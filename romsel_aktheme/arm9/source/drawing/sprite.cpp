@@ -20,6 +20,7 @@
 
 #include "drawing/sprite.h"
 #include <nds.h>
+#include <algorithm>
 
 Sprite::Sprite(u8 id)
 {
@@ -151,9 +152,9 @@ void Sprite::setScale(float scaleX, float scaleY)
     scaleX = 1 / scaleX;
     scaleY = 1 / scaleY;
 
-    u8 decimalX = (u8)((scaleX - (int)scaleX) * 256);
+    u8 decimalX = (u8)std::min<s32>(((s32)(scaleX - floatToFixed(scaleX, 6)) * 256), 255);
     u8 integerX = (u8)((int)scaleX) & 0x7f;
-    u8 decimalY = (u8)((scaleY - (int)scaleY) * 256);
+    u8 decimalY = (u8)std::min<s32>(((s32)(scaleY - floatToFixed(scaleY, 6)) * 256), 255);
     u8 integerY = (u8)((int)scaleY) & 0x7f;
 
     _affine->hdx = (integerX << 8) | decimalX;
