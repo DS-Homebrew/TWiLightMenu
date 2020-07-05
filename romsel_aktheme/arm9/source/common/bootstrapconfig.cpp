@@ -1,11 +1,11 @@
 #include "systemdetails.h"
 #include "bootstrapconfig.h"
+#include "widescreenconfig.h"
 #include "dsimenusettings.h"
 #include "filecopy.h"
 #include "flashcard.h"
 #include "loaderconfig.h"
 #include "tool/stringtool.h"
-#include "windows/mainwnd.h"
 #include <stdio.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
@@ -192,6 +192,12 @@ BootstrapConfig &BootstrapConfig::onSaveCreated(std::function<void(void)> handle
 	return *this;
 }
 
+BootstrapConfig &BootstrapConfig::onWidescreenFailed(std::function<void(std::string)> handler)
+{
+	_widescreenFailedHandler = handler;
+	return *this;
+}
+
 BootstrapConfig &BootstrapConfig::onBeforeSaveCreate(std::function<void(void)> handler)
 {
 	_saveBeforeCreatedHandler = handler;
@@ -356,7 +362,17 @@ int BootstrapConfig::launch()
 		}
 	}
 
-	bootWidescreen(_fileName.c_str(), _isHomebrew, _useWideScreen);
+	WidescreenConfig widescreen(_fileName);
+
+	std::string error = widescreen
+		.isHomebrew(_isHomebrew)
+		.gamePatch(_gametid.c_str(), _headerCrc16)
+		.enable(_useWideScreen)
+		.apply();
+
+	if (!error.empty() && _widescreenFailedHandler) {
+		_widescreenFailedHandler(error);
+	}
 
 	const char *typeToReplace = ".nds";
 	if (extention(_fileName, ".dsi")) {

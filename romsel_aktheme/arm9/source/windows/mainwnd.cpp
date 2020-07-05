@@ -33,6 +33,8 @@
 #include "ui/progresswnd.h"
 #include "common/bootstrapconfig.h"
 #include "common/loaderconfig.h"
+#include "common/widescreenconfig.h"
+
 #include "common/pergamesettings.h"
 #include "common/cardlaunch.h"
 #include "common/systemdetails.h"
@@ -51,8 +53,6 @@
 #include "common/dsimenusettings.h"
 #include "windows/rominfownd.h"
 #include "windows/cheatwnd.h"
-
-#include "sr_data_srllastran.h"
 
 #include <nds/arm9/dldi.h>
 #include <sys/iosupport.h>
@@ -522,109 +522,6 @@ void MainWnd::bootArgv(DSRomInfo &rominfo)
     }
 }
 
-sNDSHeader ndsCart;
-
-//void MainWnd::bootWidescreen(const char *filename)
-void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
-{
-	remove("/_nds/nds-bootstrap/wideCheatData.bin");
-
-	if (sys().arm7SCFGLocked() || ms().consoleModel < 2 || !useWidescreen
-	|| (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0)) {
-		return;
-	}
-	
-	bool wideCheatFound = false;
-	char wideBinPath[256];
-	if (ms().launchType[ms().secondaryDevice] == TWLSettings::ESDFlashcardLaunch) {
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
-		wideCheatFound = (access(wideBinPath, F_OK) == 0);
-	}
-
-	if (ms().slot1Launched) {
-		// Reset Slot-1 to allow reading card header
-		sysSetCardOwner (BUS_OWNER_ARM9);
-		disableSlot1();
-		for(int i = 0; i < 25; i++) { swiWaitForVBlank(); }
-		enableSlot1();
-		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
-
-		cardReadHeader((uint8*)&ndsCart);
-
-		char game_TID[5];
-		memcpy(game_TID, ndsCart.gameCode, 4);
-		game_TID[4] = 0;
-
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, ndsCart.headerCRC16);
-		wideCheatFound = (access(wideBinPath, F_OK) == 0);
-	} else if (!wideCheatFound) {
-		FILE *f_nds_file = fopen(filename, "rb");
-
-		char game_TID[5];
-		u16 headerCRC16 = 0;
-		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-		fread(game_TID, 1, 4, f_nds_file);
-		fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
-		fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
-		fclose(f_nds_file);
-		game_TID[4] = 0;
-
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
-		wideCheatFound = (access(wideBinPath, F_OK) == 0);
-	}
-
-	if (isHomebrew) {
-		if (!ms().homebrewHasWide) return;
-
-		// Prepare for reboot into 16:10 TWL_FIRM
-		mkdir("sd:/luma", 0777);
-		mkdir("sd:/luma/sysmodules", 0777);
-		if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0)
-		&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
-			//resultText = "Failed to backup custom TwlBg.";
-		} else {
-			if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
-				memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-				swiWaitForVBlank();
-			} else {
-				//resultText = "Failed to reboot TwlBg in widescreen.";
-			}
-		}
-		return;
-	}
-
-	if (wideCheatFound) {
-		//const char* resultText;
-		mkdir("/_nds", 0777);
-		mkdir("/_nds/nds-bootstrap", 0777);
-		if (fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin") == 0) {
-			// Prepare for reboot into 16:10 TWL_FIRM
-			mkdir("sd:/luma", 0777);
-			mkdir("sd:/luma/sysmodules", 0777);
-			if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0)
-			&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
-				//resultText = "Failed to backup custom TwlBg.";
-			} else {
-				if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
-					memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-					swiWaitForVBlank();
-				} else {
-					//resultText = "Failed to reboot TwlBg in widescreen.";
-				}
-			}
-			rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
-		} else {
-			//resultText = "Failed to copy widescreen code for the game.";
-		}
-		remove("/_nds/nds-bootstrap/wideCheatData.bin");
-		//messageBox(this, LANG("game launch", "Widescreen Error"), resultText, MB_OK);	// Does not work
-	}
-}
-
 void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 {
     dbg_printf("%s", _mainList->getSelectedShowName().c_str());
@@ -645,6 +542,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		  .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
 		  .nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile)
 		  .wideScreen(gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen);
+	
 	
 	long cheatOffset; size_t cheatSize;
 	if (CheatWnd::searchCheatData(GAME_CODE(rominfo.saveInfo().gameCode), 
@@ -870,7 +768,11 @@ void MainWnd::launchSelected()
 			ms().homebrewHasWide = (rominfo.saveInfo().gameCode[0] == 'W' || rominfo.version() == 0x57);
 			ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardDirectLaunch;
 			ms().saveSettings();
-			bootWidescreen(fileName.c_str(), true, (gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen));
+			WidescreenConfig widescreen(fileName);
+			widescreen
+				.isHomebrew(true)
+				.enable((gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen))
+				.apply();
             bootArgv(rominfo);
             return;
         }
@@ -1282,7 +1184,26 @@ void MainWnd::bootSlot1(void)
         unlaunch.launch();
 	}
 
-	bootWidescreen(NULL, false, ms().wideScreen);
+	sNDSHeader ndsCart;
+	// Reset Slot-1 to allow reading card header
+	sysSetCardOwner (BUS_OWNER_ARM9);
+	disableSlot1();
+	for(int i = 0; i < 25; i++) { swiWaitForVBlank(); }
+	enableSlot1();
+	for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
+
+	cardReadHeader((uint8*)&ndsCart);
+
+	char game_TID[5];
+	memcpy(game_TID, ndsCart.gameCode, 4);
+	game_TID[4] = 0;
+
+	WidescreenConfig widescreen;
+	widescreen
+		.enable(ms().wideScreen)
+		.gamePatch(game_TID, ndsCart.headerCRC16)
+		.apply();
+
 	if (sdFound()) {
 		chdir("sd:/");
 	}
