@@ -227,7 +227,7 @@ int main(int argc, char **argv)
 	}
 
 	wnd->_mainList->enterDir(ms().getCurrentRomFolder());
-
+	wnd->_mainList->selectRowByPath(ms().romPath[ms().secondaryDevice]);
 	irq().vblankStart();
 
 	while (1)

@@ -501,6 +501,17 @@ void MainList::backParentDir()
     }
 }
 
+void MainList::selectRowByPath(const std::string& path) {
+    std::string filename =  path.substr(path.find_last_of("/") + 1);
+    for (size_t i = 0; i < _rows.size(); ++i)
+    {
+        if (_rows[i][SHOWNAME_COLUMN].text() == filename)
+        {
+            selectRow(i);
+        }
+    }
+}
+
 std::string MainList::getSelectedFullPath()
 {
     if (!_rows.size())

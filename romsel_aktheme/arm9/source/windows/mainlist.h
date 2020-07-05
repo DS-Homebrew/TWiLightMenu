@@ -87,6 +87,8 @@ public:
 
   void setViewMode(VIEW_MODE mode);
 
+  void selectRowByPath(const std::string &path);
+
   std::string getSelectedFullPath();
 
   std::string getSelectedShowName();
