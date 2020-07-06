@@ -34,7 +34,7 @@
 #include "common/bootstrapconfig.h"
 #include "common/loaderconfig.h"
 #include "common/widescreenconfig.h"
-
+#include "common/playedconfig.h"
 #include "common/pergamesettings.h"
 #include "common/cardlaunch.h"
 #include "common/systemdetails.h"
@@ -726,6 +726,12 @@ void MainWnd::launchSelected()
 
     ms().slot1Launched = false;
     ms().saveSettings();
+
+    if (ms().updateRecentlyPlayedList)
+    {
+        played().updateRecentlyPlayed(_mainList->getCurrentDir(), _mainList->getSelectedShowName());
+        played().incrementTimesPlayed(_mainList->getCurrentDir(), _mainList->getSelectedShowName());
+    }
 
     DSRomInfo rominfo;
     if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo)) {
