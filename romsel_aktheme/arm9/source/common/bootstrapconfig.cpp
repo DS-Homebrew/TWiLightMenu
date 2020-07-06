@@ -400,7 +400,7 @@ int BootstrapConfig::launch()
 			bootstrapPath = BOOTSTRAP_NIGHTLY_GBAR;
 		if (!_useNightlyBootstrap)
 			bootstrapPath = BOOTSTRAP_RELEASE_GBAR;
-	} else {
+	} else if (isDSiMode()) {
 		if (_useNightlyBootstrap && _isHomebrew)
 			bootstrapPath = BOOTSTRAP_NIGHTLY_HB;
 		if (_useNightlyBootstrap && !_isHomebrew)
@@ -415,12 +415,19 @@ int BootstrapConfig::launch()
 			if (_useNightlyBootstrap && _isHomebrew)
 				bootstrapPath = BOOTSTRAP_NIGHTLY_HB_FC;
 			if (_useNightlyBootstrap && !_isHomebrew)
-				bootstrapPath = (isDSiMode() ? BOOTSTRAP_NIGHTLY_FC : BOOTSTRAP_NIGHTLY_DS);
+				bootstrapPath = BOOTSTRAP_NIGHTLY_FC;
 
 			if (!_useNightlyBootstrap && _isHomebrew)
 				bootstrapPath = BOOTSTRAP_RELEASE_HB_FC;
 			if (!_useNightlyBootstrap && !_isHomebrew)
-				bootstrapPath = (isDSiMode() ? BOOTSTRAP_RELEASE_FC : BOOTSTRAP_RELEASE_DS);
+				bootstrapPath = BOOTSTRAP_RELEASE_FC;
+		}
+	} else {
+		// b4ds path
+		if (_useNightlyBootstrap) {
+			bootstrapPath = BOOTSTRAP_NIGHTLY_DS;
+		} else {
+			bootstrapPath = BOOTSTRAP_RELEASE_DS;
 		}
 	}
 
