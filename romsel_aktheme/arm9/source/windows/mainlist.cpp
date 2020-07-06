@@ -30,6 +30,7 @@
 #include "common/systemdetails.h"
 #include "common/flashcard.h"
 #include "common/dsimenusettings.h"
+#include "common/playedconfig.h"
 #include "ui/windowmanager.h"
 #include "tool/timetool.h"
 #include "tool/memtool.h"
@@ -135,6 +136,34 @@ static bool itemSortComp(const ListView::itemVector &lhs, const ListView::itemVe
 	return strcasecmp(lhfn.c_str(), rhfn.c_str()) < 0;
 }
 
+
+static bool itemSortCompFileExt(const ListView::itemVector &lhs, const ListView::itemVector &rhs)
+{
+    const std::string &lhfn = lhs[MainList::REALNAME_COLUMN].text();
+    const std::string &rhfn = rhs[MainList::REALNAME_COLUMN].text();
+
+    bool lhIsDir = '/' == lhfn[lhfn.size() - 1];
+    bool rhIsDir = '/' == rhfn[rhfn.size() - 1];
+
+    if ("../" == lhfn)
+        return true;
+    if ("../" == rhfn)
+        return false;
+
+    if (lhIsDir && !rhIsDir) {
+		return true;
+	}
+    if (!lhIsDir && rhIsDir) {
+		return false;
+	}
+
+    if(strcasecmp(lhfn.substr(lhfn.find_last_of(".") + 1).c_str(), rhfn.substr(rhfn.find_last_of(".") + 1).c_str()) == 0) {
+		return strcasecmp(lhfn.c_str(), rhfn.c_str()) < 0;
+	} else {
+		return strcasecmp(lhfn.substr(lhfn.find_last_of(".") + 1).c_str(), rhfn.substr(rhfn.find_last_of(".") + 1).c_str()) < 0;
+	}
+}
+
 static bool extnameFilter(const std::vector<std::string> &extNames, std::string extName)
 {
     if (0 == extNames.size())
@@ -212,11 +241,6 @@ void MainList::setupExtnames()
 		}
 	}
 }
-
-struct TimesPlayed {
-	std::string name;
-	int amount;
-};
 
 void MainList::addDirEntry(const std::string row1,
     const std::string row2, 
@@ -385,14 +409,11 @@ bool MainList::enterDir(const std::string &dirName)
         switch (ms().sortMethod) {
             case TWLSettings::ERecent: 
             {
-                CIniFile recentlyPlayedIni(SFN_RECENTLY_PLAYED);
-                std::vector<std::string> recentlyPlayed;
-                recentlyPlayedIni.GetStringVector("RECENT", dirName, recentlyPlayed, ':');
+                std::vector<std::string> recentlyPlayed = played().getRecentlyPlayed(dirName);
                 int k = 0;
                 for (uint i = 0; i < recentlyPlayed.size(); i++) {
                     for (uint j = 0; j <= _rows.size(); j++) {
                         if (recentlyPlayed[i] == _rows[j][MainList::SHOWNAME_COLUMN].text()) {
-                            
                             _rows[j][MainList::POSITION_COLUMN].param = k++;
                             _rows[j][MainList::CUSTOM_POS_COLUMN].param = (u32)true;
                             break;
@@ -404,14 +425,11 @@ bool MainList::enterDir(const std::string &dirName)
             }
             case TWLSettings::EMostPlayed: 
             {
-                CIniFile timesPlayedIni(SFN_TIMES_PLAYED);
                 std::vector<TimesPlayed> timesPlayed;
 
                 for (int i = 0; i < (int)_rows.size(); i++) {
-                    TimesPlayed timesPlayedTemp;
-                    timesPlayedTemp.name = _rows[i][MainList::SHOWNAME_COLUMN].text();
-                    timesPlayedTemp.amount = timesPlayedIni.GetInt(dirName, _rows[i][MainList::SHOWNAME_COLUMN].text(), 0);
-                    timesPlayed.push_back(timesPlayedTemp);
+                    timesPlayed.emplace_back(_rows[i][MainList::SHOWNAME_COLUMN].text(), 
+                        played().getTimesPlayed(dirName, _rows[i][MainList::SHOWNAME_COLUMN].text()));
                 }
 
                 for (int i = 0; i < (int)timesPlayed.size(); i++) {
@@ -428,16 +446,12 @@ bool MainList::enterDir(const std::string &dirName)
             }
             case TWLSettings::EFileType:
             {
-                // todo: filetype sort
-                std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                std::sort(_rows.begin(), _rows.end(), itemSortCompFileExt);
                 break;
             }
             case TWLSettings::ECustom:
             {
-                nocashWrite("custom", 16);
-                CIniFile gameOrderIni(SFN_GAME_ORDER);
-                std::vector<std::string> gameOrder;
-                gameOrderIni.GetStringVector("ORDER", dirName, gameOrder, ':');
+                std::vector<std::string> gameOrder = played().getCustomOrder(dirName);
                 for (uint i = 0; i < gameOrder.size(); i++) {
                     for (uint j = 0; j < _rows.size(); j++) {
                         if (gameOrder[i] == _rows[j][MainList::SHOWNAME_COLUMN].text()) {
