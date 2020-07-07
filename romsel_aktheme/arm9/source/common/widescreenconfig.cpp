@@ -57,8 +57,10 @@ const std::string WidescreenConfig::apply()
     return "";
   }
 
-  if (_isHomebrew && ms().homebrewHasWide)
+  if (_isHomebrew)
   {
+    if (!ms().homebrewHasWide)
+      return "";
     // Prepare for reboot into 16:10 TWL_FIRM
     mkdir("sd:/luma", 0777);
     mkdir("sd:/luma/sysmodules", 0777);
@@ -88,46 +90,38 @@ const std::string WidescreenConfig::apply()
     std::string resultText;
     mkdir("/_nds", 0777);
     mkdir("/_nds/nds-bootstrap", 0777);
+
     if (fcopy(_widescreenPatch.c_str(), "/_nds/nds-bootstrap/wideCheatData.bin") == 0)
     {
-      // Prepare for reboot into 16:10 TWL_FIRM
+      // Ensure luma directories
       mkdir("sd:/luma", 0777);
       mkdir("sd:/luma/sysmodules", 0777);
-      if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) &&
-          (rename("sd:/luma/sysmodules/TwlBg.cxi",
-                  "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0))
+
+      // Backup existing TwlBg.cxi
+      if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) && (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0))
       {
-        resultText = "Failed to backup custom TwlBg.";
-        goto cleanup;
+        return "Failed to backup custom TwlBg.";
       }
-      else if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi",
-                     "sd:/luma/sysmodules/TwlBg.cxi") == 0)
+
+      if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0)
       {
         irqDisable(IRQ_VBLANK); // Fix the throwback to 3DS HOME Menu bug
         memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
         fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
         swiWaitForVBlank();
+        return "";
       }
       else
       {
-        resultText = "Failed to reboot TwlBg in widescreen.";
-        goto cleanup;
+        rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+        return "Failed to copy Widescreen TwlBg.";
       }
-
-      rename("sd:/luma/sysmodules/TwlBg_bak.cxi",
-             "sd:/luma/sysmodules/TwlBg.cxi");
-      return "";
     }
     else
     {
-      resultText = "Failed to copy widescreen code for the game.";
-      goto cleanup;
+      return "Failed to copy widescreen patch.";
     }
-  cleanup:
-    remove("/_nds/nds-bootstrap/wideCheatData.bin");
-    return resultText;
   }
-  // widescreen path is empty: do nothing;
   return "";
 }
 

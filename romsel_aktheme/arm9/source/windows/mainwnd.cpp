@@ -503,6 +503,12 @@ void bootstrapWidescreenHandler()
     progressWnd().update();
 }
 
+void bootstrapWidescreenFailedHandler(std::string error)
+{
+	progressWnd().setTipText(error);
+    progressWnd().update();
+}
+
 
 void bootstrapWidescreenApplied()
 {
@@ -674,6 +680,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
         .onCheatsApplied(bootstrapCheatsHandler)
         .onWidescreenApply(bootstrapWidescreenHandler)
         .onWidescreenApply(bootstrapWidescreenApplied)
+        .onWidescreenFailed(bootstrapWidescreenFailedHandler)
 		.onBeforeSaveCreate(bootstrapBeforeSaveHandler)
 		.onSaveCreated(bootstrapSaveHandler)
 		.onConfigSaved(bootstrapLaunchHandler);
