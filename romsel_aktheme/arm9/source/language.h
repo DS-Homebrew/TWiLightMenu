@@ -29,8 +29,6 @@
 #include <nds.h>
 #include "tool/stringtool.h"
 
-extern int setTitleLanguage;
-
 class LanguageFile : public CIniFile
 {
 private:
@@ -91,6 +89,9 @@ public:
     LoadIniFile(formatString(SFN_LANGUAGE_TEXT, getIdentifier(language, useTwlCfg).c_str()));
   }
   ~LanguageFile(){};
+  void langInit(void);
+public:
+   int setTitleLanguage;
 };
 
 typedef singleton<LanguageFile, TWLSettings::TLanguage> languageFile_s;

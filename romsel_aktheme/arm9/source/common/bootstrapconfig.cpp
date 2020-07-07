@@ -192,6 +192,18 @@ BootstrapConfig &BootstrapConfig::onSaveCreated(std::function<void(void)> handle
 	return *this;
 }
 
+BootstrapConfig &BootstrapConfig::onWidescreenApply(std::function<void(void)> handler)
+{
+	_widescreenApplyHandler = handler;
+	return *this;
+}
+
+BootstrapConfig &BootstrapConfig::onWidescreenFinished(std::function<void(void)> handler)
+{
+	_widescreenFinishedHandler = handler;
+	return *this;
+}
+
 BootstrapConfig &BootstrapConfig::onWidescreenFailed(std::function<void(std::string)> handler)
 {
 	_widescreenFailedHandler = handler;
@@ -362,6 +374,10 @@ int BootstrapConfig::launch()
 		}
 	}
 
+	if (_useWideScreen && _widescreenApplyHandler) {
+		_widescreenApplyHandler();
+	}
+	
 	WidescreenConfig widescreen(_fileName);
 
 	std::string error = widescreen
@@ -372,6 +388,8 @@ int BootstrapConfig::launch()
 
 	if (!error.empty() && _widescreenFailedHandler) {
 		_widescreenFailedHandler(error);
+	} else if (_widescreenFinishedHandler) {
+		_widescreenFinishedHandler();
 	}
 
 	const char *typeToReplace = ".nds";

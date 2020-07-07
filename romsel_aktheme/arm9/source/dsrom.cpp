@@ -127,7 +127,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
             _banner.crc = ((tNDSBanner*)unknown_nds_banner_bin)->crc;
             tonccpy(_banner.icon,((tNDSBanner*)unknown_nds_banner_bin)->icon, sizeof(_banner.icon));
             tonccpy(_banner.palette,((tNDSBanner*)unknown_nds_banner_bin)->palette, sizeof(_banner.palette));
-            tonccpy(_banner.title, ((tNDSBanner*)unknown_nds_banner_bin)->titles[setTitleLanguage], sizeof(_banner.title));
+            tonccpy(_banner.title, ((tNDSBanner*)unknown_nds_banner_bin)->titles[lang().setTitleLanguage], sizeof(_banner.title));
 			fclose(f);
 			return false;
 		}
@@ -144,7 +144,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _banner.crc = ((tNDSBanner*)unknown_nds_banner_bin)->crc;
         tonccpy(_banner.icon,((tNDSBanner*)unknown_nds_banner_bin)->icon, sizeof(_banner.icon));
         tonccpy(_banner.palette,((tNDSBanner*)unknown_nds_banner_bin)->palette, sizeof(_banner.palette));
-        tonccpy(_banner.title, ((tNDSBanner*)unknown_nds_banner_bin)->titles[setTitleLanguage], sizeof(_banner.title));        fclose(f);
+        tonccpy(_banner.title, ((tNDSBanner*)unknown_nds_banner_bin)->titles[lang().setTitleLanguage], sizeof(_banner.title));        fclose(f);
         return true;
     }
     else
@@ -328,7 +328,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 				}
 				else
 				{
-					currentLang = setTitleLanguage;
+					currentLang = lang().setTitleLanguage;
 				}
 				while (&banner.titles[currentLang][0] == 0)
 				{
@@ -350,7 +350,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 			}
 			else
 			{
-				currentLang = setTitleLanguage;
+				currentLang = lang().setTitleLanguage;
 			}
 			while (((tNDSBanner*)nds_banner_bin)->titles[currentLang][0] == 0)
 			{
@@ -606,7 +606,7 @@ bool DSRomInfo::loadGbaRomInfo(const std::string &filename)
             _banner.crc = ((tNDSBanner*)gbarom_banner_bin)->crc;
             tonccpy(_banner.icon,((tNDSBanner*)gbarom_banner_bin)->icon, sizeof(_banner.icon));
             tonccpy(_banner.palette,((tNDSBanner*)gbarom_banner_bin)->palette, sizeof(_banner.palette));
-            tonccpy(_banner.title, ((tNDSBanner*)gbarom_banner_bin)->titles[setTitleLanguage], sizeof(_banner.title));
+            tonccpy(_banner.title, ((tNDSBanner*)gbarom_banner_bin)->titles[lang().setTitleLanguage], sizeof(_banner.title));
             return true;
         }
     }
@@ -723,5 +723,5 @@ void DSRomInfo::setBanner(const std::string &anExtIcon, const u8 *aBanner)
     _banner.crc = ((tNDSBanner*)aBanner)->crc;
     tonccpy(_banner.icon,((tNDSBanner*)aBanner)->icon, sizeof(_banner.icon));
     tonccpy(_banner.palette,((tNDSBanner*)aBanner)->palette, sizeof(_banner.palette));
-	tonccpy(_banner.title, ((tNDSBanner*)aBanner)->titles[setTitleLanguage], sizeof(_banner.title));
+	tonccpy(_banner.title, ((tNDSBanner*)aBanner)->titles[lang().setTitleLanguage], sizeof(_banner.title));
 }

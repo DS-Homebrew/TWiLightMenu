@@ -264,6 +264,14 @@ void MainList::addDirEntry(const std::string row1,
     nocashMessage("mainlist:213");
 
     appendRow(std::move(a_row));
+    
+    itemVector& row = _rows.back();
+
+    row.emplace_back(ListItem());
+    row.emplace_back(ListItem());
+    row[CUSTOM_POS_COLUMN].param = false;
+    row[POSITION_COLUMN].param = _rows.size() + 1;
+  
     nocashMessage("mainlist:216");
 
     DSRomInfo romInfo;
@@ -612,7 +620,7 @@ void MainList::selectRowByPath(const std::string& path) {
     {
         if (_rows[i][SHOWNAME_COLUMN].text() == filename)
         {
-            selectRow(i);
+            setFirstVisibleIdAndSelectRow(i > 3 ? i : 0, i);
         }
     }
 }

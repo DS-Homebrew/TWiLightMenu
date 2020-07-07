@@ -22,7 +22,7 @@
 #include "listview.h"
 #include "drawing/gdi.h"
 #include "tool/dbgtool.h"
-
+#include "_ansi.h"
 namespace akui
 {
 
@@ -39,7 +39,7 @@ void ListItem::setText(const std::string &text)
 }
 
 ListView::ListView(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text, int scrollSpeed)
-    : Window(parent, text), _scrollSpeed(scrollSpeed)
+    : Window(parent, text), _scrollSpeed(scrollSpeed), _columns(7)
 {
     _size = Size(w, h);
     _position = Point(x, y);
@@ -72,9 +72,6 @@ void ListView::arangeColumnsSize()
 
 bool ListView::insertColumn(size_t index, const std::string &text, u8 width)
 {
-    if (index > _columns.size())
-        return false;
-
     ListColumn aColumn;
     aColumn.width = width;
     if (index > 0)
@@ -105,15 +102,12 @@ bool ListView::appendRow(const std::vector<std::string>&& texts)
         row.emplace_back(std::move(aItem));
     }
 
-    // 6 = CUSTOM_PARAM
-    row[6].param = false;
-    // 7 = POSITION_COLUMN;
-    row[7].param = _rows.size() + 1;
     _rows.emplace_back(std::move(row));
+
     nocashMessage("listview:106");
     //if( _visibleRowCount > _rows.size() ) _visibleRowCount = _rows.size();
 
-    return true;
+    return false;
 }
 
 void ListView::removeAllRows()
@@ -168,7 +162,12 @@ void ListView::drawText()
     {
         for (size_t j = 0; j < columnCount; ++j)
         {
-            s32 height = _rows[_firstVisibleRowId + i][j].lines() * SYSTEM_FONT_HEIGHT;
+            sassert(_rows.size() > _firstVisibleRowId + i, "failed firstVisibleRoleId");
+            sassert(_rows[_firstVisibleRowId + i].size() > j, "failed columnCount");
+            s32 lines = _rows[_firstVisibleRowId + i][j].lines();
+            sassert(lines == 1, "failed line height");
+
+            s32 height = lines * SYSTEM_FONT_HEIGHT;
             s32 itemX = _position.x + _columns[j].offset;
             s32 itemY = _position.y + i * _rowHeight;
             s32 textY = itemY + ((_rowHeight - height - 1) >> 1);

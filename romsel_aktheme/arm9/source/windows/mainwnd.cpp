@@ -477,14 +477,37 @@ void MainWnd::onKeyAPressed()
 void bootstrapBeforeSaveHandler()
 {
     progressWnd().setPercent(0);
-	progressWnd().setTipText("Creating Save file...");
+	progressWnd().setTipText("Now saving...");
     progressWnd().update();
 }
 
 void bootstrapSaveHandler()
 {
 	progressWnd().setTipText("Please wait...");
+    progressWnd().setPercent(25);
+    progressWnd().update();
+}
+
+
+void bootstrapCheatsHandler()
+{
+	progressWnd().setTipText("Writing cheats...");
     progressWnd().setPercent(50);
+    progressWnd().update();
+}
+
+
+void bootstrapWidescreenHandler()
+{
+	progressWnd().setTipText("Enabling widescreen patches...");
+    progressWnd().update();
+}
+
+
+void bootstrapWidescreenApplied()
+{
+	progressWnd().setTipText("Widescreen patches applied...");
+    progressWnd().setPercent(75);
     progressWnd().update();
 }
 
@@ -648,6 +671,9 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	} 
 	// Event handlers for progress window.
 	config
+        .onCheatsApplied(bootstrapCheatsHandler)
+        .onWidescreenApply(bootstrapWidescreenHandler)
+        .onWidescreenApply(bootstrapWidescreenApplied)
 		.onBeforeSaveCreate(bootstrapBeforeSaveHandler)
 		.onSaveCreated(bootstrapSaveHandler)
 		.onConfigSaved(bootstrapLaunchHandler);

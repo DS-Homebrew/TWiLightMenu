@@ -31,9 +31,7 @@
 
 const char* languageIniPath;
 
-int setTitleLanguage = 0;
-
-void langInit(void)
+void LanguageFile::langInit(void)
 {
 	printf("langInit\n");
 	if (ms().titleLanguage == -1) {

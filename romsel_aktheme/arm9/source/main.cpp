@@ -173,8 +173,7 @@ int main(int argc, char **argv)
 	//    _FAT_unicode_init( unicodeL2UTable, unicodeU2LTable, unicodeAnkTable );
 	cwl();
 
-	lang(); // load language file
-
+	lang().langInit(); // load language file
 	fontFactory().makeFont(); // load font file
 	uiSettings().loadSettings();
 

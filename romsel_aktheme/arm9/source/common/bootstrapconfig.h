@@ -49,6 +49,8 @@ class BootstrapConfig
         BootstrapConfig& wideScreen(bool wideScreen);
         BootstrapConfig& gbarBootstrap(bool gbarBootstrap);
 
+        BootstrapConfig& onWidescreenFinished(std::function<void(void)> handler);
+        BootstrapConfig& onWidescreenApply(std::function<void(void)> handler);
         BootstrapConfig& onWidescreenFailed(std::function<void(std::string)> handler);
         BootstrapConfig& onBeforeSaveCreate(std::function<void(void)> handler);
         BootstrapConfig& onSaveCreated(std::function<void(void)> handler);
@@ -69,6 +71,9 @@ class BootstrapConfig
         const std::string _gametid;
         const u32 _sdkVersion;
         const u16 _headerCrc16;
+
+        std::function<void(void)>  _widescreenApplyHandler;
+        std::function<void(void)>  _widescreenFinishedHandler;
 
         std::function<void(std::string)>  _widescreenFailedHandler;
         std::function<void(void)> _saveBeforeCreatedHandler;
