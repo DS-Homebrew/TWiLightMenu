@@ -6,7 +6,6 @@
 #include "flashcard.h"
 #include "loaderconfig.h"
 #include "tool/stringtool.h"
-#include <stdio.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
 
@@ -244,13 +243,6 @@ BootstrapConfig &BootstrapConfig::gbarBootstrap(bool gbarBootstrap)
 {
 	_useGbarBootstrap = gbarBootstrap;
 	return *this;
-}
-
-off_t fsize(const char *path)
-{
-	struct stat st;
-	stat(path, &st);
-	return st.st_size;
 }
 
 /**
