@@ -19,7 +19,6 @@ private:
 	std::vector<u8> fontTiles;
 	std::vector<u8> fontWidths;
 	std::vector<u16> fontMap;
-	std::vector<u8> characterBuffer;
 
 	u16 getCharIndex(char16_t c);
 

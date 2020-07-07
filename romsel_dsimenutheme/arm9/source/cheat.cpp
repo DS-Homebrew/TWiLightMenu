@@ -259,16 +259,16 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem>& list,
   }
 
   // Print the list
-  for(uint i=0;i<96/smallFontHeight() && i<list.size();i++) {
+  for(uint i=0;i<8 && i<list.size();i++) {
     if(list[screenPos+i]._flags&cParsedItem::EFolder) {
-      printSmall(false, 15+((screenPos+i == curPos) ? 5 : 0), 60+(i*smallFontHeight()), ">");
-      printSmall(false, 28+((screenPos+i == curPos) ? 4 : 0), 60+(i*smallFontHeight()), list[screenPos+i]._title);
+      printSmall(false, 15+((screenPos+i == curPos) ? 5 : 0), 60+(i*12), ">");
+      printSmall(false, 28+((screenPos+i == curPos) ? 4 : 0), 60+(i*12), list[screenPos+i]._title);
     } else {
       if(list[screenPos+i]._flags&cParsedItem::ESelected) {
-        printSmall(false, 13, 60+(i*smallFontHeight()), "x");
+        printSmall(false, 13, 60+(i*12), "x");
       }
-      printSmall(false, 21+((screenPos+i == curPos) ? 4 : 0), 60+(i*smallFontHeight()), "-");
-      printSmall(false, 28+((screenPos+i == curPos) ? 7 : 0), 60+(i*smallFontHeight()), list[screenPos+i]._title);
+      printSmall(false, 21+((screenPos+i == curPos) ? 4 : 0), 60+(i*12), "-");
+      printSmall(false, 28+((screenPos+i == curPos) ? 7 : 0), 60+(i*12), list[screenPos+i]._title);
     }
   }
 }
@@ -338,8 +338,8 @@ void CheatCodelist::selectCheats(std::string filename)
     // Scroll screen if needed
     if(cheatWnd_cursorPosition < cheatWnd_screenPosition) {
       cheatWnd_screenPosition = cheatWnd_cursorPosition;
-    } else if(cheatWnd_cursorPosition > cheatWnd_screenPosition + (96/smallFontHeight()) - 1) {
-      cheatWnd_screenPosition = cheatWnd_cursorPosition - (96/smallFontHeight()) + 1;
+    } else if(cheatWnd_cursorPosition > cheatWnd_screenPosition + 8 - 1) {
+      cheatWnd_screenPosition = cheatWnd_cursorPosition - 8 + 1;
     }
 
     clearText();
@@ -371,10 +371,10 @@ void CheatCodelist::selectCheats(std::string filename)
       }
     } else if(held & KEY_LEFT) {
       snd().playSelect();
-      cheatWnd_cursorPosition -= (cheatWnd_cursorPosition > (96/smallFontHeight()) ? (96/smallFontHeight()) : cheatWnd_cursorPosition);
+      cheatWnd_cursorPosition -= (cheatWnd_cursorPosition > 8 ? 8 : cheatWnd_cursorPosition);
     } else if(held & KEY_RIGHT) {
       snd().playSelect();
-      cheatWnd_cursorPosition += (cheatWnd_cursorPosition < (int)(currentList.size()-(96/smallFontHeight())) ? (96/smallFontHeight()) : currentList.size()-cheatWnd_cursorPosition-1);
+      cheatWnd_cursorPosition += (cheatWnd_cursorPosition < (int)(currentList.size()-8) ? 8 : currentList.size()-cheatWnd_cursorPosition-1);
     } else if(pressed & KEY_A) {
       (ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
       if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {

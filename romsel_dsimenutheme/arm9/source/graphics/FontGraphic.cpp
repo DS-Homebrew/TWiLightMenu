@@ -93,9 +93,6 @@ FontGraphic::FontGraphic(const std::string &path, const std::string &fallback) {
 		}
 		fclose(file);
 		questionMark = getCharIndex('?');
-
-		// Allocate character buffer
-		characterBuffer = std::vector<u8>(tileWidth * tileHeight);
 	}
 }
 
@@ -184,20 +181,15 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 		}
 
 		u16 index = getCharIndex(c);
-		for(int i = 0; i < tileSize; i++) {
-			u8 tile = fontTiles[i + (index * tileSize)];
-			characterBuffer[(i * 4)]     = (tile >> 6 & 3);
-			characterBuffer[(i * 4) + 1] = (tile >> 4 & 3);
-			characterBuffer[(i * 4) + 2] = (tile >> 2 & 3);
-			characterBuffer[(i * 4) + 3] = (tile      & 3);
-		}
-
 		// No need to draw off screen chars
 		if(x >= 0 && x < 256) {
 			u8 *dst = textBuf[top] + x + fontWidths[(index * 3)];
 			for(int i = 0; i < tileHeight; i++) {
-				if(y + i >= 0 && y + i < 192)
-					tonccpy(dst + ((y + i) * 256), &characterBuffer[i * tileWidth], tileWidth);
+				for(int j = 0; j < tileWidth; j++) {
+					u8 px = fontTiles[(index * tileSize) + (i * tileWidth + j) / 4] >> ((3 - ((i * tileWidth + j) % 4)) * 2) & 3;
+					if(px)
+						dst[(y + i) * 256 + j] = px;
+				}
 			}
 		}
 
