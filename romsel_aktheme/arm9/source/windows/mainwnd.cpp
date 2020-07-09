@@ -507,6 +507,8 @@ void bootstrapWidescreenFailedHandler(std::string error)
 {
 	progressWnd().setTipText(error);
     progressWnd().update();
+    progressWnd().setPercent(0);
+    while(1) {}
 }
 
 

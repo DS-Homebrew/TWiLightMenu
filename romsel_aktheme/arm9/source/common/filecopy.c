@@ -3,9 +3,10 @@
 #include <sys/stat.h>
 
 #include "common/tonccpy.h"
+#include "_ansi.h"
 
 #define COPY_BUF_SIZE 0x8000
-char copyBuf[COPY_BUF_SIZE];
+u8 copyBuf[COPY_BUF_SIZE];
 
 off_t fsize(const char *path)
 {
@@ -22,12 +23,14 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 	toncset(copyBuf, 0, COPY_BUF_SIZE);
 	FILE* sourceFile = fopen(sourcePath, "rb");
 	if (!sourceFile) {
+		sassert(0, "invalid source file");
 		return 1;
 	}
 
 	FILE* destinationFile = fopen(destinationPath, "wb");
 	if (!destinationFile) {
 		fclose(sourceFile);
+		sassert(0, "couldnt open destfile");
 		return 1;
 	}
 
@@ -40,11 +43,13 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 		offset += COPY_BUF_SIZE;
 
 		if (offset >= srcsize) {
+			fflush(destinationFile);
 			fclose(destinationFile);
 			fclose(sourceFile);
 			return 0;
 		}
 	}
+	sassert(0, "wtf");
 	// Should not get here...
 	return 1;
 }

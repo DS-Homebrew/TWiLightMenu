@@ -108,11 +108,11 @@ const std::string WidescreenConfig::apply()
         irqDisable(IRQ_VBLANK); // Fix the throwback to 3DS HOME Menu bug
         memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
         fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-        swiWaitForVBlank();
         return "";
       }
       else
       {
+        remove("sd:/luma/sysmodules/TwlBg.cxi");
         rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
         return "Failed to copy Widescreen TwlBg.";
       }
