@@ -242,75 +242,29 @@ void MainWnd::startMenuItemClicked(s16 i)
     
     dbg_printf("start menu item %d\n", i);
 
-    // ------------------- Copy and Paste ---
-    if (START_MENU_ITEM_COPY == i)
-    {
-        if (_mainList->getSelectedFullPath() == "")
-            return;
-        struct stat st;
-        stat(_mainList->getSelectedFullPath().c_str(), &st);
-        if (st.st_mode & S_IFDIR)
-        {
-            messageBox(this, LANG("no copy dir", "title"), LANG("no copy dir", "text"), MB_YES | MB_NO);
-            return;
+    // Use Gm9i for file manipulation.
+
+    switch (i) {
+        case START_MENU_ITEM_HIDE: {
+            std::string fullPath = _mainList->getSelectedFullPath();
+            if (fullPath != "")
+            {
+                bool ret = false;
+                ret = hideFile(fullPath);
+                if (ret)
+                    _mainList->enterDir(_mainList->getCurrentDir());
+            }
+            break;
         }
-        setSrcFile(_mainList->getSelectedFullPath(), SFM_COPY);
-    }
-
-    else if (START_MENU_ITEM_CUT == i)
-    {
-        if (_mainList->getSelectedFullPath() == "")
-            return;
-        struct stat st;
-        stat(_mainList->getSelectedFullPath().c_str(), &st);
-        if (st.st_mode & S_IFDIR)
-        {
-            messageBox(this, LANG("no copy dir", "title"), LANG("no copy dir", "text"), MB_YES | MB_NO);
-            return;
+        case START_MENU_ITEM_SETTING: {
+            showSettings();
+            break;
         }
-        setSrcFile(_mainList->getSelectedFullPath(), SFM_CUT);
-    }
-
-    else if (START_MENU_ITEM_PASTE == i)
-    {
-        bool ret = false;
-        ret = copyOrMoveFile(_mainList->getCurrentDir());
-        if (ret) // refresh current directory
-            _mainList->enterDir(_mainList->getCurrentDir());
-    }
-
-    else if (START_MENU_ITEM_HIDE == i)
-    {
-        std::string fullPath = _mainList->getSelectedFullPath();
-        if (fullPath != "")
-        {
-            bool ret = false;
-            ret = hideFile(fullPath);
-            if (ret)
-                _mainList->enterDir(_mainList->getCurrentDir());
+        case START_MENU_ITEM_INFO: {
+            showFileInfo();
+            break;
         }
-    }
-
-    else if (START_MENU_ITEM_DELETE == i)
-    {
-        std::string fullPath = _mainList->getSelectedFullPath();
-        if (fullPath != "" && !ms().preventDeletion)
-        {
-            bool ret = false;
-            ret = deleteFile(fullPath);
-            if (ret)
-                _mainList->enterDir(_mainList->getCurrentDir());
-        }
-    }
-
-    if (START_MENU_ITEM_SETTING == i)
-    {
-        showSettings();
-    }
-
-    else if (START_MENU_ITEM_INFO == i)
-    {
-        showFileInfo();
+        default: break;
     }
 }
 
