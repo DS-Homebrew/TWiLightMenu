@@ -123,9 +123,9 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     fseek(f, 0, SEEK_SET);
 
     sNDSHeaderExt header;
-    if (1 != fread(&header, sizeof(header), 1, f))
+    if (sizeof(header) != fread(&header, 1, sizeof(header), f))
     {    
-		if (1 != fread(&header, 0x160, 1, f))
+		if (0x160 != fread(&header, 1, 0x160, f))
 		{
 			dbg_printf("read rom header fail\n");
             _banner->crc = ((tNDSBanner*)unknown_nds_banner_bin)->crc;

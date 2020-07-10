@@ -75,7 +75,6 @@ private:
   unique_ptr<tDSiAnimatedIcon> _dsiIcon;
 
 private:
-  void load(void);
   bool loadGbaRomInfo(const std::string &filename);
   bool loadArgv(const std::string &filename);
   bool loadDSRomInfo(const std::string &filename, bool loadBanner);
@@ -101,6 +100,8 @@ public:
   virtual ~DSRomInfo() { }
 
 public:
+  void load(void);
+
   void drawDSRomIcon(u8 x, u8 y, GRAPHICS_ENGINE engine);
   void drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, bool flipH, bool flipV, GRAPHICS_ENGINE engine);
 
