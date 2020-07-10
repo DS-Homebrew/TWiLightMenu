@@ -145,12 +145,12 @@ void Sprite::setBufferOffset(u32 offset)
 
 void Sprite::setScale(float scaleX, float scaleY)
 {
-    _scaleX = scaleX;
-    _scaleY = scaleY;
+    _scaleX = scaleX <= 0 ? 1 : scaleX;
+    _scaleY = scaleY <= 0 ? 1 : scaleY;
 
     // Prevent divide by 0.
-    scaleX = 1 / (scaleX <= 0 ? 1 : scaleX);
-    scaleY = 1 / (scaleY <= 0 ? 1 : scaleY);
+    scaleX = scaleX <= 0 ? 1 : 1 / scaleX;
+    scaleY = scaleY <= 0 ? 1 : 1 / scaleX;
 
     u8 decimalX = (u8)((scaleX - (int)scaleX) * 256);
     u8 integerX = (u8)((int)scaleX) & 0x7f;
