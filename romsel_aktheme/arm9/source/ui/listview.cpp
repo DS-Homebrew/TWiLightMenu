@@ -165,7 +165,6 @@ void ListView::drawText()
             sassert(_rows.size() > _firstVisibleRowId + i, "failed firstVisibleRoleId");
             sassert(_rows[_firstVisibleRowId + i].size() > j, "failed columnCount");
             s32 lines = _rows[_firstVisibleRowId + i][j].lines();
-            sassert(lines == 1, "failed line height");
 
             s32 height = lines * SYSTEM_FONT_HEIGHT;
             s32 itemX = _position.x + _columns[j].offset;
