@@ -74,7 +74,6 @@ TWLSettings::TWLSettings()
     ak_viewMode = EViewInternal;
     ak_scrollSpeed = EScrollFast;
     ak_theme = "zelda";
-    ak_zoomIcons = true;
 
     slot1Launched = false;
     launchType[0] = ENoLaunch;
@@ -168,7 +167,6 @@ void TWLSettings::loadSettings()
     ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     ak_scrollSpeed = settingsini.GetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
     ak_theme = settingsini.GetString("SRLOADER", "AK_THEME", ak_theme);
-    ak_zoomIcons = settingsini.GetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
     dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
@@ -243,7 +241,6 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     settingsini.SetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
     settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
-    settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
     if (!gotosettings) {
         settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
