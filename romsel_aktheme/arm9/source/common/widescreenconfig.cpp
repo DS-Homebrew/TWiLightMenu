@@ -2,8 +2,7 @@
 #include "dsimenusettings.h"
 #include "filecopy.h"
 #include "systemdetails.h"
-
-#include "sr_data_srllastran.h"
+#include "string.h"
 
 WidescreenConfig &WidescreenConfig::enable(bool enable)
 {
@@ -37,9 +36,10 @@ WidescreenConfig &WidescreenConfig::gamePatch(const char *gametid,
 {
   if (!_widescreenPatch.empty())
     return *this;
-  char wideBinPath[256];
-  snprintf(wideBinPath, sizeof(wideBinPath),
-           "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", gametid, gameCrc);
+  char wideBinPath[256] = {0};
+  sassert(strlen(gametid) >= 4, "invalid game tid.");
+  snprintf(wideBinPath, sizeof(wideBinPath) - 1,
+           "sd:/_nds/TWiLightMenu/widescreen/%c%c%c%c-%X.bin", gametid[0], gametid[1], gametid[2], gametid[3], gameCrc);
   if (access(wideBinPath, F_OK) == 0)
   {
     _widescreenPatch = std::string(wideBinPath);
@@ -73,10 +73,7 @@ const std::string WidescreenConfig::apply()
     if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi",
               "sd:/luma/sysmodules/TwlBg.cxi") == 0)
     {
-      irqDisable(IRQ_VBLANK); // Fix the throwback to 3DS HOME Menu bug
-      memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-      fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-      swiWaitForVBlank();
+     return "";
     }
     else
     {
@@ -103,11 +100,8 @@ const std::string WidescreenConfig::apply()
         return "Failed to backup custom TwlBg.";
       }
 
-      if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0)
+      if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi\0", "sd:/luma/sysmodules/TwlBg.cxi\0") == 0)
       {
-        irqDisable(IRQ_VBLANK); // Fix the throwback to 3DS HOME Menu bug
-        memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-        fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
         return "";
       }
       else

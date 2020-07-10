@@ -229,6 +229,9 @@ int main(int argc, char **argv)
 	wnd->_mainList->selectRowByPath(ms().romPath[ms().secondaryDevice]);
 	irq().vblankStart();
 
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+
 	while (1)
 	{
 		timer().updateFps();

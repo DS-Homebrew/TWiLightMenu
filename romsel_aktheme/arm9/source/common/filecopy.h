@@ -6,7 +6,7 @@ extern "C" {
 #endif
 int fcopy(const char *sourcePath, const char *destinationPath);
 int fsizeincrease(const char *sourcePath, const char *tempPath, size_t newsize);
-off_t fsize(const char *path);
+long fsize(const char *path);
 #ifdef __cplusplus
 }
 #endif

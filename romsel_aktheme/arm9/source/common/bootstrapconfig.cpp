@@ -15,6 +15,8 @@
 #include "incompatibleGameMap.h"
 #include "saveMap.h"
 
+#include "sr_data_srllastran.h"
+
 extern std::string getSavExtension(int number);
 extern std::string getImgExtension(int number);
 extern bool extention(const std::string& filename, const char* ext);
@@ -191,24 +193,6 @@ BootstrapConfig &BootstrapConfig::onSaveCreated(std::function<void(void)> handle
 	return *this;
 }
 
-BootstrapConfig &BootstrapConfig::onWidescreenApply(std::function<void(void)> handler)
-{
-	_widescreenApplyHandler = handler;
-	return *this;
-}
-
-BootstrapConfig &BootstrapConfig::onWidescreenFinished(std::function<void(void)> handler)
-{
-	_widescreenFinishedHandler = handler;
-	return *this;
-}
-
-BootstrapConfig &BootstrapConfig::onWidescreenFailed(std::function<void(std::string)> handler)
-{
-	_widescreenFailedHandler = handler;
-	return *this;
-}
-
 BootstrapConfig &BootstrapConfig::onBeforeSaveCreate(std::function<void(void)> handler)
 {
 	_saveBeforeCreatedHandler = handler;
@@ -366,24 +350,6 @@ int BootstrapConfig::launch()
 		}
 	}
 
-	if (_useWideScreen && _widescreenApplyHandler) {
-		_widescreenApplyHandler();
-	}
-	
-	WidescreenConfig widescreen(_fileName);
-
-	std::string error = widescreen
-		.isHomebrew(_isHomebrew)
-		.gamePatch(_gametid.c_str(), _headerCrc16)
-		.enable(_useWideScreen)
-		.apply();
-
-	if (!error.empty() && _widescreenFailedHandler) {
-		_widescreenFailedHandler(error);
-	} else if (_widescreenFinishedHandler) {
-		_widescreenFinishedHandler();
-	}
-
 	const char *typeToReplace = ".nds";
 	if (extention(_fileName, ".dsi")) {
 		typeToReplace = ".dsi";
@@ -462,8 +428,16 @@ int BootstrapConfig::launch()
 		.option("NDS-BOOTSTRAP", "CARDENGINE_CACHED", _ceCached)
 		.option("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", _forceSleepPatch);
 
-	if (_configSavedHandler)
+	if (_configSavedHandler) {
 		_configSavedHandler();
+	}
+	
+	if (_useWideScreen) {
+		irqDisable(IRQ_VBLANK);
+		memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+        fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
+		swiWaitForVBlank();
+	}
 	return loader.launch(argarray.size(), (const char **)&argarray[0], (_isHomebrew ? false : true));
 }
 

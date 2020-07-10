@@ -49,9 +49,6 @@ class BootstrapConfig
         BootstrapConfig& wideScreen(bool wideScreen);
         BootstrapConfig& gbarBootstrap(bool gbarBootstrap);
 
-        BootstrapConfig& onWidescreenFinished(std::function<void(void)> handler);
-        BootstrapConfig& onWidescreenApply(std::function<void(void)> handler);
-        BootstrapConfig& onWidescreenFailed(std::function<void(std::string)> handler);
         BootstrapConfig& onBeforeSaveCreate(std::function<void(void)> handler);
         BootstrapConfig& onSaveCreated(std::function<void(void)> handler);
         BootstrapConfig& onConfigSaved(std::function<void(void)> handler);
@@ -59,6 +56,14 @@ class BootstrapConfig
 
         APFixType hasAPFix();
         bool checkCompatibility();
+
+        const std::string& fileName() const { return _fileName; };
+        const std::string& gameTid() const { return _gametid; };
+        const bool useWideScreen() const { return _useWideScreen; };
+        const bool isHomebrew() const { return _isHomebrew; };
+        const bool dsiMode() const { return _dsiMode; };
+        const u32 sdkVersion() const { return _sdkVersion; };
+        const u16 headerCrc16() const { return _headerCrc16; };
         int launch();
     private:
         std::string getAPFix();
@@ -72,10 +77,6 @@ class BootstrapConfig
         const u32 _sdkVersion;
         const u16 _headerCrc16;
 
-        std::function<void(void)>  _widescreenApplyHandler;
-        std::function<void(void)>  _widescreenFinishedHandler;
-
-        std::function<void(std::string)>  _widescreenFailedHandler;
         std::function<void(void)> _saveBeforeCreatedHandler;
         std::function<void(void)> _saveCreatedHandler;
         std::function<void(void)>  _configSavedHandler;

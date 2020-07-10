@@ -1,25 +1,29 @@
 #include <nds.h>
 #include <stdio.h>
-#include <sys/stat.h>
 
 #include "common/tonccpy.h"
 #include "_ansi.h"
 
-#define COPY_BUF_SIZE 0x8000
+// DO NOT INCREASE OR libfat WILL CRASH
+
+#define COPY_BUF_SIZE 0x2000
 u8 copyBuf[COPY_BUF_SIZE];
 
-off_t fsize(const char *path)
+long fsize(const char *path)
 {
-	struct stat st;
-	stat(path, &st);
-	return st.st_size;
+	FILE* f = fopen(path, "rb");
+	if (!f) return 0;
+	fseek(f, 0, SEEK_END);
+	long ret = ftell(f);
+	fclose(f);
+	return ret;
 }
 
 int fcopy(const char *sourcePath, const char *destinationPath)
 {
 	// Get source file's size
-	off_t srcsize = fsize(sourcePath);
-
+	long srcsize = fsize(sourcePath);
+	sassert(srcsize >= 0, "source cxi is broken!");
 	toncset(copyBuf, 0, COPY_BUF_SIZE);
 	FILE* sourceFile = fopen(sourcePath, "rb");
 	if (!sourceFile) {
@@ -34,29 +38,27 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 		return 1;
 	}
 
-	off_t offset = 0;
-	while (1)
-	{
+	size_t numr = 0;
+	while ((numr = fread(copyBuf, 1, COPY_BUF_SIZE, sourceFile)) > 0) {
 		// Copy file to destination path
-		size_t numr = fread(copyBuf, 1, COPY_BUF_SIZE, sourceFile);
-		fwrite(copyBuf, 1, numr, destinationFile);
-		offset += COPY_BUF_SIZE;
+		swiWaitForVBlank();
+		fwrite(copyBuf, numr, 1, destinationFile);
+		swiWaitForVBlank();
+		fflush(destinationFile);
+		swiWaitForVBlank();
+		swiWaitForVBlank();
+	};
 
-		if (offset >= srcsize) {
-			fflush(destinationFile);
-			fclose(destinationFile);
-			fclose(sourceFile);
-			return 0;
-		}
-	}
-	sassert(0, "wtf");
-	// Should not get here...
-	return 1;
+	swiWaitForVBlank();
+	fclose(destinationFile);
+	swiWaitForVBlank();
+	fclose(sourceFile);
+	return 0;
 }
 
 int fsizeincrease(const char *sourcePath, const char *tempPath, size_t newsize)
 {
-	off_t srcsize = fsize(sourcePath);
+	long srcsize = fsize(sourcePath);
 
     FILE* sourceFile = fopen(sourcePath, "rb");
     if (!sourceFile) {
@@ -69,7 +71,7 @@ int fsizeincrease(const char *sourcePath, const char *tempPath, size_t newsize)
 		return 1;
 	}
 
-	off_t offset = 0;
+	long offset = 0;
 	int numr;
 	while (1)
 	{
