@@ -61,9 +61,10 @@ DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
     _banner = std::make_unique<tNDSCompactedBanner>();
     tonccpy(_banner.get(), src._banner.get(), sizeof(_banner));
 
-    _dsiIcon = std::make_unique<tDSiAnimatedIcon>();
-    tonccpy(_dsiIcon.get(), src._dsiIcon.get(), sizeof(tDSiAnimatedIcon));
-
+    if (src._dsiIcon.get()) {
+        _dsiIcon = std::make_unique<tDSiAnimatedIcon>();
+        tonccpy(_dsiIcon.get(), src._dsiIcon.get(), sizeof(tDSiAnimatedIcon));
+    }
 
     _isDSRom = src._isDSRom;
     _isHomebrew = src._isHomebrew;
@@ -87,15 +88,16 @@ DSRomInfo::DSRomInfo(const DSRomInfo &src)
   _isArgv(EFalse),
   _requiresDonorRom(0),
   _extIcon(-1), 
-  _romVersion(0)
+  _romVersion(0),
+  _banner(std::make_unique<tNDSCompactedBanner>())
 {
     tonccpy(&_saveInfo, &src._saveInfo, sizeof(_saveInfo));
-
-    _banner = std::make_unique<tNDSCompactedBanner>();
     tonccpy(_banner.get(), src._banner.get(), sizeof(tNDSCompactedBanner));
 
-    _dsiIcon = std::make_unique<tDSiAnimatedIcon>();
-    tonccpy(_dsiIcon.get(), src._dsiIcon.get(), sizeof(tDSiAnimatedIcon));
+    if (src._dsiIcon.get()) {
+        _dsiIcon = std::make_unique<tDSiAnimatedIcon>();
+        tonccpy(_dsiIcon.get(), src._dsiIcon.get(), sizeof(tDSiAnimatedIcon));
+    }
     
     _isDSRom = src._isDSRom;
     _isHomebrew = src._isHomebrew;

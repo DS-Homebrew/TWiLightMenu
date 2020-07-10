@@ -58,7 +58,6 @@ private:
   };
 
 private:
-  unique_ptr<tNDSCompactedBanner> _banner;
   SAVE_INFO_EX _saveInfo;
   TBool _isDSRom;
   TBool _isHomebrew;
@@ -73,6 +72,7 @@ private:
   u32 _headerCrc32;
   u8 _romVersion;
   unique_ptr<tDSiAnimatedIcon> _dsiIcon;
+  unique_ptr<tNDSCompactedBanner> _banner;
 
 private:
   bool loadGbaRomInfo(const std::string &filename);
@@ -86,9 +86,10 @@ public:
   _isArgv(EFalse),
   _requiresDonorRom(0),
   _extIcon(-1), 
-  _romVersion(0)
+  _romVersion(0),
+  _banner(std::make_unique<tNDSCompactedBanner>())
   {
-    toncset(&_banner, 0, sizeof(_banner));
+    toncset(_banner.get(), 0, sizeof(*_banner));
     toncset(&_saveInfo, 0, sizeof(_saveInfo));
     // toncset(&_dsiIcon, 0, sizeof(_dsiIcon));
     // memset(&_dsiPalette, 0, sizeof(_dsiPalette));
