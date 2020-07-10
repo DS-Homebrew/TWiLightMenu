@@ -101,7 +101,6 @@ void MainWnd::init()
     _mainList->selectChanged.connect(this, &MainWnd::listSelChange);
     _mainList->selectedRowClicked.connect(this, &MainWnd::onMainListSelItemClicked);
     _mainList->directoryChanged.connect(this, &MainWnd::onFolderChanged);
-    _mainList->animateIcons.connect(this, &MainWnd::onAnimation);
 
     addChildWindow(_mainList);
     dbg_printf("mainlist %08x\n", _mainList);
@@ -486,9 +485,6 @@ void MainWnd::bootArgv(DSRomInfo &rominfo)
 
 void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 {
-    
-    animationManager().halt();
-
     dbg_printf("%s", _mainList->getSelectedShowName().c_str());
     std::string fileName = _mainList->getSelectedShowName();
     std::string fullPath = _mainList->getSelectedFullPath();
@@ -507,7 +503,6 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		  .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
 		  .nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile)
 		  .wideScreen(gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen);
-	
 	
 	long cheatOffset; size_t cheatSize;
 	if (CheatWnd::searchCheatData(GAME_CODE(rominfo.saveInfo().gameCode), 
@@ -532,11 +527,9 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
     {
         config.language(gameConfig.language);
     }
-
 	if (!rominfo.isDSiWare()) {
 		if (!config.checkCompatibility()) {
 			int optionPicked = messageBox(this, LANG("game launch", "Compatibility Warning"), "This game is known to not run. If there's an nds-bootstrap version that fixes this, please ignore this message.", MB_OK | MB_CANCEL);
-			progressWnd().hide();
 
 			scanKeys();
 			int pressed = keysHeld();
@@ -547,7 +540,6 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 			}
 		}
 	}
-
 	if (!rominfo.isDSiWare() && rominfo.requiresDonorRom()) {
 		const char* pathDefine = "DONOR_NDS_PATH";
 		const char* msg = "This game requires a donor ROM to run. Please switch the theme, and set an existing DS SDK5 game as a donor ROM.";
@@ -570,7 +562,6 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 		if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
 			messageBox(this, LANG("game launch", "NDS Bootstrap Error"), msg, MB_OK);
-			progressWnd().hide();
 			return;
 		}
 	}
@@ -578,7 +569,6 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	if ((gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode)
 	 && !rominfo.isDSiWare() && !rominfo.hasExtendedBinaries()) {
 		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), "The DSi binaries are missing. Please get a clean dump of this ROM, or start in DS mode.", MB_OK);
-		progressWnd().hide();
 		return;
 	}
 
@@ -608,7 +598,6 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 		if (pressed & KEY_B || optionPicked == ID_CANCEL || optionPicked == ID_NO)
 		{
-            animationManager().resume();
 			return;
 		}
 	} 
@@ -629,7 +618,6 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 	progressWnd().setTipText(LANG("game launch", "Applying widescreen settings..."));
     progressWnd().update();
-	progressWnd().show();
 
     swiWaitForVBlank();
     swiWaitForVBlank();
@@ -649,6 +637,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
     if (!error.empty()) {
         progressWnd().hide();
+        progressWnd().update();
         messageBox(this, LANG("game launch", "NDS Bootstrap Error") ,error, MB_OK);
         return;
     } else {
@@ -657,8 +646,8 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
         {
             std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
             progressWnd().hide();
+            progressWnd().update();
             messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
-            animationManager().resume();
             return;
         }
     }
@@ -793,7 +782,6 @@ void MainWnd::launchSelected()
 			ms().saveSettings();
             
             bootBootstrap(gameConfig, rominfo);
-
             return;
         }
         else

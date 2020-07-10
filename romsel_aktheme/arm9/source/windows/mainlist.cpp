@@ -66,11 +66,7 @@ MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string
     : ListView(x, y, w, h, parent, text, ms().ak_scrollSpeed), _showAllFiles(false)
 {
     _viewMode = VM_LIST;
-    _activeIconScale = 1;
-    _activeIcon.hide();
-    _activeIcon.update();
     setupExtnames();
-    animationManager().addAnimation(&_activeIcon);
     seq();
     dbg_printf("_activeIcon.init\n");
 }
@@ -98,9 +94,6 @@ int MainList::init()
     insertColumn(POSITION_COLUMN, "position", 0);
 
     setViewMode((MainList::VIEW_MODE)ms().ak_viewMode);
-
-    _activeIcon.hide();
-
     return 1;
 }
 
@@ -274,12 +267,13 @@ void MainList::addDirEntry(const std::string row1,
   
     nocashMessage("mainlist:216");
 
-    DSRomInfo romInfo;
+    _romInfoList.emplace_back();
+
+    DSRomInfo& romInfo = _romInfoList.back();
     if (!bannerKey.empty())
     {
         romInfo.setBanner(bannerKey, banner);
     }
-    _romInfoList.emplace_back(std::move(romInfo));
 }
 
 bool MainList::enterDir(const std::string &dirName)
@@ -550,6 +544,8 @@ bool MainList::enterDir(const std::string &dirName)
                     rominfo.setExtIcon(extName.substr(1));
                 if (allowUnknown && !rominfo.isExtIcon())
                     rominfo.setExtIcon("unknown");
+                rominfo.load();
+                swiWaitForVBlank();
             }
         }
     }
@@ -567,7 +563,6 @@ void MainList::onSelectChanged(u32 index)
 
 void MainList::onScrolled(u32 index)
 {
-    _activeIconScale = 1;
     //updateActiveIcon( CONTENT );
 }
 
@@ -667,7 +662,6 @@ void MainList::draw()
 {
     updateInternalNames();
     ListView::draw();
-    updateActiveIcon(POSITION);
     drawIcons();
 }
 
@@ -679,13 +673,6 @@ void MainList::drawIcons()
 
     for (size_t i = 0; i < total; ++i)
     {
-        if (_firstVisibleRowId + i == _selectedRowId)
-        {
-            if (_activeIcon.visible())
-            {
-                continue;
-            }
-        }
         s32 itemX = _position.x + 1;
         s32 itemY = _position.y + i * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
         if (_romInfoList[_firstVisibleRowId + i].isBannerAnimated() && ms().animateDsiIcons)
@@ -743,44 +730,6 @@ void MainList::setViewMode(VIEW_MODE mode)
         break;
     }
     scrollTo(_selectedRowId - _visibleRowCount + 1);
-}
-
-void MainList::updateActiveIcon(bool updateContent)
-{
-    const INPUT &temp = getInput();
-    bool allowAnimation = true;
-    animateIcons(allowAnimation);
-
-    //do not show active icon when hold key to list files. Otherwise the icon will not show correctly.
-    if (getInputIdleMs() > 1000 && VM_LIST != _viewMode && allowAnimation && _romInfoList.size() && 0 == temp.keysHeld && ms().ak_zoomIcons)
-    {
-        if (!_activeIcon.visible())
-        {
-            u8 backBuffer[32 * 32 * 2];
-            zeroMemory(backBuffer, 32 * 32 * 2);
-            
-            _romInfoList[_selectedRowId].drawDSRomIconMem(backBuffer);
-            tonccpy(_activeIcon.buffer(), backBuffer, 32 * 32 * sizeof(u16));
-            _activeIcon.setBufferChanged();
-
-            s32 itemX = _position.x;
-            s32 itemY = _position.y + (_selectedRowId - _firstVisibleRowId) * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
-            _activeIcon.setPosition(itemX, itemY);
-            _activeIcon.show();
-            dbg_printf("sel %d ac ico x %d y %d\n", _selectedRowId, itemX, itemY);
-            for (u8 i = 0; i < 8; ++i)
-                dbg_printf("%02x", backBuffer[i]);
-            dbg_printf("\n");
-        }
-    }
-    else
-    {
-        if (_activeIcon.visible())
-        {
-            _activeIcon.hide();
-            cwl();
-        }
-    }
 }
 
 std::string MainList::getCurrentDir()

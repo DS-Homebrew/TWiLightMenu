@@ -27,7 +27,6 @@
 #include "ui/keymessage.h"
 #include "ui/touchmessage.h"
 #include "dsrom.h"
-#include "windows/zoomingicon.h"
 #include "windows/dsiiconsequence.h"
 
 #define SD_ROOT "sd:/"
@@ -119,7 +118,6 @@ protected:
     CONTENT = 1
   };
 
-  void updateActiveIcon(bool updateContent);
   void updateInternalNames(void);
 
 protected:
@@ -133,10 +131,6 @@ protected:
   std::string _currentDir;
 
   std::vector<DSRomInfo> _romInfoList;
-
-  ZoomingIcon _activeIcon;
-
-  float _activeIconScale;
 
   bool _showAllFiles;
 

@@ -91,6 +91,7 @@ Window* Window::windowBelow(const Point & p)
 
 Window& Window::show()
 {
+    if (isVisible()) return *this;
     _isVisible = true;
     onShow();
     return *this;
@@ -99,6 +100,7 @@ Window& Window::show()
 
 Window& Window::hide()
 {
+    if (!isVisible()) return *this;
     _isVisible = false;
     onHide();
     return *this;
