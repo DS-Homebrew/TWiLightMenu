@@ -58,7 +58,7 @@ private:
   };
 
 private:
-  tNDSCompactedBanner _banner;
+  unique_ptr<tNDSCompactedBanner> _banner;
   SAVE_INFO_EX _saveInfo;
   TBool _isDSRom;
   TBool _isHomebrew;
@@ -107,8 +107,8 @@ public:
   void drawDSRomIconMem(void *mem);
   void drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette, bool flipH, bool flipV);
 
-  const tNDSCompactedBanner &banner(void);
-  const tDSiAnimatedIcon &animatedIcon(void);
+  const tNDSCompactedBanner& banner(void);
+  const tDSiAnimatedIcon& animatedIcon(void);
   SAVE_INFO_EX &saveInfo(void);
   u8 version(void);
   void setExtIcon(const std::string &aValue);
