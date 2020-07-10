@@ -450,29 +450,6 @@ void bootstrapCheatsHandler()
     progressWnd().update();
 }
 
-
-void bootstrapWidescreenHandler()
-{
-	progressWnd().setTipText("Enabling widescreen patches...");
-    progressWnd().update();
-}
-
-void bootstrapWidescreenFailedHandler(std::string error)
-{
-	progressWnd().setTipText(error);
-    progressWnd().update();
-    progressWnd().setPercent(0);
-    while(1) {}
-}
-
-
-void bootstrapWidescreenApplied()
-{
-	progressWnd().setTipText("Widescreen patches applied...");
-    progressWnd().setPercent(75);
-    progressWnd().update();
-}
-
 void bootstrapLaunchHandler()
 {
     progressWnd().setPercent(90);
@@ -509,6 +486,9 @@ void MainWnd::bootArgv(DSRomInfo &rominfo)
 
 void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 {
+    
+    animationManager().halt();
+
     dbg_printf("%s", _mainList->getSelectedShowName().c_str());
     std::string fileName = _mainList->getSelectedShowName();
     std::string fullPath = _mainList->getSelectedFullPath();
@@ -628,15 +608,13 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 		if (pressed & KEY_B || optionPicked == ID_CANCEL || optionPicked == ID_NO)
 		{
+            animationManager().resume();
 			return;
 		}
 	} 
 	// Event handlers for progress window.
 	config
         .onCheatsApplied(bootstrapCheatsHandler)
-        .onWidescreenApply(bootstrapWidescreenHandler)
-        .onWidescreenApply(bootstrapWidescreenApplied)
-        .onWidescreenFailed(bootstrapWidescreenFailedHandler)
 		.onBeforeSaveCreate(bootstrapBeforeSaveHandler)
 		.onSaveCreated(bootstrapSaveHandler)
 		.onConfigSaved(bootstrapLaunchHandler);
@@ -645,13 +623,45 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	progressWnd().update();
 	progressWnd().show();
 
-	int err = config.launch();
-	if (err)
-	{
-		std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
-		progressWnd().hide();
-	}
+    swiWaitForVBlank();
+
+    WidescreenConfig widescreen(config.fileName());
+
+	progressWnd().setTipText(LANG("game launch", "Applying widescreen settings..."));
+    progressWnd().update();
+	progressWnd().show();
+
+    swiWaitForVBlank();
+    swiWaitForVBlank();
+
+    widescreen
+        .isHomebrew(config.isHomebrew())
+        .gamePatch(config.gameTid().c_str(), config.headerCrc16())
+        .enable(config.useWideScreen());
+    
+    progressWnd().setTipText(LANG("game launch", "Copying widescreen patches, please wait..."));
+    progressWnd().setPercent(10);
+    progressWnd().update();
+    swiWaitForVBlank();
+    swiWaitForVBlank();
+
+    std::string error = widescreen.apply();
+
+    if (!error.empty()) {
+        progressWnd().hide();
+        messageBox(this, LANG("game launch", "NDS Bootstrap Error") ,error, MB_OK);
+        return;
+    } else {
+        int err = config.launch();
+        if (err)
+        {
+            std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+            progressWnd().hide();
+            messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+            animationManager().resume();
+            return;
+        }
+    }
 }
 
 void MainWnd::bootFlashcard(const std::string &ndsPath, bool usePerGameSettings)
@@ -781,7 +791,9 @@ void MainWnd::launchSelected()
         {
 			ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 			ms().saveSettings();
+            
             bootBootstrap(gameConfig, rominfo);
+
             return;
         }
         else
