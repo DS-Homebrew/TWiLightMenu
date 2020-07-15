@@ -19,9 +19,9 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	romsel_aktheme
 BUILD		:=	build
-SOURCES		:=	source source/graphics source/tool source/drawing source/font source/time source/ui source/windows source/common
-INCLUDES	:=	include source ../../universal/include
-DATA		:=	../data  ../gfx_bin
+SOURCES		:=	source source/graphics source/tool source/drawing source/font source/time source/ui source/windows source/common ../../universal/sdmmc/arm9/source
+INCLUDES	:=	include source ../../universal/include ../../universal/sdmmc/arm9/include
+DATA		:=	../data ../gfx_bin
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music
 

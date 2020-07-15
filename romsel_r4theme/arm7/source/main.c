@@ -30,7 +30,7 @@
 #include <nds.h>
 #include <maxmod7.h>
 
-unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
+void my_installSystemFIFO(void);
 
 static int rebootTimer = 0;
 
@@ -92,7 +92,7 @@ int main() {
 	
 	SetYtrigger(80);
 	
-	installSystemFIFO();
+	my_installSystemFIFO();
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
@@ -101,7 +101,7 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
-	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
+	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
 

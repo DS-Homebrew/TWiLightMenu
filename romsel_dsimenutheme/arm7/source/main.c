@@ -31,7 +31,8 @@
 #include <string.h>
 #include <maxmod7.h>
 
-#define SCFG_EXT7 (*(vu32*)0x4004008)
+void my_installSystemFIFO(void);
+
 #define SNDEXCNT (*(vu16*)0x4004700)
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
@@ -109,7 +110,7 @@ int main() {
 	SetYtrigger(80);
 	
 	installSoundFIFO();
-	installSystemFIFO();
+	my_installSystemFIFO();
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
@@ -123,13 +124,13 @@ int main() {
 
 	// 01: Fade Out
 	// 02: Return
-	// 03: SCFG_EXT7
+	// 03: REG_SCFG_EXT
 	
 	// 05: BATTERY
 	// 06: VOLUME
 	// 07: SNDEXCNT
 	// 08: SD
-	fifoSendValue32(FIFO_USER_03, SCFG_EXT7);
+	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
 	fifoSendValue32(FIFO_USER_04, isDSLite);
 	fifoSendValue32(FIFO_USER_07, SNDEXCNT);
 

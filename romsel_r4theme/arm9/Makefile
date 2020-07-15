@@ -19,8 +19,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	romsel_r4theme
 BUILD		:=	build
-SOURCES		:=	source source/graphics source/tool source/common
-INCLUDES	:=	include source ../../universal/include
+SOURCES		:=	source source/graphics source/tool source/common ../../universal/sdmmc/arm9/source
+INCLUDES	:=	include source ../../universal/include ../../universal/sdmmc/arm9/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 

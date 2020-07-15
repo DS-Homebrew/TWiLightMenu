@@ -29,6 +29,8 @@
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 
+void my_installSystemFIFO(void);
+
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -91,7 +93,7 @@ int main() {
 	
 	SetYtrigger(80);
 	
-	installSystemFIFO();
+	my_installSystemFIFO();
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);

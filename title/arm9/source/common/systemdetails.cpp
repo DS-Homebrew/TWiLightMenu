@@ -1,4 +1,7 @@
+#include <nds/arm9/dldi.h>
 #include "systemdetails.h"
+#include "common/flashcard.h"
+
 SystemDetails::SystemDetails()
 {
 
@@ -30,10 +33,16 @@ SystemDetails::SystemDetails()
 
 void SystemDetails::initFilesystem(const char *nitrofsPath, const char *runningPath)
 {
-    if (_fatInitOk)
+    if (_fatInitOk) {
         return;
+	}
 
-    _fatInitOk = fatInitDefault();
+	extern const DISC_INTERFACE __my_io_dsisd;
+
+	fatMountSimple("sd", &__my_io_dsisd);
+	fatMountSimple("fat", dldiGetInternal());
+    _fatInitOk = (sdFound() || flashcardFound());
+	chdir(sdFound() ? "sd:/" : "fat:/");
     int ntr = nitroFSInit(nitrofsPath);
     _nitroFsInitOk = (ntr == 1);
 

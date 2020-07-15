@@ -856,9 +856,14 @@ int main(int argc, char **argv) {
 
 	graphicsInit();
 
+	extern const DISC_INTERFACE __my_io_dsisd;
+
 	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
-	bool fatInited = fatInitDefault();
+	fatMountSimple("sd", &__my_io_dsisd);
+	fatMountSimple("fat", dldiGetInternal());
+    bool fatInited = (sdFound() || flashcardFound());
 	*(u32*)(0x2FFFD0C) = 0;
+	chdir(sdFound() ? "sd:/" : "fat:/");
 
 	if (!fatInited) {
 		fontInit();

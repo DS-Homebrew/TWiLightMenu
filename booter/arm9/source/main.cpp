@@ -74,7 +74,9 @@ int main(int argc, char **argv) {
 	
 	bool graphicsInited = false;
 
-	if (!fatInitDefault()) {
+	extern const DISC_INTERFACE __my_io_dsisd;
+
+	if (!fatMountSimple("sd", &__my_io_dsisd)) {
 		if(!graphicsInited) {
 			graphicsInit();
 			fontInit();
