@@ -31,7 +31,7 @@
 #include <maxmod7.h>
 #include <string.h>
 
-unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
+void my_installSystemFIFO(void);
 
 static u8 backlightLevel = 0;
 static bool isDSLite = false;
@@ -164,7 +164,7 @@ int main() {
 	SetYtrigger(80);
 	
 	installSoundFIFO();
-	installSystemFIFO();
+	my_installSystemFIFO();
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
@@ -176,7 +176,7 @@ int main() {
 	u8 readCommand = readPowerManagement(4);
 	isDSLite = (readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7));
 
-	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
+	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
 	fifoSendValue32(FIFO_USER_04, isDSLite);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);

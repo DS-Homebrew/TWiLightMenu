@@ -873,9 +873,14 @@ int main(int argc, char **argv) {
 
 	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
 
+	extern const DISC_INTERFACE __my_io_dsisd;
+
 	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
-	bool fatInited = fatInitDefault();
+	fatMountSimple("sd", &__my_io_dsisd);
+	fatMountSimple("fat", dldiGetInternal());
+    bool fatInited = (sdFound() || flashcardFound());
 	*(u32*)(0x2FFFD0C) = 0;
+	chdir(sdFound() ? "sd:/" : "fat:/");
 
 	// Read user name
 	/*char *username = (char*)PersonalData->name;
