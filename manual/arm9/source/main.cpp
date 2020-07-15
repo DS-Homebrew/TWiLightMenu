@@ -362,7 +362,13 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
-	bool fatInited = fatInitDefault();
+	extern const DISC_INTERFACE __my_io_dsisd;
+
+	fatMountSimple("sd", &__my_io_dsisd);
+	bool sdFound = (access("sd:/", F_OK) == 0);
+	fatMountSimple("fat", dldiGetInternal());
+    bool fatInited = (sdFound || (access("fat:/", F_OK) == 0));
+	chdir(sdFound ? "sd:/" : "fat:/");
 
 	if (!fatInited) {
 		graphicsInit();

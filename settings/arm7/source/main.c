@@ -30,9 +30,9 @@
 #include <nds.h>
 #include <maxmod7.h>
 
+void my_installSystemFIFO(void);
+
 //unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
-unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
-unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 unsigned int * SCFG_MC=(unsigned int*)0x4004010;
 unsigned int * CPUID=(unsigned int*)0x4004D00;
 unsigned int * CPUID2=(unsigned int*)0x4004D04;
@@ -111,7 +111,7 @@ int main() {
 	SetYtrigger(80);
 	
 	installSoundFIFO();
-	installSystemFIFO();
+	my_installSystemFIFO();
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
@@ -121,8 +121,8 @@ int main() {
 	setPowerButtonCB(powerButtonCB);
 	
 	//fifoSendValue32(FIFO_USER_01, *SCFG_ROM);
-	fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
-	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
+	fifoSendValue32(FIFO_USER_02, REG_SCFG_CLK);
+	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
 	//fifoSendValue32(FIFO_USER_04, *CPUID2);
 	//fifoSendValue32(FIFO_USER_05, *CPUID);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
