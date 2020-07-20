@@ -57,10 +57,11 @@ jobs:
       - name: "Pack 7z Package for nightly"
         if: ${{ !startsWith(github.ref, 'refs/tags') }}
         run: |
-          rm -r 7zfile/_nds/TWiLightMenu/*menu/
-
           mv 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
+
+          # Delete themes, AP patches, and widescreen patches for lite
+          rm -r TWiLightMenu/_nds/TWiLightMenu/*menu/
           rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
           rm -r TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
           7z a TWiLightMenu-Lite.7z TWiLightMenu/
