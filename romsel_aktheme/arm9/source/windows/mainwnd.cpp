@@ -1435,8 +1435,13 @@ void MainWnd::launchSelected()
 			argarray.push_back(strdup(bootstrapPath.c_str()));
 			argarray.at(0) = (char*)bootstrapPath.c_str();
 
+			const char* gbar2Path = ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI;
+			if (sys().arm7SCFGLocked()) {
+				gbar2Path = ms().consoleModel>0 ? GBARUNNER_3DS_NODSP : GBARUNNER_DSI_NODSP;
+			}
+
 			LoaderConfig gen(bootstrapPath, BOOTSTRAP_INI);
-			gen.option("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI)
+			gen.option("NDS-BOOTSTRAP", "NDS_PATH", gbar2Path)
 			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", fullPath)
 			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
 			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)

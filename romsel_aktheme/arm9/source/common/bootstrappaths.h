@@ -33,6 +33,8 @@
 
 #define GBARUNNER_DSI    "sd:/_nds/GBARunner2_arm7dldi_dsi.nds"
 #define GBARUNNER_3DS    "sd:/_nds/GBARunner2_arm7dldi_3ds.nds"
+#define GBARUNNER_DSI_NODSP "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds"
+#define GBARUNNER_3DS_NODSP "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds"
 #define GBARUNNER_DSI_FC "fat:/_nds/GBARunner2_arm7dldi_dsi.nds"
 #define GBARUNNER_3DS_FC "fat:/_nds/GBARunner2_arm7dldi_3ds.nds"
 #define GBARUNNER_A7_SD  "sd:/_nds/GBARunner2_arm7dldi_ds.nds"

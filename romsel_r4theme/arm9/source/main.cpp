@@ -1197,8 +1197,13 @@ int main(int argc, char **argv) {
 									argarray.push_back(strdup(bootstrapPath.c_str()));
 									argarray.at(0) = (char*)bootstrapPath.c_str();
 
+									const char* gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
+									if (arm7SCFGLocked) {
+										gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
+									}
+
 									CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
+									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2Path);
 									bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 									bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 									bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
@@ -2040,7 +2045,12 @@ int main(int argc, char **argv) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 					if (GBA) {
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
+						const char* gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
+						if (arm7SCFGLocked) {
+							gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
+						}
+
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2Path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
