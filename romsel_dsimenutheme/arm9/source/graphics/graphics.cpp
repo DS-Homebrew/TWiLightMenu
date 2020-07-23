@@ -1285,13 +1285,13 @@ void vBlankHandler() {
 					}
 					selIconYpos += 28;
 				}
-				/*if (ms().useGbarunner) {
-					drawSmallIconGBA(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos); // GBARunner2
-				} else {
+				if (!ms().useGbarunner && sys().isRegularDS()) {
+				/*	drawSmallIconGBA(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos); // GBARunner2
+				} else {*/
 					glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 						 &tex().smallCartImage()[3]); // GBA Mode
+					selIconYpos += 28;
 				}
-				selIconYpos += 28;*/
 				glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 					 tex().manualImage()); // Manual
 			}

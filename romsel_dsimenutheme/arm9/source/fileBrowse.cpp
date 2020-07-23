@@ -1320,10 +1320,15 @@ bool selectMenu(void) {
 			assignedOp[1] = 1;
 			assignedOp[2] = 4;
 			maxCursors = 2;
-		} else {
+		} else if (ms().useGbarunner) {
 			assignedOp[0] = 1;
 			assignedOp[1] = 4;
 			maxCursors = 1;
+		} else {
+			assignedOp[0] = 1;
+			assignedOp[1] = 3;
+			assignedOp[2] = 4;
+			maxCursors = 2;
 		}
 	}
 	if (ms().theme == 4) {
@@ -1353,9 +1358,9 @@ bool selectMenu(void) {
 				} else if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
 					printSmall(false, 64, textYpos, (REG_SCFG_MC == 0x11) ? STR_NO_SLOT_1 : STR_LAUNCH_SLOT_1);
 				}
-			/*} else if (assignedOp[i] == 3) {
+			} else if (assignedOp[i] == 3) {
 				printSmall(false, 64, textYpos,
-					   ms().useGbarunner ? "Start GBARunner2" : "Start GBA Mode");*/
+					   /*ms().useGbarunner ? "Start GBARunner2" :*/ "Start GBA Mode");
 			} else if (assignedOp[i] == 4) {
 				printSmall(false, 64, textYpos, STR_OPEN_MANUAL);
 			}
