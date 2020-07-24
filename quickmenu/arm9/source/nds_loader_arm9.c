@@ -394,6 +394,43 @@ bool runNds9 (const char* filename) {
 	return true;
 }
 
+int runUnlaunchDsi (const char* filename, u32 sector)  {
+	FILE* ndsFile = fopen(filename, "rb");
+	fseek(ndsFile, 0, SEEK_SET);
+	fread(__DSiHeader, 1, 0x1000, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm9romOffset, SEEK_SET);
+	fread((void*)0x02800000, 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
+	fread((void*)0x02B80000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
+	fclose(ndsFile);
+	
+	FILE* gifFile = fopen("sd:/_nds/TWiLightMenu/Unlaunch/custom.gif", "rb");
+	off_t fsize = 0;
+	fseek(gifFile, 0, SEEK_END);
+	fsize = ftell(gifFile);			// Get file size
+	fseek(gifFile, 0, SEEK_SET);
+
+	if (fsize > 0 && fsize <= 0x3C70) {
+		// Replace Unlaunch background with custom one
+
+		//const u32 gifSignature[2] = {0x38464947, 0x01006139};
+		const u32 gifSignatureStart = 0x38464947;
+		const u32 gifSignatureEnd = 0x3B000044;
+
+		u32 iEnd = 0;
+		for (u32 i = 0x02800000; i < 0x02810000; i += 4) {
+			iEnd = i+0x3C6C;
+			if (*(u32*)i == gifSignatureStart && *(u32*)iEnd == gifSignatureEnd) {
+				fread((void*)i, 1, 0x3C70, gifFile);
+				break;
+			}
+		}
+		fclose(gifFile);
+	}
+
+	return runNds (load_bin, load_bin_size, sector, true, false, true, 0, NULL, true, false, false, true, true);
+}
+
 int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)  {
 	struct stat st;
 	char filePath[PATH_MAX];
@@ -403,6 +440,18 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 	
 	if (stat (filename, &st) < 0) {
 		return 1;
+	}
+
+	if (isDSiMode()) {
+		// Check for Unlaunch
+		char gameTitle[0xC];
+		FILE* ndsFile = fopen(filename, "rb");
+		fread(&gameTitle, 1, 0xC, ndsFile);
+		fclose(ndsFile);
+
+		if (memcmp(gameTitle, "UNLAUNCH.DSI", 0xC) == 0) {
+			return runUnlaunchDsi (filename, st.st_ino);
+		}
 	}
 
 	if (argc <= 0 || !argv) {

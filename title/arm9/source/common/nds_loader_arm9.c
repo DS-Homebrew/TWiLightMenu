@@ -431,10 +431,13 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 		// Replace Unlaunch background with custom one
 
 		//const u32 gifSignature[2] = {0x38464947, 0x01006139};
-		const u32 gifSignature = 0x38464947;
+		const u32 gifSignatureStart = 0x38464947;
+		const u32 gifSignatureEnd = 0x3B000044;
 
+		u32 iEnd = 0;
 		for (u32 i = 0x02800000; i < 0x02810000; i += 4) {
-			if (*(u32*)i == gifSignature/*[0] && *(u32*)((u8)i+4) == gifSignature[1]*/) {
+			iEnd = i+0x3C6C;
+			if (*(u32*)i == gifSignatureStart && *(u32*)iEnd == gifSignatureEnd) {
 				fread((void*)i, 1, 0x3C70, gifFile);
 				break;
 			}
