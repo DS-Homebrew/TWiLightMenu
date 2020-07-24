@@ -66,6 +66,7 @@ TWLSettings::TWLSettings()
     boostVram = false;
     bstrap_dsiMode = EDSMode;
     forceSleepPatch = false;
+    slot1AccessSD = false;
     slot1SCFGUnlock = false;
     dsiWareBooter = false;
 
@@ -172,6 +173,7 @@ void TWLSettings::loadSettings()
     bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
     forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
     soundFreq = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
+    slot1AccessSD = settingsini.GetInt("SRLOADER", "SLOT1_ENABLESD", slot1AccessSD);
     slot1SCFGUnlock = settingsini.GetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
     dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 
@@ -270,6 +272,7 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
     settingsini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
     settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
+    settingsini.SetInt("SRLOADER", "SLOT1_ENABLESD", slot1AccessSD);
     settingsini.SetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
     settingsini.SetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 

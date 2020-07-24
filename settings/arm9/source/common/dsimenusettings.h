@@ -181,6 +181,7 @@ class TWLSettings
     bool boostVram;
     int bstrap_dsiMode;
     bool forceSleepPatch;
+    bool slot1AccessSD;
     bool slot1SCFGUnlock;
     bool dsiWareBooter;
     bool autorun;
