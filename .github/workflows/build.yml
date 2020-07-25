@@ -57,8 +57,9 @@ jobs:
       - name: "Pack 7z Package for nightly"
         if: ${{ !startsWith(github.ref, 'refs/tags') }}
         run: |
-          cp 7zfile/ TWiLightMenu/
+          cp -r 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
+          mv TWiLightMenu.7z ~/artifacts
 
           # DSi 7z
           mv TWiLightMenu/DSi\ -\ CFW users/SDNAND\ root/* TWiLightMenu
@@ -66,48 +67,50 @@ jobs:
           cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
           rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
           7z a TWiLightMenu-DSi.7z
+          mv TWiLightMenu-DSi.7z ~/artifacts
 
           # 3DS 7z
           rm -rf TWiLightMenu
-          cp 7zfile/ TWiLightMenu/
+          cp -r 7zfile/ TWiLightMenu/
           mv TWiLightMenu/3DS - CFW users/* TWiLightMenu
           rm -rf TWiLightMenu/3DS - CFW users
           cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
           rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
           7z a TWiLightMenu-3DS.7z
+          mv TWiLightMenu-3DS.7z ~/artifacts
 
           # Flashcard 7z
           rm -rf TWiLightMenu
-          cp 7zfile/ TWiLightMenu/
+          cp -r 7zfile/ TWiLightMenu/
           mv TWiLightMenu/Flashcard users/* TWiLightMenu
           rm -rf TWiLightMenu/Flashcard users
           7z a TWiLightMenu-Flashcard.7z
+          mv TWiLightMenu-Flashcard.7z ~/artifacts
 
           # Delete themes, AP patches, and widescreen patches for lite
           rm -rf TWiLightMenu
-          cp 7zfile/ TWiLightMenu/
+          cp -r 7zfile/ TWiLightMenu/
           rm -r TWiLightMenu/_nds/TWiLightMenu/*menu/
           rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
           rm -r TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
           7z a TWiLightMenu-Lite.7z TWiLightMenu/
           mkdir -p ~/artifacts
-          cp TWiLightMenu.7z ~/artifacts
-          cp TWiLightMenu-Lite.7z ~/artifacts
+          mv TWiLightMenu-Lite.7z ~/artifacts
       - name: "Pack 7z Package for release"
         if: ${{ startsWith(github.ref, 'refs/tags') }}
         run: |
-          mkdir 7zfile/_nds/TWiLightMenu/boxart/
-          mkdir 7zfile/_nds/TWiLightMenu/extras/
-          mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
+          mkdir -p 7zfile/_nds/TWiLightMenu/boxart/
+          mkdir -p 7zfile/_nds/TWiLightMenu/extras/
+          mkdir -p 7zfile/_nds/TWiLightMenu/gamesettings/
 
           # nds-bootstrap
-          mkdir nds-bootstrap
+          mkdir -p nds-bootstrap
           cd nds-bootstrap
           curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/ahezard/nds-bootstrap/releases/latest -o nds-bootstrap.json
           curl -L $(jq --raw-output '.assets[0].browser_download_url' nds-bootstrap.json) -o nds-bootstrap.7z
           7z x nds-bootstrap.7z
           mv nds-bootstrap.* ..
-          mkdir TWiLightMenu
+          mkdir -p TWiLightMenu
           mv release-bootstrap.ver TWiLightMenu
           cd ..
           curl -L https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true -o nds-bootstrap.7z
@@ -118,8 +121,6 @@ jobs:
           mv nds-bootstrap/b4ds-nightly.nds 7zfile/Flashcard\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
           mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
-          # Permissions are hecked up by Docker
-          sudo mkdir 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds
           mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
 
@@ -130,7 +131,7 @@ jobs:
           touch 7zfile/.ignoreme
 
           # Main 7z
-          cp 7zfile TWiLightMenu
+          cp -r 7zfile TWiLightMenu
           cd TWiLightMenu
           7z a TWiLightMenu.7z .
           mkdir -p ~/artifacts
@@ -147,7 +148,7 @@ jobs:
           # 3DS 7z
           cd ..
           rm -rf TWiLightMenu
-          cp 7zfile/ TWiLightMenu/
+          cp -r 7zfile/ TWiLightMenu/
           cd TWiLightMenu
           mv 3DS - CFW users/SDNAND\ root/* .
           rm -rf 3DS - CFW users
@@ -159,7 +160,7 @@ jobs:
           # Flashcard 7z
           cd ..
           rm -rf TWiLightMenu
-          cp 7zfile/ TWiLightMenu/
+          cp -r 7zfile/ TWiLightMenu/
           cd TWiLightMenu
           mv Flashcard users/* .
           rm -rf Flashcard users
