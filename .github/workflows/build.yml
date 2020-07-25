@@ -57,10 +57,35 @@ jobs:
       - name: "Pack 7z Package for nightly"
         if: ${{ !startsWith(github.ref, 'refs/tags') }}
         run: |
-          mv 7zfile/ TWiLightMenu/
+          cp 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
 
+          # DSi 7z
+          mv TWiLightMenu/DSi\ -\ CFW users/SDNAND\ root/* TWiLightMenu
+          rm -rf TWiLightMenu/DSi\ -\ CFW users
+          cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
+          rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
+          7z a TWiLightMenu-DSi.7z
+
+          # 3DS 7z
+          rm -rf TWiLightMenu
+          cp 7zfile/ TWiLightMenu/
+          mv TWiLightMenu/3DS - CFW users/* TWiLightMenu
+          rm -rf TWiLightMenu/3DS - CFW users
+          cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
+          rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
+          7z a TWiLightMenu-3DS.7z
+
+          # Flashcard 7z
+          rm -rf TWiLightMenu
+          cp 7zfile/ TWiLightMenu/
+          mv TWiLightMenu/Flashcard users/* TWiLightMenu
+          rm -rf TWiLightMenu/Flashcard users
+          7z a TWiLightMenu-Flashcard.7z
+
           # Delete themes, AP patches, and widescreen patches for lite
+          rm -rf TWiLightMenu
+          cp 7zfile/ TWiLightMenu/
           rm -r TWiLightMenu/_nds/TWiLightMenu/*menu/
           rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
           rm -r TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
@@ -72,6 +97,7 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags') }}
         run: |
           mkdir 7zfile/_nds/TWiLightMenu/boxart/
+          mkdir 7zfile/_nds/TWiLightMenu/extras/
           mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
 
           # nds-bootstrap
@@ -103,10 +129,42 @@ jobs:
           # Really dumb hidden file that for some reason fixes the releases
           touch 7zfile/.ignoreme
 
-          cd 7zfile
+          # Main 7z
+          cp 7zfile TWiLightMenu
+          cd TWiLightMenu
           7z a TWiLightMenu.7z .
           mkdir -p ~/artifacts
-          cp TWiLightMenu.7z ~/artifacts
+          mv TWiLightMenu.7z ~/artifacts
+
+          # DSi 7z
+          mv DSi\ -\ CFW users/SDNAND\ root/* .
+          rm -rf DSi\ -\ CFW users
+          cp -r DSi\&3DS\ -\ SD\ card\ users/* .
+          rm -rf DSi\&3DS\ -\ SD\ card\ users
+          7z a TWiLightMenu-DSi.7z
+          mv TWiLightMenu-DSi.7z ~/artifacts
+
+          # 3DS 7z
+          cd ..
+          rm -rf TWiLightMenu
+          cp 7zfile/ TWiLightMenu/
+          cd TWiLightMenu
+          mv 3DS - CFW users/SDNAND\ root/* .
+          rm -rf 3DS - CFW users
+          cp -r DSi\&3DS\ -\ SD\ card\ users/* .
+          rm -rf DSi\&3DS\ -\ SD\ card\ users
+          7z a TWiLightMenu-3DS.7z
+          mv TWiLightMenu-3DS.7z ~/artifacts
+
+          # Flashcard 7z
+          cd ..
+          rm -rf TWiLightMenu
+          cp 7zfile/ TWiLightMenu/
+          cd TWiLightMenu
+          mv Flashcard users/* .
+          rm -rf Flashcard users
+          7z a TWiLightMenu-Flashcard.7z
+          mv TWiLightMenu-Flashcard.7z ~/artifacts
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
@@ -160,7 +218,7 @@ jobs:
           git stage .
           git commit -m "TWiLightMenu | $COMMIT_TAG"
           git tag v$CURRENT_DATE
-          git push origin v$CURRENT_DATE
+          git push origin v$CURRENT_DATE master
           echo "::set-output name=twlbot_commit::$(git log --format=%H -1)"
       - name: Release to TWLBot/Builds
         run: |
