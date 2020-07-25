@@ -428,6 +428,14 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 	fseek(gifFile, 0, SEEK_SET);
 
 	if (fsize > 0 && fsize <= 0x3C70) {
+		// Check GIF
+		u16 gifWidth;
+		u16 gifHeight;
+		fseek(gifFile, 6, SEEK_SET);
+		fread(&gifWidth, 1, sizeof(u16), gifFile);
+		fread(&gifHeight, 1, sizeof(u16), gifFile);
+
+	  if (gifWidth == 256 && gifHeight == 192) {
 		// Replace Unlaunch background with custom one
 
 		//const u32 gifSignature[2] = {0x38464947, 0x01006139};
@@ -438,10 +446,12 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 		for (u32 i = 0x02800000; i < 0x02810000; i += 4) {
 			iEnd = i+0x3C6C;
 			if (*(u32*)i == gifSignatureStart && *(u32*)iEnd == gifSignatureEnd) {
+				fseek(gifFile, 0, SEEK_SET);
 				fread((void*)i, 1, 0x3C70, gifFile);
 				break;
 			}
 		}
+	  }
 		fclose(gifFile);
 	}
 
