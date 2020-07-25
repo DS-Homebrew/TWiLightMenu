@@ -7,6 +7,7 @@
 #include <string.h>
 
 extern const char *settingsinipath;
+const char *charUnlaunchBg;
 
 TWLSettings::TWLSettings()
 {
@@ -97,6 +98,8 @@ TWLSettings::TWLSettings()
 	dsi_theme = "dark";
 	_3ds_theme = "light";
 	
+    unlaunchBg = "default.gif";
+
 	soundfreq = EFreq32KHz;
 	showlogo = true;
 	autorun = false;
@@ -206,6 +209,8 @@ void TWLSettings::loadSettings()
 
 	dsi_theme = settingsini.GetString("SRLOADER", "DSI_THEME", dsi_theme);
 	_3ds_theme = settingsini.GetString("SRLOADER", "3DS_THEME", _3ds_theme);
+    unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
+	charUnlaunchBg = unlaunchBg.c_str();
 
 	//snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 	smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);

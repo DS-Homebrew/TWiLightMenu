@@ -8,6 +8,8 @@
 
 static const char* settingsinipath = DSIMENUPP_INI;
 
+const char *charUnlaunchBg;
+
 TWLSettings::TWLSettings()
 {
     romfolder[0] = "sd:/";
@@ -74,6 +76,8 @@ TWLSettings::TWLSettings()
     homebrewHasWide = false;
 
     r4_theme = "unused";
+    unlaunchBg = "default.gif";
+
     soundfreq = EFreq32KHz;
     showlogo = true;
     autorun = false;
@@ -168,6 +172,9 @@ void TWLSettings::loadSettings()
     romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
     romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
+
+    unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
+	charUnlaunchBg = unlaunchBg.c_str();
 
     show12hrClock = settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 

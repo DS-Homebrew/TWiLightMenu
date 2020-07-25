@@ -404,11 +404,14 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 	fread((void*)0x02B80000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
 	fclose(ndsFile);
 	
-	FILE* gifFile = fopen("sd:/_nds/TWiLightMenu/Unlaunch/custom.gif", "rb");
+	extern const char *charUnlaunchBg;
+	char bgPath[256];
+	sprintf(bgPath, "sd:/_nds/TWiLightMenu/unlaunch/backgrounds/%s", charUnlaunchBg);
+
+	FILE* gifFile = fopen(bgPath, "rb");
 	off_t fsize = 0;
 	fseek(gifFile, 0, SEEK_END);
 	fsize = ftell(gifFile);			// Get file size
-	fseek(gifFile, 0, SEEK_SET);
 
 	if (fsize > 0 && fsize <= 0x3C70) {
 		// Check GIF

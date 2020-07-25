@@ -179,9 +179,9 @@ class TWLSettings
     bool homebrewHasWide;
     bool soundfreq;
     bool showlogo;
-    // unused...
-    std::string r4_theme;
-    
+    std::string r4_theme;// unused...
+    std::string unlaunchBg;
+
     bool wideScreen;
 };
 

@@ -87,7 +87,9 @@ TWLSettings::TWLSettings()
     
     dsi_theme = "dark";
     _3ds_theme = "light";
-    
+
+    unlaunchBg = "default.gif";
+
     soundFreq = EFreq32KHz;
     dsiSplash = isDSiMode();
     showlogo = true;
@@ -194,6 +196,7 @@ void TWLSettings::loadSettings()
     r4_theme = settingsini.GetString("SRLOADER", "R4_THEME", r4_theme);
     dsi_theme = settingsini.GetString("SRLOADER", "DSI_THEME", dsi_theme);
     _3ds_theme = settingsini.GetString("SRLOADER", "3DS_THEME", _3ds_theme);
+    unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 
     //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
     smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
@@ -286,6 +289,7 @@ void TWLSettings::saveSettings()
     settingsini.SetString("SRLOADER", "R4_THEME", r4_theme);
     settingsini.SetString("SRLOADER", "DSI_THEME", dsi_theme);
     settingsini.SetString("SRLOADER", "3DS_THEME", _3ds_theme);
+    settingsini.SetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 
     //settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
     settingsini.SetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);

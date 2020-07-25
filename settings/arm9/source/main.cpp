@@ -41,6 +41,8 @@
 #define AK_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/akmenu/themes/"
 #define R4_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/r4menu/themes/"
 
+#define UNLAUNCH_BG_DIRECTORY "/_nds/TWiLightMenu/unlaunch/backgrounds/"
+
 bool useTwlCfg = false;
 
 int currentTheme = 0;
@@ -51,6 +53,7 @@ std::vector<std::string> akThemeList;
 std::vector<std::string> r4ThemeList;
 std::vector<std::string> dsiThemeList;
 std::vector<std::string> _3dsThemeList;
+std::vector<std::string> unlaunchBgList;
 
 bool fadeType = false; // false = out, true = in
 
@@ -116,6 +119,10 @@ std::string ReplaceAll(std::string str, const std::string &from, const std::stri
 		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
 	}
 	return str;
+}
+
+bool extention(const std::string& filename, const char* ext) {
+	return (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext) == 0);
 }
 
 void launchSystemSettings()
@@ -261,6 +268,29 @@ void loadR4ThemeList()
 	}
 }
 
+void loadUnlaunchBgList()
+{
+	DIR *dir;
+	struct dirent *ent;
+	std::string themeDir;
+	if ((dir = opendir(UNLAUNCH_BG_DIRECTORY)) != NULL)
+	{
+		// print all the files and directories within directory 
+		while ((ent = readdir(dir)) != NULL)
+		{
+			// Reallocation here, but prevents our vector from being filled with
+
+			themeDir = ent->d_name;
+			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+
+			if (extention(themeDir, ".gif")) {
+				unlaunchBgList.emplace_back(themeDir);
+			}
+		}
+		closedir(dir);
+	}
+}
+
 std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 {
 	switch (optVal.get())
@@ -276,6 +306,11 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	default:
 		return nullopt;
 	}
+}
+
+std::optional<Option> opt_bg_select(Option::Int &optVal)
+{
+	return Option(STR_BGSEL_UNLAUNCH, STR_AB_SETBG, Option::Str(&ms().unlaunchBg), unlaunchBgList);
 }
 
 //bool twlFirmChanged = false;
@@ -458,6 +493,7 @@ int main(int argc, char **argv)
 	loadR4ThemeList();
 	load3DSThemeList();
 	loadDSiThemeList();
+	loadUnlaunchBgList();
 	swiWaitForVBlank();
 
 	snd().init();
@@ -760,7 +796,13 @@ int main(int argc, char **argv)
 				 5,});*/
 
 	if (isDSiMode() && sdAccessible) {
-		miscPage.option(STR_SDREMOVALDETECTION,
+		miscPage
+			.option(STR_UNLAUNCH_BG,
+				STR_DESCRIPTION_UNLAUNCH_BG,
+				Option::Int(&ms().subtheme, opt_bg_select, opt_reset_subtheme),
+				{STR_PRESS_A},
+				{0})
+			.option(STR_SDREMOVALDETECTION,
 				STR_DESCRIPTION_SDREMOVALDETECTION,
 				Option::Bool(&ms().sdRemoveDetect),
 				{STR_ON, STR_OFF},

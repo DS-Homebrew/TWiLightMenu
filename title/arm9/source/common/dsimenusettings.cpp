@@ -5,6 +5,8 @@
 #include "common/inifile.h"
 #include <string.h>
 
+const char *charUnlaunchBg;
+
 TWLSettings::TWLSettings()
 {
     romfolder = "";
@@ -61,6 +63,8 @@ TWLSettings::TWLSettings()
     homebrewHasWide = false;
 
     r4_theme = "unused";
+    unlaunchBg = "default.gif";
+
 	dsiSplash = isDSiMode();
     showlogo = true;
     autorun = false;
@@ -139,6 +143,9 @@ void TWLSettings::loadSettings()
     homebrewArg[1] = settingsini.GetString("SRLOADER", "SECONDARY_HOMEBREW_ARG", homebrewArg[0]);
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
     homebrewHasWide = settingsini.GetInt("SRLOADER", "HOMEBREW_HAS_WIDE", homebrewHasWide);
+
+    unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
+	charUnlaunchBg = unlaunchBg.c_str();
 
     show12hrClock =  settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 

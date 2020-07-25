@@ -174,8 +174,8 @@ class TWLSettings
     bool soundfreq;
 	int dsiSplash;
     bool showlogo;
-    // unused...
-    std::string r4_theme;
+    std::string r4_theme;// unused...
+    std::string unlaunchBg;
 
 	bool wideScreen;
 };
