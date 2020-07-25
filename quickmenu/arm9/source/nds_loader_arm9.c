@@ -410,8 +410,10 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 
 	FILE* gifFile = fopen(bgPath, "rb");
 	off_t fsize = 0;
-	fseek(gifFile, 0, SEEK_END);
-	fsize = ftell(gifFile);			// Get file size
+	if (gifFile) {
+		fseek(gifFile, 0, SEEK_END);
+		fsize = ftell(gifFile);			// Get file size
+	}
 
 	if (fsize > 0 && fsize <= 0x3C70) {
 		// Check GIF
