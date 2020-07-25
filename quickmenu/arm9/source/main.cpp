@@ -2471,7 +2471,8 @@ int main(int argc, char **argv) {
 						}
 					}
 				} else if (extention(filename[secondaryDevice], ".gen")) {
-					bool usePicoDrive = (showMd==2 || (showMd==3 && getFileSize(filename[secondaryDevice].c_str()) > 0x300000));
+					bool usePicoDrive = ((isDSiMode() && sdFound() && arm7SCFGLocked)
+						|| showMd==2 || (showMd==3 && getFileSize(filename[secondaryDevice].c_str()) > 0x300000));
 					launchType[secondaryDevice] = (usePicoDrive ? 10 : 1);
 
 					if (usePicoDrive || secondaryDevice) {

@@ -1518,7 +1518,8 @@ int main(int argc, char **argv) {
 				gamegear = true;
 			} else if (extention(filename, ".gen")) {
 				GENESIS = true;
-				usePicoDrive = (ms().showMd==2 || (ms().showMd==3 && getFileSize(filename.c_str()) > 0x300000));
+				usePicoDrive = ((isDSiMode() && sdFound() && sys().arm7SCFGLocked())
+				|| ms().showMd==2 || (ms().showMd==3 && getFileSize(filename.c_str()) > 0x300000));
 			} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
 				SNES = true;
 			} else if (extention(filename, ".a26")) {

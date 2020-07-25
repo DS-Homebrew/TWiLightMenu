@@ -1550,7 +1550,8 @@ void MainWnd::launchSelected()
     // GEN Launch
     if (extension == ".gen")
 	{
-		bool usePicoDrive = (ms().showMd==2 || (ms().showMd==3 && getFileSize(fullPath) > 0x300000));
+		bool usePicoDrive = ((isDSiMode() && sdFound() && sys().arm7SCFGLocked())
+			|| ms().showMd==2 || (ms().showMd==3 && getFileSize(fullPath) > 0x300000));
         ms().homebrewArg = fullPath;
         ms().launchType[ms().secondaryDevice] = (usePicoDrive ? TWLSettings::EPicoDriveTWLLaunch : TWLSettings::ESDFlashcardLaunch);
         ms().saveSettings();
