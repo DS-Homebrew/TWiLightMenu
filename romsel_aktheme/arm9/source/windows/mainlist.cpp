@@ -180,19 +180,22 @@ void MainList::setupExtnames()
         _extnameFilter.emplace_back(std::string(".sms"));
         _extnameFilter.emplace_back(std::string(".gg"));
     }
-    if (ms().showMd)
-    {
-        _extnameFilter.emplace_back(std::string(".gen"));
-    }
-    if (ms().showSnes)
-    {
-        _extnameFilter.emplace_back(std::string(".smc"));
-        _extnameFilter.emplace_back(std::string(".sfc"));
-    }
-    if (ms().showPce)
-    {
-        _extnameFilter.emplace_back(std::string(".pce"));
-    }
+	if (ms().showMd)
+	{
+		_extnameFilter.emplace_back(std::string(".gen"));
+	}
+	if (!isDSiMode() || (isDSiMode() && (flashcardFound() || !sys().arm7SCFGLocked())))
+	{
+		if (ms().showSnes)
+		{
+			_extnameFilter.emplace_back(std::string(".smc"));
+			_extnameFilter.emplace_back(std::string(".sfc"));
+		}
+		if (ms().showPce)
+		{
+			_extnameFilter.emplace_back(std::string(".pce"));
+		}
+	}
 }
 
 void MainList::addDirEntry(const std::string row1,

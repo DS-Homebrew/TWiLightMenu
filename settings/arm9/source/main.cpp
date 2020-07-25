@@ -591,11 +591,11 @@ int main(int argc, char **argv)
 	if (isDSiMode() && sdAccessible && sys().arm7SCFGLocked()) {
 		emulationPage.option(STR_MD_ROMS, STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "PicoDriveTWL"}, {0, 2});
 	} else {
-		emulationPage.option(STR_MD_ROMS, STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {0, 1, 2, 3});
+		emulationPage
+			.option(STR_MD_ROMS, STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {0, 1, 2, 3})
+			.option(STR_SNES_ROMS, STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {"SNEmulDS", STR_HIDE}, {true, false})
+			.option(STR_PCE_ROMS, STR_DESCRIPTION_SHOW_PCE, Option::Bool(&ms().showPce), {"NitroGrafx", STR_HIDE}, {true, false});
 	}
-	emulationPage
-		.option(STR_SNES_ROMS, STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {"SNEmulDS", STR_HIDE}, {true, false})
-		.option(STR_PCE_ROMS, STR_DESCRIPTION_SHOW_PCE, Option::Bool(&ms().showPce), {"NitroGrafx", STR_HIDE}, {true, false});
 
 	SettingsPage gbar2Page(STR_GBARUNNER2_SETTINGS);
 
@@ -614,7 +614,7 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_ASPECTRATIO, STR_DESCRIPTION_ASPECTRATIO, Option::Bool(&ms().wideScreen), {STR_WIDESCREEN, STR_FULLSCREEN}, {true, false});
 	}
 
-	if (isDSiMode() && sdAccessible)
+	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked())
 	{
 		gamesPage.option(STR_SMSGGINRAM, STR_DESCRIPTION_SMSGGINRAM, Option::Bool(&ms().smsGgInRam), {STR_YES, STR_NO}, {true, false});
 	}

@@ -1508,7 +1508,7 @@ void MainWnd::launchSelected()
 		mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
 		ms().homebrewArg = fullPath;
-		if (!ms().secondaryDevice && ms().smsGgInRam)
+		if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().smsGgInRam)
 		{
 			ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 			ms().saveSettings();

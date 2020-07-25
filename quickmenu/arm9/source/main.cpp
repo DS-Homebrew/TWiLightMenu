@@ -2444,7 +2444,7 @@ int main(int argc, char **argv) {
 					mkdir(secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
-					if (!secondaryDevice && smsGgInRam) {
+					if (!secondaryDevice && !arm7SCFGLocked && smsGgInRam) {
 						launchType[secondaryDevice] = 1;
 
 						useNDSB = true;

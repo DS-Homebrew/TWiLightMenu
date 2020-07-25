@@ -993,12 +993,14 @@ int main(int argc, char **argv) {
 	if (showMd) {
 		extensionList.push_back(".gen");
 	}
-	if (showSnes) {
-		extensionList.push_back(".smc");
-		extensionList.push_back(".sfc");
-	}
-	if (showPce) {
-		extensionList.push_back(".pce");
+	if (!isDSiMode() || (isDSiMode() && (flashcardFound() || !arm7SCFGLocked))) {
+		if (showSnes) {
+			extensionList.push_back(".smc");
+			extensionList.push_back(".sfc");
+		}
+		if (showPce) {
+			extensionList.push_back(".pce");
+		}
 	}
 	srand(time(NULL));
 	
@@ -1898,8 +1900,7 @@ int main(int argc, char **argv) {
 			}
 
 			if (dstwoPlg || rvid || mpeg4 || gameboy || nes
-			|| (gamegear && !smsGgInRam)
-			|| (gamegear && secondaryDevice)
+			|| (gamegear && (!smsGgInRam || arm7SCFGLocked || secondaryDevice))
 			|| (GENESIS && usePicoDrive)
 			|| atari2600) {
 				const char *ndsToBoot = "";
