@@ -642,15 +642,14 @@ int main(int argc, char **argv)
 				{"133 MHz (TWL)", "67 MHz (NTR)"},
 				{true, false})
 		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false});
-		if (isDSiMode()) {
-			gamesPage.option(sdAccessible ? STR_SLOT_1_SD+": "+STR_USEBOOTSTRAP : STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
-			if (sdAccessible) {
-				gamesPage.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false});
-			}
+		if (sdAccessible && !sys().arm7SCFGLocked()) {
+			gamesPage
+				.option(STR_SLOT_1_SD+": "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false})
+				.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false});
 		} else if (!isDSiMode() && fatAccessible) {
 			gamesPage.option(STR_USEBOOTSTRAP+" (B4DS)", STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 		}
-		if (sdAccessible) {
+		if (sdAccessible && !sys().arm7SCFGLocked()) {
 			gamesPage.option(STR_FORCESLEEPPATCH, STR_DESCRIPTION_FORCESLEEPMODE, Option::Bool(&ms().forceSleepPatch), {STR_ON, STR_OFF}, {true, false})
 				.option(STR_SLOT1SDACCESS, STR_DESCRIPTION_SLOT1SDACCESS, Option::Bool(&ms().slot1AccessSD), {STR_ON, STR_OFF}, {true, false})
 				.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false});
