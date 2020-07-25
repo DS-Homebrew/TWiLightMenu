@@ -222,7 +222,7 @@ STRING(DESCRIPTION_LANGUAGE_1, "Avoid the limited selections of your console lan
 STRING(DESCRIPTION_GAMELANGUAGE_1, "Set language for DS ROMs played using nds-bootstrap.")
 STRING(DESCRIPTION_TITLELANGUAGE_1, "Set Banner Title language for DS ROMs (except DSiWare).")
 STRING(DESCRIPTION_COLORMODE, "Changes the color of your screens. May not work in all areas. Exit settings for the change to take effect.")
-STRING(DESCRIPTION_UNLAUNCH_BG, "Changes the default background of Unlaunch.")
+STRING(DESCRIPTION_UNLAUNCH_BG, "Changes the default background of Unlaunch. Requires re-installation of Unlaunch.")
 STRING(DESCRIPTION_SDREMOVALDETECTION, "Enables/Disables SD removal detection. Disable it if an error message is shown instead of the ROM menu.")
 STRING(DESCRIPTION_S1SDACCESS_1, "Allows your flashcard to be used as a secondary device. Turn this off if IR functionality doesn't work or if the app crashes.")
 STRING(DESCRIPTION_WIFI, "Select whether to use Nintendo WiFi Connection. Does not affect DS Download Play.")
