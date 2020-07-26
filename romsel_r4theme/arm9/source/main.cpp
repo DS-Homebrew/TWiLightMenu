@@ -767,6 +767,9 @@ void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
 		checkSdEject();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_B));
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	}
 	runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
 	stop();
 }
@@ -1114,7 +1117,9 @@ int main(int argc, char **argv) {
 				for (int i = 0; i < 25; i++) {
 					swiWaitForVBlank();
 				}
-				if (sdFound()) {
+				if (!isDSiMode()) {
+					chdir("fat:/");
+				} else if (sdFound()) {
 					chdir("sd:/");
 				}
 				int err = runNdsFile ("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, true, false, true, true);
@@ -1153,7 +1158,9 @@ int main(int argc, char **argv) {
 								unlaunchRomBoot("cart:");
 							} else {
 								SetWidescreen(NULL);
-								if (sdFound()) {
+								if (!isDSiMode()) {
+									chdir("fat:/");
+								} else if (sdFound()) {
 									chdir("sd:/");
 								}
 								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
@@ -1274,7 +1281,9 @@ int main(int argc, char **argv) {
 
 				gotosettings = true;
 				SaveSettings();
-				if (sdFound()) {
+				if (!isDSiMode()) {
+					chdir("fat:/");
+				} else if (sdFound()) {
 					chdir("sd:/");
 				}
 				int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
@@ -1503,6 +1512,11 @@ int main(int argc, char **argv) {
 						checkSdEject();
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_B));
+					if (!isDSiMode()) {
+						chdir("fat:/");
+					} else if (sdFound()) {
+						chdir("sd:/");
+					}
 					runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
 					stop();
 				}
@@ -1806,7 +1820,9 @@ int main(int argc, char **argv) {
 							checkSdEject();
 							swiWaitForVBlank();
 						} while (!(pressed & KEY_B));
-						if (sdFound()) {
+						if (!isDSiMode()) {
+							chdir("fat:/");
+						} else if (sdFound()) {
 							chdir("sd:/");
 						}
 						runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
@@ -1854,7 +1870,9 @@ int main(int argc, char **argv) {
 						checkSdEject();
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_B));
-					if (sdFound()) {
+					if (!isDSiMode()) {
+						chdir("fat:/");
+					} else if (sdFound()) {
 						chdir("sd:/");
 					}
 					runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
@@ -1933,7 +1951,7 @@ int main(int argc, char **argv) {
 				int err = 0;
 
 				if (dstwoPlg) {
-					ndsToBoot = "/_nds/TWiLightMenu/bootplg.srldr";
+					ndsToBoot = "fat:/_nds/TWiLightMenu/bootplg.srldr";
 
 					// Print .plg path without "fat:" at the beginning
 					char ROMpathDS2[256];
@@ -1995,7 +2013,9 @@ int main(int argc, char **argv) {
 					checkSdEject();
 					swiWaitForVBlank();
 				} while (!(pressed & KEY_B));
-				if (sdFound()) {
+				if (!isDSiMode()) {
+					chdir("fat:/");
+				} else if (sdFound()) {
 					chdir("sd:/");
 				}
 				runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
@@ -2109,7 +2129,9 @@ int main(int argc, char **argv) {
 					checkSdEject();
 					swiWaitForVBlank();
 				} while (!(pressed & KEY_B));
-				if (sdFound()) {
+				if (!isDSiMode()) {
+					chdir("fat:/");
+				} else if (sdFound()) {
 					chdir("sd:/");
 				}
 				runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);

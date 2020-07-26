@@ -387,6 +387,9 @@ void defaultExitHandler()
 	}
 
 	flashcardInit();
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	}
 	if (ms().showMainMenu)
 	{
 		loadMainMenu();

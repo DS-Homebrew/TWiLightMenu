@@ -1675,7 +1675,9 @@ void MainWnd::onKeyBPressed()
 void MainWnd::showSettings(void)
 {
     dbg_printf("Launch settings...");
-	if (sdFound()) {
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	} else if (sdFound()) {
 		chdir("sd:/");
 	}
     LoaderConfig settingsLoader(DSIMENUPP_SETTINGS_SRL, DSIMENUPP_INI);

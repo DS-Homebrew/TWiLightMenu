@@ -546,7 +546,9 @@ void launchDsClassicMenu(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch DS Classic Menu
-	if (sdFound()) {
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	} else if (sdFound()) {
 		chdir("sd:/");
 	}
 	int err = runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
@@ -572,7 +574,9 @@ void launchSettings(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch TWLMenu++ Settings
-	if (sdFound()) {
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	} else if (sdFound()) {
 		chdir("sd:/");
 	}
 	int err = runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
@@ -600,7 +604,9 @@ void launchManual(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch manual
-	if (sdFound()) {
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	} else if (sdFound()) {
 		chdir("sd:/");
 	}
 	int err = runNdsFile("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, false, false, true, true);

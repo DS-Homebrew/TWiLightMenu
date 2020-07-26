@@ -448,7 +448,9 @@ void loadGameOnFlashcard (const char *ndsPath, bool usePerGameSettings) {
 	for (int i = 0; i < 25; i++) {
 		swiWaitForVBlank();
 	}
-	if (sdFound()) {
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	} else if (sdFound()) {
 		chdir("sd:/");
 	}
 	runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
@@ -1060,7 +1062,9 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
 					}
-					if (sdFound()) {
+					if (!isDSiMode()) {
+						chdir("fat:/");
+					} else if (sdFound()) {
 						chdir("sd:/");
 					}
 					runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
@@ -1417,7 +1421,9 @@ int main(int argc, char **argv) {
 						for (int i = 0; i < 25; i++) {
 							swiWaitForVBlank();
 						}
-						if (sdFound()) {
+						if (!isDSiMode()) {
+							chdir("fat:/");
+						} else if (sdFound()) {
 							chdir("sd:/");
 						}
 						runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
@@ -1483,7 +1489,9 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
 					}
-					if (sdFound()) {
+					if (!isDSiMode()) {
+						chdir("fat:/");
+					} else if (sdFound()) {
 						chdir("sd:/");
 					}
 					runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
@@ -1572,7 +1580,7 @@ int main(int argc, char **argv) {
 				int err = 0;
 
 				if (dstwoPlg) {
-					ndsToBoot = "/_nds/TWiLightMenu/bootplg.srldr";
+					ndsToBoot = "fat:/_nds/TWiLightMenu/bootplg.srldr";
 
 					// Print .plg path without "fat:" at the beginning
 					char ROMpathDS2[256];
@@ -1640,7 +1648,9 @@ int main(int argc, char **argv) {
 				for (int i = 0; i < 25; i++) {
 					swiWaitForVBlank();
 				}
-				if (sdFound()) {
+				if (!isDSiMode()) {
+					chdir("fat:/");
+				} else if (sdFound()) {
 					chdir("sd:/");
 				}
 				runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
@@ -1762,7 +1772,9 @@ int main(int argc, char **argv) {
 				for (int i = 0; i < 25; i++) {
 					swiWaitForVBlank();
 				}
-				if (sdFound()) {
+				if (!isDSiMode()) {
+					chdir("fat:/");
+				} else if (sdFound()) {
 					chdir("sd:/");
 				}
 				runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);

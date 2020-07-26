@@ -727,7 +727,9 @@ void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
 
 void loadROMselect()
 {
-	if (sdFound()) {
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	} else if (sdFound()) {
 		chdir("sd:/");
 	}
 	if (theme == 3)
@@ -1738,7 +1740,9 @@ int main(int argc, char **argv) {
 
 						gotosettings = true;
 						//SaveSettings();
-						if (sdFound()) {
+						if (!isDSiMode()) {
+							chdir("fat:/");
+						} else if (sdFound()) {
 							chdir("sd:/");
 						}
 						int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
@@ -1754,7 +1758,9 @@ int main(int argc, char **argv) {
 						iconYpos[6] -= 6;
 						swiWaitForVBlank();
 					}
-					if (sdFound()) {
+					if (!isDSiMode()) {
+						chdir("fat:/");
+					} else if (sdFound()) {
 						chdir("sd:/");
 					}
 					int err = runNdsFile ("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, false, false, true, true);

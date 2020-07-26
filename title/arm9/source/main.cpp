@@ -150,6 +150,9 @@ void loadMainMenu()
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	}
 	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
 }
 
@@ -164,6 +167,9 @@ void loadROMselect(int number)
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	}
 	switch (number) {
 		/*case 3:
 			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
@@ -935,6 +941,9 @@ int main(int argc, char **argv)
 			fadeType = false;
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
+			}
+			if (!isDSiMode()) {
+				chdir("fat:/");
 			}
 			runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
 		} else {
