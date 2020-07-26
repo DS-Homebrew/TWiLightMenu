@@ -56,26 +56,26 @@ int main(int argc, char **argv) {
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 
-	bool sdFound = false;
+	/*bool sdFound = false;
 	#ifndef CYCLODSI
-	if (isDSiMode() || !isRegularDS) {
+	if (isDSiMode() || (!isRegularDS && REG_SCFG_EXT != 0)) {
 		extern const DISC_INTERFACE __my_io_dsisd;
 		sdFound = fatMountSimple("sd", &__my_io_dsisd);
 	}
-	#endif
+	#endif*/
 	bool flashcardFound = fatMountSimple("fat", dldiGetInternal());
 
-	if (!sdFound && !flashcardFound) {
+	if (/* !sdFound && */ !flashcardFound) {
 		consoleDemoInit();
 		printf ("FAT init failed!\n");
 	} else {
 		int err = 0;
-		err = runNdsFile ((sdFound ? "sd:/_nds/TWiLightMenu/main.srldr" : "fat:/_nds/TWiLightMenu/main.srldr"), 0, NULL);
+		err = runNdsFile ((/*sdFound ? "sd:/_nds/TWiLightMenu/main.srldr" :*/ "fat:/_nds/TWiLightMenu/main.srldr"), 0, NULL);
 
 		consoleDemoInit();
 
 		if (err == 1) {
-			printf ("/_nds/TWiLightMenu/\nmain.srldr not found.");
+			printf ("fat:/_nds/TWiLightMenu/\nmain.srldr not found.\n");
 		} else {
 			printf ("Start failed. Error %i\n", err);
 		}

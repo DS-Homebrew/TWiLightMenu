@@ -461,18 +461,15 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 		argv = args;
 	}
 
-	bool loadFromRam = runNds9(filename);
-
 	#ifdef CYCLODSI
 	if (isDSiMode()) {
 		runNds9i(filename, true);
 	}
 	#endif
 
-	bool havedsiSD = false;
-
-	if(access("sd:/", F_OK) == 0) havedsiSD = true;
+	bool loadFromRam = runNds9(filename);
 	
+	bool havedsiSD = (argv[0][0]=='s' && argv[0][1]=='d');
 	installBootStub(havedsiSD);
 
 	return runNds (load_bin, load_bin_size, st.st_ino, true, (memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, argc, argv);
