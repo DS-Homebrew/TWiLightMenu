@@ -15,11 +15,11 @@ include $(DEVKITARM)/ds_rules
 # INCLUDES is a list of directories containing extra header files
 # DATA is a list of directories containing binary files embedded using bin2o
 #---------------------------------------------------------------------------------
-TARGET		:=	booter_fc
+TARGET		:=	booter
 BUILD		:=	build
-SOURCES		:=	source
-INCLUDES    :=    include
-DATA        :=    ../data
+SOURCES		:=	source ../../universal/sdmmc/arm9/source
+INCLUDES    :=  include ../../universal/sdmmc/arm9/include
+DATA        :=  ../data
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -31,7 +31,7 @@ CFLAGS	:=	-g -Wall -O2\
 		-ffast-math \
 		$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9 -DNO_SDMMC
+CFLAGS	+=	$(INCLUDE) -DARM9
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)

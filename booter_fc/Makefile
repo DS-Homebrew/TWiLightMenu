@@ -23,7 +23,7 @@ VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 # DATA is a list of directories containing binary files embedded using bin2o
 # GRAPHICS is a list of directories containing image files to be converted with grit
 #---------------------------------------------------------------------------------
-TARGET		:=	booter_fc
+TARGET		:=	booter
 BUILD		:=	build
 SOURCES		:=	source source/graphics
 INCLUDES	:=	include
@@ -123,13 +123,13 @@ all:	bootloader bootstub $(TARGET).nds
 	
 dist:	all
 	@cp "booter_fc.nds" "../7zfile/Flashcard users/BOOT.NDS"
-	@cp "booter_fc_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
+	@cp "booter_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
 	@mkdir -p "../7zfile/Flashcard users/Autoboot/Original R4/"
 	@cp "booter_fc.nds" "../7zfile/Flashcard users/Autoboot/Original R4/default.nds"
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET)_cyclodsi.arm7 $(TARGET).arm9 $(TARGET)_cyclodsi.arm9
   # simple nds srl without dsi extended header
-	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool	-h 0x200 -c $(TARGET)_fc.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
 	ndstool	-h 0x200 -c $(TARGET)_cyclodsi.nds -7 $(TARGET)_cyclodsi.arm7.elf -9 $(TARGET)_cyclodsi.arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
 
 $(TARGET).arm7: arm7/$(TARGET).elf
@@ -178,6 +178,7 @@ clean:
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C arm9_cyclodsi clean
 	@$(MAKE) -C arm7 clean
+	@$(MAKE) -C arm7_cyclodsi clean
 
 data:
 	@mkdir -p data

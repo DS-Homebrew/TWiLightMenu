@@ -133,7 +133,11 @@ static addr_t quickFind (const data_t* data, const data_t* search, size_t dataLe
 
 // Normal DLDI uses "\xED\xA5\x8D\xBF Chishm"
 // Bootloader string is different to avoid being patched
+#ifdef CYCLODSI
 data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Different to a normal DLDI file
+#else
+static data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Different to a normal DLDI file
+#endif
 
 #define DEVICE_TYPE_DLDI 0x49444C44
 
@@ -154,9 +158,11 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 
 	size_t dldiFileSize = 0;
 	
+	#ifdef CYCLODSI
 	if (isDSiMode()) {
 		dldiMagicLoaderString[0]--;
 	}
+	#endif
 
 	// Find the DLDI reserved space in the file
 	patchOffset = quickFind (binData, dldiMagicLoaderString, binSize, sizeof(dldiMagicLoaderString));
@@ -273,7 +279,6 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 
 	writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, isDSiMode());
 	if(argv[0][0]=='s' && argv[0][1]=='d') {
-		dldiPatchNds = false;
 		writeAddr ((data_t*) LCDC_BANK_C, HAVE_DSISD_OFFSET, 1);
 	}
 
@@ -339,6 +344,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
+#ifdef CYCLODSI
 void runNds9i (const char* filename, bool dldiPatchNds) {
 	consoleClear();
 	printf ("Now loading...\n");
@@ -383,8 +389,8 @@ void runNds9i (const char* filename, bool dldiPatchNds) {
 
 	VRAM_CR = (VRAM_CR & 0xffff0000) | 0x00008080 ;
 	
-	u16 *mainregs = (u16*)0x04000000;
-	u16 *subregs = (u16*)0x04001000;
+	vu16 *mainregs = (vu16*)0x04000000;
+	vu16 *subregs = (vu16*)0x04001000;
 	
 	for (i=0; i<43; i++) {
 		mainregs[i] = 0;
@@ -409,8 +415,8 @@ void runNds9i (const char* filename, bool dldiPatchNds) {
 	resetARM7((u32)__DSiHeader->ndshdr.arm7destination);
 
 	swiSoftReset(); 
-	return;
 }
+#endif
 
 bool runNds9 (const char* filename) {
 	if (isDSiMode()) return false;
@@ -457,17 +463,19 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 
 	bool loadFromRam = runNds9(filename);
 
+	#ifdef CYCLODSI
 	if (isDSiMode()) {
 		runNds9i(filename, true);
 	}
+	#endif
 
 	bool havedsiSD = false;
 
-	if(argv[0][0]=='s' && argv[0][1]=='d') havedsiSD = true;
+	if(access("sd:/", F_OK) == 0) havedsiSD = true;
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, true, loadFromRam, argc, argv);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, (memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, argc, argv);
 }
 
 
