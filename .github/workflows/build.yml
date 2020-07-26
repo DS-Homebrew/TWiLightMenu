@@ -57,31 +57,67 @@ jobs:
       - name: "Pack 7z Package for nightly"
         if: ${{ !startsWith(github.ref, 'refs/tags') }}
         run: |
-          mv 7zfile/ TWiLightMenu/
+          cp -r 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
+          mkdir -p ~/artifacts
+          mv TWiLightMenu.7z ~/artifacts
+
+          # DSi 7z
+          cp -r TWiLightMenu/DSi\ -\ CFW\ users/* TWiLightMenu
+          rm -rf TWiLightMenu/DSi\ -\ CFW\ users
+          cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
+          rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
+          rm -rf TWiLightMenu/3DS\ -\ CFW\ users
+          rm -rf TWiLightMenu/Flashcard\ users
+          7z a TWiLightMenu-DSi.7z TWiLightMenu
+          mv TWiLightMenu-DSi.7z ~/artifacts
+
+          # 3DS 7z
+          rm -rf TWiLightMenu
+          cp -r 7zfile/ TWiLightMenu/
+          cp -r TWiLightMenu/3DS\ -\ CFW\ users/* TWiLightMenu
+          rm -rf TWiLightMenu/3DS\ -\ CFW\ users
+          cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
+          rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
+          rm -rf TWiLightMenu/DSi\ -\ CFW\ users
+          rm -rf TWiLightMenu/Flashcard\ users
+          7z a TWiLightMenu-3DS.7z TWiLightMenu
+          mv TWiLightMenu-3DS.7z ~/artifacts
+
+          # Flashcard 7z
+          rm -rf TWiLightMenu
+          cp -r 7zfile/ TWiLightMenu/
+          cp -r TWiLightMenu/Flashcard\ users/* TWiLightMenu
+          rm -rf TWiLightMenu/Flashcard\ users
+          rm -rf TWiLightMenu/3DS\ -\ CFW\ users
+          rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
+          rm -rf TWiLightMenu/DSi\ -\ CFW\ users
+          7z a TWiLightMenu-Flashcard.7z TWiLightMenu
+          mv TWiLightMenu-Flashcard.7z ~/artifacts
 
           # Delete themes, AP patches, and widescreen patches for lite
-          rm -r TWiLightMenu/_nds/TWiLightMenu/*menu/
-          rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
-          rm -r TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
+          rm -rf TWiLightMenu
+          cp -r 7zfile/ TWiLightMenu/
+          rm -rf TWiLightMenu/_nds/TWiLightMenu/*menu/
+          rm -rf TWiLightMenu/_nds/TWiLightMenu/apfix/
+          rm -rf TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
           7z a TWiLightMenu-Lite.7z TWiLightMenu/
-          mkdir -p ~/artifacts
-          cp TWiLightMenu.7z ~/artifacts
-          cp TWiLightMenu-Lite.7z ~/artifacts
+          mv TWiLightMenu-Lite.7z ~/artifacts
       - name: "Pack 7z Package for release"
         if: ${{ startsWith(github.ref, 'refs/tags') }}
         run: |
-          mkdir 7zfile/_nds/TWiLightMenu/boxart/
-          mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
+          mkdir -p 7zfile/_nds/TWiLightMenu/boxart/
+          mkdir -p 7zfile/_nds/TWiLightMenu/extras/
+          mkdir -p 7zfile/_nds/TWiLightMenu/gamesettings/
 
           # nds-bootstrap
-          mkdir nds-bootstrap
+          mkdir -p nds-bootstrap
           cd nds-bootstrap
           curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/ahezard/nds-bootstrap/releases/latest -o nds-bootstrap.json
           curl -L $(jq --raw-output '.assets[0].browser_download_url' nds-bootstrap.json) -o nds-bootstrap.7z
           7z x nds-bootstrap.7z
           mv nds-bootstrap.* ..
-          mkdir TWiLightMenu
+          mkdir -p TWiLightMenu
           mv release-bootstrap.ver TWiLightMenu
           cd ..
           curl -L https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true -o nds-bootstrap.7z
@@ -92,8 +128,6 @@ jobs:
           mv nds-bootstrap/b4ds-nightly.nds 7zfile/Flashcard\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
           mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
-          # Permissions are hecked up by Docker
-          sudo mkdir 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds
           mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
 
@@ -103,10 +137,49 @@ jobs:
           # Really dumb hidden file that for some reason fixes the releases
           touch 7zfile/.ignoreme
 
-          cd 7zfile
+          # Main 7z
+          cp -r 7zfile TWiLightMenu
+          cd TWiLightMenu
           7z a TWiLightMenu.7z .
           mkdir -p ~/artifacts
-          cp TWiLightMenu.7z ~/artifacts
+          mv TWiLightMenu.7z ~/artifacts
+
+          # DSi 7z
+          cp -r DSi\ -\ CFW\ users/* .
+          rm -rf DSi\ -\ CFW\ users
+          cp -r DSi\&3DS\ -\ SD\ card\ users/* .
+          rm -rf DSi\&3DS\ -\ SD\ card\ users
+          rm -rf 3DS\ -\ CFW\ users
+          rm -rf Flashcard\ users
+          7z a TWiLightMenu-DSi.7z
+          mv TWiLightMenu-DSi.7z ~/artifacts
+
+          # 3DS 7z
+          cd ..
+          rm -rf TWiLightMenu
+          cp -r 7zfile/ TWiLightMenu/
+          cd TWiLightMenu
+          cp -r 3DS\ -\ CFW\ users/* .
+          rm -rf 3DS\ -\ CFW\ users
+          cp -r DSi\&3DS\ -\ SD\ card\ users/* .
+          rm -rf DSi\&3DS\ -\ SD\ card\ users
+          rm -rf DSi\ -\ CFW\ users
+          rm -rf Flashcard\ users
+          7z a TWiLightMenu-3DS.7z
+          mv TWiLightMenu-3DS.7z ~/artifacts
+
+          # Flashcard 7z
+          cd ..
+          rm -rf TWiLightMenu
+          cp -r 7zfile/ TWiLightMenu/
+          cd TWiLightMenu
+          cp -r Flashcard\ users/* .
+          rm -rf Flashcard\ users
+          rm -rf 3DS\ -\ CFW\ users
+          rm -rf DSi\&3DS\ -\ SD\ card\ users
+          rm -rf DSi\ -\ CFW\ users
+          7z a TWiLightMenu-Flashcard.7z
+          mv TWiLightMenu-Flashcard.7z ~/artifacts
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
@@ -160,14 +233,14 @@ jobs:
           git stage .
           git commit -m "TWiLightMenu | $COMMIT_TAG"
           git tag v$CURRENT_DATE
-          git push origin v$CURRENT_DATE
+          git push origin v$CURRENT_DATE master
           echo "::set-output name=twlbot_commit::$(git log --format=%H -1)"
       - name: Release to TWLBot/Builds
         run: |
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
           API_URL="https://api.github.com/repos/TWLBot/Builds/releases"
-          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"TWiLightMenu | $COMMIT_TAG\", \"body\": \"$COMMIT_MESSAGE\", "prerelease": true}"
+          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"TWiLightMenu | $COMMIT_TAG\", \"body\": \"$COMMIT_MESSAGE\", \"prerelease\": true}"
 
           RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
 
