@@ -149,6 +149,8 @@ jobs:
           rm -rf DSi\ -\ CFW\ users
           cp -r DSi\&3DS\ -\ SD\ card\ users/* .
           rm -rf DSi\&3DS\ -\ SD\ card\ users
+          rm -rf 3DS\ -\ CFW\ users
+          rm -rf Flashcard\ users
           7z a TWiLightMenu-DSi.7z
           mv TWiLightMenu-DSi.7z ~/artifacts
 
@@ -161,6 +163,8 @@ jobs:
           rm -rf 3DS\ -\ CFW\ users
           cp -r DSi\&3DS\ -\ SD\ card\ users/* .
           rm -rf DSi\&3DS\ -\ SD\ card\ users
+          rm -rf DSi\ -\ CFW\ users
+          rm -rf Flashcard\ users
           7z a TWiLightMenu-3DS.7z
           mv TWiLightMenu-3DS.7z ~/artifacts
 
@@ -171,6 +175,9 @@ jobs:
           cd TWiLightMenu
           cp -r Flashcard\ users/* .
           rm -rf Flashcard\ users
+          rm -rf 3DS\ -\ CFW\ users
+          rm -rf DSi\&3DS\ -\ SD\ card\ users
+          rm -rf DSi\ -\ CFW\ users
           7z a TWiLightMenu-Flashcard.7z
           mv TWiLightMenu-Flashcard.7z ~/artifacts
       - name: "Publish build to GH Actions"
