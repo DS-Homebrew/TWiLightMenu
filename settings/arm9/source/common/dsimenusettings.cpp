@@ -94,6 +94,7 @@ TWLSettings::TWLSettings()
     dsiSplash = isDSiMode();
     showlogo = true;
     autorun = false;
+    autostartSlot1 = false;
 
     //screenScaleSize = 0;
     wideScreen = false;
@@ -202,6 +203,7 @@ void TWLSettings::loadSettings()
     smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 
     autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", autorun);
+    autostartSlot1 = settingsini.GetInt("SRLOADER", "AUTORUNSLOT1", autostartSlot1);
 
     //screenScaleSize = settingsini.GetInt("TWL_FIRM", "SCREENSCALESIZE", screenScaleSize);
     wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
@@ -217,6 +219,7 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
     settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
+    settingsini.SetInt("SRLOADER", "AUTORUNSLOT1", autostartSlot1);
 
     // Customizable UI settings.
     settingsini.SetInt("SRLOADER", "FRAME_RATE", fps);

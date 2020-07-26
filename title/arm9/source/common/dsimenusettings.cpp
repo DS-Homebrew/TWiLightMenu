@@ -68,6 +68,7 @@ TWLSettings::TWLSettings()
 	dsiSplash = isDSiMode();
     showlogo = true;
     autorun = false;
+	autostartSlot1 = false;
 
 	wideScreen = false;
 }
@@ -150,6 +151,7 @@ void TWLSettings::loadSettings()
     show12hrClock =  settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
     autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", autorun);
+    autostartSlot1 = settingsini.GetInt("SRLOADER", "AUTORUNSLOT1", autostartSlot1);
 
     wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }

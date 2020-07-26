@@ -185,6 +185,7 @@ class TWLSettings
     bool slot1SCFGUnlock;
     bool dsiWareBooter;
     bool autorun;
+	bool autostartSlot1;
     bool show12hrClock;
     //bool snesEmulator;
     bool smsGgInRam;

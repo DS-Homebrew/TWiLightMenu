@@ -282,7 +282,7 @@ void lastRunROM()
 	}
 
 	int err = 0;
-	if (ms().slot1Launched)
+	if (ms().slot1Launched && !flashcardFound())
 	{
 		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
 			dsCardLaunch();
@@ -769,9 +769,16 @@ int main(int argc, char **argv)
 			remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
 	}
 
-	runGraphicIrq();
+	if (sdFound()) {
+		mkdir("sd:/_gba", 0777);
+		mkdir("sd:/_nds/TWiLightMenu/gamesettings", 0777);
+	}
+	if (flashcardFound()) {
+		mkdir("fat:/_gba", 0777);
+		mkdir("fat:/_nds/TWiLightMenu/gamesettings", 0777);
+	}
 
-	swiWaitForVBlank();
+	runGraphicIrq();
 
 	if (REG_SCFG_EXT != 0) {
 		*(vu32*)(0x0DFFFE0C) = 0x53524C41;		// Check for 32MB of RAM
@@ -794,7 +801,7 @@ int main(int argc, char **argv)
 			else if (ms().consoleModel < 1 || ms().consoleModel > 2
 				  || bs().consoleModel < 1 || bs().consoleModel > 2)
 			{
-				consoleModelSelect();			// There's no SD card
+				consoleModelSelect();			// There's no NAND or SD card
 			}
 		}
 		else
@@ -873,9 +880,6 @@ int main(int argc, char **argv)
 		ms().saveSettings();
 	}
 
-	mkdir("/_gba", 0777);
-	mkdir("/_nds/TWiLightMenu/gamesettings", 0777);
-
 	if (access(BOOTSTRAP_INI, F_OK) != 0) {
 		u64 driveSize = 0;
 		int gbNumber = 0;
@@ -900,6 +904,16 @@ int main(int argc, char **argv)
 	{
 		flashcardInit();
 		lastRunROM();
+	}
+
+	if (!softResetParamsFound && ms().autostartSlot1 && isDSiMode() && REG_SCFG_MC != 0x11 && !flashcardFound() && !(keysHeld() & KEY_SELECT)) {
+		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
+			dsCardLaunch();
+		} else if (ms().slot1LaunchMethod==2) {
+			unlaunchRomBoot("cart:");
+		} else {
+			runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
+		}
 	}
 
 	keysSetRepeat(25, 5);
@@ -948,6 +962,10 @@ int main(int argc, char **argv)
 			runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
 		} else {
 			flashcardInit();
+			if (flashcardFound()) {
+				mkdir("fat:/_gba", 0777);
+				mkdir("fat:/_nds/TWiLightMenu/gamesettings", 0777);
+			}
 			if (ms().showMainMenu) {
 				loadMainMenu();
 			}
