@@ -387,7 +387,7 @@ void showLocation(void) {
 bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 	bool proceedToLaunch = true;
 
-	if (!isDSiMode()) {
+	if (!isDSiMode() && secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
 			if (memcmp(gameTid, incompatibleGameListB4DS[i], 3) == 0) {

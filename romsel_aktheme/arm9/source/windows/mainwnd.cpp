@@ -702,7 +702,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	if (!rominfo.isDSiWare()) {
 		bool proceedToLaunch = true;
 
-		if (!isDSiMode()) {
+		if (!isDSiMode() && ms().secondaryDevice) {
 			// TODO: If the list gets large enough, switch to bsearch().
 			for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
 				if (memcmp(gameTid, incompatibleGameListB4DS[i], 3) == 0) {

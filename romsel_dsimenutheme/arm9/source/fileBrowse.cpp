@@ -1189,7 +1189,7 @@ void donorRomMsg(const char *filename) {
 bool checkForCompatibleGame(const char *filename) {
 	bool proceedToLaunch = true;
 
-	if (!isDSiMode()) {
+	if (!isDSiMode() && ms().secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
 			if (memcmp(gameTid[CURPOS], incompatibleGameListB4DS[i], 3) == 0) {
