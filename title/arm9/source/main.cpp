@@ -768,15 +768,12 @@ int main(int argc, char **argv)
 	swiWaitForVBlank();
 
 	if (REG_SCFG_EXT != 0) {
-		if (!isDSiMode()) {
-			REG_SCFG_EXT = 0x8300C000;
-		}
 		*(vu32*)(0x0DFFFE0C) = 0x53524C41;		// Check for 32MB of RAM
 		bool isDevConsole = (*(vu32*)(0x0DFFFE0C) == 0x53524C41);
 		if (isDevConsole)
 		{
 			// Check for Nintendo 3DS console
-			if (sdFound())
+			if (isDSiMode() && sdFound())
 			{
 				bool is3DS = !nandio_startup();
 				int resultModel = 1+is3DS;
@@ -801,9 +798,6 @@ int main(int argc, char **argv)
 			bs().consoleModel = 0;
 			ms().saveSettings();
 			bs().saveSettings();
-		}
-		if (!isDSiMode()) {
-			REG_SCFG_EXT = 0x83000000;
 		}
 	}
 
@@ -856,7 +850,7 @@ int main(int argc, char **argv)
 
 		// Load sound bank into memory
 		FILE* soundBank = fopen(soundBankPath, "rb");
-		fread((void*)(isDSiMode() ? 0x02FA0000 : 0x023A0000), 1, 0x58000, soundBank);
+		fread((void*)0x02FA0000, 1, 0x58000, soundBank);
 		fclose(soundBank);
 		soundBankLoaded = true;
 	}
@@ -910,7 +904,7 @@ int main(int argc, char **argv)
 		if (!soundBankLoaded) {
 			// Load sound bank into memory
 			FILE* soundBank = fopen("nitro:/soundbank.bin", "rb");
-			fread((void*)(isDSiMode() ? 0x02FA0000 : 0x023A0000), 1, 0x58000, soundBank);
+			fread((void*)0x02FA0000, 1, 0x58000, soundBank);
 			fclose(soundBank);
 			soundBankLoaded = true;
 		}
