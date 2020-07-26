@@ -30,12 +30,12 @@ class TWLSettings
     };
 
     /*0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS/R4 Ultra
-	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
-	4: Acekard RPG
-	5: Ace 3DS+/Gateway Blue Card/R4iTT
-	6: SuperCard DSTWO
+    1: R4DS (Original Non-SDHC version)/ M3 Simply
+    2: R4iDSN/R4i Gold RTS/R4 Ultra
+    3: Acekard 2(i)/Galaxy Eagle/M3DS Real
+    4: Acekard RPG
+    5: Ace 3DS+/Gateway Blue Card/R4iTT
+    6: SuperCard DSTWO
 */
 
     enum TFlashCard
@@ -66,6 +66,9 @@ class TWLSettings
         ELangPortuguese = 10,
         ELangRussian = 11,
         ELangSwedish = 12,
+        ELangDanish = 13,
+        ELangTurkish = 14,
+        ELangUkrainian = 15,
     };
 
     enum TSlot1LaunchMethod
@@ -80,7 +83,7 @@ class TWLSettings
         ENightlyBootstrap = true
     };
 
-	// 0 = No launch, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
+    // 0 = No launch, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
     enum TLaunchType
     {
         ENoLaunch = 0,
@@ -97,9 +100,9 @@ class TWLSettings
     };
 
     /*	0 = Nintendo DSi (Retail)
-	1 = Nintendo DSi (Dev/Panda)
-	2 = Nintendo 3DS
-	3 = New Nintendo 3DS	*/
+    1 = Nintendo DSi (Dev/Panda)
+    2 = Nintendo 3DS
+    3 = New Nintendo 3DS	*/
     enum TConsoleModel
     {
         EDSiRetail = 0,
@@ -132,7 +135,7 @@ class TWLSettings
     bool showMainMenu;
     int theme;
     int subtheme;
-	int showMd;
+    int showMd;
     bool showDirectories;
     int showBoxArt;
     bool animateDsiIcons;
@@ -141,7 +144,7 @@ class TWLSettings
     bool secondaryAccess;
     bool previousUsedDevice;
     bool secondaryDevice;
-	bool fcSaveOnSd;
+    bool fcSaveOnSd;
 
     int flashcard;
     int slot1LaunchMethod;
@@ -172,12 +175,12 @@ class TWLSettings
     bool homebrewBootstrap;
     bool homebrewHasWide;
     bool soundfreq;
-	int dsiSplash;
+    int dsiSplash;
     bool showlogo;
     std::string r4_theme;// unused...
     std::string unlaunchBg;
 
-	bool wideScreen;
+    bool wideScreen;
 };
 
 typedef singleton<TWLSettings> menuSettings_s;
