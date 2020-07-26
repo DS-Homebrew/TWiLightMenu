@@ -431,7 +431,7 @@ void lastRunROM()
 
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
-				if (sdFound()) {
+				if (sdFound() && !ms().secondaryDevice) {
 					argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds"));
 				} else {
 					if (isDSiMode()) {
