@@ -151,8 +151,8 @@ void SettingsGUI::draw()
 void SettingsGUI::setTopText(const std::string &text)
 {
     _topText.clear();
-    std::string _topTextStr(text);
-    std::vector<std::string> words;
+    std::u16string _topTextStr(FontGraphic::utf8to16(text));
+    std::vector<std::u16string> words;
     std::size_t pos;
 
     // Process comment to stay within the box
@@ -162,26 +162,28 @@ void SettingsGUI::setTopText(const std::string &text)
     }
     if(_topTextStr.size())
         words.push_back(_topTextStr);
-    std::string temp;
+    std::u16string temp;
     for(auto word : words) {
         // Split word if the word is too long for a line
         int width = calcLargeFontWidth(word);
         if(width > 240) {
-        if(temp.length())
-            _topText += temp + '\n';
-        for(int i = 0; i < width/240; i++) {
-            word.insert((float)((i + 1) * word.length()) / ((width/240) + 1), "\n");
-        }
-        _topText += word + '\n';
-        continue;
+            if(temp.length()) {
+                _topText += temp + u"\n";
+                temp = u"";
+            }
+            for(int i = 0; i < width/240.0; i++) {
+                word.insert((float)((i + 1) * word.length()) / ((width/240) + 1), u"\n");
+            }
+            _topText += word + u"\n";
+            continue;
         }
 
-        width = calcLargeFontWidth(temp + " " + word);
+        width = calcLargeFontWidth(temp + u" " + word);
         if(width > 240) {
-        _topText += temp + '\n';
+        _topText += temp + u"\n";
         temp = word;
         } else {
-        temp += " " + word;
+        temp += u" " + word;
         }
     }
     if(temp.size())
