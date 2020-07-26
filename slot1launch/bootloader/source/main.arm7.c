@@ -759,7 +759,7 @@ void arm7_main (void) {
 		debugOutput(errorCode);
 	}
 
-	if (dsiMode) {
+	/*if (dsiMode) {
 		if (twlMode == 2) {
 			dsiModeConfirmed = twlMode;
 		} else {
@@ -774,7 +774,7 @@ void arm7_main (void) {
 		if (dsiHeaderTemp->arm7ibinarySize > 0) {
 			cardRead((u32)dsiHeaderTemp->arm7iromOffset, (u32*)dsiHeaderTemp->arm7idestination, dsiHeaderTemp->arm7ibinarySize);
 		}
-	}
+	}*/
 
 	ndsHeader = loadHeader(dsiHeaderTemp);
 
