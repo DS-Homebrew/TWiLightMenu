@@ -432,7 +432,7 @@ std::string setApFix(const char *filename) {
 /**
  * Enable widescreen for some games.
  */
-TWL_CODE void SetWidescreen(const char *filename) {
+void SetWidescreen(const char *filename) {
 	remove("/_nds/nds-bootstrap/wideCheatData.bin");
 
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
