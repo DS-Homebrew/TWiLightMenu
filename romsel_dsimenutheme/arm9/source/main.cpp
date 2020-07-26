@@ -1041,8 +1041,11 @@ int main(int argc, char **argv) {
 						}
 					}
 
-					if (isDSiMode()) {
+					if (isDSiMode() || !ms().secondaryDevice) {
 						SetWidescreen(filename.c_str());
+					}
+					if (!isDSiMode() && !ms().secondaryDevice) {
+						ntrStartSdGame();
 					}
 
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
@@ -1411,7 +1414,7 @@ int main(int argc, char **argv) {
 
 						char ndsToBoot[256];
 						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
-						if(access(ndsToBoot, F_OK) != 0) {
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							sprintf(ndsToBoot, "fat:/_nds/%s-%s%s.nds", isDSiMode() ? "nds-bootstrap" : "b4ds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						}
 
