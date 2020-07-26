@@ -794,15 +794,15 @@ void launchGba(void) {
 	// Switch to GBA mode
 	if (ms().useGbarunner) {
 		if (ms().secondaryDevice) {
-			const char* gbaRunner2Path = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
+			const char* gbar2Path = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
 			if (isDSiMode()) {
-				gbaRunner2Path = ms().consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
+				gbar2Path = ms().consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
 			}
 			if (ms().useBootstrap) {
-				int err = runNdsFile(gbaRunner2Path, 0, NULL, true, true, false, true, false);
+				int err = runNdsFile(gbar2Path, 0, NULL, true, true, false, true, false);
 				iprintf("Start failed. Error %i\n", err);
 			} else {
-				loadGameOnFlashcard(gbaRunner2Path, false);
+				loadGameOnFlashcard(gbar2Path, false);
 			}
 		} else {
 			std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
@@ -812,8 +812,13 @@ void launchGba(void) {
 			argarray.push_back(strdup(bootstrapPath.c_str()));
 			argarray.at(0) = (char*)bootstrapPath.c_str();
 
+			const char* gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
+			if (isDSiMode() && sys().arm7SCFGLocked()) {
+				gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
+			}
+
 			CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
-			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
+			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2Path);
 			bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
@@ -821,6 +826,10 @@ void launchGba(void) {
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 			bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+			if (!isDSiMode() && !ms().secondaryDevice) {
+				extern void ntrStartSdGame();
+				ntrStartSdGame();
+			}
 			int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
 			char text[32];
 			snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
