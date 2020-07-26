@@ -437,7 +437,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
 
-	if (arm7SCFGLocked || consoleModel < 2 || !useWidescreen
+	if ((isDSiMode() && arm7SCFGLocked) || consoleModel < 2 || !useWidescreen
 	|| (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0)) {
 		return;
 	}
@@ -797,6 +797,20 @@ void unlaunchSetHiyaBoot(void) {
 	}
 	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
 		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
+	}
+}
+
+/**
+ * Reboot into an SD game when in DS mode.
+ */
+void ntrStartSdGame(void) {
+	if (consoleModel == 0) {
+		unlaunchRomBoot("sd:/_nds/TWiLightMenu/resetgame.srldr");
+	} else {
+		irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
+		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+		fifoSendValue32(FIFO_USER_02, 1);
+		stop();
 	}
 }
 
@@ -2216,7 +2230,7 @@ int main(int argc, char **argv) {
 
 						bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
 
-						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+						bootstrapinipath = ((!secondaryDevice || (isDSiMode() && sdFound())) ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
@@ -2226,10 +2240,10 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && game_TID[0] == 'W') ? "wide" : "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !secondaryDevice) ? ramdiskpath : "sd:/null.img");
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
-						if (isDSiMode()) {
+						if (isDSiMode() || !secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
 						}
-						if (REG_SCFG_EXT != 0) {
+						if ((REG_SCFG_EXT != 0) || !secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
 						}
@@ -2249,7 +2263,7 @@ int main(int argc, char **argv) {
                         			CheatCodelist codelist;
 						u32 gameCode,crc32;
 
-						if (isDSiMode() && !isHomebrew[secondaryDevice]) {
+						if ((isDSiMode() || !secondaryDevice) && !isHomebrew[secondaryDevice]) {
 							bool cheatsEnabled = true;
 							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
 							mkdir("/_nds", 0777);
@@ -2291,8 +2305,11 @@ int main(int argc, char **argv) {
 						launchType[secondaryDevice] = 1;
 						SaveSettings();
 
-						if (isDSiMode()) {
+						if (isDSiMode() || !secondaryDevice) {
 							SetWidescreen(filename[secondaryDevice].c_str());
+						}
+						if (!isDSiMode() && !secondaryDevice) {
+							ntrStartSdGame();
 						}
 
 						bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
@@ -2324,8 +2341,11 @@ int main(int argc, char **argv) {
 					launchType[secondaryDevice] = 2;
 					SaveSettings();
 
-					if (isDSiMode()) {
+					if (isDSiMode() || !secondaryDevice) {
 						SetWidescreen(filename[secondaryDevice].c_str());
+					}
+					if (!isDSiMode() && !secondaryDevice) {
+						ntrStartSdGame();
 					}
 
 					bool runNds_boostCpu = false;
@@ -2559,6 +2579,9 @@ int main(int argc, char **argv) {
 				}
 
 				SaveSettings();
+				if (!isDSiMode() && !secondaryDevice) {
+					ntrStartSdGame();
+				}
 				argarray.push_back(ROMpath);
 				int err = 0;
 

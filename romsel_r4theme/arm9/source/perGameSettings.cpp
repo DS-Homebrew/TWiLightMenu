@@ -150,7 +150,7 @@ void dontShowAPMsgAgain (std::string filename) {
 }
 
 bool checkIfDSiMode (std::string filename) {
-	if (!isDSiMode() || (!useBootstrap && secondaryDevice)) {
+	if (secondaryDevice && (!isDSiMode() || !useBootstrap)) {
 		return false;
 	}
 
@@ -299,7 +299,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 		}
-		if (REG_SCFG_EXT != 0) {
+		if ((REG_SCFG_EXT != 0) || !secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
 			perGameOps++;
@@ -319,25 +319,25 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 0;	// Language
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
-			if (isDSiMode()) {
+			if (isDSiMode() || !secondaryDevice) {
 				perGameOps++;
 				perGameOp[perGameOps] = 2;	// Run in
 			}
 		}
-		if (REG_SCFG_EXT != 0) {
+		if ((REG_SCFG_EXT != 0) || !secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (useBootstrap || !secondaryDevice) {
-			if (isDSiMode() && arm9dst != 0x02004000 && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000) {
+			if ((isDSiMode() || !secondaryDevice) && arm9dst != 0x02004000 && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Heap shrink
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
-			if (isDSiMode() && consoleModel >= 2 && sdFound()) {
+			if (((isDSiMode() && sdFound()) || !secondaryDevice) && consoleModel >= 2) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}

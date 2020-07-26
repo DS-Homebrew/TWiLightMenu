@@ -614,12 +614,20 @@ int main(int argc, char **argv)
 
 	if (widescreenFound)
 	{
-		gamesPage.option(STR_ASPECTRATIO, STR_DESCRIPTION_ASPECTRATIO, Option::Bool(&ms().wideScreen), {STR_WIDESCREEN, STR_FULLSCREEN}, {true, false});
+		gamesPage.option((isDSiMode() ? STR_ASPECTRATIO : "Sys SD: "+STR_ASPECTRATIO),
+			STR_DESCRIPTION_ASPECTRATIO,
+			Option::Bool(&ms().wideScreen),
+			{STR_WIDESCREEN, STR_FULLSCREEN},
+			{true, false});
 	}
 
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked())
 	{
-		gamesPage.option(STR_SMSGGINRAM, STR_DESCRIPTION_SMSGGINRAM, Option::Bool(&ms().smsGgInRam), {STR_YES, STR_NO}, {true, false});
+		gamesPage.option((isDSiMode() ? STR_SMSGGINRAM : "Sys SD: "+STR_SMSGGINRAM),
+			STR_DESCRIPTION_SMSGGINRAM,
+			Option::Bool(&ms().smsGgInRam),
+			{STR_YES, STR_NO},
+			{true, false});
 	}
 
 	if (!isDSiMode() && sys().isRegularDS())
@@ -638,24 +646,37 @@ int main(int argc, char **argv)
 						{TRunIn::EDSMode, TRunIn::EDSiMode, TRunIn::EDSiModeForced});
 	}
 
-	if (REG_SCFG_EXT != 0) {
-		gamesPage.option(STR_CPUSPEED,
+	if ((REG_SCFG_EXT != 0) || sdAccessible) {
+		gamesPage.option(((isDSiMode() || (REG_SCFG_EXT != 0)) ? STR_CPUSPEED : "Sys SD: "+STR_CPUSPEED),
 				STR_DESCRIPTION_CPUSPEED_1,
 				Option::Bool(&ms().boostCpu),
 				{"133 MHz (TWL)", "67 MHz (NTR)"},
 				{true, false})
-		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false});
-		if (sdAccessible && !sys().arm7SCFGLocked()) {
+			.option(((isDSiMode() || (REG_SCFG_EXT != 0)) ? STR_VRAMBOOST : "Sys SD: "+STR_VRAMBOOST),
+				STR_DESCRIPTION_VRAMBOOST_1,
+				Option::Bool(&ms().boostVram),
+				{STR_ON, STR_OFF},
+				{true, false});
+		if (sdAccessible && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
 			gamesPage
-				.option(STR_SLOT_1_SD+": "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false})
-				.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false});
+				.option(STR_SLOT_1_SD+": "+STR_USEBOOTSTRAP+(!isDSiMode() ? " (B4DS)" : ""), STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+			if (isDSiMode()) {
+				gamesPage
+					.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false});
+			}
 		} else if (!isDSiMode() && fatAccessible) {
 			gamesPage.option(STR_USEBOOTSTRAP+" (B4DS)", STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 		}
-		if (sdAccessible && !sys().arm7SCFGLocked()) {
-			gamesPage.option(STR_FORCESLEEPPATCH, STR_DESCRIPTION_FORCESLEEPMODE, Option::Bool(&ms().forceSleepPatch), {STR_ON, STR_OFF}, {true, false})
-				.option(STR_SLOT1SDACCESS, STR_DESCRIPTION_SLOT1SDACCESS, Option::Bool(&ms().slot1AccessSD), {STR_ON, STR_OFF}, {true, false})
-				.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false});
+		if (sdAccessible && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
+			gamesPage.option((isDSiMode() ? STR_FORCESLEEPPATCH : "Sys SD: "+STR_FORCESLEEPPATCH),
+				STR_DESCRIPTION_FORCESLEEPMODE,
+				Option::Bool(&ms().forceSleepPatch),
+				{STR_ON, STR_OFF},
+				{true, false});
+			if (isDSiMode()) {
+				gamesPage.option(STR_SLOT1SDACCESS, STR_DESCRIPTION_SLOT1SDACCESS, Option::Bool(&ms().slot1AccessSD), {STR_ON, STR_OFF}, {true, false})
+					.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false});
+			}
 		}
 	} else {
 		gamesPage.option(STR_USEBOOTSTRAP+" (B4DS)", STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
@@ -676,29 +697,50 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundFreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
 	}
 
-	if (isDSiMode() && ms().consoleModel < 2)
+	if ((isDSiMode() || sdAccessible) && ms().consoleModel < 2)
 	{
 		if (sdAccessible) {
 			gamesPage
-				.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
-							 {TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
-				.option(STR_DMAROMREADLED, STR_DESCRIPTION_DMAROMREADLED, Option::Int(&bs().dmaromreadled), {STR_SAME_AS_REG, STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
-							 {TROMReadLED::ELEDSame, TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
+				.option((isDSiMode() ? STR_ROMREADLED : "Sys SD: "+STR_ROMREADLED),
+					STR_DESCRIPTION_ROMREADLED_1,
+					Option::Int(&bs().romreadled),
+					{STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
+					{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
+				.option((isDSiMode() ? STR_DMAROMREADLED : "Sys SD: "+STR_DMAROMREADLED),
+					STR_DESCRIPTION_DMAROMREADLED,
+					Option::Int(&bs().dmaromreadled),
+					{STR_SAME_AS_REG, STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
+					{TROMReadLED::ELEDSame, TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
 		}
-		gamesPage.option(STR_PRECISEVOLUMECTRL, STR_DESCRIPTION_PRECISEVOLUMECTRL, Option::Bool(&bs().preciseVolumeControl), {STR_ON, STR_OFF},
-				{true, false});
+		gamesPage.option((isDSiMode() ? STR_PRECISEVOLUMECTRL : "Sys SD: "+STR_PRECISEVOLUMECTRL),
+			STR_DESCRIPTION_PRECISEVOLUMECTRL,
+			Option::Bool(&bs().preciseVolumeControl),
+			{STR_ON, STR_OFF},
+			{true, false});
 		if (sdAccessible) {
 			gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool(&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"},
 					{true, false});
 		}
 	}
 
-	if (isDSiMode()) {
-		gamesPage.option(STR_EXPANDROMSPACE, (ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS), Option::Int(&bs().extendedMemory), {STR_NO, STR_YES, STR_YES+"+512KB"}, {0, 1, 2});
+	if (isDSiMode() || sdAccessible) {
+		gamesPage.option((isDSiMode() ? STR_EXPANDROMSPACE : "Sys SD: "+STR_EXPANDROMSPACE),
+			(ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS),
+			Option::Int(&bs().extendedMemory),
+			{STR_NO, STR_YES, STR_YES+"+512KB"},
+			{0, 1, 2});
 		if (sdAccessible) {
-			gamesPage.option(STR_CACHEBLOCKSIZE, STR_DESCRIPTION_CACHEBLOCKSIZE, Option::Bool(&bs().cacheBlockSize), {"16KB", "32KB"}, {false, true});
+			gamesPage.option((isDSiMode() ? STR_CACHEBLOCKSIZE : "Sys SD: "+STR_CACHEBLOCKSIZE),
+				STR_DESCRIPTION_CACHEBLOCKSIZE,
+				Option::Bool(&bs().cacheBlockSize),
+				{"16KB", "32KB"},
+				{false, true});
 		}
-		gamesPage.option(STR_SAVEFATTABLECACHE, STR_DESCRIPTION_SAVEFATTABLECACHE, Option::Bool(&bs().cacheFatTable), {STR_YES, STR_NO}, {true, false});
+		gamesPage.option((isDSiMode() ? STR_SAVEFATTABLECACHE : "Sys SD: "+STR_SAVEFATTABLECACHE),
+			STR_DESCRIPTION_SAVEFATTABLECACHE,
+			Option::Bool(&bs().cacheFatTable),
+			{STR_YES, STR_NO},
+			{true, false});
 	}
 
 	gamesPage
