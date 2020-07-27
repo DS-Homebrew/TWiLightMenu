@@ -188,6 +188,12 @@ void SettingsGUI::setTopText(const std::string &text)
     }
     if(temp.size())
         _topText += temp;
+    
+    // Ensure there are no newlines at the beggining / end
+    while(_topText[0] == '\n')
+        _topText = _topText.substr(1);
+    while(_topText[_topText.length() - 1] == '\n')
+        _topText = _topText.substr(0, _topText.length() - 2);
 }
 
 void SettingsGUI::drawSub()
