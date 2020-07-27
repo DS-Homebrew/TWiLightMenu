@@ -1,160 +1,198 @@
-/******************************************************************************
- *******************************************************************************
-	A simple font class for Easy GL2D DS created by:
-
-	Relminator (Richard Eric M. Lope BSN RN)
-	Http://Rel.Phatcode.Net
-
- *******************************************************************************
- ******************************************************************************/
-
-#include <nds.h>
-#include <stdio.h>
-#include <gl2d.h>
 #include "FontGraphic.h"
 
-int fontTextureID[2];
+#include "common/tonccpy.h"
 
-int FontGraphic::load(int textureID, glImage *_font_sprite,
-				  const unsigned int numframes,
-				  const unsigned int *texcoords,
-				  GL_TEXTURE_TYPE_ENUM type,
-				  int sizeX,
-				  int sizeY,
-				  int param,
-				  int pallette_width,
-				  const u16 *palette,
-				  const uint8 *texture,
-				  const unsigned short int *_mapping
-				  )
+u8 FontGraphic::textBuf[2][256 * 192];
 
-{
-	fontSprite = _font_sprite;
-	imageCount = numframes;
-	mapping = _mapping;
-	if (fontTextureID[textureID]) glDeleteTextures(1, &fontTextureID[textureID]);
-	fontTextureID[textureID] =
-			glLoadSpriteSet(fontSprite,
-							numframes,
-							texcoords,
-							type,
-							sizeX,
-							sizeY,
-							param,
-							pallette_width,
-							palette,
-							texture
-							);
+FontGraphic::FontGraphic(const std::string &path, const std::string &fallback) {
+	FILE *file = fopen(path.c_str(), "rb");
+	if(!file) {
+		file = fopen(fallback.c_str(), "rb");
+	}
 
-	return fontTextureID[textureID];
+	if(file) {
+		// Get file size
+		fseek(file, 0, SEEK_END);
+		u32 fileSize = ftell(file);
 
-}
+		// Skip font info
+		fseek(file, 0x14, SEEK_SET);
+		fseek(file, fgetc(file)-1, SEEK_CUR);
 
-/**
- * Get the index in the UV coordinate array where the letter appears
- */
-unsigned int FontGraphic::getSpriteIndex(const u16 letter) {
-	unsigned int spriteIndex = 0;
-	long int left = 0;
-	long int right = imageCount;
-	long int mid = 0;
+		// Load glyph info
+		u32 chunkSize;
+		fread(&chunkSize, 4, 1, file);
+		tileWidth = fgetc(file);
+		tileHeight = fgetc(file);
+		fread(&tileSize, 2, 1, file);
 
-	while (left <= right)
-	{
-		mid = left + ((right - left) / 2);
-		if (mapping[mid] == letter) {
-			spriteIndex = mid;
-			break;
+		// Load character glyphs
+		int tileAmount = ((chunkSize-0x10)/tileSize);
+		fontTiles = std::vector<u8>(tileSize*tileAmount);
+		fseek(file, 4, SEEK_CUR);
+		fread(fontTiles.data(), tileSize, tileAmount, file);
+
+		// Fix top row
+		for(int i=0;i<tileAmount;i++) {
+			fontTiles[i*tileSize] = 0;
+			fontTiles[i*tileSize+1] = 0;
+			fontTiles[i*tileSize+2] = 0;
 		}
 
-		if (mapping[mid] < letter) {
+		// Load character widths
+		fseek(file, 0x24, SEEK_SET);
+		u32 locHDWC;
+		fread(&locHDWC, 4, 1, file);
+		fseek(file, locHDWC-4, SEEK_SET);
+		fread(&chunkSize, 4, 1, file);
+		fseek(file, 8, SEEK_CUR);
+		fontWidths = std::vector<u8>(3*tileAmount);
+		fread(fontWidths.data(), 3, tileAmount, file);
+
+		// Load character maps
+		fontMap = std::vector<u16>(tileAmount);
+		fseek(file, 0x28, SEEK_SET);
+		u32 locPAMC, mapType;
+		fread(&locPAMC, 4, 1, file);
+
+		while(locPAMC < fileSize) {
+			u16 firstChar, lastChar;
+			fseek(file, locPAMC, SEEK_SET);
+			fread(&firstChar, 2, 1, file);
+			fread(&lastChar, 2, 1, file);
+			fread(&mapType, 4, 1, file);
+			fread(&locPAMC, 4, 1, file);
+
+			switch(mapType) {
+				case 0: {
+					u16 firstTile;
+					fread(&firstTile, 2, 1, file);
+					for(unsigned i=firstChar;i<=lastChar;i++) {
+						fontMap[firstTile+(i-firstChar)] = i;
+					}
+					break;
+				} case 1: {
+					for(int i=firstChar;i<=lastChar;i++) {
+						u16 tile;
+						fread(&tile, 2, 1, file);
+						fontMap[tile] = i;
+					}
+					break;
+				} case 2: {
+					u16 groupAmount;
+					fread(&groupAmount, 2, 1, file);
+					for(int i=0;i<groupAmount;i++) {
+						u16 charNo, tileNo;
+						fread(&charNo, 2, 1, file);
+						fread(&tileNo, 2, 1, file);
+						fontMap[tileNo] = charNo;
+					}
+					break;
+				}
+			}
+		}
+		fclose(file);
+		questionMark = getCharIndex('?');
+	}
+}
+
+u16 FontGraphic::getCharIndex(char16_t c) {
+	// Try a binary search
+	int left = 0;
+	int right = fontMap.size();
+
+	while(left <= right) {
+		int mid = left + ((right - left) / 2);
+		if(fontMap[mid] == c) {
+			return mid;
+		}
+
+		if(fontMap[mid] < c) {
 			left = mid + 1;
 		} else {
 			right = mid - 1;
 		}
 	}
-	return spriteIndex;
+
+	return questionMark;
 }
 
-char16_t FontGraphic::getCharacter(const char *&text) {
-	// UTF-8 handling
-	if((*text & 0x80) == 0) {
-		return getSpriteIndex(*text++);
-	} else if((*text & 0xE0) == 0xC0) {
-		char16_t c = ((*text++ & 0x1F) << 6);
-		if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
-
-		return getSpriteIndex(c);
-	} else if((*text & 0xF0) == 0xE0) {
-		char16_t c = (*text++ & 0xF) << 12;
-		if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-		if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
-
-		return getSpriteIndex(c);
-	} else if((*text & 0xF8) == 0xF0) {
-		char16_t c = (*text++ & 0x7) << 18;
-		if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
-		if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-		if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
-
-		return getSpriteIndex(c);
-	} else {
-		// Character isn't valid, return ?
-		text++;
-		return getSpriteIndex('?');
+std::u16string FontGraphic::utf8to16(std::string_view text) {
+	std::u16string out;
+	for(uint i=0;i<text.size();) {
+		char16_t c;
+		if(!(text[i] & 0x80)) {
+			c = text[i++];
+		} else if((text[i] & 0xE0) == 0xC0) {
+			c  = (text[i++] & 0x1F) << 6;
+			c |=  text[i++] & 0x3F;
+		} else if((text[i] & 0xF0) == 0xE0) {
+			c  = (text[i++] & 0x0F) << 12;
+			c |= (text[i++] & 0x3F) << 6;
+			c |=  text[i++] & 0x3F;
+		} else {
+			i++; // out of range or something (This only does up to 0xFFFF since it goes to a U16 anyways)
+		}
+		out += c;
 	}
+	return out;
 }
 
-void FontGraphic::print(int x, int y, const char *text)
-{
-	while (*text)
-	{
-		char16_t fontChar = getCharacter(text);
-		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
-		x += fontSprite[fontChar].width;
-	}
-}
+int FontGraphic::calcWidth(std::u16string_view text) {
+	uint x = 0;
 
-int FontGraphic::calcWidth(const char *text)
-{
-	int x = 0;
-
-	while (*text)
-	{
-		x += fontSprite[getCharacter(text)].width;
+	for(auto c : text) {
+		u16 index = getCharIndex(c);
+		x += fontWidths[(index * 3) + 2];
 	}
+
 	return x;
 }
 
-void FontGraphic::print(int x, int y, int value)
-{
-	sprintf(buffer, "%i", value);
-	print(x, y, buffer);
-}
+ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view text, Alignment align) {
+	// Adjust x for alignment
+	switch(align) {
+		case Alignment::left: {
+			break;
+		} case Alignment::center: {
+			size_t newline = text.find('\n');
+			while(newline != text.npos) {
+				print(x, y, top, text.substr(0, newline), align);
+				text = text.substr(newline + 1);
+				newline = text.find('\n');
+				y += tileHeight;
+			}
 
-int FontGraphic::getCenteredX(const char *text)
-{
-	int total_width = 0;
-	while (*text)
-	{
-		total_width += fontSprite[getCharacter(text)].width;
+			x = ((256 - calcWidth(text)) / 2) + x;
+			break;
+		} case Alignment::right: {
+			x = x - calcWidth(text);
+			break;
+		}
 	}
-	return (SCREEN_WIDTH - total_width) / 2;
-}
+	const int xStart = x;
 
-void FontGraphic::printCentered(int y, const char *text)
-{
-	int x = getCenteredX(text);
-	while (*text)
-	{
-		char16_t fontChar = getCharacter(text);
-		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
-		x += fontSprite[fontChar].width;
+	// Loop through string and print it
+	for(auto c : text) {
+		if(c == '\n') {
+			x = xStart;
+			y += tileHeight;
+			continue;
+		}
+
+		u16 index = getCharIndex(c);
+		// No need to draw off screen chars
+		if(x >= 0 && x < 256) {
+			u8 *dst = textBuf[top] + x + fontWidths[(index * 3)];
+			for(int i = 0; i < tileHeight; i++) {
+				for(int j = 0; j < tileWidth; j++) {
+					u8 px = fontTiles[(index * tileSize) + (i * tileWidth + j) / 4] >> ((3 - ((i * tileWidth + j) % 4)) * 2) & 3;
+					if(px)
+						dst[(y + i) * 256 + j] = px;
+				}
+			}
+		}
+
+		x += fontWidths[(index * 3) + 2];
 	}
-}
-
-void FontGraphic::printCentered(int y, int value)
-{
-	sprintf(buffer, "%i", value);
-	printCentered(y, buffer);
 }

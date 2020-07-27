@@ -31,15 +31,15 @@ void loadSdRemovedImage(void) {
 	std::vector<unsigned char> image;
 	unsigned width, height;
 	unsigned error = lodepng::decode(image, width, height, "nitro:/graphics/sdRemovedError.png");
-	if(error)	printSmallCentered(false, 30, "Error");
+	if(error)	printSmall(false, 0, 30, "Error", Alignment::center);
 	for(unsigned i=0;i<image.size()/4;i++) {
-  		sdRemovedExtendedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		sdRemovedExtendedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 
 	image.clear();
 	lodepng::decode(image, width, height, "nitro:/graphics/sdRemoved.png");
 	for(unsigned i=0;i<image.size()/4;i++) {
-  		sdRemovedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		sdRemovedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 }
 
@@ -54,7 +54,7 @@ void checkSdEject(void) {
 		}
 		return;
 	}
-	
+
 	// Show "SD removed" screen
 	mmEffectCancelAll();
 
@@ -86,7 +86,7 @@ void checkSdEject(void) {
 				while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
 					*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 				}
-			} 
+			}
 			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			swiWaitForVBlank();
 		}
