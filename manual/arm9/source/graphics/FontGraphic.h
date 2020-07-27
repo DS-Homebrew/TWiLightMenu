@@ -1,47 +1,41 @@
-/******************************************************************************
- *******************************************************************************
-	A simple font class for Easy GL2D DS created by:
-
-	Relminator (Richard Eric M. Lope BSN RN)
-	Http://Rel.Phatcode.Net
-
- *******************************************************************************
- ******************************************************************************/
 #pragma once
-#include <gl2d.h>
-#define FONT_SX 8
-#define FONT_SY 10
 
-class FontGraphic
-{
+#include <nds.h>
+#include <string>
+#include <string_view>
+#include <vector>
+
+enum class Alignment {
+	left,
+	center,
+	right,
+};
+
+class FontGraphic {
 private:
-	glImage *fontSprite;
-	const unsigned short int *mapping;
-	unsigned int imageCount;
-	char buffer[256];
-	char buffer2[256];
-	unsigned int getSpriteIndex(const u16 letter);
-	char16_t getCharacter(const char *&text);
+	u8 tileWidth, tileHeight;
+	u16 tileSize;
+	u16 questionMark = 0;
+	std::vector<u8> fontTiles;
+	std::vector<u8> fontWidths;
+	std::vector<u16> fontMap;
+
+	u16 getCharIndex(char16_t c);
 
 public:
+	static u8 textBuf[2][256 * 192];
 
-	FontGraphic() { };
-	int load(int textureID, glImage *_font_sprite,
-			const unsigned int numframes,
-			const unsigned int *texcoords,
-			GL_TEXTURE_TYPE_ENUM type,
-			int sizeX,
-			int sizeY,
-			int param,
-			int pallette_width,
-			const u16 *palette,
-			const uint8 *texture,
-			const unsigned short int *_mapping
-			);
-	void print(int x, int y, const char *text);
-	int calcWidth(const char *text);
-	void print(int x, int y, int value);
-	int getCenteredX(const char *text);
-	void printCentered(int y, const char *text);
-	void printCentered(int y, int value);
+	static std::u16string utf8to16(std::string_view text);
+
+	FontGraphic() {};
+	FontGraphic(const std::string &path, const std::string &fallback);
+
+	u8 height(void) { return tileHeight; }
+
+	int calcWidth(std::string_view text) { return calcWidth(utf8to16(text)); }
+	int calcWidth(std::u16string_view text);
+
+	void print(int x, int y, bool top, int value, Alignment align) { print(x, y, top, std::to_string(value), align); }
+	void print(int x, int y, bool top, std::string_view text, Alignment align) { print(x, y, top, utf8to16(text), align); }
+	void print(int x, int y, bool top, std::u16string_view text, Alignment align);
 };

@@ -31,10 +31,8 @@
 #include <algorithm>
 #include <string.h>
 #include <unistd.h>
-#include <gl2d.h>
 
 #include "graphics/graphics.h"
-#include "graphics/topText.h"
 
 #include "common/nitrofs.h"
 #include "nds_loader_arm9.h"
@@ -58,6 +56,8 @@ struct PageLink {
 	int y;
 	int w;
 	int h;
+
+	PageLink(std::string dest, int x, int y, int w, int h) : dest(dest), x(x), y(y), w(w), h(h) {}
 };
 
 bool fadeType = false;		// false = out, true = in
@@ -97,9 +97,18 @@ bool sdRemoveDetect = true;
 
 std::vector<DirEntry> manPagesList;
 std::vector<PageLink> manPageLinks;
-char manPageTitle[64] = {0};
+std::string manPageTitle;
 int pageYpos = 0;
-int pageYsize = 1036;
+int pageYsize = 0;
+
+char filePath[PATH_MAX];
+
+mm_sound_effect snd_launch;
+mm_sound_effect snd_select;
+mm_sound_effect snd_stop;
+mm_sound_effect snd_wrong;
+mm_sound_effect snd_back;
+mm_sound_effect snd_switch;
 
 bool sortPagesPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
@@ -108,10 +117,10 @@ bool sortPagesPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 void loadPageList() {
 	struct stat st;
 
-	DIR *pdir = opendir("."); 
-	
+	DIR *pdir = opendir(".");
+
 	if (pdir == NULL) {
-		printSmallCentered(false, 64, "Unable to open the directory.\n");
+		printSmall(false, 0, 64, "Unable to open the directory.\n", Alignment::center);
 	} else {
 
 		while(true) {
@@ -143,27 +152,21 @@ void loadPageInfo(std::string pagePath) {
 	manPageLinks.clear();
 
 	CIniFile pageIni(pagePath);
-	
-	memset(&manPageTitle[0], 0, sizeof(manPageTitle));
-	snprintf(manPageTitle, sizeof(manPageTitle), pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual").c_str());
-	pageYsize = pageIni.GetInt("INFO","HEIGHT",1036);
+
+	manPageTitle = pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual");
 	bgColor1 = pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B);
 	bgColor2 = pageIni.GetInt("INFO","BG_COLOR_2",0x77BD);
 
-	for(int i=1;i<99;i++) {
-		char link[7] = {0};
-		snprintf(link, sizeof(link),"LINK%i",i);
+	for(int i=1;true;i++) {
+		std::string link = "LINK" + std::to_string(i);
+		if(pageIni.GetString(link,"DEST","NONE") == "NONE")
+			break;
 
-		if(pageIni.GetString(link,"DEST","NONE") == "NONE")	break;
-
-		PageLink pageLink;
-		pageLink.x = pageIni.GetInt(link,"X",0);
-		pageLink.y = pageIni.GetInt(link,"Y",0);
-		pageLink.w = pageIni.GetInt(link,"W",0);
-		pageLink.h = pageIni.GetInt(link,"H",0);
-		pageLink.dest = pageIni.GetString(link,"DEST","NONE");
-
-		manPageLinks.push_back(pageLink);
+		manPageLinks.emplace_back(pageIni.GetString(link,"DEST","NONE"),
+								  pageIni.GetInt(link,"X",0),
+								  pageIni.GetInt(link,"Y",0),
+								  pageIni.GetInt(link,"W",0),
+								  pageIni.GetInt(link,"H",0));
 	}
 }
 
@@ -184,8 +187,6 @@ void LoadSettings(void) {
 	}
 }
 
-using namespace std;
-
 //---------------------------------------------------------------------------------
 void stop (void) {
 //---------------------------------------------------------------------------------
@@ -194,32 +195,9 @@ void stop (void) {
 	}
 }
 
-char filePath[PATH_MAX];
-
-//---------------------------------------------------------------------------------
-void doPause() {
-//---------------------------------------------------------------------------------
-	// iprintf("Press start...\n");
-	// printSmall(false, x, y, "Press start...");
-	while(1) {
-		scanKeys();
-		if(keysDown() & KEY_START)
-			break;
-		swiWaitForVBlank();
-	}
-	scanKeys();
-}
-
-mm_sound_effect snd_launch;
-mm_sound_effect snd_select;
-mm_sound_effect snd_stop;
-mm_sound_effect snd_wrong;
-mm_sound_effect snd_back;
-mm_sound_effect snd_switch;
-
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
-	
+
 	mmLoadEffect( SFX_LAUNCH );
 	mmLoadEffect( SFX_SELECT );
 	mmLoadEffect( SFX_STOP );
@@ -271,8 +249,7 @@ void InitSound() {
 	};
 }
 
-void loadROMselect()
-{
+void loadROMselect() {
 	mmEffectEx(&snd_back);
 	fadeType = false;	// Fade out to white
 	for (int i = 0; i < 25; i++) {
@@ -353,17 +330,9 @@ void unlaunchSetHiyaBoot(void) {
 	}
 }
 
-void pageScroll(void) {
-	extern u16 pageImage[256*1036];
-	dmaCopyWordsAsynch(0, (u16*)pageImage+(pageYpos*256), (u16*)BG_GFX_SUB+(18*256), 0x15C00);
-	dmaCopyWordsAsynch(1, (u16*)pageImage+((174+pageYpos)*256), (u16*)BG_GFX, 0x18000);
-	while (dmaBusy(0) || dmaBusy(1));
-}
-
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
-
 	defaultExceptionHandler();
 
 	extern const DISC_INTERFACE __my_io_dsisd;
@@ -371,13 +340,12 @@ int main(int argc, char **argv) {
 	fatMountSimple("sd", &__my_io_dsisd);
 	bool sdFound = (access("sd:/", F_OK) == 0);
 	fatMountSimple("fat", dldiGetInternal());
-    bool fatInited = (sdFound || (access("fat:/", F_OK) == 0));
+	bool fatInited = (sdFound || (access("fat:/", F_OK) == 0));
 	chdir(sdFound ? "sd:/" : "fat:/");
 
 	if (!fatInited) {
-		graphicsInit();
-		fontInit();
-		printSmall(false, 64, 32, "fatinitDefault failed!");
+		consoleDemoInit();
+		printf("fatinitDefault failed!");
 		fadeType = true;
 		stop();
 	}
@@ -414,7 +382,7 @@ int main(int argc, char **argv) {
 			switch(sysRegion) {
 				case 0:
 				default:
-					setRegion = 0x4A;	// JAP
+					setRegion = 0x4A;	// JPN
 					break;
 				case 1:
 					setRegion = 0x45;	// USA
@@ -445,19 +413,16 @@ int main(int argc, char **argv) {
 	chdir("nitro:/pages/");
 	loadPageList();
 	loadPageInfo(manPagesList[0].name.substr(0,manPagesList[0].name.length()-3) + "ini");
-	pageLoad(manPagesList[0].name.c_str());
+	pageLoad(manPagesList[0].name);
 	topBarLoad();
-	printTopText(manPageTitle);
-	//bottomBgLoad();
-	
+	printSmall(true, 4, 0, manPageTitle);
+
 	int pressed = 0;
 	int held = 0;
 	uint currentPage = 0;
 	touchPosition touch;
 
 	fadeType = true;	// Fade in from white
-
-	// printSmallCentered(true, 0, "TWiLight Menu++ Manual");
 
 	while(1) {
 		scanKeys();
@@ -480,18 +445,18 @@ int main(int argc, char **argv) {
 				pageYpos = 0;
 				currentPage--;
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
-				pageLoad(manPagesList[currentPage].name.c_str());
-				topBarLoad();
-				printTopText(manPageTitle);
+				pageLoad(manPagesList[currentPage].name);
+				clearText(true);
+				printSmall(true, 4, 0, manPageTitle);
 			}
 		} else if (pressed & KEY_RIGHT) {
 			if(currentPage < manPagesList.size()-1) {
 				pageYpos = 0;
 				currentPage++;
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
-				pageLoad(manPagesList[currentPage].name.c_str());
-				topBarLoad();
-				printTopText(manPageTitle);
+				pageLoad(manPagesList[currentPage].name);
+				clearText(true);
+				printSmall(true, 4, 0, manPageTitle);
 			}
 		} else if (pressed & KEY_TOUCH) {
 			touchPosition touchStart = touch;
@@ -536,13 +501,13 @@ int main(int argc, char **argv) {
 							continue;
 						} else {
 							break;
-						}	
+						}
 					}
 
 					if(((pageYpos + touchStart.py - touch.py) > 0) && ((pageYpos + touchStart.py - touch.py) < (pageYsize - 174)))
 						pageYpos += touchStart.py - touch.py;
 					pageScroll();
-					
+
 					prevTouch2 = touchStart;
 					touchStart = touch;
 					swiWaitForVBlank();
@@ -559,9 +524,9 @@ int main(int argc, char **argv) {
 							}
 						}
 						loadPageInfo(manPageLinks[i].dest + ".ini");
-						pageLoad((manPagesList[currentPage].name).c_str());
-						topBarLoad();
-						printTopText(manPageTitle);
+						pageLoad(manPagesList[currentPage].name);
+						clearText(true);
+						printSmall(true, 4, 0, manPageTitle);
 					}
 				}
 			}
