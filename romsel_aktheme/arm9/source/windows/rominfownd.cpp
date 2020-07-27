@@ -238,7 +238,7 @@ void RomInfoWnd::pressGameSettings(void)
 			_values.clear();
 		}
 
-		if (REG_SCFG_EXT != 0) {
+		if ((REG_SCFG_EXT != 0) || !ms().secondaryDevice) {
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
 			_values.push_back(LANG("game settings", "67MHz (NTR)")); // 0 => 1
 			_values.push_back(LANG("game settings", "133MHz (TWL)")); // 1 => 2
@@ -255,7 +255,7 @@ void RomInfoWnd::pressGameSettings(void)
 		}
 
 		if (ms().useBootstrap || !ms().secondaryDevice) {
-			if (isDSiMode() && _romInfo.saveInfo().arm9destination != 0x02004000
+			if ((isDSiMode() || !ms().secondaryDevice) && _romInfo.saveInfo().arm9destination != 0x02004000
 			&& _romInfo.saveInfo().gameSdkVersion >= 0x2008000 && _romInfo.saveInfo().gameSdkVersion < 0x5000000) {
 				_values.push_back(LANG("game settings", "Auto")); // -1 => 0
 				_values.push_back(LANG("game settings", "Off")); // 0 => 1
@@ -300,7 +300,7 @@ void RomInfoWnd::pressGameSettings(void)
 			_values.clear();
 		}
 
-		if (isDSiMode()) {
+		if (isDSiMode() || !ms().secondaryDevice) {
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
 			_values.push_back(LANG("game settings", "DS mode")); // 0 => 1
 			_values.push_back(LANG("game settings", "DSi mode")); // 1 => 2
@@ -309,7 +309,7 @@ void RomInfoWnd::pressGameSettings(void)
 			_values.clear();
 		}
 
-		if (REG_SCFG_EXT != 0) {
+		if ((REG_SCFG_EXT != 0) || !ms().secondaryDevice) {
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
 			_values.push_back(LANG("game settings", "67MHz (NTR)")); // 0 => 1
 			_values.push_back(LANG("game settings", "133MHz (TWL)")); // 1 => 2
@@ -345,16 +345,16 @@ void RomInfoWnd::pressGameSettings(void)
 		int selection = 0;
         if (!_romInfo.isHomebrew())
         {
-			if (ms().useBootstrap) {
+			if (ms().useBootstrap || !ms().secondaryDevice) {
 				settingsIni.language = (PerGameSettings::TLanguage)(settingWnd.getItemSelection(0, selection) - 2);
                 selection++;
                 settingsIni.saveNo = (int)settingWnd.getItemSelection(0, selection);
 			}
-            if (isDSiMode()) {
+            if (isDSiMode() || !ms().secondaryDevice) {
                 selection++;
                 settingsIni.dsiMode = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
             }
-            if (REG_SCFG_EXT != 0) {
+            if ((REG_SCFG_EXT != 0) || !ms().secondaryDevice) {
                 selection++;
                 settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
                 selection++;
@@ -370,15 +370,15 @@ void RomInfoWnd::pressGameSettings(void)
         else
         {
             settingsIni.directBoot = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
-			if (!ms().secondaryDevice && ms().useBootstrap) {
+			if (!ms().secondaryDevice) {
                 selection++;
                 settingsIni.ramDiskNo = (int)(settingWnd.getItemSelection(0, selection) - 1);
 			}
-            if (isDSiMode()) {
+            if (isDSiMode() || !ms().secondaryDevice) {
                 selection++;
                 settingsIni.dsiMode = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
 			}
-            if (REG_SCFG_EXT != 0) {
+            if ((REG_SCFG_EXT != 0) || !ms().secondaryDevice) {
                 selection++;
                 settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
                 selection++;

@@ -34,68 +34,66 @@
 using namespace std;
 
 //---------------------------------------------------------------------------------
-void stop (void) {
-//---------------------------------------------------------------------------------
-	while (1) {
-		swiWaitForVBlank();
-	}
-}
-
-char filePath[PATH_MAX];
-
-//---------------------------------------------------------------------------------
-//void doPause(int x, int y) {
-//---------------------------------------------------------------------------------
-/*	printf("Press start...\n");
-	while(1) {
-		scanKeys();
-		if(keysDown() & KEY_START)
-			break;
-	}
-	scanKeys();
-}*/
-
-//---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
+
+	//defaultExceptionHandler();
+
+	// overwrite reboot stub identifier
+	extern char *fake_heap_end;
+	*fake_heap_end = 0;
+
+	REG_SCFG_CLK &= (BIT(1) | BIT(2));	// Disable DSP and Camera Interface clocks
 
 	// Turn on screen backlights if they're disabled
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
 	
-	// overwrite reboot stub identifier
-	//extern u64 *fake_heap_end;
-	//*fake_heap_end = 0;
+	REG_SCFG_CLK = 0x85;					// TWL clock speed
+	REG_SCFG_EXT = 0x8307F100;				// Extended memory, extended VRAM, etc.
 
-	//defaultExceptionHandler();
-	
-	REG_SCFG_CLK = 0x85;						// TWL clock speed
-	if (isDSiMode()) {
-		REG_SCFG_EXT = 0x8307F100;				// Extended memory, extended VRAM, etc.
+	bool isRegularDS = true;
+	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
+	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
+
+	/*bool sdFound = false;
+	#ifndef CYCLODSI
+	if (isDSiMode() || (!isRegularDS && REG_SCFG_EXT != 0)) {
+		extern const DISC_INTERFACE __my_io_dsisd;
+		sdFound = fatMountSimple("sd", &__my_io_dsisd);
 	}
+	#endif*/
+	bool flashcardFound = fatMountSimple("fat", dldiGetInternal());
 
-	if (!fatMountSimple("fat", dldiGetInternal())) {
+	if (/* !sdFound && */ !flashcardFound) {
 		consoleDemoInit();
-		printf ("DLDI init failed!");
-		stop();
-	}
-
-	bool srldrFound = (access("fat:/_nds/TWiLightMenu/main.srldr", F_OK) == 0);
-
-	int err = 0;
-	if (srldrFound) {
-		err = runNdsFile ("fat:/_nds/TWiLightMenu/main.srldr", 0, NULL);
-	}
-
-	consoleDemoInit();
-
-	if (!srldrFound) {
-		iprintf ("fat:/_nds/TWiLightMenu/\nmain.srldr not found.");
+		printf ("FAT init failed!\n");
 	} else {
-		iprintf ("Start failed. Error %i\n", err);
+		int err = 0;
+		err = runNdsFile ((/*sdFound ? "sd:/_nds/TWiLightMenu/main.srldr" :*/ "fat:/_nds/TWiLightMenu/main.srldr"), 0, NULL);
+
+		consoleDemoInit();
+
+		if (err == 1) {
+			printf ("fat:/_nds/TWiLightMenu/\nmain.srldr not found.\n");
+		} else {
+			printf ("Start failed. Error %i\n", err);
+		}
 	}
 
-	stop();
+	printf(isRegularDS ? "\nPress B to power off." : "\nPress B to return to menu.");
+
+	while (1) {
+		scanKeys();
+		if (keysHeld() & KEY_B) {
+			fifoSendValue32(FIFO_USER_01, 1);	// Tell ARM7 to reboot into System Menu (power-off/sleep mode screen skipped)
+			break;
+		}
+	}
+
+	for (int i = 0; i < 10; i++) {
+		swiWaitForVBlank();
+	}
 
 	return 0;
 }

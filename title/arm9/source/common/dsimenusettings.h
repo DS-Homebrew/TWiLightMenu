@@ -157,6 +157,7 @@ class TWLSettings
     bool bstrap_dsiMode;
     bool slot1SCFGUnlock;
     bool autorun;
+	bool autostartSlot1;
     bool show12hrClock;
 
     int ak_viewMode;

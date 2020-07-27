@@ -702,7 +702,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	if (!rominfo.isDSiWare()) {
 		bool proceedToLaunch = true;
 
-		if (!isDSiMode()) {
+		if (!isDSiMode() && ms().secondaryDevice) {
 			// TODO: If the list gets large enough, switch to bsearch().
 			for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
 				if (memcmp(gameTid, incompatibleGameListB4DS[i], 3) == 0) {
@@ -1508,7 +1508,7 @@ void MainWnd::launchSelected()
 		mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
 		ms().homebrewArg = fullPath;
-		if (!ms().secondaryDevice && ms().smsGgInRam)
+		if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().smsGgInRam)
 		{
 			ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 			ms().saveSettings();
@@ -1550,7 +1550,8 @@ void MainWnd::launchSelected()
     // GEN Launch
     if (extension == ".gen")
 	{
-		bool usePicoDrive = (ms().showMd==2 || (ms().showMd==3 && getFileSize(fullPath) > 0x300000));
+		bool usePicoDrive = ((isDSiMode() && sdFound() && sys().arm7SCFGLocked())
+			|| ms().showMd==2 || (ms().showMd==3 && getFileSize(fullPath) > 0x300000));
         ms().homebrewArg = fullPath;
         ms().launchType[ms().secondaryDevice] = (usePicoDrive ? TWLSettings::EPicoDriveTWLLaunch : TWLSettings::ESDFlashcardLaunch);
         ms().saveSettings();
@@ -1674,7 +1675,9 @@ void MainWnd::onKeyBPressed()
 void MainWnd::showSettings(void)
 {
     dbg_printf("Launch settings...");
-	if (sdFound()) {
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	} else if (sdFound()) {
 		chdir("sd:/");
 	}
     LoaderConfig settingsLoader(DSIMENUPP_SETTINGS_SRL, DSIMENUPP_INI);

@@ -285,14 +285,16 @@ TWL_CODE int lastRunROM() {
 				}
 
 				argarray.at(0) = (char *)ndsToBoot;
-				CIniFile bootstrapini(bootstrapinipath);
-				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", romPath[secondaryDevice]);
-				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
-				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
-				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
-				bootstrapini.SaveIniFile(bootstrapinipath);
+				if (secondaryDevice || !homebrewBootstrap) {
+					CIniFile bootstrapini(bootstrapinipath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", romPath[secondaryDevice]);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
+					bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
+					bootstrapini.SaveIniFile(bootstrapinipath);
+				}
 
 				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
 			} else {

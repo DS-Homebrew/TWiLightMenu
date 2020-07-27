@@ -19,15 +19,11 @@
 ------------------------------------------------------------------*/
 #pragma once
 
-void SetBrightness(u8 screen, s8 bright);
-void initSubSprites(void);
-void graphicsInit();
-void pageLoad(const char *filename);
-void topBarLoad(void);
-void startRendering(bool top);
-bool isRenderingTop();
+#include <nds/ndstypes.h>
+#include <string>
 
-template<typename T> inline const T abs(T const & x)
-{
-	return ( x < 0) ? -x : x;
-}
+void SetBrightness(u8 screen, s8 bright);
+void pageLoad(const std::string &filename);
+void pageScroll();
+void topBarLoad(void);
+void graphicsInit();

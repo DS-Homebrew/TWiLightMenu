@@ -15,11 +15,11 @@ include $(DEVKITARM)/ds_rules
 # INCLUDES is a list of directories containing extra header files
 # DATA is a list of directories containing binary files embedded using bin2o
 #---------------------------------------------------------------------------------
-TARGET		:=	booter_fc
+TARGET		:=	booter
 BUILD		:=	build
 SOURCES		:=	../arm9/source
-INCLUDES    :=  ../arm9/include
-DATA        :=    ../data
+INCLUDES	:=	../arm9/include
+DATA		:=	../data  
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -31,7 +31,7 @@ CFLAGS	:=	-g -Wall -O2\
 		-ffast-math \
 		$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9 -DNO_SDMMC
+CFLAGS	+=	$(INCLUDE) -DARM9 -DNO_SDMMC -DCYCLODSI
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)
@@ -86,8 +86,6 @@ endif
 #---------------------------------------------------------------------------------
 
 export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
-					$(BMPFILES:.bmp=.o) \
-					$(PNGFILES:.png=.o) \
 					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
  
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-iquote $(CURDIR)/$(dir)) \
@@ -123,13 +121,15 @@ DEPENDS	:=	$(OFILES:.o=.d)
 $(OUTPUT).elf	:	$(OFILES)
  
 #---------------------------------------------------------------------------------
+# you need a rule like this for each extension you use as binary data 
+#---------------------------------------------------------------------------------
 %.bin.o	:	%.bin
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	$(bin2o)
 
 -include $(DEPSDIR)/*.d
-
+ 
 #---------------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------------

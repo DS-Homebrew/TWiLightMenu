@@ -150,6 +150,9 @@ void loadMainMenu()
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	}
 	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
 }
 
@@ -164,6 +167,9 @@ void loadROMselect(int number)
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
+	if (!isDSiMode()) {
+		chdir("fat:/");
+	}
 	switch (number) {
 		/*case 3:
 			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
@@ -276,7 +282,7 @@ void lastRunROM()
 	}
 
 	int err = 0;
-	if (ms().slot1Launched)
+	if (ms().slot1Launched && !flashcardFound())
 	{
 		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
 			dsCardLaunch();
@@ -425,7 +431,7 @@ void lastRunROM()
 
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
-				if (sdFound()) {
+				if (sdFound() && !ms().secondaryDevice) {
 					argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds"));
 				} else {
 					if (isDSiMode()) {
@@ -763,20 +769,24 @@ int main(int argc, char **argv)
 			remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
 	}
 
+	if (sdFound()) {
+		mkdir("sd:/_gba", 0777);
+		mkdir("sd:/_nds/TWiLightMenu/gamesettings", 0777);
+	}
+	if (flashcardFound()) {
+		mkdir("fat:/_gba", 0777);
+		mkdir("fat:/_nds/TWiLightMenu/gamesettings", 0777);
+	}
+
 	runGraphicIrq();
 
-	swiWaitForVBlank();
-
 	if (REG_SCFG_EXT != 0) {
-		if (!isDSiMode()) {
-			REG_SCFG_EXT = 0x8300C000;
-		}
 		*(vu32*)(0x0DFFFE0C) = 0x53524C41;		// Check for 32MB of RAM
 		bool isDevConsole = (*(vu32*)(0x0DFFFE0C) == 0x53524C41);
 		if (isDevConsole)
 		{
 			// Check for Nintendo 3DS console
-			if (sdFound())
+			if (isDSiMode() && sdFound())
 			{
 				bool is3DS = !nandio_startup();
 				int resultModel = 1+is3DS;
@@ -791,7 +801,7 @@ int main(int argc, char **argv)
 			else if (ms().consoleModel < 1 || ms().consoleModel > 2
 				  || bs().consoleModel < 1 || bs().consoleModel > 2)
 			{
-				consoleModelSelect();			// There's no SD card
+				consoleModelSelect();			// There's no NAND or SD card
 			}
 		}
 		else
@@ -801,9 +811,6 @@ int main(int argc, char **argv)
 			bs().consoleModel = 0;
 			ms().saveSettings();
 			bs().saveSettings();
-		}
-		if (!isDSiMode()) {
-			REG_SCFG_EXT = 0x83000000;
 		}
 	}
 
@@ -856,7 +863,7 @@ int main(int argc, char **argv)
 
 		// Load sound bank into memory
 		FILE* soundBank = fopen(soundBankPath, "rb");
-		fread((void*)(isDSiMode() ? 0x02FA0000 : 0x023A0000), 1, 0x58000, soundBank);
+		fread((void*)0x02FA0000, 1, 0x58000, soundBank);
 		fclose(soundBank);
 		soundBankLoaded = true;
 	}
@@ -872,9 +879,6 @@ int main(int argc, char **argv)
 		(ms().theme == 3) ? ms().theme = 2 : ms().theme = 0;
 		ms().saveSettings();
 	}
-
-	mkdir("/_gba", 0777);
-	mkdir("/_nds/TWiLightMenu/gamesettings", 0777);
 
 	if (access(BOOTSTRAP_INI, F_OK) != 0) {
 		u64 driveSize = 0;
@@ -902,6 +906,16 @@ int main(int argc, char **argv)
 		lastRunROM();
 	}
 
+	if (!softResetParamsFound && ms().autostartSlot1 && isDSiMode() && REG_SCFG_MC != 0x11 && !flashcardFound() && !(keysHeld() & KEY_SELECT)) {
+		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
+			dsCardLaunch();
+		} else if (ms().slot1LaunchMethod==2) {
+			unlaunchRomBoot("cart:");
+		} else {
+			runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
+		}
+	}
+
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 
@@ -910,7 +924,7 @@ int main(int argc, char **argv)
 		if (!soundBankLoaded) {
 			// Load sound bank into memory
 			FILE* soundBank = fopen("nitro:/soundbank.bin", "rb");
-			fread((void*)(isDSiMode() ? 0x02FA0000 : 0x023A0000), 1, 0x58000, soundBank);
+			fread((void*)0x02FA0000, 1, 0x58000, soundBank);
 			fclose(soundBank);
 			soundBankLoaded = true;
 		}
@@ -942,9 +956,16 @@ int main(int argc, char **argv)
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
 			}
+			if (!isDSiMode()) {
+				chdir("fat:/");
+			}
 			runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
 		} else {
 			flashcardInit();
+			if (flashcardFound()) {
+				mkdir("fat:/_gba", 0777);
+				mkdir("fat:/_nds/TWiLightMenu/gamesettings", 0777);
+			}
 			if (ms().showMainMenu) {
 				loadMainMenu();
 			}

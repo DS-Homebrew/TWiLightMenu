@@ -286,7 +286,7 @@ static void NDSTouchscreenMode(void) {
 	bool specialSetting = false;
 	u8 volLevel;
 	
-	static const char list[][4] = {
+	/*static const char list[][4] = {
 		"ABX",	// NTR-ABXE Bomberman Land Touch!
 		"YO9",	// NTR-YO9J Bokura no TV Game Kentei - Pikotto! Udedameshi
 		"ALH",	// NTR-ALHE Flushed Away
@@ -350,7 +350,7 @@ static void NDSTouchscreenMode(void) {
 			specialSetting = true; // Special setting (when found special gamecode)
 			break;
 		}
-	}
+	}*/
 
 	if (specialSetting) {
 		// special setting (when found special gamecode)
@@ -737,12 +737,15 @@ void arm7_main (void) {
 	// Wait for ARM9 to at least start
 	while (arm9_stateFlag < ARM9_START);
 
-	debugOutput (ERR_STS_CLR_MEM);
+	//debugOutput (ERR_STS_CLR_MEM);
 	
 	// Get ARM7 to clear RAM
 	arm7_resetMemory();	
 
-	debugOutput (ERR_STS_LOAD_BIN);
+	NDSTouchscreenMode();
+	*(u16*)0x4000500 = 0x807F;
+
+	//debugOutput (ERR_STS_LOAD_BIN);
 
 	if (!twlMode) {
 		REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
@@ -756,7 +759,7 @@ void arm7_main (void) {
 		debugOutput(errorCode);
 	}
 
-	if (dsiMode) {
+	/*if (dsiMode) {
 		if (twlMode == 2) {
 			dsiModeConfirmed = twlMode;
 		} else {
@@ -771,7 +774,7 @@ void arm7_main (void) {
 		if (dsiHeaderTemp->arm7ibinarySize > 0) {
 			cardRead((u32)dsiHeaderTemp->arm7iromOffset, (u32*)dsiHeaderTemp->arm7idestination, dsiHeaderTemp->arm7ibinarySize);
 		}
-	}
+	}*/
 
 	ndsHeader = loadHeader(dsiHeaderTemp);
 
@@ -787,8 +790,6 @@ void arm7_main (void) {
 	if (dsiMode) REG_GPIO_WIFI &= BIT(8);	// New Atheros/DSi-Wifi mode
 
 	if (dsiMode && !dsiModeConfirmed) {
-		NDSTouchscreenMode();
-		*(u16*)0x4000500 = 0x807F;
 		REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
 
 		if (twlClock) {
@@ -840,7 +841,7 @@ void arm7_main (void) {
 	}
 	toncset ((void*)0x023F0000, 0, 0x8000);		// Clear cheat data from main memory
 
-	debugOutput (ERR_STS_START);
+	//debugOutput (ERR_STS_START);
 
 	arm9_boostVram = boostVram;
 	arm9_scfgUnlock = scfgUnlock;
