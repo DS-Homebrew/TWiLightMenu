@@ -2353,7 +2353,7 @@ int main(int argc, char **argv) {
 
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
-					if (isDSiMode() && !dsModeDSiWare) {
+					if (REG_SCFG_EXT != 0 && !dsModeDSiWare) {
 						loadPerGameSettings(filename[secondaryDevice]);
 
 						runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
