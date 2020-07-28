@@ -724,7 +724,7 @@ int main(int argc, char **argv)
 	}
 
 	if (isDSiMode() || sdAccessible) {
-		gamesPage.option((isDSiMode() ? STR_EXPANDROMSPACE : "Sys SD: "+STR_EXPANDROMSPACE),
+		gamesPage.option((isDSiMode() ? STR_EXPANDROMSPACE : "SD: "+STR_EXPANDROMSPACE),
 			(ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS),
 			Option::Int(&bs().extendedMemory),
 			{STR_NO, STR_YES, STR_YES+"+512KB"},
