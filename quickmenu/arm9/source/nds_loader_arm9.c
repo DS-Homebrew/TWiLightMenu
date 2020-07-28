@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <fat.h>
 
+#include "common/tonccpy.h"
 #include "load_bin.h"
 
 #ifndef _NO_BOOTSTUB_
@@ -123,18 +124,6 @@ static void writeAddr (data_t *mem, addr_t offset, addr_t value) {
 	((addr_t*)mem)[offset/sizeof(addr_t)] = value;
 }
 
-static void vramcpy (void* dst, const void* src, int len)
-{
-	u16* dst16 = (u16*)dst;
-	u16* src16 = (u16*)src;
-	
-	//dmaCopy(src, dst, len);
-
-	for ( ; len > 0; len -= 2) {
-		*dst16++ = *src16++;
-	}
-}	
-
 static addr_t quickFind (const data_t* data, const data_t* search, size_t dataLen, size_t searchLen) {
 	const int* dataChunk = (const int*) data;
 	int searchChunk = ((const int*)search)[0];
@@ -216,7 +205,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	// Remember how much space is actually reserved
 	pDH[DO_allocatedSpace] = pAH[DO_allocatedSpace];
 	// Copy the DLDI patch into the application
-	vramcpy (pAH, pDH, dldiFileSize);
+	tonccpy (pAH, pDH, dldiFileSize);
 
 	// Fix the section pointers in the header
 	writeAddr (pAH, DO_text_start, readAddr (pAH, DO_text_start) + relocationOffset);
@@ -283,7 +272,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	// Direct CPU access to VRAM bank C
 	VRAM_C_CR = VRAM_ENABLE | VRAM_C_LCD;
 	// Load the loader/patcher into the correct address
-	vramcpy (LCDC_BANK_C, loader, loaderSize);
+	tonccpy (LCDC_BANK_C, loader, loaderSize);
 
 	// Set the parameters for the loader
 	// STORED_FILE_CLUSTER = cluster;
