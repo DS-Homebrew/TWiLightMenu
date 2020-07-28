@@ -50,6 +50,9 @@ std::string ndsPath;
 std::string romfolder;
 std::string filename;
 
+const char *charUnlaunchBg;
+std::string unlaunchBg = "default.gif";
+
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
 
 typedef struct {
@@ -108,6 +111,9 @@ TWL_CODE void LoadSettings(void) {
 	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 	useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+
+    unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
+	charUnlaunchBg = unlaunchBg.c_str();
 
 	// Default nds-bootstrap settings
 	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
