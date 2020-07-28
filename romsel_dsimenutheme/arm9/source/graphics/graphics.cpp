@@ -1141,7 +1141,7 @@ void vBlankHandler() {
 		// Top icons for 3DS theme
 		if (ms().theme == 1) {
 			int topIconXpos = 116;
-			if (isDSiMode() && sdFound()) {
+			if ((isDSiMode() && sdFound()) || bothSDandFlashcard()) {
 				for (int i = 0; i < 2; i++) {
 					topIconXpos -= 14;
 				}
@@ -1674,7 +1674,7 @@ void loadRotatingCubes() {
 			fseek(videoFrameFile, 0x200, SEEK_SET);
 		}
 
-		if (isDSiMode()) {
+		if (REG_SCFG_EXT != 0) {
 			doRead = true;
 		} else if (sys().isRegularDS()) {
 			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory

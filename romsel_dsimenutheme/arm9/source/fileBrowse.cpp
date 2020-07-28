@@ -2858,7 +2858,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 
 				int topIconXpos = 116;
 				int savedTopIconXpos[3] = {0};
-				if (isDSiMode() && sdFound()) {
+				if ((isDSiMode() && sdFound()) || bothSDandFlashcard()) {
 					for (int i = 0; i < 2; i++) {
 						topIconXpos -= 14;
 					}
@@ -2876,7 +2876,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					}
 				}
 
-				if (isDSiMode() && sdFound()) {
+				if ((isDSiMode() && sdFound()) || bothSDandFlashcard()) {
 					// Switch devices or launch Slot-1 by touching button
 					if ((pressed & KEY_TOUCH) && touch.py <= 26 &&
 						touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0] + 24 &&
