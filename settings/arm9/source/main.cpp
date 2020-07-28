@@ -638,8 +638,8 @@ int main(int argc, char **argv)
 	using TRunIn = TWLSettings::TRunIn;
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 
-	if (isDSiMode()) {
-		gamesPage.option(STR_RUNIN,
+	if (isDSiMode() || sdAccessible) {
+		gamesPage.option((isDSiMode() ? STR_RUNIN : "Sys SD: "+STR_RUNIN),
 						STR_DESCRIPTION_RUNIN_1,
 						Option::Int(&ms().bstrap_dsiMode),
 						{STR_DS_MODE, STR_DSI_MODE, STR_DSI_MODE_FORCED},
@@ -659,7 +659,7 @@ int main(int argc, char **argv)
 				{true, false});
 		if (sdAccessible && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
 			gamesPage
-				.option(STR_SLOT_1_SD+": "+STR_USEBOOTSTRAP+(!isDSiMode() ? " (B4DS)" : ""), STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+				.option("S1SD: "+STR_USEBOOTSTRAP+(!isDSiMode() ? " (B4DS)" : ""), STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 			if (isDSiMode()) {
 				gamesPage
 					.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false});
@@ -706,7 +706,7 @@ int main(int argc, char **argv)
 					Option::Int(&bs().romreadled),
 					{STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
 					{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
-				.option((isDSiMode() ? STR_DMAROMREADLED : "Sys SD: "+STR_DMAROMREADLED),
+				.option((isDSiMode() ? STR_DMAROMREADLED : "SD: "+STR_DMAROMREADLED),
 					STR_DESCRIPTION_DMAROMREADLED,
 					Option::Int(&bs().dmaromreadled),
 					{STR_SAME_AS_REG, STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
