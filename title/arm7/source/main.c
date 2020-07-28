@@ -32,6 +32,9 @@
 
 void my_installSystemFIFO(void);
 
+u8 my_i2cReadRegister(u8 device, u8 reg);
+u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data);
+
 //unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
 //unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
 unsigned int * SCFG_MC=(unsigned int*)0x4004010;
@@ -77,7 +80,7 @@ void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
 	if(fifoGetValue32(FIFO_USER_01) == 10) {
-		i2cWriteRegister(0x4A, 0x71, 0x01);
+		my_i2cWriteRegister(0x4A, 0x71, 0x01);
 		fifoSendValue32(FIFO_USER_01, 0);
 	}
 }
@@ -140,8 +143,8 @@ int main() {
 	isDSLite = (readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7));
 
 	//fifoSendValue32(FIFO_USER_01, *SCFG_ROM);
-	if (isDSiMode()) {
-		fifoSendValue32(FIFO_USER_01, i2cReadRegister(0x4A, 0x71));
+	if (isDSiMode() || REG_SCFG_EXT != 0) {
+		fifoSendValue32(FIFO_USER_01, my_i2cReadRegister(0x4A, 0x71));
 	}
 	//fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
 	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
