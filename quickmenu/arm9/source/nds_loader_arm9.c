@@ -451,7 +451,9 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		return 1;
 	}
 
-	if (isDSiMode()) {
+	bool havedsiSD = (access("sd:/", F_OK) == 0);
+
+	if (havedsiSD) {
 		// Check for Unlaunch
 		char gameTitle[0xC];
 		FILE* ndsFile = fopen(filename, "rb");
@@ -479,10 +481,6 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 
 	bool loadFromRam = runNds9(filename, dsModeSwitch);
 
-	bool havedsiSD = false;
-
-	if(access("sd:/", F_OK) == 0) havedsiSD = true;
-	
 	installBootStub(havedsiSD);
 
 	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, argc, argv, clearMasterBright, dsModeSwitch, lockScfg, boostCpu, boostVram);
