@@ -1877,7 +1877,7 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch DSiWare .nds via Unlaunch
-			if (isDSiMode() && isDSiWare[secondaryDevice]) {
+			if ((isDSiMode() || sdFound()) && isDSiWare[secondaryDevice]) {
 				const char *typeToReplace = ".nds";
 				if (extention(filename[secondaryDevice], ".dsi")) {
 					typeToReplace = ".dsi";

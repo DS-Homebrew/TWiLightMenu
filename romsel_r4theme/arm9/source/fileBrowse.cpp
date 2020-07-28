@@ -580,7 +580,7 @@ string browseForFile(const vector<string> extensionList) {
 				settingsChanged = false;
 				return "null";
 			}
-			else if (isDSiWare && !sdFound())
+			else if (isDSiWare && !isDSiMode() && !sdFound())
 			{
 				showdialogbox = true;
 				printLargeCentered(false, 74, "Error!");

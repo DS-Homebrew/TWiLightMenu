@@ -2554,7 +2554,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isDSiWare[CURPOS] && !sdFound()) {
+				} else if (isDSiWare[CURPOS] && !isDSiMode() && !sdFound()) {
 					clearText();
 					snd().playWrong();
 					if (ms().theme != 4) {

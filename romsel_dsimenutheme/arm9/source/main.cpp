@@ -871,7 +871,7 @@ int main(int argc, char **argv) {
 			bool pcEngine = false;
 
 			// Launch DSiWare .nds via Unlaunch
-			if (isDSiMode() && isDSiWare[CURPOS]) {
+			if ((isDSiMode() || sdFound()) && isDSiWare[CURPOS]) {
 				const char *typeToReplace = ".nds";
 				if (extention(filename, ".dsi")) {
 					typeToReplace = ".dsi";

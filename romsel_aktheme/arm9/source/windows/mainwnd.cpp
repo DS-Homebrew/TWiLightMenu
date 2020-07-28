@@ -1283,7 +1283,7 @@ void MainWnd::launchSelected()
 	chdir(_mainList->getCurrentDir().c_str());
 
     // Launch DSiWare
-    if (!rominfo.isHomebrew() && rominfo.isDSiWare() && sdFound() && ms().consoleModel == 0 && !ms().dsiWareBooter)
+    if (!rominfo.isHomebrew() && rominfo.isDSiWare() && (isDSiMode() || sdFound()) && ms().consoleModel == 0 && !ms().dsiWareBooter)
     {
         // Unlaunch boot here....
         UnlaunchBoot unlaunch(fullPath, rominfo.saveInfo().dsiPubSavSize, rominfo.saveInfo().dsiPrvSavSize);
