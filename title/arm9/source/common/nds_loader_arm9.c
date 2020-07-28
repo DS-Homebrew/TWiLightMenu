@@ -474,7 +474,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 
 	bool havedsiSD = (access("sd:/", F_OK) == 0);
 
-	if (havedsiSD) {
+	if (REG_SCFG_EXT != 0 && havedsiSD) {
 		// Check for Unlaunch
 		char gameTitle[0xC];
 		FILE* ndsFile = fopen(filename, "rb");
