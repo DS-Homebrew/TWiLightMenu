@@ -1,0 +1,145 @@
+@font-face {
+	font-family: 'nintendo_ntlg-db_001regular';
+	src: url('../font/nintendo_NTLG-DB.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body {
+	margin: 0;
+	font-family: 'nintendo_ntlg-db_001regular', 'Arial', serif;
+	font-size: 13px;
+}
+.ds-size {
+	width: 256px;
+	min-height: 384px;
+	background: repeating-linear-gradient(to bottom, #404040, #404040 1px, #383838 1px, #383838 2px);
+}
+.banner {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 192px;
+}
+.ds-margin {
+	margin: 0 2px;
+	text-align: left;
+}
+.section-title {
+	font-size: 14px;
+	font-weight: bold;
+	background-color: #cecece;
+	border-radius: 10px 10px 0 0;
+	width: fit-content;
+	width: -moz-fit-content;
+	margin-bottom: 0;
+	padding: 5px 10px 0 10px;
+}
+.section-body {
+	background-color: #cecece;
+	border-radius: 0 10px 10px 10px;
+	padding: 5px 10px 10px 10px;
+}
+.section-body:not(:last-child) {
+	margin-bottom: 6px;
+}
+.twilightLogo {
+	float: right;
+	margin-right: 2px;
+}
+.button-action-group {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.button-action-text {
+	flex-basis: 68%;
+	flex-grow: 0;
+}
+.button-action {
+	flex-basis: 32%;
+	flex-grow: 0;
+	text-align: center;
+}
+.button-action.font, .button-action .font {
+	font-size: 20px;
+}
+
+.grid-container-3 {
+	display: grid;
+	grid-template-columns: 33% 33% 33%;
+}
+.grid-container-2 {
+	display: grid;
+	grid-template-columns: 50% 50%;
+  }
+  .grid-item {
+	text-align: center;
+	margin-top: 5px;
+  }
+
+p {
+	margin-block-start: 0;
+	margin-inline-start: 0;
+}
+
+.section-title-icon {
+	height: 16px;
+	vertical-align:middle;
+}
+
+.small-height-br {
+	display: block; /* makes it have a width */
+	content: ""; /* clears default height */
+	margin-top: 7px; /* change this to whatever height you want it */
+}
+
+code[class*="language-"], pre[class*="language-"] {
+    background: none;
+    text-shadow: 0 1px #A1A1A1;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    font-size: 1em;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+:not(pre) > code[class*="language-"], pre[class*="language-"] {
+    background-color: #B2B2B2;
+}
+
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+ul {
+	padding-inline-start: 30px;
+	margin-block-start: 0.5em;
+	margin-block-end: 0.5em;
+}
+
+ul.bottom-of-section {
+	margin-block-end: 0;
+}
+
+p.small-bottom {
+	margin-bottom: 7px;
+	margin-top: 0;
+}
+
+p.small-top {
+	margin-top: 7px;
+	margin-bottom: 0;
+}

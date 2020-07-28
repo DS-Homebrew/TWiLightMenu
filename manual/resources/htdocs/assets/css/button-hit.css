@@ -1,0 +1,27 @@
+.leftRight:before {
+	content: "\E07E";
+}
+.upDown:before {
+	content: "\E07D";
+}
+.buttonA:before {
+	content: "\E000";
+}
+.buttonB:before {
+	content: "\E001";
+}
+.buttonX:before {
+	content: "\E002";
+}
+.buttonY:before {
+	content: "\E003";
+}
+.buttonL:before {
+	content: "\E083";
+}
+.buttonR:before {
+	content: "\E084";
+}
+.dpadUP:before {
+	content: "\E079";
+}
