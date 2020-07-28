@@ -381,20 +381,23 @@ void runNds9i (const char* filename) {
 
 bool runNds9 (const char* filename) {
 	if (isDSiMode()) return false;
+	bool isDSi = (REG_SCFG_EXT != 0);
 
-	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
-					 // Expansion Pak)
+	if (!isDSi) {
+		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
+						 // Expansion Pak)
 
-	*(vu32*)(0x08240000) = 1;
-	if (*(vu32*)(0x08240000) != 1) return false;
+		*(vu32*)(0x08240000) = 1;
+		if (*(vu32*)(0x08240000) != 1) return false;
+	}
 
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(__DSiHeader, 1, 0x1000, ndsFile);
 	fseek(ndsFile, __DSiHeader->ndshdr.arm9romOffset, SEEK_SET);
-	fread((void*)0x09000000, 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
+	fread((void*)(isDSi ? 0x02800000 : 0x09000000), 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
 	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
-	fread((void*)0x09380000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
+	fread((void*)(isDSi ? 0x02B80000 : 0x09380000), 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
 	fclose(ndsFile);
 
 	return true;
