@@ -2144,7 +2144,7 @@ int main(int argc, char **argv) {
 				showdialogbox = true;
 				printLargeCentered(false, 74, "Error!");
 				printSmallCentered(false, 90, text);
-				if (err == 1) {
+				if (err == 1 && !secondaryDevice) {
 					printSmallCentered(false, 4, 102, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
 					printSmallCentered(false, 4, 114, "not found.");
 				}

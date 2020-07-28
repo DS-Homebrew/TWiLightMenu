@@ -1424,6 +1424,7 @@ int main(int argc, char **argv) {
 						char text[64];
 						snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 						clearText();
+						fadeSpeed = true;
 						fadeType = true;
 						printLarge(false, 4, 4, text);
 						if (err == 1) {
@@ -1498,6 +1499,7 @@ int main(int argc, char **argv) {
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
 					char text[64];
 					snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+					fadeSpeed = true;
 					fadeType = true;
 					printLarge(false, 4, 4, text);
 					printSmall(false, 4, 20, STR_PRESS_B_RETURN);
@@ -1660,6 +1662,7 @@ int main(int argc, char **argv) {
 
 				char text[64];
 				snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+				fadeSpeed = true;
 				fadeType = true;
 				printLarge(false, 4, 4, text);
 				printLarge(false, 4, 20, STR_PRESS_B_RETURN);
@@ -1784,9 +1787,10 @@ int main(int argc, char **argv) {
 				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], ms().secondaryDevice, true, (ms().secondaryDevice && !GBA), true, !GBA);
 				char text[64];
 				snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+				fadeSpeed = true;
 				fadeType = true;
 				printLarge(false, 4, 4, text);
-				if (err == 1) {
+				if (err == 1 && !ms().secondaryDevice) {
 					printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 				}
 				printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
