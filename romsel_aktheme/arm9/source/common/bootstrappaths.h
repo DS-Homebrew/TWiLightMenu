@@ -29,7 +29,7 @@
 #define PERGAMESETTINGS_PATH "%s/_nds/TWiLightMenu/gamesettings/%s.ini"
 
 #define SLOT1_SRL "/_nds/TWiLightMenu/slot1launch.srldr"
-#define BOOTPLG_SRL "/_nds/TWiLightMenu/bootplg.srldr"
+#define BOOTPLG_SRL "fat:/_nds/TWiLightMenu/bootplg.srldr"
 
 #define GBARUNNER_DSI    "sd:/_nds/GBARunner2_arm7dldi_dsi.nds"
 #define GBARUNNER_3DS    "sd:/_nds/GBARunner2_arm7dldi_3ds.nds"
@@ -43,15 +43,15 @@
 #define GBARUNNER_A9     "fat:/_nds/GBARunner2_arm9dldi_ds.nds"
 
 #define RVIDPLAYER_SD "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
-#define RVIDPLAYER_FC "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
+#define RVIDPLAYER_FC "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
 #define MPEG4PLAYER_SD "sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds"
-#define MPEG4PLAYER_FC "/_nds/TWiLightMenu/apps/MPEG4Player.nds"
+#define MPEG4PLAYER_FC "fat:/_nds/TWiLightMenu/apps/MPEG4Player.nds"
 
 #define STELLADS_SD "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds"
-#define STELLADS_FC "/_nds/TWiLightMenu/emulators/StellaDS.nds"
+#define STELLADS_FC "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds"
 
 #define NITROGRAFX_ROM "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds"
-#define NITROGRAFX_FC "/_nds/TWiLightMenu/emulators/NitroGrafx.nds"
+#define NITROGRAFX_FC "fat:/_nds/TWiLightMenu/emulators/NitroGrafx.nds"
 
 #define SNEMULDS_ROM "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
 #define SNEMULDS_FC "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
@@ -72,9 +72,9 @@
 #define SEGA8BIT_RAMDISK "sd:/_nds/TWiLightMenu/emulators/Sega8bit.img"
 
 #define GAMEYOB_SD "sd:/_nds/TWiLightMenu/emulators/gameyob.nds"
-#define GAMEYOB_FC "/_nds/TWiLightMenu/emulators/gameyob.nds"
+#define GAMEYOB_FC "fat:/_nds/TWiLightMenu/emulators/gameyob.nds"
 
-#define NESDS_FC  "/_nds/TWiLightMenu/emulators/nesds.nds"
+#define NESDS_FC  "fat:/_nds/TWiLightMenu/emulators/nesds.nds"
 #define NESDS_SD "sd:/_nds/TWiLightMenu/emulators/nesds.nds"
 #define NESTWL_SD "sd:/_nds/TWiLightMenu/emulators/nestwl.nds"
 #endif

@@ -1619,38 +1619,38 @@ int main(int argc, char **argv) {
 					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
 				} else if (rvid) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 					}
 				} else if (mpeg4) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 					}
 				} else if (gameboy) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/gameyob.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/gameyob.nds";
 					}
 				} else if (nes) {
 					ndsToBoot = (ms().secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/nesds.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 					}
 				} else if (gamegear) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
 					}
 				} else if (GENESIS) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
 					}
 				} else if (atari2600) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/StellaDS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 					}
 				}
 				if (!isDSiMode() && !ms().secondaryDevice) {
@@ -1706,35 +1706,35 @@ int main(int argc, char **argv) {
 				if (ms().secondaryDevice) {
 					if (GBA) {
 						ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
-						if (isDSiMode()) {
+						if (REG_SCFG_EXT != 0) {
 							ndsToBoot = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
 						}
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = ms().gbar2DldiAccess ? "/_nds/GBARunner2_arm7dldi_ds.nds" : "/_nds/GBARunner2_arm9dldi_ds.nds";
-							if (isDSiMode()) {
-								ndsToBoot = ms().consoleModel>0 ? "/_nds/GBARunner2_arm7dldi_3ds.nds" : "/_nds/GBARunner2_arm7dldi_dsi.nds";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
+							if (REG_SCFG_EXT != 0) {
+								ndsToBoot = ms().consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
 							}
 						}
 						argarray.push_back(ROMpath);
 					} else if (gamegear) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS07.nds";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/S8DS07.nds";
 						}
 					} else if (SNES) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						}
 					} else if (pcEngine) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
 						}
 					} else {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 						}
 					}
 				} else {

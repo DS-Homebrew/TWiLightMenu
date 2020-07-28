@@ -2397,16 +2397,16 @@ int main(int argc, char **argv) {
 					launchType[secondaryDevice] = 7;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".mp4")) {
 					launchType[secondaryDevice] = 8;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".gba")) {
@@ -2414,13 +2414,13 @@ int main(int argc, char **argv) {
 
 					if (secondaryDevice) {
 						ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
-						if (isDSiMode()) {
+						if (REG_SCFG_EXT != 0) {
 							ndsToBoot = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
 						}
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = gbar2DldiAccess ? "/_nds/GBARunner2_arm7dldi_ds.nds" : "/_nds/GBARunner2_arm9dldi_ds.nds";
-							if (isDSiMode()) {
-								ndsToBoot = consoleModel>0 ? "/_nds/GBARunner2_arm7dldi_3ds.nds" : "/_nds/GBARunner2_arm7dldi_dsi.nds";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
+							if (REG_SCFG_EXT != 0) {
+								ndsToBoot = consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
 							}
 						}
 						boostVram = false;
@@ -2449,24 +2449,24 @@ int main(int argc, char **argv) {
 					launchType[secondaryDevice] = 9;
 					
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/StellaDS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".gb") || extention(filename[secondaryDevice], ".sgb") || extention(filename[secondaryDevice], ".gbc")) {
 					launchType[secondaryDevice] = 5;
 					
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/gameyob.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/gameyob.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".nes") || extention(filename[secondaryDevice], ".fds")) {
 					launchType[secondaryDevice] = 4;
 
 					ndsToBoot = (secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/nesds.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".sms") || extention(filename[secondaryDevice], ".gg")) {
@@ -2494,8 +2494,8 @@ int main(int argc, char **argv) {
 						launchType[secondaryDevice] = 6;
 
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
 							boostVram = true;
 						}
 					}
@@ -2506,8 +2506,8 @@ int main(int argc, char **argv) {
 
 					if (usePicoDrive || secondaryDevice) {
 						ndsToBoot = usePicoDrive ? "sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds" : "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = usePicoDrive ? "/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds" : "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = usePicoDrive ? "fat:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds" : "fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 							boostVram = true;
 						}
 						dsModeSwitch = !usePicoDrive;
@@ -2532,8 +2532,8 @@ int main(int argc, char **argv) {
 
 					if (secondaryDevice) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 							boostVram = true;
 						}
 						dsModeSwitch = true;

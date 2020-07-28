@@ -1380,7 +1380,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 
 		ndsToBoot = RVIDPLAYER_SD;
-		if(access(ndsToBoot, F_OK) != 0) {
+		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 			ndsToBoot = RVIDPLAYER_FC;
 		}
 
@@ -1395,7 +1395,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 
 		ndsToBoot = MPEG4PLAYER_SD;
-		if(access(ndsToBoot, F_OK) != 0) {
+		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 			ndsToBoot = MPEG4PLAYER_FC;
 		}
 
@@ -1410,7 +1410,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 		if (ms().secondaryDevice)
         {
-			if (isDSiMode())
+			if (REG_SCFG_EXT != 0)
 			{
 				ndsToBoot = ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI;
 				if(access(ndsToBoot, F_OK) != 0) {
@@ -1464,7 +1464,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 
 		ndsToBoot = STELLADS_SD;
-		if(access(ndsToBoot, F_OK) != 0) {
+		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 			ndsToBoot = STELLADS_FC;
 		}
 
@@ -1479,7 +1479,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 
 		ndsToBoot = (ms().secondaryDevice ? NESDS_SD : NESTWL_SD);
-		if(access(ndsToBoot, F_OK) != 0) {
+		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 			ndsToBoot = NESDS_FC;
 		}
 
@@ -1494,7 +1494,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 
 		ndsToBoot = GAMEYOB_SD;
-		if(access(ndsToBoot, F_OK) != 0) {
+		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 			ndsToBoot = GAMEYOB_FC;
 		}
 
@@ -1539,7 +1539,7 @@ void MainWnd::launchSelected()
 			ms().saveSettings();
 
 			ndsToBoot = S8DS_ROM;
-			if(access(ndsToBoot, F_OK) != 0) {
+			if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 				ndsToBoot = S8DS_FC;
 			}
 
@@ -1558,7 +1558,7 @@ void MainWnd::launchSelected()
 		if (usePicoDrive || ms().secondaryDevice)
         {
 			ndsToBoot = usePicoDrive ? PICODRIVETWL_ROM : JENESISDS_ROM;
-			if(access(ndsToBoot, F_OK) != 0) {
+			if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 				ndsToBoot = usePicoDrive ? PICODRIVETWL_FC : JENESISDS_FC;
 			}
 
@@ -1597,7 +1597,7 @@ void MainWnd::launchSelected()
 		if (ms().secondaryDevice)
         {
 			ndsToBoot = SNEMULDS_ROM;
-			if(access(ndsToBoot, F_OK) != 0) {
+			if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 				ndsToBoot = SNEMULDS_FC;
 			}
 
