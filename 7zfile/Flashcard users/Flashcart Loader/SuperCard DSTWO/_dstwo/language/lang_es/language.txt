@@ -1,0 +1,270 @@
+[start menu]
+File_Handle=File Operation
+patch=Parches
+Cheat=Trucos
+archive=Archivo guardado
+Ui_Type=Temas
+Language=Lenguaje
+Syset=Opciones
+Help=Ayuda
+Hotkey=Full Hotkey
+Hotkey1=Simple Hotkey
+
+[file handle menu]
+noText=La papelera esta vacía 
+item0=Copiar
+item1=Cortar
+item2=Pegar
+item3=Eliminar
+
+[text wnd info]
+title=Advertencia!
+item0=¡Archivo %s no existe o esta dañado!
+item1=Guía del Juego
+
+[slow wnd]
+title=Lento
+item0=Desactivado
+item1=Activado
+
+[cheat wnd]
+title=Sugerencia
+clearTitle=Limpiar todos
+text=¿Salvar opciones?
+title1=¡Sugerencia!
+text1=Trucos desactivados. ¿Desea activar Trucos?
+
+[RTL wnd info]
+title=¡Advertencia!
+load_title=Carga inmediata
+save_title=Salvado inmediato
+item0=¡No hay archivo salvado!
+item1=¿Sobrescribir el archivo salvado?
+
+[patch menu]
+item0=Limpio
+item1=Parchado
+
+[Archive type menu]
+item0=ArchivoSalvado0
+item1=ArchivoSalvado1
+item2=ArchivoSalvado2
+item3=ArchivoSalvado3
+
+[Syset menu]
+Brightness=Brillo
+List_type=Pantalla
+Hotkey=Full Hotkey
+Hotkey1=Simple Hotkey
+FileType=Files
+GbaLink=GBA Extend
+LastRomRun=AutorunRom
+
+[Ui Type menu]
+title=Advertencia
+text=El estilo de la interfaz de usuario ha cambia, reiniciar y aplicar el nuevo estilo? "No" mantiene el estilo actual.
+
+[set game info]
+item0=Salvado de archivos multiples
+item1=Trucos
+item2=Modo
+
+[reset text]
+title=Advertencia
+text=¿Reiniciar el sistema?
+
+[Cheat menu]
+item0=Desactivado
+item1=Activado
+
+[Brightness menu]
+item0=Nivel 1
+item1=Nivel 2
+item2=Nivel 3
+item3=Nivel 4
+
+[Language menu]
+title=Pregunta
+text=El idioma del system ha cambiado. ¿Reniciar y cambiar el idioma? Elija "No" para reniciar el sistema mas tarde.
+item0=Inglés
+item1=Chino-S
+item2=Chino-T
+item3=Francés
+item4=Italiano
+item5=Alemán
+item6=Español
+item7=Koreano
+
+[Filetype menu]
+item0=NDS
+item1=NDS & Sav
+item2=GBA & Sav
+item3=All
+
+[GbaLink menu]
+item0=NULL
+item1=Link
+item2=Rumble
+
+[LastRomRun menu]
+item0=Turn off
+item1=Turn on
+
+[message box]
+yes=S?A)
+no=No(B)
+ok=Aceptar(A)
+cancel=Cancelar(B)
+cheat=Trucos(Y)
+
+[List type menu]
+item0=lcono
+item1=Lista
+item2=Text
+
+[progress window]
+processing_copy=Copiando archivo
+
+[copy file error]
+title=¡Error!
+text=Ha ocurrido un error copiando el archivo
+
+[stop copying file]
+title=Confirmar
+text=¿Detener la copia del archivo?
+
+[no free space]
+title=¡Error!
+text=No hay suficiente espacio, la copia no se completo
+text1=No hay suficiente espacio.
+
+[copy file exists]
+title=¡Advertencia!
+text=Un archive con el mismo nombre ya existe, ¿sobreescribir?
+
+[copy dest is directory]
+title=¡Error!
+text=El directorio ya existe, no se pueden copiar los archivos
+
+[move dest is directory]
+title=¡Error!
+text=El directorio ya existe, no se pueden mover los archivos
+
+[no copy dir]
+title=¡Error!
+text=No se puede copiar o mover el directorio
+
+[confirm delete file]
+title=Confirmar
+text=El archivo se perder?completamente, desea eliminar el archivo "%s" ?
+
+[do not delete directory]
+title=¡Advertencia!
+text=El directorio no esta vacío y no puede ser eliminado
+
+[help window]
+title = Ayuda
+item0 = %c  Elegir programa
+item1 = %c  Iniciar/Aceptar/S?
+item2 = %c  Volver/Cancelar/No
+item3 = %c  Elegir truco
+item4 = %c  Cambiar la información del juego
+item5 = %c  Volver al anterior directorio
+item6 = %c  Ajustar brillo
+item7 = %s  Men?de inicio
+item8 = %s  Estilo del men?nuevo/clásico
+
+[hotkey window]
+title = Elegir botón de acceso directo
+
+[setting window]
+ok=Aceptar
+savetype=Tipo de salvado
+cancel=Cancelar
+confirm=Confirmar
+confirm_text = ¿Guardar las opciones actuales?
+
+[main interface title]
+item0=Guía del Juego
+item1=Truco
+item2=Salvar
+item3=Cargar
+item4=Cámara lenta
+item5=Truco libre
+
+[system setting]
+title=Opciones del sistema
+
+[search cheat]
+title=Buscar Truco
+item0=Buscar valor
+item1=Truco
+
+[search cheat btn text]
+confirm=Continuar juego
+start=Reiniciar
+search=Buscar
+add=Adicionar Truco
+change=Editar
+switch=Bloquear/Desbloquear
+switchall=Bloquear/Desbloquear todos
+remove=Remover
+result=Ver resultados
+note=Nombre(X)
+exit=Salir
+
+[cheat search type]
+title=Tipo de búsqueda
+item0=Valor específico
+item1=Busqueda difusa
+
+[cheat compare type]
+title=Compare type
+item0=Equal
+item1=More than
+item2=Less than
+item3=differ
+
+[cheat data size]
+title=Tamaño de los datos
+item0=< 8 bits
+item1=< 16 bits
+item2=< 32 bits
+
+[cheat input value]
+title=Ingresar valor
+item0=Valor
+
+[search cheat result]
+address=Dirección
+oldvalue=Antiguo valor
+newvalue=Nuevo valor
+erro=erro!
+result=Exista una diferencia %d en esta búsqueda. Por favor elija el valor correcto.
+getdataerro=Los datos buscados son erro! Por favor reiniciar el sistema.
+viewresulterro=No se encontraron datos de Trucos.
+
+[change cheat]
+note=Nota
+
+[cheat code]
+address=Dirección
+value=Valor
+state=Condición
+warn=¡Advertencia!
+del=¿Eliminar %s de la lista de Trucos?
+
+[cheat state]
+on=Activar
+off=Desactivar
+
+[rom info]
+title=Información del archivo
+file_date=Fecha del ultimo salvado
+file_size=Tamaño: %s
+save_type=Tipo de Salvado: %s
+file_name=Nombre del archivo: 
+game_name=Nombre del juego: 
+file_type=Tipo: %s
+game_id=ID del juego: %d
+[end]

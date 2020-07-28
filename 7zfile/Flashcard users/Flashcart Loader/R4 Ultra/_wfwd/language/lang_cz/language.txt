@@ -1,0 +1,439 @@
+﻿[font]
+main = tahoma.pcf
+
+[start menu]
+Start = START
+Copy = Kopirovat
+Cut = Vyjmout
+Paste = Vlozit
+Delete = Smazat
+Save Type = Typ Savu
+Patches = Patches
+Setting = Nastaveni
+Info = Vlastnosti
+Help = Pomoc
+More = Dalsi ->
+3in1 = 3in1/FAS1
+Cheats = Cheats
+Back = <- Zpet
+
+[message box]
+yes = Ano
+no = Ne
+ok = OK
+cancel = Storno
+
+[cheats]
+title = Cheats: SELECT = Ulozi vyber
+error_title = Chyba
+error_text = Cheat soubor nenalezen.
+selectrom = Prosim zvolte .NDS soubor
+noxml = Cheat DB soubor nenalezen
+ccexists = .CC existuje, vygenerovat novy?
+nonefound = Zadne Cheaty nenalezeny v DB
+xmlselect = Zvol Cheat Databazi
+confirm = Potvrdit
+confirm_rebuild = Obnovit soubor .CC?
+invalid cheatdb = Neplatna Cheat Databaze
+Rebuild = Obnovit
+Sel. DB = Vyb.DB
+
+[progress window]
+processing save = Nahravam... Nevypinej NDS!
+processing copy = Kopiruji... Nevypinej NDS, %c=Storno!
+first use sd = Kontroluji SD kartu pred prvnim pouzitim...
+gba load = Nahravam GBA hru...
+gba save load = Nahravam GBA sav...
+gba save store = Vytvarim GBA sav... Nevypinej NDS!
+erase nor = Mazu NOR flash... Nevypinej NDS!
+rebuilding cheat data = Aktualizuji cheat soubor.
+
+[copy file error]
+title = Chyba Kopirovani Souboru/Slozky
+text = Soubor/Slozka neexistuje.
+
+[copy file exists]
+title = Potvrd Prepsani Souboru
+text = Tato slozka obsahuje soubor se stejnym nazvem. Prejes si existujici soubor prepsat timto souborem?
+
+[copy dest is directory]
+title = Chyba kopirovani Slozky
+text = Tato slozka obsahuje slozku se stejnym nazvem. Neni mozne soubor kopirovat.
+
+[move dest is directory]
+title = Chyba presouvani Slozky
+text = Tato slozka obsahuje slozku se stejnym nazvem. Neni mozne soubor presunout.
+
+[no copy dir]
+title = Chyba kopirovani/vyjmuti Slozky
+text = Kopirovani/presunuti slozky neni podporovano!
+
+[stop copying file]
+title = Potvrd zruseni kopirovani souboru
+text = Jsi si jisty ze chces zrusit kopirovani souboru?
+
+[confirm delete file]
+title = Potvrd smazani Souboru/Slozky
+text = Soubor/Slozka nemuze byt smazana, opravdu si prejes smazat '%s'?
+
+[do not delete directory]
+title = Chyba mazani slozky
+text = Tato slozka neni prazdna, smazte veskery jeji obsah a zkuste to znovu.
+
+[unknown save type]
+title = Neznamy Typ Savu
+text = Typ savu tohoto programu je neznamy, stiskni "A" pro manualni nastaveni.
+
+[no savelist]
+title = Chyba Nahravani Save Listu
+text = Save List nemuze byt nahran, chybi "savelist.bin".
+
+[restore save fail]
+title = Obnoveni ulozenych dat selhalo
+text = Ulozene pozice nemohou byt obnoveny, ignorovat a pokracovat dal?
+
+[backup save fail]
+title = Zaloha ulozenych dat selhala
+text = Zalohovani ulozenych pozic selhalo, cilovy disk nemusi mit dostatek volneho mista.
+
+[language changed]
+title = Potvrd Zmenu Jazyka Systemu
+text = Chces opravdu restartovat system a pouzit novy jazyk? Zvol "Ne" pro restartovani pozdeji.
+
+[ui style changed]
+title = Potvrd Zmenu Vzhledu Systemu
+text = Chces opravdu restartovat system a pouzit nove tema? Zvol "Ne" pro zachovani stavajiciho. 
+
+[save type]
+title = Nastav Typ Savu
+text = Typ Savu
+Unknown = Neznamy/Auto
+No Save = Zadny Sav
+4K = 4K
+64K = 64K
+512K = 64K/512K
+2M = 2M
+4M = 2M/4M
+
+[scrolling]
+Fast = Rychle
+Medium = Normalne
+Slow = Pomalu
+
+[system setting]
+title = Nastaveni systemu
+
+[disk info]
+total = Velikost Disku: %s
+used = Pouz. Misto: %s
+free = Volne Misto: %s
+
+[no free space]
+title = Chyba - Nedostatek mista
+text = Na cilovem disku neni dostatek mista, soubor nebude zkopirovan.
+
+
+[sd speed]
+text = Nastav rychlost MicroSD
+item0 = Extrem
+item1 = Rychle
+item2 = Normalne
+item3 = Pomalu
+
+[unsupported sd]
+title = Nepodporovana MicroSD karta
+text = Tato MicroSD karta(Model:%s) neni vhodna pro beh oficialnich DS programu, prosim zkopirujte program z SD karty do Acekard RPG interni Flash pameti a zkuste to znovu.
+
+[sd card error]
+title = Chyba pristupu k MicroSD karte
+text = Neni pristup k MicroSD karte, prosim zkontrolujte zda je karta zformatovana 
+a spravne vlozena.
+
+[no sd for save]
+title = Chybi MicroSD pro ukladani dat
+text = Neni pristup na MicroSD kartu, ukladana data posledniho spusteneho programu budou zapsana do souboru '%s'.
+
+[no gba card]
+title = Chyba - GBA karta nenalezena
+text = Ve Slotu-2 neni zadne medium.
+
+[filelist type]
+text = Zobrazeni souboru
+item0 = NDS
+item1 = NDS + SAV
+item2 = NDS/SAV/BAK
+item3 = VSE
+
+[rom trim]
+text = Trim ROM pri kopirovani
+item0 = Zakazat
+item1 = Povolit
+
+[cheat]
+text = Pouzivani Cheatu
+item0 = Zakazat
+Item1 = Povolit
+
+[autorun]
+text = Autorun
+item0 = Zakazat
+item1 = Povolit
+
+[language]
+text = Jazyk Systemu
+item0 = English
+item1 = S.Chinese
+item2 = T.Chinese
+item3 = Japanese
+item4 = Francais
+item5 = Italiano
+item6 = Deutsch
+item7 = Español
+item8 = Nederlands
+
+[brightness]
+text = Podsviceni
+
+[ui style]
+text = Vzhled Systemu
+
+[help window]
+title = Pomoc
+item0 = %c  Nahoru/Dolu/PgUp/PgDown
+item1 = %c  Ano/Start/OK
+item2 = %c  Ne/Zpet/Storno
+item3 = %c  Info o souboru/Vyber druhu savu
+item4 = %c  Volba Pameti: MicroSD/Flash
+item5 = %c  Zpet o Slozku vyse
+item6 = %c  Nastaveni podsviceni: 1/2/3/4
+item7 = %s  Otevre "START" Menu
+item8 = %s  Styl menu: Anim./Cisla
+versions = HW: %02x NDD: %02x
+
+[abort save]
+title = Stornovat ukladani
+text = Jsi si jisty ze chces zrusit ukladani pozic?
+
+[gba warn]
+title = Varovani GBA ROM velikosti
+text = GBA ROM vetsi nez 32M nejsou momentalne podporovane!
+
+[shortcut overwrite]
+title = Potrvzeni zkratky
+text = Jsi si jisty ze chces vytvorit/prepsat zkratku?
+
+[shortcut delete]
+title = Potvrzeni smazani zkratky
+text = Jsi si jisty, ze chces zkratku smazat?
+
+[slot2]
+gbamode = Boot v GBA modu
+passme = Boot v NDS modu (PassMe)
+backupsramq = Zalohovat SRAM Bank1 (FAS1)
+
+[fas1]
+question = Otazka
+title = FAS1 Nastaveni
+useFAS1 = Pouzij FlashAdvance vlastnosti
+listgba = Seznam GBA/BIN souboru
+verifyFAS1 = Over zapsane bloky
+item0 = Ne
+item1 = Ano
+StartMenuDescription = FAS1
+prompt = Zapis ROM
+flashquestion = Flash ROM to Flash Advance Cart? (%.2fMB / about %.1f min.)
+writeprompt = Zapis Save do Bank 1?
+backupsramq = Zalohuj Slot-1 FlashAdvance kartridge
+backupsram = Zalohovani Bank 1 [%iKB] (%c pro storno)
+saveerror = Neni 64KB SAV soubor, pokracovat?
+unsupported = FAS1: Nepodporovana kartridge
+writingpercent = Zapsano %iKB z %iKB, (%c pro storno)
+savebytes = Zapsano %i bytu (%c pro storno)
+
+[save backup]
+question = Zalohovat sav?
+backing up = Zalohuji soubor .SAV s koncovkou .BAK
+overwrite = Zaloha jiz existuje, prepsat?
+
+[save restore]
+question = Obnovit sav ze zalohy?
+restoring save = Obnovuji .SAV z priponou .BAK
+overwrite = Sav soubor jiz existuje, prepsat?
+
+[textview]
+confirm = Potvrdit 
+exit = Prejes si odejit?
+error = Chyba otevirani souboru
+file open error = Tento textovy soubor nelze otevrit. Navrat do menu OS.
+screen angle = Orientace obrazovky
+normal = Normalni
+rotate 90 = Otoc o 90
+rotate 270 = Otoc o 270
+screen mode = Mod obrazu
+dual = Dualni Obraz
+dual copy = Klonuj Obraz
+lower = Pouze spodni
+upper = Pouze vrchni
+add bookmark = Jsi si jisty, ze chces pridat novou zalozku na tuto pozici?
+remove bookmark = Opravdu chces odstranit tuto zalozku?
+goto toppage? = Opravdu chces preskocit na zacatek stranky?
+
+[save slot]
+title = Zvol Save Slot
+default = Default
+text = Zvol Save Slot pro ukladani
+
+[romnametype]
+Normal = Normalni
+HideExtName = Skryj Konc.
+BannerTitle = Interni
+
+[cheat]
+text = Pouziti Cheat Kodu
+item0 = Zakazat
+Item1 = Povolit
+
+[setting window]
+ok = OK
+savetype = Typ Savu
+cancel = Storno
+confirm = Potvrd nastaveni Systemu
+confirm text = Opravdu chces ulozit soucasne nastaveni?
+shortcut = Zkratka
+delete shortcut = Smazat
+rominfo = Nastav.ROM
+
+[switches]
+Default = Default
+Enable = Povolit
+Disable = Zakazat
+auto menu = Auto Menu
+
+[rom info]
+title = Vlastnosti
+title_copywnd = Kopiruj Save Slot
+file date = Posledni zmena: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Velikost souboru: %s
+save type = Typ Savu: %s
+game code = Kod Hry: %s
+save slot = Zvol Save Slot
+save slot copy = Z %s do:
+Slot = Slot
+cheat menu = Cheat Menu
+copy menu = Kopir.Slot
+save extension = Koncovka Savu
+convert text = Konvert savu
+convert text = Konvertovat savy z %s do %s ?
+
+[patches]
+title = Defaultni nastaveni Patche
+download play = DS Download Play
+cheating system = Cheat/Action Replay
+slow motion = In-Game Slow Motion
+reset in game = Soft-Reset
+3in1 = 3in1
+ak2 loader = AK2 Loader
+altloadernotfound = Alt. Loader nenalezen, bootovat ROM primo?
+patching loader = Patchuji Alternativni Loader pro pouziti s AKAIO
+IRQ Hook = IRQ Hook
+SWI Hook = SWI Hook
+
+[advanced setting]
+title = Nastaveni systemu souboru
+Advanced = Pokrocile
+Show Hidden Files = Ukaz Skryte soubory
+Hide Extension Name = Skryj koncovku ROM
+Scrolling Speed = Rychlost rolovani
+CopyCut Saves Too = Kopir./Vyjm. SAV s ROM
+Delete Saves Too = Smaz SAV s ROM
+Cheat Scrolling = Cheat rolovani
+Homebrew Reset Type = Homebrew Reset Typ
+
+[cheatupdate]
+DATorXML = Soubor ke Stazeni
+updateDB = Wifi Update
+cheatDBbutton = Update DB
+SaveList = savelist.bin
+startupdatetitle = AKAIO Updater
+get whatsnew = Stahni WhatsNew.txt
+startupdatequestion = Prejes si spusit update proceduru?
+WFCConnection = Pripojuji pomoci WFC, %c pro Storno
+cantconnect = Nelze se pripojit, zkontrolu WFC nastaveni
+stopconnectquestion = Prejes si zastavit Wifi pripojeni?
+stopconnecttitle = Ukoncit pripojeni
+getwhatsnew = Stahuji What's New
+downloadthisfile = Stahnout cheat soubor z %s?
+downloaderror = Chyba stahovani souboru
+downloadstart = Stahuji soubor, %c pro Storno
+stopdownloadquestion = Prejes si ukoncit stahovani?
+stopdownloadtitle = Ukoncit stahovani
+downloading = Stahuji %.0fKb/%.0fKb, %c pro Storno
+unzipstop = Prejes si zastavit rozbalovani?
+unzipstoptitle = Rozbalovani pozastaveno
+unzipping = Rozbaluji soubor, %c pro Storno
+unziperror = Chyba extrakce souboru
+success = Uzij si posledni %s
+error = Chyba updatu, zkusit znovu?
+resumeupdatetitle = Obnova preruseneho stahovani
+resumethisfile = Obnovit stahovani %s v %.0fKb?
+deletepartial = Smazat castecne stazeny soubor?
+previousdates = Predchozi data
+previousfiles = Predchozi soubory
+previous date notice = Pouze Wifi a Loader Update
+cheats = Cheaty
+loader = Updatuj Loader
+wifi = Wifi Plugin
+3version = 3 verze
+5version = 5 verzi
+Checking Site = Kontroluji AKAIO stranky
+whatsnew notice = Pouze oficialni stranky
+site = Kterou databazi?
+site1 = Oficial web
+site2 = TempDB
+
+[text viewer]
+text = Prohlizec TXT
+item0 = Plugin
+item1 = Internal
+title = Plugin Nastaveni
+
+[interface settings]
+oldschool = Seznam
+modern = Jmeno souboru
+internal = Interni jmeno
+filelist style = Styl Seznamu
+Hide File Extensions = Skryj koncovky souboru
+
+[exp window]
+title = Slot 2 Cartridge Nastaveni
+ram = RAM
+sram = Dump SRAM
+off = Vypnout
+low = Nizke
+mid = Stredni
+high = Vysoke
+strength = Sila Vibraci
+NOR Mode = NOR Mod
+auto = Auto
+always = Vzdy
+notdetected = 3in1/EWin/FlashAdvance nenalezen!
+NOR Flash = Flash to NOR
+norquestion = Flash to NOR?
+
+[gba settings]
+gbabutton = Nastaveni GBA
+gbasleepdescription = (L+R+Start: spanek/ Select+Start: vzbuzeni)
+title = Nastaveni GBA
+sleephack = GBA Universalni spanek
+autosave = Zalohuj GBA sav pri nacitani OS
+gbaSavePrompt = Upozorni pred Save/Load
+Load Save = Nahraj Sav
+Load File = Nahraj %s?
+Backup Save = Zalohuj Sav
+Backup File = Zalohuj %s?
+
+[ram allocation]
+title = Chyba
+memory allocation error = Chyba alokace pameti
+
+[end]

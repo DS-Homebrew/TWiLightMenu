@@ -124,8 +124,6 @@ all:	bootloader bootstub $(TARGET).nds
 dist:	all
 	@cp "booter_fc.nds" "../7zfile/Flashcard users/BOOT.NDS"
 	@cp "booter_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
-	@mkdir -p "../7zfile/Flashcard users/Autoboot/Original R4/"
-	@cp "booter_fc.nds" "../7zfile/Flashcard users/Autoboot/Original R4/default.nds"
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET)_cyclodsi.arm7 $(TARGET).arm9 $(TARGET)_cyclodsi.arm9
   # simple nds srl without dsi extended header

@@ -1,0 +1,268 @@
+[start menu]
+File_Handle=文件操作
+patch=运行模式
+Cheat=金手指
+archive=存档
+Ui_Type=界面风格
+Language=语言
+Syset=系统设置
+Help=帮助
+Hotkey=全热键
+Hotkey1=简单热键
+
+[file handle menu]
+noText=剪切板无内容 
+item0=复制
+item1=剪切
+item2=粘贴
+item3=删除
+
+[text wnd info]
+title=警告
+item0=%s 文件不存在或损坏！
+item1=攻略
+
+[slow wnd]
+title=减慢
+item0=关
+item1=开
+
+[cheat wnd]
+title=提示
+clearTitle=全不选
+text=是否保存设置？
+title1=提示！
+text1=金手指被关闭！是否开启？
+
+[RTL wnd info]
+title=警告
+load_title=读档
+save_title=存档
+item0=没有存档！
+item1=确认覆盖存档？
+
+[patch menu]
+item0=Clean
+item1=补丁
+
+[Archive type menu]
+item0=存档0
+item1=存档1
+item2=存档2
+item3=存档3
+
+[Syset menu]
+List_type=显示
+Brightness=调光
+Hotkey=全热键
+Hotkey1=简单热键
+FileType=文件列表
+GbaLink=GBA扩展
+LastRomRun=AutorunRom
+
+[Ui Type menu]
+title=警告
+text=用户界面改变，须重启生效，确定改变主题界面吗？选“否”则保持当前界面风格。
+
+[set game info]
+item0=多存档
+item1=金手指
+item2=模式
+
+[reset text]
+title=提示
+text=重启系统吗？
+
+[Cheat menu]
+item0=关闭
+item1=开启
+
+[Brightness menu]
+item0=亮度1
+item1=亮度2
+item2=亮度3
+item3=亮度4
+
+[Language menu]
+title=问题
+text=改变了系统语言，要现在重启更换新的语言吗？选“否”稍后再重启
+item0=英语
+item1=中文
+item2=繁体
+item3=法语
+item4=意大利语
+item5=德语
+item6=西班牙语
+item7=韩语
+
+[Filetype menu]
+item0=NDS
+item1=NDS & Sav
+item2=GBA & Sav
+item3=All
+
+[GbaLink menu]
+item0=无
+item1=联动
+item2=振动
+
+[LastRomRun menu]
+item0=关闭
+item1=开启
+
+[message box]
+yes=是(A)
+no=否(B)
+ok=确定(A)
+cancel=取消(B)
+cheat=金手指(Y)
+
+[List type menu]
+item0=图标
+item1=列表
+item2=文本
+
+[progress window]
+processing_copy=复制文件！
+
+[copy file error]
+title=错误
+text=复制文件时发生错误
+
+[stop copying file]
+title=确认
+text=要停止拷贝这个文件吗？
+
+[no free space]
+title=错误
+text=磁盘空间不足，无法完成拷贝
+text1=磁盘空间不足，请整理磁盘！
+
+[copy file exists]
+title=警告
+text=有相同文件名的文件存在，要覆盖吗?
+
+[copy dest is directory]
+title=错误
+text=有相同名字的目录存在，不能将文件复制到这里
+
+[move dest is directory]
+title=错误
+text=有相同名字的目录存在，不能将文件剪切到这里
+
+[no copy dir]
+title=错误
+text=不能复制或剪切一个目录
+
+[confirm delete file]
+title=确认
+text=删除文件后不能恢复，确实要删除 “%s” 吗？
+
+[do not delete directory]
+title=警告
+text=该目录下还有文件或者目录，不能直接删除
+
+[help window]
+title = 帮助信息
+item0 = %c  选择游戏
+item1 = %c  开始/确定
+item2 = %c  后退/取消
+item3 = %c  设置金手指
+item4 = %c  设置单个游戏信息
+item5 = %c  回上一级目录
+item6 = %c  调节亮度
+item7 = %s  开始菜单
+item8 = %s  切换新列表模式/图标模式
+
+[setting window]
+ok=确定
+savetype=存档类型
+cancel=取消
+confirm=确认
+confirm_text = 要保存当前的设置吗？
+
+[main interface title]
+item0=攻略
+item1=金手指
+item2=存档
+item3=读档
+item4=慢动作
+item5=DS 游侠
+
+[system setting]
+title=系统设置
+
+[search cheat]
+title=DS 游侠
+item0=搜索金手指
+item1=金手指列表
+
+[search cheat btn text]
+confirm=返回游戏
+start=重新搜索
+search=查找
+add=添加
+change=修改
+switch=开/关
+switchall=全关/开
+remove=删除
+result=查询结果
+note=注释(X)
+exit=返回
+
+[cheat search type]
+title=查找类型
+item0=精确查找
+item1=模糊查找
+
+[cheat compare type]
+title=比较类型
+item0=相等
+item1=大于
+item2=小于
+item3=不相等
+
+[cheat data size]
+title=数据尺寸
+item0=< 8位
+item1=< 16位
+item2=< 32位
+
+[cheat input value]
+title=精确查找的目标值
+item0=目标值
+
+[search cheat result]
+address=地址
+oldvalue=旧值
+newvalue=新值
+erro=错误！
+result=搜索到 %d 结果。请选择最合适的。
+getdataerro=操作有误，请重新搜索。
+viewresulterro=没有金手指数据。
+
+[change cheat]
+note=注释
+
+[cheat code]
+address=地址
+value=目标值
+state=状态
+warn=警告！
+del=确定要删除%s选项？
+
+[cheat state]
+on=Enable
+off=Disable
+
+[rom info]
+title=文件信息
+file_date=最后写入：
+file_size=文件大小：%s
+save_type=存档类型：%s
+file_name=文件名：
+game_name=游戏名：
+file_type=类型：%s
+game_id=发布编号：%d
+
+[end]

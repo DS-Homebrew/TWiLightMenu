@@ -1,0 +1,305 @@
+﻿// Thanks to Antoine L., Shad and Supercarte for the translation.
+
+[font]
+main = liberation.pcf
+language = 2
+
+[start menu]
+Copy = Copier
+Cut = Couper
+Paste = Coller
+Delete = Supprimer
+Setting = Paramètres
+Info = Infos Fichier
+Help = Aide
+Tools = Outils
+START = START
+
+[message box]
+yes = Oui
+no = Non
+ok = OK
+cancel = Annuler
+
+[progress window]
+processing save = Sauvegarde… ne pas éteindre
+processing copy = Copie… ne pas éteindre, %c pour annuler
+first use sd = Vérification de la microSD pour une première utilisation
+gba load = Chargement du jeu GBA
+gba save load = Chargement de la sauvegarde du jeu GBA
+gba save store = Sauvegarde GBA… ne pas éteindre
+erase nor = Supprimer mémoire NOR
+
+[copy file error]
+title = Erreur
+text = Le fichier n'existe pas.
+
+[copy file exists]
+title = Attention
+text = Le fichier existe déjà, l'écraser ?
+
+[copy dest is directory]
+title = Erreur
+text = Le répertoire existe déjà, impossible de copier.
+
+[move dest is directory]
+title = Erreur
+text = Le répertoire existe déjà, impossible de déplacer.
+
+[no copy dir]
+title = Erreur
+text = La copie de dossier n'est pas supportée.
+
+[stop copying file]
+title = Arrêter la copie
+text = Voulez-vous arrêter la copie ?
+
+[confirm delete file]
+title = Confirmation
+text = La suppression est définitive, voulez-vous vraiment supprimer "%s" ?
+
+[do not delete directory]
+title = Attention
+text = Le dossier n'est pas vide, impossible de supprimer.
+
+[restore save fail]
+title = Erreur
+text = Impossible de restaurer la sauvegarde.
+
+[language changed]
+title = Question
+text = La configuration système a été mise à jour, redémarrer pour appliquer les changements ? Choisissez "Non" pour redémarrer plus tard.
+
+[ui style changed]
+title = Question
+text = L'interface utilisateur a été mise à jour, redémarrer pour appliquer les changements ? Choisissez "Non" pour annuler les modifications.
+
+[setting window]
+ok = OK
+savetype = Configuration
+cancel = Annuler
+confirm = Confirmer
+confirm text = Sauvegarder la configuration ?
+close = Fermer
+system = Système
+interface = Interface
+filesystem = Fichiers
+gba = GBA
+patches = Patches
+
+[save type]
+title = Configuration
+text = Choisir type de sauvegarde
+Unknown = Automatique
+No Save = Aucune
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = Défaut
+save slot = Le slot de sauvegarde
+tab1 = Compatibilité
+tab2 = Options
+
+[system setting]
+title = Interface utilisateur
+safe mode = Safe Mode
+
+[rom info]
+title = Propriétés du fichier
+file date = Modifié le : %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Taille : %s
+save type = Sauvegarde : %s
+game code = Code : %s
+copy slot = Copie de slot
+
+[disk info]
+total = Capacité : %s
+used = Espace utilisé : %s
+free = Espace libre : %s
+
+[no free space]
+title = Erreur
+text = L'espace disque est insuffisant.
+
+[unsupported sd]
+title = microSD incompatible
+text = Cette micro SD (modèle %s) n'est pas compatible avec les jeux DS. Veuillez copier les jeux sur la mémoire interne du Acekard et réessayer.
+
+[sd card error]
+title = Erreur microSD
+text = microSD inaccessible, vérifiez qu'elle est bien insérée.
+
+[no sd for save]
+title = Erreur microSD
+text = microSD inaccessible, la sauvegarde du dernier jeu lancé a été écrite dans "%s".
+
+[no gba card]
+title = Notification
+text = Il n'y a pas de cartouche insérée dans le slot 2.
+
+[filelist type]
+text = Afficher les fichiers
+item0 = ROMS
+item1 = ROMS + SAV
+item2 = TOUT
+
+[rom trim]
+text = Trimmer lors de la copie
+item0 = Non
+item1 = Oui
+
+[language]
+text = Langage
+ja = 日本語
+en = english
+fr = français
+de = deutsch
+it = italiano
+es = español
+
+[ui style]
+text = Interface utilisateur
+
+[help window]
+title = Aide
+item0 = %c  Sélectionner un logiciel
+item1 = %c  Lancer/OK/Oui
+item2 = %c  Retour/Annuler/Non
+item3 = %c  Propriétés/Type sauvegarde
+item4 = %c  Basculer SD/FLASH
+item5 = %c  Précédent répertoire
+item6 = %c  Ajuster la luminosité
+item7 = %s  Menu de démarrage
+item8 = %s  Style nouveau/classique
+
+[exp window]
+button = 3in1
+title = Configuration du 3in1 expansion pack
+ram = RAM
+sram = sRAM
+off = Désactivée
+low = Faible
+mid = Moyenne
+high = Forte
+strength = Vibrations
+flash to nor = NOR
+copy to psram = RAM
+
+[abort save]
+title = Annuler la sauvegarde
+text = Voulez-vous annuler la sauvegarde ?
+
+[gba warn]
+title = Attention
+text = Les roms GBA avec une taille supérieur à 32Mb ne sont pas supportées.
+
+[patches]
+download play = Download Play
+cheating system = Codes de triche AR
+reset in game = Redémarrer (L+R+A+B+Bas)
+dma = Mode DMA
+protection = Protection bypass
+linkage = Lien GBA
+sd save = Sauvegarder sur microSD
+homebrew reset = Reset in Homebrew
+reset hotkey = Reset Hotkey
+
+[switches]
+Enable = on
+Disable = off
+Global = global(%s)
+
+[ram allocation]
+title = Erreur
+memory allocation error = Erreur d'allocation mémoire
+
+[scrolling]
+fast = Rapide
+medium = Médium
+slow = Faible
+
+[file settings]
+title = Paramêtres des fichiers
+show hidden files = Afficher les fichiers cachés
+save extension = Extension de la sauvegarde
+
+[interface settings]
+title = Interface de réglages
+scrolling speed = Vitesse de défilement
+filelist style = Affichage fichiers
+oldschool = Simple
+modern = Icônes
+internal = Internal
+small = Small icons
+animation = Animation
+12 hour = Horaire sur 12 heures
+
+[gba settings]
+title = GBA settings
+sleephack = Veille universelle
+autosave = Sauvegarde au démarrage
+mode = Slot-2 mode
+modegba = gba
+modends = nds
+modeask = ask
+modetext = Launch slot-2 in NDS mode?
+
+[sd save]
+title = Attention
+text = Ce jeu ne peut pas être lancé depuis la mémoire interne, veuillez le copier sur la carte SD et réessayer.
+
+[icon]
+icon = Fond de l'icone
+transparent = transparent
+as is = original
+firmware = firmware
+
+[cheats]
+title = Cheats
+info = Info
+deselect = Deselect all
+
+[saveslot]
+title = Slot de sauvegarde
+confirm = Etes-vous sûr de vouloir copier ce slot ?
+target slot = Slot de destination
+
+[mainlist]
+flash memory = Flash Memory
+microsd card = microSD Card
+slot2 card = Slot2 Card
+favorites = Favorites
+
+[hotkeys]
+l-r-a-b-↓ = l-r-a-b-↓
+l-r-b-y-↓ = l-r-b-y-↓
+l-r-a-b-x-y = l-r-a-b-x-y
+b-y-touch = b-y-touch
+start-r-touch = start-r-touch
+
+[updater]
+update = Update
+update ? = Do you want to update?
+updater = Update module
+menu = Main module
+cheats = Cheats DB
+connecting = Connecting
+failed = failed
+updated = updated
+fresh = already updated
+stop = Do you want to stop transfer?
+download = Downloaded %d bytes
+unpack = Unpacking
+
+[crc32]
+crc32 = CRC32
+calculation = calcul CRC32
+
+[end]

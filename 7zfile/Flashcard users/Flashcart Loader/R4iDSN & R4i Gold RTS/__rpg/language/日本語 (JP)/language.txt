@@ -1,0 +1,305 @@
+﻿//tnx to ech0chrome
+
+[font]
+main = liberation.pcf
+language = 0
+
+[start menu]
+Copy = コピー
+Cut = カット
+Paste = ペースト
+Delete = 削除
+Setting = 設定
+Info = ファイル詳細
+Help = ヘルプ
+Tools = ツール
+START = START
+
+[message box]
+yes = はい
+no = いいえ
+ok = 決定
+cancel = 取消し
+
+[progress window]
+processing save = 作業中につき電源を切らないで下さい
+processing copy = ファイルコピー, 電源を落とさないで下さい
+first use sd = メディアの初期チェック中
+gba load = GBA ゲーム ロード中…
+gba save load = GBA セーブ ロード中…
+gba save store = GBA セーブ 処理中, 電源を落とさないで下さい
+erase nor = NOR flash 抹消中, 電源を落とさないで下さい
+
+[copy file error]
+title = エラー
+text = ファイルがありません
+
+[copy file exists]
+title = 警告
+text = 同名ファイルが存在します。置き換えますか?
+
+[copy dest is directory]
+title = 警告
+text = 同名ファイルが存在する為、ファイルをコピーできません
+
+[move dest is directory]
+title = 警告
+text = 同名ファイルが存在する為、このファイルを移動できません
+
+[no copy dir]
+title = エラー
+text = ディレクトリのコピー/移動は出来ません
+
+[stop copying file]
+title = ファイルコピーの中止
+text = ファイルのコピーを中止しますか?
+
+[confirm delete file]
+title = 確認
+text = ファイルを削除すると復元はできません。"%s"の削除を続行しますか?
+
+[do not delete directory]
+title = 警告
+text = ディレクトリが空で無い為に削除出来ません
+
+[restore save fail]
+title = エラー
+text = セーブデータの復元に失敗
+
+[language changed]
+title = 確認内容
+text = 言語設定の変更を反映する為に今すぐ再起動しますか?
+
+[ui style changed]
+title = 確認内容
+text = UI設定変更を反映する為に今すぐ再起動しますか?
+
+[setting window]
+ok = OK
+savetype = 設定
+cancel = 取消し
+confirm = 確認
+confirm text = 現在の設定を保存しますか？
+close = 閉じる
+system = システム
+interface = インターフェース
+filesystem = ファイル
+gba = GBA
+patches = パッチ
+
+[save type]
+title = 設定
+text = セーブタイプ選択
+Unknown = 未設定/自動
+No Save = No Save
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = メイン
+save slot = 保存スロットを選択する
+tab1 = 互換性
+tab2 = 機能
+
+[system setting]
+title = システム設定
+safe mode = Safe Mode
+
+[rom info]
+title = ファイル詳細
+file date = 最終更新: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = ファイルサイズ: %s
+save type = セーブ形式タイプ: %s
+game code = ゲームコード: %s
+copy slot = コピースロット
+
+[disk info]
+total = 全体容量: %s
+used = 使用容量: %s
+free = 空き容量: %s
+
+[no free space]
+title = エラー
+text = 容量不足の為
+
+[unsupported sd]
+title = このメディアは利用出来ません
+text = このメディア(Model:%s)は動作に適切では無いので別のものに変更してください
+
+[sd card error]
+title = SDカードエラー
+text = メディアにアクセス出来ません。正しく挿入されていることを確認してください。
+
+[no sd for save]
+title = SDカードエラー
+text = 過去のデータを保存する事が出来ません。 ファイル: "%s".
+
+[no gba card]
+title = 通知
+text = スロット２にカートリッジがありません
+
+[filelist type]
+text = リストタイプ選択
+item0 = NDS
+item1 = NDS + SAV
+item2 = ALL
+
+[rom trim]
+text = 容量調整コピー
+item0 = トリム無効
+item1 = トリム有効
+
+[language]
+text = 言語
+ja = 日本語
+en = english
+fr = français
+de = deutsch
+it = italiano
+es = español
+
+[ui style]
+text = ユーザー設定 スタイル
+
+[help window]
+title = ヘルプ　インフォメーション
+item0 = %c  プログラム選択
+item1 = %c  開始/OK/はい
+item2 = %c  戻る/キャンセル/いいえ
+item3 = %c  ファイル詳細/セーブタイプ選択
+item4 = %c  SD/FLASH　切り替え
+item5 = %c  親ディレクトリに戻る
+item6 = %c  照度調整
+item7 = %s  スタートメニュー
+item8 = %s  アイコン表示/文字表示
+
+[exp window]
+button = 3in1
+title = 3in1 拡張パック 設定
+ram = RAM
+sram = sRAM
+off = オフ
+low = 弱
+mid = 中
+high = 強
+strength = 震動レベル
+flash to nor = to NOR
+copy to psram = to RAM
+
+[abort save]
+title = セーブを中止
+text = セーブを中止しますか?
+
+[gba warn]
+title = 警告
+text = 32MBを超えるGBAロムはサポートされていません
+
+[patches]
+download play = ダウンロードプレイ
+cheating system = チート機能(AR)
+reset in game = ソフトリセット
+dma = DMAモード
+protection = プロテクト回避
+linkage = GBAとリンク
+sd save = SDに直接セーブ
+homebrew reset = Reset in Homebrew
+reset hotkey = Reset Hotkey
+
+[switches]
+Enable = オン
+Disable = オフ
+Global = 全体(%s)
+
+[ram allocation]
+title = エラー
+memory allocation error = メモリ割り当てエラー
+
+[scrolling]
+fast = 高速
+medium = 中速
+slow = 低速
+
+[file settings]
+title = ファイルシステムの設定
+show hidden files = 隠しファイルを表示する
+save extension = Save extension
+
+[interface settings]
+title = インターフェイスの設定
+scrolling speed = スクロール速度
+filelist style = ファイルリストのスタイル
+oldschool = 簡易
+modern = アイコン
+internal = 内部情報
+small = Small icons
+animation = アニメ
+12 hour = 12-hour clock
+
+[gba settings]
+title = GBA設定
+sleephack = ユニバーサルスリープ
+autosave = 起動時にセーブをバックアップする
+mode = Slot-2 mode
+modegba = gba
+modends = nds
+modeask = ask
+modetext = Launch slot-2 in NDS mode?
+
+[sd save]
+title = 警告
+text = このゲームはAcekardのフラッシュメモリから起動できません。SDにコピーしてください。
+
+[icon]
+icon = アイコン表示
+transparent = 透明
+as is = そのまま
+firmware = ファームウェア
+
+[cheats]
+title = チート
+info = More…
+deselect = Deselect all
+
+[saveslot]
+title = セーブスロットコピー
+confirm = セーブスロットをコピーしますか？
+target slot = ターゲットセーブスロット
+
+[mainlist]
+flash memory = Flash Memory
+microsd card = microSD Card
+slot2 card = Slot2 Card
+favorites = Favorites
+
+[hotkeys]
+l-r-a-b-↓ = l-r-a-b-↓
+l-r-b-y-↓ = l-r-b-y-↓
+l-r-a-b-x-y = l-r-a-b-x-y
+b-y-touch = b-y-touch
+start-r-touch = start-r-touch
+
+[updater]
+update = Update
+update ? = Do you want to update?
+updater = Update module
+menu = Main module
+cheats = Cheats DB
+connecting = Connecting
+failed = failed
+updated = updated
+fresh = already updated
+stop = Do you want to stop transfer?
+download = Downloaded %d bytes
+unpack = Unpacking
+
+[crc32]
+crc32 = CRC32
+calculation = CRC32を計算する
+
+[end]

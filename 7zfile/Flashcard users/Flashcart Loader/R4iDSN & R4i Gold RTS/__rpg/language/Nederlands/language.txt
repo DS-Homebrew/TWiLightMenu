@@ -1,0 +1,305 @@
+﻿// Thanks to DjoeN for the translation. (Almost) completely rewritten by MrDiesel.
+
+[font]
+main = liberation.pcf
+language = 1
+
+[start menu]
+Copy = Kopiëren
+Cut = Knippen
+Paste = Plakken
+Delete = Verwijderen
+Setting = Instellingen
+Info = Bestandsinfo
+Help = Help
+Tools = Gereedschap
+START = START
+
+[message box]
+yes = Ja
+no = Nee
+ok = Oké
+cancel = Annuleren
+
+[progress window]
+processing save = Verwerken… Schakel de DS niet uit
+processing copy = Bezig met kopieren… Schakel de DS niet uit. Annuleer met %c
+first use sd = Controle van SD kaart voor eerste gebruik
+gba load = GBA game laden…
+gba save load = GBA save laden…
+gba save store = Verwerken van gba save… Schakel de DS niet uit
+erase nor = Wis NOR flash
+
+[copy file error]
+title = Bestand kopiëren
+text = Het bestand bestaat niet
+
+[copy file exists]
+title = Bestand kopiëren
+text = Een bestand met dezelfde naam bestaat al. Overschrijven?
+
+[copy dest is directory]
+title = Bestand kopiëren
+text = Een map met dezelfde naam bestaat al. Kan het bestand niet kopieren.
+
+[move dest is directory]
+title = Bestand kopiëren
+text = Een map met dezelfde naam bestaat al. Kan het bestand niet verplaatsen.
+
+[no copy dir]
+title = Map kopiëren
+text = Het kopiëren van een map is momenteel niet mogelijk.
+
+[stop copying file]
+title = Bestand kopiëren
+text = Wilt u stoppen met kopiëren?
+
+[confirm delete file]
+title = Bestand verwijderen
+text = Het verwijderen kan niet ongedaan gemaakt worden. Toch doorgaan (%s)?
+
+[do not delete directory]
+title = Map verwijderen
+text = Kan de map niet verwijderen. De map is niet leeg.
+
+[restore save fail]
+title = Herstel van save data
+text = Herstellen van save data mislukt.
+
+[language changed]
+title = Systeemtaal gewijzigd
+text = Wilt u herstarten om de wijzigingen toe te passen? "Nee", later herstarten.
+
+[ui style changed]
+title = Gebruikersinterface gewijzigd
+text = Wilt u herstarten om de wijzigingen toe te passen? "Nee", later herstarten.
+
+[setting window]
+ok = Oké
+savetype = Instellingen
+cancel = Annuleren
+confirm = Bevestigen
+confirm text = Huidige instellingen bewaren?
+close = Sluiten
+system = Systeem
+interface = Interface
+filesystem = Bestandssysteem
+gba = GBA
+patches = Patches
+
+[save type]
+title = Instellingen
+text = Kies een savetype
+Unknown = onbekend/auto
+No Save = geen save
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = Standaard
+save slot = Kies save-slot
+tab1 = Compatibiliteit
+tab2 = Opties
+
+[system setting]
+title = Systeeminstellingen
+safe mode = Safe Mode
+
+[rom info]
+title = Bestandsinformatie
+file date = Laatst gewijzigd: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Bestandsgrootte: %s
+save type = Savetype: %s
+game code = Code: %s
+copy slot = Slot kopiëren
+
+[disk info]
+total = Totale grootte: %s
+used = Gebruikte ruimte: %s
+free = Beschikbare ruimte: %s
+
+[no free space]
+title = Fout
+text = Te weinig beschikbare ruimte op uw microSD kaart.
+
+[unsupported sd]
+title = Incompatibele microSD kaart
+text = Uw microSD kaart (Model: %s) is niet geschikt voor officiële DS programma's.
+
+[sd card error]
+title = MicroSD kaart fout
+text = Geen toegang tot microSD kaart. MicroSD kaart goed aangesloten?
+
+[no sd for save]
+title = MicroSD kaart fout
+text = Geen toegang tot microSD kaart. De savegegevens van laatst uitgevoerde programma zullen worden geschreven naar het bestand "%s".
+
+[no gba card]
+title = Geen GBA kaart
+text = Er is geen apparaat gedetecteerd in SLOT-2.
+
+[filelist type]
+text = Bestandenlijst
+item0 = NDS
+item1 = NDS + SAV
+item2 = ALLES
+
+[rom trim]
+text = ROM trimmen bij het kopiëren
+item0 = Nee
+item1 = Ja
+
+[language]
+text = Taal
+ja = 日本語
+en = English
+fr = Français
+de = Deutsch
+it = Italiano
+es = Español
+
+[ui style]
+text = Gebruikersinterface stijl
+
+[help window]
+title = Help-informatie
+item0 = %c  Selecteer Programma's
+item1 = %c  Start/OK/Ja
+item2 = %c  Terug/Annuleer/Nee
+item3 = %c  Bestandsinfo bekijken/Kies savetype
+item4 = %c  Schakel tussen microSD/FLASH
+item5 = %c  Terug naar hoofdmap
+item6 = %c  Helderheid aanpassen
+item7 = %s  Startmenu
+item8 = %s  Menustijl nieuw/klassiek
+
+[exp window]
+button = 3in1
+title = 3in1 uitbreidingspakket instellingen
+ram = RAM
+sram = sRAM
+off = uit
+low = laag
+mid = gemiddeld
+high = hoog
+strength = Rumble sterkte
+flash to nor = naar NOR
+copy to psram = naar RAM
+
+[abort save]
+title = Save verwerken
+text = Wilt u het saven afbreken?
+
+[gba warn]
+title = GBA ROM te groot
+text = GBA ROM's groter dan 32M worden niet ondersteund.
+
+[patches]
+download play = Single Card Play
+cheating system = Cheat Ingame (AR)
+reset in game = Reset Ingame
+dma = DMA mode
+protection = Omzeil protectie
+linkage = Link met GBA
+sd save = Rechtstreeks opslaan naar microSD
+homebrew reset = Reset in Homebrew
+reset hotkey = Reset Hotkey
+
+[switches]
+Enable = aan
+Disable = uit
+Global = globaal(%s)
+
+[ram allocation]
+title = Fout
+memory allocation error = Geheugenfout
+
+[scrolling]
+fast = Snel
+medium = Gemiddeld
+slow = Traag
+
+[file settings]
+title = Bestandsysteem instellingen
+show hidden files = Toon verborgen bestanden
+save extension = Save Extensie
+
+[interface settings]
+title = Interface instellingen
+scrolling speed = Scroll snelheid
+filelist style = Bestandslijst stijl
+oldschool = Old school
+modern = Modern
+internal = Intern
+small = Small icons
+animation = Animatie
+12 hour = 12-hour clock
+
+[gba settings]
+title = GBA instellingen
+sleephack = Universele sleep
+autosave = Back-up maken van save bij het opstarten
+mode = SLOT-2 mode
+modegba = gba
+modends = nds
+modeask = vragen
+modetext = SLOT-2 in NDS-mode starten?
+
+[sd save]
+title = Spel vanaf flashgeheugen
+text = Het spel kan niet worden gestart vanuit het interne flashgeheugen van de R4. Kopieer het spel terug naar de microSD kaart om verder te gaan.
+
+[icon]
+icon = Icoon tonen
+transparent = doorzichtig
+as is = zoals het is
+firmware = firmware
+
+[cheats]
+title = Cheats
+info = Meer…
+deselect = Deselect all
+
+[saveslot]
+title = Save-slot kopiëren
+confirm = Wilt u het save-slot kopiëren?
+target slot = Welk save-slot?
+
+[mainlist]
+flash memory = Flash Memory
+microsd card = microSD Card
+slot2 card = Slot2 Card
+favorites = Favorites
+
+[hotkeys]
+l-r-a-b-↓ = l-r-a-b-↓
+l-r-b-y-↓ = l-r-b-y-↓
+l-r-a-b-x-y = l-r-a-b-x-y
+b-y-touch = b-y-touch
+start-r-touch = start-r-touch
+
+[updater]
+update = Update
+update ? = Do you want to update?
+updater = Update module
+menu = Main module
+cheats = Cheats DB
+connecting = Connecting
+failed = failed
+updated = updated
+fresh = already updated
+stop = Do you want to stop transfer?
+download = Downloaded %d bytes
+unpack = Unpacking
+
+[crc32]
+crc32 = CRC32
+calculation = Calculating CRC32
+
+[end]

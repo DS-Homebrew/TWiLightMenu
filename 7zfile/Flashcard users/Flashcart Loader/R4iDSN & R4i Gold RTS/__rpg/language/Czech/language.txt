@@ -1,0 +1,305 @@
+﻿//tnx to intemes
+
+[font]
+main = liberation.pcf
+language = 1
+
+[start menu]
+Copy = Kopírovat
+Cut = Vyjmout
+Paste = Vložit
+Delete = Smazat
+Setting = Nastavení
+Info = Informace o úložišti
+Help = Nápověda
+Tools = Nástoje
+START = START
+
+[message box]
+yes = Ano
+no = Ne
+ok = OK
+cancel = Storno
+
+[progress window]
+processing save = Ukládám, nevypínej konzoli
+processing copy = Kopírování souboru, nevypínej, stiskni %c pro ukončení
+first use sd = Kontroluji SD kartu pro první použití.
+gba load = Načítám gba hru
+gba save load = Načítám gba save
+gba save store = Ukládám gba save, nevypínej konzoli
+erase nor = Vymazat NOR flash
+
+[copy file error]
+title = Chyba
+text = Soubor neexistuje
+
+[copy file exists]
+title = Varování
+text = Soubor se stejným jménem už existuje, nahradit ho?
+
+[copy dest is directory]
+title = Chyba
+text = Složka se stejným jménem už existuje, nelze zkopírovat zdrojový soubor.
+
+[move dest is directory]
+title = Chyba
+text = Složka se stejným jménem už existuje, nelze přesunout zdrojový soubor.
+
+[no copy dir]
+title = Chyba
+text = Složku není možné přesunout/kopírovat.
+
+[stop copying file]
+title = Zastavit kopírování souboru
+text = Chcete zastavit kopírování?
+
+[confirm delete file]
+title = Potvrď
+text = Po smazání už nemůže být soubor obnoven, chcete smazat "%s"?
+
+[do not delete directory]
+title = Chyba
+text = Smazání se nepovedlo.
+
+[restore save fail]
+title = Chyba
+text = Nepodařilo se obnovit ulořené data.
+
+[language changed]
+title = Otázka
+text = Jazyk systém byl změněn, mám restartovat? Vyber "Ne" pro odložení restartu.
+
+[ui style changed]
+title = Otázka
+text = Sytl uživatelského nastavení byl změněn, restartovat pro použití stylu? Vyber "Ne" pro ponechání stávajícího.
+
+[setting window]
+ok = OK
+savetype = Nastavení
+cancel = Storno
+confirm = Potvrdit
+confirm text = Uložit toto nastavení?
+close = Zavřít
+system = Systém
+interface = Rozhraní
+filesystem = Souborový systém
+gba = GBA
+patches = Patche
+
+[save type]
+title = Nastavení
+text = Vyberte typ savu
+Unknown = meznámé/auto
+No Save = žádný save
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = výchozí
+save slot = Vyber Save Slot
+tab1 = Kompatibilita
+tab2 = Vlastnosti
+
+[system setting]
+title = Nastavení systému
+safe mode = Nouzový režim
+
+[rom info]
+title = Informace o úložišti
+file date = Změněno: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Velikost: %s
+save type = Typ savu: %s
+game code = Code: %s
+copy slot = Copy Slot
+
+[disk info]
+total = Kapacita: %s
+used = Využité místo: %s
+free = Volné místo: %s
+
+[no free space]
+title = Chyba
+text = Na disku není dostatek volného místa.
+
+[unsupported sd]
+title = Nepodporovaná SD karta
+text = Karta (Model:%s) není vhodná pro běh oficiálních DS programů, zkopírujte prosím program z SD karty do vnitřní paměti Acekardu a zkuste to znovu.
+
+[sd card error]
+title = Chyba SD karty
+text = Nemám přístup k SD kartě, nemusí být správně vložena.
+
+[no sd for save]
+title = Chyba SD karty
+text = Nemám přístup k SD kartě, uložená data předchozíjo spuštěného programu budou uložona do: "%s".
+
+[no gba card]
+title = Oznámení
+text = SLOT-2 je prázdný
+
+[filelist type]
+text = Zobrazovat soubory
+item0 = NDS
+item1 = NDS + SAV
+item2 = VŠE
+
+[rom trim]
+text = Trimuj romku při kopírování
+item0 = Ne
+item1 = Ano
+
+[language]
+text = Jazyk
+ja = 日本語
+en = english
+fr = français
+de = deutsch
+it = italiano
+es = español
+
+[ui style]
+text = Styl uživatelského rozhraní
+
+[help window]
+title = Help information
+item0 = %c  Pohyb po seznamu
+item1 = %c  Start/OK/ANO
+item2 = %c  Zpět/Storno/NE
+item3 = %c  Zobrazit info o souboru/Volba uložení
+item4 = %c  Změň SD/FLASH
+item5 = %c  Zpět do zdrojového asresáře
+item6 = %c  Nastavení jasu
+item7 = %s  Start Menu
+item8 = %s  Styl menu nový/klasický
+
+[exp window]
+button = 3v1
+title = nastavení 3v1 expansion packu
+ram = RAM
+sram = sRAM
+off = vypnuto
+low = nízké
+mid = střední
+high = vysoké
+strength = Síla vybrací
+flash to nor = do NOR
+copy to psram = do RAM
+
+[abort save]
+title = Přerušit ukládání
+text = Přejete si přerušit ukládání?
+
+[gba warn]
+title = Varování
+text = Gba romky větší než 32M nejsou podporovány!
+
+[patches]
+download play = Hrát s jednou kartou
+cheating system = Cheaty ve hře (AR)
+reset in game = Reset ve hře
+dma = DMA mode
+protection = Bypass ochrana
+linkage = Propojit s GBA
+sd save = Uložit přímo na SD kartu
+homebrew reset = Reset v homebrew
+reset hotkey = Resetovací klávesová zkratka
+
+[switches]
+Enable = zapnuto
+Disable = vypnuto
+Global = globální(%s)
+
+[ram allocation]
+title = Chyba
+memory allocation error = Chyba alokace paměti
+
+[scrolling]
+fast = Rychlá
+medium = Střední
+slow = Pomalá
+
+[file settings]
+title = Nastavení souborového systému
+show hidden files = Zobraz skryté soubory
+save extension = Ukládat uložené hry jako
+
+[interface settings]
+title = Nastavení rozhraní
+scrolling speed = Rychlost posunu
+filelist style = Styl seznamu souborů
+oldschool = Old school
+modern = Moderní
+internal = Internal
+small = Malé ikony
+animation = Animace
+12 hour = 12-ti hodinový formát času
+
+[gba settings]
+title = nastavení GBA
+sleephack = Univerzální spánek
+autosave = Záložní uložení při startu
+mode = SLOT-2
+modegba = gba
+modends = nds
+modeask = na dotaz
+modetext = Spustit SLOT-2 v režimu NDS?
+
+[sd save]
+title = Varování
+text = Tato hra nemůže být spuštěna z vnitřní paměti Acekardu, prosím překopírujte hru z vnitřní pamětí Acekardu na SD kartu a zkuste to znovu.
+
+[icon]
+icon = Zobrazit ikonu
+transparent = průhledné
+as is = jak je
+firmware = firmware
+
+[cheats]
+title = Cheaty
+info = Více…
+deselect = Odznačit vše
+
+[saveslot]
+title = Kopírovat Save Slot
+confirm = Opravdu chcete zkopírovat save slot?
+target slot = Cílový Save Slot
+
+[mainlist]
+flash memory = Flash paměť
+microsd card = microSD
+slot2 card = SLOT-2
+favorites = Oblíbené
+
+[hotkeys]
+l-r-a-b-↓ = l-r-a-b-↓
+l-r-b-y-↓ = l-r-b-y-↓
+l-r-a-b-x-y = l-r-a-b-x-y
+b-y-touch = b-y-touch
+start-r-touch = start-r-touch
+
+[updater]
+update = Aktualizace
+update ? = Prejete si aktualizovat?
+updater = Aktualizacni modul
+menu = Hlavni modul
+cheats = Cheaty DB
+connecting = Spojuji
+failed = chyba
+updated = aktualizováno
+fresh = aktualizace jiz probehla
+stop = Chcete ukončit prenos?
+download = Stazeno %d bytu
+unpack = Rozbaluji
+
+[crc32]
+crc32 = CRC32
+calculation = Výpočet CRC32
+
+[end]

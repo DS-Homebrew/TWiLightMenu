@@ -1,0 +1,305 @@
+﻿//thanx to Attila13, http://gbatemp.net/index.php?showuser=264630
+
+[font]
+main = liberation.pcf
+language = 1
+
+[start menu]
+Copy = Copiază
+Cut = Taie
+Paste = Lipeşte
+Delete = Şterge
+Setting = Setări
+Info = Informaţie
+Help = Ajutor
+Tools = Unelte
+START = START
+
+[message box]
+yes = Da
+no = Nu
+ok = OK
+cancel = Anulează
+
+[progress window]
+processing save = Procesare, nu opriţi…
+processing copy = Copiere fişier, nu opriţi,apăsaţi %c  pentru a întrerupe.
+first use sd = Analizare card SD pentru prima folosire
+gba load = Încărcare joc GBA
+gba save load = Încărcarea salvării jocului GBA
+gba save store = Procesare salvare GBA, nu opriţi…
+erase nor = Şterge NOR flash
+
+[copy file error]
+title = Eroare
+text = Fişierul nu există.
+
+[copy file exists]
+title = Avertizare
+text = Există deja un fişier cu acest nume, suprascrieţi?
+
+[copy dest is directory]
+title = Eroare
+text = Un director cu acelaşi nume există deja, fişierul sursă nu se poate copia.
+
+[move dest is directory]
+title = Eroare
+text = Un director cu acelaşi nume există deja, fişierul sursă nu se poate muta.
+
+[no copy dir]
+title = Eroare
+text = Copierea sau mutarea directorului nu se poate executa.
+
+[stop copying file]
+title = Întrerupere copiere
+text = Aţ dori să opriţi copierea?
+
+[confirm delete file]
+title = Confirmare
+text = Fişierul nu se poate recupera dupa ştergere, continuaţi ştergerea "%s"?
+
+[do not delete directory]
+title = Eroare
+text = Operaţiunea de ştergere oprită!
+
+[restore save fail]
+title = Eroare
+text = Recuperarea datelor salvate eşuată.
+
+[language changed]
+title = Întrebare
+text = Setările limbii de sistem sau schimbat, reporniţi pentru aplicarea setărilor? Pentru a reporni mai târziu apăsaţi “Nu”.
+
+[ui style changed]
+title = Întrebare
+text = Interfaţa stilului s-a schimbat, reporniţi pentru aplicarea acesteia? Apasaţi “Nu” pentru a lăsa stilul current.
+
+[setting window]
+ok = OK
+savetype = Setări
+cancel = Anulează
+confirm = Confirmare
+confirm text = Salvaţi setările curente?
+close = Închide
+system = Sistem
+interface = Interfaţă
+filesystem = Sistem de fişiere
+gba = GBA
+patches = Patch-uri
+
+[save type]
+title = Setări
+text = Alege tipul de salvare
+Unknown = necunoscut/auto
+No Save = fără salvare
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = Implicit
+save slot = Alege slotul de salvare
+tab1 = Compatibilitate
+tab2 = Caracteristici
+
+[system setting]
+title = Setări de Sistem
+safe mode = Mod Sigur
+
+[rom info]
+title = Informaţie Fişier
+file date = Ultima schimbare: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Dimensiune Fişier: %s
+save type = Tip Salvare: %s
+game code = Cod: %s
+copy slot = Copiere Slot
+
+[disk info]
+total = Capacitate: %s
+used = Spaţiu Ocupat : %s
+free = Spaţiu Liber: %s
+
+[no free space]
+title = Eroare
+text = Nu este spaţiu suficient.
+
+[unsupported sd]
+title = Card SD neacceptat
+text = Cardul SD(Model:%s) nu este adecvat săvruleze programe DS oficiale, vă rugăm să copiaţi de pe cardul SD pe Acekard Internal Flash Memory şi încercaţi din nou.
+
+[sd card error]
+title = Eroare card SD
+text = Nu se poate accesa cardul SD , poate nu este introdus corect.
+
+[no sd for save]
+title = Eroare card SD
+text = Nu se poate accesa cardul SD, datele salvării programului lansat precedent va fi scrisaă la fisierul: "%s".
+
+[no gba card]
+title = Notificare
+text = Ne este dispozitiv în SLOT-2.
+
+[filelist type]
+text = Setează tipurile de fişiere
+item0 = NDS
+item1 = NDS + SAV
+item2 = Toate
+
+[rom trim]
+text = Comprimare ROM la copiere.
+item0 = Nu
+item1 = Da
+
+[language]
+text = Limbă
+ja = 日本語
+en = english
+fr = français
+de = deutsch
+it = italiano
+es = español
+
+[ui style]
+text = Interfaţă stil
+
+[help window]
+title = Informaţie Ajutor
+item0 = %c  Alegere Programe
+item1 = %c  Start/OK/Da
+item2 = %c  Înapoi/Anulare/Nu
+item3 = %c  Vezi informaţie fişier/Alegere tip salvare
+item4 = %c  Alegere SD/FLASH
+item5 = %c  Înapoi la directorul părinte
+item6 = %c  Reglare Luminozitate
+item7 = %s  Meniu de Start
+item8 = %s  Stil meniu nou/classic
+
+[exp window]
+button = 3in1
+title = Setări 3in1 expansion pack
+ram = RAM
+sram = sRAM
+off = neactiv
+low = mic
+mid = mediu
+high = mare
+strength = Putere vibraţie
+flash to nor = la NOR
+copy to psram = la RAM
+
+[abort save]
+title = Întreruper proces de salvare
+text = Vreţi să opriţi procesul de salvare?
+
+[gba warn]
+title = Avertizare
+text = Mărimea ROM-urilor GBA care depăşesc 32M, nu sunt suportate!
+
+[patches]
+download play = Single Card Play
+cheating system = Trişare în joc(AR)
+reset in game = Resetare în joc
+dma = Mod DMA
+protection = Bypass protecţie
+linkage = Leagă cu GBA
+sd save = Salvează direct pe cardul SD
+homebrew reset = Resetare în Homebrew
+reset hotkey = Comandă de Resetare
+
+[switches]
+Enable = Activ
+Disable = Neactiv
+Global = global(%s)
+
+[ram allocation]
+title = Eroare
+memory allocation error = Eroare la alocarea de memorie
+
+[scrolling]
+fast = Rapid
+medium = Mediu
+slow = Încet
+
+[file settings]
+title = Setări sistem de fişiere
+show hidden files = Arată fişierele ascunse
+save extension = Extensie salvare
+
+[interface settings]
+title = Setări interfaţă
+scrolling speed = Viteză de defilare
+filelist style = Stilul listei de fişiere
+oldschool = Old school
+modern = Modern
+internal = Internal
+small = Icoane Mici
+animation = Animaţie
+12 hour = Mod de 12 ore
+
+[gba settings]
+title = Setări GBA
+sleephack = Somn universal(sleep)
+autosave = Salvare automată
+mode = mod Slot-2
+modegba = gba
+modends = nds
+modeask = Întreabă
+modetext = Lansaţi slot-2 în mod NDS?
+
+[sd save]
+title = Avertizare
+text = Acest joc nu se poate lansa de pe Acekard Internal Flash Memory. Vă rugăm să copiaţi de pe Acekard Internal Flash Memory pe cardul SD şi încercaţi din nou.
+
+[icon]
+icon = afişează pictograma
+transparent = transparent
+as is = as is
+firmware = firmware
+
+[cheats]
+title = Trişare
+info = Mai mult…
+deselect = Deselectare
+
+[saveslot]
+title = Slot salvare de copiat
+confirm = Sigur vreţi să copiaţi slotul de salvare?
+target slot = Slot salvare ţintă
+
+[mainlist]
+flash memory = Memorie Flash
+microsd card = Card microSD
+slot2 card = Card Slot2
+favorites = Favoriţi
+
+[hotkeys]
+l-r-a-b-↓=l-r-a-b-↓
+l-r-b-y-↓=l-r-b-y-↓
+l-r-a-b-x-y=l-r-a-b-x-y
+b-y-touch=b-y-ecran
+start-r-touch=start-r-ecran
+
+[updater]
+update = Update
+update ? = Vreţi să faceţi Update?
+updater = Modul Update
+menu = Modul principal
+cheats = DB Trişări
+connecting = Conectare
+failed = eşuat
+updated = updatat
+fresh = deja updatat
+stop = Vreţi să opriţi transferul?
+download = Downloadat %d bytes
+unpack = Despachetare
+
+[crc32]
+crc32 = CRC32
+calculation = Calculare CRC32
+
+[end]
