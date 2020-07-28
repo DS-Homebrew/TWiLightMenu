@@ -195,6 +195,13 @@ void resetMemory_ARM7 (void)
 	}
 
 	arm7clearRAM();
+	// clear most of EWRAM - except after RAM end - 0xc000, which has the bootstub
+	if (dsiMode && loadFromRam) {
+		toncset((void*)0x02004000, 0, 0x7FC000);
+		toncset((void*)0x02D00000, 0, 0x2F4000);
+	} else {
+		toncset((void*)0x02004000, 0, dsiMode ? 0xFF0000 : 0x3F0000);
+	}
 
 	REG_IE = 0;
 	REG_IF = ~0;
@@ -226,6 +233,8 @@ void resetMemory_ARM7 (void)
 void loadBinary_ARM7 (u32 fileCluster)
 {
 	if (loadFromRam) {
+		bool isDSi = (*(vu32*)(0x08240000) != 1);
+
 		//u32 ARM9_SRC = *(u32*)(TWL_HEAD+0x20);
 		char* ARM9_DST = (char*)*(u32*)(TWL_HEAD+0x28);
 		u32 ARM9_LEN = *(u32*)(TWL_HEAD+0x2C);
@@ -233,8 +242,8 @@ void loadBinary_ARM7 (u32 fileCluster)
 		char* ARM7_DST = (char*)*(u32*)(TWL_HEAD+0x38);
 		u32 ARM7_LEN = *(u32*)(TWL_HEAD+0x3C);
 
-		tonccpy(ARM9_DST, (char*)0x09000000, ARM9_LEN);
-		tonccpy(ARM7_DST, (char*)0x09380000, ARM7_LEN);
+		tonccpy(ARM9_DST, (char*)(isDSi ? 0x02800000 : 0x09000000), ARM9_LEN);
+		tonccpy(ARM7_DST, (char*)(isDSi ? 0x02B80000 : 0x09380000), ARM7_LEN);
 
 		// first copy the header to its proper location, excluding
 		// the ARM9 start address, so as not to start it
@@ -242,6 +251,9 @@ void loadBinary_ARM7 (u32 fileCluster)
 		*(u32*)(TWL_HEAD+0x24) = 0;
 		dmaCopyWords(3, (void*)TWL_HEAD, (void*)NDS_HEAD, 0x170);
 		*(u32*)(TWL_HEAD+0x24) = TEMP_ARM9_START_ADDRESS;
+
+		if (isDSi)
+			toncset((void*)0x02800000, 0, 0x500000);
 
 		return;
 	}
