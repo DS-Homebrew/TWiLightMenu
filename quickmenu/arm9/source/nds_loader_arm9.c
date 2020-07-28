@@ -362,11 +362,13 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
-bool runNds9 (const char* filename) {
+bool runNds9 (const char* filename, bool dsModeSwitch) {
 	if (isDSiMode()) return false;
 	bool isDSi = (REG_SCFG_EXT != 0);
 
-	if (!isDSi) {
+	if (isDSi) {
+		if (dsModeSwitch) return false;
+	} else {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
 						 // Expansion Pak)
 
@@ -472,9 +474,10 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		argv = args;
 	}
 
-	bool lockScfg = (strncmp(filename, "fat:/_nds/GBARunner2", 20) != 0);
+	bool lockScfg = (strncmp(filename, "fat:/_nds/GBARunner2", 20) != 0
+					&& strncmp(filename, "fat:/_nds/TWiLightMenu/emulators/gameyob", 40) != 0);
 
-	bool loadFromRam = runNds9(filename);
+	bool loadFromRam = runNds9(filename, dsModeSwitch);
 
 	bool havedsiSD = false;
 

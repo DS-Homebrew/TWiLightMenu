@@ -577,7 +577,7 @@ void lastRunROM()
 
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/nesds.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 		}
 		else
 		{
@@ -591,7 +591,7 @@ void lastRunROM()
 
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/gameyob.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/gameyob.nds";
 		}
 		else
 		{
@@ -607,7 +607,7 @@ void lastRunROM()
 		{
 			mkdir("fat:/data", 0777);
 			mkdir("fat:/data/s8ds", 0777);
-			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/S8DS.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
 		}
 		else
 		{
@@ -623,7 +623,7 @@ void lastRunROM()
 
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = (char*)"/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 		}
 		else
 		{
@@ -637,7 +637,7 @@ void lastRunROM()
 
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = (char*)"/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 		}
 		else
 		{
@@ -651,7 +651,7 @@ void lastRunROM()
 
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/StellaDS.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 		}
 		else
 		{
@@ -665,7 +665,7 @@ void lastRunROM()
 
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
 		}
 		else
 		{

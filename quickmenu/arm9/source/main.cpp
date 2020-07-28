@@ -2371,6 +2371,7 @@ int main(int argc, char **argv) {
 			} else {
 				bool useNDSB = false;
 				bool dsModeSwitch = false;
+				bool boostCpu = true;
 				bool boostVram = false;
 
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
@@ -2459,6 +2460,7 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/gameyob.nds";
+						dsModeSwitch = !isDSiMode();
 						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".nes") || extention(filename[secondaryDevice], ".fds")) {
@@ -2534,6 +2536,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
+							boostCpu = false;
 							boostVram = true;
 						}
 						dsModeSwitch = true;
@@ -2589,7 +2592,7 @@ int main(int argc, char **argv) {
 				int err = 0;
 
 				argarray.at(0) = (char *)ndsToBoot;
-				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, true, boostVram);	// Pass ROM to emulator as argument
+				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram);	// Pass ROM to emulator as argument
 
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);

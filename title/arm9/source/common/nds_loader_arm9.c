@@ -259,7 +259,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool lockScfg, bool boostCpu, bool boostVram)
 {
 	char* argStart;
 	u16* argData;
@@ -341,7 +341,11 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 		if (!boostCpu) {
 			REG_SCFG_CLK = 0x80;
 		}
-		REG_SCFG_EXT = (boostVram ? 0x03002000 : 0x03000000);		// 4MB memory mode, and lock SCFG
+		if (lockScfg) {
+			REG_SCFG_EXT = (boostVram ? 0x03002000 : 0x03000000);		// 4MB memory mode, and lock SCFG
+		} else {
+			REG_SCFG_EXT = (boostVram ? 0x83002000 : 0x83000000);		// 4MB memory mode
+		}
 	}
 
 	// Give the VRAM to the ARM7
@@ -379,11 +383,13 @@ void runNds9i (const char* filename) {
 	fclose(ndsFile);
 }
 
-bool runNds9 (const char* filename) {
+bool runNds9 (const char* filename, bool dsModeSwitch) {
 	if (isDSiMode()) return false;
 	bool isDSi = (REG_SCFG_EXT != 0);
 
-	if (!isDSi) {
+	if (isDSi) {
+		if (dsModeSwitch) return false;
+	} else {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
 						 // Expansion Pak)
 
@@ -452,7 +458,7 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 		fclose(gifFile);
 	}
 
-	return runNds (load_bin, load_bin_size, sector, false, false, true, 0, NULL, true, false, true, true);
+	return runNds (load_bin, load_bin_size, sector, false, false, true, 0, NULL, true, false, false, true, true);
 }
 
 int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)  {
@@ -489,7 +495,10 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		argv = args;
 	}
 
-	bool loadFromRam = (runNds9(filename) || (isDSiMode() && access("sd:/", F_OK) != 0));
+	bool lockScfg = (strncmp(filename, "fat:/_nds/GBARunner2", 20) != 0
+					&& strncmp(filename, "fat:/_nds/TWiLightMenu/emulators/gameyob", 40) != 0);
+
+	bool loadFromRam = (runNds9(filename, dsModeSwitch) || (isDSiMode() && access("sd:/", F_OK) != 0));
 
 	if (isDSiMode() && loadFromRam) {
 		runNds9i(filename);
@@ -501,7 +510,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0), (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
+	return runNds (load_bin, load_bin_size, st.st_ino, (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0), (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, argc, argv, clearMasterBright, dsModeSwitch, lockScfg, boostCpu, boostVram);
 }
 
 /*

@@ -2020,7 +2020,7 @@ int main(int argc, char **argv) {
 				}
 				argarray.at(0) = (char *)ndsToBoot;
 
-				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to emulator as argument
+				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!isDSiMode() && gameboy), true, true);	// Pass ROM to emulator as argument
 
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
