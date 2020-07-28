@@ -1141,7 +1141,7 @@ void vBlankHandler() {
 		// Top icons for 3DS theme
 		if (ms().theme == 1) {
 			int topIconXpos = 116;
-			if (isDSiMode() && sdFound()) {
+			if ((isDSiMode() && sdFound()) || bothSDandFlashcard()) {
 				for (int i = 0; i < 2; i++) {
 					topIconXpos -= 14;
 				}
