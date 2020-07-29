@@ -614,7 +614,7 @@ int main(int argc, char **argv)
 
 	if (widescreenFound)
 	{
-		gamesPage.option((isDSiMode() ? STR_ASPECTRATIO : "Sys SD: "+STR_ASPECTRATIO),
+		gamesPage.option((isDSiMode() ? STR_ASPECTRATIO : "SD: "+STR_ASPECTRATIO),
 			STR_DESCRIPTION_ASPECTRATIO,
 			Option::Bool(&ms().wideScreen),
 			{STR_WIDESCREEN, STR_FULLSCREEN},
