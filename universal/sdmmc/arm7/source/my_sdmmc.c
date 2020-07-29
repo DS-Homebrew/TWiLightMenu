@@ -330,9 +330,11 @@ static u32 calcSDSize(u8* csd, int type) {
 //---------------------------------------------------------------------------------
 int my_sdmmc_sdcard_init() {
 //---------------------------------------------------------------------------------
-	// We need to send at least 74 clock pulses.
+	// We need to send at least 74 clock pulses before talking to the card.
     my_setTarget(&deviceSD);
-	swiDelay(0x1980); // ~75-76 clocks
+	// TMIO base clock is half of the CPU clock so 2 CPU cycles = 1 base clock pulse.
+	// cycles = 2 * [TMIO clock divider] * 74
+	swiDelay(2 * 128 * 74);
 
     // card reset
     my_sdmmc_send_command(&deviceSD,0,0);
