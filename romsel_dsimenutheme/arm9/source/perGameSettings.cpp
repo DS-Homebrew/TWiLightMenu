@@ -500,7 +500,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 3:
 				printSmall(false, 24, perGameOpYpos, STR_ARM9_CPU_SPEED + ":");
-				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
+				if (perGameSettings_dsiMode > 0 && (isDSiMode() || !ms().secondaryDevice)) {
 					printSmall(false, 256-24, perGameOpYpos, "133mhz (TWL)", Alignment::right);
 				} else {
 					if (perGameSettings_boostCpu == -1) {
@@ -514,7 +514,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 4:
 				printSmall(false, 24, perGameOpYpos, STR_VRAM_BOOST + ":");
-				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
+				if (perGameSettings_dsiMode > 0 && (isDSiMode() || !ms().secondaryDevice)) {
 					printSmall(false, 256-24, perGameOpYpos, STR_ON, Alignment::right);
 				} else {
 					if (perGameSettings_boostVram == -1) {
