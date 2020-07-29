@@ -38,6 +38,7 @@ int bgColor2 = 0x77BD;
 
 int screenBrightness = 31;
 
+u16 bmpImageBuffer[256*192] = {0};
 std::vector<u16> pageImage;
 
 extern int pageYpos;
@@ -156,18 +157,21 @@ void pageLoad(const std::string &filename) {
 			fseek(file, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
 			fseek(file, pixelStart, SEEK_SET);
-			fread(pageImage.data(), sizeof(u16), 256*pageYsize, file);
-			u16* src = pageImage.data();
-			int x = 0;
 			int y = pageYsize-1;
-			for (int i=0; i<256*pageYsize; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
+			for (int ii = pageYsize; ii > 0; ii-=192) {
+				fread(bmpImageBuffer, sizeof(u16), 256*192, file);
+				u16* src = bmpImageBuffer;
+				int x = 0;
+				for (int i=0; i<256*(ii>192 ? 192 : ii); i++) {
+					if (x >= 256) {
+						x = 0;
+						y--;
+					}
+					u16 val = *(src++);
+					pageImage[y*256+x] = convertToDsBmp(val);
+					x++;
 				}
-				u16 val = *(src++);
-				pageImage[y*256+x] = convertToDsBmp(val);
-				x++;
+				y--;
 			}
 		}
 
