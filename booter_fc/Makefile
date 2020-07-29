@@ -122,8 +122,12 @@ export GAME_TITLE := $(TARGET)
 all:	bootloader bootstub $(TARGET).nds
 	
 dist:	all
-	@cp "booter_fc.nds" "../7zfile/Flashcard users/BOOT.NDS"
-	@cp "booter_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
+	@cp "$(TARGET)_fc.nds" "../7zfile/Flashcard users/BOOT.NDS"
+	@cp "$(TARGET)_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
+	@cp "$(TARGET).arm7.elf" "../7zfile/Debug/$(TARGET)_fc.arm7.elf"
+	@cp "$(TARGET).arm9.elf" "../7zfile/Debug/$(TARGET)_fc.arm9.elf"
+	@cp "$(TARGET)_cyclodsi.arm7.elf" "../7zfile/Debug/$(TARGET)_cyclodsi.arm7.elf"
+	@cp "$(TARGET)_cyclodsi.arm9.elf" "../7zfile/Debug/$(TARGET)_cyclodsi.arm9.elf"
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET)_cyclodsi.arm7 $(TARGET).arm9 $(TARGET)_cyclodsi.arm9
   # simple nds srl without dsi extended header
