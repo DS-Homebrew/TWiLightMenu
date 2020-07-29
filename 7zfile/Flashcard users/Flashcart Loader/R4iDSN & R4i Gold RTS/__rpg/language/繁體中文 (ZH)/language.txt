@@ -1,0 +1,305 @@
+﻿// Thanks to s223355 for the translation.
+
+[font]
+main = wenquanyi_9pt.pcf
+language = 0
+
+[start menu]
+Copy = 複製
+Cut = 剪下
+Paste = 貼上
+Delete = 刪除
+Setting = 設定
+Info = 檔案資訊
+Help = 說明
+Tools = 工具
+START = START
+
+[message box]
+yes = 是
+no = 否
+ok = 確定
+cancel = 取消
+
+[progress window]
+processing save = 正在處理存檔，請不要關機！
+processing copy = 正在複製檔案，請不要關機，按 %c 取消！
+first use sd = 正在為第一次使用 SD 卡做準備
+gba load = 讀取GBA遊戲…
+gba save load = 讀取GBA存檔…
+gba save store = 正在處理GBA存檔，請不要關機！
+erase nor = 消除NOR記憶體中，請不要關機！
+
+[copy file error]
+title = 錯誤
+text = 檔案或資料夾不存在
+
+[copy file exists]
+title = 提示
+text = 有相同檔名的檔案存在，要覆蓋嗎？
+
+[copy dest is directory]
+title = 錯誤
+text = 有相同名字的目錄存在，不能將檔案複製到這裡
+
+[move dest is directory]
+title = 錯誤
+text = 有相同名字的目錄存在，不能將檔案搬移到這裡
+
+[no copy dir]
+title = 錯誤
+text = 不支援複製或剪下一個目錄
+
+[stop copying file]
+title = 確認
+text = 要停止複製這個檔案嗎？
+
+[confirm delete file]
+title = 確認
+text = 刪除檔案後不能恢復，確實要刪除 「%s」 嗎？
+
+[do not delete directory]
+title = 警告
+text = 該目錄下還有檔案或者目錄，不能直接刪除
+
+[restore save fail]
+title = 錯誤
+text = 恢復存檔錯誤
+
+[language changed]
+title = 問題
+text = 改變了系統語言，要現在重啟更換新的語言嗎？選「否」稍後再重啟
+
+[ui style changed]
+title = 問題
+text = 改變了使用者設定，必須重啟系統才能生效，要現在重啟更換新的設定嗎？選「否」保持當前的設定
+
+[setting window]
+ok = 確定
+savetype = 存檔類型
+cancel = 取消
+confirm = 確認
+confirm text = 要保存當前的設定嗎？
+close = 關閉
+system = 系統
+interface = 介面
+filesystem = 檔案系統
+gba = GBA
+patches = 特殊功能
+
+[save type]
+title = 設定
+text = 選擇存檔類型
+Unknown = 未知/自動
+No Save = 沒有存檔
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = 預設
+save slot = 選擇存檔Slot
+tab1 = Compatibility
+tab2 = Features
+
+[system setting]
+title = 系統設定
+safe mode = Safe Mode
+
+[rom info]
+title = 檔案資訊
+file date = 最後寫入：%d年%d月%d日 %02d:%02d:%02d(GMT)
+file size = 檔案大小：%s
+save type = 存檔類型：%s
+game code = 遊戲代碼： %s
+copy slot = 複製存檔
+
+[disk info]
+total = 磁碟容量：%s
+used = 已用空間：%s
+free = 剩餘空間：%s
+
+[no free space]
+title = 錯誤
+text = 磁碟空間不足
+
+[unsupported sd]
+title = 不相容的SD卡
+text = 您使用的SD卡(型號:%s) 不適合直接執行DS官方程式，請複製到AK內建記憶體中再執行
+
+[sd card error]
+title = SD卡錯誤
+text = 無法存取SD卡的內容，SD卡可能沒有插好
+
+[no sd for save]
+title = SD卡錯誤
+text = 無法存取SD卡，之前的存檔將被備份到內建記憶體的：%s 檔案中
+
+[no gba card]
+title = 提示
+text = SLOT2 並沒有插入設備
+
+[filelist type]
+text = 設定檔案列表方式
+item0 = NDS
+item1 = NDS + SAV
+item2 = ALL
+
+[rom trim]
+text = 複製時自動縮減ROM
+item0 = 否
+item1 = 是
+
+[language]
+text = 系統語言
+ja = 日本語
+en = english
+fr = français
+de = deutsch
+it = italiano
+es = español
+
+[ui style]
+text = 面版
+
+[help window]
+title = 說明主題
+item0 = %c  選擇檔案
+item1 = %c  是/開始/確定
+item2 = %c  否/後退/取消
+item3 = %c  查詢檔案資訊 / 選擇存檔類型
+item4 = %c  切換 SD / NAND 記憶體
+item5 = %c  上一頁
+item6 = %c  調整亮度：1/2/3/4
+item7 = %s  開始選單
+item8 = %s  切換 圖示/文字 模式
+
+[exp window]
+button = EZ3合1
+title = 3合1擴充卡設定
+ram = RAM
+sram = sRAM
+off =關閉
+low = 弱
+mid = 中
+high = 強
+strength = 震動等級
+flash to nor = 到 NOR
+copy to psram = 到 PSRAM
+
+[abort save]
+title = 取消存檔
+text = 您確定要取消存檔？
+
+[gba warn]
+title = 警告：GBA ROM 容量
+text = 不支援大於32MB的GBA ROM !
+
+[patches]
+download play = 提升單卡聯機相容性
+cheating system = 金手指
+reset in game = 暖開機  (L+R+A+B+↓)
+dma = DMA模式
+protection = 反制燒錄保護
+linkage = Link with GBA
+sd save = Save directly to SD
+homebrew reset = Reset in Homebrew
+reset hotkey = Reset Hotkey
+
+[switches]
+Enable = 開啟
+Disable = 關閉
+Global = 全體(%s)
+
+[ram allocation]
+title = 錯誤
+memory allocation error = 記憶體配置錯誤
+
+[scrolling]
+fast = 快
+medium = 中
+slow = 慢
+
+[file settings]
+title = 檔案系統設定
+show hidden files = 顯示隱藏檔案
+Save Extension = 存檔副檔名
+
+[interface settings]
+title = 介面設定
+scrolling speed = 捲動速度
+filelist style = 列表格式
+oldschool = 傳統
+modern = 圖示
+internal = 遊戲標題
+small = Small icons
+animation = 動畫
+12 hour = 12-hour clock
+
+[gba settings]
+title = GBA 設定
+sleephack = 通用休眠
+autosave = 啟動時備份存檔
+mode = Slot-2 mode
+modegba = gba
+modends = nds
+modeask = ask
+modetext = Launch slot-2 in NDS mode?
+
+[sd save]
+title = 提示
+text = This game cannot be launched from Acekard Internal Flash Memory, please copy game from Acekard Internal Flash Memory to SD card and try again.
+
+[icon]
+icon = Show icon
+transparent = transparent
+as is = as is
+firmware = firmware
+
+[cheats]
+title = Cheats
+info = More…
+deselect = Deselect all
+
+[saveslot]
+title = Copy Save Slot
+confirm = Are you sure you want to copy save slot?
+target slot = Target Save Slot
+
+[mainlist]
+flash memory = Flash Memory
+microsd card = microSD Card
+slot2 card = Slot2 Card
+favorites = Favorites
+
+[hotkeys]
+l-r-a-b-↓ = l-r-a-b-↓
+l-r-b-y-↓ = l-r-b-y-↓
+l-r-a-b-x-y = l-r-a-b-x-y
+b-y-touch = b-y-touch
+start-r-touch = start-r-touch
+
+[updater]
+update = Update
+update ? = Do you want to update?
+updater = Update module
+menu = Main module
+cheats = Cheats DB
+connecting = Connecting
+failed = failed
+updated = updated
+fresh = already updated
+stop = Do you want to stop transfer?
+download = Downloaded %d bytes
+unpack = Unpacking
+
+[crc32]
+crc32 = CRC32
+calculation = 計算 CRC32
+
+[end]

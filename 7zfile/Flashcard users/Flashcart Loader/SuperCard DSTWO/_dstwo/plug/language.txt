@@ -1,0 +1,11 @@
+[message box]
+ok=OK(A)
+cancel=Cancel(B)
+
+[update state]
+text1=Updated successful!
+text2=Updated failed!
+text3=Please wait moment.
+text4=Update system
+text5=Beta
+[end]

@@ -1,0 +1,305 @@
+﻿//Thanks to Ralf Friedrich, Klaus P., OzanOs, IcyVeins, Toastbrot & Werner Schabert for the translation.
+
+[font]
+main = liberation.pcf
+language = 3
+
+[start menu]
+Copy = Kopieren
+Cut = Ausschneiden
+Paste = Einfügen
+Delete = Löschen
+Setting = Einstellungen
+Info = Dateiinfo
+Help = Hilfe
+Tools = Tools
+START = START
+
+[message box]
+yes = Ja
+no = Nein
+ok = OK
+cancel = Abbruch
+
+[progress window]
+processing save = Arbeite… nicht ausschalten!
+processing copy = Kopiere Datei… nicht abschalten, %c zum Abbrechen
+first use sd = Prüfe SD-Karte für die erstmalige Nutzung
+gba load = Lade GBA Spiel…
+gba save load = Lade GBA Spielstand…
+gba save store = Speichere GBA Spielstand… nicht ausschalten!
+erase nor = Lösche NOR Flash… nicht ausschalten!
+
+[copy file error]
+title = Fehler
+text = Datei existiert nicht
+
+[copy file exists]
+title = Warnung
+text = Eine Datei mit diesen Namen existiert bereits. Diese Datei überschreiben?
+
+[copy dest is directory]
+title = Fehler
+text = Ein Ordner mit diesem Namen existiert bereits. Kopieren nicht möglich.
+
+[move dest is directory]
+title = Fehler
+text = Ein Ordner mit diesem Namen existiert bereits. Verschieben nicht möglich.
+
+[no copy dir]
+title = Fehler
+text = Verzeichni-Kopieren/Verschieben  nicht möglich.
+
+[stop copying file]
+title = Kopieren der Datei abbrechen
+text = Kopieren der Datei abbrechen?
+
+[confirm delete file]
+title = Bestätigen
+text = Die Datei kann nach dem Löschen nicht wiederhergestellt werden, "%s" löschen?
+
+[do not delete directory]
+title = Fehler
+text = Löschvorgang abgebrochen.
+
+[restore save fail]
+title = Fehler
+text = Wiederherstellung des Spielstands fehlgeschlagen.
+
+[language changed]
+title = Frage
+text = Die Systemsprache wurde geändert, Neustart um Änderungen anzunehmen? Wähle "Nein" um später neuzustarten.
+
+[ui style changed]
+title = Frage
+text = Benutzerinterface wurde geändert, Neustart um Änderungen anzunehmen? Wähle "Nein" um aktuellen Style beizubehalten.
+
+[setting window]
+ok = OK
+savetype = Einstellungen
+cancel = Abbruch
+confirm = Bestätigen
+confirm text = Einstellungen speichern?
+close = Schließen
+system = System
+interface = Oberfläche
+filesystem = Dateisystem
+gba = GBA
+patches = Patches
+
+[save type]
+title = Einstellungen
+text = Savetype
+Unknown = Unbekannt/Auto
+No Save = Keiner
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = Standard
+save slot = Speicher-Slot
+tab1 = Kompatibilitäts Einstellungen
+tab2 = Zusatzfunktionen
+
+[system setting]
+title = System-Konfig.
+safe mode = Safe Mode
+
+[rom info]
+title = Dateiinformation
+file date = Letzte Änderung: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Dateigröße: %s
+save type = Speichertyp: %s
+game code = Code: %s
+copy slot = Kopieren
+
+[disk info]
+total = Kapazität: %s
+used = Benutzt: %s
+free = Frei: %s
+
+[no free space]
+title = Fehler
+text = Nicht genügend freier Speicher.
+
+[unsupported sd]
+title = SD nicht unterstützt
+text = Diese SD Karte(Model:%s) ist nicht geeignet für offizielle DS Programme, Bitte kopiere diese zum internen Speicher und probiere es erneut.
+
+[sd card error]
+title = SD card Fehler
+text = Zugriff auf SD Card nicht möglich. Karte korrekt eingesetzt?
+
+[no sd for save]
+title = SD card Fehler
+text = Zugriff auf SD Card nicht möglich, Spielstand des letzten Programms wird geschrieben nach: "%s".
+
+[no gba card]
+title = Hinweis
+text = Kein Gerät im SLOT-2 vorhanden
+
+[filelist type]
+text = Setze Filelist Typ
+item0 = NDS
+item1 = NDS + SAV
+item2 = ALLE
+
+[rom trim]
+text = ROM trimmen
+item0 = Nein
+item1 = Ja
+
+[language]
+text = Sprache
+ja = 日本語
+en = english
+fr = français
+de = deutsch
+it = italiano
+es = español
+
+[ui style]
+text = Benutzerinterface-Style
+
+[help window]
+title = Hilfe
+item0 = %c  Programm wählen
+item1 = %c  Start/OK/Ja
+item2 = %c  Zurück/Abbruch/Nein
+item3 = %c  Zeige Dateiinfo/Wähle Savetype
+item4 = %c  Wechsel SD/FLASH
+item5 = %c  Ein Verzeichnis zurück
+item6 = %c  Helligkeit einstellen
+item7 = %s  Startmenü
+item8 = %s  Dateiansicht wechseln
+
+[exp window]
+button = 3in1
+title = 3in1 Expansion Pack Einstellungen
+ram = RAM
+sram = sRAM
+off = Aus
+low = Leicht
+mid = Mittel
+high = Stark
+strength = Rumble-Intensität
+flash to nor = in NOR
+copy to psram = in RAM
+
+[abort save]
+title = Abbrechen des Speichervorgangs
+text = Speichervorgang wirklich abbrechen?
+
+[gba warn]
+title = Warnung GBA ROM Größe
+text = GBA ROMs mit mehr als 32MB werden nicht unterstützt!
+
+[patches]
+download play = DS-Download-Spiel
+cheating system = In-Game Cheats
+reset in game = Menü-Softreset
+dma = DMA Modus
+protection = Kopierschutz umgehen
+linkage = Mit GBA-Spiel verbinden
+sd save = Direkt auf SD-Karte speichern
+homebrew reset = Reset in Homebrew
+reset hotkey = Reset Hotkey
+
+[switches]
+Enable = An
+Disable = Aus
+Global = Global(%s)
+
+[ram allocation]
+title = Fehler
+memory allocation error = Memory Zuordnungsfehler
+
+[scrolling]
+fast = Schnell
+medium = Normal
+slow = Langsam
+
+[file settings]
+title = File-System-Einstellungen
+show hidden files = Versteckte Dateien anzeigen
+save extension = Spielstand-Dateiendung
+
+[interface settings]
+title = Interface-Einstellungen
+scrolling speed = Scrollgeschwindigkeit
+filelist style = Dateiansicht
+oldschool = Klassisch
+modern = Modern
+internal = Eigenname
+small = Kleine Icons
+animation = Animation
+12 hour = 12-Stunden-Zählung
+
+[gba settings]
+title = GBA-Einstellungen
+sleephack = Universeller Schlaf
+autosave = Spielstand beim Start sichern?
+mode = Slot-2 mode
+modegba = gba
+modends = nds
+modeask = ask
+modetext = Slot-2 im NDS-Modus starten?
+
+[sd save]
+title = Warnung
+text = Dieses Spiel kann nicht vom internen Speicher aus gestartet werden, bitte kopiere das Spiel auf die SD-Karte und versuche es erneut.
+
+[icon]
+icon = Icon anzeigen
+transparent = transparent
+as is = beibehalten
+firmware = Firmware
+
+[cheats]
+title = Cheats
+info = Mehr…
+deselect = Kein Cheat
+
+[saveslot]
+title = Speicher-Slot kopieren
+confirm = Bist Du sicher, dass Du den Speicher-Slot kopieren möchtest?
+target slot = Ziel Speicher-Slot
+
+[mainlist]
+flash memory = Flash Memory
+microsd card = microSD Card
+slot2 card = Slot2 Card
+favorites = Favoriten
+
+[hotkeys]
+l-r-a-b-↓ = l-r-a-b-↓
+l-r-b-y-↓ = l-r-b-y-↓
+l-r-a-b-x-y = l-r-a-b-x-y
+b-y-touch = b-y-touch
+start-r-touch = start-r-touch
+
+[updater]
+update = Update
+update ? = Udpate durchführen?
+updater = Update-Modul
+menu = Haupt-Modul
+cheats = Cheats DB
+connecting = Verbindung wird hergestellt
+failed =  Update fehlgeschlagen
+updated = Update erfolgreich
+fresh = Update bereits durchgeführt
+stop = Transfer abbrechen?
+download = %d Bytes heruntergeladen
+unpack = Daten werden entpackt
+
+[crc32]
+crc32 = CRC32
+calculation = Berechne CRC32
+
+[end]

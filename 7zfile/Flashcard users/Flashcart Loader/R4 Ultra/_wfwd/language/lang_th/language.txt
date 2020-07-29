@@ -1,0 +1,432 @@
+﻿[font]
+main = tahoma.pcf
+
+[start menu]
+Start = เมนู
+Copy = คัดลอก
+Cut = ตัด
+Paste = วาง
+Delete = ลบ
+Save Type = ชนิดของเซฟ
+Patches = ปรับแต่ง
+Setting = ตั้งค่า
+Info = คุณสมบัติ
+Help = ช่วยเหลือ
+More = อื่นๆ ->
+3in1 = 3in1/FAS1
+Cheats = Cheats
+Back = <- กลับไป
+
+[message box]
+yes = ใช่
+no = ไม่
+ok = ตกลง
+cancel = ยกเลิก
+
+[cheats]
+title = Cheats: SELECT = บันทึก
+error_title = เกิดข้อผิดพลาด
+error_text = ไม่พบไฟล์ Cheat
+selectrom = โปรดเลือกไฟล์ .NDS
+noxml = ไม่พบ Cheat DB
+ccexists = .CC มีอยู่แล้ว ต้องการสร้างใหม่?
+nonefound = ไม่พบ Cheat ในฐานข้อมูล
+xmlselect = เลือก Cheat Database:
+confirm = ยืนยัน
+confirm_rebuild = คืนค่าไฟล์ .CC?
+invalid cheatdb = Cheat Database ไม่ถูกต้อง
+Rebuild = สร้างใหม่
+Sel. DB = เสร็จสิ้น
+
+[progress window]
+processing save = กำลังประมลผล... อย่าปิดเครื่อง!
+processing copy = กำลังคัดดลอก... อย่าปิดเครื่อง, %c=ยกเลิก!
+first use sd = ตรวจสอบ SD card สำหรับใช้งานครั้งแรก...
+gba load = กำละงโหลด เกม GBA ...
+gba save load = กำลังโหลด เซฟ GBA...
+gba save store = กำลังประมวลผล เซฟ GBA ... อย่าปิดเครื่อง!
+erase nor = ลบ NOR แฟลช... อย่าปิดเครื่อง!
+rebuilding cheat data = การคืนค่าไฟล์Cheat
+
+[copy file error]
+title = เกิดข้อผิดพลาดในการคัดลอกไฟล์หรือแฟ้ม
+text = ไม่พบไฟล์หรือแฟ้ม
+
+[copy file exists]
+title = ยืนยันการแทนที่
+text = แฟ้มนี้มีไฟล์ชื่อเดียวกันอยู่แล้ว ต้องการแทนที่ไฟล์ที่มีอยู่เดิมหรือไม่?
+
+[copy dest is directory]
+title = เกิดข้อผิดพลาดในการคัดลอกไฟล์หรือแฟ้ม
+text = แฟ้มนี้มีไฟล์ชื่อเดียวกันอยู่แล้ว ไม่สามารถทำการคัดลอกได้
+
+[move dest is directory]
+title = เกิดข้อผิดพลาดในการย้ายไฟล์หรือแฟ้ม
+text = แฟ้มนี้มีไฟล์ชื่อเดียวกันอยู่แล้ว ไม่สามารถทำการย้ายไฟล์ได้
+
+[no copy dir]
+title = เกิดข้อผิดพลาดในการคัดลอก/ตัด แฟ้ม
+text = การคัดลอก/ตัด แฟ้ม ไม่สามารถทำได้ในขณะนี้!
+
+[stop copying file]
+title = ยืนยันเพื่อยกเลิกการคัดลอก
+text = คุณแน่ใจหรือไม่ที่จะยกเลิกการคัดลอกไฟล์?
+
+[confirm delete file]
+title = ยืนยันการลบ ไฟล์/แฟ้ม
+text = ไฟล์/แฟ้ม ไม่สามารถกู้คืนได้อีก คุณแน่ใจหรือไม่ที่จะลบ '%s'?
+
+[do not delete directory]
+title = เกิดข้อผิดพลาดในการลบแฟ้ม
+text = แฟ้มนี้ไม่ว่างเปล่า ลบไฟล์ในแฟ้มให้หมดแล้วลองใหม่
+
+[unknown save type]
+title = ไม่รู้จักเซฟชนิดนี้
+text = ไม่รู้จักชนิดเซฟของโปรแกรมนี้ กดปุ่ม "A" เพื่อเลือกชนิดของเซฟ
+
+[no savelist]
+title = เกิดข้อผิดพลาดในการโหลดรายการเซฟ
+text = รายการเซฟไม่สามารถโหลดได้ ไม่พบ"savelist.bin"
+
+[restore save fail]
+title = กู้คืนข้อมูลเซฟไม่สำเร็จ
+text = ข้อมูลเซฟไม่สามารถกู้คืนได้ ไม่สนและทำต่อไปไหม?
+
+[backup save fail]
+title = สำรองข้อมูลเซฟไม่สำเร็จ
+text = สำรองข้อมูลเซฟไม่สำเร็จ ปลายทางอาจมีเนื้อที่ไม่พอ
+
+[language changed]
+title = ยืนยันการเปลี่ยนภาษาของระบบ
+text = คุณต้องการเริ่มต้นใหม่เพื่อเปลี่ยนภาษาของระบบเดี๋ยวนี้ไหม? เลือก "ไม่" เพื่อเริ่มต้นใหม่ภายหลัง
+
+[ui style changed]
+title = ยืนยันการเปลี่ยนรูปแบบ
+text = คุณต้องการเริ่มต้นใหม่เพื่อนำการเปลี่ยนรูปแบบมาใช้ไหม? เลือก "ไม่" เพื่อใช้รูปแบบเดิม 
+
+[save type]
+title = ตั้งชนิดของเซฟ
+text = ชนิดของเซฟ
+Unknown = ไม่ทราบ/อัตโนมัติ
+No Save = ไม่มีเซฟ
+4K = 4K
+64K = 64K
+512K = 64K/512K
+2M = 2M
+4M = 2M/4M
+
+[scrolling]
+Fast = เร็ว
+Medium = ปานกลาง
+Slow = ช้า
+
+[system setting]
+title = การตั้งค่าระบบ
+
+[disk info]
+total = เนื้อที่ทั้งหมด: %s
+used = เนื้อที่ที่ใช้ไปแล้ว: %s
+free = เนื้อที่ว่าง: %s
+
+[no free space]
+title = เกิดข้อผิดพลาดเนื่องจากไม่มีเนื้อที่ว่าง
+text = เป้าหมายมีเนื้อที่ว่างไม่พอ ไม่สามารถทำการคัดลอกได้
+
+
+[sd speed]
+text = ตั้งความเร็ว MicroSD
+item0 = เร็วมาก
+item1 = เร็ว
+item2 = ปานกลาง
+item3 = ช้า
+
+[unsupported sd]
+title = MicroSD Card ไม่สนับสนุน
+text = MicroSD card นี้ (Model:%s) ไม่เหมาะสมที่จะเปิดโปรแกรม DS ที่เป็นทางการ, กรุณาคัดลอกโปรแกรมจาก SD card ไปยังหน่วยความจำภายในของ Acekard แล้วลองใหม่
+
+[sd card error]
+title = เกิดข้อผิดพลาดในการอ่าน MicroSD Card
+text = ไม่สามารถอ่าน MicroSD card ได้ โปรดแน่ใจว่า MicroSD card ได้ format แล้วและใส่อย่างถูกต้อง
+
+[no sd for save]
+title = ไม่มี MicroSD สำหรับข้อมูลเซฟ
+text = ไม่สามารถอ่าน MicroSD card ได้ ข้อมูลเซฟของโปรแกรมที่เปิดล่าสุดจะเขียนเป็นไฟล์ '%s'.
+
+[no gba card]
+title = เกิดข้อผิดพลาด ไม่มี GBA Card
+text = ไม่มีตลับใน Slot-2.
+
+[filelist type]
+text = ตั้งค่ารายการไฟล์
+item0 = NDS
+item1 = NDS + SAV
+item2 = NDS/SAV/BAK
+item3 = ทั้งหมด
+
+[rom trim]
+text = ย่อขนาด ROM เมื่อกำลังคัดลอก
+item0 = ปิดการใช้งาน
+item1 = เปิดการใช้งาน
+
+[cheat]
+text = การใช้Cheat
+item0 = ปิดการใช้งาน
+Item1 = เปิดการใช้งาน
+
+[autorun]
+text = Autorun
+item0 = ปิดการใช้งาน
+item1 = เปิดการใช้งาน
+
+[language]
+text = เลือกภาษา
+item0 = English
+item1 = S.Chinese
+item2 = T.Chinese
+item3 = Japanese
+item4 = Francais
+item5 = Italiano
+item6 = Deutsch
+item7 = Español
+item8 = Nederlands
+item9 = Thai
+
+[brightness]
+text = ความสว่าง
+
+[ui style]
+text = รูปแบบ
+
+[help window]
+title = ช่วยเหลือ
+item0 = %c  ขึ้น/ลง/PgUp/PgDown
+item1 = %c  ใช่/เริ่มt/ตกลง
+item2 = %c  ไม่/กลับไป/ยกเลิก
+item3 = %c  ดูรายละเอียดไฟล์/เลือกชนิดของเซฟ
+item4 = %c  ชนิดหน่วยความจำ: MicroSD/Flash
+item5 = %c  กลับไปยังตำแหน่งก่อนหน้า
+item6 = %c  ตั้งความสว่าง: 1/2/3/4
+item7 = %s  เปิด รายการ "เริ่ม"
+item8 = %s  รูปแบบรายการ: เคลื่อนไหว/แต่เลข
+versions = HW: %02x NDD: %02x
+
+[abort save]
+title = ยกเลิกการเซฟ
+text = คุณต้องการยกเลิกการเซฟหรือไม่?
+
+[gba warn]
+title = คำเตือน ขนาด GBA ROM
+text = ไม่สนับสนุน GBA ROM's ที่ใหญ่เกิน 32M
+
+[shortcut overwrite]
+title = ยืนยันทางลัด
+text = คุณต้องการ สร้าง/เขียนทับทางลัดหรือไม่?
+
+[shortcut delete]
+title = ยืนยันการลบทางลัด
+text = คุณต้องการลบทางลัดหรือไม่?
+
+[slot2]
+gbamode = Boot เข้า GBA mode
+passme = Boot เข้า NDS mode (PassMe)
+backupsramq = สำรอง SRAM Bank1 (FAS1)
+
+[fas1]
+question = คำถาม
+title = ตัวเลือก FAS1
+useFAS1 = ใช้คุณลักษณะ FlashAdvance
+listgba = เรียงไฟล์ GBA/BIN
+verifyFAS1 = ยืนยันบล็อคที่เขียนแล้ว
+item0 = ไม่
+item1 = ใช่
+StartMenuDescription = FAS1
+prompt = เขียน ROM
+flashquestion = แฟลช ROM ไปยัง Flash Advance Cart? (%.2fMB / ประมาณ %.1f นาที.)
+writeprompt = เขียนเซฟ Bank 1?
+backupsramq = สำรอง Slot-1 สำหรับตลับ FlashAdvance
+backupsram = กำลังสำรอง Bank 1 [%iKB] (%c เพื่อยกเลิก)
+saveerror = Not a 64KB SAV file, continue?
+unsupported = FAS1: ตลับไม่สนับสนุน
+writingpercent = เขียนแล้ว %iKB of %iKB, (%c เพื่อยกเลิก)
+savebytes = เขียนแล้ว %i bytes (%c เพื่อยกเลิก)
+
+[save backup]
+question = สำรองเซฟ?
+backing up = กำลังสำรอง .SAV ด้วยนามสกุล .BAK
+overwrite = ข้อมูลสำรองมีอยู่แล้ว ต้องการเขียนทับ ?
+
+[save restore]
+question = กู้เซฟจากข้อมูลสำรอง?
+restoring save = กำลังกู้ .SAV จากนามสกุล .BAK
+overwrite = มีข้อมูลเซฟอยู่แล้ว เขียนทับ?
+
+[textview]
+confirm = ยืนยัน
+exit = คุณต้องการออกจริงๆ เหรอ?
+error = เกิดข้อผิดพลาดในการเปิดไฟล์
+file open error = เปิดไฟล์ข้อความไม่ได้ กลับสู่ระบบปฏิบัติการ
+screen angle = การปรับหน้าจอ
+normal = ปกติ
+rotate 90 = หมุน 90 องศา
+rotate 270 = หมุน 270 องศา
+screen mode = โหมดหน้าจอ
+dual = สองหน้าจอ
+dual copy = หน้าจอเหมือนกัน
+lower = จอล่างเท่านั้น
+upper = จอบนเท่านั้น
+add bookmark = คุณแน่ใจหรือไม่ที่จะเพิ่มรายการโปรดที่นี่?
+remove bookmark = คุณต้องการลบรายการโปรดนี้หรือไม่?
+goto toppage? = คุณต้องการกลับไปที่ด้านบนสุดหรือไม่?
+
+[save slot]
+title = เลือก Save Slot
+default = ค่าเริ่มต้น
+text = เลือก Save Slot ที่จะใช้
+
+[romnametype]
+Normal = ปกติ
+HideExtName = ซ่อนนามสกุล ROM
+BannerTitle = ชื่อในระบบ
+
+[cheat]
+text = การใช้Cheat
+item0 = ปิดการใช้งาน
+Item1 = เปิดการใช้งาน
+
+[setting window]
+ok = ตกลง
+savetype = ชนิดของเซฟ
+cancel = ยกเลิก
+confirm = ยืนยันการเลือก
+confirm text = คุณต้องการบันทึกการตั้งค่าหรือไม่?
+shortcut = ทางลัด
+delete shortcut = ลบ
+rominfo = ตั้งค่า Rom
+
+[switches]
+Default = ค่าเริ่มต้น
+Enable = ปิดการใช้งาน
+Disable = เปิดการใช้งาน
+auto menu = เมนูอัตโนมัติ
+
+[rom info]
+title = คุณสมบัติ
+title_copywnd = คัดลอก Save Slot
+file date = แก้ไขล่าสุด: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = ขนาดไฟล์: %s
+save type = ชนิดของเซฟ: %s
+game code = รหัสเกม: %s
+save slot = เลือก Save Slot
+save slot copy = จาก %s ไปยัง:
+Slot = Slot
+cheat menu = เมนู Cheat
+copy menu =  คัดลอก Slot
+save extension = นามสกุลเซฟ
+convert text = แปลงเซฟ
+convert text = แปลงเซฟจาก %s ไปยัง %s ?
+
+[patches]
+title = ค่าเริ่มต้นในการแก้ไข
+download play = DS Download Play
+cheating system = Cheat/Action Replay
+slow motion = ลดความเร็วในเกมส์
+reset in game = กลับสู่เมนู
+3in1 = 3in1
+ak2 loader = AK2 Loader
+altloadernotfound = Loader ตัวอื่นไม่พบ เริ่ม ROM โดยตรง?
+patching loader = การแก้ไข Loader ตัวอื่นเพื่อใช้กับ AKAIO
+
+[advanced setting]
+title = การตั้งค่าระบบไฟล์
+Advanced = ขั้นสูง
+Show Hidden Files = แสดงไฟล์ที่ซ่อนอยู่
+Hide Extension Name = ซ่อนนามสกุล ROM
+Scrolling Speed = ความเร็วในการเลื่อน
+CopyCut Saves Too = คัดลอก/ตัด SAV พร้อม ROM
+Delete Saves Too = ลบ SAV พร้อม ROM
+Cheat Scrolling = การเลื่อนรายการ Cheat
+
+[cheatupdate]
+DATorXML = ไฟล์ที่จะดาวน์โหลด
+updateDB = อัพเดทผ่าน Wifi
+cheatDBbutton = อัพเดท DB
+SaveList = savelist.bin
+startupdatetitle = ตัวอัพเดท AKAIO
+get whatsnew = รับ WhatsNew.txt
+startupdatequestion = คุณต้องการเริ่มการอัพเดทหรือไม่?
+WFCConnection = กำลังเชื่อมต่อโดยใช้ WFC, %c เพื่อยกเลิก
+cantconnect = ไม่สามรถเชื่อมต่อ ตรวจสอบการตั้งค่า WFC
+stopconnectquestion = คุณต้องการสิ้นสุดการเชื่อมต่อ Wifi หรือไม่?
+stopconnecttitle = หยุดการเชื่อมต่อ
+getwhatsnew = กำลังรับ มีอะไรใหม่ๆ
+downloadthisfile = ดาวน์โหลด cheat file วันที่ %s?
+downloaderror = เกิดข้อผิดพลาดในการดาวน์โหลดไฟล์
+downloadstart = กำลังดาวน์โหลดไฟล์ %c เพื่อยกเลิก
+stopdownloadquestion = คุณต้องการหยุดการดาวน์โหลดหรือไม่?
+stopdownloadtitle = หยุดการดาวน์โหลด
+downloading = กำลังดาวน์โหลด %.0fKb/%.0fKb, %c เพื่อยกเลิก
+unzipstop = คุณต้องการยกเลิกการแตกไฟล์หรือไม่?
+unzipstoptitle = พักการแตกไฟล์ชั่วคราว
+unzipping = กำลังแตกไฟล์ %c เพื่อยกเลิก
+unziperror = เกิดข้อผิดพลาดในการแตกไฟล์
+success = ขอให้สนุกกับ %s ล่าสุด
+error = เกิดข้อผิดพลาดในการอัพเดท ลองใหม่หรือไม่?
+resumeupdatetitle = ทำการดาวน์โหลดไฟล์ที่ผิดพลาดต่อ
+resumethisfile = ทำการดาวน์โหลด %s ต่อที่ %.0fKb?
+deletepartial = ลบไฟล์ที่ดาวน์โหลดแล้วบางส่วนหรือไม่?
+previousdates = วันก่อนหน้านี้
+previousfiles = ไฟล์ก่อนหน้านี้
+previous date notice = Wifi และ อัพเดท Loader เท่านั้น
+cheats = Cheats
+loader = อัพเดท Loader
+wifi = ปลั๊กอิน Wifi
+3version = 3 เวอร์ชั่น
+5version = 5 เวอร์ชั่น
+Checking Site = กำลังตรวจสอบหน้าเว็บ AKAIO
+
+[text viewer]
+text = ตัวอ่าน TXT
+item0 = ปลั๊กอิน
+item1 = ภายใน
+title = การตั้งค่าปลั๊กอิน
+
+[interface settings]
+oldschool = รายการข้อความ
+modern = ชื่อไฟล์
+internal = ชื่อภายในระบบ
+filelist style = รูปแบบรายการไฟล์
+Hide File Extensions = ซ่อนนามกุลไฟล์
+
+[exp window]
+title = การตั้งค่า ตลับ Slot 2
+ram = RAM
+sram = ถ่ายโอน SRAM
+off = ปิด
+low = ต่ำ
+mid = ปานกลาง
+high = สูง
+strength = ระดับ Rumble
+NOR Mode = โหมด NOR
+auto = อัตโนมัติ
+always = ตลอดเวลา
+notdetected = ไม่พบ 3in1/EWin/FlashAdvance
+NOR Flash = Flash ไปยัง NOR
+norquestion = Flash ไปยัง NOR หรือไม่?
+
+[gba settings]
+gbabutton = การตั้งค่า GBA
+gbasleepdescription = (L+R+Start: sleep/ Select+Start: wake up)
+title = การตั้งค่า GBA
+sleephack = GBA Universal sleep
+autosave = สำรองเซฟ GBA เมื่อเริ่มต้น 
+gbaSavePrompt = ถามก่อน Save/Load
+Load Save = โหลดเซฟ
+Load File = โหลด %s?
+Backup Save = สำรองเซฟ
+Backup File = สำรอง %s?
+
+[ram allocation]
+title = เกิดข้อผิดพลาด
+memory allocation error = การจัดสรรหน่วยความจำผิดพลาด
+
+[end]

@@ -1,0 +1,480 @@
+﻿[font]
+main = tahoma.pcf
+
+[start menu]
+Start = START
+Copy = Copy
+Cut = Cut
+Paste = Paste
+Delete = Delete
+Save Type = Save Type
+Patches = Patches
+Setting = System Options
+Info = Properties
+Help = Help
+More = More ->
+3in1 = 3in1/FAS1
+Cheats = Cheats
+Back = <- Back
+
+[message box]
+yes = Yes
+no = No
+ok = OK
+cancel = Cancel
+
+[cheats]
+title = Cheats: SELECT = Save Selection
+error_title = Error
+error_text = Cheat file was not found.
+selectrom = Please select a .NDS file
+noxml = Cheat DB file not found
+ccexists = .CC exists, Generate new one?
+nonefound = No Cheats found in DB
+xmlselect = Select Cheat Database:
+confirm = Confirm
+confirm_rebuild = Rebuild .CC file?
+invalid cheatdb = Invalid Cheat Database
+Rebuild = Rebuild
+Sel. DB = Sel. DB
+
+[progress window]
+processing save = Processing... Do not power off!
+processing copy = Copying... Do not power off, %c=Cancel!
+first use sd = Checking SD card for first time usage...
+gba load = Loading GBA game...
+gba save load = Loading GBA save...
+gba save store = Processing GBA save... Do not power off!
+erase nor = Erasing NOR flash... Do not power off!
+rebuilding cheat data = Rebuilding cheat file.
+
+[copy file error]
+title = Error Copying File or Folder
+text = The File or folder does not exist.
+
+[copy file exists]
+title = Confirm File Replace
+text = This folder already contains a file with the same name. Would you like to replace the existing file with this one?
+
+[copy dest is directory]
+title = Error Copying File or Folder
+text = This folder already contains a folder with the same name. It is not possible to copy file.
+
+[move dest is directory]
+title = Error Moving File or Folder
+text = This folder already contains a folder with the same name. It is not possible to move file.
+
+[no copy dir]
+title = Error Folder Copy/Cut
+text = Folder copying/moving is not supported for now!
+
+[stop copying file]
+title = Confirm File Copy Cancel
+text = Are you sure you want to cancel file copy?
+
+[confirm delete file]
+title = Confirm File/Folder Delete
+text = File/folder can not be undeleted, are you sure you want to delete '%s'?
+text2 = If you wish to continue press no otherwise press yes.
+
+[do not delete directory]
+title = Error Folder Delete
+text = This folder is not empty, delete folder contents first and retry.
+
+[unknown save type]
+title = Unknown Safe Type
+text = The save type of this program is unknown, press "A" to manually set a type.
+
+[no savelist]
+title = Error Loading Save List
+text = The save list could not be loaded, "savelist.bin" is missing.
+
+[restore save fail]
+title = Failed Save Data Restore
+text = The save data could not be restored, ignore and continue anyway?
+
+[backup save fail]
+title = Failed Save Data Backup
+text = Failed to backup save data, target disk may not have enough free space.
+
+[language changed]
+title = Confirm System Language Change
+text = Are you sure you want to restart now to apply the system language change? Choose "No" to restart later.
+
+[ui style changed]
+title = Confirm Interface Theme Change
+text = Are you sure you want to restart now to apply the interface theme change? Choose "No" to keep current theme. 
+
+[save type]
+title = Set Save Type
+text = Save type
+Unknown = Unknown/Auto
+No Save = No Save
+4K = 4K
+64K = 64K
+512K = 64K/512K
+2M = 2M
+4M = 2M/4M
+
+[scrolling]
+Fast = Fast
+Medium = Medium
+Slow = Slow
+
+[system setting]
+title = System Options
+
+[disk info]
+total = Disk Capacity: %s
+used = Used Space: %s
+free = Free Space: %s
+
+[no free space]
+title = Error not enough Space
+text = There is not enough space on the target disk, can not copy file.
+
+
+[sd speed]
+text = Set MicroSD speed
+item0 = Extreme
+item1 = Fast
+item2 = Medium
+item3 = Slow
+
+[unsupported sd]
+title = Unsupported MicroSD Card
+text = This MicroSD card(Model:%s) is not suitable for running offical DS programs, please copy program from SD card to Acekard Internal Flash Memory and try again.
+
+[sd card error]
+title = Error Accessing MicroSD Card
+text = Unable to access MicroSD card, please verify that MicroSD card is formatted and inserted correctly.
+
+[no sd for save]
+title = No MicroSD for Safe Data
+text = Unable to access MicroSD card, save data of previous launched program will be written to file '%s'.
+
+[no gba card]
+title = Error No GBA Card
+text = There is no device in Slot-2.
+
+[filelist type]
+text = Set file list type
+item0 = NDS
+item1 = NDS + SAV
+item2 = NDS/SAV/BAK
+item3 = ALL
+
+[rom trim]
+text = Trim ROM when copying
+item0 = Disabled
+item1 = Enabled
+
+[cheat]
+text = Cheat code usage
+item0 = Disabled
+Item1 = Enabled
+
+[autorun]
+text = Autorun
+item0 = Disabled
+item1 = Enabled
+
+[language]
+text = Interface language
+item0 = English
+item1 = S.Chinese
+item2 = T.Chinese
+item3 = Japanese
+item4 = Francais
+item5 = Italiano
+item6 = Deutsch
+item7 = Español
+item8 = Nederlands
+
+[brightness]
+text = Brightness
+
+[ui style]
+text = Interface Theme
+
+[help window]
+title = Help
+item0 = %c  Up/Down/PgUp/PgDown
+item1 = %c  Yes/Start/OK
+item2 = %c  No/Back/Cancel
+item3 = %c  View file info/Select save type
+item4 = %c  Memory Selection: MicroSD/Flash
+item5 = %c  Back to parent directory
+item6 = %c  Set Brightness: 1/2/3/4
+item7 = %s  Open "START" Menu
+item8 = %s  List style: Animate/Number
+versions = HW: %02x NDD: %02x
+
+[abort save]
+title = Cancel Save Processing
+text = Are you sure you want to cancel save processing?
+
+[gba warn]
+title = Warning GBA ROM size
+text = GBA ROM's bigger than 32M are currently not supported!
+
+[shortcut overwrite]
+title = Confirm Shortcut
+text = Are you sure you want to create/overwrite shortcut?
+
+[shortcut delete]
+title = Confirm Shortcut Delete
+text = Are you sure you want to delete shortcut?
+
+[slot2]
+gbamode = Boot in GBA mode
+passme = Boot in NDS mode (PassMe)
+backupsramq = Backup SRAM Bank1 (FAS1)
+
+[fas1]
+question = Question
+title = FAS1 Options
+useFAS1 = Use FlashAdvance Features
+listgba = List GBA/BIN files
+verifyFAS1 = Verify written blocks
+item0 = No
+item1 = Yes
+StartMenuDescription = FAS1
+prompt = Write ROM
+flashquestion = Flash ROM to Flash Advance Cart? (%.2fMB / about %.1f min.)
+writeprompt = Write Save to Bank 1?
+backupsramq = Backup Slot-1 of FlashAdvance Cartridge
+backupsram = Backing up Bank 1 [%iKB] (%c for cancel)
+saveerror = Not a 64KB SAV file, continue?
+unsupported = FAS1: Unsupported Cartridge
+writingpercent = Written %iKB of %iKB, (%c for cancel)
+savebytes = Written %i bytes (%c for cancel)
+
+[save backup]
+question = Back up save?
+backing up = Backing up .SAV with extension .BAK
+overwrite = Backup already exists, overwrite?
+
+[save restore]
+question = Restore save from backup?
+restoring save = Restoring .SAV from extension .BAK
+overwrite = Save file already exists, overwrite?
+
+[textview]
+confirm = Confirm 
+exit = Do you really want to exit?
+error = Error Opening File
+file open error = Can not open this text file. Return to OS menu.
+screen angle = Screen Orientation
+normal = Normal
+rotate 90 = Rotate 90
+rotate 270 = Rotate 270
+screen mode = Screen Mode
+dual = Dual Screen
+dual copy = Clone Screen
+lower = Lower Only
+upper = Upper Only
+add bookmark = Are you sure you want to add a new bookmark at this position?
+remove bookmark = Are you sure you want to remove this bookmark?
+goto toppage? = Are you sure you want to jump to top of page?
+
+[save slot]
+title = Choose Save Slot
+default = Default
+text = Select Save Slot to use
+
+[romnametype]
+Normal = Normal
+HideExtName = Hide ROM Ext.
+BannerTitle = Internal Name
+
+[cheat]
+text = Cheat code usage
+item0 = Disabled
+Item1 = Enabled
+
+[setting window]
+ok = OK
+savetype = Save Type
+cancel = Cancel
+confirm = Confirm Options Save
+confirm text = Are you sure you want to save current settings?
+shortcut = Shortcut
+delete shortcut = Delete
+rominfo = Rom Settings
+
+[switches]
+Default = Default
+Enable = Enabled
+Disable = Disabled
+auto menu = Auto Menu
+
+[rom info]
+title = Properties
+title_copywnd = Copy Save Slot
+file date = Last Change: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = File Size: %s
+save type = Save Type: %s
+game code = Game Code: %s
+save slot = Select Save Slot
+save slot copy = From %s to:
+Slot = Slot
+cheat menu = Cheat Menu
+copy menu = Slot Copy
+save extension = Save Ext.
+convert text = Convert saves
+convert text = Convert saves from %s to %s ?
+
+[patches]
+title = Default Patch Options
+download play = DS Download Play
+cheating system = Cheat/Action Replay
+slow motion = In-Game Slow Motion
+reset in game = Soft-Reset
+3in1 = 3in1
+ak2 loader = AK2 Loader
+altloadernotfound = Alt. Loader Not Found, boot ROM directly?
+patching loader = Patching Alternate Loader for use with AKAIO
+IRQ Hook = IRQ Hook
+SWI Hook = SWI Hook
+bypass antipiracy = Bypass AntiPiracy
+
+[advanced setting]
+title = File System Settings
+Advanced = Advanced
+Show Hidden Files = Show Hidden files
+Hide Extension Name = Hide ROM extension
+Scrolling Speed = Scroll Speed
+CopyCut Saves Too = Copy/Cut SAV with ROM
+Delete Saves Too = Delete SAV with ROM
+Cheat Scrolling = Cheat Scrolling
+Cheat Scrolling Speed = Cheat Scrolling Speed
+Homebrew Reset Type = Homebrew Reset Type
+
+[cheatupdate]
+DATorXML = File to Download
+updateDB = Wifi Update
+cheatDBbutton = Update DB
+SaveList = savelist.bin
+startupdatetitle = AKAIO Updater
+get whatsnew = Get WhatsNew.txt
+startupdatequestion = Do you wish to start the update procedure?
+WFCConnection = Connecting using WFC, %c to Cancel
+cantconnect = Could not connect, check WFC settings
+stopconnectquestion = Do you want to stop Wifi Connecting?
+stopconnecttitle = Stop Connecting
+getwhatsnew = Getting What's New
+downloadthisfile = Download cheat file dated %s?
+downloaderror = Error Downloading File
+downloadstart = Downloading file, %c to Cancel
+stopdownloadquestion = Do you want to stop Downloading?
+stopdownloadtitle = Stop Downloading
+downloading = Downloading %.0fKb/%.0fKb, %c to Cancel
+unzipstop = Do you want to stop unzipping?
+unzipstoptitle = Unzip Paused
+unzipping = Unzipping file, %c to Cancel
+unziperror = Error in extracting file
+success = Enjoy the latest %s
+error = Error updating, try again?
+resumeupdatetitle = Resume Interrupted Download
+resumethisfile = Resume download of %s at %.0fKb?
+deletepartial = Delete Partially Downloaded File?
+previousdates = Previous Dates
+previousfiles = Previous Files
+previous date notice = Wifi and Loader Updates ONLY
+cheats = Cheats
+loader = Update Loader
+wifi = Wifi Plugin
+3version = 3 versions
+5version = 5 versions
+Checking Site = Checking AKAIO Site
+whatsnew notice = Official Site ONLY
+site = Which Cheat DB?
+site1 = Official Site
+site2 = AKAIO (yusuo)
+
+[wifisave]
+zipstart = Compressing file, %c to Cancel
+zipping = Compressing %.0fKb/%.0fKb, %c to Cancel
+zipstop = Do you want to stop compressing?
+zipstoptitle = Compression Paused
+ziperror = Error in compressing file
+uploaderror = Error Uploading File
+uploadprepare = Preparing upload, %c to Cancel
+uploading = Uploading %.0fKb/%.0fKb, %c to Cancel
+uploaddone = Closing connection
+uploadreturn = File name:\n %s\nSize:\n %s\nUsed:\n %s\n
+stopuploadquestion = Do you want to stop uploading?
+stopuploadtitle = Stop Uploading
+dnuztitle = Start Download and Unzip?
+dnuzprompt = Download and Unzip "%s?"
+znutitle = Start Zip and Upload?
+znuprompt = Zip and Upload "%s?"
+savetitle =  Save List
+saveuploadtitle = Choose Save to Upload
+savedownloadtitle = Choose Save to Download
+extracttitle = Extract to...
+uploadtoobig = Upload will breach quota, sorry
+overquota = Quota reached, delete some files and try again
+checking = Checking Remote Site
+switch = Switch UL/DL
+success = %s downloaded
+
+[text viewer]
+text = TXT Viewer
+item0 = Plugin
+item1 = Internal
+title = Plugin Settings
+
+[interface settings]
+title = Interface Settings
+oldschool = Text List
+modern = File Name
+internal = Internal Name
+filelist style = File List Style
+Hide File Extensions = Hide File Extensions
+Icon Animation = Icon Animation
+
+[exp window]
+title = Slot 2 Cartridge Settings
+ram = RAM
+sram = Dump SRAM
+off = Off
+low = Low
+mid = Medium
+high = High
+strength = Rumble level
+NOR Mode = NOR Mode
+auto = Auto
+always = Always
+notdetected = 3in1/EWin/FlashAdvance not found!
+NOR Flash = Flash to NOR
+norquestion = Flash to NOR?
+norblank = Blank NOR
+erasenor = Do you want to erase the NOR?
+
+[gba settings]
+gbabutton = GBA Settings
+gbasleepdescription = (L+R+Start: sleep/ Select+Start: wake up)
+title = GBA settings
+sleephack = GBA Universal sleep
+autosave = Backup GBA save at startup
+gbaSavePrompt = Prompt before Save/Load
+Load Save = Load Save
+Load File = Load %s?
+Backup Save = Backup Save
+Backup File = Backup %s?
+
+[ram allocation]
+title = Error
+memory allocation error = Memory allocation error
+
+[LShortcuts]
+CheatOn = Cheats has been enabled for this game.
+CheatOff = Cheats has been disabled for this game.
+SoftresetOn = Soft-Reset has been enabled for this game.
+SoftresetOff = Soft-Reset has been disabled for this game.
+[clone card error]
+title = Clone
+text = It may not be a genuine Acekard.\n Please contact your vender or\n      access our website:\n\n      www.acekard.com\n
+[end]

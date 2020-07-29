@@ -1,0 +1,270 @@
+[start menu]
+File_Handle=File Operation
+patch=Patch
+Cheat=Cheat Code
+archive=Save
+Ui_Type=Skin
+Language=Language
+Syset=Settings
+Help=Help
+Hotkey=Full Hotkey
+Hotkey1=Simple Hotkey
+
+[file handle menu]
+noText=Clipboard empty 
+item0=Copy
+item1=Cut
+item2=Paste
+item3=Delete
+
+[text wnd info]
+title=Warning!
+item0=%s file does not exist or is damaged!
+item1=Game Guide
+
+[slow wnd]
+title=Slow
+item0=OFF
+item1=ON
+
+[cheat wnd]
+title=Hint
+clearTitle=Clear all
+text=Save settings?
+title1=Hint!
+text1=Cheats are turned OFF. Would you like to enable cheats?
+
+[RTL wnd info]
+title=Warning!
+load_title=Real time load
+save_title=Real time save
+item0=No save file!
+item1=OK to overwrite save file?
+
+[patch menu]
+item0=Clean
+item1=Patch
+
+[Archive type menu]
+item0=Save0
+item1=Save1
+item2=Save2
+item3=Save3
+
+[Syset menu]
+Brightness=Brightness
+List_type=Display
+Hotkey=Full Hotkey
+Hotkey1=Simple Hotkey
+FileType=Files
+GbaLink=GBA Extend
+LastRomRun=AutorunRom
+
+[Ui Type menu]
+title=Warning
+text=User interface style changed. Restart now to apply new style? Press NO to keep current syle.
+
+[set game info]
+item0=Multi-Saver
+item1=Cheat
+item2=Mode
+
+[reset text]
+title=Warning
+text=Reset the system?
+
+[Cheat menu]
+item0=Off
+item1=On
+
+[Brightness menu]
+item0=Level 1
+item1=Level 2
+item2=Level 3
+item3=Level 4
+
+[Language menu]
+title=Question
+text=System language changed. Restart now to apply new language? Select NO to restart later.
+item0=English
+item1=S-Chinese
+item2=T-Chinese
+item3=French
+item4=Italian
+item5=German
+item6=Spanish
+item7=Korean
+
+[Filetype menu]
+item0=NDS
+item1=NDS & Sav
+item2=GBA & Sav
+item3=All
+
+[GbaLink menu]
+item0=NULL
+item1=Link
+item2=Rumble
+
+[LastRomRun menu]
+item0=Turn off
+item1=Turn on
+
+[message box]
+yes=YES(A)
+no=NO(B)
+ok=OK(A)
+cancel=Cancel(B)
+cheat=Cheat(Y)
+
+[List type menu]
+item0=Icon
+item1=List
+item2=Text
+
+[progress window]
+processing_copy=Copying file
+
+[copy file error]
+title=Error!
+text=Error occured while copying file
+
+[stop copying file]
+title=Confirm
+text=Stop copying this file?
+
+[no free space]
+title=Error!
+text=Not enough space. File copying not complete
+text1=Not enough space.
+
+[copy file exists]
+title=Warning!
+text=Filename already exists. Overwrite the file?
+
+[copy dest is directory]
+title=Error!
+text=Directory already exists. Cannot copy files
+
+[move dest is directory]
+title=Error!
+text=Directory already exists. Cannot copy files
+
+[no copy dir]
+title=Error!
+text=Cannot copy or move a directory
+
+[confirm delete file]
+title=Confirm
+text=File cannot be recovered after deletion. Do you wish to delete "%s" ?
+
+[do not delete directory]
+title=Warning!
+text=The directory is not empty, it can not be deleted
+
+[help window]
+title = Help information
+item0 = %c  Select Programs
+item1 = %c  Start/OK/YES
+item2 = %c  Back/Cancel/NO
+item3 = %c  Select cheats
+item4 = %c  Set game info
+item5 = %c  Back to parent directory
+item6 = %c  Adjust brightness
+item7 = %s  Start Menu
+item8 = %s  Menu style new/classical
+
+[hotkey window]
+title = Settings hotkey
+
+[setting window]
+ok=OK
+savetype=Save type
+cancel=Cancel
+confirm=Confirm
+confirm_text = Save current settings?
+
+[main interface title]
+item0=Game guide
+item1=Cheat code
+item2=Save
+item3=Load
+item4=Slow motion
+item5=Free Cheat
+
+[system setting]
+title=System settings
+
+[search cheat]
+title=Search cheat
+item0=Search value
+item1=Cheat code
+
+[search cheat btn text]
+confirm=Resume game
+start=Reset
+search=Search
+add=Add Cheat
+change=Edit
+switch=Lock/Unlock
+switchall=Lock/Unlock all
+remove=Remove
+result=View results
+note=Name(X)
+exit=Exit
+
+[cheat search type]
+title=Search type
+item0=Specific value
+item1=Fuzzy Search
+
+[cheat compare type]
+title=Compare type
+item0=Equal
+item1=More than
+item2=Less than
+item3=differ
+
+[cheat data size]
+title=Data size
+item0=< 8 bit
+item1=< 16 bit
+item2=< 32 bit
+
+[cheat input value]
+title=Enter value
+item0=Value
+
+[search cheat result]
+address=Address
+oldvalue=Old value
+newvalue=New value
+erro=Error!
+result=There is %d difference in this search. Please choose the correct value
+getdataerro=Error whilst searching data! Please reset.
+viewresulterro=This is not cheat data
+
+[change cheat]
+note=Note
+
+[cheat code]
+address=Address
+value=Value
+state=Condition
+warn=Warning!
+del=Are you sure you want to delete %s cheat list?
+
+[cheat state]
+on=Enabled
+off=Disabled
+
+[rom info]
+title=File info
+file_date=Last saved date:
+file_size=Size: %s
+save_type=Save type: %s
+file_name=File name: 
+game_name=Game name: 
+file_type=Type: %s
+game_id=Game ID: %d
+[end]

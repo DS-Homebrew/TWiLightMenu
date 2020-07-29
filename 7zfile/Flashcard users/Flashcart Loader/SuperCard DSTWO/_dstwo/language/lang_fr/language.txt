@@ -1,0 +1,270 @@
+[start menu]
+File_Handle=Fichiers
+patch=Patch
+Cheat=Cheat Code
+archive=Sauvegarde
+Ui_Type=Skin
+Language=Langue
+Syset=Système
+Help=Aide
+Hotkey=Full Hotkey
+Hotkey1=Simple Hotkey
+
+[file handle menu]
+noText=Presse-papier vide 
+item0=Copier
+item1=Couper
+item2=Coller
+item3=Supprimer
+
+[text wnd info]
+title=Avertissement!
+item0=Le fichier '%s' n'existe pas ou est corrompu!
+item1=Guide de Jeu
+
+[slow wnd]
+title=Ralenti
+item0=Oui
+item1=Non
+
+[cheat wnd]
+title=Astuce
+clearTitle=Tout effacer
+text=Enregistrer les réglages?
+title1=Astuce!
+text1=Les cheats sont désactivés. Voulez-vous les activer?
+
+[RTL wnd info]
+title=Avertissement!
+load_title=Chargement Temps Réel
+save_title=Sauvegarde Temps Réel
+item0=Aucune sauvegarde disponible
+item1=Ecraser la sauvegarde actuelle?
+
+[patch menu]
+item0=Clean
+item1=Patch
+
+[Archive type menu]
+item0=Save0
+item1=Save1
+item2=Save2
+item3=Save3
+
+[Syset menu]
+Brightness=Luminosit?
+List_type=Affichage
+Hotkey=Full Hotkey
+Hotkey1=Simple Hotkey
+FileType=Files
+GbaLink=GBA Extend
+LastRomRun=AutorunRom
+
+[Ui Type menu]
+title=Avertissement
+text=Le style d'interface a chang? Voulez-vous rebooter maintenant?
+
+[set game info]
+item0=Multi-Save
+item1=Cheat
+item2=Mode
+
+[reset text]
+title=Avertissement
+text=Rebooter le système?
+
+[Cheat menu]
+item0=Non
+item1=Oui
+
+[Brightness menu]
+item0=Niveau 1
+item1=Niveau 2
+item2=Niveau 3
+item3=Niveau 4
+
+[Language menu]
+title=Question
+text=La langue ét?modifiée. Rebooter maintenant pour appliquer les changements?
+item0=Anglais
+item1=Chinois (S.)
+item2=Chinois (T.)
+item3=Francais
+item4=Italien
+item5=Allemand
+item6=Espagnol
+item7=Coréen
+
+[Filetype menu]
+item0=NDS
+item1=NDS & Sav
+item2=GBA & Sav
+item3=All
+
+[GbaLink menu]
+item0=NULL
+item1=Link
+item2=Rumble
+
+[LastRomRun menu]
+item0=Turn off
+item1=Turn on
+
+[message box]
+yes=Oui(A)
+no=Non(B)
+ok=OK(A)
+cancel=Annuler(B)
+cheat=Cheat(Y)
+
+[List type menu]
+item0=Icones
+item1=Liste
+item2=Text
+
+[progress window]
+processing_copy=Copie en cours
+
+[copy file error]
+title=Erreur!
+text=Une erreur s'est produite durant la copie.
+
+[stop copying file]
+title=Confirmer
+text=Arrêter de copier le fichier?
+
+[no free space]
+title=Erreur!
+text=Mémoire pleine. Impossible de copier.
+text1=Mémoire pleine. 
+
+[copy file exists]
+title=Avertissement!
+text=Un fichier porte déj?le même nom, OK pour l'écraser?
+
+[copy dest is directory]
+title=Erreur!
+text=Un répertoire porte déj?le même nom. Copie annulée.
+
+[move dest is directory]
+title=Erreur!
+text=Un répertoire porte déj?le même nom. Déplacement annul?
+
+[no copy dir]
+title=Erreur!
+text=Copie ou déplacement impossible.
+
+[confirm delete file]
+title=Confirmer
+text=Etes-vous sûr de vouloir supprimer "%s" ?
+
+[do not delete directory]
+title=Avertissement!
+text=Le répertoire n'est pas vide. Suppression annulée.
+
+[help window]
+title = Information
+item0 = %c  Sélectionner
+item1 = %c  Start/OK/Oui
+item2 = %c  Retour/Annuler/Non
+item3 = %c  Choisir les cheats
+item4 = %c  Paramètres du jeu
+item5 = %c  Retour au répertoire parent
+item6 = %c  Changer la luminosit?
+item7 = %s  Menu Démarrer
+item8 = %s  Style Moderne/Classique
+
+[hotkey window]
+title = Réglages des raccourcis
+
+[setting window]
+ok=OK
+savetype=Type de sauvegarde
+cancel=Annuler
+confirm=Confirmer
+confirm_text=Enregistrer les réglages?
+
+[main interface title]
+item0=Guide de jeu
+item1=Cheat codes
+item2=Sauvegarder
+item3=Charger
+item4=Ralenti
+item5=Free Cheat
+
+[system setting]
+title=Réglages système
+
+[search cheat]
+title=Recherche de cheat
+item0=Recherche de valeur
+item1=Cheat code
+
+[search cheat btn text]
+confirm=Reprendre le jeu
+start=Reset
+search=Rechercher
+add=Ajouter
+change=Modifier
+switch=Lock/délock
+switchall=Lock/délock tout
+remove=Effacer
+result=Voir résultat
+note=Nom (X)
+exit=Quitter
+
+[cheat search type]
+title=Type de recherche
+item0=Valeur spécifique
+item1=Recherche vague
+
+[cheat compare type]
+title=Comparaison
+item0=Egal
+item1=Supérieur ?
+item2=Inférieur ?
+item3=Différent
+
+[cheat data size]
+title=Taille de données
+item0=< 8 bit
+item1=< 16 bit
+item2=< 32 bit
+
+[cheat input value]
+title=Entrer une valeur
+item0=Valeur
+
+[search cheat result]
+address=Adresse
+oldvalue=Valeur avant
+newvalue=Valeur après
+erro=Erreur!
+result=Il y a une différence de %d sur cette recherche. Choisissez une valeur adaptée.
+getdataerro=Impossible de rechercher! Veuillez rebooter.
+viewresulterro=Ceci n'est pas une donnée correcte.
+
+[change cheat]
+note=Note
+
+[cheat code]
+address=Adresse
+value=Valeur
+state=Condition
+warn=Avertissement!
+del=Supprimer la cheat list %s ?
+
+[cheat state]
+on=Activ?
+off=Désactiv?
+
+[rom info]
+title=Info fichier
+file_date=Dernière sauvegarde:
+file_size=Taille: %s
+save_type=Type sauvegarde: %s
+file_name=Fichier: 
+game_name=Nom du jeu: 
+file_type=Type: %s
+game_id=ID Jeu: %d
+[end]

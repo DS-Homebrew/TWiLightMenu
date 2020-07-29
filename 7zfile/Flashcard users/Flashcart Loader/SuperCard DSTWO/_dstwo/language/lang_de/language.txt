@@ -1,0 +1,270 @@
+[start menu]
+File_Handle=File Operation
+patch=Patch
+Cheat=Cheats
+archive=Speicher
+Ui_Type=Theme
+Language=Sprache
+Syset=Einstellungen
+Help=Hilfe
+Hotkey=Full Hotkey
+Hotkey1=Simple Hotkey
+
+[file handle menu]
+noText=Leere Zwischenablage 
+item0=Kopieren
+item1=Ausschneiden
+item2=Einfuegen
+item3=Loeschen
+
+[text wnd info]
+title=Achtung!
+item0=Datei %s wurde entfernt oder beschaedigt!
+item1=Spielefuehrer
+
+[slow wnd]
+title=Langsam
+item0=AUS
+item1=AN
+
+[cheat wnd]
+title=Hinweis
+clearTitle=Loeschen
+text=Einstellungen speichern?
+title1=Hinweis!
+text1=Cheats sind deaktiviert. Wollen Sie Cheats aktivieren?
+
+[RTL wnd info]
+title=Achtung!
+load_title=Schnell-laden
+save_title=Schnell-speichern
+item0=Kein Spielstand!
+item1=Spielstand ueberschreiben?
+
+[patch menu]
+item0=Sauber
+item1=Patch
+
+[Archive type menu]
+item0=Spielstand0
+item1=Spielstand1
+item2=Spielstand2
+item3=Spielstand3
+
+[Syset menu]
+Brightness=Beleuchtung
+List_type=Bildschirm
+Hotkey=Full Hotkey
+Hotkey1=Simple Hotkey
+FileType=Files
+GbaLink=GBA Extend
+LastRomRun=AutorunRom
+
+[Ui Type menu]
+title=Achtung
+text=Theme wurde geaendert. Neustart notwendig. Klicke auf 'Nein' um das aktuelle Theme beizubehalten.
+
+[set game info]
+item0=Multi-Speicher
+item1=Cheat
+item2=Modus
+
+[reset text]
+title=Achtung
+text=System neustarten?
+
+[Cheat menu]
+item0=Aus
+item1=An
+
+[Brightness menu]
+item0=Level 1
+item1=Level 2
+item2=Level 3
+item3=Level 4
+
+[Language menu]
+title=Frage
+text=Systemsprache wurde geaendert. Neustart notwendig. Klicke auf 'Nein' um das aktuelle Theme beizubehalten.
+item0=Englisch
+item1=S-Chinesisch
+item2=T-Chinesisch
+item3=Franzoesisch
+item4=Italienisch
+item5=Deutsch
+item6=Spanisch
+item7=Koreanisch
+
+[Filetype menu]
+item0=NDS
+item1=NDS & Sav
+item2=GBA & Sav
+item3=All
+
+[GbaLink menu]
+item0=NULL
+item1=Link
+item2=Rumble
+
+[LastRomRun menu]
+item0=Turn off
+item1=Turn on
+
+[message box]
+yes=JA(A)
+no=NEIN(B)
+ok=OK(A)
+cancel=Abbrechen(B)
+cheat=Cheat(Y)
+
+[List type menu]
+item0=Symbol
+item1=Liste
+item2=Text
+
+[progress window]
+processing_copy=Kopieren...
+
+[copy file error]
+title=Fehler!
+text=Fehler beim Kopieren
+
+[stop copying file]
+title=Bestaetigen
+text=Kopieren abbrechen?
+
+[no free space]
+title=Fehler!
+text=Nicht genug Speicherplatz. Kopieren unvollstaendig
+text1=Nicht genug Speicherplatz.
+
+[copy file exists]
+title=Achtung!
+text=Dateiname bereits vorhanden. Überschreiben?
+
+[copy dest is directory]
+title=Fehler!
+text=Ordner existiert bereits. Kopieren fehlgeschlagen.
+
+[move dest is directory]
+title=Fehler!
+text=Ordner existiert bereits. Verschieben fehlgeschlagen.
+
+[no copy dir]
+title=Fehler!
+text=Kopieren/Verschieben unmoeglich
+
+[confirm delete file]
+title=Bestaetigen
+text=Datei kann nicht wiederhergestellt werden. "%s" wirklich loeschen?
+
+[do not delete directory]
+title=Achtung!
+text=Ordner ist nicht leer. Es kann nicht geloescht werden.
+
+[help window]
+title = Hilfe
+item0 = %c  Waehle Programme
+item1 = %c  Start/OK/Ja
+item2 = %c  Zurueck/Abbr./Nein
+item3 = %c  Cheats waehlen
+item4 = %c  Set game info
+item5 = %c  Zurueck
+item6 = %c  Helligkeit regulieren
+item7 = %s  Startmenue
+item8 = %s  Theme neu/klassisch
+
+[hotkey window]
+title = Hotkey setzen
+
+[setting window]
+ok=OK
+savetype=Speichertyp
+cancel=Abbrechen
+confirm=Bestaetigen
+confirm_text = Einstellungen speichern?
+
+[main interface title]
+item0=Spielfuehrer
+item1=Cheats
+item2=Speichern
+item3=Laden
+item4=Zeitlupe
+item5=Cheatsystem
+
+[system setting]
+title=Systemeinstellungen
+
+[search cheat]
+title=Cheat suchen
+item0=Wert suchen
+item1=Cheat
+
+[search cheat btn text]
+confirm=Spiel fortfahren
+start=Reset
+search=Suche
+add=Cheat hinzufuegen
+change=Bearbeiten
+switch=Sperren/Entsperren
+switchall=Alle Sperren/Entsperren
+remove=Entfernen
+result=Ergebnis
+note=Name(X)
+exit=Exit
+
+[cheat search type]
+title=Suchtyp
+item0=Genauer Wert
+item1=Ungenaue Suche
+
+[cheat compare type]
+title=Vergleichen
+item0=Genau
+item1=Hoeher
+item2=Niedriger
+item3=Anders
+
+[cheat data size]
+title=Datengroesse
+item0=< 8 bit
+item1=< 16 bit
+item2=< 32 bit
+
+[cheat input value]
+title=Wert eingeben
+item0=Wert
+
+[search cheat result]
+address=Addresse
+oldvalue=Alter Wert
+newvalue=Neuer Wert
+erro=Fehler!
+result=Es gibt %d Unterschied. Bitte den richtigen Wert waehlen.
+getdataerro=Datensuchfehler! Bitte zuruecksetzen.
+viewresulterro=Dies ist kein Cheat.
+
+[change cheat]
+note=Beachten
+
+[cheat code]
+address=Addresse
+value=Wert
+state=Bedingung
+warn=Achtung!
+del=Cheatliste $s loeschen?
+
+[cheat state]
+on=Aktivieren
+off=Deaktivieren
+
+[rom info]
+title=Datei InfoFile info
+file_date=Zuletzt gespeichert:
+file_size=Groesse: %s
+save_type=Speichertyp: %s
+file_name=Dateiname: 
+game_name=Spielname: 
+file_type=Type: %s
+game_id=Game ID: %d
+[end]

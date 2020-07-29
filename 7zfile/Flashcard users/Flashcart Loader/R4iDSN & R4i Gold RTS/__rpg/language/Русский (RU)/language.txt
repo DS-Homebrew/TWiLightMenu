@@ -1,0 +1,305 @@
+﻿
+
+[font]
+main = liberation.pcf
+language = 1
+
+[start menu]
+Copy = Копировать
+Cut = Вырезать
+Paste = Вставить
+Delete = Удалить
+Setting = Настройки
+Info = Информация
+Help = Помощь
+Tools = Инструменты
+START = ПУСК
+
+[message box]
+yes = Да
+no = Нет
+ok = OK
+cancel = Отмена
+
+[progress window]
+processing save = Обработка, не выключайте питание
+processing copy = Копир-ние, не выкл. питание, %c для отмены
+first use sd = Тестирование SD карты
+gba load = Загрузка gba-игры
+gba save load = Загрузка gba-сейва
+gba save store = Обработка gba-сейва, не выкл. питание
+erase nor = Очистка NOR flash
+
+[copy file error]
+title = Ошибка
+text = Файла не существует
+
+[copy file exists]
+title = Предупреждение
+text = Файл с таким именем уже существует, заменить?
+
+[copy dest is directory]
+title = Ошибка
+text = Папка с таким именем уже существует, не возможно скопировать файл.
+
+[move dest is directory]
+title = Ошибка
+text = Папка с таким именем уже существует, не возможно переместить файл.
+
+[no copy dir]
+title = Ошибка
+text = Копирование/перемещение папок не поддерживается.
+
+[stop copying file]
+title = Прервать копирование
+text = Вы хотите прервать копирование?
+
+[confirm delete file]
+title = Подтверждение
+text = Выдействительно хотите удалить "%s"?
+
+[do not delete directory]
+title = Ошибка
+text = Операция удаления прервана.
+
+[restore save fail]
+title = Ошибка
+text = Не удалось загрузить сейв.
+
+[language changed]
+title = Вопрос
+text = Язык системы изменён, перегрузиться сейчас для вступления изменений в силу? Выберите «Нет», чтобы перегрузиться позднее.
+
+[ui style changed]
+title = Вопрос
+text = Скин изменён, перегрузиться сейчас для вступления изменений в силу? Выберите «Нет» для сохранения текущего скина.
+
+[setting window]
+ok = OK
+savetype = Опции
+cancel = Отмена
+confirm = Подтверждение
+confirm text = Сохранить текущие настройки?
+close = Назад
+system = Система
+interface = Интерфейс
+filesystem = Файлы
+gba = GBA
+patches = Патчи
+
+[save type]
+title = Опции
+text = Выберите тип сейва
+Unknown = неизв./авто
+No Save = нет
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = главный
+save slot = Выберите сейв-слот
+tab1 = Совместимость
+tab2 = Дополнительно
+
+[system setting]
+title = Системные настройки
+safe mode = Безопасный режим
+
+[rom info]
+title = Информация о файле
+file date = Дата/Время: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Размер: %s
+save type = Тип сейва: %s
+game code = Код игры: %s
+copy slot = Копировать
+
+[disk info]
+total = Объём диска: %s
+used = Использовано: %s
+free = Свободно: %s
+
+[no free space]
+title = Ошибка
+text = На диске нет места.
+
+[unsupported sd]
+title = SD карта не поддерживается
+text = Данная SD карта(Модель:%s) не подходит для запуска официальных DS программ, пожалуйста скопируйте программу на встроенную память и попробуйте ещё раз.
+
+[sd card error]
+title = Ошибка SD карты
+text = Доступ к SD карте невозможен, возможно она неправильно вставлена.
+
+[no sd for save]
+title = Ошибка SD карты
+text = Доступ к SD карте невозможен, сейв последней запущенной программыбудет сохранён в файле: "%s".
+
+[no gba card]
+title = Уведомление
+text = Устройство в SLOT-2 отсутствует
+
+[filelist type]
+text = Показывать файлы
+item0 = NDS
+item1 = NDS + SAV
+item2 = Все
+
+[rom trim]
+text = Резать ромы при коп-нии
+item0 = Нет
+item1 = Да
+
+[language]
+text = Язык
+ja = 日本語
+en = english
+fr = français
+de = deutsch
+it = italiano
+es = español
+
+[ui style]
+text = Скин
+
+[help window]
+title = Информация
+item0 = %c  Выбор
+item1 = %c  Старт/OK/Да
+item2 = %c  Назад/Отмена/Нет
+item3 = %c  Информация о файле/Выбор типа сейва
+item4 = %c  Переключение SD/FLASH
+item5 = %c  Переход в родительскую папку
+item6 = %c  Изменение яркости
+item7 = %s  Меню «Старт»
+item8 = %s  Стиль меню: новый/классика
+
+[exp window]
+button = 3в1
+title = Настройки 3in1 expansion pack
+ram = RAM
+sram = sRAM
+off = выкл
+low = слабая
+mid = средняя
+high = высокая
+strength = Сила вибрации
+flash to nor = в NOR
+copy to psram = в RAM
+
+[abort save]
+title = Прерывание обработки сейва
+text = Вы хотите прервать обработку сейва?
+
+[gba warn]
+title = Предупреждение
+text = Gba ромы размером более 32M не поддерживаются!
+
+[patches]
+download play = Download Play
+cheating system = Читы (AR)
+reset in game = Софт-ресет
+dma = Режим DMA
+protection = Обход защиты
+linkage = Линк с GBA
+sd save = Сохранение прямо на SD
+homebrew reset = Софт-ресет в Homebrew
+reset hotkey = Клавиши для софт-ресет'а
+
+[switches]
+Enable = вкл
+Disable = выкл
+Global = общее(%s)
+
+[ram allocation]
+title = Ошибка
+memory allocation error = Ошибка выделения памяти
+
+[scrolling]
+fast = Быстро
+medium = Умеренно
+slow = Медленно
+
+[file settings]
+title = Настройки файловой системы
+show hidden files = Пок-вать скрытые файлы
+save extension = Расширение для сейвов
+
+[interface settings]
+title = Настройки интерфейса
+scrolling speed = Скорость прокрутки
+filelist style = Стиль списка файлов
+oldschool = Простой
+modern = Имена файлов
+internal = Информация
+small = Уменьшенный
+animation = Анимация
+12 hour = 12-часовой формат времени
+
+[gba settings]
+title = Настройки GBA
+sleephack = Универсальный режим сна
+autosave = Всегда сохранять сейвы
+mode = Режим slot-2
+modegba = gba
+modends = nds
+modeask = спрашивать
+modetext = Запустить slot-2 в режиме NDS?
+
+[sd save]
+title = Предупреждение
+text = Эта игра не может быть запущена с встроенной памяти, пожалуйста скопируйте программу на SD карту и попробуйте ещё раз.
+
+[icon]
+icon = Показывать иконку
+transparent = прозрачной
+as is = как есть
+firmware = официально
+
+[cheats]
+title = Читы
+info = Больше
+deselect = Очистить
+
+[saveslot]
+title = Копировать сейв-слот
+confirm = Вы уверены, что хотите скопировать сейв-слот?
+target slot = Целевой сейв-слот
+
+[mainlist]
+flash memory = Flash Memory
+microsd card = microSD Card
+slot2 card = Slot2 Card
+favorites = Избранное
+
+[hotkeys]
+l-r-a-b-↓ = l+r+a+b+↓
+l-r-b-y-↓ = l+r+b+y+↓
+l-r-a-b-x-y = l+r+a+b+x+y
+b-y-touch = b+y+экран
+start-r-touch = start+r+экран
+
+[updater]
+update = Обновление
+update ? = Вы хотите обновится?
+updater = Модуль обновления
+menu = Основной модуль
+cheats = База читов
+connecting = Соединение
+failed = произошла ошибка
+updated = обновлено
+fresh = обновление не требуется
+stop = Вы действительно хотите прервать скачивание?
+download = Скачано %d байт
+unpack = Распаковка
+
+[crc32]
+crc32 = CRC32
+calculation = Расчёт CRC32
+
+[end]

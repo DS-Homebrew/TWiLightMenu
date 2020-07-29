@@ -1,0 +1,305 @@
+﻿//thanx to helldavide
+
+[font]
+main = liberation.pcf
+language = 1
+
+[start menu]
+Copy = Másolás
+Cut = Kivágás
+Paste = Beillesztés
+Delete = Törlés
+Setting = Beállítások
+Info = Info
+Help = Help
+Tools = Eszközök
+START = START
+
+[message box]
+yes = Igen
+no = Nem
+ok = OK
+cancel = Mégse
+
+[progress window]
+processing save = Feldolgozás, ne kapcsolja ki…
+processing copy = Fájl másolása,ne kapcsolja ki,nyomjon %c -t a megszakításhoz.
+first use sd = SD kártya vizsgálata az első használatra
+gba load = GBA játék betöltése
+gba save load = GBA játék mentésének betöltése
+gba save store = GBA mentés feldolgozása, ne kapcsolja ki…
+erase nor = Erase NOR flash
+
+[copy file error]
+title = Hiba
+text = A fájl nem létezik.
+
+[copy file exists]
+title = Warning
+text = A fájl a megadott névvel már létezik, felülírja?
+
+[copy dest is directory]
+title = Hiba
+text = A mappa ezzel a névvel már létezik, a forrásfájlt nem lehet másolni.
+
+[move dest is directory]
+title = Hiba
+text = A mappa ezzel a névvel már létezik, a forrásfájlt nem lehet áthelyezni.
+
+[no copy dir]
+title = Hiba
+text = A mappa másolása vagy áthelyezése nem lehetséges.
+
+[stop copying file]
+title = Másolás megszakítása
+text = Megszeretné állítani másolást?
+
+[confirm delete file]
+title = Megerősítés
+text = A fájlt nem lehet visszaállítani törlés után, folytatja a törlést "%s"?
+
+[do not delete directory]
+title = Warning
+text = A mappa nem üres, ezért nem lehet törölni.
+
+[restore save fail]
+title = Hiba
+text = A mentés visszaállítása sikertelen.
+
+[language changed]
+title = Kérdés
+text = A rendszer nyelvi beállítása megváltozott,újraindítja a beállítások alkalmazásához? Későbbi újrainditáshoz válassza a Nem-et.
+
+[ui style changed]
+title = Kérdés
+text = A felület típusa megváltozott, az alkalmazásához újraindítja? Válassza a Nem-et ha meg akarja tartani a jelenlegit.
+
+[setting window]
+ok = OK
+savetype = Beállítások
+cancel = Mégse
+confirm = Megerősítés
+confirm text = Menti a jelenlegi beállításokat?
+close = Bezárás
+system = Rendszer
+interface = Interfész
+filesystem = Fájlrendszer
+gba = GBA
+patches = Javítások
+
+[save type]
+title = Beállítások
+text = Mentési típus kiválasztása
+Unknown = ismeretlen/auto
+No Save = nincs mentése
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = alapértelmezett
+save slot = Válassza ki a mentési slot-ot
+tab1 = Kompatibilitás
+tab2 = Jellemzők
+
+[system setting]
+title = Rendszerbeállítások
+safe mode = Biztonságos mód
+
+[rom info]
+title = Fájl Információ
+file date = Utolsó mósosítás: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Fájl méret: %s
+save type = Mentés típusa: %s
+game code = Kód: %s
+copy slot = Másolás Slot
+
+[disk info]
+total = Kapacitás: %s
+used = Foglalt terület : %s
+free = Szabad terület: %s
+
+[no free space]
+title = Hiba
+text = Nincs elég szabad hely.
+
+[unsupported sd]
+title = Nem támogatott SD kártya
+text = Ez az SD kártya(Model:%s) nem alkalmas hivatalos DS programok futtatására, kérlek másolja az SD kártyáról az Acekard Internal Flash Memory-ba és próbálja újra.
+
+[sd card error]
+title = SD kártya hiba
+text = Nem lehet hozzáférni az DS kártyához, talán nincs rendesen behelyezve.
+
+[no sd for save]
+title = SD kártya hiba
+text = Nem lehet hozzáférni az DS kártyához, a futtatott program kíírodik egy fájlba: "%s".
+
+[no gba card]
+title = Megjegyzés
+text = Nincs eszköz a SLOT-2-ben.
+
+[filelist type]
+text = Megjelenítendő típusok
+item0 = NDS
+item1 = NDS + SAV
+item2 = Összes
+
+[rom trim]
+text = Tömörítés másolás alatt.
+item0 = Nem
+item1 = Igen
+
+[language]
+text = Nyelv
+ja = 日本語
+en = english
+fr = français
+de = deutsch
+it = italiano
+es = español
+
+[ui style]
+text = Felhasználói felület stílusa
+
+[help window]
+title = Help Információ
+item0 = %c  Programok kiválasztása
+item1 = %c  Start/OK/Igen
+item2 = %c  Vissza/Mégse/Nem
+item3 = %c  Fájl infó megtekintése/Mentési típus kiválasztása
+item4 = %c  SD/FLASH váltása
+item5 = %c  Vissza a szülökönyvtárba
+item6 = %c  Fényerő Szabályozás
+item7 = %s  Start Menü
+item8 = %s  Menü stílus új/klasszikus
+
+[exp window]
+button = 3in1
+title = 3in1 expansion pack beállítások
+ram = RAM
+sram = sRAM
+off = ki
+low = alacsony
+mid = közepes
+high = magas
+strength = Rezgés ereje
+flash to nor = to NOR
+copy to psram = to RAM
+
+[abort save]
+title = Mentési folyamat megszakítása
+text = Meg akarja szakítani a mentést?
+
+[gba warn]
+title = Warning
+text = GBA romok mérete meghaladja a 32M, nem támogatott!
+
+[patches]
+download play = Single Card Play
+cheating system = Csalás a játékban(AR)
+reset in game = Inicializálás
+dma = DMA mód
+protection = Kikerülésvédelem
+linkage = összekapcsolás GBA-val
+sd save = Mentés közvetlenül SD-re.
+homebrew reset = Reset in Homebrew
+reset hotkey = Reset Hotkey
+
+[switches]
+Enable = Be
+Disable = Ki
+Global = global(%s)
+
+[ram allocation]
+title = Hiba
+memory allocation error = Memóriakiosztásia hiba
+
+[scrolling]
+fast = Gyors
+medium = Közepes
+slow = Lassú
+
+[file settings]
+title = Fájlrendszer beállítások
+show hidden files = Rejtett fájlok megjelenítése
+save extension = Mentés kiterjesztése
+
+[interface settings]
+title = Felület beállítása
+scrolling speed = Görgetési sebesség
+filelist style = Fájllista stílus
+oldschool = Old school
+modern = Modern
+internal = Internal
+small = Small icons
+animation = Animáció
+12 hour = 12 órás formátum
+
+[gba settings]
+title = GBA beállítások
+sleephack = Készenlét (sleep)
+autosave = Automatikus mentés
+mode = Slot-2 mód
+modegba = gba
+modends = nds
+modeask = kérdezze meg
+modetext = Futtatja a slot-2-őt NDS módban?
+
+[sd save]
+title = Warning
+text = Ez a játék nem futtatható Acekard Internal Flash Memory-ról, Kérjük másolja Acekard Internal Flash Memory-ba az SD kártyára és próbálja újra…
+
+[icon]
+icon = Ikon mutatása
+transparent = átlátszó
+as is = as is
+firmware = firmware
+
+[cheats]
+title = Csalások
+info = Még…
+deselect = Törlés
+
+[saveslot]
+title = Másolandó save slot
+confirm = Biztosan másolni akarja a save slot-ba?
+target slot = Cél save slot
+
+[mainlist]
+flash memory = Flash memória
+microsd card = microSD kártya
+slot2 card = Slot2 kártya
+favorites = Kedvencek
+
+[hotkeys]
+l-r-a-b-↓ = l-r-a-b-↓
+l-r-b-y-↓ = l-r-b-y-↓
+l-r-a-b-x-y = l-r-a-b-x-y
+b-y-touch = b-y-touch
+start-r-touch = start-r-touch
+
+[updater]
+update = Update
+update ? = Do you want to update?
+updater = Update module
+menu = Main module
+cheats = Cheats DB
+connecting = Connecting
+failed = failed
+updated = updated
+fresh = already updated
+stop = Do you want to stop transfer?
+download = Downloaded %d bytes
+unpack = Unpacking
+
+[crc32]
+crc32 = CRC32
+calculation = Calculating CRC32
+
+[end]
