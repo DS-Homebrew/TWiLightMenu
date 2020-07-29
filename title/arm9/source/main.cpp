@@ -297,8 +297,8 @@ void lastRunROM()
 				rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
 				fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 
-				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 				memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+				DC_FlushAll();					// Fix the throwback to 3DS HOME Menu bug
 				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
 				stop();
 			}
@@ -326,8 +326,8 @@ void lastRunROM()
 					rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
 					fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 
-					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 					memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+					DC_FlushAll();					// Fix the throwback to 3DS HOME Menu bug
 					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
 					stop();
 				}
@@ -343,8 +343,8 @@ void lastRunROM()
 					rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
 					fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 
-					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 					memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+					DC_FlushAll();					// Fix the throwback to 3DS HOME Menu bug
 					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
 					stop();
 				}

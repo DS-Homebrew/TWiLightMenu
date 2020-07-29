@@ -296,8 +296,8 @@ void SetWidescreen(const char *filename) {
 			resultText = STR_FAILED_TO_BACKUP_TWLBG;
 		} else {
 			if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 				tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+				DC_FlushAll();					// Fix the throwback to 3DS HOME Menu bug
 				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
 				stop();
 			} else {
@@ -335,8 +335,8 @@ void SetWidescreen(const char *filename) {
 				resultText = STR_FAILED_TO_BACKUP_TWLBG;
 			} else {
 				if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 					tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+					DC_FlushAll();					// Fix the throwback to 3DS HOME Menu bug
 					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
 					stop();
 				} else {
@@ -520,8 +520,8 @@ void ntrStartSdGame(void) {
 	if (ms().consoleModel == 0) {
 		unlaunchRomBoot("sd:/_nds/TWiLightMenu/resetgame.srldr");
 	} else {
-		irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+		DC_FlushAll();						// Make reboot not fail
 		fifoSendValue32(FIFO_USER_02, 1);
 		stop();
 	}
