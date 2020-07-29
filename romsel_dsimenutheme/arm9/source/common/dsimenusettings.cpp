@@ -159,16 +159,7 @@ void TWLSettings::loadSettings()
 	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
 	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
 
-	// secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
-	// flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
-
-	if (bothSDandFlashcard()) {
-		secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
-	} else if (flashcardFound()) {
-		secondaryDevice = true;
-	} else {
-		secondaryDevice = false;
-	}
+	secondaryDevice = bothSDandFlashcard() ? settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice) : flashcardFound();
 	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 	
 	showSelectMenu = settingsini.GetInt("SRLOADER", "SHOW_SELECT_MENU", showSelectMenu);

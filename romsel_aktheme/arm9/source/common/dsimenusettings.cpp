@@ -126,13 +126,7 @@ void TWLSettings::loadSettings()
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 
     previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
-    if (bothSDandFlashcard()) {
-        secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
-    } else if (flashcardFound()) {
-        secondaryDevice = true;
-    } else {
-        secondaryDevice = false;
-    }
+	secondaryDevice = bothSDandFlashcard() ? settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice) : flashcardFound();
     fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);

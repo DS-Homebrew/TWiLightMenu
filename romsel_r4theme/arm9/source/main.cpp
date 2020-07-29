@@ -218,13 +218,7 @@ void LoadSettings(void) {
 	r4_theme += settingsini.GetString("SRLOADER", "R4_THEME", "") + "/";
 
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
-	if (bothSDandFlashcard()) {
-		secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
-	} else if (flashcardFound()) {
-		secondaryDevice = true;
-	} else {
-		secondaryDevice = false;
-	}
+	secondaryDevice = bothSDandFlashcard() ? settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice) : flashcardFound();
 	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
 	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
