@@ -1347,6 +1347,11 @@ int main(int argc, char **argv) {
 						|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
 						|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 						);
+						if (!isDSiMode() && ms().secondaryDevice && sdFound()) {
+							CIniFile bootstrapiniSD("sd:/_nds/nds-bootstrap.ini");
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bootstrapiniSD.GetInt("NDS-BOOTSTRAP", "DEBUG", 0));
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", bootstrapiniSD.GetInt("NDS-BOOTSTRAP", "LOGGING", 0)); 
+						}
 						bootstrapini.SaveIniFile(bootstrapinipath);
 
 						CheatCodelist codelist;
