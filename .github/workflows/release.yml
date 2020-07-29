@@ -175,7 +175,7 @@ jobs:
           mv TWiLightMenu.7z ~/artifacts
 
           # DSi 7z
-          cp -r DSi\ -\ CFW\ users/* .
+          cp -r DSi\ -\ CFW\ users/SDNAND\ root/* .
           rm -rf DSi\ -\ CFW\ users
           cp -r DSi\&3DS\ -\ SD\ card\ users/* .
           rm -rf DSi\&3DS\ -\ SD\ card\ users
