@@ -59,7 +59,7 @@
 #include "find.h"
 
 
-extern u32 dsiMode;
+//extern u32 dsiMode;	// Not working?
 extern u32 language;
 extern u32 sdAccess;
 extern u32 scfgUnlock;
@@ -70,6 +70,10 @@ extern u32 soundFreq;
 extern u32 runCardEngine;
 
 extern bool arm9_runCardEngine;
+
+bool my_isDSiMode() {
+	return ((vu8)REG_SCFG_ROM == 1);
+}
 
 bool useTwlCfg = false;
 int twlCfgLang = 0;
@@ -233,7 +237,7 @@ void arm7_resetMemory (void)
 		DMA_DEST(i) = 0;
 		TIMER_CR(i) = 0;
 		TIMER_DATA(i) = 0;
-		if(dsiMode)
+		if(my_isDSiMode())
 		{
 			for(reg=0; reg<0x1c; reg+=4)*((u32*)(0x04004104 + ((i*0x1c)+reg))) = 0;//Reset NDMA.
 		}
@@ -244,7 +248,7 @@ void arm7_resetMemory (void)
 	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
 	REG_IPC_FIFO_CR = 0;
 
-	if(dsiMode) {
+	if(my_isDSiMode()) {
 		memset_addrs_arm7(0x03000000, 0x0380FFC0);
 		memset_addrs_arm7(0x0380FFD0, 0x03800000 + 0x10000);
 	} else {
@@ -258,7 +262,7 @@ void arm7_resetMemory (void)
 	// clear more of EXRAM, skipping the cheat data section
 	toncset ((void*)0x023F8000, 0, 0x8000);
 
-	if(dsiMode) {
+	if(my_isDSiMode()) {
 		// clear last part of EXRAM
 		toncset ((void*)0x02404000, 0, 0xBFC000);
 	}
@@ -271,7 +275,7 @@ void arm7_resetMemory (void)
 	(*(vu32*)(0x04000000-8)) = ~0; //VBLANK_INTR_WAIT_FLAGS, ARM7 version
 	REG_POWERCNT = 1;  //turn off power to stuffs
 
-	useTwlCfg = (dsiMode && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
+	useTwlCfg = (my_isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
 	twlCfgLang = *(u8*)0x02000406;
 
 	// Load FW header 
@@ -740,8 +744,8 @@ void arm7_main (void) {
 	while (arm9_stateFlag < ARM9_START);
 
 	//debugOutput (ERR_STS_CLR_MEM);
-	
-	if (dsiMode) {
+
+	if (my_isDSiMode()) {
 		tonccpy((char*)0x02400000, (char*)0x02000000, 0x4000);	// Backup TWLCFG for later usage by homebrew on flashcards
 	}
 
@@ -765,7 +769,7 @@ void arm7_main (void) {
 		debugOutput(errorCode);
 	}
 
-	/*if (dsiMode) {
+	/*if (my_isDSiMode()) {
 		if (twlMode == 2) {
 			dsiModeConfirmed = twlMode;
 		} else {
@@ -793,9 +797,9 @@ void arm7_main (void) {
 
 	my_readUserSettings(ndsHeader); // Header has to be loaded first
 
-	if (dsiMode) REG_GPIO_WIFI &= BIT(8);	// New Atheros/DSi-Wifi mode
+	if (my_isDSiMode()) REG_GPIO_WIFI &= BIT(8);	// New Atheros/DSi-Wifi mode
 
-	if (dsiMode && !dsiModeConfirmed) {
+	if (my_isDSiMode() && !dsiModeConfirmed) {
 		REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
 
 		if (twlClock) {
@@ -841,7 +845,7 @@ void arm7_main (void) {
 				cheatDataEndSignature, 2
 			);
 			if (cheatDataOffset) {
-				copyLoop (cheatDataOffset, (u32*)0x023F0000, 0x8000);	// Copy cheat data
+				tonccpy (cheatDataOffset, (u32*)0x023F0000, 0x8000);	// Copy cheat data
 			}
 		}
 	}

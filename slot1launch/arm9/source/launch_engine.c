@@ -71,7 +71,7 @@ void runLaunchEngine (bool EnableSD, int language, bool scfgUnlock, bool TWLMODE
 	vramcpy (LCDC_BANK_D, load_bin, load_bin_size);
 
 	// Set the parameters for the loader
-	writeAddr ((data_t*) LCDC_BANK_D, DSIMODE_OFFSET, isDSiMode());
+	writeAddr ((data_t*) LCDC_BANK_D, DSIMODE_OFFSET, isDSiMode());	// Not working?
 	writeAddr ((data_t*) LCDC_BANK_D, LANGUAGE_OFFSET, language);
 	writeAddr ((data_t*) LCDC_BANK_D, SDACCESS_OFFSET, EnableSD);
 	writeAddr ((data_t*) LCDC_BANK_D, SCFGUNLOCK_OFFSET, scfgUnlock);
