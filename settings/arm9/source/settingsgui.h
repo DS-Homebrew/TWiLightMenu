@@ -225,7 +225,7 @@ private:
 
   std::unique_ptr<Option> _subOption;
   std::vector<SettingsPage> _pages;
-  std::string _topText;
+  std::u16string _topText;
 
   std::function<void(void)> _exitCallback;
 

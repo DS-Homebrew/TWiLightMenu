@@ -122,6 +122,15 @@ void langInit(void)
 		case TWLSettings::ELangSwedish:
 			languageIniPath = "nitro:/languages/swedish.ini";
 			break;
+		case TWLSettings::ELangDanish:
+			languageIniPath = "nitro:/languages/danish.ini";
+			break;
+		case TWLSettings::ELangTurkish:
+			languageIniPath = "nitro:/languages/turkish.ini";
+			break;
+		case TWLSettings::ELangUkrainian:
+			languageIniPath = "nitro:/languages/ukrainian.ini";
+			break;
 	}
 
 	CIniFile languageini(languageIniPath);

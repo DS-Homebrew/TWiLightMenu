@@ -55,3 +55,19 @@ Please note that Docker compilation is not compatible with native compilation on
 - [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcarts.
 - retrogamefan & Rudolph: Included AP-patches for nds-bootstrap.
 - fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, gamemasterplc, RocketRobz & ChampionLeake: Widescreen Cheats
+## Translators
+- Chinese Simplified: [Forbidden](https://crowdin.com/profile/Origami), [James-Makoto](https://crowdin.com/profile/VCMOD55), [R-YaTian](https://github.com/R-YaTian)
+- Chinese Traditional:
+- Danish: [jonata](https://crowdin.com/profile/jonata)
+- French: [Arcky](https://github.com/ArckyTV), [cooolgamer](https://crowdin.com/profile/cooolgamer), [LinuxCat](https://github.com/L-i-n-u-x-C-a-t), [Martinez](https://github.com/flutterbrony), [NightScript](https://github.com/NightYoshi370), [T](https://crowdin.com/profile/--Tip--)
+- German: [Christian Schuhmann](https://github.com/c-schuhmann), [İlke Hür Eyiol](https://crowdin.com/profile/ilkecan51), [Kazuto](https://crowdin.com/profile/Marcmario), [malekairmaroc7](https://github.com/malekairmaroc7), [Oleh Hatsenko](https://github.com/IRONKAGE), [SkilLP](https://github.com/SkilLP), [SuperSaiyajinStackZ](https://github.com/SuperSaiyajinStackZ), [T](https://crowdin.com/profile/--Tip--), [Tcm0](https://github.com/Tcm0)
+- Italian: [Leonardo Ledda](https://github.com/LeddaZ), [T](https://crowdin.com/profile/--Tip--), [xavimel](https://github.com/xavimel)
+- Japanese: [Pk11](https://github.com/Epicpkmn11), [Ronny Chan](https://github.com/chyyran)
+- Korean: [Myebyeol_NOTE](https://crowdin.com/profile/groovy-mint), [Oleh Hatsenko](https://github.com/IRONKAGE)
+- Polish: [Mateusz Tobiasz](https://crowdin.com/profile/tobiaszmateusz)
+- Portuguese: [Christopher Rodrigues](https://crowdin.com/profile/chrismr197), [Gabz Almeida](https://crowdin.com/profile/connwcted), [jim](https://crowdin.com/profile/hnrwx), [joyrv](https://crowdin.com/profile/joyrv), [Wodson de Andrade](https://crowdin.com/profile/CaptainCheep), [Zak](https://github.com/zekroman)
+- Russian: [Ckau](https://crowdin.com/profile/Ckau), [manwithnoface](https://github.com/1upus), [mbhz](https://github.com/mbhz)
+- Spanish: [ccccmark](https://github.com/ccccmark), [KplyAsteroid](https://crowdin.com/profile/Kplyasteroid), [mschifino](https://crowdin.com/profile/mschifino), [XxPhoenix1996xX](https://github.com/XxPhoenix1996xX)
+- Swedish: [Max Hambraeus](https://github.com/maxhambraeus), [Walter Lindell](https://crowdin.com/profile/walter.lindell)
+- Turkish: [İlke Hür Eyiol](https://crowdin.com/profile/ilkecan51)
+- Ukrainian: [Oleh Hatsenko](https://github.com/IRONKAGE), [T](https://crowdin.com/profile/--Tip--)
