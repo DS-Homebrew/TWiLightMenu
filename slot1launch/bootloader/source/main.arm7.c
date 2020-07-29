@@ -258,8 +258,10 @@ void arm7_resetMemory (void)
 	// clear more of EXRAM, skipping the cheat data section
 	toncset ((void*)0x023F8000, 0, 0x8000);
 
-	// clear last part of EXRAM
-	toncset ((void*)0x02400000, 0, 0xC00000);
+	if(dsiMode) {
+		// clear last part of EXRAM
+		toncset ((void*)0x02404000, 0, 0xBFC000);
+	}
 
 	REG_IE = 0;
 	REG_IF = ~0;
@@ -739,6 +741,10 @@ void arm7_main (void) {
 
 	//debugOutput (ERR_STS_CLR_MEM);
 	
+	if (dsiMode) {
+		tonccpy((char*)0x02400000, (char*)0x02000000, 0x4000);	// Backup TWLCFG for later usage by homebrew on flashcards
+	}
+
 	// Get ARM7 to clear RAM
 	arm7_resetMemory();	
 
@@ -747,9 +753,9 @@ void arm7_main (void) {
 
 	//debugOutput (ERR_STS_LOAD_BIN);
 
-	if (!twlMode) {
+	//if (!twlMode) {
 		REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
-	}
+	//}
 
 	tDSiHeader* dsiHeaderTemp = (tDSiHeader*)0x02FFC000;
 

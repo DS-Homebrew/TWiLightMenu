@@ -868,9 +868,10 @@ int main(int argc, char **argv)
 		soundBankLoaded = true;
 	}
 
-	if (!softResetParamsFound && ms().dsiSplash && ((REG_SCFG_EXT != 0) ? fifoGetValue32(FIFO_USER_01) != 0x01 : *(u32*)0x02000000 != 1)) {
+	if (!softResetParamsFound && ms().dsiSplash && (isDSiMode() ? fifoGetValue32(FIFO_USER_01) != 0x01 : *(u32*)0x02000000 != 1)) {
 		BootSplashInit();
-		(REG_SCFG_EXT != 0) ? fifoSendValue32(FIFO_USER_01, 10) : *(u32*)0x02000000 = 1;
+		if (isDSiMode()) fifoSendValue32(FIFO_USER_01, 10);
+		*(u32*)0x02000000 = 1;
 	}
 
 	if ((access(DSIMENUPP_INI, F_OK) != 0)
