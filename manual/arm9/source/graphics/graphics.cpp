@@ -145,13 +145,42 @@ void vBlankHandler() {
 }
 
 void pageLoad(const std::string &filename) {
-	std::vector<unsigned char> image;
-	unsigned width, height;
-	lodepng::decode(image, width, height, filename);
-	pageYsize = height;
-	pageImage = std::vector<u16>((pageYsize + 192) * width);
-	for(unsigned i=0;i<image.size()/4;i++) {
-		pageImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+	if(filename.substr(filename.find_last_of(".") + 1) == "bmp") {
+		FILE* file = fopen(filename.c_str(), "rb");
+
+		if (file) {
+			fseek(file, 0x16, SEEK_SET);
+			fread(&pageYsize, 1, sizeof(u16), file);
+			pageImage = std::vector<u16>((pageYsize + 192) * 256);
+
+			fseek(file, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(file) + 0xe;
+			fseek(file, pixelStart, SEEK_SET);
+			fread(pageImage.data(), 2, 256*pageYsize, file);
+			u16* src = pageImage.data();
+			int x = 0;
+			int y = pageYsize-1;
+			for (int i=0; i<256*pageYsize; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				pageImage[y*256+x] = convertToDsBmp(val);
+				x++;
+			}
+		}
+
+		fclose(file);
+	} else {
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filename);
+		pageYsize = height;
+		pageImage = std::vector<u16>((pageYsize + 192) * width);
+		for(unsigned i=0;i<image.size()/4;i++) {
+			pageImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		}
 	}
 
 	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(18*256), 0x15C00);
