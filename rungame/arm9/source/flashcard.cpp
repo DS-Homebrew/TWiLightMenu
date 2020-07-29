@@ -26,27 +26,15 @@ int flashcard;
 */
 
 bool sdFound(void) {
-	if (access("sd:/", F_OK) == 0) {
-		return true;
-	} else {
-		return false;
-	}
+	return (access("sd:/", F_OK) == 0);
 }
 
 bool flashcardFound(void) {
-	if (access("fat:/", F_OK) == 0) {
-		return true;
-	} else {
-		return false;
-	}
+	return (access("fat:/", F_OK) == 0);
 }
 
 bool bothSDandFlashcard(void) {
-	if ((access("sd:/", F_OK) == 0) && (access("fat:/", F_OK) == 0)) {
-		return true;
-	} else {
-		return false;
-	}
+	return (sdFound() && flashcardFound());
 }
 
 TWL_CODE DLDI_INTERFACE* dldiLoadFromBin (const u8 dldiAddr[]) {
