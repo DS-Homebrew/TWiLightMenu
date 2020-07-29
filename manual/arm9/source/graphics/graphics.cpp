@@ -150,13 +150,13 @@ void pageLoad(const std::string &filename) {
 
 		if (file) {
 			fseek(file, 0x16, SEEK_SET);
-			fread(&pageYsize, 1, sizeof(u16), file);
+			fread(&pageYsize, sizeof(u16), 1, file);
 			pageImage = std::vector<u16>((pageYsize + 192) * 256);
 
 			fseek(file, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
 			fseek(file, pixelStart, SEEK_SET);
-			fread(pageImage.data(), 2, 256*pageYsize, file);
+			fread(pageImage.data(), sizeof(u16), 256*pageYsize, file);
 			u16* src = pageImage.data();
 			int x = 0;
 			int y = pageYsize-1;
