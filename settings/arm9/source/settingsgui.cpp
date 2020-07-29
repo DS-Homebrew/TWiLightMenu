@@ -180,10 +180,10 @@ void SettingsGUI::setTopText(const std::string &text)
 
         width = calcLargeFontWidth(temp + u" " + word);
         if(width > 240) {
-        _topText += temp + u"\n";
-        temp = word;
+            _topText += temp + u"\n";
+            temp = word;
         } else {
-        temp += u" " + word;
+            temp += u" " + word;
         }
     }
     if(temp.size())

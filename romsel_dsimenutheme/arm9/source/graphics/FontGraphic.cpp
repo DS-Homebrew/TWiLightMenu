@@ -181,8 +181,8 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 		}
 
 		u16 index = getCharIndex(c);
-		// No need to draw off screen chars
-		if(x >= 0 && x < 256) {
+		// Don't draw off screen chars
+		if(x >= 0 && x < 256 && y >= 0 && y < 192 - tileHeight) {
 			u8 *dst = textBuf[top] + x + fontWidths[(index * 3)];
 			for(int i = 0; i < tileHeight; i++) {
 				for(int j = 0; j < tileWidth; j++) {
