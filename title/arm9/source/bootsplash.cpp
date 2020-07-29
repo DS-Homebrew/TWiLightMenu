@@ -228,10 +228,7 @@ void BootSplashDSi(void) {
 		rocketVideo_videoFrames = 108;
 		rocketVideo_videoFps = 60;
 
-		if (!isDSiMode()) {
-			REG_SCFG_EXT = 0x8300C000;
-		}
-		bool dsiSixtyFpsRead = (isDSiMode() || REG_SCFG_EXT == 0x8300C000);
+		bool dsiSixtyFpsRead = (isDSiMode() || REG_SCFG_EXT != 0);
 
 		videoFrameFile = fopen(language==6 ? "nitro:/video/iquedsisplash_60fps.lz77.rvid" : "nitro:/video/dsisplash_60fps.lz77.rvid", "rb");
 
@@ -389,10 +386,6 @@ void BootSplashDSi(void) {
 	for (int i = 0; i < 256*59; i++) {
 		BG_GFX[i] = whiteCol;
 	}
-	}
-
-	if (!isDSiMode()) {
-		REG_SCFG_EXT = 0x83000000;
 	}
 
 	rocketVideo_videoFrames = 29;
