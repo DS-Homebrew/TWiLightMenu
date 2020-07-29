@@ -55,6 +55,7 @@ extern bool extention(const std::string& filename, const char* ext);
 
 extern int consoleModel;
 extern bool dsiWareBooter;
+extern bool secondaryDevice;
 
 extern int theme;
 extern int colorMode;
@@ -715,20 +716,21 @@ void getGameInfo(bool isDir, const char* name)
 			}
 		}
 
+		bool usingFlashcard = (!isDSiMode() && secondaryDevice);
 		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 		romVersion = ndsHeader.romversion;
 		switch (ndsHeader.arm7binarySize) {
 			case 0x22B40:
 			case 0x22BCC:
-				if (!isDSiMode() || hasCycloDSi) requiresDonorRom = 51;
+				if (usingFlashcard || hasCycloDSi) requiresDonorRom = 51;
 				break;
 			case 0x23708:
 			case 0x2378C:
 			case 0x237F0:
-				if (!isDSiMode() || hasCycloDSi) requiresDonorRom = 5;
+				if (usingFlashcard || hasCycloDSi) requiresDonorRom = 5;
 				break;
 			case 0x23CAC:
-				if (!isDSiMode() || hasCycloDSi) requiresDonorRom = 20;
+				if (usingFlashcard || hasCycloDSi) requiresDonorRom = 20;
 				break;
 			case 0x24DA8:
 			case 0x24F50:
@@ -740,7 +742,7 @@ void getGameInfo(bool isDir, const char* name)
 			case 0x25D04:
 			case 0x25D94:
 			case 0x25FFC:
-				if (!isDSiMode() || hasCycloDSi) requiresDonorRom = 3;
+				if (usingFlashcard || hasCycloDSi) requiresDonorRom = 3;
 				break;
 			case 0x27618:
 			case 0x2762C:

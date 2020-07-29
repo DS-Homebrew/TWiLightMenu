@@ -137,19 +137,20 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _isDSiWare = EFalse;
         _hasExtendedBinaries = ETrue;
 		_requiresDonorRom = 0;
+		bool usingFlashcard = (!isDSiMode() && ms().secondaryDevice);
 		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 		switch (header.arm7binarySize) {
 			case 0x22B40:
 			case 0x22BCC:
-				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 51;
+				if (usingFlashcard || hasCycloDSi) _requiresDonorRom = 51;
 				break;
 			case 0x23708:
 			case 0x2378C:
 			case 0x237F0:
-				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 5;
+				if (usingFlashcard || hasCycloDSi) _requiresDonorRom = 5;
 				break;
 			case 0x23CAC:
-				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 20;
+				if (usingFlashcard || hasCycloDSi) _requiresDonorRom = 20;
 				break;
 			case 0x24DA8:
 			case 0x24F50:
@@ -161,7 +162,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 			case 0x25D04:
 			case 0x25D94:
 			case 0x25FFC:
-				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 3;
+				if (usingFlashcard || hasCycloDSi) _requiresDonorRom = 3;
 				break;
 			case 0x27618:
 			case 0x2762C:
