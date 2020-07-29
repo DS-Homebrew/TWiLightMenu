@@ -55,10 +55,17 @@ jobs:
           mkdir "../../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
           mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.DAT"
 
-          #### R4i Gold 3DS Plus
+          #### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS & R4iDSN/R4 Ultra
+          ##### Global
           cp "booter_fc.nds" "_DS_MENU.nds"
           cp "DLDI/r4idsn_sd.dldi" .
           ./dlditool r4idsn_sd.dldi _DS_MENU.nds
+
+          ##### R4iDSN & R4 Ultra specific
+          cp "_DS_MENU.nds" "../../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_.NDS"
+          cp "_DS_MENU.nds" "../../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_B.NDS"
+
+          ##### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS specific
           ./r4enc _DS_MENU.nds
           mkdir "../../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/"
           mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.DAT"
@@ -86,10 +93,12 @@ jobs:
           mkdir "../../7zfile/Flashcard users/Autoboot/iSmart Premium/system/"
           mv "ismat.dat" "../../7zfile/Flashcard users/Autoboot/iSmart Premium/system/ismat.dat"
 
-          #### Acekard 2i & Acekard 2.1
+          #### Acekard 2i/Acekard 2.1 & Galaxy Eagle
           cp "booter_fc.nds" "akmenu4.nds"
           cp "DLDI/ak2_sd.dldi" .
           ./dlditool ak2_sd.dldi akmenu4.nds
+          cp "akmenu4.nds" "../../7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_.NDS"
+          cp "akmenu4.nds" "../../7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_B.NDS"
           mkdir "../../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/"
           mv "akmenu4.nds" "../../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/akmenu4.nds"
 
