@@ -1,0 +1,305 @@
+﻿// Thanks to Issac for the translation.
+
+[font]
+main = liberation.pcf
+language = 1
+
+[start menu]
+Copy = Kopiera
+Cut = Klipp ut
+Paste = Klistra in
+Delete = Ta bort
+Setting = Inställningar
+Info = Filinformation
+Help = Hjälp
+Tools = Verktyg
+START = START
+
+[message box]
+yes = Ja
+no = Nej
+ok = OK
+cancel = Avbryt
+
+[progress window]
+processing save = Sparar, stäng inte av
+processing copy = Kopierar fil, stäng inte av, %c för att avbryta
+first use sd = Kontrollerar SD-kortet för förstagångsanvändning
+gba load = Laddar GBA-spel
+gba save load = Laddar GBA-sparning
+gba save store = Sparar GBA-sparning, stäng inte av
+erase nor = Rensa NOR-flash
+
+[copy file error]
+title = Fel
+text = Filen existerar inte
+
+[copy file exists]
+title = Varning
+text = En fil med samma namn finns redan, vill du ersätta den?
+
+[copy dest is directory]
+title = Fel
+text = En mapp med samma namn finns redan, kan inte kopiera källfilen.
+
+[move dest is directory]
+title = Fel
+text = En mapp med samma namn finns redan, kan inte flytta källfilen.
+
+[no copy dir]
+title = Fel
+text = Mappkopiering / -flyttning är inte tillämpat än.
+
+[stop copying file]
+title = Avbryt kopiering av fil
+text = Vill du avbryta kopieringen?
+
+[confirm delete file]
+title = Är du säker
+text = Filen kan inte återställas när du tagit bort den, vill du fortsätta "%s"?
+
+[do not delete directory]
+title = Varning
+text = Mappen är inte tom, kan därför inte ta bort den.
+
+[restore save fail]
+title = Fel
+text = Misslyckades med återställning av den sparade datan.
+
+[language changed]
+title = Fråga
+text = Systemspråket ändrat, starta om nu för att aktivera de nya inställningarna? Välj "Nej" för att starta om senare.
+
+[ui style changed]
+title = Fråga
+text = Användargränssnittsstilen ändrades, starta om nu för att aktivera de nya inställningarna? Välj "Nej" för att starta om senare.
+
+[setting window]
+ok = OK
+savetype = Inställningar
+cancel = Avbryt
+confirm = Är du säker
+confirm text = Spara nuvarande inställningar?
+close = Stäng
+system = System
+interface = Gränssnitt
+filesystem = Filsystem
+gba = GBA
+patches = Patchar
+
+[save type]
+title = Inställningar
+text = Välj en spartyp
+Unknown = okänd/auto
+No Save = ingen sparning
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = standard
+save slot = Välj en spar-slot
+tab1 = Kompatibilitet
+tab2 = Finesser
+
+[system setting]
+title = Systeminställningar
+safe mode = Safe Mode
+
+[rom info]
+title = Filinformation
+file date = Senast ändrad: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Filstorlek: %s
+save type = Spartyp: %s
+game code = Kod: %s
+copy slot = Kopiera spar-slot
+
+[disk info]
+total = Total kapacitet: %s
+used = Använt utrymme: %s
+free = Ledigt utrymme: %s
+
+[no free space]
+title = Fel
+text = Det finns inte tillräckligt med utrymme på minnet.
+
+[unsupported sd]
+title = Fel typ av SD-kort
+text = Detta SD-kort (Modell:%s) passar inte för att köra officiella DS-program, var god kopiera programmet från SD-kortet till det inbyggda Acekard-flashminnet och försök igen.
+
+[sd card error]
+title = SD-kortfel
+text = Kan inte komma åt SD-kortet, det kanske sitter i fel?
+
+[no sd for save]
+title = SD-kortfel
+text = Kan inte komma åt SD-kortet, spardata för senast körda program kommer att skrivas till filen: "%s".
+
+[no gba card]
+title = Observera
+text = Det finns ingenting i SLOT-2
+
+[filelist type]
+text = Välj filer att visa
+item0 = NDS
+item1 = NDS + SAV
+item2 = ALLT
+
+[rom trim]
+text = Trimma rom:en vid kopiering
+item0 = Nej
+item1 = Ja
+
+[language]
+text = Språk
+ja = 日本語
+en = english
+fr = français
+de = deutsch
+it = italiano
+es = español
+
+[ui style]
+text = Användargränssnittsstil
+
+[help window]
+title = Hjälpinformation
+item0 = %c  Välj program
+item1 = %c  Starta/OK/JA
+item2 = %c  Tillbaka/Avbryt/NEJ
+item3 = %c  Se filinformation / Välj spartyp
+item4 = %c  Växla mellan SD och FLASH
+item5 = %c  Tillbaka till parent-mappen
+item6 = %c  Justera bakggrundsbelysningen
+item7 = %s  Startmeny
+item8 = %s  Menystil ny / klassisk
+
+[exp window]
+button = 3-in-1
+title = 3-in-1 expansion pack inställningar
+ram = RAM
+sram = sRAM
+off = av
+low = låg
+mid = mellan
+high = hög
+strength = Skakstyrka
+flash to nor = till NOR
+copy to psram = till RAM
+
+[abort save]
+title = Avbryt sparning
+text = Vill du avbryta sparprocessen?
+
+[gba warn]
+title = Varning
+text = GBA-spel större än 32M stöds inte!
+
+[patches]
+download play = Single Card Play
+cheating system = In Game-fusk(AR)
+reset in game = In Game-reset
+dma = DMA läge
+protection = Gå förbi kopieringsskydd
+linkage = Länka till GBA
+sd save = Spara direkt till SD-kortet
+homebrew reset = Reset in Homebrew
+reset hotkey = Reset Hotkey
+
+[switches]
+Enable = på
+Disable = av
+Global = global(%s)
+
+[ram allocation]
+title = Fel
+memory allocation error = Minnesallokeringsfel
+
+[scrolling]
+fast = Snabb
+medium = Mellan
+slow = Långsam
+
+[file settings]
+title = Filsystemsinställningar
+show hidden files = Visa dolda filer
+save extension = Save extension
+
+[interface settings]
+title = Gränssnittsinställningar
+scrolling speed = Scrollhastighet
+filelist style = Fillistestil
+oldschool = Gammaldags
+modern = Modern
+internal = Intern
+small = Small icons
+animation = Animation
+12 hour = 12-hour clock
+
+[gba settings]
+title = GBA-inställningar
+sleephack = Universalt Viloläge
+autosave = Säkerhetskopiera sparfil vid start
+mode = Slot-2 mode
+modegba = gba
+modends = nds
+modeask = ask
+modetext = Launch slot-2 in NDS mode?
+
+[sd save]
+title = Varning
+text = Det här spelet kan inte köras från det interna Acekard-flashminnet, kopiera det till SD-kortet och försök igen.
+
+[icon]
+icon = Visa ikon
+transparent = genomskinlig
+as is = som det är
+firmware = firmware
+
+[cheats]
+title = Fusk
+info = Mer…
+deselect = Deselect all
+
+[saveslot]
+title = Kopiera spar-slot
+confirm = Är du säker att du vill kopiera spar-slotten?
+target slot = Målspar-slot
+
+[mainlist]
+flash memory = Flash Memory
+microsd card = microSD Card
+slot2 card = Slot2 Card
+favorites = Favorites
+
+[hotkeys]
+l-r-a-b-↓ = l-r-a-b-↓
+l-r-b-y-↓ = l-r-b-y-↓
+l-r-a-b-x-y = l-r-a-b-x-y
+b-y-touch = b-y-touch
+start-r-touch = start-r-touch
+
+[updater]
+update = Update
+update ? = Do you want to update?
+updater = Update module
+menu = Main module
+cheats = Cheats DB
+connecting = Connecting
+failed = failed
+updated = updated
+fresh = already updated
+stop = Do you want to stop transfer?
+download = Downloaded %d bytes
+unpack = Unpacking
+
+[crc32]
+crc32 = CRC32
+calculation = Calculating CRC32
+
+[end]

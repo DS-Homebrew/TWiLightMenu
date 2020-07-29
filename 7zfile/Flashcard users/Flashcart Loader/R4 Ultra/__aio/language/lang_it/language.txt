@@ -1,0 +1,440 @@
+﻿[font]
+main = tahoma.pcf
+language = 5
+
+[start menu]
+Start = |MENU|
+Copy = Copia
+Cut = Taglia
+Paste = Incolla
+Delete = Elimina
+Save Type = Tipo Salvataggio
+Patches = Patches
+Setting = Impostazioni
+Info = Proprietà
+Help = Aiuto
+More = Avanti ->
+3in1 = GBA 3in1
+Cheats = Cheats
+Back = <- Indietro
+
+[message box]
+yes = Si
+no = No
+ok = Ok
+cancel = Annulla
+
+[cheats]
+title = SELECT = Salva Cheats
+error_title = Errore
+error_text = Cheats non trovati.
+selectrom = Seleziona un file .NDS
+noxml = Cheat DB non trovato.
+ccexists = .CC esiste, Crearne uno nuovo?
+nonefound = Nessun cheat nel DB.
+xmlselect = Seleziona Cheat DB:
+confirm = Conferma
+confirm_rebuild = Riscrivi il file .CC?
+invalid cheatdb = Cheat DB non valido.
+Rebuild = Riscrivi
+Sel. DB = Sel. DB
+
+[progress window]
+processing save = Caricamento in corso... Non spegnere!
+processing copy = Copia in corso... Non spegnere! %c per annullare
+first use sd = Controllo SD per il primo utilizzo...
+gba load = Caricamento ROM GBA...
+gba save load = Caricamento Salvataggio GBA...
+gba save store = Caricamento GBA... Non spegnere!
+erase nor = Eliminazione NOR flash... Non spegnere!
+rebuilding cheat data = Riscrittura File cheat.
+
+[copy file error]
+title = Errore. Impossibile copiare il File.
+text = Il File o la Cartella non esiste.
+
+[copy file exists]
+title = Conferma Sostituzione File.
+text = E' presente un file con lo stesso nome. Sostituirlo?
+
+[copy dest is directory]
+title = Errore. Impossibile copiare la Cartella.
+text = Questa cartella contiene già una Cartella con lo stesso nome. Non è possibile copiare il file.
+
+[move dest is directory]
+title = Errore. Impossibile spostare la Cartella.
+text =  Questa cartella contiene già una Cartella con lo stesso nome. Non è possibile spostare il file.
+
+[no copy dir]
+title = Taglia/Incolla Cartella
+text = Non è possibile spostare o copiare una Cartella.
+
+[stop copying file]
+title = Conferma annullamento Copia File.
+text = Vuoi annullare la copia del File?
+
+[confirm delete file]
+title = Conferma Eliminazione File/Cartella.
+text = Il File o la Cartella non potrà essere recuperato, sei sicuro di voler cancellare '%s'?
+
+[do not delete directory]
+title = Impossibile eliminare la Cartella.
+text = Questa Cartella non è vuota: Cancella i Files all'interno e riprova.
+
+[unknown save type]
+title = Tipo di Salvataggio sconosciuto.
+text = Il salvataggio di questo programma è sconosciuto, premi "A" per impostare un tipo manualmente.
+
+[no savelist]
+title = Errore caricamento Lista Salvataggi.
+text = La lista dei save non puÚ essere caricata, "savelist.bin" mancante.
+
+[restore save fail]
+title = Errore ripristino salvataggi
+text = I salvataggi non possono essere ripristinati, Ignora e Continua?
+
+[backup save fail]
+title = Errore nel Backup del salvataggio.
+text = Errore nel Backup del salvataggio, Il disco potrebbe aver esaurito lo spazio libero.
+
+[language changed]
+title = Cambiamento Lingua
+text = E' necessario riavviare il Firmware per cambiare della lingua. Scegli "No" per Annullare.
+
+[ui style changed]
+title = Cambiamento Tema.
+text = E' necessario riavviare il Firmware per applicare il cambio del Tema? Scegli "No" per mantenere l'attuale. 
+
+[save type]
+title = Seleziona il tipo di salvataggio
+text = Tipo salvataggio
+Unknown = Auto
+No Save = Disattiva
+4K = 4K
+64K = 64K
+512K = 64K/512K
+2M = 2M
+4M = 2M/4M
+
+[scrolling]
+Fast = Veloce
+Medium = Medio
+Slow = Lento
+
+[system setting]
+title = Opzioni di Sistema
+
+[disk info]
+total = Capacità MicroSD: %s
+used = Spazio Utilizzato: %s
+free = Spazio Libero: %s
+
+[no free space]
+title = Errore. Spazio Libero esaurito.
+text = Non c'è abbastanza spazio libero per copiare il file.
+
+
+[sd speed]
+text = Velocità MicroSD
+item0 = Estrema
+item1 = Veloce
+item2 = Media
+item3 = Lenta
+
+[unsupported sd]
+title = MicroSD non supportata
+text = Questa MicroSD, Modello (Model:%s) non è supportata,Riprova con una MicroSD di modello diverso.
+
+[sd card error]
+title = Errore di accesso alla MicroSD
+text = Impossibile accedere alla MicroSD, assicuarati che la MicroSD sia formattata e inserita correttamente.
+
+[no sd for save]
+title = Nessuna MicroSD per il salvataggio
+text = Impossibile accedere alla MicroSD, il salvataggio della partita precedente sarà scritto in '%s'.
+
+[no gba card]
+title = Nessuna scheda GBA
+text = Non c'è nessun dispositivo nello Slot-2.
+
+[filelist type]
+text = File da visualizzare:
+item0 = NDS
+item1 = NDS + SAV
+item2 = NDS/SAV/BAK
+item3 = Tutti
+
+[rom trim]
+text = Trimma ROM mentre Copia
+item0 = Disabilitato
+item1 = Abilitato
+
+[cheat]
+text = Cheat
+item0 = Disabilitati
+Item1 = Abilitati
+
+[autorun]
+text = Avvio ultima ROM
+item0 = Disabilitato
+item1 = Abilitato
+
+[language]
+text = Lingua
+item0 = Inglese
+item1 = Cinese Semplice
+item2 = Cinese Tradizionale
+item3 = Giapponese
+item4 = Francese
+item5 = Italiano
+item6 = Tedesco
+item7 = Spagnolo
+item8 = Olandese
+
+[brightness]
+text = Luminosità
+
+[ui style]
+text = Tema
+
+[help window]
+title = Help
+item0 = %c  Su/Giù/PgSu/PgGiù
+item1 = %c  Sì/Start/OK
+item2 = %c  No/Indietro/Annulla
+item3 = %c  Vedi info/Seleziona Salvataggio
+item4 = %c  Selezione Memoria: MicroSD/Flash
+item5 = %c  Cartella superiore
+item6 = %c  Regola Luminosità: 1/2/3/4
+item7 = %s  Apri il Menù START
+item8 = %s  Stile visualizzazione: Icone/Numeri
+versions = HW: %02x NDD: %02x
+
+[abort save]
+title = Annulla Salvataggio.
+text = Vuoi annullare il salvataggio?
+
+[gba warn]
+title = Attenzione! ROM troppo pesante.
+text = Le ROM GBA più grandi di 32M non sono supportate!
+
+[shortcut overwrite]
+title = Conferma Scorciatoia.
+text = Sei sicuro di voler inserire/sovrascrivere quest'oggetto nel Menu Principale?
+
+[shortcut delete]
+title = Conferma Eliminazione Scorciatoia.
+text = Sei sicuro di non voler più vedere questa Scorciatoia nel Menu Principale?
+
+[slot2]
+gbamode = Carica in modalità GBA
+passme = Carica in modalità NDS (PassMe)
+backupsramq = Backup SRAM Bank1 (FAS1)
+
+[fas1]
+question = Attenzione
+title = FAS1 Opzioni
+useFAS1 = Usa FlashAdvance Features
+listgba = Lista files GBA/BIN
+verifyFAS1 = Verifica i blocchi scritti
+item0 = No
+item1 = SÏ
+StartMenuDescription = FAS1
+prompt = Scrivi ROM
+flashquestion = Flash ROM a Flash Advance Cart? (%.2fMB / about %.1f min.)
+writeprompt = Scrivi salvataggio sul Bank 1?
+backupsramq = Backup Slot-1 della scheda FlashAdvance
+backupsram = Backup Slot 1 [%iKB] (%c per annullare)
+saveerror = Non è un file SAV di 64KB, continuare?
+unsupported = FAS1: Scheda non supportata.
+writingpercent = Scritti %iKB di %iKB, (%c per annullare)
+savebytes = Scritti %i bytes (%c per annullare)
+
+[save backup]
+question = Creare un Backup del salvataggio?
+backing up = Backup del file .SAV in corso... estensione .BAK
+overwrite = Backup già esistente, sovrascrivere?
+
+[save restore]
+question = Ripristinare il salvataggio dal Backup?
+restoring save = Ripristino .SAV da .BAK
+overwrite = Salvataggio già esistente, sovrascrivere?
+
+[textview]
+confirm = Conferma 
+exit = Vuoi veramente uscire?
+error = Errore nell'apertura del File.
+file open error = Non è possibile visualizzare questo file di testo. Ritorna al Menu.
+screen angle = Orientamento Schermo
+normal = Normale
+rotate 90 = Ruota 90°
+rotate 270 = Ruota 270°
+screen mode = Modalità
+dual = Doppio
+dual copy = Clona
+lower = In basso
+upper = In alto
+add bookmark = Vuoi aggiungere un segnalibro in questa posizione?
+remove bookmark = Vuoi eliminare questo segnalibro?
+goto toppage? = Vuoi saltare all'inizio pagina?
+
+[save slot]
+title = Scegli Slot
+default = Default
+text = Scegli Slot da usare
+
+[romnametype]
+Normal = Nome File
+HideExtName = Senza .nds
+BannerTitle = Nome Originale
+
+[cheat]
+text = Cheat
+item0 = Disabilitati
+Item1 = Abilitati
+
+[setting window]
+ok = Ok
+savetype = Salvataggio
+cancel = Annulla
+confirm = Conferma
+confirm text = Salvare queste Impostazioni?
+shortcut = Scorciatoia
+delete shortcut = Elimina
+rominfo = Info Rom
+
+[switches]
+Default = Default
+Enable = Abilita
+Disable = Disabilita
+auto menu = Auto Menu
+
+[rom info]
+title = Proprietà
+title_copywnd = Copia Slot
+file date = Ultima modifica: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Dimensione: %s
+save type = Salvataggio: %s
+game code = Codice Gioco: %s
+save slot = Slot Salvataggio
+save slot copy = Da %s a:
+Slot = Slot
+cheat menu = Cheat Menu
+copy menu = Copia Slot
+save extension = Estensione
+convert question = Estensione Salvataggi
+convert text = Convertire l'estensione del file di salvataggio da %s a %s?
+
+[patches]
+title = Patch di Default per le Rom
+download play = Download DS
+cheating system = Cheat/Action Replay
+slow motion = Slow Motion
+reset in game = Soft-Reset
+3in1 = GBA 3in1
+ak2 loader = AK2 Loader
+altloadernotfound = Loader alt. non trovato, utilizzare il Loader di default?
+patching loader = Patching Loader alternativo.
+IRQ Hook = Hook IRQ
+SWI Hook = Hook SWI
+
+
+[advanced setting]
+title = Impostazioni Avanzate
+Advanced = Avanzate
+Show Hidden Files = Mostra File nascosti
+Hide Extension Name = Nascondi estensione files.
+Scrolling Speed = Velocità scorrimento
+CopyCut Saves Too = Copia/Taglia SAV con ROM
+Delete Saves Too = Elimina SAV con ROM
+Cheat Scrolling = Scrollbar nei Cheats
+Homebrew Reset Type = Tipo di Reset Homebrew
+
+[cheatupdate]
+DATorXML = File da Scaricare
+updateDB = Aggiornamenti
+cheatDBbutton = Aggiorna DB
+SaveList = savelist.bin
+startupdatetitle = Aggiornamento AKAIO
+get whatsnew = Changelog
+startupdatequestion = Vuoi avviare l'aggiornamento?
+WFCConnection = Connessione a Internet in corso... %c annulla.
+cantconnect = Impossibile collegarsi ad Internet. Controlla le impostazioni Wi-Fi.
+stopconnectquestion = Vuoi annullare la connessione Wi-Fi?
+stopconnecttitle = Disconnessione in corso...
+getwhatsnew = Download in corso...
+downloadthisfile = Scaricare i trucchi del %s?
+downloaderror = Errore nel Download del File.
+downloadstart = Download del file in corso... %c annulla.
+stopdownloadquestion = Vuoi interrompere il Download?
+stopdownloadtitle = Annullamento del Download...
+downloading = Download: %.0fKb/%.0fKb... %c per annullare.
+unzipstop = Vuoi interrompere la decompressione?
+unzipstoptitle = Decompressione in pausa
+unzipping = Decomprimo il file, %c per annullare.
+unziperror = Errore durante la decompressione.
+success = Aggiornamento del %s eseguito.
+error = Impossibile completare l'aggiornamento. Riprovare?
+resumeupdatetitle = Riprendi il download interrotto.
+resumethisfile = Riprendi il download di %s a %.0fKb?
+deletepartial = Eliminare il file parzialmente scaricato?
+previousdates = Date precedenti
+previousfiles = Files precedenti
+previous date notice = Per il Loader o il plugin Wifi
+cheats = Cheats
+loader = Loader
+wifi = Plugin Wifi
+3version = 3 versioni
+5version = 5 versioni
+Checking Site = Controllo del Sito AKAIO
+whatsnew notice = SOLO dal Sito Ufficiale
+site = Da quale sito?
+site1 = Sito Ufficiale
+site2 = TempDB
+
+[text viewer]
+text = Visualizzatore di testi
+item0 = Plugin
+item1 = Interno
+
+[interface settings]
+oldschool = Lista
+modern = Nome del File
+internal = Nome Originale
+filelist style = Stile Visualizzazione
+Hide File Extensions = Nascondi Estensioni File
+
+[exp window]
+title = Impostazioni Scheda Slot 2
+ram = RAM
+sram = Copia sRAM
+off = Spento
+low = Basso
+mid = Medio
+high = Alto
+strength = Livello vibrazione
+NOR Mode = Metodo NOR
+auto = Auto
+always = Sempre
+notdetected = 3in1/EWin/Flash Advance non trovata!
+NOR Flash = Modo NOR
+norquestion = Scrivi sulla NOR?
+
+[gba settings]
+gbabutton = Impostazioni GBA
+gbasleepdescription = (L+R+Start: Standby/ Select+Start: Riprendi)
+title = Impostazioni GBA
+sleephack = GBA Universal Standby
+autosave = Fai una copia del salvataggio GBA all'avvio
+gbaSavePrompt = Chiedi prima di Salavre/Caricare
+Load Save = Carica salvataggio
+Load File = Caricare %s?
+Backup Save = Backup Salvataggio
+Backup File = Creare un Backup di %s?
+
+[ram allocation]
+title = Errore
+memory allocation error = Errore Allocazione di Memoria
+
+
+[end]

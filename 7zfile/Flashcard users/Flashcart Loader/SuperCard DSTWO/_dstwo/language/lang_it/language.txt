@@ -1,0 +1,270 @@
+[start menu]
+File_Handle=Operazioni File
+patch=Patch
+Cheat=Cheats
+archive=Salvataggi
+Ui_Type=Skin
+Language=Lingua
+Syset=Impostazioni
+Help=Aiuto
+Hotkey=Hotkey
+Hotkey1=Hotkey Simple
+
+[file handle menu]
+noText=Appunti vuoti 
+item0=Copia
+item1=Taglia
+item2=Incolla
+item3=Elimina
+
+[text wnd info]
+title=Attenzione!
+item0=Il file %s non esiste o e' corrotto!
+item1=Guida in-game
+
+[slow wnd]
+title=Rallenta
+item0=OFF
+item1=ON
+
+[cheat wnd]
+title=Suggerimento
+clearTitle=Azzera
+text=Salva impostazioni?
+title1=Suggerimento!
+text1=I cheats sono al momento disabilitati. Vuoi abilitarli?
+
+[RTL wnd info]
+title=Attenzione!
+load_title=Caricam. Real-time
+save_title=Salvatag. Real-time
+item0=Nessun salvataggio!
+item1=Sovrascrivere il salvataggio?
+
+[patch menu]
+item0=Clean
+item1=Patch
+
+[Archive type menu]
+item0=Salvataggio0
+item1=Salvataggio1
+item2=Salvataggio2
+item3=Salvataggio3
+
+[Syset menu]
+Brightness=Luminosita'
+List_type=Tipo lista
+Hotkey=Hotkey
+Hotkey1=Hotkey Simple
+FileType=Files
+GbaLink=GBA Union
+LastRomRun=AutorunRom
+
+[Ui Type menu]
+title=Attenzione
+text=Stile interfaccia utente cambiato. Riavviare ora per applicare il nuovo stile? 'No' manterra' l'impostazione corrente.
+
+[set game info]
+item0=Multi-salv.
+item1=Cheats
+item2=Modalita'
+
+[reset text]
+title=Attenzione!
+text=Riavviare il sistema?
+
+[Cheat menu]
+item0=Off
+item1=On
+
+[Brightness menu]
+item0=Liv. 1
+item1=Liv. 2
+item2=Liv. 3
+item3=Liv. 4
+
+[Language menu]
+title=Domanda
+text=Linguaggio del sistema cambiato. Riavviare ora per applicare i cambiamenti? Seleziona 'No' se vuoi riavviare dopo.
+item0=Inglese
+item1=Cinese-S
+item2=Cinese-T
+item3=Francese
+item4=Italiano
+item5=Tedesco
+item6=Spagnolo
+item7=Koreano
+
+[Filetype menu]
+item0=NDS
+item1=NDS & SAV
+item2=GBA & SAV
+item3=Tutti
+
+[GbaLink menu]
+item0=No
+item1=Link
+item2=Rumble
+
+[LastRomRun menu]
+item0=Turn off
+item1=Turn on
+
+[message box]
+yes=SI'(A)
+no=NO(B)
+ok=OK(A)
+cancel=Annulla(B)
+cheat=Cheats(Y)
+
+[List type menu]
+item0=Icona
+item1=Lista
+item2=Files
+
+[progress window]
+processing_copy=Copia in corso
+
+[copy file error]
+title=Errore!
+text=Errore durante la copia file.
+
+[stop copying file]
+title=Conferma
+text=Ferma copia di questo file?
+
+[no free space]
+title=Errore!
+text=Spazio libero insufficiente. Copia file non completata.
+text1=Spazio libero insufficiente.
+
+[copy file exists]
+title=Attenzione!
+text=Esiste gia' un file con questo nome, sovrascriverlo?
+
+[copy dest is directory]
+title=Errore!
+text=Esiste gia' una cartella con questo nome. Impossibile copiare i file.
+
+[move dest is directory]
+title=Errore!
+text=Esiste gia' una cartella con questo nome. Impossibile spostare i file.
+
+[no copy dir]
+title=Errore!
+text=Impossibile copiare o spostare una cartella.
+
+[confirm delete file]
+title=Conferma
+text=Il file non potra' essere recuperato dopo l'eliminazione! Sicuro di voler eliminare "%s" ?
+
+[do not delete directory]
+title=Attenzione!
+text=La cartella non e' vuota. Impossibile eliminarla.
+
+[help window]
+title = Guida rapida comandi
+item0 = %c  Seleziona Programmi
+item1 = %c  Start/OK/SI'
+item2 = %c  Indietro/Annulla/NO
+item3 = %c  Seleziona cheat
+item4 = %c  Imposta info gioco
+item5 = %c  Cartella superiore
+item6 = %c  Regola luminosita'
+item7 = %s  Menu Start
+item8 = %s  Stile menu nuovo/classico
+
+[hotkey window]
+title = Impostare tasto scelta rapida
+
+[setting window]
+ok=OK
+savetype=Tipo salvataggio
+cancel=Annulla
+confirm=Conferma
+confirm_text = Salvare le impostazioni correnti?
+
+[main interface title]
+item0=Guida in-game
+item1=Cheats
+item2=Salva
+item3=Carica
+item4=Slow-motion
+item5=Free Cheat
+
+[system setting]
+title=Impostazioni sistema
+
+[search cheat]
+title=Cerca cheat
+item0=Cerca valore
+item1=Cheat
+
+[search cheat btn text]
+confirm=Riprendi gioco
+start=Reset
+search=Cerca
+add=Agg.Cheat
+change=Modifica
+switch=(S)Blocca
+switchall=(S)Blocca tutti
+remove=Rimuovi
+result=Risultati
+note=Nome(X)
+exit=Esci
+
+[cheat search type]
+title=Tipo ricerca
+item0=Valore specifico
+item1=Ricerca Fuzzy
+
+[cheat compare type]
+title=Compara tipo
+item0=Uguale
+item1=Maggiore di
+item2=Minore di
+item3=Diverso da
+
+[cheat data size]
+title=Dim. dati
+item0=< 8 bit
+item1=< 16 bit
+item2=< 32 bit
+
+[cheat input value]
+title=Inserisci valore
+item0=Valore
+
+[search cheat result]
+address=Indirizzo
+oldvalue=Vecchio val.
+newvalue=Nuovo valore
+erro=Errore!
+result=Ci sono %d differenze in questa ricerca. Seleziona il valore giusto.
+getdataerro=Errore ricerca dati! Resettare, per favore.
+viewresulterro=Questi non sono dati cheat.
+
+[change cheat]
+note=Nota
+
+[cheat code]
+address=Indirizzo
+value=Valore
+state=Condizione
+warn=Attenzione!
+del=Vuoi eliminare la lista codici %s?
+
+[cheat state]
+on=Abilita
+off=Disabilita
+
+[rom info]
+title=Info File
+file_date=Data ultimo salv.:
+file_size=Dimens.: %s
+save_type=Tipo salv.: %s
+file_name=Nome file: 
+game_name=Nome gioco: 
+file_type=Tipo: %s
+game_id=Game ID: %d
+[end]

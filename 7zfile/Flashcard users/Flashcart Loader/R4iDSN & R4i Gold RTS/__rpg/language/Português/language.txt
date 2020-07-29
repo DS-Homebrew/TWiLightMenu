@@ -1,0 +1,305 @@
+﻿//thanx to sniperdmaa
+
+[font]
+main = liberation.pcf
+language = 1
+
+[start menu]
+Copy = Copiar
+Cut = Recortar
+Paste = Colar
+Delete = Deletar
+Setting = Opções do sistema
+Info = Detalhes
+Help = Ajuda
+Tools = Ferramentas
+START = START
+
+[message box]
+yes = Sim
+no = Não
+ok = OK
+cancel = Cancelar
+
+[progress window]
+processing save = Processando… Não desligue!
+processing copy = Copiando arquivo…Não desligue! %c para cancelar!
+first use sd = Verificando cartão SD para ser usado pela primeira vez…
+gba load = Carregando jogo de GBA…
+gba save load = Carregando save de GBA…
+gba save store = Processando save de GBA… Não desligue!
+erase nor = Apagando NOR flash… Não desligue!
+
+[copy file error]
+title = Erro copiando arquivo ou pasta.
+text = O arquivo ou pasta não existe.
+
+[copy file exists]
+title = Confirmar substituição do arquivo
+text = Esta pasta já contém um arquivo com o mesmo nome. Gostaria de substituir o arquivo existente por este?
+
+[copy dest is directory]
+title = Erro copiando arquivo ou pasta.
+text = Já existe uma pasta com o mesmo nome. Não é possível copiar o arquivo.
+
+[move dest is directory]
+title = Erro movendo arquivo ou pasta.
+text = Já existe uma pasta com o mesmo nome. Não é possível mover o arquivo.
+
+[no copy dir]
+title = Erro copiado/colando pasta.
+text = Copiar/colar pasta não é suportado agora!
+
+[stop copying file]
+title = Confirmar o cancelamento da cópia de arquivo.
+text = Tem certeza que deseja cancelar a cópia do arquivo?
+
+[confirm delete file]
+title = Confirmar apagar arquivo/pasta.
+text = Este Arquivo/pasta não poderá ser restaurado após deletado, tem certeza que deseja deletar "%s"?
+
+[do not delete directory]
+title = Erro deletando pasta.
+text = Esta pasta não está vazia, delete o conteúdo da pasta e tente novamente.
+
+[restore save fail]
+title = Falha na restauração do arquivo de save.
+text = O arquivo de save não pôde ser restaurado.
+
+[language changed]
+title = Confirmar mudança de linguagem do sistema.
+text = Tem certeza que deseja reiniciar agora e aplicar a mudança de linguagem do sistema? Escolha "Não" para reiniciar depois.
+
+[ui style changed]
+title = Confirmar mudança de interface.
+text = Tem certeza que deseja reiniciar agora e aplicar a mudança no tema da interface? Escolha "Não" para manter o tema atual.
+
+[setting window]
+ok = OK
+savetype = Configurações
+cancel = Cancelar
+confirm = Confirmar
+confirm text = Salvar configurações?
+close = Fechar
+system = Sistema
+interface = Interface
+filesystem = Sistema de Arquivos
+gba = GBA
+patches = Patches
+
+[save type]
+title = Selecionar tipo de save
+text = Tipo de save
+Unknown = Auto/Desc.
+No Save = Sem save
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = Padrão
+save slot = Selecionar Slot do Save
+tab1 = Compatibilidade
+tab2 = Funcionalidades
+
+[system setting]
+title = Configurações do sistema
+safe mode = Modo de Segurança
+
+[rom info]
+title = Detalhes do Arquivo
+file date = Última Alteração: %d%d%d %02d:%02d:%02d(GMT)
+file size = Tamanho do Arquivo: %s
+save type = Tipo de Save: %s
+game code = Código: %s
+copy slot = Copiar Slot
+
+[disk info]
+total = Capacidade do disco: %s
+used = Espaço utilizado: %s
+free = Espaço livre: %s
+
+[no free space]
+title = Erro, não há espaço suficiente!
+text = Não há espaço suficiente em disco.
+
+[unsupported sd]
+title = Cartão MicroSD não suportado
+text = Este modelo de cartão MicroSD não é compatível para rodar programas oficiais para DS, por favor copie o programa do cartão SD para a memória flash do Acekard e tente novamente.
+
+[sd card error]
+title = Erro acessando cartão MicroSD
+text = Não foi possível acessar o cartão MicroSD, por favor verifique se o cartão MicroSD está formatado e inserido corretamente.
+
+[no sd for save]
+title = Sem MicroSD para guardar dados
+text = Não foi possível acessar o cartão Micro SD, dados de programas utilizados serão escritos na pasta "%s"
+
+[no gba card]
+title = Erro, não há cartucho de GBA
+text = Não há dispositivo no Slot-2.
+
+[filelist type]
+text = Selecione o tipo de lista
+item0 = NDS
+item1 = NDS + SAV
+item2 = TODOS
+
+[rom trim]
+text = Trimmar ROM ao copiar
+item0 = Desabilitado
+item1 = Habilitado
+
+[language]
+text = Interface de linguagem
+ja = 日本語
+en = English
+fr = Français
+de = Deutsch
+it = Italiano
+es = Español
+
+[ui style]
+text = Tema de interface
+
+[help window]
+title = Informação de Ajuda
+item0 = %c  Selecionar Programas
+item1 = %c  Início/OK/Sim
+item2 = %c  Voltar/Cancelar/Não
+item3 = %c  Informação do arquivo/Tipo de Save
+item4 = %c  Seleção de memória: MicroSD/Flash
+item5 = %c  Voltar ao diretório anterior
+item6 = %c  Ajustar Brilho: 1/2/3/4
+item7 = %s  Abrir Menu
+item8 = %s  Estilo da lista: Gráfico/Numérico
+
+[exp window]
+button = 3em1
+title = Configuração de Pacote de Expansão 3em1
+ram = RAM
+sram = SRAM
+off = Desligado
+low = Baixo
+mid = Médio
+high = Alto
+strength = Nível da vibração (Rumble)
+flash to nor = Modo NOR
+copy to psram = Modo RAM
+
+[abort save]
+title = Cancelar processo de salvamento?
+text = Tem certeza que deseja cancelar o processo?
+
+[gba warn]
+title = Cuidado com o tamanho da ROM de GBA!
+text = ROM de GBA maior que 32M não é suportada!
+
+[patches]
+download play = Jogar com único Jogo
+cheating system = Cheat InGame(AR)
+reset in game = Soft-Reset
+dma = Modo DMA
+protection = Ignorar Proteção
+linkage = Link com GBA
+sd save = Salvar diretamente no SD
+homebrew reset = Resetar Homebrew
+reset hotkey = Atalho do Soft-Reset
+
+[switches]
+Enable = Habilitado
+Disable = Desabilitado
+Global = Global
+
+[ram allocation]
+title = Erro!
+memory allocation error = Erro de alocação de memória
+
+[scrolling]
+fast = Rápido
+medium = Médio
+slow = Lento
+
+[file settings]
+title = Configurações de Sistema de Arquivos
+show hidden files = Exibir arquivos ocultos
+save extension = Extensão de save
+
+[interface settings]
+title = Configurações de Interface
+scrolling speed = Velocidade do Scroll
+filelist style = Estilo de listagem de arquivos
+oldschool = Old school
+modern = Moderno
+internal = Interno
+small = Small icons
+animation = Animação
+12 hour = Modo 12-horas
+
+[gba settings]
+title = Configurações GBA
+sleephack = Modo dormir GBA
+autosave = Criar backup do save de GBA ao iniciar
+mode = Modo Slot-2
+modegba = GBA
+modends = NDS
+modeask = Solicitar
+modetext = Iniciar slot-2 em modo NDS?
+
+[sd save]
+title = Aviso
+text = Este jogo não pode ser iniciado a partir da Memória Flash Interna do R4/M3, favor copiar o jogo na Memória Interna do R4/M3 para o cartão SD e tente novamente.
+
+[icon]
+icon = Mostrar ícone
+transparent = Transparente
+as is = Sem alteração
+firmware = Firmware
+
+[cheats]
+title = Cheats
+info = Mais…
+deselect = Desmarc. todos
+
+[saveslot]
+title = Copiar Save Slot de Origem
+confirm = Tem certeza que deseja copiar o save do slot?
+target slot = Salvar Save Slot de Destino
+
+[mainlist]
+flash memory = Memória Flash
+microsd card = microSD Card
+slot2 card = Slot2 Card
+favorites = Favoritos
+
+[hotkeys]
+l-r-a-b-↓ = L-R-A-B-↓
+l-r-b-y-↓ = L-R-B-Y-↓
+l-r-a-b-x-y = L-R-A-B-X-Y
+b-y-touch = B-Y-TelaTouch
+start-r-touch = Start-R-TelaTouch
+
+[updater]
+update = Update
+update ? = Do you want to update?
+updater = Update module
+menu = Main module
+cheats = Cheats DB
+connecting = Connecting
+failed = failed
+updated = updated
+fresh = already updated
+stop = Do you want to stop transfer?
+download = Downloaded %d bytes
+unpack = Unpacking
+
+[crc32]
+crc32 = CRC32
+calculation = Calculating CRC32
+
+[end]

@@ -1,0 +1,423 @@
+﻿[font]
+main = tahoma.pcf
+
+[start menu]
+Start = Start
+Copy = Kopiera
+Cut = Klipp ut
+Paste = Klistra in
+Delete = ta bort
+Save Type = Minnestyp
+Patches = Patchar
+Setting = Inställningar
+Info = Egenskaper
+Help = Hjälp
+More = Mer ->
+3in1 = 3in1/FAS1
+Cheats = Fusk
+Back = <- Tillbaka
+
+[message box]
+yes = Ja
+no = Nej
+ok = OK
+cancel = Avbryt
+
+[cheats]
+title = Cheats: SELECT = Save Selection
+error_title = Fel
+error_text = Fusk hittades ej.
+selectrom = Välj en .NDS-fil
+noxml = Fusk-databas hittades ej
+ccexists = .CC existerar, Skapa ny?
+nonefound = Inga fusk hittades i DB
+xmlselect = Välj fusk-databas:
+confirm = Verkställ
+confirm_rebuild = Återskapa .CC-fil?
+invalid cheatdb = Ogiltig fusk-databas
+Rebuild = Återskapa
+Sel. DB = Välj DB
+
+[progress window]
+processing save = Arbetar... Stäng inte av!
+processing copy = Kopierar... Stäng inte av, %c=Avbryt!
+first use sd = Undersöker SD-kort...
+gba load = Laddar GBA-spel...
+gba save load = Laddar sparat GBA-läge...
+gba save store = Sparar GBA-läge... Stäng inte av!
+erase nor = Raderar NOR flash... Stäng inte av!
+rebuilding cheat data = Återskapar fusk-fil.
+
+[copy file error]
+title = Fel vid kopiering av fil eller mapp
+text = Filen eller mappen finns inte.
+
+[copy file exists]
+title = Ersätt fil
+text = Den här mappen innehåller redan en fil med det namnet. Vill du ersätta den befintliga filen med denna?
+
+[copy dest is directory]
+title = Fel vid kopiering av fil eller mapp
+text = Den här mappen innehåller redan en mapp med det namnet. Det går inte att kopiera.
+
+[move dest is directory]
+title = Fel vid flytt av fil eller mapp
+text = Den här mappen innehåller redan en mapp med det namnet. Det går inte att flytta.
+
+[no copy dir]
+title = Fel vid kopiering/inklistring
+text = Kopiering och flyttning av mappar stöds ännu inte!
+
+[stop copying file]
+title = Avbryt kopiering
+text = Är du säker på att du vill avbryta kopieringen?
+
+[confirm delete file]
+title = Ta bort fil/mapp
+text = Denna åtgärd går ej att ångra, är du säker på att du vill ta bort '%s'?
+
+[do not delete directory]
+title = Fel vid borttagning
+text = Mappen är inte tom, ta bort innehållet i mappen först och försök igen.
+
+[unknown save type]
+title = Okänt minnestyp
+text = Minnesstorleken för detta program är okänd, tryck "A" för att välja storlek.
+
+[no savelist]
+title = Fel vid laddning av spara-listan
+text = Spara-listan kunde inte laddas, "savelist.bin" saknas.
+
+[restore save fail]
+title = Återställning misslyckades
+text = Sparade data kunde inte återställas, ignorera detta och fortsätt ändå?
+
+[backup save fail]
+title = Backup misslyckades
+text = Misslyckades att spara data, måldisken kanske inte har tillräckligt utrymme.
+
+[language changed]
+title = Byt språk
+text = Vill du starta om nu för att genomföra språkändringen? Välj "Nej" om du vill starta om senare.
+
+[ui style changed]
+title = Byt tema
+text = Vill du starta om nu för att genomföra tema-ändringen? Välj "Nej" för att behålla aktuellt tema. 
+
+[save type]
+title = Välj minnestyp
+text = Minnestyp
+Unknown = Okänt/Auto
+No Save = Inget
+4K = 4K
+64K = 64K
+512K = 64K/512K
+2M = 2M
+4M = 2M/4M
+
+[scrolling]
+Fast = Snabb
+Medium = Medium
+Slow = Långsam
+
+[system setting]
+title = Inställningar
+
+[disk info]
+total = Diskstorlek: %s
+used = Använt: %s
+free = Ledigt: %s
+
+[no free space]
+title = Fel
+text = Det finns inte tillräckligt med utrymme på disken, kan inte kopiera filen.
+
+
+[sd speed]
+text = Välj MicroSD-hastighet
+item0 = Extrem
+item1 = Snabb
+item2 = Medium
+item3 = Långsam
+
+[unsupported sd]
+title = Ej stöd för MicroSD-kort
+text = Detta MicroSD-kort (Model:%s) är inte lämpligt för att köra DS-program, kopiera programmet från SD-kortet till Acekard's interna Flash-minne och försök igen.
+
+[sd card error]
+title = Fel vid åtkomst
+text = Kan inte få åtkomst till MicroSD-kortet, kontrollera att MicroSD-kortet är formatterat och insatt ordentligt.
+
+[no sd for save]
+title = Inget MicroSD för Sparade data
+text = Kan inte få åtkomst till MicroSD-kortet, sparade data från programmet skrivs till filen '%s'.
+
+[no gba card]
+title = Inget GBA-kort
+text = Det finns inget kort i Slot-2.
+
+[filelist type]
+text = Välj filtyper som skall visas
+item0 = NDS
+item1 = NDS + SAV
+item2 = NDS/SAV/BAK
+item3 = Alla
+
+[rom trim]
+text = Trimma ROM vid kopiering
+item0 = Nej
+item1 = Ja
+
+[cheat]
+text = Fusk aktiverat
+item0 = Nej
+Item1 = Ja
+
+[autorun]
+text = Autostart
+item0 = Nej
+item1 = Ja
+
+[language]
+text = Språk
+item0 = Engelska
+item1 = S. kinesiska
+item2 = T. kinesiska
+item3 = Japanska
+item4 = Franska
+item5 = Italienska
+item6 = Tyska
+item7 = Spanska
+item8 = Holländska
+item9 = Svenska
+
+[brightness]
+text = Ljusstyrka
+
+[ui style]
+text = Tema
+
+[help window]
+title = Hjälp
+item0 = %c  Upp/Ner/Sida Upp/Sida Ner
+item1 = %c  Ja/Start/OK
+item2 = %c  Nej/Tillbaka/Avbryt
+item3 = %c  Visa filinfo/Välj minnestyp
+item4 = %c  Välj mellan MicroSD/Flash
+item5 = %c  Upp en nivå
+item6 = %c  Välj ljusstyrka: 1/2/3/4
+item7 = %s  Öppna "START" Meny
+item8 = %s  Liststil: Animera/Nummer
+versions = HW: %02x NDD: %02x
+
+[abort save]
+title = Avbryt
+text = Är du säker på att du vill avbryta sparandet?
+
+[gba warn]
+title = GBA ROM-storlek
+text = GBA ROM's större än 32M stöds ännu inte!
+
+[shortcut overwrite]
+title = Genväg
+text = Är du säker på att du vill skapa/ersätta genvägen?
+
+[shortcut delete]
+title = Ta bort
+text = Är du säker på att du vill ta bort genvägen?
+
+[slot2]
+gbamode = Starta i GBA-läge
+passme = Starta i NDS-läge (PassMe)
+backupsramq = Backup SRAM Bank1 (FAS1)
+
+[fas1]
+question = fråga
+title = FAS1 tillval
+useFAS1 = Anvädn FlashAdvance-funktioner
+listgba = Lista GBA/BIN filer
+verifyFAS1 = Verifiera skrivna block
+item0 = Nej
+item1 = ja
+StartMenuDescription = FAS1
+prompt = Skriv ROM
+flashquestion = Flasha ROM till FlashAdvance-kort? (%.2fMB / ung. %.1f min.)
+writeprompt = Skriv data till Bank 1?
+backupsramq = Backup  från Slot-1 av FlashAdvance-kort
+backupsram = Sparar Bank 1 [%iKB] (%c för att avbryta)
+saveerror = Ej en 64KB fil, fortsätt?
+unsupported = FAS1: Stöder inte detta kort
+writingpercent = %iKB av %iKB skrivna, (%c för att avbryta)
+savebytes = %i bytes skrivna (%c för att avbryta)
+
+[save backup]
+question = Spara backup?
+backing up = Sparar .SAV med filändelse .BAK
+overwrite = Backup finns redan, ersätt?
+
+[save restore]
+question = Återställ från backup?
+restoring save = Återställer .SAV från filändelse .BAK
+overwrite = Filen finns redan, ersätt?
+
+[textview]
+confirm = verkställ 
+exit = vill du avsluta?
+error = Fel vid öppning
+file open error = Kan inte öppna den här textfilen. Återgå till OS-meny.
+screen angle = Skärmrotation
+normal = Normal
+rotate 90 = Rotera 90
+rotate 270 = Rotera 270
+screen mode = Skärmläge
+dual = Dubbelskärm
+dual copy = Klona skärm
+lower = Endast Nedre
+upper = Endast Övre
+add bookmark = Vill du lägga till ett nytt bokmärke vid denna position?
+remove bookmark = Vill du ta bort detta bokmärke?
+goto toppage? = Vill du gå tillbaka till toppen av dokumentet?
+
+[save slot]
+title = Välj slot
+default = Standard
+text = Välj slot att spara i
+
+[romnametype]
+Normal = Normal
+HideExtName = Dölj ROM-ändelse.
+BannerTitle = Internt Namn
+
+[cheat]
+text = Aktivera fusk
+item0 = Nej
+Item1 = Ja
+
+[setting window]
+ok = OK
+savetype = Sparminne
+cancel = Avbryt
+confirm = Spara Ändringar
+confirm text = Vill du spara dessa inställningar?
+shortcut = Genväg
+delete shortcut = Ta bort
+rominfo = ROM-tillval
+
+[switches]
+Default = Standard
+Enable = Ja
+Disable = Nej
+auto menu = Auto-Meny
+
+[rom info]
+title = Egenskaper
+title_copywnd = Kopiera spara-slot
+file date = Senaste ändring: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Filstorlek: %s
+save type = Minnestyp: %s
+game code = Spelkod: %s
+save slot = Välj spara-slot 
+save slot copy = Från %s till:
+Slot = Slot
+cheat menu = Fusk-Meny
+copy menu = Kopiera slot
+save extension = Spara ändelse
+convert text = Konvertera sparat
+convert text = Konvertera från %s till %s ?
+
+[patches]
+title = Patch-inställningar
+download play = DS Download Play
+cheating system = Fusk/Action Replay
+slow motion = Slow Motion i spelet
+reset in game = Soft-Reset
+3in1 = 3in1
+ak2 loader = AK2 Loader
+altloadernotfound = Alt. Loader hittades ej, boota ROM direkt?
+patching loader = Patchar Alt. Loader för AKAIO-användning
+
+[advanced setting]
+title = Filsysteminställningar
+Advanced = Avancerat
+Show Hidden Files = Visa dolda filer
+Hide Extension Name = Dölj ROM-ändelse
+Scrolling Speed = Rullningshastighet
+CopyCut Saves Too = Kopiera/klipp ut SAV med ROM
+Delete Saves Too = Ta bort SAV med ROM
+Cheat Scrolling = Fusk-rullning
+
+[cheatupdate]
+DATorXML = Fil att ladda ner
+updateDB = Wifi-Updatering
+cheatDBbutton = Updatera DB
+SaveList = savelist.bin
+startupdatetitle = AKAIO Updater
+get whatsnew = Hämta WhatsNew.txt
+startupdatequestion = Vill du starta uppdateringen?
+WFCConnection = Kopplar upp med WFC, %c för att avbryta
+cantconnect = Kunde inte koppla upp, kontrollera WFC-inställningar
+stopconnectquestion = Vill du avbryta Wifi-uppkoppling?
+stopconnecttitle = Avbryt uppkoppling
+getwhatsnew = Hämtar nyheter
+downloadthisfile = Laddar ner fusk-fil daterad %s?
+downloaderror = Fel vid nedladdning
+downloadstart = Laddar ner fil, %c för att avbryta
+stopdownloadquestion = Vill du avbryta nerladdningen?
+stopdownloadtitle = Avbryt nerladdning
+downloading = Laddar ner %.0fKb/%.0fKb, %c för att avbryte
+unzipstop = Vill du avbryta uppackningen?
+unzipstoptitle = Pausad uppackning
+unzipping = Packar upp fil, %c för att avbryta
+unziperror = Fel vid uppackning
+success = Det senaste %s
+error = Fel vid uppdatering, försök igen?
+resumeupdatetitle = Återuppta avbruten nerladdning
+resumethisfile = Återuppta nerladdning av %s vid %.0fKb?
+deletepartial = Ta bort delvis nerladdad fil?
+
+[text viewer]
+text = TXT-läsare
+item0 = Plugin
+item1 = Internt
+title = Plugin-tillval
+
+[interface settings]
+oldschool = Textlista
+modern = Filnamn
+internal = Internt Name
+filelist style = Liststil
+Hide File Extensions = Dölj filändelser
+
+[exp window]
+title = Slot-2 inställningar
+ram = RAM
+sram = Dumpa SRAM
+off = Av
+low = Låg
+mid = Medium
+high = Hög
+strength = Rumble-nivå
+NOR Mode = NOR-läge
+auto = Auto
+always = Alltid
+notdetected = 3in1/EWin/FlashAdvance hittades ej!
+NOR Flash = Flash till NOR
+norquestion = Flash till NOR?
+
+[gba settings]
+gbabutton = GBA-tillval
+gbasleepdescription = (L+R+Start: viloläge/ Select+Start: vakna)
+title = GBA-tillval
+sleephack = GBA Universal sleep
+autosave = Ta backup av GBA save vid start
+gbaSavePrompt = fråga före Spara/Ladda
+Load Save = Ladda Save
+Load File = Ladda %s?
+Backup Save = Ta backup av Save
+Backup File = Ta backup av %s?
+
+[ram allocation]
+title = Fel
+memory allocation error = Minnesallokeringsfel
+
+[end]

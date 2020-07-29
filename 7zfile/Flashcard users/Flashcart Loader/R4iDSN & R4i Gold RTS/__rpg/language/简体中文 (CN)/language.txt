@@ -1,0 +1,315 @@
+﻿// BL2CK translation
+
+[font]
+main = wenquanyi_9pt.pcf
+language = 0
+
+[start menu]
+Copy = 复制
+Cut = 剪切
+Paste = 粘贴
+Delete = 删除
+Setting = 设置
+Info = 信息
+Help = 帮助
+Tools = 工具
+START = 菜单
+
+[message box]
+yes = 是
+no = 否
+ok = 确定
+cancel = 取消
+
+[progress window]
+processing save = 正在处理存档，请不要关闭电源！
+processing copy = 正在复制文件，请不要关机，按 %c 取消！
+first use sd = 正在为第一次使用TF卡做准备...
+gba load = 读取GBA游戏
+gba save load = 正在读取GBA存档...
+gba save store = 正在处理GBA存档，请不要关机！
+erase nor = 清除NOR内存数据
+
+[copy file error]
+title = 错误
+text = 复制文件时发生错误！
+
+[copy file exists]
+title = 注意
+text = 有同名文件存在，确定需要覆盖吗？
+
+[copy dest is directory]
+title = 错误
+text = 有同名目录存在，不能将文件剪切到此处！
+
+[move dest is directory]
+title = 错误
+text = 有同名目录存在，不能将文件剪切到此处！
+
+[no copy dir]
+title = 文件夹复制/剪切错误
+text = 不能复制或剪切一个目录
+
+[stop copying file]
+title = 注意
+text = 确定需要停止文件复制吗？
+
+[confirm delete file]
+title = 注意
+text = 删除文件后不可以恢复，确定需要删除"%s" 吗？
+
+[do not delete directory]
+title = 警告
+text = 该目录下还有文件或目录，不能直接删除！
+
+[unknown save type]
+title = 注意
+text = 存档类型是未知的，请按正确选择存档类型！
+
+[restore save fail]
+title = 警告
+text = 恢复存档错误，要继续吗？
+
+[language changed]
+title = 询问
+text = 改变了系统语言要现在重启更换新的语言吗？选“否”稍后再重启
+
+[ui style changed]
+title = 询问
+text = 改变了用户界面风格，必须重启系统才能生效，要现在重启更换新的风格吗？选“否”保持当前的界面风格
+
+[setting window]
+confirm = 询问
+savetype = 功能设置
+rominfo = 文件信息
+ok = 确定
+cancel = 取消
+confirm text = 确定需要保存当前的设置吗？
+close = 关闭
+system = 系统
+interface = 接口
+filesystem = 文件系统
+gba = GBA
+patches = 功能设置
+
+[save type]
+title = 设置存档类型
+text = 存档类型
+Unknown = 未知/自动
+No Save = 没有存档
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = 预设
+save slot = 存档位置
+tab1 = 功能设置
+tab2 = 功能设置
+
+[system setting]
+title = 系统设置
+safe mode = 安全模式
+
+[rom info]
+title = 文件信息
+file date = 最后写入：%d/%d/%d/ %02d:%02d:%02d
+file size = 文件大小：%s
+save type = 存档类型：%s
+game code = 游戏编码：%s
+copy slot = 复制存档
+
+[disk info]
+total = 磁盘容量：%s
+used = 已用空间：%s
+free = 剩余空间：%s
+
+[no free space]
+title = 错误
+text = 磁盘空间不足，无法完成复制！
+
+[folder]
+title = 错误
+text = 文件夹数目不能超过1024个！
+
+[unsupported sd]
+title = 不兼容的TF卡
+text = 您使用的TF卡(型号:%s) 不适合直接运行DS官方程序，请复制到Acekard内置闪存中再运行！
+
+[sd card error]
+title = TF卡读取错误
+text = 无法读取TF卡的内容，TF卡可能没有插好！
+
+[no sd for save]
+title = TF卡上的存档无法保存
+text = 无法读取TF卡，之前的存档信息将被备份到内置闪存的：%s文件中！
+
+[no gba card]
+title = 未检测到扩展卡
+text = SLOT2并没有插入设备！
+
+[filelist type]
+text = 列表格式
+item0 = NDS图标
+item1 = NDS和SAV
+item2 = 显示所有
+
+[rom trim]
+text = 复制裁剪
+item0 = 启用
+item1 = 禁用
+
+[language]
+text = 系统语言
+ja = 日语
+en = 英语
+fr = 法语
+de = 德语
+it = 意大利语
+es = 西班牙语
+
+[ui style]
+text = 界面风格
+
+[help window]
+title = 帮助信息
+item0 = %c  选择游戏（上/下/翻页）
+item1 = %c  开始/确定/是
+item2 = %c  后退/取消/否
+item3 = %c  查看文件信息 / 选择存档类型
+item4 = %c  切换 TF卡 / NAND内存
+item5 = %c  返回上一级目录
+item6 = %c  调节亮度（四级亮度调节）
+item7 = %s  开始菜单
+item8 = %s  列表模式/经典模式
+
+[exp window]
+title = 扩展卡设置
+button = EZ3合1
+ram = RAM
+sram = sRAM
+off = 关闭
+low = 低档
+mid = 中档
+high = 高档
+strength = 震动级别
+flash to nor = 闪存到NOR
+copy to psram = 复制到PSRAM
+
+[abort save]
+title = 询问
+text = 确定需要取消存档？
+
+[gba warn]
+title = GBA游戏错误
+text = 不支持大于32MB的GBA游戏！
+
+[patches]
+download play = 提升单卡联机兼容性
+cheating system = 金手指
+reset in game = 软复位
+dma = DMA模式
+protection = 自动反烧录
+linkage = GBA联动
+sd save = 直接存储至SD卡
+reset hotkey = 复位热键
+homebrew reset = 内核复位
+
+[switches]
+Enable = 启用
+Disable = 禁用
+Global = 全部(%s)
+
+[ram allocation]
+title = 文件复制错误
+memory allocation error = 内存分配错误
+
+[scrolling]
+fast = 快速
+medium = 中速
+slow = 低速
+
+[file settings]
+title = 系统设置
+show hidden files = 显示隐藏
+save extension = 存档格式
+
+[interface settings]
+title = 系统设置
+scrolling speed = 滚屏速度
+filelist style = 图标风格
+oldschool = 简洁
+modern = 图标
+internal = 游戏标题
+small = 小图标
+animation = 图标动画
+12 hour = 12小时制
+
+[gba settings]
+title = 功能设置
+sleephack = 启用休眠
+autosave = 备份存档
+mode = SOLT2模式
+modegba = GBA模式
+modends = NDS模式
+modeask = ASK模式
+modetext = 确定在SOLT-2接口启用NDS模式？
+
+[sd save]
+title = 不兼容的TF卡
+text = 您使用的TF卡(型号:%s) 不适合直接运行DS官方程序，请拷贝到Acekard内置闪存中再运行！
+
+[icon]
+icon = 图标模式
+transparent = 边框透明
+as is = 原图标
+firmware = 固件图标
+
+[cheats]
+title = 金手指
+info = 信息
+deselect = 全部复位
+
+[saveslot]
+title = 存档管理
+confirm = 确定需要复制存档到此处？
+target slot = 复制存档位置
+
+[mainlist]
+flash memory = Flash Memory
+microsd card = 内存卡
+slot2 card = 扩展卡
+favorites = 收藏夹
+
+[hotkeys]
+l-r-a-b-↓ = l-r-a-b-↓
+l-r-b-y-↓ = l-r-b-y-↓
+l-r-a-b-x-y = l-r-a-b-x-y
+b-y-touch = b-y-touch
+start-r-touch = start-r-touch
+
+[updater]
+update = 升级内核
+update ? = 确定需要升级内核吗？
+updater = 升级模块
+menu = 内核模块
+savesize.bin = 存档模块
+cheats = 金手指模块
+connecting = 连接中
+failed = 失败
+updated = 升级中
+fresh = 准备升级
+stop = 确定需要停止升级吗？
+download = 已下载 %d B
+unpack = 解压中
+
+[crc32]
+crc32 = CRC32
+calculation = 正在处理CRC32...
+
+[end]

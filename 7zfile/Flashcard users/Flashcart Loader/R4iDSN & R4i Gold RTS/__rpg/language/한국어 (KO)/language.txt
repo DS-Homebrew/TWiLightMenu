@@ -1,0 +1,305 @@
+﻿
+
+[font]
+main = ugulim12.pcf
+language = 0
+
+[start menu]
+Copy = 복사
+Cut = 잘라내기
+Paste = 붙여넣기
+Delete = 삭제
+Setting = 환경 설정
+Info = 파일/폴더 정보
+Help = 도움말
+Tools = 도구를
+START = START
+
+[message box]
+yes = 예
+no = 아니오
+ok = 확인
+cancel = 취소
+
+[progress window]
+processing save = 진행 중입니다, 전원을 끄지 마십시오.
+processing copy = 복사 중, 전원을 끄지 마십시오.(취소: %c)
+first use sd = 처음 사용하는 SD카드를 확인하는 중입니다.
+gba load = 게임을 불러오는 중입니다.
+gba save load = 세이브를 불러옵니다.
+gba save store = 세이브를 저장합니다. 전원을 끄지 마십시오.
+erase nor = NOR 플래시 메모리를 초기화 합니다.
+
+[copy file error]
+title = 오류
+text = 파일이 존재 하지 않습니다.
+
+[copy file exists]
+title = 경고
+text = 동일한 이름을 가진 파일이 존재합니다. 덮어씌우시겠습니까?
+
+[copy dest is directory]
+title = 오류
+text = 동일한 이름을 가진 폴더가 존재하므로 파일을 복사할 수 없습니다.
+
+[move dest is directory]
+title = 오류
+text = 동일한 이름을 가진 폴더가 존재하므로 파일을 이동할 수 없습니다.
+
+[no copy dir]
+title = 오류
+text = 폴더의 복사/이동은 아직 지원하지 않습니다.
+
+[stop copying file]
+title = 파일 복사 정지
+text = 복사를 취소하시겠습니까?
+
+[confirm delete file]
+title = 확인
+text = 삭제한 파일은 복구 할 수 없습니다. 그래도 삭제 하겠습니까? "%s"
+
+[do not delete directory]
+title = 경고
+text = 비어있지 않은 디렉토리는 삭제할 수 없습니다.
+
+[restore save fail]
+title = 오류
+text = 세이브 데이터를 복구하는데 실패했습니다.
+
+[language changed]
+title = 질문
+text = 사용자 언어가 변경되었습니다. 변경한 언어를 적용시키기 위해서 지금 재시동 하겠습니까?
+
+[ui style changed]
+title = 질문
+text = 유저 인터페이스가 변경되었습니다. 변경한 인터페이스를 적용시키기 위해서 지금 재시동 하겠습니까?
+
+[setting window]
+ok = 예
+savetype = 환경 설정
+cancel = 취소
+confirm = 확인
+confirm text = 현재 설정을 저장하시겠습니까?
+close = 닫기
+system = 시스템을
+interface = 인터페이스
+filesystem = 파일
+gba = GBA
+patches = Patches
+
+[save type]
+title = 환경 설정
+text = 저장 방식 선택
+Unknown = 알수없음/자동
+No Save = 저장 안함
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = 메인
+save slot = 슬롯에 저장을 선택하십시오
+tab1 = Compatibility
+tab2 = Features
+
+[system setting]
+title = 환경 설정
+safe mode = Safe Mode
+
+[rom info]
+title = 파일/폴더 정보
+file date = 마지막 변경: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = 파일 크기: %s
+save type = 저장 방식: %s
+game code = Game Code: %s
+copy slot = 슬롯복사
+
+[disk info]
+total = 디스크 용량: %s
+used = 사용 용량: %s
+free = 남은 용량: %s
+
+[no free space]
+title = 오류
+text = 그 디스크에 충분한 공간이 없습니다.
+
+[unsupported sd]
+title = 지원되지 않는 SD 카드
+text = 이 SD 카드(모델:%s)는 DS소프트웨어를 실행하는데 적합하지 않습니다. SD 카드의 소프트웨어를 내장 메모리로 옮겨서 실행해주시기 바랍니다.
+
+[sd card error]
+title = SD 카드 에러
+text = SD 카드에 접근할 수 없습니다. 정확하게 삽입 되었는지 확인해 주십시오.
+
+[no sd for save]
+title = SD 카드 에러
+text = SD 카드에 접근할 수 없습니다. 이전에 실행했던 소프트웨어의 저장 데이터는 내장 메모리에 저장됩니다.: "%s".
+
+[no gba card]
+title = 알림
+text = 슬롯2에 장치가 없습니다.
+
+[filelist type]
+text = 표시할 파일 설정
+item0 = NDS
+item1 = NDS + SAV
+item2 = 모두보임
+
+[rom trim]
+text = 복사할 때 롬파일 용량 줄임
+item0 = 사용안함
+item1 = 사용함
+
+[language]
+text = 언어
+ja = 日本語
+en = english
+fr = français
+de = deutsch
+it = italiano
+es = español
+
+[ui style]
+text = 유저 인터페이스 스타일
+
+[help window]
+title = 도움말 정보
+item0 = %c  프로그램 선택
+item1 = %c  시작/확인/예
+item2 = %c  뒤로/취소/아니오
+item3 = %c  파일 정보 보기/저장 방식 선택
+item4 = %c  내장 메모리/외장 메모리 전환
+item5 = %c  상위 폴더로 이동
+item6 = %c  밝기 조절
+item7 = %s  시작 메뉴
+item8 = %s  목록 스타일 전환
+
+[exp window]
+button = 3in1
+title = 3in1 확장팩 설정
+ram = RAM
+sram = sRAM
+off = 사용안함
+low = 약함
+mid = 중간
+high = 강함
+strength = 진동 강도
+flash to nor = to NOR
+copy to psram = to RAM
+
+[abort save]
+title = 저장을 중지 처리
+text = 처리 저장을 중지하시겠습니까?
+
+[gba warn]
+title = 경고
+text = 32M가 넘는 GBA롬은 지원하지 않습니다.
+
+[patches]
+download play = 다운로드 플레이 패치
+cheating system = 치트 사용(AR)
+reset in game = 소프트 리셋 사용
+dma = DMA mode
+protection = Bypass Protection
+linkage = Link with GBA
+sd save = Save directly to SD
+homebrew reset = Reset in Homebrew
+reset hotkey = Reset Hotkey
+
+[switches]
+Enable = on
+Disable = off
+Global = global(%s)
+
+[ram allocation]
+title = 오류
+memory allocation error = 메모리 할당 오류
+
+[scrolling]
+fast = 패스트
+medium = 매체
+slow = 슬로우
+
+[file settings]
+title = 파일 시스템 설정을
+show hidden files = 숨김 파일 보임
+save extension = 세이브파일 확장자 선택
+
+[interface settings]
+title = 인터페이스를 설정
+scrolling speed = 스크롤 속도 조절
+filelist style = 파일 목록 스타일의
+oldschool = 단순
+modern = 아이콘
+internal = Internal
+small = Small icons
+animation = 애니메이션
+12 hour = 12-hour clock
+
+[gba settings]
+title = GBA settings
+sleephack = Universal sleep
+autosave = Backup save at startup
+mode = Slot-2 mode
+modegba = gba
+modends = nds
+modeask = ask
+modetext = Launch slot-2 in NDS mode?
+
+[sd save]
+title = 경고
+text = This game cannot be launched from Acekard Internal Flash Memory, please copy game from Acekard Internal Flash Memory to SD card and try again.
+
+[icon]
+icon = Show icon
+transparent = transparent
+as is = as is
+firmware = firmware
+
+[cheats]
+title = Cheats
+info = More…
+deselect = Deselect all
+
+[saveslot]
+title = 저장슬롯 복사
+confirm = 저장 슬롯을 복사하겠습니까?
+target slot = 목표 저장 슬롯
+
+[mainlist]
+flash memory = Flash Memory
+microsd card = microSD Card
+slot2 card = Slot2 Card
+favorites = Favorites
+
+[hotkeys]
+l-r-a-b-↓ = l-r-a-b-↓
+l-r-b-y-↓ = l-r-b-y-↓
+l-r-a-b-x-y = l-r-a-b-x-y
+b-y-touch = b-y-touch
+start-r-touch = start-r-touch
+
+[updater]
+update = Update
+update ? = Do you want to update?
+updater = Update module
+menu = Main module
+cheats = Cheats DB
+connecting = Connecting
+failed = failed
+updated = updated
+fresh = already updated
+stop = Do you want to stop transfer?
+download = Downloaded %d bytes
+unpack = Unpacking
+
+[crc32]
+crc32 = CRC32
+calculation = CRC32 계산
+
+[end]

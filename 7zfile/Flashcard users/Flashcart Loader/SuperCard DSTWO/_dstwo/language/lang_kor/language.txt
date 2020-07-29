@@ -1,0 +1,268 @@
+[start menu]
+File_Handle=파일 관리
+patch=패치 관리
+Cheat=치트 설정
+archive=저장
+Ui_Type=스킨
+Language=언어
+Syset=환경 설정
+Help=도움말
+Hotkey=Full Hotkey
+Hotkey1=Simple Hotkey
+
+[file handle menu]
+noText=클립보드가 비어있음. 
+item0=복사
+item1=잘라내기
+item2=붙이기
+item3=삭제
+
+[text wnd info]
+title=경고!
+item0=%s 파일이 없거나 손상 되었습니다!
+item1=게임 가이드
+
+[slow wnd]
+title=슬로우
+item0=꺼짐
+item1=활성화
+
+[cheat wnd]
+title=힌트
+clearTitle=Clear all
+text=설정을 저장할까요?
+title1=힌트!
+text1=치트가 꺼져 있습니다. 치트를 활성화 할까요?
+
+[RTL wnd info]
+title=주의!
+load_title=실시간 로드
+save_title=실시간 저장
+item0=저장된 파일이 없습니다!
+item1=이전 파일에 덮어 쓸까요?
+
+[patch menu]
+item0=클린롬
+item1=패치롬
+
+[Archive type menu]
+item0=저장 0
+item1=저장 1
+item2=저장 2
+item3=저장 3
+
+[Syset menu]
+Brightness=밝기 조절
+List_type=보기 방식
+Hotkey=Full Hotkey
+Hotkey1=Simple Hotkey
+FileType=파일 보기
+GbaLink=GBA Extend
+LastRomRun=AutorunRom
+
+[Ui Type menu]
+title=확인!
+text=새로운 스킨이 설정 되었습니다. 스킨 변경을 위해 재부팅 합니다. 변경을 취소하려면 NO(B)를 선택 하세요.
+
+[set game info]
+item0=멀티 저장
+item1=치트
+item2=모드
+
+[reset text]
+title=경고!
+text=시스템을 초기화 합니다!
+
+[Cheat menu]
+item0=꺼짐
+item1=활성화
+
+[Brightness menu]
+item0=밝기 1
+item1=밝기 2
+item2=밝기 3
+item3=밝기 4
+
+[Language menu]
+title=확인!
+text=시스템 언어가 변경 되었습니다. 설정 변경을 위해 재부팅 합니다. 변경을 취소하려면 NO(B)를 눌러 주세요.
+item0=영어
+item1=칸토니즈
+item2=만다린
+item3=프랑스어
+item4=이탈리아어
+item5=독일어
+item6=스페인어
+item7=한글
+
+[Filetype menu]
+item0=NDS 보기
+item1=NDS & SAV
+item2=GBA & SAV
+item3=모든 파일 보기
+
+[GbaLink menu]
+item0=NULL
+item1=Link
+item2=Rumble
+
+[LastRomRun menu]
+item0=Turn off
+item1=Turn on
+
+[message box]
+yes=YES(A)
+no=NO(B)
+ok=OK(A)
+cancel=취소(B)
+cheat=치트(Y)
+
+[List type menu]
+item0=아이콘
+item1=리스트
+item2=텍스트
+
+[progress window]
+processing_copy=파일 복사 중..
+
+[copy file error]
+title=오류!
+text=복사 중 에러가 발생 했습니다.
+
+[stop copying file]
+title=확인!
+text=파일 복사를 취소 합니다.
+
+[no free space]
+title=에러!
+text=디스크 공간이 부족합니다. 파일이 복사 되지 않았습니다.
+text1=디스크 공간이 부족합니다.
+
+[copy file exists]
+title=주의!
+text=파일명이 이미 존재합니다. 대상 파일을 덮어 쓸까요?
+
+[copy dest is directory]
+title=주의!
+text=폴더가 이미 존재합니다. 복사가 되지 않았습니다.
+
+[move dest is directory]
+title=주의!
+text=폴더가 이미 존재합니다. 복사가 되지 않았습니다.
+
+[no copy dir]
+title=오류!
+text=복사에 실패 하였거나 폴더가 이동 되지 않았습니다.
+
+[confirm delete file]
+title=경고!
+text=삭제된 파일은 다시 복구 할 수 없습니다. "%s"를 삭제 합니까?
+
+[do not delete directory]
+title=주의!
+text=폴더가 비어 있지 않아 삭제 할 수 없습니다.
+
+[help window]
+title = 도움말
+item0 = %c  프로그램 선택
+item1 = %c  YES/OK/시작
+item2 = %c  NO/취소/뒤로
+item3 = %c  치트 설정
+item4 = %c  게임 정보 설정
+item5 = %c  이전 폴더로 가기/종료
+item6 = %c  밝기 조절
+item7 = %s  시작 메뉴
+item8 = %s  파일 보기 변경 
+
+[hotkey window]
+title = 단축키 설정
+
+[setting window]
+ok=OK
+savetype=저장 종류
+cancel=취소
+confirm=확인
+confirm_text=현재 설정을 저장할까요?
+
+[main interface title]
+item0=게임 가이드
+item1=치트 설정
+item2=실시간 저장
+item3=실시간 로드
+item4=슬로우 모션
+item5=실시간 치트
+
+[system setting]
+title=환경 설정
+
+[search cheat]
+title=치트 검색
+item0=Value 검색
+item1=치트 코드
+
+[search cheat btn text]
+confirm=게임으로
+start=초기화
+search=검색
+add=치트 추가
+change=편집
+switch=잠김/해제
+switchall=전체 잠김/해제
+remove=지우기
+result=결과보기
+note=이름(X)
+exit=종료
+
+[cheat search type]
+title=검색 타입
+item0=키워드 검색
+item1=일반 검색
+
+[cheat compare type]
+title=치트 타입 비교 
+item0=일치 값
+item1=이상 값
+item2=미만 값
+item3=차이 값
+
+[cheat data size]
+title=데이타 크기
+item0=< 8 bit
+item1=< 16 bit
+item2=< 32 bit
+
+[cheat input value]
+title=값을 입력하시오
+item0=값
+
+[search cheat result]
+address=어드래스
+oldvalue=이전 값
+newvalue=신규 값
+erro=오류!
+result=%d에 대한 검색 결과가 없습니다. 코드 값을 다시 입력 하세요.
+getdataerro=치트 데이타 검색 오류입니다. 다시 검색해 주세요.
+viewresulterro=치트 데이타를 찾을 수가 없습니다.
+
+[change cheat]
+note=메모
+
+[cheat code]
+address=어드래스
+value=데이타 값
+state=상태
+warn=주의!
+del= %s 항목에서 삭제 합니다.
+
+[cheat state]
+on=활성화
+off=꺼짐
+
+[rom info]
+title=파일 정보
+file_date=수정한 날짜:
+file_size=크기: %s
+save_type=저장유형: %s
+file_name=파일명: 
+game_name=코드명: 
+file_t

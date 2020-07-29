@@ -1,0 +1,312 @@
+﻿// Spanish language file for the Wood Firmwares by Yellow Wood Goblin:
+// Modified and updated by PabloACZ.
+// Very thanks to germich3, pichon64, Mhetralla and pepeluis33, for starting the translation project.
+// ______________________________________________________________
+//
+// Archivo de idioma español para los Firmwares Wood de Yellow Wood Goblin:
+// Modificado y actualizado por PabloACZ.
+// Agradecimientos a germich3, pichon64, Mhetralla y pepeluis33 por comenzar este proyecto.
+
+[font]
+main = liberation.pcf
+language = 5
+
+[start menu]
+Copy = Copiar
+Cut = Cortar
+Paste = Pegar
+Delete = Eliminar
+Setting = Opciones
+Info = Información
+Help = Ayuda
+Tools = Herramientas
+START = Inicio
+
+[message box]
+yes = Sí
+no = No
+ok = Aceptar
+cancel = Cancelar
+
+[progress window]
+processing save = Cargando…
+processing copy = Copiando archivo… Presiona %c para cancelar.
+first use sd = Preparando la micro SD para su primer uso…
+gba load = Cargando juego de GBA…
+gba save load = Cargando save de GBA…
+gba save store = Almacenando save de GBA…
+erase nor = Borrar la memoria NOR
+
+[copy file error]
+title = Error
+text = El archivo especificado no existe.
+
+[copy file exists]
+title = Advertencia
+text = Un archivo con el mismo nombre ya existe. ¿Deseas reemplazarlo?
+
+[copy dest is directory]
+title = Error
+text = Un directorio con el mismo nombre ya existe. No se puede copiar el archivo de origen.
+
+[move dest is directory]
+title = Error
+text = Un directorio con el mismo nombre ya existe. No se puede mover el archivo de origen.
+
+[no copy dir]
+title = Error
+text = El copiado y/o movimiento de directorios no está soportado todavía.
+
+[stop copying file]
+title = Advertencia
+text = ¿Seguro de que deseas parar el copiado?
+
+[confirm delete file]
+title = Advertencia
+text = El elemento no podrá ser recuperado si se elimina. ¿Borrar "%s" de todas formas?
+
+[do not delete directory]
+title = Error
+text = Eliminación de datos abortada.
+
+[restore save fail]
+title = Error
+text = La restauración de datos guardados falló.
+
+[language changed]
+title = Aviso
+text = Se cambió el idioma del sistema. Debes reiniciar el firmware para aplicar los cambios. ¿Deseas hacerlo ahora? Cancela para hacerlo luego.
+
+[ui style changed]
+title = Aviso
+text = Se cambió la interfaz gráfica de usuario. Debes reiniciar el firmware para aplicar los cambios. ¿Deseas hacerlo ahora? Cancela para mantener el tema actual.
+
+[setting window]
+ok = OK
+savetype = Opciones
+cancel = Cancelar
+confirm = Aviso
+confirm text = ¿Deseas guardar los ajustes?
+close = Cerrar
+system = Sistema
+interface = Interfaz
+filesystem = Sistema de archivos
+gba = GBA
+patches = Parches
+
+[save type]
+title = Opciones
+text = Tipo de save
+Unknown = automático
+No Save = no guardar
+4K = 4K
+64K = 64K
+512K = 512K
+1M = 1M
+2M = 2M
+4M = 4M
+8M = 8M
+16M = 16M
+32M = 32M
+64M = 64M
+default = por defecto
+save slot = Slot de guardado
+tab1 = Compatibilidad
+tab2 = Características
+
+[system setting]
+title = Ajustes del sistema
+safe mode = Modo Seguro
+
+[rom info]
+title = Información de elemento
+file date = Último cambio: %d/%d/%d %02d:%02d:%02d(GMT).
+file size = Tamaño: %s.
+save type = Tipo de save: %s
+game code = ID del juego: %s.
+copy slot = Copiar slot
+
+[disk info]
+total = Capacidad: %s.
+used = Espacio usado: %s.
+free = Espacio libre: %s.
+
+[no free space]
+title = Error
+text = No hay espacio suficiente en la unidad.
+
+[unsupported sd]
+title = Error
+text = Esta tarjeta micro SD (modelo: %s) no es la adecuada para correr ROMs o homebrew de DS. Intenta con otra o copia el ejecutable a la memoria interna de la Acekard R.P.G.
+
+[sd card error]
+title = Error
+text = No se puede acceder a los datos de la tarjeta micro SD. Quizás no fue insertada correctamente en la flashcard.
+
+[no sd for save]
+title = Error
+text = No se puede acceder a la tarjeta micro SD. Los datos guardados del archivo ejecutado previamente serán escritos en "%S".
+
+[no gba card]
+title = Error
+text = No hay ninguna flashcard de SLOT-2 (como la EZ Flash 3-in-1) en la consola. No se puede proseguir.
+
+[filelist type]
+text = Tipos de archivo a mostrar
+item0 = NDS
+item1 = NDS y SAV
+item2 = todos
+
+[rom trim]
+text = Trimmear ROMs al copiarlas
+item0 = no
+item1 = sí
+
+[language]
+text = Idioma
+ja = 日本語
+en = english
+fr = français
+de = deutsch
+it = italiano
+es = español
+
+[ui style]
+text = Interfaz gráfica
+
+[help window]
+title = Información de ayuda
+item0 = %c  Moverse en los menús / elegir opciones
+item1 = %c  Iniciar / cargar / aceptar
+item2 = %c  Atrás / cancelar
+item3 = %c  Ver info de elemento / elegir tipo de save
+item4 = %c  Alternar entre micro SD y Favoritos
+item5 = %c  Regresar un directorio atrás
+item6 = %c  Ajustar retroiluminación
+item7 = %s  Menú de inicio
+item8 = %s  Cambiar el estilo de la lista de archivos
+
+[exp window]
+button = 3 en 1
+title = Ajustes de la expansión 3 en 1
+ram = RAM
+sram = SRAM
+off = desactivada
+low = baja
+mid = media
+high = alta
+strength = Fuerza de vibración
+flash to nor = a la NOR
+copy to psram = a la RAM
+
+[abort save]
+title = Aviso
+text = ¿En serio quieres detener el proceso?
+
+[gba warn]
+title = Error
+text = Las ROMs de GBA mayores a 32MB no están soportadas.
+
+[patches]
+download play = Habilitar Descarga DS
+cheating system = Usar cheats / trampas (AR)
+reset in game = SoftReset en los juegos
+dma = Modo DMA
+protection = Sobrepasar la protección AP
+linkage = Enlazar con GBA (SLOT-2)
+sd save = Guardar directamente en la SD
+homebrew reset = SoftReset en apps. homebrew
+reset hotkey = Comb. botones del SoftReset
+
+[switches]
+Enable = sí
+Disable = no
+Global = global (%s)
+
+[ram allocation]
+title = Error
+memory allocation error = Error de asignación de memoria.
+
+[scrolling]
+fast = rápida
+medium = intermedia
+slow = lenta
+
+[file settings]
+title = Ajustes del sistema de archivos
+show hidden files = Mostrar archivos ocultos
+save extension = Extensión de saves
+
+[interface settings]
+title = Ajustes de la interfaz
+scrolling speed = Velocidad de desplazamiento
+filelist style = Estilo de la lista de archivos
+oldschool = antiguo
+modern = moderno
+internal = detallado
+small = íconos pequeños
+animation = Animación de íconos
+12 hour = Sistema horario de 12 horas
+
+[gba settings]
+title = Ajustes de GBA
+sleephack = Reposo universal (sleep)
+autosave = Respaldar save al inicio
+mode = Modo SLOT-2
+modegba = gba
+modends = nds
+modeask = preguntar
+modetext = ¿Deseas iniciar el SLOT-2 en el modo NDS?
+
+[sd save]
+title = Error
+text = No se pudo ejecutar el juego desde la memoria flash interna de la Acekard R.P.G. Cópialo a tu tarjeta micro SD y prueba desde allí.
+
+[icon]
+icon = Mostrar ícono
+transparent = transparente
+as is = tal cual
+firmware = del menú DS
+
+[cheats]
+title = Cheats
+info = Más info
+deselect = Desact. todo
+
+[saveslot]
+title = Slot de guardado actual
+confirm = ¿Seguro de que quieres copiar el save a este nuevo slot?
+target slot = Slot de guardado de destino
+
+[mainlist]
+flash memory = Memoria flash
+microsd card = Tarjeta micro SD
+slot2 card = Flashcard de SLOT-2
+favorites = Favoritos
+
+[hotkeys]
+l-r-a-b-↓ = l+r+a+b+↓
+l-r-b-y-↓ = l+r+b+y+↓
+l-r-a-b-x-y = l+r+a+b+x+y
+b-y-touch = b+y+p.táctil
+start-r-touch = start+r+p.táctil
+
+[updater]
+update = Actualizar
+update ? = ¿Seguro de que quieres actualizar estos datos?
+updater = Módulo updater.dat
+menu = Firmware Wood
+cheats = USRCHEAT.DAT
+connecting = Conectando
+failed = actualización fallida
+updated = actualizado correctamente
+fresh = ya tienes la última versión
+stop = ¿Quieres parar la transferencia?
+download = %d bytes descargados
+unpack = Descomprimiendo
+
+[crc32]
+crc32 = CRC32
+calculation = Calculando CRC32…
+
+[end]
