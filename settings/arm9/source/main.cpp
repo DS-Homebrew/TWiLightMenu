@@ -496,7 +496,9 @@ int main(int argc, char **argv)
 	loadR4ThemeList();
 	load3DSThemeList();
 	loadDSiThemeList();
-	loadUnlaunchBgList();
+	if (ms().consoleModel == 0) {
+		loadUnlaunchBgList();
+	}
 	swiWaitForVBlank();
 
 	snd().init();
@@ -854,7 +856,7 @@ int main(int argc, char **argv)
 				 4,
 				 5,});*/
 
-	if (isDSiMode() && sdAccessible) {
+	if (isDSiMode() && ms().consoleModel == 0 && sdAccessible) {
 		miscPage
 			.option(STR_UNLAUNCH_BG,
 				STR_DESCRIPTION_UNLAUNCH_BG,
