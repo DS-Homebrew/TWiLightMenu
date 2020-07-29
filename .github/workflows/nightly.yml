@@ -87,6 +87,7 @@ jobs:
           # Delete themes, AP patches, and widescreen patches for lite
           rm -rf TWiLightMenu
           cp -r 7zfile/ TWiLightMenu/
+          rm -rf TWiLightMenu/Debug/
           rm -rf TWiLightMenu/_nds/TWiLightMenu/*menu/
           rm -rf TWiLightMenu/_nds/TWiLightMenu/apfix/
           rm -rf TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
