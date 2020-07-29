@@ -125,16 +125,10 @@ dist:	all
 	@cp "booter_fc.nds" "../7zfile/Flashcard users/BOOT.NDS"
 	@cp "booter_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
 
-info_scfw:
-	ndstool -i SCFW_og.NDS
-
-info_custom:
-	ndstool -i $(TARGET)_scdso.nds
-
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET)_cyclodsi.arm7 $(TARGET).arm9 $(TARGET)_cyclodsi.arm9
   # simple nds srl without dsi extended header
 	ndstool	-h 0x200 -c $(TARGET)_fc.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
-	ndstool -h 0x200 -c $(TARGET)_scdso.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -g ENG0 00 "DSONE" -r9 0x2000000 -r7 0x37F8000 -e9 0x2000000 -e7 0x37F8000 
+	ndstool -h SCFW_og.NDS -c $(TARGET)_scdso.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -g ENG0 00 "DSONE" -r9 0x2000000 -r7 0x37F8000 -e9 0x2000000 -e7 0x37F8000 
 	ndstool	-h 0x200 -c $(TARGET)_cyclodsi.nds -7 $(TARGET)_cyclodsi.arm7.elf -9 $(TARGET)_cyclodsi.arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
 
 $(TARGET).arm7: arm7/$(TARGET).elf

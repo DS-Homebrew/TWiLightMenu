@@ -15,6 +15,7 @@
 !GBARunner2_arm7dldi_3ds.nds
 !GBARunner2_arm7dldi_nodsp_dsi.nds
 !GBARunner2_arm7dldi_nodsp_3ds.nds
+!SCFW_og.NDS
 !/7zfile/_nds/TWiLightMenu/*/*.NDS
 !/7zfile/Flashcard users/Autoboot/*/*.NDS
 !/7zfile/Flashcard users/Autoboot/*/*/*.NDS
