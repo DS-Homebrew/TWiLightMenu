@@ -175,7 +175,7 @@ jobs:
           mv TWiLightMenu.7z ~/artifacts
 
           # DSi 7z
-          cp -r DSi\ -\ CFW\ users/* .
+          cp -r DSi\ -\ CFW\ users/SDNAND\ root/* .
           rm -rf DSi\ -\ CFW\ users
           cp -r DSi\&3DS\ -\ SD\ card\ users/* .
           rm -rf DSi\&3DS\ -\ SD\ card\ users
@@ -219,7 +219,7 @@ jobs:
   # Only run this for non-PR jobs.
   publish_build_twlbot:
     runs-on: ubuntu-latest
-    name: "Publish build to TWLBot"
+    name: "Publish build to ${{ github.repository }}"
     if: ${{ success() }}
     needs: build
     env:
@@ -236,7 +236,7 @@ jobs:
         with:
           name: "build"
           path: "build"
-      - name: Upload to DS-Homebrew/TWiLightMenu release
+      - name: Upload to ${{ github.repository }} release
         run: |
           ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
 

@@ -1382,16 +1382,18 @@ bool selectMenu(void) {
 			textYpos += 28;
 		}
 		printSmall(false, 0, (ms().theme == 4 ? 164 : 160), STR_SELECT_B_BACK_A_SELECT, Alignment::center);
-		scanKeys();
-		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-		drawCurrentTime();
-		drawCurrentDate();
-		drawClockColon();
-		snd().updateStream();
-		swiWaitForVBlank();
+		do {
+			scanKeys();
+			pressed = keysDown();
+			checkSdEject();
+			tex().drawVolumeImageCached();
+			tex().drawBatteryImageCached();
+			drawCurrentTime();
+			drawCurrentDate();
+			drawClockColon();
+			snd().updateStream();
+			swiWaitForVBlank();
+		} while(!pressed);
 		if (pressed & KEY_UP) {
 			snd().playSelect();
 			selCursorPosition--;
