@@ -19,23 +19,24 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	booter
 BUILD		:=	build
-SOURCES		:=	../arm7/source
-INCLUDES	:=	../arm7/include build
+SOURCES		:=	../../../arm7/source
+INCLUDES	:=	../../../arm7/include build
 
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-march=armv4t -mthumb -mthumb-interwork
+ARCH	:= -mthumb-interwork
 
 CFLAGS	:=	-g -Wall -O2\
  		-mcpu=arm7tdmi -mtune=arm7tdmi -fomit-frame-pointer\
 		-ffast-math \
 		$(ARCH)
 
+# Only define CycloDSi due to some DSi Enhancements code being present.
 CFLAGS	+=	$(INCLUDE) -DARM7 -DNO_SDMMC -DCYCLODSI
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=ds_arm7_iwram.specs -g $(ARCH) -Wl,--nmagic -Wl,-Map,$(notdir $*).map
+LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,--nmagic -Wl,-Map,$(notdir $*).map
 
 
 #---------------------------------------------------------------------------------
