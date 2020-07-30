@@ -48,8 +48,8 @@ dist:	all
 	@cp "$(TARGET)_scdso.arm9.elf" "../7zfile/Debug/$(TARGET)_scdso.arm9.elf"
 
 autoboot_dist:	dist
+	cp "$(TARGET)_fc.nds" "./flashcart_specifics/booter_fc.nds"
 	cd ./flashcart_specifics/
-	cp "../booter_fc.nds" "booter_fc.nds"
 
 	#### R4 Original & M3 Simply
 	cp "booter_fc.nds" "_DS_MENU.nds"
