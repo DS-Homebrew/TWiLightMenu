@@ -19,7 +19,6 @@ thumbs.db
 !/7zfile/_nds/TWiLightMenu/*/*.NDS
 !/7zfile/Flashcard users/Autoboot/*/*.NDS
 !/7zfile/Flashcard users/Autoboot/*/*/*.NDS
-7zfile/Flashcard users/Autoboot/Original R4/default.nds
 
 # Build Directory
 build/
@@ -29,3 +28,18 @@ data/
 .idea/
 .vscode/
 ipch/
+
+7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/akmenu4.nds
+7zfile/Flashcard users/Autoboot/EZ Flash V/ez5sys.bin
+7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_.NDS
+7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_B.NDS
+7zfile/Flashcard users/Autoboot/Games N Music/Non-SDHC/bootme.nds
+7zfile/Flashcard users/Autoboot/Games N Music/SDHC/bootme.nds
+7zfile/Flashcard users/Autoboot/GBAMP + PassMe, FlashMe or WifiMe/_BOOT_MP.NDS
+7zfile/Flashcard users/Autoboot/iSmart Premium/system/ismat.dat
+7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_.NDS
+7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_B.NDS
+7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds
+7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/SCFW.SC
+7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.DAT
+7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.DAT
