@@ -126,14 +126,6 @@ jobs:
           mkdir "../../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/"
           mkdir "../../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/"
           mv "dstwo.nds" "../../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds"
-
-          #### SuperCard DSONE
-          ##### not working (tested by DeadSkullzJr)
-          cp "../booter_scdso.nds" "SCFW.SC"
-          cp "DLDI/dstwo.dldi" .
-          ./dlditool dstwo.dldi SCFW.SC
-          mkdir "../../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/"
-          mv "SCFW.SC" "../../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/SCFW.SC"
       - name: "Pack 7z Package for release"
         run: |
           mkdir -p 7zfile/_nds/TWiLightMenu/boxart/
