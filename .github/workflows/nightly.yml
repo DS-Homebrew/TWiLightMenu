@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: "Checkout repo"
         uses: actions/checkout@v1
+        with:
+          submodules: recursive
       - name: "Install tools"
         run: |
           sudo apt-get update
@@ -98,7 +100,7 @@ jobs:
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
-          path: ~/artifacts/*
+          path: ~/artifacts/
           name: "build"
 
   # Only run this for non-PR jobs.
@@ -114,12 +116,9 @@ jobs:
       current_date: ${{ steps.commit.outputs.current_date }}
       twlbot_commit: ${{ steps.commit.outputs.twlbot_commit }}
     steps:
-      - name: "Checkout repo"
-        uses: actions/checkout@v1
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
-          name: "build"
           path: "build"
       - name: "Commit and push to TWLBot/Builds"
         id: "commit"
