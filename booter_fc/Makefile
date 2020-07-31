@@ -91,8 +91,7 @@ autoboot:
 	##### research done entirely by devkitPro
 	cp "booter_fc.nds" "ismat.dat"
 	dlditool ./DLDI/Mat.dldi ismat.dat
-	mkdir "../../7zfile/Flashcard users/Autoboot/iSmart Premium/"
-	mkdir "../../7zfile/Flashcard users/Autoboot/iSmart Premium/system/"
+	mkdir -p "../../7zfile/Flashcard users/Autoboot/iSmart Premium/system/"
 	mv "ismat.dat" "../../7zfile/Flashcard users/Autoboot/iSmart Premium/system/ismat.dat"
 
 	#### Acekard 2i/Acekard 2.1 & Galaxy Eagle
@@ -102,6 +101,45 @@ autoboot:
 	cp "akmenu4.nds" "../../7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_B.NDS"
 	mkdir "../../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/"
 	mv "akmenu4.nds" "../../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/akmenu4.nds"
+
+	#### DSTT
+	cp "booter_fc.nds" "TTMenu.dat"
+	dlditool "./DLDI/DSTTDLDIboyakkeyver.dldi" TTMenu.dat
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/TTMenu.dat"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/Ace3DS/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/Ace3DS/3DSCARD.DAT"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)/iLL.iL"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i Gold Upgrade Revolution (v1.14b kernel)/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i Gold Upgrade Revolution (v1.14b kernel)/R4i.dat"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4IIISDHC (v3.07 kernel) & R4i SDHC Silver RTS Lite/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4IIISDHC (v3.07 kernel) & R4i SDHC Silver RTS Lite/R4.dat"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i Upgrade Revolution/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i Upgrade Revolution/R4i.3ds"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i SDHC Upgrade Revolution (www.r4i-dshc.com), R4i 3DS (v4.3 kernel) & R4i YES/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i SDHC Upgrade Revolution (www.r4i-dshc.com), R4i 3DS (v4.3 kernel) & R4i YES/R4i.TP"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i King LL/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i King LL/R4KING"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/R4i.TP"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/iLL.iL"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/_DS_MENU.DAT"
+
+	# Since this is the last one, move it instead of copy
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i-REDANT/"
+	mv TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i-REDANT/Redant.dat"
 
 	#### Games N Music
 	mkdir "../../7zfile/Flashcard users/Autoboot/Games N Music/"
@@ -121,8 +159,7 @@ autoboot:
 	#### SuperCard DSTWO
 	cp "booter_fc.nds" "dstwo.nds"
 	dlditool ./DLDI/dstwo.dldi dstwo.nds
-	mkdir "../../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/"
-	mkdir "../../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/"
+	mkdir -p "../../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/"
 	mv "dstwo.nds" "../../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds"
 
 	#### SuperCard DSONE
@@ -139,14 +176,11 @@ $(TARGET).nds:	makearm7_fc makearm7_cyclodsi makearm7_scdso makearm9_fc makearm9
 
 clean:
 	@echo clean ...
-	@rm -fr data
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET)_fc.nds $(TARGET)_scdso.nds $(TARGET)_cyclodsi.nds
-	@rm -fr $(TARGET)_fc.arm7.elf
-	@rm -fr $(TARGET)_cyclodsi.arm7.elf
-	@rm -fr $(TARGET)_scdso.arm7.elf
-	@rm -fr $(TARGET)_fc.arm9.elf
-	@rm -fr $(TARGET)_cyclodsi.arm9.elf
-	@rm -fr $(TARGET)_scdso.arm9.elf
+	@rm -fr data $(BUILD)
+	@rm -fr ./flashcart_specifics/booter_fc.nds ./flashcart_specifics/_DS_MENU.nds
+	@rm -fr $(TARGET)_fc.nds $(TARGET)_fc.arm7.elf $(TARGET)_fc.arm9.elf
+	@rm -fr $(TARGET)_cyclodsi.nds $(TARGET)_cyclodsi.arm7.elf $(TARGET)_cyclodsi.arm9.elf
+	@rm -fr $(TARGET)_scdso.nds $(TARGET)_scdso.arm7.elf $(TARGET)_scdso.arm9.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C arm9 clean
@@ -155,6 +189,9 @@ clean:
 	@$(MAKE) -C arm7 clean
 	@$(MAKE) -C flashcart_specifics/CycloDSi/arm7 clean
 	@$(MAKE) -C flashcart_specifics/DSONE/arm7 clean
+
+	@echo Cleaning Flashcart Autobooters
+	@rm -fr "../../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
 
 data:
 	@mkdir -p data
