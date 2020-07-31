@@ -20,9 +20,8 @@ jobs:
           submodules: recursive
       - name: "Install Firefox"
         run: |
-          sudo add-apt-repository ppa:jonathonf/ffmpeg-4
           sudo apt-get update
-          sudo apt-get install firefox ffmpeg -y
+          sudo apt-get install firefox imagemagick -y
       - name: "Take PNG images"
         run: |
           mkdir ~/renders/
