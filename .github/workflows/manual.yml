@@ -26,13 +26,16 @@ jobs:
       - name: "Take PNG images"
         run: |
           mkdir ~/renders/
+          mkdir ~/toUpload/
 
           mkdir ~/renders/english
+          mkdir ~/toUpload/english
           for page in manual/resources/english/*.html; do
-            firefox --screenshot ~/renders/english/$(basename $page) --window-size 256 file://$(pwd)/$page
+            firefox --screenshot ~/renders/english/$(basename $page).png --window-size 256 file://$(pwd)/$page
+            magick convert ~/renders/english/$(basename $page).png -define bmp:subtype=RGB565 ~/toUpload/english/$(basename $page).bmp
           done
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
-          path: ~/renders/
+          path: ~/toupload/
           name: "build"
