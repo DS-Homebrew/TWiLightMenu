@@ -59,7 +59,7 @@ autoboot:
 	dlditool ./DLDI/r4_sd.dldi _DS_MENU.nds
 	r4denc _DS_MENU.nds
 	mkdir "../../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
-	mv "_DS_MENU.DAT" "../../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.DAT"
+	mv "_DS_MENU.dat" "../../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.DAT"
 
 	#### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS & R4iDSN/R4 Ultra
 	##### Global
@@ -68,12 +68,12 @@ autoboot:
 
 	##### R4iDSN & R4 Ultra specific
 	cp "_DS_MENU.nds" "../../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_.NDS"
-	cp "_DS_MENU.nds" "../../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_B.NDS"
+	mv "_DS_MENU.nds" "../../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_B.NDS"
 
 	##### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS specific
-	r4denc _DS_MENU.nds
-	mkdir "../../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/"
-	mv "_DS_MENU.DAT" "../../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.DAT"
+	#r4denc _DS_MENU.nds
+	#mkdir "../../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/"
+	#mv "_DS_MENU.dat" "../../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.DAT"
 
 	#### EZ-Flash 5
 	cp "booter_fc.nds" "ez5sys.bin"
