@@ -1,0 +1,38 @@
+name: Auto-Convert Manual to BMP
+
+on:
+  push:
+    branches: ["*"]
+    paths:
+      - '/manual/resources'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: "Convert Manual Images to BMP"
+    outputs:
+      commit_tag: ${{ steps.make-cias.outputs.commit_tag }}
+      commit_message: ${{ steps.make-cias.outputs.commit_message }}
+    steps:
+      - name: "Checkout repo"
+        uses: actions/checkout@v1
+        with:
+          submodules: recursive
+      - name: "Install Firefox"
+        run: |
+          sudo add-apt-repository ppa:jonathonf/ffmpeg-4
+          sudo apt-get update
+          sudo apt-get install firefox ffmpeg -y
+      - name: "Take PNG images"
+        run: |
+          mkdir ~/renders/
+
+          mkdir ~/renders/english
+          for page in manual/resources/english/*.html; do
+            firefox --screenshot ~/renders/english/$(basename $page) --window-size 256 file://$(pwd)/$page
+          done
+      - name: "Publish build to GH Actions"
+        uses: actions/upload-artifact@v2
+        with:
+          path: ~/renders/
+          name: "build"
