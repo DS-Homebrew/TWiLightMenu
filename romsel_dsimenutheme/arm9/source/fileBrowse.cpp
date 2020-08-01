@@ -1382,6 +1382,7 @@ bool selectMenu(void) {
 			textYpos += 28;
 		}
 		printSmall(false, 0, (ms().theme == 4 ? 164 : 160), STR_SELECT_B_BACK_A_SELECT, Alignment::center);
+		u8 current_SCFG_MC = REG_SCFG_MC;
 		do {
 			scanKeys();
 			pressed = keysDown();
@@ -1393,6 +1394,9 @@ bool selectMenu(void) {
 			drawClockColon();
 			snd().updateStream();
 			swiWaitForVBlank();
+			if (REG_SCFG_MC != current_SCFG_MC) {
+				break;
+			}
 		} while(!pressed);
 		if (pressed & KEY_UP) {
 			snd().playSelect();
