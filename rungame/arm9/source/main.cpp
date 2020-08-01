@@ -316,7 +316,8 @@ TWL_CODE int lastRunROM() {
 				bool runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 
 				std::string path;
-				if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
+				if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+				 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
 					CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 					path = ReplaceAll(romPath[1], "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", path);
@@ -334,13 +335,14 @@ TWL_CODE int lastRunROM() {
 					fcrompathini.SetString("Dir Info", "fullName", path);
 					fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 					return runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-				} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
-					CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
-					path = ReplaceAll(romPath[1], "fat:/", woodfat);
-					fcrompathini.SetString("Save Info", "lastLoaded", path);
-					fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
-					// Does not support autoboot; so only nds-bootstrap launching works.
-					return runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+				} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
+						 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
+						 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
+					CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
+					path = ReplaceAll(romPath[1], "fat:/", slashchar);
+					fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
+					fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
+					return runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 				}
 			}
 		case 2: {
