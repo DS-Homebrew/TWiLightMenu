@@ -536,7 +536,7 @@ void loadFixedBanner(bool isSlot1) {
 		 && arm9StartSig[1] == 0xE1500005
 		 && arm9StartSig[2] == 0xBAFFFFC5
 		 && arm9StartSig[3] == 0xE59D100C)
-		 || alxxHeaderCrc != 0xBA52)
+		 || alxxBannerCrc != 0xBA52)
 		{
 			// It's a SuperCard DSTWO, so use correct banner.
 			//cardRead(0x1843400, &ndsBanner, NDS_BANNER_SIZE_ORIGINAL);
