@@ -529,9 +529,9 @@ void loadFixedBanner(bool isSlot1) {
 		fclose(fixedBannerFile);
 	} else
 		if (isSlot1 && memcmp(ndsHeader.gameCode, "ALXX", 4) == 0) {
-		u16 alxxHeaderCrc = 0;
+		u16 alxxBannerCrc = 0;
 		cardRead(0x75600, &arm9StartSig, 0x10);
-		cardRead(0x174602, &alxxHeaderCrc, sizeof(u16));
+		cardRead(0x174602, &alxxBannerCrc, sizeof(u16));
 		if ((arm9StartSig[0] == 0xE58D0008
 		 && arm9StartSig[1] == 0xE1500005
 		 && arm9StartSig[2] == 0xBAFFFFC5
