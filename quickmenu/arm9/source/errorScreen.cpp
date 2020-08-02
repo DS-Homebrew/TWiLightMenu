@@ -3,7 +3,7 @@
 #include <maxmod9.h>
 
 #include "graphics/lodepng.h"
-#include "autoboot.h"
+//#include "autoboot.h"
 
 extern bool sdRemoveDetect;
 

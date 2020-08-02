@@ -210,7 +210,7 @@ void loadConsoleIcons()
 
 	// Folder
 	glDeleteTextures(1, &folderTexID);
-	
+
 	newPalette = (u16*)icon_folderPal;
 	if (colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
@@ -234,15 +234,14 @@ void loadConsoleIcons()
 
 	// DSTWO Plugin
 	glDeleteTextures(1, &plgTexID);
-	
+
 	newPalette = (u16*)icon_plgPal;
 	if (colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
-	plgTexID =
-	glLoadTileSet(plgIcon, // pointer to glImage array
+	plgTexID = glLoadTileSet(plgIcon, // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -266,8 +265,7 @@ void loadConsoleIcons()
 				*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 			}
 		}
-		gbaTexID =
-		glLoadTileSet(gbaIcon, // pointer to glImage array
+		gbaTexID = glLoadTileSet(gbaIcon, // pointer to glImage array
 					32, // sprite width
 					32, // sprite height
 					32, // bitmap image width
@@ -287,8 +285,7 @@ void loadConsoleIcons()
 				*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 			}
 		}
-		gbaTexID =
-		glLoadTileSet(gbaIcon, // pointer to glImage array
+		gbaTexID = glLoadTileSet(gbaIcon, // pointer to glImage array
 					32, // sprite width
 					32, // sprite height
 					32, // bitmap width
@@ -312,8 +309,7 @@ void loadConsoleIcons()
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
-	gbTexID =
-	glLoadTileSet(gbIcon, // pointer to glImage array
+	gbTexID = glLoadTileSet(gbIcon, // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -336,8 +332,7 @@ void loadConsoleIcons()
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
-	nesTexID =
-	glLoadTileSet(nesIcon, // pointer to glImage array
+	nesTexID = glLoadTileSet(nesIcon, // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -360,8 +355,7 @@ void loadConsoleIcons()
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
-	smsTexID =
-	glLoadTileSet(smsIcon, // pointer to glImage array
+	smsTexID = glLoadTileSet(smsIcon, // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -384,8 +378,7 @@ void loadConsoleIcons()
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
-	ggTexID =
-	glLoadTileSet(ggIcon, // pointer to glImage array
+	ggTexID = glLoadTileSet(ggIcon, // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -408,8 +401,7 @@ void loadConsoleIcons()
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
-	mdTexID =
-	glLoadTileSet(mdIcon, // pointer to glImage array
+	mdTexID = glLoadTileSet(mdIcon, // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -432,8 +424,7 @@ void loadConsoleIcons()
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
-	snesTexID =
-	glLoadTileSet(snesIcon, // pointer to glImage array
+	snesTexID = glLoadTileSet(snesIcon, // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -513,13 +504,12 @@ void loadFixedBanner(void) {
 	} else // Fire Emblem - Heroes of Light and Shadow
 		if (ndsBanner.crc[3] == 0xD8F4) {
 		// Use fixed banner.
-		FILE *fixedBannerFile =
-		    fopen("nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr", "rb");
+		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon Black Version
-	    if (ndsBanner.crc[0] != 0x4683 && ndsBanner.crc[0] != 0xA251 && ndsBanner.crc[3] == 0xEE5D) {
+		if (ndsBanner.crc[0] != 0x4683 && ndsBanner.crc[0] != 0xA251 && ndsBanner.crc[3] == 0xEE5D) {
 		// Use fixed banner.
 		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version.bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
@@ -540,35 +530,35 @@ void loadFixedBanner(void) {
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon White Version
-	    if (ndsBanner.crc[0] != 0x77F4 && ndsBanner.crc[0] != 0x9CA8 && ndsBanner.crc[3] == 0x0C88) {
+		if (ndsBanner.crc[0] != 0x77F4 && ndsBanner.crc[0] != 0x9CA8 && ndsBanner.crc[3] == 0x0C88) {
 		// Use fixed banner.
 		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version.bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon Volt White (Clean Version)
-	    if (ndsBanner.crc[0] == 0x77F4 && ndsBanner.crc[3] == 0x0C88) {
+		if (ndsBanner.crc[0] == 0x77F4 && ndsBanner.crc[3] == 0x0C88) {
 		// Use fixed banner.
 		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Clean Version).bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon Volt White (Full Version)
-	    if (ndsBanner.crc[0] == 0x9CA8 && ndsBanner.crc[3] == 0x0C88) {
+		if (ndsBanner.crc[0] == 0x9CA8 && ndsBanner.crc[3] == 0x0C88) {
 		// Use fixed banner.
 		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Full Version).bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon Black Version 2
-	    if (ndsBanner.crc[3] == 0x2CA3) {
+		if (ndsBanner.crc[3] == 0x2CA3) {
 		// Use fixed banner.
 		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version 2.bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon White Version 2
-	    if (ndsBanner.crc[3] == 0x3B18) {
+		if (ndsBanner.crc[3] == 0x3B18) {
 		// Use fixed banner.
 		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version 2.bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
@@ -590,13 +580,10 @@ void getGameInfo(bool isDir, const char* name)
 	requiresRamDisk = false;
 	requiresDonorRom = false;
 
-	if (isDir)
-	{
+	if (isDir) {
 		// banner sequence
 		clearBannerSequence();
-	}
-	else if (extention(name, ".argv"))
-	{
+	} else if (extention(name, ".argv")) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -605,16 +592,14 @@ void getGameInfo(bool isDir, const char* name)
 
 		// open the argv file
 		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
+		if (fp == NULL) {
 			clearBannerSequence();
 			fclose(fp);
 			return;
 		}
 
 		// read each line
-		while ((rc = __getline(&line, &size, fp)) > 0)
-		{
+		while ((rc = __getline(&line, &size, fp)) > 0) {
 			// remove comments
 			if ((p = strchr(line, '#')) != NULL)
 				*p = 0;
