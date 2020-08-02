@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <maxmod9.h>
 
-#include "autoboot.h"
+//#include "autoboot.h"
 #include "graphics/lodepng.h"
 #include "graphics/fontHandler.h"
 
