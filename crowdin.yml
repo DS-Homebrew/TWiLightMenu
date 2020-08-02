@@ -1,4 +1,6 @@
 files:
+  - source: /manual/resources/english/*.html
+    translation: /manual/resources/%language%/*.html
   - source: /romsel_aktheme/nitrofiles/language/lang_en/language.ini
     translation: /romsel_aktheme/nitrofiles/language/lang_%two_letters_code%/language.ini
   - source: /romsel_dsimenutheme/nitrofiles/languages/english.ini
