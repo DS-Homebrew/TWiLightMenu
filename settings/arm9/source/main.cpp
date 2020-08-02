@@ -30,9 +30,6 @@
 #include "bootstrapsettings.h"
 
 #include "soundeffect.h"
-
-#include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
-#include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
 #include "common/systemdetails.h"
 
 #define DSI_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/dsimenu/themes/"
@@ -411,18 +408,10 @@ void opt_reboot_system_menu()
 
 void opt_hiya_autoboot_toggle(bool prev, bool next)
 {
-	if (!next)
-	{
-		if (remove("sd:/hiya/autoboot.bin") != 0)
-		{
-		}
-		else
-		{
+	if (!next) {
+		if (remove("sd:/hiya/autoboot.bin") == 0)
 			hiyaAutobootFound = false;
-		}
-	}
-	else
-	{
+	} else {
 		FILE *ResetData = fopen("sd:/hiya/autoboot.bin", "wb");
 		fwrite(autoboot_bin, 1, autoboot_bin_len, ResetData);
 		fclose(ResetData);
