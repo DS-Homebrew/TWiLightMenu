@@ -203,6 +203,24 @@ void CheatCodelist::generateList(void)
   }
 }
 
+void CheatCodelist::deselectFolder(size_t anIndex)
+{
+  std::vector<cParsedItem>::iterator itr=_data.begin()+anIndex;
+  while(--itr>=_data.begin())
+  {
+    if((*itr)._flags&cParsedItem::EFolder)
+    {
+      ++itr;
+      break;
+    }
+  }
+  while(((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end())
+  {
+    (*itr)._flags&=~cParsedItem::ESelected;
+    ++itr;
+  }
+}
+
 bool CheatCodelist::romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32)
 {
   bool res=false;
@@ -235,23 +253,23 @@ std::string CheatCodelist::getCheats()
   return cheats;
 }
 
-void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem>& list, uint curPos, uint screenPos) {
+void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& list, uint curPos, uint screenPos) {
   // Print Cheats at the top
   printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
 
   // Print bottom text
-  if(list[curPos]._comment != "") {
-    if(list[curPos]._flags&cParsedItem::EFolder) {
+  if(list[curPos]->_comment != "") {
+    if(list[curPos]->_flags&cParsedItem::EFolder) {
       printSmall(false, 0, 160, STR_CHEATS_FOLDER_INFO, Alignment::center);
-    } else if(list[curPos]._flags&cParsedItem::ESelected) {
+    } else if(list[curPos]->_flags&cParsedItem::ESelected) {
       printSmall(false, 0, 160, STR_CHEATS_SELECTED_INFO, Alignment::center);
     } else {
       printSmall(false, 0, 160, STR_CHEATS_DESELECTED_INFO, Alignment::center);
     }
   } else {
-    if(list[curPos]._flags&cParsedItem::EFolder) {
+    if(list[curPos]->_flags&cParsedItem::EFolder) {
       printSmall(false, 0, 160, STR_CHEATS_FOLDER, Alignment::center);
-    } else if(list[curPos]._flags&cParsedItem::ESelected) {
+    } else if(list[curPos]->_flags&cParsedItem::ESelected) {
       printSmall(false, 0, 160, STR_CHEATS_SELECTED, Alignment::center);
     } else {
       printSmall(false, 0, 160, STR_CHEATS_DESELECTED, Alignment::center);
@@ -260,15 +278,15 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem>& list,
 
   // Print the list
   for(uint i=0;i<8 && i<list.size();i++) {
-    if(list[screenPos+i]._flags&cParsedItem::EFolder) {
+    if(list[screenPos+i]->_flags&cParsedItem::EFolder) {
       printSmall(false, 15+((screenPos+i == curPos) ? 5 : 0), 60+(i*12), ">");
-      printSmall(false, 28+((screenPos+i == curPos) ? 4 : 0), 60+(i*12), list[screenPos+i]._title);
+      printSmall(false, 28+((screenPos+i == curPos) ? 4 : 0), 60+(i*12), list[screenPos+i]->_title);
     } else {
-      if(list[screenPos+i]._flags&cParsedItem::ESelected) {
+      if(list[screenPos+i]->_flags&cParsedItem::ESelected) {
         printSmall(false, 13, 60+(i*12), "x");
       }
       printSmall(false, 21+((screenPos+i == curPos) ? 4 : 0), 60+(i*12), "-");
-      printSmall(false, 28+((screenPos+i == curPos) ? 7 : 0), 60+(i*12), list[screenPos+i]._title);
+      printSmall(false, 28+((screenPos+i == curPos) ? 7 : 0), 60+(i*12), list[screenPos+i]->_title);
     }
   }
 }
@@ -315,19 +333,11 @@ void CheatCodelist::selectCheats(std::string filename)
     }
   }
 
-  // Get cheat folders
-  std::vector<CheatCodelist::cParsedItem> cheatFolders;
-  for(uint i=0;i<_data.size();i++) {
-    if(_data[i]._flags&cParsedItem::EFolder) {
-      cheatFolders.push_back(_data[i]);
-    }
-  }
-
   // Make list of all cheats not in folders and folders
-  std::vector<CheatCodelist::cParsedItem> currentList;
+  std::vector<CheatCodelist::cParsedItem *> currentList;
   for(uint i=0;i<_data.size();i++) {
     if(!(_data[i]._flags&cParsedItem::EInFolder)) {
-      currentList.push_back(_data[i]);
+      currentList.push_back(&_data[i]);
     }
   }
 
@@ -377,40 +387,30 @@ void CheatCodelist::selectCheats(std::string filename)
       cheatWnd_cursorPosition += (cheatWnd_cursorPosition < (int)(currentList.size()-8) ? 8 : currentList.size()-cheatWnd_cursorPosition-1);
     } else if(pressed & KEY_A) {
       (ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
-      if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-        for(uint i=0;i<_data.size();i++) {
-          if(_data[i]._title == currentList[cheatWnd_cursorPosition]._title) {
-            currentList.clear();
-            for(uint j=i+1;!(_data[j]._flags&cParsedItem::EFolder) && j<_data.size();j++) {
-              currentList.push_back(_data[j]);
-            }
-            mainListCurPos = cheatWnd_cursorPosition;
-            mainListScreenPos = cheatWnd_screenPosition;
-            cheatWnd_cursorPosition = 0;
-            break;
-          }
+      if(currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
+        uint i = std::distance(&_data[0], currentList[cheatWnd_cursorPosition]) + 1;
+        currentList.clear();
+        for(; !(_data[i]._flags & cParsedItem::EFolder) && i < _data.size(); i++) {
+          currentList.push_back(&_data[i]);
         }
+        mainListCurPos = cheatWnd_cursorPosition;
+        mainListScreenPos = cheatWnd_screenPosition;
+        cheatWnd_cursorPosition = 0;
       } else {
-        for(uint i=0;i<_data.size();i++) {
-          if(_data[i]._title == currentList[cheatWnd_cursorPosition]._title) {
-            if(_data[i]._flags&cParsedItem::ESelected) {
-              _data[i]._flags&=~cParsedItem::ESelected;
-              currentList[cheatWnd_cursorPosition]._flags&=~cParsedItem::ESelected;
-            } else {
-              _data[i]._flags^=cParsedItem::ESelected;
-              currentList[cheatWnd_cursorPosition]._flags^=cParsedItem::ESelected;
-            }
-          }
+        cParsedItem &cheat = *currentList[cheatWnd_cursorPosition];
+        if(cheat._flags & cParsedItem::EOne)
+          deselectFolder(std::distance(&_data[0], currentList[cheatWnd_cursorPosition]));
+        if((cheat._flags & (cParsedItem::EOne | cParsedItem::ESelected)) != (cParsedItem::EOne | cParsedItem::ESelected)) {
+          cheat._flags ^= cParsedItem::ESelected;
         }
       }
-    }
-    if(pressed & KEY_B) {
+    } else if(pressed & KEY_B) {
       snd().playBack();
       if(mainListCurPos != -1) {
         currentList.clear();
         for(uint i=0;i<_data.size();i++) {
           if(!(_data[i]._flags&cParsedItem::EInFolder)) {
-            currentList.push_back(_data[i]);
+            currentList.push_back(&_data[i]);
           }
         }
         cheatWnd_cursorPosition = mainListCurPos;
@@ -419,23 +419,21 @@ void CheatCodelist::selectCheats(std::string filename)
       } else {
         break;
       }
-    }
-    if(pressed & KEY_X) {
+    } else if(pressed & KEY_X) {
       snd().playLaunch();
       clearText();
       printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
       printSmall(false, 0, 100, STR_SAVING, Alignment::center);
       onGenerate();
       break;
-    }
-    if(pressed & KEY_Y) {
-      if(currentList[cheatWnd_cursorPosition]._comment != "") {
+    } else if(pressed & KEY_Y) {
+      if(currentList[cheatWnd_cursorPosition]->_comment != "") {
         (ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
         clearText();
         printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
 
         std::string _topText = "";
-        std::string _topTextStr(currentList[cheatWnd_cursorPosition]._comment);
+        std::string _topTextStr(currentList[cheatWnd_cursorPosition]->_comment);
         std::vector<std::string> words;
         std::size_t pos;
 
@@ -493,15 +491,14 @@ void CheatCodelist::selectCheats(std::string filename)
           }
         }
       }
-    }
-    if(pressed & KEY_L) {
+    } else if(pressed & KEY_L) {
       // Delect all in the actual data so it doesn't just get the folder
       for(auto itr = _data.begin(); itr != _data.end(); itr++) {
         (*itr)._flags &= ~cParsedItem::ESelected;
       }
       // Also deselect them in the current list so that it updates the display
       for(auto itr = currentList.begin(); itr != currentList.end(); itr++) {
-        (*itr)._flags &= ~cParsedItem::ESelected;
+        (*itr)->_flags &= ~cParsedItem::ESelected;
       }
     }
   }

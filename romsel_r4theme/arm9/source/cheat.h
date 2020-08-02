@@ -25,9 +25,13 @@ public:
 
   void generateList(void);
 
+  void deselectFolder(size_t anIndex);
+
   bool romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32);
 
   void selectCheats(std::string filename);
+
+  void writeList();
 
   void onGenerate(void);
 
@@ -67,8 +71,8 @@ private:
 
   std::string nextToken (FILE* fp, TOKEN_TYPE& tokenType);
 
-  void drawCheatList(std::vector<CheatCodelist::cParsedItem>& list, uint curPos, uint screenPos);
-} ;
+  void drawCheatList(std::vector<CheatCodelist::cParsedItem *>& list, uint curPos, uint screenPos);
+};
 
 #endif // CHEAT_H
 
