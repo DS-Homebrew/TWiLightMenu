@@ -1,1 +1,0 @@
-START C:/"Program Files"/"Mozilla Firefox"/firefox.exe --screenshot ./renders/saturn.png --window-size 256 http://localhost/themes/saturn.html
