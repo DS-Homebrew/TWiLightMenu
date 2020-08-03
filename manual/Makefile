@@ -6,6 +6,7 @@ $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>dev
 endif
 
 export TARGET := manual
+NITRODATA	:=	nitrofiles
 
 include $(DEVKITARM)/ds_rules
 
