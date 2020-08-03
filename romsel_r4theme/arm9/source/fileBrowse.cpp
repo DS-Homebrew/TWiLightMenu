@@ -622,6 +622,8 @@ string browseForFile(const vector<string> extensionList) {
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
 				if (theme == 6) {
+					snd().playSelect();
+
 					// Clear the screen
 					iprintf ("\x1b[2J");
 
