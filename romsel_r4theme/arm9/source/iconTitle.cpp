@@ -108,6 +108,27 @@ void iconTitleInit()
 
 static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
+	if (theme == 6) {
+		char textAdjusted[18];
+		snprintf(textAdjusted, 17, text1);
+		for (int i = 15; i <= 17; i++) {
+			iprintf ("\x1b[%d;8H", i);
+			iprintf ("                  ");
+		}
+		iprintf ("\x1b[15;8H");
+		iprintf (textAdjusted);
+		if (textlines >= 1) {
+			snprintf(textAdjusted, 17, text2);
+			iprintf ("\x1b[16;8H");
+			iprintf (textAdjusted);
+		}
+		if (textlines >= 2) {
+			snprintf(textAdjusted, 17, text3);
+			iprintf ("\x1b[17;8H");
+			iprintf (textAdjusted);
+		}
+		return;
+	}
 	switch(textlines) {
 		case 0:
 		default:

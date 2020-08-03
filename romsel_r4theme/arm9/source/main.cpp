@@ -922,6 +922,11 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
+	if (theme == 6) {
+		extern int screenBrightness;
+		screenBrightness = 31;
+		fadeType = false;
+	}
 
 	if (isDSiMode() && sdFound() && consoleModel < 2 && launcherApp != -1) {
 		u8 setRegion = 0;
@@ -1028,6 +1033,17 @@ int main(int argc, char **argv) {
 	iconTitleInit();
 
 	bool menuButtonPressed = false;
+	bool menuGraphicsLoaded = false;
+	
+	if (theme == 6) {
+		//if (!menuGraphicsLoaded) {
+			topBgLoad(true);
+			//bottomBgLoad(true);
+			menuGraphicsLoaded = true;
+		//}
+		startMenu = false;
+		fadeType = true;	// Fade in from white
+	}
 	
 	char path[256];
 
@@ -1046,8 +1062,6 @@ int main(int argc, char **argv) {
 		clearText(false);
 		blackScreen = false;
 	}
-
-	bool menuGraphicsLoaded = false;
 
 	while(1) {
 

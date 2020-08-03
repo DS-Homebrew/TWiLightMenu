@@ -50,6 +50,7 @@ extern bool controlBottomBright;
 extern int fps;
 extern int colorMode;
 extern int blfLevel;
+extern int theme;
 int fadeDelay = 0;
 
 extern int colorRvalue;
@@ -289,11 +290,12 @@ void vBlankHandler()
 				fadeDelay = 0;
 			}
 		}
-		if (controlBottomBright && renderFrame) SetBrightness(0, screenBrightness);
-		if (controlTopBright && renderFrame) SetBrightness(1, screenBrightness);
+		if (controlBottomBright && renderFrame) SetBrightness(0, theme==6 ? -screenBrightness : screenBrightness);
+		if (controlTopBright && renderFrame) SetBrightness(1, theme==6 ? -screenBrightness : screenBrightness);
 
 		glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 
+	  if (theme != 6) {
 		if (startMenu) {
 			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, startBorderColor);
 			glSprite(232, 2, GL_FLIP_NONE, &manualIcon[manualIconNextImg]);
@@ -318,6 +320,7 @@ void vBlankHandler()
 				playBannerSequence();
 			}
 		}
+	  }
 		if (showdialogbox) {
 			glBoxFilled(15, 71, 241, 121+(dialogboxHeight*12), RGB15(0, 0, 0));
 			glBoxFilledGradient(16, 72, 240, 86, windowColorTop, windowColorBottom, windowColorBottom, windowColorTop);
@@ -422,6 +425,31 @@ void graphicsLoad()
 
 	BG_PALETTE_SUB[255] = RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel));
 
+	if (theme == 6) {
+		FILE* fileTop = fopen("nitro:/themes/gbnp/bg.bmp", "rb");
+
+		if (fileTop) {
+			// Start loading
+			fseek(fileTop, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(fileTop) + 0xe;
+			fseek(fileTop, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 1, 0xB40A, fileTop);
+			u16* src = bmpImageBuffer;
+			int x = 48;
+			int y = 167;
+			for (int i=0; i<160*144; i++) {
+				if (x >= 48+160) {
+					x = 48;
+					y--;
+				}
+				u16 val = *(src++);
+				topImage[0][y*256+x] = convertToDsBmp(val);
+				topImage[1][y*256+x] = topImage[0][y*256+x];
+				x++;
+			}
+		}
+		fclose(fileTop);
+	} else
 	for (int startMenu = 0; startMenu < 2; startMenu++) {
 		extern std::string r4_theme;
 
@@ -462,7 +490,7 @@ void graphicsLoad()
 			fseek(fileTop, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(fileTop) + 0xe;
 			fseek(fileTop, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x18000, fileTop);
+			fread(bmpImageBuffer, 1, 0x18000, fileTop);
 			u16* src = bmpImageBuffer;
 			int x = 0;
 			int y = 191;
@@ -485,7 +513,7 @@ void graphicsLoad()
 			fseek(fileBottom, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(fileBottom) + 0xe;
 			fseek(fileBottom, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x18000, fileBottom);
+			fread(bmpImageBuffer, 1, 0x18000, fileBottom);
 			u16* src = bmpImageBuffer;
 			int x = 0;
 			int y = 191;

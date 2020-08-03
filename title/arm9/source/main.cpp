@@ -175,6 +175,7 @@ void loadROMselect(int number)
 			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
 			break;*/
 		case 2:
+		case 6:
 			runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
 			break;
 		default:
@@ -875,7 +876,7 @@ int main(int argc, char **argv)
 	}
 
 	if ((access(DSIMENUPP_INI, F_OK) != 0)
-	|| (ms().theme < 0) || (ms().theme == 3) || (ms().theme > 5)) {
+	|| (ms().theme < 0) || (ms().theme == 3) || (ms().theme > 6)) {
 		// Create or modify "settings.ini"
 		(ms().theme == 3) ? ms().theme = 2 : ms().theme = 0;
 		ms().saveSettings();

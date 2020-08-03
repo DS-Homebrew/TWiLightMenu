@@ -56,8 +56,11 @@
 #include "fileCopy.h"
 
 #define SCREEN_COLS 32
+#define SCREEN_COLS_GBNP 17
 #define ENTRIES_PER_SCREEN 22
+#define ENTRIES_PER_SCREEN_GBNP 7
 #define ENTRIES_START_ROW 2
+#define ENTRIES_START_ROW_GBNP 6
 #define ENTRY_PAGE_LENGTH 10
 
 extern const char *bootstrapinipath;
@@ -191,40 +194,44 @@ void getDirectoryContents(vector<DirEntry>& dirContents)
 
 void showDirectoryContents (const vector<DirEntry>& dirContents, int startRow) {
 	char path[PATH_MAX];
-	
-	
+
+
 	getcwd(path, PATH_MAX);
-	
+
 	// Clear the screen
 	iprintf ("\x1b[2J");
-	
+
 	// Print the path
 	if (strlen(path) < SCREEN_COLS) {
 		iprintf ("%s", path);
 	} else {
 		iprintf ("%s", path + strlen(path) - SCREEN_COLS);
 	}
-	
-	// Move to 2nd row
-	iprintf ("\x1b[1;0H");
-	// Print line of dashes
-	iprintf ("--------------------------------");
-	
+
+	if (theme != 6) {
+		// Move to 2nd row
+		iprintf ("\x1b[1;0H");
+		// Print line of dashes
+		iprintf ("--------------------------------");
+	}
+
+	int screenCols = (theme==6 ? SCREEN_COLS_GBNP : SCREEN_COLS);
+
 	// Print directory listing
-	for (int i = 0; i < ((int)dirContents.size() - startRow) && i < ENTRIES_PER_SCREEN; i++) {
+	for (int i = 0; i < ((int)dirContents.size() - startRow) && i < (theme==6 ? ENTRIES_PER_SCREEN_GBNP : ENTRIES_PER_SCREEN); i++) {
 		const DirEntry* entry = &dirContents.at(i + startRow);
-		char entryName[SCREEN_COLS + 1];
+		char entryName[screenCols + 1];
 		
 		// Set row
-		iprintf ("\x1b[%d;0H", i + ENTRIES_START_ROW);
+		iprintf ("\x1b[%d;%dH", i + (theme==6 ? ENTRIES_START_ROW_GBNP : ENTRIES_START_ROW), (theme==6 ? 7 : 0));
 		
 		if (entry->isDirectory) {
-			strncpy (entryName, entry->name.c_str(), SCREEN_COLS);
-			entryName[SCREEN_COLS - 3] = '\0';
+			strncpy (entryName, entry->name.c_str(), screenCols);
+			entryName[screenCols - 3] = '\0';
 			iprintf (" [%s]", entryName);
 		} else {
-			strncpy (entryName, entry->name.c_str(), SCREEN_COLS);
-			entryName[SCREEN_COLS - 1] = '\0';
+			strncpy (entryName, entry->name.c_str(), screenCols);
+			entryName[screenCols - 1] = '\0';
 			iprintf (" %s", entryName);
 		}
 	}
@@ -473,12 +480,22 @@ string browseForFile(const vector<string> extensionList) {
 		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
 		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
 
+		int entriesStartRow = (theme==6 ? ENTRIES_START_ROW_GBNP : ENTRIES_START_ROW);
+		int entriesPerScreen = (theme==6 ? ENTRIES_PER_SCREEN_GBNP : ENTRIES_PER_SCREEN);
+
 		// Clear old cursors
-		for (int i = ENTRIES_START_ROW; i < ENTRIES_PER_SCREEN + ENTRIES_START_ROW; i++) {
-			iprintf ("\x1b[%d;0H ", i);
+		for (int i = entriesStartRow; i < entriesPerScreen + entriesStartRow; i++) {
+			iprintf ("\x1b[%d;%dH ", i, (theme==6 ? 7 : 0));
+			if (theme==6) {
+				iprintf ("\x1b[%d;24H ", i);
+			}
 		}
 		// Show cursor
-		iprintf ("\x1b[%d;0H*", fileOffset - screenOffset + ENTRIES_START_ROW);
+		iprintf ("\x1b[%d;%dH", fileOffset - screenOffset + entriesStartRow, (theme==6 ? 7 : 0));
+		iprintf ("%s", (theme==6 ? "<" : "*"));
+		if (theme==6) {
+			iprintf ("\x1b[%d;24H>", fileOffset - screenOffset + entriesStartRow);
+		}
 
 		if (dirContents.at(fileOffset).isDirectory) {
 			isDirectory = true;
@@ -561,8 +578,8 @@ string browseForFile(const vector<string> extensionList) {
 			screenOffset = fileOffset;
 			showDirectoryContents (dirContents, screenOffset);
 		}
-		if (fileOffset > screenOffset + ENTRIES_PER_SCREEN - 1) {
-			screenOffset = fileOffset - ENTRIES_PER_SCREEN + 1;
+		if (fileOffset > screenOffset + entriesPerScreen - 1) {
+			screenOffset = fileOffset - entriesPerScreen + 1;
 			showDirectoryContents (dirContents, screenOffset);
 		}
 
