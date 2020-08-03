@@ -619,9 +619,6 @@ string browseForFile(const vector<string> extensionList) {
 		}
 
 		if (pressed & KEY_A) {
-			if (theme == 6) {
-				snd().playLaunch();
-			}
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
 				if (theme == 6) {
@@ -788,6 +785,9 @@ string browseForFile(const vector<string> extensionList) {
 				}
 
 				if (proceedToLaunch) {
+					if (theme == 6) {
+						snd().playLaunch();
+					}
 					applaunch = true;
 
 					cursorPosition[secondaryDevice] = fileOffset;
