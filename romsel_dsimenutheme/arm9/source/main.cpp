@@ -1703,10 +1703,10 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 					}
-				} else if (extention(filename[secondaryDevice], ".pce")) {
+				} else if (extention(filename, ".pce")) {
 					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
 
-					if (secondaryDevice) {
+					if (ms().secondaryDevice) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
@@ -1716,7 +1716,7 @@ int main(int argc, char **argv) {
 					} else {
 						useNDSB = true;
 
-						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						ndsToBoot = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
