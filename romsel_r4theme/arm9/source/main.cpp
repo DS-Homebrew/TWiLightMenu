@@ -926,6 +926,8 @@ int main(int argc, char **argv) {
 		extern int screenBrightness;
 		screenBrightness = 31;
 		fadeType = false;
+		SetBrightness(0, -31);
+		SetBrightness(1, -31);
 	}
 
 	if (isDSiMode() && sdFound() && consoleModel < 2 && launcherApp != -1) {
