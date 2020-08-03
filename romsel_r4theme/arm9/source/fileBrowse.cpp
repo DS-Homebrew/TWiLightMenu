@@ -53,6 +53,7 @@
 
 #include "common/inifile.h"
 
+#include "sound.h"
 #include "fileCopy.h"
 
 #define SCREEN_COLS 32
@@ -158,6 +159,8 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 		iprintf ("Unable to open the directory.\n");
 	} else {
 		while(true) {
+			snd().updateStream();
+
 			DirEntry dirEntry;
 
 			struct dirent* pent = readdir(pdir);
@@ -250,6 +253,7 @@ bool checkGbaBios(void) {
 	printSmallCentered(false, 120, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -273,6 +277,7 @@ void smsWarning(void) {
 	printSmallCentered(false, 144, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -294,6 +299,7 @@ void mdRomTooBig(void) {
 	printSmallCentered(false, 144, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -313,6 +319,7 @@ void ramDiskMsg(void) {
 	printSmallCentered(false, 120, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -333,6 +340,7 @@ void dsiBinariesMissingMsg(void) {
 	printSmallCentered(false, 132, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -370,6 +378,7 @@ void donorRomMsg(void) {
 	printSmallCentered(false, 140, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -429,6 +438,7 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 
 	int pressed = 0;
 	while (1) {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -547,6 +557,7 @@ string browseForFile(const vector<string> extensionList) {
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
+			snd().updateStream();
 			scanKeys();
 			pressed = keysDownRepeat();
 			checkSdEject();
@@ -555,18 +566,30 @@ string browseForFile(const vector<string> extensionList) {
 
 		if (pressed & KEY_UP) {
 			fileOffset -= 1;
+			if (theme == 6) {
+				snd().playSelect();
+			}
 			settingsChanged = true;
 		}
 		if (pressed & KEY_DOWN) {
 			fileOffset += 1;
+			if (theme == 6) {
+				snd().playSelect();
+			}
 			settingsChanged = true;
 		}
 		if (pressed & KEY_LEFT) {
 			fileOffset -= ENTRY_PAGE_LENGTH;
+			if (theme == 6) {
+				snd().playSelect();
+			}
 			settingsChanged = true;
 		}
 		if (pressed & KEY_RIGHT) {
 			fileOffset += ENTRY_PAGE_LENGTH;
+			if (theme == 6) {
+				snd().playSelect();
+			}
 			settingsChanged = true;
 		}
 
@@ -584,6 +607,9 @@ string browseForFile(const vector<string> extensionList) {
 		}
 
 		if (pressed & KEY_A) {
+			if (theme == 6) {
+				snd().playSelect();
+			}
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
 				iprintf("Entering directory\n");
@@ -605,6 +631,7 @@ string browseForFile(const vector<string> extensionList) {
 				printSmallCentered(false, 108, "\u2427 OK");
 				pressed = 0;
 				do {
+					snd().updateStream();
 					scanKeys();
 					pressed = keysDown();
 					checkSdEject();
@@ -698,6 +725,7 @@ string browseForFile(const vector<string> extensionList) {
 
 					pressed = 0;
 					while (1) {
+						snd().updateStream();
 						scanKeys();
 						pressed = keysDown();
 						checkSdEject();
@@ -823,6 +851,7 @@ string browseForFile(const vector<string> extensionList) {
 
 			while (1) {
 				do {
+					snd().updateStream();
 					scanKeys();
 					pressed = keysDown();
 					checkSdEject();

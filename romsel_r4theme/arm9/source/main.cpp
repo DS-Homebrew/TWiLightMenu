@@ -31,6 +31,7 @@
 #include "common/inifile.h"
 #include "tool/stringtool.h"
 
+#include "sound.h"
 #include "language.h"
 
 #include "cheat.h"
@@ -1045,8 +1046,10 @@ int main(int argc, char **argv) {
 		//}
 		startMenu = false;
 		fadeType = true;	// Fade in from white
+		snd();
+		snd().beginStream();
 	}
-	
+
 	char path[256];
 
 	if (copyDSiWareSavBack)
