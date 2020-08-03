@@ -1348,6 +1348,8 @@ int main(int argc, char **argv) {
 		// Launch the item
 
 		if (applaunch) {
+			snd().stopStream();
+
 			// Delete previously used DSiWare of flashcard from SD
 			if (!gotosettings && consoleModel < 2 && previousUsedDevice && bothSDandFlashcard()) {
 				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {

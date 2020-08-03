@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #define SFX_SELECT		0
+#define SFX_LAUNCH		1
 
 #define MSL_NSONGS		0
 #define MSL_NSAMPS		7
@@ -35,7 +36,7 @@ extern char debug_buf[256];
 
 extern volatile u32 sample_delay_count;
 
-volatile char SFX_DATA[0x7D000] = {0};
+volatile char SFX_DATA[0x10000] = {0};
 mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
 
 SoundControl::SoundControl()
@@ -69,9 +70,18 @@ SoundControl::SoundControl()
 	mmSoundBankInMemory((mm_addr)SFX_DATA);
 
 	mmLoadEffect(SFX_SELECT);
+	mmLoadEffect(SFX_LAUNCH);
 
 	snd_select = {
 	    {SFX_SELECT},	    // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+
+	snd_launch = {
+	    {SFX_LAUNCH},	    // id
 	    (int)(1.0f * (1 << 10)), // rate
 	    0,			     // handle
 	    255,		     // volume
@@ -100,6 +110,7 @@ SoundControl::SoundControl()
 }
 
 mm_sfxhand SoundControl::playSelect() { return mmEffectEx(&snd_select); }
+mm_sfxhand SoundControl::playLaunch() { return mmEffectEx(&snd_launch); }
 
 void SoundControl::beginStream() {
 	// open the stream

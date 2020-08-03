@@ -620,7 +620,7 @@ string browseForFile(const vector<string> extensionList) {
 
 		if (pressed & KEY_A) {
 			if (theme == 6) {
-				snd().playSelect();
+				snd().playLaunch();
 			}
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
@@ -933,7 +933,9 @@ string browseForFile(const vector<string> extensionList) {
 		if ((theme!=6 && (pressed & KEY_START)) || (theme==6 && (pressed & KEY_SELECT)))
 		{
 			if (theme == 6) {
-				snd().playSelect();
+				snd().playLaunch();
+				snd().stopStream();
+				for (int i = 0; i < 25; i++) swiWaitForVBlank();
 			}
 			if (settingsChanged) {
 				cursorPosition[secondaryDevice] = fileOffset;
