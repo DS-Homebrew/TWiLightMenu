@@ -114,6 +114,19 @@ extern void SaveSettings();
 
 char path[PATH_MAX] = {0};
 
+static void gbnpBottomInfo(void) {
+	if (theme == 6) {
+		getcwd(path, PATH_MAX);
+
+		clearText(false);
+
+		// Print the path
+		printLarge(false, 0, 0, path);
+
+		printLargeCentered(false, 96, "SELECT: Settings menu");
+	}
+}
+
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
 struct DirEntry {
@@ -196,19 +209,18 @@ void getDirectoryContents(vector<DirEntry>& dirContents)
 }
 
 void showDirectoryContents (const vector<DirEntry>& dirContents, int startRow) {
-	char path[PATH_MAX];
-
-
 	getcwd(path, PATH_MAX);
 
 	// Clear the screen
 	iprintf ("\x1b[2J");
 
 	// Print the path
+	if (theme != 6) {
 	if (strlen(path) < SCREEN_COLS) {
 		iprintf ("%s", path);
 	} else {
 		iprintf ("%s", path + strlen(path) - SCREEN_COLS);
+	}
 	}
 
 	if (theme != 6) {
@@ -612,6 +624,12 @@ string browseForFile(const vector<string> extensionList) {
 			}
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
+				if (theme == 6) {
+					// Clear the screen
+					iprintf ("\x1b[2J");
+
+					iprintf ("\x1b[6;8H");
+				}
 				iprintf("Entering directory\n");
 				// Enter selected directory
 				chdir (entry->name.c_str());
@@ -786,6 +804,9 @@ string browseForFile(const vector<string> extensionList) {
 					// Return the chosen file
 					return entry->name;
 				} else {
+					if (theme == 6) {
+						gbnpBottomInfo();
+					}
 					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				}
 			}
@@ -793,6 +814,9 @@ string browseForFile(const vector<string> extensionList) {
 
 		if ((pressed & KEY_R) && bothSDandFlashcard()) {
 			consoleClear();
+			if (theme == 6) {
+				iprintf ("\x1b[6;8H");
+			}
 			printf("Please wait...\n");
 			cursorPosition[secondaryDevice] = fileOffset;
 			pagenum[secondaryDevice] = 0;
@@ -862,8 +886,11 @@ string browseForFile(const vector<string> extensionList) {
 					clearText();
 					showdialogbox = false;
 					consoleClear();
+					if (theme == 6) {
+						iprintf ("\x1b[6;8H");
+					}
 					printf("Please wait...\n");
-					
+
 					if (pressed & KEY_A && !isDirectory) {
 						remove(dirContents.at(fileOffset).name.c_str());
 					} else if (pressed & KEY_Y) {
@@ -893,6 +920,9 @@ string browseForFile(const vector<string> extensionList) {
 				}
 
 				if (pressed & KEY_B) {
+					if (theme == 6) {
+						gbnpBottomInfo();
+					}
 					break;
 				}
 			}
@@ -900,8 +930,11 @@ string browseForFile(const vector<string> extensionList) {
 			showdialogbox = false;
 		}
 
-		if (pressed & KEY_START)
+		if ((theme!=6 && (pressed & KEY_START)) || (theme==6 && (pressed & KEY_SELECT)))
 		{
+			if (theme == 6) {
+				snd().playSelect();
+			}
 			if (settingsChanged) {
 				cursorPosition[secondaryDevice] = fileOffset;
 				pagenum[secondaryDevice] = 0;
@@ -926,6 +959,9 @@ string browseForFile(const vector<string> extensionList) {
 		{
 			cursorPosition[secondaryDevice] = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);
+			if (theme == 6) {
+				gbnpBottomInfo();
+			}
 			for (int i = 0; i < 25; i++) swiWaitForVBlank();
 		}
 

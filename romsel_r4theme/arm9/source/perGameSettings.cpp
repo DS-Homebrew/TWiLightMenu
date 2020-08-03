@@ -11,6 +11,7 @@
 #include <nds/arm9/dldi.h>
 #include <gl2d.h>
 
+#include "sound.h"
 #include "date.h"
 
 #include "ndsheaderbanner.h"
@@ -525,6 +526,7 @@ void perGameSettings (std::string filename) {
 			printSmallCentered(false, 154, isHomebrew ? "\u2428 Back" : "\u2429 Cheats  \u2428 Back");
 		}
 		do {
+			snd().updateStream();
 			scanKeys();
 			pressed = keysDown();
 			held = keysDownRepeat();

@@ -28,6 +28,7 @@
 #include <sstream>
 
 #include "ndsheaderbanner.h"
+#include "sound.h"
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 #include "errorScreen.h"
@@ -300,6 +301,7 @@ void CheatCodelist::selectCheats(std::string filename)
     printSmallCentered(false, 160, "B: Back");
 
     while(1) {
+	  snd().updateStream();
       scanKeys();
       pressed = keysDownRepeat();
       checkSdEject();
@@ -355,6 +357,7 @@ void CheatCodelist::selectCheats(std::string filename)
     drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition);
 
     do {
+	  snd().updateStream();
       scanKeys();
       pressed = keysDown();
       held = keysDownRepeat();
@@ -465,6 +468,7 @@ void CheatCodelist::selectCheats(std::string filename)
         // Print 'Back' text
         printSmallCentered(false, 167, "B: Back");
         while(1) {
+		  snd().updateStream();
           scanKeys();
           pressed = keysDown();
           checkSdEject();

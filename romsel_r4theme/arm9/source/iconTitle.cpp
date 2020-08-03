@@ -861,7 +861,11 @@ void getGameInfo(bool isDir, const char* name)
 
 void iconUpdate(bool isDir, const char* name)
 {
-	clearText(false);
+	if (theme == 6) {
+		return;
+	} else {
+		clearText(false);
+	}
 
 	if (isDir)
 	{
@@ -1031,8 +1035,10 @@ void iconUpdate(bool isDir, const char* name)
 
 void titleUpdate(bool isDir, const char* name)
 {
-	clearText(false);
-	
+	if (theme != 6) {
+		clearText(false);
+	}
+
 	if (isDir)
 	{
 		// text

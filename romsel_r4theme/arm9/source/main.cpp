@@ -1080,6 +1080,15 @@ int main(int argc, char **argv) {
 
 			int pressed = 0;
 
+		  if (theme == 6) {
+				if (!isDSiMode()) {
+					chdir("fat:/");
+				} else if (sdFound()) {
+					chdir("sd:/");
+				}
+				int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
+				iprintf ("Start failed. Error %i\n", err);
+		  } else {
 			do {
 				clearText();
 				printLargeCentered(false, -112, 166, DrawDate());
@@ -1159,6 +1168,7 @@ int main(int argc, char **argv) {
 
 			if (startMenu_cursorPosition < 0) startMenu_cursorPosition = 0;
 			if (startMenu_cursorPosition > 2) startMenu_cursorPosition = 2;
+		  }
 
 			if (menuButtonPressed) {
 				switch (startMenu_cursorPosition) {
@@ -1320,6 +1330,15 @@ int main(int argc, char **argv) {
 			snprintf (path, sizeof(path), "%s", romfolder[secondaryDevice].c_str());
 			// Set directory
 			chdir (path);
+
+			if (theme == 6) {
+				clearText(false);
+
+				// Print the path
+				printLarge(false, 0, 0, path);
+
+				printLargeCentered(false, 96, "SELECT: Settings menu");
+			}
 
 			//Navigates to the file to launch
 			filename = browseForFile(extensionList);
