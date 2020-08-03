@@ -42,6 +42,7 @@ extern int consoleModel;
 
 extern int bstrap_dsiMode;
 extern bool useBootstrap;
+extern int theme;
 
 extern std::string romfolder[2];
 
@@ -381,7 +382,11 @@ void perGameSettings (std::string filename) {
 
 	while (1) {
 		clearText();
-		titleUpdate(isDirectory, filename.c_str());
+		if (theme == 6) {
+			printLarge(false, 0, 56, filename.c_str());
+		} else {
+			titleUpdate(isDirectory, filename.c_str());
+		}
 
 		printLargeCentered(false, 74, showPerGameSettings ? "Game settings" : "Info");
 		if (showSDKVersion) printSmall(false, 24, 90, SDKnumbertext);
