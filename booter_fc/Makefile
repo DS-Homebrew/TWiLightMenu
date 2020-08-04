@@ -163,10 +163,10 @@ autoboot:
 	mv "dstwo.nds" "../../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds"
 
 	#### SuperCard DSONE
-	cp "../$(TARGET)_scdso.nds" "SCFW.SC"
-	dlditool ./flashcart_specifics/DSONE/scsd2.dldi SCFW.SC
-	mkdir "../../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/"
-	mv SCFW.SC "../../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/SCFW.SC"
+	#cp "../$(TARGET)_scdso.nds" "SCFW.SC"
+	#dlditool ./flashcart_specifics/DSONE/scsd2.dldi SCFW.SC
+	#mkdir "../../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/"
+	#mv SCFW.SC "../../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/SCFW.SC"
 
 $(TARGET).nds:	makearm7_fc makearm7_cyclodsi makearm7_scdso makearm9_fc makearm9_cyclodsi makearm9_scdso
 	# simple nds srl without dsi extended header
