@@ -135,7 +135,7 @@ $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004 -a 00000138 -t twl_banner.bin
 			
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
-		python2 patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch
+		python2 ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch
 endif
 
 $(TARGET).arm7: arm7/$(TARGET).elf
