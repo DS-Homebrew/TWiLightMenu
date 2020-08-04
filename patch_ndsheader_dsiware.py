@@ -1,8 +1,7 @@
 # -*- coding: utf8 -*-
 # Patch an .nds (works with homebrew and ds demo only) to make it ready for make_cia
 #
-# 2016-02-28, Ahezard
-# 2020-08-03, NightScript
+# 2016-02-28, Ahezard 
 #
 # inspired by 
 # Apache Thunder .nds edited files and comments
@@ -84,7 +83,7 @@ class CRC16(object):
 
             return crc_value
         except Exception as e:
-            print(("EXCEPTION(calculate): {}".format(e)))
+            print("EXCEPTION(calculate): {}".format(e))
 
     def init_crc16(self):
         """The algorithm uses tables with precalculated values"""
@@ -115,9 +114,9 @@ fname=args.file.name
 args.file.close()
 
 if not args.read:
-	print("Patching file : "+fname)
+	print "Patching file : "+fname
 else:
-	print("Reading header of file : "+fname)
+	print "Reading header of file : "+fname
 
 #offset of 0x4600 created
 
@@ -132,7 +131,7 @@ file = open(fname, 'rb')
 hdr = file.read(0x15E)
 hdrCrc=CRC16(modbus_flag=True).calculate(hdr)
 if args.verbose:
-	print(("{:10s} {:20X}".format('HDR CRC-16 ModBus', hdrCrc)))
+	print("{:10s} {:20X}".format('HDR CRC-16 ModBus', hdrCrc))
 #print "origin header cr c"+hdr[0x15E:0x15F]
 #filew = open(fname+".hdr", "wb")
 #filew.write(hdr);
@@ -205,8 +204,8 @@ SrlHeader = namedtuple('SrlHeader',
 srlHeaderFormat='<12s4s2scbb7s2sbcIIIIIIIIIIIIIIIIIIIHHII8sII56s156s2sH32s'
 srlHeader=SrlHeader._make(unpack_from(srlHeaderFormat, data))
 if args.verbose:
-	print("origin header crc "+hex(srlHeader.headerCrc))
-	print("origin secure crc "+hex(srlHeader.secureAreaCrc))
+	print "origin header crc "+hex(srlHeader.headerCrc)
+	print "origin secure crc "+hex(srlHeader.secureAreaCrc)
 
 #SecureArea CRC compute "CRC-16 (Modbus)"
 file = open(fname, 'rb')
@@ -215,12 +214,12 @@ file.read(0x200)
 sec = file.read(0x4000)
 secCrc=CRC16(modbus_flag=True).calculate(sec)
 if args.verbose:
-	print(("{:10s} {:20X}".format('SEC CRC-16 ModBus', secCrc)))
+	print("{:10s} {:20X}".format('SEC CRC-16 ModBus', secCrc))
 file.close()
 
 if srlHeader.arm7EntryAddress>0x2400000 and not args.read and args.arm7 is None:
-	print("WARNING: .nds arm7EntryAddress greater than 0x2400000 will not boot as cia")
-	print("you need to recompile or swap the arm7 binary with a precompiled one with --arm7 and --arm7EntryAddress")
+	print "WARNING: .nds arm7EntryAddress greater than 0x2400000 will not boot as cia"
+	print "you need to recompile or swap the arm7 binary with a precompiled one with --arm7 and --arm7EntryAddress"
 
 if "dsi" in args.mode :
 	srlHeaderPatched=srlHeader._replace(
@@ -228,19 +227,19 @@ if "dsi" in args.mode :
 		unitCode=					'\x03',
 		)
 	
-data1=pack(*[srlHeaderFormat]+list(srlHeaderPatched._asdict().values()))
+data1=pack(*[srlHeaderFormat]+srlHeaderPatched._asdict().values())
 newHdrCrc=CRC16(modbus_flag=True).calculate(data1[0:0x15E])
 srlHeaderPatched=srlHeaderPatched._replace(headerCrc=newHdrCrc)
 
 if args.verbose:
-	print("new header crc "+hex(newHdrCrc))
+	print "new header crc "+hex(newHdrCrc)
 if not args.read :
 	if args.verbose:
 		pprint(dict(srlHeaderPatched._asdict()))
 else:
 	pprint(dict(srlHeader._asdict()))
 
-data1=pack(*[srlHeaderFormat]+list(srlHeaderPatched._asdict().values()))
+data1=pack(*[srlHeaderFormat]+srlHeaderPatched._asdict().values())
 
 arm9isize=0
 arm7isize=0
@@ -313,8 +312,8 @@ if not args.read:
 			arm9isize = getSize(args.arm9i)
 			arm9iRomOffset=srlHeaderPatched.ntrRomSize
 			if args.verbose:
-				print("arm9isize : "+hex(arm9isize))
-				print("arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize))
+				print "arm9isize : "+hex(arm9isize)
+				print "arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize)
 			args.arm9i.close()
 			totaldsisize=arm9isize
 			
@@ -323,8 +322,8 @@ if not args.read:
 			arm7isize = getSize(args.arm7i)
 			arm7iRomOffset=srlHeaderPatched.ntrRomSize+arm9isize
 			if args.verbose:
-				print("arm7isize : "+hex(arm7isize))
-				print("arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize+arm9isize))
+				print "arm7isize : "+hex(arm7isize)
+				print "arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize+arm9isize)
 			args.arm7i.close()
 			totaldsisize=arm9isize+arm7isize
 
@@ -347,7 +346,7 @@ if not args.read:
 if args.verbose or args.read:	
 	pprint(dict(srlTwlExtHeader._asdict()))
 
-data2=pack(*[srlTwlExtHeaderFormat]+list(srlTwlExtHeader._asdict().values()))
+data2=pack(*[srlTwlExtHeaderFormat]+srlTwlExtHeader._asdict().values())
 
 #TWL and Signed NTR 3328 bytes
 SrlSignedHeader = namedtuple('SrlSignedHeader', 
@@ -398,7 +397,7 @@ if not args.read:
 if args.verbose or args.read:
 	pprint(dict(srlSignedHeader._asdict()))
 
-data3=pack(*[srlSignedHeaderFormat]+list(srlSignedHeader._asdict().values()))
+data3=pack(*[srlSignedHeaderFormat]+srlSignedHeader._asdict().values())
 
 # ARM9 footer 
 # from https://github.com/devkitPro/ndstool/ ... source/header.cpp
@@ -415,24 +414,24 @@ file.read(arm9FooterAddr)
 data=file.read(12)
 arm9Footer=ARM9Footer._make(unpack_from(ARM9FooterFormat, data))
 if args.verbose:
-	print("footer addr "+hex(arm9FooterAddr))
+	print "footer addr "+hex(arm9FooterAddr)
 if arm9Footer.nitrocode == 0xDEC00621:
 	if args.verbose or args.read:
-		print("ARM9 footer found.")
-		print("no patch needed")
-		print("nitrocode "+hex(arm9Footer.nitrocode))
-		print("versionInfo "+hex(arm9Footer.versionInfo))
-		print("reserved "+hex(arm9Footer.reserved))
-		print("\n")
+		print "ARM9 footer found."
+		print "no patch needed"
+		print "nitrocode "+hex(arm9Footer.nitrocode)
+		print "versionInfo "+hex(arm9Footer.versionInfo)
+		print "reserved "+hex(arm9Footer.reserved)
+		print "\n"
 else:
 	if args.verbose or args.read:
-		print("ARM9 footer not found.\n")
+		print "ARM9 footer not found.\n"
 	arm9FooterPatched=arm9Footer._replace(
 		nitrocode=		0xDEC00621,
 		versionInfo=	0xad8,
 		reserved=		0
 	)
-	data4=pack(*[ARM9FooterFormat]+list(arm9FooterPatched._asdict().values()))
+	data4=pack(*[ARM9FooterFormat]+arm9FooterPatched._asdict().values())
 file.close()
 
 if not args.read:
@@ -465,4 +464,4 @@ if not args.read:
 			os.remove(fname+".orig.nds")
 		os.rename(fname,fname+".orig.nds")
 		os.rename(fname+".tmp",fname)	
-	print("file patched")
+	print "file patched"
