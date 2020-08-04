@@ -119,7 +119,8 @@ jobs:
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
-          path: ~/artifacts/
+          path: ~/artifacts/*
+          name: "build"
 
   # Only run this for non-PR jobs.
   publish_build_twlbot:
@@ -139,6 +140,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
+          name: "build"
           path: "build"
       - name: Upload to DS-Homebrew/TWiLightMenu release
         run: |

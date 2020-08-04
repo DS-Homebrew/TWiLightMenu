@@ -102,7 +102,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           path: ~/artifacts/
-          name: "build"
+          name: "build"*
 
   # Only run this for non-PR jobs.
   publish_build_twlbot:
@@ -121,6 +121,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: "build"
+          name: "build"
       - name: "Commit and push to TWLBot/Builds"
         id: "commit"
         run: |
