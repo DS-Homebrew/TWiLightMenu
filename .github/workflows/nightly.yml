@@ -27,7 +27,7 @@ jobs:
       - name: "Install tools"
         run: |
           sudo apt-get update
-          sudo apt-get install p7zip-full python jq -y
+          sudo apt-get install p7zip-full python3 jq -y
       - name: "Build TWiLightMenu++"
         run: |
           make package
