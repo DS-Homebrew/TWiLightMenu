@@ -35,6 +35,9 @@ body {
 	margin-bottom: 0;
 	padding: 5px 10px 0 10px;
 }
+.ds-margin > .section-title:first-of-type {
+	max-width: 60%;
+}
 .section-body {
 	background-color: #cecece;
 	border-radius: 0 10px 10px 10px;
