@@ -265,7 +265,7 @@ void loadROMselect() {
 	{
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
 	}
-	else if (theme == 2)
+	else if (theme == 2 || theme == 6)
 	{
 		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
 	}

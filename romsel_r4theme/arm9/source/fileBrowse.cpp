@@ -53,11 +53,15 @@
 
 #include "common/inifile.h"
 
+#include "sound.h"
 #include "fileCopy.h"
 
 #define SCREEN_COLS 32
+#define SCREEN_COLS_GBNP 17
 #define ENTRIES_PER_SCREEN 22
+#define ENTRIES_PER_SCREEN_GBNP 7
 #define ENTRIES_START_ROW 2
+#define ENTRIES_START_ROW_GBNP 6
 #define ENTRY_PAGE_LENGTH 10
 
 extern const char *bootstrapinipath;
@@ -110,6 +114,19 @@ extern void SaveSettings();
 
 char path[PATH_MAX] = {0};
 
+static void gbnpBottomInfo(void) {
+	if (theme == 6) {
+		getcwd(path, PATH_MAX);
+
+		clearText(false);
+
+		// Print the path
+		printLarge(false, 0, 0, path);
+
+		printLargeCentered(false, 96, "SELECT: Settings menu");
+	}
+}
+
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
 struct DirEntry {
@@ -155,6 +172,8 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 		iprintf ("Unable to open the directory.\n");
 	} else {
 		while(true) {
+			snd().updateStream();
+
 			DirEntry dirEntry;
 
 			struct dirent* pent = readdir(pdir);
@@ -190,41 +209,44 @@ void getDirectoryContents(vector<DirEntry>& dirContents)
 }
 
 void showDirectoryContents (const vector<DirEntry>& dirContents, int startRow) {
-	char path[PATH_MAX];
-	
-	
 	getcwd(path, PATH_MAX);
-	
+
 	// Clear the screen
 	iprintf ("\x1b[2J");
-	
+
 	// Print the path
+	if (theme != 6) {
 	if (strlen(path) < SCREEN_COLS) {
 		iprintf ("%s", path);
 	} else {
 		iprintf ("%s", path + strlen(path) - SCREEN_COLS);
 	}
-	
-	// Move to 2nd row
-	iprintf ("\x1b[1;0H");
-	// Print line of dashes
-	iprintf ("--------------------------------");
-	
+	}
+
+	if (theme != 6) {
+		// Move to 2nd row
+		iprintf ("\x1b[1;0H");
+		// Print line of dashes
+		iprintf ("--------------------------------");
+	}
+
+	int screenCols = (theme==6 ? SCREEN_COLS_GBNP : SCREEN_COLS);
+
 	// Print directory listing
-	for (int i = 0; i < ((int)dirContents.size() - startRow) && i < ENTRIES_PER_SCREEN; i++) {
+	for (int i = 0; i < ((int)dirContents.size() - startRow) && i < (theme==6 ? ENTRIES_PER_SCREEN_GBNP : ENTRIES_PER_SCREEN); i++) {
 		const DirEntry* entry = &dirContents.at(i + startRow);
-		char entryName[SCREEN_COLS + 1];
+		char entryName[screenCols + 1];
 		
 		// Set row
-		iprintf ("\x1b[%d;0H", i + ENTRIES_START_ROW);
+		iprintf ("\x1b[%d;%dH", i + (theme==6 ? ENTRIES_START_ROW_GBNP : ENTRIES_START_ROW), (theme==6 ? 7 : 0));
 		
 		if (entry->isDirectory) {
-			strncpy (entryName, entry->name.c_str(), SCREEN_COLS);
-			entryName[SCREEN_COLS - 3] = '\0';
+			strncpy (entryName, entry->name.c_str(), screenCols);
+			entryName[screenCols - 3] = '\0';
 			iprintf (" [%s]", entryName);
 		} else {
-			strncpy (entryName, entry->name.c_str(), SCREEN_COLS);
-			entryName[SCREEN_COLS - 1] = '\0';
+			strncpy (entryName, entry->name.c_str(), screenCols);
+			entryName[screenCols - 1] = '\0';
 			iprintf (" %s", entryName);
 		}
 	}
@@ -243,6 +265,7 @@ bool checkGbaBios(void) {
 	printSmallCentered(false, 120, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -266,6 +289,7 @@ void smsWarning(void) {
 	printSmallCentered(false, 144, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -287,6 +311,7 @@ void mdRomTooBig(void) {
 	printSmallCentered(false, 144, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -306,6 +331,7 @@ void ramDiskMsg(void) {
 	printSmallCentered(false, 120, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -326,6 +352,7 @@ void dsiBinariesMissingMsg(void) {
 	printSmallCentered(false, 132, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -363,6 +390,7 @@ void donorRomMsg(void) {
 	printSmallCentered(false, 140, "\u2427 OK");
 	int pressed = 0;
 	do {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -422,6 +450,7 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 
 	int pressed = 0;
 	while (1) {
+		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -473,12 +502,22 @@ string browseForFile(const vector<string> extensionList) {
 		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
 		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
 
+		int entriesStartRow = (theme==6 ? ENTRIES_START_ROW_GBNP : ENTRIES_START_ROW);
+		int entriesPerScreen = (theme==6 ? ENTRIES_PER_SCREEN_GBNP : ENTRIES_PER_SCREEN);
+
 		// Clear old cursors
-		for (int i = ENTRIES_START_ROW; i < ENTRIES_PER_SCREEN + ENTRIES_START_ROW; i++) {
-			iprintf ("\x1b[%d;0H ", i);
+		for (int i = entriesStartRow; i < entriesPerScreen + entriesStartRow; i++) {
+			iprintf ("\x1b[%d;%dH ", i, (theme==6 ? 7 : 0));
+			if (theme==6) {
+				iprintf ("\x1b[%d;24H ", i);
+			}
 		}
 		// Show cursor
-		iprintf ("\x1b[%d;0H*", fileOffset - screenOffset + ENTRIES_START_ROW);
+		iprintf ("\x1b[%d;%dH", fileOffset - screenOffset + entriesStartRow, (theme==6 ? 7 : 0));
+		iprintf ("%s", (theme==6 ? "<" : "*"));
+		if (theme==6) {
+			iprintf ("\x1b[%d;24H>", fileOffset - screenOffset + entriesStartRow);
+		}
 
 		if (dirContents.at(fileOffset).isDirectory) {
 			isDirectory = true;
@@ -530,6 +569,7 @@ string browseForFile(const vector<string> extensionList) {
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
+			snd().updateStream();
 			scanKeys();
 			pressed = keysDownRepeat();
 			checkSdEject();
@@ -538,18 +578,30 @@ string browseForFile(const vector<string> extensionList) {
 
 		if (pressed & KEY_UP) {
 			fileOffset -= 1;
+			if (theme == 6) {
+				snd().playSelect();
+			}
 			settingsChanged = true;
 		}
 		if (pressed & KEY_DOWN) {
 			fileOffset += 1;
+			if (theme == 6) {
+				snd().playSelect();
+			}
 			settingsChanged = true;
 		}
 		if (pressed & KEY_LEFT) {
 			fileOffset -= ENTRY_PAGE_LENGTH;
+			if (theme == 6) {
+				snd().playSelect();
+			}
 			settingsChanged = true;
 		}
 		if (pressed & KEY_RIGHT) {
 			fileOffset += ENTRY_PAGE_LENGTH;
+			if (theme == 6) {
+				snd().playSelect();
+			}
 			settingsChanged = true;
 		}
 
@@ -561,14 +613,22 @@ string browseForFile(const vector<string> extensionList) {
 			screenOffset = fileOffset;
 			showDirectoryContents (dirContents, screenOffset);
 		}
-		if (fileOffset > screenOffset + ENTRIES_PER_SCREEN - 1) {
-			screenOffset = fileOffset - ENTRIES_PER_SCREEN + 1;
+		if (fileOffset > screenOffset + entriesPerScreen - 1) {
+			screenOffset = fileOffset - entriesPerScreen + 1;
 			showDirectoryContents (dirContents, screenOffset);
 		}
 
 		if (pressed & KEY_A) {
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
+				if (theme == 6) {
+					snd().playSelect();
+
+					// Clear the screen
+					iprintf ("\x1b[2J");
+
+					iprintf ("\x1b[6;8H");
+				}
 				iprintf("Entering directory\n");
 				// Enter selected directory
 				chdir (entry->name.c_str());
@@ -588,6 +648,7 @@ string browseForFile(const vector<string> extensionList) {
 				printSmallCentered(false, 108, "\u2427 OK");
 				pressed = 0;
 				do {
+					snd().updateStream();
 					scanKeys();
 					pressed = keysDown();
 					checkSdEject();
@@ -681,6 +742,7 @@ string browseForFile(const vector<string> extensionList) {
 
 					pressed = 0;
 					while (1) {
+						snd().updateStream();
 						scanKeys();
 						pressed = keysDown();
 						checkSdEject();
@@ -725,6 +787,9 @@ string browseForFile(const vector<string> extensionList) {
 				}
 
 				if (proceedToLaunch) {
+					if (theme == 6) {
+						snd().playLaunch();
+					}
 					applaunch = true;
 
 					cursorPosition[secondaryDevice] = fileOffset;
@@ -741,6 +806,9 @@ string browseForFile(const vector<string> extensionList) {
 					// Return the chosen file
 					return entry->name;
 				} else {
+					if (theme == 6) {
+						gbnpBottomInfo();
+					}
 					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				}
 			}
@@ -748,6 +816,9 @@ string browseForFile(const vector<string> extensionList) {
 
 		if ((pressed & KEY_R) && bothSDandFlashcard()) {
 			consoleClear();
+			if (theme == 6) {
+				iprintf ("\x1b[6;8H");
+			}
 			printf("Please wait...\n");
 			cursorPosition[secondaryDevice] = fileOffset;
 			pagenum[secondaryDevice] = 0;
@@ -806,6 +877,7 @@ string browseForFile(const vector<string> extensionList) {
 
 			while (1) {
 				do {
+					snd().updateStream();
 					scanKeys();
 					pressed = keysDown();
 					checkSdEject();
@@ -816,8 +888,11 @@ string browseForFile(const vector<string> extensionList) {
 					clearText();
 					showdialogbox = false;
 					consoleClear();
+					if (theme == 6) {
+						iprintf ("\x1b[6;8H");
+					}
 					printf("Please wait...\n");
-					
+
 					if (pressed & KEY_A && !isDirectory) {
 						remove(dirContents.at(fileOffset).name.c_str());
 					} else if (pressed & KEY_Y) {
@@ -847,6 +922,9 @@ string browseForFile(const vector<string> extensionList) {
 				}
 
 				if (pressed & KEY_B) {
+					if (theme == 6) {
+						gbnpBottomInfo();
+					}
 					break;
 				}
 			}
@@ -854,8 +932,13 @@ string browseForFile(const vector<string> extensionList) {
 			showdialogbox = false;
 		}
 
-		if (pressed & KEY_START)
+		if ((theme!=6 && (pressed & KEY_START)) || (theme==6 && (pressed & KEY_SELECT)))
 		{
+			if (theme == 6) {
+				snd().playLaunch();
+				snd().stopStream();
+				for (int i = 0; i < 25; i++) swiWaitForVBlank();
+			}
 			if (settingsChanged) {
 				cursorPosition[secondaryDevice] = fileOffset;
 				pagenum[secondaryDevice] = 0;
@@ -880,6 +963,9 @@ string browseForFile(const vector<string> extensionList) {
 		{
 			cursorPosition[secondaryDevice] = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);
+			if (theme == 6) {
+				gbnpBottomInfo();
+			}
 			for (int i = 0; i < 25; i++) swiWaitForVBlank();
 		}
 

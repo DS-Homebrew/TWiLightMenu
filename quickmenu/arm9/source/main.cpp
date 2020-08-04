@@ -697,24 +697,24 @@ void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
 		fcrompathini.SetString("Dir Info", "fullName", path);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-	} /*else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
+	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0) {
+			 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
 		CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 		path = replaceAll(ndsPath, "fat:/", slashchar);
 		fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
 		fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
 		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-	}*/
+	}
 
 	char text[32];
 	snprintf(text, sizeof(text), "Start failed. Error %i", err);
 	ClearBrightness();
-	printLarge(false, 4, 4, text);
+	printSmall(false, 4, 4, text);
 	if (err == 0) {
-		printLarge(false, 4, 20, "Flashcard may be unsupported.");
-		printLarge(false, 4, 52, "Flashcard name:");
-		printLarge(false, 4, 68, io_dldi_data->friendlyName);
+		printSmall(false, 4, 20, "Flashcard may be unsupported.");
+		printSmall(false, 4, 52, "Flashcard name:");
+		printSmall(false, 4, 68, io_dldi_data->friendlyName);
 	}
 	stop();
 }
@@ -726,11 +726,11 @@ void loadROMselect()
 	} else if (sdFound()) {
 		chdir("sd:/");
 	}
-	if (theme == 3)
+	/*if (theme == 3)
 	{
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
 	}
-	else if (theme == 2)
+	else */if (theme == 2 || theme == 6)
 	{
 		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
 	}
@@ -825,6 +825,41 @@ void dsCardLaunch() {
 
 	DC_FlushAll();						// Make reboot not fail
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
+	stop();
+}
+
+void directCardLaunch() {
+	/*if (memcmp(ndsCardHeader.gameCode, "ALXX", 4) == 0) {
+		u16 alxxBannerCrc = 0;
+		extern u32 arm9StartSig[4];
+		cardRead(0x75600, &arm9StartSig, 0x10);
+		cardRead(0x174602, &alxxBannerCrc, sizeof(u16));
+		if ((arm9StartSig[0] == 0xE58D0008
+		 && arm9StartSig[1] == 0xE1500005
+		 && arm9StartSig[2] == 0xBAFFFFC5
+		 && arm9StartSig[3] == 0xE59D100C)
+		 || alxxBannerCrc != 0xBA52)
+		{
+			if (sdFound()) {
+				chdir("sd:/");
+			}
+			int err = runNdsFile ("/_nds/TWiLightMenu/dstwoLaunch.srldr", 0, NULL, true, true, true, boostCpu, boostVram);
+			char text[32];
+			snprintf(text, sizeof(text), "Start failed. Error %i", err);
+			ClearBrightness();
+			printSmall(false, 4, 4, text);
+			stop();
+		}
+	}*/
+	SetWidescreen(NULL);
+	if (sdFound()) {
+		chdir("sd:/");
+	}
+	int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
+	char text[32];
+	snprintf(text, sizeof(text), "Start failed. Error %i", err);
+	ClearBrightness();
+	printSmall(false, 4, 4, text);
 	stop();
 }
 
@@ -1505,12 +1540,7 @@ int main(int argc, char **argv) {
 							} else if (slot1LaunchMethod == 2) {
 								unlaunchRomBoot("cart:");
 							} else {
-								SetWidescreen(NULL);
-								if (sdFound()) {
-									chdir("sd:/");
-								}
-								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
-								iprintf ("Start failed. Error %i\n", err);
+								directCardLaunch();
 							}
 						} else {
 							mmEffectEx(&snd_wrong);

@@ -11,6 +11,7 @@
 #include <nds/arm9/dldi.h>
 #include <gl2d.h>
 
+#include "sound.h"
 #include "date.h"
 
 #include "ndsheaderbanner.h"
@@ -41,6 +42,7 @@ extern int consoleModel;
 
 extern int bstrap_dsiMode;
 extern bool useBootstrap;
+extern int theme;
 
 extern std::string romfolder[2];
 
@@ -380,7 +382,11 @@ void perGameSettings (std::string filename) {
 
 	while (1) {
 		clearText();
-		titleUpdate(isDirectory, filename.c_str());
+		if (theme == 6) {
+			printLarge(false, 0, 56, filename.c_str());
+		} else {
+			titleUpdate(isDirectory, filename.c_str());
+		}
 
 		printLargeCentered(false, 74, showPerGameSettings ? "Game settings" : "Info");
 		if (showSDKVersion) printSmall(false, 24, 90, SDKnumbertext);
@@ -525,6 +531,7 @@ void perGameSettings (std::string filename) {
 			printSmallCentered(false, 154, isHomebrew ? "\u2428 Back" : "\u2429 Cheats  \u2428 Back");
 		}
 		do {
+			snd().updateStream();
 			scanKeys();
 			pressed = keysDown();
 			held = keysDownRepeat();

@@ -28,9 +28,11 @@
 #include <sstream>
 
 #include "ndsheaderbanner.h"
+#include "sound.h"
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 #include "errorScreen.h"
+#include "common/tonccpy.h"
 
 extern int dialogboxHeight;
 extern bool useBootstrap;
@@ -39,9 +41,9 @@ CheatCodelist::~CheatCodelist(void) {}
 
 inline u32 gamecode(const char *aGameCode)
 {
-    u32 gameCode;
-    memcpy(&gameCode, aGameCode, sizeof(gameCode));
-    return gameCode;
+  u32 gameCode;
+  memcpy(&gameCode, aGameCode, sizeof(gameCode));
+  return gameCode;
 }
 
 #define CRCPOLY 0xedb88320
@@ -93,7 +95,7 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
 
   while(!done)
   {
-    memcpy(&idx,&nidx,sizeof(idx));
+    tonccpy(&idx,&nidx,sizeof(idx));
     fread(&nidx,sizeof(nidx),1,aDat);
     if(gamecode==idx._gameCode&&crc32==idx._crc32)
     {
@@ -197,6 +199,24 @@ void CheatCodelist::generateList(void)
   }
 }
 
+void CheatCodelist::deselectFolder(size_t anIndex)
+{
+  std::vector<cParsedItem>::iterator itr=_data.begin()+anIndex;
+  while(--itr>=_data.begin())
+  {
+    if((*itr)._flags&cParsedItem::EFolder)
+    {
+      ++itr;
+      break;
+    }
+  }
+  while(((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end())
+  {
+    (*itr)._flags&=~cParsedItem::ESelected;
+    ++itr;
+  }
+}
+
 bool CheatCodelist::romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32)
 {
   bool res=false;
@@ -229,26 +249,26 @@ std::string CheatCodelist::getCheats()
   return cheats;
 }
 
-void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem>& list, uint curPos, uint screenPos) {
+void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& list, uint curPos, uint screenPos) {
   for(uint i=0;(int)i<(dialogboxHeight+2) && i<list.size();i++) {
-    if(list[screenPos+i]._flags&cParsedItem::EFolder) {
+    if(list[screenPos+i]->_flags&cParsedItem::EFolder) {
       if(screenPos+i == curPos) {
         printSmall(false, 27, 90+(i*10), ">");
-        printSmall(false, 35, 90+(i*10), list[screenPos+i]._title.c_str());
+        printSmall(false, 35, 90+(i*10), list[screenPos+i]->_title.c_str());
       } else {
         printSmall(false, 22, 90+(i*10), ">");
-        printSmall(false, 30, 90+(i*10), list[screenPos+i]._title.c_str());
+        printSmall(false, 30, 90+(i*10), list[screenPos+i]->_title.c_str());
       }
     } else {
-      if(list[screenPos+i]._flags&cParsedItem::ESelected) {
+      if(list[screenPos+i]->_flags&cParsedItem::ESelected) {
         printSmall(false, 16, 89+(i*10), "x");
       }
       if(screenPos+i == curPos) {
         printSmall(false, 25, 90+(i*10), "-");
-        printSmall(false, 32, 90+(i*10), list[screenPos+i]._title.c_str());
+        printSmall(false, 32, 90+(i*10), list[screenPos+i]->_title.c_str());
       } else {
         printSmall(false, 21, 90+(i*10), "-");
-        printSmall(false, 28, 90+(i*10), list[screenPos+i]._title.c_str());
+        printSmall(false, 28, 90+(i*10), list[screenPos+i]->_title.c_str());
       }
     }
   }
@@ -281,6 +301,7 @@ void CheatCodelist::selectCheats(std::string filename)
     printSmallCentered(false, 160, "B: Back");
 
     while(1) {
+	  snd().updateStream();
       scanKeys();
       pressed = keysDownRepeat();
       checkSdEject();
@@ -291,19 +312,11 @@ void CheatCodelist::selectCheats(std::string filename)
     }
   }
 
-  // Get cheat folders
-  std::vector<CheatCodelist::cParsedItem> cheatFolders;
-  for(uint i=0;i<_data.size();i++) {
-    if(_data[i]._flags&cParsedItem::EFolder) {
-      cheatFolders.push_back(_data[i]);
-    }
-  }
-
   // Make list of all cheats not in folders and folders
-  std::vector<CheatCodelist::cParsedItem> currentList;
+  std::vector<CheatCodelist::cParsedItem *> currentList;
   for(uint i=0;i<_data.size();i++) {
     if(!(_data[i]._flags&cParsedItem::EInFolder)) {
-      currentList.push_back(_data[i]);
+      currentList.push_back(&_data[i]);
     }
   }
 
@@ -316,18 +329,18 @@ void CheatCodelist::selectCheats(std::string filename)
     printLargeCentered(false, 74, "Cheats");
 
     // Print bottom text
-    if(currentList[cheatWnd_cursorPosition]._comment != "") {
-      if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
+    if(currentList[cheatWnd_cursorPosition]->_comment != "") {
+      if(currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
         printSmallCentered(false, 167, "A: Open Y: Info X: Save B: Cancel");
-      } else if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
+      } else if(currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::ESelected) {
         printSmallCentered(false, 167, "A: Deselect Y: Info X: Save B: Cancel");
       } else {
         printSmallCentered(false, 167, "A: Select Y: Info X: Save B: Cancel");
       }
     } else {
-      if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
+      if(currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
         printSmallCentered(false, 167, "A: Open X: Save B: Cancel");
-      } else if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
+      } else if(currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::ESelected) {
         printSmallCentered(false, 167, "A: Deselect X: Save B: Cancel");
       } else {
         printSmallCentered(false, 167, "A: Select X: Save B: Cancel");
@@ -337,14 +350,14 @@ void CheatCodelist::selectCheats(std::string filename)
     // Scroll screen if needed
     if(cheatWnd_cursorPosition < cheatWnd_screenPosition) {
       cheatWnd_screenPosition = cheatWnd_cursorPosition;
-    }
-    if(cheatWnd_cursorPosition > cheatWnd_screenPosition + (dialogboxHeight+2) - 1) {
+    } else if(cheatWnd_cursorPosition > cheatWnd_screenPosition + (dialogboxHeight+2) - 1) {
       cheatWnd_screenPosition = cheatWnd_cursorPosition - (dialogboxHeight+2) + 1;
     }
 
     drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition);
 
     do {
+	  snd().updateStream();
       scanKeys();
       pressed = keysDown();
       held = keysDownRepeat();
@@ -365,39 +378,29 @@ void CheatCodelist::selectCheats(std::string filename)
     } else if(held & KEY_RIGHT) {
       cheatWnd_cursorPosition += (cheatWnd_cursorPosition < (int)(currentList.size()-(dialogboxHeight+2)) ? (dialogboxHeight+2) : currentList.size()-cheatWnd_cursorPosition-1);
     } else if(pressed & KEY_A) {
-      if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-        for(uint i=0;i<_data.size();i++) {
-          if(_data[i]._title == currentList[cheatWnd_cursorPosition]._title) {
-            currentList.clear();
-            for(uint j=i+1;!(_data[j]._flags&cParsedItem::EFolder) && j<_data.size();j++) {
-              currentList.push_back(_data[j]);
-            }
-            mainListCurPos = cheatWnd_cursorPosition;
-            mainListScreenPos = cheatWnd_screenPosition;
-            cheatWnd_cursorPosition = 0;
-            break;
-          }
+      if(currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
+        uint i = std::distance(&_data[0], currentList[cheatWnd_cursorPosition]) + 1;
+        currentList.clear();
+        for(; !(_data[i]._flags & cParsedItem::EFolder) && i < _data.size(); i++) {
+          currentList.push_back(&_data[i]);
         }
+        mainListCurPos = cheatWnd_cursorPosition;
+        mainListScreenPos = cheatWnd_screenPosition;
+        cheatWnd_cursorPosition = 0;
       } else {
-        for(uint i=0;i<_data.size();i++) {
-          if(_data[i]._title == currentList[cheatWnd_cursorPosition]._title) {
-            if(_data[i]._flags&cParsedItem::ESelected) {
-              _data[i]._flags&=~cParsedItem::ESelected;
-              currentList[cheatWnd_cursorPosition]._flags&=~cParsedItem::ESelected;
-            } else {
-              _data[i]._flags^=cParsedItem::ESelected;
-              currentList[cheatWnd_cursorPosition]._flags^=cParsedItem::ESelected;
-            }
-          }
+        cParsedItem &cheat = *currentList[cheatWnd_cursorPosition];
+        if(cheat._flags & cParsedItem::EOne)
+          deselectFolder(std::distance(&_data[0], currentList[cheatWnd_cursorPosition]));
+        if((cheat._flags & (cParsedItem::EOne | cParsedItem::ESelected)) != (cParsedItem::EOne | cParsedItem::ESelected)) {
+          cheat._flags ^= cParsedItem::ESelected;
         }
       }
-    }
-    if(pressed & KEY_B) {
+    } else if(pressed & KEY_B) {
       if(mainListCurPos != -1) {
         currentList.clear();
         for(uint i=0;i<_data.size();i++) {
           if(!(_data[i]._flags&cParsedItem::EInFolder)) {
-            currentList.push_back(_data[i]);
+            currentList.push_back(&_data[i]);
           }
         }
         cheatWnd_cursorPosition = mainListCurPos;
@@ -406,8 +409,7 @@ void CheatCodelist::selectCheats(std::string filename)
       } else {
         break;
       }
-    }
-    if(pressed & KEY_X) {
+    } else if(pressed & KEY_X) {
       clearText();
       titleUpdate(isDirectory, filename.c_str());
       printLargeCentered(false, 74, "Cheats");
@@ -416,13 +418,13 @@ void CheatCodelist::selectCheats(std::string filename)
       break;
     }
     if(pressed & KEY_Y) {
-      if(currentList[cheatWnd_cursorPosition]._comment != "") {
+      if(currentList[cheatWnd_cursorPosition]->_comment != "") {
         clearText();
         titleUpdate(isDirectory, filename.c_str());
         printLargeCentered(false, 74, "Cheats");
 
         std::vector<std::string> _topText;
-        std::string _topTextStr(currentList[cheatWnd_cursorPosition]._comment);
+        std::string _topTextStr(currentList[cheatWnd_cursorPosition]->_comment);
         std::vector<std::string> words;
         std::size_t pos;
 
@@ -434,10 +436,21 @@ void CheatCodelist::selectCheats(std::string filename)
         if(_topTextStr.size())
           words.push_back(_topTextStr);
         std::string temp;
-        _topText.clear();
         for(auto word : words) {
-          int width = calcLargeFontWidth((temp + " " + word).c_str());
+          // Split word if the word is too long for a line
+          int width = calcLargeFontWidth(word.c_str());
           if(width > 220) {
+            if(temp.length())
+              _topText.push_back(temp);
+            for(int i = 0; i < width/240; i++) {
+              word.insert((float)((i + 1) * word.length()) / ((width/240) + 1), "\n");
+            }
+            _topText.push_back(word);
+            continue;
+          }
+
+          width = calcSmallFontWidth((temp + " " + word).c_str());
+          if(width > 240) {
             _topText.push_back(temp);
             temp = word;
           } else {
@@ -455,6 +468,7 @@ void CheatCodelist::selectCheats(std::string filename)
         // Print 'Back' text
         printSmallCentered(false, 167, "B: Back");
         while(1) {
+		  snd().updateStream();
           scanKeys();
           pressed = keysDown();
           checkSdEject();
@@ -472,7 +486,7 @@ void CheatCodelist::selectCheats(std::string filename)
       }
       // Also deselect them in the current list so that it updates the display
       for(auto itr = currentList.begin(); itr != currentList.end(); itr++) {
-        (*itr)._flags &= ~cParsedItem::ESelected;
+        (*itr)->_flags &= ~cParsedItem::ESelected;
       }
     }
   }

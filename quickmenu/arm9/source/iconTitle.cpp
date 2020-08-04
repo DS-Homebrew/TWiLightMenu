@@ -529,14 +529,21 @@ void loadFixedBanner(bool isSlot1) {
 		fclose(fixedBannerFile);
 	} else
 		if (isSlot1 && memcmp(ndsHeader.gameCode, "ALXX", 4) == 0) {
+		u16 alxxBannerCrc = 0;
 		cardRead(0x75600, &arm9StartSig, 0x10);
-		if (arm9StartSig[0] == 0xE58D0008
+		cardRead(0x174602, &alxxBannerCrc, sizeof(u16));
+		if ((arm9StartSig[0] == 0xE58D0008
 		 && arm9StartSig[1] == 0xE1500005
 		 && arm9StartSig[2] == 0xBAFFFFC5
 		 && arm9StartSig[3] == 0xE59D100C)
+		 || alxxBannerCrc != 0xBA52)
 		{
 			// It's a SuperCard DSTWO, so use correct banner.
-			cardRead(0x1843400, &ndsBanner, NDS_BANNER_SIZE_ORIGINAL);
+			//cardRead(0x1843400, &ndsBanner, NDS_BANNER_SIZE_ORIGINAL);
+			FILE *fixedBannerFile = fopen("nitro:/fixedbanners/SuperCard DSTWO.bnr", "rb");
+			bannersize = NDS_BANNER_SIZE_ORIGINAL;
+			fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+			fclose(fixedBannerFile);
 		}
 	}
 }

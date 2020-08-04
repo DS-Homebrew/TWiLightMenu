@@ -31,6 +31,7 @@
 #include "common/inifile.h"
 #include "tool/stringtool.h"
 
+#include "sound.h"
 #include "language.h"
 
 #include "cheat.h"
@@ -730,7 +731,7 @@ void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
 		fcrompathini.SetString("Dir Info", "fullName", path);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-	} /*else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
+	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
 		CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
@@ -738,7 +739,7 @@ void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
 		fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
 		fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
 		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-	}*/
+	}
 
 	char text[32];
 	snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -922,6 +923,13 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
+	if (theme == 6) {
+		extern int screenBrightness;
+		screenBrightness = 31;
+		fadeType = false;
+		SetBrightness(0, -31);
+		SetBrightness(1, -31);
+	}
 
 	if (isDSiMode() && sdFound() && consoleModel < 2 && launcherApp != -1) {
 		u8 setRegion = 0;
@@ -1028,7 +1036,20 @@ int main(int argc, char **argv) {
 	iconTitleInit();
 
 	bool menuButtonPressed = false;
+	bool menuGraphicsLoaded = false;
 	
+	if (theme == 6) {
+		//if (!menuGraphicsLoaded) {
+			topBgLoad(true);
+			//bottomBgLoad(true);
+			menuGraphicsLoaded = true;
+		//}
+		startMenu = false;
+		fadeType = true;	// Fade in from white
+		snd();
+		snd().beginStream();
+	}
+
 	char path[256];
 
 	if (copyDSiWareSavBack)
@@ -1047,8 +1068,6 @@ int main(int argc, char **argv) {
 		blackScreen = false;
 	}
 
-	bool menuGraphicsLoaded = false;
-
 	while(1) {
 
 		if (startMenu) {
@@ -1061,6 +1080,15 @@ int main(int argc, char **argv) {
 
 			int pressed = 0;
 
+		  if (theme == 6) {
+				if (!isDSiMode()) {
+					chdir("fat:/");
+				} else if (sdFound()) {
+					chdir("sd:/");
+				}
+				int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
+				iprintf ("Start failed. Error %i\n", err);
+		  } else {
 			do {
 				clearText();
 				printLargeCentered(false, -112, 166, DrawDate());
@@ -1140,6 +1168,7 @@ int main(int argc, char **argv) {
 
 			if (startMenu_cursorPosition < 0) startMenu_cursorPosition = 0;
 			if (startMenu_cursorPosition > 2) startMenu_cursorPosition = 2;
+		  }
 
 			if (menuButtonPressed) {
 				switch (startMenu_cursorPosition) {
@@ -1302,6 +1331,15 @@ int main(int argc, char **argv) {
 			// Set directory
 			chdir (path);
 
+			if (theme == 6) {
+				clearText(false);
+
+				// Print the path
+				printLarge(false, 0, 0, path);
+
+				printLargeCentered(false, 96, "SELECT: Settings menu");
+			}
+
 			//Navigates to the file to launch
 			filename = browseForFile(extensionList);
 		}
@@ -1310,6 +1348,8 @@ int main(int argc, char **argv) {
 		// Launch the item
 
 		if (applaunch) {
+			snd().stopStream();
+
 			// Delete previously used DSiWare of flashcard from SD
 			if (!gotosettings && consoleModel < 2 && previousUsedDevice && bothSDandFlashcard()) {
 				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {

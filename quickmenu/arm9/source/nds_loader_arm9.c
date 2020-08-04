@@ -479,7 +479,8 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 	}
 
 	bool lockScfg = (strncmp(filename, "fat:/_nds/GBARunner2", 20) != 0
-					&& strncmp(filename, "fat:/_nds/TWiLightMenu/emulators/gameyob", 40) != 0);
+				  && strncmp(filename, "fat:/_nds/TWiLightMenu/emulators/gameyob", 40) != 0
+				  && strncmp(filename, "/_nds/TWiLightMenu/dstwoLaunch", 30) != 0);
 
 	bool loadFromRam = runNds9(filename, dsModeSwitch);
 

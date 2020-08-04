@@ -55,7 +55,7 @@ jobs:
           mv TWiLightMenu.7z ~/artifacts
 
           # DSi 7z
-          cp -r TWiLightMenu/DSi\ -\ CFW\ users/* TWiLightMenu
+          cp -r TWiLightMenu/DSi\ -\ CFW\ users/SDNAND\ root/* TWiLightMenu
           rm -rf TWiLightMenu/DSi\ -\ CFW\ users
           cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
           rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users

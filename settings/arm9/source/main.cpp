@@ -168,7 +168,7 @@ void loadROMselect()
 	{
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
 	}
-	else*/ if (ms().theme == 2)
+	else*/ if (ms().theme == 2 || ms().theme == 6)
 	{
 		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
 	}
@@ -538,8 +538,8 @@ int main(int argc, char **argv)
 				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
 				/*{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_WOOD_UI, STR_R4_ORIGINAL},
 				{0, 1, 4, 5, 3, 2})*/
-				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL},
-				{0, 1, 4, 5, 2})
+				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, "GameBoy Color"},
+				{0, 1, 4, 5, 2, 6})
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int(&ms().dsiMusic),
