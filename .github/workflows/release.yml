@@ -70,6 +70,15 @@ jobs:
           mkdir "../../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/"
           mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.DAT"
 
+          #### DSTT and clones
+          ##### No B4DS
+          cp "booter_fc.nds" "TTMenu.dat"
+          cp "DLDI/ttio.dldi" .
+          ./dlditool ttio.dldi TTMenu.dat
+          mkdir "../../7zfile/Flashcard users/Autoboot/DSTT (No B4DS)/"
+          mv "TTMenu.dat" "../../7zfile/Flashcard users/Autoboot/DSTT (No B4DS)/TTMenu.dat"
+          mv "TTMenu.dat" "../../7zfile/Flashcard users/Autoboot/R4i-SDHC, R4i Gold (non-RTS) & r4isdhc.com cards (No B4DS)/_BOOT_DS.NDS"
+
           #### EZ-Flash 5
           cp "booter_fc.nds" "ez5sys.bin"
           cp "DLDI/EZ5V2.dldi" .
