@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Nintendo DSi-Thema - TWiLight Menu++ Anleitung</title>
+		<link rel="stylesheet" href="../assets/css/layout.css">
+		<link rel="stylesheet" href="../assets/css/button-hit.css">
+	</head>
+	<body>
+		<div class="ds-size">
+			<div class="banner">
+				<img src="../assets/images/dsi-theme.png">
+			</div>
+			<div class="bottom-screen">
+				<img class="twilightLogo" src="../assets/images/twilight.png">
+				<div class="ds-margin">
+					<div class="section-title">Tastenbefehle</div>
+					<div class="section-body">
+						<div class="button-action-group">
+							<span class="button-action font dpadUP"></span>
+							<span class="button-action-text">Eintrag verschieben<br>(muss die "Benutzerdefiniert"-Sortieroption aktiviert haben)</span>
+						</div>
+						<hr>
+						<div class="button-action-group">
+							<span class="button-action font leftRight"></span>
+							<span class="button-action-text">Vorheriger/Nächster Eintrag</span>
+						</div>
+						<hr>
+						<div class="button-action-group">
+							<span class="button-action"><span class="font buttonA"> /</span> <b>START</b></span>
+							<span class="button-action-text">Hervorgehobene Anwendung starten</span>
+						</div>
+						<hr>
+						<div class="button-action-group">
+							<span class="button-action font buttonB"></span>
+							<span class="button-action-text">Gehe ein Verzeichnislevel hoch</span>
+						</div>
+						<hr>
+						<div class="button-action-group">
+							<span class="button-action font buttonX"></span>
+							<span class="button-action-text">Eintrag im Menü ausblenden</span>
+						</div>
+						<hr>
+						<div class="button-action-group">
+							<span class="button-action font buttonY"></span>
+							<span class="button-action-text">Anwendungs-Informationen und bestimmte Einstellungen anzeigen</span>
+						</div>
+						<hr>
+						<div class="button-action-group">
+							<span class="button-action">SELECT</span>
+							<span class="button-action-text">Öffnet entweder das SELECT-Menü oder das Klassische DS-Menü.</span>
+						</div>
+					</div>
+
+					<div class="section-title">Touch-Steuerung</div>
+					<div class="section-body">
+						<div class="button-action-group">
+							<span class="button-action"><img src="../assets/images/left_right.png"></span>
+							<span class="button-action-text">Durch die Seite scrollen</span>
+						</div>
+						<hr>
+						<div class="button-action-group">
+							<span class="button-action"><img src="../assets/images/tap.png"></span>
+							<span class="button-action-text">Hervorgehobene Anwendung starten</span>
+						</div>
+						<!--
+							<hr>
+							If you have the sorting option set to "Custom", dragging the icon to the top would allow you to move it.
+						-->
+					</div>
+
+					<div class="section-title">Seitensystem</div>
+					<div class="section-body">
+						Menüeinträge im Nintendo DSi-Thema werden in Seiten aufgeteilt, mit maximal 40 Einträgen pro Seite. Du kannst durch die Seiten navigieren, indem du die <span class="font buttonL"></span> & <span class="font buttonR"></span> -Trigger benutzt.
+						<ul>
+							<li>Wenn du <span class="font buttonL"></span> auf der Seite die ganz rechts ist drückst, gelangst du zum letzten Eintrag auf der Seite.</li>
+							<li>Wenn du <span class="font buttonR"></span> auf der Seite die ganz links ist drückst, gelangst du zum ersten Eintrag auf der Seite.</li>
+						</ul>
+						Die untere Leiste repräsentiert die Position aller 40 Einträge auf einer Seite und so kannst du darauf tippen, um schnell einen bestimmten Ort auf einer Seite zu erreichen.<br>
+						Wenn deine Trigger nicht funktionieren, funktionieren SELECT + <span class="font leftRight"></span> als Ersatz.
+					</div>
+
+					<div class="section-title">Eigenes Bild am oberen Bildschirm</div>
+					<div class="section-body">
+						<div style="text-align: center;"><img style="border-color: black; border-width: 1px; border-style: dashed;" src="/assets/images/photo_default.png"></div>
+						TWiLight Menu++ unterstützt das Anzeigen eigener Fotos auf dem oberen Bildschirm, genau wie das offizielle Nintendo DSi-Menü. Jedoch, anstatt es aus der Nintendo DSi Kamera Anwendung zu beziehen, kannst du ein beliebiges PNG-Bild im folgenden Verzeichnis platzieren: <code class="language-plaintext">/_nds/TWiLightMenu/dsimenu/photos</code>
+						<ul>
+							<li>Maximale Breite: 208 Pixel</li>
+							<li>Maximale Höhe: 156 Pixel</li>
+						</ul>
+						Wenn die Bildgröße kleiner als die Maximalgröße ist, werden die schwarzen Ränder dein Bild umgeben.
+					</div>
+
+					<div class="section-title">SELECT-Menü</div>
+					<div class="section-body">
+						Das Drücken von SELECT im Nintendo DSi-Thema öffnet standardmäßig das Klassische DS-Menü. In den TWiLight Menu++ Einstellungen kannst du es jedoch so ändern, dass es das SELECT-Menü öffnet, ein Miniaturmenü, das im Thema selbst eingebettet ist. Hier sind die Menüoptionen für das SELECT-Menü.
+						<ul>
+							<li><b>Home-Menü:</b> Auf den Nintendo DSi- und Nintendo 3DS-Konsolen wird diese Option zur Rückkehr ins Home-Menü angezeigt.</li>
+							<li><b>Einstellungen:</b> Auswahl öffnet ein Menü zum Umstellen von Einstellungen für TWiLight Menu++ und dessen Launcher.</li>
+							<li><b>Spielkarten-Optionen:</b> Auf einem original-DS oder -DS Lite kannst du dein Slot-2-Gerät von hier aus starten. Auf einem Nintendo DSi und Nintendo 3DS auf dem TWiLightMenu++ von der SD-Karte läuft, kannst du entweder deine Slot-1-Karte starten oder auf bestimmten Flashkarten, umstellen welche SD-Karte TWiLight Menu++ navigiert.</li>
+							<li><b>Anleitung:</b> Dies startet die Informationsdatenbank von TWiLight Menu++. Es ist das, was du gerade ansiehst :P</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
