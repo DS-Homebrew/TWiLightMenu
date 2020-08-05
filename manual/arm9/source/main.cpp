@@ -336,6 +336,8 @@ int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 	defaultExceptionHandler();
 
+	bool useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
+
 	extern const DISC_INTERFACE __my_io_dsisd;
 
 	fatMountSimple("sd", &__my_io_dsisd);
@@ -411,7 +413,19 @@ int main(int argc, char **argv) {
 
 	InitSound();
 
-	chdir("nitro:/pages/");
+	int userLanguage = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
+	int setLanguage = (guiLanguage == -1) ? userLanguage : guiLanguage;
+
+	switch (setLanguage) {
+		case 1:
+		default:
+			chdir("nitro:/pages/english/");
+			break;
+		case 5:
+			chdir("nitro:/pages/spanish/");
+			break;
+	}
+
 	loadPageList();
 	loadPageInfo(manPagesList[0].name.substr(0,manPagesList[0].name.length()-3) + "ini");
 	pageLoad(manPagesList[0].name);
