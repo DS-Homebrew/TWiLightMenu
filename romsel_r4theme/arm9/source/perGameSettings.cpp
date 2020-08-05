@@ -526,7 +526,7 @@ void perGameSettings (std::string filename) {
 		if (!isDSiMode() && isHomebrew) {
 			printSmallCentered(false, 132, "\u2428 Back");
 		} else if (!showPerGameSettings) {
-			printSmallCentered(false, 124, "\u2427 OK");
+			printSmallCentered(false, 104, "\u2427 OK");
 		} else if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
 			printSmallCentered(false, 154, isHomebrew ? "\u2428 Back" : "\u2429 Cheats  \u2428 Back");
 		}
