@@ -1327,7 +1327,7 @@ void vBlankHandler() {
 
 		frameDelay = 0;
 		frameDelayEven = !frameDelayEven;
-		renderFrame = false;
+		renderFrame = (ms().fps == 60);
 	}
 
 	colonTimer++;
