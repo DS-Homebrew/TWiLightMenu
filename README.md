@@ -54,6 +54,7 @@ Please note that Docker compilation is not compatible with native compilation on
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI.
 - [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcarts.
+- SNBeast: Unlaunch patches
 - retrogamefan & Rudolph: Included AP-patches for nds-bootstrap.
 - fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, gamemasterplc, RocketRobz & ChampionLeake: Widescreen Cheats
 ## Translators
