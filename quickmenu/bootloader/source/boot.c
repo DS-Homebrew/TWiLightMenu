@@ -210,7 +210,7 @@ void resetMemory_ARM7 (void)
 		toncset((void*)0x02004000, 0, 0x7FC000);
 		toncset((void*)0x02D00000, 0, 0x2F4000);
 	} else {
-		toncset((void*)0x02004000, 0, dsiMode ? 0xFF0000 : 0x3F0000);
+		toncset((void*)0x02004000, 0, dsiMode&&!dsMode ? 0xFF0000 : 0x3F0000);
 	}
 	*(u32*)(0x2FFFD9C) = 0;	// Clear exception handler
 
