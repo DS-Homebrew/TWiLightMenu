@@ -78,6 +78,7 @@ std::string dsiWarePrvPath;
 
 const char *charUnlaunchBg;
 std::string unlaunchBg = "default.gif";
+bool removeLauncherPatches = true;
 
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
@@ -219,6 +220,7 @@ void LoadSettings(void) {
 
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 	charUnlaunchBg = unlaunchBg.c_str();
+	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
 
 	// Default nds-bootstrap settings
 	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);

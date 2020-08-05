@@ -213,6 +213,7 @@ class TWLSettings
     std::string dsi_theme;
     std::string _3ds_theme;
     std::string unlaunchBg;
+    bool removeLauncherPatches;
 
     //int screenScaleSize;
     bool wideScreen;

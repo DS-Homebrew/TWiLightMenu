@@ -847,11 +847,6 @@ int main(int argc, char **argv)
 
 	if (isDSiMode() && ms().consoleModel == 0 && sdAccessible) {
 		miscPage
-			.option(STR_UNLAUNCH_BG,
-				STR_DESCRIPTION_UNLAUNCH_BG,
-				Option::Int(&ms().subtheme, opt_bg_select, opt_reset_subtheme),
-				{STR_PRESS_A},
-				{0})
 			.option(STR_SDREMOVALDETECTION,
 				STR_DESCRIPTION_SDREMOVALDETECTION,
 				Option::Bool(&ms().sdRemoveDetect),
@@ -929,6 +924,21 @@ int main(int argc, char **argv)
 			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
 	}
 	
+	SettingsPage unlaunchPage(STR_UNLAUNCH_SETTINGS);
+	if (sdAccessible && ms().consoleModel == 0) {
+		unlaunchPage
+			.option(STR_BACKGROUND,
+				STR_DESCRIPTION_UNLAUNCH_BG,
+				Option::Int(&ms().subtheme, opt_bg_select, opt_reset_subtheme),
+				{STR_PRESS_A},
+				{0})
+			.option(STR_LAUNCHER_PATCHES,
+				STR_DESCRIPTION_LAUNCHER_PATCHES,
+				Option::Bool(&ms().removeLauncherPatches),
+				{STR_OFF, STR_ON},
+				{true, false});
+	}
+
 	/*SettingsPage twlfirmPage(STR_TWLFIRM_SETTINGS);
 	if (isDSiMode() && ms().consoleModel >= 2) {
 		twlfirmPage
@@ -941,6 +951,9 @@ int main(int argc, char **argv)
 		.addPage(gbar2Page)
 		.addPage(gamesPage)
 		.addPage(miscPage);
+	if (sdAccessible && ms().consoleModel == 0) {
+		gui().addPage(unlaunchPage);
+	}
 	/*if (isDSiMode() && ms().consoleModel >= 2) {
 		gui().addPage(twlfirmPage);
 	}*/

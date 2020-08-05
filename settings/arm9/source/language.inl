@@ -9,6 +9,7 @@ STRING(GUI_SETTINGS, "GUI Settings")
 STRING(EMULATION_HB_SETTINGS, "Emulation/HB settings")
 STRING(GBARUNNER2_SETTINGS, "GBARunner2 Emulation settings")
 STRING(GAMESAPPS_SETTINGS, "Games and Apps settings")
+STRING(UNLAUNCH_SETTINGS, "Unlaunch settings")
 STRING(PRESS_A, "Press \\A")
 
 // TWL_FIRM settings
@@ -195,7 +196,6 @@ STRING(LANGUAGE, "Language")
 STRING(GAMELANGUAGE, "Game Language")
 STRING(TITLELANGUAGE, "Game Title Language")
 STRING(COLORMODE, "Color Mode")
-STRING(UNLAUNCH_BG, "Unlaunch BG")
 STRING(SDREMOVALDETECTION, "SD removal detection")
 STRING(S1SDACCESS, "Slot-1 microSD access")
 STRING(WIFI, "WiFi")
@@ -223,7 +223,6 @@ STRING(DESCRIPTION_LANGUAGE_1, "Avoid the limited selections of your console lan
 STRING(DESCRIPTION_GAMELANGUAGE_1, "Set language for DS ROMs played using nds-bootstrap.")
 STRING(DESCRIPTION_TITLELANGUAGE_1, "Set Banner Title language for DS ROMs (except DSiWare).")
 STRING(DESCRIPTION_COLORMODE, "Changes the color of your screens. May not work in all areas. Exit settings for the change to take effect.")
-STRING(DESCRIPTION_UNLAUNCH_BG, "Changes the default background of Unlaunch. Requires re-installation of Unlaunch.")
 STRING(DESCRIPTION_SDREMOVALDETECTION, "Enables/Disables SD removal detection. Disable it if an error message is shown instead of the ROM menu.")
 STRING(DESCRIPTION_S1SDACCESS_1, "Allows your flashcard to be used as a secondary device. Turn this off if IR functionality doesn't work or if the app crashes.")
 STRING(DESCRIPTION_WIFI, "Select whether to use Nintendo WiFi Connection. Does not affect DS Download Play.")
@@ -238,6 +237,13 @@ STRING(DESCRIPTION_DEFAULT_LAUNCHER_1, "Select whether to launch TWiLight Menu++
 STRING(DESCRIPTION_SYSTEMSETTINGS_1, "Press \\A to change settings related to the Nintendo DSi system.")
 // STRING(DESCRIPTION_REPLACEDSIMENU_1, "Start TWiLight Menu++ on boot, instead of the DSi Menu.")
 // STRING(DESCRIPTION_RESTOREDSIMENU_1, "Show DSi Menu on boot again.")
+
+// Unlaunch settings
+STRING(BACKGROUND, "Background")
+STRING(LAUNCHER_PATCHES, "Launcher Patches")
+
+STRING(DESCRIPTION_UNLAUNCH_BG, "Changes the default background of Unlaunch. Requires re-installation of Unlaunch.")
+STRING(DESCRIPTION_LAUNCHER_PATCHES, "Enables or disables the DSi Splash Screen and the DSi Menu music.")
 
 // Flashcard settings
 // STRING(FLASHCARD_SELECT, "Select Flashcard")

@@ -419,6 +419,20 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 	fread((void*)0x02B80000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
 	fclose(ndsFile);
 	
+	extern bool removeLauncherPatches;
+	if (removeLauncherPatches) {
+		// Patch out splash and sound disable patches
+		if (memcmp((char*)0x0280A591, "1.9", 3) == 0) {
+			*(u8*)0x02806E74 = 'S';
+			*(u8*)0x02806E75 = 'A';
+			*(u8*)0x02806E76 = 'N';
+		} else if (memcmp((char*)0x0280A616, "2.0", 3) == 0) {
+			*(u8*)0x02806E91 = 'S';
+			*(u8*)0x02806E92 = 'A';
+			*(u8*)0x02806E93 = 'N';
+		}
+	}
+
 	extern const char *charUnlaunchBg;
 	char bgPath[256];
 	sprintf(bgPath, "sd:/_nds/TWiLightMenu/unlaunch/backgrounds/%s", charUnlaunchBg);

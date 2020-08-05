@@ -52,6 +52,7 @@ std::string filename;
 
 const char *charUnlaunchBg;
 std::string unlaunchBg = "default.gif";
+bool removeLauncherPatches = true;
 
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
 
@@ -114,6 +115,7 @@ TWL_CODE void LoadSettings(void) {
 
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 	charUnlaunchBg = unlaunchBg.c_str();
+	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
 
 	// Default nds-bootstrap settings
 	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);

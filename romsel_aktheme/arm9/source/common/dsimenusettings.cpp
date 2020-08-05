@@ -9,6 +9,7 @@
 static const char* settingsinipath = DSIMENUPP_INI;
 
 const char *charUnlaunchBg;
+bool removeLauncherPatches = true;
 
 TWLSettings::TWLSettings()
 {
@@ -169,6 +170,7 @@ void TWLSettings::loadSettings()
 
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 	charUnlaunchBg = unlaunchBg.c_str();
+	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
 
     show12hrClock = settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
