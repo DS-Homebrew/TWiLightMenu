@@ -789,6 +789,8 @@ string browseForFile(const vector<string> extensionList) {
 				if (proceedToLaunch) {
 					if (theme == 6) {
 						snd().playLaunch();
+						snd().stopStream();
+						for (int i = 0; i < 25; i++) swiWaitForVBlank();
 					}
 					applaunch = true;
 

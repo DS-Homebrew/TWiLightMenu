@@ -47,6 +47,7 @@ Please note that Docker compilation is not compatible with native compilation on
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons.
 - [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi theme's `SELECT` menu.
 - [fail0verflow](https://github.com/fail0verflow/), Fluto, and Arkhandar: Homebrew Channel/Launcher graphics.
+- davi: Border for GBC theme (originally for GameYob).
 - [NightScript](https://github.com/NightYoshi370/): Reworked Manual pages.
 ## Others
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.

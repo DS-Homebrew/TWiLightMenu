@@ -22,6 +22,7 @@
 #include <maxmod9.h>
 #include <fstream>
 #include <gl2d.h>
+#include "graphics/lodepng.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
 #include "common/inifile.h"
@@ -426,6 +427,19 @@ void graphicsLoad()
 	BG_PALETTE_SUB[255] = RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel));
 
 	if (theme == 6) {
+		uint imageWidth, imageHeight;
+		std::vector<unsigned char> image;
+
+		lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/gbcborder.png");
+
+		for(uint i=0; i<image.size()/4; i++) {
+			topImage[0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorMode == 1) {
+				topImage[0][i] = convertVramColorToGrayscale(topImage[0][i]);
+			}
+			topImage[1][i] = topImage[0][i];
+		}
+
 		FILE* fileTop = fopen("nitro:/themes/gbnp/bg.bmp", "rb");
 
 		if (fileTop) {
