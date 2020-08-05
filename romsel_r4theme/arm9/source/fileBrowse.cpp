@@ -513,10 +513,14 @@ string browseForFile(const vector<string> extensionList) {
 			}
 		}
 		// Show cursor
+		if (theme==6) {
+			iprintf ("\x1B[43m");		// Print foreground yellow color
+		}
 		iprintf ("\x1b[%d;%dH", fileOffset - screenOffset + entriesStartRow, (theme==6 ? 7 : 0));
 		iprintf ("%s", (theme==6 ? "<" : "*"));
 		if (theme==6) {
 			iprintf ("\x1b[%d;24H>", fileOffset - screenOffset + entriesStartRow);
+			iprintf ("\x1B[47m");		// Print foreground white color
 		}
 
 		if (dirContents.at(fileOffset).isDirectory) {
