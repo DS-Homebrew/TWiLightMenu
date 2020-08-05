@@ -19,8 +19,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	booter
 BUILD		:=	build
-SOURCES		:=	../arm7/source
-INCLUDES	:=	../arm7/include build
+SOURCES		:=	../../../arm7/source
+INCLUDES	:=	../../../arm7/include build
 
 #---------------------------------------------------------------------------------
 # options for code generation

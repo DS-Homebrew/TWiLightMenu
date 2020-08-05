@@ -15,7 +15,6 @@ if (!$?) {
 docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args
 
 if($args.Count -eq 0 -and $?) {
-    Copy-Item "booter_fc.nds" "../7zfile/Flashcard users/BOOT_fc.nds"
-    Copy-Item "booter_fc_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.nds"
-    Copy-Item "booter_fc.nds" "../7zfile/Flashcard users/Autoboot/Original R4/default.nds"
+    Copy-Item "booter_fc.nds" "../7zfile/Flashcard users/BOOT.nds"
+    Copy-Item "booter_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.nds"
 }

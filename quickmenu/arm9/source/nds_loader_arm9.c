@@ -341,6 +341,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 		if (!boostCpu) {
 			REG_SCFG_CLK = 0x80;
 		}
+
 		if (lockScfg) {
 			REG_SCFG_EXT = (boostVram ? 0x03002000 : 0x03000000);		// 4MB memory mode, and lock SCFG
 		} else {
@@ -397,7 +398,7 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
 	fread((void*)0x02B80000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
 	fclose(ndsFile);
-	
+
 	extern const char *charUnlaunchBg;
 	char bgPath[256];
 	sprintf(bgPath, "sd:/_nds/TWiLightMenu/unlaunch/backgrounds/%s", charUnlaunchBg);
@@ -417,23 +418,24 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 		fread(&gifWidth, 1, sizeof(u16), gifFile);
 		fread(&gifHeight, 1, sizeof(u16), gifFile);
 
-	  if (gifWidth == 256 && gifHeight == 192) {
-		// Replace Unlaunch background with custom one
+		if (gifWidth == 256 && gifHeight == 192) {
+			// Replace Unlaunch background with custom one
 
-		//const u32 gifSignature[2] = {0x38464947, 0x01006139};
-		const u32 gifSignatureStart = 0x38464947;
-		const u32 gifSignatureEnd = 0x3B000044;
+			//const u32 gifSignature[2] = {0x38464947, 0x01006139};
+			const u32 gifSignatureStart = 0x38464947;
+			const u32 gifSignatureEnd = 0x3B000044;
 
-		u32 iEnd = 0;
-		for (u32 i = 0x02800000; i < 0x02810000; i += 4) {
-			iEnd = i+0x3C6C;
-			if (*(u32*)i == gifSignatureStart && *(u32*)iEnd == gifSignatureEnd) {
-				fseek(gifFile, 0, SEEK_SET);
-				fread((void*)i, 1, 0x3C70, gifFile);
-				break;
+			u32 iEnd = 0;
+			for (u32 i = 0x02800000; i < 0x02810000; i += 4) {
+				iEnd = i+0x3C6C;
+				if (*(u32*)i == gifSignatureStart && *(u32*)iEnd == gifSignatureEnd) {
+					fseek(gifFile, 0, SEEK_SET);
+					fread((void*)i, 1, 0x3C70, gifFile);
+					break;
+				}
 			}
 		}
-	  }
+
 		fclose(gifFile);
 	}
 
@@ -518,7 +520,7 @@ bool installBootStub(bool havedsiSD) {
 	bool ret = false;
 
 	bootloader[8] = isDSiMode();
-	if( havedsiSD) {
+	if (havedsiSD) {
 		ret = true;
 		bootloader[3] = 0; // don't dldi patch
 		bootloader[7] = 1; // use internal dsi SD code

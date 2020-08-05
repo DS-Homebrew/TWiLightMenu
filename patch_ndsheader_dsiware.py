@@ -35,7 +35,8 @@ parser.add_argument('--arm9EntryAddress', help='arm9 ram address of the binary p
 parser.add_argument('--arm7EntryAddress', help='arm7 ram address of the binary provided')
 parser.add_argument('--arm9i', type=file, help='add a dsi arm9i binary to the file, not needed for homebrew so far')
 parser.add_argument('--arm7i', type=file, help='add a dsi arm7i binary to the file, not needed for homebrew so far')
-parser.add_argument('--accessControl', help='access control field')	
+parser.add_argument('--accessControl', help='access control field')
+parser.add_argument('--twlTouch', help='Toggle TWL Touch or not', action="store_true")
 args = parser.parse_args()
 
 if args.mode is None:
@@ -325,20 +326,23 @@ if not args.read:
 				print "arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize+arm9isize)
 			args.arm7i.close()
 			totaldsisize=arm9isize+arm7isize
-			
 
-			
 		srlTwlExtHeader=srlTwlExtHeader._replace(
 			accessControl=			0x00000138,
 			arm7ScfgExtMask=		0x80040000,
-			reserved_flags=			0x01000000
+			reserved_flags=			0x00000000
 			)
-			
+
+		if args.twlTouch:
+			srlTwlExtHeader=srlTwlExtHeader._replace(
+				reserved_flags=			0x01000000,
+				)
+
 		if args.accessControl is not None:
 			srlTwlExtHeader=srlTwlExtHeader._replace(
 				accessControl=			int(args.accessControl,0),
 				)
-				
+
 if args.verbose or args.read:	
 	pprint(dict(srlTwlExtHeader._asdict()))
 

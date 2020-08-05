@@ -12,14 +12,14 @@ body {
 }
 .ds-size {
 	width: 256px;
-	min-height: 384px;
+	min-height: 368px;
 	background: repeating-linear-gradient(to bottom, #404040, #404040 1px, #383838 1px, #383838 2px);
 }
 .banner {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 192px;
+	height: 174px;
 }
 .ds-margin {
 	margin: 0 2px;
@@ -34,6 +34,9 @@ body {
 	width: -moz-fit-content;
 	margin-bottom: 0;
 	padding: 5px 10px 0 10px;
+}
+.ds-margin > .section-title:first-of-type {
+	max-width: 60%;
 }
 .section-body {
 	background-color: #cecece;

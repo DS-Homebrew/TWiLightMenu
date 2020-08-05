@@ -1,182 +1,184 @@
 #---------------------------------------------------------------------------------
 .SUFFIXES:
 #---------------------------------------------------------------------------------
-.SECONDARY:
-
 ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
+export TARGET := booter
+
 include $(DEVKITARM)/ds_rules
 
-export VERSION_MAJOR	:= 7
-export VERSION_MINOR	:= 4
-export VERSION_PATCH	:= 0
-
-
-VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
-#---------------------------------------------------------------------------------
-# TARGET is the name of the output
-# BUILD is the directory where object files & intermediate files will be placed
-# SOURCES is a list of directories containing source code
-# INCLUDES is a list of directories containing extra header files
-# DATA is a list of directories containing binary files embedded using bin2o
-# GRAPHICS is a list of directories containing image files to be converted with grit
-#---------------------------------------------------------------------------------
-TARGET		:=	booter
-BUILD		:=	build
-SOURCES		:=	source source/graphics
-INCLUDES	:=	include
-DATA		:=	data  
-GRAPHICS	:=  gfx
-
-#---------------------------------------------------------------------------------
-# options for code generation
-#---------------------------------------------------------------------------------
-ARCH	:=	-mthumb -mthumb-interwork
-
-CFLAGS	:=	-g -Wall -O2\
- 		-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
-		-ffast-math \
-		$(ARCH)
-
-CFLAGS	+=	$(INCLUDE) -DARM9 -DNO_SDMMC
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=c++11
-
-ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
-
-#---------------------------------------------------------------------------------
-# any extra libraries we wish to link with the project (order is important)
-#---------------------------------------------------------------------------------
-LIBS	:= 	-lfat -lnds9
- 
- 
-#---------------------------------------------------------------------------------
-# list of directories containing libraries, this must be the top level containing
-# include and lib
-#---------------------------------------------------------------------------------
-LIBDIRS	:=	$(LIBNDS)
- 
-#---------------------------------------------------------------------------------
-# no real need to edit anything past this point unless you need to add additional
-# rules for different file extensions
-#---------------------------------------------------------------------------------
-ifneq ($(BUILD),$(notdir $(CURDIR)))
-#---------------------------------------------------------------------------------
-
-export OUTPUT	:=	$(CURDIR)/$(TARGET)
-
-export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
-					$(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
-					$(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir))
-
-export DEPSDIR	:=	$(CURDIR)/$(BUILD)
-
-CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-BMPFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.bmp)))
-PNGFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
-SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	load.bin bootstub.bin exceptionstub.bin
- 
-#---------------------------------------------------------------------------------
-# use CXX for linking C++ projects, CC for standard C
-#---------------------------------------------------------------------------------
-ifeq ($(strip $(CPPFILES)),)
-#---------------------------------------------------------------------------------
-	export LD	:=	$(CC)
-#---------------------------------------------------------------------------------
-else
-#---------------------------------------------------------------------------------
-	export LD	:=	$(CXX)
-#---------------------------------------------------------------------------------
-endif
-#---------------------------------------------------------------------------------
-
-export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
-					$(BMPFILES:.bmp=.o) \
-					$(PNGFILES:.png=.o) \
-					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
- 
-export INCLUDE	:=	$(foreach dir,$(INCLUDES),-iquote $(CURDIR)/$(dir)) \
-					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-					-I$(CURDIR)/$(BUILD)
- 
-export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
-
-icons := $(wildcard *.bmp)
-
-ifneq (,$(findstring $(TARGET).bmp,$(icons)))
-	export GAME_ICON := $(CURDIR)/$(TARGET).bmp
-else
-	ifneq (,$(findstring icon.bmp,$(icons)))
-		export GAME_ICON := $(CURDIR)/icon.bmp
-	endif
-endif
- 
-export GAME_TITLE := $(TARGET)
-
-.PHONY: bootloader bootstub clean arm7/$(TARGET).elf arm7_cyclodsi/$(TARGET).elf arm9/$(TARGET).elf arm9_cyclodsi/$(TARGET).elf
+.PHONY: bootloader bootstub clean makearm7_fc makearm7_cyclodsi makearm9_fc makearm9_cyclodsi
 
 all:	bootloader bootstub $(TARGET).nds
-	
+
+makearm7_fc:
+	$(MAKE) -C arm7
+	cp arm7/$(TARGET).elf $(TARGET)_fc.arm7.elf
+
+makearm7_cyclodsi:
+	$(MAKE) -C flashcart_specifics/CycloDSi/arm7
+	cp flashcart_specifics/CycloDSi/arm7/$(TARGET).elf $(TARGET)_cyclodsi.arm7.elf
+
+makearm9_fc:
+	$(MAKE) -C arm9
+	cp arm9/$(TARGET).elf $(TARGET)_fc.arm9.elf
+
+makearm9_cyclodsi:
+	$(MAKE) -C flashcart_specifics/CycloDSi/arm9
+	cp flashcart_specifics/CycloDSi/arm9/$(TARGET).elf $(TARGET)_cyclodsi.arm9.elf
+
 dist:	all
-	@cp "booter_fc.nds" "../7zfile/Flashcard users/BOOT.NDS"
-	@cp "booter_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
+	@cp "$(TARGET)_fc.nds" "../7zfile/Flashcard users/BOOT.NDS"
+	@cp "$(TARGET)_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
+	@cp "$(TARGET)_fc.arm7.elf" "../7zfile/Debug/$(TARGET)_fc.arm7.elf"
+	@cp "$(TARGET)_fc.arm9.elf" "../7zfile/Debug/$(TARGET)_fc.arm9.elf"
+	@cp "$(TARGET)_cyclodsi.arm7.elf" "../7zfile/Debug/$(TARGET)_cyclodsi.arm7.elf"
+	@cp "$(TARGET)_cyclodsi.arm9.elf" "../7zfile/Debug/$(TARGET)_cyclodsi.arm9.elf"
 
-$(TARGET).nds:	$(TARGET).arm7 $(TARGET)_cyclodsi.arm7 $(TARGET).arm9 $(TARGET)_cyclodsi.arm9
-  # simple nds srl without dsi extended header
-	ndstool	-h 0x200 -c $(TARGET)_fc.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
-	ndstool	-h 0x200 -c $(TARGET)_cyclodsi.nds -7 $(TARGET)_cyclodsi.arm7.elf -9 $(TARGET)_cyclodsi.arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
+autoboot_dist:	dist autoboot
 
-$(TARGET).arm7: arm7/$(TARGET).elf
-	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
+.ONESHELL:
+autoboot:
+	cp "$(TARGET)_fc.nds" "./flashcart_specifics/booter_fc.nds"
+	cd flashcart_specifics/
 
-$(TARGET)_cyclodsi.arm7: arm7_cyclodsi/$(TARGET).elf
-	cp arm7_cyclodsi/$(TARGET).elf $(TARGET)_cyclodsi.arm7.elf
+	#### R4 Original & M3 Simply
+	cp "booter_fc.nds" "_DS_MENU.nds"
+	dlditool ./DLDI/r4_sd.dldi _DS_MENU.nds
+	r4denc _DS_MENU.nds
+	mkdir "../../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
+	mv "_DS_MENU.dat" "../../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.DAT"
 
-$(TARGET).arm9: arm9/$(TARGET).elf
-	cp arm9/$(TARGET).elf $(TARGET).arm9.elf
+	#### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS & R4iDSN/R4 Ultra
+	##### Global
+	cp "booter_fc.nds" "_DS_MENU.nds"
+	dlditool ./DLDI/r4idsn_sd.dldi _DS_MENU.nds
 
-$(TARGET)_cyclodsi.arm9: arm9_cyclodsi/$(TARGET).elf
-	cp arm9_cyclodsi/$(TARGET).elf $(TARGET)_cyclodsi.arm9.elf
+	##### R4iDSN & R4 Ultra specific
+	cp "_DS_MENU.nds" "../../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_.NDS"
+	mv "_DS_MENU.nds" "../../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_B.NDS"
 
-#---------------------------------------------------------------------------------
-arm7/$(TARGET).elf:
-	@$(MAKE) -C arm7
-	
-#---------------------------------------------------------------------------------
-arm7_cyclodsi/$(TARGET).elf:
-	@$(MAKE) -C arm7_cyclodsi
+	##### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS specific
+	#r4denc _DS_MENU.nds
+	#mkdir "../../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/"
+	#mv "_DS_MENU.dat" "../../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.DAT"
 
-#---------------------------------------------------------------------------------
-arm9/$(TARGET).elf:
-	@$(MAKE) -C arm9
+	#### EZ-Flash 5
+	cp "booter_fc.nds" "ez5sys.bin"
+	dlditool ./DLDI/EZ5V2.dldi ez5sys.bin
+	mkdir "../../7zfile/Flashcard users/Autoboot/EZ Flash V/"
+	mv "ez5sys.bin" "../../7zfile/Flashcard users/Autoboot/EZ Flash V/ez5sys.bin"
 
-#---------------------------------------------------------------------------------
-arm9_cyclodsi/$(TARGET).elf:
-	@$(MAKE) -C arm9_cyclodsi
+	#### GBAMP + PassMe, FlashMe or WifiMe
+	cp "booter_fc.nds" "_BOOT_MP.NDS"
+	dlditool ./DLDI/mpcf.dldi _BOOT_MP.NDS
+	mkdir "../../7zfile/Flashcard users/Autoboot/GBAMP + PassMe, FlashMe or WifiMe/"
+	mv "_BOOT_MP.NDS" "../../7zfile/Flashcard users/Autoboot/GBAMP + PassMe, FlashMe or WifiMe/_BOOT_MP.NDS"
 
-#---------------------------------------------------------------------------------
-#$(BUILD):
-	#@[ -d $@ ] || mkdir -p $@
-	#@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-#---------------------------------------------------------------------------------
+	#### iSmart Premium
+	##### research done entirely by devkitPro
+	cp "booter_fc.nds" "ismat.dat"
+	dlditool ./DLDI/Mat.dldi ismat.dat
+	mkdir -p "../../7zfile/Flashcard users/Autoboot/iSmart Premium/system/"
+	mv "ismat.dat" "../../7zfile/Flashcard users/Autoboot/iSmart Premium/system/ismat.dat"
+
+	#### Acekard 2i/Acekard 2.1 & Galaxy Eagle
+	cp "booter_fc.nds" "akmenu4.nds"
+	dlditool ./DLDI/ak2_sd.dldi akmenu4.nds
+	cp "akmenu4.nds" "../../7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_.NDS"
+	cp "akmenu4.nds" "../../7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_B.NDS"
+	mkdir "../../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/"
+	mv "akmenu4.nds" "../../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/akmenu4.nds"
+
+	#### DSTT
+	cp "booter_fc.nds" "TTMenu.dat"
+	dlditool "./DLDI/DSTTDLDIboyakkeyver.dldi" TTMenu.dat
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/TTMenu.dat"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/Ace3DS/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/Ace3DS/3DSCARD.DAT"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)/iLL.iL"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i Gold Upgrade Revolution (v1.14b kernel)/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i Gold Upgrade Revolution (v1.14b kernel)/R4i.dat"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4IIISDHC (v3.07 kernel) & R4i SDHC Silver RTS Lite/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4IIISDHC (v3.07 kernel) & R4i SDHC Silver RTS Lite/R4.dat"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i Upgrade Revolution/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i Upgrade Revolution/R4i.3ds"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i SDHC Upgrade Revolution (www.r4i-dshc.com), R4i 3DS (v4.3 kernel) & R4i YES/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i SDHC Upgrade Revolution (www.r4i-dshc.com), R4i 3DS (v4.3 kernel) & R4i YES/R4i.TP"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i King LL/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i King LL/R4KING"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/R4i.TP"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/iLL.iL"
+
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/_BOOT_DS.NDS"
+
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/"
+	cp TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/_DS_MENU.DAT"
+
+	# Since this is the last one, move it instead of copy
+	mkdir "../../7zfile/Flashcard users/Autoboot/R4i-REDANT/"
+	mv TTMenu.dat "../../7zfile/Flashcard users/Autoboot/R4i-REDANT/Redant.dat"
+
+	#### Games N Music
+	mkdir "../../7zfile/Flashcard users/Autoboot/Games N Music/"
+
+	##### SDHC but Faster
+	cp "booter_fc.nds" "bootme.nds"
+	dlditool ./DLDI/gmtf2.dldi bootme.nds
+	mkdir "../../7zfile/Flashcard users/Autoboot/Games N Music/SDHC/"
+	mv "bootme.nds" "../../7zfile/Flashcard users/Autoboot/Games N Music/SDHC/bootme.nds"
+
+	##### Not-SDHC restricted but slower
+	cp "booter_fc.nds" "bootme.nds"
+	dlditool ./DLDI/gmtf.dldi bootme.nds
+	mkdir "../../7zfile/Flashcard users/Autoboot/Games N Music/Non-SDHC/"
+	mv "bootme.nds" "../../7zfile/Flashcard users/Autoboot/Games N Music/Non-SDHC/bootme.nds"
+
+	#### SuperCard DSTWO
+	cp "booter_fc.nds" "dstwo.nds"
+	dlditool ./DLDI/dstwo.dldi dstwo.nds
+	mkdir -p "../../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/"
+	mv "dstwo.nds" "../../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds"
+
+	#### SuperCard DSONE
+	cp "../booter_fc.nds" "TTMenu.DAT"
+	dlditool ./DLDI/DSONESlot-1.dldi TTMenu.DAT
+	mv TTMenu.DAT "../../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/TTMenu.DAT"
+
+$(TARGET).nds:	makearm7_fc makearm7_cyclodsi makearm9_fc makearm9_cyclodsi
+	# simple nds srl without dsi extended header
+	ndstool -c $(TARGET)_fc.nds       -7 $(TARGET)_fc.arm7.elf       -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool -c $(TARGET)_cyclodsi.nds -7 $(TARGET)_cyclodsi.arm7.elf -9 $(TARGET)_cyclodsi.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
+
 clean:
 	@echo clean ...
-	@rm -fr data
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds
-	@rm -fr $(TARGET).arm7.elf
-	@rm -fr $(TARGET).arm7_cyclodsi.elf
-	@rm -fr $(TARGET).arm9.elf
-	@rm -fr $(TARGET).arm9_cyclodsi.elf
+	@rm -fr data $(BUILD)
+	@rm -fr ./flashcart_specifics/booter_fc.nds ./flashcart_specifics/_DS_MENU.nds
+	@rm -fr $(TARGET)_fc.nds $(TARGET)_fc.arm7.elf $(TARGET)_fc.arm9.elf
+	@rm -fr $(TARGET)_cyclodsi.nds $(TARGET)_cyclodsi.arm7.elf $(TARGET)_cyclodsi.arm9.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C arm9 clean
-	@$(MAKE) -C arm9_cyclodsi clean
+	@$(MAKE) -C flashcart_specifics/CycloDSi/arm9 clean
 	@$(MAKE) -C arm7 clean
-	@$(MAKE) -C arm7_cyclodsi clean
+	@$(MAKE) -C flashcart_specifics/CycloDSi/arm7 clean
+
+	@echo Cleaning Flashcart Autobooters
+	@rm -fr "../../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
 
 data:
 	@mkdir -p data
@@ -186,40 +188,3 @@ bootloader: data
 
 bootstub: data
 	@$(MAKE) -C bootstub
-
-#---------------------------------------------------------------------------------
-else
- 
-#---------------------------------------------------------------------------------
-# main targets
-#---------------------------------------------------------------------------------
-#$(OUTPUT).nds	: 	$(OUTPUT).elf
-#$(OUTPUT).elf	:	$(OFILES)
- 
-#---------------------------------------------------------------------------------
-%.bin.o	:	%.bin
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	$(bin2o)
-
-#---------------------------------------------------------------------------------
-# This rule creates assembly source files using grit
-# grit takes an image file and a .grit describing how the file is to be processed
-# add additional rules like this for each image extension
-# you use in the graphics folders 
-#---------------------------------------------------------------------------------
-%.s %.h	: %.bmp %.grit
-#---------------------------------------------------------------------------------
-	grit $< -fts -o$*
-
-
-#---------------------------------------------------------------------------------
-%.s %.h   : %.png %.grit
-#---------------------------------------------------------------------------------
-	grit $< -fts -o$*
-
--include $(DEPSDIR)/*.d
- 
-#---------------------------------------------------------------------------------------
-endif
-#---------------------------------------------------------------------------------------

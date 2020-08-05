@@ -1535,9 +1535,9 @@ int main(int argc, char **argv) {
 							slot1Launched = true;
 							SaveSettings();
 
-							if (slot1LaunchMethod==0 || arm7SCFGLocked) {
+							if (slot1LaunchMethod == 0 || arm7SCFGLocked) {
 								dsCardLaunch();
-							} else if (slot1LaunchMethod==2) {
+							} else if (slot1LaunchMethod == 2) {
 								unlaunchRomBoot("cart:");
 							} else {
 								directCardLaunch();
@@ -1574,24 +1574,24 @@ int main(int argc, char **argv) {
 							if (pictochatReboot) {
 								*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
 								*(u16 *)(0x02000304) = 0x1801;
-								if (sysRegion == 4)
-								{
-									*(u32 *)(0x02000308) = 0x484E4543;
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E4543;
+
+								switch (sysRegion) {
+									case 4:
+										*(u32 *)(0x02000308) = 0x484E4543;
+										*(u32 *)(0x0200030C) = 0x00030005;
+										*(u32 *)(0x02000310) = 0x484E4543;
+										break;
+									case 5:
+										*(u32 *)(0x02000308) = 0x484E454B;
+										*(u32 *)(0x0200030C) = 0x00030005;
+										*(u32 *)(0x02000310) = 0x484E454B;
+										break;
+									default:
+										*(u32 *)(0x02000308) = 0x484E4541;	// "HNEA"
+										*(u32 *)(0x0200030C) = 0x00030005;
+										*(u32 *)(0x02000310) = 0x484E4541;	// "HNEA"
 								}
-								else if (sysRegion == 5)
-								{
-									*(u32 *)(0x02000308) = 0x484E454B;
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E454B;
-								}
-								else
-								{
-									*(u32 *)(0x02000308) = 0x484E4541;	// "HNEA"
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E4541;	// "HNEA"
-								}
+
 								*(u32 *)(0x02000314) = 0x00030005;
 								*(u32 *)(0x02000318) = 0x00000017;
 								*(u32 *)(0x0200031C) = 0x00000000;
@@ -1650,24 +1650,24 @@ int main(int argc, char **argv) {
 							if (dlplayReboot) {
 								*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
 								*(u16 *)(0x02000304) = 0x1801;
-								if (sysRegion == 4)
-								{
-									*(u32 *)(0x02000308) = 0x484E4443;
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E4443;
+
+								switch (sysRegion) {
+									case 4:
+										*(u32 *)(0x02000308) = 0x484E4443;
+										*(u32 *)(0x0200030C) = 0x00030005;
+										*(u32 *)(0x02000310) = 0x484E4443;
+										break;
+									case 5:
+										*(u32 *)(0x02000308) = 0x484E444B;
+										*(u32 *)(0x0200030C) = 0x00030005;
+										*(u32 *)(0x02000310) = 0x484E444B;
+										break;
+									default:
+										*(u32 *)(0x02000308) = 0x484E4441;	// "HNDA"
+										*(u32 *)(0x0200030C) = 0x00030005;
+										*(u32 *)(0x02000310) = 0x484E4441;	// "HNDA"
 								}
-								else if (sysRegion == 5)
-								{
-									*(u32 *)(0x02000308) = 0x484E444B;
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E444B;
-								}
-								else
-								{
-									*(u32 *)(0x02000308) = 0x484E4441;	// "HNDA"
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E4441;	// "HNDA"
-								}
+
 								*(u32 *)(0x02000314) = 0x00030005;
 								*(u32 *)(0x02000318) = 0x00000017;
 								*(u32 *)(0x0200031C) = 0x00000000;
@@ -2613,10 +2613,9 @@ int main(int argc, char **argv) {
 					ntrStartSdGame();
 				}
 				argarray.push_back(ROMpath);
-				int err = 0;
-
 				argarray.at(0) = (char *)ndsToBoot;
-				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram);	// Pass ROM to emulator as argument
+
+				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram);	// Pass ROM to emulator as argument
 
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);

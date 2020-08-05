@@ -124,16 +124,18 @@ all:	bootloader bootstub $(TARGET).nds
 
 dist:	all
 	@mkdir -p "../7zfile/DSi&3DS - SD card users"
-	@cp "booter.nds" "../7zfile/DSi&3DS - SD card users/BOOT.NDS"
+	@cp "$(TARGET).nds" "../7zfile/DSi&3DS - SD card users/BOOT.NDS"
 	@mkdir -p "../DSi - CFW users/SDNAND root/title/00030004/53524c41/content"
-	@cp "booter.nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
+	@cp "$(TARGET).nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
+	@cp "$(TARGET).arm7.elf" "../7zfile/Debug/$(TARGET).arm7.elf"
+	@cp "$(TARGET).arm9.elf" "../7zfile/Debug/$(TARGET).arm9.elf"
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
 			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004 -a 00000138 -t twl_banner.bin
 			
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
-		python2 patch_ndsheader_dsiware_twltouch.py $(TARGET).nds
+		python2 ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch
 endif
 
 $(TARGET).arm7: arm7/$(TARGET).elf

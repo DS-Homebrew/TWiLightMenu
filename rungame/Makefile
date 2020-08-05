@@ -123,15 +123,17 @@ export GAME_TITLE := $(TARGET)
 all:	bootloader bootstub $(TARGET).nds
 	
 dist:	all
-	@cp $(TARGET).nds "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
-	@cp $(TARGET).nds "../7zfile/_nds/TWiLightMenu/resetgame.srldr"
-	
+	@cp "$(TARGET).nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
+	@cp "$(TARGET).nds" "../7zfile/_nds/TWiLightMenu/resetgame.srldr"
+	@cp "$(TARGET).arm7.elf" "../7zfile/Debug/$(TARGET).arm7.elf"
+	@cp "$(TARGET).arm9.elf" "../7zfile/Debug/$(TARGET).arm9.elf"
+
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-u 00030015 -g SLRN -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
 			-g SLRN 01 "TWLMENUPP-LR" -a 00000138 -z 80040000 -b icon.bmp "TWiLight Menu++;Last-run ROM;RocketRobz"
 
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
-		python2 patch_ndsheader_dsiware_twltouch.py $(TARGET).nds
+		python2 ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch
 endif
 
 $(TARGET).arm7: arm7/$(TARGET).elf
