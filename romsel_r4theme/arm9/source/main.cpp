@@ -2144,6 +2144,7 @@ int main(int argc, char **argv) {
 				if (!isDSiMode() && !secondaryDevice) {
 					ntrStartSdGame();
 				}
+				argarray.push_back(ROMpath);
 				argarray.at(0) = (char *)ndsToBoot;
 				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram);	// Pass ROM to emulator as argument
 				char text[32];

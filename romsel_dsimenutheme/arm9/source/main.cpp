@@ -1735,6 +1735,7 @@ int main(int argc, char **argv) {
 					ntrStartSdGame();
 				}
 
+				argarray.push_back(ROMpath);
 				argarray.at(0) = (char *)ndsToBoot;
 				snd().stopStream();
 
