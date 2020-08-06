@@ -60,7 +60,7 @@ SystemDetails::SystemDetails()
 }
 
 void SystemDetails::initArm7RegStatuses() {
-	printf("sys().initArm7RegStatuses()\n");
+	//printf("sys().initArm7RegStatuses()\n");
     if (!_fifoOk) {
         registerFifoHandlers();
     }
@@ -83,7 +83,7 @@ void SystemDetails::initFilesystem(const char *runningPath)
 {
 	extern const DISC_INTERFACE __my_io_dsisd;
 
-	printf("sys().initFilesystem()\n");
+	//printf("sys().initFilesystem()\n");
     if (_fatInitOk) {
         return;
 	}
