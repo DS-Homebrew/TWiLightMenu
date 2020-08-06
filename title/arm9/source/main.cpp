@@ -872,8 +872,8 @@ int main(int argc, char **argv)
 	if (!softResetParamsFound && ms().dsiSplash && (isDSiMode() ? fifoGetValue32(FIFO_USER_01) != 0x01 : *(u32*)0x02000000 != 1)) {
 		BootSplashInit();
 		if (isDSiMode()) fifoSendValue32(FIFO_USER_01, 10);
-		*(u32*)0x02000000 = 1;
 	}
+	*(u32*)0x02000000 = 1;
 
 	if ((access(DSIMENUPP_INI, F_OK) != 0)
 	|| (ms().theme < 0) || (ms().theme == 3) || (ms().theme > 6)) {
