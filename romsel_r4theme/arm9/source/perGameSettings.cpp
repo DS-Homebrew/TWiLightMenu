@@ -523,7 +523,7 @@ void perGameSettings (std::string filename) {
 		}
 		perGameOpYpos += 12;
 		}
-		if (!isDSiMode() && isHomebrew) {
+		if (REG_SCFG_EXT==0 && isHomebrew) {
 			printSmallCentered(false, 132, "\u2428 Back");
 		} else if (!showPerGameSettings) {
 			printSmallCentered(false, 104, "\u2427 OK");
