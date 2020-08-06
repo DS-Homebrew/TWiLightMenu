@@ -462,7 +462,7 @@ void lastRunROM()
 		{
 			bool runNds_boostCpu = false;
 			bool runNds_boostVram = false;
-			if (isDSiMode()) {
+			if (REG_SCFG_EXT != 0) {
 				std::string filename = ms().romPath[1];
 				const size_t last_slash_idx = filename.find_last_of("/");
 				if (std::string::npos != last_slash_idx)

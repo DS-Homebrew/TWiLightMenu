@@ -699,7 +699,7 @@ void doPause() {
 void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
-	if (isDSiMode() && usePerGameSettings) {
+	if ((REG_SCFG_EXT != 0) && usePerGameSettings) {
 		std::string filename = ndsPath;
 
 		const size_t last_slash_idx = filename.find_last_of("/");
