@@ -125,7 +125,7 @@ all:	bootloader bootstub $(TARGET).nds
 dist:	all
 	@mkdir -p "../7zfile/DSi&3DS - SD card users"
 	@cp "$(TARGET).nds" "../7zfile/DSi&3DS - SD card users/BOOT.NDS"
-	@mkdir -p "../DSi - CFW users/SDNAND root/title/00030004/53524c41/content"
+	@mkdir -p "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content"
 	@cp "$(TARGET).nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
 	@cp "$(TARGET).arm7.elf" "../7zfile/Debug/$(TARGET).arm7.elf"
 	@cp "$(TARGET).arm9.elf" "../7zfile/Debug/$(TARGET).arm9.elf"
