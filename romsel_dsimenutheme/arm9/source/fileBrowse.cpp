@@ -55,8 +55,6 @@ extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 
-extern bool gbaBiosFound[2];
-
 extern const char *unlaunchAutoLoadID;
 extern void unlaunchRomBoot(const char* rom);
 
@@ -728,54 +726,7 @@ void switchDevice(void) {
 	}
 }
 
-bool checkGbaBios(void) {
-	if (!gbaBiosFound[ms().secondaryDevice]) {
-		snd().playWrong();
-		clearText();
-		dbox_selectMenu = false;
-		if (!showdialogbox) {
-			showdialogbox = true;
-			for (int i = 0; i < 30; i++) {
-				snd().updateStream();
-				swiWaitForVBlank();
-			}
-		}
-		printLarge(false, 16, 12, STR_GBA_BIOS_ERROR);
-		printSmall(false, 0, 64, STR_GBA_BIOS_ERROR_DESC, Alignment::center);
-		printSmall(false, 240, 160, STR_A_OK, Alignment::right);
-		int pressed = 0;
-		do {
-			scanKeys();
-			pressed = keysDown();
-			checkSdEject();
-			tex().drawVolumeImageCached();
-			tex().drawBatteryImageCached();
-			drawCurrentDate();
-			drawCurrentTime();
-			drawClockColon();
-			snd().updateStream();
-			swiWaitForVBlank();
-		} while (!(pressed & KEY_A));
-		snd().playBack();
-		clearText();
-		showdialogbox = false;
-		for (int i = 0; i < 15; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
-		}
-		return false;
-	}
-	return true;
-}
-
 void launchGba(void) {
-	if (ms().useGbarunner) {
-		// Show GBA BIOS message, if GBARunner2 is set in TWLMenu++ Settings
-		if (!checkGbaBios()) {
-			return;
-		}
-	}
-
 	snd().playLaunch();
 	controlTopBright = true;
 
@@ -2639,8 +2590,6 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							proceedToLaunch = false;
 							ramDiskMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						}
-					} else if (bnrRomType[CURPOS] == 1) {
-						proceedToLaunch = checkGbaBios();
 					} else if (bnrRomType[CURPOS] == 5 || bnrRomType[CURPOS] == 6) {
 						if (!ms().smsGgInRam)
 							smsWarning();

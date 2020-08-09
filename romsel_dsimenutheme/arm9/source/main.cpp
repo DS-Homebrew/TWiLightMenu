@@ -106,8 +106,6 @@ bool ceCached = true;
 
 bool applaunch = false;
 
-bool gbaBiosFound[2] = {false};
-
 bool useBackend = false;
 
 bool dropDown = false;
@@ -649,9 +647,6 @@ int main(int argc, char **argv) {
 	langInit();
 
 	std::string filename;
-
-	gbaBiosFound[0] = ((access("sd:/bios.bin", F_OK) == 0) || (access("sd:/gba/bios.bin", F_OK) == 0) || (access("sd:/_gba/bios.bin", F_OK) == 0));
-	gbaBiosFound[1] = ((access("fat:/bios.bin", F_OK) == 0) || (access("fat:/gba/bios.bin", F_OK) == 0) || (access("fat:/_gba/bios.bin", F_OK) == 0));
 
 	if (isDSiMode() && sdFound() && ms().consoleModel < 2 && ms().launcherApp != -1) {
 		u8 setRegion = 0;

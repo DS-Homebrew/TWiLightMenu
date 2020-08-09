@@ -112,8 +112,6 @@ bool ceCached = true;
 
 bool applaunch = false;
 
-bool gbaBiosFound[2] = {false};
-
 bool startMenu = true;
 bool gotosettings = false;
 
@@ -915,9 +913,6 @@ int main(int argc, char **argv) {
 
 	std::string filename;
 
-	gbaBiosFound[0] = ((access("sd:/bios.bin", F_OK) == 0) || (access("sd:/gba/bios.bin", F_OK) == 0) || (access("sd:/_gba/bios.bin", F_OK) == 0));
-	gbaBiosFound[1] = ((access("fat:/bios.bin", F_OK) == 0) || (access("fat:/gba/bios.bin", F_OK) == 0) || (access("fat:/_gba/bios.bin", F_OK) == 0));
-
 	fifoWaitValue32(FIFO_USER_06);
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
@@ -1208,73 +1203,53 @@ int main(int argc, char **argv) {
 						}
 						break;
 					case 2:
-						if (useGbarunner && !gbaBiosFound[secondaryDevice]) {
-							clearText();
-							dialogboxHeight = 1;
-							showdialogbox = true;
-							printLargeCentered(false, 74, "Error code: BINF");
-							printSmallCentered(false, 90, "The GBA BIOS is required");
-							printSmallCentered(false, 102, "to run GBA games.");
-							printSmallCentered(false, 120, "\u2427 OK");
-							for (int i = 0; i < 30; i++) swiWaitForVBlank();
-							pressed = 0;
-							do {
-								scanKeys();
-								pressed = keysDown();
-								checkSdEject();
-								swiWaitForVBlank();
-							} while (!(pressed & KEY_A));
-							showdialogbox = false;
-							dialogboxHeight = 0;
-						} else {
-							// Switch to GBA mode
-							fadeType = false;	// Fade to white
-							for (int i = 0; i < 25; i++) {
-								swiWaitForVBlank();
-							}
-							if (useGbarunner) {
-								if (secondaryDevice) {
-									const char* gbaRunner2Path = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
-									if (isDSiMode()) {
-										gbaRunner2Path = consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
-									}
-									if (useBootstrap) {
-										int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false);
-										iprintf ("Start failed. Error %i\n", err);
-									} else {
-										loadGameOnFlashcard(gbaRunner2Path, false);
-									}
-								} else {
-									std::string bootstrapPath = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-
-									std::vector<char*> argarray;
-									argarray.push_back(strdup(bootstrapPath.c_str()));
-									argarray.at(0) = (char*)bootstrapPath.c_str();
-
-									const char* gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-									if (arm7SCFGLocked) {
-										gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
-									}
-
-									CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2Path);
-									bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
-									bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-									bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
-									bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-									bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-									int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
+						// Switch to GBA mode
+						fadeType = false;	// Fade to white
+						for (int i = 0; i < 25; i++) {
+							swiWaitForVBlank();
+						}
+						if (useGbarunner) {
+							if (secondaryDevice) {
+								const char* gbaRunner2Path = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
+								if (isDSiMode()) {
+									gbaRunner2Path = consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
+								}
+								if (useBootstrap) {
+									int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false);
 									iprintf ("Start failed. Error %i\n", err);
-									if (err == 1) {
-										iprintf(bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
-										iprintf("\nnot found.");
-									}
+								} else {
+									loadGameOnFlashcard(gbaRunner2Path, false);
 								}
 							} else {
-								gbaSwitch();
+								std::string bootstrapPath = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+
+								std::vector<char*> argarray;
+								argarray.push_back(strdup(bootstrapPath.c_str()));
+								argarray.at(0) = (char*)bootstrapPath.c_str();
+
+								const char* gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
+								if (arm7SCFGLocked) {
+									gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
+								}
+
+								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2Path);
+								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+								bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+								int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
+								iprintf ("Start failed. Error %i\n", err);
+								if (err == 1) {
+									iprintf(bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+									iprintf("\nnot found.");
+								}
 							}
+						} else {
+							gbaSwitch();
 						}
 						break;
 				}
