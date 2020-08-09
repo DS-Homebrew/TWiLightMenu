@@ -42,6 +42,7 @@
 		"YIP",	// Idol Janshi Suchi-Pai III Remix
 	    "AK4",	// Kabu Trader Shun
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
+		"YKF",	// Kung Fu Panda
 		"B3X",	// Kunio-kun no Chou Nekketsu!: Soccer League Plus: World Hyper Cup Hen
 		"YLU",	// Last Window: The Secret of Cape West
 		"ANI",	// Luminous Arc
