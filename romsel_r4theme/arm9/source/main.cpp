@@ -1911,6 +1911,7 @@ int main(int argc, char **argv) {
 				char ROMpath[256];
 				snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
 				romPath[secondaryDevice] = ROMpath;
+				previousUsedDevice = secondaryDevice;
 				homebrewBootstrap = true;
 
 				const char *ndsToBoot = "sd:/_nds/nds-bootstrap-release.nds";
