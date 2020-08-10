@@ -933,7 +933,7 @@ int main(int argc, char **argv) {
 	fatMountSimple("fat", dldiGetInternal());
     bool fatInited = (sdFound() || flashcardFound());
 	*(u32*)(0x2FFFD0C) = 0;
-	chdir(sdFound() ? "sd:/" : "fat:/");
+	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
 
 	// Read user name
 	/*char *username = (char*)PersonalData->name;

@@ -39,7 +39,7 @@ void SystemDetails::initFilesystem(const char *runningPath)
 	fatMountSimple("fat", dldiGetInternal());
     _fatInitOk = (sdFound() || flashcardFound());
 	*(u32*)(0x2FFFD0C) = 0;
-	chdir(sdFound() ? "sd:/" : "fat:/");
+	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
     int ntr = nitroFSInit("/_nds/TWiLightMenu/settings.srldr");
     _nitroFsInitOk = (ntr == 1);
 

@@ -203,6 +203,7 @@ int main() {
 		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
 			if (rebootTimer == 60*2) {
 				ReturntoDSiMenu();	// Reboot, if fat init code is stuck in a loop
+				*(u32*)(0x2FFFD0C) = 0;
 			}
 			rebootTimer++;
 		}

@@ -42,7 +42,7 @@ void SystemDetails::initFilesystem(const char *nitrofsPath, const char *runningP
 	fatMountSimple("sd", &__my_io_dsisd);
 	fatMountSimple("fat", dldiGetInternal());
     _fatInitOk = (sdFound() || flashcardFound());
-	chdir(sdFound() ? "sd:/" : "fat:/");
+	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
     int ntr = nitroFSInit(nitrofsPath);
     _nitroFsInitOk = (ntr == 1);
 

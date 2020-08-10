@@ -344,7 +344,7 @@ int main(int argc, char **argv) {
 	bool sdFound = (access("sd:/", F_OK) == 0);
 	fatMountSimple("fat", dldiGetInternal());
 	bool fatInited = (sdFound || (access("fat:/", F_OK) == 0));
-	chdir(sdFound ? "sd:/" : "fat:/");
+	chdir(sdFound&&isDSiMode() ? "sd:/" : "fat:/");
 
 	if (!fatInited) {
 		consoleDemoInit();
