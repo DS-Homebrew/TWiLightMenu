@@ -2199,7 +2199,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						touchRead(&touch);
 						snd().updateStream();
 						if (!(keysHeld() & KEY_TOUCH)) {
-							gameTapped = showSTARTborder;
+							gameTapped = (bannerTextShown && showSTARTborder);
 							break;
 						} else if (touch.px < startTouch.px - 20 ||
 								   touch.px > startTouch.px + 20)
