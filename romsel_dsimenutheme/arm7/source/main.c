@@ -33,6 +33,9 @@
 
 void my_installSystemFIFO(void);
 
+u8 my_i2cReadRegister(u8 device, u8 reg);
+u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data);
+
 #define SNDEXCNT (*(vu16*)0x4004700)
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
@@ -147,9 +150,9 @@ int main() {
 		}*/
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
-			if (isDSiMode()) { //vol
-				volumeLevel = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
-				batteryLevel = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
+			if (isDSiMode() || REG_SCFG_EXT != 0) { //vol
+				volumeLevel = my_i2cReadRegister(I2C_PM, I2CREGPM_VOL);
+				batteryLevel = my_i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
 			} else {
 				batteryLevel = readPowerManagement(PM_BATTERY_REG);
 			}
@@ -172,6 +175,7 @@ int main() {
 		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
 			if (rebootTimer == 60*2) {
 				ReturntoDSiMenu();	// Reboot, if fat init code is stuck in a loop
+				*(u32*)(0x2FFFD0C) = 0;
 			}
 			rebootTimer++;
 		}
