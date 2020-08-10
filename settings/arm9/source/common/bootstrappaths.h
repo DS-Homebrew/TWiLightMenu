@@ -11,7 +11,8 @@
 
 #define BOOTSTRAP_INI "/_nds/nds-bootstrap.ini"
 
-#define DSIMENUPP_INI "/_nds/TWiLightMenu/settings.ini"
+#define DSIMENUPP_INI "sd:/_nds/TWiLightMenu/settings.ini"
+#define DSIMENUPP_INI_FC "fat:/_nds/TWiLightMenu/settings.ini"
 #define DSIMENUPP_SETTINGS_SRL "/_nds/TWiLightMenu/main.srldr"
 
 #define PERGAMESETTINGS_PATH "/_nds/TWiLightMenu/gamesettings/%s.ini"

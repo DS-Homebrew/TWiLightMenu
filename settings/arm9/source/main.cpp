@@ -42,6 +42,8 @@
 
 bool useTwlCfg = false;
 
+const char *settingsinipath = DSIMENUPP_INI;
+
 int currentTheme = 0;
 static int previousDSiWareExploit = 0;
 static int previousSysRegion = 0;
@@ -476,7 +478,11 @@ int main(int argc, char **argv)
 		stop();
 	}
 
-	std::string filename;
+	if (access(settingsinipath, F_OK) != 0 && (access("fat:/", F_OK) == 0)) {
+		settingsinipath =
+		    DSIMENUPP_INI_FC; // Fallback to .ini path on flashcard, if not found on
+							   // SD card, or if SD access is disabled
+	}
 
 	ms().loadSettings();
 	gs().loadSettings();

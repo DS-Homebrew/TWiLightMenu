@@ -5,6 +5,8 @@
 #include "common/inifile.h"
 #include <string.h>
 
+extern const char *settingsinipath;
+
 TWLSettings::TWLSettings()
 {
     romfolder = "";
@@ -103,7 +105,7 @@ TWLSettings::TWLSettings()
 
 void TWLSettings::loadSettings()
 {
-    CIniFile settingsini(DSIMENUPP_INI);
+    CIniFile settingsini(settingsinipath);
 
     // UI settings.
     romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder);
@@ -213,7 +215,7 @@ void TWLSettings::loadSettings()
 
 void TWLSettings::saveSettings()
 {
-    CIniFile settingsini(DSIMENUPP_INI);
+    CIniFile settingsini(settingsinipath);
 
     settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder);
 
@@ -303,7 +305,7 @@ void TWLSettings::saveSettings()
     //settingsini.SetInt("TWL_FIRM", "SCREENSCALESIZE", screenScaleSize);
     settingsini.SetInt("SRLOADER", "WIDESCREEN", wideScreen);
 
-    settingsini.SaveIniFile(DSIMENUPP_INI);
+    settingsini.SaveIniFileModified(settingsinipath);
 }
 
 TWLSettings::TLanguage TWLSettings::getGuiLanguage()
