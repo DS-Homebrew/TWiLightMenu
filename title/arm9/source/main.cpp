@@ -718,8 +718,8 @@ int main(int argc, char **argv)
 		stop();
 	}
 
-	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
-	if (isDSiMode()) {
+	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	if (REG_SCFG_EXT!=0) {
 		u16 cfgCrc = swiCRC16(0xFFFF, (void*)0x02000400, 0x128);
 		u16 cfgCrcFromFile = 0;
 
