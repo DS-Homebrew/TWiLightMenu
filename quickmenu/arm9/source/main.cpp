@@ -2332,6 +2332,7 @@ int main(int argc, char **argv) {
 						}
 
 						launchType[secondaryDevice] = 1;
+						previousUsedDevice = secondaryDevice;
 						SaveSettings();
 
 						if (isDSiMode() || !secondaryDevice) {
@@ -2363,11 +2364,13 @@ int main(int argc, char **argv) {
 						stop();
 					} else {
 						launchType[secondaryDevice] = 1;
+						previousUsedDevice = secondaryDevice;
 						SaveSettings();
 						loadGameOnFlashcard(argarray[0], true);
 					}
 				} else {
 					launchType[secondaryDevice] = 2;
+					previousUsedDevice = secondaryDevice;
 					SaveSettings();
 
 					if (isDSiMode() || !secondaryDevice) {
@@ -2405,6 +2408,8 @@ int main(int argc, char **argv) {
 				char ROMpath[256];
 				snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename[secondaryDevice].c_str());
 				romPath[secondaryDevice] = ROMpath;
+				previousUsedDevice = secondaryDevice;
+				homebrewBootstrap = true;
 
 				const char *ndsToBoot = "sd:/_nds/nds-bootstrap-release.nds";
 				if (extention(filename[secondaryDevice], ".plg")) {
