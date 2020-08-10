@@ -507,7 +507,7 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 					// Clear top screen cubes
 					rocketVideo_playVideo = false;
 				}
-				if (isDSiMode() && ms().showBoxArt == 2) {
+				if ((REG_SCFG_EXT != 0) && ms().showBoxArt == 2) {
 					tex().drawBoxArtFromMem(CURPOS); // Load box art
 				} else {
 					snprintf(boxArtPath, sizeof(boxArtPath),
@@ -1478,7 +1478,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					isHomebrew[i] = 0;
 				}
 
-				if (isDSiMode() && ms().showBoxArt == 2 && ms().theme!=5 && !isDirectory[i]) {
+				if ((REG_SCFG_EXT != 0) && ms().showBoxArt == 2 && ms().theme!=5 && !isDirectory[i]) {
 					snprintf(boxArtPath, sizeof(boxArtPath),
 						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
 								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),

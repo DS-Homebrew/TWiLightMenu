@@ -684,7 +684,7 @@ unsigned int ThemeTextures::getTopFontSpriteIndex(const u16 letter) {
 	return spriteIndex;
 }
 
-TWL_CODE void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
+void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 	if (num < 0 || num > 39) {
 		return;
 	}
