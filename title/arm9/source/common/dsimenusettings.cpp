@@ -5,6 +5,8 @@
 #include "common/inifile.h"
 #include <string.h>
 
+extern const char *settingsinipath;
+
 const char *charUnlaunchBg;
 bool removeLauncherPatches = true;
 
@@ -76,7 +78,7 @@ TWLSettings::TWLSettings()
 
 void TWLSettings::loadSettings()
 {
-    CIniFile settingsini(DSIMENUPP_INI);
+    CIniFile settingsini(settingsinipath);
 
     // UI settings.
     romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder);
@@ -160,7 +162,7 @@ void TWLSettings::loadSettings()
 
 void TWLSettings::saveSettings()
 {
-    CIniFile settingsini(DSIMENUPP_INI);
+    CIniFile settingsini(settingsinipath);
 
     settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder);
 
@@ -205,7 +207,7 @@ void TWLSettings::saveSettings()
 
     settingsini.SetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
-    settingsini.SaveIniFile(DSIMENUPP_INI);
+    settingsini.SaveIniFile(settingsinipath);
 }
 
 TWLSettings::TLanguage TWLSettings::getGuiLanguage()

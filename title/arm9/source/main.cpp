@@ -56,6 +56,7 @@ bool hiyaAutobootFound = false;
 */
 
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
+const char *settingsinipath = DSIMENUPP_INI;
 
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
@@ -748,6 +749,12 @@ int main(int argc, char **argv)
 			}
 		}
 		fclose(twlCfg);
+	}
+
+	if (access(settingsinipath, F_OK) != 0 && (access("fat:/", F_OK) == 0)) {
+		settingsinipath =
+		    DSIMENUPP_INI_FC; // Fallback to .ini path on flashcard, if not found on
+							   // SD card, or if SD access is disabled
 	}
 
 	ms().loadSettings();
