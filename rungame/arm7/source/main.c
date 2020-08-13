@@ -29,18 +29,12 @@
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 
-unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
-unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
-unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
-unsigned int * SCFG_MC=(unsigned int*)0x4004010;
-unsigned int * CPUID=(unsigned int*)0x4004D00;
-unsigned int * CPUID2=(unsigned int*)0x4004D04;
-
-int sndValue = 0;
+void my_installSystemFIFO(void);
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
+	// This will skip the power-off/sleep mode screen when returning to HOME Menu
 	i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
 	i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi Menu
 }
@@ -67,8 +61,13 @@ void powerButtonCB() {
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
-    nocashMessage("ARM7 main.c main");
-	
+	REG_SCFG_ROM = 0x101;
+	REG_SCFG_CLK = (BIT(0) | BIT(1) | BIT(2) | BIT(7) | BIT(8));
+	REG_SCFG_EXT = 0x93FFFB06;
+	*(vu16*)(0x04004012) = 0x1988;
+	*(vu16*)(0x04004014) = 0x264C;
+	*(vu16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
+
 	*(vu16*)(0x04004700) |= BIT(13);	// Set 48khz sound/mic frequency
 
 	// clear sound registers
@@ -89,7 +88,7 @@ int main() {
 	
 	SetYtrigger(80);
 	
-	installSystemFIFO();
+	my_installSystemFIFO();
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
@@ -98,7 +97,7 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
-	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
+	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
 	fifoSendValue32(FIFO_USER_06, 1);
 	
 	// Keep the ARM7 mostly idle
