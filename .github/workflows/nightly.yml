@@ -151,7 +151,7 @@ jobs:
       - name: Release to TWLBot/Builds
         run: |
           # Delete debug 7z
-          rm ${{ github.workspace }}/build/TWiLightMenu-debug-release.7z
+          rm ${{ github.workspace }}/build/TWiLightMenu-debug.7z
 
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
