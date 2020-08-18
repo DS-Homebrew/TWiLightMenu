@@ -123,10 +123,10 @@ export GAME_TITLE := $(TARGET)
 all:	bootloader bootstub $(TARGET).nds
 	
 dist:	all
-	@cp "$(TARGET).nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
-	@cp "$(TARGET).nds" "../7zfile/_nds/TWiLightMenu/resetgame.srldr"
-	@cp "$(TARGET).arm7.elf" "../7zfile/Debug/$(TARGET).arm7.elf"
-	@cp "$(TARGET).arm9.elf" "../7zfile/Debug/$(TARGET).arm9.elf"
+	@cp $(TARGET).nds "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
+	@cp $(TARGET).nds ../7zfile/_nds/TWiLightMenu/resetgame.srldr
+	@cp $(TARGET).arm7.elf ../7zfile/debug/$(TARGET).arm7.elf
+	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-u 00030015 -g SLRN -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
