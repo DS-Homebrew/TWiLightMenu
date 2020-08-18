@@ -11,9 +11,8 @@ PACKAGE		:=	7zfile
 all:	booter booter_fc quickmenu manual romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
 package:
-	@mkdir 7zfile/Debug/
 	@$(MAKE) -C booter dist
-	@$(MAKE) -C booter_fc autoboot_dist
+	@$(MAKE) -C booter_fc dist
 	@$(MAKE) -C quickmenu dist
 	@$(MAKE) -C manual dist
 	#@$(MAKE) -C romsel_aktheme dist
@@ -26,8 +25,6 @@ package:
 
 	@rm -rf 7zfile/*/.gitkeep
 	@rm -rf 7zfile/*/*/.gitkeep
-	# Theme is currently unused
-	@rm -rf 7zfile/_nds/TWiLightMenu/akmenu
 
 booter:
 	@$(MAKE) -C booter

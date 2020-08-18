@@ -49,9 +49,19 @@ jobs:
           echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
       - name: "Pack 7z Package for nightly"
         run: |
+          # Make artifacts directory
+          mkdir -p ~/artifacts
+
+          # Theme is currently unused
+          rm -rf 7zfile/_nds/TWiLightMenu/akmenu
+
+          # Debug 7z
+          mv 7zfile/debug debug
+          7z a TWiLightMenu-debug.7z debug
+          mv TWiLightMenu-debug.7z ~/artifacts
+
           cp -r 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
-          mkdir -p ~/artifacts
           mv TWiLightMenu.7z ~/artifacts
 
           # DSi 7z

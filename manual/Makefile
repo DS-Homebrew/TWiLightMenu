@@ -23,9 +23,9 @@ makearm9:
 	cp arm9/$(TARGET).elf $(TARGET).arm9.elf
 
 dist:	all
-	@cp "$(TARGET).nds" "../7zfile/_nds/TWiLightMenu/manual.srldr"
-	@cp "$(TARGET).arm7.elf" "../7zfile/Debug/$(TARGET).arm7.elf"
-	@cp "$(TARGET).arm9.elf" "../7zfile/Debug/$(TARGET).arm9.elf"
+	@cp $(TARGET).nds ../7zfile/_nds/TWiLightMenu/manual.srldr
+	@cp $(TARGET).arm7.elf ../7zfile/debug/$(TARGET).arm7.elf
+	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
 
 $(TARGET).nds:	makearm7 makearm9
 	ndstool	-u 00030004 -g HBLA -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -d $(NITRODATA) \
