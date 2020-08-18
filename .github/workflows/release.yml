@@ -165,8 +165,7 @@ jobs:
           cp ${{ github.workspace }}/build/TWiLightMenu-debug-release.7z .
           git stage .
           git commit -m "TWiLightMenu (Release) | $COMMIT_TAG"
-          git tag v$CURRENT_DATE
-          git push origin v$CURRENT_DATE master
+          git push origin master
           echo "::set-output name=twlbot_commit::$(git log --format=%H -1)"
       - name: Upload to ${{ github.repository }} release
         run: |
