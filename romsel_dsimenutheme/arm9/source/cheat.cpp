@@ -398,11 +398,11 @@ void CheatCodelist::selectCheats(std::string filename)
         cheatWnd_cursorPosition = 0;
       } else {
         cParsedItem &cheat = *currentList[cheatWnd_cursorPosition];
+        bool select = !(cheat._flags & cParsedItem::ESelected);
         if(cheat._flags & cParsedItem::EOne)
           deselectFolder(std::distance(&_data[0], currentList[cheatWnd_cursorPosition]));
-        if((cheat._flags & (cParsedItem::EOne | cParsedItem::ESelected)) != (cParsedItem::EOne | cParsedItem::ESelected)) {
-          cheat._flags ^= cParsedItem::ESelected;
-        }
+        if(select)
+          cheat._flags |= cParsedItem::ESelected;
       }
     } else if(pressed & KEY_B) {
       snd().playBack();
