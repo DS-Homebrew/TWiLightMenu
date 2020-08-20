@@ -137,6 +137,19 @@ nitroFSInit(const char *ndsfile)
     chdirpathid = NITROROOT;
     ndsFileLastpos = 0;
     ndsFile = NULL;
+	if (strncmp((const char*)0x4FFFA00, "no$gba", 6) == 0)
+	{
+		sysSetCartOwner (BUS_OWNER_ARM9); //give us gba slot ownership
+		if ((strncmp(((const char *)GBAROM) + 0xC, __NDSHeader->gameCode, 4) == 0)
+		 && (memcmp((const char *)GBAROM + 0x15E, (const char *)0x02FFFF5E, 2) == 0))
+		{ // We has gba rahm
+			fntOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FNTOFFSET));
+			fatOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FATOFFSET));
+			hasLoader = false;
+			AddDevice(&nitroFSdevoptab);
+			return (1);
+		}
+	}
     if (ndsfile != NULL)
     {
         if ((ndsFile = fopen(ndsfile, "rb")))
@@ -161,29 +174,6 @@ nitroFSInit(const char *ndsfile)
                 hasLoader = false;
             }
             setvbuf(ndsFile, NULL, _IONBF, 0); //we dont need double buffs u_u
-            AddDevice(&nitroFSdevoptab);
-            return (1);
-        }
-    }
-    REG_EXMEMCNT &= ~ARM7_OWNS_CARD; //give us gba slot ownership
-    if (strncmp(((const char *)GBAROM) + LOADERSTROFFSET, LOADERSTR, strlen(LOADERSTR)) == 0)
-    { // We has gba rahm
-        printf("yes i think this is GBA?!\n");
-        if (strncmp(((const char *)GBAROM) + LOADERSTROFFSET + LOADEROFFSET, LOADERSTR, strlen(LOADERSTR)) == 0)
-        { //Look for second magic string, if found its a sc.nds or nds.gba
-            printf("sc/gba\n");
-            fntOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FNTOFFSET + LOADEROFFSET)) + LOADEROFFSET;
-            fatOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FATOFFSET + LOADEROFFSET)) + LOADEROFFSET;
-            hasLoader = true;
-            AddDevice(&nitroFSdevoptab);
-            return (1);
-        }
-        else
-        { //Ok, its not a .gba build, so must be emulator
-            printf("gba, must be emu\n");
-            fntOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FNTOFFSET));
-            fatOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FATOFFSET));
-            hasLoader = false;
             AddDevice(&nitroFSdevoptab);
             return (1);
         }
