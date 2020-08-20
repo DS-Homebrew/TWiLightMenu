@@ -47,25 +47,23 @@
     
     2018-09-05 v0.9 - modernize devoptab (by RonnChyran)
         * Updated for libsysbase change in devkitARM r46 and above. 
+    
+    2020-08-20 v0.10 - modernize GBA SLOT support (by RocketRobz)
+        * Updated GBA SLOT detection to check for game code and header CRC. 
 
 */
 
 #include <string.h>
 #include <errno.h>
-#include "nds.h"
-#include "common/nitrofs.h"
-
-//This seems to be a typo! memory.h has REG_EXEMEMCNT
-#ifndef REG_EXMEMCNT
-#define REG_EXMEMCNT (*(vuint16 *)0x04000204)
-#endif
+#include <nds.h>
+#include "nitrofs.h"
+#include "tonccpy.h"
 
 #define __itcm __attribute__((section(".itcm")))
 
 //Globals!
 u32 fntOffset;   //offset to start of filename table
 u32 fatOffset;   //offset to start of file alloc table
-bool hasLoader;  //single global nds filehandle (is null if not in dldi/fat mode)
 u16 chdirpathid; //default dir path id...
 FILE *ndsFile;
 off_t ndsFileLastpos; //Used to determine need to fseek or not
@@ -110,7 +108,7 @@ inline ssize_t nitroSubRead(off_t *npos, void *ptr, size_t len)
     }
     else
     {                                             //reading from gbarom
-        memcpy(ptr, *npos + (void *)GBAROM, len); //len isnt checked here because other checks exist in the callers (hopefully)
+        tonccpy(ptr, *npos + (void *)GBAROM, len); //len isnt checked here because other checks exist in the callers (hopefully)
     }
     if (len > 0)
         *npos += len;
@@ -132,46 +130,26 @@ int __itcm
 nitroFSInit(const char *ndsfile)
 {
     off_t pos = 0;
-    char romstr[0x10];
     chdirpathid = NITROROOT;
     ndsFileLastpos = 0;
     ndsFile = NULL;
-	if (strncmp((const char*)0x4FFFA00, "no$gba", 6) == 0)
+	if ((strncmp((const char *)0x02FFFC38, __NDSHeader->gameCode, 4) == 0) && (*(u16*)0x02FFFC36 == __NDSHeader->headerCRC16))
 	{
 		sysSetCartOwner (BUS_OWNER_ARM9); //give us gba slot ownership
-		if ((strncmp(((const char *)GBAROM) + 0xC, __NDSHeader->gameCode, 4) == 0)
-		 && (memcmp((const char *)GBAROM + 0x15E, (const char *)0x02FFFF5E, 2) == 0))
-		{ // We has gba rahm
-			fntOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FNTOFFSET));
-			fatOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FATOFFSET));
-			hasLoader = false;
-			AddDevice(&nitroFSdevoptab);
-			return (1);
-		}
+		// We has gba rahm
+		fntOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FNTOFFSET));
+		fatOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FATOFFSET));
+		AddDevice(&nitroFSdevoptab);
+		return (1);
 	}
     if (ndsfile != NULL)
     {
         if ((ndsFile = fopen(ndsfile, "rb")))
         {
-            nitroSubRead(&pos, romstr, strlen(LOADERSTR));
-            if (strncmp(romstr, LOADERSTR, strlen(LOADERSTR)) == 0)
-            {
-                nitroSubSeek(&pos, LOADEROFFSET + FNTOFFSET, SEEK_SET);
-                nitroSubRead(&pos, &fntOffset, sizeof(fntOffset));
-                nitroSubSeek(&pos, LOADEROFFSET + FATOFFSET, SEEK_SET);
-                nitroSubRead(&pos, &fatOffset, sizeof(fatOffset));
-                fatOffset += LOADEROFFSET;
-                fntOffset += LOADEROFFSET;
-                hasLoader = true;
-            }
-            else
-            {
-                nitroSubSeek(&pos, FNTOFFSET, SEEK_SET);
-                nitroSubRead(&pos, &fntOffset, sizeof(fntOffset));
-                nitroSubSeek(&pos, FATOFFSET, SEEK_SET);
-                nitroSubRead(&pos, &fatOffset, sizeof(fatOffset));
-                hasLoader = false;
-            }
+            nitroSubSeek(&pos, FNTOFFSET, SEEK_SET);
+            nitroSubRead(&pos, &fntOffset, sizeof(fntOffset));
+            nitroSubSeek(&pos, FATOFFSET, SEEK_SET);
+            nitroSubRead(&pos, &fatOffset, sizeof(fatOffset));
             setvbuf(ndsFile, NULL, _IONBF, 0); //we dont need double buffs u_u
             AddDevice(&nitroFSdevoptab);
             return (1);
@@ -362,11 +340,6 @@ int nitroFSOpen(struct _reent *r, void *fileStruct, const char *path, int flags,
             { //Found the *file* youre looking for!!
                 fatStruct->start = dirStruct.romfat.top;
                 fatStruct->end = dirStruct.romfat.bottom;
-                if (hasLoader)
-                {
-                    fatStruct->start += LOADEROFFSET;
-                    fatStruct->end += LOADEROFFSET;
-                }
                 break;
             }
         }
