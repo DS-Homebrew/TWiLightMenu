@@ -42,7 +42,6 @@
 		"YIP",	// Idol Janshi Suchi-Pai III Remix
 	    "AK4",	// Kabu Trader Shun
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
-		"YKF",	// Kung Fu Panda
 		"B3X",	// Kunio-kun no Chou Nekketsu!: Soccer League Plus: World Hyper Cup Hen
 		"YLU",	// Last Window: The Secret of Cape West
 		"ANI",	// Luminous Arc
@@ -81,6 +80,7 @@
 		"BJM",	// Stitch Jam
 		"YG4",	// Suikoden: Tierkreis
 		"CS7",	// Summon Night X: Tears Crown
+		"AXU",	// Surf's Up
 		"AYT",	// Tales of Innocence
 		"AG7",	// Tamagotchi Connection: Corner Shop
 		"YT9",	// Tony Hawk's Proving Ground
