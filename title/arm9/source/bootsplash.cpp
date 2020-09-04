@@ -203,7 +203,7 @@ void BootSplashDSi(void) {
 		fclose(videoFrameFile);
 	}
 
-	videoImageBuffer[0] = new u16[(256*144)*39];
+	videoImageBuffer[0] = new u16[(256*144)*35];
 	for (int i = 1; i < 35; i++) {
 		videoImageBuffer[i] = (u16*)videoImageBuffer[i-1]+(256*144);
 	}
