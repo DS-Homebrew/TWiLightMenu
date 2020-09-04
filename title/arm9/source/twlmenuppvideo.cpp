@@ -9,6 +9,7 @@
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
 #include "common/gl2d.h"
+#include "graphics/lodepng.h"
 
 #include "logo_twlmenupp.h"
 #include "logo_anniversary.h"
@@ -52,8 +53,10 @@ static glImage ggIcon[1];
 static glImage mdIcon[1];
 static glImage snesIcon[1];
 
-extern u16 bmpImageBuffer[256*192];
-extern u16 videoImageBuffer[39][256*144];
+extern u16 bmpImageBuffer[2][256*192];
+extern u16 frameBuffer[2][256*192];
+extern u16 frameBufferBot[2][256*192];
+extern bool doubleBuffer;
 
 extern u16 convertToDsBmp(u16 val);
 
@@ -69,6 +72,7 @@ static int twilightCurrentLine = 191;
 static int menuCurrentLine = 0;
 static int textScale = 191*10;
 static bool videoDonePlaying = false;
+static bool scaleTwlmText = false;
 static bool hideTwlMenuTextSprite = false;
 static bool changeBgAlpha = false;
 
@@ -370,6 +374,7 @@ void twlMenuVideo_topGraphicRender(void) {
 		videoDonePlaying = true;
 	}
 	if (videoDonePlaying) {
+	  if (scaleTwlmText) {
 		if (textScale < 32) {
 			textScale -= 2;
 			REG_BLDY = 0;
@@ -393,13 +398,14 @@ void twlMenuVideo_topGraphicRender(void) {
 			REG_BLDY = changeBgAlpha ? (0b0100 << 1) : 0;
 		}
 		if (textScale < 16) textScale = 16;
+	  }
 	} else {
 		for (int y = 0; y < 94; y++) {
-			dmaCopyWordsAsynch(0, (u16*)videoImageBuffer[0]+(256*twilightCurrentLine), (u16*)BG_GFX+(256*y), 0x200);
-			dmaCopyWordsAsynch(1, (u16*)videoImageBuffer[2]+(256*menuCurrentLine), (u16*)BG_GFX+(256*(191-y)), 0x200);
+			dmaCopyWordsAsynch(0, (u16*)bmpImageBuffer[0]+(256*twilightCurrentLine), (u16*)BG_GFX+(256*y), 0x200);
+			dmaCopyWordsAsynch(1, (u16*)bmpImageBuffer[1]+(256*menuCurrentLine), (u16*)BG_GFX+(256*(191-y)), 0x200);
 			if (y==93) {
 				while (dmaBusy(1));
-				dmaCopyWordsAsynch(1, (u16*)videoImageBuffer[2]+(256*menuCurrentLine), (u16*)BG_GFX+(256*(191-y-1)), 0x200);
+				dmaCopyWordsAsynch(1, (u16*)bmpImageBuffer[1]+(256*menuCurrentLine), (u16*)BG_GFX+(256*(191-y-1)), 0x200);
 			}
 			while (dmaBusy(0) || dmaBusy(1));
 		}
@@ -575,16 +581,16 @@ void twlMenuVideo(void) {
 
 	if (strcmp(currentDate, "02/14") == 0) {
 		// Load pink BG for Valentine's Day
-		sprintf(bgPath, "nitro:/graphics/bg_twlmenuppPink.bmp");
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppPink.bmp");
+		sprintf(bgPath, "nitro:/graphics/bg_twlmenuppPink.png");
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppPink.png");
 	} else if (strcmp(currentDate, "04/22") == 0) {
 		// Load green BG for Earth Day
-		sprintf(bgPath, "nitro:/graphics/bg_twlmenuppGreen.bmp");
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppGreen.bmp");
+		sprintf(bgPath, "nitro:/graphics/bg_twlmenuppGreen.png");
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppGreen.png");
 	} else {
 		// Load normal BG
-		sprintf(bgPath, "nitro:/graphics/bg_twlmenupp.bmp");
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenupp.bmp");
+		sprintf(bgPath, "nitro:/graphics/bg_twlmenupp.png");
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenupp.png");
 	}
 
 	for (int i = 0; i < 30; i++) {
@@ -606,55 +612,121 @@ void twlMenuVideo(void) {
 	while (dmaBusy(0) || dmaBusy(1));
 
 	// Load RocketRobz logo
-	videoFrameFile = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.bmp" : "nitro:/graphics/logo_rocketrobz.bmp", "rb");
-
-	if (videoFrameFile) {
-		// Start loading
-		fseek(videoFrameFile, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-		fseek(videoFrameFile, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, videoFrameFile);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	lodepng::decode(image, width, height, sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.png" : "nitro:/graphics/logo_rocketrobz.png");
+	bool alternatePixel = false;
+	for(unsigned i=0;i<image.size()/4;i++) {
+		image[(i*4)+3] = 0;
+		if (alternatePixel) {
+			if (image[(i*4)] >= 0x4) {
+				image[(i*4)] -= 0x4;
+				image[(i*4)+3] |= BIT(0);
 			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
-			x++;
+			if (image[(i*4)+1] >= 0x4) {
+				image[(i*4)+1] -= 0x4;
+				image[(i*4)+3] |= BIT(1);
+			}
+			if (image[(i*4)+2] >= 0x4) {
+				image[(i*4)+2] -= 0x4;
+				image[(i*4)+3] |= BIT(2);
+			}
 		}
+		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			color = convertVramColorToGrayscale(color);
+		}
+		frameBufferBot[0][i] = color;
+		if (alternatePixel) {
+			if (image[(i*4)+3] & BIT(0)) {
+				image[(i*4)] += 0x4;
+			}
+			if (image[(i*4)+3] & BIT(1)) {
+				image[(i*4)+1] += 0x4;
+			}
+			if (image[(i*4)+3] & BIT(2)) {
+				image[(i*4)+2] += 0x4;
+			}
+		} else {
+			if (image[(i*4)] >= 0x4) {
+				image[(i*4)] -= 0x4;
+			}
+			if (image[(i*4)+1] >= 0x4) {
+				image[(i*4)+1] -= 0x4;
+			}
+			if (image[(i*4)+2] >= 0x4) {
+				image[(i*4)+2] -= 0x4;
+			}
+		}
+		color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			color = convertVramColorToGrayscale(color);
+		}
+		frameBufferBot[1][i] = color;
+		if ((i % 256) == 255) alternatePixel = !alternatePixel;
+		alternatePixel = !alternatePixel;
 	}
-	fclose(videoFrameFile);
+	image.clear();
 
+	scaleTwlmText = true;
+	doubleBuffer = true;
 	fadeType = true;
 	changeBgAlpha = true;
 
 	// Load TWLMenu++ BG
-	videoFrameFile = fopen(bgPath, "rb");
-
-	if (videoFrameFile) {
-		// Start loading
-		fseek(videoFrameFile, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-		fseek(videoFrameFile, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, videoFrameFile);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
+	lodepng::decode(image, width, height, bgPath);
+	alternatePixel = false;
+	for(unsigned i=0;i<image.size()/4;i++) {
+		image[(i*4)+3] = 0;
+		if (alternatePixel) {
+			if (image[(i*4)] >= 0x4) {
+				image[(i*4)] -= 0x4;
+				image[(i*4)+3] |= BIT(0);
 			}
-			u16 val = *(src++);
-			BG_GFX[y*256+x] = convertToDsBmp(val);
-			x++;
+			if (image[(i*4)+1] >= 0x4) {
+				image[(i*4)+1] -= 0x4;
+				image[(i*4)+3] |= BIT(1);
+			}
+			if (image[(i*4)+2] >= 0x4) {
+				image[(i*4)+2] -= 0x4;
+				image[(i*4)+3] |= BIT(2);
+			}
 		}
+		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			color = convertVramColorToGrayscale(color);
+		}
+		frameBuffer[0][i] = color;
+		if (alternatePixel) {
+			if (image[(i*4)+3] & BIT(0)) {
+				image[(i*4)] += 0x4;
+			}
+			if (image[(i*4)+3] & BIT(1)) {
+				image[(i*4)+1] += 0x4;
+			}
+			if (image[(i*4)+3] & BIT(2)) {
+				image[(i*4)+2] += 0x4;
+			}
+		} else {
+			if (image[(i*4)] >= 0x4) {
+				image[(i*4)] -= 0x4;
+			}
+			if (image[(i*4)+1] >= 0x4) {
+				image[(i*4)+1] -= 0x4;
+			}
+			if (image[(i*4)+2] >= 0x4) {
+				image[(i*4)+2] -= 0x4;
+			}
+		}
+		color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			color = convertVramColorToGrayscale(color);
+		}
+		frameBuffer[1][i] = color;
+		if ((i % 256) == 255) alternatePixel = !alternatePixel;
+		alternatePixel = !alternatePixel;
 	}
-	fclose(videoFrameFile);
+	image.clear();
 
 	while (textScale != 16)
 	{
@@ -664,28 +736,58 @@ void twlMenuVideo(void) {
 	}
 
 	// Load TWLMenu++ logo
-	videoFrameFile = fopen(logoPath, "rb");
-
-	if (videoFrameFile) {
-		// Start loading
-		fseek(videoFrameFile, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-		fseek(videoFrameFile, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, videoFrameFile);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
+	lodepng::decode(image, width, height, logoPath);
+	alternatePixel = false;
+	for(unsigned i=0;i<image.size()/4;i++) {
+		image[(i*4)+3] = 0;
+		if (alternatePixel) {
+			if (image[(i*4)] >= 0x4) {
+				image[(i*4)] -= 0x4;
+				image[(i*4)+3] |= BIT(0);
 			}
-			u16 val = *(src++);
-			BG_GFX[y*256+x] = convertToDsBmp(val);
-			x++;
+			if (image[(i*4)+1] >= 0x4) {
+				image[(i*4)+1] -= 0x4;
+				image[(i*4)+3] |= BIT(1);
+			}
+			if (image[(i*4)+2] >= 0x4) {
+				image[(i*4)+2] -= 0x4;
+				image[(i*4)+3] |= BIT(2);
+			}
 		}
+		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			color = convertVramColorToGrayscale(color);
+		}
+		frameBuffer[0][i] = color;
+		if (alternatePixel) {
+			if (image[(i*4)+3] & BIT(0)) {
+				image[(i*4)] += 0x4;
+			}
+			if (image[(i*4)+3] & BIT(1)) {
+				image[(i*4)+1] += 0x4;
+			}
+			if (image[(i*4)+3] & BIT(2)) {
+				image[(i*4)+2] += 0x4;
+			}
+		} else {
+			if (image[(i*4)] >= 0x4) {
+				image[(i*4)] -= 0x4;
+			}
+			if (image[(i*4)+1] >= 0x4) {
+				image[(i*4)+1] -= 0x4;
+			}
+			if (image[(i*4)+2] >= 0x4) {
+				image[(i*4)+2] -= 0x4;
+			}
+		}
+		color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			color = convertVramColorToGrayscale(color);
+		}
+		frameBuffer[1][i] = color;
+		if ((i % 256) == 255) alternatePixel = !alternatePixel;
+		alternatePixel = !alternatePixel;
 	}
-	fclose(videoFrameFile);
 
 	hideTwlMenuTextSprite = true;
 
@@ -698,18 +800,19 @@ void twlMenuVideo(void) {
 		fseek(videoFrameFile, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 		fseek(videoFrameFile, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x800, videoFrameFile);
-		u16* src = bmpImageBuffer;
+		fread(bmpImageBuffer[0], 1, 0x800, videoFrameFile);
+		u16* src = bmpImageBuffer[0];
 		int x = 68;
-		int y = 69;
+		int y = 93;
 		for (int i=0; i<62*14; i++) {
 			if (x >= 130) {
 				x = 68;
 				y--;
 			}
 			u16 val = *(src++);
-			if (val != 0x7C1F) {
-				BG_GFX[(y+24)*256+x] = convertToDsBmp(val);
+			if (val != 0x7C1F && val != 0xFC1F) {
+				frameBuffer[0][y*256+x] = convertToDsBmp(val);
+				frameBuffer[1][y*256+x] = frameBuffer[0][y*256+x];
 			}
 			x++;
 		}

@@ -26,6 +26,7 @@
 #include "common/systemdetails.h"
 #include "common/gl2d.h"
 #include "graphics.h"
+#include "lodepng.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
@@ -52,8 +53,14 @@ bool twlMenuSplash = false;
 extern void twlMenuVideo_loadTopGraphics(void);
 extern void twlMenuVideo_topGraphicRender(void);
 
-u16 bmpImageBuffer[256*192];
-u16 videoImageBuffer[39][256*144];
+bool doubleBuffer = false;
+bool secondBuffer = false;
+
+u16 bmpImageBuffer[2][256*192];
+u16 frameBuffer[2][256*192];
+u16 frameBufferBot[2][256*192];
+//u16 videoImageBuffer[39][256*144];
+u16* videoImageBuffer[39] = {0};
 void* dsiSplashLocation = (void*)0x02600000;
 
 void vramcpy_ui (void* dest, const void* src, int size) 
@@ -140,6 +147,11 @@ void vBlankHandler()
 	}
 	if (controlTopBright) SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
 	if (controlBottomBright) SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
+	if (doubleBuffer) {
+		dmaCopyWordsAsynch(0, frameBuffer[secondBuffer], BG_GFX, 0x18000);
+		dmaCopyWordsAsynch(1, frameBufferBot[secondBuffer], BG_GFX_SUB, 0x18000);
+		secondBuffer = !secondBuffer;
+	}
 	if (twlMenuSplash) {
 		twlMenuVideo_topGraphicRender();
 	}
@@ -201,53 +213,26 @@ void LoadBMP(void) {
 	dmaFillHalfWords(0, BG_GFX, 0x18000);
 	dmaFillHalfWords(0, BG_GFX_SUB, 0x18000);
 
-	FILE* file = fopen("nitro:/graphics/effect_twilight.bmp", "rb");
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			videoImageBuffer[0][y*256+x] = convertToDsBmp(val);
-			x++;
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	lodepng::decode(image, width, height, "nitro:/graphics/effect_twilight.png");
+	for(unsigned i=0;i<image.size()/4;i++) {
+		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			color = convertVramColorToGrayscale(color);
 		}
+		bmpImageBuffer[0][i] = color;
 	}
+	image.clear();
 
-	fclose(file);
-
-	file = fopen("nitro:/graphics/effect_menupp.bmp", "rb");
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			videoImageBuffer[2][y*256+x] = convertToDsBmp(val);
-			x++;
+	lodepng::decode(image, width, height, "nitro:/graphics/effect_menupp.png");
+	for(unsigned i=0;i<image.size()/4;i++) {
+		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			color = convertVramColorToGrayscale(color);
 		}
+		bmpImageBuffer[1][i] = color;
 	}
-
-	fclose(file);
 }
 
 void runGraphicIrq(void) {

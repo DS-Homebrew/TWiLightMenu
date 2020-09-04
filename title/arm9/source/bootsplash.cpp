@@ -14,7 +14,8 @@
 extern bool useTwlCfg;
 
 extern u16 bmpImageBuffer[256*192];
-extern u16 videoImageBuffer[39][256*144];
+//extern u16 videoImageBuffer[39][256*144];
+extern u16* videoImageBuffer[39];
 
 extern u16 convertToDsBmp(u16 val);
 
@@ -221,6 +222,11 @@ void BootSplashDSi(void) {
 			}
 		}
 		fclose(videoFrameFile);
+	}
+
+	videoImageBuffer[0] = new u16[(256*144)*39];
+	for (int i = 1; i < 39; i++) {
+		videoImageBuffer[i] = (u16*)videoImageBuffer[i-1]+(256*144);
 	}
 
 	if (!virtualPain) {
@@ -465,6 +471,8 @@ void BootSplashDSi(void) {
 	for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
 
 	rocketVideo_playVideo = false;
+
+	free(videoImageBuffer[0]);
 }
 
 void BootSplashInit(void) {
