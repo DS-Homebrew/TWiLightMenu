@@ -930,7 +930,7 @@ int main(int argc, char **argv)
 
 	if (ms().showlogo)
 	{
-		if (!soundBankLoaded) {
+		if (!soundBankLoaded || strncmp((char*)0x02FA0004, "*maxmod*", 8) != 0) {
 			// Load sound bank into memory
 			FILE* soundBank = fopen("nitro:/soundbank.bin", "rb");
 			fread((void*)0x02FA0000, 1, 0x58000, soundBank);
