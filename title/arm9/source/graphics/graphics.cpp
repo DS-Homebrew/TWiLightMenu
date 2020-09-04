@@ -56,7 +56,6 @@ extern void twlMenuVideo_topGraphicRender(void);
 bool doubleBuffer = false;
 bool secondBuffer = false;
 
-u16 bmpImageBuffer[2][256*192];
 u16 frameBuffer[2][256*192];
 u16 frameBufferBot[2][256*192];
 //u16 videoImageBuffer[39][256*144];
@@ -221,7 +220,7 @@ void LoadBMP(void) {
 		if (ms().colorMode == 1) {
 			color = convertVramColorToGrayscale(color);
 		}
-		bmpImageBuffer[0][i] = color;
+		frameBuffer[0][i] = color;
 	}
 	image.clear();
 
@@ -231,7 +230,7 @@ void LoadBMP(void) {
 		if (ms().colorMode == 1) {
 			color = convertVramColorToGrayscale(color);
 		}
-		bmpImageBuffer[1][i] = color;
+		frameBuffer[1][i] = color;
 	}
 }
 

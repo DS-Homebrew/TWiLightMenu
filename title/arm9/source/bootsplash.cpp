@@ -13,7 +13,8 @@
 
 extern bool useTwlCfg;
 
-extern u16 bmpImageBuffer[256*192];
+extern u16 frameBuffer[2][256*192];
+extern u16 frameBufferBot[2][256*192];
 //extern u16 videoImageBuffer[39][256*144];
 extern u16* videoImageBuffer[39];
 
@@ -124,8 +125,8 @@ void BootSplashDSi(void) {
 			fseek(videoFrameFile, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 1, 0x18000, videoFrameFile);
-			u16* src = bmpImageBuffer;
+			fread(frameBuffer[0], 1, 0x18000, videoFrameFile);
+			u16* src = frameBuffer[0];
 			int x = 0;
 			int y = 191;
 			for (int i=0; i<256*192; i++) {
@@ -148,8 +149,8 @@ void BootSplashDSi(void) {
 				fseek(videoFrameFile, 0xe, SEEK_SET);
 				u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 				fseek(videoFrameFile, pixelStart, SEEK_SET);
-				fread(bmpImageBuffer, 1, 0x1D00, videoFrameFile);
-				u16* src = bmpImageBuffer;
+				fread(frameBuffer[0], 1, 0x1D00, videoFrameFile);
+				u16* src = frameBuffer[0];
 				int x = 67;
 				int y = 159;
 				for (int i=0; i<122*30; i++) {
@@ -182,8 +183,8 @@ void BootSplashDSi(void) {
 			fseek(file, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
 			fseek(file, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 1, 0x18000, file);
-			u16* src = bmpImageBuffer;
+			fread(frameBuffer[0], 1, 0x18000, file);
+			u16* src = frameBuffer[0];
 			int x = 0;
 			int y = 191;
 			for (int i=0; i<256*192; i++) {
@@ -212,8 +213,8 @@ void BootSplashDSi(void) {
 			fseek(videoFrameFile, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 1, 0x1B00, videoFrameFile);
-			u16* src = bmpImageBuffer;
+			fread(frameBuffer[0], 1, 0x1B00, videoFrameFile);
+			u16* src = frameBuffer[0];
 			for (int i=0; i<122*28; i++) {
 				u16 val = *(src++);
 				if (val != 0x7C1F) {
@@ -251,8 +252,8 @@ void BootSplashDSi(void) {
 				fseek(videoFrameFile, 0xe, SEEK_SET);
 				u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 				fseek(videoFrameFile, pixelStart, SEEK_SET);
-				fread(bmpImageBuffer, 2, 0x12000, videoFrameFile);
-				u16* src = bmpImageBuffer;
+				fread(frameBuffer[0], 2, 0x12000, videoFrameFile);
+				u16* src = frameBuffer[0];
 				int x = 0;
 				int y = 143;
 				for (int i=0; i<256*144; i++) {
@@ -285,8 +286,8 @@ void BootSplashDSi(void) {
 				}
 			}*/
 			if (doRead) {
-				fread(videoImageBuffer, 1, 0x108000, videoFrameFile);
-				LZ77_Decompress((u8*)videoImageBuffer, (u8*)dsiSplashLocation);
+				fread(videoImageBuffer[0], 1, 0x108000, videoFrameFile);
+				LZ77_Decompress((u8*)videoImageBuffer[0], (u8*)dsiSplashLocation);
 			} else {
 				sixtyFps = false;
 			}
@@ -410,8 +411,8 @@ void BootSplashDSi(void) {
 			fseek(videoFrameFile, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 1, 0x4000, videoFrameFile);
-			u16* src = bmpImageBuffer;
+			fread(frameBuffer[0], 1, 0x4000, videoFrameFile);
+			u16* src = frameBuffer[0];
 			int x = 0;
 			int y = 31;
 			for (int i=0; i<256*32; i++) {

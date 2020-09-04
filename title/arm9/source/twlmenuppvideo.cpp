@@ -53,7 +53,6 @@ static glImage ggIcon[1];
 static glImage mdIcon[1];
 static glImage snesIcon[1];
 
-extern u16 bmpImageBuffer[2][256*192];
 extern u16 frameBuffer[2][256*192];
 extern u16 frameBufferBot[2][256*192];
 extern bool doubleBuffer;
@@ -401,11 +400,11 @@ void twlMenuVideo_topGraphicRender(void) {
 	  }
 	} else {
 		for (int y = 0; y < 94; y++) {
-			dmaCopyWordsAsynch(0, (u16*)bmpImageBuffer[0]+(256*twilightCurrentLine), (u16*)BG_GFX+(256*y), 0x200);
-			dmaCopyWordsAsynch(1, (u16*)bmpImageBuffer[1]+(256*menuCurrentLine), (u16*)BG_GFX+(256*(191-y)), 0x200);
+			dmaCopyWordsAsynch(0, (u16*)frameBuffer[0]+(256*twilightCurrentLine), (u16*)BG_GFX+(256*y), 0x200);
+			dmaCopyWordsAsynch(1, (u16*)frameBuffer[1]+(256*menuCurrentLine), (u16*)BG_GFX+(256*(191-y)), 0x200);
 			if (y==93) {
 				while (dmaBusy(1));
-				dmaCopyWordsAsynch(1, (u16*)bmpImageBuffer[1]+(256*menuCurrentLine), (u16*)BG_GFX+(256*(191-y-1)), 0x200);
+				dmaCopyWordsAsynch(1, (u16*)frameBuffer[1]+(256*menuCurrentLine), (u16*)BG_GFX+(256*(191-y-1)), 0x200);
 			}
 			while (dmaBusy(0) || dmaBusy(1));
 		}
@@ -668,6 +667,9 @@ void twlMenuVideo(void) {
 	}
 	image.clear();
 
+	dmaFillHalfWords(0, frameBuffer[0], 0x18000);
+	dmaFillHalfWords(0, frameBuffer[1], 0x18000);
+
 	scaleTwlmText = true;
 	doubleBuffer = true;
 	fadeType = true;
@@ -791,6 +793,8 @@ void twlMenuVideo(void) {
 
 	hideTwlMenuTextSprite = true;
 
+	u16* twlTextBuffer = new u16[62*14];
+
 	// Change TWL letters to user color
 	snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/graphics/TWL_%i.bmp", (int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme));
 	videoFrameFile = fopen(videoFrameFilename, "rb");
@@ -800,8 +804,8 @@ void twlMenuVideo(void) {
 		fseek(videoFrameFile, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 		fseek(videoFrameFile, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer[0], 1, 0x800, videoFrameFile);
-		u16* src = bmpImageBuffer[0];
+		fread(twlTextBuffer, 1, 0x800, videoFrameFile);
+		u16* src = twlTextBuffer;
 		int x = 68;
 		int y = 93;
 		for (int i=0; i<62*14; i++) {
@@ -818,6 +822,8 @@ void twlMenuVideo(void) {
 		}
 	}
 	fclose(videoFrameFile);
+
+	free(twlTextBuffer);
 
 	for (int i = 0; i < (60 * 2)+30; i++)
 	{

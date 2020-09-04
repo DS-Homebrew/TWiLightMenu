@@ -19,7 +19,8 @@
 ------------------------------------------------------------------*/
 #pragma once
 
-extern u16 bmpImageBuffer[2][256*192];
+extern u16 frameBuffer[2][256*192];
+extern u16 frameBufferBot[2][256*192];
 void vramcpy_ui (void* dest, const void* src, int size);
 void clearBrightness(void);
 void runGraphicIrq(void);
