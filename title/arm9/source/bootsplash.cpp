@@ -17,7 +17,7 @@ extern bool useTwlCfg;
 extern u16 frameBuffer[2][256*192];
 extern u16 frameBufferBot[2][256*192];
 //extern u16 videoImageBuffer[39][256*144];
-extern u16* videoImageBuffer[39];
+extern u16* videoImageBuffer[35];
 
 extern u16 convertToDsBmp(u16 val);
 extern u16 convertVramColorToGrayscale(u16 val);
@@ -204,7 +204,7 @@ void BootSplashDSi(void) {
 	}
 
 	videoImageBuffer[0] = new u16[(256*144)*39];
-	for (int i = 1; i < 39; i++) {
+	for (int i = 1; i < 35; i++) {
 		videoImageBuffer[i] = (u16*)videoImageBuffer[i-1]+(256*144);
 	}
 
@@ -281,7 +281,7 @@ void BootSplashDSi(void) {
 		videoFrameFile = fopen("nitro:/video/dsisplash.rvid", "rb");
 		fseek(videoFrameFile, 0x200, SEEK_SET);
 
-		for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
+		for (int selectedFrame = 0; selectedFrame < 35; selectedFrame++) {
 			fread(videoImageBuffer[selectedFrame], 1, 0x12000, videoFrameFile);
 
 			if (cartInserted && selectedFrame > 5) {
@@ -338,8 +338,8 @@ void BootSplashDSi(void) {
 	}
 
 	if (!sixtyFps) {
-		for (int selectedFrame = 39; selectedFrame <= 42; selectedFrame++) {
-			fread(videoImageBuffer[selectedFrame-39], 1, 0x12000, videoFrameFile);
+		for (int selectedFrame = 35; selectedFrame <= 42; selectedFrame++) {
+			fread(videoImageBuffer[selectedFrame-35], 1, 0x12000, videoFrameFile);
 
 			if (cartInserted) {
 				// Draw first half of Nintendo logo
@@ -351,7 +351,7 @@ void BootSplashDSi(void) {
 						y--;
 					}
 					if (BG_GFX[(256*192)+i] != 0xFFFF) {
-						videoImageBuffer[selectedFrame-39][y*256+x] = BG_GFX[(256*192)+i];
+						videoImageBuffer[selectedFrame-35][y*256+x] = BG_GFX[(256*192)+i];
 					}
 					x++;
 				}
@@ -389,8 +389,8 @@ void BootSplashDSi(void) {
 			fseek(videoFrameFile, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(frameBuffer[0], 1, 0x4000, videoFrameFile);
-			u16* src = frameBuffer[0];
+			fread(frameBufferBot[0], 1, 0x4000, videoFrameFile);
+			u16* src = frameBufferBot[0];
 			int x = 0;
 			int y = 31;
 			for (int i=0; i<256*32; i++) {
