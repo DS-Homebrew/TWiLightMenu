@@ -69,7 +69,7 @@ Please note that Docker compilation is not compatible with native compilation on
 - Polish: [Mateusz Tobiasz](https://crowdin.com/profile/tobiaszmateusz)
 - Portuguese: [Christopher Rodrigues](https://crowdin.com/profile/chrismr197), [Gabz Almeida](https://crowdin.com/profile/connwcted), [jim](https://crowdin.com/profile/hnrwx), [joyrv](https://crowdin.com/profile/joyrv), [Wodson de Andrade](https://crowdin.com/profile/CaptainCheep), [Zak](https://github.com/zekroman)
 - Russian: [Ckau](https://crowdin.com/profile/Ckau), [manwithnoface](https://github.com/1upus), [mbhz](https://github.com/mbhz)
-- Spanish: [ccccmark](https://github.com/ccccmark), [KplyAsteroid](https://crowdin.com/profile/Kplyasteroid), [mschifino](https://crowdin.com/profile/mschifino), [XxPhoenix1996xX](https://github.com/XxPhoenix1996xX)
+- Spanish: [ccccmark](https://github.com/ccccmark), [KplyAsteroid](https://crowdin.com/profile/Kplyasteroid), [mschifino](https://crowdin.com/profile/mschifino), [Uriki](https://github.com/Uriki), [XxPhoenix1996xX](https://github.com/XxPhoenix1996xX)
 - Swedish: [Max Hambraeus](https://github.com/maxhambraeus), [Walter Lindell](https://crowdin.com/profile/walter.lindell)
 - Turkish: [İlke Hür Eyiol](https://crowdin.com/profile/ilkecan51)
 - Ukrainian: [Oleh Hatsenko](https://github.com/IRONKAGE), [T](https://crowdin.com/profile/--Tip--)
