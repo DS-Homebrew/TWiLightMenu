@@ -56,15 +56,14 @@
 #include <string.h>
 #include <errno.h>
 #include <nds.h>
-#include "common/nitrofs.h"
-#include "common/tonccpy.h"
+#include "nitrofs.h"
+#include "tonccpy.h"
 
 #define __itcm __attribute__((section(".itcm")))
 
 //Globals!
 u32 fntOffset;   //offset to start of filename table
 u32 fatOffset;   //offset to start of file alloc table
-bool hasLoader;  //single global nds filehandle (is null if not in dldi/fat mode)
 u16 chdirpathid; //default dir path id...
 FILE *ndsFile;
 off_t ndsFileLastpos; //Used to determine need to fseek or not
@@ -131,7 +130,6 @@ int __itcm
 nitroFSInit(const char *ndsfile)
 {
     off_t pos = 0;
-    char romstr[0x10];
     chdirpathid = NITROROOT;
     ndsFileLastpos = 0;
     ndsFile = NULL;
@@ -141,7 +139,6 @@ nitroFSInit(const char *ndsfile)
 		// We has gba rahm
 		fntOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FNTOFFSET));
 		fatOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FATOFFSET));
-		hasLoader = false;
 		AddDevice(&nitroFSdevoptab);
 		return (1);
 	}
@@ -149,25 +146,10 @@ nitroFSInit(const char *ndsfile)
     {
         if ((ndsFile = fopen(ndsfile, "rb")))
         {
-            nitroSubRead(&pos, romstr, strlen(LOADERSTR));
-            if (strncmp(romstr, LOADERSTR, strlen(LOADERSTR)) == 0)
-            {
-                nitroSubSeek(&pos, LOADEROFFSET + FNTOFFSET, SEEK_SET);
-                nitroSubRead(&pos, &fntOffset, sizeof(fntOffset));
-                nitroSubSeek(&pos, LOADEROFFSET + FATOFFSET, SEEK_SET);
-                nitroSubRead(&pos, &fatOffset, sizeof(fatOffset));
-                fatOffset += LOADEROFFSET;
-                fntOffset += LOADEROFFSET;
-                hasLoader = true;
-            }
-            else
-            {
-                nitroSubSeek(&pos, FNTOFFSET, SEEK_SET);
-                nitroSubRead(&pos, &fntOffset, sizeof(fntOffset));
-                nitroSubSeek(&pos, FATOFFSET, SEEK_SET);
-                nitroSubRead(&pos, &fatOffset, sizeof(fatOffset));
-                hasLoader = false;
-            }
+            nitroSubSeek(&pos, FNTOFFSET, SEEK_SET);
+            nitroSubRead(&pos, &fntOffset, sizeof(fntOffset));
+            nitroSubSeek(&pos, FATOFFSET, SEEK_SET);
+            nitroSubRead(&pos, &fatOffset, sizeof(fatOffset));
             setvbuf(ndsFile, NULL, _IONBF, 0); //we dont need double buffs u_u
             AddDevice(&nitroFSdevoptab);
             return (1);
@@ -358,11 +340,6 @@ int nitroFSOpen(struct _reent *r, void *fileStruct, const char *path, int flags,
             { //Found the *file* youre looking for!!
                 fatStruct->start = dirStruct.romfat.top;
                 fatStruct->end = dirStruct.romfat.bottom;
-                if (hasLoader)
-                {
-                    fatStruct->start += LOADEROFFSET;
-                    fatStruct->end += LOADEROFFSET;
-                }
                 break;
             }
         }

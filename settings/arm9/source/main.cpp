@@ -502,7 +502,7 @@ int main(int argc, char **argv)
 	bool widescreenFound = false;
 	bool sdAccessible = (access("sd:/", F_OK) == 0);
 	if (sdAccessible) {
-		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (ms().consoleModel >= 2) && (!sys().arm7SCFGLocked()));
+		widescreenFound = ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) && (ms().consoleModel >= 2) && (!sys().arm7SCFGLocked()));
 	}
 	bool fatAccessible = (access("fat:/", F_OK) == 0);
 

@@ -180,12 +180,21 @@ TWL_CODE int lastRunROM() {
 		*(u8*)(0x023FFD00) = (wifiLed ? 0x13 : 0);		// WiFi On/Off
 	}
 
-	if (consoleModel >= 2 && wideScreen
+	bool twlBgCxiFound = false;
+	if (consoleModel >= 2) {
+		twlBgCxiFound = (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
+	}
+	/*if (consoleModel >= 2 && wideScreen
 	&& access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0 && access("sd:/luma/sysmodules/TwlBg_bak.cxi", F_OK) == 0) {
 		// Revert back to 4:3 for when returning to TWLMenu++
-		remove("sd:/luma/sysmodules/TwlBg.cxi");
-		rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
-	}
+		if (remove("sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+			rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+		} else {
+			consoleDemoInit();
+			printf("Failed to delete TwlBg.cxi");
+			for (int i = 0; i < 60*2; i++) swiWaitForVBlank();
+		}
+	}*/
 
 	vector<char*> argarray;
 	if (launchType[secondaryDevice] > 3) {
@@ -367,7 +376,7 @@ TWL_CODE int lastRunROM() {
 
 			bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
 
-			if (consoleModel >= 2 && useWidescreen && homebrewHasWide) {
+			if (consoleModel >= 2 && twlBgCxiFound && useWidescreen && homebrewHasWide) {
 				argarray.push_back((char*)"wide");
 			}
 
