@@ -59,6 +59,7 @@ bool fadeSpeed = true; // false = slow (for DSi launch effect), true = fast
 bool fadeColor = true; // false = black, true = white
 bool controlTopBright = true;
 bool controlBottomBright = true;
+bool widescreenEffects = false;
 
 extern void ClearBrightness();
 extern bool displayGameIcons;
@@ -523,6 +524,7 @@ int main(int argc, char **argv) {
 	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	ms().loadSettings();
+	widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	tfn(); //
 	tc().loadConfig();
 	tex().videoSetup(); // allocate texture pointers

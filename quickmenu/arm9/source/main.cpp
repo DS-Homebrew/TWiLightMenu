@@ -58,6 +58,7 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
+bool widescreenEffects = false;
 int fps = 60;
 int colorMode = 0;
 int blfLevel = 0;
@@ -922,6 +923,7 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
+	widescreenEffects = (consoleModel >= 2 && wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	
 	if (isDSiMode() && arm7SCFGLocked) {
 		if (consoleModel < 2) {

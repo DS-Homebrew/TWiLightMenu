@@ -609,15 +609,6 @@ int main(int argc, char **argv)
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
-	if (widescreenFound)
-	{
-		gamesPage.option((isDSiMode() ? STR_ASPECTRATIO : "SD: "+STR_ASPECTRATIO),
-			STR_DESCRIPTION_ASPECTRATIO,
-			Option::Bool(&ms().wideScreen),
-			{STR_WIDESCREEN, STR_FULLSCREEN},
-			{true, false});
-	}
-
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked())
 	{
 		gamesPage.option((isDSiMode() ? STR_SMSGGINRAM : "Sys SD: "+STR_SMSGGINRAM),
@@ -749,6 +740,15 @@ int main(int argc, char **argv)
 		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().logging), {STR_ON, STR_OFF}, {true, false});
 
 	SettingsPage miscPage(STR_MISC_SETTINGS);
+
+	if (widescreenFound)
+	{
+		miscPage.option((isDSiMode() ? STR_ASPECTRATIO : "SD: "+STR_ASPECTRATIO),
+			STR_DESCRIPTION_ASPECTRATIO,
+			Option::Bool(&ms().wideScreen),
+			{STR_WIDESCREEN, STR_FULLSCREEN},
+			{true, false});
+	}
 
 	using TLanguage = TWLSettings::TLanguage;
 	miscPage

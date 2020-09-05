@@ -25,6 +25,8 @@
 
 extern bool useTwlCfg;
 
+extern bool widescreenEffects;
+
 // #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
 extern s16 usernameRendered[11];
@@ -1122,6 +1124,13 @@ void ThemeTextures::videoSetup() {
 	bgSetPriority(bg3Sub, 3);
 
 	bgSetPriority(0, 1); // Set 3D to below text
+
+	if (widescreenEffects) {
+		// Add black bars to left and right sides
+		s16 c = cosLerp(0) >> 4;
+		REG_BG3PA_SUB = ( c * 315)>>8;
+		REG_BG3X_SUB = -29 << 8;
+	}
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 }
