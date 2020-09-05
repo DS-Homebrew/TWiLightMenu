@@ -85,9 +85,8 @@ static int anniversaryTextYposMoveSpeed = 9;
 static int anniversaryTextYposMoveDelay = 0;
 static bool anniversaryTextYposMoveDelayEven = true;	// For 24FPS */
 
-static int zoomingIconXpos[9] = {-32, 128, 280, 256, 128, -32, -128, 128, 256+96};
-static int zoomingIconYpos[9] = {0, -32, -64, 192+64, 192+128, 192, -96, -168, -240};
-static int zoomingIconFade[9] = {31, 31, 31, 31, 31, 31, 31, 31, 31};
+static int zoomingIconXpos[8] = {-32, -32, 256, 256+16, -32, -32, 256, 256+16};
+static int zoomingIconYpos[8] = {-32, -48, -48, -32, 192+32, 192+48, 192+48, 192+32};
 
 void twlMenuVideo_loadTopGraphics(void) {
 	u16* newPalette;
@@ -432,43 +431,16 @@ void twlMenuVideo_topGraphicRender(void) {
 				glSprite(i, 191-(blackCoverSize+15), GL_FLIP_NONE, transparentBlock);
 			}
 		}
-		if (zoomingIconYpos[0] < 64) {
-			glColor(RGB15(zoomingIconFade[0], zoomingIconFade[0], zoomingIconFade[0]));
-			glSprite(zoomingIconXpos[0], zoomingIconYpos[0], GL_FLIP_NONE, nesIcon);
-		}
-		if (zoomingIconYpos[1] < 64) {
-			glColor(RGB15(zoomingIconFade[1], zoomingIconFade[1], zoomingIconFade[1]));
-			glSprite(zoomingIconXpos[1], zoomingIconYpos[1], GL_FLIP_NONE, smsIcon);
-		}
-		if (zoomingIconYpos[2] < 64) {
-			glColor(RGB15(zoomingIconFade[2], zoomingIconFade[2], zoomingIconFade[2]));
-			glSprite(zoomingIconXpos[2], zoomingIconYpos[2], GL_FLIP_NONE, mdIcon);
-		}
-		if (zoomingIconYpos[3] > 64+32) {
-			glColor(RGB15(zoomingIconFade[3], zoomingIconFade[3], zoomingIconFade[3]));
-			glSprite(zoomingIconXpos[3], zoomingIconYpos[3], GL_FLIP_NONE, gbIcon);
-		}
-		if (zoomingIconYpos[4] > 64+32) {
-			glColor(RGB15(zoomingIconFade[4], zoomingIconFade[4], zoomingIconFade[4]));
-			glSprite(zoomingIconXpos[4], zoomingIconYpos[4], GL_FLIP_NONE, ggIcon);
-		}
-		if (zoomingIconYpos[5] > 64+32) {
-			glColor(RGB15(zoomingIconFade[5], zoomingIconFade[5], zoomingIconFade[5]));
-			glSprite(zoomingIconXpos[5], zoomingIconYpos[5], GL_FLIP_NONE, &gbIcon[1]);
-		}
-		if (zoomingIconYpos[6] < 64) {
-			glColor(RGB15(zoomingIconFade[6], zoomingIconFade[6], zoomingIconFade[6]));
-			glSprite(zoomingIconXpos[6], zoomingIconYpos[6], GL_FLIP_NONE, snesIcon);
-		}
-		if (zoomingIconYpos[7] < 64) {
-			glColor(RGB15(zoomingIconFade[7], zoomingIconFade[7], zoomingIconFade[7]));
-			glSprite(zoomingIconXpos[7], zoomingIconYpos[7], GL_FLIP_NONE, gbaIcon);
-		}
-		if (zoomingIconYpos[8] < 64) {
-			glColor(RGB15(zoomingIconFade[8], zoomingIconFade[8], zoomingIconFade[8]));
-			glSprite(zoomingIconXpos[8], zoomingIconYpos[8], GL_FLIP_NONE, ndsIcon);
-		}
-
+	if (scaleTwlmText) {
+		glSprite(zoomingIconXpos[0], zoomingIconYpos[0], GL_FLIP_NONE, nesIcon);
+		glSprite(zoomingIconXpos[1], zoomingIconYpos[1], GL_FLIP_NONE, &gbIcon[1]);
+		glSprite(zoomingIconXpos[2], zoomingIconYpos[2], GL_FLIP_NONE, snesIcon);
+		glSprite(zoomingIconXpos[3], zoomingIconYpos[3], GL_FLIP_NONE, gbaIcon);
+		glSprite(zoomingIconXpos[4], zoomingIconYpos[4], GL_FLIP_NONE, smsIcon);
+		glSprite(zoomingIconXpos[5], zoomingIconYpos[5], GL_FLIP_NONE, mdIcon);
+		glSprite(zoomingIconXpos[6], zoomingIconYpos[6], GL_FLIP_NONE, ggIcon);
+		glSprite(zoomingIconXpos[7], zoomingIconYpos[7], GL_FLIP_NONE, ndsIcon);
+	}
 		//glBoxFilled(0, 0, 256, 23, RGB15(0, 0, 0));
 		//glBoxFilled(0, 168, 256, 192, RGB15(0, 0, 0));
 	}
@@ -480,65 +452,77 @@ void twlMenuVideo_topGraphicRender(void) {
 		loadFrameSprite = (frameDelaySprite == 2+frameDelaySpriteEven);
 	}
 
-	if (loadFrameSprite) {
-		zoomingIconXpos[0] += 5;
-		zoomingIconYpos[0] += 4;
-		if (zoomingIconYpos[0] > 32) {
-			zoomingIconFade[0] -= 4;
-			if (zoomingIconFade[0] < 0) zoomingIconFade[0] = 0;
+	if (loadFrameSprite && scaleTwlmText && textScale < 64) {
+		zoomingIconXpos[0] += 4;
+		zoomingIconYpos[0] += 5;
+		if (zoomingIconXpos[0] > 24) {
+			zoomingIconXpos[0] = 24;
+		}
+		if (zoomingIconYpos[0] > 56) {
+			zoomingIconYpos[0] = 56;
 		}
 
+		zoomingIconXpos[1] += 6;
 		zoomingIconYpos[1] += 4;
-		if (zoomingIconYpos[1] > 32) {
-			zoomingIconFade[1] -= 4;
-			if (zoomingIconFade[1] < 0) zoomingIconFade[1] = 0;
+		if (zoomingIconXpos[1] > 80) {
+			zoomingIconXpos[1] = 80;
+		}
+		if (zoomingIconYpos[1] > 12) {
+			zoomingIconYpos[1] = 12;
 		}
 
-		zoomingIconXpos[2] -= 4;
+		zoomingIconXpos[2] -= 6;
 		zoomingIconYpos[2] += 4;
-		if (zoomingIconYpos[2] > 32) {
-			zoomingIconFade[2] -= 4;
-			if (zoomingIconFade[2] < 0) zoomingIconFade[2] = 0;
+		if (zoomingIconXpos[2] < 154) {
+			zoomingIconXpos[2] = 154;
+		}
+		if (zoomingIconYpos[2] > 12) {
+			zoomingIconYpos[2] = 12;
 		}
 
 		zoomingIconXpos[3] -= 4;
-		zoomingIconYpos[3] -= 4;
-		if (zoomingIconYpos[3] < 192-48) {
-			zoomingIconFade[3] -= 4;
-			if (zoomingIconFade[3] < 0) zoomingIconFade[3] = 0;
+		zoomingIconYpos[3] += 4;
+		if (zoomingIconXpos[3] < 202) {
+			zoomingIconXpos[3] = 202;
+		}
+		if (zoomingIconYpos[3] > 44) {
+			zoomingIconYpos[3] = 44;
 		}
 
+		zoomingIconXpos[4] += 4;
 		zoomingIconYpos[4] -= 5;
-		if (zoomingIconYpos[4] < 192-48) {
-			zoomingIconFade[4] -= 4;
-			if (zoomingIconFade[4] < 0) zoomingIconFade[4] = 0;
+		if (zoomingIconXpos[4] > 32) {
+			zoomingIconXpos[4] = 32;
+		}
+		if (zoomingIconYpos[4] < 128) {
+			zoomingIconYpos[4] = 128;
 		}
 
-		zoomingIconXpos[5] += 5;
+		zoomingIconXpos[5] += 6;
 		zoomingIconYpos[5] -= 4;
-		if (zoomingIconYpos[5] < 192-48) {
-			zoomingIconFade[5] -= 4;
-			if (zoomingIconFade[5] < 0) zoomingIconFade[5] = 0;
+		if (zoomingIconXpos[5] > 80) {
+			zoomingIconXpos[5] = 80;
+		}
+		if (zoomingIconYpos[5] < 152) {
+			zoomingIconYpos[5] = 152;
 		}
 
-		zoomingIconXpos[6] += 5;
-		zoomingIconYpos[6] += 4;
-		if (zoomingIconYpos[6] > 32) {
-			zoomingIconFade[6] -= 4;
-			if (zoomingIconFade[6] < 0) zoomingIconFade[6] = 0;
+		zoomingIconXpos[6] -= 6;
+		zoomingIconYpos[6] -= 4;
+		if (zoomingIconXpos[6] < 150) {
+			zoomingIconXpos[6] = 150;
+		}
+		if (zoomingIconYpos[6] < 142) {
+			zoomingIconYpos[6] = 142;
 		}
 
-		zoomingIconYpos[7] += 5;
-		if (zoomingIconYpos[7] > 32) {
-			zoomingIconFade[7] -= 4;
-			if (zoomingIconFade[7] < 0) zoomingIconFade[7] = 0;
+		zoomingIconXpos[7] -= 4;
+		zoomingIconYpos[7] -= 5;
+		if (zoomingIconXpos[7] < 202) {
+			zoomingIconXpos[7] = 202;
 		}
-
-		zoomingIconXpos[8] -= 5;
-		zoomingIconYpos[8] += 6;
-		if (zoomingIconYpos[8] > 32) {
-			zoomingIconFade[8] -= 5;
-			if (zoomingIconFade[8] < 0) zoomingIconFade[8] = 0;
+		if (zoomingIconYpos[7] < 120) {
+			zoomingIconYpos[7] = 120;
 		}
 
 		frameDelaySprite = 0;
