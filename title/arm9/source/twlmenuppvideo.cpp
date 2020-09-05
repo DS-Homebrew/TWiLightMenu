@@ -452,7 +452,7 @@ void twlMenuVideo_topGraphicRender(void) {
 		loadFrameSprite = (frameDelaySprite == 2+frameDelaySpriteEven);
 	}
 
-	if (loadFrameSprite && scaleTwlmText && textScale < 64) {
+	if (loadFrameSprite && scaleTwlmText && textScale < 191*5) {
 		zoomingIconXpos[0] += 4;
 		zoomingIconYpos[0] += 5;
 		if (zoomingIconXpos[0] > 24) {
@@ -508,7 +508,7 @@ void twlMenuVideo_topGraphicRender(void) {
 		}
 
 		zoomingIconXpos[6] -= 6;
-		zoomingIconYpos[6] -= 4;
+		zoomingIconYpos[6] -= 5;
 		if (zoomingIconXpos[6] < 150) {
 			zoomingIconXpos[6] = 150;
 		}
