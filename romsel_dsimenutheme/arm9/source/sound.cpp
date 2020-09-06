@@ -151,10 +151,17 @@ SoundControl::SoundControl()
 	};
 
 
+	stream.sampling_rate = 16000;	 		// 16000Hz
+
 	if (ms().theme == 4) {
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 	} else {
 		switch(ms().dsiMusic) {
+			case 5:
+				stream.sampling_rate = 22050;	 		// 22050Hz
+				stream_start_source = fopen(std::string(TFN_HBL_START_SOUND_BG).c_str(), "rb");
+				stream_source = fopen(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), "rb");
+				break;
 			case 4:
 				stream_source = fopen(std::string(TFN_CLASSIC_SOUND_BG).c_str(), "rb");
 				break;
@@ -174,19 +181,51 @@ SoundControl::SoundControl()
 
 	fseek(stream_source, 0, SEEK_SET);
 
-	stream.sampling_rate = 16000;	 		// 16000Hz
-	stream.buffer_length = 800;	  			// should be adequate
+	stream.buffer_length = 1600;	  			// should be adequate
 	stream.callback = on_stream_request;    
 	stream.format = MM_STREAM_16BIT_MONO;  // select format
 	stream.timer = MM_TIMER0;	    	   // use timer0
 	stream.manual = false;	      		   // auto filling
 	
-	// Prep the first section of the stream
-	fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+	if (stream_start_source) {
+		fseek(stream_start_source, 0, SEEK_END);
+		size_t fileSize = ftell(stream_start_source);
+		fseek(stream_start_source, 0, SEEK_SET);
 
-	// Fill the next section premptively
-	fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+		// Prep the first section of the stream
+		fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_start_source);
+		if (fileSize < STREAMING_BUF_LENGTH*sizeof(s16)) {
+			size_t fillerSize = 0;
+			while (fileSize+fillerSize < STREAMING_BUF_LENGTH*sizeof(s16)) {
+				fillerSize++;
+			}
+			fread((void*)play_stream_buf+fileSize, 1, fillerSize, stream_source);
 
+			// Fill the next section premptively
+			fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+
+			//loopingPoint = true;
+		} else {
+			// Fill the next section premptively
+			fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_start_source);
+			fileSize -= STREAMING_BUF_LENGTH*sizeof(s16);
+			if (fileSize < STREAMING_BUF_LENGTH*sizeof(s16)) {
+				size_t fillerSize = 0;
+				while (fileSize+fillerSize < STREAMING_BUF_LENGTH*sizeof(s16)) {
+					fillerSize++;
+				}
+				fread((void*)fill_stream_buf+fileSize, 1, fillerSize, stream_source);
+
+				//loopingPoint = true;
+			}
+		}
+	} else {
+		// Prep the first section of the stream
+		fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+
+		// Fill the next section premptively
+		fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+	}
 }
 
 mm_sfxhand SoundControl::playLaunch() { return mmEffectEx(&snd_launch); }
