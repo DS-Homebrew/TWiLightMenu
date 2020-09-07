@@ -1529,7 +1529,7 @@ void loadPhoto(const std::string &path) {
 	}
 
 	u16 *bgSubBuffer = tex().beginBgSubModify();
-	u16* bgSubBuffer2 = (u16*)0x02F68000;
+	u16* bgSubBuffer2 = (u16*)0x02F98000;
 
 	// Fill area with black
 	for(int y = 24; y < 180; y++) {
@@ -1559,7 +1559,7 @@ void loadPhoto(const std::string &path) {
 // Load photo without overwriting shoulder button images
 void loadPhotoPart() {
 	u16 *bgSubBuffer = tex().beginBgSubModify();
-	u16* bgSubBuffer2 = (u16*)0x02F68000;
+	u16* bgSubBuffer2 = (u16*)0x02F98000;
 
 	// Fill area with black
 	for(int y = 24; y < 172; y++) {
