@@ -492,7 +492,7 @@ void vBlankHandler() {
 
 	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		//ndmaCopyWordsAsynch(0, tex().frameBuffer(secondBuffer), BG_GFX, 0x18000);
-		ndmaCopyWordsAsynch(0, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
+		dmaCopyWordsAsynch(1, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
 		secondBuffer = !secondBuffer;
 	}
 
