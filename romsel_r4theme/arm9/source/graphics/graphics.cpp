@@ -436,8 +436,9 @@ void graphicsLoad()
 			if (colorMode == 1) {
 				topImage[0][0][i] = convertVramColorToGrayscale(topImage[0][0][i]);
 			}
+			topImage[0][1][i] = topImage[0][0][i];
 			topImage[1][0][i] = topImage[0][0][i];
-			topImage[1][1][i] = topImage[0][1][i];
+			topImage[1][1][i] = topImage[0][0][i];
 		}
 
 		FILE* fileTop = fopen("nitro:/themes/gbnp/bg.bmp", "rb");
