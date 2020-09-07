@@ -42,6 +42,7 @@
 #include "launchDots.h"
 #include "queueControl.h"
 #include "sound.h"
+#include "ndma.h"
 #include "ThemeConfig.h"
 #include "themefilenames.h"
 #include "tool/colortool.h"
@@ -109,6 +110,7 @@ extern bool titleboxXmoveright;
 extern bool applaunchprep;
 
 int screenBrightness = 31;
+static bool secondBuffer = false;
 
 static int colonTimer = 0;
 extern bool showColon;
@@ -472,6 +474,12 @@ void playRotatingCubesVideo(void) {
 }
 
 void vBlankHandler() {
+	if (ndmaEnabled()) {
+		//ndmaCopyWordsAsynch(0, tex().frameBuffer(secondBuffer), BG_GFX, 0x18000);
+		ndmaCopyWordsAsynch(1, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
+		secondBuffer = !secondBuffer;
+	}
+
 	execQueue();		   // Execute any actions queued during last vblank.
 	execDeferredIconUpdates(); // Update any icons queued during last vblank.
 
@@ -1452,6 +1460,7 @@ void loadPhotoList() {
 
 void loadPhoto(const std::string &path) {
 	std::vector<unsigned char> image;
+	bool alternatePixel = false;
 
 	lodepng::decode(image, photoWidth, photoHeight, path);
 
@@ -1462,13 +1471,60 @@ void loadPhoto(const std::string &path) {
 	}
 
 	for(uint i=0;i<image.size()/4;i++) {
+		if (ndmaEnabled()) {
+			image[(i*4)+3] = 0;
+			if (alternatePixel) {
+				if (image[(i*4)] >= 0x4) {
+					image[(i*4)] -= 0x4;
+					image[(i*4)+3] |= BIT(0);
+				}
+				if (image[(i*4)+1] >= 0x4) {
+					image[(i*4)+1] -= 0x4;
+					image[(i*4)+3] |= BIT(1);
+				}
+				if (image[(i*4)+2] >= 0x4) {
+					image[(i*4)+2] -= 0x4;
+					image[(i*4)+3] |= BIT(2);
+				}
+			}
+		}
 		tex().photoBuffer()[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (ms().colorMode == 1) {
 			tex().photoBuffer()[i] = convertVramColorToGrayscale(tex().photoBuffer()[i]);
 		}
+		if (ndmaEnabled()) {
+			if (alternatePixel) {
+				if (image[(i*4)+3] & BIT(0)) {
+					image[(i*4)] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(1)) {
+					image[(i*4)+1] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(2)) {
+					image[(i*4)+2] += 0x4;
+				}
+			} else {
+				if (image[(i*4)] >= 0x4) {
+					image[(i*4)] -= 0x4;
+				}
+				if (image[(i*4)+1] >= 0x4) {
+					image[(i*4)+1] -= 0x4;
+				}
+				if (image[(i*4)+2] >= 0x4) {
+					image[(i*4)+2] -= 0x4;
+				}
+			}
+			tex().photoBuffer2()[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (ms().colorMode == 1) {
+				tex().photoBuffer2()[i] = convertVramColorToGrayscale(tex().photoBuffer()[i]);
+			}
+			if ((i % photoWidth) == photoWidth-1) alternatePixel = !alternatePixel;
+			alternatePixel = !alternatePixel;
+		}
 	}
 
 	u16 *bgSubBuffer = tex().beginBgSubModify();
+	u16* bgSubBuffer2 = (u16*)0x02F68000;
 
 	// Fill area with black
 	for(int y = 24; y < 180; y++) {
@@ -1477,6 +1533,7 @@ void loadPhoto(const std::string &path) {
 
 	// Start loading
 	u16 *src = tex().photoBuffer();
+	u16 *src2 = tex().photoBuffer2();
 	uint startX = 24 + (208 - photoWidth) / 2;
 	uint y = 24 + ((156 - photoHeight) / 2);
 	uint x = startX;
@@ -1486,6 +1543,9 @@ void loadPhoto(const std::string &path) {
 			y++;
 		}
 		bgSubBuffer[y * 256 + x] = *(src++);
+		if (ndmaEnabled()) {
+			bgSubBuffer2[y * 256 + x] = *(src2++);
+		}
 		x++;
 	}
 	tex().commitBgSubModify();
@@ -1494,6 +1554,7 @@ void loadPhoto(const std::string &path) {
 // Load photo without overwriting shoulder button images
 void loadPhotoPart() {
 	u16 *bgSubBuffer = tex().beginBgSubModify();
+	u16* bgSubBuffer2 = (u16*)0x02F68000;
 
 	// Fill area with black
 	for(int y = 24; y < 172; y++) {
@@ -1502,6 +1563,7 @@ void loadPhotoPart() {
 
 	// Start loading
 	u16 *src = tex().photoBuffer();
+	u16 *src2 = tex().photoBuffer2();
 	uint startX = 24 + (208 - photoWidth) / 2;
 	uint y = 24 + ((156 - photoHeight) / 2);
 	uint x = startX;
@@ -1512,6 +1574,9 @@ void loadPhotoPart() {
 			if(y >= 172)	break;
 		}
 		bgSubBuffer[y * 256 + x] = *(src++);
+		if (ndmaEnabled()) {
+			bgSubBuffer2[y * 256 + x] = *(src2++);
+		}
 		x++;
 	}
 	tex().commitBgSubModify();

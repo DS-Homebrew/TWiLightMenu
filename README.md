@@ -51,12 +51,13 @@ Please note that Docker compilation is not compatible with native compilation on
 - [NightScript](https://github.com/NightYoshi370/): Reworked Manual pages.
 ## Others
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
+- [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap.
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI.
 - [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcarts.
-- [SNBeast](https://github.com/SNBeast): Unlaunch patches
+- [SNBeast](https://github.com/SNBeast): Unlaunch patches.
 - retrogamefan & Rudolph: Included AP-patches for nds-bootstrap.
-- fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, gamemasterplc, RocketRobz & ChampionLeake: Widescreen Cheats
+- fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, gamemasterplc, RocketRobz & ChampionLeake: Widescreen Cheats.
 ## Translators
 - Chinese Simplified: [Forbidden](https://crowdin.com/profile/Origami), [James-Makoto](https://crowdin.com/profile/VCMOD55), [R-YaTian](https://github.com/R-YaTian)
 - Chinese Traditional:
