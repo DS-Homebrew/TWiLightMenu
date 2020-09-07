@@ -75,11 +75,12 @@ body {
 .grid-container-2 {
 	display: grid;
 	grid-template-columns: 50% 50%;
-  }
-  .grid-item {
+}
+
+.grid-item {
 	text-align: center;
 	margin-top: 5px;
-  }
+}
 
 p {
 	margin-block-start: 0;
@@ -98,33 +99,37 @@ p {
 }
 
 code[class*="language-"], pre[class*="language-"] {
-    background: none;
-    text-shadow: 0 1px #A1A1A1;
-    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-    font-size: 1em;
-    text-align: left;
-    white-space: pre;
-    word-spacing: normal;
-    word-break: normal;
-    word-wrap: normal;
-    line-height: 1.5;
-    -moz-tab-size: 4;
-    -o-tab-size: 4;
-    tab-size: 4;
-    -webkit-hyphens: none;
-    -moz-hyphens: none;
-    -ms-hyphens: none;
-    hyphens: none;
+	background: none;
+	text-shadow: 0 1px #A1A1A1;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+code.wrap {
+	word-wrap: break-word;
 }
 
 :not(pre) > code[class*="language-"], pre[class*="language-"] {
-    background-color: #B2B2B2;
+	background-color: #B2B2B2;
 }
 
 :not(pre) > code[class*="language-"] {
-    padding: .1em;
-    border-radius: .3em;
-    white-space: normal;
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
 }
 
 ul {
