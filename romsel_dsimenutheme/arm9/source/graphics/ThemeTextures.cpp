@@ -28,6 +28,8 @@ extern bool useTwlCfg;
 
 extern bool widescreenEffects;
 
+extern bool rotatingCubesLoaded;
+
 // #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
 extern s16 usernameRendered[11];
@@ -519,11 +521,11 @@ void ThemeTextures::loadIconTextures() {
 }
 u16 *ThemeTextures::beginBgSubModify() {
 	u16* bgLoc = BG_GFX_SUB;
-	if (ndmaEnabled()) {
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		bgLoc = _frameBufferBot[0];
 	}
 	dmaCopyWords(0, bgLoc, _bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	if (ndmaEnabled()) {
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		dmaCopyWords(0, _frameBufferBot[1], _bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}
 	return _bgSubBuffer;
@@ -531,12 +533,12 @@ u16 *ThemeTextures::beginBgSubModify() {
 
 void ThemeTextures::commitBgSubModify() {
 	u16* bgLoc = BG_GFX_SUB;
-	if (ndmaEnabled()) {
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		bgLoc = _frameBufferBot[0];
 	}
 	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	dmaCopyWords(2, _bgSubBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	if (ndmaEnabled()) {
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		DC_FlushRange(_bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 		dmaCopyWords(2, _bgSubBuffer2, _frameBufferBot[1], sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}
@@ -544,12 +546,12 @@ void ThemeTextures::commitBgSubModify() {
 
 void ThemeTextures::commitBgSubModifyAsync() {
 	u16* bgLoc = BG_GFX_SUB;
-	if (ndmaEnabled()) {
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		bgLoc = _frameBufferBot[0];
 	}
 	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	dmaCopyWordsAsynch(2, _bgSubBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	if (ndmaEnabled()) {
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		DC_FlushRange(_bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 		ndmaCopyWordsAsynch(2, _bgSubBuffer2, _frameBufferBot[1], sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}
@@ -594,7 +596,7 @@ void ThemeTextures::commitBgMainModifyAsync() {
 void ThemeTextures::drawTopBg() {
 	beginBgSubModify();
 	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
-	if (ndmaEnabled()) {
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		tonccpy((u8*)_bgSubBuffer2, (u8*)_bgSubBuffer, 0x18000);
 	}
 	commitBgSubModify();
@@ -704,7 +706,7 @@ void ThemeTextures::drawProfileName() {
 					}
 					if (val != 0xFC1F && val != 0x7C1F) { // Do not render magneta pixel
 						_bgSubBuffer[(y + 2) * 256 + (i + x)] = Texture::bmpToDS(val);
-						if (ndmaEnabled()) {
+						if (ndmaEnabled() && !rotatingCubesLoaded) {
 							_bgSubBuffer2[(y + 2) * 256 + (i + x)] = _bgSubBuffer[(y + 2) * 256 + (i + x)];
 						}
 					}
@@ -790,7 +792,7 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 	if(imageWidth > 256 || imageHeight > 192)	return;
 
 	for(uint i=0;i<image.size()/4;i++) {
-		if (ndmaEnabled()) {
+		if (ndmaEnabled() && !rotatingCubesLoaded) {
 			image[(i*4)+3] = 0;
 			if (alternatePixel) {
 				if (image[(i*4)] >= 0x4) {
@@ -811,7 +813,7 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 		if (ms().colorMode == 1) {
 			_bmpImageBuffer[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
 		}
-		if (ndmaEnabled()) {
+		if (ndmaEnabled() && !rotatingCubesLoaded) {
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -849,7 +851,7 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 	for(uint y = 0; y < imageHeight; y++) {
 		for(uint x = 0; x < imageWidth; x++) {
 			_bgSubBuffer[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
-			if (ndmaEnabled()) {
+			if (ndmaEnabled() && !rotatingCubesLoaded) {
 				_bgSubBuffer2[(y+imageYpos) * 256 + imageXpos + x] = *(src2++);
 			}
 		}
@@ -877,7 +879,7 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 	if(imageWidth > 256 || imageHeight > 192)	return;
 
 	for(uint i=0;i<image.size()/4;i++) {
-		if (ndmaEnabled()) {
+		if (ndmaEnabled() && !rotatingCubesLoaded) {
 			image[(i*4)+3] = 0;
 			if (alternatePixel) {
 				if (image[(i*4)] >= 0x4) {
@@ -898,7 +900,7 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 		if (ms().colorMode == 1) {
 			_bmpImageBuffer[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
 		}
-		if (ndmaEnabled()) {
+		if (ndmaEnabled() && !rotatingCubesLoaded) {
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -936,7 +938,7 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 	for(uint y = 0; y < imageHeight;y++) {
 		for(uint x = 0; x < imageWidth; x++) {
 			_bgSubBuffer[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
-			if (ndmaEnabled()) {
+			if (ndmaEnabled() && !rotatingCubesLoaded) {
 				_bgSubBuffer2[(y+imageYpos) * 256 + imageXpos + x] = *(src2++);
 			}
 		}
@@ -958,7 +960,7 @@ void ThemeTextures::drawVolumeImage(int volumeLevel) {
 			u16 val = *(src++);
 			if (val >> 15) { // Do not render transparent pixel
 				_bgSubBuffer[(startY + y) * 256 + startX + x] = val;
-				if (ndmaEnabled()) {
+				if (ndmaEnabled() && !rotatingCubesLoaded) {
 					_bgSubBuffer2[(startY + y) * 256 + startX + x] = val;
 				}
 			}
@@ -1025,7 +1027,7 @@ void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool is
 			u16 val = *(src++);
 			if (val >> 15) { // Do not render transparent pixel
 				_bgSubBuffer[y * 256 + x] = val;
-				if (ndmaEnabled()) {
+				if (ndmaEnabled() && !rotatingCubesLoaded) {
 					_bgSubBuffer2[y * 256 + x] = val;
 				}
 			}
@@ -1051,7 +1053,7 @@ void ThemeTextures::drawBatteryImageCached() {
 void ThemeTextures::drawTopBgAvoidingShoulders() {
 
 	// Copy current to _bmpImageBuffer
-	if (ndmaEnabled()) {
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		dmaCopyWords(0, _frameBufferBot[0], _bmpImageBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 		dmaCopyWords(0, _frameBufferBot[1], _bmpImageBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	} else {
@@ -1060,20 +1062,20 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 
 	// Throw the entire top background into the sub buffer.
 	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
-	if (ndmaEnabled()) {
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		tonccpy((u8*)_bgSubBuffer2, (u8*)_bgSubBuffer, 0x18000);
 	}
 
  	// Copy top 32 lines from the buffer into the sub.
 	tonccpy(_bgSubBuffer, _bmpImageBuffer, sizeof(u16) * TOPLINES);
-	if (ndmaEnabled()) {
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		tonccpy(_bgSubBuffer2, _bmpImageBuffer2, sizeof(u16) * TOPLINES);
 	}
 	
 	// Copy bottom tc().shoulderLRenderY() + 5 lines into the sub
 	// ((192 - 32) * 256)
 	tonccpy(_bgSubBuffer + BOTTOMOFFSET, _bmpImageBuffer + BOTTOMOFFSET, sizeof(u16) * BOTTOMLINES);
-	if (ndmaEnabled()) {
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		tonccpy(_bgSubBuffer2 + BOTTOMOFFSET, _bmpImageBuffer2 + BOTTOMOFFSET, sizeof(u16) * BOTTOMLINES);
 	}
 
@@ -1095,7 +1097,7 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 			u16 val = *(rightSrc++);
 			if (val >> 15) { // Do not render transparent pixel
 				_bgSubBuffer[y * 256 + x] = val;
-				if (ndmaEnabled()) {
+				if (ndmaEnabled() && !rotatingCubesLoaded) {
 					_bgSubBuffer2[y * 256 + x] = val;
 				}
 			}
@@ -1108,7 +1110,7 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 			u16 val = *(leftSrc++);
 			if (val >> 15) { // Do not render transparent pixel
 				_bgSubBuffer[y * 256 + x] = val;
-				if (ndmaEnabled()) {
+				if (ndmaEnabled() && !rotatingCubesLoaded) {
 					_bgSubBuffer2[y * 256 + x] = val;
 				}
 			}
@@ -1155,7 +1157,7 @@ void ThemeTextures::drawDateTime(const char *str, int posX, int posY, const int 
 				u16 val = *(src++);
 				if (val >> 15) { // Do not render transparent pixel
 					_bgSubBuffer[(posY + y) * 256 + (posX + x)] = val;
-					if (ndmaEnabled()) {
+					if (ndmaEnabled() && !rotatingCubesLoaded) {
 						_bgSubBuffer2[(posY + y) * 256 + (posX + x)] = val;
 					}
 				}

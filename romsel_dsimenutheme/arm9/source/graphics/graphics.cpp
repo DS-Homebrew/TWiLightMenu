@@ -164,7 +164,7 @@ int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble 3 = moving.
 
 int vblankRefreshCounter = 0;
 
-static bool rotatingCubesLoaded = false;
+bool rotatingCubesLoaded = false;
 
 bool rocketVideo_playVideo = false;
 int rocketVideo_videoYpos = 78;
@@ -461,12 +461,8 @@ void playRotatingCubesVideo(void) {
 	if (rocketVideo_loadFrame) {
 		//if (renderFrame) {
 			//DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
-		if (ndmaEnabled()) {
-			dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)), (u16*)tex().frameBufferBot(0)+(256*rocketVideo_videoYpos), 0x200*56);
-			ndmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)), (u16*)tex().frameBufferBot(1)+(256*rocketVideo_videoYpos), 0x200*56);
-		} else {
 			dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x200*56);
-		}
+		//}
 
 		rocketVideo_currentFrame++;
 		if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
@@ -490,14 +486,14 @@ void vBlankHandler() {
 		needToPlayStopSound = false;
 	}
 
-	if (ndmaEnabled()) {
+	if (ms().theme == 1 && rotatingCubesLoaded) {
+		playRotatingCubesVideo();
+	}
+
+	if (ndmaEnabled() && !rotatingCubesLoaded) {
 		//ndmaCopyWordsAsynch(0, tex().frameBuffer(secondBuffer), BG_GFX, 0x18000);
 		ndmaCopyWordsAsynch(0, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
 		secondBuffer = !secondBuffer;
-	}
-
-	if (ms().theme == 1 && rotatingCubesLoaded) {
-		playRotatingCubesVideo();
 	}
 
 		if (fadeType == true) {
@@ -1476,7 +1472,7 @@ void loadPhoto(const std::string &path) {
 	}
 
 	for(uint i=0;i<image.size()/4;i++) {
-		if (ndmaEnabled()) {
+		if (ndmaEnabled() && !rotatingCubesLoaded) {
 			image[(i*4)+3] = 0;
 			if (alternatePixel) {
 				if (image[(i*4)] >= 0x4) {
@@ -1497,7 +1493,7 @@ void loadPhoto(const std::string &path) {
 		if (ms().colorMode == 1) {
 			tex().photoBuffer()[i] = convertVramColorToGrayscale(tex().photoBuffer()[i]);
 		}
-		if (ndmaEnabled()) {
+		if (ndmaEnabled() && !rotatingCubesLoaded) {
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -1548,7 +1544,7 @@ void loadPhoto(const std::string &path) {
 			y++;
 		}
 		bgSubBuffer[y * 256 + x] = *(src++);
-		if (ndmaEnabled()) {
+		if (ndmaEnabled() && !rotatingCubesLoaded) {
 			bgSubBuffer2[y * 256 + x] = *(src2++);
 		}
 		x++;
@@ -1579,7 +1575,7 @@ void loadPhotoPart() {
 			if(y >= 172)	break;
 		}
 		bgSubBuffer[y * 256 + x] = *(src++);
-		if (ndmaEnabled()) {
+		if (ndmaEnabled() && !rotatingCubesLoaded) {
 			bgSubBuffer2[y * 256 + x] = *(src2++);
 		}
 		x++;
