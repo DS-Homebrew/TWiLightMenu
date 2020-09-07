@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>GBARunner2</title>
+		<title>GBARunner2 - TWiLight Menu++ Manual</title>
 		<link rel="stylesheet" href="../assets/css/layout.css">
 		<link rel="stylesheet" href="../assets/css/button-hit.css">
 	</head>
@@ -14,36 +14,51 @@
 			<div class="bottom-screen">
 				<img class="twilightLogo" src="../assets/images/twilight.png">
 				<div class="ds-margin">
-					<div class="section-title">File Browser</div>
+					<div class="section-title">ファイルブラウザー</div>
 					<div class="section-body">
 						<div class="button-action-group">
 							<span class="button-action font upDown"></span>
-							<span class="button-action-text">Previous/Next entry</span>
+							<span class="button-action-text">Previous/next entry</span>
 						</div>
 						<hr>
 						<div class="button-action-group">
 							<span class="button-action font leftRight"></span>
-							<span class="button-action-text">Move Up/Down by 10</span>
+							<span class="button-action-text">Move up/down by 10</span>
 						</div>
 						<hr>
 						<div class="button-action-group">
 							<span class="button-action font buttonA"></span>
-							<span class="button-action-text">Launch Gameboy Advance Title</span>
+							<span class="button-action-text">Launch title</span>
 						</div>
 						<hr>
 						<div class="button-action-group">
 							<span class="button-action font buttonB"></span>
-							<span class="button-action-text">Go up a directory level</span>
+							<span class="button-action-text">ディレクトリを上がる</span>
 						</div>
 						<hr>
 						<div class="button-action-group">
 							<span class="button-action font buttonL"></span>
-							<span class="button-action-text">Swap Screens</span>
+							<span class="button-action-text">Swap screens</span>
+						</div>
+						<hr>
+						<div class="button-action-group">
+							<span class="button-action font buttonR"></span>
+							<span class="button-action-text">Open settings</span>
+						</div>
+					</div>
+					<div class="section-title">In-Game</div>
+					<div class="section-body">
+						<div class="button-action-group">
+							<span class="button-action"><img src="../assets/images/tap.png"></span>
+							<span class="button-action-text">Open menu</span>
 						</div>
 					</div>
 					<div class="section-title">BIOS File</div>
 					<div class="section-body">
-						GBARunner2 requires a dump of the GBA BIOS titled <code class="language-plaintext">bios.bin</code>. This file could be located either at the root of the SD card, <code class="language-plaintext">/gba</code> folder or <code class="language-plaintext">/_gba</code> folder.
+						GBARunner2 can use a dump of the official GBA BIOS to improve compatibility. The file must be named <code class="language-plaintext">bios.bin</code> and can be in the root of the SD card, <code class="language-plaintext">sd:/gba</code> or <code class="language-plaintext">sd:/_gba</code>.
+						<hr>
+						Make sure your GBA BIOS dump matches with the following CRC32 hash: <code class="language-plaintext">81977335</code>.<br>
+						You can check this by visiting the following website: <strong>simplycalc.com/crc32-file.php</strong>
 					</div>
 				</div>
 			</div>
