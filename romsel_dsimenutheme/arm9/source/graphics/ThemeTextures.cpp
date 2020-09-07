@@ -39,8 +39,8 @@ static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
 static u16 _photoBuffer[208 * 156] = {0};
 static u16* _photoBuffer2 = (u16*)0x024E8000;
-// DSi mode double-frame buffers
 static u16* _bgSubBuffer2 = (u16*)0x02F68000;
+// DSi mode double-frame buffers
 static u16* _frameBuffer[2] = {(u16*)0x02F80000, (u16*)0x02F98000};
 static u16* _frameBufferBot[2] = {(u16*)0x02FB0000, (u16*)0x02FC8000};
 
