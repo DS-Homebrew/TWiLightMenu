@@ -979,14 +979,8 @@ int main(int argc, char **argv) {
 	iconTitleInit();
 
 	bool menuButtonPressed = false;
-	bool menuGraphicsLoaded = false;
 	
 	if (theme == 6) {
-		//if (!menuGraphicsLoaded) {
-			topBgLoad(true);
-			//bottomBgLoad(true);
-			menuGraphicsLoaded = true;
-		//}
 		startMenu = false;
 		fadeType = true;	// Fade in from white
 		snd();
@@ -1014,11 +1008,6 @@ int main(int argc, char **argv) {
 	while(1) {
 
 		if (startMenu) {
-			if (!menuGraphicsLoaded) {
-				topBgLoad(true);
-				bottomBgLoad(true);
-				menuGraphicsLoaded = true;
-			}
 			fadeType = true;	// Fade in from white
 
 			int pressed = 0;
@@ -1119,9 +1108,6 @@ int main(int argc, char **argv) {
 					default:
 						clearText();
 						startMenu = false;
-						topBgLoad(false);
-						bottomBgLoad(false);
-						menuGraphicsLoaded = false;
 						break;
 					case 1:
 						if (!flashcardFound() && REG_SCFG_MC != 0x11) {

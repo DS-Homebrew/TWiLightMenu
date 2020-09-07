@@ -59,6 +59,7 @@ extern int colorGvalue;
 extern int colorBvalue;
 
 int screenBrightness = 0;
+static bool secondBuffer = false;
 
 int frameOf60fps = 60;
 int frameDelay = 0;
@@ -92,8 +93,8 @@ glImage wirelessIcons[(32 / 32) * (64 / 32)];
 int bottomBg;
 
 u16 bmpImageBuffer[256*192];
-static u16 topImage[2][256*192];
-static u16 bottomImage[2][256*192];
+static u16 topImage[2][2][256*192];
+static u16 bottomImage[2][2][256*192];
 
 static u16 startBorderColor = 0;
 static u16 windowColorTop = 0;
@@ -247,10 +248,6 @@ u16 convertVramColorToGrayscale(u16 val) {
 	return 32768|(max<<10)|(max<<5)|(max);
 }
 
-void bottomBgLoad(bool startMenu) {
-	dmaCopyWordsAsynch(1, bottomImage[startMenu], BG_GFX, 0x18000);
-}
-
 // No longer used.
 // void drawBG(glImage *images)
 // {
@@ -266,6 +263,11 @@ void bottomBgLoad(bool startMenu) {
 
 void vBlankHandler()
 {
+	extern bool startMenu;
+	dmaCopyHalfWordsAsynch(0, topImage[startMenu][secondBuffer], (u16*)BG_GFX_SUB+(256*32), 0x18000);
+	dmaCopyHalfWordsAsynch(1, bottomImage[startMenu][secondBuffer], BG_GFX, 0x18000);
+	secondBuffer = !secondBuffer;
+
 	glBegin2D();
 	{
 		if(fadeType == true) {
@@ -342,10 +344,6 @@ void vBlankHandler()
 	renderFrame = false;
 
 	manualIconNextImg = !manualIconNextImg;
-}
-
-void topBgLoad(bool startMenu) {
-	dmaCopyWordsAsynch(0, topImage[startMenu], (u16*)BG_GFX_SUB+(256*32), 0x18000);
 }
 
 void graphicsInit()
@@ -426,18 +424,20 @@ void graphicsLoad()
 
 	BG_PALETTE_SUB[255] = RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel));
 
-	if (theme == 6) {
-		uint imageWidth, imageHeight;
-		std::vector<unsigned char> image;
+	uint imageWidth, imageHeight;
+	std::vector<unsigned char> image;
+	bool alternatePixel = false;
 
+	if (theme == 6) {
 		lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/gbcborder.png");
 
 		for(uint i=0; i<image.size()/4; i++) {
-			topImage[0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			topImage[0][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorMode == 1) {
-				topImage[0][i] = convertVramColorToGrayscale(topImage[0][i]);
+				topImage[0][0][i] = convertVramColorToGrayscale(topImage[0][0][i]);
 			}
-			topImage[1][i] = topImage[0][i];
+			topImage[1][0][i] = topImage[0][0][i];
+			topImage[1][1][i] = topImage[0][1][i];
 		}
 
 		FILE* fileTop = fopen("nitro:/themes/gbnp/bg.bmp", "rb");
@@ -457,91 +457,143 @@ void graphicsLoad()
 					y--;
 				}
 				u16 val = *(src++);
-				topImage[0][y*256+x] = convertToDsBmp(val);
-				topImage[1][y*256+x] = topImage[0][y*256+x];
+				topImage[0][0][y*256+x] = convertToDsBmp(val);
+				topImage[0][1][y*256+x] = topImage[0][0][y*256+x];
+				topImage[1][0][y*256+x] = topImage[0][0][y*256+x];
+				topImage[1][1][y*256+x] = topImage[0][0][y*256+x];
 				x++;
 			}
 		}
 		fclose(fileTop);
 	} else
 	for (int startMenu = 0; startMenu < 2; startMenu++) {
+		image.clear();
 		extern std::string r4_theme;
 
 		char pathTop[256];
 		if (startMenu) {
-			std::ifstream file((r4_theme+"logo.bmp").c_str());
+			FILE* file = fopen((r4_theme+"logo.png").c_str(), "rb");
 			if(file)
-				snprintf(pathTop, sizeof(pathTop), (r4_theme+"logo.bmp").c_str());
+				snprintf(pathTop, sizeof(pathTop), (r4_theme+"logo.png").c_str());
 			else
-				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/logo.bmp");
+				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/logo.png");
+			fclose(file);
 		} else {
-			std::ifstream file((r4_theme+"bckgrd_1.bmp").c_str());
+			FILE* file = fopen((r4_theme+"bckgrd_1.png").c_str(), "rb");
 			if(file)
-				snprintf(pathTop, sizeof(pathTop), (r4_theme+"bckgrd_1.bmp").c_str());
+				snprintf(pathTop, sizeof(pathTop), (r4_theme+"bckgrd_1.png").c_str());
 			else
-				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/bckgrd_1.bmp");
+				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/bckgrd_1.png");
+			fclose(file);
 		}
 
 		char pathBottom[256];
 		if (startMenu) {
-			std::ifstream file((r4_theme+"icons.bmp").c_str());
+			FILE* file = fopen((r4_theme+"icons.png").c_str(), "rb");
 			if(file)
-				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"icons.bmp").c_str());
+				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"icons.png").c_str());
 			else
-				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/icons.bmp");
+				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/icons.png");
+			fclose(file);
 		} else {
-			std::ifstream file((r4_theme+"bckgrd_2.bmp").c_str());
+			FILE* file = fopen((r4_theme+"bckgrd_2.png").c_str(), "rb");
 			if(file)
-				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"bckgrd_2.bmp").c_str());
+				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"bckgrd_2.png").c_str());
 			else
-				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/bckgrd_2.bmp");
+				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/bckgrd_2.png");
+			fclose(file);
 		}
 
-		FILE* fileTop = fopen(pathTop, "rb");
+		lodepng::decode(image, imageWidth, imageHeight, pathTop);
 
-		if (fileTop) {
-			// Start loading
-			fseek(fileTop, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(fileTop) + 0xe;
-			fseek(fileTop, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 1, 0x18000, fileTop);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 191;
-			for (int i=0; i<256*192; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
+		for(unsigned i=0;i<image.size()/4;i++) {
+			image[(i*4)+3] = 0;
+			if (alternatePixel) {
+				if (image[(i*4)] >= 0x4) {
+					image[(i*4)] -= 0x4;
+					image[(i*4)+3] |= BIT(0);
 				}
-				u16 val = *(src++);
-				topImage[startMenu][y*256+x] = convertToDsBmp(val);
-				x++;
-			}
-		}
-		fclose(fileTop);
-
-		FILE* fileBottom = fopen(pathBottom, "rb");
-
-		if (fileBottom) {
-			// Start loading
-			fseek(fileBottom, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(fileBottom) + 0xe;
-			fseek(fileBottom, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 1, 0x18000, fileBottom);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 191;
-			for (int i=0; i<256*192; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
+				if (image[(i*4)+1] >= 0x4) {
+					image[(i*4)+1] -= 0x4;
+					image[(i*4)+3] |= BIT(1);
 				}
-				u16 val = *(src++);
-				bottomImage[startMenu][y*256+x] = convertToDsBmp(val);
-				x++;
+				if (image[(i*4)+2] >= 0x4) {
+					image[(i*4)+2] -= 0x4;
+					image[(i*4)+3] |= BIT(2);
+				}
 			}
+			topImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (alternatePixel) {
+				if (image[(i*4)+3] & BIT(0)) {
+					image[(i*4)] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(1)) {
+					image[(i*4)+1] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(2)) {
+					image[(i*4)+2] += 0x4;
+				}
+			} else {
+				if (image[(i*4)] >= 0x4) {
+					image[(i*4)] -= 0x4;
+				}
+				if (image[(i*4)+1] >= 0x4) {
+					image[(i*4)+1] -= 0x4;
+				}
+				if (image[(i*4)+2] >= 0x4) {
+					image[(i*4)+2] -= 0x4;
+				}
+			}
+			topImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if ((i % 256) == 255) alternatePixel = !alternatePixel;
+			alternatePixel = !alternatePixel;
 		}
-		fclose(fileBottom);
+
+		image.clear();
+		lodepng::decode(image, imageWidth, imageHeight, pathBottom);
+
+		for(unsigned i=0;i<image.size()/4;i++) {
+			image[(i*4)+3] = 0;
+			if (alternatePixel) {
+				if (image[(i*4)] >= 0x4) {
+					image[(i*4)] -= 0x4;
+					image[(i*4)+3] |= BIT(0);
+				}
+				if (image[(i*4)+1] >= 0x4) {
+					image[(i*4)+1] -= 0x4;
+					image[(i*4)+3] |= BIT(1);
+				}
+				if (image[(i*4)+2] >= 0x4) {
+					image[(i*4)+2] -= 0x4;
+					image[(i*4)+3] |= BIT(2);
+				}
+			}
+			bottomImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (alternatePixel) {
+				if (image[(i*4)+3] & BIT(0)) {
+					image[(i*4)] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(1)) {
+					image[(i*4)+1] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(2)) {
+					image[(i*4)+2] += 0x4;
+				}
+			} else {
+				if (image[(i*4)] >= 0x4) {
+					image[(i*4)] -= 0x4;
+				}
+				if (image[(i*4)+1] >= 0x4) {
+					image[(i*4)+1] -= 0x4;
+				}
+				if (image[(i*4)+2] >= 0x4) {
+					image[(i*4)+2] -= 0x4;
+				}
+			}
+			bottomImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if ((i % 256) == 255) alternatePixel = !alternatePixel;
+			alternatePixel = !alternatePixel;
+		}
 	}
 
 	// Initialize the bottom background
