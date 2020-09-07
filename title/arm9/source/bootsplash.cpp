@@ -17,6 +17,7 @@
 extern bool useTwlCfg;
 
 extern u16 bmpImageBuffer[256*192];
+extern u16 frameBuffer[2][256*192];
 // extern u16 videoImageBuffer[39][256*144];
 
 extern u16 convertToDsBmp(u16 val);
@@ -101,8 +102,8 @@ void BootSplashDSi(void) {
 
 	cartInserted = (REG_SCFG_MC != 0x11);
 
-	int language = ms().guiLanguage;
-	if (ms().guiLanguage == -1) {
+	int language = ms().gameLanguage;
+	if (ms().gameLanguage == -1) {
 		language = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 	}
 
@@ -158,13 +159,17 @@ void BootSplashDSi(void) {
 		controlBottomBright = false;
 	}
 
-	Gif splash("nitro:/video/dsisplash.gif", true, true);
+	Gif splash(language == TWLSettings::ELangChineseS ? "nitro:/video/splash/ique.gif" : "nitro:/video/splash/dsi.gif", true, true);
 	Gif healthSafety;
-	if (ms().dsiSplash == 2) {
-		// Load H&S image
-		// Get the language for the splash screen
+	if (ms().dsiSplash == 1) {
+		// Load Touch the Touch Screen to continue image
 		char path[256];
-		sprintf(path, (virtualPain ? "nitro:/video/VirtualPain_bot.gif" : "nitro:/video/tttstc_%i.gif"), language);
+		sprintf(path, (virtualPain ? "nitro:/video/tttstc/virtualPain.gif" : "nitro:/video/tttstc/%i.gif"), language);
+		healthSafety.load(path, false, true);
+	} else if (ms().dsiSplash == 2) {
+		// Load H&S image
+		char path[256];
+		sprintf(path, (virtualPain ? "nitro:/video/tttstc/virtualPain.gif" : "nitro:/video/hsmsg/%i.gif"), language);
 		healthSafety.load(path, false, true);
 	}
 
