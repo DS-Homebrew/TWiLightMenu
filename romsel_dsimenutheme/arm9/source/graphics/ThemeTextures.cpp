@@ -34,14 +34,14 @@ extern s16 usernameRendered[11];
 extern bool showColon;
 
 static u16 _bmpImageBuffer[256 * 192] = {0};
-static u16* _bmpImageBuffer2 = (u16*)0x024D0000;
+static u16* _bmpImageBuffer2 = (u16*)0x02F80000;
 static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
 static u16 _photoBuffer[208 * 156] = {0};
-static u16* _photoBuffer2 = (u16*)0x024E8000;
-static u16* _bgSubBuffer2 = (u16*)0x02F68000;
+static u16* _photoBuffer2 = (u16*)0x02F68000;
+static u16* _bgSubBuffer2 = (u16*)0x02F98000;
 // DSi mode double-frame buffers
-static u16* _frameBuffer[2] = {(u16*)0x02F80000, (u16*)0x02F98000};
+//static u16* _frameBuffer[2] = {(u16*)0x02F80000, (u16*)0x02F98000};
 static u16* _frameBufferBot[2] = {(u16*)0x02FB0000, (u16*)0x02FC8000};
 
 static void* boxArtCache = (void*)0x02500000;	// Size: 0x1B8000
@@ -594,7 +594,9 @@ void ThemeTextures::commitBgMainModifyAsync() {
 void ThemeTextures::drawTopBg() {
 	beginBgSubModify();
 	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
-	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer2);
+	if (ndmaEnabled()) {
+		tonccpy((u8*)_bgSubBuffer2, (u8*)_bgSubBuffer, 0x18000);
+	}
 	commitBgSubModify();
 }
 
@@ -1049,22 +1051,31 @@ void ThemeTextures::drawBatteryImageCached() {
 void ThemeTextures::drawTopBgAvoidingShoulders() {
 
 	// Copy current to _bmpImageBuffer
-	dmaCopyWords(0, BG_GFX_SUB, _bmpImageBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	if (ndmaEnabled()) {
+		dmaCopyWords(0, _frameBufferBot[0], _bmpImageBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+		dmaCopyWords(0, _frameBufferBot[1], _bmpImageBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	} else {
+		dmaCopyWords(0, BG_GFX_SUB, _bmpImageBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	}
 
 	// Throw the entire top background into the sub buffer.
 	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
 	if (ndmaEnabled()) {
-		dmaCopyWords(2, _bgSubBuffer, _frameBufferBot[1], sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+		tonccpy((u8*)_bgSubBuffer2, (u8*)_bgSubBuffer, 0x18000);
 	}
 
  	// Copy top 32 lines from the buffer into the sub.
 	tonccpy(_bgSubBuffer, _bmpImageBuffer, sizeof(u16) * TOPLINES);
-	tonccpy(_frameBufferBot[1], _bmpImageBuffer2, sizeof(u16) * TOPLINES);
+	if (ndmaEnabled()) {
+		tonccpy(_bgSubBuffer2, _bmpImageBuffer2, sizeof(u16) * TOPLINES);
+	}
 	
 	// Copy bottom tc().shoulderLRenderY() + 5 lines into the sub
 	// ((192 - 32) * 256)
 	tonccpy(_bgSubBuffer + BOTTOMOFFSET, _bmpImageBuffer + BOTTOMOFFSET, sizeof(u16) * BOTTOMLINES);
-	tonccpy(_frameBufferBot[1] + BOTTOMOFFSET, _bmpImageBuffer2 + BOTTOMOFFSET, sizeof(u16) * BOTTOMLINES);
+	if (ndmaEnabled()) {
+		tonccpy(_bgSubBuffer2 + BOTTOMOFFSET, _bmpImageBuffer2 + BOTTOMOFFSET, sizeof(u16) * BOTTOMLINES);
+	}
 
 	commitBgSubModify();
 }
@@ -1259,7 +1270,7 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 u16 *ThemeTextures::bmpImageBuffer() { return _bmpImageBuffer; }
 u16 *ThemeTextures::photoBuffer() { return _photoBuffer; }
 u16 *ThemeTextures::photoBuffer2() { return _photoBuffer2; }
-u16 *ThemeTextures::frameBuffer(bool secondBuffer) { return _frameBuffer[secondBuffer]; }
+//u16 *ThemeTextures::frameBuffer(bool secondBuffer) { return _frameBuffer[secondBuffer]; }
 u16 *ThemeTextures::frameBufferBot(bool secondBuffer) { return _frameBufferBot[secondBuffer]; }
 
 void ThemeTextures::videoSetup() {
