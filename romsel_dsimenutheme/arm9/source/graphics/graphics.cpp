@@ -460,8 +460,12 @@ void playRotatingCubesVideo(void) {
 	if (rocketVideo_loadFrame) {
 		//if (renderFrame) {
 			//DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
+		if (ndmaEnabled()) {
+			dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)), (u16*)tex().frameBufferBot(0)+(256*rocketVideo_videoYpos), 0x200*56);
+			ndmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)), (u16*)tex().frameBufferBot(1)+(256*rocketVideo_videoYpos), 0x200*56);
+		} else {
 			dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x200*56);
-		//}
+		}
 
 		rocketVideo_currentFrame++;
 		if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
@@ -476,7 +480,7 @@ void playRotatingCubesVideo(void) {
 void vBlankHandler() {
 	if (ndmaEnabled()) {
 		//ndmaCopyWordsAsynch(0, tex().frameBuffer(secondBuffer), BG_GFX, 0x18000);
-		ndmaCopyWordsAsynch(1, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
+		ndmaCopyWordsAsynch(0, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
 		secondBuffer = !secondBuffer;
 	}
 
@@ -1765,7 +1769,7 @@ void loadRotatingCubes() {
 	}
 }
 void graphicsInit() {
-	printf("graphicsInit()\n");
+	//printf("graphicsInit()\n");
 
 	// for (int i = 0; i < 12; i++) {
 	// 	launchDotFrame[i] = 5;
