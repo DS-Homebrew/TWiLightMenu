@@ -638,6 +638,10 @@ void ThemeTextures::clearTopScreen() {
 	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 		_bgSubBuffer[i] = ((val >> 10) & 31) | (val & (31 - 3 * ms().blfLevel) << 5) |
 				  (val & (31 - 6 * ms().blfLevel)) << 10 | BIT(15);
+		if (ndmaEnabled() && !rotatingCubesLoaded) {
+			_bgSubBuffer2[i] = ((val >> 10) & 31) | (val & (31 - 3 * ms().blfLevel) << 5) |
+				  (val & (31 - 6 * ms().blfLevel)) << 10 | BIT(15);
+		}
 	}
 	commitBgSubModify();
 }
