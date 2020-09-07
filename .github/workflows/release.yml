@@ -42,6 +42,17 @@ jobs:
           echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
       - name: "Pack 7z Package for release"
         run: |
+          # Make artifacts directory
+          mkdir -p ~/artifacts
+
+          # Theme is currently unused
+          rm -rf 7zfile/_nds/TWiLightMenu/akmenu
+
+          # Debug 7z
+          mv 7zfile/debug debug
+          7z a TWiLightMenu-debug-release.7z debug
+          mv TWiLightMenu-debug-release.7z ~/artifacts
+
           mkdir -p 7zfile/_nds/TWiLightMenu/boxart/
           mkdir -p 7zfile/_nds/TWiLightMenu/extras/
           mkdir -p 7zfile/_nds/TWiLightMenu/gamesettings/
@@ -77,7 +88,6 @@ jobs:
           cp -r 7zfile TWiLightMenu
           cd TWiLightMenu
           7z a TWiLightMenu.7z .
-          mkdir -p ~/artifacts
           mv TWiLightMenu.7z ~/artifacts
 
           # DSi 7z
@@ -142,8 +152,26 @@ jobs:
         with:
           name: "build"
           path: "build"
+      - name: "Commit and push debug files to TWLBot/Builds"
+        id: "commit"
+        run: |
+          CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
+          echo "::set-output name=current_date::$CURRENT_DATE"
+
+          git config --global user.email "flamekat54@aol.com"
+          git config --global user.name "TWLBot"
+          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
+          cd Builds/
+          cp ${{ github.workspace }}/build/TWiLightMenu-debug-release.7z .
+          git stage .
+          git commit -m "TWiLightMenu (Release) | $COMMIT_TAG"
+          git push origin master
+          echo "::set-output name=twlbot_commit::$(git log --format=%H -1)"
       - name: Upload to ${{ github.repository }} release
         run: |
+          # Delete debug 7z
+          rm ${{ github.workspace }}/build/TWiLightMenu-debug-release.7z
+
           ID=$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)
 
           for file in ${{ github.workspace }}/build/*; do

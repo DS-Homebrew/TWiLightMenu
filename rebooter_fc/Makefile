@@ -22,9 +22,9 @@ makearm9_fc:
 	cp arm9/$(TARGET).elf $(TARGET).arm9.elf
 
 dist:	all
-	@cp "$(TARGET).nds" "../../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/TWLMRS.DAT"
-	@cp "$(TARGET).arm7.elf" "../7zfile/Debug/$(TARGET).arm7.elf"
-	@cp "$(TARGET).arm9.elf" "../7zfile/Debug/$(TARGET).arm9.elf"
+	@cp $(TARGET).nds "../../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/TWLMRS.DAT"
+	@cp $(TARGET).arm7.elf ../7zfile/debug/$(TARGET).arm7.elf
+	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
 
 autoboot_dist:	dist autoboot
 

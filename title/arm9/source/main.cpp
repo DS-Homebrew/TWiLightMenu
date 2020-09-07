@@ -291,20 +291,6 @@ void lastRunROM()
 		} else if (ms().slot1LaunchMethod==2) {
 			unlaunchRomBoot("cart:");
 		} else {
-			// Set Widescreen
-			if (!sys().arm7SCFGLocked() && ms().consoleModel >= 2 && ms().wideScreen
-			&& (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)
-			&& (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0)) {
-				// Prepare for reboot into 16:10 TWL_FIRM
-				rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-				fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
-
-				memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-				DC_FlushAll();					// Fix the throwback to 3DS HOME Menu bug
-				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-				stop();
-			}
-
 			err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
 		}
 	}
@@ -320,35 +306,11 @@ void lastRunROM()
 			bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 			if (ms().homebrewBootstrap) {
-				// Set Widescreen
-				if (!sys().arm7SCFGLocked() && ms().consoleModel >= 2 && useWidescreen
-				&& (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)
-				&& ms().homebrewHasWide) {
-					// Prepare for reboot into 16:10 TWL_FIRM
-					rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-					fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
-
-					memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-					DC_FlushAll();					// Fix the throwback to 3DS HOME Menu bug
-					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-					stop();
-				}
-
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 				argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
 			} else {
-				// Set Widescreen
-				if (!sys().arm7SCFGLocked() && ms().consoleModel >= 2 && useWidescreen
-				&& (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)
-				&& (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0)) {
-					// Prepare for reboot into 16:10 TWL_FIRM
-					rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-					fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
-
-					memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-					DC_FlushAll();					// Fix the throwback to 3DS HOME Menu bug
-					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-					stop();
+				if (ms().consoleModel >= 2 && !useWidescreen) {
+					remove("/_nds/nds-bootstrap/wideCheatData.bin");
 				}
 
 				const char *typeToReplace = ".nds";
@@ -519,18 +481,13 @@ void lastRunROM()
 
 		bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
-		// Set Widescreen
-		if (!sys().arm7SCFGLocked() && ms().consoleModel >= 2 && useWidescreen
-			&& (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)
-			&& ms().homebrewHasWide) {
-			// Prepare for reboot into 16:10 TWL_FIRM
-			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-			rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+		bool twlBgCxiFound = false;
+		if (ms().consoleModel >= 2) {
+			twlBgCxiFound = (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
+		}
 
-			irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
-			memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-			fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-			stop();
+		if (ms().consoleModel >= 2 && twlBgCxiFound && useWidescreen && ms().homebrewHasWide) {
+			argarray.push_back((char*)"wide");
 		}
 
 		runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
@@ -930,7 +887,7 @@ int main(int argc, char **argv)
 
 	if (ms().showlogo)
 	{
-		if (!soundBankLoaded) {
+		if (!soundBankLoaded || strncmp((char*)0x02FA0004, "*maxmod*", 8) != 0) {
 			// Load sound bank into memory
 			FILE* soundBank = fopen("nitro:/soundbank.bin", "rb");
 			fread((void*)0x02FA0000, 1, 0x58000, soundBank);

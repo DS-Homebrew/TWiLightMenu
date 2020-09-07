@@ -29,9 +29,9 @@ export PATH		:=	$(DEVKITARM)/bin:$(PATH)
 all: cardengine_arm7 bootloader $(TARGET).nds
 
 dist:	all
-	@cp "$(TARGET).nds" "../7zfile/_nds/TWiLightMenu/slot1launch.srldr"
-	@cp "$(TARGET).arm7.elf" "../7zfile/Debug/$(TARGET).arm7.elf"
-	@cp "$(TARGET).arm9.elf" "../7zfile/Debug/$(TARGET).arm9.elf"
+	@cp $(TARGET).nds ../7zfile/_nds/TWiLightMenu/slot1launch.srldr
+	@cp $(TARGET).arm7.elf ../7zfile/debug/$(TARGET).arm7.elf
+	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \

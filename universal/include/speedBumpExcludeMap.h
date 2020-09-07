@@ -81,6 +81,7 @@
 		"BJM",	// Stitch Jam
 		"YG4",	// Suikoden: Tierkreis
 		"CS7",	// Summon Night X: Tears Crown
+		"AXU",	// Surf's Up
 		"AYT",	// Tales of Innocence
 		"AG7",	// Tamagotchi Connection: Corner Shop
 		"YT9",	// Tony Hawk's Proving Ground

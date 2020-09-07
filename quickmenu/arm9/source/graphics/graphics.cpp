@@ -51,6 +51,8 @@
 
 extern bool useTwlCfg;
 
+extern bool widescreenEffects;
+
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
@@ -652,6 +654,13 @@ void graphicsInit()
 	REG_BG3PB_SUB = 0;
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
+
+	if (widescreenEffects) {
+		// Add black bars to left and right sides
+		s16 c = cosLerp(0) >> 4;
+		REG_BG3PA_SUB = ( c * 315)>>8;
+		REG_BG3X_SUB = -29 << 8;
+	}
 
 	if (isDSiMode()) {
 		loadSdRemovedImage();

@@ -38,8 +38,8 @@ void LoadConsoleBMP(int consoleModel) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
+		fread(frameBuffer[0], 1, 0x18000, file);
+		u16* src = frameBuffer[0];
 		int x = 0;
 		int y = 191;
 		for (int i=0; i<256*192; i++) {
@@ -90,8 +90,8 @@ void LoadConsoleBMP(int consoleModel) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
+		fread(frameBuffer[0], 1, 0x18000, file);
+		u16* src = frameBuffer[0];
 		int x = 0;
 		int y = 191;
 		for (int i=0; i<256*192; i++) {
@@ -138,8 +138,8 @@ bool consoleModel_isSure(void) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
+		fread(frameBuffer[0], 1, 0x18000, file);
+		u16* src = frameBuffer[0];
 		int x = 0;
 		int y = 191;
 		for (int i=0; i<256*192; i++) {

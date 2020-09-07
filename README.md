@@ -15,7 +15,7 @@
 </p>
 
 TWiLight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
-It can launch Nintendo DS, SNES, NES, GameBoy (color), GameBoy Advance, Sega GameGear/Master System & Mega Drive/Genesis ROMs, as well as DSTWO plugins (if you use a DSTWO) and `.rvid` videos using RocketVideo Technology.
+It can launch Nintendo DS, SNES, NES, GameBoy (color), GameBoy Advance, Sega GameGear/Master System & Mega Drive/Genesis ROMs, as well as DSTWO plugins (if you use a DSTWO) and videos.
 
 # Compiling
 
@@ -51,13 +51,13 @@ Please note that Docker compilation is not compatible with native compilation on
 - [NightScript](https://github.com/NightYoshi370/): Reworked Manual pages.
 ## Others
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
-- [ahezard](https://github.com/ahezard): NDMA SD code from nds-bootstrap.
+- [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap.
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI.
 - [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcarts.
-- [SNBeast](https://github.com/SNBeast): Unlaunch patches
+- [SNBeast](https://github.com/SNBeast): Unlaunch patches.
 - retrogamefan & Rudolph: Included AP-patches for nds-bootstrap.
-- fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, gamemasterplc, RocketRobz & ChampionLeake: Widescreen Cheats
+- fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, gamemasterplc, RocketRobz & ChampionLeake: Widescreen Cheats.
 ## Translators
 - Chinese Simplified: [Forbidden](https://crowdin.com/profile/Origami), [James-Makoto](https://crowdin.com/profile/VCMOD55), [R-YaTian](https://github.com/R-YaTian)
 - Chinese Traditional:
@@ -70,7 +70,7 @@ Please note that Docker compilation is not compatible with native compilation on
 - Polish: [Mateusz Tobiasz](https://crowdin.com/profile/tobiaszmateusz)
 - Portuguese: [Christopher Rodrigues](https://crowdin.com/profile/chrismr197), [Gabz Almeida](https://crowdin.com/profile/connwcted), [jim](https://crowdin.com/profile/hnrwx), [joyrv](https://crowdin.com/profile/joyrv), [Wodson de Andrade](https://crowdin.com/profile/CaptainCheep), [Zak](https://github.com/zekroman)
 - Russian: [Ckau](https://crowdin.com/profile/Ckau), [manwithnoface](https://github.com/1upus), [mbhz](https://github.com/mbhz)
-- Spanish: [ccccmark](https://github.com/ccccmark), [KplyAsteroid](https://crowdin.com/profile/Kplyasteroid), [mschifino](https://crowdin.com/profile/mschifino), [XxPhoenix1996xX](https://github.com/XxPhoenix1996xX)
+- Spanish: [ccccmark](https://github.com/ccccmark), [KplyAsteroid](https://crowdin.com/profile/Kplyasteroid), [mschifino](https://crowdin.com/profile/mschifino), [Uriki](https://github.com/Uriki), [XxPhoenix1996xX](https://github.com/XxPhoenix1996xX)
 - Swedish: [Max Hambraeus](https://github.com/maxhambraeus), [Walter Lindell](https://crowdin.com/profile/walter.lindell)
 - Turkish: [İlke Hür Eyiol](https://crowdin.com/profile/ilkecan51)
 - Ukrainian: [Oleh Hatsenko](https://github.com/IRONKAGE), [T](https://crowdin.com/profile/--Tip--)

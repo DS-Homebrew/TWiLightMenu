@@ -27,10 +27,12 @@
 #include "soundeffect.h"
 
 #include "top_bg.h"
+#include "top_bg_wide.h"
 #include "sub_bg.h"
 #include "saturn_bg.h"
 
 extern bool fadeType;
+extern bool widescreenEffects;
 int screenBrightness = 31;
 extern int currentTheme;
 
@@ -193,8 +195,8 @@ void graphicsInit() {
 	bgSetPriority(bg2Sub, 0);
 
 	if(currentTheme != 4) {
-		tonccpy(bgGetGfxPtr(bg3Main), top_bgBitmap, top_bgBitmapLen);
-		copyPalette(BG_PALETTE + 0x10, top_bgPal, top_bgPalLen);
+		tonccpy(bgGetGfxPtr(bg3Main), (widescreenEffects ? top_bg_wideBitmap : top_bgBitmap), (widescreenEffects ? top_bg_wideBitmapLen : top_bgBitmapLen));
+		copyPalette(BG_PALETTE + 0x10, (widescreenEffects ? top_bg_widePal : top_bgPal), (widescreenEffects ? top_bg_widePalLen : top_bgPalLen));
 		tonccpy(bgGetGfxPtr(bg3Sub), sub_bgBitmap, sub_bgBitmapLen);
 		copyPalette(BG_PALETTE_SUB + 0x10, sub_bgPal, sub_bgPalLen);
 	} else {

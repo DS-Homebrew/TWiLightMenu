@@ -90,10 +90,11 @@ void powerButtonCB() {
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
-    // nocashMessage("ARM7 main.c main");
-	
-	// clear sound registers
-	dmaFillWords(0, (void*)0x04000400, 0x100);
+	//nocashMessage("ARM7 main.c main");
+
+	// Grab from DS header in GBA slot
+	*(u16*)0x02FFFC36 = *(u16*)0x0800015E;	// Header CRC16
+	*(u32*)0x02FFFC38 = *(u32*)0x0800000C;	// Game Code
 
 	REG_SOUNDCNT |= SOUND_ENABLE;
 	writePowerManagement(PM_CONTROL_REG, ( readPowerManagement(PM_CONTROL_REG) & ~PM_SOUND_MUTE ) | PM_SOUND_AMP );

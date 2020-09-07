@@ -9,6 +9,7 @@
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
 #include "graphics/gif.hpp"
+#include "graphics/lodepng.h"
 
 #include "soundbank.h"
 //#include "soundbank_bin.h"
@@ -19,6 +20,7 @@ extern u16 bmpImageBuffer[256*192];
 // extern u16 videoImageBuffer[39][256*144];
 
 extern u16 convertToDsBmp(u16 val);
+extern u16 convertVramColorToGrayscale(u16 val);
 
 // extern void* dsiSplashLocation;
 
@@ -114,28 +116,16 @@ void BootSplashDSi(void) {
 	bool virtualPain = (strcmp(currentDate, "04/01") == 0);
 
 	if (virtualPain) {
-		videoFrameFile = fopen("nitro:/graphics/VirtualPain.bmp", "rb");
-
-		if (videoFrameFile) {
-			// Start loading
-			fseek(videoFrameFile, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 1, 0x18000, videoFrameFile);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 191;
-			for (int i=0; i<256*192; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				BG_GFX[y*256+x] = convertToDsBmp(val);
-				x++;
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, "nitro:/graphics/VirtualPain.png");
+		for(unsigned i=0;i<image.size()/4;i++) {
+			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (ms().colorMode == 1) {
+				color = convertVramColorToGrayscale(color);
 			}
+			BG_GFX[i] = color;
 		}
-		fclose(videoFrameFile);
 
 		if (cartInserted) {
 			videoFrameFile = fopen("nitro:/graphics/nintendoPain.bmp", "rb");
@@ -145,8 +135,8 @@ void BootSplashDSi(void) {
 				fseek(videoFrameFile, 0xe, SEEK_SET);
 				u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 				fseek(videoFrameFile, pixelStart, SEEK_SET);
-				fread(bmpImageBuffer, 1, 0x1D00, videoFrameFile);
-				u16* src = bmpImageBuffer;
+				fread(frameBuffer[0], 1, 0x1D00, videoFrameFile);
+				u16* src = frameBuffer[0];
 				int x = 67;
 				int y = 159;
 				for (int i=0; i<122*30; i++) {

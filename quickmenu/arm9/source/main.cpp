@@ -58,6 +58,7 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
+bool widescreenEffects = false;
 int fps = 60;
 int colorMode = 0;
 int blfLevel = 0;
@@ -142,6 +143,7 @@ int slot1LaunchMethod = 1;	// 0 == Reboot, 1 == Direct, 2 == Unlaunch
 bool useBootstrap = true;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
+bool homebrewHasWide = false;
 bool show12hrClock = true;
 //bool snesEmulator = true;
 bool smsGgInRam = false;
@@ -254,6 +256,7 @@ void SaveSettings(void) {
 		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
 		settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
+		settingsini.SetInt("SRLOADER", "HOMEBREW_HAS_WIDE", homebrewHasWide);
 	}
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
 	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
@@ -434,7 +437,8 @@ void SetWidescreen(const char *filename) {
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
 
 	if ((isDSiMode() && arm7SCFGLocked) || consoleModel < 2 || !useWidescreen
-	|| (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0)) {
+	|| (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) != 0)) {
+		homebrewHasWide = false;
 		return;
 	}
 	
@@ -489,43 +493,7 @@ void SetWidescreen(const char *filename) {
 		fclose(f_nds_file);
 		game_TID[4] = 0;
 
-		if (game_TID[0] != 'W' && romVersion != 0x57) return;
-
-		const char* resultText1;
-		const char* resultText2;
-		// Prepare for reboot into 16:10 TWL_FIRM
-		mkdir("sd:/luma", 0777);
-		mkdir("sd:/luma/sysmodules", 0777);
-		if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0)
-		&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
-			resultText1 = "Failed to backup custom";
-			resultText2 = "TwlBg.";
-		} else {
-			if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-				tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-				DC_FlushAll();					// Fix the throwback to 3DS HOME Menu bug
-				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-				stop();
-			} else {
-				resultText1 = "Failed to reboot TwlBg";
-				resultText2 = "in widescreen.";
-			}
-		}
-		rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
-		int textXpos[2] = {0};
-		textXpos[0] = 72;
-		textXpos[1] = 84;
-		clearText();
-		printSmallCentered(false, textXpos[0], resultText1);
-		printSmallCentered(false, textXpos[1], resultText2);
-		fadeType = true; // Fade in from white
-		for (int i = 0; i < 60 * 3; i++) {
-			swiWaitForVBlank(); // Wait 3 seconds
-		}
-		fadeType = false;	   // Fade to white
-		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
-		}
+		homebrewHasWide = (game_TID[0] == 'W' || romVersion == 0x57);
 		return;
 	}
 
@@ -535,25 +503,7 @@ void SetWidescreen(const char *filename) {
 		mkdir("/_nds", 0777);
 		mkdir("/_nds/nds-bootstrap", 0777);
 		if (fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin") == 0) {
-			// Prepare for reboot into 16:10 TWL_FIRM
-			mkdir("sd:/luma", 0777);
-			mkdir("sd:/luma/sysmodules", 0777);
-			if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0)
-			&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
-				resultText1 = "Failed to backup custom";
-				resultText2 = "TwlBg.";
-			} else {
-				if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-					tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-					DC_FlushAll();					// Fix the throwback to 3DS HOME Menu bug
-					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-					stop();
-				} else {
-					resultText1 = "Failed to reboot TwlBg";
-					resultText2 = "in widescreen.";
-				}
-			}
-			rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+			return;
 		} else {
 			resultText1 = "Failed to copy widescreen";
 			resultText2 = "code for the game.";
@@ -973,6 +923,7 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
+	widescreenEffects = (consoleModel >= 2 && wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	
 	if (isDSiMode() && arm7SCFGLocked) {
 		if (consoleModel < 2) {
@@ -2369,15 +2320,20 @@ int main(int argc, char **argv) {
 						loadGameOnFlashcard(argarray[0], true);
 					}
 				} else {
-					launchType[secondaryDevice] = 2;
-					previousUsedDevice = secondaryDevice;
-					SaveSettings();
-
 					if (isDSiMode() || !secondaryDevice) {
 						SetWidescreen(filename[secondaryDevice].c_str());
 					}
+					launchType[secondaryDevice] = 2;
+					previousUsedDevice = secondaryDevice;
+					SaveSettings();
 					if (!isDSiMode() && !secondaryDevice) {
 						ntrStartSdGame();
+					}
+
+					bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
+
+					if (consoleModel >= 2 && useWidescreen && homebrewHasWide) {
+						argarray.push_back((char*)"wide");
 					}
 
 					bool runNds_boostCpu = false;

@@ -48,6 +48,7 @@ class SoundControl {
         bool stream_is_playing;
         //mm_sound_effect snd_loading;
         mm_sound_effect mus_startup;
+        FILE* stream_start_source;
         FILE* stream_source;
         u32 startup_sample_length;
 };

@@ -42,6 +42,8 @@
 
 bool useTwlCfg = false;
 
+bool widescreenEffects = false;
+
 const char *settingsinipath = DSIMENUPP_INI;
 
 int currentTheme = 0;
@@ -502,9 +504,11 @@ int main(int argc, char **argv)
 	bool widescreenFound = false;
 	bool sdAccessible = (access("sd:/", F_OK) == 0);
 	if (sdAccessible) {
-		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (ms().consoleModel >= 2) && (!sys().arm7SCFGLocked()));
+		widescreenFound = ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) && (ms().consoleModel >= 2) && (!sys().arm7SCFGLocked()));
 	}
 	bool fatAccessible = (access("fat:/", F_OK) == 0);
+
+	widescreenEffects = (ms().wideScreen && widescreenFound);
 
 	graphicsInit();
 	fontInit();
@@ -549,8 +553,8 @@ int main(int argc, char **argv)
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int(&ms().dsiMusic),
-				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, STR_THEME, STR_CLASSIC},
-				{0, 1, 2, 3, 4});
+				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, STR_THEME, STR_CLASSIC, "HBL"},
+				{0, 1, 2, 3, 4, 5});
 
 	if (isDSiMode() && sdAccessible) {
 		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {STR_MICRO_SD_CARD, STR_SD_CARD}, {true, false});
@@ -608,15 +612,6 @@ int main(int argc, char **argv)
 			.option(STR_BIOS_INTRO, STR_DESCRIPTION_BIOSINTRO, Option::Bool(&gs().skipIntro), {STR_OFF, STR_ON}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
-
-	if (widescreenFound)
-	{
-		gamesPage.option((isDSiMode() ? STR_ASPECTRATIO : "SD: "+STR_ASPECTRATIO),
-			STR_DESCRIPTION_ASPECTRATIO,
-			Option::Bool(&ms().wideScreen),
-			{STR_WIDESCREEN, STR_FULLSCREEN},
-			{true, false});
-	}
 
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked())
 	{
@@ -749,6 +744,15 @@ int main(int argc, char **argv)
 		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().logging), {STR_ON, STR_OFF}, {true, false});
 
 	SettingsPage miscPage(STR_MISC_SETTINGS);
+
+	if (widescreenFound)
+	{
+		miscPage.option((isDSiMode() ? STR_ASPECTRATIO : "SD: "+STR_ASPECTRATIO),
+			STR_DESCRIPTION_ASPECTRATIO,
+			Option::Bool(&ms().wideScreen),
+			{STR_WIDESCREEN, STR_FULLSCREEN},
+			{true, false});
+	}
 
 	using TLanguage = TWLSettings::TLanguage;
 	miscPage
