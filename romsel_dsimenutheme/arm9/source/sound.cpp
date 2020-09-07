@@ -151,6 +151,8 @@ SoundControl::SoundControl()
 	};
 
 
+	bool loopableMusic = false;
+
 	stream.sampling_rate = 16000;	 		// 16000Hz
 
 	if (ms().theme == 4) {
@@ -161,6 +163,7 @@ SoundControl::SoundControl()
 				stream.sampling_rate = 22050;	 		// 22050Hz
 				stream_start_source = fopen(std::string(TFN_HBL_START_SOUND_BG).c_str(), "rb");
 				stream_source = fopen(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), "rb");
+				loopableMusic = true;
 				break;
 			case 4:
 				stream_source = fopen(std::string(TFN_CLASSIC_SOUND_BG).c_str(), "rb");
@@ -187,7 +190,7 @@ SoundControl::SoundControl()
 	stream.timer = MM_TIMER0;	    	   // use timer0
 	stream.manual = false;	      		   // auto filling
 	
-	if (stream_start_source) {
+	if (loopableMusic) {
 		fseek(stream_start_source, 0, SEEK_END);
 		size_t fileSize = ftell(stream_start_source);
 		fseek(stream_start_source, 0, SEEK_SET);

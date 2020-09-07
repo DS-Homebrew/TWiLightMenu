@@ -30,6 +30,7 @@
 #include "gbaswitch.h"
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
+//#include "tool/logging.h"
 
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
@@ -523,6 +524,7 @@ int main(int argc, char **argv) {
 
 	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
+	//logInit();
 	ms().loadSettings();
 	widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	tfn(); //
@@ -698,15 +700,20 @@ int main(int argc, char **argv) {
 
 	char path[256] = {0};
 
+	//logPrint("snd()\n");
 	snd();
 
 	if (ms().theme == 4) {
+		//logPrint("snd().playStartup()\n");
 		snd().playStartup();
 	} else if (ms().dsiMusic != 0) {
 		if ((ms().theme == 1 && ms().dsiMusic == 1) || ms().dsiMusic == 2 || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
+			//logPrint("snd().playStartup()\n");
 			snd().playStartup();
+			//logPrint("snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust())\n");
 			snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
 		}
+		//logPrint("snd().beginStream()\n");
 		snd().beginStream();
 	}
 

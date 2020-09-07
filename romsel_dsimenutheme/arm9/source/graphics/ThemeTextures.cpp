@@ -231,7 +231,7 @@ void ThemeTextures::loadBackgrounds() {
 }
 
 void ThemeTextures::loadHBTheme() {	
-	printf("tex().loadHBTheme()\n");
+	//printf("tex().loadHBTheme()\n");
 
 	// printf("tex().loadBackgrounds()\n");
 	loadBackgrounds();
@@ -294,7 +294,7 @@ void ThemeTextures::loadHBTheme() {
 }
 
 void ThemeTextures::loadSaturnTheme() {	
-	printf("tex().loadSaturnTheme()\n");
+	//printf("tex().loadSaturnTheme()\n");
 
 	loadBackgrounds();
 	loadUITextures();
@@ -337,7 +337,7 @@ void ThemeTextures::loadSaturnTheme() {
 }
 
 void ThemeTextures::load3DSTheme() {
-	printf("tex().load3DSTheme()\n");
+	//printf("tex().load3DSTheme()\n");
 
 	loadBackgrounds();
 	loadUITextures();
@@ -378,7 +378,7 @@ void ThemeTextures::load3DSTheme() {
 }
 
 void ThemeTextures::loadDSiTheme() {	
-	printf("tex().loadDSiTheme()\n");
+	//printf("tex().loadDSiTheme()\n");
 
 	loadBackgrounds();
 	loadUITextures();
@@ -1274,7 +1274,7 @@ u16 *ThemeTextures::photoBuffer2() { return _photoBuffer2; }
 u16 *ThemeTextures::frameBufferBot(bool secondBuffer) { return _frameBufferBot[secondBuffer]; }
 
 void ThemeTextures::videoSetup() {
-	printf("tex().videoSetup()\n");
+	//printf("tex().videoSetup()\n");
 	//////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);

@@ -46,6 +46,7 @@
 #include "ThemeConfig.h"
 #include "themefilenames.h"
 #include "tool/colortool.h"
+//#include "tool/logging.h"
 
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
@@ -478,12 +479,6 @@ void playRotatingCubesVideo(void) {
 }
 
 void vBlankHandler() {
-	if (ndmaEnabled()) {
-		//ndmaCopyWordsAsynch(0, tex().frameBuffer(secondBuffer), BG_GFX, 0x18000);
-		ndmaCopyWordsAsynch(0, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
-		secondBuffer = !secondBuffer;
-	}
-
 	execQueue();		   // Execute any actions queued during last vblank.
 	execDeferredIconUpdates(); // Update any icons queued during last vblank.
 
@@ -493,6 +488,12 @@ void vBlankHandler() {
 			waitForNeedToPlayStopSound = 0;
 		}
 		needToPlayStopSound = false;
+	}
+
+	if (ndmaEnabled()) {
+		//ndmaCopyWordsAsynch(0, tex().frameBuffer(secondBuffer), BG_GFX, 0x18000);
+		ndmaCopyWordsAsynch(0, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
+		secondBuffer = !secondBuffer;
 	}
 
 	if (ms().theme == 1 && rotatingCubesLoaded) {
@@ -1769,7 +1770,7 @@ void loadRotatingCubes() {
 	}
 }
 void graphicsInit() {
-	//printf("graphicsInit()\n");
+	//logPrint("graphicsInit()\n");
 
 	// for (int i = 0; i < 12; i++) {
 	// 	launchDotFrame[i] = 5;
