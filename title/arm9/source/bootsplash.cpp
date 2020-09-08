@@ -9,7 +9,6 @@
 #include "graphics/lodepng.h"
 
 #include "soundbank.h"
-//#include "soundbank_bin.h"
 
 extern bool useTwlCfg;
 
@@ -72,7 +71,7 @@ void drawNintendoLogoToVram(void) {
 	}
 }
 
-void BootSplashDSi(void) {
+void bootSplashDSi(void) {
 	u16 whiteCol = 0xFFFF;
 	whiteCol = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
 	for (int i = 0; i < 256*256; i++) {
@@ -209,7 +208,7 @@ void BootSplashDSi(void) {
 	timerStop(0);
 }
 
-void BootSplashInit(void) {
+void bootSplashInit(void) {
 	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
@@ -221,5 +220,5 @@ void BootSplashInit(void) {
 	bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
 
 	splashSoundInit();
-	BootSplashDSi();
+	bootSplashDSi();
 }
