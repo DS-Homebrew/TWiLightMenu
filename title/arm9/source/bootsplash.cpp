@@ -7,6 +7,7 @@
 // #include "common/lzss.h"
 // #include "common/tonccpy.h"
 #include "common/dsimenusettings.h"
+#include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "graphics/gif.hpp"
 #include "graphics/lodepng.h"
@@ -159,19 +160,23 @@ void BootSplashDSi(void) {
 		controlBottomBright = false;
 	}
 
-	Gif splash(language == TWLSettings::ELangChineseS ? "nitro:/video/splash/ique.gif" : "nitro:/video/splash/dsi.gif", true, true);
-	Gif healthSafety;
-	if (ms().dsiSplash == 1) {
-		// Load Touch the Touch Screen to continue image
-		char path[256];
-		sprintf(path, (virtualPain ? "nitro:/video/tttstc/virtualPain.gif" : "nitro:/video/tttstc/%i.gif"), language);
-		healthSafety.load(path, false, true);
-	} else if (ms().dsiSplash == 2) {
-		// Load H&S image
-		char path[256];
-		sprintf(path, (virtualPain ? "nitro:/video/tttstc/virtualPain.gif" : "nitro:/video/hsmsg/%i.gif"), language);
-		healthSafety.load(path, false, true);
+	char path[256];
+	if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashtop.gif", F_OK) == 0) {
+		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", sdFound() ? "sd" : "fat");
+	} else {
+		sprintf(path, "nitro:/video/splash/%s.gif", language == TWLSettings::ELangChineseS ? "ique" : "dsi");
 	}
+	Gif splash(path, true, true);
+
+	path[0] = '\0';
+	if (ms().dsiSplash == 1) { // Load Touch the Touch Screen to continue image
+		sprintf(path, (virtualPain ? "nitro:/video/tttstc/virtualPain.gif" : "nitro:/video/tttstc/%i.gif"), language);
+	} else if (ms().dsiSplash == 2) { // Load H&S image
+		sprintf(path, (virtualPain ? "nitro:/video/tttstc/virtualPain.gif" : "nitro:/video/hsmsg/%i.gif"), language);
+	} else if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashbottom.gif", F_OK) == 0) { // Load custom bottom image
+		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", sdFound() ? "sd" : "fat");
+	}
+	Gif healthSafety(path, false, true);
 
 	timerStart(0, ClockDivider_1024, TIMER_FREQ_1024(100), Gif::timerHandler);
 
