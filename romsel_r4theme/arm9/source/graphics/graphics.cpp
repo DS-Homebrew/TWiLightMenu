@@ -60,6 +60,7 @@ extern int colorBvalue;
 
 int screenBrightness = 0;
 static bool secondBuffer = false;
+bool doubleBuffer = true;
 
 int frameOf60fps = 60;
 int frameDelay = 0;
@@ -263,10 +264,12 @@ u16 convertVramColorToGrayscale(u16 val) {
 
 void vBlankHandler()
 {
-	extern bool startMenu;
-	dmaCopyHalfWordsAsynch(0, topImage[startMenu][secondBuffer], (u16*)BG_GFX_SUB+(256*32), 0x18000);
-	dmaCopyHalfWordsAsynch(1, bottomImage[startMenu][secondBuffer], BG_GFX, 0x18000);
-	secondBuffer = !secondBuffer;
+	if (doubleBuffer) {
+		extern bool startMenu;
+		dmaCopyHalfWordsAsynch(0, topImage[startMenu][secondBuffer], (u16*)BG_GFX_SUB+(256*32), 0x18000);
+		dmaCopyHalfWordsAsynch(1, bottomImage[startMenu][secondBuffer], BG_GFX, 0x18000);
+		secondBuffer = !secondBuffer;
+	}
 
 	glBegin2D();
 	{
@@ -436,8 +439,9 @@ void graphicsLoad()
 			if (colorMode == 1) {
 				topImage[0][0][i] = convertVramColorToGrayscale(topImage[0][0][i]);
 			}
+			topImage[0][1][i] = topImage[0][0][i];
 			topImage[1][0][i] = topImage[0][0][i];
-			topImage[1][1][i] = topImage[0][1][i];
+			topImage[1][1][i] = topImage[0][0][i];
 		}
 
 		FILE* fileTop = fopen("nitro:/themes/gbnp/bg.bmp", "rb");
