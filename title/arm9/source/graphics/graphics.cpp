@@ -206,6 +206,12 @@ void loadTitleGraphics() {
 
 	twlMenuVideo_loadTopGraphics();
 
+	// Clear the background palettes
+	for(int i = 0; i < 0xFF; i++) {
+		BG_PALETTE[i] = 0;
+		BG_PALETTE_SUB[i] = 0;
+	}
+
 	// Display TWiLightMenu++ logo
 	LoadBMP();
 }
