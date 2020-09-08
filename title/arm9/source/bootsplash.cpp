@@ -87,6 +87,8 @@ void bootSplashDSi(void) {
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
 	bool virtualPain = (strcmp(currentDate, "04/01") == 0);
 
+	bool custom = ms().dsiSplash == 3;
+
 	char path[256];
 	if (virtualPain) {
 		strcpy(path, "nitro:/video/splash/virtualPain.gif");
@@ -110,6 +112,13 @@ void bootSplashDSi(void) {
 	Gif healthSafety(path, false, true);
 
 	timerStart(0, ClockDivider_1024, TIMER_FREQ_1024(100), Gif::timerHandler);
+
+	// For the default splashes, draw first frame, then wait until the top is done
+	if(!custom) {
+		while(healthSafety.currentFrame() == 0)
+			swiWaitForVBlank();
+		healthSafety.pause();
+	}
 
 	if (cartInserted) {
 		u16 *gfx[2];
@@ -143,9 +152,11 @@ void bootSplashDSi(void) {
 	controlBottomBright = true;
 	fadeType = true;
 
-	while (!splash.finished()) {
+	while (!(splash.finished() && healthSafety.finished())) {
 		swiWaitForVBlank();
 		if (splash.waitingForInput()) {
+			if(!custom && healthSafety.paused())
+				healthSafety.unpause();
 			scanKeys();
 			if(keysDown()) {
 				splash.resume();
