@@ -37,18 +37,6 @@ bool controlTopBright = true;
 bool controlBottomBright = true;
 int screenBrightness = 31;
 
-bool rocketVideo_playVideo = false;
-bool rocketVideo_playBackwards = false;
-bool rocketVideo_screen = true;			// true == top, false == bottom
-int rocketVideo_videoYpos = 0;
-int rocketVideo_videoYsize = 144;
-int rocketVideo_videoFrames = 0;
-int rocketVideo_videoFps = 60;
-int rocketVideo_currentFrame = -1;
-int rocketVideo_frameDelay = 0;
-bool rocketVideo_frameDelayEven = true;	// For 24FPS
-bool rocketVideo_loadFrame = true;
-
 bool twlMenuSplash = false;
 extern void twlMenuVideo_loadTopGraphics(void);
 extern void twlMenuVideo_topGraphicRender(void);
@@ -58,24 +46,7 @@ bool secondBuffer = false;
 
 u16 frameBuffer[2][256*192];
 u16 frameBufferBot[2][256*192];
-//u16 videoImageBuffer[39][256*144];
-u16* videoImageBuffer[35] = {0};
-void* dsiSplashLocation = (void*)0x02600000;
-
-void vramcpy_ui (void* dest, const void* src, int size) 
-{
-	u16* destination = (u16*)dest;
-	u16* source = (u16*)src;
-	while (size > 0) {
-		*destination++ = *source++;
-		size-=2;
-	}
-}
-
-void clearBrightness(void) {
-	fadeType = true;
-	screenBrightness = 0;
-}
+u16* dsiSplashLocation = (u16*)0x02600000;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
@@ -135,8 +106,7 @@ u16 convertVramColorToGrayscale(u16 val) {
 	return 32768|(max<<10)|(max<<5)|(max);
 }
 
-void vBlankHandler()
-{
+void vBlankHandler() {
 	if(fadeType == true) {
 		screenBrightness--;
 		if (screenBrightness < 0) screenBrightness = 0;
@@ -153,58 +123,6 @@ void vBlankHandler()
 	}
 	if (twlMenuSplash) {
 		twlMenuVideo_topGraphicRender();
-	}
-	if (rocketVideo_playVideo) {
-		if (!rocketVideo_loadFrame) {
-			if (rocketVideo_videoFps != 60) {
-				rocketVideo_frameDelay++;
-				rocketVideo_loadFrame = (rocketVideo_frameDelay == 2+rocketVideo_frameDelayEven);
-			} else {
-				rocketVideo_loadFrame = true;
-			}
-		}
-
-		if (rocketVideo_loadFrame) {
-			if (rocketVideo_playBackwards) {
-				rocketVideo_currentFrame--;
-
-				if (rocketVideo_currentFrame < 0) {
-					rocketVideo_playVideo = false;
-					rocketVideo_currentFrame = rocketVideo_videoFrames+1;
-					rocketVideo_frameDelay = 0;
-					rocketVideo_frameDelayEven = true;
-					rocketVideo_loadFrame = false;
-				} else {
-					if (rocketVideo_videoFps == 60 && rocketVideo_screen) {
-						dmaCopy(dsiSplashLocation+(0x12000*rocketVideo_currentFrame), (u16*)BG_GFX+(256*rocketVideo_videoYpos), 0x12000);
-					} else {
-						dmaCopy((void*)videoImageBuffer[rocketVideo_currentFrame % 35], (u16*)(rocketVideo_screen ? BG_GFX+(256*rocketVideo_videoYpos) : BG_GFX_SUB+(256*rocketVideo_videoYpos)), 0x200*rocketVideo_videoYsize);
-					}
-					rocketVideo_frameDelay = 0;
-					rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
-					rocketVideo_loadFrame = false;
-				}
-			} else {
-				rocketVideo_currentFrame++;
-
-				if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
-					rocketVideo_playVideo = false;
-					rocketVideo_currentFrame = -1;
-					rocketVideo_frameDelay = 0;
-					rocketVideo_frameDelayEven = true;
-					rocketVideo_loadFrame = false;
-				} else {
-					if (rocketVideo_videoFps == 60 && rocketVideo_screen) {
-						dmaCopy(dsiSplashLocation+(0x12000*rocketVideo_currentFrame), (u16*)BG_GFX+(256*rocketVideo_videoYpos), 0x12000);
-					} else {
-						dmaCopy((void*)videoImageBuffer[rocketVideo_currentFrame % 35], (u16*)(rocketVideo_screen ? BG_GFX+(256*rocketVideo_videoYpos) : BG_GFX_SUB+(256*rocketVideo_videoYpos)), 0x200*rocketVideo_videoYsize);
-					}
-					rocketVideo_frameDelay = 0;
-					rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
-					rocketVideo_loadFrame = false;
-				}
-			}
-		}
 	}
 }
 

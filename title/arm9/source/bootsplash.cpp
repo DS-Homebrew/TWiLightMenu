@@ -5,27 +5,20 @@
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
+#include "common/tonccpy.h"
 #include "graphics/gif.hpp"
+#include "graphics/graphics.h"
 #include "graphics/lodepng.h"
 
 #include "soundbank.h"
 
 extern bool useTwlCfg;
 
-extern u16 bmpImageBuffer[256*192];
-extern u16 frameBuffer[2][256*192];
-
-extern u16 convertToDsBmp(u16 val);
-extern u16 convertVramColorToGrayscale(u16 val);
-
 extern bool fadeType;
 extern bool controlTopBright;
 extern bool controlBottomBright;
-extern int screenBrightness;
 
 bool cartInserted;
-
-static FILE* videoFrameFile;
 
 mm_sound_effect dsiboot;
 mm_sound_effect proceed;
@@ -92,54 +85,12 @@ void bootSplashDSi(void) {
 	const struct tm *Time = localtime(&Raw);
 
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
-
 	bool virtualPain = (strcmp(currentDate, "04/01") == 0);
 
-	if (virtualPain) {
-		std::vector<unsigned char> image;
-		unsigned width, height;
-		lodepng::decode(image, width, height, "nitro:/graphics/VirtualPain.png");
-		for(unsigned i=0;i<image.size()/4;i++) {
-			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				color = convertVramColorToGrayscale(color);
-			}
-			BG_GFX[i] = color;
-		}
-
-		if (cartInserted) {
-			videoFrameFile = fopen("nitro:/graphics/nintendoPain.bmp", "rb");
-
-			if (videoFrameFile) {
-				// Start loading
-				fseek(videoFrameFile, 0xe, SEEK_SET);
-				u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-				fseek(videoFrameFile, pixelStart, SEEK_SET);
-				fread(frameBuffer[0], 1, 0x1D00, videoFrameFile);
-				u16* src = frameBuffer[0];
-				int x = 67;
-				int y = 159;
-				for (int i=0; i<122*30; i++) {
-					if (x >= 67+122) {
-						x = 67;
-						y--;
-					}
-					u16 val = *(src++);
-					BG_GFX[y*256+x] = convertToDsBmp(val);
-					x++;
-				}
-			}
-			fclose(videoFrameFile);
-		}
-
-		controlTopBright = true;
-		controlBottomBright = true;
-	} else {
-		controlBottomBright = false;
-	}
-
 	char path[256];
-	if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashtop.gif", F_OK) == 0) {
+	if (virtualPain) {
+		strcpy(path, "nitro:/video/splash/virtualPain.gif");
+	} else if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashtop.gif", F_OK) == 0) {
 		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", sdFound() ? "sd" : "fat");
 	} else {
 		sprintf(path, "nitro:/video/splash/%s.gif", language == TWLSettings::ELangChineseS ? "ique" : "dsi");
@@ -161,25 +112,31 @@ void bootSplashDSi(void) {
 	timerStart(0, ClockDivider_1024, TIMER_FREQ_1024(100), Gif::timerHandler);
 
 	if (cartInserted) {
-		// Gif nintendo("nitro:/graphics/nintendo.gif", false, false);
-		// FILE *file = fopen("nitro:/graphics/nintendo.bmp", "rb");
+		u16 *gfx[2];
+		for(int i = 0; i < 2; i++) {
+			gfx[i] = oamAllocateGfx(&oamMain, SpriteSize_64x32, SpriteColorFormat_Bmp);
+			oamSet(&oamMain, i, 67 + (i * 64), virtualPain ? 130 : 142, 0, 15, SpriteSize_64x32, SpriteColorFormat_Bmp, gfx[i], 0, false, false, false, false, false);
+		}
 
-		// if (file) {
-		// 	// Start loading
+		std::vector<unsigned char> image;
+		unsigned int width, height;
+		lodepng::decode(image, width, height, virtualPain ? "nitro:/graphics/nintendoPain.png" : "nitro:/graphics/nintendo.png");
 
-		// 	fseek(videoFrameFile, 0xE, SEEK_SET);
-		// 	u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-		// 	fseek(videoFrameFile, pixelStart, SEEK_SET);
-		// 	fread(bmpImageBuffer, 1, 0x1B00, videoFrameFile);
-		// 	u16* src = bmpImageBuffer;
-		// 	for (int i=0; i<122*28; i++) {
-		// 		u16 val = *(src++);
-		// 		if (val != 0x7C1F) {
-		// 			BG_GFX[(256*192)+i] = convertToDsBmp(val);
-		// 		}
-		// 	}
-		// }
-		// fclose(videoFrameFile);
+		for(unsigned int i = 0, y = 0, x = 0;i < image.size() / 4; i++, x++) {
+			u16 color = image[i * 4] >> 3 | (image[(i * 4) + 1] >> 3) << 5 | (image[(i * 4) + 2] >> 3) << 10 | (image[(i * 4) + 3] > 0) << 15;
+			if (ms().colorMode == 1) {
+				color = convertVramColorToGrayscale(color);
+			}
+
+			if(x >= width) {
+				x = 0;
+				y++;
+			}
+
+			gfx[x >= 64][y * 64 + (x % 64)] = color;
+		}
+
+		oamUpdate(&oamMain);
 	}
 
 	controlTopBright = true;
@@ -209,15 +166,19 @@ void bootSplashDSi(void) {
 }
 
 void bootSplashInit(void) {
-	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
-	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
-	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	
-	// bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	videoSetMode(MODE_5_2D);
+	videoSetModeSub(MODE_5_2D);
+	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankB(VRAM_B_MAIN_SPRITE);
+	vramSetBankC(VRAM_C_SUB_BG);
+
 	bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
-	// bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(3, 3);
+
 	bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(7, 3);
+
+	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 
 	splashSoundInit();
 	bootSplashDSi();
