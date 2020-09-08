@@ -111,6 +111,8 @@ public:
 	bool waitingForInput(void) { return _waitingForInput; }
 	void resume(void) { _waitingForInput = false; _currentDelayProgress = _currentDelay; }
 	bool finished(void) { return _finished; }
+
+	int currentFrame(void) { return _currentFrame; }
 };
 
 #endif

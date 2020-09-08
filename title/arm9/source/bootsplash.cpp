@@ -1,11 +1,7 @@
 #include "bootsplash.h"
 #include <nds.h>
-// #include <fat.h>
-// #include <stdio.h>
 #include <maxmod9.h>
 
-// #include "common/lzss.h"
-// #include "common/tonccpy.h"
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
@@ -19,12 +15,9 @@ extern bool useTwlCfg;
 
 extern u16 bmpImageBuffer[256*192];
 extern u16 frameBuffer[2][256*192];
-// extern u16 videoImageBuffer[39][256*144];
 
 extern u16 convertToDsBmp(u16 val);
 extern u16 convertVramColorToGrayscale(u16 val);
-
-// extern void* dsiSplashLocation;
 
 extern bool fadeType;
 extern bool controlTopBright;
@@ -33,21 +26,7 @@ extern int screenBrightness;
 
 bool cartInserted;
 
-// static char videoFrameFilename[256];
-
 static FILE* videoFrameFile;
-
-// extern bool rocketVideo_playVideo;
-// extern bool rocketVideo_playBackwards;
-// extern bool rocketVideo_screen;
-// extern int rocketVideo_videoYpos;
-// extern int rocketVideo_videoYsize;
-// extern int rocketVideo_videoFrames;
-// extern int rocketVideo_videoFps;
-// extern int rocketVideo_currentFrame;
-
-// #define CONSOLE_SCREEN_WIDTH 32
-// #define CONSOLE_SCREEN_HEIGHT 24
 
 mm_sound_effect dsiboot;
 mm_sound_effect proceed;
@@ -169,10 +148,12 @@ void BootSplashDSi(void) {
 	Gif splash(path, true, true);
 
 	path[0] = '\0';
-	if (ms().dsiSplash == 1) { // Load Touch the Touch Screen to continue image
-		sprintf(path, (virtualPain ? "nitro:/video/tttstc/virtualPain.gif" : "nitro:/video/tttstc/%i.gif"), language);
+	if (virtualPain) { // Load Virtual Pain image
+		strcpy(path, "nitro:/video/hsmsg/virtualPain.gif");
+	} else if (ms().dsiSplash == 1) { // Load Touch the Touch Screen to continue image
+		sprintf(path, "nitro:/video/tttstc/%i.gif", language);
 	} else if (ms().dsiSplash == 2) { // Load H&S image
-		sprintf(path, (virtualPain ? "nitro:/video/tttstc/virtualPain.gif" : "nitro:/video/hsmsg/%i.gif"), language);
+		sprintf(path, "nitro:/video/hsmsg/%i.gif", language);
 	} else if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashbottom.gif", F_OK) == 0) { // Load custom bottom image
 		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", sdFound() ? "sd" : "fat");
 	}
@@ -207,6 +188,7 @@ void BootSplashDSi(void) {
 	fadeType = true;
 
 	while (!splash.finished()) {
+		swiWaitForVBlank();
 		if (splash.waitingForInput()) {
 			scanKeys();
 			if(keysDown()) {
@@ -214,7 +196,8 @@ void BootSplashDSi(void) {
 				mmEffectEx(&proceed);
 			}
 		}
-		swiWaitForVBlank();
+		if (splash.currentFrame() == 24)
+			mmEffectEx(&dsiboot);
 	}
 
 	// Fade out
