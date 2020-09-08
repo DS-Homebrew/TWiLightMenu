@@ -105,7 +105,7 @@ void bootSplashDSi(void) {
 	} else if (ms().dsiSplash == 2) { // Load H&S image
 		sprintf(path, "nitro:/video/hsmsg/%i.gif", language);
 	} else if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashbottom.gif", F_OK) == 0) { // Load custom bottom image
-		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", sdFound() ? "sd" : "fat");
+		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashbottom.gif", sdFound() ? "sd" : "fat");
 	}
 	Gif healthSafety(path, false, true);
 
