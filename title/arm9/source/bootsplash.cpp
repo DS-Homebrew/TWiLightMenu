@@ -46,24 +46,6 @@ void splashSoundInit() {
 	};
 }
 
-void drawNintendoLogoToVram(void) {
-	if (!cartInserted) return;
-
-	// Draw first half of Nintendo logo
-	int x = 66;
-	int y = 155;
-	for (int i=122*14; i<122*28; i++) {
-		if (x >= 66+122) {
-			x = 66;
-			y--;
-		}
-		if (BG_GFX[(256*192)+i] != 0xFFFF) {
-			BG_GFX[y*256+x] = BG_GFX[(256*192)+i];
-		}
-		x++;
-	}
-}
-
 void bootSplashDSi(void) {
 	u16 whiteCol = 0xFFFF;
 	whiteCol = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
@@ -120,7 +102,7 @@ void bootSplashDSi(void) {
 		healthSafety.pause();
 	}
 
-	if (cartInserted) {
+	if (cartInserted && !custom) {
 		u16 *gfx[2];
 		for(int i = 0; i < 2; i++) {
 			gfx[i] = oamAllocateGfx(&oamMain, SpriteSize_64x32, SpriteColorFormat_Bmp);
@@ -152,19 +134,37 @@ void bootSplashDSi(void) {
 	controlBottomBright = true;
 	fadeType = true;
 
-	while (!(splash.finished() && healthSafety.finished())) {
-		swiWaitForVBlank();
-		if (splash.waitingForInput()) {
-			if(!custom && healthSafety.paused())
-				healthSafety.unpause();
+	// If both will loop forever, show for 3s or until button press
+	if(splash.loopForever() && healthSafety.loopForever()) {
+		for (int i = 0; i < 60 * 3 && !keysDown(); i++) {
+			swiWaitForVBlank();
 			scanKeys();
-			if(keysDown()) {
-				splash.resume();
-				mmEffectEx(&proceed);
-			}
 		}
-		if (splash.currentFrame() == 24)
-			mmEffectEx(&dsiboot);
+	} else {
+		while (!(splash.finished() && healthSafety.finished())) {
+			swiWaitForVBlank();
+			scanKeys();
+			u16 pressed = keysDown();
+
+			if (splash.waitingForInput()) {
+				if(!custom && healthSafety.paused())
+					healthSafety.unpause();
+				if(pressed) {
+					splash.resume();
+					mmEffectEx(&proceed);
+				}
+			}
+
+			if(healthSafety.waitingForInput()) {
+				if(pressed) {
+					healthSafety.resume();
+					mmEffectEx(&proceed);
+				}
+			}
+
+			if (!custom && splash.currentFrame() == 24)
+				mmEffectEx(&dsiboot);
+		}
 	}
 
 	// Fade out
