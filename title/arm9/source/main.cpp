@@ -1,36 +1,25 @@
 #include <nds.h>
 #include <nds/arm9/dldi.h>
-#include <cstdio>
-#include <fat.h>
-#include <sys/stat.h>
-#include <limits.h>
-#include <variant>
-#include <string.h>
-#include <unistd.h>
-#include "common/gl2d.h"
+
+#include "bootsplash.h"
+#include "bootstrapsettings.h"
+#include "common/bootstrappaths.h"
+#include "common/cardlaunch.h"
+#include "common/dsimenusettings.h"
+#include "common/fileCopy.h"
+#include "common/flashcard.h"
+#include "common/inifile.h"
+#include "common/nds_loader_arm9.h"
+#include "common/nitrofs.h"
+#include "common/pergamesettings.h"
+#include "common/systemdetails.h"
+#include "common/tonccpy.h"
+#include "consolemodelselect.h"
+#include "graphics/graphics.h"
+#include "nandio.h"
+#include "twlmenuppvideo.h"
 
 #include "autoboot.h"
-
-#include "graphics/graphics.h"
-
-#include "common/nds_loader_arm9.h"
-#include "common/inifile.h"
-#include "common/nitrofs.h"
-#include "common/bootstrappaths.h"
-#include "common/dsimenusettings.h"
-#include "common/pergamesettings.h"
-#include "common/cardlaunch.h"
-#include "common/flashcard.h"
-#include "common/fileCopy.h"
-#include "common/tonccpy.h"
-#include "nandio.h"
-#include "bootstrapsettings.h"
-#include "bootsplash.h"
-#include "twlmenuppvideo.h"
-#include "consolemodelselect.h"
-
-#include "sr_data_srllastran.h"			 // For rebooting into the game
-#include "common/systemdetails.h"
 
 #include "saveMap.h"
 
@@ -806,23 +795,13 @@ int main(int argc, char **argv)
 		// Get date
 		int birthMonth = (useTwlCfg ? *(u8*)0x02000446 : PersonalData->birthMonth);
 		int birthDay = (useTwlCfg ? *(u8*)0x02000447 : PersonalData->birthDay);
-		char soundBankPath[32], currentDate[16], birthDate[16], dateOutput[2][5];
+		char soundBankPath[32], currentDate[16], birthDate[16];
 		time_t Raw;
 		time(&Raw);
 		const struct tm *Time = localtime(&Raw);
 
 		strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
-		if (birthMonth >= 1 && birthMonth < 10) {
-			sprintf(dateOutput[0], "0%i", birthMonth);
-		} else {
-			sprintf(dateOutput[0], "%i", birthMonth);
-		}
-		if (birthDay >= 1 && birthDay < 10) {
-			sprintf(dateOutput[1], "0%i", birthDay);
-		} else {
-			sprintf(dateOutput[1], "%i", birthDay);
-		}
-		sprintf(birthDate, "%s/%s", dateOutput[0], dateOutput[1]);
+		sprintf(birthDate, "%02d/%02d", birthMonth, birthDay);
 
 		sprintf(soundBankPath, "nitro:/soundbank%s.bin", (strcmp(currentDate, birthDate) == 0) ? "_bday" : "");
 
@@ -834,7 +813,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!softResetParamsFound && ms().dsiSplash && (isDSiMode() ? fifoGetValue32(FIFO_USER_01) != 0x01 : *(u32*)0x02000000 != 1)) {
-		BootSplashInit();
+		bootSplashInit();
 		if (isDSiMode()) fifoSendValue32(FIFO_USER_01, 10);
 	}
 	*(u32*)0x02000000 = 1;

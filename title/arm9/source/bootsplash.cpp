@@ -1,59 +1,29 @@
+#include "bootsplash.h"
 #include <nds.h>
-#include <fat.h>
-#include <stdio.h>
 #include <maxmod9.h>
 
-#include "common/lzss.h"
-#include "common/tonccpy.h"
 #include "common/dsimenusettings.h"
+#include "common/flashcard.h"
 #include "common/systemdetails.h"
+#include "common/tonccpy.h"
+#include "graphics/gif.hpp"
+#include "graphics/graphics.h"
 #include "graphics/lodepng.h"
 
 #include "soundbank.h"
-//#include "soundbank_bin.h"
 
 extern bool useTwlCfg;
-
-extern u16 frameBuffer[2][256*192];
-extern u16 frameBufferBot[2][256*192];
-//extern u16 videoImageBuffer[39][256*144];
-extern u16* videoImageBuffer[35];
-
-extern u16 convertToDsBmp(u16 val);
-extern u16 convertVramColorToGrayscale(u16 val);
-
-extern void* dsiSplashLocation;
 
 extern bool fadeType;
 extern bool controlTopBright;
 extern bool controlBottomBright;
-extern int screenBrightness;
 
 bool cartInserted;
-
-static char videoFrameFilename[256];
-
-static FILE* videoFrameFile;
-
-extern bool rocketVideo_playVideo;
-extern bool rocketVideo_playBackwards;
-extern bool rocketVideo_screen;
-extern int rocketVideo_videoYpos;
-extern int rocketVideo_videoYsize;
-extern int rocketVideo_videoFrames;
-extern int rocketVideo_videoFps;
-extern int rocketVideo_currentFrame;
-
-#include "bootsplash.h"
-
-#define CONSOLE_SCREEN_WIDTH 32
-#define CONSOLE_SCREEN_HEIGHT 24
 
 mm_sound_effect dsiboot;
 mm_sound_effect proceed;
 
 void splashSoundInit() {
-
 	mmInitDefaultMem((mm_addr)0x02FA0000);
 
 	mmLoadEffect( SFX_DSIBOOT );
@@ -76,26 +46,7 @@ void splashSoundInit() {
 	};
 }
 
-void drawNintendoLogoToVram(void) {
-	if (!cartInserted) return;
-
-	// Draw first half of Nintendo logo
-	int x = 66;
-	int y = 155;
-	for (int i=122*14; i<122*28; i++) {
-		if (x >= 66+122) {
-			x = 66;
-			y--;
-		}
-		if (BG_GFX[(256*192)+i] != 0xFFFF) {
-			BG_GFX[y*256+x] = BG_GFX[(256*192)+i];
-		}
-		x++;
-	}
-}
-
-void BootSplashDSi(void) {
-
+void bootSplashDSi(void) {
 	u16 whiteCol = 0xFFFF;
 	whiteCol = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
 	for (int i = 0; i < 256*256; i++) {
@@ -105,8 +56,8 @@ void BootSplashDSi(void) {
 
 	cartInserted = (REG_SCFG_MC != 0x11);
 
-	int language = ms().guiLanguage;
-	if (ms().guiLanguage == -1) {
+	int language = ms().gameLanguage;
+	if (ms().gameLanguage == -1) {
 		language = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 	}
 
@@ -116,332 +67,105 @@ void BootSplashDSi(void) {
 	const struct tm *Time = localtime(&Raw);
 
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
-
 	bool virtualPain = (strcmp(currentDate, "04/01") == 0);
 
+	bool custom = ms().dsiSplash == 3;
+
+	char path[256];
 	if (virtualPain) {
-		std::vector<unsigned char> image;
-		unsigned width, height;
-		lodepng::decode(image, width, height, "nitro:/graphics/VirtualPain.png");
-		for(unsigned i=0;i<image.size()/4;i++) {
-			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				color = convertVramColorToGrayscale(color);
-			}
-			BG_GFX[i] = color;
-		}
-
-		if (cartInserted) {
-			videoFrameFile = fopen("nitro:/graphics/nintendoPain.bmp", "rb");
-
-			if (videoFrameFile) {
-				// Start loading
-				fseek(videoFrameFile, 0xe, SEEK_SET);
-				u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-				fseek(videoFrameFile, pixelStart, SEEK_SET);
-				fread(frameBuffer[0], 1, 0x1D00, videoFrameFile);
-				u16* src = frameBuffer[0];
-				int x = 67;
-				int y = 159;
-				for (int i=0; i<122*30; i++) {
-					if (x >= 67+122) {
-						x = 67;
-						y--;
-					}
-					u16 val = *(src++);
-					BG_GFX[y*256+x] = convertToDsBmp(val);
-					x++;
-				}
-			}
-			fclose(videoFrameFile);
-		}
-
-		controlTopBright = true;
-		controlBottomBright = true;
+		strcpy(path, "nitro:/video/splash/virtualPain.gif");
+	} else if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashtop.gif", F_OK) == 0) {
+		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", sdFound() ? "sd" : "fat");
 	} else {
-		controlBottomBright = false;
+		sprintf(path, "nitro:/video/splash/%s.gif", language == TWLSettings::ELangChineseS ? "iquedsi" : "dsi");
+	}
+	Gif splash(path, true, true);
+
+	path[0] = '\0';
+	if (virtualPain) { // Load Virtual Pain image
+		strcpy(path, "nitro:/video/hsmsg/virtualPain.gif");
+	} else if (ms().dsiSplash == 1) { // Load Touch the Touch Screen to continue image
+		sprintf(path, "nitro:/video/tttstc/%i.gif", language);
+	} else if (ms().dsiSplash == 2) { // Load H&S image
+		sprintf(path, "nitro:/video/hsmsg/%i.gif", language);
+	} else if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashbottom.gif", F_OK) == 0) { // Load custom bottom image
+		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashbottom.gif", sdFound() ? "sd" : "fat");
+	}
+	Gif healthSafety(path, false, true);
+
+	timerStart(0, ClockDivider_1024, TIMER_FREQ_1024(100), Gif::timerHandler);
+
+	// For the default splashes, draw first frame, then wait until the top is done
+	if(!custom) {
+		while(healthSafety.currentFrame() == 0)
+			swiWaitForVBlank();
+		healthSafety.pause();
 	}
 
-	if (ms().dsiSplash == 2) {
-		// Load H&S image
-		//Get the language for the splash screen
-		sprintf(videoFrameFilename, (virtualPain ? "nitro:/graphics/VirtualPain_bot.png" : "nitro:/graphics/hsmsg%i.png"), language);
+	if (cartInserted && !custom) {
+		u16 *gfx[2];
+		for(int i = 0; i < 2; i++) {
+			gfx[i] = oamAllocateGfx(&oamMain, SpriteSize_64x32, SpriteColorFormat_Bmp);
+			oamSet(&oamMain, i, 67 + (i * 64), virtualPain ? 130 : 142, 0, 15, SpriteSize_64x32, SpriteColorFormat_Bmp, gfx[i], 0, false, false, false, false, false);
+		}
 
 		std::vector<unsigned char> image;
-		unsigned width, height;
-		lodepng::decode(image, width, height, videoFrameFilename);
-		for(unsigned i=0;i<image.size()/4;i++) {
-			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		unsigned int width, height;
+		lodepng::decode(image, width, height, virtualPain ? "nitro:/graphics/nintendoPain.png" : "nitro:/graphics/nintendo.png");
+
+		for(unsigned int i = 0, y = 0, x = 0;i < image.size() / 4; i++, x++) {
+			u16 color = image[i * 4] >> 3 | (image[(i * 4) + 1] >> 3) << 5 | (image[(i * 4) + 2] >> 3) << 10 | (image[(i * 4) + 3] > 0) << 15;
 			if (ms().colorMode == 1) {
 				color = convertVramColorToGrayscale(color);
 			}
-			BG_GFX_SUB[i] = color;
+
+			if(x >= width) {
+				x = 0;
+				y++;
+			}
+
+			gfx[x >= 64][y * 64 + (x % 64)] = color;
 		}
+
+		oamUpdate(&oamMain);
 	}
 
-	bool sixtyFps = true;
-
+	controlTopBright = true;
+	controlBottomBright = true;
 	fadeType = true;
 
-	if (cartInserted) {
-		videoFrameFile = fopen("nitro:/graphics/nintendo.bmp", "rb");
+	// If both will loop forever, show for 3s or until button press
+	if(splash.loopForever() && healthSafety.loopForever()) {
+		for (int i = 0; i < 60 * 3 && !keysDown(); i++) {
+			swiWaitForVBlank();
+			scanKeys();
+		}
+	} else {
+		while (!(splash.finished() && healthSafety.finished())) {
+			swiWaitForVBlank();
+			scanKeys();
+			u16 pressed = keysDown();
 
-		if (videoFrameFile) {
-			// Start loading
-			fseek(videoFrameFile, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(frameBuffer[0], 1, 0x1B00, videoFrameFile);
-			u16* src = frameBuffer[0];
-			for (int i=0; i<122*28; i++) {
-				u16 val = *(src++);
-				if (val != 0x7C1F) {
-					BG_GFX[(256*192)+i] = convertToDsBmp(val);
+			if (splash.waitingForInput()) {
+				if(!custom && healthSafety.paused())
+					healthSafety.unpause();
+				if(pressed) {
+					splash.resume();
+					mmEffectEx(&proceed);
 				}
 			}
-		}
-		fclose(videoFrameFile);
-	}
 
-	videoImageBuffer[0] = new u16[(256*144)*35];
-	for (int i = 1; i < 35; i++) {
-		videoImageBuffer[i] = (u16*)videoImageBuffer[i-1]+(256*144);
-	}
-
-	if (!virtualPain) {
-	if (sixtyFps) {
-		rocketVideo_videoFrames = 108;
-		rocketVideo_videoFps = 60;
-
-		bool dsiSixtyFpsRead = (isDSiMode() || REG_SCFG_EXT != 0);
-
-		videoFrameFile = fopen(language==6 ? "nitro:/video/iquedsisplash_60fps.lz77.rvid" : "nitro:/video/dsisplash_60fps.lz77.rvid", "rb");
-
-		/*for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
-			if (selectedFrame < 0x10) {
-				snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash_60fps/0x0%x.bmp", (int)selectedFrame);
-			} else {
-				snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash_60fps/0x%x.bmp", (int)selectedFrame);
-			}
-			videoFrameFile = fopen(videoFrameFilename, "rb");
-
-			if (videoFrameFile) {
-				// Start loading
-				fseek(videoFrameFile, 0xe, SEEK_SET);
-				u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-				fseek(videoFrameFile, pixelStart, SEEK_SET);
-				fread(frameBuffer[0], 2, 0x12000, videoFrameFile);
-				u16* src = frameBuffer[0];
-				int x = 0;
-				int y = 143;
-				for (int i=0; i<256*144; i++) {
-					if (x >= 256) {
-						x = 0;
-						y--;
-					}
-					u16 val = *(src++);
-					videoImageBuffer[0][y*256+x] = convertToDsBmp(val);
-					x++;
+			if(healthSafety.waitingForInput()) {
+				if(pressed) {
+					healthSafety.resume();
+					mmEffectEx(&proceed);
 				}
 			}
-			fclose(videoFrameFile);
-			memcpy(dsiSplashLocation+(selectedFrame*0x12000), videoImageBuffer[0], 0x12000);
-		}*/
 
-		if (videoFrameFile) {
-			bool doRead = false;
-
-			if (dsiSixtyFpsRead) {
-				doRead = true;
-			} /*else if (sys().isRegularDS()) {
-				fseek(videoFrameFile, 0x200, SEEK_SET);
-				sysSetCartOwner (BUS_OWNER_ARM9);	// Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
-				*(vu32*)(0x08240000) = 1;
-				if (*(vu32*)(0x08240000) == 1) {
-					// Set to load video into DS Memory Expansion Pak
-					dsiSplashLocation = (void*)0x09000000;
-					doRead = true;
-				}
-			}*/
-			if (doRead) {
-				fread(videoImageBuffer[0], 1, 0x108000, videoFrameFile);
-				LZ77_Decompress((u8*)videoImageBuffer[0], (u8*)dsiSplashLocation);
-			} else {
-				sixtyFps = false;
-			}
-		} else {
-			sixtyFps = false;
-		}
-		fclose(videoFrameFile);
-	}
-	if (!sixtyFps) {
-		rocketVideo_videoFrames = 42;
-		rocketVideo_videoFps = 24;
-
-		videoFrameFile = fopen("nitro:/video/dsisplash.rvid", "rb");
-		fseek(videoFrameFile, 0x200, SEEK_SET);
-
-		for (int selectedFrame = 0; selectedFrame < 35; selectedFrame++) {
-			fread(videoImageBuffer[selectedFrame], 1, 0x12000, videoFrameFile);
-
-			if (cartInserted && selectedFrame > 5) {
-				// Draw first half of Nintendo logo
-				int x = 66;
-				int y = 130+13;
-				for (int i=122*14; i<122*28; i++) {
-					if (x >= 66+122) {
-						x = 66;
-						y--;
-					}
-					if (BG_GFX[(256*192)+i] != 0xFFFF) {
-						videoImageBuffer[selectedFrame][y*256+x] = BG_GFX[(256*192)+i];
-					}
-					x++;
-				}
-			}
+			if (!custom && splash.currentFrame() == 24)
+				mmEffectEx(&dsiboot);
 		}
 	}
-		controlTopBright = false;
-		fadeType = false;
-		screenBrightness = 20;
-		swiWaitForVBlank();
-
-		rocketVideo_videoYpos = 12;
-		rocketVideo_videoYsize = 144;
-		rocketVideo_screen = true;
-		rocketVideo_playVideo = !virtualPain;
-		controlBottomBright = true;
-		fadeType = true;
-
-	while (rocketVideo_playVideo) {
-		if (sixtyFps && rocketVideo_currentFrame >= 16) {
-			drawNintendoLogoToVram();
-		}
-		if (cartInserted && rocketVideo_currentFrame == (sixtyFps ? 16 : 6)) {
-			// Draw last half of Nintendo logo
-			int x = 66;
-			int y = 144+13;
-			for (int i=0; i<122*14; i++) {
-				if (x >= 66+122) {
-					x = 66;
-					y--;
-				}
-				BG_GFX[(y+12)*256+x] = BG_GFX[(256*192)+i];
-				x++;
-			}
-		}
-		if (rocketVideo_currentFrame == (sixtyFps ? 24 : 10)) {
-			mmEffectEx(&dsiboot);
-			break;
-		}
-		swiWaitForVBlank();
-	}
-
-	if (!sixtyFps) {
-		for (int selectedFrame = 35; selectedFrame <= 42; selectedFrame++) {
-			fread(videoImageBuffer[selectedFrame-35], 1, 0x12000, videoFrameFile);
-
-			if (cartInserted) {
-				// Draw first half of Nintendo logo
-				int x = 66;
-				int y = 130+13;
-				for (int i=122*14; i<122*28; i++) {
-					if (x >= 66+122) {
-						x = 66;
-						y--;
-					}
-					if (BG_GFX[(256*192)+i] != 0xFFFF) {
-						videoImageBuffer[selectedFrame-35][y*256+x] = BG_GFX[(256*192)+i];
-					}
-					x++;
-				}
-			}
-		}
-		fclose(videoFrameFile);
-	}
-
-	while (rocketVideo_playVideo) {
-		if (sixtyFps && rocketVideo_currentFrame >= 16) {
-			drawNintendoLogoToVram();
-		}
-		swiWaitForVBlank();
-	}
-	if (!sixtyFps) swiWaitForVBlank();
-
-	for (int i = 0; i < 256*59; i++) {
-		BG_GFX[i] = whiteCol;
-	}
-	}
-
-	rocketVideo_videoFrames = 29;
-	rocketVideo_videoFps = 60;
-
-	for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
-		if (selectedFrame < 0x10) {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/tttstc_%i/0x0%x.bmp", (int)language, (int)selectedFrame);
-		} else {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/tttstc_%i/0x%x.bmp", (int)language, (int)selectedFrame);
-		}
-		videoFrameFile = fopen(videoFrameFilename, "rb");
-
-		if (videoFrameFile) {
-			// Start loading
-			fseek(videoFrameFile, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(frameBufferBot[0], 1, 0x4000, videoFrameFile);
-			u16* src = frameBufferBot[0];
-			int x = 0;
-			int y = 31;
-			for (int i=0; i<256*32; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				videoImageBuffer[selectedFrame][y*256+x] = convertToDsBmp(val);
-				x++;
-			}
-		}
-		fclose(videoFrameFile);
-	}
-
-	rocketVideo_videoYpos = (ms().dsiSplash == 2 ? 160 : 80);
-	rocketVideo_videoYsize = 32;
-	rocketVideo_screen = false;
-	rocketVideo_playVideo = true;
-	int touchToContinueWait = 59;
-	int touchToContinue_secondsWaited = -1;
-
-	while (1) {
-		touchToContinueWait++;
-		if (!rocketVideo_playVideo) {
-			rocketVideo_playBackwards = !rocketVideo_playBackwards;
-			if (rocketVideo_playBackwards) {
-				rocketVideo_currentFrame = rocketVideo_videoFrames+1;
-			} else {
-				rocketVideo_currentFrame = -1;
-			}
-			rocketVideo_playVideo = true;
-		}
-		if (touchToContinueWait == 60) {
-			touchToContinueWait = 0;
-			touchToContinue_secondsWaited++;
-		}
-		scanKeys();
-		if ((keysDown() & (KEY_L | KEY_R
-				| KEY_A | KEY_B | KEY_X | KEY_Y
-				| KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT
-				| KEY_START | KEY_SELECT | KEY_TOUCH)) || (touchToContinue_secondsWaited == 60)) {
-			mmEffectEx(&proceed);
-			break;
-		}
-		swiWaitForVBlank();
-	}
-
-	/*FILE* destinationFile = fopen("sd:/_nds/TWiLightMenu/extractedvideo.rvid", "wb");
-	fwrite(dsiSplashLocation, 1, 0x7C0000, destinationFile);
-	fclose(destinationFile);*/
 
 	// Fade out
 	controlTopBright = true;
@@ -449,33 +173,24 @@ void BootSplashDSi(void) {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
 
-	rocketVideo_playVideo = false;
-
-	free(videoImageBuffer[0]);
+	timerStop(0);
 }
 
-void BootSplashInit(void) {
+void bootSplashInit(void) {
+	videoSetMode(MODE_5_2D);
+	videoSetModeSub(MODE_5_2D);
+	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankB(VRAM_B_MAIN_SPRITE);
+	vramSetBankC(VRAM_C_SUB_BG);
 
-	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
-	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
-	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
-	REG_BG3X = 0;
-	REG_BG3Y = 0;
-	REG_BG3PA = 1<<8;
-	REG_BG3PB = 0;
-	REG_BG3PC = 0;
-	REG_BG3PD = 1<<8;
+	bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(3, 3);
 
-	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
-	REG_BG3X_SUB = 0;
-	REG_BG3Y_SUB = 0;
-	REG_BG3PA_SUB = 1<<8;
-	REG_BG3PB_SUB = 0;
-	REG_BG3PC_SUB = 0;
-	REG_BG3PD_SUB = 1<<8;
+	bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(7, 3);
+
+	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 
 	splashSoundInit();
-	BootSplashDSi();
+	bootSplashDSi();
 }

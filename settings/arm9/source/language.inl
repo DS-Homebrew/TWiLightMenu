@@ -216,6 +216,7 @@ STRING(BW_GREYSCALE, "B&W/Greyscale")
 // STRING(BLUELIGHTFILTER, "Blue light filter")
 STRING(WITH_HS, "With H&S")
 STRING(WITHOUT_HS, "Without H&S")
+STRING(CUSTOM_SPLASH, "Custom")
 STRING(AUTO_HIYA_ONLY, "Auto (hiyaCFW only)")
 STRING(SYSTEM_MENU, "System Menu")
 
