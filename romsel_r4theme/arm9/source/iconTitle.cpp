@@ -798,7 +798,7 @@ void getGameInfo(bool isDir, const char* name)
 			isDSiWare = false;
 		}
 
-		if (isHomebrew == true) {
+		if (isHomebrew == true && !secondaryDevice) {
 			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
 			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
 			|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058
