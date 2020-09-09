@@ -401,8 +401,8 @@ void CheatCodelist::selectCheats(std::string filename)
         bool select = !(cheat._flags & cParsedItem::ESelected);
         if(cheat._flags & cParsedItem::EOne)
           deselectFolder(std::distance(&_data[0], currentList[cheatWnd_cursorPosition]));
-        if(select)
-          cheat._flags |= cParsedItem::ESelected;
+        if(select || !(cheat._flags & cParsedItem::EOne))
+          cheat._flags ^= cParsedItem::ESelected;
       }
     } else if(pressed & KEY_B) {
       snd().playBack();
