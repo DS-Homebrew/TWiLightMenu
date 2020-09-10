@@ -659,6 +659,7 @@ void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
 	std::string path;
 	int err = 0;
 	if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 		path = replaceAll(ndsPath, "fat:/", woodfat);

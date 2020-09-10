@@ -428,6 +428,7 @@ void lastRunROM()
 			}
 			std::string path;
 			if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+			 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
 				CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 				path = ReplaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
