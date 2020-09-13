@@ -98,7 +98,7 @@ bool Gif::load(const char *path, bool top, bool animate) {
 		return false;
 
 	fseek(file, 0, SEEK_END);
-	_compressed = ftell(file) > 1000000; // Decompress files bigger than 1MB while drawing
+	_compressed = ftell(file) > (isDSiMode() ? 1 << 20 : 1 << 18); // Decompress files bigger than 1MiB (256KiB in DS Mode) while drawing
 	fseek(file, 0, SEEK_SET);
 
 	// Reserve space for 2,000 frames
