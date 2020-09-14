@@ -1773,7 +1773,7 @@ void graphicsInit() {
 		u16* newPalette = (u16*)bubblesPal;
 		if (ms().colorMode == 1) {
 			// Convert palette to grayscale
-			for (int i2 = 0; i2 < 3; i2++) {
+			for (int i2 = 0; i2 < 6; i2++) {
 				*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 			}
 		}
