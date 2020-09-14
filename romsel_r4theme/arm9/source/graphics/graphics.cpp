@@ -527,6 +527,9 @@ void graphicsLoad()
 				}
 			}
 			topImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorMode == 1) {
+				topImage[startMenu][0][i] = convertVramColorToGrayscale(topImage[startMenu][0][i]);
+			}
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -549,6 +552,9 @@ void graphicsLoad()
 				}
 			}
 			topImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorMode == 1) {
+				topImage[startMenu][1][i] = convertVramColorToGrayscale(topImage[startMenu][1][i]);
+			}
 			if ((i % 256) == 255) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
 		}
@@ -573,6 +579,9 @@ void graphicsLoad()
 				}
 			}
 			bottomImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorMode == 1) {
+				bottomImage[startMenu][0][i] = convertVramColorToGrayscale(bottomImage[startMenu][0][i]);
+			}
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -595,6 +604,9 @@ void graphicsLoad()
 				}
 			}
 			bottomImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorMode == 1) {
+				bottomImage[startMenu][1][i] = convertVramColorToGrayscale(bottomImage[startMenu][1][i]);
+			}
 			if ((i % 256) == 255) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
 		}
@@ -657,7 +669,7 @@ void graphicsLoad()
 	u16* newPalette = (u16*)icon_manualPal;
 	if (colorMode == 1) {
 		// Convert palette to grayscale
-		for (int i2 = 0; i2 < 3; i2++) {
+		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
@@ -679,7 +691,7 @@ void graphicsLoad()
 	newPalette = (u16*)iconboxPal;
 	if (colorMode == 1) {
 		// Convert palette to grayscale
-		for (int i2 = 0; i2 < 3; i2++) {
+		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
@@ -701,7 +713,7 @@ void graphicsLoad()
 	newPalette = (u16*)wirelessiconsPal;
 	if (colorMode == 1) {
 		// Convert palette to grayscale
-		for (int i2 = 0; i2 < 3; i2++) {
+		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
