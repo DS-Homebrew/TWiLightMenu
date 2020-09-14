@@ -544,7 +544,16 @@ void ThemeTextures::commitBgMainModifyAsync() {
 
 void ThemeTextures::drawTopBg() {
 	beginBgSubModify();
+
 	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
+
+	if(ms().colorMode == 1) {
+		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+			_bgSubBuffer[i] =
+			    convertVramColorToGrayscale(_bgSubBuffer[i]);
+		}
+	}
+
 	commitBgSubModify();
 }
 
@@ -893,7 +902,14 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 	// Throw the entire top background into the sub buffer.
 	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
 
- 	// Copy top 32 lines from the buffer into the sub.
+ 	if(ms().colorMode == 1) {
+		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+			_bgSubBuffer[i] =
+			    convertVramColorToGrayscale(_bgSubBuffer[i]);
+		}
+	}
+
+	// Copy top 32 lines from the buffer into the sub.
 	tonccpy(_bgSubBuffer, _bmpImageBuffer, sizeof(u16) * TOPLINES);
 	
 	// Copy bottom tc().shoulderLRenderY() + 5 lines into the sub
