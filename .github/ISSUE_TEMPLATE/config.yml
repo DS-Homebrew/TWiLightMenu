@@ -5,10 +5,10 @@ contact_links:
     about: "Please use #nds-modding-help on the Discord server to for support-related questions, such as needing assistance to launch TWiLight Menu++"
   - name: DS game issue
     url: https://github.com/ahezard/nds-bootstrap/issues/new
-    about: Please use the nds-bootstrap Github Repository to report issues related to running Nintendo DS applications as `.nds` files (not as a retail cart) via B4DS/nds-bootstrap (and not via Unlaunch)
+    about: Please use the nds-bootstrap GitHub repository to report issues related to running Nintendo DS applications as `.nds` files (not as a retail cart) via B4DS/nds-bootstrap (and not via Unlaunch)
   - name: GBA game issue
     url: https://github.com/Gericom/GBARunner2/issues/new
-    about: Please use the GBARunner2 Github Repository to report issues related to running GameBoy Advance applications as `.gba` files (not as Slot-2 for DS Phat/Lite consoles), or the GBARunner2 GUI
+    about: Please use the GBARunner2 GitHub repository to report issues related to running Game Boy Advance applications as `.gba` files (not as Slot-2 for DS Phat/Lite consoles), or the GBARunner2 GUI
   - name: MPEG4 issue
     url: https://github.com/Gericom/YouTubeDS/issues/new
-    about: Please use the MPEG4Player/YouTubeDS Github Repository to report issues related to .mp4 playback
+    about: Please use the MPEG4Player/YouTubeDS GitHub repository to report issues related to .mp4 playback
