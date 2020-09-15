@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Support (thru TWL Mode Hacking Discord Server)
+  - name: Support (thru DS⁽ⁱ⁾ Mode Hacking Discord server)
     url: https://discord.gg/yD3spjv
-    about: "Please use the #support Discord Server to ask for support-related questions, such as needing assistance to launch TWiLight Menu++"
+    about: "Please use #nds-modding-help on the Discord server to for support-related questions, such as needing assistance to launch TWiLight Menu++"
   - name: DS game issue
     url: https://github.com/ahezard/nds-bootstrap/issues/new
     about: Please use the nds-bootstrap Github Repository to report issues related to running Nintendo DS applications as `.nds` files (not as a retail cart) via B4DS/nds-bootstrap (and not via Unlaunch)
