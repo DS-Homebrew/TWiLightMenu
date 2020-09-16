@@ -17,6 +17,7 @@ extern bool useTwlCfg;
 extern bool fadeType;
 extern bool controlTopBright;
 extern bool controlBottomBright;
+extern int screenBrightness;
 
 bool cartInserted;
 
@@ -130,7 +131,16 @@ void bootSplashDSi(void) {
 		oamUpdate(&oamMain);
 	}
 
-	controlTopBright = true;
+	if(!custom && !virtualPain) {
+		controlBottomBright = false;
+		fadeType = false;
+		screenBrightness = 0;
+		swiWaitForVBlank();
+		controlTopBright = false;
+		screenBrightness = 25;
+		swiWaitForVBlank();
+	}
+
 	controlBottomBright = true;
 	fadeType = true;
 
@@ -171,7 +181,7 @@ void bootSplashDSi(void) {
 	controlTopBright = true;
 	controlBottomBright = true;
 	fadeType = false;
-	for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+	for (int i = 0; i < 25; i++) { swiWaitForVBlank(); }
 
 	timerStop(0);
 }
