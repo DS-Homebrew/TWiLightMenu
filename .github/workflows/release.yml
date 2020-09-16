@@ -146,7 +146,7 @@ jobs:
       twlbot_commit: ${{ steps.commit.outputs.twlbot_commit }}
     steps:
       - name: "Checkout repo"
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
@@ -183,11 +183,10 @@ jobs:
             curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
 
-  send_webhook_success:
+  send_webhook:
     runs-on: ubuntu-latest
     needs: [publish_build_twlbot, build]
-    name: "Send Discord success webhook"
-    if: ${{ success() }}
+    name: "Send Discord webhook"
     env:
       COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
@@ -195,27 +194,15 @@ jobs:
       TWLBOT_COMMIT: ${{ needs.publish_build_twlbot.outputs.twlbot_commit }}
     steps:
       - name: "Checkout repo"
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2 # Temporary fix until Evie manages to convert this to use a var instead
       - name: "Send success webhook"
+        if: ${{ success() }}
         run: |
           curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-ghactions.sh
           chmod +x send.sh
           ./send.sh success ${{ secrets.WEBHOOK_URL }}
-
-  send_webhook_failure:
-    runs-on: ubuntu-latest
-    needs: [publish_build_twlbot, build]
-    name: "Send Discord failure webhook"
-    if: ${{ failure() }}
-    env:
-      COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
-      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
-      CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
-      TWLBOT_COMMIT: ${{ needs.publish_build_twlbot.outputs.twlbot_commit }}
-    steps:
-      - name: "Checkout repo"
-        uses: actions/checkout@v1
       - name: "Send failure webhook"
+        if: ${{ failure() }}
         run: |
           curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-ghactions.sh
           chmod +x send.sh
