@@ -413,18 +413,21 @@ void opt_update()
 		} while (!pressed);
 
 		if (pressed & KEY_UP) {
+			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
 			cursorPosition--;
 			if (cursorPosition < 0) cursorPosition = 1;
 			updateText = true;
 		}
 
 		if (pressed & KEY_DOWN) {
+			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
 			cursorPosition++;
 			if (cursorPosition > 1) cursorPosition = 0;
 			updateText = true;
 		}
 
 		if (pressed & KEY_A) {
+			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_launch : &snd().snd_launch);
 			begin_update(cursorPosition);
 			break;
 		}
