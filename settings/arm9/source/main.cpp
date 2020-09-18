@@ -81,6 +81,7 @@ char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'}
 
 int subscreenmode = 0;
 
+int pressed = 0;
 touchPosition touch;
 
 using namespace std;
@@ -314,6 +315,88 @@ std::optional<Option> opt_bg_select(Option::Int &optVal)
 	return Option(STR_BGSEL_UNLAUNCH, STR_AB_SETBG, Option::Str(&ms().unlaunchBg), unlaunchBgList);
 }
 
+void begin_update(int opt)
+{
+	ms().saveSettings();
+	gs().saveSettings();
+	bs().saveSettings();
+
+	clearText();
+	printSmall(true, 0, 124, (ms().consoleModel>1) ? STR_TAKEWHILE_PRESSHOME : STR_TAKEWHILE_CLOSELID, Alignment::center);
+	printLarge(false, 4, 0, STR_NOW_UPDATING);
+
+	if (opt == 1) {
+		// Slot-1 microSD > Console SD
+		fcopy("fat:/_nds/TWiLightMenu/main.srldr", "sd:/_nds/TWiLightMenu/main.srldr");
+		fcopy("fat:/_nds/TWiLightMenu/settings.srldr", "sd:/_nds/TWiLightMenu/settings.srldr");
+	} else {
+		// Console SD > Slot-1 microSD
+		fcopy("sd:/_nds/TWiLightMenu/main.srldr", "fat:/_nds/TWiLightMenu/main.srldr");
+		fcopy("sd:/_nds/TWiLightMenu/settings.srldr", "fat:/_nds/TWiLightMenu/settings.srldr");
+	}
+
+	fadeType = false;
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	for (int i = 0; i < 25; i++)
+		swiWaitForVBlank();
+	snd().stopBgMusic();
+	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
+	
+	runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
+	stop();
+}
+
+void opt_update()
+{
+	int cursorPosition = 0;
+	bool updateText = true;
+	while (1) {
+		if (updateText) {
+			clearText();
+			printLarge(false, 4, 0, STR_HOW_WANT_UPDATE);
+			printSmall(false, 12, 29, ms().showMicroSd ? "Console microSD > Slot-1 microSD" : "Console SD > Slot-1 microSD");
+			printSmall(false, 12, 43, ms().showMicroSd ? "Slot-1 microSD > Console microSD" : "Slot-1 microSD > Console SD");
+			printSmall(false, 4, 29+(14*cursorPosition), ">");
+			updateText = false;
+		}
+
+		if (!gui().isExited() && currentTheme != 4)
+		{
+			snd().playBgMusic();
+		}
+
+		do
+		{
+			scanKeys();
+			pressed = keysDownRepeat();
+			touchRead(&touch);
+			swiWaitForVBlank();
+		} while (!pressed);
+
+		if (pressed & KEY_UP) {
+			cursorPosition--;
+			if (cursorPosition < 0) cursorPosition = 1;
+			updateText = true;
+		}
+
+		if (pressed & KEY_DOWN) {
+			cursorPosition++;
+			if (cursorPosition > 1) cursorPosition = 0;
+			updateText = true;
+		}
+
+		if (pressed & KEY_A) {
+			begin_update(cursorPosition);
+			break;
+		}
+
+		if (pressed & KEY_B) {
+			break;
+		}
+	}
+	clearText();
+}
+
 //bool twlFirmChanged = false;
 
 void defaultExitHandler()
@@ -529,7 +612,6 @@ int main(int argc, char **argv)
 	previousDSiWareExploit = ms().dsiWareExploit;
 	previousSysRegion = ms().sysRegion;
 
-	int pressed = 0;
 //#pragma endregion
 
 	// consoleDemoInit();
@@ -537,6 +619,14 @@ int main(int argc, char **argv)
 
 	using TLanguage = TWLSettings::TLanguage;
 	//using TAKScrollSpeed = TWLSettings::TScrollSpeed;
+	if (sdAccessible && fatAccessible) {
+		guiPage.option(STR_UPDATETWLMENU,
+				STR_DESCRIPTION_UPDATETWLMENU,
+				Option::Nul(opt_update),
+				{},
+				{});
+	}
+
 	guiPage
 		.option(STR_FRAMERATE, STR_DESCRIPTION_FRAMERATE, Option::Int(&ms().fps), {"15FPS", "20FPS", "24FPS", "30FPS", "50FPS", "60FPS"}, {15, 20, 24, 30, 50, 60})
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})

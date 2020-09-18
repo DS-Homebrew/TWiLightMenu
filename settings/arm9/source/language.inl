@@ -1,5 +1,9 @@
 // STRING(SAVING_SETTINGS, "Saving settings...")
 // STRING(SETTINGS_SAVED, "Settings saved.")
+STRING(HOW_WANT_UPDATE, "How do you want to update?")
+STRING(NOW_UPDATING, "Now Updating...")
+STRING(TAKEWHILE_PRESSHOME, "If this takes a while, press HOME,\nthen press B.")
+STRING(TAKEWHILE_CLOSELID, "If this takes a while, close and open\nthe console's lid.")
 STRING(NDS_BOOTSTRAP_VER, "nds-bootstrap Ver.")
 
 // STRING(LR_SWITCH, "L/R/Y/X Switch Pages")
@@ -17,6 +21,7 @@ STRING(PRESS_A, "Press \\A")
 // STRING(DESCRIPTION_SCREENSCALESIZE, "Changes screen scaling size.")
 
 // GUI settings
+STRING(UPDATETWLMENU, "Update TWiLight Menu++")
 STRING(FRAMERATE, "Frame Rate")
 STRING(DSCLASSICMENU, "DS Classic Menu on startup")
 STRING(THEME, "Theme")
@@ -61,6 +66,7 @@ STRING(FAST, "Fast")
 STRING(MEDIUM, "Medium")
 STRING(SLOW, "Slow")
 
+STRING(DESCRIPTION_UPDATETWLMENU, "Updates TWiLight Menu++ to a new version.")
 STRING(DESCRIPTION_FRAMERATE, "Changes how many frames per second are displayed.")
 STRING(DESCRIPTION_DSCLASSICMENU, "The menu that is shown by pressing SELECT in the Nintendo DSi theme, can be shown before the ROM select menu.")
 STRING(DESCRIPTION_SELECTBUTTONOPTION, "Choose a menu to show when pressing SELECT in the Nintendo DSi, SEGA Saturn, and Homebrew Launcher theme.")
