@@ -433,6 +433,7 @@ void opt_update()
 		}
 
 		if (pressed & KEY_B) {
+			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_back : &snd().snd_back);
 			break;
 		}
 	}
