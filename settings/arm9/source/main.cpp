@@ -55,6 +55,7 @@ std::vector<std::string> r4ThemeList;
 std::vector<std::string> dsiThemeList;
 std::vector<std::string> _3dsThemeList;
 std::vector<std::string> unlaunchBgList;
+std::vector<std::string> menuSrldrList;
 
 bool fadeType = false; // false = out, true = in
 
@@ -293,6 +294,28 @@ void loadUnlaunchBgList()
 	}
 }
 
+void loadMenuSrldrList (const char* dirPath) {
+	DIR *dir;
+	struct dirent *ent;
+	std::string srldrDir;
+	if ((dir = opendir(dirPath)) != NULL)
+	{
+		// print all the files and directories within directory 
+		while ((ent = readdir(dir)) != NULL)
+		{
+			// Reallocation here, but prevents our vector from being filled with
+
+			srldrDir = ent->d_name;
+			if (srldrDir == ".." || srldrDir == "..." || srldrDir == ".") continue;
+
+			if (extention(srldrDir, "menu.srldr")) {
+				menuSrldrList.emplace_back(srldrDir);
+			}
+		}
+		closedir(dir);
+	}
+}
+
 std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 {
 	switch (optVal.get())
@@ -328,11 +351,27 @@ void begin_update(int opt)
 	if (opt == 1) {
 		// Slot-1 microSD > Console SD
 		fcopy("fat:/_nds/TWiLightMenu/main.srldr", "sd:/_nds/TWiLightMenu/main.srldr");
+		fcopy("fat:/_nds/TWiLightMenu/manual.srldr", "sd:/_nds/TWiLightMenu/manual.srldr");
+		fcopy("fat:/_nds/TWiLightMenu/slot1launch.srldr", "sd:/_nds/TWiLightMenu/slot1launch.srldr");
+		fcopy("fat:/_nds/TWiLightMenu/resetgame.srldr", "sd:/_nds/TWiLightMenu/resetgame.srldr");
 		fcopy("fat:/_nds/TWiLightMenu/settings.srldr", "sd:/_nds/TWiLightMenu/settings.srldr");
 	} else {
 		// Console SD > Slot-1 microSD
 		fcopy("sd:/_nds/TWiLightMenu/main.srldr", "fat:/_nds/TWiLightMenu/main.srldr");
+		fcopy("sd:/_nds/TWiLightMenu/manual.srldr", "fat:/_nds/TWiLightMenu/manual.srldr");
+		fcopy("sd:/_nds/TWiLightMenu/slot1launch.srldr", "fat:/_nds/TWiLightMenu/slot1launch.srldr");
+		fcopy("sd:/_nds/TWiLightMenu/resetgame.srldr", "fat:/_nds/TWiLightMenu/resetgame.srldr");
 		fcopy("sd:/_nds/TWiLightMenu/settings.srldr", "fat:/_nds/TWiLightMenu/settings.srldr");
+	}
+
+	loadMenuSrldrList(opt==1 ? "fat:/_nds/TWiLightMenu/" : "sd:/_nds/TWiLightMenu/");
+
+	// Copy theme srldr files
+	char srldrPath[2][256];
+	for (int i = 0; i < (int)menuSrldrList.size(); i++) {
+		sprintf(srldrPath[0], opt==1 ? "fat:/_nds/TWiLightMenu/%s" : "sd:/_nds/TWiLightMenu/%s", menuSrldrList[i].c_str());
+		sprintf(srldrPath[1], opt==1 ? "sd:/_nds/TWiLightMenu/%s" : "fat:/_nds/TWiLightMenu/%s", menuSrldrList[i].c_str());
+		fcopy(srldrPath[0], srldrPath[1]);
 	}
 
 	fadeType = false;
