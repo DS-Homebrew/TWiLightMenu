@@ -70,8 +70,7 @@ jobs:
           # nds-bootstrap
           mkdir -p nds-bootstrap
           cd nds-bootstrap
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/ahezard/nds-bootstrap/releases/latest -o nds-bootstrap.json
-          curl -L $(jq --raw-output '.assets[0].browser_download_url' nds-bootstrap.json) -o nds-bootstrap.7z
+          curl -LO https://github.com/DS-Homebrew/nds-bootstrap/releases/latest/download/nds-bootstrap.7z
           7z x nds-bootstrap.7z
           mv nds-bootstrap.* ..
           mkdir -p TWiLightMenu
@@ -145,7 +144,7 @@ jobs:
   # Only run this for non-PR jobs.
   publish_build_twlbot:
     runs-on: ubuntu-latest
-    name: Publish build to ${{ github.repository }}
+    name: "Publish build to ${{ github.repository }}"
     if: ${{ success() }}
     needs: build
     env:
