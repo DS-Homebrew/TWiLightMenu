@@ -611,7 +611,7 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	gs().loadSettings();
 	bs().loadSettings();
-	loadAkThemeList();
+	//loadAkThemeList();
 	loadR4ThemeList();
 	load3DSThemeList();
 	loadDSiThemeList();
