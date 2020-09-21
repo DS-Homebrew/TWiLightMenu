@@ -31,10 +31,9 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get update
-          sudo apt-get install p7zip-full python -y
-      - name: Build TWiLightMenu++
-        run: |
-          make package
+          sudo apt-get install ffmpeg firefox imagemagick libxml2-utils p7zip-full python -y
+      # - name: Build TWiLightMenu++
+      #   run: make package
       - name: Build Manual
         run: make -C manual pages
       - name: Make booter and TWiLightMenu CIAs
