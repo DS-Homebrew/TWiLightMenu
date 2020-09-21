@@ -31,7 +31,7 @@ all:	kill-webserver webserver $(TARGETS) kill-webserver
 	@echo pages ...
 
 webserver:
-	@python -m SimpleHTTPServer 1>/dev/null & echo $$! > webserver.pid
+	@python -m SimpleHTTPServer 1>/dev/null 2>&1 & echo $$! > webserver.pid
 
 kill-webserver:
 	@if [ -f webserver.pid ]; then kill $$(cat webserver.pid); fi
