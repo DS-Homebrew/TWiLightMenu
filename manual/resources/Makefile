@@ -31,10 +31,11 @@ all:	kill-webserver webserver $(TARGETS) kill-webserver
 	@echo pages ...
 
 webserver:
-	@python -m SimpleHTTPServer 1>/dev/null &
+	@python -m SimpleHTTPServer 1>/dev/null & echo $$! > webserver.pid
 
 kill-webserver:
-	@killall Python || true
+	@if [ -f webserver.pid ]; then kill $$(cat webserver.pid); fi
+	@rm -f webserver.pid
 
 $(NITROFILES)/pages/%.png	:	%.html
 	@echo $$(basename $(@D))/$$(basename $<)

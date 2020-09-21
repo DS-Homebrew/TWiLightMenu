@@ -20,6 +20,7 @@ thumbs.db
 !/7zfile/Flashcard users/Autoboot/*/*.NDS
 !/7zfile/Flashcard users/Autoboot/*/*/*.NDS
 !/7zfile/Flashcard users/Flashcart Loader/*/*/*.NDS
+manual/resources/webserver.pid
 manual/nitrofiles/pages/*/*
 !manual/nitrofiles/pages/english/*.ini
 
