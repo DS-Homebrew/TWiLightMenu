@@ -60,6 +60,28 @@ struct PageLink {
 	PageLink(std::string dest, int x, int y, int w, int h) : dest(dest), x(x), y(y), w(w), h(h) {}
 };
 
+// Do not reorder these, just add to the end
+// This should be in dsimenusettings.h, but the manual currently doesn't have that
+enum TLanguage {
+	ELangDefault = -1,
+	ELangJapanese = 0,
+	ELangEnglish = 1,
+	ELangFrench = 2,
+	ELangGerman = 3,
+	ELangItalian = 4,
+	ELangSpanish = 5,
+	ELangChineseS = 6,
+	ELangKorean = 7,
+	ELangChineseT = 8,
+	ELangPolish = 9,
+	ELangPortuguese = 10,
+	ELangRussian = 11,
+	ELangSwedish = 12,
+	ELangDanish = 13,
+	ELangTurkish = 14,
+	ELangUkrainian = 15,
+};
+
 bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
@@ -417,12 +439,54 @@ int main(int argc, char **argv) {
 	int setLanguage = (guiLanguage == -1) ? userLanguage : guiLanguage;
 
 	switch (setLanguage) {
-		case 1:
+		case ELangJapanese:
+			chdir("nitro:/pages/japanese/");
+			break;
+		case ELangEnglish:
 		default:
 			chdir("nitro:/pages/english/");
 			break;
-		case 5:
+		case ELangFrench:
+			chdir("nitro:/pages/french/");
+			break;
+		case ELangGerman:
+			chdir("nitro:/pages/german/");
+			break;
+		case ELangItalian:
+			chdir("nitro:/pages/italian/");
+			break;
+		case ELangSpanish:
 			chdir("nitro:/pages/spanish/");
+			break;
+		case ELangChineseS:
+			chdir("nitro:/pages/chinese_s/");
+			break;
+		case ELangKorean:
+			chdir("nitro:/pages/korean/");
+			break;
+		case ELangChineseT:
+			chdir("nitro:/pages/chinese_t/");
+			break;
+		case ELangPolish:
+			chdir("nitro:/pages/polish/");
+			break;
+		case ELangPortuguese:
+			chdir("nitro:/pages/portuguese/");
+			break;
+		case ELangRussian:
+			chdir("nitro:/pages/russian/");
+			break;
+		case ELangSwedish:
+			chdir("nitro:/pages/swedish/");
+			break;
+		case ELangDanish:
+			chdir("nitro:/pages/danish/");
+			break;
+		case ELangTurkish:
+			chdir("nitro:/pages/turkish/");
+			break;
+		case ELangUkrainian:
+			chdir("nitro:/pages/ukrainian/");
 			break;
 	}
 
