@@ -18,26 +18,25 @@ EXCLUDE		:= Acholi assets Makefile
 LANGS		:= $(filter-out $(EXCLUDE),$(wildcard $(PAGES)))
 NITROFILES	:= ../nitrofiles
 
-BMPFILES	:= $(foreach dir,$(LANGS),$(wildcard $(NITROFILES)/pages/$(dir)/*.bmp))
-
 INPUTS		:= $(foreach dir,$(LANGS),$(wildcard $(dir)/*.html))
-TARGETS		:= $(filter-out $(subst bmp,png,$(BMPFILES)),$(foreach file,$(INPUTS:.html=.png),$(addprefix $(NITROFILES)/pages/, $(file))))
+TARGETS		:= $(foreach file,$(INPUTS:.html=.gif),$(addprefix $(NITROFILES)/pages/, $(file)))
 
 INIFILES	:= $(wildcard $(NITROFILES)/pages/english/*.ini)
-INITARGETS	:= $(foreach file,$(INIFILES),$(foreach lang,$(LANGS),$(subst english,$(lang),$(file))))
+INITARGETS	:= $(foreach file,$(INIFILES),$(foreach lang,$(filter-out english,$(LANGS)),$(subst english,$(lang),$(file))))
 
 .PHONY: all clean
 
 all:	$(TARGETS)
 
-$(NITROFILES)/pages/%.png	:	%.html
+$(NITROFILES)/pages/%.gif	:	%.html
 	@echo $$(basename $(@D))/$$(basename $<)
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
 	@# remove 2>&1 to see errors
 	$(CHROMIUM) --no-sandbox --hide-scrollbars --headless --disable-gpu --window-size=256,3000 --screenshot "$<" 1>/dev/null 2>&1
-	@mv screenshot.png $@
-	@mogrify -trim "$@"
-	@if [ $$(identify -format "%h" "$@") -gt 1000 ]; then ffmpeg -i "$@" -pix_fmt rgb555le "$(subst png,bmp,$@)" -y -loglevel error; rm "$@"; fi
+	@mogrify -trim screenshot.png
+	@gifski screenshot.png --width 256 --output screenshot.gif
+	@gifsicle screenshot.gif --colors=246 --optimize=200 > "$@"
+	@rm screenshot.*
 
 inifiles	:	$(INITARGETS)
 
@@ -49,5 +48,5 @@ $(foreach lang,$(filter-out english,$(LANGS)),$(NITROFILES)/pages/$(lang)/%.ini)
 
 clean:
 	@echo clean ...
-	@rm -rf $(NITROFILES)/pages/*/*.png
-	@rm -rf $(NITROFILES)/pages/*/*.bmp
+	@rm -rf $(TARGETS)
+	@rm -rf $(INITARGETS)

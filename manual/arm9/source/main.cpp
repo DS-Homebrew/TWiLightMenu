@@ -41,6 +41,7 @@
 #include "graphics/fontHandler.h"
 
 #include "common/inifile.h"
+#include "common/tonccpy.h"
 
 #include "soundbank.h"
 #include "soundbank_bin.h"
@@ -155,11 +156,9 @@ void loadPageList() {
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
-			if(dirEntry.name.substr(dirEntry.name.find_last_of(".") + 1) == "bmp"
-			|| dirEntry.name.substr(dirEntry.name.find_last_of(".") + 1) == "png") {
+			if(dirEntry.name.substr(dirEntry.name.find_last_of(".") + 1) == "gif" && dirEntry.name.substr(0, 2) != "._") {
 				char path[PATH_MAX] = {0};
 				getcwd(path, PATH_MAX);
-				dirEntry.name = path + dirEntry.name;
 				manPagesList.push_back(dirEntry);
 			} else if((dirEntry.isDirectory) && (dirEntry.name.compare(".") != 0) && (dirEntry.name.compare("..") != 0)) {
 				chdir(dirEntry.name.c_str());
@@ -177,8 +176,8 @@ void loadPageInfo(std::string pagePath) {
 	CIniFile pageIni(pagePath);
 
 	manPageTitle = pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual");
-	bgColor1 = pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B);
-	bgColor2 = pageIni.GetInt("INFO","BG_COLOR_2",0x77BD);
+	toncset16(BG_PALETTE_SUB + 0xF6, pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B), 1);
+	toncset16(BG_PALETTE_SUB + 0xF7, pageIni.GetInt("INFO","BG_COLOR_2",0x77BD), 1);
 
 	for(int i=1;true;i++) {
 		std::string link = "LINK" + std::to_string(i);
@@ -358,6 +357,8 @@ int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 	defaultExceptionHandler();
 
+	keysSetRepeat(25, 25);
+
 	bool useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	extern const DISC_INTERFACE __my_io_dsisd;
@@ -498,28 +499,42 @@ int main(int argc, char **argv) {
 
 	int pressed = 0;
 	int held = 0;
-	uint currentPage = 0;
+	int repeat = 0;
+	int currentPage = 0, returnPage = -1;
 	touchPosition touch;
 
 	fadeType = true;	// Fade in from white
 
 	while(1) {
-		scanKeys();
-		touchRead(&touch);
-		pressed = keysDown();
-		held = keysHeld();
-		checkSdEject();
-		swiWaitForVBlank();
+		do {
+			scanKeys();
+			touchRead(&touch);
+			pressed = keysDown();
+			held = keysHeld();
+			repeat = keysDownRepeat();
+			checkSdEject();
+			swiWaitForVBlank();
+		} while(!held);
 
-		if (held & KEY_UP) {
+		if (pressed & KEY_B) {
+			if(returnPage != -1) {
+				currentPage = returnPage;
+				returnPage = -1;
+				pageYpos = 0;
+				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
+				pageLoad(manPagesList[currentPage].name);
+				clearText(true);
+				printSmall(true, 4, 0, manPageTitle);
+			}
+		} else if (held & KEY_UP) {
 			pageYpos -= 4;
 			if (pageYpos < 0) pageYpos = 0;
 			pageScroll();
 		} else if (held & KEY_DOWN) {
 			pageYpos += 4;
-			if (pageYpos > pageYsize-174) pageYpos = pageYsize-174;
+			if (pageYpos > pageYsize-176) pageYpos = pageYsize-176;
 			pageScroll();
-		} else if (pressed & KEY_LEFT) {
+		} else if (repeat & KEY_LEFT) {
 			if(currentPage > 0) {
 				pageYpos = 0;
 				currentPage--;
@@ -528,8 +543,8 @@ int main(int argc, char **argv) {
 				clearText(true);
 				printSmall(true, 4, 0, manPageTitle);
 			}
-		} else if (pressed & KEY_RIGHT) {
-			if(currentPage < manPagesList.size()-1) {
+		} else if (repeat & KEY_RIGHT) {
+			if(currentPage < (int)manPagesList.size()-1) {
 				pageYpos = 0;
 				currentPage++;
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
@@ -558,8 +573,8 @@ int main(int argc, char **argv) {
 								pageYpos = 0;
 								pageScroll();
 								break;
-							} else if (pageYpos > (pageYsize-174)) {
-								pageYpos = pageYsize-174;
+							} else if (pageYpos > (pageYsize-176)) {
+								pageYpos = pageYsize-176;
 								pageScroll();
 								break;
 							}
@@ -583,7 +598,7 @@ int main(int argc, char **argv) {
 						}
 					}
 
-					if(((pageYpos + touchStart.py - touch.py) > 0) && ((pageYpos + touchStart.py - touch.py) < (pageYsize - 174)))
+					if(((pageYpos + touchStart.py - touch.py) > 0) && ((pageYpos + touchStart.py - touch.py) < (pageYsize - 176)))
 						pageYpos += touchStart.py - touch.py;
 					pageScroll();
 
@@ -594,11 +609,11 @@ int main(int argc, char **argv) {
 			} else {
 				for(uint i=0;i<manPageLinks.size();i++) {
 					if(((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
-						(((touchStart.py + pageYpos) >= manPageLinks[i].y - 174) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - 174 + manPageLinks[i].h)))) {
+						(((touchStart.py + pageYpos) >= manPageLinks[i].y - 176) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - 176 + manPageLinks[i].h)))) {
 						pageYpos = 0;
+						returnPage = currentPage;
 						for(uint j=0;j<manPagesList.size();j++) {
-							if(manPagesList[j].name == (manPageLinks[i].dest + ".bmp")
-							|| manPagesList[j].name == (manPageLinks[i].dest + ".png")) {
+							if(manPagesList[j].name == (manPageLinks[i].dest + ".gif")) {
 								currentPage = j;
 								break;
 							}
