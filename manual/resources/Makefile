@@ -31,18 +31,18 @@ all:	kill-webserver webserver $(TARGETS) kill-webserver
 	@echo pages ...
 
 webserver:
-	@python -m SimpleHTTPServer 1>/dev/null 2>&1 & echo $$! > webserver.pid
+	python -m SimpleHTTPServer & echo $$! > webserver.pid
 
 kill-webserver:
-	@if [ -f webserver.pid ]; then kill $$(cat webserver.pid); fi
-	@rm -f webserver.pid
+	if [ -f webserver.pid ]; then kill $$(cat webserver.pid); fi
+	rm -f webserver.pid
 
 $(NITROFILES)/pages/%.png	:	%.html
 	@echo $$(basename $(@D))/$$(basename $<)
-	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
-	@$(FIREFOX) --headless --screenshot "$@" --window-size 256 "http://localhost:8000/$<" 2>/dev/null
-	@mogrify -trim "$@"
-	@if [ $$(identify -format "%h" "$@") -gt 1000 ]; then ffmpeg -i "$@" -pix_fmt rgb555le "$(subst png,bmp,$@)" -y -loglevel error; rm "$@"; fi
+	[ -d "$(@D)" ] || mkdir -p "$(@D)"
+	$(FIREFOX) --headless --screenshot "$@" --window-size 256 "http://localhost:8000/$<"
+	mogrify -trim "$@"
+	if [ $$(identify -format "%h" "$@") -gt 1000 ]; then ffmpeg -i "$@" -pix_fmt rgb555le "$(subst png,bmp,$@)" -y -loglevel error; rm "$@"; fi
 
 inifiles	:	$(INITARGETS)
 
