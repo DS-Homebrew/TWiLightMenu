@@ -32,6 +32,7 @@ $(TARGET).nds:	makearm7 makearm9
 	-b icon.bmp "TWiLight Menu++;Instruction Manual;RocketRobz, Evie & NightScript"
 
 pages:
+	@$(MAKE) -C resources inifiles
 	@$(MAKE) -C resources
 
 clean:
