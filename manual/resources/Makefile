@@ -42,7 +42,7 @@ $(NITROFILES)/pages/%.png	:	%.html
 	@echo $$(basename $(@D))/$$(basename $<)
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
 	@# remove 2>&1 to see errors
-	$(CHROMIUM) --no-sandbox --headless --disable-gpu --window-size=256,2048 --screenshot "http://localhost:8000/$<" 1>/dev/null 2>&1
+	$(CHROMIUM) --no-sandbox --hide-scrollbars --headless --disable-gpu --window-size=256,3000 --screenshot "http://localhost:8000/$<" 1>/dev/null 2>&1
 	@mv screenshot.png $@
 	@mogrify -trim "$@"
 	@if [ $$(identify -format "%h" "$@") -gt 1000 ]; then ffmpeg -i "$@" -pix_fmt rgb555le "$(subst png,bmp,$@)" -y -loglevel error; rm "$@"; fi
