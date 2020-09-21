@@ -35,8 +35,8 @@ jobs:
       - name: Build TWiLightMenu++
         run: |
           make package
-
-          make -C manual pages
+      - name: Build Manual
+        run: make -C manual pages
       - name: Make booter and TWiLightMenu CIAs
         id: make-cias
         run: |
