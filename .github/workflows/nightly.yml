@@ -31,7 +31,13 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get update
-          sudo apt-get install chromium gifski gifsicle imagemagick libxml2-utils p7zip-full python -y
+          sudo apt-get install chromium gifsicle imagemagick libxml2-utils p7zip-full python -y
+
+          # Install gifski
+          curl -LO https://gif.ski/gifski-1.2.0.zip
+          7z e gifski-1.2.0.zip debian/gifski_1.2.0_amd64.deb
+          sudo dpkg -i gifski_1.2.0_amd64.deb
+          rm -f gifski_1.2.0_amd64.deb
       - name: Build Manual
         run: make -C manual pages
       - name: Build TWiLightMenu++
