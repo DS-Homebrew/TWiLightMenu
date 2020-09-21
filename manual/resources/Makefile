@@ -41,7 +41,7 @@ kill-webserver:
 $(NITROFILES)/pages/%.png	:	%.html
 	@echo $$(basename $(@D))/$$(basename $<)
 	[ -d "$(@D)" ] || mkdir -p "$(@D)"
-	$(CHROMIUM) --headless --disable-gpu --window-size=256,2048 --screenshot "http://localhost:8000/$<"
+	$(CHROMIUM) --no-sandbox --headless --disable-gpu --window-size=256,2048 --screenshot "http://localhost:8000/$<"
 	mv screenshot.png $@
 	mogrify -trim "$@"
 	if [ $$(identify -format "%h" "$@") -gt 1000 ]; then ffmpeg -i "$@" -pix_fmt rgb555le "$(subst png,bmp,$@)" -y -loglevel error; rm "$@"; fi
