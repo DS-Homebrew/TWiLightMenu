@@ -1,19 +1,20 @@
 ifeq ($(OS),Windows_NT)
-FIREFOX		:= firefox.exe
+CHROMIUM	:= chromium.exe
 SED			:= sed.exe -i
 else
 	ifeq ($(shell uname -s),Darwin)
-FIREFOX		:= /Applications/Firefox.app/Contents/MacOS/firefox
+# I use Edge, change this if using another Chromium browser -Pk11
+CHROMIUM	:= /Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge
 # macOS sed is dumb apparently
 SED			:= sed -i ''
 	else
-FIREFOX		:= firefox
+CHROMIUM	:= chromium
 SED			:= sed -i
 	endif
 endif
 
 PAGES		:=	*
-EXCLUDE		:= Acholi assets Makefile
+EXCLUDE		:= Acholi assets Makefile webserver.pid
 LANGS		:= $(filter-out $(EXCLUDE),$(wildcard $(PAGES)))
 NITROFILES	:= ../nitrofiles
 
@@ -40,7 +41,8 @@ kill-webserver:
 $(NITROFILES)/pages/%.png	:	%.html
 	@echo $$(basename $(@D))/$$(basename $<)
 	[ -d "$(@D)" ] || mkdir -p "$(@D)"
-	$(FIREFOX) --headless --screenshot "$@" --window-size 256 "http://localhost:8000/$<"
+	$(CHROMIUM) --headless --disable-gpu --window-size=256,2048 --screenshot "http://localhost:8000/$<"
+	mv screenshot.png $@
 	mogrify -trim "$@"
 	if [ $$(identify -format "%h" "$@") -gt 1000 ]; then ffmpeg -i "$@" -pix_fmt rgb555le "$(subst png,bmp,$@)" -y -loglevel error; rm "$@"; fi
 
