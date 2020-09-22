@@ -14,8 +14,8 @@ SED			:= sed -i
 endif
 
 PAGES		:=	*
-EXCLUDE		:= Acholi assets Makefile
-LANGS		:= $(filter-out $(EXCLUDE),$(wildcard $(PAGES)))
+EXCLUDE		:= Acholi assets
+LANGS		:= $(filter-out $(EXCLUDE),$(subst /,,$(wildcard $(PAGES)/)))
 NITROFILES	:= ../nitrofiles
 
 INPUTS		:= $(foreach dir,$(LANGS),$(wildcard $(dir)/*.html))
@@ -34,9 +34,9 @@ $(NITROFILES)/pages/%.gif	:	%.html
 	@# remove 2>&1 to see errors
 	$(CHROMIUM) --no-sandbox --hide-scrollbars --headless --disable-gpu --window-size=256,3000 --screenshot "$<" 1>/dev/null 2>&1
 	@mogrify -trim screenshot.png
-	@gifski screenshot.png --width 256 --output screenshot.gif
-	@gifsicle screenshot.gif --colors=246 --optimize=200 > "$@"
-	@rm screenshot.*
+	@ffmpeg -i screenshot.png -vf "palettegen=max_colors=246" palette.png -y -loglevel error
+	@ffmpeg -i screenshot.png -i palette.png -filter_complex paletteuse "$@" -y -loglevel error
+	@rm -f screenshot.png palette.png
 
 inifiles	:	$(INITARGETS)
 
