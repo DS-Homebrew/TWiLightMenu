@@ -33,9 +33,8 @@ $(NITROFILES)/pages/%.gif	:	%.html
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
 	@# remove 2>&1 to see errors
 	$(CHROMIUM) --no-sandbox --hide-scrollbars --headless --disable-gpu --window-size=256,3000 --screenshot "$<" 1>/dev/null 2>&1
-	@mogrify -trim screenshot.png
 	@ffmpeg -i screenshot.png -vf "palettegen=max_colors=246" palette.png -y -loglevel error
-	@ffmpeg -i screenshot.png -i palette.png -filter_complex paletteuse "$@" -y -loglevel error
+	@ffmpeg -i screenshot.png -i palette.png -filter_complex "$$(ffmpeg -loop 1 -i screenshot.png -frames:v 3 -vf 'negate,cropdetect=24:16:0' -f null - 2>&1 | awk '/y2/ {print $$NF}' | tail -1),paletteuse" "$@" -y -loglevel error
 	@rm -f screenshot.png palette.png
 
 inifiles	:	$(INITARGETS)

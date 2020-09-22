@@ -31,7 +31,7 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get update
-          sudo apt-get install chromium ffmpeg imagemagick libxml2-utils p7zip-full python -y
+          sudo apt-get install chromium ffmpeg libxml2-utils p7zip-full python -y
       - name: Build Manual
         run: make -C manual pages
       - name: Build TWiLightMenu++
