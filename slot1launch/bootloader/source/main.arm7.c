@@ -798,23 +798,27 @@ void arm7_main (void) {
 
 	my_readUserSettings(ndsHeader); // Header has to be loaded first
 
-	if (my_isDSiMode()) REG_GPIO_WIFI &= BIT(8);	// New Atheros/DSi-Wifi mode
+	if (my_isDSiMode()) {
+		REG_GPIO_WIFI &= BIT(8);	// New Atheros/DSi-Wifi mode
 
-	if (my_isDSiMode() && !dsiModeConfirmed) {
-		REG_SCFG_ROM = 0x703;
-
-		NDSTouchscreenMode();
-		*(u16*)0x4000500 = 0x807F;
-
-		REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
-
-		if (twlClock) {
-			REG_SCFG_CLK = 0x0181;
+		if (dsiModeConfirmed) {
+			*(u32*)0x3FFFFC8 = 0x7884;	// Fix sound pitch table for DSi mode (works with SDK5 binaries)
 		} else {
-			REG_SCFG_CLK = 0x0180;
-		}
-		if (!sdAccess) {
-			REG_SCFG_EXT = 0x93FBFB06;
+			REG_SCFG_ROM = 0x703;
+
+			NDSTouchscreenMode();
+			*(u16*)0x4000500 = 0x807F;
+
+			REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
+
+			if (twlClock) {
+				REG_SCFG_CLK = 0x0181;
+			} else {
+				REG_SCFG_CLK = 0x0180;
+			}
+			if (!sdAccess) {
+				REG_SCFG_EXT = 0x93FBFB06;
+			}
 		}
 	}
 
