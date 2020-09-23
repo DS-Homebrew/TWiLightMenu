@@ -13,6 +13,9 @@ SED			:= sed -i
 	endif
 endif
 
+# Screeshot shortcut, follow with =name.png if wanted and page name, remove 2>&1 to see errors
+SCREENSHOT	:= $(CHROMIUM) --no-sandbox --hide-scrollbars --headless --disable-gpu --window-size=256,3000 1>/dev/null 2>&1 --screenshot
+
 PAGES		:=	*
 EXCLUDE		:= Acholi assets
 LANGS		:= $(filter-out $(EXCLUDE),$(subst /,,$(wildcard $(PAGES)/)))
@@ -31,11 +34,14 @@ all:	$(TARGETS)
 $(NITROFILES)/pages/%.gif	:	%.html
 	@echo $$(basename $(@D))/$$(basename $<)
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
-	@# remove 2>&1 to see errors
-	$(CHROMIUM) --no-sandbox --hide-scrollbars --headless --disable-gpu --window-size=256,3000 --screenshot "$<" 1>/dev/null 2>&1
+#	Generate two screenshots and check that their the same because of
+#	some dumb bug that happens on Actions that causes the text to not work
+	$(SCREENSHOT) $<
+	@$(SCREENSHOT)=2.png $<
+	@while [ "$$(crc32 screenshot.png)" != "$$(crc32 2.png)" ]; do $(SCREENSHOT) $<; $(SCREENSHOT)=2.png $<; done
 	@ffmpeg -i screenshot.png -vf "palettegen=max_colors=246" palette.png -y -loglevel error
 	@ffmpeg -i screenshot.png -i palette.png -filter_complex "$$(ffmpeg -loop 1 -i screenshot.png -frames:v 3 -vf 'negate,cropdetect=0:2:0' -f null - 2>&1 | awk '/y2/ {print $$NF}' | tail -1),paletteuse" "$@" -y -loglevel error
-	@rm -f screenshot.png palette.png
+	@rm -f screenshot.png 2.png palette.png
 
 inifiles	:	$(INITARGETS)
 
