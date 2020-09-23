@@ -689,7 +689,7 @@ int main(int argc, char **argv)
 				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, STR_THEME, STR_CLASSIC, "HBL"},
 				{0, 1, 2, 3, 4, 5});
 
-	if (isDSiMode() && sdAccessible) {
+	if (sdAccessible) {
 		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {STR_MICRO_SD_CARD, STR_SD_CARD}, {true, false});
 	}
 
