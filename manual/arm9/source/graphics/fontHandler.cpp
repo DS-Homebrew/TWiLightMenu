@@ -26,8 +26,8 @@ void fontInit() {
 		0xC631,
 		0xA108,
 	};
-	tonccpy(BG_PALETTE, palette, sizeof(palette));
-	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
+	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
+	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
 }
 
 static std::list<TextEntry> &getTextQueue(bool top) {

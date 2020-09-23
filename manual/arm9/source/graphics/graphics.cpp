@@ -21,7 +21,8 @@
 #include "graphics.h"
 #include "../errorScreen.h"
 #include "fontHandler.h"
-#include "graphics/lodepng.h"
+#include "common/tonccpy.h"
+#include "graphics/gif.hpp"
 
 #include <nds.h>
 
@@ -33,13 +34,13 @@ extern int colorMode;
 extern int blfLevel;
 int fadeDelay = 0;
 
-int bgColor1 = 0x6F7B;
-int bgColor2 = 0x77BD;
+u8 bgColor1 = 0xF6;
+u8 bgColor2 = 0xF7;
 
 int screenBrightness = 31;
 
 u16 bmpImageBuffer[256*192] = {0};
-std::vector<u16> pageImage;
+std::vector<u8> pageImage;
 
 extern int pageYpos;
 extern int pageYsize;
@@ -146,67 +147,38 @@ void vBlankHandler() {
 }
 
 void pageLoad(const std::string &filename) {
-	if(filename.substr(filename.find_last_of(".") + 1) == "bmp") {
-		FILE* file = fopen(filename.c_str(), "rb");
+	Gif gif(filename.c_str(), false, false, true);
+	pageImage = gif.frame(0).image.imageData;
+	pageYsize = gif.frame(0).descriptor.h;
 
-		if (file) {
-			fseek(file, 0x16, SEEK_SET);
-			fread(&pageYsize, sizeof(u16), 1, file);
-			pageImage = std::vector<u16>((pageYsize + 192) * 256);
+	tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
+	tonccpy(BG_PALETTE_SUB, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
 
-			fseek(file, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(file) + 0xe;
-			fseek(file, pixelStart, SEEK_SET);
-			int y = pageYsize-1;
-			for (int ii = pageYsize; ii > 0; ii-=192) {
-				fread(bmpImageBuffer, sizeof(u16), 256*192, file);
-				u16* src = bmpImageBuffer;
-				int x = 0;
-				for (int i=0; i<256*(ii>192 ? 192 : ii); i++) {
-					if (x >= 256) {
-						x = 0;
-						y--;
-					}
-					u16 val = *(src++);
-					pageImage[y*256+x] = convertToDsBmp(val);
-					x++;
-				}
-				y--;
-			}
-		}
+	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
+	dmaCopyWordsAsynch(1, pageImage.data()+(176*256), bgGetGfxPtr(bg3Sub), 192*256);
 
-		fclose(file);
-	} else {
-		std::vector<unsigned char> image;
-		unsigned width, height;
-		lodepng::decode(image, width, height, filename);
-		pageYsize = height;
-		pageImage = std::vector<u16>((pageYsize + 192) * width);
-		for(unsigned i=0;i<image.size()/4;i++) {
-			pageImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		}
-	}
-
-	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(18*256), 0x15C00);
-	dmaCopyWordsAsynch(1, pageImage.data()+(174*256), bgGetGfxPtr(bg3Sub), 0x18000);
+	pageImage.resize(pageImage.size() + 256 * 192);
 	for(int i=0;i<192;i++) {
-		if(i%2)	dmaFillHalfWords(((bgColor1>>10)&0x1f) | ((bgColor1)&(0x1f<<5)) | (bgColor1&0x1f)<<10 | BIT(15), pageImage.data()+(pageYsize*256)+(i*256), 512);
-		else	dmaFillHalfWords(((bgColor2>>10)&0x1f) | ((bgColor2)&(0x1f<<5)) | (bgColor2&0x1f)<<10 | BIT(15), pageImage.data()+(pageYsize*256)+(i*256), 512);
+		if(i%2)	dmaFillHalfWords(bgColor1 | bgColor1 << 8, pageImage.data()+(pageYsize*256)+(i*256), 256);
+		else	dmaFillHalfWords(bgColor2 | bgColor2 << 8, pageImage.data()+(pageYsize*256)+(i*256), 256);
 	}
 }
 
 void pageScroll(void) {
-	dmaCopyWordsAsynch(0, pageImage.data()+(pageYpos*256), bgGetGfxPtr(bg3Main)+(18*256), 0x15C00);
-	dmaCopyWordsAsynch(1, pageImage.data()+((174+pageYpos)*256), bgGetGfxPtr(bg3Sub), 0x18000);
+	dmaCopyWordsAsynch(0, pageImage.data()+(pageYpos*256), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
+	dmaCopyWordsAsynch(1, pageImage.data()+((176+pageYpos)*256), bgGetGfxPtr(bg3Sub), 192*256);
 	while (dmaBusy(0) || dmaBusy(1));
 }
 
 void topBarLoad(void) {
-	std::vector<unsigned char> image;
-	unsigned width, height;
-	lodepng::decode(image, width, height, "nitro:/graphics/topbar.png");
-	for(unsigned i=0;i<image.size()/4;i++) {
-		bgGetGfxPtr(bg3Main)[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+	Gif gif("nitro:/graphics/topbar.gif", false, false, true);
+	const auto &frame = gif.frame(0);
+	u16 *dst = bgGetGfxPtr(bg3Main);
+
+	tonccpy(BG_PALETTE + 0xFC, gif.gct().data(), gif.gct().size() * 2);
+
+	for(uint i = 0; i < frame.image.imageData.size() - 2; i += 2) {
+		toncset16(dst++, (frame.image.imageData[i] + 0xFC) | (frame.image.imageData[i + 1] + 0xFC) << 8, 1);
 	}
 }
 
@@ -223,13 +195,13 @@ void graphicsInit() {
 	vramSetBankA(VRAM_A_MAIN_BG);
 	vramSetBankC(VRAM_C_SUB_BG);
 
-	bg3Main = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+	bg3Main = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
 	bgSetPriority(bg3Sub, 3);
 
 	bg2Main = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 6, 0);
 	bgSetPriority(bg2Main, 0);
 
-	bg3Sub = bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+	bg3Sub = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
 	bgSetPriority(bg3Main, 3);
 
 	// bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 6, 0);
