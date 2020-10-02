@@ -15,21 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <nds/ndstypes.h>
 
-#ifndef LAUNCH_ENGINE_H
-#define LAUNCH_ENGINE_H
-
-#include <nds/ndstypes.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // LAUNCH_ENGINE_H
-
+void readBios (u8* dest, u32 src, u32 size);

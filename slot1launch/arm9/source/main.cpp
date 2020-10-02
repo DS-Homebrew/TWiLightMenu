@@ -185,7 +185,7 @@ int main() {
 				cheatData[wideCheatSize+3] = 0xCF;
 			}
 			memcpy((void*)0x023F0000, cheatData, 0x8000);
-			runLaunchEngine (EnableSD, language, scfgUnlock, TWLMODE, TWLCLK, TWLVRAM, soundFreq, runCardEngine);
+			runLaunchEngine ((memcmp(ndsHeader.gameCode, "UBRP", 4) == 0 || (memcmp(ndsHeader.gameCode, "ALXX", 4) == 0)), (memcmp(ndsHeader.gameCode, "UBRP", 4) == 0), EnableSD, language, scfgUnlock, TWLMODE, TWLCLK, TWLVRAM, soundFreq, runCardEngine);
 		}
 	}
 	return 0;

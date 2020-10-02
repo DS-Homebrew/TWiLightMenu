@@ -16,20 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LAUNCH_ENGINE_H
-#define LAUNCH_ENGINE_H
+#ifndef ENCRYPTION_H
+#define ENCRYPTION_H
 
 #include <nds/ndstypes.h>
+void init_keycode (u32 idcode, u32 level, u32 modulo);
+void crypt_64bit_down (u32* ptr);
+void crypt_64bit_up (u32* ptr);
 
-#ifdef __cplusplus
-extern "C" {
 #endif
-
-void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // LAUNCH_ENGINE_H
-

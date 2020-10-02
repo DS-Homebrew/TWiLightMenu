@@ -16,20 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LAUNCH_ENGINE_H
-#define LAUNCH_ENGINE_H
-
+#include <nds/memory.h>
 #include <nds/ndstypes.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // LAUNCH_ENGINE_H
-
+/*-------------------------------------------------------------------------
+arm7_hookGame
+Adds a hook in the game's ARM7 binary to our own code
+-------------------------------------------------------------------------*/
+int hookNdsRetail (const tNDSHeader* ndsHeader, u32* cardEngineLocation);

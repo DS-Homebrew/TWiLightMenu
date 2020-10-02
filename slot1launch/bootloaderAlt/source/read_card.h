@@ -16,20 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LAUNCH_ENGINE_H
-#define LAUNCH_ENGINE_H
+#ifndef READ_CARD_H
+#define READ_CARD_H
 
 #include <nds/ndstypes.h>
+#include <nds/memory.h>
+#include <stdlib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#define CARD_NDS_HEADER_SIZE (0x200)
+#define CARD_SECURE_AREA_OFFSET (0x4000)
+#define CARD_SECURE_AREA_SIZE (0x4000)
+#define CARD_DATA_OFFSET (0x8000)
+#define CARD_DATA_BLOCK_SIZE (0x200)
 
-void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine);
+int cardInit (tNDSHeader* ndsHeader, u32* chipID);
 
-#ifdef __cplusplus
-}
-#endif
+void cardRead (u32 src, u32* dest, size_t size);
 
-#endif // LAUNCH_ENGINE_H
+#endif // READ_CARD_H
 
