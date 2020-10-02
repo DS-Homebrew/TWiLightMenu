@@ -30,12 +30,14 @@
 #include <nds.h>
 #include <maxmod7.h>
 
+#define REG_SCFG_WL *(vu16*)0x4004020
+
 void my_installSystemFIFO(void);
 
 //unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
-unsigned int * SCFG_MC=(unsigned int*)0x4004010;
-unsigned int * CPUID=(unsigned int*)0x4004D00;
-unsigned int * CPUID2=(unsigned int*)0x4004D04;
+//unsigned int * SCFG_MC=(unsigned int*)0x4004010;
+//unsigned int * CPUID=(unsigned int*)0x4004D00;
+//unsigned int * CPUID2=(unsigned int*)0x4004D04;
 
 static int soundVolume = 127;
 
@@ -142,6 +144,11 @@ int main() {
 		}
 		if (isDSiMode() && *(u8*)(0x023FFD00) != 0xFF) {
 			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x023FFD00));
+			if (*(u8*)(0x023FFD00) == 0x13) {
+				REG_SCFG_WL &= BIT(0);
+			} else {
+				REG_SCFG_WL |= BIT(0);
+			}
 			*(u8*)(0x023FFD00) = 0xFF;
 		}
 		if (fifoCheckValue32(FIFO_USER_08)) {

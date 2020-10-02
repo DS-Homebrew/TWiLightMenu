@@ -21,14 +21,6 @@
 
 extern u16 frameBuffer[2][256*192];
 extern u16 frameBufferBot[2][256*192];
-void vramcpy_ui (void* dest, const void* src, int size);
-void clearBrightness(void);
+u16 convertVramColorToGrayscale(u16 val);
 void runGraphicIrq(void);
 void loadTitleGraphics();
-void startRendering(bool top);
-bool isRenderingTop();
-
-template<typename T> inline const T abs(T const & x)
-{
-	return ( x < 0) ? -x : x;
-}

@@ -19,6 +19,10 @@ thumbs.db
 !/7zfile/_nds/TWiLightMenu/*/*.NDS
 !/7zfile/Flashcard users/Autoboot/*/*.NDS
 !/7zfile/Flashcard users/Autoboot/*/*/*.NDS
+!/7zfile/Flashcard users/Flashcart Loader/*/*/*.NDS
+manual/nitrofiles/pages/*/*
+!manual/nitrofiles/pages/english/*.ini
+manual/resources/server.pid
 
 # Build Directory
 build/

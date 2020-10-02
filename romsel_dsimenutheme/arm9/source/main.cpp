@@ -350,6 +350,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool usePerGameSettings) {
 	snd().stopStream();
 
 	if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 		path = replaceAll(ndsPath, "fat:/", woodfat);
@@ -1496,9 +1497,14 @@ int main(int argc, char **argv) {
 
 					// Print .plg path without "fat:" at the beginning
 					char ROMpathDS2[256];
-					for (int i = 0; i < 252; i++) {
-						ROMpathDS2[i] = ROMpath[4+i];
-						if (ROMpath[4+i] == '\x00') break;
+					if (ms().secondaryDevice) {
+						for (int i = 0; i < 252; i++) {
+							ROMpathDS2[i] = ROMpath[4+i];
+							if (ROMpath[4+i] == '\x00') break;
+						}
+					} else {
+						sprintf(ROMpathDS2, "/_nds/TWiLightMenu/tempPlugin.plg");
+						fcopy(ROMpath, "fat:/_nds/TWiLightMenu/tempPlugin.plg");
 					}
 
 					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );

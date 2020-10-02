@@ -23,9 +23,8 @@
 extern "C" {
 #endif
 
-void BootJingleDSi (void);
-void BootSplashDSi (void);
-void BootSplashInit (void);
+void bootSplashDSi (void);
+void bootSplashInit (void);
 
 #ifdef __cplusplus
 }

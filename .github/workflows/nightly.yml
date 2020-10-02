@@ -14,24 +14,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: devkitpro/devkitarm:20200730
-    name: "Build with Docker using devKitARM r55"
+    container: devkitpro/devkitarm
+    name: Build with Docker using devkitARM
     outputs:
       commit_tag: ${{ steps.make-cias.outputs.commit_tag }}
+      commit_hash: ${{ steps.make-cias.outputs.commit_hash }}
+      author_name: ${{ steps.make-cias.outputs.author_name }}
+      committer_name: ${{ steps.make-cias.outputs.committer_name }}
+      commit_subject: ${{ steps.make-cias.outputs.commit_subject }}
       commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
-      - name: "Checkout repo"
+      - name: Checkout repo
         uses: actions/checkout@v1
         with:
           submodules: recursive
-      - name: "Install tools"
+      - name: Install tools
         run: |
+          echo deb http://deb.debian.org/debian testing main contrib non-free >> /etc/apt/sources.list
           sudo apt-get update
-          sudo apt-get install p7zip-full python jq -y
-      - name: "Build TWiLightMenu++"
-        run: |
-          make package
-      - name: "Make booter and TWiLightMenu CIAs"
+          sudo apt-get install chromium ffmpeg fonts-noto-cjk libxml2-utils p7zip-full python -y
+      - name: Build manual pages
+        run: make -C manual pages
+      - name: Build TWiLightMenu++
+        run: make package
+      - name: Make booter and TWiLightMenu CIAs
         id: make-cias
         run: |
           cd booter/
@@ -45,9 +51,15 @@ jobs:
           ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
           cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
 
-          echo "::set-output name=commit_tag::$(git log --format=%h -1)"
-          echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
-      - name: "Pack 7z Package for nightly"
+          echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
+          echo ::set-output name=commit_hash::$(git log --format=%h -1)
+
+          # Webhook info
+          echo ::set-output name=author_name::$(git log -1 "$GITHUB_SHA" --pretty="%aN")
+          echo ::set-output name=committer_name::$(git log -1 "$GITHUB_SHA" --pretty="%cN")
+          echo ::set-output name=commit_subject::$(git log -1 "$GITHUB_SHA" --pretty="%s")
+          echo ::set-output name=commit_message::$(git log -1 "$GITHUB_SHA" --pretty="%b")
+      - name: Pack 7z Package for nightly
         run: |
           # Make artifacts directory
           mkdir -p ~/artifacts
@@ -108,35 +120,36 @@ jobs:
           rm -rf TWiLightMenu/Flashcard\ users/Flashcart\ Loader/
           7z a TWiLightMenu-Lite.7z TWiLightMenu/
           mv TWiLightMenu-Lite.7z ~/artifacts
-      - name: "Publish build to GH Actions"
+      - name: Publish build to GH Actions
         uses: actions/upload-artifact@v2
         with:
           path: ~/artifacts/*
-          name: "build"
+          name: build
 
   # Only run this for non-PR jobs.
-  publish_build_twlbot:
+  publish_build:
     runs-on: ubuntu-latest
-    name: "Publish build to TWLBot"
+    name: Publish build to TWLBot
     if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
     needs: build
     env:
       COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
+      COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
+      AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
     outputs:
       current_date: ${{ steps.commit.outputs.current_date }}
-      twlbot_commit: ${{ steps.commit.outputs.twlbot_commit }}
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
-          name: "build"
-          path: "build"
-      - name: "Commit and push to TWLBot/Builds"
-        id: "commit"
+          name: build
+          path: build
+      - name: Commit and push to TWLBot/Builds
+        id: commit
         run: |
           CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
-          echo "::set-output name=current_date::$CURRENT_DATE"
+          echo ::set-output name=current_date::$CURRENT_DATE
 
           git config --global user.email "flamekat54@aol.com"
           git config --global user.name "TWLBot"
@@ -144,10 +157,9 @@ jobs:
           cd Builds/
           cp ${{ github.workspace }}/build/* .
           git stage .
-          git commit -m "TWiLightMenu | $COMMIT_TAG"
+          git commit -m "TWiLightMenu | $COMMIT_HASH"
           git tag v$CURRENT_DATE
           git push origin v$CURRENT_DATE master
-          echo "::set-output name=twlbot_commit::$(git log --format=%H -1)"
       - name: Release to TWLBot/Builds
         run: |
           # Delete debug 7z
@@ -156,7 +168,7 @@ jobs:
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
           API_URL="https://api.github.com/repos/TWLBot/Builds/releases"
-          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"TWiLightMenu | $COMMIT_TAG\", \"body\": \"$COMMIT_MESSAGE\", \"prerelease\": true}"
+          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"TWiLightMenu | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_MESSAGE\", \"prerelease\": true}"
 
           RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
 
@@ -171,39 +183,26 @@ jobs:
             curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
 
-  send_webhook_success:
+  send_webhook:
     runs-on: ubuntu-latest
-    needs: [publish_build_twlbot, build]
-    name: "Send Discord success webhook"
-    if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
+    needs: [publish_build, build]
+    name: Send Discord webhook
+    if: ${{ !startsWith(github.ref, 'refs/pull') }}
     env:
-      COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
+      CURRENT_DATE: ${{ needs.publish_build.outputs.current_date }}
+      AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
+      COMMITTER_NAME: ${{ needs.build.outputs.committer_name }}
+      COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
-      CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
-      TWLBOT_COMMIT: ${{ needs.publish_build_twlbot.outputs.twlbot_commit }}
     steps:
-      - name: "Checkout repo"
-        uses: actions/checkout@v1
-      - name: "Send success webhook"
+      - name: Send success webhook
+        if: ${{ success() }}
         run: |
           curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-ghactions.sh
           chmod +x send.sh
           ./send.sh success ${{ secrets.WEBHOOK_URL }}
-
-  send_webhook_failure:
-    runs-on: ubuntu-latest
-    needs: [publish_build_twlbot, build]
-    name: "Send Discord failure webhook"
-    if: ${{ failure() && !startsWith(github.ref, 'refs/pull') }}
-    env:
-      COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
-      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
-      CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
-      TWLBOT_COMMIT: ${{ needs.publish_build_twlbot.outputs.twlbot_commit }}
-    steps:
-      - name: "Checkout repo"
-        uses: actions/checkout@v1
-      - name: "Send failure webhook"
+      - name: Send failure webhook
+        if: ${{ failure() }}
         run: |
           curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-ghactions.sh
           chmod +x send.sh

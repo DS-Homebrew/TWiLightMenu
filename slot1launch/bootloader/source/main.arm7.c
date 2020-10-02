@@ -71,8 +71,10 @@ extern u32 runCardEngine;
 
 extern bool arm9_runCardEngine;
 
+u16 scfgRomBak = 0;
+
 bool my_isDSiMode() {
-	return ((vu8)REG_SCFG_ROM == 1);
+	return ((vu8)scfgRomBak == 1);
 }
 
 bool useTwlCfg = false;
@@ -745,6 +747,8 @@ void arm7_main (void) {
 
 	//debugOutput (ERR_STS_CLR_MEM);
 
+	scfgRomBak = REG_SCFG_ROM;
+
 	if (my_isDSiMode()) {
 		tonccpy((char*)0x02400000, (char*)0x02000000, 0x4000);	// Backup TWLCFG for later usage by homebrew on flashcards
 	}
@@ -752,14 +756,11 @@ void arm7_main (void) {
 	// Get ARM7 to clear RAM
 	arm7_resetMemory();	
 
-	NDSTouchscreenMode();
-	*(u16*)0x4000500 = 0x807F;
-
 	//debugOutput (ERR_STS_LOAD_BIN);
 
-	//if (!twlMode) {
-		REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
-	//}
+	if (!twlMode) {
+		REG_SCFG_ROM = 0x703;	// Needed for Golden Sun: Dark Dawn to work
+	}
 
 	tDSiHeader* dsiHeaderTemp = (tDSiHeader*)0x02FFC000;
 
@@ -769,7 +770,7 @@ void arm7_main (void) {
 		debugOutput(errorCode);
 	}
 
-	/*if (my_isDSiMode()) {
+	if (my_isDSiMode()) {
 		if (twlMode == 2) {
 			dsiModeConfirmed = twlMode;
 		} else {
@@ -784,7 +785,7 @@ void arm7_main (void) {
 		if (dsiHeaderTemp->arm7ibinarySize > 0) {
 			cardRead((u32)dsiHeaderTemp->arm7iromOffset, (u32*)dsiHeaderTemp->arm7idestination, dsiHeaderTemp->arm7ibinarySize);
 		}
-	}*/
+	}
 
 	ndsHeader = loadHeader(dsiHeaderTemp);
 
@@ -797,18 +798,27 @@ void arm7_main (void) {
 
 	my_readUserSettings(ndsHeader); // Header has to be loaded first
 
-	if (my_isDSiMode()) REG_GPIO_WIFI &= BIT(8);	// New Atheros/DSi-Wifi mode
+	if (my_isDSiMode()) {
+		REG_GPIO_WIFI &= BIT(8);	// New Atheros/DSi-Wifi mode
 
-	if (my_isDSiMode() && !dsiModeConfirmed) {
-		REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
-
-		if (twlClock) {
-			REG_SCFG_CLK = 0x0181;
+		if (dsiModeConfirmed) {
+			*(u32*)0x3FFFFC8 = 0x7884;	// Fix sound pitch table for DSi mode (works with SDK5 binaries)
 		} else {
-			REG_SCFG_CLK = 0x0180;
-		}
-		if (!sdAccess) {
-			REG_SCFG_EXT = 0x93FBFB06;
+			REG_SCFG_ROM = 0x703;
+
+			NDSTouchscreenMode();
+			*(u16*)0x4000500 = 0x807F;
+
+			REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
+
+			if (twlClock) {
+				REG_SCFG_CLK = 0x0181;
+			} else {
+				REG_SCFG_CLK = 0x0180;
+			}
+			if (!sdAccess) {
+				REG_SCFG_EXT = 0x93FBFB06;
+			}
 		}
 	}
 

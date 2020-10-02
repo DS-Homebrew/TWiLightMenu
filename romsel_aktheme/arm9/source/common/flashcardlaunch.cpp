@@ -30,6 +30,7 @@ int loadGameOnFlashcard (std::string ndsPath, bool usePerGameSettings) {
 
 	std::string launchPath;
 	if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
 		LoaderConfig config("fat:/Wfwd.dat", "fat:/_wfwd/lastsave.ini");
 		launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT0);

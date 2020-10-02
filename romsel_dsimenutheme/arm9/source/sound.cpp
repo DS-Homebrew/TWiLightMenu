@@ -151,6 +151,7 @@ SoundControl::SoundControl()
 	};
 
 
+	bool isDSi = (isDSiMode() || REG_SCFG_EXT != 0);
 	bool loopableMusic = false;
 
 	stream.sampling_rate = 16000;	 		// 16000Hz
@@ -160,9 +161,11 @@ SoundControl::SoundControl()
 	} else {
 		switch(ms().dsiMusic) {
 			case 5:
-				stream.sampling_rate = 22050;	 		// 22050Hz
-				stream_start_source = fopen(std::string(TFN_HBL_START_SOUND_BG).c_str(), "rb");
-				stream_source = fopen(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), "rb");
+				if (isDSi) {
+					stream.sampling_rate = 22050;	 		// 22050Hz
+				}
+				stream_start_source = fopen(std::string(isDSi ? TFN_HBL_START_SOUND_BG : TFN_HBL_START_DS_SOUND_BG).c_str(), "rb");
+				stream_source = fopen(std::string(isDSi ? TFN_HBL_LOOP_SOUND_BG : TFN_HBL_LOOP_DS_SOUND_BG).c_str(), "rb");
 				loopableMusic = true;
 				break;
 			case 4:
@@ -184,7 +187,7 @@ SoundControl::SoundControl()
 
 	fseek(stream_source, 0, SEEK_SET);
 
-	stream.buffer_length = 0x1000;	  			// should be adequate
+	stream.buffer_length = (isDSi ? 0x1000 : 800);	  			// should be adequate
 	stream.callback = on_stream_request;    
 	stream.format = MM_STREAM_16BIT_MONO;  // select format
 	stream.timer = MM_TIMER0;	    	   // use timer0

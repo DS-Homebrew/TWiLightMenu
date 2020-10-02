@@ -631,6 +631,7 @@ void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
 	std::string path;
 	int err = 0;
 	if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 		path = replaceAll(ndsPath, "fat:/", woodfat);
@@ -916,7 +917,7 @@ int main(int argc, char **argv) {
 	std::string filename[2];
 
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 	isDSLite = fifoGetValue32(FIFO_USER_04);
@@ -925,8 +926,11 @@ int main(int argc, char **argv) {
 	LoadSettings();
 	widescreenEffects = (consoleModel >= 2 && wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	
+	snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
+	pictochatFound = (access(pictochatPath, F_OK) == 0);
+
 	if (isDSiMode() && arm7SCFGLocked) {
-		if (consoleModel < 2) {
+		if (consoleModel < 2 && !pictochatFound) {
 			pictochatFound = true;
 			pictochatReboot = true;
 		}
@@ -937,8 +941,6 @@ int main(int argc, char **argv) {
 		char srcPath[256];
 		u8 regions[3] = {0x41, 0x43, 0x4B};
 
-		snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
-		pictochatFound = (access(pictochatPath, F_OK) == 0);
 		if (!pictochatFound && consoleModel == 0) {
 			for (int i = 0; i < 3; i++)
 			{
@@ -2373,9 +2375,14 @@ int main(int argc, char **argv) {
 
 					// Print .plg path without "fat:" at the beginning
 					char ROMpathDS2[256];
-					for (int i = 0; i < 252; i++) {
-						ROMpathDS2[i] = ROMpath[4+i];
-						if (ROMpath[4+i] == '\x00') break;
+					if (secondaryDevice) {
+						for (int i = 0; i < 252; i++) {
+							ROMpathDS2[i] = ROMpath[4+i];
+							if (ROMpath[4+i] == '\x00') break;
+						}
+					} else {
+						sprintf(ROMpathDS2, "/_nds/TWiLightMenu/tempPlugin.plg");
+						fcopy(ROMpath, "fat:/_nds/TWiLightMenu/tempPlugin.plg");
 					}
 
 					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );

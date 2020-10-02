@@ -55,6 +55,7 @@ std::vector<std::string> r4ThemeList;
 std::vector<std::string> dsiThemeList;
 std::vector<std::string> _3dsThemeList;
 std::vector<std::string> unlaunchBgList;
+std::vector<std::string> menuSrldrList;
 
 bool fadeType = false; // false = out, true = in
 
@@ -81,6 +82,7 @@ char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'}
 
 int subscreenmode = 0;
 
+int pressed = 0;
 touchPosition touch;
 
 using namespace std;
@@ -292,6 +294,28 @@ void loadUnlaunchBgList()
 	}
 }
 
+void loadMenuSrldrList (const char* dirPath) {
+	DIR *dir;
+	struct dirent *ent;
+	std::string srldrDir;
+	if ((dir = opendir(dirPath)) != NULL)
+	{
+		// print all the files and directories within directory 
+		while ((ent = readdir(dir)) != NULL)
+		{
+			// Reallocation here, but prevents our vector from being filled with
+
+			srldrDir = ent->d_name;
+			if (srldrDir == ".." || srldrDir == "..." || srldrDir == ".") continue;
+
+			if (extention(srldrDir, "menu.srldr")) {
+				menuSrldrList.emplace_back(srldrDir);
+			}
+		}
+		closedir(dir);
+	}
+}
+
 std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 {
 	switch (optVal.get())
@@ -312,6 +336,108 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 std::optional<Option> opt_bg_select(Option::Int &optVal)
 {
 	return Option(STR_BGSEL_UNLAUNCH, STR_AB_SETBG, Option::Str(&ms().unlaunchBg), unlaunchBgList);
+}
+
+void begin_update(int opt)
+{
+	ms().saveSettings();
+	gs().saveSettings();
+	bs().saveSettings();
+
+	clearText();
+	printSmall(true, 0, 124, (ms().consoleModel>1) ? STR_TAKEWHILE_PRESSHOME : STR_TAKEWHILE_CLOSELID, Alignment::center);
+	printLarge(false, 4, 0, STR_NOW_UPDATING);
+
+	if (opt == 1) {
+		// Slot-1 microSD > Console SD
+		fcopy("fat:/_nds/TWiLightMenu/main.srldr", "sd:/_nds/TWiLightMenu/main.srldr");
+		fcopy("fat:/_nds/TWiLightMenu/manual.srldr", "sd:/_nds/TWiLightMenu/manual.srldr");
+		fcopy("fat:/_nds/TWiLightMenu/slot1launch.srldr", "sd:/_nds/TWiLightMenu/slot1launch.srldr");
+		fcopy("fat:/_nds/TWiLightMenu/resetgame.srldr", "sd:/_nds/TWiLightMenu/resetgame.srldr");
+		fcopy("fat:/_nds/TWiLightMenu/settings.srldr", "sd:/_nds/TWiLightMenu/settings.srldr");
+	} else {
+		// Console SD > Slot-1 microSD
+		fcopy("sd:/_nds/TWiLightMenu/main.srldr", "fat:/_nds/TWiLightMenu/main.srldr");
+		fcopy("sd:/_nds/TWiLightMenu/manual.srldr", "fat:/_nds/TWiLightMenu/manual.srldr");
+		fcopy("sd:/_nds/TWiLightMenu/slot1launch.srldr", "fat:/_nds/TWiLightMenu/slot1launch.srldr");
+		fcopy("sd:/_nds/TWiLightMenu/resetgame.srldr", "fat:/_nds/TWiLightMenu/resetgame.srldr");
+		fcopy("sd:/_nds/TWiLightMenu/settings.srldr", "fat:/_nds/TWiLightMenu/settings.srldr");
+	}
+
+	loadMenuSrldrList(opt==1 ? "fat:/_nds/TWiLightMenu/" : "sd:/_nds/TWiLightMenu/");
+
+	// Copy theme srldr files
+	char srldrPath[2][256];
+	for (int i = 0; i < (int)menuSrldrList.size(); i++) {
+		sprintf(srldrPath[0], opt==1 ? "fat:/_nds/TWiLightMenu/%s" : "sd:/_nds/TWiLightMenu/%s", menuSrldrList[i].c_str());
+		sprintf(srldrPath[1], opt==1 ? "sd:/_nds/TWiLightMenu/%s" : "fat:/_nds/TWiLightMenu/%s", menuSrldrList[i].c_str());
+		fcopy(srldrPath[0], srldrPath[1]);
+	}
+
+	fadeType = false;
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	for (int i = 0; i < 25; i++)
+		swiWaitForVBlank();
+	snd().stopBgMusic();
+	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
+	
+	runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
+	stop();
+}
+
+void opt_update()
+{
+	int cursorPosition = 0;
+	bool updateText = true;
+	while (1) {
+		if (updateText) {
+			clearText();
+			printLarge(false, 4, 0, STR_HOW_WANT_UPDATE);
+			printSmall(false, 12, 29, ms().showMicroSd ? "Console microSD > Slot-1 microSD" : "Console SD > Slot-1 microSD");
+			printSmall(false, 12, 43, ms().showMicroSd ? "Slot-1 microSD > Console microSD" : "Slot-1 microSD > Console SD");
+			printSmall(false, 4, 29+(14*cursorPosition), ">");
+			updateText = false;
+		}
+
+		if (!gui().isExited() && currentTheme != 4)
+		{
+			snd().playBgMusic();
+		}
+
+		do
+		{
+			scanKeys();
+			pressed = keysDownRepeat();
+			touchRead(&touch);
+			swiWaitForVBlank();
+		} while (!pressed);
+
+		if (pressed & KEY_UP) {
+			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
+			cursorPosition--;
+			if (cursorPosition < 0) cursorPosition = 1;
+			updateText = true;
+		}
+
+		if (pressed & KEY_DOWN) {
+			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
+			cursorPosition++;
+			if (cursorPosition > 1) cursorPosition = 0;
+			updateText = true;
+		}
+
+		if (pressed & KEY_A) {
+			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_launch : &snd().snd_launch);
+			begin_update(cursorPosition);
+			break;
+		}
+
+		if (pressed & KEY_B) {
+			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_back : &snd().snd_back);
+			break;
+		}
+	}
+	clearText();
 }
 
 //bool twlFirmChanged = false;
@@ -489,7 +615,7 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	gs().loadSettings();
 	bs().loadSettings();
-	loadAkThemeList();
+	//loadAkThemeList();
 	loadR4ThemeList();
 	load3DSThemeList();
 	loadDSiThemeList();
@@ -529,7 +655,6 @@ int main(int argc, char **argv)
 	previousDSiWareExploit = ms().dsiWareExploit;
 	previousSysRegion = ms().sysRegion;
 
-	int pressed = 0;
 //#pragma endregion
 
 	// consoleDemoInit();
@@ -537,6 +662,14 @@ int main(int argc, char **argv)
 
 	using TLanguage = TWLSettings::TLanguage;
 	//using TAKScrollSpeed = TWLSettings::TScrollSpeed;
+	if (sdAccessible && fatAccessible) {
+		guiPage.option(STR_UPDATETWLMENU,
+				STR_DESCRIPTION_UPDATETWLMENU,
+				Option::Nul(opt_update),
+				{},
+				{});
+	}
+
 	guiPage
 		.option(STR_FRAMERATE, STR_DESCRIPTION_FRAMERATE, Option::Int(&ms().fps), {"15FPS", "20FPS", "24FPS", "30FPS", "50FPS", "60FPS"}, {15, 20, 24, 30, 50, 60})
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})
@@ -556,7 +689,7 @@ int main(int argc, char **argv)
 				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, STR_THEME, STR_CLASSIC, "HBL"},
 				{0, 1, 2, 3, 4, 5});
 
-	if (isDSiMode() && sdAccessible) {
+	if (sdAccessible) {
 		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {STR_MICRO_SD_CARD, STR_SD_CARD}, {true, false});
 	}
 
@@ -887,7 +1020,7 @@ int main(int argc, char **argv)
 			.option(STR_AUTOSTARTSLOT1, STR_DESCRIPTION_AUTOSTARTSLOT1, Option::Bool(&ms().autostartSlot1), {STR_YES, STR_NO}, {true, false});
 	}
 	miscPage
-		.option(STR_DSISPLASH, STR_DESCRIPTION_DSISPLASH, Option::Int(&ms().dsiSplash), {STR_WITHOUT_HS, STR_WITH_HS, STR_HIDE}, {1, 2, 0})
+		.option(STR_DSISPLASH, STR_DESCRIPTION_DSISPLASH, Option::Int(&ms().dsiSplash), {STR_WITHOUT_HS, STR_WITH_HS, STR_CUSTOM_SPLASH, STR_HIDE}, {1, 2, 3, 0})
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false});
 
 	if (isDSiMode() && sdAccessible) {

@@ -20,6 +20,7 @@
 #include <nds.h>
 
 #include "load_bin.h"
+#include "loadAlt_bin.h"
 #include "launch_engine.h"
 
 #define LCDC_BANK_D (u16*)0x06860000
@@ -55,7 +56,7 @@ void vramcpy (void* dst, const void* src, int len)
 	}
 }	
 
-void runLaunchEngine (bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine)
+void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine)
 {
 	nocashMessage("runLaunchEngine");
 
@@ -68,7 +69,7 @@ void runLaunchEngine (bool EnableSD, int language, bool scfgUnlock, bool TWLMODE
 	memset (LCDC_BANK_D, 0x00, 128 * 1024);
 
 	// Load the loader/patcher into the correct address
-	vramcpy (LCDC_BANK_D, load_bin, load_bin_size);
+	vramcpy (LCDC_BANK_D, altBootloader ? loadAlt_bin : load_bin, altBootloader ? loadAlt_bin_size : load_bin_size);
 
 	// Set the parameters for the loader
 	writeAddr ((data_t*) LCDC_BANK_D, DSIMODE_OFFSET, isDSiMode());	// Not working?
@@ -83,6 +84,17 @@ void runLaunchEngine (bool EnableSD, int language, bool scfgUnlock, bool TWLMODE
 
 	nocashMessage("irqDisable(IRQ_ALL);");
 	irqDisable(IRQ_ALL);
+
+	if (altBootloader) {
+		if (isDSBrowser) {
+			REG_SCFG_EXT = TWLVRAM ? 0x8300E000 : 0x8300C000;
+		} else {
+			REG_SCFG_EXT = TWLVRAM ? 0x83002000 : 0x83000000;
+		}
+		if (!scfgUnlock) {
+			REG_SCFG_EXT &= ~(1UL << 31);
+		}
+	}
 
 	// Give the VRAM to the ARM7
 	nocashMessage("Give the VRAM to the ARM7");

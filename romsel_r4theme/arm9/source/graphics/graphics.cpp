@@ -60,6 +60,7 @@ extern int colorBvalue;
 
 int screenBrightness = 0;
 static bool secondBuffer = false;
+bool doubleBuffer = true;
 
 int frameOf60fps = 60;
 int frameDelay = 0;
@@ -263,10 +264,12 @@ u16 convertVramColorToGrayscale(u16 val) {
 
 void vBlankHandler()
 {
-	extern bool startMenu;
-	dmaCopyHalfWordsAsynch(0, topImage[startMenu][secondBuffer], (u16*)BG_GFX_SUB+(256*32), 0x18000);
-	dmaCopyHalfWordsAsynch(1, bottomImage[startMenu][secondBuffer], BG_GFX, 0x18000);
-	secondBuffer = !secondBuffer;
+	if (doubleBuffer) {
+		extern bool startMenu;
+		dmaCopyHalfWordsAsynch(0, topImage[startMenu][secondBuffer], (u16*)BG_GFX_SUB+(256*32), 0x18000);
+		dmaCopyHalfWordsAsynch(1, bottomImage[startMenu][secondBuffer], BG_GFX, 0x18000);
+		secondBuffer = !secondBuffer;
+	}
 
 	glBegin2D();
 	{
@@ -524,6 +527,9 @@ void graphicsLoad()
 				}
 			}
 			topImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorMode == 1) {
+				topImage[startMenu][0][i] = convertVramColorToGrayscale(topImage[startMenu][0][i]);
+			}
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -546,6 +552,9 @@ void graphicsLoad()
 				}
 			}
 			topImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorMode == 1) {
+				topImage[startMenu][1][i] = convertVramColorToGrayscale(topImage[startMenu][1][i]);
+			}
 			if ((i % 256) == 255) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
 		}
@@ -570,6 +579,9 @@ void graphicsLoad()
 				}
 			}
 			bottomImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorMode == 1) {
+				bottomImage[startMenu][0][i] = convertVramColorToGrayscale(bottomImage[startMenu][0][i]);
+			}
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -592,6 +604,9 @@ void graphicsLoad()
 				}
 			}
 			bottomImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorMode == 1) {
+				bottomImage[startMenu][1][i] = convertVramColorToGrayscale(bottomImage[startMenu][1][i]);
+			}
 			if ((i % 256) == 255) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
 		}
@@ -654,7 +669,7 @@ void graphicsLoad()
 	u16* newPalette = (u16*)icon_manualPal;
 	if (colorMode == 1) {
 		// Convert palette to grayscale
-		for (int i2 = 0; i2 < 3; i2++) {
+		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
@@ -676,7 +691,7 @@ void graphicsLoad()
 	newPalette = (u16*)iconboxPal;
 	if (colorMode == 1) {
 		// Convert palette to grayscale
-		for (int i2 = 0; i2 < 3; i2++) {
+		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}
@@ -698,7 +713,7 @@ void graphicsLoad()
 	newPalette = (u16*)wirelessiconsPal;
 	if (colorMode == 1) {
 		// Convert palette to grayscale
-		for (int i2 = 0; i2 < 3; i2++) {
+		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
 	}

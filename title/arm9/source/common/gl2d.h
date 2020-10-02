@@ -11,14 +11,9 @@
 
 ---------------------------------------------------------------------------------*/
 
-/*!
-
-
- 
- \section gl2d API
+/*! \section gl2d API
  - \ref gl2d.h "Reference"
- 
- 
+*/
 
 /*! \file gl2d.h
 	\brief A very small and simple DS rendering lib using the 3d core to render 2D stuff.

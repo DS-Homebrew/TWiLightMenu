@@ -21,12 +21,12 @@ export VERSTRING	:=	$(VERSION_MAJOR).$(VERSION_MINOR)
 #---------------------------------------------------------------------------------
 export PATH		:=	$(DEVKITARM)/bin:$(PATH)
 
-.PHONY: cardengine_arm7 bootloader clean arm7/$(TARGET).elf arm9/$(TARGET).elf
+.PHONY: cardengine_arm7 bootloader bootloaderAlt clean arm7/$(TARGET).elf arm9/$(TARGET).elf
 
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all: cardengine_arm7 bootloader $(TARGET).nds
+all: cardengine_arm7 bootloader bootloaderAlt $(TARGET).nds
 
 dist:	all
 	@cp $(TARGET).nds ../7zfile/_nds/TWiLightMenu/slot1launch.srldr
@@ -65,6 +65,7 @@ clean:
 	@rm -fr $(TARGET).arm7.elf
 	@rm -fr $(TARGET).arm9.elf
 	@$(MAKE) -C bootloader clean
+	@$(MAKE) -C bootloaderAlt clean
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C arm7 clean
 	@$(MAKE) -C cardengine_arm7 clean
@@ -74,3 +75,6 @@ data:
 
 bootloader: data
 	@$(MAKE) -C bootloader
+
+bootloaderAlt: data
+	@$(MAKE) -C bootloaderAlt

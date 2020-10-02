@@ -1,13 +1,14 @@
 @font-face {
 	font-family: 'nintendo_ntlg-db_001regular';
 	src: url('../font/nintendo_NTLG-DB.ttf') format('truetype');
-	font-weight: normal;
+	font-weight: bold;
 	font-style: normal;
 }
 
 body {
 	margin: 0;
-	font-family: 'nintendo_ntlg-db_001regular', 'Arial', serif;
+	font-family: 'nintendo_ntlg-db_001regular', 'Arial', sans-serif;
+	font-weight: bold;
 	font-size: 13px;
 }
 .ds-size {
@@ -19,7 +20,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 174px;
+	height: 177px;
 }
 .ds-margin {
 	margin: 0 2px;
@@ -102,6 +103,7 @@ code[class*="language-"], pre[class*="language-"] {
 	background: none;
 	text-shadow: 0 1px #A1A1A1;
 	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-weight: normal;
 	font-size: 1em;
 	text-align: left;
 	white-space: pre;
@@ -150,4 +152,8 @@ p.small-bottom {
 p.small-top {
 	margin-top: 7px;
 	margin-bottom: 0;
+}
+
+.ext-link {
+	color: rgb(6,69,173);
 }

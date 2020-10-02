@@ -29,6 +29,8 @@
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 
+#define REG_SCFG_WL *(vu16*)0x4004020
+
 void my_installSystemFIFO(void);
 
 //---------------------------------------------------------------------------------
@@ -104,6 +106,11 @@ int main() {
 	while (!exitflag) {
 		if (isDSiMode() && *(u8*)(0x023FFD00) != 0) {
 			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x023FFD00));
+			if (*(u8*)(0x023FFD00) == 0x13) {
+				REG_SCFG_WL &= BIT(0);
+			} else {
+				REG_SCFG_WL |= BIT(0);
+			}
 			*(u8*)(0x023FFD00) = 0;
 		}
 		if(fifoCheckValue32(FIFO_USER_08)) {
