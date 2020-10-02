@@ -25,3 +25,6 @@
 .dpadUP:before {
 	content: "\E079";
 }
+.dpadDOWN:before {
+	content: "\E07A";
+}

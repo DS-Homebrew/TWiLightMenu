@@ -153,3 +153,7 @@ p.small-top {
 	margin-top: 7px;
 	margin-bottom: 0;
 }
+
+.ext-link {
+	color: rgb(6,69,173);
+}
