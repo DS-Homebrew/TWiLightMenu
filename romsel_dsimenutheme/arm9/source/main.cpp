@@ -1493,7 +1493,7 @@ int main(int argc, char **argv) {
 
 				const char *ndsToBoot = "sd:/_nds/nds-bootstrap-release.nds";
 				if (extention(filename, ".plg")) {
-					ndsToBoot = "/_nds/TWiLightMenu/bootplg.srldr";
+					ndsToBoot = "fat:/_nds/TWiLightMenu/bootplg.srldr";
 
 					// Print .plg path without "fat:" at the beginning
 					char ROMpathDS2[256];
