@@ -2063,7 +2063,7 @@ int main(int argc, char **argv) {
 				}
 
 				SaveSettings();
-				if (!isDSiMode() && !secondaryDevice) {
+				if (!isDSiMode() && !secondaryDevice && !extention(filename, ".plg")) {
 					ntrStartSdGame();
 				}
 				argarray.push_back(ROMpath);
@@ -2076,7 +2076,7 @@ int main(int argc, char **argv) {
 				showdialogbox = true;
 				printLargeCentered(false, 74, "Error!");
 				printSmallCentered(false, 90, text);
-				if (err == 1 && !secondaryDevice) {
+				if (err == 1 && useNDSB) {
 					printSmallCentered(false, 4, 102, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
 					printSmallCentered(false, 4, 114, "not found.");
 				}

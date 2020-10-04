@@ -2579,7 +2579,7 @@ int main(int argc, char **argv) {
 				}
 
 				SaveSettings();
-				if (!isDSiMode() && !secondaryDevice) {
+				if (!isDSiMode() && !secondaryDevice && !extention(filename[secondaryDevice], ".plg")) {
 					ntrStartSdGame();
 				}
 				argarray.push_back(ROMpath);

@@ -1701,7 +1701,7 @@ int main(int argc, char **argv) {
 				}
 
 				ms().saveSettings();
-				if (!isDSiMode() && !ms().secondaryDevice) {
+				if (!isDSiMode() && !ms().secondaryDevice && !extention(filename, ".plg")) {
 					ntrStartSdGame();
 				}
 
@@ -1716,7 +1716,7 @@ int main(int argc, char **argv) {
 				fadeSpeed = true;
 				fadeType = true;
 				printLarge(false, 4, 4, text);
-				if (err == 1 && !ms().secondaryDevice) {
+				if (err == 1 && useNDSB) {
 					printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 				}
 				printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
