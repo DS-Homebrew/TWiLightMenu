@@ -703,10 +703,10 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			}
-			if ((pressed & KEY_X) && !isHomebrew && showCheats) {
-				CheatCodelist codelist;
-				codelist.selectCheats(filename);
-			}
+		}
+		if ((pressed & KEY_X) && !isHomebrew && showCheats) {
+			CheatCodelist codelist;
+			codelist.selectCheats(filename);
 		}
 	}
 	clearText();

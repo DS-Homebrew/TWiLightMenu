@@ -762,11 +762,11 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			}
-			if ((pressed & KEY_X) && !isHomebrew[CURPOS] && showCheats) {
-				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
-				CheatCodelist codelist;
-				codelist.selectCheats(filename);
-			}
+		}
+		if ((pressed & KEY_X) && !isHomebrew[CURPOS] && showCheats) {
+			(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
+			CheatCodelist codelist;
+			codelist.selectCheats(filename);
 		}
 	}
 	showdialogbox = false;
