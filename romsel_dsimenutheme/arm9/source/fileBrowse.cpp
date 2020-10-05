@@ -120,7 +120,7 @@ bool bannerTextShown = false;
 
 extern void stop();
 
-extern void loadGameOnFlashcard(const char *ndsPath, bool usePerGameSettings);
+extern void loadGameOnFlashcard(const char *ndsPath, bool dsGame);
 extern void dsCardLaunch();
 extern void unlaunchSetHiyaBoot();
 extern void SetWidescreen(const char *filename);

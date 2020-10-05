@@ -119,7 +119,7 @@ void savePerGameSettings (std::string filename) {
 		if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
-		if (useBootstrap || !secondaryDevice) pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
+		pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
 		if (REG_SCFG_EXT != 0) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
@@ -279,9 +279,9 @@ void perGameSettings (std::string filename) {
 		(!isDSiWare
 		&& memcmp(game_TID, "HND", 3) != 0
 		&& memcmp(game_TID, "HNE", 3) != 0);
-	if (!useBootstrap && !isHomebrew && REG_SCFG_EXT == 0) {
+	/*if (!useBootstrap && !isHomebrew && REG_SCFG_EXT == 0) {
 		showPerGameSettings = false;
-	}
+	}*/
 
 	bool showCheats = ((isDSiMode() && useBootstrap)
 	|| (secondaryDevice && !useBootstrap
@@ -323,16 +323,16 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
-	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games with nds-bootstrap/B4DS
+	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
 		if (useBootstrap || !secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
+		}
+		perGameOps++;
+		perGameOp[perGameOps] = 1;	// Save number
+		if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
 			perGameOps++;
-			perGameOp[perGameOps] = 1;	// Save number
-			if (isDSiMode() || !secondaryDevice) {
-				perGameOps++;
-				perGameOp[perGameOps] = 2;	// Run in
-			}
+			perGameOp[perGameOps] = 2;	// Run in
 		}
 		if ((REG_SCFG_EXT != 0) || !secondaryDevice) {
 			perGameOps++;

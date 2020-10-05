@@ -99,6 +99,14 @@ bool isDSLite = false;
 
 extern bool showdialogbox;
 
+bool extention(const std::string& filename, const char* ext) {
+	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
 /**
  * Remove trailing slashes from a pathname, if present.
  * @param path Pathname to modify.
@@ -612,50 +620,73 @@ void InitSound() {
 	};
 }
 
-void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
+void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
-	if ((REG_SCFG_EXT != 0) && usePerGameSettings) {
-		std::string filename = ndsPath;
+	std::string filename = ndsPath;
+	const size_t last_slash_idx = filename.find_last_of("/");
+	if (std::string::npos != last_slash_idx) {
+		filename.erase(0, last_slash_idx + 1);
+	}
 
-		const size_t last_slash_idx = filename.find_last_of("/");
-		if (std::string::npos != last_slash_idx) {
-			filename.erase(0, last_slash_idx + 1);
-		}
+	loadPerGameSettings(filename);
 
-		loadPerGameSettings(filename);
-		
+	if ((REG_SCFG_EXT != 0) && dsGame) {
 		runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
 		runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 	}
-	std::string path;
+	if (dsGame) {
+		// Move .sav outside of "saves" folder for flashcard kernel usage
+		const char *typeToReplace = ".nds";
+		if (extention(filename, ".dsi")) {
+			typeToReplace = ".dsi";
+		} else if (extention(filename, ".ids")) {
+			typeToReplace = ".ids";
+		} else if (extention(filename, ".srl")) {
+			typeToReplace = ".srl";
+		} else if (extention(filename, ".app")) {
+			typeToReplace = ".app";
+		}
+
+		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
+		std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
+		std::string romFolderNoSlash = romfolder[true];
+		RemoveTrailingSlashes(romFolderNoSlash);
+		std::string saveFolder = romFolderNoSlash + "/saves";
+		mkdir(saveFolder.c_str(), 0777);
+		std::string savepath = romFolderNoSlash + "/saves/" + savename;
+		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
+		rename(savepath.c_str(), savepathFc.c_str());
+	}
+
+	std::string fcPath;
 	int err = 0;
 	if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-		path = replaceAll(ndsPath, "fat:/", woodfat);
-		fcrompathini.SetString("Save Info", "lastLoaded", path);
+		fcPath = replaceAll(ndsPath, "fat:/", woodfat);
+		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
 		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-		path = replaceAll(ndsPath, "fat:/", woodfat);
-		fcrompathini.SetString("Save Info", "lastLoaded", path);
+		fcPath = replaceAll(ndsPath, "fat:/", woodfat);
+		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
 		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-		path = replaceAll(ndsPath, "fat:/", dstwofat);
-		fcrompathini.SetString("Dir Info", "fullName", path);
+		fcPath = replaceAll(ndsPath, "fat:/", dstwofat);
+		fcrompathini.SetString("Dir Info", "fullName", fcPath);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
 		CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
-		path = replaceAll(ndsPath, "fat:/", slashchar);
-		fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
+		fcPath = replaceAll(ndsPath, "fat:/", slashchar);
+		fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
 		fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
 		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	}
@@ -859,14 +890,6 @@ void printNdsCartBannerText() {
 
 void printGbaBannerText() {
 	printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing1, isRegularDS ? gbamodeText : featureUnavailableText);
-}
-
-bool extention(const std::string& filename, const char* ext) {
-	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
-		return false;
-	} else {
-		return true;
-	}
 }
 
 //---------------------------------------------------------------------------------
@@ -1079,6 +1102,36 @@ int main(int argc, char **argv) {
 	
 	bool menuButtonPressed = false;
 	
+	if (flashcardFound()) {
+		// Move .sav back to "saves" folder
+		std::string filename = romPath[true];
+		const size_t last_slash_idx = filename.find_last_of("/");
+		if (std::string::npos != last_slash_idx) {
+			filename.erase(0, last_slash_idx + 1);
+		}
+
+		loadPerGameSettings(filename);
+
+		const char *typeToReplace = ".nds";
+		if (extention(filename, ".dsi")) {
+			typeToReplace = ".dsi";
+		} else if (extention(filename, ".ids")) {
+			typeToReplace = ".ids";
+		} else if (extention(filename, ".srl")) {
+			typeToReplace = ".srl";
+		} else if (extention(filename, ".app")) {
+			typeToReplace = ".app";
+		}
+
+		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
+		std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
+		std::string romFolderNoSlash = romfolder[true];
+		RemoveTrailingSlashes(romFolderNoSlash);
+		std::string savepath = romFolderNoSlash + "/saves/" + savename;
+		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
+		rename(savepathFc.c_str(), savepath.c_str());
+	}
+
 	if (consoleModel < 2
 	 && previousUsedDevice
 	 && bothSDandFlashcard()
