@@ -533,7 +533,7 @@ void perGameSettings (std::string filename) {
 		}
 		if (isHomebrew) {		// Per-game settings for homebrew
 			printSmallCentered(false, 132, "\u2428 Back");
-		} else if (!showPerGameSettings) {
+		} else if (!showPerGameSettings && !showCheats) {
 			printSmallCentered(false, 104, "\u2427 OK");
 		} else { 	// Per-game settings for retail/commercial games
 			printSmallCentered(false, 154, showCheats ? "\u2429 Cheats  \u2428 Back" : "\u2428 Back");
@@ -703,11 +703,9 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			}
-			if ((pressed & KEY_X) && !isHomebrew) {
-			  if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
+			if ((pressed & KEY_X) && !isHomebrew && showCheats) {
 				CheatCodelist codelist;
 				codelist.selectCheats(filename);
-			  }
 			}
 		}
 	}

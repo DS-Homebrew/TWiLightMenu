@@ -581,7 +581,7 @@ void perGameSettings (std::string filename) {
 		}
 		if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
 			printSmall(false, 240, botRowY, STR_B_BACK, Alignment::right);
-		} else if (!showPerGameSettings) {
+		} else if (!showPerGameSettings && !showCheats) {
 			printSmall(false, 240, botRowY, STR_A_OK, Alignment::right);
 		} else {	// Per-game settings for retail/commercial games
 			printSmall(false, 240, botRowY, showCheats ? STR_X_CHEATS_B_BACK : STR_B_BACK, Alignment::right);
@@ -762,12 +762,10 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			}
-			if ((pressed & KEY_X) && !isHomebrew[CURPOS]) {
-			  if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
+			if ((pressed & KEY_X) && !isHomebrew[CURPOS] && showCheats) {
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 				CheatCodelist codelist;
 				codelist.selectCheats(filename);
-			  }
 			}
 		}
 	}
