@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>GBARunner2</title>
+		<title>nds-bootstrap - TWiLight Menu++の説明書</title>
 		<link rel="stylesheet" href="../assets/css/layout.css">
 		<link rel="stylesheet" href="../assets/css/button-hit.css">
 	</head>
@@ -14,16 +14,32 @@
 			<div class="bottom-screen">
 				<img class="twilightLogo" src="../assets/images/twilight.png">
 				<div class="ds-margin">
-					<div class="section-title">About</div>
+					<div class="section-title">ついて</div>
 					<div class="section-body">
-						<p class="small-bottom">nds-bootstrap is a Nintendo DSi Homebrew used by TWiLight Menu++ to launch Cartridge dumps and Nintendo DS-mode homebrew binaries from the Nintendo DSi/Nintendo 3DS SD card.</p>
-						<p class="small-top">There is also a version for Nintendo DS-mode Flashcarts titled B4DS, intended for homebrew-only flashcarts and launching via external nds launchers.</p>
+						<p class="small-bottom">nds-bootstrapは、ニンテンドーDSi/3DSのSDカードからカートリッジダンプとDSモードhomebrewを読み取りための、TWiLight Menu++で使われるhomebrewアプリケーションです。</p>
+						<p class="small-top">また、フラッシュカードためにB4DSというのバージョンがあり、homebrewのみのフラッシュカードや、低い互換性のフラッシュカード向け。</p>
 					</div>
 
-					<div class="section-title">Compatibility</div>
+					<div class="section-title">互換性</div>
 					<div class="section-body">
-						<p class="small-bottom">To see if a game is compatible with nds-bootstrap, check the compatibility list: <b style="color:blueviolet">https://bit.ly/nds-compatibility</b></p>
-						<p class="small-top">For the best compatibility with B4DS, we recommend getting a DS Memory Expansion Pak.</p>
+						<p class="small-bottom">ゲームがnds-bootstrapと互換性があるかどうかを確認するには、互換性リストを確認してください：<br><strong>cutt.ly/nds-compatibility</strong></p>
+						<p class="small-top">B4DSと最高な互換性のために、DSメモリー拡張カートリッジを取得するをお勧めます。</p>
+					</div>
+
+					<div class="section-title">コントロール</div>
+					<div class="section-body">
+						<span class="font buttonL"></span>、<span class="font buttonR"></span>、<span class="font dpadDOWN"></span>、と<span class="font buttonB"></span>を押して、TWiLight Menu++に戻る。
+						<hr>
+						<span class="font buttonL"></span>、<span class="font buttonR"></span>、START、とSELECTを押して、ゲームをリセットする。
+						<hr>
+						<span class="font buttonL"></span>、<span class="font buttonR"></span>、<span class="font dpadDOWN"></span>、と<span class="font buttonA"></span>を押して、NANDダンプを作成する。
+					</div>
+
+					<div class="section-title">チート</div>
+					<div class="section-body">
+						nds-bootstrapは、<code class="language-plaintext">usrcheat.dat</code>データベースからAction Replayチートを適用できる。これは<code class="language-plaintext">sd:/_nds/TWiLightMenu/extras</code>に配置するは必要です。 そこにデータベースが配置されると、ゲームのゲームごとの設定メニューに入り、表示されているボタンを使うしてチートメニューを開く。
+						<hr>
+						データベースを見つける必要がある？ DeadSkullzJrのものを使用することをお勧め：<span class="ext-link">cutt.ly/DSJCheats</span>。<br>あるいは、自作を作成が好き場合は、Windowsデバイス（または、LinuxまたはmacOSを使っている場合はWINE）でR4CCEを使う。
 					</div>
 				</div>
 			</div>

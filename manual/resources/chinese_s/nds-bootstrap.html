@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>GBARunner2</title>
+		<title>nds-bootstrap - TWiLight Menu++ Manual</title>
 		<link rel="stylesheet" href="../assets/css/layout.css">
 		<link rel="stylesheet" href="../assets/css/button-hit.css">
 	</head>
@@ -16,14 +16,30 @@
 				<div class="ds-margin">
 					<div class="section-title">关于</div>
 					<div class="section-body">
-						<p class="small-bottom">nds-bootstrap是本软件所使用的一个Nintendo DSi自制程序，用于在Nintendo DSi/Nintendo 3DS的内置DS卡内加载NDS ROM文件或是已完成编译的Nintendo DS自制软件。</p>
-						<p class="small-top">此外本软件的Nintendo DS烧录卡用户使用版本中还内藏了名为B4DS的自制程序，用于仅能使用自制软件的烧录卡通过加载外部的NDS ROM引导程序完成游戏的加载。</p>
+						<p class="small-bottom">TWiLight Menu++使用名为nds-bootstrap的自制程序，该程序可以使Nintendo DSi或是Nintendo 3DS在主机SD卡中加载并使用Nintendo DS卡带ROM或是自制软件。</p>
+						<p class="small-top">同时，TwiLight Menu++还内置了B4DS自制程序，以在仅限于使用自制程序的烧录卡或是低兼容性的烧录卡中实现同样的效果。</p>
 					</div>
 
 					<div class="section-title">兼容性</div>
 					<div class="section-body">
-						<p class="small-bottom">要检索nds-bootstrap对于游戏的兼容性，请前往<b style="color:blueviolet">https://bit.ly/nds-compatibility</b>进行查阅。</p>
+						<p class="small-bottom">要确认要游玩的游戏是否与nds-bootstrap兼容，请查看在线兼容列表：<br><strong>cutt.ly/nds-compatibility</strong></p>
 						<p class="small-top">为了能最大限度保证B4DS的兼容性，我们建议您同时使用DS Memory Expansion Pak.(DS/DS Lite专用内存扩展卡)</p>
+					</div>
+
+					<div class="section-title">Controls</div>
+					<div class="section-body">
+						Hit <span class="font buttonL"></span>, <span class="font buttonR"></span>, <span class="font dpadDOWN"></span> & <span class="font buttonB"></span> to return to TWiLight Menu++.
+						<hr>
+						Hit <span class="font buttonL"></span>, <span class="font buttonR"></span>, START & SELECT to reset the game.
+						<hr>
+						Hit <span class="font buttonL"></span>, <span class="font buttonR"></span>, <span class="font dpadDOWN"></span> & <span class="font buttonA"></span> to create a NAND dump.
+					</div>
+
+					<div class="section-title">Cheats</div>
+					<div class="section-body">
+						nds-bootstrap can apply Action Replay cheats via a <code class="language-plaintext">usrcheat.dat</code> database, which would need to be placed at <code class="language-plaintext">sd:/_nds/TWiLightMenu/extras</code>. Once the database is placed there, enter your game's per-game setting menu and open the cheats menu using the button prompt shown.
+						<hr>
+						Need to find a database? We recommend using the one from DeadSkullzJr: <span class="ext-link">cutt.ly/DSJCheats</span>.<br>Alternatively, if you would like to make one yourself, feel free to use the R4CEE application on a Windows device (or Wine if you use Linux or macOS).
 					</div>
 				</div>
 			</div>

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>GBARunner2</title>
+		<title>nds-bootstrap - Instrukcja obsługi TWiLight Menu++</title>
 		<link rel="stylesheet" href="../assets/css/layout.css">
 		<link rel="stylesheet" href="../assets/css/button-hit.css">
 	</head>
@@ -14,16 +14,32 @@
 			<div class="bottom-screen">
 				<img class="twilightLogo" src="../assets/images/twilight.png">
 				<div class="ds-margin">
-					<div class="section-title">About</div>
+					<div class="section-title">O programie</div>
 					<div class="section-body">
-						<p class="small-bottom">nds-bootstrap is a Nintendo DSi Homebrew used by TWiLight Menu++ to launch Cartridge dumps and Nintendo DS-mode homebrew binaries from the Nintendo DSi/Nintendo 3DS SD card.</p>
-						<p class="small-top">There is also a version for Nintendo DS-mode Flashcarts titled B4DS, intended for homebrew-only flashcarts and launching via external nds launchers.</p>
+						<p class="small-bottom">nds-bootstrap jest aplikacją homebrew używaną przez TWiLight Menu++ w celu załadowania zrzutów kartridży oraz homebrew w trybie DS-mode z karty SD konsoli Nintendo DSi/3DS.</p>
+						<p class="small-top">There is also a version for flashcarts titled B4DS, intended for homebrew-only flashcarts and flashcards with low compatibility.</p>
 					</div>
 
-					<div class="section-title">Compatibility</div>
+					<div class="section-title">Kompatybilność</div>
 					<div class="section-body">
-						<p class="small-bottom">To see if a game is compatible with nds-bootstrap, check the compatibility list: <b style="color:blueviolet">https://bit.ly/nds-compatibility</b></p>
-						<p class="small-top">For the best compatibility with B4DS, we recommend getting a DS Memory Expansion Pak.</p>
+						<p class="small-bottom">Aby sprawdzić, czy gra jest kompatybilna z nds-bootstrap, sprawdź listę kompatybilności:<br><strong>cutt.ly/nds-compatibility</strong></p>
+						<p class="small-top">Aby uzyskać najlepszą kompatybilność z B4DS, zalecamy nabycie DS Memory Expansion Pak.</p>
+					</div>
+
+					<div class="section-title">Controls</div>
+					<div class="section-body">
+						Hit <span class="font buttonL"></span>, <span class="font buttonR"></span>, <span class="font dpadDOWN"></span> & <span class="font buttonB"></span> to return to TWiLight Menu++.
+						<hr>
+						Hit <span class="font buttonL"></span>, <span class="font buttonR"></span>, START & SELECT to reset the game.
+						<hr>
+						Hit <span class="font buttonL"></span>, <span class="font buttonR"></span>, <span class="font dpadDOWN"></span> & <span class="font buttonA"></span> to create a NAND dump.
+					</div>
+
+					<div class="section-title">Cheats</div>
+					<div class="section-body">
+						nds-bootstrap can apply Action Replay cheats via a <code class="language-plaintext">usrcheat.dat</code> database, which would need to be placed at <code class="language-plaintext">sd:/_nds/TWiLightMenu/extras</code>. Once the database is placed there, enter your game's per-game setting menu and open the cheats menu using the button prompt shown.
+						<hr>
+						Need to find a database? We recommend using the one from DeadSkullzJr: <span class="ext-link">cutt.ly/DSJCheats</span>.<br>Alternatively, if you would like to make one yourself, feel free to use the R4CEE application on a Windows device (or Wine if you use Linux or macOS).
 					</div>
 				</div>
 			</div>

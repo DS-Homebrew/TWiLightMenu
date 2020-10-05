@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>GBARunner2</title>
+		<title>GBARunner2 - TWiLight Menu++ Manual</title>
 		<link rel="stylesheet" href="../assets/css/layout.css">
 		<link rel="stylesheet" href="../assets/css/button-hit.css">
 	</head>
@@ -18,7 +18,7 @@
 					<div class="section-body">
 						<div class="button-action-group">
 							<span class="button-action font upDown"></span>
-							上一个/下一个
+							<span class="button-action-text">上一行/下一行</span>
 						</div>
 						<hr>
 						<div class="button-action-group">
@@ -28,7 +28,7 @@
 						<hr>
 						<div class="button-action-group">
 							<span class="button-action font buttonA"></span>
-							<span class="button-action-text">加载GBA游戏</span>
+							<span class="button-action-text">加载ROM</span>
 						</div>
 						<hr>
 						<div class="button-action-group">
@@ -40,10 +40,25 @@
 							<span class="button-action font buttonL"></span>
 							<span class="button-action-text">切换屏幕</span>
 						</div>
+						<hr>
+						<div class="button-action-group">
+							<span class="button-action font buttonR"></span>
+							<span class="button-action-text">进入设置菜单</span>
+						</div>
 					</div>
-					<div class="section-title">BIOS文件</div>
+					<div class="section-title">游戏中</div>
 					<div class="section-body">
-						GBARunner2模拟器需要使用名为<code class="language-plaintext">bios.bin</code>的GBA BIOS导出镜像。 此文件必须放置在SD卡根目录的 <code class="language-plaintext">/gba</code>文件夹或是 <code class="language-plaintext">/_gba</code> 文件夹内。
+						<div class="button-action-group">
+							<span class="button-action"><img src="../assets/images/tap.png"></span>
+							<span class="button-action-text">开启模拟器菜单</span>
+						</div>
+					</div>
+					<div class="section-title">关于BIOS文件</div>
+					<div class="section-body">
+						GBARunner2使用官方GBA BIOS文件以保证游戏兼容性。 该文件必须命名为<code class="language-plaintext">bios.bin</code>并放在SD卡根目录中，或是<code class="language-plaintext">sd:/gba</code>和<code class="language-plaintext">sd:/_gba</code>之中。
+						<hr>
+						Make sure your GBA BIOS dump matches with the following CRC32 hash: <code class="language-plaintext">81977335</code>.<br>
+						You can check this by visiting the following website: <span class="ext-link">simplycalc.com/crc32-file.php</span>
 					</div>
 				</div>
 			</div>

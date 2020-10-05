@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>GBARunner2</title>
+		<title>GBARunner2 - Manual de TWiLight Menu++</title>
 		<link rel="stylesheet" href="../assets/css/layout.css">
 		<link rel="stylesheet" href="../assets/css/button-hit.css">
 	</head>
@@ -18,17 +18,17 @@
 					<div class="section-body">
 						<div class="button-action-group">
 							<span class="button-action font upDown"></span>
-							<span class="button-action-text">Anterior/Siguiente página</span>
+							<span class="button-action-text">Entrada anterior/siguiente</span>
 						</div>
 						<hr>
 						<div class="button-action-group">
 							<span class="button-action font leftRight"></span>
-							<span class="button-action-text">Mover Arriba/Abajo 10</span>
+							<span class="button-action-text">Mover hacia arriba/abajo 10</span>
 						</div>
 						<hr>
 						<div class="button-action-group">
 							<span class="button-action font buttonA"></span>
-							<span class="button-action-text">Lanzar Título de Avance de Gameboy</span>
+							<span class="button-action-text">Lanzar título</span>
 						</div>
 						<hr>
 						<div class="button-action-group">
@@ -40,10 +40,25 @@
 							<span class="button-action font buttonL"></span>
 							<span class="button-action-text">Intercambiar pantallas</span>
 						</div>
+						<hr>
+						<div class="button-action-group">
+							<span class="button-action font buttonR"></span>
+							<span class="button-action-text">Abrir ajustes</span>
+						</div>
+					</div>
+					<div class="section-title">En juego</div>
+					<div class="section-body">
+						<div class="button-action-group">
+							<span class="button-action"><img src="../assets/images/tap.png"></span>
+							<span class="button-action-text">Abrir menú</span>
+						</div>
 					</div>
 					<div class="section-title">Archivo BIOS</div>
 					<div class="section-body">
-						GBARunner2 requiere un volcado del GBA BIOS titulado <code class="language-plaintext">bios.bin</code>. Este archivo puede encontrarse en la raíz de la tarjeta SD, en la carpeta <code class="language-plaintext">/gba</code> o en la carpeta <code class="language-plaintext">/_gba</code>.
+						GBARunner2 puede usar un volcado de la GBA BIOS oficial para mejorar la compatibilidad. El archivo debe ser llamado <code class="language-plaintext">bios. en</code> y puede estar en la raíz de la tarjeta SD, <code class="language-plaintext">sd:/gba</code> o <code class="language-plaintext">sd:/_gba</code>.
+						<hr>
+						Make sure your GBA BIOS dump matches with the following CRC32 hash: <code class="language-plaintext">81977335</code>.<br>
+						You can check this by visiting the following website: <span class="ext-link">simplycalc.com/crc32-file.php</span>
 					</div>
 				</div>
 			</div>

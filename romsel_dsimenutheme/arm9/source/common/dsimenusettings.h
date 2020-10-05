@@ -73,6 +73,7 @@ public:
 		ELangDanish = 13,
 		ELangTurkish = 14,
 		ELangUkrainian = 15,
+		ELangHungarian = 16,
 	};
 
 	enum TRunIn
