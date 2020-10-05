@@ -86,11 +86,11 @@ void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int l
 	irqDisable(IRQ_ALL);
 
 	if (altBootloader) {
-		//if (isDSBrowser) {
+		if (isDSBrowser || scfgUnlock) {
 			REG_SCFG_EXT = TWLVRAM ? 0x8300E000 : 0x8300C000;
-		//} else {
-			//REG_SCFG_EXT = TWLVRAM ? 0x83002000 : 0x83000000;
-		//}
+		} else {
+			REG_SCFG_EXT = TWLVRAM ? 0x83002000 : 0x83000000;
+		}
 		if (!scfgUnlock) {
 			REG_SCFG_EXT &= ~(1UL << 31);
 		}
