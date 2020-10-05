@@ -18,6 +18,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <nds/arm9/dldi.h>
 #include "cheat.h"
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
@@ -68,7 +69,17 @@ bool CheatCodelist::parse(const std::string& aFileName)
   u32 romcrc32,gamecode;
   if(romData(aFileName,gamecode,romcrc32))
   {
-    FILE* dat=fopen((sdFound() || !ms().secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
+    const char* usrcheatPath = (sdFound() || !ms().secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
+	if (ms().secondaryDevice && !ms().useBootstrap) {
+		if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
+			usrcheatPath = "fat:/_wfwd/cheats/usrcheat.dat";
+		} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
+			usrcheatPath = "fat:/_afwd/cheats/usrcheat.dat";
+		}
+	}
+    FILE* dat=fopen(usrcheatPath,"rb");
     if(dat)
     {
       res=parseInternal(dat,gamecode,romcrc32);
@@ -520,7 +531,17 @@ static void updateDB(u8 value,u32 offset,FILE* db)
 
 void CheatCodelist::onGenerate(void)
 {
-  FILE* db=fopen((sdFound() || !ms().secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","r+b");
+    const char* usrcheatPath = (sdFound() || !ms().secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
+	if (ms().secondaryDevice && !ms().useBootstrap) {
+		if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
+			usrcheatPath = "fat:/_wfwd/cheats/usrcheat.dat";
+		} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
+			usrcheatPath = "fat:/_afwd/cheats/usrcheat.dat";
+		}
+	}
+  FILE* db=fopen(usrcheatPath,"r+b");
   if(db)
   {
     std::vector<cParsedItem>::iterator itr=_data.begin();

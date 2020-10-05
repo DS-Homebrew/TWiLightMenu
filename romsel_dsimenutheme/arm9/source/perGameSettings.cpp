@@ -312,6 +312,14 @@ void perGameSettings (std::string filename) {
 		showPerGameSettings = false;
 	}
 
+	bool showCheats = ((isDSiMode() && ms().useBootstrap)
+	|| (ms().secondaryDevice && !ms().useBootstrap
+		&& ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)))
+	|| !ms().secondaryDevice);
+
 	firstPerGameOpShown = 0;
 	perGameOps = -1;
 	for (int i = 0; i < 10; i++) {
@@ -576,11 +584,7 @@ void perGameSettings (std::string filename) {
 		} else if (!showPerGameSettings) {
 			printSmall(false, 240, botRowY, STR_A_OK, Alignment::right);
 		} else {	// Per-game settings for retail/commercial games
-			if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
-				printSmall(false, 240, botRowY, STR_X_CHEATS_B_BACK, Alignment::right);
-			} else {
-				printSmall(false, 240, botRowY, STR_B_BACK, Alignment::right);
-			}
+			printSmall(false, 240, botRowY, showCheats ? STR_X_CHEATS_B_BACK : STR_B_BACK, Alignment::right);
 		}
 		do {
 			scanKeys();

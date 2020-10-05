@@ -283,6 +283,14 @@ void perGameSettings (std::string filename) {
 		showPerGameSettings = false;
 	}
 
+	bool showCheats = ((isDSiMode() && useBootstrap)
+	|| (secondaryDevice && !useBootstrap
+		&& ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)))
+	|| !secondaryDevice);
+
 	firstPerGameOpShown = 0;
 	perGameOps = -1;
 	for (int i = 0; i < 10; i++) {
@@ -523,15 +531,12 @@ void perGameSettings (std::string filename) {
 		}
 		perGameOpYpos += 12;
 		}
-		if (REG_SCFG_EXT==0 && isHomebrew) {
+		if (isHomebrew) {		// Per-game settings for homebrew
 			printSmallCentered(false, 132, "\u2428 Back");
 		} else if (!showPerGameSettings) {
 			printSmallCentered(false, 104, "\u2427 OK");
-		} else 	// Per-game settings for retail/commercial games
-		if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
-			printSmallCentered(false, 154, isHomebrew ? "\u2428 Back" : "\u2429 Cheats  \u2428 Back");
-		} else {
-			printSmallCentered(false, 154, "\u2428 Back");
+		} else { 	// Per-game settings for retail/commercial games
+			printSmallCentered(false, 154, showCheats ? "\u2429 Cheats  \u2428 Back" : "\u2428 Back");
 		}
 		do {
 			snd().updateStream();
