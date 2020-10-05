@@ -284,11 +284,11 @@ void perGameSettings (std::string filename) {
 	}*/
 
 	bool showCheats = ((isDSiMode() && useBootstrap)
-	|| (secondaryDevice && !useBootstrap
+	/*|| (secondaryDevice && !useBootstrap
 		&& ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)))
+		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)))*/
 	|| !secondaryDevice);
 
 	firstPerGameOpShown = 0;
