@@ -723,23 +723,6 @@ int main(int argc, char **argv) {
 
 	char path[256] = {0};
 
-	//logPrint("snd()\n");
-	snd();
-
-	if (ms().theme == 4) {
-		//logPrint("snd().playStartup()\n");
-		snd().playStartup();
-	} else if (ms().dsiMusic != 0) {
-		if ((ms().theme == 1 && ms().dsiMusic == 1) || ms().dsiMusic == 2 || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
-			//logPrint("snd().playStartup()\n");
-			snd().playStartup();
-			//logPrint("snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust())\n");
-			snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
-		}
-		//logPrint("snd().beginStream()\n");
-		snd().beginStream();
-	}
-
 	if (flashcardFound()) {
 		// Move .sav back to "saves" folder
 		std::string filename = ms().romPath[true];
@@ -768,6 +751,23 @@ int main(int argc, char **argv) {
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
 		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
 		rename(savepathFc.c_str(), savepath.c_str());
+	}
+
+	//logPrint("snd()\n");
+	snd();
+
+	if (ms().theme == 4) {
+		//logPrint("snd().playStartup()\n");
+		snd().playStartup();
+	} else if (ms().dsiMusic != 0) {
+		if ((ms().theme == 1 && ms().dsiMusic == 1) || ms().dsiMusic == 2 || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
+			//logPrint("snd().playStartup()\n");
+			snd().playStartup();
+			//logPrint("snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust())\n");
+			snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
+		}
+		//logPrint("snd().beginStream()\n");
+		snd().beginStream();
 	}
 
 	if (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard()
