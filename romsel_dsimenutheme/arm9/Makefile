@@ -8,6 +8,8 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
+export LIBSLIM  		:=	$(CURDIR)/../../libslim/libslim
+
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
@@ -45,14 +47,14 @@ LDFLAGS	=	-specs=../../../universal/arm9/ds_arm9_twlm.specs -g $(ARCH) -Wl,-Map,
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
 #---------------------------------------------------------------------------------
-LIBS	:= 	-lfat -lmm9 -lnds9
+LIBS	:= 	-lslim -lmm9 -lnds9
  
  
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=	$(CURDIR) ../ $(LIBNDS)
+LIBDIRS	:= $(CURDIR) ../ $(LIBSLIM) $(LIBNDS)
  
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -111,16 +113,17 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
  
 .PHONY: $(BUILD) clean
 
-all : $(BUILD)
+all : libslim $(BUILD)
 	
 #---------------------------------------------------------------------------------
-$(BUILD):
+$(BUILD): libslim 
 	@[ -d $@ ] || mkdir -p $@
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds *.bin 
+	@rm -fr $(LIBSLIM)/lib
 
 #---------------------------------------------------------------------------------
 else
@@ -171,3 +174,9 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------------
+
+libslim: $(LIBSLIM)/lib/libslim.a
+
+$(LIBSLIM)/lib/libslim.a:
+	mkdir -p $(LIBSLIM)/lib
+	cd $(LIBSLIM) && $(MAKE)

@@ -12,7 +12,7 @@
 #include <maxmod9.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
-#include <fat.h>
+#include <slim.h>
 
 #include "date.h"
 

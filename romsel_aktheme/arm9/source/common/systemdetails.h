@@ -2,7 +2,7 @@
 #ifndef __SYSTEM_DETAILS__
 #define __SYSTEM_DETAILS__
 #include "common/singleton.h"
-#include <fat.h>
+#include <slim.h>
 #include <stdio.h>
 #include "nitrofs.h"
 #include <nds.h>
