@@ -93,8 +93,6 @@ void SystemDetails::initFilesystem(const char *runningPath)
 	fatMountSimple("sd:/", &__my_io_dsisd);
     fatMountSimple("fat:/", dldiGetInternal());
 
-    configureArgv(sdFound() && isDSiMode() ? "sd:/" : "fat:/");
-
     _fatInitOk = (sdFound() || flashcardFound());
 	*(u32*)(0x2FFFD0C) = 0;
 	chdir(sdFound() && isDSiMode() ? "sd:/" : "fat:/");

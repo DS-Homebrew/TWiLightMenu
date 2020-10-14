@@ -849,8 +849,6 @@ int main(int argc, char **argv) {
 	fatMountSimple("sd:/", &__my_io_dsisd);
 	fatMountSimple("fat:/", dldiGetInternal());
 
-	configureArgv(sdFound() && isDSiMode() ? "sd:/" : "fat:/");
-
     bool fatInited = (sdFound() || flashcardFound());
 
 	*(u32*)(0x2FFFD0C) = 0;
