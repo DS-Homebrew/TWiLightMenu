@@ -30,8 +30,8 @@
 #include <unistd.h>
 #include <vector>
 
+#include <slim.h>
 #include <nds.h>
-#include <fat.h>
 #include <gl2d.h>
 
 #include "date.h"

@@ -2,7 +2,7 @@
 #include <nds/arm9/dldi.h>
 
 #include <stdio.h>
-#include <fat.h>
+#include <slim.h>
 #include <sys/stat.h>
 #include <limits.h>
 
@@ -846,11 +846,15 @@ int main(int argc, char **argv) {
 	extern const DISC_INTERFACE __my_io_dsisd;
 
 	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
-	fatMountSimple("sd", &__my_io_dsisd);
-	fatMountSimple("fat", dldiGetInternal());
+	fatMountSimple("sd:/", &__my_io_dsisd);
+	fatMountSimple("fat:/", dldiGetInternal());
+
+	configureArgv(sdFound() && isDSiMode() ? "sd:/" : "fat:/");
+
     bool fatInited = (sdFound() || flashcardFound());
+
 	*(u32*)(0x2FFFD0C) = 0;
-	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
+	chdir(sdFound() && isDSiMode() ? "sd:/" : "fat:/");
 
 	if (!fatInited) {
 		fontInit();
