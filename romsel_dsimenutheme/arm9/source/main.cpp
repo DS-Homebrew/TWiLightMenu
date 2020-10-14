@@ -2,7 +2,6 @@
 #include <nds.h>
 #include <nds/arm9/dldi.h>
 
-#include <fat.h>
 #include <limits.h>
 #include <stdio.h>
 #include <sys/stat.h>
