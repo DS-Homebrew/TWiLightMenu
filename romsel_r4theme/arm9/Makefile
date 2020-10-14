@@ -7,7 +7,6 @@ $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>dev
 endif
 
 include $(DEVKITARM)/ds_rules
-export LIBSLIM  		:=	$(CURDIR)/../../libslim/libslim
 
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
@@ -120,7 +119,7 @@ clean:
 
 #---------------------------------------------------------------------------------
 else
- 
+
 DEPENDS	:=	$(OFILES:.o=.d)
 
 #---------------------------------------------------------------------------------

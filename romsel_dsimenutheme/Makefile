@@ -5,10 +5,13 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
+
 export TARGET	:=	romsel_dsimenutheme
 NITRODATA		:=	nitrofiles
 
 include $(DEVKITARM)/ds_rules
+
+export LIBSLIM  		:=	$(CURDIR)/../libslim/libslim
 
 .PHONY: bootloader bootstub clean makearm7 makearm9
 
@@ -50,3 +53,9 @@ bootloader: data
 
 bootstub: data
 	@$(MAKE) -C bootstub
+
+
+libslim: $(LIBSLIM)/lib/libslim.a
+
+$(LIBSLIM)/lib/libslim.a:
+	@$(MAKE) -C $(LIBSLIM)

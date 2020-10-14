@@ -8,8 +8,6 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
-export LIBSLIM  		:=	$(CURDIR)/../../libslim/libslim
-
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
@@ -113,17 +111,16 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
  
 .PHONY: $(BUILD) clean
 
-all : libslim $(BUILD)
+all : $(BUILD)
 	
 #---------------------------------------------------------------------------------
-$(BUILD): libslim 
+$(BUILD): 
 	@[ -d $@ ] || mkdir -p $@
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds *.bin 
-	@rm -fr $(LIBSLIM)/lib
 
 #---------------------------------------------------------------------------------
 else
@@ -174,9 +171,3 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------------
-
-libslim: $(LIBSLIM)/lib/libslim.a
-
-$(LIBSLIM)/lib/libslim.a:
-	mkdir -p $(LIBSLIM)/lib
-	cd $(LIBSLIM) && $(MAKE)
