@@ -13,9 +13,9 @@ include $(DEVKITARM)/ds_rules
 
 export LIBSLIM  		:=	$(CURDIR)/../libslim/libslim
 
-.PHONY: bootloader bootstub clean makearm7 makearm9
+.PHONY: libslim bootloader bootstub clean makearm7 makearm9
 
-all:	bootloader bootstub $(TARGET).nds
+all:	libslim bootloader bootstub $(TARGET).nds
 
 makearm7:
 	$(MAKE) -C arm7
@@ -44,6 +44,7 @@ clean:
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C arm7 clean
+	@$(MAKE) -C $(LIBSLIM) clean
 
 data:
 	@mkdir -p data
