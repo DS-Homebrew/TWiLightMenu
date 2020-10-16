@@ -88,10 +88,6 @@ void SystemDetails::initFilesystem(const char *runningPath)
         return;
 	}
 
-    if (!configureCache(16)) {
-        return;
-    }
-
 	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
 
 	fatMountSimple("sd:/", &__my_io_dsisd);

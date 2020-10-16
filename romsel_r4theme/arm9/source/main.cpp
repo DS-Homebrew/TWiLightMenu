@@ -845,13 +845,6 @@ int main(int argc, char **argv) {
 
 	extern const DISC_INTERFACE __my_io_dsisd;
 
-    if (!configureCache(16)) {
-        fontInit();
-		printSmall(false, 64, 32, "configureCache failed!");
-		fadeType = true;
-		stop();
-    }
-
 	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
 	fatMountSimple("sd:/", &__my_io_dsisd);
 	fatMountSimple("fat:/", dldiGetInternal());
