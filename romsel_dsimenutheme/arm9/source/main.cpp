@@ -1281,7 +1281,7 @@ int main(int argc, char **argv) {
 								}
 								showProgressIcon = true;
 
-								FILE *pFile = fopen(savepath.c_str(), "wb");
+								FILE *pFile = fopen(savepath.c_str(), "r+b");
 								if (pFile) {
 									ftruncate(fileno(pFile), savesize);
 									fclose(pFile);
