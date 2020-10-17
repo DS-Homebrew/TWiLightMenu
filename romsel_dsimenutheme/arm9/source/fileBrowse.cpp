@@ -2594,7 +2594,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						if (!ms().smsGgInRam)
 							smsWarning();
 					} else if (bnrRomType[CURPOS] == 7) {
-						if (ms().showMd==1 && getFileSize(
+						if (ms().showMd==1 && fsize(
 							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str()) >
 							0x300000) {
 							proceedToLaunch = false;

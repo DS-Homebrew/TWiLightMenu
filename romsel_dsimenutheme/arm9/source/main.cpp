@@ -902,7 +902,7 @@ int main(int argc, char **argv) {
 
 				fadeSpeed = true; // Fast fading
 
-				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
+				if ((fsize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					if (ms().theme == 5) displayGameIcons = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
@@ -948,7 +948,7 @@ int main(int argc, char **argv) {
 					if (ms().theme == 5) displayGameIcons = true;
 				}
 
-				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
+				if ((fsize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					if (ms().theme == 5) displayGameIcons = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
@@ -1243,7 +1243,7 @@ int main(int argc, char **argv) {
 
 						if (!isHomebrew[CURPOS] && (strcmp(gameTid[CURPOS], "NTR") != 0))
 						{ // Create or expand save if game isn't homebrew
-							int orgsavesize = getFileSize(savepath.c_str());
+							int orgsavesize = fsize(savepath.c_str());
 							int savesize = 524288; // 512KB (default size for most games)
 
 							for (auto i : saveMap) {
@@ -1282,7 +1282,7 @@ int main(int argc, char **argv) {
 								showProgressIcon = true;
 
 								if (orgsavesize > 0) {
-									fsizeincrease(savepath.c_str(), sdFound() ? "sd:/_nds/TWiLightMenu/temp.sav" : "fat:/_nds/TWiLightMenu/temp.sav", savesize);
+									truncate(savepath.c_str(), savesize);
 								} else {
 									FILE *pFile = fopen(savepath.c_str(), "wb");
 									if (pFile) {
@@ -1369,7 +1369,7 @@ int main(int argc, char **argv) {
 											u32 check[2];
 											fread(check, 1, 8, cheatData);
 											fclose(cheatData);
-											if (check[1] == 0xCF000000 || getFileSize(cheatDataBin) > 0x8000) {
+											if (check[1] == 0xCF000000 || fsize(cheatDataBin) > 0x8000) {
 												cheatsEnabled = false;
 											}
 										}
@@ -1670,7 +1670,7 @@ int main(int argc, char **argv) {
 					}
 				} else if (extention(filename, ".gen")) {
 					bool usePicoDrive = ((isDSiMode() && sdFound() && sys().arm7SCFGLocked())
-						|| ms().showMd==2 || (ms().showMd==3 && getFileSize(filename.c_str()) > 0x300000));
+						|| ms().showMd==2 || (ms().showMd==3 && fsize(filename.c_str()) > 0x300000));
 					ms().launchType[ms().secondaryDevice] = (usePicoDrive ? Launch::EPicoDriveTWLLaunch : Launch::ESDFlashcardLaunch);
 
 					if (usePicoDrive || ms().secondaryDevice) {
