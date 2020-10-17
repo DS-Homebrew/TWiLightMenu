@@ -1281,16 +1281,12 @@ int main(int argc, char **argv) {
 								}
 								showProgressIcon = true;
 
-								if (orgsavesize > 0) {
-									truncate(savepath.c_str(), savesize);
-								} else {
-									FILE *pFile = fopen(savepath.c_str(), "wb");
-									if (pFile) {
-										fseek(pFile, savesize - 1, SEEK_SET);
-										fputc('\0', pFile);
-										fclose(pFile);
-									}
+								FILE *pFile = fopen(savepath.c_str(), "wb");
+								if (pFile) {
+									ftruncate(fileno(pFile), savesize);
+									fclose(pFile);
 								}
+
 								showProgressIcon = false;
 								clearText();
 								printLarge(false, 0, (ms().theme == 4 ? 32 : 88), (orgsavesize == 0) ? STR_SAVE_CREATED : STR_SAVE_EXPANDED, Alignment::center);

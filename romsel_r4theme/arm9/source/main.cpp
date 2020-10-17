@@ -1683,16 +1683,12 @@ int main(int argc, char **argv) {
 								printLargeCentered(false, 74, "Save management");
 								printSmallCentered(false, 90, (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...");
 
-								if (orgsavesize > 0) {
-									truncate(savepath.c_str(), savesize);
-								} else {
-									FILE *pFile = fopen(savepath.c_str(), "wb");
-									if (pFile) {
-										fseek(pFile, savesize - 1, SEEK_SET);
-										fputc('\0', pFile);
-										fclose(pFile);
-									}
+								FILE *pFile = fopen(savepath.c_str(), "wb");
+								if (pFile) {
+									ftruncate(fileno(pFile), savesize);
+									fclose(pFile);
 								}
+								
 								clearText();
 								printLargeCentered(false, 74, "Save management");
 								printSmallCentered(false, 90, (orgsavesize == 0) ? "Save file created!" : "Save file expanded!");
