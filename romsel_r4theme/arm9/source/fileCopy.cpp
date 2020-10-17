@@ -3,7 +3,7 @@
 
 #include "common/tonccpy.h"
 
-off_t getFileSize(const char *fileName)
+off_t fsize(const char *fileName)
 {
     FILE* fp = fopen(fileName, "rb");
     off_t fsize = 0;
