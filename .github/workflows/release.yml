@@ -108,6 +108,10 @@ jobs:
           rm -rf DSi\&3DS\ -\ SD\ card\ users
           rm -rf 3DS\ -\ CFW\ users
           rm -rf Flashcard\ users
+          rm -rf _nds/GBARunner2_arm7dldi_3ds.nds
+          rm -rf _nds/GBARunner2_arm7dldi_nodsp_3ds.nds
+          rm -rf _nds/TwilightMenu/bootplg.srldr
+          rm -rf _nds/TwilightMenu/gbaswitch.srldr
           7z a TWiLightMenu-DSi.7z
           mv TWiLightMenu-DSi.7z ~/artifacts
 
@@ -122,6 +126,11 @@ jobs:
           rm -rf DSi\&3DS\ -\ SD\ card\ users
           rm -rf DSi\ -\ CFW\ users
           rm -rf Flashcard\ users
+          rm -rf _nds/GBARunner2_arm7dldi_dsi.nds
+          rm -rf _nds/GBARunner2_arm7dldi_nodsp_dsi.nds
+          rm -rf _nds/TwilightMenu/unlaunch
+          rm -rf _nds/TwilightMenu/bootplg.srldr
+          rm -rf _nds/TwilightMenu/gbaswitch.srldr
           7z a TWiLightMenu-3DS.7z
           mv TWiLightMenu-3DS.7z ~/artifacts
 
