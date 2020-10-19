@@ -819,7 +819,7 @@ int main(int argc, char **argv)
 	}
 	*(u32*)0x02000000 = 1;
 
-	if ((access(DSIMENUPP_INI, F_OK) != 0)
+	if ((access(settingsinipath, F_OK) != 0)
 	|| (ms().theme < 0) || (ms().theme == 3) || (ms().theme > 6)) {
 		// Create or modify "settings.ini"
 		(ms().theme == 3) ? ms().theme = 2 : ms().theme = 0;
