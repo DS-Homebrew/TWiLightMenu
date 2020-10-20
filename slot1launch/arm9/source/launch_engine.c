@@ -60,6 +60,9 @@ void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int l
 {
 	nocashMessage("runLaunchEngine");
 
+	if (altBootloader)
+		TWLVRAM = false;
+
 	irqDisable(IRQ_ALL);
 
 	// Direct CPU access to VRAM bank D
