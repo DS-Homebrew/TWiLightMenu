@@ -1,7 +1,7 @@
 #include <nds/arm9/dldi.h>
 #include "systemdetails.h"
 #include "common/flashcard.h"
-
+#include <slim.h>
 // Make this link C-like for volatility
 extern "C" {
     static volatile int _batteryLevel = 0;
@@ -89,11 +89,14 @@ void SystemDetails::initFilesystem(const char *runningPath)
 	}
 
 	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
-	fatMountSimple("sd", &__my_io_dsisd);
-	fatMountSimple("fat", dldiGetInternal());
+
+	fatMountSimple("sd:/", &__my_io_dsisd);
+    fatMountSimple("fat:/", dldiGetInternal());
+    // fatInitDefault();
+
     _fatInitOk = (sdFound() || flashcardFound());
 	*(u32*)(0x2FFFD0C) = 0;
-	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
+	chdir(sdFound() && isDSiMode() ? "sd:/" : "fat:/");
     int ntr = nitroFSInit("/_nds/TWiLightMenu/dsimenu.srldr");
     _nitroFsInitOk = (ntr == 1);
 
