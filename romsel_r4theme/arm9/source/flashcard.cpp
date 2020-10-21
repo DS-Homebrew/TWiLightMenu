@@ -1,4 +1,5 @@
 #include <nds.h>
+#include <fat.h>
 #include <sys/stat.h>
 #include <stdio.h>
 

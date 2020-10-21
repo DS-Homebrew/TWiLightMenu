@@ -30,8 +30,8 @@
 #include <unistd.h>
 #include <vector>
 
-#include <slim.h>
 #include <nds.h>
+#include <fat.h>
 #include <gl2d.h>
 
 #include "date.h"
@@ -691,7 +691,7 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				else if (bnrRomType == 7)
 				{
-					if (showMd==1 && fsize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
+					if (showMd==1 && getFileSize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
 						proceedToLaunch = false;
 						mdRomTooBig();
 					}

@@ -646,7 +646,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			 || extention(name, ".app"))
 	{
 		// this is an nds/app file!
-		FILE *fp = NULL;
+		FILE *fp;
 		int ret;
 		bool isSlot1 = (strcmp(name, "slot1") == 0);
 

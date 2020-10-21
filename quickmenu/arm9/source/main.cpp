@@ -3,7 +3,7 @@
 #include <maxmod9.h>
 
 #include <stdio.h>
-#include <slim.h>
+#include <fat.h>
 #include <sys/stat.h>
 #include <limits.h>
 
@@ -903,8 +903,8 @@ int main(int argc, char **argv) {
 	extern const DISC_INTERFACE __my_io_dsisd;
 
 	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
-	fatMountSimple("sd:/", &__my_io_dsisd);
-	fatMountSimple("fat:/", dldiGetInternal());
+	fatMountSimple("sd", &__my_io_dsisd);
+	fatMountSimple("fat", dldiGetInternal());
     bool fatInited = (sdFound() || flashcardFound());
 	*(u32*)(0x2FFFD0C) = 0;
 	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
@@ -1941,7 +1941,7 @@ int main(int argc, char **argv) {
 
 				whiteScreen = true;
 
-				if ((fsize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
+				if ((getFileSize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
@@ -1978,7 +1978,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
-				if ((fsize(dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
+				if ((getFileSize(dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
@@ -2208,7 +2208,7 @@ int main(int argc, char **argv) {
 
 						if (!isHomebrew[secondaryDevice] && (strcmp(game_TID, "NTR") != 0)) {
 							// Create or expand save if game isn't homebrew
-							int orgsavesize = fsize(savepath.c_str());
+							int orgsavesize = getFileSize(savepath.c_str());
 							int savesize = 524288;	// 512KB (default size)
 
 							for (auto i : saveMap) {
@@ -2243,12 +2243,16 @@ int main(int argc, char **argv) {
 								}
 								printSmallCentered(false, 88, (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...");
 
-								FILE *pFile = fopen(savepath.c_str(), "wb");
-								if (pFile) {
-									ftruncate(fileno(pFile), savesize);
-									fclose(pFile);
+								if (orgsavesize > 0) {
+									fsizeincrease(savepath.c_str(), sdFound() ? "sd:/_nds/TWiLightMenu/temp.sav" : "fat:/_nds/TWiLightMenu/temp.sav", savesize);
+								} else {
+									FILE *pFile = fopen(savepath.c_str(), "wb");
+									if (pFile) {
+										fseek(pFile, savesize - 1, SEEK_SET);
+										fputc('\0', pFile);
+										fclose(pFile);
+									}
 								}
-
 								clearText();
 								printSmallCentered(false, 88, (orgsavesize == 0) ? "Save file created!" : "Save file expanded!");
 								for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -2314,7 +2318,7 @@ int main(int argc, char **argv) {
 											fread(check, 1, 8, cheatData);
 											fclose(cheatData);
 											if (check[1] == 0xCF000000
-											|| fsize(cheatDataBin) > 0x8000) {
+											|| getFileSize(cheatDataBin) > 0x8000) {
 												cheatsEnabled = false;
 											}
 										}
@@ -2546,7 +2550,7 @@ int main(int argc, char **argv) {
 					}
 				} else if (extention(filename[secondaryDevice], ".gen")) {
 					bool usePicoDrive = ((isDSiMode() && sdFound() && arm7SCFGLocked)
-						|| showMd==2 || (showMd==3 && fsize(filename[secondaryDevice].c_str()) > 0x300000));
+						|| showMd==2 || (showMd==3 && getFileSize(filename[secondaryDevice].c_str()) > 0x300000));
 					launchType[secondaryDevice] = (usePicoDrive ? 10 : 1);
 
 					if (usePicoDrive || secondaryDevice) {

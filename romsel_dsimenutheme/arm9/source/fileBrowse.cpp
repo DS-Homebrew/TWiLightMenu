@@ -12,7 +12,7 @@
 #include <maxmod9.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
-#include <slim.h>
+#include <fat.h>
 
 #include "date.h"
 
@@ -2594,7 +2594,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						if (!ms().smsGgInRam)
 							smsWarning();
 					} else if (bnrRomType[CURPOS] == 7) {
-						if (ms().showMd==1 && fsize(
+						if (ms().showMd==1 && getFileSize(
 							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str()) >
 							0x300000) {
 							proceedToLaunch = false;

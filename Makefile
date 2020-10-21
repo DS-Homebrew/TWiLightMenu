@@ -3,22 +3,19 @@
 #---------------------------------------------------------------------------------
 PACKAGE		:=	7zfile
 
-export LIBSLIM  		:=	$(CURDIR)/libslim/libslim
-
 #---------------------------------------------------------------------------------
 # Goals for Build
 #---------------------------------------------------------------------------------
-.PHONY: all package libslim booter booter_fc quickmenu manual romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+.PHONY: all package booter booter_fc quickmenu manual romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
-all:	libslim booter booter_fc quickmenu manual romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+all:	booter booter_fc quickmenu manual romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
 package:
-	@$(MAKE) -C libslim
 	@$(MAKE) -C booter dist
 	@$(MAKE) -C booter_fc dist
 	@$(MAKE) -C quickmenu dist
 	@$(MAKE) -C manual dist
-	# @$(MAKE) -C romsel_aktheme dist
+	#@$(MAKE) -C romsel_aktheme dist
 	@$(MAKE) -C romsel_dsimenutheme dist
 	@$(MAKE) -C romsel_r4theme dist
 	@$(MAKE) -C rungame dist
@@ -62,9 +59,6 @@ slot1launch:
 title:
 	@$(MAKE) -C title
 
-libslim:
-	@$(MAKE) -C libslim
-
 clean:
 	@echo clean build directories
 	@$(MAKE) -C booter clean
@@ -78,7 +72,6 @@ clean:
 	@$(MAKE) -C settings clean
 	@$(MAKE) -C slot1launch clean
 	@$(MAKE) -C title clean
-	@$(MAKE) -C libslim clean
 
 	@echo clean package files
 	@rm -rf "$(PACKAGE)/DSi&3DS - SD card users/BOOT.NDS"
