@@ -14,6 +14,7 @@
 #include "common/pergamesettings.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
+#include "tool/stringtool.h"
 #include "consolemodelselect.h"
 #include "graphics/graphics.h"
 #include "nandio.h"
@@ -106,17 +107,6 @@ void doPause(void)
 	}
 	scanKeys();
 }*/
-
-std::string ReplaceAll(std::string str, const std::string &from, const std::string &to)
-{
-	size_t start_pos = 0;
-	while ((start_pos = str.find(from, start_pos)) != std::string::npos)
-	{
-		str.replace(start_pos, from.length(), to);
-		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
-	}
-	return str;
-}
 
 void rebootDSiMenuPP()
 {
@@ -244,12 +234,8 @@ void lastRunROM()
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out*/
 
-	if (bothSDandFlashcard()) {
-		// Do nothing
-	} else if (flashcardFound()) {
-		ms().secondaryDevice = true;
-	} else {
-		ms().secondaryDevice = false;
+	if (!bothSDandFlashcard()) {
+		ms().secondaryDevice = flashcardFound();
 	}
 
 	std::string romfolder = ms().romPath[ms().secondaryDevice];
@@ -324,13 +310,13 @@ void lastRunROM()
 
 				fclose(f_nds_file);
 
-				std::string savename = ReplaceAll(filename, typeToReplace, getSavExtension());
+				std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 				std::string romFolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romFolderNoSlash);
 				mkdir ("saves", 0777);
 				savepath = romFolderNoSlash+"/saves/"+savename;
 				if (ms().previousUsedDevice && ms().fcSaveOnSd) {
-					savepath = ReplaceAll(savepath, "fat:/", "sd:/");
+					savepath = replaceAll(savepath, "fat:/", "sd:/");
 				}
 
 				if ((strcmp(game_TID, "###") != 0) && (strcmp(game_TID, "NTR") != 0)) {
@@ -414,45 +400,60 @@ void lastRunROM()
 		{
 			bool runNds_boostCpu = false;
 			bool runNds_boostVram = false;
+			loadPerGameSettings(filename);
 			if (REG_SCFG_EXT != 0) {
-				std::string filename = ms().romPath[1];
-				const size_t last_slash_idx = filename.find_last_of("/");
-				if (std::string::npos != last_slash_idx)
-				{
-					filename.erase(0, last_slash_idx + 1);
-				}
-
-				loadPerGameSettings(filename);
 				runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
 				runNds_boostVram = perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram;
 			}
-			std::string path;
+
+			// Move .sav outside of "saves" folder for flashcard kernel usage
+			const char *typeToReplace = ".nds";
+			if (extention(filename, ".dsi")) {
+				typeToReplace = ".dsi";
+			} else if (extention(filename, ".ids")) {
+				typeToReplace = ".ids";
+			} else if (extention(filename, ".srl")) {
+				typeToReplace = ".srl";
+			} else if (extention(filename, ".app")) {
+				typeToReplace = ".app";
+			}
+
+			std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
+			std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
+			std::string romFolderNoSlash = romfolder;
+			RemoveTrailingSlashes(romFolderNoSlash);
+			mkdir("saves", 0777);
+			std::string savepath = romFolderNoSlash + "/saves/" + savename;
+			std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
+			rename(savepath.c_str(), savepathFc.c_str());
+
+			std::string fcPath;
 			if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
 				CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-				path = ReplaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
-				fcrompathini.SetString("Save Info", "lastLoaded", path);
+				fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
+				fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 				fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 				err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
 				CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-				path = ReplaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
-				fcrompathini.SetString("Save Info", "lastLoaded", path);
+				fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
+				fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 				fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
 				err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 				CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-				path = ReplaceAll(ms().romPath[ms().secondaryDevice], "fat:/", dstwofat);
-				fcrompathini.SetString("Dir Info", "fullName", path);
+				fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", dstwofat);
+				fcrompathini.SetString("Dir Info", "fullName", fcPath);
 				fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 				err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 					 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
 					 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
 				CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
-				path = ReplaceAll(ms().romPath[ms().secondaryDevice], "fat:/", slashchar);
-				fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
+				fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", slashchar);
+				fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
 				fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
 				err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			}
