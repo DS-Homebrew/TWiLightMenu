@@ -22,6 +22,8 @@
 #include <nds/system.h>
 #include <nds/input.h>
 #include <nds/arm7/audio.h>
+
+#include <string.h>
 #include "cardEngine.h"
 #include "i2c.h"
 
@@ -30,15 +32,16 @@
 #include "sr_data_srllastran.h"	// For rebooting the game
 
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
-static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
+static char bootNdsPath[14] = {'s','d','m','c',':','/','b','o','o','t','.','n','d','s'};
+static const char *resetGameSrldrPath = "sdmc:/_nds/TWiLightMenu/resetgame.srldr";
 
-extern void* memcpy(const void * src0, void * dst0, int len0);	// Fixes implicit declaration
+extern void cheat_engine_start(void);
 
 extern u32 language;
 extern u32 gameSoftReset;
 static int softResetTimer = 0;
 
-static void unlaunchSetHiyaBoot(void) {
+static void unlaunchSetFilename(bool boot) {
 	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
@@ -48,9 +51,16 @@ static void unlaunchSetHiyaBoot(void) {
 	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
 	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 	int i2 = 0;
-	for (int i = 0; i < 14; i++) {
-		*(u8*)(0x02000838+i2) = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-		i2 += 2;
+	if (boot) {
+		for (int i = 0; i < (int)sizeof(bootNdsPath); i++) {
+			*(u8*)(0x02000838+i2) = bootNdsPath[i];				// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+			i2 += 2;
+		}
+	} else {
+		for (int i = 0; i < 39; i++) {
+			*(u8*)(0x02000838+i2) = resetGameSrldrPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+			i2 += 2;
+		}
 	}
 	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
 		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
@@ -67,7 +77,7 @@ void myIrqHandlerVBlank(void) {
 		if(softResetTimer == 60*2) {
 			REG_MASTER_VOLUME = 0;
 			int oldIME = enterCriticalSection();
-			unlaunchSetHiyaBoot();
+			unlaunchSetFilename(true);
 			memcpy((u32*)0x02000300,sr_data_srloader,0x020);
 			i2cWriteRegister(0x4a,0x70,0x01);
 			i2cWriteRegister(0x4a,0x11,0x01);	// Reboot into TWiLight Menu++
@@ -81,7 +91,7 @@ void myIrqHandlerVBlank(void) {
 	if ((0 == (REG_KEYINPUT & (KEY_L | KEY_R | KEY_START | KEY_SELECT))) && !gameSoftReset) {
 		REG_MASTER_VOLUME = 0;
 		int oldIME = enterCriticalSection();
-		unlaunchSetHiyaBoot();
+		unlaunchSetFilename(false);
     	memcpy((u32*)0x02000300,sr_data_srllastran,0x020);
     	i2cWriteRegister(0x4a,0x70,0x01);
     	i2cWriteRegister(0x4a,0x11,0x01);	// Reboot game
