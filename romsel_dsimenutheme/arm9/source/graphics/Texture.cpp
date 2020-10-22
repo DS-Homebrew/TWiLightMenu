@@ -22,19 +22,27 @@ Texture::Texture(const std::string &filePath, const std::string &fallback)
 
 	switch (_type) {
 	case TextureType::PalettedGrf:
+#ifdef DEBUG_NOGBA
 		nocashMessage("loading paletted");
+#endif
 		loadPaletted(file);
 		break;
 	case TextureType::BMP:
+#ifdef DEBUG_NOGBA
 		nocashMessage("loading bmp");
+#endif
 		loadBitmap(file);
 		break;
 	case TextureType::PNG:
+#ifdef DEBUG_NOGBA
 		nocashMessage("loading png");
+#endif
 		loadPNG(useFallback ? fallback : filePath);
 		break;
 	case TextureType::CompressedGrf:
+#ifdef DEBUG_NOGBA
 		nocashMessage("loading compressed");
+#endif
 		loadCompressed(file);
 		break;
 	default:
