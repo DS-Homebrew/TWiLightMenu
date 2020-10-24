@@ -16,11 +16,6 @@ export VERSION_MAJOR	:= 1
 export VERSION_MINOR	:= 99
 export VERSTRING	:=	$(VERSION_MAJOR).$(VERSION_MINOR)
 
-#---------------------------------------------------------------------------------
-# path to tools - this can be deleted if you set the path in windows
-#---------------------------------------------------------------------------------
-export PATH		:=	$(DEVKITARM)/bin:$(PATH)
-
 .PHONY: cardengine_arm7 bootloader bootloaderAlt clean arm7/$(TARGET).elf arm9/$(TARGET).elf
 
 #---------------------------------------------------------------------------------
