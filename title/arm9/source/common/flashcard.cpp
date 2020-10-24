@@ -1,6 +1,6 @@
 #include <nds.h>
 #include <nds/arm9/dldi.h>
-#include <fat.h>
+#include <slim.h>
 #include <sys/stat.h>
 #include <stdio.h>
 
@@ -68,28 +68,28 @@ TWL_CODE void twl_flashcardInit(void) {
 		// Read a DLDI driver specific to the cart
 		/*if (!memcmp(ndsCardHeader.gameCode, "ASMA", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tf.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
+			fatMountSimple("fat:/", &io_dldi_data->ioInterface);
 		} else if (!memcmp(ndsCardHeader.gameTitle, "TOP TF/SD DS", 12) || !memcmp(ndsCardHeader.gameCode, "A76E", 4) || ((u32)ndsCardHeader.gameCode == 0xB003C24)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
+			fatMountSimple("fat:/", &io_dldi_data->ioInterface);
 		} else if (!memcmp(ndsCardHeader.gameTitle, "PASS", 4) && !memcmp(ndsCardHeader.gameCode, "ASME", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloEvo.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
+			fatMountSimple("fat:/", &io_dldi_data->ioInterface);
 		} else if (!memcmp(ndsCardHeader.gameTitle, "D!S!XTREME", 12) && !memcmp(ndsCardHeader.gameCode, "AYIE", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dsx.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
+			fatMountSimple("fat:/", &io_dldi_data->ioInterface);
 		} else*/ if (!memcmp(ndsCardHeader.gameTitle, "QMATETRIAL", 9) || !memcmp(ndsCardHeader.gameTitle, "R4DSULTRA", 9)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
+			fatMountSimple("fat:/", &io_dldi_data->ioInterface);
 		} else if (!memcmp(ndsCardHeader.gameCode, "ACEK", 4) || !memcmp(ndsCardHeader.gameCode, "YCEP", 4) || !memcmp(ndsCardHeader.gameCode, "AHZH", 4) || !memcmp(ndsCardHeader.gameCode, "CHPJ", 4) || !memcmp(ndsCardHeader.gameCode, "ADLP", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ak2_sd.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
+			fatMountSimple("fat:/", &io_dldi_data->ioInterface);
 		} /*else if (!memcmp(ndsCardHeader.gameCode, "ALXX", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dstwo.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
+			fatMountSimple("fat:/", &io_dldi_data->ioInterface);
 		} else if (!memcmp(ndsCardHeader.gameCode, "VCKF", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloIEvo.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
+			fatMountSimple("fat:/", &io_dldi_data->ioInterface);
 		} */
 	}
 }
