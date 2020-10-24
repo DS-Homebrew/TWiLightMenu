@@ -838,6 +838,10 @@ void arm7_main (void) {
 		gameSoftReset = true;
 	}
 
+	if (memcmp(ndsHeader->gameTitle, "TOP TF/SD DS", 12) == 0) {
+		runCardEngine = false;
+	}
+
 	if (runCardEngine) {
 		initMBK();
 
