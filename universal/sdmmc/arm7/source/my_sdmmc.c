@@ -113,14 +113,14 @@ void my_sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 						#else
 						if(!((u32)rDataPtr16 & 1))
 						{
-							for(u32 i = 0; i < blkSize; i += 4)
+							for(u32 i = 0; i < blkSize; i += 2)
 							{
 								*rDataPtr16++ = sdmmc_read16(REG_SDFIFO);
 							}
 						}
 						else
 						{
-							for(u32 i = 0; i < blkSize; i += 4)
+							for(u32 i = 0; i < blkSize; i += 2)
 							{
 								u16 data = sdmmc_read16(REG_SDFIFO);
 								*rDataPtr8++ = data;
