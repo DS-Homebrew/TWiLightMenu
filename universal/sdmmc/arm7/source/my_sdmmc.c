@@ -7,6 +7,8 @@
 
 #include <stddef.h>
 
+#define DATA32_SUPPORT
+
 static struct mmcdevice deviceSD;
 static struct mmcdevice deviceNAND;
 

@@ -32,9 +32,17 @@
 #include <nds/arm7/clock.h>
 #include <nds/arm7/i2c.h>
 
+#define PROFI200_SD 1
+
 void powerValueHandler(u32 value, void* user_data);
+
+#if PROFI200_SD
 void my_sdmmcMsgHandler(int bytes, void *user_data);
 void my_sdmmcValueHandler(u32 value, void* user_data);
+#else 
+void sdmmcMsgHandler(int bytes, void *user_data);
+void sdmmcValueHandler(u32 value, void* user_data);
+#endif
 void firmwareMsgHandler(int bytes, void *user_data);
 
 //---------------------------------------------------------------------------------
@@ -42,10 +50,14 @@ void my_installSystemFIFO(void) {
 //---------------------------------------------------------------------------------
 
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
-	//if (isDSiMode() || (REG_SCFG_EXT & BIT(18))) {
-		fifoSetValue32Handler(FIFO_SDMMC, my_sdmmcValueHandler, 0);
-		fifoSetDatamsgHandler(FIFO_SDMMC, my_sdmmcMsgHandler, 0);
-	//}
+
+#if PROFI200_SD    
+	fifoSetValue32Handler(FIFO_SDMMC, my_sdmmcValueHandler, 0);
+	fifoSetDatamsgHandler(FIFO_SDMMC, my_sdmmcMsgHandler, 0);
+#else
+	fifoSetValue32Handler(FIFO_SDMMC, sdmmcValueHandler, 0);
+	fifoSetDatamsgHandler(FIFO_SDMMC, sdmmcMsgHandler, 0);
+#endif
 	fifoSetDatamsgHandler(FIFO_FIRMWARE, firmwareMsgHandler, 0);
 	
 }
