@@ -876,6 +876,9 @@ void refreshNdsCard() {
 	bnrRomType[1] = 0;
 	boxArtType[1] = 0;
 
+	// Power off after done retrieving info
+	disableSlot1();
+
 	cardRefreshed = true;
 	cardEjected = false;
 }
