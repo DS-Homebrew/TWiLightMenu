@@ -853,6 +853,11 @@ int main(int argc, char **argv)
 		lastRunROM();
 	}
 
+	// If in DSi mode with SCFG access attempt to cut slot1 power to save battery
+	if (isDSiMode() && !sys().arm7SCFGLocked()) {
+		fifoSendValue32(FIFO_USER_05, 2);
+	}
+
 	if (!softResetParamsFound && ms().autostartSlot1 && isDSiMode() && REG_SCFG_MC != 0x11 && !flashcardFound() && !(keysHeld() & KEY_SELECT)) {
 		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
 			dsCardLaunch();

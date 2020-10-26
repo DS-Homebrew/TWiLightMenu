@@ -178,11 +178,20 @@ int main() {
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
-		if (fifoGetValue32(FIFO_USER_05) == 1) {
-			SetYtrigger(202);
-			REG_DISPSTAT |= DISP_YTRIGGER_IRQ;
-			REG_DISPSTAT |= BIT(7);
-			runFrameRateHack = true;
+		switch (fifoGetValue32(FIFO_USER_05)) {
+			case 1: {
+				SetYtrigger(202);
+				REG_DISPSTAT |= DISP_YTRIGGER_IRQ;
+				REG_DISPSTAT |= BIT(7);
+				runFrameRateHack = true;
+				break;
+			} case 2: {
+				if (!(REG_SCFG_MC & 1)) {
+					REG_SCFG_MC = 0x0C; // Request slot 1 power off
+					while (REG_SCFG_MC & 1); // Wait until off
+				}
+				break;
+			}
 			fifoSendValue32(FIFO_USER_05, 0);
 		}
 		swiWaitForVBlank();
