@@ -75,6 +75,8 @@ TWLSettings::TWLSettings()
 	boostCpu = false;
 	boostVram = false;
 	bstrap_dsiMode = EDSMode;
+    extendedMemory = 0;
+
 	forceSleepPatch = false;
 	slot1SCFGUnlock = false;
 	dsiWareBooter = false;
@@ -187,6 +189,8 @@ void TWLSettings::loadSettings()
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+	extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
+
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
 	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 

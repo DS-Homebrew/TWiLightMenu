@@ -70,7 +70,6 @@ class TWLSettings
         ELangDanish = 13,
         ELangTurkish = 14,
         ELangUkrainian = 15,
-        ELangHungarian = 16,
     };
 
     enum TRunIn
@@ -184,6 +183,8 @@ class TWLSettings
     bool boostCpu;
     bool boostVram;
     int bstrap_dsiMode;
+    int extendedMemory;
+
     bool forceSleepPatch;
     bool slot1AccessSD;
     bool slot1SCFGUnlock;

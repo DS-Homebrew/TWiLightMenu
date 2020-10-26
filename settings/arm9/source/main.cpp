@@ -851,7 +851,7 @@ int main(int argc, char **argv)
 	if (isDSiMode() || sdAccessible) {
 		gamesPage.option((isDSiMode() ? STR_EXPANDROMSPACE : "SD: "+STR_EXPANDROMSPACE),
 			(ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS),
-			Option::Int(&bs().extendedMemory),
+			Option::Int(&ms().extendedMemory),
 			{STR_NO, STR_YES, STR_YES+"+512KB"},
 			{0, 1, 2});
 		if (sdAccessible) {
@@ -900,7 +900,6 @@ int main(int argc, char **argv)
 				 "Español",
 				 "Français",
 				 "Italiano",
-				 "Magyar",
 				 "Polski",
 				 "Português",
 				 "Svenska",
@@ -918,7 +917,6 @@ int main(int argc, char **argv)
 				 TLanguage::ELangSpanish,
 				 TLanguage::ELangFrench,
 				 TLanguage::ELangItalian,
-				 TLanguage::ELangHungarian,
 				 TLanguage::ELangPolish,
 				 TLanguage::ELangPortuguese,
 				 TLanguage::ELangSwedish,

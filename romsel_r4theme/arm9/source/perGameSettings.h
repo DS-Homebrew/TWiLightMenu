@@ -14,6 +14,7 @@ extern int perGameSettings_boostVram;
 extern int perGameSettings_heapShrink;
 extern int perGameSettings_bootstrapFile;
 extern int perGameSettings_wideScreen;
+extern int perGameSettings_expandRomSpace;
 
 void loadPerGameSettings(std::string filename);
 void savePerGameSettings(std::string filename);

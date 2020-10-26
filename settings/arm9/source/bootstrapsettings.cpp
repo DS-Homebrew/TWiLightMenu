@@ -7,7 +7,6 @@
 
 BootstrapSettings::BootstrapSettings()
 {
-    extendedMemory = 0;
     cacheBlockSize = false;
     cacheFatTable = false;
     debug = false;
@@ -25,7 +24,6 @@ void BootstrapSettings::loadSettings()
    	debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", debug);
 	logging = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOGGING", logging);
 	if (isDSiMode()) {
-		extendedMemory = bootstrapini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 		cacheBlockSize = bootstrapini.GetInt("NDS-BOOTSTRAP", "CACHE_BLOCK_SIZE", cacheBlockSize);
 		cacheFatTable = bootstrapini.GetInt("NDS-BOOTSTRAP", "CACHE_FAT_TABLE", cacheFatTable);
 		romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", romreadled);
@@ -43,7 +41,6 @@ void BootstrapSettings::saveSettings()
     bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", logging);
 	if (isDSiMode()) {
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "CACHE_BLOCK_SIZE", cacheBlockSize);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "CACHE_FAT_TABLE", cacheFatTable);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", romreadled);
