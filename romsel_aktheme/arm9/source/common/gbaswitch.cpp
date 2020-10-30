@@ -9,9 +9,10 @@ void gbaSwitch(void)
     // Clear VRAM A and B to show black border for GBA mode
 	dmaFillHalfWords(0, (u16*)0x06000000, 0x80000);
 	dmaFillHalfWords(0, (u16*)0x06200000, 0x80000);
-    /*if (gbaBorder == 1) {
-		loadGbaBorder("nitro:/gbaborder/nologo.bmp");
-	}*/
+    if (gbaBorder == 1) {
+		// TODO: Load gbaborder from theme?
+		loadGbaBorder("nitro:/graphics/gbaborder.png");
+	}
     // Switch to GBA mode
     runNdsFile("/_nds/TWiLightMenu/gbaswitch.srldr", 0, NULL, true, false, true, false, false);
 }
