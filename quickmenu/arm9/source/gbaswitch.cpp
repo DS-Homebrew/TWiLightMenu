@@ -9,16 +9,61 @@ int gbaBorder = 1;
 void loadGbaBorder(const char* filename) {
 	uint imageWidth, imageHeight;
 	std::vector<unsigned char> image;
-
 	lodepng::decode(image, imageWidth, imageHeight, filename);
+	bool alternatePixel = false;
 
-	for(uint i=0;i<image.size()/4;i++) {
+	for(uint i = 0; i < image.size()/4; i++) {
+		image[(i*4)+3] = 0;
+		if (alternatePixel) {
+			if (image[(i*4)] >= 0x4) {
+				image[(i*4)] -= 0x4;
+				image[(i*4)+3] |= BIT(0);
+			}
+			if (image[(i*4)+1] >= 0x4) {
+				image[(i*4)+1] -= 0x4;
+				image[(i*4)+3] |= BIT(1);
+			}
+			if (image[(i*4)+2] >= 0x4) {
+				image[(i*4)+2] -= 0x4;
+				image[(i*4)+3] |= BIT(2);
+			}
+		}
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if ((i % 256) == 255) alternatePixel = !alternatePixel;
+		alternatePixel = !alternatePixel;
 	}
+    DC_FlushRange(bmpImageBuffer,SCREEN_WIDTH*SCREEN_HEIGHT*2);
+    dmaCopy(bmpImageBuffer,(void*)BG_BMP_RAM(0),SCREEN_WIDTH*SCREEN_HEIGHT*2);
 
-	DC_FlushRange(bmpImageBuffer,SCREEN_WIDTH*SCREEN_HEIGHT*2);
-	dmaCopy(bmpImageBuffer,(void*)BG_BMP_RAM(0),SCREEN_WIDTH*SCREEN_HEIGHT*2);
-	dmaCopy(bmpImageBuffer,(void*)BG_BMP_RAM(8),SCREEN_WIDTH*SCREEN_HEIGHT*2);
+	alternatePixel = false;
+	for(uint i = 0; i < image.size()/4; i++) {
+		if (alternatePixel) {
+			if (image[(i*4)+3] & BIT(0)) {
+				image[(i*4)] += 0x4;
+			}
+			if (image[(i*4)+3] & BIT(1)) {
+				image[(i*4)+1] += 0x4;
+			}
+			if (image[(i*4)+3] & BIT(2)) {
+				image[(i*4)+2] += 0x4;
+			}
+		} else {
+			if (image[(i*4)] >= 0x4) {
+				image[(i*4)] -= 0x4;
+			}
+			if (image[(i*4)+1] >= 0x4) {
+				image[(i*4)+1] -= 0x4;
+			}
+			if (image[(i*4)+2] >= 0x4) {
+				image[(i*4)+2] -= 0x4;
+			}
+		}
+		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if ((i % 256) == 255) alternatePixel = !alternatePixel;
+		alternatePixel = !alternatePixel;
+	}
+    DC_FlushRange(bmpImageBuffer,SCREEN_WIDTH*SCREEN_HEIGHT*2);
+    dmaCopy(bmpImageBuffer,(void*)BG_BMP_RAM(8),SCREEN_WIDTH*SCREEN_HEIGHT*2);
 }
 
 void gbaSwitch(void) {
