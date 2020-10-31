@@ -1042,7 +1042,9 @@ int main(int argc, char **argv) {
 		RemoveTrailingSlashes(romFolderNoSlash);
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
 		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
-		rename(savepathFc.c_str(), savepath.c_str());
+		if (access(savepathFc.c_str(), F_OK) == 0) {
+			rename(savepathFc.c_str(), savepath.c_str());
+		}
 	}
 
 	if (copyDSiWareSavBack)
