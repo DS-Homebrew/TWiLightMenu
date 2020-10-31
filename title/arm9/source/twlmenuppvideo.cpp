@@ -562,7 +562,11 @@ void twlMenuVideo(void) {
 
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
 
-	if (strcmp(currentDate, "02/14") == 0) {
+	if (strcmp(currentDate, "10/31") == 0) {
+		// Load orange BG for Halloween
+		sprintf(bgPath, "nitro:/graphics/bg_twlmenuppOrange.png");
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppOrange.png");
+	} else if (strcmp(currentDate, "02/14") == 0) {
 		// Load pink BG for Valentine's Day
 		sprintf(bgPath, "nitro:/graphics/bg_twlmenuppPink.png");
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppPink.png");
