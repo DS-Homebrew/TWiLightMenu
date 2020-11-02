@@ -31,6 +31,7 @@
 #include "graphics/fontHandler.h"
 
 #include "common/inifile.h"
+#include "common/dsimenusettings.h"
 #include "tool/stringtool.h"
 
 #include "language.h"
@@ -2311,7 +2312,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 							(forceSleepPatch
-						|| ((flashcard == EDSTTClone || flascard == R4iGoldClone) && !isRegulards))
+						|| ((flashcard == EDSTTClone || flashcard == ER4iGoldClone) && !isRegularDS))
 						);
 						bootstrapini.SaveIniFile( bootstrapinipath );
 
