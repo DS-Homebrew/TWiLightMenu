@@ -29,6 +29,30 @@ class TWLSettings
         EViewInternal = 2
     };
 
+
+    /*
+		0: Unknown
+        1: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
+        2: R4DS (Original Non-SDHC version)/ M3 Simply
+        3: R4iDSN/R4i Gold RTS/R4 Ultra
+        4: Acekard 2(i)/Galaxy Eagle/M3DS Real
+        5: Acekard RPG
+        6: Ace 3DS+/Gateway Blue Card/R4iTT
+        7: SuperCard DSTWO
+    */
+
+    enum TFlashCard
+    {
+		EFCUnknown = 0,
+        EDSTTClone = 1,
+        ER4Original = 2,
+        ER4iGoldClone = 3,
+        EAcekard2i = 4,
+        EAcekardRPG = 5,
+        EGatewayBlue = 6,
+        ESupercardDSTWO = 7
+    };
+
     // Do not reorder these, just add to the end
     enum TLanguage
     {
@@ -150,6 +174,7 @@ class TWLSettings
     bool secondaryDevice;
     bool fcSaveOnSd;
 
+	int flashcard;
     int slot1LaunchMethod;
     bool useBootstrap;
     bool bootstrapFile;

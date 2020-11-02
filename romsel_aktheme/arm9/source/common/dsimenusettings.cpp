@@ -48,6 +48,7 @@ TWLSettings::TWLSettings()
     secondaryDevice = false;
     fcSaveOnSd = false;
 
+	flashcard = EFCUnknown;
     slot1LaunchMethod = EReboot;
 
     useBootstrap = isDSiMode();
@@ -141,6 +142,8 @@ void TWLSettings::loadSettings()
         sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
         launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
     }
+
+	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
 
     slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
     bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);

@@ -30,10 +30,7 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_mpuRegion = 0;
 	_ceCached = true;
 	_forceSleepPatch = (ms().forceSleepPatch
-					|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !sys().isRegularDS())
-					|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !sys().isRegularDS())
-					|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
-					|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()));
+		|| ((ms().flashcard == EDSTTClone || ms().flashcard == ER4iGoldClone) && !sys().isRegularDS());
 	_isHomebrew = _gametid.empty() || _sdkVersion == 0;
 	_saveSize = 0x80000;
 	_dsiMode = 0;

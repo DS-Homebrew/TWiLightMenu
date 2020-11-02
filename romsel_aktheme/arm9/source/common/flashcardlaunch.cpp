@@ -29,30 +29,36 @@ int loadGameOnFlashcard (std::string ndsPath, bool usePerGameSettings) {
 	}
 
 	std::string launchPath;
-	if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
-		LoaderConfig config("fat:/Wfwd.dat", "fat:/_wfwd/lastsave.ini");
-		launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT0);
-		config.option("Save Info", "lastLoaded", launchPath);
-		return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-		LoaderConfig config("fat:/Afwd.dat", "fat:/_afwd/lastsave.ini");
-		launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT0);
-		config.option("Save Info", "lastLoaded", launchPath);
-		return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		LoaderConfig config("fat:/_dstwo/autoboot.nds", "fat:/_dstwo/autoboot.ini");
-		launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT1);
-		config.option("Dir Info", "fullName", launchPath);
-		return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
-		LoaderConfig config("fat:/YSMenu.nds", "fat:/TTMenu/YSMenu.ini");
-		launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_SLASH);
-		config.option("YSMENU", "AUTO_BOOT", launchPath);
-		return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+
+
+	switch (ms().flashcard) {
+		case EDSTTClone: {
+			LoaderConfig config("fat:/YSMenu.nds", "fat:/TTMenu/YSMenu.ini");
+			launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_SLASH);
+			config.option("YSMENU", "AUTO_BOOT", launchPath);
+			return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		}
+		case EGatewayBlue: // Blue card can run wood 1.62 so this should work?
+		case ER4Original: // And clones that can run wood (no N5)
+		case ER4iGoldClone: {
+			LoaderConfig config("fat:/Wfwd.dat", "fat:/_wfwd/lastsave.ini");
+			launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT0);
+			config.option("Save Info", "lastLoaded", launchPath);
+			return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		}
+		case ESupercardDSTWO: {
+			LoaderConfig config("fat:/_dstwo/autoboot.nds", "fat:/_dstwo/autoboot.ini");
+			launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT1);
+			config.option("Dir Info", "fullName", launchPath);
+			return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		}
+		case EAcekardRPG: // ?
+		case EAcekard2i: {
+			LoaderConfig config("fat:/Afwd.dat", "fat:/_afwd/lastsave.ini");
+			launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT0);
+			config.option("Save Info", "lastLoaded", launchPath);
+			return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		}
 	}
 
 	return 100;

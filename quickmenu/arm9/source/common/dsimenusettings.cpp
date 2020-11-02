@@ -44,7 +44,7 @@ TWLSettings::TWLSettings()
     secondaryDevice = false;
 	fcSaveOnSd = false;
 
-    flashcard = EDSTTClone;
+    flashcard = EFCUnknown;
 
     slot1LaunchMethod = EDirect;
 

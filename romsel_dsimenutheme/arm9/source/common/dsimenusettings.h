@@ -44,13 +44,14 @@ public:
 
 	enum TFlashCard
 	{
-		EDSTTClone = 0,
-		ER4Original = 1,
-		ER4iGoldClone = 2,
-		EAcekard2i = 3,
-		EAcekardRPG = 4,
-		EGatewayBlue = 5,
-		ESupercardDSTWO = 6
+		EFCUnknown = 0,
+		EDSTTClone = 1,
+		ER4Original = 2,
+		ER4iGoldClone = 3,
+		EAcekard2i = 4,
+		EAcekardRPG = 5,
+		EGatewayBlue = 6,
+		ESupercardDSTWO = 7
 	};
 
 	// Do not reorder these, just add to the end
