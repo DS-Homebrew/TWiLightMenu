@@ -119,4 +119,5 @@ void detectFlashcard() {
 		ms().flashcard = FC::ESupercardDSTWO;
 	else
 		ms().flashcard = FC::EUnknown;
+	ms().saveSettings();
 }
