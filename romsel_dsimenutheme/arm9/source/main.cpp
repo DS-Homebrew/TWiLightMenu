@@ -1036,8 +1036,8 @@ int main(int argc, char **argv) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", 1);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 						(ms().forceSleepPatch
-					|| ((flashcard == 1 || flashcard == 3) && !sys().isRegularDS())
-					);
+					|| ((ms().flashcard == 1 || ms().flashcard == 3) && !sys().isRegularDS())
+					));
 
 					bootstrapini.SaveIniFile(bootstrapinipath);
 
@@ -1350,7 +1350,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 							(ms().forceSleepPatch
-						|| ((flashcard == 1 || flashcard == 3) && !sys().isRegularDS()))
+						|| ((ms().flashcard == 1 || ms().flashcard == 3) && !sys().isRegularDS()))
 						);
 						if (!isDSiMode() && ms().secondaryDevice && sdFound()) {
 							CIniFile bootstrapiniSD("sd:/_nds/nds-bootstrap.ini");

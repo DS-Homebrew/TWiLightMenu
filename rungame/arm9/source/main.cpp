@@ -67,8 +67,6 @@ static int consoleModel = 0;
 	2 = Nintendo 3DS
 	3 = New Nintendo 3DS	*/
 
-static int flashcard = 0;
-
 static std::string romPath[2];
 
 /**

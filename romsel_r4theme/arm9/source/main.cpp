@@ -1489,7 +1489,7 @@ int main(int argc, char **argv) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", 1);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 						(forceSleepPatch
-					|| ((flashcard == 1 || flashcard == 3) && !isRegularDs))
+					|| ((flashcard == 1 || flashcard == 3) && !isRegularDS))
 					);
 					bootstrapini.SaveIniFile(bootstrapinipath);
 

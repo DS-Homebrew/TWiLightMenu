@@ -37,6 +37,7 @@
 
 extern int dialogboxHeight;
 extern bool useBootstrap;
+extern int flashcard;
 
 CheatCodelist::~CheatCodelist(void) {}
 
