@@ -86,6 +86,7 @@ TWL_CODE void twl_flashcardInit(void) {
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(ndsCardHeader.gameCode, "ACEK", 4) || !memcmp(ndsCardHeader.gameCode, "YCEP", 4) || !memcmp(ndsCardHeader.gameCode, "AHZH", 4) || !memcmp(ndsCardHeader.gameCode, "CHPJ", 4) || !memcmp(ndsCardHeader.gameCode, "ADLP", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ak2_sd.dldi");
+			//io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} /*else if (!memcmp(ndsCardHeader.gameCode, "ALXX", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dstwo.dldi");
@@ -111,14 +112,18 @@ int detectFlashcard() {
 		|| !memcmp(io_dldi_data->friendlyName, "DSTT", 4)
 		|| !memcmp(io_dldi_data->friendlyName, "DEMON", 5))
 		return FC::EDSTTClone;
-	if (!memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26)
+	if (!memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 0x1A)
 		|| !memcmp(io_dldi_data->friendlyName, "R4TF", 4))
 		return FC::ER4Original;
 	if (!memcmp(io_dldi_data->friendlyName, "R4iDSN", 6))
-	      return FC::ER4iGoldClone;
+		return FC::ER4iGoldClone;
 	if (!memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB))
 		return FC::EAcekard2i;
+	if (!memcmp(io_dldi_data->friendlyName, "Acekard RPG", 0xB))
+		return FC::EAcekardRPG;
 	if (!memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD))
 		return FC::ESupercardDSTWO;
+	if (!memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 0x12))
+		return FC::ECycloDSi;
 	return FC::EUnknown;
 }
