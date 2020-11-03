@@ -920,7 +920,7 @@ int main(int argc, char **argv) {
 				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					if (ms().theme == 5) displayGameIcons = false;
 					clearText();
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+					if (ms().flashcard == 8) {
 						// Display nothing
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
@@ -966,7 +966,7 @@ int main(int argc, char **argv) {
 				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					if (ms().theme == 5) displayGameIcons = false;
 					clearText();
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+					if (ms().flashcard == 8) {
 						// Display nothing
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
@@ -1278,7 +1278,7 @@ int main(int argc, char **argv) {
 
 							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 								if (ms().theme == 5) displayGameIcons = false;
-								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+								if (isDSiMode() && ms().flashcard == 8) {
 									// Display nothing
 								} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
 									printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);

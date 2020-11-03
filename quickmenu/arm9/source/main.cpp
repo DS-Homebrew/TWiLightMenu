@@ -1969,7 +1969,7 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+					if (flashcard == 8) {
 						// Display nothing
 					} else if (consoleModel >= 2) {
 						printSmallCentered(false, 20, "If this takes a while, press HOME,");
@@ -2006,7 +2006,7 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					clearText();
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+					if (flashcard == 8) {
 						// Display nothing
 					} else if (consoleModel >= 2) {
 						printSmallCentered(false, 20, "If this takes a while, press HOME,");
@@ -2255,7 +2255,7 @@ int main(int argc, char **argv) {
 							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 								clearText();
 								ClearBrightness();
-								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+								if (isDSiMode() && flashcard == 8) {
 									// Display nothing
 								} else if (REG_SCFG_EXT != 0 && consoleModel >= 2) {
 									printSmallCentered(false, 20, "If this takes a while, press HOME,");

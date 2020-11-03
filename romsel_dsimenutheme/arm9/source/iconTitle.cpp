@@ -371,7 +371,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		}
 
 		bool usingFlashcard = (!isDSiMode() && ms().secondaryDevice);
-		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+		bool hasCycloDSi = ms().flashcard == 8;
 
 		if (num < 40) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);

@@ -745,6 +745,8 @@ int main(int argc, char **argv)
 	if (flashcardFound()) {
 		mkdir("fat:/_gba", 0777);
 		mkdir("fat:/_nds/TWiLightMenu/gamesettings", 0777);
+
+		detectFlashcard();
 	}
 
 	runGraphicIrq();

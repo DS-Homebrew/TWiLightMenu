@@ -138,7 +138,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _hasExtendedBinaries = ETrue;
 		_requiresDonorRom = 0;
 		bool usingFlashcard = (!isDSiMode() && ms().secondaryDevice);
-		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+		bool hasCycloDSi = ms().flashcard == 8;
 		switch (header.arm7binarySize) {
 			case 0x22B40:
 			case 0x22BCC:

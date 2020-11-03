@@ -430,7 +430,7 @@ void displayNowLoading(void) {
 	fadeType = true; // Fade in from white
 	snd().updateStream();
 	std::string *msg;
-	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+	if (isDSiMode() && ms().flashcard == 8) {
 		msg = &STR_TAKEWHILE_TURNOFF;
 	} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
 		msg = &STR_TAKEWHILE_PRESSHOME;
@@ -1268,7 +1268,7 @@ bool selectMenu(void) {
 	int selCursorPosition = 0;
 	int assignedOp[5] = {-1};
 	int selIconYpos = 96;
-	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
+	if (isDSiMode() && ms().flashcard != 8) {
 		for (int i = 0; i < 4; i++) {
 			selIconYpos -= 14;
 		}
@@ -1321,7 +1321,7 @@ bool selectMenu(void) {
 					} else {
 						printSmall(false, 64, textYpos, STR_SWITCH_TO_SLOT_1);
 					}
-				} else if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
+				} else if (isDSiMode() && ms().flashcard != 8) {
 					printSmall(false, 64, textYpos, (REG_SCFG_MC == 0x11) ? STR_NO_SLOT_1 : STR_LAUNCH_SLOT_1);
 				}
 			} else if (assignedOp[i] == 3) {

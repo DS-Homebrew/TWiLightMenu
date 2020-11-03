@@ -7,7 +7,10 @@
 #include "common/bootstrappaths.h"
 #include "common/inifile.h"
 #include "common/systemdetails.h"
+#include "common/dsimenusettings.h"
 #include "read_card.h"
+
+using FC = TWLSettings::TFlashCard;
 
 bool sdFound(void) {
 	return (access("sd:/", F_OK) == 0);
@@ -98,4 +101,22 @@ void flashcardInit(void) {
 	if (isDSiMode() && !flashcardFound()) {
 		twl_flashcardInit();
 	}
+}
+
+void detectFlashcard() {
+	if (!memcmp(io_dldi_data->friendlyName, "TTCARD", 6)
+		|| !memcmp(io_dldi_data->friendlyName, "DSTT", 4)
+		|| !memcmp(io_dldi_data->friendlyName, "DEMON", 5))
+		ms().flashcard = FC::EDSTTClone;
+	else if (!memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26)
+		|| !memcmp(io_dldi_data->friendlyName, "R4TF", 4))
+		ms().flashcard = FC::ER4Original;
+	else if (!memcmp(io_dldi_data->friendlyName, "R4iDSN", 6))
+	      ms().flashcard = FC::ER4iGoldClone;
+	else if (!memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB))
+		ms().flashcard = FC::EAcekard2i;
+	else if (!memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD))
+		ms().flashcard = FC::ESupercardDSTWO;
+	else
+		ms().flashcard = FC::EUnknown;
 }

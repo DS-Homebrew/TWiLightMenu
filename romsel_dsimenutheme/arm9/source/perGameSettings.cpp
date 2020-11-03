@@ -189,7 +189,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	if (requiresDonorRom[CURPOS]) return false;
 
 	bool usingFlashcard = (!isDSiMode() && ms().secondaryDevice);
-	bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+	bool hasCycloDSi = ms().flashcard == 8;
 
 	if (((usingFlashcard || hasCycloDSi) && SDKVersion > 0x2000000 && SDKVersion < 0x2008000	// Early SDK2
 	 && (arm7size==0x25F70

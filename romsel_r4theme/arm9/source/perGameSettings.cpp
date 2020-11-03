@@ -40,6 +40,8 @@ extern const char *bootstrapinipath;
 extern bool isRegularDS;
 extern int consoleModel;
 
+extern int flashcard;
+
 extern int bstrap_dsiMode;
 extern bool useBootstrap;
 extern int theme;
@@ -174,7 +176,7 @@ bool checkIfDSiMode (std::string filename) {
 bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	if (requiresDonorRom) return false;
 
-	bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+	bool hasCycloDSi = flashcard == 8;
 
 	if (((!isDSiMode() || hasCycloDSi) && SDKVersion > 0x2000000 && SDKVersion < 0x2008000	// Early SDK2
 	 && (arm7size==0x25F70

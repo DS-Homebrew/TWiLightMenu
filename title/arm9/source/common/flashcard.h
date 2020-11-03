@@ -8,5 +8,6 @@ bool sdFound(void);
 bool flashcardFound(void);
 bool bothSDandFlashcard(void);
 void flashcardInit(void);
+void detectFlashcard();
 
 #endif //DSIMENUPP_FLASHCARD_H
