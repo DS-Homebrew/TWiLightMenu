@@ -1351,7 +1351,7 @@ void MainWnd::launchSelected()
         extension = fullPath.substr(lastDotPos);
 
     // DSTWO Plugin Launch
-    if (extension == ".plg" && ms().secondaryDevice && ms().flashcard == ESupercardDSTWO)
+    if (extension == ".plg" && ms().secondaryDevice && ms().flashcard == 7)
     {
         ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
         ms().saveSettings();

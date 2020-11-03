@@ -297,7 +297,7 @@ void perGameSettings (std::string filename) {
 	bool showCheats = ((isDSiMode() && useBootstrap)
 	// TODO: Enable
 	/*|| (secondaryDevice && !useBootstrap
-		&& flashcard != EFCUnknown))*/
+		&& flashcard != 0))*/
 	|| !secondaryDevice);
 
 	firstPerGameOpShown = 0;

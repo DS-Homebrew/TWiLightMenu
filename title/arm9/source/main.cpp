@@ -430,7 +430,7 @@ void lastRunROM()
 			std::string fcPath;
  
 			switch (ms().flashcard) {
-				case EDSTTClone: {
+				case 1: {
 					CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 					fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", slashchar);
 					fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
@@ -438,9 +438,9 @@ void lastRunROM()
 					err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 					break;
 				}
-				case EGatewayBlue: // Blue card can run wood 1.62 so this should work?
-				case ER4Original: // And clones that can run wood (no N5)
-				case ER4iGoldClone: {
+				case 6: // Blue card can run wood 1.62 so this should work?
+				case 2: // And clones that can run wood (no N5)
+				case 3: {
 					CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 					fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
@@ -448,7 +448,7 @@ void lastRunROM()
 					err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 					break;
 				}
-				case ESupercardDSTWO: {
+				case 7: {
 					CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 					fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", dstwofat);
 					fcrompathini.SetString("Dir Info", "fullName", fcPath);
@@ -456,8 +456,8 @@ void lastRunROM()
 					err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 					break;
 				}
-				case EAcekardRPG: // ?
-				case EAcekard2i: {
+				case 5: // ?
+				case 4: {
 					CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
 					fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", fcPath);

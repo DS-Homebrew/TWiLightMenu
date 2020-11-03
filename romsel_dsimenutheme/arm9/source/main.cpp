@@ -380,7 +380,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 	snd().stopStream();
 
 	switch (ms().flashcard) {
-		case EDSTTClone: {
+		case 1: {
 			CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 			fcPath = replaceAll(ndsPath, "fat:/", slashchar);
 			fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
@@ -388,9 +388,9 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 			err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			break;
 		}
-		case EGatewayBlue: // Blue card can run wood 1.62 so this should work?
-		case ER4Original: // And clones that can run wood (no N5)
-		case ER4iGoldClone: {
+		case 6: // Blue card can run wood 1.62 so this should work?
+		case 2: // And clones that can run wood (no N5)
+		case 3: {
 			CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 			fcPath = replaceAll(ndsPath, "fat:/", woodfat);
 			fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
@@ -398,7 +398,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 			err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			break;
 		}
-		case ESupercardDSTWO: {
+		case 7: {
 			CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 			fcPath = replaceAll(ndsPath, "fat:/", dstwofat);
 			fcrompathini.SetString("Dir Info", "fullName", fcPath);
@@ -406,8 +406,8 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 			err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			break;
 		}
-		case EAcekardRPG: // ?
-		case EAcekard2i: {
+		case 5: // ?
+		case 4: {
 			CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
 			fcPath = replaceAll(ndsPath, "fat:/", woodfat);
 			fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
@@ -693,7 +693,7 @@ int main(int argc, char **argv) {
 		extensionList.emplace_back(".app");
 		extensionList.emplace_back(".argv");
 	}
-	if (ms().flashcard == ESupercardDSTWO) {
+	if (ms().flashcard == 7) {
 		extensionList.emplace_back(".plg");
 	}
 	if (ms().showRvid) {
@@ -1036,7 +1036,7 @@ int main(int argc, char **argv) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", 1);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 						(ms().forceSleepPatch
-					|| ((flashcard == EDSTTClone || flashcard == ER4iGoldclone) && !sys().isRegularDS())
+					|| ((flashcard == 1 || flashcard == 3) && !sys().isRegularDS())
 					);
 
 					bootstrapini.SaveIniFile(bootstrapinipath);
@@ -1350,7 +1350,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 							(ms().forceSleepPatch
-						|| ((flashcard == EDSTTClone || flashcard == ER4iGoldclone) && !sys().isRegularDS()))
+						|| ((flashcard == 1 || flashcard == 3) && !sys().isRegularDS()))
 						);
 						if (!isDSiMode() && ms().secondaryDevice && sdFound()) {
 							CIniFile bootstrapiniSD("sd:/_nds/nds-bootstrap.ini");

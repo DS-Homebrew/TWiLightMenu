@@ -32,28 +32,28 @@ int loadGameOnFlashcard (std::string ndsPath, bool usePerGameSettings) {
 
 
 	switch (ms().flashcard) {
-		case EDSTTClone: {
+		case 1: {
 			LoaderConfig config("fat:/YSMenu.nds", "fat:/TTMenu/YSMenu.ini");
 			launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_SLASH);
 			config.option("YSMENU", "AUTO_BOOT", launchPath);
 			return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 		}
-		case EGatewayBlue: // Blue card can run wood 1.62 so this should work?
-		case ER4Original: // And clones that can run wood (no N5)
-		case ER4iGoldClone: {
+		case 6: // Blue card can run wood 1.62 so this should work?
+		case 2: // And clones that can run wood (no N5)
+		case 3: {
 			LoaderConfig config("fat:/Wfwd.dat", "fat:/_wfwd/lastsave.ini");
 			launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT0);
 			config.option("Save Info", "lastLoaded", launchPath);
 			return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 		}
-		case ESupercardDSTWO: {
+		case 7: {
 			LoaderConfig config("fat:/_dstwo/autoboot.nds", "fat:/_dstwo/autoboot.ini");
 			launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT1);
 			config.option("Dir Info", "fullName", launchPath);
 			return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 		}
-		case EAcekardRPG: // ?
-		case EAcekard2i: {
+		case 5: // ?
+		case 4: {
 			LoaderConfig config("fat:/Afwd.dat", "fat:/_afwd/lastsave.ini");
 			launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT0);
 			config.option("Save Info", "lastLoaded", launchPath);

@@ -64,7 +64,7 @@ TWLSettings::TWLSettings()
 	updateRecentlyPlayedList = true;
 	sortMethod = 0;
 
-	flashcard = EDSTTClone;
+	flashcard = 1;
 
 	slot1LaunchMethod = EDirect;
 

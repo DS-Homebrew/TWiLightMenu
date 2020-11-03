@@ -68,22 +68,22 @@ bool CheatCodelist::parse(const std::string& aFileName)
 		const char* usrcheatPath = (sdFound() || !secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
 	if (secondaryDevice && !useBootstrap) {
 		switch (flashcard) {
-			case EDSTTClone: {
+			case 1: {
 				usrcheatPath = "fat:/TTMenu/usrcheat.dat";
 				break;
 			}
-			case ER4iGoldClone:
-			case EGatewayBlue:
-			case ER4Original: {
+			case 3:
+			case 6:
+			case 2: {
 				usrcheatPath = "fat:/_wfwd/cheats/usrcheat.dat";
 				break;
 			}
-			case EAcekardRPG: // TODO: WoodRPG? Test
-			case EAcekard2i: {
+			case 5: // TODO: WoodRPG? Test
+			case 4: {
 				usrcheatPath = "fat:/_afwd/cheats/usrcheat.dat";
 				break;
 			}
-			case ESupercardDSTWO: {
+			case 7: {
 				usrcheatPath = "fat:/_dstwo/usrcheat.dat";
 				break;
 			}
@@ -537,22 +537,22 @@ void CheatCodelist::onGenerate(void)
 		const char* usrcheatPath = (sdFound() || !secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
 	if (secondaryDevice && !useBootstrap) {
 		switch (flashcard) {
-			case EDSTTClone: {
+			case 1: {
 				usrcheatPath = "fat:/TTMenu/usrcheat.dat";
 				break;
 			}
-			case ER4iGoldClone:
-			case EGatewayBlue:
-			case ER4Original: {
+			case 3:
+			case 6:
+			case 2: {
 				usrcheatPath = "fat:/_wfwd/cheats/usrcheat.dat";
 				break;
 			}
-			case EAcekardRPG: // TODO: WoodRPG? Test
-			case EAcekard2i: {
+			case 5: // TODO: WoodRPG? Test
+			case 4: {
 				usrcheatPath = "fat:/_afwd/cheats/usrcheat.dat";
 				break;
 			}
-			case ESupercardDSTWO: {
+			case 7: {
 				usrcheatPath = "fat:/_dstwo/usrcheat.dat";
 				break;
 			}

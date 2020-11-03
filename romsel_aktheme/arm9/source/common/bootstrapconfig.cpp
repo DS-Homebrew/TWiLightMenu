@@ -30,7 +30,7 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_mpuRegion = 0;
 	_ceCached = true;
 	_forceSleepPatch = (ms().forceSleepPatch
-		|| ((ms().flashcard == EDSTTClone || ms().flashcard == ER4iGoldClone) && !sys().isRegularDS());
+		|| ((ms().flashcard == 1 || ms().flashcard == 3) && !sys().isRegularDS());
 	_isHomebrew = _gametid.empty() || _sdkVersion == 0;
 	_saveSize = 0x80000;
 	_dsiMode = 0;
