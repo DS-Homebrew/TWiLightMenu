@@ -64,7 +64,7 @@ TWLSettings::TWLSettings()
 	updateRecentlyPlayedList = true;
 	sortMethod = 0;
 
-	flashcard = EDSTTClone;
+	flashcard = 0;
 
 	slot1LaunchMethod = EDirect;
 
@@ -127,6 +127,8 @@ void TWLSettings::loadSettings()
 
 	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
+
+	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
 
 	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", showNds);
 	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
@@ -233,6 +235,7 @@ void TWLSettings::saveSettings()
 	if (bothSDandFlashcard()) {
 		settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
 	}
+	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 
 	if (!gotosettings) {
 		settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);

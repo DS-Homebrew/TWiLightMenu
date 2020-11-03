@@ -149,7 +149,7 @@ void MainList::setupExtnames()
         _extnameFilter.emplace_back(std::string(".app"));
         _extnameFilter.emplace_back(std::string(".argv"));
     }
-	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
+	if (ms().flashcard == 7) {
 		_extnameFilter.emplace_back(std::string(".plg"));
 	}
     if (ms().showRvid)

@@ -48,6 +48,7 @@ TWLSettings::TWLSettings()
     secondaryDevice = false;
     fcSaveOnSd = false;
 
+	flashcard = 0;
     slot1LaunchMethod = EReboot;
 
     useBootstrap = isDSiMode();
@@ -142,6 +143,8 @@ void TWLSettings::loadSettings()
         launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
     }
 
+    flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
+
     slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
     bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
     useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
@@ -208,6 +211,7 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 
     settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
+    settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
     settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
     if (!isDSiMode()) settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 

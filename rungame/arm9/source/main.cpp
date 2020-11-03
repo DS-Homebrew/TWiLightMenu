@@ -112,6 +112,7 @@ TWL_CODE void LoadSettings(void) {
 	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 	useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 	charUnlaunchBg = unlaunchBg.c_str();
@@ -327,33 +328,38 @@ TWL_CODE int lastRunROM() {
 				bool runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 
 				std::string path;
-				if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-				 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
-					CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-					path = ReplaceAll(romPath[1], "fat:/", woodfat);
-					fcrompathini.SetString("Save Info", "lastLoaded", path);
-					fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-					return runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-				} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-					CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-					path = ReplaceAll(romPath[1], "fat:/", woodfat);
-					fcrompathini.SetString("Save Info", "lastLoaded", path);
-					fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-					return runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-				} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-					CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-					path = ReplaceAll(romPath[1], "fat:/", dstwofat);
-					fcrompathini.SetString("Dir Info", "fullName", path);
-					fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-					return runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-				} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
-						 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
-						 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
-					CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
-					path = ReplaceAll(romPath[1], "fat:/", slashchar);
-					fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
-					fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-					return runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+				switch (flashcard) {
+					case 1: {
+						CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
+						path = ReplaceAll(romPath[1], "fat:/", slashchar);
+						fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
+						fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
+						return runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+					}
+					case 6: // Blue card can run wood 1.62 so this should work?
+					case 2: // And clones that can run wood (no N5)
+					case 3: {
+						CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+						path = ReplaceAll(romPath[1], "fat:/", woodfat);
+						fcrompathini.SetString("Save Info", "lastLoaded", path);
+						fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+						return runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+					}
+					case 7: {
+						CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+						path = ReplaceAll(romPath[1], "fat:/", dstwofat);
+						fcrompathini.SetString("Dir Info", "fullName", path);
+						fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+						return runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+					}
+					case 5: // ?
+					case 4: {
+						CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+						path = ReplaceAll(romPath[1], "fat:/", woodfat);
+						fcrompathini.SetString("Save Info", "lastLoaded", path);
+						fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+						return runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+					}
 				}
 			}
 		case 2: {

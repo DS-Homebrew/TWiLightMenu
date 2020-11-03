@@ -1256,15 +1256,10 @@ void vBlankHandler() {
 				drawIcon(24, ((ms().theme == 4 || ms().theme == 5) ? 0 : dbox_Ypos) + 24, CURPOS);
 			}
 			if (dbox_selectMenu) {
+				bool noCycloDSi = isDSiMode() && ms().flashcard != 8;
 				int selIconYpos = 96;
-				if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
-					for (int i = 0; i < 4; i++) {
-						selIconYpos -= 14;
-					}
-				} else {
-					for (int i = 0; i < 3; i++) {
-						selIconYpos -= 14;
-					}
+				for (int i = 0; i < (noCycloDSi ? 4 : 3); i++) {
+					selIconYpos -= 14;
 				}
 				if (!sys().isRegularDS()) {
 					glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
@@ -1274,16 +1269,10 @@ void vBlankHandler() {
 				glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 					 &tex().cornerButtonImage()[0]); // Settings
 				selIconYpos += 28;
-				if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
-					if (ms().secondaryDevice) {
-						glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
-							 &tex().smallCartImage()[2]); // SD card
-					} else {
-						glSprite(
-							32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
-							&tex().smallCartImage()[(REG_SCFG_MC == 0x11) ? 1
-												  : 0]); // Slot-1 card
-					}
+				if (noCycloDSi) {
+					glSprite(
+						32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
+						&tex().smallCartImage()[ms().secondaryDevice ? 2 : (REG_SCFG_MC == 0x11)]);
 					selIconYpos += 28;
 				}
 				if (!ms().useGbarunner && sys().isRegularDS()) {

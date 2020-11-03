@@ -18,20 +18,20 @@ TWLSettings::TWLSettings()
     wifiLed = true;
     sdRemoveDetect = true;
     showMicroSd = false;
-	gbar2DldiAccess = false;
+    gbar2DldiAccess = false;
     showMainMenu = true;
     theme = 0;
     subtheme = 0;
     dsiMusic = 1;
 
-	showNds = true;
-	showRvid = true;
-	showNes = true;
-	showGb = true;
-	showSmsGg = true;
-	showMd = true;
-	showSnes = true;
-	updateRecentlyPlayedList = true;
+    showNds = true;
+    showRvid = true;
+    showNes = true;
+    showGb = true;
+    showSmsGg = true;
+    showMd = true;
+    showSnes = true;
+    updateRecentlyPlayedList = true;
     sortMethod = 0;
     showDirectories = true;
     showHidden = false;
@@ -42,9 +42,9 @@ TWLSettings::TWLSettings()
     secondaryAccess = false;
     previousUsedDevice = false;
     secondaryDevice = false;
-	fcSaveOnSd = false;
+    fcSaveOnSd = false;
 
-    flashcard = EDSTTClone;
+    flashcard = 0;
 
     slot1LaunchMethod = EDirect;
 

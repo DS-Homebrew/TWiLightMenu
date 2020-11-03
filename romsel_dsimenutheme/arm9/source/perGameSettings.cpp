@@ -189,7 +189,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	if (requiresDonorRom[CURPOS]) return false;
 
 	bool usingFlashcard = (!isDSiMode() && ms().secondaryDevice);
-	bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+	bool hasCycloDSi = ms().flashcard == 8;
 
 	if (((usingFlashcard || hasCycloDSi) && SDKVersion > 0x2000000 && SDKVersion < 0x2008000	// Early SDK2
 	 && (arm7size==0x25F70
@@ -324,11 +324,9 @@ void perGameSettings (std::string filename) {
 	}*/
 
 	bool showCheats = ((isDSiMode() && ms().useBootstrap)
+	// TODO: Enable
 	/*|| (ms().secondaryDevice && !ms().useBootstrap
-		&& ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)))*/
+		&& ms().flashcard != 0))*/
 	|| !ms().secondaryDevice);
 
 	firstPerGameOpShown = 0;

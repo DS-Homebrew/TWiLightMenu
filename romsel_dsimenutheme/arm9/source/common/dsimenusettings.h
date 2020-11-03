@@ -33,24 +33,28 @@ public:
 	};
 
 	/*
-		0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-		1: R4DS (Original Non-SDHC version)/ M3 Simply
-		2: R4iDSN/R4i Gold RTS/R4 Ultra
-		3: Acekard 2(i)/Galaxy Eagle/M3DS Real
-		4: Acekard RPG
-		5: Ace 3DS+/Gateway Blue Card/R4iTT
-		6: SuperCard DSTWO
+		0: Unknown
+		1: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
+		2: R4DS (Original Non-SDHC version)/ M3 Simply
+		3: R4iDSN/R4i Gold RTS/R4 Ultra
+		4: Acekard 2(i)/Galaxy Eagle/M3DS Real
+		5: Acekard RPG
+		6: Ace 3DS+/Gateway Blue Card/R4iTT
+		7: SuperCard DSTWO
+		8: CycloDS iEvolution
 	*/
 
 	enum TFlashCard
 	{
-		EDSTTClone = 0,
-		ER4Original = 1,
-		ER4iGoldClone = 2,
-		EAcekard2i = 3,
-		EAcekardRPG = 4,
-		EGatewayBlue = 5,
-		ESupercardDSTWO = 6
+		EUnknown = 0,
+		EDSTTClone = 1,
+		ER4Original = 2,
+		ER4iGoldClone = 3,
+		EAcekard2i = 4,
+		EAcekardRPG = 5,
+		EGatewayBlue = 6,
+		ESupercardDSTWO = 7,
+		ECycloDSi = 8
 	};
 
 	// Do not reorder these, just add to the end

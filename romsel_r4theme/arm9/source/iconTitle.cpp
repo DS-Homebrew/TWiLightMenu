@@ -57,6 +57,8 @@ extern int consoleModel;
 extern bool dsiWareBooter;
 extern bool secondaryDevice;
 
+extern int flashcard;
+
 extern int theme;
 extern int colorMode;
 extern bool useGbarunner;
@@ -723,7 +725,7 @@ void getGameInfo(bool isDir, const char* name)
 		}
 
 		bool usingFlashcard = (!isDSiMode() && secondaryDevice);
-		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+		bool hasCycloDSi = flashcard == 8;
 		romVersion = ndsHeader.romversion;
 		switch (ndsHeader.arm7binarySize) {
 			case 0x22B40:

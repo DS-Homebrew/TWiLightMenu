@@ -31,6 +31,7 @@
 #include "graphics/fontHandler.h"
 
 #include "common/inifile.h"
+#include "common/dsimenusettings.h"
 #include "tool/stringtool.h"
 
 #include "language.h"
@@ -96,6 +97,7 @@ int consoleModel = 0;
 	3 = New Nintendo 3DS	*/
 bool isRegularDS = true;
 bool isDSLite = false;
+int flashcard = 0;
 
 extern bool showdialogbox;
 
@@ -216,6 +218,8 @@ void LoadSettings(void) {
 	if (consoleModel < 2) {
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
 	}
+
+	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
 
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	secondaryDevice = bothSDandFlashcard() ? settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice) : flashcardFound();
@@ -664,35 +668,49 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 
 	std::string fcPath;
 	int err = 0;
-	if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
-		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-		fcPath = replaceAll(ndsPath, "fat:/", woodfat);
-		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
-		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-		fcPath = replaceAll(ndsPath, "fat:/", woodfat);
-		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
-		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-		fcPath = replaceAll(ndsPath, "fat:/", dstwofat);
-		fcrompathini.SetString("Dir Info", "fullName", fcPath);
-		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
-		CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
-		fcPath = replaceAll(ndsPath, "fat:/", slashchar);
-		fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
-		fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+
+	switch (flashcard) {
+		case 1: {
+			CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
+			fcPath = replaceAll(ndsPath, "fat:/", slashchar);
+			fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
+			fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
+			err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+			break;
+		}
+		case 6: // Blue card can run wood 1.62 so this should work?
+		case 2: // And clones that can run wood (no N5)
+		case 3: {
+			CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+			fcPath = replaceAll(ndsPath, "fat:/", woodfat);
+			fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
+			fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+			err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+			break;
+		}
+		case 7: {
+			CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+			fcPath = replaceAll(ndsPath, "fat:/", dstwofat);
+			fcrompathini.SetString("Dir Info", "fullName", fcPath);
+			fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+			err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+			break;
+		}
+		case 5: // ?
+		case 4: {
+			CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+			fcPath = replaceAll(ndsPath, "fat:/", woodfat);
+			fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
+			fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+			err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+			break;
+		}
+		default: {
+			err = 1337;
+			return;
+		}
 	}
+
 
 	char text[32];
 	snprintf(text, sizeof(text), "Start failed. Error %i", err);
@@ -1951,7 +1969,7 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+					if (flashcard == 8) {
 						// Display nothing
 					} else if (consoleModel >= 2) {
 						printSmallCentered(false, 20, "If this takes a while, press HOME,");
@@ -1988,7 +2006,7 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					clearText();
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+					if (flashcard == 8) {
 						// Display nothing
 					} else if (consoleModel >= 2) {
 						printSmallCentered(false, 20, "If this takes a while, press HOME,");
@@ -2048,10 +2066,7 @@ int main(int argc, char **argv) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", 1);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 						(forceSleepPatch
-					|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !isRegularDS)
-					|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !isRegularDS)
-					|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !isRegularDS)
-					|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS))
+					|| ((flashcard == 1 || flashcard == 3) && !isRegularDS))
 					);
 					bootstrapini.SaveIniFile(bootstrapinipath);
 
@@ -2240,7 +2255,7 @@ int main(int argc, char **argv) {
 							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 								clearText();
 								ClearBrightness();
-								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+								if (isDSiMode() && flashcard == 8) {
 									// Display nothing
 								} else if (REG_SCFG_EXT != 0 && consoleModel >= 2) {
 									printSmallCentered(false, 20, "If this takes a while, press HOME,");
@@ -2297,10 +2312,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 							(forceSleepPatch
-						|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !isRegularDS)
-						|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !isRegularDS)
-						|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !isRegularDS)
-						|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS))
+						|| ((flashcard == 1 || flashcard == 3) && !isRegularDS))
 						);
 						bootstrapini.SaveIniFile( bootstrapinipath );
 

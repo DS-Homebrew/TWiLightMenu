@@ -34,16 +34,7 @@ extern bool controlBottomBright;
 
 //bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
-//static int flashcard;
-/* Flashcard value
-	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS/R4 Ultra
-	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
-	4: Acekard RPG
-	5: Ace 3DS+/Gateway Blue Card/R4iTT
-	6: SuperCard DSTWO
-*/
+int flashcard = 0;
 
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 const char *settingsinipath = DSIMENUPP_INI;
@@ -93,8 +84,8 @@ void stop(void)
 
 char filePath[PATH_MAX];
 
-/*//---------------------------------------------------------------------------------
-void doPause(void)
+//---------------------------------------------------------------------------------
+/*void doPause(void)
 {
 	//---------------------------------------------------------------------------------
 	printf("Press start...\n");
@@ -428,34 +419,47 @@ void lastRunROM()
 			rename(savepath.c_str(), savepathFc.c_str());
 
 			std::string fcPath;
-			if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
-				CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-				fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
-				fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
-				fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-				err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-			} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-				CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-				fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
-				fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
-				fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-				err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-			} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-				CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-				fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", dstwofat);
-				fcrompathini.SetString("Dir Info", "fullName", fcPath);
-				fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-				err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-			} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
-					 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
-					 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
-				CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
-				fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", slashchar);
-				fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
-				fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-				err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+ 
+			switch (ms().flashcard) {
+				case 1: {
+					CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
+					fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", slashchar);
+					fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
+					fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
+					err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+					break;
+				}
+				case 6: // Blue card can run wood 1.62 so this should work?
+				case 2: // And clones that can run wood (no N5)
+				case 3: {
+					CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+					fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
+					fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
+					fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+					err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+					break;
+				}
+				case 7: {
+					CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+					fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", dstwofat);
+					fcrompathini.SetString("Dir Info", "fullName", fcPath);
+					fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+					err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+					break;
+				}
+				case 5: // ?
+				case 4: {
+					CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+					fcPath = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
+					fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
+					fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+					err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+					break;
+				}
+				default: {
+					err = 1337;
+					break;
+				}
 			}
 		}
 	}
@@ -708,6 +712,7 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	bs().loadSettings();
 
+
 	if (isDSiMode() && ms().consoleModel < 2) {
 		if (ms().wifiLed == -1) {
 			if (*(u8*)(0x023FFD01) == 0x13) {
@@ -845,6 +850,17 @@ int main(int argc, char **argv)
 	
 	scanKeys();
 
+	// If in DSi mode with SCFG access attempt to cut slot1 power to save battery
+	if (isDSiMode() && !sys().arm7SCFGLocked() && !ms().autostartSlot1) {
+		disableSlot1();
+	} else {
+		const int flashcard = detectFlashcard();
+		ms().flashcard = flashcard;
+		ms().flashcard = flashcard;
+		ms().saveSettings();
+		ms().saveSettings();
+	}
+
 	if (softResetParamsFound
 	 || (ms().autorun && !(keysHeld() & KEY_B))
 	 || (!ms().autorun && (keysHeld() & KEY_B)))
@@ -853,10 +869,6 @@ int main(int argc, char **argv)
 		lastRunROM();
 	}
 
-	// If in DSi mode with SCFG access attempt to cut slot1 power to save battery
-	if (isDSiMode() && !sys().arm7SCFGLocked() && !ms().autostartSlot1) {
-		disableSlot1();
-	}
 
 	if (!softResetParamsFound && ms().autostartSlot1 && isDSiMode() && REG_SCFG_MC != 0x11 && !flashcardFound() && !(keysHeld() & KEY_SELECT)) {
 		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
