@@ -34,16 +34,7 @@ extern bool controlBottomBright;
 
 //bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
-//static int flashcard;
-/* Flashcard value
-	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS/R4 Ultra
-	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
-	4: Acekard RPG
-	5: Ace 3DS+/Gateway Blue Card/R4iTT
-	6: SuperCard DSTWO
-*/
+int flashcard = 0;
 
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 const char *settingsinipath = DSIMENUPP_INI;
@@ -93,8 +84,8 @@ void stop(void)
 
 char filePath[PATH_MAX];
 
-/*//---------------------------------------------------------------------------------
-void doPause(void)
+//---------------------------------------------------------------------------------
+/*void doPause(void)
 {
 	//---------------------------------------------------------------------------------
 	printf("Press start...\n");
@@ -721,6 +712,7 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	bs().loadSettings();
 
+
 	if (isDSiMode() && ms().consoleModel < 2) {
 		if (ms().wifiLed == -1) {
 			if (*(u8*)(0x023FFD01) == 0x13) {
@@ -745,8 +737,6 @@ int main(int argc, char **argv)
 	if (flashcardFound()) {
 		mkdir("fat:/_gba", 0777);
 		mkdir("fat:/_nds/TWiLightMenu/gamesettings", 0777);
-
-		detectFlashcard();
 	}
 
 	runGraphicIrq();
@@ -860,6 +850,17 @@ int main(int argc, char **argv)
 	
 	scanKeys();
 
+	// If in DSi mode with SCFG access attempt to cut slot1 power to save battery
+	if (isDSiMode() && !sys().arm7SCFGLocked() && !ms().autostartSlot1) {
+		disableSlot1();
+	} else {
+		const int flashcard = detectFlashcard();
+		ms().flashcard = flashcard;
+		ms().flashcard = flashcard;
+		ms().saveSettings();
+		ms().saveSettings();
+	}
+
 	if (softResetParamsFound
 	 || (ms().autorun && !(keysHeld() & KEY_B))
 	 || (!ms().autorun && (keysHeld() & KEY_B)))
@@ -868,10 +869,6 @@ int main(int argc, char **argv)
 		lastRunROM();
 	}
 
-	// If in DSi mode with SCFG access attempt to cut slot1 power to save battery
-	if (isDSiMode() && !sys().arm7SCFGLocked() && !ms().autostartSlot1) {
-		disableSlot1();
-	}
 
 	if (!softResetParamsFound && ms().autostartSlot1 && isDSiMode() && REG_SCFG_MC != 0x11 && !flashcardFound() && !(keysHeld() & KEY_SELECT)) {
 		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {

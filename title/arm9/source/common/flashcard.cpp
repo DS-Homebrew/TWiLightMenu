@@ -94,6 +94,9 @@ TWL_CODE void twl_flashcardInit(void) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloIEvo.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} */
+		else {
+			disableSlot1();
+		}
 	}
 }
 
@@ -103,21 +106,19 @@ void flashcardInit(void) {
 	}
 }
 
-void detectFlashcard() {
+int detectFlashcard() {
 	if (!memcmp(io_dldi_data->friendlyName, "TTCARD", 6)
 		|| !memcmp(io_dldi_data->friendlyName, "DSTT", 4)
 		|| !memcmp(io_dldi_data->friendlyName, "DEMON", 5))
-		ms().flashcard = FC::EDSTTClone;
-	else if (!memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26)
+		return FC::EDSTTClone;
+	if (!memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26)
 		|| !memcmp(io_dldi_data->friendlyName, "R4TF", 4))
-		ms().flashcard = FC::ER4Original;
-	else if (!memcmp(io_dldi_data->friendlyName, "R4iDSN", 6))
-	      ms().flashcard = FC::ER4iGoldClone;
-	else if (!memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB))
-		ms().flashcard = FC::EAcekard2i;
-	else if (!memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD))
-		ms().flashcard = FC::ESupercardDSTWO;
-	else
-		ms().flashcard = FC::EUnknown;
-	ms().saveSettings();
+		return FC::ER4Original;
+	if (!memcmp(io_dldi_data->friendlyName, "R4iDSN", 6))
+	      return FC::ER4iGoldClone;
+	if (!memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB))
+		return FC::EAcekard2i;
+	if (!memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD))
+		return FC::ESupercardDSTWO;
+	return FC::EUnknown;
 }
