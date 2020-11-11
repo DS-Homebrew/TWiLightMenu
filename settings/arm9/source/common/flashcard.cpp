@@ -91,6 +91,10 @@ TWL_CODE void twl_flashcardInit(void) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloIEvo.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} */
+
+		if (!flashcardFound()) {
+			disableSlot1();
+		}
 	}
 }
 
