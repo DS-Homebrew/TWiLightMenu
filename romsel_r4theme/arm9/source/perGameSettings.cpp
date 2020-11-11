@@ -302,6 +302,9 @@ void perGameSettings (std::string filename) {
 	}
 
 	u32 romSizeLimit = (consoleModel > 0 ? 0x01800000 : 0x800000);
+	if (SDKVersion > 0x5000000) {
+		romSizeLimit = (consoleModel > 0 ? 0x01000000 : 0);
+	}
 	u32 romSizeLimit2 = (consoleModel > 0 ? 0x01C00000 : 0xC00000);
 
 	bool showPerGameSettings =
