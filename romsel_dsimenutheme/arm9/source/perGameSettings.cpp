@@ -618,7 +618,7 @@ void perGameSettings (std::string filename) {
 				if (perGameSettings_expandRomSpace == -1) {
 					printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
 				} else if (perGameSettings_expandRomSpace == 2) {
-					printSmall(false, 256-24, perGameOpYpos, STR_YES + "+512KB", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, "Y+512KB", Alignment::right);
 				} else if (perGameSettings_expandRomSpace == 1) {
 					printSmall(false, 256-24, perGameOpYpos, STR_YES, Alignment::right);
 				} else {
