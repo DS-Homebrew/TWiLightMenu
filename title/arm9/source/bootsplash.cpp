@@ -21,11 +21,13 @@ extern int screenBrightness;
 
 bool cartInserted;
 
+extern char soundBank[];
+
 mm_sound_effect dsiboot;
 mm_sound_effect proceed;
 
 void splashSoundInit() {
-	mmInitDefaultMem((mm_addr)0x02FA0000);
+	mmInitDefaultMem((mm_addr)soundBank);
 
 	mmLoadEffect( SFX_DSIBOOT );
 	mmLoadEffect( SFX_SELECT );

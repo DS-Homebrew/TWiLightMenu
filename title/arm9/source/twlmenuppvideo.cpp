@@ -350,9 +350,11 @@ void twlMenuVideo_loadTopGraphics(void) {
 				);
 }
 
+extern char soundBank[];
+
 void BootJingleTwlMenu() {
 	
-	mmInitDefaultMem((mm_addr)0x02FA0000);
+	mmInitDefaultMem((mm_addr)soundBank);
 
 	mmLoadEffect( SFX_TWLMENUVIDEO );
 
