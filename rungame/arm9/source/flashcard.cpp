@@ -6,8 +6,7 @@
 
 #include "inifile.h"
 #include "dldi-include.h"
-
-static sNDSHeader nds;
+#include "read_card.h"
 
 extern const char* settingsinipath;
 
@@ -70,18 +69,18 @@ TWL_CODE DLDI_INTERFACE* dldiLoadFromBin (const u8 dldiAddr[]) {
 	return device;
 }
 
-TWL_CODE bool UpdateCardInfo(sNDSHeader* nds, char* gameid, char* gamename) {
-	cardReadHeader((uint8*)nds);
-	memcpy(gameid, nds->gameCode, 4);
+/*TWL_CODE bool UpdateCardInfo(char* gameid, char* gamename) {
+	cardReadHeader((uint8*)&ndsCardHeader);
+	memcpy(gameid, ndsCardHeader.gameCode, 4);
 	gameid[4] = 0x00;
-	memcpy(gamename, nds->gameTitle, 12);
+	memcpy(gamename, ndsCardHeader.gameTitle, 12);
 	gamename[12] = 0x00;
 	return true;
 }
 
 TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
 	iprintf("Game id: %s\nName:    %s", gameid, gamename);
-}
+}*/
 
 TWL_CODE void twl_flashcardInit(void) {
 	if (REG_SCFG_MC != 0x11) {
@@ -92,27 +91,19 @@ TWL_CODE void twl_flashcardInit(void) {
 		}
 
 		// Reset Slot-1 to allow reading title name and ID
-		sysSetCardOwner (BUS_OWNER_ARM9);
-		disableSlot1();
-		for(int i = 0; i < 25; i++) { swiWaitForVBlank(); }
-		enableSlot1();
-		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
+		cardInit(false);
 
-		nds.gameCode[0] = 0;
-		nds.gameTitle[0] = 0;
-		char gamename[13];
-		char gameid[5];
+		//char gamename[13];
+		//char gameid[5];
 
 		/*fifoSendValue32(FIFO_USER_04, 1);
 		for (int i = 0; i < 10; i++) {
 			swiWaitForVBlank();
 		}
 		memcpy(&nds, (void*)0x02000000, sizeof(nds));*/
-		UpdateCardInfo(&nds, &gameid[0], &gamename[0]);
+		//UpdateCardInfo(&gameid[0], &gamename[0]);
 
-		/*SetBrightness(0, 0);
-		SetBrightness(1, 0);
-		consoleDemoInit();
+		/*consoleDemoInit();
 		iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
 		ShowGameInfo(gameid, gamename);
 
@@ -135,10 +126,10 @@ TWL_CODE void twl_flashcardInit(void) {
 		} else if (!memcmp(gamename, "D!S!XTREME", 12) && !memcmp(gameid, "AYIE", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dsx.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else*/ if (!memcmp(gamename, "QMATETRIAL", 9) || !memcmp(gamename, "R4DSULTRA", 9)) {
+		} else*/ if (!memcmp(ndsCardHeader.gameTitle, "QMATETRIAL", 9) || !memcmp(ndsCardHeader.gameTitle, "R4DSULTRA", 9)) {
 			io_dldi_data = dldiLoadFromBin(r4idsn_sd_dldi);
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gameid, "ACEK", 4) || !memcmp(gameid, "YCEP", 4) || !memcmp(gameid, "AHZH", 4) || !memcmp(gameid, "CHPJ", 4) || !memcmp(gameid, "ADLP", 4)) {
+		} else if (!memcmp(ndsCardHeader.gameCode, "ACEK", 4) || !memcmp(ndsCardHeader.gameCode, "YCEP", 4) || !memcmp(ndsCardHeader.gameCode, "AHZH", 4) || !memcmp(ndsCardHeader.gameCode, "CHPJ", 4) || !memcmp(ndsCardHeader.gameCode, "ADLP", 4)) {
 			io_dldi_data = dldiLoadFromBin(ak2_sd_dldi);
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} /*else if (!memcmp(gameid, "ALXX", 4)) {
