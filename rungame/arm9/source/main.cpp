@@ -173,6 +173,8 @@ bool extention(const std::string& filename, const char* ext) {
 	}
 }
 
+std::vector<char*> argarray;
+
 TWL_CODE int lastRunROM() {
 	LoadSettings();
 
@@ -196,9 +198,9 @@ TWL_CODE int lastRunROM() {
 		}
 	}*/
 
-	vector<char*> argarray;
+	argarray.push_back(strdup("null"));
+
 	if (launchType[secondaryDevice] > 3) {
-		argarray.push_back(strdup("null"));
 		argarray.push_back(strdup(homebrewArg[secondaryDevice].c_str()));
 	}
 
@@ -228,8 +230,6 @@ TWL_CODE int lastRunROM() {
 				{
 					filename.erase(0, last_slash_idx + 1);
 				}
-
-				argarray.push_back(strdup(filename.c_str()));
 
 				loadPerGameSettings(filename);
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
@@ -370,7 +370,7 @@ TWL_CODE int lastRunROM() {
 				filename.erase(0, last_slash_idx + 1);
 			}
 
-			argarray.push_back((char*)romPath[secondaryDevice].c_str());
+			argarray.at(0) = (char*)romPath[secondaryDevice].c_str();
 
 			loadPerGameSettings(filename);
 
@@ -461,6 +461,10 @@ int main(int argc, char **argv) {
 	}
 
 	flashcardInit();
+
+	if (!flashcardFound()) {
+		disableSlot1();
+	}
 
 	fifoWaitValue32(FIFO_USER_06);
 
