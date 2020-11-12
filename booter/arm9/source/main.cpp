@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 	fwrite((void*)0x02480000, 1, 0x400, deviceList);
 	fclose(deviceList);*/
 
-	bool runGame = (strncmp((char*)0x02FFFE0C, "SRLN", 4) == 0);
+	bool runGame = (strncmp((char*)0x02FFFE0C, "SLRN", 4) == 0);
 
 	const char* srldrPath = (runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" : "sd:/_nds/TWiLightMenu/main.srldr");
 
