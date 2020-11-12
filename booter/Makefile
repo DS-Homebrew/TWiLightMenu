@@ -120,23 +120,30 @@ export GAME_TITLE := $(TARGET)
 
 .PHONY: bootloader bootstub clean arm7/$(TARGET).elf arm9/$(TARGET).elf
 
-all:	bootloader bootstub $(TARGET).nds
+all:	bootloader bootstub $(TARGET).nds $(TARGET)_rungame.nds
 
 dist:	all
 	@mkdir -p ../7zfile/debug
 	@mkdir -p "../7zfile/DSi&3DS - SD card users"
 	@cp "$(TARGET).nds" "../7zfile/DSi&3DS - SD card users/BOOT.NDS"
 	@mkdir -p "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content"
+	@mkdir -p "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content"
 	@cp $(TARGET).nds "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
+	@cp $(TARGET)_rungame.nds "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
 	@cp $(TARGET).arm7.elf ../7zfile/debug/$(TARGET).arm7.elf
 	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
 			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004 -a 00000138 -b icon.bmp "TWiLight Menu++;RocketRobz"
-			
+
+$(TARGET)_rungame.nds:	$(TARGET).arm7 $(TARGET).arm9
+	ndstool	-c $(TARGET)_rungame.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
+			-g SRLN 01 "TWLMENUPP-LR" -z 80040000 -u 00030015 -a 00000138 -b icon.bmp "TWiLight Menu++;Last-run ROM;RocketRobz"
+
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
 		python2 ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch
+		python2 ../patch_ndsheader_dsiware.py $(TARGET)_rungame.nds --twlTouch
 endif
 
 $(TARGET).arm7: arm7/$(TARGET).elf

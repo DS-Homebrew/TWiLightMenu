@@ -72,17 +72,13 @@ int main(int argc, char **argv) {
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
 	
-	bool graphicsInited = false;
-
 	extern const DISC_INTERFACE __my_io_dsisd;
 
 	if (!fatMountSimple("sd", &__my_io_dsisd)) {
-		if(!graphicsInited) {
-			graphicsInit();
-			fontInit();
-			graphicsInited = true;
-			fadeType = true;
-		}
+		graphicsInit();
+		fontInit();
+		fadeType = true;
+
 		clearText();
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
@@ -94,28 +90,24 @@ int main(int argc, char **argv) {
 	fwrite((void*)0x02480000, 1, 0x400, deviceList);
 	fclose(deviceList);*/
 
-	bool srldrFound = (access("sd:/_nds/TWiLightMenu/main.srldr", F_OK) == 0);
+	bool runGame = (strncmp((char*)0x02FFFE0C, "SRLN", 4) == 0);
 
-	int err = 0;
-	if (srldrFound) {
-		err = runNdsFile ("sd:/_nds/TWiLightMenu/main.srldr", 0, NULL);
-	}
+	const char* srldrPath = (runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" : "sd:/_nds/TWiLightMenu/main.srldr");
 
-	if(!graphicsInited) {
-		graphicsInit();
-		fontInit();
-		graphicsInited = true;
-		fadeType = true;
-	}
+	int err = runNdsFile (srldrPath, 0, NULL);
+
+	graphicsInit();
+	fontInit();
+	fadeType = true;
 
 	clearText();
-	if (!srldrFound) {
+	if (err == 1) {
 		printSmall(false, 4, 4, "sd:/_nds/TWiLightMenu/");
-		printSmall(false, 4, 12, "main.srldr not found.");
+		printSmall(false, 4, 12, runGame ? "resetgame.srldr not found." : "main.srldr not found.");
 	} else {
 		char errorText[16];
 		snprintf(errorText, sizeof(errorText), "Error %i", err);
-		printSmall(false, 4, 4, "Unable to start main.srldr");
+		printSmall(false, 4, 4, runGame ? "Unable to start resetgame.srldr" : "Unable to start main.srldr");
 		printSmall(false, 4, 12, errorText);
 	}
 	printSmall(false, 4, 28, "Press B to return to menu.");

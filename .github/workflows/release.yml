@@ -36,13 +36,10 @@ jobs:
           cd booter/
           chmod +x make_cia
           ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          ./make_cia --srl="booter_rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
           mkdir -p "../7zfile/3DS - CFW users/"
           cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
-
-          cd ../rungame/
-          chmod +x make_cia
-          ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
-          cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+          cp "booter_rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
 
           echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
           echo ::set-output name=commit_hash::$(git log --format=%h -1)
