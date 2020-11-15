@@ -53,6 +53,7 @@
 		"YNP",	// Need for Speed: ProStreet
 		"A2D",	// New Super Mario Bros.
 		"BSK",	// Nine Hours, Nine Persons, Nine Doors
+		"AH5",	// Over the Hedge
 		"CUP",	// Peppa Pig: The Game
 		"A8N",	// Planet Puzzle League
 		"YFY",	// Pokemon Mystery Dungeon: Explorers of Darkness
