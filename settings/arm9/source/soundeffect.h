@@ -105,12 +105,13 @@ class SoundEffect
 				return;	// Do not play music if using SEGA Saturn theme
 			}
 			// Play settings music
-			mmSetModuleVolume(1000);
 			if (currentTheme == 1 || currentTheme == 5) {
 				mmLoad(MOD_SETTINGS3D);
+				mmSetModuleVolume(1000);
 				mmStart(MOD_SETTINGS3D, MM_PLAY_LOOP);
 			} else {
 				mmLoad(MOD_SETTINGS);
+				mmSetModuleVolume(500);
 				mmSetModuleTempo(1900);
 				mmStart(MOD_SETTINGS, MM_PLAY_LOOP);
 			}
