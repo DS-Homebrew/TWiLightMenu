@@ -30,7 +30,6 @@ class SoundEffect
         mmLoadEffect(SFX_BACK);
         mmLoadEffect(SFX_SATURNBACK);
         mmLoadEffect(SFX_SWITCH);
-        mmLoadEffect(SFX_SETTINGS);
 
         snd_launch = {
             {SFX_LAUNCH},            // id
@@ -95,34 +94,17 @@ class SoundEffect
             255,                     // volume
             128,                     // panning
         };
-        mus_settings = {
-            {SFX_SETTINGS},          // id
-            (int)(1.0f * (1 << 10)), // rate
-            0,                       // handle
-            255,                     // volume
-            128,                     // panning
-        };
     }
 
     void playBgMusic()
     {
         if (!music)
         {
+			mmLoad(MOD_SETTINGS);
+			mmSetModuleVolume(500);
+			mmSetModuleTempo(1900);
             music = true;
-            mmEffectEx(&mus_settings); // Play settings music
-        }
-    }
-
-    void tickBgMusic()
-    {
-        if (music)
-        {
-            counter++;
-            if (counter >= 60 * 25)
-            { // Length of music file in seconds (60*ss)
-                mmEffectEx(&mus_settings);
-                counter = 0;
-            }
+			mmStart(MOD_SETTINGS, MM_PLAY_LOOP); // Play settings music
         }
     }
 
@@ -147,7 +129,6 @@ class SoundEffect
     mm_sound_effect snd_back;
     mm_sound_effect snd_saturn_back;
     mm_sound_effect snd_switch;
-    mm_sound_effect mus_settings;
 
   private:
     bool music;

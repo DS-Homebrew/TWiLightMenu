@@ -24,7 +24,6 @@
 #include "common/dsimenusettings.h"
 #include "common/tonccpy.h"
 #include "fontHandler.h"
-#include "soundeffect.h"
 
 #include "top_bg.h"
 #include "top_bg_wide.h"
@@ -154,10 +153,6 @@ void vBlankHandler()
 	if (renderFrame) {
 		SetBrightness(0, currentTheme == 4 ? -screenBrightness : screenBrightness);
 		SetBrightness(1, currentTheme == 4 ? -screenBrightness : screenBrightness);
-	}
-
-	if (currentTheme != 4) {
-		snd().tickBgMusic();
 	}
 
 	updateText(false);
