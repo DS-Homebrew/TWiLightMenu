@@ -98,13 +98,23 @@ class SoundEffect
 
     void playBgMusic()
     {
+		extern int currentTheme;
         if (!music)
         {
-			mmLoad(MOD_SETTINGS);
+			if (currentTheme == 4) {
+				return;	// Do not play music if using SEGA Saturn theme
+			}
+			// Play settings music
 			mmSetModuleVolume(500);
-			mmSetModuleTempo(1900);
+			if (currentTheme == 1 || currentTheme == 5) {
+				mmLoad(MOD_SETTINGS3D);
+				mmStart(MOD_SETTINGS3D, MM_PLAY_LOOP);
+			} else {
+				mmLoad(MOD_SETTINGS);
+				mmSetModuleTempo(1900);
+				mmStart(MOD_SETTINGS, MM_PLAY_LOOP);
+			}
             music = true;
-			mmStart(MOD_SETTINGS, MM_PLAY_LOOP); // Play settings music
         }
     }
 

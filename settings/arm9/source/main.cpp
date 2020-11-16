@@ -1109,7 +1109,7 @@ int main(int argc, char **argv)
 	//	stop();
 	while (1)
 	{
-		if (!gui().isExited() && currentTheme != 4)
+		if (!gui().isExited())
 		{
 			snd().playBgMusic();
 		}
