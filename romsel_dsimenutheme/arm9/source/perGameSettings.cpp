@@ -256,6 +256,7 @@ void perGameSettings (std::string filename) {
 		showdialogbox = true;
 	}
 	clearText();
+	updateText(false);
 	
 	snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS+1)+PAGENUM*40, file_count);
 	
@@ -635,6 +636,7 @@ void perGameSettings (std::string filename) {
 		} else {	// Per-game settings for retail/commercial games
 			printSmall(false, 240, botRowY, showCheats ? STR_X_CHEATS_B_BACK : STR_B_BACK, Alignment::right);
 		}
+		updateText(false);
 		do {
 			scanKeys();
 			pressed = keysDown();
@@ -853,6 +855,7 @@ void perGameSettings (std::string filename) {
 	} else {
 		clearText();
 	}
+	updateText(false);
 
 	keysSetRepeat(10, 2); // Reset key repeat
 }

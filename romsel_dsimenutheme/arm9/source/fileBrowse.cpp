@@ -454,6 +454,7 @@ void displayNowLoading(void) {
 			}
 		}
 	}
+	updateText(false);
 	nowLoadingDisplaying = true;
 	while (!screenFadedIn()) 
 	{
@@ -683,6 +684,7 @@ void switchDevice(void) {
 		showSTARTborder = false;
 		stopSoundPlayed = false;
 		clearText();
+		updateText(false);
 		ms().saveSettings();
 		settingsChanged = false;
 		if (ms().theme == 4) {
@@ -789,6 +791,7 @@ void launchGba(void) {
 			if (err == 1) {
 				printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 			}
+			updateText(false);
 			stop();
 		}
 	} else {
@@ -817,6 +820,7 @@ void smsWarning(void) {
 	}
 	printSmall(false, 0, 64, STR_SMS_WARNING, Alignment::center);
 	printSmall(false, 240, 160, STR_A_OK, Alignment::right);
+	updateText(false);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -837,6 +841,7 @@ void smsWarning(void) {
 			swiWaitForVBlank();
 		}
 		clearText();
+		updateText(false);
 		currentBg = 0;
 		displayGameIcons = true;
 		fadeType = true;
@@ -844,6 +849,7 @@ void smsWarning(void) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 	} else {
 		clearText();
+		updateText(false);
 		for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 }
@@ -866,6 +872,7 @@ void mdRomTooBig(void) {
 		showdialogbox = true;
 	}
 	clearText();
+	updateText(false);
 	if (ms().theme == 4) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 		snd().playWrong();
@@ -967,10 +974,12 @@ void mdRomTooBig(void) {
 	} else {
 		clearText();
 	}
+	updateText(false);
 }
 
 void ramDiskMsg(const char *filename) {
 	clearText();
+	updateText(false);
 	snd().playWrong();
 	if (ms().theme != 4) {
 		dbox_showIcon = true;
@@ -994,6 +1003,7 @@ void ramDiskMsg(const char *filename) {
 	printSmall(false, 16, 66, dirContName);
 	printSmall(false, 0, (ms().theme == 4 ? 24 : 112), STR_RAM_DISK_REQUIRED, Alignment::center);
 	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
+	updateText(false);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1009,6 +1019,7 @@ void ramDiskMsg(const char *filename) {
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	clearText();
+	updateText(false);
 	if (ms().theme == 5) {
 		dbox_showIcon = false;
 	}
@@ -1021,6 +1032,7 @@ void ramDiskMsg(const char *filename) {
 
 void dsiBinariesMissingMsg(const char *filename) {
 	clearText();
+	updateText(false);
 	snd().playWrong();
 	if (ms().theme != 4) {
 		dbox_showIcon = true;
@@ -1044,6 +1056,7 @@ void dsiBinariesMissingMsg(const char *filename) {
 	}
 	printSmall(false, 0, (ms().theme == 4 ? 8 : 96), STR_DSIBINARIES_MISSING, Alignment::center);
 	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
+	updateText(false);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1067,6 +1080,7 @@ void dsiBinariesMissingMsg(const char *filename) {
 	} else {
 		showdialogbox = false;
 	}
+	updateText(false);
 }
 
 void donorRomMsg(const char *filename) {
@@ -1112,6 +1126,7 @@ void donorRomMsg(const char *filename) {
 			break;
 	}
 	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
+	updateText(false);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1135,6 +1150,7 @@ void donorRomMsg(const char *filename) {
 	} else {
 		showdialogbox = false;
 	}
+	updateText(false);
 }
 
 bool checkForCompatibleGame(const char *filename) {
@@ -1189,6 +1205,7 @@ bool checkForCompatibleGame(const char *filename) {
 	titleUpdate(false, filename, CURPOS);
 	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG, Alignment::center);
 	printSmall(false, 0, 160, STR_A_IGNORE_B_DONT_LAUNCH, Alignment::center);
+	updateText(false);
 	int pressed = 0;
 	while (1) {
 		scanKeys();
@@ -1224,6 +1241,7 @@ bool checkForCompatibleGame(const char *filename) {
 			swiWaitForVBlank();
 		}
 		clearText();
+		updateText(false);
 		currentBg = 0;
 		displayGameIcons = true;
 		fadeType = true;
@@ -1233,6 +1251,7 @@ bool checkForCompatibleGame(const char *filename) {
 		}
 	} else {
 		clearText();
+		updateText(false);
 		for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
@@ -1260,6 +1279,7 @@ bool selectMenu(void) {
 		showdialogbox = true;
 	}
 	clearText();
+	updateText(false);
 	if (!rocketVideo_playVideo || ms().showBoxArt)
 		clearBoxArt(); // Clear box art
 	boxArtLoaded = false;
@@ -1333,6 +1353,7 @@ bool selectMenu(void) {
 			textYpos += 28;
 		}
 		printSmall(false, 0, (ms().theme == 4 ? 164 : 160), STR_SELECT_B_BACK_A_SELECT, Alignment::center);
+		updateText(false);
 		u8 current_SCFG_MC = REG_SCFG_MC;
 		do {
 			scanKeys();
@@ -1409,6 +1430,7 @@ bool selectMenu(void) {
 		clearText();
 		inSelectMenu = false;
 	}
+	updateText(false);
 	return false;
 }
 
@@ -1569,6 +1591,7 @@ static bool previousPage(void) {
 		showSTARTborder = false;
 		stopSoundPlayed = false;
 		clearText();
+		updateText(false);
 		ms().saveSettings();
 		settingsChanged = false;
 		displayNowLoading();
@@ -1611,6 +1634,7 @@ static bool nextPage(void) {
 		showSTARTborder = false;
 		stopSoundPlayed = false;
 		clearText();
+		updateText(false);
 		ms().saveSettings();
 		settingsChanged = false;
 		displayNowLoading();
@@ -1655,6 +1679,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 			swiWaitForVBlank();
 		}
 		clearText(false);
+		updateText(false);
 		snd().updateStream();
 		waitForFadeOut();
 		bool gameTapped = false;
@@ -1730,6 +1755,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
 					printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
 				}
+				updateText(false);
 				buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
 				buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
 				checkSdEject();
@@ -1810,6 +1836,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				showSTARTborder = false;
 				currentBg = 2;
 				clearText();
+				updateText(false);
 				mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 					  0777);
 				movingApp = (PAGENUM * 40) + (CURPOS);
@@ -1943,6 +1970,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							}
 							reloadIconPalettes();
 							clearText();
+							updateText(false);
 						} else {
 							snd().playWrong();
 						}
@@ -1977,6 +2005,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							}
 							reloadIconPalettes();
 							clearText();
+							updateText(false);
 						} else {
 							snd().playWrong();
 						}
@@ -2125,6 +2154,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						}
 					} else {
 						clearText();
+						updateText(false);
 						currentBg = 0;
 					}
 					prevPos = CURPOS;
@@ -2442,6 +2472,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
 							printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
 						}
+						updateText(false);
 					}
 					prevTouch2 = prevTouch1;
 					prevTouch1 = touch;
@@ -2505,6 +2536,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					showSTARTborder = false;
 					stopSoundPlayed = false;
 					clearText();
+					updateText(false);
 					chdir(entry->name.c_str());
 					char buf[256];
 					ms().romfolder[ms().secondaryDevice] = std::string(getcwd(buf, 256));
@@ -2513,6 +2545,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					return "null";
 				} else if (isDSiWare[CURPOS] && !isDSiMode() && !sdFound()) {
 					clearText();
+					updateText(false);
 					snd().playWrong();
 					if (ms().theme != 4) {
 						dbox_showIcon = true;
@@ -2527,6 +2560,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					int yPos = (ms().theme == 4 ? 24 : 112);
 					printSmall(false, 0, yPos, isDSiMode() ? STR_CANNOT_LAUNCH_WITHOUT_SD : STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center);
 					printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
+					updateText(false);
 					pressed = 0;
 					do {
 						scanKeys();
@@ -2542,6 +2576,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));
 					clearText();
+					updateText(false);
 					if (ms().theme == 5) {
 						dbox_showIcon = false;
 					}
@@ -2617,6 +2652,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							showdialogbox = true;
 						}
 						clearText();
+						updateText(false);
 						if (ms().theme == 4) {
 							while (!screenFadedIn()) { swiWaitForVBlank(); }
 							dbox_showIcon = true;
@@ -2633,6 +2669,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							printSmall(false, 0, 72, STR_AP_USE_LATEST, Alignment::center);
 						}
 						printSmall(false, 0, 160, STR_B_A_OK_X_DONT_SHOW, Alignment::center);
+						updateText(false);
 						pressed = 0;
 						while (1) {
 							scanKeys();
@@ -2670,6 +2707,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 								swiWaitForVBlank();
 							}
 							clearText();
+							updateText(false);
 							currentBg = 0;
 							displayGameIcons = true;
 							fadeType = true;
@@ -2679,6 +2717,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							}
 						} else {
 							clearText();
+							updateText(false);
 							for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
 								snd().updateStream();
 								swiWaitForVBlank();
@@ -2712,6 +2751,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							currentBg = 0;
 							showSTARTborder = false;
 							clearText(false); // Clear title
+							updateText(false);
 
 							fadeSpeed = false; // Slow fade speed
 							for (int i = 0; i < 5; i++) {
@@ -2739,9 +2779,11 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							tex().clearTopScreen();
 						}
 						clearText();
+						updateText(false);
 
 						if(ms().updateRecentlyPlayedList) {
 							printLarge(false, 0, (ms().theme == 4 ? 72 : 88), STR_NOW_SAVING, Alignment::center);
+							updateText(false);
 							if (ms().theme == 5) {
 								displayGameIcons = false;
 								showProgressIcon = true;
@@ -2755,6 +2797,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							}
 
 							printSmall(false, 0, 20, STR_IF_CRASH_DISABLE_RECENT, Alignment::center);
+							updateText(false);
 
 							mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 						  0777);
@@ -2789,6 +2832,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 								}
 							}
 							clearText();
+							updateText(false);
 						}
 
 						// Return the chosen file
@@ -2894,6 +2938,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				showSTARTborder = false;
 				stopSoundPlayed = false;
 				clearText();
+				updateText(false);
 				chdir("..");
 				char buf[256];
 
@@ -2921,6 +2966,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					showdialogbox = true;
 				}
 				clearText();
+				updateText(false);
 				if (ms().theme == 4) {
 					while (!screenFadedIn()) { swiWaitForVBlank(); }
 					dbox_showIcon = true;
@@ -2954,6 +3000,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					else
 						printSmall(false, 0, 112, STR_ARE_YOU_SURE_DELETE_HIDE, Alignment::center);
 				}
+				updateText(false);
 				for (int i = 0; i < 90; i++) {
 					snd().updateStream();
 					swiWaitForVBlank();
@@ -2963,6 +3010,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				} else {
 					printSmall(false, 240, 160, (unHide ? STR_Y_UNHIDE : STR_Y_HIDE) + "  " + STR_A_DEL + "  " + STR_B_NO, Alignment::right);
 				}
+				updateText(false);
 				while (1) {
 					do {
 						scanKeys();
@@ -2999,6 +3047,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						showSTARTborder = false;
 						stopSoundPlayed = false;
 						clearText();
+						updateText(false);
 						showdialogbox = false;
 						dbox_showIcon = false;
 						ms().saveSettings();
@@ -3038,6 +3087,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						showSTARTborder = false;
 						stopSoundPlayed = false;
 						clearText();
+						updateText(false);
 						showdialogbox = false;
 						dbox_showIcon = false;
 						ms().saveSettings();
@@ -3055,12 +3105,14 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						swiWaitForVBlank();
 					}
 					clearText();
+					updateText(false);
 					currentBg = 0;
 					displayGameIcons = true;
 					fadeType = true;
 					if (ms().theme == 4) snd().playStartup();
 				} else {
 					clearText();
+					updateText(false);
 					for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 				}
 				dbox_showIcon = false;
@@ -3120,6 +3172,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					if (ms().showSelectMenu) {
 						if (selectMenu()) {
 							clearText();
+							updateText(false);
 							showdialogbox = false;
 							dbox_selectMenu = false;
 							if (ms().theme == 4) currentBg = 0;

@@ -1413,7 +1413,6 @@ void vBlankHandler() {
 	// 	launchDotDoFrameChange = !launchDotDoFrameChange;
 
 	bottomBgRefresh(); // Refresh the background image on vblank
-	updateText(false);
 }
 
 void loadPhoto(const std::string &path);

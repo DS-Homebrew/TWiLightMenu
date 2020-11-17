@@ -313,6 +313,7 @@ void CheatCodelist::selectCheats(std::string filename)
 
   printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
   printSmall(false, 0, 100, STR_LOADING, Alignment::center);
+  updateText(false);
   
   parse(filename);
 
@@ -325,6 +326,7 @@ void CheatCodelist::selectCheats(std::string filename)
     printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
     printSmall(false, 0, 100, STR_NO_CHEATS_FOUND, Alignment::center);
     printSmall(false, 0, 160, STR_B_BACK, Alignment::center);
+	updateText(false);
 
     while(1) {
       scanKeys();
@@ -365,6 +367,7 @@ void CheatCodelist::selectCheats(std::string filename)
 
     clearText();
     drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition);
+	updateText(false);
 
     do {
       scanKeys();
@@ -435,6 +438,7 @@ void CheatCodelist::selectCheats(std::string filename)
       clearText();
       printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
       printSmall(false, 0, 100, STR_SAVING, Alignment::center);
+	  updateText(false);
       onGenerate();
       break;
     } else if(pressed & KEY_Y) {
@@ -485,6 +489,8 @@ void CheatCodelist::selectCheats(std::string filename)
 
         // Print 'Back' text
         printSmall(false, 0, 160, STR_B_BACK, Alignment::center);
+
+		updateText(false);
         while(1) {
           scanKeys();
           pressed = keysDown();

@@ -780,6 +780,7 @@ int main(int argc, char **argv) {
 		printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 		printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
 		printSmall(false, 0, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER, Alignment::center);
+		updateText(false);
 		for (int i = 0; i < 15; i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
@@ -805,6 +806,7 @@ int main(int argc, char **argv) {
 			}
 		}
 		clearText();
+		updateText(false);
 	  }
 	}
 
@@ -916,6 +918,7 @@ int main(int argc, char **argv) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					}
 					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_CREATING_PUBLIC_SAVE, Alignment::center);
+					updateText(false);
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
@@ -945,6 +948,7 @@ int main(int argc, char **argv) {
 					showProgressIcon = false;
 					clearText();
 					printLarge(false, 0, (ms().theme == 4 ? 32 : 88), STR_PUBLIC_SAVE_CREATED, Alignment::center);
+					updateText(false);
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
@@ -962,6 +966,7 @@ int main(int argc, char **argv) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					}
 					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_CREATING_PRIVATE_SAVE, Alignment::center);
+					updateText(false);
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
@@ -991,6 +996,7 @@ int main(int argc, char **argv) {
 					showProgressIcon = false;
 					clearText();
 					printLarge(false, 0, (ms().theme == 4 ? 32 : 88), STR_PRIVATE_SAVE_CREATED, Alignment::center);
+					updateText(false);
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
@@ -1066,6 +1072,7 @@ int main(int argc, char **argv) {
 						printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 					}
 					printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+					updateText(false);
 					int pressed = 0;
 					do {
 						scanKeys();
@@ -1091,6 +1098,7 @@ int main(int argc, char **argv) {
 					printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
 					printSmall(false, 0, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER, Alignment::center);
+					updateText(false);
 					if (ms().theme != 4) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
@@ -1119,6 +1127,7 @@ int main(int argc, char **argv) {
 					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
 						clearText();
 						printLarge(false, 0, ms().theme == 4 ? 16 : 72, STR_RESTART_AFTER_SAVING, Alignment::center);
+						updateText(false);
 						if (ms().theme != 4) {
 							fadeType = true; // Fade in from white
 						}
@@ -1277,6 +1286,7 @@ int main(int argc, char **argv) {
 									printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 								}
 								printLarge(false, 0, (ms().theme == 4 ? 80 : 88), (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
+								updateText(false);
 
 								if (ms().theme != 4 && ms().theme != 5) {
 									fadeSpeed = true; // Fast fading
@@ -1297,6 +1307,7 @@ int main(int argc, char **argv) {
 								showProgressIcon = false;
 								clearText();
 								printLarge(false, 0, (ms().theme == 4 ? 32 : 88), (orgsavesize == 0) ? STR_SAVE_CREATED : STR_SAVE_EXPANDED, Alignment::center);
+								updateText(false);
 								for (int i = 0; i < 30; i++) {
 									swiWaitForVBlank();
 								}
@@ -1307,6 +1318,7 @@ int main(int argc, char **argv) {
 									}
 								}
 								clearText();
+								updateText(false);
 								if (ms().theme == 5) displayGameIcons = true;
 							}
 						}
@@ -1428,13 +1440,14 @@ int main(int argc, char **argv) {
 						char text[64];
 						snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 						clearText();
-						fadeSpeed = true;
-						fadeType = true;
 						printLarge(false, 4, 4, text);
 						if (err == 1) {
 							printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 						}
 						printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+						updateText(false);
+						fadeSpeed = true;
+						fadeType = true;
 						int pressed = 0;
 						do {
 							scanKeys();
@@ -1509,10 +1522,11 @@ int main(int argc, char **argv) {
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
 					char text[64];
 					snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-					fadeSpeed = true;
-					fadeType = true;
 					printLarge(false, 4, 4, text);
 					printSmall(false, 4, 20, STR_PRESS_B_RETURN);
+					updateText(false);
+					fadeSpeed = true;
+					fadeType = true;
 					int pressed = 0;
 					do {
 						scanKeys();
@@ -1769,13 +1783,14 @@ int main(int argc, char **argv) {
 
 				char text[64];
 				snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-				fadeSpeed = true;
-				fadeType = true;
 				printLarge(false, 4, 4, text);
 				if (err == 1 && useNDSB) {
 					printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 				}
 				printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+				updateText(false);
+				fadeSpeed = true;
+				fadeType = true;
 				int pressed = 0;
 				do {
 					scanKeys();
