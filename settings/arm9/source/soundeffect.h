@@ -98,6 +98,7 @@ class SoundEffect
     void playBgMusic(int settingsMusic)
     {
         if (music) return;
+		music = true;
 
 		if (settingsMusic == -1) {
 			extern int currentTheme;
@@ -130,8 +131,6 @@ class SoundEffect
 			mmSetModuleTempo(1900);
 			mmStart(MOD_SETTINGS, MM_PLAY_LOOP);
 		}
-
-		music = true;
     }
 
     void stopBgMusic()
