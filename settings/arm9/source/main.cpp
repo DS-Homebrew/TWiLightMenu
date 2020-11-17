@@ -399,9 +399,9 @@ void opt_update()
 			updateText = false;
 		}
 
-		if (!gui().isExited() && currentTheme != 4)
+		if (!gui().isExited())
 		{
-			snd().playBgMusic();
+			snd().playBgMusic(ms().settingsMusic);
 		}
 
 		do
@@ -683,6 +683,11 @@ int main(int argc, char **argv)
 				{0, 1, 4, 5, 3, 2})*/
 				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, "GameBoy Color"},
 				{0, 1, 4, 5, 2, 6})
+		.option(STR_SETTINGSMUSIC,
+				STR_DESCRIPTION_SETTINGSMUSIC,
+				Option::Int(&ms().settingsMusic),
+				{STR_THEME, STR_OFF, STR_NINTENDO_DSI, STR_NINTENDO_3DS},
+				{-1, 0, 1, 2})
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int(&ms().dsiMusic),
@@ -1111,7 +1116,7 @@ int main(int argc, char **argv)
 	{
 		if (!gui().isExited())
 		{
-			snd().playBgMusic();
+			snd().playBgMusic(ms().settingsMusic);
 		}
 
 		gui().draw();

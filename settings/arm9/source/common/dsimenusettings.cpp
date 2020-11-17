@@ -31,6 +31,7 @@ TWLSettings::TWLSettings()
     showSelectMenu = false;
     theme = 0;
     subtheme = 0;
+    settingsMusic = -1;
     dsiMusic = 1;
 
     showNds = true;
@@ -155,6 +156,7 @@ void TWLSettings::loadSettings()
     showSelectMenu = settingsini.GetInt("SRLOADER", "SHOW_SELECT_MENU", showSelectMenu);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
+    settingsMusic = settingsini.GetInt("SRLOADER", "SETTINGS_MUSIC", settingsMusic);
     dsiMusic = settingsini.GetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
     updateRecentlyPlayedList = settingsini.GetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
     sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
@@ -250,6 +252,7 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_SELECT_MENU", showSelectMenu);
     settingsini.SetInt("SRLOADER", "THEME", theme);
     settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
+    settingsini.SetInt("SRLOADER", "SETTINGS_MUSIC", settingsMusic);
     settingsini.SetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
     settingsini.SetInt("SRLOADER", "SHOW_NDS", showNds);
     settingsini.SetInt("SRLOADER", "SHOW_RVID", showRvid);

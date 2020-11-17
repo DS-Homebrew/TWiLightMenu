@@ -13,7 +13,6 @@ class SoundEffect
   public:
     SoundEffect(): music(false) {
         music = false;
-        counter = 0;
     }
     ~SoundEffect() {}
 
@@ -96,42 +95,54 @@ class SoundEffect
         };
     }
 
-    void playBgMusic()
+    void playBgMusic(int settingsMusic)
     {
-		extern int currentTheme;
-        if (!music)
-        {
-			if (currentTheme == 4) {
-				return;	// Do not play music if using SEGA Saturn theme
+        if (music) return;
+
+		if (settingsMusic == -1) {
+			extern int currentTheme;
+			switch (currentTheme) {
+				case 0:
+				case 2:
+				case 3:
+					settingsMusic = 1;
+					break;
+				case 4:
+					settingsMusic = 0;	// Do not play music if using SEGA Saturn theme
+					break;
+				case 1:
+				case 5:
+					settingsMusic = 2;
+					break;
 			}
-			// Play settings music
-			if (currentTheme == 1 || currentTheme == 5) {
-				mmLoad(MOD_SETTINGS3D);
-				mmSetModuleVolume(1000);
-				mmStart(MOD_SETTINGS3D, MM_PLAY_LOOP);
-			} else {
-				mmLoad(MOD_SETTINGS);
-				mmSetModuleVolume(500);
-				mmSetModuleTempo(1900);
-				mmStart(MOD_SETTINGS, MM_PLAY_LOOP);
-			}
-            music = true;
-        }
+		}
+		if (settingsMusic == 0) {
+			return;
+		}
+		// Play settings music
+		if (settingsMusic == 2) {
+			mmLoad(MOD_SETTINGS3D);
+			mmSetModuleVolume(1000);
+			mmStart(MOD_SETTINGS3D, MM_PLAY_LOOP);
+		} else {
+			mmLoad(MOD_SETTINGS);
+			mmSetModuleVolume(500);
+			mmSetModuleTempo(1900);
+			mmStart(MOD_SETTINGS, MM_PLAY_LOOP);
+		}
+
+		music = true;
     }
 
     void stopBgMusic()
     {
-        if (music) {
-			fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
-			for (int i = 0; i < 25; i++)
-				swiWaitForVBlank();
-			if (mmActive()) {
-				mmStop();
-			}
-			mmEffectCancelAll();
-			fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
-        }
-        music = false;
+        if (!mmActive()) return;
+
+		fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+		for (int i = 0; i < 25; i++)
+			swiWaitForVBlank();
+		mmStop();
+		fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
     }
 
     mm_sound_effect snd_launch;
@@ -146,7 +157,6 @@ class SoundEffect
 
   private:
     bool music;
-    int counter;
 };
 
 typedef singleton<SoundEffect>

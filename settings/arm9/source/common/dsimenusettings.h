@@ -151,6 +151,7 @@ class TWLSettings
     bool showSelectMenu;
     int theme;
     int subtheme;
+    int settingsMusic;
     int dsiMusic;
     bool showNds;
     bool showRvid;
