@@ -121,8 +121,8 @@
 #define TFN_DEFAULT_SOUND_EFFECTBANK      TFN_SYSTEM_SOUND_DIRECTORY"/defaultfx.bin"
 #define TFN_DEFAULT_SOUND_BG              TFN_SYSTEM_SOUND_DIRECTORY"/defaultbg.pcm.raw"
 
-#define TFN_SHOP_SOUND_EFFECTBANK         TFN_SYSTEM_SOUND_DIRECTORY"/shopfx.bin"
-#define TFN_SHOP_SOUND_BG                 TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.pcm.raw"
+#define TFN_SHOP_START_SOUND_BG           TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.start.raw"
+#define TFN_SHOP_LOOP_SOUND_BG            TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.loop.raw"
 
 #define TFN_CLASSIC_SOUND_BG              TFN_SYSTEM_SOUND_DIRECTORY"/classicbg.pcm.raw"
 

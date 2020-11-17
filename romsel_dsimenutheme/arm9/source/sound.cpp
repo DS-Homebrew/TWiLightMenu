@@ -57,13 +57,11 @@ SoundControl::SoundControl()
 		soundbank_file = fopen(std::string(TFN_SATURN_SOUND_EFFECTBANK).c_str(), "rb");
 	} else {
 		switch(ms().dsiMusic) {
-			case 2:
-				soundbank_file = fopen(std::string(TFN_SHOP_SOUND_EFFECTBANK).c_str(), "rb");
-				break;
 			case 3:
 				soundbank_file = fopen(std::string(TFN_SOUND_EFFECTBANK).c_str(), "rb");
 				if (soundbank_file) break; // fallthrough if soundbank_file fails.
 			case 1:
+			case 2:
 			default:
 				soundbank_file = fopen(std::string(TFN_DEFAULT_SOUND_EFFECTBANK).c_str(), "rb");
 				break;
@@ -84,17 +82,7 @@ SoundControl::SoundControl()
 	// sprintf(debug_buf, "Read sample length %li for startup", startup_sample_length);
     // nocashMessage(debug_buf);
 
-	if (ms().dsiMusic < 2) {
-		mmInitDefaultMem((mm_addr)SFX_DATA);
-	} else {
-		sys.mod_count = MSL_NSONGS;
-		sys.samp_count = MSL_NSAMPS;
-		sys.mem_bank = new mm_word[MSL_BANKSIZE];
-		sys.fifo_channel = FIFO_MAXMOD;
-
-		mmInit(&sys);
-		mmSoundBankInMemory((mm_addr)SFX_DATA);
-	}
+	mmInitDefaultMem((mm_addr)SFX_DATA);
 
 	mmLoadEffect(SFX_LAUNCH);
 	mmLoadEffect(SFX_SELECT);
@@ -156,7 +144,7 @@ SoundControl::SoundControl()
 	};
 
 
-	if (ms().dsiMusic == 0) {
+	if (ms().dsiMusic == 0 || ms().theme == 4) {
 		return;
 	}
 
@@ -188,7 +176,9 @@ SoundControl::SoundControl()
 				break;
 			case 2:
 			default:
-				stream_source = fopen(std::string(TFN_SHOP_SOUND_BG).c_str(), "rb");
+				stream_start_source = fopen(std::string(TFN_SHOP_START_SOUND_BG).c_str(), "rb");
+				stream_source = fopen(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), "rb");
+				loopableMusic = true;
 				break;
 			case 3:
 				stream_source = fopen(std::string(TFN_SOUND_BG).c_str(), "rb");
@@ -196,7 +186,7 @@ SoundControl::SoundControl()
 				break;
 		}
 	}
-	
+
 
 	fseek(stream_source, 0, SEEK_SET);
 
@@ -205,7 +195,7 @@ SoundControl::SoundControl()
 	stream.format = MM_STREAM_16BIT_MONO;  // select format
 	stream.timer = MM_TIMER0;	    	   // use timer0
 	stream.manual = false;	      		   // auto filling
-	
+
 	if (loopableMusic) {
 		fseek(stream_start_source, 0, SEEK_END);
 		size_t fileSize = ftell(stream_start_source);

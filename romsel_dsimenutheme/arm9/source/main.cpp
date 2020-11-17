@@ -762,7 +762,7 @@ int main(int argc, char **argv) {
 		//logPrint("snd().playStartup()\n");
 		snd().playStartup();
 	} else if (ms().dsiMusic != 0) {
-		if ((ms().theme == 1 && ms().dsiMusic == 1) || ms().dsiMusic == 2 || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
+		if ((ms().theme == 1 && ms().dsiMusic == 1) || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
 			//logPrint("snd().playStartup()\n");
 			snd().playStartup();
 			//logPrint("snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust())\n");
