@@ -125,6 +125,9 @@ class SoundEffect
 			fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 			for (int i = 0; i < 25; i++)
 				swiWaitForVBlank();
+			if (mmActive()) {
+				mmStop();
+			}
 			mmEffectCancelAll();
 			fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
         }
