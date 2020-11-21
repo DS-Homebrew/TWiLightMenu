@@ -796,8 +796,6 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 		loadFixedBanner(isSlot1);
 
-		DC_FlushAll();
-
 		int currentLang = 0;
 		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
 			currentLang = setGameLanguage;
@@ -910,7 +908,6 @@ void iconUpdate(int num, bool isDir, const char* name)
 		// this is an nds/app file!
 
 		// icon
-		DC_FlushAll();
 		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			loadIcon(num, ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {

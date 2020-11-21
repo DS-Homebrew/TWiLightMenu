@@ -524,8 +524,6 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 		loadFixedBanner();
 
-		DC_FlushAll();
-
 		int currentLang = 0;
 		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
 			currentLang = setGameLanguage;
@@ -645,7 +643,6 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		tonccpy((char *)&ndsBanner, bnriconTile[num], 0x23C0);
 
 		// icon
-		DC_FlushAll();
 		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], num2, true);
 		} else {

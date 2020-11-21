@@ -835,8 +835,6 @@ void getGameInfo(bool isDir, const char* name)
 		loadFixedBanner();
 
 		// banner sequence
-		DC_FlushAll();
-
 		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			grabBannerSequence();
 			bnriconisDSi = true;
@@ -1009,7 +1007,6 @@ void iconUpdate(bool isDir, const char* name)
 		loadFixedBanner();
 
 		// icon
-		DC_FlushAll();
 		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
