@@ -763,8 +763,10 @@ void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 		return;
 	}
 
-	FILE *file = fopen(filename, "rb");
-	if (!file) {
+	extern off_t getFileSize(const char *fileName);
+	off_t filesize = getFileSize(filename);
+
+	if (filesize == 0 || filesize > 0xB000) {
 		boxArtFound[num] = false;
 		//filename = "nitro:/graphics/boxart_unknown.bmp";
 		//file = fopen(filename, "rb");
@@ -773,6 +775,7 @@ void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 
 	boxArtFound[num] = true;
 
+	FILE *file = fopen(filename, "rb");
 	fread((u8*)boxArtCache+(num*0xB000), 1, 0xB000, file);
 	fclose(file);
 }
