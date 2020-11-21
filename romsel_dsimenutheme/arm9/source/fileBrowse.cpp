@@ -2151,6 +2151,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 									dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
 									CURPOS);
 									bannerTextShown = true;
+							updateText(false);
 						}
 					} else {
 						clearText();
@@ -2297,6 +2298,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 											.at((CURPOS + 2) + PAGENUM * 40)
 											.name.c_str(),
 											CURPOS + 2);
+										updateText(false);
 									}
 								}
 							}
@@ -2345,6 +2347,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 											.at((CURPOS - 2) + PAGENUM * 40)
 											.name.c_str(),
 											CURPOS - 2);
+										updateText(false);
 									}
 								}
 							}
@@ -2374,6 +2377,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 											   .at(i + PAGENUM * 40)
 											   .name.c_str(),
 										   i);
+									updateText(false);
 								}
 							}
 						} else if (CURPOS >= 2 && CURPOS <= 36) {
@@ -2390,6 +2394,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 										.at((CURPOS - 2 + i) + PAGENUM * 40)
 										.name.c_str(),
 										CURPOS - 2 + i);
+									updateText(false);
 								}
 							}
 						} else if (CURPOS >= 37 && CURPOS <= 39) {
@@ -2405,6 +2410,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 											   .at((35 + i) + PAGENUM * 40)
 											   .name.c_str(),
 										   35 + i);
+									updateText(false);
 								}
 							}
 						}
@@ -2440,6 +2446,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 										   .at((CURPOS - 2) + PAGENUM * 40)
 										   .name.c_str(),
 									   CURPOS - 2);
+								updateText(false);
 							}
 						}
 					} else if (prevPos == CURPOS - 1) {
@@ -2453,6 +2460,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 										   .at((CURPOS + 2) + PAGENUM * 40)
 										   .name.c_str(),
 									   CURPOS + 2);
+								updateText(false);
 							}
 						}
 					}
