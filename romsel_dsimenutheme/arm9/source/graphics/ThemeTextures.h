@@ -155,6 +155,9 @@ public:
 
 	static u16* bmpImageBuffer();
 	static u16* photoBuffer();
+	static u16* photoBuffer2();
+	static u16* frameBuffer(bool secondBuffer);
+	static u16* frameBufferBot(bool secondBuffer);
 
 	const Texture *volumeTexture(int texture) {
 		switch(texture) {
