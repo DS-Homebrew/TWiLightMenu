@@ -16,8 +16,6 @@
 #define SFX_SELECT		5
 #define SFX_BACK		6
 
-#define MOD_MENU        0
-
 #define MSL_NSONGS		0
 #define MSL_NSAMPS		7
 #define MSL_BANKSIZE	7
@@ -45,11 +43,17 @@ extern char debug_buf[256];
 
 extern volatile u32 sample_delay_count;
 
-volatile char SFX_DATA[0x8D000] = {0};
+volatile char SFX_DATA[0x7D000] = {0};
+mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
 
 SoundControl::SoundControl()
 	: stream_is_playing(false), stream_source(NULL), startup_sample_length(0)
  {
+
+	sys.mod_count = MSL_NSONGS;
+	sys.samp_count = MSL_NSAMPS;
+	sys.mem_bank = SOUNDBANK;
+	sys.fifo_channel = FIFO_MAXMOD;
 
 	FILE* soundbank_file;
 
@@ -82,7 +86,8 @@ SoundControl::SoundControl()
 	// sprintf(debug_buf, "Read sample length %li for startup", startup_sample_length);
     // nocashMessage(debug_buf);
 
-	mmInitDefaultMem((mm_addr)SFX_DATA);
+	mmInit(&sys);
+	mmSoundBankInMemory((mm_addr)SFX_DATA);
 
 	mmLoadEffect(SFX_LAUNCH);
 	mmLoadEffect(SFX_SELECT);
@@ -148,12 +153,6 @@ SoundControl::SoundControl()
 		return;
 	}
 
-	if (ms().dsiMusic == 1) {
-		mmLoad(MOD_MENU);
-		mmSetModuleVolume(500);
-		return;
-	}
-
 	//bool isDSi = (isDSiMode() || REG_SCFG_EXT != 0);
 	bool loopableMusic = false;
 
@@ -175,14 +174,16 @@ SoundControl::SoundControl()
 				stream_source = fopen(std::string(TFN_CLASSIC_SOUND_BG).c_str(), "rb");
 				break;
 			case 2:
-			default:
 				stream_start_source = fopen(std::string(TFN_SHOP_START_SOUND_BG).c_str(), "rb");
 				stream_source = fopen(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), "rb");
 				loopableMusic = true;
 				break;
 			case 3:
 				stream_source = fopen(std::string(TFN_SOUND_BG).c_str(), "rb");
+				if (stream_source) break; // fallthrough if stream_source fails.
 			case 1:
+			default:
+				stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 				break;
 		}
 	}
@@ -246,11 +247,6 @@ mm_sfxhand SoundControl::playStop() { return mmEffectEx(&snd_stop); }
 mm_sfxhand SoundControl::playWrong() { return mmEffectEx(&snd_wrong); }
 
 void SoundControl::beginStream() {
-	if (ms().dsiMusic == 1) {
-		mmStart(MOD_MENU, MM_PLAY_LOOP);
-		return;
-	}
-
 	// open the stream
 	stream_is_playing = true;
 	mmStreamOpen(&stream);
@@ -258,28 +254,17 @@ void SoundControl::beginStream() {
 }
 
 void SoundControl::stopStream() {
-	if (ms().dsiMusic == 1 && mmActive()) {
-		mmStop();
-		return;
-	}
-	if (!stream_is_playing) return;
 	stream_is_playing = false;
 	mmStreamClose();
 }
 
 void SoundControl::fadeOutStream() {
 	fade_out = true;
-	if (ms().dsiMusic == 1) {
-		fifoSendValue32(FIFO_USER_01, 1); // Sound fade-out workaround for module/sequenced music
-	}
 }
 
 void SoundControl::cancelFadeOutStream() {
 	fade_out = false;
 	fade_counter = FADE_STEPS;
-	if (ms().dsiMusic == 1) {
-		fifoSendValue32(FIFO_USER_01, 0);
-	}
 }
 
 void SoundControl::setStreamDelay(u32 delay) {

@@ -47,17 +47,6 @@ static bool isDSLite = false;
 //static bool gotCartHeader = false;
 
 
-static int soundVolume = 127;
-
-//---------------------------------------------------------------------------------
-void soundFadeOut() {
-//---------------------------------------------------------------------------------
-	soundVolume -= 3;
-	if (soundVolume < 0) {
-		soundVolume = 0;
-	}
-}
-
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -76,12 +65,6 @@ void ReturntoDSiMenu() {
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
-	if(fifoCheckValue32(FIFO_USER_01)) {
-		soundFadeOut();
-	} else {
-		soundVolume = 127;
-	}
-	REG_MASTER_VOLUME = soundVolume;
 }
 
 //---------------------------------------------------------------------------------
