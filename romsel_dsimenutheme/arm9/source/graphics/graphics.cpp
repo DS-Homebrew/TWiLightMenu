@@ -160,11 +160,11 @@ float dbox_movespeed = 22;
 float dbox_Ypos = -192;
 int bottomScreenBrightness = 255;
 
-int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble 3 = moving.
+int bottomBgState = 0; // 0 = Uninitialized, 1 = No Bubble, 2 = bubble, 3 = moving.
 
 int vblankRefreshCounter = 0;
 
-bool rotatingCubesLoaded = false;
+u32 rotatingCubesLoaded = false;	// u32 used instead of bool, to fix a weird bug
 
 bool rocketVideo_playVideo = false;
 int rocketVideo_videoYpos = 78;

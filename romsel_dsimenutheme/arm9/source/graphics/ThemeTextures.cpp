@@ -28,7 +28,7 @@ extern bool useTwlCfg;
 
 extern bool widescreenEffects;
 
-extern bool rotatingCubesLoaded;
+extern u32 rotatingCubesLoaded;
 
 // #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
