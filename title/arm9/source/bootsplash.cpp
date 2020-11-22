@@ -22,12 +22,14 @@ extern int screenBrightness;
 bool cartInserted;
 
 extern char soundBank[];
+extern bool soundBankInited;
 
 mm_sound_effect dsiboot;
 mm_sound_effect proceed;
 
 void splashSoundInit() {
 	mmInitDefaultMem((mm_addr)soundBank);
+	soundBankInited = true;
 
 	mmLoadEffect( SFX_DSIBOOT );
 	mmLoadEffect( SFX_SELECT );

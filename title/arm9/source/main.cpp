@@ -57,7 +57,8 @@ typedef struct {
 	char gameCode[4];			//!< 4 characters for the game code.
 } sNDSHeadertitlecodeonly;
 
-char soundBank[0x58000] = {0};
+char soundBank[0x7D000] = {0};
+bool soundBankInited = false;
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -811,7 +812,7 @@ int main(int argc, char **argv)
 
 		// Load sound bank into memory
 		FILE* soundBankF = fopen(soundBankPath, "rb");
-		fread(soundBank, 1, 0x58000, soundBankF);
+		fread(soundBank, 1, sizeof(soundBank), soundBankF);
 		fclose(soundBankF);
 		soundBankLoaded = true;
 	}
@@ -878,7 +879,7 @@ int main(int argc, char **argv)
 		if (!soundBankLoaded || strncmp((char*)soundBank+4, "*maxmod*", 8) != 0) {
 			// Load sound bank into memory
 			FILE* soundBankF = fopen("nitro:/soundbank.bin", "rb");
-			fread(soundBank, 1, 0x58000, soundBankF);
+			fread(soundBank, 1, sizeof(soundBank), soundBankF);
 			fclose(soundBankF);
 			soundBankLoaded = true;
 		}

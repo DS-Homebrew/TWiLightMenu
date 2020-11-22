@@ -351,22 +351,18 @@ void twlMenuVideo_loadTopGraphics(void) {
 }
 
 extern char soundBank[];
+extern bool soundBankInited;
 
 void BootJingleTwlMenu() {
-	
-	mmInitDefaultMem((mm_addr)soundBank);
+	if (!soundBankInited) {
+		mmInitDefaultMem((mm_addr)soundBank);
+		soundBankInited = true;
+	}
 
-	mmLoadEffect( SFX_TWLMENUVIDEO );
-
-	mm_sound_effect twlmenuvideosound = {
-		{ SFX_TWLMENUVIDEO } ,	// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-	
-	mmEffectEx(&twlmenuvideosound);
+	mmLoad(MOD_TITLE);
+	mmSetModuleVolume(400);
+	mmSetModuleTempo(0x6C0);
+	mmStart(MOD_TITLE, MM_PLAY_ONCE);
 }
 
 void twlMenuVideo_topGraphicRender(void) {

@@ -1,0 +1,82 @@
+[File]
+Version=1750
+Split tracks=-1
+Rearrange split tracks=1
+
+[Arrangement]
+Num Audio Tracks=0
+Num Layer Tracks=0
+Midi file=D:\disassemblies\nds\SRLoader\title\resources\Music\Title.mid
+Play Tracks=,1,1,1,1,1
+Active Tracks=,1,1,1,1,1
+MidiChnl to VSTBus=0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Track 1 LockPresetLive=0
+Track 1 Sf2 Prog=D:\Program Files (x86)\SynthFont\GMGSx.SF2>0:0
+Track 1 extras=127,0,0,0,0,1,-1,255,0,
+Track 1 Ignore Bank Numbers=0
+Track 2 LockPresetLive=0
+Track 2 Sf2 Prog=D:\Users\Robz\Music\Soundfonts\Nintendo_64_ver_3.1.sf2>0:0
+Track 2 extras=127,0,0,0,0,0,-1,0,0,
+Track 2 Ignore Bank Numbers=0
+Track 3 LockPresetLive=0
+Track 3 Sf2 Prog=D:\Users\Robz\Music\Soundfonts\Nintendo_64_ver_3.1.sf2>0:48
+Track 3 extras=127,0,0,0,0,0,-1,0,0,
+Track 3 Ignore Bank Numbers=0
+Track 4 LockPresetLive=0
+Track 4 Sf2 Prog=D:\Users\Robz\Music\Soundfonts\Nintendo_64_ver_3.1.sf2>0:52
+Track 4 extras=127,0,0,0,0,0,-1,0,0,
+Track 4 Ignore Bank Numbers=0
+Left Volume=100
+Right Volume=100
+Mixer state=0
+Tuning scale=Equal Temperament
+Tuning root key=0
+BMP factor=1065353216
+Final decay time=2
+Selected track=5
+Tracks order=1,2,3,4,5
+Track 5 LockPresetLive=0
+Track 5 Sf2 Prog=D:\Users\Robz\Music\Soundfonts\Nintendo_64_ver_3.1.sf2>0:79
+Track 5 extras=127,0,0,0,0,0,-1,0,0,
+Track 5 Ignore Bank Numbers=0
+
+[Track names]
+1=METADATA
+2=Piano
+3=Strings
+4=Choir
+5=Track 5
+
+[Pan spread]
+Track 1=0,0,0,0
+Track 2=0,0,0,0
+Track 3=0,0,0,0
+Track 4=0,0,0,0
+Track 5=0,0,0,0
+
+[Pitch Shifting Method]
+Track2=0
+Track3=0
+Track4=0
+Track5=0
+
+[PianoRoll]
+Melodic scale=Natural major
+Key signature=0
+
+[Play region]
+Use markers=1
+Start at=1,1
+Stop at=8,1
+Loop=0
+Loop count=0
+Loop continue=1
+Loop start pos=1
+
+[VST Effects]
+Bypass all=0
+
+[Pianoroll Markers]
+Start at=Start
+Stop at=End
+

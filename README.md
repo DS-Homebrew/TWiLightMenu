@@ -53,6 +53,8 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [fail0verflow](https://github.com/fail0verflow/), Fluto, and Arkhandar: Homebrew Channel/Launcher graphics.
 - davi: Border for GBC theme (originally for GameYob).
 - [NightScript](https://github.com/NightYoshi370/): Reworked Manual pages.
+## Music
+- IkaMusumeYiyaRoxie: General N64 MIDI Soundfont, used for the title splash fanfare
 ## Others
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
 - [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap.
