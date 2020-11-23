@@ -2474,8 +2474,6 @@ int main(int argc, char **argv) {
 					launchType[secondaryDevice] = (showGba == 1) ? 11 : 1;
 
 					if (showGba == 1) {
-						SaveSettings();
-
 						clearText();
 						ClearBrightness();
 						printSmallCentered(false, 20, "If this takes a while, close and open");
@@ -2486,7 +2484,7 @@ int main(int argc, char **argv) {
 						fread((void*)0x08000000, 1, 0x2000000, gbaFile);
 						fclose(gbaFile);
 
-						gbaSwitch();
+						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
 					} else if (secondaryDevice) {
 						ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						if (REG_SCFG_EXT != 0) {

@@ -58,6 +58,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## Others
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
 - [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap.
+- [Gericom](https://github.com/Gericom): SRAM-patching code from GBARunner2, used in gbapatcher
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI.
 - [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcarts.

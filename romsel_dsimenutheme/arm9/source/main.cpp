@@ -1609,8 +1609,6 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = (ms().showGba == 1) ? Launch::EGBANativeLaunch : Launch::ESDFlashcardLaunch;
 
 					if (ms().showGba == 1) {
-						ms().saveSettings();
-
 						if (ms().theme == 5) displayGameIcons = false;
 						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 						printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_LOADING, Alignment::center);
@@ -1637,7 +1635,7 @@ int main(int argc, char **argv) {
 						updateText(false);
 						if (ms().theme == 5) displayGameIcons = true;
 
-						gbaSwitch();
+						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
 					} else if (ms().secondaryDevice) {
 						ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						if (REG_SCFG_EXT != 0) {
