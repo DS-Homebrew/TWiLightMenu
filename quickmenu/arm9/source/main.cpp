@@ -166,6 +166,7 @@ bool sdRemoveDetect = true;
 bool gbar2DldiAccess = false;	// false == ARM9, true == ARM7
 int theme = 0;
 int subtheme = 0;
+int showGba = 2;
 int showMd = 3;
 int cursorPosition[2] = {0};
 int startMenu_cursorPosition = 0;
@@ -188,6 +189,7 @@ bool dsiWareBooter = false;
 
 void LoadSettings(void) {
 	useBootstrap = isDSiMode();
+	showGba = 1 + isDSiMode();
 
 	// GUI
 	CIniFile settingsini( settingsinipath );
@@ -195,6 +197,10 @@ void LoadSettings(void) {
 	// UI settings.
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
+	showGba = settingsini.GetInt("SRLOADER", "SHOW_GBA", showGba);
+	if (!isRegularDS && showGba != 0) {
+		showGba = 2;
+	}
 	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 
 	// Customizable UI settings.
@@ -2465,9 +2471,23 @@ int main(int argc, char **argv) {
 						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".gba")) {
-					launchType[secondaryDevice] = 1;
+					launchType[secondaryDevice] = (showGba == 1) ? 11 : 1;
 
-					if (secondaryDevice) {
+					if (showGba == 1) {
+						SaveSettings();
+
+						clearText();
+						ClearBrightness();
+						printSmallCentered(false, 20, "If this takes a while, close and open");
+						printSmallCentered(false, 34, "the console's lid.");
+						printSmallCentered(false, 88, "Now Loading...");
+
+						FILE* gbaFile = fopen(filename[secondaryDevice].c_str(), "rb");
+						fread((void*)0x08000000, 1, 0x2000000, gbaFile);
+						fclose(gbaFile);
+
+						gbaSwitch();
+					} else if (secondaryDevice) {
 						ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						if (REG_SCFG_EXT != 0) {
 							ndsToBoot = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
