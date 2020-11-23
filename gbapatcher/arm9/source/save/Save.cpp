@@ -3,6 +3,8 @@
 //#include "FlashSave.h"
 #include "Save.h"
 
+extern u32 saveSize;
+
 //#define SAVE_TYPE_COUNT		18
 #define SAVE_TYPE_COUNT		7
 
@@ -45,6 +47,7 @@ const save_type_t* save_findTag()
 		{
 			//SRAM
 			type = SAVE_TYPE_SRAM;
+			saveSize = 32*1024;
 			return NULL;
 		}
 		else if (fst == 0x52504545)

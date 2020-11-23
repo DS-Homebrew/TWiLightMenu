@@ -4,11 +4,17 @@
 #include <sys/stat.h>
 #include <limits.h>
 
+#include <string>
 #include <string.h>
 #include <unistd.h>
 
+#include "tonccpy.h"
+#include "fileCopy.h"
+#include "tool/stringtool.h"
 #include "save/Save.h"
 #include "gbaswitch.h"
+
+u32 saveSize = 0;
 
 //---------------------------------------------------------------------------------
 void stop (void) {
@@ -37,10 +43,22 @@ int main(int argc, char **argv) {
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
 	const save_type_t* saveType = save_findTag();
-	if (saveType != NULL)
+	if (saveType != NULL && saveType->patchFunc != NULL)
 	{
-		if (saveType->patchFunc != NULL)
-			saveType->patchFunc(saveType);
+		saveType->patchFunc(saveType);
+	}
+
+	if (saveSize > 0) {
+		std::string savepath = replaceAll(argv[1], ".gba", ".sav");
+		if (getFileSize(savepath.c_str()) == 0) {
+			toncset((void*)0x0A000000, 0, saveSize);
+			FILE *pFile = fopen(savepath.c_str(), "wb");
+			if (pFile) {
+				fseek(pFile, saveSize - 1, SEEK_SET);
+				fputc('\0', pFile);
+				fclose(pFile);
+			}
+		}
 	}
 
 	gbaSwitch();

@@ -1111,6 +1111,41 @@ int main(int argc, char **argv) {
 	
 	bool menuButtonPressed = false;
 	
+	if (showGba == 1) {
+		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
+
+		*(vu32*)(0x08000000) = 0x53524C41;	// Write test
+		if (*(vu32*)(0x08000000) != 0x53524C41) {	// Check if writeable
+			showGba = 0;	// If not, hide GBA ROMs
+		} else {
+			u8 byteBak = *(vu8*)(0x0A000000);
+			*(vu8*)(0x0A000000) = 'T';	// SRAM write test
+		  if (*(vu8*)(0x0A000000) == 'T') {	// Check if SRAM is writeable
+			*(vu8*)(0x0A000000) = byteBak;
+			std::string savepath = replaceAll(romPath[true], ".gba", ".sav");
+			u32 savesize = getFileSize(savepath.c_str());
+			if (savesize > 0) {
+				// Try to restore save from SRAM
+				bool restoreSave = false;
+				for (u32 addr = 0x0A000000; addr < 0x0A010000; addr++) {
+					if (*(u8*)addr != 0) {
+						restoreSave = true;
+						break;
+					}
+				}
+				if (restoreSave) {
+					FILE* savFile = fopen(savepath.c_str(), "wb");
+					fwrite((void*)0x0A000000, 1, savesize, savFile);
+					fclose(savFile);
+
+					// Wipe out SRAM after restoring save
+					toncset((void*)0x0A000000, 0, 0x10000);
+				}
+			}
+		  }
+		}
+	}
+
 	if (flashcardFound()) {
 		// Move .sav back to "saves" folder
 		std::string filename = romPath[true];
@@ -2483,6 +2518,13 @@ int main(int argc, char **argv) {
 						FILE* gbaFile = fopen(filename[secondaryDevice].c_str(), "rb");
 						fread((void*)0x08000000, 1, 0x2000000, gbaFile);
 						fclose(gbaFile);
+
+						std::string savename = replaceAll(filename[secondaryDevice], ".gba", ".sav");
+						FILE* savFile = fopen(savename.c_str(), "rb");
+						if (savFile) {
+							fread((void*)0x0A000000, 1, 0x10000, gbaFile);
+							fclose(gbaFile);
+						}
 
 						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
 					} else if (secondaryDevice) {
