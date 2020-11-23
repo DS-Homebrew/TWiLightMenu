@@ -1166,7 +1166,7 @@ void vBlankHandler() {
 				// for (int i = 0; i < 2; i++) {
 					topIconXpos -= 14;
 				//}
-				if (ms().useGbarunner) {
+				if (ms().showGba == 2) {
 					drawSmallIconGBA(topIconXpos, 1); // GBARunner2
 				} else {
 					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[3]); // GBA Mode
@@ -1294,7 +1294,7 @@ void vBlankHandler() {
 					}
 					selIconYpos += 28;
 				}
-				if (!ms().useGbarunner && sys().isRegularDS()) {
+				if (sys().isRegularDS() && ms().showGba != 2) {
 				/*	drawSmallIconGBA(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos); // GBARunner2
 				} else {*/
 					glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,

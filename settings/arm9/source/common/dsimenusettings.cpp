@@ -25,7 +25,6 @@ TWLSettings::TWLSettings()
     wifiLed = true;
     sdRemoveDetect = true;
     showMicroSd = false;
-    useGbarunner = false;
     gbar2DldiAccess = false;
     showMainMenu = false;
     showSelectMenu = false;
@@ -35,6 +34,7 @@ TWLSettings::TWLSettings()
     dsiMusic = 1;
 
     showNds = true;
+	showGba = 1 + isDSiMode();
     showRvid = true;
     showA26 = true;
     showNes = true;
@@ -119,12 +119,19 @@ void TWLSettings::loadSettings()
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
 
     showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", showNds);
+	showGba = settingsini.GetInt("SRLOADER", "SHOW_GBA", showGba);
+	if (!sys().isRegularDS() && showGba != 0) {
+		showGba = 2;
+	}
     showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
     showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", showA26);
     showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
     showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
     showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
     showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
+	if (isDSiMode() && (access("sd:/", F_OK) == 0) && sys().arm7SCFGLocked() && (ms().showMd == 1 || ms().showMd == 3)) {
+		ms().showMd = 2;	// Use only PicoDriveTWL
+	}
     showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
     showPce = settingsini.GetInt("SRLOADER", "SHOW_PCE", showPce);
 
@@ -138,10 +145,6 @@ void TWLSettings::loadSettings()
     titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
     showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
-    useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
-    if (!sys().isRegularDS()) {
-        useGbarunner = true;
-    }
     gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 
     dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
@@ -239,7 +242,6 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "WIFI_LED", wifiLed);
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
     settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
-    settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     settingsini.SetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
     settingsini.SetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
     settingsini.SetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
@@ -255,6 +257,7 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SETTINGS_MUSIC", settingsMusic);
     settingsini.SetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
     settingsini.SetInt("SRLOADER", "SHOW_NDS", showNds);
+    settingsini.SetInt("SRLOADER", "SHOW_GBA", showGba);
     settingsini.SetInt("SRLOADER", "SHOW_RVID", showRvid);
     settingsini.SetInt("SRLOADER", "SHOW_A26", showA26);
     settingsini.SetInt("SRLOADER", "SHOW_NES", showNes);

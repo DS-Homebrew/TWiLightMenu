@@ -719,12 +719,14 @@ int main(int argc, char **argv)
 
 	SettingsPage emulationPage(STR_EMULATION_HB_SETTINGS);
 
-	if (isDSiMode() && sdAccessible && sys().arm7SCFGLocked() && (ms().showMd == 1 || ms().showMd == 3)) {
-		ms().showMd = 2;	// Use only PicoDriveTWL
-	}
-
 	emulationPage
-		.option(STR_NDS_ROMS, STR_DESCRIPTION_SHOW_NDS, Option::Bool(&ms().showNds), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_NDS_ROMS, STR_DESCRIPTION_SHOW_NDS, Option::Bool(&ms().showNds), {STR_SHOW, STR_HIDE}, {true, false});
+	if (sys().isRegularDS()) {
+		emulationPage.option(STR_GBA_ROMS, STR_DESCRIPTION_SHOW_GBA, Option::Int(&ms().showGba), {"GBARunner2", STR_NATIVE, STR_HIDE}, {2, 1, 0});
+	} else {
+		emulationPage.option(STR_GBA_ROMS, STR_DESCRIPTION_SHOW_GBA, Option::Int(&ms().showGba), {"GBARunner2", STR_HIDE}, {2, 0});
+	}
+	emulationPage
 		.option(STR_VIDEOS, STR_DESCRIPTION_SHOW_VIDEO, Option::Bool(&ms().showRvid), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_A26_ROMS, STR_DESCRIPTION_SHOW_A26, Option::Bool(&ms().showA26), {"StellaDS", STR_HIDE}, {true, false})
 		.option(STR_NES_ROMS, STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {"nesDS", STR_HIDE}, {true, false})
@@ -758,11 +760,6 @@ int main(int argc, char **argv)
 			Option::Bool(&ms().smsGgInRam),
 			{STR_YES, STR_NO},
 			{true, false});
-	}
-
-	if (!isDSiMode() && sys().isRegularDS())
-	{
-		gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});
 	}
 
 	using TRunIn = TWLSettings::TRunIn;

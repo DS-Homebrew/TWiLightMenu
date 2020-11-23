@@ -108,7 +108,8 @@ public:
 		ERVideoLaunch = 7,
 		EMPEG4Launch = 8,
 		EStellaDSLaunch = 9,
-		EPicoDriveTWLLaunch = 10
+		EPicoDriveTWLLaunch = 10,
+		EGBANativeLaunch = 11
 	};
 
 	/*
@@ -156,13 +157,13 @@ public:
 	int blfLevel;
 	bool sdRemoveDetect;
 	bool showMicroSd;
-	bool useGbarunner;
 	bool gbar2DldiAccess;
 	bool showSelectMenu;
 	int theme;
 	int subtheme;
 	int dsiMusic;
 	bool showNds;
+	int showGba;
 	bool showRvid;
 	bool showA26;
 	bool showNes;

@@ -34,7 +34,6 @@ TWLSettings::TWLSettings()
 	blfLevel = 0;
 	sdRemoveDetect = true;
 	showMicroSd = false;
-	useGbarunner = false;
 	gbar2DldiAccess = false;
 	showSelectMenu = false;
 	theme = 0;
@@ -42,6 +41,7 @@ TWLSettings::TWLSettings()
 	dsiMusic = 1;
 
 	showNds = true;
+	showGba = 1 + isDSiMode();
 	showRvid = true;
 	showA26 = true;
 	showNes = true;
@@ -129,6 +129,10 @@ void TWLSettings::loadSettings()
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
 
 	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", showNds);
+	showGba = settingsini.GetInt("SRLOADER", "SHOW_GBA", showGba);
+	if (!sys().isRegularDS() && showGba != 0) {
+		showGba = 2;
+	}
 	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", showA26);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
@@ -149,10 +153,6 @@ void TWLSettings::loadSettings()
 	titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
 	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
 	showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
-	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
-	if (!sys().isRegularDS()) {
-		useGbarunner = true;
-	}
 	gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", soundfreq);

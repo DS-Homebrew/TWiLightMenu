@@ -163,7 +163,6 @@ bool dlplayFound = false;
 bool pictochatReboot = false;
 bool dlplayReboot = false;
 bool sdRemoveDetect = true;
-bool useGbarunner = false;
 bool gbar2DldiAccess = false;	// false == ARM9, true == ARM7
 int theme = 0;
 int subtheme = 0;
@@ -205,8 +204,6 @@ void LoadSettings(void) {
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
 	titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
 	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", 1);
-	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
-	if (!isRegularDS) useGbarunner = true;
 	gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);

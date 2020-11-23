@@ -145,7 +145,6 @@ class TWLSettings
     bool wifiLed;
     bool sdRemoveDetect;
     bool showMicroSd;
-    bool useGbarunner;
     bool gbar2DldiAccess;
     bool showMainMenu;
     bool showSelectMenu;
@@ -154,6 +153,7 @@ class TWLSettings
     int settingsMusic;
     int dsiMusic;
     bool showNds;
+    int showGba;
     bool showRvid;
     bool showA26;
     bool showNes;

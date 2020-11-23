@@ -745,7 +745,7 @@ void launchGba(void) {
 	ms().saveSettings();
 
 	// Switch to GBA mode
-	if (ms().useGbarunner) {
+	if (ms().showGba == 2) {
 		if (ms().secondaryDevice) {
 			const char* gbar2Path = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
 			if (isDSiMode()) {
@@ -1306,7 +1306,7 @@ bool selectMenu(void) {
 			assignedOp[1] = 1;
 			assignedOp[2] = 4;
 			maxCursors = 2;
-		} else if (ms().useGbarunner) {
+		} else if (ms().showGba == 2) {
 			assignedOp[0] = 1;
 			assignedOp[1] = 4;
 			maxCursors = 1;

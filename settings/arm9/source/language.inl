@@ -89,6 +89,7 @@ STRING(DESCRIPTION_ZOOMING_ICON, "Display a zoom effect for the selected icon in
 
 // Emulation / HB settings
 STRING(NDS_ROMS, "NDS ROMs")
+STRING(GBA_ROMS, "GBA ROMs")
 STRING(VIDEOS, "Videos (.RVID and .MP4)")
 STRING(A26_ROMS, "Atari 2600 ROMs")
 STRING(NES_ROMS, "NES/FDS ROMs")
@@ -101,6 +102,7 @@ STRING(PCE_ROMS, "PCE/TurboGrafx-16 ROMs")
 STRING(HYBRID, "Hybrid")
 
 STRING(DESCRIPTION_SHOW_NDS, "Display Nintendo DS/DSi ROMs in the ROM list.")
+STRING(DESCRIPTION_SHOW_GBA, "Display GameBoy Advance ROMs in the ROM list.")
 STRING(DESCRIPTION_SHOW_VIDEO, "Display Rocket Video and MPEG4 files in the ROM list.")
 STRING(DESCRIPTION_SHOW_A26, "Display Atari 2600 ROMs in the ROM list.")
 STRING(DESCRIPTION_SHOW_NES, "Display NES and Famicom Disk System ROMs in the ROM list.")
@@ -159,6 +161,7 @@ STRING(ON, "On")
 STRING(OFF, "Off")
 STRING(YES, "Yes")
 STRING(NO, "No")
+STRING(NATIVE, "Native")
 STRING(DS_MODE, "DS mode")
 STRING(DSI_MODE, "DSi mode")
 STRING(DSI_MODE_FORCED, "DSi mode (Forced)")

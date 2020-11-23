@@ -59,7 +59,7 @@ extern bool secondaryDevice;
 
 extern int theme;
 extern int colorMode;
-extern bool useGbarunner;
+extern int showGba;
 extern bool animateDsiIcons;
 extern int consoleModel;
 
@@ -279,7 +279,7 @@ void loadConsoleIcons()
 	// GBA
 	glDeleteTextures(1, &gbaTexID);
 	
-	if (useGbarunner) {
+	if (showGba == 2) {
 		newPalette = (u16*)icon_gbaPal;
 		if (colorMode == 1) {
 			for (int i2 = 0; i2 < 16; i2++) {

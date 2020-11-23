@@ -672,6 +672,15 @@ int main(int argc, char **argv) {
 
 	keysSetRepeat(10, 2);
 
+	if (ms().showGba == 1) {
+		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
+
+		*(vu32*)(0x08000000) = 0x53524C41;	// Write test
+		if (*(vu32*)(0x08000000) != 0x53524C41) {	// Check if writeable
+			ms().showGba = 0;	// If not, hide GBA ROMs
+		}
+	}
+
 	std::vector<std::string> extensionList;
 	if (ms().showNds) {
 		extensionList.emplace_back(".nds");
@@ -688,7 +697,7 @@ int main(int argc, char **argv) {
 		extensionList.emplace_back(".rvid");
 		extensionList.emplace_back(".mp4");
 	}
-	if (ms().useGbarunner) {
+	if (ms().showGba) {
 		extensionList.emplace_back(".gba");
 	}
 	if (ms().showA26) {
@@ -1597,9 +1606,39 @@ int main(int argc, char **argv) {
 						boostVram = true;
 					}
 				} else if (extention(filename, ".gba")) {
-					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
+					ms().launchType[ms().secondaryDevice] = (ms().showGba == 1) ? Launch::EGBANativeLaunch : Launch::ESDFlashcardLaunch;
 
-					if (ms().secondaryDevice) {
+					if (ms().showGba == 1) {
+						ms().saveSettings();
+
+						if (ms().theme == 5) displayGameIcons = false;
+						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
+						printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_LOADING, Alignment::center);
+						updateText(false);
+
+						if (ms().theme != 4 && ms().theme != 5) {
+							fadeSpeed = true; // Fast fading
+							fadeType = true; // Fade in from white
+						}
+						showProgressIcon = true;
+
+						FILE* gbaFile = fopen(filename.c_str(), "rb");
+						fread((void*)0x08000000, 1, 0x2000000, gbaFile);
+						fclose(gbaFile);
+
+						showProgressIcon = false;
+						if (ms().theme != 4 && ms().theme != 5) {
+							fadeType = false;	   // Fade to white
+							for (int i = 0; i < 25; i++) {
+								swiWaitForVBlank();
+							}
+						}
+						clearText();
+						updateText(false);
+						if (ms().theme == 5) displayGameIcons = true;
+
+						gbaSwitch();
+					} else if (ms().secondaryDevice) {
 						ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						if (REG_SCFG_EXT != 0) {
 							ndsToBoot = ms().consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";

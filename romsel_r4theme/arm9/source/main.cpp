@@ -137,7 +137,6 @@ bool fcSaveOnSd = false;
 bool wideScreen = false;
 
 bool sdRemoveDetect = true;
-bool useGbarunner = false;
 bool gbar2DldiAccess = false;	// false == ARM9, true == ARM7
 int theme = 0;
 int subtheme = 0;
@@ -146,6 +145,7 @@ int startMenu_cursorPosition = 0;
 int pagenum[2] = {0};
 bool showMicroSd = false;
 bool showNds = true;
+int showGba = 2;
 bool showRvid = true;
 bool showA26 = true;
 bool showNes = true;
@@ -173,6 +173,7 @@ bool dsiWareBooter = false;
 
 void LoadSettings(void) {
 	useBootstrap = isDSiMode();
+	showGba = 1 + isDSiMode();
 
 	// GUI
 	CIniFile settingsini( settingsinipath );
@@ -188,6 +189,10 @@ void LoadSettings(void) {
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
 	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", true);
+	showGba = settingsini.GetInt("SRLOADER", "SHOW_GBA", showGba);
+	if (!isRegularDS && showGba != 0) {
+		showGba = 2;
+	}
 	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", true);
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", true);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
@@ -204,8 +209,6 @@ void LoadSettings(void) {
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
 	titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
 	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", 1);
-	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
-	if (!isRegularDS) useGbarunner = true;
 	gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 	showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
@@ -943,6 +946,15 @@ int main(int argc, char **argv) {
 
 	keysSetRepeat(10, 2);
 
+	if (showGba == 1) {
+		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
+
+		*(vu32*)(0x08000000) = 0x53524C41;	// Write test
+		if (*(vu32*)(0x08000000) != 0x53524C41) {	// Check if writeable
+			showGba = 0;	// If not, hide GBA ROMs
+		}
+	}
+
 	vector<string> extensionList;
 	if (showNds) {
 		extensionList.push_back(".nds");
@@ -959,7 +971,7 @@ int main(int argc, char **argv) {
 		extensionList.push_back(".rvid");
 		extensionList.push_back(".mp4");
 	}
-	if (useGbarunner) {
+	if (showGba) {
 		extensionList.emplace_back(".gba");
 	}
 	if (showA26) {
@@ -1096,10 +1108,10 @@ int main(int argc, char **argv) {
 						}
 						break;
 					case 2:
-						if (useGbarunner) {
-							printLargeCentered(false, 166, "Start GBARunner2");
-						} else {
+						if (isRegularDS && showGba != 2) {
 							printLargeCentered(false, 166, "Start GBA Mode");
+						} else {
+							printLargeCentered(false, 166, "Start GBARunner2");
 						}
 						break;
 				}
@@ -1198,7 +1210,7 @@ int main(int argc, char **argv) {
 						for (int i = 0; i < 25; i++) {
 							swiWaitForVBlank();
 						}
-						if (useGbarunner) {
+						if (showGba == 2) {
 							if (secondaryDevice) {
 								const char* gbaRunner2Path = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
 								if (isDSiMode()) {
@@ -1948,9 +1960,23 @@ int main(int argc, char **argv) {
 						boostVram = true;
 					}
 				} else if (extention(filename, ".gba")) {
-					launchType[secondaryDevice] = 1;
+					launchType[secondaryDevice] = (showGba == 1) ? 11 : 1;
 
-					if (secondaryDevice) {
+					if (showGba == 1) {
+						SaveSettings();
+
+						clearText();
+						dialogboxHeight = 0;
+						showdialogbox = true;
+						printLargeCentered(false, 74, "Game loading");
+						printSmallCentered(false, 90, "Please wait...");
+
+						FILE* gbaFile = fopen(filename.c_str(), "rb");
+						fread((void*)0x08000000, 1, 0x2000000, gbaFile);
+						fclose(gbaFile);
+
+						gbaSwitch();
+					} else if (secondaryDevice) {
 						ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						if (REG_SCFG_EXT != 0) {
 							ndsToBoot = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
