@@ -368,15 +368,6 @@ int main (void) {
 	}
 #endif
 
-#ifndef NO_SDMMC
-	if (dsiSD && !dsMode && dsiMode) {
-		sdmmc_controller_init(true);
-		*(vu16*)(SDMMC_BASE + REG_SDDATACTL32) &= 0xFFFDu;
-		*(vu16*)(SDMMC_BASE + REG_SDDATACTL) &= 0xFFDDu;
-		*(vu16*)(SDMMC_BASE + REG_SDBLKLEN32) = 0;
-	}
-#endif
-
 	// Pass command line arguments to loaded program
 	passArgs_ARM7();
 
