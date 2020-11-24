@@ -91,29 +91,89 @@ bool eeprom_patchV111(const save_type_t* type)
 
 bool eeprom_patchV120(const save_type_t* type)
 {
-	u8* readFunc = memsearch8((u8*)0x08000000, romSize, sReadEepromDwordV120Sig, 0x10, false);
+	u32* romPos = (u32*)0x08000000;
+	u32 curRomSize = romSize;
+	u32 startSig[4] = {0};
+	startSig[0] = *(u32*)0x08000000;
+	startSig[1] = *(u32*)0x08000004;
+	startSig[2] = *(u32*)0x08000008;
+	startSig[3] = *(u32*)0x0800000C;
+
+	for (int i = 0; i < 3; i++) {
+
+	if (i != 0) {
+		while (romPos < romPos+romSize) {
+			// Look for another ROM in 2-3 in 1 game packs
+			romPos += 0x100000;
+			curRomSize -= 0x100000;
+			if (romPos[0] == startSig[0]
+			&& romPos[1] == startSig[1]
+			&& romPos[2] == startSig[2]
+			&& romPos[3] == startSig[3])
+			{
+				break;
+			}
+		}
+
+		if (romPos >= romPos+romSize) break;
+	}
+
+	u8* readFunc = memsearch8((u8*)romPos, curRomSize, sReadEepromDwordV120Sig, 0x10, false);
 	if (!readFunc)
 		return false;
 	tonccpy(readFunc, &patch_eeprom_1, sizeof(patch_eeprom_1));
 
-	u8* progFunc = memsearch8((u8*)0x08000000, romSize, sProgramEepromDwordV120Sig, 0x10, false);
+	u8* progFunc = memsearch8((u8*)romPos, curRomSize, sProgramEepromDwordV120Sig, 0x10, false);
 	if (!progFunc)
 		return false;
 	tonccpy(progFunc, &patch_eeprom_2, sizeof(patch_eeprom_2));
+
+	}
+
 	return true;
 }
 
 bool eeprom_patchV124(const save_type_t* type)
 {
-	u8* readFunc = memsearch8((u8*)0x08000000, romSize, sReadEepromDwordV120Sig, 0x10, false);
+	u32* romPos = (u32*)0x08000000;
+	u32 curRomSize = romSize;
+	u32 startSig[4] = {0};
+	startSig[0] = *(u32*)0x08000000;
+	startSig[1] = *(u32*)0x08000004;
+	startSig[2] = *(u32*)0x08000008;
+	startSig[3] = *(u32*)0x0800000C;
+
+	for (int i = 0; i < 2; i++) {
+
+	if (i != 0) {
+		while (romPos < romPos+romSize) {
+			// Look for another ROM in 2 in 1 game packs
+			romPos += 0x100000;
+			curRomSize -= 0x100000;
+			if (romPos[0] == startSig[0]
+			&& romPos[1] == startSig[1]
+			&& romPos[2] == startSig[2]
+			&& romPos[3] == startSig[3])
+			{
+				break;
+			}
+		}
+
+		if (romPos >= romPos+romSize) break;
+	}
+
+	u8* readFunc = memsearch8((u8*)romPos, curRomSize, sReadEepromDwordV120Sig, 0x10, false);
 	if (!readFunc)
 		return false;
 	tonccpy(readFunc, &patch_eeprom_1, sizeof(patch_eeprom_1));
 
-	u8* progFunc = memsearch8((u8*)0x08000000, romSize, sProgramEepromDwordV124Sig, 0x10, false);
+	u8* progFunc = memsearch8((u8*)romPos, curRomSize, sProgramEepromDwordV124Sig, 0x10, false);
 	if (!progFunc)
 		return false;
 	tonccpy(progFunc, &patch_eeprom_2, sizeof(patch_eeprom_2));
+
+	}
+
 	return true;
 }
 
