@@ -112,6 +112,16 @@ void gptc_patchRom()
 		if (*(u16*)(0x08000000 + 0x3B8EAE) == 0x0003)
 			*(u16*)(0x08000000 + 0x3B8EAE) = 0;
 	}
+	else if(gameCode == 0x4A464C41)
+	{
+		//Dragon Ball Z - The Legacy of Goku II International (Japan)
+		//Fix "game will not run on the hardware found" error
+		if (*(u16*)(0x08000000 + 0x3FC8F6) == 0x1102)
+			*(u16*)(0x08000000 + 0x3FC8F6) = 0x1001;
+
+		if (*(u16*)(0x08000000 + 0x3FC906) == 0x0003)
+			*(u16*)(0x08000000 + 0x3FC906) = 0;
+	}
 	else if(gameCode == 0x50464C41)
 	{
 		//Dragon Ball Z - The Legacy of Goku II (Europe)
