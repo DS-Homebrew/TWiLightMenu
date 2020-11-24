@@ -58,7 +58,7 @@ const save_type_t* save_findTag()
 			//SRAM
 			type = SAVE_TYPE_SRAM;
 		}
-		else if (fst == 0x52504545)
+		else if (fst == 0x52504545 && *(u8*)(curAddr+6) == '_')
 		{
 			//EEPR
 			type = SAVE_TYPE_EEPROM;
