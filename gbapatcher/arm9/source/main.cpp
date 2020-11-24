@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
-	const save_type_t* saveType = save_findTag();
+	const save_type_t* saveType = save_findTag(getFileSize(argv[1]));
 	if (saveType != NULL && saveType->patchFunc != NULL)
 	{
 		saveType->patchFunc(saveType);

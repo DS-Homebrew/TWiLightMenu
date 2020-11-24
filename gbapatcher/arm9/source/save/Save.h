@@ -61,5 +61,4 @@ struct save_type_t
 		asm volatile("bx lr"); \
 	}
 
-const save_type_t* save_findTag();
-void               save_injectJump(u32* location, void* jumpTarget);
+const save_type_t* save_findTag(u32 romSize);
