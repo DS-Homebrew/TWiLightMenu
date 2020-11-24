@@ -61,4 +61,4 @@ struct save_type_t
 		asm volatile("bx lr"); \
 	}
 
-const save_type_t* save_findTag(u32 romSize);
+const save_type_t* save_findTag();

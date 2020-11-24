@@ -3,6 +3,7 @@
 //#include "FlashSave.h"
 #include "Save.h"
 
+extern u32 romSize;
 extern u32 saveSize;
 
 //#define SAVE_TYPE_COUNT		18
@@ -31,7 +32,7 @@ static const save_type_t sSaveTypes[SAVE_TYPE_COUNT] =
 	{"FLASH1M_V103", 13, SAVE_TYPE_FLASH1M_V103, 128 * 1024, flash_patch1MV103 },*/
 };
 
-const save_type_t* save_findTag(u32 romSize)
+const save_type_t* save_findTag()
 {
 	u32  curAddr = 0x080000C0;
 	while (curAddr < 0x08000000+romSize)

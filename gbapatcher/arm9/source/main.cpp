@@ -14,6 +14,7 @@
 #include "save/Save.h"
 #include "gbaswitch.h"
 
+u32 romSize = 0;
 u32 saveSize = 0;
 
 //---------------------------------------------------------------------------------
@@ -40,9 +41,11 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
+	romSize = getFileSize(argv[1]);
+
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
-	const save_type_t* saveType = save_findTag(getFileSize(argv[1]));
+	const save_type_t* saveType = save_findTag();
 	if (saveType != NULL && saveType->patchFunc != NULL)
 	{
 		saveType->patchFunc(saveType);
