@@ -264,10 +264,6 @@ void stop (void) {
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 
-	// overwrite reboot stub identifier
-	extern char *fake_heap_end;
-	*fake_heap_end = 0;
-
 	defaultExceptionHandler();
 
 	if (!fatInitDefault()) {
@@ -275,6 +271,14 @@ int main(int argc, char **argv) {
 		printf("fatInitDefault failed!");
 		stop();
 	}
+
+	if (argc < 2) {
+		return 0;	// No arguments passed!
+	}
+
+	// overwrite reboot stub identifier
+	extern char *fake_heap_end;
+	*fake_heap_end = 0;
 
 	romSize = getFileSize(argv[1]);
 
