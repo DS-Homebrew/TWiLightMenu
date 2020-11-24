@@ -4,7 +4,6 @@
 #include "EepromSave.h"
 
 extern u32 romSize;
-extern u32 saveSize;
 
 //todo: Moero!! Jaleco Collection (Japan) reports EEPROM_V124, but the signatures below don't work!
 
@@ -87,7 +86,6 @@ bool eeprom_patchV111(const save_type_t* type)
 	if (!progFunc)
 		return false;
 	tonccpy(progFunc, &patch_eeprom_2, sizeof(patch_eeprom_2));
-    saveSize=512;
 	return true;
 }
 
@@ -102,7 +100,6 @@ bool eeprom_patchV120(const save_type_t* type)
 	if (!progFunc)
 		return false;
 	tonccpy(progFunc, &patch_eeprom_2, sizeof(patch_eeprom_2));
-	saveSize=8*1024;
 	return true;
 }
 
@@ -117,7 +114,6 @@ bool eeprom_patchV124(const save_type_t* type)
 	if (!progFunc)
 		return false;
 	tonccpy(progFunc, &patch_eeprom_2, sizeof(patch_eeprom_2));
-	saveSize=8*1024;
 	return true;
 }
 
@@ -132,6 +128,5 @@ bool eeprom_patchV126(const save_type_t* type)
 	if (!progFunc)
 		return false;
 	tonccpy(progFunc, &patch_eeprom_2, sizeof(patch_eeprom_2));
-	saveSize=8*1024;
 	return true;
 }

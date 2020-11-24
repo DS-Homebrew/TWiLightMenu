@@ -15,7 +15,6 @@
 #include "gbaswitch.h"
 
 u32 romSize = 0;
-u32 saveSize = 0;
 
 //---------------------------------------------------------------------------------
 void stop (void) {
@@ -51,13 +50,13 @@ int main(int argc, char **argv) {
 		saveType->patchFunc(saveType);
 	}
 
-	if (saveSize > 0) {
+	if (saveType != NULL) {
 		std::string savepath = replaceAll(argv[1], ".gba", ".sav");
 		if (getFileSize(savepath.c_str()) == 0) {
-			toncset((void*)0x0A000000, 0, saveSize);
+			toncset((void*)0x0A000000, 0, saveType->size);
 			FILE *pFile = fopen(savepath.c_str(), "wb");
 			if (pFile) {
-				fseek(pFile, saveSize - 1, SEEK_SET);
+				fseek(pFile, saveType->size - 1, SEEK_SET);
 				fputc('\0', pFile);
 				fclose(pFile);
 			}

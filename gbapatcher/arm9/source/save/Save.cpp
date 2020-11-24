@@ -4,10 +4,9 @@
 #include "Save.h"
 
 extern u32 romSize;
-extern u32 saveSize;
 
-//#define SAVE_TYPE_COUNT		18
-#define SAVE_TYPE_COUNT		7
+//#define SAVE_TYPE_COUNT		25
+#define SAVE_TYPE_COUNT		14
 
 static const save_type_t sSaveTypes[SAVE_TYPE_COUNT] =
 {
@@ -30,6 +29,16 @@ static const save_type_t sSaveTypes[SAVE_TYPE_COUNT] =
 	{"FLASH512_V133", 14, SAVE_TYPE_FLASH512_V133, 64 * 1024, flash_patch512V130},
 	{"FLASH1M_V102", 13, SAVE_TYPE_FLASH1M_V102, 128 * 1024, flash_patch1MV102},
 	{"FLASH1M_V103", 13, SAVE_TYPE_FLASH1M_V103, 128 * 1024, flash_patch1MV103 },*/
+
+	//sram does not require patching
+	{"SRAM_F_V100", 12, SAVE_TYPE_SRAM_F_V100, 32 * 1024, NULL},
+	{"SRAM_F_V102", 12, SAVE_TYPE_SRAM_F_V102, 32 * 1024, NULL},
+	{"SRAM_F_V103", 12, SAVE_TYPE_SRAM_F_V103, 32 * 1024, NULL},
+
+	{"SRAM_V110", 10, SAVE_TYPE_SRAM_V110, 32 * 1024, NULL},
+	{"SRAM_V111", 10, SAVE_TYPE_SRAM_V111, 32 * 1024, NULL},
+	{"SRAM_V112", 10, SAVE_TYPE_SRAM_V112, 32 * 1024, NULL},
+	{"SRAM_V113", 10, SAVE_TYPE_SRAM_V113, 32 * 1024, NULL},
 };
 
 const save_type_t* save_findTag()
@@ -48,8 +57,6 @@ const save_type_t* save_findTag()
 		{
 			//SRAM
 			type = SAVE_TYPE_SRAM;
-			saveSize = 32*1024;
-			return NULL;
 		}
 		else if (fst == 0x52504545)
 		{
