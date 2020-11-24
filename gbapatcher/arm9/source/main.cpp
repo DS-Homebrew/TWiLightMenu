@@ -132,6 +132,41 @@ void gptc_patchRom()
 		if (*(u16*)(0x08000000 + 0x6F42C2) == 0x0003)
 			*(u16*)(0x08000000 + 0x6F42C2) = 0;
 	}
+	else if(gameCode == 0x45464C42)
+	{
+		//2 Games in 1 - Dragon Ball Z - The Legacy of Goku I & II (USA)
+		//LoG1: Fix "game cannot be played on hardware found" error
+		if (*(u16*)(0x08000000 + 0x40356) == 0x7002)
+			*(u16*)(0x08000000 + 0x40356) = 0;
+
+		if (*(u16*)(0x08000000 + 0x4035E) == 0x7043)
+			*(u16*)(0x08000000 + 0x4035E) = 0;
+
+		if (*(u16*)(0x08000000 + 0x4037E) == 0x7001)
+			*(u16*)(0x08000000 + 0x4037E) = 0;
+
+		if (*(u16*)(0x08000000 + 0x40382) == 0x7041)
+			*(u16*)(0x08000000 + 0x40382) = 0;
+
+		//Do we need this?
+		/*if (*(u16*)(0x08000000 + 0x4E316) == 0xB0A2)
+		{
+			*(u16*)(0x08000000 + 0x4E316) = 0x400;
+
+			for(int i = 0; i < sizeof(sDbzLoGUPatch1); i += 4)
+				*(u32*)(0x08000000 + 0x4E318 + i) = *(u32*)&sDbzLoGUPatch1[i];
+
+			for(int i = 0; i < sizeof(sDbzLoGUPatch2); i += 4)
+				*(u32*)(0x08000000 + 0x????? + i) = *(u32*)&sDbzLoGUPatch2[i];
+		}*/
+
+		//LoG2: Fix "game will not run on the hardware found" error
+		if (*(u16*)(0x08000000 + 0xBB9016) == 0x1102)
+			*(u16*)(0x08000000 + 0xBB9016) = 0x1001;
+
+		if (*(u16*)(0x08000000 + 0xBB9026) == 0x0003)
+			*(u16*)(0x08000000 + 0xBB9026) = 0;
+	}
 	else if(gameCode == 0x45424442)
 	{
 		//Dragon Ball Z - Taiketsu (USA)
@@ -194,6 +229,25 @@ void gptc_patchRom()
 
 		if (*(u16*)(0x08000000 + 0x8B90) == 0x7071)
 			*(u16*)(0x08000000 + 0x8B90) = 0;
+	}
+	else if(gameCode == 0x45465542)
+	{
+		//2 Games in 1 - Dragon Ball Z - Buu's Fury & Dragon Ball GT - Transformation (USA)
+		//DBZ BF: Fix "game will not run on this hardware" error
+		if (*(u16*)(0x08000000 + 0x38B66) == 0x7032)
+			*(u16*)(0x08000000 + 0x38B66) = 0;
+
+		if (*(u16*)(0x08000000 + 0x38B6A) == 0x7072)
+			*(u16*)(0x08000000 + 0x38B6A) = 0;
+
+		if (*(u16*)(0x08000000 + 0x38B86) == 0x7008)
+			*(u16*)(0x08000000 + 0x38B86) = 0;
+
+		if (*(u16*)(0x08000000 + 0x38B8C) == 0x7031)
+			*(u16*)(0x08000000 + 0x38B8C) = 0;
+
+		if (*(u16*)(0x08000000 + 0x38B90) == 0x7071)
+			*(u16*)(0x08000000 + 0x38B90) = 0;
 	}
 }
 
