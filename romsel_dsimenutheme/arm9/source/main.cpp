@@ -678,16 +678,16 @@ int main(int argc, char **argv) {
 	  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
-		*(vu32*)(0x08000000) = 0x53524C41;	// Write test
-		if (*(vu32*)(0x08000000) != 0x53524C41) {	// If not writeable
+		*(vu16*)(0x08000000) = 0x4D54;	// Write test
+		if (*(vu16*)(0x08000000) != 0x4D54) {	// If not writeable
 			_M3_changeMode(M3_MODE_RAM);	// Try again with M3
-			*(vu32*)(0x08000000) = 0x53524C41;
+			*(vu16*)(0x08000000) = 0x4D54;
 		}
-		if (*(vu32*)(0x08000000) != 0x53524C41) {
+		if (*(vu16*)(0x08000000) != 0x4D54) {
 			_SC_changeMode(SC_MODE_RAM);	// Try again with SuperCard
-			*(vu32*)(0x08000000) = 0x53524C41;
+			*(vu16*)(0x08000000) = 0x4D54;
 		}
-		if (*(vu32*)(0x08000000) == 0x53524C41) {
+		if (*(vu16*)(0x08000000) == 0x4D54) {
 			u8 byteBak = *(vu8*)(0x0A000000);
 			*(vu8*)(0x0A000000) = 'T';	// SRAM write test
 		  if (*(vu8*)(0x0A000000) == 'T') {	// Check if SRAM is writeable

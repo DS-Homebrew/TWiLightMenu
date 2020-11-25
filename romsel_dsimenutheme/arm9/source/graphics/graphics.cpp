@@ -23,6 +23,8 @@
 #include <dirent.h>
 #include <maxmod9.h>
 #include <nds/arm9/dldi.h>
+#include "io_m3_common.h"
+#include "io_sc_common.h"
 
 #include "../errorScreen.h"
 #include "../iconTitle.h"
@@ -1744,8 +1746,18 @@ void loadRotatingCubes() {
 		} else if (sys().isRegularDS()) {
 			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
 							 // Expansion Pak)
-			*(vu32 *)(0x08240000) = 1;
-			if (*(vu32 *)(0x08240000) == 1) {
+			*(vu16*)(0x08240000) = 1;
+			if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+				if (*(vu16*)(0x08240000) != 1) {	// If not writeable
+					_M3_changeMode(M3_MODE_RAM);	// Try again with M3
+					*(vu16*)(0x08240000) = 1;
+				}
+				if (*(vu16*)(0x08240000) != 1) {
+					_SC_changeMode(SC_MODE_RAM);	// Try again with SuperCard
+					*(vu16*)(0x08240000) = 1;
+				}
+			}
+			if (*(vu16*)(0x08240000) == 1) {
 				// Set to load video into DS Memory Expansion Pak
 				rotatingCubesLocation = (u8 *)0x09000000;
 				doRead = true;
