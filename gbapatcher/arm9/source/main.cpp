@@ -8,6 +8,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "io_sc_common.h"
+
 #include "tonccpy.h"
 #include "fileCopy.h"
 #include "tool/stringtool.h"
@@ -291,6 +293,8 @@ int main(int argc, char **argv) {
 	{
 		saveType->patchFunc(saveType);
 	}
+
+	_SC_changeMode(SC_MODE_RAM_RO);	// Lock write access to ROM region
 
 	if (saveType != NULL) {
 		std::string savepath = replaceAll(argv[1], ".gba", ".sav");

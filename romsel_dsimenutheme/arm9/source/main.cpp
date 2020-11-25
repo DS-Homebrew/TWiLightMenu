@@ -1,6 +1,7 @@
 #include <maxmod9.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
+#include "io_sc_common.h"
 
 #include <fat.h>
 #include <limits.h>
@@ -673,12 +674,15 @@ int main(int argc, char **argv) {
 	keysSetRepeat(10, 2);
 
 	if (ms().showGba == 1) {
+	  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
 		*(vu32*)(0x08000000) = 0x53524C41;	// Write test
 		if (*(vu32*)(0x08000000) != 0x53524C41) {	// Check if writeable
-			ms().showGba = 0;	// If not, hide GBA ROMs
-		} else {
+			_SC_changeMode(SC_MODE_RAM);	// If not, try again with SuperCard
+			*(vu32*)(0x08000000) = 0x53524C41;
+		}
+		if (*(vu32*)(0x08000000) == 0x53524C41) {
 			u8 byteBak = *(vu8*)(0x0A000000);
 			*(vu8*)(0x0A000000) = 'T';	// SRAM write test
 		  if (*(vu8*)(0x0A000000) == 'T') {	// Check if SRAM is writeable
@@ -704,7 +708,12 @@ int main(int argc, char **argv) {
 				}
 			}
 		  }
+		} else {
+			ms().showGba = 0;	// If write failed, hide GBA ROMs
 		}
+	  } else {
+		  ms().showGba = 0;	// If reading SD from Slot-2, hide GBA ROMs
+	  }
 	}
 
 	std::vector<std::string> extensionList;

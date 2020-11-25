@@ -19,8 +19,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	gbapatcher
 BUILD		:=	build
-SOURCES		:=	source source/common source/graphics source/save source/tool
-INCLUDES	:=	include source source/common source/graphics source/save source/tool
+SOURCES		:=	source source/common source/graphics source/save source/tool ../../universal/source/flashcard
+INCLUDES	:=	include source source/common source/graphics source/save source/tool ../../universal/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music
