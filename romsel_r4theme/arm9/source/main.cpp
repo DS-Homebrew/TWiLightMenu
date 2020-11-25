@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <nds/arm9/dldi.h>
+#include "io_m3_common.h"
 #include "io_sc_common.h"
 
 #include <stdio.h>
@@ -952,8 +953,12 @@ int main(int argc, char **argv) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
 		*(vu32*)(0x08000000) = 0x53524C41;	// Write test
-		if (*(vu32*)(0x08000000) != 0x53524C41) {	// Check if writeable
-			_SC_changeMode(SC_MODE_RAM);	// If not, try again with SuperCard
+		if (*(vu32*)(0x08000000) != 0x53524C41) {	// If not writeable
+			_M3_changeMode(M3_MODE_RAM);	// Try again with M3
+			*(vu32*)(0x08000000) = 0x53524C41;
+		}
+		if (*(vu32*)(0x08000000) != 0x53524C41) {
+			_SC_changeMode(SC_MODE_RAM);	// Try again with SuperCard
 			*(vu32*)(0x08000000) = 0x53524C41;
 		}
 		if (*(vu32*)(0x08000000) == 0x53524C41) {
