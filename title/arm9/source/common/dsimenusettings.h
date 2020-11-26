@@ -137,6 +137,7 @@ class TWLSettings
     bool showMainMenu;
     int theme;
     int subtheme;
+	int showGba;
     int showMd;
     bool showDirectories;
     int showBoxArt;

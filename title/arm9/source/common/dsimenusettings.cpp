@@ -28,6 +28,7 @@ TWLSettings::TWLSettings()
     theme = 0;
     subtheme = 0;
 
+	showGba = 1 + isDSiMode();
 	showMd = 3;
     showDirectories = true;
     showBoxArt = 1 + isDSiMode();
@@ -88,6 +89,10 @@ void TWLSettings::loadSettings()
     startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
 
+	showGba = settingsini.GetInt("SRLOADER", "SHOW_GBA", showGba);
+	if (!sys().isRegularDS() && showGba != 0) {
+		showGba = 2;
+	}
 	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 
     // Customizable UI settings.

@@ -643,7 +643,7 @@ void lastRunROM()
 	}
 	else if (ms().launchType[ms().secondaryDevice] == Launch::EGBANativeLaunch)
 	{
-		if (!sys().isRegularDS() || access(ms().romPath[true].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (!sys().isRegularDS() || (ms().showGba != 1) || access(ms().romPath[true].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
 
