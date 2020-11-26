@@ -1,5 +1,7 @@
 #include <nds.h>
 #include <nds/arm9/dldi.h>
+#include "io_m3_common.h"
+#include "io_sc_common.h"
 
 #include "bootsplash.h"
 #include "bootstrapsettings.h"
@@ -258,7 +260,11 @@ void lastRunROM()
 	if (ms().launchType[ms().secondaryDevice] > Launch::EDSiWareLaunch)
 	{
 		argarray.push_back(strdup("null"));
-		argarray.push_back(strdup(ms().homebrewArg[ms().secondaryDevice].c_str()));
+		if (ms().launchType[ms().secondaryDevice] == Launch::EGBANativeLaunch) {
+			argarray.push_back(strdup(ms().romPath[ms().secondaryDevice].c_str()));
+		} else {
+			argarray.push_back(strdup(ms().homebrewArg[ms().secondaryDevice].c_str()));
+		}
 	}
 
 	int err = 0;
@@ -346,7 +352,16 @@ void lastRunROM()
 
 					if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 						consoleDemoInit();
-						printf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
+						iprintf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
+						iprintf ("\n");
+						if (ms().consoleModel >= 2) {
+							iprintf ("If this takes a while,\n");
+							iprintf ("press HOME, and press B.\n");
+						} else {
+							iprintf ("If this takes a while, close\n");
+							iprintf ("and open the console's lid.\n");
+						}
+						iprintf ("\n");
 						fadeType = true;
 
 						if (orgsavesize > 0) {
@@ -359,7 +374,7 @@ void lastRunROM()
 								fclose(pFile);
 							}
 						}
-						printf((orgsavesize == 0) ? "Save file created!\n" : "Save file expanded!\n");
+						iprintf((orgsavesize == 0) ? "Save file created!\n" : "Save file expanded!\n");
 
 						for (int i = 0; i < 30; i++) {
 							swiWaitForVBlank();
@@ -612,9 +627,9 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to StellaDS as argument
 	}
-	else if (ms().launchType[ms().secondaryDevice] == Launch::EPicoDriveTWLLaunch && ms().showMd >= 2)
+	else if (ms().launchType[ms().secondaryDevice] == Launch::EPicoDriveTWLLaunch)
 	{
-		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (ms().showMd >= 2 || access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		if (sys().flashcardUsed())
 		{
@@ -626,9 +641,85 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to PicoDrive TWL as argument
 	}
+	else if (ms().launchType[ms().secondaryDevice] == Launch::EGBANativeLaunch)
+	{
+		if (!sys().isRegularDS() || access(ms().romPath[true].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
+
+	  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
+
+		*(vu16*)(0x08000000) = 0x4D54;	// Write test
+		if (*(vu16*)(0x08000000) != 0x4D54) {	// If not writeable
+			_M3_changeMode(M3_MODE_RAM);	// Try again with M3
+			*(vu16*)(0x08000000) = 0x4D54;
+		}
+		if (*(vu16*)(0x08000000) != 0x4D54) {
+			_SC_changeMode(SC_MODE_RAM);	// Try again with SuperCard
+			*(vu16*)(0x08000000) = 0x4D54;
+		}
+		if (*(vu16*)(0x08000000) == 0x4D54) {
+			u8 byteBak = *(vu8*)(0x0A000000);
+			*(vu8*)(0x0A000000) = 'T';	// SRAM write test
+		  if (*(vu8*)(0x0A000000) == 'T') {	// Check if SRAM is writeable
+			*(vu8*)(0x0A000000) = byteBak;
+			u32 savesize = getFileSize(savepath.c_str());
+			if (savesize > 0) {
+				// Try to restore save from SRAM
+				bool restoreSave = false;
+				for (u32 addr = 0x0A000000; addr < 0x0A010000; addr++) {
+					if (*(u8*)addr != 0) {
+						restoreSave = true;
+						break;
+					}
+				}
+				if (restoreSave) {
+					FILE* savFile = fopen(savepath.c_str(), "wb");
+					fwrite((void*)0x0A000000, 1, savesize, savFile);
+					fclose(savFile);
+
+					// Wipe out SRAM after restoring save
+					toncset((void*)0x0A000000, 0, 0x10000);
+				}
+			}
+		  }
+		} else {
+			return;	// If write failed, skip to running TWiLight Menu++
+		}
+	  } else {
+		  return;
+	  }
+
+		consoleDemoInit();
+		iprintf("Now Loading...\n");
+		iprintf("\n");
+		iprintf("If this takes a while, close\n");
+		iprintf("and open the console's lid.\n");
+		iprintf("\n");
+		fadeType = true;
+
+		FILE* gbaFile = fopen(ms().romPath[true].c_str(), "rb");
+		fread((void*)0x08000000, 1, 0x2000000, gbaFile);
+		fclose(gbaFile);
+
+		FILE* savFile = fopen(savepath.c_str(), "rb");
+		if (savFile) {
+			fread((void*)0x0A000000, 1, 0x10000, gbaFile);
+			fclose(gbaFile);
+		}
+
+		fadeType = false;
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+
+		argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/gbapatcher.srldr";
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to StellaDS as argument
+	}
 	if (err > 0) {
 		consoleDemoInit();
-		printf("Start failed. Error %i\n", err);
+		iprintf("Start failed. Error %i\n", err);
 		fadeType = true;
 		for (int i = 0; i < 60*3; i++) {
 			swiWaitForVBlank();
