@@ -364,8 +364,10 @@ bool runNds9 (const char* filename) {
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
 					 // Expansion Pak)
 
-	*(vu32*)(0x08240000) = 1;
-	if (*(vu32*)(0x08240000) != 1) return false;
+	if (*(u16*)(0x020000C0) == 0) {
+		*(vu32*)(0x08240000) = 1;
+	}
+	if (*(u16*)(0x020000C0) != 0 || *(vu32*)(0x08240000) != 1) return false;
 
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
