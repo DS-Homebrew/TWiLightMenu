@@ -1,6 +1,7 @@
 #include <nds.h>
 #include <nds/arm9/dldi.h>
 #include "io_m3_common.h"
+#include "io_g6_common.h"
 #include "io_sc_common.h"
 
 #include <stdio.h>
@@ -956,6 +957,11 @@ int main(int argc, char **argv) {
 		if (*(vu16*)(0x08000000) != 0x4D54) {	// If not writeable
 			_M3_changeMode(M3_MODE_RAM);	// Try again with M3
 			*(u16*)(0x020000C0) = 0x334D;
+			*(vu16*)(0x08000000) = 0x4D54;
+		}
+		if (*(vu16*)(0x08000000) != 0x4D54) {	// If not writeable
+			_G6_SelectOperation(G6_MODE_RAM);	// Try again with G6
+			*(u16*)(0x020000C0) = 0x3647;
 			*(vu16*)(0x08000000) = 0x4D54;
 		}
 		if (*(vu16*)(0x08000000) != 0x4D54) {
