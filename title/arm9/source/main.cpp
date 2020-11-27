@@ -804,7 +804,9 @@ int main(int argc, char **argv)
 		fclose(twlCfg);
 	}
 
-	*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
+	if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353) {
+		*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
+	}
 
 	if (access(settingsinipath, F_OK) != 0 && (access("fat:/", F_OK) == 0)) {
 		settingsinipath =
