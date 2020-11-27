@@ -653,10 +653,12 @@ void lastRunROM()
 		*(vu16*)(0x08000000) = 0x4D54;	// Write test
 		if (*(vu16*)(0x08000000) != 0x4D54) {	// If not writeable
 			_M3_changeMode(M3_MODE_RAM);	// Try again with M3
+			*(u16*)(0x020000C0) = 0x334D;
 			*(vu16*)(0x08000000) = 0x4D54;
 		}
 		if (*(vu16*)(0x08000000) != 0x4D54) {
 			_SC_changeMode(SC_MODE_RAM);	// Try again with SuperCard
+			*(u16*)(0x020000C0) = 0x4353;
 			*(vu16*)(0x08000000) = 0x4D54;
 		}
 		if (*(vu16*)(0x08000000) == 0x4D54) {
@@ -685,6 +687,7 @@ void lastRunROM()
 			}
 		  }
 		} else {
+			*(u16*)(0x020000C0) = 0;
 			return;	// If write failed, skip to running TWiLight Menu++
 		}
 	  } else {
@@ -699,8 +702,10 @@ void lastRunROM()
 		iprintf("\n");
 		fadeType = true;
 
+		u32 romSizeLimit = (*(u16*)(0x020000C0) == 0x4353) ? 0x1FFFFFE : 0x2000000;
+
 		FILE* gbaFile = fopen(ms().romPath[true].c_str(), "rb");
-		fread((void*)0x08000000, 1, 0x2000000, gbaFile);
+		fread((void*)0x08000000, 1, romSizeLimit, gbaFile);
 		fclose(gbaFile);
 
 		FILE* savFile = fopen(savepath.c_str(), "rb");
@@ -792,6 +797,8 @@ int main(int argc, char **argv)
 		}
 		fclose(twlCfg);
 	}
+
+	*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
 
 	if (access(settingsinipath, F_OK) != 0 && (access("fat:/", F_OK) == 0)) {
 		settingsinipath =

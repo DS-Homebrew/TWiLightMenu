@@ -291,15 +291,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	// INIT_DISC = initDisc;
 	writeAddr ((data_t*) LCDC_BANK_C, INIT_DISC_OFFSET, initDisc);
 
-	writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, isDSiMode());
-	if(argv[0][0]=='s' && argv[0][1]=='d') {
-		writeAddr ((data_t*) LCDC_BANK_C, HAVE_DSISD_OFFSET, 1);
-	}
-
 	writeAddr ((data_t*) LCDC_BANK_C, CLEAR_MASTER_BRIGHT_OFFSET, clearMasterBright);
-	if (isDSiMode()) {
-		writeAddr ((data_t*) LCDC_BANK_C, DSMODE_SWITCH_OFFSET, dsModeSwitch);
-	}
 	writeAddr ((data_t*) LCDC_BANK_C, LOADFROMRAM_OFFSET, loadFromRam);
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
@@ -383,12 +375,6 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		args[0] = filePath;
 		argv = args;
 	}
-
-	bool havedsiSD = false;
-
-	if(access("sd:/", F_OK) == 0) havedsiSD = true;
-	
-	installBootStub(havedsiSD);
 
 	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), false, argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
 }

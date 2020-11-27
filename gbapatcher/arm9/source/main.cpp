@@ -294,7 +294,9 @@ int main(int argc, char **argv) {
 		saveType->patchFunc(saveType);
 	}
 
-	_SC_changeMode(SC_MODE_RAM_RO);	// Lock write access to ROM region
+	if (*(u16*)(0x020000C0) == 0x4353) {
+		_SC_changeMode(SC_MODE_RAM_RO);	// Lock write access to ROM region
+	}
 
 	if (saveType != NULL) {
 		std::string savepath = replaceAll(argv[1], ".gba", ".sav");
