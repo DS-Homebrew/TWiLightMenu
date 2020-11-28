@@ -647,6 +647,7 @@ void lastRunROM()
 		if (!sys().isRegularDS() || (ms().showGba != 1) || access(ms().romPath[true].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
+		u32 savesize = getFileSize(savepath.c_str());
 
 	  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
@@ -672,7 +673,6 @@ void lastRunROM()
 			*(vu8*)(0x0A000000) = 'T';	// SRAM write test
 		  if (*(vu8*)(0x0A000000) == 'T') {	// Check if SRAM is writeable
 			*(vu8*)(0x0A000000) = byteBak;
-			u32 savesize = getFileSize(savepath.c_str());
 			if (savesize > 0) {
 				// Try to restore save from SRAM
 				bool restoreSave = false;
@@ -708,15 +708,33 @@ void lastRunROM()
 		iprintf("\n");
 		fadeType = true;
 
+		u32 ptr = 0x08000000;
+		extern char copyBuf[0x8000];
 		u32 romSizeLimit = (*(u16*)(0x020000C0) == 0x4353) ? 0x1FFFFFE : 0x2000000;
 
 		FILE* gbaFile = fopen(ms().romPath[true].c_str(), "rb");
-		fread((void*)0x08000000, 1, romSizeLimit, gbaFile);
+		for (u32 len = romSizeLimit; len > 0; len -= 0x8000) {
+			if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
+				tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+				ptr += 0x8000;
+			} else {
+				break;
+			}
+		}
 		fclose(gbaFile);
 
-		FILE* savFile = fopen(savepath.c_str(), "rb");
-		if (savFile) {
-			fread((void*)0x0A000000, 1, 0x10000, gbaFile);
+		ptr = 0x0A000000;
+
+		if (savesize > 0) {
+			FILE* savFile = fopen(savepath.c_str(), "rb");
+			for (u32 len = savesize; len > 0; len -= 0x8000) {
+				if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile) > 0) {
+					tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+					ptr += 0x8000;
+				} else {
+					break;
+				}
+			}
 			fclose(gbaFile);
 		}
 

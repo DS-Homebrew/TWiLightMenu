@@ -2550,16 +2550,36 @@ int main(int argc, char **argv) {
 						printSmallCentered(false, 34, "the console's lid.");
 						printSmallCentered(false, 88, "Now Loading...");
 
+						u32 ptr = 0x08000000;
+						extern char copyBuf[0x8000];
 						u32 romSizeLimit = (*(u16*)(0x020000C0) == 0x4353) ? 0x1FFFFFE : 0x2000000;
 
 						FILE* gbaFile = fopen(filename[secondaryDevice].c_str(), "rb");
-						fread((void*)0x08000000, 1, romSizeLimit, gbaFile);
+						for (u32 len = romSizeLimit; len > 0; len -= 0x8000) {
+							if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
+								tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+								ptr += 0x8000;
+							} else {
+								break;
+							}
+						}
 						fclose(gbaFile);
 
 						std::string savename = replaceAll(filename[secondaryDevice], ".gba", ".sav");
-						FILE* savFile = fopen(savename.c_str(), "rb");
-						if (savFile) {
-							fread((void*)0x0A000000, 1, 0x10000, gbaFile);
+						u32 savesize = getFileSize(savename.c_str());
+
+						ptr = 0x0A000000;
+
+						if (savesize > 0) {
+							FILE* savFile = fopen(savename.c_str(), "rb");
+							for (u32 len = savesize; len > 0; len -= 0x8000) {
+								if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile) > 0) {
+									tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+									ptr += 0x8000;
+								} else {
+									break;
+								}
+							}
 							fclose(gbaFile);
 						}
 
