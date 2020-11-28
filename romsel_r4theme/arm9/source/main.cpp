@@ -3,6 +3,7 @@
 #include "io_m3_common.h"
 #include "io_g6_common.h"
 #include "io_sc_common.h"
+#include "exptools.h"
 
 #include <stdio.h>
 #include <fat.h>
@@ -961,7 +962,7 @@ int main(int argc, char **argv) {
 			writeFlagToRam = true;
 			*(vu16*)(0x08000000) = 0x4D54;
 		}
-		if (*(vu16*)(0x08000000) != 0x4D54) {	// If not writeable
+		if (*(vu16*)(0x08000000) != 0x4D54) {
 			_G6_SelectOperation(G6_MODE_RAM);	// Try again with G6
 			*(u16*)(0x020000C0) = 0x3647;
 			writeFlagToRam = true;
@@ -973,11 +974,19 @@ int main(int argc, char **argv) {
 			writeFlagToRam = true;
 			*(vu16*)(0x08000000) = 0x4D54;
 		}
+		if (*(vu16*)(0x08000000) != 0x4D54) {
+			cExpansion::SetRompage(381);	// Try again with EZ Flash
+			cExpansion::OpenNorWrite();
+			cExpansion::SetSerialMode();
+			*(u16*)(0x020000C0) = 0x5A45;
+			writeFlagToRam = true;
+			*(vu16*)(0x08000000) = 0x4D54;
+		}
 		if (writeFlagToRam) {
 			*(vu16*)(0x08000002) = *(u16*)(0x020000C0);
 		} else {
 			*(u16*)(0x020000C0) = *(vu16*)(0x08000002);
-			if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353) {
+			if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353 && *(u16*)(0x020000C0) != 0x5A45) {
 				*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
 			}
 		}
@@ -2032,12 +2041,26 @@ int main(int argc, char **argv) {
 
 						u32 ptr = 0x08000000;
 						extern char copyBuf[0x8000];
-						u32 romSizeLimit = (*(u16*)(0x020000C0) == 0x4353) ? 0x1FFFFFE : 0x2000000;
+						u32 romSize = getFileSize(filename.c_str());
+						if (romSize > 0x2000000) romSize = 0x2000000;
+
+						bool nor = false;
+						if (*(u16*)(0x020000C0) == 0x5A45 && romSize > 0x1000000) {
+							cExpansion::SetRompage(0);
+							expansion().SetRampage(cExpansion::ENorPage);
+							nor = true;
+						} else if (*(u16*)(0x020000C0) == 0x4353 && romSize > 0x1FFFFFE) {
+							romSize = 0x1FFFFFE;
+						}
 
 						FILE* gbaFile = fopen(filename.c_str(), "rb");
-						for (u32 len = romSizeLimit; len > 0; len -= 0x8000) {
+						for (u32 len = romSize; len > 0; len -= 0x8000) {
 							if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
-								tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+								if (nor) {
+									expansion().WriteNorFlash(ptr-0x08000000, (u8*)&copyBuf, (len>0x8000 ? 0x8000 : len));
+								} else {
+									tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+								}
 								ptr += 0x8000;
 							} else {
 								break;
@@ -2054,7 +2077,7 @@ int main(int argc, char **argv) {
 							FILE* savFile = fopen(savename.c_str(), "rb");
 							for (u32 len = savesize; len > 0; len -= 0x8000) {
 								if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile) > 0) {
-									tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+									tonccpy((u8*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
 									ptr += 0x8000;
 								} else {
 									break;

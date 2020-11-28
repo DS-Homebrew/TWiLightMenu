@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 #include "io_sc_common.h"
+#include "exptools.h"
 
 #include "tonccpy.h"
 #include "fileCopy.h"
@@ -306,8 +307,11 @@ int main(int argc, char **argv) {
 		saveType->patchFunc(saveType);
 	}
 
+	// Lock write access to ROM region
 	if (*(u16*)(0x020000C0) == 0x4353) {
-		_SC_changeMode(SC_MODE_RAM_RO);	// Lock write access to ROM region
+		_SC_changeMode(SC_MODE_RAM_RO);
+	} else 	if (*(u16*)(0x020000C0) == 0x5A45) {
+		cExpansion::CloseNorWrite();
 	}
 
 	if (saveType != NULL) {

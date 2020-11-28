@@ -3,6 +3,7 @@
 #include "io_m3_common.h"
 #include "io_g6_common.h"
 #include "io_sc_common.h"
+#include "exptools.h"
 
 #include "bootsplash.h"
 #include "bootstrapsettings.h"
@@ -647,6 +648,8 @@ void lastRunROM()
 		if (!sys().isRegularDS() || (ms().showGba != 1) || access(ms().romPath[true].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
+		u32 romSize = getFileSize(ms().romPath[true].c_str());
+		if (romSize > 0x2000000) romSize = 0x2000000;
 		u32 savesize = getFileSize(savepath.c_str());
 
 	  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
@@ -658,7 +661,7 @@ void lastRunROM()
 			*(u16*)(0x020000C0) = 0x334D;
 			*(vu16*)(0x08000000) = 0x4D54;
 		}
-		if (*(vu16*)(0x08000000) != 0x4D54) {	// If not writeable
+		if (*(vu16*)(0x08000000) != 0x4D54) {
 			_G6_SelectOperation(G6_MODE_RAM);	// Try again with G6
 			*(u16*)(0x020000C0) = 0x3647;
 			*(vu16*)(0x08000000) = 0x4D54;
@@ -666,6 +669,13 @@ void lastRunROM()
 		if (*(vu16*)(0x08000000) != 0x4D54) {
 			_SC_changeMode(SC_MODE_RAM);	// Try again with SuperCard
 			*(u16*)(0x020000C0) = 0x4353;
+			*(vu16*)(0x08000000) = 0x4D54;
+		}
+		if (*(vu16*)(0x08000000) != 0x4D54) {
+			cExpansion::SetRompage(381);	// Try again with EZ Flash
+			cExpansion::OpenNorWrite();
+			cExpansion::SetSerialMode();
+			*(u16*)(0x020000C0) = 0x5A45;
 			*(vu16*)(0x08000000) = 0x4D54;
 		}
 		if (*(vu16*)(0x08000000) == 0x4D54) {
@@ -710,12 +720,23 @@ void lastRunROM()
 
 		u32 ptr = 0x08000000;
 		extern char copyBuf[0x8000];
-		u32 romSizeLimit = (*(u16*)(0x020000C0) == 0x4353) ? 0x1FFFFFE : 0x2000000;
+		bool nor = false;
+		if (*(u16*)(0x020000C0) == 0x5A45 && romSize > 0x1000000) {
+			cExpansion::SetRompage(0);
+			expansion().SetRampage(cExpansion::ENorPage);
+			nor = true;
+		} else if (*(u16*)(0x020000C0) == 0x4353 && romSize > 0x1FFFFFE) {
+			romSize = 0x1FFFFFE;
+		}
 
 		FILE* gbaFile = fopen(ms().romPath[true].c_str(), "rb");
-		for (u32 len = romSizeLimit; len > 0; len -= 0x8000) {
+		for (u32 len = romSize; len > 0; len -= 0x8000) {
 			if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
-				tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+				if (nor) {
+					expansion().WriteNorFlash(ptr-0x08000000, (u8*)&copyBuf, (len>0x8000 ? 0x8000 : len));
+				} else {
+					tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+				}
 				ptr += 0x8000;
 			} else {
 				break;
@@ -729,7 +750,7 @@ void lastRunROM()
 			FILE* savFile = fopen(savepath.c_str(), "rb");
 			for (u32 len = savesize; len > 0; len -= 0x8000) {
 				if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile) > 0) {
-					tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+					tonccpy((u8*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
 					ptr += 0x8000;
 				} else {
 					break;
