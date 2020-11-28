@@ -15,7 +15,7 @@ off_t getFileSize(const char *fileName)
 	return fsize;
 }
 
-u32 copyBuf[0x8000];
+char copyBuf[0x8000];
 
 int fcopy(const char *sourcePath, const char *destinationPath)
 {
