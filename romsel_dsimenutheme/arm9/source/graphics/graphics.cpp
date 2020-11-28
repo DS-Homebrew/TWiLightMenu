@@ -1785,7 +1785,7 @@ void loadRotatingCubes() {
 						*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
 					}
 				}
-				if (*(vu16*)(0x08240000) != 1) {
+				if (*(vu16*)(0x08240000) != 1 && *(vu16*)(0x08000000) != 0x4D54) {
 					*(u16*)(0x020000C0) = 0;
 				}
 			}
