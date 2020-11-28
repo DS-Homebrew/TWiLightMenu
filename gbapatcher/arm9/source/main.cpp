@@ -54,11 +54,11 @@ void gptc_patchRom()
 		{
 			*(u16*)(0x08000000 + 0xE27E) = 0x400;
 
-			for(int i = 0; i < (int)sizeof(sDbzLoGUPatch1); i += 4)
-				*(u32*)(0x08000000 + 0xE280 + i) = *(u32*)&sDbzLoGUPatch1[i];
+			for(int i = 0; i < (int)sizeof(sDbzLoGUPatch1); i += 2)
+				*(u16*)(0x08000000 + 0xE280 + i) = *(u16*)&sDbzLoGUPatch1[i];
 
-			for(int i = 0; i < (int)sizeof(sDbzLoGUPatch2); i += 4)
-				*(u32*)(0x08000000 + 0xE32C + i) = *(u32*)&sDbzLoGUPatch2[i];
+			for(int i = 0; i < (int)sizeof(sDbzLoGUPatch2); i += 2)
+				*(u16*)(0x08000000 + 0xE32C + i) = *(u16*)&sDbzLoGUPatch2[i];
 		}
 	}
 	else if(gameCode == 0x50474C41)
@@ -155,11 +155,11 @@ void gptc_patchRom()
 		{
 			*(u16*)(0x08000000 + 0x4E316) = 0x400;
 
-			for(int i = 0; i < sizeof(sDbzLoGUPatch1); i += 4)
-				*(u32*)(0x08000000 + 0x4E318 + i) = *(u32*)&sDbzLoGUPatch1[i];
+			for(int i = 0; i < sizeof(sDbzLoGUPatch1); i += 2)
+				*(u16*)(0x08000000 + 0x4E318 + i) = *(u16*)&sDbzLoGUPatch1[i];
 
-			for(int i = 0; i < sizeof(sDbzLoGUPatch2); i += 4)
-				*(u32*)(0x08000000 + 0x????? + i) = *(u32*)&sDbzLoGUPatch2[i];
+			for(int i = 0; i < sizeof(sDbzLoGUPatch2); i += 2)
+				*(u16*)(0x08000000 + 0x????? + i) = *(u16*)&sDbzLoGUPatch2[i];
 		}*/
 
 		//LoG2: Fix "game will not run on the hardware found" error
@@ -179,11 +179,17 @@ void gptc_patchRom()
 		if (*(u16*)(0x08000000 + 0x2BD60) == 0x7810)
 			*(u16*)(0x08000000 + 0x2BD60) = 0x2000;
 
-		if (*(u32*)(0x08000000 + 0x2BD80) == 0x7839703A)
-			*(u32*)(0x08000000 + 0x2BD80) = 0x21001C00;
+		if (*(u16*)(0x08000000 + 0x2BD80) == 0x703A)
+			*(u16*)(0x08000000 + 0x2BD80) = 0x1C00;
 
-		if (*(u32*)(0x08000000 + 0x2BD8C) == 0x78307030)
-			*(u32*)(0x08000000 + 0x2BD8C) = 0x20001C00;
+		if (*(u16*)(0x08000000 + 0x2BD82) == 0x7839)
+			*(u16*)(0x08000000 + 0x2BD82) = 0x2100;
+
+		if (*(u16*)(0x08000000 + 0x2BD8C) == 0x7030)
+			*(u16*)(0x08000000 + 0x2BD8C) = 0x1C00;
+
+		if (*(u16*)(0x08000000 + 0x2BD8E) == 0x7830)
+			*(u16*)(0x08000000 + 0x2BD8E) = 0x2000;
 
 		if (*(u16*)(0x08000000 + 0x2BDAC) == 0x7008)
 			*(u16*)(0x08000000 + 0x2BDAC) = 0x1C00;
@@ -201,11 +207,17 @@ void gptc_patchRom()
 		if (*(u16*)(0x08000000 + 0x3FE14) == 0x7810)
 			*(u16*)(0x08000000 + 0x3FE14) = 0x2000;
 
-		if (*(u32*)(0x08000000 + 0x3FE34) == 0x7839703A)
-			*(u32*)(0x08000000 + 0x3FE34) = 0x21001C00;
+		if (*(u16*)(0x08000000 + 0x3FE34) == 0x703A)
+			*(u16*)(0x08000000 + 0x3FE34) = 0x1C00;
 
-		if (*(u32*)(0x08000000 + 0x3FE40) == 0x78307030)
-			*(u32*)(0x08000000 + 0x3FE40) = 0x20001C00;
+		if (*(u16*)(0x08000000 + 0x3FE36) == 0x7839)
+			*(u16*)(0x08000000 + 0x3FE36) = 0x2100;
+
+		if (*(u16*)(0x08000000 + 0x3FE40) == 0x7030)
+			*(u16*)(0x08000000 + 0x3FE40) = 0x1C00;
+
+		if (*(u16*)(0x08000000 + 0x3FE42) == 0x7830)
+			*(u16*)(0x08000000 + 0x3FE42) = 0x2000;
 
 		if (*(u16*)(0x08000000 + 0x3FE58) == 0x7008)
 			*(u16*)(0x08000000 + 0x3FE58) = 0x1C00;
