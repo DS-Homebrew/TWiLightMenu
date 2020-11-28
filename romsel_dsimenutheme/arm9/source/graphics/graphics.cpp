@@ -1750,7 +1750,7 @@ void loadRotatingCubes() {
 							 // Expansion Pak)
 			bool writeFlagToRam = false;
 			*(vu16*)(0x08240000) = 1;
-			if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+			if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) && *(u16*)(0x020000C0) != 0) {
 				if (*(vu16*)(0x08240000) != 1) {	// If not writeable
 					_M3_changeMode(M3_MODE_RAM);	// Try again with M3
 					*(u16*)(0x020000C0) = 0x334D;
@@ -1785,7 +1785,7 @@ void loadRotatingCubes() {
 						*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
 					}
 				}
-				if (*(vu16*)(0x08240000) != 1 && *(vu16*)(0x08000000) != 0x4D54) {
+				if (*(vu16*)(0x08240000) != 1) {
 					*(u16*)(0x020000C0) = 0;
 				}
 			}

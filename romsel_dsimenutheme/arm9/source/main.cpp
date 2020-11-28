@@ -671,11 +671,6 @@ int main(int argc, char **argv) {
 			 "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, ms().launcherApp);
 	}
 
-	graphicsInit();
-	iconManagerInit();
-
-	keysSetRepeat(10, 2);
-
 	if (ms().showGba == 1) {
 	  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
@@ -750,6 +745,11 @@ int main(int argc, char **argv) {
 		  ms().showGba = 0;	// If reading SD from Slot-2, hide GBA ROMs
 	  }
 	}
+
+	graphicsInit();
+	iconManagerInit();
+
+	keysSetRepeat(10, 2);
 
 	std::vector<std::string> extensionList;
 	if (ms().showNds) {
