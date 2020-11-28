@@ -2577,7 +2577,7 @@ int main(int argc, char **argv) {
 						for (u32 len = romSize; len > 0; len -= 0x8000) {
 							if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
 								if (nor) {
-									expansion().WriteNorFlash(ptr-0x08000000, (u8*)&copyBuf, (len>0x8000 ? 0x8000 : len));
+									expansion().WriteNorFlash(ptr-0x08000000, (u8*)copyBuf, (len>0x8000 ? 0x8000 : len));
 								} else {
 									tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
 								}
