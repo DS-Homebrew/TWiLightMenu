@@ -772,6 +772,13 @@ int main(int argc, char **argv)
 		stop();
 	}
 
+	if (sys().isRegularDS()) {
+		*(u16*)(0x020000C0) = *(vu16*)(0x08000002);
+		if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353) {
+			*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
+		}
+	}
+
 	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 	if (REG_SCFG_EXT!=0) {
 		u16 cfgCrc = swiCRC16(0xFFFF, (void*)0x02000400, 0x128);
@@ -802,10 +809,6 @@ int main(int argc, char **argv)
 			}
 		}
 		fclose(twlCfg);
-	}
-
-	if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353) {
-		*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
 	}
 
 	if (access(settingsinipath, F_OK) != 0 && (access("fat:/", F_OK) == 0)) {

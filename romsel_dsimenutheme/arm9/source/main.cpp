@@ -679,21 +679,33 @@ int main(int argc, char **argv) {
 	  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
+		bool writeFlagToRam = false;
 		*(vu16*)(0x08000000) = 0x4D54;	// Write test
 		if (*(vu16*)(0x08000000) != 0x4D54) {	// If not writeable
 			_M3_changeMode(M3_MODE_RAM);	// Try again with M3
 			*(u16*)(0x020000C0) = 0x334D;
+			writeFlagToRam = true;
 			*(vu16*)(0x08000000) = 0x4D54;
 		}
 		if (*(vu16*)(0x08000000) != 0x4D54) {	// If not writeable
 			_G6_SelectOperation(G6_MODE_RAM);	// Try again with G6
 			*(u16*)(0x020000C0) = 0x3647;
+			writeFlagToRam = true;
 			*(vu16*)(0x08000000) = 0x4D54;
 		}
 		if (*(vu16*)(0x08000000) != 0x4D54) {
 			_SC_changeMode(SC_MODE_RAM);	// Try again with SuperCard
 			*(u16*)(0x020000C0) = 0x4353;
+			writeFlagToRam = true;
 			*(vu16*)(0x08000000) = 0x4D54;
+		}
+		if (writeFlagToRam) {
+			*(vu16*)(0x08000002) = *(u16*)(0x020000C0);
+		} else {
+			*(u16*)(0x020000C0) = *(vu16*)(0x08000002);
+			if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353) {
+				*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
+			}
 		}
 		if (*(vu16*)(0x08000000) == 0x4D54) {
 			u8 byteBak = *(vu8*)(0x0A000000);
