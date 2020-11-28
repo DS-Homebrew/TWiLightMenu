@@ -1785,6 +1785,9 @@ void loadRotatingCubes() {
 						*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
 					}
 				}
+				if (*(vu16*)(0x08240000) != 1) {
+					*(u16*)(0x020000C0) = 0;
+				}
 			}
 			if (*(vu16*)(0x08240000) == 1) {
 				// Set to load video into DS Memory Expansion Pak
