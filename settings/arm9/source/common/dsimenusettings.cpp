@@ -93,6 +93,7 @@ TWLSettings::TWLSettings()
     dsi_theme = "dark";
     _3ds_theme = "light";
 
+    gbaBorder = "default.png";
     unlaunchBg = "default.gif";
 	removeLauncherPatches = true;
 
@@ -209,6 +210,7 @@ void TWLSettings::loadSettings()
     r4_theme = settingsini.GetString("SRLOADER", "R4_THEME", r4_theme);
     dsi_theme = settingsini.GetString("SRLOADER", "DSI_THEME", dsi_theme);
     _3ds_theme = settingsini.GetString("SRLOADER", "3DS_THEME", _3ds_theme);
+    gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
 
@@ -308,6 +310,7 @@ void TWLSettings::saveSettings()
     settingsini.SetString("SRLOADER", "R4_THEME", r4_theme);
     settingsini.SetString("SRLOADER", "DSI_THEME", dsi_theme);
     settingsini.SetString("SRLOADER", "3DS_THEME", _3ds_theme);
+    settingsini.SetString("SRLOADER", "GBA_BORDER", gbaBorder);
     settingsini.SetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 	settingsini.SetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
 

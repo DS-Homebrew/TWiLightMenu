@@ -1,9 +1,9 @@
+#include "common/dsimenusettings.h"
+#include "common/tonccpy.h"
 #include "graphics/ThemeTextures.h"
 #include "graphics/lodepng.h"
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
-
-int gbaBorder = 1;
 
 void loadGbaBorder(const char* filename) {
 	uint imageWidth, imageHeight;
@@ -68,29 +68,30 @@ void loadGbaBorder(const char* filename) {
 void gbaSwitch(void) {
 	irqDisable(IRQ_VBLANK);
 
-  videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
-  videoSetModeSub(MODE_5_2D | DISPLAY_BG3_ACTIVE);
+	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
+	videoSetModeSub(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 
 	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
 	vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
 	vramSetBankD(VRAM_D_LCD);
 
-  // for the main screen
-  REG_BG3CNT = BG_BMP16_256x256 | BG_BMP_BASE(0) | BG_WRAP_OFF;
-  REG_BG3PA = 1 << 8; //scale x
-  REG_BG3PB = 0; //rotation x
-  REG_BG3PC = 0; //rotation y
-  REG_BG3PD = 1 << 8; //scale y
-  REG_BG3X = 0; //translation x
-  REG_BG3Y = 0; //translation y
+	// for the main screen
+	REG_BG3CNT = BG_BMP16_256x256 | BG_BMP_BASE(0) | BG_WRAP_OFF;
+	REG_BG3PA = 1 << 8; //scale x
+	REG_BG3PB = 0; //rotation x
+	REG_BG3PC = 0; //rotation y
+	REG_BG3PD = 1 << 8; //scale y
+	REG_BG3X = 0; //translation x
+	REG_BG3Y = 0; //translation y
 
-  memset((void*)BG_BMP_RAM(0),0,0x18000);
-  memset((void*)BG_BMP_RAM(8),0,0x18000);
+	toncset((void*)BG_BMP_RAM(0),0,0x18000);
+	toncset((void*)BG_BMP_RAM(8),0,0x18000);
 
-	if (gbaBorder == 1) {
-		loadGbaBorder("nitro:/graphics/gbaborder.png");
-	}
+	char borderPath[256];
+	sprintf(borderPath, "/_nds/TWiLightMenu/gbaborders/%s", ms().gbaBorder.c_str());
+	loadGbaBorder((access(borderPath, F_OK)==0) ? borderPath : "nitro:/graphics/gbaborder.png");
+
 	// Switch to GBA mode
 	runNdsFile ("/_nds/TWiLightMenu/gbaswitch.srldr", 0, NULL, true, false, true, false, false);	
 }

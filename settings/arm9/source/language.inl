@@ -133,7 +133,7 @@ STRING(DESCRIPTION_BIOSINTRO, "Select whether the Game Boy Advance splash screen
 // Games/Apps settings
 STRING(ASPECTRATIO, "Screen Aspect Ratio")
 STRING(SMSGGINRAM, "Load SMS/GG ROM into RAM")
-STRING(USEGBARUNNER2, "Use GBARunner2")
+STRING(GBABORDER, "GBA border")
 STRING(RUNIN, "Run in")
 STRING(CPUSPEED, "ARM9 CPU Speed")
 STRING(VRAMBOOST, "VRAM boost")
@@ -178,7 +178,7 @@ STRING(NIGHTLY, "Nightly")
 
 STRING(DESCRIPTION_ASPECTRATIO, "Adjusts the top screen to be the original size or wider for DS games. Some games may not use this. Requires Sono's patcher to be used as well as external sysmodules enabled in Luma.")
 STRING(DESCRIPTION_SMSGGINRAM, "Load SEGA Master System and Game Gear ROMs into RAM drives. An older S8DS version will be used. Enable this if you can't run said ROMs.")
-STRING(DESCRIPTION_GBARUNNER2_1, "Use either GBARunner2 or the native GBA mode to play GBA games.")
+STRING(DESCRIPTION_GBABORDER, "Changes the border in GBA mode. Does not affect GBARunner2.")
 STRING(DESCRIPTION_RUNIN_1, "Select whether to run in DS or DSi mode.")
 STRING(DESCRIPTION_CPUSPEED_1, "Set to TWL to get rid of lags in some games.")
 STRING(DESCRIPTION_VRAMBOOST_1, "Allow 8 bit VRAM writes and expands the bus to 32 bit.")
@@ -268,9 +268,11 @@ STRING(SKINSEL_3DS, "Skin select: Nintendo 3DS HOME Menu")
 STRING(SKINSEL_R4, "Skin select: R4 Original")
 STRING(SKINSEL_WOOD, "Skin select: Wood UI")
 
+STRING(BORDERSEL_GBA, "Border select: GBA mode")
 STRING(BGSEL_UNLAUNCH, "Background select: Unlaunch")
 
 STRING(AB_SETSKIN, "\\A / \\B: Set skin")
+STRING(AB_SETBORDER, "\\A / \\B: Set border")
 STRING(AB_SETBG, "\\A / \\B: Set background")
 
 // STRING(SNES_EMULATOR, "Choose a SNES emulator")

@@ -101,6 +101,7 @@ TWLSettings::TWLSettings()
 	dsi_theme = "dark";
 	_3ds_theme = "light";
 	
+    gbaBorder = "default.png";
     unlaunchBg = "default.gif";
 
 	soundfreq = EFreq32KHz;
@@ -206,6 +207,7 @@ void TWLSettings::loadSettings()
 	dsi_theme = settingsini.GetString("SRLOADER", "DSI_THEME", dsi_theme);
 	_3ds_theme = settingsini.GetString("SRLOADER", "3DS_THEME", _3ds_theme);
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
+    gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
 	charUnlaunchBg = unlaunchBg.c_str();
 	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
 

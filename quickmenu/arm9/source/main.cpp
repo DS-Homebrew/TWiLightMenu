@@ -82,6 +82,7 @@ std::string dsiWarePubPath;
 std::string dsiWarePrvPath;
 
 const char *charUnlaunchBg;
+std::string gbaBorder = "default.png";
 std::string unlaunchBg = "default.gif";
 bool removeLauncherPatches = true;
 
@@ -236,6 +237,7 @@ void LoadSettings(void) {
 
     show12hrClock = settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
+    gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 	charUnlaunchBg = unlaunchBg.c_str();
 	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);

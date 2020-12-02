@@ -38,6 +38,7 @@
 #define AK_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/akmenu/themes/"
 #define R4_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/r4menu/themes/"
 
+#define GBA_BORDER_DIRECTORY "/_nds/TWiLightMenu/gbaborders/"
 #define UNLAUNCH_BG_DIRECTORY "/_nds/TWiLightMenu/unlaunch/backgrounds/"
 
 bool useTwlCfg = false;
@@ -54,6 +55,7 @@ std::vector<std::string> akThemeList;
 std::vector<std::string> r4ThemeList;
 std::vector<std::string> dsiThemeList;
 std::vector<std::string> _3dsThemeList;
+std::vector<std::string> gbaBorderList;
 std::vector<std::string> unlaunchBgList;
 std::vector<std::string> menuSrldrList;
 
@@ -294,6 +296,29 @@ void loadUnlaunchBgList()
 	}
 }
 
+void loadGbaBorderList()
+{
+	DIR *dir;
+	struct dirent *ent;
+	std::string themeDir;
+	if ((dir = opendir(GBA_BORDER_DIRECTORY)) != NULL)
+	{
+		// print all the files and directories within directory 
+		while ((ent = readdir(dir)) != NULL)
+		{
+			// Reallocation here, but prevents our vector from being filled with
+
+			themeDir = ent->d_name;
+			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+
+			if (extention(themeDir, ".png")) {
+				gbaBorderList.emplace_back(themeDir);
+			}
+		}
+		closedir(dir);
+	}
+}
+
 void loadMenuSrldrList (const char* dirPath) {
 	DIR *dir;
 	struct dirent *ent;
@@ -331,6 +356,11 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	default:
 		return nullopt;
 	}
+}
+
+std::optional<Option> opt_gba_border_select(Option::Int &optVal)
+{
+	return Option(STR_BORDERSEL_GBA, STR_AB_SETBORDER, Option::Str(&ms().gbaBorder), gbaBorderList);
 }
 
 std::optional<Option> opt_bg_select(Option::Int &optVal)
@@ -619,7 +649,10 @@ int main(int argc, char **argv)
 	loadR4ThemeList();
 	load3DSThemeList();
 	loadDSiThemeList();
-	if (ms().consoleModel == 0) {
+	if (sys().isRegularDS()) {
+		loadGbaBorderList();
+	}
+	if ((isDSiMode() || REG_SCFG_EXT != 0) && ms().consoleModel == 0) {
 		loadUnlaunchBgList();
 	}
 	swiWaitForVBlank();
@@ -752,6 +785,15 @@ int main(int argc, char **argv)
 			.option(STR_BIOS_INTRO, STR_DESCRIPTION_BIOSINTRO, Option::Bool(&gs().skipIntro), {STR_OFF, STR_ON}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
+
+	if (sys().isRegularDS()) {
+		gamesPage
+			.option(STR_GBABORDER,
+				STR_DESCRIPTION_GBABORDER,
+				Option::Int(&ms().subtheme, opt_gba_border_select, opt_reset_subtheme),
+				{STR_PRESS_A},
+				{0});
+	}
 
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked())
 	{
