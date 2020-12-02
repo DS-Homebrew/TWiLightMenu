@@ -999,7 +999,7 @@ int main(int argc, char **argv) {
 			*(vu8*)(0x0A000000) = byteBak;
 			std::string savepath = replaceAll(romPath[true], ".gba", ".sav");
 			u32 savesize = getFileSize(savepath.c_str());
-			if (savesize > 0) {
+			if (savesize > 0 && launchType[true] == 11) {
 				// Try to restore save from SRAM
 				bool restoreSave = false;
 				for (u32 addr = 0x0A000000; addr < 0x0A010000; addr++) {
