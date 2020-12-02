@@ -802,7 +802,7 @@ int main(int argc, char **argv) {
 
 	char path[256] = {0};
 
-	if (flashcardFound()) {
+	if (flashcardFound() && ms().launchType[true] == Launch::ESDFlashcardLaunch) {
 		// Move .sav back to "saves" folder
 		std::string filename = ms().romPath[true];
 		const size_t last_slash_idx = filename.find_last_of("/");

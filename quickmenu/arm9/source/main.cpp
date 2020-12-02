@@ -1192,7 +1192,7 @@ int main(int argc, char **argv) {
 	  }
 	}
 
-	if (flashcardFound()) {
+	if (flashcardFound() && launchType[true] == 1) {
 		// Move .sav back to "saves" folder
 		std::string filename = romPath[true];
 		const size_t last_slash_idx = filename.find_last_of("/");
