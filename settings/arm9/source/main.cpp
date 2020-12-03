@@ -755,9 +755,9 @@ int main(int argc, char **argv)
 	emulationPage
 		.option(STR_NDS_ROMS, STR_DESCRIPTION_SHOW_NDS, Option::Bool(&ms().showNds), {STR_SHOW, STR_HIDE}, {true, false});
 	if (sys().isRegularDS()) {
-		emulationPage.option(STR_GBA_ROMS, STR_DESCRIPTION_SHOW_GBA, Option::Int(&ms().showGba), {"GBARunner2", STR_NATIVE, STR_HIDE}, {2, 1, 0});
+		emulationPage.option(STR_GBA_ROMS, STR_DESCRIPTION_SHOW_GBA, Option::Int(&ms().showGba), {STR_HIDE, STR_NATIVE, "GBARunner2"}, {0, 1, 2});
 	} else {
-		emulationPage.option(STR_GBA_ROMS, STR_DESCRIPTION_SHOW_GBA, Option::Int(&ms().showGba), {"GBARunner2", STR_HIDE}, {2, 0});
+		emulationPage.option(STR_GBA_ROMS, STR_DESCRIPTION_SHOW_GBA, Option::Int(&ms().showGba), {STR_HIDE, "GBARunner2"}, {0, 2});
 	}
 	emulationPage
 		.option(STR_VIDEOS, STR_DESCRIPTION_SHOW_VIDEO, Option::Bool(&ms().showRvid), {STR_SHOW, STR_HIDE}, {true, false})
