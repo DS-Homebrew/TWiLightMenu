@@ -686,7 +686,7 @@ void lastRunROM()
 			if (savesize > 0) {
 				// Try to restore save from SRAM
 				bool restoreSave = false;
-				for (u32 addr = 0x0A000000; addr < 0x0A010000; addr++) {
+				for (u32 addr = 0x0A000000; addr < 0x0A000000+savesize; addr++) {
 					if (*(u8*)addr != 0) {
 						restoreSave = true;
 						break;
@@ -697,7 +697,7 @@ void lastRunROM()
 					extern char copyBuf[0x8000];
 					FILE* savFile = fopen(savepath.c_str(), "wb");
 					for (u32 len = savesize; len > 0; len -= 0x8000) {
-						tonccpy((u8*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+						tonccpy(&copyBuf, (u8*)ptr, (len>0x8000 ? 0x8000 : len));
 						fwrite(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile);
 						ptr += 0x8000;
 					}

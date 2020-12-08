@@ -721,7 +721,7 @@ int main(int argc, char **argv) {
 			if (savesize > 0 && ms().launchType[true] == Launch::EGBANativeLaunch) {
 				// Try to restore save from SRAM
 				bool restoreSave = false;
-				for (u32 addr = 0x0A000000; addr < 0x0A010000; addr++) {
+				for (u32 addr = 0x0A000000; addr < 0x0A000000+savesize; addr++) {
 					if (*(u8*)addr != 0) {
 						restoreSave = true;
 						break;
