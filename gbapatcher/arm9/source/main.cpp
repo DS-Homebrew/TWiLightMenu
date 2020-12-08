@@ -34,6 +34,16 @@ static const u8 sDbzLoGUPatch2[0x28] =
 
 void gptc_patchRom()
 {
+	// General fix for white screen crash
+	// Patch out wait states
+	for (u32 addr = 0x08000000; addr < 0x08000000+romSize; addr+=4) {
+		if ((*(u8*)(addr-1) == 0x00 || *(u8*)(addr-1) == 0x04) && *(u32*)addr == 0x04000204) {
+			toncset((u16*)addr, 0, sizeof(u32));
+		}
+	}
+
+	u32 nop = 0xE1A00000;
+
 	u32 gameCode = *(u32*)(0x080000AC);
 	if(gameCode == 0x45474C41)
 	{
@@ -138,6 +148,8 @@ void gptc_patchRom()
 	else if(gameCode == 0x45464C42)
 	{
 		//2 Games in 1 - Dragon Ball Z - The Legacy of Goku I & II (USA)
+		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
+
 		//LoG1: Fix "game cannot be played on hardware found" error
 		if (*(u16*)(0x08000000 + 0x40356) == 0x7002)
 			*(u16*)(0x08000000 + 0x40356) = 0;
@@ -248,6 +260,8 @@ void gptc_patchRom()
 	else if(gameCode == 0x45465542)
 	{
 		//2 Games in 1 - Dragon Ball Z - Buu's Fury & Dragon Ball GT - Transformation (USA)
+		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
+
 		//DBZ BF: Fix "game will not run on this hardware" error
 		if (*(u16*)(0x08000000 + 0x38B66) == 0x7032)
 			*(u16*)(0x08000000 + 0x38B66) = 0;
