@@ -693,8 +693,14 @@ void lastRunROM()
 					}
 				}
 				if (restoreSave) {
+					u32 ptr = 0x0A000000;
+					extern char copyBuf[0x8000];
 					FILE* savFile = fopen(savepath.c_str(), "wb");
-					fwrite((void*)0x0A000000, 1, savesize, savFile);
+					for (u32 len = savesize; len > 0; len -= 0x8000) {
+						tonccpy((u8*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+						fwrite(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile);
+						ptr += 0x8000;
+					}
 					fclose(savFile);
 
 					// Wipe out SRAM after restoring save
@@ -756,7 +762,7 @@ void lastRunROM()
 					break;
 				}
 			}
-			fclose(gbaFile);
+			fclose(savFile);
 		}
 
 		fadeType = false;
