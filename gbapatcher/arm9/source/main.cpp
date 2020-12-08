@@ -8,6 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "io_m3_common.h"
 #include "io_sc_common.h"
 #include "exptools.h"
 
@@ -402,7 +403,9 @@ int main(int argc, char **argv) {
 	}
 
 	// Lock write access to ROM region
-	if (*(u16*)(0x020000C0) == 0x4353) {
+	if (*(u16*)(0x020000C0) == 0x334D) {
+		_M3_changeMode(M3_MODE_ROM);
+	} else 	if (*(u16*)(0x020000C0) == 0x4353) {
 		_SC_changeMode(SC_MODE_RAM_RO);
 	} else 	if (*(u16*)(0x020000C0) == 0x5A45) {
 		cExpansion::CloseNorWrite();

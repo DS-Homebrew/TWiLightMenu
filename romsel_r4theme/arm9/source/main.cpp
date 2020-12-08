@@ -845,6 +845,22 @@ void dsCardLaunch() {
 	stop();
 }
 
+void gbaSramAccess(bool open) {
+	if (open) {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_ROM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_RAM_RO);
+		}
+	} else {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_RAM);
+		}
+	}
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -1001,6 +1017,7 @@ int main(int argc, char **argv) {
 			u32 savesize = getFileSize(savepath.c_str());
 			if (savesize > 0x8000) savesize = 0x8000;
 			if (savesize > 0 && launchType[true] == 11) {
+				gbaSramAccess(true);	// Switch to GBA SRAM
 				// Try to restore save from SRAM
 				bool restoreSave = false;
 				extern char copyBuf[0x8000];
@@ -1017,8 +1034,10 @@ int main(int argc, char **argv) {
 					fclose(savFile);
 
 					// Wipe out SRAM after restoring save
-					toncset((void*)0x0A000000, 0, 0x8000);
+					toncset(&copyBuf, 0, 0x8000);
+					cExpansion::WriteSram(0x0A000000,(u8*)copyBuf,0x8000);
 				}
+				gbaSramAccess(false);	// Switch out of GBA SRAM
 			}
 		  }
 		} else {
@@ -2076,19 +2095,13 @@ int main(int argc, char **argv) {
 						std::string savename = replaceAll(filename, ".gba", ".sav");
 						u32 savesize = getFileSize(savename.c_str());
 
-						ptr = 0x0A000000;
-
 						if (savesize > 0) {
+							gbaSramAccess(true);	// Switch to GBA SRAM
 							FILE* savFile = fopen(savename.c_str(), "rb");
-							for (u32 len = savesize; len > 0; len -= 0x8000) {
-								if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile) > 0) {
-									tonccpy((u8*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
-									ptr += 0x8000;
-								} else {
-									break;
-								}
-							}
+							fread(&copyBuf, 1, savesize, savFile);
 							fclose(savFile);
+							cExpansion::WriteSram(0x0A000000,(u8*)copyBuf,0x8000);
+							gbaSramAccess(false);	// Switch out of GBA SRAM
 						}
 
 						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
