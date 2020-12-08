@@ -5,6 +5,19 @@
 #include "nitrofs.h"
 #include "nds_loader_arm9.h"
 
+static void SetBrightness(u8 screen, s8 bright) {
+	u16 mode = 1 << 14;
+
+	if (bright < 0) {
+		mode = 2 << 14;
+		bright = -bright;
+	}
+	if (bright > 31) {
+		bright = 31;
+	}
+	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+}
+
 static u16 bmpImageBuffer[256*192] = {0};
 
 std::string gbaBorder = "default.png";
@@ -71,6 +84,11 @@ void loadGbaBorder(const char* filename) {
 
 void gbaSwitch(void) {
 	irqDisable(IRQ_VBLANK);
+
+	*(u16*)0x0400006C |= BIT(14);
+	*(u16*)0x0400006C &= BIT(15);
+	SetBrightness(0, 31);
+	SetBrightness(1, 31);
 
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_5_2D | DISPLAY_BG3_ACTIVE);
