@@ -337,6 +337,27 @@ void gptc_patchRom()
 		if (*(u16*)(0x08000000 + 0x10B078) == 0x8008)
 			*(u16*)(0x08000000 + 0x10B078) = 0x46C0;
 	}
+	else if(gameCode == 0x45533342)
+	{
+		//Sonic Advance 3 (USA)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0xBB67C) == 0x8008)
+			*(u16*)(0x08000000 + 0xBB67C) = 0x46C0;
+	}
+	else if(gameCode == 0x50533342)
+	{
+		//Sonic Advance 3 (Europe)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0xBBA04) == 0x8008)
+			*(u16*)(0x08000000 + 0xBBA04) = 0x46C0;
+	}
+	else if(gameCode == 0x4A533342)
+	{
+		//Sonic Advance 3 (Japan)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0xBB9F8) == 0x8008)
+			*(u16*)(0x08000000 + 0xBB9F8) = 0x46C0;
+	}
 }
 
 
