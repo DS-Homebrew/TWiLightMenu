@@ -1178,7 +1178,7 @@ int main(int argc, char **argv) {
 					extern char copyBuf[0x8000];
 					FILE* savFile = fopen(savepath.c_str(), "wb");
 					for (u32 len = savesize; len > 0; len -= 0x8000) {
-						tonccpy((u8*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+						tonccpy(&copyBuf, (u8*)ptr, (len>0x8000 ? 0x8000 : len));
 						fwrite(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile);
 						ptr += 0x8000;
 					}
