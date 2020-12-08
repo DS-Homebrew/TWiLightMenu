@@ -1164,28 +1164,25 @@ int main(int argc, char **argv) {
 			*(vu8*)(0x0A000000) = byteBak;
 			std::string savepath = replaceAll(romPath[true], ".gba", ".sav");
 			u32 savesize = getFileSize(savepath.c_str());
+			if (savesize > 0x8000) savesize = 0x8000;
 			if (savesize > 0 && launchType[true] == 11) {
 				// Try to restore save from SRAM
 				bool restoreSave = false;
-				for (u32 addr = 0x0A000000; addr < 0x0A000000+savesize; addr++) {
-					if (*(u8*)addr != 0) {
+				extern char copyBuf[0x8000];
+				cExpansion::ReadSram(0x0A000000,(u8*)copyBuf,savesize);
+				for (u16 i = 0; i < (u16)savesize; i++) {
+					if (copyBuf[i] != 0) {
 						restoreSave = true;
 						break;
 					}
 				}
 				if (restoreSave) {
-					u32 ptr = 0x0A000000;
-					extern char copyBuf[0x8000];
 					FILE* savFile = fopen(savepath.c_str(), "wb");
-					for (u32 len = savesize; len > 0; len -= 0x8000) {
-						tonccpy(&copyBuf, (u8*)ptr, (len>0x8000 ? 0x8000 : len));
-						fwrite(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile);
-						ptr += 0x8000;
-					}
+					fwrite(&copyBuf, 1, savesize, savFile);
 					fclose(savFile);
 
 					// Wipe out SRAM after restoring save
-					toncset((void*)0x0A000000, 0, 0x10000);
+					toncset((void*)0x0A000000, 0, 0x8000);
 				}
 			}
 		  }
