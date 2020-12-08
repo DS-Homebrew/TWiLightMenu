@@ -37,17 +37,34 @@ void gptc_patchRom()
 	// General fix for white screen crash
 	// Patch out wait states
 	for (u32 addr = 0x080000C0; addr < 0x08000000+romSize; addr+=4) {
-		if ((*(u8*)(addr-1) == 0x00 || *(u8*)(addr-1) == 0x04) && *(u32*)addr == 0x04000204) {
+		if ((*(u8*)(addr-1) == 0x00 || *(u8*)(addr-1) == 0x04)
+		&& *(u32*)addr == 0x04000204) {
 			toncset((u16*)addr, 0, sizeof(u32));
 		}
+	}
+
+	// Also check at 0x410
+	if (*(u32*)0x08000410 == 0x04000204) {
+		toncset((u16*)0x08000410, 0, sizeof(u32));
 	}
 
 	u32 nop = 0xE1A00000;
 
 	u32 gameCode = *(u32*)(0x080000AC);
-	if(gameCode == 0x45474C41)
+	if(gameCode == 0x50584C42)
+	{
+		//Astreix & Obelix XXL (Europe)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x50118) == 0x4014)
+			*(u16*)(0x08000000 + 0x50118) = 0x4000;
+	}
+	else if(gameCode == 0x45474C41)
 	{
 		//Dragon Ball Z - The Legacy of Goku (USA)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x96E8) == 0x80A8)
+			*(u16*)(0x08000000 + 0x96E8) = 0x46C0;
+
 		//Fix "game cannot be played on hardware found" error
 		if (*(u16*)(0x08000000 + 0x356) == 0x7002)
 			*(u16*)(0x08000000 + 0x356) = 0;
@@ -75,6 +92,10 @@ void gptc_patchRom()
 	else if(gameCode == 0x50474C41)
 	{
 		//Dragon Ball Z - The Legacy of Goku (Europe)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x9948) == 0x80B0)
+			*(u16*)(0x08000000 + 0x9948) = 0x46C0;
+
 		//Fix "game cannot be played on hardware found" error
 		if (*(u16*)(0x08000000 + 0x33C) == 0x7119)
 			*(u16*)(0x08000000 + 0x33C) = 0x46C0;
@@ -118,6 +139,8 @@ void gptc_patchRom()
 	else if(gameCode == 0x45464C41)
 	{
 		//Dragon Ball Z - The Legacy of Goku II (USA)
+		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
+
 		//Fix "game will not run on the hardware found" error
 		if (*(u16*)(0x08000000 + 0x3B8E9E) == 0x1102)
 			*(u16*)(0x08000000 + 0x3B8E9E) = 0x1001;
@@ -128,6 +151,8 @@ void gptc_patchRom()
 	else if(gameCode == 0x4A464C41)
 	{
 		//Dragon Ball Z - The Legacy of Goku II International (Japan)
+		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
+
 		//Fix "game will not run on the hardware found" error
 		if (*(u16*)(0x08000000 + 0x3FC8F6) == 0x1102)
 			*(u16*)(0x08000000 + 0x3FC8F6) = 0x1001;
@@ -138,6 +163,8 @@ void gptc_patchRom()
 	else if(gameCode == 0x50464C41)
 	{
 		//Dragon Ball Z - The Legacy of Goku II (Europe)
+		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
+
 		//Fix "game will not run on the hardware found" error
 		if (*(u16*)(0x08000000 + 0x6F42B2) == 0x1102)
 			*(u16*)(0x08000000 + 0x6F42B2) = 0x1001;
@@ -149,6 +176,7 @@ void gptc_patchRom()
 	{
 		//2 Games in 1 - Dragon Ball Z - The Legacy of Goku I & II (USA)
 		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
+		tonccpy((u16*)0x088000E0, &nop, sizeof(u32));
 
 		//LoG1: Fix "game cannot be played on hardware found" error
 		if (*(u16*)(0x08000000 + 0x40356) == 0x7002)
@@ -241,6 +269,8 @@ void gptc_patchRom()
 	else if(gameCode == 0x45334742)
 	{
 		//Dragon Ball Z - Buu's Fury (USA)
+		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
+
 		//Fix "game will not run on this hardware" error
 		if (*(u16*)(0x08000000 + 0x8B66) == 0x7032)
 			*(u16*)(0x08000000 + 0x8B66) = 0;
@@ -257,10 +287,17 @@ void gptc_patchRom()
 		if (*(u16*)(0x08000000 + 0x8B90) == 0x7071)
 			*(u16*)(0x08000000 + 0x8B90) = 0;
 	}
+	else if(gameCode == 0x45345442)
+	{
+		//Dragon Ball GT - Transformation (USA)
+		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
+	}
 	else if(gameCode == 0x45465542)
 	{
 		//2 Games in 1 - Dragon Ball Z - Buu's Fury & Dragon Ball GT - Transformation (USA)
 		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
+		tonccpy((u16*)0x080300E0, &nop, sizeof(u32));
+		tonccpy((u16*)0x088000E0, &nop, sizeof(u32));
 
 		//DBZ BF: Fix "game will not run on this hardware" error
 		if (*(u16*)(0x08000000 + 0x38B66) == 0x7032)
