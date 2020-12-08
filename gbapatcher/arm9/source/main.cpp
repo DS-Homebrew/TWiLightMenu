@@ -315,6 +315,27 @@ void gptc_patchRom()
 		if (*(u16*)(0x08000000 + 0x38B90) == 0x7071)
 			*(u16*)(0x08000000 + 0x38B90) = 0;
 	}
+	else if(gameCode == 0x45564442)
+	{
+		//Dragon Ball - Advanced Adventure (USA)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x10C240) == 0x8008)
+			*(u16*)(0x08000000 + 0x10C240) = 0x46C0;
+	}
+	else if(gameCode == 0x50564442)
+	{
+		//Dragon Ball - Advanced Adventure (Europe)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x10CE3C) == 0x8008)
+			*(u16*)(0x08000000 + 0x10CE3C) = 0x46C0;
+	}
+	else if(gameCode == 0x4A564442)
+	{
+		//Dragon Ball - Advanced Adventure (Japan)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x10B078) == 0x8008)
+			*(u16*)(0x08000000 + 0x10B078) = 0x46C0;
+	}
 }
 
 
