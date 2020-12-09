@@ -713,22 +713,22 @@ void lastRunROM()
 							restoreSave = true;
 							break;
 						}
-						ptr -= 0x8000;
 					}
+					ptr -= 0x8000;
 					if (restoreSave) break;
 				}
 				if (restoreSave) {
 					ptr = 0x0A000000;
 					FILE* savFile = fopen(savepath.c_str(), "wb");
 					for (u32 len = savesize; len > 0; len -= 0x8000) {
-						if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile) > 0) {
-							cExpansion::ReadSram(ptr,(u8*)copyBuf,0x8000);
-							ptr += 0x8000;
+						if (ptr >= 0x0A010000) {
+							toncset(&copyBuf, 0, 0x8000);
 						} else {
-							break;
+							cExpansion::ReadSram(ptr,(u8*)copyBuf,0x8000);
 						}
+						fwrite(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile);
+						ptr += 0x8000;
 					}
-					fwrite(&copyBuf, 1, savesize, savFile);
 					fclose(savFile);
 
 					// Wipe out SRAM after restoring save
