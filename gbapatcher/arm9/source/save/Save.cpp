@@ -1,4 +1,5 @@
 #include <nds.h>
+#include "tonccpy.h"
 #include "EepromSave.h"
 #include "FlashSave.h"
 #include "Save.h"
@@ -43,11 +44,13 @@ static const save_type_t sSaveTypes[SAVE_TYPE_COUNT] =
 const save_type_t* save_findTag()
 {
 	u32  curAddr = 0x080000C0;
+	char saveTag[16];
 	while (curAddr < 0x08000000+romSize)
 	{
 		u32      fst = *(u32*)curAddr;
+		tonccpy(&saveTag, (u8*)curAddr, 16);
 		SaveType type = SAVE_TYPE_NONE;
-		if (fst == 0x53414C46 && (*(char*)(curAddr+5) == '_' || *(char*)(curAddr+5) == '5' || *(char*)(curAddr+5) == '1'))
+		if (fst == 0x53414C46 && (saveTag[5] == '_' || saveTag[5] == '5' || saveTag[5] == '1'))
 		{
 			//FLAS
 			type = SAVE_TYPE_FLASH;
@@ -57,7 +60,7 @@ const save_type_t* save_findTag()
 			//SRAM
 			type = SAVE_TYPE_SRAM;
 		}
-		else if (fst == 0x52504545 && *(char*)(curAddr+6) == '_')
+		else if (fst == 0x52504545 && saveTag[6] == '_')
 		{
 			//EEPR
 			type = SAVE_TYPE_EEPROM;
@@ -67,7 +70,7 @@ const save_type_t* save_findTag()
 		{
 			for (int i = 0; i < SAVE_TYPE_COUNT; i++)
 			{
-				if ((sSaveTypes[i].type & SAVE_TYPE_TYPE_MASK) != type)
+				if (strncmp(saveTag, sSaveTypes[i].tag, sSaveTypes[i].tagLength) != 0)
 					continue;
 				return &sSaveTypes[i];
 			}

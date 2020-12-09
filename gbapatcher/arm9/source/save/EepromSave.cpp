@@ -77,12 +77,12 @@ const u8 patch_eeprom_2[]=
 
 bool eeprom_patchV111(const save_type_t* type)
 {
-	u8* readFunc = memsearch8((u8*)0x08000000, romSize, sReadEepromDwordV111Sig, 0x10, false);
+	u8* readFunc = memsearch8((u8*)0x08000000, romSize, sReadEepromDwordV111Sig, 0x10, true);
 	if (!readFunc)
 		return false;
 	tonccpy(readFunc, &patch_eeprom_1, sizeof(patch_eeprom_1));
 
-	u8* progFunc = memsearch8((u8*)0x08000000, romSize, sProgramEepromDwordV111Sig, 0x10, false);
+	u8* progFunc = memsearch8((u8*)0x08000000, romSize, sProgramEepromDwordV111Sig, 0x10, true);
 	if (!progFunc)
 		return false;
 	tonccpy(progFunc, &patch_eeprom_2, sizeof(patch_eeprom_2));
@@ -118,12 +118,12 @@ bool eeprom_patchV120(const save_type_t* type)
 		if (romPos >= romPos+romSize) break;
 	}
 
-	u8* readFunc = memsearch8((u8*)romPos, curRomSize, sReadEepromDwordV120Sig, 0x10, false);
+	u8* readFunc = memsearch8((u8*)romPos, curRomSize, sReadEepromDwordV120Sig, 0x10, true);
 	if (!readFunc)
 		return false;
 	tonccpy(readFunc, &patch_eeprom_1, sizeof(patch_eeprom_1));
 
-	u8* progFunc = memsearch8((u8*)romPos, curRomSize, sProgramEepromDwordV120Sig, 0x10, false);
+	u8* progFunc = memsearch8((u8*)romPos, curRomSize, sProgramEepromDwordV120Sig, 0x10, true);
 	if (!progFunc)
 		return false;
 	tonccpy(progFunc, &patch_eeprom_2, sizeof(patch_eeprom_2));
@@ -162,12 +162,12 @@ bool eeprom_patchV124(const save_type_t* type)
 		if (romPos >= romPos+romSize) break;
 	}
 
-	u8* readFunc = memsearch8((u8*)romPos, curRomSize, sReadEepromDwordV120Sig, 0x10, false);
+	u8* readFunc = memsearch8((u8*)romPos, curRomSize, sReadEepromDwordV120Sig, 0x10, true);
 	if (!readFunc)
 		return false;
 	tonccpy(readFunc, &patch_eeprom_1, sizeof(patch_eeprom_1));
 
-	u8* progFunc = memsearch8((u8*)romPos, curRomSize, sProgramEepromDwordV124Sig, 0x10, false);
+	u8* progFunc = memsearch8((u8*)romPos, curRomSize, sProgramEepromDwordV124Sig, 0x10, true);
 	if (!progFunc)
 		return false;
 	tonccpy(progFunc, &patch_eeprom_2, sizeof(patch_eeprom_2));
@@ -179,12 +179,12 @@ bool eeprom_patchV124(const save_type_t* type)
 
 bool eeprom_patchV126(const save_type_t* type)
 {
-	u8* readFunc = memsearch8((u8*)0x08000000, romSize, sReadEepromDwordV120Sig, 0x10, false);
+	u8* readFunc = memsearch8((u8*)0x08000000, romSize, sReadEepromDwordV120Sig, 0x10, true);
 	if (!readFunc)
 		return false;
 	tonccpy(readFunc, &patch_eeprom_1, sizeof(patch_eeprom_1));
 
-	u8* progFunc = memsearch8((u8*)0x08000000, romSize, sProgramEepromDwordV126Sig, 0x10, false);
+	u8* progFunc = memsearch8((u8*)0x08000000, romSize, sProgramEepromDwordV126Sig, 0x10, true);
 	if (!progFunc)
 		return false;
 	tonccpy(progFunc, &patch_eeprom_2, sizeof(patch_eeprom_2));

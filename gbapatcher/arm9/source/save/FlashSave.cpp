@@ -197,17 +197,17 @@ static const u8 flash_V12Y_replace4[38] = {
 
 bool flash_patchV120(const save_type_t* type)
 {
-	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash_V12X_find1, sizeof(flash_V12X_find1), false);
+	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash_V12X_find1, sizeof(flash_V12X_find1), true);
 	if (!func1)
 		return false;
 	tonccpy(func1, &flash_V12X_replace1, sizeof(flash_V12X_replace1));
 
-	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash_V12X_find2, sizeof(flash_V12X_find2), false);
+	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash_V12X_find2, sizeof(flash_V12X_find2), true);
 	if (!func2)
 		return false;
 	tonccpy(func2, &flash_V12X_replace2, sizeof(flash_V12X_replace2));
 
-	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash_V12X_find3, sizeof(flash_V12X_find3), false);
+	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash_V12X_find3, sizeof(flash_V12X_find3), true);
 	if (!func3)
 		return false;
 	tonccpy(func3, &flash_V12X_replace3, sizeof(flash_V12X_replace3));
@@ -217,22 +217,22 @@ bool flash_patchV120(const save_type_t* type)
 
 bool flash_patchV123(const save_type_t* type)
 {
-	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find1, sizeof(flash_V12Y_find1), false);
+	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find1, sizeof(flash_V12Y_find1), true);
 	if (!func1)
 		return false;
 	tonccpy(func1, &flash_V12Y_replace1, sizeof(flash_V12Y_replace1));
 
-	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find2, sizeof(flash_V12Y_find2), false);
+	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find2, sizeof(flash_V12Y_find2), true);
 	if (!func2)
 		return false;
 	tonccpy(func2, &flash_V12Y_replace2, sizeof(flash_V12Y_replace2));
 
-	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find3, sizeof(flash_V12Y_find3), false);
+	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find3, sizeof(flash_V12Y_find3), true);
 	if (!func3)
 		return false;
 	tonccpy(func3, &flash_V12Y_replace3, sizeof(flash_V12Y_replace3));
 
-	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find4, sizeof(flash_V12Y_find4), false);
+	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find4, sizeof(flash_V12Y_find4), true);
 	if (!func4)
 		return false;
 	tonccpy(func4, &flash_V12Y_replace4, sizeof(flash_V12Y_replace4));
@@ -246,52 +246,81 @@ bool flash_patchV123(const save_type_t* type)
 
 bool flash_patch512V130(const save_type_t* type)
 {
-	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find1, sizeof(flash512_V13X_find1), false);
+	u32* romPos = (u32*)0x08000000;
+	u32 curRomSize = romSize;
+	u32 startSig[4] = {0};
+	startSig[0] = *(u32*)0x08000000;
+	startSig[1] = *(u32*)0x08000004;
+	startSig[2] = *(u32*)0x08000008;
+	startSig[3] = *(u32*)0x0800000C;
+
+	for (int i = 0; i < 2; i++) {
+
+	if (i != 0) {
+		while (romPos < romPos+romSize) {
+			// Look for another ROM in 2 in 1 game packs
+			romPos += 0x100000;
+			curRomSize -= 0x100000;
+			if (romPos[0] == startSig[0]
+			&& romPos[1] == startSig[1]
+			&& romPos[2] == startSig[2]
+			&& romPos[3] == startSig[3])
+			{
+				break;
+			}
+		}
+
+		if (romPos >= romPos+romSize) break;
+	}
+
+	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find1, sizeof(flash512_V13X_find1), true);
 	if (!func1)
 		return false;
 	tonccpy(func1, &flash512_V13X_replace1, sizeof(flash512_V13X_replace1));
 
-	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find2, sizeof(flash512_V13X_find2), false);
+	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find2, sizeof(flash512_V13X_find2), true);
 	if (!func2)
 		return false;
 	tonccpy(func2, &flash512_V13X_replace2, sizeof(flash512_V13X_replace2));
 
-	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find3, sizeof(flash512_V13X_find3), false);
+	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find3, sizeof(flash512_V13X_find3), true);
 	if (!func3)
 		return false;
 	tonccpy(func3, &flash512_V13X_replace3_4, sizeof(flash512_V13X_replace3_4));
 
-	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find4, sizeof(flash512_V13X_find4), false);
+	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find4, sizeof(flash512_V13X_find4), true);
 	if (!func4)
 		return false;
 	tonccpy(func4, &flash512_V13X_replace3_4, sizeof(flash512_V13X_replace3_4));
 
-	u8* func5 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find5, sizeof(flash512_V13X_find5), false);
+	u8* func5 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find5, sizeof(flash512_V13X_find5), true);
 	if (!func5)
 		return false;
 	tonccpy(func5, &flash512_V13X_replace5, sizeof(flash512_V13X_replace5));
+
+	}
 
 	return true;
 }
 
 bool flash_patch1MV102(const save_type_t* type)
 {
-	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find1, sizeof(flash1M_V102_find1), false);
+	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find1, sizeof(flash1M_V102_find1), true);
 	if (!func1)
 		return false;
 	tonccpy(func1, &flash1M_V102_replace1, sizeof(flash1M_V102_replace1));
 
-	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find2, sizeof(flash1M_V102_find2), false);
+	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find2, sizeof(flash1M_V102_find2), true);
 	if (!func2)
 		return false;
 	tonccpy(func2, &flash1M_V102_replace2, sizeof(flash1M_V102_replace2));
 
-	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find3, sizeof(flash1M_V102_find3), false);
+	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find3, sizeof(flash1M_V102_find3), true);
 	if (!func3)
 		return false;
 	tonccpy(func3, &flash1M_V102_replace3, sizeof(flash1M_V102_replace3));
 
-	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find4, sizeof(flash1M_V102_find4), false);
+	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find4, sizeof(flash1M_V102_find4), true);
 	if (!func4)
 		return false;
 	tonccpy(func4, &flash1M_V102_replace4, sizeof(flash1M_V102_replace4));
@@ -301,27 +330,27 @@ bool flash_patch1MV102(const save_type_t* type)
 
 bool flash_patch1MV103(const save_type_t* type)
 {
-	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find1, sizeof(flash1M_V103_find1), false);
+	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find1, sizeof(flash1M_V103_find1), true);
 	if (!func1)
 		return false;
 	tonccpy(func1, &flash1M_V103_replace1, sizeof(flash1M_V103_replace1));
 
-	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find2, sizeof(flash1M_V103_find2), false);
+	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find2, sizeof(flash1M_V103_find2), true);
 	if (!func2)
 		return false;
 	tonccpy(func2, &flash1M_V103_replace2, sizeof(flash1M_V103_replace2));
 
-	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find3, sizeof(flash1M_V103_find3), false);
+	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find3, sizeof(flash1M_V103_find3), true);
 	if (!func3)
 		return false;
 	tonccpy(func3, &flash1M_V103_replace3, sizeof(flash1M_V103_replace3));
 
-	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find4, sizeof(flash1M_V103_find4), false);
+	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find4, sizeof(flash1M_V103_find4), true);
 	if (!func4)
 		return false;
 	tonccpy(func4, &flash1M_V103_replace4, sizeof(flash1M_V103_replace4));
 
-	u8* func5 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find5, sizeof(flash1M_V103_find5), false);
+	u8* func5 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find5, sizeof(flash1M_V103_find5), true);
 	if (!func5)
 		return false;
 	tonccpy(func5, &flash1M_V103_replace5, sizeof(flash1M_V103_replace5));
