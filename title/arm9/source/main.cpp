@@ -793,7 +793,6 @@ void lastRunROM()
 				}
 			}
 			fclose(savFile);
-			cExpansion::WriteSram(0x0A000000,(u8*)copyBuf,0x8000);
 			gbaSramAccess(false);	// Switch out of GBA SRAM
 		}
 
