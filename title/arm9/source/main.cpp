@@ -784,7 +784,7 @@ void lastRunROM()
 		if (savesize > 0) {
 			gbaSramAccess(true);	// Switch to GBA SRAM
 			FILE* savFile = fopen(savepath.c_str(), "rb");
-			for (u32 len = savesize; len > 0; len -= 0x8000) {
+			for (u32 len = (savesize > 0x10000 ? 0x10000 : savesize); len > 0; len -= 0x8000) {
 				if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile) > 0) {
 					cExpansion::WriteSram(ptr,(u8*)copyBuf,0x8000);
 					ptr += 0x8000;
