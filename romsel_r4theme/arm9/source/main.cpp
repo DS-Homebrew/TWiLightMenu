@@ -2094,6 +2094,7 @@ int main(int argc, char **argv) {
 
 						std::string savename = replaceAll(filename, ".gba", ".sav");
 						u32 savesize = getFileSize(savename.c_str());
+						if (savesize > 0x8000) savesize = 0x8000;
 
 						if (savesize > 0) {
 							gbaSramAccess(true);	// Switch to GBA SRAM
