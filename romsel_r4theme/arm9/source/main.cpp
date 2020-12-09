@@ -2085,6 +2085,12 @@ int main(int argc, char **argv) {
 						if (*(u16*)(0x020000C0) == 0x5A45 && romSize > 0x1000000) {
 							cExpansion::SetRompage(0);
 							expansion().SetRampage(cExpansion::ENorPage);
+							cExpansion::OpenNorWrite();
+							cExpansion::SetSerialMode();
+							for(u32 address=0;address<romSize&&address<0x2000000;address+=0x40000)
+							{
+								expansion().Block_Erase(address);
+							}
 							nor = true;
 						} else if (*(u16*)(0x020000C0) == 0x4353 && romSize > 0x1FFFFFE) {
 							romSize = 0x1FFFFFE;
