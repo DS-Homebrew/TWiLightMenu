@@ -1015,27 +1015,40 @@ int main(int argc, char **argv) {
 			*(vu8*)(0x0A000000) = byteBak;
 			std::string savepath = replaceAll(romPath[true], ".gba", ".sav");
 			u32 savesize = getFileSize(savepath.c_str());
-			if (savesize > 0x8000) savesize = 0x8000;
+			if (savesize > 0x20000) savesize = 0x20000;
 			if (savesize > 0 && launchType[true] == 11) {
 				gbaSramAccess(true);	// Switch to GBA SRAM
 				// Try to restore save from SRAM
 				bool restoreSave = false;
 				extern char copyBuf[0x8000];
-				cExpansion::ReadSram(0x0A000000,(u8*)copyBuf,savesize);
-				for (u16 i = 0; i < (u16)savesize; i++) {
-					if (copyBuf[i] != 0) {
-						restoreSave = true;
-						break;
+				u32 ptr = 0x0A000000+(savesize > 0x10000 ? 0x10000 : savesize);
+				for (u32 len = (savesize > 0x10000 ? 0x10000 : savesize); len > 0; len -= 0x8000) {
+					cExpansion::ReadSram(ptr,(u8*)copyBuf,(len>0x8000 ? 0x8000 : len));
+					for (u16 i = 0; i < (u16)(len>0x8000 ? 0x8000 : len); i++) {
+						if (copyBuf[i] != 0) {
+							restoreSave = true;
+							break;
+						}
+						ptr -= 0x8000;
 					}
+					if (restoreSave) break;
 				}
 				if (restoreSave) {
+					ptr = 0x0A000000;
 					FILE* savFile = fopen(savepath.c_str(), "wb");
+					for (u32 len = savesize; len > 0; len -= 0x8000) {
+						if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile) > 0) {
+							cExpansion::ReadSram(ptr,(u8*)copyBuf,0x8000);
+							ptr += 0x8000;
+						} else {
+							break;
+						}
+					}
 					fwrite(&copyBuf, 1, savesize, savFile);
 					fclose(savFile);
 
 					// Wipe out SRAM after restoring save
-					toncset(&copyBuf, 0, 0x8000);
-					cExpansion::WriteSram(0x0A000000,(u8*)copyBuf,0x8000);
+					toncset((u8*)0x0A000000, 0, 0x10000);
 				}
 				gbaSramAccess(false);	// Switch out of GBA SRAM
 			}
@@ -2092,14 +2105,23 @@ int main(int argc, char **argv) {
 						}
 						fclose(gbaFile);
 
+						ptr = 0x0A000000;
+
 						std::string savename = replaceAll(filename, ".gba", ".sav");
 						u32 savesize = getFileSize(savename.c_str());
-						if (savesize > 0x8000) savesize = 0x8000;
+						if (savesize > 0x20000) savesize = 0x20000;
 
 						if (savesize > 0) {
 							gbaSramAccess(true);	// Switch to GBA SRAM
 							FILE* savFile = fopen(savename.c_str(), "rb");
-							fread(&copyBuf, 1, savesize, savFile);
+							for (u32 len = savesize; len > 0; len -= 0x8000) {
+								if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile) > 0) {
+									cExpansion::WriteSram(ptr,(u8*)copyBuf,0x8000);
+									ptr += 0x8000;
+								} else {
+									break;
+								}
+							}
 							fclose(savFile);
 							cExpansion::WriteSram(0x0A000000,(u8*)copyBuf,0x8000);
 							gbaSramAccess(false);	// Switch out of GBA SRAM
