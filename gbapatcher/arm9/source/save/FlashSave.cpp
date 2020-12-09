@@ -261,6 +261,7 @@ bool flash_patch512V130(const save_type_t* type)
 			// Look for another ROM in 2 in 1 game packs
 			romPos += 0x100000;
 			curRomSize -= 0x100000;
+			if (curRomSize <= 0) break;
 			if (romPos[0] == startSig[0]
 			&& romPos[1] == startSig[1]
 			&& romPos[2] == startSig[2]

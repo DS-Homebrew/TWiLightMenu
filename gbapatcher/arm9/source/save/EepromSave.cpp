@@ -106,6 +106,7 @@ bool eeprom_patchV120(const save_type_t* type)
 			// Look for another ROM in 2-3 in 1 game packs
 			romPos += 0x100000;
 			curRomSize -= 0x100000;
+			if (curRomSize <= 0) break;
 			if (romPos[0] == startSig[0]
 			&& romPos[1] == startSig[1]
 			&& romPos[2] == startSig[2]
@@ -150,6 +151,7 @@ bool eeprom_patchV124(const save_type_t* type)
 			// Look for another ROM in 2 in 1 game packs
 			romPos += 0x100000;
 			curRomSize -= 0x100000;
+			if (curRomSize <= 0) break;
 			if (romPos[0] == startSig[0]
 			&& romPos[1] == startSig[1]
 			&& romPos[2] == startSig[2]
