@@ -3,464 +3,328 @@
 #include "Save.h"
 #include "FlashSave.h"
 
-struct flash_patchinfo_t
-{
-	u32* progSectorPtr;
-	u32* progBytePtr;
-	u32* eraseChipPtr;
-	u32* eraseSectorPtr;
-	u32* pollingSrPtr;
-	u32* flMaxTimePtr;
-	u32* flashPtr;
+extern u32 romSize;
+
+static const u8 flash1M_V102_find1[48] = {
+	0xaa,0x21,0x19,0x70,0x05,0x4a,0x55,0x21,0x11,0x70,0xb0,0x21,0x19,0x70,0xe0,0x21,
+	0x09,0x05,0x08,0x70,0x70,0x47,0x55,0x55,0x00,0x0e,0xaa,0x2a,0x00,0x0e,0x30,0xb5,
+	0x91,0xb0,0x68,0x46,0x00,0xf0,0xf3,0xf8,0x6d,0x46,0x01,0x35,0x06,0x4a,0xaa,0x20
+};
+static const u8 flash1M_V102_replace1[136] = {
+	0x80,0x21,0x09,0x02,0x09,0x22,0x12,0x06,0x9f,0x44,0x11,0x80,0x03,0x49,0xc3,0x02,
+	0xc9,0x18,0x11,0x80,0x70,0x47,0xfe,0xff,0xff,0x01,0x00,0x00,0x00,0x00,0x30,0xb5,
+	0x91,0xb0,0x68,0x46,0x00,0xf0,0xf3,0xf8,0x6d,0x46,0x01,0x35,0x06,0x4a,0xaa,0x20,
+	0x00,0x00,0x05,0x49,0x55,0x20,0x00,0x00,0x90,0x20,0x00,0x00,0x10,0xa9,0x03,0x4a,
+	0x10,0x1c,0x08,0xe0,0x00,0x00,0x55,0x55,0x00,0x0e,0xaa,0x2a,0x00,0x0e,0x20,0x4e,
+	0x00,0x00,0x08,0x88,0x01,0x38,0x08,0x80,0x08,0x88,0x00,0x28,0xf9,0xd1,0x0c,0x48,
+	0x13,0x20,0x13,0x20,0x00,0x06,0x04,0x0c,0xe0,0x20,0x00,0x05,0x62,0x20,0x62,0x20,
+	0x00,0x06,0x00,0x0e,0x04,0x43,0x07,0x49,0xaa,0x20,0x00,0x00,0x07,0x4a,0x55,0x20,
+	0x00,0x00,0xf0,0x20,0x00,0x00,0x00,0x00
+};
+static const u8 flash1M_V102_find2[24] = {
+	0x14,0x49,0xaa,0x24,0x0c,0x70,0x13,0x4b,0x55,0x22,0x1a,0x70,0x80,0x20,0x08,0x70,
+	0x0c,0x70,0x1a,0x70,0x10,0x20,0x08,0x70
+};
+static const u8 flash1M_V102_replace2[24] = {
+	0x0e,0x21,0x09,0x06,0xff,0x24,0x80,0x22,0x13,0x4b,0x52,0x02,0x01,0x3a,0x8c,0x54,
+	0xfc,0xd1,0x00,0x00,0x00,0x00,0x00,0x00
+};
+static const u8 flash1M_V102_find3[22] = {
+	0xaa,0x25,0x0d,0x70,0x13,0x4b,0x55,0x22,0x1a,0x70,0x80,0x20,0x08,0x70,0x0d,0x70,
+	0x1a,0x70,0x30,0x20,0x20,0x70
+};
+static const u8 flash1M_V102_replace3[22] = {
+	0xff,0x25,0x08,0x22,0x00,0x00,0x52,0x02,0x01,0x3a,0xa5,0x54,0xfc,0xd1,0x00,0x00,
+	0x00,0x00,0x00,0x00,0x00,0x00
+};
+static const u8 flash1M_V102_find4[12] = {
+	0x22,0x70,0x09,0x4b,0x55,0x22,0x1a,0x70,0xa0,0x22,0x22,0x70
+};
+static const u8 flash1M_V102_replace4[12] = {
+	0x00,0x00,0x09,0x4b,0x55,0x22,0x00,0x00,0xa0,0x22,0x00,0x00
 };
 
-static flash_patchinfo_t sPatchInfo;
 
-#define FLASH_V120_OFFSET_PROG_SECTOR		0x18
-#define FLASH_V120_OFFSET_ERASE_CHIP		0x1C
-#define FLASH_V120_OFFSET_ERASE_SECTOR		0x20
-#define FLASH_V120_OFFSET_POLLING_SR		0x24
-#define FLASH_V120_OFFSET_FL_MAXTIME		0x28
-#define FLASH_V120_OFFSET_FLASH				0x2C
-#define FLASH_V120_OFFSET_READ				0x84
-#define FLASH_V120_OFFSET_VERIFY_SECTOR		0x90
-
-#define FLASH_512V130_OFFSET_PROG_SECTOR	0x14
-#define FLASH_512V130_OFFSET_ERASE_CHIP		0x18
-#define FLASH_512V130_OFFSET_ERASE_SECTOR	0x1C
-#define FLASH_512V130_OFFSET_POLLING_SR		0x20
-#define FLASH_512V130_OFFSET_FL_MAXTIME		0x24
-#define FLASH_512V130_OFFSET_FLASH			0x28
-
-#define FLASH_1MV102_OFFSET_PROG_SECTOR		0x10
-#define FLASH_1MV102_OFFSET_ERASE_CHIP		0x14
-#define FLASH_1MV102_OFFSET_ERASE_SECTOR	0x18
-#define FLASH_1MV102_OFFSET_POLLING_SR		0x1C
-#define FLASH_1MV102_OFFSET_FL_MAXTIME		0x20
-#define FLASH_1MV102_OFFSET_FLASH			0x24
-
-#define FLASH_1MV103_OFFSET_PROG_BYTE		0x10
-#define FLASH_1MV103_OFFSET_PROG_SECTOR		0x14
-#define FLASH_1MV103_OFFSET_ERASE_CHIP		0x18
-#define FLASH_1MV103_OFFSET_ERASE_SECTOR	0x1C
-#define FLASH_1MV103_OFFSET_POLLING_SR		0x20
-#define FLASH_1MV103_OFFSET_FL_MAXTIME		0x24
-#define FLASH_1MV103_OFFSET_FLASH			0x28
-
-struct flash_v120_sector
-{
-	u32 size;
-	u8  shift;
-	u16 count;
-	u16 top;
+static const u8 flash1M_V103_find1[98] = {
+	0x05,0x4b,0xaa,0x21,0x19,0x70,0x05,0x4a,0x55,0x21,0x11,0x70,0xb0,0x21,0x19,0x70,
+	0xe0,0x21,0x09,0x05,0x08,0x70,0x70,0x47,0x55,0x55,0x00,0x0e,0xaa,0x2a,0x00,0x0e,
+	0x30,0xb5,0x91,0xb0,0x68,0x46,0x00,0xf0,0xf3,0xf8,0x6d,0x46,0x01,0x35,0x06,0x4a,
+	0xaa,0x20,0x10,0x70,0x05,0x49,0x55,0x20,0x08,0x70,0x90,0x20,0x10,0x70,0x10,0xa9,
+	0x03,0x4a,0x10,0x1c,0x08,0xe0,0x00,0x00,0x55,0x55,0x00,0x0e,0xaa,0x2a,0x00,0x0e,
+	0x20,0x4e,0x00,0x00,0x08,0x88,0x01,0x38,0x08,0x80,0x08,0x88,0x00,0x28,0xf9,0xd1,
+	0x0c,0x48
+};
+static const u8 flash1M_V103_replace1[138] = {
+	0x05,0x4b,0x80,0x21,0x09,0x02,0x09,0x22,0x12,0x06,0x9f,0x44,0x11,0x80,0x03,0x49,
+	0xc3,0x02,0xc9,0x18,0x11,0x80,0x70,0x47,0xfe,0xff,0xff,0x01,0x00,0x00,0x00,0x00,
+	0x30,0xb5,0x91,0xb0,0x68,0x46,0x00,0xf0,0xf3,0xf8,0x6d,0x46,0x01,0x35,0x06,0x4a,
+	0xaa,0x20,0x00,0x00,0x05,0x49,0x55,0x20,0x00,0x00,0x90,0x20,0x00,0x00,0x10,0xa9,
+	0x03,0x4a,0x10,0x1c,0x08,0xe0,0x00,0x00,0x55,0x55,0x00,0x0e,0xaa,0x2a,0x00,0x0e,
+	0x20,0x4e,0x00,0x00,0x08,0x88,0x01,0x38,0x08,0x80,0x08,0x88,0x00,0x28,0xf9,0xd1,
+	0x0c,0x48,0x13,0x20,0x13,0x20,0x00,0x06,0x04,0x0c,0xe0,0x20,0x00,0x05,0x62,0x20,
+	0x62,0x20,0x00,0x06,0x00,0x0e,0x04,0x43,0x07,0x49,0xaa,0x20,0x00,0x00,0x07,0x4a,
+	0x55,0x20,0x00,0x00,0xf0,0x20,0x00,0x00,0x00,0x00
+};
+static const u8 flash1M_V103_find2[24] = {
+	0x14,0x49,0xaa,0x24,0x0c,0x70,0x13,0x4b,0x55,0x22,0x1a,0x70,0x80,0x20,0x08,0x70,
+	0x0c,0x70,0x1a,0x70,0x10,0x20,0x08,0x70
+};
+static const u8 flash1M_V103_replace2[24] = {
+	0x0e,0x21,0x09,0x06,0xff,0x24,0x80,0x22,0x13,0x4b,0x52,0x02,0x01,0x3a,0x8c,0x54,
+	0xfc,0xd1,0x00,0x00,0x00,0x00,0x00,0x00
+};
+static const u8 flash1M_V103_find3[22] = {
+	0xaa,0x25,0x0d,0x70,0x14,0x4b,0x55,0x22,0x1a,0x70,0x80,0x20,0x08,0x70,0x0d,0x70,
+	0x1a,0x70,0x30,0x20,0x20,0x70
+};
+static const u8 flash1M_V103_replace3[22] = {
+	0xff,0x25,0x08,0x22,0x00,0x00,0x52,0x02,0x01,0x3a,0xa5,0x54,0xfc,0xd1,0x00,0x00,
+	0x00,0x00,0x00,0x00,0x00,0x00
+};
+static const u8 flash1M_V103_find4[12] = {
+	0x10,0x70,0x0b,0x49,0x55,0x20,0x08,0x70,0xa0,0x20,0x10,0x70
+};
+static const u8 flash1M_V103_replace4[12] = {
+	0x00,0x00,0x0b,0x49,0x55,0x20,0x00,0x00,0xa0,0x20,0x00,0x00
+};
+static const u8 flash1M_V103_find5[12] = {
+	0x22,0x70,0x09,0x4b,0x55,0x22,0x1a,0x70,0xa0,0x22,0x22,0x70
+};
+static const u8 flash1M_V103_replace5[12] = {
+	0x00,0x00,0x09,0x4b,0x55,0x22,0x00,0x00,0xa0,0x22,0x00,0x00
 };
 
-struct flash_v120_type
-{
-	u32               romSize;
-	flash_v120_sector sector;
-	u16               agbWait[2];
-	u8                makerID;
-	u8                deviceID;
+
+// FLASH512_V130 and V131 have all the same patches.
+// TODO Check if FLASH512_V133 patch works correctly. Patches are from gbatemp thread, but gbata doesn't actually support V133.
+static const u8 flash512_V13X_find1[38] = {
+	0xf0,0xb5,0xa0,0xb0,0x0d,0x1c,0x16,0x1c,0x1f,0x1c,0x03,0x04,0x1c,0x0c,0x0f,0x4a,
+	0x10,0x88,0x0f,0x49,0x08,0x40,0x03,0x21,0x08,0x43,0x10,0x80,0x0d,0x48,0x00,0x68,
+	0x01,0x68,0x80,0x20,0x80,0x02
+};
+static const u8 flash512_V13X_replace1[38] = {
+	0x70,0xb5,0xa0,0xb0,0x00,0x03,0x40,0x18,0xe0,0x21,0x09,0x05,0x09,0x18,0x08,0x78,
+	0x10,0x70,0x01,0x3b,0x01,0x32,0x01,0x31,0x00,0x2b,0xf8,0xd1,0x00,0x20,0x20,0xb0,
+	0x70,0xbc,0x02,0xbc,0x08,0x47
+};
+static const u8 flash512_V13X_find2[8] = {
+	0xff,0xf7,0x88,0xfd,0x00,0x04,0x03,0x0c
+};
+static const u8 flash512_V13X_replace2[8] = {
+	0x1b,0x23,0x1b,0x02,0x32,0x20,0x03,0x43
+};
+static const u8 flash512_V13X_find3[8] = {
+	0x70,0xb5,0x90,0xb0,0x15,0x4d,0x29,0x88
+};
+static const u8 flash512_V13X_replace3_4[8] = {
+	0x00,0xb5,0x00,0x20,0x02,0xbc,0x08,0x47
+};
+static const u8 flash512_V13X_find4[8] = {
+	0x70,0xb5,0x46,0x46,0x40,0xb4,0x90,0xb0
+};
+static const u8 flash512_V13X_find5[24] = {
+	0xf0,0xb5,0x90,0xb0,0x0f,0x1c,0x00,0x04,0x04,0x0c,0x03,0x48,0x00,0x68,0x40,0x89,
+	0x84,0x42,0x05,0xd3,0x01,0x48,0x41,0xe0
+};
+static const u8 flash512_V13X_replace5[42] = {
+	0x7c,0xb5,0x90,0xb0,0x00,0x03,0x0a,0x1c,0xe0,0x21,0x09,0x05,0x09,0x18,0x01,0x23,
+	0x1b,0x03,0x10,0x78,0x08,0x70,0x01,0x3b,0x01,0x32,0x01,0x31,0x00,0x2b,0xf8,0xd1,
+	0x00,0x20,0x10,0xb0,0x7c,0xbc,0x02,0xbc,0x08,0x47
 };
 
-static flash_v120_type sFlashType;
-static const u16       sMaxTime[] = {0xA, 0xFFBD, 0xC2, 0xA, 0xFFBD, 0xC2, 0x28, 0xFFBD, 0xC2, 0xC8, 0xFFBD, 0xC2};
 
-static const u8 sIdentifyFlashV120Sig[0x10] =
-	{0x80, 0xB5, 0x82, 0xB0, 0x6F, 0x46, 0x0E, 0x48, 0x0D, 0x49, 0x0A, 0x88, 0x0D, 0x4B, 0x11, 0x1C};
+// Encompasses FLASH_V120 and V121.
+static const u8 flash_V12X_find1[12] = {
+	0x90,0xb5,0x93,0xb0,0x6f,0x46,0x39,0x1d,0x08,0x1c,0x00,0xf0
+};
+static const u8 flash_V12X_replace1[14] = {
+	0x00,0xb5,0x3d,0x20,0x00,0x02,0x1f,0x21,0x08,0x43,0x02,0xbc,0x08,0x47
+};
+static const u8 flash_V12X_find2[35] = {
+	0x80,0xb5,0x94,0xb0,0x6f,0x46,0x39,0x1c,0x08,0x80,0x38,0x1c,0x01,0x88,0x0f,0x29,
+	0x04,0xd9,0x01,0x48,0x56,0xe0,0x00,0x00,0xff,0x80,0x00,0x00,0x23,0x48,0x23,0x49,
+	0x0a,0x88,0x23
+};
+static const u8 flash_V12X_replace2[36] = {
+	0x7c,0xb5,0x00,0x07,0x00,0x0c,0xe0,0x21,0x09,0x05,0x09,0x18,0x01,0x23,0x1b,0x03,
+	0xff,0x20,0x08,0x70,0x01,0x3b,0x01,0x31,0x00,0x2b,0xfa,0xd1,0x00,0x20,0x7c,0xbc,
+	0x02,0xbc,0x08,0x47
+};
+static const u8 flash_V12X_find3[42] = {
+	0x80,0xb5,0x94,0xb0,0x6f,0x46,0x79,0x60,0x39,0x1c,0x08,0x80,0x38,0x1c,0x01,0x88,
+	0x0f,0x29,0x03,0xd9,0x00,0x48,0x73,0xe0,0xff,0x80,0x00,0x00,0x38,0x1c,0x01,0x88,
+	0x08,0x1c,0xff,0xf7,0x21,0xfe,0x39,0x1c,0x0c,0x31
+};
+static const u8 flash_V12X_replace3[42] = {
+	0x7c,0xb5,0x90,0xb0,0x00,0x03,0x0a,0x1c,0xe0,0x21,0x09,0x05,0x09,0x18,0x01,0x23,
+	0x1b,0x03,0x10,0x78,0x08,0x70,0x01,0x3b,0x01,0x32,0x01,0x31,0x00,0x2b,0xf8,0xd1,
+	0x00,0x20,0x10,0xb0,0x7c,0xbc,0x08,0xbc,0x08,0x47
+};
 
-static const u8 sIdentifyFlashV123Sig[0x10] =
-	{0x10, 0xB5, 0x07, 0x4A, 0x10, 0x88, 0x07, 0x49, 0x08, 0x40, 0x03, 0x21, 0x08, 0x43, 0x10, 0x80};
+// Encompasses FLASH_V123, V124, V125, and V126.
+// FIXME for FLASH_V125 and FLASH_V126: Medabots/Metarot and Super Monkey Ball Jr. (U) don't patch 1:1 with gbata.
+static const u8 flash_V12Y_find1[8] = {
+	0xff,0xf7,0xaa,0xff,0x00,0x04,0x03,0x0c
+};
+static const u8 flash_V12Y_replace1[8] = {
+	0x1b,0x23,0x1b,0x02,0x32,0x20,0x03,0x43
+};
+static const u8 flash_V12Y_find2[6] = {
+	0x70,0xb5,0x90,0xb0,0x15,0x4d
+};
+static const u8 flash_V12Y_replace2[4] = {
+	0x00,0x20,0x70,0x47/*,0x15,0x4d*/
+};
+// Patch 3 differs from GBATemp tutorial.
+// The added bytes at the end have significance.
+static const u8 flash_V12Y_find3[9] = {
+	0x70,0xb5,0x46,0x46,0x40,0xb4,0x90,0xb0,0x00
+};
+static const u8 flash_V12Y_replace3[4] = {
+	0x00,0x20,0x70,0x47/*,0x40,0xb4,0x90,0xb0,0x00*/
+};
+static const u8 flash_V12Y_find4[38] = {
+	0xf0,0xb5,0x90,0xb0,0x0f,0x1c,0x00,0x04,0x04,0x0c,0x0f,0x2c,0x04,0xd9,0x01,0x48,
+	0x40,0xe0,0x00,0x00,0xff,0x80,0x00,0x00,0x20,0x1c,0xff,0xf7,0xd7,0xfe,0x00,0x04,
+	0x05,0x0c,0x00,0x2d,0x35,0xd1
+};
+static const u8 flash_V12Y_replace4[38] = {
+	0x70,0xb5,0x00,0x03,0x0a,0x1c,0xe0,0x21,0x09,0x05,0x41,0x18,0x01,0x23,0x1b,0x03,
+	0x10,0x78,0x08,0x70,0x01,0x3b,0x01,0x32,0x01,0x31,0x00,0x2b,0xf8,0xd1,0x00,0x20,
+	0x70,0xbc,0x02,0xbc,0x08,0x47
+};
 
-static const u8 sIdentifyFlash1MV103Sig[0x10] =
-	{0x10, 0xB5, 0x07, 0x4A, 0x10, 0x88, 0x07, 0x49, 0x08, 0x40, 0x03, 0x21, 0x08, 0x43, 0x10, 0x80};
-
-static const u8 sVerifyFlashV126Sig[0x10] =
-	{0x70, 0xB5, 0xC0, 0xB0, 0x0D, 0x1C, 0x16, 0x1C, 0x00, 0x04, 0x04, 0x0C, 0x07, 0x4A, 0x10, 0x88};
-
-static const u8 sReadFlash512V130Sig[0x10] =
-	{0xF0, 0xB5, 0xA0, 0xB0, 0x0D, 0x1C, 0x16, 0x1C, 0x1F, 0x1C, 0x03, 0x04, 0x1C, 0x0C, 0x0F, 0x4A};
-
-static const u8 sVerifyFlash512V130Sig[0x10] =
-	{0x70, 0xB5, 0xC0, 0xB0, 0x0D, 0x1C, 0x16, 0x1C, 0x02, 0x04, 0x14, 0x0C, 0x0E, 0x48, 0x00, 0x68};
-
-static const u8 sVerifyFlashSector512V130Sig[0x10] =
-	{0x30, 0xB5, 0xC0, 0xB0, 0x0D, 0x1C, 0x03, 0x04, 0x1C, 0x0C, 0x0F, 0x4A, 0x10, 0x88, 0x0F, 0x49};
-
-/*extern "C" u16 eraseFlashChip_impl()
-{
-	vram_cd_t* vramcd_uncached = (vram_cd_t*)(((u32)vram_cd) + UNCACHED_OFFSET);
-	u8*        pSave = (u8*)MAIN_MEMORY_ADDRESS_SAVE_DATA;
-	//disable irqs
-	u32 irq = *(vu32*)0x04000208;
-	*(vu32*)0x04000208 = 0;
-	{
-		CP15_SET_DATA_PROT(0x33333333);
-		for (int i = 0; i < SAVE_DATA_SIZE; i++)
-			*pSave++ = 0xFF;
-		vramcd_uncached->save_work.save_state = SAVE_WORK_STATE_DIRTY;
-		CP15_SET_DATA_PROT(pu_data_permissions);
-	}
-	//restore irqs
-	*(vu32*)0x04000208 = irq;
-	return 0;
-}
-
-GBA_INTERWORK_BRIDGE(eraseFlashChip)
-
-extern "C" u16 eraseFlashSector_impl(u16 secNo)
-{
-	vram_cd_t* vramcd_uncached = (vram_cd_t*)(((u32)vram_cd) + UNCACHED_OFFSET);
-	u8*        pSave = (u8*)(MAIN_MEMORY_ADDRESS_SAVE_DATA + (secNo << 12));
-	//disable irqs
-	u32 irq = *(vu32*)0x04000208;
-	*(vu32*)0x04000208 = 0;
-	{
-		CP15_SET_DATA_PROT(0x33333333);
-		for (int i = 0; i < (1 << 12); i++)
-			*pSave++ = 0xFF;
-		vramcd_uncached->save_work.save_state = SAVE_WORK_STATE_DIRTY;
-		CP15_SET_DATA_PROT(pu_data_permissions);
-	}
-	//restore irqs
-	*(vu32*)0x04000208 = irq;
-	return 0;
-}
-
-GBA_INTERWORK_BRIDGE(eraseFlashSector)
-
-extern "C" u16 programFlashSector512_impl(u16 secNo, u8* src)
-{
-	u8* pSave = (u8*)(0x0E000000 + (secNo << 12));
-	for (int i = 0; i < (1 << 12); i++)
-		*pSave++ = *src++;
-	return 0;
-}
-
-GBA_INTERWORK_BRIDGE(programFlashSector512)
-
-//todo: account for rom source
-extern "C" u16 programFlashSector1M_impl(u16 secNo, u8* src)
-{
-	vram_cd_t* vramcd_uncached = (vram_cd_t*)(((u32)vram_cd) + UNCACHED_OFFSET);
-	u8*        pSave = (u8*)(MAIN_MEMORY_ADDRESS_SAVE_DATA + (secNo << 12));
-	//disable irqs
-	u32 irq = *(vu32*)0x04000208;
-	*(vu32*)0x04000208 = 0;
-	{
-		CP15_SET_DATA_PROT(0x33333333);
-		for (int i = 0; i < (1 << 12); i++)
-			*pSave++ = *src++;
-		vramcd_uncached->save_work.save_state = SAVE_WORK_STATE_DIRTY;
-		CP15_SET_DATA_PROT(pu_data_permissions);
-	}
-	//restore irqs
-	*(vu32*)0x04000208 = irq;
-	return 0;
-}
-
-GBA_INTERWORK_BRIDGE(programFlashSector1M)
-
-extern "C" u16 programFlashByte1M_impl(u16 secNo, u32 offset, u8 data)
-{
-	vram_cd_t* vramcd_uncached = (vram_cd_t*)(((u32)vram_cd) + UNCACHED_OFFSET);
-	u8*        pSave = (u8*)(MAIN_MEMORY_ADDRESS_SAVE_DATA + (secNo << 12) + offset);
-	//disable irqs
-	u32 irq = *(vu32*)0x04000208;
-	*(vu32*)0x04000208 = 0;
-	{
-		CP15_SET_DATA_PROT(0x33333333);
-		*pSave = data;
-		vramcd_uncached->save_work.save_state = SAVE_WORK_STATE_DIRTY;
-		CP15_SET_DATA_PROT(pu_data_permissions);
-	}
-	//restore irqs
-	*(vu32*)0x04000208 = irq;
-	return 0;
-}
-
-GBA_INTERWORK_BRIDGE(programFlashByte1M)
-
-extern "C" u32 verifyFlashSector_impl(u16 secNo, u8* src)
-{
-	//reading from main memory is safe without changing permissions
-	const u32 addr = secNo << 12;
-	u8*       pSave = (u8*)(MAIN_MEMORY_ADDRESS_SAVE_DATA + addr);
-	for (int i = 0; i < (1 << 12); i++)
-		if (*pSave++ != *src++)
-			return addr + i;
-	return 0;
-}
-
-GBA_INTERWORK_BRIDGE(verifyFlashSector)
-
-extern "C" u32 verifyFlash_impl(u16 secNo, u8* src, u32 size)
-{
-	//reading from main memory is safe without changing permissions
-	const u32 addr = secNo << 12;
-	u8*       pSave = (u8*)(MAIN_MEMORY_ADDRESS_SAVE_DATA + addr);
-	for (int i = 0; i < size; i++)
-		if (*pSave++ != *src++)
-			return addr + i;
-	return 0;
-}
-
-GBA_INTERWORK_BRIDGE(verifyFlash)
-
-extern "C" void readFlash_impl(u16 secNo, u32 offset, u8* dst, u32 size)
-{
-	//reading from main memory is safe without changing permissions
-	u8* pSave = (u8*)(MAIN_MEMORY_ADDRESS_SAVE_DATA + (secNo << 12) + offset);
-	for (int i = 0; i < size; i++)
-		*dst++ = *pSave++;
-}
-
-GBA_INTERWORK_BRIDGE(readFlash)
-
-extern "C" u16 identifyFlash512_impl()
-{
-	*sPatchInfo.progSectorPtr = (u32)&programFlashSector512;
-	*sPatchInfo.eraseChipPtr = (u32)&eraseFlashChip;
-	*sPatchInfo.eraseSectorPtr = (u32)&eraseFlashSector;
-	*sPatchInfo.pollingSrPtr = NULL;
-	*sPatchInfo.flMaxTimePtr = (u32)sMaxTime;
-
-	sFlashType.romSize = SAVE_DATA_SIZE;
-	sFlashType.sector.size = 0x1000;
-	MI_WriteByte(&sFlashType.sector.shift, 12);
-	sFlashType.sector.count = sFlashType.sector.size >> sFlashType.sector.shift;
-	sFlashType.sector.top = 0;
-	sFlashType.agbWait[0] = 0;
-	sFlashType.agbWait[1] = 3;
-	MI_WriteByte(&sFlashType.makerID, 3);
-	MI_WriteByte(&sFlashType.deviceID, 0);
-	*sPatchInfo.flashPtr = (u32)&sFlashType;
-	return 0;
-}
-
-GBA_INTERWORK_BRIDGE(identifyFlash512)
-
-extern "C" u16 identifyFlash1M_impl()
-{
-	*sPatchInfo.progSectorPtr = (u32)&programFlashSector1M;
-	if(sPatchInfo.progBytePtr)
-		*sPatchInfo.progBytePtr = (u32)&programFlashByte1M;
-	*sPatchInfo.eraseChipPtr = (u32)&eraseFlashChip;
-	*sPatchInfo.eraseSectorPtr = (u32)&eraseFlashSector;
-	*sPatchInfo.pollingSrPtr = NULL;
-	*sPatchInfo.flMaxTimePtr = (u32)sMaxTime;
-
-	sFlashType.romSize = SAVE_DATA_SIZE;
-	sFlashType.sector.size = 0x2000;
-	MI_WriteByte(&sFlashType.sector.shift, 12);
-	sFlashType.sector.count = sFlashType.sector.size >> sFlashType.sector.shift;
-	sFlashType.sector.top = 0;
-	sFlashType.agbWait[0] = 0;
-	sFlashType.agbWait[1] = 3;
-	MI_WriteByte(&sFlashType.makerID, 3);
-	MI_WriteByte(&sFlashType.deviceID, 0);
-	*sPatchInfo.flashPtr = (u32)&sFlashType;
-	return 0;
-}
-
-GBA_INTERWORK_BRIDGE(identifyFlash1M)
-
-static bool loadDataV120(const save_type_t* type)
-{
-	//load flash data
-	f_lseek(&vram_cd->fil, f_tell(&vram_cd->fil) + ((type->tagLength + 3) & ~3));
-	UINT read;
-	if (f_read(&vram_cd->fil, vram_cd->tmpSector, 0x94, &read) != FR_OK || read != 0x94)
-		return false;
-
-	sPatchInfo.progSectorPtr = *(u32**)(vram_cd->tmpSector + FLASH_V120_OFFSET_PROG_SECTOR);
-	sPatchInfo.progBytePtr = NULL;
-	sPatchInfo.eraseChipPtr = *(u32**)(vram_cd->tmpSector + FLASH_V120_OFFSET_ERASE_CHIP);
-	sPatchInfo.eraseSectorPtr = *(u32**)(vram_cd->tmpSector + FLASH_V120_OFFSET_ERASE_SECTOR);
-	sPatchInfo.pollingSrPtr = *(u32**)(vram_cd->tmpSector + FLASH_V120_OFFSET_POLLING_SR);
-	sPatchInfo.flMaxTimePtr = *(u32**)(vram_cd->tmpSector + FLASH_V120_OFFSET_FL_MAXTIME);
-	sPatchInfo.flashPtr = *(u32**)(vram_cd->tmpSector + FLASH_V120_OFFSET_FLASH);
-	return true;
-}
 
 bool flash_patchV120(const save_type_t* type)
 {
-	if (!loadDataV120(type))
+	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash_V12X_find1, sizeof(flash_V12X_find1), false);
+	if (!func1)
 		return false;
+	tonccpy(func1, &flash_V12X_replace1, sizeof(flash_V12X_replace1));
 
-	u32* pIdentify = gptc_findSignature(sIdentifyFlashV120Sig);
-	if (!pIdentify)
+	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash_V12X_find2, sizeof(flash_V12X_find2), false);
+	if (!func2)
 		return false;
+	tonccpy(func2, &flash_V12X_replace2, sizeof(flash_V12X_replace2));
 
-	save_injectJump(pIdentify, (void*)identifyFlash512);
+	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash_V12X_find3, sizeof(flash_V12X_find3), false);
+	if (!func3)
+		return false;
+	tonccpy(func3, &flash_V12X_replace3, sizeof(flash_V12X_replace3));
 
-	save_injectJump((u32*)((*(u32*)(vram_cd->tmpSector + FLASH_V120_OFFSET_READ) & ~1) - 0x08000000 +
-		                MAIN_MEMORY_ADDRESS_ROM_DATA), (void*)readFlash);
-
-	save_injectJump((u32*)((*(u32*)(vram_cd->tmpSector + FLASH_V120_OFFSET_VERIFY_SECTOR) & ~1) - 0x08000000 +
-		                MAIN_MEMORY_ADDRESS_ROM_DATA), (void*)verifyFlashSector);
 	return true;
 }
 
 bool flash_patchV123(const save_type_t* type)
 {
-	if (!loadDataV120(type))
+	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find1, sizeof(flash_V12Y_find1), false);
+	if (!func1)
 		return false;
+	tonccpy(func1, &flash_V12Y_replace1, sizeof(flash_V12Y_replace1));
 
-	u32* pIdentify = gptc_findSignature(sIdentifyFlashV123Sig);
-	if (!pIdentify)
+	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find2, sizeof(flash_V12Y_find2), false);
+	if (!func2)
 		return false;
+	tonccpy(func2, &flash_V12Y_replace2, sizeof(flash_V12Y_replace2));
 
-	save_injectJump(pIdentify, (void*)identifyFlash512);
+	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find3, sizeof(flash_V12Y_find3), false);
+	if (!func3)
+		return false;
+	tonccpy(func3, &flash_V12Y_replace3, sizeof(flash_V12Y_replace3));
 
-	save_injectJump((u32*)((*(u32*)(vram_cd->tmpSector + FLASH_V120_OFFSET_READ) & ~1) - 0x08000000 +
-		                MAIN_MEMORY_ADDRESS_ROM_DATA), (void*)readFlash);
+	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash_V12Y_find4, sizeof(flash_V12Y_find4), false);
+	if (!func4)
+		return false;
+	tonccpy(func4, &flash_V12Y_replace4, sizeof(flash_V12Y_replace4));
 
-	save_injectJump((u32*)((*(u32*)(vram_cd->tmpSector + FLASH_V120_OFFSET_VERIFY_SECTOR) & ~1) - 0x08000000 +
-		                MAIN_MEMORY_ADDRESS_ROM_DATA), (void*)verifyFlashSector);
 	return true;
 }
 
-bool flash_patchV126(const save_type_t* type)
+/*bool flash_patchV126(const save_type_t* type)
 {
-	if (!loadDataV120(type))
-		return false;
-
-	u32* pIdentify = gptc_findSignature(sIdentifyFlashV123Sig);
-	if (!pIdentify)
-		return false;
-
-	save_injectJump(pIdentify, (void*)identifyFlash512);
-
-	save_injectJump((u32*)((*(u32*)(vram_cd->tmpSector + FLASH_V120_OFFSET_READ) & ~1) - 0x08000000 +
-		                MAIN_MEMORY_ADDRESS_ROM_DATA), (void*)readFlash);
-
-	save_injectJump((u32*)((*(u32*)(vram_cd->tmpSector + FLASH_V120_OFFSET_VERIFY_SECTOR) & ~1) - 0x08000000 +
-		                MAIN_MEMORY_ADDRESS_ROM_DATA), (void*)verifyFlashSector);
-
-	u32* verify = gptc_findSignature(sVerifyFlashV126Sig);
-	if (!verify)
-		return false;
-	save_injectJump(verify, (void*)verifyFlash);
-	return true;
-}
+}*/
 
 bool flash_patch512V130(const save_type_t* type)
 {
-	//load flash data
-	f_lseek(&vram_cd->fil, f_tell(&vram_cd->fil) + ((type->tagLength + 3) & ~3));
-	UINT read;
-	if (f_read(&vram_cd->fil, vram_cd->tmpSector, 0x94, &read) != FR_OK || read != 0x94)
+	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find1, sizeof(flash512_V13X_find1), false);
+	if (!func1)
 		return false;
+	tonccpy(func1, &flash512_V13X_replace1, sizeof(flash512_V13X_replace1));
 
-	sPatchInfo.progSectorPtr = *(u32**)(vram_cd->tmpSector + FLASH_512V130_OFFSET_PROG_SECTOR);
-	sPatchInfo.progBytePtr = NULL;
-	sPatchInfo.eraseChipPtr = *(u32**)(vram_cd->tmpSector + FLASH_512V130_OFFSET_ERASE_CHIP);
-	sPatchInfo.eraseSectorPtr = *(u32**)(vram_cd->tmpSector + FLASH_512V130_OFFSET_ERASE_SECTOR);
-	sPatchInfo.pollingSrPtr = *(u32**)(vram_cd->tmpSector + FLASH_512V130_OFFSET_POLLING_SR);
-	sPatchInfo.flMaxTimePtr = *(u32**)(vram_cd->tmpSector + FLASH_512V130_OFFSET_FL_MAXTIME);
-	sPatchInfo.flashPtr = *(u32**)(vram_cd->tmpSector + FLASH_512V130_OFFSET_FLASH);
-
-	u32* pIdentify = gptc_findSignature(sIdentifyFlashV123Sig);
-	if (!pIdentify)
+	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find2, sizeof(flash512_V13X_find2), false);
+	if (!func2)
 		return false;
+	tonccpy(func2, &flash512_V13X_replace2, sizeof(flash512_V13X_replace2));
 
-	save_injectJump(pIdentify, (void*)identifyFlash512);
-
-	u32* readFunc = gptc_findSignature(sReadFlash512V130Sig);
-	if (!readFunc)
+	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find3, sizeof(flash512_V13X_find3), false);
+	if (!func3)
 		return false;
-	save_injectJump(readFunc, (void*)readFlash);
+	tonccpy(func3, &flash512_V13X_replace3_4, sizeof(flash512_V13X_replace3_4));
 
-	u32* verifySector = gptc_findSignature(sVerifyFlashSector512V130Sig);
-	if (!verifySector)
+	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find4, sizeof(flash512_V13X_find4), false);
+	if (!func4)
 		return false;
-	save_injectJump(verifySector, (void*)verifyFlashSector);
+	tonccpy(func4, &flash512_V13X_replace3_4, sizeof(flash512_V13X_replace3_4));
 
-	u32* verify = gptc_findSignature(sVerifyFlash512V130Sig);
-	if (!verify)
+	u8* func5 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find5, sizeof(flash512_V13X_find5), false);
+	if (!func5)
 		return false;
-	save_injectJump(verify, (void*)verifyFlash);
+	tonccpy(func5, &flash512_V13X_replace5, sizeof(flash512_V13X_replace5));
+
 	return true;
 }
 
 bool flash_patch1MV102(const save_type_t* type)
 {
-	//load flash data
-	f_lseek(&vram_cd->fil, f_tell(&vram_cd->fil) + ((type->tagLength + 3) & ~3));
-	UINT read;
-	if (f_read(&vram_cd->fil, vram_cd->tmpSector, 0x94, &read) != FR_OK || read != 0x94)
+	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find1, sizeof(flash1M_V102_find1), false);
+	if (!func1)
 		return false;
+	tonccpy(func1, &flash1M_V102_replace1, sizeof(flash1M_V102_replace1));
 
-	sPatchInfo.progSectorPtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV102_OFFSET_PROG_SECTOR);
-	sPatchInfo.progBytePtr = NULL;
-	sPatchInfo.eraseChipPtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV102_OFFSET_ERASE_CHIP);
-	sPatchInfo.eraseSectorPtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV102_OFFSET_ERASE_SECTOR);
-	sPatchInfo.pollingSrPtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV102_OFFSET_POLLING_SR);
-	sPatchInfo.flMaxTimePtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV102_OFFSET_FL_MAXTIME + (
-		type->type == SAVE_TYPE_FLASH1M_V102 ? 0 : 4));
-	sPatchInfo.flashPtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV102_OFFSET_FLASH + (
-		type->type == SAVE_TYPE_FLASH1M_V102 ? 0 : 4));
-
-	u32* pIdentify = gptc_findSignature(type->type == SAVE_TYPE_FLASH1M_V102 ? sIdentifyFlashV123Sig : sIdentifyFlash1MV103Sig);
-	if (!pIdentify)
+	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find2, sizeof(flash1M_V102_find2), false);
+	if (!func2)
 		return false;
+	tonccpy(func2, &flash1M_V102_replace2, sizeof(flash1M_V102_replace2));
 
-	save_injectJump(pIdentify, (void*)identifyFlash1M);
-
-	u32* readFunc = gptc_findSignature(sReadFlash512V130Sig);
-	if (!readFunc)
+	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find3, sizeof(flash1M_V102_find3), false);
+	if (!func3)
 		return false;
-	save_injectJump(readFunc, (void*)readFlash);
+	tonccpy(func3, &flash1M_V102_replace3, sizeof(flash1M_V102_replace3));
 
-	u32* verifySector = gptc_findSignature(sVerifyFlashSector512V130Sig);
-	if (!verifySector)
+	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash1M_V102_find4, sizeof(flash1M_V102_find4), false);
+	if (!func4)
 		return false;
-	save_injectJump(verifySector, (void*)verifyFlashSector);
+	tonccpy(func4, &flash1M_V102_replace4, sizeof(flash1M_V102_replace4));
 
-	u32* verify = gptc_findSignature(sVerifyFlash512V130Sig);
-	if (!verify)
-		return false;
-	save_injectJump(verify, (void*)verifyFlash);
 	return true;
 }
 
 bool flash_patch1MV103(const save_type_t* type)
 {
-	//load flash data
-	f_lseek(&vram_cd->fil, f_tell(&vram_cd->fil) + ((type->tagLength + 3) & ~3));
-	UINT read;
-	if (f_read(&vram_cd->fil, vram_cd->tmpSector, 0x94, &read) != FR_OK || read != 0x94)
+	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find1, sizeof(flash1M_V103_find1), false);
+	if (!func1)
 		return false;
+	tonccpy(func1, &flash1M_V103_replace1, sizeof(flash1M_V103_replace1));
 
-	sPatchInfo.progSectorPtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV103_OFFSET_PROG_SECTOR);
-	sPatchInfo.progBytePtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV103_OFFSET_PROG_BYTE);
-	sPatchInfo.eraseChipPtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV103_OFFSET_ERASE_CHIP);
-	sPatchInfo.eraseSectorPtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV103_OFFSET_ERASE_SECTOR);
-	sPatchInfo.pollingSrPtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV103_OFFSET_POLLING_SR);
-	sPatchInfo.flMaxTimePtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV103_OFFSET_FL_MAXTIME);
-	sPatchInfo.flashPtr = *(u32**)(vram_cd->tmpSector + FLASH_1MV103_OFFSET_FLASH);
-
-	u32* pIdentify = gptc_findSignature(sIdentifyFlash1MV103Sig);
-	if (!pIdentify)
+	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find2, sizeof(flash1M_V103_find2), false);
+	if (!func2)
 		return false;
+	tonccpy(func2, &flash1M_V103_replace2, sizeof(flash1M_V103_replace2));
 
-	save_injectJump(pIdentify, (void*)identifyFlash1M);
-
-	u32* readFunc = gptc_findSignature(sReadFlash512V130Sig);
-	if (!readFunc)
+	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find3, sizeof(flash1M_V103_find3), false);
+	if (!func3)
 		return false;
-	save_injectJump(readFunc, (void*)readFlash);
+	tonccpy(func3, &flash1M_V103_replace3, sizeof(flash1M_V103_replace3));
 
-	u32* verifySector = gptc_findSignature(sVerifyFlashSector512V130Sig);
-	if (!verifySector)
+	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find4, sizeof(flash1M_V103_find4), false);
+	if (!func4)
 		return false;
-	save_injectJump(verifySector, (void*)verifyFlashSector);
+	tonccpy(func4, &flash1M_V103_replace4, sizeof(flash1M_V103_replace4));
 
-	u32* verify = gptc_findSignature(sVerifyFlash512V130Sig);
-	if (!verify)
+	u8* func5 = memsearch8((u8*)0x08000000, romSize, flash1M_V103_find5, sizeof(flash1M_V103_find5), false);
+	if (!func5)
 		return false;
-	save_injectJump(verify, (void*)verifyFlash);
+	tonccpy(func5, &flash1M_V103_replace5, sizeof(flash1M_V103_replace5));
+
 	return true;
-}*/
+}
