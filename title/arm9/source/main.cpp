@@ -950,7 +950,7 @@ int main(int argc, char **argv)
 				}
 				if (restoreSave) {
 					ptr = 0x0A000000;
-					u32 len = savesize;
+					len = savesize;
 					FILE* savFile = fopen(savepath.c_str(), "wb");
 					for (u32 i = 0; i < savesize; i += 0x8000) {
 						if (ptr >= 0x0A020000 || len <= 0) {
