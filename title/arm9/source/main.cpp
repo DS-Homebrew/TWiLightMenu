@@ -663,12 +663,6 @@ void lastRunROM()
 	{
 		if (!sys().isRegularDS() || (ms().showGba != 1) || access(ms().romPath[true].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
-		u32 romSize = getFileSize(ms().romPath[true].c_str());
-		if (romSize > 0x2000000) romSize = 0x2000000;
-		u32 savesize = getFileSize(savepath.c_str());
-		if (savesize > 0x20000) savesize = 0x20000;
-
 	  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
@@ -680,6 +674,12 @@ void lastRunROM()
 	  } else {
 		  return;
 	  }
+
+		std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
+		u32 romSize = getFileSize(ms().romPath[true].c_str());
+		if (romSize > 0x2000000) romSize = 0x2000000;
+		u32 savesize = getFileSize(savepath.c_str());
+		if (savesize > 0x20000) savesize = 0x20000;
 
 		consoleDemoInit();
 		iprintf("Now Loading...\n");
