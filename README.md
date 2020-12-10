@@ -43,7 +43,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob) (used to launch Gameboy ROMs)
 - [Coto](https://coto88.bitbucket.io/): Working on [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS) with acheid/Loopy (used to launch SNES ROMs) & [nesDS](https://github.com/RocketRobz/NesDS) ([TWL Edition](https://github.com/ApacheThunder/NesDS) by [Apache Thunder](https://github.com/ApacheThunder)) (used to launch NES ROMs).
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS) (used to launch Sega Mega Drive/Genesis ROMs)
-- [Gericom](https://github.com/Gericom): [GBARunner2](https://github.com/Gericom/GBARunner2) (used to launch GameBoy Advance ROMs)
+- [Gericom](https://github.com/Gericom): [GBARunner2](https://github.com/Gericom/GBARunner2) (used to launch GameBoy Advance ROMs outside of the DS Phat/lite's GBA mode)
 - [FluBBa](https://gbatemp.net/members/flubba.19963/): [S8DS](https://gbatemp.net/threads/s8ds.392855/) (used to launch Sega Master System/Game Gear ROMs)
 - Alekmaul & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS) and [A7800DS](https://github.com/wavemotion-dave/A7800DS) (used to launch Atari 2600/7800 ROMs)
 ## Graphics & Themes
