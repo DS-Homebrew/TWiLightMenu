@@ -339,6 +339,27 @@ void gptc_patchRom()
 		if (*(u16*)(0x08000000 + 0x10B078) == 0x8008)
 			*(u16*)(0x08000000 + 0x10B078) = 0x46C0;
 	}
+	else if(gameCode == 0x454B3842)
+	{
+		//Kirby and the Amazing Mirror (USA)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x1515A4) == 0x8008)
+			*(u16*)(0x08000000 + 0x1515A4) = 0x46C0;
+	}
+	else if(gameCode == 0x504B3842)
+	{
+		//Kirby and the Amazing Mirror (Europe)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x151EE0) == 0x8008)
+			*(u16*)(0x08000000 + 0x151EE0) = 0x46C0;
+	}
+	else if(gameCode == 0x4A4B3842)
+	{
+		//Hoshi no Kirby - Kagami no Daimeikyuu (Japan) (V1.1)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x151564) == 0x8008)
+			*(u16*)(0x08000000 + 0x151564) = 0x46C0;
+	}
 	else if(gameCode == 0x45533342)
 	{
 		//Sonic Advance 3 (USA)
