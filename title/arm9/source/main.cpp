@@ -931,17 +931,22 @@ int main(int argc, char **argv)
 				// Try to restore save from SRAM
 				bool restoreSave = false;
 				extern char copyBuf[0x8000];
-				u32 ptr = 0x0A000000+(savesize > 0x10000 ? 0x10000 : savesize);
-				for (u32 len = (savesize > 0x10000 ? 0x10000 : savesize); len > 0; len -= 0x8000) {
+				u32 ptr = 0x0A000000;
+				u32 len = savesize;
+				for (u32 i = 0; i < savesize; i += 0x8000) {
+					if (ptr >= 0x0A020000 || len <= 0) {
+						break;
+					}
 					cExpansion::ReadSram(ptr,(u8*)copyBuf,(len>0x8000 ? 0x8000 : len));
-					for (u32 i = 0; i < (len>0x8000 ? 0x8000 : len); i++) {
-						if (copyBuf[i] != 0) {
+					for (u32 i2 = 0; i2 < (len>0x8000 ? 0x8000 : len); i2++) {
+						if (copyBuf[i2] != 0) {
 							restoreSave = true;
 							break;
 						}
 					}
-					ptr -= 0x8000;
-					if (ptr < 0x0A000000 || restoreSave) break;
+					ptr += 0x8000;
+					len -= 0x8000;
+					if (restoreSave) break;
 				}
 				if (restoreSave) {
 					ptr = 0x0A000000;
