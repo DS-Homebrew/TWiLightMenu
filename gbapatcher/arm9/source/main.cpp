@@ -18,7 +18,7 @@
 #include "save/Save.h"
 #include "gbaswitch.h"
 
-static u8 blankBuf[0x10000] = {0xFF};
+static u8 blankBuf[0x10000] = {0};
 
 u32 romSize = 0;
 
@@ -438,7 +438,11 @@ int main(int argc, char **argv) {
 	if (saveType != NULL) {
 		std::string savepath = replaceAll(argv[1], ".gba", ".sav");
 		if (getFileSize(savepath.c_str()) == 0) {
-			cExpansion::WriteSram(0x0A000000, (u8*)blankBuf, (saveType->size > 0x10000 ? 0x10000 : saveType->size));
+			u32 size = (saveType->size > 0x10000 ? 0x10000 : saveType->size);
+			for (u32 i = 0; i < size; i++) {
+				blankBuf[i] = 0xFF;
+			}
+			cExpansion::WriteSram(0x0A000000, (u8*)blankBuf, size);
 			FILE *pFile = fopen(savepath.c_str(), "wb");
 			if (pFile) {
 				fseek(pFile, saveType->size - 1, SEEK_SET);
