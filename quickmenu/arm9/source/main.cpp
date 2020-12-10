@@ -1189,7 +1189,7 @@ int main(int argc, char **argv) {
 				u32 ptr = 0x0A000000+(savesize > 0x10000 ? 0x10000 : savesize);
 				for (u32 len = (savesize > 0x10000 ? 0x10000 : savesize); len > 0; len -= 0x8000) {
 					cExpansion::ReadSram(ptr,(u8*)copyBuf,(len>0x8000 ? 0x8000 : len));
-					for (u16 i = 0; i < (u16)(len>0x8000 ? 0x8000 : len); i++) {
+					for (u32 i = 0; i < (len>0x8000 ? 0x8000 : len); i++) {
 						if (copyBuf[i] != 0) {
 							restoreSave = true;
 							break;
@@ -1200,9 +1200,10 @@ int main(int argc, char **argv) {
 				}
 				if (restoreSave) {
 					ptr = 0x0A000000;
+					u32 len = savesize;
 					FILE* savFile = fopen(savepath.c_str(), "wb");
-					for (u32 len = savesize; len > 0; len -= 0x8000) {
-						if (ptr >= 0x0A020000) {
+					for (u32 i = 0; i < savesize; i += 0x8000) {
+						if (ptr >= 0x0A020000 || len <= 0) {
 							break;	// In case if this writes a save bigger than 128KB
 						} else if (ptr >= 0x0A010000) {
 							toncset(&copyBuf, 0, 0x8000);
@@ -1211,6 +1212,7 @@ int main(int argc, char **argv) {
 						}
 						fwrite(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile);
 						ptr += 0x8000;
+						len -= 0x8000;
 					}
 					fclose(savFile);
 
