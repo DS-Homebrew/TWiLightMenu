@@ -95,8 +95,8 @@ static const u8 flash1M_V103_replace5[12] = {
 };
 
 
-// FLASH512_V130 and V131 have all the same patches.
-// TODO Check if FLASH512_V133 patch works correctly. Patches are from gbatemp thread, but gbata doesn't actually support V133.
+// FLASH512_V130, V131, and V133 have all the same patches.
+// Patches are from gbatemp thread, but gbata doesn't actually support V133.
 static const u8 flash512_V13X_find1[38] = {
 	0xf0,0xb5,0xa0,0xb0,0x0d,0x1c,0x16,0x1c,0x1f,0x1c,0x03,0x04,0x1c,0x0c,0x0f,0x4a,
 	0x10,0x88,0x0f,0x49,0x08,0x40,0x03,0x21,0x08,0x43,0x10,0x80,0x0d,0x48,0x00,0x68,
@@ -116,11 +116,11 @@ static const u8 flash512_V13X_replace2[8] = {
 static const u8 flash512_V13X_find3[8] = {
 	0x70,0xb5,0x90,0xb0,0x15,0x4d,0x29,0x88
 };
-static const u8 flash512_V13X_replace3_4[8] = {
-	0x00,0xb5,0x00,0x20,0x02,0xbc,0x08,0x47
-};
 static const u8 flash512_V13X_find4[8] = {
 	0x70,0xb5,0x46,0x46,0x40,0xb4,0x90,0xb0
+};
+static const u8 flash512_V13X_replace3_4[8] = {
+	0x00,0xb5,0x00,0x20,0x02,0xbc,0x08,0x47
 };
 static const u8 flash512_V13X_find5[24] = {
 	0xf0,0xb5,0x90,0xb0,0x0f,0x1c,0x00,0x04,0x04,0x0c,0x03,0x48,0x00,0x68,0x40,0x89,
@@ -274,27 +274,27 @@ bool flash_patch512V130(const save_type_t* type)
 		if (romPos >= romPos+romSize) break;
 	}
 
-	u8* func1 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find1, sizeof(flash512_V13X_find1), true);
+	u8* func1 = memsearch8((u8*)romPos, curRomSize, flash512_V13X_find1, sizeof(flash512_V13X_find1), true);
 	if (!func1)
 		return false;
 	tonccpy(func1, &flash512_V13X_replace1, sizeof(flash512_V13X_replace1));
 
-	u8* func2 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find2, sizeof(flash512_V13X_find2), true);
+	u8* func2 = memsearch8((u8*)romPos, curRomSize, flash512_V13X_find2, sizeof(flash512_V13X_find2), true);
 	if (!func2)
 		return false;
 	tonccpy(func2, &flash512_V13X_replace2, sizeof(flash512_V13X_replace2));
 
-	u8* func3 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find3, sizeof(flash512_V13X_find3), true);
+	u8* func3 = memsearch8((u8*)romPos, curRomSize, flash512_V13X_find3, sizeof(flash512_V13X_find3), true);
 	if (!func3)
 		return false;
 	tonccpy(func3, &flash512_V13X_replace3_4, sizeof(flash512_V13X_replace3_4));
 
-	u8* func4 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find4, sizeof(flash512_V13X_find4), true);
+	u8* func4 = memsearch8((u8*)romPos, curRomSize, flash512_V13X_find4, sizeof(flash512_V13X_find4), true);
 	if (!func4)
 		return false;
 	tonccpy(func4, &flash512_V13X_replace3_4, sizeof(flash512_V13X_replace3_4));
 
-	u8* func5 = memsearch8((u8*)0x08000000, romSize, flash512_V13X_find5, sizeof(flash512_V13X_find5), true);
+	u8* func5 = memsearch8((u8*)romPos, curRomSize, flash512_V13X_find5, sizeof(flash512_V13X_find5), true);
 	if (!func5)
 		return false;
 	tonccpy(func5, &flash512_V13X_replace5, sizeof(flash512_V13X_replace5));
