@@ -1202,7 +1202,9 @@ int main(int argc, char **argv) {
 					ptr = 0x0A000000;
 					FILE* savFile = fopen(savepath.c_str(), "wb");
 					for (u32 len = savesize; len > 0; len -= 0x8000) {
-						if (ptr >= 0x0A010000) {
+						if (ptr >= 0x0A020000) {
+							break;	// In case if this writes a save bigger than 128KB
+						} else if (ptr >= 0x0A010000) {
 							toncset(&copyBuf, 0, 0x8000);
 						} else {
 							cExpansion::ReadSram(ptr,(u8*)copyBuf,0x8000);
@@ -1213,7 +1215,9 @@ int main(int argc, char **argv) {
 					fclose(savFile);
 
 					// Wipe out SRAM after restoring save
-					toncset((u8*)0x0A000000, 0, 0x10000);
+					toncset(&copyBuf, 0, 0x8000);
+					cExpansion::WriteSram(0x0A000000, (u8*)copyBuf, 0x8000);
+					cExpansion::WriteSram(0x0A008000, (u8*)copyBuf, 0x8000);
 				}
 				gbaSramAccess(false);	// Switch out of GBA SRAM
 			}
