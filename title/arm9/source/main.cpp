@@ -934,7 +934,7 @@ int main(int argc, char **argv)
 				u32 ptr = 0x0A000000;
 				u32 len = savesize;
 				for (u32 i = 0; i < savesize; i += 0x8000) {
-					if (ptr >= 0x0A020000 || len <= 0) {
+					if (ptr >= 0x0A010000 || len <= 0) {
 						break;
 					}
 					cExpansion::ReadSram(ptr,(u8*)copyBuf,(len>0x8000 ? 0x8000 : len));
