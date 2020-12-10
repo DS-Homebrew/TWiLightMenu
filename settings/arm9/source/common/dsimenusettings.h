@@ -92,16 +92,6 @@ class TWLSettings
         ENightlyBootstrap = true
     };
 
-    enum TLaunchType
-    {
-        ENoLaunch = -1,
-        ESlot1 = 0,
-        ESDFlashcardLaunch = 1,
-        EDSiWareLaunch = 2,
-        ENESDSLaunch = 3,
-        EGameYobLaunch = 4
-    };
-
     /*	0 = Nintendo DSi (Retail)
     1 = Nintendo DSi (Dev/Panda)
     2 = Nintendo 3DS
@@ -156,6 +146,7 @@ class TWLSettings
     int showGba;
     bool showRvid;
     bool showA26;
+	bool showA78;
     bool showNes;
     bool showGb;
     bool showSmsGg;

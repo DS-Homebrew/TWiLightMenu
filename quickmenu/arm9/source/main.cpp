@@ -1381,7 +1381,7 @@ int main(int argc, char **argv) {
 			iconUpdate (1, false, filename[1].c_str());
 			bnrRomType[1] = 0;
 			boxArtType[1] = 0;
-		} else if (extention(filename[1], ".plg") || extention(filename[1], ".rvid") || extention(filename[1], ".mp4") || extention(filename[1], ".a26")) {
+		} else if (extention(filename[1], ".plg") || extention(filename[1], ".rvid") || extention(filename[1], ".mp4") || extention(filename[1], ".a26") || extention(filename[1], ".a78")) {
 			bnrRomType[1] = 9;
 			boxArtType[1] = 0;
 		} else if (extention(filename[1], ".gba")) {
@@ -2698,6 +2698,14 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
+						boostVram = true;
+					}
+				} else if (extention(filename[secondaryDevice], ".a78")) {
+					launchType[secondaryDevice] = 12;
+					
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".gb") || extention(filename[secondaryDevice], ".sgb") || extention(filename[secondaryDevice], ".gbc")) {

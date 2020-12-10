@@ -1044,6 +1044,7 @@ void titleUpdate(bool isDir, const char* name)
 		  || extention(name, ".smc")
 		  || extention(name, ".sfc")
 		  || extention(name, ".a26")
+		  || extention(name, ".a78")
 		  || extention(name, ".pce"))
 	{
 		writeBannerText(0, name, "", "");

@@ -816,6 +816,20 @@ void lastRunROM()
 		argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/gbapatcher.srldr";
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to StellaDS as argument
 	}
+	else if (ms().launchType[ms().secondaryDevice] == Launch::EA7800DSLaunch)
+	{
+		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		if (sys().flashcardUsed())
+		{
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+		}
+		else
+		{
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to StellaDS as argument
+	}
 	if (err > 0) {
 		consoleDemoInit();
 		iprintf("Start failed. Error %i\n", err);

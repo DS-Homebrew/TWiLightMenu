@@ -153,6 +153,7 @@ bool showNds = true;
 int showGba = 2;
 bool showRvid = true;
 bool showA26 = true;
+bool showA78 = true;
 bool showNes = true;
 bool showGb = true;
 bool showSmsGg = true;
@@ -200,6 +201,7 @@ void LoadSettings(void) {
 	}
 	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", true);
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", true);
+	showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", true);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", true);
@@ -1089,6 +1091,9 @@ int main(int argc, char **argv) {
 	}
 	if (showA26) {
 		extensionList.emplace_back(".a26");
+	}
+	if (showA78) {
+		extensionList.emplace_back(".a78");
 	}
 	if (showGb) {
 		extensionList.push_back(".gb");
@@ -2178,6 +2183,14 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
+						boostVram = true;
+					}
+				} else if (extention(filename, ".a78")) {
+					launchType[secondaryDevice] = 12;
+					
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {
