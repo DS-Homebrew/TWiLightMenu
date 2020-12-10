@@ -18,7 +18,7 @@
 #include "save/Save.h"
 #include "gbaswitch.h"
 
-static u8 blankBuf[0x10000] = {0};
+static u8 blankBuf[0x10000] = {0xFF};
 
 u32 romSize = 0;
 
