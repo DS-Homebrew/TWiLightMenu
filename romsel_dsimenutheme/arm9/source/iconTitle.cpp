@@ -743,6 +743,7 @@ void titleUpdate(bool isDir, const std::string &name, int num) {
 			|| extention(name, ".smc")
 			|| extention(name, ".sfc")
 			|| extention(name, ".a26")
+			|| extention(name, ".a78")
 			|| extention(name, ".pce")) {
 		writeBannerText(name.substr(0, name.find_last_of('.')));
 	} else {

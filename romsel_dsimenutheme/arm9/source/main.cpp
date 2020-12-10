@@ -691,94 +691,8 @@ int main(int argc, char **argv) {
 	  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
-		bool writeFlagToRam = false;
 		*(vu16*)(0x08000000) = 0x4D54;	// Write test
-		if (*(vu16*)(0x08000000) != 0x4D54) {	// If not writeable
-			_M3_changeMode(M3_MODE_RAM);	// Try again with M3
-			*(u16*)(0x020000C0) = 0x334D;
-			writeFlagToRam = true;
-			*(vu16*)(0x08000000) = 0x4D54;
-		}
 		if (*(vu16*)(0x08000000) != 0x4D54) {
-			_G6_SelectOperation(G6_MODE_RAM);	// Try again with G6
-			*(u16*)(0x020000C0) = 0x3647;
-			writeFlagToRam = true;
-			*(vu16*)(0x08000000) = 0x4D54;
-		}
-		if (*(vu16*)(0x08000000) != 0x4D54) {
-			_SC_changeMode(SC_MODE_RAM);	// Try again with SuperCard
-			*(u16*)(0x020000C0) = 0x4353;
-			writeFlagToRam = true;
-			*(vu16*)(0x08000000) = 0x4D54;
-		}
-		if (*(vu16*)(0x08000000) != 0x4D54) {
-			cExpansion::SetRompage(381);	// Try again with EZ Flash
-			cExpansion::OpenNorWrite();
-			cExpansion::SetSerialMode();
-			*(u16*)(0x020000C0) = 0x5A45;
-			writeFlagToRam = true;
-			*(vu16*)(0x08000000) = 0x4D54;
-		}
-		if (writeFlagToRam) {
-			*(vu16*)(0x08000002) = *(u16*)(0x020000C0);
-		} else {
-			*(u16*)(0x020000C0) = *(vu16*)(0x08000002);
-			if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353 && *(u16*)(0x020000C0) != 0x5A45) {
-				*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
-			}
-		}
-		if (*(vu16*)(0x08000000) == 0x4D54) {
-			u8 byteBak = *(vu8*)(0x0A000000);
-			*(vu8*)(0x0A000000) = 'T';	// SRAM write test
-		  if (*(vu8*)(0x0A000000) == 'T') {	// Check if SRAM is writeable
-			*(vu8*)(0x0A000000) = byteBak;
-			std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
-			u32 savesize = getFileSize(savepath.c_str());
-			if (savesize > 0x20000) savesize = 0x20000;
-			if (savesize > 0 && ms().launchType[true] == Launch::EGBANativeLaunch) {
-				gbaSramAccess(true);	// Switch to GBA SRAM
-				// Try to restore save from SRAM
-				bool restoreSave = false;
-				extern char copyBuf[0x8000];
-				u32 ptr = 0x0A000000+(savesize > 0x10000 ? 0x10000 : savesize);
-				for (u32 len = (savesize > 0x10000 ? 0x10000 : savesize); len > 0; len -= 0x8000) {
-					cExpansion::ReadSram(ptr,(u8*)copyBuf,(len>0x8000 ? 0x8000 : len));
-					for (u32 i = 0; i < (len>0x8000 ? 0x8000 : len); i++) {
-						if (copyBuf[i] != 0) {
-							restoreSave = true;
-							break;
-						}
-					}
-					ptr -= 0x8000;
-					if (restoreSave) break;
-				}
-				if (restoreSave) {
-					ptr = 0x0A000000;
-					u32 len = savesize;
-					FILE* savFile = fopen(savepath.c_str(), "wb");
-					for (u32 i = 0; i < savesize; i += 0x8000) {
-						if (ptr >= 0x0A020000 || len <= 0) {
-							break;	// In case if this writes a save bigger than 128KB
-						} else if (ptr >= 0x0A010000) {
-							toncset(&copyBuf, 0, 0x8000);
-						} else {
-							cExpansion::ReadSram(ptr,(u8*)copyBuf,0x8000);
-						}
-						fwrite(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile);
-						ptr += 0x8000;
-						len -= 0x8000;
-					}
-					fclose(savFile);
-
-					// Wipe out SRAM after restoring save
-					toncset(&copyBuf, 0, 0x8000);
-					cExpansion::WriteSram(0x0A000000, (u8*)copyBuf, 0x8000);
-					cExpansion::WriteSram(0x0A008000, (u8*)copyBuf, 0x8000);
-				}
-				gbaSramAccess(false);	// Switch out of GBA SRAM
-			}
-		  }
-		} else {
 			*(u16*)(0x020000C0) = 0;
 			ms().showGba = 0;	// If write failed, hide GBA ROMs
 		}
@@ -814,6 +728,9 @@ int main(int argc, char **argv) {
 	if (ms().showA26) {
 		extensionList.emplace_back(".a26");
 	}
+	if (ms().showA78) {
+		extensionList.emplace_back(".a78");
+	}
 	if (ms().showGb) {
 		extensionList.emplace_back(".gb");
 		extensionList.emplace_back(".sgb");
@@ -842,38 +759,6 @@ int main(int argc, char **argv) {
 	srand(time(NULL));
 
 	char path[256] = {0};
-
-	if (flashcardFound() && ms().launchType[true] == Launch::ESDFlashcardLaunch) {
-		// Move .sav back to "saves" folder
-		std::string filename = ms().romPath[true];
-		const size_t last_slash_idx = filename.find_last_of("/");
-		if (std::string::npos != last_slash_idx) {
-			filename.erase(0, last_slash_idx + 1);
-		}
-
-		loadPerGameSettings(filename);
-
-		const char *typeToReplace = ".nds";
-		if (extention(filename, ".dsi")) {
-			typeToReplace = ".dsi";
-		} else if (extention(filename, ".ids")) {
-			typeToReplace = ".ids";
-		} else if (extention(filename, ".srl")) {
-			typeToReplace = ".srl";
-		} else if (extention(filename, ".app")) {
-			typeToReplace = ".app";
-		}
-
-		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
-		std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
-		std::string romFolderNoSlash = ms().romfolder[true];
-		RemoveTrailingSlashes(romFolderNoSlash);
-		std::string savepath = romFolderNoSlash + "/saves/" + savename;
-		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
-		if (access(savepathFc.c_str(), F_OK) == 0) {
-			rename(savepathFc.c_str(), savepath.c_str());
-		}
-	}
 
 	//logPrint("snd()\n");
 	snd();
@@ -1838,6 +1723,14 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
+						boostVram = true;
+					}
+				} else if (extention(filename, ".a78")) {
+					ms().launchType[ms().secondaryDevice] = Launch::EA7800DSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {
