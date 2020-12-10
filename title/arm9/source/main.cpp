@@ -941,7 +941,7 @@ int main(int argc, char **argv)
 						}
 					}
 					ptr -= 0x8000;
-					if (restoreSave) break;
+					if (ptr < 0x0A000000 || restoreSave) break;
 				}
 				if (restoreSave) {
 					ptr = 0x0A000000;
