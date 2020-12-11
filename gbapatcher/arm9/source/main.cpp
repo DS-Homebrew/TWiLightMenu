@@ -425,7 +425,26 @@ int main(int argc, char **argv) {
 	const save_type_t* saveType = save_findTag();
 	if (saveType != NULL && saveType->patchFunc != NULL)
 	{
-		saveType->patchFunc(saveType);
+		if (*(u16*)(0x020000C0) == 0x5A45) {
+			consoleDemoInit();
+			printf("\x1B[41mWARNING!\x1B[47m\n\n");
+			printf("This game uses a save type\n");
+			printf("other than SRAM.\n\n");
+			printf("Please SRAM-patch your ROM\n");
+			printf("in order to save your data.\n\n");
+			printf("Press A to continue\nwithout saving\n");
+
+			u16 pressed = 0;
+			do {
+				swiWaitForVBlank();
+				scanKeys();
+				pressed = keysDown();
+			} while(!(pressed & KEY_A));
+
+			consoleClear();
+		} else {
+			saveType->patchFunc(saveType);
+		}
 	}
 
 	// Lock write access to ROM region
