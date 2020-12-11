@@ -418,7 +418,9 @@ int main(int argc, char **argv) {
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
-	gptc_patchRom();
+	if (*(u16*)(0x020000C0) != 0x5A45) {
+		gptc_patchRom();
+	}
 
 	const save_type_t* saveType = save_findTag();
 	if (saveType != NULL && saveType->patchFunc != NULL)

@@ -1975,7 +1975,7 @@ int main(int argc, char **argv) {
 						if (romSize > 0x2000000) romSize = 0x2000000;
 
 						bool nor = false;
-						if (*(u16*)(0x020000C0) == 0x5A45 && romSize > 0x1000000) {
+						if (*(u16*)(0x020000C0) == 0x5A45) {
 							cExpansion::SetRompage(0);
 							expansion().SetRampage(cExpansion::ENorPage);
 							cExpansion::OpenNorWrite();

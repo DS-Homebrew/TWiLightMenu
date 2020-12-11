@@ -692,34 +692,28 @@ void lastRunROM()
 		u32 ptr = 0x08000000;
 		extern char copyBuf[0x8000];
 		bool nor = false;
-		if (*(u16*)(0x020000C0) == 0x5A45 && romSize > 0x1000000) {
+		if (*(u16*)(0x020000C0) == 0x5A45) {
 			cExpansion::SetRompage(0);
 			expansion().SetRampage(cExpansion::ENorPage);
 			cExpansion::OpenNorWrite();
 			cExpansion::SetSerialMode();
-			for(u32 address=0;address<romSize&&address<0x2000000;address+=0x40000)
-			{
-				expansion().Block_Erase(address);
-			}
 			nor = true;
 		} else if (*(u16*)(0x020000C0) == 0x4353 && romSize > 0x1FFFFFE) {
 			romSize = 0x1FFFFFE;
 		}
 
-		FILE* gbaFile = fopen(ms().romPath[true].c_str(), "rb");
-		for (u32 len = romSize; len > 0; len -= 0x8000) {
-			if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
-				if (nor) {
-					expansion().WriteNorFlash(ptr-0x08000000, (u8*)copyBuf, (len>0x8000 ? 0x8000 : len));
-				} else {
+		if (!nor) {
+			FILE* gbaFile = fopen(ms().romPath[true].c_str(), "rb");
+			for (u32 len = romSize; len > 0; len -= 0x8000) {
+				if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
 					tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+					ptr += 0x8000;
+				} else {
+					break;
 				}
-				ptr += 0x8000;
-			} else {
-				break;
 			}
+			fclose(gbaFile);
 		}
-		fclose(gbaFile);
 
 		ptr = 0x0A000000;
 
