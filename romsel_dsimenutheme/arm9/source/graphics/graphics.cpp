@@ -23,10 +23,6 @@
 #include <dirent.h>
 #include <maxmod9.h>
 #include <nds/arm9/dldi.h>
-#include "io_m3_common.h"
-#include "io_g6_common.h"
-#include "io_sc_common.h"
-#include "exptools.h"
 
 #include "../errorScreen.h"
 #include "../iconTitle.h"
@@ -1748,47 +1744,7 @@ void loadRotatingCubes() {
 		} else if (sys().isRegularDS()) {
 			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
 							 // Expansion Pak)
-			bool writeFlagToRam = false;
 			*(vu16*)(0x08240000) = 1;
-			if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) && *(u16*)(0x020000C0) == 0) {
-				if (*(vu16*)(0x08240000) != 1) {	// If not writeable
-					_M3_changeMode(M3_MODE_RAM);	// Try again with M3
-					*(u16*)(0x020000C0) = 0x334D;
-					writeFlagToRam = true;
-					*(vu16*)(0x08240000) = 1;
-				}
-				if (*(vu16*)(0x08240000) != 1) {
-					_G6_SelectOperation(G6_MODE_RAM);	// Try again with G6
-					*(u16*)(0x020000C0) = 0x3647;
-					writeFlagToRam = true;
-					*(vu16*)(0x08240000) = 1;
-				}
-				if (*(vu16*)(0x08240000) != 1) {
-					_SC_changeMode(SC_MODE_RAM);	// Try again with SuperCard
-					*(u16*)(0x020000C0) = 0x4353;
-					writeFlagToRam = true;
-					*(vu16*)(0x08240000) = 1;
-				}
-				if (*(vu16*)(0x08240000) != 1) {
-					cExpansion::SetRompage(381);	// Try again with EZ Flash
-					cExpansion::OpenNorWrite();
-					cExpansion::SetSerialMode();
-					*(u16*)(0x020000C0) = 0x5A45;
-					writeFlagToRam = true;
-					*(vu16*)(0x08240000) = 1;
-				}
-				if (writeFlagToRam) {
-					*(vu16*)(0x08000002) = *(u16*)(0x020000C0);
-				} else {
-					*(u16*)(0x020000C0) = *(vu16*)(0x08000002);
-					if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353 && *(u16*)(0x020000C0) != 0x5A45) {
-						*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
-					}
-				}
-				if (*(vu16*)(0x08240000) != 1) {
-					*(u16*)(0x020000C0) = 0;
-				}
-			}
 			if (*(vu16*)(0x08240000) == 1) {
 				// Set to load video into DS Memory Expansion Pak
 				rotatingCubesLocation = (u8 *)(*(u16*)(0x020000C0)==0x5A45 ? 0x08000200 : 0x09000000);
