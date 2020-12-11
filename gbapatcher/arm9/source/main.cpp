@@ -427,7 +427,7 @@ int main(int argc, char **argv) {
 	{
 		if (*(u16*)(0x020000C0) == 0x5A45) {
 			consoleDemoInit();
-			printf("\x1B[41mWARNING!\x1B[47m\n\n");
+			printf("\x1B[41mWARNING!\x1B[47m\n");
 			printf("This game uses a save type\n");
 			printf("other than SRAM.\n\n");
 			printf("Please SRAM-patch your ROM\n");
