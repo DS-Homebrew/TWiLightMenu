@@ -425,7 +425,7 @@ int main(int argc, char **argv) {
 	const save_type_t* saveType = save_findTag();
 	if (saveType != NULL && saveType->patchFunc != NULL)
 	{
-		if (*(u16*)(0x020000C0) == 0x5A45) {
+		if (saveType->patchFunc(saveType) && *(u16*)(0x020000C0) == 0x5A45) {
 			consoleDemoInit();
 			printf("\x1B[41mWARNING!\x1B[47m\n");
 			printf("This game uses a save type\n");
@@ -442,8 +442,6 @@ int main(int argc, char **argv) {
 			} while(!(pressed & KEY_A));
 
 			consoleClear();
-		} else {
-			saveType->patchFunc(saveType);
 		}
 	}
 
