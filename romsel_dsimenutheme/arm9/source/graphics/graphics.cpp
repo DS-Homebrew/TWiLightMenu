@@ -138,6 +138,8 @@ bool showRshoulder = false;
 int movecloseXpos = 0;
 
 bool showProgressIcon = false;
+bool showProgressBar = false;
+int progressBarLength = 0;
 
 int progressAnimNum = 0;
 int progressAnimDelay = 0;
@@ -1314,8 +1316,13 @@ void vBlankHandler() {
 			}*/
 		if (whiteScreen) {
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
-			if (showProgressIcon)
+			if (showProgressIcon) {
 				glSprite(224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
+				if (showProgressBar) {
+					glBoxFilled(19, 157, 19+192, 157+5, RGB15(23, 23, 23));
+					glBoxFilled(19, 157, 19+progressBarLength, 157+5, RGB15(0, 0, 31 - (6 * ms().blfLevel)));
+				}
+			}
 		}
 
 		if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
@@ -1323,7 +1330,6 @@ void vBlankHandler() {
 				// Reload the dialog box palettes here...
 				reloadDboxPalette();
 			} else if (!showdialogbox) {
-
 				reloadIconPalettes();
 			}
 			vblankRefreshCounter = 0;

@@ -69,6 +69,8 @@ bool widescreenEffects = false;
 extern void ClearBrightness();
 extern bool displayGameIcons;
 extern bool showProgressIcon;
+extern bool showProgressBar;
+extern int progressBarLength;
 
 const char *settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -1615,6 +1617,8 @@ int main(int argc, char **argv) {
 							fadeType = true; // Fade in from white
 						}
 						showProgressIcon = true;
+						showProgressBar = true;
+						progressBarLength = 0;
 
 						u32 ptr = 0x08000000;
 						extern char copyBuf[0x8000];
@@ -1645,6 +1649,7 @@ int main(int argc, char **argv) {
 									tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
 								}
 								ptr += 0x8000;
+								progressBarLength = ((ptr-0x08000000)+0x8000)/(romSize/192);
 							} else {
 								break;
 							}
