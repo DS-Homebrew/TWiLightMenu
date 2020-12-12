@@ -97,6 +97,8 @@ extern bool showLshoulder;
 extern bool showRshoulder;
 
 extern bool showProgressIcon;
+extern bool showProgressBar;
+extern int progressBarLength;
 
 bool dirInfoIniFound = false;
 bool pageLoaded[100] = {false};
@@ -430,12 +432,22 @@ void displayNowLoading(void) {
 	fadeType = true; // Fade in from white
 	snd().updateStream();
 	std::string *msg;
-	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-		msg = &STR_TAKEWHILE_TURNOFF;
-	} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
-		msg = &STR_TAKEWHILE_PRESSHOME;
+	if (showProgressBar) {
+		if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+			msg = &STR_BARSTOPPED_TURNOFF;
+		} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
+			msg = &STR_BARSTOPPED_PRESSHOME;
+		} else {
+			msg = &STR_BARSTOPPED_CLOSELID;
+		}
 	} else {
-		msg = &STR_TAKEWHILE_CLOSELID;
+		if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+			msg = &STR_TAKEWHILE_TURNOFF;
+		} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
+			msg = &STR_TAKEWHILE_PRESSHOME;
+		} else {
+			msg = &STR_TAKEWHILE_CLOSELID;
+		}
 	}
 	printSmall(false, 0, 20, *msg, Alignment::center);
 	printLarge(false, 0, 88, STR_NOW_LOADING, Alignment::center);
@@ -448,9 +460,9 @@ void displayNowLoading(void) {
 			}
 		} else {
 			if (ms().secondaryDevice) {
-				printSmall(false, 8, 152, STR_LOCATION_N_SLOT_1);
+				printSmall(false, 0, 168, STR_LOCATION_SLOT_1, Alignment::center);
 			} else {
-				printSmall(false, 8, 152, ms().showMicroSd ? STR_LOCATION_N_MICRO_SD : STR_LOCATION_N_SD);
+				printSmall(false, 0, 168, ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
 			}
 		}
 	}
@@ -1437,6 +1449,12 @@ bool selectMenu(void) {
 void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool reSpawnBoxes) {
 	extern bool extention(const std::string& filename, const char* ext);
 
+	if (nowLoadingDisplaying) {
+		clearText();
+		showProgressBar = true;
+		progressBarLength = 0;
+		displayNowLoading();
+	}
 	if (reSpawnBoxes)
 		spawnedtitleboxes = 0;
 	for (int i = 0; i < 40; i++) {
@@ -1517,6 +1535,8 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 			if (reSpawnBoxes)
 				spawnedtitleboxes++;
 
+			progressBarLength += (200/((file_count - (PAGENUM*40)) > 40 ? 40 : (file_count - (PAGENUM*40))));
+			if (progressBarLength > 192) progressBarLength = 192;
 			checkSdEject();
 			tex().drawVolumeImageCached();
 			tex().drawBatteryImageCached();
@@ -1529,6 +1549,8 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	if (nowLoadingDisplaying) {
 		snd().updateStream();
 		showProgressIcon = false;
+		showProgressBar = false;
+		progressBarLength = 0;
 		if (ms().theme != 4 && ms().theme != 5) fadeType = false; // Fade to white
 	}
 	// Load correct icons depending on cursor position

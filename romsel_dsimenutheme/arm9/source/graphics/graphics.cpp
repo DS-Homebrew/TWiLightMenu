@@ -1316,12 +1316,20 @@ void vBlankHandler() {
 			}*/
 		if (whiteScreen) {
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
-			if (showProgressIcon) {
-				glSprite(224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
-				if (showProgressBar) {
-					glBoxFilled(19, 157, 19+192, 157+5, RGB15(23, 23, 23));
-					glBoxFilled(19, 157, 19+progressBarLength, 157+5, RGB15(0, 0, 31 - (6 * ms().blfLevel)));
-				}
+		}
+		if (showProgressIcon && ms().theme != 4) {
+			glSprite(224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
+		}
+		if (showProgressBar) {
+			int barXpos = 19;
+			int barYpos = 157;
+			if (ms().theme == 4) {
+				barXpos += 12;
+				barYpos += 12;
+			}
+			glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, RGB15(23, 23, 23));
+			if (progressBarLength > 0) {
+				glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, RGB15(0, 0, 31 - (6 * ms().blfLevel)));
 			}
 		}
 
