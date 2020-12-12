@@ -383,6 +383,20 @@ void gptc_patchRom()
 		if (*(u16*)(0x08000000 + 0xBB9F8) == 0x8008)
 			*(u16*)(0x08000000 + 0xBB9F8) = 0x46C0;
 	}
+	else if(gameCode == 0x45415741 || gameCode == 0x4A415741)
+	{
+		//Wario Land 4/Advance (USA/Europe/Japan)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x726) == 0x8008)
+			*(u16*)(0x08000000 + 0x726) = 0x46C0;
+	}
+	else if(gameCode == 0x43415741)
+	{
+		//Wario Land Advance (iQue)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0xE92) == 0x8008)
+			*(u16*)(0x08000000 + 0xE92) = 0x46C0;
+	}
 }
 
 
