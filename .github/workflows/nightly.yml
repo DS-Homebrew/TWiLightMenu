@@ -36,6 +36,7 @@ jobs:
           cd manual/nitrofiles
           curl -LO https://github.com/DS-Homebrew/twilight-manual/releases/download/pages/pages.7z
           7z x pages.7z
+          rm pages.7z
       - name: Build TWiLightMenu++
         run: make package
       - name: Make booter and TWiLightMenu CIAs
