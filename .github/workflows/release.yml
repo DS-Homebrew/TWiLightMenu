@@ -23,11 +23,14 @@ jobs:
           submodules: recursive
       - name: Install tools
         run: |
-          echo deb http://deb.debian.org/debian stable main contrib non-free >> /etc/apt/sources.list
           sudo apt-get update
-          sudo apt-get install chromium ffmpeg fonts-noto-cjk gifsicle jq libxml2-utils p7zip-full python -y
-      - name: Build manual pages
-        run: make -C manual pages
+          sudo apt-get install jq p7zip-full python -y
+      - name: Get manual pages
+        run: |
+          cd manual/nitrofiles
+          curl -LO https://github.com/DS-Homebrew/twilight-manual/releases/download/pages/pages.7z
+          7z x pages.7z
+          rm pages.7z
       - name: Build TWiLightMenu++
         run: make package
       - name: Make booter and TWiLightMenu CIAs
