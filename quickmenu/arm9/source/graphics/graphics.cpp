@@ -74,6 +74,9 @@ int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
 bool renderFrame = true;
 
+bool showProgressBar = false;
+int progressBarLength = 0;
+
 extern int spawnedtitleboxes;
 
 extern bool showCursor;
@@ -468,6 +471,14 @@ void vBlankHandler()
 		}
 		if (whiteScreen) {
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+			if (showProgressBar) {
+				int barXpos = 31;
+				int barYpos = 169;
+				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, RGB15(23, 23, 23));
+				if (progressBarLength > 0) {
+					glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, RGB15(0, 0, 31));
+				}
+			}
 		}
 		updateText(false);
 	  }

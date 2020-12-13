@@ -67,6 +67,9 @@ int fps = 60;
 int colorMode = 0;
 int blfLevel = 0;
 
+extern bool showProgressBar;
+extern int progressBarLength;
+
 bool cardEjected = false;
 static bool cardRefreshed = false;
 
@@ -1981,10 +1984,10 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (consoleModel >= 2) {
-						printSmallCentered(false, 20, "If this takes a while, press HOME,");
+						printSmallCentered(false, 20, "If the bar stopped, press HOME,");
 						printSmallCentered(false, 34, "then press B.");
 					} else {
-						printSmallCentered(false, 20, "If this takes a while, close and open");
+						printSmallCentered(false, 20, "If the bar stopped, close and open");
 						printSmallCentered(false, 34, "the console's lid.");
 					}
 					printSmall(false, 2, 80, "Creating public save file...");
@@ -2018,10 +2021,10 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (consoleModel >= 2) {
-						printSmallCentered(false, 20, "If this takes a while, press HOME,");
+						printSmallCentered(false, 20, "If the bar stopped, press HOME,");
 						printSmallCentered(false, 34, "then press B.");
 					} else {
-						printSmallCentered(false, 20, "If this takes a while, close and open");
+						printSmallCentered(false, 20, "If the bar stopped, close and open");
 						printSmallCentered(false, 34, "the console's lid.");
 					}
 					printSmall(false, 2, 80, "Creating private save file...");
@@ -2113,7 +2116,7 @@ int main(int argc, char **argv) {
 
 				if (secondaryDevice) {
 					clearText();
-					printSmallCentered(false, 20, "If this takes a while, close and open");
+					printSmallCentered(false, 20, "If the bar stopped, close and open");
 					printSmallCentered(false, 34, "the console's lid.");
 					printSmallCentered(false, 86, "Now copying data...");
 					printSmallCentered(false, 100, "Do not turn off the power.");
@@ -2500,9 +2503,12 @@ int main(int argc, char **argv) {
 					if (showGba == 1) {
 						clearText();
 						ClearBrightness();
-						printSmallCentered(false, 20, "If this takes a while, close and open");
+						printSmallCentered(false, 20, "If the bar stopped, close and open");
 						printSmallCentered(false, 34, "the console's lid.");
 						printSmallCentered(false, 88, "Now Loading...");
+
+						showProgressBar = true;
+						progressBarLength = 0;
 
 						u32 ptr = 0x08000000;
 						extern char copyBuf[0x8000];
@@ -2535,6 +2541,7 @@ int main(int argc, char **argv) {
 								}
 								s2RamAccess(false);
 								ptr += 0x8000;
+								progressBarLength = ((ptr-0x08000000)+0x8000)/(romSize/192);
 							} else {
 								break;
 							}

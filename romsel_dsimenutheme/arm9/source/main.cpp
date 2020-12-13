@@ -1122,7 +1122,7 @@ int main(int argc, char **argv) {
 
 				if (ms().secondaryDevice) {
 					clearText();
-					printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
+					printSmall(false, 0, 20, STR_BARSTOPPED_CLOSELID, Alignment::center);
 					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
 					printSmall(false, 0, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER, Alignment::center);
 					updateText(false);

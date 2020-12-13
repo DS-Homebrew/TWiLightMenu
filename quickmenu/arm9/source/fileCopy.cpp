@@ -3,6 +3,9 @@
 
 #include "common/tonccpy.h"
 
+extern bool showProgressBar;
+extern int progressBarLength;
+
 off_t getFileSize(const char *fileName)
 {
     FILE* fp = fopen(fileName, "rb");
@@ -39,6 +42,8 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 		return 1;
 	}
 
+	showProgressBar = true;
+	progressBarLength = 0;
 	off_t offset = 0;
 	int numr;
 	while (1)
@@ -60,11 +65,13 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 		if (offset > fsize) {
 			fclose(sourceFile);
 			fclose(destinationFile);
+			showProgressBar = false;
 			return 0;
-			break;
 		}
+		progressBarLength = (offset+0x8000)/(fsize/192);
 	}
 
+	showProgressBar = false;
 	return 1;
 }
 
@@ -88,6 +95,8 @@ int fsizeincrease(const char *sourcePath, const char *tempPath, size_t newsize)
 		return 1;
 	}
 
+	showProgressBar = true;
+	progressBarLength = 0;
 	off_t offset = 0;
 	int numr;
 	while (1)
@@ -107,10 +116,12 @@ int fsizeincrease(const char *sourcePath, const char *tempPath, size_t newsize)
 			fclose(destinationFile);
 			remove(sourcePath);
 			rename(tempPath, sourcePath);
+			showProgressBar = false;
 			return 0;
-			break;
 		}
+		progressBarLength = (offset+0x8000)/(fsize/192);
 	}
 
+	showProgressBar = false;
 	return 1;
 }
