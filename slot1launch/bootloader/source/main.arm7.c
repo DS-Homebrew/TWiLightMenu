@@ -822,7 +822,7 @@ void arm7_main (void) {
 		}
 	}
 
-	if (isDSBrowser) {
+	if (my_isDSiMode() && isDSBrowser) {
 		fixDSBrowser();
 	}
 

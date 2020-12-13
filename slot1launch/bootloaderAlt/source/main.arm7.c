@@ -613,7 +613,7 @@ void arm7_main (void) {
 		}
 	//}
 
-	if (*(u32*)(NDS_HEAD+0xC) == 0x50524255) {
+	if (my_isDSiMode() && *(u32*)(NDS_HEAD+0xC) == 0x50524255) {
 		fixDSBrowser();
 	}
 

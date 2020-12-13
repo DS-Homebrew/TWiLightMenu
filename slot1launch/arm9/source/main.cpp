@@ -138,7 +138,7 @@ int main() {
 	} else {
 		sysSetCardOwner (BUS_OWNER_ARM9);
 
-		if (*(u32*)((u8*)io_dldi_data+0x64) & FEATURE_SLOT_NDS) {
+		if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 			consoleDemoInit();
 			consoleInited = true;
 			printf ("Please remove your flashcard.\n");
@@ -176,15 +176,17 @@ int main() {
 	while(1) {
 		if(REG_SCFG_MC == 0x11) {
 		break; } else {
-			cheatData[3] = 0xCF;
-			off_t wideCheatSize = getFileSize("sd:/_nds/nds-bootstrap/wideCheatData.bin");
-			if (wideCheatSize > 0) {
-				FILE* wideCheatFile = fopen("sd:/_nds/nds-bootstrap/wideCheatData.bin", "rb");
-				fread(cheatData, 1, wideCheatSize, wideCheatFile);
-				fclose(wideCheatFile);
-				cheatData[wideCheatSize+3] = 0xCF;
+			if (runCardEngine) {
+				cheatData[3] = 0xCF;
+				off_t wideCheatSize = getFileSize("sd:/_nds/nds-bootstrap/wideCheatData.bin");
+				if (wideCheatSize > 0) {
+					FILE* wideCheatFile = fopen("sd:/_nds/nds-bootstrap/wideCheatData.bin", "rb");
+					fread(cheatData, 1, wideCheatSize, wideCheatFile);
+					fclose(wideCheatFile);
+					cheatData[wideCheatSize+3] = 0xCF;
+				}
+				memcpy((void*)0x023F0000, cheatData, 0x8000);
 			}
-			memcpy((void*)0x023F0000, cheatData, 0x8000);
 			runLaunchEngine ((memcmp(ndsHeader.gameCode, "UBRP", 4) == 0 || (memcmp(ndsHeader.gameCode, "ALXX", 4) == 0)), (memcmp(ndsHeader.gameCode, "UBRP", 4) == 0), EnableSD, language, scfgUnlock, TWLMODE, TWLCLK, TWLVRAM, soundFreq, runCardEngine);
 		}
 	}
