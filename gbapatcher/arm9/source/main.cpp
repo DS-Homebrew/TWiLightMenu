@@ -1,4 +1,5 @@
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <stdio.h>
 #include <fat.h>
 #include <sys/stat.h>
@@ -9,9 +10,12 @@
 #include <unistd.h>
 
 #include "io_m3_common.h"
+#include "io_g6_common.h"
 #include "io_sc_common.h"
 #include "exptools.h"
 
+#include "nitrofs.h"
+#include "inifile.h"
 #include "tonccpy.h"
 #include "fileCopy.h"
 #include "tool/stringtool.h"
@@ -19,6 +23,8 @@
 #include "gbaswitch.h"
 
 static u8 blankBuf[0x10000] = {0};
+u8 borderData[0x30000] = {0};
+std::string gbaBorder = "default.png";
 
 u32 romSize = 0;
 
@@ -408,6 +414,48 @@ void stop (void) {
 	}
 }
 
+void s2RamAccess(bool open) {
+	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) return;
+
+	if (open) {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_RAM);
+		}
+	} else {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_MEDIA);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_MEDIA);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_MEDIA);
+		}
+	}
+}
+
+void gbaSramAccess(bool open) {
+	if (open) {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_ROM);
+		//} else if (*(u16*)(0x020000C0) == 0x3647) {
+		//	_G6_SelectOperation(G6_MODE_ROM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_RAM_RO);
+		}
+	} else {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? M3_MODE_MEDIA : M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? G6_MODE_MEDIA : G6_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? SC_MODE_MEDIA : SC_MODE_RAM);
+		}
+	}
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -428,15 +476,44 @@ int main(int argc, char **argv) {
 	extern char *fake_heap_end;
 	*fake_heap_end = 0;
 
+	//consoleDemoInit();
+
+	FILE* file = fopen("/_nds/TWiLightMenu/gbaswitch.srldr", "rb");
+	if (file) {
+		fread((void*)0x02001000, 1, 0x1000, file);
+		fclose(file);
+	}
+	//iprintf("Loaded GBA switcher\n");
+
 	romSize = getFileSize(argv[1]);
+
+	nitroFSInit("/_nds/TWiLightMenu/gbapatcher.srldr");
+
+	CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
+    gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
+
+	char borderPath[256];
+	sprintf(borderPath, "/_nds/TWiLightMenu/gbaborders/%s", gbaBorder.c_str());
+
+	file = fopen((access(borderPath, F_OK)==0) ? borderPath : "nitro:/graphics/gbaborder.png", "rb");
+	if (file) {
+		fread(borderData, 1, sizeof(borderData), file);
+		fclose(file);
+	}
+	//iprintf("Loaded GBA border\n");
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
+	s2RamAccess(true);
+	//iprintf("s2RamAccess(true)\n");
+
 	if (*(u16*)(0x020000C0) != 0x5A45) {
 		gptc_patchRom();
+		//iprintf("ROM patched\n");
 	}
 
 	const save_type_t* saveType = save_findTag();
+	//iprintf("Save tag found\n");
 	if (saveType != NULL && saveType->patchFunc != NULL)
 	{
 		if (saveType->patchFunc(saveType) && *(u16*)(0x020000C0) == 0x5A45) {
@@ -459,14 +536,8 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	// Lock write access to ROM region
-	if (*(u16*)(0x020000C0) == 0x334D) {
-		_M3_changeMode(M3_MODE_ROM);
-	} else 	if (*(u16*)(0x020000C0) == 0x4353) {
-		_SC_changeMode(SC_MODE_RAM_RO);
-	} else 	if (*(u16*)(0x020000C0) == 0x5A45) {
-		cExpansion::CloseNorWrite();
-	}
+	s2RamAccess(false);
+	//iprintf("s2RamAccess(false)\n");
 
 	if (saveType != NULL) {
 		std::string savepath = replaceAll(argv[1], ".gba", ".sav");
@@ -475,7 +546,10 @@ int main(int argc, char **argv) {
 			for (u32 i = 0; i < size; i++) {
 				blankBuf[i] = 0xFF;
 			}
+			//iprintf("Creating save file\n");
+			gbaSramAccess(true);	// Switch to GBA SRAM
 			cExpansion::WriteSram(0x0A000000, (u8*)blankBuf, size);
+			gbaSramAccess(false);	// Switch out of GBA SRAM
 			FILE *pFile = fopen(savepath.c_str(), "wb");
 			if (pFile) {
 				fseek(pFile, saveType->size - 1, SEEK_SET);
@@ -485,6 +559,16 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	// Lock write access to ROM region (and switch to GBA SRAM)
+	if (*(u16*)(0x020000C0) == 0x334D) {
+		_M3_changeMode(M3_MODE_ROM);
+	} else 	if (*(u16*)(0x020000C0) == 0x4353) {
+		_SC_changeMode(SC_MODE_RAM_RO);
+	} else 	if (*(u16*)(0x020000C0) == 0x5A45) {
+		cExpansion::CloseNorWrite();
+	}
+
+	//iprintf("Switching to GBA mode\n");
 	gbaSwitch();
 
 	return 0;

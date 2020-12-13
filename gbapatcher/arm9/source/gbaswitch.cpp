@@ -1,8 +1,6 @@
-#include "common/inifile.h"
-#include "common/tonccpy.h"
 #include "graphics/lodepng.h"
+#include "tonccpy.h"
 #include "gbaswitch.h"
-#include "nitrofs.h"
 #include "nds_loader_arm9.h"
 
 static void SetBrightness(u8 screen, s8 bright) {
@@ -18,14 +16,13 @@ static void SetBrightness(u8 screen, s8 bright) {
 	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
+extern u8 borderData[0x30000];
 static u16 bmpImageBuffer[256*192] = {0};
 
-std::string gbaBorder = "default.png";
-
-void loadGbaBorder(const char* filename) {
+void loadGbaBorder(void) {
 	uint imageWidth, imageHeight;
 	std::vector<unsigned char> image;
-	lodepng::decode(image, imageWidth, imageHeight, filename);
+	lodepng::decode(image, imageWidth, imageHeight, borderData, sizeof(borderData));
 	bool alternatePixel = false;
 
 	for(uint i = 0; i < image.size()/4; i++) {
@@ -110,15 +107,8 @@ void gbaSwitch(void) {
 	toncset((void*)BG_BMP_RAM(0),0,0x18000);
 	toncset((void*)BG_BMP_RAM(8),0,0x18000);
 
-	nitroFSInit("/_nds/TWiLightMenu/gbapatcher.srldr");
-
-	CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
-    gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
-
-	char borderPath[256];
-	sprintf(borderPath, "/_nds/TWiLightMenu/gbaborders/%s", gbaBorder.c_str());
-	loadGbaBorder((access(borderPath, F_OK)==0) ? borderPath : "nitro:/graphics/gbaborder.png");
+	loadGbaBorder();
 
 	// Switch to GBA mode
-	runNdsFile ("/_nds/TWiLightMenu/gbaswitch.srldr", 0, NULL, true, false, true, false, false);	
+	runNdsFile ();	
 }
