@@ -234,18 +234,44 @@ void dsCardLaunch() {
 	stop();
 }
 
+void s2RamAccess(bool open) {
+	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) return;
+
+	if (open) {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_RAM);
+		}
+	} else {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_MEDIA);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_MEDIA);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_MEDIA);
+		}
+	}
+}
+
 void gbaSramAccess(bool open) {
 	if (open) {
 		if (*(u16*)(0x020000C0) == 0x334D) {
 			_M3_changeMode(M3_MODE_ROM);
+		//} else if (*(u16*)(0x020000C0) == 0x3647) {
+		//	_G6_SelectOperation(G6_MODE_ROM);
 		} else if (*(u16*)(0x020000C0) == 0x4353) {
 			_SC_changeMode(SC_MODE_RAM_RO);
 		}
 	} else {
 		if (*(u16*)(0x020000C0) == 0x334D) {
-			_M3_changeMode(M3_MODE_RAM);
+			_M3_changeMode((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? M3_MODE_MEDIA : M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? G6_MODE_MEDIA : G6_MODE_RAM);
 		} else if (*(u16*)(0x020000C0) == 0x4353) {
-			_SC_changeMode(SC_MODE_RAM);
+			_SC_changeMode((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? SC_MODE_MEDIA : SC_MODE_RAM);
 		}
 	}
 }
@@ -661,19 +687,9 @@ void lastRunROM()
 	}
 	else if (ms().launchType[ms().secondaryDevice] == Launch::EGBANativeLaunch)
 	{
-		if (!sys().isRegularDS() || (ms().showGba != 1) || access(ms().romPath[true].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (!sys().isRegularDS() || *(u16*)(0x020000C0) == 0 || (ms().showGba != 1) || access(ms().romPath[true].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-	  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
-
-		*(vu16*)(0x08000000) = 0x4D54;	// Write test
-		if (*(vu16*)(0x08000000) != 0x4D54) {
-			*(u16*)(0x020000C0) = 0;
-			return;	// If write failed, skip to running TWiLight Menu++
-		}
-	  } else {
-		  return;
-	  }
 
 		std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
 		u32 romSize = getFileSize(ms().romPath[true].c_str());
@@ -706,7 +722,9 @@ void lastRunROM()
 			FILE* gbaFile = fopen(ms().romPath[true].c_str(), "rb");
 			for (u32 len = romSize; len > 0; len -= 0x8000) {
 				if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
+					s2RamAccess(true);
 					tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+					s2RamAccess(false);
 					ptr += 0x8000;
 				} else {
 					break;
@@ -718,18 +736,18 @@ void lastRunROM()
 		ptr = 0x0A000000;
 
 		if (savesize > 0) {
-			gbaSramAccess(true);	// Switch to GBA SRAM
 			FILE* savFile = fopen(savepath.c_str(), "rb");
 			for (u32 len = (savesize > 0x10000 ? 0x10000 : savesize); len > 0; len -= 0x8000) {
 				if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile) > 0) {
+					gbaSramAccess(true);	// Switch to GBA SRAM
 					cExpansion::WriteSram(ptr,(u8*)copyBuf,0x8000);
+					gbaSramAccess(false);	// Switch out of GBA SRAM
 					ptr += 0x8000;
 				} else {
 					break;
 				}
 			}
 			fclose(savFile);
-			gbaSramAccess(false);	// Switch out of GBA SRAM
 		}
 
 		fadeType = false;
@@ -804,7 +822,8 @@ int main(int argc, char **argv)
 			*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
 		}
 
-		if ((*(u16*)(0x020000C0) == 0) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
+		if (*(u16*)(0x020000C0) == 0) {
+		  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
 			*(vu16*)(0x08000000) = 0x4D54;	// Write test
@@ -833,6 +852,15 @@ int main(int argc, char **argv)
 			if (*(vu16*)(0x08000000) != 0x4D54) {
 				*(u16*)(0x020000C0) = 0;
 			}
+		  } else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+			if (memcmp(io_dldi_data->friendlyName, "M3 Adapter", 10) == 0) {
+				*(u16*)(0x020000C0) = 0x334D;
+			} else if (memcmp(io_dldi_data->friendlyName, "G6", 2) == 0) {
+				*(u16*)(0x020000C0) = 0x3647;
+			} else if (memcmp(io_dldi_data->friendlyName, "SuperCard", 9) == 0) {
+				*(u16*)(0x020000C0) = 0x4353;
+			}
+		  }
 		}
 	}
 
@@ -921,12 +949,12 @@ int main(int argc, char **argv)
 			u32 savesize = getFileSize(savepath.c_str());
 			if (savesize > 0x20000) savesize = 0x20000;
 			if (savesize > 0) {
-				gbaSramAccess(true);	// Switch to GBA SRAM
 				// Try to restore save from SRAM
 				bool restoreSave = false;
 				extern char copyBuf[0x8000];
 				u32 ptr = 0x0A000000;
 				u32 len = savesize;
+				gbaSramAccess(true);	// Switch to GBA SRAM
 				for (u32 i = 0; i < savesize; i += 0x8000) {
 					if (ptr >= 0x0A010000 || len <= 0) {
 						break;
@@ -942,6 +970,7 @@ int main(int argc, char **argv)
 					len -= 0x8000;
 					if (restoreSave) break;
 				}
+				gbaSramAccess(false);	// Switch out of GBA SRAM
 				if (restoreSave) {
 					ptr = 0x0A000000;
 					len = savesize;
@@ -952,7 +981,9 @@ int main(int argc, char **argv)
 						} else if (ptr >= 0x0A010000) {
 							toncset(&copyBuf, 0, 0x8000);
 						} else {
+							gbaSramAccess(true);	// Switch to GBA SRAM
 							cExpansion::ReadSram(ptr,(u8*)copyBuf,0x8000);
+							gbaSramAccess(false);	// Switch out of GBA SRAM
 						}
 						fwrite(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile);
 						ptr += 0x8000;
@@ -960,12 +991,13 @@ int main(int argc, char **argv)
 					}
 					fclose(savFile);
 
+					gbaSramAccess(true);	// Switch to GBA SRAM
 					// Wipe out SRAM after restoring save
 					toncset(&copyBuf, 0, 0x8000);
 					cExpansion::WriteSram(0x0A000000, (u8*)copyBuf, 0x8000);
 					cExpansion::WriteSram(0x0A008000, (u8*)copyBuf, 0x8000);
+					gbaSramAccess(false);	// Switch out of GBA SRAM
 				}
-				gbaSramAccess(false);	// Switch out of GBA SRAM
 			}
 		  }
 	  }

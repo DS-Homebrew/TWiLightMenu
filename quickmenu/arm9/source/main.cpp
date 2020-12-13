@@ -824,18 +824,44 @@ void dsCardLaunch() {
 	stop();
 }
 
+void s2RamAccess(bool open) {
+	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) return;
+
+	if (open) {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_RAM);
+		}
+	} else {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_MEDIA);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_MEDIA);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_MEDIA);
+		}
+	}
+}
+
 void gbaSramAccess(bool open) {
 	if (open) {
 		if (*(u16*)(0x020000C0) == 0x334D) {
 			_M3_changeMode(M3_MODE_ROM);
+		//} else if (*(u16*)(0x020000C0) == 0x3647) {
+		//	_G6_SelectOperation(G6_MODE_ROM);
 		} else if (*(u16*)(0x020000C0) == 0x4353) {
 			_SC_changeMode(SC_MODE_RAM_RO);
 		}
 	} else {
 		if (*(u16*)(0x020000C0) == 0x334D) {
-			_M3_changeMode(M3_MODE_RAM);
+			_M3_changeMode((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? M3_MODE_MEDIA : M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? G6_MODE_MEDIA : G6_MODE_RAM);
 		} else if (*(u16*)(0x020000C0) == 0x4353) {
-			_SC_changeMode(SC_MODE_RAM);
+			_SC_changeMode((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? SC_MODE_MEDIA : SC_MODE_RAM);
 		}
 	}
 }
@@ -1134,16 +1160,10 @@ int main(int argc, char **argv) {
 	bool menuButtonPressed = false;
 	
 	if (showGba == 1) {
-	  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+	  if (*(u16*)(0x020000C0) != 0) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
-
-		*(vu16*)(0x08000000) = 0x4D54;	// Write test
-		if (*(vu16*)(0x08000000) != 0x4D54) {
-			*(u16*)(0x020000C0) = 0;
-			showGba = 0;	// If write failed, hide GBA ROMs
-		}
 	  } else {
-		  showGba = 0;	// If reading SD from Slot-2, hide GBA ROMs
+		showGba = 0;	// Hide GBA ROMs
 	  }
 	}
 
@@ -2507,11 +2527,13 @@ int main(int argc, char **argv) {
 						FILE* gbaFile = fopen(filename[secondaryDevice].c_str(), "rb");
 						for (u32 len = romSize; len > 0; len -= 0x8000) {
 							if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
+								s2RamAccess(true);
 								if (nor) {
 									expansion().WriteNorFlash(ptr-0x08000000, (u8*)copyBuf, (len>0x8000 ? 0x8000 : len));
 								} else {
 									tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
 								}
+								s2RamAccess(false);
 								ptr += 0x8000;
 							} else {
 								break;
@@ -2526,18 +2548,18 @@ int main(int argc, char **argv) {
 						if (savesize > 0x10000) savesize = 0x10000;
 
 						if (savesize > 0) {
-							gbaSramAccess(true);	// Switch to GBA SRAM
 							FILE* savFile = fopen(savename.c_str(), "rb");
 							for (u32 len = savesize; len > 0; len -= 0x8000) {
 								if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), savFile) > 0) {
+									gbaSramAccess(true);	// Switch to GBA SRAM
 									cExpansion::WriteSram(ptr,(u8*)copyBuf,0x8000);
+									gbaSramAccess(false);	// Switch out of GBA SRAM
 									ptr += 0x8000;
 								} else {
 									break;
 								}
 							}
 							fclose(savFile);
-							gbaSramAccess(false);	// Switch out of GBA SRAM
 						}
 
 						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
