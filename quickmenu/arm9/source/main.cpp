@@ -1228,7 +1228,13 @@ int main(int argc, char **argv) {
 			iconUpdate (0, false, filename[0].c_str());
 			bnrRomType[0] = 0;
 			boxArtType[0] = 0;
-		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4") || extention(filename[0], ".a26") || extention(filename[0], ".pce")) {
+		} else if (extention(filename[0], ".pce")) {
+			bnrRomType[0] = 11;
+			boxArtType[0] = 0;
+		} else if (extention(filename[0], ".a26") || extention(filename[0], ".a78")) {
+			bnrRomType[0] = 10;
+			boxArtType[0] = 0;
+		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4")) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = 0;
 		} else if (extention(filename[0], ".gba")) {
@@ -1286,7 +1292,13 @@ int main(int argc, char **argv) {
 			iconUpdate (1, false, filename[1].c_str());
 			bnrRomType[1] = 0;
 			boxArtType[1] = 0;
-		} else if (extention(filename[1], ".plg") || extention(filename[1], ".rvid") || extention(filename[1], ".mp4") || extention(filename[1], ".a26") || extention(filename[1], ".a78")) {
+		} else if (extention(filename[1], ".pce")) {
+			bnrRomType[1] = 11;
+			boxArtType[1] = 0;
+		} else if (extention(filename[1], ".a26") || extention(filename[1], ".a78")) {
+			bnrRomType[1] = 10;
+			boxArtType[1] = 0;
+		} else if (extention(filename[1], ".plg") || extention(filename[1], ".rvid") || extention(filename[1], ".mp4")) {
 			bnrRomType[1] = 9;
 			boxArtType[1] = 0;
 		} else if (extention(filename[1], ".gba")) {

@@ -310,6 +310,8 @@ void vBlankHandler()
 			glBoxFilled(77, 24, 216, 63, RGB15(31, 31, 31));
 			glSprite(36, 24, GL_FLIP_NONE, iconboxImage);
 			if (isDirectory) drawIconFolder(40, 28);
+			else if (bnrRomType == 11) drawIconPCE(40, 28);
+			else if (bnrRomType == 10) drawIconA26(40, 28);
 			else if (bnrRomType == 9) drawIconPlg(40, 28);
 			else if (bnrRomType == 8) drawIconSNES(40, 28);
 			else if (bnrRomType == 7) drawIconMD(40, 28);

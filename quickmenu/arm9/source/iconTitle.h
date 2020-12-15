@@ -13,6 +13,8 @@ void getGameInfo(int num, bool isDir, const char* name);
 void iconUpdate(int num, bool isDir, const char* name);
 void titleUpdate(int num, bool isDir, const char* name);
 void drawIcon(int num, int Xpos, int Ypos);
+void drawIconPCE(int Xpos, int Ypos);
+void drawIconA26(int Xpos, int Ypos);
 void drawIconPlg(int Xpos, int Ypos);
 void drawIconGBA(int Xpos, int Ypos);
 void drawIconGB(int Xpos, int Ypos);

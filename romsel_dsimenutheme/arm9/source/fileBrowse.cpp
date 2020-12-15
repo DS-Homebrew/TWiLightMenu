@@ -1477,7 +1477,13 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 							i);
 					bnrRomType[i] = 0;
 					boxArtType[i] = 0;
-				} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid") || extention(std_romsel_filename, ".mp4") || extention(std_romsel_filename, ".a26") || extention(std_romsel_filename, ".a78") || extention(std_romsel_filename, ".pce")) {
+				} else if (extention(std_romsel_filename, ".pce")) {
+					bnrRomType[i] = 11;
+					boxArtType[i] = 0;
+				} else if (extention(std_romsel_filename, ".a26") || extention(std_romsel_filename, ".a78")) {
+					bnrRomType[i] = 10;
+					boxArtType[i] = 0;
+				} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid") || extention(std_romsel_filename, ".mp4")) {
 					bnrRomType[i] = 9;
 					boxArtType[i] = 0;
 				} else if (extention(std_romsel_filename, ".gba")) {

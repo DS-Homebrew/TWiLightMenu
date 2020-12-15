@@ -23,6 +23,8 @@ int _snesTexID;
 //int _msxTexID;
 //int _colTexID;
 int _plgTexID;
+int _a26TexID;
+int _pceTexID;
 
 glImage _ndsIcon[NDS_ICON_BANK_COUNT][TWL_ICON_FRAMES];
 glImage _gbaIcon[(32 / 32) * (64 / 32)];
@@ -35,6 +37,8 @@ glImage _snesIcon[1];
 // glImage _msxIcon[1];
 // glImage _colIcon[1];
 glImage _plgIcon[1];
+glImage _a26Icon[1];
+glImage _pceIcon[1];
 
 static u8 clearTiles[(32 * 256) / 2] = {0};
 static u16 blackPalette[16 * 8] = {0};
@@ -65,6 +69,10 @@ const glImage *getIcon(int num) {
 	    return _colIcon;*/
 	if (num == PLG_ICON)
 		return _plgIcon;
+	if (num == A26_ICON)
+		return _a26Icon;
+	if (num == PCE_ICON)
+		return _pceIcon;
 	if (BAD_ICON_IDX(num) || !initialized)
 		return NULL;
 	return _ndsIcon[num];
@@ -117,6 +125,14 @@ void glLoadTileSetIntoSlot(int num, int tile_wid, int tile_hei, int bmp_wid, int
 	case PLG_ICON:
 		textureID = _plgTexID;
 		sprite = _plgIcon;
+		break;
+	case A26_ICON:
+		textureID = _a26TexID;
+		sprite = _a26Icon;
+		break;
+	case PCE_ICON:
+		textureID = _pceTexID;
+		sprite = _pceIcon;
 		break;
 	default:
 		if (BAD_ICON_IDX(num))
@@ -250,6 +266,14 @@ void glReloadIconPalette(int num) {
 		textureID = _plgTexID;
 		cachedPalette = tex().iconPLGTexture()->palette();
 		break;
+	case A26_ICON:
+		textureID = _a26TexID;
+		cachedPalette = tex().iconA26Texture()->palette();
+		break;
+	case PCE_ICON:
+		textureID = _pceTexID;
+		cachedPalette = tex().iconPCETexture()->palette();
+		break;
 	default:
 		if (BAD_ICON_IDX(num))
 			return;
@@ -275,6 +299,8 @@ void reloadIconPalettes() {
 	glReloadIconPalette(MD_ICON);
 	glReloadIconPalette(SNES_ICON);
 	glReloadIconPalette(PLG_ICON);
+	glReloadIconPalette(A26_ICON);
+	glReloadIconPalette(PCE_ICON);
 
 	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
 		glReloadIconPalette(i);
@@ -320,6 +346,8 @@ void iconManagerInit() {
 	glGenTextures(1, &_mdTexID);
 	glGenTextures(1, &_snesTexID);
 	glGenTextures(1, &_plgTexID);
+	glGenTextures(1, &_a26TexID);
+	glGenTextures(1, &_pceTexID);
 
 	// Initialize empty data for the 6 textures.
 	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
@@ -328,7 +356,6 @@ void iconManagerInit() {
 			   TWL_TEX_HEIGHT, true);
 	}
 
-	// Load GB Icon
 	glLoadIcon(GBC_ICON, tex().iconGBTexture()->palette(), tex().iconGBTexture()->bytes(), 64, true);
 
 	glLoadIcon(NES_ICON, tex().iconNESTexture()->palette(), tex().iconNESTexture()->bytes(), 32, true);
@@ -344,6 +371,10 @@ void iconManagerInit() {
 	glLoadIcon(PLG_ICON, tex().iconPLGTexture()->palette(), tex().iconPLGTexture()->bytes(), 32, true);
 
 	glLoadIcon(GBA_ICON, tex().iconGBATexture()->palette(), tex().iconGBATexture()->bytes(), 64, true);
+
+	glLoadIcon(A26_ICON, tex().iconA26Texture()->palette(), tex().iconA26Texture()->bytes(), 32, true);
+
+	glLoadIcon(PCE_ICON, tex().iconPCETexture()->palette(), tex().iconPCETexture()->bytes(), 32, true);
 
 	// set initialized.
 	initialized = true;

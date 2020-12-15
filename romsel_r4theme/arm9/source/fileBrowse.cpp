@@ -511,7 +511,11 @@ string browseForFile(const vector<string> extensionList) {
 			{
 				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
-			} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid") || extention(std_romsel_filename, ".mp4") || extention(std_romsel_filename, ".a26") || extention(std_romsel_filename, ".a78") || extention(std_romsel_filename, ".pce")) {
+			} else if (extention(std_romsel_filename, ".pce")) {
+				bnrRomType = 11;
+			} else if (extention(std_romsel_filename, ".a26") || extention(std_romsel_filename, ".a78")) {
+				bnrRomType = 10;
+			} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid") || extention(std_romsel_filename, ".mp4")) {
 				bnrRomType = 9;
 			} else if (extention(std_romsel_filename, ".gba")) {
 				bnrRomType = 1;

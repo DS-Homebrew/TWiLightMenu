@@ -40,6 +40,8 @@
 
 // Graphic files
 #include "icon_unk.h"
+#include "icon_pce.h"
+#include "icon_a26.h"
 #include "icon_plg.h"
 #include "icon_gbamode.h"
 #include "icon_gba.h"
@@ -71,6 +73,8 @@ static int smsTexID;
 static int ggTexID;
 static int mdTexID;
 static int snesTexID;
+static int a26TexID;
+static int pceTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
@@ -93,6 +97,8 @@ static glImage smsIcon[1];
 static glImage ggIcon[1];
 static glImage mdIcon[1];
 static glImage snesIcon[1];
+static glImage a26Icon[1];
+static glImage pceIcon[1];
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -398,6 +404,54 @@ void loadConsoleIcons()
 				(u16*) newPalette, // Image palette
 				(u8*) icon_snesBitmap // Raw image data
 				);
+
+	// A26
+	glDeleteTextures(1, &a26TexID);
+	
+	newPalette = (u16*)icon_a26Pal;
+	if (colorMode == 1) {
+		for (int i2 = 0; i2 < 16; i2++) {
+			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		}
+	}
+	a26TexID =
+	glLoadTileSet(a26Icon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) newPalette, // Image palette
+				(u8*) icon_a26Bitmap // Raw image data
+				);
+
+	// PCE
+	glDeleteTextures(1, &pceTexID);
+	
+	newPalette = (u16*)icon_pcePal;
+	if (colorMode == 1) {
+		for (int i2 = 0; i2 < 16; i2++) {
+			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		}
+	}
+	pceTexID =
+	glLoadTileSet(pceIcon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) newPalette, // Image palette
+				(u8*) icon_pceBitmap // Raw image data
+				);
 }
 
 static void clearIcon(int num)
@@ -405,47 +459,20 @@ static void clearIcon(int num)
 	loadIcon(num, clearTiles, blackPalette, true);
 }
 
-void drawIcon(int num, int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
+void drawIcon(int num, int Xpos, int Ypos) { glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
 }
 
-void drawIconPlg(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, plgIcon);
-}
-void drawIconGBA(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, gbaModeIcon);
-}
-void drawIconGB(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[0 & 31]);
-}
-void drawIconGBC(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[1 & 31]);
-}
-void drawIconNES(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, nesIcon);
-}
-void drawIconSMS(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, smsIcon);
-}
-void drawIconGG(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, ggIcon);
-}
-void drawIconMD(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, mdIcon);
-}
-void drawIconSNES(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, snesIcon);
-}
+void drawIconPlg(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, plgIcon); }
+void drawIconGBA(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, gbaModeIcon); }
+void drawIconGB(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[0 & 31]); }
+void drawIconGBC(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[1 & 31]); }
+void drawIconNES(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, nesIcon); }
+void drawIconSMS(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, smsIcon); }
+void drawIconGG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, ggIcon); }
+void drawIconMD(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, mdIcon); }
+void drawIconSNES(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, snesIcon); }
+void drawIconA26(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, a26Icon); }
+void drawIconPCE(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, pceIcon); }
 
 void loadFixedBanner(bool isSlot1) {
 	/* Banner fixes start here */
