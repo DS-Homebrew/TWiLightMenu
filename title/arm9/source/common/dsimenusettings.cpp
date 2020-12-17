@@ -70,6 +70,7 @@ TWLSettings::TWLSettings()
     unlaunchBg = "default.gif";
 
 	dsiSplash = isDSiMode();
+	nintendoLogoColor = 1;
     showlogo = true;
     autorun = false;
 	autostartSlot1 = false;
@@ -107,6 +108,7 @@ void TWLSettings::loadSettings()
     }
 
     dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
+    nintendoLogoColor = settingsini.GetInt("SRLOADER", "NINTENDO_LOGO_COLOR", nintendoLogoColor);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 
 	secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);

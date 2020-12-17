@@ -181,6 +181,7 @@ class TWLSettings
     bool homebrewHasWide;
     bool soundfreq;
     int dsiSplash;
+	int nintendoLogoColor;
     bool showlogo;
     std::string r4_theme;// unused...
     std::string unlaunchBg;

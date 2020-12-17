@@ -100,6 +100,7 @@ TWLSettings::TWLSettings()
 
     soundFreq = EFreq32KHz;
     dsiSplash = isDSiMode();
+	nintendoLogoColor = 1;
     showlogo = true;
     autorun = false;
     autostartSlot1 = false;
@@ -151,6 +152,7 @@ void TWLSettings::loadSettings()
     gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 
     dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
+    nintendoLogoColor = settingsini.GetInt("SRLOADER", "NINTENDO_LOGO_COLOR", nintendoLogoColor);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 
     secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
@@ -251,6 +253,7 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
 
     settingsini.SetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
+    settingsini.SetInt("SRLOADER", "NINTENDO_LOGO_COLOR", nintendoLogoColor);
     settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 
     settingsini.SetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
