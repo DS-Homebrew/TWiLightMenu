@@ -459,8 +459,7 @@ static void clearIcon(int num)
 	loadIcon(num, clearTiles, blackPalette, true);
 }
 
-void drawIcon(int num, int Xpos, int Ypos) { glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
-}
+void drawIcon(int num, int Xpos, int Ypos) { glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconPalLine[num]][bnriconframenumY[num] & 31]); }
 
 void drawIconPlg(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, plgIcon); }
 void drawIconGBA(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, gbaModeIcon); }

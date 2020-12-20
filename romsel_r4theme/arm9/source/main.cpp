@@ -2026,6 +2026,10 @@ int main(int argc, char **argv) {
 						}
 						fclose(gbaFile);
 
+						if (*(u16*)(0x020000C0) == 0x5A45) {
+							expansion().SetRampage(0);	// Switch to GBA SRAM for EZ Flash
+						}
+
 						ptr = 0x0A000000;
 
 						std::string savename = replaceAll(filename, ".gba", ".sav");
