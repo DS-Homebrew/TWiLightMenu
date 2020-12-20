@@ -813,7 +813,6 @@ int main(int argc, char **argv)
 	}
 
 	if (sys().isRegularDS()) {
-		*(u16*)(0x020000C0) = *(vu16*)(0x08000002);
 		if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353 && *(u16*)(0x020000C0) != 0x5A45) {
 			*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
 		}
