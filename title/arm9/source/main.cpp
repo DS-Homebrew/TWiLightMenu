@@ -685,8 +685,6 @@ void lastRunROM()
 	{
 		if (!sys().isRegularDS() || *(u16*)(0x020000C0) == 0 || (ms().showGba != 1) || access(ms().romPath[true].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
-
 		std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
 		u32 romSize = getFileSize(ms().romPath[true].c_str());
 		if (romSize > 0x2000000) romSize = 0x2000000;
