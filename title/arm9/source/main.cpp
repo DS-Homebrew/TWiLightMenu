@@ -813,14 +813,13 @@ int main(int argc, char **argv)
 	}
 
 	if (sys().isRegularDS()) {
+		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 		if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353 && *(u16*)(0x020000C0) != 0x5A45) {
 			*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
 		}
 
 		if (*(u16*)(0x020000C0) == 0) {
 		  if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
-			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
-
 			*(vu16*)(0x08000000) = 0x4D54;	// Write test
 			if (*(vu16*)(0x08000000) != 0x4D54) {	// If not writeable
 				_M3_changeMode(M3_MODE_RAM);	// Try again with M3
