@@ -11,7 +11,6 @@
 extern const char* settingsinipath;
 
 bool previousUsedDevice = false;	// true == secondary
-bool secondaryDevice = false;
 
 int flashcard;
 /* Flashcard value
