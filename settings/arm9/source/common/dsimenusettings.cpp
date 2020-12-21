@@ -32,6 +32,7 @@ TWLSettings::TWLSettings()
     subtheme = 0;
     settingsMusic = -1;
     dsiMusic = 1;
+	boxArtColorDeband = true;
 
     showNds = true;
 	showGba = 1 + isDSiMode();
@@ -166,6 +167,7 @@ void TWLSettings::loadSettings()
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
     settingsMusic = settingsini.GetInt("SRLOADER", "SETTINGS_MUSIC", settingsMusic);
     dsiMusic = settingsini.GetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
+	boxArtColorDeband = settingsini.GetInt("SRLOADER", "PHOTO_BOXART_COLOR_DEBAND", boxArtColorDeband);
     updateRecentlyPlayedList = settingsini.GetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
     sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
@@ -263,6 +265,7 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
     settingsini.SetInt("SRLOADER", "SETTINGS_MUSIC", settingsMusic);
     settingsini.SetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
+	settingsini.SetInt("SRLOADER", "PHOTO_BOXART_COLOR_DEBAND", boxArtColorDeband);
     settingsini.SetInt("SRLOADER", "SHOW_NDS", showNds);
     settingsini.SetInt("SRLOADER", "SHOW_GBA", showGba);
     settingsini.SetInt("SRLOADER", "SHOW_RVID", showRvid);

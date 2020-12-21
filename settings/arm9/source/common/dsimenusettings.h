@@ -142,6 +142,7 @@ class TWLSettings
     int subtheme;
     int settingsMusic;
     int dsiMusic;
+	bool boxArtColorDeband;
     bool showNds;
     int showGba;
     bool showRvid;

@@ -163,6 +163,7 @@ public:
 	int theme;
 	int subtheme;
 	int dsiMusic;
+	bool boxArtColorDeband;
 	bool showNds;
 	int showGba;
 	bool showRvid;

@@ -492,9 +492,9 @@ void vBlankHandler() {
 		playRotatingCubesVideo();
 	}
 
-	if (ndmaEnabled() && !rotatingCubesLoaded) {
+	if (boxArtColorDeband()) {
 		//ndmaCopyWordsAsynch(0, tex().frameBuffer(secondBuffer), BG_GFX, 0x18000);
-		dmaCopyWordsAsynch(1, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
+		dmaCopyHalfWordsAsynch(1, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
 		secondBuffer = !secondBuffer;
 	}
 
@@ -1511,7 +1511,7 @@ void loadPhoto(const std::string &path) {
 	}
 
 	for(uint i=0;i<image.size()/4;i++) {
-		if (ndmaEnabled() && !rotatingCubesLoaded) {
+		if (boxArtColorDeband()) {
 			image[(i*4)+3] = 0;
 			if (alternatePixel) {
 				if (image[(i*4)] >= 0x4) {
@@ -1532,7 +1532,7 @@ void loadPhoto(const std::string &path) {
 		if (ms().colorMode == 1) {
 			tex().photoBuffer()[i] = convertVramColorToGrayscale(tex().photoBuffer()[i]);
 		}
-		if (ndmaEnabled() && !rotatingCubesLoaded) {
+		if (boxArtColorDeband()) {
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -1564,7 +1564,7 @@ void loadPhoto(const std::string &path) {
 	}
 
 	u16 *bgSubBuffer = tex().beginBgSubModify();
-	u16* bgSubBuffer2 = (u16*)0x02F98000;
+	u16* bgSubBuffer2 = tex().bgSubBuffer2();
 
 	// Fill area with black
 	for(int y = 24; y < 180; y++) {
@@ -1583,7 +1583,7 @@ void loadPhoto(const std::string &path) {
 			y++;
 		}
 		bgSubBuffer[y * 256 + x] = *(src++);
-		if (ndmaEnabled() && !rotatingCubesLoaded) {
+		if (boxArtColorDeband()) {
 			bgSubBuffer2[y * 256 + x] = *(src2++);
 		}
 		x++;
@@ -1594,7 +1594,7 @@ void loadPhoto(const std::string &path) {
 // Load photo without overwriting shoulder button images
 void loadPhotoPart() {
 	u16 *bgSubBuffer = tex().beginBgSubModify();
-	u16* bgSubBuffer2 = (u16*)0x02F98000;
+	u16* bgSubBuffer2 = tex().bgSubBuffer2();
 
 	// Fill area with black
 	for(int y = 24; y < 172; y++) {
@@ -1614,7 +1614,7 @@ void loadPhotoPart() {
 			if(y >= 172)	break;
 		}
 		bgSubBuffer[y * 256 + x] = *(src++);
-		if (ndmaEnabled() && !rotatingCubesLoaded) {
+		if (boxArtColorDeband()) {
 			bgSubBuffer2[y * 256 + x] = *(src2++);
 		}
 		x++;
@@ -1784,10 +1784,12 @@ void loadRotatingCubes() {
 		} else if (sys().isRegularDS()) {
 			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
 							 // Expansion Pak)
-			*(vu16*)(0x08240000) = 1;
-			if (*(vu16*)(0x08240000) == 1) {
+			if (*(u16*)(0x020000C0) == 0) {
+				*(vu16*)(0x08240000) = 1;
+			}
+			if (*(u16*)(0x020000C0) != 0 || *(vu16*)(0x08240000) == 1) {
 				// Set to load video into DS Memory Expansion Pak
-				rotatingCubesLocation = (u8 *)(*(u16*)(0x020000C0)==0x5A45 ? 0x08000200 : 0x09000000);
+				rotatingCubesLocation = (u8*)(*(u16*)(0x020000C0)==0x5A45 ? 0x08000200 : 0x09000000);
 				doRead = true;
 			}
 		}

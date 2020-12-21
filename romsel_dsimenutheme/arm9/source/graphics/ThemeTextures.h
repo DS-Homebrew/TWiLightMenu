@@ -11,6 +11,8 @@
 
 #define BG_BUFFER_PIXELCOUNT 256 * 192
 
+extern bool boxArtColorDeband();
+
 extern int boxArtType[40];
 
 using std::unique_ptr;
@@ -156,6 +158,7 @@ public:
 	const Texture *rightShoulderGreyedTexture() { return _rightShoulderGreyedTexture.get(); }
 
 	static u16* bmpImageBuffer();
+	static u16* bgSubBuffer2();
 	static u16* photoBuffer();
 	static u16* photoBuffer2();
 	static u16* frameBuffer(bool secondBuffer);
