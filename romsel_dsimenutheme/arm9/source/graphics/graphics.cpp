@@ -1781,7 +1781,7 @@ void loadRotatingCubes() {
 
 		if (REG_SCFG_EXT != 0) {
 			doRead = true;
-		} else if (sys().isRegularDS()) {
+		} else if (sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
 			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
 							 // Expansion Pak)
 			if (*(u16*)(0x020000C0) == 0) {
