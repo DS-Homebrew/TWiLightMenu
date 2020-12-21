@@ -259,9 +259,9 @@ void s2RamAccess(bool open) {
 void gbaSramAccess(bool open) {
 	if (open) {
 		if (*(u16*)(0x020000C0) == 0x334D) {
-			_M3_changeMode(M3_MODE_ROM);
-		//} else if (*(u16*)(0x020000C0) == 0x3647) {
-		//	_G6_SelectOperation(G6_MODE_ROM);
+			_M3_changeMode(M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_RAM);
 		} else if (*(u16*)(0x020000C0) == 0x4353) {
 			_SC_changeMode(SC_MODE_RAM_RO);
 		}
