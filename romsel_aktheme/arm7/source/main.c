@@ -30,6 +30,9 @@
 #include <nds.h>
 #include <string.h>
 #include <maxmod7.h>
+#include "arm7status.h"
+
+#define BIT_SET(c, n) ((c) << (n))
 
 void my_installSystemFIFO(void);
 
@@ -38,8 +41,8 @@ void my_installSystemFIFO(void);
 
 volatile int soundVolume = 127;
 volatile int timeTilVolumeLevelRefresh = 0;
-volatile int volumeLevel = -1;
-volatile int batteryLevel = 0;
+volatile int status = 0;
+
 volatile int rebootTimer = 0;
 //static bool gotCartHeader = false;
 
@@ -131,15 +134,24 @@ int main() {
 	
 	// 01: Fade Out
 	// 02: Return
-	// 03: REG_SCFG_EXT
+	// 03: status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: sndExcnt)
 	
-	// 05: BATTERY
-	// 06: VOLUME
-	// 07: SNDEXCNT
-	// 08: SD
-	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
-	fifoSendValue32(FIFO_USER_07, SNDEXCNT);
-	
+
+	// 05: Volume/Battery/SD
+	// https://problemkaputt.de/gbatek.htm#dsii2cdevice4ahbptwlchip
+	// Battery is 7 bits -- bits 0-7
+	// Volume is 00h to 1Fh = 5 bits -- bits 8-12
+	// SD status -- bit 13
+
+	u8 readCommand = readPowerManagement(4);
+
+	u32 initStatus = (BIT_SET(!!(SNDEXCNT), SNDEXCNT_BIT) 
+									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT) 
+									| BIT_SET(!!(readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7)), DSLITE_BIT));
+
+	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
+	fifoSendValue32(FIFO_USER_03, status);
+
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
@@ -154,22 +166,24 @@ int main() {
 
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
-			if (isDSiMode()) { //vol
-				volumeLevel = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
-				batteryLevel = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
+			if (isDSiMode() || REG_SCFG_EXT != 0) { //vol
+				status = (status & ~VOL_MASK) | ((i2cReadRegister(I2C_PM, I2CREGPM_VOL) << VOL_OFF) & VOL_MASK);
+				status = (status & ~BAT_MASK) | ((i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) << BAT_OFF) & BAT_MASK);				
 			} else {
-				batteryLevel = readPowerManagement(PM_BATTERY_REG);
+				status = (status & ~BAT_MASK) | ((readPowerManagement(PM_BATTERY_REG) << BAT_OFF) & BAT_MASK);
+				// batteryLevel = readPowerManagement(PM_BATTERY_REG);
 			}
 			timeTilVolumeLevelRefresh = 0;
-			fifoSendValue32(FIFO_USER_05, batteryLevel);
-			fifoSendValue32(FIFO_USER_06, volumeLevel);
+			fifoSendValue32(FIFO_USER_03, status);
 		}
 
 		if (isDSiMode()) {
 			if (SD_IRQ_STATUS & BIT(4)) {
-				fifoSendValue32(FIFO_USER_08, 2);
+				status = (status & ~SD_MASK) | ((2 << SD_OFF) & SD_MASK);
+				fifoSendValue32(FIFO_USER_03, status);
 			} else if (SD_IRQ_STATUS & BIT(3)) {
-				fifoSendValue32(FIFO_USER_08, 1);
+				status = (status & ~SD_MASK) | ((1 << SD_OFF) & SD_MASK);
+				fifoSendValue32(FIFO_USER_03, status);
 			}
 		}
 

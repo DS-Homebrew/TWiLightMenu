@@ -1,6 +1,9 @@
 #include <nds/arm9/dldi.h>
 #include "systemdetails.h"
 #include "common/flashcard.h"
+#include "common/arm7status.h"
+
+#define CHECK_BIT(v, n) (((v) >> (n)) & 1)
 
 // Make this link C-like for volatility
 extern "C" {
@@ -8,24 +11,14 @@ extern "C" {
     static volatile int _volumeLevel = -1;
     static volatile int _sdStatus = 0;
 
-    void batteryCallback(u32 newBatteryLevel, void *userdata) {
-        _batteryLevel = newBatteryLevel;
-    }
-
-
-    void volumeCallback(u32 newVolumeLevel, void *userdata) {
-        _volumeLevel = newVolumeLevel;
-    }
-
-
-    void sdStatusCallback(u32 newSdStatus, void *userdata) {
-        _sdStatus = newSdStatus;
+    void volBatSdCallback(u32 status, void *userdata) {
+        _batteryLevel = (status & BAT_MASK) >> BAT_OFF;
+        _volumeLevel = (status & VOL_MASK) >> VOL_OFF;
+        _sdStatus = (status & SD_MASK) >> SD_OFF;
     }
 
     void registerFifoHandlers() {
-        fifoSetValue32Handler(FIFO_USER_06, volumeCallback, NULL);
-        fifoSetValue32Handler(FIFO_USER_05, batteryCallback, NULL);
-        fifoSetValue32Handler(FIFO_USER_08, sdStatusCallback, NULL);
+        fifoSetValue32Handler(FIFO_USER_03, volBatSdCallback, NULL);
     }
 }
 
@@ -41,18 +34,21 @@ SystemDetails::SystemDetails()
     _fifoOk = false;
 
     fifoWaitValue32(FIFO_USER_03);
-	fifoWaitValue32(FIFO_USER_07);
 
-    if (fifoGetValue32(FIFO_USER_03) == 0)
-        _arm7SCFGLocked = true; // If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
+    // status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: sndExcnt)
+    u32 status = ((fifoGetValue32(FIFO_USER_03)) >> INIT_OFF);
     
-    u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-    if (arm7_SNDEXCNT != 0)
+    if (CHECK_BIT(status, REGSCFG_BIT) == 0) 
+    {
+        _arm7SCFGLocked = true; // If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
+    }
+
+    if (CHECK_BIT(status, SNDEXCNT_BIT) != 0)
     {
         _isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
     }
     
-	_isDSLite = fifoGetValue32(FIFO_USER_04);
+	_isDSLite = CHECK_BIT(status, DSLITE_BIT);
 
     // force is regular ds
     //_isRegularDS = true;
