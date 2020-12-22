@@ -11,7 +11,7 @@
 
 #define BG_BUFFER_PIXELCOUNT 256 * 192
 
-extern bool boxArtColorDeband();
+extern bool boxArtColorDeband;
 
 extern int boxArtType[40];
 

@@ -492,7 +492,7 @@ void vBlankHandler() {
 		playRotatingCubesVideo();
 	}
 
-	if (boxArtColorDeband()) {
+	if (boxArtColorDeband) {
 		//ndmaCopyWordsAsynch(0, tex().frameBuffer(secondBuffer), BG_GFX, 0x18000);
 		dmaCopyHalfWordsAsynch(1, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
 		secondBuffer = !secondBuffer;
@@ -1511,7 +1511,7 @@ void loadPhoto(const std::string &path) {
 	}
 
 	for(uint i=0;i<image.size()/4;i++) {
-		if (boxArtColorDeband()) {
+		if (boxArtColorDeband) {
 			image[(i*4)+3] = 0;
 			if (alternatePixel) {
 				if (image[(i*4)] >= 0x4) {
@@ -1532,7 +1532,7 @@ void loadPhoto(const std::string &path) {
 		if (ms().colorMode == 1) {
 			tex().photoBuffer()[i] = convertVramColorToGrayscale(tex().photoBuffer()[i]);
 		}
-		if (boxArtColorDeband()) {
+		if (boxArtColorDeband) {
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -1583,7 +1583,7 @@ void loadPhoto(const std::string &path) {
 			y++;
 		}
 		bgSubBuffer[y * 256 + x] = *(src++);
-		if (boxArtColorDeband()) {
+		if (boxArtColorDeband) {
 			bgSubBuffer2[y * 256 + x] = *(src2++);
 		}
 		x++;
@@ -1614,7 +1614,7 @@ void loadPhotoPart() {
 			if(y >= 172)	break;
 		}
 		bgSubBuffer[y * 256 + x] = *(src++);
-		if (boxArtColorDeband()) {
+		if (boxArtColorDeband) {
 			bgSubBuffer2[y * 256 + x] = *(src2++);
 		}
 		x++;
