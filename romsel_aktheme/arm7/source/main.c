@@ -41,7 +41,7 @@ void my_installSystemFIFO(void);
 
 volatile int soundVolume = 127;
 volatile int timeTilVolumeLevelRefresh = 0;
-volatile int volBatSd = 0;
+volatile int status = 0;
 
 volatile int rebootTimer = 0;
 //static bool gotCartHeader = false;
@@ -145,10 +145,11 @@ int main() {
 
 	u8 readCommand = readPowerManagement(4);
 
-	u32 status = (BIT_SET(!!(SNDEXCNT), SNDEXCNT_BIT) 
+	u32 initStatus = (BIT_SET(!!(SNDEXCNT), SNDEXCNT_BIT) 
 									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT) 
 									| BIT_SET(!!(readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7)), DSLITE_BIT));
 
+	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
 
 
@@ -166,23 +167,23 @@ int main() {
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
 			if (isDSiMode() || REG_SCFG_EXT != 0) { //vol
-				volBatSd = (volBatSd & ~VOL_MASK) | ((i2cReadRegister(I2C_PM, I2CREGPM_VOL) << VOL_OFF) & VOL_MASK);
-				volBatSd = (volBatSd & ~BAT_MASK) | ((i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) << BAT_OFF) & BAT_MASK);				
+				status = (status & ~VOL_MASK) | ((i2cReadRegister(I2C_PM, I2CREGPM_VOL) << VOL_OFF) & VOL_MASK);
+				status = (status & ~BAT_MASK) | ((i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) << BAT_OFF) & BAT_MASK);				
 			} else {
-				volBatSd = (volBatSd & ~BAT_MASK) | ((readPowerManagement(PM_BATTERY_REG) << BAT_OFF) & BAT_MASK);
+				status = (status & ~BAT_MASK) | ((readPowerManagement(PM_BATTERY_REG) << BAT_OFF) & BAT_MASK);
 				// batteryLevel = readPowerManagement(PM_BATTERY_REG);
 			}
 			timeTilVolumeLevelRefresh = 0;
-			fifoSendValue32(FIFO_USER_05, volBatSd);
+			fifoSendValue32(FIFO_USER_03, status);
 		}
 
 		if (isDSiMode()) {
 			if (SD_IRQ_STATUS & BIT(4)) {
-				volBatSd = (volBatSd & ~SD_MASK) | ((2 << SD_OFF) & SD_MASK);
-				fifoSendValue32(FIFO_USER_05, volBatSd);
+				status = (status & ~SD_MASK) | ((2 << SD_OFF) & SD_MASK);
+				fifoSendValue32(FIFO_USER_03, status);
 			} else if (SD_IRQ_STATUS & BIT(3)) {
-				volBatSd = (volBatSd & ~SD_MASK) | ((1 << SD_OFF) & SD_MASK);
-				fifoSendValue32(FIFO_USER_05, volBatSd);
+				status = (status & ~SD_MASK) | ((1 << SD_OFF) & SD_MASK);
+				fifoSendValue32(FIFO_USER_03, status);
 			}
 		}
 

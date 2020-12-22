@@ -18,7 +18,7 @@ extern "C" {
     }
 
     void registerFifoHandlers() {
-        fifoSetValue32Handler(FIFO_USER_05, volBatSdCallback, NULL);
+        fifoSetValue32Handler(FIFO_USER_03, volBatSdCallback, NULL);
     }
 }
 
@@ -35,7 +35,7 @@ SystemDetails::SystemDetails()
     fifoWaitValue32(FIFO_USER_03);
 
     // status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: sndExcnt)
-    u32 status = fifoGetValue32(FIFO_USER_03);
+    u32 status = ((fifoGetValue32(FIFO_USER_03)) >> INIT_OFF);
 
     if (CHECK_BIT(status, REGSCFG_BIT) == 0) 
     {
