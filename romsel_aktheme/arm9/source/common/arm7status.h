@@ -1,0 +1,17 @@
+
+#ifndef A7STAT_H
+#define A7STAT_H
+
+#define SNDEXCNT_BIT 2
+#define REGSCFG_BIT 1
+#define DSLITE_BIT 0
+
+#define BAT_MASK 0b0000000011111111
+#define BAT_OFF 0
+
+#define VOL_MASK 0b0001111100000000
+#define VOL_OFF 8
+
+#define SD_MASK  0b0110000000000000
+#define SD_OFF 13
+#endif
