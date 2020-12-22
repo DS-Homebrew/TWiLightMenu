@@ -258,6 +258,7 @@ void LoadSettings(void) {
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 	dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
+	slot1Launched = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHED", slot1Launched);
 	launchType[0] = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
 	launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
 	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
@@ -1205,6 +1206,7 @@ int main(int argc, char **argv) {
 	bottomBgLoad();
 	
 	bool romFound[2] = {false};
+	char boxArtPath[2][256];
 
 	// SD card
 	if (sdFound() && romPath[0] != "" && access(romPath[0].c_str(), F_OK) == 0) {
@@ -1267,6 +1269,45 @@ int main(int argc, char **argv) {
 		} else if (extention(filename[0], ".sfc")) {
 			bnrRomType[0] = 8;
 			boxArtType[0] = 2;
+		}
+
+		if (showBoxArt) {
+			// Store box art path
+			std::string temp_filename = filename[0];
+			sprintf (boxArtPath[0], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename[0].c_str());
+			if ((access(boxArtPath[0], F_OK) != 0) && (bnrRomType[0] == 0)) {
+				if(extention(filename[0], ".argv")) {
+					vector<char*> argarray;
+
+					FILE *argfile = fopen(filename[0].c_str(),"rb");
+						char str[PATH_MAX], *pstr;
+					const char seps[]= "\n\r\t ";
+
+					while( fgets(str, PATH_MAX, argfile) ) {
+						// Find comment and end string there
+						if( (pstr = strchr(str, '#')) )
+							*pstr= '\0';
+
+						// Tokenize arguments
+						pstr= strtok(str, seps);
+
+						while( pstr != NULL ) {
+							argarray.push_back(strdup(pstr));
+							pstr= strtok(NULL, seps);
+						}
+					}
+					fclose(argfile);
+					temp_filename = argarray.at(0);
+				}
+				// Get game's TID
+				FILE *f_nds_file = fopen(temp_filename.c_str(), "rb");
+				char game_TID[5];
+				grabTID(f_nds_file, game_TID);
+				game_TID[4] = 0;
+				fclose(f_nds_file);
+
+				sprintf (boxArtPath[0], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
+			}
 		}
 	}
 
@@ -1335,10 +1376,9 @@ int main(int argc, char **argv) {
 
 		if (showBoxArt) {
 			// Store box art path
-			std::string temp_filename = filename[secondaryDevice];
-			char boxArtPath[256];
-			snprintf (boxArtPath, sizeof(boxArtPath), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename[0].c_str());
-			if ((access(boxArtPath, F_OK) != 0) && (bnrRomType[secondaryDevice] == 0)) {
+			std::string temp_filename = filename[1];
+			sprintf (boxArtPath[1], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename[0].c_str());
+			if ((access(boxArtPath[1], F_OK) != 0) && (bnrRomType[1] == 0)) {
 				if(extention(filename[0], ".argv")) {
 					vector<char*> argarray;
 
@@ -1369,16 +1409,19 @@ int main(int argc, char **argv) {
 				game_TID[4] = 0;
 				fclose(f_nds_file);
 
-				sprintf (boxArtPath, (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
+				sprintf (boxArtPath[1], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
 			}
-			loadBoxArt(boxArtPath);	// Load box art
 		}
 	}
 
-	if (isDSiMode() && !flashcardFound()) {
+	if (showBoxArt && !slot1Launched) {
+		loadBoxArt(boxArtPath[previousUsedDevice]);	// Load box art
+	}
+
+	if (isDSiMode() && !flashcardFound() && slot1Launched) {
 		if (REG_SCFG_MC == 0x11) {
-			if (showBoxArt) loadBoxArt("nitro:/graphics/boxart_unknown.png");
 			cardEjected = true;
+			if (showBoxArt) loadBoxArt("nitro:/graphics/boxart_unknown.png");
 		} else {
 			refreshNdsCard();
 		}
@@ -1422,7 +1465,7 @@ int main(int argc, char **argv) {
 				if (isDSiMode() && !flashcardFound()) {
 					if (REG_SCFG_MC == 0x11) {
 						if (cardRefreshed && showBoxArt) {
-							loadBoxArt("nitro:/graphics/boxart_unknown.png");
+							loadBoxArt(slot1Launched ? "nitro:/graphics/boxart_unknown.png" : boxArtPath[previousUsedDevice]);
 						}
 						cardRefreshed = false;
 						cardEjected = true;
