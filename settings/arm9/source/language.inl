@@ -238,7 +238,7 @@ STRING(SYSTEM_MENU, "System Menu")
 STRING(GRAY, "Gray")
 STRING(RED, "Red")
 STRING(BLUE, "Blue")
-STRING(MAGNETA, "Magneta")
+STRING(MAGENTA, "Magenta")
 
 STRING(DESCRIPTION_LANGUAGE_1, "Avoid the limited selections of your console language by setting this option.")
 STRING(DESCRIPTION_GAMELANGUAGE_1, "Set language for DS ROMs played using nds-bootstrap.")
