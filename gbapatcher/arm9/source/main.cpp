@@ -192,6 +192,10 @@ void gptc_patchRom()
 	{
 		//2 Games in 1 - Dragon Ball Z - The Legacy of Goku I & II (USA)
 		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
+
+		if (*(u16*)(0x08000000 + 0x49840) == 0x80A8)
+			*(u16*)(0x08000000 + 0x49840) = 0x46C0;
+
 		tonccpy((u16*)0x088000E0, &nop, sizeof(u32));
 
 		//LoG1: Fix "game cannot be played on hardware found" error
