@@ -41,7 +41,7 @@ static const save_type_t sSaveTypes[SAVE_TYPE_COUNT] =
 	{"SRAM_V113", 10, SAVE_TYPE_SRAM_V113, 32 * 1024, NULL},
 };
 
-const save_type_t* save_findTag()
+ITCM_CODE const save_type_t* save_findTag()
 {
 	u32  curAddr = 0x080000C0;
 	char saveTag[16];

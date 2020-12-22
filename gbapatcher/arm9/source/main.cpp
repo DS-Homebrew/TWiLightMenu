@@ -41,7 +41,7 @@ static const u8 sDbzLoGUPatch2[0x28] =
 	};
 
 
-void gptc_patchRom()
+ITCM_CODE void gptc_patchWait()
 {
 	// General fix for white screen crash
 	// Patch out wait states
@@ -58,6 +58,11 @@ void gptc_patchRom()
 	if (*(u32*)0x08000410 == 0x04000204) {
 		toncset((u16*)0x08000410, 0, sizeof(u32));
 	}
+}
+
+void gptc_patchRom()
+{
+	gptc_patchWait();
 
 	u32 nop = 0xE1A00000;
 
