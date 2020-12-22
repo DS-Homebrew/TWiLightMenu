@@ -1,4 +1,4 @@
-
+#include <nds/arm9/dldi.h>
 #include "dsimenusettings.h"
 #include "bootstrappaths.h"
 #include "systemdetails.h"
@@ -188,6 +188,9 @@ void TWLSettings::loadSettings()
 	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
 	useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
+	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+		useBootstrap = true;
+	}
 
 	// Default nds-bootstrap settings
 	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
