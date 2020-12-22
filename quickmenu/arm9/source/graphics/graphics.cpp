@@ -117,7 +117,8 @@ glImage gbaIconImage[(32 / 32) * (32 / 32)];
 glImage cornerIcons[(32 / 32) * (128 / 32)];
 glImage settingsIconImage[(32 / 32) * (32 / 32)];
 
-u16 bmpImageBuffer[256*192];
+u16 bmpImageBuffer[256*192] = {0};
+u16 topImageBuffer[256*192] = {0};
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -526,9 +527,22 @@ void loadBoxArt(const char* filename) {
 		}
 	}
 
+	// Re-load top BG (excluding top bar)
+	u16* src = topImageBuffer+(256*16);
+	int x = 0;
+	int y = 16;
+	for (int i=256*16; i<256*192; i++) {
+		if (x >= 256) {
+			x = 0;
+			y++;
+		}
+		BG_GFX_SUB[y*256+x] = *(src++);
+		x++;
+	}
+
 	imageXpos = (256-imageWidth)/2;
 	imageYpos = (192-imageHeight)/2;
-	u16 *src = bmpImageBuffer;
+	src = bmpImageBuffer;
 	for(uint y = 0; y < imageHeight; y++) {
 		for(uint x = 0; x < imageWidth; x++) {
 			BG_GFX_SUB[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
@@ -570,11 +584,11 @@ void topBgLoad(void) {
 	if(imageWidth > 256 || imageHeight > 192)	return;
 
 	for(uint i=0;i<image.size()/4;i++) {
-		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		topImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 
 	// Start loading
-	u16* src = bmpImageBuffer;
+	u16* src = topImageBuffer;
 	int x = 0;
 	int y = 0;
 	for (int i=0; i<256*192; i++) {
