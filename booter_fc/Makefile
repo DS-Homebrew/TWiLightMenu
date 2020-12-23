@@ -40,13 +40,6 @@ dist:	all autoboot
 
 .ONESHELL:
 autoboot:
-	#### R4 Original & M3 Simply
-	cp booter_fc.nds _DS_MENU.nds
-	dlditool flashcart_specifics/DLDI/r4_sd.dldi _DS_MENU.nds
-	r4denc _DS_MENU.nds
-	mkdir -p "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
-	mv "_DS_MENU.dat" "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.DAT"
-
 	#### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS & R4iDSN/R4 Ultra
 	##### Global
 	cp booter_fc.nds _DS_MENU.nds
@@ -80,13 +73,11 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/iSmart Premium/system/"
 	mv ismat.dat "../7zfile/Flashcard users/Autoboot/iSmart Premium/system/ismat.dat"
 
-	#### Acekard 2i/Acekard 2.1 & Galaxy Eagle
-	cp booter_fc.nds akmenu4.nds
-	dlditool flashcart_specifics/DLDI/ak2_sd.dldi akmenu4.nds
-	cp akmenu4.nds "../7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_.NDS"
-	cp akmenu4.nds "../7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_B.NDS"
-	mkdir -p "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/"
-	mv akmenu4.nds "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/akmenu4.nds"
+	#### Galaxy Eagle
+	cp booter_fc.nds ge.nds
+	dlditool flashcart_specifics/DLDI/ak2_sd.dldi ge.nds
+	cp ge.nds "../7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_.NDS"
+	cp ge.nds "../7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_B.NDS"
 
 	#### DSTT
 	cp booter_fc.nds TTMenu.dat
