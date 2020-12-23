@@ -727,10 +727,6 @@ void lastRunROM()
 			fclose(gbaFile);
 		}
 
-		if (*(u16*)(0x020000C0) == 0x5A45) {
-			expansion().SetRampage(0);	// Switch to GBA SRAM for EZ Flash
-		}
-
 		ptr = 0x0A000000;
 
 		if (savesize > 0) {
@@ -840,7 +836,6 @@ int main(int argc, char **argv)
 			}
 			if (*(vu16*)(0x08000000) != 0x4D54) {
 				cExpansion::SetRompage(381);	// Try again with EZ Flash
-				expansion().SetRampage(cExpansion::EPsramPage);
 				cExpansion::OpenNorWrite();
 				cExpansion::SetSerialMode();
 				*(u16*)(0x020000C0) = 0x5A45;
@@ -947,9 +942,6 @@ int main(int argc, char **argv)
 			rename(savepathFc.c_str(), savepath.c_str());
 		}
 	  } else if (sys().isRegularDS() && (*(u16*)(0x020000C0) != 0) && (ms().launchType[true] == Launch::EGBANativeLaunch)) {
-			if (*(u16*)(0x020000C0) == 0x5A45) {
-				expansion().SetRampage(0);	// Switch to GBA SRAM for EZ Flash
-			}
 			u8 byteBak = *(vu8*)(0x0A000000);
 			*(vu8*)(0x0A000000) = 'T';	// SRAM write test
 		  if (*(vu8*)(0x0A000000) == 'T') {	// Check if SRAM is writeable
@@ -1009,9 +1001,6 @@ int main(int argc, char **argv)
 				}
 			}
 		  }
-			if (*(u16*)(0x020000C0) == 0x5A45) {
-				expansion().SetRampage(cExpansion::EPsramPage);
-			}
 	  }
 	}
 
