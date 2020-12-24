@@ -795,7 +795,7 @@ int main(int argc, char **argv)
 	if (!sys().fatInitOk())
 	{
 		consoleDemoInit();
-		printf("fatInitDefault failed!");
+		iprintf("fatInitDefault failed!");
 		stop();
 	}
 
@@ -881,6 +881,27 @@ int main(int argc, char **argv)
 		settingsinipath =
 		    DSIMENUPP_INI_FC; // Fallback to .ini path on flashcard, if not found on
 							   // SD card, or if SD access is disabled
+	}
+
+	scanKeys();
+	if (keysHeld() & (KEY_A & KEY_B & KEY_X & KEY_Y)) {
+		consoleDemoInit();
+		iprintf("Reset TWiLight Menu++ settings?\n");
+		iprintf("\n");
+		iprintf("Per-game settings will be kept.\n");
+		iprintf("\n");
+		iprintf("A: Yes\n");
+		iprintf("B: No\n");
+		int pressed = 0;
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+		} while (!(pressed & KEY_A) && !(pressed & KEY_B));
+		consoleClear();
+		if (pressed & KEY_A) {
+			remove(settingsinipath);	// Delete "settings.ini"
+		}
 	}
 
 	ms().loadSettings();
