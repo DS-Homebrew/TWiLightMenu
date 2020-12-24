@@ -583,13 +583,10 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (sys().flashcardUsed())
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/nesds.nds";
-		}
-		else
-		{
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to nesDS as argument
 	}
@@ -597,13 +594,10 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (sys().flashcardUsed())
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/gameyob.nds";
-		}
-		else
-		{
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to GameYob as argument
 	}
@@ -611,17 +605,13 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (sys().flashcardUsed())
+		mkdir(ms().previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
+		mkdir(ms().previousUsedDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
+
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
-			mkdir("fat:/data", 0777);
-			mkdir("fat:/data/s8ds", 0777);
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
-		}
-		else
-		{
-			mkdir("sd:/data", 0777);
-			mkdir("sd:/data/s8ds", 0777);
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to S8DS as argument
 	}
@@ -629,13 +619,10 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (sys().flashcardUsed())
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-		}
-		else
-		{
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass video to Rocket Video Player as argument
 	}
@@ -643,13 +630,10 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (sys().flashcardUsed())
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
-		}
-		else
-		{
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass video to MPEG4Player as argument
 	}
@@ -657,13 +641,10 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (sys().flashcardUsed())
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
-		}
-		else
-		{
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to StellaDS as argument
 	}
@@ -671,13 +652,10 @@ void lastRunROM()
 	{
 		if (ms().showMd >= 2 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (sys().flashcardUsed())
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
-		}
-		else
-		{
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to PicoDrive TWL as argument
 	}
@@ -761,7 +739,7 @@ void lastRunROM()
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A7800DS-LITE.nds";
 		}
-		if((!isDSiMode() && REG_SCFG_EXT != 0) || access(argarray.at(0), F_OK) != 0)
+		if((!isDSiMode() && REG_SCFG_EXT != 0) || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 		}
@@ -771,13 +749,10 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (sys().flashcardUsed())
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
-		}
-		else
-		{
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to A5200DS as argument
 	}
@@ -814,7 +789,6 @@ int main(int argc, char **argv)
 	*fake_heap_end = 0;*/
 
 	sys().initFilesystem("/_nds/TWiLightMenu/main.srldr");
-	sys().flashcardUsed();
 	ms();
 	defaultExceptionHandler();
 

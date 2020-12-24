@@ -5,7 +5,6 @@
 SystemDetails::SystemDetails()
 {
 
-    _flashcardUsed = false;
     _arm7SCFGLocked = false;
     _isRegularDS = true;
     _isDSLite = false;
