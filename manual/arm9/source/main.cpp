@@ -82,6 +82,7 @@ enum TLanguage {
 	ELangTurkish = 14,
 	ELangUkrainian = 15,
 	ELangHungarian = 16,
+	ELangNorwegian = 17,
 };
 
 bool fadeType = false;		// false = out, true = in
@@ -492,6 +493,9 @@ int main(int argc, char **argv) {
 			break;
 		case ELangHungarian:
 			chdir("nitro:/pages/hungarian/");
+			break;
+		case ELangNorwegian:
+			chdir("nitro:/pages/norwegian/");
 			break;
 	}
 
