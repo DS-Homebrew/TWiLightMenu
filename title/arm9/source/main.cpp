@@ -756,13 +756,14 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (sys().flashcardUsed())
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+		if(REG_SCFG_EXT == 0)
+		{
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A7800DS-LITE.nds";
+		}
+		if((!isDSiMode() && REG_SCFG_EXT != 0) || access(argarray.at(0), F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
-		}
-		else
-		{
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to A7800DS as argument
 	}
