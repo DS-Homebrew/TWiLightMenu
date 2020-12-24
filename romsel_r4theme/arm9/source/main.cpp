@@ -2246,6 +2246,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
+				homebrewArg = useNDSB ? "" : romPath[secondaryDevice];
 				SaveSettings();
 				if (!isDSiMode() && !secondaryDevice && !extention(filename, ".plg")) {
 					ntrStartSdGame();
