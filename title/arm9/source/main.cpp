@@ -884,7 +884,11 @@ int main(int argc, char **argv)
 	}
 
 	scanKeys();
-	if (keysHeld() & (KEY_A & KEY_B & KEY_X & KEY_Y)) {
+	if ((keysHeld() & KEY_A)
+	 && (keysHeld() & KEY_B)
+	 && (keysHeld() & KEY_X)
+	 && (keysHeld() & KEY_Y))
+	{
 		consoleDemoInit();
 		iprintf("Reset TWiLight Menu++ settings?\n");
 		iprintf("\n");
@@ -892,6 +896,9 @@ int main(int argc, char **argv)
 		iprintf("\n");
 		iprintf("A: Yes\n");
 		iprintf("B: No\n");
+		for (int i = 0; i < 30; i++) {
+			swiWaitForVBlank();
+		}
 		int pressed = 0;
 		do {
 			swiWaitForVBlank();
