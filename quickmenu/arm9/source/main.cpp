@@ -1236,7 +1236,7 @@ int main(int argc, char **argv) {
 		} else if (extention(filename[0], ".pce")) {
 			bnrRomType[0] = 11;
 			boxArtType[0] = 0;
-		} else if (extention(filename[0], ".a26") || extention(filename[0], ".a78")) {
+		} else if (extention(filename[0], ".a26") || extention(filename[0], ".a52") || extention(filename[0], ".a78")) {
 			bnrRomType[0] = 10;
 			boxArtType[0] = 0;
 		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4")) {
@@ -1339,7 +1339,7 @@ int main(int argc, char **argv) {
 		} else if (extention(filename[1], ".pce")) {
 			bnrRomType[1] = 11;
 			boxArtType[1] = 0;
-		} else if (extention(filename[1], ".a26") || extention(filename[1], ".a78")) {
+		} else if (extention(filename[1], ".a26") || extention(filename[1], ".a52") || extention(filename[1], ".a78")) {
 			bnrRomType[1] = 10;
 			boxArtType[1] = 0;
 		} else if (extention(filename[1], ".plg") || extention(filename[1], ".rvid") || extention(filename[1], ".mp4")) {
@@ -2667,6 +2667,14 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
+						boostVram = true;
+					}
+				} else if (extention(filename[secondaryDevice], ".a52")) {
+					launchType[secondaryDevice] = 13;
+					
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".a78")) {

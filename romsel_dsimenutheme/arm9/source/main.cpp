@@ -750,6 +750,9 @@ int main(int argc, char **argv) {
 	if (ms().showA26) {
 		extensionList.emplace_back(".a26");
 	}
+	if (ms().showA52) {
+		extensionList.emplace_back(".a52");
+	}
 	if (ms().showA78) {
 		extensionList.emplace_back(".a78");
 	}
@@ -1750,6 +1753,14 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
+						boostVram = true;
+					}
+				} else if (extention(filename, ".a52")) {
+					ms().launchType[ms().secondaryDevice] = Launch::EA5200DSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename, ".a78")) {

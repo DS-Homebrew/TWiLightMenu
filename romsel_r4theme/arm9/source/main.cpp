@@ -153,6 +153,7 @@ bool showNds = true;
 int showGba = 2;
 bool showRvid = true;
 bool showA26 = true;
+bool showA52 = true;
 bool showA78 = true;
 bool showNes = true;
 bool showGb = true;
@@ -201,6 +202,7 @@ void LoadSettings(void) {
 	}
 	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", true);
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", true);
+	showA52 = settingsini.GetInt("SRLOADER", "SHOW_A52", true);
 	showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", true);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
@@ -1028,6 +1030,9 @@ int main(int argc, char **argv) {
 	}
 	if (showA26) {
 		extensionList.emplace_back(".a26");
+	}
+	if (showA52) {
+		extensionList.emplace_back(".a52");
 	}
 	if (showA78) {
 		extensionList.emplace_back(".a78");
@@ -2090,6 +2095,14 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
+						boostVram = true;
+					}
+				} else if (extention(filename, ".a52")) {
+					launchType[secondaryDevice] = 13;
+					
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename, ".a78")) {

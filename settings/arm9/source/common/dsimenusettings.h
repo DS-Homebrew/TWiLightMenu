@@ -147,6 +147,7 @@ class TWLSettings
     int showGba;
     bool showRvid;
     bool showA26;
+    bool showA52;
 	bool showA78;
     bool showNes;
     bool showGb;

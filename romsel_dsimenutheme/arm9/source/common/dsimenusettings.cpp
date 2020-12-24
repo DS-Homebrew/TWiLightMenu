@@ -45,6 +45,7 @@ TWLSettings::TWLSettings()
 	showGba = 1 + isDSiMode();
 	showRvid = true;
 	showA26 = true;
+	showA52 = true;
 	showA78 = true;
 	showNes = true;
 	showGb = true;
@@ -138,6 +139,7 @@ void TWLSettings::loadSettings()
 	}
 	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", showA26);
+	showA52 = settingsini.GetInt("SRLOADER", "SHOW_A52", showA52);
 	showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", showA78);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);

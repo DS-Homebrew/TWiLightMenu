@@ -110,7 +110,8 @@ public:
 		EStellaDSLaunch = 9,
 		EPicoDriveTWLLaunch = 10,
 		EGBANativeLaunch = 11,
-        EA7800DSLaunch = 12
+        EA7800DSLaunch = 12,
+        EA5200DSLaunch = 13
 	};
 
 	/*
@@ -168,6 +169,7 @@ public:
 	int showGba;
 	bool showRvid;
 	bool showA26;
+	bool showA52;
 	bool showA78;
 	bool showNes;
 	bool showGb;

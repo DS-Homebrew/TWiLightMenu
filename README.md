@@ -45,7 +45,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS) (used to launch Sega Mega Drive/Genesis ROMs)
 - [Gericom](https://github.com/Gericom): [GBARunner2](https://github.com/Gericom/GBARunner2) (used to launch GameBoy Advance ROMs outside of the DS Phat/lite's GBA mode)
 - [FluBBa](https://gbatemp.net/members/flubba.19963/): [S8DS](https://gbatemp.net/threads/s8ds.392855/) (used to launch Sega Master System/Game Gear ROMs)
-- Alekmaul & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS) and [A7800DS](https://github.com/wavemotion-dave/A7800DS) (used to launch Atari 2600/7800 ROMs)
+- Alekmaul & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5800DS](https://github.com/wavemotion-dave/A5800DS), and [A7800DS](https://github.com/wavemotion-dave/A7800DS) (used to launch Atari 2600/5200/7800 ROMs)
 ## Graphics & Themes
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics.
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons.

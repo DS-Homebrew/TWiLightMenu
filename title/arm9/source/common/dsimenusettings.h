@@ -99,7 +99,8 @@ class TWLSettings
         EStellaDSLaunch = 9,
         EPicoDriveTWLLaunch = 10,
 		EGBANativeLaunch = 11,
-        EA7800DSLaunch = 12
+        EA7800DSLaunch = 12,
+        EA5200DSLaunch = 13
     };
 
     /*	0 = Nintendo DSi (Retail)
