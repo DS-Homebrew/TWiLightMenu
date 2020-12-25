@@ -1097,6 +1097,7 @@ void dsiBinariesMissingMsg(const char *filename) {
 
 void donorRomMsg(const char *filename) {
 	clearText();
+	updateText(false);
 	snd().playWrong();
 	if (ms().theme != 4) {
 		dbox_showIcon = true;
@@ -1207,6 +1208,7 @@ bool checkForCompatibleGame(const char *filename) {
 		showdialogbox = true;
 	}
 	clearText();
+	updateText(false);
 	if (ms().theme == 4) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 		dbox_showIcon = true;
