@@ -2600,6 +2600,7 @@ int main(int argc, char **argv) {
 								s2RamAccess(false);
 								ptr += 0x8000;
 								progressBarLength = ((ptr-0x08000000)+0x8000)/(romSize/192);
+								if (progressBarLength > 192) progressBarLength = 192;
 							} else {
 								break;
 							}
