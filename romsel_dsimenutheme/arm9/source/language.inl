@@ -53,6 +53,7 @@ STRING(GAME_INCOMPATIBLE_MSG, "This game is known to not run.\nIf there's an nds
 STRING(CANNOT_LAUNCH_WITHOUT_SD, "This game cannot be launched\nwithout an SD card.")
 STRING(CANNOT_LAUNCH_IN_DS_MODE, "This game cannot be launched\nin DS mode.")
 STRING(PRESS_B_RETURN, "Press \\B to return.")
+STRING(BAD_CLUSTER_SIZE, "Your SD card is not formatted\nusing 32KB clusters, this causes\nsome games to load very slowly.\nIt's recommended to reformat your\nSD card using 32KB clusters.")
 
 // Donor rom
 STRING(DONOR_ROM_MSG_ESDK2, "This game requires a donor ROM\nto run. Please set an existing\nearly SDK2 game as a donor ROM.")

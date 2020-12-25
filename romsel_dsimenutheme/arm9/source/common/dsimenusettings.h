@@ -236,6 +236,8 @@ public:
     std::string unlaunchBg;
 
 	bool wideScreen;
+
+	bool dontShowClusterWarning;
 };
 
 typedef singleton<TWLSettings> menuSettings_s;
