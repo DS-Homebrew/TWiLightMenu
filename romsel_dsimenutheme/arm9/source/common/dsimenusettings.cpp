@@ -112,6 +112,8 @@ TWLSettings::TWLSettings()
 	autorun = false;
 
 	wideScreen = false;
+
+	dontShowClusterWarning = false;
 }
 
 void TWLSettings::loadSettings()
@@ -224,6 +226,8 @@ void TWLSettings::loadSettings()
 	smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 	
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
+
+	dontShowClusterWarning = settingsini.GetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
 }
 
 void TWLSettings::saveSettings()
@@ -258,6 +262,7 @@ void TWLSettings::saveSettings()
 		settingsini.SetString("SRLOADER", ms().secondaryDevice ? "SECONDARY_HOMEBREW_ARG" : "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_HAS_WIDE", homebrewHasWide);
+		settingsini.SetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
 	}
 	
 	settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);

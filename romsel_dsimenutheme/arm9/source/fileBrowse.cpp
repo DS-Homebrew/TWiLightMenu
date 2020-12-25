@@ -2777,6 +2777,91 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						}
 					}
 
+					// If SD card's cluster size is not 32KB, then show warning for DS games
+					struct statvfs st;
+					statvfs("/", &st);
+					if (bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS] && isHomebrew[CURPOS] == 0 &&
+						proceedToLaunch && st.f_bsize != 32 << 10 && !ms().dontShowClusterWarning) {
+						if (ms().theme == 4) {
+							snd().playStartup();
+							fadeType = false; // Fade to black
+							for (int i = 0; i < 25; i++) {
+								snd().updateStream();
+								swiWaitForVBlank();
+							}
+							currentBg = 1;
+							displayGameIcons = false;
+							fadeType = true;
+						} else {
+							showdialogbox = true;
+						}
+						dbox_showIcon = false;
+						clearText();
+						updateText(false);
+						if (ms().theme == 4) {
+							while (!screenFadedIn()) { swiWaitForVBlank(); }
+							snd().playWrong();
+						} else {
+							for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+						}
+
+						printSmall(false, 0, 40, STR_BAD_CLUSTER_SIZE, Alignment::center);
+						printSmall(false, 0, 160, STR_B_A_OK_X_DONT_SHOW, Alignment::center);
+						updateText(false);
+						pressed = 0;
+						while (1) {
+							scanKeys();
+							pressed = keysDown();
+							checkSdEject();
+							tex().drawVolumeImageCached();
+							tex().drawBatteryImageCached();
+
+							drawCurrentTime();
+							drawCurrentDate();
+							drawClockColon();
+							snd().updateStream();
+							swiWaitForVBlank();
+							if (pressed & KEY_A) {
+								pressed = 0;
+								break;
+							}
+							if (pressed & KEY_B) {
+								snd().playBack();
+								proceedToLaunch = false;
+								pressed = 0;
+								break;
+							}
+							if (pressed & KEY_X) {
+								ms().dontShowClusterWarning = true;
+								pressed = 0;
+								break;
+							}
+						}
+						showdialogbox = false;
+						if (ms().theme == 4) {
+							fadeType = false;	   // Fade to black
+							for (int i = 0; i < 25; i++) {
+								swiWaitForVBlank();
+							}
+							clearText();
+							updateText(false);
+							currentBg = 0;
+							displayGameIcons = true;
+							fadeType = true;
+							snd().playStartup();
+							if (proceedToLaunch) {
+								while (!screenFadedIn()) { swiWaitForVBlank(); }
+							}
+						} else {
+							clearText();
+							updateText(false);
+							for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
+								snd().updateStream();
+								swiWaitForVBlank();
+							}
+						}
+					}
+
 					if (proceedToLaunch) {
 						snd().playLaunch();
 						controlTopBright = true;

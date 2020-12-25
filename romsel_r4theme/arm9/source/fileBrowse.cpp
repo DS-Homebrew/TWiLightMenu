@@ -106,6 +106,8 @@ extern int startMenu_cursorPosition;
 extern int pagenum[2];
 extern bool showMicroSd;
 
+extern bool dontShowClusterWarning;
+
 bool settingsChanged = false;
 
 extern void SaveSettings();
@@ -759,6 +761,57 @@ string browseForFile(const vector<string> extensionList) {
 					if (!hasDsiBinaries) {
 						dsiBinariesMissingMsg();
 						proceedToLaunch = false;
+					}
+				}
+
+				// If SD card's cluster size is not 32KB, then show warning for DS games
+				struct statvfs st;
+				statvfs("/", &st);
+				if (bnrRomType == 0 && !isDSiWare && isHomebrew == 0 &&
+					proceedToLaunch && st.f_bsize != 32 << 10 && !dontShowClusterWarning) {
+					dialogboxHeight = 5;
+					showdialogbox = true;
+					// Clear location text
+					clearText();
+					titleUpdate(dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+
+					printLargeCentered(false, 74, "Cluster Size Warning");
+					printSmallCentered(false, 98, "Your SD card is not formatted");
+					printSmallCentered(false, 110, "using 32KB clusters, this causes");
+					printSmallCentered(false, 122, "some games to load very slowly.");
+					printSmallCentered(false, 134, "It's recommended to reformat your");
+					printSmallCentered(false, 146, "SD card using 32KB clusters.");
+					printSmallCentered(false, 166, "\u2428 Return   \u2427 Launch");
+
+					pressed = 0;
+					while (1) {
+						snd().updateStream();
+						scanKeys();
+						pressed = keysDown();
+						checkSdEject();
+						swiWaitForVBlank();
+						if (pressed & KEY_A) {
+							pressed = 0;
+							break;
+						}
+						if (pressed & KEY_B) {
+							proceedToLaunch = false;
+							pressed = 0;
+							break;
+						}
+						if (pressed & KEY_X) {
+							dontShowClusterWarning = true;
+							pressed = 0;
+							break;
+						}
+					}
+					clearText();
+					showdialogbox = false;
+					dialogboxHeight = 0;
+
+					if (proceedToLaunch) {
+						titleUpdate(dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+						showLocation();
 					}
 				}
 

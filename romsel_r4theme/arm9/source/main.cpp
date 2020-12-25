@@ -178,6 +178,8 @@ int bstrap_extendedMemory = 0;
 bool forceSleepPatch = false;
 bool dsiWareBooter = false;
 
+bool dontShowClusterWarning = false;
+
 void LoadSettings(void) {
 	useBootstrap = isDSiMode();
 	showGba = 1 + isDSiMode();
@@ -277,6 +279,8 @@ void LoadSettings(void) {
 	launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
 
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
+
+	dontShowClusterWarning = settingsini.GetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
 }
 
 void SaveSettings(void) {
@@ -308,6 +312,7 @@ void SaveSettings(void) {
 		settingsini.SetString("SRLOADER", secondaryDevice ? "SECONDARY_HOMEBREW_ARG" : "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_HAS_WIDE", homebrewHasWide);
+		settingsini.SetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
 	}
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
 	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
