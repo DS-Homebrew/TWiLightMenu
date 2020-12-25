@@ -142,6 +142,8 @@ bool usernameRenderedDone = false;
 
 bool showColon = true;
 
+struct statvfs st[2];
+
 touchPosition touch;
 
 //---------------------------------------------------------------------------------
@@ -664,6 +666,9 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
+
+	if (sdFound()) statvfs("sd:/", &st[0]);
+	if (flashcardFound()) statvfs("fat:/", &st[1]);
 
 	if (ms().theme == 4 || ms().theme == 5) {
 		whiteScreen = false;

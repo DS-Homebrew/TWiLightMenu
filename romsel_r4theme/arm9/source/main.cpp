@@ -429,6 +429,8 @@ int spawnedtitleboxes = 0;
 //char usernameRendered[10];
 //bool usernameRenderedDone = false;
 
+struct statvfs st[2];
+
 touchPosition touch;
 
 //---------------------------------------------------------------------------------
@@ -924,6 +926,9 @@ int main(int argc, char **argv) {
 		fadeType = true;
 		stop();
 	}
+
+	if (sdFound()) statvfs("sd:/", &st[0]);
+	if (flashcardFound()) statvfs("fat:/", &st[1]);
 
 	// Read user name
 	/*char *username = (char*)PersonalData->name;

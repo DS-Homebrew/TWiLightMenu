@@ -764,11 +764,10 @@ string browseForFile(const vector<string> extensionList) {
 					}
 				}
 
-				// If SD card's cluster size is not 32KB, then show warning for DS games
-				struct statvfs st;
-				statvfs("/", &st);
-				if (bnrRomType == 0 && !isDSiWare && isHomebrew == 0 &&
-					proceedToLaunch && st.f_bsize != 32 << 10 && !dontShowClusterWarning) {
+				// If SD card's cluster size is not 32KB, then show warning for DS games with nds-bootstrap
+				extern struct statvfs st[2];
+				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare && isHomebrew == 0
+				 && proceedToLaunch && st[secondaryDevice].f_bsize != 32 << 10 && !dontShowClusterWarning) {
 					dialogboxHeight = 5;
 					showdialogbox = true;
 					// Clear location text
