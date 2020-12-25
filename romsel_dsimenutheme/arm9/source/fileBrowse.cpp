@@ -2777,10 +2777,11 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						}
 					}
 
-					// If SD card's cluster size is not 32KB, then show warning
+					// If SD card's cluster size is not 32KB, then show warning for DS games
 					struct statvfs st;
 					statvfs("/", &st);
-					if (proceedToLaunch && st.f_bsize != 32 << 10 && !ms().dontShowClusterWarning) {
+					if (bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS] && isHomebrew[CURPOS] == 0 &&
+						proceedToLaunch && st.f_bsize != 32 << 10 && !ms().dontShowClusterWarning) {
 						if (ms().theme == 4) {
 							snd().playStartup();
 							fadeType = false; // Fade to black
