@@ -2561,9 +2561,9 @@ int main(int argc, char **argv) {
 					if (showGba == 1) {
 						clearText();
 						ClearBrightness();
-						printSmallCentered(false, 20, "If the bar stopped, close and open");
-						printSmallCentered(false, 34, "the console's lid.");
-						printSmallCentered(false, 88, "Now Loading...");
+						if (*(u16*)(0x020000C0) == 0x5A45) {
+							printSmallCentered(false, 88, "Please wait...");
+						}
 
 						showProgressBar = true;
 						progressBarLength = 0;
@@ -2582,11 +2582,18 @@ int main(int argc, char **argv) {
 							for(u32 address=0;address<romSize&&address<0x2000000;address+=0x40000)
 							{
 								expansion().Block_Erase(address);
+								progressBarLength = (address+0x40000)/(romSize/192);
+								if (progressBarLength > 192) progressBarLength = 192;
 							}
 							nor = true;
 						} else if (*(u16*)(0x020000C0) == 0x4353 && romSize > 0x1FFFFFE) {
 							romSize = 0x1FFFFFE;
 						}
+
+						clearText();
+						printSmallCentered(false, 20, "If the bar stopped, close and open");
+						printSmallCentered(false, 34, "the console's lid.");
+						printSmallCentered(false, 88, "Now Loading...");
 
 						FILE* gbaFile = fopen(filename[secondaryDevice].c_str(), "rb");
 						for (u32 len = romSize; len > 0; len -= 0x8000) {

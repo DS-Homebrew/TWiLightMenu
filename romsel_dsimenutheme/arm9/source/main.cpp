@@ -1636,9 +1636,10 @@ int main(int argc, char **argv) {
 
 					if (ms().showGba == 1) {
 						if (ms().theme == 5) displayGameIcons = false;
-						printSmall(false, 0, 20, STR_BARSTOPPED_CLOSELID, Alignment::center);
-						printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_LOADING, Alignment::center);
-						updateText(false);
+						if (*(u16*)(0x020000C0) == 0x5A45) {
+							printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_PLEASE_WAIT, Alignment::center);
+							updateText(false);
+						}
 
 						if (ms().theme != 4 && ms().theme != 5) {
 							fadeSpeed = true; // Fast fading
@@ -1662,11 +1663,18 @@ int main(int argc, char **argv) {
 							for(u32 address=0;address<romSize&&address<0x2000000;address+=0x40000)
 							{
 								expansion().Block_Erase(address);
+								progressBarLength = (address+0x40000)/(romSize/192);
+								if (progressBarLength > 192) progressBarLength = 192;
 							}
 							nor = true;
 						} else if (*(u16*)(0x020000C0) == 0x4353 && romSize > 0x1FFFFFE) {
 							romSize = 0x1FFFFFE;
 						}
+
+						clearText();
+						printSmall(false, 0, 20, STR_BARSTOPPED_CLOSELID, Alignment::center);
+						printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_LOADING, Alignment::center);
+						updateText(false);
 
 						FILE* gbaFile = fopen(filename.c_str(), "rb");
 						for (u32 len = romSize; len > 0; len -= 0x8000) {
