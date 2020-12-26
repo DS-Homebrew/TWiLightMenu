@@ -166,6 +166,13 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			x = ((256 - calcWidth(text)) / 2) + x;
 			break;
 		} case Alignment::right: {
+			size_t newline = text.find('\n');
+			while(newline != text.npos) {
+				print(x - calcWidth(text.substr(0, newline)), y, top, text.substr(0, newline), Alignment::left);
+				text = text.substr(newline + 1);
+				newline = text.find('\n');
+				y += tileHeight;
+			}
 			x = x - calcWidth(text);
 			break;
 		}

@@ -40,7 +40,6 @@
 #include <sys/stat.h>
 #include <vector>
 
-#define LEFT_ALIGN 70
 #define ICON_POS_X 112
 #define ICON_POS_Y 96
 
@@ -718,7 +717,7 @@ static inline void writeDialogTitle(std::u16string text) {
 		}
 	}
 
-	printLarge(false, LEFT_ALIGN, 31 - (lines * largeFontHeight() / 2), text);
+	printLarge(false, ms().rtl() ? 256 - 70 : 70, 31 - (lines * largeFontHeight() / 2), text, ms().rtl() ? Alignment::right : Alignment::left);
 }
 
 const char *lastName;

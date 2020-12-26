@@ -75,6 +75,7 @@ public:
 		ELangUkrainian = 15,
 		ELangHungarian = 16,
 		ELangNorwegian = 17,
+		ELangHebrew = 18,
 	};
 
 	enum TRunIn
@@ -144,6 +145,10 @@ public:
 	void saveSettings();
 
 	TLanguage getGuiLanguage();
+
+	// Get if the current language is right to left
+	bool rtl();
+
 	const char* getAppName();
 public:
 	std::string romfolder[2];

@@ -166,21 +166,80 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			x = ((256 - calcWidth(text)) / 2) + x;
 			break;
 		} case Alignment::right: {
+			size_t newline = text.find('\n');
+			while(newline != text.npos) {
+				print(x - calcWidth(text.substr(0, newline)), y, top, text.substr(0, newline), Alignment::left);
+				text = text.substr(newline + 1);
+				newline = text.find('\n');
+				y += tileHeight;
+			}
 			x = x - calcWidth(text);
 			break;
 		}
 	}
 	const int xStart = x;
 
+	bool rtl = false;
+	for(const auto c : text) {
+		if(c >= 0x0590 && c <= 0x05FF) {
+			rtl = true;
+			break;
+		}
+	}
+	auto ltrBegin = text.end(), ltrEnd = text.end();
+
 	// Loop through string and print it
-	for(auto c : text) {
-		if(c == '\n') {
+	for(auto it = (rtl ? text.end() - 1 : text.begin()); true; it += (rtl ? -1 : 1)) {
+		if(it == (rtl ? text.begin() - 1 : text.end())) {
+			if(ltrBegin == text.end()) {
+				break;
+			} else {
+				it = ltrBegin;
+				ltrBegin = text.end();
+				rtl = true;
+			}
+		}
+
+		if(it == ltrEnd && ltrBegin != text.end()) {
+			if(ltrBegin == text.begin())
+				break;
+
+			it = ltrBegin;
+			ltrBegin = text.end();
+			rtl = true;
+		} else if (rtl && ((*it < 0x0590 || *it > 0x05FF) && (*it >= '0' && (*it <= 'Z' || *it >= 'a')))) {
+			ltrEnd = it + 1;
+			while(((*it < 0x0590 || *it > 0x05FF) || ((*it < '0' || (*it > 'Z' && *it < 'a')) && (*(it - 1) < 0x0590 && *(it - 1) > 0x05FF))) && it != text.begin())
+				it--;
+			ltrBegin = it;
+			if(it != text.begin())
+				it++;
+			while((*it < '0' || (*it > 'Z' && *it < 'a')) && it != text.begin()) {
+				it++;
+				ltrBegin++;
+			}
+			rtl = false;
+		}
+
+		if(*it == '\n') {
 			x = xStart;
 			y += tileHeight;
 			continue;
 		}
 
-		u16 index = getCharIndex(c);
+		u16 index = getCharIndex(*it);
+
+		if(rtl) {
+			if(*it == '(')
+				index = getCharIndex(')');
+			else if(*it == ')')
+				index = getCharIndex('(');
+			else if(*it == '[')
+				index = getCharIndex(']');
+			else if(*it == ']')
+				index = getCharIndex('[');
+		}
+
 		// Don't draw off screen chars
 		if(x >= 0 && x < 256 && y >= 0 && y < 192 - tileHeight) {
 			u8 *dst = textBuf[top] + x + fontWidths[(index * 3)];
@@ -188,7 +247,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 				for(int j = 0; j < tileWidth; j++) {
 					u8 px = fontTiles[(index * tileSize) + (i * tileWidth + j) / 4] >> ((3 - ((i * tileWidth + j) % 4)) * 2) & 3;
 					if(px)
-						dst[(y + i) * 256 + j] = px + 0xF8;
+						dst[(y + i) * 256 + j] = px;
 				}
 			}
 		}

@@ -83,6 +83,7 @@ enum TLanguage {
 	ELangUkrainian = 15,
 	ELangHungarian = 16,
 	ELangNorwegian = 17,
+	ELangHebrew = 18,
 };
 
 bool fadeType = false;		// false = out, true = in
@@ -117,12 +118,17 @@ int launcherApp = -1;
 int sysRegion = -1;
 
 int guiLanguage = -1;
+bool rtl = false;
 
 bool sdRemoveDetect = true;
 
 std::vector<DirEntry> manPagesList;
 std::vector<PageLink> manPageLinks;
 std::string manPageTitle;
+
+int manPageTitleX = 4;
+Alignment manPageTitleAlign = Alignment::left;
+
 int pageYpos = 0;
 int pageYsize = 0;
 
@@ -440,6 +446,11 @@ int main(int argc, char **argv) {
 
 	int userLanguage = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 	int setLanguage = (guiLanguage == -1) ? userLanguage : guiLanguage;
+	bool rtl = guiLanguage == ELangHebrew;
+	if(rtl) {
+		manPageTitleX = 256 - manPageTitleX;
+		manPageTitleAlign = Alignment::right;
+	}
 
 	switch (setLanguage) {
 		case ELangJapanese:
@@ -497,13 +508,16 @@ int main(int argc, char **argv) {
 		case ELangNorwegian:
 			chdir("nitro:/pages/norwegian/");
 			break;
+		case ELangHeBrew:
+			chdir("nitro:/pages/hebrew/");
+			break;
 	}
 
 	loadPageList();
 	loadPageInfo(manPagesList[0].name.substr(0,manPagesList[0].name.length()-3) + "ini");
 	pageLoad(manPagesList[0].name);
 	topBarLoad();
-	printSmall(true, 4, 0, manPageTitle);
+	printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 
 	int pressed = 0;
 	int held = 0;
@@ -532,7 +546,7 @@ int main(int argc, char **argv) {
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
 				pageLoad(manPagesList[currentPage].name);
 				clearText(true);
-				printSmall(true, 4, 0, manPageTitle);
+				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 			}
 		} else if (held & KEY_UP) {
 			pageYpos -= 4;
@@ -549,7 +563,7 @@ int main(int argc, char **argv) {
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
 				pageLoad(manPagesList[currentPage].name);
 				clearText(true);
-				printSmall(true, 4, 0, manPageTitle);
+				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 			}
 		} else if (repeat & KEY_RIGHT) {
 			if(currentPage < (int)manPagesList.size()-1) {
@@ -558,7 +572,7 @@ int main(int argc, char **argv) {
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
 				pageLoad(manPagesList[currentPage].name);
 				clearText(true);
-				printSmall(true, 4, 0, manPageTitle);
+				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 			}
 		} else if (pressed & KEY_TOUCH) {
 			touchPosition touchStart = touch;
@@ -629,7 +643,7 @@ int main(int argc, char **argv) {
 						loadPageInfo(manPageLinks[i].dest + ".ini");
 						pageLoad(manPagesList[currentPage].name);
 						clearText(true);
-						printSmall(true, 4, 0, manPageTitle);
+						printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 					}
 				}
 			}

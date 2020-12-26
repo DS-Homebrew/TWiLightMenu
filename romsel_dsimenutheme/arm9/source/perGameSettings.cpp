@@ -481,149 +481,153 @@ void perGameSettings (std::string filename) {
 		clearText();
 		titleUpdate(isDirectory[CURPOS], filename.c_str(), CURPOS);
 
-		printSmall(false, 16, row1Y, dirContName);
+		int perGameOpYpos = (ms().theme==5 ? 110 : 98);
+		Alignment startAlign = ms().rtl() ? Alignment::right : Alignment::left;
+		Alignment endAlign = ms().rtl() ? Alignment::left : Alignment::right;
+		int perGameOpStartXpos = ms().rtl() ? 256 - 24 : 24;
+		int perGameOpEndXpos = ms().rtl() ? 24 : 256 - 24;
+
+		printSmall(false, ms().rtl() ? 256 - 16 : 16, row1Y, dirContName, startAlign);
 		//if (showSDKVersion) printSmall(false, 16, row2Y, (useTwlCfg ? "TwlCfg found!" : SDKnumbertext));
 		if (showSDKVersion) printSmall(false, 16, row2Y, SDKnumbertext);
 		printSmall(false, 176, row2Y, gameTIDText);
 		printSmall(false, 16, botRowY, fileCounter);
 
-		int perGameOpYpos = (ms().theme==5 ? 110 : 98);
-
 		if (showPerGameSettings) {
-			printSmall(false, 16, perGameOpYpos+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ">");
+			printSmall(false, ms().rtl() ? 256 - 16 : 16, perGameOpYpos+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ms().rtl() ? "<" : ">", startAlign);
 		}
 		for (int i = firstPerGameOpShown; i < firstPerGameOpShown+4; i++) {
 		if (!showPerGameSettings || perGameOp[i] == -1) break;
 		switch (perGameOp[i]) {
 			case 0:
-				printSmall(false, 24, perGameOpYpos, STR_LANGUAGE + ":");
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_LANGUAGE + ":", startAlign);
 				if (perGameSettings_language == -2) {
-					printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_language == -1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_SYSTEM, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SYSTEM, endAlign);
 				} else if (perGameSettings_language == 0) {
-					printSmall(false, 256-24, perGameOpYpos, STR_JAPANESE, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_JAPANESE, endAlign);
 				} else if (perGameSettings_language == 1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_ENGLISH, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ENGLISH, endAlign);
 				} else if (perGameSettings_language == 2) {
-					printSmall(false, 256-24, perGameOpYpos, STR_FRENCH, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_FRENCH, endAlign);
 				} else if (perGameSettings_language == 3) {
-					printSmall(false, 256-24, perGameOpYpos, STR_GERMAN, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_GERMAN, endAlign);
 				} else if (perGameSettings_language == 4) {
-					printSmall(false, 256-24, perGameOpYpos, STR_ITALIAN, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ITALIAN, endAlign);
 				} else if (perGameSettings_language == 5) {
-					printSmall(false, 256-24, perGameOpYpos, STR_SPANISH, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SPANISH, endAlign);
 				} else if (perGameSettings_language == 6) {
-					printSmall(false, 256-24, perGameOpYpos, STR_CHINESE, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_CHINESE, endAlign);
 				} else if (perGameSettings_language == 7) {
-					printSmall(false, 256-24, perGameOpYpos, STR_KOREAN, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_KOREAN, endAlign);
 				}
 				break;
 			case 1:
 				if (isHomebrew[CURPOS]) {
-					printSmall(false, 24, perGameOpYpos, STR_RAM_DISK + ":");
+					printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_RAM_DISK + ":", startAlign);
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_ramDiskNo);
 				} else {
-					printSmall(false, 24, perGameOpYpos, STR_SAVE_NO + ":");
+					printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SAVE_NO + ":", startAlign);
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_saveNo);
 				}
 				if (isHomebrew[CURPOS] && perGameSettings_ramDiskNo == -1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_NONE, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NONE, endAlign);
 				} else {
-					printSmall(false, 256-24, perGameOpYpos, saveNoDisplay, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, saveNoDisplay, endAlign);
 				}
 				break;
 			case 2:
-				printSmall(false, 24, perGameOpYpos, STR_RUN_IN + ":");
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_RUN_IN + ":", startAlign);
 				if (perGameSettings_dsiMode == -1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_dsiMode == 2) {
-					printSmall(false, 256-24, perGameOpYpos, STR_DSI_MODE_FORCED, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DSI_MODE_FORCED, endAlign);
 				} else if (perGameSettings_dsiMode == 1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_DSI_MODE, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DSI_MODE, endAlign);
 				} else {
-					printSmall(false, 256-24, perGameOpYpos, STR_DS_MODE, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DS_MODE, endAlign);
 				}
 				break;
 			case 3:
-				printSmall(false, 24, perGameOpYpos, STR_ARM9_CPU_SPEED + ":");
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_ARM9_CPU_SPEED + ":", startAlign);
 				if (perGameSettings_dsiMode > 0 && (isDSiMode() || !ms().secondaryDevice)) {
-					printSmall(false, 256-24, perGameOpYpos, "133mhz (TWL)", Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "133mhz (TWL)", endAlign);
 				} else {
 					if (perGameSettings_boostCpu == -1) {
-						printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 					} else if (perGameSettings_boostCpu == 1) {
-						printSmall(false, 256-24, perGameOpYpos, "133mhz (TWL)", Alignment::right);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, "133mhz (TWL)", endAlign);
 					} else {
-						printSmall(false, 256-24, perGameOpYpos, "67mhz (NTR)", Alignment::right);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, "67mhz (NTR)", endAlign);
 					}
 				}
 				break;
 			case 4:
-				printSmall(false, 24, perGameOpYpos, STR_VRAM_BOOST + ":");
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_VRAM_BOOST + ":", startAlign);
 				if (perGameSettings_dsiMode > 0 && (isDSiMode() || !ms().secondaryDevice)) {
-					printSmall(false, 256-24, perGameOpYpos, STR_ON, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
 				} else {
 					if (perGameSettings_boostVram == -1) {
-						printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 					} else if (perGameSettings_boostVram == 1) {
-						printSmall(false, 256-24, perGameOpYpos, STR_ON, Alignment::right);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
 					} else {
-						printSmall(false, 256-24, perGameOpYpos, STR_OFF, Alignment::right);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
 					}
 				}
 				break;
 			case 5:
-				printSmall(false, 24, perGameOpYpos, STR_HEAP_SHRINK + ":");
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_HEAP_SHRINK + ":", startAlign);
 				if (perGameSettings_heapShrink == -1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_AUTO, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_AUTO, endAlign);
 				} else if (perGameSettings_heapShrink == 1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_ON, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
 				} else {
-					printSmall(false, 256-24, perGameOpYpos, STR_OFF, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
 				}
 				break;
 			case 6:
-				printSmall(false, 24, perGameOpYpos, STR_DIRECT_BOOT + ":");
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_DIRECT_BOOT + ":", startAlign);
 				if (perGameSettings_directBoot) {
-					printSmall(false, 256-24, perGameOpYpos, STR_YES, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_YES, endAlign);
 				} else {
-					printSmall(false, 256-24, perGameOpYpos, STR_NO, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign);
 				}
 				break;
 			case 7:
-				printSmall(false, 24, perGameOpYpos, "Bootstrap:");
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, "Bootstrap:", startAlign);
 				if (perGameSettings_bootstrapFile == -1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_bootstrapFile == 1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_NIGHTLY, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NIGHTLY, endAlign);
 				} else {
-					printSmall(false, 256-24, perGameOpYpos, STR_RELEASE, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_RELEASE, endAlign);
 				}
 				break;
 			case 8:
-				printSmall(false, 24, perGameOpYpos, STR_SCREEN_ASPECT_RATIO + ":");
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SCREEN_ASPECT_RATIO + ":", startAlign);
 				if (perGameSettings_wideScreen == -1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_wideScreen == 1) {
-					printSmall(false, 256-24, perGameOpYpos, "16:10", Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "16:10", endAlign);
 				} else {
-					printSmall(false, 256-24, perGameOpYpos, "4:3", Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "4:3", endAlign);
 				}
 				break;
 			case 9:
 				printSmall(false, 0, perGameOpYpos, setAsDonorRom, Alignment::center);
 				break;
 			case 10:
-				printSmall(false, 24, perGameOpYpos, STR_EXPAND_ROM_SPACE + ":");
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_EXPAND_ROM_SPACE + ":", startAlign);
 				if (perGameSettings_expandRomSpace == -1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_expandRomSpace == 2) {
-					printSmall(false, 256-24, perGameOpYpos, "Y+512KB", Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Y+512KB", endAlign);
 				} else if (perGameSettings_expandRomSpace == 1) {
-					printSmall(false, 256-24, perGameOpYpos, STR_YES, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_YES, endAlign);
 				} else {
-					printSmall(false, 256-24, perGameOpYpos, STR_NO, Alignment::right);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign);
 				}
 				break;
 		}

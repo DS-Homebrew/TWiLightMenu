@@ -1340,29 +1340,31 @@ bool selectMenu(void) {
 	int pressed = 0;
 	while (1) {
 		int textYpos = selIconYpos + 4;
+		int textXpos = ms().rtl() ? 256 - 64 : 64;
+		Alignment align = ms().rtl() ? Alignment::right : Alignment::left;
 		clearText();
 		printSmall(false, 0, (ms().theme == 4 ? 8 : 16), STR_SELECT_MENU, Alignment::center);
-		printSmall(false, 24, -2 + textYpos + (28 * selCursorPosition), ">");
+		printSmall(false, ms().rtl() ? 256 - 24: 24, -2 + textYpos + (28 * selCursorPosition), ms().rtl() ? "<" : ">", align);
 		for (int i = 0; i <= maxCursors; i++) {
 			if (assignedOp[i] == 0) {
-				printSmall(false, 64, textYpos, (ms().consoleModel < 2) ? STR_DSI_MENU : STR_3DS_HOME_MENU);
+				printSmall(false, textXpos, textYpos, (ms().consoleModel < 2) ? STR_DSI_MENU : STR_3DS_HOME_MENU, align);
 			} else if (assignedOp[i] == 1) {
-				printSmall(false, 64, textYpos, STR_TWLMENU_SETTINGS);
+				printSmall(false, textXpos, textYpos, STR_TWLMENU_SETTINGS, align);
 			} else if (assignedOp[i] == 2) {
 				if (bothSDandFlashcard()) {
 					if (ms().secondaryDevice) {
-						printSmall(false, 64, textYpos, ms().showMicroSd ? STR_SWITCH_TO_MICRO_SD : STR_SWITCH_TO_SD);
+						printSmall(false, textXpos, textYpos, ms().showMicroSd ? STR_SWITCH_TO_MICRO_SD : STR_SWITCH_TO_SD, align);
 					} else {
-						printSmall(false, 64, textYpos, STR_SWITCH_TO_SLOT_1);
+						printSmall(false, textXpos, textYpos, STR_SWITCH_TO_SLOT_1, align);
 					}
 				} else if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
-					printSmall(false, 64, textYpos, (REG_SCFG_MC == 0x11) ? STR_NO_SLOT_1 : STR_LAUNCH_SLOT_1);
+					printSmall(false, textXpos, textYpos, (REG_SCFG_MC == 0x11) ? STR_NO_SLOT_1 : STR_LAUNCH_SLOT_1, align);
 				}
 			} else if (assignedOp[i] == 3) {
-				printSmall(false, 64, textYpos,
-					   /*ms().useGbarunner ? "Start GBARunner2" :*/ "Start GBA Mode");
+				printSmall(false, textXpos, textYpos,
+					   /*ms().useGbarunner ? "Start GBARunner2" :*/ "Start GBA Mode", align);
 			} else if (assignedOp[i] == 4) {
-				printSmall(false, 64, textYpos, STR_OPEN_MANUAL);
+				printSmall(false, textXpos, textYpos, STR_OPEN_MANUAL, align);
 			}
 			textYpos += 28;
 		}
