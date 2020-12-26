@@ -222,19 +222,21 @@ void SettingsGUI::drawSub()
     int selected = _subOption->selected();
 
     if(currentLanguage == TWLSettings::ELangHebrew) {
+        printLarge(false, SCREEN_WIDTH - 6, 1, _subOption->displayName().c_str(), Alignment::right);
         for (int i = _subTopCursor; i < _subBottomCursor; i++)
         {
             if (i == selected)
             {
-                printSmall(false, 4, 29 + (i - _subTopCursor) * 14, "<", Alignment::right);
+                printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _subTopCursor) * 14, "<", Alignment::right);
 
                 // print scroller on the other side
-                drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1), true);
+                drawScroller(30 + i * CURSOR_HEIGHT / _subOption->labels().size() + 1, (CURSOR_HEIGHT / _subOption->labels().size() + 1), true);
             }
 
             printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str(), Alignment::right);
         }
     } else {
+        printLarge(false, 6, 1, _subOption->displayName().c_str());
         for (int i = _subTopCursor; i < _subBottomCursor; i++)
         {
             if (i == selected)
@@ -242,14 +244,13 @@ void SettingsGUI::drawSub()
                 printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
 
                 // print scroller on the other side
-                drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1), false);
+                drawScroller(30 + i * CURSOR_HEIGHT / _subOption->labels().size() + 1, (CURSOR_HEIGHT / _subOption->labels().size() + 1), false);
             }
 
             printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
         }
     }
 
-    printLarge(false, 6, 1, _subOption->displayName().c_str());
     printSmall(false, 0, 173, "TWiLight Menu++", Alignment::center);
 }
 
