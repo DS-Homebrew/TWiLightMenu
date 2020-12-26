@@ -508,7 +508,7 @@ int main(int argc, char **argv) {
 		case ELangNorwegian:
 			chdir("nitro:/pages/norwegian/");
 			break;
-		case ELangHeBrew:
+		case ELangHebrew:
 			chdir("nitro:/pages/hebrew/");
 			break;
 	}
