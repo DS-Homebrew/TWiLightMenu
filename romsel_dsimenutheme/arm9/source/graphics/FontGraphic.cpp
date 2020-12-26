@@ -173,9 +173,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 				newline = text.find('\n');
 				y += tileHeight;
 			}
-			nocashMessage(("calc " + std::to_string(calcWidth(text))).c_str());
 			x = x - calcWidth(text);
-			nocashMessage(("x " + std::to_string(x)).c_str());
 			break;
 		}
 	}
@@ -192,6 +190,8 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 
 	// Loop through string and print it
 	for(auto it = (rtl ? text.end() - 1 : text.begin()); true; it += (rtl ? -1 : 1)) {
+		// If we hit the end of the string in an LTR section of an RTL
+		// string, it may not be done, if so jump back to printing RTL
 		if(it == (rtl ? text.begin() - 1 : text.end())) {
 			if(ltrBegin == text.end()) {
 				break;
@@ -202,6 +202,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			}
 		}
 
+		// If at the end of an LRT section within RTL, jump back to the RTL
 		if(it == ltrEnd && ltrBegin != text.end()) {
 			if(ltrBegin == text.begin())
 				break;
@@ -209,13 +210,19 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			it = ltrBegin;
 			ltrBegin = text.end();
 			rtl = true;
+		// If in RTL and hit a non-RTL character that's not punctuation, switch to LTR
 		} else if (rtl && ((*it < 0x0590 || *it > 0x05FF) && (*it >= '0' && (*it <= 'Z' || *it >= 'a')))) {
+			// Save where we are as the end of the LTR section
 			ltrEnd = it + 1;
-			while(((*it < 0x0590 || *it > 0x05FF) || ((*it < '0' || (*it > 'Z' && *it < 'a')) && (*(it - 1) < 0x0590 && *(it - 1) > 0x05FF))) && it != text.begin())
+			// Go back until an RTL character or the start of the string
+			while((*it < 0x0590 || *it > 0x05FF) && it != text.begin())
 				it--;
+			// Save where we are to return to after printing the LTR section
 			ltrBegin = it;
+			// If not at the start, then we're on the first RTL right now, so add one
 			if(it != text.begin())
 				it++;
+			// Skip all punctuation at the end
 			while((*it < '0' || (*it > 'Z' && *it < 'a')) && it != text.begin()) {
 				it++;
 				ltrBegin++;
@@ -231,6 +238,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 
 		u16 index = getCharIndex(*it);
 
+		// Brackets are flipped in RTL
 		if(rtl) {
 			if(*it == '(')
 				index = getCharIndex(')');
