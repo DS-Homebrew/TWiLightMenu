@@ -128,12 +128,12 @@ void copyPalette(u16 *dst, const u16 *src, int size) {
 }
 
 // TODO: If adding sprites, this would work better as one
-void drawScroller(int y, int h) {
+void drawScroller(int y, int h, bool onLeft) {
 	// Reset layer
 	dmaCopyWords(0, currentTheme == 4 ? saturn_bgBitmap : sub_bgBitmap , bgGetGfxPtr(7), sub_bgBitmapLen);
 
 	const u8 scroller[4] = {2, 3, 3, 2};
-	u8 *dst = (u8*)bgGetGfxPtr(7) + 250;
+	u8 *dst = (u8*)bgGetGfxPtr(7) + (onLeft ? 2 : 250);
 	toncset16(dst + y * 256, 2 | 2 << 8, 2);
 	for(int i = 1; i < h - 1; i++) {
 		tonccpy(dst + (y + i) * 256, scroller, sizeof(scroller));

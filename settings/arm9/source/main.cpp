@@ -49,6 +49,7 @@ bool widescreenEffects = false;
 const char *settingsinipath = DSIMENUPP_INI;
 
 int currentTheme = 0;
+int currentLanguage = 0;
 static int previousDSiWareExploit = 0;
 static int previousSysRegion = 0;
 
@@ -686,6 +687,7 @@ int main(int argc, char **argv)
 	}
 
 	currentTheme = ms().theme;
+	currentLanguage = ms().guiLanguage;
 	previousDSiWareExploit = ms().dsiWareExploit;
 	previousSysRegion = ms().sysRegion;
 
@@ -957,6 +959,7 @@ int main(int argc, char **argv)
 				 "Türkçe",
 				 "Русский",
 				 "Українська",
+				 "עברית",
 				 "中文 (简体)",
 				 "中文 (繁體)",
 				 "日本語",
@@ -976,6 +979,7 @@ int main(int argc, char **argv)
 				 TLanguage::ELangTurkish,
 				 TLanguage::ELangRussian,
 				 TLanguage::ELangUkrainian,
+				 TLanguage::ELangHebrew,
 				 TLanguage::ELangChineseS,
 				 TLanguage::ELangChineseT,
 				 TLanguage::ELangJapanese,

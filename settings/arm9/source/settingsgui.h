@@ -20,22 +20,24 @@ public:
         _subOption(nullptr),
         _exitCallback(nullptr)
   {
-
-	// Read nds-bootstrap version
-	FILE* bsVerFile;
-	for (int i = 0; i < 2; i++) {
-		snprintf(bsVerText[i], sizeof(bsVerText[i]), "%s", "No version available    ");
-		if (i == 1) {
-			bsVerFile = fopen("/_nds/TWiLightMenu/nightly-bootstrap.ver", "rb");
-		} else {
-			bsVerFile = fopen("/_nds/TWiLightMenu/release-bootstrap.ver", "rb");
-		}
-		if (bsVerFile) {
-			snprintf(bsVerText[i], sizeof(bsVerText[i]), "%s", "                        ");
-			fread(bsVerText[i], 1, 19, bsVerFile);
-		}
-		fclose(bsVerFile);
-	}
+    // Read nds-bootstrap version
+    FILE* bsVerFile;
+    for (int i = 0; i < 2; i++) {
+      if (i == 1) {
+        bsVerFile = fopen("/_nds/TWiLightMenu/nightly-bootstrap.ver", "rb");
+      } else {
+        bsVerFile = fopen("/_nds/TWiLightMenu/release-bootstrap.ver", "rb");
+      }
+      if (bsVerFile) {
+        fseek(bsVerFile, 0, SEEK_END);
+        uint len = ftell(bsVerFile);
+        fseek(bsVerFile, 0, SEEK_SET);
+        fread(bsVerText[i], 1, std::max(len, sizeof(bsVerText[i]) - 1), bsVerFile);
+      } else {
+        snprintf(bsVerText[i], sizeof(bsVerText[i]), "%s", "No version available");
+      }
+      fclose(bsVerFile);
+    }
   }
   ~SettingsGUI() {}
 
@@ -229,7 +231,7 @@ private:
 
   std::function<void(void)> _exitCallback;
 
-  char bsVerText[2][25];
+  char bsVerText[2][25] = {{0}, {0}};
 };
 
 typedef singleton<SettingsGUI> settingsGui_s;
