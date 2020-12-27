@@ -952,7 +952,7 @@ int main(int argc, char **argv)
 				 "Français",
 				 "Italiano",
 				 "Magyar",
-				 "Norsk bokmål",
+				 "Norsk",
 				 "Polski",
 				 "Português",
 				 "Svenska",
