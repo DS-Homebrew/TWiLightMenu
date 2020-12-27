@@ -211,7 +211,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			ltrBegin = text.end();
 			rtl = true;
 		// If in RTL and hit a non-RTL character that's not punctuation, switch to LTR
-		} else if (rtl && ((*it < 0x0590 || *it > 0x05FF) && (*it >= '0' && (*it <= 'Z' || *it >= 'a')))) {
+		} else if (rtl && ((*it < 0x0590 || *it > 0x05FF) && ((*it >= '0' && *it <= '9') || (*it >= 'A' && *it <= 'Z') || (*it >= 'a' && *it <= 'z') || *it >= 127))) {
 			// Save where we are as the end of the LTR section
 			ltrEnd = it + 1;
 			// Go back until an RTL character or the start of the string
@@ -222,8 +222,8 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			// If not at the start, then we're on the first RTL right now, so add one
 			if(it != text.begin())
 				it++;
-			// Skip all punctuation at the end
-			while((*it < '0' || (*it > 'Z' && *it < 'a')) && it != text.begin()) {
+			// Skip all punctuation at the end if not at beginning
+			while(it != text.begin() && (*it < '0' || (*it > '9' && *it < 'A') || (*it > 'Z' && *it < 'a') || (*it > 'z' && *it < 127))) {
 				it++;
 				ltrBegin++;
 			}
