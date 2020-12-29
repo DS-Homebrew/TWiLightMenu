@@ -93,9 +93,6 @@ jobs:
           # version.txt
           printf "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(jq --raw-output '.tag_name' nds-bootstrap.json)\n\nRocketRobz, ahezard\n" > 7zfile/version.txt
 
-          # Really dumb hidden file that for some reason fixes the releases
-          touch 7zfile/.ignoreme
-
           # Main 7z
           cp -r 7zfile TWiLightMenu
           cd TWiLightMenu
