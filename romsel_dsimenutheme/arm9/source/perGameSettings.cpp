@@ -596,7 +596,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 7:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, "Bootstrap:", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, ms().rtl() ? ":Bootstrap" : "Bootstrap:", startAlign);
 				if (perGameSettings_bootstrapFile == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_bootstrapFile == 1) {
