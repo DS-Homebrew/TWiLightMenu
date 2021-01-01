@@ -264,7 +264,7 @@ std::string CheatCodelist::getCheats()
   return cheats;
 }
 
-void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& list, uint curPos, uint screenPos) {
+void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& list, uint curPos, uint screenPos, uint scrollPos) {
   // Print Cheats at the top
   printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
 
@@ -294,13 +294,13 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& lis
   for(uint i=0;i<8 && i<list.size();i++) {
     if(list[screenPos+i]->_flags&cParsedItem::EFolder) {
       printSmall(false, (ms().rtl() ? 256 - 15 : 15) + ((screenPos+i == curPos) ? 5 * rtlNegative : 0), 60+(i*12), ms().rtl() ? "<" : ">", align);
-      printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title, align);
+      printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title.substr((screenPos+i == curPos) ? scrollPos : 0, 30), align);
     } else {
       if(list[screenPos+i]->_flags&cParsedItem::ESelected) {
         printSmall(false, (ms().rtl() ? 256 - 13 : 13), 60+(i*12), "x", align);
       }
       printSmall(false, (ms().rtl() ? 256 - 21 : 21) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), "-", align);
-      printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 7 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title, align);
+      printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 7 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title.substr((screenPos+i == curPos) ? scrollPos : 0, 30), align);
     }
   }
 }
@@ -358,7 +358,9 @@ void CheatCodelist::selectCheats(std::string filename)
   }
 
   int mainListCurPos = -1, mainListScreenPos = -1,
-      cheatWnd_cursorPosition = 0, cheatWnd_screenPosition = 0;
+      cheatWnd_cursorPosition = 0, cheatWnd_screenPosition = 0,
+      cheatWnd_scrollPosition = 0, cheatWnd_scrollTimer = 0,
+      cheatWnd_scrollDirection = 1;
 
   while(cheatsFound) {
     // Scroll screen if needed
@@ -369,8 +371,8 @@ void CheatCodelist::selectCheats(std::string filename)
     }
 
     clearText();
-    drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition);
-	updateText(false);
+    drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition, cheatWnd_scrollPosition);
+    updateText(false);
 
     do {
       scanKeys();
@@ -383,6 +385,24 @@ void CheatCodelist::selectCheats(std::string filename)
       drawCurrentDate();
       drawClockColon();
       snd().updateStream();
+      if(currentList[cheatWnd_cursorPosition]->_title.length() > 30u) {
+        if(cheatWnd_scrollTimer > 0) {
+          cheatWnd_scrollTimer--;
+        } else {
+          if((cheatWnd_scrollDirection == 1 && cheatWnd_scrollPosition < (int)currentList[cheatWnd_cursorPosition]->_title.length() - 30)
+          || (cheatWnd_scrollDirection == -1 && cheatWnd_scrollPosition > 0)) {
+            cheatWnd_scrollPosition += cheatWnd_scrollDirection;
+            cheatWnd_scrollTimer = 6;
+          } else {
+            cheatWnd_scrollDirection *= -1;
+            cheatWnd_scrollTimer = 120;
+          }
+
+          clearText();
+          drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition, cheatWnd_scrollPosition);
+          updateText(false);
+        }
+      }
       swiWaitForVBlank();
     } while(!pressed && !held);
 
@@ -390,18 +410,30 @@ void CheatCodelist::selectCheats(std::string filename)
       if(cheatWnd_cursorPosition>0) {
         snd().playSelect();
         cheatWnd_cursorPosition--;
+        cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
       }
     } else if(held & KEY_DOWN) {
       if(cheatWnd_cursorPosition<((int)currentList.size()-1)) {
         snd().playSelect();
         cheatWnd_cursorPosition++;
+        cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
       }
     } else if(held & KEY_LEFT) {
       snd().playSelect();
-      cheatWnd_cursorPosition -= (cheatWnd_cursorPosition > 8 ? 8 : cheatWnd_cursorPosition);
+      if(cheatWnd_cursorPosition != 0) {
+        cheatWnd_cursorPosition -= (cheatWnd_cursorPosition > 8 ? 8 : cheatWnd_cursorPosition);
+        cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
+      }
     } else if(held & KEY_RIGHT) {
       snd().playSelect();
-      cheatWnd_cursorPosition += (cheatWnd_cursorPosition < (int)(currentList.size()-8) ? 8 : currentList.size()-cheatWnd_cursorPosition-1);
+      if(cheatWnd_cursorPosition != (int)currentList.size() - 1) {
+        cheatWnd_cursorPosition += (cheatWnd_cursorPosition < (int)(currentList.size()-8) ? 8 : currentList.size()-cheatWnd_cursorPosition-1);
+        cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
+      }
     } else if(pressed & KEY_A) {
       (ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
       if(currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
@@ -413,6 +445,8 @@ void CheatCodelist::selectCheats(std::string filename)
         mainListCurPos = cheatWnd_cursorPosition;
         mainListScreenPos = cheatWnd_screenPosition;
         cheatWnd_cursorPosition = 0;
+        cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
       } else {
         cParsedItem &cheat = *currentList[cheatWnd_cursorPosition];
         bool select = !(cheat._flags & cParsedItem::ESelected);
@@ -433,6 +467,8 @@ void CheatCodelist::selectCheats(std::string filename)
         cheatWnd_cursorPosition = mainListCurPos;
         cheatWnd_screenPosition = mainListScreenPos;
         mainListCurPos = -1;
+        cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
       } else {
         break;
       }
@@ -493,7 +529,7 @@ void CheatCodelist::selectCheats(std::string filename)
         // Print 'Back' text
         printSmall(false, 0, 160, STR_B_BACK, Alignment::center);
 
-		updateText(false);
+        updateText(false);
         while(1) {
           scanKeys();
           pressed = keysDown();
