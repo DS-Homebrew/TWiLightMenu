@@ -71,7 +71,7 @@ private:
 
   std::string nextToken (FILE* fp, TOKEN_TYPE& tokenType);
 
-  void drawCheatList(std::vector<CheatCodelist::cParsedItem *>& list, uint curPos, uint screenPos);
+  void drawCheatList(std::vector<CheatCodelist::cParsedItem *>& list, uint curPos, uint screenPos, uint scrollPos);
 };
 
 #endif // CHEAT_H
