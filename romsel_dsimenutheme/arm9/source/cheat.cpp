@@ -395,7 +395,7 @@ void CheatCodelist::selectCheats(std::string filename)
             cheatWnd_scrollTimer = 6;
           } else {
             cheatWnd_scrollDirection *= -1;
-            cheatWnd_scrollTimer = 60;
+            cheatWnd_scrollTimer = 120;
           }
 
           clearText();
