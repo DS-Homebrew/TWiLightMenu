@@ -19,6 +19,7 @@
 
 extern bool fadeType; // false = out, true = in
 extern int currentTheme;
+extern int currentLanguage;
 
 void SettingsGUI::processInputs(int pressed, touchPosition &touch)
 {
@@ -117,23 +118,41 @@ void SettingsGUI::draw()
     clearText();
     drawTopText();
 
-    printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
+    // If the language is set to hebrew, display right to left
+    if(currentLanguage == TWLSettings::ELangHebrew) {
+        printLarge(false, SCREEN_WIDTH - 6, 1, _pages[_selectedPage].title().c_str(), Alignment::right);
 
-    for (int i = _topCursor; i < _bottomCursor; i++)
-    {
-        int selected = _pages[_selectedPage].options()[i].selected();
-        if (i == _selectedOption)
+        for (int i = _topCursor; i < _bottomCursor; i++)
         {
-            printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
-            // print scroller on the other side
-            drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1));
+            int selected = _pages[_selectedPage].options()[i].selected();
+            if (i == _selectedOption)
+            {
+                printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _topCursor) * 14, "<", Alignment::right);
+                // print scroller on the other side
+                drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1), true);
+            }
+
+            printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str(), Alignment::right);
+            if (selected < 0 ) continue;
+            printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
         }
+    } else {
+        printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
 
-        int labelWidth = calcSmallFontWidth(_pages[_selectedPage].options()[i].labels()[selected].c_str());
+        for (int i = _topCursor; i < _bottomCursor; i++)
+        {
+            int selected = _pages[_selectedPage].options()[i].selected();
+            if (i == _selectedOption)
+            {
+                printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
+                // print scroller on the other side
+                drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1), false);
+            }
 
-        printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str());
-        if (selected < 0 ) continue;
-        printSmall(false, SCREEN_WIDTH - 12 - labelWidth, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
+            printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str());
+            if (selected < 0 ) continue;
+            printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str(), Alignment::right);
+        }
     }
 
     // Divide CURSOR_HEIGHT into _subOption->values().size() pieces and get the ith piece.
@@ -202,26 +221,46 @@ void SettingsGUI::drawSub()
     drawTopText();
     int selected = _subOption->selected();
 
-    for (int i = _subTopCursor; i < _subBottomCursor; i++)
-    {
-        if (i == selected)
+    if(currentLanguage == TWLSettings::ELangHebrew) {
+        printLarge(false, SCREEN_WIDTH - 6, 1, _subOption->displayName().c_str(), Alignment::right);
+        for (int i = _subTopCursor; i < _subBottomCursor; i++)
         {
-            printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
+            if (i == selected)
+            {
+                printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _subTopCursor) * 14, "<", Alignment::right);
 
-            // print scroller on the other side
-            drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1));
+                // print scroller on the other side
+                drawScroller(30 + i * CURSOR_HEIGHT / _subOption->labels().size() + 1, (CURSOR_HEIGHT / _subOption->labels().size() + 1), true);
+            }
+
+            printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str(), Alignment::right);
         }
+    } else {
+        printLarge(false, 6, 1, _subOption->displayName().c_str());
+        for (int i = _subTopCursor; i < _subBottomCursor; i++)
+        {
+            if (i == selected)
+            {
+                printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
 
-        printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
+                // print scroller on the other side
+                drawScroller(30 + i * CURSOR_HEIGHT / _subOption->labels().size() + 1, (CURSOR_HEIGHT / _subOption->labels().size() + 1), false);
+            }
+
+            printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
+        }
     }
 
-    printLarge(false, 6, 1, _subOption->displayName().c_str());
     printSmall(false, 0, 173, "TWiLight Menu++", Alignment::center);
 }
 
 void SettingsGUI::drawTopText()
 {
-    printSmall(true, 4, 0, STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile]);
+    if(currentLanguage == TWLSettings::ELangHebrew) {
+        printSmall(true, SCREEN_WIDTH - 4, 0, STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile], Alignment::right);
+    } else {
+        printSmall(true, 4, 0, STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile]);
+    }
     printSmall(true, 256 - 4, 174, VERTEXT, Alignment::right);
     printLarge(true, 0, (currentTheme == 4 ? 96 : 138) - (calcLargeFontHeight(_topText) / 2), _topText, Alignment::center);
 }

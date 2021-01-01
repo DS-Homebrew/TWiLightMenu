@@ -287,17 +287,20 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& lis
     }
   }
 
+  Alignment align = ms().rtl() ? Alignment::right : Alignment::left;
+  int rtlNegative = ms().rtl() ? -1 : 1;
+
   // Print the list
   for(uint i=0;i<8 && i<list.size();i++) {
     if(list[screenPos+i]->_flags&cParsedItem::EFolder) {
-      printSmall(false, 15+((screenPos+i == curPos) ? 5 : 0), 60+(i*12), ">");
-      printSmall(false, 28+((screenPos+i == curPos) ? 4 : 0), 60+(i*12), list[screenPos+i]->_title);
+      printSmall(false, (ms().rtl() ? 256 - 15 : 15) + ((screenPos+i == curPos) ? 5 * rtlNegative : 0), 60+(i*12), ms().rtl() ? "<" : ">", align);
+      printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title, align);
     } else {
       if(list[screenPos+i]->_flags&cParsedItem::ESelected) {
-        printSmall(false, 13, 60+(i*12), "x");
+        printSmall(false, (ms().rtl() ? 256 - 13 : 13), 60+(i*12), "x", align);
       }
-      printSmall(false, 21+((screenPos+i == curPos) ? 4 : 0), 60+(i*12), "-");
-      printSmall(false, 28+((screenPos+i == curPos) ? 7 : 0), 60+(i*12), list[screenPos+i]->_title);
+      printSmall(false, (ms().rtl() ? 256 - 21 : 21) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), "-", align);
+      printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 7 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title, align);
     }
   }
 }

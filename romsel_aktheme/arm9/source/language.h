@@ -76,6 +76,8 @@ private:
       return "lang_hu";
     case TWLSettings::ELangNorwegian:
       return "lang_no";
+    case TWLSettings::ELangHebrew:
+      return "lang_he";
     default:
       return "lang_en";
     }

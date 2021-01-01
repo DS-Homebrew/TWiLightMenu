@@ -1283,10 +1283,11 @@ void vBlankHandler() {
 			// Draw the dialog box.
 			if (ms().theme != 4 && ms().theme != 5) drawDbox();
 			if (dbox_showIcon && !isDirectory[CURPOS]) {
-				drawIcon(24, ((ms().theme == 4 || ms().theme == 5) ? 0 : dbox_Ypos) + 24, CURPOS);
+				drawIcon(ms().rtl() ? 256 - 56 : 24, ((ms().theme == 4 || ms().theme == 5) ? 0 : dbox_Ypos) + 24, CURPOS);
 			}
 			if (dbox_selectMenu) {
 				int selIconYpos = 96;
+				int selIconXpos = ms().rtl() ? 256 - 56 : 32;
 				if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
 					for (int i = 0; i < 4; i++) {
 						selIconYpos -= 14;
@@ -1297,33 +1298,33 @@ void vBlankHandler() {
 					}
 				}
 				if (!sys().isRegularDS()) {
-					glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
+					glSprite(selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 						 &tex().cornerButtonImage()[1]); // System Menu
 					selIconYpos += 28;
 				}
-				glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
+				glSprite(selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 					 &tex().cornerButtonImage()[0]); // Settings
 				selIconYpos += 28;
 				if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
 					if (ms().secondaryDevice) {
-						glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
+						glSprite(selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 							 &tex().smallCartImage()[2]); // SD card
 					} else {
 						glSprite(
-							32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
+							selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 							&tex().smallCartImage()[(REG_SCFG_MC == 0x11) ? 1
 												  : 0]); // Slot-1 card
 					}
 					selIconYpos += 28;
 				}
 				if (sys().isRegularDS() && ms().showGba != 2) {
-				/*	drawSmallIconGBA(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos); // GBARunner2
+				/*	drawSmallIconGBA(selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos); // GBARunner2
 				} else {*/
-					glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
+					glSprite(selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 						 &tex().smallCartImage()[3]); // GBA Mode
 					selIconYpos += 28;
 				}
-				/*glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
+				/*glSprite(selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 					 tex().manualImage());*/ // Manual
 			}
 		}
@@ -1338,18 +1339,25 @@ void vBlankHandler() {
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
 		}
 		if (showProgressIcon && ms().theme != 4) {
-			glSprite(224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
+			glSprite(ms().rtl() ? 16 : 224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
 		}
 		if (showProgressBar) {
-			int barXpos = 19;
+			int barXpos = ms().rtl() ? 256 - 19 : 19;
 			int barYpos = 157;
 			if (ms().theme == 4) {
-				barXpos += 12;
+				barXpos += ms().rtl() ? -12 : 12;
 				barYpos += 12;
 			}
-			glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, RGB15(23, 23, 23));
-			if (progressBarLength > 0) {
-				glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, RGB15(0, 0, 31 - (6 * ms().blfLevel)));
+			if(ms().rtl()) {
+				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, RGB15(23, 23, 23));
+				if (progressBarLength > 0) {
+					glBoxFilled(barXpos, barYpos, barXpos-progressBarLength, barYpos+5, RGB15(0, 0, 31 - (6 * ms().blfLevel)));
+				}
+			} else {
+				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, RGB15(23, 23, 23));
+				if (progressBarLength > 0) {
+					glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, RGB15(0, 0, 31 - (6 * ms().blfLevel)));
+				}
 			}
 		}
 

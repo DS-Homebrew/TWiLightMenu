@@ -21,4 +21,4 @@
 
 void graphicsInit();
 
-void drawScroller(int y, int h);
+void drawScroller(int y, int h, bool onLeft);

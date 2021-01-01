@@ -279,3 +279,8 @@ TWLSettings::TLanguage TWLSettings::getGuiLanguage()
 	}
 	return (TLanguage)guiLanguage;
 }
+
+bool TWLSettings::rtl()
+{
+	return guiLanguage == ELangHebrew;
+}
