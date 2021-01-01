@@ -3250,7 +3250,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 
 			if (held & KEY_SELECT) {
 				bannerTextShown = false;
-				bool runSelectMenu = true;
+				bool runSelectMenu = pressed & KEY_SELECT;
 				bool break2 = false;
 				while (held & KEY_SELECT) {
 					scanKeys();
