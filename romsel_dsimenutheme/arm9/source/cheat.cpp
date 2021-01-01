@@ -392,7 +392,7 @@ void CheatCodelist::selectCheats(std::string filename)
           if((cheatWnd_scrollDirection == 1 && cheatWnd_scrollPosition < (int)currentList[cheatWnd_cursorPosition]->_title.length() - 30)
           || (cheatWnd_scrollDirection == -1 && cheatWnd_scrollPosition > 0)) {
             cheatWnd_scrollPosition += cheatWnd_scrollDirection;
-            cheatWnd_scrollTimer = 10;
+            cheatWnd_scrollTimer = 6;
           } else {
             cheatWnd_scrollDirection *= -1;
             cheatWnd_scrollTimer = 60;
