@@ -492,12 +492,6 @@ void vBlankHandler() {
 		playRotatingCubesVideo();
 	}
 
-	if (boxArtColorDeband) {
-		//ndmaCopyWordsAsynch(0, tex().frameBuffer(secondBuffer), BG_GFX, 0x18000);
-		dmaCopyHalfWordsAsynch(1, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
-		secondBuffer = !secondBuffer;
-	}
-
 		if (fadeType == true) {
 			if (!fadeDelay) {
 				screenBrightness -= 1+(ms().theme<4 && fadeSpeed);
@@ -1459,6 +1453,12 @@ void vBlankHandler() {
 	// }
 	// if (applaunchprep && ms().theme == 0)
 	// 	launchDotDoFrameChange = !launchDotDoFrameChange;
+
+	if (boxArtColorDeband) {
+		//ndmaCopyWordsAsynch(0, tex().frameBuffer(secondBuffer), BG_GFX, 0x18000);
+		dmaCopyHalfWordsAsynch(1, tex().frameBufferBot(secondBuffer), BG_GFX_SUB, 0x18000);
+		secondBuffer = !secondBuffer;
+	}
 
 	bottomBgRefresh(); // Refresh the background image on vblank
 }
