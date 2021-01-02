@@ -114,9 +114,6 @@
 #define TFN_LZ77_RVID_CUBES         TFN_UI_DIRECTORY"/video/3dsRotatingCubes.lz77.rvid"
 #define TFN_LZ77_RVID_CUBES_BW      TFN_UI_DIRECTORY"/video/3dsRotatingCubes_bw.lz77.rvid"
 
-#define TFN_FONT_LARGE              TFN_UI_DIRECTORY"/font/large.nftr"
-#define TFN_FONT_SMALL              TFN_UI_DIRECTORY"/font/small.nftr"
-
 #define TFN_SOUND_EFFECTBANK        TFN_UI_DIRECTORY"/sound/sfx.bin"
 #define TFN_SOUND_BG                TFN_UI_DIRECTORY"/sound/bgm.pcm.raw"
 
@@ -205,10 +202,6 @@
 #define TFN_FALLBACK_GRF_START_BORDER        TFN_FALLBACK_UI_DIRECTORY"/grf/start_border.grf"
 #define TFN_FALLBACK_GRF_START_TEXT          TFN_FALLBACK_UI_DIRECTORY"/grf/start_text.grf"
 #define TFN_FALLBACK_GRF_WIRELESSICONS       TFN_FALLBACK_UI_DIRECTORY"/grf/wirelessicons.grf"
-
-// Fallback fonts not in a theme as the font files are quite large and shared between all defaults
-#define TFN_FALLBACK_FONT_LARGE              "nitro:/graphics/font/large.nftr"
-#define TFN_FALLBACK_FONT_SMALL              "nitro:/graphics/font/small.nftr"
 
 #define TFN_FALLBACK_RVID_CUBES              TFN_FALLBACK_UI_DIRECTORY"/video/3dsRotatingCubes.rvid"
 

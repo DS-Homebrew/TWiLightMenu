@@ -68,6 +68,7 @@ TWLSettings::TWLSettings()
 
     r4_theme = "unused";
     unlaunchBg = "default.gif";
+    font = "default";
 
 	dsiSplash = isDSiMode();
 	nintendoLogoColor = 1;
@@ -156,8 +157,9 @@ void TWLSettings::loadSettings()
     homebrewHasWide = settingsini.GetInt("SRLOADER", "HOMEBREW_HAS_WIDE", homebrewHasWide);
 
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
-	charUnlaunchBg = unlaunchBg.c_str();
-	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
+    charUnlaunchBg = unlaunchBg.c_str();
+    removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
+    font = settingsini.GetString("SRLOADER", "FONT", font);
 
     show12hrClock =  settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 

@@ -28,7 +28,7 @@ public:
 	static std::u16string utf8to16(std::string_view text);
 
 	FontGraphic() {};
-	FontGraphic(const std::string &path, const std::string &fallback);
+	FontGraphic(const std::vector<std::string> &paths);
 
 	u8 height(void) { return tileHeight; }
 

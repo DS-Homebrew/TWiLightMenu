@@ -117,6 +117,8 @@ int theme = 0;
 int launcherApp = -1;
 int sysRegion = -1;
 
+std::string font = "default";
+
 int guiLanguage = -1;
 bool rtl = false;
 
@@ -207,6 +209,8 @@ void LoadSettings(void) {
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 	showSelectMenu = settingsini.GetInt("SRLOADER", "SHOW_SELECT_MENU", 0);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
+
+	font = settingsini.GetString("SRLOADER", "FONT", font);
 
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);

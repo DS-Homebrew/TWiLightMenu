@@ -4,10 +4,12 @@
 
 u8 FontGraphic::textBuf[2][256 * 192];
 
-FontGraphic::FontGraphic(const std::string &path, const std::string &fallback) {
-	FILE *file = fopen(path.c_str(), "rb");
-	if(!file) {
-		file = fopen(fallback.c_str(), "rb");
+FontGraphic::FontGraphic(const std::vector<std::string> &paths) {
+	FILE *file = nullptr;
+	for(const auto &path : paths) {
+		file = fopen(path.c_str(), "rb");
+		if(file)
+			break;
 	}
 
 	if(file) {

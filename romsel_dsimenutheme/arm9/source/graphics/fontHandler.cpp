@@ -1,10 +1,11 @@
 #include "fontHandler.h"
 #include <list>
 
+#include "common/dsimenusettings.h"
+#include "common/flashcard.h"
 #include "common/tonccpy.h"
 #include "TextEntry.h"
 #include "ThemeConfig.h"
-#include "themefilenames.h"
 
 FontGraphic smallFont;
 FontGraphic largeFont;
@@ -18,8 +19,9 @@ void fontInit() {
 	printf("fontInit()\n");
 
 	// Load font graphics
-	smallFont = FontGraphic(TFN_FONT_SMALL, TFN_FALLBACK_FONT_SMALL);
-	largeFont = FontGraphic(TFN_FONT_LARGE, TFN_FALLBACK_FONT_LARGE);
+	std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
+	smallFont = FontGraphic({fontPath + (isDSiMode() ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"});
+	largeFont = FontGraphic({fontPath + (isDSiMode() ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"});
 
 	// Load palettes
 	u16 palette[] = {

@@ -123,6 +123,7 @@ jobs:
           rm -rf TWiLightMenu/Debug/
           rm -rf TWiLightMenu/_nds/TWiLightMenu/*menu/
           rm -rf TWiLightMenu/_nds/TWiLightMenu/apfix/
+          rm -rf TWiLightMenu/_nds/TWiLightMenu/extras/fonts/
           rm -rf TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
           rm -rf TWiLightMenu/Flashcard\ users/Autoboot/
           rm -rf TWiLightMenu/Flashcard\ users/Flashcart\ Loader/
