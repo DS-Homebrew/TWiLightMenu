@@ -2123,7 +2123,7 @@ int main(int argc, char **argv) {
 					if(!dsiFeatures()) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS-LITE.nds";
 					}
-					if(dsiFeatures() || access(ndsToBoot, F_OK) != 0) {
+					if((!isDSiMode() && dsiFeatures()) || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
