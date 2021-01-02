@@ -27,6 +27,7 @@
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 
+#include "myDSiMode.h"
 #include "common/inifile.h"
 #include "flashcard.h"
 
@@ -112,7 +113,7 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
 		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", perGameSettings_ramDiskNo);
-		if (REG_SCFG_EXT != 0) {
+		if (dsiFeatures()) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
@@ -122,7 +123,7 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
 		pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
-		if (REG_SCFG_EXT != 0) {
+		if (dsiFeatures()) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
@@ -341,7 +342,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 		}
-		if ((REG_SCFG_EXT != 0) || !secondaryDevice) {
+		if (dsiFeatures() || !secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
 			perGameOps++;
@@ -366,7 +367,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 		}
-		if ((REG_SCFG_EXT != 0) || !secondaryDevice) {
+		if (dsiFeatures() || !secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
 			perGameOps++;

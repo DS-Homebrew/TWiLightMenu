@@ -19,6 +19,7 @@
 
 #include "graphics/graphics.h"
 
+#include "myDSiMode.h"
 #include "common/tonccpy.h"
 #include "common/nitrofs.h"
 #include "flashcard.h"
@@ -685,7 +686,7 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 
 	loadPerGameSettings(filename);
 
-	if ((REG_SCFG_EXT != 0) && dsGame) {
+	if (dsiFeatures() && dsGame) {
 		runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
 		runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 	}
@@ -907,7 +908,7 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
-	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	graphicsInit();
 
@@ -1772,7 +1773,7 @@ int main(int argc, char **argv) {
 						if (isDSiMode() || !secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
 						}
-						if ((REG_SCFG_EXT != 0) || !secondaryDevice) {
+						if (dsiFeatures() || !secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
 						}
@@ -1918,7 +1919,7 @@ int main(int argc, char **argv) {
 
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
-					if (REG_SCFG_EXT != 0 && !dsModeDSiWare) {
+					if (dsiFeatures() && !dsModeDSiWare) {
 						loadPerGameSettings(filename);
 
 						runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
@@ -2068,12 +2069,12 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
 					} else if (secondaryDevice) {
 						ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
-						if (REG_SCFG_EXT != 0) {
+						if (dsiFeatures()) {
 							ndsToBoot = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
 						}
 						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
-							if (REG_SCFG_EXT != 0) {
+							if (dsiFeatures()) {
 								ndsToBoot = consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
 							}
 						}
@@ -2119,10 +2120,10 @@ int main(int argc, char **argv) {
 					launchType[secondaryDevice] = 12;
 					
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
-					if(REG_SCFG_EXT == 0) {
+					if(!dsiFeatures()) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS-LITE.nds";
 					}
-					if((!isDSiMode() && REG_SCFG_EXT != 0) || access(ndsToBoot, F_OK) != 0) {
+					if(dsiFeatures() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
