@@ -3,6 +3,7 @@
 #include "ThemeConfig.h"
 
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
 #include "myDSiMode.h"
@@ -30,6 +31,8 @@ extern bool useTwlCfg;
 extern bool widescreenEffects;
 
 extern u32 rotatingCubesLoaded;
+extern bool rocketVideo_playVideo;
+extern u8 *rotatingCubesLocation;
 
 // #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
@@ -1340,6 +1343,101 @@ u16 *ThemeTextures::photoBuffer2() { return _photoBuffer2; }
 //u16 *ThemeTextures::frameBuffer(bool secondBuffer) { return _frameBuffer[secondBuffer]; }
 u16 *ThemeTextures::frameBufferBot(bool secondBuffer) { return _frameBufferBot[secondBuffer]; }
 
+void loadRotatingCubes() {
+	bool rvidCompressed = false;
+	std::string cubes = TFN_RVID_CUBES;
+	/*if (isDSiMode()) {
+		rvidCompressed = true;
+		cubes = TFN_LZ77_RVID_CUBES;
+		if (ms().colorMode == 1) {
+			cubes = TFN_LZ77_RVID_CUBES_BW;
+		}
+	} else {*/
+		if (ms().colorMode == 1) {
+			cubes = TFN_RVID_CUBES_BW;
+		}
+	//}
+	FILE *videoFrameFile = fopen(cubes.c_str(), "rb");
+
+	/*if (!videoFrameFile && isDSiMode()) {
+		// Fallback to uncompressed RVID
+		rvidCompressed = false;
+		cubes = TFN_RVID_CUBES;
+		if (ms().colorMode == 1) {
+			cubes = TFN_RVID_CUBES_BW;
+		}
+		videoFrameFile = fopen(cubes.c_str(), "rb");
+	}*/
+
+	// if (!videoFrameFile) {
+	// 	videoFrameFile = fopen(std::string(TFN_FALLBACK_RVID_CUBES).c_str(), "rb");
+	// }
+	// FILE* videoFrameFile;
+
+	/*for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
+		if (selectedFrame < 0x10) {
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename),
+	"nitro:/video/3dsRotatingCubes/0x0%x.bmp", (int)selectedFrame); } else { snprintf(videoFrameFilename,
+	sizeof(videoFrameFilename), "nitro:/video/3dsRotatingCubes/0x%x.bmp", (int)selectedFrame);
+		}
+		videoFrameFile = fopen(videoFrameFilename, "rb");
+
+		if (videoFrameFile) {
+			// Start loading
+			fseek(videoFrameFile, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+			fseek(videoFrameFile, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 2, 0x7000, videoFrameFile);
+			u16* src = bmpImageBuffer;
+			int x = 0;
+			int y = 55;
+			for (int i=0; i<256*56; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				renderedImageBuffer[y*256+x] = Texture::bmpToDS(val);
+				x++;
+			}
+		}
+		fclose(videoFrameFile);
+		memcpy(rotatingCubesLocation+(selectedFrame*0x7000), renderedImageBuffer, 0x7000);
+	}*/
+
+	if (videoFrameFile) {
+		bool doRead = false;
+		if (!rvidCompressed) {
+			fseek(videoFrameFile, 0x200, SEEK_SET);
+		}
+
+		if (dsiFeatures()) {
+			doRead = true;
+		} else if (sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
+			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
+							 // Expansion Pak)
+			if (*(u16*)(0x020000C0) == 0) {
+				*(vu16*)(0x08240000) = 1;
+			}
+			if (*(u16*)(0x020000C0) != 0 || *(vu16*)(0x08240000) == 1) {
+				// Set to load video into DS Memory Expansion Pak
+				rotatingCubesLocation = (u8*)(*(u16*)(0x020000C0)==0x5A45 ? 0x08000200 : 0x09000000);
+				doRead = true;
+			}
+		}
+
+		if (doRead) {
+			if (rvidCompressed) {
+				fread((void*)0x02480000, 1, 0x200000, videoFrameFile);
+				LZ77_Decompress((u8*)0x02480000, (u8*)rotatingCubesLocation);
+			} else {
+				fread(rotatingCubesLocation, 1, 0x700000, videoFrameFile);
+			}
+			rotatingCubesLoaded = true;
+			rocketVideo_playVideo = true;
+		}
+	}
+}
 void ThemeTextures::videoSetup() {
 	//printf("tex().videoSetup()\n");
 	//////////////////////////////////////////////////////////
@@ -1391,6 +1489,10 @@ void ThemeTextures::videoSetup() {
 	}
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
+
+	if (ms().theme == 1) {
+		loadRotatingCubes();
+	}
 
 	boxArtColorDeband = (ms().boxArtColorDeband && ndmaEnabled() && !rotatingCubesLoaded && ms().theme != 5);
 }
