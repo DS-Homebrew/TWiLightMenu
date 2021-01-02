@@ -638,7 +638,6 @@ int main(int argc, char **argv)
 //#pragma region init
 
 	sys().initFilesystem();
-	sys().flashcardUsed();
 	ms();
 	defaultExceptionHandler();
 
@@ -708,7 +707,7 @@ int main(int argc, char **argv)
 
 	srand(time(NULL));
 
-	if (!sys().flashcardUsed() && ms().consoleModel < 2)
+	if (sdAccessible && ms().consoleModel < 2)
 	{
 		if (access("sd:/hiya/autoboot.bin", F_OK) == 0)
 			hiyaAutobootFound = true;
