@@ -215,6 +215,7 @@ class TWLSettings
     std::string gbaBorder;
     std::string unlaunchBg;
     bool removeLauncherPatches;
+    std::string font;
 
     //int screenScaleSize;
     bool wideScreen;

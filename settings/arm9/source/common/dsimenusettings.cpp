@@ -98,7 +98,8 @@ TWLSettings::TWLSettings()
 
     gbaBorder = "default.png";
     unlaunchBg = "default.gif";
-	removeLauncherPatches = true;
+    removeLauncherPatches = true;
+    font = "default";
 
     soundFreq = EFreq32KHz;
     dsiSplash = isDSiMode();
@@ -220,7 +221,8 @@ void TWLSettings::loadSettings()
     _3ds_theme = settingsini.GetString("SRLOADER", "3DS_THEME", _3ds_theme);
     gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
-	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
+    removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
+    font = settingsini.GetString("SRLOADER", "FONT", font);
 
     //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
     smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
@@ -324,7 +326,8 @@ void TWLSettings::saveSettings()
     settingsini.SetString("SRLOADER", "3DS_THEME", _3ds_theme);
     settingsini.SetString("SRLOADER", "GBA_BORDER", gbaBorder);
     settingsini.SetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
-	settingsini.SetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
+    settingsini.SetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
+    settingsini.SetString("SRLOADER", "FONT", font);
 
     //settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
     settingsini.SetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);

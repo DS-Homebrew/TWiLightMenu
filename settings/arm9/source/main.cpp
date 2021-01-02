@@ -41,6 +41,7 @@
 
 #define GBA_BORDER_DIRECTORY "/_nds/TWiLightMenu/gbaborders/"
 #define UNLAUNCH_BG_DIRECTORY "/_nds/TWiLightMenu/unlaunch/backgrounds/"
+#define FONT_DIRECTORY "/_nds/TWiLightMenu/extras/fonts/"
 
 bool useTwlCfg = false;
 
@@ -59,6 +60,7 @@ std::vector<std::string> dsiThemeList;
 std::vector<std::string> _3dsThemeList;
 std::vector<std::string> gbaBorderList;
 std::vector<std::string> unlaunchBgList;
+std::vector<std::string> fontList;
 std::vector<std::string> menuSrldrList;
 
 bool fadeType = false; // false = out, true = in
@@ -298,6 +300,27 @@ void loadUnlaunchBgList()
 	}
 }
 
+void loadFontList()
+{
+	DIR *dir;
+	struct dirent *ent;
+	std::string themeDir;
+	if ((dir = opendir(FONT_DIRECTORY)) != NULL)
+	{
+		// print all the files and directories within directory
+		while ((ent = readdir(dir)) != NULL)
+		{
+			// Reallocation here, but prevents our vector from being filled with
+
+			themeDir = ent->d_name;
+			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+
+			fontList.emplace_back(themeDir);
+		}
+		closedir(dir);
+	}
+}
+
 void loadGbaBorderList()
 {
 	DIR *dir;
@@ -368,6 +391,11 @@ std::optional<Option> opt_gba_border_select(Option::Int &optVal)
 std::optional<Option> opt_bg_select(Option::Int &optVal)
 {
 	return Option(STR_BGSEL_UNLAUNCH, STR_AB_SETBG, Option::Str(&ms().unlaunchBg), unlaunchBgList);
+}
+
+std::optional<Option> opt_font_select(Option::Int &optVal)
+{
+	return Option(STR_FONTSEL, STR_AB_SETFONT, Option::Str(&ms().font), fontList);
 }
 
 void begin_update(int opt)
@@ -657,6 +685,7 @@ int main(int argc, char **argv)
 	if ((isDSiMode() || REG_SCFG_EXT != 0) && ms().consoleModel == 0) {
 		loadUnlaunchBgList();
 	}
+	loadFontList();
 	swiWaitForVBlank();
 
 	snd().init();
@@ -728,7 +757,12 @@ int main(int argc, char **argv)
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int(&ms().dsiMusic),
 				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, STR_THEME, STR_CLASSIC, "HBL"},
-				{0, 1, 2, 3, 4, 5});
+				{0, 1, 2, 3, 4, 5})
+		.option(STR_FONT,
+				STR_DESCRIPTION_FONT,
+				Option::Int(&ms().subtheme, opt_font_select, opt_reset_subtheme),
+				{STR_PRESS_A},
+				{0});
 
 	if (sdAccessible) {
 		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {STR_MICRO_SD_CARD, STR_SD_CARD}, {true, false});

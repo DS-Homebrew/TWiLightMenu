@@ -240,6 +240,7 @@ public:
 	std::string _3ds_theme;
     std::string gbaBorder;
     std::string unlaunchBg;
+    std::string font;
 
 	bool wideScreen;
 

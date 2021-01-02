@@ -188,6 +188,7 @@ class TWLSettings
     bool showlogo;
     std::string r4_theme;// unused...
     std::string unlaunchBg;
+    std::string font;
 
     bool wideScreen;
 };
