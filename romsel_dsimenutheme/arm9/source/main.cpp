@@ -24,6 +24,7 @@
 #include "common/flashcard.h"
 #include "common/nitrofs.h"
 #include "common/systemdetails.h"
+#include "myDSiMode.h"
 #include "graphics/ThemeConfig.h"
 #include "graphics/ThemeTextures.h"
 #include "graphics/themefilenames.h"
@@ -356,7 +357,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 
 	loadPerGameSettings(filename);
 
-	if ((REG_SCFG_EXT != 0) && dsGame) {
+	if (dsiFeatures() && dsGame) {
 		runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
 		runNds_boostVram = perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram;
 	}
@@ -595,7 +596,7 @@ int main(int argc, char **argv) {
 							   // SD card, or if SD access is disabled
 	}
 
-	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	//logInit();
 	ms().loadSettings();
@@ -1315,7 +1316,7 @@ int main(int argc, char **argv) {
 								if (ms().theme == 5) displayGameIcons = false;
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									// Display nothing
-								} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
+								} else if (dsiFeatures() && ms().consoleModel >= 2) {
 									printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 								} else {
 									printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
@@ -1377,7 +1378,7 @@ int main(int argc, char **argv) {
 						if (isDSiMode() || !ms().secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode);
 						}
-						if ((REG_SCFG_EXT != 0) || !ms().secondaryDevice) {
+						if (dsiFeatures() || !ms().secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram);
 						}
@@ -1547,7 +1548,7 @@ int main(int argc, char **argv) {
 
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
-					if (REG_SCFG_EXT != 0 && !dsModeDSiWare) {
+					if (dsiFeatures() && !dsModeDSiWare) {
 						loadPerGameSettings(filename);
 
 						runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
@@ -1730,12 +1731,12 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
 					} else if (ms().secondaryDevice) {
 						ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
-						if (REG_SCFG_EXT != 0) {
+						if (dsiFeatures()) {
 							ndsToBoot = ms().consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
 						}
 						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
-							if (REG_SCFG_EXT != 0) {
+							if (dsiFeatures()) {
 								ndsToBoot = ms().consoleModel > 0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
 							}
 						}
@@ -1781,10 +1782,10 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::EA7800DSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
-					if(REG_SCFG_EXT == 0) {
+					if(!dsiFeatures()) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS-LITE.nds";
 					}
-					if((!isDSiMode() && REG_SCFG_EXT != 0) || access(ndsToBoot, F_OK) != 0) {
+					if(dsiFeatures() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}

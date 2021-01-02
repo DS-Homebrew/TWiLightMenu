@@ -5,6 +5,7 @@
 #include <nds.h>
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
+#include "myDSiMode.h"
 
 #include "paletteEffects.h"
 #include "themefilenames.h"
@@ -460,7 +461,7 @@ void ThemeTextures::loadDSiTheme() {
 }
 
 void ThemeTextures::loadVolumeTextures() {
-	if (isDSiMode() || REG_SCFG_EXT != 0) {
+	if (dsiFeatures()) {
 		_volume0Texture = std::make_unique<Texture>(TFN_VOLUME0, TFN_FALLBACK_VOLUME0);
 		_volume1Texture = std::make_unique<Texture>(TFN_VOLUME1, TFN_FALLBACK_VOLUME1);
 		_volume2Texture = std::make_unique<Texture>(TFN_VOLUME2, TFN_FALLBACK_VOLUME2);
@@ -470,7 +471,7 @@ void ThemeTextures::loadVolumeTextures() {
 }
 
 void ThemeTextures::loadBatteryTextures() {
-	if (isDSiMode() || REG_SCFG_EXT != 0) {
+	if (dsiFeatures()) {
 		_batterychargeTexture = std::make_unique<Texture>(TFN_BATTERY_CHARGE, TFN_FALLBACK_BATTERY_CHARGE);
 		_batterychargeblinkTexture = std::make_unique<Texture>(TFN_BATTERY_CHARGE_BLINK, TFN_FALLBACK_BATTERY_CHARGE_BLINK);
 		_battery0Texture = std::make_unique<Texture>(TFN_BATTERY0, TFN_FALLBACK_BATTERY0);
@@ -663,7 +664,7 @@ void ThemeTextures::drawProfileName() {
 	// Load username
 	char fontPath[64] = {0};
 	FILE *file;
-	int x = ((isDSiMode() || REG_SCFG_EXT != 0) ? 28 : 4);
+	int x = (dsiFeatures() ? 28 : 4);
 
 	for (int c = 0; c < 10; c++) {
 		unsigned int charIndex = getTopFontSpriteIndex(usernameRendered[c]);
@@ -1003,7 +1004,7 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 }
 
 void ThemeTextures::drawVolumeImage(int volumeLevel) {
-	if (!isDSiMode() && REG_SCFG_EXT == 0)
+	if (!dsiFeatures())
 		return;
 	beginBgSubModify();
 
@@ -1034,7 +1035,7 @@ void ThemeTextures::drawVolumeImageCached() {
 }
 
 int ThemeTextures::getVolumeLevel(void) {
-	if (!isDSiMode() && REG_SCFG_EXT == 0)
+	if (!dsiFeatures())
 		return -1;
 	
 	u8 volumeLevel = sys().volumeStatus();
@@ -1053,7 +1054,7 @@ int ThemeTextures::getVolumeLevel(void) {
 
 int ThemeTextures::getBatteryLevel(void) {
 	u8 batteryLevel = sys().batteryStatus();
-	if (!isDSiMode() && REG_SCFG_EXT == 0) {
+	if (!dsiFeatures()) {
 		if (batteryLevel & BIT(0))
 			return 1;
 		return 0;
@@ -1098,7 +1099,7 @@ void ThemeTextures::drawBatteryImageCached() {
 	else if(batteryLevel == 7 && showColon)	batteryLevel++;
 	if (_cachedBatteryLevel != batteryLevel) {
 		_cachedBatteryLevel = batteryLevel;
-		drawBatteryImage(batteryLevel, (isDSiMode() || REG_SCFG_EXT != 0), sys().isRegularDS());
+		drawBatteryImage(batteryLevel, dsiFeatures(), sys().isRegularDS());
 	}
 }
 

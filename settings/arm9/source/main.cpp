@@ -32,6 +32,7 @@
 
 #include "soundeffect.h"
 #include "common/systemdetails.h"
+#include "myDSiMode.h"
 
 #define DSI_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/dsimenu/themes/"
 #define _3DS_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/3dsmenu/themes/"
@@ -641,7 +642,7 @@ int main(int argc, char **argv)
 	ms();
 	defaultExceptionHandler();
 
-	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	if (!sys().fatInitOk())
 	{
@@ -682,7 +683,7 @@ int main(int argc, char **argv)
 	if (sys().isRegularDS()) {
 		loadGbaBorderList();
 	}
-	if ((isDSiMode() || REG_SCFG_EXT != 0) && ms().consoleModel == 0) {
+	if (dsiFeatures() && ms().consoleModel == 0) {
 		loadUnlaunchBgList();
 	}
 	loadFontList();
@@ -774,7 +775,7 @@ int main(int argc, char **argv)
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_SHOW_HIDDEN, STR_DESCRIPTION_SHOW_HIDDEN_1, Option::Bool(&ms().showHidden), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_PREVENT_ROM_DELETION, STR_DESCRIPTION_PREVENT_ROM_DELETION_1, Option::Bool(&ms().preventDeletion), {STR_YES, STR_NO}, {true, false});
-	if (REG_SCFG_EXT != 0) {
+	if (dsiFeatures()) {
 		guiPage
 			.option(STR_BOXART, STR_DESCRIPTION_BOXART_DSI, Option::Int(&ms().showBoxArt), {STR_NON_CACHED, STR_CACHED, STR_HIDE}, {1, 2, 0})
 			.option(STR_PHOTO_BOXART_COLOR_DEBAND, STR_DESCRIPTION_PHOTO_BOXART_COLOR_DEBAND, Option::Bool(&ms().boxArtColorDeband), {STR_ON, STR_OFF}, {true, false});
@@ -856,13 +857,13 @@ int main(int argc, char **argv)
 						{TRunIn::EDSMode, TRunIn::EDSiMode, TRunIn::EDSiModeForced});
 	}
 
-	if ((REG_SCFG_EXT != 0) || sdAccessible) {
-		gamesPage.option(((isDSiMode() || (REG_SCFG_EXT != 0)) ? STR_CPUSPEED : "Sys SD: "+STR_CPUSPEED),
+	if (dsiFeatures() || sdAccessible) {
+		gamesPage.option((dsiFeatures() ? STR_CPUSPEED : "Sys SD: "+STR_CPUSPEED),
 				STR_DESCRIPTION_CPUSPEED_1,
 				Option::Bool(&ms().boostCpu),
 				{"133 MHz (TWL)", "67 MHz (NTR)"},
 				{true, false})
-			.option(((isDSiMode() || (REG_SCFG_EXT != 0)) ? STR_VRAMBOOST : "Sys SD: "+STR_VRAMBOOST),
+			.option((dsiFeatures() ? STR_VRAMBOOST : "Sys SD: "+STR_VRAMBOOST),
 				STR_DESCRIPTION_VRAMBOOST_1,
 				Option::Bool(&ms().boostVram),
 				{STR_ON, STR_OFF},

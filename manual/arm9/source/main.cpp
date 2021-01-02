@@ -40,6 +40,7 @@
 
 #include "graphics/fontHandler.h"
 
+#include "myDSiMode.h"
 #include "common/inifile.h"
 #include "common/tonccpy.h"
 
@@ -371,7 +372,7 @@ int main(int argc, char **argv) {
 
 	keysSetRepeat(25, 25);
 
-	bool useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	bool useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	extern const DISC_INTERFACE __my_io_dsisd;
 
@@ -383,7 +384,7 @@ int main(int argc, char **argv) {
 
 	if (!fatInited) {
 		consoleDemoInit();
-		printf("fatinitDefault failed!");
+		iprintf("fatinitDefault failed!");
 		fadeType = true;
 		stop();
 	}

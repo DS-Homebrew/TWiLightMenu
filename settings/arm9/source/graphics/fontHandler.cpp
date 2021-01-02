@@ -2,6 +2,7 @@
 #include <list>
 
 #include "common/dsimenusettings.h"
+#include "myDSiMode.h"
 #include "common/flashcard.h"
 #include "common/tonccpy.h"
 #include "TextEntry.h"
@@ -19,8 +20,8 @@ void fontInit() {
 
 	// Load font graphics
 	std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
-	smallFont = FontGraphic({fontPath + (isDSiMode() ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"});
-	largeFont = FontGraphic({fontPath + (isDSiMode() ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"});
+	smallFont = FontGraphic({fontPath + (dsiFeatures() ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"});
+	largeFont = FontGraphic({fontPath + (dsiFeatures() ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"});
 
 	// Load palettes
 	u16 palette[] = {

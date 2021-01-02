@@ -1,4 +1,5 @@
 #include "gif.hpp"
+#include "myDSiMode.h"
 #include "common/tonccpy.h"
 #include "lzw.hpp"
 
@@ -98,7 +99,7 @@ bool Gif::load(const char *path, bool top, bool animate) {
 		return false;
 
 	fseek(file, 0, SEEK_END);
-	_compressed = ftell(file) > ((isDSiMode() || REG_SCFG_EXT != 0) ? 1 << 20 : 1 << 18); // Decompress files bigger than 1MiB (256KiB in DS Mode) while drawing
+	_compressed = ftell(file) > (dsiFeatures() ? 1 << 20 : 1 << 18); // Decompress files bigger than 1MiB (256KiB in DS Mode) while drawing
 	fseek(file, 0, SEEK_SET);
 
 	// Reserve space for 2,000 frames

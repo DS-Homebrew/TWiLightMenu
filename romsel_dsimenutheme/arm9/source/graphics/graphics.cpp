@@ -33,6 +33,7 @@
 #include <gl2d.h>
 #include "common/lzss.h"
 #include "common/systemdetails.h"
+#include "myDSiMode.h"
 #include "date.h"
 #include "iconHandler.h"
 #include "FontGraphic.h"
@@ -1787,7 +1788,7 @@ void loadRotatingCubes() {
 			fseek(videoFrameFile, 0x200, SEEK_SET);
 		}
 
-		if (REG_SCFG_EXT != 0) {
+		if (dsiFeatures()) {
 			doRead = true;
 		} else if (sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
 			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory

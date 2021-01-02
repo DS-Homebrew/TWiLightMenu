@@ -33,6 +33,7 @@
 #include "common/flashcard.h"
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
+#include "myDSiMode.h"
 
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 15
@@ -126,7 +127,7 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
 		if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", perGameSettings_ramDiskNo);
-		if (REG_SCFG_EXT != 0) {
+		if (dsiFeatures()) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
@@ -136,7 +137,7 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
 		pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
-		if (REG_SCFG_EXT != 0) {
+		if (dsiFeatures()) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
@@ -341,7 +342,7 @@ void perGameSettings (std::string filename) {
 		(!isDSiWare[CURPOS]
 		&& memcmp(gameTid[CURPOS], "HND", 3) != 0
 		&& memcmp(gameTid[CURPOS], "HNE", 3) != 0);
-	/*if (!ms().useBootstrap && !isHomebrew[CURPOS] && REG_SCFG_EXT == 0) {
+	/*if (!ms().useBootstrap && !isHomebrew[CURPOS] && !dsiFeatures()) {
 		showPerGameSettings = false;
 	}*/
 
@@ -371,7 +372,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 		}
-		if ((REG_SCFG_EXT != 0) || !ms().secondaryDevice) {
+		if (dsiFeatures() || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
 			perGameOps++;
@@ -396,7 +397,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 		}
-		if ((REG_SCFG_EXT != 0) || !ms().secondaryDevice) {
+		if (dsiFeatures() || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
 			perGameOps++;
