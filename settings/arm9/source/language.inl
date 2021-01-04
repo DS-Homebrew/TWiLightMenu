@@ -232,7 +232,7 @@ STRING(SYSTEMSETTINGS, "System Settings")
 // STRING(RESTOREDSIMENU, "Restore DSi Menu")
 
 STRING(SYSTEM, "System")
-STRING(BW_GREYSCALE, "B&W/Greyscale")
+STRING(BW_GREYSCALE, "B&W/Grayscale")
 // STRING(BLUELIGHTFILTER, "Blue light filter")
 STRING(WITH_HS, "With H&S")
 STRING(WITHOUT_HS, "Without H&S")
