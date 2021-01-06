@@ -94,7 +94,9 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths) {
 			}
 		}
 		fclose(file);
-		questionMark = getCharIndex('?');
+		questionMark = getCharIndex(0xFFFD);
+		if(questionMark == 0)
+			questionMark = getCharIndex('?');
 	}
 }
 
