@@ -46,6 +46,7 @@ class SystemDetails
     bool _isRegularDS;
     bool _fatInitOk;
     bool _fifoOk;
+    bool _isDSLite;
     bool _nitroFsInitOk;
 };
 

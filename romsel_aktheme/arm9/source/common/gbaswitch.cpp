@@ -1,10 +1,11 @@
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
+#include "drawing/lodepng.h"
 
 int gbaBorder = 1;
 
 void loadGbaBorder(const char* filename) {
-	new u16 bmpImageBuffer[256*192];
+	u16* bmpImageBuffer = new u16[256*192];
 
 	uint imageWidth, imageHeight;
 	std::vector<unsigned char> image;
@@ -63,6 +64,7 @@ void loadGbaBorder(const char* filename) {
 	}
     DC_FlushRange(bmpImageBuffer,SCREEN_WIDTH*SCREEN_HEIGHT*2);
     dmaCopy(bmpImageBuffer,(void*)BG_BMP_RAM(8),SCREEN_WIDTH*SCREEN_HEIGHT*2);
+	delete bmpImageBuffer;
 }
 
 void gbaSwitch(void)
