@@ -189,6 +189,7 @@ class TWLSettings
 
     int ak_viewMode;
     int ak_scrollSpeed;
+    bool ak_zoomIcons;
     std::string ak_theme;
 
     std::string dsiWareSrlPath;
