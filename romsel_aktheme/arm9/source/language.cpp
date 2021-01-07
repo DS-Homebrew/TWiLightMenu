@@ -31,9 +31,7 @@
 
 const char* languageIniPath;
 
-int setTitleLanguage = 0;
-
-void langInit(void)
+void LanguageFile::langInit(void)
 {
 	printf("langInit\n");
 	if (ms().titleLanguage == -1) {
@@ -41,9 +39,4 @@ void langInit(void)
 	} else {
 		setTitleLanguage = ms().titleLanguage;
 	}
-}
-
-bool stringComp(const std::string &item1, const std::string &item2)
-{
-  return strcasecmp(item1.c_str(), item2.c_str()) < 0;
 }

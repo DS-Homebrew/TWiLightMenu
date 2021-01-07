@@ -56,7 +56,7 @@ void ZoomingIcon::setBufferChanged()
 
 void ZoomingIcon::update()
 {
-    static float scaleFactor = 0.015;
+    static float scaleFactor = 0.03;
     if (_visible)
     {
         _scale += scaleFactor;

@@ -50,12 +50,14 @@ class AnimationManager
 {
 
   public:
-    AnimationManager();
+    AnimationManager() : _halted(false) {};
 
     ~AnimationManager();
 
   public:
     void update();
+    void halt();
+    void resume();
 
     void addAnimation(Animation *animation);
 
@@ -63,6 +65,9 @@ class AnimationManager
 
   protected:
     std::list<Animation *> _animations;
+
+  private:
+    bool _halted;
 };
 
 typedef singleton<AnimationManager> animationManager_s;

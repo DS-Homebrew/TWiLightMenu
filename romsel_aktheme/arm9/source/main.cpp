@@ -167,23 +167,13 @@ int main(int argc, char **argv)
 		stop();
 	}
 	dbg_printf("UISETTINGS: %s\n", SFN_BUTTON2);
-	//stop();
-	// if (!nitroFSInitOk)
-	// {
-	// 	consoleDemoInit();
-	// 	printf("Failed to init NitroFS");
-	// 	stop();
-	// }
-
-
 	
 	// init unicode
 	//if( initUnicode() )
 	//    _FAT_unicode_init( unicodeL2UTable, unicodeU2LTable, unicodeAnkTable );
 	cwl();
 
-	lang(); // load language file
-
+	lang().langInit(); // load language file
 	fontFactory().makeFont(); // load font file
 	uiSettings().loadSettings();
 
@@ -235,10 +225,12 @@ int main(int argc, char **argv)
 		}
 	}
 
-	//if (!wnd->_mainList->enterDir(SPATH_ROOT != lastDirectory ? lastDirectory : gs().startupFolder))
-	wnd->_mainList->enterDir(ms().romfolder[ms().secondaryDevice]);
-
+	wnd->_mainList->enterDir(ms().getCurrentRomFolder());
+	wnd->_mainList->selectRowByPath(ms().romPath[ms().secondaryDevice]);
 	irq().vblankStart();
+
+	swiWaitForVBlank();
+	swiWaitForVBlank();
 
 	while (1)
 	{

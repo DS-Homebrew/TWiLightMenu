@@ -30,6 +30,8 @@
 #include "unknown_banner_bin.h"
 #include <memory>
 
+#define GAME_CODE(gamecode) ((u32)( (gamecode[0]) | (gamecode[1])<<8 | (gamecode[2])<<16 | (gamecode[3])<<24 ))
+
 using std::unique_ptr;
 
 typedef struct {
@@ -56,7 +58,6 @@ private:
   };
 
 private:
-  tNDSCompactedBanner _banner;
   SAVE_INFO_EX _saveInfo;
   TBool _isDSRom;
   TBool _isHomebrew;
@@ -68,11 +69,12 @@ private:
   int _requiresDonorRom;
   std::string _fileName;
   s32 _extIcon;
+  u32 _headerCrc32;
   u8 _romVersion;
   unique_ptr<tDSiAnimatedIcon> _dsiIcon;
+  unique_ptr<tNDSCompactedBanner> _banner;
 
 private:
-  void load(void);
   bool loadGbaRomInfo(const std::string &filename);
   bool loadArgv(const std::string &filename);
   bool loadDSRomInfo(const std::string &filename, bool loadBanner);
@@ -84,9 +86,10 @@ public:
   _isArgv(EFalse),
   _requiresDonorRom(0),
   _extIcon(-1), 
-  _romVersion(0)
+  _romVersion(0),
+  _banner(std::make_unique<tNDSCompactedBanner>())
   {
-    toncset(&_banner, 0, sizeof(_banner));
+    toncset(_banner.get(), 0, sizeof(*_banner));
     toncset(&_saveInfo, 0, sizeof(_saveInfo));
     // toncset(&_dsiIcon, 0, sizeof(_dsiIcon));
     // memset(&_dsiPalette, 0, sizeof(_dsiPalette));
@@ -98,14 +101,16 @@ public:
   virtual ~DSRomInfo() { }
 
 public:
+  void load(void);
+
   void drawDSRomIcon(u8 x, u8 y, GRAPHICS_ENGINE engine);
   void drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, bool flipH, bool flipV, GRAPHICS_ENGINE engine);
 
   void drawDSRomIconMem(void *mem);
   void drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette, bool flipH, bool flipV);
 
-  const tNDSCompactedBanner &banner(void);
-  const tDSiAnimatedIcon &animatedIcon(void);
+  const tNDSCompactedBanner& banner(void);
+  const tDSiAnimatedIcon& animatedIcon(void);
   SAVE_INFO_EX &saveInfo(void);
   u8 version(void);
   void setExtIcon(const std::string &aValue);

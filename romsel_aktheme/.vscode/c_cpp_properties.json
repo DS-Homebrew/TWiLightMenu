@@ -11,6 +11,7 @@
                 "${workspaceFolder}/arm9/include",
                 "${workspaceFolder}/arm9/build"
             ],
+            "defines": ["PREFER_SLASH"],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""

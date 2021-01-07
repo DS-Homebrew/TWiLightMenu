@@ -846,6 +846,7 @@ int main(int argc, char **argv) {
 	  }
 	}
 
+	std::string previousRomPath = ms().romPath[ms().secondaryDevice];
 	while (1) {
 
 		snprintf(path, sizeof(path), "%s", ms().romfolder[ms().secondaryDevice].c_str());
@@ -853,8 +854,8 @@ int main(int argc, char **argv) {
 		chdir(path);
 
 		// Navigates to the file to launch
-		filename = browseForFile(extensionList);
-
+		filename = browseForFile(extensionList, previousRomPath);
+		previousRomPath.clear();
 		////////////////////////////////////
 		// Launch the item
 

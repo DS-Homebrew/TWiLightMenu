@@ -29,8 +29,6 @@
 #include <nds.h>
 #include "tool/stringtool.h"
 
-extern int setTitleLanguage;
-
 class LanguageFile : public CIniFile
 {
 private:
@@ -91,13 +89,15 @@ public:
     LoadIniFile(formatString(SFN_LANGUAGE_TEXT, getIdentifier(language, useTwlCfg).c_str()));
   }
   ~LanguageFile(){};
+  void langInit(void);
+public:
+   int setTitleLanguage;
 };
 
 typedef singleton<LanguageFile, TWLSettings::TLanguage> languageFile_s;
 inline LanguageFile &lang() { return languageFile_s::instance(ms().getGuiLanguage()); }
 #define LANG(i, t) lang().GetString(i, t, t)
 
-bool stringComp(const std::string &item1, const std::string &item2);
 void langInit(void);
 
 #endif //_AK_LANGUAGE_H_

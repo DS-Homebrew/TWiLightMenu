@@ -53,8 +53,6 @@ class MainWnd : public akui::Form
 
     MainList *_mainList;
 
-    //void bootWidescreen(const char *filename);
-
   protected:
     void onMainListSelItemClicked(u32 index);
 
@@ -120,7 +118,6 @@ class MainWnd : public akui::Form
     
 };
 
-std::string apFix(const char *filename, bool isHomebrew);
 void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen);
 
 #endif //_MAINWND_H_

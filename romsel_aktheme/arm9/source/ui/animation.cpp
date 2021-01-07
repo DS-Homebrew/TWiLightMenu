@@ -39,22 +39,27 @@ void Animation::hide()
     _visible = false;
 }
 
-AnimationManager::AnimationManager()
-{
-}
-
 AnimationManager::~AnimationManager()
 {
 }
 
 void AnimationManager::update()
 {
+    if (_halted) return;
     std::list<Animation *>::iterator itr = _animations.begin();
     while (itr != _animations.end())
     {
         (*itr)->update();
         ++itr;
     }
+}
+
+void AnimationManager::halt() {
+    _halted = true;
+}
+
+void AnimationManager::resume() {
+    _halted = false;
 }
 
 void AnimationManager::addAnimation(Animation *animation)

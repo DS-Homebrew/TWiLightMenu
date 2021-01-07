@@ -198,7 +198,7 @@ bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 		if(!lhs.customPos)	return false;
 		else if(!rhs.customPos)	return true;
 
-		if(lhs.position < rhs.position)	return true;
+		if (lhs.position < rhs.position) return true;
 		else return false;
 	}
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
@@ -1676,7 +1676,7 @@ static bool nextPage(void) {
 	return false;
 }
 
-std::string browseForFile(const std::vector<std::string> extensionList) {
+std::string browseForFile(const std::vector<std::string> extensionList, std::string previousRomPath) {
 	snd().updateStream();
 	displayNowLoading();
 	snd().updateStream();
@@ -1714,6 +1714,22 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 		clearText(false);
 		updateText(false);
 		snd().updateStream();
+
+		// restore previous ROM path position.
+		if (!previousRomPath.empty()) {
+			for (size_t i = 0; i != dirContents[scrn].size(); i++) {
+				if (dirContents[scrn][i].name == previousRomPath.substr(previousRomPath.find_last_of("/") + 1)) {
+					CURPOS = i % 40;
+					PAGENUM = (i / 40);
+					titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
+					titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
+					getFileInfo(scrn, dirContents, true);
+					reloadIconPalettes();
+					swiWaitForVBlank();
+					previousRomPath.clear();
+				}
+			}
+		}
 		waitForFadeOut();
 		bool gameTapped = false;
 

@@ -27,7 +27,6 @@
 
 #define SFN_SYSTEM_DIR              "/_nds/TWiLightMenu/akmenu/"
 
-
 #define SFN_FALLBACK_UI_DIRECTORY  "nitro:/themes/zelda"
 #define SFN_SYSTEM_UI_DIRECTORY    SFN_SYSTEM_DIR"themes/"
 #define SFN_UI_DIRECTORY           sfn().uiDirectory() + 
@@ -89,9 +88,6 @@
 
 
 #define SFN_ICONS_DIRECTORY         SFN_SYSTEM_DIR"icons/"
-
-#define SFN_CHEATS                  "/_nds/TWiLightMenu/extras/usrcheat.dat"
-#define SFN_CHEAT_DATA              "/_nds/nds-bootstrap/cheatData.bin"
 
 class SystemFilenames
 {

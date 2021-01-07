@@ -19,6 +19,7 @@
 */
 
 #include "cheatwnd.h"
+#include "common/bootstrapconfig.h"
 #include "ui/uisettings.h"
 #include "ui/windowmanager.h"
 #include "language.h"
@@ -26,9 +27,6 @@
 #include "gamecode.h"
 #include <sys/stat.h>
 #include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <sstream>
 
 using namespace akui;
 
@@ -282,7 +280,7 @@ static void updateDB(u8 value,u32 offset,FILE* db)
 
 void CheatWnd::onGenerate(void)
 {
-  FILE* db=fopen(SFN_CHEATS,"r+b");
+  FILE* db=fopen(CHEATS_USRCHEAT,"r+b");
   if(db)
   {
     std::vector<cParsedItem>::iterator itr=_data.begin();
@@ -345,7 +343,7 @@ bool CheatWnd::parse(const std::string& aFileName)
   u32 romcrc32,gamecode;
   if(romData(_fileName,gamecode,romcrc32))
   {
-    FILE* dat=fopen(SFN_CHEATS,"rb");
+    FILE* dat=fopen(CHEATS_USRCHEAT,"rb");
     if(dat)
     {
       res=parseInternal(dat,gamecode,romcrc32);
@@ -362,7 +360,7 @@ bool CheatWnd::romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32)
   if(rom)
   {
     u8 header[512];
-    if(1==fread(header,sizeof(header),1,rom))
+    if(1==fread(header, sizeof(header),1,rom))
     {
       aCrc32=crc32(header,sizeof(header));
       aGameCode=gamecode((const char*)(header+12));
@@ -373,7 +371,17 @@ bool CheatWnd::romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32)
   return res;
 }
 
-bool CheatWnd::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize)
+bool CheatWnd::searchCheatData(u32 gamecode,u32 crc32,long& aPos,size_t& aSize) {
+  FILE* db;
+  if ((db = fopen(CHEATS_USRCHEAT, "rb"))) {
+    bool ret = CheatWnd::searchCheatDataInternal(db, gamecode, crc32, aPos, aSize);
+    fclose(db);
+    return ret;
+  }
+  return false;
+}
+
+bool CheatWnd::searchCheatDataInternal(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize)
 {
   aPos=0;
   aSize=0;
@@ -414,7 +422,7 @@ bool CheatWnd::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
   _data.clear();
 
   long dataPos; size_t dataSize;
-  if(!searchCheatData(aDat,gamecode,crc32,dataPos,dataSize)) return false;
+  if(!searchCheatDataInternal(aDat,gamecode,crc32,dataPos,dataSize)) return false;
   fseek(aDat,dataPos,SEEK_SET);
 
   dbg_printf("record found: %d\n",dataSize);
@@ -526,23 +534,6 @@ std::string CheatWnd::getCheats()
       cheats += _data[i]._cheat.substr(0, _data[i]._cheat.size());
     }
   }
-  std::replace( cheats.begin(), cheats.end(), '\n', ' ');
+  std::replace(cheats.begin(), cheats.end(), '\n', ' ');
   return cheats;
-}
-
-void CheatWnd::writeCheatsToFile(std::string data, const char* path) {
-  std::fstream fs;
-  fs.open(path, std::ios::binary | std::fstream::out);
-  std::stringstream str;
-  u32 value;
-  while(1) {
-    str.clear();
-    str << data.substr(0, data.find(" "));
-    str >> std::hex >> value;
-    fs.write(reinterpret_cast<char*>(&value),sizeof(value));
-    data = data.substr(data.find(" ")+1);
-    if((int)data.find(" ") == -1) break;
-  }
-  fs.write("\0\0\0\xCF", 4);
-  fs.close();
 }

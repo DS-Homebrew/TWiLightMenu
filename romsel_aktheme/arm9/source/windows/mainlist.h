@@ -27,7 +27,6 @@
 #include "ui/keymessage.h"
 #include "ui/touchmessage.h"
 #include "dsrom.h"
-#include "windows/zoomingicon.h"
 #include "windows/dsiiconsequence.h"
 
 #define SD_ROOT "sd:/"
@@ -60,7 +59,9 @@ public:
     INTERNALNAME_COLUMN = 2,
     REALNAME_COLUMN = 3,
     SAVETYPE_COLUMN = 4,
-    FILESIZE_COLUMN = 5
+    FILESIZE_COLUMN = 5,
+    CUSTOM_POS_COLUMN = 6,
+    POSITION_COLUMN = 7,
   };
 
 public:
@@ -86,6 +87,8 @@ public:
   void setRomInfo(u32 rowIndex, const DSRomInfo &info);
 
   void setViewMode(VIEW_MODE mode);
+
+  void selectRowByPath(const std::string &path);
 
   std::string getSelectedFullPath();
 
@@ -115,7 +118,6 @@ protected:
     CONTENT = 1
   };
 
-  void updateActiveIcon(bool updateContent);
   void updateInternalNames(void);
 
 protected:
@@ -129,10 +131,6 @@ protected:
   std::string _currentDir;
 
   std::vector<DSRomInfo> _romInfoList;
-
-  ZoomingIcon _activeIcon;
-
-  float _activeIconScale;
 
   bool _showAllFiles;
 

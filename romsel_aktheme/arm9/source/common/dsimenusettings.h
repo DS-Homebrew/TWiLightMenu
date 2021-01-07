@@ -29,6 +29,14 @@ class TWLSettings
         EViewInternal = 2
     };
 
+    enum TSortMethod 
+    {
+        EAlphabetical = 0,
+        ERecent = 1,
+        EMostPlayed = 2,
+        EFileType = 3,
+        ECustom = 4,
+    };
     // Do not reorder these, just add to the end
     enum TLanguage
     {
@@ -118,10 +126,18 @@ class TWLSettings
 
     TLanguage getGuiLanguage();
     const char* getAppName();
+
+    std::string getCurrentRomFolder();
+    std::string getPrimaryRomFolder();
+    std::string getSecondaryRomFolder();
+    void setCurrentRomFolder(const std::string& romfolder);
+
+  private: 
+      std::string romfolder[2];
+
   public:
-    std::string romfolder[2];
-    int pagenum;
-    int cursorPosition;
+    int pagenum[2];
+	int cursorPosition[2];
     int startMenu_cursorPosition;
     int consoleModel;
     int guiLanguage;
@@ -148,9 +164,12 @@ class TWLSettings
     int sysRegion;
     int launcherApp;
     bool gotosettings;
+    bool secondaryAccess;
     bool previousUsedDevice;
     bool secondaryDevice;
     bool fcSaveOnSd;
+	bool updateRecentlyPlayedList;
+	int sortMethod;
 
     int slot1LaunchMethod;
     bool useBootstrap;

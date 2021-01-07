@@ -42,16 +42,18 @@ class ListItem
 {
   protected:
     std::string _text;
-    u32 _lines;
+    s32 _lines;
 
   public:
-    ListItem() : _text(""), _lines(1), index(0), column(0), imageId(0), param(0) {}
+    ListItem() : _text(""), _lines(1), index(0), column(0), imageId(0), param(0) {
+      _lines = 1;
+    }
     u32 index;
     u32 column;
     u32 imageId;
     u32 param;
     const std::string &text(void) const { return _text; }
-    u32 lines(void) const { return _lines; }
+    s32 lines(void) const { return _lines; }
     void setText(const std::string &text);
 };
 

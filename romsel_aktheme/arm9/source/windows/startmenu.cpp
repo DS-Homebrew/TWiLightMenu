@@ -31,10 +31,14 @@ void StartMenu::init()
     CIniFile ini(SFN_UI_SETTINGS);
     if(ini.GetInt("start menu", "showFileOperations", true))
     {
-        addItem(START_MENU_ITEM_COPY, LANG("start menu", "Copy"));
-        addItem(START_MENU_ITEM_CUT, LANG("start menu", "Cut"));
-        addItem(START_MENU_ITEM_PASTE, LANG("start menu", "Paste"));
-        addItem(START_MENU_ITEM_DELETE, LANG("start menu", "Delete"));
+        // File manipulation is way too dangerous.
+        // Use GM9i instead.
+
+        // addItem(START_MENU_ITEM_COPY, LANG("start menu", "Copy"));
+        // addItem(START_MENU_ITEM_CUT, LANG("start menu", "Cut"));
+        // addItem(START_MENU_ITEM_PASTE, LANG("start menu", "Paste"));
+        // addItem(START_MENU_ITEM_DELETE, LANG("start menu", "Delete"));
+
         addItem(START_MENU_ITEM_HIDE, LANG("start menu", "Hide"));
         //addItem(START_MENU_ITEM_HELP, LANG("start menu", "Help"));
 

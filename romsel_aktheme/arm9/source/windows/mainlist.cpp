@@ -30,6 +30,7 @@
 #include "common/systemdetails.h"
 #include "common/flashcard.h"
 #include "common/dsimenusettings.h"
+#include "common/playedconfig.h"
 #include "ui/windowmanager.h"
 #include "tool/timetool.h"
 #include "tool/memtool.h"
@@ -65,11 +66,7 @@ MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string
     : ListView(x, y, w, h, parent, text, ms().ak_scrollSpeed), _showAllFiles(false)
 {
     _viewMode = VM_LIST;
-    _activeIconScale = 1;
-    _activeIcon.hide();
-    _activeIcon.update();
     setupExtnames();
-    animationManager().addAnimation(&_activeIcon);
     seq();
     dbg_printf("_activeIcon.init\n");
 }
@@ -93,31 +90,71 @@ int MainList::init()
     insertColumn(INTERNALNAME_COLUMN, "internalName", 0);
     insertColumn(REALNAME_COLUMN, "realName", 0); // hidden column for contain real filename
     insertColumn(SAVETYPE_COLUMN, "saveType", 0);
-    insertColumn(FILESIZE_COLUMN, "fileSize", 0);
+    insertColumn(CUSTOM_POS_COLUMN, "customPos", 0);
+    insertColumn(POSITION_COLUMN, "position", 0);
 
     setViewMode((MainList::VIEW_MODE)ms().ak_viewMode);
-
-    _activeIcon.hide();
-
     return 1;
 }
 
-static bool itemSortComp(const ListView::itemVector &item1, const ListView::itemVector &item2)
+static bool itemSortComp(const ListView::itemVector &lhs, const ListView::itemVector &rhs)
 {
-    const std::string &fn1 = item1[MainList::REALNAME_COLUMN].text();
-    const std::string &fn2 = item2[MainList::REALNAME_COLUMN].text();
-    if ("../" == fn1)
+    const std::string &lhfn = lhs[MainList::REALNAME_COLUMN].text();
+    const std::string &rhfn = rhs[MainList::REALNAME_COLUMN].text();
+
+    bool lhIsCustom = (bool)lhs[MainList::CUSTOM_POS_COLUMN].param;
+    bool rhIsCustom = (bool)rhs[MainList::CUSTOM_POS_COLUMN].param;
+
+    bool lhIsDir = '/' == lhfn[lhfn.size() - 1];
+    bool rhIsDir = '/' == rhfn[rhfn.size() - 1];
+
+    if ("../" == lhfn)
         return true;
-    if ("../" == fn2)
-        return false;
-    if ('/' == fn1[fn1.size() - 1] && '/' == fn2[fn2.size() - 1])
-        return fn1 < fn2;
-    if ('/' == fn1[fn1.size() - 1])
-        return true;
-    if ('/' == fn2[fn2.size() - 1])
+    if ("../" == rhfn)
         return false;
 
-    return fn1 < fn2;
+    if (lhIsDir && !lhIsCustom && !rhIsDir) {
+		return true;
+	}
+    if (!lhIsDir && rhIsDir && !rhIsCustom) {
+		return false;
+	}
+
+    if (lhIsCustom || rhIsCustom) {
+		if(!lhIsCustom)	return false;
+		else if (!rhIsCustom) return true;
+
+		return (lhs[MainList::POSITION_COLUMN].param < rhs[MainList::POSITION_COLUMN].param);
+	}
+	return strcasecmp(lhfn.c_str(), rhfn.c_str()) < 0;
+}
+
+
+static bool itemSortCompFileExt(const ListView::itemVector &lhs, const ListView::itemVector &rhs)
+{
+    const std::string &lhfn = lhs[MainList::REALNAME_COLUMN].text();
+    const std::string &rhfn = rhs[MainList::REALNAME_COLUMN].text();
+
+    bool lhIsDir = '/' == lhfn[lhfn.size() - 1];
+    bool rhIsDir = '/' == rhfn[rhfn.size() - 1];
+
+    if ("../" == lhfn)
+        return true;
+    if ("../" == rhfn)
+        return false;
+
+    if (lhIsDir && !rhIsDir) {
+		return true;
+	}
+    if (!lhIsDir && rhIsDir) {
+		return false;
+	}
+
+    if(strcasecmp(lhfn.substr(lhfn.find_last_of(".") + 1).c_str(), rhfn.substr(rhfn.find_last_of(".") + 1).c_str()) == 0) {
+		return strcasecmp(lhfn.c_str(), rhfn.c_str()) < 0;
+	} else {
+		return strcasecmp(lhfn.substr(lhfn.find_last_of(".") + 1).c_str(), rhfn.substr(rhfn.find_last_of(".") + 1).c_str()) < 0;
+	}
 }
 
 static bool extnameFilter(const std::vector<std::string> &extNames, std::string extName)
@@ -220,14 +257,23 @@ void MainList::addDirEntry(const std::string row1,
     nocashMessage("mainlist:213");
 
     appendRow(std::move(a_row));
+    
+    itemVector& row = _rows.back();
+
+    row.emplace_back(ListItem());
+    row.emplace_back(ListItem());
+    row[CUSTOM_POS_COLUMN].param = false;
+    row[POSITION_COLUMN].param = _rows.size() + 1;
+  
     nocashMessage("mainlist:216");
 
-    DSRomInfo romInfo;
+    _romInfoList.emplace_back();
+
+    DSRomInfo& romInfo = _romInfoList.back();
     if (!bannerKey.empty())
     {
         romInfo.setBanner(bannerKey, banner);
     }
-    _romInfoList.emplace_back(std::move(romInfo));
 }
 
 bool MainList::enterDir(const std::string &dirName)
@@ -242,11 +288,11 @@ bool MainList::enterDir(const std::string &dirName)
 
         if (sdFound())
         {
-            addDirEntry(LANG("mainlist", ((ms().showMicroSd) ? "microSD Card" : "SD Card")), "", (ms().showDirectories ? SD_ROOT : ms().romfolder[0]), "usd", microsd_banner_bin);
+            addDirEntry(LANG("mainlist", ((ms().showMicroSd) ? "microSD Card" : "SD Card")), "", (ms().showDirectories ? SD_ROOT : ms().getPrimaryRomFolder()), "usd", microsd_banner_bin);
         }
         if (flashcardFound())
         {
-            addDirEntry(LANG("mainlist", ((sys().isRegularDS()) ? "microSD Card" : "SLOT-1 microSD Card")), "", (ms().showDirectories ? S1SD_ROOT : ms().romfolder[1]), "usd", microsd_banner_bin);
+            addDirEntry(LANG("mainlist", ((sys().isRegularDS()) ? "microSD Card" : "SLOT-1 microSD Card")), "", (ms().showDirectories ? S1SD_ROOT : ms().getSecondaryRomFolder()), "usd", microsd_banner_bin);
         }
         addDirEntry("GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
         if (!sys().isRegularDS())
@@ -309,15 +355,12 @@ bool MainList::enterDir(const std::string &dirName)
     std::string extName;
     char lfnBuf[dirName.length() + 256 + 2];
     // list dir
-
     cwl();
     nocashMessage("mainlist:307");
     if (dir)
     {
         nocashMessage(dirName.c_str());
         _currentDir = std::string(dirName);
-        extern void RemoveTrailingSlashes(std::string &path);
-        RemoveTrailingSlashes(_currentDir);
 
         while ((direntry = readdir(dir)) != NULL)
         {
@@ -364,8 +407,70 @@ bool MainList::enterDir(const std::string &dirName)
         nocashMessage("mainlist:355");
 
         closedir(dir);
+        
+        switch (ms().sortMethod) {
+            case TWLSettings::ERecent: 
+            {
+                std::vector<std::string> recentlyPlayed = played().getRecentlyPlayed(dirName);
+                int k = 0;
+                for (uint i = 0; i < recentlyPlayed.size(); i++) {
+                    for (uint j = 0; j <= _rows.size(); j++) {
+                        if (recentlyPlayed[i] == _rows[j][MainList::SHOWNAME_COLUMN].text()) {
+                            _rows[j][MainList::POSITION_COLUMN].param = k++;
+                            _rows[j][MainList::CUSTOM_POS_COLUMN].param = (u32)true;
+                            break;
+                        }
+                    }
+                }
+                std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                break;
+            }
+            case TWLSettings::EMostPlayed: 
+            {
+                std::vector<TimesPlayed> timesPlayed;
 
-        std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                for (int i = 0; i < (int)_rows.size(); i++) {
+                    timesPlayed.emplace_back(_rows[i][MainList::SHOWNAME_COLUMN].text(), 
+                        played().getTimesPlayed(dirName, _rows[i][MainList::SHOWNAME_COLUMN].text()));
+                }
+
+                for (int i = 0; i < (int)timesPlayed.size(); i++) {
+                    for (int j = 0; j <= (int)_rows.size(); j++) {
+                        if (timesPlayed[i].name == _rows[j][MainList::SHOWNAME_COLUMN].text()) {
+                            _rows[j][MainList::POSITION_COLUMN].param = timesPlayed[i].amount;
+                            _rows[j][MainList::CUSTOM_POS_COLUMN].param = (u32)true;
+                            break;
+                        }
+                    }
+                }
+                std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                break;
+            }
+            case TWLSettings::EFileType:
+            {
+                std::sort(_rows.begin(), _rows.end(), itemSortCompFileExt);
+                break;
+            }
+            case TWLSettings::ECustom:
+            {
+                std::vector<std::string> gameOrder = played().getCustomOrder(dirName);
+                for (uint i = 0; i < gameOrder.size(); i++) {
+                    for (uint j = 0; j < _rows.size(); j++) {
+                        if (gameOrder[i] == _rows[j][MainList::SHOWNAME_COLUMN].text()) {
+                            _rows[j][MainList::POSITION_COLUMN].param = i;
+                            _rows[j][MainList::CUSTOM_POS_COLUMN].param = true;
+                            break;
+                        }
+                    }
+                }
+                std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                break;
+            }
+            case TWLSettings::EAlphabetical:
+            default:
+                std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                break;
+        }
 
         for (size_t ii = 0; ii < _rows.size(); ii++)
         {
@@ -439,6 +544,8 @@ bool MainList::enterDir(const std::string &dirName)
                     rominfo.setExtIcon(extName.substr(1));
                 if (allowUnknown && !rominfo.isExtIcon())
                     rominfo.setExtIcon("unknown");
+                rominfo.load();
+                swiWaitForVBlank();
             }
         }
     }
@@ -456,7 +563,6 @@ void MainList::onSelectChanged(u32 index)
 
 void MainList::onScrolled(u32 index)
 {
-    _activeIconScale = 1;
     //updateActiveIcon( CONTENT );
 }
 
@@ -503,6 +609,17 @@ void MainList::backParentDir()
     }
 }
 
+void MainList::selectRowByPath(const std::string& path) {
+    std::string filename =  path.substr(path.find_last_of("/") + 1);
+    for (size_t i = 0; i < _rows.size(); ++i)
+    {
+        if (_rows[i][SHOWNAME_COLUMN].text() == filename)
+        {
+            setFirstVisibleIdAndSelectRow(i > 3 ? i : 0, i);
+        }
+    }
+}
+
 std::string MainList::getSelectedFullPath()
 {
     if (!_rows.size())
@@ -545,7 +662,6 @@ void MainList::draw()
 {
     updateInternalNames();
     ListView::draw();
-    updateActiveIcon(POSITION);
     drawIcons();
 }
 
@@ -557,13 +673,6 @@ void MainList::drawIcons()
 
     for (size_t i = 0; i < total; ++i)
     {
-        if (_firstVisibleRowId + i == _selectedRowId)
-        {
-            if (_activeIcon.visible())
-            {
-                continue;
-            }
-        }
         s32 itemX = _position.x + 1;
         s32 itemY = _position.y + i * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
         if (_romInfoList[_firstVisibleRowId + i].isBannerAnimated() && ms().animateDsiIcons)
@@ -621,44 +730,6 @@ void MainList::setViewMode(VIEW_MODE mode)
         break;
     }
     scrollTo(_selectedRowId - _visibleRowCount + 1);
-}
-
-void MainList::updateActiveIcon(bool updateContent)
-{
-    const INPUT &temp = getInput();
-    bool allowAnimation = true;
-    animateIcons(allowAnimation);
-
-    //do not show active icon when hold key to list files. Otherwise the icon will not show correctly.
-    if (getInputIdleMs() > 1000 && VM_LIST != _viewMode && allowAnimation && _romInfoList.size() && 0 == temp.keysHeld && ms().ak_zoomIcons)
-    {
-        if (!_activeIcon.visible())
-        {
-            u8 backBuffer[32 * 32 * 2];
-            zeroMemory(backBuffer, 32 * 32 * 2);
-            
-            _romInfoList[_selectedRowId].drawDSRomIconMem(backBuffer);
-            tonccpy(_activeIcon.buffer(), backBuffer, 32 * 32 * sizeof(u16));
-            _activeIcon.setBufferChanged();
-
-            s32 itemX = _position.x;
-            s32 itemY = _position.y + (_selectedRowId - _firstVisibleRowId) * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
-            _activeIcon.setPosition(itemX, itemY);
-            _activeIcon.show();
-            dbg_printf("sel %d ac ico x %d y %d\n", _selectedRowId, itemX, itemY);
-            for (u8 i = 0; i < 8; ++i)
-                dbg_printf("%02x", backBuffer[i]);
-            dbg_printf("\n");
-        }
-    }
-    else
-    {
-        if (_activeIcon.visible())
-        {
-            _activeIcon.hide();
-            cwl();
-        }
-    }
 }
 
 std::string MainList::getCurrentDir()

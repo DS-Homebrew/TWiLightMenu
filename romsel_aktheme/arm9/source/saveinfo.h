@@ -115,6 +115,8 @@ typedef struct SAVE_INFO_EX_T
   u32 dsiPubSavSize;
   u32 dsiPrvSavSize;
   u32 gameSdkVersion;
+  
+  u32 headerCRC;
 
   u8 getRumble(void) { return flags & SAVE_INFO_EX_RUMBLE; };
   u8 getDownloadPlay(void) { return getFlag(SAVE_INFO_EX_DOWNLOAD_PLAY, SAVE_INFO_EX_GLOBAL_DOWNLOAD_PLAY, false); };
