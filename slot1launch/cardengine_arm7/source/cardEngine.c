@@ -32,8 +32,8 @@
 #include "sr_data_srllastran.h"	// For rebooting the game
 
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
-static char bootNdsPath[14] = {'s','d','m','c',':','/','b','o','o','t','.','n','d','s'};
-static const char *resetGameSrldrPath = "sdmc:/_nds/TWiLightMenu/resetgame.srldr";
+static const char bootNdsPath[15] = "sdmc:/boot.nds";
+static const char resetGameSrldrPath[40] = "sdmc:/_nds/TWiLightMenu/resetgame.srldr";
 
 extern void cheat_engine_start(void);
 
@@ -50,16 +50,13 @@ static void unlaunchSetFilename(bool boot) {
 	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
 	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
-	int i2 = 0;
 	if (boot) {
-		for (int i = 0; i < (int)sizeof(bootNdsPath); i++) {
-			*(u8*)(0x02000838+i2) = bootNdsPath[i];				// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-			i2 += 2;
+		for (unsigned int i = 0; i < sizeof(bootNdsPath)/sizeof(bootNdsPath[0]); i++) {
+			((u16*)0x02000838)[i] = bootNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 		}
 	} else {
-		for (int i = 0; i < 39; i++) {
-			*(u8*)(0x02000838+i2) = resetGameSrldrPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-			i2 += 2;
+		for (unsigned int i = 0; i < sizeof(resetGameSrldrPath)/sizeof(resetGameSrldrPath[0]); i++) {
+			((u16*)0x02000838)[i] = resetGameSrldrPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 		}
 	}
 	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0

@@ -173,6 +173,28 @@ bool extention(const std::string& filename, const char* ext) {
 	}
 }
 
+// From FontGraphic class
+std::u16string utf8to16(std::string_view text) {
+	std::u16string out;
+	for(uint i=0;i<text.size();) {
+		char16_t c;
+		if(!(text[i] & 0x80)) {
+			c = text[i++];
+		} else if((text[i] & 0xE0) == 0xC0) {
+			c  = (text[i++] & 0x1F) << 6;
+			c |=  text[i++] & 0x3F;
+		} else if((text[i] & 0xF0) == 0xE0) {
+			c  = (text[i++] & 0x0F) << 12;
+			c |= (text[i++] & 0x3F) << 6;
+			c |=  text[i++] & 0x3F;
+		} else {
+			i++; // out of range or something (This only does up to 0xFFFF since it goes to a U16 anyways)
+		}
+		out += c;
+	}
+	return out;
+}
+
 std::vector<char*> argarray;
 
 TWL_CODE int lastRunROM() {
@@ -385,15 +407,9 @@ TWL_CODE int lastRunROM() {
 
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram);
 		} case 3: {
-			char unlaunchDevicePath[256];
-			if (previousUsedDevice) {
-				snprintf(unlaunchDevicePath, (int)sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
-			} else {
-				snprintf(unlaunchDevicePath, (int)sizeof(unlaunchDevicePath), "__%s", dsiWareSrlPath.c_str());
-				unlaunchDevicePath[0] = 's';
-				unlaunchDevicePath[1] = 'd';
-				unlaunchDevicePath[2] = 'm';
-				unlaunchDevicePath[3] = 'c';
+			std::u16string path(previousUsedDevice ? u"sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : utf8to16(dsiWareSrlPath));
+			if (path.substr(0, 3) == u"sd:") {
+				path = u"sdmc:" + path.substr(3);
 			}
 
 			memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
@@ -404,10 +420,8 @@ TWL_CODE int lastRunROM() {
 			*(u16*)(0x02000814) = 0x7FFF;			// Unlaunch Upper screen BG color (0..7FFFh)
 			*(u16*)(0x02000816) = 0x7FFF;			// Unlaunch Lower screen BG color (0..7FFFh)
 			memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);	// Unlaunch Reserved (zero)
-			int i2 = 0;
-			for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
-				*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-				i2 += 2;
+			for (uint i = 0; i < std::min(path.length(), 0x103u); i++) {
+				((char16_t*)0x02000838)[i] = path[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 			}
 			while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
 				*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16

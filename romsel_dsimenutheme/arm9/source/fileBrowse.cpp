@@ -57,7 +57,7 @@ extern bool controlTopBright;
 extern bool controlBottomBright;
 
 extern const char *unlaunchAutoLoadID;
-extern void unlaunchRomBoot(const char* rom);
+extern void unlaunchRomBoot(std::string_view rom);
 
 extern bool dropDown;
 extern int currentBg;
@@ -653,25 +653,8 @@ void exitToSystemMenu(void) {
 		*(u32 *)(0x02000310) = 0x4D454E55; // "MENU"
 		unlaunchSetHiyaBoot();
 	} else {
-		extern char unlaunchDevicePath[256];
-
-		memcpy((u8 *)0x02000800, unlaunchAutoLoadID, 12);
-		*(u16 *)(0x0200080C) = 0x3F0;			   // Unlaunch Length for CRC16 (fixed, must be 3F0h)
-		*(u16 *)(0x0200080E) = 0;			   // Unlaunch CRC16 (empty)
-		*(u32 *)(0x02000810) = (BIT(0) | BIT(1));	  // Load the title at 2000838h
-								   // Use colors 2000814h
-		*(u16 *)(0x02000814) = 0x7FFF;			   // Unlaunch Upper screen BG color (0..7FFFh)
-		*(u16 *)(0x02000816) = 0x7FFF;			   // Unlaunch Lower screen BG color (0..7FFFh)
-		memset((u8 *)0x02000818, 0, 0x20 + 0x208 + 0x1C0); // Unlaunch Reserved (zero)
-		int i2 = 0;
-		for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
-			*(u8 *)(0x02000838 + i2) =
-				unlaunchDevicePath[i]; // Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-			i2 += 2;
-		}
-		while (*(u16 *)(0x0200080E) == 0) { // Keep running, so that CRC16 isn't 0
-			*(u16 *)(0x0200080E) = swiCRC16(0xFFFF, (void *)0x02000810, 0x3F0); // Unlaunch CRC16
-		}
+		extern char launcherPath[256];
+		unlaunchRomBoot(launcherPath);
 	}
 	fifoSendValue32(FIFO_USER_02, 1); // ReturntoDSiMenu
 }

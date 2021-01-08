@@ -84,9 +84,6 @@ const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 std::string homebrewArg;
 std::string bootstrapfilename;
 
-const char *unlaunchAutoLoadID = "AutoLoadInfo";
-char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
-
 int subscreenmode = 0;
 
 int pressed = 0;

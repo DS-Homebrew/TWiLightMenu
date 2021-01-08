@@ -52,10 +52,6 @@ bool hiyaAutobootFound = false;
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 const char *settingsinipath = DSIMENUPP_INI;
 
-const char *unlaunchAutoLoadID = "AutoLoadInfo";
-char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
-char unlaunchDevicePath[256];
-
 typedef struct {
 	char gameTitle[12];			//!< 12 characters for the game title.
 	char gameCode[4];			//!< 4 characters for the game code.
@@ -180,15 +176,34 @@ bool extention(const std::string& filename, const char* ext) {
 	}
 }
 
-void unlaunchRomBoot(const char* rom) {
-	if (strncmp(rom, "cart:", 5) == 0) {
-		sprintf(unlaunchDevicePath, "cart:");
-	} else {
-		sprintf(unlaunchDevicePath, "__%s", rom);
-		unlaunchDevicePath[0] = 's';
-		unlaunchDevicePath[1] = 'd';
-		unlaunchDevicePath[2] = 'm';
-		unlaunchDevicePath[3] = 'c';
+// Unlaunch needs the path in 16 bit unicode so this function is
+// from the FontGraphic class, but as that's not used in title
+// it's copied here. Remove this if adding FontGraphic to title.
+std::u16string utf8to16(std::string_view text) {
+	std::u16string out;
+	for(uint i=0;i<text.size();) {
+		char16_t c;
+		if(!(text[i] & 0x80)) {
+			c = text[i++];
+		} else if((text[i] & 0xE0) == 0xC0) {
+			c  = (text[i++] & 0x1F) << 6;
+			c |=  text[i++] & 0x3F;
+		} else if((text[i] & 0xF0) == 0xE0) {
+			c  = (text[i++] & 0x0F) << 12;
+			c |= (text[i++] & 0x3F) << 6;
+			c |=  text[i++] & 0x3F;
+		} else {
+			i++; // out of range or something (This only does up to 0xFFFF since it goes to a U16 anyways)
+		}
+		out += c;
+	}
+	return out;
+}
+
+void unlaunchRomBoot(std::string_view rom) {
+	std::u16string path(utf8to16(rom));
+	if (path.substr(0, 3) == u"sd:") {
+		path = u"sdmc:" + path.substr(3);
 	}
 
 	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
@@ -200,10 +215,8 @@ void unlaunchRomBoot(const char* rom) {
 	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
 	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
-	int i2 = 0;
-	for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
-		*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-		i2 += 2;
+	for (uint i = 0; i < std::min(path.length(), 0x103u); i++) {
+		((char16_t*)0x02000838)[i] = path[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 	}
 	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
 		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
@@ -548,36 +561,7 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (ms().previousUsedDevice) {
-			snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
-		} else {
-			snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s", ms().dsiWareSrlPath.c_str());
-			unlaunchDevicePath[0] = 's';
-			unlaunchDevicePath[1] = 'd';
-			unlaunchDevicePath[2] = 'm';
-			unlaunchDevicePath[3] = 'c';
-		}
-
-		memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
-		*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
-		*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
-		*(u32*)(0x02000810) = 0;			// Unlaunch Flags
-		*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
-		*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
-		*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
-		*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
-		memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
-		int i2 = 0;
-		for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
-			*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-			i2 += 2;
-		}
-		while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
-			*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-		}
-
-		fifoSendValue32(FIFO_USER_08, 1); // Reboot
-		for (int i = 0; i < 15; i++) swiWaitForVBlank();
+		unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 	}
 	else if (ms().launchType[ms().previousUsedDevice] == Launch::ENESDSLaunch)
 	{
