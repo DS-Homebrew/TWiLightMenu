@@ -15,6 +15,27 @@
 
 int fontTextureID[2];
 
+std::u16string FontGraphic::utf8to16(std::string_view text) {
+	std::u16string out;
+	for(uint i=0;i<text.size();) {
+		char16_t c;
+		if(!(text[i] & 0x80)) {
+			c = text[i++];
+		} else if((text[i] & 0xE0) == 0xC0) {
+			c  = (text[i++] & 0x1F) << 6;
+			c |=  text[i++] & 0x3F;
+		} else if((text[i] & 0xF0) == 0xE0) {
+			c  = (text[i++] & 0x0F) << 12;
+			c |= (text[i++] & 0x3F) << 6;
+			c |=  text[i++] & 0x3F;
+		} else {
+			i++; // out of range or something (This only does up to 0xFFFF since it goes to a U16 anyways)
+		}
+		out += c;
+	}
+	return out;
+}
+
 int FontGraphic::load(int textureID, glImage *_font_sprite,
 				  const unsigned int numframes,
 				  const unsigned int *texcoords,

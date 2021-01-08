@@ -101,10 +101,6 @@ extern void ClearBrightness();
 
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 
-const char *unlaunchAutoLoadID = "AutoLoadInfo";
-static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
-char unlaunchDevicePath[256];
-
 bool arm7SCFGLocked = false;
 int consoleModel = 0;
 /*	0 = Nintendo DSi (Retail)
@@ -316,55 +312,6 @@ void loadROMselect() {
 	fadeType = true;	// Fade in from white
 }
 
-void unalunchRomBoot(const char* rom) {
-	char unlaunchDevicePath[256];
-	snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s", rom);
-	unlaunchDevicePath[0] = 's';
-	unlaunchDevicePath[1] = 'd';
-	unlaunchDevicePath[2] = 'm';
-	unlaunchDevicePath[3] = 'c';
-
-	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
-	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
-	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
-	*(u32*)(0x02000810) = 0;			// Unlaunch Flags
-	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
-	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
-	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
-	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
-	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
-	int i2 = 0;
-	for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
-		*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-		i2 += 2;
-	}
-	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
-		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-	}
-
-	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
-}
-
-void unlaunchSetHiyaBoot(void) {
-	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
-	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
-	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
-	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
-	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
-	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
-	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
-	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
-	int i2 = 0;
-	for (int i = 0; i < 14; i++) {
-		*(u8*)(0x02000838+i2) = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-		i2 += 2;
-	}
-	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
-		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-	}
-}
-
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -402,47 +349,6 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
-
-	if (isDSiMode() && (access("sd:/", F_OK) == 0) && consoleModel < 2 && launcherApp != -1) {
-		u8 setRegion = 0;
-		if (sysRegion == -1) {
-			// Determine SysNAND region by searching region of System Settings on SDNAND
-			char tmdpath[256];
-			for (u8 i = 0x41; i <= 0x5A; i++)
-			{
-				snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
-				if (access(tmdpath, F_OK) == 0)
-				{
-					setRegion = i;
-					break;
-				}
-			}
-		} else {
-			switch(sysRegion) {
-				case 0:
-				default:
-					setRegion = 0x4A;	// JPN
-					break;
-				case 1:
-					setRegion = 0x45;	// USA
-					break;
-				case 2:
-					setRegion = 0x50;	// EUR
-					break;
-				case 3:
-					setRegion = 0x55;	// AUS
-					break;
-				case 4:
-					setRegion = 0x43;	// CHN
-					break;
-				case 5:
-					setRegion = 0x4B;	// KOR
-					break;
-			}
-		}
-
-		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, launcherApp);
-	}
 
 	graphicsInit();
 	fontInit();

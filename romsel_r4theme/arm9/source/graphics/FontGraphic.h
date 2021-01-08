@@ -8,6 +8,7 @@
  *******************************************************************************
  ******************************************************************************/
 #pragma once
+#include <string>
 #include <gl2d.h>
 #define FONT_SX 8
 #define FONT_SY 10
@@ -24,6 +25,9 @@ private:
 	char16_t getCharacter(const char *&text);
 
 public:
+
+	// From the other rewritten FontGraphic, needed for Unlaunch
+	static std::u16string utf8to16(std::string_view text);
 
 	FontGraphic() { };
 	int load(int textureID, glImage *_font_sprite,

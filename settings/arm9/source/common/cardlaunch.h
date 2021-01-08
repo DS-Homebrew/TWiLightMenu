@@ -2,8 +2,9 @@
 
 #ifndef __CARD_LAUNCH__
 #define __CARD_LAUNCH__
-extern const char *unlaunchAutoLoadID;
-extern char hiyaNdsPath[14];
+
+const char *unlaunchAutoLoadID = "AutoLoadInfo";
+const char16_t hiyaNdsPath[] = u"sdmc:/hiya.dsi";
 
 void unlaunchSetHiyaBoot(void) {
 	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
@@ -14,10 +15,8 @@ void unlaunchSetHiyaBoot(void) {
 	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
 	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
-	int i2 = 0;
-	for (int i = 0; i < 14; i++) {
-		*(u8*)(0x02000838+i2) = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-		i2 += 2;
+	for (uint i = 0; i < sizeof(hiyaNdsPath)/sizeof(hiyaNdsPath[0]); i++) {
+		((char16_t*)0x02000838)[i] = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 	}
 	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
 		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16

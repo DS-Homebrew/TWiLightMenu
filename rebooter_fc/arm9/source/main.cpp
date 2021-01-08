@@ -4,7 +4,7 @@
 #include "tonccpy.h"
 
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
-static char bootNdsPath[14] = {'s','d','m','c',':','/','b','o','o','t','.','n','d','s'};
+static char16_t bootNdsPath[] = u"sdmc:/boot.nds";
 
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
@@ -17,10 +17,8 @@ int main(int argc, char **argv) {
 	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
 	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
-	int i2 = 0;
-	for (int i = 0; i < (int)sizeof(bootNdsPath); i++) {
-		*(u8*)(0x02000838+i2) = bootNdsPath[i];				// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-		i2 += 2;
+	for (uint i = 0; i < sizeof(bootNdsPath)/sizeof(bootNdsPath[0]); i++) {
+		((char16_t*)0x02000838)[i] = bootNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 	}
 	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
 		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
