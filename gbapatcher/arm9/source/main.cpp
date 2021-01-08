@@ -48,7 +48,7 @@ ITCM_CODE void gptc_patchWait()
 	for (u32 addr = 0x080000C0; addr < 0x08000000+romSize; addr+=4) {
 		if ((*(u8*)(addr-1) == 0x00 || *(u8*)(addr-1) == 0x03 || *(u8*)(addr-1) == 0x04 || *(u8*)(addr+7) == 0x04
 		  || *(u8*)(addr-1) == 0x47 || *(u8*)(addr-1) == 0x81 || *(u8*)(addr-1) == 0x85
-		  || *(u8*)(addr-1) == 0xE0 || *(u8*)(addr-1) == 0xE7)
+		  || *(u8*)(addr-1) == 0xE0 || *(u8*)(addr-1) == 0xE7 || *(u16*)(addr-2) == 0xFFFE)
 		&& *(u32*)addr == 0x04000204) {
 			toncset((u16*)addr, 0, sizeof(u32));
 		}
@@ -73,6 +73,13 @@ void gptc_patchRom()
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x50118) == 0x4014)
 			*(u16*)(0x08000000 + 0x50118) = 0x4000;
+	}
+	else if(gameCode == 0x45443941 || gameCode == 0x50443941)
+	{
+		//Doom II (USA/Europe)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x2856) == 0x5281)
+			*(u16*)(0x08000000 + 0x2856) = 0x46C0;
 	}
 	else if(gameCode == 0x45474C41)
 	{
