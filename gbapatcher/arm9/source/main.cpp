@@ -99,6 +99,13 @@ void gptc_patchRom()
 		if (*(u16*)(0x08000000 + 0x50118) == 0x4014)
 			*(u16*)(0x08000000 + 0x50118) = 0x4000;
 	}
+	else if(gameCode == 0x454D4441)
+	{
+		//Doom (USA)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x51C) == 0x45B6)
+			*(u16*)(0x08000000 + 0x51C) = 0x4002;
+	}
 	else if(gameCode == 0x45443941 || gameCode == 0x50443941)
 	{
 		//Doom II (USA/Europe)
