@@ -28,6 +28,17 @@ std::string gbaBorder = "default.png";
 
 u32 romSize = 0;
 
+u32 prefetchPatch[8] = {
+	0xE59F000C,	// LDR  R0, =0x4000204
+	0xE59F100C, // LDR  R1, =0x4000
+	0xE4A01000, // STRT R1, [R0]
+	0xE59F0008, // LDR  R0, =0x80000C0
+	0xE1A0F000, // MOV  PC, R0
+	0x04000204,
+	0x00004000,
+	0x080000C0
+};
+
 static const u8 sDbzLoGUPatch1[0x24] = 
 	{0x0A, 0x1C, 0x40, 0x0B, 0xE0, 0x21, 0x09, 0x05, 0x41, 0x18, 0x07, 0x31, 0x00, 0x23, 0x08, 0x78,
 	 0x10, 0x70, 0x01, 0x33, 0x01, 0x32, 0x01, 0x39, 0x07, 0x2B, 0xF8, 0xD9, 0x00, 0x20, 0x70, 0xBC,
@@ -43,9 +54,23 @@ static const u8 sDbzLoGUPatch2[0x28] =
 
 ITCM_CODE void gptc_patchWait()
 {
+	u32 entryPoint = *(u32*)0x08000000;
+	entryPoint -= 0xEA000000;
+	entryPoint += 2;
+	prefetchPatch[7] = 0x08000000+(entryPoint*4);
+
+	u32 patchOffset = 0x01FFFFDC;
+	tonccpy((u8*)0x08000000+patchOffset, prefetchPatch, 8*sizeof(u32));
+
+	u32 branchCode = 0xEA000000+(patchOffset/sizeof(u32))-2;
+	tonccpy((u16*)0x08000000, &branchCode, sizeof(u32));
+
+	u32 searchRange = 0x08000000+romSize;
+	if (romSize > 0x01FFFFDC) searchRange = 0x09FFFFDC;
+
 	// General fix for white screen crash
 	// Patch out wait states
-	for (u32 addr = 0x080000C0; addr < 0x08000000+romSize; addr+=4) {
+	for (u32 addr = 0x080000C0; addr < searchRange; addr+=4) {
 		if ((*(u8*)(addr-1) == 0x00 || *(u8*)(addr-1) == 0x03 || *(u8*)(addr-1) == 0x04 || *(u8*)(addr+7) == 0x04
 		  || *(u8*)(addr-1) == 0x47 || *(u8*)(addr-1) == 0x81 || *(u8*)(addr-1) == 0x85
 		  || *(u8*)(addr-1) == 0xE0 || *(u8*)(addr-1) == 0xE7 || *(u16*)(addr-2) == 0xFFFE)
