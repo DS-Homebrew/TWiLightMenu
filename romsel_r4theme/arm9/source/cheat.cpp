@@ -360,7 +360,7 @@ void CheatCodelist::selectCheats(std::string filename)
     drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition);
 
     do {
-	  snd().updateStream();
+      snd().updateStream();
       scanKeys();
       pressed = keysDown();
       held = keysDownRepeat();
@@ -397,6 +397,27 @@ void CheatCodelist::selectCheats(std::string filename)
           deselectFolder(std::distance(&_data[0], currentList[cheatWnd_cursorPosition]));
         if(select || !(cheat._flags & cParsedItem::EOne))
           cheat._flags ^= cParsedItem::ESelected;
+        // Warn when enabling a cheat that uses E codes
+        if(select) {
+          for(u32 code : cheat._cheat) {
+            if(code >> 28 == 0xE) {
+              clearText();
+              titleUpdate(isDirectory, filename.c_str());
+              printLargeCentered(false, 0, 74, "Cheats");
+              printSmallCentered(false, 0, 100, "This cheat uses E type codes");
+              printSmallCentered(false, 0, 110, "and may not work or cause");
+              printSmallCentered(false, 0, 120, "the game to not launch.");
+              printSmallCentered(false, 0, 167, "A: OK");
+
+              do {
+                scanKeys();
+                checkSdEject();
+                swiWaitForVBlank();
+              } while(!(keysDown() & KEY_A));
+              break;
+            }
+          }
+        }
       }
     } else if(pressed & KEY_B) {
       if(mainListCurPos != -1) {

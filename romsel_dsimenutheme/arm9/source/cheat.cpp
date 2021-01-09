@@ -446,6 +446,31 @@ void CheatCodelist::selectCheats(std::string filename)
           deselectFolder(std::distance(&_data[0], currentList[cheatWnd_cursorPosition]));
         if(select || !(cheat._flags & cParsedItem::EOne))
           cheat._flags ^= cParsedItem::ESelected;
+        // Warn when enabling a cheat that uses E codes
+        if(select) {
+          for(u32 code : cheat._cheat) {
+            if(code >> 28 == 0xE) {
+              clearText();
+              printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
+              printSmall(false, 0, 80, STR_E_CODE, Alignment::center);
+              printSmall(false, 0, 160, STR_A_OK, Alignment::center);
+              updateText(false);
+
+              do {
+                scanKeys();
+                checkSdEject();
+                tex().drawVolumeImageCached();
+                tex().drawBatteryImageCached();
+                drawCurrentTime();
+                drawCurrentDate();
+                drawClockColon();
+                snd().updateStream();
+                swiWaitForVBlank();
+              } while(!(keysDown() & KEY_A));
+              break;
+            }
+          }
+        }
       }
     } else if(pressed & KEY_B) {
       snd().playBack();
@@ -469,7 +494,7 @@ void CheatCodelist::selectCheats(std::string filename)
       clearText();
       printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
       printSmall(false, 0, 100, STR_SAVING, Alignment::center);
-	  updateText(false);
+      updateText(false);
       onGenerate();
       break;
     } else if(pressed & KEY_Y) {
