@@ -308,7 +308,7 @@ void BootstrapConfig::loadCheats()
 						CheatWnd chtwnd((256)/2,(192)/2,100,100,NULL,_fullPath);
 
 						chtwnd.parse(_fullPath);
-						chtwnd.writeCheatsToFile(chtwnd.getCheats(), SFN_CHEAT_DATA);
+						chtwnd.writeCheatsToFile(SFN_CHEAT_DATA);
 						FILE* cheatData=fopen(SFN_CHEAT_DATA,"rb");
 						if (cheatData) {
 							u32 check[2];

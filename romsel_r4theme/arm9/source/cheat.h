@@ -6,8 +6,6 @@
 #include <vector>
 #include <nds.h>
 
-void writeCheatsToFile(std::string data, const char* path);
-
 class CheatCodelist
 {
 public:
@@ -47,7 +45,7 @@ public:
       public:
         std::string _title;
         std::string _comment;
-        std::string _cheat;
+        std::vector<u32> _cheat;
         u32 _flags;
         u32 _offset;
         cParsedItem(const std::string& title,const std::string& comment,u32 flags,u32 offset=0):_title(title),_comment(comment),_flags(flags),_offset(offset) {};
@@ -64,8 +62,9 @@ public:
     std::vector<cParsedItem> _data;
     std::vector<size_t> _indexes;
   public:
-    std::string getCheats();
-  
+    std::vector<u32> getCheats();
+    void writeCheatsToFile(const char* path);
+
 private:
   enum TOKEN_TYPE {TOKEN_DATA, TOKEN_TAG_START, TOKEN_TAG_END, TOKEN_TAG_SINGLE};
 

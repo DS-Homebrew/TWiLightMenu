@@ -1368,7 +1368,7 @@ int main(int argc, char **argv) {
 								if (dat) {
 									if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
 										codelist.parse(path);
-										writeCheatsToFile(codelist.getCheats(), cheatDataBin);
+										codelist.writeCheatsToFile(cheatDataBin);
 										FILE* cheatData=fopen(cheatDataBin,"rb");
 										if (cheatData) {
 											u32 check[2];
