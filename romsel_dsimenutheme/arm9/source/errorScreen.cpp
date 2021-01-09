@@ -19,8 +19,8 @@ extern bool showdialogbox;
 extern float dbox_Ypos;
 
 
-vu16* sdRemovedExtendedImage = (vu16*)0x026C8000;
-vu16* sdRemovedImage = (vu16*)0x026E0000;
+vu16* sdRemovedExtendedImage = (vu16*)0x02EC8000;
+vu16* sdRemovedImage = (vu16*)0x02EE0000;
 
 static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;

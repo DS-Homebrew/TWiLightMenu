@@ -52,7 +52,7 @@ static u16* _frameBufferBot[2] = {(u16*)0x02FB0000, (u16*)0x02FC8000};
 
 bool boxArtColorDeband = false;
 
-static void* boxArtCache = (void*)0x02500000;	// Size: 0x1B8000
+static void* boxArtCache = (void*)0x02540000;	// Size: 0x1B8000
 static bool boxArtFound[40] = {false};
 int boxArtType[40] = {0};	// 0: NDS, 1: FDS/GBA/GBC/GB, 2: NES/GEN/MD/SFC, 3: SNES
 
@@ -1489,6 +1489,11 @@ void ThemeTextures::videoSetup() {
 	}
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
+
+	if (dsiFeatures() && ms().consoleModel > 0) {
+		rotatingCubesLocation = (u8*)0x0D700000;
+		boxArtCache = (void*)0x0D540000;
+	}
 
 	if (ms().theme == 1) {
 		loadRotatingCubes();
