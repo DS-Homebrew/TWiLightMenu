@@ -448,8 +448,8 @@ void CheatCodelist::selectCheats(std::string filename)
           cheat._flags ^= cParsedItem::ESelected;
         // Warn when enabling a cheat that uses E codes
         if(select) {
-          for(u32 code : cheat._cheat) {
-            if(code >> 28 == 0xE) {
+          for(uint i=0;i<cheat._cheat.size();i+=2) {
+            if(cheat._cheat[i] >> 28 == 0xE) {
               clearText();
               printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
               printSmall(false, 0, 80, STR_E_CODE, Alignment::center);
