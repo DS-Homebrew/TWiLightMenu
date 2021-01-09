@@ -14,6 +14,7 @@ extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
 
 
+extern bool boxArtColorDeband;
 extern bool rocketVideo_playVideo;
 extern bool showdialogbox;
 extern float dbox_Ypos;
@@ -56,6 +57,7 @@ void checkSdEject(void) {
 	}
 	
 	// Show "SD removed" screen
+	boxArtColorDeband = false;
 	rocketVideo_playVideo = false;
 	
 	if (showdialogbox) {
