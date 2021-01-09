@@ -33,7 +33,7 @@ class CheatWnd: public akui::Form
     bool parse(const std::string& aFileName);
     static bool searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize);
     static bool romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32);
-    void writeCheatsToFile(std::string data, const char* path);
+    void writeCheatsToFile(const char* path);
   protected:
     void draw();
     bool process(const akui::Message& msg);
@@ -70,7 +70,7 @@ class CheatWnd: public akui::Form
       public:
         std::string _title;
         std::string _comment;
-        std::string _cheat;
+        std::vector<u32> _cheat;
         u32 _flags;
         u32 _offset;
         cParsedItem(const std::string& title,const std::string& comment,u32 flags,u32 offset=0):_title(title),_comment(comment),_flags(flags),_offset(offset) {};
@@ -98,7 +98,7 @@ class CheatWnd: public akui::Form
     std::vector<size_t> _indexes;
     std::string _fileName;
   public:
-    std::string getCheats();
+    std::vector<u32> getCheats();
 };
 
 #endif

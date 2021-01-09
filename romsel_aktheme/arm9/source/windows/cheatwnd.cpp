@@ -26,9 +26,6 @@
 #include "gamecode.h"
 #include <sys/stat.h>
 #include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <sstream>
 
 using namespace akui;
 
@@ -460,12 +457,8 @@ bool CheatWnd::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
       {
         _data.push_back(cParsedItem(cheatName,cheatNote,flagItem|((*ccode&0xff000000)?selectValue:0),dataPos+(((char*)ccode+3)-buffer)));
         if((*ccode&0xff000000)&&(flagItem&cParsedItem::EOne)) selectValue=0;
-        for(size_t jj=0;jj<cheatDataLen;++jj)
-        {
-          _data.back()._cheat+=formatString("%08X",*(cheatData+jj));
-          _data.back()._cheat+=((jj+1)%2)?" ":"\n";
-        }
-        if(cheatDataLen%2) _data.back()._cheat+="\n";
+        _data.back()._cheat.resize(cheatDataLen);
+        tonccpy(_data.back()._cheat.data(),cheatData,cheatDataLen*4);
       }
       cc++;
       ccode=(u32*)((u32)ccode+(((*ccode&0x00ffffff)+1)*4));
@@ -516,33 +509,25 @@ void CheatWnd::deselectFolder(size_t anIndex)
   }
 }
 
-std::string CheatWnd::getCheats()
+std::vector<u32> CheatWnd::getCheats()
 {
-  std::string cheats;
-  for(uint i=0;i< _data.size();i++)
+  std::vector<u32> cheats;
+  for(uint i=0;i<_data.size();i++)
   {
     if(_data[i]._flags&cParsedItem::ESelected)
     {
-      cheats += _data[i]._cheat.substr(0, _data[i]._cheat.size());
+      cheats.insert(cheats.end(),_data[i]._cheat.begin(),_data[i]._cheat.end());
     }
   }
-  std::replace( cheats.begin(), cheats.end(), '\n', ' ');
   return cheats;
 }
 
-void CheatWnd::writeCheatsToFile(std::string data, const char* path) {
-  std::fstream fs;
-  fs.open(path, std::ios::binary | std::fstream::out);
-  std::stringstream str;
-  u32 value;
-  while(1) {
-    str.clear();
-    str << data.substr(0, data.find(" "));
-    str >> std::hex >> value;
-    fs.write(reinterpret_cast<char*>(&value),sizeof(value));
-    data = data.substr(data.find(" ")+1);
-    if((int)data.find(" ") == -1) break;
+void CheatWnd::writeCheatsToFile(const char* path) {
+  FILE *file = fopen(path, "wb");
+  if(file) {
+    std::vector<u32> cheats(getCheats());
+    fwrite(cheats.data(),4,cheats.size(),file);
+    fwrite("\0\0\0\xCF",4,1,file);
+    fclose(file);
   }
-  fs.write("\0\0\0\xCF", 4);
-  fs.close();
 }

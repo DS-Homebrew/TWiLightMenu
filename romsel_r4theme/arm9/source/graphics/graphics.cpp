@@ -20,7 +20,6 @@
 
 #include <nds.h>
 #include <maxmod9.h>
-#include <fstream>
 #include <gl2d.h>
 #include "graphics/lodepng.h"
 #include "bios_decompress_callback.h"
