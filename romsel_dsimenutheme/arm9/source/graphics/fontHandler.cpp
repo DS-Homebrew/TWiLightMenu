@@ -1,9 +1,11 @@
+#include <nds/arm9/dldi.h>
 #include "fontHandler.h"
 #include <list>
 
 #include "common/dsimenusettings.h"
 #include "myDSiMode.h"
 #include "common/flashcard.h"
+#include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "TextEntry.h"
 #include "ThemeConfig.h"
@@ -17,12 +19,16 @@ bool shouldClear[] = {false, false};
 
 
 void fontInit() {
-	printf("fontInit()\n");
+	//iprintf("fontInit()\n");
+
+	extern u32 rotatingCubesLoaded;
+	bool useExpansionPak = (sys().isRegularDS() && (*(u16*)(0x020000C0) != 0 || *(vu16*)(0x08240000) == 1) && (*(u16*)(0x020000C0) != 0 || !rotatingCubesLoaded)
+							&& (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
 
 	// Load font graphics
 	std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
-	smallFont = FontGraphic({fontPath + (dsiFeatures() ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"});
-	largeFont = FontGraphic({fontPath + (dsiFeatures() ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"});
+	smallFont = FontGraphic({fontPath + ((dsiFeatures() || useExpansionPak) ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"}, useExpansionPak);
+	largeFont = FontGraphic({fontPath + ((dsiFeatures() || useExpansionPak) ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"}, useExpansionPak);
 
 	// Load palettes
 	u16 palette[] = {
@@ -33,6 +39,25 @@ void fontInit() {
 	};
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
+}
+
+void fontReinit() {
+	//iprintf("fontReinit()\n");
+
+	// Load font graphics
+	std::string fontPath = std::string("fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
+	smallFont = FontGraphic({fontPath + "/small-ds.nftr", fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"}, false);
+	largeFont = FontGraphic({fontPath + "/large-ds.nftr", fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"}, false);
+
+	// Load palettes (Already loaded)
+	/*u16 palette[] = {
+		tc().fontPalette1(),
+		tc().fontPalette2(),
+		tc().fontPalette3(),
+		tc().fontPalette4(),
+	};
+	tonccpy(BG_PALETTE, palette, sizeof(palette));
+	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));*/
 }
 
 static std::list<TextEntry> &getTextQueue(bool top) {

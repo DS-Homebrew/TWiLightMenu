@@ -3,6 +3,7 @@
 #pragma once
 
 void fontInit();
+void fontReinit();
 
 void updateText(bool top);
 void clearText(bool top);

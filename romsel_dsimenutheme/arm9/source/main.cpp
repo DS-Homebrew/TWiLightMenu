@@ -588,6 +588,8 @@ int main(int argc, char **argv) {
 
 	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
+	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
+
 	//logInit();
 	ms().loadSettings();
 	widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
@@ -711,12 +713,8 @@ int main(int argc, char **argv) {
 			 "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, ms().launcherApp);
 	}
 
-	if (ms().showGba == 1) {
-	  if (*(u16*)(0x020000C0) != 0) {
-		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
-	  } else {
+	if (ms().showGba == 1 && *(u16*)(0x020000C0) == 0) {
 		ms().showGba = 0;	// Hide GBA ROMs
-	  }
 	}
 
 	graphicsInit();
@@ -1589,6 +1587,8 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = (ms().showGba == 1) ? Launch::EGBANativeLaunch : Launch::ESDFlashcardLaunch;
 
 					if (ms().showGba == 1) {
+						fontReinit();	// Re-load font into main memory
+
 						if (ms().theme == 5) displayGameIcons = false;
 						if (*(u16*)(0x020000C0) == 0x5A45) {
 							printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_PLEASE_WAIT, Alignment::center);

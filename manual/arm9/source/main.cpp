@@ -119,6 +119,7 @@ std::string font = "default";
 int guiLanguage = -1;
 bool rtl = false;
 
+bool sdFound = false;
 bool sdRemoveDetect = true;
 
 std::vector<DirEntry> manPagesList;
@@ -324,7 +325,7 @@ int main(int argc, char **argv) {
 	extern const DISC_INTERFACE __my_io_dsisd;
 
 	fatMountSimple("sd", &__my_io_dsisd);
-	bool sdFound = (access("sd:/", F_OK) == 0);
+	sdFound = (access("sd:/", F_OK) == 0);
 	fatMountSimple("fat", dldiGetInternal());
 	bool fatInited = (sdFound || (access("fat:/", F_OK) == 0));
 	chdir(sdFound&&isDSiMode() ? "sd:/" : "fat:/");
@@ -347,6 +348,8 @@ int main(int argc, char **argv) {
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 	fifoSendValue32(FIFO_USER_07, 0);
+
+	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
 	LoadSettings();
 
