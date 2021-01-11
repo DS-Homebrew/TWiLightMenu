@@ -272,13 +272,13 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 		}
 
 		// Don't draw off screen chars
-		if(x >= 0 && x < 256 && y >= 0 && y < 192 - tileHeight) {
+		if(x >= 0 && x + fontWidths[(index * 3) + 2] < 256 && y >= 0 && y + tileHeight < 192) {
 			u8 *dst = textBuf[top] + x + fontWidths[(index * 3)];
 			for(int i = 0; i < tileHeight; i++) {
 				for(int j = 0; j < tileWidth; j++) {
 					u8 px = fontTiles[(index * tileSize) + (i * tileWidth + j) / 4] >> ((3 - ((i * tileWidth + j) % 4)) * 2) & 3;
 					if(px)
-						dst[(y + i) * 256 + j] = px;
+						dst[(y + i) * 256 + j] = px + 0xF8;
 				}
 			}
 		}
