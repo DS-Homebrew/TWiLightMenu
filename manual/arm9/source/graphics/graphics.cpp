@@ -156,12 +156,7 @@ void pageLoad(const std::string &filename) {
 
 	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
 	dmaCopyWordsAsynch(1, pageImage.data()+(176*256), bgGetGfxPtr(bg3Sub), 192*256);
-
-	pageImage.resize(pageImage.size() + 256 * 192);
-	for(int i=0;i<192;i++) {
-		if(i%2)	dmaFillHalfWords(bgColor1 | bgColor1 << 8, pageImage.data()+(pageYsize*256)+(i*256), 256);
-		else	dmaFillHalfWords(bgColor2 | bgColor2 << 8, pageImage.data()+(pageYsize*256)+(i*256), 256);
-	}
+	while (dmaBusy(0) || dmaBusy(1));
 }
 
 void pageScroll(void) {

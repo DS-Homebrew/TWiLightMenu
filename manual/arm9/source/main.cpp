@@ -468,7 +468,7 @@ int main(int argc, char **argv) {
 			pageScroll();
 		} else if (held & KEY_DOWN) {
 			pageYpos += 4;
-			if (pageYpos > pageYsize-176) pageYpos = pageYsize-176;
+			if (pageYpos > pageYsize-368) pageYpos = pageYsize-368;
 			pageScroll();
 		} else if (repeat & KEY_LEFT) {
 			if(currentPage > 0) {
@@ -509,8 +509,8 @@ int main(int argc, char **argv) {
 								pageYpos = 0;
 								pageScroll();
 								break;
-							} else if (pageYpos > (pageYsize-176)) {
-								pageYpos = pageYsize-176;
+							} else if (pageYpos > (pageYsize-368)) {
+								pageYpos = pageYsize-368;
 								pageScroll();
 								break;
 							}
@@ -534,7 +534,7 @@ int main(int argc, char **argv) {
 						}
 					}
 
-					if(((pageYpos + touchStart.py - touch.py) > 0) && ((pageYpos + touchStart.py - touch.py) < (pageYsize - 176)))
+					if(((pageYpos + touchStart.py - touch.py) > 0) && ((pageYpos + touchStart.py - touch.py) < (pageYsize - 368)))
 						pageYpos += touchStart.py - touch.py;
 					pageScroll();
 
@@ -545,7 +545,7 @@ int main(int argc, char **argv) {
 			} else {
 				for(uint i=0;i<manPageLinks.size();i++) {
 					if(((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
-						(((touchStart.py + pageYpos) >= manPageLinks[i].y - 176) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - 176 + manPageLinks[i].h)))) {
+						(((touchStart.py + pageYpos) >= manPageLinks[i].y - 368) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - 368 + manPageLinks[i].h)))) {
 						pageYpos = 0;
 						returnPage = currentPage;
 						for(uint j=0;j<manPagesList.size();j++) {
