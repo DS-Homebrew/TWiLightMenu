@@ -894,6 +894,8 @@ int main(int argc, char **argv) {
 				argarray.push_back(strdup(filename.c_str()));
 			}
 
+			ms().slot1Launched = false;
+
 			// Launch DSiWare .nds via Unlaunch
 			if ((isDSiMode() || sdFound()) && isDSiWare[CURPOS]) {
 				const char *typeToReplace = ".nds";

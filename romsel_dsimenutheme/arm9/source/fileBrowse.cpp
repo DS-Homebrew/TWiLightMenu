@@ -738,6 +738,7 @@ void launchGba(void) {
 	mmEffectCancelAll();
 	snd().stopStream();
 
+	ms().slot1Launched = false;
 	ms().saveSettings();
 
 	// Switch to GBA mode

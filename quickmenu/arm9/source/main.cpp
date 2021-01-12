@@ -1980,6 +1980,8 @@ int main(int argc, char **argv) {
 				argarray.push_back(strdup(filename[secondaryDevice].c_str()));
 			}
 
+			slot1Launched = false;
+
 			// Launch DSiWare .nds via Unlaunch
 			if ((isDSiMode() || sdFound()) && isDSiWare[secondaryDevice]) {
 				const char *typeToReplace = ".nds";

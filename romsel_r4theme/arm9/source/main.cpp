@@ -1216,7 +1216,7 @@ int main(int argc, char **argv) {
 								swiWaitForVBlank();
 							}
 
-							slot1Launched = 0;
+							slot1Launched = true;
 							SaveSettings();
 							if (slot1LaunchMethod==0 || arm7SCFGLocked) {
 								dsCardLaunch();
@@ -1240,6 +1240,7 @@ int main(int argc, char **argv) {
 						for (int i = 0; i < 25; i++) {
 							swiWaitForVBlank();
 						}
+						slot1Launched = false;
 						if (showGba == 2) {
 							if (secondaryDevice) {
 								const char* gbaRunner2Path = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
@@ -1386,6 +1387,8 @@ int main(int argc, char **argv) {
 			} else {
 				argarray.push_back(strdup(filename.c_str()));
 			}
+
+			slot1Launched = false;
 
 			// Launch DSiWare .nds via Unlaunch
 			if ((isDSiMode() || sdFound()) && isDSiWare) {
