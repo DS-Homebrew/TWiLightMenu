@@ -1633,7 +1633,7 @@ void loadPhotoPart() {
 
 static std::string loadedDate;
 
-void drawCurrentDate() {
+ITCM_CODE void drawCurrentDate() {
 	// Load date
 	int x = (ms().theme >= 4 ? 122 : 162);
 	if (ms().theme == 5) {
@@ -1654,7 +1654,7 @@ static std::string loadedTime;
 static int hourWidth;
 static bool initialClockDraw = true;
 
-void drawCurrentTime() {
+ITCM_CODE void drawCurrentTime() {
 	// Load time
 	int x = (ms().theme >= 4 ? 162 : 200);
 	if (ms().theme == 5) {
@@ -1683,7 +1683,7 @@ void drawCurrentTime() {
 	}
 }
 
-void drawClockColon() {
+ITCM_CODE void drawClockColon() {
 	// Load time
 	int x = (ms().theme >= 4 ? 176 : 214);
 	if (ms().theme == 5) {

@@ -1006,7 +1006,7 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 	commitBgSubModify();
 }
 
-void ThemeTextures::drawVolumeImage(int volumeLevel) {
+ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
 	if (!dsiFeatures())
 		return;
 	beginBgSubModify();
@@ -1029,7 +1029,7 @@ void ThemeTextures::drawVolumeImage(int volumeLevel) {
 	commitBgSubModify();
 }
 
-void ThemeTextures::drawVolumeImageCached() {
+ITCM_CODE void ThemeTextures::drawVolumeImageCached() {
 	int volumeLevel = getVolumeLevel();
 	if (_cachedVolumeLevel != volumeLevel) {
 		_cachedVolumeLevel = volumeLevel;
@@ -1037,7 +1037,7 @@ void ThemeTextures::drawVolumeImageCached() {
 	}
 }
 
-int ThemeTextures::getVolumeLevel(void) {
+ITCM_CODE int ThemeTextures::getVolumeLevel(void) {
 	if (!dsiFeatures())
 		return -1;
 	
@@ -1055,7 +1055,7 @@ int ThemeTextures::getVolumeLevel(void) {
 	return -1;
 }
 
-int ThemeTextures::getBatteryLevel(void) {
+ITCM_CODE int ThemeTextures::getBatteryLevel(void) {
 	u8 batteryLevel = sys().batteryStatus();
 	if (!dsiFeatures()) {
 		if (batteryLevel & BIT(0))
@@ -1077,7 +1077,7 @@ int ThemeTextures::getBatteryLevel(void) {
 	return 0;
 }
 
-void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool isRegularDS) {
+ITCM_CODE void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool isRegularDS) {
 	// Start loading
 	beginBgSubModify();
 	const Texture *tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
@@ -1096,7 +1096,7 @@ void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool is
 	commitBgSubModify();
 }
 
-void ThemeTextures::drawBatteryImageCached() {
+ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
 	int batteryLevel = getBatteryLevel();
 	if(batteryLevel == 0 && showColon)	batteryLevel--;
 	else if(batteryLevel == 7 && showColon)	batteryLevel++;
@@ -1187,7 +1187,7 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 	commitBgSubModify();
 }
 
-unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 letter) {
+ITCM_CODE unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 letter) {
 	unsigned int spriteIndex = 0;
 	long int left = 0;
 	long int right = DATE_TIME_FONT_NUM_IMAGES;
@@ -1209,7 +1209,7 @@ unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 letter) {
 	return spriteIndex;
 }
 
-void ThemeTextures::drawDateTime(const char *str, int posX, int posY, const int drawCount, int *hourWidthPointer) {
+ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, const int drawCount, int *hourWidthPointer) {
 	beginBgSubModify();
 
 	const Texture *tex = dateTimeFontTexture();
