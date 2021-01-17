@@ -1419,9 +1419,9 @@ void loadRotatingCubes() {
 			if (*(u16*)(0x020000C0) == 0) {
 				*(vu16*)(0x08240000) = 1;
 			}
-			if (*(u16*)(0x020000C0) != 0 || *(vu16*)(0x08240000) == 1) {
+			if ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) {
 				// Set to load video into DS Memory Expansion Pak
-				rotatingCubesLocation = (u8*)(*(u16*)(0x020000C0)==0x5A45 ? 0x08800000 : 0x09000000);
+				rotatingCubesLocation = (u8*)0x09000000;
 				doRead = true;
 			}
 		}

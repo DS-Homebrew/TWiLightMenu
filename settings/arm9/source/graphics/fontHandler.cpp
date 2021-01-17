@@ -20,7 +20,7 @@ bool shouldClear[] = {false, false};
 void fontInit() {
 	//iprintf("fontInit()\n");
 
-	bool useExpansionPak = (sys().isRegularDS() && (*(u16*)(0x020000C0) != 0 || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
+	bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
 
 	// Load font graphics
 	std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
