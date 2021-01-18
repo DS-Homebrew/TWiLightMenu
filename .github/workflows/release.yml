@@ -90,8 +90,19 @@ jobs:
           mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
 
+          # Emulators
+          mkdir -p 7zfile/_nds/TWiLightMenu/emulators
+          cd 7zfile/_nds/TWiLightMenu/emulators
+          curl -LO https://github.com/wavemotion-dave/StellaDS/releases/latest/download/StellaDS.nds
+          curl -LO https://github.com/wavemotion-dave/A5200DS/releases/latest/download/A5200DS.nds
+          curl -LO https://github.com/wavemotion-dave/A7800DS/releases/latest/download/A7800DS.nds
+          curl -LO https://github.com/wavemotion-dave/A7800DS/releases/latest/download/A7800DS-LITE.nds
+          # PicoDriveTWL is a prerelease, so get the latest URL from the GH api
+          curl -LO $(curl https://api.github.com/repos/DS-Homebrew/PicoDriveTWL/releases | jq --raw-output '.[0].assets[0].browser_download_url' -)
+          cd ../../../..
+
           # version.txt
-          printf "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(jq --raw-output '.tag_name' nds-bootstrap.json)\n\nRocketRobz, ahezard\n" > 7zfile/version.txt
+          printf "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(cat 7zfile/_nds/TWiLightMenu/release-bootstrap.ver)\n\nRocketRobz, ahezard\n" > 7zfile/version.txt
 
           # Main 7z
           cp -r 7zfile TWiLightMenu
