@@ -1606,12 +1606,22 @@ int main(int argc, char **argv) {
 						progressBarLength = 0;
 
 						u32 ptr = 0x08000000;
-						extern char copyBuf[0x8000];
 						u32 romSize = getFileSize(filename.c_str());
+						char titleID[4];
+						FILE* gbaFile = fopen(filename.c_str(), "rb");
+						fseek(gbaFile, 0xAC, SEEK_SET);
+						fread(&titleID, 1, 4, gbaFile);
+						if (strncmp(titleID, "AGBJ", 4) == 0 && romSize <= 0x40000) {
+							ptr += 0x400;
+						}
+						u32 curPtr = ptr;
+						fseek(gbaFile, 0, SEEK_SET);
+
+						extern char copyBuf[0x8000];
 						if (romSize > 0x2000000) romSize = 0x2000000;
 
 						bool nor = false;
-						if (*(u16*)(0x020000C0) == 0x5A45) {
+						if (*(u16*)(0x020000C0) == 0x5A45 && strncmp(titleID, "AGBJ", 4) != 0) {
 							cExpansion::SetRompage(0);
 							expansion().SetRampage(cExpansion::ENorPage);
 							cExpansion::OpenNorWrite();
@@ -1632,18 +1642,17 @@ int main(int argc, char **argv) {
 						printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_LOADING, Alignment::center);
 						updateText(false);
 
-						FILE* gbaFile = fopen(filename.c_str(), "rb");
 						for (u32 len = romSize; len > 0; len -= 0x8000) {
 							if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
 								s2RamAccess(true);
 								if (nor) {
-									expansion().WriteNorFlash(ptr-0x08000000, (u8*)copyBuf, (len>0x8000 ? 0x8000 : len));
+									expansion().WriteNorFlash(curPtr-ptr, (u8*)copyBuf, (len>0x8000 ? 0x8000 : len));
 								} else {
-									tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+									tonccpy((u16*)curPtr, &copyBuf, (len>0x8000 ? 0x8000 : len));
 								}
 								s2RamAccess(false);
-								ptr += 0x8000;
-								progressBarLength = ((ptr-0x08000000)+0x8000)/(romSize/192);
+								curPtr += 0x8000;
+								progressBarLength = ((curPtr-ptr)+0x8000)/(romSize/192);
 								if (progressBarLength > 192) progressBarLength = 192;
 							} else {
 								break;

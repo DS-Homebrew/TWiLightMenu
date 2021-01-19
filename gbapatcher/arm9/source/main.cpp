@@ -555,56 +555,68 @@ int main(int argc, char **argv) {
 	s2RamAccess(true);
 	//iprintf("s2RamAccess(true)\n");
 
-	if (*(u16*)(0x020000C0) != 0x5A45) {
-		gptc_patchRom();
-		//iprintf("ROM patched\n");
-	}
-
-	const save_type_t* saveType = save_findTag();
-	//iprintf("Save tag found\n");
-	if (saveType != NULL && saveType->patchFunc != NULL)
-	{
-		if (saveType->patchFunc(saveType) && *(u16*)(0x020000C0) == 0x5A45) {
-			consoleDemoInit();
-			printf("\x1B[41mWARNING!\x1B[47m\n");
-			printf("This game uses a save type\n");
-			printf("other than SRAM.\n\n");
-			printf("Please SRAM-patch your ROM\n");
-			printf("in order to save your data.\n\n");
-			printf("Press A to continue\nwithout saving\n");
-
-			u16 pressed = 0;
-			do {
-				swiWaitForVBlank();
-				scanKeys();
-				pressed = keysDown();
-			} while(!(pressed & KEY_A));
-
-			consoleClear();
+	if (*(u32*)0x080004AC == 0x4A424741) {
+		// Make multiboot binary bootable
+		file = fopen("nitro:/mb2gba.gba", "rb");
+		if (file) {
+			fread((void*)0x08000000, 1, 0x400, file);
+			fclose(file);
 		}
-	}
+		s2RamAccess(false);
+	} else if (*(u32*)0x080000AC != 0x4732424D) {
+		if (*(u16*)(0x020000C0) != 0x5A45) {
+			gptc_patchRom();
+			//iprintf("ROM patched\n");
+		}
 
-	s2RamAccess(false);
-	//iprintf("s2RamAccess(false)\n");
+		const save_type_t* saveType = save_findTag();
+		//iprintf("Save tag found\n");
+		if (saveType != NULL && saveType->patchFunc != NULL)
+		{
+			if (saveType->patchFunc(saveType) && *(u16*)(0x020000C0) == 0x5A45) {
+				consoleDemoInit();
+				printf("\x1B[41mWARNING!\x1B[47m\n");
+				printf("This game uses a save type\n");
+				printf("other than SRAM.\n\n");
+				printf("Please SRAM-patch your ROM\n");
+				printf("in order to save your data.\n\n");
+				printf("Press A to continue\nwithout saving\n");
 
-	if (saveType != NULL) {
-		std::string savepath = replaceAll(argv[1], ".gba", ".sav");
-		if (getFileSize(savepath.c_str()) == 0) {
-			u32 size = (saveType->size > 0x10000 ? 0x10000 : saveType->size);
-			for (u32 i = 0; i < size; i++) {
-				blankBuf[i] = 0xFF;
-			}
-			//iprintf("Creating save file\n");
-			gbaSramAccess(true);	// Switch to GBA SRAM
-			cExpansion::WriteSram(0x0A000000, (u8*)blankBuf, size);
-			gbaSramAccess(false);	// Switch out of GBA SRAM
-			FILE *pFile = fopen(savepath.c_str(), "wb");
-			if (pFile) {
-				fseek(pFile, saveType->size - 1, SEEK_SET);
-				fputc('\0', pFile);
-				fclose(pFile);
+				u16 pressed = 0;
+				do {
+					swiWaitForVBlank();
+					scanKeys();
+					pressed = keysDown();
+				} while(!(pressed & KEY_A));
+
+				consoleClear();
 			}
 		}
+
+		s2RamAccess(false);
+		//iprintf("s2RamAccess(false)\n");
+
+		if (saveType != NULL) {
+			std::string savepath = replaceAll(argv[1], ".gba", ".sav");
+			if (getFileSize(savepath.c_str()) == 0) {
+				u32 size = (saveType->size > 0x10000 ? 0x10000 : saveType->size);
+				for (u32 i = 0; i < size; i++) {
+					blankBuf[i] = 0xFF;
+				}
+				//iprintf("Creating save file\n");
+				gbaSramAccess(true);	// Switch to GBA SRAM
+				cExpansion::WriteSram(0x0A000000, (u8*)blankBuf, size);
+				gbaSramAccess(false);	// Switch out of GBA SRAM
+				FILE *pFile = fopen(savepath.c_str(), "wb");
+				if (pFile) {
+					fseek(pFile, saveType->size - 1, SEEK_SET);
+					fputc('\0', pFile);
+					fclose(pFile);
+				}
+			}
+		}
+	} else {
+		s2RamAccess(false);
 	}
 
 	// Lock write access to ROM region (and switch to GBA SRAM)
