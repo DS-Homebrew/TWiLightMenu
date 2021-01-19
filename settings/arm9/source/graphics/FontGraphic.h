@@ -37,7 +37,7 @@ public:
 	int calcWidth(std::string_view text) { return calcWidth(utf8to16(text)); }
 	int calcWidth(std::u16string_view text);
 
-	void print(int x, int y, bool top, int value, Alignment align) { print(x, y, top, std::to_string(value), align); }
-	void print(int x, int y, bool top, std::string_view text, Alignment align) { print(x, y, top, utf8to16(text), align); }
-	void print(int x, int y, bool top, std::u16string_view text, Alignment align);
+	void print(int x, int y, bool top, int value, Alignment align, bool rtl = false) { print(x, y, top, std::to_string(value), align, rtl); }
+	void print(int x, int y, bool top, std::string_view text, Alignment align, bool rtl = false) { print(x, y, top, utf8to16(text), align, rtl); }
+	void print(int x, int y, bool top, std::u16string_view text, Alignment align, bool rtl = false);
 };

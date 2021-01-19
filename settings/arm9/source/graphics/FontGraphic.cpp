@@ -170,7 +170,18 @@ int FontGraphic::calcWidth(std::u16string_view text) {
 	return x;
 }
 
-ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view text, Alignment align) {
+ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view text, Alignment align, bool rtl) {
+	// If RTL isn't forced, check for RTL text
+	if(!rtl) {
+		for(const auto c : text) {
+			if(c >= 0x0590 && c <= 0x05FF) {
+				rtl = true;
+				break;
+			}
+		}
+	}
+	auto ltrBegin = text.end(), ltrEnd = text.end();
+
 	// Adjust x for alignment
 	switch(align) {
 		case Alignment::left: {
@@ -178,7 +189,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 		} case Alignment::center: {
 			size_t newline = text.find('\n');
 			while(newline != text.npos) {
-				print(x, y, top, text.substr(0, newline), align);
+				print(x, y, top, text.substr(0, newline), align, rtl);
 				text = text.substr(newline + 1);
 				newline = text.find('\n');
 				y += tileHeight;
@@ -189,7 +200,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 		} case Alignment::right: {
 			size_t newline = text.find('\n');
 			while(newline != text.npos) {
-				print(x - calcWidth(text.substr(0, newline)), y, top, text.substr(0, newline), Alignment::left);
+				print(x - calcWidth(text.substr(0, newline)), y, top, text.substr(0, newline), Alignment::left, rtl);
 				text = text.substr(newline + 1);
 				newline = text.find('\n');
 				y += tileHeight;
@@ -200,21 +211,12 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 	}
 	const int xStart = x;
 
-	bool rtl = false;
-	for(const auto c : text) {
-		if(c >= 0x0590 && c <= 0x05FF) {
-			rtl = true;
-			break;
-		}
-	}
-	auto ltrBegin = text.end(), ltrEnd = text.end();
-
 	// Loop through string and print it
 	for(auto it = (rtl ? text.end() - 1 : text.begin()); true; it += (rtl ? -1 : 1)) {
 		// If we hit the end of the string in an LTR section of an RTL
 		// string, it may not be done, if so jump back to printing RTL
 		if(it == (rtl ? text.begin() - 1 : text.end())) {
-			if(ltrBegin == text.end()) {
+			if(ltrBegin == text.end() || (ltrBegin == text.begin() && ltrEnd == text.end())) {
 				break;
 			} else {
 				it = ltrBegin;
@@ -223,7 +225,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			}
 		}
 
-		// If at the end of an LRT section within RTL, jump back to the RTL
+		// If at the end of an LTR section within RTL, jump back to the RTL
 		if(it == ltrEnd && ltrBegin != text.end()) {
 			if(ltrBegin == text.begin())
 				break;
@@ -232,21 +234,25 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			ltrBegin = text.end();
 			rtl = true;
 		// If in RTL and hit a non-RTL character that's not punctuation, switch to LTR
-		} else if (rtl && ((*it < 0x0590 || *it > 0x05FF) && ((*it >= '0' && *it <= '9') || (*it >= 'A' && *it <= 'Z') || (*it >= 'a' && *it <= 'z') || *it >= 127))) {
+		} else if(rtl && ((*it < 0x0590 || *it > 0x05FF) && ((*it >= '0' && *it <= '9') || (*it >= 'A' && *it <= 'Z') || (*it >= 'a' && *it <= 'z') || *it >= 127))) {
 			// Save where we are as the end of the LTR section
 			ltrEnd = it + 1;
+
 			// Go back until an RTL character or the start of the string
 			while((*it < 0x0590 || *it > 0x05FF) && it != text.begin())
 				it--;
+
 			// Save where we are to return to after printing the LTR section
 			ltrBegin = it;
-			// If not at the start, then we're on the first RTL right now, so add one
-			if(it != text.begin())
+
+			// If on an RTL char right now, add one
+			if(*it >= 0x0590 && *it <= 0x05FF) {
 				it++;
-			// Skip all punctuation at the end if not at beginning
-			while(it != text.begin() && (*it < '0' || (*it > '9' && *it < 'A') || (*it > 'Z' && *it < 'a') || (*it > 'z' && *it < 127))) {
-				it++;
-				ltrBegin++;
+				// And skip all punctuation at the end if not at beginning
+				while(*it < '0' || (*it > '9' && *it < 'A') || (*it > 'Z' && *it < 'a') || (*it > 'z' && *it < 127)) {
+					it++;
+					ltrBegin++;
+				}
 			}
 			rtl = false;
 		}
