@@ -519,7 +519,7 @@ string browseForFile(const vector<string> extensionList) {
 				bnrRomType = 10;
 			} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid") || extention(std_romsel_filename, ".mp4")) {
 				bnrRomType = 9;
-			} else if (extention(std_romsel_filename, ".gba")) {
+			} else if (extention(std_romsel_filename, ".agb") || extention(std_romsel_filename, ".gba") || extention(std_romsel_filename, ".mb")) {
 				bnrRomType = 1;
 			} else if (extention(std_romsel_filename, ".gb") || extention(std_romsel_filename, ".sgb")) {
 				bnrRomType = 2;

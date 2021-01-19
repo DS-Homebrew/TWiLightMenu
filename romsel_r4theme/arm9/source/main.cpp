@@ -1028,7 +1028,9 @@ int main(int argc, char **argv) {
 		extensionList.push_back(".mp4");
 	}
 	if (showGba) {
+		extensionList.emplace_back(".agb");
 		extensionList.emplace_back(".gba");
+		extensionList.emplace_back(".mb");
 	}
 	if (showA26) {
 		extensionList.emplace_back(".a26");
@@ -1944,7 +1946,9 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 						boostVram = true;
 					}
-				} else if (extention(filename, ".gba")) {
+				} else if (extention(filename, ".agb")
+						|| extention(filename, ".gba")
+						|| extention(filename, ".mb")) {
 					launchType[secondaryDevice] = (showGba == 1) ? 11 : 1;
 
 					if (showGba == 1) {

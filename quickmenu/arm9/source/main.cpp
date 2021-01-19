@@ -1233,7 +1233,7 @@ int main(int argc, char **argv) {
 		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4")) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = 0;
-		} else if (extention(filename[0], ".gba")) {
+		} else if (extention(filename[0], ".agb") || extention(filename[0], ".gba") || extention(filename[0], ".mb")) {
 			bnrRomType[0] = 1;
 			boxArtType[0] = 1;
 		} else if (extention(filename[0], ".gb") || extention(filename[0], ".sgb")) {
@@ -1336,7 +1336,7 @@ int main(int argc, char **argv) {
 		} else if (extention(filename[1], ".plg") || extention(filename[1], ".rvid") || extention(filename[1], ".mp4")) {
 			bnrRomType[1] = 9;
 			boxArtType[1] = 0;
-		} else if (extention(filename[1], ".gba")) {
+		} else if (extention(filename[1], ".agb") || extention(filename[1], ".gba") || extention(filename[1], ".mb")) {
 			bnrRomType[1] = 1;
 			boxArtType[1] = 1;
 		} else if (extention(filename[1], ".gb") || extention(filename[1], ".sgb")) {
@@ -2505,7 +2505,9 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 						boostVram = true;
 					}
-				} else if (extention(filename[secondaryDevice], ".gba")) {
+				} else if (extention(filename[secondaryDevice], ".agb")
+						|| extention(filename[secondaryDevice], ".gba")
+						|| extention(filename[secondaryDevice], ".mb")) {
 					launchType[secondaryDevice] = (showGba == 1) ? 11 : 1;
 
 					if (showGba == 1) {
@@ -2519,12 +2521,22 @@ int main(int argc, char **argv) {
 						progressBarLength = 0;
 
 						u32 ptr = 0x08000000;
-						extern char copyBuf[0x8000];
 						u32 romSize = getFileSize(filename[secondaryDevice].c_str());
+						char titleID[4];
+						FILE* gbaFile = fopen(filename[secondaryDevice].c_str(), "rb");
+						fseek(gbaFile, 0xAC, SEEK_SET);
+						fread(&titleID, 1, 4, gbaFile);
+						if (strncmp(titleID, "AGBJ", 4) == 0 && romSize <= 0x40000) {
+							ptr += 0x400;
+						}
+						u32 curPtr = ptr;
+						fseek(gbaFile, 0, SEEK_SET);
+
+						extern char copyBuf[0x8000];
 						if (romSize > 0x2000000) romSize = 0x2000000;
 
 						bool nor = false;
-						if (*(u16*)(0x020000C0) == 0x5A45) {
+						if (*(u16*)(0x020000C0) == 0x5A45 && strncmp(titleID, "AGBJ", 4) != 0) {
 							cExpansion::SetRompage(0);
 							expansion().SetRampage(cExpansion::ENorPage);
 							cExpansion::OpenNorWrite();
@@ -2545,18 +2557,17 @@ int main(int argc, char **argv) {
 						printSmallCentered(false, 34, "the console's lid.");
 						printSmallCentered(false, 88, "Now Loading...");
 
-						FILE* gbaFile = fopen(filename[secondaryDevice].c_str(), "rb");
 						for (u32 len = romSize; len > 0; len -= 0x8000) {
 							if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
 								s2RamAccess(true);
 								if (nor) {
-									expansion().WriteNorFlash(ptr-0x08000000, (u8*)copyBuf, (len>0x8000 ? 0x8000 : len));
+									expansion().WriteNorFlash(curPtr-ptr, (u8*)copyBuf, (len>0x8000 ? 0x8000 : len));
 								} else {
-									tonccpy((u16*)ptr, &copyBuf, (len>0x8000 ? 0x8000 : len));
+									tonccpy((u16*)curPtr, &copyBuf, (len>0x8000 ? 0x8000 : len));
 								}
 								s2RamAccess(false);
-								ptr += 0x8000;
-								progressBarLength = ((ptr-0x08000000)+0x8000)/(romSize/192);
+								curPtr += 0x8000;
+								progressBarLength = ((curPtr-ptr)+0x8000)/(romSize/192);
 								if (progressBarLength > 192) progressBarLength = 192;
 							} else {
 								break;
