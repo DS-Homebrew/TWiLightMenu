@@ -137,7 +137,7 @@ void TWLSettings::loadSettings()
 
 	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", showNds);
 	showGba = settingsini.GetInt("SRLOADER", "SHOW_GBA", showGba);
-	if (!sys().isRegularDS() && showGba != 0) {
+	if ((!sys().isRegularDS() || *(u16*)(0x020000C0) == 0) && showGba != 0) {
 		showGba = 2;
 	}
 	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);

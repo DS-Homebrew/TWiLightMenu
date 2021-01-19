@@ -200,7 +200,7 @@ void LoadSettings(void) {
 
 	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", true);
 	showGba = settingsini.GetInt("SRLOADER", "SHOW_GBA", showGba);
-	if (!isRegularDS && showGba != 0) {
+	if ((!isRegularDS || *(u16*)(0x020000C0) == 0) && showGba != 0) {
 		showGba = 2;
 	}
 	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", true);
@@ -901,6 +901,8 @@ int main(int argc, char **argv) {
 
 	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
+	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
+
 	graphicsInit();
 
 	extern const DISC_INTERFACE __my_io_dsisd;
@@ -1002,14 +1004,6 @@ int main(int argc, char **argv) {
 	}
 
 	keysSetRepeat(10, 2);
-
-	if (showGba == 1) {
-	  if (*(u16*)(0x020000C0) != 0) {
-		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
-	  } else {
-		showGba = 0;	// Hide GBA ROMs
-	  }
-	}
 
 	vector<string> extensionList;
 	if (showNds) {

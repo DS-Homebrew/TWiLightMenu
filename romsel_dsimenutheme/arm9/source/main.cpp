@@ -713,10 +713,6 @@ int main(int argc, char **argv) {
 			 "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, ms().launcherApp);
 	}
 
-	if (ms().showGba == 1 && *(u16*)(0x020000C0) == 0) {
-		ms().showGba = 0;	// Hide GBA ROMs
-	}
-
 	graphicsInit();
 	iconManagerInit();
 
