@@ -202,7 +202,7 @@ void loadDSiThemeList()
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
-			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
 			dsiThemeList.emplace_back(themeDir);
 		}
@@ -224,7 +224,7 @@ void load3DSThemeList()
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
-			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
 			_3dsThemeList.emplace_back(themeDir);
 		}
@@ -246,7 +246,7 @@ void loadAkThemeList()
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
-			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
 			akThemeList.emplace_back(themeDir);
 		}
@@ -267,7 +267,7 @@ void loadR4ThemeList()
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
-			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
 			r4ThemeList.emplace_back(themeDir);
 		}
@@ -288,7 +288,7 @@ void loadUnlaunchBgList()
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
-			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
 			if (extention(themeDir, ".gif")) {
 				unlaunchBgList.emplace_back(themeDir);
@@ -302,7 +302,7 @@ void loadFontList()
 {
 	DIR *dir;
 	struct dirent *ent;
-	std::string themeDir;
+	std::string fontDir;
 	if ((dir = opendir(FONT_DIRECTORY)) != NULL)
 	{
 		// print all the files and directories within directory
@@ -310,10 +310,10 @@ void loadFontList()
 		{
 			// Reallocation here, but prevents our vector from being filled with
 
-			themeDir = ent->d_name;
-			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+			fontDir = ent->d_name;
+			if (fontDir == ".." || fontDir == "..." || fontDir == "." || fontDir.substr(0, 2) == "._") continue;
 
-			fontList.emplace_back(themeDir);
+			fontList.emplace_back(fontDir);
 		}
 		closedir(dir);
 	}
@@ -332,7 +332,7 @@ void loadGbaBorderList()
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
-			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
 			if (extention(themeDir, ".png")) {
 				gbaBorderList.emplace_back(themeDir);
@@ -354,7 +354,7 @@ void loadMenuSrldrList (const char* dirPath) {
 			// Reallocation here, but prevents our vector from being filled with
 
 			srldrDir = ent->d_name;
-			if (srldrDir == ".." || srldrDir == "..." || srldrDir == ".") continue;
+			if (srldrDir == ".." || srldrDir == "..." || srldrDir == "." || srldrDir.substr(0, 2) == "._") continue;
 
 			if (extention(srldrDir, "menu.srldr")) {
 				menuSrldrList.emplace_back(srldrDir);
@@ -381,17 +381,17 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	}
 }
 
-std::optional<Option> opt_gba_border_select(Option::Int &optVal)
+std::optional<Option> opt_gba_border_select(void)
 {
 	return Option(STR_BORDERSEL_GBA, STR_AB_SETBORDER, Option::Str(&ms().gbaBorder), gbaBorderList);
 }
 
-std::optional<Option> opt_bg_select(Option::Int &optVal)
+std::optional<Option> opt_bg_select(void)
 {
 	return Option(STR_BGSEL_UNLAUNCH, STR_AB_SETBG, Option::Str(&ms().unlaunchBg), unlaunchBgList);
 }
 
-std::optional<Option> opt_font_select(Option::Int &optVal)
+std::optional<Option> opt_font_select(void)
 {
 	return Option(STR_FONTSEL, STR_AB_SETFONT, Option::Str(&ms().font), fontList);
 }
@@ -581,13 +581,6 @@ void defaultExitHandler()
 	}
 	loadROMselect();
 }
-void opt_reset_subtheme(int prev, int next)
-{
-	if (prev != next)
-	{
-		ms().subtheme = 0;
-	}
-}
 
 void opt_reboot_system_menu()
 {
@@ -742,7 +735,7 @@ int main(int argc, char **argv)
 		// Theme
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
-				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
+				Option::Int(&ms().theme, opt_subtheme_select),
 				/*{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_WOOD_UI, STR_R4_ORIGINAL},
 				{0, 1, 4, 5, 3, 2})*/
 				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, "GameBoy Color"},
@@ -759,7 +752,7 @@ int main(int argc, char **argv)
 				{0, 1, 2, 3, 4, 5})
 		.option(STR_FONT,
 				STR_DESCRIPTION_FONT,
-				Option::Int(&ms().subtheme, opt_font_select, opt_reset_subtheme),
+				Option::Nul(opt_font_select),
 				{STR_PRESS_A},
 				{0});
 
@@ -830,7 +823,7 @@ int main(int argc, char **argv)
 		gamesPage
 			.option(STR_GBABORDER,
 				STR_DESCRIPTION_GBABORDER,
-				Option::Int(&ms().subtheme, opt_gba_border_select, opt_reset_subtheme),
+				Option::Nul(opt_gba_border_select),
 				{STR_PRESS_A},
 				{0});
 	}
@@ -1163,7 +1156,7 @@ int main(int argc, char **argv)
 		unlaunchPage
 			.option(STR_BACKGROUND,
 				STR_DESCRIPTION_UNLAUNCH_BG,
-				Option::Int(&ms().subtheme, opt_bg_select, opt_reset_subtheme),
+				Option::Nul(opt_bg_select),
 				{STR_PRESS_A},
 				{0})
 			.option(STR_LAUNCHER_PATCHES,

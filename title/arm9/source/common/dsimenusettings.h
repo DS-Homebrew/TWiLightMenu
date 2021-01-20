@@ -140,7 +140,6 @@ class TWLSettings
     bool useGbarunner;
     bool showMainMenu;
     int theme;
-    int subtheme;
 	int showGba;
     int showMd;
     bool showDirectories;

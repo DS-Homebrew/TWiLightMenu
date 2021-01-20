@@ -94,7 +94,6 @@ extern bool isDSPhat(void);
 extern bool sdFound(void);
 extern bool flashcardFound(void);
 extern int theme;
-extern int subtheme;
 extern int consoleModel;
 extern bool cardEjected;
 

@@ -72,7 +72,6 @@ extern bool startMenu;
 
 extern bool dsiWareList;
 extern int theme;
-extern int subtheme;
 extern int cursorPosition;
 extern int dsiWare_cursorPosition;
 extern int startMenu_cursorPosition;

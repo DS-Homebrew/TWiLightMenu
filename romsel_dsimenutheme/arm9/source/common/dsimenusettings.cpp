@@ -37,7 +37,6 @@ TWLSettings::TWLSettings()
 	gbar2DldiAccess = false;
 	showSelectMenu = false;
 	theme = 0;
-	subtheme = 0;
 	dsiMusic = 1;
 	boxArtColorDeband = true;
 
@@ -176,7 +175,6 @@ void TWLSettings::loadSettings()
 	
 	showSelectMenu = settingsini.GetInt("SRLOADER", "SHOW_SELECT_MENU", showSelectMenu);
 	theme = settingsini.GetInt("SRLOADER", "THEME", theme);
-	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
 	dsiMusic = settingsini.GetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
 	boxArtColorDeband = settingsini.GetInt("SRLOADER", "PHOTO_BOXART_COLOR_DEBAND", boxArtColorDeband);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);

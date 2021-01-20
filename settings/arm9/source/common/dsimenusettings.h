@@ -141,7 +141,6 @@ class TWLSettings
     bool showMainMenu;
     bool showSelectMenu;
     int theme;
-    int subtheme;
     int settingsMusic;
     int dsiMusic;
 	bool boxArtColorDeband;
