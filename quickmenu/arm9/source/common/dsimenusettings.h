@@ -147,7 +147,6 @@ class TWLSettings
     bool gbar2DldiAccess;
     bool showMainMenu;
     int theme;
-    int subtheme;
     int dsiMusic;
     bool showNds;
     bool showRvid;

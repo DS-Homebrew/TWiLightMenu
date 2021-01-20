@@ -168,7 +168,6 @@ public:
 	bool gbar2DldiAccess;
 	bool showSelectMenu;
 	int theme;
-	int subtheme;
 	int dsiMusic;
 	bool boxArtColorDeband;
 	bool showNds;

@@ -145,7 +145,6 @@ bool wideScreen = false;
 bool sdRemoveDetect = true;
 bool gbar2DldiAccess = false;	// false == ARM9, true == ARM7
 int theme = 0;
-int subtheme = 0;
 int cursorPosition[2] = {0};
 int startMenu_cursorPosition = 0;
 int pagenum[2] = {0};
@@ -224,7 +223,6 @@ void LoadSettings(void) {
 	gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 	showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
-	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", 0);
     preventDeletion = settingsini.GetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
@@ -316,7 +314,6 @@ void SaveSettings(void) {
 		settingsini.SetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
 	}
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
-	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
 }
 

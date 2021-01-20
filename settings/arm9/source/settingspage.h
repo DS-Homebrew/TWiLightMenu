@@ -399,17 +399,17 @@ public:
     {
       return *action;
     }
-    if (auto action = std::get_if<Int>(&_action))
+    else if (auto action = std::get_if<Int>(&_action))
     {
       return *action;
     }
-    if (auto action = std::get_if<Str>(&_action))
+    else if (auto action = std::get_if<Str>(&_action))
     {
       return *action;
     }
-    if (auto action = std::get_if<Nul>(&_action))
+    else
     {
-      return *action;
+      return *std::get_if<Nul>(&_action);
     }
   }
 
@@ -450,6 +450,10 @@ public:
             return i;
         }
       }
+    }
+    if (std::get_if<Nul>(&action()))
+    {
+      return 0;
     }
     return -1;
   }

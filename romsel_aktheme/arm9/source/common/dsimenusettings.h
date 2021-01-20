@@ -130,7 +130,6 @@ class TWLSettings
     bool gbar2DldiAccess;
     bool showMicroSd;
     int theme;
-    int subtheme;
     bool showNds;
     bool showRvid;
     bool showA26;

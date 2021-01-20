@@ -29,7 +29,6 @@ TWLSettings::TWLSettings()
     showMainMenu = false;
     showSelectMenu = false;
     theme = 0;
-    subtheme = 0;
     settingsMusic = -1;
     dsiMusic = 1;
 	boxArtColorDeband = true;
@@ -167,7 +166,6 @@ void TWLSettings::loadSettings()
     showMainMenu = settingsini.GetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     showSelectMenu = settingsini.GetInt("SRLOADER", "SHOW_SELECT_MENU", showSelectMenu);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
-    subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
     settingsMusic = settingsini.GetInt("SRLOADER", "SETTINGS_MUSIC", settingsMusic);
     dsiMusic = settingsini.GetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
 	boxArtColorDeband = settingsini.GetInt("SRLOADER", "PHOTO_BOXART_COLOR_DEBAND", boxArtColorDeband);
@@ -266,7 +264,6 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     settingsini.SetInt("SRLOADER", "SHOW_SELECT_MENU", showSelectMenu);
     settingsini.SetInt("SRLOADER", "THEME", theme);
-    settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
     settingsini.SetInt("SRLOADER", "SETTINGS_MUSIC", settingsMusic);
     settingsini.SetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
 	settingsini.SetInt("SRLOADER", "PHOTO_BOXART_COLOR_DEBAND", boxArtColorDeband);

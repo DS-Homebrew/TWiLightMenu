@@ -26,7 +26,6 @@ TWLSettings::TWLSettings()
     useGbarunner = false;
     showMainMenu = false;
     theme = 0;
-    subtheme = 0;
 
 	showGba = 1 + isDSiMode();
 	showMd = 3;
@@ -121,7 +120,6 @@ void TWLSettings::loadSettings()
    	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
     showMainMenu = settingsini.GetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
-    subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
@@ -190,7 +188,6 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
     settingsini.SetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     settingsini.SetInt("SRLOADER", "THEME", theme);
-    settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);

@@ -174,7 +174,6 @@ bool dlplayReboot = false;
 bool sdRemoveDetect = true;
 bool gbar2DldiAccess = false;	// false == ARM9, true == ARM7
 int theme = 0;
-int subtheme = 0;
 int showGba = 2;
 int showMd = 3;
 int cursorPosition[2] = {0};
@@ -221,7 +220,6 @@ void LoadSettings(void) {
 	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", 1);
 	gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
-	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
@@ -287,7 +285,6 @@ void SaveSettings(void) {
 		settingsini.SetInt("SRLOADER", "HOMEBREW_HAS_WIDE", homebrewHasWide);
 	}
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
-	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
 }
 

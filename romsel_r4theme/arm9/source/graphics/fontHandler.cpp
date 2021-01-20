@@ -35,7 +35,6 @@
 #include "TextPane.h"
 
 extern int theme;
-extern int subtheme;
 
 using namespace std;
 
