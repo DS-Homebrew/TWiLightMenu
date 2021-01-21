@@ -255,7 +255,7 @@ STRING(DESCRIPTION_WIFI, "Select whether to use Nintendo WiFi Connection. Does n
 STRING(DESCRIPTION_LASTPLAYEDROM_1, "If turned on, hold \\B on startup to skip to the ROM select menu.")
 STRING(DESCRIPTION_AUTOSTARTSLOT1, "Auto-starts the game or flashcard in Slot-1. Useful if TWLMenu++ is on your flashcard with console SD access.")
 STRING(DESCRIPTION_DSISPLASH, "Select whether to show the Nintendo DSi splash screen on boot. Set to \"With H&S\" for the Health & Safety message to show on the bottom screen.")
-STRING(DESCRIPTION_NINTENDOLOGOCOLOR, "Changes the color of the Nintendo logo in the Nintendo DSi splash screen.")
+STRING(DESCRIPTION_NINTENDOLOGOCOLOR, "Changes the color of the Nintendo logo that shows in the Nintendo DSi splash screen if you have a game card in.")
 STRING(DESCRIPTION_DSIMENUPPLOGO_1, "The logo will be shown when you start TWiLight Menu++.")
 STRING(DESCRIPTION_DSIWARE_EXPLOIT, "The exploited DSiWare app/game you're using for TWiLight Menu++ and nds-bootstrap. Set to \"None\" if not using one.")
 STRING(DESCRIPTION_SYSREGION_1, "The region of SysNAND. \"Auto\" option will only work if SDNAND is set up.")
