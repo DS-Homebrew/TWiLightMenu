@@ -2017,10 +2017,10 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (consoleModel >= 2) {
-						printSmallCentered(false, 20, "If this take a while, press HOME,");
+						printSmallCentered(false, 20, "If this takes a while, press HOME,");
 						printSmallCentered(false, 34, "then press B.");
 					} else {
-						printSmallCentered(false, 20, "If this take a while, close and open");
+						printSmallCentered(false, 20, "If this takes a while, close and open");
 						printSmallCentered(false, 34, "the console's lid.");
 					}
 					printSmall(false, 2, 80, "Creating public save file...");
@@ -2054,10 +2054,10 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (consoleModel >= 2) {
-						printSmallCentered(false, 20, "If this take a while, press HOME,");
+						printSmallCentered(false, 20, "If this takes a while, press HOME,");
 						printSmallCentered(false, 34, "then press B.");
 					} else {
-						printSmallCentered(false, 20, "If this take a while, close and open");
+						printSmallCentered(false, 20, "If this takes a while, close and open");
 						printSmallCentered(false, 34, "the console's lid.");
 					}
 					printSmall(false, 2, 80, "Creating private save file...");
