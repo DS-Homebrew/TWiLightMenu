@@ -937,9 +937,9 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (ms().consoleModel >= 2) {
-						printSmall(false, 0, 20, STR_BARSTOPPED_PRESSHOME, Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
-						printSmall(false, 0, 20, STR_BARSTOPPED_CLOSELID, Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					}
 					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_CREATING_PUBLIC_SAVE, Alignment::center);
 					updateText(false);
@@ -985,9 +985,9 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (ms().consoleModel >= 2) {
-						printSmall(false, 0, 20, STR_BARSTOPPED_PRESSHOME, Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
-						printSmall(false, 0, 20, STR_BARSTOPPED_CLOSELID, Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					}
 					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_CREATING_PRIVATE_SAVE, Alignment::center);
 					updateText(false);
