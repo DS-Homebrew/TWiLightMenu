@@ -15,7 +15,7 @@ class SystemDetails
 
   public:
     bool arm7SCFGLocked() { return _arm7SCFGLocked; }
-    bool isRegularDS() { return true; }
+    bool isRegularDS() { return _isRegularDS; }
     bool fatInitOk() { return _fatInitOk; }
     bool useNitroFS() { return _nitroFsInitOk; }
     void initFilesystem(const char *runningPath = NULL);

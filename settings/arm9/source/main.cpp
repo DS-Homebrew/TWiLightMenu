@@ -724,7 +724,7 @@ int main(int argc, char **argv)
 
 	using TLanguage = TWLSettings::TLanguage;
 	//using TAKScrollSpeed = TWLSettings::TScrollSpeed;
-	if (true) {
+	if (sdAccessible && fatAccessible) {
 		guiPage.option(STR_UPDATETWLMENU,
 				STR_DESCRIPTION_UPDATETWLMENU,
 				Option::Nul(opt_update),
