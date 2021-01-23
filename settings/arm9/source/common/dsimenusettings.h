@@ -116,11 +116,18 @@ class TWLSettings
     TWLSettings();
     ~TWLSettings();
 
+    // Used so that the app doesn't change some things when the language is changed
+    int currentLanguage = ELangDefault;
+
   public:
     void loadSettings();
     void saveSettings();
 
     TLanguage getGuiLanguage();
+
+    // Get if the current language is right to left
+	bool rtl();
+
     const char* getAppName();
   public:
     std::string romfolder;

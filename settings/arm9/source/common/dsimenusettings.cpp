@@ -149,6 +149,7 @@ void TWLSettings::loadSettings()
     dsiWareExploit = settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
     wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", wifiLed);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
+    currentLanguage = guiLanguage;
     titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
     showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
@@ -337,10 +338,15 @@ void TWLSettings::saveSettings()
 
 TWLSettings::TLanguage TWLSettings::getGuiLanguage()
 {
-    if (guiLanguage == ELangDefault)
+    if (currentLanguage == ELangDefault)
     {
         extern bool useTwlCfg;
         return (TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
     }
-    return (TLanguage)guiLanguage;
+    return (TLanguage)currentLanguage;
+}
+
+bool TWLSettings::rtl()
+{
+	return currentLanguage == ELangHebrew;
 }

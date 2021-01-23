@@ -48,7 +48,7 @@ extern const char *bootstrapinipath;
 extern int currentBg;
 extern bool displayGameIcons;
 
-const char* SDKnumbertext;
+std::string SDKnumbertext;
 
 extern bool fadeType;
 extern bool showdialogbox;
@@ -432,17 +432,17 @@ void perGameSettings (std::string filename) {
 	snprintf (gameTIDText, sizeof(gameTIDText), gameTid[CURPOS][0]==0 ? "" : "TID: %s", gameTid[CURPOS]);
 
 	if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
-		SDKnumbertext = "SDK ver: 1";
+		SDKnumbertext = STR_SDK_VER_1;
 	} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
-		SDKnumbertext = "SDK ver: 2";
+		SDKnumbertext = STR_SDK_VER_2;
 	} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
-		SDKnumbertext = "SDK ver: 3";
+		SDKnumbertext = STR_SDK_VER_3;
 	} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
-		SDKnumbertext = "SDK ver: 4";
+		SDKnumbertext = STR_SDK_VER_4;
 	} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
-		SDKnumbertext = "SDK ver: 5 (TWLSDK)";
+		SDKnumbertext = STR_SDK_VER_5;
 	} else {
-		SDKnumbertext = "SDK ver: ?";
+		SDKnumbertext = STR_SDK_VER_Q;
 	}
 	if (ms().theme == 5) {
 		dbox_showIcon = true;
@@ -624,7 +624,7 @@ void perGameSettings (std::string filename) {
 				if (perGameSettings_expandRomSpace == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_expandRomSpace == 2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Y+512KB", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_Y_512KB, endAlign);
 				} else if (perGameSettings_expandRomSpace == 1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_YES, endAlign);
 				} else {

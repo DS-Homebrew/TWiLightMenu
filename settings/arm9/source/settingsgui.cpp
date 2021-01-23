@@ -19,7 +19,6 @@
 
 extern bool fadeType; // false = out, true = in
 extern int currentTheme;
-extern int currentLanguage;
 
 void SettingsGUI::processInputs(int pressed, touchPosition &touch)
 {
@@ -118,8 +117,8 @@ void SettingsGUI::draw()
     clearText();
     drawTopText();
 
-    // If the language is set to hebrew, display right to left
-    if(currentLanguage == TWLSettings::ELangHebrew) {
+    // If the language is set to RTL, mirror everything
+    if(ms().rtl()) {
         printLarge(false, SCREEN_WIDTH - 6, 1, _pages[_selectedPage].title().c_str(), Alignment::right);
 
         for (int i = _topCursor; i < _bottomCursor; i++)
@@ -221,7 +220,7 @@ void SettingsGUI::drawSub()
     drawTopText();
     int selected = _subOption->selected();
 
-    if(currentLanguage == TWLSettings::ELangHebrew) {
+    if(ms().rtl()) {
         printLarge(false, SCREEN_WIDTH - 6, 1, _subOption->displayName().c_str(), Alignment::right);
         for (int i = _subTopCursor; i < _subBottomCursor; i++)
         {
@@ -256,7 +255,7 @@ void SettingsGUI::drawSub()
 
 void SettingsGUI::drawTopText()
 {
-    if(currentLanguage == TWLSettings::ELangHebrew) {
+    if(ms().rtl()) {
         printSmall(true, SCREEN_WIDTH - 4, 0, STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile], Alignment::right);
     } else {
         printSmall(true, 4, 0, STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile]);
