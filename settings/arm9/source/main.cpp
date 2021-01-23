@@ -51,7 +51,6 @@ bool widescreenEffects = false;
 const char *settingsinipath = DSIMENUPP_INI;
 
 int currentTheme = 0;
-int currentLanguage = 0;
 static int previousDSiWareExploit = 0;
 static int previousSysRegion = 0;
 
@@ -404,7 +403,7 @@ void begin_update(int opt)
 
 	clearText();
 	printSmall(true, 0, 124, (ms().consoleModel>1) ? STR_TAKEWHILE_PRESSHOME : STR_TAKEWHILE_CLOSELID, Alignment::center);
-	printLarge(false, 4, 0, STR_NOW_UPDATING);
+	printLarge(false, ms().rtl() ? 256 - 4 : 4, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
 
 	if (opt == 1) {
 		// Slot-1 microSD > Console SD
@@ -450,10 +449,17 @@ void opt_update()
 	while (1) {
 		if (updateText) {
 			clearText();
-			printLarge(false, 4, 0, STR_HOW_WANT_UPDATE);
-			printSmall(false, 12, 29, ms().showMicroSd ? "Console microSD > Slot-1 microSD" : "Console SD > Slot-1 microSD");
-			printSmall(false, 12, 43, ms().showMicroSd ? "Slot-1 microSD > Console microSD" : "Slot-1 microSD > Console SD");
-			printSmall(false, 4, 29+(14*cursorPosition), ">");
+			if(ms().rtl()) {
+				printLarge(false, 256 - 4, 0, STR_HOW_WANT_UPDATE, Alignment::right);
+				printSmall(false, 256 - 12, 29, ms().showMicroSd ? STR_CONSOLE_MICRO_SLOT1_MICRO : STR_CONSOLE_SD_SLOT1_MICRO, Alignment::right);
+				printSmall(false, 256 - 12, 43, ms().showMicroSd ? STR_SLOT1_MICRO_CONSOLE_MICRO : STR_SLOT1_MICRO_CONSOLE_SD, Alignment::right);
+				printSmall(false, 256 - 4, 29+(14*cursorPosition), "<", Alignment::right);
+			} else {
+				printLarge(false, 4, 0, STR_HOW_WANT_UPDATE);
+				printSmall(false, 12, 29, ms().showMicroSd ? STR_CONSOLE_MICRO_SLOT1_MICRO : STR_CONSOLE_SD_SLOT1_MICRO);
+				printSmall(false, 12, 43, ms().showMicroSd ? STR_SLOT1_MICRO_CONSOLE_MICRO : STR_SLOT1_MICRO_CONSOLE_SD);
+				printSmall(false, 4, 29+(14*cursorPosition), ">");
+			}
 			updateText = false;
 		}
 
@@ -708,7 +714,6 @@ int main(int argc, char **argv)
 	}
 
 	currentTheme = ms().theme;
-	currentLanguage = ms().guiLanguage;
 	previousDSiWareExploit = ms().dsiWareExploit;
 	previousSysRegion = ms().sysRegion;
 
@@ -723,12 +728,12 @@ int main(int argc, char **argv)
 		guiPage.option(STR_UPDATETWLMENU,
 				STR_DESCRIPTION_UPDATETWLMENU,
 				Option::Nul(opt_update),
-				{},
-				{});
+				{STR_PRESS_A},
+				{0});
 	}
 
 	guiPage
-		.option(STR_FRAMERATE, STR_DESCRIPTION_FRAMERATE, Option::Int(&ms().fps), {"15FPS", "20FPS", "24FPS", "30FPS", "50FPS", "60FPS"}, {15, 20, 24, 30, 50, 60})
+		.option(STR_FRAMERATE, STR_DESCRIPTION_FRAMERATE, Option::Int(&ms().fps), {STR_15FPS, STR_20FPS, STR_24FPS, STR_30FPS, STR_50FPS, STR_60FPS}, {15, 20, 24, 30, 50, 60})
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})
 		.option("DSi/Saturn: SELECT", STR_DESCRIPTION_SELECTBUTTONOPTION, Option::Bool(&ms().showSelectMenu), {STR_SELECT_MENU, STR_DS_CLASSIC_MENU}, {true, false})
 
@@ -738,7 +743,7 @@ int main(int argc, char **argv)
 				Option::Int(&ms().theme, opt_subtheme_select),
 				/*{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_WOOD_UI, STR_R4_ORIGINAL},
 				{0, 1, 4, 5, 3, 2})*/
-				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, "GameBoy Color"},
+				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, STR_GAMEBOY_COLOR},
 				{0, 1, 4, 5, 2, 6})
 		.option(STR_SETTINGSMUSIC,
 				STR_DESCRIPTION_SETTINGSMUSIC,
@@ -786,7 +791,7 @@ int main(int argc, char **argv)
 	emulationPage
 		.option(STR_NDS_ROMS, STR_DESCRIPTION_SHOW_NDS, Option::Bool(&ms().showNds), {STR_SHOW, STR_HIDE}, {true, false});
 	if (sys().isRegularDS()) {
-		emulationPage.option(STR_GBA_ROMS, STR_DESCRIPTION_SHOW_GBA, Option::Int(&ms().showGba), {STR_HIDE, STR_NATIVE+"<GBARunner2", "GBARunner2 only"}, {0, 1, 2});
+		emulationPage.option(STR_GBA_ROMS, STR_DESCRIPTION_SHOW_GBA, Option::Int(&ms().showGba), {STR_HIDE, STR_NATIVE+"<GBARunner2", STR_GBARUNNER2_ONLY}, {0, 1, 2});
 	} else {
 		emulationPage.option(STR_GBA_ROMS, STR_DESCRIPTION_SHOW_GBA, Option::Int(&ms().showGba), {STR_HIDE, "GBARunner2"}, {0, 2});
 	}
@@ -830,7 +835,7 @@ int main(int argc, char **argv)
 
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked())
 	{
-		gamesPage.option((isDSiMode() ? STR_SMSGGINRAM : "Sys SD: "+STR_SMSGGINRAM),
+		gamesPage.option((isDSiMode() ? STR_SMSGGINRAM : STR_SYSSD_SMSGGINRAM),
 			STR_DESCRIPTION_SMSGGINRAM,
 			Option::Bool(&ms().smsGgInRam),
 			{STR_YES, STR_NO},
@@ -841,7 +846,7 @@ int main(int argc, char **argv)
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 
 	if (isDSiMode() || sdAccessible) {
-		gamesPage.option((isDSiMode() ? STR_RUNIN : "Sys SD: "+STR_RUNIN),
+		gamesPage.option((isDSiMode() ? STR_RUNIN : STR_SYSSD_RUNIN),
 						STR_DESCRIPTION_RUNIN_1,
 						Option::Int(&ms().bstrap_dsiMode),
 						{STR_DS_MODE, STR_DSI_MODE, STR_DSI_MODE_FORCED},
@@ -849,12 +854,12 @@ int main(int argc, char **argv)
 	}
 
 	if (dsiFeatures() || sdAccessible) {
-		gamesPage.option((dsiFeatures() ? STR_CPUSPEED : "Sys SD: "+STR_CPUSPEED),
+		gamesPage.option((dsiFeatures() ? STR_CPUSPEED : STR_SYSSD_CPUSPEED),
 				STR_DESCRIPTION_CPUSPEED_1,
 				Option::Bool(&ms().boostCpu),
 				{"133 MHz (TWL)", "67 MHz (NTR)"},
 				{true, false})
-			.option((dsiFeatures() ? STR_VRAMBOOST : "Sys SD: "+STR_VRAMBOOST),
+			.option((dsiFeatures() ? STR_VRAMBOOST : STR_SYSSD_VRAMBOOST),
 				STR_DESCRIPTION_VRAMBOOST_1,
 				Option::Bool(&ms().boostVram),
 				{STR_ON, STR_OFF},
@@ -870,7 +875,7 @@ int main(int argc, char **argv)
 			gamesPage.option(STR_USEBOOTSTRAP_B4DS, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 		}
 		if (sdAccessible && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
-			gamesPage.option((isDSiMode() ? STR_FORCESLEEPPATCH : "Sys SD: "+STR_FORCESLEEPPATCH),
+			gamesPage.option((isDSiMode() ? STR_FORCESLEEPPATCH : STR_SYSSD_FORCESLEEPPATCH),
 				STR_DESCRIPTION_FORCESLEEPMODE,
 				Option::Bool(&ms().forceSleepPatch),
 				{STR_ON, STR_OFF},
@@ -903,18 +908,18 @@ int main(int argc, char **argv)
 	{
 		if (sdAccessible) {
 			gamesPage
-				.option((isDSiMode() ? STR_ROMREADLED : "Sys SD: "+STR_ROMREADLED),
+				.option((isDSiMode() ? STR_ROMREADLED : STR_SYSSD_ROMREADLED),
 					STR_DESCRIPTION_ROMREADLED_1,
 					Option::Int(&bs().romreadled),
 					{STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
 					{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
-				.option((isDSiMode() ? STR_DMAROMREADLED : "SD: "+STR_DMAROMREADLED),
+				.option((isDSiMode() ? STR_DMAROMREADLED : STR_SD_DMAROMREADLED),
 					STR_DESCRIPTION_DMAROMREADLED,
 					Option::Int(&bs().dmaromreadled),
 					{STR_SAME_AS_REG, STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
 					{TROMReadLED::ELEDSame, TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
 		}
-		gamesPage.option((isDSiMode() ? STR_PRECISEVOLUMECTRL : "Sys SD: "+STR_PRECISEVOLUMECTRL),
+		gamesPage.option((isDSiMode() ? STR_PRECISEVOLUMECTRL : STR_SYSSD_PRECISEVOLUMECTRL),
 			STR_DESCRIPTION_PRECISEVOLUMECTRL,
 			Option::Bool(&bs().preciseVolumeControl),
 			{STR_ON, STR_OFF},
@@ -926,19 +931,19 @@ int main(int argc, char **argv)
 	}
 
 	if (isDSiMode() || sdAccessible) {
-		gamesPage.option((isDSiMode() ? STR_EXPANDROMSPACE : "SD: "+STR_EXPANDROMSPACE),
+		gamesPage.option((isDSiMode() ? STR_EXPANDROMSPACE : STR_SD_EXPANDROMSPACE),
 			(ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS),
 			Option::Int(&ms().extendedMemory),
-			{STR_NO, STR_YES, STR_YES+"+512KB"},
+			{STR_NO, STR_YES, STR_YES_512KB},
 			{0, 1, 2});
 		if (sdAccessible) {
-			gamesPage.option((isDSiMode() ? STR_CACHEBLOCKSIZE : "Sys SD: "+STR_CACHEBLOCKSIZE),
+			gamesPage.option((isDSiMode() ? STR_CACHEBLOCKSIZE : STR_SYSSD_CACHEBLOCKSIZE),
 				STR_DESCRIPTION_CACHEBLOCKSIZE,
 				Option::Bool(&bs().cacheBlockSize),
-				{"16KB", "32KB"},
+				{STR_16KB, STR_32KB},
 				{false, true});
 		}
-		gamesPage.option((isDSiMode() ? STR_SAVEFATTABLECACHE : "Sys SD: "+STR_SAVEFATTABLECACHE),
+		gamesPage.option((isDSiMode() ? STR_SAVEFATTABLECACHE : STR_SYSSD_SAVEFATTABLECACHE),
 			STR_DESCRIPTION_SAVEFATTABLECACHE,
 			Option::Bool(&bs().cacheFatTable),
 			{STR_YES, STR_NO},
@@ -957,7 +962,7 @@ int main(int argc, char **argv)
 
 	if (widescreenFound)
 	{
-		miscPage.option((isDSiMode() ? STR_ASPECTRATIO : "SD: "+STR_ASPECTRATIO),
+		miscPage.option((isDSiMode() ? STR_ASPECTRATIO : STR_SD_ASPECTRATIO),
 			STR_DESCRIPTION_ASPECTRATIO,
 			Option::Bool(&ms().wideScreen),
 			{STR_WIDESCREEN, STR_FULLSCREEN},

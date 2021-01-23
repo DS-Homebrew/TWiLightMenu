@@ -267,14 +267,28 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 
 		// Brackets are flipped in RTL
 		if(rtl) {
-			if(*it == '(')
-				index = getCharIndex(')');
-			else if(*it == ')')
-				index = getCharIndex('(');
-			else if(*it == '[')
-				index = getCharIndex(']');
-			else if(*it == ']')
-				index = getCharIndex('[');
+			switch(*it) {
+				case '(':
+					index = getCharIndex(')');
+					break;
+				case ')':
+					index = getCharIndex('(');
+					break;
+				case '[':
+					index = getCharIndex(']');
+					break;
+				case ']':
+					index = getCharIndex('[');
+					break;
+				case '<':
+					index = getCharIndex('>');
+					break;
+				case '>':
+					index = getCharIndex('<');
+					break;
+				default:
+					break;
+			}
 		}
 
 		// Don't draw off screen chars
