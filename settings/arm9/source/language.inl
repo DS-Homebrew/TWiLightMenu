@@ -235,7 +235,7 @@ STRING(DESCRIPTION_EXPANDROMSPACE_DSI, "Extends the ROM space in RAM from 8MB to
 STRING(DESCRIPTION_EXPANDROMSPACE_3DS, "Extends the ROM space in RAM from 24MB to 28MB, or for SDK5 games, 16MB to 28MB. Breaks a few games that fit in RAM.")
 STRING(DESCRIPTION_CACHEBLOCKSIZE, "Depending on the size, some areas in DS(i) games will load slightly faster or slower.")
 STRING(DESCRIPTION_SAVEFATTABLECACHE, "Saves the created FAT table cache as a 512KB file. If you soon encounter SD corruption, please turn this off.")
-STRING(DESCRIPTION_BOOTSTRAP_1, "Pick release or nightly bootstrap")
+STRING(DESCRIPTION_BOOTSTRAP_1, "Pick release or nightly bootstrap.")
 STRING(DESCRIPTION_DEBUG_1, "Displays some text before launched game.")
 STRING(DESCRIPTION_LOGGING_1, "Logs the process of patching to sd:/NDSBTSRP.LOG")
 // STRING(DESCRIPTION_FLASHCARD_1, "Pick a flashcard to use to run ROMs from it.")
