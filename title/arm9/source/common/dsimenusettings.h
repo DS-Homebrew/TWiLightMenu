@@ -102,7 +102,8 @@ class TWLSettings
         EPicoDriveTWLLaunch = 10,
 		EGBANativeLaunch = 11,
         EA7800DSLaunch = 12,
-        EA5200DSLaunch = 13
+        EA5200DSLaunch = 13,
+        ENitroGrafxLaunch = 14
     };
 
     /*	0 = Nintendo DSi (Retail)

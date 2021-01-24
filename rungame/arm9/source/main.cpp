@@ -459,6 +459,11 @@ TWL_CODE int lastRunROM() {
 		case 13:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to A5200DS as argument
+		case 14:
+			mkdir("sd:/data", 0777);
+			mkdir("sd:/data/NitroGrafx", 0777);
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to NitroGrafx as argument
 	}
 	
 	return -1;
