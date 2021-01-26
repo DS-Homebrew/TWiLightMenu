@@ -89,8 +89,6 @@ class Gif {
 
 	static void animate(bool top);
 
-	void displayFrame(void);
-
 public:
 	static void timerHandler(void);
 
@@ -101,6 +99,8 @@ public:
 	bool load(const char *path, bool top, bool animate);
 
 	Frame &frame(int frame) { return _frames[frame]; }
+
+	void displayFrame(void);
 
 	bool paused() { return _paused; }
 	void pause() { _paused = true; }

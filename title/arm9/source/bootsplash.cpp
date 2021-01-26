@@ -98,14 +98,13 @@ void bootSplashDSi(void) {
 	}
 	Gif healthSafety(path, false, true);
 
-	timerStart(0, ClockDivider_1024, TIMER_FREQ_1024(100), Gif::timerHandler);
-
 	// For the default splashes, draw first frame, then wait until the top is done
 	if(!custom) {
-		while(healthSafety.currentFrame() == 0)
-			swiWaitForVBlank();
+		healthSafety.displayFrame();
 		healthSafety.pause();
 	}
+
+	timerStart(0, ClockDivider_1024, TIMER_FREQ_1024(100), Gif::timerHandler);
 
 	if (cartInserted && !custom) {
 		u16 *gfx[2];
@@ -176,10 +175,11 @@ void bootSplashDSi(void) {
 			scanKeys();
 		}
 	} else {
-		while (!(splash.finished() && healthSafety.finished())) {
+		u16 pressed = 0;
+		while (!(splash.finished() && healthSafety.finished()) && !(pressed & KEY_START)) {
 			swiWaitForVBlank();
 			scanKeys();
-			u16 pressed = keysDown();
+			pressed = keysDown();
 
 			if (splash.waitingForInput()) {
 				if(!custom && healthSafety.paused())
