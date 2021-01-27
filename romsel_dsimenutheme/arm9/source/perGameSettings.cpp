@@ -582,8 +582,10 @@ void perGameSettings (std::string filename) {
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_HEAP_SHRINK + ":", startAlign);
 				if (perGameSettings_heapShrink == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_AUTO, endAlign);
+				} else if (perGameSettings_heapShrink == 2) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_HI, endAlign);
 				} else if (perGameSettings_heapShrink == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_LO, endAlign);
 				} else {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
 				}
@@ -720,7 +722,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 5:
 						perGameSettings_heapShrink--;
-						if (perGameSettings_heapShrink < -1) perGameSettings_heapShrink = 1;
+						if (perGameSettings_heapShrink < -1) perGameSettings_heapShrink = 2;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
@@ -780,7 +782,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 5:
 						perGameSettings_heapShrink++;
-						if (perGameSettings_heapShrink > 1) perGameSettings_heapShrink = -1;
+						if (perGameSettings_heapShrink > 2) perGameSettings_heapShrink = -1;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;

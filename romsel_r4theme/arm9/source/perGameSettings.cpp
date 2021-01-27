@@ -529,8 +529,10 @@ void perGameSettings (std::string filename) {
 				printSmall(false, 32, perGameOpYpos, "Heap Shrink:");
 				if (perGameSettings_heapShrink == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Auto");
+				} else if (perGameSettings_heapShrink == 2) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Hi");
 				} else if (perGameSettings_heapShrink == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Lo");
 				} else {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
 				}
@@ -658,7 +660,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 5:
 						perGameSettings_heapShrink--;
-						if (perGameSettings_heapShrink < -1) perGameSettings_heapShrink = 1;
+						if (perGameSettings_heapShrink < -1) perGameSettings_heapShrink = 2;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
@@ -717,7 +719,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 5:
 						perGameSettings_heapShrink++;
-						if (perGameSettings_heapShrink > 1) perGameSettings_heapShrink = -1;
+						if (perGameSettings_heapShrink > 2) perGameSettings_heapShrink = -1;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
