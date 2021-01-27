@@ -122,7 +122,7 @@ std::string r4_theme;
 
 int mpuregion = 0;
 int mpusize = 0;
-bool ceCached = true;
+int ceCached = 1;
 
 bool applaunch = false;
 
@@ -509,7 +509,7 @@ void SetMPUSettings(const char* filename) {
  * Move nds-bootstrap's cardEngine_arm9 to cached memory region for some games.
  */
 void SetSpeedBumpExclude(const char* filename) {
-	if (!isDSiMode() || (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 2)) {
+	if (!isDSiMode() || (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 3)) {
 		ceCached = perGameSettings_heapShrink;
 		return;
 	}
@@ -525,7 +525,7 @@ void SetSpeedBumpExclude(const char* filename) {
 	for (unsigned int i = 0; i < sizeof(sbeList2)/sizeof(sbeList2[0]); i++) {
 		if (memcmp(game_TID, sbeList2[i], 3) == 0) {
 			// Found match
-			ceCached = false;
+			ceCached = 0;
 		}
 	}
 }
