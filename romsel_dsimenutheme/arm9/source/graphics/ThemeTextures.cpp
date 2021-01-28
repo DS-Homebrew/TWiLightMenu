@@ -1013,8 +1013,8 @@ ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
 
 	const Texture *tex = volumeTexture(volumeLevel);
 	const u16 *src = tex->texture();
-	int startX = (ms().theme == 4 ? 40 : 4);
-	int startY = (ms().theme == 4 ? 10 : 5);
+	int startX = tc().volumeRenderX();
+	int startY = tc().volumeRenderY();
 	for (uint y = 0; y < tex->texHeight(); y++) {
 		for (uint x = 0; x < tex->texWidth(); x++) {
 			u16 val = *(src++);
