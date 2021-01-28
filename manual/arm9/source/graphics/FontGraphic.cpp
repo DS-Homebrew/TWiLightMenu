@@ -6,6 +6,14 @@ static u8* lastUsedLoc = (u8*)0x08000000;
 
 u8 FontGraphic::textBuf[2][256 * 192];
 
+bool FontGraphic::isStrongRTL(char16_t c) {
+	return (c >= 0x0590 && c <= 0x05FF) || c == 0x200F;
+}
+
+bool FontGraphic::isWeak(char16_t c) {
+	return c < '0' || (c > '9' && c < 'A') || (c > 'Z' && c < 'a') || (c > 'z' && c < 127);
+}
+
 FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool useExpansionPak) {
 	FILE *file = nullptr;
 	for(const auto &path : paths) {
@@ -174,7 +182,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 	// If RTL isn't forced, check for RTL text
 	if(!rtl) {
 		for(const auto c : text) {
-			if(c >= 0x0590 && c <= 0x05FF) {
+			if(isStrongRTL(c)) {
 				rtl = true;
 				break;
 			}
@@ -234,24 +242,24 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			ltrBegin = text.end();
 			rtl = true;
 		// If in RTL and hit a non-RTL character that's not punctuation, switch to LTR
-		} else if(rtl && ((*it < 0x0590 || *it > 0x05FF) && ((*it >= '0' && *it <= '9') || (*it >= 'A' && *it <= 'Z') || (*it >= 'a' && *it <= 'z') || *it >= 127))) {
+		} else if(rtl && !isStrongRTL(*it) && !isWeak(*it)) {
 			// Save where we are as the end of the LTR section
 			ltrEnd = it + 1;
 
 			// Go back until an RTL character or the start of the string
-			while((*it < 0x0590 || *it > 0x05FF) && it != text.begin())
+			while(!isStrongRTL(*it) && it != text.begin())
 				it--;
 
 			// Save where we are to return to after printing the LTR section
 			ltrBegin = it;
 
 			// If on an RTL char right now, add one
-			if(*it >= 0x0590 && *it <= 0x05FF) {
+			if(isStrongRTL(*it)) {
 				it++;
 			}
 
 			// Skip all punctuation at the end
-			while(*it < '0' || (*it > '9' && *it < 'A') || (*it > 'Z' && *it < 'a') || (*it > 'z' && *it < 127)) {
+			while(isWeak(*it)) {
 				if(it != text.begin())
 					ltrBegin++;
 				it++;
@@ -265,9 +273,8 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			continue;
 		}
 
-		u16 index = getCharIndex(*it);
-
 		// Brackets are flipped in RTL
+		u16 index;
 		if(rtl) {
 			switch(*it) {
 				case '(':
@@ -289,8 +296,11 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 					index = getCharIndex('<');
 					break;
 				default:
+					index = getCharIndex(*it);
 					break;
 			}
+		} else {
+			index = getCharIndex(*it);
 		}
 
 		// Don't draw off screen chars

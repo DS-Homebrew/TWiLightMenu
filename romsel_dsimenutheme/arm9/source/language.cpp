@@ -62,6 +62,12 @@ std::string getString(CIniFile &ini, const std::string &item, const std::string 
 				default:
 					break;
 			}
+		} else if(out[i] == '&') {
+			if(out.substr(i + 1, 4) == "lrm;") {
+				out = out.substr(0, i) + "\u200E" + out.substr(i + 5); // Left-to-Right mark
+			} else if(out.substr(i + 1, 4) == "rlm;") {
+				out = out.substr(0, i) + "\u200F" + out.substr(i + 5); // Right-to-Left mark
+			}
 		}
 	}
 
