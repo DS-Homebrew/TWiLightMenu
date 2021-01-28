@@ -13,6 +13,9 @@ enum class Alignment {
 
 class FontGraphic {
 private:
+	static bool isStrongRTL(char16_t c);
+	static bool isWeak(char16_t c);
+
 	u8 tileWidth, tileHeight;
 	u16 tileSize;
 	u16 questionMark = 0;
