@@ -11,7 +11,11 @@ bool FontGraphic::isStrongRTL(char16_t c) {
 }
 
 bool FontGraphic::isWeak(char16_t c) {
-	return c < '0' || (c > '9' && c < 'A') || (c > 'Z' && c < 'a') || (c > 'z' && c < 127);
+	return c < 'A' || (c > 'Z' && c < 'a') || (c > 'z' && c < 127);
+}
+
+bool FontGraphic::isNumber(char16_t c) {
+	return c >= '0' && c <= '9';
 }
 
 FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool useExpansionPak) {
@@ -235,7 +239,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 
 		// If at the end of an LTR section within RTL, jump back to the RTL
 		if(it == ltrEnd && ltrBegin != text.end()) {
-			if(ltrBegin == text.begin())
+			if(ltrBegin == text.begin() && !isWeak(*ltrBegin))
 				break;
 
 			it = ltrBegin;
@@ -264,6 +268,24 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 					ltrBegin++;
 				it++;
 			}
+
+			rtl = false;
+		// Numbers are weak, *but* the digits of the number are LTR
+		} else if(rtl && isNumber(*it)) {
+			// Save where we are as the end of the LTR section
+			ltrEnd = it + 1;
+
+			// Go back until an RTL character or the start of the string
+			while(isNumber(*it) && it != text.begin())
+				it--;
+
+			// Save where we are to return to after printing the LTR section
+			ltrBegin = it;
+
+			// If not on a number, add one
+			if(!isNumber(*it))
+				it++;
+
 			rtl = false;
 		}
 
