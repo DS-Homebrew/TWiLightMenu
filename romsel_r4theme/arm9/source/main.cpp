@@ -190,6 +190,13 @@ void LoadSettings(void) {
 	// UI settings.
 	romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", "sd:/");
 	romfolder[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_FOLDER", "fat:/");
+	if (strncmp(romfolder[0].c_str(), "sd:", 3) != 0) {
+		romfolder[0] = "sd:/";
+	}
+	if (strncmp(romfolder[1].c_str(), "fat:", 4) != 0) {
+		romfolder[1] = "fat:/";
+	}
+
 	pagenum[0] = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
 	pagenum[1] = settingsini.GetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", 0);
 	cursorPosition[0] = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
@@ -271,6 +278,13 @@ void LoadSettings(void) {
 
 	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
 	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
+	if (strncmp(romPath[0].c_str(), "sd:", 3) != 0) {
+		romPath[0] = "";
+	}
+	if (strncmp(romPath[1].c_str(), "fat:", 4) != 0) {
+		romPath[1] = "";
+	}
+
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 	dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);

@@ -124,6 +124,12 @@ void TWLSettings::loadSettings()
 	// UI settings.
 	romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
 	romfolder[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
+	if (strncmp(romfolder[0].c_str(), "sd:", 3) != 0) {
+		romfolder[0] = "sd:/";
+	}
+	if (strncmp(romfolder[1].c_str(), "fat:", 4) != 0) {
+		romfolder[1] = "fat:/";
+	}
 
 	pagenum[0] = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", pagenum[0]);
 	pagenum[1] = settingsini.GetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
@@ -169,6 +175,12 @@ void TWLSettings::loadSettings()
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
 	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
+	if (strncmp(romPath[0].c_str(), "sd:", 3) != 0) {
+		romPath[0] = "";
+	}
+	if (strncmp(romPath[1].c_str(), "fat:", 4) != 0) {
+		romPath[1] = "";
+	}
 
 	secondaryDevice = bothSDandFlashcard() ? settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice) : flashcardFound();
 	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);

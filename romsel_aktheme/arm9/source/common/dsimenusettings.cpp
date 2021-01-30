@@ -96,6 +96,12 @@ void TWLSettings::loadSettings()
     // UI settings.
     romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
     romfolder[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
+	if (strncmp(romfolder[0].c_str(), "sd:", 3) != 0) {
+		romfolder[0] = "sd:/";
+	}
+	if (strncmp(romfolder[1].c_str(), "fat:", 4) != 0) {
+		romfolder[1] = "fat:/";
+	}
 
     pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", pagenum);
     cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
@@ -164,6 +170,13 @@ void TWLSettings::loadSettings()
     launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
     romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
     romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
+	if (strncmp(romPath[0].c_str(), "sd:", 3) != 0) {
+		romPath[0] = "";
+	}
+	if (strncmp(romPath[1].c_str(), "fat:", 4) != 0) {
+		romPath[1] = "";
+	}
+
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);

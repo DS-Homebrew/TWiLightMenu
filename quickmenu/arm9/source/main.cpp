@@ -265,6 +265,12 @@ void LoadSettings(void) {
 	launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
 	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
 	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
+	if (strncmp(romPath[0].c_str(), "sd:", 3) != 0) {
+		romPath[0] = "";
+	}
+	if (strncmp(romPath[1].c_str(), "fat:", 4) != 0) {
+		romPath[1] = "";
+	}
 
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
