@@ -284,6 +284,13 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 				}
 			}
 
+			// But then allow all numbers directly touching the strong LTR or with 1 weak between
+			while((it - 1 >= text.begin() && isNumber(*(it - 1))) || (it - 2 >= text.begin() && isWeak(*(it - 1)) && isNumber(*(it - 2)))) {
+				if(it - 1 != text.begin())
+					ltrBegin--;
+				it--;
+			}
+
 			rtl = false;
 		}
 
