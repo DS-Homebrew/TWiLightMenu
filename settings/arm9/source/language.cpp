@@ -59,10 +59,10 @@ std::string getString(CIniFile &ini, const std::string &item, const std::string 
 					break;
 			}
 		} else if(out[i] == '&') {
-			if(out.substr(i + 1, 4) == "lrm;") {
-				out = out.substr(0, i) + "\u200E" + out.substr(i + 5); // Left-to-Right mark
-			} else if(out.substr(i + 1, 4) == "rlm;") {
-				out = out.substr(0, i) + "\u200F" + out.substr(i + 5); // Right-to-Left mark
+			if(out.substr(i + 1, 3) == "lrm") {
+				out = out.substr(0, i) + "\u200E" + out.substr(i + 4); // Left-to-Right mark
+			} else if(out.substr(i + 1, 3) == "rlm") {
+				out = out.substr(0, i) + "\u200F" + out.substr(i + 4); // Right-to-Left mark
 			}
 		}
 	}
