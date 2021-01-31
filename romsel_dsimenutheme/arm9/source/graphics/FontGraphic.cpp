@@ -239,20 +239,26 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 
 		// If at the end of an LTR section within RTL, jump back to the RTL
 		if(it == ltrEnd && ltrBegin != text.end()) {
-			if(ltrBegin == text.begin() && !isWeak(*ltrBegin))
+			if(ltrBegin == text.begin() && (!isWeak(*ltrBegin) || isNumber(*ltrBegin)))
 				break;
 
 			it = ltrBegin;
 			ltrBegin = text.end();
 			rtl = true;
 		// If in RTL and hit a non-RTL character that's not punctuation, switch to LTR
-		} else if(rtl && !isStrongRTL(*it) && !isWeak(*it)) {
+		} else if(rtl && !isStrongRTL(*it) && (!isWeak(*it) || isNumber(*it))) {
 			// Save where we are as the end of the LTR section
 			ltrEnd = it + 1;
 
 			// Go back until an RTL character or the start of the string
-			while(!isStrongRTL(*it) && it != text.begin())
+			bool allNumbers = true;
+			while(!isStrongRTL(*it) && it != text.begin()) {
+				// Check for if the LTR section is only numbers,
+				// if so they won't be removed from the end
+				if(allNumbers && !isNumber(*it) && !isWeak(*it))
+					allNumbers = false;
 				it--;
+			}
 
 			// Save where we are to return to after printing the LTR section
 			ltrBegin = it;
@@ -262,29 +268,21 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 				it++;
 			}
 
-			// Skip all punctuation at the end
-			while(isWeak(*it)) {
-				if(it != text.begin())
-					ltrBegin++;
-				it++;
+			// Remove all punctuation and, if the section isn't only numbers,
+			// numbers from the end of the LTR section
+			if(allNumbers) {
+				while(isWeak(*it) && !isNumber(*it)) {
+					if(it != text.begin())
+						ltrBegin++;
+					it++;
+				}
+			} else {
+				while(isWeak(*it)) {
+					if(it != text.begin())
+						ltrBegin++;
+					it++;
+				}
 			}
-
-			rtl = false;
-		// Numbers are weak, *but* the digits of the number are LTR
-		} else if(rtl && isNumber(*it)) {
-			// Save where we are as the end of the LTR section
-			ltrEnd = it + 1;
-
-			// Go back until an RTL character or the start of the string
-			while(isNumber(*it) && it != text.begin())
-				it--;
-
-			// Save where we are to return to after printing the LTR section
-			ltrBegin = it;
-
-			// If not on a number, add one
-			if(!isNumber(*it))
-				it++;
 
 			rtl = false;
 		}
