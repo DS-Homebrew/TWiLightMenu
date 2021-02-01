@@ -1410,7 +1410,7 @@ int main(int argc, char **argv) {
 							SetWidescreen(filename.c_str());
 						}
 						if ((!isDSiMode() && !ms().secondaryDevice)
-						|| (isDSiMode() && ms().consoleModel >= 2 && gameTid[CURPOS][0] == 'I' && !flashcardFound() && REG_SCFG_MC == 0x11 && !sys().arm7SCFGLocked())) {
+						|| (isDSiMode() && ms().consoleModel >= 2 && gameTid[CURPOS][0] == 'I' && !flashcardFound() && REG_SCFG_MC != 0x11 && !sys().arm7SCFGLocked())) {
 							ntrStartSdGame();
 						}
 
