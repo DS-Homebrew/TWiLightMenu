@@ -25,6 +25,7 @@
 #include "twlmenuppvideo.h"
 
 #include "autoboot.h"
+#include "sr_data_srllastran.h"	// For rebooting into the game
 
 #include "saveMap.h"
 
@@ -225,6 +226,20 @@ void unlaunchRomBoot(std::string_view rom) {
 	DC_FlushAll();						// Make reboot not fail
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
 	stop();
+}
+
+/**
+ * Reboot into an SD game when in DS mode.
+ */
+void ntrStartSdGame(void) {
+	if (ms().consoleModel == 0) {
+		unlaunchRomBoot("sd:/_nds/TWiLightMenu/resetgame.srldr");
+	} else {
+		tonccpy((u32*)0x02000300, sr_data_srllastran, 0x020);
+		DC_FlushAll();						// Make reboot not fail
+		fifoSendValue32(FIFO_USER_02, 1);
+		stop();
+	}
 }
 
 void dsCardLaunch() {
@@ -437,6 +452,10 @@ void lastRunROM()
 							swiWaitForVBlank();
 						}
 					}
+				}
+
+				if (isDSiMode() && ms().consoleModel >= 2 && !flashcardFound() && game_TID[0] == 'I') {
+					ntrStartSdGame();
 				}
 
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
