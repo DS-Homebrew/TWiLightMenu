@@ -1802,7 +1802,7 @@ int main(int argc, char **argv) {
 						if (isDSiMode() || !secondaryDevice) {
 							SetWidescreen(filename.c_str());
 						}
-						if (!isDSiMode() && !secondaryDevice) {
+						if ((!isDSiMode() && !secondaryDevice) || (isDSiMode() && consoleModel >= 2 && !flashcardFound() && game_TID[0] == 'I')) {
 							ntrStartSdGame();
 						}
 
