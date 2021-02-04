@@ -78,11 +78,11 @@ void bootSplashDSi(void) {
 
 	char path[256];
 	if (virtualPain) {
-		sprintf(path, "nitro:/video/splash/virtualPain%s.gif", ms().wideScreen ? "_wide" : "");
+		sprintf(path, "nitro:/video/splash/virtualPain%s.gif", ms().wideScreen && !ms().macroMode ? "_wide" : "");
 	} else if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashtop.gif", F_OK) == 0) {
 		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", sdFound() ? "sd" : "fat");
 	} else {
-		sprintf(path, "nitro:/video/splash/%s%s.gif", language == TWLSettings::ELangChineseS ? "iquedsi" : "dsi", ms().wideScreen ? "_wide" : "");
+		sprintf(path, "nitro:/video/splash/%s%s.gif", language == TWLSettings::ELangChineseS ? "iquedsi" : "dsi", ms().wideScreen && !ms().macroMode ? "_wide" : "");
 	}
 	Gif splash(path, true, true);
 
@@ -169,10 +169,13 @@ void bootSplashDSi(void) {
 	fadeType = true;
 
 	// If both will loop forever, show for 3s or until button press
-	if(splash.loopForever() && healthSafety.loopForever()) {
+	if((!custom && ms().macroMode) || (splash.loopForever() && healthSafety.loopForever())) {
 		for (int i = 0; i < 60 * 3 && !keysDown(); i++) {
 			swiWaitForVBlank();
 			scanKeys();
+
+			if (!custom && splash.currentFrame() == 24)
+				mmEffectEx(&dsiboot);
 		}
 	} else {
 		u16 pressed = 0;

@@ -59,6 +59,7 @@ extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 extern int fps;
+extern bool macroMode;
 extern int colorMode;
 extern int blfLevel;
 int fadeDelay = 0;
@@ -360,7 +361,7 @@ void vBlankHandler()
 	  glBegin2D();
 	  {
 		if (controlBottomBright) SetBrightness(0, screenBrightness);
-		if (controlTopBright) SetBrightness(1, screenBrightness);
+		if (controlTopBright && !macroMode) SetBrightness(1, screenBrightness);
 
 		glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 		if (startMenu) {
@@ -496,6 +497,8 @@ void vBlankHandler()
 }
 
 void loadBoxArt(const char* filename) {
+	if (macroMode) return;
+
 	if(access(filename, F_OK) != 0) {
 		switch (boxArtType[secondaryDevice]) {
 			case 0:
@@ -550,6 +553,8 @@ void loadBoxArt(const char* filename) {
 }
 
 void topBgLoad(void) {
+	if (macroMode) return;
+
 	char filePath[256];
 	sprintf(filePath, "nitro:/graphics/%s.png", isDSPhat() ? "phat_topbg" : "topbg");
 
@@ -601,6 +606,8 @@ void topBgLoad(void) {
 }
 
 void topBarLoad(void) {
+	if (macroMode) return;
+
 	char filePath[256];
 	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", isDSPhat() ? "phat_topbar" : "topbar", (useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme));
 	FILE* file = fopen(filePath, "rb");

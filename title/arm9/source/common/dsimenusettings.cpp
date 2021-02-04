@@ -19,6 +19,7 @@ TWLSettings::TWLSettings()
     consoleModel = -1;
 
     guiLanguage = ELangDefault;
+    macroMode = false;
     colorMode = 0;
     blfLevel = 0;
     dsiWareExploit = 0;
@@ -97,6 +98,7 @@ void TWLSettings::loadSettings()
 	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 
     // Customizable UI settings.
+	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	dsiWareExploit = settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);

@@ -51,6 +51,7 @@ bool widescreenEffects = false;
 const char *settingsinipath = DSIMENUPP_INI;
 
 int currentTheme = 0;
+bool currentMacroMode = false;
 static int previousDSiWareExploit = 0;
 static int previousSysRegion = 0;
 
@@ -84,6 +85,7 @@ std::string homebrewArg;
 std::string bootstrapfilename;
 
 int subscreenmode = 0;
+int titleDisplayLength = 0;
 
 int pressed = 0;
 touchPosition touch;
@@ -581,6 +583,14 @@ void defaultExitHandler()
 	if (!isDSiMode()) {
 		chdir("fat:/");
 	}
+	if (ms().macroMode)
+	{
+		powerOff(PM_BACKLIGHT_TOP);
+	}
+	else
+	{
+		powerOn(PM_BACKLIGHT_TOP);
+	}
 	if (ms().showMainMenu)
 	{
 		loadMainMenu();
@@ -628,9 +638,6 @@ int main(int argc, char **argv)
 {
 	//---------------------------------------------------------------------------------
 
-	// Turn on screen backlights if they're disabled
-	powerOn(PM_BACKLIGHT_TOP);
-	powerOn(PM_BACKLIGHT_BOTTOM);
 //#pragma region init
 
 	sys().initFilesystem();
@@ -714,6 +721,7 @@ int main(int argc, char **argv)
 	}
 
 	currentTheme = ms().theme;
+	currentMacroMode = ms().macroMode;
 	previousDSiWareExploit = ms().dsiWareExploit;
 	previousSysRegion = ms().sysRegion;
 
@@ -1053,6 +1061,11 @@ int main(int argc, char **argv)
 				 TLanguage::ELangFrench,
 				 TLanguage::ELangItalian,
 				 TLanguage::ELangJapanese,})
+		.option(STR_MACROMODE,
+				STR_DESCRIPTION_MACROMODE,
+				Option::Bool(&ms().macroMode),
+				{STR_ON, STR_OFF},
+				{true, false})
 		.option(STR_COLORMODE,
 				STR_DESCRIPTION_COLORMODE,
 				Option::Int(&ms().colorMode),
@@ -1204,6 +1217,11 @@ int main(int argc, char **argv)
 		gui().draw();
 		do
 		{
+			if (currentMacroMode) {
+				titleDisplayLength++;
+				if (titleDisplayLength >= 60*8) titleDisplayLength = 0;
+				if (titleDisplayLength == 60*4 || titleDisplayLength == 0) gui().draw();
+			}
 			scanKeys();
 			pressed = keysDownRepeat();
 			touchRead(&touch);

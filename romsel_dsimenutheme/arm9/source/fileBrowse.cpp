@@ -505,7 +505,7 @@ void updateScrollingState(u32 held, u32 pressed) {
 void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 	if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 		showSTARTborder = true;
-		if (ms().theme == 5 || !ms().showBoxArt) {
+		if (ms().theme == 5 || ms().macroMode || !ms().showBoxArt) {
 			return;
 		}
 
@@ -1513,7 +1513,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					isHomebrew[i] = 0;
 				}
 
-				if (dsiFeatures() && ms().showBoxArt == 2 && ms().theme!=5 && !isDirectory[i]) {
+				if (dsiFeatures() && !ms().macroMode && ms().showBoxArt == 2 && ms().theme!=5 && !isDirectory[i]) {
 					snprintf(boxArtPath, sizeof(boxArtPath),
 						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
 								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
@@ -1749,6 +1749,10 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					dbox_showIcon = false;
 					dbox_selectMenu = false;
 				}
+				if (ms().macroMode && ms().theme == 4) {
+					printSmall(false, 4, 4, (showLshoulder ? STR_L_PREV : STR_L));
+					printSmall(false, 256-4, 4, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+				}
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					currentBg = (ms().theme == 4 ? 0 : 1), displayBoxArt = ms().showBoxArt;
 					if(!bannerTextShown) {
@@ -1771,6 +1775,9 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					printLarge(false, 0, 142, "^", Alignment::center);
 					printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
 					printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+				} else if (ms().macroMode && ms().theme != 4) {
+					printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
+					printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
 				}
 				updateText(false);
 				buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);

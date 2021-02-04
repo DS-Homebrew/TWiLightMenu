@@ -65,6 +65,7 @@ bool controlTopBright = true;
 bool controlBottomBright = true;
 bool widescreenEffects = false;
 int fps = 60;
+bool macroMode = false;
 int colorMode = 0;
 int blfLevel = 0;
 
@@ -213,6 +214,7 @@ void LoadSettings(void) {
 
 	// Customizable UI settings.
 	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
+	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);

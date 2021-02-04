@@ -30,6 +30,7 @@ extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
+extern bool macroMode;
 extern int colorMode;
 extern int blfLevel;
 int fadeDelay = 0;
@@ -139,8 +140,8 @@ void vBlankHandler() {
 			fadeDelay = 0;
 		}
 	}
-	if (controlBottomBright) SetBrightness(0, screenBrightness);
-	if (controlTopBright) SetBrightness(1, screenBrightness);
+	if (controlTopBright) SetBrightness(0, screenBrightness);
+	if (controlBottomBright && !macroMode) SetBrightness(1, screenBrightness);
 
 	updateText(true);
 	// updateText(false);
@@ -152,16 +153,16 @@ void pageLoad(const std::string &filename) {
 	pageYsize = gif.frame(0).descriptor.h;
 
 	tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
-	tonccpy(BG_PALETTE_SUB, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
+	if (!macroMode) tonccpy(BG_PALETTE_SUB, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
 
 	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
-	dmaCopyWordsAsynch(1, pageImage.data()+(176*256), bgGetGfxPtr(bg3Sub), 192*256);
+	if (!macroMode) dmaCopyWordsAsynch(1, pageImage.data()+(176*256), bgGetGfxPtr(bg3Sub), 192*256);
 	while (dmaBusy(0) || dmaBusy(1));
 }
 
 void pageScroll(void) {
 	dmaCopyWordsAsynch(0, pageImage.data()+(pageYpos*256), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
-	dmaCopyWordsAsynch(1, pageImage.data()+((176+pageYpos)*256), bgGetGfxPtr(bg3Sub), 192*256);
+	if (!macroMode) dmaCopyWordsAsynch(1, pageImage.data()+((176+pageYpos)*256), bgGetGfxPtr(bg3Sub), 192*256);
 	while (dmaBusy(0) || dmaBusy(1));
 }
 
@@ -201,6 +202,10 @@ void graphicsInit() {
 
 	// bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 6, 0);
 	// bgSetPriority(bg2Sub, 0);
+
+	if (macroMode) {
+		lcdMainOnBottom();
+	}
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);

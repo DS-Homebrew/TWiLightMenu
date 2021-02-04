@@ -115,7 +115,7 @@ void vBlankHandler() {
 		if (screenBrightness > 31) screenBrightness = 31;
 	}
 	if (controlTopBright) SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
-	if (controlBottomBright) SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
+	if (controlBottomBright && !ms().macroMode) SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
 	if (doubleBuffer) {
 		dmaCopyWordsAsynch(0, frameBuffer[secondBuffer], BG_GFX, 0x18000);
 		dmaCopyWordsAsynch(1, frameBufferBot[secondBuffer], BG_GFX_SUB, 0x18000);
@@ -132,6 +132,80 @@ void LoadBMP(void) {
 
 	std::vector<unsigned char> image;
 	unsigned width, height;
+
+	if (ms().macroMode) {
+		// Show RocketRobz logo before showing TWiLight Menu++ logo in Macro mode
+		lodepng::decode(image, width, height, sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.png" : "nitro:/graphics/logo_rocketrobz.png");
+		bool alternatePixel = false;
+		for(unsigned i=0;i<image.size()/4;i++) {
+			image[(i*4)+3] = 0;
+			if (alternatePixel) {
+				if (image[(i*4)] >= 0x4) {
+					image[(i*4)] -= 0x4;
+					image[(i*4)+3] |= BIT(0);
+				}
+				if (image[(i*4)+1] >= 0x4) {
+					image[(i*4)+1] -= 0x4;
+					image[(i*4)+3] |= BIT(1);
+				}
+				if (image[(i*4)+2] >= 0x4) {
+					image[(i*4)+2] -= 0x4;
+					image[(i*4)+3] |= BIT(2);
+				}
+			}
+			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (ms().colorMode == 1) {
+				color = convertVramColorToGrayscale(color);
+			}
+			frameBuffer[0][i] = color;
+			if (alternatePixel) {
+				if (image[(i*4)+3] & BIT(0)) {
+					image[(i*4)] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(1)) {
+					image[(i*4)+1] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(2)) {
+					image[(i*4)+2] += 0x4;
+				}
+			} else {
+				if (image[(i*4)] >= 0x4) {
+					image[(i*4)] -= 0x4;
+				}
+				if (image[(i*4)+1] >= 0x4) {
+					image[(i*4)+1] -= 0x4;
+				}
+				if (image[(i*4)+2] >= 0x4) {
+					image[(i*4)+2] -= 0x4;
+				}
+			}
+			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (ms().colorMode == 1) {
+				color = convertVramColorToGrayscale(color);
+			}
+			frameBuffer[1][i] = color;
+			if ((i % 256) == 255) alternatePixel = !alternatePixel;
+			alternatePixel = !alternatePixel;
+		}
+		image.clear();
+		doubleBuffer = true;
+		fadeType = true;
+		for (int i = 0; i < 60 * 3; i++)
+		{
+			scanKeys();
+			if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) break;
+			swiWaitForVBlank();
+		}
+		fadeType = false;
+		for (int i = 0; i < 25; i++)
+		{
+			swiWaitForVBlank();
+		}
+		doubleBuffer = false;
+		swiWaitForVBlank();
+		dmaFillHalfWords(0, BG_GFX, 0x18000);
+	}
+
 	lodepng::decode(image, width, height, "nitro:/graphics/effect_twilight.png");
 	for(unsigned i=0;i<image.size()/4;i++) {
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
@@ -157,6 +231,10 @@ void runGraphicIrq(void) {
 	*(u16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
+	if (ms().macroMode) {
+		lcdMainOnBottom();
+		powerOff(PM_BACKLIGHT_TOP);
+	}
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);

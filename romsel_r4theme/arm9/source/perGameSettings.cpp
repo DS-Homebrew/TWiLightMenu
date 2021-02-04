@@ -40,6 +40,8 @@ extern const char *bootstrapinipath;
 
 extern bool isRegularDS;
 extern int consoleModel;
+extern bool macroMode;
+extern bool lcdSwapped;
 
 extern int bstrap_dsiMode;
 extern bool useBootstrap;
@@ -222,6 +224,11 @@ void revertDonorRomText(void) {
 }
 
 void perGameSettings (std::string filename) {
+	if (macroMode) {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
+
 	int pressed = 0, held = 0;
 
 	keysSetRepeat(25, 5); // Slow down key repeat
@@ -783,6 +790,11 @@ void perGameSettings (std::string filename) {
 	showdialogbox = false;
 	dialogboxHeight = 0;
 	keysSetRepeat(10, 2); // Reset key repeat
+
+	if (macroMode) {
+		lcdMainOnTop();
+		lcdSwapped = false;
+	}
 }
 
 std::string getSavExtension(void) {

@@ -33,7 +33,9 @@
 extern bool fadeType;
 extern bool widescreenEffects;
 int screenBrightness = 31;
+bool lcdSwapped = false;
 extern int currentTheme;
+extern bool currentMacroMode;
 
 int frameOf60fps = 60;
 int frameDelay = 0;
@@ -151,8 +153,13 @@ void vBlankHandler()
 		if (screenBrightness > 31) screenBrightness = 31;
 	}
 	if (renderFrame) {
-		SetBrightness(0, currentTheme == 4 ? -screenBrightness : screenBrightness);
-		SetBrightness(1, currentTheme == 4 ? -screenBrightness : screenBrightness);
+		if (currentMacroMode) {
+			SetBrightness(0, lcdSwapped ? (currentTheme == 4 ? -screenBrightness : screenBrightness) : (currentTheme == 4 ? -31 : 31));
+			SetBrightness(1, !lcdSwapped ? (currentTheme == 4 ? -screenBrightness : screenBrightness) : (currentTheme == 4 ? -31 : 31));
+		} else {
+			SetBrightness(0, currentTheme == 4 ? -screenBrightness : screenBrightness);
+			SetBrightness(1, currentTheme == 4 ? -screenBrightness : screenBrightness);
+		}
 	}
 
 	updateText(false);
@@ -169,7 +176,10 @@ void graphicsInit() {
 	currentTheme = ms().theme;
 
 	SetBrightness(0, currentTheme == 4 ? -31 : 31);
-	SetBrightness(1, currentTheme == 4 ? -31 : 31);
+	SetBrightness(1, currentTheme == 4 && !ms().macroMode ? -31 : 31);
+	if (ms().macroMode) {
+		powerOff(PM_BACKLIGHT_TOP);
+	}
 
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_5_2D | DISPLAY_BG3_ACTIVE);

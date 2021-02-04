@@ -84,6 +84,7 @@ static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
+static bool macroMode = false;
 static bool wifiLed = false;
 static bool slot1Launched = false;
 static int launchType[2] = {0};	// 0 = No launch, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
@@ -105,6 +106,7 @@ TWL_CODE void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
+	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
 	wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", 0);
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
@@ -202,6 +204,10 @@ TWL_CODE int lastRunROM() {
 
 	if (consoleModel < 2) {
 		*(u8*)(0x023FFD00) = (wifiLed ? 0x13 : 0);		// WiFi On/Off
+	}
+
+	if (macroMode) {
+		powerOff(PM_BACKLIGHT_TOP);
 	}
 
 	bool twlBgCxiFound = false;

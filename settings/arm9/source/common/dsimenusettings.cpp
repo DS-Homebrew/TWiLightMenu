@@ -144,6 +144,7 @@ void TWLSettings::loadSettings()
 
     // Customizable UI settings.
     fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
+	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
     colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
     blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
     dsiWareExploit = settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
@@ -247,6 +248,7 @@ void TWLSettings::saveSettings()
 
     // Customizable UI settings.
     settingsini.SetInt("SRLOADER", "FRAME_RATE", fps);
+	settingsini.SetInt("SRLOADER", "MACRO_MODE", macroMode);
     settingsini.SetInt("SRLOADER", "COLOR_MODE", colorMode);
     settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
     settingsini.SetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);

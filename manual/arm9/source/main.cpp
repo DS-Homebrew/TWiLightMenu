@@ -91,6 +91,7 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
+bool macroMode = false;
 int colorMode = 0;
 int blfLevel = 0;
 
@@ -210,6 +211,7 @@ void LoadSettings(void) {
 
 	font = settingsini.GetString("SRLOADER", "FONT", font);
 
+	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
@@ -365,6 +367,7 @@ int main(int argc, char **argv) {
 		manPageTitleX = 256 - manPageTitleX;
 		manPageTitleAlign = Alignment::right;
 	}
+	int ySizeSub = macroMode ? 176 : 368;
 
 	switch (setLanguage) {
 		case ELangJapanese:
@@ -468,7 +471,7 @@ int main(int argc, char **argv) {
 			pageScroll();
 		} else if (held & KEY_DOWN) {
 			pageYpos += 4;
-			if (pageYpos > pageYsize-368) pageYpos = pageYsize-368;
+			if (pageYpos > pageYsize-ySizeSub) pageYpos = pageYsize-ySizeSub;
 			pageScroll();
 		} else if (repeat & KEY_LEFT) {
 			if(currentPage > 0) {
@@ -509,8 +512,8 @@ int main(int argc, char **argv) {
 								pageYpos = 0;
 								pageScroll();
 								break;
-							} else if (pageYpos > (pageYsize-368)) {
-								pageYpos = pageYsize-368;
+							} else if (pageYpos > (pageYsize-ySizeSub)) {
+								pageYpos = pageYsize-ySizeSub;
 								pageScroll();
 								break;
 							}
@@ -534,7 +537,7 @@ int main(int argc, char **argv) {
 						}
 					}
 
-					if(((pageYpos + touchStart.py - touch.py) > 0) && ((pageYpos + touchStart.py - touch.py) < (pageYsize - 368)))
+					if(((pageYpos + touchStart.py - touch.py) > 0) && ((pageYpos + touchStart.py - touch.py) < (pageYsize - ySizeSub)))
 						pageYpos += touchStart.py - touch.py;
 					pageScroll();
 
@@ -545,7 +548,7 @@ int main(int argc, char **argv) {
 			} else {
 				for(uint i=0;i<manPageLinks.size();i++) {
 					if(((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
-						(((touchStart.py + pageYpos) >= manPageLinks[i].y - 368) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - 368 + manPageLinks[i].h)))) {
+						(((touchStart.py + pageYpos) >= manPageLinks[i].y - ySizeSub) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - ySizeSub + manPageLinks[i].h)))) {
 						pageYpos = 0;
 						returnPage = currentPage;
 						for(uint j=0;j<manPagesList.size();j++) {

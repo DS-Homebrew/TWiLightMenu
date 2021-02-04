@@ -134,6 +134,7 @@ class TWLSettings
     int startMenu_cursorPosition;
     int consoleModel;
     int guiLanguage;
+	bool macroMode;
     int colorMode;
     int blfLevel;
     int dsiWareExploit;

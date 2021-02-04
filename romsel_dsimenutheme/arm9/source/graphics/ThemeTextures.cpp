@@ -528,6 +528,9 @@ void ThemeTextures::loadIconTextures() {
 	// }
 }
 u16 *ThemeTextures::beginBgSubModify() {
+	if (ms().macroMode)
+		return _bgSubBuffer;
+
 	u16* bgLoc = BG_GFX_SUB;
 	if (boxArtColorDeband) {
 		bgLoc = _frameBufferBot[0];
@@ -540,6 +543,9 @@ u16 *ThemeTextures::beginBgSubModify() {
 }
 
 void ThemeTextures::commitBgSubModify() {
+	if (ms().macroMode)
+		return;
+
 	u16* bgLoc = BG_GFX_SUB;
 	if (boxArtColorDeband) {
 		bgLoc = _frameBufferBot[0];
@@ -553,6 +559,9 @@ void ThemeTextures::commitBgSubModify() {
 }
 
 void ThemeTextures::commitBgSubModifyAsync() {
+	if (ms().macroMode)
+		return;
+
 	u16* bgLoc = BG_GFX_SUB;
 	if (boxArtColorDeband) {
 		bgLoc = _frameBufferBot[0];
@@ -1495,9 +1504,9 @@ void ThemeTextures::videoSetup() {
 		boxArtCache = (void*)0x0D540000;
 	}
 
-	if (ms().theme == 1) {
+	if (ms().theme == 1 && !ms().macroMode) {
 		loadRotatingCubes();
 	}
 
-	boxArtColorDeband = (ms().boxArtColorDeband && ndmaEnabled() && !rotatingCubesLoaded && ms().theme != 5);
+	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && ndmaEnabled() && !rotatingCubesLoaded && ms().theme != 5);
 }

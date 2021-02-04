@@ -48,6 +48,7 @@ extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 extern int fps;
+extern bool macroMode;
 extern int colorMode;
 extern int blfLevel;
 extern int theme;
@@ -58,6 +59,7 @@ extern int colorGvalue;
 extern int colorBvalue;
 
 int screenBrightness = 0;
+bool lcdSwapped = false;
 static bool secondBuffer = false;
 bool doubleBuffer = true;
 
@@ -294,8 +296,15 @@ void vBlankHandler()
 				fadeDelay = 0;
 			}
 		}
-		if (controlBottomBright && renderFrame) SetBrightness(0, theme==6 ? -screenBrightness : screenBrightness);
-		if (controlTopBright && renderFrame) SetBrightness(1, theme==6 ? -screenBrightness : screenBrightness);
+		if (renderFrame) {
+			if (macroMode) {
+				SetBrightness(0, lcdSwapped ? (theme==6 ? -screenBrightness : screenBrightness) : (theme==6 ? -31 : 31));
+				SetBrightness(1, !lcdSwapped ? (theme==6 ? -screenBrightness : screenBrightness) : (theme==6 ? -31 : 31));
+			} else {
+				if (controlBottomBright) SetBrightness(0, theme==6 ? -screenBrightness : screenBrightness);
+				if (controlTopBright) SetBrightness(1, theme==6 ? -screenBrightness : screenBrightness);
+			}
+		}
 
 		glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 
@@ -392,8 +401,14 @@ void graphicsInit()
 	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 	vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
-	lcdMainOnBottom();
-	
+	if (macroMode && theme == 6) {
+		lcdMainOnTop();
+		lcdSwapped = false;
+	} else {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
+
 	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 0, 15, false, true);
 	
 	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);

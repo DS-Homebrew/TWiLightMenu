@@ -69,6 +69,8 @@ extern const char *bootstrapinipath;
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
+extern bool macroMode;
+extern bool lcdSwapped;
 
 extern bool useBootstrap;
 extern bool homebrewBootstrap;
@@ -294,6 +296,11 @@ void mdRomTooBig(void) {
 	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
+
+	if (macroMode) {
+		lcdMainOnTop();
+		lcdSwapped = false;
+	}
 }
 
 void ramDiskMsg(void) {
@@ -314,6 +321,11 @@ void ramDiskMsg(void) {
 	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
+
+	if (macroMode) {
+		lcdMainOnTop();
+		lcdSwapped = false;
+	}
 }
 
 void dsiBinariesMissingMsg(void) {
@@ -335,6 +347,11 @@ void dsiBinariesMissingMsg(void) {
 	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
+
+	if (macroMode) {
+		lcdMainOnTop();
+		lcdSwapped = false;
+	}
 }
 
 void donorRomMsg(void) {
@@ -373,6 +390,11 @@ void donorRomMsg(void) {
 	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
+
+	if (macroMode) {
+		lcdMainOnTop();
+		lcdSwapped = false;
+	}
 }
 
 void showLocation(void) {
@@ -447,6 +469,9 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 	if (proceedToLaunch) {
 		titleUpdate(false, filename);
 		showLocation();
+	} else if (macroMode) {
+		lcdMainOnTop();
+		lcdSwapped = false;
 	}
 
 	return proceedToLaunch;
@@ -455,6 +480,11 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 extern bool extention(const std::string& filename, const char* ext);
 
 string browseForFile(const vector<string> extensionList) {
+	if (macroMode) {
+		lcdMainOnTop();
+		lcdSwapped = false;
+	}
+
 	int pressed = 0;
 	int screenOffset = 0;
 	int fileOffset = 0;
@@ -624,6 +654,10 @@ string browseForFile(const vector<string> extensionList) {
 			}
 			else if (isDSiWare && !isDSiMode() && !sdFound())
 			{
+				if (macroMode) {
+					lcdMainOnBottom();
+					lcdSwapped = true;
+				}
 				showdialogbox = true;
 				printLargeCentered(false, 74, "Error!");
 				printSmallCentered(false, 90, "This game cannot be launched.");
@@ -637,6 +671,10 @@ string browseForFile(const vector<string> extensionList) {
 					swiWaitForVBlank();
 				} while (!(pressed & KEY_A));
 				showdialogbox = false;
+				if (macroMode) {
+					lcdMainOnTop();
+					lcdSwapped = false;
+				}
 				for (int i = 0; i < 25; i++) swiWaitForVBlank();
 			} else {
 				int hasAP = 0;
@@ -704,6 +742,11 @@ string browseForFile(const vector<string> extensionList) {
 				}
 
 				if (hasAP > 0) {
+					if (macroMode) {
+						lcdMainOnBottom();
+						lcdSwapped = true;
+					}
+
 					dialogboxHeight = 3;
 					showdialogbox = true;
 					printLargeCentered(false, 74, "Anti-Piracy Warning");
@@ -747,6 +790,9 @@ string browseForFile(const vector<string> extensionList) {
 					if (proceedToLaunch) {
 						titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 						showLocation();
+					} else if (macroMode) {
+						lcdMainOnTop();
+						lcdSwapped = false;
 					}
 				}
 
@@ -768,6 +814,11 @@ string browseForFile(const vector<string> extensionList) {
 				extern struct statvfs st[2];
 				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare && isHomebrew == 0
 				 && proceedToLaunch && st[secondaryDevice].f_bsize < (32 << 10) && !dontShowClusterWarning) {
+					if (macroMode) {
+						lcdMainOnBottom();
+						lcdSwapped = true;
+					}
+
 					dialogboxHeight = 5;
 					showdialogbox = true;
 					// Clear location text
@@ -811,6 +862,9 @@ string browseForFile(const vector<string> extensionList) {
 					if (proceedToLaunch) {
 						titleUpdate(dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 						showLocation();
+					} else if (macroMode) {
+						lcdMainOnTop();
+						lcdSwapped = false;
 					}
 				}
 
@@ -879,6 +933,11 @@ string browseForFile(const vector<string> extensionList) {
 
 		if ((pressed & KEY_X) && !preventDeletion && dirContents.at(fileOffset).name != "..")
 		{
+			if (macroMode) {
+				lcdMainOnBottom();
+				lcdSwapped = true;
+			}
+
 			DirEntry *entry = &dirContents.at(fileOffset);
 			bool unHide = (FAT_getAttr(entry->name.c_str()) & ATTR_HIDDEN || (strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != ".."));
 
@@ -960,6 +1019,11 @@ string browseForFile(const vector<string> extensionList) {
 			}
 			clearText();
 			showdialogbox = false;
+
+			if (macroMode) {
+				lcdMainOnTop();
+				lcdSwapped = false;
+			}
 		}
 
 		if ((theme!=6 && (pressed & KEY_START)) || (theme==6 && (pressed & KEY_SELECT)))

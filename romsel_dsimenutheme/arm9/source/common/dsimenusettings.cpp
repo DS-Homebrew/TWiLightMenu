@@ -28,6 +28,7 @@ TWLSettings::TWLSettings()
 	gotosettings = false;
 
 	guiLanguage = ELangDefault;
+    macroMode = false;
 	titleLanguage = -1;
 	fps = 60;
 	colorMode = 0;
@@ -160,6 +161,7 @@ void TWLSettings::loadSettings()
 	sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
 
 	// Customizable UI settings.
+	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
 	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);

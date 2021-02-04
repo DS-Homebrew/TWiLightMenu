@@ -138,6 +138,7 @@ class TWLSettings
     int guiLanguage;
     int titleLanguage;
     int fps;
+	bool macroMode;
     int colorMode;
     int blfLevel;
     int dsiWareExploit;

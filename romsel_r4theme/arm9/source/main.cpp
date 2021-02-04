@@ -58,10 +58,12 @@ bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
 int fps = 60;
+bool macroMode = false;
 int colorMode = 0;
 int blfLevel = 0;
 
 extern void ClearBrightness();
+extern bool lcdSwapped;
 
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -222,6 +224,7 @@ void LoadSettings(void) {
 
 	// Customizable UI settings.
 	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
+	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
@@ -1128,6 +1131,8 @@ int main(int argc, char **argv) {
 				int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
 				iprintf ("Start failed. Error %i\n", err);
 		  } else {
+			lcdMainOnBottom();
+			lcdSwapped = true;
 			do {
 				clearText();
 				printLargeCentered(false, -112, 166, DrawDate());

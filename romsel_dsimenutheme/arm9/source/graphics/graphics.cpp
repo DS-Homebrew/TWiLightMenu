@@ -522,7 +522,7 @@ void vBlankHandler() {
 		}
 		if (controlBottomBright && renderFrame)
 			SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
-		if (controlTopBright && renderFrame)
+		if (controlTopBright && !ms().macroMode && renderFrame)
 			SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
 
 		if (showdialogbox) {
@@ -1703,6 +1703,8 @@ ITCM_CODE void drawClockColon() {
 }
 
 void clearBoxArt() {
+	if (ms().macroMode) return;
+
 	if (!tc().renderPhoto()) {
 		// tex().drawTopBg();
 		// tex().drawProfileName();
@@ -1749,7 +1751,7 @@ void graphicsInit() {
 	titlewindowXpos[1] = ms().cursorPosition[1] * 5;
 
 	SetBrightness(0, (ms().theme == 4 || ms().theme == 5) ? -31 : 31);
-	SetBrightness(1, (ms().theme == 4 || ms().theme == 5) ? -31 : 31);
+	SetBrightness(1, (ms().theme == 4 || ms().theme == 5) && !ms().macroMode ? -31 : 31);
 
 	// videoSetup() Called here before.
 	// REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
