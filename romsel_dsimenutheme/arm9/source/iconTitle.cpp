@@ -120,9 +120,9 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
 	}
 }
 
-void loadUnkIcon(int num) { glLoadIcon(num, tex().iconUnknownTexture()->palette(), tex().iconUnknownTexture()->bytes()); }
+static inline void loadUnkIcon(int num) { glLoadIcon(num, tex().iconUnknownTexture()->palette(), tex().iconUnknownTexture()->bytes()); }
 
-static void clearIcon(int num) { glClearIcon(num); }
+static inline void clearIcon(int num) { glClearIcon(num); }
 
 void drawIcon(int Xpos, int Ypos, int num) {
 	int num2 = num;
