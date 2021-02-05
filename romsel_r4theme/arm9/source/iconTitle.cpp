@@ -784,6 +784,10 @@ void getGameInfo(bool isDir, const char* name)
 
 		fseek(fp, (ndsHeader.arm9romOffset <= 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, fp);
+		if (ndsHeader.arm9romOffset <= 0x200 && arm9StartSig[0] == 0 && arm9StartSig[1] == 0 && arm9StartSig[2] == 0 && arm9StartSig[3] == 0) {
+			fseek(fp, ndsHeader.arm9romOffset+0x800, SEEK_SET);
+			fread(arm9StartSig, sizeof(u32), 4, fp);
+		}
 		if (arm9StartSig[0] == 0xE3A00301
 		 && arm9StartSig[1] == 0xE5800208
 		 && arm9StartSig[2] == 0xE3A00013

@@ -175,6 +175,11 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 
 		fseek(f, (header.arm9romOffset <= 0x200 ? header.arm9romOffset : header.arm9romOffset+0x800), SEEK_SET);
 		fread(arm9Sig[0], sizeof(u32), 4, f);
+		if (header.arm9romOffset <= 0x200 && arm9Sig[0] == 0 && arm9Sig[1] == 0 && arm9Sig[2] == 0 && arm9Sig[3] == 0)
+		{
+			fseek(f, header.arm9romOffset+0x800, SEEK_SET);
+			fread(arm9Sig[0], sizeof(u32), 4, f);
+		}
 		if (arm9Sig[0][0] == 0xE3A00301
 		 && arm9Sig[0][1] == 0xE5800208
 		 && arm9Sig[0][2] == 0xE3A00013
