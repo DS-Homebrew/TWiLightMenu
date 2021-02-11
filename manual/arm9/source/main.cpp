@@ -551,7 +551,7 @@ int main(int argc, char **argv) {
 			} else {
 				for(uint i=0;i<manPageLinks.size();i++) {
 					if(((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
-						(((touchStart.py + pageYpos) >= manPageLinks[i].y - ySizeSub) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - ySizeSub + manPageLinks[i].h)))) {
+						(((touchStart.py + pageYpos) >= manPageLinks[i].y - (macroMode ? 0 : 176)) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - (macroMode ? 0 : 176) + manPageLinks[i].h)))) {
 						pageYpos = 0;
 						returnPage = currentPage;
 						for(uint j=0;j<manPagesList.size();j++) {
