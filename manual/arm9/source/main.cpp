@@ -431,6 +431,9 @@ int main(int argc, char **argv) {
 	}
 
 	loadPageList();
+	// Move index.gif to the start
+	std::sort(manPagesList.begin(), manPagesList.end(), [](DirEntry a, DirEntry b) {return a.name == "index.gif"; });
+
 	loadPageInfo(manPagesList[0].name.substr(0,manPagesList[0].name.length()-3) + "ini");
 	pageLoad(manPagesList[0].name);
 	topBarLoad();
