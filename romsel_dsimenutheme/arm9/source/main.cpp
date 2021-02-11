@@ -268,7 +268,8 @@ void SetWidescreen(const char *filename) {
 
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
-	if ((isDSiMode() && sys().arm7SCFGLocked()) || ms().consoleModel < 2 || !useWidescreen
+	if ((isDSiMode() && sys().arm7SCFGLocked()) || ms().consoleModel < 2
+	|| !useWidescreen || ms().macroMode
 	|| (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) != 0)) {
 		ms().homebrewHasWide = false;
 		return;

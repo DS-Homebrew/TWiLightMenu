@@ -343,6 +343,9 @@ void lastRunROM()
 		} else if (ms().slot1LaunchMethod==2) {
 			unlaunchRomBoot("cart:");
 		} else {
+			if ((ms().consoleModel >= 2 && !ms().wideScreen) || ms().consoleModel < 2 || ms().macroMode) {
+				remove("/_nds/nds-bootstrap/wideCheatData.bin");
+			}
 			err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
 		}
 	}
@@ -361,7 +364,7 @@ void lastRunROM()
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 				argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
 			} else {
-				if (ms().consoleModel >= 2 && !useWidescreen) {
+				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || ms().macroMode) {
 					remove("/_nds/nds-bootstrap/wideCheatData.bin");
 				}
 
