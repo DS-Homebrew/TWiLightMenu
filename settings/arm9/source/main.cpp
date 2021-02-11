@@ -1131,14 +1131,17 @@ int main(int argc, char **argv)
 				STR_DESCRIPTION_DSIWARE_EXPLOIT,
 				Option::Int(&ms().dsiWareExploit),
 				{STR_NONE, "sudokuhax", "4swordshax", "fieldrunnerhax", "grtpwn", "ugopwn/Lenny", "UNO*pwn", "Memory Pit"},
-				{0, 1, 2, 3, 4, 5, 6, 7})
+				{0, 1, 2, 3, 4, 5, 6, 7});
+	}
+	if (sdAccessible) {
+		miscPage
 			.option(STR_SYSREGION,
 				STR_DESCRIPTION_SYSREGION_1,
 				Option::Int(&ms().sysRegion),
 				{STR_AUTO_HIYA_ONLY, "JPN", "USA", "EUR", "AUS", "CHN", "KOR"},
 				{-1, 0, 1, 2, 3, 4, 5});
 	}
-	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
+	if (sdAccessible && ms().consoleModel < 2) {
 		miscPage
 			.option(STR_LAUNCHERAPP,
 				STR_DESCRIPTION_LAUNCHERAPP,
@@ -1152,8 +1155,9 @@ int main(int argc, char **argv)
 				"00000005.app",
 				"00000006.app",
 				"00000007.app",
-				"00000008.app"},
-				{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8});
+				"00000008.app",
+				"launcher.dsi"},
+				{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
 	}
 
 	if (isDSiMode() && ms().consoleModel < 2)

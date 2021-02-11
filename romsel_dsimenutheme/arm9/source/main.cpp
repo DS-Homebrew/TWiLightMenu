@@ -673,7 +673,7 @@ int main(int argc, char **argv) {
 
 	std::string filename;
 
-	if (isDSiMode() && sdFound() && ms().consoleModel < 2 && ms().launcherApp != -1) {
+	if (sdFound() && ms().consoleModel < 2 && ms().launcherApp != -1) {
 		u8 setRegion = 0;
 
 		if (ms().sysRegion == -1) {
@@ -710,8 +710,12 @@ int main(int argc, char **argv) {
 			}
 		}
 
-		snprintf(launcherPath, sizeof(launcherPath),
-			 "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, ms().launcherApp);
+		if (ms().sysRegion == 9) {
+			sprintf(launcherPath, "nand:/launcher.dsi");
+		} else {
+			sprintf(launcherPath,
+				 "nand:/title/00030017/484E41%X/content/0000000%i.app", setRegion, ms().launcherApp);
+		}
 	}
 
 	graphicsInit();

@@ -977,7 +977,7 @@ int main(int argc, char **argv) {
 		SetBrightness(1, -31);
 	}
 
-	if (isDSiMode() && sdFound() && consoleModel < 2 && launcherApp != -1) {
+	if (sdFound() && consoleModel < 2 && launcherApp != -1) {
 		u8 setRegion = 0;
 		if (sysRegion == -1) {
 			// Determine SysNAND region by searching region of System Settings on SDNAND
@@ -1015,7 +1015,12 @@ int main(int argc, char **argv) {
 			}
 		}
 
-		snprintf(launcherPath, sizeof(launcherPath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, launcherApp);
+		if (sysRegion == 9) {
+			sprintf(launcherPath, "nand:/launcher.dsi");
+		} else {
+			sprintf(launcherPath,
+				 "nand:/title/00030017/484E41%X/content/0000000%i.app", setRegion, launcherApp);
+		}
 	}
 
 	keysSetRepeat(10, 2);
