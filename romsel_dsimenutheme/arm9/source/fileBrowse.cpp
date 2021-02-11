@@ -647,7 +647,7 @@ void exitToSystemMenu(void) {
 		ms().saveSettings();
 		settingsChanged = false;
 	}
-	if (!isDSiMode() || ms().launcherApp == -1) {
+	if (!sdFound() || ms().launcherApp == -1) {
 		*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
 		*(u16 *)(0x02000304) = 0x1801;
 		*(u32 *)(0x02000310) = 0x4D454E55; // "MENU"
