@@ -27,6 +27,7 @@ static const char incompatibleGameList[][4] = {
 	"APD", // Pokemon Dash
 	"A24", // Pokemon Dash (Kiosk Demo)
 	"AH9", // Tony Hawk's American Sk8land
+	"CTX", // Tropix
 };
 
 #endif // INCOMPATIBLEMAP_H
