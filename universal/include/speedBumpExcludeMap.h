@@ -9,6 +9,7 @@
 		"AEK",	// Age of Empires: The Age of Kings
 		"ARD",	// American Dragon Jake Long
 		"ALC",	// Animaniacs: Lights, Camera, Action!
+		"A2L",	// Anno 1701: Dawn of Discovery
 		"YAH",	// Assassin's Creed: Altair's Chronicles
 		"B6R",	// Bakugan: Battle Brawlers
 		"BGH",	// Band Hero
