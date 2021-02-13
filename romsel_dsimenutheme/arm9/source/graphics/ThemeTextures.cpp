@@ -1079,6 +1079,8 @@ ITCM_CODE void ThemeTextures::drawVolumeImageMacro(int volumeLevel) {
 }
 
 ITCM_CODE void ThemeTextures::drawVolumeImageCached() {
+	if (ms().macroMode && ms().theme == 4) return;
+
 	int volumeLevel = getVolumeLevel();
 	if (_cachedVolumeLevel != volumeLevel) {
 		_cachedVolumeLevel = volumeLevel;
@@ -1166,6 +1168,8 @@ ITCM_CODE void ThemeTextures::drawBatteryImageMacro(int batteryLevel, bool drawD
 }
 
 ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
+	if (ms().macroMode && ms().theme == 4) return;
+
 	int batteryLevel = getBatteryLevel();
 	if(batteryLevel == 0 && showColon)	batteryLevel--;
 	else if(batteryLevel == 7 && showColon)	batteryLevel++;
@@ -1314,6 +1318,8 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 }
 
 ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int posY, const int drawCount, int *hourWidthPointer) {
+	if (ms().theme == 4) return;
+
 	beginBgMainModify();
 
 	const Texture *tex = dateTimeFontTexture();
