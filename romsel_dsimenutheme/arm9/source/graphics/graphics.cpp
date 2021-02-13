@@ -1786,7 +1786,9 @@ void graphicsInit() {
 		rocketVideo_videoYpos = tc().rotatingCubesRenderY();
 	}
 
-	tex().drawTopBg();
+	if (!ms().macroMode) {
+		tex().drawTopBg();
+	}
 	bottomBgLoad(false, true);
 	// consoleDemoInit();
 
@@ -1800,7 +1802,7 @@ void graphicsInit() {
 
 	// printf("drawn bgload");
 	// while(1) {}
-	if (tc().renderPhoto()) {
+	if (!ms().macroMode && tc().renderPhoto()) {
 		srand(time(NULL));
 		loadPhotoList();
 	}
