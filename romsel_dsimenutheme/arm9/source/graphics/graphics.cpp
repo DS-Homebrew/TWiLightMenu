@@ -133,6 +133,8 @@ int titleboxXpos[2];
 int titleboxYpos = 85; // 85, when dropped down
 int titlewindowXpos[2];
 
+bool reloadDate = false;
+bool reloadTime = false;
 bool showLshoulder = false;
 bool showRshoulder = false;
 
@@ -164,6 +166,7 @@ float dbox_Ypos = -192;
 int bottomScreenBrightness = 255;
 
 int bottomBgState = 0; // 0 = Uninitialized, 1 = No Bubble, 2 = bubble, 3 = moving.
+int prevBottomBgState = 1;
 
 int vblankRefreshCounter = 0;
 
@@ -359,6 +362,14 @@ void bottomBgLoad(int drawBubble, bool init = false) {
 			tex().drawBottomBg(3);
 			bottomBgState = 3;
 		}
+	}
+	if (ms().macroMode && prevBottomBgState != bottomBgState) {
+		reloadDate = true;
+		reloadTime = true;
+		tex().resetCachedVolumeLevel();
+		tex().resetCachedBatteryLevel();
+		tex().resetProfileName();
+		prevBottomBgState = bottomBgState;
 	}
 }
 
@@ -1642,12 +1653,14 @@ ITCM_CODE void drawCurrentDate() {
 	int y = (ms().theme == 4 ? 12 : 7);
 
 	std::string currentDate = getDate();
-	if (currentDate == loadedDate)
+	if (currentDate == loadedDate && !reloadDate)
 		return;
 
 	loadedDate = currentDate;
 
-	tex().drawDateTime(loadedDate.c_str(), x, y, 5, NULL);
+	ms().macroMode ? tex().drawDateTimeMacro(loadedDate.c_str(), x, y, 5, NULL) : tex().drawDateTime(loadedDate.c_str(), x, y, 5, NULL);
+
+	reloadDate = false;
 }
 
 static std::string loadedTime;
@@ -1663,24 +1676,27 @@ ITCM_CODE void drawCurrentTime() {
 	int y = (ms().theme == 4 ? 12 : 7);
 	char time[10];
 	std::string currentTime = retTime();
-	if (currentTime != loadedTime) {
-		loadedTime = currentTime;
-		if (currentTime.substr(0, 1) == " ")
-			currentTime = "0" + currentTime.substr(1);
-		sprintf(time, currentTime.c_str());
+	if (currentTime == loadedTime && !reloadTime)
+		return;
 
-		int howManyToDraw = 5;
-		if (initialClockDraw) {
-			initialClockDraw = false;
-		} else {
-			if (currentTime.substr(3, 2) != "00") {
-				strcpy(time, currentTime.substr(3, 2).c_str());
-				howManyToDraw = 2;
-				x = hourWidth;
-			}
+	loadedTime = currentTime;
+	if (currentTime.substr(0, 1) == " ")
+		currentTime = "0" + currentTime.substr(1);
+	sprintf(time, currentTime.c_str());
+
+	int howManyToDraw = 5;
+	if (initialClockDraw || reloadTime) {
+		initialClockDraw = false;
+	} else {
+		if (currentTime.substr(3, 2) != "00") {
+			strcpy(time, currentTime.substr(3, 2).c_str());
+			howManyToDraw = 2;
+			x = hourWidth;
 		}
-		tex().drawDateTime(time, x, y, howManyToDraw, &hourWidth);
 	}
+	ms().macroMode ? tex().drawDateTimeMacro(time, x, y, howManyToDraw, &hourWidth) : tex().drawDateTime(time, x, y, howManyToDraw, &hourWidth);
+
+	reloadTime = false;
 }
 
 ITCM_CODE void drawClockColon() {
@@ -1697,7 +1713,7 @@ ITCM_CODE void drawClockColon() {
 		colonTimer = 0;
 		std::string currentColon = showColon ? ":" : ";";
 		sprintf(colon, currentColon.c_str());
-		tex().drawDateTime(colon, x, y, 1, NULL);
+		ms().macroMode ? tex().drawDateTimeMacro(colon, x, y, 1, NULL) : tex().drawDateTime(colon, x, y, 1, NULL);
 		showColon = !showColon;
 	}
 }
@@ -1771,6 +1787,9 @@ void graphicsInit() {
 	}
 
 	tex().drawTopBg();
+	bottomBgLoad(false, true);
+	// consoleDemoInit();
+
 	if (ms().theme != 4 && ms().theme != 5) {
 		tex().drawProfileName();
 	}
@@ -1778,10 +1797,6 @@ void graphicsInit() {
 	drawCurrentDate();
 	drawCurrentTime();
 	drawClockColon();
-
-
-	bottomBgLoad(false, true);
-	// consoleDemoInit();
 
 	// printf("drawn bgload");
 	// while(1) {}

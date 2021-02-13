@@ -338,6 +338,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			drawCurrentTime();
 			drawCurrentDate();
 			drawClockColon();
+			tex().drawProfileName();
 
 			snd().updateStream();
 		}
@@ -420,6 +421,7 @@ void waitForFadeOut(void) {
 			drawCurrentTime();
 			drawCurrentDate();
 			drawClockColon();
+			tex().drawProfileName();
 			snd().updateStream();
 			swiWaitForVBlank();
 		}
@@ -1538,6 +1540,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 			drawCurrentTime();
 			drawCurrentDate();
 			drawClockColon();
+			tex().drawProfileName();
 			snd().updateStream();
 		}
 	}
@@ -1788,6 +1791,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				drawCurrentTime();
 				drawCurrentDate();
 				drawClockColon();
+				tex().drawProfileName();
 				snd().updateStream();
 				swiWaitForVBlank();
 				/*if (REG_SCFG_MC != current_SCFG_MC) {
@@ -1895,6 +1899,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					drawCurrentTime();
 					drawCurrentDate();
 					drawClockColon();
+					tex().drawProfileName();
 					snd().updateStream();
 					swiWaitForVBlank();
 
@@ -2190,6 +2195,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					drawCurrentTime();
 					drawCurrentDate();
 					drawClockColon();
+					tex().drawProfileName();
 					snd().updateStream();
 				}
 				scrollWindowTouched = false;

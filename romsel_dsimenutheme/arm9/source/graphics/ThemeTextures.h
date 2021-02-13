@@ -53,6 +53,7 @@ public:
 	void drawTopBgAvoidingShoulders();
 
 	void drawProfileName();
+	void resetProfileName();
 	void drawBottomBg(int bg);
 
 	void loadBoxArtToMem(const char *filename, int num);
@@ -60,13 +61,18 @@ public:
 	void drawBoxArtFromMem(int num);
 
 	void drawVolumeImage(int volumeLevel);
+	void drawVolumeImageMacro(int volumeLevel);
 	void drawVolumeImageCached();
+	void resetCachedVolumeLevel();
 
 	void drawBatteryImage(int batteryLevel, bool drawDSiMode, bool isRegularDS);
+	void drawBatteryImageMacro(int batteryLevel, bool drawDSiMode, bool isRegularDS);
 	void drawBatteryImageCached();
+	void resetCachedBatteryLevel();
 
 	void drawShoulders(bool LShoulderActive, bool RShoulderActive);
 	void drawDateTime(const char* date, int posX, int posY, const int drawCount, int *hourWidthPointer);
+	void drawDateTimeMacro(const char* date, int posX, int posY, const int drawCount, int *hourWidthPointer);
 
 	void clearTopScreen();
 	static void videoSetup();
@@ -322,6 +328,7 @@ private:
 private:
 	int _cachedVolumeLevel;
 	int _cachedBatteryLevel;
+	bool _profileNameLoaded;
 };
 
 

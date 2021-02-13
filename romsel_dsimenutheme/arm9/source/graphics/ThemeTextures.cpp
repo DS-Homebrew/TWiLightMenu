@@ -60,7 +60,7 @@ ThemeTextures::ThemeTextures()
     : previouslyDrawnBottomBg(-1), bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
       movingarrowTexID(0), launchdotTexID(0), startTexID(0), startbrdTexID(0), settingsTexID(0), braceTexID(0),
       boxfullTexID(0), boxemptyTexID(0), folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0),
-      dialogboxTexID(0), wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1) {
+      dialogboxTexID(0), wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1), _profileNameLoaded(false) {
 	// Overallocation, but thats fine,
 	// 0: Top, 1: Bottom, 2: Bottom Bubble, 3: Moving, 4: MovingLeft, 5: MovingRight
 	_backgroundTextures.reserve(6);
@@ -233,7 +233,14 @@ void ThemeTextures::loadBackgrounds() {
 	}
 	// DSi Theme
 	_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
-	_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
+	if (ms().macroMode
+	&& (access(((std::string)TFN_BG_BOTTOMBUBBLEBG_MACRO).c_str(), F_OK) == 0
+	 || access(((std::string)TFN_FALLBACK_BG_BOTTOMBUBBLEBG_MACRO).c_str(), F_OK) == 0)
+	) {
+		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG_MACRO, TFN_FALLBACK_BG_BOTTOMBUBBLEBG_MACRO);
+	} else {
+		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
+	}
 	if (ms().theme == 0) _backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
 	
 }
@@ -673,6 +680,8 @@ void ThemeTextures::clearTopScreen() {
 }
 
 void ThemeTextures::drawProfileName() {
+	if (_profileNameLoaded || ms().theme == 4 || ms().theme == 5) return;
+
 	// Load username
 	char fontPath[64] = {0};
 	FILE *file;
@@ -687,7 +696,7 @@ void ThemeTextures::drawProfileName() {
 		file = fopen(fontPath, "rb");
 
 		if (file) {
-			beginBgSubModify();
+			ms().macroMode ? beginBgMainModify() : beginBgSubModify();
 			// Start loading
 			fseek(file, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
@@ -701,7 +710,7 @@ void ThemeTextures::drawProfileName() {
 
 					// Blend with pixel
 					const u16 bg =
-					    _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
+					    ms().macroMode ? _bgMainBuffer[(y + 2) * 256 + (i + x)] : _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
 					// Apply palette here.
 
 					// Magic numbers were found by dumping val to stdout
@@ -735,19 +744,30 @@ void ThemeTextures::drawProfileName() {
 						break;
 					}
 					if (val != 0xFC1F && val != 0x7C1F) { // Do not render magneta pixel
-						_bgSubBuffer[(y + 2) * 256 + (i + x)] = Texture::bmpToDS(val);
-						if (boxArtColorDeband) {
-							_bgSubBuffer2[(y + 2) * 256 + (i + x)] = _bgSubBuffer[(y + 2) * 256 + (i + x)];
+						if (ms().macroMode) {
+							_bgMainBuffer[(y + 2) * 256 + (i + x)] = Texture::bmpToDS(val);
+						} else {
+							_bgSubBuffer[(y + 2) * 256 + (i + x)] = Texture::bmpToDS(val);
+							if (boxArtColorDeband) {
+								_bgSubBuffer2[(y + 2) * 256 + (i + x)] = _bgSubBuffer[(y + 2) * 256 + (i + x)];
+							}
 						}
 					}
 				}
 			}
 			x += top_font_texcoords[2 + (4 * charIndex)];
-			commitBgSubModify();
+			ms().macroMode ? commitBgMainModify() : commitBgSubModify();
 		}
 
 		fclose(file);
 	}
+
+	_profileNameLoaded = true;
+}
+
+
+ITCM_CODE void ThemeTextures::resetProfileName() {
+	_profileNameLoaded = false;
 }
 
 /**
@@ -1038,12 +1058,36 @@ ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
 	commitBgSubModify();
 }
 
+ITCM_CODE void ThemeTextures::drawVolumeImageMacro(int volumeLevel) {
+	if (!dsiFeatures())
+		return;
+	beginBgMainModify();
+
+	const Texture *tex = volumeTexture(volumeLevel);
+	const u16 *src = tex->texture();
+	int startX = tc().volumeRenderX();
+	int startY = tc().volumeRenderY();
+	for (uint y = 0; y < tex->texHeight(); y++) {
+		for (uint x = 0; x < tex->texWidth(); x++) {
+			u16 val = *(src++);
+			if (val >> 15) { // Do not render transparent pixel
+				_bgMainBuffer[(startY + y) * 256 + startX + x] = val;
+			}
+		}
+	}
+	commitBgMainModify();
+}
+
 ITCM_CODE void ThemeTextures::drawVolumeImageCached() {
 	int volumeLevel = getVolumeLevel();
 	if (_cachedVolumeLevel != volumeLevel) {
 		_cachedVolumeLevel = volumeLevel;
-		drawVolumeImage(volumeLevel);
+		ms().macroMode ? drawVolumeImageMacro(volumeLevel) : drawVolumeImage(volumeLevel);
 	}
+}
+
+ITCM_CODE void ThemeTextures::resetCachedVolumeLevel() {
+	_cachedVolumeLevel = -1;
 }
 
 ITCM_CODE int ThemeTextures::getVolumeLevel(void) {
@@ -1105,14 +1149,34 @@ ITCM_CODE void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMod
 	commitBgSubModify();
 }
 
+ITCM_CODE void ThemeTextures::drawBatteryImageMacro(int batteryLevel, bool drawDSiMode, bool isRegularDS) {
+	// Start loading
+	beginBgMainModify();
+	const Texture *tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
+	const u16 *src = tex->texture();
+	for (uint y = tc().batteryRenderY(); y < tc().batteryRenderY() + tex->texHeight(); y++) {
+		for (uint x = tc().batteryRenderX(); x < tc().batteryRenderX() + tex->texWidth(); x++) {
+			u16 val = *(src++);
+			if (val >> 15) { // Do not render transparent pixel
+				_bgMainBuffer[y * 256 + x] = val;
+			}
+		}
+	}
+	commitBgMainModify();
+}
+
 ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
 	int batteryLevel = getBatteryLevel();
 	if(batteryLevel == 0 && showColon)	batteryLevel--;
 	else if(batteryLevel == 7 && showColon)	batteryLevel++;
 	if (_cachedBatteryLevel != batteryLevel) {
 		_cachedBatteryLevel = batteryLevel;
-		drawBatteryImage(batteryLevel, dsiFeatures(), sys().isRegularDS());
+		ms().macroMode ? drawBatteryImageMacro(batteryLevel, dsiFeatures(), sys().isRegularDS()) : drawBatteryImage(batteryLevel, dsiFeatures(), sys().isRegularDS());
 	}
+}
+
+ITCM_CODE void ThemeTextures::resetCachedBatteryLevel() {
+	_cachedBatteryLevel = -1;
 }
 
 #define TOPLINES 32 * 256
@@ -1247,6 +1311,34 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 	}
 
 	commitBgSubModify();
+}
+
+ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int posY, const int drawCount, int *hourWidthPointer) {
+	beginBgMainModify();
+
+	const Texture *tex = dateTimeFontTexture();
+	const u16 *bitmap = tex->texture();
+
+	for (int c = 0; c < drawCount; c++) {
+		unsigned int charIndex = getDateTimeFontSpriteIndex(str[c]);
+		// Start date
+		for (uint y = 0; y < tex->texHeight(); y++) {
+			const u16 *src = bitmap + (y * 128) + (date_time_font_texcoords[4 * charIndex]);
+			for (uint x = 0; x < date_time_font_texcoords[2 + (4 * charIndex)]; x++) {
+				u16 val = *(src++);
+				if (val >> 15) { // Do not render transparent pixel
+					_bgMainBuffer[(posY + y) * 256 + (posX + x)] = val;
+				}
+			}
+		}
+		posX += date_time_font_texcoords[2 + (4 * charIndex)];
+		if (hourWidthPointer != NULL) {
+			if (c == 2)
+				*hourWidthPointer = posX;
+		}
+	}
+
+	commitBgMainModify();
 }
 
 void ThemeTextures::applyGrayscaleToAllGrfTextures() {

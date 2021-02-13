@@ -706,7 +706,7 @@ void writeBannerText(std::u16string text) {
 	for(auto line : lines) {
 		out += line + u'\n';
 	}
-	if (tc().titleboxTextLarge()) {
+	if (tc().titleboxTextLarge() && !ms().macroMode) {
 		printLarge(false, 0, tc().titleboxTextY() - (((lines.size() - 1) * largeFontHeight()) / 2), out, Alignment::center);
 	} else {
 		printSmall(false, 0, tc().titleboxTextY() - (((lines.size() - 1) * smallFontHeight()) / 2), out, Alignment::center);

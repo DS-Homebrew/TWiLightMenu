@@ -47,7 +47,10 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 
 
 void ThemeConfig::loadConfig() {
-	printf("tc().loadConfig()\n");
+	//iprintf("tc().loadConfig()\n");
+	int macroY = 0;
+	int macroW = 0;
+
 	CIniFile themeConfig(TFN_THEME_SETTINGS);
 	_startBorderRenderY = themeConfig.GetInt("THEME", "StartBorderRenderY", _startBorderRenderY);
 	_startBorderSpriteW = themeConfig.GetInt("THEME", "StartBorderSpriteW", _startBorderSpriteW);
@@ -61,8 +64,14 @@ void ThemeConfig::loadConfig() {
 
 	_titleboxRenderY = themeConfig.GetInt("THEME", "TitleboxRenderY", _titleboxRenderY);
 	_titleboxMaxLines = themeConfig.GetInt("THEME", "TitleboxMaxLines", _titleboxMaxLines);
+	macroY = themeConfig.GetInt("THEME", "MacroTitleboxTextY", -1);
+	macroW = themeConfig.GetInt("THEME", "MacroTitleboxTextW", -1);
 	_titleboxTextY = themeConfig.GetInt("THEME", "TitleboxTextY", _titleboxTextY);
 	_titleboxTextW = themeConfig.GetInt("THEME", "TitleboxTextW", _titleboxTextW);
+	if (ms().macroMode) {
+		if (macroY != -1) _titleboxTextY = macroY;
+		if (macroW != -1) _titleboxTextW = macroW;
+	}
 	_titleboxTextLarge = themeConfig.GetInt("THEME", "TitleboxTextLarge", _titleboxTextLarge);
 
 	_volumeRenderX = themeConfig.GetInt("THEME", "VolumeRenderX", _volumeRenderX);
