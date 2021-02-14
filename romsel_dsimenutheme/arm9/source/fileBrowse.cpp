@@ -2581,7 +2581,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isDSiWare[CURPOS] && !isDSiMode() && !sdFound()) {
+				} else if (isDSiWare[CURPOS] && ((!isDSiMode() && !sdFound()) || (isHomebrew[CURPOS] && ms().consoleModel >= 2))) {
 					clearText();
 					updateText(false);
 					snd().playWrong();
@@ -2596,7 +2596,11 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 					}
 					int yPos = (ms().theme == 4 ? 24 : 112);
-					printSmall(false, 0, yPos, isDSiMode() ? STR_CANNOT_LAUNCH_WITHOUT_SD : STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center);
+					if (isHomebrew[CURPOS] && ms().consoleModel >= 2) {
+						printSmall(false, 0, yPos, STR_CANNOT_LAUNCH_HB_ON_3DS, Alignment::center);
+					} else {
+						printSmall(false, 0, yPos, isDSiMode() ? STR_CANNOT_LAUNCH_WITHOUT_SD : STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center);
+					}
 					printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
 					updateText(false);
 					pressed = 0;

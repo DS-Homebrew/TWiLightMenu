@@ -652,7 +652,7 @@ string browseForFile(const vector<string> extensionList) {
 				settingsChanged = false;
 				return "null";
 			}
-			else if (isDSiWare && !isDSiMode() && !sdFound())
+			else if (isDSiWare && ((!isDSiMode() && !sdFound()) || (isHomebrew && consoleModel >= 2)))
 			{
 				if (macroMode) {
 					lcdMainOnBottom();
