@@ -19,7 +19,11 @@ It can launch Nintendo DS, SNES, NES, GameBoy (Color), GameBoy Advance, Sega Gam
 
 # Compiling
 
-Compiling this app requires devkitPRO with devkitARM and libnds. Be sure you have grit and mmutil installed.
+Compiling this app requires devkitPro's devkitARM, libnds, grit, and mmutil. These can be installed using [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman) with the following command:
+```
+sudo dkp-pacman -S nds-dev
+```
+(Note: Command will vary by OS, sudo may not be needed and it may be just `pacman` instead)
 
 ## Using Docker
 
@@ -29,9 +33,13 @@ The script accepts `make` arguments as well. For example, `.\compile_docker.ps1 
 
 Please note that Docker compilation is not compatible with native compilation on Windows. You should run `.\compile_docker.ps1 clean` to clean the artifacts before attempting to build with Docker. If a notification appears asking you to share your drive, you must choose to enable drive sharing for Docker to work on Windows.
 
+## Manual Pages
+
+The manual pages are stored in a separate repository and downloaded from a release when building TWiLight Menu++. For more information, see the [twilight-manual](https://github.com/DS-Homebrew/twilight-manual) repository.
+
 # Translating
 
-You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.com/project/TwilightMenu). If you'd like to request a new language be added then please ask on the Discord server.
+You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.com/project/TwilightMenu). If you'd like to request a new language be added then please ask on the [Discord server](https://ds-homebrew.com/discord).
 
 # Credits
 ## Main Developers
