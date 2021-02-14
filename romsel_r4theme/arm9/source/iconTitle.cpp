@@ -834,6 +834,10 @@ void getGameInfo(bool isDir, const char* name)
 			}
 		}
 
+		if (isHomebrew == true && ndsHeader.arm9binarySize > 0x380000) {
+			isDSiWare = true; // Make homebrew boot through Unlaunch
+		}
+
 		if (ndsHeader.dsi_flags & BIT(4))
 			bnrWirelessIcon = 1;
 		else if (ndsHeader.dsi_flags & BIT(3))

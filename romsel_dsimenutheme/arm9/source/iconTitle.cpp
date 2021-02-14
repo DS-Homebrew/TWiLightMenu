@@ -465,6 +465,10 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			}
 		}
 
+		if (isHomebrew[num] == true && ndsHeader.arm9binarySize > 0x380000) {
+			isDSiWare[num] = true; // Make homebrew boot through Unlaunch
+		}
+
 		bnrSysSettings[num] =
 		    (ndsHeader.gameCode[0] == 0x48 && ndsHeader.gameCode[1] == 0x4E && ndsHeader.gameCode[2] == 0x42);
 
