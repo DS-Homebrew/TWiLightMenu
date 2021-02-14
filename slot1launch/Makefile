@@ -24,6 +24,7 @@ export VERSTRING	:=	$(VERSION_MAJOR).$(VERSION_MINOR)
 all: cardengine_arm7 bootloader bootloaderAlt $(TARGET).nds
 
 dist:	all
+	@mkdir -p ../7zfile/debug
 	@cp $(TARGET).nds ../7zfile/_nds/TWiLightMenu/slot1launch.srldr
 	@cp $(TARGET).arm7.elf ../7zfile/debug/$(TARGET).arm7.elf
 	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
