@@ -744,7 +744,7 @@ void launchGba(void) {
 	ms().saveSettings();
 
 	// Switch to GBA mode
-	if (ms().showGba == 2) {
+	/*if (ms().showGba == 2) {
 		if (ms().secondaryDevice) {
 			const char* gbar2Path = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
 			if (isDSiMode()) {
@@ -793,9 +793,9 @@ void launchGba(void) {
 			updateText(false);
 			stop();
 		}
-	} else {
+	} else {*/
 		gbaSwitch();
-	}
+	//}
 }
 
 void smsWarning(void) {
