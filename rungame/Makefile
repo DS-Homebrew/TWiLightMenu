@@ -123,6 +123,7 @@ export GAME_TITLE := $(TARGET)
 all:	bootloader bootstub $(TARGET).nds
 	
 dist:	all
+	@mkdir -p ../7zfile/debug
 	@cp $(TARGET).nds ../7zfile/_nds/TWiLightMenu/resetgame.srldr
 	@cp $(TARGET).arm7.elf ../7zfile/debug/$(TARGET).arm7.elf
 	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
