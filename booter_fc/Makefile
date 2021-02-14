@@ -30,7 +30,7 @@ makearm9_cyclodsi:
 	cp flashcart_specifics/CycloDSi/arm9/$(TARGET).elf $(TARGET)_cyclodsi.arm9.elf
 
 dist:	all autoboot
-	mkdir -p ../7zfile/debug
+	@mkdir -p ../7zfile/debug
 	@cp $(TARGET)_fc.nds "../7zfile/Flashcard users/BOOT.NDS"
 	@cp $(TARGET)_cyclodsi.nds "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
 	@cp $(TARGET)_fc.arm7.elf ../7zfile/debug/$(TARGET)_fc.arm7.elf

@@ -19,7 +19,19 @@ It can launch Nintendo DS, SNES, NES, GameBoy (Color), GameBoy Advance, Sega Gam
 
 # Compiling
 
-Compiling this app requires devkitPRO with devkitARM and libnds. Be sure you have grit and mmutil installed.
+## Setting up
+
+Compiling this app requires devkitPro's devkitARM, libnds, grit, and mmutil. These can be installed using [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman) with the following command:
+```
+sudo dkp-pacman -S nds-dev
+```
+(Note: Command will vary by OS, sudo may not be needed and it may be just `pacman` instead)
+
+## Building
+
+Once you have devkitPro's toolchains installed you can build the entirety of TWiLight Menu++ by simply running `make package` in the root of the repository. If you only want to build a specific part of TWiLight Menu++ you can `cd` to that folder and run `make dist`.
+
+Once it finishes building, the output files will be in the `7zfile` folder following the same directory structure as the official `TWiLightMenu.7z` builds.
 
 ## Using Docker
 
@@ -29,9 +41,13 @@ The script accepts `make` arguments as well. For example, `.\compile_docker.ps1 
 
 Please note that Docker compilation is not compatible with native compilation on Windows. You should run `.\compile_docker.ps1 clean` to clean the artifacts before attempting to build with Docker. If a notification appears asking you to share your drive, you must choose to enable drive sharing for Docker to work on Windows.
 
+## Manual Pages
+
+The manual pages are stored in a separate repository and downloaded from a release when building TWiLight Menu++. For more information, see the [twilight-manual](https://github.com/DS-Homebrew/twilight-manual) repository.
+
 # Translating
 
-You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.com/project/TwilightMenu). If you'd like to request a new language be added then please ask on the Discord server.
+You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.com/project/TwilightMenu). If you'd like to request a new language be added then please ask on the [Discord server](https://ds-homebrew.com/discord).
 
 # Credits
 ## Main Developers
