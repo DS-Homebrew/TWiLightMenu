@@ -19,11 +19,19 @@ It can launch Nintendo DS, SNES, NES, GameBoy (Color), GameBoy Advance, Sega Gam
 
 # Compiling
 
+## Setting up
+
 Compiling this app requires devkitPro's devkitARM, libnds, grit, and mmutil. These can be installed using [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman) with the following command:
 ```
 sudo dkp-pacman -S nds-dev
 ```
 (Note: Command will vary by OS, sudo may not be needed and it may be just `pacman` instead)
+
+## Building
+
+Once you have devkitPro's toolchains installed you can build the entirety of TWiLight Menu++ by simply running `make package` in the root of the repository. If you only want to build a specific part of TWiLight Menu++ you can `cd` to that folder and run `make dist`.
+
+Once it finishes building, the output files will be in the `7zfile` folder following the same directory structure as the official `TWiLightMenu.7z` builds.
 
 ## Using Docker
 
