@@ -352,7 +352,7 @@ void perGameSettings (std::string filename) {
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)))*/
-	|| !ms().secondaryDevice) && !isDSiWare[CURPOS]);
+	|| !ms().secondaryDevice) && !isHomebrew[CURPOS] && !isDSiWare[CURPOS]);
 
 	firstPerGameOpShown = 0;
 	perGameOps = -1;
@@ -636,11 +636,9 @@ void perGameSettings (std::string filename) {
 		}
 		perGameOpYpos += 14;
 		}
-		if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
-			printSmall(false, 240, botRowY, STR_B_BACK, Alignment::right);
-		} else if (!showPerGameSettings && !showCheats) {
+		if (!showPerGameSettings && !showCheats) {
 			printSmall(false, 240, botRowY, STR_A_OK, Alignment::right);
-		} else {	// Per-game settings for retail/commercial games
+		} else {
 			printSmall(false, 240, botRowY, showCheats ? STR_X_CHEATS_B_BACK : STR_B_BACK, Alignment::right);
 		}
 		updateText(false);
