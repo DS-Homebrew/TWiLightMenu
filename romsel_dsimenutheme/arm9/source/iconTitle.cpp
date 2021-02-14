@@ -753,6 +753,7 @@ void titleUpdate(bool isDir, const std::string &name, int num) {
 			|| extention(name, ".gen")
 			|| extention(name, ".smc")
 			|| extention(name, ".sfc")
+			|| extention(name, ".xex")
 			|| extention(name, ".a26")
 			|| extention(name, ".a52")
 			|| extention(name, ".a78")

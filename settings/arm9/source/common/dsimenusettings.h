@@ -155,6 +155,7 @@ class TWLSettings
     bool showNds;
     int showGba;
     bool showRvid;
+    bool showXex;
     bool showA26;
     bool showA52;
 	bool showA78;

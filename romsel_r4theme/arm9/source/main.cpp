@@ -154,6 +154,7 @@ bool showMicroSd = false;
 bool showNds = true;
 int showGba = 2;
 bool showRvid = true;
+bool showXex = true;
 bool showA26 = true;
 bool showA52 = true;
 bool showA78 = true;
@@ -212,6 +213,7 @@ void LoadSettings(void) {
 		showGba = 2;
 	}
 	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", true);
+	showXex = settingsini.GetInt("SRLOADER", "SHOW_XEX", true);
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", true);
 	showA52 = settingsini.GetInt("SRLOADER", "SHOW_A52", true);
 	showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", true);
@@ -1045,6 +1047,9 @@ int main(int argc, char **argv) {
 		extensionList.emplace_back(".agb");
 		extensionList.emplace_back(".gba");
 		extensionList.emplace_back(".mb");
+	}
+	if (showXex) {
+		extensionList.emplace_back(".xex");
 	}
 	if (showA26) {
 		extensionList.emplace_back(".a26");
@@ -2074,6 +2079,14 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+					}
+				} else if (extention(filename, ".xex")) {
+					launchType[secondaryDevice] = 15;
+					
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
+						boostVram = true;
 					}
 				} else if (extention(filename, ".a26")) {
 					launchType[secondaryDevice] = 9;

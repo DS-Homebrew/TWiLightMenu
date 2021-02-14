@@ -1238,7 +1238,7 @@ int main(int argc, char **argv) {
 		} else if (extention(filename[0], ".pce")) {
 			bnrRomType[0] = 11;
 			boxArtType[0] = 0;
-		} else if (extention(filename[0], ".a26") || extention(filename[0], ".a52") || extention(filename[0], ".a78")) {
+		} else if (extention(filename[0], ".xex") || extention(filename[0], ".a26") || extention(filename[0], ".a52") || extention(filename[0], ".a78")) {
 			bnrRomType[0] = 10;
 			boxArtType[0] = 0;
 		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4")) {
@@ -1341,7 +1341,7 @@ int main(int argc, char **argv) {
 		} else if (extention(filename[1], ".pce")) {
 			bnrRomType[1] = 11;
 			boxArtType[1] = 0;
-		} else if (extention(filename[1], ".a26") || extention(filename[1], ".a52") || extention(filename[1], ".a78")) {
+		} else if (extention(filename[1], ".xex") || extention(filename[1], ".a26") || extention(filename[1], ".a52") || extention(filename[1], ".a78")) {
 			bnrRomType[1] = 10;
 			boxArtType[1] = 0;
 		} else if (extention(filename[1], ".plg") || extention(filename[1], ".rvid") || extention(filename[1], ".mp4")) {
@@ -2641,6 +2641,14 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+					}
+				} else if (extention(filename[secondaryDevice], ".xex")) {
+					launchType[secondaryDevice] = 15;
+					
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
+						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".a26")) {
 					launchType[secondaryDevice] = 9;

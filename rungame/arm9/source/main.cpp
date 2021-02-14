@@ -470,6 +470,9 @@ TWL_CODE int lastRunROM() {
 			mkdir("sd:/data/NitroGrafx", 0777);
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to NitroGrafx as argument
+		case 15:
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to XEGS-DS as argument
 	}
 	
 	return -1;

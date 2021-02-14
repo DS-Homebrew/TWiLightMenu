@@ -103,7 +103,8 @@ class TWLSettings
 		EGBANativeLaunch = 11,
         EA7800DSLaunch = 12,
         EA5200DSLaunch = 13,
-        ENitroGrafxLaunch = 14
+        ENitroGrafxLaunch = 14,
+        EXEGSDSLaunch = 15
     };
 
     /*	0 = Nintendo DSi (Retail)
