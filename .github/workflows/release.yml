@@ -72,8 +72,7 @@ jobs:
           # nds-bootstrap
           mkdir -p nds-bootstrap
           cd nds-bootstrap
-          # curl -LO https://github.com/DS-Homebrew/nds-bootstrap/releases/latest/download/nds-bootstrap.7z
-          curl -LO https://github.com/DS-Homebrew/nds-bootstrap/raw/master/nds-bootstrap-stealth.7z
+          curl -LO https://github.com/DS-Homebrew/nds-bootstrap/releases/latest/download/nds-bootstrap.7z
           7z x nds-bootstrap-stealth.7z
           mv nds-bootstrap-stealth.* ..
           mkdir -p TWiLightMenu
