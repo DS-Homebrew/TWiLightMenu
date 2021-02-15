@@ -1471,7 +1471,8 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				} else if (extention(std_romsel_filename, ".pce")) {
 					bnrRomType[i] = 11;
 					boxArtType[i] = 0;
-				} else if (extention(std_romsel_filename, ".xex") || extention(std_romsel_filename, ".a26") || extention(std_romsel_filename, ".a52") || extention(std_romsel_filename, ".a78")) {
+				} else if (extention(std_romsel_filename, ".xex") || extention(std_romsel_filename, ".atr")
+				 || extention(std_romsel_filename, ".a26") || extention(std_romsel_filename, ".a52") || extention(std_romsel_filename, ".a78")) {
 					bnrRomType[i] = 10;
 					boxArtType[i] = 0;
 				} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid") || extention(std_romsel_filename, ".mp4")) {

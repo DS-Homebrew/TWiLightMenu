@@ -1050,6 +1050,7 @@ int main(int argc, char **argv) {
 	}
 	if (showXex) {
 		extensionList.emplace_back(".xex");
+		extensionList.emplace_back(".atr");
 	}
 	if (showA26) {
 		extensionList.emplace_back(".a26");
@@ -2080,7 +2081,8 @@ int main(int argc, char **argv) {
 
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 					}
-				} else if (extention(filename, ".xex")) {
+				} else if (extention(filename, ".xex")
+						 || extention(filename, ".atr")) {
 					launchType[secondaryDevice] = 15;
 					
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
