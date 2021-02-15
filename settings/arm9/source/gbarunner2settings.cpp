@@ -1,6 +1,7 @@
 
 #include "common/inifile.h"
 #include "common/bootstrappaths.h"
+#include "common/dsimenusettings.h"
 #include "gbarunner2settings.h"
 #include <string.h>
 
@@ -33,7 +34,7 @@ void GBAR2Settings::saveSettings()
 	gbar2Fix = true;
     CIniFile gbarunner2ini(GBARUNNER2_INI);
 
-   	gbarunner2ini.SetString("emulation", "useBottomScreen", useBottomScreen ? "true" : "false");
+   	gbarunner2ini.SetString("emulation", "useBottomScreen", (useBottomScreen || ms().macroMode) ? "true" : "false");
    	gbarunner2ini.SetString("emulation", "centerMask", centerMask ? "true" : "false");
    	gbarunner2ini.SetString("emulation", "gbaColors", gbaColors ? "true" : "false");
    	gbarunner2ini.SetString("emulation", "mainMemICache", mainMemICache ? "true" : "false");
