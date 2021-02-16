@@ -2237,11 +2237,11 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				}
 
 				// Dragging icons (DSi & 3DS themes)
-			} else if ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && !titleboxXmoveleft &&
+			} else if ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < (ms().theme==0 ? 164 : 144) && !titleboxXmoveleft &&
 					!titleboxXmoveright) {
 				touchPosition startTouch = touch;
 
-				if (touch.px > 96 && touch.px < 160) {
+				if (touch.px > 96 && touch.px < (ms().theme==0 ? 180 : 160)) {
 					while (1) {
 						scanKeys();
 						touchRead(&touch);
