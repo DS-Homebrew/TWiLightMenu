@@ -183,6 +183,9 @@ bool dsiWareBooter = false;
 
 bool dontShowClusterWarning = false;
 
+int updateRecentlyPlayedList = true;
+int sortMethod = 0;
+
 void LoadSettings(void) {
 	useBootstrap = isDSiMode();
 	showGba = 1 + isDSiMode();
@@ -299,6 +302,9 @@ void LoadSettings(void) {
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 
 	dontShowClusterWarning = settingsini.GetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
+
+	updateRecentlyPlayedList = settingsini.GetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
+	sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
 }
 
 void SaveSettings(void) {
