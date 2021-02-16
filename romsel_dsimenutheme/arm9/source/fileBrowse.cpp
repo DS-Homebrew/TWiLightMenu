@@ -144,11 +144,6 @@ struct DirEntry {
 	bool customPos;
 };
 
-struct TimesPlayed {
-	std::string name;
-	int amount;
-};
-
 char path[PATH_MAX] = {0};
 
 #ifdef EMULATE_FILES
@@ -187,7 +182,6 @@ bool nameEndsWith(const std::string &name, const std::vector<std::string> extens
 }
 
 bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
-
 	if (lhs.isDirectory && !lhs.customPos && !rhs.isDirectory) {
 		return true;
 	}
@@ -202,28 +196,6 @@ bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 		else return false;
 	}
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
-}
-
-bool dirEntryPredicateMostPlayed(const DirEntry &lhs, const DirEntry &rhs) {
-	if (!lhs.isDirectory && rhs.isDirectory)	return false;
-	else if (lhs.isDirectory && !rhs.isDirectory)	return true;
-
-	if(lhs.position > rhs.position)	return true;
-	else if(lhs.position < rhs.position)	return false;
-	else {
-		return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
-	}
-}
-
-bool dirEntryPredicateFileType(const DirEntry &lhs, const DirEntry &rhs) {
-	if (!lhs.isDirectory && rhs.isDirectory)	return false;
-	else if (lhs.isDirectory && !rhs.isDirectory)	return true;
-
-	if(strcasecmp(lhs.name.substr(lhs.name.find_last_of(".") + 1).c_str(), rhs.name.substr(rhs.name.find_last_of(".") + 1).c_str()) == 0) {
-		return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
-	} else {
-		return strcasecmp(lhs.name.substr(lhs.name.find_last_of(".") + 1).c_str(), rhs.name.substr(rhs.name.find_last_of(".") + 1).c_str()) < 0;
-	}
 }
 
 void updateDirectoryContents(vector<DirEntry> &dirContents) {
@@ -364,26 +336,40 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 		} else if(ms().sortMethod == 2) { // Most Played
 			CIniFile timesPlayedIni(timesPlayedIniPath);
-			vector<TimesPlayed> timesPlayed;
+			vector<std::pair<std::string, int>> timesPlayed;
 
 			for (int i = 0; i < (int)dirContents.size(); i++) {
-				TimesPlayed timesPlayedTemp;
-				timesPlayedTemp.name = dirContents[i].name;
-				timesPlayedTemp.amount = timesPlayedIni.GetInt(getcwd(path, PATH_MAX), dirContents[i].name, 0);
-				// if(timesPlayedTemp.amount)
-					timesPlayed.push_back(timesPlayedTemp);
+				timesPlayed.emplace_back(dirContents[i].name, timesPlayedIni.GetInt(getcwd(path, PATH_MAX), dirContents[i].name, 0));
 			}
 
 			for (int i = 0; i < (int)timesPlayed.size(); i++) {
 				for (int j = 0; j <= (int)dirContents.size(); j++) {
-					if (timesPlayed[i].name == dirContents[j].name) {
-						dirContents[j].position = timesPlayed[i].amount;
+					if (timesPlayed[i].first == dirContents[j].name) {
+						dirContents[j].position = timesPlayed[i].second;
 					}
 				}
 			}
-			sort(dirContents.begin(), dirContents.end(), dirEntryPredicateMostPlayed);
+			sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
+					if (!lhs.isDirectory && rhs.isDirectory)	return false;
+					else if (lhs.isDirectory && !rhs.isDirectory)	return true;
+
+					if(lhs.position > rhs.position)	return true;
+					else if(lhs.position < rhs.position)	return false;
+					else {
+						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
+					}
+				});
 		} else if(ms().sortMethod == 3) { // File type
-			sort(dirContents.begin(), dirContents.end(), dirEntryPredicateFileType);
+			sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
+					if (!lhs.isDirectory && rhs.isDirectory)	return false;
+					else if (lhs.isDirectory && !rhs.isDirectory)	return true;
+
+					if(strcasecmp(lhs.name.substr(lhs.name.find_last_of(".") + 1).c_str(), rhs.name.substr(rhs.name.find_last_of(".") + 1).c_str()) == 0) {
+						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
+					} else {
+						return strcasecmp(lhs.name.substr(lhs.name.find_last_of(".") + 1).c_str(), rhs.name.substr(rhs.name.find_last_of(".") + 1).c_str()) < 0;
+					}
+				});
 		} else if(ms().sortMethod == 4) { // Custom
 			CIniFile gameOrderIni(gameOrderIniPath);
 			vector<std::string> gameOrder;
