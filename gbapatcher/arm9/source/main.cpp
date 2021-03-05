@@ -516,6 +516,10 @@ void gptc_patchRom()
 	else if(gameCode == 0x4547594B)
 	{
 		//Yoshi Topsy-Turvy (USA)
+		//Fix white screen crash
+		if (*(u16*)(0x08000000 + 0x16E4) == 0x8008)
+			*(u16*)(0x08000000 + 0x16E4) = 0x46C0;
+
 		//Patch out tilt controls
 		if (*(u16*)(0x08000000 + 0x1F2) == 0x0802 && *(u16*)(0x08000000 + 0x1F0) == 0x5169) {
 			*(u16*)(0x08000000 + 0x1F2) = 0x087B;
