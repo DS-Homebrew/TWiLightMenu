@@ -457,7 +457,7 @@ void lastRunROM()
 					}
 				}
 
-				if (isDSiMode() && ms().consoleModel >= 2 && game_TID[0] == 'I' && !flashcardFound() && REG_SCFG_MC == 0x11 && !sys().arm7SCFGLocked()) {
+				if (isDSiMode() && ms().consoleModel >= 2 && !flashcardFound() && game_TID[0] == 'I') {
 					ntrStartSdGame();
 				}
 
