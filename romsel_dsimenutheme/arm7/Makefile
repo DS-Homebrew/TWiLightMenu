@@ -27,7 +27,7 @@ INCLUDES	:=	include build ../../universal/sdmmc/arm7/include
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv4t -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -Os \
+CFLAGS	:=	-g -Wall -O2 \
  		-mcpu=arm7tdmi -mtune=arm7tdmi -fomit-frame-pointer\
 		-ffast-math \
 		$(ARCH)
