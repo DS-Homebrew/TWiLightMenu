@@ -59,11 +59,11 @@
 		"AH5",	// Over the Hedge
 		"CUP",	// Peppa Pig: The Game
 		"A8N",	// Planet Puzzle League
-		"YFY",	// Pokemon Mystery Dungeon: Explorers of Darkness
+		/*"YFY",	// Pokemon Mystery Dungeon: Explorers of Darkness
 		"YFT",	// Pokemon Mystery Dungeon: Explorers of Time
 		"Y4R",	// Pokemon Mystery Dungeon: Explorers of Time + Explorers of Darkness (Demo)
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
-		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
+		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)*/
 		"BPP",	// PostPet DS: Yumemiru Momo to Fushigi no Pen
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
