@@ -707,7 +707,8 @@ void perGameSettings (std::string filename) {
 						break;
 					case 2:
 						perGameSettings_dsiMode--;
-						if (perGameSettings_dsiMode == 1 && unitCode > 0) perGameSettings_dsiMode--;
+						if (perGameSettings_dsiMode == 1 && unitCode == 0) perGameSettings_dsiMode--;
+						else if (perGameSettings_dsiMode == 2 && unitCode > 0) perGameSettings_dsiMode--;
 						if (perGameSettings_dsiMode < -1) perGameSettings_dsiMode = 2-isHomebrew[CURPOS];
 						break;
 					case 3:
@@ -768,7 +769,8 @@ void perGameSettings (std::string filename) {
 						break;
 					case 2:
 						perGameSettings_dsiMode++;
-						if (perGameSettings_dsiMode == 1 && unitCode > 0) perGameSettings_dsiMode++;
+						if (perGameSettings_dsiMode == 1 && unitCode == 0) perGameSettings_dsiMode++;
+						else if (perGameSettings_dsiMode == 2 && unitCode > 0) perGameSettings_dsiMode++;
 						if (perGameSettings_dsiMode > 2-isHomebrew[CURPOS]) perGameSettings_dsiMode = -1;
 						break;
 					case 3:
