@@ -49,6 +49,7 @@
 		"YLU",	// Last Window: The Secret of Cape West
 		"ANI",	// Luminous Arc
 		"AVC",	// Magical Starsign
+		"CLJ",	// Mario & Luigi: Bowser's Inside Story
 		"COL",	// Mario & Sonic at the Olympic Winter Games
 		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
 		"YMO",	// Monster Jam
@@ -68,8 +69,9 @@
 		"BYO",	// Puyo Puyo 7
 		"BQ2",	// Quiz Magic Academy DS: Futatsu no Jikuuseki
 		"B3X",	// River City: Soccer Hooligans
-		//"ARZ",	// Rockman ZX/MegaMan ZX
+		"ARZ",	// Rockman ZX/MegaMan ZX
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"B6X",	// Rockman EXE: Operate Shooting Star
 		"AKA",	// The Rub Rabbits!
 		"ARF",	// Rune Factory: A Fantasy Harvest Moon

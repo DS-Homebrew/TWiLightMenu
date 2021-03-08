@@ -406,7 +406,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (ms().useBootstrap || !ms().secondaryDevice) {
-			if ((isDSiMode() || !ms().secondaryDevice) && arm9dst != 0x02004000 && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000) {
+			if ((isDSiMode() || !ms().secondaryDevice) && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Heap shrink
 			}
@@ -582,12 +582,12 @@ void perGameSettings (std::string filename) {
 				break;
 			case 5:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_HEAP_SHRINK + ":", startAlign);
-				if (perGameSettings_heapShrink == -1) {
+				if (perGameSettings_dsiMode > 0 && (isDSiMode() || !ms().secondaryDevice)) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
+				} else if (perGameSettings_heapShrink == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_AUTO, endAlign);
-				} else if (perGameSettings_heapShrink == 2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_HI, endAlign);
 				} else if (perGameSettings_heapShrink == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_LO, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
 				} else {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
 				}
@@ -706,6 +706,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 2:
 						perGameSettings_dsiMode--;
+						if (perGameSettings_dsiMode == 1 && unitCode > 0) perGameSettings_dsiMode--;
 						if (perGameSettings_dsiMode < -1) perGameSettings_dsiMode = 2-isHomebrew[CURPOS];
 						break;
 					case 3:
@@ -766,6 +767,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 2:
 						perGameSettings_dsiMode++;
+						if (perGameSettings_dsiMode == 1 && unitCode > 0) perGameSettings_dsiMode++;
 						if (perGameSettings_dsiMode > 2-isHomebrew[CURPOS]) perGameSettings_dsiMode = -1;
 						break;
 					case 3:
