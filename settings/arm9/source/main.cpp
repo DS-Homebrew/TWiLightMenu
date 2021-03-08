@@ -940,19 +940,13 @@ int main(int argc, char **argv)
 	}
 
 	if (isDSiMode() || sdAccessible) {
-		gamesPage.option((isDSiMode() ? STR_EXPANDROMSPACE : STR_SD_EXPANDROMSPACE),
+		gamesPage
+		.option((isDSiMode() ? STR_EXPANDROMSPACE : STR_SD_EXPANDROMSPACE),
 			(ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS),
 			Option::Int(&ms().extendedMemory),
 			{STR_NO, STR_YES, STR_YES_512KB},
-			{0, 1, 2});
-		if (sdAccessible) {
-			gamesPage.option((isDSiMode() ? STR_CACHEBLOCKSIZE : STR_SYSSD_CACHEBLOCKSIZE),
-				STR_DESCRIPTION_CACHEBLOCKSIZE,
-				Option::Bool(&bs().cacheBlockSize),
-				{STR_16KB, STR_32KB},
-				{false, true});
-		}
-		gamesPage.option((isDSiMode() ? STR_SAVEFATTABLECACHE : STR_SYSSD_SAVEFATTABLECACHE),
+			{0, 1, 2})
+		.option((isDSiMode() ? STR_SAVEFATTABLECACHE : STR_SYSSD_SAVEFATTABLECACHE),
 			STR_DESCRIPTION_SAVEFATTABLECACHE,
 			Option::Bool(&bs().cacheFatTable),
 			{STR_YES, STR_NO},

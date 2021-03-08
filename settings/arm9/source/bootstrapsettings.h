@@ -33,7 +33,6 @@ class BootstrapSettings
     void saveSettings();
 
   public:
-    bool cacheBlockSize;
     bool cacheFatTable;
     bool debug;
 	bool logging;
