@@ -23,7 +23,7 @@ static const char incompatibleGameListB4DS[][4] = {
 
 static const char incompatibleGameList[][4] = {
 	"BO5", // Golden Sun: Dark Dawn
-	"COL", // Mario & Sonic at the Olympic Winter Games
+	//"COL", // Mario & Sonic at the Olympic Winter Games
 	"APD", // Pokemon Dash
 	"A24", // Pokemon Dash (Kiosk Demo)
 	"AH9", // Tony Hawk's American Sk8land

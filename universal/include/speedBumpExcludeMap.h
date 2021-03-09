@@ -50,7 +50,7 @@
 		"ANI",	// Luminous Arc
 		"AVC",	// Magical Starsign
 		"CLJ",	// Mario & Luigi: Bowser's Inside Story
-		"COL",	// Mario & Sonic at the Olympic Winter Games
+		//"COL",	// Mario & Sonic at the Olympic Winter Games
 		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
 		"YMO",	// Monster Jam
 		"YNP",	// Need for Speed: ProStreet
