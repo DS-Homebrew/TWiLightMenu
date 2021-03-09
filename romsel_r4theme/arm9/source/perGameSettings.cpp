@@ -669,8 +669,10 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 5:
-						perGameSettings_heapShrink--;
-						if (perGameSettings_heapShrink < -1) perGameSettings_heapShrink = 2;
+						if (perGameSettings_dsiMode < 1) {
+							perGameSettings_heapShrink--;
+							if (perGameSettings_heapShrink < -1) perGameSettings_heapShrink = 1;
+						}
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
@@ -730,8 +732,10 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 5:
-						perGameSettings_heapShrink++;
-						if (perGameSettings_heapShrink > 2) perGameSettings_heapShrink = -1;
+						if (perGameSettings_dsiMode < 1) {
+							perGameSettings_heapShrink++;
+							if (perGameSettings_heapShrink > 1) perGameSettings_heapShrink = -1;
+						}
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
