@@ -26,7 +26,7 @@ static const char incompatibleGameList[][4] = {
 	//"COL", // Mario & Sonic at the Olympic Winter Games
 	"APD", // Pokemon Dash
 	"A24", // Pokemon Dash (Kiosk Demo)
-	"AH9", // Tony Hawk's American Sk8land
+	"AWK", // Tony Hawk's Downhill Jam
 	"CTX", // Tropix
 };
 
