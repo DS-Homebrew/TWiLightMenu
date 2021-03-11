@@ -44,7 +44,6 @@
 
 #include "donorMap.h"
 #include "mpuMap.h"
-#include "speedBumpExcludeMap.h"
 #include "saveMap.h"
 
 #include "sr_data_srllastran.h"	// For rebooting into the game
@@ -124,7 +123,6 @@ std::string r4_theme;
 
 int mpuregion = 0;
 int mpusize = 0;
-int ceCached = 1;
 
 bool applaunch = false;
 
@@ -526,31 +524,6 @@ void SetMPUSettings(const char* filename) {
 			mpuregion = 1;
 			mpusize = 3145728;
 			break;
-		}
-	}
-}
-
-/**
- * Move nds-bootstrap's cardEngine_arm9 to cached memory region for some games.
- */
-void SetSpeedBumpExclude(const char* filename) {
-	if (!isDSiMode() || (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 3)) {
-		ceCached = perGameSettings_heapShrink;
-		return;
-	}
-
-	FILE *f_nds_file = fopen(filename, "rb");
-
-	char game_TID[5];
-	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-	fread(game_TID, 1, 4, f_nds_file);
-	fclose(f_nds_file);
-
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(sbeList2)/sizeof(sbeList2[0]); i++) {
-		if (memcmp(game_TID, sbeList2[i], 3) == 0) {
-			// Found match
-			ceCached = 0;
 		}
 	}
 }
@@ -1732,7 +1705,6 @@ int main(int argc, char **argv) {
 
 						int donorSdkVer = SetDonorSDK(argarray[0]);
 						SetMPUSettings(argarray[0]);
-						SetSpeedBumpExclude(argarray[0]);
 
 						bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
 
@@ -1757,7 +1729,6 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 							(forceSleepPatch
 						|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !isRegularDS)
