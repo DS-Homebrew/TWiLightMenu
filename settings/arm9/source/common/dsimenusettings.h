@@ -73,6 +73,8 @@ class TWLSettings
         ELangHungarian = 16,
         ELangNorwegian = 17,
         ELangHebrew = 18,
+        ELangDutch = 19,
+        ELangIndonesian = 20,
     };
 
     enum TRunIn

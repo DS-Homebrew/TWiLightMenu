@@ -78,6 +78,10 @@ private:
       return "lang_no";
     case TWLSettings::ELangHebrew:
       return "lang_he";
+    case TWLSettings::ELangDutch:
+      return "lang_nl";
+    case TWLSettings::ELangIndonesian:
+      return "lang_id";
     default:
       return "lang_en";
     }
