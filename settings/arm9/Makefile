@@ -6,11 +6,22 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
-# If on a tagged commit, use the tag instead of the commit
+# If on a tagged commit, use just the tag
 ifneq ($(shell echo $(shell git tag -l --points-at HEAD) | head -c 1),)
 GIT_VER := $(shell git tag -l --points-at HEAD)
 else
-GIT_VER := $(shell git rev-parse --short HEAD)
+GIT_VER := $(shell git describe --abbrev=0 --tags)-$(shell git rev-parse --short=7 HEAD)
+endif
+
+# Ensure version.h exists
+ifeq (,$(wildcard include/version.h))
+$(shell mkdir -p include)
+$(shell touch include/version.h)
+endif
+
+# Print new version if changed
+ifeq (,$(findstring $(GIT_VER), $(shell cat include/version.h)))
+$(shell printf "#ifndef VERSION_HPP\n#define VERSION_HPP\n\n#define VER_NUMBER \"$(GIT_VER)\"\n\n#endif\n" > include/version.h)
 endif
 
 include $(DEVKITARM)/ds_rules
@@ -40,7 +51,6 @@ ARCH	:=	-mthumb -mthumb-interwork
 CFLAGS	:=	-g -Wall -O2\
  		-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 		-ffast-math \
-		-DVERTEXT=\"$(GIT_VER)\" \
 		$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM9
