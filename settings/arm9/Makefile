@@ -21,7 +21,7 @@ endif
 
 # Print new version if changed
 ifeq (,$(findstring $(GIT_VER), $(shell cat include/version.h)))
-$(shell printf "#ifndef VERSION_HPP\n#define VERSION_HPP\n\n#define VER_NUMBER \"$(GIT_VER)\"\n\n#endif\n" > include/version.h)
+$(shell printf "#ifndef VERSION_H\n#define VERSION_H\n\n#define VER_NUMBER \"$(GIT_VER)\"\n\n#endif\n" > include/version.h)
 endif
 
 include $(DEVKITARM)/ds_rules
