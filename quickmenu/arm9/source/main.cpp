@@ -2329,7 +2329,7 @@ int main(int argc, char **argv) {
                         			CheatCodelist codelist;
 						u32 gameCode,crc32;
 
-						if ((isDSiMode() || !secondaryDevice) && !isHomebrew[secondaryDevice]) {
+						if ((dsiFeatures() || !secondaryDevice) && !isHomebrew[secondaryDevice]) {
 							bool cheatsEnabled = true;
 							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
 							mkdir("/_nds", 0777);
@@ -2372,7 +2372,7 @@ int main(int argc, char **argv) {
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
 
-						if (isDSiMode() || !secondaryDevice) {
+						if (dsiFeatures() || !secondaryDevice) {
 							SetWidescreen(filename[secondaryDevice].c_str());
 						}
 						if (!isDSiMode() && !secondaryDevice) {
