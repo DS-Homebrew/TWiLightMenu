@@ -447,11 +447,7 @@ void lastRunROM()
 				if (sdFound() && !ms().previousUsedDevice) {
 					argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds"));
 				} else {
-					if (isDSiMode()) {
-						argarray.push_back((char*)(useNightly ? "/_nds/nds-bootstrap-nightly.nds" : "/_nds/nds-bootstrap-release.nds"));
-					} else {
-						argarray.push_back((char*)(useNightly ? "/_nds/b4ds-nightly.nds" : "/_nds/b4ds-release.nds"));
-					}
+					argarray.push_back((char*)(useNightly ? "/_nds/nds-bootstrap-nightly.nds" : "/_nds/nds-bootstrap-release.nds"));
 				}
 			}
 			if (ms().previousUsedDevice || !ms().homebrewBootstrap) {

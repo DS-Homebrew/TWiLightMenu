@@ -2296,7 +2296,7 @@ int main(int argc, char **argv) {
 
 						bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
 
-						bootstrapinipath = ((!secondaryDevice || (isDSiMode() && sdFound())) ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+						bootstrapinipath = ((!secondaryDevice || sdFound()) ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
@@ -2384,7 +2384,7 @@ int main(int argc, char **argv) {
 						char ndsToBoot[256];
 						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-							sprintf(ndsToBoot, "fat:/_nds/%s-%s%s.nds", isDSiMode() ? "nds-bootstrap" : "b4ds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
+							sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						}
 
 						argarray.at(0) = (char *)ndsToBoot;
