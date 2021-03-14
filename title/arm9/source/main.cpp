@@ -1102,7 +1102,7 @@ int main(int argc, char **argv)
 	bool soundBankLoaded = false;
 
 	bool softResetParamsFound = false;
-	const char* softResetParamsPath = (isDSiMode() ? (!ms().previousUsedDevice ? "sd:/_nds/nds-bootstrap/softResetParams.bin" : "fat:/_nds/nds-bootstrap/softResetParams.bin") : "fat:/_nds/nds-bootstrap/B4DS-softResetParams.bin");
+	const char* softResetParamsPath = (!ms().previousUsedDevice ? "sd:/_nds/nds-bootstrap/softResetParams.bin" : "fat:/_nds/nds-bootstrap/softResetParams.bin");
 	u32 softResetParams = 0;
 	FILE* file = fopen(softResetParamsPath, "rb");
 	if (file) {
