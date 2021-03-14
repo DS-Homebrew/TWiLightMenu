@@ -359,7 +359,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 		}
-		if (isDSiMode() && consoleModel >= 2 && sdFound() && (game_TID[0] == 'W' || romVersion == 0x57)) {
+		if (dsiFeatures() && consoleModel >= 2 && sdFound() && (game_TID[0] == 'W' || romVersion == 0x57)) {
 			perGameOps++;
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
@@ -381,14 +381,14 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (useBootstrap || !secondaryDevice) {
-			if ((isDSiMode() || !secondaryDevice)
+			if ((dsiFeatures() || !secondaryDevice)
 			 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
 				perGameOps++;
 				perGameOp[perGameOps] = 10;	// Expand ROM space in RAM
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
-			if (((isDSiMode() && sdFound()) || !secondaryDevice) && consoleModel >= 2) {
+			if (((dsiFeatures() && sdFound()) || !secondaryDevice) && consoleModel >= 2) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}

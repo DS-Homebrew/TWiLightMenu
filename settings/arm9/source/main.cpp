@@ -965,7 +965,7 @@ int main(int argc, char **argv)
 
 	if (widescreenFound)
 	{
-		miscPage.option((isDSiMode() ? STR_ASPECTRATIO : STR_SD_ASPECTRATIO),
+		miscPage.option((dsiFeatures() ? STR_ASPECTRATIO : STR_SD_ASPECTRATIO),
 			STR_DESCRIPTION_ASPECTRATIO,
 			Option::Bool(&ms().wideScreen),
 			{STR_WIDESCREEN, STR_FULLSCREEN},
