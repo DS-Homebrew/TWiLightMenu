@@ -186,10 +186,10 @@ bool checkIfDSiMode (std::string filename) {
 bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	if (requiresDonorRom[CURPOS]) return false;
 
-	bool usingFlashcard = (!isDSiMode() && ms().secondaryDevice);
-	bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+	bool usingB4DS = (!dsiFeatures() && ms().secondaryDevice);
+	bool hasCycloDSi = (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 
-	if (((usingFlashcard || hasCycloDSi) && SDKVersion > 0x2000000 && SDKVersion < 0x2008000	// Early SDK2
+	if (((usingB4DS || hasCycloDSi) && SDKVersion > 0x2000000 && SDKVersion < 0x2008000	// Early SDK2
 	 && (arm7size==0x25F70
 	  || arm7size==0x25FA4
 	  || arm7size==0x2619C
@@ -198,7 +198,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	  || arm7size==0x27224
 	  || arm7size==0x2724C))
 	 || (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000 && (arm7size==0x26F24 || arm7size==0x26F28))	// Late SDK2
-	 || ((usingFlashcard || hasCycloDSi) && SDKVersion > 0x3000000 && SDKVersion < 0x4000000	// SDK3
+	 || ((usingB4DS || hasCycloDSi) && SDKVersion > 0x3000000 && SDKVersion < 0x4000000	// SDK3
 	 && (arm7size==0x28464
 	  || arm7size==0x28684
 	  || arm7size==0x286A0
@@ -207,7 +207,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	  || arm7size==0x289F8
 	  || arm7size==0x28FFC))
 	 || (SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))		// SDK5 (NTR)
-	 || ((usingFlashcard || hasCycloDSi) && SDKVersion > 0x5000000	// SDK5 (TWL)
+	 || ((usingB4DS || hasCycloDSi) && SDKVersion > 0x5000000	// SDK5 (TWL)
 	 && (arm7size==0x28F84
 	  || arm7size==0x2909C
 	  || arm7size==0x2914C

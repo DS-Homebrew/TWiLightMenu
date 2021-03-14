@@ -33,6 +33,7 @@
 #include "graphics/ThemeTextures.h"
 #include "language.h"
 #include "ndsheaderbanner.h"
+#include "myDSiMode.h"
 #include <ctype.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
@@ -371,8 +372,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			}
 		}
 
-		bool usingFlashcard = (!isDSiMode() && ms().secondaryDevice);
-		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+		bool usingB4DS = (!dsiFeatures() && ms().secondaryDevice);
+		bool hasCycloDSi = (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 
 		if (num < 40) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
@@ -381,15 +382,15 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			switch (ndsHeader.arm7binarySize) {
 				case 0x22B40:
 				case 0x22BCC:
-					if (usingFlashcard || hasCycloDSi) requiresDonorRom[num] = 51;
+					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 51;
 					break;
 				case 0x23708:
 				case 0x2378C:
 				case 0x237F0:
-					if (usingFlashcard || hasCycloDSi) requiresDonorRom[num] = 5;
+					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 5;
 					break;
 				case 0x23CAC:
-					if (usingFlashcard || hasCycloDSi) requiresDonorRom[num] = 20;
+					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 20;
 					break;
 				case 0x24DA8:
 				case 0x24F50:
@@ -401,7 +402,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				case 0x25D04:
 				case 0x25D94:
 				case 0x25FFC:
-					if (usingFlashcard || hasCycloDSi) requiresDonorRom[num] = 3;
+					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 3;
 					break;
 				case 0x27618:
 				case 0x2762C:

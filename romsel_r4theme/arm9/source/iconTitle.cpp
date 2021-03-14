@@ -28,8 +28,9 @@
 #include <sys/stat.h>
 #include <gl2d.h>
 #include "graphics/fontHandler.h"
-#include "ndsheaderbanner.h"
 #include "language.h"
+#include "ndsheaderbanner.h"
+#include "myDSiMode.h"
 
 #include "iconTitle.h"
 
@@ -745,21 +746,21 @@ void getGameInfo(bool isDir, const char* name)
 			}
 		}
 
-		bool usingFlashcard = (!isDSiMode() && secondaryDevice);
-		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+		bool usingB4DS = (!dsiFeatures() && secondaryDevice);
+		bool hasCycloDSi = (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 		romVersion = ndsHeader.romversion;
 		switch (ndsHeader.arm7binarySize) {
 			case 0x22B40:
 			case 0x22BCC:
-				if (usingFlashcard || hasCycloDSi) requiresDonorRom = 51;
+				if (usingB4DS || hasCycloDSi) requiresDonorRom = 51;
 				break;
 			case 0x23708:
 			case 0x2378C:
 			case 0x237F0:
-				if (usingFlashcard || hasCycloDSi) requiresDonorRom = 5;
+				if (usingB4DS || hasCycloDSi) requiresDonorRom = 5;
 				break;
 			case 0x23CAC:
-				if (usingFlashcard || hasCycloDSi) requiresDonorRom = 20;
+				if (usingB4DS || hasCycloDSi) requiresDonorRom = 20;
 				break;
 			case 0x24DA8:
 			case 0x24F50:
@@ -771,7 +772,7 @@ void getGameInfo(bool isDir, const char* name)
 			case 0x25D04:
 			case 0x25D94:
 			case 0x25FFC:
-				if (usingFlashcard || hasCycloDSi) requiresDonorRom = 3;
+				if (usingB4DS || hasCycloDSi) requiresDonorRom = 3;
 				break;
 			case 0x27618:
 			case 0x2762C:
