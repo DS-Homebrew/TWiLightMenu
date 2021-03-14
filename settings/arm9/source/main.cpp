@@ -875,13 +875,13 @@ int main(int argc, char **argv)
 				{true, false});
 		if (sdAccessible && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
 			gamesPage
-				.option("S1SD: "+isDSiMode() ? STR_USEBOOTSTRAP : STR_USEBOOTSTRAP_B4DS, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
-			if (isDSiMode()) {
+				.option("S1SD: "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+			if (dsiFeatures()) {
 				gamesPage
 					.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false});
 			}
 		} else if (!isDSiMode() && fatAccessible && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
-			gamesPage.option(STR_USEBOOTSTRAP_B4DS, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+			gamesPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 		}
 		if (sdAccessible && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
 			gamesPage.option((isDSiMode() ? STR_FORCESLEEPPATCH : STR_SYSSD_FORCESLEEPPATCH),
@@ -895,7 +895,7 @@ int main(int argc, char **argv)
 			}
 		}
 	} else {
-		gamesPage.option(STR_USEBOOTSTRAP_B4DS, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+		gamesPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 	}
 
 	if (isDSiMode() && !sys().arm7SCFGLocked()) {
