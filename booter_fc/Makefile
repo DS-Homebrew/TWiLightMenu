@@ -54,11 +54,11 @@ autoboot:
 	# mkdir "../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/"
 	# mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.DAT"
 
-	#### EDGE
-	cp booter_fc.nds EDGE.dat
-	dlditool flashcart_specifics/DLDI/EDGEv1.0.dldi EDGE.dat
-	mkdir -p "../7zfile/Flashcard users/Autoboot/EDGE/"
-	mv EDGE.dat "../7zfile/Flashcard users/Autoboot/EDGE/EDGE.dat"
+	#### EDGE (TODO: Find out how to encrypt the .dat file)
+	# cp booter_fc.nds EDGE.dat
+	# dlditool flashcart_specifics/DLDI/EDGEv1.0.dldi EDGE.dat
+	# mkdir -p "../7zfile/Flashcard users/Autoboot/EDGE/"
+	# mv EDGE.dat "../7zfile/Flashcard users/Autoboot/EDGE/EDGE.dat"
 
 	#### EZ-Flash 5
 	cp booter_fc.nds ez5sys.bin
