@@ -57,7 +57,7 @@ jobs:
           echo ::set-output name=author_name::$(git log -1 "$GITHUB_SHA" --pretty="%aN")
           echo ::set-output name=committer_name::$(git log -1 "$GITHUB_SHA" --pretty="%cN")
           echo ::set-output name=commit_subject::$(git log -1 "$GITHUB_SHA" --pretty="%s")
-          echo ::set-output name=commit_message::$(git log -1 "$GITHUB_SHA" --pretty="%b")
+          echo ::set-output name=commit_message::$(git log -1 "$GITHUB_SHA" --pretty="%B")
       - name: Pack 7z Package for nightly
         run: |
           # Make artifacts directory
