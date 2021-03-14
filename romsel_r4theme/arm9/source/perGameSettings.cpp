@@ -130,10 +130,10 @@ void savePerGameSettings (std::string filename) {
 		if (useBootstrap || !secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 		}
-		if (isDSiMode() && consoleModel >= 2 && sdFound()) {
+		if (dsiFeatures() && consoleModel >= 2 && sdFound()) {
 			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
 		}
-		if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
+		if ((dsiFeatures() && useBootstrap) || !secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "EXTENDED_MEMORY", perGameSettings_expandRomSpace);
 		}
 	}
