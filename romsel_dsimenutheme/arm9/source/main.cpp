@@ -214,23 +214,43 @@ void SetMPUSettings(const char *filename) {
  */
 std::string setApFix(const char *filename) {
 	remove("fat:/_nds/nds-bootstrap/apFix.ips");
+	remove("fat:/_nds/nds-bootstrap/apFixCheat.bin");
 
 	bool ipsFound = false;
+	bool cheatVer = true;
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s.ips", sdFound() ? "sd" : "fat", filename);
-	ipsFound = (access(ipsPath, F_OK) == 0);
+	if (!ipsFound) {
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/cht/%s.ips", sdFound() ? "sd" : "fat", filename);
+		ipsFound = (access(ipsPath, F_OK) == 0);
+	}
+
+	if (!ipsFound) {
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/cht/%s-%X.bin", sdFound() ? "sd" : "fat", gameTid[CURPOS], headerCRC[CURPOS]);
+		ipsFound = (access(ipsPath, F_OK) == 0);
+	}
+
+	if (!ipsFound) {
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s.ips", sdFound() ? "sd" : "fat", filename);
+		ipsFound = (access(ipsPath, F_OK) == 0);
+		if (ipsFound) {
+			cheatVer = false;
+		}
+	}
 
 	if (!ipsFound) {
 		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid[CURPOS], headerCRC[CURPOS]);
 		ipsFound = (access(ipsPath, F_OK) == 0);
+		if (ipsFound) {
+			cheatVer = false;
+		}
 	}
 
 	if (ipsFound) {
 		if (ms().secondaryDevice && sdFound()) {
 			mkdir("fat:/_nds", 0777);
 			mkdir("fat:/_nds/nds-bootstrap", 0777);
-			fcopy(ipsPath, "fat:/_nds/nds-bootstrap/apFix.ips");
-			return "fat:/_nds/nds-bootstrap/apFix.ips";
+			fcopy(ipsPath, cheatVer ? "fat:/_nds/nds-bootstrap/apFixCheat.bin" : "fat:/_nds/nds-bootstrap/apFix.ips");
+			return cheatVer ? "fat:/_nds/nds-bootstrap/apFixCheat.bin" : "fat:/_nds/nds-bootstrap/apFix.ips";
 		}
 		return ipsPath;
 	}
