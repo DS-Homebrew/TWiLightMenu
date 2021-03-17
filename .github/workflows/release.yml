@@ -82,8 +82,6 @@ jobs:
           7z x nds-bootstrap.7z
           mv nds-bootstrap/TWiLightMenu/release-bootstrap.ver 7zfile/_nds/TWiLightMenu
           mv nds-bootstrap/TWiLightMenu/nightly-bootstrap.ver 7zfile/_nds/TWiLightMenu
-          mv nds-bootstrap/b4ds-release.nds 7zfile/Flashcard\ users/_nds/
-          mv nds-bootstrap/b4ds-nightly.nds 7zfile/Flashcard\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
           mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
