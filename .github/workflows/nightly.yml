@@ -145,6 +145,7 @@ jobs:
       COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
       COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
       AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
+      COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
     outputs:
       current_date: ${{ steps.commit.outputs.current_date }}
