@@ -54,10 +54,10 @@ jobs:
           echo ::set-output name=commit_hash::$(git log --format=%h -1)
 
           # Webhook info
-          echo ::set-output name=author_name::$(git log -1 "$GITHUB_SHA" --pretty="%aN")
-          echo ::set-output name=committer_name::$(git log -1 "$GITHUB_SHA" --pretty="%cN")
-          echo ::set-output name=commit_subject::$(git log -1 "$GITHUB_SHA" --pretty="%s")
-          echo ::set-output name=commit_message::$(git log -1 "$GITHUB_SHA" --pretty="%B")
+          echo "::set-output name=author_name::$(git log -1 $GITHUB_SHA --pretty=%aN)"
+          echo "::set-output name=committer_name::$(git log -1 $GITHUB_SHA --pretty=%cN)"
+          echo "::set-output name=commit_subject::$(git log -1 $GITHUB_SHA --pretty=%s)"
+          echo "::set-output name=commit_message::$(git log -1 $GITHUB_SHA --pretty=%b)"
       - name: Pack 7z Package for nightly
         run: |
           # Make artifacts directory
@@ -145,6 +145,7 @@ jobs:
       COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
       COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
       AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
+      COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
     outputs:
       current_date: ${{ steps.commit.outputs.current_date }}
@@ -177,7 +178,7 @@ jobs:
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
           API_URL="https://api.github.com/repos/TWLBot/Builds/releases"
-          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"TWiLightMenu | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_MESSAGE\", \"prerelease\": true}"
+          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"TWiLightMenu | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_SUBJECT\\n\\n$COMMIT_MESSAGE\", \"prerelease\": true}"
 
           RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
 
