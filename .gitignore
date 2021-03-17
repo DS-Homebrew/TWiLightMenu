@@ -21,6 +21,7 @@ thumbs.db
 !/7zfile/Flashcard users/Autoboot/*/*/*.NDS
 !/7zfile/Flashcard users/Flashcart Loader/*/*/*.NDS
 manual/nitrofiles/pages
+settings/arm9/include/version.h
 
 # Build Directory
 build/

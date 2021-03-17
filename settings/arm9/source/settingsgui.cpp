@@ -11,6 +11,7 @@
 #include "language.h"
 #include "gbarunner2settings.h"
 #include "bootstrapsettings.h"
+#include "version.h"
 
 // Screen offsets for scrollbar
 #define CURSOR_MIN 30
@@ -280,7 +281,7 @@ void SettingsGUI::drawTopText()
     } else {
         printSmall(true, 4, 0, titleDisplayLength>=60*4 ? STR_SELECT_SETTING_LIST : STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile]);
     }
-    printSmall(true, 256 - 4, 174, VERTEXT, Alignment::right);
+    printSmall(true, 256 - 4, 174, VER_NUMBER, Alignment::right);
     printLarge(true, 0, (currentTheme == 4 ? 96 : 138) - (calcLargeFontHeight(_topText) / 2), _topText, Alignment::center);
 }
 
