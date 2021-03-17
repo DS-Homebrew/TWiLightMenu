@@ -1153,6 +1153,17 @@ bool checkForCompatibleGame(const char *filename) {
 		}
 	}
 
+	if (proceedToLaunch && dsiFeatures() && ms().secondaryDevice) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(incompatibleGameListFC)/sizeof(incompatibleGameListFC[0]); i++) {
+			if (memcmp(gameTid[CURPOS], incompatibleGameListFC[i], 3) == 0) {
+				// Found match
+				proceedToLaunch = false;
+				break;
+			}
+		}
+	}
+
 	if (proceedToLaunch) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {

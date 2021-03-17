@@ -21,13 +21,20 @@ static const char incompatibleGameListB4DS[][4] = {
 	"CS3", // Sonic & Sega All-Stars Racing
 };
 
+static const char incompatibleGameListFC[][4] = {
+	"ADM", // Animal Crossing: Wild World
+};
+
 static const char incompatibleGameList[][4] = {
+	"CAY", // Army Men: Soldiers of Misfortune
 	"BO5", // Golden Sun: Dark Dawn
-	//"COL", // Mario & Sonic at the Olympic Winter Games
 	"APD", // Pokemon Dash
 	"A24", // Pokemon Dash (Kiosk Demo)
+	"AH9", // Tony Hawk's American Sk8land
 	"AWK", // Tony Hawk's Downhill Jam
 	"CTX", // Tropix
+	"YUT", // Ultimate Mortal Kombat
+	"BYY", // Yu-Gi-Oh! 5D's: World Championship 2011: Over the Nexus
 };
 
 #endif // INCOMPATIBLEMAP_H
