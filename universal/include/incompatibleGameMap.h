@@ -2,7 +2,6 @@
 #define INCOMPATIBLEMAP_H
 
 static const char incompatibleGameListB4DS[][4] = {
-	"ADM", // Animal Crossing: Wild World
 	"BDU", // C.O.P. The Recruit
 	"AQC", // Crayon Shin-chan DS - Arashi o Yobu Nutte Crayoon Daisakusen!
 	"YRC", // Crayon Shin-chan - Arashi o Yobu Cinemaland Kachinko Gachinko Daikatsugeki!
@@ -23,18 +22,17 @@ static const char incompatibleGameListB4DS[][4] = {
 
 static const char incompatibleGameListFC[][4] = {
 	"ADM", // Animal Crossing: Wild World
+	"CAY", // Army Men: Soldiers of Misfortune
+	"AH9", // Tony Hawk's American Sk8land
+	"YUT", // Ultimate Mortal Kombat
 };
 
 static const char incompatibleGameList[][4] = {
-	"CAY", // Army Men: Soldiers of Misfortune
 	"BO5", // Golden Sun: Dark Dawn
 	"APD", // Pokemon Dash
 	"A24", // Pokemon Dash (Kiosk Demo)
-	"AH9", // Tony Hawk's American Sk8land
 	"AWK", // Tony Hawk's Downhill Jam
 	"CTX", // Tropix
-	"YUT", // Ultimate Mortal Kombat
-	"BYY", // Yu-Gi-Oh! 5D's: World Championship 2011: Over the Nexus
 };
 
 #endif // INCOMPATIBLEMAP_H

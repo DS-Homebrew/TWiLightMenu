@@ -1153,7 +1153,7 @@ bool checkForCompatibleGame(const char *filename) {
 		}
 	}
 
-	if (proceedToLaunch && dsiFeatures() && ms().secondaryDevice) {
+	if (proceedToLaunch && ms().secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameListFC)/sizeof(incompatibleGameListFC[0]); i++) {
 			if (memcmp(gameTid[CURPOS], incompatibleGameListFC[i], 3) == 0) {
