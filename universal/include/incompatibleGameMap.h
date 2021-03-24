@@ -31,7 +31,6 @@ static const char incompatibleGameList[][4] = {
 	"BO5", // Golden Sun: Dark Dawn
 	"APD", // Pokemon Dash
 	"A24", // Pokemon Dash (Kiosk Demo)
-	"AWK", // Tony Hawk's Downhill Jam
 	"CTX", // Tropix
 };
 
