@@ -842,15 +842,6 @@ int main(int argc, char **argv)
 				{0});
 	}
 
-	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked())
-	{
-		gamesPage.option((isDSiMode() ? STR_RUNFLUBBAEMUSIN : STR_SYSSD_RUNFLUBBAEMUSIN),
-			STR_DESCRIPTION_RUNFLUBBAEMUSIN,
-			Option::Bool(&ms().smsGgInRam),
-			{STR_DS_MODE, STR_DSI_MODE},
-			{true, false});
-	}
-
 	using TRunIn = TWLSettings::TRunIn;
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 
@@ -860,6 +851,15 @@ int main(int argc, char **argv)
 						Option::Int(&ms().bstrap_dsiMode),
 						{STR_DS_MODE, STR_DSI_MODE, STR_DSI_MODE_FORCED},
 						{TRunIn::EDSMode, TRunIn::EDSiMode, TRunIn::EDSiModeForced});
+	}
+
+	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked())
+	{
+		gamesPage.option((isDSiMode() ? STR_RUNFLUBBAEMUSIN : STR_SYSSD_RUNFLUBBAEMUSIN),
+			STR_DESCRIPTION_RUNFLUBBAEMUSIN,
+			Option::Bool(&ms().smsGgInRam),
+			{STR_DS_MODE, STR_DSI_MODE},
+			{true, false});
 	}
 
 	if (dsiFeatures() || sdAccessible) {
