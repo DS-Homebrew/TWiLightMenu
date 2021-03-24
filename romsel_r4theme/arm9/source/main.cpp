@@ -2219,12 +2219,31 @@ int main(int argc, char **argv) {
 					mkdir(secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(secondaryDevice ? "fat:/data/NitroGrafx" : "sd:/data/NitroGrafx", 0777);
 
-					launchType[secondaryDevice] = 14;
+					if (!secondaryDevice && !arm7SCFGLocked && smsGgInRam) {
+						launchType[secondaryDevice] = 1;
 
-					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
-						boostVram = true;
+						useNDSB = true;
+
+						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+					} else {
+						launchType[secondaryDevice] = 14;
+
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
+							boostVram = true;
+						}
 					}
 				}
 

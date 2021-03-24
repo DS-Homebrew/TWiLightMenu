@@ -844,10 +844,10 @@ int main(int argc, char **argv)
 
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked())
 	{
-		gamesPage.option((isDSiMode() ? STR_SMSGGINRAM : STR_SYSSD_SMSGGINRAM),
-			STR_DESCRIPTION_SMSGGINRAM,
+		gamesPage.option((isDSiMode() ? STR_RUNFLUBBAEMUSIN : STR_SYSSD_RUNFLUBBAEMUSIN),
+			STR_DESCRIPTION_RUNFLUBBAEMUSIN,
 			Option::Bool(&ms().smsGgInRam),
-			{STR_YES, STR_NO},
+			{STR_DS_MODE, STR_DSI_MODE},
 			{true, false});
 	}
 
