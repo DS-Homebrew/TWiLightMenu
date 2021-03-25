@@ -1,4 +1,5 @@
 
+#include "myDSiMode.h"
 #include "common/inifile.h"
 #include "common/bootstrappaths.h"
 #include "common/dsimenusettings.h"
@@ -22,7 +23,7 @@ void BootstrapSettings::loadSettings()
 
    	debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", debug);
 	logging = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOGGING", logging);
-	if (isDSiMode()) {
+	if (dsiFeatures()) {
 		cacheFatTable = bootstrapini.GetInt("NDS-BOOTSTRAP", "CACHE_FAT_TABLE", cacheFatTable);
 		romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", romreadled);
 		dmaromreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "DMA_ROMREAD_LED", dmaromreadled);
@@ -38,7 +39,7 @@ void BootstrapSettings::saveSettings()
 
     bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", logging);
-	if (isDSiMode()) {
+	if (dsiFeatures()) {
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "CACHE_FAT_TABLE", cacheFatTable);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", romreadled);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DMA_ROMREAD_LED", dmaromreadled);

@@ -79,6 +79,7 @@ TWLSettings::TWLSettings()
 	boostCpu = false;
 	boostVram = false;
 	bstrap_dsiMode = EDSMode;
+	cardReadDMA = true;
     extendedMemory = 0;
 
 	forceSleepPatch = false;
@@ -216,6 +217,7 @@ void TWLSettings::loadSettings()
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+	cardReadDMA = settingsini.GetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
 	extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);

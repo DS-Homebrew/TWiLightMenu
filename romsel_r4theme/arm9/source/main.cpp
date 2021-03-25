@@ -175,6 +175,7 @@ int gameLanguage = -1;
 bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
 int bstrap_dsiMode = 0;
+bool cardReadDMA = true;
 int bstrap_extendedMemory = 0;
 bool forceSleepPatch = false;
 bool dsiWareBooter = false;
@@ -277,6 +278,7 @@ void LoadSettings(void) {
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+	cardReadDMA = settingsini.GetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
 	bstrap_extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", 0);
 
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
@@ -1744,6 +1746,9 @@ int main(int argc, char **argv) {
 						if (dsiFeatures() || !secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
+						}
+						if (!secondaryDevice) {
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", perGameSettings_cardReadDMA == -1 ? cardReadDMA : perGameSettings_cardReadDMA);
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", perGameSettings_expandRomSpace == -1 ? bstrap_extendedMemory : perGameSettings_expandRomSpace);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);

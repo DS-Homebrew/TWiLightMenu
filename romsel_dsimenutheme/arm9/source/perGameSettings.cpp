@@ -64,6 +64,7 @@ int perGameSettings_saveNo = 0;
 int perGameSettings_ramDiskNo = -1;
 int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
+int perGameSettings_cardReadDMA = -1;
 int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 int perGameSettings_expandRomSpace = -1;
@@ -110,6 +111,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_ramDiskNo = pergameini.GetInt("GAMESETTINGS", "RAM_DISK", -1);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
+	perGameSettings_cardReadDMA = pergameini.GetInt("GAMESETTINGS", "CARD_READ_DMA", -1);
     perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
     perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
     perGameSettings_expandRomSpace = pergameini.GetInt("GAMESETTINGS", "EXTENDED_MEMORY", -1);
@@ -138,6 +140,9 @@ void savePerGameSettings (std::string filename) {
 		if (dsiFeatures()) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
+		}
+		if (!ms().secondaryDevice) {
+			pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
 		}
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
@@ -403,6 +408,10 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (ms().useBootstrap || !ms().secondaryDevice) {
+			if (!ms().secondaryDevice) {
+				perGameOps++;
+				perGameOp[perGameOps] = 5;	// Card read DMA
+			}
 			if ((dsiFeatures() || !ms().secondaryDevice)
 			 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
 				perGameOps++;
@@ -573,6 +582,16 @@ void perGameSettings (std::string filename) {
 					}
 				}
 				break;
+			case 5:
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_CARD_READ_DMA + ":", startAlign);
+				if (perGameSettings_cardReadDMA == -1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+				} else if (perGameSettings_cardReadDMA == 1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
+				} else {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
+				}
+				break;
 			case 6:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_DIRECT_BOOT + ":", startAlign);
 				if (perGameSettings_directBoot) {
@@ -703,6 +722,10 @@ void perGameSettings (std::string filename) {
 							if (perGameSettings_boostVram < -1) perGameSettings_boostVram = 1;
 						}
 						break;
+					case 5:
+						perGameSettings_cardReadDMA--;
+						if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = 1;
+						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
 						break;
@@ -760,6 +783,10 @@ void perGameSettings (std::string filename) {
 							perGameSettings_boostVram++;
 							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
 						}
+						break;
+					case 5:
+						perGameSettings_cardReadDMA++;
+						if (perGameSettings_cardReadDMA > 1) perGameSettings_cardReadDMA = -1;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;

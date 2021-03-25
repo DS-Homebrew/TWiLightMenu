@@ -211,6 +211,7 @@ public:
 	bool boostCpu;
 	bool boostVram;
 	int bstrap_dsiMode;
+	bool cardReadDMA;
     int extendedMemory;
 
 	bool forceSleepPatch;

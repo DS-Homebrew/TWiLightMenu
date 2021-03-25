@@ -917,18 +917,23 @@ int main(int argc, char **argv)
 	{
 		if (sdAccessible) {
 			gamesPage
-				.option((isDSiMode() ? STR_ROMREADLED : STR_SYSSD_ROMREADLED),
+				.option(((sdAccessible && fatAccessible) ? STR_CARDREADDMA : STR_SYSSD_CARDREADDMA),
+					STR_DESCRIPTION_CARDREADDMA,
+					Option::Bool(&ms().cardReadDMA),
+					{STR_ON, STR_OFF},
+					{true, false})
+				.option(((sdAccessible && fatAccessible) ? STR_ROMREADLED : STR_SYSSD_ROMREADLED),
 					STR_DESCRIPTION_ROMREADLED_1,
 					Option::Int(&bs().romreadled),
 					{STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
 					{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
-				.option((isDSiMode() ? STR_DMAROMREADLED : STR_SD_DMAROMREADLED),
+				.option(((sdAccessible && fatAccessible) ? STR_DMAROMREADLED : STR_SD_DMAROMREADLED),
 					STR_DESCRIPTION_DMAROMREADLED,
 					Option::Int(&bs().dmaromreadled),
 					{STR_SAME_AS_REG, STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
 					{TROMReadLED::ELEDSame, TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
 		}
-		gamesPage.option((isDSiMode() ? STR_PRECISEVOLUMECTRL : STR_SYSSD_PRECISEVOLUMECTRL),
+		gamesPage.option((dsiFeatures() ? STR_PRECISEVOLUMECTRL : STR_SYSSD_PRECISEVOLUMECTRL),
 			STR_DESCRIPTION_PRECISEVOLUMECTRL,
 			Option::Bool(&bs().preciseVolumeControl),
 			{STR_ON, STR_OFF},
@@ -941,12 +946,12 @@ int main(int argc, char **argv)
 
 	if (isDSiMode() || sdAccessible) {
 		gamesPage
-		.option((isDSiMode() ? STR_EXPANDROMSPACE : STR_SD_EXPANDROMSPACE),
+		.option((dsiFeatures() ? STR_EXPANDROMSPACE : STR_SD_EXPANDROMSPACE),
 			(ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS),
 			Option::Int(&ms().extendedMemory),
 			{STR_NO, STR_YES, STR_YES_512KB},
 			{0, 1, 2})
-		.option((isDSiMode() ? STR_SAVEFATTABLECACHE : STR_SYSSD_SAVEFATTABLECACHE),
+		.option((dsiFeatures() ? STR_SAVEFATTABLECACHE : STR_SYSSD_SAVEFATTABLECACHE),
 			STR_DESCRIPTION_SAVEFATTABLECACHE,
 			Option::Bool(&bs().cacheFatTable),
 			{STR_YES, STR_NO},
