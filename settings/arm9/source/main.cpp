@@ -857,7 +857,7 @@ int main(int argc, char **argv)
 
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked())
 	{
-		gamesPage.option(((sdAccessible && fatAccessible) ? STR_SYSSD_RUNFLUBBAEMUSIN : STR_RUNFLUBBAEMUSIN),
+		gamesPage.option((fatAccessible ? STR_SYSSD_RUNFLUBBAEMUSIN : STR_RUNFLUBBAEMUSIN),
 			STR_DESCRIPTION_RUNFLUBBAEMUSIN,
 			Option::Bool(&ms().smsGgInRam),
 			{STR_DS_MODE, STR_DSI_MODE},
@@ -915,21 +915,25 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundFreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
 	}
 
+	if (sdAccessible) {
+		gamesPage
+			.option((fatAccessible ? STR_SYSSD_CARDREADDMA : STR_CARDREADDMA),
+				STR_DESCRIPTION_CARDREADDMA,
+				Option::Bool(&ms().cardReadDMA),
+				{STR_ON, STR_OFF},
+				{true, false});
+	}
+
 	if ((isDSiMode() || sdAccessible) && ms().consoleModel < 2)
 	{
 		if (sdAccessible) {
 			gamesPage
-				.option(((sdAccessible && fatAccessible) ? STR_SYSSD_CARDREADDMA : STR_CARDREADDMA),
-					STR_DESCRIPTION_CARDREADDMA,
-					Option::Bool(&ms().cardReadDMA),
-					{STR_ON, STR_OFF},
-					{true, false})
-				.option(((sdAccessible && fatAccessible) ? STR_SYSSD_ROMREADLED : STR_ROMREADLED),
+				.option((fatAccessible ? STR_SYSSD_ROMREADLED : STR_ROMREADLED),
 					STR_DESCRIPTION_ROMREADLED_1,
 					Option::Int(&bs().romreadled),
 					{STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
 					{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
-				.option(((sdAccessible && fatAccessible) ? STR_SD_DMAROMREADLED : STR_DMAROMREADLED),
+				.option((fatAccessible ? STR_SD_DMAROMREADLED : STR_DMAROMREADLED),
 					STR_DESCRIPTION_DMAROMREADLED,
 					Option::Int(&bs().dmaromreadled),
 					{STR_SAME_AS_REG, STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
