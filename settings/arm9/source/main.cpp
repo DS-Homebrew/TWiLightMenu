@@ -823,8 +823,10 @@ int main(int argc, char **argv)
 
 	SettingsPage gbar2Page(STR_GBARUNNER2_SETTINGS);
 
-	gbar2Page.option(sdAccessible ? STR_SLOT_1_DLDI_ACCESS : STR_DLDI_ACCESS, STR_DESCRIPTION_GBAR2_DLDIACCESS, Option::Bool(&ms().gbar2DldiAccess), {"ARM7", "ARM9"}, {true, false})
-			.option(STR_USE_BOTTOM_SCREEN, STR_DESCRIPTION_USEBOTTOMSCREEN, Option::Bool(&gs().useBottomScreen), {STR_YES, STR_NO}, {true, false})
+	if (fatAccessible) {
+		gbar2Page.option(sdAccessible ? STR_SLOT_1_DLDI_ACCESS : STR_DLDI_ACCESS, STR_DESCRIPTION_GBAR2_DLDIACCESS, Option::Bool(&ms().gbar2DldiAccess), {"ARM7", "ARM9"}, {true, false});
+	}
+	gbar2Page.option(STR_USE_BOTTOM_SCREEN, STR_DESCRIPTION_USEBOTTOMSCREEN, Option::Bool(&gs().useBottomScreen), {STR_YES, STR_NO}, {true, false})
 			.option(STR_CENTER_AND_MASK, STR_DESCRIPTION_CENTERANDMASK, Option::Bool(&gs().centerMask), {STR_ON, STR_OFF}, {true, false})
 			.option(STR_SIMULATE_GBA_COLORS, STR_DESCRIPTION_GBACOLORS, Option::Bool(&gs().gbaColors), {STR_YES, STR_NO}, {true, false})
 			.option(STR_DS_MAIN_MEMORY_I_CACHE, STR_DESCRIPTION_GBAR2_MAINMEMICACHE, Option::Bool(&gs().mainMemICache), {STR_ON, STR_OFF}, {true, false})
@@ -873,7 +875,7 @@ int main(int argc, char **argv)
 				Option::Bool(&ms().boostVram),
 				{STR_ON, STR_OFF},
 				{true, false});
-		if (sdAccessible && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
+		if (sdAccessible && fatAccessible && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
 			gamesPage
 				.option("S1SD: "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 			if (dsiFeatures()) {
