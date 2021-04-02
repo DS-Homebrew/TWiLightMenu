@@ -127,6 +127,8 @@ class TWLSettings
 
     TLanguage getGuiLanguage();
 
+    std::string getGuiLanguageString();
+
     // Get if the current language is right to left
 	bool rtl();
 

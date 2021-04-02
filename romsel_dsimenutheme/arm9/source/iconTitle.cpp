@@ -489,13 +489,13 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 			for (int i = 0; i < 128; i++) {
 				if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
-					if (ndsBanner.titles[setGameLanguage][0] == 0) {
-						cachedTitle[num][i] = ndsBanner.titles[setTitleLanguage][i];
+					if (ndsBanner.titles[ms().getGameLanguage()][0] == 0) {
+						cachedTitle[num][i] = ndsBanner.titles[ms().getTitleLanguage()][i];
 					} else {
-						cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
+						cachedTitle[num][i] = ndsBanner.titles[ms().getGameLanguage()][i];
 					}
 				} else {
-					cachedTitle[num][i] = ndsBanner.titles[setTitleLanguage][i];
+					cachedTitle[num][i] = ndsBanner.titles[ms().getTitleLanguage()][i];
 				}
 			}
 
@@ -523,7 +523,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				fclose(bannerFile);
 
 				tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
-				tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE*sizeof(u16));
+				tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
 
 				return;
 			}
@@ -536,9 +536,9 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 		int currentLang = 0;
 		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
-			currentLang = setGameLanguage;
+			currentLang = ms().getGameLanguage();
 		} else {
-			currentLang = setTitleLanguage;
+			currentLang = ms().getTitleLanguage();
 		}
 		while (ndsBanner.titles[currentLang][0] == 0) {
 			if (currentLang == 0) break;

@@ -3,11 +3,9 @@
 preserve_hierarchy: true
 
 files:
-  - source: /pages/english/*.html
-    translation: /pages/%language%/%original_file_name%
   - source: /romsel_aktheme/nitrofiles/language/lang_en/language.ini
     translation: /romsel_aktheme/nitrofiles/language/lang_%two_letters_code%/language.ini
-  - source: /romsel_dsimenutheme/nitrofiles/languages/english.ini
-    translation: /romsel_dsimenutheme/nitrofiles/languages/%language%.ini
-  - source: /settings/nitrofiles/languages/english.ini
-    translation: /settings/nitrofiles/languages/%language%.ini
+  - source: /romsel_dsimenutheme/nitrofiles/languages/en/*
+    translation: /romsel_dsimenutheme/nitrofiles/languages/%two_letters_code%/%original_file_name%
+  - source: /settings/nitrofiles/languages/en/*
+    translation: /settings/nitrofiles/languages/%two_letters_code%/%original_file_name%

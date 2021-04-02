@@ -1286,7 +1286,7 @@ void vBlankHandler() {
 		if (currentBg == 1 && ms().theme != 4 && ms().theme != 5)
 			drawBubble(tex().bubbleImage());
 		if (showSTARTborder && displayGameIcons && ms().theme == 0 && !isScrolling) {
-			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[setGameLanguage]);
+			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[ms().getGameLanguage()]);
 		}
 
 		glColor(RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
@@ -1514,7 +1514,9 @@ void loadPhotoList() {
 		}
 	}
 	// If dir not opened or no photos found, then draw the default
-	loadPhoto("nitro:/graphics/photo_default.png");
+	char path[64];
+	snprintf(path, sizeof(path), "nitro:/languages/%s/photo_default.png", ms().getGuiLanguageString().c_str());
+	loadPhoto(path);
 }
 
 void loadPhoto(const std::string &path) {

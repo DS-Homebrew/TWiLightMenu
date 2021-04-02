@@ -60,5 +60,5 @@ ipch/
 
 # Crowdin In-Context
 romsel_aktheme/nitrofiles/language/lang_ic
-romsel_dsimenutheme/nitrofiles/languages/In-Context.ini
-settings/nitrofiles/languages/In-Context.ini
+romsel_dsimenutheme/nitrofiles/languages/ic
+settings/nitrofiles/languages/ic
