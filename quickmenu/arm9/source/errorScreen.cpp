@@ -16,6 +16,8 @@ extern bool arm7SCFGLocked;
 extern int consoleModel;
 extern int launcherApp;
 
+extern int guiLanguage;
+
 u16* sdRemovedExtendedImage = (u16*)0x026C8000;
 u16* sdRemovedImage = (u16*)0x026E0000;
 
@@ -25,15 +27,23 @@ static bool showNonExtendedImage = false;
 void loadSdRemovedImage(void) {
 	uint imageWidth, imageHeight;
 	std::vector<unsigned char> image;
+	char sdRemovedError[40];
+	char sdRemoved[40];
+	sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_%i.png", guiLanguage);
+	sprintf(sdRemoved, "nitro:/graphics/sdRemoved_%i.png", guiLanguage);
+	if (access(sdRemovedError, F_OK) != 0 || access(sdRemoved, F_OK) != 0) {
+		sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_1.png");
+		sprintf(sdRemoved, "nitro:/graphics/sdRemoved_1.png");
+	}
 
-	lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/sdRemovedError.png");
+	lodepng::decode(image, imageWidth, imageHeight, sdRemovedError);
 
 	for(uint i=0;i<image.size()/4;i++) {
 		sdRemovedExtendedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 
 	image.clear();
-	lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/sdRemoved.png");
+	lodepng::decode(image, imageWidth, imageHeight, sdRemoved);
 
 	for(uint i=0;i<image.size()/4;i++) {
 		sdRemovedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
