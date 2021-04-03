@@ -31,11 +31,11 @@ void loadSdRemovedImage(void) {
 	std::vector<unsigned char> image;
 	char sdRemovedError[40];
 	char sdRemoved[40];
-	sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_%i.png", ms().guiLanguage);
-	sprintf(sdRemoved, "nitro:/graphics/sdRemoved_%i.png", ms().guiLanguage);
+	sprintf(sdRemovedError, "nitro:/languages/%s/sdRemovedError.png", ms().getGuiLanguageString().c_str());
+	sprintf(sdRemoved, "nitro:/languages/%s/sdRemoved.png", ms().getGuiLanguageString().c_str());
 	if (access(sdRemovedError, F_OK) != 0 || access(sdRemoved, F_OK) != 0) {
-		sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_1.png");
-		sprintf(sdRemoved, "nitro:/graphics/sdRemoved_1.png");
+		sprintf(sdRemovedError, "nitro:/languages/en/sdRemovedError.png");
+		sprintf(sdRemoved, "nitro:/languages/en/sdRemoved.png");
 	}
 
 	lodepng::decode(image, imageWidth, imageHeight, sdRemovedError);
