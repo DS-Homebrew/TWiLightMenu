@@ -144,7 +144,7 @@ void vBlankHandler() {
 	if (controlBottomBright && !macroMode) SetBrightness(1, screenBrightness);
 
 	updateText(true);
-	// updateText(false);
+	updateText(false);
 }
 
 void pageLoad(const std::string &filename) {
@@ -185,8 +185,8 @@ void graphicsInit() {
 	SetBrightness(1, 31);
 
 	////////////////////////////////////////////////////////////
-	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_5_2D | DISPLAY_BG3_ACTIVE);
+	videoSetMode(MODE_5_2D);
+	videoSetModeSub(MODE_5_2D);
 
 	vramSetBankA(VRAM_A_MAIN_BG);
 	vramSetBankC(VRAM_C_SUB_BG);
@@ -194,14 +194,14 @@ void graphicsInit() {
 	bg3Main = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
 	bgSetPriority(bg3Sub, 3);
 
-	bg2Main = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 6, 0);
+	bg2Main = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
 	bgSetPriority(bg2Main, 0);
 
 	bg3Sub = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
 	bgSetPriority(bg3Main, 3);
 
-	// bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 6, 0);
-	// bgSetPriority(bg2Sub, 0);
+	bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(bg2Sub, 0);
 
 	if (macroMode) {
 		lcdMainOnBottom();

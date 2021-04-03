@@ -43,6 +43,7 @@
 #include "myDSiMode.h"
 #include "common/inifile.h"
 #include "common/tonccpy.h"
+#include "language.h"
 
 #include "soundbank.h"
 #include "soundbank_bin.h"
@@ -89,6 +90,7 @@ enum TLanguage {
 	ELangIndonesian = 20,
 };
 
+int setLanguage = 0;
 bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
@@ -143,6 +145,54 @@ mm_sound_effect snd_stop;
 mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
+
+std::string getGuiLanguageString() {
+	switch (setLanguage) {
+		case ELangJapanese:
+			return "ja";
+		case ELangEnglish:
+		default:
+			return "en";
+		case ELangFrench:
+			return "fr";
+		case ELangGerman:
+			return "de";
+		case ELangItalian:
+			return "it";
+		case ELangSpanish:
+			return "es";
+		case ELangChineseS:
+			return "zh-CN";
+		case ELangKorean:
+			return "ko";
+		case ELangChineseT:
+			return "zh-TW";
+		case ELangPolish:
+			return "pl";
+		case ELangPortuguese:
+			return "pt";
+		case ELangRussian:
+			return "ru";
+		case ELangSwedish:
+			return "sv";
+		case ELangDanish:
+			return "da";
+		case ELangTurkish:
+			return "tr";
+		case ELangUkrainian:
+			return "uk";
+		case ELangHungarian:
+			return "hu";
+		case ELangNorwegian:
+			return "no";
+		case ELangHebrew:
+			return "he";
+		case ELangDutch:
+			return "nl";
+		case ELangIndonesian:
+			return "id";
+	}
+}
 
 bool sortPagesPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
@@ -363,13 +413,15 @@ int main(int argc, char **argv) {
 	InitSound();
 
 	int userLanguage = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
-	int setLanguage = (guiLanguage == -1) ? userLanguage : guiLanguage;
+	setLanguage = (guiLanguage == -1) ? userLanguage : guiLanguage;
 	bool rtl = guiLanguage == ELangHebrew;
 	if(rtl) {
 		manPageTitleX = 256 - manPageTitleX;
 		manPageTitleAlign = Alignment::right;
 	}
 	int ySizeSub = macroMode ? 176 : 368;
+
+	langInit();
 
 	switch (setLanguage) {
 		case ELangJapanese:

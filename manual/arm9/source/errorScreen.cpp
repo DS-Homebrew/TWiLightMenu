@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <maxmod9.h>
 
-//#include "autoboot.h"
-#include "graphics/lodepng.h"
+// #include "autoboot.h"
 #include "graphics/fontHandler.h"
+#include "common/tonccpy.h"
+#include "language.h"
 
 extern bool sdRemoveDetect;
-
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
@@ -17,56 +17,53 @@ extern bool arm7SCFGLocked;
 extern int consoleModel;
 extern int launcherApp;
 
-extern u16 bmpImageBuffer[256*1036];
-u16* sdRemovedExtendedImage = (u16*)0x026C8000;
-u16* sdRemovedImage = (u16*)0x026E0000;
-
-extern u16 convertToDsBmp(u16 val);
-
 static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
-
-void loadSdRemovedImage(void) {
-	//FILE* file = fopen((arm7SCFGLocked ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
-	std::vector<unsigned char> image;
-	unsigned width, height;
-	unsigned error = lodepng::decode(image, width, height, "nitro:/graphics/sdRemovedError.png");
-	if(error)	printSmall(false, 0, 30, "Error", Alignment::center);
-	for(unsigned i=0;i<image.size()/4;i++) {
-		sdRemovedExtendedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-	}
-
-	image.clear();
-	lodepng::decode(image, width, height, "nitro:/graphics/sdRemoved.png");
-	for(unsigned i=0;i<image.size()/4;i++) {
-		sdRemovedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-	}
-}
 
 void checkSdEject(void) {
 	if (!sdRemoveDetect) return;
 
 	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) {
-		timeTillChangeToNonExtendedImage++;
-		if (timeTillChangeToNonExtendedImage > 10) {
-			showNonExtendedImage = true;
-			timeTillChangeToNonExtendedImage = 10;
+		if(!showNonExtendedImage) {
+			timeTillChangeToNonExtendedImage++;
+			if (timeTillChangeToNonExtendedImage > 10) {
+				showNonExtendedImage = true;
+			}
 		}
-		return;
+		// return;
 	}
 
 	// Show "SD removed" screen
 	mmEffectCancelAll();
 
-	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
+	videoSetMode(MODE_5_2D | DISPLAY_BG2_ACTIVE);
+	videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
 
 	REG_BLDY = 0;
 
-	dmaCopyWordsAsynch(0, (showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), BG_GFX, 0x18000);
-	dmaFillWords(1, BG_GFX_SUB, 0x18000);
+	// Change to white text palette
+	u16 palette[] = {
+		0x0000,
+		0xB9CE,
+		0xD6B5,
+		0xFFFF,
+	};
+	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
+	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
+
+	swiWaitForVBlank();
+	clearText();
+
+	if(showNonExtendedImage) {
+		printLarge(false, 0, 45, STR_SD_WAS_REMOVED, Alignment::center);
+		printLarge(false, 0, 75, STR_REINSERT_SD_CARD, Alignment::center);
+	} else {
+		printLarge(false, 0, 37, STR_ERROR_HAS_OCCURRED, Alignment::center);
+		printSmall(false, 0, 67, STR_DISABLE_SD_REMOVAL_CHECK, Alignment::center);
+	}
 
 	while(1) {
+		// Currently not working
 		/*scanKeys();
 		if (keysDown() & KEY_B) {
 			if (consoleModel < 2 && launcherApp != -1) {

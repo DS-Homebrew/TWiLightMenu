@@ -1773,10 +1773,6 @@ void graphicsInit() {
 	// videoSetup() Called here before.
 	// REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 
-	if (isDSiMode()) {
-		loadSdRemovedImage();
-	}
-
 	// swiWaitForVBlank();
 	titleboxYpos = tc().titleboxRenderY();
 	bubbleYpos = tc().bubbleTipRenderY();

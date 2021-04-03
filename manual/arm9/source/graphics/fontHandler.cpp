@@ -61,7 +61,7 @@ void updateText(bool top) {
 	text.clear();
 
 	// Copy buffer to the screen
-	tonccpy(bgGetGfxPtr(top ? 2 : 6), FontGraphic::textBuf[top], 256 * 64);
+	tonccpy(bgGetGfxPtr(top ? 2 : 6), FontGraphic::textBuf[top], 256 * 192);
 }
 
 void clearText(bool top) {
