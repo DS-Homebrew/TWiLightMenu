@@ -13,24 +13,25 @@ TWLSettings::TWLSettings()
     consoleModel = 0;
 
     guiLanguage = ELangDefault;
+    titleLanguage = ELangDefault;
     colorMode = 0;
     blfLevel = 0;
     wifiLed = true;
     sdRemoveDetect = true;
     showMicroSd = false;
-	gbar2DldiAccess = false;
+    gbar2DldiAccess = false;
     showMainMenu = true;
     theme = 0;
     dsiMusic = 1;
 
-	showNds = true;
-	showRvid = true;
-	showNes = true;
-	showGb = true;
-	showSmsGg = true;
-	showMd = true;
-	showSnes = true;
-	updateRecentlyPlayedList = true;
+    showNds = true;
+    showRvid = true;
+    showNes = true;
+    showGb = true;
+    showSmsGg = true;
+    showMd = true;
+    showSnes = true;
+    updateRecentlyPlayedList = true;
     sortMethod = 0;
     showDirectories = true;
     showHidden = false;
@@ -41,7 +42,7 @@ TWLSettings::TWLSettings()
     secondaryAccess = false;
     previousUsedDevice = false;
     secondaryDevice = false;
-	fcSaveOnSd = false;
+    fcSaveOnSd = false;
 
     flashcard = EDSTTClone;
 
@@ -54,7 +55,7 @@ TWLSettings::TWLSettings()
     boostCpu = false;
     boostVram = false;
     bstrap_dsiMode = EDSMode;
-	forceSleepPatch = false;
+    forceSleepPatch = false;
     slot1SCFGUnlock = false;
     dsiWareBooter = false;
 
@@ -76,12 +77,12 @@ TWLSettings::TWLSettings()
     _3ds_theme = "light";
     
     soundFreq = EFreq32KHz;
-	dsiSplash = isDSiMode();
+    dsiSplash = isDSiMode();
     showlogo = true;
     autorun = false;
 
     //screenScaleSize = 0;
-	wideScreen = false;
+    wideScreen = false;
 }
 
 void TWLSettings::loadSettings()
@@ -96,19 +97,20 @@ void TWLSettings::loadSettings()
     startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
 
-	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", showNds);
-	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
-	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
-	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
-	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
-	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
-	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
+    showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", showNds);
+    showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
+    showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
+    showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
+    showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
+    showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
+    showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
 
     // Customizable UI settings.
-	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
-	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
-	wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", wifiLed);
+    colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
+    blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
+    wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", wifiLed);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
+    titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
     showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
     gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
@@ -116,10 +118,10 @@ void TWLSettings::loadSettings()
     dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 
-	secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
-	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
+    secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
+    previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
     secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
-	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
+    fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
     showMainMenu = settingsini.GetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
@@ -130,10 +132,10 @@ void TWLSettings::loadSettings()
     showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
-	if (consoleModel < 2) {
-		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
-		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
-	}
+    if (consoleModel < 2) {
+        sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
+        launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+    }
 
     flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
 
@@ -146,9 +148,9 @@ void TWLSettings::loadSettings()
     boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
     forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
-	soundFreq = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
+    soundFreq = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
     slot1SCFGUnlock = settingsini.GetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
-	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
+    dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 
     ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     ak_scrollSpeed = settingsini.GetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
@@ -188,13 +190,14 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 
     // Customizable UI settings.
-	settingsini.SetInt("SRLOADER", "COLOR_MODE", colorMode);
-	settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
-	settingsini.SetInt("SRLOADER", "WIFI_LED", wifiLed);
+    settingsini.SetInt("SRLOADER", "COLOR_MODE", colorMode);
+    settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
+    settingsini.SetInt("SRLOADER", "WIFI_LED", wifiLed);
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
+    settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     settingsini.SetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
-	settingsini.SetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
-	settingsini.SetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
+    settingsini.SetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
+    settingsini.SetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
 
     settingsini.SetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
     settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
@@ -203,30 +206,30 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     settingsini.SetInt("SRLOADER", "THEME", theme);
     settingsini.SetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
-	settingsini.SetInt("SRLOADER", "SHOW_NDS", showNds);
-	settingsini.SetInt("SRLOADER", "SHOW_RVID", showRvid);
-	settingsini.SetInt("SRLOADER", "SHOW_NES", showNes);
-	settingsini.SetInt("SRLOADER", "SHOW_GB", showGb);
-	settingsini.SetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
-	settingsini.SetInt("SRLOADER", "SHOW_MDGEN", showMd);
-	settingsini.SetInt("SRLOADER", "SHOW_SNES", showSnes);
+    settingsini.SetInt("SRLOADER", "SHOW_NDS", showNds);
+    settingsini.SetInt("SRLOADER", "SHOW_RVID", showRvid);
+    settingsini.SetInt("SRLOADER", "SHOW_NES", showNes);
+    settingsini.SetInt("SRLOADER", "SHOW_GB", showGb);
+    settingsini.SetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
+    settingsini.SetInt("SRLOADER", "SHOW_MDGEN", showMd);
+    settingsini.SetInt("SRLOADER", "SHOW_SNES", showSnes);
     settingsini.SetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
     settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     settingsini.SetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
-	if (consoleModel < 2) {
-		settingsini.SetInt("SRLOADER", "SYS_REGION", sysRegion);
-		settingsini.SetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
-	}
+    if (consoleModel < 2) {
+        settingsini.SetInt("SRLOADER", "SYS_REGION", sysRegion);
+        settingsini.SetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+    }
 
     settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 
     settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
     settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
     settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
-	settingsini.SetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
+    settingsini.SetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
     // Default nds-bootstrap settings
     settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", guiLanguage);
@@ -234,9 +237,9 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     settingsini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
     settingsini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
-	settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
+    settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
     settingsini.SetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
-	settingsini.SetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
+    settingsini.SetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 
     settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     settingsini.SetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
@@ -261,8 +264,82 @@ TWLSettings::TLanguage TWLSettings::getGuiLanguage()
 {
     if (guiLanguage == ELangDefault)
     {
-		extern bool useTwlCfg;
+        extern bool useTwlCfg;
         return (TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
     }
     return (TLanguage)guiLanguage;
+}
+
+TWLSettings::TLanguage TWLSettings::getGameLanguage()
+{
+    if (gameLanguage == ELangDefault)
+    {
+        extern bool useTwlCfg;
+        return (TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
+    }
+    return (TLanguage)gameLanguage;
+}
+
+TWLSettings::TLanguage TWLSettings::getTitleLanguage()
+{
+    if (titleLanguage == ELangDefault)
+    {
+        return (TLanguage)PersonalData->language;
+    }
+    return (TLanguage)gameLanguage;
+}
+
+std::string TWLSettings::getGuiLanguageString()
+{
+    switch (getGuiLanguage())
+    {
+        case TWLSettings::ELangJapanese:
+            return "ja";
+        case TWLSettings::ELangEnglish:
+        default:
+            return "en";
+        case TWLSettings::ELangFrench:
+            return "fr";
+        case TWLSettings::ELangGerman:
+            return "de";
+        case TWLSettings::ELangItalian:
+            return "it";
+        case TWLSettings::ELangSpanish:
+            return "es";
+        case TWLSettings::ELangChineseS:
+            return "zh-CN";
+        case TWLSettings::ELangKorean:
+            return "ko";
+        case TWLSettings::ELangChineseT:
+            return "zh-TW";
+        case TWLSettings::ELangPolish:
+            return "pl";
+        case TWLSettings::ELangPortuguese:
+            return "pt";
+        case TWLSettings::ELangRussian:
+            return "ru";
+        case TWLSettings::ELangSwedish:
+            return "sv";
+        case TWLSettings::ELangDanish:
+            return "da";
+        case TWLSettings::ELangTurkish:
+            return "tr";
+        case TWLSettings::ELangUkrainian:
+            return "uk";
+        case TWLSettings::ELangHungarian:
+            return "hu";
+        case TWLSettings::ELangNorwegian:
+            return "no";
+        case TWLSettings::ELangHebrew:
+            return "he";
+        case TWLSettings::ELangDutch:
+            return "nl";
+        case TWLSettings::ELangIndonesian:
+            return "id";
+    }
+}
+
+bool TWLSettings::rtl()
+{
+    return guiLanguage == ELangHebrew;
 }

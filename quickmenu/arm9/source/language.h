@@ -2,9 +2,11 @@
 #ifndef DSIMENUPP_LANGUAGE_H
 #define DSIMENUPP_LANGUAGE_H
 
-extern int setLanguage;
-extern int setGameLanguage;
-extern int setTitleLanguage;
+#include <string>
+
+#define STRING(what,def) extern std::string STR_##what;
+#include "language.inl"
+#undef STRING
 
 /**
  * Initialize translations.

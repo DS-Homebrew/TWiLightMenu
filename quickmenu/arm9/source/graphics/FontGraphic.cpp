@@ -128,8 +128,17 @@ char16_t FontGraphic::getCharacter(const char *&text) {
 
 void FontGraphic::print(int x, int y, const char *text)
 {
+	const int initialX = x;
 	while (*text)
 	{
+		if (*text == '\n')
+		{
+			x = initialX;
+			y += FONT_SY;
+			text++;
+			continue;
+		}
+
 		char16_t fontChar = getCharacter(text);
 		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
 		x += fontSprite[fontChar].width;

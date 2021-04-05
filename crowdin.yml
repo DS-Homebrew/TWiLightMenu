@@ -3,6 +3,10 @@
 preserve_hierarchy: true
 
 files:
+  - source: /manual/nitrofiles/languages/en/*
+    translation: /manual/nitrofiles/languages/%two_letters_code%/%original_file_name%
+  - source: /quickmenu/nitrofiles/languages/en/*
+    translation: /quickmenu/nitrofiles/languages/%two_letters_code%/%original_file_name%
   - source: /romsel_aktheme/nitrofiles/language/lang_en/language.ini
     translation: /romsel_aktheme/nitrofiles/language/lang_%two_letters_code%/language.ini
   - source: /romsel_dsimenutheme/nitrofiles/languages/en/*
