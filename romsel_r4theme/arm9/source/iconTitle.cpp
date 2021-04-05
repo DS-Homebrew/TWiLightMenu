@@ -759,6 +759,7 @@ void getGameInfo(bool isDir, const char* name)
 			case 0x237F0:
 				if (usingB4DS || hasCycloDSi) requiresDonorRom = 5;
 				break;
+			case 0x235DC:
 			case 0x23CAC:
 				if (usingB4DS || hasCycloDSi) requiresDonorRom = 20;
 				break;
