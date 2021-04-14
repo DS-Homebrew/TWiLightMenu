@@ -30,7 +30,7 @@ void checkSdEject(void) {
 				showNonExtendedImage = true;
 			}
 		}
-		// return;
+		return;
 	}
 
 	// Show "SD removed" screen
