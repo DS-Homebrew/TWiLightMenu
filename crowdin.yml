@@ -13,3 +13,5 @@ files:
     translation: /romsel_dsimenutheme/nitrofiles/languages/%two_letters_code%/%original_file_name%
   - source: /settings/nitrofiles/languages/en/*
     translation: /settings/nitrofiles/languages/%two_letters_code%/%original_file_name%
+  - source: /title/nitrofiles/languages/en/*
+    translation: /title/nitrofiles/languages/%two_letters_code%/%original_file_name%
