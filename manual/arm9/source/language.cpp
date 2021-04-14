@@ -52,6 +52,37 @@ std::string getString(CIniFile &ini, const std::string &item, const std::string 
 				case 'R':
 					out = out.substr(0, i) + "" + out.substr(i + 2); // U+E005
 					break;
+				case 'd':
+				case 'D':
+					switch(out[i + 2]) {
+						default:
+							out = out.substr(0, i) + "" + out.substr(i + 2); // U+E006
+							break;
+						case 'u':
+						case 'U':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E079
+							break;
+						case 'd':
+						case 'D':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E07A
+							break;
+						case 'l':
+						case 'L':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E07B
+							break;
+						case 'r':
+						case 'R':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E07C
+							break;
+						case 'v':
+						case 'V':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E07D
+							break;
+						case 'h':
+						case 'H':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E07E
+							break;
+					}
 				default:
 					break;
 			}
