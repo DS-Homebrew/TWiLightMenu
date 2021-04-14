@@ -147,13 +147,20 @@ void FontGraphic::print(int x, int y, const char *text)
 
 int FontGraphic::calcWidth(const char *text)
 {
-	int x = 0;
+	int x = 0, maxLine = 0;
 
 	while (*text)
 	{
+		if (*text == '\n') {
+			if (x > maxLine)
+				maxLine = x;
+			x = 0;
+			text++;
+			continue;
+		}
 		x += fontSprite[getCharacter(text)].width;
 	}
-	return x;
+	return std::max(x, maxLine);
 }
 
 void FontGraphic::print(int x, int y, int value)
@@ -164,12 +171,7 @@ void FontGraphic::print(int x, int y, int value)
 
 int FontGraphic::getCenteredX(const char *text)
 {
-	int total_width = 0;
-	while (*text)
-	{
-		total_width += fontSprite[getCharacter(text)].width;
-	}
-	return (SCREEN_WIDTH - total_width) / 2;
+	return (SCREEN_WIDTH - calcWidth(text)) / 2;
 }
 
 void FontGraphic::printCentered(int y, const char *text)

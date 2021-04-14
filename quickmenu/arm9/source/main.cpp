@@ -899,7 +899,7 @@ void directCardLaunch() {
 }
 
 void printLastPlayedText(int num) {
-	printSmallCentered(false, 24, iconYpos[num]+BOX_PY+BOX_PY_spacing2, STR_LAST_PLAYED_HERE.c_str());
+	printSmallCentered(false, 22, iconYpos[num]+BOX_PY+BOX_PY_spacing2, STR_LAST_PLAYED_HERE.c_str());
 }
 
 void refreshNdsCard() {
