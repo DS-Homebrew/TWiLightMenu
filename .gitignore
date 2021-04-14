@@ -59,6 +59,8 @@ ipch/
 7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/_BOOT_DS.NDS
 
 # Crowdin In-Context
+manual/nitrofiles/languages/ic
 romsel_aktheme/nitrofiles/language/lang_ic
 romsel_dsimenutheme/nitrofiles/languages/ic
 settings/nitrofiles/languages/ic
+title/nitrofiles/languages/ic
