@@ -423,72 +423,7 @@ int main(int argc, char **argv) {
 
 	langInit();
 
-	switch (setLanguage) {
-		case ELangJapanese:
-			chdir("nitro:/pages/japanese/");
-			break;
-		case ELangEnglish:
-		default:
-			chdir("nitro:/pages/english/");
-			break;
-		case ELangFrench:
-			chdir("nitro:/pages/french/");
-			break;
-		case ELangGerman:
-			chdir("nitro:/pages/german/");
-			break;
-		case ELangItalian:
-			chdir("nitro:/pages/italian/");
-			break;
-		case ELangSpanish:
-			chdir("nitro:/pages/spanish/");
-			break;
-		case ELangChineseS:
-			chdir("nitro:/pages/chinese_s/");
-			break;
-		case ELangKorean:
-			chdir("nitro:/pages/korean/");
-			break;
-		case ELangChineseT:
-			chdir("nitro:/pages/chinese_t/");
-			break;
-		case ELangPolish:
-			chdir("nitro:/pages/polish/");
-			break;
-		case ELangPortuguese:
-			chdir("nitro:/pages/portuguese/");
-			break;
-		case ELangRussian:
-			chdir("nitro:/pages/russian/");
-			break;
-		case ELangSwedish:
-			chdir("nitro:/pages/swedish/");
-			break;
-		case ELangDanish:
-			chdir("nitro:/pages/danish/");
-			break;
-		case ELangTurkish:
-			chdir("nitro:/pages/turkish/");
-			break;
-		case ELangUkrainian:
-			chdir("nitro:/pages/ukrainian/");
-			break;
-		case ELangHungarian:
-			chdir("nitro:/pages/hungarian/");
-			break;
-		case ELangNorwegian:
-			chdir("nitro:/pages/norwegian/");
-			break;
-		case ELangHebrew:
-			chdir("nitro:/pages/hebrew/");
-			break;
-		case ELangDutch:
-			chdir("nitro:/pages/dutch/");
-			break;
-		case ELangIndonesian:
-			chdir("nitro:/pages/indonesian/");
-			break;
-	}
+	chdir(("nitro:/pages/" + getGuiLanguageString()).c_str());
 
 	loadPageList();
 	// Move index.gif to the start
