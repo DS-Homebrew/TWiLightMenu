@@ -85,6 +85,12 @@ u32 getSDKVersion(FILE *ndsFile)
  */
 int checkRomAP(FILE *ndsFile, int num)
 {
+	char ipsPath[256];
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid[num], headerCRC[num]);
+
+	if (access(ipsPath, F_OK) == 0) {
+		return 0;
+
 	FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
 	if (file) {
 		char buf[5] = {0};
