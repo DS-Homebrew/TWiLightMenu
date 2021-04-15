@@ -117,12 +117,11 @@ jobs:
           7z a TWiLightMenu-Flashcard.7z TWiLightMenu
           mv TWiLightMenu-Flashcard.7z ~/artifacts
 
-          # Delete themes, AP patches, and widescreen patches for lite
+          # Delete skins and widescreen patches for lite
           rm -rf TWiLightMenu
           cp -r 7zfile/ TWiLightMenu/
           rm -rf TWiLightMenu/Debug/
           rm -rf TWiLightMenu/_nds/TWiLightMenu/*menu/
-          rm -rf TWiLightMenu/_nds/TWiLightMenu/apfix/
           rm -rf TWiLightMenu/_nds/TWiLightMenu/extras/fonts/
           rm -rf TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
           rm -rf TWiLightMenu/Flashcard\ users/Autoboot/
