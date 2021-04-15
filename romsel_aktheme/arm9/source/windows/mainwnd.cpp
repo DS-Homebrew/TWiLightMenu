@@ -526,11 +526,12 @@ std::string apFix(const char *filename, bool isHomebrew)
 	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s.ips", sdFound() ? "sd" : "fat", filename);
 	ipsFound = (access(ipsPath, F_OK) == 0);
 
+	char game_TID[5];
+	u16 headerCRC16 = 0;
+
 	if (!ipsFound) {
 		FILE *f_nds_file = fopen(filename, "rb");
 
-		char game_TID[5];
-		u16 headerCRC16 = 0;
 		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
 		fread(game_TID, 1, 4, f_nds_file);
 		fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
@@ -550,9 +551,132 @@ std::string apFix(const char *filename, bool isHomebrew)
 			return "fat:/_nds/nds-bootstrap/apFix.ips";
 		}
 		return ipsPath;
+	} else {
+		bool cheatVer = false;
+
+		FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
+		if (file) {
+			char buf[5] = {0};
+			fread(buf, 1, 4, file);
+			if (strcmp(buf, ".PCK") != 0) // Invalid file
+				return "";
+
+			u32 fileCount;
+			fread(&fileCount, 1, sizeof(fileCount), file);
+
+			u32 offset = 0, size = 0;
+
+			// Try binary search for the game
+			int left = 0;
+			int right = fileCount;
+
+			while (left <= right) {
+				int mid = left + ((right - left) / 2);
+				fseek(file, 16 + mid * 16, SEEK_SET);
+				fread(buf, 1, 4, file);
+				nocashMessage(buf);
+				int cmp = strcmp(buf, game_TID);
+				if (cmp == 0) { // TID matches, check CRC
+					u16 crc;
+					fread(&crc, 1, sizeof(crc), file);
+
+					if (crc == headerCRC16) { // CRC matches
+						fread(&offset, 1, sizeof(offset), file);
+						fread(&size, 1, sizeof(size), file);
+						cheatVer = fgetc(file) & 1;
+						break;
+					} else if (crc < headerCRC16) {
+						left = mid + 1;
+					} else {
+						right = mid - 1;
+					}
+				} else if (cmp < 0) {
+					left = mid + 1;
+				} else {
+					right = mid - 1;
+				}
+			}
+
+			if (offset > 0 && size > 0) {
+				fseek(file, offset, SEEK_SET);
+				u8 *buffer = new u8[size];
+				fread(buffer, 1, size, file);
+
+				mkdir("fat:/_nds", 0777);
+				mkdir("fat:/_nds/nds-bootstrap", 0777);
+				snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apFix%s", sdFound() ? "sd" : "fat", cheatVer ? "Cheat.bin" : ".ips");
+				FILE *out = fopen(ipsPath, "wb");
+				if(out) {
+					fwrite(buffer, 1, size, out);
+					fclose(out);
+				}
+				delete[] buffer;
+				fclose(file);
+				return ipsPath;
+			}
+
+			fclose(file);
+		}
 	}
 
 	return "";
+}
+
+bool checkIfAPPatch(const char *filename) {
+	char game_TID[5];
+	u16 headerCRC16 = 0;
+
+	FILE *f_nds_file = fopen(filename, "rb");
+
+	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+	fread(game_TID, 1, 4, f_nds_file);
+	fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
+	fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
+	fclose(f_nds_file);
+	game_TID[4] = 0;
+
+	FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
+	if (file) {
+		char buf[5] = {0};
+		fread(buf, 1, 4, file);
+		if (strcmp(buf, ".PCK") != 0) // Invalid file
+			return "";
+
+		u32 fileCount;
+		fread(&fileCount, 1, sizeof(fileCount), file);
+
+		// Try binary search for the game
+		int left = 0;
+		int right = fileCount;
+
+		while (left <= right) {
+			int mid = left + ((right - left) / 2);
+			fseek(file, 16 + mid * 16, SEEK_SET);
+			fread(buf, 1, 4, file);
+			int cmp = strcmp(buf, game_TID);
+			if (cmp == 0) { // TID matches, check CRC
+				u16 crc;
+				fread(&crc, 1, sizeof(crc), file);
+
+				if (crc == headerCRC16) { // CRC matches
+					fclose(file);
+					return true;
+				} else if (crc < headerCRC16) {
+					left = mid + 1;
+				} else {
+					right = mid - 1;
+				}
+			} else if (cmp < 0) {
+				left = mid + 1;
+			} else {
+				right = mid - 1;
+			}
+		}
+
+		fclose(file);
+	}
+
+	return false;
 }
 
 sNDSHeader ndsCart;
@@ -779,7 +903,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	char ipsPath[256];
 	sprintf(ipsPath, "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid, headerCRC16);
 
-	if (settingsIni.checkIfShowAPMsg() && (access(ipsPath, F_OK) != 0)) {
+	if (settingsIni.checkIfShowAPMsg() && !(access(ipsPath, F_OK) == 0 || checkIfAPPatch(_mainList->getSelectedFullPath().c_str()))) {
 		// Check for SDK4-5 ROMs that don't have AP measures.
 		if ((memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) == 0)	// Girls Mode (JAP version of Style Savvy)
 		 || (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)	// Inazuma Eleven (Japan)

@@ -274,7 +274,6 @@ std::string setApFix(const char *filename) {
 				int mid = left + ((right - left) / 2);
 				fseek(file, 16 + mid * 16, SEEK_SET);
 				fread(buf, 1, 4, file);
-				nocashMessage(buf);
 				int cmp = strcmp(buf, gameTid[CURPOS]);
 				if (cmp == 0) { // TID matches, check CRC
 					u16 crc;

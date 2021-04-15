@@ -449,6 +449,69 @@ std::string setApFix(const char *filename) {
 			return cheatVer ? "fat:/_nds/nds-bootstrap/apFixCheat.bin" : "fat:/_nds/nds-bootstrap/apFix.ips";
 		}
 		return ipsPath;
+	} else {
+		FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
+		if (file) {
+			char buf[5] = {0};
+			fread(buf, 1, 4, file);
+			if (strcmp(buf, ".PCK") != 0) // Invalid file
+				return "";
+
+			u32 fileCount;
+			fread(&fileCount, 1, sizeof(fileCount), file);
+
+			u32 offset = 0, size = 0;
+
+			// Try binary search for the game
+			int left = 0;
+			int right = fileCount;
+
+			while (left <= right) {
+				int mid = left + ((right - left) / 2);
+				fseek(file, 16 + mid * 16, SEEK_SET);
+				fread(buf, 1, 4, file);
+				int cmp = strcmp(buf, game_TID);
+				if (cmp == 0) { // TID matches, check CRC
+					u16 crc;
+					fread(&crc, 1, sizeof(crc), file);
+
+					if (crc == headerCRC16) { // CRC matches
+						fread(&offset, 1, sizeof(offset), file);
+						fread(&size, 1, sizeof(size), file);
+						cheatVer = fgetc(file) & 1;
+						break;
+					} else if (crc < headerCRC16) {
+						left = mid + 1;
+					} else {
+						right = mid - 1;
+					}
+				} else if (cmp < 0) {
+					left = mid + 1;
+				} else {
+					right = mid - 1;
+				}
+			}
+
+			if (offset > 0 && size > 0) {
+				fseek(file, offset, SEEK_SET);
+				u8 *buffer = new u8[size];
+				fread(buffer, 1, size, file);
+
+				mkdir("fat:/_nds", 0777);
+				mkdir("fat:/_nds/nds-bootstrap", 0777);
+				snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apFix%s", sdFound() ? "sd" : "fat", cheatVer ? "Cheat.bin" : ".ips");
+				FILE *out = fopen(ipsPath, "wb");
+				if(out) {
+					fwrite(buffer, 1, size, out);
+					fclose(out);
+				}
+				delete[] buffer;
+				fclose(file);
+				return ipsPath;
+			}
+
+			fclose(file);
+		}
 	}
 
 	return "";

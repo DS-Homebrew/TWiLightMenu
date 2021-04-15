@@ -39,7 +39,7 @@ with open(os.path.join("..", "7zfile", "_nds", "TWiLightMenu", "extras", "apfix.
 			f.write(bytes(file[:4], "ASCII")) # TID
 		else:
 			f.write(file[:4]) # TID
-		# Header CRC-16, Position of data, Size of data, Flags (bit 1 is cheat), Padding
+		# Header CRC-16, Position of data, Size of data, Flags (bit 0 is cheat), Padding
 		f.write(struct.pack("<Hllbx", int(file[5:file.find(".")], 16), position, len(data[i]), 1 if file[-3:] == "bin" else 0))
 		position += len(data[i])
 

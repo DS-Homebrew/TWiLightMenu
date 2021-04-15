@@ -114,6 +114,7 @@ int checkRomAP(FILE *ndsFile, int num)
 					fread(&crc, 1, sizeof(crc), file);
 
 					if (crc == headerCRC[num]) { // CRC matches
+						fclose(file);
 						return 0;
 					} else if (crc < headerCRC[num]) {
 						left = mid + 1;
