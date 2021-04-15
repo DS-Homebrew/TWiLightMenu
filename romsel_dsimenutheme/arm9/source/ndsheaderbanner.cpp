@@ -90,6 +90,7 @@ int checkRomAP(FILE *ndsFile, int num)
 
 	if (access(ipsPath, F_OK) == 0) {
 		return 0;
+	}
 
 	FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
 	if (file) {
