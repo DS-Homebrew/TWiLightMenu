@@ -45,6 +45,7 @@ extern bool lcdSwapped;
 
 extern int bstrap_dsiMode;
 extern bool useBootstrap;
+extern bool dsiWareBooter;
 extern int theme;
 
 extern std::string romfolder[2];
@@ -322,6 +323,9 @@ void perGameSettings (std::string filename) {
 		(!isDSiWare
 		&& memcmp(game_TID, "HND", 3) != 0
 		&& memcmp(game_TID, "HNE", 3) != 0);
+	if ((isDSiMode() || secondaryDevice) && (dsiWareBooter || consoleModel > 0) && !isHomebrew && isDSiWare) {
+		showPerGameSettings = true;
+	}
 	/*if (!useBootstrap && !isHomebrew && REG_SCFG_EXT == 0) {
 		showPerGameSettings = false;
 	}*/
@@ -368,6 +372,12 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
+	} else if (showPerGameSettings && isDSiWare) {	// Per-game settings for DSiWare
+		perGameOps++;
+		perGameOp[perGameOps] = 0;	// Language
+		perGameOps++;
+		perGameOp[perGameOps] = 7;	// Bootstrap
+		showCheats = true;
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
 		if (useBootstrap || !secondaryDevice) {
 			perGameOps++;

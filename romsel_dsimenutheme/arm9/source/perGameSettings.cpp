@@ -344,6 +344,9 @@ void perGameSettings (std::string filename) {
 		(!isDSiWare[CURPOS]
 		&& memcmp(gameTid[CURPOS], "HND", 3) != 0
 		&& memcmp(gameTid[CURPOS], "HNE", 3) != 0);
+	if ((isDSiMode() || ms().secondaryDevice) && (ms().dsiWareBooter || ms().consoleModel > 0) && !isHomebrew[CURPOS] && isDSiWare[CURPOS]) {
+		showPerGameSettings = true;
+	}
 	/*if (!ms().useBootstrap && !isHomebrew[CURPOS] && !dsiFeatures()) {
 		showPerGameSettings = false;
 	}*/
@@ -390,6 +393,12 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
+	} else if (showPerGameSettings && isDSiWare[CURPOS]) {	// Per-game settings for DSiWare
+		perGameOps++;
+		perGameOp[perGameOps] = 0;	// Language
+		perGameOps++;
+		perGameOp[perGameOps] = 7;	// Bootstrap
+		showCheats = true;
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			perGameOps++;
