@@ -345,6 +345,8 @@ void SetWidescreen(const char *filename) {
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
+	char s1GameTid[5];
+
 	if (ms().slot1Launched) {
 		// Reset Slot-1 to allow reading card header
 		sysSetCardOwner (BUS_OWNER_ARM9);
@@ -355,7 +357,6 @@ void SetWidescreen(const char *filename) {
 
 		cardReadHeader((uint8*)&ndsCart);
 
-		char s1GameTid[5];
 		tonccpy(s1GameTid, ndsCart.gameCode, 4);
 		s1GameTid[4] = 0;
 
@@ -393,6 +394,71 @@ void SetWidescreen(const char *filename) {
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
 			}
+		}
+	} else {
+		char *tid = ms().slot1Launched ? s1GameTid : gameTid[CURPOS];
+		u16 crc16 = ms().slot1Launched ? ndsCart.headerCRC16 : headerCRC[CURPOS];
+
+		FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/widescreen.pck" : "fat:/_nds/TWiLightMenu/extras/widescreen.pck", "rb");
+		if (file) {
+			char buf[5] = {0};
+			fread(buf, 1, 4, file);
+			if (strcmp(buf, ".PCK") != 0) // Invalid file
+				return;
+
+			u32 fileCount;
+			fread(&fileCount, 1, sizeof(fileCount), file);
+
+			u32 offset = 0, size = 0;
+
+			// Try binary search for the game
+			int left = 0;
+			int right = fileCount;
+
+			while (left <= right) {
+				int mid = left + ((right - left) / 2);
+				fseek(file, 16 + mid * 16, SEEK_SET);
+				fread(buf, 1, 4, file);
+				int cmp = strcmp(buf, tid);
+				if (cmp == 0) { // TID matches, check CRC
+					u16 crc;
+					fread(&crc, 1, sizeof(crc), file);
+
+					if (crc == crc16) { // CRC matches
+						fread(&offset, 1, sizeof(offset), file);
+						fread(&size, 1, sizeof(size), file);
+						break;
+					} else if (crc < crc16) {
+						left = mid + 1;
+					} else {
+						right = mid - 1;
+					}
+				} else if (cmp < 0) {
+					left = mid + 1;
+				} else {
+					right = mid - 1;
+				}
+			}
+
+			if (offset > 0 && size > 0) {
+				fseek(file, offset, SEEK_SET);
+				u8 *buffer = new u8[size];
+				fread(buffer, 1, size, file);
+
+				mkdir("fat:/_nds", 0777);
+				mkdir("fat:/_nds/nds-bootstrap", 0777);
+				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", sdFound() ? "sd" : "fat");
+				FILE *out = fopen(wideBinPath, "wb");
+				if(out) {
+					fwrite(buffer, 1, size, out);
+					fclose(out);
+				}
+				delete[] buffer;
+				fclose(file);
+				return;
+			}
+
+			fclose(file);
 		}
 	}
 }
