@@ -14,7 +14,7 @@ WIDEFILES	:= widescreen
 all:	$(OUTPUT_DIR)/apfix.pck $(OUTPUT_DIR)/widescreen.pck
 
 $(OUTPUT_DIR)/apfix.pck: $(APFILES)
-	./pack.py $^ -o $@
+	python2 pack.py $^ -o $@
 
 $(OUTPUT_DIR)/widescreen.pck: $(WIDEFILES)
-	./pack.py $^ -o $@
+	python2 pack.py $^ -o $@
