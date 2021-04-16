@@ -927,7 +927,8 @@ int main(int argc, char **argv) {
 				if (!isArgv) {
 					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 				}
-				ms().launchType[ms().secondaryDevice] = (ms().consoleModel>0 ? Launch::ESDFlashcardLaunch : Launch::EDSiWareLaunch);
+				ms().homebrewBootstrap = isHomebrew[CURPOS];
+				ms().launchType[ms().secondaryDevice] = Launch::EDSiWareLaunch;
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
 
@@ -1043,16 +1044,17 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (ms().dsiWareBooter || ms().consoleModel > 0) {
+				if (ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 
-					bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
+					bootstrapinipath = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? "fat:/_nds/nds-bootstrap.ini" : "sd:/_nds/nds-bootstrap.ini";
 					CIniFile bootstrapini(bootstrapinipath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().dsiWareSrlPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", ms().dsiWarePubPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", ms().dsiWarePrvPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
@@ -1060,7 +1062,6 @@ int main(int argc, char **argv) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", 1);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", 0);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", 0);
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", 1);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 						(ms().forceSleepPatch
 					|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !sys().isRegularDS())

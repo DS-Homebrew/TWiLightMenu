@@ -166,7 +166,10 @@ class TWLSettings
     bool boostCpu;
     bool boostVram;
     bool bstrap_dsiMode;
+	bool forceSleepPatch;
+
     bool slot1SCFGUnlock;
+	bool dsiWareBooter;
     bool autorun;
 	bool autostartSlot1;
     bool show12hrClock;

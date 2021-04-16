@@ -33,6 +33,7 @@
 
 #include "inifile.h"
 
+#include "ndsheaderbanner.h"
 #include "perGameSettings.h"
 #include "fileCopy.h"
 #include "flashcard.h"
@@ -55,11 +56,6 @@ std::string unlaunchBg = "default.gif";
 bool removeLauncherPatches = true;
 
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
-
-typedef struct {
-	char gameTitle[12];			//!< 12 characters for the game title.
-	char gameCode[4];			//!< 4 characters for the game code.
-} sNDSHeadertitlecodeonly;
 
 static int consoleModel = 0;
 /*	0 = Nintendo DSi (Retail)
@@ -102,6 +98,8 @@ static bool boostCpu = false;	// false == NTR, true == TWL
 static bool boostVram = false;
 static bool bstrap_dsiMode = false;
 
+static bool dsiWareBooter = false;
+
 TWL_CODE void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
@@ -124,6 +122,8 @@ TWL_CODE void LoadSettings(void) {
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+
+	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", "");
 	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", "");
@@ -195,6 +195,31 @@ std::u16string utf8to16(std::string_view text) {
 		out += c;
 	}
 	return out;
+}
+
+void unlaunchBootDSiWare(void) {
+	std::u16string path(previousUsedDevice ? u"sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : utf8to16(dsiWareSrlPath));
+	if (path.substr(0, 3) == u"sd:") {
+		path = u"sdmc:" + path.substr(3);
+	}
+
+	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	*(u16*)(0x0200080C) = 0x3F0;			// Unlaunch Length for CRC16 (fixed, must be 3F0h)
+	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
+	*(u32*)(0x02000810) |= BIT(0);			// Load the title at 2000838h
+	*(u32*)(0x02000810) |= BIT(1);			// Use colors 2000814h
+	*(u16*)(0x02000814) = 0x7FFF;			// Unlaunch Upper screen BG color (0..7FFFh)
+	*(u16*)(0x02000816) = 0x7FFF;			// Unlaunch Lower screen BG color (0..7FFFh)
+	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);	// Unlaunch Reserved (zero)
+	for (uint i = 0; i < std::min(path.length(), 0x103u); i++) {
+		((char16_t*)0x02000838)[i] = path[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+	}
+	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
+		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
+	}
+
+	fifoSendValue32(FIFO_USER_08, 1);	// Reboot
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 }
 
 std::vector<char*> argarray;
@@ -413,28 +438,53 @@ TWL_CODE int lastRunROM() {
 
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram);
 		} case 3: {
-			std::u16string path(previousUsedDevice ? u"sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : utf8to16(dsiWareSrlPath));
-			if (path.substr(0, 3) == u"sd:") {
-				path = u"sdmc:" + path.substr(3);
-			}
+			if (dsiWareBooter || consoleModel > 0) {
+				if (homebrewBootstrap) {
+					unlaunchBootDSiWare();
+				} else {
+					romfolder = romPath[previousUsedDevice];
+					while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+						romfolder.resize(romfolder.size()-1);
+					}
+					chdir(romfolder.c_str());
 
-			memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
-			*(u16*)(0x0200080C) = 0x3F0;			// Unlaunch Length for CRC16 (fixed, must be 3F0h)
-			*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
-			*(u32*)(0x02000810) |= BIT(0);			// Load the title at 2000838h
-			*(u32*)(0x02000810) |= BIT(1);			// Use colors 2000814h
-			*(u16*)(0x02000814) = 0x7FFF;			// Unlaunch Upper screen BG color (0..7FFFh)
-			*(u16*)(0x02000816) = 0x7FFF;			// Unlaunch Lower screen BG color (0..7FFFh)
-			memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);	// Unlaunch Reserved (zero)
-			for (uint i = 0; i < std::min(path.length(), 0x103u); i++) {
-				((char16_t*)0x02000838)[i] = path[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-			}
-			while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
-				*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-			}
+					filename = romPath[previousUsedDevice];
+					const size_t last_slash_idx = filename.find_last_of("/");
+					if (std::string::npos != last_slash_idx)
+					{
+						filename.erase(0, last_slash_idx + 1);
+					}
 
-			fifoSendValue32(FIFO_USER_08, 1);	// Reboot
-			for (int i = 0; i < 15; i++) swiWaitForVBlank();
+					loadPerGameSettings(filename);
+					bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
+
+					char ndsToBoot[256];
+					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
+					if(access(ndsToBoot, F_OK) != 0) {
+						sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
+					}
+
+					argarray.at(0) = (char *)ndsToBoot;
+					CIniFile bootstrapini(bootstrapinipath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", dsiWareSrlPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", dsiWarePubPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", dsiWarePrvPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", (perGameSettings_language == -2 ? gameLanguage : perGameSettings_language));
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", 5);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", 1);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", 0);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", 0);
+					bootstrapini.SaveIniFile(bootstrapinipath);
+
+					return runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);
+				}
+			} else {
+				unlaunchBootDSiWare();
+			}
 			break;
 		} case 4:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";

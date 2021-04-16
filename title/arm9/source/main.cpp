@@ -15,6 +15,7 @@
 #include "common/inifile.h"
 #include "common/nds_loader_arm9.h"
 #include "common/nitrofs.h"
+#include "ndsheaderbanner.h"
 #include "common/pergamesettings.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
@@ -52,13 +53,10 @@ bool hiyaAutobootFound = false;
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 const char *settingsinipath = DSIMENUPP_INI;
 
-typedef struct {
-	char gameTitle[12];			//!< 12 characters for the game title.
-	char gameCode[4];			//!< 4 characters for the game code.
-} sNDSHeadertitlecodeonly;
-
 char soundBank[0x7D000] = {0};
 bool soundBankInited = false;
+
+static sNDSHeaderExt NDSHeader;
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -344,9 +342,9 @@ void lastRunROM()
 			loadPerGameSettings(filename);
 
 			bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
+			bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
 			if (ms().homebrewBootstrap) {
-				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 				argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
 			} else {
 				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || ms().macroMode) {
@@ -442,8 +440,6 @@ void lastRunROM()
 					}
 				}
 
-				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
-
 				if (sdFound() && !ms().previousUsedDevice) {
 					argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds"));
 				} else {
@@ -462,6 +458,13 @@ void lastRunROM()
 					(perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM",
 					(perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram));
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
+					(ms().forceSleepPatch
+				|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !sys().isRegularDS())
+				|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !sys().isRegularDS())
+				|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
+				|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
+				);
 				bootstrapini.SaveIniFile( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
 			}
 			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true);
@@ -560,7 +563,160 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
+		if (ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0)
+		{
+			if (ms().homebrewBootstrap) {
+				unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
+			} else {
+				loadPerGameSettings(filename);
+
+				bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
+				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+
+				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || ms().macroMode) {
+					remove("/_nds/nds-bootstrap/wideCheatData.bin");
+				}
+
+				const char *typeToReplace = ".nds";
+				if (extention(filename, ".dsi")) {
+					typeToReplace = ".dsi";
+				} else if (extention(filename, ".ids")) {
+					typeToReplace = ".ids";
+				} else if (extention(filename, ".srl")) {
+					typeToReplace = ".srl";
+				} else if (extention(filename, ".app")) {
+					typeToReplace = ".app";
+				}
+
+				ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
+				ms().dsiWarePubPath = replaceAll(ms().romPath[ms().previousUsedDevice], typeToReplace, ".pub");
+				ms().dsiWarePrvPath = replaceAll(ms().romPath[ms().previousUsedDevice], typeToReplace, ".prv");
+				ms().saveSettings();
+
+				FILE *f_nds_file = fopen(filename.c_str(), "rb");
+
+				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+				fclose(f_nds_file);
+
+				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
+					consoleDemoInit();
+					iprintf("Creating public save file...\n");
+					iprintf ("\n");
+					if (ms().consoleModel >= 2) {
+						iprintf ("If this takes a while,\n");
+						iprintf ("press HOME, and press B.\n");
+					} else {
+						iprintf ("If this takes a while, close\n");
+						iprintf ("and open the console's lid.\n");
+					}
+					iprintf ("\n");
+					fadeType = true;
+
+					static const int BUFFER_SIZE = 4096;
+					char buffer[BUFFER_SIZE];
+					toncset(buffer, 0, sizeof(buffer));
+					char savHdrPath[64];
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr",
+						 (unsigned int)NDSHeader.pubSavSize);
+					FILE *hdrFile = fopen(savHdrPath, "rb");
+					if (hdrFile)
+						fread(buffer, 1, 0x200, hdrFile);
+					fclose(hdrFile);
+
+					FILE *pFile = fopen(ms().dsiWarePubPath.c_str(), "wb");
+					if (pFile) {
+						fwrite(buffer, 1, sizeof(buffer), pFile);
+						fseek(pFile, NDSHeader.pubSavSize - 1, SEEK_SET);
+						fputc('\0', pFile);
+						fclose(pFile);
+					}
+					iprintf("Public save file created!\n");
+
+					for (int i = 0; i < 30; i++) {
+						swiWaitForVBlank();
+					}
+					fadeType = false;
+					for (int i = 0; i < 25; i++) {
+						swiWaitForVBlank();
+					}
+				}
+
+				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
+					consoleDemoInit();
+					iprintf("Creating private save file...\n");
+					iprintf ("\n");
+					if (ms().consoleModel >= 2) {
+						iprintf ("If this takes a while,\n");
+						iprintf ("press HOME, and press B.\n");
+					} else {
+						iprintf ("If this takes a while, close\n");
+						iprintf ("and open the console's lid.\n");
+					}
+					iprintf ("\n");
+					fadeType = true;
+
+					static const int BUFFER_SIZE = 4096;
+					char buffer[BUFFER_SIZE];
+					toncset(buffer, 0, sizeof(buffer));
+					char savHdrPath[64];
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr",
+						 (unsigned int)NDSHeader.prvSavSize);
+					FILE *hdrFile = fopen(savHdrPath, "rb");
+					if (hdrFile)
+						fread(buffer, 1, 0x200, hdrFile);
+					fclose(hdrFile);
+
+					FILE *pFile = fopen(ms().dsiWarePrvPath.c_str(), "wb");
+					if (pFile) {
+						fwrite(buffer, 1, sizeof(buffer), pFile);
+						fseek(pFile, NDSHeader.prvSavSize - 1, SEEK_SET);
+						fputc('\0', pFile);
+						fclose(pFile);
+					}
+					iprintf("Private save file created!\n");
+
+					for (int i = 0; i < 30; i++) {
+						swiWaitForVBlank();
+					}
+					fadeType = false;
+					for (int i = 0; i < 25; i++) {
+						swiWaitForVBlank();
+					}
+				}
+
+				if (sdFound() && !ms().previousUsedDevice) {
+					argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds"));
+				} else {
+					argarray.push_back((char*)(useNightly ? "/_nds/nds-bootstrap-nightly.nds" : "/_nds/nds-bootstrap-release.nds"));
+				}
+				CIniFile bootstrapini((memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI_SD);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().dsiWareSrlPath);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", ms().dsiWarePubPath);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", ms().dsiWarePrvPath);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
+					(perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", 5);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", 1);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", 0);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", 0);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
+					(ms().forceSleepPatch
+				|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !sys().isRegularDS())
+				|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !sys().isRegularDS())
+				|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
+				|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
+				);
+				bootstrapini.SaveIniFile((memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI_SD);
+
+				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);
+			}
+		} else {
+			unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
+		}
 	}
 	else if (ms().launchType[ms().previousUsedDevice] == Launch::ENESDSLaunch)
 	{
