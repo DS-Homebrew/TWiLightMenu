@@ -92,6 +92,46 @@ int checkRomAP(FILE *ndsFile, int num)
 		return 0;
 	}
 
+	FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
+	if (file) {
+		char buf[5] = {0};
+		fread(buf, 1, 4, file);
+		if (strcmp(buf, ".PCK") == 0) { // Make sure correct file type
+			u32 fileCount;
+			fread(&fileCount, 1, sizeof(fileCount), file);
+
+			// Try binary search for the game
+			int left = 0;
+			int right = fileCount;
+
+			while (left <= right) {
+				int mid = left + ((right - left) / 2);
+				fseek(file, 16 + mid * 16, SEEK_SET);
+				fread(buf, 1, 4, file);
+				int cmp = strcmp(buf, gameTid[num]);
+				if (cmp == 0) { // TID matches, check CRC
+					u16 crc;
+					fread(&crc, 1, sizeof(crc), file);
+
+					if (crc == headerCRC[num]) { // CRC matches
+						fclose(file);
+						return 0;
+					} else if (crc < headerCRC[num]) {
+						left = mid + 1;
+					} else {
+						right = mid - 1;
+					}
+				} else if (cmp < 0) {
+					left = mid + 1;
+				} else {
+					right = mid - 1;
+				}
+			}
+		}
+
+		fclose(file);
+	}
+
 	// Check for SDK4-5 ROMs that don't have AP measures.
 	if ((memcmp(gameTid[num], "AZLJ", 4) == 0)	// Girls Mode (JAP version of Style Savvy)
 	 || (memcmp(gameTid[num], "YEEJ", 4) == 0)	// Inazuma Eleven (Japan)

@@ -6,9 +6,9 @@ PACKAGE		:=	7zfile
 #---------------------------------------------------------------------------------
 # Goals for Build
 #---------------------------------------------------------------------------------
-.PHONY: all package booter booter_fc gbapatcher quickmenu manual romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+.PHONY: all package booter booter_fc gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
-all:	booter booter_fc gbapatcher quickmenu manual romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+all:	booter booter_fc gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
 package:
 	@$(MAKE) -C booter dist
@@ -16,6 +16,7 @@ package:
 	@$(MAKE) -C gbapatcher dist
 	@$(MAKE) -C quickmenu dist
 	@$(MAKE) -C manual dist
+	@$(MAKE) -C resources
 	#@$(MAKE) -C romsel_aktheme dist
 	@$(MAKE) -C romsel_dsimenutheme dist
 	@$(MAKE) -C romsel_r4theme dist
@@ -41,6 +42,9 @@ quickmenu:
 
 manual:
 	@$(MAKE) -C manual
+
+resources:
+	@$(MAKE) -C resources
 
 romsel_aktheme:
 	@$(MAKE) -C romsel_aktheme
