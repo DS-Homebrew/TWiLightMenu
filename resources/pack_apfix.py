@@ -1,31 +1,34 @@
 #!/usr/bin/env python
 
+import argparse
 import os
 import struct
 import sys
 
+parser = argparse.ArgumentParser(description="Packs many small files into a single file for TWiLight Menu++")
+parser.add_argument("dirs", metavar="inputs", type=str, nargs="+", help="directories to include from")
+parser.add_argument("-o", "--output", metavar="output.pck", type=str, nargs=1, help="file to output to", required=True)
+
+args = parser.parse_args()
+
 files = []
-data = []
 
 # Get list of files and data from them
-dirlist = os.listdir("apfix")
-dirlist += os.listdir(os.path.join("apfix", "cht"))
-dirlist.sort()
-for file in dirlist:
-	if not file[-3:] in ["ips", "bin"]:
-		continue
+for dir in args.dirs:
+	for file in os.listdir(dir):
+		if not file[-3:] in ["ips", "bin"]:
+			continue
 
-	files.append(file)
+		with open(os.path.join(dir, file), "rb") as f:
+			files.append({
+				"name": file,
+				"data": f.read()
+			})
 
-	if os.path.exists(os.path.join("apfix", file)):
-		with open(os.path.join("apfix", file), "rb") as f:
-			data.append(f.read())
-	else:
-		with open(os.path.join("apfix", "cht", file), "rb") as f:
-			data.append(f.read())
+files = sorted(files, key=lambda x: x["name"])
 
 # Write file
-with open(os.path.join("..", "7zfile", "_nds", "TWiLightMenu", "extras", "apfix.pck"), "wb") as f:
+with open(args.output[0], "wb") as f:
 	f.write(b".PCK") # Format magic
 	f.write(struct.pack("<l", len(files))) # File count
 	f.write(b"\x00" * 8) # Padding
@@ -34,15 +37,15 @@ with open(os.path.join("..", "7zfile", "_nds", "TWiLightMenu", "extras", "apfix.
 	position = 16 + len(files) * 16
 
 	# Write file list
-	for i, file in enumerate(files):
+	for file in files:
 		if sys.version_info[0] == 3:
-			f.write(bytes(file[:4], "ASCII")) # TID
+			f.write(bytes(file["name"][:4], "ASCII")) # TID
 		else:
-			f.write(file[:4]) # TID
+			f.write(file["name"][:4]) # TID
 		# Header CRC-16, Position of data, Size of data, Flags (bit 0 is cheat), Padding
-		f.write(struct.pack("<Hllbx", int(file[5:file.find(".")], 16), position, len(data[i]), 1 if file[-3:] == "bin" else 0))
-		position += len(data[i])
+		f.write(struct.pack("<Hllbx", int(file["name"][5:file["name"].find(".")], 16), position, len(file["data"]), 1 if file["name"][-3:] == "bin" else 0))
+		position += len(file["data"])
 
 	# Write data
-	for d in data:
-		f.write(d)
+	for file in files:
+		f.write(file["data"])
