@@ -15,8 +15,6 @@
 
 extern bool useTwlCfg;
 
-const char *languageIniPath;
-
 /**
  * Get strings from the ini with special processing
  */
@@ -55,6 +53,37 @@ std::string getString(CIniFile &ini, const std::string &item, const std::string 
 				case 'R':
 					out = out.substr(0, i) + "" + out.substr(i + 2); // U+E005
 					break;
+				case 'd':
+				case 'D':
+					switch(out[i + 2]) {
+						default:
+							out = out.substr(0, i) + "" + out.substr(i + 2); // U+E006
+							break;
+						case 'u':
+						case 'U':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E079
+							break;
+						case 'd':
+						case 'D':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E07A
+							break;
+						case 'l':
+						case 'L':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E07B
+							break;
+						case 'r':
+						case 'R':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E07C
+							break;
+						case 'v':
+						case 'V':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E07D
+							break;
+						case 'h':
+						case 'H':
+							out = out.substr(0, i) + "" + out.substr(i + 3); // U+E07E
+							break;
+					}
 				default:
 					break;
 			}
@@ -76,75 +105,8 @@ std::string getString(CIniFile &ini, const std::string &item, const std::string 
  */
 void langInit(void)
 {
-	int userLanguage = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
-	int setLanguage = (ms().getGuiLanguage() == -1) ? userLanguage : ms().getGuiLanguage();
-
-	switch (setLanguage) {
-		case TWLSettings::ELangJapanese:
-			languageIniPath = "nitro:/languages/japanese.ini";
-			break;
-		case TWLSettings::ELangEnglish:
-		default:
-			languageIniPath = "nitro:/languages/english.ini";
-			break;
-		case TWLSettings::ELangFrench:
-			languageIniPath = "nitro:/languages/french.ini";
-			break;
-		case TWLSettings::ELangGerman:
-			languageIniPath = "nitro:/languages/german.ini";
-			break;
-		case TWLSettings::ELangItalian:
-			languageIniPath = "nitro:/languages/italian.ini";
-			break;
-		case TWLSettings::ELangSpanish:
-			languageIniPath = "nitro:/languages/spanish.ini";
-			break;
-		case TWLSettings::ELangChineseS:
-			languageIniPath = "nitro:/languages/chinese_s.ini";
-			break;
-		case TWLSettings::ELangKorean:
-			languageIniPath = "nitro:/languages/korean.ini";
-			break;
-		case TWLSettings::ELangChineseT:
-			languageIniPath = "nitro:/languages/chinese_t.ini";
-			break;
-		case TWLSettings::ELangPolish:
-			languageIniPath = "nitro:/languages/polish.ini";
-			break;
-		case TWLSettings::ELangPortuguese:
-			languageIniPath = "nitro:/languages/portuguese.ini";
-			break;
-		case TWLSettings::ELangRussian:
-			languageIniPath = "nitro:/languages/russian.ini";
-			break;
-		case TWLSettings::ELangSwedish:
-			languageIniPath = "nitro:/languages/swedish.ini";
-			break;
-		case TWLSettings::ELangDanish:
-			languageIniPath = "nitro:/languages/danish.ini";
-			break;
-		case TWLSettings::ELangTurkish:
-			languageIniPath = "nitro:/languages/turkish.ini";
-			break;
-		case TWLSettings::ELangUkrainian:
-			languageIniPath = "nitro:/languages/ukrainian.ini";
-			break;
-		case TWLSettings::ELangHungarian:
-			languageIniPath = "nitro:/languages/hungarian.ini";
-			break;
-		case TWLSettings::ELangNorwegian:
-			languageIniPath = "nitro:/languages/norwegian.ini";
-			break;
-		case TWLSettings::ELangHebrew:
-			languageIniPath = "nitro:/languages/hebrew.ini";
-			break;
-		case TWLSettings::ELangDutch:
-			languageIniPath = "nitro:/languages/dutch.ini";
-			break;
-		case TWLSettings::ELangIndonesian:
-			languageIniPath = "nitro:/languages/indonesian.ini";
-			break;
-	}
+	char languageIniPath[64];
+	snprintf(languageIniPath, sizeof(languageIniPath), "nitro:/languages/%s/language.ini", ms().getGuiLanguageString().c_str());
 
 	CIniFile languageini(languageIniPath);
 

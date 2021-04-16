@@ -27,6 +27,7 @@
 #include <sys/stat.h>
 #include <gl2d.h>
 #include "common/tonccpy.h"
+#include "common/dsimenusettings.h"
 #include "graphics/graphics.h"
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
@@ -771,7 +772,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 			fclose(bannerFile);
 
-			tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE*sizeof(u16));
+			tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
 
 			return;
 		}
@@ -787,7 +788,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
 
-				tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE*sizeof(u16));
+				tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
 
 				return;
 			}
@@ -817,7 +818,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 					fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 					fclose(bannerFile);
 
-					tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE*sizeof(u16));
+					tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
 
 					return;
 				}
@@ -831,9 +832,9 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 		int currentLang = 0;
 		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
-			currentLang = setGameLanguage;
+			currentLang = ms().getGameLanguage();
 		} else {
-			currentLang = setTitleLanguage;
+			currentLang = ms().getTitleLanguage();
 		}
 		while (ndsBanner.titles[currentLang][0] == 0) {
 			if (currentLang == 0) break;

@@ -2,64 +2,36 @@
 #include <stdio.h>
 #include <maxmod9.h>
 
-#include "common/systemdetails.h"
+// #include "autoboot.h"
 #include "common/dsimenusettings.h"
-#include "graphics/ThemeTextures.h"
-#include "graphics/lodepng.h"
-//#include "autoboot.h"
+#include "common/systemdetails.h"
+#include "common/tonccpy.h"
+#include "graphics/fontHandler.h"
+// #include "graphics/ThemeTextures.h"
+#include "language.h"
 #include "sound.h"
 
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
 
-
 extern bool boxArtColorDeband;
 extern bool rocketVideo_playVideo;
 extern bool showdialogbox;
 extern float dbox_Ypos;
 
-
-vu16* sdRemovedExtendedImage = (vu16*)0x02EC8000;
-vu16* sdRemovedImage = (vu16*)0x02EE0000;
-
 static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
-
-void loadSdRemovedImage(void) {
-	uint imageWidth, imageHeight;
-	std::vector<unsigned char> image;
-	char sdRemovedError[40];
-	char sdRemoved[40];
-	sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_%i.png", ms().guiLanguage);
-	sprintf(sdRemoved, "nitro:/graphics/sdRemoved_%i.png", ms().guiLanguage);
-	if (access(sdRemovedError, F_OK) != 0 || access(sdRemoved, F_OK) != 0) {
-		sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_1.png");
-		sprintf(sdRemoved, "nitro:/graphics/sdRemoved_1.png");
-	}
-
-	lodepng::decode(image, imageWidth, imageHeight, sdRemovedError);
-
-	for(uint i=0;i<image.size()/4;i++) {
-		sdRemovedExtendedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-	}
-
-	image.clear();
-	lodepng::decode(image, imageWidth, imageHeight, sdRemoved);
-
-	for(uint i=0;i<image.size()/4;i++) {
-		sdRemovedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-	}
-}
 
 void checkSdEject(void) {
 	if (!ms().sdRemoveDetect) return;
 
 	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode()) {
-		timeTillChangeToNonExtendedImage++;
-		if (timeTillChangeToNonExtendedImage > 10) {
-			showNonExtendedImage = true;
-			timeTillChangeToNonExtendedImage = 10;
+		if(!showNonExtendedImage) {
+			timeTillChangeToNonExtendedImage++;
+			if (timeTillChangeToNonExtendedImage > 10) {
+				showNonExtendedImage = true;
+			}
 		}
 		return;
 	}
@@ -75,13 +47,30 @@ void checkSdEject(void) {
 	snd().stopStream();
 	mmEffectCancelAll();
 
-	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
+	videoSetMode(MODE_5_2D | DISPLAY_BG2_ACTIVE);
+	videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
 
 	REG_BLDY = 0;
 
-	dmaCopyWordsAsynch(0, (void*)(showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), BG_GFX, 0x18000);
-	dmaFillWords(1, BG_GFX_SUB, 0x18000);
+	// Change to white text palette
+	u16 palette[] = {
+		0x0000,
+		0xB9CE,
+		0xD6B5,
+		0xFFFF,
+	};
+	tonccpy(BG_PALETTE, palette, sizeof(palette));
+	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
+
+	clearText();
+
+	if(showNonExtendedImage) {
+		printLarge(false, 0, 45, STR_SD_WAS_REMOVED, Alignment::center);
+		printLarge(false, 0, 75, STR_REINSERT_SD_CARD, Alignment::center);
+	} else {
+		printLarge(false, 0, 37, STR_ERROR_HAS_OCCURRED, Alignment::center);
+		printSmall(false, 0, 67, STR_DISABLE_SD_REMOVAL_CHECK, Alignment::center);
+	}
 
 	while(1) {
 		// Currently not working

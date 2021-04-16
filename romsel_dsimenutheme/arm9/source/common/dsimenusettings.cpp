@@ -28,7 +28,7 @@ TWLSettings::TWLSettings()
 	gotosettings = false;
 
 	guiLanguage = ELangDefault;
-    macroMode = false;
+	macroMode = false;
 	titleLanguage = -1;
 	fps = 60;
 	colorMode = 0;
@@ -80,7 +80,7 @@ TWLSettings::TWLSettings()
 	boostVram = false;
 	bstrap_dsiMode = EDSMode;
 	cardReadDMA = true;
-    extendedMemory = 0;
+	extendedMemory = 0;
 
 	forceSleepPatch = false;
 	slot1SCFGUnlock = false;
@@ -106,8 +106,8 @@ TWLSettings::TWLSettings()
 	dsi_theme = "dark";
 	_3ds_theme = "light";
 	
-    gbaBorder = "default.png";
-    unlaunchBg = "default.gif";
+	gbaBorder = "default.png";
+	unlaunchBg = "default.gif";
 	font = "default";
 
 	soundfreq = EFreq32KHz;
@@ -234,8 +234,8 @@ void TWLSettings::loadSettings()
 
 	dsi_theme = settingsini.GetString("SRLOADER", "DSI_THEME", dsi_theme);
 	_3ds_theme = settingsini.GetString("SRLOADER", "3DS_THEME", _3ds_theme);
-    unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
-    gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
+	unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
+	gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
 	charUnlaunchBg = unlaunchBg.c_str();
 	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
 	font = settingsini.GetString("SRLOADER", "FONT", font);
@@ -296,6 +296,75 @@ TWLSettings::TLanguage TWLSettings::getGuiLanguage()
 		return (TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 	}
 	return (TLanguage)guiLanguage;
+}
+
+TWLSettings::TLanguage TWLSettings::getGameLanguage()
+{
+	if (gameLanguage == ELangDefault)
+	{
+		extern bool useTwlCfg;
+		return (TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
+	}
+	return (TLanguage)gameLanguage;
+}
+
+TWLSettings::TLanguage TWLSettings::getTitleLanguage()
+{
+	if (titleLanguage == ELangDefault)
+	{
+		return (TLanguage)PersonalData->language;
+	}
+	return (TLanguage)gameLanguage;
+}
+
+std::string TWLSettings::getGuiLanguageString()
+{
+	switch (getGuiLanguage())
+	{
+		case TWLSettings::ELangJapanese:
+			return "ja";
+		case TWLSettings::ELangEnglish:
+		default:
+			return "en";
+		case TWLSettings::ELangFrench:
+			return "fr";
+		case TWLSettings::ELangGerman:
+			return "de";
+		case TWLSettings::ELangItalian:
+			return "it";
+		case TWLSettings::ELangSpanish:
+			return "es";
+		case TWLSettings::ELangChineseS:
+			return "zh-CN";
+		case TWLSettings::ELangKorean:
+			return "ko";
+		case TWLSettings::ELangChineseT:
+			return "zh-TW";
+		case TWLSettings::ELangPolish:
+			return "pl";
+		case TWLSettings::ELangPortuguese:
+			return "pt";
+		case TWLSettings::ELangRussian:
+			return "ru";
+		case TWLSettings::ELangSwedish:
+			return "sv";
+		case TWLSettings::ELangDanish:
+			return "da";
+		case TWLSettings::ELangTurkish:
+			return "tr";
+		case TWLSettings::ELangUkrainian:
+			return "uk";
+		case TWLSettings::ELangHungarian:
+			return "hu";
+		case TWLSettings::ELangNorwegian:
+			return "no";
+		case TWLSettings::ELangHebrew:
+			return "he";
+		case TWLSettings::ELangDutch:
+			return "nl";
+		case TWLSettings::ELangIndonesian:
+			return "id";
+	}
 }
 
 bool TWLSettings::rtl()

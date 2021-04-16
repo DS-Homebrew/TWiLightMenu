@@ -41,7 +41,7 @@ private:
     switch (language)
     {
     case TWLSettings::ELangJapanese:
-      return "lang_jp";
+      return "lang_ja";
     case TWLSettings::ELangEnglish:
       return "lang_en";
     case TWLSettings::ELangFrench:
@@ -53,11 +53,11 @@ private:
     case TWLSettings::ELangSpanish:
       return "lang_es";
     case TWLSettings::ELangChineseS:
-      return "lang_cn";
+      return "lang_zh-CN";
     case TWLSettings::ELangKorean:
       return "lang_ko";
     case TWLSettings::ELangChineseT:
-      return "lang_zh";
+      return "lang_zh-TW";
     case TWLSettings::ELangPolish:
       return "lang_pl";
     case TWLSettings::ELangPortuguese:

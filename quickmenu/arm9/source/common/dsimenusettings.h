@@ -133,6 +133,14 @@ class TWLSettings
     void saveSettings();
 
     TLanguage getGuiLanguage();
+    TLanguage getTitleLanguage();
+    TLanguage getGameLanguage();
+
+    std::string getGuiLanguageString();
+
+    // Get if the current language is right to left
+    bool rtl();
+
     const char* getAppName();
   public:
     std::string romfolder;
@@ -141,6 +149,7 @@ class TWLSettings
     int startMenu_cursorPosition;
     int consoleModel;
     int guiLanguage;
+    int titleLanguage;
     int colorMode;
     int blfLevel;
     bool wifiLed;

@@ -114,10 +114,10 @@ public:
 		EStellaDSLaunch = 9,
 		EPicoDriveTWLLaunch = 10,
 		EGBANativeLaunch = 11,
-        EA7800DSLaunch = 12,
-        EA5200DSLaunch = 13,
-        ENitroGrafxLaunch = 14,
-        EXEGSDSLaunch = 15
+		EA7800DSLaunch = 12,
+		EA5200DSLaunch = 13,
+		ENitroGrafxLaunch = 14,
+		EXEGSDSLaunch = 15
 	};
 
 	/*
@@ -149,6 +149,10 @@ public:
 	void saveSettings();
 
 	TLanguage getGuiLanguage();
+	TLanguage getTitleLanguage();
+	TLanguage getGameLanguage();
+
+	std::string getGuiLanguageString();
 
 	// Get if the current language is right to left
 	bool rtl();
@@ -212,7 +216,7 @@ public:
 	bool boostVram;
 	int bstrap_dsiMode;
 	bool cardReadDMA;
-    int extendedMemory;
+	int extendedMemory;
 
 	bool forceSleepPatch;
 	bool slot1SCFGUnlock;
@@ -244,9 +248,9 @@ public:
 	std::string r4_theme;
 	std::string dsi_theme;
 	std::string _3ds_theme;
-    std::string gbaBorder;
-    std::string unlaunchBg;
-    std::string font;
+	std::string gbaBorder;
+	std::string unlaunchBg;
+	std::string font;
 
 	bool wideScreen;
 

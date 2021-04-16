@@ -62,6 +62,8 @@ ipch/
 7zfile/_nds/TWiLightMenu/extras/widescreen.pck
 
 # Crowdin In-Context
+manual/nitrofiles/languages/ic
 romsel_aktheme/nitrofiles/language/lang_ic
-romsel_dsimenutheme/nitrofiles/languages/In-Context.ini
-settings/nitrofiles/languages/In-Context.ini
+romsel_dsimenutheme/nitrofiles/languages/ic
+settings/nitrofiles/languages/ic
+title/nitrofiles/languages/ic

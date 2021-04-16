@@ -354,6 +354,55 @@ TWLSettings::TLanguage TWLSettings::getGuiLanguage()
     return (TLanguage)currentLanguage;
 }
 
+std::string TWLSettings::getGuiLanguageString()
+{
+    switch (getGuiLanguage()) {
+        case TWLSettings::ELangJapanese:
+            return "ja";
+        case TWLSettings::ELangEnglish:
+        default:
+            return "en";
+        case TWLSettings::ELangFrench:
+            return "fr";
+        case TWLSettings::ELangGerman:
+            return "de";
+        case TWLSettings::ELangItalian:
+            return "it";
+        case TWLSettings::ELangSpanish:
+            return "es";
+        case TWLSettings::ELangChineseS:
+            return "zh-CN";
+        case TWLSettings::ELangKorean:
+            return "ko";
+        case TWLSettings::ELangChineseT:
+            return "zh-TW";
+        case TWLSettings::ELangPolish:
+            return "pl";
+        case TWLSettings::ELangPortuguese:
+            return "pt";
+        case TWLSettings::ELangRussian:
+            return "ru";
+        case TWLSettings::ELangSwedish:
+            return "sv";
+        case TWLSettings::ELangDanish:
+            return "da";
+        case TWLSettings::ELangTurkish:
+            return "tr";
+        case TWLSettings::ELangUkrainian:
+            return "uk";
+        case TWLSettings::ELangHungarian:
+            return "hu";
+        case TWLSettings::ELangNorwegian:
+            return "no";
+        case TWLSettings::ELangHebrew:
+            return "he";
+        case TWLSettings::ELangDutch:
+            return "nl";
+        case TWLSettings::ELangIndonesian:
+            return "id";
+    }
+}
+
 bool TWLSettings::rtl()
 {
 	return currentLanguage == ELangHebrew;

@@ -159,3 +159,9 @@ STRING(CHEATS_DESELECTED, "\\A Select  \\X Save  \\B Cancl")
 STRING(CHEATS_FOLDER_INFO, "\\A Open  \\Y Info  \\X Save  \\B Cancel")
 STRING(CHEATS_SELECTED_INFO, "\\A Deslct  \\Y Info  \\X Save  \\B Cancl")
 STRING(CHEATS_DESELECTED_INFO, "\\A Slct  \\Y Info  \\X Save  \\B Cancl")
+
+// SD removal errors
+STRING(ERROR_HAS_OCCURRED, "An error has occurred.")
+STRING(DISABLE_SD_REMOVAL_CHECK, "Please turn off the power, turn\nthe power back on, relaunch\nTWiLight Menu++, hold SELECT to\nopen TWLMenu++ Settings, and\ndisable SD removal detection.")
+STRING(SD_WAS_REMOVED, "The SD card was removed.")
+STRING(REINSERT_SD_CARD, "Please press POWER to turn off\nthe power, reinsert the SD card,\nthen turn the power back on.")

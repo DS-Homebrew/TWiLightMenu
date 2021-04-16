@@ -1,168 +1,37 @@
+#include <algorithm>
 #include <nds.h>
 
-#include "graphics/bios_decompress_callback.h"
-#include "common/dsimenusettings.h"
 #include "bootstrapsettings.h"
+#include "common/dsimenusettings.h"
+#include "graphics/bios_decompress_callback.h"
+#include "graphics/fontHandler.h"
+#include "graphics/gif.hpp"
 #include "graphics/graphics.h"
-
-#define CONSOLE_SCREEN_WIDTH 32
-#define CONSOLE_SCREEN_HEIGHT 24
+#include "language.h"
 
 extern bool useTwlCfg;
 
 extern bool fadeType;
-extern bool controlTopBright;
 
-void LoadConsoleBMP(int consoleModel) {
-	FILE* file;
-	int language = ms().guiLanguage;
-	if (ms().guiLanguage == -1) {
-		language = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
-	}
-
-	switch (consoleModel) {
-		case 0:
-		default:
-			file = fopen("nitro:/graphics/dsi.bmp", "rb");
-			break;
-		case 1:
-			file = fopen("nitro:/graphics/devdsi.bmp", "rb");
-			break;
-		case 2:
-			file = fopen("nitro:/graphics/o3ds.bmp", "rb");
-			break;
-	}
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(frameBuffer[0], 1, 0x18000, file);
-		u16* src = frameBuffer[0];
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-			x++;
-		}
-	}
-
-	fclose(file);
-
-	//if french
-	if (language == 2){
-		switch (consoleModel) {
-			case 0:
-			default:
-				file = fopen("nitro:/graphics/consoleseltext_dsi-fr.bmp", "rb");
-				break;
-			case 1:
-				file = fopen("nitro:/graphics/consoleseltext_devdsi-fr.bmp", "rb");
-				break;
-			case 2:
-				file = fopen("nitro:/graphics/consoleseltext_3ds-fr.bmp", "rb");
-				break;
-		}
-	}
-	else {
-		switch (consoleModel) {
-			case 0:
-			default:
-				file = fopen("nitro:/graphics/consoleseltext_dsi.bmp", "rb");
-				break;
-			case 1:
-				file = fopen("nitro:/graphics/consoleseltext_devdsi.bmp", "rb");
-				break;
-			case 2:
-				file = fopen("nitro:/graphics/consoleseltext_3ds.bmp", "rb");
-				break;
-		}
-	}
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(frameBuffer[0], 1, 0x18000, file);
-		u16* src = frameBuffer[0];
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-			x++;
-		}
-	}
-
-	fclose(file);
-
+void LoadConsoleImage(int consoleModel) {
+	Gif gif(consoleModel == 1 ? "nitro:/graphics/devdsi.gif" : "nitro:/graphics/o3ds.gif", true, false);
+	gif.displayFrame();
 }
 
 bool consoleModel_isSure(void) {
 	int isSure_pressed = 0;
 
-	controlTopBright = false;
-	fadeType = false;
-	for (int i = 0; i < 90; i++) {
-		swiWaitForVBlank();
-	}
-
-	//Get the language for the splash screen
-	int language = ms().guiLanguage;
-	if (ms().guiLanguage == -1) {
-		language = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
-	}
-	FILE* file;
-
-	//If not french, then fallback to english
-	if(language == 2){
-		file = fopen("nitro:/graphics/consoleseltext_areyousure-fr.bmp", "rb");
-	}
-	else {
-		file = fopen("nitro:/graphics/consoleseltext_areyousure.bmp", "rb");
-	}
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(frameBuffer[0], 1, 0x18000, file);
-		u16* src = frameBuffer[0];
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-			x++;
-		}
-	}
-
-	fclose(file);
-
-	fadeType = true;
-	for (int i = 0; i < 25; i++) {
-		swiWaitForVBlank();
-	}
 	while (1) {
+		clearText();
+		printLarge(false, 0, 31, STR_ARE_YOU_SURE, Alignment::center);
+		printSmall(false, 0, 88 - ((calcSmallFontHeight(STR_SELECTING_WRONG) - smallFontHeight()) / 2), STR_SELECTING_WRONG, Alignment::center);
+		printSmall(false, 0, 146, STR_B_NO_A_YES, Alignment::center);
+		updateText(false);
+
+		fadeType = true;
+
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
-		do
-		{
+		do {
 			scanKeys();
 			isSure_pressed = keysDown();
 			swiWaitForVBlank();
@@ -170,7 +39,6 @@ bool consoleModel_isSure(void) {
 		while (!isSure_pressed);
 
 		if (isSure_pressed & KEY_A) {
-			controlTopBright = true;
 			fadeType = false;
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
@@ -185,57 +53,53 @@ bool consoleModel_isSure(void) {
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
 			}
-			LoadConsoleBMP(ms().consoleModel);
-			fadeType = true;
-			for (int i = 0; i < 25; i++) {
-				swiWaitForVBlank();
-			}
 			return false;
 		}
 	}
 }
 
 void consoleModelSelect(void) {
-	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
-	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
-	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256;
-	REG_BG3X = 0;
-	REG_BG3Y = 0;
-	REG_BG3PA = 1<<8;
-	REG_BG3PB = 0;
-	REG_BG3PC = 0;
-	REG_BG3PD = 1<<8;
+	videoSetMode(MODE_5_2D);
+	videoSetModeSub(MODE_5_2D);
 
-	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
-	REG_BG3X_SUB = 0;
-	REG_BG3Y_SUB = 0;
-	REG_BG3PA_SUB = 1<<8;
-	REG_BG3PB_SUB = 0;
-	REG_BG3PC_SUB = 0;
-	REG_BG3PD_SUB = 1<<8;
+	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankC(VRAM_C_SUB_BG);
+	
+	bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(3, 3);
+	bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(2, 2);
+	bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(7, 3);
+	bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(6, 2);
 
-	if (ms().consoleModel < 1 || ms().consoleModel > 2) {
-		ms().consoleModel = 2;
-	}
+	fontInit();
+	langInit();
 
-	LoadConsoleBMP(ms().consoleModel);
+	LoadConsoleImage(ms().consoleModel);
 
 	int pressed = 0;
-	//touchPosition touch;
+	// touchPosition touch;
 
-	fadeType = true;
-	for (int i = 0; i < 25; i++) {
-		swiWaitForVBlank();
-	}
+	Gif bg("nitro:/graphics/consolesel_bg.gif", false, false);
+	bg.displayFrame();
+
 	while (1) {
+		clearText();
+		printSmall(false, 0, 31, STR_SELECT_CONSOLE, Alignment::center);
+		std::string &consoleStr = ms().consoleModel == 1 ? STR_DSI_PANDA : STR_3DS_2DS;
+		printLarge(false, 0, 88 - ((calcLargeFontHeight(consoleStr) - largeFontHeight()) / 2), consoleStr, Alignment::center);
+		printSmall(false, 0, 146, STR_LR_CHOOSE_A_SELECT, Alignment::center);
+		updateText(false);
+
+		fadeType = true;
+
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
-		do
-		{
+		do {
 			scanKeys();
 			pressed = keysDown();
-			//touchRead(&touch);
+			// touchRead(&touch);
 			swiWaitForVBlank();
 		}
 		while (!pressed);
@@ -245,17 +109,21 @@ void consoleModelSelect(void) {
 			if (ms().consoleModel < 1) {
 				ms().consoleModel = 2;
 			}
-			LoadConsoleBMP(ms().consoleModel);
+			LoadConsoleImage(ms().consoleModel);
 		}
 		if (pressed & KEY_RIGHT) {
 			ms().consoleModel++;
 			if (ms().consoleModel > 2) {
 				ms().consoleModel = 1;
 			}
-			LoadConsoleBMP(ms().consoleModel);
+			LoadConsoleImage(ms().consoleModel);
 		}
 
 		if (pressed & KEY_A) {
+			fadeType = false;
+			for (int i = 0; i < 25; i++) {
+				swiWaitForVBlank();
+			}
 			if (consoleModel_isSure()) {
 				break;
 			}

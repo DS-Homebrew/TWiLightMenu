@@ -130,6 +130,7 @@ class TWLSettings
     void saveSettings();
 
     TLanguage getGuiLanguage();
+    std::string getGuiLanguageString();
   public:
     std::string romfolder;
     int pagenum;
