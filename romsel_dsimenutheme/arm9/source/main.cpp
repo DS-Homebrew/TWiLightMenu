@@ -698,13 +698,17 @@ void gbaSramAccess(bool open) {
 }
 
 int main(int argc, char **argv) {
-	/*SetBrightness(0, 0);
-	SetBrightness(1, 0);
-	consoleDemoInit();*/
-
 	defaultExceptionHandler();
 	sys().initFilesystem();
 	sys().initArm7RegStatuses();
+
+	if (!sys().fatInitOk()) {
+		SetBrightness(0, 0);
+		SetBrightness(1, 0);
+		consoleDemoInit();
+		iprintf("FAT init failed!");
+		stop();
+	}
 
 	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
 		settingsinipath =
@@ -737,54 +741,6 @@ int main(int argc, char **argv) {
 
 	//printf("Username copied\n");
 	tonccpy(usernameRendered, (useTwlCfg ? (s16*)0x02000448 : PersonalData->name), sizeof(s16) * 10);
-
-	if (!sys().fatInitOk()) {
-		graphicsInit();
-		fontInit();
-		whiteScreen = false;
-		fadeType = true;
-		for (int i = 0; i < 5; i++)
-			swiWaitForVBlank();
-		if (!dropDown && ms().theme == 0) {
-			dropDown = true;
-			for (int i = 0; i < 72; i++) 
-				swiWaitForVBlank();
-		} else {
-			for (int i = 0; i < 25; i++)
-				swiWaitForVBlank();
-		}
-		currentBg = 1;
-		printLarge(false, 0, 32, "fatInitDefault failed!", Alignment::center);
-
-		// Control the DSi Menu, but can't launch anything.
-		int pressed = 0;
-
-		while (1) {
-			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing
-			// else to do
-			do {
-				scanKeys();
-				pressed = keysDownRepeat();
-				snd().updateStream();
-				swiWaitForVBlank();
-			} while (!pressed);
-
-			if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
-				CURPOS -= 1;
-				if (CURPOS >= 0)
-					titleboxXmoveleft = true;
-			} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
-				CURPOS += 1;
-				if (CURPOS <= 39)
-					titleboxXmoveright = true;
-			}
-			if (CURPOS < 0) {
-				CURPOS = 0;
-			} else if (CURPOS > 39) {
-				CURPOS = 39;
-			}
-		}
-	}
 
 	if (sdFound()) statvfs("sd:/", &st[0]);
 	if (flashcardFound()) statvfs("fat:/", &st[1]);

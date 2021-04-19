@@ -1039,11 +1039,7 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
-
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
-
-	graphicsInit();
 
 	extern const DISC_INTERFACE __my_io_dsisd;
 
@@ -1055,11 +1051,16 @@ int main(int argc, char **argv) {
 	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
 
 	if (!fatInited) {
-		fontInit();
-		printSmall(false, 64, 32, "fatinitDefault failed!");
-		fadeType = true;
+		SetBrightness(0, 0);
+		SetBrightness(1, 0);
+		consoleDemoInit();
+		iprintf("FAT init failed!");
 		stop();
 	}
+
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+
+	graphicsInit();
 
 	if (sdFound()) statvfs("sd:/", &st[0]);
 	if (flashcardFound()) statvfs("fat:/", &st[1]);

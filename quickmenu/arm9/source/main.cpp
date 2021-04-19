@@ -1083,6 +1083,14 @@ int main(int argc, char **argv) {
 	*(u32*)(0x2FFFD0C) = 0;
 	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
 
+	if (!fatInited) {
+		SetBrightness(0, 0);
+		SetBrightness(1, 0);
+		consoleDemoInit();
+		iprintf("FAT init failed!");
+		stop();
+	}
+
 	// Read user name
 	/*char *username = (char*)PersonalData->name;
 		
@@ -1094,15 +1102,6 @@ int main(int argc, char **argv) {
 			username[i*2/2] = username[i*2];
 	}*/
 	
-	if (!fatInited) {
-		graphicsInit();
-		fontInit();
-		whiteScreen = true;
-		printSmall(false, 64, 32, "fatinitDefault failed!");
-		fadeType = true;
-		stop();
-	}
-
 	nitroFSInit("/_nds/TWiLightMenu/mainmenu.srldr");
 
 	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
