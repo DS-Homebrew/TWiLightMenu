@@ -804,7 +804,7 @@ void smsWarning(void) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmall(false, 0, 64, STR_SMS_WARNING, Alignment::center);
-	printSmall(false, 240, 160, STR_A_OK, Alignment::center);
+	printSmall(false, 0, 160, STR_A_OK, Alignment::center);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -865,7 +865,7 @@ void mdRomTooBig(void) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmall(false, 0, 64, STR_MD_ROM_TOO_BIG, Alignment::center);
-	printSmall(false, 240, 160, STR_A_OK, Alignment::center);
+	printSmall(false, 0, 160, STR_A_OK, Alignment::center);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -987,7 +987,7 @@ void ramDiskMsg(const char *filename) {
 	}
 	printSmall(false, 16, 66, dirContName);
 	printSmall(false, 0, (ms().theme == 4 ? 24 : 112), STR_RAM_DISK_REQUIRED, Alignment::center);
-	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
+	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -1042,7 +1042,7 @@ bool dsiBinariesMissingMsg(const char *filename) {
 		printSmall(false, 16, 66, dirContName);
 	}
 	printSmall(false, 0, (ms().theme == 4 ? 8 : 96), STR_DSIBINARIES_MISSING, Alignment::center);
-	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_Y_DS_MODE_B_BACK, Alignment::center);
+	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), STR_Y_DS_MODE_B_BACK, Alignment::center);
 	updateText(false);
 	int pressed = 0;
 	while (1) {
@@ -1127,7 +1127,7 @@ void donorRomMsg(const char *filename) {
 			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center);
 			break;
 	}
-	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
+	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -2619,7 +2619,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					} else {
 						printSmall(false, 0, yPos, isDSiMode() ? STR_CANNOT_LAUNCH_WITHOUT_SD : STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center);
 					}
-					printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
+					printSmall(false, 0, (ms().theme == 4 ? 64 : 140), STR_A_OK, Alignment::center);
 					updateText(false);
 					pressed = 0;
 					do {
