@@ -406,7 +406,7 @@ void perGameSettings (std::string filename) {
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
 		if (((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice)
-		&& (unitCode[CURPOS] == 0 || unitCode[CURPOS] == 3 || (unitCode > 0 && !sys().arm7SCFGLocked()))) {
+		&& (unitCode[CURPOS] == 0 || unitCode[CURPOS] == (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? 2 : 3) || (unitCode > 0 && !sys().arm7SCFGLocked()))) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;
