@@ -61,6 +61,7 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"CGF", // Garfield's Fun Fest
 		"YGJ", // George of the Jungle
 		"CHK", // Hell's Kitchen - The Game
+		"DD3", // Hidden Photo
 		"AL4", // Illumislight - Hikari no Puzzle
 		"CIT", // Imagine - Teacher
 		"YJB", // LEGO Batman - The Videogame
@@ -73,6 +74,7 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"YFW", // Rain Drops
 		"CGX", // Shinreigari - Ghost Hound DS
 		"YZL", // Simple DS Series Vol. 44 - The Gal Mahjong
+		"DSY", // System Flaw
 	}},
 	{ 0x2000, {		// 8 KB/64 kbit
 		"YBD", // Bikkuriman Daijiten
@@ -408,6 +410,7 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 	}},
 	{ 0x800000, {	// 8 MB
 		"VAA", // Art Academy
+		"USK", // Face Training
 		"UXB", // Jam with the Band
 	}},
 	{ 0x2000000, {	// 32 MB
