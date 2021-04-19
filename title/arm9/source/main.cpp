@@ -344,6 +344,9 @@ void lastRunROM()
 			bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 			bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
+			u8 unitCode = 0;
+			bool dsiBinariesFound = true;
+
 			if (ms().homebrewBootstrap) {
 				argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
 			} else {
@@ -365,9 +368,11 @@ void lastRunROM()
 				char game_TID[5];
 
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");
-
-				fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+				dsiBinariesFound = checkDsiBinaries(f_nds_file);
+				fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
 				fread(game_TID, 1, 4, f_nds_file);
+				fseek(f_nds_file, 0x12, SEEK_SET);
+				fread(&unitCode, 1, 1, f_nds_file);
 				game_TID[4] = 0;
 				game_TID[3] = 0;
 
@@ -452,8 +457,11 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
 					(perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
-				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE",
-					(perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode));
+				if (!dsiBinariesFound || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? unitCode==3 : (unitCode > 0 && unitCode < 3) && sys().arm7SCFGLocked())) {
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+				} else {
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode);
+				}
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU",
 					(perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM",

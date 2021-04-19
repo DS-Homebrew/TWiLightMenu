@@ -6,6 +6,7 @@
 #define NDS_HEADER2
 
 #include <nds.h>
+#include <stdio.h>
 
 /*!
 	\brief the GBA file header format.
@@ -195,5 +196,7 @@ typedef enum {
 	N3DS_LANG_RUSSIAN		= 10,
 	N3DS_LANG_CHINESE_TRADITIONAL	= 11,
 } sNDSLanguage;
+
+bool checkDsiBinaries(FILE* ndsFile);
 
 #endif

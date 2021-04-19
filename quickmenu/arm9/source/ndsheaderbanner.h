@@ -240,6 +240,8 @@ typedef enum {
 	N3DS_LANG_CHINESE_TRADITIONAL	= 11,
 } sNDSLanguage;
 
+bool checkDsiBinaries(FILE* ndsFile);
+
 /**
  * Get the title ID.
  * @param ndsFile DS ROM image.
