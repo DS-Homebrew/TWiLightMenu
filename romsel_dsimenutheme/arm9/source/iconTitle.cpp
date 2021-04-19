@@ -144,7 +144,7 @@ void drawIcon(int Xpos, int Ypos, int num) {
 		num2 -= 6;
 	}
 	// glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num]]);
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(num2)[bnriconframenumY[num2 == 6 ? 40 : num]]);
+	glSprite(Xpos, Ypos, bannerFlip[num2 == 6 ? 40 : num], &getIcon(num2)[bnriconframenumY[num2 == 6 ? 40 : num]]);
 }
 
 void drawIconGBA(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBA_ICON)[0 & 31]); }
