@@ -135,6 +135,10 @@ int main() {
 		cardReadHeader((uint8*)&ndsHeader);
 
 		for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+
+		if (ndsHeader.unitCode > 0 && TWLMODE) {
+			runCardEngine = false;
+		}
 	} else {
 		sysSetCardOwner (BUS_OWNER_ARM9);
 

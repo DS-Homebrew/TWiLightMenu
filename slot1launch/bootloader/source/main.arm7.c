@@ -92,6 +92,14 @@ static const u32 moduleParamsSignature[2] = {0xDEC00621, 0x2106C0DE};
 
 static u32 chipID;
 
+const char* getRomTid(const tNDSHeader* ndsHeader) {
+	//u32 ROM_TID = *(u32*)ndsHeader->gameCode;
+	static char romTid[5];
+	strncpy(romTid, ndsHeader->gameCode, 4);
+	romTid[4] = '\0';
+	return romTid;
+}
+
 static module_params_t* moduleParams;
 
 u32* findModuleParamsOffset(const tNDSHeader* ndsHeader) {
@@ -204,6 +212,46 @@ static void my_readUserSettings(tNDSHeader* ndsHeader) {
 		ndsHeader->reserved1[8] = 0;	// Patch iQue game to be region-free
 		ndsHeader->headerCRC16 = swiCRC16(0xFFFF, ndsHeader, 0x15E);	// Fix CRC
 	}
+}
+
+void initMBK() {
+	// give all DSI WRAM to arm7 at boot
+	// this function have no effect with ARM7 SCFG locked
+	
+	// arm7 is master of WRAM-A, arm9 of WRAM-B & C
+	REG_MBK9=0x3000000F;
+	
+	// WRAM-A fully mapped to arm7
+	*((vu32*)REG_MBK1)=0x8185898D; // same as dsiware
+	
+	// WRAM-B fully mapped to arm7 // inverted order
+	*((vu32*)REG_MBK2)=0x9195999D;
+	*((vu32*)REG_MBK3)=0x8185898D;
+	
+	// WRAM-C fully mapped to arm7 // inverted order
+	*((vu32*)REG_MBK4)=0x9195999D;
+	*((vu32*)REG_MBK5)=0x8185898D;
+	
+	// WRAM mapped to the 0x3700000 - 0x37FFFFF area 
+	// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
+	REG_MBK6=0x080037C0; // same as dsiware
+	// WRAM-B mapped to the 0x3740000 - 0x37BFFFF area : 512k // why? only 256k real memory is there
+	REG_MBK7=0x07C03740; // same as dsiware
+	// WRAM-C mapped to the 0x3700000 - 0x373FFFF area : 256k
+	REG_MBK8=0x07403700; // same as dsiware
+}
+
+static void initMBK_dsiMode(void) {
+	// This function has no effect with ARM7 SCFG locked
+	*(vu32*)REG_MBK1 = *(u32*)0x02FFE180;
+	*(vu32*)REG_MBK2 = *(u32*)0x02FFE184;
+	*(vu32*)REG_MBK3 = *(u32*)0x02FFE188;
+	*(vu32*)REG_MBK4 = *(u32*)0x02FFE18C;
+	*(vu32*)REG_MBK5 = *(u32*)0x02FFE190;
+	REG_MBK6 = *(u32*)0x02FFE1A0;
+	REG_MBK7 = *(u32*)0x02FFE1A4;
+	REG_MBK8 = *(u32*)0x02FFE1A8;
+	REG_MBK9 = *(u32*)0x02FFE1AC;
 }
 
 void memset_addrs_arm7(u32 start, u32 end)
@@ -524,16 +572,6 @@ static bool ROMsupportsDsiMode(const tNDSHeader* ndsHeader) {
 	return (ndsHeader->unitCode > 0);
 }
 
-// SDK 5
-static bool ROMisDsiEnhanced(const tNDSHeader* ndsHeader) {
-	return (ndsHeader->unitCode == 0x02);
-}
-
-// SDK 5
-static bool ROMisDsiExclusive(const tNDSHeader* ndsHeader) {
-	return (ndsHeader->unitCode == 0x03);
-}
-
 int arm7_loadBinary (const tDSiHeader* dsiHeaderTemp) {
 	u32 errorCode;
 	
@@ -603,52 +641,6 @@ void arm7_startBinary (void)
 }
 
 
-void initMBK() {
-	// give all DSI WRAM to arm7 at boot
-	// this function have no effect with ARM7 SCFG locked
-	
-	// arm7 is master of WRAM-A, arm9 of WRAM-B & C
-	REG_MBK9=0x3000000F;
-	
-	// WRAM-A fully mapped to arm7
-	*((vu32*)REG_MBK1)=0x8185898D; // same as dsiware
-	
-	// WRAM-B fully mapped to arm7 // inverted order
-	*((vu32*)REG_MBK2)=0x9195999D;
-	*((vu32*)REG_MBK3)=0x8185898D;
-	
-	// WRAM-C fully mapped to arm7 // inverted order
-	*((vu32*)REG_MBK4)=0x9195999D;
-	*((vu32*)REG_MBK5)=0x8185898D;
-	
-	// WRAM mapped to the 0x3700000 - 0x37FFFFF area 
-	// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
-	REG_MBK6=0x080037C0; // same as dsiware
-	// WRAM-B mapped to the 0x3740000 - 0x37BFFFF area : 512k // why? only 256k real memory is there
-	REG_MBK7=0x07C03740; // same as dsiware
-	// WRAM-C mapped to the 0x3700000 - 0x373FFFF area : 256k
-	REG_MBK8=0x07403700; // same as dsiware
-}
-
-static void initMBK_dsiEnhanced(void) {
-	// This function has no effect with ARM7 SCFG locked
-
-	// ARM7 is master of WRAM-A, arm9 of WRAM-B & C
-	REG_MBK9 = 0x0000000F;
-
-	// WRAM-B fully mapped to ARM7 // inverted order
-	*(vu32*)REG_MBK2 = 0x0105090D;
-	*(vu32*)REG_MBK3 = 0x1115191D;
-
-	// WRAM-C fully mapped to arm7 // inverted order
-	*(vu32*)REG_MBK4 = 0x0105090D;
-	*(vu32*)REG_MBK5 = 0x1115191D;
-
-	// WRAM-A mapped to the 0x3000000 - 0x303FFFF area : 256k
-	REG_MBK6 = 0x00403000;
-}
-
-
 /*void fixFlashcardForDSiMode(void) {
 	if ((memcmp(ndsHeader->gameTitle, "PASS", 4) == 0)
 	&& (memcmp(ndsHeader->gameCode, "ASME", 4) == 0))		// CycloDS Evolution
@@ -707,7 +699,7 @@ static void setMemoryAddress(const tNDSHeader* ndsHeader) {
 	//	const char *ndsPath = "nand:/dsiware.nds";
 	//	tonccpy(deviceListAddr+0x3C0, ndsPath, sizeof(ndsPath));
 
-		//tonccpy((u32*)0x02FFC000, (u32*)DSI_HEADER_SDK5, 0x1000);		// Make a duplicate of DSi header
+		tonccpy((u32*)0x02FFC000, (u32*)DSI_HEADER_SDK5, 0x1000);		// Make a duplicate of DSi header
 		tonccpy((u32*)0x02FFFA80, (u32*)NDS_HEADER_SDK5, 0x160);	// Make a duplicate of DS header
 
 		*(u32*)(0x02FFA680) = 0x02FD4D80;
@@ -717,6 +709,26 @@ static void setMemoryAddress(const tNDSHeader* ndsHeader) {
 		*(u32*)(0x02FFF00C) = 0x0000007F;
 		*(u32*)(0x02FFF010) = 0x550E25B8;
 		*(u32*)(0x02FFF014) = 0x02FF4000;
+
+		// Set region flag
+		if (strncmp(getRomTid(ndsHeader)+3, "J", 1) == 0) {
+			*(u8*)(0x02FFFD70) = 0;
+		} else if (strncmp(getRomTid(ndsHeader)+3, "E", 1) == 0) {
+			*(u8*)(0x02FFFD70) = 1;
+		} else if (strncmp(getRomTid(ndsHeader)+3, "P", 1) == 0) {
+			*(u8*)(0x02FFFD70) = 2;
+		} else if (strncmp(getRomTid(ndsHeader)+3, "U", 1) == 0) {
+			*(u8*)(0x02FFFD70) = 3;
+		} else if (strncmp(getRomTid(ndsHeader)+3, "C", 1) == 0) {
+			*(u8*)(0x02FFFD70) = 4;
+		} else if (strncmp(getRomTid(ndsHeader)+3, "K", 1) == 0) {
+			*(u8*)(0x02FFFD70) = 5;
+		}
+
+		if (dsiModeConfirmed) {
+			i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 1);		// Have IRQ check for power button press
+			i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);		// SDK 5 --> Bootflag = Warmboot/SkipHealthSafety
+		}
 	}
 
     // Set memory values expected by loaded NDS
@@ -803,6 +815,11 @@ void arm7_main (void) {
 
 		if (dsiModeConfirmed) {
 			*(u32*)0x3FFFFC8 = 0x7884;	// Fix sound pitch table for DSi mode (works with SDK5 binaries)
+
+			if (ndsHeader->unitCode == 0 || (ndsHeader->unitCode > 0 && !(*(u8*)0x02FFE1BF & BIT(0)))) {
+				NDSTouchscreenMode();
+				*(u16*)0x4000500 = 0x807F;
+			}
 		} else {
 			REG_SCFG_ROM = 0x703;
 
@@ -872,8 +889,8 @@ void arm7_main (void) {
 	arm9_isSdk5 = isSdk5(moduleParams);
 	arm9_runCardEngine = runCardEngine;
 
-	if (isSdk5(moduleParams) && ndsHeader->unitCode != 0 && dsiModeConfirmed) {
-		ROMisDsiExclusive(ndsHeader) ? initMBK() : initMBK_dsiEnhanced();
+	if (isSdk5(moduleParams) && ndsHeader->unitCode > 0 && dsiModeConfirmed) {
+		initMBK_dsiMode();
 	}
 
 	if (!scfgUnlock && !dsiModeConfirmed) {
