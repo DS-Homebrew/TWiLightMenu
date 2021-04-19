@@ -267,6 +267,10 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 		CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(1) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
 		NULL, 0);
 
+	*chipID=cardReadID(CARD_CLK_SLOW);	
+	while(REG_ROMCTRL & CARD_BUSY);
+	//u32 iCheapCard=iCardId&0x80000000;
+
 	// Read the header
 	cardParamCommand (CARD_CMD_HEADER_READ, 0,
 		CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(1) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
@@ -309,11 +313,6 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 	// Port 40001A4h setting for KEY1 commands   (usually 001808F8h)
 	portFlagsKey1 = CARD_ACTIVATE | CARD_nRESET | (ndsHeader->cardControl13 & (CARD_WR|CARD_CLK_SLOW)) |
 		((ndsHeader->cardControlBF & (CARD_CLK_SLOW|CARD_DELAY1(0x1FFF))) + ((ndsHeader->cardControlBF & CARD_DELAY2(0x3F)) >> 16));
-
-	// 1st Get ROM Chip ID
-	cardParamCommand (CARD_CMD_HEADER_CHIPID, 0,
-		(ndsHeader->cardControl13 & (CARD_WR|CARD_nRESET|CARD_CLK_SLOW)) | CARD_ACTIVATE | CARD_BLK_SIZE(7),
-		chipID, sizeof(u32));
 
 	// Adjust card transfer method depending on the most significant bit of the chip ID
 	normalChip = ((*chipID) & 0x80000000) != 0;		// ROM chip ID MSB
@@ -358,7 +357,7 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 	portFlagsSecRead = (ndsHeader->cardControlBF & (CARD_CLK_SLOW|CARD_DELAY1(0x1FFF)|CARD_DELAY2(0x3F)))
 		| CARD_ACTIVATE | CARD_nRESET | CARD_SEC_EN | CARD_SEC_DAT;
 
-    u32* secureAreaOffset = secureArea;
+    int secureAreaOffset = 0;
 	for (secureBlockNumber = 4; secureBlockNumber < 8; secureBlockNumber++) {
 		createEncryptedCommand (CARD_CMD_SECURE_READ, cmdData, secureBlockNumber);
 
@@ -366,11 +365,11 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 			cardPolledTransfer(portFlagsSecRead, NULL, 0, cmdData);
 			cardDelay(ndsHeader->readTimeout);
 			for (i = 8; i > 0; i--) {
-				cardPolledTransfer(portFlagsSecRead | CARD_BLK_SIZE(1), secureAreaOffset, 0x200, cmdData);
+				cardPolledTransfer(portFlagsSecRead | CARD_BLK_SIZE(1), secureArea + secureAreaOffset, 0x200, cmdData);
 				secureAreaOffset += 0x200/sizeof(u32);
 			}
 		} else {
-			cardPolledTransfer(portFlagsSecRead | CARD_BLK_SIZE(4) | CARD_SEC_LARGE, secureAreaOffset, 0x1000, cmdData);
+			cardPolledTransfer(portFlagsSecRead | CARD_BLK_SIZE(4) | CARD_SEC_LARGE, secureArea + secureAreaOffset, 0x1000, cmdData);
 			secureAreaOffset += 0x1000/sizeof(u32);
 		}
 	}
