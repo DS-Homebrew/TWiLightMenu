@@ -976,10 +976,10 @@ void ramDiskMsg(const char *filename) {
 		titleUpdate(false, filename, CURPOS);
 	}
 	dirContName = filename;
-	// About 38 characters fit in the box.
-	if (strlen(dirContName.c_str()) > 38) {
-		// Truncate to 35, 35 + 3 = 38 (because we append "...").
-		dirContName.resize(35, ' ');
+	// About 35 characters fit in the box.
+	if (strlen(dirContName.c_str()) > 35) {
+		// Truncate to 32, 32 + 3 = 35 (because we append "...").
+		dirContName.resize(32, ' ');
 		size_t first = dirContName.find_first_not_of(' ');
 		size_t last = dirContName.find_last_not_of(' ');
 		dirContName = dirContName.substr(first, (last - first + 1));
@@ -1028,10 +1028,10 @@ void dsiBinariesMissingMsg(const char *filename) {
 		}
 		titleUpdate(false, filename, CURPOS);
 		dirContName = filename;
-		// About 38 characters fit in the box.
-		if (strlen(dirContName.c_str()) > 38) {
-			// Truncate to 35, 35 + 3 = 38 (because we append "...").
-			dirContName.resize(35, ' ');
+		// About 35 characters fit in the box.
+		if (strlen(dirContName.c_str()) > 35) {
+			// Truncate to 32, 32 + 3 = 35 (because we append "...").
+			dirContName.resize(32, ' ');
 			size_t first = dirContName.find_first_not_of(' ');
 			size_t last = dirContName.find_last_not_of(' ');
 			dirContName = dirContName.substr(first, (last - first + 1));
@@ -1081,10 +1081,10 @@ void donorRomMsg(const char *filename) {
 		}
 		titleUpdate(false, filename, CURPOS);
 		dirContName = filename;
-		// About 38 characters fit in the box.
-		if (strlen(dirContName.c_str()) > 38) {
-			// Truncate to 35, 35 + 3 = 38 (because we append "...").
-			dirContName.resize(35, ' ');
+		// About 35 characters fit in the box.
+		if (strlen(dirContName.c_str()) > 35) {
+			// Truncate to 32, 32 + 3 = 35 (because we append "...").
+			dirContName.resize(32, ' ');
 			size_t first = dirContName.find_first_not_of(' ');
 			size_t last = dirContName.find_last_not_of(' ');
 			dirContName = dirContName.substr(first, (last - first + 1));

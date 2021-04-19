@@ -468,10 +468,10 @@ void perGameSettings (std::string filename) {
 
 	setAsDonorRom = STR_SET_AS_DONOR_ROM;
 
-	// About 38 characters fit in the box.
+	// About 35 characters fit in the box.
 	dirContName = filename;
 	if (strlen(dirContName.c_str()) > 35) {
-		// Truncate to 35, 35 + 3 = 38 (because we append "...").
+		// Truncate to 32, 32 + 3 = 35 (because we append "...").
 		dirContName.resize(32, ' ');
 		size_t first = dirContName.find_first_not_of(' ');
 		size_t last = dirContName.find_last_not_of(' ');
