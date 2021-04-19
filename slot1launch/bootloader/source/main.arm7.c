@@ -642,13 +642,7 @@ arm7_startBinary
 Jumps to the ARM7 NDS binary in sync with the display and ARM9
 Written by Darkain, modified by Chishm.
 --------------------------------------------------------------------------*/
-void arm7_startBinary (void)
-{
-	REG_IME = 0;
-
-	while(REG_VCOUNT!=191);
-	while(REG_VCOUNT==191);
-	
+void arm7_startBinary (void) {	
 	// Get the ARM9 to boot
 	arm9_stateFlag = ARM9_BOOTBIN;
 
