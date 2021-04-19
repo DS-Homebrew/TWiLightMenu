@@ -804,7 +804,7 @@ void smsWarning(void) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmall(false, 0, 64, STR_SMS_WARNING, Alignment::center);
-	printSmall(false, 240, 160, STR_A_OK, Alignment::right);
+	printSmall(false, 240, 160, STR_A_OK, Alignment::center);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -865,7 +865,7 @@ void mdRomTooBig(void) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmall(false, 0, 64, STR_MD_ROM_TOO_BIG, Alignment::center);
-	printSmall(false, 240, 160, STR_A_OK, Alignment::right);
+	printSmall(false, 240, 160, STR_A_OK, Alignment::center);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -987,7 +987,7 @@ void ramDiskMsg(const char *filename) {
 	}
 	printSmall(false, 16, 66, dirContName);
 	printSmall(false, 0, (ms().theme == 4 ? 24 : 112), STR_RAM_DISK_REQUIRED, Alignment::center);
-	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
+	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -1015,7 +1015,9 @@ void ramDiskMsg(const char *filename) {
 	}
 }
 
-void dsiBinariesMissingMsg(const char *filename) {
+bool dsiBinariesMissingMsg(const char *filename) {
+	bool proceedToLaunch = false;
+
 	clearText();
 	updateText(false);
 	snd().playWrong();
@@ -1040,10 +1042,10 @@ void dsiBinariesMissingMsg(const char *filename) {
 		printSmall(false, 16, 66, dirContName);
 	}
 	printSmall(false, 0, (ms().theme == 4 ? 8 : 96), STR_DSIBINARIES_MISSING, Alignment::center);
-	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
+	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_Y_DS_MODE_B_BACK, Alignment::center);
 	updateText(false);
 	int pressed = 0;
-	do {
+	while (1) {
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -1055,7 +1057,19 @@ void dsiBinariesMissingMsg(const char *filename) {
 		drawClockColon();
 		snd().updateStream();
 		swiWaitForVBlank();
-	} while (!(pressed & KEY_A));
+		if (pressed & KEY_Y) {
+			extern bool dsModeForced;
+			dsModeForced = true;
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_B) {
+			proceedToLaunch = false;
+			pressed = 0;
+			break;
+		}
+	}
 	clearText();
 	if (ms().theme == 5) {
 		dbox_showIcon = false;
@@ -1066,6 +1080,8 @@ void dsiBinariesMissingMsg(const char *filename) {
 		showdialogbox = false;
 	}
 	updateText(false);
+
+	return proceedToLaunch;
 }
 
 void donorRomMsg(const char *filename) {
@@ -1111,7 +1127,7 @@ void donorRomMsg(const char *filename) {
 			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center);
 			break;
 	}
-	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
+	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -2776,8 +2792,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						fclose(f_nds_file);
 
 						if (!hasDsiBinaries) {
-							dsiBinariesMissingMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
-							proceedToLaunch = false;
+							proceedToLaunch = dsiBinariesMissingMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						}
 					}
 

@@ -120,6 +120,7 @@ int mpuregion = 0;
 int mpusize = 0;
 
 bool applaunch = false;
+bool dsModeForced = false;
 
 bool useBackend = false;
 
@@ -1416,7 +1417,9 @@ int main(int argc, char **argv) {
 						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img");
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
-						if (isDSiMode() || !ms().secondaryDevice) {
+						if (dsModeForced) {
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+						} else if (isDSiMode() || !ms().secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode);
 						}
 						if (dsiFeatures() || !ms().secondaryDevice) {

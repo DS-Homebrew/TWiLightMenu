@@ -349,10 +349,10 @@ void smsWarning(void) {
 	printSmallCentered(false, 144, "\u2427 OK");
 	int pressed = 0;
 	do {
-		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
+		snd().updateStream();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	clearText();
@@ -371,10 +371,10 @@ void mdRomTooBig(void) {
 	printSmallCentered(false, 144, "\u2427 OK");
 	int pressed = 0;
 	do {
-		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
+		snd().updateStream();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	clearText();
@@ -412,22 +412,36 @@ void ramDiskMsg(void) {
 	}
 }
 
-void dsiBinariesMissingMsg(void) {
+bool dsiBinariesMissingMsg(void) {
+	bool proceedToLaunch = false;
+
 	dialogboxHeight = 2;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error!");
 	printSmallCentered(false, 90, "The DSi binaries are missing.");
 	printSmallCentered(false, 102, "Please get a clean dump of");
 	printSmallCentered(false, 114, "this ROM, or start in DS mode.");
-	printSmallCentered(false, 132, "\u2427 OK");
+	printSmallCentered(false, 132, "\u2430 Launch in DS mode  \u2428 Back");
 	int pressed = 0;
-	do {
-		snd().updateStream();
+	while (1) {
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
+		snd().updateStream();
 		swiWaitForVBlank();
-	} while (!(pressed & KEY_A));
+		if (pressed & KEY_Y) {
+			extern bool dsModeForced;
+			dsModeForced = true;
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_B) {
+			proceedToLaunch = false;
+			pressed = 0;
+			break;
+		}
+	}
 	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
@@ -436,6 +450,8 @@ void dsiBinariesMissingMsg(void) {
 		lcdMainOnTop();
 		lcdSwapped = false;
 	}
+
+	return proceedToLaunch;
 }
 
 void donorRomMsg(void) {
@@ -465,10 +481,10 @@ void donorRomMsg(void) {
 	printSmallCentered(false, 140, "\u2427 OK");
 	int pressed = 0;
 	do {
-		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
+		snd().updateStream();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	clearText();
@@ -541,10 +557,10 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 
 	int pressed = 0;
 	while (1) {
-		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
+		snd().updateStream();
 		swiWaitForVBlank();
 		if (pressed & KEY_A) {
 			proceedToLaunch = true;
@@ -905,8 +921,7 @@ string browseForFile(const vector<string> extensionList) {
 					fclose(f_nds_file);
 
 					if (!hasDsiBinaries) {
-						dsiBinariesMissingMsg();
-						proceedToLaunch = false;
+						proceedToLaunch = dsiBinariesMissingMsg();
 					}
 				}
 
