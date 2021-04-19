@@ -31,6 +31,7 @@
 #include <vector>
 
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <fat.h>
 #include <gl2d.h>
 
@@ -768,8 +769,9 @@ string browseForFile(const vector<string> extensionList) {
 				settingsChanged = false;
 				return "null";
 			}
-			else if (isDSiWare && ((!isDSiMode() && !sdFound()) || (isHomebrew && consoleModel >= 2)))
-			{
+			else if (isDSiWare && ((!isDSiMode() && !sdFound()) || (isHomebrew && consoleModel >= 2)
+				  || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && arm7SCFGLocked))
+			) {
 				if (macroMode) {
 					lcdMainOnBottom();
 					lcdSwapped = true;
