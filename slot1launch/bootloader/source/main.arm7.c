@@ -758,11 +758,15 @@ static void setMemoryAddress(const tNDSHeader* ndsHeader) {
 	*((u16*)(isSdk5(moduleParams) ? 0x02fff808 : 0x027ff808)) = ndsHeader->headerCRC16;	// Header Checksum, CRC-16 of [000h-15Dh]
 	*((u16*)(isSdk5(moduleParams) ? 0x02fff80a : 0x027ff80a)) = ndsHeader->secureCRC16;	// Secure Area Checksum, CRC-16 of [ [20h]..7FFFh]
 
+	*((u16*)(isSdk5(moduleParams) ? 0x02fff850 : 0x027ff850)) = 0x5835;
+
 	// Copies of above
 	*((u32*)(isSdk5(moduleParams) ? 0x02fffc00 : 0x027ffc00)) = chipID;					// CurrentCardID
 	*((u32*)(isSdk5(moduleParams) ? 0x02fffc04 : 0x027ffc04)) = chipID;					// Command10CardID
 	*((u16*)(isSdk5(moduleParams) ? 0x02fffc08 : 0x027ffc08)) = ndsHeader->headerCRC16;	// Header Checksum, CRC-16 of [000h-15Dh]
 	*((u16*)(isSdk5(moduleParams) ? 0x02fffc0a : 0x027ffc0a)) = ndsHeader->secureCRC16;	// Secure Area Checksum, CRC-16 of [ [20h]..7FFFh]
+
+	*((u16*)(isSdk5(moduleParams) ? 0x02fffc10 : 0x027ffc10)) = 0x5835;
 
 	*((u16*)(isSdk5(moduleParams) ? 0x02fffc40 : 0x027ffc40)) = 0x1;						// Boot Indicator (Booted from card for SDK5) -- EXTREMELY IMPORTANT!!! Thanks to cReDiAr
 }
@@ -844,6 +848,9 @@ void arm7_main (void) {
 				u128_add(key, DSi_KEY_MAGIC);
 		  u128_lrot(key, 42) ;
 			}
+			uint32_t modcryptLengths[2] ;
+			modcryptLengths[0] = ((uint32_t *)(target+0x220))[1] ;
+			modcryptLengths[1] = ((uint32_t *)(target+0x220))[3] ;
 
 			uint32_t rk[4];
 			tonccpy(rk, key, 16) ;
@@ -851,16 +858,16 @@ void arm7_main (void) {
 			dsi_context ctx;
 			dsi_set_key(&ctx, key);
 			dsi_set_ctr(&ctx, &target[0x300]);
-			if (*(u32*)0x02FFC224)
+			if (modcryptLengths[0])
 			{
-				decrypt_modcrypt_area(&ctx, (u8*)dsiHeaderTemp->arm9idestination, *(u32*)0x02FFC224);
+				decrypt_modcrypt_area(&ctx, (u8*)dsiHeaderTemp->arm9idestination, modcryptLengths[0]);
 			}
 
 			dsi_set_key(&ctx, key);
 			dsi_set_ctr(&ctx, &target[0x314]);
-			if (*(u32*)0x02FFC22C)
+			if (modcryptLengths[1])
 			{
-				decrypt_modcrypt_area(&ctx, (u8*)dsiHeaderTemp->arm7idestination, *(u32*)0x02FFC22C);
+				decrypt_modcrypt_area(&ctx, (u8*)dsiHeaderTemp->arm7idestination, modcryptLengths[1]);
 			}
 
 			for (int i=0;i<4;i++)
