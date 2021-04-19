@@ -38,6 +38,7 @@
 
 extern const char *bootstrapinipath;
 
+extern bool arm7SCFGLocked;
 extern bool isRegularDS;
 extern int consoleModel;
 extern bool macroMode;
@@ -329,6 +330,7 @@ void perGameSettings (std::string filename) {
 	/*if (!useBootstrap && !isHomebrew && REG_SCFG_EXT == 0) {
 		showPerGameSettings = false;
 	}*/
+	bool runInShown = false;
 
 	bool showCheats = (((dsiFeatures() && useBootstrap)
 	/*|| (secondaryDevice && !useBootstrap
@@ -357,6 +359,7 @@ void perGameSettings (std::string filename) {
 		if (isDSiMode() || !secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
+			runInShown = true;
 		}
 		if (dsiFeatures() || !secondaryDevice) {
 			perGameOps++;
@@ -385,9 +388,11 @@ void perGameSettings (std::string filename) {
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
-		if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
+		if (((isDSiMode() && useBootstrap) || !secondaryDevice)
+		&& (unitCode == 0 || unitCode == 3 || (unitCode > 0 && !arm7SCFGLocked))) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
+			runInShown = true;
 		}
 		if (dsiFeatures() || !secondaryDevice) {
 			perGameOps++;
@@ -521,7 +526,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 3:
 				printSmall(false, 32, perGameOpYpos, "ARM9 CPU Speed:");
-				if (perGameSettings_dsiMode > 0 && (isDSiMode() || !secondaryDevice)) {
+				if (perGameSettings_dsiMode > 0 && runInShown) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "133mhz (TWL)");
 				} else {
 					if (perGameSettings_boostCpu == -1) {
@@ -535,7 +540,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 4:
 				printSmall(false, 32, perGameOpYpos, "VRAM Boost:");
-				if (perGameSettings_dsiMode > 0 && (isDSiMode() || !secondaryDevice)) {
+				if (perGameSettings_dsiMode > 0 && runInShown) {
 					printSmallRightAlign(false, 180, perGameOpYpos, "On");
 				} else {
 					if (perGameSettings_boostVram == -1) {
@@ -667,13 +672,13 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_dsiMode < -1) perGameSettings_dsiMode = 2-isHomebrew;
 						break;
 					case 3:
-						if (perGameSettings_dsiMode < 1) {
+						if (perGameSettings_dsiMode < 1 || !runInShown) {
 							perGameSettings_boostCpu--;
 							if (perGameSettings_boostCpu < -1) perGameSettings_boostCpu = 1;
 						}
 						break;
 					case 4:
-						if (perGameSettings_dsiMode < 1) {
+						if (perGameSettings_dsiMode < 1 || !runInShown) {
 							perGameSettings_boostVram--;
 							if (perGameSettings_boostVram < -1) perGameSettings_boostVram = 1;
 						}
@@ -728,13 +733,13 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_dsiMode > 2-isHomebrew) perGameSettings_dsiMode = -1;
 						break;
 					case 3:
-						if (perGameSettings_dsiMode < 1) {
+						if (perGameSettings_dsiMode < 1 || !runInShown) {
 							perGameSettings_boostCpu++;
 							if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
 						}
 						break;
 					case 4:
-						if (perGameSettings_dsiMode < 1) {
+						if (perGameSettings_dsiMode < 1 || !runInShown) {
 							perGameSettings_boostVram++;
 							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
 						}
