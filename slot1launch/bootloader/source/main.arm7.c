@@ -58,6 +58,11 @@
 #include "hook.h"
 #include "find.h"
 
+#include "gm9i/crypto.h"
+#include "gm9i/f_xy.h"
+#include "twltool/dsi.h"
+#include "u128_math.h"
+
 
 //extern u32 dsiMode;	// Not working?
 extern u32 language;
@@ -572,6 +577,21 @@ static bool ROMsupportsDsiMode(const tNDSHeader* ndsHeader) {
 	return (ndsHeader->unitCode > 0);
 }
 
+void decrypt_modcrypt_area(dsi_context* ctx, u8 *buffer, unsigned int size)
+{
+	uint32_t len = size / 0x10;
+	u8 block[0x10];
+
+	while(len>0)
+	{
+		toncset(block, 0, 0x10);
+		dsi_crypt_ctr_block(ctx, buffer, block);
+		tonccpy(buffer, block, 0x10);
+		buffer+=0x10;
+		len--;
+	}
+}
+
 int arm7_loadBinary (const tDSiHeader* dsiHeaderTemp) {
 	u32 errorCode;
 	
@@ -699,7 +719,7 @@ static void setMemoryAddress(const tNDSHeader* ndsHeader) {
 	//	const char *ndsPath = "nand:/dsiware.nds";
 	//	tonccpy(deviceListAddr+0x3C0, ndsPath, sizeof(ndsPath));
 
-		tonccpy((u32*)0x02FFC000, (u32*)DSI_HEADER_SDK5, 0x1000);		// Make a duplicate of DSi header
+		//tonccpy((u32*)0x02FFC000, (u32*)DSI_HEADER_SDK5, 0x1000);		// Make a duplicate of DSi header (Already used by dsiHeaderTemp)
 		tonccpy((u32*)0x02FFFA80, (u32*)NDS_HEADER_SDK5, 0x160);	// Make a duplicate of DS header
 
 		*(u32*)(0x02FFA680) = 0x02FD4D80;
@@ -797,6 +817,57 @@ void arm7_main (void) {
 		if (dsiHeaderTemp->arm7ibinarySize > 0) {
 			cardRead((u32)dsiHeaderTemp->arm7iromOffset, (u32*)dsiHeaderTemp->arm7idestination, dsiHeaderTemp->arm7ibinarySize);
 		}
+
+		uint8_t *target = (uint8_t *)0x02FFC000 ;
+
+		if (target[0x01C] & 2)
+		{
+			u8 key[16] = {0} ;
+			u8 keyp[16] = {0} ;
+			if (target[0x01C] & 4)
+			{
+				// Debug Key
+				tonccpy(key, target, 16) ;
+			} else
+			{
+				//Retail key
+				char modcrypt_shared_key[8] = {'N','i','n','t','e','n','d','o'};
+				tonccpy(keyp, modcrypt_shared_key, 8) ;
+				for (int i=0;i<4;i++)
+				{
+					keyp[8+i] = target[0x0c+i] ;
+					keyp[15-i] = target[0x0c+i] ;
+				}
+				tonccpy(key, target+0x350, 16) ;
+				
+				u128_xor(key, keyp);
+				u128_add(key, DSi_KEY_MAGIC);
+		  u128_lrot(key, 42) ;
+			}
+
+			uint32_t rk[4];
+			tonccpy(rk, key, 16) ;
+			
+			dsi_context ctx;
+			dsi_set_key(&ctx, key);
+			dsi_set_ctr(&ctx, &target[0x300]);
+			if (*(u32*)0x02FFC224)
+			{
+				decrypt_modcrypt_area(&ctx, (u8*)dsiHeaderTemp->arm9idestination, *(u32*)0x02FFC224);
+			}
+
+			dsi_set_key(&ctx, key);
+			dsi_set_ctr(&ctx, &target[0x314]);
+			if (*(u32*)0x02FFC22C)
+			{
+				decrypt_modcrypt_area(&ctx, (u8*)dsiHeaderTemp->arm7idestination, *(u32*)0x02FFC22C);
+			}
+
+			for (int i=0;i<4;i++)
+			{
+				((uint32_t *)(target+0x220))[i] = 0;
+			}
+		}
 	}
 
 	ndsHeader = loadHeader(dsiHeaderTemp);
@@ -891,6 +962,8 @@ void arm7_main (void) {
 
 	if (isSdk5(moduleParams) && ndsHeader->unitCode > 0 && dsiModeConfirmed) {
 		initMBK_dsiMode();
+		REG_SCFG_EXT = 0x93FFFB06;
+		REG_SCFG_CLK = 0x187;
 	}
 
 	if (!scfgUnlock && !dsiModeConfirmed) {
