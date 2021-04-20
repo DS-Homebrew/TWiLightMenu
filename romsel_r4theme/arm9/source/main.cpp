@@ -792,8 +792,10 @@ void SetWidescreen(const char *filename) {
 				u8 *buffer = new u8[size];
 				fread(buffer, 1, size, file);
 
-				mkdir("fat:/_nds", 0777);
-				mkdir("fat:/_nds/nds-bootstrap", 0777);
+				if (flashcardFound()) {
+					mkdir("fat:/_nds", 0777);
+					mkdir("fat:/_nds/nds-bootstrap", 0777);
+				}
 				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", sdFound() ? "sd" : "fat");
 				FILE *out = fopen(wideBinPath, "wb");
 				if(out) {
