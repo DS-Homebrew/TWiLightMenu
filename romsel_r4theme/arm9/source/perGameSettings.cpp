@@ -616,23 +616,23 @@ void perGameSettings (std::string filename) {
 				break;
 			case 11:
 				printSmall(false, 32, perGameOpYpos, "Region:");
-				if (perGameSettings_language == -3) {
+				if (perGameSettings_region == -3) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
-				} else if (perGameSettings_language == -2) {
+				} else if (perGameSettings_region == -2) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Game");
-				} else if (perGameSettings_language == -1) {
+				} else if (perGameSettings_region == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "System");
-				} else if (perGameSettings_language == 0) {
+				} else if (perGameSettings_region == 0) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Japan");
-				} else if (perGameSettings_language == 1) {
+				} else if (perGameSettings_region == 1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "USA");
-				} else if (perGameSettings_language == 2) {
+				} else if (perGameSettings_region == 2) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Europe");
-				} else if (perGameSettings_language == 3) {
+				} else if (perGameSettings_region == 3) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Australia");
-				} else if (perGameSettings_language == 4) {
+				} else if (perGameSettings_region == 4) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "China");
-				} else if (perGameSettings_language == 5) {
+				} else if (perGameSettings_region == 5) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Korea");
 				}
 				break;
