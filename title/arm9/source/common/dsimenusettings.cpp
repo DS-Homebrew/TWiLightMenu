@@ -48,9 +48,12 @@ TWLSettings::TWLSettings()
     bootstrapFile = EReleaseBootstrap;
 
     gameLanguage = ELangDefault;
+    gameRegion = ERegionGame;
     boostCpu = false;
     boostVram = false;
     bstrap_dsiMode = false;
+	cardReadDMA = true;
+	extendedMemory = 0;
 
 	forceSleepPatch = false;
     slot1SCFGUnlock = false;
@@ -138,10 +141,13 @@ void TWLSettings::loadSettings()
     useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 
     // Default nds-bootstrap settings
-    gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
-    boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-    boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-    bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
+    gameRegion = settingsini.GetInt("NDS-BOOTSTRAP", "REGION", gameRegion);
+	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
+	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
+	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+	cardReadDMA = settingsini.GetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
+	extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
 	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
@@ -210,9 +216,12 @@ void TWLSettings::saveSettings()
 
     // Default nds-bootstrap settings
     settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
+    settingsini.SetInt("NDS-BOOTSTRAP", "REGION", gameRegion);
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     settingsini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+    settingsini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
+	settingsini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 
     settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     settingsini.SetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);

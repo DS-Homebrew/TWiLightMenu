@@ -187,7 +187,7 @@ int sysRegion = -1;
 int guiLanguage = -1;
 int gameLanguage = -1;
 int titleLanguage = -1;
-int gameRegion = -3;
+int gameRegion = -2;
 bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
 int bstrap_dsiMode = 0;

@@ -76,6 +76,18 @@ class TWLSettings
         ELangIndonesian = 20,
     };
 
+    enum TRegion
+    {
+        ERegionGame = -2,
+        ERegionDefault = -1,
+        ERegionJapan = 0,
+        ERegionUSA = 1,
+        ERegionEurope = 2,
+        ERegionAustralia = 3,
+        ERegionChina = 4,
+        ERegionKorea = 5,
+    };
+
     enum TSlot1LaunchMethod
     {
         EReboot = 0,
@@ -164,11 +176,14 @@ class TWLSettings
     bool bootstrapFile;
 
     int gameLanguage;
+    int gameRegion;
     bool boostCpu;
     bool boostVram;
     bool bstrap_dsiMode;
-	bool forceSleepPatch;
+	bool cardReadDMA;
+	int extendedMemory;
 
+	bool forceSleepPatch;
     bool slot1SCFGUnlock;
 	bool dsiWareBooter;
     bool autorun;

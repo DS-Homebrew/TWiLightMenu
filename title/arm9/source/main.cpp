@@ -457,6 +457,8 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
 					(perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION",
+					(perGameSettings_language == -3 ? ms().gameRegion : perGameSettings_region));
 				if (!dsiBinariesFound || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? unitCode==3 : (unitCode > 0 && unitCode < 3) && sys().arm7SCFGLocked())) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 				} else {
@@ -466,6 +468,10 @@ void lastRunROM()
 					(perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM",
 					(perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram));
+				if (!ms().previousUsedDevice) {
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", perGameSettings_cardReadDMA == -1 ? ms().cardReadDMA : perGameSettings_cardReadDMA);
+				}
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", perGameSettings_expandRomSpace == -1 ? ms().extendedMemory : perGameSettings_expandRomSpace);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 					(ms().forceSleepPatch
 				|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !sys().isRegularDS())
@@ -702,6 +708,8 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", ms().dsiWarePubPath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", ms().dsiWarePrvPath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION",
+					(perGameSettings_language == -3 ? ms().gameRegion : perGameSettings_region));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
 					(perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
