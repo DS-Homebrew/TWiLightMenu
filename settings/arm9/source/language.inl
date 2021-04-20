@@ -284,6 +284,14 @@ STRING(RED, "Red")
 STRING(BLUE, "Blue")
 STRING(MAGENTA, "Magenta")
 
+// Regions
+STRING(JAPAN, "Japan")
+STRING(USA, "USA")
+STRING(EUROPE, "Europe")
+STRING(AUSTRALIA, "Australia")
+STRING(CHINA, "China")
+STRING(KOREA, "Korea")
+
 STRING(DESCRIPTION_LANGUAGE_1, "Avoid the limited selections of your console language by setting this option.")
 STRING(DESCRIPTION_GAMELANGUAGE_1, "Set language for DS ROMs played using nds-bootstrap.")
 STRING(DESCRIPTION_TITLELANGUAGE_1, "Set Banner Title language for DS ROMs (except DSi titles).")
