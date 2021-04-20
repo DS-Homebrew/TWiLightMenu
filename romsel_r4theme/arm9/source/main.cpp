@@ -636,8 +636,10 @@ std::string setApFix(const char *filename) {
 				u8 *buffer = new u8[size];
 				fread(buffer, 1, size, file);
 
-				mkdir("fat:/_nds", 0777);
-				mkdir("fat:/_nds/nds-bootstrap", 0777);
+				if (flashcardFound()) {
+					mkdir("fat:/_nds", 0777);
+					mkdir("fat:/_nds/nds-bootstrap", 0777);
+				}
 				snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apFix%s", sdFound() ? "sd" : "fat", cheatVer ? "Cheat.bin" : ".ips");
 				FILE *out = fopen(ipsPath, "wb");
 				if(out) {

@@ -374,8 +374,10 @@ void SetWidescreen(const char *filename) {
 
 	if (wideCheatFound) {
 		std::string resultText;
-		mkdir("/_nds", 0777);
-		mkdir("/_nds/nds-bootstrap", 0777);
+		if (flashcardFound()) {
+			mkdir("/_nds", 0777);
+			mkdir("/_nds/nds-bootstrap", 0777);
+		}
 		if (fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin") == 0) {
 			return;
 		} else {
@@ -446,8 +448,10 @@ void SetWidescreen(const char *filename) {
 				u8 *buffer = new u8[size];
 				fread(buffer, 1, size, file);
 
-				mkdir("fat:/_nds", 0777);
-				mkdir("fat:/_nds/nds-bootstrap", 0777);
+				if (flashcardFound()) {
+					mkdir("fat:/_nds", 0777);
+					mkdir("fat:/_nds/nds-bootstrap", 0777);
+				}
 				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", sdFound() ? "sd" : "fat");
 				FILE *out = fopen(wideBinPath, "wb");
 				if(out) {
