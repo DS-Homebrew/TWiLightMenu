@@ -835,7 +835,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 					mkdir("fat:/_nds", 0777);
 					mkdir("fat:/_nds/nds-bootstrap", 0777);
 				}
-				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", sdFound() ? "sd" : "fat");
+				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice ? "fat" : "sd");
 				FILE *out = fopen(wideBinPath, "wb");
 				if(out) {
 					fwrite(buffer, 1, size, out);
