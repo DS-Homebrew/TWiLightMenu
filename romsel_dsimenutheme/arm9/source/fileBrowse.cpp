@@ -2611,15 +2611,17 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 					}
-					int yPos = (ms().theme == 4 ? 24 : 96);
+					const std::string *str = nullptr;
 					if (isDSiMode() && (ms().consoleModel>=2 ? !isHomebrew[CURPOS] : isDSiWare[CURPOS]) && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()) {
-						if (ms().consoleModel >= 2) yPos -= 6;
-						printSmall(false, 0, yPos, ms().consoleModel >= 2 ? STR_RELAUNCH_3DS_HOME : STR_RELAUNCH_UNLAUNCH, Alignment::center);
+						str = ms().consoleModel >= 2 ? &STR_RELAUNCH_3DS_HOME : &STR_RELAUNCH_UNLAUNCH;
 					} else if (isHomebrew[CURPOS] && ms().consoleModel >= 2) {
-						printSmall(false, 0, yPos, STR_CANNOT_LAUNCH_HB_ON_3DS, Alignment::center);
+						str = &STR_CANNOT_LAUNCH_HB_ON_3DS;
 					} else {
-						printSmall(false, 0, yPos, isDSiMode() ? STR_CANNOT_LAUNCH_WITHOUT_SD : STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center);
+						str = isDSiMode() ? &STR_CANNOT_LAUNCH_WITHOUT_SD : &STR_CANNOT_LAUNCH_IN_DS_MODE;
 					}
+					int yPos = (ms().theme == 4 ? 30 : 102);
+					printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center);
+
 					printSmall(false, 0, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
 					updateText(false);
 					pressed = 0;
