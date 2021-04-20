@@ -14,11 +14,6 @@ extern sNDSBannerExt ndsBanner;
 // Needed to test if homebrew
 char tidBuf[4];
 
-typedef enum
-{
-	GL_FLIP_BOTH = (1 << 3)
-} GL_FLIP_MODE_XTRA;
-
 bool checkDsiBinaries(FILE* ndsFile) {
 	sNDSHeaderExt ndsHeader;
 
@@ -154,7 +149,7 @@ void playBannerSequence(int num)
 
 		if (flipH && flipV)
 		{
-			bannerFlip[num] = GL_FLIP_BOTH;
+			bannerFlip[num] = GL_FLIP_H | GL_FLIP_V;
 		}
 		else if (!flipH && !flipV)
 		{

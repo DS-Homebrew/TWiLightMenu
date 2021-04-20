@@ -17,11 +17,6 @@ u8 romVersion[40] = {0};
 u8 unitCode[40] = {0};
 u16 headerCRC[40] = {0};
 
-typedef enum
-{
-	GL_FLIP_BOTH = (1 << 3)
-} GL_FLIP_MODE_XTRA;
-
 bool checkDsiBinaries(FILE* ndsFile) {
 	sNDSHeaderExt ndsHeader;
 
@@ -593,7 +588,7 @@ void playBannerSequence(int iconnum)
 
 		if (flipH && flipV)
 		{
-			bannerFlip[iconnum] = GL_FLIP_BOTH;
+			bannerFlip[iconnum] = GL_FLIP_H | GL_FLIP_V;
 		}
 		else if (!flipH && !flipV)
 		{

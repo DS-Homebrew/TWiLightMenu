@@ -12,11 +12,6 @@ static u32 arm9Sig[3][4];
 
 extern sNDSBannerExt ndsBanner;
 
-typedef enum
-{
-	GL_FLIP_BOTH = (1 << 3)
-} GL_FLIP_MODE_XTRA;
-
 bool checkDsiBinaries(FILE* ndsFile) {
 	sNDSHeaderExt ndsHeader;
 
@@ -604,7 +599,7 @@ void playBannerSequence()
 
 		if (flipH && flipV)
 		{
-			bannerFlip = GL_FLIP_BOTH;
+			bannerFlip = GL_FLIP_H | GL_FLIP_V;
 		}
 		else if (!flipH && !flipV)
 		{
