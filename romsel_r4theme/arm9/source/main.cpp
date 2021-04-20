@@ -537,8 +537,10 @@ void SetMPUSettings(const char* filename) {
  * Fix AP for some games.
  */
 std::string setApFix(const char *filename) {
-	remove("fat:/_nds/nds-bootstrap/apFix.ips");
-	remove("fat:/_nds/nds-bootstrap/apFixCheat.bin");
+	if (flashcardFound()) {
+		remove("fat:/_nds/nds-bootstrap/apFix.ips");
+		remove("fat:/_nds/nds-bootstrap/apFixCheat.bin");
+	}
 
 	FILE *f_nds_file = fopen(filename, "rb");
 
@@ -640,7 +642,7 @@ std::string setApFix(const char *filename) {
 					mkdir("fat:/_nds", 0777);
 					mkdir("fat:/_nds/nds-bootstrap", 0777);
 				}
-				snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apFix%s", sdFound() ? "sd" : "fat", cheatVer ? "Cheat.bin" : ".ips");
+				snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apFix%s", secondaryDevice ? "fat" : "sd", cheatVer ? "Cheat.bin" : ".ips");
 				FILE *out = fopen(ipsPath, "wb");
 				if(out) {
 					fwrite(buffer, 1, size, out);
@@ -796,7 +798,7 @@ void SetWidescreen(const char *filename) {
 					mkdir("fat:/_nds", 0777);
 					mkdir("fat:/_nds/nds-bootstrap", 0777);
 				}
-				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", sdFound() ? "sd" : "fat");
+				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", secondaryDevice ? "fat" : "sd");
 				FILE *out = fopen(wideBinPath, "wb");
 				if(out) {
 					fwrite(buffer, 1, size, out);

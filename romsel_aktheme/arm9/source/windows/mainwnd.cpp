@@ -515,7 +515,9 @@ void MainWnd::bootArgv(DSRomInfo &rominfo)
 //void MainWnd::apFix(const char *filename)
 std::string apFix(const char *filename, bool isHomebrew)
 {
-	remove("fat:/_nds/nds-bootstrap/apFix.ips");
+	if (flashcardFound()) {
+		remove("fat:/_nds/nds-bootstrap/apFix.ips");
+	}
 
 	if (isHomebrew) {
 		return "";
@@ -606,7 +608,7 @@ std::string apFix(const char *filename, bool isHomebrew)
 					mkdir("fat:/_nds", 0777);
 					mkdir("fat:/_nds/nds-bootstrap", 0777);
 				}
-				snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apFix%s", sdFound() ? "sd" : "fat", cheatVer ? "Cheat.bin" : ".ips");
+				snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apFix%s", ms().secondaryDevice ? "fat" : "sd", cheatVer ? "Cheat.bin" : ".ips");
 				FILE *out = fopen(ipsPath, "wb");
 				if(out) {
 					fwrite(buffer, 1, size, out);
