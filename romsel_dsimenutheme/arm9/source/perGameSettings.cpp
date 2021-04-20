@@ -60,6 +60,7 @@ int perGameSettings_cursorPosition = 0;
 bool perGameSettings_directBoot = false;	// Homebrew only
 int perGameSettings_dsiMode = -1;
 int perGameSettings_language = -2;
+int perGameSettings_region = -3;
 int perGameSettings_saveNo = 0;
 int perGameSettings_ramDiskNo = -1;
 int perGameSettings_boostCpu = -1;
@@ -107,6 +108,7 @@ void loadPerGameSettings (std::string filename) {
 		perGameSettings_dsiMode = -1;
 	}
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
+	perGameSettings_region = pergameini.GetInt("GAMESETTINGS", "REGION", -3);
 	perGameSettings_saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
 	perGameSettings_ramDiskNo = pergameini.GetInt("GAMESETTINGS", "RAM_DISK", -1);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
@@ -134,6 +136,7 @@ void savePerGameSettings (std::string filename) {
 	} else {
 		if (ms().useBootstrap || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
+			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
 		pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
@@ -396,12 +399,18 @@ void perGameSettings (std::string filename) {
 		perGameOps++;
 		perGameOp[perGameOps] = 0;	// Language
 		perGameOps++;
+		perGameOp[perGameOps] = 11;	// Region
+		perGameOps++;
 		perGameOp[perGameOps] = 7;	// Bootstrap
 		showCheats = true;
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
+		}
+		if (((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) && unitCode[CURPOS] == 3) {
+			perGameOps++;
+			perGameOp[perGameOps] = 11;	// Region
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
@@ -645,6 +654,28 @@ void perGameSettings (std::string filename) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign);
 				}
 				break;
+			case 11:
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_REGION + ":", startAlign);
+				if (perGameSettings_language == -3) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+				} else if (perGameSettings_language == -2) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_GAME, endAlign);
+				} else if (perGameSettings_language == -1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SYSTEM, endAlign);
+				} else if (perGameSettings_language == 0) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Japan", endAlign);
+				} else if (perGameSettings_language == 1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "USA", endAlign);
+				} else if (perGameSettings_language == 2) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Europe", endAlign);
+				} else if (perGameSettings_language == 3) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Australia", endAlign);
+				} else if (perGameSettings_language == 4) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "China", endAlign);
+				} else if (perGameSettings_language == 5) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Korea", endAlign);
+				}
+				break;
 		}
 		perGameOpYpos += 14;
 		}
@@ -756,6 +787,10 @@ void perGameSettings (std::string filename) {
 						}
 						if (perGameSettings_expandRomSpace < -1) perGameSettings_expandRomSpace = 2;
 						break;
+					case 11:
+						perGameSettings_region--;
+						if (perGameSettings_region < -3) perGameSettings_region = 5;
+						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
@@ -838,6 +873,10 @@ void perGameSettings (std::string filename) {
 							perGameSettings_expandRomSpace++;
 						}
 						if (perGameSettings_expandRomSpace > 2) perGameSettings_expandRomSpace = -1;
+						break;
+					case 11:
+						perGameSettings_region++;
+						if (perGameSettings_region > 5) perGameSettings_region = -3;
 						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();

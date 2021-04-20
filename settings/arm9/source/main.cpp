@@ -731,6 +731,7 @@ int main(int argc, char **argv)
 	SettingsPage guiPage(STR_GUI_SETTINGS);
 
 	using TLanguage = TWLSettings::TLanguage;
+	using TRegion = TWLSettings::TRegion;
 	//using TAKScrollSpeed = TWLSettings::TScrollSpeed;
 	if (sdAccessible && fatAccessible) {
 		guiPage.option(STR_UPDATETWLMENU,
@@ -1070,7 +1071,30 @@ int main(int argc, char **argv)
 				 TLanguage::ELangSpanish,
 				 TLanguage::ELangFrench,
 				 TLanguage::ELangItalian,
-				 TLanguage::ELangJapanese,})
+				 TLanguage::ELangJapanese,});
+	if (dsiFeatures()) {
+		miscPage
+		.option(STR_GAMEREGION,
+				STR_DESCRIPTION_GAMEREGION,
+				Option::Int(&ms().gameRegion),
+				{STR_GAME,
+				 STR_SYSTEM,
+				 "Japan",
+				 "USA",
+				 "Europe",
+				 "Australia",
+				 "China",
+				 "Korea"},
+				{TRegion::ERegionGame, 
+				 TRegion::ERegionDefault,
+				 TRegion::ERegionJapan,
+				 TRegion::ERegionUSA,
+				 TRegion::ERegionEurope,
+				 TRegion::ERegionAustralia,
+				 TRegion::ERegionChina,
+				 TRegion::ERegionKorea});
+	}
+	miscPage
 		.option(STR_MACROMODE,
 				STR_DESCRIPTION_MACROMODE,
 				Option::Bool(&ms().macroMode),

@@ -1137,6 +1137,7 @@ int main(int argc, char **argv) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", ms().dsiWarePrvPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_language == -3 ? ms().gameRegion : perGameSettings_region);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
@@ -1417,6 +1418,7 @@ int main(int argc, char **argv) {
 						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img");
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_language == -3 ? ms().gameRegion : perGameSettings_region);
 						if (dsModeForced || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? unitCode[CURPOS]==3 : (unitCode[CURPOS] > 0 && unitCode[CURPOS] < 3) && sys().arm7SCFGLocked())) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						} else if (isDSiMode() || !ms().secondaryDevice) {

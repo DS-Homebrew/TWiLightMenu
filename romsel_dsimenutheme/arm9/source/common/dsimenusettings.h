@@ -80,6 +80,18 @@ public:
 		ELangIndonesian = 20,
 	};
 
+    enum TRegion
+    {
+        ERegionGame = -2,
+        ERegionDefault = -1,
+        ERegionJapan = 0,
+        ERegionUSA = 1,
+        ERegionEurope = 2,
+        ERegionAustralia = 3,
+        ERegionChina = 4,
+        ERegionKorea = 5,
+    };
+
 	enum TRunIn
 	{
 		EDSMode = 0,
@@ -212,6 +224,7 @@ public:
 	bool bootstrapFile;
 
 	int gameLanguage;
+    int gameRegion;
 	bool boostCpu;
 	bool boostVram;
 	int bstrap_dsiMode;
