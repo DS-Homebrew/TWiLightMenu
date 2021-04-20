@@ -663,17 +663,17 @@ void perGameSettings (std::string filename) {
 				} else if (perGameSettings_region == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SYSTEM, endAlign);
 				} else if (perGameSettings_region == 0) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Japan", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_JAPAN, endAlign);
 				} else if (perGameSettings_region == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "USA", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_USA, endAlign);
 				} else if (perGameSettings_region == 2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Europe", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_EUROPE, endAlign);
 				} else if (perGameSettings_region == 3) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Australia", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_AUSTRALIA, endAlign);
 				} else if (perGameSettings_region == 4) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "China", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_CHINA, endAlign);
 				} else if (perGameSettings_region == 5) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Korea", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_KOREA, endAlign);
 				}
 				break;
 		}
