@@ -153,6 +153,14 @@ STRING(JAPANESE, "Japanese")
 STRING(KOREAN, "Korean")
 STRING(SPANISH, "Spanish")
 
+// Regions
+STRING(JAPAN, "Japan")
+STRING(USA, "USA")
+STRING(EUROPE, "Europe")
+STRING(AUSTRALIA, "Australia")
+STRING(CHINA, "China")
+STRING(KOREA, "Korea")
+
 // Cheats
 STRING(CHEATS, "Cheats")
 STRING(SAVING, "Saving...")
