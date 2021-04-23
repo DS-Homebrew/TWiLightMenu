@@ -402,7 +402,7 @@ std::string setApFix(const char *filename) {
 	bool cheatVer = true;
 	char ipsPath[256];
 	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/cht/%s.ips", sdFound() ? "sd" : "fat", filename);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/cht/%s.bin", sdFound() ? "sd" : "fat", filename);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 	}
 
