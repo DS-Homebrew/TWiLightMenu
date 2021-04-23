@@ -51,7 +51,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 
 # Credits
 ## Main Developers
-- [RocketRobz](https://github.com/RocketRobz): Lead Developer, implementing the auto-reset power button function used in NTR-mode.
+- [Rocket Robz](https://github.com/RocketRobz): Lead Developer, implementing the auto-reset power button function used in NTR-mode.
 - [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ & adding the ability to load sub-themes off the SD card for DSi/3DS themes.
 - [Pk11](https://github.com/Epicpkmn11): Adding the ability to load sub-themes off the SD card for the R4 theme, implemented sorting & made manuals use PNG, improved font rendering, providing a custom background for Unlaunch, and various bug fixes.
 ## App Launchers
@@ -82,7 +82,8 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcarts.
 - [SNBeast](https://github.com/SNBeast): Unlaunch patches.
 - retrogamefan & Rudolph: Included AP-patches for nds-bootstrap.
-   - enler: Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility. Same done by Rocket Robz for USA/Europe region (using JAP patch as base).
+   - enler: Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility.
+   - Rocket Robz: Fixing some DS⁽ⁱ⁾-Enhanced game AP-patches for DS⁽ⁱ⁾ mode compatibility.
 - fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, gamemasterplc, RocketRobz & ChampionLeake: Widescreen Cheats.
 ## Translators
 - Chinese Simplified: [Forbidden](https://crowdin.com/profile/Origami), [James-Makoto](https://crowdin.com/profile/VCMOD55), [R-YaTian](https://github.com/R-YaTian), [Yukino Song](https://crowdin.com/profile/ClassicOldSong), [百地 希留耶](https://crowdin.com/profile/FIve201)
