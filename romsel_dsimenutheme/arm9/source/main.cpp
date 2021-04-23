@@ -197,17 +197,6 @@ void SetMPUSettings(const char *filename) {
 	} else {
 		mpusize = 0;
 	}
-
-	// Check for games that need an MPU size of 3 MB.
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(mpu_3MB_list) / sizeof(mpu_3MB_list[0]); i++) {
-		if (memcmp(gameTid[CURPOS], mpu_3MB_list[i], 3) == 0) {
-			// Found a match.
-			mpuregion = 1;
-			mpusize = 3145728;
-			break;
-		}
-	}
 }
 
 /**

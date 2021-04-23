@@ -356,15 +356,6 @@ int SetDonorSDK(const char* filename) {
  * Set MPU settings for a specific game.
  */
 void SetMPUSettings(const char* filename) {
-	FILE *f_nds_file = fopen(filename, "rb");
-
-	char game_TID[5];
-	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-	fread(game_TID, 1, 4, f_nds_file);
-	game_TID[4] = 0;
-	game_TID[3] = 0;
-	fclose(f_nds_file);
-
 	scanKeys();
 	int pressed = keysHeld();
 	
@@ -384,17 +375,6 @@ void SetMPUSettings(const char* filename) {
 		mpusize = 1;
 	} else {
 		mpusize = 0;
-	}
-
-	// Check for games that need an MPU size of 3 MB.
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(mpu_3MB_list)/sizeof(mpu_3MB_list[0]); i++) {
-		if (!memcmp(game_TID, mpu_3MB_list[i], 3)) {
-			// Found a match.
-			mpuregion = 1;
-			mpusize = 3145728;
-			break;
-		}
 	}
 }
 
