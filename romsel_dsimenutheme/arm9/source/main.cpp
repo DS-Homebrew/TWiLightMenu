@@ -335,7 +335,7 @@ void SetWidescreen(const char *filename) {
 	bool wideCheatFound = false;
 	char wideBinPath[256];
 	if (ms().launchType[ms().secondaryDevice] == Launch::ESDFlashcardLaunch) {
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s.bin", filename);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
@@ -354,10 +354,10 @@ void SetWidescreen(const char *filename) {
 		tonccpy(s1GameTid, ndsCart.gameCode, 4);
 		s1GameTid[4] = 0;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", s1GameTid, ndsCart.headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", s1GameTid, ndsCart.headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	} else if (!wideCheatFound) {
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", gameTid[CURPOS], headerCRC[CURPOS]);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", gameTid[CURPOS], headerCRC[CURPOS]);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 

@@ -698,7 +698,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 	bool wideCheatFound = false;
 	char wideBinPath[256];
 	if (ms().launchType[ms().secondaryDevice] == TWLSettings::ESDFlashcardLaunch) {
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s.bin", filename);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
@@ -719,7 +719,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 		game_TID[4] = 0;
 		headerCRC16 = ndsCart.headerCRC16;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, ndsCart.headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", game_TID, ndsCart.headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	} else if (!wideCheatFound) {
 		FILE *f_nds_file = fopen(filename, "rb");
@@ -731,7 +731,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 		fclose(f_nds_file);
 		game_TID[4] = 0;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", game_TID, headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 

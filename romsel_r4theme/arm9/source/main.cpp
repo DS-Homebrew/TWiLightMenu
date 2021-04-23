@@ -662,7 +662,7 @@ void SetWidescreen(const char *filename) {
 	bool wideCheatFound = false;
 	char wideBinPath[256];
 	if (launchType[secondaryDevice] == 1) {
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s.bin", filename);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
@@ -683,7 +683,7 @@ void SetWidescreen(const char *filename) {
 		game_TID[4] = 0;
 		headerCRC16 = ndsCart.headerCRC16;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, ndsCart.headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", game_TID, ndsCart.headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	} else if (!wideCheatFound) {
 		FILE *f_nds_file = fopen(filename, "rb");
@@ -695,7 +695,7 @@ void SetWidescreen(const char *filename) {
 		fclose(f_nds_file);
 		game_TID[4] = 0;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", game_TID, headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
