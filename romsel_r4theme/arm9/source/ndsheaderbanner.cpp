@@ -98,7 +98,7 @@ int checkRomAP(FILE *ndsFile)
 	game_TID[4] = 0;
 
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
 
 	if (access(ipsPath, F_OK) == 0) {
 		return 0;
