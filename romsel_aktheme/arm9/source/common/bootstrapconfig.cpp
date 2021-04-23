@@ -14,7 +14,6 @@
 #include <nds/arm9/dldi.h>
 
 #include "donorMap.h"
-#include "mpuMap.h"
 #include "speedBumpExcludeMap.h"
 #include "saveMap.h"
 
