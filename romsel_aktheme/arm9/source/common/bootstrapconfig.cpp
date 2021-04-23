@@ -78,13 +78,6 @@ BootstrapConfig &BootstrapConfig::donorSdk(int sdk)
 
 BootstrapConfig &BootstrapConfig::mpuSettings()
 {
-	for (const char *mputid : mpu_3MB_list)
-	{
-		if (strncmp(mputid, _gametid.c_str(), 3) == 0)
-		{
-			return mpuRegion(1).mpuSize(0x300000);
-		}
-	}
 	return mpuRegion(0).mpuSize(0);
 }
 BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
