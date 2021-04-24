@@ -66,8 +66,9 @@ jobs:
           # Theme is currently unused
           rm -rf 7zfile/_nds/TWiLightMenu/akmenu
 
-          # Don't include skins in nightlies
+          # Don't include skins or fonts in nightlies
           rm -rf 7zfile/_nds/TWiLightMenu/*menu/
+          rm -rf 7zfile/_nds/TWiLightMenu/extras/fonts
 
           # Debug 7z
           mv 7zfile/debug debug
