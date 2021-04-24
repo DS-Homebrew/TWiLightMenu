@@ -525,7 +525,7 @@ std::string apFix(const char *filename, bool isHomebrew)
 
 	bool ipsFound = false;
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s.ips", sdFound() ? "sd" : "fat", filename);
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s.ips", sdFound() ? "sd" : "fat", filename);
 	ipsFound = (access(ipsPath, F_OK) == 0);
 
 	char game_TID[5];
@@ -541,7 +541,7 @@ std::string apFix(const char *filename, bool isHomebrew)
 		fclose(f_nds_file);
 		game_TID[4] = 0;
 
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 	}
 
@@ -698,7 +698,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 	bool wideCheatFound = false;
 	char wideBinPath[256];
 	if (ms().launchType[ms().secondaryDevice] == TWLSettings::ESDFlashcardLaunch) {
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s.bin", filename);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
@@ -719,7 +719,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 		game_TID[4] = 0;
 		headerCRC16 = ndsCart.headerCRC16;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, ndsCart.headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", game_TID, ndsCart.headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	} else if (!wideCheatFound) {
 		FILE *f_nds_file = fopen(filename, "rb");
@@ -731,7 +731,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 		fclose(f_nds_file);
 		game_TID[4] = 0;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", game_TID, headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
@@ -970,7 +970,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
     PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
 
 	char ipsPath[256];
-	sprintf(ipsPath, "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid, headerCRC16);
+	sprintf(ipsPath, "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid, headerCRC16);
 
 	if (settingsIni.checkIfShowAPMsg() && !(access(ipsPath, F_OK) == 0 || checkIfAPPatch(_mainList->getSelectedFullPath().c_str()))) {
 		// Check for SDK4-5 ROMs that don't have AP measures.
