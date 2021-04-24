@@ -344,6 +344,81 @@ void SaveSettings(void) {
 	settingsini.SaveIniFile(settingsinipath);
 }
 
+// Do not reorder these, just add to the end
+// This should be in dsimenusettings.h, but the R4 theme currently doesn't have that
+enum TLanguage {
+	ELangDefault = -1,
+	ELangJapanese = 0,
+	ELangEnglish = 1,
+	ELangFrench = 2,
+	ELangGerman = 3,
+	ELangItalian = 4,
+	ELangSpanish = 5,
+	ELangChineseS = 6,
+	ELangKorean = 7,
+	ELangChineseT = 8,
+	ELangPolish = 9,
+	ELangPortuguese = 10,
+	ELangRussian = 11,
+	ELangSwedish = 12,
+	ELangDanish = 13,
+	ELangTurkish = 14,
+	ELangUkrainian = 15,
+	ELangHungarian = 16,
+	ELangNorwegian = 17,
+	ELangHebrew = 18,
+	ELangDutch = 19,
+	ELangIndonesian = 20,
+};
+
+std::string getGuiLanguageString() {
+	switch (setLanguage) {
+		case ELangJapanese:
+			return "ja";
+		case ELangEnglish:
+		default:
+			return "en";
+		case ELangFrench:
+			return "fr";
+		case ELangGerman:
+			return "de";
+		case ELangItalian:
+			return "it";
+		case ELangSpanish:
+			return "es";
+		case ELangChineseS:
+			return "zh-CN";
+		case ELangKorean:
+			return "ko";
+		case ELangChineseT:
+			return "zh-TW";
+		case ELangPolish:
+			return "pl";
+		case ELangPortuguese:
+			return "pt";
+		case ELangRussian:
+			return "ru";
+		case ELangSwedish:
+			return "sv";
+		case ELangDanish:
+			return "da";
+		case ELangTurkish:
+			return "tr";
+		case ELangUkrainian:
+			return "uk";
+		case ELangHungarian:
+			return "hu";
+		case ELangNorwegian:
+			return "no";
+		case ELangHebrew:
+			return "he";
+		case ELangDutch:
+			return "nl";
+		case ELangIndonesian:
+			return "id";
+	}
+}
+
 int colorRvalue;
 int colorGvalue;
 int colorBvalue;
@@ -1411,6 +1486,7 @@ int main(int argc, char **argv) {
 								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2Path);
 								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", getGuiLanguageString());
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
@@ -1636,6 +1712,7 @@ int main(int argc, char **argv) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", dsiWarePubPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", dsiWarePrvPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
+					bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region == -3 ? gameRegion : perGameSettings_region);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
@@ -1861,6 +1938,7 @@ int main(int argc, char **argv) {
 						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && (game_TID[0] == 'W' || romVersion == 0x57)) ? "wide" : "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !secondaryDevice) ? ramdiskpath : "sd:/null.img");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", getGuiLanguageString());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region == -3 ? gameRegion : perGameSettings_region);
 						if (dsModeForced || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? unitCode==3 : (unitCode > 0 && unitCode < 3) && arm7SCFGLocked)) {
@@ -2197,6 +2275,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
+						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", getGuiLanguageString());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2Path);
@@ -2272,6 +2351,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
+						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", getGuiLanguageString());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
@@ -2308,6 +2388,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
+						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", getGuiLanguageString());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
@@ -2335,6 +2416,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
+						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", getGuiLanguageString());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
@@ -2357,6 +2439,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
+						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", getGuiLanguageString());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds");
