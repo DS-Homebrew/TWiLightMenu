@@ -1,3 +1,4 @@
+#include "common/dsimenusettings.h"
 #include "common/tonccpy.h"
 #include "graphics/lodepng.h"
 #include "gbaswitch.h"
@@ -91,7 +92,7 @@ void gbaSwitch(void) {
 	toncset((void*)BG_BMP_RAM(8),0,0x18000);
 
 	char borderPath[256];
-	sprintf(borderPath, "/_nds/TWiLightMenu/gbaborders/%s", gbaBorder.c_str());
+	sprintf(borderPath, "/_nds/TWiLightMenu/gbaborders/%s", ms().gbaBorder.c_str());
 	loadGbaBorder((access(borderPath, F_OK)==0) ? borderPath : "nitro:/graphics/gbaborder.png");
 
 	// Switch to GBA mode

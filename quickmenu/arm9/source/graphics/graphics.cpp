@@ -58,10 +58,6 @@ extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
-extern int fps;
-extern bool macroMode;
-extern int colorMode;
-extern int blfLevel;
 int fadeDelay = 0;
 
 extern int colorRvalue;
@@ -82,10 +78,7 @@ extern int spawnedtitleboxes;
 
 extern bool showCursor;
 extern bool startMenu;
-extern int startMenu_cursorPosition;
 
-extern int launchType;
-extern bool secondaryDevice;
 extern bool pictochatFound;
 extern bool dlplayFound;
 extern bool gbaBiosFound;
@@ -94,8 +87,6 @@ extern bool isRegularDS;
 extern bool isDSPhat(void);
 extern bool sdFound(void);
 extern bool flashcardFound(void);
-extern int theme;
-extern int consoleModel;
 extern bool cardEjected;
 
 int boxArtType[2] = {0};
@@ -155,7 +146,7 @@ void frameRateHandler(void) {
 
 	if (!renderFrame) {
 		frameDelay++;
-		switch (fps) {
+		switch (ms().fps) {
 			case 11:
 				renderFrame = (frameDelay == 5+frameDelayEven);
 				break;
@@ -190,7 +181,7 @@ void frameRateHandler(void) {
 							&& frameOf60fps != 58);
 				break;
 			default:
-				renderFrame = (frameDelay == 60/fps);
+				renderFrame = (frameDelay == 60/ms().fps);
 				break;
 		}
 	}
@@ -223,7 +214,7 @@ void initSubSprites(void)
 }
 
 u16 convertToDsBmp(u16 val) {
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		u16 newVal = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
 
 		u8 b,g,r,max,min;
@@ -241,13 +232,13 @@ u16 convertToDsBmp(u16 val) {
 		
 		newVal = 32768|(max<<10)|(max<<5)|(max);
 
-		b = ((newVal)>>10)&(31-6*blfLevel);
-		g = ((newVal)>>5)&(31-3*blfLevel);
+		b = ((newVal)>>10)&(31-6*ms().blfLevel);
+		g = ((newVal)>>5)&(31-3*ms().blfLevel);
 		r = (newVal)&31;
 
 		return 32768|(b<<10)|(g<<5)|(r);
 	} else {
-		return ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+		return ((val>>10)&31) | (val&(31-3*ms().blfLevel)<<5) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 	}
 }
 
@@ -272,7 +263,6 @@ void bottomBgLoad(void) {
 	std::string bottomBGFile = "nitro:/graphics/bottombg.png";
 
 	char temp[256];
-	ms().loadSettings();
 
 	switch (ms().theme) {
 		case 0: // DSi Theme
@@ -361,9 +351,9 @@ void vBlankHandler()
 	  glBegin2D();
 	  {
 		if (controlBottomBright) SetBrightness(0, screenBrightness);
-		if (controlTopBright && !macroMode) SetBrightness(1, screenBrightness);
+		if (controlTopBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
-		glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
+		glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
 		if (startMenu) {
 			if (isDSiMode() && cardEjected) {
 				//glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
@@ -409,7 +399,7 @@ void vBlankHandler()
 			else if (bnrRomType[0] == 2) drawIconGB(40, iconYpos[3]+6);
 			else if (bnrRomType[0] == 1) glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
 			else drawIcon(0, 40, iconYpos[3]+6);
-			if (isDSiMode() && consoleModel < 2) {
+			if (isDSiMode() && ms().consoleModel < 2) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, &cornerIcons[0]);
 			}
 			if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[1]-1) & 31]);
@@ -422,7 +412,7 @@ void vBlankHandler()
 
 			// Draw cursor
 			if (showCursor) {
-				switch (startMenu_cursorPosition) {
+				switch (ms().startMenu_cursorPosition) {
 					case 0:
 					default:
 						glSprite(31, 23, GL_FLIP_NONE, &cursorImage[0]);
@@ -497,10 +487,10 @@ void vBlankHandler()
 }
 
 void loadBoxArt(const char* filename) {
-	if (macroMode) return;
+	if (ms().macroMode) return;
 
 	if(access(filename, F_OK) != 0) {
-		switch (boxArtType[secondaryDevice]) {
+		switch (boxArtType[ms().secondaryDevice]) {
 			case 0:
 			default:
 				filename = "nitro:/graphics/boxart_unknown.png";
@@ -524,7 +514,7 @@ void loadBoxArt(const char* filename) {
 
 	for(uint i=0;i<image.size()/4;i++) {
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (colorMode == 1) {
+		if (ms().colorMode == 1) {
 			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
 		}
 	}
@@ -553,13 +543,12 @@ void loadBoxArt(const char* filename) {
 }
 
 void topBgLoad(void) {
-	if (macroMode) return;
+	if (ms().macroMode) return;
 
 	char filePath[256];
 	sprintf(filePath, "nitro:/graphics/%s.png", isDSPhat() ? "phat_topbg" : "topbg");
 
 	char temp[256];
-	ms().loadSettings();
 
 	switch (ms().theme) {
 		case 0: // DSi Theme
@@ -606,7 +595,7 @@ void topBgLoad(void) {
 }
 
 void topBarLoad(void) {
-	if (macroMode) return;
+	if (ms().macroMode) return;
 
 	char filePath[256];
 	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", isDSPhat() ? "phat_topbar" : "topbar", (useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme));
@@ -619,7 +608,7 @@ void topBarLoad(void) {
 		lodepng::decode(image, width, height, filePath);
 		for(unsigned i=0;i<image.size()/4;i++) {
 			bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorMode == 1) {
+			if (ms().colorMode == 1) {
 				bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
 			}
 		}
@@ -704,7 +693,7 @@ void graphicsInit()
 	swiWaitForVBlank();
 
 	u16* newPalette = (u16*)cursorPals+((useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme)*16);
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 3; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
@@ -726,7 +715,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)iconboxPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 12; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
@@ -748,7 +737,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)wirelessiconsPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
@@ -770,7 +759,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)pictodlpPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 12; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
@@ -792,7 +781,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)icon_dscardPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
@@ -814,7 +803,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)(isDSPhat() ? iconPhat_gbaPal : icon_gbaPal);
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
@@ -836,7 +825,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)cornericonsPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
@@ -858,7 +847,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)icon_settingsPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
