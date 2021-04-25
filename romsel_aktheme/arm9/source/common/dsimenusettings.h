@@ -119,6 +119,9 @@ class TWLSettings
     static u32 CopyBufferSize(void);
 
     TLanguage getGuiLanguage();
+
+    std::string getGuiLanguageString();
+
     const char* getAppName();
   public:
     std::string romfolder[2];

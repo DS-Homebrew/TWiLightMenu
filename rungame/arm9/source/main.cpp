@@ -359,6 +359,7 @@ TWL_CODE int lastRunROM() {
 					CIniFile bootstrapini(bootstrapinipath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", romPath[previousUsedDevice]);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+					// bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
@@ -470,6 +471,7 @@ TWL_CODE int lastRunROM() {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", dsiWarePubPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", dsiWarePrvPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
+					// bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", (perGameSettings_language == -2 ? gameLanguage : perGameSettings_language));
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
