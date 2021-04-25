@@ -2208,7 +2208,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				}
 
-				if (dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel > 0) {
+				if ((dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel > 0) && !homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename[secondaryDevice]);
 

@@ -1126,7 +1126,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0) {
+				if ((ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 
