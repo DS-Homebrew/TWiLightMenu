@@ -56,12 +56,6 @@
 extern bool extention(const std::string& filename, const char* ext);
 
 extern int consoleModel;
-extern bool dsiWareBooter;
-
-extern int theme;
-extern int colorMode;
-extern bool animateDsiIcons;
-extern int consoleModel;
 
 extern u16 convertVramColorToGrayscale(u16 val);
 
@@ -167,7 +161,7 @@ void loadIcon(int num, u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 
 		glDeleteTextures(1, &iconTexID[num][i]);
 	}
 	for (int i = 0; i < loadIcon_loopTimes; i++) {
-		if (colorMode == 1) {
+		if (ms().colorMode == 1) {
 			for (int i2 = 0; i2 < 16; i2++) {
 				*(palSrc+i2+(i*16)) = convertVramColorToGrayscale(*(palSrc+i2+(i*16)));
 			}
@@ -218,7 +212,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &plgTexID);
 	
 	newPalette = (u16*)icon_plgPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -241,7 +235,7 @@ void loadConsoleIcons()
 	if (!isDSiMode()) {
 		// GBA Mode
 		newPalette = (u16*)icon_gbamodePal;
-		if (colorMode == 1) {
+		if (ms().colorMode == 1) {
 			for (int i2 = 0; i2 < 16; i2++) {
 				*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 			}
@@ -266,7 +260,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &gbTexID);
 	
 	newPalette = (u16*)icon_gbPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -290,7 +284,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &nesTexID);
 
 	newPalette = (u16*)icon_nesPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -314,7 +308,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &smsTexID);
 	
 	newPalette = (u16*)icon_smsPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -338,7 +332,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &ggTexID);
 	
 	newPalette = (u16*)icon_ggPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -362,7 +356,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &mdTexID);
 	
 	newPalette = (u16*)icon_mdPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -386,7 +380,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &snesTexID);
 	
 	newPalette = (u16*)icon_snesPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -410,7 +404,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &a26TexID);
 	
 	newPalette = (u16*)icon_a26Pal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -434,7 +428,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &pceTexID);
 	
 	newPalette = (u16*)icon_pcePal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -750,7 +744,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			}
 			if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
 			  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
-			&& (!isDSiMode() || dsiWareBooter || consoleModel > 0)) {
+			&& (!isDSiMode() || ms().dsiWareBooter || ms().consoleModel > 0)) {
 				isDSiWare[num] = false;
 			}
 			if (isHomebrew[num] == true && ndsHeader.arm9binarySize > 0x380000) {
@@ -844,7 +838,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 		infoFound[num] = true;
 
 		// banner sequence
-		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if(ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			grabBannerSequence(num);
 			bnriconisDSi[num] = true;
 		}
@@ -942,7 +936,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 		// this is an nds/app file!
 
 		// icon
-		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if(ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			loadIcon(num, ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
 			loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);

@@ -2,21 +2,15 @@
 #include <stdio.h>
 #include <maxmod9.h>
 
+#include "common/dsimenusettings.h"
 #include "graphics/lodepng.h"
 //#include "autoboot.h"
-
-extern bool sdRemoveDetect;
 
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
 
 extern bool arm7SCFGLocked;
-
-extern int consoleModel;
-extern int launcherApp;
-
-extern int guiLanguage;
 
 u16* sdRemovedExtendedImage = (u16*)0x026C8000;
 u16* sdRemovedImage = (u16*)0x026E0000;
@@ -29,8 +23,8 @@ void loadSdRemovedImage(void) {
 	std::vector<unsigned char> image;
 	char sdRemovedError[40];
 	char sdRemoved[40];
-	sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_%i.png", guiLanguage);
-	sprintf(sdRemoved, "nitro:/graphics/sdRemoved_%i.png", guiLanguage);
+	sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_%i.png", ms().guiLanguage);
+	sprintf(sdRemoved, "nitro:/graphics/sdRemoved_%i.png", ms().guiLanguage);
 	if (access(sdRemovedError, F_OK) != 0 || access(sdRemoved, F_OK) != 0) {
 		sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_1.png");
 		sprintf(sdRemoved, "nitro:/graphics/sdRemoved_1.png");
@@ -51,7 +45,7 @@ void loadSdRemovedImage(void) {
 }
 
 void checkSdEject(void) {
-	if (!sdRemoveDetect) return;
+	if (!ms().sdRemoveDetect) return;
 
 	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) {
 		timeTillChangeToNonExtendedImage++;

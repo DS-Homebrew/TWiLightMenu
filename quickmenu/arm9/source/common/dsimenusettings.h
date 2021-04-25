@@ -9,7 +9,7 @@
 
 /**
  * Multi use class for DSiMenuPlusPlus INI file.
- * 
+ *
  * Try not to change settings that are not related to the current theme.
  */
 class TWLSettings
@@ -77,6 +77,18 @@ class TWLSettings
         ELangIndonesian = 20,
     };
 
+    enum TRegion
+    {
+        ERegionGame = -2,
+        ERegionDefault = -1,
+        ERegionJapan = 0,
+        ERegionUSA = 1,
+        ERegionEurope = 2,
+        ERegionAustralia = 3,
+        ERegionChina = 4,
+        ERegionKorea = 5,
+    };
+
     enum TRunIn
     {
         EDSMode = 0,
@@ -86,8 +98,8 @@ class TWLSettings
 
     enum TSlot1LaunchMethod
     {
-        EReboot = false,
-        EDirect = true
+        EReboot = 0,
+        EDirect = 1
     };
 
     enum TBootstrapFile
@@ -96,20 +108,33 @@ class TWLSettings
         ENightlyBootstrap = true
     };
 
+    // 0 = No launch, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
     enum TLaunchType
     {
-        ENoLaunch = -1,
-        ESlot1 = 0,
+        ENoLaunch = 0,
         ESDFlashcardLaunch = 1,
-        EDSiWareLaunch = 2,
-        ENESDSLaunch = 3,
-        EGameYobLaunch = 4
+        ESDFlashcardDirectLaunch = 2,
+        EDSiWareLaunch = 3,
+        ENESDSLaunch = 4,
+        EGameYobLaunch = 5,
+        ES8DSLaunch = 6,
+        ERVideoLaunch = 7,
+        EMPEG4Launch = 8,
+        EStellaDSLaunch = 9,
+        EPicoDriveTWLLaunch = 10,
+        EGBANativeLaunch = 11,
+        EA7800DSLaunch = 12,
+        EA5200DSLaunch = 13,
+        ENitroGrafxLaunch = 14,
+        EXEGSDSLaunch = 15
     };
 
-    /*	0 = Nintendo DSi (Retail)
-    1 = Nintendo DSi (Dev/Panda)
-    2 = Nintendo 3DS
-    3 = New Nintendo 3DS	*/
+    /*
+        0 = Nintendo DSi (Retail)
+        1 = Nintendo DSi (Dev/Panda)
+        2 = Nintendo 3DS
+        3 = New Nintendo 3DS
+    */
     enum TConsoleModel
     {
         EDSiRetail = 0,
@@ -143,33 +168,42 @@ class TWLSettings
 
     const char* getAppName();
   public:
-    std::string romfolder;
-    int pagenum;
-    int cursorPosition;
+    std::string romfolder[2];
+    int pagenum[2];
+    int cursorPosition[2];
     int startMenu_cursorPosition;
     int consoleModel;
+    bool gotosettings;
+
     int guiLanguage;
     int titleLanguage;
+    int fps;
+    bool macroMode;
     int colorMode;
     int blfLevel;
-    bool wifiLed;
     bool sdRemoveDetect;
     bool showMicroSd;
     bool gbar2DldiAccess;
-    bool showMainMenu;
+    bool showSelectMenu;
     int theme;
     int dsiMusic;
+    bool boxArtColorDeband;
     bool showNds;
+    int showGba;
     bool showRvid;
+    bool showXex;
+    bool showA26;
+    bool showA52;
+    bool showA78;
     bool showNes;
     bool showGb;
     bool showSmsGg;
-    bool showMd;
+    int showMd;
     bool showSnes;
-    bool updateRecentlyPlayedList;
-    int sortMethod;
+    bool showPce;
     bool showDirectories;
     bool showHidden;
+    bool preventDeletion;
     int showBoxArt;
     bool animateDsiIcons;
     int sysRegion;
@@ -178,22 +212,29 @@ class TWLSettings
     bool previousUsedDevice;
     bool secondaryDevice;
     bool fcSaveOnSd;
+    bool updateRecentlyPlayedList;
+    int sortMethod;
 
     int flashcard;
-    bool slot1LaunchMethod;
+    int slot1LaunchMethod;
     bool useBootstrap;
     bool bootstrapFile;
 
     int gameLanguage;
+    int gameRegion;
     bool boostCpu;
     bool boostVram;
     int bstrap_dsiMode;
+    bool cardReadDMA;
+    int extendedMemory;
+
     bool forceSleepPatch;
     bool slot1SCFGUnlock;
     bool dsiWareBooter;
     bool autorun;
     bool show12hrClock;
-    bool snesEmulator;
+    //bool snesEmulator;
+    bool smsGgInRam;
 
     int ak_viewMode;
     int ak_scrollSpeed;
@@ -204,19 +245,26 @@ class TWLSettings
     std::string dsiWarePubPath;
     std::string dsiWarePrvPath;
 
-    int launchType;
+    std::string romPath[2];
+
+    bool slot1Launched;
+    int launchType[2];
     std::string homebrewArg;
     bool homebrewBootstrap;
-    bool soundFreq;
-    int dsiSplash;
+    bool homebrewHasWide;
+    bool soundfreq;
     bool showlogo;
 
     std::string r4_theme;
     std::string dsi_theme;
     std::string _3ds_theme;
+    std::string gbaBorder;
+    std::string unlaunchBg;
+    std::string font;
 
-    //int screenScaleSize;
     bool wideScreen;
+
+    bool dontShowClusterWarning;
 };
 
 typedef singleton<TWLSettings> menuSettings_s;
