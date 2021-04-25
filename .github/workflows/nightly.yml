@@ -66,6 +66,10 @@ jobs:
           # Theme is currently unused
           rm -rf 7zfile/_nds/TWiLightMenu/akmenu
 
+          # Don't include skins or fonts in nightlies
+          rm -rf 7zfile/_nds/TWiLightMenu/*menu/
+          rm -rf 7zfile/_nds/TWiLightMenu/extras/fonts
+
           # Debug 7z
           mv 7zfile/debug debug
           7z a TWiLightMenu-debug.7z debug
@@ -116,17 +120,6 @@ jobs:
           rm -rf TWiLightMenu/DSi\ -\ CFW\ users
           7z a TWiLightMenu-Flashcard.7z TWiLightMenu
           mv TWiLightMenu-Flashcard.7z ~/artifacts
-
-          # Delete skins for lite
-          rm -rf TWiLightMenu
-          cp -r 7zfile/ TWiLightMenu/
-          rm -rf TWiLightMenu/Debug/
-          rm -rf TWiLightMenu/_nds/TWiLightMenu/*menu/
-          rm -rf TWiLightMenu/_nds/TWiLightMenu/extras/fonts/
-          rm -rf TWiLightMenu/Flashcard\ users/Autoboot/
-          rm -rf TWiLightMenu/Flashcard\ users/Flashcart\ Loader/
-          7z a TWiLightMenu-Lite.7z TWiLightMenu/
-          mv TWiLightMenu-Lite.7z ~/artifacts
       - name: Publish build to GH Actions
         uses: actions/upload-artifact@v2
         with:
