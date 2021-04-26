@@ -88,6 +88,13 @@ class TWLSettings
         ERegionKorea = 5,
     };
 
+    enum TRunIn
+    {
+        EDSMode = 0,
+        EDSiMode = 1,
+        EDSiModeForced = 2
+    };
+
     enum TSlot1LaunchMethod
     {
         EReboot = 0,
@@ -179,7 +186,7 @@ class TWLSettings
     int gameRegion;
     bool boostCpu;
     bool boostVram;
-    bool bstrap_dsiMode;
+    int bstrap_dsiMode;
 	bool cardReadDMA;
 	int extendedMemory;
 

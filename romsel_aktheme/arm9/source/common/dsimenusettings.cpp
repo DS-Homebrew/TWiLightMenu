@@ -55,7 +55,7 @@ TWLSettings::TWLSettings()
     gameLanguage = ELangDefault;
     boostCpu = false;
     boostVram = false;
-    bstrap_dsiMode = EDSMode;
+    bstrap_dsiMode = EDSiMode;
     forceSleepPatch = false;
     dsiWareBooter = false;
 

@@ -803,9 +803,9 @@ void arm7_main (void) {
 	if (my_isDSiMode()) {
 		if (twlMode == 2) {
 			dsiModeConfirmed = twlMode;
-		} else {
+		} /*else {
 			dsiModeConfirmed = twlMode && ROMsupportsDsiMode(&dsiHeaderTemp->ndshdr);
-		}
+		}*/
 	}
 
 	if (dsiModeConfirmed) {

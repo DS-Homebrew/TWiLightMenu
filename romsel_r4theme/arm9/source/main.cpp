@@ -175,7 +175,7 @@ int gameLanguage = -1;
 int gameRegion = -2;
 bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
-int bstrap_dsiMode = 0;
+int bstrap_dsiMode = 1;
 bool cardReadDMA = true;
 int bstrap_extendedMemory = 0;
 bool forceSleepPatch = false;

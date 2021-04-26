@@ -51,7 +51,7 @@ TWLSettings::TWLSettings()
     gameRegion = ERegionGame;
     boostCpu = false;
     boostVram = false;
-    bstrap_dsiMode = false;
+    bstrap_dsiMode = EDSiMode;
 	cardReadDMA = true;
 	extendedMemory = 0;
 
