@@ -82,7 +82,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcarts.
 - [SNBeast](https://github.com/SNBeast): Unlaunch patches.
 - retrogamefan & Rudolph: Included AP-patches for nds-bootstrap.
-   - enler: Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility.
+   - [enler](https://github.com/enler): Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility.
    - Rocket Robz: Fixing some DS⁽ⁱ⁾-Enhanced game AP-patches for DS⁽ⁱ⁾ mode compatibility.
 - fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, gamemasterplc, RocketRobz & ChampionLeake: Widescreen Cheats.
 ## Translators
