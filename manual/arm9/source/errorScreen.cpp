@@ -23,7 +23,7 @@ static bool showNonExtendedImage = false;
 void checkSdEject(void) {
 	if (!sdRemoveDetect) return;
 
-	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) {
+	if (*(u8*)(0x02FFF002) == 0 || !isDSiMode()) {
 		if(!showNonExtendedImage) {
 			timeTillChangeToNonExtendedImage++;
 			if (timeTillChangeToNonExtendedImage > 10) {
@@ -87,7 +87,7 @@ void checkSdEject(void) {
 			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			swiWaitForVBlank();
 		}
-		if (*(u8*)(0x023FF002) == 2 && !arm7SCFGLocked) {
+		if (*(u8*)(0x02FFF002) == 2 && !arm7SCFGLocked) {
 			if (consoleModel < 2) {
 				unlaunchSetHiyaBoot();
 			}
