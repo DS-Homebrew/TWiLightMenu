@@ -1,4 +1,4 @@
-﻿Total: 494
+﻿Total: 496
 
 007 - Blood Stone (USA/Canada/Europe/France/Germany)
 American Dragon - Jake Long - Attack of the Dark Dragon (USA)
@@ -268,6 +268,8 @@ Pocket Monsters - Black 2 (Japan)
 Pocket Monsters - White 2 (Japan)
 Pocket Monsters - Black 2 (Korea)
 Pocket Monsters - White 2 (Korea)
+Pocket Monsters - Black 2 (Chinese translation)
+Pocket Monsters - White 2 (Chinese translation)
 Pop Island (USA)
 Pop Island (Europe)
 Pop Island - Paperfield (USA)
