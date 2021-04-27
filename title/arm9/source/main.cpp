@@ -989,6 +989,16 @@ int main(int argc, char **argv)
 		stop();
 	}
 
+	if (*(u32*)(0x02000004) == 0xA32AE2B3) {	// Unlaunch check
+		*(u32*)(0x02000000) = 0; // Clear soft-reset params
+	}
+	// Soft-reset parameters
+	/*
+		0: Skip DS(i) splash
+		1: Skip TWLMenu++ splash
+		2: Skip last-run game
+	*/
+
 	if (sys().isRegularDS()) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 		if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353 && *(u16*)(0x020000C0) != 0x5A45) {
@@ -1050,6 +1060,7 @@ int main(int argc, char **argv)
 		}
 		if (useTwlCfg) {
 			if (cfgCrcFromFile != cfgCrc) {
+				*(u32*)(0x02000000) = 0; // Clear soft-reset params
 				fclose(twlCfg);
 				// Cache first 16KB containing TWLCFG, in case some homebrew overwrites it
 				twlCfg = fopen(twlCfgPath, "wb");
@@ -1317,11 +1328,11 @@ int main(int argc, char **argv)
 		soundBankLoaded = true;
 	}
 
-	if (!softResetParamsFound && ms().dsiSplash && (isDSiMode() ? fifoGetValue32(FIFO_USER_01) != 0x01 : *(u32*)0x02000000 != 1)) {
+	if (!softResetParamsFound && ms().dsiSplash && (isDSiMode()&&ms().consoleModel<2 ? fifoGetValue32(FIFO_USER_01) != 0x01 : !(*(u32*)0x02000000 & BIT(0)))) {
 		bootSplashInit();
-		if (isDSiMode()) fifoSendValue32(FIFO_USER_01, 10);
+		if (isDSiMode() && ms().consoleModel < 2) fifoSendValue32(FIFO_USER_01, 10);
 	}
-	*(u32*)0x02000000 = 1;
+	*(u32*)0x02000000 |= BIT(0);
 
 	if ((access(settingsinipath, F_OK) != 0)
 	|| (ms().theme < 0) || (ms().theme == 3) || (ms().theme > 6)) {
@@ -1348,9 +1359,9 @@ int main(int argc, char **argv)
 	
 	scanKeys();
 
-	if (softResetParamsFound
+	if (!(*(u32*)0x02000000 & BIT(2)) && (softResetParamsFound
 	 || (ms().autorun && !(keysHeld() & KEY_B))
-	 || (!ms().autorun && (keysHeld() & KEY_B)))
+	 || (!ms().autorun && (keysHeld() & KEY_B))))
 	{
 		lastRunROM();
 	}
@@ -1373,7 +1384,7 @@ int main(int argc, char **argv)
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 
-	if (ms().showlogo)
+	if (ms().showlogo && !(*(u32*)0x02000000 & BIT(1)))
 	{
 		if (!soundBankLoaded || strncmp((char*)soundBank+4, "*maxmod*", 8) != 0) {
 			// Load sound bank into memory
@@ -1391,6 +1402,7 @@ int main(int argc, char **argv)
 		}
 		twlMenuVideo();
 	}
+	*(u32*)0x02000000 &= ~(1UL << 1);
 
 	scanKeys();
 
