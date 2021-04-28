@@ -989,8 +989,11 @@ int main(int argc, char **argv)
 		stop();
 	}
 
-	if (*(u32*)(0x02000004) == 0xA32AE2B3) {	// Unlaunch check
+	u32 softResetParamsBak = 0;
+	if (*(u32*)(0x02000004) != 0) {
 		*(u32*)(0x02000000) = 0; // Clear soft-reset params
+	} else {
+		softResetParamsBak = *(u32*)(0x02000000);
 	}
 	// Soft-reset parameters
 	/*
@@ -1077,6 +1080,8 @@ int main(int argc, char **argv)
 		}
 		fclose(twlCfg);
 	}
+
+	*(u32*)(0x02000000) = softResetParamsBak;
 
 	if (access(settingsinipath, F_OK) != 0 && (access("fat:/", F_OK) == 0)) {
 		settingsinipath =
