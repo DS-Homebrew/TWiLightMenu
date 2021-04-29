@@ -1268,9 +1268,18 @@ int main(int argc, char **argv) {
 	}
 
 	// Flashcard (Secondary device)
-	if (flashcardFound() && ms().romPath[1] != "" && access(ms().romPath[1].c_str(), F_OK) == 0) {
-		romFound[1] = true;
+	if (flashcardFound()) {
+		CIniFile autoruninf("fat:/autorun.inf");
+		std::string autorunOpen = autoruninf.GetString("autorun.twl", "open", "");
 
+	  if (dsiFeatures() && autorunOpen != "" && access(autorunOpen.c_str(), F_OK) == 0) {
+		ms().romPath[1] = autorunOpen;
+		romFound[1] = true;
+	  } else if (ms().romPath[1] != "" && access(ms().romPath[1].c_str(), F_OK) == 0) {
+		romFound[1] = true;
+	  }
+
+	  if (romFound[1]) {
 		romfolder[1] = ms().romPath[1];
 		while (!romfolder[1].empty() && romfolder[1][romfolder[1].size()-1] != '/') {
 			romfolder[1].resize(romfolder[1].size()-1);
@@ -1369,6 +1378,7 @@ int main(int argc, char **argv) {
 				sprintf (boxArtPath[1], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
 			}
 		}
+	  }
 	}
 
 	if (ms().showBoxArt && !ms().slot1Launched) {
