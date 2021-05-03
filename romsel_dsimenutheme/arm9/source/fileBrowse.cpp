@@ -2673,7 +2673,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 								pathDefine = "DONORTWL_NDS_PATH";
 							}
 							std::string donorRomPath;
-							bootstrapinipath = ((!ms().secondaryDevice || (isDSiMode() && sdFound())) ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+							bootstrapinipath = ((!ms().secondaryDevice || (dsiFeatures() && sdFound())) ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 							CIniFile bootstrapini(bootstrapinipath);
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 							if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
