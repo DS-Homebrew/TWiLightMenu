@@ -1270,14 +1270,12 @@ int main(int argc, char **argv) {
 	if (showMd) {
 		extensionList.push_back(".gen");
 	}
-	if (!isDSiMode() || (isDSiMode() && (flashcardFound() || !arm7SCFGLocked))) {
-		if (showSnes) {
-			extensionList.push_back(".smc");
-			extensionList.push_back(".sfc");
-		}
-		if (showPce) {
-			extensionList.push_back(".pce");
-		}
+	if (showSnes) {
+		extensionList.push_back(".smc");
+		extensionList.push_back(".sfc");
+	}
+	if (showPce) {
+		extensionList.push_back(".pce");
 	}
 	srand(time(NULL));
 	

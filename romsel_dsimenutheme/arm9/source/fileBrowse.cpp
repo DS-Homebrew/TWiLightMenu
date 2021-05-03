@@ -1276,6 +1276,60 @@ bool checkForCompatibleGame(const char *filename) {
 	return proceedToLaunch;
 }
 
+void cannotLaunchMsg(const char *filename) {
+	clearText();
+	updateText(false);
+	snd().playWrong();
+	if (ms().theme != 4) {
+		dbox_showIcon = bnrRomType[CURPOS]==0;
+		showdialogbox = true;
+		for (int i = 0; i < 30; i++) {
+			snd().updateStream();
+			swiWaitForVBlank();
+		}
+		if (bnrRomType[CURPOS] == 0) {
+			titleUpdate(false, filename, CURPOS);
+		}
+	}
+	const std::string *str = nullptr;
+	if (bnrRomType[CURPOS] != 0 || (isDSiMode() && (ms().consoleModel>=2 ? !isHomebrew[CURPOS] : isDSiWare[CURPOS]) && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked())) {
+		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_3DS_HOME : &STR_RELAUNCH_UNLAUNCH;
+	} else if (isHomebrew[CURPOS] && ms().consoleModel >= 2) {
+		str = &STR_CANNOT_LAUNCH_HB_ON_3DS;
+	} else {
+		str = isDSiMode() ? &STR_CANNOT_LAUNCH_WITHOUT_SD : &STR_CANNOT_LAUNCH_IN_DS_MODE;
+	}
+	int yPos = (ms().theme == 4 ? 30 : 102);
+	printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center);
+
+	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
+	updateText(false);
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+
+		drawCurrentTime();
+		drawCurrentDate();
+		drawClockColon();
+		snd().updateStream();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	clearText();
+	updateText(false);
+	if (ms().theme == 5) {
+		dbox_showIcon = false;
+	}
+	if (ms().theme == 4) {
+		snd().playLaunch();
+	} else {
+		showdialogbox = false;
+	}
+}
+
 bool selectMenu(void) {
 	inSelectMenu = true;
 	dbox_showIcon = false;
@@ -2598,56 +2652,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				} else if (isDSiWare[CURPOS] && ((!isDSiMode() && !sdFound()) || (isHomebrew[CURPOS] && ms().consoleModel >= 2)
 						|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()))
 				) {
-					clearText();
-					updateText(false);
-					snd().playWrong();
-					if (ms().theme != 4) {
-						dbox_showIcon = true;
-						showdialogbox = true;
-						for (int i = 0; i < 30; i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
-						}
-						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
-					}
-					const std::string *str = nullptr;
-					if (isDSiMode() && (ms().consoleModel>=2 ? !isHomebrew[CURPOS] : isDSiWare[CURPOS]) && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()) {
-						str = ms().consoleModel >= 2 ? &STR_RELAUNCH_3DS_HOME : &STR_RELAUNCH_UNLAUNCH;
-					} else if (isHomebrew[CURPOS] && ms().consoleModel >= 2) {
-						str = &STR_CANNOT_LAUNCH_HB_ON_3DS;
-					} else {
-						str = isDSiMode() ? &STR_CANNOT_LAUNCH_WITHOUT_SD : &STR_CANNOT_LAUNCH_IN_DS_MODE;
-					}
-					int yPos = (ms().theme == 4 ? 30 : 102);
-					printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center);
-
-					printSmall(false, 0, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
-					updateText(false);
-					pressed = 0;
-					do {
-						scanKeys();
-						pressed = keysDown();
-						checkSdEject();
-						tex().drawVolumeImageCached();
-						tex().drawBatteryImageCached();
-
-						drawCurrentTime();
-						drawCurrentDate();
-						drawClockColon();
-						snd().updateStream();
-						swiWaitForVBlank();
-					} while (!(pressed & KEY_A));
-					clearText();
-					updateText(false);
-					if (ms().theme == 5) {
-						dbox_showIcon = false;
-					}
-					if (ms().theme == 4) {
-						snd().playLaunch();
-					} else {
-						showdialogbox = false;
-					}
+					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {
 					int hasAP = 0;
 					bool proceedToLaunch = true;
@@ -2698,6 +2703,10 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							proceedToLaunch = false;
 							mdRomTooBig();
 						}
+					} else if ((bnrRomType[CURPOS] == 8 || (bnrRomType[CURPOS] == 11 && ms().smsGgInRam))
+							&& isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()) {
+						proceedToLaunch = false;
+						cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 					}
 					if (hasAP > 0) {
 						if (ms().theme == 4) {

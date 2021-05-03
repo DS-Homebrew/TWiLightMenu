@@ -340,6 +340,10 @@ void showDirectoryContents (const vector<DirEntry>& dirContents, int startRow) {
 }
 
 void smsWarning(void) {
+	if (macroMode) {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Warning");
@@ -362,6 +366,10 @@ void smsWarning(void) {
 }
 
 void mdRomTooBig(void) {
+	if (macroMode) {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error!");
@@ -389,6 +397,10 @@ void mdRomTooBig(void) {
 }
 
 void ramDiskMsg(void) {
+	if (macroMode) {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
 	dialogboxHeight = 1;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error!");
@@ -416,6 +428,10 @@ void ramDiskMsg(void) {
 bool dsiBinariesMissingMsg(void) {
 	bool proceedToLaunch = false;
 
+	if (macroMode) {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
 	dialogboxHeight = 2;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error!");
@@ -456,6 +472,10 @@ bool dsiBinariesMissingMsg(void) {
 }
 
 void donorRomMsg(void) {
+	if (macroMode) {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
 	dialogboxHeight = 2;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error!");
@@ -547,6 +567,10 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 
 	if (proceedToLaunch) return true;	// Game is compatible
 
+	if (macroMode) {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Compatibility Warning");
@@ -587,6 +611,31 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 	}
 
 	return proceedToLaunch;
+}
+
+void cannotLaunchMsg(void) {
+	if (macroMode) {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
+	showdialogbox = true;
+	printLargeCentered(false, 74, "Error!");
+	printSmallCentered(false, 90, "This game cannot be launched.");
+	printSmallCentered(false, 108, "\u2427 OK");
+	int pressed = 0;
+	do {
+		snd().updateStream();
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	showdialogbox = false;
+	if (macroMode) {
+		lcdMainOnTop();
+		lcdSwapped = false;
+	}
+	for (int i = 0; i < 25; i++) swiWaitForVBlank();
 }
 
 extern bool extention(const std::string& filename, const char* ext);
@@ -772,28 +821,7 @@ string browseForFile(const vector<string> extensionList) {
 			else if (isDSiWare && ((!isDSiMode() && !sdFound()) || (isHomebrew && consoleModel >= 2)
 				  || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && arm7SCFGLocked))
 			) {
-				if (macroMode) {
-					lcdMainOnBottom();
-					lcdSwapped = true;
-				}
-				showdialogbox = true;
-				printLargeCentered(false, 74, "Error!");
-				printSmallCentered(false, 90, "This game cannot be launched.");
-				printSmallCentered(false, 108, "\u2427 OK");
-				pressed = 0;
-				do {
-					snd().updateStream();
-					scanKeys();
-					pressed = keysDown();
-					checkSdEject();
-					swiWaitForVBlank();
-				} while (!(pressed & KEY_A));
-				showdialogbox = false;
-				if (macroMode) {
-					lcdMainOnTop();
-					lcdSwapped = false;
-				}
-				for (int i = 0; i < 25; i++) swiWaitForVBlank();
+				cannotLaunchMsg();
 			} else {
 				int hasAP = 0;
 				bool proceedToLaunch = true;
@@ -857,6 +885,12 @@ string browseForFile(const vector<string> extensionList) {
 						proceedToLaunch = false;
 						mdRomTooBig();
 					}
+				}
+				else if ((bnrRomType == 8 || (bnrRomType == 11 && smsGgInRam))
+							&& isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && arm7SCFGLocked)
+				{
+					proceedToLaunch = false;
+					cannotLaunchMsg();
 				}
 
 				if (hasAP > 0) {

@@ -855,14 +855,12 @@ int main(int argc, char **argv) {
 	if (ms().showMd) {
 		extensionList.emplace_back(".gen");
 	}
-	if (!isDSiMode() || (isDSiMode() && (flashcardFound() || !sys().arm7SCFGLocked()))) {
-		if (ms().showSnes) {
-			extensionList.emplace_back(".smc");
-			extensionList.emplace_back(".sfc");
-		}
-		if (ms().showPce) {
-			extensionList.emplace_back(".pce");
-		}
+	if (ms().showSnes) {
+		extensionList.emplace_back(".smc");
+		extensionList.emplace_back(".sfc");
+	}
+	if (ms().showPce) {
+		extensionList.emplace_back(".pce");
 	}
 	srand(time(NULL));
 
