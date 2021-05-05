@@ -397,7 +397,7 @@ void lastRunROM()
 					for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
 						ROMListEntry* curentry = &ROMList[i];
 						if (gameTidHex == curentry->GameCode) {
-							savesize = sramlen[curentry->SaveMemType];
+							if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
 							break;
 						}
 					}

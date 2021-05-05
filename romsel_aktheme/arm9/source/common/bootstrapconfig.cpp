@@ -61,6 +61,7 @@ BootstrapConfig &BootstrapConfig::saveSize()
 	for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
 		ROMListEntry* curentry = &ROMList[i];
 		if (gameTidHex == curentry->GameCode) {
+			if (curentry->SaveMemType == 0xFFFFFFFF) break;
 			return saveSize(sramlen[curentry->SaveMemType]);
 		}
 	}
