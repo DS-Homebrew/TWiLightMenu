@@ -73,6 +73,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## Music
 - IkaMusumeYiyaRoxie: General N64 MIDI Soundfont, used for the title splash fanfare
 ## Others
+- [Arisotura](https://github.com/Arisotura): ROM list from melonDS.
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
 - [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap.
 - [Gericom](https://github.com/Gericom), TrolleyDave, and FAST6191: GBA SRAM-patching code, used in gbapatcher ([SRAM patching thread at GBATemp](https://gbatemp.net/threads/reverse-engineering-gba-patching.60168/))

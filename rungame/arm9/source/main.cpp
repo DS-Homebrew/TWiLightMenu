@@ -39,6 +39,7 @@
 #include "flashcard.h"
 
 #include "saveMap.h"
+#include "ROMList.h"
 
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -306,7 +307,6 @@ TWL_CODE int lastRunROM() {
 					fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
 					fread(game_TID, 1, 4, f_nds_file);
 					game_TID[4] = 0;
-					game_TID[3] = 0;
 
 					fclose(f_nds_file);
 
@@ -319,12 +319,16 @@ TWL_CODE int lastRunROM() {
 						savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 					}
 
-					if ((getFileSize(savepath.c_str()) == 0) && (strcmp(game_TID, "###") != 0) && (strcmp(game_TID, "NTR") != 0)) {
-						int savesize = 524288;	// 512KB (default size for most games)
+					if ((getFileSize(savepath.c_str()) == 0) && (strcmp(game_TID, "####") != 0) && (strncmp(game_TID, "NTR", 3) != 0)) {
+						u32 savesize = 524288;	// 512KB (default size for most games)
 
-						for (auto i : saveMap) {
-							if (i.second.find(game_TID) != i.second.cend()) {
-								savesize = i.first;
+						u32 gameTidHex = 0;
+						memcpy(&gameTidHex, &game_TID, 4);
+
+						for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
+							ROMListEntry* curentry = &ROMList[i];
+							if (gameTidHex == curentry->GameCode) {
+								savesize = sramlen[curentry->SaveMemType];
 								break;
 							}
 						}

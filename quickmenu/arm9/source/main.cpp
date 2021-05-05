@@ -49,6 +49,7 @@
 
 #include "donorMap.h"
 #include "saveMap.h"
+#include "ROMList.h"
 
 #include "sr_data_srllastran.h"	// For rebooting into the game
 
@@ -2181,9 +2182,8 @@ int main(int argc, char **argv) {
 				fread(&unitCode, 1, 1, f_nds_file);
 				fclose(f_nds_file);
 				game_TID[4] = 0;
-				game_TID[3] = 0;
 
-				if (strcmp(game_TID, "HND") == 0 || strcmp(game_TID, "HNE") == 0) {
+				if (memcmp(game_TID, "HND", 3) == 0 || memcmp(game_TID, "HNE", 3) == 0) {
 					dsModeSwitch = true;
 					dsModeDSiWare = true;
 					useBackend = false;	// Bypass nds-bootstrap
@@ -2223,14 +2223,18 @@ int main(int argc, char **argv) {
 						}
 						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
-						if (!isHomebrew[secondaryDevice] && (strcmp(game_TID, "NTR") != 0)) {
+						if (!isHomebrew[secondaryDevice] && (strncmp(game_TID, "NTR", 3) != 0)) {
 							// Create or expand save if game isn't homebrew
-							int orgsavesize = getFileSize(savepath.c_str());
-							int savesize = 524288;	// 512KB (default size)
+							u32 orgsavesize = getFileSize(savepath.c_str());
+							u32 savesize = 524288;	// 512KB (default size)
 
-							for (auto i : saveMap) {
-								if (i.second.find(game_TID) != i.second.cend()) {
-									savesize = i.first;
+							u32 gameTidHex = 0;
+							tonccpy(&gameTidHex, &game_TID, 4);
+
+							for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
+								ROMListEntry* curentry = &ROMList[i];
+								if (gameTidHex == curentry->GameCode) {
+									savesize = sramlen[curentry->SaveMemType];
 									break;
 								}
 							}
