@@ -1,10 +1,11 @@
+#include "common/dsimenusettings.h"
+#include "common/tonccpy.h"
+#include "drawing/lodepng.h"
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 
-int gbaBorder = 1;
-
 void loadGbaBorder(const char* filename) {
-	new u16 bmpImageBuffer[256*192];
+	u16* bmpImageBuffer = new u16[256*192];
 
 	uint imageWidth, imageHeight;
 	std::vector<unsigned char> image;
@@ -86,13 +87,13 @@ void gbaSwitch(void)
 	REG_BG3X = 0; //translation x
 	REG_BG3Y = 0; //translation y
 
-	memset((void*)BG_BMP_RAM(0),0,0x18000);
-	memset((void*)BG_BMP_RAM(8),0,0x18000);
+	toncset((void*)BG_BMP_RAM(0),0,0x18000);
+	toncset((void*)BG_BMP_RAM(8),0,0x18000);
 
-    if (gbaBorder == 1) {
-		// TODO: Load gbaborder from theme?
-		loadGbaBorder("nitro:/graphics/gbaborder.png");
-	}
+	char borderPath[256];
+	sprintf(borderPath, "/_nds/TWiLightMenu/gbaborders/%s", ms().gbaBorder.c_str());
+	loadGbaBorder((access(borderPath, F_OK)==0) ? borderPath : "nitro:/graphics/gbaborder.png");
+
     // Switch to GBA mode
     runNdsFile("/_nds/TWiLightMenu/gbaswitch.srldr", 0, NULL, true, false, true, false, false);
 }

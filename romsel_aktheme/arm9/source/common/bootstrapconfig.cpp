@@ -14,8 +14,8 @@
 #include <nds/arm9/dldi.h>
 
 #include "donorMap.h"
-#include "speedBumpExcludeMap.h"
 #include "saveMap.h"
+#include "ROMList.h"
 
 extern std::string getSavExtension(int number);
 extern std::string getImgExtension(int number);
@@ -46,7 +46,6 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	this
 		->saveSize()
 		.mpuSettings()
-		.speedBumpExclude(heapShrink)
 		.donorSdk();
 }
 
@@ -56,14 +55,14 @@ BootstrapConfig::~BootstrapConfig()
 
 BootstrapConfig &BootstrapConfig::saveSize()
 {
-	char gameTid3[5];
-	for (int i = 0; i < 3; i++) {
-		gameTid3[i] = _gametid.c_str()[i];
-	}
+	u32 gameTidHex = 0;
+	tonccpy(&gameTidHex, &_gametid, 4);
 
-	for (auto i : saveMap) {
-		if (i.second.find(gameTid3) != i.second.cend())
-			return saveSize(i.first);
+	for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
+		ROMListEntry* curentry = &ROMList[i];
+		if (gameTidHex == curentry->GameCode) {
+			return saveSize(sramlen[curentry->SaveMemType]);
+		}
 	}
 
 	return saveSize(0x80000);
@@ -78,22 +77,6 @@ BootstrapConfig &BootstrapConfig::donorSdk(int sdk)
 BootstrapConfig &BootstrapConfig::mpuSettings()
 {
 	return mpuRegion(0).mpuSize(0);
-}
-BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
-{
-	if (!isDSiMode() || (heapShrink >= 0 && heapShrink < 2)) {
-		return ceCached(heapShrink);
-	}
-
-	for (const char *speedtid : sbeList2)
-	{
-		if (strncmp(speedtid, _gametid.c_str(), 3) == 0)
-		{
-			return ceCached(false);
-		}
-	}
-
-	return ceCached(true);
 }
 BootstrapConfig &BootstrapConfig::donorSdk()
 {

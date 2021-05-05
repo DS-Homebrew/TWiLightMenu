@@ -76,6 +76,7 @@ TWLSettings::TWLSettings()
     homebrewHasWide = false;
 
     r4_theme = "unused";
+    gbaBorder = "default.png";
     unlaunchBg = "default.gif";
 
     soundfreq = EFreq32KHz;
@@ -180,6 +181,7 @@ void TWLSettings::loadSettings()
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
+	gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
 	charUnlaunchBg = unlaunchBg.c_str();
 	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
 

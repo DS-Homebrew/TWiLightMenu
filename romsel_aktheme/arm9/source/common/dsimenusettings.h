@@ -190,6 +190,7 @@ class TWLSettings
     bool soundfreq;
     bool showlogo;
     std::string r4_theme;// unused...
+	std::string gbaBorder;
     std::string unlaunchBg;
 
     bool wideScreen;

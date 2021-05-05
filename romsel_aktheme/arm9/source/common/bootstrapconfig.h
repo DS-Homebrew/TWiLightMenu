@@ -26,7 +26,6 @@ class BootstrapConfig
 
         BootstrapConfig& donorSdk();
         BootstrapConfig& mpuSettings();
-        BootstrapConfig& speedBumpExclude(int heapShrink);
         BootstrapConfig& forceSleepPatch();
         BootstrapConfig& saveSize();
 
