@@ -31,6 +31,8 @@ void BootstrapSettings::loadSettings()
 	}
 	soundFreq = bootstrapini.GetInt( "NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
 
+	bootstrapHotkey = strtol(bootstrapini.GetString("NDS-BOOTSTRAP", "HOTKEY", "284").c_str(), NULL, 16);
+
 }
 
 void BootstrapSettings::saveSettings()
@@ -48,5 +50,10 @@ void BootstrapSettings::saveSettings()
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "MACRO_MODE", ms().macroMode);
 	//bootstrapini.SetInt( "NDS-BOOTSTRAP", "COLOR_MODE", ms().colorMode);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "SOUND_FREQ", ms().soundFreq);
+
+	char hotkey[8] = {0};
+	itoa(bootstrapHotkey, hotkey, 16);
+	bootstrapini.SetString("NDS-BOOTSTRAP", "HOTKEY", hotkey);
+
     bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 }

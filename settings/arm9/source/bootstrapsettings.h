@@ -35,13 +35,15 @@ class BootstrapSettings
   public:
     bool cacheFatTable;
     bool debug;
-	bool logging;
-	int romreadled;
-	int dmaromreadled;
-	bool preciseVolumeControl;
+    bool logging;
+    int romreadled;
+    int dmaromreadled;
+    bool preciseVolumeControl;
+
+    int bootstrapHotkey;
 
   private:
-	bool soundFreq;
+    bool soundFreq;
 };
 
 typedef singleton<BootstrapSettings> bootstrapSettings_s;
