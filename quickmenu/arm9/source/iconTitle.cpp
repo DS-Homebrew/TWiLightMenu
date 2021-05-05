@@ -472,6 +472,23 @@ void loadFixedBanner(bool isSlot1) {
 	/* Banner fixes start here */
 	u32 bannersize = 0;
 
+	//Check reserved area before loadFixedBanner
+	int total = 0;
+	for (int i = 0; i < 8; i++)
+	{
+		if (ndsBanner.reserved2[i] == 0)
+			total++;
+	}
+
+	for (int i = 2047; i > 2039; i--)
+	{
+		if (ndsBanner.reserved2[i] == 0)
+			total++;
+	}
+
+	if (total == 16)
+		return;
+
 	/*FILE* bannerFile = fopen("sd:/_nds/TWiLightMenu/slot1.bnr", "wb");
 	bannersize = NDS_BANNER_SIZE_ORIGINAL;
 	fwrite(&ndsBanner, 1, bannersize, bannerFile);
