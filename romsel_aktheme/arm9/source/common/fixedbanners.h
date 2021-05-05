@@ -4,6 +4,24 @@
 
 inline void fixBanner(sNDSBannerExt *banner)
 {
+    //Check reserved area before loadFixedBanner
+    int total = 0;
+    int i;
+    for (i = 0; i < 8; i++)
+    {
+        if (banner->reserved2[i] == 0)
+            total++;
+    }
+
+    for (i = 2047; i > 2039; i--)
+    {
+        if (banner->reserved2[i] == 0)
+            total++;
+    }
+
+    if (total == 16)
+        return;
+
     // Check for fixed banner here.
     u16 crc1 = banner->crc[0];
 	//u16 crc2 = banner->crc[1];
