@@ -19,6 +19,7 @@ TWLSettings::TWLSettings()
     gameLanguage = ELangDefault;
     titleLanguage = ELangDefault;
     fps = 60;
+    macroMode = false;
     colorMode = 0;
     blfLevel = 0;
     dsiWareExploit = 0;

@@ -397,6 +397,90 @@ std::optional<Option> opt_font_select(void)
 	return Option(STR_FONTSEL, STR_AB_SETFONT, Option::Str(&ms().font), fontList);
 }
 
+void opt_set_hotkey(void) {
+	clearScroller();
+	bool updateText = true;
+	u16 held = 0, set = 0, timer = 0;
+	std::string keys = "";
+	while (timer < 60) {
+		if (updateText) {
+			keys = "";
+			if (set & KEY_L)
+				keys += " ";
+			if (set & KEY_R)
+				keys += " ";
+			if (set & KEY_UP)
+				keys += " ";
+			if (set & KEY_DOWN)
+				keys += " ";
+			if (set & KEY_LEFT)
+				keys += " ";
+			if (set & KEY_RIGHT)
+				keys += " ";
+			if (set & KEY_START)
+				keys += "START ";
+			if (set & KEY_SELECT)
+				keys += "SELECT ";
+			if (set & KEY_A)
+				keys += " ";
+			if (set & KEY_B)
+				keys += " ";
+			if (set & KEY_X)
+				keys += " ";
+			if (set & KEY_Y)
+				keys += " ";
+			if (set & KEY_TOUCH)
+				keys += STR_TOUCH + " ";
+
+			// Remove trailing space
+			keys = keys.substr(0, keys.size() - 1);
+
+			clearText(false);
+			if(ms().rtl())
+				printLarge(false, 256 - 4, 0, STR_HOLD_1S_SET, Alignment::right);
+			else
+				printLarge(false, 4, 0, STR_HOLD_1S_SET);
+			printSmall(false, 0, 48, keys, Alignment::center);
+			updateText = false;
+		}
+
+		if (!gui().isExited())
+			snd().playBgMusic(ms().settingsMusic);
+
+		do {
+			scanKeys();
+			held = keysHeld();
+			swiWaitForVBlank();
+			if(set)
+				timer++;
+		} while (held == set && timer < 60);
+
+		if(held != set) {
+			timer = 0;
+			set = held;
+			updateText = true;
+		}
+	}
+
+	bs().bootstrapHotkey = set;
+
+	mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
+
+	clearText(false);
+	if(ms().rtl())
+		printLarge(false, 256 - 4, 0, STR_HOTKEY_SET, Alignment::right);
+	else
+		printLarge(false, 4, 0, STR_HOTKEY_SET);
+	printSmall(false, 0, 48, keys, Alignment::center);
+	do {
+		scanKeys();
+		held = keysHeld();
+		swiWaitForVBlank();
+	} while(held & set);
+
+	clearText();
+}
+
 void begin_update(int opt)
 {
 	ms().saveSettings();
@@ -914,6 +998,8 @@ int main(int argc, char **argv)
 	} else {
 		gamesPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 	}
+
+	gamesPage.option(STR_HOTKEY, STR_DESCRIPTION_HOTKEY, Option::Nul(opt_set_hotkey), {STR_PRESS_A}, {0});
 
 	if (isDSiMode() && !sys().arm7SCFGLocked()) {
 		if (ms().consoleModel == 0) {
