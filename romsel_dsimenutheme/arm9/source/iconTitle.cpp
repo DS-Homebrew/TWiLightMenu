@@ -164,6 +164,23 @@ void loadFixedBanner(void) {
 	/* Banner fixes start here */
 	u32 bannersize = 0;
 
+	//Check reserved area before loadFixedBanner
+	int total = 0;
+	for (int i = 0; i < 8; i++)
+	{
+		if (ndsBanner.reserved2[i] == 0)
+			total++;
+	}
+
+	for (int i = 2047; i > 2039; i--)
+	{
+		if (ndsBanner.reserved2[i] == 0)
+			total++;
+	}
+
+	if (total == 16)
+		return;
+
 	// Alice in Wonderland (U)
 	if (ndsBanner.crc[3] == 0xB9EA) {
 		// Use fixed banner.
