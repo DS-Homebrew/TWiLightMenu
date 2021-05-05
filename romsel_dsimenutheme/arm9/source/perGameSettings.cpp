@@ -415,7 +415,7 @@ void perGameSettings (std::string filename) {
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
 		if (((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice)
-		&& (unitCode[CURPOS] == 0 || unitCode[CURPOS] == (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? 2 : 3) || (unitCode > 0 && !sys().arm7SCFGLocked()))) {
+		&& (unitCode[CURPOS] == 0 || unitCode[CURPOS] == (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? 2 : 3) || (unitCode[CURPOS] > 0 && !sys().arm7SCFGLocked()))) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;
@@ -853,7 +853,7 @@ void perGameSettings (std::string filename) {
 							pathDefine = "DONOR2_NDS_PATH";
 						} else if (SDKVersion > 0x3000000 && SDKVersion < 0x5000000) {
 							pathDefine = "DONOR3_NDS_PATH";
-						} else if (unitCode > 0 && SDKVersion > 0x5000000) {
+						} else if (unitCode[CURPOS] > 0 && SDKVersion > 0x5000000) {
 							pathDefine = "DONORTWL_NDS_PATH";
 						}
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
