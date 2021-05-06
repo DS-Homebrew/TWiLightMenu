@@ -1335,8 +1335,8 @@ void vBlankHandler() {
 						 &tex().smallCartImage()[3]); // GBA Mode
 					selIconYpos += 28;
 				}
-				/*glSprite(selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
-					 tex().manualImage());*/ // Manual
+				glSprite(selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
+					 tex().manualImage()); // Manual
 			}
 		}
 
