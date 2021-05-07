@@ -1165,7 +1165,13 @@ int main(int argc, char **argv)
 		RemoveTrailingSlashes(romFolderNoSlash);
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
 		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
-		if (access(savepathFc.c_str(), F_OK) == 0) {
+		if (access(savepathFc.c_str(), F_OK) == 0
+		&& (extention(filename, ".nds")
+		 || extention(filename, ".dsi")
+		 || extention(filename, ".ids")
+		 || extention(filename, ".srl")
+		 || extention(filename, ".app")))
+		{
 			rename(savepathFc.c_str(), savepath.c_str());
 		}
 	  } else if (sys().isRegularDS() && (*(u16*)(0x020000C0) != 0) && (ms().launchType[true] == Launch::EGBANativeLaunch)) {
