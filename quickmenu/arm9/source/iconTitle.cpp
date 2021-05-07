@@ -747,9 +747,6 @@ void getGameInfo(int num, bool isDir, const char* name)
 			&& (!isDSiMode() || ms().dsiWareBooter || ms().consoleModel > 0)) {
 				isDSiWare[num] = false;
 			}
-			if (isHomebrew[num] == true && ndsHeader.arm9binarySize > 0x380000) {
-				isDSiWare[num] = true; // Make homebrew boot through Unlaunch
-			}
 		}
 
 		if (ndsHeader.dsi_flags & BIT(4))
