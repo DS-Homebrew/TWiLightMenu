@@ -1296,6 +1296,8 @@ void cannotLaunchMsg(const char *filename) {
 		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_3DS_HOME : &STR_RELAUNCH_UNLAUNCH;
 	} else if (isHomebrew[CURPOS] && ms().consoleModel >= 2) {
 		str = &STR_CANNOT_LAUNCH_HB_ON_3DS;
+	} else if (sys().isRegularDS()) {
+		str = &STR_FOR_USE_WITH_DSI_ONLY;
 	} else {
 		str = isDSiMode() ? &STR_CANNOT_LAUNCH_WITHOUT_SD : &STR_CANNOT_LAUNCH_IN_DS_MODE;
 	}

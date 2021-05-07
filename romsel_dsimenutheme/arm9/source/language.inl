@@ -52,6 +52,7 @@ STRING(DSIBINARIES_MISSING, "The DSi binaries are missing.\nPlease get a clean d
 STRING(RELAUNCH_UNLAUNCH, "To launch this title, please restart\nTWiLight Menu++ from Unlaunch.")
 STRING(RELAUNCH_3DS_HOME, "To launch this title, please restart\nTWiLight Menu++ as a title\nfrom the 3DS HOME Menu.")
 STRING(GAME_INCOMPATIBLE_MSG, "This game is known to not run.\nIf there's an nds-bootstrap\nversion that fixes this,\nplease ignore this message.")
+STRING(FOR_USE_WITH_DSI_ONLY, "For use with Nintendo DSi\nsystems only. Cannot be used with\nNintendo DS/DS Lite systems.")
 STRING(CANNOT_LAUNCH_WITHOUT_SD, "This game cannot be launched\nwithout an SD card.")
 STRING(CANNOT_LAUNCH_IN_DS_MODE, "This game cannot be launched\nin DS mode.")
 STRING(CANNOT_LAUNCH_HB_ON_3DS, "This homebrew cannot be\nlaunched on 3DS consoles.")
