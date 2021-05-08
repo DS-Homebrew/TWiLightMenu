@@ -1862,7 +1862,7 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if(useBackend) {
-					if(useBootstrap || !secondaryDevice) {
+					if((useBootstrap || !secondaryDevice) || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode))) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 						std::string ramdiskname = replaceAll(filename, typeToReplace, getImgExtension(perGameSettings_ramDiskNo));
@@ -1945,7 +1945,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region == -3 ? gameRegion : perGameSettings_region);
 						if (dsModeForced || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? unitCode==3 : (unitCode > 0 && unitCode < 3) && arm7SCFGLocked)) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						} else if (isDSiMode() || !secondaryDevice) {
+						} else if (dsiFeatures() || !secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
 						}
 						if (dsiFeatures() || !secondaryDevice) {

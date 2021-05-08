@@ -92,7 +92,7 @@ void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", (isModernHomebrew || previousUsedDevice));	// Homebrew only
-	if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
+	if (((isHomebrew ? isDSiMode() : dsiFeatures()) && useBootstrap) || !secondaryDevice) {
 		perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew ? true : -1));
 	} else {
 		perGameSettings_dsiMode = -1;
@@ -125,7 +125,7 @@ void savePerGameSettings (std::string filename) {
 		}
 	} else {
 		if (useBootstrap || !secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
-		if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
+		if ((dsiFeatures() && useBootstrap) || !secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
@@ -391,13 +391,13 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 		}
-		if (((isDSiMode() && useBootstrap) || !secondaryDevice) && unitCode == 3) {
+		if (((dsiFeatures() && useBootstrap) || !secondaryDevice) && unitCode == 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
-		if (((isDSiMode() && useBootstrap) || !secondaryDevice)
+		if (((dsiFeatures() && useBootstrap) || !secondaryDevice)
 		&& (unitCode == 0 || unitCode == (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? 2 : 3) || (unitCode > 0 && !arm7SCFGLocked))) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in

@@ -102,7 +102,7 @@ void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", (isModernHomebrew[CURPOS] || ms().secondaryDevice));	// Homebrew only
-	if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
+	if (((isHomebrew[CURPOS] ? isDSiMode() : dsiFeatures()) && ms().useBootstrap) || !ms().secondaryDevice) {
 		perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew[CURPOS] ? true : -1));
 	} else {
 		perGameSettings_dsiMode = -1;
@@ -135,7 +135,7 @@ void savePerGameSettings (std::string filename) {
 		}
 	} else {
 		if (ms().useBootstrap || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
-		if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
+		if ((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
@@ -408,13 +408,13 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 		}
-		if (((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) && unitCode[CURPOS] == 3) {
+		if (((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice) && unitCode[CURPOS] == 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
-		if (((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice)
+		if (((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice)
 		&& (unitCode[CURPOS] == 0 || unitCode[CURPOS] == (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? 2 : 3) || (unitCode[CURPOS] > 0 && !sys().arm7SCFGLocked()))) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
