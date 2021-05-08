@@ -53,8 +53,9 @@ int main(int argc, char **argv) {
 	REG_SCFG_CLK = 0x85;					// TWL clock speed
 	REG_SCFG_EXT = 0x8307F100;				// Extended memory, extended VRAM, etc.
 
-	if (*(u32*)0x02400000 == 1) {
+	if (REG_SCFG_EXT == 0x8307F100) {
 		tonccpy((char*)0x02000000, (char*)0x02400000, 0x4000);	// Grab TWLCFG backup, including boot splash flag
+		*(u32*)0x02000000 |= BIT(0);
 	}
 
 	bool isRegularDS = true;
