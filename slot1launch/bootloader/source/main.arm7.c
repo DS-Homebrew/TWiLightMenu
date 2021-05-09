@@ -71,6 +71,7 @@ extern u32 scfgUnlock;
 extern u32 twlMode;
 extern u32 twlClock;
 extern u32 boostVram;
+extern u32 twlTouch;
 extern u32 soundFreq;
 extern u32 runCardEngine;
 
@@ -572,6 +573,68 @@ static void NDSTouchscreenMode(void) {
 	writePowerManagement(PM_CONTROL_REG, 0x0D); //*(unsigned char*)0x40001C2 = 0x00, 0x0D; // PWR[0]=0Dh    ;<-- also part of TSC !
 }
 
+static void DSiTouchscreenMode(void) {
+	// Touchscreen
+	cdcWriteReg(0, 0x01, 0x01);
+	cdcWriteReg(0, 0x39, 0x66);
+	cdcWriteReg(1, 0x20, 0x16);
+	cdcWriteReg(0, 0x04, 0x00);
+	cdcWriteReg(0, 0x12, 0x81);
+	cdcWriteReg(0, 0x13, 0x82);
+	cdcWriteReg(0, 0x51, 0x82);
+	cdcWriteReg(0, 0x51, 0x00);
+	cdcWriteReg(0, 0x04, 0x03);
+	cdcWriteReg(0, 0x05, 0xA1);
+	cdcWriteReg(0, 0x06, 0x15);
+	cdcWriteReg(0, 0x0B, 0x87);
+	cdcWriteReg(0, 0x0C, 0x83);
+	cdcWriteReg(0, 0x12, 0x87);
+	cdcWriteReg(0, 0x13, 0x83);
+	cdcWriteReg(3, 0x10, 0x88);
+	cdcWriteReg(4, 0x08, 0x7F);
+	cdcWriteReg(4, 0x09, 0xE1);
+	cdcWriteReg(4, 0x0A, 0x80);
+	cdcWriteReg(4, 0x0B, 0x1F);
+	cdcWriteReg(4, 0x0C, 0x7F);
+	cdcWriteReg(4, 0x0D, 0xC1);
+	cdcWriteReg(0, 0x41, 0x08);
+	cdcWriteReg(0, 0x42, 0x08);
+	cdcWriteReg(0, 0x3A, 0x00);
+	cdcWriteReg(4, 0x08, 0x7F);
+	cdcWriteReg(4, 0x09, 0xE1);
+	cdcWriteReg(4, 0x0A, 0x80);
+	cdcWriteReg(4, 0x0B, 0x1F);
+	cdcWriteReg(4, 0x0C, 0x7F);
+	cdcWriteReg(4, 0x0D, 0xC1);
+	cdcWriteReg(1, 0x2F, 0x2B);
+	cdcWriteReg(1, 0x30, 0x40);
+	cdcWriteReg(1, 0x31, 0x40);
+	cdcWriteReg(1, 0x32, 0x60);
+	cdcWriteReg(0, 0x74, 0x82);
+	cdcWriteReg(0, 0x74, 0x92);
+	cdcWriteReg(0, 0x74, 0xD2);
+	cdcWriteReg(1, 0x21, 0x20);
+	cdcWriteReg(1, 0x22, 0xF0);
+	cdcWriteReg(0, 0x3F, 0xD4);
+	cdcWriteReg(1, 0x23, 0x44);
+	cdcWriteReg(1, 0x1F, 0xD4);
+	cdcWriteReg(1, 0x28, 0x4E);
+	cdcWriteReg(1, 0x29, 0x4E);
+	cdcWriteReg(1, 0x24, 0x9E);
+	cdcWriteReg(1, 0x25, 0x9E);
+	cdcWriteReg(1, 0x20, 0xD4);
+	cdcWriteReg(1, 0x2A, 0x14);
+	cdcWriteReg(1, 0x2B, 0x14);
+	cdcWriteReg(1, 0x26, 0xA7);
+	cdcWriteReg(1, 0x27, 0xA7);
+	cdcWriteReg(0, 0x40, 0x00);
+	cdcWriteReg(0, 0x3A, 0x60);
+
+	// Finish up!
+	cdcReadReg (CDC_TOUCHCNT, 0x02);
+	cdcWriteReg(CDC_TOUCHCNT, 0x02, 0x00);
+}
+
 // SDK 5
 static bool ROMsupportsDsiMode(const tNDSHeader* ndsHeader) {
 	return (ndsHeader->unitCode > 0);
@@ -883,19 +946,19 @@ void arm7_main (void) {
 	my_readUserSettings(ndsHeader); // Header has to be loaded first
 
 	if (my_isDSiMode()) {
-		REG_GPIO_WIFI &= BIT(8);	// New Atheros/DSi-Wifi mode
+		REG_GPIO_WIFI &= ~BIT(8);	// New Atheros/DSi-Wifi mode
 
 		if (dsiModeConfirmed) {
 			*(u32*)0x3FFFFC8 = 0x7884;	// Fix sound pitch table for DSi mode (works with SDK5 binaries)
 
 			if (ndsHeader->unitCode == 0 || (ndsHeader->unitCode > 0 && !(*(u8*)0x02FFE1BF & BIT(0)))) {
-				NDSTouchscreenMode();
+				twlTouch ? DSiTouchscreenMode() : NDSTouchscreenMode();
 				*(u16*)0x4000500 = 0x807F;
 			}
 		} else {
 			REG_SCFG_ROM = 0x703;
 
-			NDSTouchscreenMode();
+			twlTouch ? DSiTouchscreenMode() : NDSTouchscreenMode();
 			*(u16*)0x4000500 = 0x807F;
 
 			REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode

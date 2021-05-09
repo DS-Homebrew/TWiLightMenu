@@ -8,6 +8,7 @@
 	.global twlMode
 	.global twlClock
 	.global boostVram
+	.global twlTouch
 	.global soundFreq
 	.global runCardEngine
 @---------------------------------------------------------------------------------
@@ -31,6 +32,8 @@ twlMode:
 twlClock:
 	.word	0x00000000
 boostVram:
+	.word	0x00000000
+twlTouch:
 	.word	0x00000000
 soundFreq:
 	.word	0x00000000

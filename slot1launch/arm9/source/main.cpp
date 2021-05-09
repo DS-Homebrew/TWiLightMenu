@@ -59,6 +59,7 @@ int main() {
 	bool TWLMODE = false;
 	bool TWLCLK = false;	// false == NTR, true == TWL
 	bool TWLVRAM = false;
+	bool TWLTOUCH = false;
 	bool soundFreq = false;
 	bool runCardEngine = false;
 	bool EnableSD = false;
@@ -77,6 +78,7 @@ int main() {
 			TWLMODE = settingsini.GetInt("NDS-BOOTSTRAP","DSI_MODE",0);
 			TWLCLK = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_CPU",0);
 			TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_VRAM",0);
+			TWLTOUCH = settingsini.GetInt("SRLOADER","SLOT1_TOUCH_MODE",0);
 			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);
 			runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
 			EnableSD = settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0);
@@ -191,7 +193,7 @@ int main() {
 				}
 				memcpy((void*)0x023F0000, cheatData, 0x8000);
 			}
-			runLaunchEngine ((memcmp(ndsHeader.gameCode, "UBRP", 4) == 0 || memcmp(ndsHeader.gameCode, "AMFE", 4) == 0 || memcmp(ndsHeader.gameCode, "ALXX", 4) == 0), (memcmp(ndsHeader.gameCode, "UBRP", 4) == 0), EnableSD, language, scfgUnlock, TWLMODE, TWLCLK, TWLVRAM, soundFreq, runCardEngine);
+			runLaunchEngine ((memcmp(ndsHeader.gameCode, "UBRP", 4) == 0 || memcmp(ndsHeader.gameCode, "AMFE", 4) == 0 || memcmp(ndsHeader.gameCode, "ALXX", 4) == 0), (memcmp(ndsHeader.gameCode, "UBRP", 4) == 0), EnableSD, language, scfgUnlock, TWLMODE, TWLCLK, TWLVRAM, TWLTOUCH, soundFreq, runCardEngine);
 		}
 	}
 	return 0;

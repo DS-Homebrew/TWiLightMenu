@@ -992,7 +992,8 @@ int main(int argc, char **argv)
 				{true, false});
 			if (isDSiMode()) {
 				gamesPage.option(STR_SLOT1SDACCESS, STR_DESCRIPTION_SLOT1SDACCESS, Option::Bool(&ms().slot1AccessSD), {STR_ON, STR_OFF}, {true, false})
-					.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false});
+					.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false})
+					.option(STR_SLOT1TOUCHMODE, STR_DESCRIPTION_SLOT1TOUCHMODE, Option::Bool(&ms().slot1TouchMode), {STR_DSI_MODE, STR_DS_MODE}, {true, false});
 			}
 		}
 		gamesPage.option(STR_HOTKEY, STR_DESCRIPTION_HOTKEY, Option::Nul(opt_set_hotkey), {STR_PRESS_A}, {0});

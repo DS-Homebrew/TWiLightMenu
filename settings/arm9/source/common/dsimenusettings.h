@@ -211,6 +211,7 @@ class TWLSettings
     bool forceSleepPatch;
     bool slot1AccessSD;
     bool slot1SCFGUnlock;
+    bool slot1TouchMode;
     bool dsiWareBooter;
     bool autorun;
 	bool autostartSlot1;

@@ -32,8 +32,9 @@
 #define TWLMODE_OFFSET 20
 #define TWLCLOCK_OFFSET 24
 #define BOOSTVRAM_OFFSET 28
-#define SOUNDFREQ_OFFSET 32
-#define RUNCARDENGINE_OFFSET 36
+#define TWLTOUCH_OFFSET 32
+#define SOUNDFREQ_OFFSET 36
+#define RUNCARDENGINE_OFFSET 40
 
 typedef signed int addr_t;
 typedef unsigned char data_t;
@@ -56,7 +57,7 @@ void vramcpy (void* dst, const void* src, int len)
 	}
 }	
 
-void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine)
+void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool TWLTOUCH, bool soundFreq, bool runCardEngine)
 {
 	nocashMessage("runLaunchEngine");
 
@@ -82,6 +83,7 @@ void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int l
 	writeAddr ((data_t*) LCDC_BANK_D, TWLMODE_OFFSET, TWLMODE);
 	writeAddr ((data_t*) LCDC_BANK_D, TWLCLOCK_OFFSET, TWLCLK);
 	writeAddr ((data_t*) LCDC_BANK_D, BOOSTVRAM_OFFSET, TWLVRAM);
+	writeAddr ((data_t*) LCDC_BANK_D, TWLTOUCH_OFFSET, TWLTOUCH);
 	writeAddr ((data_t*) LCDC_BANK_D, SOUNDFREQ_OFFSET, soundFreq);
 	writeAddr ((data_t*) LCDC_BANK_D, RUNCARDENGINE_OFFSET, runCardEngine);
 

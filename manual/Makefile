@@ -29,12 +29,12 @@ dist:	all
 	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
 
 $(TARGET).nds:	makearm7 makearm9
-	ndstool	-u 00030004 -g HBLA -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -d $(NITRODATA) \
-	-b icon.bmp "TWiLight Menu++;Instruction Manual;RocketRobz, Evie & NightScript"
 
 pages:
 	@$(MAKE) -C resources inifiles
 	@$(MAKE) -C resources
+	ndstool	-u 00030004 -g SRLA 01 "TWLMENUPP" -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -d $(NITRODATA) \
+  -b icon.bmp "TWiLight Menu++;Instruction Manual;Rocket Robz, Evie & NightScript"
 
 clean:
 	@echo clean ...

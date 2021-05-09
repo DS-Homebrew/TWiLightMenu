@@ -48,6 +48,7 @@ Helpful information:
 #define ARM7
 #include <nds/arm7/audio.h>
 #include <nds/arm7/codec.h>
+#include <string.h> // memcmp
 #include "tonccpy.h"
 #include "sdmmc.h"
 #include "i2c.h"
@@ -598,7 +599,8 @@ int main (void) {
 		(*(vu16*)0x02FFFCFA) = 0x1041;	// NoCash: channel ch1+7+13
 	}
 
-	if (dsiMode && ((ARM9_SRC==0x4000 && dsiFlags==0) || dsMode)) {
+	if ((dsiMode && ((ARM9_SRC==0x4000 && !(dsiFlags & BIT(0))) || dsMode))
+	|| (!dsiMode && REG_SCFG_EXT != 0 && memcmp((char*)0x02FFFE00, "TWLMENUPP", 9) != 0 && memcmp((char*)0x02FFFE00, "NDSBOOTSTRAP", 12) != 0)) {
 		NDSTouchscreenMode();
 		*(u16*)0x4000500 = 0x807F;
 		if (dsMode) REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
