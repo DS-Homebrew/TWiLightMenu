@@ -32,6 +32,7 @@
 #include <maxmod7.h>
 #include "arm7status.h"
 
+void my_touchInit();
 void my_installSystemFIFO(void);
 
 u8 my_i2cReadRegister(u8 device, u8 reg);
@@ -72,7 +73,8 @@ void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 void VcountHandler() {
 //---------------------------------------------------------------------------------
-	inputGetAndSend();
+	void my_inputGetAndSend(void);
+	my_inputGetAndSend();
 }
 
 volatile bool exitflag = false;
@@ -103,7 +105,7 @@ int main() {
 	// Start the RTC tracking IRQ
 	initClockIRQ();
 
-	touchInit();
+	my_touchInit();
 	fifoInit();
 
 	mmInstall(FIFO_MAXMOD);

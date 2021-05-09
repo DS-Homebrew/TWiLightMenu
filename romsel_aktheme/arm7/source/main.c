@@ -34,6 +34,7 @@
 
 #define BIT_SET(c, n) ((c) << (n))
 
+void my_touchInit();
 void my_installSystemFIFO(void);
 
 #define SNDEXCNT (*(vu16*)0x4004700)
@@ -83,7 +84,8 @@ void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 void VcountHandler() {
 //---------------------------------------------------------------------------------
-	inputGetAndSend();
+	void my_inputGetAndSend(void);
+	my_inputGetAndSend();
 }
 
 volatile bool exitflag = false;
@@ -118,8 +120,8 @@ int main() {
 	initClockIRQ();
 
 	fifoInit();
-	touchInit();
-		
+	my_touchInit();
+
 	SetYtrigger(80);
 	
 	installSoundFIFO();

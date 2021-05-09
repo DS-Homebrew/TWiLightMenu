@@ -32,6 +32,7 @@
 
 #define REG_SCFG_WL *(vu16*)0x4004020
 
+void my_touchInit();
 void my_installSystemFIFO(void);
 
 u8 my_i2cReadRegister(u8 device, u8 reg);
@@ -43,10 +44,10 @@ u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data);
 //unsigned int * CPUID=(unsigned int*)0x4004D00;
 //unsigned int * CPUID2=(unsigned int*)0x4004D04;
 
-static bool doFrameRateHackAgain = false;
-static bool runFrameRateHack = false;
 static bool isDSLite = false;
 
+/*static bool doFrameRateHackAgain = false;
+static bool runFrameRateHack = false;
 static u32 sRateCounter = 0;
 
 void frameRateHack()
@@ -61,7 +62,7 @@ void frameRateHack()
 		while(REG_DISPSTAT & DISP_IN_HBLANK);
 		*(vu16*)0x04000006 = *(vu16*)0x04000006;//repeat line
 	}
-}
+}*/
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -90,10 +91,11 @@ void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 void VcountHandler() {
 //---------------------------------------------------------------------------------
-	if (runFrameRateHack) {
+	/*if (runFrameRateHack) {
 		frameRateHack();
-	}
-	inputGetAndSend();
+	}*/
+	void my_inputGetAndSend(void);
+	my_inputGetAndSend();
 }
 
 volatile bool exitflag = false;
@@ -127,7 +129,7 @@ int main() {
 	// Start the RTC tracking IRQ
 	initClockIRQ();
 
-	touchInit();
+	my_touchInit();
 
 	fifoInit();
 
@@ -181,13 +183,13 @@ int main() {
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
-		if (fifoGetValue32(FIFO_USER_05) == 1) {
+		/*if (fifoGetValue32(FIFO_USER_05) == 1) {
 			SetYtrigger(202);
 			REG_DISPSTAT |= DISP_YTRIGGER_IRQ;
 			REG_DISPSTAT |= BIT(7);
 			runFrameRateHack = true;
 			fifoSendValue32(FIFO_USER_05, 0);
-		}
+		}*/
 		swiWaitForVBlank();
 	}
 	return 0;

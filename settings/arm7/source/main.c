@@ -32,6 +32,7 @@
 
 #define REG_SCFG_WL *(vu16*)0x4004020
 
+void my_touchInit();
 void my_installSystemFIFO(void);
 
 //unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
@@ -74,7 +75,8 @@ void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 void VcountHandler() {
 //---------------------------------------------------------------------------------
-	inputGetAndSend();
+	void my_inputGetAndSend(void);
+	my_inputGetAndSend();
 }
 
 volatile bool exitflag = false;
@@ -108,7 +110,7 @@ int main() {
 	// Start the RTC tracking IRQ
 	initClockIRQ();
 
-	touchInit();
+	my_touchInit();
 
 	fifoInit();
 	

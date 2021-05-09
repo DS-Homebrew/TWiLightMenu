@@ -30,6 +30,7 @@
 #include <nds.h>
 #include <maxmod7.h>
 
+void my_touchInit();
 void my_installSystemFIFO(void);
 
 static int rebootTimer = 0;
@@ -56,7 +57,8 @@ void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 void VcountHandler() {
 //---------------------------------------------------------------------------------
-	inputGetAndSend();
+	void my_inputGetAndSend(void);
+	my_inputGetAndSend();
 }
 
 volatile bool exitflag = false;
@@ -90,7 +92,7 @@ int main() {
 	// Start the RTC tracking IRQ
 	initClockIRQ();
 
-	touchInit();
+	my_touchInit();
 
 	fifoInit();
 	
