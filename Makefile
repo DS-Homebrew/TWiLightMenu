@@ -6,16 +6,16 @@ PACKAGE		:=	7zfile
 #---------------------------------------------------------------------------------
 # Goals for Build
 #---------------------------------------------------------------------------------
-.PHONY: all package booter booter_fc gbapatcher quickmenu resources romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+.PHONY: all package booter booter_fc gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
-all:	booter booter_fc gbapatcher quickmenu resources romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+all:	booter booter_fc gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
 package:
 	@$(MAKE) -C booter dist
 	@$(MAKE) -C booter_fc dist
 	@$(MAKE) -C gbapatcher dist
 	@$(MAKE) -C quickmenu dist
-	#@$(MAKE) -C manual dist
+	@$(MAKE) -C manual dist
 	@$(MAKE) -C resources
 	#@$(MAKE) -C romsel_aktheme dist
 	@$(MAKE) -C romsel_dsimenutheme dist
@@ -73,7 +73,7 @@ clean:
 	@$(MAKE) -C booter_fc clean
 	@$(MAKE) -C gbapatcher clean
 	@$(MAKE) -C quickmenu clean
-	#@$(MAKE) -C manual clean
+	@$(MAKE) -C manual clean
 	#@$(MAKE) -C romsel_aktheme clean
 	@$(MAKE) -C romsel_dsimenutheme clean
 	@$(MAKE) -C romsel_r4theme clean
@@ -95,7 +95,7 @@ clean:
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
-	#@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/manual.srldr"
+	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/manual.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/r4menu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/settings.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/slot1launch.srldr"
