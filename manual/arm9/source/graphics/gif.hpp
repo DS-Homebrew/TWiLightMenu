@@ -3,6 +3,7 @@
 
 #include <nds/ndstypes.h>
 #include <vector>
+#include <cstddef>
 
 typedef unsigned int uint;
 
