@@ -63,6 +63,10 @@ jobs:
           # Make artifacts directory
           mkdir -p ~/artifacts
 
+          # Make R4 and Wood UI skins folders
+          mkdir -p 7zfile/_nds/TWiLightMenu/r4menu/themes
+          # mkdir -p 7zfile/_nds/TWiLightMenu/akmenu/themes
+
           # Theme is currently unused
           rm -rf 7zfile/_nds/TWiLightMenu/akmenu
 
