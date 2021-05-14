@@ -551,7 +551,7 @@ void my_sdmmcMsgHandler(int bytes, void *user_data) {
 
     fifoGetDatamsg(FIFO_SDMMC, bytes, (u8*)&msg);
 
-    int oldIME = enterCriticalSection();
+    //int oldIME = enterCriticalSection();
     switch (msg.type) {
 
     case SDMMC_SD_READ_SECTORS:
@@ -568,7 +568,7 @@ void my_sdmmcMsgHandler(int bytes, void *user_data) {
         break;
     }
 
-    leaveCriticalSection(oldIME);
+    //leaveCriticalSection(oldIME);
 
     fifoSendValue32(FIFO_SDMMC, retval);
 }
