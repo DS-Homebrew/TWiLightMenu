@@ -1,5 +1,4 @@
 #include <nds.h>
-#include <fat.h>
 #include <stdio.h>
 #include <maxmod9.h>
 

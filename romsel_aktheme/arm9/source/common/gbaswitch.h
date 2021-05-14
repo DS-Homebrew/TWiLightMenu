@@ -4,7 +4,7 @@
 #include <nds.h>
 
 #include <stdio.h>
-#include <fat.h>
+#include <slim.h>
 #include <sys/stat.h>
 #include <limits.h>
 

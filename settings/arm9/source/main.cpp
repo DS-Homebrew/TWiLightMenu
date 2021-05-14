@@ -1,7 +1,7 @@
 #include <nds.h>
 #include <nds/arm9/dldi.h>
 #include <cstdio>
-#include <fat.h>
+#include <slim.h>
 #include <sys/stat.h>
 #include <limits.h>
 #include <variant>

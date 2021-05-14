@@ -592,7 +592,7 @@ void my_sdmmcValueHandler(u32 value, void* user_data) {
 //---------------------------------------------------------------------------------
     int result = 0;
     int sdflag = 0;
-    int oldIME = enterCriticalSection();
+    //int oldIME = enterCriticalSection();
 
     switch(value) {
 
@@ -623,7 +623,7 @@ void my_sdmmcValueHandler(u32 value, void* user_data) {
         break;
     }
 
-    leaveCriticalSection(oldIME);
+    //leaveCriticalSection(oldIME);
 
     fifoSendValue32(FIFO_SDMMC, result);
 }
