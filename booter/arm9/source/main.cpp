@@ -21,7 +21,7 @@
 ------------------------------------------------------------------*/
 #include <nds.h>
 #include <stdio.h>
-#include <slim.h>
+#include <fat.h>
 #include <sys/stat.h>
 #include <limits.h>
 
@@ -74,13 +74,13 @@ int main(int argc, char **argv) {
 	
 	extern const DISC_INTERFACE __my_io_dsisd;
 
-	if (!fatMountSimple("sd:/", &__my_io_dsisd)) {
+	if (!fatMountSimple("sd", &__my_io_dsisd)) {
 		graphicsInit();
 		fontInit();
 		fadeType = true;
 
 		clearText();
-		printSmall(false, 4, 4, "FAT init failed!");
+		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
 

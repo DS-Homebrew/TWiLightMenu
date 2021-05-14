@@ -24,7 +24,7 @@
 //#include "dbgtool.h"
 // #include <elm.h>
 #include <dirent.h>
-#include <slim.h>
+#include <fat.h>
 #include <sys/iosupport.h>
 #include "ui/msgbox.h"
 #include "ui/progresswnd.h"
