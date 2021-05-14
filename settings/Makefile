@@ -8,13 +8,11 @@ endif
 export TARGET	:=	settings
 NITRODATA		:=	nitrofiles
 
-export LIBSLIM  		:=	$(CURDIR)/../libslim/libslim
-
 include $(DEVKITARM)/ds_rules
 
-.PHONY: libslim bootloader bootstub clean makearm7 makearm9
+.PHONY: bootloader bootstub clean makearm7 makearm9
 
-all:	libslim bootloader bootstub $(TARGET).nds
+all:	bootloader bootstub $(TARGET).nds
 
 makearm7:
 	$(MAKE) -C arm7
@@ -53,8 +51,3 @@ bootloader: data
 
 bootstub: data
 	@$(MAKE) -C bootstub
-
-libslim: $(LIBSLIM)/lib/libslim.a
-
-$(LIBSLIM)/lib/libslim.a:
-	@$(MAKE) -C $(LIBSLIM)

@@ -5,7 +5,7 @@
 #include "io_sc_common.h"
 #include "exptools.h"
 
-#include <slim.h>
+#include <fat.h>
 #include <limits.h>
 #include <stdio.h>
 #include <sys/stat.h>

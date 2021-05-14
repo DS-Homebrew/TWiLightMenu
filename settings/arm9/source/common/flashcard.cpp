@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <nds/arm9/dldi.h>
+#include <fat.h>
 #include <sys/stat.h>
 #include <stdio.h>
 
