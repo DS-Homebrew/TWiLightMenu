@@ -8,8 +8,6 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
-export LIBSLIM  		:=	../../libslim/libslim
-
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
@@ -22,7 +20,7 @@ export LIBSLIM  		:=	../../libslim/libslim
 TARGET		:=	booter
 BUILD		:=	build
 SOURCES		:=	source source/graphics ../../universal/sdmmc/arm9/source
-INCLUDES	:=	include source ../../universal/sdmmc/arm9/include $(LIBSLIM)/include
+INCLUDES	:=	include source ../../universal/sdmmc/arm9/include ../../libslim/libslim/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music
