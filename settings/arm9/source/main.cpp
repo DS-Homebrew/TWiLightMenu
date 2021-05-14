@@ -1105,6 +1105,7 @@ int main(int argc, char **argv)
 				 "Português",
 				 "Svenska",
 				 "Türkçe",
+				 "Ελληνικά"
 				 "Русский",
 				 "Українська",
 				 "עברית",
@@ -1127,6 +1128,7 @@ int main(int argc, char **argv)
 				 TLanguage::ELangPortuguese,
 				 TLanguage::ELangSwedish,
 				 TLanguage::ELangTurkish,
+				 TLanguage::ELangGreek,
 				 TLanguage::ELangRussian,
 				 TLanguage::ELangUkrainian,
 				 TLanguage::ELangHebrew,
