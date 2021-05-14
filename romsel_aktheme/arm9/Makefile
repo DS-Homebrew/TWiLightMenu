@@ -8,8 +8,6 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
-export LIBSLIM  		:=	../../libslim/libslim
-
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
@@ -22,7 +20,7 @@ export LIBSLIM  		:=	../../libslim/libslim
 TARGET		:=	romsel_aktheme
 BUILD		:=	build
 SOURCES		:=	source source/graphics source/tool source/drawing source/font source/time source/ui source/windows source/common ../../universal/sdmmc/arm9/source
-INCLUDES	:=	include source ../../universal/include ../../universal/sdmmc/arm9/include $(LIBSLIM)/include
+INCLUDES	:=	include source ../../universal/include ../../universal/sdmmc/arm9/include
 DATA		:=	../data ../gfx_bin
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music
@@ -53,7 +51,7 @@ LIBS	:= 	-lslim -lmm9 -lnds9
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=	$(CURDIR) ../ $(LIBNDS)
+LIBDIRS	:=	$(CURDIR) ../ $(LIBSLIM) $(LIBNDS)
  
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
