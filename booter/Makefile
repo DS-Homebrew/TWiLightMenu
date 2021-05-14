@@ -30,6 +30,8 @@ INCLUDES	:=	include source source/graphics
 DATA		:=	data  
 GRAPHICS	:=  gfx
 
+export LIBSLIM  		:=	$(CURDIR)/../libslim/libslim
+
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
