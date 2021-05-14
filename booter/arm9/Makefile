@@ -53,7 +53,7 @@ LIBS	:= 	-lslim -lnds9
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=	$(CURDIR) ../ $(LIBNDS) $(LIBSLIM)
+LIBDIRS	:=	$(CURDIR) ../ $(LIBNDS)
  
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
