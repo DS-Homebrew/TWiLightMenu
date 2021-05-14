@@ -9,8 +9,6 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
-export LIBSLIM  		:=	$(CURDIR)/../libslim/libslim
-
 export VERSION_MAJOR	:= 7
 export VERSION_MINOR	:= 4
 export VERSION_PATCH	:= 0
@@ -28,9 +26,11 @@ VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 TARGET		:=	booter
 BUILD		:=	build
 SOURCES		:=	source source/graphics
-INCLUDES	:=	include source source/graphics $(LIBSLIM)/include
+INCLUDES	:=	include source source/graphics
 DATA		:=	data  
 GRAPHICS	:=  gfx
+
+export LIBSLIM  		:=	$(CURDIR)/../libslim/libslim
 
 #---------------------------------------------------------------------------------
 # options for code generation

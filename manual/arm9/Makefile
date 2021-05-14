@@ -8,6 +8,8 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
+export LIBSLIM  		:=	$(CURDIR)/../libslim/libslim
+
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
@@ -20,7 +22,7 @@ include $(DEVKITARM)/ds_rules
 TARGET		:=	manual
 BUILD		:=	build
 SOURCES		:=	source source/graphics source/tool source/common ../../universal/sdmmc/arm9/source
-INCLUDES	:=	source ../../universal/include ../../universal/sdmmc/arm9/include
+INCLUDES	:=	source ../../universal/include ../../universal/sdmmc/arm9/include $(LIBSLIM)/include
 DATA		:=	../data
 GRAPHICS	:=	../gfx
 MUSIC		:=	../music
@@ -44,7 +46,7 @@ LDFLAGS	=	-specs=../../../universal/arm9/ds_arm9_twlm.specs -g $(ARCH) -Wl,-Map,
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
 #---------------------------------------------------------------------------------
-LIBS	:= 	-lfat -lmm9 -lnds9
+LIBS	:= 	-lslim -lmm9 -lnds9
 
 
 #---------------------------------------------------------------------------------
