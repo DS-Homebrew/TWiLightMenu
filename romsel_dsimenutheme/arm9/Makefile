@@ -8,7 +8,7 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
-export LIBSLIM  		:=	$(CURDIR)/../libslim/libslim
+export LIBSLIM  		:=	../../libslim/libslim
 
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
