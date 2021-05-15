@@ -410,6 +410,8 @@ std::string TWLSettings::getGuiLanguageString()
             return "nl";
         case TWLSettings::ELangIndonesian:
             return "id";
+        case TWLSettings::ELangGreek:
+            return "el";
     }
 }
 
