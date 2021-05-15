@@ -19,8 +19,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	title
 BUILD		:=	build
-SOURCES		:=	source source/graphics source/tool source/common ../../universal/source ../../universal/source/flashcard ../../universal/sdmmc/arm9/source
-INCLUDES	:=	include source ../../universal/include ../../universal/sdmmc/arm9/include
+SOURCES		:=	source source/graphics source/tool source/common ../../universal/source ../../universal/arm9/source ../../universal/source/flashcard ../../universal/sdmmc/arm9/source
+INCLUDES	:=	include source ../../universal/include ../../universal/arm9/include ../../universal/sdmmc/arm9/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music

@@ -1,28 +1,8 @@
-/*-----------------------------------------------------------------
- Copyright (C) 2005 - 2013
-	Michael "Chishm" Chisholm
-	Dave "WinterMute" Murphy
-	Claudio "sverx"
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-------------------------------------------------------------------*/
 #include <nds.h>
 #include <nds/arm9/dldi.h>
 #include <stdio.h>
 #include <fat.h>
+#include "fat_ext.h"
 #include <sys/stat.h>
 #include <limits.h>
 
@@ -470,10 +450,19 @@ TWL_CODE int lastRunROM() {
 					}
 
 					argarray.at(0) = (char *)ndsToBoot;
+
+					char sfnSrl[62];
+					char sfnPub[62];
+					char sfnPrv[62];
+					fatGetAliasPath(previousUsedDevice ? "fat:/" : "sd:/", dsiWareSrlPath.c_str(), sfnSrl);
+					fatGetAliasPath(previousUsedDevice ? "fat:/" : "sd:/", dsiWarePubPath.c_str(), sfnPub);
+					fatGetAliasPath(previousUsedDevice ? "fat:/" : "sd:/", dsiWarePrvPath.c_str(), sfnPrv);
+
 					CIniFile bootstrapini(bootstrapinipath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", dsiWareSrlPath);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", dsiWarePubPath);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", dsiWarePrvPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
 					// bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", (perGameSettings_language == -2 ? gameLanguage : perGameSettings_language));

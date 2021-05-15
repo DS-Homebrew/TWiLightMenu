@@ -6,6 +6,7 @@
 #include "exptools.h"
 
 #include <fat.h>
+#include "fat_ext.h"
 #include <limits.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -1129,11 +1130,19 @@ int main(int argc, char **argv) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 
+					char sfnSrl[62];
+					char sfnPub[62];
+					char sfnPrv[62];
+					fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWareSrlPath.c_str(), sfnSrl);
+					fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWarePubPath.c_str(), sfnPub);
+					fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWarePrvPath.c_str(), sfnPrv);
+
 					bootstrapinipath = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? "fat:/_nds/nds-bootstrap.ini" : "sd:/_nds/nds-bootstrap.ini";
 					CIniFile bootstrapini(bootstrapinipath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().dsiWareSrlPath);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", ms().dsiWarePubPath);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", ms().dsiWarePrvPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
 					bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);

@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <nds/arm9/dldi.h>
+#include "fat_ext.h"
 #include "io_m3_common.h"
 #include "io_g6_common.h"
 #include "io_sc_common.h"
@@ -708,10 +709,19 @@ void lastRunROM()
 				} else {
 					argarray.push_back((char*)(useNightly ? "/_nds/nds-bootstrap-nightly.nds" : "/_nds/nds-bootstrap-release.nds"));
 				}
+
+				char sfnSrl[62];
+				char sfnPub[62];
+				char sfnPrv[62];
+				fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWareSrlPath.c_str(), sfnSrl);
+				fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWarePubPath.c_str(), sfnPub);
+				fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWarePrvPath.c_str(), sfnPrv);
+
 				CIniFile bootstrapini((memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI_SD);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().dsiWareSrlPath);
-				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", ms().dsiWarePubPath);
-				bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", ms().dsiWarePrvPath);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
