@@ -23,6 +23,7 @@
 
 #include "iconTitle.h"
 #include "common/dsimenusettings.h"
+#include "common/systemdetails.h"
 #include "common/flashcard.h"
 #include <gl2d.h>
 #include "common/tonccpy.h"
@@ -472,7 +473,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
 		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
-		&& (!isDSiMode() || ms().dsiWareBooter || ms().consoleModel > 0)) {
+		&& (!dsiFeatures() || sys().arm7SCFGLocked())) {
 			isDSiWare[num] = false;
 		}
 

@@ -31,6 +31,7 @@
 #include "graphics/graphics.h"
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
+#include "myDSiMode.h"
 #include "language.h"
 #include "read_card.h"
 
@@ -55,7 +56,7 @@
 
 extern bool extention(const std::string& filename, const char* ext);
 
-extern int consoleModel;
+extern bool arm7SCFGLocked;
 
 extern u16 convertVramColorToGrayscale(u16 val);
 
@@ -761,7 +762,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			}
 			if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
 			  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
-			&& (!isDSiMode() || ms().dsiWareBooter || ms().consoleModel > 0)) {
+			&& (!dsiFeatures() || arm7SCFGLocked)) {
 				isDSiWare[num] = false;
 			}
 		}

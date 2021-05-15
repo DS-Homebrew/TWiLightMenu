@@ -56,15 +56,13 @@
 
 extern bool extention(const std::string& filename, const char* ext);
 
-extern int consoleModel;
-extern bool dsiWareBooter;
+extern bool arm7SCFGLocked;
 extern bool secondaryDevice;
 
 extern int theme;
 extern int colorMode;
 extern int showGba;
 extern bool animateDsiIcons;
-extern int consoleModel;
 
 extern u16 convertVramColorToGrayscale(u16 val);
 
@@ -840,7 +838,7 @@ void getGameInfo(bool isDir, const char* name)
 
 		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
 		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
-		&& (!isDSiMode() || dsiWareBooter || consoleModel > 0)) {
+		&& (!dsiFeatures() || arm7SCFGLocked)) {
 			isDSiWare = false;
 		}
 
