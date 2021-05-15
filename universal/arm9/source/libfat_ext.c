@@ -21,7 +21,7 @@ static inline void _FAT_mem_free (void* mem) {
 #include "partition.h"
 #include "common/tonccpy.h"
 
-static int timesRan = 0;
+//static int timesRan = 0;
 
 static int fatGetAlias (const char* drive, const char* name, const char* nameEnd, char *alias) {
 	devoptab_t *devops;
@@ -126,11 +126,11 @@ void fatGetAliasPath (const char* drive, const char* path, char *alias) {
 				break;
 			}
 		}
-		tonccpy((char*)0x02800040+(timesRan*0x10), name, nameEnd);
+		//tonccpy((char*)0x02800040+(timesRan*0x10), name, nameEnd);
 		len += fatGetAlias (drive, path+lfnLen, path+lfnLen+nameEnd, alias+len);
 		lfnLen += nameEnd+1;
 		i += nameEnd;
-		timesRan++;
+		//timesRan++;
 		if (path[i] == '\0') break;
 		chdir(name);
 	}
