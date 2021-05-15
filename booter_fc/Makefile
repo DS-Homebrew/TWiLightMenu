@@ -87,7 +87,7 @@ autoboot:
 
 	#### DSTT
 	cp booter_fc.nds TTMenu.dat
-	dlditool flashcart_specifics/DLDI/TTCARDIOLibrary.dldi TTMenu.dat
+	dlditool flashcart_specifics/DLDI/DSTTDLDIboyakkeyver.dldi TTMenu.dat
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/TTMenu.dat"
