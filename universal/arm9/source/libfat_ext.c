@@ -84,7 +84,7 @@ static int fatGetAlias (const char* drive, const char* name, const char* nameEnd
 			resultLen = i+4;
 		} else {
 			for (i = 0; i <= 8; i++) {
-				if (entry.entryData[i] == '.' || entry.entryData[i] == ' ') {
+				if (entry.entryData[i] == ' ') {
 					alias[i] = _FAT_directory_isDirectory(&entry) ? '\x2F' : '\0';
 					break;
 				}
