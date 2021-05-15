@@ -87,7 +87,8 @@ TWLSettings::TWLSettings()
 
     forceSleepPatch = false;
     slot1SCFGUnlock = false;
-    dsiWareBooter = false;
+    dsiWareBooter = true;
+    dsiWareToSD = true;
 
     show12hrClock = true;
 
@@ -226,6 +227,7 @@ void TWLSettings::loadSettings()
 
     forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
     dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
+	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 
     dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);

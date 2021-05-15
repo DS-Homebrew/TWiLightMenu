@@ -80,7 +80,8 @@ TWLSettings::TWLSettings()
     slot1AccessSD = false;
     slot1SCFGUnlock = false;
     slot1TouchMode = false;
-    dsiWareBooter = false;
+    dsiWareBooter = true;
+    dsiWareToSD = true;
 
     show12hrClock = true;
 
@@ -210,6 +211,7 @@ void TWLSettings::loadSettings()
     slot1SCFGUnlock = settingsini.GetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
     slot1TouchMode = settingsini.GetInt("SRLOADER", "SLOT1_TOUCH_MODE", slot1TouchMode);
     dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
+	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 
     ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     ak_scrollSpeed = settingsini.GetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
@@ -326,6 +328,7 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
     settingsini.SetInt("SRLOADER", "SLOT1_TOUCH_MODE", slot1TouchMode);
     settingsini.SetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
+	settingsini.SetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 
     settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     settingsini.SetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);

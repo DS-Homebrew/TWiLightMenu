@@ -1051,6 +1051,11 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (sdAccessible) {
+		gamesPage.option(STR_DSIWARETOSD, STR_DESCRIPTION_DSIWARETOSD, Option::Bool(&ms().dsiWareToSD), {STR_YES, STR_NO},
+				{true, false});
+	}
+
 	if (isDSiMode() || sdAccessible) {
 		gamesPage
 		.option((dsiFeatures() ? STR_EXPANDROMSPACE : STR_SD_EXPANDROMSPACE),

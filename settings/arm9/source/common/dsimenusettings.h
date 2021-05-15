@@ -213,6 +213,7 @@ class TWLSettings
     bool slot1SCFGUnlock;
     bool slot1TouchMode;
     bool dsiWareBooter;
+    bool dsiWareToSD;
     bool autorun;
 	bool autostartSlot1;
     bool show12hrClock;

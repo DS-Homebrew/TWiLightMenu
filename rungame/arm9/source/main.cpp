@@ -79,7 +79,8 @@ static bool boostCpu = false;	// false == NTR, true == TWL
 static bool boostVram = false;
 static bool bstrap_dsiMode = false;
 
-static bool dsiWareBooter = false;
+static bool dsiWareBooter = true;
+static bool dsiWareToSD = true;
 
 TWL_CODE void LoadSettings(void) {
 	// GUI
@@ -105,6 +106,7 @@ TWL_CODE void LoadSettings(void) {
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 
 	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
+	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", "");
 	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", "");
@@ -423,7 +425,7 @@ TWL_CODE int lastRunROM() {
 
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram);
 		} case 3: {
-			if (dsiWareBooter || consoleModel > 0) {
+			if (dsiWareBooter || consoleModel >= 2) {
 				if (homebrewBootstrap) {
 					unlaunchBootDSiWare();
 				} else {
@@ -454,12 +456,18 @@ TWL_CODE int lastRunROM() {
 					char sfnSrl[62];
 					char sfnPub[62];
 					char sfnPrv[62];
-					fatGetAliasPath(previousUsedDevice ? "fat:/" : "sd:/", dsiWareSrlPath.c_str(), sfnSrl);
-					fatGetAliasPath(previousUsedDevice ? "fat:/" : "sd:/", dsiWarePubPath.c_str(), sfnPub);
-					fatGetAliasPath(previousUsedDevice ? "fat:/" : "sd:/", dsiWarePrvPath.c_str(), sfnPrv);
+					if (previousUsedDevice && dsiWareToSD) {
+						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
+						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
+						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
+					} else {
+						fatGetAliasPath(previousUsedDevice ? "fat:/" : "sd:/", dsiWareSrlPath.c_str(), sfnSrl);
+						fatGetAliasPath(previousUsedDevice ? "fat:/" : "sd:/", dsiWarePubPath.c_str(), sfnPub);
+						fatGetAliasPath(previousUsedDevice ? "fat:/" : "sd:/", dsiWarePrvPath.c_str(), sfnPrv);
+					}
 
 					CIniFile bootstrapini(bootstrapinipath);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", dsiWareSrlPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", previousUsedDevice && dsiWareToSD ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : dsiWareSrlPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);

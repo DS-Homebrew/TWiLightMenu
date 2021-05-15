@@ -231,6 +231,7 @@ class TWLSettings
     bool forceSleepPatch;
     bool slot1SCFGUnlock;
     bool dsiWareBooter;
+	bool dsiWareToSD;
     bool autorun;
     bool show12hrClock;
     //bool snesEmulator;

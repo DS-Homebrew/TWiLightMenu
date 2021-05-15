@@ -3,9 +3,6 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-bool previousUsedDevice = false;	// true == secondary
-bool secondaryDevice = false;
-
 bool sdFound(void) {
 	return (access("sd:/", F_OK) == 0);
 }

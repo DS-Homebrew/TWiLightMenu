@@ -193,6 +193,7 @@ class TWLSettings
 	bool forceSleepPatch;
     bool slot1SCFGUnlock;
 	bool dsiWareBooter;
+	bool dsiWareToSD;
     bool autorun;
 	bool autostartSlot1;
     bool show12hrClock;

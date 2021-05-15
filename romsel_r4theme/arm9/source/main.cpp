@@ -181,7 +181,8 @@ int bstrap_dsiMode = 1;
 bool cardReadDMA = true;
 int bstrap_extendedMemory = 0;
 bool forceSleepPatch = false;
-bool dsiWareBooter = false;
+bool dsiWareBooter = true;
+bool dsiWareToSD = true;
 
 bool dontShowClusterWarning = false;
 
@@ -287,6 +288,7 @@ void LoadSettings(void) {
 
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
 	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
+	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 
 	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
 	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
@@ -1281,8 +1283,15 @@ int main(int argc, char **argv) {
 	}
 	srand(time(NULL));
 	
-	bool copyDSiWareSavBack = ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType[previousUsedDevice] == 3 && !dsiWareBooter && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
-							|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType[previousUsedDevice] == 3 && !dsiWareBooter && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv")));
+	bool copyDSiWareSavBack =
+	   ((dsiWareToSD || (!dsiWareBooter && consoleModel < 2))
+	 && previousUsedDevice
+	 && bothSDandFlashcard()
+	 && launchType[previousUsedDevice] == 3
+	 && (
+		(access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
+	     || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv"))
+	    ));
 	
 	if (copyDSiWareSavBack) {
 		blackScreen = true;
@@ -1562,7 +1571,7 @@ int main(int argc, char **argv) {
 
 		if (applaunch) {
 			// Delete previously used DSiWare of flashcard from SD
-			if (!gotosettings && consoleModel < 2 && previousUsedDevice && bothSDandFlashcard()) {
+			if (!gotosettings && (dsiWareToSD || (!dsiWareBooter && consoleModel < 2)) && previousUsedDevice && bothSDandFlashcard()) {
 				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {
 					remove("sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 				}
@@ -1571,6 +1580,9 @@ int main(int argc, char **argv) {
 				}
 				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0) {
 					remove("sd:/_nds/TWiLightMenu/tempDSiWare.prv");
+				}
+				if (access("sd:/_nds/nds-bootstrap/patchOffsetCache/tempDSiWare.bin", F_OK) == 0) {
+					remove("sd:/_nds/nds-bootstrap/patchOffsetCache/tempDSiWare.bin");
 				}
 			}
 
@@ -1702,6 +1714,33 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
+				if (secondaryDevice && (dsiWareToSD || (!dsiWareBooter && consoleModel < 2))) {
+					clearText();
+					dialogboxHeight = 0;
+					showdialogbox = true;
+					printLargeCentered(false, 74, "Please wait");
+					printSmallCentered(false, 98, "Now copying data...");
+					printSmallCentered(false, 110, "Do not turn off the power.");
+					fcopy(dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
+					if ((access(dsiWarePubPath.c_str(), F_OK) == 0) && (NDSHeader.pubSavSize > 0)) {
+						fcopy(dsiWarePubPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
+					}
+					if ((access(dsiWarePrvPath.c_str(), F_OK) == 0) && (NDSHeader.prvSavSize > 0)) {
+						fcopy(dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
+					}
+
+					clearText();
+					if ((access(dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
+					 || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
+						dialogboxHeight = 1;
+						printLargeCentered(false, 74, "Important!");
+						printSmall(false, 2, 90, "After saving, please re-start");
+						printSmall(false, 2, 102, "TWiLight Menu++ to transfer your");
+						printSmall(false, 2, 114, "save data back.");
+						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds
+					}
+				}
+
 				if ((dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel > 0) && !homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
@@ -1709,13 +1748,19 @@ int main(int argc, char **argv) {
 					char sfnSrl[62];
 					char sfnPub[62];
 					char sfnPrv[62];
-					fatGetAliasPath(secondaryDevice ? "fat:/" : "sd:/", dsiWareSrlPath.c_str(), sfnSrl);
-					fatGetAliasPath(secondaryDevice ? "fat:/" : "sd:/", dsiWarePubPath.c_str(), sfnPub);
-					fatGetAliasPath(secondaryDevice ? "fat:/" : "sd:/", dsiWarePrvPath.c_str(), sfnPrv);
+					if (secondaryDevice && dsiWareToSD) {
+						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
+						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
+						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
+					} else {
+						fatGetAliasPath(secondaryDevice ? "fat:/" : "sd:/", dsiWareSrlPath.c_str(), sfnSrl);
+						fatGetAliasPath(secondaryDevice ? "fat:/" : "sd:/", dsiWarePubPath.c_str(), sfnPub);
+						fatGetAliasPath(secondaryDevice ? "fat:/" : "sd:/", dsiWarePrvPath.c_str(), sfnPrv);
+					}
 
 					bootstrapinipath = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? "fat:/_nds/nds-bootstrap.ini" : "sd:/_nds/nds-bootstrap.ini";
 					CIniFile bootstrapini(bootstrapinipath);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", dsiWareSrlPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", secondaryDevice && dsiWareToSD ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : dsiWareSrlPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
@@ -1782,33 +1827,6 @@ int main(int argc, char **argv) {
 					}
 					runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
 					stop();
-				}
-
-				if (secondaryDevice) {
-					clearText();
-					dialogboxHeight = 0;
-					showdialogbox = true;
-					printLargeCentered(false, 74, "Please wait");
-					printSmallCentered(false, 98, "Now copying data...");
-					printSmallCentered(false, 110, "Do not turn off the power.");
-					fcopy(dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
-					if ((access(dsiWarePubPath.c_str(), F_OK) == 0) && (NDSHeader.pubSavSize > 0)) {
-						fcopy(dsiWarePubPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
-					}
-					if ((access(dsiWarePrvPath.c_str(), F_OK) == 0) && (NDSHeader.prvSavSize > 0)) {
-						fcopy(dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
-					}
-
-					clearText();
-					if ((access(dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
-					 || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
-						dialogboxHeight = 1;
-						printLargeCentered(false, 74, "Important!");
-						printSmall(false, 2, 90, "After saving, please re-start");
-						printSmall(false, 2, 102, "TWiLight Menu++ to transfer your");
-						printSmall(false, 2, 114, "save data back.");
-						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds
-					}
 				}
 
 				unlaunchRomBoot(secondaryDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : dsiWareSrlPath.c_str());
