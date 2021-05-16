@@ -2007,7 +2007,7 @@ int main(int argc, char **argv) {
 					char buffer[BUFFER_SIZE];
 					memset(buffer, 0, sizeof(buffer));
 					char savHdrPath[64];
-					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", (unsigned int)NDSHeader.pubSavSize);
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%X.savhdr", (unsigned int)NDSHeader.pubSavSize);
 					FILE *hdrFile = fopen(savHdrPath, "rb");
 					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
 					fclose(hdrFile);
@@ -2042,7 +2042,7 @@ int main(int argc, char **argv) {
 					char buffer[BUFFER_SIZE];
 					memset(buffer, 0, sizeof(buffer));
 					char savHdrPath[64];
-					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", (unsigned int)NDSHeader.prvSavSize);
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%X.savhdr", (unsigned int)NDSHeader.prvSavSize);
 					FILE *hdrFile = fopen(savHdrPath, "rb");
 					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
 					fclose(hdrFile);
