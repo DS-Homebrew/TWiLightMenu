@@ -322,7 +322,8 @@ sNDSHeader ndsCart;
  * Enable widescreen for some games.
  */
 void SetWidescreen(const char *filename) {
-	remove("/_nds/nds-bootstrap/wideCheatData.bin");
+	const char* wideCheatDataPath = ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin";
+	remove(wideCheatDataPath);
 
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
@@ -366,18 +367,17 @@ void SetWidescreen(const char *filename) {
 		return;
 	}
 
+	mkdir(ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat:/_nds" : "sd:/_nds", 0777);
+	mkdir(ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
+
 	if (wideCheatFound) {
 		std::string resultText;
-		if (flashcardFound()) {
-			mkdir("/_nds", 0777);
-			mkdir("/_nds/nds-bootstrap", 0777);
-		}
-		if (fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin") == 0) {
+		if (fcopy(wideBinPath, wideCheatDataPath) == 0) {
 			return;
 		} else {
 			resultText = STR_FAILED_TO_COPY_WIDESCREEN;
 		}
-		remove("/_nds/nds-bootstrap/wideCheatData.bin");
+		remove(wideCheatDataPath);
 		clearText();
 		printLarge(false, 0, ms().theme == 4 ? 24 : 72, resultText, Alignment::center);
 		if (ms().theme != 4) {
@@ -442,11 +442,7 @@ void SetWidescreen(const char *filename) {
 				u8 *buffer = new u8[size];
 				fread(buffer, 1, size, file);
 
-				if (flashcardFound()) {
-					mkdir("fat:/_nds", 0777);
-					mkdir("fat:/_nds/nds-bootstrap", 0777);
-				}
-				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice ? "fat" : "sd");
+				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat" : "sd");
 				FILE *out = fopen(wideBinPath, "wb");
 				if(out) {
 					fwrite(buffer, 1, size, out);

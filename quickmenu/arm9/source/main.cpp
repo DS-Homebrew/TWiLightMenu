@@ -351,7 +351,8 @@ std::string setApFix(const char *filename) {
  * Enable widescreen for some games.
  */
 void SetWidescreen(const char *filename) {
-	remove("/_nds/nds-bootstrap/wideCheatData.bin");
+	const char* wideCheatDataPath = ms().secondaryDevice && (!isDSiWare[ms().secondaryDevice] || (isDSiWare[ms().secondaryDevice] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin";
+	remove(wideCheatDataPath);
 
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
@@ -418,18 +419,19 @@ void SetWidescreen(const char *filename) {
 		return;
 	}
 
+	mkdir(ms().secondaryDevice && (!isDSiWare[ms().secondaryDevice] || (isDSiWare[ms().secondaryDevice] && !ms().dsiWareToSD)) ? "fat:/_nds" : "sd:/_nds", 0777);
+	mkdir(ms().secondaryDevice && (!isDSiWare[ms().secondaryDevice] || (isDSiWare[ms().secondaryDevice] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
+
 	if (wideCheatFound) {
 		const char* resultText1;
 		const char* resultText2;
-		mkdir("/_nds", 0777);
-		mkdir("/_nds/nds-bootstrap", 0777);
-		if (fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin") == 0) {
+		if (fcopy(wideBinPath, wideCheatDataPath) == 0) {
 			return;
 		} else {
 			resultText1 = "Failed to copy widescreen";
 			resultText2 = "code for the game.";
 		}
-		remove("/_nds/nds-bootstrap/wideCheatData.bin");
+		remove(wideCheatDataPath);
 		int textXpos[2] = {0};
 		textXpos[0] = 72;
 		textXpos[1] = 84;
@@ -491,11 +493,7 @@ void SetWidescreen(const char *filename) {
 				u8 *buffer = new u8[size];
 				fread(buffer, 1, size, file);
 
-				if (flashcardFound()) {
-					mkdir("fat:/_nds", 0777);
-					mkdir("fat:/_nds/nds-bootstrap", 0777);
-				}
-				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice ? "fat" : "sd");
+				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice && (!isDSiWare[ms().secondaryDevice] || (isDSiWare[ms().secondaryDevice] && !ms().dsiWareToSD)) ? "fat" : "sd");
 				FILE *out = fopen(wideBinPath, "wb");
 				if(out) {
 					fwrite(buffer, 1, size, out);
