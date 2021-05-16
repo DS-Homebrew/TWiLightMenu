@@ -1922,6 +1922,8 @@ int main(int argc, char **argv) {
 				}
 			}
 
+			chdir(romfolder[ms().secondaryDevice].c_str());
+
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);
