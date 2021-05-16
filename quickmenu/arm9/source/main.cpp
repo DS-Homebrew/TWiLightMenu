@@ -2063,9 +2063,9 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				}
 
-				if (ms().secondaryDevice && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel < 2))) {
+				if (ms().secondaryDevice && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel < 2)) && sdFound()) {
 					clearText();
-					printSmallCentered(false, 20, STR_TAKEWHILE_CLOSELID.c_str());
+					printSmallCentered(false, 20, ms().consoleModel >= 2 ? STR_TAKEWHILE_PRESSHOME.c_str() : STR_TAKEWHILE_CLOSELID.c_str());
 					printSmallCentered(false, 86, STR_NOW_COPYING_DATA.c_str());
 					printSmallCentered(false, 100, STR_DO_NOT_TURN_OFF_POWER.c_str());
 					fadeType = true;	// Fade in from white

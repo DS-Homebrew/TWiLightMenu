@@ -1717,7 +1717,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
-				if (secondaryDevice && (dsiWareToSD || (!dsiWareBooter && consoleModel < 2))) {
+				if (secondaryDevice && (dsiWareToSD || (!dsiWareBooter && consoleModel < 2)) && sdFound()) {
 					clearText();
 					dialogboxHeight = 0;
 					showdialogbox = true;
