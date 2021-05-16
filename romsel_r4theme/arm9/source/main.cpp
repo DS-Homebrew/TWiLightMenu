@@ -1752,12 +1752,12 @@ int main(int argc, char **argv) {
 					const char* cheatDataBin = (secondaryDevice && dsiWareToSD) ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "/_nds/nds-bootstrap/cheatData.bin";
 					mkdir((secondaryDevice && dsiWareToSD) ? "sd:/_nds" : "/_nds", 0777);
 					mkdir((secondaryDevice && dsiWareToSD) ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
-					if(codelist.romData(path,gameCode,crc32)) {
+					if(codelist.romData(dsiWareSrlPath,gameCode,crc32)) {
 						long cheatOffset; size_t cheatSize;
 						FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
 						if (dat) {
 							if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
-								codelist.parse(path);
+								codelist.parse(dsiWareSrlPath);
 								codelist.writeCheatsToFile(cheatDataBin);
 								FILE* cheatData=fopen(cheatDataBin,"rb");
 								if (cheatData) {
