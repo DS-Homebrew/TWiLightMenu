@@ -1110,7 +1110,7 @@ int main(int argc, char **argv)
 				 "Português",
 				 "Svenska",
 				 "Türkçe",
-				 "Ελληνικά"
+				 "Ελληνικά",
 				 "Русский",
 				 "Українська",
 				 "עברית",
