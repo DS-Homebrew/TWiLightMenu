@@ -881,10 +881,9 @@ int main(int argc, char **argv) {
 		snd().beginStream();
 	}
 
-	if ((ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel < 2)) && ms().previousUsedDevice && bothSDandFlashcard()
-	&& ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch) {
-	  if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub")) ||
-	    (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv"))) {
+	if (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch
+	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub"))
+	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv")))) {
 		fadeType = true; // Fade in from white
 		printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 		printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
@@ -902,9 +901,11 @@ int main(int argc, char **argv) {
 		controlTopBright = false;
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", ms().dsiWarePubPath.c_str());
+			rename("sd:/_nds/TWiLightMenu/tempDSiWare.pub", "sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak");
 		}
 		if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", ms().dsiWarePrvPath.c_str());
+			rename("sd:/_nds/TWiLightMenu/tempDSiWare.prv", "sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak");
 		}
 		showProgressIcon = false;
 		if (ms().theme != 4) {
@@ -916,7 +917,6 @@ int main(int argc, char **argv) {
 		}
 		clearText();
 		updateText(false);
-	  }
 	}
 
 	while (1) {
@@ -932,17 +932,16 @@ int main(int argc, char **argv) {
 		// Launch the item
 
 		if (applaunch) {
-			// Delete previously used DSiWare of flashcard from SD
-			if (!ms().gotosettings && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel < 2)) && ms().previousUsedDevice &&
-			    bothSDandFlashcard()) {
+			// Delete previously launched DSiWare copied from flashcard to SD
+			if (!ms().gotosettings) {
 				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {
 					remove("sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 				}
-				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0) {
-					remove("sd:/_nds/TWiLightMenu/tempDSiWare.pub");
+				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak", F_OK) == 0) {
+					remove("sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak");
 				}
-				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0) {
-					remove("sd:/_nds/TWiLightMenu/tempDSiWare.prv");
+				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak", F_OK) == 0) {
+					remove("sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak");
 				}
 				if (access("sd:/_nds/nds-bootstrap/patchOffsetCache/tempDSiWare.bin", F_OK) == 0) {
 					remove("sd:/_nds/nds-bootstrap/patchOffsetCache/tempDSiWare.bin");

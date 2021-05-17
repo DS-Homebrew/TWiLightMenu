@@ -1122,15 +1122,9 @@ int main(int argc, char **argv) {
 	  }
 	}
 
-	if ((ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel < 2))
-	 && ms().previousUsedDevice
-	 && bothSDandFlashcard()
-	 && ms().launchType[ms().previousUsedDevice] == 3
-	 && (
-		(access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub"))
-	     || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv"))
-	    )
-	) {
+	if (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == 3
+	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub"))
+	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv")))) {
 		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white
@@ -1140,9 +1134,11 @@ int main(int argc, char **argv) {
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", ms().dsiWarePubPath.c_str());
+			rename("sd:/_nds/TWiLightMenu/tempDSiWare.pub", "sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak");
 		}
 		if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", ms().dsiWarePrvPath.c_str());
+			rename("sd:/_nds/TWiLightMenu/tempDSiWare.prv", "sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak");
 		}
 		fadeType = false;	// Fade to white
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -1904,16 +1900,16 @@ int main(int argc, char **argv) {
 			controlTopBright = false;
 			clearText();
 
-			// Delete previously used DSiWare of flashcard from SD
-			if (!ms().gotosettings && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel < 2)) && ms().previousUsedDevice && bothSDandFlashcard()) {
+			// Delete previously launched DSiWare copied from flashcard to SD
+			if (!ms().gotosettings) {
 				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {
 					remove("sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 				}
-				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0) {
-					remove("sd:/_nds/TWiLightMenu/tempDSiWare.pub");
+				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak", F_OK) == 0) {
+					remove("sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak");
 				}
-				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0) {
-					remove("sd:/_nds/TWiLightMenu/tempDSiWare.prv");
+				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak", F_OK) == 0) {
+					remove("sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak");
 				}
 				if (access("sd:/_nds/nds-bootstrap/patchOffsetCache/tempDSiWare.bin", F_OK) == 0) {
 					remove("sd:/_nds/nds-bootstrap/patchOffsetCache/tempDSiWare.bin");

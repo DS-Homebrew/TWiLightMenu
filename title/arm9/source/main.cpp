@@ -714,6 +714,18 @@ void lastRunROM()
 				char sfnPub[62];
 				char sfnPrv[62];
 				if (ms().previousUsedDevice && ms().dsiWareToSD) {
+					if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak", F_OK) == 0) {
+						if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0) {
+							remove("sd:/_nds/TWiLightMenu/tempDSiWare.pub");
+						}
+						rename("sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak", "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
+					}
+					if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak", F_OK) == 0) {
+						if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0) {
+							remove("sd:/_nds/TWiLightMenu/tempDSiWare.prv");
+						}
+						rename("sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak", "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
+					}
 					fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
 					fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
 					fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
