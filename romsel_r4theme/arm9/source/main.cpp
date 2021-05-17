@@ -1286,8 +1286,8 @@ int main(int argc, char **argv) {
 	
 	bool copyDSiWareSavBack =
 	   (previousUsedDevice && bothSDandFlashcard() && launchType[previousUsedDevice] == 3
-	&& ((access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
-	 || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv"))));
+	&& ((access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub") && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
+	 || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv") && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0)));
 	
 	if (copyDSiWareSavBack) {
 		blackScreen = true;

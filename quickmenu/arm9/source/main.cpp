@@ -1123,8 +1123,8 @@ int main(int argc, char **argv) {
 	}
 
 	if (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == 3
-	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub"))
-	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv")))) {
+	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub") && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
+	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv") && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0))) {
 		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white

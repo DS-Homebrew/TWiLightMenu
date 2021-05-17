@@ -882,18 +882,14 @@ int main(int argc, char **argv) {
 	}
 
 	if (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch
-	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub"))
-	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv")))) {
+	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub") && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
+	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv") && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0))) {
 		fadeType = true; // Fade in from white
 		printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 		printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
 		printSmall(false, 0, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER, Alignment::center);
 		updateText(false);
-		for (int i = 0; i < 15; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
-		}
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 30; i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		}
