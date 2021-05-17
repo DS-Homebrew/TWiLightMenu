@@ -31,6 +31,8 @@
 #include "saveMap.h"
 #include "ROMList.h"
 
+#include "sr_data_srllastran.h"		 // For rebooting into the game
+
 bool useTwlCfg = false;
 
 bool renderScreens = false;
@@ -225,6 +227,20 @@ void unlaunchRomBoot(std::string_view rom) {
 	DC_FlushAll();						// Make reboot not fail
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
 	stop();
+}
+
+/**
+ * Reboot into an SD game when in DS mode.
+ */
+void ntrStartSdGame(void) {
+	if (ms().consoleModel == 0) {
+		unlaunchRomBoot("sd:/_nds/TWiLightMenu/resetgame.srldr");
+	} else {
+		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+		DC_FlushAll();						// Make reboot not fail
+		fifoSendValue32(FIFO_USER_02, 1);
+		stop();
+	}
 }
 
 void dsCardLaunch() {
@@ -594,7 +610,7 @@ void lastRunROM()
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
 				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || ms().macroMode) {
-					remove("/_nds/nds-bootstrap/wideCheatData.bin");
+					remove((ms().previousUsedDevice && !ms().dsiWareToSD) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
 				}
 
 				const char *typeToReplace = ".nds";
@@ -761,6 +777,13 @@ void lastRunROM()
 				|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 				);
 				bootstrapini.SaveIniFile((memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI_SD);
+
+				if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD))) {
+					*(u32*)(0x02000000) |= BIT(3);
+					*(u32*)(0x02000004) = 0;
+					*(bool*)(0x02000010) = useNightly;
+					ntrStartSdGame();
+				}
 
 				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);
 			}
@@ -1032,6 +1055,7 @@ int main(int argc, char **argv)
 		0: Skip DS(i) splash
 		1: Skip TWLMenu++ splash
 		2: Skip last-run game
+		3: Skip flashcard ROM check (Used for launching DSiWare from flashcards booted in DS mode)
 	*/
 
 	if (sys().isRegularDS()) {

@@ -75,6 +75,7 @@ static bool wideScreen = false;
 static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
 
 static int gameLanguage = -1;
+static int gameRegion = -2;
 static bool boostCpu = false;	// false == NTR, true == TWL
 static bool boostVram = false;
 static bool bstrap_dsiMode = false;
@@ -101,6 +102,7 @@ TWL_CODE void LoadSettings(void) {
 
 	// Default nds-bootstrap settings
 	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
+	gameRegion = settingsini.GetInt("NDS-BOOTSTRAP", "REGION", -2);
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
@@ -240,12 +242,14 @@ TWL_CODE int lastRunROM() {
 		argarray.push_back(strdup(homebrewArg[previousUsedDevice].c_str()));
 	}
 
-	if (access(romPath[previousUsedDevice].c_str(), F_OK) != 0 || launchType[previousUsedDevice] == 0) {
-		return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true);	// Skip to running TWiLight Menu++
-	}
+	if (!(*(u32*)(0x02000000) & BIT(3))) {
+		if (access(romPath[previousUsedDevice].c_str(), F_OK) != 0 || launchType[previousUsedDevice] == 0) {
+			return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true);	// Skip to running TWiLight Menu++
+		}
 
-	if (slot1Launched) {
-		return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true);
+		if (slot1Launched) {
+			return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true);
+		}
 	}
 
 	switch (launchType[previousUsedDevice]) {
@@ -444,6 +448,9 @@ TWL_CODE int lastRunROM() {
 
 					loadPerGameSettings(filename);
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
+					if (*(u32*)(0x02000000) & BIT(3)) {
+						useNightly = *(bool*)(0x02000010);
+					}
 
 					char ndsToBoot[256];
 					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
@@ -453,6 +460,7 @@ TWL_CODE int lastRunROM() {
 
 					argarray.at(0) = (char *)ndsToBoot;
 
+				  if (!(*(u32*)(0x02000000) & BIT(3))) {
 					char sfnSrl[62];
 					char sfnPub[62];
 					char sfnPrv[62];
@@ -486,6 +494,7 @@ TWL_CODE int lastRunROM() {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
 					// bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", (perGameSettings_language == -2 ? gameLanguage : perGameSettings_language));
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", 	(perGameSettings_region == -3 ? gameRegion : perGameSettings_region));
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
@@ -494,6 +503,7 @@ TWL_CODE int lastRunROM() {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", 0);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", 0);
 					bootstrapini.SaveIniFile(bootstrapinipath);
+				  }
 
 					return runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);
 				}
@@ -557,6 +567,10 @@ int main(int argc, char **argv) {
 		consoleDemoInit();
 		printf("fatInitDefault failed!");
 		stop();
+	}
+
+	if (*(u32*)(0x02000004) != 0) {
+		*(u32*)(0x02000000) = 0; // Clear soft-reset params
 	}
 
 	flashcardInit();

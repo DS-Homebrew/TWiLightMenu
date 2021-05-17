@@ -1267,14 +1267,17 @@ int main(int argc, char **argv) {
 						}
 					}
 
+					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+
 					if (dsiFeatures() || !ms().secondaryDevice) {
 						SetWidescreen(filename.c_str());
 					}
 					if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD))) {
+						*(u32*)(0x02000000) |= BIT(3);
+						*(u32*)(0x02000004) = 0;
+						*(bool*)(0x02000010) = useNightly;
 						ntrStartSdGame();
 					}
-
-					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
 					char ndsToBoot[256];
 					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");

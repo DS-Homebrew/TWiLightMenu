@@ -1821,14 +1821,17 @@ int main(int argc, char **argv) {
 					);
 					bootstrapini.SaveIniFile(bootstrapinipath);
 
+					bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
+
 					if (isDSiMode() || !secondaryDevice) {
 						SetWidescreen(filename.c_str());
 					}
 					if (!isDSiMode() && !secondaryDevice) {
+						*(u32*)(0x02000000) |= BIT(3);
+						*(u32*)(0x02000004) = 0;
+						*(bool*)(0x02000010) = useNightly;
 						ntrStartSdGame();
 					}
-
-					bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
 
 					char ndsToBoot[256];
 					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
