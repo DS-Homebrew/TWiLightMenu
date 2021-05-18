@@ -1255,8 +1255,6 @@ int main(int argc, char **argv)
 				{true, false});
 	}
 
-	miscPage
-		.option(STR_LASTPLAYEDROM, STR_DESCRIPTION_LASTPLAYEDROM_1, Option::Bool(&ms().autorun), {STR_YES, STR_NO}, {true, false});
 	if (isDSiMode() && sdAccessible) {
 		miscPage
 			.option(STR_AUTOSTARTSLOT1, STR_DESCRIPTION_AUTOSTARTSLOT1, Option::Bool(&ms().autostartSlot1), {STR_YES, STR_NO}, {true, false});

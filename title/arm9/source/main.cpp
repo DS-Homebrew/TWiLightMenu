@@ -1426,9 +1426,7 @@ int main(int argc, char **argv)
 	
 	scanKeys();
 
-	if (!(*(u32*)0x02000000 & BIT(2)) && (softResetParamsFound
-	 || (ms().autorun && !(keysHeld() & KEY_B))
-	 || (!ms().autorun && (keysHeld() & KEY_B))))
+	if (!(*(u32*)0x02000000 & BIT(2)) && (softResetParamsFound || (keysHeld() & KEY_B)))
 	{
 		lastRunROM();
 	}
