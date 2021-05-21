@@ -1,24 +1,3 @@
-/*-----------------------------------------------------------------
- Copyright (C) 2005 - 2013
-	Michael "Chishm" Chisholm
-	Dave "WinterMute" Murphy
-	Claudio "sverx"
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-------------------------------------------------------------------*/
 #include <nds.h>
 #include <nds/arm9/dldi.h>
 #include <maxmod9.h>
@@ -34,6 +13,7 @@
 
 #include "graphics/graphics.h"
 
+#include "common/systemdetails.h"
 #include "common/nitrofs.h"
 #include "nds_loader_arm9.h"
 #include "errorScreen.h"
@@ -379,32 +359,19 @@ int main(int argc, char **argv) {
 
 	bool useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
-	extern const DISC_INTERFACE __my_io_dsisd;
+	sys().initFilesystem();
+	sys().initArm7RegStatuses();
 
-	fatMountSimple("sd", &__my_io_dsisd);
-	sdFound = (access("sd:/", F_OK) == 0);
-	fatMountSimple("fat", dldiGetInternal());
-	bool fatInited = (sdFound || (access("fat:/", F_OK) == 0));
-	chdir(sdFound&&isDSiMode() ? "sd:/" : "fat:/");
-
-	if (!fatInited) {
+	if (!sys().fatInitOk()) {
 		consoleDemoInit();
 		iprintf("fatinitDefault failed!");
 		fadeType = true;
 		stop();
 	}
 
-	nitroFSInit("/_nds/TWiLightMenu/manual.srldr");
-
 	if ((access(settingsinipath, F_OK) != 0) && (access("fat:/", F_OK) == 0)) {
 		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
-
-	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
-	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
-	fifoSendValue32(FIFO_USER_07, 0);
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 

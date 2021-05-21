@@ -3,6 +3,7 @@
 #include <maxmod9.h>
 
 // #include "autoboot.h"
+#include "common/systemdetails.h"
 #include "graphics/fontHandler.h"
 #include "common/tonccpy.h"
 #include "language.h"
@@ -23,7 +24,7 @@ static bool showNonExtendedImage = false;
 void checkSdEject(void) {
 	if (!sdRemoveDetect) return;
 
-	if (*(u8*)(0x02FFF002) == 0 || !isDSiMode()) {
+	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode()) {
 		if(!showNonExtendedImage) {
 			timeTillChangeToNonExtendedImage++;
 			if (timeTillChangeToNonExtendedImage > 10) {

@@ -29,9 +29,17 @@
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 #include <maxmod7.h>
+#include "arm7status.h"
 
 void my_touchInit();
 void my_installSystemFIFO(void);
+
+#define BIT_SET(c, n) ((c) << (n))
+
+#define SNDEXCNT (*(vu16*)0x4004700)
+#define SD_IRQ_STATUS (*(vu32*)0x400481C)
+
+volatile int status = 0;
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -107,21 +115,40 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 
-	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
-	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
-	fifoSendValue32(FIFO_USER_06, 1);
+	u8 readCommand = readPowerManagement(4);
+
+	// 01: Fade Out
+	// 02: Return
+	// 03: status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: sndExcnt)
+	
+
+	// 03: Status: Init/Volume/Battery/SD
+	// https://problemkaputt.de/gbatek.htm#dsii2cdevice4ahbptwlchip
+	// Battery is 7 bits -- bits 0-7
+	// Volume is 00h to 1Fh = 5 bits -- bits 8-12
+	// SD status -- bits 13-14
+	// Init status -- bits 15-17 (Bit 0 (15): isDSLite, Bit 1 (16): scfgEnabled, Bit 2 (17): sndExcnt)
+
+	u8 initStatus = (BIT_SET(!!(SNDEXCNT), SNDEXCNT_BIT) 
+									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT) 
+									| BIT_SET(!!(readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7)), DSLITE_BIT));
+
+	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
+	fifoSendValue32(FIFO_USER_03, status);
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
-		if (isDSiMode() && *(vu32*)(0x400481C) & BIT(4)) {
-			*(u8*)(0x02FFF002) = 2;
-		} else if (isDSiMode() && *(vu32*)(0x400481C) & BIT(3)) {
-			*(u8*)(0x02FFF002) = 1;
-		} else {
-			*(u8*)(0x02FFF002) = 0;
+		if (isDSiMode()) {
+			if (SD_IRQ_STATUS & BIT(4)) {
+				status = (status & ~SD_MASK) | ((2 << SD_OFF) & SD_MASK);
+				fifoSendValue32(FIFO_USER_03, status);
+			} else if (SD_IRQ_STATUS & BIT(3)) {
+				status = (status & ~SD_MASK) | ((1 << SD_OFF) & SD_MASK);
+				fifoSendValue32(FIFO_USER_03, status);
+			}
 		}
 		if(fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
