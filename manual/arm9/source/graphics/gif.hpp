@@ -61,7 +61,6 @@ class Gif {
 		struct Image {
 			u8 lzwMinimumCodeSize;
 			std::vector<u8> imageData;
-			size_t dataSize;
 		} image;
 
 		std::vector<u16> lct; // In DS format
