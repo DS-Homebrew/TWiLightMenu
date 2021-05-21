@@ -113,7 +113,7 @@ bool Gif::load(const char *path, bool top, bool animate, bool forceDecompress) {
 	fread(&header, 1, sizeof(header), file);
 
 	// Check that this is a GIF
-	if (memcmp(header.signature, "GIF89a", sizeof(header.signature)) != 0) {
+	if (memcmp(header.signature, "GIF87a", sizeof(header.signature)) != 0 && memcmp(header.signature, "GIF89a", sizeof(header.signature)) != 0) {
 		fclose(file);
 		return false;
 	}
