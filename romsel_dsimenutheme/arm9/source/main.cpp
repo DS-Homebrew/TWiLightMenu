@@ -1503,7 +1503,7 @@ int main(int argc, char **argv) {
 						CheatCodelist codelist;
 						u32 gameCode, crc32;
 
-						if ((dsiFeatures() || !ms().secondaryDevice) && !isHomebrew[CURPOS]) {
+						if (!isHomebrew[CURPOS]) {
 							bool cheatsEnabled = true;
 							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
 							mkdir("/_nds", 0777);

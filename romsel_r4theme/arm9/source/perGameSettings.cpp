@@ -335,7 +335,7 @@ void perGameSettings (std::string filename) {
 	}*/
 	bool runInShown = false;
 
-	bool showCheats = (((dsiFeatures() && useBootstrap)
+	bool showCheats = ((useBootstrap
 	/*|| (secondaryDevice && !useBootstrap
 		&& ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
