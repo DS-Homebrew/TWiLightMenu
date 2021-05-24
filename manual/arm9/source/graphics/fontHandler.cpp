@@ -1,4 +1,6 @@
 #include <nds/arm9/dldi.h>
+#include "common/systemdetails.h"
+#include "common/flashcard.h"
 #include "fontHandler.h"
 #include <list>
 
@@ -14,16 +16,14 @@ std::list<TextEntry> topText, bottomText;
 bool shouldClear[] = {false, false};
 
 extern std::string font;
-extern bool isRegularDS;
-extern bool sdFound;
 
 void fontInit() {
 	//iprintf("fontInit()\n");
 
-	bool useExpansionPak = (isRegularDS && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
+	bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
 
 	// Load font graphics
-	std::string fontPath = std::string(sdFound ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + font;
+	std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + font;
 	smallFont = FontGraphic({fontPath + ((dsiFeatures() || useExpansionPak) ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"}, useExpansionPak);
 	largeFont = FontGraphic({fontPath + ((dsiFeatures() || useExpansionPak) ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"}, useExpansionPak);
 

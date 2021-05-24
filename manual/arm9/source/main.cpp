@@ -103,7 +103,6 @@ std::string font = "default";
 int guiLanguage = -1;
 bool rtl = false;
 
-bool sdFound = false;
 bool sdRemoveDetect = true;
 
 std::vector<DirEntry> manPagesList;
