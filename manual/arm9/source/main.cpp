@@ -354,24 +354,24 @@ void loadROMselect() {
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 	defaultExceptionHandler();
-
-	keysSetRepeat(25, 25);
-
-	bool useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
-
 	sys().initFilesystem();
 	sys().initArm7RegStatuses();
 
 	if (!sys().fatInitOk()) {
+		SetBrightness(0, 0);
+		SetBrightness(1, 0);
 		consoleDemoInit();
-		iprintf("fatinitDefault failed!");
-		fadeType = true;
+		iprintf("FAT init failed!");
 		stop();
 	}
 
 	if ((access(settingsinipath, F_OK) != 0) && (access("fat:/", F_OK) == 0)) {
 		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
+
+	keysSetRepeat(25, 25);
+
+	bool useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
