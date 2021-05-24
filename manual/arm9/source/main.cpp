@@ -87,13 +87,11 @@ extern void ClearBrightness();
 
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 
-bool arm7SCFGLocked = false;
 int consoleModel = 0;
 /*	0 = Nintendo DSi (Retail)
 	1 = Nintendo DSi (Dev/Panda)
 	2 = Nintendo 3DS
 	3 = New Nintendo 3DS	*/
-bool isRegularDS = true;
 
 bool showSelectMenu = false;
 int theme = 0;
