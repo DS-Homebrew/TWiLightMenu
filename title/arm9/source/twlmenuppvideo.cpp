@@ -30,6 +30,8 @@
 
 extern bool useTwlCfg;
 
+extern void loadROMselectAsynch(void);
+
 extern u16 convertVramColorToGrayscale(u16 val);
 
 static int twlmenuTexID;
@@ -648,6 +650,7 @@ void twlMenuVideo(void) {
 	for (int i = 0; i < 30; i++) {
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
+		loadROMselectAsynch();
 		swiWaitForVBlank();
 	}
 
@@ -659,6 +662,7 @@ void twlMenuVideo(void) {
 	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
+		loadROMselectAsynch();
 		swiWaitForVBlank();
 	}
 	while (dmaBusy(0) || dmaBusy(1));
@@ -787,6 +791,7 @@ void twlMenuVideo(void) {
 	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
+		loadROMselectAsynch();
 		swiWaitForVBlank();
 	}
 
@@ -882,6 +887,7 @@ void twlMenuVideo(void) {
 	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
+		loadROMselectAsynch();
 		swiWaitForVBlank();
 	}
 }

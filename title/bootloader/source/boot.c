@@ -61,6 +61,7 @@ void arm7clearRAM();
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Important things
+#define TWL_HEAD_BUF 0x02FFC000
 #define TEMP_MEM 0x02FFD000
 #define TWL_HEAD 0x02FFE000
 #define NDS_HEAD 0x02FFFE00
@@ -255,6 +256,9 @@ void loadBinary_ARM7 (u32 fileCluster)
 	if (loadFromRam) {
 		bool isDSi = (*(vu32*)(0x08240000) != 1);
 
+		tonccpy((char*)TWL_HEAD, (char*)TWL_HEAD_BUF, 0x1000);
+		toncset((char*)TWL_HEAD_BUF, 0, 0x1000);
+
 		ARM9_SRC = *(u32*)(TWL_HEAD+0x20);
 		char* ARM9_DST = (char*)*(u32*)(TWL_HEAD+0x28);
 		u32 ARM9_LEN = *(u32*)(TWL_HEAD+0x2C);
@@ -262,10 +266,17 @@ void loadBinary_ARM7 (u32 fileCluster)
 		char* ARM7_DST = (char*)*(u32*)(TWL_HEAD+0x38);
 		u32 ARM7_LEN = *(u32*)(TWL_HEAD+0x3C);
 
+		//char* ARM9i_SRC = (char*)*(u32*)(TWL_HEAD+0x1C0);
+		char* ARM9i_DST = (char*)*(u32*)(TWL_HEAD+0x1C8);
+		u32 ARM9i_LEN = *(u32*)(TWL_HEAD+0x1CC);
+		//char* ARM7i_SRC = (char*)*(u32*)(TWL_HEAD+0x1D0);
+		char* ARM7i_DST = (char*)*(u32*)(TWL_HEAD+0x1D8);
+		u32 ARM7i_LEN = *(u32*)(TWL_HEAD+0x1DC);
+
 		ROM_TID = *(u32*)(TWL_HEAD+0xC);
 
-		tonccpy(ARM9_DST, (char*)(isDSi ? 0x02800000 : 0x09000000), ARM9_LEN);
-		tonccpy(ARM7_DST, (char*)(isDSi ? 0x02B80000 : 0x09380000), ARM7_LEN);
+		dmaCopyHalfWordsAsynch(0, (char*)(isDSi ? 0x02800000 : 0x09000000), ARM9_DST, ARM9_LEN);
+		dmaCopyHalfWordsAsynch(1, (char*)(isDSi ? 0x02B80000 : 0x09380000), ARM7_DST, ARM7_LEN);
 
 		// first copy the header to its proper location, excluding
 		// the ARM9 start address, so as not to start it
@@ -277,21 +288,22 @@ void loadBinary_ARM7 (u32 fileCluster)
 		dsiFlags = *(u8*)(TWL_HEAD+0x1BF);
 		if (!dsMode && dsiMode && (*(u8*)(TWL_HEAD+0x12) > 0))
 		{
-			//char* ARM9i_SRC = (char*)*(u32*)(TWL_HEAD+0x1C0);
-			char* ARM9i_DST = (char*)*(u32*)(TWL_HEAD+0x1C8);
-			u32 ARM9i_LEN = *(u32*)(TWL_HEAD+0x1CC);
-			//char* ARM7i_SRC = (char*)*(u32*)(TWL_HEAD+0x1D0);
-			char* ARM7i_DST = (char*)*(u32*)(TWL_HEAD+0x1D8);
-			u32 ARM7i_LEN = *(u32*)(TWL_HEAD+0x1DC);
-
 			if (ARM9i_LEN)
 				tonccpy(ARM9i_DST, (char*)0x02C00000, ARM9i_LEN);
 			if (ARM7i_LEN)
 				tonccpy(ARM7i_DST, (char*)0x02C80000, ARM7i_LEN);
 		}
 
-		if (isDSi)
-			toncset((void*)0x02800000, 0, 0x500000);
+		if (isDSi) {
+			if (!dsMode && dsiMode && (*(u8*)(TWL_HEAD+0x12) > 0)) {
+				toncset((void*)0x02C00000, 0, ARM9i_LEN);
+				toncset((void*)0x02C80000, 0, ARM7i_LEN);
+			}
+			while (dmaBusy(0));
+			toncset((void*)0x02800000, 0, ARM9_LEN);
+			while (dmaBusy(1));
+			toncset((void*)0x02B80000, 0, ARM7_LEN);
+		}
 
 		return;
 	}

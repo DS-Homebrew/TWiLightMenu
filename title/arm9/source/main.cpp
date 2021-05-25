@@ -141,7 +141,7 @@ void loadMainMenu()
 	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
 }
 
-void loadROMselect(int number)
+void loadROMselect(void)
 {
 	fadeColor = true;
 	controlTopBright = true;
@@ -155,7 +155,7 @@ void loadROMselect(int number)
 	if (!isDSiMode()) {
 		chdir("fat:/");
 	}
-	switch (number) {
+	switch (ms().theme) {
 		/*case 3:
 			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
 			break;*/
@@ -168,6 +168,22 @@ void loadROMselect(int number)
 			break;
 	}
 	stop();
+}
+
+void loadROMselectAsynch(void)
+{
+	switch (ms().theme) {
+		/*case 3:
+			loadNds9iAsynch(!isDSiMode() ? "fat:/_nds/TWiLightMenu/akmenu.srldr" : "/_nds/TWiLightMenu/akmenu.srldr");
+			break;*/
+		case 2:
+		case 6:
+			loadNds9iAsynch(!isDSiMode() ? "fat:/_nds/TWiLightMenu/r4menu.srldr" : "/_nds/TWiLightMenu/r4menu.srldr");
+			break;
+		default:
+			loadNds9iAsynch(!isDSiMode() ? "fat:/_nds/TWiLightMenu/dsimenu.srldr" : "/_nds/TWiLightMenu/dsimenu.srldr");
+			break;
+	}
 }
 
 bool extention(const std::string& filename, const char* ext) {
@@ -1015,15 +1031,6 @@ void lastRunROM()
 	}
 }
 
-void defaultExitHandler()
-{
-	/*if (!sys().arm7SCFGLocked())
-	{
-		rebootDSiMenuPP();
-	}*/
-	loadROMselect(ms().theme);
-}
-
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
@@ -1395,18 +1402,18 @@ int main(int argc, char **argv)
 		soundBankLoaded = true;
 	}
 
-	if (!softResetParamsFound && ms().dsiSplash && (REG_SCFG_EXT!=0&&ms().consoleModel<2 ? fifoGetValue32(FIFO_USER_01) != 0x01 : !(*(u32*)0x02000000 & BIT(0)))) {
-		bootSplashInit();
-		if (REG_SCFG_EXT != 0 && ms().consoleModel < 2) fifoSendValue32(FIFO_USER_01, 10);
-	}
-	*(u32*)0x02000000 |= BIT(0);
-
 	if ((access(settingsinipath, F_OK) != 0)
 	|| (ms().theme < 0) || (ms().theme == 3) || (ms().theme > 6)) {
 		// Create or modify "settings.ini"
 		(ms().theme == 3) ? ms().theme = 2 : ms().theme = 0;
 		ms().saveSettings();
 	}
+
+	if (!softResetParamsFound && ms().dsiSplash && (REG_SCFG_EXT!=0&&ms().consoleModel<2 ? fifoGetValue32(FIFO_USER_01) != 0x01 : !(*(u32*)0x02000000 & BIT(0)))) {
+		bootSplashInit();
+		if (REG_SCFG_EXT != 0 && ms().consoleModel < 2) fifoSendValue32(FIFO_USER_01, 10);
+	}
+	*(u32*)0x02000000 |= BIT(0);
 
 	if (access(BOOTSTRAP_INI, F_OK) != 0) {
 		u64 driveSize = 0;
@@ -1428,6 +1435,7 @@ int main(int argc, char **argv)
 
 	if (!(*(u32*)0x02000000 & BIT(2)) && (softResetParamsFound || (keysHeld() & KEY_B)))
 	{
+		unloadNds9iAsynch();
 		lastRunROM();
 	}
 
@@ -1437,6 +1445,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!softResetParamsFound && ms().autostartSlot1 && isDSiMode() && REG_SCFG_MC != 0x11 && !fcFound && !(keysHeld() & KEY_SELECT)) {
+		unloadNds9iAsynch();
 		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
 			dsCardLaunch();
 		} else if (ms().slot1LaunchMethod==2) {
@@ -1480,6 +1489,7 @@ int main(int argc, char **argv)
 
 	while (1) {
 		if (screenmode == 1) {
+			unloadNds9iAsynch();
 			fadeColor = true;
 			controlTopBright = true;
 			controlBottomBright = true;
@@ -1495,7 +1505,7 @@ int main(int argc, char **argv)
 			if (ms().showMainMenu) {
 				loadMainMenu();
 			}
-			loadROMselect(ms().theme);
+			loadROMselect();
 		}
 	}
 
