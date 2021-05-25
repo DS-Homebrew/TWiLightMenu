@@ -154,7 +154,7 @@ void my_cdcTouchInit(void) {
 	my_cdcWriteReg    (CDC_TOUCHCNT, 0x0F, 0xA0);
 	my_cdcWriteRegMask(CDC_TOUCHCNT, 0x0E, 0x38, 5<<3);
 	my_cdcWriteRegMask(CDC_TOUCHCNT, 0x0E, 0x40, 0<<6);
-	my_cdcWriteReg    (CDC_TOUCHCNT, 0x03, 0x87);
+	my_cdcWriteReg    (CDC_TOUCHCNT, 0x03, 0x8B);
 	my_cdcWriteRegMask(CDC_TOUCHCNT, 0x05, 0x07, 4<<0);
 	my_cdcWriteRegMask(CDC_TOUCHCNT, 0x04, 0x07, 6<<0);
 	my_cdcWriteRegMask(CDC_TOUCHCNT, 0x04, 0x70, 4<<4);
@@ -173,16 +173,18 @@ bool my_cdcTouchPenDown(void) {
 bool my_cdcTouchRead(touchPosition* pos) {
 //---------------------------------------------------------------------------------
 
-	u8 raw[2*2*5];
-	u16 arrayX[5], arrayY[5];
-	u32 sumX, sumY;
+	u8 raw[4*2*5];
+	u16 arrayX[5], arrayY[5], arrayZ1[5], arrayZ2[5];
+	u32 sumX, sumY, sumZ1, sumZ2;
 	int i;
 
 	my_cdcReadRegArray(CDC_TOUCHDATA, 0x01, raw, sizeof(raw));
 
 	for (i = 0; i < 5; i ++) {
-		arrayX[i] = (raw[i*2+ 0]<<8) | raw[i*2+ 1];
-		arrayY[i] = (raw[i*2+10]<<8) | raw[i*2+11];
+		arrayX[i]  = (raw[i*2+ 0]<<8) | raw[i*2+ 1];
+		arrayY[i]  = (raw[i*2+10]<<8) | raw[i*2+11];
+		arrayZ1[i] = (raw[i*2+20]<<8) | raw[i*2+21];
+		arrayZ2[i] = (raw[i*2+30]<<8) | raw[i*2+31];
 		if ((arrayX[i] & 0xF000) || (arrayY[i] & 0xF000)) {
 			pos->rawx = 0;
 			pos->rawy = 0;
@@ -193,12 +195,18 @@ bool my_cdcTouchRead(touchPosition* pos) {
 	// TODO: For now we just average all values without removing inaccurate values
 	sumX = 0;
 	sumY = 0;
+	sumZ1 = 0;
+	sumZ2 = 0;
 	for (i = 0; i < 5; i ++) {
 		sumX += arrayX[i];
 		sumY += arrayY[i];
+		sumZ1 += arrayZ1[i];
+		sumZ2 += arrayZ2[i];
 	}
 
 	pos->rawx = sumX / 5;
 	pos->rawy = sumY / 5;
+	pos->z1 = sumZ1 / 5;
+	pos->z2 = sumZ2 / 5;
 	return true;
 }
