@@ -80,7 +80,7 @@ TWLSettings::TWLSettings()
 	boostCpu = false;
 	boostVram = false;
 	bstrap_dsiMode = EDSiMode;
-	cardReadDMA = true;
+	cardReadDMA = false;
 	extendedMemory = 0;
 
 	forceSleepPatch = false;
