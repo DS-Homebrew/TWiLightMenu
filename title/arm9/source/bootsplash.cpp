@@ -19,7 +19,7 @@ extern bool controlTopBright;
 extern bool controlBottomBright;
 extern int screenBrightness;
 
-extern void loadROMselectAsynch(void);
+//extern void loadROMselectAsynch(void);
 
 bool cartInserted;
 
@@ -174,7 +174,7 @@ void bootSplashDSi(void) {
 	if((!custom && ms().macroMode) || (splash.loopForever() && healthSafety.loopForever())) {
 		for (int i = 0; i < 60 * 3 && !keysDown(); i++) {
 			swiWaitForVBlank();
-			loadROMselectAsynch();
+			//loadROMselectAsynch();
 			scanKeys();
 
 			if (!custom && splash.currentFrame() == 24)
@@ -184,7 +184,7 @@ void bootSplashDSi(void) {
 		u16 pressed = 0;
 		while (!(splash.finished() && healthSafety.finished()) && !(pressed & KEY_START)) {
 			swiWaitForVBlank();
-			loadROMselectAsynch();
+			//loadROMselectAsynch();
 			scanKeys();
 			pressed = keysDown();
 

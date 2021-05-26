@@ -362,8 +362,8 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
-static FILE* ndsFileAsynch;
 static tDSiHeader dsiHeaderBuffer;
+/*static FILE* ndsFileAsynch;
 static int asynchOp = 0;
 static u32 asynchArm9size = 0;
 static u32 asynchArm7size = 0;
@@ -435,7 +435,7 @@ void loadNds9iAsynch (const char* filename) {
 
 void unloadNds9iAsynch (void) {
 	asyncLoaded = false;
-}
+}*/
 
 void runNds9i (const char* filename) {
 	memset((void*)0x02800000, 0, 0x500000);
@@ -593,9 +593,9 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 	bool lockScfg = (strncmp(filename, "fat:/_nds/GBARunner2", 20) != 0
 					&& strncmp(filename, "fat:/_nds/TWiLightMenu/emulators/gameyob", 40) != 0);
 
-	bool loadFromRam = (runNds9(filename, dsModeSwitch) || (isDSiMode() && access("sd:/", F_OK) != 0) || asyncLoaded);
+	bool loadFromRam = (runNds9(filename, dsModeSwitch) || (isDSiMode() && access("sd:/", F_OK) != 0) /*|| asyncLoaded*/);
 
-	if (isDSiMode() && loadFromRam && !asyncLoaded) {
+	if (isDSiMode() && loadFromRam /*&& !asyncLoaded*/) {
 		runNds9i(filename);
 	}
 

@@ -170,12 +170,9 @@ void loadROMselect(void)
 	stop();
 }
 
-void loadROMselectAsynch(void)
+/*void loadROMselectAsynch(void)
 {
 	switch (ms().theme) {
-		/*case 3:
-			loadNds9iAsynch(!isDSiMode() ? "fat:/_nds/TWiLightMenu/akmenu.srldr" : "/_nds/TWiLightMenu/akmenu.srldr");
-			break;*/
 		case 2:
 		case 6:
 			loadNds9iAsynch(!isDSiMode() ? "fat:/_nds/TWiLightMenu/r4menu.srldr" : "/_nds/TWiLightMenu/r4menu.srldr");
@@ -184,7 +181,7 @@ void loadROMselectAsynch(void)
 			loadNds9iAsynch(!isDSiMode() ? "fat:/_nds/TWiLightMenu/dsimenu.srldr" : "/_nds/TWiLightMenu/dsimenu.srldr");
 			break;
 	}
-}
+}*/
 
 bool extention(const std::string& filename, const char* ext) {
 	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
@@ -1435,7 +1432,7 @@ int main(int argc, char **argv)
 
 	if (!(*(u32*)0x02000000 & BIT(2)) && (softResetParamsFound || (keysHeld() & KEY_B)))
 	{
-		unloadNds9iAsynch();
+		//unloadNds9iAsynch();
 		lastRunROM();
 	}
 
@@ -1445,7 +1442,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!softResetParamsFound && ms().autostartSlot1 && isDSiMode() && REG_SCFG_MC != 0x11 && !fcFound && !(keysHeld() & KEY_SELECT)) {
-		unloadNds9iAsynch();
+		//unloadNds9iAsynch();
 		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
 			dsCardLaunch();
 		} else if (ms().slot1LaunchMethod==2) {
@@ -1489,7 +1486,7 @@ int main(int argc, char **argv)
 
 	while (1) {
 		if (screenmode == 1) {
-			unloadNds9iAsynch();
+			//unloadNds9iAsynch();
 			fadeColor = true;
 			controlTopBright = true;
 			controlBottomBright = true;
