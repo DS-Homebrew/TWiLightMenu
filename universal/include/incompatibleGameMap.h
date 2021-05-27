@@ -28,7 +28,6 @@ static const char incompatibleGameListFC[][4] = {
 
 static const char incompatibleGameList[][4] = {
 	"BO5", // Golden Sun: Dark Dawn
-	"ALK", // Lunar Knights
 	"APD", // Pokemon Dash
 	"A24", // Pokemon Dash (Kiosk Demo)
 	"CTX", // Tropix
