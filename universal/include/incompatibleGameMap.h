@@ -7,6 +7,7 @@ static const char incompatibleGameListB4DS[][4] = {
 	"YRC", // Crayon Shin-chan - Arashi o Yobu Cinemaland Kachinko Gachinko Daikatsugeki!
 	"CL4", // Crayon Shin-Chan - Arashi o Yobu Nendororoon Daihenshin!
 	"BQB", // Crayon Shin-chan - Obaka Dainin Den - Susume! Kasukabe Ninja Tai!
+	"YKR", // Culdcept DS
 	"AWD", // Diddy Kong Racing
 	"AK4", // Kabu Trader Shun
 	"ARM", // Mario & Luigi: Partners in Time
