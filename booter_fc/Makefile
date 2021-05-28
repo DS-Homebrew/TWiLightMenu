@@ -47,12 +47,17 @@ autoboot:
 
 	##### R4iDSN & R4 Ultra specific
 	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_.NDS"
-	mv _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_B.NDS"
+	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_B.NDS"
 
 	##### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS specific
 	# r4denc _DS_MENU.nds
 	# mkdir "../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/"
 	# mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.DAT"
+	
+	#### Original R4 / M3 Simply specific
+	dlditool flashcart_specifics/DLDI/r4tfv2.dldi _DS_MENU.nds
+	r4denc _DS_MENU.nds
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.DAT"
 
 	#### EDGE (TODO: Find out how to encrypt the .dat file)
 	# cp booter_fc.nds EDGE.dat
