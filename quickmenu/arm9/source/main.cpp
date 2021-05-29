@@ -48,6 +48,7 @@
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
+#include "dmaExcludeMap.h"
 #include "donorMap.h"
 #include "saveMap.h"
 #include "ROMList.h"
@@ -169,6 +170,28 @@ void stop (void) {
 	while (1) {
 		swiWaitForVBlank();
 	}
+}
+
+/**
+ * Disable card read DMA for a specific game.
+ */
+bool setCardReadDMA(const char* filename) {
+	FILE *f_nds_file = fopen(filename, "rb");
+
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	fclose(f_nds_file);
+	game_TID[4] = 0;
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
+		if (memcmp(game_TID, cardReadDMAExcludeList[i], 3) == 0) {
+			// Found match
+			return false;
+		}
+	}
+
+	return perGameSettings_cardReadDMA == -1 ? ms().cardReadDMA : perGameSettings_cardReadDMA;
 }
 
 /**
@@ -2353,9 +2376,7 @@ int main(int argc, char **argv) {
 						if (dsiFeatures() || !ms().secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram);
-						}
-						if (!ms().secondaryDevice) {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", perGameSettings_cardReadDMA == -1 ? ms().cardReadDMA : perGameSettings_cardReadDMA);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA(argarray[0]));
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", perGameSettings_expandRomSpace == -1 ? ms().extendedMemory : perGameSettings_expandRomSpace);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
