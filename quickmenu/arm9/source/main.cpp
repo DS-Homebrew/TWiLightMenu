@@ -176,18 +176,20 @@ void stop (void) {
  * Disable card read DMA for a specific game.
  */
 bool setCardReadDMA(const char* filename) {
-	FILE *f_nds_file = fopen(filename, "rb");
+	if (perGameSettings_cardReadDMA == -1) {
+		FILE *f_nds_file = fopen(filename, "rb");
 
-	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
-	fclose(f_nds_file);
-	game_TID[4] = 0;
+		char game_TID[5];
+		grabTID(f_nds_file, game_TID);
+		fclose(f_nds_file);
+		game_TID[4] = 0;
 
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
-		if (memcmp(game_TID, cardReadDMAExcludeList[i], 3) == 0) {
-			// Found match
-			return false;
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
+			if (memcmp(game_TID, cardReadDMAExcludeList[i], 3) == 0) {
+				// Found match
+				return false;
+			}
 		}
 	}
 

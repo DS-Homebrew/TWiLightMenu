@@ -480,12 +480,14 @@ void lastRunROM()
 						}
 					}
 
-					// TODO: If the list gets large enough, switch to bsearch().
-					for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
-						if (memcmp(game_TID, cardReadDMAExcludeList[i], 3) == 0) {
-							// Found match
-							cardReadDMA = false;
-							break;
+					if (perGameSettings_cardReadDMA == -1) {
+						// TODO: If the list gets large enough, switch to bsearch().
+						for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
+							if (memcmp(game_TID, cardReadDMAExcludeList[i], 3) == 0) {
+								// Found match
+								cardReadDMA = false;
+								break;
+							}
 						}
 					}
 				}

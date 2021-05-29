@@ -181,11 +181,13 @@ int SetDonorSDK() {
  * Disable card read DMA for a specific game.
  */
 bool setCardReadDMA() {
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
-		if (memcmp(gameTid[CURPOS], cardReadDMAExcludeList[i], 3) == 0) {
-			// Found match
-			return false;
+	if (perGameSettings_cardReadDMA == -1) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
+			if (memcmp(gameTid[CURPOS], cardReadDMAExcludeList[i], 3) == 0) {
+				// Found match
+				return false;
+			}
 		}
 	}
 
