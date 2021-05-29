@@ -58,10 +58,10 @@
 #include "hook.h"
 #include "find.h"
 
-#include "gm9i/crypto.h"
+/*#include "gm9i/crypto.h"
 #include "gm9i/f_xy.h"
 #include "twltool/dsi.h"
-#include "u128_math.h"
+#include "u128_math.h"*/
 
 
 //extern u32 dsiMode;	// Not working?
@@ -640,7 +640,7 @@ static bool ROMsupportsDsiMode(const tNDSHeader* ndsHeader) {
 	return (ndsHeader->unitCode > 0);
 }
 
-void decrypt_modcrypt_area(dsi_context* ctx, u8 *buffer, unsigned int size)
+/*void decrypt_modcrypt_area(dsi_context* ctx, u8 *buffer, unsigned int size)
 {
 	uint32_t len = size / 0x10;
 	u8 block[0x10];
@@ -653,7 +653,7 @@ void decrypt_modcrypt_area(dsi_context* ctx, u8 *buffer, unsigned int size)
 		buffer+=0x10;
 		len--;
 	}
-}
+}*/
 
 int arm7_loadBinary (const tDSiHeader* dsiHeaderTemp) {
 	u32 errorCode;
@@ -879,7 +879,7 @@ void arm7_main (void) {
 			cardRead((u32)dsiHeaderTemp->arm7iromOffset, (u32*)dsiHeaderTemp->arm7idestination, dsiHeaderTemp->arm7ibinarySize);
 		}
 
-		uint8_t *target = (uint8_t *)0x02FFC000 ;
+		/*uint8_t *target = (uint8_t *)0x02FFC000 ;
 
 		if (target[0x01C] & 2)
 		{
@@ -931,7 +931,7 @@ void arm7_main (void) {
 			{
 				((uint32_t *)(target+0x220))[i] = 0;
 			}
-		}
+		}*/
 	}
 
 	ndsHeader = loadHeader(dsiHeaderTemp);

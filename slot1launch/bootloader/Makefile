@@ -14,7 +14,7 @@ endif
 #---------------------------------------------------------------------------------
 TARGET		:=	load
 BUILD		:=	build
-SOURCES		:=	source source/polarssl source/twltool source/gm9i
+SOURCES		:=	source
 INCLUDES	:=	build source
 DATA		:=	../data
 SPECS		:=  specs
@@ -22,7 +22,7 @@ SPECS		:=  specs
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-mthumb -mthumb-interwork -march=armv4t
+ARCH	:=	-mthumb-interwork -march=armv4t
 
 CFLAGS	:=	-g -Wall -O2\
 			-mcpu=arm7tdmi -mtune=arm7tdmi -fomit-frame-pointer\
