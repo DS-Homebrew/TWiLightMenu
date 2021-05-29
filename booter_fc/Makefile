@@ -57,12 +57,14 @@ autoboot:
 	#### Original R4 / M3 Simply specific
 	dlditool flashcart_specifics/DLDI/r4tfv2.dldi _DS_MENU.nds
 	r4denc _DS_MENU.nds
+	mkdir "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply"
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.DAT"
 	
 	#### Ace3DS+, Ace3DS X specific
 	cp booter_fc.nds _DS_MENU_ACEP.nds
 	dlditool flashcart_specifics/DLDI/ace3ds_sd.dldi _DS_MENU_ACEP.nds
 	r4denc -k 0x4002 _DS_MENU_ACEP.nds _DS_MENU.dat
+	mkdir "../7zfile/Flashcard users/Autoboot/Ace3DS+, Ace3DS X"
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Ace3DS+, Ace3DS X/_DS_MENU.DAT"
 	
 	#### EDGE (TODO: Find out how to encrypt the .dat file)
