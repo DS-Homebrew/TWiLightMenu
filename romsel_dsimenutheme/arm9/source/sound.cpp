@@ -154,6 +154,7 @@ SoundControl::SoundControl()
 	}
 
 	bool loopableMusic = false;
+	loopingPoint = false;
 
 	stream.sampling_rate = 16000;	 		// 16000Hz
 
@@ -171,7 +172,7 @@ SoundControl::SoundControl()
 				stream_source = fopen(std::string(TFN_CLASSIC_SOUND_BG).c_str(), "rb");
 				break;
 			case 2:
-				stream.sampling_rate = 22050;	 		// 22050Hz
+				stream.sampling_rate = 44100;	 		// 44100Hz
 				stream_start_source = fopen(std::string(TFN_SHOP_START_SOUND_BG).c_str(), "rb");
 				stream_source = fopen(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), "rb");
 				loopableMusic = true;
@@ -212,7 +213,7 @@ SoundControl::SoundControl()
 			// Fill the next section premptively
 			fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
 
-			//loopingPoint = true;
+			loopingPoint = true;
 		} else {
 			// Fill the next section premptively
 			fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_start_source);
@@ -224,7 +225,7 @@ SoundControl::SoundControl()
 				}
 				fread((void*)fill_stream_buf+fileSize, 1, fillerSize, stream_source);
 
-				//loopingPoint = true;
+				loopingPoint = true;
 			}
 		}
 	} else {
@@ -233,6 +234,8 @@ SoundControl::SoundControl()
 
 		// Fill the next section premptively
 		fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+
+		loopingPoint = true;
 	}
 }
 
@@ -301,11 +304,12 @@ volatile void SoundControl::updateStream() {
 		int instance_to_fill = std::min(SAMPLES_LEFT_TO_FILL, SAMPLES_TO_FILL);
 
 		// If we don't read enough samples, loop from the beginning of the file.
-		instance_filled = fread((s16*)fill_stream_buf + filled_samples, sizeof(s16), instance_to_fill, stream_source);		
+		instance_filled = fread((s16*)fill_stream_buf + filled_samples, sizeof(s16), instance_to_fill, loopingPoint ? stream_source : stream_start_source);		
 		if (instance_filled < instance_to_fill) {
 			fseek(stream_source, 0, SEEK_SET);
 			instance_filled += fread((s16*)fill_stream_buf + filled_samples + instance_filled,
 				 sizeof(s16), (instance_to_fill - instance_filled), stream_source);
+			loopingPoint = true;
 		}
 
 		#ifdef SOUND_DEBUG

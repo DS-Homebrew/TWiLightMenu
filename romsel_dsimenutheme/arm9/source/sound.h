@@ -46,6 +46,7 @@ class SoundControl {
         mm_stream stream;
 		mm_ds_system sys;
         bool stream_is_playing;
+        bool loopingPoint;
         //mm_sound_effect snd_loading;
         mm_sound_effect mus_startup;
         FILE* stream_start_source;
