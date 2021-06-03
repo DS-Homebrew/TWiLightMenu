@@ -486,11 +486,11 @@ void vBlankHandler()
 	}
 }
 
-void loadBoxArt(const char* filename) {
+void loadBoxArt(const char* filename, bool secondaryDevice) {
 	if (ms().macroMode) return;
 
 	if(access(filename, F_OK) != 0) {
-		switch (boxArtType[ms().secondaryDevice]) {
+		switch (boxArtType[secondaryDevice]) {
 			case 0:
 			default:
 				filename = "nitro:/graphics/boxart_unknown.png";

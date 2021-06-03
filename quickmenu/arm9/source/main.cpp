@@ -887,14 +887,14 @@ void refreshNdsCard() {
 	if (cardRefreshed) return;
 
 	if (arm7SCFGLocked && ms().showBoxArt) {
-		loadBoxArt("nitro:/graphics/boxart_unknown.png");
+		loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 	} else if ((cardInit(true) == 0) && ms().showBoxArt) {
 		char game_TID[5] = {0};
 		tonccpy(&game_TID, ndsCardHeader.gameCode, 4);
 
 		char boxArtPath[256];
 		sprintf (boxArtPath, (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
-		loadBoxArt(boxArtPath);	// Load box art
+		loadBoxArt(boxArtPath, true);	// Load box art
 	} else if (ms().showBoxArt) {
 		loadBoxArt("nitro:/graphics/boxart_unknown.png");
 	}
@@ -1396,14 +1396,14 @@ int main(int argc, char **argv) {
 	  }
 	}
 
-	if (ms().showBoxArt && !ms().slot1Launched) {
-		loadBoxArt(boxArtPath[ms().previousUsedDevice]);	// Load box art
+	if (ms().showBoxArt && (sdFound() ? !ms().slot1Launched : flashcardFound())) {
+		loadBoxArt(boxArtPath[ms().previousUsedDevice], ms().previousUsedDevice);	// Load box art
 	}
 
 	if (isDSiMode() && !flashcardFound() && ms().slot1Launched) {
 		if (REG_SCFG_MC == 0x11) {
 			cardEjected = true;
-			if (ms().showBoxArt) loadBoxArt("nitro:/graphics/boxart_unknown.png");
+			if (ms().showBoxArt) loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 		} else {
 			refreshNdsCard();
 		}
@@ -1447,7 +1447,7 @@ int main(int argc, char **argv) {
 				if (isDSiMode() && !flashcardFound()) {
 					if (REG_SCFG_MC == 0x11) {
 						if (cardRefreshed && ms().showBoxArt) {
-							loadBoxArt(ms().slot1Launched ? "nitro:/graphics/boxart_unknown.png" : boxArtPath[ms().previousUsedDevice]);
+							loadBoxArt(ms().slot1Launched ? "nitro:/graphics/boxart_unknown.png" : boxArtPath[ms().previousUsedDevice], ms().slot1Launched ? true : ms().previousUsedDevice);
 						}
 						cardRefreshed = false;
 						cardEjected = true;
