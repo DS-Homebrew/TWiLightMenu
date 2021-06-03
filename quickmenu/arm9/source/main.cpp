@@ -896,7 +896,7 @@ void refreshNdsCard() {
 		sprintf (boxArtPath, (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
 		loadBoxArt(boxArtPath, true);	// Load box art
 	} else if (ms().showBoxArt) {
-		loadBoxArt("nitro:/graphics/boxart_unknown.png");
+		loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 	}
 
 	getGameInfo(1, false, "slot1");
