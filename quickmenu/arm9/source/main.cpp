@@ -1360,7 +1360,7 @@ int main(int argc, char **argv) {
 			std::string temp_filename = filename[1];
 			sprintf (boxArtPath[1], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename[0].c_str());
 			if ((access(boxArtPath[1], F_OK) != 0) && (bnrRomType[1] == 0)) {
-				if(extention(filename[0], ".argv")) {
+				if(extention(filename[1], ".argv")) {
 					vector<char*> argarray;
 
 					FILE *argfile = fopen(filename[0].c_str(),"rb");
