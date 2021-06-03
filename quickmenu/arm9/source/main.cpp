@@ -1363,7 +1363,7 @@ int main(int argc, char **argv) {
 				if(extention(filename[1], ".argv")) {
 					vector<char*> argarray;
 
-					FILE *argfile = fopen(filename[0].c_str(),"rb");
+					FILE *argfile = fopen(filename[1].c_str(),"rb");
 						char str[PATH_MAX], *pstr;
 					const char seps[]= "\n\r\t ";
 
