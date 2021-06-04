@@ -1441,7 +1441,7 @@ int main(int argc, char **argv)
 	
 	scanKeys();
 
-	if (!(*(u32*)0x02000000 & BIT(2)) && (softResetParamsFound || (keysHeld() & KEY_B)))
+	if (!(*(u32*)0x02000000 & BIT(2)) && ((softResetParamsFound && ms().launchType[ms().previousUsedDevice] == Launch::ESDFlashcardLaunch) || (keysHeld() & KEY_B)))
 	{
 		//unloadNds9iAsynch();
 		lastRunROM();
