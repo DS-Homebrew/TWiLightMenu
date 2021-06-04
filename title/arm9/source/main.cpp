@@ -1380,7 +1380,7 @@ int main(int argc, char **argv)
 
 	if (softResetParamsFound) {
 		scanKeys();
-		if (keysHeld() & KEY_B) {
+		if (keysHeld() & KEY_X) {
 			softResetParams = 0xFFFFFFFF;
 			file = fopen(softResetParamsPath, "wb");
 			fwrite(&softResetParams, sizeof(u32), 1, file);
