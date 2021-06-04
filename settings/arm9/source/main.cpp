@@ -981,7 +981,7 @@ int main(int argc, char **argv)
 				gamesPage
 					.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false});
 			}
-		} else if (!isDSiMode() && fatAccessible && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
+		} else if (!isDSiMode() && fatAccessible) {
 			gamesPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 		}
 		if (sdAccessible && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
@@ -997,7 +997,7 @@ int main(int argc, char **argv)
 			}
 		}
 		gamesPage.option(STR_HOTKEY, STR_DESCRIPTION_HOTKEY, Option::Nul(opt_set_hotkey), {STR_PRESS_A}, {0});
-	} else {
+	} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 		gamesPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 	}
 
