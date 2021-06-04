@@ -408,7 +408,7 @@ void runNds9i (const char* filename, bool dldiPatchNds) {
 #endif
 
 bool runNds9 (const char* filename) {
-	if (isDSiMode()) return false;
+	if (isDSiMode() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) return false;
 	bool isDSi = (REG_SCFG_EXT != 0);
 
 	if (!isDSi) {

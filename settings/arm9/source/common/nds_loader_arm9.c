@@ -359,7 +359,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 }
 
 bool runNds9 (const char* filename) {
-	if (isDSiMode()) return false;
+	if (isDSiMode() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) return false;
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
 					 // Expansion Pak)
