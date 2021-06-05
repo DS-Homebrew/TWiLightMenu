@@ -946,8 +946,6 @@ void arm7_main (void) {
 	my_readUserSettings(ndsHeader); // Header has to be loaded first
 
 	if (my_isDSiMode()) {
-		REG_GPIO_WIFI = 0;	// New Atheros/DSi-Wifi mode
-
 		if (dsiModeConfirmed) {
 			*(u32*)0x3FFFFC8 = 0x7884;	// Fix sound pitch table for DSi mode (works with SDK5 binaries)
 
