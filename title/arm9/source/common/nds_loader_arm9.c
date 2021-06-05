@@ -362,7 +362,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
-static tDSiHeader dsiHeaderBuffer;
+//static tDSiHeader dsiHeaderBuffer;
 /*static FILE* ndsFileAsynch;
 static int asynchOp = 0;
 static u32 asynchArm9size = 0;
@@ -442,20 +442,19 @@ void runNds9i (const char* filename) {
 
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
-	fread(&dsiHeaderBuffer, 1, 0x1000, ndsFile);
-	fseek(ndsFile, dsiHeaderBuffer.ndshdr.arm9romOffset, SEEK_SET);
-	fread((void*)0x02800000, 1,  dsiHeaderBuffer.ndshdr.arm9binarySize, ndsFile);
-	fseek(ndsFile, dsiHeaderBuffer.ndshdr.arm7romOffset, SEEK_SET);
-	fread((void*)0x02B80000, 1,  dsiHeaderBuffer.ndshdr.arm7binarySize, ndsFile);
-	if ( dsiHeaderBuffer.arm9ibinarySize > 0) {
-		fseek(ndsFile, (u32) dsiHeaderBuffer.arm9iromOffset, SEEK_SET);
-		fread((void*)0x02C00000, 1,  dsiHeaderBuffer.arm9ibinarySize, ndsFile);
+	fread(__DSiHeader, 1, 0x1000, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm9romOffset, SEEK_SET);
+	fread((void*)0x02800000, 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
+	fread((void*)0x02B80000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
+	if (__DSiHeader->arm9ibinarySize > 0) {
+		fseek(ndsFile, (u32)__DSiHeader->arm9iromOffset, SEEK_SET);
+		fread((void*)0x02C00000, 1, __DSiHeader->arm9ibinarySize, ndsFile);
 	}
-	if ( dsiHeaderBuffer.arm7ibinarySize > 0) {
-		fseek(ndsFile, (u32) dsiHeaderBuffer.arm7iromOffset, SEEK_SET);
-		fread((void*)0x02C80000, 1,  dsiHeaderBuffer.arm7ibinarySize, ndsFile);
+	if (__DSiHeader->arm7ibinarySize > 0) {
+		fseek(ndsFile, (u32)__DSiHeader->arm7iromOffset, SEEK_SET);
+		fread((void*)0x02C80000, 1, __DSiHeader->arm7ibinarySize, ndsFile);
 	}
-	memcpy((void*)0x02FFC000, &dsiHeaderBuffer, sizeof(tDSiHeader));
 	fclose(ndsFile);
 }
 
@@ -477,12 +476,11 @@ bool runNds9 (const char* filename, bool dsModeSwitch) {
 
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
-	fread(&dsiHeaderBuffer, 1, 0x1000, ndsFile);
-	fseek(ndsFile, dsiHeaderBuffer.ndshdr.arm9romOffset, SEEK_SET);
-	fread((void*)(isDSi ? 0x02800000 : 0x09000000), 1, dsiHeaderBuffer.ndshdr.arm9binarySize, ndsFile);
-	fseek(ndsFile, dsiHeaderBuffer.ndshdr.arm7romOffset, SEEK_SET);
-	fread((void*)(isDSi ? 0x02B80000 : 0x09380000), 1, dsiHeaderBuffer.ndshdr.arm7binarySize, ndsFile);
-	memcpy((void*)0x02FFC000, &dsiHeaderBuffer, sizeof(tDSiHeader));
+	fread(__DSiHeader, 1, 0x1000, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm9romOffset, SEEK_SET);
+	fread((void*)(isDSi ? 0x02800000 : 0x09000000), 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
+	fread((void*)(isDSi ? 0x02B80000 : 0x09380000), 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
 	fclose(ndsFile);
 
 	return true;
