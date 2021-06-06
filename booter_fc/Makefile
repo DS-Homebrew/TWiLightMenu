@@ -48,6 +48,7 @@ autoboot:
 	##### R4iDSN & R4 Ultra specific
 	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_.NDS"
 	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_B.NDS"
+	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_X.NDS"
 
 	##### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS specific
 	# r4denc _DS_MENU.nds
