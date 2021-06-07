@@ -21,9 +21,11 @@
 #include "icon_gba.h"
 #include "iconPhat_gba.h"
 #include "icon_gb.h"
+#include "icon_a26.h"
 #include "icon_nes.h"
 #include "icon_sms.h"
 #include "icon_gg.h"
+#include "icon_pce.h"
 #include "icon_md.h"
 #include "icon_snes.h"
 #include "icon_present.h"
@@ -40,9 +42,11 @@ static int transparentTexID;
 static int ndsTexID;
 static int gbaTexID;
 static int gbTexID;
+static int a26TexID;
 static int nesTexID;
 static int smsTexID;
 static int ggTexID;
+static int pceTexID;
 static int mdTexID;
 static int snesTexID;
 
@@ -52,9 +56,11 @@ static glImage transparentBlock[1];
 static glImage ndsIcon[1];
 static glImage gbaIcon[1];
 static glImage gbIcon[1];
+static glImage a26Icon[1];
 static glImage nesIcon[1];
 static glImage smsIcon[1];
 static glImage ggIcon[1];
+static glImage pceIcon[1];
 static glImage mdIcon[1];
 static glImage snesIcon[1];
 
@@ -90,8 +96,8 @@ static int anniversaryTextYposMoveSpeed = 9;
 static int anniversaryTextYposMoveDelay = 0;
 static bool anniversaryTextYposMoveDelayEven = true;	// For 24FPS */
 
-static int zoomingIconXpos[8] = {-32, -32, 256, 256+16, -32, -32, 256, 256+16};
-static int zoomingIconYpos[8] = {-32, -48, -48, -32, 192+32, 192+48, 192+48, 192+32};
+static int zoomingIconXpos[10] = {-32, -32, 256, 256+16, -32, -32, 256, 256+16, -32, -32};
+static int zoomingIconYpos[10] = {-32, -48, -48, -32, 192+32, 192+48, 192+48, 192+32, -32, 192};
 
 void twlMenuVideo_loadTopGraphics(void) {
 	// TWiLight Menu++ text
@@ -264,6 +270,36 @@ void twlMenuVideo_loadTopGraphics(void) {
 				icon_Bitmap // Raw image data
 				);
 
+	// A26
+	glDeleteTextures(1, &a26TexID);
+
+	if (december) {
+		icon_Bitmap = (u8*)icon_presentBitmap;
+		icon_Pal = (u16*)icon_presentPal;
+	} else 	{
+		icon_Bitmap = (u8*)icon_a26Bitmap;
+		icon_Pal = (u16*)icon_a26Pal;
+	}
+	if (ms().colorMode == 1) {
+		for (int i2 = 0; i2 < 16; i2++) {
+			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+		}
+	}
+	a26TexID =
+	glLoadTileSet(a26Icon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				icon_Pal, // Image palette
+				icon_Bitmap // Raw image data
+				);
+
 	// NES
 	glDeleteTextures(1, &nesTexID);
 
@@ -341,6 +377,36 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	ggTexID =
 	glLoadTileSet(ggIcon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				icon_Pal, // Image palette
+				icon_Bitmap // Raw image data
+				);
+
+	// PCE
+	glDeleteTextures(1, &pceTexID);
+	
+	if (december) {
+		icon_Bitmap = (u8*)icon_presentBitmap;
+		icon_Pal = (u16*)icon_presentPal;
+	} else 	{
+		icon_Bitmap = (u8*)icon_pceBitmap;
+		icon_Pal = (u16*)icon_pcePal;
+	}
+	if (ms().colorMode == 1) {
+		for (int i2 = 0; i2 < 16; i2++) {
+			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+		}
+	}
+	pceTexID =
+	glLoadTileSet(pceIcon, // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -503,6 +569,8 @@ void twlMenuVideo_topGraphicRender(void) {
 		glSprite(zoomingIconXpos[5], zoomingIconYpos[5], GL_FLIP_NONE, mdIcon);
 		glSprite(zoomingIconXpos[6], zoomingIconYpos[6], GL_FLIP_NONE, ggIcon);
 		glSprite(zoomingIconXpos[7], zoomingIconYpos[7], GL_FLIP_NONE, ndsIcon);
+		glSprite(zoomingIconXpos[8], zoomingIconYpos[8], GL_FLIP_NONE, a26Icon);
+		glSprite(zoomingIconXpos[9], zoomingIconYpos[9], GL_FLIP_NONE, pceIcon);
 	}
 		//glBoxFilled(0, 0, 256, 23, RGB15(0, 0, 0));
 		//glBoxFilled(0, 168, 256, 192, RGB15(0, 0, 0));
@@ -557,8 +625,8 @@ void twlMenuVideo_topGraphicRender(void) {
 		if (zoomingIconXpos[4] > 32) {
 			zoomingIconXpos[4] = 32;
 		}
-		if (zoomingIconYpos[4] < 128) {
-			zoomingIconYpos[4] = 128;
+		if (zoomingIconYpos[4] < 120) {
+			zoomingIconYpos[4] = 120;
 		}
 
 		zoomingIconXpos[5] += 6;
@@ -586,6 +654,24 @@ void twlMenuVideo_topGraphicRender(void) {
 		}
 		if (zoomingIconYpos[7] < 120) {
 			zoomingIconYpos[7] = 120;
+		}
+
+		zoomingIconXpos[8] += 4;
+		zoomingIconYpos[8] += 4;
+		if (zoomingIconXpos[8] > 8) {
+			zoomingIconXpos[8] = 8;
+		}
+		if (zoomingIconYpos[8] > 8) {
+			zoomingIconYpos[8] = 8;
+		}
+
+		zoomingIconXpos[9] += 4;
+		zoomingIconYpos[9] -= 4;
+		if (zoomingIconXpos[9] > 8) {
+			zoomingIconXpos[9] = 8;
+		}
+		if (zoomingIconYpos[9] < 192-40) {
+			zoomingIconYpos[9] = 192-40;
 		}
 
 		frameDelaySprite = 0;
