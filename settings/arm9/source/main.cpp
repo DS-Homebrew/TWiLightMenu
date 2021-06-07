@@ -791,13 +791,13 @@ int main(int argc, char **argv)
 
 	snd().init();
 	keysSetRepeat(25, 5);
-	
+
 	bool widescreenFound = false;
-	bool sdAccessible = (access("sd:/", F_OK) == 0);
-	if (sdAccessible) {
+	if (sdFound()) {
 		widescreenFound = ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) && (ms().consoleModel >= 2) && (!sys().arm7SCFGLocked()));
 	}
-	bool fatAccessible = (access("fat:/", F_OK) == 0);
+
+	bool sharedFound = (access("sd:/shared2", F_OK) == 0);
 
 	widescreenEffects = (ms().wideScreen && widescreenFound);
 
@@ -810,7 +810,7 @@ int main(int argc, char **argv)
 
 	srand(time(NULL));
 
-	if (sdAccessible && ms().consoleModel < 2)
+	if (sdFound() && ms().consoleModel < 2)
 	{
 		if (access("sd:/hiya/autoboot.bin", F_OK) == 0)
 			hiyaAutobootFound = true;
@@ -831,7 +831,7 @@ int main(int argc, char **argv)
 	using TLanguage = TWLSettings::TLanguage;
 	using TRegion = TWLSettings::TRegion;
 	//using TAKScrollSpeed = TWLSettings::TScrollSpeed;
-	if (sdAccessible && fatAccessible) {
+	if (sdFound() && flashcardFound()) {
 		guiPage.option(STR_UPDATETWLMENU,
 				STR_DESCRIPTION_UPDATETWLMENU,
 				Option::Nul(opt_update),
@@ -868,7 +868,7 @@ int main(int argc, char **argv)
 				{STR_PRESS_A},
 				{0});
 
-	if (sdAccessible) {
+	if (sdFound()) {
 		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {STR_MICRO_SD_CARD, STR_SD_CARD}, {true, false});
 	}
 
@@ -911,7 +911,7 @@ int main(int argc, char **argv)
 		.option(STR_NES_ROMS, STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {"nesDS", STR_HIDE}, {true, false})
 		.option(STR_GB_ROMS, STR_DESCRIPTION_SHOW_GB, Option::Bool(&ms().showGb), {"GameYob", STR_HIDE}, {true, false})
 		.option(STR_SMS_ROMS, STR_DESCRIPTION_SHOW_SMS, Option::Bool(&ms().showSmsGg), {"S8DS", STR_HIDE}, {true, false});
-	if (isDSiMode() && sdAccessible && sys().arm7SCFGLocked()) {
+	if (isDSiMode() && sdFound() && sys().arm7SCFGLocked()) {
 		emulationPage.option(STR_MD_ROMS, STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "PicoDriveTWL"}, {0, 2});
 	} else {
 		emulationPage
@@ -922,8 +922,8 @@ int main(int argc, char **argv)
 
 	SettingsPage gbar2Page(STR_GBARUNNER2_SETTINGS);
 
-	if (fatAccessible) {
-		gbar2Page.option(sdAccessible ? STR_SLOT_1_DLDI_ACCESS : STR_DLDI_ACCESS, STR_DESCRIPTION_GBAR2_DLDIACCESS, Option::Bool(&ms().gbar2DldiAccess), {"ARM7", "ARM9"}, {true, false});
+	if (flashcardFound()) {
+		gbar2Page.option(sdFound() ? STR_SLOT_1_DLDI_ACCESS : STR_DLDI_ACCESS, STR_DESCRIPTION_GBAR2_DLDIACCESS, Option::Bool(&ms().gbar2DldiAccess), {"ARM7", "ARM9"}, {true, false});
 	}
 	gbar2Page.option(STR_USE_BOTTOM_SCREEN, STR_DESCRIPTION_USEBOTTOMSCREEN, Option::Bool(&gs().useBottomScreen), {STR_YES, STR_NO}, {true, false})
 			.option(STR_CENTER_AND_MASK, STR_DESCRIPTION_CENTERANDMASK, Option::Bool(&gs().centerMask), {STR_ON, STR_OFF}, {true, false})
@@ -946,7 +946,7 @@ int main(int argc, char **argv)
 	using TRunIn = TWLSettings::TRunIn;
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 
-	if (isDSiMode() || sdAccessible) {
+	if (isDSiMode() || sdFound()) {
 		gamesPage.option((isDSiMode() ? STR_RUNIN : STR_SYSSD_RUNIN),
 						STR_DESCRIPTION_RUNIN_1,
 						Option::Int(&ms().bstrap_dsiMode),
@@ -954,16 +954,16 @@ int main(int argc, char **argv)
 						{TRunIn::EDSMode, TRunIn::EDSiMode, TRunIn::EDSiModeForced});
 	}
 
-	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked())
+	if (isDSiMode() && sdFound() && !sys().arm7SCFGLocked())
 	{
-		gamesPage.option((fatAccessible ? STR_SYSSD_RUNFLUBBAEMUSIN : STR_RUNFLUBBAEMUSIN),
+		gamesPage.option((flashcardFound() ? STR_SYSSD_RUNFLUBBAEMUSIN : STR_RUNFLUBBAEMUSIN),
 			STR_DESCRIPTION_RUNFLUBBAEMUSIN,
 			Option::Bool(&ms().smsGgInRam),
 			{STR_DS_MODE, STR_DSI_MODE},
 			{true, false});
 	}
 
-	if (dsiFeatures() || sdAccessible) {
+	if (dsiFeatures() || sdFound()) {
 		gamesPage.option((dsiFeatures() ? STR_CPUSPEED : STR_SYSSD_CPUSPEED),
 				STR_DESCRIPTION_CPUSPEED_1,
 				Option::Bool(&ms().boostCpu),
@@ -974,17 +974,17 @@ int main(int argc, char **argv)
 				Option::Bool(&ms().boostVram),
 				{STR_ON, STR_OFF},
 				{true, false});
-		if (sdAccessible && fatAccessible && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
+		if (sdFound() && flashcardFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
 			gamesPage
 				.option("S1SD: "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 			if (dsiFeatures()) {
 				gamesPage
 					.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false});
 			}
-		} else if (!isDSiMode() && fatAccessible) {
+		} else if (!isDSiMode() && flashcardFound()) {
 			gamesPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 		}
-		if (sdAccessible && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
+		if (sdFound() && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
 			gamesPage.option((isDSiMode() ? STR_FORCESLEEPPATCH : STR_SYSSD_FORCESLEEPPATCH),
 				STR_DESCRIPTION_FORCESLEEPMODE,
 				Option::Bool(&ms().forceSleepPatch),
@@ -1016,25 +1016,25 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundFreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
 	}
 
-	if (sdAccessible) {
+	if (sdFound()) {
 		gamesPage
-			.option((fatAccessible ? STR_SYSSD_CARDREADDMA : STR_CARDREADDMA),
+			.option((flashcardFound() ? STR_SYSSD_CARDREADDMA : STR_CARDREADDMA),
 				STR_DESCRIPTION_CARDREADDMA,
 				Option::Bool(&ms().cardReadDMA),
 				{STR_ON, STR_OFF},
 				{true, false});
 	}
 
-	if ((isDSiMode() || sdAccessible) && ms().consoleModel < 2)
+	if ((isDSiMode() || sdFound()) && ms().consoleModel < 2)
 	{
-		if (sdAccessible) {
+		if (sdFound()) {
 			gamesPage
-				.option((fatAccessible ? STR_SYSSD_ROMREADLED : STR_ROMREADLED),
+				.option((flashcardFound() ? STR_SYSSD_ROMREADLED : STR_ROMREADLED),
 					STR_DESCRIPTION_ROMREADLED_1,
 					Option::Int(&bs().romreadled),
 					{STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
 					{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
-				.option((fatAccessible ? STR_SD_DMAROMREADLED : STR_DMAROMREADLED),
+				.option((flashcardFound() ? STR_SD_DMAROMREADLED : STR_DMAROMREADLED),
 					STR_DESCRIPTION_DMAROMREADLED,
 					Option::Int(&bs().dmaromreadled),
 					{STR_SAME_AS_REG, STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
@@ -1045,18 +1045,23 @@ int main(int argc, char **argv)
 			Option::Bool(&bs().preciseVolumeControl),
 			{STR_ON, STR_OFF},
 			{true, false});
-		if (sdAccessible) {
+		if (sdFound()) {
 			gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool(&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"},
 					{true, false});
 		}
 	}
 
-	if (sdAccessible) {
+	if (sdFound()) {
 		gamesPage.option(STR_DSIWARETOSD, STR_DESCRIPTION_DSIWARETOSD, Option::Bool(&ms().dsiWareToSD), {STR_YES, STR_NO},
+				{true, false})
+			.option(sharedFound ? STR_TWLNANDLOCATION : STR_PHOTOLOCATION,
+				sharedFound ? STR_DESCRIPTION_TWLNANDLOCATION : STR_DESCRIPTION_PHOTOLOCATION,
+				Option::Bool(&bs().sdNand),
+				{ms().showMicroSd ? STR_MICRO_SD_CARD : STR_SD_CARD, sharedFound ? STR_SYSTEM : STR_NAND},
 				{true, false});
 	}
 
-	if (isDSiMode() || sdAccessible) {
+	if (isDSiMode() || sdFound()) {
 		gamesPage
 		.option((dsiFeatures() ? STR_EXPANDROMSPACE : STR_SD_EXPANDROMSPACE),
 			(ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS),
@@ -1230,7 +1235,7 @@ int main(int argc, char **argv)
 				 4,
 				 5,});*/
 
-	if (isDSiMode() && ms().consoleModel == 0 && sdAccessible) {
+	if (isDSiMode() && ms().consoleModel == 0 && sdFound()) {
 		miscPage
 			.option(STR_SDREMOVALDETECTION,
 				STR_DESCRIPTION_SDREMOVALDETECTION,
@@ -1239,7 +1244,7 @@ int main(int argc, char **argv)
 				{true, false});
 	}
 
-	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked()) {
+	if (isDSiMode() && sdFound() && !sys().arm7SCFGLocked()) {
 		miscPage.option(STR_S1SDACCESS,
 				STR_DESCRIPTION_S1SDACCESS_1,
 				Option::Bool(&ms().secondaryAccess),
@@ -1255,7 +1260,7 @@ int main(int argc, char **argv)
 				{true, false});
 	}
 
-	if (isDSiMode() && sdAccessible) {
+	if (isDSiMode() && sdFound()) {
 		miscPage
 			.option(STR_AUTOSTARTSLOT1, STR_DESCRIPTION_AUTOSTARTSLOT1, Option::Bool(&ms().autostartSlot1), {STR_YES, STR_NO}, {true, false});
 	}
@@ -1264,7 +1269,7 @@ int main(int argc, char **argv)
 		.option(STR_NINTENDOLOGOCOLOR, STR_DESCRIPTION_NINTENDOLOGOCOLOR, Option::Int(&ms().nintendoLogoColor), {STR_RED, STR_BLUE, STR_MAGENTA, STR_GRAY}, {1, 2, 3, 0})
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false});
 
-	if (isDSiMode() && sdAccessible) {
+	if (isDSiMode() && sdFound()) {
 		miscPage
 			.option(STR_DSIWARE_EXPLOIT,
 				STR_DESCRIPTION_DSIWARE_EXPLOIT,
@@ -1272,7 +1277,7 @@ int main(int argc, char **argv)
 				{STR_NONE, "sudokuhax", "4swordshax", "fieldrunnerhax", "grtpwn", "ugopwn/Lenny", "UNO*pwn", "Memory Pit"},
 				{0, 1, 2, 3, 4, 5, 6, 7});
 	}
-	if (sdAccessible) {
+	if (sdFound()) {
 		miscPage
 			.option(STR_SYSREGION,
 				STR_DESCRIPTION_SYSREGION_1,
@@ -1280,7 +1285,7 @@ int main(int argc, char **argv)
 				{STR_AUTO_HIYA_ONLY, "JPN", "USA", "EUR", "AUS", "CHN", "KOR"},
 				{-1, 0, 1, 2, 3, 4, 5});
 	}
-	if (sdAccessible && ms().consoleModel < 2) {
+	if (sdFound() && ms().consoleModel < 2) {
 		miscPage
 			.option(STR_LAUNCHERAPP,
 				STR_DESCRIPTION_LAUNCHERAPP,
@@ -1313,7 +1318,7 @@ int main(int argc, char **argv)
 	}
 	
 	SettingsPage unlaunchPage(STR_UNLAUNCH_SETTINGS);
-	if (sdAccessible && ms().consoleModel == 0) {
+	if (sdFound() && ms().consoleModel == 0) {
 		unlaunchPage
 			.option(STR_BACKGROUND,
 				STR_DESCRIPTION_UNLAUNCH_BG,
@@ -1339,7 +1344,7 @@ int main(int argc, char **argv)
 		.addPage(gbar2Page)
 		.addPage(gamesPage)
 		.addPage(miscPage);
-	if (sdAccessible && ms().consoleModel == 0) {
+	if (sdFound() && ms().consoleModel == 0) {
 		gui().addPage(unlaunchPage);
 	}
 	/*if (isDSiMode() && ms().consoleModel >= 2) {

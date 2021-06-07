@@ -9,18 +9,31 @@
 #include "common/systemdetails.h"
 #include "read_card.h"
 
+static bool sdAccessed = false;
+static bool sdRead = false;
+
+static bool flashcardAccessed = false;
+static bool flashcardRead = false;
+
 bool sdFound(void) {
-	return (access("sd:/", F_OK) == 0);
+	if (!sdAccessed) {
+		sdRead = (access("sd:/", F_OK) == 0);
+		sdAccessed = true;
+	}
+	return sdRead;
 }
 
 bool flashcardFound(void) {
-	return (access("fat:/", F_OK) == 0);
+	if (!flashcardAccessed) {
+		flashcardRead = (access("fat:/", F_OK) == 0);
+		flashcardAccessed = true;
+	}
+	return flashcardRead;
 }
 
 bool bothSDandFlashcard(void) {
 	return (sdFound() && flashcardFound());
 }
-
 /*TWL_CODE bool UpdateCardInfo(char* gameid, char* gamename) {
 	cardReadHeader((uint8*)&ndsCardHeader);
 	memcpy(gameid, ndsCardHeader.gameCode, 4);

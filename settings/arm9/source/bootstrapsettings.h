@@ -39,6 +39,7 @@ class BootstrapSettings
     int romreadled;
     int dmaromreadled;
     bool preciseVolumeControl;
+    bool sdNand;
 
     int bootstrapHotkey;
 
