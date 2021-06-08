@@ -2,7 +2,6 @@
 #define INCOMPATIBLEMAP_H
 
 static const char incompatibleGameListB4DS[][4] = {
-	"BDU", // C.O.P. The Recruit
 	"AQC", // Crayon Shin-chan DS - Arashi o Yobu Nutte Crayoon Daisakusen!
 	"YRC", // Crayon Shin-chan - Arashi o Yobu Cinemaland Kachinko Gachinko Daikatsugeki!
 	"CL4", // Crayon Shin-Chan - Arashi o Yobu Nendororoon Daihenshin!
@@ -15,8 +14,8 @@ static const char incompatibleGameListB4DS[][4] = {
 	"COL", // Mario & Sonic at the Olympic Winter Games
 	"AMM", // Minna no Mahjong DS
 	"ARZ", // Rockman ZX/MegaMan ZX
+	"YZX", // Rockman ZX Advent/MegaMan ZX Advent
 	"B6Z", // Rockman Zero Collection/MegaMan Zero Collection
-	"B6X", // Rockman EXE: Operate Shooting Star
 	"CS3", // Sonic & Sega All-Stars Racing
 };
 
