@@ -526,8 +526,8 @@ TWL_CODE int lastRunROM() {
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass video to Rocket Video Player as argument
 		case 8:
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass video to MPEG4Player as argument
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass video to FastVideoDS as argument
 		case 9:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to StellaDS as argument

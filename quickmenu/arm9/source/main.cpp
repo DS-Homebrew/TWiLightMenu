@@ -1207,9 +1207,12 @@ int main(int argc, char **argv) {
 				 || extention(filename[0], ".a26") || extention(filename[0], ".a52") || extention(filename[0], ".a78")) {
 			bnrRomType[0] = 10;
 			boxArtType[0] = 0;
-		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4")) {
+		} else if (extention(filename[0], ".plg")) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = 0;
+		} else if (extention(filename[0], ".rvid") || extention(filename[0], ".fv")) {
+			bnrRomType[0] = 9;
+			boxArtType[0] = 2;
 		} else if (extention(filename[0], ".agb") || extention(filename[0], ".gba") || extention(filename[0], ".mb")) {
 			bnrRomType[0] = 1;
 			boxArtType[0] = 1;
@@ -1320,9 +1323,12 @@ int main(int argc, char **argv) {
 				 || extention(filename[1], ".a26") || extention(filename[1], ".a52") || extention(filename[1], ".a78")) {
 			bnrRomType[1] = 10;
 			boxArtType[1] = 0;
-		} else if (extention(filename[1], ".plg") || extention(filename[1], ".rvid") || extention(filename[1], ".mp4")) {
+		} else if (extention(filename[1], ".plg")) {
 			bnrRomType[1] = 9;
 			boxArtType[1] = 0;
+		} else if (extention(filename[1], ".rvid") || extention(filename[1], ".fv")) {
+			bnrRomType[1] = 9;
+			boxArtType[1] = 2;
 		} else if (extention(filename[1], ".agb") || extention(filename[1], ".gba") || extention(filename[1], ".mb")) {
 			bnrRomType[1] = 1;
 			boxArtType[1] = 1;
@@ -2547,12 +2553,12 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 						ms().boostVram = true;
 					}
-				} else if (extention(filename[ms().secondaryDevice], ".mp4")) {
+				} else if (extention(filename[ms().secondaryDevice], ".fv")) {
 					ms().launchType[ms().secondaryDevice] = 8;
 
-					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 						ms().boostVram = true;
 					}
 				} else if (extention(filename[ms().secondaryDevice], ".agb")

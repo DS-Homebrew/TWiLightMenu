@@ -1264,7 +1264,7 @@ int main(int argc, char **argv) {
 	}
 	if (showRvid) {
 		extensionList.push_back(".rvid");
-		extensionList.push_back(".mp4");
+		extensionList.push_back(".fv");
 	}
 	if (showGba) {
 		extensionList.emplace_back(".agb");
@@ -2257,12 +2257,12 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 						boostVram = true;
 					}
-				} else if (extention(filename, ".mp4")) {
+				} else if (extention(filename, ".fv")) {
 					launchType[secondaryDevice] = 8;
 
-					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 						boostVram = true;
 					}
 				} else if (extention(filename, ".agb")

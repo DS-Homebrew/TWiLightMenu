@@ -866,12 +866,12 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
-			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass video to MPEG4Player as argument
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass video to FastVideoDS as argument
 	}
 	else if (ms().launchType[ms().previousUsedDevice] == Launch::EStellaDSLaunch)
 	{

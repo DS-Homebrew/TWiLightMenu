@@ -1544,9 +1544,12 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				 || extention(std_romsel_filename, ".a26") || extention(std_romsel_filename, ".a52") || extention(std_romsel_filename, ".a78")) {
 					bnrRomType[i] = 10;
 					boxArtType[i] = 0;
-				} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid") || extention(std_romsel_filename, ".mp4")) {
+				} else if (extention(std_romsel_filename, ".plg")) {
 					bnrRomType[i] = 9;
 					boxArtType[i] = 0;
+				} else if (extention(std_romsel_filename, ".rvid") || extention(std_romsel_filename, ".fv")) {
+					bnrRomType[i] = 9;
+					boxArtType[i] = 2;
 				} else if (extention(std_romsel_filename, ".agb") || extention(std_romsel_filename, ".gba") || extention(std_romsel_filename, ".mb")) {
 					bnrRomType[i] = 1;
 					boxArtType[i] = 1;
