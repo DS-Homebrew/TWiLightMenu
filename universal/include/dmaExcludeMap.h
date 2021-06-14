@@ -9,6 +9,7 @@ static const char cardReadDMAExcludeList[][4] = {
 	"AJS", // Jump! Super Stars
 	"AJU", // Jump! Ultimate Stars
 	"YKG", // Kingdom Hearts: 358/2 Days
+	"AUG", // Need for Speed: Underground 2
 	"A2D", // New(er) Super Mario Bros. (DS)
 	"ARR", // Ridge Racer DS
 	"B8I", // Spider-Man: Edge of Time
