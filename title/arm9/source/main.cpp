@@ -1188,6 +1188,7 @@ static const char* displayLanguage(int l, int type) {
 	} else {
 		switch(type) {
 			case 0:
+			default:
 				return languages[guiLanguages[l]];
 			case 1:
 				return languages[gameLanguages[l]];
@@ -1222,15 +1223,15 @@ void languageSelect(void) {
 	fontInit();
 
 	int guiLanguage = -1, gameLanguage = -1, titleLanguage = -1;
-	for(int i = 0; i < sizeof(guiLanguages) / sizeof(guiLanguages[0]); i++) {
+	for(uint i = 0; i < sizeof(guiLanguages) / sizeof(guiLanguages[0]); i++) {
 		if(guiLanguages[i] == ms().guiLanguage)
 			guiLanguage = i;
 	}
-	for(int i = 0; i < sizeof(gameLanguages) / sizeof(gameLanguages[0]); i++) {
+	for(uint i = 0; i < sizeof(gameLanguages) / sizeof(gameLanguages[0]); i++) {
 		if(gameLanguages[i] == ms().gameLanguage)
 			gameLanguage = i;
 	}
-	for(int i = 0; i < sizeof(titleLanguages) / sizeof(titleLanguages[0]); i++) {
+	for(uint i = 0; i < sizeof(titleLanguages) / sizeof(titleLanguages[0]); i++) {
 		if(titleLanguages[i] == ms().titleLanguage)
 			titleLanguage = i;
 	}
@@ -1251,9 +1252,9 @@ void languageSelect(void) {
 
 		printSmall(false, 2, 20 + cursorPosition * 12, ">");
 
-		printSmall(false, 2, 64, STR_UP_DOWN_CHOOSE);
-		printSmall(false, 2, 76, STR_LEFT_RIGHT_CHANGE_LANGUAGE);
-		printSmall(false, 2, 88, STR_A_PROCEED);
+		printSmall(false, 2, 62, STR_UP_DOWN_CHOOSE);
+		printSmall(false, 2, 74, STR_LEFT_RIGHT_CHANGE_LANGUAGE);
+		printSmall(false, 2, 86, STR_A_PROCEED);
 
 		updateText(false);
 
@@ -1361,13 +1362,13 @@ void regionSelect(void) {
 		clearText();
 		printLarge(false, 2, 0, STR_SELECT_YOUR_REGION);
 
-		for(int i = dsiFeatures() ? 0 : 2; i < sizeof(regions) / sizeof(regions[0]); i++) {
-			printSmall(false, 15, 20 + i * 12, *regions[i]);
+		for(uint i = dsiFeatures() ? 0 : 2, p = 0; i < sizeof(regions) / sizeof(regions[0]); i++, p++) {
+			printSmall(false, 15, 20 + p * 12, *regions[i]);
 		}
 
-		printSmall(false, 2, 20 + (ms().gameRegion + 2) * 12, ">");
+		printSmall(false, 2, 20 + (ms().gameRegion + (dsiFeatures() ? 2 : 0)) * 12, ">");
 
-		int x = dsiFeatures() ? 136 : 136 - 24;
+		int x = 20 + (sizeof(regions) / sizeof(regions[0])) * 12 + 10 - (dsiFeatures() ? 0 : 24);
 		printSmall(false, 2, x, STR_UP_DOWN_CHOOSE);
 		printSmall(false, 2, x + 12, STR_A_PROCEED);
 
@@ -1381,7 +1382,7 @@ void regionSelect(void) {
 		} while(!held);
 
 		if (held & KEY_UP) {
-			if (ms().gameRegion > -2)
+			if (ms().gameRegion > (dsiFeatures() ? -2 : 0))
 				ms().gameRegion--;
 		} else if (held & KEY_DOWN) {
 			if (ms().gameRegion < (int)(sizeof(regions) / sizeof(regions[0])) - 3)
