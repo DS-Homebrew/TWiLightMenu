@@ -1222,6 +1222,8 @@ void languageSelect(void) {
 	langInit();
 	fontInit();
 
+	fadeType = true;
+
 	int guiLanguage = -1, gameLanguage = -1, titleLanguage = -1;
 	for(uint i = 0; i < sizeof(guiLanguages) / sizeof(guiLanguages[0]); i++) {
 		if(guiLanguages[i] == ms().guiLanguage)
@@ -1328,6 +1330,10 @@ void languageSelect(void) {
 		}
 	}
 
+	fadeType = false;
+	for (int i = 0; i < 30; i++)
+		swiWaitForVBlank();
+
 	clearText();
 	updateText(false);
 }
@@ -1343,7 +1349,7 @@ const std::string *regions[] {
 	&STR_KOREA
 };
 
-void regionSelect(void) {
+void regionSelect(bool fontInited) {
 	videoSetMode(MODE_5_2D);
 	videoSetModeSub(MODE_5_2D);
 
@@ -1365,7 +1371,10 @@ void regionSelect(void) {
 	toncset16(bgGetGfxPtr(7), 0x1010, 256 * 192);
 
 	langInit();
-	fontInit();
+	if(!fontInited)
+		fontInit();
+
+	fadeType = true;
 
 	u16 held = 0, pressed = 0;
 	while (1) {
@@ -1406,6 +1415,11 @@ void regionSelect(void) {
 		}
 	}
 
+
+	fadeType = false;
+	for (int i = 0; i < 30; i++)
+		swiWaitForVBlank();
+
 	clearText();
 	updateText(false);
 }
@@ -1431,6 +1445,8 @@ int main(int argc, char **argv)
 	}
 
 	keysSetRepeat(25, 5);
+
+	runGraphicIrq();
 
 	*(u32*)0x02FFFDFC = 0; // Reset TWLCFG location
 
@@ -1566,13 +1582,15 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	bs().loadSettings();
 
+	bool fontInited = false;
 	if (!ms().languageSet) {
 		languageSelect();
+		fontInited = true;
 	}
 
 	if (!ms().regionSet || (!dsiFeatures() && ms().gameRegion < 0)) {
 		if (!dsiFeatures() && ms().gameRegion < 0) ms().gameRegion = 0;
-		regionSelect();
+		regionSelect(fontInited);
 	}
 
 	if (isDSiMode()) {
@@ -1713,8 +1731,6 @@ int main(int argc, char **argv)
 		mkdir("fat:/_gba", 0777);
 		mkdir("fat:/_nds/TWiLightMenu/gamesettings", 0777);
 	}
-
-	runGraphicIrq();
 
 	if (REG_SCFG_EXT != 0) {
 		*(vu32*)(0x0DFFFE0C) = 0x53524C41;		// Check for 32MB of RAM
