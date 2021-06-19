@@ -1205,6 +1205,23 @@ int main(int argc, char **argv)
 				 TRegion::ERegionAustralia,
 				 TRegion::ERegionChina,
 				 TRegion::ERegionKorea});
+	} else {
+		miscPage
+		.option(STR_GAMEREGION,
+				STR_DESCRIPTION_GAMEREGION_DS,
+				Option::Int(&ms().gameRegion),
+				{STR_JAPAN,
+				 STR_USA,
+				 STR_EUROPE,
+				 STR_AUSTRALIA,
+				 STR_CHINA,
+				 STR_KOREA},
+				{TRegion::ERegionJapan,
+				 TRegion::ERegionUSA,
+				 TRegion::ERegionEurope,
+				 TRegion::ERegionAustralia,
+				 TRegion::ERegionChina,
+				 TRegion::ERegionKorea});
 	}
 	miscPage
 		.option(STR_MACROMODE,
