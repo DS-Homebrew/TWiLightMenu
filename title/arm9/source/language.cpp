@@ -101,10 +101,10 @@ std::string getString(CIniFile &ini, const std::string &item, const std::string 
  * Initialize translations.
  * Uses the language ID specified in settings.ui.language.
  */
-void langInit(void)
+void langInit(const char *language = nullptr)
 {
 	char languageIniPath[64];
-	snprintf(languageIniPath, sizeof(languageIniPath), "nitro:/languages/%s/language.ini", ms().getGuiLanguageString().c_str());
+	snprintf(languageIniPath, sizeof(languageIniPath), "nitro:/languages/%s/language.ini", language ? language : ms().getGuiLanguageString().c_str());
 
 	CIniFile languageini(languageIniPath);
 

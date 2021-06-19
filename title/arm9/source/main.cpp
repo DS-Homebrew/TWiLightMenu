@@ -1137,11 +1137,15 @@ void graphicsInit(void) {
 	toncset16(bgGetGfxPtr(3), 0x1010, 256 * 192);
 	toncset16(bgGetGfxPtr(7), 0x1010, 256 * 192);
 
-	langInit();
 	fontInit();
 }
 
 void resetSettingsPrompt(void) {
+	TWLSettings settings;
+	settings.loadSettings();
+
+	langInit(settings.getGuiLanguageString().c_str());
+
 	graphicsInit();
 
 	fadeType = true;
@@ -1152,10 +1156,11 @@ void resetSettingsPrompt(void) {
 
 	clearText();
 	printLarge(false, x1, 0, STR_RESET_TWILIGHT_SETTINGS, align);
-	printSmall(false, x1, 16, STR_PGS_WILL_BE_KEPT, align);
+	int y = calcLargeFontHeight(STR_RESET_TWILIGHT_SETTINGS);
+	printSmall(false, x1, y, STR_PGS_WILL_BE_KEPT, align);
 
-	printSmall(false, x1, 36, STR_A_YES, align);
-	printSmall(false, x1, 36 + 14, STR_B_NO, align);
+	printSmall(false, x1, y + 20, STR_A_YES, align);
+	printSmall(false, x1, y + 20 + 14, STR_B_NO, align);
 
 	updateText(false);
 
@@ -1269,6 +1274,7 @@ static const char* displayLanguage(int l, int type) {
 
 void languageSelect(void) {
 	graphicsInit();
+	langInit();
 
 	fadeType = true;
 
@@ -1405,6 +1411,7 @@ const std::string *regions[] {
 
 void regionSelect(void) {
 	graphicsInit();
+	langInit();
 
 	fadeType = true;
 
@@ -1588,7 +1595,6 @@ int main(int argc, char **argv)
 	}
 
 	bool fontInited = false;
-
 	scanKeys();
 	if ((keysHeld() & KEY_A)
 	 && (keysHeld() & KEY_B)
