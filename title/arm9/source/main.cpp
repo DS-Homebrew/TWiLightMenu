@@ -1461,7 +1461,8 @@ int main(int argc, char **argv)
 		languageSelect();
 	}
 
-	if (!ms().regionSet) {
+	if (!ms().regionSet || (!dsiFeatures() && ms().gameRegion < 0)) {
+		if (!dsiFeatures() && ms().gameRegion < 0) ms().gameRegion = 0;
 		regionSelect();
 	}
 
