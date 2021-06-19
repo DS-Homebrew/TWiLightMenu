@@ -1152,15 +1152,15 @@ void resetSettingsPrompt(void) {
 
 	bool rtl = ms().guiLanguage == TWLSettings::TLanguage::ELangHebrew;
 	Alignment align = rtl ? Alignment::right : Alignment::left;
-	int x1 = rtl ? 256 - 2 : 2, x2 = rtl ? 256 - 15 : 15;
+	int x = rtl ? 256 - 2 : 2;
 
 	clearText();
-	printLarge(false, x1, 0, STR_RESET_TWILIGHT_SETTINGS, align);
+	printLarge(false, x, 0, STR_RESET_TWILIGHT_SETTINGS, align);
 	int y = calcLargeFontHeight(STR_RESET_TWILIGHT_SETTINGS);
-	printSmall(false, x1, y, STR_PGS_WILL_BE_KEPT, align);
+	printSmall(false, x, y, STR_PGS_WILL_BE_KEPT, align);
 
-	printSmall(false, x1, y + 20, STR_A_YES, align);
-	printSmall(false, x1, y + 20 + 14, STR_B_NO, align);
+	printSmall(false, x, y + 20, STR_A_YES, align);
+	printSmall(false, x, y + 20 + 14, STR_B_NO, align);
 
 	updateText(false);
 
@@ -1594,7 +1594,6 @@ int main(int argc, char **argv)
 							   // SD card, or if SD access is disabled
 	}
 
-	bool fontInited = false;
 	scanKeys();
 	if ((keysHeld() & KEY_A)
 	 && (keysHeld() & KEY_B)
