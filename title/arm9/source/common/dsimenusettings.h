@@ -147,7 +147,6 @@ class TWLSettings
 
   public:
     void loadSettings();
-    void reloadSettings();
     void saveSettings();
 
     TLanguage getGuiLanguage();

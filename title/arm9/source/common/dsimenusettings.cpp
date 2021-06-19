@@ -255,11 +255,6 @@ TWLSettings::TLanguage TWLSettings::getGuiLanguage()
     return (TLanguage)guiLanguage;
 }
 
-void TWLSettings::reloadSettings()
-{
-    
-}
-
 std::string TWLSettings::getGuiLanguageString()
 {
     switch (getGuiLanguage())
