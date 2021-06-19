@@ -1238,12 +1238,12 @@ void languageSelect(void) {
 
 	printSmall(true, 2, 4, "\uE07Eを使用して言語を選択してください。");
 	printSmall(true, 2, 28, "Select your language with \uE07E.");
-	printSmall(true, 2, 52, "[French]");
-	printSmall(true, 2, 76, "[German]");
-	printSmall(true, 2, 100, "[Italian]");
-	printSmall(true, 2, 124, "[Spanish]");
-	printSmall(true, 2, 148, "[Chinese (Simplified)]");
-	printSmall(true, 2, 172, "[Korean]");
+	// printSmall(true, 2, 52, "[French]");
+	// printSmall(true, 2, 76, "[German]");
+	// printSmall(true, 2, 100, "[Italian]");
+	// printSmall(true, 2, 124, "[Spanish]");
+	// printSmall(true, 2, 148, "[Chinese (Simplified)]");
+	// printSmall(true, 2, 172, "[Korean]");
 	updateText(true);
 
 	int cursorPosition = 0;
