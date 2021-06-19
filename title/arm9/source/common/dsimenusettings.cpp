@@ -18,7 +18,11 @@ TWLSettings::TWLSettings()
     startMenu_cursorPosition = 0;
     consoleModel = -1;
 
+	languageSet = false;
+	regionSet = false;
     guiLanguage = ELangDefault;
+    gameLanguage = ELangDefault;
+    titleLanguage = ELangDefault;
     macroMode = false;
     colorMode = 0;
     blfLevel = 0;
@@ -97,6 +101,8 @@ void TWLSettings::loadSettings()
     cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
     startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
+    languageSet = settingsini.GetInt("SRLOADER", "LANGUAGE_SET", languageSet);
+    regionSet = settingsini.GetInt("SRLOADER", "REGION_SET", regionSet);
 
 	showGba = settingsini.GetInt("SRLOADER", "SHOW_GBA", showGba);
 	if (!sys().isRegularDS() && showGba != 0) {
@@ -111,6 +117,7 @@ void TWLSettings::loadSettings()
 	dsiWareExploit = settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
 	wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", wifiLed);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
+    titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     if (!sys().isRegularDS()) {
         useGbarunner = true;
@@ -195,8 +202,11 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "WIFI_LED", wifiLed);
+    settingsini.SetInt("SRLOADER", "LANGUAGE_SET", languageSet);
+    settingsini.SetInt("SRLOADER", "REGION_SET", regionSet);
     // Customizable UI settings.
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
+    settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
 
     settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);

@@ -157,7 +157,10 @@ class TWLSettings
     int cursorPosition;
     int startMenu_cursorPosition;
     int consoleModel;
+	bool languageSet;
+	bool regionSet;
     int guiLanguage;
+    int titleLanguage;
 	bool macroMode;
     int colorMode;
     int blfLevel;

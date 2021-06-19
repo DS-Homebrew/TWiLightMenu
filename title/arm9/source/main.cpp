@@ -4,6 +4,7 @@
 #include "io_m3_common.h"
 #include "io_g6_common.h"
 #include "io_sc_common.h"
+#include "myDSiMode.h"
 #include "exptools.h"
 
 #include "bootsplash.h"
@@ -1107,6 +1108,201 @@ void lastRunROM()
 	}
 }
 
+static bool languageNowSet = false;
+static bool regionNowSet = false;
+
+static const char* displayLanguage(int l, bool s) {
+	switch (l) {
+		case -1:
+		default:
+			return "System";
+		case 0:
+			return "Japanese";
+		case 1:
+			return "English";
+		case 2:
+			return "French";
+		case 3:
+			return "German";
+		case 4:
+			return "Italian";
+		case 5:
+			return "Spanish";
+		case 6:
+			return s ? "ChineseS" : "Chinese";
+		case 7:
+			return "Korean";
+		case 8:
+			return "ChineseT";
+		case 9:
+			return "Polish";
+		case 10:
+			return "Portuguese";
+		case 11:
+			return "Russian";
+		case 12:
+			return "Swedish";
+		case 13:
+			return "Danish";
+		case 14:
+			return "Turkish";
+		case 15:
+			return "Ukrainian";
+		case 16:
+			return "Hungarian";
+		case 17:
+			return "Norwegian";
+		case 18:
+			return "Hebrew";
+		case 19:
+			return "Dutch";
+		case 20:
+			return "Indonesian";
+		case 21:
+			return "Greek";
+    }
+}
+
+void languageSelect(void) {
+	int cursorPosition = 0;
+	consoleDemoInit();
+	iprintf("Select your language.\n");
+	iprintf("\n");
+	iprintf("->GUI: \n");
+	iprintf("  Game: \n");
+	iprintf("  DS Banner title: \n");
+	iprintf("\n");
+	iprintf("Up/Down: Choose\n");
+	iprintf("Left/Right: Change language\n");
+	iprintf("A: Proceed\n");
+
+	iprintf("\x1b[2;7H%s", displayLanguage(ms().guiLanguage, true));
+	iprintf("\x1b[3;8H%s", displayLanguage(ms().gameLanguage, false));
+	iprintf("\x1b[4;19H%s", displayLanguage(ms().titleLanguage, false));
+
+	for (int i = 0; i < 30; i++) {
+		swiWaitForVBlank();
+	}
+	int pressed = 0;
+	while (1) {
+		swiWaitForVBlank();
+		scanKeys();
+		pressed = keysDown();
+		if (pressed & KEY_UP) {
+			iprintf("\x1b[%d;0H  ", 2 + cursorPosition);
+			cursorPosition--;
+			if (cursorPosition < 0) cursorPosition = 0;
+			iprintf("\x1b[%d;0H->", 2 + cursorPosition);
+		} else if (pressed & KEY_DOWN) {
+			iprintf("\x1b[%d;0H  ", 2 + cursorPosition);
+			cursorPosition++;
+			if (cursorPosition > 2) cursorPosition = 2;
+			iprintf("\x1b[%d;0H->", 2 + cursorPosition);
+		} else if (pressed & KEY_LEFT) {
+			switch (cursorPosition) {
+				case 0:
+					iprintf("\x1b[2;7H            ");
+					ms().guiLanguage--;
+					if (ms().guiLanguage < -1) ms().guiLanguage = 21;
+					iprintf("\x1b[2;7H%s", displayLanguage(ms().guiLanguage, true));
+					break;
+				case 1:
+					iprintf("\x1b[3;8H            ");
+					ms().gameLanguage--;
+					if (ms().gameLanguage < -1) ms().gameLanguage = 7;
+					iprintf("\x1b[3;8H%s", displayLanguage(ms().gameLanguage, false));
+					break;
+				case 2:
+					iprintf("\x1b[4;19H            ");
+					ms().titleLanguage--;
+					if (ms().titleLanguage < -1) ms().titleLanguage = 5;
+					iprintf("\x1b[4;19H%s", displayLanguage(ms().titleLanguage, false));
+					break;
+			}
+		} else if (pressed & KEY_RIGHT) {
+			switch (cursorPosition) {
+				case 0:
+					iprintf("\x1b[2;7H            ");
+					ms().guiLanguage++;
+					if (ms().guiLanguage > 21) ms().guiLanguage = -1;
+					iprintf("\x1b[2;7H%s", displayLanguage(ms().guiLanguage, true));
+					break;
+				case 1:
+					iprintf("\x1b[3;8H            ");
+					ms().gameLanguage++;
+					if (ms().gameLanguage > 7) ms().gameLanguage = -1;
+					iprintf("\x1b[3;8H%s", displayLanguage(ms().gameLanguage, false));
+					break;
+				case 2:
+					iprintf("\x1b[4;19H            ");
+					ms().titleLanguage++;
+					if (ms().titleLanguage > 5) ms().titleLanguage = -1;
+					iprintf("\x1b[4;19H%s", displayLanguage(ms().titleLanguage, false));
+					break;
+			}
+		}
+		if (pressed & KEY_A) {
+			ms().languageSet = true;
+			languageNowSet = true;
+			break;
+		}
+	};
+	consoleClear();
+}
+
+void regionSelect(void) {
+	int firstOption = (dsiFeatures() ? -2 : 0);
+	int firstOptionDisplay = ms().gameRegion+(dsiFeatures() ? 2 : 0);
+
+	consoleDemoInit();
+	iprintf("Select your region.\n");
+	iprintf("\n");
+	if (dsiFeatures()) {
+		iprintf("  Game-specific\n");
+		iprintf("  System default\n");
+	}
+	iprintf("  Japan\n");
+	iprintf("  USA\n");
+	iprintf("  Europe\n");
+	iprintf("  Australia\n");
+	iprintf("  China\n");
+	iprintf("  Korea\n");
+	iprintf("\n");
+	iprintf("Up/Down: Choose\n");
+	iprintf("A: Proceed\n");
+
+	iprintf("\x1b[%d;0H->", 2 + firstOptionDisplay);
+
+	for (int i = 0; i < 30; i++) {
+		swiWaitForVBlank();
+	}
+	int pressed = 0;
+	while (1) {
+		swiWaitForVBlank();
+		scanKeys();
+		pressed = keysDown();
+		if (pressed & KEY_UP) {
+			iprintf("\x1b[%d;0H  ", 2 + firstOptionDisplay);
+			ms().gameRegion--;
+			if (ms().gameRegion < firstOption) ms().gameRegion = firstOption;
+			firstOptionDisplay = ms().gameRegion+(dsiFeatures() ? 2 : 0);
+			iprintf("\x1b[%d;0H->", 2 + firstOptionDisplay);
+		} else if (pressed & KEY_DOWN) {
+			iprintf("\x1b[%d;0H  ", 2 + firstOptionDisplay);
+			ms().gameRegion++;
+			if (ms().gameRegion > 5) ms().gameRegion = 5;
+			firstOptionDisplay = ms().gameRegion+(dsiFeatures() ? 2 : 0);
+			iprintf("\x1b[%d;0H->", 2 + firstOptionDisplay);
+		}
+		if (pressed & KEY_A) {
+			ms().regionSet = true;
+			regionNowSet = true;
+			break;
+		}
+	};
+	consoleClear();
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
@@ -1260,6 +1456,14 @@ int main(int argc, char **argv)
 
 	ms().loadSettings();
 	bs().loadSettings();
+
+	if (!ms().languageSet) {
+		languageSelect();
+	}
+
+	if (!ms().regionSet) {
+		regionSelect();
+	}
 
 	if (isDSiMode()) {
 		scanKeys();
@@ -1481,9 +1685,14 @@ int main(int argc, char **argv)
 	}
 
 	if ((access(settingsinipath, F_OK) != 0)
+	|| languageNowSet || regionNowSet
 	|| (ms().theme < 0) || (ms().theme == 3) || (ms().theme > 6)) {
 		// Create or modify "settings.ini"
-		(ms().theme == 3) ? ms().theme = 2 : ms().theme = 0;
+		if (ms().theme == 3) {
+			ms().theme = 2;
+		} else if (ms().theme < 0 || ms().theme > 6) {
+			ms().theme = 0;
+		}
 		ms().saveSettings();
 	}
 
