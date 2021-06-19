@@ -26,6 +26,8 @@
 #include "graphics/graphics.h"
 #include "nandio.h"
 #include "twlmenuppvideo.h"
+#include "language.h"
+#include "graphics/fontHandler.h"
 
 #include "autoboot.h"
 
@@ -1111,196 +1113,324 @@ void lastRunROM()
 static bool languageNowSet = false;
 static bool regionNowSet = false;
 
-static const char* displayLanguage(int l, bool s) {
-	switch (l) {
-		case -1:
-		default:
-			return "System";
-		case 0:
-			return "Japanese";
-		case 1:
-			return "English";
-		case 2:
-			return "French";
-		case 3:
-			return "German";
-		case 4:
-			return "Italian";
-		case 5:
-			return "Spanish";
-		case 6:
-			return s ? "ChineseS" : "Chinese";
-		case 7:
-			return "Korean";
-		case 8:
-			return "ChineseT";
-		case 9:
-			return "Polish";
-		case 10:
-			return "Portuguese";
-		case 11:
-			return "Russian";
-		case 12:
-			return "Swedish";
-		case 13:
-			return "Danish";
-		case 14:
-			return "Turkish";
-		case 15:
-			return "Ukrainian";
-		case 16:
-			return "Hungarian";
-		case 17:
-			return "Norwegian";
-		case 18:
-			return "Hebrew";
-		case 19:
-			return "Dutch";
-		case 20:
-			return "Indonesian";
-		case 21:
-			return "Greek";
-    }
+const char *languages[] = {
+	"日本語",
+	"English",
+	"Français",
+	"Deutsch",
+	"Italiano",
+	"Español",
+	"中文 (简体)",
+	"한국어",
+	"中文 (繁體)",
+	"Polski",
+	"Português",
+	"Русский",
+	"Svenska",
+	"Dansk",
+	"Türkçe",
+	"Українська",
+	"Magyar",
+	"Norsk",
+	"עברית",
+	"Nederlands",
+	"Bahasa Indonesia",
+	"Ελληνικά",
+};
+
+const int guiLanguages[] = {
+	TWLSettings::TLanguage::ELangIndonesian,
+	TWLSettings::TLanguage::ELangDanish,
+	TWLSettings::TLanguage::ELangGerman,
+	TWLSettings::TLanguage::ELangEnglish,
+	TWLSettings::TLanguage::ELangSpanish,
+	TWLSettings::TLanguage::ELangFrench,
+	TWLSettings::TLanguage::ELangItalian,
+	TWLSettings::TLanguage::ELangHungarian,
+	TWLSettings::TLanguage::ELangDutch,
+	TWLSettings::TLanguage::ELangNorwegian,
+	TWLSettings::TLanguage::ELangPolish,
+	TWLSettings::TLanguage::ELangPortuguese,
+	TWLSettings::TLanguage::ELangSwedish,
+	TWLSettings::TLanguage::ELangTurkish,
+	TWLSettings::TLanguage::ELangGreek,
+	TWLSettings::TLanguage::ELangRussian,
+	TWLSettings::TLanguage::ELangUkrainian,
+	TWLSettings::TLanguage::ELangHebrew,
+	TWLSettings::TLanguage::ELangChineseS,
+	TWLSettings::TLanguage::ELangChineseT,
+	TWLSettings::TLanguage::ELangJapanese,
+	TWLSettings::TLanguage::ELangKorean
+};
+
+const int gameLanguages[] = {
+	TWLSettings::TLanguage::ELangGerman,
+	TWLSettings::TLanguage::ELangEnglish,
+	TWLSettings::TLanguage::ELangSpanish,
+	TWLSettings::TLanguage::ELangFrench,
+	TWLSettings::TLanguage::ELangItalian,
+	TWLSettings::TLanguage::ELangChineseS,
+	TWLSettings::TLanguage::ELangJapanese,
+	TWLSettings::TLanguage::ELangKorean
+};
+const int titleLanguages[] = {
+	TWLSettings::TLanguage::ELangGerman,
+	TWLSettings::TLanguage::ELangEnglish,
+	TWLSettings::TLanguage::ELangSpanish,
+	TWLSettings::TLanguage::ELangFrench,
+	TWLSettings::TLanguage::ELangItalian,
+	TWLSettings::TLanguage::ELangJapanese
+};
+
+static const char* displayLanguage(int l, int type) {
+	if(l == -1) {
+		return STR_SYSTEM.c_str();
+	} else {
+		switch(type) {
+			case 0:
+			default:
+				return languages[guiLanguages[l]];
+			case 1:
+				return languages[gameLanguages[l]];
+			case 2:
+				return languages[titleLanguages[l]];
+		}
+	}
 }
 
 void languageSelect(void) {
-	int cursorPosition = 0;
-	consoleDemoInit();
-	iprintf("Select your language.\n");
-	iprintf("\n");
-	iprintf("->GUI: \n");
-	iprintf("  Game: \n");
-	iprintf("  DS Banner title: \n");
-	iprintf("\n");
-	iprintf("Up/Down: Choose\n");
-	iprintf("Left/Right: Change language\n");
-	iprintf("A: Proceed\n");
+	videoSetMode(MODE_5_2D);
+	videoSetModeSub(MODE_5_2D);
 
-	iprintf("\x1b[2;7H%s", displayLanguage(ms().guiLanguage, true));
-	iprintf("\x1b[3;8H%s", displayLanguage(ms().gameLanguage, false));
-	iprintf("\x1b[4;19H%s", displayLanguage(ms().titleLanguage, false));
+	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankC(VRAM_C_SUB_BG);
 
-	for (int i = 0; i < 30; i++) {
-		swiWaitForVBlank();
+	bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(3, 3);
+	bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(2, 2);
+	bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(7, 3);
+	bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(6, 2);
+
+	BG_PALETTE[0x10] = 0xFFFF;
+	BG_PALETTE_SUB[0x10] = 0xFFFF;
+	toncset16(bgGetGfxPtr(3), 0x1010, 256 * 192);
+	toncset16(bgGetGfxPtr(7), 0x1010, 256 * 192);
+
+	langInit();
+	fontInit();
+
+	fadeType = true;
+
+	int guiLanguage = -1, gameLanguage = -1, titleLanguage = -1;
+	for(uint i = 0; i < sizeof(guiLanguages) / sizeof(guiLanguages[0]); i++) {
+		if(guiLanguages[i] == ms().guiLanguage)
+			guiLanguage = i;
 	}
-	int pressed = 0;
+	for(uint i = 0; i < sizeof(gameLanguages) / sizeof(gameLanguages[0]); i++) {
+		if(gameLanguages[i] == ms().gameLanguage)
+			gameLanguage = i;
+	}
+	for(uint i = 0; i < sizeof(titleLanguages) / sizeof(titleLanguages[0]); i++) {
+		if(titleLanguages[i] == ms().titleLanguage)
+			titleLanguage = i;
+	}
+
+	printSmall(true, 2, 4, "\uE07Eを使用して言語を選択してください。");
+	printSmall(true, 2, 28, "Select your language with \uE07E.");
+	// printSmall(true, 2, 52, "[French]");
+	// printSmall(true, 2, 76, "[German]");
+	// printSmall(true, 2, 100, "[Italian]");
+	// printSmall(true, 2, 124, "[Spanish]");
+	// printSmall(true, 2, 148, "[Chinese (Simplified)]");
+	// printSmall(true, 2, 172, "[Korean]");
+	updateText(true);
+
+	int cursorPosition = 0;
+	char buffer[64] = {0};
+	u16 held = 0, pressed = 0;
 	while (1) {
-		swiWaitForVBlank();
-		scanKeys();
-		pressed = keysDown();
-		if (pressed & KEY_UP) {
-			iprintf("\x1b[%d;0H  ", 2 + cursorPosition);
-			cursorPosition--;
-			if (cursorPosition < 0) cursorPosition = 0;
-			iprintf("\x1b[%d;0H->", 2 + cursorPosition);
-		} else if (pressed & KEY_DOWN) {
-			iprintf("\x1b[%d;0H  ", 2 + cursorPosition);
-			cursorPosition++;
-			if (cursorPosition > 2) cursorPosition = 2;
-			iprintf("\x1b[%d;0H->", 2 + cursorPosition);
-		} else if (pressed & KEY_LEFT) {
+		clearText(false);
+
+		bool rtl = ms().guiLanguage == TWLSettings::TLanguage::ELangHebrew;
+		Alignment align = rtl ? Alignment::right : Alignment::left;
+		int x1 = rtl ? 256 - 2 : 2, x2 = rtl ? 256 - 15 : 15;
+
+		printLarge(false, x1, 0, STR_SELECT_YOUR_LANGUAGE, align);
+
+		snprintf(buffer, sizeof(buffer), STR_GUI.c_str(), displayLanguage(guiLanguage, 0));
+		printSmall(false, x2, 20, buffer, align);
+		snprintf(buffer, sizeof(buffer), STR_GAME.c_str(), displayLanguage(gameLanguage, 1));
+		printSmall(false, x2, 32, buffer, align);
+		snprintf(buffer, sizeof(buffer), STR_DS_BANNER_TITLE.c_str(), displayLanguage(titleLanguage, 2));
+		printSmall(false, x2, 44, buffer, align);
+
+		printSmall(false, x1, 20 + cursorPosition * 12, rtl ? "<" : ">", align);
+
+		printSmall(false, x1, 62, STR_UP_DOWN_CHOOSE, align);
+		printSmall(false, x1, 74, STR_LEFT_RIGHT_CHANGE_LANGUAGE, align);
+		printSmall(false, x1, 86, STR_A_PROCEED, align);
+
+		updateText(false);
+
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
+
+		if (held & KEY_UP) {
+			if (cursorPosition > 0)
+				cursorPosition--;
+		} else if (held & KEY_DOWN) {
+			if (cursorPosition < 2)
+				cursorPosition++;
+		} else if (held & KEY_LEFT) {
 			switch (cursorPosition) {
 				case 0:
-					iprintf("\x1b[2;7H            ");
-					ms().guiLanguage--;
-					if (ms().guiLanguage < -1) ms().guiLanguage = 21;
-					iprintf("\x1b[2;7H%s", displayLanguage(ms().guiLanguage, true));
+					if (guiLanguage > -1) {
+						guiLanguage--;
+						ms().guiLanguage = guiLanguage == -1 ? guiLanguage : guiLanguages[guiLanguage];
+						langInit();
+					}
 					break;
 				case 1:
-					iprintf("\x1b[3;8H            ");
-					ms().gameLanguage--;
-					if (ms().gameLanguage < -1) ms().gameLanguage = 7;
-					iprintf("\x1b[3;8H%s", displayLanguage(ms().gameLanguage, false));
+					if (gameLanguage > -1)
+						gameLanguage--;
 					break;
 				case 2:
-					iprintf("\x1b[4;19H            ");
-					ms().titleLanguage--;
-					if (ms().titleLanguage < -1) ms().titleLanguage = 5;
-					iprintf("\x1b[4;19H%s", displayLanguage(ms().titleLanguage, false));
+					if (titleLanguage > -1)
+						titleLanguage--;
 					break;
 			}
-		} else if (pressed & KEY_RIGHT) {
+		} else if (held & KEY_RIGHT) {
 			switch (cursorPosition) {
 				case 0:
-					iprintf("\x1b[2;7H            ");
-					ms().guiLanguage++;
-					if (ms().guiLanguage > 21) ms().guiLanguage = -1;
-					iprintf("\x1b[2;7H%s", displayLanguage(ms().guiLanguage, true));
+					if (guiLanguage < (int)(sizeof(languages) / sizeof(languages[0])) - 1) {
+						guiLanguage++;
+						ms().guiLanguage = guiLanguage == -1 ? guiLanguage : guiLanguages[guiLanguage];
+						langInit();
+					}
 					break;
 				case 1:
-					iprintf("\x1b[3;8H            ");
-					ms().gameLanguage++;
-					if (ms().gameLanguage > 7) ms().gameLanguage = -1;
-					iprintf("\x1b[3;8H%s", displayLanguage(ms().gameLanguage, false));
+					if (gameLanguage < 7)
+						gameLanguage++;
 					break;
 				case 2:
-					iprintf("\x1b[4;19H            ");
-					ms().titleLanguage++;
-					if (ms().titleLanguage > 5) ms().titleLanguage = -1;
-					iprintf("\x1b[4;19H%s", displayLanguage(ms().titleLanguage, false));
+					if (titleLanguage < 5)
+						titleLanguage++;
 					break;
 			}
 		}
+
 		if (pressed & KEY_A) {
+			ms().gameLanguage = gameLanguage == -1 ? gameLanguage : gameLanguages[gameLanguage];
+			ms().titleLanguage = titleLanguage == -1 ? titleLanguage : titleLanguages[titleLanguage];
 			ms().languageSet = true;
 			languageNowSet = true;
 			break;
 		}
-	};
-	consoleClear();
+	}
+
+	fadeType = false;
+	for (int i = 0; i < 30; i++)
+		swiWaitForVBlank();
+
+	clearText();
+	updateText(false);
 }
 
-void regionSelect(void) {
-	int firstOption = (dsiFeatures() ? -2 : 0);
-	int firstOptionDisplay = ms().gameRegion+(dsiFeatures() ? 2 : 0);
+const std::string *regions[] {
+	&STR_GAME_SPECIFIC,
+	&STR_SYSTEM,
+	&STR_JAPAN,
+	&STR_USA,
+	&STR_EUROPE,
+	&STR_AUSTRALIA,
+	&STR_CHINA,
+	&STR_KOREA
+};
 
-	consoleDemoInit();
-	iprintf("Select your region.\n");
-	iprintf("\n");
-	if (dsiFeatures()) {
-		iprintf("  Game-specific\n");
-		iprintf("  System default\n");
-	}
-	iprintf("  Japan\n");
-	iprintf("  USA\n");
-	iprintf("  Europe\n");
-	iprintf("  Australia\n");
-	iprintf("  China\n");
-	iprintf("  Korea\n");
-	iprintf("\n");
-	iprintf("Up/Down: Choose\n");
-	iprintf("A: Proceed\n");
+void regionSelect(bool fontInited) {
+	videoSetMode(MODE_5_2D);
+	videoSetModeSub(MODE_5_2D);
 
-	iprintf("\x1b[%d;0H->", 2 + firstOptionDisplay);
+	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankC(VRAM_C_SUB_BG);
 
-	for (int i = 0; i < 30; i++) {
-		swiWaitForVBlank();
-	}
-	int pressed = 0;
+	bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(3, 3);
+	bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(2, 2);
+	bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(7, 3);
+	bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(6, 2);
+
+	BG_PALETTE[0x10] = 0xFFFF;
+	BG_PALETTE_SUB[0x10] = 0xFFFF;
+	toncset16(bgGetGfxPtr(3), 0x1010, 256 * 192);
+	toncset16(bgGetGfxPtr(7), 0x1010, 256 * 192);
+
+	langInit();
+	if(!fontInited)
+		fontInit();
+
+	fadeType = true;
+
+	bool rtl = ms().guiLanguage == TWLSettings::TLanguage::ELangHebrew;
+	Alignment align = rtl ? Alignment::right : Alignment::left;
+	int x1 = rtl ? 256 - 2 : 2, x2 = rtl ? 256 - 15 : 15;
+
+	u16 held = 0, pressed = 0;
 	while (1) {
-		swiWaitForVBlank();
-		scanKeys();
-		pressed = keysDown();
-		if (pressed & KEY_UP) {
-			iprintf("\x1b[%d;0H  ", 2 + firstOptionDisplay);
-			ms().gameRegion--;
-			if (ms().gameRegion < firstOption) ms().gameRegion = firstOption;
-			firstOptionDisplay = ms().gameRegion+(dsiFeatures() ? 2 : 0);
-			iprintf("\x1b[%d;0H->", 2 + firstOptionDisplay);
-		} else if (pressed & KEY_DOWN) {
-			iprintf("\x1b[%d;0H  ", 2 + firstOptionDisplay);
-			ms().gameRegion++;
-			if (ms().gameRegion > 5) ms().gameRegion = 5;
-			firstOptionDisplay = ms().gameRegion+(dsiFeatures() ? 2 : 0);
-			iprintf("\x1b[%d;0H->", 2 + firstOptionDisplay);
+		clearText();
+		printLarge(false, x1, 0, STR_SELECT_YOUR_REGION, align);
+
+		for(uint i = dsiFeatures() ? 0 : 2, p = 0; i < sizeof(regions) / sizeof(regions[0]); i++, p++) {
+			printSmall(false, x2, 20 + p * 12, *regions[i], align);
 		}
+
+		printSmall(false, x1, 20 + (ms().gameRegion + (dsiFeatures() ? 2 : 0)) * 12, rtl ? "<" : ">", align);
+
+		int y = 20 + (sizeof(regions) / sizeof(regions[0])) * 12 + 10 - (dsiFeatures() ? 0 : 24);
+		printSmall(false, x1, y, STR_UP_DOWN_CHOOSE, align);
+		printSmall(false, x1, y + 12, STR_A_PROCEED, align);
+
+		updateText(false);
+
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
+
+		if (held & KEY_UP) {
+			if (ms().gameRegion > (dsiFeatures() ? -2 : 0))
+				ms().gameRegion--;
+		} else if (held & KEY_DOWN) {
+			if (ms().gameRegion < (int)(sizeof(regions) / sizeof(regions[0])) - 3)
+				ms().gameRegion++;
+		}
+
 		if (pressed & KEY_A) {
 			ms().regionSet = true;
 			regionNowSet = true;
 			break;
 		}
-	};
-	consoleClear();
+	}
+
+
+	fadeType = false;
+	for (int i = 0; i < 30; i++)
+		swiWaitForVBlank();
+
+	clearText();
+	updateText(false);
 }
 
 //---------------------------------------------------------------------------------
@@ -1322,6 +1452,10 @@ int main(int argc, char **argv)
 		iprintf("fatInitDefault failed!");
 		stop();
 	}
+
+	keysSetRepeat(25, 5);
+
+	runGraphicIrq();
 
 	*(u32*)0x02FFFDFC = 0; // Reset TWLCFG location
 
@@ -1457,13 +1591,15 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	bs().loadSettings();
 
+	bool fontInited = false;
 	if (!ms().languageSet) {
 		languageSelect();
+		fontInited = true;
 	}
 
 	if (!ms().regionSet || (!dsiFeatures() && ms().gameRegion < 0)) {
 		if (!dsiFeatures() && ms().gameRegion < 0) ms().gameRegion = 0;
-		regionSelect();
+		regionSelect(fontInited);
 	}
 
 	if (isDSiMode()) {
@@ -1605,8 +1741,6 @@ int main(int argc, char **argv)
 		mkdir("fat:/_nds/TWiLightMenu/gamesettings", 0777);
 	}
 
-	runGraphicIrq();
-
 	if (REG_SCFG_EXT != 0) {
 		*(vu32*)(0x0DFFFE0C) = 0x53524C41;		// Check for 32MB of RAM
 		bool isDevConsole = (*(vu32*)(0x0DFFFE0C) == 0x53524C41);
@@ -1743,7 +1877,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 
 	if (ms().showlogo && !(*(u32*)0x02000000 & BIT(1)))
