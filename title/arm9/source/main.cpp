@@ -1236,11 +1236,21 @@ void languageSelect(void) {
 			titleLanguage = i;
 	}
 
+	printSmall(true, 2, 4, "\uE07Eを使用して言語を選択してください。");
+	printSmall(true, 2, 28, "Select your language with \uE07E.");
+	printSmall(true, 2, 52, "[French]");
+	printSmall(true, 2, 76, "[German]");
+	printSmall(true, 2, 100, "[Italian]");
+	printSmall(true, 2, 124, "[Spanish]");
+	printSmall(true, 2, 148, "[Chinese (Simplified)]");
+	printSmall(true, 2, 172, "[Korean]");
+	updateText(true);
+
 	int cursorPosition = 0;
 	char buffer[64] = {0};
 	u16 held = 0, pressed = 0;
 	while (1) {
-		clearText();
+		clearText(false);
 		printLarge(false, 2, 0, STR_SELECT_YOUR_LANGUAGE);
 
 		snprintf(buffer, sizeof(buffer), STR_GUI.c_str(), displayLanguage(guiLanguage, 0));
