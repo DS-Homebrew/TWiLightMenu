@@ -611,7 +611,10 @@ void lastRunROM()
 		loadPerGameSettings(filename);
 
 		int language = perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language;
-		int gameRegion = perGameSettings_region == -1 ? ms().gameRegion : perGameSettings_region;
+		int gameRegion = perGameSettings_region == -3 ? ms().gameRegion : perGameSettings_region;
+		if (!dsiFeatures() && (gameRegion == -2 || gameRegion == -1)) {
+			gameRegion = ms().gameRegion;
+		}
 
 		// Set region flag
 		if (gameRegion == -2 && game_TID[3] != 'A' && game_TID[3] != '#') {

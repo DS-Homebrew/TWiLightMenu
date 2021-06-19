@@ -1658,7 +1658,10 @@ int main(int argc, char **argv) {
 					}
 
 					int language = perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language;
-					int gameRegion = perGameSettings_region == -1 ? ms().gameRegion : perGameSettings_region;
+					int gameRegion = perGameSettings_region == -3 ? ms().gameRegion : perGameSettings_region;
+					if (!dsiFeatures() && (gameRegion == -2 || gameRegion == -1)) {
+						gameRegion = ms().gameRegion;
+					}
 
 					// Set region flag
 					if (gameRegion == -2 && gameTid[CURPOS][3] != 'A' && gameTid[CURPOS][3] != '#') {
