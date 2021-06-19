@@ -1304,7 +1304,7 @@ void languageSelect(void) {
 		} else if (held & KEY_RIGHT) {
 			switch (cursorPosition) {
 				case 0:
-					if (guiLanguage < (int)(sizeof(languages) / sizeof(languages[0]))) {
+					if (guiLanguage < (int)(sizeof(languages) / sizeof(languages[0])) - 1) {
 						guiLanguage++;
 						ms().guiLanguage = guiLanguage == -1 ? guiLanguage : guiLanguages[guiLanguage];
 						langInit();
