@@ -1110,6 +1110,75 @@ void lastRunROM()
 	}
 }
 
+bool graphicsInited = false;
+void graphicsInit(void) {
+	if(graphicsInited)
+		return;
+
+	graphicsInited = true;
+
+	videoSetMode(MODE_5_2D);
+	videoSetModeSub(MODE_5_2D);
+
+	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankC(VRAM_C_SUB_BG);
+
+	bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(3, 3);
+	bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(2, 2);
+	bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(7, 3);
+	bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(6, 2);
+
+	BG_PALETTE[0x10] = 0xFFFF;
+	BG_PALETTE_SUB[0x10] = 0xFFFF;
+	toncset16(bgGetGfxPtr(3), 0x1010, 256 * 192);
+	toncset16(bgGetGfxPtr(7), 0x1010, 256 * 192);
+
+	langInit();
+	fontInit();
+}
+
+void resetSettingsPrompt(void) {
+	graphicsInit();
+
+	fadeType = true;
+
+	bool rtl = ms().guiLanguage == TWLSettings::TLanguage::ELangHebrew;
+	Alignment align = rtl ? Alignment::right : Alignment::left;
+	int x1 = rtl ? 256 - 2 : 2, x2 = rtl ? 256 - 15 : 15;
+
+	clearText();
+	printLarge(false, x1, 0, STR_RESET_TWILIGHT_SETTINGS, align);
+	printSmall(false, x1, 16, STR_PGS_WILL_BE_KEPT, align);
+
+	printSmall(false, x1, 36, STR_A_YES, align);
+	printSmall(false, x1, 36 + 14, STR_B_NO, align);
+
+	updateText(false);
+
+	u16 pressed = 0;
+	do {
+		swiWaitForVBlank();
+		scanKeys();
+		pressed = keysDown();
+	} while (!(pressed & (KEY_A | KEY_B)));
+
+	if (pressed & KEY_A) {
+		remove(settingsinipath);	// Delete "settings.ini"
+	}
+
+
+	fadeType = false;
+	for (int i = 0; i < 30; i++)
+		swiWaitForVBlank();
+
+	clearText();
+	updateText(false);
+}
+
 static bool languageNowSet = false;
 static bool regionNowSet = false;
 
@@ -1199,28 +1268,7 @@ static const char* displayLanguage(int l, int type) {
 }
 
 void languageSelect(void) {
-	videoSetMode(MODE_5_2D);
-	videoSetModeSub(MODE_5_2D);
-
-	vramSetBankA(VRAM_A_MAIN_BG);
-	vramSetBankC(VRAM_C_SUB_BG);
-
-	bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
-	bgSetPriority(3, 3);
-	bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
-	bgSetPriority(2, 2);
-	bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
-	bgSetPriority(7, 3);
-	bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
-	bgSetPriority(6, 2);
-
-	BG_PALETTE[0x10] = 0xFFFF;
-	BG_PALETTE_SUB[0x10] = 0xFFFF;
-	toncset16(bgGetGfxPtr(3), 0x1010, 256 * 192);
-	toncset16(bgGetGfxPtr(7), 0x1010, 256 * 192);
-
-	langInit();
-	fontInit();
+	graphicsInit();
 
 	fadeType = true;
 
@@ -1240,11 +1288,11 @@ void languageSelect(void) {
 
 	printSmall(true, 2, 4, "\uE07Eを使用して言語を選択してください。");
 	printSmall(true, 2, 28, "Select your language with \uE07E.");
-	// printSmall(true, 2, 52, "[French]");
-	// printSmall(true, 2, 76, "[German]");
-	// printSmall(true, 2, 100, "[Italian]");
+	printSmall(true, 2, 52, "Sélectionnez votre langage avec \uE07E.");
+	printSmall(true, 2, 76, "Wähle deine Sprache mit \uE07E.");
+	printSmall(true, 2, 100, "Seleziona la tua lingua con \uE07E.");
 	// printSmall(true, 2, 124, "[Spanish]");
-	// printSmall(true, 2, 148, "[Chinese (Simplified)]");
+	printSmall(true, 2, 148, "使用 \uE07E 选择你的语言");
 	// printSmall(true, 2, 172, "[Korean]");
 	updateText(true);
 
@@ -1263,15 +1311,15 @@ void languageSelect(void) {
 		snprintf(buffer, sizeof(buffer), STR_GUI.c_str(), displayLanguage(guiLanguage, 0));
 		printSmall(false, x2, 20, buffer, align);
 		snprintf(buffer, sizeof(buffer), STR_GAME.c_str(), displayLanguage(gameLanguage, 1));
-		printSmall(false, x2, 32, buffer, align);
+		printSmall(false, x2, 34, buffer, align);
 		snprintf(buffer, sizeof(buffer), STR_DS_BANNER_TITLE.c_str(), displayLanguage(titleLanguage, 2));
-		printSmall(false, x2, 44, buffer, align);
+		printSmall(false, x2, 48, buffer, align);
 
-		printSmall(false, x1, 20 + cursorPosition * 12, rtl ? "<" : ">", align);
+		printSmall(false, x1, 20 + cursorPosition * 14, rtl ? "<" : ">", align);
 
-		printSmall(false, x1, 62, STR_UP_DOWN_CHOOSE, align);
-		printSmall(false, x1, 74, STR_LEFT_RIGHT_CHANGE_LANGUAGE, align);
-		printSmall(false, x1, 86, STR_A_PROCEED, align);
+		printSmall(false, x1, 68, STR_UP_DOWN_CHOOSE, align);
+		printSmall(false, x1, 82, STR_LEFT_RIGHT_CHANGE_LANGUAGE, align);
+		printSmall(false, x1, 96, STR_A_PROCEED, align);
 
 		updateText(false);
 
@@ -1340,6 +1388,7 @@ void languageSelect(void) {
 		swiWaitForVBlank();
 
 	clearText();
+	updateText(true);
 	updateText(false);
 }
 
@@ -1354,30 +1403,8 @@ const std::string *regions[] {
 	&STR_KOREA
 };
 
-void regionSelect(bool fontInited) {
-	videoSetMode(MODE_5_2D);
-	videoSetModeSub(MODE_5_2D);
-
-	vramSetBankA(VRAM_A_MAIN_BG);
-	vramSetBankC(VRAM_C_SUB_BG);
-
-	bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
-	bgSetPriority(3, 3);
-	bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
-	bgSetPriority(2, 2);
-	bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
-	bgSetPriority(7, 3);
-	bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
-	bgSetPriority(6, 2);
-
-	BG_PALETTE[0x10] = 0xFFFF;
-	BG_PALETTE_SUB[0x10] = 0xFFFF;
-	toncset16(bgGetGfxPtr(3), 0x1010, 256 * 192);
-	toncset16(bgGetGfxPtr(7), 0x1010, 256 * 192);
-
-	langInit();
-	if(!fontInited)
-		fontInit();
+void regionSelect(void) {
+	graphicsInit();
 
 	fadeType = true;
 
@@ -1391,14 +1418,14 @@ void regionSelect(bool fontInited) {
 		printLarge(false, x1, 0, STR_SELECT_YOUR_REGION, align);
 
 		for(uint i = dsiFeatures() ? 0 : 2, p = 0; i < sizeof(regions) / sizeof(regions[0]); i++, p++) {
-			printSmall(false, x2, 20 + p * 12, *regions[i], align);
+			printSmall(false, x2, 20 + p * 14, *regions[i], align);
 		}
 
-		printSmall(false, x1, 20 + (ms().gameRegion + (dsiFeatures() ? 2 : 0)) * 12, rtl ? "<" : ">", align);
+		printSmall(false, x1, 20 + (ms().gameRegion + (dsiFeatures() ? 2 : 0)) * 14, rtl ? "<" : ">", align);
 
-		int y = 20 + (sizeof(regions) / sizeof(regions[0])) * 12 + 10 - (dsiFeatures() ? 0 : 24);
+		int y = 20 + (sizeof(regions) / sizeof(regions[0])) * 14 + 6 - (dsiFeatures() ? 0 : 28);
 		printSmall(false, x1, y, STR_UP_DOWN_CHOOSE, align);
-		printSmall(false, x1, y + 12, STR_A_PROCEED, align);
+		printSmall(false, x1, y + 14, STR_A_PROCEED, align);
 
 		updateText(false);
 
@@ -1560,50 +1587,27 @@ int main(int argc, char **argv)
 							   // SD card, or if SD access is disabled
 	}
 
+	bool fontInited = false;
+
 	scanKeys();
 	if ((keysHeld() & KEY_A)
 	 && (keysHeld() & KEY_B)
 	 && (keysHeld() & KEY_X)
 	 && (keysHeld() & KEY_Y))
 	{
-		consoleDemoInit();
-		iprintf("Reset TWiLight Menu++ settings?\n");
-		iprintf("\n");
-		iprintf("Per-game settings will be kept.\n");
-		iprintf("\n");
-		iprintf("A: Yes\n");
-		iprintf("B: No\n");
-		fadeType = true;
-		for (int i = 0; i < 30; i++) {
-			swiWaitForVBlank();
-		}
-		int pressed = 0;
-		do {
-			swiWaitForVBlank();
-			scanKeys();
-			pressed = keysDown();
-		} while (!(pressed & KEY_A) && !(pressed & KEY_B));
-		if (pressed & KEY_A) {
-			remove(settingsinipath);	// Delete "settings.ini"
-		}
-		fadeType = false;
-		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
-		}
+		resetSettingsPrompt();
 	}
 
 	ms().loadSettings();
 	bs().loadSettings();
 
-	bool fontInited = false;
 	if (!ms().languageSet) {
 		languageSelect();
-		fontInited = true;
 	}
 
 	if (!ms().regionSet || (!dsiFeatures() && ms().gameRegion < 0)) {
 		if (!dsiFeatures() && ms().gameRegion < 0) ms().gameRegion = 0;
-		regionSelect(fontInited);
+		regionSelect();
 	}
 
 	if (isDSiMode()) {

@@ -7,6 +7,12 @@ STRING(ARE_YOU_SURE, "Are you sure this is the\nconsole you're using?")
 STRING(SELECTING_WRONG, "Selecting the wrong one will\ncause unintended behavior.")
 STRING(B_NO_A_YES, "\\B: No   \\A: Yes")
 
+// Settings reset
+STRING(RESET_TWILIGHT_SETTINGS, "Reset TWiLight Menu++ settings?")
+STRING(PGS_WILL_BE_KEPT, "Per-game settings will be kept.")
+STRING(A_YES, "\\A Yes")
+STRING(B_NO, "\\B No")
+
 // Language selection
 STRING(SELECT_YOUR_LANGUAGE, "Select your language:")
 STRING(GUI, "GUI: %s")
