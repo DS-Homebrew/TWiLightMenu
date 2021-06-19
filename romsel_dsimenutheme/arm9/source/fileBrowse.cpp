@@ -551,7 +551,7 @@ void launchDsClassicMenu(void) {
 	} else if (sdFound()) {
 		chdir("sd:/");
 	}
-	int err = runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
+	int err = runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true, -1);
 	char text[32];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	fadeType = true;
@@ -579,7 +579,7 @@ void launchSettings(void) {
 	} else if (sdFound()) {
 		chdir("sd:/");
 	}
-	int err = runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
+	int err = runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true, -1);
 	char text[32];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	fadeType = true;
@@ -609,7 +609,7 @@ void launchManual(void) {
 	} else if (sdFound()) {
 		chdir("sd:/");
 	}
-	int err = runNdsFile("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, false, false, true, true);
+	int err = runNdsFile("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, false, false, true, true, -1);
 	char text[32];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	fadeType = true;
@@ -702,7 +702,7 @@ void switchDevice(void) {
 			if (sdFound()) {
 				chdir("sd:/");
 			}
-			int err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
+			int err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, -1);
 			char text[32];
 			snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 			fadeType = true;
@@ -737,7 +737,7 @@ void launchGba(void) {
 				gbar2Path = ms().consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
 			}
 			if (ms().useBootstrap) {
-				int err = runNdsFile(gbar2Path, 0, NULL, true, true, false, true, false);
+				int err = runNdsFile(gbar2Path, 0, NULL, true, true, false, true, false, -1);
 				iprintf("Start failed. Error %i\n", err);
 			} else {
 				loadGameOnFlashcard(gbar2Path, false);
@@ -768,7 +768,7 @@ void launchGba(void) {
 				extern void ntrStartSdGame();
 				ntrStartSdGame();
 			}
-			int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
+			int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true, -1);
 			char text[32];
 			snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 			fadeType = true;

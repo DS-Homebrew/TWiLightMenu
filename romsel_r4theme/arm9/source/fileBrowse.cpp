@@ -50,7 +50,6 @@
 #include "incompatibleGameMap.h"
 
 #include "gbaswitch.h"
-#include "nds_loader_arm9.h"
 #include "myDSiMode.h"
 
 #include "common/inifile.h"

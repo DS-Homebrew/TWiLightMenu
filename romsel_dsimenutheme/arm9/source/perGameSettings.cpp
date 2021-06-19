@@ -123,12 +123,15 @@ void savePerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	if (isHomebrew[CURPOS]) {
-		if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		if (isModernHomebrew[CURPOS]) {
+			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
+		}
+		if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", perGameSettings_ramDiskNo);
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
 		if (isDSiMode() || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
-		if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", perGameSettings_ramDiskNo);
 		if (dsiFeatures()) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
@@ -368,9 +371,13 @@ void perGameSettings (std::string filename) {
 		perGameOp[i] = -1;
 	}
 	if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
-		if (!ms().secondaryDevice) {
+		perGameOps++;
+		perGameOp[perGameOps] = 0;	// Language
+		if (isModernHomebrew[CURPOS]) {
 			perGameOps++;
-			perGameOp[perGameOps] = 0;	// Language
+			perGameOp[perGameOps] = 11;	// Region
+		}
+		if (!ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// RAM disk number
 		}

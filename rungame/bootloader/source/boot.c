@@ -48,6 +48,7 @@ Helpful information:
 #define ARM7
 #include <nds/arm7/audio.h>
 #include <nds/arm7/codec.h>
+#include <string.h> // memcmp
 #include "tonccpy.h"
 #include "sdmmc.h"
 #include "i2c.h"
@@ -64,6 +65,7 @@ void arm7clearRAM();
 #define TWL_HEAD 0x02FFE000
 #define NDS_HEAD 0x02FFFE00
 #define TEMP_ARM9_START_ADDRESS (*(vu32*)0x02FFFFF4)
+#define REG_GPIO_WIFI *(vu16*)0x4004C04
 
 
 const char* bootName = "BOOT.NDS";
@@ -79,6 +81,7 @@ extern unsigned long dsiMode;
 extern unsigned long clearMasterBright;
 extern unsigned long dsMode;
 extern unsigned long loadFromRam;
+extern unsigned long language;
 
 bool sdRead = false;
 
@@ -235,6 +238,11 @@ void resetMemory_ARM7 (void)
 		boot_readFirmware(settingsOffset + 0x000, (u8*)0x02FFFC80, 0x70);
 	} else {
 		boot_readFirmware(settingsOffset + 0x100, (u8*)0x02FFFC80, 0x70);
+	}
+
+	if (language >= 0 && language <= 7) {
+		// Change language
+		*(u8*)((u32)NDS_HEAD - 0x11C) = language;
 	}
 
 	((vu32*)0x040044f0)[2] = 0x202DDD1D;
@@ -597,14 +605,19 @@ int main (void) {
 		(*(vu16*)0x02FFFCFA) = 0x1041;	// NoCash: channel ch1+7+13
 	}
 
-	if (dsiMode && ((ARM9_SRC==0x4000 && dsiFlags==0) || dsMode)) {
+	if ((dsiMode && ((ARM9_SRC==0x4000 && !(dsiFlags & BIT(0))) || dsMode))
+	|| (!dsiMode && REG_SCFG_EXT != 0 && memcmp((char*)0x02FFFE00, "TWLMENUPP", 9) != 0 && memcmp((char*)0x02FFFE00, "NDSBOOTSTRAP", 12) != 0)) {
 		NDSTouchscreenMode();
 		*(u16*)0x4000500 = 0x807F;
+		if (dsMode) REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
 		i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 0);		// Press power button for auto-reset
 		i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);	// Bootflag = Warmboot/SkipHealthSafety
 		if (dsMode && REG_SCFG_EXT != 0) {
 			REG_SCFG_ROM = 0x703;								// NTR BIOS
 			REG_SCFG_EXT = 0x12A03000;
+		}
+		if (dsMode && REG_SCFG_ROM != 0x703) {
+			*(u32*)0x3FFFFC8 = 0x7884;	// Fix sound pitch table
 		}
 	}
 

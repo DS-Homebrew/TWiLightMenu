@@ -33,6 +33,7 @@
 	.global clearMasterBright
 	.global dsMode
 	.global loadFromRam
+	.global language
 @---------------------------------------------------------------------------------
 	.align	4
 	.arm
@@ -63,6 +64,8 @@ clearMasterBright:
 dsMode:
 	.word	0
 loadFromRam:
+	.word	0
+language:
 	.word	0
 
 startUp:

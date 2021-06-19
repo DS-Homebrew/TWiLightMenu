@@ -73,6 +73,7 @@ dsiMode:
 #define CLEAR_MASTER_BRIGHT_OFFSET 36
 #define DSMODE_SWITCH_OFFSET 40
 #define LOADFROMRAM_OFFSET 44
+#define LANGUAGE_OFFSET 48
 
 
 typedef signed int addr_t;
@@ -270,7 +271,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, int language)
 {
 	char* argStart;
 	u16* argData;
@@ -301,6 +302,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 		writeAddr ((data_t*) LCDC_BANK_C, DSMODE_SWITCH_OFFSET, dsModeSwitch);
 	}
 	writeAddr ((data_t*) LCDC_BANK_C, LOADFROMRAM_OFFSET, loadFromRam);
+	writeAddr ((data_t*) LCDC_BANK_C, LANGUAGE_OFFSET, language);
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
 	writeAddr ((data_t*) LCDC_BANK_C, WANT_TO_PATCH_DLDI_OFFSET, dldiPatchNds);
@@ -432,10 +434,10 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 		fclose(gifFile);
 	}
 
-	return runNds (load_bin, load_bin_size, sector, true, false, true, 0, NULL, true, false, true, true);
+	return runNds (load_bin, load_bin_size, sector, true, false, true, 0, NULL, true, false, true, true, -1);
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)  {
+int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, int language)  {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
@@ -475,7 +477,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), false, argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), false, argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram, language);
 }
 
 /*

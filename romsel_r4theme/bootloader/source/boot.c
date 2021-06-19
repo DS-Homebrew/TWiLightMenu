@@ -81,6 +81,7 @@ extern unsigned long dsiMode;
 extern unsigned long clearMasterBright;
 extern unsigned long dsMode;
 extern unsigned long loadFromRam;
+extern unsigned long language;
 
 bool sdRead = false;
 
@@ -237,6 +238,11 @@ void resetMemory_ARM7 (void)
 		boot_readFirmware(settingsOffset + 0x000, (u8*)0x02FFFC80, 0x70);
 	} else {
 		boot_readFirmware(settingsOffset + 0x100, (u8*)0x02FFFC80, 0x70);
+	}
+
+	if (language >= 0 && language <= 7) {
+		// Change language
+		*(u8*)((u32)NDS_HEAD - 0x11C) = language;
 	}
 
 	((vu32*)0x040044f0)[2] = 0x202DDD1D;

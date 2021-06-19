@@ -114,11 +114,14 @@ void savePerGameSettings (std::string filename) {
 	CIniFile pergameini( pergamefilepath );
 	if (isHomebrew) {
 		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		if (isModernHomebrew) {
+			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
+		}
+		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", perGameSettings_ramDiskNo);
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
 		if (isDSiMode() || !secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
-		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", perGameSettings_ramDiskNo);
 		if (dsiFeatures()) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
@@ -351,9 +354,13 @@ void perGameSettings (std::string filename) {
 		perGameOp[i] = -1;
 	}
 	if (isHomebrew) {		// Per-game settings for homebrew
-		if (!secondaryDevice) {
+		perGameOps++;
+		perGameOp[perGameOps] = 0;	// Language
+		if (isModernHomebrew) {
 			perGameOps++;
-			perGameOp[perGameOps] = 0;	// Language
+			perGameOp[perGameOps] = 11;	// Region
+		}
+		if (!secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// RAM disk number
 		}
