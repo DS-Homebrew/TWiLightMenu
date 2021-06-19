@@ -143,7 +143,7 @@ class TWLSettings
 
   public:
     TWLSettings();
-    ~TWLSettings();
+    ~TWLSettings() {};
 
   public:
     void loadSettings();

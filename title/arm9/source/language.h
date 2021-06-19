@@ -19,6 +19,6 @@ extern int setTitleLanguage;
  * Check the language variable outside of settings to determine
  * the actual language in use.
  */
-void langInit(void);
+void langInit(const char *language = nullptr);
 
 #endif /* DSIMENUPP_LANGUAGE_H */
