@@ -1253,20 +1253,25 @@ void languageSelect(void) {
 	u16 held = 0, pressed = 0;
 	while (1) {
 		clearText(false);
-		printLarge(false, 2, 0, STR_SELECT_YOUR_LANGUAGE);
+
+		bool rtl = ms().guiLanguage == TWLSettings::TLanguage::ELangHebrew;
+		Alignment align = rtl ? Alignment::right : Alignment::left;
+		int x1 = rtl ? 256 - 2 : 2, x2 = rtl ? 256 - 15 : 15;
+
+		printLarge(false, x1, 0, STR_SELECT_YOUR_LANGUAGE, align);
 
 		snprintf(buffer, sizeof(buffer), STR_GUI.c_str(), displayLanguage(guiLanguage, 0));
-		printSmall(false, 15, 20, buffer);
+		printSmall(false, x2, 20, buffer, align);
 		snprintf(buffer, sizeof(buffer), STR_GAME.c_str(), displayLanguage(gameLanguage, 1));
-		printSmall(false, 15, 32, buffer);
+		printSmall(false, x2, 32, buffer, align);
 		snprintf(buffer, sizeof(buffer), STR_DS_BANNER_TITLE.c_str(), displayLanguage(titleLanguage, 2));
-		printSmall(false, 15, 44, buffer);
+		printSmall(false, x2, 44, buffer, align);
 
-		printSmall(false, 2, 20 + cursorPosition * 12, ">");
+		printSmall(false, x1, 20 + cursorPosition * 12, rtl ? "<" : ">", align);
 
-		printSmall(false, 2, 62, STR_UP_DOWN_CHOOSE);
-		printSmall(false, 2, 74, STR_LEFT_RIGHT_CHANGE_LANGUAGE);
-		printSmall(false, 2, 86, STR_A_PROCEED);
+		printSmall(false, x1, 62, STR_UP_DOWN_CHOOSE, align);
+		printSmall(false, x1, 74, STR_LEFT_RIGHT_CHANGE_LANGUAGE, align);
+		printSmall(false, x1, 86, STR_A_PROCEED, align);
 
 		updateText(false);
 
@@ -1376,20 +1381,24 @@ void regionSelect(bool fontInited) {
 
 	fadeType = true;
 
+	bool rtl = ms().guiLanguage == TWLSettings::TLanguage::ELangHebrew;
+	Alignment align = rtl ? Alignment::right : Alignment::left;
+	int x1 = rtl ? 256 - 2 : 2, x2 = rtl ? 256 - 15 : 15;
+
 	u16 held = 0, pressed = 0;
 	while (1) {
 		clearText();
-		printLarge(false, 2, 0, STR_SELECT_YOUR_REGION);
+		printLarge(false, x1, 0, STR_SELECT_YOUR_REGION, align);
 
 		for(uint i = dsiFeatures() ? 0 : 2, p = 0; i < sizeof(regions) / sizeof(regions[0]); i++, p++) {
-			printSmall(false, 15, 20 + p * 12, *regions[i]);
+			printSmall(false, x2, 20 + p * 12, *regions[i], align);
 		}
 
-		printSmall(false, 2, 20 + (ms().gameRegion + (dsiFeatures() ? 2 : 0)) * 12, ">");
+		printSmall(false, x1, 20 + (ms().gameRegion + (dsiFeatures() ? 2 : 0)) * 12, rtl ? "<" : ">", align);
 
-		int x = 20 + (sizeof(regions) / sizeof(regions[0])) * 12 + 10 - (dsiFeatures() ? 0 : 24);
-		printSmall(false, 2, x, STR_UP_DOWN_CHOOSE);
-		printSmall(false, 2, x + 12, STR_A_PROCEED);
+		int y = 20 + (sizeof(regions) / sizeof(regions[0])) * 12 + 10 - (dsiFeatures() ? 0 : 24);
+		printSmall(false, x1, y, STR_UP_DOWN_CHOOSE, align);
+		printSmall(false, x1, y + 12, STR_A_PROCEED, align);
 
 		updateText(false);
 
