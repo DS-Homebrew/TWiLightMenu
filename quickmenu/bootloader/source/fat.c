@@ -75,12 +75,9 @@ License:
 
 #define __PACKED __attribute__ ((__packed__))
 
-// Boot Sector - must be packed
-typedef struct
-{
-	u8	jmpBoot[3];
-	u8	OEMName[8];
-	// BIOS Parameter Block
+// BIOS Parameter Block
+typedef struct {
+
 	u16	bytesPerSector;
 	u8	sectorsPerCluster;
 	u16	reservedSectors;
@@ -93,6 +90,14 @@ typedef struct
 	u16	numHeads;
 	u32	numHiddenSectors;
 	u32	numSectors;
+} __PACKED BIOS_BPB;
+
+// Boot Sector - must be packed
+typedef struct
+{
+	u8	jmpBoot[3];
+	u8	OEMName[8];
+	BIOS_BPB bpb;
 	union	// Different types of extended BIOS Parameter Block for FAT16 and FAT32
 	{
 		struct  
@@ -106,7 +111,7 @@ typedef struct
 			u8	fileSysType[8];
 			// Bootcode
 			u8	bootCode[448];
-		}	fat16;
+		}	__PACKED fat16;
 		struct  
 		{
 			// FAT32 extended block
@@ -126,12 +131,14 @@ typedef struct
 			u8	fileSysType[8];
 			// Bootcode
 			u8	bootCode[420];
-		}	fat32;
-	}	extBlock;
+		}	__PACKED fat32;
+	}	__PACKED extBlock;
 
 	__PACKED	u16	bootSig;
 
 }	__PACKED BOOT_SEC;
+
+_Static_assert(sizeof(BOOT_SEC) == 512);
 
 // Directory entry - must be packed
 typedef struct
@@ -347,37 +354,37 @@ bool FAT_InitFiles (bool initCard)
 	CARD_ReadSector (bootSector,  bootSec);
 	
 	// Store required information about the file system
-	if (bootSec->sectorsPerFAT != 0)
+	if (bootSec->bpb.sectorsPerFAT != 0)
 	{
-		discSecPerFAT = bootSec->sectorsPerFAT;
+		discSecPerFAT = bootSec->bpb.sectorsPerFAT;
 	}
 	else
 	{
 		discSecPerFAT = bootSec->extBlock.fat32.sectorsPerFAT32;
 	}
 	
-	if (bootSec->numSectorsSmall != 0)
+	if (bootSec->bpb.numSectorsSmall != 0)
 	{
-		discNumSec = bootSec->numSectorsSmall;
+		discNumSec = bootSec->bpb.numSectorsSmall;
 	}
 	else
 	{
-		discNumSec = bootSec->numSectors;
+		discNumSec = bootSec->bpb.numSectors;
 	}
 
 	discBytePerSec = BYTES_PER_SECTOR;	// Sector size is redefined to be 512 bytes
-	discSecPerClus = bootSec->sectorsPerCluster * bootSec->bytesPerSector / BYTES_PER_SECTOR;
+	discSecPerClus = bootSec->bpb.sectorsPerCluster * bootSec->bpb.bytesPerSector / BYTES_PER_SECTOR;
 	discBytePerClus = discBytePerSec * discSecPerClus;
-	discFAT = bootSector + bootSec->reservedSectors;
+	discFAT = bootSector + bootSec->bpb.reservedSectors;
 
-	discRootDir = discFAT + (bootSec->numFATs * discSecPerFAT);
-	discData = discRootDir + ((bootSec->rootEntries * sizeof(DIR_ENT)) / BYTES_PER_SECTOR);
+	discRootDir = discFAT + (bootSec->bpb.numFATs * discSecPerFAT);
+	discData = discRootDir + ((bootSec->bpb.rootEntries * sizeof(DIR_ENT)) / BYTES_PER_SECTOR);
 
-	if ((discNumSec - discData) / bootSec->sectorsPerCluster < 4085)
+	if ((discNumSec - discData) / bootSec->bpb.sectorsPerCluster < 4085)
 	{
 		discFileSystem = FS_FAT12;
 	}
-	else if ((discNumSec - discData) / bootSec->sectorsPerCluster < 65525)
+	else if ((discNumSec - discData) / bootSec->bpb.sectorsPerCluster < 65525)
 	{
 		discFileSystem = FS_FAT16;
 	}
