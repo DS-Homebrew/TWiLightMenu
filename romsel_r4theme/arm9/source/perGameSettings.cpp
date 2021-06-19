@@ -99,6 +99,7 @@ void loadPerGameSettings (std::string filename) {
 	}
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_region = pergameini.GetInt("GAMESETTINGS", "REGION", -3);
+	if (!dsiFeatures() && (perGameSettings_region == -2 || perGameSettings_region == -1)) perGameSettings_region = -3;
 	perGameSettings_saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
 	perGameSettings_ramDiskNo = pergameini.GetInt("GAMESETTINGS", "RAM_DISK", -1);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
@@ -747,6 +748,14 @@ void perGameSettings (std::string filename) {
 						break;
 					case 11:
 						perGameSettings_region--;
+						if (!dsiFeatures()) {
+							if (perGameSettings_region == -1) {
+								perGameSettings_region--;
+							}
+							if (perGameSettings_region == -2) {
+								perGameSettings_region--;
+							}
+						}
 						if (perGameSettings_region < -3) perGameSettings_region = 5;
 						break;
 				}
@@ -833,6 +842,14 @@ void perGameSettings (std::string filename) {
 						break;
 					case 11:
 						perGameSettings_region++;
+						if (!dsiFeatures()) {
+							if (perGameSettings_region == -2) {
+								perGameSettings_region++;
+							}
+							if (perGameSettings_region == -1) {
+								perGameSettings_region++;
+							}
+						}
 						if (perGameSettings_region > 5) perGameSettings_region = -3;
 						break;
 				}
