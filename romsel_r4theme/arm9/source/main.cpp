@@ -2180,9 +2180,6 @@ int main(int argc, char **argv) {
 
 					int runNds_language = perGameSettings_language == -2 ? gameLanguage : perGameSettings_language;
 					int runNds_gameRegion = perGameSettings_region == -3 ? gameRegion : perGameSettings_region;
-					if (!dsiFeatures() && (runNds_gameRegion == -2 || runNds_gameRegion == -1)) {
-						runNds_gameRegion = gameRegion;
-					}
 
 					// Set region flag
 					if (runNds_gameRegion == -2 && game_TID[3] != 'A' && game_TID[3] != '#') {
