@@ -1573,6 +1573,7 @@ int main(int argc, char **argv)
 		iprintf("\n");
 		iprintf("A: Yes\n");
 		iprintf("B: No\n");
+		fadeType = true;
 		for (int i = 0; i < 30; i++) {
 			swiWaitForVBlank();
 		}
@@ -1582,9 +1583,12 @@ int main(int argc, char **argv)
 			scanKeys();
 			pressed = keysDown();
 		} while (!(pressed & KEY_A) && !(pressed & KEY_B));
-		consoleClear();
 		if (pressed & KEY_A) {
 			remove(settingsinipath);	// Delete "settings.ini"
+		}
+		fadeType = false;
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
 		}
 	}
 
