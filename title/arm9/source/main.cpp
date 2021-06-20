@@ -1297,9 +1297,9 @@ void languageSelect(void) {
 	printSmall(true, 2, 52, "Sélectionnez votre langage avec \uE07E.");
 	printSmall(true, 2, 76, "Wähle deine Sprache mit \uE07E.");
 	printSmall(true, 2, 100, "Seleziona la tua lingua con \uE07E.");
-	// printSmall(true, 2, 124, "[Spanish]");
-	printSmall(true, 2, 148, "使用 \uE07E 选择你的语言");
-	// printSmall(true, 2, 172, "[Korean]");
+	printSmall(true, 2, 124, "Selecciona tu idioma con \uE07E.");
+	printSmall(true, 2, 148, "使用 \uE07E 选择你的语言。");
+	printSmall(true, 2, 172, "\uE07E를 사용하여 언어를 선택해주세요.");
 	updateText(true);
 
 	int cursorPosition = 0;
