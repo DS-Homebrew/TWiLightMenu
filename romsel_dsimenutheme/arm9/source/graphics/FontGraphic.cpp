@@ -2,9 +2,9 @@
 
 #include "common/tonccpy.h"
 
-static u8* lastUsedLoc = (u8*)0x08000000;
+u8 *FontGraphic::lastUsedLoc = (u8*)0x08000000;
 
-u8 FontGraphic::textBuf[2][256 * 192];
+u8 FontGraphic::textBuf[1][256 * 192]; // Increase to two if adding top screen support
 
 bool FontGraphic::isStrongRTL(char16_t c) {
 	return (c >= 0x0590 && c <= 0x05FF) || c == 0x200F;
@@ -18,7 +18,7 @@ bool FontGraphic::isNumber(char16_t c) {
 	return c >= '0' && c <= '9';
 }
 
-FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool useExpansionPak) {
+FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansionPak) : useExpansionPak(useExpansionPak) {
 	FILE *file = nullptr;
 	for(const auto &path : paths) {
 		file = fopen(path.c_str(), "rb");
@@ -27,7 +27,7 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool useEx
 	}
 
 	if(file) {
-		if (useExpansionPak && *(u16*)(0x020000C0) == 0 && lastUsedLoc == (u8*)0x08000000) {
+		if(useExpansionPak && *(u16*)(0x020000C0) == 0 && lastUsedLoc == (u8*)0x08000000) {
 			lastUsedLoc += 0x01000000;
 		}
 
@@ -47,21 +47,26 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool useEx
 		fread(&tileSize, 2, 1, file);
 
 		// Load character glyphs
-		int tileAmount = ((chunkSize-0x10)/tileSize);
-		if (!useExpansionPak) {
-			fontTilesVector = std::vector<u8>(tileSize*tileAmount);
-			fontTiles = fontTilesVector.data();
-		} else {
-			fontTiles = lastUsedLoc;
-		}
+		tileAmount = (chunkSize - 0x10) / tileSize;
 		fseek(file, 4, SEEK_CUR);
-		fread(fontTiles, tileSize, tileAmount, file);
+		if(useExpansionPak) {
+			fontTiles = lastUsedLoc;
+			lastUsedLoc += tileSize * tileAmount;
+
+			u8 *buf = new u8[tileSize * tileAmount];
+			fread(buf, tileSize, tileAmount, file);
+			tonccpy(fontTiles, buf, tileSize * tileAmount);
+			delete[] buf;
+		} else {
+			fontTiles = new u8[tileSize * tileAmount];
+			fread(fontTiles, tileSize, tileAmount, file);
+		}
 
 		// Fix top row
-		for(int i=0;i<tileAmount;i++) {
-			fontTiles[i*tileSize] = 0;
-			fontTiles[i*tileSize+1] = 0;
-			fontTiles[i*tileSize+2] = 0;
+		for(int i = 0; i < tileAmount; i++) {
+			fontTiles[i * tileSize] = 0;
+			fontTiles[i * tileSize + 1] = 0;
+			fontTiles[i * tileSize + 2] = 0;
 		}
 
 		// Load character widths
@@ -71,17 +76,27 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool useEx
 		fseek(file, locHDWC-4, SEEK_SET);
 		fread(&chunkSize, 4, 1, file);
 		fseek(file, 8, SEEK_CUR);
-		if (!useExpansionPak) {
-			fontWidthsVector = std::vector<u8>(3*tileAmount);
-			fontWidths = fontWidthsVector.data();
+		if(useExpansionPak) {
+			fontWidths = lastUsedLoc;
+			lastUsedLoc += 3 * tileAmount;
+
+			u8 *buf = new u8[3 * tileAmount];
+			fread(buf, 3, tileAmount, file);
+			tonccpy(fontWidths, buf, 3 * tileAmount);
+			delete[] buf;
 		} else {
-			fontWidths = fontTiles+(tileSize*tileAmount);
-			lastUsedLoc = fontWidths+((3*tileAmount)*4);
+			fontWidths = new u8[3 * tileAmount];
+			fread(fontWidths, 3, tileAmount, file);
 		}
-		fread(fontWidths, 3, tileAmount, file);
 
 		// Load character maps
-		fontMap = std::vector<u16>(tileAmount);
+		if(useExpansionPak) {
+			fontMap = (u16*)lastUsedLoc;
+			lastUsedLoc += tileAmount * sizeof(u16);
+		} else {
+			fontMap = new u16[tileAmount];
+		}
+
 		fseek(file, 0x28, SEEK_SET);
 		u32 locPAMC, mapType;
 		fread(&locPAMC, 4, 1, file);
@@ -129,10 +144,21 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool useEx
 	}
 }
 
+FontGraphic::~FontGraphic(void) {
+	if(!useExpansionPak) {
+		if(fontTiles)
+			delete[] fontTiles;
+		if(fontWidths)
+			delete[] fontWidths;
+		if(fontMap)
+			delete[] fontMap;
+	}
+}
+
 u16 FontGraphic::getCharIndex(char16_t c) {
 	// Try a binary search
 	int left = 0;
-	int right = fontMap.size();
+	int right = tileAmount;
 
 	while(left <= right) {
 		int mid = left + ((right - left) / 2);
