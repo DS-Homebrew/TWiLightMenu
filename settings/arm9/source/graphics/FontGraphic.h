@@ -17,14 +17,16 @@ private:
 	static bool isWeak(char16_t c);
 	static bool isNumber(char16_t c);
 
-	u8 tileWidth, tileHeight;
-	u16 tileSize;
+	static u8 *lastUsedLoc;
+
+	bool useExpansionPak = false;
+	u8 tileWidth = 0, tileHeight = 0;
+	u16 tileSize = 0;
+	int tileAmount = 0;
 	u16 questionMark = 0;
-	u8* fontTiles = (u8*)0;
-	u8* fontWidths = (u8*)0;
-	std::vector<u8> fontTilesVector;
-	std::vector<u8> fontWidthsVector;
-	std::vector<u16> fontMap;
+	u8 *fontTiles = nullptr;
+	u8 *fontWidths = nullptr;
+	u16 *fontMap = nullptr;
 
 	u16 getCharIndex(char16_t c);
 
@@ -33,8 +35,9 @@ public:
 
 	static std::u16string utf8to16(std::string_view text);
 
-	FontGraphic() {};
 	FontGraphic(const std::vector<std::string> &paths, const bool useExpansionPak);
+
+	~FontGraphic(void);
 
 	u8 height(void) { return tileHeight; }
 
