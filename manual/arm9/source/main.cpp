@@ -69,6 +69,7 @@ enum TLanguage {
 	ELangDutch = 19,
 	ELangIndonesian = 20,
 	ELangGreek = 21,
+	ELangBulgarian = 22,
 };
 
 int setLanguage = 0;
@@ -171,6 +172,8 @@ std::string getGuiLanguageString() {
 			return "id";
 		case ELangGreek:
 			return "el";
+		case ELangBulgarian:
+			return "bg";
 	}
 }
 

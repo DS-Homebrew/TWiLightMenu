@@ -1210,6 +1210,7 @@ const char *languages[] = {
 	"Nederlands",
 	"Bahasa Indonesia",
 	"Ελληνικά",
+	"Български",
 };
 
 const int guiLanguages[] = {
@@ -1228,6 +1229,7 @@ const int guiLanguages[] = {
 	TWLSettings::TLanguage::ELangSwedish,
 	TWLSettings::TLanguage::ELangTurkish,
 	TWLSettings::TLanguage::ELangGreek,
+	TWLSettings::TLanguage::ELangBulgarian,
 	TWLSettings::TLanguage::ELangRussian,
 	TWLSettings::TLanguage::ELangUkrainian,
 	TWLSettings::TLanguage::ELangHebrew,

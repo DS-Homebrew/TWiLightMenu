@@ -79,6 +79,7 @@ public:
 		ELangDutch = 19,
 		ELangIndonesian = 20,
 		ELangGreek = 21,
+		ELangBulgarian = 22,
 	};
 
     enum TRegion
