@@ -1022,6 +1022,11 @@ int main(int argc, char **argv)
 				STR_DESCRIPTION_CARDREADDMA,
 				Option::Bool(&ms().cardReadDMA),
 				{STR_ON, STR_OFF},
+				{true, false})
+			.option((flashcardFound() ? STR_SYSSD_ASYNCHCARDREAD : STR_ASYNCHCARDREAD),
+				STR_DESCRIPTION_ASYNCHCARDREAD,
+				Option::Bool(&ms().asyncCardRead),
+				{STR_ON, STR_OFF},
 				{true, false});
 	}
 

@@ -66,6 +66,7 @@ int perGameSettings_ramDiskNo = -1;
 int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
 int perGameSettings_cardReadDMA = -1;
+int perGameSettings_asyncCardRead = -1;
 int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 int perGameSettings_expandRomSpace = -1;
@@ -115,6 +116,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
 	perGameSettings_cardReadDMA = pergameini.GetInt("GAMESETTINGS", "CARD_READ_DMA", -1);
+	perGameSettings_asyncCardRead = pergameini.GetInt("GAMESETTINGS", "ASYNC_CARD_READ", -1);
     perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
     perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
     perGameSettings_expandRomSpace = pergameini.GetInt("GAMESETTINGS", "EXTENDED_MEMORY", -1);
@@ -150,6 +152,7 @@ void savePerGameSettings (std::string filename) {
 		}
 		if (!ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
+			pergameini.SetInt("GAMESETTINGS", "ASYNC_CARD_READ", perGameSettings_asyncCardRead);
 		}
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
@@ -428,7 +431,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;
 		}
-		if (dsiFeatures() || !ms().secondaryDevice) {
+		if ((dsiFeatures() || !ms().secondaryDevice) && unitCode[CURPOS] < 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
 			perGameOps++;
@@ -436,8 +439,14 @@ void perGameSettings (std::string filename) {
 		}
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			if (!ms().secondaryDevice) {
-				perGameOps++;
-				perGameOp[perGameOps] = 5;	// Card read DMA
+				if (unitCode[CURPOS] < 3) {
+					perGameOps++;
+					perGameOp[perGameOps] = 5;	// Card Read DMA
+				}
+				if (romSize > romSizeLimit) {
+					perGameOps++;
+					perGameOp[perGameOps] = 12;	// Async Card Read
+				}
 			}
 			if ((dsiFeatures() || !ms().secondaryDevice)
 			 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
@@ -684,6 +693,16 @@ void perGameSettings (std::string filename) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_KOREA, endAlign);
 				}
 				break;
+			case 12:
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_ASYNCH_CARD_READ + ":", startAlign);
+				if (perGameSettings_asyncCardRead == -1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+				} else if (perGameSettings_asyncCardRead == 1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
+				} else {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
+				}
+				break;
 		}
 		perGameOpYpos += 14;
 		}
@@ -807,6 +826,10 @@ void perGameSettings (std::string filename) {
 						}
 						if (perGameSettings_region < -3) perGameSettings_region = 5;
 						break;
+					case 12:
+						perGameSettings_asyncCardRead--;
+						if (perGameSettings_asyncCardRead < -1) perGameSettings_asyncCardRead = 1;
+						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
@@ -901,6 +924,10 @@ void perGameSettings (std::string filename) {
 							}
 						}
 						if (perGameSettings_region > 5) perGameSettings_region = -3;
+						break;
+					case 12:
+						perGameSettings_asyncCardRead++;
+						if (perGameSettings_asyncCardRead > 1) perGameSettings_asyncCardRead = -1;
 						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();

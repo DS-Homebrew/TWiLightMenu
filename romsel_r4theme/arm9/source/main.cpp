@@ -44,6 +44,7 @@
 #include "crc.h"
 
 #include "dmaExcludeMap.h"
+#include "asyncReadExcludeMap.h"
 #include "donorMap.h"
 #include "saveMap.h"
 #include "ROMList.h"
@@ -180,6 +181,7 @@ bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
 int bstrap_dsiMode = 1;
 bool cardReadDMA = true;
+bool asyncCardRead = true;
 int bstrap_extendedMemory = 0;
 bool forceSleepPatch = false;
 bool dsiWareBooter = true;
@@ -285,6 +287,7 @@ void LoadSettings(void) {
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 	cardReadDMA = settingsini.GetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
+	asyncCardRead = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", asyncCardRead);
 	bstrap_extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", 0);
 
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
@@ -571,6 +574,30 @@ bool setCardReadDMA(const char* filename) {
 	}
 
 	return perGameSettings_cardReadDMA == -1 ? cardReadDMA : perGameSettings_cardReadDMA;
+}
+
+/**
+ * Disable asynch card read for a specific game.
+ */
+bool setAsyncReadDMA(const char* filename) {
+	if (perGameSettings_asyncCardRead == -1) {
+		FILE *f_nds_file = fopen(filename, "rb");
+
+		char game_TID[5];
+		grabTID(f_nds_file, game_TID);
+		fclose(f_nds_file);
+		game_TID[4] = 0;
+
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
+			if (memcmp(game_TID, asyncReadExcludeList[i], 3) == 0) {
+				// Found match
+				return false;
+			}
+		}
+	}
+
+	return perGameSettings_asyncCardRead == -1 ? asyncCardRead : perGameSettings_asyncCardRead;
 }
 
 /**
@@ -2044,6 +2071,7 @@ int main(int argc, char **argv) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA(argarray[0]));
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", setAsyncReadDMA(argarray[0]));
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", perGameSettings_expandRomSpace == -1 ? bstrap_extendedMemory : perGameSettings_expandRomSpace);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);

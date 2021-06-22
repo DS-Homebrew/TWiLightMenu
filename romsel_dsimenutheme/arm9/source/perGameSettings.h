@@ -13,6 +13,7 @@ extern int perGameSettings_ramDiskNo;
 extern int perGameSettings_boostCpu;
 extern int perGameSettings_boostVram;
 extern int perGameSettings_cardReadDMA;
+extern int perGameSettings_asyncCardRead;
 extern int perGameSettings_bootstrapFile;
 extern int perGameSettings_wideScreen;
 extern int perGameSettings_expandRomSpace;

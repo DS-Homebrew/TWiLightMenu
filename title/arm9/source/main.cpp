@@ -32,6 +32,7 @@
 #include "autoboot.h"
 
 #include "dmaExcludeMap.h"
+#include "asyncReadExcludeMap.h"
 #include "saveMap.h"
 #include "ROMList.h"
 
@@ -379,6 +380,7 @@ void lastRunROM()
 			bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 			bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 			bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? ms().cardReadDMA : perGameSettings_cardReadDMA);
+			bool asyncCardRead = (perGameSettings_asyncCardRead == -1 ? ms().asyncCardRead : perGameSettings_asyncCardRead);
 
 			u8 unitCode = 0;
 			bool dsiBinariesFound = true;
@@ -493,6 +495,16 @@ void lastRunROM()
 							}
 						}
 					}
+					if (perGameSettings_cardReadDMA == -1) {
+						// TODO: If the list gets large enough, switch to bsearch().
+						for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
+							if (memcmp(game_TID, asyncReadExcludeList[i], 3) == 0) {
+								// Found match
+								asyncCardRead = false;
+								break;
+							}
+						}
+					}
 				}
 
 				if (sdFound() && !ms().previousUsedDevice) {
@@ -520,6 +532,7 @@ void lastRunROM()
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM",
 					(perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", asyncCardRead);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", perGameSettings_expandRomSpace == -1 ? ms().extendedMemory : perGameSettings_expandRomSpace);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 					(ms().forceSleepPatch

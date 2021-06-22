@@ -207,6 +207,7 @@ class TWLSettings
     bool boostVram;
     int bstrap_dsiMode;
 	bool cardReadDMA;
+	bool asyncCardRead;
     int extendedMemory;
 
     bool forceSleepPatch;
