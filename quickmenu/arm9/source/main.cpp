@@ -2468,7 +2468,11 @@ int main(int argc, char **argv) {
 						ClearBrightness();
 						printSmall(false, 4, 4, text);
 						if (err == 1) {
-							printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND.c_str() : STR_BOOTSTRAP_RELEASE_NOT_FOUND.c_str());
+							if(ms().homebrewBootstrap == true) {
+								printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND.c_str() : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND.c_str());
+							} else {
+								printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND.c_str() : STR_BOOTSTRAP_RELEASE_NOT_FOUND.c_str());
+							}
 						}
 						stop();
 					} else {
@@ -2911,7 +2915,7 @@ int main(int argc, char **argv) {
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				if (err == 1 && useNDSB) {
-					printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND.c_str() : STR_BOOTSTRAP_RELEASE_NOT_FOUND.c_str());
+					printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND.c_str() : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND.c_str());
 				}
 				stop();
 
