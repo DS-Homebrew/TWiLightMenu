@@ -1527,7 +1527,7 @@ int main(int argc, char **argv) {
 								int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true, -1);
 								iprintf ("Start failed. Error %i\n", err);
 								if (err == 1) {
-									iprintf(bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+									iprintf(bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)");
 									iprintf("\nnot found.");
 								}
 							}
@@ -2138,8 +2138,13 @@ int main(int argc, char **argv) {
 						printLargeCentered(false, 74, "Error!");
 						printSmallCentered(false, 90, text);
 						if (err == 1) {
-							printSmallCentered(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
-							printSmallCentered(false, 4, 114, "not found.");
+							if (homebrewBootstrap == true) {
+								printSmallCentered(false, 4, 102, useNightly ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)");
+								printSmallCentered(false, 4, 114, "not found.");
+							} else {
+								printSmallCentered(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+								printSmallCentered(false, 4, 114, "not found.");
+							}
 						}
 						printSmallCentered(false, (err==1 ? 132 : 108), "\u2428 Back");
 						int pressed = 0;
@@ -2625,7 +2630,7 @@ int main(int argc, char **argv) {
 				printLargeCentered(false, 74, "Error!");
 				printSmallCentered(false, 90, text);
 				if (err == 1 && useNDSB) {
-					printSmallCentered(false, 4, 102, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+					printSmallCentered(false, 4, 102, bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)");
 					printSmallCentered(false, 4, 114, "not found.");
 				}
 				printSmallCentered(false, (err==1 ? 132 : 108), "\u2428 Back");
