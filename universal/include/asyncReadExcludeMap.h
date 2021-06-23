@@ -2,12 +2,14 @@
 #define ASYNCHREADEXCLUDEMAP_H
 
 static const char asyncReadExcludeList[][4] = {
+	"CBB", // Big Bang Mini
 	"YEE", // Inazuma Eleven
 	"BEE", // Inazuma Eleven 2: Firestorm
 	"BEB", // Inazuma Eleven 2: Blizzard
 	"BEZ", // Inazuma Eleven 3: Bomb Blast
 	"BE8", // Inazuma Eleven 3: Lightning Bolt
 	"BOE", // Inazuma Eleven 3: Team Ogre Attacks!
+	"AWV", // Nervous Brickdown
 	"B2K", // Ni no Kuni: The Jet Black Mage
 	"B3R", // Pokemon Ranger: Guardian Signs
 	"A5F", // Professor Layton and the Curious Village
