@@ -73,6 +73,8 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## Music
 - IkaMusumeYiyaRoxie: General N64 MIDI Soundfont, used for the title splash fanfare
 - BlastoiseVeteran: Remastered version of Nintendo DSi Shop music.
+## Sound
+- Firexploit: 3DS UI sounds for the 3DS theme, which some are also used in the DSi theme.
 ## Others
 - [Arisotura](https://github.com/Arisotura): ROM list from melonDS.
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.

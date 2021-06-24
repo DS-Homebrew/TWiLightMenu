@@ -182,6 +182,7 @@ SoundControl::SoundControl()
 				if (stream_source) break; // fallthrough if stream_source fails.
 			case 1:
 			default:
+				stream.sampling_rate = 22050;	 		// 22050Hz
 				stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 				break;
 		}
