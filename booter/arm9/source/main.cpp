@@ -80,8 +80,13 @@ int main(int argc, char **argv) {
 		fadeType = true;
 
 		clearText();
-		printSmall(false, 4, 4, "fatinitDefault failed!");
-		stop();
+		printSmall(false, 4, 4, "FAT init failed!");
+		printSmall(false, 4, 28, "Press B to return to menu.");
+
+		while (1) {
+			scanKeys();
+			if (keysHeld() & KEY_B) fifoSendValue32(FIFO_USER_01, 1);	// Tell ARM7 to reboot into 3DS HOME Menu (power-off/sleep mode screen skipped)
+		}
 	}
 
 	// Test code to extract device list
@@ -95,13 +100,22 @@ int main(int argc, char **argv) {
 	const char* srldrPath = (runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" : "sd:/_nds/TWiLightMenu/main.srldr");
 
 	int err = runNdsFile (srldrPath, 0, NULL);
+	bool twlmFound = (access("sd:/_nds/TWiLightMenu", F_OK) == 0);
+	bool formatting = (access("sd:/_nds/_nds", F_OK) != 0);
 
 	graphicsInit();
 	fontInit();
 	fadeType = true;
 
+	int returnTextPos = 28;
 	clearText();
-	if (err == 1) {
+	if (!twlmFound && !formatting) {
+		printSmall(false, 4, 4, "The SD Card is formatted in a");
+		printSmall(false, 4, 12, "way that TWiLight Menu++ cannot");
+		printSmall(false, 4, 20, "start. Please reformat your");
+		printSmall(false, 4, 28, "SD Card, or try another SD Card.");
+		returnTextPos += 12*2;
+	} else if (err == 1) {
 		printSmall(false, 4, 4, "sd:/_nds/TWiLightMenu/");
 		printSmall(false, 4, 12, runGame ? "resetgame.srldr not found." : "main.srldr not found.");
 	} else {
@@ -110,8 +124,8 @@ int main(int argc, char **argv) {
 		printSmall(false, 4, 4, runGame ? "Unable to start resetgame.srldr" : "Unable to start main.srldr");
 		printSmall(false, 4, 12, errorText);
 	}
-	printSmall(false, 4, 28, "Press B to return to menu.");
-	
+	printSmall(false, 4, returnTextPos, "Press B to return to menu.");
+
 	while (1) {
 		scanKeys();
 		if (keysHeld() & KEY_B) fifoSendValue32(FIFO_USER_01, 1);	// Tell ARM7 to reboot into 3DS HOME Menu (power-off/sleep mode screen skipped)
