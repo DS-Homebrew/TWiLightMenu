@@ -561,6 +561,31 @@ TWL_CODE int lastRunROM() {
 					return runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);
 				}
 			} else {
+				const char *typeToReplace = ".nds";
+				if (extention(filename, ".dsi")) {
+					typeToReplace = ".dsi";
+				} else if (extention(filename, ".ids")) {
+					typeToReplace = ".ids";
+				} else if (extention(filename, ".srl")) {
+					typeToReplace = ".srl";
+				} else if (extention(filename, ".app")) {
+					typeToReplace = ".app";
+				}
+
+				// Move .pub and/or .prv out of "saves" folder
+				std::string pubnameUl = ReplaceAll(filename, typeToReplace, ".pub");
+				std::string prvnameUl = ReplaceAll(filename, typeToReplace, ".prv");
+				std::string pubpathUl = romfolder + "/" + pubnameUl;
+				std::string prvpathUl = romfolder + "/" + prvnameUl;
+				if (access(dsiWarePubPath.c_str(), F_OK) == 0)
+				{
+					rename(dsiWarePubPath.c_str(), pubpathUl.c_str());
+				}
+				if (access(dsiWarePrvPath.c_str(), F_OK) == 0)
+				{
+					rename(dsiWarePrvPath.c_str(), prvpathUl.c_str());
+				}
+
 				unlaunchBootDSiWare();
 			}
 			break;

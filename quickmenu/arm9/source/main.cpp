@@ -1148,8 +1148,8 @@ int main(int argc, char **argv) {
 	}
 
 	if (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == 3
-	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub") && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
-	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv") && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0))) {
+	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
+	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0))) {
 		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white
@@ -1999,9 +1999,15 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 
-				ms().dsiWareSrlPath = argarray[0];
-				ms().dsiWarePubPath = replaceAll(argarray[0], typeToReplace, ".pub");
-				ms().dsiWarePrvPath = replaceAll(argarray[0], typeToReplace, ".prv");
+				std::string romFolderNoSlash = romfolder[ms().secondaryDevice];
+				RemoveTrailingSlashes(romFolderNoSlash);
+				mkdir ("saves", 0777);
+
+				ms().dsiWareSrlPath = std::string(argarray[0]);
+				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename[ms().secondaryDevice];
+				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
+				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename[ms().secondaryDevice];
+				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
 				ms().homebrewBootstrap = isHomebrew[ms().secondaryDevice];
 				ms().launchType[ms().secondaryDevice] = 3;
 				ms().saveSettings();
@@ -2229,6 +2235,20 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND.c_str() : STR_BOOTSTRAP_RELEASE_NOT_FOUND.c_str());
 					}
 					stop();
+				}
+
+				// Move .pub and/or .prv out of "saves" folder
+				std::string pubnameUl = replaceAll(filename[ms().secondaryDevice], typeToReplace, ".pub");
+				std::string prvnameUl = replaceAll(filename[ms().secondaryDevice], typeToReplace, ".prv");
+				std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
+				std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
+				if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0)
+				{
+					rename(ms().dsiWarePubPath.c_str(), pubpathUl.c_str());
+				}
+				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0)
+				{
+					rename(ms().dsiWarePrvPath.c_str(), prvpathUl.c_str());
 				}
 
 				unlaunchRomBoot(ms().secondaryDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath.c_str());

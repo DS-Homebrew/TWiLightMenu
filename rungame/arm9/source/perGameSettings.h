@@ -16,6 +16,8 @@ extern int perGameSettings_wideScreen;
 
 void loadPerGameSettings(std::string filename);
 std::string getSavExtension(void);
+std::string getPubExtension(void);
+std::string getPrvExtension(void);
 
 
 

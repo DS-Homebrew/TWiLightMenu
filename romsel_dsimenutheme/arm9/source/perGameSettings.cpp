@@ -317,6 +317,8 @@ void perGameSettings (std::string filename) {
 	u32 arm7off = 0;
 	u32 arm7size = 0;
 	u32 romSize = 0;
+	u32 pubSize = 0;
+	u32 prvSize = 0;
 	fseek(f_nds_file, 0x28, SEEK_SET);
 	fread(&arm9dst, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x2C, SEEK_SET);
@@ -327,6 +329,9 @@ void perGameSettings (std::string filename) {
 	fread(&arm7size, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x80, SEEK_SET);
 	fread(&romSize, sizeof(u32), 1, f_nds_file);
+	fseek(f_nds_file, 0x238, SEEK_SET);
+	fread(&pubSize, sizeof(u32), 1, f_nds_file);
+	fread(&prvSize, sizeof(u32), 1, f_nds_file);
 	fclose(f_nds_file);
 
 	if (romSize > 0) {
@@ -351,7 +356,7 @@ void perGameSettings (std::string filename) {
 		(!isDSiWare[CURPOS]
 		&& memcmp(gameTid[CURPOS], "HND", 3) != 0
 		&& memcmp(gameTid[CURPOS], "HNE", 3) != 0);
-	if ((isDSiMode() || ms().secondaryDevice) && (ms().dsiWareBooter || ms().consoleModel > 0) && !isHomebrew[CURPOS] && isDSiWare[CURPOS]) {
+	if ((isDSiMode() || ms().secondaryDevice) && !isHomebrew[CURPOS] && isDSiWare[CURPOS]) {
 		showPerGameSettings = true;
 	}
 	/*if (!ms().useBootstrap && !isHomebrew[CURPOS] && !dsiFeatures()) {
@@ -407,13 +412,21 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
 	} else if (showPerGameSettings && isDSiWare[CURPOS]) {	// Per-game settings for DSiWare
-		perGameOps++;
-		perGameOp[perGameOps] = 0;	// Language
-		perGameOps++;
-		perGameOp[perGameOps] = 11;	// Region
-		perGameOps++;
-		perGameOp[perGameOps] = 7;	// Bootstrap
-		showCheats = true;
+		if (ms().dsiWareBooter || ms().consoleModel > 0) {
+			perGameOps++;
+			perGameOp[perGameOps] = 0;	// Language
+			perGameOps++;
+			perGameOp[perGameOps] = 11;	// Region
+		}
+		if (pubSize > 0 || prvSize > 0) {
+			perGameOps++;
+			perGameOp[perGameOps] = 1;	// Save number
+		}
+		if (ms().dsiWareBooter || ms().consoleModel > 0) {
+			perGameOps++;
+			perGameOp[perGameOps] = 7;	// Bootstrap
+			showCheats = true;
+		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			perGameOps++;
@@ -976,6 +989,22 @@ std::string getSavExtension(void) {
 		return ".sav";
 	} else {
 		return ".sav" + std::to_string(perGameSettings_saveNo);
+	}
+}
+
+std::string getPubExtension(void) {
+	if (perGameSettings_saveNo == 0) {
+		return ".pub";
+	} else {
+		return ".pu" + std::to_string(perGameSettings_saveNo);
+	}
+}
+
+std::string getPrvExtension(void) {
+	if (perGameSettings_saveNo == 0) {
+		return ".prv";
+	} else {
+		return ".pr" + std::to_string(perGameSettings_saveNo);
 	}
 }
 

@@ -1338,8 +1338,8 @@ int main(int argc, char **argv) {
 	
 	bool copyDSiWareSavBack =
 	   (previousUsedDevice && bothSDandFlashcard() && launchType[previousUsedDevice] == 3
-	&& ((access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub") && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
-	 || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv") && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0)));
+	&& ((access(dsiWarePubPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
+	 || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0)));
 	
 	if (copyDSiWareSavBack) {
 		blackScreen = true;
@@ -1688,9 +1688,15 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 
-				dsiWareSrlPath = argarray[0];
-				dsiWarePubPath = replaceAll(argarray[0], typeToReplace, ".pub");
-				dsiWarePrvPath = replaceAll(argarray[0], typeToReplace, ".prv");
+				std::string romFolderNoSlash = romfolder[secondaryDevice];
+				RemoveTrailingSlashes(romFolderNoSlash);
+				mkdir ("saves", 0777);
+
+				dsiWareSrlPath = std::string(argarray[0]);
+				dsiWarePubPath = romFolderNoSlash + "/saves/" + filename[secondaryDevice];
+				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, getPubExtension());
+				dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename[secondaryDevice];
+				dsiWarePrvPath = replaceAll(dsiWarePrvPath, typeToReplace, getPrvExtension());
 				if (!isArgv) {
 					romPath[secondaryDevice] = argarray[0];
 				}
@@ -1919,6 +1925,20 @@ int main(int argc, char **argv) {
 					}
 					runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true, -1);
 					stop();
+				}
+
+				// Move .pub and/or .prv out of "saves" folder
+				std::string pubnameUl = replaceAll(filename, typeToReplace, ".pub");
+				std::string prvnameUl = replaceAll(filename, typeToReplace, ".prv");
+				std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
+				std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
+				if (access(dsiWarePubPath.c_str(), F_OK) == 0)
+				{
+					rename(dsiWarePubPath.c_str(), pubpathUl.c_str());
+				}
+				if (access(dsiWarePrvPath.c_str(), F_OK) == 0)
+				{
+					rename(dsiWarePrvPath.c_str(), prvpathUl.c_str());
 				}
 
 				unlaunchRomBoot(secondaryDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : dsiWareSrlPath.c_str());

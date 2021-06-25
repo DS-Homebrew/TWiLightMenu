@@ -74,73 +74,33 @@ void loadPerGameSettings (std::string filename) {
 }
 
 std::string getSavExtension(void) {
-	switch (perGameSettings_saveNo) {
-		case 0:
-		default:
-			return ".sav";
-			break;
-		case 1:
-			return ".sav1";
-			break;
-		case 2:
-			return ".sav2";
-			break;
-		case 3:
-			return ".sav3";
-			break;
-		case 4:
-			return ".sav4";
-			break;
-		case 5:
-			return ".sav5";
-			break;
-		case 6:
-			return ".sav6";
-			break;
-		case 7:
-			return ".sav7";
-			break;
-		case 8:
-			return ".sav8";
-			break;
-		case 9:
-			return ".sav9";
-			break;
+	if (perGameSettings_saveNo == 0) {
+		return ".sav";
+	} else {
+		return ".sav" + std::to_string(perGameSettings_saveNo);
+	}
+}
+
+std::string getPubExtension(void) {
+	if (perGameSettings_saveNo == 0) {
+		return ".pub";
+	} else {
+		return ".pu" + std::to_string(perGameSettings_saveNo);
+	}
+}
+
+std::string getPrvExtension(void) {
+	if (perGameSettings_saveNo == 0) {
+		return ".prv";
+	} else {
+		return ".pr" + std::to_string(perGameSettings_saveNo);
 	}
 }
 
 std::string getImgExtension(void) {
-	switch (perGameSettings_ramDiskNo) {
-		case 0:
-		default:
-			return ".img";
-			break;
-		case 1:
-			return ".img1";
-			break;
-		case 2:
-			return ".img2";
-			break;
-		case 3:
-			return ".img3";
-			break;
-		case 4:
-			return ".img4";
-			break;
-		case 5:
-			return ".img5";
-			break;
-		case 6:
-			return ".img6";
-			break;
-		case 7:
-			return ".img7";
-			break;
-		case 8:
-			return ".img8";
-			break;
-		case 9:
-			return ".img9";
-			break;
+	if (perGameSettings_ramDiskNo == 0) {
+		return ".img";
+	} else {
+		return ".img" + std::to_string(perGameSettings_ramDiskNo);
 	}
 }

@@ -298,6 +298,8 @@ void perGameSettings (std::string filename) {
 	u32 arm7off = 0;
 	u32 arm7size = 0;
 	u32 romSize = 0;
+	u32 pubSize = 0;
+	u32 prvSize = 0;
 	fseek(f_nds_file, 0x12, SEEK_SET);
 	fread(&unitCode, sizeof(u8), 1, f_nds_file);
 	fseek(f_nds_file, 0x28, SEEK_SET);
@@ -310,6 +312,9 @@ void perGameSettings (std::string filename) {
 	fread(&arm7size, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x80, SEEK_SET);
 	fread(&romSize, sizeof(u32), 1, f_nds_file);
+	fseek(f_nds_file, 0x238, SEEK_SET);
+	fread(&pubSize, sizeof(u32), 1, f_nds_file);
+	fread(&prvSize, sizeof(u32), 1, f_nds_file);
 	fclose(f_nds_file);
 
 	if (romSize > 0) {
@@ -334,7 +339,7 @@ void perGameSettings (std::string filename) {
 		(!isDSiWare
 		&& memcmp(game_TID, "HND", 3) != 0
 		&& memcmp(game_TID, "HNE", 3) != 0);
-	if ((isDSiMode() || secondaryDevice) && (dsiWareBooter || consoleModel > 0) && !isHomebrew && isDSiWare) {
+	if ((isDSiMode() || secondaryDevice) && !isHomebrew && isDSiWare) {
 		showPerGameSettings = true;
 	}
 	/*if (!useBootstrap && !isHomebrew && REG_SCFG_EXT == 0) {
@@ -390,13 +395,21 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
 	} else if (showPerGameSettings && isDSiWare) {	// Per-game settings for DSiWare
-		perGameOps++;
-		perGameOp[perGameOps] = 0;	// Language
-		perGameOps++;
-		perGameOp[perGameOps] = 11;	// Region
-		perGameOps++;
-		perGameOp[perGameOps] = 7;	// Bootstrap
-		showCheats = true;
+		if (dsiWareBooter || consoleModel > 0) {
+			perGameOps++;
+			perGameOp[perGameOps] = 0;	// Language
+			perGameOps++;
+			perGameOp[perGameOps] = 11;	// Region
+		}
+		if (pubSize > 0 || prvSize > 0) {
+			perGameOps++;
+			perGameOp[perGameOps] = 1;	// Save number
+		}
+		if (dsiWareBooter || consoleModel > 0) {
+			perGameOps++;
+			perGameOp[perGameOps] = 7;	// Bootstrap
+			showCheats = true;
+		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
 		if (useBootstrap || !secondaryDevice) {
 			perGameOps++;
@@ -910,73 +923,33 @@ void perGameSettings (std::string filename) {
 }
 
 std::string getSavExtension(void) {
-	switch (perGameSettings_saveNo) {
-		case 0:
-		default:
-			return ".sav";
-			break;
-		case 1:
-			return ".sav1";
-			break;
-		case 2:
-			return ".sav2";
-			break;
-		case 3:
-			return ".sav3";
-			break;
-		case 4:
-			return ".sav4";
-			break;
-		case 5:
-			return ".sav5";
-			break;
-		case 6:
-			return ".sav6";
-			break;
-		case 7:
-			return ".sav7";
-			break;
-		case 8:
-			return ".sav8";
-			break;
-		case 9:
-			return ".sav9";
-			break;
+	if (perGameSettings_saveNo == 0) {
+		return ".sav";
+	} else {
+		return ".sav" + std::to_string(perGameSettings_saveNo);
+	}
+}
+
+std::string getPubExtension(void) {
+	if (perGameSettings_saveNo == 0) {
+		return ".pub";
+	} else {
+		return ".pu" + std::to_string(perGameSettings_saveNo);
+	}
+}
+
+std::string getPrvExtension(void) {
+	if (perGameSettings_saveNo == 0) {
+		return ".prv";
+	} else {
+		return ".pr" + std::to_string(perGameSettings_saveNo);
 	}
 }
 
 std::string getImgExtension(int number) {
-	switch (number) {
-		case 0:
-		default:
-			return ".img";
-			break;
-		case 1:
-			return ".img1";
-			break;
-		case 2:
-			return ".img2";
-			break;
-		case 3:
-			return ".img3";
-			break;
-		case 4:
-			return ".img4";
-			break;
-		case 5:
-			return ".img5";
-			break;
-		case 6:
-			return ".img6";
-			break;
-		case 7:
-			return ".img7";
-			break;
-		case 8:
-			return ".img8";
-			break;
-		case 9:
-			return ".img9";
-			break;
+	if (number == 0) {
+		return ".img";
+	} else {
+		return ".img" + std::to_string(number);
 	}
 }

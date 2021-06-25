@@ -732,9 +732,15 @@ void lastRunROM()
 					typeToReplace = ".app";
 				}
 
+				std::string romFolderNoSlash = romfolder;
+				RemoveTrailingSlashes(romFolderNoSlash);
+				mkdir ("saves", 0777);
+
 				ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
-				ms().dsiWarePubPath = replaceAll(ms().romPath[ms().previousUsedDevice], typeToReplace, ".pub");
-				ms().dsiWarePrvPath = replaceAll(ms().romPath[ms().previousUsedDevice], typeToReplace, ".prv");
+				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
+				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
+				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
+				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
 				ms().saveSettings();
 
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");
@@ -886,7 +892,7 @@ void lastRunROM()
 				);
 				bootstrapini.SaveIniFile((memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI_SD);
 
-				if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD))) {
+				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD))) {
 					*(u32*)(0x02000000) |= BIT(3);
 					*(u32*)(0x02000004) = 0;
 					*(bool*)(0x02000010) = useNightly;
@@ -896,6 +902,49 @@ void lastRunROM()
 				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);
 			}
 		} else {
+			// Move .pub and/or .prv out of "saves" folder
+			std::string filename = ms().romPath[ms().previousUsedDevice];
+			const size_t last_slash_idx = filename.find_last_of("/");
+			if (std::string::npos != last_slash_idx) {
+				filename.erase(0, last_slash_idx + 1);
+			}
+
+			loadPerGameSettings(filename);
+
+			const char *typeToReplace = ".nds";
+			if (extention(filename, ".dsi")) {
+				typeToReplace = ".dsi";
+			} else if (extention(filename, ".ids")) {
+				typeToReplace = ".ids";
+			} else if (extention(filename, ".srl")) {
+				typeToReplace = ".srl";
+			} else if (extention(filename, ".app")) {
+				typeToReplace = ".app";
+			}
+
+			std::string pubname = replaceAll(filename, typeToReplace, getPubExtension());
+			std::string prvname = replaceAll(filename, typeToReplace, getPrvExtension());
+			std::string pubnameUl = replaceAll(filename, typeToReplace, ".pub");
+			std::string prvnameUl = replaceAll(filename, typeToReplace, ".prv");
+			std::string romfolder = ms().romPath[ms().previousUsedDevice];
+			while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+				romfolder.resize(romfolder.size()-1);
+			}
+			std::string romFolderNoSlash = romfolder;
+			RemoveTrailingSlashes(romFolderNoSlash);
+			std::string pubpath = romFolderNoSlash + "/saves/" + pubname;
+			std::string prvpath = romFolderNoSlash + "/saves/" + prvname;
+			std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
+			std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
+			if (access(pubpath.c_str(), F_OK) == 0)
+			{
+				rename(pubpath.c_str(), pubpathUl.c_str());
+			}
+			if (access(prvpath.c_str(), F_OK) == 0)
+			{
+				rename(prvpath.c_str(), prvpathUl.c_str());
+			}
+
 			unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 		}
 	}
@@ -1636,6 +1685,51 @@ int main(int argc, char **argv)
 	}
 
 	bool fcFound = flashcardFound();
+
+	if (ms().launchType[true] == Launch::EDSiWareLaunch) {
+		// Move .pub and/or .prv back to "saves" folder
+		std::string filename = ms().romPath[ms().previousUsedDevice];
+		const size_t last_slash_idx = filename.find_last_of("/");
+		if (std::string::npos != last_slash_idx) {
+			filename.erase(0, last_slash_idx + 1);
+		}
+
+		loadPerGameSettings(filename);
+
+		const char *typeToReplace = ".nds";
+		if (extention(filename, ".dsi")) {
+			typeToReplace = ".dsi";
+		} else if (extention(filename, ".ids")) {
+			typeToReplace = ".ids";
+		} else if (extention(filename, ".srl")) {
+			typeToReplace = ".srl";
+		} else if (extention(filename, ".app")) {
+			typeToReplace = ".app";
+		}
+
+		std::string pubname = replaceAll(filename, typeToReplace, getPubExtension());
+		std::string prvname = replaceAll(filename, typeToReplace, getPrvExtension());
+		std::string pubnameUl = replaceAll(filename, typeToReplace, ".pub");
+		std::string prvnameUl = replaceAll(filename, typeToReplace, ".prv");
+		std::string romfolder = ms().romPath[ms().previousUsedDevice];
+		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+			romfolder.resize(romfolder.size()-1);
+		}
+		std::string romFolderNoSlash = romfolder;
+		RemoveTrailingSlashes(romFolderNoSlash);
+		std::string pubpath = romFolderNoSlash + "/saves/" + pubname;
+		std::string prvpath = romFolderNoSlash + "/saves/" + prvname;
+		std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
+		std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
+		if (access(pubpathUl.c_str(), F_OK) == 0)
+		{
+			rename(pubpathUl.c_str(), pubpath.c_str());
+		}
+		if (access(prvpathUl.c_str(), F_OK) == 0)
+		{
+			rename(prvpathUl.c_str(), prvpath.c_str());
+		}
+	}
 
 	if (fcFound) {
 	  if (ms().launchType[true] == Launch::ESDFlashcardLaunch) {
