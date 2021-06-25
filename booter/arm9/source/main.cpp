@@ -115,6 +115,12 @@ int main(int argc, char **argv) {
 		printSmall(false, 4, 20, "start. Please reformat your");
 		printSmall(false, 4, 28, "SD Card, or try another SD Card.");
 		returnTextPos += 12*2;
+	} else if (!twlmFound) {
+		printSmall(false, 4, 4, "The TWiLight Menu++ files are");
+		printSmall(false, 4, 12, "missing. In order to start");
+		printSmall(false, 4, 20, "TWiLight Menu++, please add the");
+		printSmall(false, 4, 28, "missing files.");
+		returnTextPos += 12*2;
 	} else if (err == 1) {
 		printSmall(false, 4, 4, "sd:/_nds/TWiLightMenu/");
 		printSmall(false, 4, 12, runGame ? "resetgame.srldr not found." : "main.srldr not found.");
