@@ -339,7 +339,7 @@ void perGameSettings (std::string filename) {
 		(!isDSiWare
 		&& memcmp(game_TID, "HND", 3) != 0
 		&& memcmp(game_TID, "HNE", 3) != 0);
-	if ((isDSiMode() || secondaryDevice) && !isHomebrew && isDSiWare) {
+	if ((dsiFeatures() || !secondaryDevice) && !isHomebrew && isDSiWare) {
 		showPerGameSettings = true;
 	}
 	/*if (!useBootstrap && !isHomebrew && REG_SCFG_EXT == 0) {
@@ -411,7 +411,7 @@ void perGameSettings (std::string filename) {
 			showCheats = true;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		if (useBootstrap || !secondaryDevice) {
+		if (useBootstrap || (dsiFeatures() && unitCode > 0) || !secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 		}
@@ -421,21 +421,19 @@ void perGameSettings (std::string filename) {
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
-		if (((dsiFeatures() && useBootstrap) || !secondaryDevice)
+		if (((dsiFeatures() && (useBootstrap || unitCode > 0)) || !secondaryDevice)
 		&& (unitCode == 0 || unitCode == (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? 2 : 3) || (unitCode > 0 && !arm7SCFGLocked))) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;
 		}
-		if (dsiFeatures() || !secondaryDevice) {
-			if (unitCode < 3) {
-				perGameOps++;
-				perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
-				perGameOps++;
-				perGameOp[perGameOps] = 4;	// VRAM Boost
-			}
+		if ((dsiFeatures() || !secondaryDevice) && unitCode < 3) {
+			perGameOps++;
+			perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
+			perGameOps++;
+			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
-		if (useBootstrap || !secondaryDevice) {
+		if (useBootstrap || (dsiFeatures() && unitCode > 0) || !secondaryDevice) {
 			if (!secondaryDevice) {
 				if (unitCode < 3) {
 					perGameOps++;

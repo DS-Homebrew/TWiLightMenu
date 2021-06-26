@@ -356,7 +356,7 @@ void perGameSettings (std::string filename) {
 		(!isDSiWare[CURPOS]
 		&& memcmp(gameTid[CURPOS], "HND", 3) != 0
 		&& memcmp(gameTid[CURPOS], "HNE", 3) != 0);
-	if ((isDSiMode() || ms().secondaryDevice) && !isHomebrew[CURPOS] && isDSiWare[CURPOS]) {
+	if ((dsiFeatures() || !ms().secondaryDevice) && !isHomebrew[CURPOS] && isDSiWare[CURPOS]) {
 		showPerGameSettings = true;
 	}
 	/*if (!ms().useBootstrap && !isHomebrew[CURPOS] && !dsiFeatures()) {
@@ -428,17 +428,17 @@ void perGameSettings (std::string filename) {
 			showCheats = true;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		if (ms().useBootstrap || !ms().secondaryDevice) {
+		if (ms().useBootstrap || (dsiFeatures() && unitCode[CURPOS] > 0) || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 		}
-		if (((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice) && unitCode[CURPOS] == 3) {
+		if ((dsiFeatures() || !ms().secondaryDevice) && unitCode[CURPOS] == 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
-		if (((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice)
+		if (((dsiFeatures() && (ms().useBootstrap || unitCode[CURPOS] > 0)) || !ms().secondaryDevice)
 		&& (unitCode[CURPOS] == 0 || unitCode[CURPOS] == (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? 2 : 3) || (unitCode[CURPOS] > 0 && !sys().arm7SCFGLocked()))) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
@@ -450,7 +450,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
-		if (ms().useBootstrap || !ms().secondaryDevice) {
+		if (ms().useBootstrap || (dsiFeatures() && unitCode[CURPOS] > 0) || !ms().secondaryDevice) {
 			if (!ms().secondaryDevice) {
 				if (unitCode[CURPOS] < 3) {
 					perGameOps++;
