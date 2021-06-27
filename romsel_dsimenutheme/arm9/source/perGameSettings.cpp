@@ -606,7 +606,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 3:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_ARM9_CPU_SPEED + ":", startAlign);
-				if ((perGameSettings_dsiMode==-1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode > 0) && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode && unitCode[CURPOS] > 0) : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, "133mhz (TWL)", endAlign);
 				} else {
 					if (perGameSettings_boostCpu == -1) {
@@ -620,7 +620,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 4:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_VRAM_BOOST + ":", startAlign);
-				if ((perGameSettings_dsiMode==-1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode > 0) && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode && unitCode[CURPOS] > 0) : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
 				} else {
 					if (perGameSettings_boostVram == -1) {
