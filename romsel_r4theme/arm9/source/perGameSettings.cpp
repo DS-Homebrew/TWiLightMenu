@@ -505,6 +505,7 @@ void perGameSettings (std::string filename) {
 		printSmallRightAlign(false, 232, 90, gameTIDText);
 
 		int perGameOpYpos = 102;
+		bool flashcardKernelOnly = (!useBootstrap && secondaryDevice && !isHomebrew && unitCode == 2 && (perGameSettings_dsiMode==-1 ? !bstrap_dsiMode : perGameSettings_dsiMode==0));
 
 		if (showPerGameSettings) {
 			printSmall(false, 24, 102+(perGameSettings_cursorPosition*12)-(firstPerGameOpShown*12), ">");
@@ -515,10 +516,10 @@ void perGameSettings (std::string filename) {
 		switch (perGameOp[i]) {
 			case 0:
 				printSmall(false, 32, perGameOpYpos, "Language:");
-				if (perGameSettings_language == -2) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
-				} else if (perGameSettings_language == -1) {
+				if (perGameSettings_language == -1 || flashcardKernelOnly) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "System");
+				} else if (perGameSettings_language == -2) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_language == 0) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Japanese");
 				} else if (perGameSettings_language == 1) {
@@ -611,7 +612,9 @@ void perGameSettings (std::string filename) {
 				break;
 			case 7:
 				printSmall(false, 32, perGameOpYpos, "Bootstrap:");
-				if (perGameSettings_bootstrapFile == -1) {
+				if (flashcardKernelOnly) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Not Used");
+				} else if (perGameSettings_bootstrapFile == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_bootstrapFile == 1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Nightly");
@@ -722,8 +725,10 @@ void perGameSettings (std::string filename) {
 			if (held & KEY_LEFT) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
 					case 0:
-						perGameSettings_language--;
-						if (perGameSettings_language < -2) perGameSettings_language = 7;
+						if (!flashcardKernelOnly) {
+							perGameSettings_language--;
+							if (perGameSettings_language < -2) perGameSettings_language = 7;
+						}
 						break;
 					case 1:
 						if (isHomebrew) {
@@ -762,8 +767,10 @@ void perGameSettings (std::string filename) {
 						perGameSettings_directBoot = !perGameSettings_directBoot;
 						break;
 					case 7:
-						perGameSettings_bootstrapFile--;
-						if (perGameSettings_bootstrapFile < -1) perGameSettings_bootstrapFile = 1;
+						if (!flashcardKernelOnly) {
+							perGameSettings_bootstrapFile--;
+							if (perGameSettings_bootstrapFile < -1) perGameSettings_bootstrapFile = 1;
+						}
 						break;
 					case 8:
 						perGameSettings_wideScreen++;
@@ -799,8 +806,10 @@ void perGameSettings (std::string filename) {
 			} else if ((pressed & KEY_A) || (held & KEY_RIGHT)) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
 					case 0:
-						perGameSettings_language++;
-						if (perGameSettings_language > 7) perGameSettings_language = -2;
+						if (!flashcardKernelOnly) {
+							perGameSettings_language++;
+							if (perGameSettings_language > 7) perGameSettings_language = -2;
+						}
 						break;
 					case 1:
 						if (isHomebrew) {
@@ -839,8 +848,10 @@ void perGameSettings (std::string filename) {
 						perGameSettings_directBoot = !perGameSettings_directBoot;
 						break;
 					case 7:
-						perGameSettings_bootstrapFile++;
-						if (perGameSettings_bootstrapFile > 1) perGameSettings_bootstrapFile = -1;
+						if (!flashcardKernelOnly) {
+							perGameSettings_bootstrapFile++;
+							if (perGameSettings_bootstrapFile > 1) perGameSettings_bootstrapFile = -1;
+						}
 						break;
 					case 8:
 						perGameSettings_wideScreen++;

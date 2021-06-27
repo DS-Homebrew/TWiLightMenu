@@ -540,6 +540,7 @@ void perGameSettings (std::string filename) {
 		Alignment endAlign = ms().rtl() ? Alignment::left : Alignment::right;
 		int perGameOpStartXpos = ms().rtl() ? 256 - 24 : 24;
 		int perGameOpEndXpos = ms().rtl() ? 24 : 256 - 24;
+		bool flashcardKernelOnly = (!ms().useBootstrap && ms().secondaryDevice && !isHomebrew[CURPOS] && unitCode[CURPOS] == 2 && (perGameSettings_dsiMode==-1 ? !ms().bstrap_dsiMode : perGameSettings_dsiMode==0));
 
 		printSmall(false, ms().rtl() ? 256 - 16 : 16, row1Y, dirContName, startAlign);
 		//if (showSDKVersion) printSmall(false, 16, row2Y, (useTwlCfg ? "TwlCfg found!" : SDKnumbertext));
@@ -555,10 +556,10 @@ void perGameSettings (std::string filename) {
 		switch (perGameOp[i]) {
 			case 0:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_LANGUAGE + ":", startAlign);
-				if (perGameSettings_language == -2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
-				} else if (perGameSettings_language == -1) {
+				if (perGameSettings_language == -1 || flashcardKernelOnly) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SYSTEM, endAlign);
+				} else if (perGameSettings_language == -2) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_language == 0) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_JAPANESE, endAlign);
 				} else if (perGameSettings_language == 1) {
@@ -651,7 +652,9 @@ void perGameSettings (std::string filename) {
 				break;
 			case 7:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, ms().rtl() ? ":Bootstrap" : "Bootstrap:", startAlign);
-				if (perGameSettings_bootstrapFile == -1) {
+				if (flashcardKernelOnly) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign);
+				} else if (perGameSettings_bootstrapFile == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_bootstrapFile == 1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NIGHTLY, endAlign);
@@ -771,8 +774,10 @@ void perGameSettings (std::string filename) {
 			if (held & KEY_LEFT) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
 					case 0:
-						perGameSettings_language--;
-						if (perGameSettings_language < -2) perGameSettings_language = 7;
+						if (!flashcardKernelOnly) {
+							perGameSettings_language--;
+							if (perGameSettings_language < -2) perGameSettings_language = 7;
+						}
 						break;
 					case 1:
 						if (isHomebrew[CURPOS]) {
@@ -811,8 +816,10 @@ void perGameSettings (std::string filename) {
 						perGameSettings_directBoot = !perGameSettings_directBoot;
 						break;
 					case 7:
-						perGameSettings_bootstrapFile--;
-						if (perGameSettings_bootstrapFile < -1) perGameSettings_bootstrapFile = 1;
+						if (!flashcardKernelOnly) {
+							perGameSettings_bootstrapFile--;
+							if (perGameSettings_bootstrapFile < -1) perGameSettings_bootstrapFile = 1;
+						}
 						break;
 					case 8:
 						perGameSettings_wideScreen--;
@@ -849,8 +856,10 @@ void perGameSettings (std::string filename) {
 			} else if ((pressed & KEY_A) || (held & KEY_RIGHT)) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
 					case 0:
-						perGameSettings_language++;
-						if (perGameSettings_language > 7) perGameSettings_language = -2;
+						if (!flashcardKernelOnly) {
+							perGameSettings_language++;
+							if (perGameSettings_language > 7) perGameSettings_language = -2;
+						}
 						break;
 					case 1:
 						if (isHomebrew[CURPOS]) {
@@ -889,8 +898,10 @@ void perGameSettings (std::string filename) {
 						perGameSettings_directBoot = !perGameSettings_directBoot;
 						break;
 					case 7:
-						perGameSettings_bootstrapFile++;
-						if (perGameSettings_bootstrapFile > 1) perGameSettings_bootstrapFile = -1;
+						if (!flashcardKernelOnly) {
+							perGameSettings_bootstrapFile++;
+							if (perGameSettings_bootstrapFile > 1) perGameSettings_bootstrapFile = -1;
+						}
 						break;
 					case 8:
 						perGameSettings_wideScreen++;
