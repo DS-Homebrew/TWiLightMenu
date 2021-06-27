@@ -796,18 +796,18 @@ void perGameSettings (std::string filename) {
 						break;
 					case 2:
 						perGameSettings_dsiMode--;
-						if (perGameSettings_dsiMode == 1 && unitCode[CURPOS] == 0) perGameSettings_dsiMode--;
-						else if (perGameSettings_dsiMode == 2 && unitCode[CURPOS] > 0) perGameSettings_dsiMode--;
+						if ((perGameSettings_dsiMode == 1 && unitCode[CURPOS] == 0)
+						 || (perGameSettings_dsiMode == 2 && unitCode[CURPOS] > 0)) perGameSettings_dsiMode--;
 						if (perGameSettings_dsiMode < -1) perGameSettings_dsiMode = 2-isHomebrew[CURPOS];
 						break;
 					case 3:
-						if (perGameSettings_dsiMode < 1 || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode == 0 || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostCpu--;
 							if (perGameSettings_boostCpu < -1) perGameSettings_boostCpu = 1;
 						}
 						break;
 					case 4:
-						if (perGameSettings_dsiMode < 1 || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode == 0 || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostVram--;
 							if (perGameSettings_boostVram < -1) perGameSettings_boostVram = 1;
 						}
@@ -878,18 +878,18 @@ void perGameSettings (std::string filename) {
 						break;
 					case 2:
 						perGameSettings_dsiMode++;
-						if (perGameSettings_dsiMode == 1 && unitCode[CURPOS] == 0) perGameSettings_dsiMode++;
-						else if (perGameSettings_dsiMode == 2 && unitCode[CURPOS] > 0) perGameSettings_dsiMode++;
+						if ((perGameSettings_dsiMode == 1 && unitCode[CURPOS] == 0)
+						 || (perGameSettings_dsiMode == 2 && unitCode[CURPOS] > 0)) perGameSettings_dsiMode++;
 						if (perGameSettings_dsiMode > 2-isHomebrew[CURPOS]) perGameSettings_dsiMode = -1;
 						break;
 					case 3:
-						if (perGameSettings_dsiMode < 1 || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode == 0 || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostCpu++;
 							if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
 						}
 						break;
 					case 4:
-						if (perGameSettings_dsiMode < 1 || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode == 0 || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostVram++;
 							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
 						}
