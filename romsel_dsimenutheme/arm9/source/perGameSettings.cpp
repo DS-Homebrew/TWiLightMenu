@@ -606,7 +606,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 3:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_ARM9_CPU_SPEED + ":", startAlign);
-				if (perGameSettings_dsiMode > 0 && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, "133mhz (TWL)", endAlign);
 				} else {
 					if (perGameSettings_boostCpu == -1) {
@@ -620,7 +620,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 4:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_VRAM_BOOST + ":", startAlign);
-				if (perGameSettings_dsiMode > 0 && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
 				} else {
 					if (perGameSettings_boostVram == -1) {
@@ -664,7 +664,9 @@ void perGameSettings (std::string filename) {
 				break;
 			case 8:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SCREEN_ASPECT_RATIO + ":", startAlign);
-				if (perGameSettings_wideScreen == -1) {
+				if (flashcardKernelOnly) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign);
+				} else if (perGameSettings_wideScreen == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_wideScreen == 1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, "16:10", endAlign);
@@ -677,7 +679,9 @@ void perGameSettings (std::string filename) {
 				break;
 			case 10:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_EXPAND_ROM_SPACE + ":", startAlign);
-				if (perGameSettings_expandRomSpace == -1) {
+				if (flashcardKernelOnly) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign);
+				} else if (perGameSettings_expandRomSpace == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_expandRomSpace == 2) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_Y_512KB, endAlign);

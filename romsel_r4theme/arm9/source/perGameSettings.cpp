@@ -566,7 +566,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 3:
 				printSmall(false, 32, perGameOpYpos, "ARM9 CPU Speed:");
-				if (perGameSettings_dsiMode > 0 && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? bstrap_dsiMode : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "133mhz (TWL)");
 				} else {
 					if (perGameSettings_boostCpu == -1) {
@@ -580,7 +580,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 4:
 				printSmall(false, 32, perGameOpYpos, "VRAM Boost:");
-				if (perGameSettings_dsiMode > 0 && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? bstrap_dsiMode : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmallRightAlign(false, 180, perGameOpYpos, "On");
 				} else {
 					if (perGameSettings_boostVram == -1) {
@@ -624,7 +624,9 @@ void perGameSettings (std::string filename) {
 				break;
 			case 8:
 				printSmall(false, 32, perGameOpYpos, "Screen Aspect Ratio:");
-				if (perGameSettings_wideScreen == -1) {
+				if (flashcardKernelOnly) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Not Used");
+				} else if (perGameSettings_wideScreen == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_wideScreen == 1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "16:10");
@@ -637,7 +639,9 @@ void perGameSettings (std::string filename) {
 				break;
 			case 10:
 				printSmall(false, 32, perGameOpYpos, "Ex. ROM space in RAM:");
-				if (perGameSettings_expandRomSpace == -1) {
+				if (flashcardKernelOnly) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Not Used");
+				} else if (perGameSettings_expandRomSpace == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_expandRomSpace == 2) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Yes+512KB");
