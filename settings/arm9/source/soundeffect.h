@@ -24,7 +24,6 @@ class SoundEffect
         mmLoadEffect(SFX_SATURNLAUNCH);
         mmLoadEffect(SFX_SELECT);
         mmLoadEffect(SFX_SATURNSELECT);
-        mmLoadEffect(SFX_STOP);
         mmLoadEffect(SFX_WRONG);
         mmLoadEffect(SFX_BACK);
         mmLoadEffect(SFX_SATURNBACK);
@@ -53,13 +52,6 @@ class SoundEffect
         };
         snd_saturn_select = {
             {SFX_SATURNSELECT},       // id
-            (int)(1.0f * (1 << 10)), // rate
-            0,                       // handle
-            255,                     // volume
-            128,                     // panning
-        };
-        snd_stop = {
-            {SFX_STOP},              // id
             (int)(1.0f * (1 << 10)), // rate
             0,                       // handle
             255,                     // volume
