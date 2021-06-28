@@ -4,6 +4,20 @@
 #include <nds/system.h>
 #include <nds/arm9/cache.h>
 
+static inline void my_sdio_wait(void) {
+	int waitFrames = 0;
+	while(!fifoCheckValue32(FIFO_SDMMC)) {
+		swiIntrWait(1,IRQ_FIFO_NOT_EMPTY);
+		if (REG_VCOUNT == 191) {
+			waitFrames++;
+		}
+		if (waitFrames == 60) {
+			fifoSendValue32(FIFO_USER_08, 1);	// Try to get FIFO unstuck
+			waitFrames = 0;
+		}
+	}
+}
+
 //---------------------------------------------------------------------------------
 bool my_sdio_Startup() {
 //---------------------------------------------------------------------------------
@@ -15,7 +29,7 @@ bool my_sdio_Startup() {
 
 	fifoSendValue32(FIFO_SDMMC,SDMMC_SD_START);
 
-	fifoWaitValue32(FIFO_SDMMC);
+	my_sdio_wait();
 
 	result = fifoGetValue32(FIFO_SDMMC);
 
@@ -27,7 +41,7 @@ bool my_sdio_IsInserted() {
 //---------------------------------------------------------------------------------
 	fifoSendValue32(FIFO_SDMMC,SDMMC_SD_IS_INSERTED);
 
-	fifoWaitValue32(FIFO_SDMMC);
+	my_sdio_wait();
 
 	int result = fifoGetValue32(FIFO_SDMMC);
 
@@ -48,7 +62,7 @@ bool my_sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	
 	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
 
-	fifoWaitValue32(FIFO_SDMMC);
+	my_sdio_wait();
 
 	int result = fifoGetValue32(FIFO_SDMMC);
 	
@@ -69,7 +83,7 @@ bool my_sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 	
 	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
 
-	fifoWaitValue32(FIFO_SDMMC);
+	my_sdio_wait();
 
 	int result = fifoGetValue32(FIFO_SDMMC);
 	
