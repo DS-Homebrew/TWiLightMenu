@@ -84,6 +84,8 @@ private:
       return "lang_id";
     case TWLSettings::ELangGreek:
       return "lang_el";
+    case TWLSettings::ELangBulgarian:
+      return "lang_bg";
     default:
       return "lang_en";
     }

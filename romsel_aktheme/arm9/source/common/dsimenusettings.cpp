@@ -319,5 +319,7 @@ std::string TWLSettings::getGuiLanguageString()
             return "id";
         case TWLSettings::ELangGreek:
             return "el";
+        case TWLSettings::ELangBulgarian:
+            return "bg";
     }
 }
