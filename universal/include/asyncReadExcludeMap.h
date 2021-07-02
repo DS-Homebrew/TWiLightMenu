@@ -14,6 +14,8 @@ static const char asyncReadExcludeList[][4] = {
 	"Y7S", // The Legend of Zelda: Spirit Tracks (Demo)
 	"AWV", // Nervous Brickdown
 	"B2K", // Ni no Kuni: The Jet Black Mage
+	"IRB", // Pokemon Black Version (Keeps AP-fix in effect)
+	"IRA", // Pokemon White Version (Keeps AP-fix in effect)
 	"B3R", // Pokemon Ranger: Guardian Signs (Keeps AP-fix in effect)
 	"A5F", // Professor Layton and the Curious Village
 	"Y49", // Professor Layton and the Curious Village (Demo)
