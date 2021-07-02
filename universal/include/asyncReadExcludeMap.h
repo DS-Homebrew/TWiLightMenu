@@ -3,6 +3,7 @@
 
 static const char asyncReadExcludeList[][4] = {
 	"CBB", // Big Bang Mini
+	"YDQ", // Dragon Quest IX: Sentinels of the Starry Skies
 	"YEE", // Inazuma Eleven
 	"BEE", // Inazuma Eleven 2: Firestorm
 	"BEB", // Inazuma Eleven 2: Blizzard
@@ -13,10 +14,6 @@ static const char asyncReadExcludeList[][4] = {
 	"Y7S", // The Legend of Zelda: Spirit Tracks (Demo)
 	"AWV", // Nervous Brickdown
 	"B2K", // Ni no Kuni: The Jet Black Mage
-	"IRB", // Pokemon Black Version (Keeps AP-fix in effect)
-	"IRA", // Pokemon White Version (Keeps AP-fix in effect)
-	"IRE", // Pokemon Black Version 2 (Keeps AP-fix in effect)
-	"IRD", // Pokemon White Version 2 (Keeps AP-fix in effect)
 	"B3R", // Pokemon Ranger: Guardian Signs (Keeps AP-fix in effect)
 	"A5F", // Professor Layton and the Curious Village
 	"Y49", // Professor Layton and the Curious Village (Demo)

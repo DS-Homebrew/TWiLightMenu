@@ -3,6 +3,7 @@
 
 static const char cardReadDMAExcludeList[][4] = {
 	"AWD", // Diddy Kong Racing
+	"YV5", // Dragon Quest V: Hand of the Heavenly Bride
 	"APR", // Feel the Magic: XY-XX
 	"AFF", // Final Fantasy III
 	"BO5", // Golden Sun: Dark Dawn
