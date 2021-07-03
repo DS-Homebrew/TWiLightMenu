@@ -2,6 +2,7 @@
 #define ASYNCHREADEXCLUDEMAP_H
 
 static const char asyncReadExcludeList[][4] = {
+	"ADM", // Animal Crossing: Wild World
 	"CBB", // Big Bang Mini
 	"YDQ", // Dragon Quest IX: Sentinels of the Starry Skies
 	"YEE", // Inazuma Eleven
@@ -10,6 +11,7 @@ static const char asyncReadExcludeList[][4] = {
 	"BEZ", // Inazuma Eleven 3: Bomb Blast
 	"BE8", // Inazuma Eleven 3: Lightning Bolt
 	"BOE", // Inazuma Eleven 3: Team Ogre Attacks!
+	"YLU", // Last Window: The Secret of Cape West
 	"BKI", // The Legend of Zelda: Spirit Tracks (Keeps AP-fix in effect)
 	"Y7S", // The Legend of Zelda: Spirit Tracks (Demo)
 	"AWV", // Nervous Brickdown
