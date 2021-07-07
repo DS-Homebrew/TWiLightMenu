@@ -1915,6 +1915,8 @@ int main(int argc, char **argv)
 			softResetParams = 0xFFFFFFFF;
 			file = fopen(softResetParamsPath, "wb");
 			fwrite(&softResetParams, sizeof(u32), 1, file);
+			fseek(file, 0x10 - 1, SEEK_SET);
+			fputc('\0', file);
 			fclose(file);
 			softResetParamsFound = false;
 		}
