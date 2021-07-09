@@ -46,7 +46,7 @@
 
 bool useTwlCfg = false;
 
-bool widescreenEffects = false;
+//bool widescreenEffects = false;
 
 const char *settingsinipath = DSIMENUPP_INI;
 
@@ -794,12 +794,12 @@ int main(int argc, char **argv)
 
 	bool widescreenFound = false;
 	if (sdFound()) {
-		widescreenFound = ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) && (ms().consoleModel >= 2) && (!sys().arm7SCFGLocked()));
+		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (ms().consoleModel >= 2) && (!sys().arm7SCFGLocked()));
 	}
 
 	bool sharedFound = (access("sd:/shared2", F_OK) == 0);
 
-	widescreenEffects = (ms().wideScreen && widescreenFound);
+	//widescreenEffects = (ms().wideScreen && widescreenFound);
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
@@ -933,6 +933,15 @@ int main(int argc, char **argv)
 			.option(STR_BIOS_INTRO, STR_DESCRIPTION_BIOSINTRO, Option::Bool(&gs().skipIntro), {STR_OFF, STR_ON}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
+
+	if (widescreenFound)
+	{
+		gamesPage.option((dsiFeatures() ? STR_ASPECTRATIO : STR_SD_ASPECTRATIO),
+			STR_DESCRIPTION_ASPECTRATIO,
+			Option::Bool(&ms().wideScreen),
+			{STR_WIDESCREEN, STR_FULLSCREEN},
+			{true, false});
+	}
 
 	if (sys().isRegularDS()) {
 		gamesPage
@@ -1089,15 +1098,6 @@ int main(int argc, char **argv)
 		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().logging), {STR_ON, STR_OFF}, {true, false});
 
 	SettingsPage miscPage(STR_MISC_SETTINGS);
-
-	if (widescreenFound)
-	{
-		miscPage.option((dsiFeatures() ? STR_ASPECTRATIO : STR_SD_ASPECTRATIO),
-			STR_DESCRIPTION_ASPECTRATIO,
-			Option::Bool(&ms().wideScreen),
-			{STR_WIDESCREEN, STR_FULLSCREEN},
-			{true, false});
-	}
 
 	using TLanguage = TWLSettings::TLanguage;
 	miscPage

@@ -364,6 +364,16 @@ void lastRunROM()
 		} else {
 			if ((ms().consoleModel >= 2 && !ms().wideScreen) || ms().consoleModel < 2 || ms().macroMode) {
 				remove("/_nds/nds-bootstrap/wideCheatData.bin");
+			} else if (access("sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0 && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
+				if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
+					rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
+				}
+				if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+					tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+					DC_FlushAll();
+					fifoSendValue32(FIFO_USER_02, 1);
+					stop();
+				}
 			}
 			err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, -1);
 		}
@@ -390,6 +400,16 @@ void lastRunROM()
 			} else {
 				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || ms().macroMode) {
 					remove("/_nds/nds-bootstrap/wideCheatData.bin");
+				} else if ((access(ms().previousUsedDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0) && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
+					if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
+						rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
+					}
+					if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+						tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+						DC_FlushAll();
+						fifoSendValue32(FIFO_USER_02, 1);
+						stop();
+					}
 				}
 
 				const char *typeToReplace = ".nds";
@@ -689,13 +709,17 @@ void lastRunROM()
 
 		bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
-		bool twlBgCxiFound = false;
-		if (ms().consoleModel >= 2) {
-			twlBgCxiFound = (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
-		}
-
-		if (ms().consoleModel >= 2 && twlBgCxiFound && useWidescreen && ms().homebrewHasWide) {
-			argarray.push_back((char*)"wide");
+		if (ms().consoleModel >= 2 && useWidescreen && ms().homebrewHasWide) {
+			//argarray.push_back((char*)"wide");
+			if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
+				rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
+			}
+			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+				tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+				DC_FlushAll();
+				fifoSendValue32(FIFO_USER_02, 1);
+				stop();
+			}
 		}
 
 		runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
@@ -716,10 +740,6 @@ void lastRunROM()
 
 				bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
-
-				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || ms().macroMode) {
-					remove((ms().previousUsedDevice && !ms().dsiWareToSD) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
-				}
 
 				const char *typeToReplace = ".nds";
 				if (extention(filename, ".dsi")) {
@@ -891,6 +911,20 @@ void lastRunROM()
 				|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 				);
 				bootstrapini.SaveIniFile((memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI_SD);
+
+				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || ms().macroMode) {
+					remove((ms().previousUsedDevice && !ms().dsiWareToSD) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
+				} else if ((access((ms().previousUsedDevice && !ms().dsiWareToSD) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0) && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
+					if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
+						rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
+					}
+					if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+						tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+						DC_FlushAll();
+						fifoSendValue32(FIFO_USER_02, 1);
+						stop();
+					}
+				}
 
 				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD))) {
 					*(u32*)(0x02000000) |= BIT(3);

@@ -28,7 +28,7 @@
 
 extern bool useTwlCfg;
 
-extern bool widescreenEffects;
+//extern bool widescreenEffects;
 
 extern u32 rotatingCubesLoaded;
 extern bool rocketVideo_playVideo;
@@ -1588,12 +1588,12 @@ void ThemeTextures::videoSetup() {
 
 	bgSetPriority(0, 1); // Set 3D to below text
 
-	if (widescreenEffects) {
+	/*if (widescreenEffects) {
 		// Add black bars to left and right sides
 		s16 c = cosLerp(0) >> 4;
 		REG_BG3PA_SUB = ( c * 315)>>8;
 		REG_BG3X_SUB = -29 << 8;
-	}
+	}*/
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 

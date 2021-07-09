@@ -11,6 +11,11 @@ static u32 arm9Sig[3][4];
 
 extern sNDSBannerExt ndsBanner;
 
+char gameTid[2][5] = {0};
+u8 romVersion[2] = {0};
+u8 unitCode[2] = {0};
+u16 headerCRC[2] = {0};
+
 // Needed to test if homebrew
 char tidBuf[4];
 

@@ -22,6 +22,8 @@
 #include "saveMap.h"
 #include "ROMList.h"
 
+#include "sr_data_srllastran.h"		 // For rebooting into the game
+
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
@@ -221,21 +223,34 @@ TWL_CODE int lastRunROM() {
 		powerOff(PM_BACKLIGHT_TOP);
 	}
 
+	if (consoleModel >= 2 && wideScreen && (access("sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0 || access("fat:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0) && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
+		// If title previously launched in widescreen, move Widescreen.cxi again, and reboot again
+		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
+			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
+		}
+		if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+			tonccpy((u32*)0x02000300, sr_data_srllastran, 0x020);
+			DC_FlushAll();
+			fifoSendValue32(FIFO_USER_08, 1);
+			stop();
+		}
+	}
 	bool twlBgCxiFound = false;
 	if (consoleModel >= 2) {
 		twlBgCxiFound = (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	}
-	/*if (consoleModel >= 2 && wideScreen
-	&& access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0 && access("sd:/luma/sysmodules/TwlBg_bak.cxi", F_OK) == 0) {
+	if (consoleModel >= 2 && wideScreen && twlBgCxiFound) {
 		// Revert back to 4:3 for when returning to TWLMenu++
-		if (remove("sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-			rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
-		} else {
+		if (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi") != 0) {
 			consoleDemoInit();
-			printf("Failed to delete TwlBg.cxi");
-			for (int i = 0; i < 60*2; i++) swiWaitForVBlank();
+			iprintf("Failed to rename TwlBg.cxi\n");
+			iprintf("back to Widescreen.cxi\n");
+			for (int i = 0; i < 60*3; i++) swiWaitForVBlank();
 		}
-	}*/
+		if (access("sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak", F_OK) == 0) {
+			rename("sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak", "sd:/luma/sysmodules/TwlBg.cxi");
+		}
+	}
 
 	argarray.push_back(strdup("null"));
 

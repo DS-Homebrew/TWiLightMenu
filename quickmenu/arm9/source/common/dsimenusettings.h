@@ -76,7 +76,6 @@ class TWLSettings
         ELangDutch = 19,
         ELangIndonesian = 20,
         ELangGreek = 21,
-        ELangBulgarian = 22,
     };
 
     enum TRegion
@@ -228,6 +227,7 @@ class TWLSettings
     bool boostVram;
     int bstrap_dsiMode;
     bool cardReadDMA;
+    bool asyncCardRead;
     int extendedMemory;
 
     bool forceSleepPatch;

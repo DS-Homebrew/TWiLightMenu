@@ -83,6 +83,7 @@ TWLSettings::TWLSettings()
     boostVram = false;
     bstrap_dsiMode = EDSiMode;
     cardReadDMA = true;
+    asyncCardRead = true;
     extendedMemory = 0;
 
     forceSleepPatch = false;
@@ -223,6 +224,7 @@ void TWLSettings::loadSettings()
     boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
     cardReadDMA = settingsini.GetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
+    asyncCardRead = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", asyncCardRead);
     extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 
     forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
@@ -372,8 +374,6 @@ std::string TWLSettings::getGuiLanguageString()
             return "id";
         case TWLSettings::ELangGreek:
             return "el";
-        case TWLSettings::ELangBulgarian:
-            return "bg";
     }
 }
 

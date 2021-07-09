@@ -67,7 +67,7 @@ bool fadeSpeed = true; // false = slow (for DSi launch effect), true = fast
 bool fadeColor = true; // false = black, true = white
 bool controlTopBright = true;
 bool controlBottomBright = true;
-bool widescreenEffects = false;
+//bool widescreenEffects = false;
 
 extern void ClearBrightness();
 extern bool displayGameIcons;
@@ -215,7 +215,7 @@ bool setAsyncReadDMA() {
 /**
  * Set MPU settings for a specific game.
  */
-void SetMPUSettings(const char *filename) {
+void SetMPUSettings() {
 	scanKeys();
 	int pressed = keysHeld();
 
@@ -365,12 +365,23 @@ void SetWidescreen(const char *filename) {
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 	if ((isDSiMode() && sys().arm7SCFGLocked()) || ms().consoleModel < 2
-	|| !useWidescreen || ms().macroMode
-	|| (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) != 0)) {
-		ms().homebrewHasWide = false;
+	|| !useWidescreen || ms().macroMode) {
 		return;
 	}
 	
+	if (isHomebrew[CURPOS] && ms().homebrewHasWide && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
+		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
+			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
+		}
+		if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+			tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+			DC_FlushAll();
+			fifoSendValue32(FIFO_USER_02, 1);
+			stop();
+		}
+		return;
+	}
+
 	bool wideCheatFound = false;
 	char wideBinPath[256];
 	if (ms().launchType[ms().secondaryDevice] == Launch::ESDFlashcardLaunch) {
@@ -408,26 +419,24 @@ void SetWidescreen(const char *filename) {
 	mkdir(ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
 
 	if (wideCheatFound) {
-		std::string resultText;
-		if (fcopy(wideBinPath, wideCheatDataPath) == 0) {
-			return;
-		} else {
-			resultText = STR_FAILED_TO_COPY_WIDESCREEN;
-		}
-		remove(wideCheatDataPath);
-		clearText();
-		printLarge(false, 0, ms().theme == 4 ? 24 : 72, resultText, Alignment::center);
-		if (ms().theme != 4) {
-			fadeType = true; // Fade in from white
-		}
-		for (int i = 0; i < 60 * 3; i++) {
-			swiWaitForVBlank(); // Wait 3 seconds
-		}
-		if (ms().theme != 4) {
-			fadeType = false;	   // Fade to white
-			for (int i = 0; i < 25; i++) {
-				swiWaitForVBlank();
+		if (fcopy(wideBinPath, wideCheatDataPath) != 0) {
+			std::string resultText = STR_FAILED_TO_COPY_WIDESCREEN;
+			remove(wideCheatDataPath);
+			clearText();
+			printLarge(false, 0, ms().theme == 4 ? 24 : 72, resultText, Alignment::center);
+			if (ms().theme != 4) {
+				fadeType = true; // Fade in from white
 			}
+			for (int i = 0; i < 60 * 3; i++) {
+				swiWaitForVBlank(); // Wait 3 seconds
+			}
+			if (ms().theme != 4) {
+				fadeType = false;	   // Fade to white
+				for (int i = 0; i < 25; i++) {
+					swiWaitForVBlank();
+				}
+			}
+			return;
 		}
 	} else {
 		char *tid = ms().slot1Launched ? s1GameTid : gameTid[CURPOS];
@@ -461,6 +470,7 @@ void SetWidescreen(const char *filename) {
 					if (crc == crc16) { // CRC matches
 						fread(&offset, 1, sizeof(offset), file);
 						fread(&size, 1, sizeof(size), file);
+						wideCheatFound = true;
 						break;
 					} else if (crc < crc16) {
 						left = mid + 1;
@@ -486,11 +496,20 @@ void SetWidescreen(const char *filename) {
 					fclose(out);
 				}
 				delete[] buffer;
-				fclose(file);
-				return;
 			}
 
 			fclose(file);
+		}
+	}
+	if (wideCheatFound && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
+		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
+			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
+		}
+		if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+			tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+			DC_FlushAll();
+			fifoSendValue32(FIFO_USER_02, 1);
+			stop();
 		}
 	}
 }
@@ -758,7 +777,7 @@ int main(int argc, char **argv) {
 
 	//logInit();
 	ms().loadSettings();
-	widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
+	//widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	tfn(); //
 	tc().loadConfig();
 	tex().videoSetup(); // allocate texture pointers
@@ -1312,13 +1331,15 @@ int main(int argc, char **argv) {
 
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
-					if (dsiFeatures() || !ms().secondaryDevice) {
-						SetWidescreen(filename.c_str());
-					}
 					if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD))) {
 						*(u32*)(0x02000000) |= BIT(3);
 						*(u32*)(0x02000004) = 0;
 						*(bool*)(0x02000010) = useNightly;
+					}
+					if (dsiFeatures() || !ms().secondaryDevice) {
+						SetWidescreen(filename.c_str());
+					}
+					if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD))) {
 						ntrStartSdGame();
 					}
 
@@ -1510,8 +1531,7 @@ int main(int argc, char **argv) {
 							}
 						}
 
-						int donorSdkVer = SetDonorSDK();
-						SetMPUSettings(argarray[0]);
+						SetMPUSettings();
 
 						bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
@@ -1539,7 +1559,7 @@ int main(int argc, char **argv) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", setAsyncReadDMA());
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", perGameSettings_expandRomSpace == -1 ? ms().extendedMemory : perGameSettings_expandRomSpace);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", SetDonorSDK());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
@@ -1766,7 +1786,8 @@ int main(int argc, char **argv) {
 					bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 					if (ms().consoleModel >= 2 && useWidescreen && ms().homebrewHasWide) {
-						argarray.push_back((char*)"wide");
+						//argarray.push_back((char*)"wide");
+						SetWidescreen(NULL);
 					}
 
 					bool runNds_boostCpu = false;
