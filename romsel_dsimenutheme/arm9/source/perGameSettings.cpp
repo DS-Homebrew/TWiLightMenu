@@ -425,6 +425,10 @@ void perGameSettings (std::string filename) {
 		if (ms().dsiWareBooter || ms().consoleModel > 0) {
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
+			if (ms().consoleModel >= 2) {
+				perGameOps++;
+				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
+			}
 			showCheats = true;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
