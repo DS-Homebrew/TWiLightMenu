@@ -215,31 +215,32 @@ std::vector<char*> argarray;
 bool twlBgCxiFound = false;
 
 TWL_CODE void wideCheck(bool useWidescreen) {
-	if (consoleModel >= 2 && useWidescreen && (access("sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0 || access("fat:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0) && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
-		// If title previously launched in widescreen, move Widescreen.cxi again, and reboot again
-		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
-			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
-		}
-		if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-			tonccpy((u32*)0x02000300, sr_data_srllastran, 0x020);
-			DC_FlushAll();
-			fifoSendValue32(FIFO_USER_08, 1);
-			stop();
-		}
-	}
-	if (consoleModel >= 2) {
-		twlBgCxiFound = (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
-	}
-	if (consoleModel >= 2 && useWidescreen && twlBgCxiFound) {
-		// Revert back to 4:3 for when returning to TWLMenu++
-		if (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi") != 0) {
-			consoleDemoInit();
-			iprintf("Failed to rename TwlBg.cxi\n");
-			iprintf("back to Widescreen.cxi\n");
-			for (int i = 0; i < 60*3; i++) swiWaitForVBlank();
-		}
-		if (access("sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak", F_OK) == 0) {
-			rename("sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak", "sd:/luma/sysmodules/TwlBg.cxi");
+	if (consoleModel < 2) return;
+
+	bool wideCheatFound = (access("sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0 || access("fat:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0);
+	if (useWidescreen && wideCheatFound) {
+		if (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) {
+			// If title previously launched in widescreen, move Widescreen.cxi again, and reboot again
+			if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
+				rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
+			}
+			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+				tonccpy((u32*)0x02000300, sr_data_srllastran, 0x020);
+				DC_FlushAll();
+				fifoSendValue32(FIFO_USER_08, 1);
+				stop();
+			}
+		} else if (twlBgCxiFound) {
+			// Revert back to 4:3 for when returning to TWLMenu++
+			if (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi") != 0) {
+				consoleDemoInit();
+				iprintf("Failed to rename TwlBg.cxi\n");
+				iprintf("back to Widescreen.cxi\n");
+				for (int i = 0; i < 60*3; i++) swiWaitForVBlank();
+			}
+			if (access("sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak", F_OK) == 0) {
+				rename("sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak", "sd:/luma/sysmodules/TwlBg.cxi");
+			}
 		}
 	}
 }
@@ -253,6 +254,10 @@ TWL_CODE int lastRunROM() {
 
 	if (macroMode) {
 		powerOff(PM_BACKLIGHT_TOP);
+	}
+
+	if (consoleModel >= 2) {
+		twlBgCxiFound = (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	}
 
 	argarray.push_back(strdup("null"));
