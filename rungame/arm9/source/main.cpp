@@ -212,17 +212,9 @@ void unlaunchBootDSiWare(void) {
 
 std::vector<char*> argarray;
 
-TWL_CODE int lastRunROM() {
-	LoadSettings();
+bool twlBgCxiFound = false;
 
-	if (consoleModel < 2) {
-		*(u8*)(0x023FFD00) = (wifiLed ? 0x13 : 0);		// WiFi On/Off
-	}
-
-	if (macroMode) {
-		powerOff(PM_BACKLIGHT_TOP);
-	}
-
+TWL_CODE void wideCheck(bool useWidescreen) {
 	if (consoleModel >= 2 && wideScreen && (access("sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0 || access("fat:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0) && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
 		// If title previously launched in widescreen, move Widescreen.cxi again, and reboot again
 		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
@@ -235,11 +227,10 @@ TWL_CODE int lastRunROM() {
 			stop();
 		}
 	}
-	bool twlBgCxiFound = false;
 	if (consoleModel >= 2) {
 		twlBgCxiFound = (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	}
-	if (consoleModel >= 2 && wideScreen && twlBgCxiFound) {
+	if (consoleModel >= 2 && useWidescreen && twlBgCxiFound) {
 		// Revert back to 4:3 for when returning to TWLMenu++
 		if (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi") != 0) {
 			consoleDemoInit();
@@ -250,6 +241,18 @@ TWL_CODE int lastRunROM() {
 		if (access("sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak", F_OK) == 0) {
 			rename("sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak", "sd:/luma/sysmodules/TwlBg.cxi");
 		}
+	}
+}
+
+TWL_CODE int lastRunROM() {
+	LoadSettings();
+
+	if (consoleModel < 2) {
+		*(u8*)(0x023FFD00) = (wifiLed ? 0x13 : 0);		// WiFi On/Off
+	}
+
+	if (macroMode) {
+		powerOff(PM_BACKLIGHT_TOP);
 	}
 
 	argarray.push_back(strdup("null"));
@@ -289,6 +292,9 @@ TWL_CODE int lastRunROM() {
 
 				loadPerGameSettings(filename);
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
+				bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
+
+				wideCheck(useWidescreen);
 
 				if (!homebrewBootstrap) {
 					const char *typeToReplace = ".nds";
@@ -519,6 +525,13 @@ TWL_CODE int lastRunROM() {
 					if (*(u32*)(0x02000000) & BIT(3)) {
 						useNightly = *(bool*)(0x02000010);
 					}
+
+					bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
+					if (*(u32*)(0x02000000) & BIT(3)) {
+						useWidescreen = *(bool*)(0x02000014);
+					}
+
+					wideCheck(useWidescreen);
 
 					char ndsToBoot[256];
 					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");

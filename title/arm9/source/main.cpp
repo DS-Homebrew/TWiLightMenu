@@ -912,6 +912,13 @@ void lastRunROM()
 				);
 				bootstrapini.SaveIniFile((memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI_SD);
 
+				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD))) {
+					*(u32*)(0x02000000) |= BIT(3);
+					*(u32*)(0x02000004) = 0;
+					*(bool*)(0x02000010) = useNightly;
+					*(bool*)(0x02000014) = useWidescreen;
+				}
+
 				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || ms().macroMode) {
 					remove((ms().previousUsedDevice && !ms().dsiWareToSD) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
 				} else if ((access((ms().previousUsedDevice && !ms().dsiWareToSD) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0) && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
@@ -927,9 +934,6 @@ void lastRunROM()
 				}
 
 				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD))) {
-					*(u32*)(0x02000000) |= BIT(3);
-					*(u32*)(0x02000004) = 0;
-					*(bool*)(0x02000010) = useNightly;
 					ntrStartSdGame();
 				}
 
