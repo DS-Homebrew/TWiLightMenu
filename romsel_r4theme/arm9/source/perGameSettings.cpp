@@ -293,21 +293,12 @@ void perGameSettings (std::string filename) {
 		showSDKVersion = true;
 	}
 	u8 unitCode = 0;
-	u32 arm9dst = 0;
-	u32 arm9size = 0;
-	u32 arm7off = 0;
 	u32 arm7size = 0;
 	u32 romSize = 0;
 	u32 pubSize = 0;
 	u32 prvSize = 0;
 	fseek(f_nds_file, 0x12, SEEK_SET);
 	fread(&unitCode, sizeof(u8), 1, f_nds_file);
-	fseek(f_nds_file, 0x28, SEEK_SET);
-	fread(&arm9dst, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, 0x2C, SEEK_SET);
-	fread(&arm9size, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, 0x30, SEEK_SET);
-	fread(&arm7off, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x3C, SEEK_SET);
 	fread(&arm7size, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x80, SEEK_SET);
@@ -318,15 +309,7 @@ void perGameSettings (std::string filename) {
 	fclose(f_nds_file);
 
 	if (romSize > 0) {
-		u32 overlaysSize = 0;
-		// Calculate overlay pack size
-		for (u32 i = 0x4000+arm9size; i < arm7off; i++) {
-			overlaysSize++;
-		}
-
-		romSize -= arm7off;
-		romSize -= arm7size;
-		romSize += overlaysSize;
+		romSize -= 0x8000;
 	}
 
 	u32 romSizeLimit = (consoleModel > 0 ? 0x01800000 : 0x800000);
