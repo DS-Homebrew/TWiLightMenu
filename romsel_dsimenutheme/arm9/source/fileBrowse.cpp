@@ -2807,10 +2807,12 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						isHomebrew[CURPOS] == 0 &&
 						checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
 						bool hasDsiBinaries = true;
-						FILE *f_nds_file = fopen(
-							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
-						hasDsiBinaries = checkDsiBinaries(f_nds_file);
-						fclose(f_nds_file);
+						if (!sys().arm7SCFGLocked() || memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+							FILE *f_nds_file = fopen(
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
+							hasDsiBinaries = checkDsiBinaries(f_nds_file);
+							fclose(f_nds_file);
+						}
 
 						if (!hasDsiBinaries) {
 							proceedToLaunch = dsiBinariesMissingMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
