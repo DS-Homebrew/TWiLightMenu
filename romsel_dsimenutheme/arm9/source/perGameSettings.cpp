@@ -326,7 +326,8 @@ void perGameSettings (std::string filename) {
 	fclose(f_nds_file);
 
 	if (romSize > 0) {
-		romSize -= 0x8000;
+		romSize -= 0x8000;	// First 32KB
+		romSize += 0x88;	// RSA key
 	}
 
 	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x01800000 : 0x800000);
