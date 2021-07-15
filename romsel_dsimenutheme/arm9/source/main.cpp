@@ -795,7 +795,11 @@ int main(int argc, char **argv) {
 	}
 
 	//printf("Username copied\n");
-	tonccpy(usernameRendered, (useTwlCfg ? (s16*)0x02000448 : PersonalData->name), sizeof(s16) * 10);
+	if(useTwlCfg) {
+		tonccpy(usernameRendered, (s16*)0x02000448, sizeof(s16) * 10);
+	} else {
+		tonccpy(usernameRendered, PersonalData->name, sizeof(s16) * PersonalData->nameLen);
+	}
 
 	if (sdFound()) statvfs("sd:/", &st[0]);
 	if (flashcardFound()) statvfs("fat:/", &st[1]);
