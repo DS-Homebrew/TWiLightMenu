@@ -744,25 +744,10 @@ int main(int argc, char **argv)
 
 	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
-	if (!sys().fatInitOk())
-	{
-		// Read user name
-		char usernameRendered[16];
-		char *username = (useTwlCfg ? (char*)0x02000448 : (char*)PersonalData->name);
-
-		// text
-		for (int i = 0; i < 10; i++)
-		{
-			if (username[i * 2] == 0x00)
-				usernameRendered[i * 2 / 2] = 0;
-			else
-				usernameRendered[i * 2 / 2] = username[i * 2];
-		}
-
+	if (!sys().fatInitOk()) {
 		graphicsInit();
 		fontInit();
 		fadeType = true;
-		printSmall(true, 28, 1, usernameRendered);
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
