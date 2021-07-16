@@ -140,7 +140,8 @@ $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	# Unpack and repack with animated banner
 	mkdir -p NDS_UNPACK
 	ndstool -x $(TARGET).nds -9 NDS_UNPACK/arm9.bin -7 NDS_UNPACK/arm7.bin -y9 NDS_UNPACK/y9.bin -y7 NDS_UNPACK/y7.bin -d NDS_UNPACK/data -y NDS_UNPACK/overlay -h NDS_UNPACK/header.bin
-	ndstool -c $(TARGET).nds -9 NDS_UNPACK/arm9.bin -7 NDS_UNPACK/arm7.bin -y9 NDS_UNPACK/y9.bin -y7 NDS_UNPACK/y7.bin -d NDS_UNPACK/data -y NDS_UNPACK/overlay -h NDS_UNPACK/header.bin -t twl_banner.bin
+	ndstool -c $(TARGET).nds -9 NDS_UNPACK/arm9.bin -7 NDS_UNPACK/arm7.bin -y9 NDS_UNPACK/y9.bin -y7 NDS_UNPACK/y7.bin -d NDS_UNPACK/data -y NDS_UNPACK/overlay -h NDS_UNPACK/header.bin -t twl_banner.bin \
+			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004 -a 00000138 
 	rm -rf NDS_UNPACK
 
 $(TARGET)_rungame.nds:	$(TARGET).arm7 $(TARGET).arm9
