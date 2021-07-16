@@ -135,11 +135,11 @@ dist:	all
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
-			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004 -a 00000138 -t twl_banner.bin
+			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004 -a 00000138 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 
 $(TARGET)_rungame.nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET)_rungame.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
-			-g SLRN 01 "TWLMENUPP-LR" -z 80040000 -u 00030015 -a 00000138 -b icon.bmp "TWiLight Menu++;Last-run ROM;RocketRobz"
+			-g SLRN 01 "TWLMENUPP-LR" -z 80040000 -u 00030015 -a 00000138 -b icon.bmp "TWiLight Menu++;Last-run ROM;Rocket Robz"
 
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
 		python2 ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch
