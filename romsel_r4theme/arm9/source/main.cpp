@@ -918,7 +918,7 @@ void SetWidescreen(const char *filename) {
 				}
 			}
 
-			if (offset > 0 && size > 0) {
+			if (offset > 0) {
 				fseek(file, offset, SEEK_SET);
 				u8 *buffer = new u8[size];
 				fread(buffer, 1, size, file);
