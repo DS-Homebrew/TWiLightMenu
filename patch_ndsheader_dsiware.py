@@ -36,7 +36,10 @@ parser.add_argument('--arm7EntryAddress', help='arm7 ram address of the binary p
 parser.add_argument('--arm9i', type=file, help='add a dsi arm9i binary to the file, not needed for homebrew so far')
 parser.add_argument('--arm7i', type=file, help='add a dsi arm7i binary to the file, not needed for homebrew so far')
 parser.add_argument('--accessControl', help='access control field')
+parser.add_argument('--ntrHb', help='NTR homebrew', action="store_true")
+parser.add_argument('--ntrTouch', help='Toggle NTR Touch or not', action="store_true")
 parser.add_argument('--twlTouch', help='Toggle TWL Touch or not', action="store_true")
+parser.add_argument('--twlIcon', help='Toggle TWL Icon size or not', action="store_true")
 args = parser.parse_args()
 
 if args.mode is None:
@@ -306,36 +309,47 @@ if not args.read:
 		totaldsisize=0
 		arm7iname = None
 		arm9iname = None
-		
-		if args.arm9i is not None:
-			arm9iname = args.arm9i.name
-			arm9isize = getSize(args.arm9i)
-			arm9iRomOffset=srlHeaderPatched.ntrRomSize
-			if args.verbose:
-				print "arm9isize : "+hex(arm9isize)
-				print "arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize)
-			args.arm9i.close()
-			totaldsisize=arm9isize
-			
-		if args.arm7i is not None:
-			arm7iname = args.arm7i.name
-			arm7isize = getSize(args.arm7i)
-			arm7iRomOffset=srlHeaderPatched.ntrRomSize+arm9isize
-			if args.verbose:
-				print "arm7isize : "+hex(arm7isize)
-				print "arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize+arm9isize)
-			args.arm7i.close()
-			totaldsisize=arm9isize+arm7isize
 
-		srlTwlExtHeader=srlTwlExtHeader._replace(
-			accessControl=			0x00000138,
-			arm7ScfgExtMask=		0x80040000,
-			reserved_flags=			0x00000000
-			)
+		if args.ntrHb:
+			if args.arm9i is not None:
+				arm9iname = args.arm9i.name
+				arm9isize = getSize(args.arm9i)
+				arm9iRomOffset=srlHeaderPatched.ntrRomSize
+				if args.verbose:
+					print "arm9isize : "+hex(arm9isize)
+					print "arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize)
+				args.arm9i.close()
+				totaldsisize=arm9isize
+				
+			if args.arm7i is not None:
+				arm7iname = args.arm7i.name
+				arm7isize = getSize(args.arm7i)
+				arm7iRomOffset=srlHeaderPatched.ntrRomSize+arm9isize
+				if args.verbose:
+					print "arm7isize : "+hex(arm7isize)
+					print "arm9ioffset : "+hex(srlHeaderPatched.ntrRomSize+arm9isize)
+				args.arm7i.close()
+				totaldsisize=arm9isize+arm7isize
+
+			srlTwlExtHeader=srlTwlExtHeader._replace(
+				accessControl=			0x00000138,
+				arm7ScfgExtMask=		0x80040000,
+				reserved_flags=			0x00000000
+				)
+
+		if args.ntrTouch:
+			srlTwlExtHeader=srlTwlExtHeader._replace(
+				reserved_flags=			0x00000000,
+				)
 
 		if args.twlTouch:
 			srlTwlExtHeader=srlTwlExtHeader._replace(
 				reserved_flags=			0x01000000,
+				)
+
+		if args.twlIcon:
+			srlTwlExtHeader=srlTwlExtHeader._replace(
+				iconSize=			0x23C0,
 				)
 
 		if args.accessControl is not None:
@@ -377,23 +391,24 @@ else:
 
 # Fix srlSignedHeader
 if not args.read:
-	srlSignedHeader=srlSignedHeader._replace(
-		arm7Sha1Hmac=				'\xff'*20,
-		arm9WithSecAreaSha1Hmac=	'\xff'*20,
-		bannerSha1Hmac=				'\xff'*20,
-		signature=					'\xff'*128
-		)
-	if "dsi" in args.mode :
+	if args.ntrHb:
 		srlSignedHeader=srlSignedHeader._replace(
 			arm7Sha1Hmac=				'\xff'*20,
-			arm7iSha1Hmac=				'\xff'*20,
-			arm9Sha1Hmac=				'\xff'*20,
 			arm9WithSecAreaSha1Hmac=	'\xff'*20,
-			arm9iSha1Hmac=				'\xff'*20,
 			bannerSha1Hmac=				'\xff'*20,
-			digestMasterSha1Hmac=		'\xff'*20,
 			signature=					'\xff'*128
 			)
+		if "dsi" in args.mode :
+			srlSignedHeader=srlSignedHeader._replace(
+				arm7Sha1Hmac=				'\xff'*20,
+				arm7iSha1Hmac=				'\xff'*20,
+				arm9Sha1Hmac=				'\xff'*20,
+				arm9WithSecAreaSha1Hmac=	'\xff'*20,
+				arm9iSha1Hmac=				'\xff'*20,
+				bannerSha1Hmac=				'\xff'*20,
+				digestMasterSha1Hmac=		'\xff'*20,
+				signature=					'\xff'*128
+				)
 if args.verbose or args.read:
 	pprint(dict(srlSignedHeader._asdict()))
 
@@ -447,12 +462,13 @@ if not args.read:
 	filew.write('\xff'*16*8)
 	writeBlankuntilAddress(filew,0x1000,0x4000)
 	
-	if arm9Footer.nitrocode != 0xDEC00621:
-		# patch ARM9 footer 
-		skipUntilAddress(filer,filew,caddr,arm9FooterAddr)
-		filew.write(data4)
-		filer.read(12)
-		caddr=arm9FooterAddr+12		
+	if args.ntrHb:
+		if arm9Footer.nitrocode != 0xDEC00621:
+			# patch ARM9 footer 
+			skipUntilAddress(filer,filew,caddr,arm9FooterAddr)
+			filew.write(data4)
+			filer.read(12)
+			caddr=arm9FooterAddr+12		
 	
 	skipUntilAddress(filer,filew,caddr,srlTwlExtHeader.twlRomSize)
 		
