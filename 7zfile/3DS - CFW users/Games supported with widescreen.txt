@@ -430,3 +430,4 @@ Codes by:
 * gamemasterplc
 * ChampionLeake
 * DeadSkullzJr
+* spellboundtriangle
