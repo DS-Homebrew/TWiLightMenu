@@ -148,6 +148,7 @@ Golden Sun - Dark Dawn (Europe)
 Ougon no Taiyou - Shikkoku Naru Yoake (Japan)
 GoldenEye - 007 (USA/Canada/Europe/France/Germany/Italy/Spain)
 Grand Theft Auto - Chinatown Wars (USA/Europe)
+Grand Theft Auto - Chinatown Wars (Russian translation)
 Grand Theft Auto - Chinatown Wars (Chinese translation)
 Grand Theft Auto - Chinatown Wars (Japan)
 Grid (USA)/Race Driver - Grid (Europe)
@@ -431,3 +432,4 @@ Codes by:
 * ChampionLeake
 * DeadSkullzJr
 * spellboundtriangle
+* Bacer
