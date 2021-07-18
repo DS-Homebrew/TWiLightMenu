@@ -221,6 +221,7 @@ Mini Ninjas (Europe)
 Moon (USA)
 Moon (Europe)
 Moon (Chinese translation)
+moonshineDS
 Moto Racing DS (USA)
 Moto Racing DS (Europe)
 MySims - Racing (USA)
@@ -375,6 +376,8 @@ Super Mario 64 DS (Europe)
 Super Mario 64 DS (Japan) (Rev 0)
 Super Mario 64 DS (Japan) (Rev 1)
 Super Mario 64 DS (Korea)
+Super Mario Galaxy DS (2017)
+Super Mario Gakaxy DS (2017)(BigModel)
 Shenyou Maliou DS (China)
 Shenyou Maliou DS (China)(Hacked for remove iQue Only)
 Super Monkey Ball - Touch and Roll (USA)
@@ -427,3 +430,4 @@ Codes by:
 * gamemasterplc
 * ChampionLeake
 * DeadSkullzJr
+* spellboundtriangle
