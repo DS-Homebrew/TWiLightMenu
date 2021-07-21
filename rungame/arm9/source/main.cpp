@@ -419,7 +419,8 @@ TWL_CODE int lastRunROM() {
 					return runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
 				} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 						 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
-						 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
+						 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
+						 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)) {
 					CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 					path = ReplaceAll(romPath[1], "fat:/", slashchar);
 					fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
