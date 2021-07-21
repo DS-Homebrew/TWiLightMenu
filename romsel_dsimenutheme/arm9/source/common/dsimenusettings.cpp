@@ -320,7 +320,7 @@ TWLSettings::TLanguage TWLSettings::getTitleLanguage()
 	{
 		return (TLanguage)PersonalData->language;
 	}
-	return (TLanguage)gameLanguage;
+	return (TLanguage)titleLanguage;
 }
 
 std::string TWLSettings::getGuiLanguageString()
