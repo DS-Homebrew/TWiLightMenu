@@ -22,6 +22,8 @@ static const char asyncReadExcludeList[][4] = {
 	"B2K", // Ni no Kuni: The Jet Black Mage
 	"IRB", // Pokemon Black Version (Keeps AP-fix in effect)
 	"IRA", // Pokemon White Version (Keeps AP-fix in effect)
+	"IRE", // Pokemon Black Version 2 (Keeps AP-fix in effect)
+	"IRD", // Pokemon White Version 2 (Keeps AP-fix in effect)
 	"VPY", // Pokemon Conquest (Keeps AP-fix in effect in DSi mode)
 	"B3R", // Pokemon Ranger: Guardian Signs (Keeps AP-fix in effect)
 	"A5F", // Professor Layton and the Curious Village
