@@ -31,6 +31,7 @@ static const char asyncReadExcludeList[][4] = {
 	"C3J", // Professor Layton and the Unwound/Lost Future
 	"BLF", // Professor Layton and the Last Specter/Spectre's Call
 	"Y9B", // Professor Layton and the Last Specter/Spectre's Call (Demo)
+	"VSO", // Sonic Classic Collection
 };
 
 #endif // ASYNCHREADEXCLUDEMAP_H
