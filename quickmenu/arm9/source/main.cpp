@@ -379,7 +379,7 @@ void SetWidescreen(const char *filename) {
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 	if ((isDSiMode() && arm7SCFGLocked) || ms().consoleModel < 2
-	|| useWidescreen || ms().macroMode) {
+	|| !useWidescreen || ms().macroMode) {
 		return;
 	}
 	
