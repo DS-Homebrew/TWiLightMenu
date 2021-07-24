@@ -16,7 +16,7 @@ DSiIconSequence::DSiIconSequence()
 
 void DSiIconSequence::update()
 {
-    if (!_visible || (_sequence[0] == 0x0001 && _sequence[1] == 0x0100))
+    if (!_visible || _sequence[1] == 0x0100)
         return;
 
     if (_sequence[_currentSequenceIndex] == 0x0000)

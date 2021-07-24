@@ -582,7 +582,7 @@ int currentbnriconframeseq = 0;
  */
 void playBannerSequence()
 {
-	if (bnriconframeseq[currentbnriconframeseq] == 0x0001 && bnriconframeseq[currentbnriconframeseq + 1] == 0x0100)
+	if (bnriconframeseq[currentbnriconframeseq + 1] == 0x0100)
 	{
 		// Do nothing if icon isn't animated
 		bnriconPalLine = 0;
