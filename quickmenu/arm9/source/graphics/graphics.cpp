@@ -636,8 +636,8 @@ void graphicsInit()
 	SetBrightness(1, 31);
 
 	////////////////////////////////////////////////////////////
-	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
+	videoSetMode(MODE_5_3D);
+	videoSetModeSub(MODE_5_2D);
 
 	// Initialize gl2d
 	glScreen2D();
@@ -651,10 +651,10 @@ void graphicsInit()
 	// Set up enough texture memory for our textures
 	// Bank A is just 128kb and we are using 194 kb of
 	// sprites
-	vramSetBankA(VRAM_A_TEXTURE);
-	vramSetBankB(VRAM_B_TEXTURE);
-	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
+	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankB(VRAM_B_MAIN_BG);
+	vramSetBankC(VRAM_C_SUB_BG);
+	vramSetBankD(VRAM_D_TEXTURE);
 	vramSetBankE(VRAM_E_TEX_PALETTE);
 	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
 	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT5); // 16Kb of palette ram, and font textures take up 8*16 bytes.
@@ -663,21 +663,19 @@ void graphicsInit()
 
 	lcdMainOnBottom();
 	
-	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
-	REG_BG3X = 0;
-	REG_BG3Y = 0;
-	REG_BG3PA = 1<<8;
-	REG_BG3PB = 0;
-	REG_BG3PC = 0;
-	REG_BG3PD = 1<<8;
+	int bg3Main = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+	bgSetPriority(bg3Main, 3);
 
-	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
-	REG_BG3X_SUB = 0;
-	REG_BG3Y_SUB = 0;
-	REG_BG3PA_SUB = 1<<8;
-	REG_BG3PB_SUB = 0;
-	REG_BG3PC_SUB = 0;
-	REG_BG3PD_SUB = 1<<8;
+	int bg2Main = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 7, 0);
+	bgSetPriority(bg2Main, 0);
+
+	int bg3Sub = bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+	bgSetPriority(bg3Sub, 3);
+
+	// int bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	// bgSetPriority(bg2Sub, 0);
+
+	bgSetPriority(0, 1); // Set 3D to below text
 
 	/*if (widescreenEffects) {
 		// Add black bars to left and right sides
@@ -685,10 +683,6 @@ void graphicsInit()
 		REG_BG3PA_SUB = ( c * 315)>>8;
 		REG_BG3X_SUB = -29 << 8;
 	}*/
-
-	if (isDSiMode()) {
-		loadSdRemovedImage();
-	}
 
 	swiWaitForVBlank();
 

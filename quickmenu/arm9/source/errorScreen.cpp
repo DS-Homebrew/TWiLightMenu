@@ -2,9 +2,12 @@
 #include <stdio.h>
 #include <maxmod9.h>
 
+// #include "autoboot.h"
+// #include "common/systemdetails.h"
 #include "common/dsimenusettings.h"
-#include "graphics/lodepng.h"
-//#include "autoboot.h"
+#include "graphics/fontHandler.h"
+#include "common/tonccpy.h"
+#include "language.h"
 
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
@@ -12,60 +15,53 @@ extern void unlaunchSetHiyaBoot();
 
 extern bool arm7SCFGLocked;
 
-u16* sdRemovedExtendedImage = (u16*)0x026C8000;
-u16* sdRemovedImage = (u16*)0x026E0000;
+extern int consoleModel;
+extern int launcherApp;
 
 static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
-
-void loadSdRemovedImage(void) {
-	uint imageWidth, imageHeight;
-	std::vector<unsigned char> image;
-	char sdRemovedError[40];
-	char sdRemoved[40];
-	sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_%i.png", ms().guiLanguage);
-	sprintf(sdRemoved, "nitro:/graphics/sdRemoved_%i.png", ms().guiLanguage);
-	if (access(sdRemovedError, F_OK) != 0 || access(sdRemoved, F_OK) != 0) {
-		sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_1.png");
-		sprintf(sdRemoved, "nitro:/graphics/sdRemoved_1.png");
-	}
-
-	lodepng::decode(image, imageWidth, imageHeight, sdRemovedError);
-
-	for(uint i=0;i<image.size()/4;i++) {
-		sdRemovedExtendedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-	}
-
-	image.clear();
-	lodepng::decode(image, imageWidth, imageHeight, sdRemoved);
-
-	for(uint i=0;i<image.size()/4;i++) {
-		sdRemovedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-	}
-}
 
 void checkSdEject(void) {
 	if (!ms().sdRemoveDetect) return;
 
 	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) {
-		timeTillChangeToNonExtendedImage++;
-		if (timeTillChangeToNonExtendedImage > 10) {
-			showNonExtendedImage = true;
-			timeTillChangeToNonExtendedImage = 10;
+		if(!showNonExtendedImage) {
+			timeTillChangeToNonExtendedImage++;
+			if (timeTillChangeToNonExtendedImage > 10) {
+				showNonExtendedImage = true;
+			}
 		}
 		return;
 	}
-	
+
 	// Show "SD removed" screen
 	mmEffectCancelAll();
 
-	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
+	videoSetMode(MODE_5_2D | DISPLAY_BG2_ACTIVE);
+	videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
 
 	REG_BLDY = 0;
 
-	dmaCopyWordsAsynch(0, (showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), BG_GFX, 0x18000);
-	dmaFillWords(1, BG_GFX_SUB, 0x18000);
+	// Change to white text palette
+	u16 palette[] = {
+		0x0000,
+		0xB9CE,
+		0xD6B5,
+		0xFFFF,
+	};
+	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
+	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
+
+	swiWaitForVBlank();
+	clearText();
+
+	if(showNonExtendedImage) {
+		printSmall(false, 0, 45, STR_SD_WAS_REMOVED, Alignment::center);
+		printSmall(false, 0, 75, STR_REINSERT_SD_CARD, Alignment::center);
+	} else {
+		printSmall(false, 0, 37, STR_ERROR_HAS_OCCURRED, Alignment::center);
+		printSmall(false, 0, 67, STR_DISABLE_SD_REMOVAL_CHECK, Alignment::center);
+	}
 
 	while(1) {
 		// Currently not working
@@ -88,11 +84,11 @@ void checkSdEject(void) {
 				while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
 					*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 				}
-			} 
+			}
 			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			swiWaitForVBlank();
 		}
-		if (*(u8*)(0x023FF002) == 2 && !arm7SCFGLocked) {
+		if (*(u8*)(0x02FFF002) == 2 && !arm7SCFGLocked) {
 			if (consoleModel < 2) {
 				unlaunchSetHiyaBoot();
 			}

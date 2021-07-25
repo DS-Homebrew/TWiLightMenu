@@ -56,9 +56,6 @@
 
 #include "sr_data_srllastran.h"	// For rebooting into the game
 
-#define gbamodeText "Start GBA game."
-#define featureUnavailableText "This feature is unavailable."
-
 bool useTwlCfg = false;
 
 bool whiteScreen = true;
@@ -434,15 +431,9 @@ void SetWidescreen(const char *filename) {
 
 	if (wideCheatFound) {
 		if (fcopy(wideBinPath, wideCheatDataPath) != 0) {
-			const char* resultText1 = "Failed to copy widescreen";
-			const char* resultText2 = "code for the game.";
 			remove(wideCheatDataPath);
-			int textXpos[2] = {0};
-			textXpos[0] = 72;
-			textXpos[1] = 84;
 			clearText();
-			printSmallCentered(false, textXpos[0], resultText1);
-			printSmallCentered(false, textXpos[1], resultText2);
+			printSmall(false, 0, 72, STR_FAILED_TO_COPY_WIDESCREEN, Alignment::center);
 			fadeType = true; // Fade in from white
 			for (int i = 0; i < 60 * 3; i++) {
 				swiWaitForVBlank(); // Wait 3 seconds
@@ -687,13 +678,14 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
 	}
 
-	char text[32];
+	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	ClearBrightness();
+	clearText();
 	printSmall(false, 4, 4, text);
 	if (err == 0) {
-		printSmall(false, 4, 20, "Flashcard may be unsupported.");
-		printSmall(false, 4, 52, "Flashcard name:");
+		printSmall(false, 4, 20, STR_FLASHCARD_UNSUPPORTED);
+		printSmall(false, 4, 52, STR_FLASHCARD_NAME);
 		printSmall(false, 4, 68, io_dldi_data->friendlyName);
 	}
 	stop();
@@ -856,7 +848,7 @@ void directCardLaunch() {
 				chdir("sd:/");
 			}
 			int err = runNdsFile ("/_nds/TWiLightMenu/dstwoLaunch.srldr", 0, NULL, true, true, true, ms().boostCpu, ms().boostVram, -1);
-			char text[32];
+			char text[64];
 			snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 			ClearBrightness();
 			printSmall(false, 4, 4, text);
@@ -868,15 +860,16 @@ void directCardLaunch() {
 		chdir("sd:/");
 	}
 	int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, -1);
-	char text[32];
+	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	ClearBrightness();
+	clearText();
 	printSmall(false, 4, 4, text);
 	stop();
 }
 
 void printLastPlayedText(int num) {
-	printSmallCentered(false, 22, iconYpos[num]+BOX_PY+BOX_PY_spacing2, STR_LAST_PLAYED_HERE.c_str());
+	printSmall(false, BOX_PX, iconYpos[num] + BOX_PY - (calcSmallFontHeight(STR_LAST_PLAYED_HERE) / 2), STR_LAST_PLAYED_HERE, Alignment::center);
 }
 
 void refreshNdsCard() {
@@ -909,16 +902,16 @@ void refreshNdsCard() {
 
 void printNdsCartBannerText() {
 	if (cardEjected) {
-		printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing2, STR_NO_GAME_CARD.c_str());
+		printSmall(false, BOX_PX, iconYpos[0] + BOX_PY - (calcSmallFontHeight(STR_NO_GAME_CARD) / 2), STR_NO_GAME_CARD, Alignment::center);
 	} else if (arm7SCFGLocked) {
-		printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing1, STR_START_GAME_CARD.c_str());
+		printSmall(false, BOX_PX, iconYpos[0] + BOX_PY - (calcSmallFontHeight(STR_START_GAME_CARD) / 2), STR_START_GAME_CARD, Alignment::center);
 	} else {
 		titleUpdate(1, false, "slot1");
 	}
 }
 
 void printGbaBannerText() {
-	printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing1, isRegularDS ? gbamodeText : featureUnavailableText);
+	printSmall(false, BOX_PY, iconYpos[3] + BOX_PY - (calcSmallFontHeight(isRegularDS ? STR_START_GBA_GAME : STR_FEATURE_UNAVAILABLE) / 2), isRegularDS ? STR_START_GBA_GAME : STR_FEATURE_UNAVAILABLE, Alignment::center);
 }
 
 //---------------------------------------------------------------------------------
@@ -934,7 +927,7 @@ int main(int argc, char **argv) {
 	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
 	fatMountSimple("sd", &__my_io_dsisd);
 	fatMountSimple("fat", dldiGetInternal());
-    bool fatInited = (sdFound() || flashcardFound());
+	bool fatInited = (sdFound() || flashcardFound());
 	*(u32*)(0x2FFFD0C) = 0;
 	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
 
@@ -975,8 +968,6 @@ int main(int argc, char **argv) {
 	ms().loadSettings();
 	//widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 
-	langInit();
-	
 	snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
 	pictochatFound = (access(pictochatPath, F_OK) == 0);
 
@@ -1124,6 +1115,7 @@ int main(int argc, char **argv) {
 
 	graphicsInit();
 	fontInit();
+	langInit();
 
 	iconTitleInit();
 
@@ -1136,11 +1128,11 @@ int main(int argc, char **argv) {
 	bool menuButtonPressed = false;
 	
 	if (ms().showGba == 1) {
-	  if (*(u16*)(0x020000C0) != 0) {
-		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
-	  } else {
-		ms().showGba = 0;	// Hide GBA ROMs
-	  }
+		if (*(u16*)(0x020000C0) != 0) {
+			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
+		} else {
+			ms().showGba = 0;	// Hide GBA ROMs
+		}
 	}
 
 	if (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == 3
@@ -1149,9 +1141,9 @@ int main(int argc, char **argv) {
 		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white
-		printSmallCentered(false, 24, STR_TAKEWHILE_CLOSELID.c_str());
-		printSmallCentered(false, 86, STR_NOW_COPYING_DATA.c_str());
-		printSmallCentered(false, 100, STR_DO_NOT_TURN_OFF_POWER.c_str());
+		printSmall(false, 0, 24, STR_TAKEWHILE_CLOSELID, Alignment::center);
+		printSmall(false, 0, 86, STR_NOW_COPYING_DATA, Alignment::center);
+		printSmall(false, 0, 100, STR_DO_NOT_TURN_OFF_POWER, Alignment::center);
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", ms().dsiWarePubPath.c_str());
@@ -1413,15 +1405,15 @@ int main(int argc, char **argv) {
 
 			do {
 				clearText();
-				printSmall(false, 6, 6, STR_B_BACK.c_str());
-				printSmallCentered(false, 112, 6, retTime().c_str());
+				printSmall(false, ms().rtl() ? 72 : -72, 6, STR_B_BACK, Alignment::center);
+				printSmall(false, ms().rtl() ? -72 : 72, 6, retTime(), Alignment::center);
 				if (flashcardFound()) {
 					if (romFound[1]) {
 						titleUpdate(1, false, filename[1].c_str());
 					} else {
 						printLastPlayedText(0);
 					}
-				} else if (isDSiMode() && !flashcardFound()) {
+				} else if (isDSiMode()) {
 					printNdsCartBannerText();
 				}
 				if (!sdFound()) {
@@ -1537,21 +1529,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK.c_str());
-								printSmallCentered(false, 112, 6, retTime().c_str());
-								if (romFound[1]) {
-									titleUpdate(1, false, filename[1].c_str());
-								} else {
-									printLastPlayedText(0);
-								}
-								if (!sdFound()) {
-									printGbaBannerText();
-								} else if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 							loadROMselect();
@@ -1561,21 +1538,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK.c_str());
-								printSmallCentered(false, 112, 6, retTime().c_str());
-								if (romFound[1]) {
-									titleUpdate(1, false, filename[1].c_str());
-								} else {
-									printLastPlayedText(0);
-								}
-								if (!sdFound()) {
-									printGbaBannerText();
-								} else if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 							if (romFound[1]) {
@@ -1592,15 +1554,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK.c_str());
-								printSmallCentered(false, 112, 6, retTime().c_str());
-								printNdsCartBannerText();
-								if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 							ms().slot1Launched = true;
@@ -1624,16 +1577,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[1] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK.c_str());
-								printSmallCentered(false, 112, 6, retTime().c_str());
-								if (!sdFound()) {
-									printGbaBannerText();
-								} else if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 
@@ -1682,7 +1625,7 @@ int main(int argc, char **argv) {
 									chdir("sd:/");
 								}
 								int err = runNdsFile (pictochatPath, 0, NULL, true, true, true, false, false, ms().gameLanguage);
-								char text[32];
+								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText();
 								ClearBrightness();
@@ -1700,16 +1643,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[2] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK.c_str());
-								printSmallCentered(false, 112, 6, retTime().c_str());
-								if (!sdFound()) {
-									printGbaBannerText();
-								} else if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 
@@ -1758,7 +1691,7 @@ int main(int argc, char **argv) {
 									chdir("sd:/");
 								}
 								int err = runNdsFile (dlplayPath, 0, NULL, true, true, true, false, false, ms().gameLanguage);
-								char text[32];
+								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText();
 								ClearBrightness();
@@ -1778,14 +1711,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK.c_str());
-								printSmallCentered(false, 112, 6, retTime().c_str());
-								if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 							loadROMselect();
@@ -1795,14 +1720,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK.c_str());
-								printSmallCentered(false, 112, 6, retTime().c_str());
-								if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 							if (romFound[0]) {
@@ -1819,10 +1736,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK.c_str());
-								printSmallCentered(false, 112, 6, retTime().c_str());
-								printGbaBannerText();
 								swiWaitForVBlank();
 							}
 							gbaSwitch();
@@ -2008,11 +1921,11 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (ms().consoleModel >= 2) {
-						printSmallCentered(false, 20, STR_TAKEWHILE_PRESSHOME.c_str());
+						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
-						printSmallCentered(false, 20, STR_TAKEWHILE_CLOSELID.c_str());
+						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					}
-					printSmall(false, 2, 80, STR_CREATING_PUBLIC_SAVE.c_str());
+					printSmall(false, 2, 80, STR_CREATING_PUBLIC_SAVE);
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 35; i++) swiWaitForVBlank();
@@ -2034,7 +1947,7 @@ int main(int argc, char **argv) {
 						fputc('\0', pFile);
 						fclose(pFile);
 					}
-					printSmall(false, 2, 88, STR_PUBLIC_SAVE_CREATED.c_str());
+					printSmall(false, 2, 88, STR_PUBLIC_SAVE_CREATED);
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
@@ -2043,11 +1956,11 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (ms().consoleModel >= 2) {
-						printSmallCentered(false, 20, STR_TAKEWHILE_PRESSHOME.c_str());
+						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
-						printSmallCentered(false, 20, STR_TAKEWHILE_CLOSELID.c_str());
+						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					}
-					printSmall(false, 2, 80, STR_CREATING_PRIVATE_SAVE.c_str());
+					printSmall(false, 2, 80, STR_CREATING_PRIVATE_SAVE);
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 35; i++) swiWaitForVBlank();
@@ -2069,7 +1982,7 @@ int main(int argc, char **argv) {
 						fputc('\0', pFile);
 						fclose(pFile);
 					}
-					printSmall(false, 2, 88, STR_PRIVATE_SAVE_CREATED.c_str());
+					printSmall(false, 2, 88, STR_PRIVATE_SAVE_CREATED);
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
@@ -2080,9 +1993,9 @@ int main(int argc, char **argv) {
 
 				if (ms().secondaryDevice && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel < 2)) && sdFound()) {
 					clearText();
-					printSmallCentered(false, 20, ms().consoleModel >= 2 ? STR_TAKEWHILE_PRESSHOME.c_str() : STR_TAKEWHILE_CLOSELID.c_str());
-					printSmallCentered(false, 86, STR_NOW_COPYING_DATA.c_str());
-					printSmallCentered(false, 100, STR_DO_NOT_TURN_OFF_POWER.c_str());
+					printSmall(false, 0, 20, ms().consoleModel >= 2 ? STR_TAKEWHILE_PRESSHOME : STR_TAKEWHILE_CLOSELID, Alignment::center);
+					printSmall(false, 0, 86, STR_NOW_COPYING_DATA, Alignment::center);
+					printSmall(false, 0, 100, STR_DO_NOT_TURN_OFF_POWER, Alignment::center);
 					fadeType = true;	// Fade in from white
 					for (int i = 0; i < 35; i++) swiWaitForVBlank();
 					fcopy(ms().dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
@@ -2098,7 +2011,7 @@ int main(int argc, char **argv) {
 					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
 					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
 						clearText();
-						printSmallCentered(false, 8, STR_RESTART_AFTER_SAVE.c_str());
+						printSmall(false, 0, 8, STR_RESTART_AFTER_SAVE, Alignment::center);
 						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds
 						fadeType = false;	// Fade to white
@@ -2212,13 +2125,13 @@ int main(int argc, char **argv) {
 
 					argarray.at(0) = (char *)ndsToBoot;
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);
-					char text[32];
+					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText();
 					ClearBrightness();
 					printSmall(false, 4, 4, text);
 					if (err == 1) {
-						printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND.c_str() : STR_BOOTSTRAP_RELEASE_NOT_FOUND.c_str());
+						printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 					}
 					stop();
 				}
@@ -2335,11 +2248,11 @@ int main(int argc, char **argv) {
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									// Display nothing
 								} else if (dsiFeatures() && ms().consoleModel >= 2) {
-									printSmallCentered(false, 20, STR_TAKEWHILE_PRESSHOME.c_str());
+									printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 								} else {
-									printSmallCentered(false, 20, STR_TAKEWHILE_CLOSELID.c_str());
+									printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 								}
-								printSmallCentered(false, 88, (orgsavesize == 0) ? STR_CREATING_SAVE.c_str() : STR_EXPANDING_SAVE.c_str());
+								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
 
 								if (orgsavesize > 0) {
 									fsizeincrease(savepath.c_str(), sdFound() ? "sd:/_nds/TWiLightMenu/temp.sav" : "fat:/_nds/TWiLightMenu/temp.sav", savesize);
@@ -2352,7 +2265,7 @@ int main(int argc, char **argv) {
 									}
 								}
 								clearText();
-								printSmallCentered(false, 88, (orgsavesize == 0) ? STR_SAVE_CREATED.c_str() : STR_SAVE_EXPANDED.c_str());
+								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_SAVE_CREATED : STR_SAVE_EXPANDED, Alignment::center);
 								for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							}
 						}
@@ -2397,7 +2310,7 @@ int main(int argc, char **argv) {
 						);
 						bootstrapini.SaveIniFile( bootstrapinipath );
 
-                        			CheatCodelist codelist;
+						CheatCodelist codelist;
 						u32 gameCode,crc32;
 
 						if (!isHomebrew[ms().secondaryDevice]) {
@@ -2410,8 +2323,8 @@ int main(int argc, char **argv) {
 								FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
 								if (dat) {
 									if (codelist.searchCheatData(dat, gameCode,
-												     crc32, cheatOffset,
-												     cheatSize)) {
+																 crc32, cheatOffset,
+																 cheatSize)) {
 										codelist.parse(path);
 										codelist.writeCheatsToFile(cheatDataBin);
 										FILE* cheatData=fopen(cheatDataBin,"rb");
@@ -2460,16 +2373,16 @@ int main(int argc, char **argv) {
 
 						argarray.at(0) = (char *)ndsToBoot;
 						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true, -1);
-						char text[32];
+						char text[64];
 						snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 						clearText();
 						ClearBrightness();
 						printSmall(false, 4, 4, text);
 						if (err == 1) {
 							if(ms().homebrewBootstrap == true) {
-								printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND.c_str() : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND.c_str());
+								printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
 							} else {
-								printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND.c_str() : STR_BOOTSTRAP_RELEASE_NOT_FOUND.c_str());
+								printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 							}
 						}
 						stop();
@@ -2565,7 +2478,7 @@ int main(int argc, char **argv) {
 					}
 					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, language);
-					char text[32];
+					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText();
 					ClearBrightness();
@@ -2631,7 +2544,7 @@ int main(int argc, char **argv) {
 						clearText();
 						ClearBrightness();
 						if (*(u16*)(0x020000C0) == 0x5A45) {
-							printSmallCentered(false, 88, "Please wait...");
+							printSmall(false, 0, 88, STR_PLEASE_WAIT, Alignment::center);
 						}
 
 						showProgressBar = true;
@@ -2670,8 +2583,8 @@ int main(int argc, char **argv) {
 						}
 
 						clearText();
-						printSmallCentered(false, 20, STR_BARSTOPPED_CLOSELID.c_str());
-						printSmallCentered(false, 88, STR_NOW_LOADING.c_str());
+						printSmall(false, 0, 20, STR_BARSTOPPED_CLOSELID, Alignment::center);
+						printSmall(false, 0, 88, STR_NOW_LOADING, Alignment::center);
 
 						for (u32 len = romSize; len > 0; len -= 0x8000) {
 							if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
@@ -2909,13 +2822,13 @@ int main(int argc, char **argv) {
 
 				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, ms().boostCpu, ms().boostVram, -1);	// Pass ROM to emulator as argument
 
-				char text[32];
+				char text[64];
 				snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 				clearText();
 				ClearBrightness();
-				printLarge(false, 4, 4, text);
+				printSmall(false, 4, 4, text);
 				if (err == 1 && useNDSB) {
-					printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND.c_str() : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND.c_str());
+					printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
 				}
 				stop();
 

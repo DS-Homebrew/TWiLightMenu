@@ -72,6 +72,8 @@ void checkSdEject(void) {
 		printSmall(false, 0, 67, STR_DISABLE_SD_REMOVAL_CHECK, Alignment::center);
 	}
 
+	updateText(false);
+
 	while(1) {
 		// Currently not working
 		/*scanKeys();

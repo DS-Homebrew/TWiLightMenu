@@ -851,7 +851,12 @@ int main(int argc, char **argv)
 				STR_DESCRIPTION_FONT,
 				Option::Nul(opt_font_select),
 				{STR_PRESS_A},
-				{0});
+				{0})
+		.option(STR_DS_CLASSIC_CUSTOM_FONT,
+				STR_DESCRIPTION_DS_CLASSIC_CUSTOM_FONT,
+				Option::Bool(&ms().dsClassicCustomFont),
+				{STR_DEFAULT, STR_CUSTOM_SPLASH},
+				{false, true});
 
 	if (sdFound()) {
 		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {STR_MICRO_SD_CARD, STR_SD_CARD}, {true, false});

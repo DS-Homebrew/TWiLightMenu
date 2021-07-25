@@ -114,6 +114,7 @@ TWLSettings::TWLSettings()
     gbaBorder = "default.png";
     unlaunchBg = "default.gif";
     font = "default";
+    dsClassicCustomFont = false;
 
     soundfreq = EFreq32KHz;
     showlogo = true;
@@ -247,6 +248,7 @@ void TWLSettings::loadSettings()
     charUnlaunchBg = unlaunchBg.c_str();
     removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
     font = settingsini.GetString("SRLOADER", "FONT", font);
+    dsClassicCustomFont = settingsini.GetInt("SRLOADER", "DS_CLASSIC_CUSTOM_FONT", dsClassicCustomFont);
 
     //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
     smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);

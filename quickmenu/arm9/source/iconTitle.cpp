@@ -77,8 +77,7 @@ sNDSBannerExt ndsBanner;
 #define TITLE_CACHE_SIZE 0x80
 
 static bool infoFound[2] = {false};
-static u16 cachedTitle[2][TITLE_CACHE_SIZE]; 
-static char titleToDisplay[2][3][384]; 
+static char16_t cachedTitle[2][TITLE_CACHE_SIZE];
 
 static u32 arm9StartSig[4];
 
@@ -105,25 +104,6 @@ void iconTitleInit()
 	clearTiles = new u8[(32 * 256) / 2]();
 	blackPalette = new u16[16*8]();
 	tilesModified = new u8[(32 * 256) / 2];
-}
-
-static inline void writeBannerText(int num, int textlines, const char* text1, const char* text2, const char* text3)
-{
-	switch(textlines) {
-		case 0:
-		default:
-			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY+BOX_PY_spacing1, text1);
-			break;
-		case 1:
-			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY+BOX_PY_spacing2, text1);
-			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY+BOX_PY_spacing3, text2);
-			break;
-		case 2:
-			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY, text1);
-			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY+BOX_PY_spacing1, text2);
-			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY+BOX_PY_spacing1*2, text3);
-			break;
-	}
 }
 
 static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
@@ -987,44 +967,14 @@ void titleUpdate(int num, bool isDir, const char* name)
 	 || extention(name, ".a26")
 	 || extention(name, ".a52")
 	 || extention(name, ".a78")
-	 || extention(name, ".pce"))
-	{
-		writeBannerText(num, 0, name, "", "");
-	}
-	else
-	{
+	 || extention(name, ".pce")) {
+		printSmall(false, BOX_PX, iconYpos[num==0 ? 3 : 0] + BOX_PY - (calcSmallFontHeight(name) / 2), name, Alignment::center);
+	} else {
 		// this is an nds/app file!
-
-		// turn unicode into ascii (kind of)
-		// and convert 0x0A into 0x00
-		int bannerlines = 0;
-		// The index of the character array
-		int charIndex = 0;
-		for (int i = 0; i < TITLE_CACHE_SIZE; i++)
-		{
-			// todo: fix crash on titles that are too long (homebrew)
-			if ((cachedTitle[num][i] == 0x000A) || (cachedTitle[num][i] == 0xFFFF)) {
-				titleToDisplay[num][bannerlines][charIndex] = 0;
-				bannerlines++;
-				charIndex = 0;
-			} else if (cachedTitle[num][i] <= 0x007F) { // ASCII are one UTF-8 character
-				titleToDisplay[num][bannerlines][charIndex++] = cachedTitle[num][i];
-			} else if (cachedTitle[num][i] <= 0x07FF) { // 0x0080 - 0x07FF are two UTF-8 characters
-				titleToDisplay[num][bannerlines][charIndex++] = (0xC0 | ((cachedTitle[num][i] & 0x7C0) >> 6));
-				titleToDisplay[num][bannerlines][charIndex++] = (0x80 | (cachedTitle[num][i] & 0x03F));
-			} else { // 0x0800 - 0xFFFF take three UTF-8 characters, we don't need to handle higher as we're coming from single UTF-16 chars
-				titleToDisplay[num][bannerlines][charIndex++] = (0xE0 | ((cachedTitle[num][i] & 0xF000) >> 12));
-				titleToDisplay[num][bannerlines][charIndex++] = (0x80 | ((cachedTitle[num][i] & 0x0FC0) >> 6));
-				titleToDisplay[num][bannerlines][charIndex++] = (0x80 | (cachedTitle[num][i] & 0x003F));
-			}
-		}
-
-		// text
 		if (infoFound[num]) {
-			writeBannerText(num, bannerlines, titleToDisplay[num][0], titleToDisplay[num][1], titleToDisplay[num][2]);
+			printSmall(false, BOX_PX, iconYpos[num==0 ? 3 : 0] + BOX_PY - (calcSmallFontHeight(cachedTitle[num]) / 2), cachedTitle[num], Alignment::center);
 		} else {
-			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY+BOX_PY_spacing2, name);
-			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY+BOX_PY_spacing3, titleToDisplay[num][0]);
+			printSmall(false, BOX_PX, iconYpos[num==0 ? 3 : 0] + BOX_PY - (calcSmallFontHeight(name) / 2), name, Alignment::center);
 		}
 	}
 }

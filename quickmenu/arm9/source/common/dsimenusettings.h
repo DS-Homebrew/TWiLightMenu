@@ -264,6 +264,7 @@ class TWLSettings
     std::string gbaBorder;
     std::string unlaunchBg;
     std::string font;
+    bool dsClassicCustomFont;
 
     bool wideScreen;
 
