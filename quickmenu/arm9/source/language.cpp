@@ -29,33 +29,27 @@ std::string getString(CIniFile &ini, const std::string &item, const std::string 
 					break;
 				case 'a':
 				case 'A':
-					// out = out.substr(0, i) + "" + out.substr(i + 2); // U+E000
-					out = out.substr(0, i) + "\u2427" + out.substr(i + 2);
+					out = out.substr(0, i) + "" + out.substr(i + 2); // U+E000
 					break;
 				case 'b':
 				case 'B':
-					// out = out.substr(0, i) + "" + out.substr(i + 2); // U+E001
-					out = out.substr(0, i) + "\u2428" + out.substr(i + 2);
+					out = out.substr(0, i) + "" + out.substr(i + 2); // U+E001
 					break;
 				case 'x':
 				case 'X':
-					// out = out.substr(0, i) + "" + out.substr(i + 2); // U+E002
-					out = out.substr(0, i) + "\u2429" + out.substr(i + 2);
+					out = out.substr(0, i) + "" + out.substr(i + 2); // U+E002
 					break;
 				case 'y':
 				case 'Y':
-					// out = out.substr(0, i) + "" + out.substr(i + 2); // U+E003
-					out = out.substr(0, i) + "\u242A" + out.substr(i + 2);
+					out = out.substr(0, i) + "" + out.substr(i + 2); // U+E003
 					break;
 				case 'l':
 				case 'L':
-					// out = out.substr(0, i) + "" + out.substr(i + 2); // U+E004
-					out = out.substr(0, i) + "\u242B" + out.substr(i + 2);
+					out = out.substr(0, i) + "" + out.substr(i + 2); // U+E004
 					break;
 				case 'r':
 				case 'R':
-					// out = out.substr(0, i) + "" + out.substr(i + 2); // U+E005
-					out = out.substr(0, i) + "\u242C" + out.substr(i + 2);
+					out = out.substr(0, i) + "" + out.substr(i + 2); // U+E005
 					break;
 				case 'd':
 				case 'D':

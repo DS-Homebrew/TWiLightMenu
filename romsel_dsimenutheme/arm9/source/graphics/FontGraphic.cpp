@@ -62,13 +62,6 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansio
 			fread(fontTiles, tileSize, tileAmount, file);
 		}
 
-		// Fix top row
-		for(int i = 0; i < tileAmount; i++) {
-			fontTiles[i * tileSize] = 0;
-			fontTiles[i * tileSize + 1] = 0;
-			fontTiles[i * tileSize + 2] = 0;
-		}
-
 		// Load character widths
 		fseek(file, 0x24, SEEK_SET);
 		u32 locHDWC;
