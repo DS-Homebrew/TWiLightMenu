@@ -1248,10 +1248,17 @@ void titleUpdate(bool isDir, const char* name)
 		loadFixedBanner();
 
 		int currentLang = 0;
+		extern bool useTwlCfg;
 		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
 			currentLang = setGameLanguage;
+			if (currentLang < 0 || currentLang > 7) {
+				currentLang = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
+			}
 		} else {
 			currentLang = setTitleLanguage;
+			if (currentLang < 0 || currentLang > 7) {
+				currentLang = PersonalData->language;
+			}
 		}
 		while (ndsBanner.titles[currentLang][0] == 0) {
 			if (currentLang == 0) break;
