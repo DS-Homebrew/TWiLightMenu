@@ -49,8 +49,8 @@ void checkSdEject(void) {
 		0xD6B5,
 		0xFFFF,
 	};
-	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
-	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
+	tonccpy(BG_PALETTE, palette, sizeof(palette));
+	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
 
 	swiWaitForVBlank();
 	clearText();
