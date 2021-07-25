@@ -247,6 +247,7 @@ class TWLSettings
     std::string unlaunchBg;
     bool removeLauncherPatches;
     std::string font;
+    bool dsClassicCustomFont;
 
     //int screenScaleSize;
     bool wideScreen;

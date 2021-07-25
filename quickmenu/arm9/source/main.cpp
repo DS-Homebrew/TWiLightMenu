@@ -678,9 +678,10 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
 	}
 
-	char text[32];
+	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	ClearBrightness();
+	clearText();
 	printSmall(false, 4, 4, text);
 	if (err == 0) {
 		printSmall(false, 4, 20, STR_FLASHCARD_UNSUPPORTED);
@@ -847,7 +848,7 @@ void directCardLaunch() {
 				chdir("sd:/");
 			}
 			int err = runNdsFile ("/_nds/TWiLightMenu/dstwoLaunch.srldr", 0, NULL, true, true, true, ms().boostCpu, ms().boostVram, -1);
-			char text[32];
+			char text[64];
 			snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 			ClearBrightness();
 			printSmall(false, 4, 4, text);
@@ -859,9 +860,10 @@ void directCardLaunch() {
 		chdir("sd:/");
 	}
 	int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, -1);
-	char text[32];
+	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	ClearBrightness();
+	clearText();
 	printSmall(false, 4, 4, text);
 	stop();
 }
@@ -1403,8 +1405,8 @@ int main(int argc, char **argv) {
 
 			do {
 				clearText();
-				printSmall(false, 6, 6, STR_B_BACK);
-				printSmall(false, 112, 6, retTime(), Alignment::center);
+				printSmall(false, ms().rtl() ? 72 : -72, 6, STR_B_BACK, Alignment::center);
+				printSmall(false, ms().rtl() ? -72 : 72, 6, retTime(), Alignment::center);
 				if (flashcardFound()) {
 					if (romFound[1]) {
 						titleUpdate(1, false, filename[1].c_str());
@@ -1527,21 +1529,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK);
-								printSmall(false, 112, 6, retTime(), Alignment::center);
-								if (romFound[1]) {
-									titleUpdate(1, false, filename[1].c_str());
-								} else {
-									printLastPlayedText(0);
-								}
-								if (!sdFound()) {
-									printGbaBannerText();
-								} else if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 							loadROMselect();
@@ -1551,21 +1538,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK);
-								printSmall(false, 112, 6, retTime().c_str(), Alignment::center);
-								if (romFound[1]) {
-									titleUpdate(1, false, filename[1].c_str());
-								} else {
-									printLastPlayedText(0);
-								}
-								if (!sdFound()) {
-									printGbaBannerText();
-								} else if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 							if (romFound[1]) {
@@ -1582,15 +1554,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK);
-								printSmall(false, 112, 6, retTime().c_str(), Alignment::center);
-								printNdsCartBannerText();
-								if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 							ms().slot1Launched = true;
@@ -1614,16 +1577,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[1] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK);
-								printSmall(false, 112, 6, retTime().c_str(), Alignment::center);
-								if (!sdFound()) {
-									printGbaBannerText();
-								} else if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 
@@ -1672,7 +1625,7 @@ int main(int argc, char **argv) {
 									chdir("sd:/");
 								}
 								int err = runNdsFile (pictochatPath, 0, NULL, true, true, true, false, false, ms().gameLanguage);
-								char text[32];
+								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText();
 								ClearBrightness();
@@ -1690,16 +1643,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[2] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK);
-								printSmall(false, 112, 6, retTime().c_str(), Alignment::center);
-								if (!sdFound()) {
-									printGbaBannerText();
-								} else if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 
@@ -1748,7 +1691,7 @@ int main(int argc, char **argv) {
 									chdir("sd:/");
 								}
 								int err = runNdsFile (dlplayPath, 0, NULL, true, true, true, false, false, ms().gameLanguage);
-								char text[32];
+								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText();
 								ClearBrightness();
@@ -1768,14 +1711,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK);
-								printSmall(false, 112, 6, retTime().c_str(), Alignment::center);
-								if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 							loadROMselect();
@@ -1785,14 +1720,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK);
-								printSmall(false, 112, 6, retTime().c_str(), Alignment::center);
-								if (romFound[0]) {
-									titleUpdate(0, false, filename[0].c_str());
-								} else {
-									printLastPlayedText(3);
-								}
 								swiWaitForVBlank();
 							}
 							if (romFound[0]) {
@@ -1809,10 +1736,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
-								clearText();
-								printSmall(false, 6, 6, STR_B_BACK);
-								printSmall(false, 112, 6, retTime().c_str(), Alignment::center);
-								printGbaBannerText();
 								swiWaitForVBlank();
 							}
 							gbaSwitch();
@@ -2202,7 +2125,7 @@ int main(int argc, char **argv) {
 
 					argarray.at(0) = (char *)ndsToBoot;
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);
-					char text[32];
+					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText();
 					ClearBrightness();
@@ -2450,7 +2373,7 @@ int main(int argc, char **argv) {
 
 						argarray.at(0) = (char *)ndsToBoot;
 						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true, -1);
-						char text[32];
+						char text[64];
 						snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 						clearText();
 						ClearBrightness();
@@ -2555,7 +2478,7 @@ int main(int argc, char **argv) {
 					}
 					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, language);
-					char text[32];
+					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText();
 					ClearBrightness();
@@ -2899,7 +2822,7 @@ int main(int argc, char **argv) {
 
 				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, ms().boostCpu, ms().boostVram, -1);	// Pass ROM to emulator as argument
 
-				char text[32];
+				char text[64];
 				snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 				clearText();
 				ClearBrightness();

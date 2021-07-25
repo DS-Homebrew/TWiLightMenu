@@ -106,6 +106,7 @@ TWLSettings::TWLSettings()
     unlaunchBg = "default.gif";
     removeLauncherPatches = true;
     font = "default";
+    dsClassicCustomFont = false;
 
     soundFreq = EFreq32KHz;
     dsiSplash = isDSiMode();
@@ -236,6 +237,7 @@ void TWLSettings::loadSettings()
     unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
     removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
     font = settingsini.GetString("SRLOADER", "FONT", font);
+    dsClassicCustomFont = settingsini.GetInt("SRLOADER", "DS_CLASSIC_CUSTOM_FONT", dsClassicCustomFont);
 
     //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
     smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
@@ -347,6 +349,7 @@ void TWLSettings::saveSettings()
     settingsini.SetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
     settingsini.SetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
     settingsini.SetString("SRLOADER", "FONT", font);
+    settingsini.SetInt("SRLOADER", "DS_CLASSIC_CUSTOM_FONT", dsClassicCustomFont);
 
     //settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
     settingsini.SetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
