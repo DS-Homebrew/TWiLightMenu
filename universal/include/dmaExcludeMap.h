@@ -11,6 +11,8 @@ static const char cardReadDMAExcludeList[][4] = {
 	"AJS", // Jump! Super Stars
 	"AJU", // Jump! Ultimate Stars
 	"YKG", // Kingdom Hearts: 358/2 Days
+	"AZE", // The Legend of Zelda: Phantom Hourglass
+	"Y4C", // The Legend of Zelda: Phantom Hourglass (Demo)
 	"COL", // Mario & Sonic at the Olympic Winter Games
 	"AUG", // Need for Speed: Underground 2
 	"A2D", // New(er) Super Mario Bros. (DS)
