@@ -88,7 +88,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - retrogamefan & Rudolph: Included AP-patches for nds-bootstrap.
    - [enler](https://github.com/enler): Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility.
    - Rocket Robz: Fixing some DS⁽ⁱ⁾-Enhanced game AP-patches for DS⁽ⁱ⁾ mode compatibility.
-- fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, gamemasterplc, RocketRobz, ChampionLeake, DeadSkullzJr, spellboundtriangle, Bacer: Widescreen Cheats.
+- fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, [gamemasterplc](https://github.com/gamemasterplc), RocketRobz, [ChampionLeake](https://github.com/ChampionLeake), [DeadSkullzJr](https://github.com/DeadSkullzJr), [spellboundtriangle](https://github.com/spellboundtriangle), [LedyBacer](https://github.com/LedyBacer): Widescreen Cheats.
 ## Translators
 - Bulgarian: [Peter0x44](https://github.com/Peter0x44)
 - Chinese Simplified: [Forbidden](https://crowdin.com/profile/Origami), [James-Makoto](https://crowdin.com/profile/VCMOD55), [R-YaTian](https://github.com/R-YaTian), [Yukino Song](https://crowdin.com/profile/ClassicOldSong), [曾国立](https://crowdin.com/profile/notthingtosay), [百地 希留耶](https://crowdin.com/profile/FIve201)
