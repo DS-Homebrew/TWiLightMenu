@@ -79,8 +79,8 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [Arisotura](https://github.com/Arisotura): ROM list from melonDS.
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
 - [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap.
-- [Gericom](https://github.com/Gericom), TrolleyDave, and FAST6191: GBA SRAM-patching code, used in gbapatcher ([SRAM patching thread at GBATemp](https://gbatemp.net/threads/reverse-engineering-gba-patching.60168/))
-- Nikokaro: Found no-tilt patches for *WarioWare: Twisted!*, and *Yoshi Topsy-Turvy*. ([GBATemp thread](https://gbatemp.net/threads/gba-no-tilt-patches-for-ds-users.584128/))
+- [Gericom](https://github.com/Gericom), TrolleyDave, and FAST6191: GBA SRAM-patching code, used in gbapatcher ([SRAM patching thread at GBAtemp](https://gbatemp.net/threads/reverse-engineering-gba-patching.60168/))
+- Nikokaro: Found no-tilt patches for *WarioWare: Twisted!*, and *Yoshi Topsy-Turvy*. ([GBAtemp thread](https://gbatemp.net/threads/gba-no-tilt-patches-for-ds-users.584128/))
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI.
 - [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcarts.
@@ -88,7 +88,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - retrogamefan & Rudolph: Included AP-patches for nds-bootstrap.
    - [enler](https://github.com/enler): Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility.
    - Rocket Robz: Fixing some DS⁽ⁱ⁾-Enhanced game AP-patches for DS⁽ⁱ⁾ mode compatibility.
-- fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, gamemasterplc, RocketRobz, ChampionLeake, DeadSkullzJr, spellboundtriangle, Bacer: Widescreen Cheats.
+- fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, [gamemasterplc](https://github.com/gamemasterplc), RocketRobz, [ChampionLeake](https://github.com/ChampionLeake), [DeadSkullzJr](https://github.com/DeadSkullzJr), [spellboundtriangle](https://github.com/spellboundtriangle), [LedyBacer](https://github.com/LedyBacer): Widescreen Cheats.
 ## Translators
 - Bulgarian: [Peter0x44](https://github.com/Peter0x44)
 - Chinese Simplified: [Forbidden](https://crowdin.com/profile/Origami), [James-Makoto](https://crowdin.com/profile/VCMOD55), [R-YaTian](https://github.com/R-YaTian), [Yukino Song](https://crowdin.com/profile/ClassicOldSong), [曾国立](https://crowdin.com/profile/notthingtosay), [百地 希留耶](https://crowdin.com/profile/FIve201)
@@ -103,7 +103,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - Indonesian: [Farid Irwan](https://crowdin.com/profile/farid1991), [heydootdoot](https://crowdin.com/profile/heydootdoot), [Shiori](https://crowdin.com/profile/egoistamamono)
 - Italian: [Leonardo Ledda](https://github.com/LeddaZ), [TM-47](https://crowdin.com/profile/-tm-), [Vendicatorealato](https://crowdin.com/profile/vendicatorealato), [xavimel](https://github.com/xavimel)
 - Japanese: [Chromaryu](https://crowdin.com/profile/knight-ryu12), [Pk11](https://github.com/Epicpkmn11), [rinrinrin2002](https://crowdin.com/profile/rinrinrin2002), [Rintim](https://crowdin.com/profile/Rintim), [Ronny Chan](https://github.com/chyyran), [Uriki](https://github.com/Uriki)
-- Korean: [Han Sol Jin](https://github.com/hansoljin), [I'm Not Cry](https://crowdin.com/profile/cryental), [Myebyeol_NOTE](https://crowdin.com/profile/groovy-mint), [Oleh Hatsenko](https://github.com/IRONKAGE), [그그기그](https://crowdin.com/profile/gigueguegue0803)
+- Korean: [lifehackerhansol](https://github.com/lifehackerhansol), [I'm Not Cry](https://crowdin.com/profile/cryental), [Myebyeol_NOTE](https://crowdin.com/profile/groovy-mint), [Oleh Hatsenko](https://github.com/IRONKAGE), [그그기그](https://crowdin.com/profile/gigueguegue0803)
 - Norwegian: [Nullified Block](https://crowdin.com/profile/elasderas123)
 - Polish: [gierkowiec tv](https://crowdin.com/profile/krystianbederz), [Konrad Borowski](https://crowdin.com/profile/xfix), [MaksCROWDIN0](https://crowdin.com/profile/makscrowdin0), [Mateusz Tobiasz](https://crowdin.com/profile/tobiaszmateusz), [RedstonekPL](https://crowdin.com/profile/redstonekpl)
 - Portuguese: [bruwyvn](https://crowdin.com/profile/bruwyvn), [Christopher Rodrigues](https://crowdin.com/profile/chrismr197), [Gabz Almeida](https://crowdin.com/profile/connwcted), [jim](https://crowdin.com/profile/hnrwx), [joyrv](https://crowdin.com/profile/joyrv), [leteka 1234](https://crowdin.com/profile/Leaqua21), [Rodrigo Tavares](https://crowdin.com/profile/rodrigodst), [Tiago Silva](https://crowdin.com/profile/TheGameratorT), [Wodson de Andrade](https://crowdin.com/profile/CaptainCheep), [Wodson de Andrade](https://crowdin.com/profile/WodsonKun), [Zak](https://github.com/zekroman)
