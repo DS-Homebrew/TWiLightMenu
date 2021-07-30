@@ -17,6 +17,7 @@ static const char asyncReadExcludeList[][4] = {
 	"BOE", // Inazuma Eleven 3: Team Ogre Attacks!
 	"YLU", // Last Window: The Secret of Cape West
 	"AY9", // Mario & Sonic at the Olympic Games
+	"V2G", // Mario vs. Donkey Kong: Mini-Land Mayhem!
 	"BKI", // The Legend of Zelda: Spirit Tracks (Keeps AP-fix in effect)
 	"Y7S", // The Legend of Zelda: Spirit Tracks (Demo)
 	"AWV", // Nervous Brickdown
