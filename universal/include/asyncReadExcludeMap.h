@@ -21,6 +21,8 @@ static const char asyncReadExcludeList[][4] = {
 	"V2G", // Mario vs. Donkey Kong: Mini-Land Mayhem!
 	"BKI", // The Legend of Zelda: Spirit Tracks (Keeps AP-fix in effect)
 	"Y7S", // The Legend of Zelda: Spirit Tracks (Demo)
+	"BLH", // LEGO Harry Potter: Years 1-4
+	"B83", // LEGO Harry Potter: Years 5-7
 	"AWV", // Nervous Brickdown
 	"B2K", // Ni no Kuni: The Jet Black Mage
 	"IRB", // Pokemon Black Version (Keeps AP-fix in effect)
