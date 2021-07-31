@@ -1667,7 +1667,6 @@ void loadBootstrapScreenshot(FILE *file) {
 			u16 val = buffer[(row * 12 / 10) * 256 + (col * 12 / 10)];
 
 			// RGB 565 -> BGR 5551
-			// ((val >> 10) & 31) | ((val & (31 << 5)) << 1) | ((val & 31) << 11)
 			val = ((val >> 11) & 0x1F) | ((val & (0x1F << 6)) >> 1) | ((val & 0x1F) << 10) | BIT(15);
 
 			u8 y = photoHeight - row - 1;
