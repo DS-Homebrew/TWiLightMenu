@@ -1483,6 +1483,7 @@ void vBlankHandler() {
 }
 
 void loadPhoto(const std::string &path);
+void loadBootstrapScreenshot(FILE *file);
 
 void loadPhotoList() {
 	DIR *dir;
@@ -1513,7 +1514,29 @@ void loadPhotoList() {
 			return;
 		}
 	}
-	// If dir not opened or no photos found, then draw the default
+
+	// If no photos found, try find a bootstrap screenshot
+	FILE *file = fopen("sd:/_nds/nds-bootstrap/screenshots.tar", "rb");
+	if(!file)
+		file = fopen("fat:/_nds/nds-bootstrap/screenshots.tar", "rb");
+	
+	if(file) {
+		std::vector<int> screenshots;
+		fseek(file, 0x200, SEEK_SET);
+		for(int i = 0; i < 50; i++) {
+			if(fgetc(file) == 'B')
+				screenshots.push_back(i);
+			fseek(file, 0x18400 - 1, SEEK_CUR);
+		}
+
+		if(screenshots.size() > 0) {
+			fseek(file, 0x200 + 0x18400 * (screenshots[rand() % screenshots.size()]), SEEK_SET);
+			loadBootstrapScreenshot(file);
+			return;
+		}
+	}
+
+	// If no photos or screenshots found, then draw the default
 	char path[64];
 	snprintf(path, sizeof(path), "nitro:/languages/%s/photo_default.png", ms().getGuiLanguageString().c_str());
 	loadPhoto(path);
@@ -1610,6 +1633,55 @@ void loadPhoto(const std::string &path) {
 		x++;
 	}
 	tex().commitBgSubModify();
+}
+
+void loadBootstrapScreenshot(FILE *file) {
+	// Simple check to ensure we're seeked to a BMP
+	if(fgetc(file) != 'B' || fgetc(file) != 'M')
+		return;
+
+	photoWidth = 208;
+	photoHeight = 156;
+
+	// All nds-bootstrap screenshots should be this size, if it's not something's wrong
+	u32 bmpSize;
+	fread(&bmpSize, 4, 1, file);
+	if(bmpSize != 0x18046)
+		return;
+
+	fseek(file, 0x40, SEEK_CUR);
+	u16 *buffer = new u16[256 * 192];
+	fread(buffer, 2, 256 * 192, file);
+
+	u16 *bgSubBuffer = tex().beginBgSubModify();
+	u16* bgSubBuffer2 = tex().bgSubBuffer2();
+
+	// Fill area with black
+	for(int y = 24; y < 180; y++) {
+		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
+	}
+
+	// Start loading
+	for (uint row = 0; row < photoHeight; row++) {
+		for (uint col = 0; col < photoWidth; col++) {
+			u16 val = buffer[(row * 12 / 10) * 256 + (col * 12 / 10)];
+
+			// RGB 565 -> BGR 5551
+			// ((val >> 10) & 31) | ((val & (31 << 5)) << 1) | ((val & 31) << 11)
+			val = ((val >> 11) & 0x1F) | ((val & (0x1F << 6)) >> 1) | ((val & 0x1F) << 10) | BIT(15);
+
+			u8 y = photoHeight - row - 1;
+			bgSubBuffer[(24 + y) * 256 + 24 + col] = val;
+			tex().photoBuffer()[y * photoWidth + col] = val;
+			if (boxArtColorDeband) {
+				bgSubBuffer2[(24 + y) * 256 + 24 + col] = val;
+				tex().photoBuffer2()[y * photoWidth + col] = val;
+			}
+		}
+	}
+	tex().commitBgSubModify();
+
+	delete[] buffer;
 }
 
 // Load photo without overwriting shoulder button images
