@@ -74,7 +74,7 @@ TWLSettings::TWLSettings()
     boostVram = false;
     bstrap_dsiMode = EDSMode;
 	cardReadDMA = true;
-	asyncCardRead = true;
+	asyncCardRead = false;
     extendedMemory = 0;
 
     forceSleepPatch = false;

@@ -181,7 +181,7 @@ bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
 int bstrap_dsiMode = 1;
 bool cardReadDMA = true;
-bool asyncCardRead = true;
+bool asyncCardRead = false;
 int bstrap_extendedMemory = 0;
 bool forceSleepPatch = false;
 bool dsiWareBooter = true;
