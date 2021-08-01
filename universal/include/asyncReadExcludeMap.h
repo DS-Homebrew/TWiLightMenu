@@ -21,8 +21,17 @@ static const char asyncReadExcludeList[][4] = {
 	"V2G", // Mario vs. Donkey Kong: Mini-Land Mayhem!
 	"BKI", // The Legend of Zelda: Spirit Tracks (Keeps AP-fix in effect)
 	"Y7S", // The Legend of Zelda: Spirit Tracks (Demo)
+	"B6F", // LEGO Batman 2: DC Super Heroes
+	"TLJ", // LEGO Friends
 	"BLH", // LEGO Harry Potter: Years 1-4
 	"B83", // LEGO Harry Potter: Years 5-7
+	"BLJ", // LEGO Indiana Jones 2: The Adventure Continues
+	"TCB", // LEGO Legends of Chima: Laval's Journey
+	"TLR", // LEGO The Lord of the Rings
+	"TLM", // LEGO Marvel Super Heroes: Universe in Peril
+	"BVY", // LEGO Ninjago: The Videogame
+	"BZD", // LEGO Pirates of the Caribbean: The Video Game
+	"BL9", // LEGO Star Wars III: The Clone Wars
 	"AWV", // Nervous Brickdown
 	"B2K", // Ni no Kuni: The Jet Black Mage
 	"IRB", // Pokemon Black Version (Keeps AP-fix in effect)
@@ -38,6 +47,7 @@ static const char asyncReadExcludeList[][4] = {
 	"C3J", // Professor Layton and the Unwound/Lost Future
 	"BLF", // Professor Layton and the Last Specter/Spectre's Call
 	"Y9B", // Professor Layton and the Last Specter/Spectre's Call (Demo)
+	"BMT", // Shin Megami Tensei: Strange Journey
 	"VSO", // Sonic Classic Collection
 	"AFZ", // Transformers: Autobots
 	"AFY", // Transformers: Decepticons
