@@ -3,6 +3,7 @@
 
 static const char asyncReadExcludeList[][4] = {
 	"ADM", // Animal Crossing: Wild World
+	"VAA", // Art Academy
 	"CBB", // Big Bang Mini
 	"CVZ", // Blazer Drive
 	"ABX", // Bomberman Land Touch!
