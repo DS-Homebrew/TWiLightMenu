@@ -2,6 +2,7 @@
 #define DMAEXCLUDEMAP_H
 
 static const char cardReadDMAExcludeList[][4] = {
+	"AY6", // Bangai-O Spirits
 	"AWD", // Diddy Kong Racing
 	"YV5", // Dragon Quest V: Hand of the Heavenly Bride
 	"APR", // Feel the Magic: XY-XX
