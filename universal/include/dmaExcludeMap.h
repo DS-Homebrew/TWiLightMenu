@@ -19,6 +19,7 @@ static const char cardReadDMAExcludeList[][4] = {
 	"A2D", // New(er) Super Mario Bros. (DS)
 	"ARR", // Ridge Racer DS
 	"B8I", // Spider-Man: Edge of Time
+	"AST", // Star Wars: Episode III: Revenge of the Sith
 	"TAM", // The Amazing Spider-Man
 	"CP3", // Viva Pinata
 };
