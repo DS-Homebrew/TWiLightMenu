@@ -483,6 +483,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 
 extern char soundBank[];
 extern bool soundBankInited;
+mm_sound_effect bootJingle;
 
 void BootJingleTwlMenu() {
 	if (!soundBankInited) {
@@ -490,10 +491,17 @@ void BootJingleTwlMenu() {
 		soundBankInited = true;
 	}
 
-	mmLoad(MOD_TITLE);
-	mmSetModuleVolume(400);
-	mmSetModuleTempo(0x6C0);
-	mmStart(MOD_TITLE, MM_PLAY_ONCE);
+	mmLoadEffect( SFX_TITLE );
+
+	bootJingle = {
+		{ SFX_TITLE } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+
+	mmEffectEx(&bootJingle);
 }
 
 void twlMenuVideo_topGraphicRender(void) {
