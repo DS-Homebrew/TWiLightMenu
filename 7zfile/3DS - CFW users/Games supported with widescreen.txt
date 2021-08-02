@@ -202,7 +202,7 @@ Mario Hoops 3 on 3 (USA)
 Mario Hoops 3 on 3 (Chinese translation)
 Mario Slam Basketball (Europe)
 Mario Basketball 3 on 3 (Japan)
-Mario Kart DS (USA/Europe) (Optional xdelta patch (USA and English only): https://www.dropbox.com/s/5111awpf08vtoag/mkdswide.xdelta3?dl=1)
+Mario Kart DS (USA/Europe/CTGP Nitro) (Optional xdelta patch (USA and English only): https://www.dropbox.com/s/5111awpf08vtoag/mkdswide.xdelta3?dl=1)
 Mario Kart DS (Japan)
 Mario Kart DS (Simplified Chinese translation)
 Mario Kart DS (Traditional Chinese translation)
@@ -434,7 +434,7 @@ Zombie Shiki - Eigo Ryoku Sosei Jutsu - English of the Dead (Japan)
 
 NOTES:
 * If some regions are combined in one line, that means the ROMs use the same cheat as one region.
-* Only clean unhacked ROMs work with widescreen.
+* Only clean unhacked ROMs work with widescreen, unless a patch has been created for that hacked ROM.
 
 Codes by:
 * fintogive
