@@ -101,7 +101,21 @@ int main(int argc, char **argv) {
 
 	int err = runNdsFile (srldrPath, 0, NULL);
 	bool twlmFound = (access("sd:/_nds/TWiLightMenu", F_OK) == 0);
-	bool formatting = (access("sd:/_nds/_nds", F_OK) != 0);
+	bool formatting = true;
+	if (access("_nds", F_OK) == 0) {
+		chdir("_nds");
+		if (access("_nds", F_OK) == 0) {
+			chdir("_nds");
+			if (access("_nds", F_OK) == 0) {
+				formatting = false;	// _nds folder is found 3 times without opening it
+			} else {
+				chdir("..");
+				chdir("..");
+			}
+		} else {
+			chdir("..");
+		}
+	}
 
 	graphicsInit();
 	fontInit();
