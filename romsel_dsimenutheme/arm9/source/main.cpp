@@ -51,6 +51,7 @@
 #include "cheat.h"
 #include "crc.h"
 
+#include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
 #include "donorMap.h"
@@ -177,6 +178,23 @@ int SetDonorSDK() {
 	return 0;
 }
 
+
+/**
+ * Disable TWL clock speed for a specific game.
+ */
+bool setClockSpeed() {
+	if (perGameSettings_boostCpu == -1) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
+			if (memcmp(gameTid[CURPOS], twlClockExcludeList[i], 3) == 0) {
+				// Found match
+				return false;
+			}
+		}
+	}
+
+	return perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
+}
 
 /**
  * Disable card read DMA for a specific game.
@@ -1560,7 +1578,7 @@ int main(int argc, char **argv) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode);
 						}
 						if (dsiFeatures() || !ms().secondaryDevice) {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed());
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA());
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", setAsyncReadDMA());
