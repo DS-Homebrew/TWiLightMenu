@@ -157,6 +157,8 @@ jobs:
           git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
           cd Builds/
           cp ${{ github.workspace }}/build/* .
+          7z e TWiLightMenu.7z TWiLightMenu/_nds/TWiLightMenu/extras/apfix.pck -y
+          mv apfix.pck extras/apfix.pck
           git stage .
           git commit -m "TWiLightMenu | $COMMIT_HASH"
           git tag v$CURRENT_DATE
