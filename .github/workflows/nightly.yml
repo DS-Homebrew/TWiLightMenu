@@ -159,8 +159,8 @@ jobs:
           git config --global user.name "TWLBot"
           git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
           cd Builds/
-          mv ${{ github.workspace }}/build/*.7z .
-          mv ${{ github.workspace }}/build/* extras
+          cp ${{ github.workspace }}/build/*.7z .
+          mv ${{ github.workspace }}/build/apfix.pck extras
           git stage .
           git commit -m "TWiLightMenu | $COMMIT_HASH"
           git tag v$CURRENT_DATE
@@ -179,7 +179,7 @@ jobs:
 
           ID=$(echo $RESPONSE | jq --raw-output '.id')
 
-          for file in ${{ github.workspace }}/build/*; do
+          for file in ${{ github.workspace }}/build/*.7z; do
             AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
             CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
             CONTENT_TYPE="Content-Type: application/7z-x-compressed"
