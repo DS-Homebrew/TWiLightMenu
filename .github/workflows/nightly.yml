@@ -120,6 +120,9 @@ jobs:
           rm -rf TWiLightMenu/DSi\ -\ CFW\ users
           7z a TWiLightMenu-Flashcard.7z TWiLightMenu
           mv TWiLightMenu-Flashcard.7z ~/artifacts
+
+          # apfix.pck
+          cp 7zfile/_nds/TWiLightMenu/extras/apfix.pck ~/artifacts
       - name: Publish build to GH Actions
         uses: actions/upload-artifact@v2
         with:
@@ -156,9 +159,8 @@ jobs:
           git config --global user.name "TWLBot"
           git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
           cd Builds/
-          cp ${{ github.workspace }}/build/* .
-          7z e TWiLightMenu.7z TWiLightMenu/_nds/TWiLightMenu/extras/apfix.pck -y
-          mv apfix.pck extras/apfix.pck
+          mv ${{ github.workspace }}/build/*.7z .
+          mv ${{ github.workspace }}/build/* extras
           git stage .
           git commit -m "TWiLightMenu | $COMMIT_HASH"
           git tag v$CURRENT_DATE
