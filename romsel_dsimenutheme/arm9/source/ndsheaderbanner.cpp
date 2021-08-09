@@ -10,8 +10,6 @@
 
 static u32 arm9Sig[3][4];
 
-extern sNDSBannerExt ndsBanner;
-
 char gameTid[40][5] = {0};
 u8 romVersion[40] = {0};
 u8 unitCode[40] = {0};
@@ -514,7 +512,7 @@ int checkRomAP(FILE *ndsFile, int num)
 	return 0;
 }
 
-char bnriconTile[41][0x23C0];
+sNDSBannerExt bnriconTile[41];
 
 // bnriconframeseq[]
 static u16 bnriconframeseq[41][64] = {0x0000};
@@ -545,10 +543,8 @@ int currentbnriconframeseq[41] = {0};
  */
 void grabBannerSequence(int iconnum)
 {
-	for (int i = 0; i < 64; i++)
-	{
-		bnriconframeseq[iconnum][i] = ndsBanner.dsi_seq[i];
-	}
+	memcpy(bnriconframeseq[iconnum], bnriconTile[iconnum].dsi_seq, 64 * sizeof(u16));
+
 	currentbnriconframeseq[iconnum] = 0;
 }
 
@@ -557,10 +553,7 @@ void grabBannerSequence(int iconnum)
  */
 void clearBannerSequence(int iconnum)
 {
-	for (int i = 0; i < 64; i++)
-	{
-		bnriconframeseq[iconnum][i] = 0x0000;
-	}
+	memset(bnriconframeseq[iconnum], 0, 64 * sizeof(u16));
 	currentbnriconframeseq[iconnum] = 0;
 }
 

@@ -521,7 +521,7 @@ void perGameSettings (std::string filename) {
 
 	while (1) {
 		clearText();
-		titleUpdate(isDirectory[CURPOS], filename.c_str(), CURPOS);
+		titleUpdate(isDirectory[CURPOS], filename, CURPOS);
 
 		int perGameOpYpos = (ms().theme==5 ? 110 : 98);
 		Alignment startAlign = ms().rtl() ? Alignment::right : Alignment::left;
@@ -729,7 +729,6 @@ void perGameSettings (std::string filename) {
 			tex().drawBatteryImageCached();
 			drawCurrentTime();
 			drawCurrentDate();
-			drawClockColon();
 			snd().updateStream();
 			swiWaitForVBlank();
 		} while (!held);

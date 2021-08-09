@@ -126,9 +126,6 @@ bool showSTARTborder = false;
 bool buttonArrowTouched[2] = {false};
 bool scrollWindowTouched = false;
 
-bool titleboxXmoveleft = false;
-bool titleboxXmoveright = false;
-
 bool applaunchprep = false;
 
 int spawnedtitleboxes = 0;

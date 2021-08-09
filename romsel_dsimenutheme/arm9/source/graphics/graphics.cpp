@@ -92,7 +92,6 @@ int allowedTitleboxForDropDown = 0;
 int delayForTitleboxToDropDown = 0;
 extern int currentBg;
 extern bool showSTARTborder;
-extern bool isScrolling;
 extern bool needToPlayStopSound;
 extern int waitForNeedToPlayStopSound;
 extern int movingApp;
@@ -105,9 +104,6 @@ bool displayGameIcons = false;
 
 extern bool buttonArrowTouched[2];
 extern bool scrollWindowTouched;
-
-extern bool titleboxXmoveleft;
-extern bool titleboxXmoveright;
 
 extern bool applaunchprep;
 
@@ -129,9 +125,12 @@ static std::string photoPath;
 uint photoWidth, photoHeight;
 int titleboxXmovespeed[8] = {12, 10, 8, 8, 8, 8, 6, 4};
 #define titleboxXscrollspeed 8
-int titleboxXpos[2];
+int titleboxXpos[2] = {0};
+int titleboxXdest[2] = {0};
 int titleboxYpos = 85; // 85, when dropped down
-int titlewindowXpos[2];
+int titlewindowXpos[2] = {0};
+int titlewindowXdest[2] = {0};
+int titleboxXspeed = 3; // higher is SLOWER
 
 bool reloadDate = false;
 bool reloadTime = false;
@@ -221,105 +220,6 @@ void SetBrightness(u8 screen, s8 bright) {
 	if (bright > 31)
 		bright = 31;
 	*(u16 *)(0x0400006C + (0x1000 * screen)) = bright + mode;
-}
-
-void moveIconClose(int num) {
-	if (titleboxXmoveleft) {
-		movecloseXpos = 0;
-		if (movetimer == 1) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 1;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -2;
-		} else if (movetimer == 2) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 1;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -2;
-		} else if (movetimer == 3) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 2;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -3;
-		} else if (movetimer == 4) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 2;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -3;
-		} else if (movetimer == 5) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 3;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -4;
-		} else if (movetimer == 6) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 4;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -5;
-		} else if (movetimer == 7) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 5;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -6;
-		} else if (movetimer == 8) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 6;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -7;
-		}
-	}
-	if (titleboxXmoveright) {
-		movecloseXpos = 0;
-		if (movetimer == 1) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 2;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -1;
-		} else if (movetimer == 2) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 2;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -1;
-		} else if (movetimer == 3) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 3;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -2;
-		} else if (movetimer == 4) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 3;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -2;
-		} else if (movetimer == 5) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 4;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -3;
-		} else if (movetimer == 6) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 5;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -4;
-		} else if (movetimer == 7) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 6;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -5;
-		} else if (movetimer == 8) {
-			if (CURPOS - 2 == num)
-				movecloseXpos = 7;
-			else if (CURPOS + 2 == num)
-				movecloseXpos = -6;
-		}
-	}
-	if (!titleboxXmoveleft || !titleboxXmoveright) {
-		if (CURPOS - 2 == num)
-			movecloseXpos = 6;
-		else if (CURPOS + 2 == num)
-			movecloseXpos = -6;
-		else
-			movecloseXpos = 0;
-	}
 }
 
 //-------------------------------------------------------
@@ -500,208 +400,183 @@ void vBlankHandler() {
 		needToPlayStopSound = false;
 	}
 
+	// Move title box/window closer to destination if moved
+	if(ms().theme != 4) {
+		if(titleboxXpos[ms().secondaryDevice] > titleboxXdest[ms().secondaryDevice]) {
+			titleboxXpos[ms().secondaryDevice] -= std::max((titleboxXpos[ms().secondaryDevice] - titleboxXdest[ms().secondaryDevice]) / titleboxXspeed, 1);
+		} else if(titleboxXpos[ms().secondaryDevice] < titleboxXdest[ms().secondaryDevice]) {
+			titleboxXpos[ms().secondaryDevice] += std::max((titleboxXdest[ms().secondaryDevice] - titleboxXpos[ms().secondaryDevice]) / titleboxXspeed, 1);
+		}
+
+		if(titlewindowXpos[ms().secondaryDevice] > titlewindowXdest[ms().secondaryDevice]) {
+			titlewindowXpos[ms().secondaryDevice] -= std::max((titlewindowXpos[ms().secondaryDevice] - titlewindowXdest[ms().secondaryDevice]) / titleboxXspeed, 1);
+		} else if(titlewindowXpos[ms().secondaryDevice] < titlewindowXdest[ms().secondaryDevice]) {
+			titlewindowXpos[ms().secondaryDevice] += std::max((titlewindowXdest[ms().secondaryDevice] - titlewindowXpos[ms().secondaryDevice]) / titleboxXspeed, 1);
+		}
+	} else { // In saturn theme just move instantly
+		titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+		titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice];
+	}
+
 	if (ms().theme == 1 && rotatingCubesLoaded) {
 		playRotatingCubesVideo();
 	}
 
-		if (fadeType == true) {
-			if (!fadeDelay) {
-				screenBrightness -= 1+(ms().theme<4 && fadeSpeed);
-				if (screenBrightness < 0)
-					screenBrightness = 0;
-			}
-			if (!fadeSpeed) {
-				fadeDelay++;
-				if (fadeDelay == 3)
-					fadeDelay = 0;
-			} else {
-				fadeDelay = 0;
-			}
-		} else {
-			if (!fadeDelay) {
-				screenBrightness += 1+(ms().theme<4 && fadeSpeed);
-				if (screenBrightness > 31)
-					screenBrightness = 31;
-			}
-			if (!fadeSpeed) {
-				fadeDelay++;
-				if (fadeDelay == 3)
-					fadeDelay = 0;
-			} else {
-				fadeDelay = 0;
-			}
+	if (fadeType == true) {
+		if (!fadeDelay) {
+			screenBrightness -= 1+(ms().theme<4 && fadeSpeed);
+			if (screenBrightness < 0)
+				screenBrightness = 0;
 		}
-		if (controlBottomBright && renderFrame)
-			SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
-		if (controlTopBright && !ms().macroMode && renderFrame)
-			SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
-
-		if (showdialogbox) {
-			// Dialogbox moving into view...
-			dboxInFrame = true;
-			if (dbox_movespeed <= 1) {
-				if (dbox_Ypos >= 0) {
-					// dbox stopped
-					dbox_movespeed = 0;
-					dbox_Ypos = 0;
-					bottomScreenBrightness = 127;
-					REG_BLDY = (0b0100 << 1);
-				} else {
-					// dbox moving into view
-					dbox_movespeed = 1;
-				}
-			} else {
-				// Dbox decel
-				dbox_movespeed -= 1.25;
-				bottomScreenBrightness -= 7;
-				if (bottomScreenBrightness < 127) {
-					bottomScreenBrightness = 127;
-				}
-				if (bottomScreenBrightness > 231)
-					REG_BLDY = 0;
-				if (bottomScreenBrightness > 199 && bottomScreenBrightness <= 231)
-					REG_BLDY = (0b0001 << 1);
-				if (bottomScreenBrightness > 167 && bottomScreenBrightness <= 199)
-					REG_BLDY = (0b0010 << 1);
-				if (bottomScreenBrightness > 135 && bottomScreenBrightness <= 167)
-					REG_BLDY = (0b0011 << 1);
-				if (bottomScreenBrightness > 103 && bottomScreenBrightness <= 135)
-					REG_BLDY = (0b0100 << 1);
-			}
-			dbox_Ypos += dbox_movespeed;
+		if (!fadeSpeed) {
+			fadeDelay++;
+			if (fadeDelay == 3)
+				fadeDelay = 0;
 		} else {
-			// Dialogbox moving down...
-			if (dbox_Ypos <= -192 || dbox_Ypos >= 192) {
-				dboxInFrame = false;
-				dbox_movespeed = 22;
-				dbox_Ypos = -192;
-				bottomScreenBrightness = 255;
+			fadeDelay = 0;
+		}
+	} else {
+		if (!fadeDelay) {
+			screenBrightness += 1+(ms().theme<4 && fadeSpeed);
+			if (screenBrightness > 31)
+				screenBrightness = 31;
+		}
+		if (!fadeSpeed) {
+			fadeDelay++;
+			if (fadeDelay == 3)
+				fadeDelay = 0;
+		} else {
+			fadeDelay = 0;
+		}
+	}
+
+	if (controlBottomBright && renderFrame)
+		SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
+	if (controlTopBright && !ms().macroMode && renderFrame)
+		SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
+
+	if (showdialogbox) {
+		// Dialogbox moving into view...
+		dboxInFrame = true;
+		if (dbox_movespeed <= 1) {
+			if (dbox_Ypos >= 0) {
+				// dbox stopped
+				dbox_movespeed = 0;
+				dbox_Ypos = 0;
+				bottomScreenBrightness = 127;
+				REG_BLDY = (0b0100 << 1);
+			} else {
+				// dbox moving into view
+				dbox_movespeed = 1;
+			}
+		} else {
+			// Dbox decel
+			dbox_movespeed -= 1.25;
+			bottomScreenBrightness -= 7;
+			if (bottomScreenBrightness < 127) {
+				bottomScreenBrightness = 127;
+			}
+			if (bottomScreenBrightness > 231)
 				REG_BLDY = 0;
-			} else {
-				dbox_movespeed += 1;
-				dbox_Ypos += dbox_movespeed;
-				bottomScreenBrightness += 7;
-				if (bottomScreenBrightness > 255) {
-					bottomScreenBrightness = 255;
+			if (bottomScreenBrightness > 199 && bottomScreenBrightness <= 231)
+				REG_BLDY = (0b0001 << 1);
+			if (bottomScreenBrightness > 167 && bottomScreenBrightness <= 199)
+				REG_BLDY = (0b0010 << 1);
+			if (bottomScreenBrightness > 135 && bottomScreenBrightness <= 167)
+				REG_BLDY = (0b0011 << 1);
+			if (bottomScreenBrightness > 103 && bottomScreenBrightness <= 135)
+				REG_BLDY = (0b0100 << 1);
+		}
+		dbox_Ypos += dbox_movespeed;
+	} else {
+		// Dialogbox moving down...
+		if (dbox_Ypos <= -192 || dbox_Ypos >= 192) {
+			dboxInFrame = false;
+			dbox_movespeed = 22;
+			dbox_Ypos = -192;
+			bottomScreenBrightness = 255;
+			REG_BLDY = 0;
+		} else {
+			dbox_movespeed += 1;
+			dbox_Ypos += dbox_movespeed;
+			bottomScreenBrightness += 7;
+			if (bottomScreenBrightness > 255) {
+				bottomScreenBrightness = 255;
+			}
+			if (bottomScreenBrightness > 231)
+				REG_BLDY = 0;
+			if (bottomScreenBrightness > 199 && bottomScreenBrightness <= 231)
+				REG_BLDY = (0b0001 << 1);
+			if (bottomScreenBrightness > 167 && bottomScreenBrightness <= 199)
+				REG_BLDY = (0b0010 << 1);
+			if (bottomScreenBrightness > 135 && bottomScreenBrightness <= 167)
+				REG_BLDY = (0b0011 << 1);
+			if (bottomScreenBrightness > 103 && bottomScreenBrightness <= 135)
+				REG_BLDY = (0b0100 << 1);
+		}
+	}
+
+	if (!whiteScreen && dropDown && ms().theme == 0) {
+		int i2 = CURPOS - 2;
+		if (i2 < 0)
+			i2 += 5;
+		for (int i = i2; i <= allowedTitleboxForDropDown + i2; i++) {
+			if (dropSeq[i % 5] == 0) {
+				titleboxYposDropDown[i % 5] += dropSpeed[i % 5];
+				if (titleboxYposDropDown[i % 5] > 0)
+					dropSeq[i % 5] = 1;
+			} else if (dropSeq[i % 5] == 1) {
+				titleboxYposDropDown[i % 5] -= dropSpeed[i % 5];
+				dropTime[i % 5]++;
+				dropSpeedChange[i % 5]++;
+				if (dropTime[i % 5] >= 15) {
+					dropSpeedChange[i % 5] = -1;
+					dropSeq[i % 5] = 2;
 				}
-				if (bottomScreenBrightness > 231)
-					REG_BLDY = 0;
-				if (bottomScreenBrightness > 199 && bottomScreenBrightness <= 231)
-					REG_BLDY = (0b0001 << 1);
-				if (bottomScreenBrightness > 167 && bottomScreenBrightness <= 199)
-					REG_BLDY = (0b0010 << 1);
-				if (bottomScreenBrightness > 135 && bottomScreenBrightness <= 167)
-					REG_BLDY = (0b0011 << 1);
-				if (bottomScreenBrightness > 103 && bottomScreenBrightness <= 135)
-					REG_BLDY = (0b0100 << 1);
-			}
-		}
-
-		if (titleboxXmoveleft) {
-			if (ms().theme == 4) {
-				titleboxXpos[ms().secondaryDevice] -= 64;
-				titlewindowXpos[ms().secondaryDevice] -= 8;
-				titleboxXmoveleft = false;
-			} else if (movetimer == 8) {
-				//	if (currentBg && theme == 0) mmEffectEx(&snd_stop);
-				needToPlayStopSound = true;
-				startBorderZoomOut = true;
-				titlewindowXpos[ms().secondaryDevice] -= 1;
-				movetimer++;
-			} else if (movetimer < 8) {
-				titleboxXpos[ms().secondaryDevice] -=
-					(isScrolling ? titleboxXscrollspeed : titleboxXmovespeed[movetimer]);
-				if (movetimer == 0 || movetimer == 2 || movetimer == 4 || movetimer == 6)
-					titlewindowXpos[ms().secondaryDevice] -= 1;
-				movetimer++;
-			} else {
-				titleboxXmoveleft = false;
-				movetimer = 0;
-			}
-		} else if (titleboxXmoveright) {
-			if (ms().theme == 4) {
-				titleboxXpos[ms().secondaryDevice] += 64;
-				titlewindowXpos[ms().secondaryDevice] += 8;
-				titleboxXmoveright = false;
-			} else if (movetimer == 8) {
-				//	if (currentBg && theme == 0) mmEffectEx(&snd_stop);
-				needToPlayStopSound = true;
-				startBorderZoomOut = true;
-				titlewindowXpos[ms().secondaryDevice] += 1;
-				movetimer++;
-			} else if (movetimer < 8) {
-				titleboxXpos[ms().secondaryDevice] +=
-					(isScrolling ? titleboxXscrollspeed : titleboxXmovespeed[movetimer]);
-				if (movetimer == 0 || movetimer == 2 || movetimer == 4 || movetimer == 6)
-					titlewindowXpos[ms().secondaryDevice] += 1;
-				movetimer++;
-			} else {
-				titleboxXmoveright = false;
-				movetimer = 0;
-			}
-		}
-
-		if (!whiteScreen && dropDown && ms().theme == 0) {
-			int i2 = CURPOS - 2;
-			if (i2 < 0)
-				i2 += 5;
-			for (int i = i2; i <= allowedTitleboxForDropDown + i2; i++) {
-				if (dropSeq[i % 5] == 0) {
-					titleboxYposDropDown[i % 5] += dropSpeed[i % 5];
-					if (titleboxYposDropDown[i % 5] > 0)
-						dropSeq[i % 5] = 1;
-				} else if (dropSeq[i % 5] == 1) {
-					titleboxYposDropDown[i % 5] -= dropSpeed[i % 5];
-					dropTime[i % 5]++;
-					dropSpeedChange[i % 5]++;
-					if (dropTime[i % 5] >= 15) {
-						dropSpeedChange[i % 5] = -1;
-						dropSeq[i % 5] = 2;
-					}
-					if (dropSpeedChange[i % 5] == 2) {
-						dropSpeed[i % 5]--;
-						if (dropSpeed[i % 5] < 0)
-							dropSpeed[i % 5] = 0;
-						dropSpeedChange[i % 5] = -1;
-					}
-				} else if (dropSeq[i % 5] == 2) {
-					titleboxYposDropDown[i % 5] += dropSpeed[i % 5];
-					if (titleboxYposDropDown[i % 5] >= 0) {
-						dropSeq[i % 5] = 3;
-						titleboxYposDropDown[i % 5] = 0;
-					}
-					dropSpeedChange[i % 5]++;
-					if (dropSpeedChange[i % 5] == 1) {
-						dropSpeed[i % 5]++;
-						if (dropSpeed[i % 5] > 6)
-							dropSpeed[i % 5] = 6;
-						dropSpeedChange[i % 5] = -1;
-					}
-				} else if (dropSeq[i % 5] == 3) {
+				if (dropSpeedChange[i % 5] == 2) {
+					dropSpeed[i % 5]--;
+					if (dropSpeed[i % 5] < 0)
+						dropSpeed[i % 5] = 0;
+					dropSpeedChange[i % 5] = -1;
+				}
+			} else if (dropSeq[i % 5] == 2) {
+				titleboxYposDropDown[i % 5] += dropSpeed[i % 5];
+				if (titleboxYposDropDown[i % 5] >= 0) {
+					dropSeq[i % 5] = 3;
 					titleboxYposDropDown[i % 5] = 0;
 				}
-			}
-
-			delayForTitleboxToDropDown++;
-			if (delayForTitleboxToDropDown >= 5) {
-				allowedTitleboxForDropDown++;
-				if (allowedTitleboxForDropDown > 4)
-					allowedTitleboxForDropDown = 4;
-				delayForTitleboxToDropDown = 0;
-			}
-		}
-
-		if (movingApp != -1 && ms().theme==0 && showMovingArrow) {
-			if (movingArrowYdirection) {
-				movingArrowYpos += 0.33;
-				if (movingArrowYpos > 67)
-					movingArrowYdirection = false;
-			} else {
-				movingArrowYpos -= 0.33;
-				if (movingArrowYpos < 59)
-					movingArrowYdirection = true;
+				dropSpeedChange[i % 5]++;
+				if (dropSpeedChange[i % 5] == 1) {
+					dropSpeed[i % 5]++;
+					if (dropSpeed[i % 5] > 6)
+						dropSpeed[i % 5] = 6;
+					dropSpeedChange[i % 5] = -1;
+				}
+			} else if (dropSeq[i % 5] == 3) {
+				titleboxYposDropDown[i % 5] = 0;
 			}
 		}
+
+		delayForTitleboxToDropDown++;
+		if (delayForTitleboxToDropDown >= 5) {
+			allowedTitleboxForDropDown++;
+			if (allowedTitleboxForDropDown > 4)
+				allowedTitleboxForDropDown = 4;
+			delayForTitleboxToDropDown = 0;
+		}
+	}
+
+	if (movingApp != -1 && ms().theme==0 && showMovingArrow) {
+		if (movingArrowYdirection) {
+			movingArrowYpos += 0.33;
+			if (movingArrowYpos > 67)
+				movingArrowYdirection = false;
+		} else {
+			movingArrowYpos -= 0.33;
+			if (movingArrowYpos < 59)
+				movingArrowYdirection = true;
+		}
+	}
 
 	if (ms().theme == 5) {
 		// Back bubbles
@@ -773,410 +648,406 @@ void vBlankHandler() {
 			glSprite(72 - titleboxXpos[ms().secondaryDevice], 81, GL_FLIP_NONE, tex().braceImage());
 		}
 
-	if (displayGameIcons) {
-		int spawnedboxXpos = 96;
-		int iconXpos = 112;
+		if (displayGameIcons) {
+			int spawnedboxXpos = 96;
+			int iconXpos = 112;
 
-		// for (int i = 0; i < 11; i++) {
-		// 		glSprite(76 + launchDotX[i], 69 + launchDotY[i], GL_FLIP_NONE,
-		// 			&tex().launchdotImage()[5 & 15]);
+			// for (int i = 0; i < 11; i++) {
+			// 		glSprite(76 + launchDotX[i], 69 + launchDotY[i], GL_FLIP_NONE,
+			// 			&tex().launchdotImage()[5 & 15]);
 
-		// 			//  &tex().launchdotImage()[(launchDotFrame[i]) & 15]);
-		// 		if (launchDotX[i] == 0)
-		// 			launchDotXMove[i] = true;
-		// 		if (launchDotX[i] == 88)
-		// 			launchDotXMove[i] = false;
-		// 		if (launchDotY[i] == 0)
-		// 			launchDotYMove[i] = true;
-		// 		if (launchDotY[i] == 88)
-		// 			launchDotYMove[i] = false;
-		// 		if (launchDotXMove[i] == false) {
-		// 			launchDotX[i]--;
-		// 		} else if (launchDotXMove[i] == true) {
-		// 			launchDotX[i]++;
-		// 		}
-		// 		if (launchDotYMove[i] == false) {
-		// 			launchDotY[i]--;
-		// 		} else if (launchDotYMove[i] == true) {
-		// 			launchDotY[i]++;
-		// 		}
-		// }
+			// 			//  &tex().launchdotImage()[(launchDotFrame[i]) & 15]);
+			// 		if (launchDotX[i] == 0)
+			// 			launchDotXMove[i] = true;
+			// 		if (launchDotX[i] == 88)
+			// 			launchDotXMove[i] = false;
+			// 		if (launchDotY[i] == 0)
+			// 			launchDotYMove[i] = true;
+			// 		if (launchDotY[i] == 88)
+			// 			launchDotYMove[i] = false;
+			// 		if (launchDotXMove[i] == false) {
+			// 			launchDotX[i]--;
+			// 		} else if (launchDotXMove[i] == true) {
+			// 			launchDotX[i]++;
+			// 		}
+			// 		if (launchDotYMove[i] == false) {
+			// 			launchDotY[i]--;
+			// 		} else if (launchDotYMove[i] == true) {
+			// 			launchDotY[i]++;
+			// 		}
+			// }
 
-		if (movingApp != -1) {
-			if (movingAppIsDir) {
-				if (ms().theme == 1)
-					glSprite(96, titleboxYpos - movingAppYpos, GL_FLIP_NONE, tex().folderImage());
-				else
-					glSprite(96, titleboxYpos - movingAppYpos + titleboxYposDropDown[movingApp % 5],
-						 GL_FLIP_NONE, tex().folderImage());
-			} else {
-				if (!bnrSysSettings[movingApp]) {
-					if (ms().theme == 1) {
-						glSprite(96, titleboxYpos - movingAppYpos, GL_FLIP_NONE,
-							 tex().boxfullImage());
-					} else {
-						glSprite(96,
-							 titleboxYpos - movingAppYpos +
-								 titleboxYposDropDown[movingApp % 5],
-							 GL_FLIP_NONE, &tex().boxfullImage()[0]);
-					}
-				}
-				if (bnrSysSettings[movingApp])
-					glSprite(96,
-						 (titleboxYpos - 1) - movingAppYpos +
-							 titleboxYposDropDown[movingApp % 5],
-						 GL_FLIP_NONE, &tex().settingsImage()[1]);
-				else if (bnrRomType[movingApp] == 9)
-					drawIconPLG(112, (titleboxYpos + 12) - movingAppYpos +
-								  titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 8)
-					drawIconSNES(112, (titleboxYpos + 12) - movingAppYpos +
-								  titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 7)
-					drawIconMD(112, (titleboxYpos + 12) - movingAppYpos +
-								titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 6)
-					drawIconGG(112, (titleboxYpos + 12) - movingAppYpos +
-								titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 5)
-					drawIconSMS(112, (titleboxYpos + 12) - movingAppYpos +
-								 titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 4)
-					drawIconNES(112, (titleboxYpos + 12) - movingAppYpos +
-								 titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 3)
-					drawIconGBC(112, (titleboxYpos + 12) - movingAppYpos +
-								 titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 2)
-					drawIconGB(112, (titleboxYpos + 12) - movingAppYpos +
-								titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 1)
-					drawIconGBA(112, (titleboxYpos + 12) - movingAppYpos +
-								titleboxYposDropDown[movingApp % 5]);
-				else
-					drawIcon(112,
-						 (titleboxYpos + 12) - movingAppYpos +
-							 titleboxYposDropDown[movingApp % 5],
-						 -1);
-			}
-		}
-
-		int maxIconNumber = (ms().theme == 4 ? 0 : 3);
-		for (int i = 0; i < 40; i++) {
-			int movingAppXFix = 0;
-			if (CURPOS <= (movingApp - (PAGENUM * 40))) {
-				if (i == CURPOS - 2)
-					movingAppXFix = -20;
-				else if (i == CURPOS - 1)
-					movingAppXFix = -5;
-				else if (i == CURPOS)
-					movingAppXFix = 5;
-				else if (CURPOS < (movingApp - (PAGENUM * 40)) - 1) {
-					if (i == CURPOS + 1)
-						movingAppXFix = 20;
-				} else if (CURPOS == (movingApp - (PAGENUM * 40)) - 1) {
-					if (i == CURPOS + 1)
-						movingAppXFix = 20;
-					else if (i == CURPOS + 2)
-						movingAppXFix = 20;
+			if (movingApp != -1) {
+				if (movingAppIsDir) {
+					if (ms().theme == 1)
+						glSprite(96, titleboxYpos - movingAppYpos, GL_FLIP_NONE, tex().folderImage());
+					else
+						glSprite(96, titleboxYpos - movingAppYpos + titleboxYposDropDown[movingApp % 5],
+							GL_FLIP_NONE, tex().folderImage());
 				} else {
-					if (i == CURPOS + 1)
-						movingAppXFix = 5;
-					else if (i == CURPOS + 2)
-						movingAppXFix = 20;
+					if (!bnrSysSettings[movingApp]) {
+						if (ms().theme == 1) {
+							glSprite(96, titleboxYpos - movingAppYpos, GL_FLIP_NONE,
+								tex().boxfullImage());
+						} else {
+							glSprite(96,
+								titleboxYpos - movingAppYpos +
+									titleboxYposDropDown[movingApp % 5],
+								GL_FLIP_NONE, &tex().boxfullImage()[0]);
+						}
+					}
+					if (bnrSysSettings[movingApp])
+						glSprite(96,
+							(titleboxYpos - 1) - movingAppYpos +
+								titleboxYposDropDown[movingApp % 5],
+							GL_FLIP_NONE, &tex().settingsImage()[1]);
+					else if (bnrRomType[movingApp] == 9)
+						drawIconPLG(112, (titleboxYpos + 12) - movingAppYpos +
+									titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 8)
+						drawIconSNES(112, (titleboxYpos + 12) - movingAppYpos +
+									titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 7)
+						drawIconMD(112, (titleboxYpos + 12) - movingAppYpos +
+									titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 6)
+						drawIconGG(112, (titleboxYpos + 12) - movingAppYpos +
+									titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 5)
+						drawIconSMS(112, (titleboxYpos + 12) - movingAppYpos +
+									titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 4)
+						drawIconNES(112, (titleboxYpos + 12) - movingAppYpos +
+									titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 3)
+						drawIconGBC(112, (titleboxYpos + 12) - movingAppYpos +
+									titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 2)
+						drawIconGB(112, (titleboxYpos + 12) - movingAppYpos +
+									titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 1)
+						drawIconGBA(112, (titleboxYpos + 12) - movingAppYpos +
+									titleboxYposDropDown[movingApp % 5]);
+					else
+						drawIcon(112,
+							(titleboxYpos + 12) - movingAppYpos +
+								titleboxYposDropDown[movingApp % 5],
+							-1);
 				}
-			} else {
-				if (CURPOS == (movingApp - (PAGENUM * 40)) + 1) {
+			}
+
+			int maxIconNumber = (ms().theme == 4 ? 0 : 3);
+			for (int i = 0; i < 40; i++) {
+				int movingAppXFix = 0;
+				if (CURPOS <= (movingApp - (PAGENUM * 40))) {
 					if (i == CURPOS - 2)
 						movingAppXFix = -20;
 					else if (i == CURPOS - 1)
 						movingAppXFix = -5;
-				} else {
-					if (i == CURPOS - 2)
-						movingAppXFix = -20;
-					else if (i == CURPOS - 1)
-						movingAppXFix = -20;
-				}
-				if (i == CURPOS)
-					movingAppXFix = -5;
-				else if (i == CURPOS + 1)
-					movingAppXFix = 5;
-				else if (i == CURPOS + 2)
-					movingAppXFix = 20;
-			}
-
-			if (ms().theme == 0) {
-				moveIconClose(i);
-			} else {
-				movecloseXpos = 0;
-			}
-			if (i >= CURPOS - maxIconNumber && i <= CURPOS + maxIconNumber) {
-				if (i < spawnedtitleboxes) {
-					if (isDirectory[i]) {
-						if (movingApp != -1) {
-							int j = i;
-							if (i > movingApp - (PAGENUM * 40))
-								j--;
-							if (ms().theme == 1)
-								glSprite((j * 2496 / 39) + 128 -
-										 titleboxXpos[ms().secondaryDevice] +
-										 movingAppXFix,
-									 titleboxYpos, GL_FLIP_NONE,
-									 tex().folderImage());
-							else
-								glSprite((j * 2496 / 39) + 128 -
-										 titleboxXpos[ms().secondaryDevice] +
-										 movingAppXFix,
-									 (titleboxYpos - 3) +
-										 titleboxYposDropDown[i % 5],
-									 GL_FLIP_NONE, tex().folderImage());
-						} else {
-							if (ms().theme == 1)
-								glSprite(spawnedboxXpos -
-										 titleboxXpos[ms().secondaryDevice] +
-										 movecloseXpos,
-									 titleboxYpos, GL_FLIP_NONE,
-									 tex().folderImage());
-							else
-								glSprite(spawnedboxXpos -
-										 titleboxXpos[ms().secondaryDevice] +
-										 movecloseXpos,
-									 (titleboxYpos - 3) +
-										 titleboxYposDropDown[i % 5],
-									 GL_FLIP_NONE, tex().folderImage());
-						}
-					} else if (!applaunchprep ||
-						   CURPOS !=
-							   i) { // Only draw the icon if we're not launching the selcted app
-						if (movingApp != -1) {
-							int j = i;
-							if (i > movingApp - (PAGENUM * 40))
-								j--;
-							if (j == -1)
-								continue;
-							if (!bnrSysSettings[i]) {
-								if (ms().theme == 1) {
-									glSprite(
-										(j * 2496 / 39) + 128 -
-										titleboxXpos[ms().secondaryDevice] +
-										movingAppXFix,
-										titleboxYpos, GL_FLIP_NONE,
-										tex().boxfullImage());
-								} else {
-									glSprite(
-										(j * 2496 / 39) + 128 -
-										titleboxXpos[ms().secondaryDevice] +
-										movingAppXFix,
-										titleboxYpos + titleboxYposDropDown[i % 5],
-										GL_FLIP_NONE, &tex().boxfullImage()[0]);
-								}
-							}
-							if (bnrSysSettings[i])
-								glSprite((j * 2496 / 39) + 128 -
-										 titleboxXpos[ms().secondaryDevice] +
-										 movingAppXFix,
-									 (titleboxYpos - 1) +
-										 titleboxYposDropDown[i % 5],
-									 GL_FLIP_NONE, &tex().settingsImage()[1]);
-							else if (bnrRomType[i] == 11)
-								drawIconPCE((j * 2496 / 39) + 144 -
-										 titleboxXpos[ms().secondaryDevice] +
-										 movingAppXFix,
-										 (titleboxYpos + 12) +
-										 titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 10)
-								drawIconA26((j * 2496 / 39) + 144 -
-										 titleboxXpos[ms().secondaryDevice] +
-										 movingAppXFix,
-										 (titleboxYpos + 12) +
-										 titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 9)
-								drawIconPLG((j * 2496 / 39) + 144 -
-										 titleboxXpos[ms().secondaryDevice] +
-										 movingAppXFix,
-										 (titleboxYpos + 12) +
-										 titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 8)
-								drawIconSNES((j * 2496 / 39) + 144 -
-										 titleboxXpos[ms().secondaryDevice] +
-										 movingAppXFix,
-										 (titleboxYpos + 12) +
-										 titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 7)
-								drawIconMD((j * 2496 / 39) + 144 -
-										   titleboxXpos[ms().secondaryDevice] +
-										   movingAppXFix,
-									   (titleboxYpos + 12) +
-										   titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 6)
-								drawIconGG((j * 2496 / 39) + 144 -
-										   titleboxXpos[ms().secondaryDevice] +
-										   movingAppXFix,
-									   (titleboxYpos + 12) +
-										   titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 5)
-								drawIconSMS((j * 2496 / 39) + 144 -
-										titleboxXpos[ms().secondaryDevice] +
-										movingAppXFix,
-										(titleboxYpos + 12) +
-										titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 4)
-								drawIconNES((j * 2496 / 39) + 144 -
-										titleboxXpos[ms().secondaryDevice] +
-										movingAppXFix,
-										(titleboxYpos + 12) +
-										titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 3)
-								drawIconGBC((j * 2496 / 39) + 144 -
-										titleboxXpos[ms().secondaryDevice] +
-										movingAppXFix,
-										(titleboxYpos + 12) +
-										titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 2)
-								drawIconGB((j * 2496 / 39) + 144 -
-										   titleboxXpos[ms().secondaryDevice] +
-										   movingAppXFix,
-									   (titleboxYpos + 12) +
-										   titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 1)
-								drawIconGBA((j * 2496 / 39) + 144 -
-										   titleboxXpos[ms().secondaryDevice] +
-										   movingAppXFix,
-									   (titleboxYpos + 12) +
-										   titleboxYposDropDown[i % 5]);
-							else
-								drawIcon((j * 2496 / 39) + 144 -
-										 titleboxXpos[ms().secondaryDevice] +
-										 movingAppXFix,
-									 (titleboxYpos + 12) +
-										 titleboxYposDropDown[i % 5],
-									 i);
-						} else {
-							if (!bnrSysSettings[i]) {
-								if (ms().theme == 1) {
-									glSprite(spawnedboxXpos -
-											 titleboxXpos[ms().secondaryDevice],
-										 titleboxYpos, GL_FLIP_NONE,
-										 tex().boxfullImage());
-								} else {
-									glSprite(
-										spawnedboxXpos -
-										titleboxXpos[ms().secondaryDevice] +
-										movecloseXpos,
-										titleboxYpos + titleboxYposDropDown[i % 5],
-										GL_FLIP_NONE, &tex().boxfullImage()[0]);
-								}
-							}
-							if (bnrSysSettings[i])
-								glSprite(spawnedboxXpos -
-										 titleboxXpos[ms().secondaryDevice] +
-										 movecloseXpos,
-									 (titleboxYpos - 1) +
-										 titleboxYposDropDown[i % 5],
-									 GL_FLIP_NONE, &tex().settingsImage()[1]);
-							else if (bnrRomType[i] == 11)
-								drawIconPCE(
-									iconXpos - titleboxXpos[ms().secondaryDevice] +
-									movecloseXpos,
-									(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 10)
-								drawIconA26(
-									iconXpos - titleboxXpos[ms().secondaryDevice] +
-									movecloseXpos,
-									(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 9)
-								drawIconPLG(
-									iconXpos - titleboxXpos[ms().secondaryDevice] +
-									movecloseXpos,
-									(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 8)
-								drawIconSNES(
-									iconXpos - titleboxXpos[ms().secondaryDevice] +
-									movecloseXpos,
-									(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 7)
-								drawIconMD(
-									iconXpos - titleboxXpos[ms().secondaryDevice] +
-									movecloseXpos,
-									(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 6)
-								drawIconGG(
-									iconXpos - titleboxXpos[ms().secondaryDevice] +
-									movecloseXpos,
-									(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 5)
-								drawIconSMS(
-									iconXpos - titleboxXpos[ms().secondaryDevice] +
-									movecloseXpos,
-									(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 4)
-								drawIconNES(
-									iconXpos - titleboxXpos[ms().secondaryDevice] +
-									movecloseXpos,
-									(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 3)
-								drawIconGBC(
-									iconXpos - titleboxXpos[ms().secondaryDevice] +
-									movecloseXpos,
-									(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 2)
-								drawIconGB(
-									iconXpos - titleboxXpos[ms().secondaryDevice] +
-									movecloseXpos,
-									(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 1)
-								drawIconGBA(
-									iconXpos - titleboxXpos[ms().secondaryDevice] +
-									movecloseXpos,
-									(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else
-								drawIcon(iconXpos - titleboxXpos[ms().secondaryDevice] +
-										 movecloseXpos,
-									 (titleboxYpos + 12) +
-										 titleboxYposDropDown[i % 5],
-									 i);
-						}
+					else if (i == CURPOS)
+						movingAppXFix = 5;
+					else if (CURPOS < (movingApp - (PAGENUM * 40)) - 1) {
+						if (i == CURPOS + 1)
+							movingAppXFix = 20;
+					} else if (CURPOS == (movingApp - (PAGENUM * 40)) - 1) {
+						if (i == CURPOS + 1)
+							movingAppXFix = 20;
+						else if (i == CURPOS + 2)
+							movingAppXFix = 20;
+					} else {
+						if (i == CURPOS + 1)
+							movingAppXFix = 5;
+						else if (i == CURPOS + 2)
+							movingAppXFix = 20;
 					}
 				} else {
-					// Empty box
-					if (movingApp != -1) {
-						if (ms().theme > 0) {
-							glSprite(((i - 1) * 2496 / 39) + 128 -
-									 titleboxXpos[ms().secondaryDevice] + movingAppXFix,
-								 titleboxYpos + titleboxYposDropDown[i % 5],
-								 GL_FLIP_NONE, tex().boxemptyImage());
-						} else {
-							glSprite(((i - 1) * 2496 / 39) + 128 -
-									 titleboxXpos[ms().secondaryDevice] + movingAppXFix,
-								 titleboxYpos + titleboxYposDropDown[i % 5],
-								 GL_FLIP_NONE, &tex().boxfullImage()[1]);
+					if (CURPOS == (movingApp - (PAGENUM * 40)) + 1) {
+						if (i == CURPOS - 2)
+							movingAppXFix = -20;
+						else if (i == CURPOS - 1)
+							movingAppXFix = -5;
+					} else {
+						if (i == CURPOS - 2)
+							movingAppXFix = -20;
+						else if (i == CURPOS - 1)
+							movingAppXFix = -20;
+					}
+					if (i == CURPOS)
+						movingAppXFix = -5;
+					else if (i == CURPOS + 1)
+						movingAppXFix = 5;
+					else if (i == CURPOS + 2)
+						movingAppXFix = 20;
+				}
+
+				if (i >= CURPOS - maxIconNumber && i <= CURPOS + maxIconNumber) {
+					if (i < spawnedtitleboxes) {
+						if (isDirectory[i]) {
+							if (movingApp != -1) {
+								int j = i;
+								if (i > movingApp - (PAGENUM * 40))
+									j--;
+								if (ms().theme == 1)
+									glSprite((j * 2496 / 39) + 128 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+										titleboxYpos, GL_FLIP_NONE,
+										tex().folderImage());
+								else
+									glSprite((j * 2496 / 39) + 128 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+										(titleboxYpos - 3) +
+											titleboxYposDropDown[i % 5],
+										GL_FLIP_NONE, tex().folderImage());
+							} else {
+								if (ms().theme == 1)
+									glSprite(spawnedboxXpos -
+											titleboxXpos[ms().secondaryDevice] +
+											movecloseXpos,
+										titleboxYpos, GL_FLIP_NONE,
+										tex().folderImage());
+								else
+									glSprite(spawnedboxXpos -
+											titleboxXpos[ms().secondaryDevice] +
+											movecloseXpos,
+										(titleboxYpos - 3) +
+											titleboxYposDropDown[i % 5],
+										GL_FLIP_NONE, tex().folderImage());
+							}
+						} else if (!applaunchprep ||
+							CURPOS !=
+								i) { // Only draw the icon if we're not launching the selcted app
+							if (movingApp != -1) {
+								int j = i;
+								if (i > movingApp - (PAGENUM * 40))
+									j--;
+								if (j == -1)
+									continue;
+								if (!bnrSysSettings[i]) {
+									if (ms().theme == 1) {
+										glSprite(
+											(j * 2496 / 39) + 128 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+											titleboxYpos, GL_FLIP_NONE,
+											tex().boxfullImage());
+									} else {
+										glSprite(
+											(j * 2496 / 39) + 128 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+											titleboxYpos + titleboxYposDropDown[i % 5],
+											GL_FLIP_NONE, &tex().boxfullImage()[0]);
+									}
+								}
+								if (bnrSysSettings[i])
+									glSprite((j * 2496 / 39) + 128 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+										(titleboxYpos - 1) +
+											titleboxYposDropDown[i % 5],
+										GL_FLIP_NONE, &tex().settingsImage()[1]);
+								else if (bnrRomType[i] == 11)
+									drawIconPCE((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+											(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 10)
+									drawIconA26((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+											(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 9)
+									drawIconPLG((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+											(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 8)
+									drawIconSNES((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+											(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 7)
+									drawIconMD((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+										(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 6)
+									drawIconGG((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+										(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 5)
+									drawIconSMS((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+											(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 4)
+									drawIconNES((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+											(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 3)
+									drawIconGBC((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+											(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 2)
+									drawIconGB((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+										(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 1)
+									drawIconGBA((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+										(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5]);
+								else
+									drawIcon((j * 2496 / 39) + 144 -
+											titleboxXpos[ms().secondaryDevice] +
+											movingAppXFix,
+										(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5],
+										i);
+							} else {
+								if (!bnrSysSettings[i]) {
+									if (ms().theme == 1) {
+										glSprite(spawnedboxXpos -
+												titleboxXpos[ms().secondaryDevice],
+											titleboxYpos, GL_FLIP_NONE,
+											tex().boxfullImage());
+									} else {
+										glSprite(
+											spawnedboxXpos -
+											titleboxXpos[ms().secondaryDevice] +
+											movecloseXpos,
+											titleboxYpos + titleboxYposDropDown[i % 5],
+											GL_FLIP_NONE, &tex().boxfullImage()[0]);
+									}
+								}
+								if (bnrSysSettings[i])
+									glSprite(spawnedboxXpos -
+											titleboxXpos[ms().secondaryDevice] +
+											movecloseXpos,
+										(titleboxYpos - 1) +
+											titleboxYposDropDown[i % 5],
+										GL_FLIP_NONE, &tex().settingsImage()[1]);
+								else if (bnrRomType[i] == 11)
+									drawIconPCE(
+										iconXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 10)
+									drawIconA26(
+										iconXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 9)
+									drawIconPLG(
+										iconXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 8)
+									drawIconSNES(
+										iconXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 7)
+									drawIconMD(
+										iconXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 6)
+									drawIconGG(
+										iconXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 5)
+									drawIconSMS(
+										iconXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 4)
+									drawIconNES(
+										iconXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 3)
+									drawIconGBC(
+										iconXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 2)
+									drawIconGB(
+										iconXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+								else if (bnrRomType[i] == 1)
+									drawIconGBA(
+										iconXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+								else
+									drawIcon(iconXpos - titleboxXpos[ms().secondaryDevice] +
+											movecloseXpos,
+										(titleboxYpos + 12) +
+											titleboxYposDropDown[i % 5],
+										i);
+							}
 						}
 					} else {
-						if (ms().theme > 0) {
-							glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice],
-								 titleboxYpos + titleboxYposDropDown[i % 5],
-								 GL_FLIP_NONE, tex().boxemptyImage());
+						// Empty box
+						if (movingApp != -1) {
+							if (ms().theme > 0) {
+								glSprite(((i - 1) * 2496 / 39) + 128 -
+										titleboxXpos[ms().secondaryDevice] + movingAppXFix,
+									titleboxYpos + titleboxYposDropDown[i % 5],
+									GL_FLIP_NONE, tex().boxemptyImage());
+							} else {
+								glSprite(((i - 1) * 2496 / 39) + 128 -
+										titleboxXpos[ms().secondaryDevice] + movingAppXFix,
+									titleboxYpos + titleboxYposDropDown[i % 5],
+									GL_FLIP_NONE, &tex().boxfullImage()[1]);
+							}
 						} else {
-							glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice] +
-									 movecloseXpos,
-								 titleboxYpos + titleboxYposDropDown[i % 5],
-								 GL_FLIP_NONE, &tex().boxfullImage()[1]);
+							if (ms().theme > 0) {
+								glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice],
+									titleboxYpos + titleboxYposDropDown[i % 5],
+									GL_FLIP_NONE, tex().boxemptyImage());
+							} else {
+								glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice] +
+										movecloseXpos,
+									titleboxYpos + titleboxYposDropDown[i % 5],
+									GL_FLIP_NONE, &tex().boxfullImage()[1]);
+							}
 						}
 					}
 				}
+				spawnedboxXpos += 64;
+				iconXpos += 64;
 			}
-			spawnedboxXpos += 64;
-			iconXpos += 64;
-		}
-		if (ms().theme == 0) {
-			glSprite(spawnedboxXpos + 10 - titleboxXpos[ms().secondaryDevice], 81, GL_FLIP_H,
-				 tex().braceImage());
+			if (ms().theme == 0) {
+				glSprite(spawnedboxXpos + 10 - titleboxXpos[ms().secondaryDevice], 81, GL_FLIP_H,
+					tex().braceImage());
+			}
+
+			if (movingApp != -1 && ms().theme==0 && showMovingArrow) {
+				glSprite(115, movingArrowYpos, GL_FLIP_NONE, tex().movingArrowImage());
+			}
 		}
 
-		if (movingApp != -1 && ms().theme==0 && showMovingArrow) {
-			glSprite(115, movingArrowYpos, GL_FLIP_NONE, tex().movingArrowImage());
-		}
-	}
 		// Top icons for 3DS theme
 		if (ms().theme == 1) {
 			int topIconXpos = 116;
@@ -1252,7 +1123,7 @@ void vBlankHandler() {
 
 			titleboxYmovepos += 5;
 		}
-		if (showSTARTborder && displayGameIcons && (ms().theme < 4) && (!isScrolling || ms().theme == 1)) {
+		if (showSTARTborder && displayGameIcons && (ms().theme < 4)) {
 			glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
 				 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] &
 							(tc().startBorderSpriteH() - 1)]);
@@ -1285,7 +1156,7 @@ void vBlankHandler() {
 		// Refresh the background layer.
 		if (currentBg == 1 && ms().theme != 4 && ms().theme != 5)
 			drawBubble(tex().bubbleImage());
-		if (showSTARTborder && displayGameIcons && ms().theme == 0 && !isScrolling) {
+		if (showSTARTborder && displayGameIcons && ms().theme == 0) {
 			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[ms().getGameLanguage()]);
 		}
 
@@ -1386,6 +1257,12 @@ void vBlankHandler() {
 		//}
 		glEnd2D();
 		GFX_FLUSH = 0;
+
+		// Blink colon once per second
+		if (colonTimer >= 60) {
+			colonTimer = 0;
+			showColon = !showColon;
+		}
 
 		frameDelay = 0;
 		frameDelayEven = !frameDelayEven;
@@ -1730,14 +1607,12 @@ ITCM_CODE void drawCurrentDate() {
 
 	loadedDate = currentDate;
 
-	ms().macroMode ? tex().drawDateTimeMacro(loadedDate.c_str(), x, y, 5, NULL) : tex().drawDateTime(loadedDate.c_str(), x, y, 5, NULL);
+	ms().macroMode ? tex().drawDateTimeMacro(loadedDate.c_str(), x, y) : tex().drawDateTime(loadedDate.c_str(), x, y);
 
 	reloadDate = false;
 }
 
 static std::string loadedTime;
-static int hourWidth;
-static bool initialClockDraw = true;
 
 ITCM_CODE void drawCurrentTime() {
 	// Load time
@@ -1746,48 +1621,20 @@ ITCM_CODE void drawCurrentTime() {
 		x -= 28;
 	}
 	int y = (ms().theme == 4 ? 12 : 7);
-	char time[10];
+
 	std::string currentTime = retTime();
+	if (currentTime[0] == ' ')
+		currentTime[0] = '0';
+	currentTime[2] = showColon ? ':' : ';';
+
 	if (currentTime == loadedTime && !reloadTime)
 		return;
 
 	loadedTime = currentTime;
-	if (currentTime.substr(0, 1) == " ")
-		currentTime = "0" + currentTime.substr(1);
-	sprintf(time, currentTime.c_str());
 
-	int howManyToDraw = 5;
-	if (initialClockDraw || reloadTime) {
-		initialClockDraw = false;
-	} else {
-		if (currentTime.substr(3, 2) != "00") {
-			strcpy(time, currentTime.substr(3, 2).c_str());
-			howManyToDraw = 2;
-			x = hourWidth;
-		}
-	}
-	ms().macroMode ? tex().drawDateTimeMacro(time, x, y, howManyToDraw, &hourWidth) : tex().drawDateTime(time, x, y, howManyToDraw, &hourWidth);
+	ms().macroMode ? tex().drawDateTimeMacro(currentTime.c_str(), x, y) : tex().drawDateTime(currentTime.c_str(), x, y);
 
 	reloadTime = false;
-}
-
-ITCM_CODE void drawClockColon() {
-	// Load time
-	int x = (ms().theme >= 4 ? 176 : 214);
-	if (ms().theme == 5) {
-		x -= 28;
-	}
-	int y = (ms().theme == 4 ? 12 : 7);
-	char colon[1];
-
-	// Blink the ':' once per second.
-	if (colonTimer >= 60) {
-		colonTimer = 0;
-		std::string currentColon = showColon ? ":" : ";";
-		sprintf(colon, currentColon.c_str());
-		ms().macroMode ? tex().drawDateTimeMacro(colon, x, y, 1, NULL) : tex().drawDateTime(colon, x, y, 1, NULL);
-		showColon = !showColon;
-	}
 }
 
 void clearBoxArt() {
@@ -1801,7 +1648,6 @@ void clearBoxArt() {
 		// tex().drawShoulders(showLshoulder, showR);
 		// drawCurrentDate();
 		// drawCurrentTime();
-		// drawClockColon();
 		tex().drawTopBgAvoidingShoulders();
 	} else {
 		loadPhotoPart();
@@ -1866,7 +1712,6 @@ void graphicsInit() {
 
 	drawCurrentDate();
 	drawCurrentTime();
-	drawClockColon();
 
 	// printf("drawn bgload");
 	// while(1) {}

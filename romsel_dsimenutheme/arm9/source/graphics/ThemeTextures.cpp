@@ -1286,65 +1286,53 @@ ITCM_CODE unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 lette
 	return spriteIndex;
 }
 
-ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, const int drawCount, int *hourWidthPointer) {
-	beginBgSubModify();
-
+ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) {
 	const Texture *tex = dateTimeFontTexture();
 	const u16 *bitmap = tex->texture();
 
-	for (int c = 0; c < drawCount; c++) {
-		unsigned int charIndex = getDateTimeFontSpriteIndex(str[c]);
+	while(*str) {
+		char c = *(str++);
+		unsigned int charIndex = getDateTimeFontSpriteIndex(c);
+
 		// Start date
 		for (uint y = 0; y < tex->texHeight(); y++) {
 			const u16 *src = bitmap + (y * 128) + (date_time_font_texcoords[4 * charIndex]);
 			for (uint x = 0; x < date_time_font_texcoords[2 + (4 * charIndex)]; x++) {
 				u16 val = *(src++);
-				if (val >> 15) { // Do not render transparent pixel
-					_bgSubBuffer[(posY + y) * 256 + (posX + x)] = val;
+				if (val & BIT(15)) { // Do not render transparent pixel
+					BG_GFX_SUB[(posY + y) * 256 + (posX + x)] = val;
 					if (boxArtColorDeband) {
-						_bgSubBuffer2[(posY + y) * 256 + (posX + x)] = val;
+						_frameBufferBot[0][(posY + y) * 256 + (posX + x)] = val;
+						_frameBufferBot[1][(posY + y) * 256 + (posX + x)] = val;
 					}
 				}
 			}
 		}
 		posX += date_time_font_texcoords[2 + (4 * charIndex)];
-		if (hourWidthPointer != NULL) {
-			if (c == 2)
-				*hourWidthPointer = posX;
-		}
 	}
-
-	commitBgSubModify();
 }
 
-ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int posY, const int drawCount, int *hourWidthPointer) {
+ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int posY) {
 	if (ms().theme == 4) return;
-
-	beginBgMainModify();
 
 	const Texture *tex = dateTimeFontTexture();
 	const u16 *bitmap = tex->texture();
 
-	for (int c = 0; c < drawCount; c++) {
-		unsigned int charIndex = getDateTimeFontSpriteIndex(str[c]);
+	while(*str) {
+		char c = *(str++);
+		unsigned int charIndex = getDateTimeFontSpriteIndex(c);
 		// Start date
 		for (uint y = 0; y < tex->texHeight(); y++) {
 			const u16 *src = bitmap + (y * 128) + (date_time_font_texcoords[4 * charIndex]);
 			for (uint x = 0; x < date_time_font_texcoords[2 + (4 * charIndex)]; x++) {
 				u16 val = *(src++);
 				if (val >> 15) { // Do not render transparent pixel
-					_bgMainBuffer[(posY + y) * 256 + (posX + x)] = val;
+					BG_GFX[(posY + y) * 256 + (posX + x)] = val;
 				}
 			}
 		}
 		posX += date_time_font_texcoords[2 + (4 * charIndex)];
-		if (hourWidthPointer != NULL) {
-			if (c == 2)
-				*hourWidthPointer = posX;
-		}
 	}
-
-	commitBgMainModify();
 }
 
 void ThemeTextures::applyGrayscaleToAllGrfTextures() {

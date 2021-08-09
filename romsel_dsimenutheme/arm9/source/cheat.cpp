@@ -331,7 +331,6 @@ void CheatCodelist::selectCheats(std::string filename)
       tex().drawBatteryImageCached();
       drawCurrentTime();
       drawCurrentDate();
-      drawClockColon();
       snd().updateStream();
       swiWaitForVBlank();
       if(pressed & KEY_B) {
@@ -375,7 +374,6 @@ void CheatCodelist::selectCheats(std::string filename)
       tex().drawBatteryImageCached();
       drawCurrentTime();
       drawCurrentDate();
-      drawClockColon();
       snd().updateStream();
       if(currentList[cheatWnd_cursorPosition]->_title.length() > 30u) {
         if(cheatWnd_scrollTimer > 0) {
@@ -530,7 +528,6 @@ void CheatCodelist::selectCheats(std::string filename)
           tex().drawBatteryImageCached();
           drawCurrentTime();
           drawCurrentDate();
-          drawClockColon();
           snd().updateStream();
           swiWaitForVBlank();
           if(pressed & KEY_B) {

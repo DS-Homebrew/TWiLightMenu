@@ -28,7 +28,6 @@ void SetBrightness(u8 screen, s8 bright);
 
 void drawCurrentDate();
 void drawCurrentTime();
-void drawClockColon();
 
 void clearBoxArt();
 void graphicsInit();
