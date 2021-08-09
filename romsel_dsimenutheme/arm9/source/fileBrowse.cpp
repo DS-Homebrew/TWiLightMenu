@@ -162,6 +162,16 @@ void chdirFake(const char *dir) {
 }
 #endif
 
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
+	for(std::string_view extension : extensions) {
+		if(strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool nameEndsWith(const std::string &name, const std::vector<std::string> extensionList) {
 
 	if (name.substr(0, 2) == "._")
@@ -1507,8 +1517,6 @@ bool selectMenu(void) {
 }
 
 void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool reSpawnBoxes) {
-	extern bool extention(const std::string& filename, const char* ext);
-
 	if (nowLoadingDisplaying) {
 		clearText();
 		showProgressBar = true;
@@ -1526,58 +1534,51 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				isDirectory[i] = false;
 				std::string std_romsel_filename = dirContents[scrn].at(i + PAGENUM * 40).name.c_str();
 
-				if (extention(std_romsel_filename, ".nds")
-				 || extention(std_romsel_filename, ".dsi")
-				 || extention(std_romsel_filename, ".ids")
-				 || extention(std_romsel_filename, ".srl")
-				 || extention(std_romsel_filename, ".app")
-				 || extention(std_romsel_filename, ".argv"))
-				{
+				if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 					getGameInfo(isDirectory[i], dirContents[scrn].at(i + PAGENUM * 40).name.c_str(),
 							i);
 					bnrRomType[i] = 0;
 					boxArtType[i] = 0;
-				} else if (extention(std_romsel_filename, ".pce")) {
+				} else if (extension(std_romsel_filename, {".pce"})) {
 					bnrRomType[i] = 11;
 					boxArtType[i] = 0;
-				} else if (extention(std_romsel_filename, ".xex") || extention(std_romsel_filename, ".atr")
-				 || extention(std_romsel_filename, ".a26") || extention(std_romsel_filename, ".a52") || extention(std_romsel_filename, ".a78")) {
+				} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 					bnrRomType[i] = 10;
 					boxArtType[i] = 0;
-				} else if (extention(std_romsel_filename, ".plg")) {
+				} else if (extension(std_romsel_filename, {".plg"})) {
 					bnrRomType[i] = 9;
 					boxArtType[i] = 0;
-				} else if (extention(std_romsel_filename, ".rvid") || extention(std_romsel_filename, ".fv")) {
+				} else if (extension(std_romsel_filename, {".rvid", ".fv"})) {
 					bnrRomType[i] = 9;
 					boxArtType[i] = 2;
-				} else if (extention(std_romsel_filename, ".agb") || extention(std_romsel_filename, ".gba") || extention(std_romsel_filename, ".mb")) {
+				} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
 					bnrRomType[i] = 1;
 					boxArtType[i] = 1;
-				} else if (extention(std_romsel_filename, ".gb") || extention(std_romsel_filename, ".sgb")) {
+				} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
 					bnrRomType[i] = 2;
 					boxArtType[i] = 1;
-				} else if (extention(std_romsel_filename, ".gbc")) {
+				} else if (extension(std_romsel_filename, {".gbc"})) {
 					bnrRomType[i] = 3;
 					boxArtType[i] = 1;
-				} else if (extention(std_romsel_filename, ".nes")) {
+				} else if (extension(std_romsel_filename, {".nes"})) {
 					bnrRomType[i] = 4;
 					boxArtType[i] = 2;
-				} else if (extention(std_romsel_filename, ".fds")) {
+				} else if (extension(std_romsel_filename, {".fds"})) {
 					bnrRomType[i] = 4;
 					boxArtType[i] = 1;
-				} else if (extention(std_romsel_filename, ".sms")) {
+				} else if (extension(std_romsel_filename, {".sms"})) {
 					bnrRomType[i] = 5;
 					boxArtType[i] = 2;
-				} else if (extention(std_romsel_filename, ".gg")) {
+				} else if (extension(std_romsel_filename, {".gg"})) {
 					bnrRomType[i] = 6;
 					boxArtType[i] = 2;
-				} else if (extention(std_romsel_filename, ".gen")) {
+				} else if (extension(std_romsel_filename, {".gen"})) {
 					bnrRomType[i] = 7;
 					boxArtType[i] = 2;
-				} else if (extention(std_romsel_filename, ".smc")) {
+				} else if (extension(std_romsel_filename, {".smc"})) {
 					bnrRomType[i] = 8;
 					boxArtType[i] = 3;
-				} else if (extention(std_romsel_filename, ".sfc")) {
+				} else if (extension(std_romsel_filename, {".sfc"})) {
 					bnrRomType[i] = 8;
 					boxArtType[i] = 2;
 				}

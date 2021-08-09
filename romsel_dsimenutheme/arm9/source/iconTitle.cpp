@@ -27,6 +27,7 @@
 #include "common/flashcard.h"
 #include <gl2d.h>
 #include "common/tonccpy.h"
+#include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
 #include "graphics/queueControl.h"
@@ -52,8 +53,6 @@ extern bool startMenu;
 extern int currentBg;
 
 extern int movingApp;
-
-extern bool extention(const std::string& filename, const char* ext);
 
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
@@ -281,7 +280,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 	if (isDir) {
 		clearTitle(num);
 		clearBannerSequence(num); // banner sequence
-	} else if (extention(name, ".argv")) {
+	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -321,11 +320,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extention(p, ".nds")
-			 || extention(p, ".dsi")
-			 || extention(p, ".ids")
-			 || extention(p, ".srl")
-			 || extention(p, ".app")) {
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
 				if (rc != 0) {
@@ -350,11 +345,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		}
 		// clean up the allocated line
 		free(line);
-	} else if (extention(name, ".nds")
-			 || extention(name, ".dsi")
-			 || extention(name, ".ids")
-			 || extention(name, ".srl")
-			 || extention(name, ".app")) {
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp;
 		int ret;
@@ -596,7 +587,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 	if (isDir) {
 		// icon
 		clearIcon(num2);
-	} else if (extention(name, ".argv")) {
+	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -635,11 +626,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extention(p, ".nds")
-			 || extention(p, ".dsi")
-			 || extention(p, ".ids")
-			 || extention(p, ".srl")
-			 || extention(p, ".app")) {
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
 				if (rc != 0) {
@@ -660,11 +647,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		}
 		// clean up the allocated line
 		free(line);
-	} else if (extention(name, ".nds")
-			 || extention(name, ".dsi")
-			 || extention(name, ".ids")
-			 || extention(name, ".srl")
-			 || extention(name, ".app")) {
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		tonccpy((char *)&ndsBanner, bnriconTile[num], 0x23C0);
 
@@ -754,28 +737,7 @@ void titleUpdate(bool isDir, const std::string &name, int num) {
 		} else {
 			writeBannerText(name);
 		}
-	} else if (extention(name, ".plg")
-			|| extention(name, ".rvid")
-			|| extention(name, ".mp4")
-			|| extention(name, ".agb")
-			|| extention(name, ".gba")
-			|| extention(name, ".mb")
-			|| extention(name, ".gb")
-			|| extention(name, ".sgb")
-			|| extention(name, ".gbc")
-			|| extention(name, ".nes")
-			|| extention(name, ".fds")
-			|| extention(name, ".sms")
-			|| extention(name, ".gg")
-			|| extention(name, ".gen")
-			|| extention(name, ".smc")
-			|| extention(name, ".sfc")
-			|| extention(name, ".xex")
-			|| extention(name, ".atr")
-			|| extention(name, ".a26")
-			|| extention(name, ".a52")
-			|| extention(name, ".a78")
-			|| extention(name, ".pce")) {
+	} else if (!extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		writeBannerText(name.substr(0, name.find_last_of('.')));
 	} else {
 		// this is an nds/app file!
