@@ -489,6 +489,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 		if (!rocketVideo_playVideo)
 			clearBoxArt();
 		rocketVideo_playVideo = (ms().theme == 1 ? true : false);
+		boxArtLoaded = false;
 	}
 
 	bool firstMove = true;
