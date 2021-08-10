@@ -680,7 +680,14 @@ void writeBannerText(std::u16string text) {
 }
 
 static inline void writeDialogTitle(std::u16string text) {
-	printLarge(false, ms().rtl() ? 256 - 70 : 70, 31 - (calcLargeFontHeight(text) / 2), text, ms().rtl() ? Alignment::right : Alignment::left);
+	int lines = 0;
+	for(auto c : text) {
+		if(c == '\n') {
+			lines++;
+		}
+	}
+
+	printLarge(false, ms().rtl() ? 256 - 70 : 70, 31 - (lines * largeFontHeight() / 2), text, ms().rtl() ? Alignment::right : Alignment::left);
 }
 
 void titleUpdate(bool isDir, std::string_view name, int num) {
