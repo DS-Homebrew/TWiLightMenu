@@ -62,11 +62,9 @@ extern void unlaunchRomBoot(std::string_view rom);
 extern bool dropDown;
 extern int currentBg;
 extern bool showSTARTborder;
+extern bool startBorderZoomOut;
 extern bool buttonArrowTouched[2];
 extern bool scrollWindowTouched;
-
-extern bool titleboxXmoveleft;
-extern bool titleboxXmoveright;
 
 extern bool applaunchprep;
 
@@ -86,7 +84,11 @@ int file_count = 0;
 extern int spawnedtitleboxes;
 
 extern int titleboxXpos[2];
+extern int titleboxXdest[2];
 extern int titlewindowXpos[2];
+extern int titlewindowXdest[2];
+extern int titleboxXspeed;
+extern int titleboxXspacing;
 int movingApp = -1;
 int movingAppYpos = 0;
 bool movingAppIsDir = false;
@@ -113,7 +115,6 @@ bool boxArtLoaded = false;
 bool shouldersRendered = false;
 bool settingsChanged = false;
 
-bool isScrolling = false;
 bool edgeBumpSoundPlayed = false;
 bool needToPlayStopSound = false;
 bool stopSoundPlayed = false;
@@ -161,6 +162,16 @@ void chdirFake(const char *dir) {
 	strcpy(path, pathStr.c_str());
 }
 #endif
+
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
+	for(std::string_view extension : extensions) {
+		if(strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
 
 bool nameEndsWith(const std::string &name, const std::vector<std::string> extensionList) {
 
@@ -309,7 +320,6 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			tex().drawBatteryImageCached();
 			drawCurrentTime();
 			drawCurrentDate();
-			drawClockColon();
 			tex().drawProfileName();
 
 			snd().updateStream();
@@ -406,7 +416,6 @@ void waitForFadeOut(void) {
 			tex().drawBatteryImageCached();
 			drawCurrentTime();
 			drawCurrentDate();
-			drawClockColon();
 			tex().drawProfileName();
 			snd().updateStream();
 			swiWaitForVBlank();
@@ -465,29 +474,125 @@ void displayNowLoading(void) {
 	showProgressIcon = true;
 }
 
-void updateScrollingState(u32 held, u32 pressed) {
-	snd().updateStream();
-
-	bool isHeld = (held & KEY_LEFT) || (held & KEY_RIGHT) ||
-			((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
-	bool isPressed = (pressed & KEY_LEFT) || (pressed & KEY_RIGHT) ||
-			((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19) || ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
-
-	// If we were scrolling before, but now let go of all keys, stop scrolling.
-	if (isHeld && !isPressed && (CURPOS != 0 && CURPOS != 39)) {
-		isScrolling = true;
-		if (edgeBumpSoundPlayed) {
-			edgeBumpSoundPlayed = false;
-		}
-	} else if (!isHeld && !isPressed && !titleboxXmoveleft && !titleboxXmoveright) {
-		isScrolling = false;
+void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntry = 0xFFFF) {
+	if((right && CURPOS >= 39) || (!right && CURPOS <= 0)) {
+		if(!edgeBumpSoundPlayed)
+			snd().playWrong();
+		edgeBumpSoundPlayed = true;
+		return;
 	}
 
-	if (isPressed && !isHeld) {
-		if (edgeBumpSoundPlayed) {
-			edgeBumpSoundPlayed = false;
-		}
+	waitForNeedToPlayStopSound = 1;
+	settingsChanged = true;
+	bannerTextShown = false;
+	if (boxArtLoaded) {
+		if (!rocketVideo_playVideo)
+			clearBoxArt();
+		rocketVideo_playVideo = (ms().theme == 1 ? true : false);
 	}
+
+	bool firstMove = true;
+	touchPosition touch;
+	do {
+		if(right && CURPOS < 39 && CURPOS < maxEntry) {
+			CURPOS++;
+		} else if(!right && CURPOS > 0) {
+			CURPOS--;
+		} else {
+			if(!edgeBumpSoundPlayed)
+				snd().playWrong();
+			edgeBumpSoundPlayed = true;
+			return;
+		}
+
+		if(movingApp == -1) {
+			clearText(false);
+			if(CURPOS + PAGENUM * 40 < (int)dirContents.size()) {
+				if(ms().theme != 4)
+					currentBg = 1;
+				titleUpdate(dirContents[CURPOS + PAGENUM * 40].isDirectory,
+							dirContents[CURPOS + PAGENUM * 40].name,
+							CURPOS);
+			} else {
+				if(ms().theme != 4)
+					currentBg = 0;
+			}
+			if (ms().theme == 5) {
+				printLarge(false, 0, 142, "^", Alignment::center);
+				printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
+				printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+			} else if (ms().macroMode && ms().theme != 4) {
+				printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
+				printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+			}
+			updateText(false);
+		}
+
+		int pos = CURPOS + (right ? 2 : -2);
+		if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < (int)dirContents.size()) {
+			iconUpdate(dirContents[pos + PAGENUM * 40].isDirectory,
+						dirContents[pos + PAGENUM * 40].name.c_str(),
+						pos);
+		}
+
+		checkSdEject();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+		drawCurrentTime();
+		drawCurrentDate();
+		tex().drawProfileName();
+		snd().updateStream();
+
+		if(ms().theme != 4) {
+			for(int i = 0; i < 8; i++) {
+				swiWaitForVBlank();
+
+				if(right) {
+					titleboxXdest[ms().secondaryDevice] += titleboxXspacing / 8;
+					if(i % 3)
+						titlewindowXdest[ms().secondaryDevice]++;
+				} else {
+					titleboxXdest[ms().secondaryDevice] -= titleboxXspacing / 8;
+					if(i % 3)
+						titlewindowXdest[ms().secondaryDevice]--;
+				}
+			}
+			titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+			swiWaitForVBlank();
+		} else {
+			if(right) {
+				titleboxXdest[ms().secondaryDevice] += titleboxXspacing;
+				titlewindowXdest[ms().secondaryDevice] += 5;
+			} else {
+				titleboxXdest[ms().secondaryDevice] -= titleboxXspacing;
+				titlewindowXdest[ms().secondaryDevice] -= 5;
+			}
+		}
+
+		// Bit of delay the first time to give time to release the button
+		if(firstMove) {
+			firstMove = false;
+			for(int i = 0; i < (ms().theme == 4 ? 15 : 4); i++)
+				swiWaitForVBlank();
+		} else {
+			if(ms().theme != 1)
+				showSTARTborder = false;
+		}
+
+
+		scanKeys();
+		touchRead(&touch);
+	} while((keysHeld() & (right ? KEY_RIGHT : KEY_LEFT)) || ((keysHeld() & KEY_TOUCH) && touch.py > 171 && (right ? touch.px > 236 : touch.px < 19) && ms().theme == 0));
+
+	// Wait for movement to finish before showing START boarder and such
+	while(titleboxXdest[ms().secondaryDevice] != titleboxXpos[ms().secondaryDevice] && !(keysHeld() & KEY_TOUCH))
+		swiWaitForVBlank();
+
+	if(movingApp == -1 && CURPOS + PAGENUM * 40 < (int)dirContents.size())
+		showSTARTborder = true;
+	edgeBumpSoundPlayed = false;
+	needToPlayStopSound = true;
+	startBorderZoomOut = true;
 }
 
 void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
@@ -815,7 +920,6 @@ void smsWarning(void) {
 		tex().drawBatteryImageCached();
 		drawCurrentTime();
 		drawCurrentDate();
-		drawClockColon();
 		snd().updateStream();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
@@ -875,7 +979,6 @@ void mdRomTooBig(void) {
 		tex().drawBatteryImageCached();
 		drawCurrentTime();
 		drawCurrentDate();
-		drawClockColon();
 		snd().updateStream();
 		swiWaitForVBlank();
 
@@ -999,7 +1102,6 @@ void ramDiskMsg(const char *filename) {
 
 		drawCurrentTime();
 		drawCurrentDate();
-		drawClockColon();
 		snd().updateStream();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
@@ -1054,7 +1156,6 @@ bool dsiBinariesMissingMsg(const char *filename) {
 
 		drawCurrentTime();
 		drawCurrentDate();
-		drawClockColon();
 		snd().updateStream();
 		swiWaitForVBlank();
 		if (pressed & KEY_Y) {
@@ -1139,7 +1240,6 @@ void donorRomMsg(const char *filename) {
 
 		drawCurrentTime();
 		drawCurrentDate();
-		drawClockColon();
 		snd().updateStream();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
@@ -1230,7 +1330,6 @@ bool checkForCompatibleGame(const char *filename) {
 
 		drawCurrentTime();
 		drawCurrentDate();
-		drawClockColon();
 		snd().updateStream();
 		swiWaitForVBlank();
 		if (pressed & KEY_A) {
@@ -1316,7 +1415,6 @@ void cannotLaunchMsg(const char *filename) {
 
 		drawCurrentTime();
 		drawCurrentDate();
-		drawClockColon();
 		snd().updateStream();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
@@ -1435,7 +1533,6 @@ bool selectMenu(void) {
 			tex().drawBatteryImageCached();
 			drawCurrentTime();
 			drawCurrentDate();
-			drawClockColon();
 			snd().updateStream();
 			swiWaitForVBlank();
 			if (REG_SCFG_MC != current_SCFG_MC) {
@@ -1507,8 +1604,6 @@ bool selectMenu(void) {
 }
 
 void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool reSpawnBoxes) {
-	extern bool extention(const std::string& filename, const char* ext);
-
 	if (nowLoadingDisplaying) {
 		clearText();
 		showProgressBar = true;
@@ -1526,58 +1621,51 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				isDirectory[i] = false;
 				std::string std_romsel_filename = dirContents[scrn].at(i + PAGENUM * 40).name.c_str();
 
-				if (extention(std_romsel_filename, ".nds")
-				 || extention(std_romsel_filename, ".dsi")
-				 || extention(std_romsel_filename, ".ids")
-				 || extention(std_romsel_filename, ".srl")
-				 || extention(std_romsel_filename, ".app")
-				 || extention(std_romsel_filename, ".argv"))
-				{
+				if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 					getGameInfo(isDirectory[i], dirContents[scrn].at(i + PAGENUM * 40).name.c_str(),
 							i);
 					bnrRomType[i] = 0;
 					boxArtType[i] = 0;
-				} else if (extention(std_romsel_filename, ".pce")) {
+				} else if (extension(std_romsel_filename, {".pce"})) {
 					bnrRomType[i] = 11;
 					boxArtType[i] = 0;
-				} else if (extention(std_romsel_filename, ".xex") || extention(std_romsel_filename, ".atr")
-				 || extention(std_romsel_filename, ".a26") || extention(std_romsel_filename, ".a52") || extention(std_romsel_filename, ".a78")) {
+				} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 					bnrRomType[i] = 10;
 					boxArtType[i] = 0;
-				} else if (extention(std_romsel_filename, ".plg")) {
+				} else if (extension(std_romsel_filename, {".plg"})) {
 					bnrRomType[i] = 9;
 					boxArtType[i] = 0;
-				} else if (extention(std_romsel_filename, ".rvid") || extention(std_romsel_filename, ".fv")) {
+				} else if (extension(std_romsel_filename, {".rvid", ".fv"})) {
 					bnrRomType[i] = 9;
 					boxArtType[i] = 2;
-				} else if (extention(std_romsel_filename, ".agb") || extention(std_romsel_filename, ".gba") || extention(std_romsel_filename, ".mb")) {
+				} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
 					bnrRomType[i] = 1;
 					boxArtType[i] = 1;
-				} else if (extention(std_romsel_filename, ".gb") || extention(std_romsel_filename, ".sgb")) {
+				} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
 					bnrRomType[i] = 2;
 					boxArtType[i] = 1;
-				} else if (extention(std_romsel_filename, ".gbc")) {
+				} else if (extension(std_romsel_filename, {".gbc"})) {
 					bnrRomType[i] = 3;
 					boxArtType[i] = 1;
-				} else if (extention(std_romsel_filename, ".nes")) {
+				} else if (extension(std_romsel_filename, {".nes"})) {
 					bnrRomType[i] = 4;
 					boxArtType[i] = 2;
-				} else if (extention(std_romsel_filename, ".fds")) {
+				} else if (extension(std_romsel_filename, {".fds"})) {
 					bnrRomType[i] = 4;
 					boxArtType[i] = 1;
-				} else if (extention(std_romsel_filename, ".sms")) {
+				} else if (extension(std_romsel_filename, {".sms"})) {
 					bnrRomType[i] = 5;
 					boxArtType[i] = 2;
-				} else if (extention(std_romsel_filename, ".gg")) {
+				} else if (extension(std_romsel_filename, {".gg"})) {
 					bnrRomType[i] = 6;
 					boxArtType[i] = 2;
-				} else if (extention(std_romsel_filename, ".gen")) {
+				} else if (extension(std_romsel_filename, {".gen"})) {
 					bnrRomType[i] = 7;
 					boxArtType[i] = 2;
-				} else if (extention(std_romsel_filename, ".smc")) {
+				} else if (extension(std_romsel_filename, {".smc"})) {
 					bnrRomType[i] = 8;
 					boxArtType[i] = 3;
-				} else if (extention(std_romsel_filename, ".sfc")) {
+				} else if (extension(std_romsel_filename, {".sfc"})) {
 					bnrRomType[i] = 8;
 					boxArtType[i] = 2;
 				}
@@ -1612,7 +1700,6 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 			tex().drawBatteryImageCached();
 			drawCurrentTime();
 			drawCurrentDate();
-			drawClockColon();
 			tex().drawProfileName();
 			snd().updateStream();
 		}
@@ -1659,7 +1746,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 static bool previousPage(void) {
 	if (CURPOS == 0 && !showLshoulder) {
 		snd().playWrong();
-	} else if (!titleboxXmoveleft && !titleboxXmoveright) {
+	} else {
 		snd().playSwitch();
 		if (ms().theme != 4 && ms().theme != 5) {
 			fadeType = false; // Fade to white
@@ -1671,8 +1758,8 @@ static bool previousPage(void) {
 		if (showLshoulder)
 			PAGENUM -= 1;
 		CURPOS = 0;
-		titleboxXpos[ms().secondaryDevice] = 0;
-		titlewindowXpos[ms().secondaryDevice] = 0;
+		titleboxXdest[ms().secondaryDevice] = 0;
+		titlewindowXdest[ms().secondaryDevice] = 0;
 		if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
 		if (ms().showBoxArt)
 			clearBoxArt(); // Clear box art
@@ -1696,7 +1783,7 @@ static bool previousPage(void) {
 static bool nextPage(void) {
 	if (CURPOS == (file_count - 1) - PAGENUM * 40 && !showRshoulder) {
 		snd().playWrong();
-	} else if (!titleboxXmoveleft && !titleboxXmoveright) {
+	} else {
 		snd().playSwitch();
 		if (ms().theme != 4 && ms().theme != 5) {
 			fadeType = false; // Fade to white
@@ -1708,13 +1795,13 @@ static bool nextPage(void) {
 		if (showRshoulder) {
 			PAGENUM += 1;
 			CURPOS = 0;
-			titleboxXpos[ms().secondaryDevice] = 0;
-			titlewindowXpos[ms().secondaryDevice] = 0;
+			titleboxXdest[ms().secondaryDevice] = 0;
+			titlewindowXdest[ms().secondaryDevice] = 0;
 		} else {
 			CURPOS = (file_count - 1) - PAGENUM * 40;
 			if (CURPOS < 0) CURPOS = 0;
-			titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
-			titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
+			titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+			titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
 		}
 		if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
 		if (ms().showBoxArt)
@@ -1773,6 +1860,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 		}
 		clearText(false);
 		updateText(false);
+
 		snd().updateStream();
 		waitForFadeOut();
 		bool gameTapped = false;
@@ -1805,26 +1893,18 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				pressed = keysDown();
 				held = keysDownRepeat();
 				touchRead(&touch);
-				updateScrollingState(held, pressed);
 				snd().updateStream();
 
-				if (isScrolling) {
-					if (boxArtLoaded) {
-						if (!rocketVideo_playVideo)
-							clearBoxArt();
-						rocketVideo_playVideo = (ms().theme == 1 ? true : false);
+				updateBoxArt(dirContents, scrn);
+				if (ms().theme < 4) {
+					while (dboxInFrame) {
+						snd().updateStream();
+						swiWaitForVBlank();
 					}
-				} else {
-					updateBoxArt(dirContents, scrn);
-					if (ms().theme < 4) {
-						while (dboxInFrame) {
-							snd().updateStream();
-							swiWaitForVBlank();
-						}
-					}
-					dbox_showIcon = false;
-					dbox_selectMenu = false;
 				}
+				dbox_showIcon = false;
+				dbox_selectMenu = false;
+
 				if (ms().macroMode && ms().theme == 4) {
 					printSmall(false, 4, 4, (showLshoulder ? STR_L_PREV : STR_L));
 					printSmall(false, 256-4, 4, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
@@ -1863,101 +1943,49 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				tex().drawBatteryImageCached();
 				drawCurrentTime();
 				drawCurrentDate();
-				drawClockColon();
 				tex().drawProfileName();
 				snd().updateStream();
 				swiWaitForVBlank();
 				/*if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
 				}*/
-			} while (!pressed && !held);
+			} while (!held);
 
 			buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
 			buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
 
-			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) ||
-				((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) ||
-				((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == 0 &&
-				 !titleboxXmoveleft && !titleboxXmoveright) || // Button arrow (DSi theme)
-				((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == 0 &&
-				 !titleboxXmoveleft && !titleboxXmoveright)) // Button arrow held (DSi theme)
-			{
-				CURPOS -= 1;
-				if (CURPOS >= 0) {
-					titleboxXmoveleft = true;
-					waitForNeedToPlayStopSound = 1;
-					snd().playSelect();
-					boxArtLoaded = false;
-					settingsChanged = true;
-					bannerTextShown = false;
-				} else if (!edgeBumpSoundPlayed) {
-					snd().playWrong();
-					edgeBumpSoundPlayed = true;
-				}
-				if (CURPOS >= 2 && CURPOS <= 36) {
-					if (bnrRomType[CURPOS - 2] == 0 && (CURPOS - 2) + PAGENUM * 40 < file_count) {
-						iconUpdate(
-							dirContents[scrn].at((CURPOS - 2) + PAGENUM * 40).isDirectory,
-							dirContents[scrn].at((CURPOS - 2) + PAGENUM * 40).name.c_str(),
-							CURPOS - 2);
-					}
-				}
-			} else if (((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) ||
-				   ((held & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) ||
-				   ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == 0 &&
-					!titleboxXmoveleft && !titleboxXmoveright) || // Button arrow (DSi theme)
-				   ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == 0 &&
-					!titleboxXmoveleft && !titleboxXmoveright)) // Button arrow held (DSi theme)
-			{
-				CURPOS += 1;
-				if (CURPOS <= 39) {
-					titleboxXmoveright = true;
-					waitForNeedToPlayStopSound = 1;
-					snd().playSelect();
-					boxArtLoaded = false;
-					settingsChanged = true;
-					bannerTextShown = false;
-				} else if (!edgeBumpSoundPlayed) {
-					snd().playWrong();
-					edgeBumpSoundPlayed = true;
-				}
-
-				if (CURPOS >= 3 && CURPOS <= 37) {
-					if (bnrRomType[CURPOS + 2] == 0 && (CURPOS + 2) + PAGENUM * 40 < file_count) {
-						iconUpdate(
-							dirContents[scrn].at((CURPOS + 2) + PAGENUM * 40).isDirectory,
-							dirContents[scrn].at((CURPOS + 2) + PAGENUM * 40).name.c_str(),
-							CURPOS + 2);
-					}
-				}
-				// Move apps
-			} else if ((pressed & KEY_UP) && (ms().theme != 4 && ms().theme != 5) && !dirInfoIniFound && (ms().sortMethod == 4)
-				   && !titleboxXmoveleft && !titleboxXmoveright &&CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
+			if ((held & KEY_LEFT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == 0)) { // Left or button arrow (DSi theme)
+				moveCursor(false, dirContents[scrn]);
+			} else if ((held & KEY_RIGHT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == 0)) { // Right or button arrow (DSi theme)
+				moveCursor(true, dirContents[scrn]);
+			} else if ((pressed & KEY_UP) && (ms().theme != 4 && ms().theme != 5) && !dirInfoIniFound && (ms().sortMethod == 4) && CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) { // Move apps (DSi & 3DS themes)
 				bannerTextShown = false; // Redraw the title when done
 				showSTARTborder = false;
 				currentBg = 2;
 				clearText();
 				updateText(false);
-				mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
-					  0777);
+				mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
 				movingApp = (PAGENUM * 40) + (CURPOS);
+				titleboxXspacing = 76;
+				titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+
 				if (dirContents[scrn][movingApp].isDirectory)
 					movingAppIsDir = true;
 				else
 					movingAppIsDir = false;
-				getGameInfo(dirContents[scrn].at(movingApp).isDirectory,
-						dirContents[scrn].at(movingApp).name.c_str(), -1);
-				iconUpdate(dirContents[scrn].at(movingApp).isDirectory,
-					   dirContents[scrn].at(movingApp).name.c_str(), -1);
-				for (int i = 0; i < 10; i++) {
-					if (i == 9) {
-						movingAppYpos += 2;
-					} else {
-						movingAppYpos += 8;
-					}
+
+				getGameInfo(dirContents[scrn][movingApp].isDirectory,
+							dirContents[scrn][movingApp].name.c_str(), -1);
+				iconUpdate(dirContents[scrn][movingApp].isDirectory,
+						   dirContents[scrn][movingApp].name.c_str(), -1);
+
+				int movingAppYmax = ms().theme == 1 ? 64 : 82;
+				while(movingAppYpos < movingAppYmax) {
+					movingAppYpos += std::max((movingAppYmax - movingAppYpos) / 3, 1);
 					snd().updateStream();
 					swiWaitForVBlank();
 				}
+
 				int orgCursorPosition = CURPOS;
 				int orgPage = PAGENUM;
 				showMovingArrow = true;
@@ -1971,7 +1999,6 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					tex().drawBatteryImageCached();
 					drawCurrentTime();
 					drawCurrentDate();
-					drawClockColon();
 					tex().drawProfileName();
 					snd().updateStream();
 					swiWaitForVBlank();
@@ -1984,65 +2011,25 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						fclose(destinationFile);
 					}*/
 
-					if ((pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright) ||
-						(held & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)) {
-						if (CURPOS > 0) {
-							snd().playSelect();
-							titleboxXmoveleft = true;
-							CURPOS--;
-							if (bnrRomType[CURPOS + 2] == 0 &&
-								(CURPOS + 2) + PAGENUM * 40 < file_count && CURPOS >= 2 &&
-								CURPOS <= 36) {
-								iconUpdate(dirContents[scrn]
-										   .at((CURPOS - 2) + PAGENUM * 40)
-										   .isDirectory,
-									   dirContents[scrn]
-										   .at((CURPOS - 2) + PAGENUM * 40)
-										   .name.c_str(),
-									   CURPOS - 2);
-							}
-						} else if (!edgeBumpSoundPlayed) {
-							snd().playWrong();
-							edgeBumpSoundPlayed = true;
-						}
-					} else if ((pressed & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright) ||
-						   (held & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)) {
-						if (CURPOS + (PAGENUM * 40) < (int)dirContents[scrn].size() - 1 &&
-							CURPOS < 39) {
-							snd().playSelect();
-							titleboxXmoveright = true;
-							CURPOS++;
-							if (bnrRomType[CURPOS + 2] == 0 &&
-								(CURPOS + 2) + PAGENUM * 40 < file_count && CURPOS >= 3 &&
-								CURPOS <= 37) {
-								iconUpdate(dirContents[scrn]
-										   .at((CURPOS + 2) + PAGENUM * 40)
-										   .isDirectory,
-									   dirContents[scrn]
-										   .at((CURPOS + 2) + PAGENUM * 40)
-										   .name.c_str(),
-									   CURPOS + 2);
-							}
+					if (held & KEY_LEFT) {
+						moveCursor(false, dirContents[scrn]);
+					} else if (held & KEY_RIGHT) {
+						if (CURPOS + (PAGENUM * 40) < (int)dirContents[scrn].size() - 1) {
+							moveCursor(true, dirContents[scrn], dirContents[scrn].size() - 1 - PAGENUM * 40);
 						} else if (!edgeBumpSoundPlayed) {
 							snd().playWrong();
 							edgeBumpSoundPlayed = true;
 						}
 					} else if (pressed & KEY_DOWN) {
-						for (int i = 0; i < 10; i++) {
-							showMovingArrow = false;
-							movingArrowYpos = 59;
-							if (i == 9) {
-								movingAppYpos -= 2;
-							} else {
-								movingAppYpos -= 8;
-							}
+						showMovingArrow = false;
+						while(movingAppYpos > 0) {
+							movingAppYpos -= std::max(movingAppYpos / 3, 1);
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
 						break;
 					} else if (pressed & KEY_L) {
-						if (!titleboxXmoveleft && !titleboxXmoveright &&
-							PAGENUM != 0) {
+						if (PAGENUM > 0) {
 							snd().playSwitch();
 							fadeType = false; // Fade to white
 							for (int i = 0; i < 6; i++) {
@@ -2051,8 +2038,8 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							}
 							PAGENUM -= 1;
 							CURPOS = 0;
-							titleboxXpos[ms().secondaryDevice] = 0;
-							titlewindowXpos[ms().secondaryDevice] = 0;
+							titleboxXdest[ms().secondaryDevice] = 0;
+							titlewindowXdest[ms().secondaryDevice] = 0;
 							whiteScreen = true;
 							shouldersRendered = false;
 							displayNowLoading();
@@ -2077,8 +2064,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							snd().playWrong();
 						}
 					} else if (pressed & KEY_R) {
-						if (!titleboxXmoveleft && !titleboxXmoveright &&
-							file_count > 40 + PAGENUM * 40) {
+						if (file_count > 40 + PAGENUM * 40) {
 							snd().playSwitch();
 							fadeType = false; // Fade to white
 							for (int i = 0; i < 6; i++) {
@@ -2087,16 +2073,15 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							}
 							PAGENUM += 1;
 							CURPOS = 0;
-							titleboxXpos[ms().secondaryDevice] = 0;
-							titlewindowXpos[ms().secondaryDevice] = 0;
+							titleboxXdest[ms().secondaryDevice] = 0;
+							titlewindowXdest[ms().secondaryDevice] = 0;
 							whiteScreen = true;
 							shouldersRendered = false;
 							displayNowLoading();
 							getDirectoryContents(dirContents[scrn], extensionList);
 							getFileInfo(scrn, dirContents, true);
 
-							while (!screenFadedOut())
-								;
+							while (!screenFadedOut());
 							nowLoadingDisplaying = false;
 							whiteScreen = false;
 							displayGameIcons = true;
@@ -2113,19 +2098,21 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						}
 					}
 				}
+
 				if ((PAGENUM != orgPage) || (CURPOS != orgCursorPosition)) {
 					currentBg = 1;
 					writeBannerText(STR_PLEASE_WAIT);
+					updateText(false);
 
 					int dest = CURPOS + (PAGENUM * 40);
 
 					DirEntry entry = dirContents[scrn][movingApp];
-					dirContents[scrn].erase(dirContents[scrn].begin()+movingApp);
+					dirContents[scrn].erase(dirContents[scrn].begin() + movingApp);
 					dirContents[scrn].insert(dirContents[scrn].begin() + dest, entry);
 
-					std::vector<std::string> dirNames;
+					std::vector<std::string> dirNames(dirContents[scrn].size());
 					for(uint i=0;i<dirContents[scrn].size();i++) {
-						dirNames.push_back(dirContents[scrn][i].name);
+						dirNames[i] = dirContents[scrn][i].name;
 					}
 
 					CIniFile gameOrderIni(gameOrderIniPath);
@@ -2140,140 +2127,70 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 
 					getFileInfo(scrn, dirContents, false);
 				}
-				movingApp = -1;
 
-				// Scrollbar
-			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 &&
-					ms().theme == 0 && !titleboxXmoveleft &&
-					!titleboxXmoveright)) // Scroll bar (DSi theme))
-			{
+				movingApp = -1;
+				titleboxXspacing = 64;
+				titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+			} else if ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && ms().theme == 0) { // Scroll bar (DSi theme)
 				touchPosition startTouch = touch;
-				int prevPos = CURPOS;
 				showSTARTborder = false;
 				scrollWindowTouched = true;
-				int prevCurPos;
+				int prevPos = CURPOS;
 				while (1) {
 					scanKeys();
 					touchRead(&touch);
-
-					if (!(keysHeld() & KEY_TOUCH))
-						break;
-
-					prevCurPos = CURPOS;
-					CURPOS = round((touch.px - 30) / 4.925);
-					if (CURPOS > 39) {
-						CURPOS = 39;
-						titlewindowXpos[ms().secondaryDevice] = 192.075;
-						titleboxXpos[ms().secondaryDevice] = 2496;
-					} else if (CURPOS < 0) {
-						CURPOS = 0;
-						titlewindowXpos[ms().secondaryDevice] = 0;
-						titleboxXpos[ms().secondaryDevice] = 0;
-					} else {
-						titlewindowXpos[ms().secondaryDevice] = touch.px - 30;
-						titleboxXpos[ms().secondaryDevice] = (touch.px - 30) / 4.925 * 64;
-					}
-
-					// Load icons
-					if (prevPos == CURPOS + 1) {
-						if (CURPOS >= 2) {
-							if (bnrRomType[0] == 0 &&
-								(CURPOS - 2) + PAGENUM * 40 < file_count) {
-								iconUpdate(dirContents[scrn]
-										   .at((CURPOS - 2) + PAGENUM * 40)
-										   .isDirectory,
-									   dirContents[scrn]
-										   .at((CURPOS - 2) + PAGENUM * 40)
-										   .name.c_str(),
-									   CURPOS - 2);
-							}
-						}
-					} else if (prevPos == CURPOS - 1) {
-						if (CURPOS <= 37) {
-							if (bnrRomType[0] == 0 &&
-								(CURPOS + 2) + PAGENUM * 40 < file_count) {
-								iconUpdate(dirContents[scrn]
-										   .at((CURPOS + 2) + PAGENUM * 40)
-										   .isDirectory,
-									   dirContents[scrn]
-										   .at((CURPOS + 2) + PAGENUM * 40)
-										   .name.c_str(),
-									   CURPOS + 2);
-							}
-						}
-					} else if (CURPOS <= 1) {
-						for (int i = 0; i < 5; i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
-					
-							if (bnrRomType[i] == 0 && i + PAGENUM * 40 < file_count) {
-								iconUpdate(
-									dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
-									dirContents[scrn].at(i + PAGENUM * 40).name.c_str(),
-									i);
-							}
-						}
-					} else if (CURPOS >= 2 && CURPOS <= 36) {
-						for (int i = 0; i < 6; i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
-							if (bnrRomType[i] == 0 &&
-								(CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
-								iconUpdate(dirContents[scrn]
-										   .at((CURPOS - 2 + i) + PAGENUM * 40)
-										   .isDirectory,
-									   dirContents[scrn]
-										   .at((CURPOS - 2 + i) + PAGENUM * 40)
-										   .name.c_str(),
-									   CURPOS - 2 + i);
-							}
-						}
-					} else if (CURPOS >= 37 && CURPOS <= 39) {
-						for (int i = 0; i < 5; i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
-							if (bnrRomType[i] == 0 &&
-								(35 + i) + PAGENUM * 40 < file_count) {
-								iconUpdate(dirContents[scrn]
-										   .at((35 + i) + PAGENUM * 40)
-										   .isDirectory,
-									   dirContents[scrn]
-										   .at((35 + i) + PAGENUM * 40)
-										   .name.c_str(),
-									   35 + i);
-							}
-						}
-					}
-
-					if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
-						if(prevCurPos != CURPOS) {
-							currentBg = 1;
-							clearText();
-							titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-									dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
-									CURPOS);
-									bannerTextShown = true;
-							updateText(false);
-						}
-					} else {
-						clearText();
-						updateText(false);
-						currentBg = 0;
-					}
-					prevPos = CURPOS;
-
 					checkSdEject();
 					tex().drawVolumeImageCached();
 					tex().drawBatteryImageCached();
 					drawCurrentTime();
 					drawCurrentDate();
-					drawClockColon();
 					tex().drawProfileName();
 					snd().updateStream();
+					swiWaitForVBlank();
+
+					if (keysHeld() & KEY_TOUCH) {
+						titlewindowXdest[ms().secondaryDevice] = std::clamp(touch.px - 30, 0, 192);
+						titleboxXdest[ms().secondaryDevice] = std::clamp((touch.px - 30) * titleboxXspacing / 5 - 28, 0, titleboxXspacing * 39);
+					} else {
+						int dest = titlewindowXdest[ms().secondaryDevice] / 5;
+						titlewindowXdest[ms().secondaryDevice] = dest * 5;
+						titleboxXdest[ms().secondaryDevice] = dest * titleboxXspacing;
+
+						if(titleboxXdest[ms().secondaryDevice] == titleboxXpos[ms().secondaryDevice])
+							break;
+					}
+
+					prevPos = CURPOS;
+					CURPOS = std::clamp((titleboxXpos[ms().secondaryDevice] + 28) / titleboxXspacing, 0, 39);
+
+					// Load icons
+					if(prevPos != CURPOS) {
+						for (int i = 0; i < 6; i++) {
+							int pos = (CURPOS - 2 + i);
+							if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
+										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
+										pos);
+							}
+						}
+					}
+
+					if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
+						currentBg = 1;
+						clearText();
+						titleUpdate(dirContents[scrn][CURPOS + PAGENUM * 40].isDirectory,
+									dirContents[scrn][CURPOS + PAGENUM * 40].name,
+									CURPOS);
+						bannerTextShown = true;
+						updateText(false);
+					} else {
+						clearText();
+						updateText(false);
+						currentBg = 0;
+					}
 				}
 				scrollWindowTouched = false;
-				titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
-				titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
+
 				waitForNeedToPlayStopSound = 1;
 				snd().playSelect();
 				boxArtLoaded = false;
@@ -2282,331 +2199,199 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				touch = startTouch;
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()))
 					showSTARTborder = true;
+			} else if ((pressed & KEY_TOUCH) && touch.py > 76 && touch.py < (ms().theme == 0 ? 164 : 144)) { // Dragging icons
+				touchPosition startTouch = touch;
+				touchPosition prevTouch1 = touch;
+				touchPosition prevTouch2 = touch;
 
-				// Draw icons 1 per vblank to prevent corruption
-				if (CURPOS <= 1) {
-					for (int i = 0; i < 5; i++) {
-						snd().updateStream();
-						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 && i + PAGENUM * 40 < file_count) {
-							iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
-								   dirContents[scrn].at(i + PAGENUM * 40).name.c_str(),
-								   i);
-						}
-					}
-				} else if (CURPOS >= 2 && CURPOS <= 36) {
-					for (int i = 0; i < 6; i++) {
-						snd().updateStream();
-						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 &&
-							(CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
-							iconUpdate(dirContents[scrn]
-									   .at((CURPOS - 2 + i) + PAGENUM * 40)
-									   .isDirectory,
-								   dirContents[scrn]
-									   .at((CURPOS - 2 + i) + PAGENUM * 40)
-									   .name.c_str(),
-								   CURPOS - 2 + i);
-						}
-					}
-				} else if (CURPOS >= 37 && CURPOS <= 39) {
-					for (int i = 0; i < 5; i++) {
-						snd().updateStream();
-						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 && (35 + i) + PAGENUM * 40 < file_count) {
-							iconUpdate(
-								dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(),
-								35 + i);
-						}
+				bool tapped = false;
+				while (1) {
+					scanKeys();
+					touchRead(&touch);
+					checkSdEject();
+					tex().drawVolumeImageCached();
+					tex().drawBatteryImageCached();
+					drawCurrentTime();
+					drawCurrentDate();
+					tex().drawProfileName();
+					snd().updateStream();
+					swiWaitForVBlank();
+
+					prevTouch2 = prevTouch1;
+					prevTouch1 = touch;
+
+					if (!(keysHeld() & KEY_TOUCH)) {
+						tapped = true;
+						break;
+					} else if (touch.px < startTouch.px - 2
+							|| touch.px > startTouch.px + 2) {
+						break;
 					}
 				}
 
-				// Dragging icons (DSi & 3DS themes)
-			} else if ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < (ms().theme==0 ? 164 : 144) && !titleboxXmoveleft &&
-					!titleboxXmoveright) {
-				touchPosition startTouch = touch;
+				if(tapped) {
+					int moveBy;
+					if(startTouch.px < 39)
+						moveBy = -2;
+					else if(startTouch.px < 96)
+						moveBy = -1;
+					else if(startTouch.px < 160)
+						moveBy = 0;
+					else if(startTouch.px < 217)
+						moveBy = 1;
+					else
+						moveBy = 2;
 
-				if (touch.px > 96 && touch.px < (ms().theme==0 ? 180 : 160)) {
+					if(moveBy == 0) {
+						gameTapped = bannerTextShown && showSTARTborder;
+					} else if(ms().theme != 4) {
+						CURPOS = std::clamp(CURPOS + moveBy, 0, 39);
+
+						// Load icons
+						for (int i = 0; i < 6; i++) {
+							int pos = (CURPOS - 2 + i);
+							if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
+										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
+										pos);
+							}
+						}
+					}
+				} else if(ms().theme != 4) {
+					int prevPos = CURPOS;
+					showSTARTborder = false;
+
 					while (1) {
 						scanKeys();
 						touchRead(&touch);
+						checkSdEject();
+						tex().drawVolumeImageCached();
+						tex().drawBatteryImageCached();
+						drawCurrentTime();
+						drawCurrentDate();
+						tex().drawProfileName();
 						snd().updateStream();
+						swiWaitForVBlank();
+
 						if (!(keysHeld() & KEY_TOUCH)) {
-							gameTapped = (bannerTextShown && showSTARTborder);
-							break;
-						} else if (touch.px < startTouch.px - 20 ||
-								   touch.px > startTouch.px + 20)
-							break;
-					}
-				}
+							titleboxXspeed = 6;
+							int dx = std::clamp(-(prevTouch1.px - prevTouch2.px) * 39 / 192, -39, 39);
 
-				if (ms().theme != 4) {
-				touchPosition prevTouch1 = touch;
-				touchPosition prevTouch2 = touch;
-				int prevPos = CURPOS;
-				showSTARTborder = false;
+							int dest = std::clamp(CURPOS + dx, 0, 39);
+							titlewindowXdest[ms().secondaryDevice] = dest * 5;
 
-				while (1) {
-					if (gameTapped)
-						break;
-					scanKeys();
-					touchRead(&touch);
-					snd().updateStream();
-					if (!(keysHeld() & KEY_TOUCH)) {
-						bool tapped = false;
-						int dX = (-(prevTouch1.px - prevTouch2.px));
-						int decAmount = abs(dX);
-						if (dX > 0) {
-							while (decAmount > .25) {
-								if (ms().theme &&
-									titleboxXpos[ms().secondaryDevice] > 2496)
-									break;
-								scanKeys();
-								if (keysHeld() & KEY_TOUCH) {
-									tapped = true;
-									break;
-								}
-
-								titlewindowXpos[ms().secondaryDevice] =
-									(titleboxXpos[ms().secondaryDevice] + 32) *
-									0.078125;
-								;
-								if (titlewindowXpos[ms().secondaryDevice] > 192.075)
-									titlewindowXpos[ms().secondaryDevice] = 192.075;
-
-								for (int i = 0; i < 2; i++) {
-									snd().updateStream();
-									swiWaitForVBlank();
-									if (titleboxXpos[ms().secondaryDevice] < 2496)
-										titleboxXpos[ms().secondaryDevice] +=
-											decAmount / 2;
-									else
-										titleboxXpos[ms().secondaryDevice] +=
-											decAmount / 4;
-								}
-								decAmount = decAmount / 1.25;
-
-								ms().cursorPosition[ms().secondaryDevice] = round(
-									(titleboxXpos[ms().secondaryDevice] + 32) / 64);
-
-								if (CURPOS <= 37) {
-									if (bnrRomType[0] == 0 &&
-										(CURPOS + 2) + PAGENUM * 40 < file_count) {
-										iconUpdate(
-											dirContents[scrn]
-											.at((CURPOS + 2) + PAGENUM * 40)
-											.isDirectory,
-											dirContents[scrn]
-											.at((CURPOS + 2) + PAGENUM * 40)
-											.name.c_str(),
-											CURPOS + 2);
-										updateText(false);
-									}
-								}
+							int boxDest = std::clamp(titleboxXdest[ms().secondaryDevice] + dx * titleboxXspacing, -160, titleboxXspacing * 39 + 160);
+							if(boxDest < 0 || boxDest > titleboxXspacing * 39) {
+								titleboxXdest[ms().secondaryDevice] = boxDest;
+							} else {
+								titleboxXdest[ms().secondaryDevice] = dest * titleboxXspacing;
 							}
-						} else if (dX < 0) {
-							while (decAmount > .25) {
-								if (ms().theme &&
-									titleboxXpos[ms().secondaryDevice] < 0)
-									break;
+
+							int prevPos;
+							while(titleboxXdest[ms().secondaryDevice] != titleboxXpos[ms().secondaryDevice] && !(keysHeld() & KEY_TOUCH)) {
 								scanKeys();
-								if (keysHeld() & KEY_TOUCH) {
+								if(keysDown() & KEY_TOUCH)
 									touchRead(&touch);
-									tapped = true;
-									break;
-								}
+								swiWaitForVBlank();
 
-								titlewindowXpos[ms().secondaryDevice] =
-									(titleboxXpos[ms().secondaryDevice] + 32) *
-									0.078125;
-								;
-								if (titlewindowXpos[ms().secondaryDevice] < 0)
-									titlewindowXpos[ms().secondaryDevice] = 0;
+								prevPos = CURPOS;
+								CURPOS = std::clamp(titleboxXpos[ms().secondaryDevice] / titleboxXspacing, 0, 39);
 
-								for (int i = 0; i < 2; i++) {
-									snd().updateStream();
-									swiWaitForVBlank();
-									if (titleboxXpos[ms().secondaryDevice] > 0)
-										titleboxXpos[ms().secondaryDevice] -=
-											decAmount / 2;
-									else
-										titleboxXpos[ms().secondaryDevice] -=
-											decAmount / 4;
-								}
-								decAmount = decAmount / 1.25;
-
-								ms().cursorPosition[ms().secondaryDevice] = round(
-									(titleboxXpos[ms().secondaryDevice] + 32) / 64);
-
-								if (CURPOS >= 2) {
-									if (bnrRomType[0] == 0 &&
-										(CURPOS - 2) + PAGENUM * 40 < file_count) {
-										iconUpdate(
-											dirContents[scrn]
-											.at((CURPOS - 2) + PAGENUM * 40)
-											.isDirectory,
-											dirContents[scrn]
-											.at((CURPOS - 2) + PAGENUM * 40)
-											.name.c_str(),
-											CURPOS - 2);
-										updateText(false);
+								if(CURPOS != prevPos) {
+									// Load icons
+									for (int i = 0; i < 6; i++) {
+										int pos = (CURPOS - 2 + i);
+										if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+											iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
+													dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
+													pos);
+										}
 									}
-								}
-							}
-						}
-						if (tapped) {
-							prevTouch1 = touch;
-							prevTouch2 = touch;
-							continue;
-						}
 
-						if (CURPOS < 0)
-							ms().cursorPosition[ms().secondaryDevice] = 0;
-						else if (CURPOS > 39)
-							ms().cursorPosition[ms().secondaryDevice] = 39;
-
-						// Load icons
-						if (CURPOS <= 1) {
-							for (int i = 0; i < 5; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
-								if (bnrRomType[i] == 0 &&
-									i + PAGENUM * 40 < file_count) {
-									iconUpdate(dirContents[scrn]
-											   .at(i + PAGENUM * 40)
-											   .isDirectory,
-										   dirContents[scrn]
-											   .at(i + PAGENUM * 40)
-											   .name.c_str(),
-										   i);
+									clearText();
+									if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()) && boxDest > -28 && boxDest < titleboxXspacing * 39 + 28) {
+										currentBg = 1;
+										titleUpdate(dirContents[scrn][CURPOS + PAGENUM * 40].isDirectory,
+													dirContents[scrn][CURPOS + PAGENUM * 40].name,
+													CURPOS);
+									} else {
+										currentBg = 0;
+									}
+									if (ms().theme == 5) {
+										printLarge(false, 0, 142, "^", Alignment::center);
+										printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
+										printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+									} else if (ms().macroMode && ms().theme != 4) {
+										printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
+										printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+									}
 									updateText(false);
 								}
 							}
-						} else if (CURPOS >= 2 && CURPOS <= 36) {
+
+							// Wait a little bit to give time to re-grab
+							for(int i = 0; i < 10 && !(keysHeld() & KEY_TOUCH); i++) {
+								swiWaitForVBlank();
+								scanKeys();
+							}
+
+							if(keysHeld() & KEY_TOUCH) {
+								prevTouch2 = touch;
+								touchRead(&prevTouch1);
+								titleboxXspeed = 3;
+								continue;
+							}
+
+							break;
+						}
+
+						titleboxXdest[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice] - (touch.px - prevTouch1.px);
+						titlewindowXdest[ms().secondaryDevice] = std::clamp(titleboxXdest[ms().secondaryDevice] * 5 / titleboxXspacing, 0, 192);
+						CURPOS = std::clamp((titleboxXdest[ms().secondaryDevice] + 32) / titleboxXspacing, 0, 39);
+
+						if (prevPos != CURPOS) {
+							// Load icons
 							for (int i = 0; i < 6; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
-								if (bnrRomType[i] == 0 &&
-									(CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
-									iconUpdate(
-										dirContents[scrn]
-										.at((CURPOS - 2 + i) + PAGENUM * 40)
-										.isDirectory,
-										dirContents[scrn]
-										.at((CURPOS - 2 + i) + PAGENUM * 40)
-										.name.c_str(),
-										CURPOS - 2 + i);
-									updateText(false);
-								}
-							}
-						} else if (CURPOS >= 37 && CURPOS <= 39) {
-							for (int i = 0; i < 5; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
-								if (bnrRomType[i] == 0 &&
-									(35 + i) + PAGENUM * 40 < file_count) {
-									iconUpdate(dirContents[scrn]
-											   .at((35 + i) + PAGENUM * 40)
-											   .isDirectory,
-										   dirContents[scrn]
-											   .at((35 + i) + PAGENUM * 40)
-											   .name.c_str(),
-										   35 + i);
-									updateText(false);
+								int pos = (CURPOS - 2 + i);
+								if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+									iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
+											dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
+											pos);
 								}
 							}
 						}
-						break;
-					}
 
-					titleboxXpos[ms().secondaryDevice] += (-(touch.px - prevTouch1.px));
-					ms().cursorPosition[ms().secondaryDevice] =
-						round((titleboxXpos[ms().secondaryDevice] + 32) / 64);
-					titlewindowXpos[ms().secondaryDevice] =
-						(titleboxXpos[ms().secondaryDevice] + 32) * 0.078125;
-					if (titleboxXpos[ms().secondaryDevice] > 2496) {
-						if (ms().theme)
-							titleboxXpos[ms().secondaryDevice] = 2496;
-						ms().cursorPosition[ms().secondaryDevice] = 39;
-						titlewindowXpos[ms().secondaryDevice] = 192.075;
-					} else if (titleboxXpos[ms().secondaryDevice] < 0) {
-						if (ms().theme)
-							titleboxXpos[ms().secondaryDevice] = 0;
-						ms().cursorPosition[ms().secondaryDevice] = 0;
-						titlewindowXpos[ms().secondaryDevice] = 0;
-					}
-
-					// Load icons
-					if (prevPos == CURPOS + 1) {
-						if (CURPOS > 2) {
-							if (bnrRomType[0] == 0 &&
-								(CURPOS - 2) + PAGENUM * 40 < file_count) {
-								iconUpdate(dirContents[scrn]
-										   .at((CURPOS - 2) + PAGENUM * 40)
-										   .isDirectory,
-									   dirContents[scrn]
-										   .at((CURPOS - 2) + PAGENUM * 40)
-										   .name.c_str(),
-									   CURPOS - 2);
-								updateText(false);
-							}
-						}
-					} else if (prevPos == CURPOS - 1) {
-						if (CURPOS < 37) {
-							if (bnrRomType[0] == 0 &&
-								(CURPOS + 2) + PAGENUM * 40 < file_count) {
-								iconUpdate(dirContents[scrn]
-										   .at((CURPOS + 2) + PAGENUM * 40)
-										   .isDirectory,
-									   dirContents[scrn]
-										   .at((CURPOS + 2) + PAGENUM * 40)
-										   .name.c_str(),
-									   CURPOS + 2);
-								updateText(false);
-							}
-						}
-					}
-
-					if (prevPos != CURPOS) {
 						clearText();
-						if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
+						if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()) && titleboxXdest[ms().secondaryDevice] > -28 && titleboxXdest[ms().secondaryDevice] < titleboxXspacing * 39 + 28) {
 							currentBg = 1;
-							titleUpdate(
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
-								CURPOS);
+							titleUpdate(dirContents[scrn][CURPOS + PAGENUM * 40].isDirectory,
+										dirContents[scrn][CURPOS + PAGENUM * 40].name,
+										CURPOS);
 						} else {
 							currentBg = 0;
 						}
 						if (ms().theme == 5) {
+							printLarge(false, 0, 142, "^", Alignment::center);
 							printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
 							printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+						} else if (ms().macroMode && ms().theme != 4) {
+							printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
+							printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
 						}
 						updateText(false);
+
+						prevTouch2 = prevTouch1;
+						prevTouch1 = touch;
+						prevPos = CURPOS;
 					}
-					prevTouch2 = prevTouch1;
-					prevTouch1 = touch;
-					prevPos = CURPOS;
-
-					checkSdEject();
-					tex().drawVolumeImageCached();
-					tex().drawBatteryImageCached();
-
-					drawCurrentTime();
-					drawCurrentDate();
-					drawClockColon();
-					snd().updateStream();
-					swiWaitForVBlank();
-					snd().updateStream();
-					swiWaitForVBlank();
 				}
-				}	// End of DSi/3DS theme check
-				titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
-				titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
+
+				titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
+				titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 				boxArtLoaded = false;
 				settingsChanged = true;
 				bannerTextShown = false;
+				titleboxXspeed = 3;
 				touch = startTouch;
 				if (!gameTapped && CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					showSTARTborder = (ms().theme == 1 ? true : false);
@@ -2619,9 +2404,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				ms().cursorPosition[ms().secondaryDevice] = 39;
 
 			// Startup...
-			if ((((pressed & KEY_A) || (pressed & KEY_START)) && bannerTextShown && showSTARTborder &&
-				!titleboxXmoveleft && !titleboxXmoveright) ||
-				(gameTapped)) {
+			if ((((pressed & KEY_A) || (pressed & KEY_START)) && bannerTextShown && showSTARTborder) || (gameTapped)) {
 				bannerTextShown = false; // Redraw title when done
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
@@ -2636,8 +2419,8 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					}
 					ms().pagenum[ms().secondaryDevice] = 0;
 					ms().cursorPosition[ms().secondaryDevice] = 0;
-					titleboxXpos[ms().secondaryDevice] = 0;
-					titlewindowXpos[ms().secondaryDevice] = 0;
+					titleboxXdest[ms().secondaryDevice] = 0;
+					titlewindowXdest[ms().secondaryDevice] = 0;
 					if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
 					if (ms().showBoxArt)
 						clearBoxArt(); // Clear box art
@@ -2757,7 +2540,6 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 
 							drawCurrentTime();
 							drawCurrentDate();
-							drawClockColon();
 							snd().updateStream();
 							swiWaitForVBlank();
 							if (pressed & KEY_A) {
@@ -2859,7 +2641,6 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 
 							drawCurrentTime();
 							drawCurrentDate();
-							drawClockColon();
 							snd().updateStream();
 							swiWaitForVBlank();
 							if (pressed & KEY_A) {
@@ -3006,14 +2787,12 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 
 			if (ms().theme == 1) {
 				// Launch TWLMenu++ Settings by touching corner button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft &&
-					!titleboxXmoveright) {
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44) {
 					launchSettings();
 				}
 
 				// Exit to system menu by touching corner button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 &&
-					!sys().isRegularDS() && !titleboxXmoveleft && !titleboxXmoveright) {
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !sys().isRegularDS()) {
 					exitToSystemMenu();
 				}
 
@@ -3039,9 +2818,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 
 				if ((isDSiMode() && sdFound()) || bothSDandFlashcard()) {
 					// Switch devices or launch Slot-1 by touching button
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 &&
-						touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0] + 24 &&
-						!titleboxXmoveleft && !titleboxXmoveright) {
+					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0] + 24) {
 						if (ms().secondaryDevice || REG_SCFG_MC != 0x11) {
 							switchDevice();
 							return "null";
@@ -3053,26 +2830,22 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 
 				if ((isDSiMode() && sdFound()) || bothSDandFlashcard()) {
 					// Open the manual
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] &&
-						touch.px < savedTopIconXpos[1] + 24 && !titleboxXmoveleft && !titleboxXmoveright) {
+					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1] + 24) {
 						launchManual();
 					}
 				} else if (ms().showGba == 1) {
 					// Launch GBA by touching button
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] &&
-						touch.px < savedTopIconXpos[1] + 24 && !titleboxXmoveleft && !titleboxXmoveright) {
+					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1] + 24) {
 						launchGba();
 					}
 
 					// Open the manual
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[2] &&
-						touch.px < savedTopIconXpos[2] + 24 && !titleboxXmoveleft && !titleboxXmoveright) {
+					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[2] && touch.px < savedTopIconXpos[2] + 24) {
 						launchManual();
 					}
 				} else {
 					// Open the manual
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] &&
-						touch.px < savedTopIconXpos[0] + 24 && !titleboxXmoveleft && !titleboxXmoveright) {
+					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0] + 24) {
 						launchManual();
 					}
 				}
@@ -3089,7 +2862,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				}
 			}
 
-			if ((pressed & KEY_B) && ms().showDirectories && !titleboxXmoveleft && !titleboxXmoveright) {
+			if ((pressed & KEY_B) && ms().showDirectories) {
 				// Go up a directory
 				snd().playBack();
 				if (ms().theme != 4 && ms().theme != 5) {
@@ -3101,8 +2874,8 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				}
 				PAGENUM = 0;
 				CURPOS = 0;
-				titleboxXpos[ms().secondaryDevice] = 0;
-				titlewindowXpos[ms().secondaryDevice] = 0;
+				titleboxXdest[ms().secondaryDevice] = 0;
+				titlewindowXdest[ms().secondaryDevice] = 0;
 				if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
 				if (ms().showBoxArt)
 					clearBoxArt(); // Clear box art
@@ -3196,7 +2969,6 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						tex().drawBatteryImageCached();
 						drawCurrentTime();
 						drawCurrentDate();
-						drawClockColon();
 						snd().updateStream();
 						swiWaitForVBlank();
 					} while (!pressed);
@@ -3296,8 +3068,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 			}
 
 			if ((pressed & KEY_Y) && (isDirectory[CURPOS] == false) &&
-				(bnrRomType[CURPOS] == 0) && !titleboxXmoveleft && !titleboxXmoveright &&
-				bannerTextShown && showSTARTborder) {
+				(bnrRomType[CURPOS] == 0) && bannerTextShown && showSTARTborder) {
 				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 				bannerTextShown = false;
 			}
@@ -3310,13 +3081,11 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					scanKeys();
 					pressed = keysDown();
 					held = keysHeld();
-					updateScrollingState(held, pressed);
 					checkSdEject();
 					tex().drawVolumeImageCached();
 					tex().drawBatteryImageCached();
 					drawCurrentTime();
 					drawCurrentDate();
-					drawClockColon();
 					snd().updateStream();
 					swiWaitForVBlank();
 

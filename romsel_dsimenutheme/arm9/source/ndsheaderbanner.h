@@ -258,7 +258,7 @@ extern u8 romVersion[40];
 extern u8 unitCode[40];
 extern u16 headerCRC[40];
 
-extern char bnriconTile[41][0x23C0];
+extern sNDSBannerExt bnriconTile[41];
 
 // bnriconframenum[]
 extern int bnriconPalLine[41];

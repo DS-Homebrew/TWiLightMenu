@@ -27,6 +27,7 @@
 #include "common/flashcard.h"
 #include <gl2d.h>
 #include "common/tonccpy.h"
+#include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
 #include "graphics/queueControl.h"
@@ -52,11 +53,6 @@ extern bool startMenu;
 extern int currentBg;
 
 extern int movingApp;
-
-extern bool extention(const std::string& filename, const char* ext);
-
-sNDSHeaderExt ndsHeader;
-sNDSBannerExt ndsBanner;
 
 #define TITLE_CACHE_SIZE 0x80
 
@@ -127,25 +123,11 @@ static inline void loadUnkIcon(int num) { glLoadIcon(num, tex().iconUnknownTextu
 static inline void clearIcon(int num) { glClearIcon(num); }
 
 void drawIcon(int Xpos, int Ypos, int num) {
-	int num2 = num;
-	if (num == -1) {
-		num2 = 6;
-		num = movingApp;
-	} else if (num >= 36) {
-		num2 -= 36;
-	} else if (num2 >= 30) {
-		num2 -= 30;
-	} else if (num2 >= 24) {
-		num2 -= 24;
-	} else if (num2 >= 18) {
-		num2 -= 18;
-	} else if (num2 >= 12) {
-		num2 -= 12;
-	} else if (num2 >= 6) {
-		num2 -= 6;
+	if(num == -1) { // Moving app icon
+		glSprite(Xpos, Ypos, bannerFlip[40], &getIcon(6)[bnriconframenumY[40]]);
+	} else {
+		glSprite(Xpos, Ypos, bannerFlip[num], &getIcon(num % 6)[bnriconframenumY[num]]);
 	}
-	// glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num]]);
-	glSprite(Xpos, Ypos, bannerFlip[num2 == 6 ? 40 : num], &getIcon(num2)[bnriconframenumY[num2 == 6 ? 40 : num]]);
 }
 
 void drawIconGBA(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBA_ICON)[0 & 31]); }
@@ -161,7 +143,7 @@ void drawIconPLG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIco
 void drawIconA26(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(A26_ICON)); }
 void drawIconPCE(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(PCE_ICON)); }
 
-void loadFixedBanner(void) {
+void loadFixedBanner(sNDSBannerExt &ndsBanner) {
 	/* Banner fixes start here */
 	u32 bannersize = 0;
 
@@ -257,9 +239,7 @@ void loadFixedBanner(void) {
 }
 
 void clearTitle(int num) {
-	for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
-		cachedTitle[num][i] = 0;
-	}
+	toncset(cachedTitle[num], 0, TITLE_CACHE_SIZE);
 }
 
 void getGameInfo(bool isDir, const char *name, int num) {
@@ -281,7 +261,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 	if (isDir) {
 		clearTitle(num);
 		clearBannerSequence(num); // banner sequence
-	} else if (extention(name, ".argv")) {
+	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -321,11 +301,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extention(p, ".nds")
-			 || extention(p, ".dsi")
-			 || extention(p, ".ids")
-			 || extention(p, ".srl")
-			 || extention(p, ".app")) {
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
 				if (rc != 0) {
@@ -350,11 +326,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		}
 		// clean up the allocated line
 		free(line);
-	} else if (extention(name, ".nds")
-			 || extention(name, ".dsi")
-			 || extention(name, ".ids")
-			 || extention(name, ".srl")
-			 || extention(name, ".app")) {
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp;
 		int ret;
@@ -367,6 +339,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			fclose(fp);
 			return;
 		}
+
+		sNDSHeaderExt ndsHeader;
 
 		ret = fseek(fp, 0, SEEK_SET);
 		if (ret == 0)
@@ -494,6 +468,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		else if (ndsHeader.dsi_flags & BIT(3))
 			bnrWirelessIcon[num] = 2;
 
+		sNDSBannerExt &ndsBanner = bnriconTile[num];
+
 		if (ndsHeader.bannerOffset == 0) {
 			fclose(fp);
 
@@ -501,18 +477,15 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 			fclose(bannerFile);
 
-			tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
 
-			for (int i = 0; i < 128; i++) {
-				if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
-					if (ndsBanner.titles[ms().getGameLanguage()][0] == 0) {
-						cachedTitle[num][i] = ndsBanner.titles[ms().getTitleLanguage()][i];
-					} else {
-						cachedTitle[num][i] = ndsBanner.titles[ms().getGameLanguage()][i];
-					}
+			if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
+				if (ndsBanner.titles[ms().getGameLanguage()][0] == 0) {
+					tonccpy(cachedTitle[num], ndsBanner.titles[ms().getTitleLanguage()], TITLE_CACHE_SIZE);
 				} else {
-					cachedTitle[num][i] = ndsBanner.titles[ms().getTitleLanguage()][i];
+					tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE);
 				}
+			} else {
+				tonccpy(cachedTitle[num], ndsBanner.titles[ms().getTitleLanguage()], TITLE_CACHE_SIZE);
 			}
 
 			return;
@@ -538,8 +511,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
 
-				tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
-				tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
+				tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE);
 
 				return;
 			}
@@ -548,7 +520,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		// close file!
 		fclose(fp);
 
-		loadFixedBanner();
+		loadFixedBanner(ndsBanner);
 
 		int currentLang = 0;
 		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
@@ -561,8 +533,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			currentLang--;
 		}
 
-		tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
-		tonccpy(cachedTitle[num], ndsBanner.titles[currentLang], TITLE_CACHE_SIZE*sizeof(u16));
+		tonccpy(cachedTitle[num], ndsBanner.titles[currentLang], TITLE_CACHE_SIZE);
 
 		infoFound[num] = true;
 
@@ -575,28 +546,13 @@ void getGameInfo(bool isDir, const char *name, int num) {
 }
 
 void iconUpdate(bool isDir, const char *name, int num) {
-	int num2 = num;
-	if (num == -1) {
-		num2 = 6;
+	int spriteIdx = num == -1 ? 6 : num % 6;
+	if (num == -1)
 		num = 40;
-	} else if (num >= 36) {
-		num2 -= 36;
-	} else if (num >= 30) {
-		num2 -= 30;
-	} else if (num >= 24) {
-		num2 -= 24;
-	} else if (num >= 18) {
-		num2 -= 18;
-	} else if (num >= 12) {
-		num2 -= 12;
-	} else if (num >= 6) {
-		num2 -= 6;
-	}
 
 	if (isDir) {
-		// icon
-		clearIcon(num2);
-	} else if (extention(name, ".argv")) {
+		clearIcon(spriteIdx);
+	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -606,7 +562,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		// open the argv file
 		fp = fopen(name, "rb");
 		if (fp == NULL) {
-			clearIcon(num2);
+			clearIcon(spriteIdx);
 			fclose(fp);
 			return;
 		}
@@ -618,8 +574,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 				*p = 0;
 
 			// skip leading whitespace
-			for (p = line; *p && isspace((int)*p); ++p)
-				;
+			for (p = line; *p && isspace((int)*p); ++p);
 
 			if (*p)
 				break;
@@ -635,44 +590,34 @@ void iconUpdate(bool isDir, const char *name, int num) {
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extention(p, ".nds")
-			 || extention(p, ".dsi")
-			 || extention(p, ".ids")
-			 || extention(p, ".srl")
-			 || extention(p, ".app")) {
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
 				if (rc != 0) {
 					// stat failed
-					clearIcon(num2);
+					clearIcon(spriteIdx);
 				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
-					clearIcon(num2);
+					clearIcon(spriteIdx);
 				} else {
-					iconUpdate(false, p, num2);
+					iconUpdate(false, p, spriteIdx);
 				}
 			} else {
 				// this is not an nds/app file!
-				clearIcon(num2);
+				clearIcon(spriteIdx);
 			}
 		} else {
-			clearIcon(num2);
+			clearIcon(spriteIdx);
 		}
 		// clean up the allocated line
 		free(line);
-	} else if (extention(name, ".nds")
-			 || extention(name, ".dsi")
-			 || extention(name, ".ids")
-			 || extention(name, ".srl")
-			 || extention(name, ".app")) {
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
-		tonccpy((char *)&ndsBanner, bnriconTile[num], 0x23C0);
-
-		// icon
+		sNDSBannerExt &ndsBanner = bnriconTile[num];
 		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
-			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], num2, true);
+			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], spriteIdx, true);
 		} else {
-			loadIcon(ndsBanner.icon, ndsBanner.palette, num2, false);
+			loadIcon(ndsBanner.icon, ndsBanner.palette, spriteIdx, false);
 		}
 	}
 }
@@ -735,48 +680,18 @@ void writeBannerText(std::u16string text) {
 }
 
 static inline void writeDialogTitle(std::u16string text) {
-	int lines = 0;
-	for(auto c : text) {
-		if(c == '\n') {
-			lines++;
-		}
-	}
-
-	printLarge(false, ms().rtl() ? 256 - 70 : 70, 31 - (lines * largeFontHeight() / 2), text, ms().rtl() ? Alignment::right : Alignment::left);
+	printLarge(false, ms().rtl() ? 256 - 70 : 70, 31 - (calcLargeFontHeight(text) / 2), text, ms().rtl() ? Alignment::right : Alignment::left);
 }
 
-const char *lastName;
-
-void titleUpdate(bool isDir, const std::string &name, int num) {
+void titleUpdate(bool isDir, std::string_view name, int num) {
 	if (isDir) {
 		if (name == "..") {
 			writeBannerText(STR_BACK);
 		} else {
 			writeBannerText(name);
 		}
-	} else if (extention(name, ".plg")
-			|| extention(name, ".rvid")
-			|| extention(name, ".mp4")
-			|| extention(name, ".agb")
-			|| extention(name, ".gba")
-			|| extention(name, ".mb")
-			|| extention(name, ".gb")
-			|| extention(name, ".sgb")
-			|| extention(name, ".gbc")
-			|| extention(name, ".nes")
-			|| extention(name, ".fds")
-			|| extention(name, ".sms")
-			|| extention(name, ".gg")
-			|| extention(name, ".gen")
-			|| extention(name, ".smc")
-			|| extention(name, ".sfc")
-			|| extention(name, ".xex")
-			|| extention(name, ".atr")
-			|| extention(name, ".a26")
-			|| extention(name, ".a52")
-			|| extention(name, ".a78")
-			|| extention(name, ".pce")) {
-		writeBannerText(name.substr(0, name.find_last_of('.')));
+	} else if (!extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+		writeBannerText(name.substr(0, name.rfind('.')));
 	} else {
 		// this is an nds/app file!
 

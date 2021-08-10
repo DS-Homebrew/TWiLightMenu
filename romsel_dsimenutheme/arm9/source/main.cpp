@@ -83,14 +83,6 @@ const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char16_t hiyaNdsPath[] = u"sdmc:/hiya.dsi";
 char launcherPath[256];
 
-bool extention(const std::string& filename, const char* ext) {
-	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
-		return false;
-	} else {
-		return true;
-	}
-}
-
 /**
  * Remove trailing slashes from a pathname, if present.
  * @param path Pathname to modify.
@@ -133,9 +125,6 @@ int currentBg = 0;
 bool showSTARTborder = false;
 bool buttonArrowTouched[2] = {false};
 bool scrollWindowTouched = false;
-
-bool titleboxXmoveleft = false;
-bool titleboxXmoveright = false;
 
 bool applaunchprep = false;
 
@@ -562,16 +551,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 	}
 	if (dsGame) {
 		// Move .sav outside of "saves" folder for flashcard kernel usage
-		const char *typeToReplace = ".nds";
-		if (extention(filename, ".dsi")) {
-			typeToReplace = ".dsi";
-		} else if (extention(filename, ".ids")) {
-			typeToReplace = ".ids";
-		} else if (extention(filename, ".srl")) {
-			typeToReplace = ".srl";
-		} else if (extention(filename, ".app")) {
-			typeToReplace = ".app";
-		}
+		std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 		std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
@@ -1060,16 +1040,7 @@ int main(int argc, char **argv) {
 
 			// Launch DSiWare .nds via Unlaunch
 			if ((isDSiMode() || sdFound()) && isDSiWare[CURPOS]) {
-				const char *typeToReplace = ".nds";
-				if (extention(filename, ".dsi")) {
-					typeToReplace = ".dsi";
-				} else if (extention(filename, ".ids")) {
-					typeToReplace = ".ids";
-				} else if (extention(filename, ".srl")) {
-					typeToReplace = ".srl";
-				} else if (extention(filename, ".app")) {
-					typeToReplace = ".app";
-				}
+				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				char *name = argarray.at(0);
 				strcpy(filePath + pathLen, name);
@@ -1425,19 +1396,8 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if (extention(filename, ".nds") || extention(filename, ".dsi")
-			 || extention(filename, ".ids") || extention(filename, ".srl")
-			 || extention(filename, ".app")) {
-				const char *typeToReplace = ".nds";
-				if (extention(filename, ".dsi")) {
-					typeToReplace = ".dsi";
-				} else if (extention(filename, ".ids")) {
-					typeToReplace = ".ids";
-				} else if (extention(filename, ".srl")) {
-					typeToReplace = ".srl";
-				} else if (extention(filename, ".app")) {
-					typeToReplace = ".app";
-				}
+			if (extension(filename, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
@@ -1863,7 +1823,7 @@ int main(int argc, char **argv) {
 				ms().homebrewBootstrap = true;
 
 				const char *ndsToBoot = "sd:/_nds/nds-bootstrap-release.nds";
-				if (extention(filename, ".plg")) {
+				if (extension(filename, {".plg"})) {
 					ndsToBoot = "fat:/_nds/TWiLightMenu/bootplg.srldr";
 					dsModeSwitch = true;
 
@@ -1882,7 +1842,7 @@ int main(int argc, char **argv) {
 					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
-				} else if (extention(filename, ".rvid")) {
+				} else if (extension(filename, {".rvid"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::ERVideoLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
@@ -1890,7 +1850,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 						boostVram = true;
 					}
-				} else if (extention(filename, ".fv")) {
+				} else if (extension(filename, {".fv"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EMPEG4Launch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
@@ -1898,9 +1858,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 						boostVram = true;
 					}
-				} else if (extention(filename, ".agb")
-						|| extention(filename, ".gba")
-						|| extention(filename, ".mb")) {
+				} else if (extension(filename, {".agb", ".gba", ".mb"})) {
 					ms().launchType[ms().secondaryDevice] = (ms().showGba == 1) ? Launch::EGBANativeLaunch : Launch::ESDFlashcardLaunch;
 
 					if (ms().showGba == 1) {
@@ -2042,8 +2000,7 @@ int main(int argc, char **argv) {
 
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 					}
-				} else if (extention(filename, ".xex")
-						 || extention(filename, ".atr")) {
+				} else if (extension(filename, {".xex", ".atr"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EXEGSDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
@@ -2051,7 +2008,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
 						boostVram = true;
 					}
-				} else if (extention(filename, ".a26")) {
+				} else if (extension(filename, {".a26"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EStellaDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
@@ -2059,7 +2016,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 						boostVram = true;
 					}
-				} else if (extention(filename, ".a52")) {
+				} else if (extension(filename, {".a52"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EA5200DSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
@@ -2067,7 +2024,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 						boostVram = true;
 					}
-				} else if (extention(filename, ".a78")) {
+				} else if (extension(filename, {".a78"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EA7800DSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
@@ -2078,7 +2035,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
-				} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {
+				} else if (extension(filename, {".gb", ".sgb", ".gbc"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EGameYobLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
@@ -2087,7 +2044,7 @@ int main(int argc, char **argv) {
 						dsModeSwitch = !isDSiMode();
 						boostVram = true;
 					}
-				} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
+				} else if (extension(filename, {".nes", ".fds"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::ENESDSLaunch;
 
 					ndsToBoot = (ms().secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
@@ -2095,7 +2052,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 						boostVram = true;
 					}
-				} else if (extention(filename, ".sms") || extention(filename, ".gg")) {
+				} else if (extension(filename, {".sms", ".gg"})) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
@@ -2126,7 +2083,7 @@ int main(int argc, char **argv) {
 							boostVram = true;
 						}
 					}
-				} else if (extention(filename, ".gen")) {
+				} else if (extension(filename, {".gen"})) {
 					bool usePicoDrive = ((isDSiMode() && sdFound() && sys().arm7SCFGLocked())
 						|| ms().showMd==2 || (ms().showMd==3 && getFileSize(filename.c_str()) > 0x300000));
 					ms().launchType[ms().secondaryDevice] = (usePicoDrive ? Launch::EPicoDriveTWLLaunch : Launch::ESDFlashcardLaunch);
@@ -2155,7 +2112,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 					}
-				} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
+				} else if (extension(filename, {".smc", ".sfc"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
 
 					if (ms().secondaryDevice) {
@@ -2183,7 +2140,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 					}
-				} else if (extention(filename, ".pce")) {
+				} else if (extension(filename, {".pce"})) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/NitroGrafx" : "sd:/data/NitroGrafx", 0777);
 
@@ -2218,7 +2175,7 @@ int main(int argc, char **argv) {
 
 				ms().homebrewArg = useNDSB ? "" : ms().romPath[ms().secondaryDevice];
 				ms().saveSettings();
-				if (!isDSiMode() && !ms().secondaryDevice && !extention(filename, ".plg")) {
+				if (!isDSiMode() && !ms().secondaryDevice && !extension(filename, {".plg"})) {
 					ntrStartSdGame();
 				}
 
