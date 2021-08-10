@@ -88,6 +88,7 @@ extern int titleboxXdest[2];
 extern int titlewindowXpos[2];
 extern int titlewindowXdest[2];
 extern int titleboxXspeed;
+extern int titleboxXspacing;
 int movingApp = -1;
 int movingAppYpos = 0;
 bool movingAppIsDir = false;
@@ -547,22 +548,23 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 				swiWaitForVBlank();
 
 				if(right) {
-					titleboxXdest[ms().secondaryDevice] += 8;
+					titleboxXdest[ms().secondaryDevice] += titleboxXspacing / 8;
 					if(i % 3)
 						titlewindowXdest[ms().secondaryDevice]++;
 				} else {
-					titleboxXdest[ms().secondaryDevice] -= 8;
+					titleboxXdest[ms().secondaryDevice] -= titleboxXspacing / 8;
 					if(i % 3)
 						titlewindowXdest[ms().secondaryDevice]--;
 				}
 			}
+			titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 			swiWaitForVBlank();
 		} else {
 			if(right) {
-				titleboxXdest[ms().secondaryDevice] += 64;
+				titleboxXdest[ms().secondaryDevice] += titleboxXspacing;
 				titlewindowXdest[ms().secondaryDevice] += 5;
 			} else {
-				titleboxXdest[ms().secondaryDevice] -= 64;
+				titleboxXdest[ms().secondaryDevice] -= titleboxXspacing;
 				titlewindowXdest[ms().secondaryDevice] -= 5;
 			}
 		}
@@ -1793,7 +1795,7 @@ static bool nextPage(void) {
 		} else {
 			CURPOS = (file_count - 1) - PAGENUM * 40;
 			if (CURPOS < 0) CURPOS = 0;
-			titleboxXdest[ms().secondaryDevice] = CURPOS * 64;
+			titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 			titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
 		}
 		if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
@@ -1854,10 +1856,10 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 		clearText(false);
 		updateText(false);
 
-		titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
-		titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
-		titleboxXdest[ms().secondaryDevice] = CURPOS * 64;
-		titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
+		// titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+		// titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
+		// titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+		// titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
 
 		snd().updateStream();
 		waitForFadeOut();
@@ -1964,19 +1966,26 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				updateText(false);
 				mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
 				movingApp = (PAGENUM * 40) + (CURPOS);
+				titleboxXspacing = 76;
+				titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+
 				if (dirContents[scrn][movingApp].isDirectory)
 					movingAppIsDir = true;
 				else
 					movingAppIsDir = false;
-				getGameInfo(dirContents[scrn].at(movingApp).isDirectory,
-							dirContents[scrn].at(movingApp).name.c_str(), -1);
-				iconUpdate(dirContents[scrn].at(movingApp).isDirectory,
-						   dirContents[scrn].at(movingApp).name.c_str(), -1);
-				while(movingAppYpos < 82) {
-					movingAppYpos += std::max((82 - movingAppYpos) / 3, 1);
+
+				getGameInfo(dirContents[scrn][movingApp].isDirectory,
+							dirContents[scrn][movingApp].name.c_str(), -1);
+				iconUpdate(dirContents[scrn][movingApp].isDirectory,
+						   dirContents[scrn][movingApp].name.c_str(), -1);
+
+				int movingAppYmax = ms().theme == 1 ? 64 : 82;
+				while(movingAppYpos < movingAppYmax) {
+					movingAppYpos += std::max((movingAppYmax - movingAppYpos) / 3, 1);
 					snd().updateStream();
 					swiWaitForVBlank();
 				}
+
 				int orgCursorPosition = CURPOS;
 				int orgPage = PAGENUM;
 				showMovingArrow = true;
@@ -2072,8 +2081,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							getDirectoryContents(dirContents[scrn], extensionList);
 							getFileInfo(scrn, dirContents, true);
 
-							while (!screenFadedOut())
-								;
+							while (!screenFadedOut());
 							nowLoadingDisplaying = false;
 							whiteScreen = false;
 							displayGameIcons = true;
@@ -2090,6 +2098,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						}
 					}
 				}
+
 				if ((PAGENUM != orgPage) || (CURPOS != orgCursorPosition)) {
 					currentBg = 1;
 					writeBannerText(STR_PLEASE_WAIT);
@@ -2098,12 +2107,12 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					int dest = CURPOS + (PAGENUM * 40);
 
 					DirEntry entry = dirContents[scrn][movingApp];
-					dirContents[scrn].erase(dirContents[scrn].begin()+movingApp);
+					dirContents[scrn].erase(dirContents[scrn].begin() + movingApp);
 					dirContents[scrn].insert(dirContents[scrn].begin() + dest, entry);
 
-					std::vector<std::string> dirNames;
+					std::vector<std::string> dirNames(dirContents[scrn].size());
 					for(uint i=0;i<dirContents[scrn].size();i++) {
-						dirNames.push_back(dirContents[scrn][i].name);
+						dirNames[i] = dirContents[scrn][i].name;
 					}
 
 					CIniFile gameOrderIni(gameOrderIniPath);
@@ -2118,12 +2127,15 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 
 					getFileInfo(scrn, dirContents, false);
 				}
-				movingApp = -1;
 
+				movingApp = -1;
+				titleboxXspacing = 64;
+				titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 			} else if ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && ms().theme == 0) { // Scroll bar (DSi theme)
 				touchPosition startTouch = touch;
 				showSTARTborder = false;
 				scrollWindowTouched = true;
+				int prevPos = CURPOS;
 				while (1) {
 					scanKeys();
 					touchRead(&touch);
@@ -2139,18 +2151,21 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					if (!(keysHeld() & KEY_TOUCH))
 						break;
 
+					prevPos = CURPOS;
 					CURPOS = std::clamp((touch.px - 30) / 5, 0, 39);
 
 					titlewindowXdest[ms().secondaryDevice] = std::clamp(touch.px - 30, 0, 192);
-					titleboxXdest[ms().secondaryDevice] = std::clamp((touch.px - 30) * 64 / 5, 0, 2496);
+					titleboxXdest[ms().secondaryDevice] = std::clamp((touch.px - 30) * titleboxXspacing / 5 - 28, 0, titleboxXspacing * 39);
 
 					// Load icons
-					for (int i = 0; i < 6; i++) {
-						int pos = (CURPOS - 2 + i);
-						if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
-							iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
-									   dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
-									   pos);
+					if(prevPos != CURPOS) {
+						for (int i = 0; i < 6; i++) {
+							int pos = (CURPOS - 2 + i);
+							if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
+										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
+										pos);
+							}
 						}
 					}
 
@@ -2169,7 +2184,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					}
 				}
 				scrollWindowTouched = false;
-				titleboxXdest[ms().secondaryDevice] = CURPOS * 64;
+				titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 				titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
 				waitForNeedToPlayStopSound = 1;
 				snd().playSelect();
@@ -2257,11 +2272,11 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							CURPOS = std::clamp(CURPOS + dx, 0, 39);
 							titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
 
-							int dest = std::clamp(titleboxXdest[ms().secondaryDevice] + dx * 64, -160, 64 * 39 + 160);
-							if(dest < 0 || dest > 64 * 39) {
+							int dest = std::clamp(titleboxXdest[ms().secondaryDevice] + dx * titleboxXspacing, -160, titleboxXspacing * 39 + 160);
+							if(dest < 0 || dest > titleboxXspacing * 39) {
 								titleboxXdest[ms().secondaryDevice] = dest;
 							} else {
-								titleboxXdest[ms().secondaryDevice] = CURPOS * 64;
+								titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 							}
 
 							// Load icons
@@ -2297,9 +2312,8 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						}
 
 						titleboxXdest[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice] - (touch.px - prevTouch1.px);
-						titlewindowXdest[ms().secondaryDevice] = std::clamp(titleboxXdest[ms().secondaryDevice] * 5 / 64, 0, 192);
-						CURPOS = std::clamp((titleboxXdest[ms().secondaryDevice] + 32) / 64, 0, 39);
-						// CURPOS = round((titleboxXdest[ms().secondaryDevice] + 32) / 64);
+						titlewindowXdest[ms().secondaryDevice] = std::clamp(titleboxXdest[ms().secondaryDevice] * 5 / titleboxXspacing, 0, 192);
+						CURPOS = std::clamp((titleboxXdest[ms().secondaryDevice] + 32) / titleboxXspacing, 0, 39);
 
 						// Load icons
 						for (int i = 0; i < 6; i++) {
@@ -2338,7 +2352,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				}
 
 				titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
-				titleboxXdest[ms().secondaryDevice] = CURPOS * 64;
+				titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 				boxArtLoaded = false;
 				settingsChanged = true;
 				bannerTextShown = false;
