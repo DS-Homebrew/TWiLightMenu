@@ -574,14 +574,19 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 			firstMove = false;
 			for(int i = 0; i < (ms().theme == 4 ? 15 : 4); i++)
 				swiWaitForVBlank();
+		} else {
+			if(ms().theme != 1)
+				showSTARTborder = false;
 		}
 
-		if(ms().theme != 1)
-			showSTARTborder = false;
 
 		scanKeys();
 		touchRead(&touch);
 	} while((keysHeld() & (right ? KEY_RIGHT : KEY_LEFT)) || ((keysHeld() & KEY_TOUCH) && touch.py > 171 && (right ? touch.px > 236 : touch.px < 19) && ms().theme == 0));
+
+	// Wait for movement to finish before showing START boarder and such
+	while(titleboxXdest[ms().secondaryDevice] != titleboxXpos[ms().secondaryDevice] && !(keysHeld() & KEY_TOUCH))
+		swiWaitForVBlank();
 
 	if(movingApp == -1 && CURPOS + PAGENUM * 40 < (int)dirContents.size())
 		showSTARTborder = true;
@@ -2196,6 +2201,8 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					showSTARTborder = true;
 			} else if ((pressed & KEY_TOUCH) && touch.py > 76 && touch.py < (ms().theme == 0 ? 164 : 144)) { // Dragging icons
 				touchPosition startTouch = touch;
+				touchPosition prevTouch1 = touch;
+				touchPosition prevTouch2 = touch;
 
 				bool tapped = false;
 				while (1) {
@@ -2209,6 +2216,9 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					tex().drawProfileName();
 					snd().updateStream();
 					swiWaitForVBlank();
+
+					prevTouch2 = prevTouch1;
+					prevTouch1 = touch;
 
 					if (!(keysHeld() & KEY_TOUCH)) {
 						tapped = true;
@@ -2248,8 +2258,6 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						}
 					}
 				} else if(ms().theme != 4) {
-					touchPosition prevTouch1 = touch;
-					touchPosition prevTouch2 = touch;
 					int prevPos = CURPOS;
 					showSTARTborder = false;
 
@@ -2267,31 +2275,58 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 
 						if (!(keysHeld() & KEY_TOUCH)) {
 							titleboxXspeed = 6;
-							int dx = std::clamp(-(prevTouch1.px - prevTouch2.px) * 2 * 39 / 192, -39, 39);
+							int dx = std::clamp(-(prevTouch1.px - prevTouch2.px) * 39 / 192, -39, 39);
 
-							CURPOS = std::clamp(CURPOS + dx, 0, 39);
-							titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
+							int dest = std::clamp(CURPOS + dx, 0, 39);
+							titlewindowXdest[ms().secondaryDevice] = dest * 5;
 
-							int dest = std::clamp(titleboxXdest[ms().secondaryDevice] + dx * titleboxXspacing, -160, titleboxXspacing * 39 + 160);
-							if(dest < 0 || dest > titleboxXspacing * 39) {
-								titleboxXdest[ms().secondaryDevice] = dest;
+							int boxDest = std::clamp(titleboxXdest[ms().secondaryDevice] + dx * titleboxXspacing, -160, titleboxXspacing * 39 + 160);
+							if(boxDest < 0 || boxDest > titleboxXspacing * 39) {
+								titleboxXdest[ms().secondaryDevice] = boxDest;
 							} else {
-								titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+								titleboxXdest[ms().secondaryDevice] = dest * titleboxXspacing;
 							}
 
-							// Load icons
-							for (int i = 0; i < 6; i++) {
-								int pos = (CURPOS - 2 + i);
-								if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
-									iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
-											dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
-											pos);
-								}
-							}
-
+							int prevPos;
 							while(titleboxXdest[ms().secondaryDevice] != titleboxXpos[ms().secondaryDevice] && !(keysHeld() & KEY_TOUCH)) {
 								scanKeys();
+								if(keysDown() & KEY_TOUCH)
+									touchRead(&touch);
 								swiWaitForVBlank();
+
+								prevPos = CURPOS;
+								CURPOS = std::clamp(titleboxXpos[ms().secondaryDevice] / titleboxXspacing, 0, 39);
+
+								if(CURPOS != prevPos) {
+									// Load icons
+									for (int i = 0; i < 6; i++) {
+										int pos = (CURPOS - 2 + i);
+										if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+											iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
+													dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
+													pos);
+										}
+									}
+
+									clearText();
+									if (std::min(dest, CURPOS) + PAGENUM * 40 < ((int)dirContents[scrn].size()) && boxDest > -28 && boxDest < titleboxXspacing * 39 + 28) {
+										currentBg = 1;
+										titleUpdate(dirContents[scrn][CURPOS + PAGENUM * 40].isDirectory,
+													dirContents[scrn][CURPOS + PAGENUM * 40].name,
+													CURPOS);
+									} else {
+										currentBg = 0;
+									}
+									if (ms().theme == 5) {
+										printLarge(false, 0, 142, "^", Alignment::center);
+										printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
+										printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+									} else if (ms().macroMode && ms().theme != 4) {
+										printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
+										printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+									}
+									updateText(false);
+								}
 							}
 
 							// Wait a little bit to give time to re-grab
@@ -2301,9 +2336,8 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 							}
 
 							if(keysHeld() & KEY_TOUCH) {
-								touchRead(&touch);
-								prevTouch1 = touch;
 								prevTouch2 = touch;
+								touchRead(&prevTouch1);
 								titleboxXspeed = 3;
 								continue;
 							}
@@ -2315,36 +2349,37 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						titlewindowXdest[ms().secondaryDevice] = std::clamp(titleboxXdest[ms().secondaryDevice] * 5 / titleboxXspacing, 0, 192);
 						CURPOS = std::clamp((titleboxXdest[ms().secondaryDevice] + 32) / titleboxXspacing, 0, 39);
 
-						// Load icons
-						for (int i = 0; i < 6; i++) {
-							int pos = (CURPOS - 2 + i);
-							if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
-								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
-										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
-										pos);
+						if (prevPos != CURPOS) {
+							// Load icons
+							for (int i = 0; i < 6; i++) {
+								int pos = (CURPOS - 2 + i);
+								if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+									iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
+											dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
+											pos);
+								}
 							}
 						}
 
-						if (prevPos != CURPOS) {
-							clearText();
-							if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
-								currentBg = 1;
-								titleUpdate(dirContents[scrn][CURPOS + PAGENUM * 40].isDirectory,
-											dirContents[scrn][CURPOS + PAGENUM * 40].name,
-											CURPOS);
-							} else {
-								currentBg = 0;
-							}
-							if (ms().theme == 5) {
-								printLarge(false, 0, 142, "^", Alignment::center);
-								printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
-								printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
-							} else if (ms().macroMode && ms().theme != 4) {
-								printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
-								printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
-							}
-							updateText(false);
+						clearText();
+						if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()) && titleboxXdest[ms().secondaryDevice] > -28 && titleboxXdest[ms().secondaryDevice] < titleboxXspacing * 39 + 28) {
+							currentBg = 1;
+							titleUpdate(dirContents[scrn][CURPOS + PAGENUM * 40].isDirectory,
+										dirContents[scrn][CURPOS + PAGENUM * 40].name,
+										CURPOS);
+						} else {
+							currentBg = 0;
 						}
+						if (ms().theme == 5) {
+							printLarge(false, 0, 142, "^", Alignment::center);
+							printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
+							printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+						} else if (ms().macroMode && ms().theme != 4) {
+							printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
+							printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+						}
+						updateText(false);
+
 						prevTouch2 = prevTouch1;
 						prevTouch1 = touch;
 						prevPos = CURPOS;
