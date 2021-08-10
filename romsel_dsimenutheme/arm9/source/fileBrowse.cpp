@@ -2148,14 +2148,20 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					snd().updateStream();
 					swiWaitForVBlank();
 
-					if (!(keysHeld() & KEY_TOUCH))
-						break;
+					if (keysHeld() & KEY_TOUCH) {
+						titlewindowXdest[ms().secondaryDevice] = std::clamp(touch.px - 30, 0, 192);
+						titleboxXdest[ms().secondaryDevice] = std::clamp((touch.px - 30) * titleboxXspacing / 5 - 28, 0, titleboxXspacing * 39);
+					} else {
+						int dest = titlewindowXdest[ms().secondaryDevice] / 5;
+						titlewindowXdest[ms().secondaryDevice] = dest * 5;
+						titleboxXdest[ms().secondaryDevice] = dest * titleboxXspacing;
+
+						if(titleboxXdest[ms().secondaryDevice] == titleboxXpos[ms().secondaryDevice])
+							break;
+					}
 
 					prevPos = CURPOS;
-					CURPOS = std::clamp((touch.px - 30) / 5, 0, 39);
-
-					titlewindowXdest[ms().secondaryDevice] = std::clamp(touch.px - 30, 0, 192);
-					titleboxXdest[ms().secondaryDevice] = std::clamp((touch.px - 30) * titleboxXspacing / 5 - 28, 0, titleboxXspacing * 39);
+					CURPOS = std::clamp((titleboxXpos[ms().secondaryDevice] + 28) / titleboxXspacing, 0, 39);
 
 					// Load icons
 					if(prevPos != CURPOS) {
@@ -2184,45 +2190,6 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 					}
 				}
 				scrollWindowTouched = false;
-				titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
-				titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
-
-				while(titleboxXdest[ms().secondaryDevice] != titleboxXpos[ms().secondaryDevice]) {
-					swiWaitForVBlank();
-
-					CURPOS = std::clamp(titleboxXpos[ms().secondaryDevice] / titleboxXspacing, 0, 39);
-
-					if(CURPOS != prevPos) {
-						// Load icons
-						for (int i = 0; i < 6; i++) {
-							int pos = (CURPOS - 2 + i);
-							if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
-								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
-										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
-										pos);
-							}
-						}
-
-						clearText();
-						if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
-							currentBg = 1;
-							titleUpdate(dirContents[scrn][CURPOS + PAGENUM * 40].isDirectory,
-										dirContents[scrn][CURPOS + PAGENUM * 40].name,
-										CURPOS);
-						} else {
-							currentBg = 0;
-						}
-						if (ms().theme == 5) {
-							printLarge(false, 0, 142, "^", Alignment::center);
-							printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
-							printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
-						} else if (ms().macroMode && ms().theme != 4) {
-							printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
-							printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
-						}
-						updateText(false);
-					}
-				}
 
 				waitForNeedToPlayStopSound = 1;
 				snd().playSelect();
