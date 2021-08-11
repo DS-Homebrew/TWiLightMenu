@@ -687,21 +687,23 @@ void vBlankHandler() {
 					spawnedboxXpos = 96 + pos * titleboxXspacing;
 					iconXpos = 112 + pos * titleboxXspacing;
 
-					if (titleboxOffset >= 22 && titleboxOffset <= 32 && (i == realCurPos || i == realCurPos - 1)) {
-						int adjust = 0;
-						if (i == realCurPos)
-							adjust = (titleboxOffset - 22) * 7 / 10;
-						else if (i == realCurPos - 1)
-							adjust = -((10 - (titleboxOffset - 22)) * 7 / 10);
+					if (ms().theme == 0) {
+						if (titleboxOffset >= 22 && titleboxOffset <= 32 && (i == realCurPos || i == realCurPos - 1)) {
+							int adjust = 0;
+							if (i == realCurPos)
+								adjust = (titleboxOffset - 22) * 7 / 10;
+							else if (i == realCurPos - 1)
+								adjust = -((10 - (titleboxOffset - 22)) * 7 / 10);
 
-						spawnedboxXpos += adjust;
-						iconXpos += adjust;
-					} else if (i < realCurPos) {
-						spawnedboxXpos -= 7;
-						iconXpos -= 7;
-					} else if (i > realCurPos) {
-						spawnedboxXpos += 7;
-						iconXpos += 7;
+							spawnedboxXpos += adjust;
+							iconXpos += adjust;
+						} else if (i < realCurPos) {
+							spawnedboxXpos -= 7;
+							iconXpos -= 7;
+						} else if (i > realCurPos) {
+							spawnedboxXpos += 7;
+							iconXpos += 7;
+						}
 					}
 				} else {
 					spawnedboxXpos = 96 + 38 + pos * titleboxXspacing;
