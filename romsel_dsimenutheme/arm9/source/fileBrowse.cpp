@@ -2130,7 +2130,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				}
 
 				movingApp = -1;
-				titleboxXspacing = 64;
+				titleboxXspacing = 58;
 				titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 			} else if ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && ms().theme == 0) { // Scroll bar (DSi theme)
 				touchPosition startTouch = touch;
