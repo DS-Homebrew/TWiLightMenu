@@ -131,7 +131,7 @@ int titleboxYpos = 85; // 85, when dropped down
 int titlewindowXpos[2] = {0};
 int titlewindowXdest[2] = {0};
 int titleboxXspeed = 3; // higher is SLOWER
-int titleboxXspacing = 64;
+int titleboxXspacing = 58;
 
 bool reloadDate = false;
 bool reloadTime = false;
@@ -676,6 +676,9 @@ void vBlankHandler() {
 			int spawnedboxXpos = 96;
 			int iconXpos = 112;
 
+			int realCurPos = (titleboxXpos[ms().secondaryDevice] + 32) / titleboxXspacing;
+			int titleboxOffset = (realCurPos * titleboxXspacing) - (titleboxXpos[ms().secondaryDevice]);
+
 			int maxIconNumber = (ms().theme == 4 ? 0 : 3);
 			for (int pos = std::max(CURPOS - maxIconNumber, 0); pos <= std::min(CURPOS + maxIconNumber, 39); pos++) {
 				int i = pos;
@@ -683,6 +686,23 @@ void vBlankHandler() {
 				if (movingApp == -1) {
 					spawnedboxXpos = 96 + pos * titleboxXspacing;
 					iconXpos = 112 + pos * titleboxXspacing;
+
+					if (titleboxOffset >= 22 && titleboxOffset <= 32 && (i == realCurPos || i == realCurPos - 1)) {
+						int adjust = 0;
+						if (i == realCurPos)
+							adjust = (titleboxOffset - 22) * 7 / 10;
+						else if (i == realCurPos - 1)
+							adjust = -((10 - (titleboxOffset - 22)) * 7 / 10);
+
+						spawnedboxXpos += adjust;
+						iconXpos += adjust;
+					} else if (i < realCurPos) {
+						spawnedboxXpos -= 7;
+						iconXpos -= 7;
+					} else if (i > realCurPos) {
+						spawnedboxXpos += 7;
+						iconXpos += 7;
+					}
 				} else {
 					spawnedboxXpos = 96 + 38 + pos * titleboxXspacing;
 					iconXpos = 112 + 38 + pos * titleboxXspacing;
