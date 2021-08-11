@@ -2132,7 +2132,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 				movingApp = -1;
 				titleboxXspacing = 58;
 				titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
-			} else if ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && ms().theme == 0) { // Scroll bar (DSi theme)
+			} else if ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 19 && touch.px <= 236 && ms().theme == 0) { // Scroll bar (DSi theme)
 				touchPosition startTouch = touch;
 				showSTARTborder = false;
 				scrollWindowTouched = true;
@@ -2153,7 +2153,7 @@ std::string browseForFile(const std::vector<std::string> extensionList) {
 						titlewindowXdest[ms().secondaryDevice] = std::clamp(touch.px - 30, 0, 192);
 						titleboxXdest[ms().secondaryDevice] = std::clamp((touch.px - 30) * titleboxXspacing / 5 - 28, 0, titleboxXspacing * 39);
 					} else {
-						int dest = titlewindowXdest[ms().secondaryDevice] / 5;
+						int dest = (titleboxXdest[ms().secondaryDevice] + 28) / titleboxXspacing;
 						titlewindowXdest[ms().secondaryDevice] = dest * 5;
 						titleboxXdest[ms().secondaryDevice] = dest * titleboxXspacing;
 
