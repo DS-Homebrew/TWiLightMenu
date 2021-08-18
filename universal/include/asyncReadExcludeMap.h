@@ -11,6 +11,7 @@ static const char asyncReadExcludeList[][4] = {
 	"VCW", // Classic Word Games
 	"ADK", // Daikoukai Jidai IV: Rota Nova
 	"YDQ", // Dragon Quest IX: Sentinels of the Starry Skies
+	"BJ3", // Etrian Odyssey 3
 	"BGT", // Ghost Trick: Phantom Detective
 	"YEE", // Inazuma Eleven
 	"BEE", // Inazuma Eleven 2: Firestorm
