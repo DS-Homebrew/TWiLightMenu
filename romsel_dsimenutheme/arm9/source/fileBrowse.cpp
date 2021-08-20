@@ -228,7 +228,6 @@ void updateDirectoryContents(vector<DirEntry> &dirContents) {
 	int currentPos = PAGENUM*40;
 	for (int i = 0; i < 40; i++) {
 		sprintf(str, "%d", i+(PAGENUM*40));
-		DirEntry dirEntry;
 		std::string filename = twlmDirInfo.GetString("LIST", str, "");
 
 		if (filename != "") {
@@ -351,7 +350,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					else if (lhs.isDirectory && !rhs.isDirectory)
 						return true;
 
-					int extCmp = strcasecmp(lhs.name.substr(lhs.name.find_last_of('.') + 1).c_str(), rhs.name.substr(rhs.name.find_last_of('.') + 1).c_str()) == 0;
+					int extCmp = strcasecmp(lhs.name.substr(lhs.name.find_last_of('.') + 1).c_str(), rhs.name.substr(rhs.name.find_last_of('.') + 1).c_str());
 					if(extCmp == 0)
 						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 					else
