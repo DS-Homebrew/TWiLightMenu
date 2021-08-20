@@ -138,6 +138,9 @@ static void gbnpBottomInfo(void) {
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
 struct DirEntry {
+	DirEntry(std::string name, bool isDirectory, int position, int customPos) : name(name), isDirectory(isDirectory), position(position), customPos(customPos) {}
+	DirEntry() {}
+
 	std::string name;
 	bool isDirectory;
 	int position;
@@ -154,18 +157,24 @@ bool extension(const std::string_view filename, const std::vector<std::string_vi
 	return false;
 }
 
-	if (name.size() == 0) return false;
+bool nameEndsWith(const std::string_view name, const std::vector<std::string_view> extensionList) {
+	if (name.size() == 0)
+		return false;
 
-	if (extensionList.size() == 0) return true;
+	if (extensionList.size() == 0)
+		return true;
 
-	for (int i = 0; i < (int)extensionList.size(); i++) {
-		const string ext = extensionList.at(i);
-		if ( strcasecmp (name.c_str() + name.size() - ext.size(), ext.c_str()) == 0) return true;
+	if (name.substr(0, 2) == "._")
+		return false; // Don't show macOS's index files
+
+	for (const std::string_view &ext : extensionList) {
+		if(name.length() > ext.length() && strcasecmp(name.substr(name.length() - ext.length()).data(), ext.data()) == 0)
+			return true;
 	}
 	return false;
 }
 
-bool dirEntryPredicate(const DirEntry& lhs, const DirEntry& rhs) {
+bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 	if (lhs.isDirectory && !lhs.customPos && !rhs.isDirectory) {
 		return true;
 	}
@@ -182,122 +191,111 @@ bool dirEntryPredicate(const DirEntry& lhs, const DirEntry& rhs) {
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 }
 
-void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> extensionList)
-{
+void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string_view> extensionList = {}) {
 	dirContents.clear();
 
-	struct stat st;
-	DIR *pdir = opendir ("."); 
-	
-	if (pdir == NULL) {
-		iprintf ("Unable to open the directory.\n");
+	DIR *pdir = opendir(".");
+
+	if (pdir == nullptr) {
+		iprintf("Unable to open the directory.\n");
 	} else {
-		while(true) {
+		int currentPos = 0;
+		while (true) {
 			snd().updateStream();
 
-			DirEntry dirEntry;
+			dirent *pent = readdir(pdir);
+			if (pent == nullptr)
+				break;
 
-			struct dirent* pent = readdir(pdir);
-			if(pent == NULL) break;
-				
-			stat(pent->d_name, &st);
-			dirEntry.name = pent->d_name;
-			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
-
-			if(showHidden || !(FAT_getAttr(dirEntry.name.c_str()) & ATTR_HIDDEN || (strncmp(dirEntry.name.c_str(), ".", 1) == 0 && dirEntry.name != ".."))) {
-				if (showDirectories) {
-					if (dirEntry.name.compare(".") && dirEntry.name.compare("_nds") && dirEntry.name.compare("saves") && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
-						dirContents.push_back (dirEntry);
+			if (showDirectories) {
+				if (strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
+					&& strcmp(pent->d_name, "saves") != 0
+					&& (pent->d_type == DT_DIR || nameEndsWith(pent->d_name, extensionList))) {
+					if (showHidden || !(FAT_getAttr(pent->d_name) & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0))) {
+						dirContents.emplace_back(pent->d_name, pent->d_type == DT_DIR, currentPos, false);
 					}
-				} else {
-					if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList))) {
-						dirContents.push_back (dirEntry);
+				}
+			} else {
+				if (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList)) {
+					if (showHidden || !(FAT_getAttr(pent->d_name) & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0))) {
+						dirContents.emplace_back(pent->d_name, false, currentPos, false);
 					}
 				}
 			}
 		}
 
+		if (sortMethod == 0) { // Alphabetical
+			std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+		} else if (sortMethod == 1) { // Recent
+			CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
+			std::vector<std::string> recentlyPlayed;
+			getcwd(path, PATH_MAX);
+			recentlyPlayedIni.GetStringVector("RECENT", path, recentlyPlayed, ':');
+
+			int i = 0;
+			for (const std::string &recentlyPlayedName : recentlyPlayed) {
+				for (DirEntry &dirEntry : dirContents) {
+					if (recentlyPlayedName == dirEntry.name) {
+						dirEntry.position = i++;
+						dirEntry.customPos = true;
+						break;
+					}
+				}
+			}
+			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+		} else if (sortMethod == 2) { // Most Played
+			CIniFile timesPlayedIni(timesPlayedIniPath);
+
+			getcwd(path, PATH_MAX);
+			for (DirEntry &dirEntry : dirContents) {
+				dirEntry.position = timesPlayedIni.GetInt(path, dirEntry.name, 0);
+			}
+
+			std::sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
+					if (!lhs.isDirectory && rhs.isDirectory)
+						return false;
+					else if (lhs.isDirectory && !rhs.isDirectory)
+						return true;
+
+					if (lhs.position > rhs.position)
+						return true;
+					else if (lhs.position < rhs.position)
+						return false;
+					else
+						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
+				});
+		} else if (sortMethod == 3) { // File type
+			sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
+					if (!lhs.isDirectory && rhs.isDirectory)
+						return false;
+					else if (lhs.isDirectory && !rhs.isDirectory)
+						return true;
+
+					int extCmp = strcasecmp(lhs.name.substr(lhs.name.find_last_of('.') + 1).c_str(), rhs.name.substr(rhs.name.find_last_of('.') + 1).c_str());
+					if(extCmp == 0)
+						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
+					else
+						return extCmp < 0;
+				});
+		} else if (sortMethod == 4) { // Custom
+			CIniFile gameOrderIni(gameOrderIniPath);
+			std::vector<std::string> gameOrder;
+			getcwd(path, PATH_MAX);
+			gameOrderIni.GetStringVector("ORDER", path, gameOrder, ':');
+
+			for (uint i = 0; i < gameOrder.size(); i++) {
+				for (DirEntry &dirEntry : dirContents) {
+					if (gameOrder[i] == dirEntry.name) {
+						dirEntry.position = i;
+						dirEntry.customPos = true;
+						break;
+					}
+				}
+			}
+			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+		}
 		closedir(pdir);
 	}
-
-	if(sortMethod == 0) { // Alphabetical
-		std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
-	} else if(sortMethod == 1) { // Recent
-		CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
-		std::vector<std::string> recentlyPlayed;
-		getcwd(path, PATH_MAX);
-		recentlyPlayedIni.GetStringVector("RECENT", path, recentlyPlayed, ':');
-
-		int k = 0;
-		for (uint i = 0; i < recentlyPlayed.size(); i++) {
-			for (uint j = 0; j <= dirContents.size(); j++) {
-				if (recentlyPlayed[i] == dirContents[j].name) {
-					dirContents[j].position = k++;
-					dirContents[j].customPos = true;
-					break;
-				}
-			}
-		}
-		std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
-	} else if(sortMethod == 2) { // Most Played
-		CIniFile timesPlayedIni(timesPlayedIniPath);
-		vector<std::pair<std::string, int>> timesPlayed;
-
-		for (int i = 0; i < (int)dirContents.size(); i++) {
-			timesPlayed.emplace_back(dirContents[i].name, timesPlayedIni.GetInt(getcwd(path, PATH_MAX), dirContents[i].name, 0));
-		}
-
-		for (int i = 0; i < (int)timesPlayed.size(); i++) {
-			for (int j = 0; j <= (int)dirContents.size(); j++) {
-				if (timesPlayed[i].first == dirContents[j].name) {
-					dirContents[j].position = timesPlayed[i].second;
-				}
-			}
-		}
-		sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
-				if (!lhs.isDirectory && rhs.isDirectory)	return false;
-				else if (lhs.isDirectory && !rhs.isDirectory)	return true;
-
-				if(lhs.position > rhs.position)	return true;
-				else if(lhs.position < rhs.position)	return false;
-				else {
-					return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
-				}
-			});
-		} else if(sortMethod == 3) { // File type
-			sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
-					if (!lhs.isDirectory && rhs.isDirectory)	return false;
-					else if (lhs.isDirectory && !rhs.isDirectory)	return true;
-
-					if(strcasecmp(lhs.name.substr(lhs.name.find_last_of(".") + 1).c_str(), rhs.name.substr(rhs.name.find_last_of(".") + 1).c_str()) == 0) {
-						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
-					} else {
-						return strcasecmp(lhs.name.substr(lhs.name.find_last_of(".") + 1).c_str(), rhs.name.substr(rhs.name.find_last_of(".") + 1).c_str()) < 0;
-					}
-				});
-	} else if(sortMethod == 4) { // Custom
-		CIniFile gameOrderIni(gameOrderIniPath);
-		vector<std::string> gameOrder;
-		getcwd(path, PATH_MAX);
-		gameOrderIni.GetStringVector("ORDER", path, gameOrder, ':');
-
-		for (uint i = 0; i < gameOrder.size(); i++) {
-			for (uint j = 0; j < dirContents.size(); j++) {
-				if (gameOrder[i] == dirContents[j].name) {
-					dirContents[j].position = i;
-					dirContents[j].customPos = true;
-					break;
-				}
-			}
-		}
-		std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
-	}
-}
-
-void getDirectoryContents(vector<DirEntry>& dirContents)
-{
-	vector<string> extensionList;
-	getDirectoryContents(dirContents, extensionList);
 }
 
 void showDirectoryContents (const vector<DirEntry>& dirContents, int startRow) {
@@ -643,7 +641,7 @@ void cannotLaunchMsg(void) {
 	for (int i = 0; i < 25; i++) swiWaitForVBlank();
 }
 
-string browseForFile(const vector<string> extensionList) {
+string browseForFile(const vector<string_view> extensionList) {
 	if (macroMode) {
 		lcdMainOnTop();
 		lcdSwapped = false;

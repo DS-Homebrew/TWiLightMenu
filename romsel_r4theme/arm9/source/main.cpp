@@ -1307,7 +1307,7 @@ int main(int argc, char **argv) {
 
 	keysSetRepeat(10, 2);
 
-	vector<string> extensionList;
+	std::vector<std::string_view> extensionList;
 	if (showNds) {
 		extensionList.push_back(".nds");
 		extensionList.push_back(".dsi");
