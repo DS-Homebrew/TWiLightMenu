@@ -27,6 +27,7 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <gl2d.h>
+#include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "language.h"
 #include "ndsheaderbanner.h"
@@ -53,8 +54,6 @@
 #include "icon_gg.h"
 #include "icon_md.h"
 #include "icon_snes.h"
-
-extern bool extention(const std::string& filename, const char* ext);
 
 extern bool arm7SCFGLocked;
 extern bool secondaryDevice;
@@ -643,7 +642,7 @@ void getGameInfo(bool isDir, const char* name)
 	if (isDir) {
 		// banner sequence
 		clearBannerSequence();
-	} else if (extention(name, ".argv")) {
+	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -683,11 +682,7 @@ void getGameInfo(bool isDir, const char* name)
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extention(p, ".nds")
-			 || extention(p, ".dsi")
-			 || extention(p, ".ids")
-			 || extention(p, ".srl")
-			 || extention(p, ".app"))
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"}))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -719,11 +714,7 @@ void getGameInfo(bool isDir, const char* name)
 		// clean up the allocated line
 		free(line);
 	}
-	else if (extention(name, ".nds")
-			 || extention(name, ".dsi")
-			 || extention(name, ".ids")
-			 || extention(name, ".srl")
-			 || extention(name, ".app"))
+	else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}))
 	{
 		// this is an nds/app file!
 		FILE *fp;
@@ -899,7 +890,7 @@ void iconUpdate(bool isDir, const char* name)
 		// icon
 		clearIcon();
 	}
-	else if (extention(name, ".argv"))
+	else if (extension(name, {".argv"}))
 	{
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
@@ -942,11 +933,7 @@ void iconUpdate(bool isDir, const char* name)
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extention(p, ".nds")
-			 || extention(p, ".dsi")
-			 || extention(p, ".ids")
-			 || extention(p, ".srl")
-			 || extention(p, ".app"))
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"}))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -978,11 +965,7 @@ void iconUpdate(bool isDir, const char* name)
 		// clean up the allocated line
 		free(line);
 	}
-	else if (extention(name, ".nds")
-			 || extention(name, ".dsi")
-			 || extention(name, ".ids")
-			 || extention(name, ".srl")
-			 || extention(name, ".app"))
+	else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}))
 	{
 		// this is an nds/app file!
 		FILE *fp;
@@ -1074,31 +1057,11 @@ void titleUpdate(bool isDir, const char* name)
 			writeBannerText(0, name, "", "");
 		}
 	}
-	else if (extention(name, ".plg")
-		  || extention(name, ".rvid")
-		  || extention(name, ".agb")
-		  || extention(name, ".gba")
-		  || extention(name, ".mb")
-		  || extention(name, ".gb")
-		  || extention(name, ".sgb")
-		  || extention(name, ".gbc")
-		  || extention(name, ".nes")
-		  || extention(name, ".fds")
-		  || extention(name, ".sms")
-		  || extention(name, ".gg")
-		  || extention(name, ".gen")
-		  || extention(name, ".smc")
-		  || extention(name, ".sfc")
-		  || extention(name, ".xex")
-		  || extention(name, ".atr")
-		  || extention(name, ".a26")
-		  || extention(name, ".a52")
-		  || extention(name, ".a78")
-		  || extention(name, ".pce"))
+	else if (!extension(name, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"}))
 	{
 		writeBannerText(0, name, "", "");
 	}
-	else if (extention(name, ".argv"))
+	else if (extension(name, {".argv"}))
 	{
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
@@ -1141,11 +1104,7 @@ void titleUpdate(bool isDir, const char* name)
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extention(p, ".nds")
-			 || extention(p, ".dsi")
-			 || extention(p, ".ids")
-			 || extention(p, ".srl")
-			 || extention(p, ".app"))
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"}))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -1176,11 +1135,8 @@ void titleUpdate(bool isDir, const char* name)
 		}
 		// clean up the allocated line
 		free(line);
-	} else if (extention(name, ".nds")
-			 || extention(name, ".dsi")
-			 || extention(name, ".ids")
-			 || extention(name, ".srl")
-			 || extention(name, ".app"))
+	}
+	else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}))
 	{
 		// this is an nds/app file!
 		FILE *fp;

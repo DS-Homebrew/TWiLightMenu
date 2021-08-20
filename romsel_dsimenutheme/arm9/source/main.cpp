@@ -862,7 +862,7 @@ int main(int argc, char **argv) {
 
 	keysSetRepeat(10, 2);
 
-	std::vector<std::string> extensionList;
+	std::vector<std::string_view> extensionList;
 	if (ms().showNds) {
 		extensionList.emplace_back(".nds");
 		extensionList.emplace_back(".dsi");

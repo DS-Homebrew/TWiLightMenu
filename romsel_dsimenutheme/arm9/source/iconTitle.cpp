@@ -57,7 +57,8 @@ extern int movingApp;
 #define TITLE_CACHE_SIZE 0x80
 
 static bool infoFound[41] = {false};
-static char16_t cachedTitle[41][TITLE_CACHE_SIZE];
+static const char16_t *cachedTitle[41];
+static const char16_t *blankTitle = u"";
 
 static u32 arm9StartSig[4];
 
@@ -239,7 +240,7 @@ void loadFixedBanner(sNDSBannerExt &ndsBanner) {
 }
 
 void clearTitle(int num) {
-	toncset(cachedTitle[num], 0, TITLE_CACHE_SIZE);
+	cachedTitle[num] = blankTitle;
 }
 
 void getGameInfo(bool isDir, const char *name, int num) {
@@ -480,12 +481,12 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 			if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
 				if (ndsBanner.titles[ms().getGameLanguage()][0] == 0) {
-					tonccpy(cachedTitle[num], ndsBanner.titles[ms().getTitleLanguage()], TITLE_CACHE_SIZE);
+					cachedTitle[num] = (char16_t*)&ndsBanner.titles[ms().getTitleLanguage()];
 				} else {
-					tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE);
+					cachedTitle[num] = (char16_t*)&ndsBanner.titles[ms().getGameLanguage()];
 				}
 			} else {
-				tonccpy(cachedTitle[num], ndsBanner.titles[ms().getTitleLanguage()], TITLE_CACHE_SIZE);
+				cachedTitle[num] = (char16_t*)&ndsBanner.titles[ms().getTitleLanguage()];
 			}
 
 			return;
@@ -511,7 +512,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
 
-				tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE);
+				cachedTitle[num] = (char16_t*)&ndsBanner.titles[ms().getGameLanguage()];
 
 				return;
 			}
@@ -533,7 +534,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			currentLang--;
 		}
 
-		tonccpy(cachedTitle[num], ndsBanner.titles[currentLang], TITLE_CACHE_SIZE);
+		cachedTitle[num] = (char16_t*)&ndsBanner.titles[currentLang];
 
 		infoFound[num] = true;
 
