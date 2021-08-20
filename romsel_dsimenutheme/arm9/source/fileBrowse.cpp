@@ -139,6 +139,9 @@ std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
 static bool inSelectMenu = false;
 
 struct DirEntry {
+	DirEntry(std::string name, bool isDirectory, int position, int customPos) : name(name), isDirectory(isDirectory), position(position), customPos(customPos) {}
+	DirEntry() {}
+
 	std::string name;
 	bool isDirectory;
 	int position;
@@ -173,20 +176,18 @@ bool extension(const std::string_view filename, const std::vector<std::string_vi
 	return false;
 }
 
-bool nameEndsWith(const std::string &name, const std::vector<std::string> extensionList) {
-
-	if (name.substr(0, 2) == "._")
-		return false; // Don't show macOS's index files
-
+bool nameEndsWith(const std::string_view name, const std::vector<std::string_view> extensionList) {
 	if (name.size() == 0)
 		return false;
 
 	if (extensionList.size() == 0)
 		return true;
 
-	for (int i = 0; i < (int)extensionList.size(); i++) {
-		const std::string ext = extensionList.at(i);
-		if (strcasecmp(name.c_str() + name.size() - ext.size(), ext.c_str()) == 0)
+	if (name.substr(0, 2) == "._")
+		return false; // Don't show macOS's index files
+
+	for (const std::string_view &ext : extensionList) {
+		if(name.length() > ext.length() && strcasecmp(name.substr(name.length() - ext.length()).data(), ext.data()) == 0)
 			return true;
 	}
 	return false;
@@ -213,15 +214,9 @@ void updateDirectoryContents(vector<DirEntry> &dirContents) {
 	if (!dirInfoIniFound || pageLoaded[PAGENUM]) return;
 
 	if ((PAGENUM > 0) && !lockOutDirContentBlankFilling) {
-		DirEntry dirEntry;
-		dirEntry.name = "";
-		dirEntry.isDirectory = false;
-		dirEntry.customPos = false;
-
 		for (int p = 0; p < PAGENUM; p++) {
 			for (int i = 0; i < 40; i++) {
-				dirEntry.position = i+(p*40);
-				dirContents.insert(dirContents.begin() + i + (p * 40), dirEntry);
+				dirContents.insert(dirContents.begin() + i + (p * 40), {"", false, i + (p * 40), false});
 			}
 			dirContentBlankFilled[p] = true;
 		}
@@ -237,15 +232,10 @@ void updateDirectoryContents(vector<DirEntry> &dirContents) {
 		std::string filename = twlmDirInfo.GetString("LIST", str, "");
 
 		if (filename != "") {
-			dirEntry.name = filename;
-			dirEntry.isDirectory = false;
-			dirEntry.position = currentPos;
-			dirEntry.customPos = false;
-
 			if (dirContentBlankFilled[PAGENUM]) {
 				dirContents.erase(dirContents.begin() + i + (PAGENUM * 40));
 			}
-			dirContents.insert(dirContents.begin() + i + (PAGENUM * 40), dirEntry);
+			dirContents.insert(dirContents.begin() + i + (PAGENUM * 40), {filename, false, currentPos, false});
 			currentPos++;
 		} else {
 			break;
@@ -254,8 +244,7 @@ void updateDirectoryContents(vector<DirEntry> &dirContents) {
 	pageLoaded[PAGENUM] = true;
 }
 
-void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string> extensionList) {
-
+void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string_view> extensionList = {}) {
 	dirContents.clear();
 
 	file_count = 0;
@@ -274,42 +263,32 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 		dirInfoIniFound = false;
 	}
 
-	struct stat st;
 	DIR *pdir = opendir(".");
 
-	if (pdir == NULL) {
-		// iprintf("Unable to open the directory.\n");
+	if (pdir == nullptr) {
 		printSmall(false, 4, 4, STR_UNABLE_TO_OPEN_DIRECTORY);
 	} else {
 		int currentPos = 0;
 		while (true) {
 			snd().updateStream();
 
-			DirEntry dirEntry;
-
-			struct dirent *pent = readdir(pdir);
-			if (pent == NULL)
+			dirent *pent = readdir(pdir);
+			if (pent == nullptr)
 				break;
 
-			stat(pent->d_name, &st);
-			dirEntry.name = pent->d_name;
-			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
-			dirEntry.position = currentPos;
-			dirEntry.customPos = false;
-
 			if (ms().showDirectories) {
-				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") &&
-					dirEntry.name.compare("saves") != 0 &&
-					(dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
-					if (ms().showHidden || !(FAT_getAttr(dirEntry.name.c_str()) & ATTR_HIDDEN || (strncmp(dirEntry.name.c_str(), ".", 1) == 0 && dirEntry.name != ".."))) {
-						dirContents.push_back(dirEntry);
+				if (strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
+					&& strcmp(pent->d_name, "saves") != 0
+					&& (pent->d_type == DT_DIR || nameEndsWith(pent->d_name, extensionList))) {
+					if (ms().showHidden || !(FAT_getAttr(pent->d_name) & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0))) {
+						dirContents.emplace_back(pent->d_name, pent->d_type == DT_DIR, currentPos, false);
 						file_count++;
 					}
 				}
 			} else {
-				if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList))) {
-					if (ms().showHidden || !(FAT_getAttr(dirEntry.name.c_str()) & ATTR_HIDDEN)) {
-						dirContents.push_back(dirEntry);
+				if (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList)) {
+					if (ms().showHidden || !(FAT_getAttr(pent->d_name) & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0))) {
+						dirContents.emplace_back(pent->d_name, false, currentPos, false);
 						file_count++;
 					}
 				}
@@ -325,72 +304,70 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			snd().updateStream();
 		}
 
-		if(ms().sortMethod == 0) { // Alphabetical
-			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
-		} else if(ms().sortMethod == 1) { // Recent
+		if (ms().sortMethod == 0) { // Alphabetical
+			std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+		} else if (ms().sortMethod == 1) { // Recent
 			CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 			std::vector<std::string> recentlyPlayed;
 			getcwd(path, PATH_MAX);
 			recentlyPlayedIni.GetStringVector("RECENT", path, recentlyPlayed, ':');
 
-			int k = 0;
-			for (uint i = 0; i < recentlyPlayed.size(); i++) {
-				for (uint j = 0; j <= dirContents.size(); j++) {
-					if (recentlyPlayed[i] == dirContents[j].name) {
-						dirContents[j].position = k++;
-						dirContents[j].customPos = true;
+			int i = 0;
+			for (const std::string &recentlyPlayedName : recentlyPlayed) {
+				for (DirEntry &dirEntry : dirContents) {
+					if (recentlyPlayedName == dirEntry.name) {
+						dirEntry.position = i++;
+						dirEntry.customPos = true;
 						break;
 					}
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
-		} else if(ms().sortMethod == 2) { // Most Played
+		} else if (ms().sortMethod == 2) { // Most Played
 			CIniFile timesPlayedIni(timesPlayedIniPath);
-			vector<std::pair<std::string, int>> timesPlayed;
 
-			for (int i = 0; i < (int)dirContents.size(); i++) {
-				timesPlayed.emplace_back(dirContents[i].name, timesPlayedIni.GetInt(getcwd(path, PATH_MAX), dirContents[i].name, 0));
+			getcwd(path, PATH_MAX);
+			for (DirEntry &dirEntry : dirContents) {
+				dirEntry.position = timesPlayedIni.GetInt(path, dirEntry.name, 0);
 			}
 
-			for (int i = 0; i < (int)timesPlayed.size(); i++) {
-				for (int j = 0; j <= (int)dirContents.size(); j++) {
-					if (timesPlayed[i].first == dirContents[j].name) {
-						dirContents[j].position = timesPlayed[i].second;
-					}
-				}
-			}
-			sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
-					if (!lhs.isDirectory && rhs.isDirectory)	return false;
-					else if (lhs.isDirectory && !rhs.isDirectory)	return true;
+			std::sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
+					if (!lhs.isDirectory && rhs.isDirectory)
+						return false;
+					else if (lhs.isDirectory && !rhs.isDirectory)
+						return true;
 
-					if(lhs.position > rhs.position)	return true;
-					else if(lhs.position < rhs.position)	return false;
-					else {
+					if (lhs.position > rhs.position)
+						return true;
+					else if (lhs.position < rhs.position)
+						return false;
+					else
 						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
-					}
 				});
-		} else if(ms().sortMethod == 3) { // File type
+		} else if (ms().sortMethod == 3) { // File type
 			sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
-					if (!lhs.isDirectory && rhs.isDirectory)	return false;
-					else if (lhs.isDirectory && !rhs.isDirectory)	return true;
+					if (!lhs.isDirectory && rhs.isDirectory)
+						return false;
+					else if (lhs.isDirectory && !rhs.isDirectory)
+						return true;
 
-					if(strcasecmp(lhs.name.substr(lhs.name.find_last_of(".") + 1).c_str(), rhs.name.substr(rhs.name.find_last_of(".") + 1).c_str()) == 0) {
+					int extCmp = strcasecmp(lhs.name.substr(lhs.name.find_last_of('.') + 1).c_str(), rhs.name.substr(rhs.name.find_last_of('.') + 1).c_str()) == 0;
+					if(extCmp == 0)
 						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
-					} else {
-						return strcasecmp(lhs.name.substr(lhs.name.find_last_of(".") + 1).c_str(), rhs.name.substr(rhs.name.find_last_of(".") + 1).c_str()) < 0;
-					}
+					else
+						return extCmp < 0;
 				});
-		} else if(ms().sortMethod == 4) { // Custom
+		} else if (ms().sortMethod == 4) { // Custom
 			CIniFile gameOrderIni(gameOrderIniPath);
-			vector<std::string> gameOrder;
+			std::vector<std::string> gameOrder;
 			getcwd(path, PATH_MAX);
 			gameOrderIni.GetStringVector("ORDER", path, gameOrder, ':');
 
 			for (uint i = 0; i < gameOrder.size(); i++) {
-				for (uint j = 0; j < dirContents.size(); j++) {
-					if (gameOrder[i] == dirContents[j].name) {
-						dirContents[j].position = i;
-						dirContents[j].customPos = true;
+				for (DirEntry &dirEntry : dirContents) {
+					if (gameOrder[i] == dirEntry.name) {
+						dirEntry.position = i;
+						dirEntry.customPos = true;
 						break;
 					}
 				}
@@ -399,11 +376,6 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 		}
 		closedir(pdir);
 	}
-}
-
-void getDirectoryContents(std::vector<DirEntry> &dirContents) {
-	std::vector<std::string> extensionList;
-	getDirectoryContents(dirContents, extensionList);
 }
 
 void waitForFadeOut(void) {
@@ -1615,16 +1587,15 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 		spawnedtitleboxes = 0;
 	for (int i = 0; i < 40; i++) {
 		if (i + PAGENUM * 40 < file_count) {
-			if (dirContents[scrn].at(i + PAGENUM * 40).isDirectory) {
+			if (dirContents[scrn][i + PAGENUM * 40].isDirectory) {
 				isDirectory[i] = true;
 				bnrWirelessIcon[i] = 0;
 			} else {
 				isDirectory[i] = false;
-				std::string std_romsel_filename = dirContents[scrn].at(i + PAGENUM * 40).name.c_str();
+				const std::string &std_romsel_filename = dirContents[scrn][i + PAGENUM * 40].name;
 
 				if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
-					getGameInfo(isDirectory[i], dirContents[scrn].at(i + PAGENUM * 40).name.c_str(),
-							i);
+					getGameInfo(isDirectory[i], dirContents[scrn][i + PAGENUM * 40].name.c_str(), i);
 					bnrRomType[i] = 0;
 					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".pce"})) {
@@ -1677,16 +1648,14 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					isHomebrew[i] = 0;
 				}
 
-				if (dsiFeatures() && !ms().macroMode && ms().showBoxArt == 2 && ms().theme!=5 && !isDirectory[i]) {
-					snprintf(boxArtPath, sizeof(boxArtPath),
-						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-						 dirContents[scrn].at(i + PAGENUM * 40).name.c_str());
+				if (dsiFeatures() && !ms().macroMode && ms().showBoxArt == 2 && ms().theme != 5 && !isDirectory[i]) {
+					snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
+							 sdFound() ? "sd" : "fat",
+							 dirContents[scrn][i + PAGENUM * 40].name.c_str());
 					if ((bnrRomType[i] == 0) && (access(boxArtPath, F_OK) != 0)) {
-						snprintf(boxArtPath, sizeof(boxArtPath),
-							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-									: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-							 gameTid[i]);
+						snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
+								 (sdFound() ? "sd" : "fat"),
+								 gameTid[i]);
 					}
 					tex().loadBoxArtToMem(boxArtPath, i);
 				}
@@ -1824,7 +1793,7 @@ static bool nextPage(void) {
 	return false;
 }
 
-std::string browseForFile(const std::vector<std::string> extensionList) {
+std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	snd().updateStream();
 	displayNowLoading();
 	snd().updateStream();
