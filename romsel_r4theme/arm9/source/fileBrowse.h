@@ -27,6 +27,8 @@
 
 //#define EMULATE_FILES
 
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions);
+
 std::string browseForFile(const std::vector<std::string> extensionList);
 
 

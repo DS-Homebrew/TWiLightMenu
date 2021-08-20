@@ -144,9 +144,15 @@ struct DirEntry {
 	bool customPos;
 };
 
-bool nameEndsWith (const string& name, const vector<string> extensionList) {
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
+	for(std::string_view extension : extensions) {
+		if(strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
+			return true;
+		}
+	}
 
-	if (name.substr(0,2) == "._")	return false;	// Don't show macOS's index files
+	return false;
+}
 
 	if (name.size() == 0) return false;
 
@@ -637,8 +643,6 @@ void cannotLaunchMsg(void) {
 	for (int i = 0; i < 25; i++) swiWaitForVBlank();
 }
 
-extern bool extention(const std::string& filename, const char* ext);
-
 string browseForFile(const vector<string> extensionList) {
 	if (macroMode) {
 		lcdMainOnTop();
@@ -698,37 +702,31 @@ string browseForFile(const vector<string> extensionList) {
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 
-			if (extention(std_romsel_filename, ".nds")
-			 || extention(std_romsel_filename, ".dsi")
-			 || extention(std_romsel_filename, ".ids")
-			 || extention(std_romsel_filename, ".srl")
-			 || extention(std_romsel_filename, ".app")
-			 || extention(std_romsel_filename, ".argv"))
+			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"}))
 			{
 				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
-			} else if (extention(std_romsel_filename, ".pce")) {
+			} else if (extension(std_romsel_filename, {".pce"})) {
 				bnrRomType = 11;
-			} else if (extention(std_romsel_filename, ".xex") || extention(std_romsel_filename, ".atr")
-			 || extention(std_romsel_filename, ".a26") || extention(std_romsel_filename, ".a52") || extention(std_romsel_filename, ".a78")) {
+			} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 				bnrRomType = 10;
-			} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid") || extention(std_romsel_filename, ".fv")) {
+			} else if (extension(std_romsel_filename, {".plg", ".rvid", ".fv"})) {
 				bnrRomType = 9;
-			} else if (extention(std_romsel_filename, ".agb") || extention(std_romsel_filename, ".gba") || extention(std_romsel_filename, ".mb")) {
+			} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
 				bnrRomType = 1;
-			} else if (extention(std_romsel_filename, ".gb") || extention(std_romsel_filename, ".sgb")) {
+			} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
 				bnrRomType = 2;
-			} else if (extention(std_romsel_filename, ".gbc")) {
+			} else if (extension(std_romsel_filename,{ ".gbc"})) {
 				bnrRomType = 3;
-			} else if (extention(std_romsel_filename, ".nes") || extention(std_romsel_filename, ".fds")) {
+			} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
 				bnrRomType = 4;
-			} else if(extention(std_romsel_filename, ".sms")) {
+			} else if(extension(std_romsel_filename, {".sms"})) {
 				bnrRomType = 5;
-			} else if(extention(std_romsel_filename, ".gg")) {
+			} else if(extension(std_romsel_filename, {".gg"})) {
 				bnrRomType = 6;
-			} else if(extention(std_romsel_filename, ".gen")) {
+			} else if(extension(std_romsel_filename, {".gen"})) {
 				bnrRomType = 7;
-			} else if(extention(std_romsel_filename, ".smc") || extention(std_romsel_filename, ".sfc")) {
+			} else if(extension(std_romsel_filename, {".smc", ".sfc"})) {
 				bnrRomType = 8;
 			}
 		}
