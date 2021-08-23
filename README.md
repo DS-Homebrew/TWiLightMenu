@@ -4,7 +4,7 @@
    <img src="https://img.shields.io/badge/GBAtemp-Thread-blue.svg" alt="GBAtemp Thread">
   </a>
   <a href="https://discord.gg/yD3spjv">
-   <img src="https://img.shields.io/badge/Discord%20Server-%23twilightmenu-green.svg" alt="Discord Server">
+   <img src="https://img.shields.io/badge/Discord%20Server-%23twilight--menu-green.svg" alt="Discord Server">
   </a>
   <a href="https://github.com/DS-Homebrew/TWiLightMenu/actions?query=workflow%3A%22Build+TWiLight+Menu%2B%2B%22">
    <img src="https://github.com/DS-Homebrew/TWiLightMenu/workflows/Build%20TWiLight%20Menu++/badge.svg" height="20" alt="Build status on GitHub Actions">
@@ -15,7 +15,7 @@
 </p>
 
 TWiLight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
-It can launch Nintendo DS, SNES, NES, GameBoy (Color), GameBoy Advance, Sega GameGear/Master System & Mega Drive/Genesis ROMs, as well as DSTWO plugins (if you use a DSTWO) and videos.
+It can launch Nintendo DS(i), SNES, NES, GameBoy (Color), GameBoy Advance, Sega GameGear/Master System & Mega Drive/Genesis, and Atari 2600/5200/7800/XEGS ROMs, as well as DSTWO plugins (if you use a DSTWO).
 
 # Compiling
 
@@ -25,7 +25,7 @@ Compiling this app requires devkitPro's devkitARM, libnds, grit, and mmutil. The
 ```
 sudo dkp-pacman -S nds-dev
 ```
-(Note: Command will vary by OS, sudo may not be needed and it may be just `pacman` instead)
+(Note: Command will vary by OS, sudo may not be needed and it may be just `pacman` instead.)
 
 ## Building
 
@@ -51,51 +51,51 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 
 # Credits
 ## Main Developers
-- [Rocket Robz](https://github.com/RocketRobz): Lead Developer, implementing the auto-reset power button function used in NTR-mode.
-- [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ & adding the ability to load sub-themes off the SD card for DSi/3DS themes.
-- [Pk11](https://github.com/Epicpkmn11): Adding the ability to load sub-themes off the SD card for the R4 theme, implemented sorting & made manuals use PNG, improved font rendering, providing a custom background for Unlaunch, and various bug fixes.
+- [Rocket Robz](https://github.com/RocketRobz): Lead Developer, implementing the auto-reset power button function used in NTR-mode
+- [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ & adding the ability to load sub-themes off the SD card for DSi/3DS themes
+- [Pk11](https://github.com/Epicpkmn11): Adding the ability to load sub-themes off the SD card for the R4 theme, implemented sorting & made manuals use PNG, improved font rendering, providing a custom background for Unlaunch, and various bug fixes
 ## App Launchers
-- [ahezard](https://github.com/ahezard) & [shutterbug2000](https://github.com/shutterbug2000): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used to launch Nintendo DS ROMs off the SD card), and NDMA SD read code.
+- [ahezard](https://github.com/ahezard) & [shutterbug2000](https://github.com/shutterbug2000): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used to launch Nintendo DS ROMs off the SD card), and NDMA SD read code
 - [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob) (used to launch Gameboy ROMs)
-- [Coto](https://coto88.bitbucket.io/): Working on [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS) with acheid/Loopy (used to launch SNES ROMs) & [nesDS](https://github.com/RocketRobz/NesDS) ([TWL Edition](https://github.com/ApacheThunder/NesDS) by [Apache Thunder](https://github.com/ApacheThunder)) (used to launch NES ROMs).
+- [Coto](https://coto88.bitbucket.io/): Working on [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS) with acheid/Loopy (used to launch SNES ROMs) & [nesDS](https://github.com/RocketRobz/NesDS) ([TWL Edition](https://github.com/ApacheThunder/NesDS) by [Apache Thunder](https://github.com/ApacheThunder)) (used to launch NES ROMs)
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS) (used to launch Sega Mega Drive/Genesis ROMs)
 - Ryan FB & [xonn83](https://github.com/xonn83): [PicoDriveDS](https://github.com/xonn83/PicodriveDS_GBMacro) (used to launch large Sega Mega Drive/Genesis ROMs)
 - [Gericom](https://github.com/Gericom): [GBARunner2](https://github.com/Gericom/GBARunner2) (used to launch GameBoy Advance ROMs outside of the DS Phat/lite's GBA mode)
 - [FluBBa](https://gbatemp.net/members/flubba.19963/): [S8DS](https://gbatemp.net/threads/s8ds.392855/) (used to launch Sega Master System/Game Gear ROMs)
 - Alekmaul & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5200DS](https://github.com/wavemotion-dave/A5200DS), [A7800DS](https://github.com/wavemotion-dave/A7800DS), and [XEGS-DS](https://github.com/wavemotion-dave/XEGS-DS) (used to launch Atari 2600/5200/7800/XEGS ROMs)
 ## Graphics & Themes
-- [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics.
-- [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons.
-- [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi theme's `SELECT` menu.
-- [fail0verflow](https://github.com/fail0verflow/), Fluto, and Arkhandar: Homebrew Channel/Launcher graphics.
-- davi: Border for GBC theme (originally for GameYob).
-- [NightScript](https://github.com/NightYoshi370/): Reworked Manual pages.
+- [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics
+- [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons
+- [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi theme's `SELECT` menu
+- [fail0verflow](https://github.com/fail0verflow/), Fluto, and Arkhandar: Homebrew Channel/Launcher graphics
+- davi: Border for GBC theme (originally for GameYob)
+- [NightScript](https://github.com/NightYoshi370/): Reworked Manual pages
 ## Music
 - IkaMusumeYiyaRoxie: General N64 MIDI Soundfont, used for the title splash fanfare
-- BlastoiseVeteran: Remastered version of Nintendo DSi Shop music.
+- BlastoiseVeteran: Remastered version of Nintendo DSi Shop music
 ## Sound
-- Firexploit: 3DS UI sounds for the 3DS theme, which some are also used in the DSi theme.
+- [Firexploit](https://github.com/Firexploit): 3DS UI sounds for the 3DS theme, which some are also used in the DSi theme
 ## Others
-- [Arisotura](https://github.com/Arisotura): ROM list from melonDS.
-- [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
-- [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap.
+- [Arisotura](https://github.com/Arisotura): ROM list from melonDS
+- [profi200](https://github.com/profi200): Improved SD code from fastboot3DS
+- [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap
 - [Gericom](https://github.com/Gericom), TrolleyDave, and FAST6191: GBA SRAM-patching code, used in gbapatcher ([SRAM patching thread at GBAtemp](https://gbatemp.net/threads/reverse-engineering-gba-patching.60168/))
 - Nikokaro: Found no-tilt patches for *WarioWare: Twisted!*, and *Yoshi Topsy-Turvy*. ([GBAtemp thread](https://gbatemp.net/threads/gba-no-tilt-patches-for-ds-users.584128/))
-- [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
-- Another World & Yellow Wood Goblin: The original akMenu/Wood UI.
-- [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcarts.
-- [SNBeast](https://github.com/SNBeast): Unlaunch patches.
-- retrogamefan & Rudolph: Included AP-patches for nds-bootstrap.
-   - [enler](https://github.com/enler): Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility.
-   - Rocket Robz: Fixing some DS⁽ⁱ⁾-Enhanced game AP-patches for DS⁽ⁱ⁾ mode compatibility.
-- fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, [gamemasterplc](https://github.com/gamemasterplc), RocketRobz, [ChampionLeake](https://github.com/ChampionLeake), [DeadSkullzJr](https://github.com/DeadSkullzJr), [spellboundtriangle](https://github.com/spellboundtriangle), [LedyBacer](https://github.com/LedyBacer): Widescreen Cheats.
+- [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat
+- Another World & Yellow Wood Goblin: The original akMenu/Wood UI
+- [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcards
+- [SNBeast](https://github.com/SNBeast): Unlaunch patches
+- retrogamefan & Rudolph: Included AP-patches for nds-bootstrap
+   - [enler](https://github.com/enler): Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility
+   - [Rocket Robz](https://github.com/RocketRobz): Fixing some DS⁽ⁱ⁾-Enhanced game AP-patches for DS⁽ⁱ⁾ mode compatibility
+- fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, [gamemasterplc](https://github.com/gamemasterplc), [Rocket Robz](https://github.com/RocketRobz), [ChampionLeake](https://github.com/ChampionLeake), [DeadSkullzJr](https://github.com/DeadSkullzJr), [spellboundtriangle](https://github.com/spellboundtriangle), [LedyBacer](https://github.com/LedyBacer): Widescreen Cheats
 ## Translators
 - Bulgarian: [Peter0x44](https://github.com/Peter0x44)
 - Chinese Simplified: [Forbidden](https://crowdin.com/profile/Origami), [James-Makoto](https://crowdin.com/profile/VCMOD55), [R-YaTian](https://github.com/R-YaTian), [Yukino Song](https://crowdin.com/profile/ClassicOldSong), [曾国立](https://crowdin.com/profile/notthingtosay), [百地 希留耶](https://crowdin.com/profile/FIve201)
 - Chinese Traditional: [ccccchoho](https://crowdin.com/profile/ccccchoho), [James-Makoto](https://crowdin.com/profile/VCMOD55), [Rintim](https://crowdin.com/profile/Rintim), [奇诺比奥](https://crowdin.com/profile/Counta6_233)
 - Danish: [jonata](https://github.com/Jonatan6), [Nadia Pedersen](https://crowdin.com/profile/nadiaholmquist)
 - Dutch: [Arthur](https://crowdin.com/profile/arthurr2014.tl), [Mikosu](https://crowdin.com/profile/miko303), [Xtremegamer007](https://crowdin.com/profile/xtremegamer007)
-- French: [Arcky](https://github.com/ArckyTV), [Benjamin](https://crowdin.com/profile/sombrabsol), [cooolgamer](https://crowdin.com/profile/cooolgamer), [Dhalian.](https://crowdin.com/profile/DHALiaN3630), [maximesharp](https://crowdin.com/profile/maximesharp), [Ghost0159](https://crowdin.com/profile/Ghost0159), [Léo](https://crowdin.com/profile/leeo97one), [LinuxCat](https://github.com/L-i-n-u-x-C-a-t), [Martinez](https://github.com/flutterbrony), [NightScript](https://github.com/NightYoshi370), [SLG3](https://crowdin.com/profile/slg3), [TM-47](https://crowdin.com/profile/-tm-)
+- French: [Arcky](https://github.com/ArckyTV), [Benjamin](https://crowdin.com/profile/sombrabsol), [cooolgamer](https://crowdin.com/profile/cooolgamer), [Dhalian](https://crowdin.com/profile/DHALiaN3630), [maximesharp](https://crowdin.com/profile/maximesharp), [Ghost0159](https://crowdin.com/profile/Ghost0159), [Léo](https://crowdin.com/profile/leeo97one), [LinuxCat](https://github.com/L-i-n-u-x-C-a-t), [Martinez](https://github.com/flutterbrony), [NightScript](https://github.com/NightYoshi370), [SLG3](https://crowdin.com/profile/slg3), [TM-47](https://crowdin.com/profile/-tm-)
 - German: [ariebe9115](https://crowdin.com/profile/ariebe9115), [Christian Schuhmann](https://github.com/c-schuhmann), [Dubsenbert Reaches](https://crowdin.com/profile/Bierjunge), [İlke Hür Eyiol](https://crowdin.com/profile/ilkecan51), [Julian](https://crowdin.com/profile/nailujx86), [Kazuto](https://crowdin.com/profile/Marcmario), [malekairmaroc7](https://github.com/malekairmaroc7), [Oleh Hatsenko](https://github.com/IRONKAGE), [SkilLP](https://github.com/SkilLP), [SuperSaiyajinStackZ](https://github.com/SuperSaiyajinStackZ), [Tcm0](https://github.com/Tcm0), [TheDude](https://crowdin.com/profile/the6771), [TM-47](https://crowdin.com/profile/-tm-), [Uriki](https://github.com/Uriki)
 - Greek: [Anestis1403](https://crowdin.com/profile/anestis1403)
 - Hebrew: [Barawer](https://crowdin.com/profile/barawer), [Yaniv](https://crowdin.com/profile/y4niv)
