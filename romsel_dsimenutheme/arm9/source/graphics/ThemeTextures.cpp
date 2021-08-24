@@ -1590,7 +1590,9 @@ void ThemeTextures::videoSetup() {
 			rotatingCubesLocation = (u8*)0x0D700000;
 			boxArtCache = (u8*)0x0D540000;
 		} else {
-			rotatingCubesLocation = new u8[0x700000];
+			if (ms().theme == 1 && !ms().macroMode) {
+				rotatingCubesLocation = new u8[0x700000];
+			}
 			boxArtCache = new u8[0x1B8000];
 		}
 	}
