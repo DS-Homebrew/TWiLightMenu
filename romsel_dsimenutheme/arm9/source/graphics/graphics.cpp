@@ -287,7 +287,7 @@ void drawDbox() {
 
 void reloadDboxPalette() { tex().reloadPalDialogBox(); }
 
-u8 *rotatingCubesLocation = (u8*)0x02700000;
+u8 *rotatingCubesLocation = (u8*)NULL;
 
 void frameRateHandler(void) {
 	frameOf60fps++;
