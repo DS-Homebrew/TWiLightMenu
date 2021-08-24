@@ -22,6 +22,7 @@ static const char twlClockExcludeList[][4] = {
 	"AY9", // Mario & Sonic at the Olympic Games
 	"ASC", // Sonic Rush
 	"ASM", // Super Mario 64 DS
+	"COZ", // The Wizard of Oz: Beyond the Yellow Brick Road
 };
 
 #endif // TWLCLOCKEXCLUDEMAP_H
