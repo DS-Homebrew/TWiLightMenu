@@ -1585,15 +1585,17 @@ void ThemeTextures::videoSetup() {
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 
-	if (dsiFeatures()) {
+	if (dsiFeatures() && !ms().macroMode && ms().theme != 5) {
 		if (ms().consoleModel > 0) {
 			rotatingCubesLocation = (u8*)0x0D700000;
 			boxArtCache = (u8*)0x0D540000;
 		} else {
-			if (ms().theme == 1 && !ms().macroMode) {
+			if (ms().theme == 1) {
 				rotatingCubesLocation = new u8[0x700000];
 			}
-			boxArtCache = new u8[0x1B8000];
+			if (ms().showBoxArt == 2) {
+				boxArtCache = new u8[0x1B8000];
+			}
 		}
 	}
 
