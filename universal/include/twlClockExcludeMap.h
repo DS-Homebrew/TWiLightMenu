@@ -2,6 +2,10 @@
 #define TWLCLOCKEXCLUDEMAP_H
 
 static const char twlClockExcludeList[][4] = {
+	"CRL", // Coraline
+	"CLP", // Club Pengion: Elite Penguin Force
+	"CY9", // Club Penguin: EPF: Herbert's Revenge
+	"ATD", // Clubhouse Games
 	"YGX", // Grand Theft Auto: Chinatown Wars
 	"AWI", // Hotel Dusk: Room 215
 	"C6C", // Infinite Space
@@ -22,6 +26,8 @@ static const char twlClockExcludeList[][4] = {
 	"YLG", // LEGO Star Wars: The Complete Saga
 	"BL9", // LEGO Star Wars III: The Clone Wars
 	"AY9", // Mario & Sonic at the Olympic Games
+	"BZP", // Peppa Pig: Theme Park Fun
+	"AQW", // Puzzle Quest: Challenge of the Warlords
 	"ASC", // Sonic Rush
 	"ASM", // Super Mario 64 DS
 	"COZ", // The Wizard of Oz: Beyond the Yellow Brick Road
