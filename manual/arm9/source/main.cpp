@@ -70,6 +70,9 @@ enum TLanguage {
 	ELangIndonesian = 20,
 	ELangGreek = 21,
 	ELangBulgarian = 22,
+	ELangRomanian = 23,
+	ELangArabic = 24,
+	ELangPortugueseBrazil = 25,
 };
 
 int setLanguage = 0;
@@ -174,6 +177,12 @@ std::string getGuiLanguageString() {
 			return "el";
 		case ELangBulgarian:
 			return "bg";
+		case ELangRomanian:
+			return "ro";
+		case ELangArabic:
+			return "ar";
+		case ELangPortugueseBrazil:
+			return "pt-BR";
 	}
 }
 
@@ -384,7 +393,7 @@ int main(int argc, char **argv) {
 
 	int userLanguage = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 	setLanguage = (guiLanguage == -1) ? userLanguage : guiLanguage;
-	bool rtl = guiLanguage == ELangHebrew;
+	bool rtl = (guiLanguage == ELangHebrew || guiLanguage == ELangArabic);
 	if(rtl) {
 		manPageTitleX = 256 - manPageTitleX;
 		manPageTitleAlign = Alignment::right;

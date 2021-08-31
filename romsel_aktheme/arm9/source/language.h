@@ -86,6 +86,12 @@ private:
       return "lang_el";
     case TWLSettings::ELangBulgarian:
       return "lang_bg";
+    case TWLSettings::ELangRomanian:
+      return "lang_ro";
+    case TWLSettings::ELangArabic:
+      return "lang_ar";
+    case TWLSettings::ELangPortugueseBrazil:
+      return "lang_pt-BR";
     default:
       return "lang_en";
     }

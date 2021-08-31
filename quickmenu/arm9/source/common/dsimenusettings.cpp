@@ -376,10 +376,18 @@ std::string TWLSettings::getGuiLanguageString()
             return "id";
         case TWLSettings::ELangGreek:
             return "el";
+        case TWLSettings::ELangBulgarian:
+            return "bg";
+        case TWLSettings::ELangRomanian:
+            return "ro";
+        case TWLSettings::ELangArabic:
+            return "ar";
+        case TWLSettings::ELangPortugueseBrazil:
+            return "pt-BR";
     }
 }
 
 bool TWLSettings::rtl()
 {
-    return guiLanguage == ELangHebrew;
+    return (guiLanguage == ELangHebrew || guiLanguage == ELangArabic);
 }
