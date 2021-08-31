@@ -18,7 +18,6 @@
 
 #include "SwitchState.h"
 #include "errorScreen.h"
-#include "graphics/FontGraphic.h"
 #include "graphics/ThemeTextures.h"
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"

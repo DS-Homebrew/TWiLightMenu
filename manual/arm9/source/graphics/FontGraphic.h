@@ -13,9 +13,57 @@ enum class Alignment {
 
 class FontGraphic {
 private:
+	constexpr static char16_t arabicPresentationForms[][3] = {
+		// Initial, Medial, Final
+		{u'آ', u'ﺂ', u'ﺂ'}, // Alef with madda above
+		{u'أ', u'ﺄ', u'ﺄ'}, // Alef with hamza above
+		{u'ؤ', u'ﺆ', u'ﺆ'}, // Waw with hamza above
+		{u'إ', u'ﺈ', u'ﺈ'}, // Alef with hamza below
+		{u'ﺋ', u'ﺌ', u'ﺊ'}, // Yeh with hamza above
+		{u'ا', u'ﺎ', u'ﺎ'}, // Alef
+		{u'ﺑ', u'ﺒ', u'ﺐ'}, // Beh
+		{u'ة', u'ﺔ', u'ﺔ'}, // Teh marbuta
+		{u'ﺗ', u'ﺘ', u'ﺖ'}, // Teh
+		{u'ﺛ', u'ﺜ', u'ﺚ'}, // Theh
+		{u'ﺟ', u'ﺠ', u'ﺞ'}, // Jeem
+		{u'ﺣ', u'ﺤ', u'ﺢ'}, // Hah
+		{u'ﺧ', u'ﺨ', u'ﺦ'}, // Khah
+		{u'د', u'ﺪ', u'ﺪ'}, // Dal
+		{u'ذ', u'ﺬ', u'ﺬ'}, // Thal
+		{u'ر', u'ﺮ', u'ﺮ'}, // Reh
+		{u'ز', u'ﺰ', u'ﺰ'}, // Zain
+		{u'ﺳ', u'ﺴ', u'ﺲ'}, // Seen
+		{u'ﺷ', u'ﺸ', u'ﺶ'}, // Sheen
+		{u'ﺻ', u'ﺼ', u'ﺺ'}, // Sad
+		{u'ﺿ', u'ﻀ', u'ﺾ'}, // Dad
+		{u'ﻃ', u'ﻄ', u'ﻂ'}, // Tah
+		{u'ﻇ', u'ﻈ', u'ﻆ'}, // Zah
+		{u'ﻋ', u'ﻌ', u'ﻊ'}, // Ain
+		{u'ﻏ', u'ﻐ', u'ﻎ'}, // Ghain
+		{u'ػ', u'ػ', u'ػ'}, // Keheh with two dots above
+		{u'ؼ', u'ؼ', u'ؼ'}, // Keheh with three dots below
+		{u'ؽ', u'ؽ', u'ؽ'}, // Farsi yeh with inverted v
+		{u'ؾ', u'ؾ', u'ؾ'}, // Farsi yeh with two dots above
+		{u'ؿ', u'ؿ', u'ؿ'}, // Farsi yeh with three docs above
+		{u'ـ', u'ـ', u'ـ'}, // Tatweel
+		{u'ﻓ', u'ﻔ', u'ﻒ'}, // Feh
+		{u'ﻗ', u'ﻘ', u'ﻖ'}, // Qaf
+		{u'ﻛ', u'ﻜ', u'ﻚ'}, // Kaf
+		{u'ﻟ', u'ﻠ', u'ﻞ'}, // Lam
+		{u'ﻣ', u'ﻤ', u'ﻢ'}, // Meem
+		{u'ﻧ', u'ﻨ', u'ﻦ'}, // Noon
+		{u'ﻫ', u'ﻬ', u'ﻪ'}, // Heh
+		{u'و', u'ﻮ', u'ﻮ'}, // Waw
+		{u'ﯨ', u'ﯩ', u'ﻰ'}, // Alef maksura
+		{u'ﻳ', u'ﻴ', u'ﻲ'}, // Yeh
+	};
+
+	static bool isArabic(char16_t c);
 	static bool isStrongRTL(char16_t c);
 	static bool isWeak(char16_t c);
 	static bool isNumber(char16_t c);
+
+	static char16_t arabicForm(char16_t current, char16_t prev, char16_t next);
 
 	static u8 *lastUsedLoc;
 

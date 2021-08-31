@@ -6,8 +6,14 @@ u8 *FontGraphic::lastUsedLoc = (u8*)0x08000000;
 
 u8 FontGraphic::textBuf[2][256 * 192];
 
+// Specifically the Arabic letters that have supported presentation forms
+bool FontGraphic::isArabic(char16_t c) {
+	return (c >= 0x0622 && c <= 0x064A);
+}
+
 bool FontGraphic::isStrongRTL(char16_t c) {
-	return (c >= 0x0590 && c <= 0x05FF) || c == 0x200F;
+	// Hebrew, Arabic, or RLM
+	return (c >= 0x0590 && c <= 0x05FF) || isArabic(c) || c == 0x200F;
 }
 
 bool FontGraphic::isWeak(char16_t c) {
@@ -16,6 +22,25 @@ bool FontGraphic::isWeak(char16_t c) {
 
 bool FontGraphic::isNumber(char16_t c) {
 	return c >= '0' && c <= '9';
+}
+
+char16_t FontGraphic::arabicForm(char16_t current, char16_t prev, char16_t next) {
+	if(isArabic(current)) {
+		// If previous should be connected to
+		if((prev >= 0x626 && prev <= 0x62E && prev != 0x627 && prev != 0x629) || (prev >= 0x633 && prev <= 0x64A && prev != 0x647)) {
+			if(isArabic(next)) // If next is arabic, medial
+				return arabicPresentationForms[current - 0x622][1];
+			else // If not, final
+				return arabicPresentationForms[current - 0x622][2];
+		} else {
+			if(isArabic(next)) // If next is arabic, initial
+				return arabicPresentationForms[current - 0x622][0];
+			else // If not, isolated
+				return current;
+		}
+	}
+
+	return current;
 }
 
 FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansionPak) : useExpansionPak(useExpansionPak) {
@@ -193,8 +218,8 @@ std::u16string FontGraphic::utf8to16(std::string_view text) {
 int FontGraphic::calcWidth(std::u16string_view text) {
 	uint x = 0;
 
-	for(auto c : text) {
-		u16 index = getCharIndex(c);
+	for(auto it = text.begin(); it != text.end(); ++it) {
+		u16 index = getCharIndex(arabicForm(*it, it > text.begin() ? *(it - 1) : 0, it < text.end() - 1 ? *(it + 1) : 0));
 		x += fontWidths[(index * 3) + 2];
 	}
 
@@ -342,7 +367,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 					index = getCharIndex('<');
 					break;
 				default:
-					index = getCharIndex(*it);
+					index = getCharIndex(arabicForm(*it, it > text.begin() ? *(it - 1) : 0, it < text.end() - 1 ? *(it + 1) : 0));
 					break;
 			}
 		} else {
