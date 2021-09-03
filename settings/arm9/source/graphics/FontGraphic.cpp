@@ -8,12 +8,12 @@ u8 FontGraphic::textBuf[2][256 * 192];
 
 // Specifically the Arabic letters that have supported presentation forms
 bool FontGraphic::isArabic(char16_t c) {
-	return (c >= 0x0622 && c <= 0x064A);
+	return c >= 0x0622 && c <= 0x064A;
 }
 
 bool FontGraphic::isStrongRTL(char16_t c) {
 	// Hebrew, Arabic, or RLM
-	return (c >= 0x0590 && c <= 0x05FF) || isArabic(c) || c == 0x200F;
+	return (c >= 0x0590 && c <= 0x05FF) || (c >= 0x0600 && c <= 0x06FF) || c == 0x200F;
 }
 
 bool FontGraphic::isWeak(char16_t c) {
@@ -27,7 +27,7 @@ bool FontGraphic::isNumber(char16_t c) {
 char16_t FontGraphic::arabicForm(char16_t current, char16_t prev, char16_t next) {
 	if(isArabic(current)) {
 		// If previous should be connected to
-		if((prev >= 0x626 && prev <= 0x62E && prev != 0x627 && prev != 0x629) || (prev >= 0x633 && prev <= 0x64A && prev != 0x647)) {
+		if((prev >= 0x626 && prev <= 0x62E && prev != 0x627 && prev != 0x629) || (prev >= 0x633 && prev <= 0x64A && prev != 0x648)) {
 			if(isArabic(next)) // If next is arabic, medial
 				return arabicPresentationForms[current - 0x622][1];
 			else // If not, final
