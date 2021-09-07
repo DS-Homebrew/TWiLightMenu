@@ -1523,8 +1523,8 @@ void loadRotatingCubes() {
 
 		if (doRead) {
 			if (rvidCompressed) {
-				fread((void*)0x02500000, 1, 0x200000, videoFrameFile);
-				LZ77_Decompress((u8*)0x02500000, (u8*)rotatingCubesLocation);
+				fread((void*)0x02D80000, 1, 0x200000, videoFrameFile);
+				LZ77_Decompress((u8*)0x02D80000, (u8*)rotatingCubesLocation);
 			} else {
 				fread(rotatingCubesLocation, 1, 0x700000, videoFrameFile);
 			}
