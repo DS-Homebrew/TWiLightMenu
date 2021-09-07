@@ -33,8 +33,9 @@
 #define TFN_FALLBACK_SATURN_UI_DIRECTORY      "nitro:/themes/saturn/default"
 #define TFN_FALLBACK_HBLAUNCHER_UI_DIRECTORY  "nitro:/themes/hbLauncher/default"
 
-#define TFN_SYSTEM_UI_DIRECTORY       TFN_SYSTEM_DIR"themes/"
-#define TFN_SYSTEM_SOUND_DIRECTORY    "nitro:/sound"
+#define TFN_SYSTEM_UI_DIRECTORY             TFN_SYSTEM_DIR"themes/"
+#define TFN_SYSTEM_SOUND_DIRECTORY          "nitro:/sound"
+#define TFN_SYSTEM_SOUND_CACHE_DIRECTORY    "/_nds/TWiLightMenu/cache/music"
 
 #define TFN_UI_DIRECTORY              tfn().uiDirectory() + 
 #define TFN_FALLBACK_UI_DIRECTORY     tfn().fallbackDirectory() + 
@@ -119,18 +120,21 @@
 #define TFN_SOUND_BG                TFN_UI_DIRECTORY"/sound/bgm.pcm.raw"
 
 #define TFN_DEFAULT_SOUND_EFFECTBANK      TFN_SYSTEM_SOUND_DIRECTORY"/defaultfx.bin"
-#define TFN_DEFAULT_SOUND_BG              TFN_SYSTEM_SOUND_DIRECTORY"/defaultbg.pcm.raw"
+#define TFN_DEFAULT_SOUND_BG              TFN_SYSTEM_SOUND_DIRECTORY"/defaultbg.wav"
+#define TFN_DEFAULT_SOUND_BG_CACHE        TFN_SYSTEM_SOUND_CACHE_DIRECTORY"/defaultbg.raw"
 
-#define TFN_SHOP_START_SOUND_BG           TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.start.raw"
-#define TFN_SHOP_LOOP_SOUND_BG            TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.loop.raw"
+#define TFN_SHOP_START_SOUND_BG           TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.start.wav"
+#define TFN_SHOP_LOOP_SOUND_BG            TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.loop.wav"
+#define TFN_SHOP_START_SOUND_BG_CACHE     TFN_SYSTEM_SOUND_CACHE_DIRECTORY"/shopbg.start.raw"
+#define TFN_SHOP_LOOP_SOUND_BG_CACHE      TFN_SYSTEM_SOUND_CACHE_DIRECTORY"/shopbg.loop.raw"
 
-#define TFN_CLASSIC_SOUND_BG              TFN_SYSTEM_SOUND_DIRECTORY"/classicbg.pcm.raw"
+#define TFN_CLASSIC_SOUND_BG              TFN_SYSTEM_SOUND_DIRECTORY"/classicbg.wav"
+#define TFN_CLASSIC_SOUND_BG_CACHE        TFN_SYSTEM_SOUND_CACHE_DIRECTORY"/classicbg.raw"
 
-#define TFN_HBL_START_SOUND_BG            TFN_SYSTEM_SOUND_DIRECTORY"/hbl.start.raw"
-#define TFN_HBL_LOOP_SOUND_BG             TFN_SYSTEM_SOUND_DIRECTORY"/hbl.loop.raw"
-
-#define TFN_HBL_START_DS_SOUND_BG         TFN_SYSTEM_SOUND_DIRECTORY"/hbl.start.ds.raw"
-#define TFN_HBL_LOOP_DS_SOUND_BG          TFN_SYSTEM_SOUND_DIRECTORY"/hbl.loop.ds.raw"
+#define TFN_HBL_START_SOUND_BG           TFN_SYSTEM_SOUND_DIRECTORY"/hbl.start.wav"
+#define TFN_HBL_LOOP_SOUND_BG            TFN_SYSTEM_SOUND_DIRECTORY"/hbl.loop.wav"
+#define TFN_HBL_START_SOUND_BG_CACHE     TFN_SYSTEM_SOUND_CACHE_DIRECTORY"/hbl.start.raw"
+#define TFN_HBL_LOOP_SOUND_BG_CACHE      TFN_SYSTEM_SOUND_CACHE_DIRECTORY"/hbl.loop.raw"
 
 #define TFN_SATURN_SOUND_EFFECTBANK       TFN_SYSTEM_SOUND_DIRECTORY"/saturnfx.bin"
 
