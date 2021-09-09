@@ -48,11 +48,19 @@ extern volatile u32 sample_delay_count;
 volatile char* SFX_DATA = (char*)NULL;
 mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
 
+extern bool fadeType;
+extern bool controlTopBright;
+extern bool controlBottomBright;
+extern void takeWhileMsg(void);
+extern bool screenFadedOut(void);
+
 SoundControl::SoundControl()
 	: stream_is_playing(false), stream_source(NULL), startup_sample_length(0)
  {
 
-	irqDisable(IRQ_VBLANK); // Temporarily disable graphics rendering code to fix SDMMC R/W lockups
+	controlTopBright = false;
+	takeWhileMsg();
+	fadeType = true; // Fade in from white
 
 	sys.mod_count = MSL_NSONGS;
 	sys.samp_count = MSL_NSAMPS;
@@ -281,7 +289,11 @@ SoundControl::SoundControl()
 		loopingPoint = true;
 	}
 
-	irqEnable(IRQ_VBLANK);
+	fadeType = false;
+	while (!screenFadedOut()) {
+		swiWaitForVBlank();
+	}
+	controlTopBright = true;
 }
 
 mm_sfxhand SoundControl::playLaunch() { return mmEffectEx(&snd_launch); }
