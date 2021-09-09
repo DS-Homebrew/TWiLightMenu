@@ -1,5 +1,5 @@
-"project_id_env": "TWILIGHT_CROWDIN_ID"
-"api_token_env": "CROWDIN_TOKEN"
+project_id_env: TWILIGHT_CROWDIN_ID
+api_token_env: CROWDIN_TOKEN
 preserve_hierarchy: true
 
 files:

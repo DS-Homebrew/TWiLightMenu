@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+#include <map>
 #include <nds.h>
 #include <string>
 #include <string_view>
@@ -13,9 +15,14 @@ enum class Alignment {
 
 class FontGraphic {
 private:
+	static std::map<char16_t, std::array<char16_t, 3>> arabicPresentationForms;
+
+	static bool isArabic(char16_t c);
 	static bool isStrongRTL(char16_t c);
 	static bool isWeak(char16_t c);
 	static bool isNumber(char16_t c);
+
+	static char16_t arabicForm(char16_t current, char16_t prev, char16_t next);
 
 	static u8 *lastUsedLoc;
 

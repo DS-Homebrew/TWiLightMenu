@@ -420,10 +420,16 @@ std::string TWLSettings::getGuiLanguageString()
             return "el";
         case TWLSettings::ELangBulgarian:
             return "bg";
+        case TWLSettings::ELangRomanian:
+            return "ro";
+        case TWLSettings::ELangArabic:
+            return "ar";
+        case TWLSettings::ELangPortugueseBrazil:
+            return "pt-BR";
     }
 }
 
 bool TWLSettings::rtl()
 {
-	return currentLanguage == ELangHebrew;
+	return (currentLanguage == ELangHebrew || currentLanguage == ELangArabic);
 }

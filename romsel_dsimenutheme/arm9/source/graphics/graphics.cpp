@@ -36,7 +36,6 @@
 #include "myDSiMode.h"
 #include "date.h"
 #include "iconHandler.h"
-#include "FontGraphic.h"
 #include "fontHandler.h"
 #include "graphics/ThemeTextures.h"
 #include "graphics/lodepng.h"

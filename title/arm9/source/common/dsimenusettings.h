@@ -76,6 +76,9 @@ class TWLSettings
         ELangIndonesian = 20,
         ELangGreek = 21,
         ELangBulgarian = 22,
+        ELangRomanian = 23,
+        ELangArabic = 24,
+        ELangPortugueseBrazil = 25,
     };
 
     enum TRegion
@@ -152,6 +155,10 @@ class TWLSettings
 
     TLanguage getGuiLanguage();
     std::string getGuiLanguageString();
+
+    // Get if the current language is right to left
+    bool rtl();
+
   public:
     std::string romfolder;
     int pagenum;

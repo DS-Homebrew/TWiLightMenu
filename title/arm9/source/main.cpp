@@ -1258,9 +1258,8 @@ void resetSettingsPrompt(void) {
 
 	fadeType = true;
 
-	bool rtl = ms().guiLanguage == TWLSettings::TLanguage::ELangHebrew;
-	Alignment align = rtl ? Alignment::right : Alignment::left;
-	int x = rtl ? 256 - 2 : 2;
+	Alignment align = ms().rtl() ? Alignment::right : Alignment::left;
+	int x = ms().rtl() ? 256 - 2 : 2;
 
 	clearText();
 	printLarge(false, x, 0, STR_RESET_TWILIGHT_SETTINGS, align);
@@ -1306,7 +1305,7 @@ const char *languages[] = {
 	"한국어",
 	"中文 (繁體)",
 	"Polski",
-	"Português",
+	"Português (Portugal)",
 	"Русский",
 	"Svenska",
 	"Dansk",
@@ -1319,6 +1318,9 @@ const char *languages[] = {
 	"Bahasa Indonesia",
 	"Ελληνικά",
 	"Български",
+	"Română",
+	"العربية",
+	"Português (Brasil)",
 };
 
 const int guiLanguages[] = {
@@ -1334,6 +1336,8 @@ const int guiLanguages[] = {
 	TWLSettings::TLanguage::ELangNorwegian,
 	TWLSettings::TLanguage::ELangPolish,
 	TWLSettings::TLanguage::ELangPortuguese,
+	TWLSettings::TLanguage::ELangPortugueseBrazil,
+	TWLSettings::TLanguage::ELangRomanian,
 	TWLSettings::TLanguage::ELangSwedish,
 	TWLSettings::TLanguage::ELangTurkish,
 	TWLSettings::TLanguage::ELangGreek,
@@ -1341,10 +1345,11 @@ const int guiLanguages[] = {
 	TWLSettings::TLanguage::ELangRussian,
 	TWLSettings::TLanguage::ELangUkrainian,
 	TWLSettings::TLanguage::ELangHebrew,
+	TWLSettings::TLanguage::ELangArabic,
 	TWLSettings::TLanguage::ELangChineseS,
 	TWLSettings::TLanguage::ELangChineseT,
 	TWLSettings::TLanguage::ELangJapanese,
-	TWLSettings::TLanguage::ELangKorean
+	TWLSettings::TLanguage::ELangKorean,
 };
 
 const int gameLanguages[] = {
@@ -1418,9 +1423,8 @@ void languageSelect(void) {
 	while (1) {
 		clearText(false);
 
-		bool rtl = ms().guiLanguage == TWLSettings::TLanguage::ELangHebrew;
-		Alignment align = rtl ? Alignment::right : Alignment::left;
-		int x1 = rtl ? 256 - 2 : 2, x2 = rtl ? 256 - 15 : 15;
+		Alignment align = ms().rtl() ? Alignment::right : Alignment::left;
+		int x1 = ms().rtl() ? 256 - 2 : 2, x2 = ms().rtl() ? 256 - 15 : 15;
 
 		printLarge(false, x1, 0, STR_SELECT_YOUR_LANGUAGE, align);
 
@@ -1431,7 +1435,7 @@ void languageSelect(void) {
 		snprintf(buffer, sizeof(buffer), STR_DS_BANNER_TITLE.c_str(), displayLanguage(titleLanguage, 2));
 		printSmall(false, x2, 48, buffer, align);
 
-		printSmall(false, x1, 20 + cursorPosition * 14, rtl ? "<" : ">", align);
+		printSmall(false, x1, 20 + cursorPosition * 14, ms().rtl() ? "<" : ">", align);
 
 		printSmall(false, x1, 68, STR_UP_DOWN_CHOOSE, align);
 		printSmall(false, x1, 82, STR_LEFT_RIGHT_CHANGE_LANGUAGE, align);
@@ -1525,9 +1529,8 @@ void regionSelect(void) {
 
 	fadeType = true;
 
-	bool rtl = ms().guiLanguage == TWLSettings::TLanguage::ELangHebrew;
-	Alignment align = rtl ? Alignment::right : Alignment::left;
-	int x1 = rtl ? 256 - 2 : 2, x2 = rtl ? 256 - 15 : 15;
+	Alignment align = ms().rtl() ? Alignment::right : Alignment::left;
+	int x1 = ms().rtl() ? 256 - 2 : 2, x2 = ms().rtl() ? 256 - 15 : 15;
 
 	u16 held = 0, pressed = 0;
 	while (1) {
@@ -1538,7 +1541,7 @@ void regionSelect(void) {
 			printSmall(false, x2, 20 + p * 14, *regions[i], align);
 		}
 
-		printSmall(false, x1, 20 + (ms().gameRegion + (dsiFeatures() ? 2 : 0)) * 14, rtl ? "<" : ">", align);
+		printSmall(false, x1, 20 + (ms().gameRegion + (dsiFeatures() ? 2 : 0)) * 14, ms().rtl() ? "<" : ">", align);
 
 		int y = 20 + (sizeof(regions) / sizeof(regions[0])) * 14 + 6 - (dsiFeatures() ? 0 : 28);
 		printSmall(false, x1, y, STR_UP_DOWN_CHOOSE, align);

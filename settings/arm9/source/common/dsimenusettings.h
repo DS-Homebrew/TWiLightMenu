@@ -77,6 +77,9 @@ class TWLSettings
         ELangIndonesian = 20,
         ELangGreek = 21,
         ELangBulgarian = 22,
+        ELangRomanian = 23,
+        ELangArabic = 24,
+        ELangPortugueseBrazil = 25,
     };
 
     enum TRegion

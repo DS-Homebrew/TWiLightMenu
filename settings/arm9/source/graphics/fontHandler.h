@@ -1,6 +1,6 @@
-#include "FontGraphic.h"
-
 #pragma once
+
+#include "FontGraphic.h"
 
 void fontInit();
 
