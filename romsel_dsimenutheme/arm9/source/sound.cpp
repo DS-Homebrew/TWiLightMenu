@@ -305,12 +305,13 @@ void SoundControl::stopStream() {
 }
 
 void SoundControl::fadeOutStream() {
-	fade_out = true;
+	//fade_out = true; // Bugged
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out on ARM7 side
 }
 
 void SoundControl::cancelFadeOutStream() {
-	fade_out = false;
-	fade_counter = FADE_STEPS;
+	//fade_out = false;
+	//fade_counter = FADE_STEPS;
 }
 
 void SoundControl::setStreamDelay(u32 delay) {

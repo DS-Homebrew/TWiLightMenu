@@ -44,11 +44,21 @@ u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data);
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
 volatile int timeTilVolumeLevelRefresh = 0;
+static int soundVolume = 127;
 volatile int rebootTimer = 0;
 volatile int status = 0;
 
 //static bool gotCartHeader = false;
 
+
+//---------------------------------------------------------------------------------
+void soundFadeOut() {
+//---------------------------------------------------------------------------------
+	soundVolume -= 3;
+	if (soundVolume < 0) {
+		soundVolume = 0;
+	}
+}
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -68,6 +78,12 @@ void ReturntoDSiMenu() {
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
+	if(fifoCheckValue32(FIFO_USER_01)) {
+		soundFadeOut();
+	} else {
+		soundVolume = 127;
+	}
+	REG_MASTER_VOLUME = soundVolume;
 }
 
 //---------------------------------------------------------------------------------
@@ -120,7 +136,7 @@ int main() {
 	irqEnable( IRQ_VBLANK | IRQ_VCOUNT );
 
 	setPowerButtonCB(powerButtonCB);
-	
+
 	u8 readCommand = readPowerManagement(4);
 
 	// 01: Fade Out
