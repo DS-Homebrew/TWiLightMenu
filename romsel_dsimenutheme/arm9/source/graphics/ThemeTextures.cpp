@@ -52,7 +52,7 @@ static u16* _frameBufferBot[2] = {(u16*)0x02FB0000, (u16*)0x02FC8000};
 
 bool boxArtColorDeband = false;
 
-static void* boxArtCache = (void*)0x02540000;	// Size: 0x1B8000
+static u8* boxArtCache = (u8*)NULL;	// Size: 0x1B8000
 static bool boxArtFound[40] = {false};
 int boxArtType[40] = {0};	// 0: NDS, 1: FDS/GBA/GBC/GB, 2: NES/GEN/MD/SFC, 3: SNES
 
@@ -813,7 +813,7 @@ void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 	boxArtFound[num] = true;
 
 	FILE *file = fopen(filename, "rb");
-	fread((u8*)boxArtCache+(num*0xB000), 1, 0xB000, file);
+	fread(boxArtCache+(num*0xB000), 1, 0xB000, file);
 	fclose(file);
 }
 
@@ -1523,8 +1523,8 @@ void loadRotatingCubes() {
 
 		if (doRead) {
 			if (rvidCompressed) {
-				fread((void*)0x02500000, 1, 0x200000, videoFrameFile);
-				LZ77_Decompress((u8*)0x02500000, (u8*)rotatingCubesLocation);
+				fread((void*)0x02D80000, 1, 0x200000, videoFrameFile);
+				LZ77_Decompress((u8*)0x02D80000, (u8*)rotatingCubesLocation);
 			} else {
 				fread(rotatingCubesLocation, 1, 0x700000, videoFrameFile);
 			}
@@ -1585,9 +1585,18 @@ void ThemeTextures::videoSetup() {
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 
-	if (dsiFeatures() && ms().consoleModel > 0) {
-		rotatingCubesLocation = (u8*)0x0D700000;
-		boxArtCache = (void*)0x0D540000;
+	if (dsiFeatures() && !ms().macroMode && ms().theme != 5) {
+		if (ms().consoleModel > 0) {
+			rotatingCubesLocation = (u8*)0x0D700000;
+			boxArtCache = (u8*)0x0D540000;
+		} else {
+			if (ms().theme == 1) {
+				rotatingCubesLocation = new u8[0x700000];
+			}
+			if (ms().showBoxArt == 2) {
+				boxArtCache = new u8[0x1B8000];
+			}
+		}
 	}
 
 	if (ms().theme == 1 && !ms().macroMode) {

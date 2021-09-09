@@ -11,6 +11,8 @@ static const char asyncReadExcludeList[][4] = {
 	"VCW", // Classic Word Games
 	"ADK", // Daikoukai Jidai IV: Rota Nova
 	"YDQ", // Dragon Quest IX: Sentinels of the Starry Skies
+	"DMD", // DSi XL Demo Video Volume 1
+	"DME", // DSi XL Demo Video Volume 2
 	"BJ3", // Etrian Odyssey 3
 	"BGT", // Ghost Trick: Phantom Detective
 	"YEE", // Inazuma Eleven
@@ -22,6 +24,7 @@ static const char asyncReadExcludeList[][4] = {
 	"YLU", // Last Window: The Secret of Cape West
 	"AY9", // Mario & Sonic at the Olympic Games
 	"V2G", // Mario vs. Donkey Kong: Mini-Land Mayhem!
+	"DMP", // NOE Movie Player Volume 1
 	"BKI", // The Legend of Zelda: Spirit Tracks (Keeps AP-fix in effect)
 	"Y7S", // The Legend of Zelda: Spirit Tracks (Demo)
 	"B6F", // LEGO Batman 2: DC Super Heroes
@@ -51,6 +54,7 @@ static const char asyncReadExcludeList[][4] = {
 	"BLF", // Professor Layton and the Last Specter/Spectre's Call
 	"Y9B", // Professor Layton and the Last Specter/Spectre's Call (Demo)
 	"BMT", // Shin Megami Tensei: Strange Journey
+	"YSL", // Sands of Destruction
 	"VSO", // Sonic Classic Collection
 	"AFZ", // Transformers: Autobots
 	"AFY", // Transformers: Decepticons

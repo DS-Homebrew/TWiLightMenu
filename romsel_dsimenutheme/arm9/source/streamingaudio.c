@@ -117,11 +117,11 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
         
     }
 
-    if (!sample_delay_count && fade_out && (fade_counter > 0)) {
+    /*if (!sample_delay_count && fade_out && (fade_counter > 0)) {
 	    // sprintf(debug_buf, "Fade i: %i", fade_counter);
         // nocashMessage(debug_buf);
         fade_counter--;
-    }
+    }*/
 
     
     #ifdef SOUND_DEBUG

@@ -1,12 +1,14 @@
 #include "sound.h"
+#include "tool/adpcm-xq.h"
 
 #include "graphics/themefilenames.h"
 #include "common/dsimenusettings.h"
-// #include "soundbank_bin.h"
+#include "common/flashcard.h"
 #include "streamingaudio.h"
 #include "string.h"
 #include "common/tonccpy.h"
 #include <algorithm>
+#include <sys/stat.h>
 
 #define SFX_STARTUP		0
 #define SFX_WRONG		1
@@ -43,8 +45,14 @@ extern char debug_buf[256];
 
 extern volatile u32 sample_delay_count;
 
-volatile char SFX_DATA[0x7D000] = {0};
+volatile char* SFX_DATA = (char*)NULL;
 mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
+
+extern bool fadeType;
+extern bool controlTopBright;
+extern bool controlBottomBright;
+extern void takeWhileMsg(void);
+extern bool screenFadedOut(void);
 
 SoundControl::SoundControl()
 	: stream_is_playing(false), stream_source(NULL), startup_sample_length(0)
@@ -72,7 +80,12 @@ SoundControl::SoundControl()
 		}
 	}
 
-	fread((void*)SFX_DATA, 1, sizeof(SFX_DATA), soundbank_file);
+	fseek(soundbank_file, 0, SEEK_END);
+	size_t sfxDataSize = ftell(soundbank_file);
+	fseek(soundbank_file, 0, SEEK_SET);
+
+	SFX_DATA = new char[sfxDataSize > 0x7D000 ? 0x7D000 : sfxDataSize];
+	fread((void*)SFX_DATA, 1, sfxDataSize, soundbank_file);
 
 	fclose(soundbank_file);
 
@@ -156,35 +169,121 @@ SoundControl::SoundControl()
 	bool loopableMusic = false;
 	loopingPoint = false;
 
+	mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/cache" : "fat:/_nds/TWiLightMenu/cache", 0777);
+	mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/cache/music" : "fat:/_nds/TWiLightMenu/cache/music", 0777);
+	std::string devicePath = sdFound() ? "sd:" : "fat:";
+
 	stream.sampling_rate = 16000;	 		// 16000Hz
+	stream.format = MM_STREAM_16BIT_MONO;  // select format
 
 	if (ms().theme == 4) {
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 	} else {
+		bool msg = false;
 		switch(ms().dsiMusic) {
-			case 5:
-				stream.sampling_rate = 22050;	 		// 22050Hz
-				stream_start_source = fopen(std::string(TFN_HBL_START_SOUND_BG).c_str(), "rb");
-				stream_source = fopen(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), "rb");
-				loopableMusic = true;
-				break;
-			case 4:
-				stream_source = fopen(std::string(TFN_CLASSIC_SOUND_BG).c_str(), "rb");
-				break;
-			case 2:
+			case 5: {
+				std::string startPath = (devicePath+TFN_HBL_START_SOUND_BG_CACHE);
+				if (access(startPath.c_str(), F_OK) != 0) {
+					msg = true;
+					controlTopBright = false;
+					takeWhileMsg();
+					fadeType = true; // Fade in from white
+					adpcm_main(std::string(TFN_HBL_START_SOUND_BG).c_str(), startPath.c_str(), true);
+				}
+				std::string loopPath = (devicePath+TFN_HBL_LOOP_SOUND_BG_CACHE);
+				if (access(loopPath.c_str(), F_OK) != 0) {
+					msg = true;
+					controlTopBright = false;
+					takeWhileMsg();
+					fadeType = true; // Fade in from white
+					adpcm_main(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true);
+				}
+				if (msg) {
+					fadeType = false;
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+					controlTopBright = true;
+				}
 				stream.sampling_rate = 44100;	 		// 44100Hz
-				stream_start_source = fopen(std::string(TFN_SHOP_START_SOUND_BG).c_str(), "rb");
-				stream_source = fopen(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), "rb");
+				stream.format = MM_STREAM_8BIT_STEREO;
+				stream_start_source = fopen(startPath.c_str(), "rb");
+				stream_source = fopen(loopPath.c_str(), "rb");
 				loopableMusic = true;
-				break;
+				break; }
+			case 4: {
+				std::string musicPath = (devicePath+TFN_CLASSIC_SOUND_BG_CACHE);
+				if (access(musicPath.c_str(), F_OK) != 0) {
+					controlTopBright = false;
+					takeWhileMsg();
+					fadeType = true; // Fade in from white
+
+					adpcm_main(std::string(TFN_CLASSIC_SOUND_BG).c_str(), musicPath.c_str(), false);
+
+					fadeType = false;
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+					controlTopBright = true;
+				}
+				stream.sampling_rate = 44100;	 		// 44100Hz
+				stream_source = fopen(musicPath.c_str(), "rb");
+				break; }
+			case 2: {
+				std::string startPath = (devicePath+TFN_SHOP_START_SOUND_BG_CACHE);
+				if (access(startPath.c_str(), F_OK) != 0) {
+					msg = true;
+					controlTopBright = false;
+					takeWhileMsg();
+					fadeType = true; // Fade in from white
+
+					adpcm_main(std::string(TFN_SHOP_START_SOUND_BG).c_str(), startPath.c_str(), true);
+				}
+				std::string loopPath = (devicePath+TFN_SHOP_LOOP_SOUND_BG_CACHE);
+				if (access(loopPath.c_str(), F_OK) != 0) {
+					msg = true;
+					controlTopBright = false;
+					takeWhileMsg();
+					fadeType = true; // Fade in from white
+
+					adpcm_main(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true);
+				}
+				if (msg) {
+					fadeType = false;
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+					controlTopBright = true;
+				}
+				stream.sampling_rate = 44100;	 		// 44100Hz
+				stream.format = MM_STREAM_8BIT_STEREO;
+				stream_start_source = fopen(startPath.c_str(), "rb");
+				stream_source = fopen(loopPath.c_str(), "rb");
+				loopableMusic = true;
+				break; }
 			case 3:
 				stream_source = fopen(std::string(TFN_SOUND_BG).c_str(), "rb");
 				if (stream_source) break; // fallthrough if stream_source fails.
 			case 1:
-			default:
-				stream.sampling_rate = 22050;	 		// 22050Hz
-				stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
-				break;
+			default: {
+				std::string musicPath = (devicePath+TFN_DEFAULT_SOUND_BG_CACHE);
+				if (access(musicPath.c_str(), F_OK) != 0) {
+					controlTopBright = false;
+					takeWhileMsg();
+					fadeType = true; // Fade in from white
+
+					adpcm_main(std::string(TFN_DEFAULT_SOUND_BG).c_str(), musicPath.c_str(), true);
+
+					fadeType = false;
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+					controlTopBright = true;
+				}
+				stream.sampling_rate = 32000;	 		// 32000Hz
+				stream.format = MM_STREAM_8BIT_STEREO;
+				stream_source = fopen(musicPath.c_str(), "rb");
+				break; }
 		}
 	}
 
@@ -193,7 +292,6 @@ SoundControl::SoundControl()
 
 	stream.buffer_length = 0x1000;	  			// should be adequate
 	stream.callback = on_stream_request;    
-	stream.format = MM_STREAM_16BIT_MONO;  // select format
 	stream.timer = MM_TIMER0;	    	   // use timer0
 	stream.manual = false;	      		   // auto filling
 
@@ -261,12 +359,13 @@ void SoundControl::stopStream() {
 }
 
 void SoundControl::fadeOutStream() {
-	fade_out = true;
+	//fade_out = true; // Bugged
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out on ARM7 side
 }
 
 void SoundControl::cancelFadeOutStream() {
-	fade_out = false;
-	fade_counter = FADE_STEPS;
+	//fade_out = false;
+	//fade_counter = FADE_STEPS;
 }
 
 void SoundControl::setStreamDelay(u32 delay) {
