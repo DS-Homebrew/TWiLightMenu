@@ -71,7 +71,7 @@ class Gif {
 
 	std::vector<Frame> _frames;
 	std::vector<u16> _gct; // In DS format
-	u16 _loopCount = 0;
+	u16 _loopCount = 0xFFFF;
 	bool _top = false;
 	bool _compressed = false;
 
