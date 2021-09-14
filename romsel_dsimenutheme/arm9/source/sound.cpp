@@ -261,9 +261,37 @@ SoundControl::SoundControl()
 				stream_source = fopen(loopPath.c_str(), "rb");
 				loopableMusic = true;
 				break; }
-			case 3:
-				stream_source = fopen(std::string(TFN_SOUND_BG).c_str(), "rb");
-				if (stream_source) break; // fallthrough if stream_source fails.
+			case 3: {
+				std::string musicPath = TFN_SOUND_BG;
+				std::string cachePath = TFN_SOUND_BG_CACHE;
+				if (access(musicPath.c_str(), F_OK) == 0) {
+					u8 wavFormat = 0;
+					u8 numChannels = 1;
+					stream_source = fopen(musicPath.c_str(), "rb");
+					fseek(stream_source, 0x14, SEEK_SET);
+					fread(&wavFormat, sizeof(u8), 1, stream_source);
+					fseek(stream_source, 0x16, SEEK_SET);
+					fread(&numChannels, sizeof(u8), 1, stream_source);
+					stream.format = numChannels == 2 ? MM_STREAM_8BIT_STEREO : MM_STREAM_16BIT_MONO;
+					fseek(stream_source, 0x18, SEEK_SET);
+					fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
+					fclose(stream_source);
+					if (access(cachePath.c_str(), F_OK) != 0 && wavFormat == 0x11) {
+						controlTopBright = false;
+						takeWhileMsg();
+						fadeType = true; // Fade in from white
+
+						adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2);
+
+						fadeType = false;
+						while (!screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+						controlTopBright = true;
+					}
+				}
+				stream_source = fopen(cachePath.c_str(), "rb");
+				if (stream_source) break; } // fallthrough if stream_source fails.
 			case 1:
 			default: {
 				std::string musicPath = (devicePath+TFN_DEFAULT_SOUND_BG_CACHE);
