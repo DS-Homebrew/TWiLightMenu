@@ -138,6 +138,12 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
+		if (!ms().secondaryDevice) {
+			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
+		}
+		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound()) {
+			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
+		}
 	} else {
 		if (ms().useBootstrap || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		if ((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice) {
@@ -782,8 +788,10 @@ void perGameSettings (std::string filename) {
 						break;
 					case 2:
 						perGameSettings_dsiMode--;
-						if ((perGameSettings_dsiMode == 1 && unitCode[CURPOS] == 0)
-						 || (perGameSettings_dsiMode == 2 && unitCode[CURPOS] > 0)) perGameSettings_dsiMode--;
+						if (!isHomebrew[CURPOS]) {
+							if ((perGameSettings_dsiMode == 1 && unitCode[CURPOS] == 0)
+							 || (perGameSettings_dsiMode == 2 && unitCode[CURPOS] > 0)) perGameSettings_dsiMode--;
+						}
 						if (perGameSettings_dsiMode < -1) perGameSettings_dsiMode = 2-isHomebrew[CURPOS];
 						break;
 					case 3:
@@ -864,8 +872,10 @@ void perGameSettings (std::string filename) {
 						break;
 					case 2:
 						perGameSettings_dsiMode++;
-						if ((perGameSettings_dsiMode == 1 && unitCode[CURPOS] == 0)
-						 || (perGameSettings_dsiMode == 2 && unitCode[CURPOS] > 0)) perGameSettings_dsiMode++;
+						if (!isHomebrew[CURPOS]) {
+							if ((perGameSettings_dsiMode == 1 && unitCode[CURPOS] == 0)
+							 || (perGameSettings_dsiMode == 2 && unitCode[CURPOS] > 0)) perGameSettings_dsiMode++;
+						}
 						if (perGameSettings_dsiMode > 2-isHomebrew[CURPOS]) perGameSettings_dsiMode = -1;
 						break;
 					case 3:
