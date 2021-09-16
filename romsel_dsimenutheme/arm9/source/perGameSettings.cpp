@@ -793,6 +793,9 @@ void perGameSettings (std::string filename) {
 							 || (perGameSettings_dsiMode == 2 && unitCode[CURPOS] > 0)) perGameSettings_dsiMode--;
 						}
 						if (perGameSettings_dsiMode < -1) perGameSettings_dsiMode = 2-isHomebrew[CURPOS];
+						if (!isHomebrew[CURPOS]) {
+							if (perGameSettings_dsiMode == 2 && unitCode[CURPOS] > 0) perGameSettings_dsiMode--;
+						}
 						break;
 					case 3:
 						if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode == 0 || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {

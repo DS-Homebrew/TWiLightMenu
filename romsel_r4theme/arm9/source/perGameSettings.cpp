@@ -746,6 +746,9 @@ void perGameSettings (std::string filename) {
 							 || (perGameSettings_dsiMode == 2 && unitCode > 0)) perGameSettings_dsiMode--;
 						}
 						if (perGameSettings_dsiMode < -1) perGameSettings_dsiMode = 2-isHomebrew;
+						if (!isHomebrew) {
+							if (perGameSettings_dsiMode == 2 && unitCode > 0) perGameSettings_dsiMode--;
+						}
 						break;
 					case 3:
 						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || unitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
