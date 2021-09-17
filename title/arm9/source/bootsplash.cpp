@@ -191,14 +191,14 @@ void bootSplashDSi(void) {
 			if (splash.waitingForInput()) {
 				if(!custom && healthSafety.paused())
 					healthSafety.unpause();
-				if(pressed) {
+				if(pressed || ms().dsiSplashAutoSkip) {
 					splash.resume();
 					mmEffectEx(&proceed);
 				}
 			}
 
 			if(healthSafety.waitingForInput()) {
-				if(pressed) {
+				if(pressed || ms().dsiSplashAutoSkip) {
 					healthSafety.resume();
 					mmEffectEx(&proceed);
 				}

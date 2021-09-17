@@ -124,6 +124,9 @@ bool Gif::load(const char *path, bool top, bool animate) {
 		}
 	}
 
+	// Set default loop count to 0, uninitialized default is 0xFFFF so it's infinite
+	_loopCount = 0;
+
 	Frame frame;
 	while (1) {
 		switch (fgetc(file)) {

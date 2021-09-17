@@ -240,7 +240,8 @@ class TWLSettings
     bool homebrewBootstrap;
     bool soundFreq;
     int dsiSplash;
-	int nintendoLogoColor;
+    bool dsiSplashAutoSkip;
+    int nintendoLogoColor;
     bool showlogo;
 
     std::string r4_theme;
