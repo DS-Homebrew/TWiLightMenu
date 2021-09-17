@@ -83,6 +83,7 @@ TWLSettings::TWLSettings()
     font = "default";
 
 	dsiSplash = isDSiMode();
+	dsiSplashAutoSkip = false;
 	nintendoLogoColor = 1;
     showlogo = true;
     autorun = false;
@@ -125,6 +126,7 @@ void TWLSettings::loadSettings()
     }
 
     dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
+    dsiSplashAutoSkip = settingsini.GetInt("SRLOADER", "DSI_SPLASH_AUTO_SKIP", dsiSplashAutoSkip);
     nintendoLogoColor = settingsini.GetInt("SRLOADER", "NINTENDO_LOGO_COLOR", nintendoLogoColor);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 

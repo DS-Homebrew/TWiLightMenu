@@ -1286,6 +1286,7 @@ int main(int argc, char **argv)
 	}
 	miscPage
 		.option(STR_DSISPLASH, STR_DESCRIPTION_DSISPLASH, Option::Int(&ms().dsiSplash), {STR_WITHOUT_HS, STR_WITH_HS, STR_CUSTOM_SPLASH, STR_HIDE}, {1, 2, 3, 0})
+		.option(STR_DSISPLASHAUTOSKIP, STR_DESCRIPTION_DSISPLASHAUTOSKIP, Option::Bool(&ms().dsiSplashAutoSkip), {STR_OFF, STR_ON}, {false, true})
 		.option(STR_NINTENDOLOGOCOLOR, STR_DESCRIPTION_NINTENDOLOGOCOLOR, Option::Int(&ms().nintendoLogoColor), {STR_RED, STR_BLUE, STR_MAGENTA, STR_GRAY}, {1, 2, 3, 0})
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false});
 
