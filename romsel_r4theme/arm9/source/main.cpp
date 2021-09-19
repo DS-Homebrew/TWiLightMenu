@@ -1723,9 +1723,9 @@ int main(int argc, char **argv) {
 				mkdir ("saves", 0777);
 
 				dsiWareSrlPath = std::string(argarray[0]);
-				dsiWarePubPath = romFolderNoSlash + "/saves/" + filename[secondaryDevice];
+				dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
 				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, getPubExtension());
-				dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename[secondaryDevice];
+				dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
 				dsiWarePrvPath = replaceAll(dsiWarePrvPath, typeToReplace, getPrvExtension());
 				if (!isArgv) {
 					romPath[secondaryDevice] = argarray[0];
