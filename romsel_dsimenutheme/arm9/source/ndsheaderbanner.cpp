@@ -25,6 +25,10 @@ bool checkDsiBinaries(FILE* ndsFile) {
 		return true;
 	}
 
+	if (ndsHeader.arm9iromOffset == 0 || ndsHeader.arm7iromOffset == 0) {
+		return false;
+	}
+
 	fseek(ndsFile, 0x8000, SEEK_SET);
 	fread(arm9Sig[0], sizeof(u32), 4, ndsFile);
 	fseek(ndsFile, ndsHeader.arm9iromOffset, SEEK_SET);

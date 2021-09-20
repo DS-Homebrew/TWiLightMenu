@@ -261,6 +261,10 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 				_hasExtendedBinaries = EFalse;
 			}
 		}
+		if (header.arm9iromOffset == 0 || header.arm7iromOffset == 0)
+		{
+			_hasExtendedBinaries = EFalse;
+		}
 	}
 
     ///////// saveInfo /////////
