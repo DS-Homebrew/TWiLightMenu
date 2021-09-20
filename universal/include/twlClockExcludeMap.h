@@ -30,6 +30,7 @@ static const char twlClockExcludeList[][4] = {
 	"AY9", // Mario & Sonic at the Olympic Games
 	"BZP", // Peppa Pig: Theme Park Fun
 	"AQW", // Puzzle Quest: Challenge of the Warlords
+	"BRJ", // Radiant Historia
 	"ASC", // Sonic Rush
 	"ASM", // Super Mario 64 DS
 	"COZ", // The Wizard of Oz: Beyond the Yellow Brick Road

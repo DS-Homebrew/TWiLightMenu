@@ -25,6 +25,8 @@ static const char asyncReadExcludeList[][4] = {
 	"BSD", // Lufia: Curse of the Sinistrals
 	"AY9", // Mario & Sonic at the Olympic Games
 	"V2G", // Mario vs. Donkey Kong: Mini-Land Mayhem!
+	"YZX", // Rockman ZX Advent/MegaMan ZX Advent
+	"CNS", // Naruto Shippuden: Naruto vs Sasuke
 	"DMP", // NOE Movie Player Volume 1
 	"BKI", // The Legend of Zelda: Spirit Tracks (Keeps AP-fix in effect)
 	"Y7S", // The Legend of Zelda: Spirit Tracks (Demo)
@@ -55,11 +57,13 @@ static const char asyncReadExcludeList[][4] = {
 	"C3J", // Professor Layton and the Unwound/Lost Future
 	"BLF", // Professor Layton and the Last Specter/Spectre's Call
 	"Y9B", // Professor Layton and the Last Specter/Spectre's Call (Demo)
+	"TDV", // Shin Megami Tensei: Devil Survivor 2
 	"BMT", // Shin Megami Tensei: Strange Journey
 	"YSL", // Sands of Destruction
 	"VSO", // Sonic Classic Collection
 	"AFZ", // Transformers: Autobots
 	"AFY", // Transformers: Decepticons
+	"AYG", // Yu-Gi-Oh! Nightmare Trabadour
 };
 
 #endif // ASYNCHREADEXCLUDEMAP_H
