@@ -18,7 +18,6 @@ static const char cardReadDMAExcludeList[][4] = {
 	"COL", // Mario & Sonic at the Olympic Winter Games
 	"AUG", // Need for Speed: Underground 2
 	"A2D", // New(er) Super Mario Bros. (DS)
-	"ARR", // Ridge Racer DS
 	"B8I", // Spider-Man: Edge of Time
 	"AST", // Star Wars: Episode III: Revenge of the Sith
 	"TAM", // The Amazing Spider-Man
