@@ -22,6 +22,7 @@ static const char asyncReadExcludeList[][4] = {
 	"BE8", // Inazuma Eleven 3: Lightning Bolt
 	"BOE", // Inazuma Eleven 3: Team Ogre Attacks!
 	"YLU", // Last Window: The Secret of Cape West
+	"BSD", // Lufia: Curse of the Sinistrals
 	"AY9", // Mario & Sonic at the Olympic Games
 	"V2G", // Mario vs. Donkey Kong: Mini-Land Mayhem!
 	"DMP", // NOE Movie Player Volume 1
@@ -38,6 +39,7 @@ static const char asyncReadExcludeList[][4] = {
 	"BVY", // LEGO Ninjago: The Videogame
 	"BZD", // LEGO Pirates of the Caribbean: The Video Game
 	"BL9", // LEGO Star Wars III: The Clone Wars
+	"YL2", // Luminous Arc 2
 	"AWV", // Nervous Brickdown
 	"B2K", // Ni no Kuni: The Jet Black Mage
 	"IRB", // Pokemon Black Version (Keeps AP-fix in effect)
