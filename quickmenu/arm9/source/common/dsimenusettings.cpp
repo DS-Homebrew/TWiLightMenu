@@ -174,6 +174,7 @@ void TWLSettings::loadSettings()
     fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
     colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
     blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
+    dsiWareExploit = settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);

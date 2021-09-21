@@ -64,6 +64,7 @@ int fps = 60;
 bool macroMode = false;
 int colorMode = 0;
 int blfLevel = 0;
+int dsiWareExploit = 0;
 
 extern void ClearBrightness();
 extern bool lcdSwapped;
@@ -231,6 +232,7 @@ void LoadSettings(void) {
 	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
+    dsiWareExploit = settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
 	titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
 	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", 1);
@@ -1576,7 +1578,7 @@ int main(int argc, char **argv) {
 								argarray.at(0) = (char*)bootstrapPath.c_str();
 
 								const char* gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-								if (arm7SCFGLocked) {
+								if (arm7SCFGLocked && dsiWareExploit == 7) {
 									gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
 								}
 
@@ -2491,7 +2493,7 @@ int main(int argc, char **argv) {
 						useNDSB = true;
 
 						const char* gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-						if (isDSiMode() && arm7SCFGLocked) {
+						if (isDSiMode() && arm7SCFGLocked && dsiWareExploit == 7) {
 							gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
 						}
 

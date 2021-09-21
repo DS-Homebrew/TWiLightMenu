@@ -189,6 +189,7 @@ public:
 	bool macroMode;
 	int colorMode;
 	int blfLevel;
+    int dsiWareExploit;
 	bool sdRemoveDetect;
 	bool showMicroSd;
 	bool gbar2DldiAccess;
