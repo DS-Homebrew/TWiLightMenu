@@ -60,6 +60,7 @@ static const char asyncReadExcludeList[][4] = {
 	"TDV", // Shin Megami Tensei: Devil Survivor 2
 	"BMT", // Shin Megami Tensei: Strange Journey
 	"YSL", // Sands of Destruction
+	"CS3", // Sonic & Sega All-Stars Racing
 	"VSO", // Sonic Classic Collection
 	"AFZ", // Transformers: Autobots
 	"AFY", // Transformers: Decepticons
