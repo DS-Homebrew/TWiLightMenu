@@ -81,13 +81,13 @@ int main(int argc, char **argv) {
 		consoleDemoInit();
 
 		if (err == 1) {
-			printf ("fat:/_nds/TWiLightMenu/\nmain.srldr not found.\n");
+			iprintf ("fat:/_nds/TWiLightMenu/\nmain.srldr not found.\n");
 		} else {
-			printf ("Start failed. Error %i\n", err);
+			iprintf ("Start failed. Error %i\n", err);
 		}
 	}
 
-	printf(isRegularDS ? "\nPress B to power off." : "\nPress B to return to menu.");
+	iprintf(isRegularDS ? "\nPress B to power off." : "\nPress B to return to menu.");
 
 	while (1) {
 		scanKeys();

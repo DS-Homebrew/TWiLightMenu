@@ -335,8 +335,8 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 
 #ifdef CYCLODSI
 void runNds9i (const char* filename, bool dldiPatchNds) {
-	consoleClear();
-	printf ("Now loading...\n");
+	//consoleClear();
+	//iprintf ("Now loading...\n");
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(__DSiHeader, 1, 0x1000, ndsFile);
@@ -399,7 +399,7 @@ void runNds9i (const char* filename, bool dldiPatchNds) {
 	VRAM_I_CR = 0;
 	REG_POWERCNT = 0x820F;
 
-	memcpy(__NDSHeader, __DSiHeader, 0x170);
+	tonccpy(__NDSHeader, __DSiHeader, 0x170);
 
 	resetARM7((u32)__DSiHeader->ndshdr.arm7destination);
 
