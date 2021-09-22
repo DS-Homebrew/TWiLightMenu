@@ -1602,8 +1602,6 @@ int main(int argc, char **argv)
 
 	keysSetRepeat(25, 5);
 
-	runGraphicIrq();
-
 	*(u32*)0x02FFFDFC = 0; // Reset TWLCFG location
 
 	u32 softResetParamsBak = 0;
@@ -1713,6 +1711,7 @@ int main(int argc, char **argv)
 	 && (keysHeld() & KEY_X)
 	 && (keysHeld() & KEY_Y))
 	{
+		runGraphicIrq();
 		resetSettingsPrompt();
 	}
 
@@ -1725,6 +1724,7 @@ int main(int argc, char **argv)
 
 	if (!ms().regionSet || (!dsiFeatures() && ms().gameRegion < 0)) {
 		if (!dsiFeatures() && ms().gameRegion < 0) ms().gameRegion = 0;
+		runGraphicIrq();
 		regionSelect();
 	}
 
@@ -1933,6 +1933,7 @@ int main(int argc, char **argv)
 			else if (ms().consoleModel < 1 || ms().consoleModel > 2
 				  || bs().consoleModel < 1 || bs().consoleModel > 2)
 			{
+				runGraphicIrq();
 				consoleModelSelect();			// There's no NAND or SD card
 			}
 		}
@@ -2005,6 +2006,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!softResetParamsFound && ms().dsiSplash && (REG_SCFG_EXT!=0&&ms().consoleModel<2 ? fifoGetValue32(FIFO_USER_01) != 0x01 : !(*(u32*)0x02000000 & BIT(0)))) {
+		runGraphicIrq();
 		bootSplashInit();
 		if (REG_SCFG_EXT != 0 && ms().consoleModel < 2) fifoSendValue32(FIFO_USER_01, 10);
 	}
@@ -2064,6 +2066,7 @@ int main(int argc, char **argv)
 			soundBankLoaded = true;
 		}
 
+		runGraphicIrq();
 		loadTitleGraphics();
 		fadeType = true;
 		for (int i = 0; i < 15; i++)

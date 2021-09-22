@@ -226,7 +226,11 @@ void LoadBMP(void) {
 	}
 }
 
+static bool graphicIrqRunning = false;
+
 void runGraphicIrq(void) {
+	if (graphicIrqRunning) return;
+
 	*(u16*)(0x0400006C) |= BIT(14);
 	*(u16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
@@ -238,6 +242,8 @@ void runGraphicIrq(void) {
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
+
+	graphicIrqRunning = true;
 }
 
 void loadTitleGraphics() {
