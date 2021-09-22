@@ -46,6 +46,8 @@ u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data);
 
 static bool isDSLite = false;
 
+volatile int rebootTimer = 0;
+
 /*static bool doFrameRateHackAgain = false;
 static bool runFrameRateHack = false;
 static u32 sRateCounter = 0;
@@ -183,6 +185,15 @@ int main() {
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
+
+		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
+			if (rebootTimer == 60*2) {
+				ReturntoDSiMenu();	// Reboot, if fat init code is stuck in a loop
+				*(u32*)(0x2FFFD0C) = 0;
+			}
+			rebootTimer++;
+		}
+
 		/*if (fifoGetValue32(FIFO_USER_05) == 1) {
 			SetYtrigger(202);
 			REG_DISPSTAT |= DISP_YTRIGGER_IRQ;

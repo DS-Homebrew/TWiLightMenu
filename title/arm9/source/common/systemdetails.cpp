@@ -32,15 +32,17 @@ SystemDetails::SystemDetails()
 
 void SystemDetails::initFilesystem(const char *nitrofsPath, const char *runningPath)
 {
+	extern const DISC_INTERFACE __my_io_dsisd;
+
     if (_fatInitOk) {
         return;
 	}
 
-	extern const DISC_INTERFACE __my_io_dsisd;
-
+	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
 	fatMountSimple("sd", &__my_io_dsisd);
 	fatMountSimple("fat", dldiGetInternal());
     _fatInitOk = (sdFound() || flashcardFound());
+	*(u32*)(0x2FFFD0C) = 0;
 	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
     int ntr = nitroFSInit(nitrofsPath);
     _nitroFsInitOk = (ntr == 1);

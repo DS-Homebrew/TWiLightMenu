@@ -1589,14 +1589,14 @@ int main(int argc, char **argv)
 	/*extern char *fake_heap_end;
 	*fake_heap_end = 0;*/
 
+	defaultExceptionHandler();
 	sys().initFilesystem("/_nds/TWiLightMenu/main.srldr");
 	ms();
-	defaultExceptionHandler();
 
 	if (!sys().fatInitOk())
 	{
 		consoleDemoInit();
-		iprintf("fatInitDefault failed!");
+		iprintf("FAT init failed!");
 		stop();
 	}
 
