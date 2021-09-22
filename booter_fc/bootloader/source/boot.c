@@ -202,6 +202,7 @@ void resetMemory_ARM7 (void)
 	} else {
 		toncset((void*)0x02004000, 0, dsiMode ? 0xFF0000 : 0x3F0000);
 	}
+	*(u32*)(0x2FFFD9C) = 0;	// Clear exception handler
 
 	REG_IE = 0;
 	REG_IF = ~0;
@@ -251,6 +252,21 @@ void loadBinary_ARM7 (u32 fileCluster)
 		*(u32*)(TWL_HEAD+0x24) = 0;
 		dmaCopyWords(3, (void*)TWL_HEAD, (void*)NDS_HEAD, 0x170);
 		*(u32*)(TWL_HEAD+0x24) = TEMP_ARM9_START_ADDRESS;
+
+		if (dsiMode && (*(u8*)(TWL_HEAD+0x12) > 0))
+		{
+			//char* ARM9i_SRC = (char*)*(u32*)(TWL_HEAD+0x1C0);
+			char* ARM9i_DST = (char*)*(u32*)(TWL_HEAD+0x1C8);
+			u32 ARM9i_LEN = *(u32*)(TWL_HEAD+0x1CC);
+			//char* ARM7i_SRC = (char*)*(u32*)(TWL_HEAD+0x1D0);
+			char* ARM7i_DST = (char*)*(u32*)(TWL_HEAD+0x1D8);
+			u32 ARM7i_LEN = *(u32*)(TWL_HEAD+0x1DC);
+
+			if (ARM9i_LEN)
+				tonccpy(ARM9i_DST, (char*)0x02C00000, ARM9i_LEN);
+			if (ARM7i_LEN)
+				tonccpy(ARM7i_DST, (char*)0x02C80000, ARM7i_LEN);
+		}
 
 		if (isDSi)
 			toncset((void*)0x02800000, 0, 0x500000);

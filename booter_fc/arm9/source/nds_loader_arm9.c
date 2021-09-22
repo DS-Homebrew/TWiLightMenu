@@ -121,12 +121,8 @@ static addr_t quickFind (const data_t* data, const data_t* search, size_t dataLe
 }
 
 // Normal DLDI uses "\xED\xA5\x8D\xBF Chishm"
-// Bootloader string is different to avoid being patched
-#ifdef CYCLODSI
-data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Different to a normal DLDI file
-#else
+// Bootloader string is different to avoid being patched#ifdef CYCLODSI#else
 static data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Different to a normal DLDI file
-#endif
 
 #define DEVICE_TYPE_DLDI 0x49444C44
 
@@ -147,12 +143,6 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 
 	size_t dldiFileSize = 0;
 	
-	#ifdef CYCLODSI
-	if (isDSiMode()) {
-		dldiMagicLoaderString[0]--;
-	}
-	#endif
-
 	// Find the DLDI reserved space in the file
 	patchOffset = quickFind (binData, dldiMagicLoaderString, binSize, sizeof(dldiMagicLoaderString));
 
@@ -334,76 +324,25 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 }
 
 #ifdef CYCLODSI
-void runNds9i (const char* filename, bool dldiPatchNds) {
+void runNds9i (const char* filename) {
 	//consoleClear();
 	//iprintf ("Now loading...\n");
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(__DSiHeader, 1, 0x1000, ndsFile);
 	fseek(ndsFile, __DSiHeader->ndshdr.arm9romOffset, SEEK_SET);
-	fread(__DSiHeader->ndshdr.arm9destination, 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
+	fread((void*)0x02800000, 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
 	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
-	fread(__DSiHeader->ndshdr.arm7destination, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
-	if (isDSiMode()) {
-		if (__DSiHeader->arm9ibinarySize > 0) {
-			fseek(ndsFile, (u32)__DSiHeader->arm9iromOffset, SEEK_SET);
-			fread(__DSiHeader->arm9idestination, 1, __DSiHeader->arm9ibinarySize, ndsFile);
-		}
-		if (__DSiHeader->arm7ibinarySize > 0) {
-			fseek(ndsFile, (u32)__DSiHeader->arm7iromOffset, SEEK_SET);
-			fread(__DSiHeader->arm7idestination, 1, __DSiHeader->arm7ibinarySize, ndsFile);
-		}
+	fread((void*)0x02B80000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
+	if (__DSiHeader->arm9ibinarySize > 0) {
+		fseek(ndsFile, (u32)__DSiHeader->arm9iromOffset, SEEK_SET);
+		fread((void*)0x02C00000, 1, __DSiHeader->arm9ibinarySize, ndsFile);
+	}
+	if (__DSiHeader->arm7ibinarySize > 0) {
+		fseek(ndsFile, (u32)__DSiHeader->arm7iromOffset, SEEK_SET);
+		fread((void*)0x02C80000, 1, __DSiHeader->arm7ibinarySize, ndsFile);
 	}
 	fclose(ndsFile);
-
-	if(dldiPatchNds) {
-		// Patch the loader with a DLDI for the card
-		if (!dldiPatchLoader ((data_t*)__DSiHeader->ndshdr.arm9destination, __DSiHeader->ndshdr.arm9binarySize, true)) {
-			return;
-		}
-	}
-
-	irqDisable(IRQ_ALL);
-
- 	register int i;
-  
-	//clear out ARM9 DMA channels
-	for (i=0; i<4; i++) {
-		DMA_CR(i) = 0;
-		DMA_SRC(i) = 0;
-		DMA_DEST(i) = 0;
-		TIMER_CR(i) = 0;
-		TIMER_DATA(i) = 0;
-	}
-
-	VRAM_CR = (VRAM_CR & 0xffff0000) | 0x00008080 ;
-	
-	vu16 *mainregs = (vu16*)0x04000000;
-	vu16 *subregs = (vu16*)0x04001000;
-	
-	for (i=0; i<43; i++) {
-		mainregs[i] = 0;
-		subregs[i] = 0;
-	}
-	
-	REG_DISPSTAT = 0;
-
-	VRAM_A_CR = 0;
-	VRAM_B_CR = 0;
-	VRAM_C_CR = 0;
-	VRAM_D_CR = 0;
-	VRAM_E_CR = 0;
-	VRAM_F_CR = 0;
-	VRAM_G_CR = 0;
-	VRAM_H_CR = 0;
-	VRAM_I_CR = 0;
-	REG_POWERCNT = 0x820F;
-
-	tonccpy(__NDSHeader, __DSiHeader, 0x170);
-
-	resetARM7((u32)__DSiHeader->ndshdr.arm7destination);
-
-	swiSoftReset(); 
 }
 #endif
 
@@ -455,11 +394,11 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 
 	#ifdef CYCLODSI
 	if (isDSiMode()) {
-		runNds9i(filename, true);
+		runNds9i(filename);
 	}
 	#endif
 
-	bool loadFromRam = runNds9(filename);
+	bool loadFromRam = (runNds9(filename) || (isDSiMode() && access("sd:/", F_OK) != 0));
 	
 	bool havedsiSD = (argv[0][0]=='s' && argv[0][1]=='d');
 	installBootStub(havedsiSD);
