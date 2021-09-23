@@ -1251,8 +1251,6 @@ int main(int argc, char **argv) {
 		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
 
-	langInit();
-
 	std::string filename;
 
 	fifoWaitValue32(FIFO_USER_06);
@@ -1262,6 +1260,9 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
+
+	langInit();
+
 	if (theme == 6) {
 		extern int screenBrightness;
 		screenBrightness = 31;
