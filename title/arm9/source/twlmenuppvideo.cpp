@@ -975,7 +975,7 @@ void twlMenuVideo(void) {
 	}
 	fclose(videoFrameFile);
 
-	free(twlTextBuffer);
+	delete[] twlTextBuffer;
 
 	for (int i = 0; i < (60 * 2)+30; i++)
 	{
