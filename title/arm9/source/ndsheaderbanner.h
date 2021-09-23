@@ -91,13 +91,26 @@ typedef struct {
 	u32 debugRomDestination;	//!< debug RAM destination.
 	u32 offset_0x16C;			//reserved?
 
-	u8 zero[0x40];
+	u8 zero[0x10];
+	u32 mbk1;
+	u32 mbk2;
+	u32 mbk3;
+	u32 mbk4;
+	u32 mbk5;
+	u32 a9mbk6;
+	u32 a9mbk7;
+	u32 a9mbk8;
+	u32 a7mbk6;
+	u32 a7mbk7;
+	u32 a7mbk8;
+	u32 mbk9;
 	u32 region;
 	u32 accessControl;
 	u32 arm7SCFGSettings;
 	u16 dsi_unk1;
 	u8 dsi_unk2;
 	u8 dsi_flags;
+
 	u32 arm9iromOffset;			//!< offset of the arm9 binary in the nds file.
 	u32 arm9iexecuteAddress;
 	u32 arm9idestination;		//!< destination address to where the arm9 binary should be copied.

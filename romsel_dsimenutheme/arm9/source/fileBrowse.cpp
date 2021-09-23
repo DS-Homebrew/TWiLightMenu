@@ -75,6 +75,7 @@ extern bool dbox_showIcon;
 extern bool dbox_selectMenu;
 
 extern bool applaunch;
+extern bool dsModeForced;
 
 extern int vblankRefreshCounter;
 
@@ -1130,7 +1131,6 @@ bool dsiBinariesMissingMsg(const char *filename) {
 		snd().updateStream();
 		swiWaitForVBlank();
 		if (pressed & KEY_Y) {
-			extern bool dsModeForced;
 			dsModeForced = true;
 			proceedToLaunch = true;
 			pressed = 0;
@@ -1156,7 +1156,8 @@ bool dsiBinariesMissingMsg(const char *filename) {
 	return proceedToLaunch;
 }
 
-void donorRomMsg(const char *filename) {
+bool donorRomMsg(const char *filename) {
+	bool proceedToLaunch = false;
 	clearText();
 	updateText(false);
 	snd().playWrong();
@@ -1198,11 +1199,14 @@ void donorRomMsg(const char *filename) {
 		case 51:
 			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center);
 			break;
+		case 52:
+			printSmall(false, 0, yPos, !isDSiWare[CURPOS] ? STR_DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE : STR_DONOR_ROM_MSG_SDK5TWLONLY, Alignment::center);
+			break;
 	}
-	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
+	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), ((requiresDonorRom[CURPOS] == 52 && !isDSiWare[CURPOS]) ? STR_Y_DS_MODE_B_BACK : STR_B_BACK), Alignment::center);
 	updateText(false);
 	int pressed = 0;
-	do {
+	while (1) {
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -1213,17 +1217,37 @@ void donorRomMsg(const char *filename) {
 		drawCurrentDate();
 		snd().updateStream();
 		swiWaitForVBlank();
-	} while (!(pressed & KEY_A));
+		if (requiresDonorRom[CURPOS] == 52 && !isDSiWare[CURPOS] && (pressed & KEY_Y)) {
+			dsModeForced = true;
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_B) {
+			proceedToLaunch = false;
+			pressed = 0;
+			break;
+		}
+	}
 	clearText();
+	
+	showdialogbox = false;
 	if (ms().theme == 5) {
 		dbox_showIcon = false;
 	}
 	if (ms().theme == 4) {
 		snd().playLaunch();
+		updateText(false);
 	} else {
-		showdialogbox = false;
+		clearText();
+		updateText(false);
+		for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
+			snd().updateStream();
+			swiWaitForVBlank();
+		}
 	}
-	updateText(false);
+
+	return proceedToLaunch;
 }
 
 bool checkForCompatibleGame(const char *filename) {
@@ -2405,36 +2429,40 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isDSiWare[CURPOS] && ((!isDSiMode() && !sdFound()) || (isHomebrew[CURPOS] && ms().consoleModel >= 2)
-						|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()))
+				} else if (isDSiWare[CURPOS] && (!isDSiMode() || (isHomebrew[CURPOS] && ms().consoleModel >= 2)
+						|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && ms().dsiWareExploit == 7))
 				) {
 					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {
 					int hasAP = 0;
 					bool proceedToLaunch = true;
 					bool useBootstrapAnyway = (ms().useBootstrap || !ms().secondaryDevice);
-					if (useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
-					 &&	isHomebrew[CURPOS] == 0)
+					if (useBootstrapAnyway && bnrRomType[CURPOS] == 0 && isHomebrew[CURPOS] == 0)
 					{
 						proceedToLaunch = checkForCompatibleGame(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						if (proceedToLaunch && requiresDonorRom[CURPOS]) {
 							const char* pathDefine = "DONOR_NDS_PATH";
-							if (requiresDonorRom[CURPOS]==20) {
+							if (requiresDonorRom[CURPOS] == 20) {
 								pathDefine = "DONORE2_NDS_PATH";
-							} else if (requiresDonorRom[CURPOS]==2) {
+							} else if (requiresDonorRom[CURPOS] == 2) {
 								pathDefine = "DONOR2_NDS_PATH";
-							} else if (requiresDonorRom[CURPOS]==3) {
+							} else if (requiresDonorRom[CURPOS] == 3) {
 								pathDefine = "DONOR3_NDS_PATH";
-							} else if (requiresDonorRom[CURPOS]==51) {
+							} else if (requiresDonorRom[CURPOS] == 51) {
 								pathDefine = "DONORTWL_NDS_PATH";
+							} else if (requiresDonorRom[CURPOS] == 52) {
+								pathDefine = "DONORTWLONLY_NDS_PATH";
 							}
 							std::string donorRomPath;
-							bootstrapinipath = ((!ms().secondaryDevice || (dsiFeatures() && sdFound())) ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+							bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";
+							loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+							int bstrap_dsiMode = (perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode);
 							CIniFile bootstrapini(bootstrapinipath);
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-							if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
-								proceedToLaunch = false;
-								donorRomMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+							if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
+							&& (requiresDonorRom[CURPOS] == 20 || requiresDonorRom[CURPOS] == 2 || requiresDonorRom[CURPOS] == 3
+							 || requiresDonorRom[CURPOS] == 51 || (requiresDonorRom[CURPOS] == 52 && (isDSiWare[CURPOS] || bstrap_dsiMode > 0)))) {
+								proceedToLaunch = donorRomMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 							}
 						}
 						if (proceedToLaunch && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
@@ -2553,9 +2581,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						dbox_showIcon = false;
 					}
 
-					if (proceedToLaunch && useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS] &&
-						isHomebrew[CURPOS] == 0 &&
-						checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
+					if (proceedToLaunch && useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
+					 && !dsModeForced && isHomebrew[CURPOS] == 0
+					 && checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name))
+					{
 						bool hasDsiBinaries = true;
 						if (!sys().arm7SCFGLocked() || memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 							FILE *f_nds_file = fopen(

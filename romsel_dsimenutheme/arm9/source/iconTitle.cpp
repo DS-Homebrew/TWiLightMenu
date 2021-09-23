@@ -373,6 +373,10 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			romVersion[num] = ndsHeader.romversion;
 			unitCode[num] = ndsHeader.unitCode;
 			headerCRC[num] = ndsHeader.headerCRC16;
+			a7mbk6[num] = ndsHeader.a7mbk6;
+			if (a7mbk6[num] == (hasCycloDSi ? 0x080037C0 : 0x00403000) && isDSiMode() && sys().arm7SCFGLocked()) {
+				requiresDonorRom[num] = hasCycloDSi ? 51 : 52;
+			} else
 			switch (ndsHeader.arm7binarySize) {
 				case 0x22B40:
 				case 0x22BCC:
@@ -448,7 +452,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
 		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
-		&& (!dsiFeatures() || sys().arm7SCFGLocked())) {
+		&& (!dsiFeatures() || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()))) {
 			isDSiWare[num] = false;
 		}
 

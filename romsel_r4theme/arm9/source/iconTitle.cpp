@@ -755,6 +755,10 @@ void getGameInfo(bool isDir, const char* name)
 		bool usingB4DS = (!dsiFeatures() && secondaryDevice);
 		bool hasCycloDSi = (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 		romVersion = ndsHeader.romversion;
+		a7mbk6 = ndsHeader.a7mbk6;
+		if (a7mbk6 == (hasCycloDSi ? 0x080037C0 : 0x00403000) && isDSiMode() && arm7SCFGLocked) {
+			requiresDonorRom = hasCycloDSi ? 51 : 52;
+		} else
 		switch (ndsHeader.arm7binarySize) {
 			case 0x22B40:
 			case 0x22BCC:
@@ -829,7 +833,7 @@ void getGameInfo(bool isDir, const char* name)
 
 		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
 		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
-		&& (!dsiFeatures() || arm7SCFGLocked)) {
+		&& (!dsiFeatures() || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && arm7SCFGLocked))) {
 			isDSiWare = false;
 		}
 
