@@ -188,6 +188,11 @@ autoboot:
 	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi TTMenu.DAT
 	mv TTMenu.DAT "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/TTMenu.DAT"
 
+	#### M3 DS Real (for YSMenu reset)
+	cp booter_fc.nds SRESET.DAT
+	dlditool flashcart_specifics/DLDI/M3DS_DLDI_based_on_r4tf_v2.dldi SRESET.DAT
+	mv SRESET.DAT "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SRESET.DAT"
+
 $(TARGET).nds:	makearm7_fc makearm7_cyclodsi makearm9_fc makearm9_cyclodsi
 	# simple nds srl without dsi extended header
 	ndstool -c $(TARGET)_fc.nds       -7 $(TARGET)_fc.arm7.elf       -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
