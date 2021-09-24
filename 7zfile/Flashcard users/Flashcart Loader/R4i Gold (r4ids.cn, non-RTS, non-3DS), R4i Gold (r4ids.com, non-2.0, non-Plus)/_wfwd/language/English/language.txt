@@ -59,8 +59,8 @@ title = Confirm
 text = File can not be recovered after delete, continue delete "%s"?
 
 [do not delete directory]
-title = Warning
-text = The directory is not empty, can not delete it.
+title = Error
+text = Deleting operation aborted.
 
 [restore save fail]
 title = Error
@@ -209,6 +209,7 @@ protection = Bypass Protection
 linkage = Link with GBA
 sd save = Save directly to SD
 homebrew reset = Reset in Homebrew
+reset hotkey = Reset Hotkey
 
 [switches]
 Enable = on
@@ -236,6 +237,7 @@ filelist style = Filelist style
 oldschool = Old school
 modern = Modern
 internal = Internal
+small = Small icons
 animation = Animation
 12 hour = 12-hour clock
 
@@ -274,5 +276,30 @@ flash memory = Flash Memory
 microsd card = microSD Card
 slot2 card = Slot2 Card
 favorites = Favorites
+
+[hotkeys]
+l-r-a-b-↓ = l-r-a-b-↓
+l-r-b-y-↓ = l-r-b-y-↓
+l-r-a-b-x-y = l-r-a-b-x-y
+b-y-touch = b-y-touch
+start-r-touch = start-r-touch
+
+[updater]
+update = Update
+update ? = Do you want to update?
+updater = Update module
+menu = Main module
+cheats = Cheats DB
+connecting = Connecting
+failed = failed
+updated = updated
+fresh = already updated
+stop = Do you want to stop transfer?
+download = Downloaded %d bytes
+unpack = Unpacking
+
+[crc32]
+crc32 = CRC32
+calculation = Calculating CRC32
 
 [end]
