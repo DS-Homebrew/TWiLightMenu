@@ -53,10 +53,12 @@ int main(int argc, char **argv) {
 	REG_SCFG_CLK = 0x85;					// TWL clock speed
 	REG_SCFG_EXT = 0x8307F100;				// Extended memory, extended VRAM, etc.
 
+	#ifndef CYCLODSI
 	if (REG_SCFG_EXT == 0x8307F100) {
 		tonccpy((char*)0x02000000, (char*)0x02400000, 0x4000);	// Grab TWLCFG backup, including boot splash flag
 		*(u32*)0x02000000 |= BIT(0);
 	}
+	#endif
 
 	bool isRegularDS = true;
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
