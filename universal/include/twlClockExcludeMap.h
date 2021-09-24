@@ -6,6 +6,7 @@ static const char twlClockExcludeList[][4] = {
 	"CLP", // Club Pengion: Elite Penguin Force
 	"CY9", // Club Penguin: EPF: Herbert's Revenge
 	"ATD", // Clubhouse Games
+	"YGD", // Diary Girl
 	"AKY", // Etrian Odyssey
 	"YIK", // Etrian Odyssey II: Heroes of Lagaard
 	"YGX", // Grand Theft Auto: Chinatown Wars
