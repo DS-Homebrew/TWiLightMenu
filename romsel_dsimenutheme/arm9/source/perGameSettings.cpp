@@ -433,10 +433,10 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
-		if (ms().dsiWareBooter || ms().consoleModel > 0) {
+		if (ms().dsiWareBooter || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0) {
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
-			if (ms().consoleModel >= 2) {
+			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
@@ -489,7 +489,7 @@ void perGameSettings (std::string filename) {
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
-			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2) {
+			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
