@@ -159,6 +159,13 @@ int main() {
 	//fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
 	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
 	fifoSendValue32(FIFO_USER_04, isDSLite);
+	if (isDSiMode() || REG_SCFG_EXT != 0) {
+		// Check for 3DS
+		u8 byteBak = my_i2cReadRegister(0x4A, 0x71);
+		my_i2cWriteRegister(0x4A, 0x71, 0xD2);
+		fifoSendValue32(FIFO_USER_05, my_i2cReadRegister(0x4A, 0x71));
+		my_i2cWriteRegister(0x4A, 0x71, byteBak);
+	}
 	//fifoSendValue32(FIFO_USER_04, *CPUID2);
 	//fifoSendValue32(FIFO_USER_05, *CPUID);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));

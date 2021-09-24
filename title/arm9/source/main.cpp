@@ -22,9 +22,7 @@
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "tool/stringtool.h"
-#include "consolemodelselect.h"
 #include "graphics/graphics.h"
-#include "nandio.h"
 #include "twlmenuppvideo.h"
 #include "language.h"
 #include "graphics/fontHandler.h"
@@ -1914,23 +1912,14 @@ int main(int argc, char **argv)
 		if (isDevConsole)
 		{
 			// Check for Nintendo 3DS console
-			if (isDSiMode() && sdFound())
+			bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
+			int resultModel = 1+is3DS;
+			if (ms().consoleModel != resultModel || bs().consoleModel != resultModel)
 			{
-				bool is3DS = !nandio_startup();
-				int resultModel = 1+is3DS;
-				if (ms().consoleModel != resultModel || bs().consoleModel != resultModel)
-				{
-					ms().consoleModel = resultModel;
-					bs().consoleModel = resultModel;
-					ms().saveSettings();
-					bs().saveSettings();
-				}
-			}
-			else if (ms().consoleModel < 1 || ms().consoleModel > 2
-				  || bs().consoleModel < 1 || bs().consoleModel > 2)
-			{
-				runGraphicIrq();
-				consoleModelSelect();			// There's no NAND or SD card
+				ms().consoleModel = resultModel;
+				bs().consoleModel = resultModel;
+				ms().saveSettings();
+				bs().saveSettings();
 			}
 		}
 		else
