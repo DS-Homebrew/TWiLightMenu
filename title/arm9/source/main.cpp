@@ -474,7 +474,10 @@ void lastRunROM()
 						consoleDemoInit();
 						iprintf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
 						iprintf ("\n");
-						if (ms().consoleModel >= 2) {
+						if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+							iprintf ("If this takes a while, turn off\n");
+							iprintf ("the POWER, and try again.\n");
+						} else if (dsiFeatures() && ms().consoleModel >= 2) {
 							iprintf ("If this takes a while,\n");
 							iprintf ("press HOME, and press B.\n");
 						} else {
@@ -733,7 +736,7 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel >= 2)
+		if (ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0)
 		{
 			if (ms().homebrewBootstrap) {
 				unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
@@ -774,7 +777,10 @@ void lastRunROM()
 					consoleDemoInit();
 					iprintf("Creating public save file...\n");
 					iprintf ("\n");
-					if (ms().consoleModel >= 2) {
+					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+						iprintf ("If this takes a while, turn off\n");
+						iprintf ("the POWER, and try again.\n");
+					} else if (ms().consoleModel >= 2) {
 						iprintf ("If this takes a while,\n");
 						iprintf ("press HOME, and press B.\n");
 					} else {
@@ -817,7 +823,10 @@ void lastRunROM()
 					consoleDemoInit();
 					iprintf("Creating private save file...\n");
 					iprintf ("\n");
-					if (ms().consoleModel >= 2) {
+					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+						iprintf ("If this takes a while, turn off\n");
+						iprintf ("the POWER, and try again.\n");
+					} else if (ms().consoleModel >= 2) {
 						iprintf ("If this takes a while,\n");
 						iprintf ("press HOME, and press B.\n");
 					} else {
