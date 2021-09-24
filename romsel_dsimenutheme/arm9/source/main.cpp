@@ -1091,7 +1091,7 @@ int main(int argc, char **argv) {
 					if (ms().theme == 5) displayGameIcons = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						// Display nothing
+						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
@@ -1139,7 +1139,7 @@ int main(int argc, char **argv) {
 					if (ms().theme == 5) displayGameIcons = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						// Display nothing
+						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
@@ -1190,7 +1190,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (ms().secondaryDevice && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel < 2)) && sdFound()) {
+				if (ms().secondaryDevice && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel == 0)) && sdFound()) {
 					clearText();
 					printSmall(false, 0, 20, ms().consoleModel >= 2 ? STR_BARSTOPPED_PRESSHOME : STR_BARSTOPPED_CLOSELID, Alignment::center);
 					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
@@ -1247,7 +1247,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel >= 2) {
+				if (ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0) {
 					CheatCodelist codelist;
 					u32 gameCode, crc32;
 
@@ -1286,7 +1286,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if ((ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel >= 2) && !ms().homebrewBootstrap) {
+				if ((ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 
@@ -1486,7 +1486,7 @@ int main(int argc, char **argv) {
 							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 								if (ms().theme == 5) displayGameIcons = false;
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-									// Display nothing
+									printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
 								} else if (dsiFeatures() && ms().consoleModel >= 2) {
 									printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 								} else {

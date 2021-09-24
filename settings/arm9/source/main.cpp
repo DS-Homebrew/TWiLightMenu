@@ -1029,7 +1029,7 @@ int main(int argc, char **argv)
 				{true, false});
 	}
 
-	if ((isDSiMode() || sdFound()) && ms().consoleModel < 2)
+	if ((isDSiMode() || sdFound()) && ms().consoleModel == 0)
 	{
 		if (sdFound()) {
 			gamesPage

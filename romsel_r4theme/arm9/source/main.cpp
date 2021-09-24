@@ -1804,7 +1804,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
-				if (secondaryDevice && (dsiWareToSD || (!dsiWareBooter && consoleModel < 2)) && sdFound()) {
+				if (secondaryDevice && (dsiWareToSD || (!dsiWareBooter && consoleModel == 0)) && sdFound()) {
 					clearText();
 					dialogboxHeight = 0;
 					showdialogbox = true;
@@ -1831,7 +1831,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel >= 2) {
+				if (dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel > 0) {
 					CheatCodelist codelist;
 					u32 gameCode, crc32;
 
@@ -1870,7 +1870,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if ((dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel >= 2) && !homebrewBootstrap) {
+				if ((dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel > 0) && !homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 
