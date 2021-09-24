@@ -79,7 +79,7 @@ autoboot:
 	rm -f _DSMENU.nds
 	
 	#### Gateway Blue specific
-	ndstool -c _DSMENU.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf -h "flashcart_specifics/headers/gateway_header.bin" -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool -c _DSMENU.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g "####" "##" "R4IT" -b icon.bmp "TWiLight Menu++;RocketRobz"
 	dlditool flashcart_specifics/DLDI/ace3ds_sd.dldi _DSMENU.nds
 	r4denc -k 0x4002 _DSMENU.nds _DSMENU.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Gateway Blue"
