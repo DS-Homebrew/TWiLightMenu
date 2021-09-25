@@ -184,10 +184,9 @@ autoboot:
 	mv dstwo.nds "../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds"
 
 	#### SuperCard DSONE
-	ndstool -c SCFW.SC -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g ENG0 -b icon.bmp "TWiLight Menu++;RocketRobz"
-	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi SCFW.SC
-	cp SCFW.SC "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/SCFW.SC"
-	mv SCFW.SC "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/MSFORSC.NDS"
+	cp booter_fc.nds TTMenu.DAT
+	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi TTMenu.DAT
+	mv TTMenu.DAT "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/TTMenu.DAT"
 
 	#### M3 DS Real (for YSMenu reset)
 	cp booter_fc.nds SRESET.DAT
