@@ -4,6 +4,8 @@
 static const char cardReadDMAExcludeList[][4] = {
 	"AY6", // Bangai-O Spirits
 	"AWD", // Diddy Kong Racing
+	"A3V", // Digimon World: Dawn
+	"A6R", // Digimon World: Dusk
 	"YV5", // Dragon Quest V: Hand of the Heavenly Bride
 	"APR", // Feel the Magic: XY-XX
 	"AFF", // Final Fantasy III
