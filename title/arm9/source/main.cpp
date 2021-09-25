@@ -624,7 +624,9 @@ void lastRunROM()
 				err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
 			} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 					 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
-					 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
+					 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
+					 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)
+					 || (memcmp(io_dldi_data->friendlyName, "M3DS DLDI", 9) == 0)) {
 				CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 				fcPath = replaceAll(ms().romPath[ms().previousUsedDevice], "fat:/", slashchar);
 				fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
