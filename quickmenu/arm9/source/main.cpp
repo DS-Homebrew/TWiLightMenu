@@ -1919,7 +1919,7 @@ int main(int argc, char **argv) {
 
 				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename[ms().secondaryDevice];
-				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
+				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(gameTid[ms().secondaryDevice], "Z2E", 3) == 0 && ms().secondaryDevice && (!ms().dsiWareToSD || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0))) ? getSavExtension() : getPubExtension());
 				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename[ms().secondaryDevice];
 				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
 				ms().homebrewBootstrap = isHomebrew[ms().secondaryDevice];

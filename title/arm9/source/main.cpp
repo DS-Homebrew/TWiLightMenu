@@ -761,17 +761,17 @@ void lastRunROM()
 				RemoveTrailingSlashes(romFolderNoSlash);
 				mkdir ("saves", 0777);
 
-				ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
-				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
-				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
-				ms().saveSettings();
-
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");
 
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
+
+				ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
+				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
+				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && ms().previousUsedDevice && (!ms().dsiWareToSD || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0))) ? getSavExtension() : getPubExtension());
+				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
+				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
+				ms().saveSettings();
 
 				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					consoleDemoInit();

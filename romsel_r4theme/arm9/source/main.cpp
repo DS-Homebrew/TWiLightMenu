@@ -1726,9 +1726,16 @@ int main(int argc, char **argv) {
 				RemoveTrailingSlashes(romFolderNoSlash);
 				mkdir ("saves", 0777);
 
+				sNDSHeaderExt NDSHeader;
+
+				FILE *f_nds_file = fopen(filename.c_str(), "rb");
+
+				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+				fclose(f_nds_file);
+
 				dsiWareSrlPath = std::string(argarray[0]);
 				dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, getPubExtension());
+				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && secondaryDevice && (!dsiWareToSD || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0))) ? getSavExtension() : getPubExtension());
 				dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
 				dsiWarePrvPath = replaceAll(dsiWarePrvPath, typeToReplace, getPrvExtension());
 				if (!isArgv) {
@@ -1738,13 +1745,6 @@ int main(int argc, char **argv) {
 				launchType[secondaryDevice] = 3;
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
-
-				sNDSHeaderExt NDSHeader;
-
-				FILE *f_nds_file = fopen(filename.c_str(), "rb");
-
-				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
-				fclose(f_nds_file);
 
 				if ((getFileSize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
