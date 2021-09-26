@@ -450,104 +450,7 @@ void drawIconA26(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, a26Ico
 void drawIconPCE(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, pceIcon); }
 
 void loadFixedBanner(bool isSlot1) {
-	/* Banner fixes start here */
-	u32 bannersize = 0;
-
-	//Check reserved area before loadFixedBanner
-	int total = 0;
-	for (int i = 0; i < 8; i++)
-	{
-		if (ndsBanner.reserved2[i] == 0)
-			total++;
-	}
-
-	for (int i = 2047; i > 2039; i--)
-	{
-		if (ndsBanner.reserved2[i] == 0)
-			total++;
-	}
-
-	if (total == 16)
-		return;
-
-	/*FILE* bannerFile = fopen("sd:/_nds/TWiLightMenu/slot1.bnr", "wb");
-	bannersize = NDS_BANNER_SIZE_ORIGINAL;
-	fwrite(&ndsBanner, 1, bannersize, bannerFile);
-	fclose(bannerFile);*/
-
-	// Alice in Wonderland (U)
-	if (ndsBanner.crc[3] == 0xB9EA) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Alice in Wonderland (U).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Fire Emblem - Heroes of Light and Shadow
-		if (ndsBanner.crc[3] == 0xD8F4) {
-		// Use fixed banner.
-		FILE *fixedBannerFile =
-		    fopen("nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Black Version
-	    if (ndsBanner.crc[0] != 0x4683 && ndsBanner.crc[0] != 0xA251 && ndsBanner.crc[3] == 0xEE5D) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Blaze Black (Clean Version)
-	    if (ndsBanner.crc[0] == 0x4683 && ndsBanner.crc[3] == 0xEE5D) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Clean Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Blaze Black (Full Version)
-	    if (ndsBanner.crc[0] == 0xA251 && ndsBanner.crc[3] == 0xEE5D) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Full Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon White Version
-	    if (ndsBanner.crc[0] != 0x77F4 && ndsBanner.crc[0] != 0x9CA8 && ndsBanner.crc[3] == 0x0C88) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Volt White (Clean Version)
-	    if (ndsBanner.crc[0] == 0x77F4 && ndsBanner.crc[3] == 0x0C88) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Clean Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Volt White (Full Version)
-	    if (ndsBanner.crc[0] == 0x9CA8 && ndsBanner.crc[3] == 0x0C88) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Full Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Black Version 2
-	    if (ndsBanner.crc[3] == 0x2CA3) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version 2.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon White Version 2
-	    if (ndsBanner.crc[3] == 0x3B18) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version 2.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else
-		if (isSlot1 && memcmp(ndsHeader.gameCode, "ALXX", 4) == 0) {
+	if (isSlot1 && memcmp(ndsHeader.gameCode, "ALXX", 4) == 0) {
 		u16 alxxBannerCrc = 0;
 		cardRead(0x75600, &arm9StartSig, 0x10);
 		cardRead(0x174602, &alxxBannerCrc, sizeof(u16));
@@ -560,8 +463,7 @@ void loadFixedBanner(bool isSlot1) {
 			// It's a SuperCard DSTWO, so use correct banner.
 			//cardRead(0x1843400, &ndsBanner, NDS_BANNER_SIZE_ORIGINAL);
 			FILE *fixedBannerFile = fopen("nitro:/fixedbanners/SuperCard DSTWO.bnr", "rb");
-			bannersize = NDS_BANNER_SIZE_ORIGINAL;
-			fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ORIGINAL, fixedBannerFile);
 			fclose(fixedBannerFile);
 		}
 	}
@@ -839,8 +741,11 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 		// banner sequence
 		if(ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
-			grabBannerSequence(num);
-			bnriconisDSi[num] = true;
+			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
+			if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
+				grabBannerSequence(num);
+				bnriconisDSi[num] = true;
+			}
 		}
 	}
 }

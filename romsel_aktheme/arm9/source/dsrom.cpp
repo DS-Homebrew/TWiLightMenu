@@ -29,7 +29,6 @@
 #include "common/module_params.h"
 #include "common/ndsheader.h"
 #include "common/dsargv.h"
-#include "common/fixedbanners.h"
 
 #include "nds_banner_bin.h"
 #include "unknown_nds_banner_bin.h"
@@ -300,12 +299,12 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         // Otherwise, if we read an invalid amount of bytes, read a DS size header.
         if ((fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, sizeof(banner), f)) == sizeof(banner)) || (fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, NDS_BANNER_SIZE_ORIGINAL, f)) == NDS_BANNER_SIZE_ORIGINAL))
         {
+			u16 dsiCrc16 = swiCRC16(0xFFFF, banner.dsi_icon, 0x1180);
             // Check for DSi Banner.
-            if (bannerSize == NDS_BANNER_SIZE_DSi && banner.version == NDS_BANNER_VER_DSi)
+            if (bannerSize == NDS_BANNER_SIZE_DSi && banner.version == NDS_BANNER_VER_DSi && ndsBanner.crc[3] == dsiCrc16)
             {
                 dbg_printf("DSi Banner Found!");
                 _isBannerAnimated = ETrue;
-                fixBanner(&banner);
                 _dsiIcon = std::make_unique<tDSiAnimatedIcon>();
 
                 tonccpy(_dsiIcon->icon_frames, banner.dsi_icon, sizeof(banner.dsi_icon));
