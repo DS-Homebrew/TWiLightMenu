@@ -6,6 +6,7 @@
 #include "io_sc_common.h"
 #include "myDSiMode.h"
 #include "exptools.h"
+#include "nand/nandio.h"
 
 #include "bootsplash.h"
 #include "bootstrapsettings.h"
@@ -1669,37 +1670,36 @@ int main(int argc, char **argv)
 		}
 	}
 
+	bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
+
 	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 	if (REG_SCFG_EXT!=0) {
-		u16 cfgCrc = swiCRC16(0xFFFF, (void*)0x02000400, 0x128);
-		u16 cfgCrcFromFile = 0;
-
-		char twlCfgPath[256];
-		sprintf(twlCfgPath, "%s:/_nds/TWiLightMenu/16KBcache.bin", sdFound() ? "sd" : "fat");
-
-		FILE* twlCfg = fopen(twlCfgPath, "rb");
-		if (twlCfg) {
-			fseek(twlCfg, 0x4000, SEEK_SET);
-			fread((u16*)&cfgCrcFromFile, sizeof(u16), 1, twlCfg);
-		}
-		if (useTwlCfg) {
-			if (cfgCrcFromFile != cfgCrc) {
-				*(u32*)(0x02000000) = 0; // Clear soft-reset params
+		if (!useTwlCfg && !isDSiMode() && sdFound() && sys().arm7SCFGLocked() && !is3DS) {
+			if (fatMountSimple("nand", &io_dsi_nand)) {
+				FILE* twlCfg = fopen("nand:/shared1/TWLCFG0.dat", "rb");
+				fseek(twlCfg, 0x88, SEEK_SET);
+				fread((void*)0x02000400, 1, 0x128, twlCfg);
 				fclose(twlCfg);
-				// Cache first 16KB containing TWLCFG, in case some homebrew overwrites it
-				twlCfg = fopen(twlCfgPath, "wb");
-				fwrite((void*)0x02000000, 1, 0x4000, twlCfg);
-				fwrite((u16*)&cfgCrc, sizeof(u16), 1, twlCfg);
+
+				// Reconstruct TWLCFG
+				u8* twlCfgOffset = (u8*)0x02000400;
+				readFirmware(0x1FD, twlCfgOffset+0x1E0, 1); // WlFirm Type (1=DWM-W015, 2=W024, 3=W028)
+				toncset32(twlCfgOffset+0x1E4, 0x500400, 1); // WlFirm RAM vars
+				toncset32(twlCfgOffset+0x1E8, 0x500000, 1); // WlFirm RAM base
+				toncset32(twlCfgOffset+0x1EC, 0x02E000, 1); // WlFirm RAM size
+				*(u16*)(twlCfgOffset+0x1E2) = swiCRC16(0xFFFF, twlCfgOffset+0x1E4, 0xC); // WlFirm CRC16
+
+				useTwlCfg = ((*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 			}
-		} else if (twlCfg) {
-			if (cfgCrc != cfgCrcFromFile) {
-				// Reload first 16KB from cache
-				fseek(twlCfg, 0, SEEK_SET);
-				fread((void*)0x02000000, 1, 0x4000, twlCfg);
+		} else {
+			if (useTwlCfg) {
+				*(u32*)(0x02000000) = 0; // Clear soft-reset params
+				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
+			} else {
+				tonccpy((void*)0x02000000, (void*)0x0377C000, 0x4000); // Restore from DSi WRAM
 				useTwlCfg = ((*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 			}
 		}
-		fclose(twlCfg);
 	}
 
 	*(u32*)(0x02000000) = softResetParamsBak;
@@ -1923,7 +1923,6 @@ int main(int argc, char **argv)
 		if (isDevConsole)
 		{
 			// Check for Nintendo 3DS console
-			bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
 			int resultModel = 1+is3DS;
 			if (ms().consoleModel != resultModel || bs().consoleModel != resultModel)
 			{
