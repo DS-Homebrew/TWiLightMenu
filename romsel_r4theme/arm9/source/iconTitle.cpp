@@ -784,6 +784,8 @@ void getGameInfo(bool isDir, const char* name)
 				grabBannerSequence();
 				bnriconisDSi = true;
 			}
+		} else {
+			bnriconisDSi = false;
 		}
 	}
 }
@@ -943,7 +945,7 @@ void iconUpdate(bool isDir, const char* name)
 		fclose(fp);
 
 		// icon
-		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if (bnriconisDSi) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, false);

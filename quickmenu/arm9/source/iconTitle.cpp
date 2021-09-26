@@ -841,7 +841,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 		// this is an nds/app file!
 
 		// icon
-		if(ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if (bnriconisDSi[num]) {
 			loadIcon(num, ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
 			loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);

@@ -452,6 +452,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				grabBannerSequence(num);
 				bnriconisDSi[num] = true;
 			}
+		} else {
+			bnriconisDSi[num] = false;
 		}
 	}
 }
@@ -525,7 +527,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
-		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if (bnriconisDSi[num]) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], spriteIdx, true);
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, spriteIdx, false);
