@@ -1681,7 +1681,7 @@ int main(int argc, char **argv)
 				fread((void*)0x02000400, 1, 0x128, twlCfg);
 				fclose(twlCfg);
 
-				// Reconstruct TWLCFG
+				// WiFi RAM data
 				u8* twlCfgOffset = (u8*)0x02000400;
 				readFirmware(0x1FD, twlCfgOffset+0x1E0, 1); // WlFirm Type (1=DWM-W015, 2=W024, 3=W028)
 				toncset32(twlCfgOffset+0x1E4, 0x500400, 1); // WlFirm RAM vars
