@@ -90,7 +90,7 @@ extern bool cardEjected;
 
 int boxArtType[2] = {0};
 
-//bool moveIconUp[7] = {false};
+bool moveIconUp[7] = {false};
 int iconYpos[7] = {25, 73, 73, 121, 175, 170, 175};
 
 bool showdialogbox = false;
@@ -127,6 +127,10 @@ void ClearBrightness(void) {
 	swiWaitForVBlank();
 }
 
+bool screenFadedIn(void) { return (screenBrightness == 0); }
+
+bool screenFadedOut(void) { return (screenBrightness > 24); }
+
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
 	u16 mode = 1 << 14;
@@ -136,7 +140,7 @@ void SetBrightness(u8 screen, s8 bright) {
 		bright = -bright;
 	}
 	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 void frameRateHandler(void) {
@@ -353,7 +357,17 @@ void vBlankHandler()
 		if (controlTopBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
 		glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
-		if (startMenu) {
+		if (whiteScreen) {
+			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+			if (showProgressBar) {
+				int barXpos = 31;
+				int barYpos = 169;
+				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, RGB15(23, 23, 23));
+				if (progressBarLength > 0) {
+					glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, RGB15(0, 0, 31));
+				}
+			}
+		} else if (startMenu) {
 			if (isDSiMode() && cardEjected) {
 				//glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
 				//glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
@@ -458,22 +472,11 @@ void vBlankHandler()
 				}
 			}
 		}
-		if (showdialogbox) {
+		/*if (showdialogbox) {
 			glBoxFilled(15, 79, 241, 129+(dialogboxHeight*8), RGB15(0, 0, 0));
 			glBoxFilledGradient(16, 80, 240, 94, RGB15(0, 0, 31), RGB15(0, 0, 15), RGB15(0, 0, 15), RGB15(0, 0, 31));
 			glBoxFilled(16, 96, 240, 128+(dialogboxHeight*8), RGB15(31, 31, 31));
-		}
-		if (whiteScreen) {
-			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-			if (showProgressBar) {
-				int barXpos = 31;
-				int barYpos = 169;
-				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, RGB15(23, 23, 23));
-				if (progressBarLength > 0) {
-					glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, RGB15(0, 0, 31));
-				}
-			}
-		}
+		}*/
 		updateText(false);
 	  }
 	  glEnd2D();
@@ -482,6 +485,14 @@ void vBlankHandler()
 		frameDelay = 0;
 		frameDelayEven = !frameDelayEven;
 		renderFrame = false;
+	}
+
+	if (!whiteScreen) {
+		for (int i = 0; i < 7; i++) {
+			if (moveIconUp[i]) {
+				iconYpos[i] -= 6;
+			}
+		}
 	}
 }
 

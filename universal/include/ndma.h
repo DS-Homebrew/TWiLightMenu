@@ -12,22 +12,16 @@ static inline
     \param size the size in bytes of the data to copy.  Will be truncated to the nearest word (4 bytes)
 */
 void ndmaCopyWords(uint8 ndmaSlot, const void* src, void* dest, uint32 size) {
-	u32 addr[5] = {0x4004104, 0x4004108, 0x4004110, 0x4004114, 0x400411C};
-	if (ndmaSlot > 0)
-	for (int a = 0; a < 5; a++) {
-		addr[a] += 0x1C*(ndmaSlot+1);
-	}
+	*(vu32*)((u32)0x4004104+0x1C*ndmaSlot) = (u32)src;
+	*(vu32*)((u32)0x4004108+0x1C*ndmaSlot) = (u32)dest;
 
-	*(vu32*)addr[0] = (u32)src;
-	*(vu32*)addr[1] = (u32)dest;
+	*(vu32*)((u32)0x4004110+0x1C*ndmaSlot) = size/4;	
 
-	*(vu32*)addr[2] = size/4;	
+    *(vu32*)((u32)0x4004114+0x1C*ndmaSlot) = 0x1;
 
-    *(vu32*)addr[3] = 0x1;
+	*(vu32*)((u32)0x400411C+0x1C*ndmaSlot) = 0x90070000;
 
-	*(vu32*)addr[4] = 0x90070000;
-
-	while ((*(vu32*)(addr[4]) & BIT(31)) == 0x80000000);
+	while ((*(vu32*)((u32)0x400411C+0x1C*ndmaSlot) & BIT(31)) == 0x80000000);
 }
 
 static inline
@@ -40,20 +34,14 @@ This function returns immediately after starting the transfer.
 \param size the size in bytes of the data to copy.  Will be truncated to the nearest word (4 bytes)
 */
 void ndmaCopyWordsAsynch(uint8 ndmaSlot, const void* src, void* dest, uint32 size) {
-	u32 addr[5] = {0x4004104, 0x4004108, 0x4004110, 0x4004114, 0x400411C};
-	if (ndmaSlot > 0)
-	for (int a = 0; a < 5; a++) {
-		addr[a] += 0x1C*(ndmaSlot+1);
-	}
+	*(vu32*)((u32)0x4004104+0x1C*ndmaSlot) = (u32)src;
+	*(vu32*)((u32)0x4004108+0x1C*ndmaSlot) = (u32)dest;
 
-	*(vu32*)addr[0] = (u32)src;
-	*(vu32*)addr[1] = (u32)dest;
+	*(vu32*)((u32)0x4004110+0x1C*ndmaSlot) = size/4;	
 
-	*(vu32*)addr[2] = size/4;	
+    *(vu32*)((u32)0x4004114+0x1C*ndmaSlot) = 0x1;
 
-    *(vu32*)addr[3] = 0x1;
-
-	*(vu32*)addr[4] = 0x90070000;
+	*(vu32*)((u32)0x400411C+0x1C*ndmaSlot) = 0x90070000;
 }
 
 static inline 

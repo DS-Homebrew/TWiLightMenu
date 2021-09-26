@@ -2694,10 +2694,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							updateText(false);
 
 							fadeSpeed = false; // Slow fade speed
-							for (int i = 0; i < 5; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
-							}
 						}
 						if (ms().theme == 5) {
 							currentBg = 0;
@@ -2705,23 +2701,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						} else if (ms().theme != 4) {
 							fadeType = false;		  // Fade to white
 							snd().fadeOutStream();
-							for (int i = 0; i < 60; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
-							}
-
-							mmEffectCancelAll();
-							snd().stopStream();
 
 							// Clear screen with white
 							rocketVideo_playVideo = false;
-							whiteScreen = true;
-							tex().clearTopScreen();
 						}
-						clearText();
-						updateText(false);
 
 						if(ms().updateRecentlyPlayedList) {
+							while (ms().theme != 5 && !screenFadedOut()) {
+								swiWaitForVBlank();
+							}
+							clearText();
 							printLarge(false, 0, (ms().theme == 4 ? 72 : 88), STR_NOW_SAVING, Alignment::center);
 							updateText(false);
 							if (ms().theme == 5) {
@@ -2767,12 +2756,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							} else if (ms().theme != 4) {
 								showProgressIcon = false;
 								fadeType = false;	   // Fade to white
-								for (int i = 0; i < 25; i++) {
-									swiWaitForVBlank();
-								}
 							}
-							clearText();
-							updateText(false);
 						}
 
 						// Return the chosen file

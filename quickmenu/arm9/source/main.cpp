@@ -1546,8 +1546,8 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
+							moveIconUp[0] = true;
 							for (int i = 0; i < 50; i++) {
-								iconYpos[0] -= 6;
 								swiWaitForVBlank();
 							}
 							loadROMselect();
@@ -1555,13 +1555,13 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
-							for (int i = 0; i < 50; i++) {
-								iconYpos[0] -= 6;
-								swiWaitForVBlank();
-							}
+							moveIconUp[0] = true;
 							if (romFound[1]) {
 								applaunch = true;
 							} else {
+								for (int i = 0; i < 50; i++) {
+									swiWaitForVBlank();
+								}
 								loadROMselect();
 							}
 						  }
@@ -1571,8 +1571,8 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
+							moveIconUp[0] = true;
 							for (int i = 0; i < 50; i++) {
-								iconYpos[0] -= 6;
 								swiWaitForVBlank();
 							}
 							ms().slot1Launched = true;
@@ -1594,8 +1594,8 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
+							moveIconUp[1] = true;
 							for (int i = 0; i < 50; i++) {
-								iconYpos[1] -= 6;
 								swiWaitForVBlank();
 							}
 
@@ -1660,8 +1660,8 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
+							moveIconUp[2] = true;
 							for (int i = 0; i < 50; i++) {
-								iconYpos[2] -= 6;
 								swiWaitForVBlank();
 							}
 
@@ -1728,8 +1728,8 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
+							moveIconUp[3] = true;
 							for (int i = 0; i < 50; i++) {
-								iconYpos[3] -= 6;
 								swiWaitForVBlank();
 							}
 							loadROMselect();
@@ -1737,8 +1737,8 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
+							moveIconUp[3] = true;
 							for (int i = 0; i < 50; i++) {
-								iconYpos[3] -= 6;
 								swiWaitForVBlank();
 							}
 							if (romFound[0]) {
@@ -1753,8 +1753,8 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
+							moveIconUp[3] = true;
 							for (int i = 0; i < 50; i++) {
-								iconYpos[3] -= 6;
 								swiWaitForVBlank();
 							}
 							gbaSwitch();
@@ -1774,8 +1774,8 @@ int main(int argc, char **argv) {
 						showCursor = false;
 						fadeType = false;	// Fade to white
 						mmEffectEx(&snd_launch);
+						moveIconUp[5] = true;
 						for (int i = 0; i < 50; i++) {
-							iconYpos[5] -= 6;
 							swiWaitForVBlank();
 						}
 
@@ -1795,8 +1795,8 @@ int main(int argc, char **argv) {
 					showCursor = false;
 					fadeType = false;	// Fade to white
 					mmEffectEx(&snd_launch);
+					moveIconUp[6] = true;
 					for (int i = 0; i < 50; i++) {
-						iconYpos[6] -= 6;
 						swiWaitForVBlank();
 					}
 					if (!isDSiMode()) {
@@ -1839,12 +1839,6 @@ int main(int argc, char **argv) {
 		// Launch the item
 
 		if (applaunch) {
-			// Clear screen with white
-			whiteScreen = true;
-			fadeSpeed = true;
-			controlTopBright = false;
-			clearText();
-
 			// Delete previously launched DSiWare copied from flashcard to SD
 			if (!ms().gotosettings) {
 				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {
@@ -1933,9 +1927,13 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
-				whiteScreen = true;
-
 				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+					whiteScreen = true;
+					fadeSpeed = true;
+					controlTopBright = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
@@ -1971,6 +1969,12 @@ int main(int argc, char **argv) {
 				}
 
 				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
+					while (!fadeType && !screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+					whiteScreen = true;
+					fadeSpeed = true;
+					controlTopBright = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
@@ -2005,12 +2009,15 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
-				if (fadeType) {
-					fadeType = false;	// Fade to white
-					for (int i = 0; i < 25; i++) swiWaitForVBlank();
-				}
+				fadeType = false;	// Fade to white
 
 				if (ms().secondaryDevice && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel == 0)) && sdFound()) {
+					while (!fadeType && !screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+					whiteScreen = true;
+					fadeSpeed = true;
+					controlTopBright = false;
 					clearText();
 					printSmall(false, 0, 20, ms().consoleModel >= 2 ? STR_TAKEWHILE_PRESSHOME : STR_TAKEWHILE_CLOSELID, Alignment::center);
 					printSmall(false, 0, 86, STR_NOW_COPYING_DATA, Alignment::center);
@@ -2025,10 +2032,10 @@ int main(int argc, char **argv) {
 						fcopy(ms().dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 
 					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
 					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
+						for (int i = 0; i < 25; i++) swiWaitForVBlank();
 						clearText();
 						printSmall(false, 0, 8, STR_RESTART_AFTER_SAVE, Alignment::center);
 						fadeType = true;	// Fade in from white
@@ -2120,6 +2127,10 @@ int main(int argc, char **argv) {
 					);
 					bootstrapini.SaveIniFile(bootstrapinipath);
 
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 					bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
@@ -2167,6 +2178,10 @@ int main(int argc, char **argv) {
 				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0)
 				{
 					rename(ms().dsiWarePrvPath.c_str(), prvpathUl.c_str());
+				}
+
+				while (!screenFadedOut()) {
+					swiWaitForVBlank();
 				}
 
 				unlaunchRomBoot(ms().secondaryDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath.c_str());
@@ -2262,8 +2277,12 @@ int main(int argc, char **argv) {
 							}
 
 							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
+								while (!screenFadedOut()) {
+									swiWaitForVBlank();
+								}
+								whiteScreen = true;
+								fadeSpeed = true; // Fast fading
 								clearText();
-								ClearBrightness();
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
 								} else if (dsiFeatures() && ms().consoleModel >= 2) {
@@ -2272,6 +2291,8 @@ int main(int argc, char **argv) {
 									printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 								}
 								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
+
+								fadeType = true; // Fade in from white
 
 								if (orgsavesize > 0) {
 									fsizeincrease(savepath.c_str(), sdFound() ? "sd:/_nds/TWiLightMenu/temp.sav" : "fat:/_nds/TWiLightMenu/temp.sav", savesize);
@@ -2286,6 +2307,7 @@ int main(int argc, char **argv) {
 								clearText();
 								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_SAVE_CREATED : STR_SAVE_EXPANDED, Alignment::center);
 								for (int i = 0; i < 30; i++) swiWaitForVBlank();
+								fadeType = false; // Fade out
 							}
 						}
 
@@ -2371,6 +2393,10 @@ int main(int argc, char **argv) {
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
 
+						while (!screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+
 						if (dsiFeatures() || !ms().secondaryDevice) {
 							SetWidescreen(filename[ms().secondaryDevice].c_str());
 						}
@@ -2391,7 +2417,6 @@ int main(int argc, char **argv) {
 						char text[64];
 						snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 						clearText();
-						ClearBrightness();
 						printSmall(false, 4, 4, text);
 						if (err == 1) {
 							if(ms().homebrewBootstrap == true) {
@@ -2400,21 +2425,29 @@ int main(int argc, char **argv) {
 								printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 							}
 						}
+						fadeType = true; // Fade in
 						stop();
 					} else {
 						ms().launchType[ms().secondaryDevice] = 1;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
+
+						while (!screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+
 						loadGameOnFlashcard(argarray[0], true);
 					}
 				} else {
-					if (isDSiMode() || !ms().secondaryDevice) {
-						SetWidescreen(filename[ms().secondaryDevice].c_str());
-					}
 					ms().homebrewHasWide = (isHomebrew[ms().secondaryDevice] && (gameTid[ms().secondaryDevice][0] == 'W' || romVersion[ms().secondaryDevice] == 0x57));
 					ms().launchType[ms().secondaryDevice] = 2;
 					ms().previousUsedDevice = ms().secondaryDevice;
 					ms().saveSettings();
+
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+
 					if (!isDSiMode() && !ms().secondaryDevice) {
 						ntrStartSdGame();
 					}
@@ -2556,11 +2589,14 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = (ms().showGba == 1) ? 11 : 1;
 
 					if (ms().showGba == 1) {
+						while (!screenFadedOut()) {
+							swiWaitForVBlank();
+						}
 						clearText();
-						ClearBrightness();
 						if (*(u16*)(0x020000C0) == 0x5A45) {
 							printSmall(false, 0, 88, STR_PLEASE_WAIT, Alignment::center);
 						}
+						fadeType = true; // Fade in
 
 						showProgressBar = true;
 						progressBarLength = 0;
@@ -2829,6 +2865,11 @@ int main(int argc, char **argv) {
 				}
 
 				ms().saveSettings();
+
+				while (!screenFadedOut()) {
+					swiWaitForVBlank();
+				}
+
 				if (!isDSiMode() && !ms().secondaryDevice && !extention(filename[ms().secondaryDevice], ".plg")) {
 					ntrStartSdGame();
 				}
@@ -2840,11 +2881,11 @@ int main(int argc, char **argv) {
 				char text[64];
 				snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 				clearText();
-				ClearBrightness();
 				printSmall(false, 4, 4, text);
 				if (err == 1 && useNDSB) {
 					printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
 				}
+				fadeType = true; // Fade in
 				stop();
 
 				while(argarray.size() !=0 ) {
