@@ -87,6 +87,7 @@ const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char16_t hiyaNdsPath[] = u"sdmc:/hiya.dsi";
 char launcherPath[256];
 
+bool dsiWramAccess = false;
 bool arm7SCFGLocked = false;
 int consoleModel = 0;
 /*	0 = Nintendo DSi (Retail)
@@ -1254,8 +1255,15 @@ int main(int argc, char **argv) {
 
 	std::string filename;
 
+	if (isDSiMode()) {
+		u32 wordBak = *(vu32*)0x03700000;
+		*(vu32*)0x03700000 = 0x414C5253;
+		dsiWramAccess = *(vu32*)0x03700000 == 0x414C5253;
+		*(vu32*)0x03700000 = wordBak;
+	}
+
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 	fifoSendValue32(FIFO_USER_07, 0);

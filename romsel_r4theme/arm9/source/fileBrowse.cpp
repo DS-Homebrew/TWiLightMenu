@@ -79,6 +79,7 @@ extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern int consoleModel;
 extern bool isRegularDS;
+extern bool dsiWramAccess;
 extern bool arm7SCFGLocked;
 extern bool smsGgInRam;
 
@@ -636,6 +637,22 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 	return proceedToLaunch;
 }
 
+bool gameCompatibleMemoryPit(const char* filename) {
+	FILE *f_nds_file = fopen(filename, "rb");
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	fclose(f_nds_file);
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(incompatibleGameListMemoryPit)/sizeof(incompatibleGameListMemoryPit[0]); i++) {
+		if (memcmp(game_TID, incompatibleGameListMemoryPit[i], 3) == 0) {
+			// Found match
+			return false;
+		}
+	}
+	return true;
+}
+
 void cannotLaunchMsg(void) {
 	if (macroMode) {
 		lcdMainOnBottom();
@@ -833,7 +850,7 @@ string browseForFile(const vector<string_view> extensionList) {
 				settingsChanged = false;
 				return "null";
 			}
-			else if (isDSiWare && !dsiFeatures()) {
+			else if (isDSiWare && (!dsiFeatures() || (isDSiMode() && arm7SCFGLocked && !dsiWramAccess && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str())))) {
 				cannotLaunchMsg();
 			} else {
 				int hasAP = 0;

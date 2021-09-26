@@ -1370,6 +1370,17 @@ bool checkForCompatibleGame(const char *filename) {
 	return proceedToLaunch;
 }
 
+bool gameCompatibleMemoryPit(void) {
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(incompatibleGameListMemoryPit)/sizeof(incompatibleGameListMemoryPit[0]); i++) {
+		if (memcmp(gameTid[CURPOS], incompatibleGameListMemoryPit[i], 3) == 0) {
+			// Found match
+			return false;
+		}
+	}
+	return true;
+}
+
 void cannotLaunchMsg(const char *filename) {
 	clearText();
 	updateText(false);
@@ -1386,16 +1397,18 @@ void cannotLaunchMsg(const char *filename) {
 		}
 	}
 	const std::string *str = nullptr;
-	/*if (bnrRomType[CURPOS] != 0 || (isDSiMode() && (ms().consoleModel>=2 ? !isHomebrew[CURPOS] : isDSiWare[CURPOS]) && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked())) {
+	if (bnrRomType[CURPOS] != 0) {
 		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_3DS_HOME : &STR_RELAUNCH_UNLAUNCH;
-	} else if (isHomebrew[CURPOS] && ms().consoleModel >= 2) {
+	} else if (isDSiMode() && isDSiWare[CURPOS]) {
+		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_DSIWARE_3DS_HOME : &STR_RELAUNCH_DSIWARE_UNLAUNCH;
+	} else /*if (isHomebrew[CURPOS] && ms().consoleModel >= 2) {
 		str = &STR_CANNOT_LAUNCH_HB_ON_3DS;
 	} else*/ if (sys().isRegularDS()) {
 		str = &STR_FOR_USE_WITH_DSI_ONLY;
 	} else {
 		str = /*isDSiMode() ? &STR_CANNOT_LAUNCH_WITHOUT_SD :*/ &STR_CANNOT_LAUNCH_IN_DS_MODE;
 	}
-	int yPos = (ms().theme == 4 ? 30 : 102);
+	int yPos = (ms().theme == 4 ? 30 : (bnrRomType[CURPOS] == 0 ? 102 : 82));
 	printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center);
 
 	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
@@ -2429,7 +2442,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isDSiWare[CURPOS] && !dsiFeatures()) {
+				} else if (isDSiWare[CURPOS] && (!dsiFeatures() || (isDSiMode() && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit()))) {
 					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {
 					int hasAP = 0;
