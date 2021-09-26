@@ -555,16 +555,18 @@ bool isModernHomebrew = false;		// false == No DSi-Extended header, true == Has 
 bool requiresRamDisk = false;
 int requiresDonorRom = 0;
 
+static u16 bannerDelayNum = 0x0000;
+int currentbnriconframeseq = 0;
+
 /**
  * Get banner sequence from banner file.
  * @param binFile Banner file.
  */
 void grabBannerSequence()
 {
-	for (int i = 0; i < 64; i++)
-	{
-		bnriconframeseq[i] = ndsBanner.dsi_seq[i];
-	}
+	memcpy(bnriconframeseq, ndsBanner.dsi_seq, 64 * sizeof(u16));
+
+	currentbnriconframeseq = 0;
 }
 
 /**
@@ -572,14 +574,9 @@ void grabBannerSequence()
  */
 void clearBannerSequence()
 {
-	for (int i = 0; i < 64; i++)
-	{
-		bnriconframeseq[i] = 0x0000;
-	}
+	memset(bnriconframeseq, 0, 64 * sizeof(u16));
+	currentbnriconframeseq = 0;
 }
-
-static u16 bannerDelayNum = 0x0000;
-int currentbnriconframeseq = 0;
 
 /**
  * Play banner sequence.

@@ -452,8 +452,6 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				grabBannerSequence(num);
 				bnriconisDSi[num] = true;
 			}
-		} else {
-			bnriconisDSi[num] = false;
 		}
 	}
 }
