@@ -1674,7 +1674,7 @@ int main(int argc, char **argv)
 
 	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 	if (REG_SCFG_EXT!=0) {
-		if (!useTwlCfg && !isDSiMode() && sdFound() && sys().arm7SCFGLocked() && !is3DS) {
+		if (!useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && !is3DS) {
 			if (fatMountSimple("nand", &io_dsi_nand)) {
 				FILE* twlCfg = fopen("nand:/shared1/TWLCFG0.dat", "rb");
 				fseek(twlCfg, 0x88, SEEK_SET);
