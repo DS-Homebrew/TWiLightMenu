@@ -739,7 +739,7 @@ void getGameInfo(bool isDir, const char* name)
 
 		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
 		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
-		&& (!dsiFeatures() || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && arm7SCFGLocked))) {
+		&& !dsiFeatures()) {
 			isDSiWare = false;
 		}
 

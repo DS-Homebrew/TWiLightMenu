@@ -649,7 +649,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			}
 			if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
 			  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
-			&& (!dsiFeatures() || arm7SCFGLocked)) {
+			&& !dsiFeatures()) {
 				isDSiWare[num] = false;
 			}
 		}

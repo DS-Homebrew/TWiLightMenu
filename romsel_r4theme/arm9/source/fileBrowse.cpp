@@ -833,9 +833,7 @@ string browseForFile(const vector<string_view> extensionList) {
 				settingsChanged = false;
 				return "null";
 			}
-			else if (isDSiWare && (!isDSiMode() || (isHomebrew && consoleModel >= 2)
-				  || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && arm7SCFGLocked && dsiWareExploit == 7))
-			) {
+			else if (isDSiWare && !dsiFeatures()) {
 				cannotLaunchMsg();
 			} else {
 				int hasAP = 0;

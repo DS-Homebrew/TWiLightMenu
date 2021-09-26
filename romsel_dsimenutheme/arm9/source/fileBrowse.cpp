@@ -1386,14 +1386,14 @@ void cannotLaunchMsg(const char *filename) {
 		}
 	}
 	const std::string *str = nullptr;
-	if (bnrRomType[CURPOS] != 0 || (isDSiMode() && (ms().consoleModel>=2 ? !isHomebrew[CURPOS] : isDSiWare[CURPOS]) && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked())) {
+	/*if (bnrRomType[CURPOS] != 0 || (isDSiMode() && (ms().consoleModel>=2 ? !isHomebrew[CURPOS] : isDSiWare[CURPOS]) && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked())) {
 		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_3DS_HOME : &STR_RELAUNCH_UNLAUNCH;
 	} else if (isHomebrew[CURPOS] && ms().consoleModel >= 2) {
 		str = &STR_CANNOT_LAUNCH_HB_ON_3DS;
-	} else if (sys().isRegularDS()) {
+	} else*/ if (sys().isRegularDS()) {
 		str = &STR_FOR_USE_WITH_DSI_ONLY;
 	} else {
-		str = isDSiMode() ? &STR_CANNOT_LAUNCH_WITHOUT_SD : &STR_CANNOT_LAUNCH_IN_DS_MODE;
+		str = /*isDSiMode() ? &STR_CANNOT_LAUNCH_WITHOUT_SD :*/ &STR_CANNOT_LAUNCH_IN_DS_MODE;
 	}
 	int yPos = (ms().theme == 4 ? 30 : 102);
 	printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center);
@@ -2429,9 +2429,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isDSiWare[CURPOS] && (!isDSiMode() || (isHomebrew[CURPOS] && ms().consoleModel >= 2)
-						|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && ms().dsiWareExploit == 7))
-				) {
+				} else if (isDSiWare[CURPOS] && !dsiFeatures()) {
 					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {
 					int hasAP = 0;
