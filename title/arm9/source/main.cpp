@@ -1701,11 +1701,13 @@ int main(int argc, char **argv)
 				*(u16*)(twlCfgOffset+0x1E2) = swiCRC16(0xFFFF, twlCfgOffset+0x1E4, 0xC); // WlFirm CRC16
 
 				useTwlCfg = true;
+				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
+				*(vu32*)(0x0377C000) = BIT(1);
 			}
 		} else {
 			if (useTwlCfg) {
-				*(u32*)(0x02000000) = 0; // Clear soft-reset params
 				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
+				*(vu32*)(0x0377C000) = BIT(1);
 			} else {
 				tonccpy((void*)0x02000000, (void*)0x0377C000, 0x4000); // Restore from DSi WRAM
 				useTwlCfg = ((*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
