@@ -548,11 +548,15 @@ int bnrRomType = 0;
 bool bnriconisDSi = false;
 int bnrWirelessIcon = 0; // 0 = None, 1 = Local, 2 = WiFi
 u8 romVersion = 0;
+u32 a7mbk6 = 0;
 bool isDSiWare = false;
 bool isHomebrew = false;
 bool isModernHomebrew = false;		// false == No DSi-Extended header, true == Has DSi-Extended header
 bool requiresRamDisk = false;
 int requiresDonorRom = 0;
+
+static u16 bannerDelayNum = 0x0000;
+int currentbnriconframeseq = 0;
 
 /**
  * Get banner sequence from banner file.
@@ -560,10 +564,9 @@ int requiresDonorRom = 0;
  */
 void grabBannerSequence()
 {
-	for (int i = 0; i < 64; i++)
-	{
-		bnriconframeseq[i] = ndsBanner.dsi_seq[i];
-	}
+	memcpy(bnriconframeseq, ndsBanner.dsi_seq, 64 * sizeof(u16));
+
+	currentbnriconframeseq = 0;
 }
 
 /**
@@ -571,14 +574,9 @@ void grabBannerSequence()
  */
 void clearBannerSequence()
 {
-	for (int i = 0; i < 64; i++)
-	{
-		bnriconframeseq[i] = 0x0000;
-	}
+	memset(bnriconframeseq, 0, 64 * sizeof(u16));
+	currentbnriconframeseq = 0;
 }
-
-static u16 bannerDelayNum = 0x0000;
-int currentbnriconframeseq = 0;
 
 /**
  * Play banner sequence.

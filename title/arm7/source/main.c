@@ -29,6 +29,7 @@
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 #include <maxmod7.h>
+#include <string.h>
 
 #define REG_SCFG_WL *(vu16*)0x4004020
 
@@ -108,6 +109,61 @@ void powerButtonCB() {
 	exitflag = true;
 }
 
+TWL_CODE void set_ctr(u32* ctr){
+	for (int i = 0; i < 4; i++) REG_AES_IV[i] = ctr[3-i];
+}
+
+// 10 11  22 23 24 25
+TWL_CODE void aes(void* in, void* out, void* iv, u32 method){ //this is sort of a bodged together dsi aes function adapted from this 3ds function
+	REG_AES_CNT = ( AES_CNT_MODE(method) |           //https://github.com/TiniVi/AHPCFW/blob/master/source/aes.c#L42
+					AES_WRFIFO_FLUSH |				 //as long as the output changes when keyslot values change, it's good enough.
+					AES_RDFIFO_FLUSH | 
+					AES_CNT_KEY_APPLY | 
+					AES_CNT_KEYSLOT(3) |
+					AES_CNT_DMA_WRITE_SIZE(2) |
+					AES_CNT_DMA_READ_SIZE(1)
+					);
+					
+    if (iv != NULL) set_ctr((u32*)iv);
+	REG_AES_BLKCNT = (1 << 16);
+	REG_AES_CNT |= 0x80000000;
+	
+	for (int j = 0; j < 0x10; j+=4) REG_AES_WRFIFO = *((u32*)(in+j));
+	while(((REG_AES_CNT >> 0x5) & 0x1F) < 0x4); //wait for every word to get processed
+	for (int j = 0; j < 0x10; j+=4) *((u32*)(out+j)) = REG_AES_RDFIFO;
+	//REG_AES_CNT &= ~0x80000000;
+	//if (method & (AES_CTR_DECRYPT | AES_CTR_ENCRYPT)) add_ctr((u8*)iv);
+}
+
+TWL_CODE void getConsoleID(void) {
+	// Fix duplicated line bug on 3DS
+	while (REG_VCOUNT != 191);
+	while (REG_VCOUNT == 191);
+
+	u8 base[16]={0};
+	u8 in[16]={0};
+	u8 iv[16]={0};
+	u8 *scratch=(u8*)0x02F00200; 
+	u8 *out=(u8*)0x02F00000;
+	u8 *key3=(u8*)0x40044D0;
+
+	aes(in, base, iv, 2);
+
+	//write consecutive 0-255 values to any byte in key3 until we get the same aes output as "base" above - this reveals the hidden byte. this way we can uncover all 16 bytes of the key3 normalkey pretty easily.
+	//greets to Martin Korth for this trick https://problemkaputt.de/gbatek.htm#dsiaesioports (Reading Write-Only Values)
+	for(int i=0;i<16;i++){  
+		for(int j=0;j<256;j++){
+			*(key3+i)=j & 0xFF;
+			aes(in, scratch, iv, 2);
+			if(memcmp(scratch, base, 16)==0){
+				out[i]=j;
+				//hit++;
+				break;
+			}
+		}
+	}
+}
+
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
@@ -159,6 +215,13 @@ int main() {
 	//fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
 	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
 	fifoSendValue32(FIFO_USER_04, isDSLite);
+	if (isDSiMode() || REG_SCFG_EXT != 0) {
+		// Check for 3DS
+		u8 byteBak = my_i2cReadRegister(0x4A, 0x71);
+		my_i2cWriteRegister(0x4A, 0x71, 0xD2);
+		fifoSendValue32(FIFO_USER_05, my_i2cReadRegister(0x4A, 0x71));
+		my_i2cWriteRegister(0x4A, 0x71, byteBak);
+	}
 	//fifoSendValue32(FIFO_USER_04, *CPUID2);
 	//fifoSendValue32(FIFO_USER_05, *CPUID);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
@@ -168,6 +231,10 @@ int main() {
 	}
 	fifoSendValue32(FIFO_USER_06, 1);
 	
+	if (isDSiMode()) {
+		getConsoleID();
+	}
+
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
@@ -192,6 +259,10 @@ int main() {
 				*(u32*)(0x2FFFD0C) = 0;
 			}
 			rebootTimer++;
+		}
+		if (*(u32*)(0x2FFFD0C) == 0x454D4D43) {
+			sdmmc_nand_cid((u32*)0x2FFD7BC);	// Get eMMC CID
+			*(u32*)(0x2FFFD0C) = 0;
 		}
 
 		/*if (fifoGetValue32(FIFO_USER_05) == 1) {

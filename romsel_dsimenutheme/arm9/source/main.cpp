@@ -590,7 +590,8 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)) {
+			 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)
+			 || (memcmp(io_dldi_data->friendlyName, "M3DS DLDI", 9) == 0)) {
 		CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 		fcPath = replaceAll(ndsPath, "fat:/", slashchar);
 		fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
@@ -779,7 +780,7 @@ int main(int argc, char **argv) {
 							   // SD card, or if SD access is disabled
 	}
 
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
@@ -904,6 +905,9 @@ int main(int argc, char **argv) {
 	}
 	if (ms().showA78) {
 		extensionList.emplace_back(".a78");
+	}
+	if (ms().showInt) {
+		extensionList.emplace_back(".int");
 	}
 	if (ms().showGb) {
 		extensionList.emplace_back(".gb");
@@ -1066,7 +1070,7 @@ int main(int argc, char **argv) {
 
 				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
+				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(gameTid[CURPOS], "Z2E", 3) == 0 && ms().secondaryDevice && (!ms().dsiWareToSD || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0))) ? getSavExtension() : getPubExtension());
 				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
 				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
 				if (!isArgv) {
@@ -1084,13 +1088,20 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
-				fadeSpeed = true; // Fast fading
-
 				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
-					if (ms().theme == 5) displayGameIcons = false;
+					if (ms().theme == 5) {
+						displayGameIcons = false;
+					} else {
+						while (!screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+						fadeSpeed = true; // Fast fading
+						whiteScreen = true;
+						tex().clearTopScreen();
+					}
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						// Display nothing
+						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
@@ -1100,9 +1111,6 @@ int main(int argc, char **argv) {
 					updateText(false);
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
-						for (int i = 0; i < 35; i++) {
-							swiWaitForVBlank();
-						}
 					}
 					showProgressIcon = true;
 
@@ -1135,10 +1143,19 @@ int main(int argc, char **argv) {
 				}
 
 				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
-					if (ms().theme == 5) displayGameIcons = false;
+					if (ms().theme == 5) {
+						displayGameIcons = false;
+					} else {
+						while (!fadeType && !screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+						fadeSpeed = true; // Fast fading
+						whiteScreen = true;
+						tex().clearTopScreen();
+					}
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						// Display nothing
+						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
@@ -1148,9 +1165,6 @@ int main(int argc, char **argv) {
 					updateText(false);
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
-						for (int i = 0; i < 35; i++) {
-							swiWaitForVBlank();
-						}
 					}
 					showProgressIcon = true;
 
@@ -1184,12 +1198,17 @@ int main(int argc, char **argv) {
 
 				if (ms().theme != 4 && ms().theme != 5 && fadeType) {
 					fadeType = false; // Fade to white
-					for (int i = 0; i < 25; i++) {
-						swiWaitForVBlank();
-					}
 				}
 
-				if (ms().secondaryDevice && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel < 2)) && sdFound()) {
+				if (ms().secondaryDevice && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel == 0)) && sdFound()) {
+					if (ms().theme != 5) {
+						while (!fadeType && !screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+						fadeSpeed = true; // Fast fading
+						whiteScreen = true;
+						tex().clearTopScreen();
+					}
 					clearText();
 					printSmall(false, 0, 20, ms().consoleModel >= 2 ? STR_BARSTOPPED_PRESSHOME : STR_BARSTOPPED_CLOSELID, Alignment::center);
 					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
@@ -1197,9 +1216,6 @@ int main(int argc, char **argv) {
 					updateText(false);
 					if (ms().theme != 4) {
 						fadeType = true; // Fade in from white
-						for (int i = 0; i < 35; i++) {
-							swiWaitForVBlank();
-						}
 					}
 					showProgressIcon = true;
 					fcopy(ms().dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
@@ -1214,13 +1230,13 @@ int main(int argc, char **argv) {
 					showProgressIcon = false;
 					if (ms().theme != 4 && ms().theme != 5) {
 						fadeType = false; // Fade to white
-						for (int i = 0; i < 25; i++) {
-							swiWaitForVBlank();
-						}
 					}
 
 					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
 					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
+						for (int i = 0; i < 25; i++) {
+							swiWaitForVBlank();
+						}
 						clearText();
 						printLarge(false, 0, ms().theme == 4 ? 16 : 72, STR_RESTART_AFTER_SAVING, Alignment::center);
 						updateText(false);
@@ -1232,28 +1248,22 @@ int main(int argc, char **argv) {
 						}
 						if (ms().theme != 4 && ms().theme != 5) {
 							fadeType = false;	   // Fade to white
-							for (int i = 0; i < 25; i++) {
-								swiWaitForVBlank();
-							}
 						}
 					}
 				}
 
 				if (ms().theme == 5) {
 					fadeType = false;		  // Fade to black
-					for (int i = 0; i < 60; i++) {
-						swiWaitForVBlank();
-					}
 				}
 
-				if (ms().dsiWareBooter || ms().consoleModel >= 2) {
+				if (ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0) {
 					CheatCodelist codelist;
 					u32 gameCode, crc32;
 
 					bool cheatsEnabled = true;
-					const char* cheatDataBin = (ms().secondaryDevice && ms().dsiWareToSD) ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "/_nds/nds-bootstrap/cheatData.bin";
-					mkdir((ms().secondaryDevice && ms().dsiWareToSD) ? "sd:/_nds" : "/_nds", 0777);
-					mkdir((ms().secondaryDevice && ms().dsiWareToSD) ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
+					const char* cheatDataBin = (ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "/_nds/nds-bootstrap/cheatData.bin";
+					mkdir((ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds" : "/_nds", 0777);
+					mkdir((ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
 					if(codelist.romData(ms().dsiWareSrlPath,gameCode,crc32)) {
 						long cheatOffset; size_t cheatSize;
 						FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
@@ -1285,14 +1295,14 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if ((ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel >= 2) && !ms().homebrewBootstrap) {
+				if ((ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 
 					char sfnSrl[62];
 					char sfnPub[62];
 					char sfnPrv[62];
-					if (ms().secondaryDevice && ms().dsiWareToSD) {
+					if (ms().secondaryDevice && ms().dsiWareToSD && sdFound()) {
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
@@ -1304,7 +1314,7 @@ int main(int argc, char **argv) {
 
 					bootstrapinipath = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? "fat:/_nds/nds-bootstrap.ini" : "sd:/_nds/nds-bootstrap.ini";
 					CIniFile bootstrapini(bootstrapinipath);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().secondaryDevice && ms().dsiWareToSD ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().secondaryDevice && ms().dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
@@ -1331,9 +1341,10 @@ int main(int argc, char **argv) {
 
 					if (ms().theme == 5) {
 						fadeType = false;		  // Fade to black
-						for (int i = 0; i < 60; i++) {
-							swiWaitForVBlank();
-						}
+					}
+
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
 					}
 
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
@@ -1403,6 +1414,10 @@ int main(int argc, char **argv) {
 				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0)
 				{
 					rename(ms().dsiWarePrvPath.c_str(), prvpathUl.c_str());
+				}
+
+				while (!screenFadedOut()) {
+					swiWaitForVBlank();
 				}
 
 				unlaunchRomBoot(ms().secondaryDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
@@ -1483,9 +1498,18 @@ int main(int argc, char **argv) {
 							}
 
 							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
-								if (ms().theme == 5) displayGameIcons = false;
+								if (ms().theme == 5) {
+									displayGameIcons = false;
+								} else {
+									while (!screenFadedOut()) {
+										swiWaitForVBlank();
+									}
+									whiteScreen = true;
+									tex().clearTopScreen();
+								}
+								clearText();
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-									// Display nothing
+									printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
 								} else if (dsiFeatures() && ms().consoleModel >= 2) {
 									printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 								} else {
@@ -1517,14 +1541,12 @@ int main(int argc, char **argv) {
 								for (int i = 0; i < 30; i++) {
 									swiWaitForVBlank();
 								}
-								if (ms().theme != 4 && ms().theme != 5) {
+								if (ms().theme == 4 || ms().theme == 5) {
+									clearText();
+									updateText(false);
+								} else {
 									fadeType = false;	   // Fade to white
-									for (int i = 0; i < 25; i++) {
-										swiWaitForVBlank();
-									}
 								}
-								clearText();
-								updateText(false);
 								if (ms().theme == 5) displayGameIcons = true;
 							}
 						}
@@ -1545,11 +1567,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region == -3 ? ms().gameRegion : perGameSettings_region);
-						if (dsModeForced || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? unitCode[CURPOS]==3 : (unitCode[CURPOS] > 0 && unitCode[CURPOS] < 3) && sys().arm7SCFGLocked())) {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						} else if (dsiFeatures() || !ms().secondaryDevice) {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode);
-						}
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", dsModeForced ? 0 : (perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode));
 						if (dsiFeatures() || !ms().secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed());
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram);
@@ -1623,9 +1641,10 @@ int main(int argc, char **argv) {
 
 						if (ms().theme == 5) {
 							fadeType = false;		  // Fade to black
-							for (int i = 0; i < 60; i++) {
-								swiWaitForVBlank();
-							}
+						}
+
+						while (!screenFadedOut()) {
+							swiWaitForVBlank();
 						}
 
 						if (dsiFeatures() || !ms().secondaryDevice) {
@@ -1691,9 +1710,10 @@ int main(int argc, char **argv) {
 
 						if (ms().theme == 5) {
 							fadeType = false;		  // Fade to black
-							for (int i = 0; i < 60; i++) {
-								swiWaitForVBlank();
-							}
+						}
+
+						while (!screenFadedOut()) {
+							swiWaitForVBlank();
 						}
 
 						loadGameOnFlashcard(argarray[0], true);
@@ -1712,11 +1732,11 @@ int main(int argc, char **argv) {
 
 					if (ms().theme == 5) {
 						fadeType = false;		  // Fade to black
-						for (int i = 0; i < 60; i++) {
-							swiWaitForVBlank();
-						}
 					}
-					snd().stopStream();
+
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
+					}
 
 					if (!isDSiMode() && !ms().secondaryDevice) {
 						ntrStartSdGame();
@@ -1877,7 +1897,15 @@ int main(int argc, char **argv) {
 					if (ms().showGba == 1) {
 						fontReinit();	// Re-load font into main memory
 
-						if (ms().theme == 5) displayGameIcons = false;
+						if (ms().theme == 5) {
+							displayGameIcons = false;
+						} else {
+							while (!screenFadedOut()) {
+								swiWaitForVBlank();
+							}
+							whiteScreen = true;
+							tex().clearTopScreen();
+						}
 						if (*(u16*)(0x020000C0) == 0x5A45) {
 							printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_PLEASE_WAIT, Alignment::center);
 							updateText(false);
@@ -1970,12 +1998,7 @@ int main(int argc, char **argv) {
 						showProgressIcon = false;
 						if (ms().theme != 4 && ms().theme != 5) {
 							fadeType = false;	   // Fade to white
-							for (int i = 0; i < 25; i++) {
-								swiWaitForVBlank();
-							}
 						}
-						clearText();
-						updateText(false);
 						if (ms().theme == 5) displayGameIcons = true;
 
 						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
@@ -2046,6 +2069,14 @@ int main(int argc, char **argv) {
 					}
 					if((!isDSiMode() && dsiFeatures()) || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename, {".int"})) {
+					ms().launchType[ms().secondaryDevice] = Launch::ENINTVDSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
 						boostVram = true;
 					}
 				} else if (extension(filename, {".gb", ".sgb", ".gbc"})) {
@@ -2188,6 +2219,11 @@ int main(int argc, char **argv) {
 
 				ms().homebrewArg = useNDSB ? "" : ms().romPath[ms().secondaryDevice];
 				ms().saveSettings();
+
+				while (!screenFadedOut()) {
+					swiWaitForVBlank();
+				}
+
 				if (!isDSiMode() && !ms().secondaryDevice && !extension(filename, {".plg"})) {
 					ntrStartSdGame();
 				}
@@ -2200,6 +2236,7 @@ int main(int argc, char **argv) {
 
 				char text[64];
 				snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+				clearText();
 				printLarge(false, 4, 4, text);
 				if (err == 1 && useNDSB) {
 					printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);

@@ -52,7 +52,9 @@ STRING(FAILED_TO_COPY_WIDESCREEN, "Failed to copy widescreen\ncode for the game.
 STRING(ERROR_FLASHCARD_UNSUPPORTED, "Error!\nFlashcard may be unsupported.\nFlashcard name:")
 STRING(DSIBINARIES_MISSING, "The DSi binaries are missing.\nPlease get a clean dump of\nthis ROM, or start in DS mode.")
 STRING(RELAUNCH_UNLAUNCH, "To launch this title, please restart\nTWiLight Menu++ from Unlaunch.")
+STRING(RELAUNCH_DSIWARE_UNLAUNCH, "To launch this title, please restart\nTWiLight Menu++ from another\nDSiWare exploit, or from Unlaunch.")
 STRING(RELAUNCH_3DS_HOME, "To launch this title, please restart\nTWiLight Menu++ as a title\nfrom the 3DS HOME Menu.")
+STRING(RELAUNCH_DSIWARE_3DS_HOME, "To launch this title, please restart\nTWiLight Menu++ from another\nDSiWare exploit, or as a title\nfrom the 3DS HOME Menu.")
 STRING(GAME_INCOMPATIBLE_MSG, "This game is known to not run.\nIf there's an nds-bootstrap\nversion that fixes this,\nplease ignore this message.")
 STRING(FOR_USE_WITH_DSI_ONLY, "For use with Nintendo DSi\nsystems only. Cannot be used with\nNintendo DS/DS Lite systems.")
 STRING(CANNOT_LAUNCH_WITHOUT_SD, "This game cannot be launched\nwithout an SD card.")
@@ -67,6 +69,8 @@ STRING(DONOR_ROM_MSG_SDK2, "This game requires a donor ROM\nto run. Please set a
 STRING(DONOR_ROM_MSG_ESDK3, "This game requires a donor ROM\nto run. Please set an existing\nearly SDK3 game as a donor ROM.")
 STRING(DONOR_ROM_MSG_SDK5, "This game requires a donor ROM\nto run. Please set an existing\nDS SDK5 game as a donor ROM.")
 STRING(DONOR_ROM_MSG_SDK5TWL, "This game requires a donor ROM\nto run. Please set an existing\nDSi-Enhanced game as a donor ROM.")
+STRING(DONOR_ROM_MSG_SDK5TWLONLY, "This game requires a donor ROM\nto run. Please set an existing\nDSi(Ware) title as a donor ROM.")
+STRING(DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE, "DSi mode requires a donor ROM\nto run. Please set an existing\nDSi(Ware) title as a donor ROM.")
 
 // Hiding
 STRING(ARE_YOU_SURE_UNHIDE, "Are you sure you want to\nunhide this folder?")

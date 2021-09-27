@@ -6,6 +6,7 @@
 #include "io_sc_common.h"
 #include "myDSiMode.h"
 #include "exptools.h"
+#include "nand/nandio.h"
 
 #include "bootsplash.h"
 #include "bootstrapsettings.h"
@@ -22,9 +23,7 @@
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "tool/stringtool.h"
-#include "consolemodelselect.h"
 #include "graphics/graphics.h"
-#include "nandio.h"
 #include "twlmenuppvideo.h"
 #include "language.h"
 #include "graphics/fontHandler.h"
@@ -476,7 +475,10 @@ void lastRunROM()
 						consoleDemoInit();
 						iprintf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
 						iprintf ("\n");
-						if (ms().consoleModel >= 2) {
+						if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+							iprintf ("If this takes a while, turn off\n");
+							iprintf ("the POWER, and try again.\n");
+						} else if (dsiFeatures() && ms().consoleModel >= 2) {
 							iprintf ("If this takes a while,\n");
 							iprintf ("press HOME, and press B.\n");
 						} else {
@@ -552,11 +554,7 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", (perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", (perGameSettings_region == -3 ? ms().gameRegion : perGameSettings_region));
-				if (!dsiBinariesFound || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? unitCode==3 : (unitCode > 0 && unitCode < 3) && sys().arm7SCFGLocked())) {
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-				} else {
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode);
-				}
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", !dsiBinariesFound ? 0 : (perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", (perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
@@ -627,7 +625,9 @@ void lastRunROM()
 				err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
 			} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 					 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
-					 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
+					 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
+					 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)
+					 || (memcmp(io_dldi_data->friendlyName, "M3DS DLDI", 9) == 0)) {
 				CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 				fcPath = replaceAll(ms().romPath[ms().previousUsedDevice], "fat:/", slashchar);
 				fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
@@ -739,7 +739,7 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel >= 2)
+		if (ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0)
 		{
 			if (ms().homebrewBootstrap) {
 				unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
@@ -764,23 +764,26 @@ void lastRunROM()
 				RemoveTrailingSlashes(romFolderNoSlash);
 				mkdir ("saves", 0777);
 
-				ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
-				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
-				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
-				ms().saveSettings();
-
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");
 
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
+				ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
+				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
+				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && ms().previousUsedDevice && (!ms().dsiWareToSD || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0))) ? getSavExtension() : getPubExtension());
+				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
+				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
+				ms().saveSettings();
+
 				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					consoleDemoInit();
 					iprintf("Creating public save file...\n");
 					iprintf ("\n");
-					if (ms().consoleModel >= 2) {
+					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+						iprintf ("If this takes a while, turn off\n");
+						iprintf ("the POWER, and try again.\n");
+					} else if (ms().consoleModel >= 2) {
 						iprintf ("If this takes a while,\n");
 						iprintf ("press HOME, and press B.\n");
 					} else {
@@ -823,7 +826,10 @@ void lastRunROM()
 					consoleDemoInit();
 					iprintf("Creating private save file...\n");
 					iprintf ("\n");
-					if (ms().consoleModel >= 2) {
+					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+						iprintf ("If this takes a while, turn off\n");
+						iprintf ("the POWER, and try again.\n");
+					} else if (ms().consoleModel >= 2) {
 						iprintf ("If this takes a while,\n");
 						iprintf ("press HOME, and press B.\n");
 					} else {
@@ -871,7 +877,7 @@ void lastRunROM()
 				char sfnSrl[62];
 				char sfnPub[62];
 				char sfnPrv[62];
-				if (ms().previousUsedDevice && ms().dsiWareToSD) {
+				if (ms().previousUsedDevice && ms().dsiWareToSD && sdFound()) {
 					if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak", F_OK) == 0) {
 						if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0) {
 							remove("sd:/_nds/TWiLightMenu/tempDSiWare.pub");
@@ -894,7 +900,7 @@ void lastRunROM()
 				}
 
 				CIniFile bootstrapini((memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI_SD);
-				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().previousUsedDevice && ms().dsiWareToSD ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().previousUsedDevice && ms().dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
@@ -1203,6 +1209,17 @@ void lastRunROM()
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to XEGS-DS as argument
+	}
+	else if (ms().launchType[ms().previousUsedDevice] == Launch::ENINTVDSLaunch)
+	{
+		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		{
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to NINTV-DS as argument
 	}
 	if (err > 0) {
 		consoleDemoInit();
@@ -1664,37 +1681,36 @@ int main(int argc, char **argv)
 		}
 	}
 
-	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
+
+	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 	if (REG_SCFG_EXT!=0) {
-		u16 cfgCrc = swiCRC16(0xFFFF, (void*)0x02000400, 0x128);
-		u16 cfgCrcFromFile = 0;
-
-		char twlCfgPath[256];
-		sprintf(twlCfgPath, "%s:/_nds/TWiLightMenu/16KBcache.bin", sdFound() ? "sd" : "fat");
-
-		FILE* twlCfg = fopen(twlCfgPath, "rb");
-		if (twlCfg) {
-			fseek(twlCfg, 0x4000, SEEK_SET);
-			fread((u16*)&cfgCrcFromFile, sizeof(u16), 1, twlCfg);
-		}
-		if (useTwlCfg) {
-			if (cfgCrcFromFile != cfgCrc) {
-				*(u32*)(0x02000000) = 0; // Clear soft-reset params
+		if (!useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && !is3DS) {
+			if (fatMountSimple("nand", &io_dsi_nand)) {
+				FILE* twlCfg = fopen("nand:/shared1/TWLCFG0.dat", "rb");
+				fseek(twlCfg, 0x88, SEEK_SET);
+				fread((void*)0x02000400, 1, 0x128, twlCfg);
 				fclose(twlCfg);
-				// Cache first 16KB containing TWLCFG, in case some homebrew overwrites it
-				twlCfg = fopen(twlCfgPath, "wb");
-				fwrite((void*)0x02000000, 1, 0x4000, twlCfg);
-				fwrite((u16*)&cfgCrc, sizeof(u16), 1, twlCfg);
+
+				// WiFi RAM data
+				u8* twlCfgOffset = (u8*)0x02000400;
+				readFirmware(0x1FD, twlCfgOffset+0x1E0, 1); // WlFirm Type (1=DWM-W015, 2=W024, 3=W028)
+				toncset32(twlCfgOffset+0x1E4, 0x500400, 1); // WlFirm RAM vars
+				toncset32(twlCfgOffset+0x1E8, 0x500000, 1); // WlFirm RAM base
+				toncset32(twlCfgOffset+0x1EC, 0x02E000, 1); // WlFirm RAM size
+				*(u16*)(twlCfgOffset+0x1E2) = swiCRC16(0xFFFF, twlCfgOffset+0x1E4, 0xC); // WlFirm CRC16
+
+				useTwlCfg = true;
 			}
-		} else if (twlCfg) {
-			if (cfgCrc != cfgCrcFromFile) {
-				// Reload first 16KB from cache
-				fseek(twlCfg, 0, SEEK_SET);
-				fread((void*)0x02000000, 1, 0x4000, twlCfg);
-				useTwlCfg = ((*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+		} else {
+			if (useTwlCfg) {
+				*(u32*)(0x02000000) = 0; // Clear soft-reset params
+				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
+			} else {
+				tonccpy((void*)0x02000000, (void*)0x0377C000, 0x4000); // Restore from DSi WRAM
+				useTwlCfg = ((*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 			}
 		}
-		fclose(twlCfg);
 	}
 
 	*(u32*)(0x02000000) = softResetParamsBak;
@@ -1918,23 +1934,13 @@ int main(int argc, char **argv)
 		if (isDevConsole)
 		{
 			// Check for Nintendo 3DS console
-			if (isDSiMode() && sdFound())
+			int resultModel = 1+is3DS;
+			if (ms().consoleModel != resultModel || bs().consoleModel != resultModel)
 			{
-				bool is3DS = !nandio_startup();
-				int resultModel = 1+is3DS;
-				if (ms().consoleModel != resultModel || bs().consoleModel != resultModel)
-				{
-					ms().consoleModel = resultModel;
-					bs().consoleModel = resultModel;
-					ms().saveSettings();
-					bs().saveSettings();
-				}
-			}
-			else if (ms().consoleModel < 1 || ms().consoleModel > 2
-				  || bs().consoleModel < 1 || bs().consoleModel > 2)
-			{
-				runGraphicIrq();
-				consoleModelSelect();			// There's no NAND or SD card
+				ms().consoleModel = resultModel;
+				bs().consoleModel = resultModel;
+				ms().saveSettings();
+				bs().saveSettings();
 			}
 		}
 		else
@@ -2031,7 +2037,7 @@ int main(int argc, char **argv)
 	scanKeys();
 
 	if (!(*(u32*)0x02000000 & BIT(2))
-	&& ((softResetParamsFound && ms().launchType[ms().previousUsedDevice] == Launch::ESDFlashcardLaunch)
+	&& ((softResetParamsFound && (ms().launchType[ms().previousUsedDevice] == Launch::ESDFlashcardLaunch || ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch))
 	|| (ms().autorun ? !(keysHeld() & KEY_B) : (keysHeld() & KEY_B))))
 	{
 		//unloadNds9iAsynch();

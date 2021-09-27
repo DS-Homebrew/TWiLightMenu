@@ -14,6 +14,7 @@ char gameTid[40][5] = {0};
 u8 romVersion[40] = {0};
 u8 unitCode[40] = {0};
 u16 headerCRC[40] = {0};
+u32 a7mbk6[40] = {0};
 
 bool checkDsiBinaries(FILE* ndsFile) {
 	sNDSHeaderExt ndsHeader;

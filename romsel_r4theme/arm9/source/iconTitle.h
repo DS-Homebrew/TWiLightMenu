@@ -24,6 +24,7 @@ void drawIconGG(int Xpos, int Ypos);
 void drawIconMD(int Xpos, int Ypos);
 void drawIconSNES(int Xpos, int Ypos);
 void drawIconA26(int Xpos, int Ypos);
+void drawIconINT(int Xpos, int Ypos);
 void drawIconPCE(int Xpos, int Ypos);
 
 #endif // ICONTITLE_H

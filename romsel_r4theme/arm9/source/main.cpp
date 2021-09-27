@@ -87,6 +87,7 @@ const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char16_t hiyaNdsPath[] = u"sdmc:/hiya.dsi";
 char launcherPath[256];
 
+bool dsiWramAccess = false;
 bool arm7SCFGLocked = false;
 int consoleModel = 0;
 /*	0 = Nintendo DSi (Retail)
@@ -154,6 +155,7 @@ bool showXex = true;
 bool showA26 = true;
 bool showA52 = true;
 bool showA78 = true;
+bool showInt = true;
 bool showNes = true;
 bool showGb = true;
 bool showSmsGg = true;
@@ -220,6 +222,7 @@ void LoadSettings(void) {
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", true);
 	showA52 = settingsini.GetInt("SRLOADER", "SHOW_A52", true);
 	showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", true);
+	showInt = settingsini.GetInt("SRLOADER", "SHOW_INT", true);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", true);
@@ -1044,7 +1047,8 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)) {
+			 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)
+			 || (memcmp(io_dldi_data->friendlyName, "M3DS DLDI", 9) == 0)) {
 		CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 		fcPath = replaceAll(ndsPath, "fat:/", slashchar);
 		fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
@@ -1225,7 +1229,7 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	graphicsInit();
 
@@ -1251,17 +1255,25 @@ int main(int argc, char **argv) {
 		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
 
-	langInit();
-
 	std::string filename;
 
+	if (isDSiMode()) {
+		u32 wordBak = *(vu32*)0x03700000;
+		*(vu32*)0x03700000 = 0x414C5253;
+		dsiWramAccess = *(vu32*)0x03700000 == 0x414C5253;
+		*(vu32*)0x03700000 = wordBak;
+	}
+
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
+
+	langInit();
+
 	if (theme == 6) {
 		extern int screenBrightness;
 		screenBrightness = 31;
@@ -1351,6 +1363,9 @@ int main(int argc, char **argv) {
 	}
 	if (showA78) {
 		extensionList.emplace_back(".a78");
+	}
+	if (showInt) {
+		extensionList.emplace_back(".int");
 	}
 	if (showGb) {
 		extensionList.push_back(".gb");
@@ -1724,9 +1739,16 @@ int main(int argc, char **argv) {
 				RemoveTrailingSlashes(romFolderNoSlash);
 				mkdir ("saves", 0777);
 
+				sNDSHeaderExt NDSHeader;
+
+				FILE *f_nds_file = fopen(filename.c_str(), "rb");
+
+				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+				fclose(f_nds_file);
+
 				dsiWareSrlPath = std::string(argarray[0]);
 				dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, getPubExtension());
+				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && secondaryDevice && (!dsiWareToSD || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0))) ? getSavExtension() : getPubExtension());
 				dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
 				dsiWarePrvPath = replaceAll(dsiWarePrvPath, typeToReplace, getPrvExtension());
 				if (!isArgv) {
@@ -1736,13 +1758,6 @@ int main(int argc, char **argv) {
 				launchType[secondaryDevice] = 3;
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
-
-				sNDSHeaderExt NDSHeader;
-
-				FILE *f_nds_file = fopen(filename.c_str(), "rb");
-
-				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
-				fclose(f_nds_file);
 
 				if ((getFileSize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
@@ -1802,7 +1817,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
-				if (secondaryDevice && (dsiWareToSD || (!dsiWareBooter && consoleModel < 2)) && sdFound()) {
+				if (secondaryDevice && (dsiWareToSD || (!dsiWareBooter && consoleModel == 0)) && sdFound()) {
 					clearText();
 					dialogboxHeight = 0;
 					showdialogbox = true;
@@ -1829,14 +1844,14 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (dsiWareBooter || consoleModel >= 2) {
+				if (dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel > 0) {
 					CheatCodelist codelist;
 					u32 gameCode, crc32;
 
 					bool cheatsEnabled = true;
-					const char* cheatDataBin = (secondaryDevice && dsiWareToSD) ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "/_nds/nds-bootstrap/cheatData.bin";
-					mkdir((secondaryDevice && dsiWareToSD) ? "sd:/_nds" : "/_nds", 0777);
-					mkdir((secondaryDevice && dsiWareToSD) ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
+					const char* cheatDataBin = (secondaryDevice && dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "/_nds/nds-bootstrap/cheatData.bin";
+					mkdir((secondaryDevice && dsiWareToSD && sdFound()) ? "sd:/_nds" : "/_nds", 0777);
+					mkdir((secondaryDevice && dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
 					if(codelist.romData(dsiWareSrlPath,gameCode,crc32)) {
 						long cheatOffset; size_t cheatSize;
 						FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
@@ -1868,14 +1883,14 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if ((dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel >= 2) && !homebrewBootstrap) {
+				if ((dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel > 0) && !homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 
 					char sfnSrl[62];
 					char sfnPub[62];
 					char sfnPrv[62];
-					if (secondaryDevice && dsiWareToSD) {
+					if (secondaryDevice && dsiWareToSD && sdFound()) {
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
@@ -1887,7 +1902,7 @@ int main(int argc, char **argv) {
 
 					bootstrapinipath = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? "fat:/_nds/nds-bootstrap.ini" : "sd:/_nds/nds-bootstrap.ini";
 					CIniFile bootstrapini(bootstrapinipath);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", secondaryDevice && dsiWareToSD ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : dsiWareSrlPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", secondaryDevice && dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : dsiWareSrlPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
@@ -2106,11 +2121,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", getGuiLanguageString());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region == -3 ? gameRegion : perGameSettings_region);
-						if (dsModeForced || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? unitCode==3 : (unitCode > 0 && unitCode < 3) && arm7SCFGLocked)) {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						} else if (dsiFeatures() || !secondaryDevice) {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
-						}
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", dsModeForced ? 0 : (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode));
 						if (dsiFeatures() || !secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed(argarray[0]));
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
@@ -2544,6 +2555,14 @@ int main(int argc, char **argv) {
 					}
 					if((!isDSiMode() && dsiFeatures()) || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename, {".int"})) {
+					launchType[secondaryDevice] = 16;
+					
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
 						boostVram = true;
 					}
 				} else if (extension(filename, {".gb", ".sgb", ".gbc"})) {

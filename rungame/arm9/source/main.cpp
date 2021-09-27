@@ -420,7 +420,8 @@ TWL_CODE int lastRunROM() {
 				} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 						 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
 						 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
-						 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)) {
+						 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)
+						 || (memcmp(io_dldi_data->friendlyName, "M3DS DLDI", 9) == 0)) {
 					CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 					path = ReplaceAll(romPath[1], "fat:/", slashchar);
 					fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
@@ -660,6 +661,9 @@ TWL_CODE int lastRunROM() {
 		case 15:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to XEGS-DS as argument
+		case 16:
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to NINTV-DS as argument
 	}
 	
 	return -1;

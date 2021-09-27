@@ -71,6 +71,7 @@ extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 extern bool macroMode;
+extern int dsiWareExploit;
 extern bool lcdSwapped;
 
 extern bool useBootstrap;
@@ -78,6 +79,7 @@ extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern int consoleModel;
 extern bool isRegularDS;
+extern bool dsiWramAccess;
 extern bool arm7SCFGLocked;
 extern bool smsGgInRam;
 
@@ -90,6 +92,7 @@ extern std::string arm7DonorPath;
 bool donorFound = true;
 
 extern bool applaunch;
+extern bool dsModeForced;
 
 extern bool gotosettings;
 
@@ -103,6 +106,7 @@ extern int showMd;
 extern bool showDirectories;
 extern bool showHidden;
 extern bool preventDeletion;
+extern int bstrap_dsiMode;
 extern int spawnedtitleboxes;
 extern int cursorPosition[2];
 extern int startMenu_cursorPosition;
@@ -450,7 +454,6 @@ bool dsiBinariesMissingMsg(void) {
 		snd().updateStream();
 		swiWaitForVBlank();
 		if (pressed & KEY_Y) {
-			extern bool dsModeForced;
 			dsModeForced = true;
 			proceedToLaunch = true;
 			pressed = 0;
@@ -474,7 +477,9 @@ bool dsiBinariesMissingMsg(void) {
 	return proceedToLaunch;
 }
 
-void donorRomMsg(void) {
+bool donorRomMsg(void) {
+	bool proceedToLaunch = true;
+
 	if (macroMode) {
 		lcdMainOnBottom();
 		lcdSwapped = true;
@@ -482,7 +487,7 @@ void donorRomMsg(void) {
 	dialogboxHeight = 2;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error!");
-	printSmallCentered(false, 98, "This game requires a donor ROM");
+	printSmallCentered(false, 98, (requiresDonorRom == 52 && !isDSiWare) ? "DSi mode requires a donor ROM" : "This game requires a donor ROM");
 	printSmallCentered(false, 110, "to run. Please set an existing");
 	switch (requiresDonorRom) {
 		case 20:
@@ -501,16 +506,30 @@ void donorRomMsg(void) {
 		case 51:
 			printSmallCentered(false, 122, "DSi-Enhanced game as a donor ROM.");
 			break;
+		case 52:
+			printSmallCentered(false, 122, "DSi(Ware) game as a donor ROM.");
+			break;
 	}
-	printSmallCentered(false, 140, "\u2427 OK");
+	printSmallCentered(false, 140, (requiresDonorRom == 52 && !isDSiWare) ? "\u2430 Launch in DS mode  \u2428 Back" : "\u2428 Back");
 	int pressed = 0;
-	do {
+	while (1) {
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
 		snd().updateStream();
 		swiWaitForVBlank();
-	} while (!(pressed & KEY_A));
+		if (requiresDonorRom == 52 && !isDSiWare && (pressed & KEY_Y)) {
+			dsModeForced = true;
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_B) {
+			proceedToLaunch = false;
+			pressed = 0;
+			break;
+		}
+	}
 	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
@@ -519,6 +538,8 @@ void donorRomMsg(void) {
 		lcdMainOnTop();
 		lcdSwapped = false;
 	}
+
+	return proceedToLaunch;
 }
 
 void showLocation(void) {
@@ -616,6 +637,22 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 	return proceedToLaunch;
 }
 
+bool gameCompatibleMemoryPit(const char* filename) {
+	FILE *f_nds_file = fopen(filename, "rb");
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	fclose(f_nds_file);
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(incompatibleGameListMemoryPit)/sizeof(incompatibleGameListMemoryPit[0]); i++) {
+		if (memcmp(game_TID, incompatibleGameListMemoryPit[i], 3) == 0) {
+			// Found match
+			return false;
+		}
+	}
+	return true;
+}
+
 void cannotLaunchMsg(void) {
 	if (macroMode) {
 		lcdMainOnBottom();
@@ -708,6 +745,8 @@ string browseForFile(const vector<string_view> extensionList) {
 				bnrRomType = 11;
 			} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 				bnrRomType = 10;
+			} else if (extension(std_romsel_filename, {".int"})) {
+				bnrRomType = 12;
 			} else if (extension(std_romsel_filename, {".plg", ".rvid", ".fv"})) {
 				bnrRomType = 9;
 			} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
@@ -813,15 +852,13 @@ string browseForFile(const vector<string_view> extensionList) {
 				settingsChanged = false;
 				return "null";
 			}
-			else if (isDSiWare && ((!isDSiMode() && !sdFound()) || (isHomebrew && consoleModel >= 2)
-				  || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && arm7SCFGLocked))
-			) {
+			else if (isDSiWare && (!dsiFeatures() || (isDSiMode() && arm7SCFGLocked && !dsiWramAccess && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str())))) {
 				cannotLaunchMsg();
 			} else {
 				int hasAP = 0;
 				bool proceedToLaunch = true;
 				bool useBootstrapAnyway = (useBootstrap || !secondaryDevice);
-				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare && isHomebrew == 0)
+				if (useBootstrapAnyway && bnrRomType == 0 && isHomebrew == 0)
 				{
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 					char game_TID[5];
@@ -833,22 +870,27 @@ string browseForFile(const vector<string_view> extensionList) {
 					if (proceedToLaunch && requiresDonorRom)
 					{
 						const char* pathDefine = "DONOR_NDS_PATH";
-						if (requiresDonorRom==20) {
+						if (requiresDonorRom == 20) {
 							pathDefine = "DONORE2_NDS_PATH";
-						} else if (requiresDonorRom==2) {
+						} else if (requiresDonorRom == 2) {
 							pathDefine = "DONOR2_NDS_PATH";
-						} else if (requiresDonorRom==3) {
+						} else if (requiresDonorRom == 3) {
 							pathDefine = "DONOR3_NDS_PATH";
-						} else if (requiresDonorRom==51) {
+						} else if (requiresDonorRom == 51) {
 							pathDefine = "DONORTWL_NDS_PATH";
+						} else if (requiresDonorRom == 52) {
+							pathDefine = "DONORTWLONLY_NDS_PATH";
 						}
 						std::string donorRomPath;
-						bootstrapinipath = ((!secondaryDevice || (dsiFeatures() && sdFound())) ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+						bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";
+						loadPerGameSettings(dirContents.at(fileOffset).name);
+						int dsiModeSetting = (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
 						CIniFile bootstrapini(bootstrapinipath);
 						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-						if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
-							proceedToLaunch = false;
-							donorRomMsg();
+						if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
+						&& (requiresDonorRom == 20 || requiresDonorRom == 2 || requiresDonorRom == 3
+						 || requiresDonorRom == 51 || (requiresDonorRom == 52 && (isDSiWare || dsiModeSetting > 0)))) {
+							proceedToLaunch = donorRomMsg();
 						}
 					}
 					if (proceedToLaunch && checkIfShowAPMsg(dirContents.at(fileOffset).name))
@@ -943,9 +985,9 @@ string browseForFile(const vector<string_view> extensionList) {
 					}
 				}
 
-				if (proceedToLaunch && useBootstrapAnyway && bnrRomType == 0 && !isDSiWare &&
-					isHomebrew == 0 &&
-					checkIfDSiMode(dirContents.at(fileOffset).name)) {
+				if (proceedToLaunch && useBootstrapAnyway && bnrRomType == 0 && !isDSiWare
+				 && !dsModeForced && isHomebrew == 0
+				 && checkIfDSiMode(dirContents.at(fileOffset).name)) {
 					bool hasDsiBinaries = true;
 					if (!arm7SCFGLocked || memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");

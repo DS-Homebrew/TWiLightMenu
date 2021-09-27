@@ -237,6 +237,21 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	return false;
 }
 
+bool showSetDonorRomDSiWare(u32 arm7size) {
+	if (requiresDonorRom || !isDSiMode() || memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0 || !arm7SCFGLocked) return false;
+
+	if (arm7size==0x257DC
+	 || arm7size==0x25860
+	 || arm7size==0x26D10
+	 || arm7size==0x26D50
+	 || arm7size==0x26DF4)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 bool donorRomTextShown = false;
 void revertDonorRomText(void) {
 	if (!donorRomTextShown || strncmp(SET_AS_DONOR_ROM, "Done!", 5) != 0) return;
@@ -402,14 +417,21 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
-		if (dsiWareBooter || consoleModel > 0) {
+		if (dsiWareBooter || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel > 0) {
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
-			if (consoleModel >= 2) {
+			if (((dsiFeatures() && sdFound()) || !secondaryDevice) && consoleModel >= 2 && (!isDSiMode() || !arm7SCFGLocked)) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
 			showCheats = true;
+		}
+		if (a7mbk6 == 0x080037C0 ? showSetDonorRomDSiWare(arm7size) : showSetDonorRom(arm7size, SDKVersion)) {
+			perGameOps++;
+			perGameOp[perGameOps] = 9;	// Set as Donor ROM
+			donorRomTextShown = true;
+		} else {
+			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
 		if (useBootstrap || (dsiFeatures() && unitCode > 0) || !secondaryDevice) {
@@ -422,8 +444,7 @@ void perGameSettings (std::string filename) {
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
-		if (((dsiFeatures() && (useBootstrap || unitCode > 0)) || !secondaryDevice)
-		&& (unitCode == 0 || unitCode == (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18)==0 ? 2 : 3) || (unitCode > 0 && !arm7SCFGLocked))) {
+		if ((dsiFeatures() && (useBootstrap || unitCode > 0)) || !secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;
@@ -452,11 +473,11 @@ void perGameSettings (std::string filename) {
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
-			if (((dsiFeatures() && sdFound()) || !secondaryDevice) && consoleModel >= 2) {
+			if (((dsiFeatures() && sdFound()) || !secondaryDevice) && consoleModel >= 2 && (!isDSiMode() || !arm7SCFGLocked)) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
-			if (showSetDonorRom(arm7size, SDKVersion)) {
+			if (a7mbk6 == 0x080037C0 ? showSetDonorRomDSiWare(arm7size) : showSetDonorRom(arm7size, SDKVersion)) {
 				perGameOps++;
 				perGameOp[perGameOps] = 9;	// Set as Donor ROM
 				donorRomTextShown = true;
@@ -879,11 +900,11 @@ void perGameSettings (std::string filename) {
 						} else if (SDKVersion > 0x3000000 && SDKVersion < 0x5000000) {
 							pathDefine = "DONOR3_NDS_PATH";
 						} else if (unitCode > 0 && SDKVersion > 0x5000000) {
-							pathDefine = "DONORTWL_NDS_PATH";
+							pathDefine = a7mbk6 == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH";
 						}
 						std::string romFolderNoSlash = romfolder[secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						bootstrapinipath = ((!secondaryDevice || (isDSiMode() && sdFound())) ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+						bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, romFolderNoSlash+"/"+filename);
 						bootstrapini.SaveIniFile(bootstrapinipath);

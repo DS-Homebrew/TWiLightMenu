@@ -99,7 +99,7 @@ void SetBrightness(u8 screen, s8 bright)
 	}
 	if (bright > 31)
 		bright = 31;
-	*(u16 *)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16 *)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 bool extention(const std::string& filename, const char* ext) {
@@ -112,7 +112,7 @@ bool extention(const std::string& filename, const char* ext) {
 
 int main(int argc, char **argv)
 {
-	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);

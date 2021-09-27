@@ -42,8 +42,6 @@
 
 // Graphic files
 #include "icon_unk.h"
-#include "icon_pce.h"
-#include "icon_a26.h"
 #include "icon_folder.h"
 #include "icon_plg.h"
 #include "icon_gbamode.h"
@@ -54,6 +52,9 @@
 #include "icon_gg.h"
 #include "icon_md.h"
 #include "icon_snes.h"
+#include "icon_a26.h"
+#include "icon_int.h"
+#include "icon_pce.h"
 
 extern bool arm7SCFGLocked;
 extern bool secondaryDevice;
@@ -76,6 +77,7 @@ static int ggTexID;
 static int mdTexID;
 static int snesTexID;
 static int a26TexID;
+static int intTexID;
 static int pceTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
@@ -97,6 +99,7 @@ static glImage ggIcon[1];
 static glImage mdIcon[1];
 static glImage snesIcon[1];
 static glImage a26Icon[1];
+static glImage intIcon[1];
 static glImage pceIcon[1];
 
 u8 *clearTiles;
@@ -487,6 +490,30 @@ void loadConsoleIcons()
 				(u8*) icon_a26Bitmap // Raw image data
 				);
 
+	// INT
+	glDeleteTextures(1, &intTexID);
+	
+	newPalette = (u16*)icon_intPal;
+	if (colorMode == 1) {
+		for (int i2 = 0; i2 < 16; i2++) {
+			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		}
+	}
+	intTexID =
+	glLoadTileSet(intIcon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) newPalette, // Image palette
+				(u8*) icon_intBitmap // Raw image data
+				);
+
 	// PCE
 	glDeleteTextures(1, &pceTexID);
 	
@@ -530,101 +557,8 @@ void drawIconGG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, ggIcon)
 void drawIconMD(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, mdIcon); }
 void drawIconSNES(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, snesIcon); }
 void drawIconA26(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, a26Icon); }
+void drawIconINT(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, intIcon); }
 void drawIconPCE(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, pceIcon); }
-
-void loadFixedBanner(void) {
-	/* Banner fixes start here */
-	u32 bannersize = 0;
-
-	//Check reserved area before loadFixedBanner
-	int total = 0;
-	for (int i = 0; i < 8; i++)
-	{
-		if (ndsBanner.reserved2[i] == 0)
-			total++;
-	}
-
-	for (int i = 2047; i > 2039; i--)
-	{
-		if (ndsBanner.reserved2[i] == 0)
-			total++;
-	}
-
-	if (total == 16)
-		return;
-
-	// Alice in Wonderland (U)
-	if (ndsBanner.crc[3] == 0xB9EA) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Alice in Wonderland (U).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Fire Emblem - Heroes of Light and Shadow
-		if (ndsBanner.crc[3] == 0xD8F4) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Black Version
-		if (ndsBanner.crc[0] != 0x4683 && ndsBanner.crc[0] != 0xA251 && ndsBanner.crc[3] == 0xEE5D) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Blaze Black (Clean Version)
-	    if (ndsBanner.crc[0] == 0x4683 && ndsBanner.crc[3] == 0xEE5D) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Clean Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Blaze Black (Full Version)
-	    if (ndsBanner.crc[0] == 0xA251 && ndsBanner.crc[3] == 0xEE5D) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Full Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon White Version
-		if (ndsBanner.crc[0] != 0x77F4 && ndsBanner.crc[0] != 0x9CA8 && ndsBanner.crc[3] == 0x0C88) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Volt White (Clean Version)
-		if (ndsBanner.crc[0] == 0x77F4 && ndsBanner.crc[3] == 0x0C88) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Clean Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Volt White (Full Version)
-		if (ndsBanner.crc[0] == 0x9CA8 && ndsBanner.crc[3] == 0x0C88) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Full Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Black Version 2
-		if (ndsBanner.crc[3] == 0x2CA3) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version 2.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon White Version 2
-		if (ndsBanner.crc[3] == 0x3B18) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version 2.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	}
-}
 
 void getGameInfo(bool isDir, const char* name)
 {
@@ -755,6 +689,10 @@ void getGameInfo(bool isDir, const char* name)
 		bool usingB4DS = (!dsiFeatures() && secondaryDevice);
 		bool hasCycloDSi = (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 		romVersion = ndsHeader.romversion;
+		a7mbk6 = ndsHeader.a7mbk6;
+		if (a7mbk6 == (hasCycloDSi ? 0x080037C0 : 0x00403000) && isDSiMode() && arm7SCFGLocked) {
+			requiresDonorRom = hasCycloDSi ? 51 : 52;
+		} else
 		switch (ndsHeader.arm7binarySize) {
 			case 0x22B40:
 			case 0x22BCC:
@@ -829,7 +767,7 @@ void getGameInfo(bool isDir, const char* name)
 
 		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
 		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
-		&& (!dsiFeatures() || arm7SCFGLocked)) {
+		&& !dsiFeatures()) {
 			isDSiWare = false;
 		}
 
@@ -867,12 +805,13 @@ void getGameInfo(bool isDir, const char* name)
 		// close file!
 		fclose(fp);
 
-		loadFixedBanner();
-
 		// banner sequence
 		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
-			grabBannerSequence();
-			bnriconisDSi = true;
+			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
+			if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
+				grabBannerSequence();
+				bnriconisDSi = true;
+			}
 		}
 	}
 }
@@ -1031,10 +970,8 @@ void iconUpdate(bool isDir, const char* name)
 		// close file!
 		fclose(fp);
 
-		loadFixedBanner();
-
 		// icon
-		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if (bnriconisDSi) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, false);
@@ -1200,8 +1137,6 @@ void titleUpdate(bool isDir, const char* name)
 
 		// close file!
 		fclose(fp);
-
-		loadFixedBanner();
 
 		int currentLang = 0;
 		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
