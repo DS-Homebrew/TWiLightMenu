@@ -155,6 +155,7 @@ bool showXex = true;
 bool showA26 = true;
 bool showA52 = true;
 bool showA78 = true;
+bool showInt = true;
 bool showNes = true;
 bool showGb = true;
 bool showSmsGg = true;
@@ -221,6 +222,7 @@ void LoadSettings(void) {
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", true);
 	showA52 = settingsini.GetInt("SRLOADER", "SHOW_A52", true);
 	showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", true);
+	showInt = settingsini.GetInt("SRLOADER", "SHOW_INT", true);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", true);
@@ -1361,6 +1363,9 @@ int main(int argc, char **argv) {
 	}
 	if (showA78) {
 		extensionList.emplace_back(".a78");
+	}
+	if (showInt) {
+		extensionList.emplace_back(".int");
 	}
 	if (showGb) {
 		extensionList.push_back(".gb");
@@ -2550,6 +2555,14 @@ int main(int argc, char **argv) {
 					}
 					if((!isDSiMode() && dsiFeatures()) || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename, {".int"})) {
+					launchType[secondaryDevice] = 16;
+					
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
 						boostVram = true;
 					}
 				} else if (extension(filename, {".gb", ".sgb", ".gbc"})) {

@@ -22,6 +22,7 @@
 #include "iconPhat_gba.h"
 #include "icon_gb.h"
 #include "icon_a26.h"
+#include "icon_int.h"
 #include "icon_nes.h"
 #include "icon_sms.h"
 #include "icon_gg.h"
@@ -43,6 +44,7 @@ static int ndsTexID;
 static int gbaTexID;
 static int gbTexID;
 static int a26TexID;
+static int intTexID;
 static int nesTexID;
 static int smsTexID;
 static int ggTexID;
@@ -57,6 +59,7 @@ static glImage ndsIcon[1];
 static glImage gbaIcon[1];
 static glImage gbIcon[1];
 static glImage a26Icon[1];
+static glImage intIcon[1];
 static glImage nesIcon[1];
 static glImage smsIcon[1];
 static glImage ggIcon[1];
@@ -96,8 +99,8 @@ static int anniversaryTextYposMoveSpeed = 9;
 static int anniversaryTextYposMoveDelay = 0;
 static bool anniversaryTextYposMoveDelayEven = true;	// For 24FPS */
 
-static int zoomingIconXpos[10] = {-32, -32, 256, 256+16, -32, -32, 256, 256+16, -32, -32};
-static int zoomingIconYpos[10] = {-32, -48, -48, -32, 192+32, 192+48, 192+48, 192+32, -32, 192};
+static int zoomingIconXpos[11] = {-32, -32, 256, 256+16, -32, -32, 256, 256+16, -32, -32, 256+16};
+static int zoomingIconYpos[11] = {-32, -48, -48, -32, 192+32, 192+48, 192+48, 192+32, -32, 192, -32};
 
 void twlMenuVideo_loadTopGraphics(void) {
 	// TWiLight Menu++ text
@@ -287,6 +290,36 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	a26TexID =
 	glLoadTileSet(a26Icon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				icon_Pal, // Image palette
+				icon_Bitmap // Raw image data
+				);
+
+	// INT
+	glDeleteTextures(1, &intTexID);
+
+	if (december) {
+		icon_Bitmap = (u8*)icon_presentBitmap;
+		icon_Pal = (u16*)icon_presentPal;
+	} else 	{
+		icon_Bitmap = (u8*)icon_intBitmap;
+		icon_Pal = (u16*)icon_intPal;
+	}
+	if (ms().colorMode == 1) {
+		for (int i2 = 0; i2 < 16; i2++) {
+			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+		}
+	}
+	intTexID =
+	glLoadTileSet(intIcon, // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -579,6 +612,7 @@ void twlMenuVideo_topGraphicRender(void) {
 		glSprite(zoomingIconXpos[7], zoomingIconYpos[7], GL_FLIP_NONE, ndsIcon);
 		glSprite(zoomingIconXpos[8], zoomingIconYpos[8], GL_FLIP_NONE, a26Icon);
 		glSprite(zoomingIconXpos[9], zoomingIconYpos[9], GL_FLIP_NONE, pceIcon);
+		glSprite(zoomingIconXpos[10], zoomingIconYpos[10], GL_FLIP_NONE, intIcon);
 	}
 		//glBoxFilled(0, 0, 256, 23, RGB15(0, 0, 0));
 		//glBoxFilled(0, 168, 256, 192, RGB15(0, 0, 0));
@@ -680,6 +714,15 @@ void twlMenuVideo_topGraphicRender(void) {
 		}
 		if (zoomingIconYpos[9] < 192-40) {
 			zoomingIconYpos[9] = 192-40;
+		}
+
+		zoomingIconXpos[10] -= 4;
+		zoomingIconYpos[10] += 4;
+		if (zoomingIconXpos[10] < 256-40) {
+			zoomingIconXpos[10] = 256-40;
+		}
+		if (zoomingIconYpos[10] > 8) {
+			zoomingIconYpos[10] = 8;
 		}
 
 		frameDelaySprite = 0;

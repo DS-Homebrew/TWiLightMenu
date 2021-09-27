@@ -1210,6 +1210,17 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to XEGS-DS as argument
 	}
+	else if (ms().launchType[ms().previousUsedDevice] == Launch::ENINTVDSLaunch)
+	{
+		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		{
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to NINTV-DS as argument
+	}
 	if (err > 0) {
 		consoleDemoInit();
 		iprintf("Start failed. Error %i\n", err);

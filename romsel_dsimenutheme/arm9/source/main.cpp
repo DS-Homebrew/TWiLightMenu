@@ -906,6 +906,9 @@ int main(int argc, char **argv) {
 	if (ms().showA78) {
 		extensionList.emplace_back(".a78");
 	}
+	if (ms().showInt) {
+		extensionList.emplace_back(".int");
+	}
 	if (ms().showGb) {
 		extensionList.emplace_back(".gb");
 		extensionList.emplace_back(".sgb");
@@ -2066,6 +2069,14 @@ int main(int argc, char **argv) {
 					}
 					if((!isDSiMode() && dsiFeatures()) || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename, {".int"})) {
+					ms().launchType[ms().secondaryDevice] = Launch::ENINTVDSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
 						boostVram = true;
 					}
 				} else if (extension(filename, {".gb", ".sgb", ".gbc"})) {

@@ -378,6 +378,7 @@ void vBlankHandler()
 				if (isDSiMode() && !flashcardFound() && arm7SCFGLocked) {
 					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[0]);
 				}
+				else if (bnrRomType[1] == 12) drawIconINT(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 11) drawIconPCE(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 10) drawIconA26(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 9) drawIconPlg(40, iconYpos[0]+6);
@@ -400,6 +401,7 @@ void vBlankHandler()
 			glSprite(129, iconYpos[2], GL_FLIP_NONE, &pictodlpImage[3-dlplayFound]);
 			glSprite(33, iconYpos[3], GL_FLIP_NONE, sdFound() ? &iconboxImage[0] : &iconboxImage[1-isRegularDS]);
 			if (!sdFound()) drawIconGBA(40, iconYpos[3]+6);
+			else if (bnrRomType[0] == 12) drawIconINT(40, iconYpos[3]+6);
 			else if (bnrRomType[0] == 11) drawIconPCE(40, iconYpos[3]+6);
 			else if (bnrRomType[0] == 10) drawIconA26(40, iconYpos[3]+6);
 			else if (bnrRomType[0] == 9) drawIconPlg(40, iconYpos[3]+6);

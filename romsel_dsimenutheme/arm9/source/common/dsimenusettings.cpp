@@ -49,6 +49,7 @@ TWLSettings::TWLSettings()
 	showA26 = true;
 	showA52 = true;
 	showA78 = true;
+	showInt = true;
 	showNes = true;
 	showGb = true;
 	showSmsGg = true;
@@ -157,6 +158,7 @@ void TWLSettings::loadSettings()
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", showA26);
 	showA52 = settingsini.GetInt("SRLOADER", "SHOW_A52", showA52);
 	showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", showA78);
+	showInt = settingsini.GetInt("SRLOADER", "SHOW_INT", showInt);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);

@@ -67,6 +67,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## Graphics & Themes
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons
+- [Absent-Reality](http://pixeljoint.com/p/19283.htm): Intellivision icon
 - [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi theme's `SELECT` menu
 - [fail0verflow](https://github.com/fail0verflow/), Fluto, and Arkhandar: Homebrew Channel/Launcher graphics
 - davi: Border for GBC theme (originally for GameYob)

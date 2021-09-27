@@ -1639,6 +1639,9 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 					bnrRomType[i] = 10;
 					boxArtType[i] = 0;
+				} else if (extension(std_romsel_filename, {".int"})) {
+					bnrRomType[i] = 12;
+					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".plg"})) {
 					bnrRomType[i] = 9;
 					boxArtType[i] = 0;

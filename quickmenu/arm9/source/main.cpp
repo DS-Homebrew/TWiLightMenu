@@ -1214,6 +1214,9 @@ int main(int argc, char **argv) {
 				 || extention(filename[0], ".a26") || extention(filename[0], ".a52") || extention(filename[0], ".a78")) {
 			bnrRomType[0] = 10;
 			boxArtType[0] = 0;
+		} else if (extention(filename[0], ".int")) {
+			bnrRomType[0] = 12;
+			boxArtType[0] = 0;
 		} else if (extention(filename[0], ".plg")) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = 0;
@@ -1322,6 +1325,9 @@ int main(int argc, char **argv) {
 		} else if (extention(filename[1], ".xex") || extention(filename[1], ".atr")
 				 || extention(filename[1], ".a26") || extention(filename[1], ".a52") || extention(filename[1], ".a78")) {
 			bnrRomType[1] = 10;
+			boxArtType[1] = 0;
+		} else if (extention(filename[1], ".int")) {
+			bnrRomType[1] = 12;
 			boxArtType[1] = 0;
 		} else if (extention(filename[1], ".plg")) {
 			bnrRomType[1] = 9;
@@ -2744,6 +2750,14 @@ int main(int argc, char **argv) {
 					}
 					if((!isDSiMode() && dsiFeatures()) || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+						ms().boostVram = true;
+					}
+				} else if (extention(filename[ms().secondaryDevice], ".int")) {
+					ms().launchType[ms().secondaryDevice] = 16;
+					
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
 						ms().boostVram = true;
 					}
 				} else if (extention(filename[ms().secondaryDevice], ".gb") || extention(filename[ms().secondaryDevice], ".sgb") || extention(filename[ms().secondaryDevice], ".gbc")) {

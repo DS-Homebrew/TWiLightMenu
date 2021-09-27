@@ -517,6 +517,7 @@ void ThemeTextures::loadIconTextures() {
 	_iconSNESTexture = std::make_unique<Texture>(TFN_GRF_ICON_SNES, TFN_FALLBACK_GRF_ICON_SNES);
 	_iconPLGTexture = std::make_unique<Texture>(TFN_GRF_ICON_PLG, TFN_FALLBACK_GRF_ICON_PLG);
 	_iconA26Texture = std::make_unique<Texture>(TFN_GRF_ICON_A26, TFN_FALLBACK_GRF_ICON_A26);
+	_iconINTTexture = std::make_unique<Texture>(TFN_GRF_ICON_INT, TFN_FALLBACK_GRF_ICON_INT);
 	_iconPCETexture = std::make_unique<Texture>(TFN_GRF_ICON_PCE, TFN_FALLBACK_GRF_ICON_PCE);
 	_iconUnknownTexture = std::make_unique<Texture>(TFN_GRF_ICON_UNK, TFN_FALLBACK_GRF_ICON_UNK);
 
@@ -1425,6 +1426,15 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 	}
 	if (_iconPLGTexture) {
 		_iconPLGTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconA26Texture) {
+		_iconA26Texture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconINTTexture) {
+		_iconINTTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconPCETexture) {
+		_iconPCETexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconUnknownTexture) {
 		_iconUnknownTexture->applyPaletteEffect(effectGrayscalePalette);

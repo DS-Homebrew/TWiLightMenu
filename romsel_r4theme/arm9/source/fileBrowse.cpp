@@ -745,6 +745,8 @@ string browseForFile(const vector<string_view> extensionList) {
 				bnrRomType = 11;
 			} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 				bnrRomType = 10;
+			} else if (extension(std_romsel_filename, {".int"})) {
+				bnrRomType = 12;
 			} else if (extension(std_romsel_filename, {".plg", ".rvid", ".fv"})) {
 				bnrRomType = 9;
 			} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
