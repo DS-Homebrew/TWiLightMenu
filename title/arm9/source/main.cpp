@@ -1702,12 +1702,12 @@ int main(int argc, char **argv)
 
 				useTwlCfg = true;
 				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
-				*(vu32*)(0x0377C000) = BIT(1);
+				*(vu32*)(0x0377C000) = BIT(0);
 			}
 		} else {
 			if (useTwlCfg) {
 				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
-				*(vu32*)(0x0377C000) = BIT(1);
+				*(vu32*)(0x0377C000) = BIT(0);
 			} else {
 				tonccpy((void*)0x02000000, (void*)0x0377C000, 0x4000); // Restore from DSi WRAM
 				useTwlCfg = ((*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
