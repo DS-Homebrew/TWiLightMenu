@@ -1593,7 +1593,7 @@ int main(int argc, char **argv) {
 								argarray.at(0) = (char*)bootstrapPath.c_str();
 
 								const char* gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-								if (arm7SCFGLocked && dsiWareExploit == 7) {
+								if (arm7SCFGLocked && !dsiWramAccess) {
 									gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
 								}
 
@@ -2504,7 +2504,7 @@ int main(int argc, char **argv) {
 						useNDSB = true;
 
 						const char* gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-						if (isDSiMode() && arm7SCFGLocked && dsiWareExploit == 7) {
+						if (isDSiMode() && arm7SCFGLocked && !dsiWramAccess) {
 							gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
 						}
 

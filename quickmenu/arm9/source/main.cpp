@@ -85,6 +85,7 @@ char launcherPath[256];
 static char pictochatPath[256];
 static char dlplayPath[256];
 
+bool dsiWramAccess = false;
 bool arm7SCFGLocked = false;
 bool isRegularDS = true;
 bool isDSLite = false;
@@ -976,6 +977,13 @@ int main(int argc, char **argv) {
 	}
 
 	std::string filename[2];
+
+	if (isDSiMode()) {
+		u32 wordBak = *(vu32*)0x03700000;
+		*(vu32*)0x03700000 = 0x414C5253;
+		dsiWramAccess = *(vu32*)0x03700000 == 0x414C5253;
+		*(vu32*)0x03700000 = wordBak;
+	}
 
 	fifoWaitValue32(FIFO_USER_06);
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
@@ -2699,7 +2707,7 @@ int main(int argc, char **argv) {
 						useNDSB = true;
 
 						const char* gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-						if (isDSiMode() && arm7SCFGLocked && ms().dsiWareExploit == 7) {
+						if (isDSiMode() && arm7SCFGLocked && !dsiWramAccess) {
 							gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
 						}
 
