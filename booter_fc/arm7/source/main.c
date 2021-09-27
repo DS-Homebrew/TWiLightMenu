@@ -71,14 +71,12 @@ void powerButtonCB() {
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
-	#ifndef CYCLODSI
 	REG_SCFG_ROM = 0x101;
 	REG_SCFG_CLK = (BIT(0) | BIT(1) | BIT(2) | BIT(7) | BIT(8));
 	REG_SCFG_EXT = 0x93FFFB06;
 	*(vu16*)(0x04004012) = 0x1988;
 	*(vu16*)(0x04004014) = 0x264C;
 	*(vu16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
-	#endif
 
 	*(vu16*)(0x04004700) |= BIT(13);	// Set 48khz sound/mic frequency (DSi/3DS only)
 

@@ -121,7 +121,7 @@ static addr_t quickFind (const data_t* data, const data_t* search, size_t dataLe
 }
 
 // Normal DLDI uses "\xED\xA5\x8D\xBF Chishm"
-// Bootloader string is different to avoid being patched#ifdef CYCLODSI#else
+// Bootloader string is different to avoid being patched
 static data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Different to a normal DLDI file
 
 #define DEVICE_TYPE_DLDI 0x49444C44
@@ -323,7 +323,6 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
-#ifdef CYCLODSI
 void runNds9i (const char* filename) {
 	//consoleClear();
 	//iprintf ("Now loading...\n");
@@ -344,7 +343,6 @@ void runNds9i (const char* filename) {
 	}
 	fclose(ndsFile);
 }
-#endif
 
 bool runNds9 (const char* filename) {
 	if (isDSiMode() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) return false;
@@ -392,11 +390,9 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 		argv = args;
 	}
 
-	#ifdef CYCLODSI
 	if (isDSiMode()) {
 		runNds9i(filename);
 	}
-	#endif
 
 	bool loadFromRam = (runNds9(filename) || (isDSiMode() && access("sd:/", F_OK) != 0));
 	
