@@ -380,7 +380,7 @@ int main(int argc, char **argv) {
 
 	keysSetRepeat(25, 25);
 
-	bool useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	bool useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 

@@ -1683,7 +1683,7 @@ int main(int argc, char **argv)
 
 	bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
 
-	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 	if (REG_SCFG_EXT!=0) {
 		if (!useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && !is3DS) {
 			if (fatMountSimple("nand", &io_dsi_nand)) {
@@ -1710,7 +1710,7 @@ int main(int argc, char **argv)
 				*(vu32*)(0x0377C000) = BIT(0);
 			} else {
 				tonccpy((void*)0x02000000, (void*)0x0377C000, 0x4000); // Restore from DSi WRAM
-				useTwlCfg = ((*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+				useTwlCfg = ((*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 				if (*(vu32*)(0x0377C000) & BIT(0)) {
 					softResetParamsBak |= BIT(0);
 				}

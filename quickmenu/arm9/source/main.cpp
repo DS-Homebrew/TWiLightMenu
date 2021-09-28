@@ -943,7 +943,7 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	extern const DISC_INTERFACE __my_io_dsisd;
 
