@@ -700,7 +700,6 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 
 	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-	ClearBrightness();
 	clearText();
 	printSmall(false, 4, 4, text);
 	if (err == 0) {
@@ -708,6 +707,10 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 		printSmall(false, 4, 52, STR_FLASHCARD_NAME);
 		printSmall(false, 4, 68, io_dldi_data->friendlyName);
 	}
+	whiteScreen = true;
+	fadeSpeed = true;
+	controlTopBright = false;
+	fadeType = true; // Fade in
 	stop();
 }
 
@@ -2172,11 +2175,14 @@ int main(int argc, char **argv) {
 					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText();
-					ClearBrightness();
 					printSmall(false, 4, 4, text);
 					if (err == 1) {
 						printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 					}
+					whiteScreen = true;
+					fadeSpeed = true;
+					controlTopBright = false;
+					fadeType = true; // Fade in
 					stop();
 				}
 
@@ -2543,7 +2549,10 @@ int main(int argc, char **argv) {
 					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText();
-					ClearBrightness();
+					whiteScreen = true;
+					fadeSpeed = true;
+					controlTopBright = false;
+					fadeType = true; // Fade in
 					printSmall(false, 4, 4, text);
 					stop();
 				}
@@ -2907,6 +2916,9 @@ int main(int argc, char **argv) {
 				if (err == 1 && useNDSB) {
 					printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
 				}
+				whiteScreen = true;
+				fadeSpeed = true;
+				controlTopBright = false;
 				fadeType = true; // Fade in
 				stop();
 

@@ -2732,6 +2732,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								showProgressIcon = true;
 							} else if (ms().theme != 4) {
 								fadeSpeed = true; // Fast fading
+								whiteScreen = true;
+								tex().clearTopScreen();
 								fadeType = true; // Fade in from white
 								for (int i = 0; i < 25; i++) {
 									swiWaitForVBlank();

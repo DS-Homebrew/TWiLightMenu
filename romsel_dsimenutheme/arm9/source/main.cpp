@@ -601,7 +601,6 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 
 	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-	fadeType = true;	// Fade from white
 	if (err == 0) {
 		printLarge(false, 4, 4, STR_ERROR_FLASHCARD_UNSUPPORTED);
 		printLarge(false, 4, 68, io_dldi_data->friendlyName);
@@ -609,6 +608,12 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 		printLarge(false, 4, 4, text);
 	}
 	printSmall(false, 4, 90, STR_PRESS_B_RETURN);
+	fadeSpeed = true; // Fast fading
+	if (ms().theme != 4 && ms().theme != 5) {
+		whiteScreen = true;
+		tex().clearTopScreen();
+	}
+	fadeType = true;	// Fade from white
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1682,7 +1687,11 @@ int main(int argc, char **argv) {
 							printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 						}
 						updateText(false);
-						fadeSpeed = true;
+						fadeSpeed = true; // Fast fading
+						if (ms().theme != 4 && ms().theme != 5) {
+							whiteScreen = true;
+							tex().clearTopScreen();
+						}
 						fadeType = true;
 						int pressed = 0;
 						do {
@@ -1821,6 +1830,10 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 					updateText(false);
 					fadeSpeed = true;
+					if (ms().theme != 4 && ms().theme != 5) {
+						whiteScreen = true;
+						tex().clearTopScreen();
+					}
 					fadeType = true;
 					int pressed = 0;
 					do {
@@ -2244,6 +2257,10 @@ int main(int argc, char **argv) {
 				printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 				updateText(false);
 				fadeSpeed = true;
+				if (ms().theme != 4 && ms().theme != 5) {
+					whiteScreen = true;
+					tex().clearTopScreen();
+				}
 				fadeType = true;
 				int pressed = 0;
 				do {
