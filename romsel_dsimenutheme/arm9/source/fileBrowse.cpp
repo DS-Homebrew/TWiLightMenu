@@ -403,7 +403,7 @@ void displayNowLoading(void) {
 	std::string *msg;
 	if (showProgressBar) {
 		if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-			msg = &STR_BARSTOPPED_TURNOFF;
+			msg = &STR_BARSTOPPED_RESTART;
 		} else if (dsiFeatures() && ms().consoleModel >= 2) {
 			msg = &STR_BARSTOPPED_PRESSHOME;
 		} else {
@@ -411,7 +411,7 @@ void displayNowLoading(void) {
 		}
 	} else {
 		if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-			msg = &STR_TAKEWHILE_TURNOFF;
+			msg = &STR_TAKEWHILE_RESTART;
 		} else if (dsiFeatures() && ms().consoleModel >= 2) {
 			msg = &STR_TAKEWHILE_PRESSHOME;
 		} else {

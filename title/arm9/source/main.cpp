@@ -781,8 +781,8 @@ void lastRunROM()
 					iprintf("Creating public save file...\n");
 					iprintf ("\n");
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						iprintf ("If this takes a while, turn off\n");
-						iprintf ("the POWER, and try again.\n");
+						iprintf ("If this takes a while, press\n");
+						iprintf ("L+R+START+SELECT to restart.\n");
 					} else if (ms().consoleModel >= 2) {
 						iprintf ("If this takes a while,\n");
 						iprintf ("press HOME, and press B.\n");
@@ -827,8 +827,8 @@ void lastRunROM()
 					iprintf("Creating private save file...\n");
 					iprintf ("\n");
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						iprintf ("If this takes a while, turn off\n");
-						iprintf ("the POWER, and try again.\n");
+						iprintf ("If this takes a while, press\n");
+						iprintf ("L+R+START+SELECT to restart.\n");
 					} else if (ms().consoleModel >= 2) {
 						iprintf ("If this takes a while,\n");
 						iprintf ("press HOME, and press B.\n");

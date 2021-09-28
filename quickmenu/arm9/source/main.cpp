@@ -1950,7 +1950,7 @@ int main(int argc, char **argv) {
 					controlTopBright = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
@@ -1991,7 +1991,7 @@ int main(int argc, char **argv) {
 					controlTopBright = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
@@ -2298,7 +2298,7 @@ int main(int argc, char **argv) {
 								fadeSpeed = true; // Fast fading
 								clearText();
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-									printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
+									printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
 								} else if (dsiFeatures() && ms().consoleModel >= 2) {
 									printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 								} else {
