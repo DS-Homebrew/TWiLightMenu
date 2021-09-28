@@ -1030,6 +1030,15 @@ int main(int argc, char **argv)
 				{true, false});
 	}
 
+	if (dsiFeatures()) {
+		gamesPage
+			.option(STR_SWIHALTHOOK,
+				STR_DESCRIPTION_SWIHALTHOOK,
+				Option::Bool(&bs().swiHaltHook),
+				{STR_ON, STR_OFF},
+				{true, false});
+	}
+
 	if ((isDSiMode() || sdFound()) && ms().consoleModel == 0)
 	{
 		if (sdFound()) {

@@ -36,6 +36,7 @@ class BootstrapSettings
     bool cacheFatTable;
     bool debug;
     bool logging;
+    bool swiHaltHook;
     int romreadled;
     int dmaromreadled;
     bool preciseVolumeControl;
