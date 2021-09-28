@@ -601,16 +601,16 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 4:
-				printSmall(false, 32, perGameOpYpos, "VRAM Boost:");
+				printSmall(false, 32, perGameOpYpos, "VRAM Mode:");
 				if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode && unitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
-					printSmallRightAlign(false, 180, perGameOpYpos, "On");
+					printSmallRightAlign(false, 180, perGameOpYpos, "DSi mode");
 				} else {
 					if (perGameSettings_boostVram == -1) {
 						printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 					} else if (perGameSettings_boostVram == 1) {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, "DSi mode");
 					} else {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, "DS mode");
 					}
 				}
 				break;

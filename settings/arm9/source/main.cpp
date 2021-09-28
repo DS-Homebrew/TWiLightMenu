@@ -972,7 +972,7 @@ int main(int argc, char **argv)
 			.option((dsiFeatures() ? STR_VRAMBOOST : STR_SYSSD_VRAMBOOST),
 				STR_DESCRIPTION_VRAMBOOST_1,
 				Option::Bool(&ms().boostVram),
-				{STR_ON, STR_OFF},
+				{STR_DSI_MODE, STR_DS_MODE},
 				{true, false});
 		if (sdFound() && flashcardFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
 			gamesPage
