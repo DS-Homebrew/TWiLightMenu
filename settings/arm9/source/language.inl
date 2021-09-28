@@ -239,7 +239,7 @@ STRING(DESCRIPTION_RUNFLUBBAEMUSIN, "Run emulators developed by FluBBa in either
 STRING(DESCRIPTION_GBABORDER, "Changes the border in GBA mode. Does not affect GBARunner2.")
 STRING(DESCRIPTION_RUNIN_1, "Select whether to run in DS or DSi mode. In TWL titles, DSi mode will allow features such as Camera and/or WPA1/2 WiFi to be useable.")
 STRING(DESCRIPTION_CPUSPEED_1, "Set to TWL to get rid of slowdowns, at the cost of a few bugs in some NTR titles.")
-STRING(DESCRIPTION_VRAMBOOST_1, "DSi mode will allow 8-bit VRAM writes and expands the bus to 32-bit. Can cause graphical glitches in some NTR titles.")
+STRING(DESCRIPTION_VRAMBOOST_1, "DSi mode will allow 8-bit VRAM writes and expand the bus to 32-bit. Can cause graphical glitches in some NTR titles.")
 STRING(DESCRIPTION_USEBOOTSTRAP, "nds-bootstrap is used instead of the flashcard kernel or firmware.")
 STRING(DESCRIPTION_HOTKEY, "Set the hotkey to open the nds-bootstrap in-game menu.")
 STRING(DESCRIPTION_FCSAVELOCATION, "Pick the location of Slot-1 SD (or flashcard) saves.")
