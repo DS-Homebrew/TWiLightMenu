@@ -1711,6 +1711,9 @@ int main(int argc, char **argv)
 			} else {
 				tonccpy((void*)0x02000000, (void*)0x0377C000, 0x4000); // Restore from DSi WRAM
 				useTwlCfg = ((*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+				if (*(vu32*)(0x0377C000) & BIT(0)) {
+					softResetParamsBak |= BIT(0);
+				}
 			}
 		}
 	}
