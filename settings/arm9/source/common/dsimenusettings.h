@@ -180,6 +180,7 @@ class TWLSettings
     bool showA26;
     bool showA52;
 	bool showA78;
+	bool showInt;
     bool showNes;
     bool showGb;
     bool showSmsGg;

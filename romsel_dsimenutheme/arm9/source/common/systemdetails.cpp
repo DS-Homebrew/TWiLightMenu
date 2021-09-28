@@ -26,6 +26,7 @@ SystemDetails::SystemDetails()
 {
 
     _flashcardUsed = false;
+    _dsiWramAccess = false;
     _arm7SCFGLocked = false;
     _isRegularDS = true;
     _isDSLite = false;
@@ -38,6 +39,13 @@ SystemDetails::SystemDetails()
     // status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: sndExcnt)
     u32 status = ((fifoGetValue32(FIFO_USER_03)) >> INIT_OFF);
     
+	if (isDSiMode()) {
+		u32 wordBak = *(vu32*)0x03700000;
+		*(vu32*)0x03700000 = 0x414C5253;
+		_dsiWramAccess = *(vu32*)0x03700000 == 0x414C5253;
+		*(vu32*)0x03700000 = wordBak;
+	}
+
     if (CHECK_BIT(status, REGSCFG_BIT) == 0) 
     {
         _arm7SCFGLocked = true; // If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.

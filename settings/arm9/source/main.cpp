@@ -742,7 +742,7 @@ int main(int argc, char **argv)
 	ms();
 	defaultExceptionHandler();
 
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	if (!sys().fatInitOk()) {
 		graphicsInit();
@@ -898,6 +898,7 @@ int main(int argc, char **argv)
 		.option(STR_A26_ROMS, STR_DESCRIPTION_SHOW_A26, Option::Bool(&ms().showA26), {"StellaDS", STR_HIDE}, {true, false})
 		.option(STR_A52_ROMS, STR_DESCRIPTION_SHOW_A52, Option::Bool(&ms().showA52), {"A5200DS", STR_HIDE}, {true, false})
 		.option(STR_A78_ROMS, STR_DESCRIPTION_SHOW_A78, Option::Bool(&ms().showA78), {"A7800DS", STR_HIDE}, {true, false})
+		.option(STR_INT_ROMS, STR_DESCRIPTION_SHOW_INT, Option::Bool(&ms().showInt), {"NINTV-DS", STR_HIDE}, {true, false})
 		.option(STR_NES_ROMS, STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {"nesDS", STR_HIDE}, {true, false})
 		.option(STR_GB_ROMS, STR_DESCRIPTION_SHOW_GB, Option::Bool(&ms().showGb), {"GameYob", STR_HIDE}, {true, false})
 		.option(STR_SMS_ROMS, STR_DESCRIPTION_SHOW_SMS, Option::Bool(&ms().showSmsGg), {"S8DS", STR_HIDE}, {true, false});

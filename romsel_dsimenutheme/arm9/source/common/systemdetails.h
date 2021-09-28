@@ -19,6 +19,7 @@ class SystemDetails
       SDInserted = 2 
     };
   public:
+    bool dsiWramAccess() { return _dsiWramAccess; }
     bool arm7SCFGLocked() { return _arm7SCFGLocked; }
     bool flashcardUsed()
     {
@@ -42,6 +43,7 @@ class SystemDetails
     ESDStatus sdStatus();
 
   private:
+    bool _dsiWramAccess;
     bool _arm7SCFGLocked;
     bool _flashcardUsed;
     bool _isRegularDS;

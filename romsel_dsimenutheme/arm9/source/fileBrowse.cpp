@@ -403,7 +403,7 @@ void displayNowLoading(void) {
 	std::string *msg;
 	if (showProgressBar) {
 		if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-			msg = &STR_BARSTOPPED_TURNOFF;
+			msg = &STR_BARSTOPPED_RESTART;
 		} else if (dsiFeatures() && ms().consoleModel >= 2) {
 			msg = &STR_BARSTOPPED_PRESSHOME;
 		} else {
@@ -411,7 +411,7 @@ void displayNowLoading(void) {
 		}
 	} else {
 		if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-			msg = &STR_TAKEWHILE_TURNOFF;
+			msg = &STR_TAKEWHILE_RESTART;
 		} else if (dsiFeatures() && ms().consoleModel >= 2) {
 			msg = &STR_TAKEWHILE_PRESSHOME;
 		} else {
@@ -1370,6 +1370,17 @@ bool checkForCompatibleGame(const char *filename) {
 	return proceedToLaunch;
 }
 
+bool gameCompatibleMemoryPit(void) {
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(incompatibleGameListMemoryPit)/sizeof(incompatibleGameListMemoryPit[0]); i++) {
+		if (memcmp(gameTid[CURPOS], incompatibleGameListMemoryPit[i], 3) == 0) {
+			// Found match
+			return false;
+		}
+	}
+	return true;
+}
+
 void cannotLaunchMsg(const char *filename) {
 	clearText();
 	updateText(false);
@@ -1386,16 +1397,18 @@ void cannotLaunchMsg(const char *filename) {
 		}
 	}
 	const std::string *str = nullptr;
-	if (bnrRomType[CURPOS] != 0 || (isDSiMode() && (ms().consoleModel>=2 ? !isHomebrew[CURPOS] : isDSiWare[CURPOS]) && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked())) {
+	if (bnrRomType[CURPOS] != 0) {
 		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_3DS_HOME : &STR_RELAUNCH_UNLAUNCH;
-	} else if (isHomebrew[CURPOS] && ms().consoleModel >= 2) {
+	} else if (isDSiMode() && isDSiWare[CURPOS]) {
+		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_DSIWARE_3DS_HOME : &STR_RELAUNCH_DSIWARE_UNLAUNCH;
+	} else /*if (isHomebrew[CURPOS] && ms().consoleModel >= 2) {
 		str = &STR_CANNOT_LAUNCH_HB_ON_3DS;
-	} else if (sys().isRegularDS()) {
+	} else*/ if (sys().isRegularDS()) {
 		str = &STR_FOR_USE_WITH_DSI_ONLY;
 	} else {
-		str = isDSiMode() ? &STR_CANNOT_LAUNCH_WITHOUT_SD : &STR_CANNOT_LAUNCH_IN_DS_MODE;
+		str = /*isDSiMode() ? &STR_CANNOT_LAUNCH_WITHOUT_SD :*/ &STR_CANNOT_LAUNCH_IN_DS_MODE;
 	}
-	int yPos = (ms().theme == 4 ? 30 : 102);
+	int yPos = (ms().theme == 4 ? 30 : (bnrRomType[CURPOS] == 0 ? 102 : 82));
 	printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center);
 
 	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::center);
@@ -1625,6 +1638,9 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 					bnrRomType[i] = 10;
+					boxArtType[i] = 0;
+				} else if (extension(std_romsel_filename, {".int"})) {
+					bnrRomType[i] = 12;
 					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".plg"})) {
 					bnrRomType[i] = 9;
@@ -2429,9 +2445,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isDSiWare[CURPOS] && (!isDSiMode() || (isHomebrew[CURPOS] && ms().consoleModel >= 2)
-						|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && ms().dsiWareExploit == 7))
-				) {
+				} else if (isDSiWare[CURPOS] && (!dsiFeatures() || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit()))) {
 					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {
 					int hasAP = 0;
@@ -2694,10 +2708,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							updateText(false);
 
 							fadeSpeed = false; // Slow fade speed
-							for (int i = 0; i < 5; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
-							}
 						}
 						if (ms().theme == 5) {
 							currentBg = 0;
@@ -2705,23 +2715,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						} else if (ms().theme != 4) {
 							fadeType = false;		  // Fade to white
 							snd().fadeOutStream();
-							for (int i = 0; i < 60; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
-							}
-
-							mmEffectCancelAll();
-							snd().stopStream();
 
 							// Clear screen with white
 							rocketVideo_playVideo = false;
-							whiteScreen = true;
-							tex().clearTopScreen();
 						}
-						clearText();
-						updateText(false);
 
 						if(ms().updateRecentlyPlayedList) {
+							while (ms().theme != 5 && !screenFadedOut()) {
+								swiWaitForVBlank();
+							}
+							clearText();
 							printLarge(false, 0, (ms().theme == 4 ? 72 : 88), STR_NOW_SAVING, Alignment::center);
 							updateText(false);
 							if (ms().theme == 5) {
@@ -2767,12 +2770,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							} else if (ms().theme != 4) {
 								showProgressIcon = false;
 								fadeType = false;	   // Fade to white
-								for (int i = 0; i < 25; i++) {
-									swiWaitForVBlank();
-								}
 							}
-							clearText();
-							updateText(false);
 						}
 
 						// Return the chosen file

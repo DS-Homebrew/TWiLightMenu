@@ -24,6 +24,7 @@ int _snesTexID;
 //int _colTexID;
 int _plgTexID;
 int _a26TexID;
+int _intTexID;
 int _pceTexID;
 
 glImage _ndsIcon[NDS_ICON_BANK_COUNT][TWL_ICON_FRAMES];
@@ -38,6 +39,7 @@ glImage _snesIcon[1];
 // glImage _colIcon[1];
 glImage _plgIcon[1];
 glImage _a26Icon[1];
+glImage _intIcon[1];
 glImage _pceIcon[1];
 
 static u8 clearTiles[(32 * 256) / 2] = {0};
@@ -71,6 +73,8 @@ const glImage *getIcon(int num) {
 		return _plgIcon;
 	if (num == A26_ICON)
 		return _a26Icon;
+	if (num == INT_ICON)
+		return _intIcon;
 	if (num == PCE_ICON)
 		return _pceIcon;
 	if (BAD_ICON_IDX(num) || !initialized)
@@ -129,6 +133,10 @@ void glLoadTileSetIntoSlot(int num, int tile_wid, int tile_hei, int bmp_wid, int
 	case A26_ICON:
 		textureID = _a26TexID;
 		sprite = _a26Icon;
+		break;
+	case INT_ICON:
+		textureID = _intTexID;
+		sprite = _intIcon;
 		break;
 	case PCE_ICON:
 		textureID = _pceTexID;
@@ -270,6 +278,10 @@ void glReloadIconPalette(int num) {
 		textureID = _a26TexID;
 		cachedPalette = tex().iconA26Texture()->palette();
 		break;
+	case INT_ICON:
+		textureID = _intTexID;
+		cachedPalette = tex().iconINTTexture()->palette();
+		break;
 	case PCE_ICON:
 		textureID = _pceTexID;
 		cachedPalette = tex().iconPCETexture()->palette();
@@ -300,6 +312,7 @@ void reloadIconPalettes() {
 	glReloadIconPalette(SNES_ICON);
 	glReloadIconPalette(PLG_ICON);
 	glReloadIconPalette(A26_ICON);
+	glReloadIconPalette(INT_ICON);
 	glReloadIconPalette(PCE_ICON);
 
 	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
@@ -347,6 +360,7 @@ void iconManagerInit() {
 	glGenTextures(1, &_snesTexID);
 	glGenTextures(1, &_plgTexID);
 	glGenTextures(1, &_a26TexID);
+	glGenTextures(1, &_intTexID);
 	glGenTextures(1, &_pceTexID);
 
 	// Initialize empty data for the 6 textures.
@@ -373,6 +387,8 @@ void iconManagerInit() {
 	glLoadIcon(GBA_ICON, tex().iconGBATexture()->palette(), tex().iconGBATexture()->bytes(), 64, true);
 
 	glLoadIcon(A26_ICON, tex().iconA26Texture()->palette(), tex().iconA26Texture()->bytes(), 32, true);
+
+	glLoadIcon(INT_ICON, tex().iconINTTexture()->palette(), tex().iconINTTexture()->bytes(), 32, true);
 
 	glLoadIcon(PCE_ICON, tex().iconPCETexture()->palette(), tex().iconPCETexture()->bytes(), 32, true);
 

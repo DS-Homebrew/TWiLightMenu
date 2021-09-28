@@ -142,102 +142,8 @@ void drawIconMD(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon
 void drawIconSNES(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(SNES_ICON)); }
 void drawIconPLG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(PLG_ICON)); }
 void drawIconA26(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(A26_ICON)); }
+void drawIconINT(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(INT_ICON)); }
 void drawIconPCE(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(PCE_ICON)); }
-
-void loadFixedBanner(sNDSBannerExt &ndsBanner) {
-	/* Banner fixes start here */
-	u32 bannersize = 0;
-
-	//Check reserved area before loadFixedBanner
-	int total = 0;
-	for (int i = 0; i < 8; i++)
-	{
-		if (ndsBanner.reserved2[i] == 0)
-			total++;
-	}
-
-	for (int i = 2047; i > 2039; i--)
-	{
-		if (ndsBanner.reserved2[i] == 0)
-			total++;
-	}
-
-	if (total == 16)
-		return;
-
-	// Alice in Wonderland (U)
-	if (ndsBanner.crc[3] == 0xB9EA) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Alice in Wonderland (U).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Fire Emblem - Heroes of Light and Shadow
-		if (ndsBanner.crc[3] == 0xD8F4) {
-		// Use fixed banner.
-		FILE *fixedBannerFile =
-		    fopen("nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Black Version
-	    if (ndsBanner.crc[0] != 0x4683 && ndsBanner.crc[0] != 0xA251 && ndsBanner.crc[3] == 0xEE5D) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Blaze Black (Clean Version)
-	    if (ndsBanner.crc[0] == 0x4683 && ndsBanner.crc[3] == 0xEE5D) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Clean Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Blaze Black (Full Version)
-	    if (ndsBanner.crc[0] == 0xA251 && ndsBanner.crc[3] == 0xEE5D) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Full Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon White Version
-	    if (ndsBanner.crc[0] != 0x77F4 && ndsBanner.crc[0] != 0x9CA8 && ndsBanner.crc[3] == 0x0C88) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Volt White (Clean Version)
-	    if (ndsBanner.crc[0] == 0x77F4 && ndsBanner.crc[3] == 0x0C88) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Clean Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Volt White (Full Version)
-	    if (ndsBanner.crc[0] == 0x9CA8 && ndsBanner.crc[3] == 0x0C88) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Full Version).bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon Black Version 2
-	    if (ndsBanner.crc[3] == 0x2CA3) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version 2.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	} else // Pokemon White Version 2
-	    if (ndsBanner.crc[3] == 0x3B18) {
-		// Use fixed banner.
-		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version 2.bnr", "rb");
-		bannersize = NDS_BANNER_SIZE_DSi;
-		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
-		fclose(fixedBannerFile);
-	}
-}
 
 void clearTitle(int num) {
 	cachedTitle[num] = blankTitle;
@@ -452,7 +358,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
 		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
-		&& (!dsiFeatures() || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()))) {
+		&& !dsiFeatures()) {
 			isDSiWare[num] = false;
 		}
 
@@ -525,8 +431,6 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		// close file!
 		fclose(fp);
 
-		loadFixedBanner(ndsBanner);
-
 		int currentLang = 0;
 		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
 			currentLang = ms().getGameLanguage();
@@ -544,8 +448,11 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 		// banner sequence
 		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
-			grabBannerSequence(num);
-			bnriconisDSi[num] = true;
+			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
+			if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
+				grabBannerSequence(num);
+				bnriconisDSi[num] = true;
+			}
 		}
 	}
 }
@@ -619,7 +526,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
-		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if (bnriconisDSi[num]) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], spriteIdx, true);
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, spriteIdx, false);

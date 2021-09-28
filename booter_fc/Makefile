@@ -9,17 +9,13 @@ export TARGET := booter
 
 include $(DEVKITARM)/ds_rules
 
-.PHONY: bootloader bootstub clean makearm7_fc makearm7_cyclodsi  makearm7_r4idsn makearm9_fc makearm9_cyclodsi makearm9_r4idsn
+.PHONY: bootloader bootstub clean makearm7_fc makearm7_r4idsn makearm9_fc makearm9_r4idsn
 
 all:	bootloader bootstub $(TARGET).nds
 
 makearm7_fc:
 	$(MAKE) -C arm7
 	cp arm7/$(TARGET).elf $(TARGET)_fc.arm7.elf
-
-makearm7_cyclodsi:
-	$(MAKE) -C flashcart_specifics/CycloDSi/arm7
-	cp flashcart_specifics/CycloDSi/arm7/$(TARGET).elf $(TARGET)_cyclodsi.arm7.elf
 
 makearm7_r4idsn:
 	$(MAKE) -C flashcart_specifics/r4idsn/arm7
@@ -29,10 +25,6 @@ makearm9_fc:
 	$(MAKE) -C arm9
 	cp arm9/$(TARGET).elf $(TARGET)_fc.arm9.elf
 
-makearm9_cyclodsi:
-	$(MAKE) -C flashcart_specifics/CycloDSi/arm9
-	cp flashcart_specifics/CycloDSi/arm9/$(TARGET).elf $(TARGET)_cyclodsi.arm9.elf
-
 makearm9_r4idsn:
 	$(MAKE) -C flashcart_specifics/r4idsn/arm9
 	cp flashcart_specifics/r4idsn/arm9/$(TARGET).elf $(TARGET)_r4idsn.arm9.elf
@@ -40,11 +32,8 @@ makearm9_r4idsn:
 dist:	all autoboot
 	@mkdir -p ../7zfile/debug
 	@cp $(TARGET)_fc.nds "../7zfile/Flashcard users/BOOT.NDS"
-	@cp $(TARGET)_cyclodsi.nds "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
 	@cp $(TARGET)_fc.arm7.elf ../7zfile/debug/$(TARGET)_fc.arm7.elf
 	@cp $(TARGET)_fc.arm9.elf ../7zfile/debug/$(TARGET)_fc.arm9.elf
-	@cp $(TARGET)_cyclodsi.arm7.elf ../7zfile/debug/$(TARGET)_cyclodsi.arm7.elf
-	@cp $(TARGET)_cyclodsi.arm9.elf ../7zfile/debug/$(TARGET)_cyclodsi.arm9.elf
 	@cp $(TARGET)_r4idsn.arm7.elf ../7zfile/debug/$(TARGET)_r4idsn.arm7.elf
 	@cp $(TARGET)_r4idsn.arm9.elf ../7zfile/debug/$(TARGET)_r4idsn.arm9.elf
 
@@ -184,38 +173,32 @@ autoboot:
 	mv dstwo.nds "../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds"
 
 	#### SuperCard DSONE
-	ndstool -c SCFW.SC -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g ENG0 -b icon.bmp "TWiLight Menu++;RocketRobz"
-	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi SCFW.SC
-	cp SCFW.SC "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/SCFW.SC"
-	mv SCFW.SC "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/MSFORSC.NDS"
+	cp booter_fc.nds TTMenu.DAT
+	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi TTMenu.DAT
+	mv TTMenu.DAT "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/TTMenu.DAT"
 
 	#### M3 DS Real (for YSMenu reset)
 	cp booter_fc.nds SRESET.DAT
 	dlditool flashcart_specifics/DLDI/M3DS_DLDI_based_on_r4tf_v2.dldi SRESET.DAT
 	mv SRESET.DAT "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SRESET.DAT"
 
-$(TARGET).nds:	makearm7_fc makearm7_cyclodsi makearm9_fc makearm9_cyclodsi makearm7_r4idsn makearm9_r4idsn
+$(TARGET).nds:	makearm7_fc makearm9_fc makearm7_r4idsn makearm9_r4idsn
 	# simple nds srl without dsi extended header
-	ndstool -c $(TARGET)_fc.nds       -7 $(TARGET)_fc.arm7.elf       -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
-	ndstool -c $(TARGET)_cyclodsi.nds -7 $(TARGET)_cyclodsi.arm7.elf -9 $(TARGET)_cyclodsi.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
-	ndstool -c $(TARGET)_r4idsn.nds  -7 $(TARGET)_r4idsn.arm7.elf  -9 $(TARGET)_r4idsn.arm9.elf  -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool -c $(TARGET)_fc.nds     -7 $(TARGET)_fc.arm7.elf     -9 $(TARGET)_fc.arm9.elf     -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool -c $(TARGET)_r4idsn.nds -7 $(TARGET)_r4idsn.arm7.elf -9 $(TARGET)_r4idsn.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
 
 clean:
 	@echo clean ...
 	@rm -fr data $(BUILD)
 	@rm -fr ./flashcart_specifics/booter_fc.nds ./flashcart_specifics/_DS_MENU.nds
 	@rm -fr $(TARGET)_fc.nds $(TARGET)_fc.arm7.elf $(TARGET)_fc.arm9.elf
-	@rm -fr $(TARGET)_cyclodsi.nds $(TARGET)_cyclodsi.arm7.elf $(TARGET)_cyclodsi.arm9.elf
 	@rm -fr $(TARGET)_r4idsn.nds $(TARGET)_r4idsn.arm7.elf $(TARGET)_r4idsn.arm9.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C arm9 clean
-	@$(MAKE) -C flashcart_specifics/CycloDSi/arm9 clean
 	@$(MAKE) -C flashcart_specifics/r4idsn/arm9 clean
 	@$(MAKE) -C arm7 clean
-	@$(MAKE) -C flashcart_specifics/CycloDSi/arm7 clean
 	@$(MAKE) -C flashcart_specifics/r4idsn/arm7 clean
-
 	# echo Cleaning Flashcart Autobooters
 	# rm -fr "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
 

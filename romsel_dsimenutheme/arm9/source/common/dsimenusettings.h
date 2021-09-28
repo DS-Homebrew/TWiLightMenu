@@ -134,7 +134,8 @@ public:
 		EA7800DSLaunch = 12,
 		EA5200DSLaunch = 13,
 		ENitroGrafxLaunch = 14,
-		EXEGSDSLaunch = 15
+		EXEGSDSLaunch = 15,
+		ENINTVDSLaunch = 16
 	};
 
 	/*
@@ -204,6 +205,7 @@ public:
 	bool showA26;
 	bool showA52;
 	bool showA78;
+	bool showInt;
 	bool showNes;
 	bool showGb;
 	bool showSmsGg;

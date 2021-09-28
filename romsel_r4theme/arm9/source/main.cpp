@@ -87,6 +87,7 @@ const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char16_t hiyaNdsPath[] = u"sdmc:/hiya.dsi";
 char launcherPath[256];
 
+bool dsiWramAccess = false;
 bool arm7SCFGLocked = false;
 int consoleModel = 0;
 /*	0 = Nintendo DSi (Retail)
@@ -154,6 +155,7 @@ bool showXex = true;
 bool showA26 = true;
 bool showA52 = true;
 bool showA78 = true;
+bool showInt = true;
 bool showNes = true;
 bool showGb = true;
 bool showSmsGg = true;
@@ -220,6 +222,7 @@ void LoadSettings(void) {
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", true);
 	showA52 = settingsini.GetInt("SRLOADER", "SHOW_A52", true);
 	showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", true);
+	showInt = settingsini.GetInt("SRLOADER", "SHOW_INT", true);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", true);
@@ -1226,7 +1229,7 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	graphicsInit();
 
@@ -1254,8 +1257,15 @@ int main(int argc, char **argv) {
 
 	std::string filename;
 
+	if (isDSiMode()) {
+		u32 wordBak = *(vu32*)0x03700000;
+		*(vu32*)0x03700000 = 0x414C5253;
+		dsiWramAccess = *(vu32*)0x03700000 == 0x414C5253;
+		*(vu32*)0x03700000 = wordBak;
+	}
+
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 	fifoSendValue32(FIFO_USER_07, 0);
@@ -1353,6 +1363,9 @@ int main(int argc, char **argv) {
 	}
 	if (showA78) {
 		extensionList.emplace_back(".a78");
+	}
+	if (showInt) {
+		extensionList.emplace_back(".int");
 	}
 	if (showGb) {
 		extensionList.push_back(".gb");
@@ -1580,7 +1593,7 @@ int main(int argc, char **argv) {
 								argarray.at(0) = (char*)bootstrapPath.c_str();
 
 								const char* gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-								if (arm7SCFGLocked && dsiWareExploit == 7) {
+								if (arm7SCFGLocked && !dsiWramAccess) {
 									gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
 								}
 
@@ -1726,9 +1739,16 @@ int main(int argc, char **argv) {
 				RemoveTrailingSlashes(romFolderNoSlash);
 				mkdir ("saves", 0777);
 
+				sNDSHeaderExt NDSHeader;
+
+				FILE *f_nds_file = fopen(filename.c_str(), "rb");
+
+				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+				fclose(f_nds_file);
+
 				dsiWareSrlPath = std::string(argarray[0]);
 				dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, getPubExtension());
+				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && secondaryDevice && (!dsiWareToSD || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0))) ? getSavExtension() : getPubExtension());
 				dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
 				dsiWarePrvPath = replaceAll(dsiWarePrvPath, typeToReplace, getPrvExtension());
 				if (!isArgv) {
@@ -1738,13 +1758,6 @@ int main(int argc, char **argv) {
 				launchType[secondaryDevice] = 3;
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
-
-				sNDSHeaderExt NDSHeader;
-
-				FILE *f_nds_file = fopen(filename.c_str(), "rb");
-
-				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
-				fclose(f_nds_file);
 
 				if ((getFileSize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
@@ -2491,7 +2504,7 @@ int main(int argc, char **argv) {
 						useNDSB = true;
 
 						const char* gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-						if (isDSiMode() && arm7SCFGLocked && dsiWareExploit == 7) {
+						if (isDSiMode() && arm7SCFGLocked && !dsiWramAccess) {
 							gbar2Path = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
 						}
 
@@ -2542,6 +2555,14 @@ int main(int argc, char **argv) {
 					}
 					if((!isDSiMode() && dsiFeatures()) || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename, {".int"})) {
+					launchType[secondaryDevice] = 16;
+					
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
 						boostVram = true;
 					}
 				} else if (extension(filename, {".gb", ".sgb", ".gbc"})) {
