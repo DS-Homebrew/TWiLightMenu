@@ -9,7 +9,7 @@ export TARGET := booter
 
 include $(DEVKITARM)/ds_rules
 
-.PHONY: bootloader bootstub clean makearm7_fc makearm7_cyclodsi makearm9_fc makearm9_cyclodsi
+.PHONY: bootloader bootstub clean makearm7_fc makearm9_fc makearm9_r4idsn
 
 all:	bootloader bootstub $(TARGET).nds
 
@@ -17,43 +17,27 @@ makearm7_fc:
 	$(MAKE) -C arm7
 	cp arm7/$(TARGET).elf $(TARGET)_fc.arm7.elf
 
-makearm7_cyclodsi:
-	$(MAKE) -C flashcart_specifics/CycloDSi/arm7
-	cp flashcart_specifics/CycloDSi/arm7/$(TARGET).elf $(TARGET)_cyclodsi.arm7.elf
-
 makearm9_fc:
 	$(MAKE) -C arm9
 	cp arm9/$(TARGET).elf $(TARGET)_fc.arm9.elf
 
-makearm9_cyclodsi:
-	$(MAKE) -C flashcart_specifics/CycloDSi/arm9
-	cp flashcart_specifics/CycloDSi/arm9/$(TARGET).elf $(TARGET)_cyclodsi.arm9.elf
+makearm9_r4idsn:
+	$(MAKE) -C flashcart_specifics/r4idsn/arm9
+	cp flashcart_specifics/r4idsn/arm9/$(TARGET).elf $(TARGET)_r4idsn.arm9.elf
 
 dist:	all autoboot
 	@mkdir -p ../7zfile/debug
 	@cp $(TARGET)_fc.nds "../7zfile/Flashcard users/BOOT.NDS"
-	@cp $(TARGET)_cyclodsi.nds "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
 	@cp $(TARGET)_fc.arm7.elf ../7zfile/debug/$(TARGET)_fc.arm7.elf
 	@cp $(TARGET)_fc.arm9.elf ../7zfile/debug/$(TARGET)_fc.arm9.elf
-	@cp $(TARGET)_cyclodsi.arm7.elf ../7zfile/debug/$(TARGET)_cyclodsi.arm7.elf
-	@cp $(TARGET)_cyclodsi.arm9.elf ../7zfile/debug/$(TARGET)_cyclodsi.arm9.elf
+	@cp $(TARGET)_r4idsn.arm9.elf ../7zfile/debug/$(TARGET)_r4idsn.arm9.elf
 
 .ONESHELL:
 autoboot:
 	#### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS & R4iDSN/R4 Ultra
-	##### Global
-	cp booter_fc.nds _DS_MENU.nds
-	dlditool flashcart_specifics/DLDI/r4idsn_sd.dldi _DS_MENU.nds
-
-	##### R4iDSN & R4 Ultra specific
-	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_.NDS"
-	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_B.NDS"
-	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/R4iDSN & R4 Ultra/_MENU_X.NDS"
-
-	##### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS specific
-	# r4denc _DS_MENU.nds
-	# mkdir "../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/"
-	# mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.DAT"
+	dlditool flashcart_specifics/DLDI/r4idsn_sd.dldi booter_r4idsn.nds
+	mkdir -p "../7zfile/Flashcard users/Autoboot/R4iDSN, R4 Ultra, R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/"
+	mv booter_r4idsn.nds "../7zfile/Flashcard users/Autoboot/R4iDSN, R4 Ultra, R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.DAT"
 	
 	#### Original R4 / M3 Simply specific
 	dlditool flashcart_specifics/DLDI/r4tfv2.dldi _DS_MENU.nds
@@ -193,24 +177,22 @@ autoboot:
 	dlditool flashcart_specifics/DLDI/M3DS_DLDI_based_on_r4tf_v2.dldi SRESET.DAT
 	mv SRESET.DAT "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SRESET.DAT"
 
-$(TARGET).nds:	makearm7_fc makearm7_cyclodsi makearm9_fc makearm9_cyclodsi
+$(TARGET).nds:	makearm7_fc makearm9_fc makearm9_r4idsn
 	# simple nds srl without dsi extended header
-	ndstool -c $(TARGET)_fc.nds       -7 $(TARGET)_fc.arm7.elf       -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
-	ndstool -c $(TARGET)_cyclodsi.nds -7 $(TARGET)_cyclodsi.arm7.elf -9 $(TARGET)_cyclodsi.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool -c $(TARGET)_fc.nds     -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf     -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool -c $(TARGET)_r4idsn.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_r4idsn.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
 
 clean:
 	@echo clean ...
 	@rm -fr data $(BUILD)
 	@rm -fr ./flashcart_specifics/booter_fc.nds ./flashcart_specifics/_DS_MENU.nds
 	@rm -fr $(TARGET)_fc.nds $(TARGET)_fc.arm7.elf $(TARGET)_fc.arm9.elf
-	@rm -fr $(TARGET)_cyclodsi.nds $(TARGET)_cyclodsi.arm7.elf $(TARGET)_cyclodsi.arm9.elf
+	@rm -fr $(TARGET)_r4idsn.nds $(TARGET)_r4idsn.arm9.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C arm9 clean
-	@$(MAKE) -C flashcart_specifics/CycloDSi/arm9 clean
+	@$(MAKE) -C flashcart_specifics/r4idsn/arm9 clean
 	@$(MAKE) -C arm7 clean
-	@$(MAKE) -C flashcart_specifics/CycloDSi/arm7 clean
-
 	# echo Cleaning Flashcart Autobooters
 	# rm -fr "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
 

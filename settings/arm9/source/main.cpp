@@ -742,7 +742,7 @@ int main(int argc, char **argv)
 	ms();
 	defaultExceptionHandler();
 
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	if (!sys().fatInitOk()) {
 		graphicsInit();
@@ -1026,6 +1026,15 @@ int main(int argc, char **argv)
 			.option((flashcardFound() ? STR_SYSSD_ASYNCHCARDREAD : STR_ASYNCHCARDREAD),
 				STR_DESCRIPTION_ASYNCHCARDREAD,
 				Option::Bool(&ms().asyncCardRead),
+				{STR_ON, STR_OFF},
+				{true, false});
+	}
+
+	if (dsiFeatures()) {
+		gamesPage
+			.option(STR_SWIHALTHOOK,
+				STR_DESCRIPTION_SWIHALTHOOK,
+				Option::Bool(&bs().swiHaltHook),
 				{STR_ON, STR_OFF},
 				{true, false});
 	}

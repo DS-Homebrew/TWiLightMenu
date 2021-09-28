@@ -403,7 +403,7 @@ void displayNowLoading(void) {
 	std::string *msg;
 	if (showProgressBar) {
 		if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-			msg = &STR_BARSTOPPED_TURNOFF;
+			msg = &STR_BARSTOPPED_RESTART;
 		} else if (dsiFeatures() && ms().consoleModel >= 2) {
 			msg = &STR_BARSTOPPED_PRESSHOME;
 		} else {
@@ -411,7 +411,7 @@ void displayNowLoading(void) {
 		}
 	} else {
 		if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-			msg = &STR_TAKEWHILE_TURNOFF;
+			msg = &STR_TAKEWHILE_RESTART;
 		} else if (dsiFeatures() && ms().consoleModel >= 2) {
 			msg = &STR_TAKEWHILE_PRESSHOME;
 		} else {
@@ -2445,7 +2445,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isDSiWare[CURPOS] && (!dsiFeatures() || (isDSiMode() && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit()))) {
+				} else if (isDSiWare[CURPOS] && (!dsiFeatures() || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit()))) {
 					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {
 					int hasAP = 0;
@@ -2732,6 +2732,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								showProgressIcon = true;
 							} else if (ms().theme != 4) {
 								fadeSpeed = true; // Fast fading
+								whiteScreen = true;
+								tex().clearTopScreen();
 								fadeType = true; // Fade in from white
 								for (int i = 0; i < 25; i++) {
 									swiWaitForVBlank();

@@ -66,14 +66,14 @@ extern void arm9_clearCache (void);
 void initMBKARM9() {
 	// default dsiware settings
 
-	// WRAM-B fully mapped to arm7 // inverted order
-	*((vu32*)REG_MBK2)=0x9195999D;
-	*((vu32*)REG_MBK3)=0x8185898D;
-	
-	// WRAM-C fully mapped to arm7 // inverted order
-	*((vu32*)REG_MBK4)=0x9195999D;
-	*((vu32*)REG_MBK5)=0x8185898D;
-		
+	// WRAM-B fully mapped to arm9 // inverted order
+	*((vu32*)REG_MBK2)=0x8C888480;
+	*((vu32*)REG_MBK3)=0x9C989490;
+
+	// WRAM-C fully mapped to arm9 // inverted order
+	*((vu32*)REG_MBK4)=0x8C888480;
+	*((vu32*)REG_MBK5)=0x9C989490;
+
 	// WRAM-A not mapped (reserved to arm7)
 	REG_MBK6=0x00000000;
 	// WRAM-B mapped to the 0x3740000 - 0x37BFFFF area : 512k // why? only 256k real memory is there
@@ -204,6 +204,8 @@ void __attribute__((target("arm"))) arm9_main (void) {
 	WRAM_CR = 0x03;
 	REG_EXMEMCNT = 0xE880;
 
+	initMBKARM9();
+
 	arm9_stateFlag = ARM9_START;
 
 	REG_IME = 0;
@@ -289,9 +291,6 @@ void __attribute__((target("arm"))) arm9_main (void) {
 			}
 		}
 		if (arm9_stateFlag == ARM9_SETSCFG) {
-			if (arm9_runCardEngine) {
-				initMBKARM9();
-			}
 			if (dsiModeConfirmed) {
 				if (arm9_isSdk5 && ndsHeader->unitCode > 0) {
 					initMBKARM9_dsiMode();

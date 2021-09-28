@@ -781,8 +781,8 @@ void lastRunROM()
 					iprintf("Creating public save file...\n");
 					iprintf ("\n");
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						iprintf ("If this takes a while, turn off\n");
-						iprintf ("the POWER, and try again.\n");
+						iprintf ("If this takes a while, press\n");
+						iprintf ("L+R+START+SELECT to restart.\n");
 					} else if (ms().consoleModel >= 2) {
 						iprintf ("If this takes a while,\n");
 						iprintf ("press HOME, and press B.\n");
@@ -827,8 +827,8 @@ void lastRunROM()
 					iprintf("Creating private save file...\n");
 					iprintf ("\n");
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						iprintf ("If this takes a while, turn off\n");
-						iprintf ("the POWER, and try again.\n");
+						iprintf ("If this takes a while, press\n");
+						iprintf ("L+R+START+SELECT to restart.\n");
 					} else if (ms().consoleModel >= 2) {
 						iprintf ("If this takes a while,\n");
 						iprintf ("press HOME, and press B.\n");
@@ -1683,7 +1683,7 @@ int main(int argc, char **argv)
 
 	bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
 
-	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 	if (REG_SCFG_EXT!=0) {
 		if (!useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && !is3DS) {
 			if (fatMountSimple("nand", &io_dsi_nand)) {
@@ -1701,14 +1701,19 @@ int main(int argc, char **argv)
 				*(u16*)(twlCfgOffset+0x1E2) = swiCRC16(0xFFFF, twlCfgOffset+0x1E4, 0xC); // WlFirm CRC16
 
 				useTwlCfg = true;
+				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
+				*(vu32*)(0x0377C000) = BIT(0);
 			}
 		} else {
 			if (useTwlCfg) {
-				*(u32*)(0x02000000) = 0; // Clear soft-reset params
 				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
+				*(vu32*)(0x0377C000) = BIT(0);
 			} else {
 				tonccpy((void*)0x02000000, (void*)0x0377C000, 0x4000); // Restore from DSi WRAM
-				useTwlCfg = ((*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+				useTwlCfg = ((*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+				if (*(vu32*)(0x0377C000) & BIT(0)) {
+					softResetParamsBak |= BIT(0);
+				}
 			}
 		}
 	}

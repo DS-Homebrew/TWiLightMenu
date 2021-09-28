@@ -601,7 +601,6 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 
 	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-	fadeType = true;	// Fade from white
 	if (err == 0) {
 		printLarge(false, 4, 4, STR_ERROR_FLASHCARD_UNSUPPORTED);
 		printLarge(false, 4, 68, io_dldi_data->friendlyName);
@@ -609,6 +608,12 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 		printLarge(false, 4, 4, text);
 	}
 	printSmall(false, 4, 90, STR_PRESS_B_RETURN);
+	fadeSpeed = true; // Fast fading
+	if (ms().theme != 4 && ms().theme != 5) {
+		whiteScreen = true;
+		tex().clearTopScreen();
+	}
+	fadeType = true;	// Fade from white
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -780,7 +785,7 @@ int main(int argc, char **argv) {
 							   // SD card, or if SD access is disabled
 	}
 
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
@@ -1101,7 +1106,7 @@ int main(int argc, char **argv) {
 					}
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
@@ -1155,7 +1160,7 @@ int main(int argc, char **argv) {
 					}
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
@@ -1509,7 +1514,7 @@ int main(int argc, char **argv) {
 								}
 								clearText();
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-									printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
+									printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
 								} else if (dsiFeatures() && ms().consoleModel >= 2) {
 									printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 								} else {
@@ -1682,7 +1687,11 @@ int main(int argc, char **argv) {
 							printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 						}
 						updateText(false);
-						fadeSpeed = true;
+						fadeSpeed = true; // Fast fading
+						if (ms().theme != 4 && ms().theme != 5) {
+							whiteScreen = true;
+							tex().clearTopScreen();
+						}
 						fadeType = true;
 						int pressed = 0;
 						do {
@@ -1821,6 +1830,10 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 					updateText(false);
 					fadeSpeed = true;
+					if (ms().theme != 4 && ms().theme != 5) {
+						whiteScreen = true;
+						tex().clearTopScreen();
+					}
 					fadeType = true;
 					int pressed = 0;
 					do {
@@ -2018,7 +2031,7 @@ int main(int argc, char **argv) {
 						useNDSB = true;
 
 						const char* gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-						if (isDSiMode() && sys().arm7SCFGLocked() && ms().dsiWareExploit == 7) {
+						if (isDSiMode() && sys().arm7SCFGLocked() && !sys().dsiWramAccess()) {
 							gbar2Path = ms().consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
 						}
 
@@ -2244,6 +2257,10 @@ int main(int argc, char **argv) {
 				printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 				updateText(false);
 				fadeSpeed = true;
+				if (ms().theme != 4 && ms().theme != 5) {
+					whiteScreen = true;
+					tex().clearTopScreen();
+				}
 				fadeType = true;
 				int pressed = 0;
 				do {

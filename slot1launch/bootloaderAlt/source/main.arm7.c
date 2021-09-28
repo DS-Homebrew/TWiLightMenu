@@ -539,26 +539,23 @@ void arm7_startBinary (void)
 
 
 void initMBK() {
-	// give all DSI WRAM to arm7 at boot
-	// this function have no effect with ARM7 SCFG locked
-	
 	// arm7 is master of WRAM-A, arm9 of WRAM-B & C
 	REG_MBK9=0x3000000F;
-	
+
 	// WRAM-A fully mapped to arm7
-	*((vu32*)REG_MBK1)=0x8185898D; // same as dsiware
-	
-	// WRAM-B fully mapped to arm7 // inverted order
-	*((vu32*)REG_MBK2)=0x9195999D;
-	*((vu32*)REG_MBK3)=0x8185898D;
-	
-	// WRAM-C fully mapped to arm7 // inverted order
-	*((vu32*)REG_MBK4)=0x9195999D;
-	*((vu32*)REG_MBK5)=0x8185898D;
-	
+	*((vu32*)REG_MBK1)=0x8D898581; // same as dsiware
+
+	// WRAM-B fully mapped to arm9 // inverted order
+	*((vu32*)REG_MBK2)=0x8C888480;
+	*((vu32*)REG_MBK3)=0x9C989490;
+
+	// WRAM-C fully mapped to arm9 // inverted order
+	*((vu32*)REG_MBK4)=0x8C888480;
+	*((vu32*)REG_MBK5)=0x9C989490;
+
 	// WRAM mapped to the 0x3700000 - 0x37FFFFF area 
-	// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
-	REG_MBK6=0x080037C0; // same as dsiware
+	// WRAM-A mapped to the 0x3000000 - 0x303FFFF area : 256k
+	REG_MBK6=0x00403000;
 	// WRAM-B mapped to the 0x3740000 - 0x37BFFFF area : 512k // why? only 256k real memory is there
 	REG_MBK7=0x07C03740; // same as dsiware
 	// WRAM-C mapped to the 0x3700000 - 0x373FFFF area : 256k
@@ -623,24 +620,20 @@ void fixDSBrowser(void) {
 // Main function
 
 void arm7_main (void) {
-	
+
 	if (runCardEngine) {
 		arm9_runCardEngine = runCardEngine;
 		initMBK();
 	}
-	
+
 	int errorCode;
-	
+
 	// Wait for ARM9 to at least start
 	while (arm9_stateFlag < ARM9_START);
 
 	debugOutput (ERR_STS_CLR_MEM);
 	
 	scfgRomBak = REG_SCFG_ROM;
-
-	if (my_isDSiMode()) {
-		tonccpy((char*)0x02400000, (char*)0x02000000, 0x4000);	// Backup TWLCFG for later usage by homebrew on flashcards
-	}
 
 	// Get ARM7 to clear RAM
 	arm7_resetMemory();	
@@ -693,6 +686,9 @@ void arm7_main (void) {
 	}
 
 	if (runCardEngine) {
+		// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
+		REG_MBK6=0x080037C0;
+
 		copyLoop ((u32*)ENGINE_LOCATION_ARM7, (u32*)cardengine_arm7_bin, cardengine_arm7_bin_size);
 		errorCode = hookNdsRetail(ndsHeader, (u32*)ENGINE_LOCATION_ARM7);
 		if(errorCode == ERR_NONE) {

@@ -85,6 +85,7 @@ char launcherPath[256];
 static char pictochatPath[256];
 static char dlplayPath[256];
 
+bool dsiWramAccess = false;
 bool arm7SCFGLocked = false;
 bool isRegularDS = true;
 bool isDSLite = false;
@@ -699,7 +700,6 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 
 	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-	ClearBrightness();
 	clearText();
 	printSmall(false, 4, 4, text);
 	if (err == 0) {
@@ -707,6 +707,10 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 		printSmall(false, 4, 52, STR_FLASHCARD_NAME);
 		printSmall(false, 4, 68, io_dldi_data->friendlyName);
 	}
+	whiteScreen = true;
+	fadeSpeed = true;
+	controlTopBright = false;
+	fadeType = true; // Fade in
 	stop();
 }
 
@@ -939,7 +943,7 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 & BIT(0) & BIT(1) & BIT(2)) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	extern const DISC_INTERFACE __my_io_dsisd;
 
@@ -976,6 +980,13 @@ int main(int argc, char **argv) {
 	}
 
 	std::string filename[2];
+
+	if (isDSiMode()) {
+		u32 wordBak = *(vu32*)0x03700000;
+		*(vu32*)0x03700000 = 0x414C5253;
+		dsiWramAccess = *(vu32*)0x03700000 == 0x414C5253;
+		*(vu32*)0x03700000 = wordBak;
+	}
 
 	fifoWaitValue32(FIFO_USER_06);
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
@@ -1942,7 +1953,7 @@ int main(int argc, char **argv) {
 					controlTopBright = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
@@ -1983,7 +1994,7 @@ int main(int argc, char **argv) {
 					controlTopBright = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
 					} else if (ms().consoleModel >= 2) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
@@ -2164,11 +2175,14 @@ int main(int argc, char **argv) {
 					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText();
-					ClearBrightness();
 					printSmall(false, 4, 4, text);
 					if (err == 1) {
 						printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 					}
+					whiteScreen = true;
+					fadeSpeed = true;
+					controlTopBright = false;
+					fadeType = true; // Fade in
 					stop();
 				}
 
@@ -2290,7 +2304,7 @@ int main(int argc, char **argv) {
 								fadeSpeed = true; // Fast fading
 								clearText();
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-									printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
+									printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
 								} else if (dsiFeatures() && ms().consoleModel >= 2) {
 									printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 								} else {
@@ -2535,7 +2549,10 @@ int main(int argc, char **argv) {
 					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText();
-					ClearBrightness();
+					whiteScreen = true;
+					fadeSpeed = true;
+					controlTopBright = false;
+					fadeType = true; // Fade in
 					printSmall(false, 4, 4, text);
 					stop();
 				}
@@ -2699,7 +2716,7 @@ int main(int argc, char **argv) {
 						useNDSB = true;
 
 						const char* gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-						if (isDSiMode() && arm7SCFGLocked && ms().dsiWareExploit == 7) {
+						if (isDSiMode() && arm7SCFGLocked && !dsiWramAccess) {
 							gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
 						}
 
@@ -2899,6 +2916,9 @@ int main(int argc, char **argv) {
 				if (err == 1 && useNDSB) {
 					printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
 				}
+				whiteScreen = true;
+				fadeSpeed = true;
+				controlTopBright = false;
 				fadeType = true; // Fade in
 				stop();
 
