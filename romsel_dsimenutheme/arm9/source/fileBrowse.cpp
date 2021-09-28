@@ -2445,7 +2445,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isDSiWare[CURPOS] && (!dsiFeatures() || (isDSiMode() && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit()))) {
+				} else if (isDSiWare[CURPOS] && (!dsiFeatures() || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit()))) {
 					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {
 					int hasAP = 0;
