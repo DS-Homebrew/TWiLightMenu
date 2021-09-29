@@ -54,7 +54,7 @@ autoboot:
 	rm -f _DS_MENU.nds
 	
 	#### R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version specific
-	ndstool -c _DSMENU.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g "####" "##" "R4XX" -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool -c _DSMENU.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g "####" "##" "R4XX" -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	dlditool flashcart_specifics/DLDI/ace3ds_sd.dldi _DSMENU.nds
 	r4denc -k 0x4002 _DSMENU.nds
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version/"
@@ -63,7 +63,7 @@ autoboot:
 	rm -f _DSMENU.nds
 	
 	#### Gateway Blue specific
-	ndstool -c _DSMENU.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g "####" "##" "R4IT" -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool -c _DSMENU.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g "####" "##" "R4IT" -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	dlditool flashcart_specifics/DLDI/ace3ds_sd.dldi _DSMENU.nds
 	r4denc -k 0x4002 _DSMENU.nds _DSMENU.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Gateway Blue"
@@ -179,8 +179,8 @@ autoboot:
 
 $(TARGET).nds:	makearm7_fc makearm9_fc makearm9_r4idsn
 	# simple nds srl without dsi extended header
-	ndstool -c $(TARGET)_fc.nds     -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf     -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
-	ndstool -c $(TARGET)_r4idsn.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_r4idsn.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool -c $(TARGET)_fc.nds     -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf     -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_r4idsn.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_r4idsn.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 
 clean:
 	@echo clean ...
