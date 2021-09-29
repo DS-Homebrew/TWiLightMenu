@@ -785,7 +785,7 @@ int main(int argc, char **argv) {
 							   // SD card, or if SD access is disabled
 	}
 
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 

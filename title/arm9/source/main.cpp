@@ -1702,10 +1702,12 @@ int main(int argc, char **argv)
 
 	bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
 
-	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 	if (REG_SCFG_EXT!=0) {
 		if (!useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && !is3DS) {
 			if (fatMountSimple("nand", &io_dsi_nand)) {
+				//toncset((void*)0x02000004, 0, 0x3FFC); // Already done by exploit
+
 				FILE* twlCfg = fopen("nand:/shared1/TWLCFG0.dat", "rb");
 				fseek(twlCfg, 0x88, SEEK_SET);
 				fread((void*)0x02000400, 1, 0x128, twlCfg);
@@ -1719,6 +1721,11 @@ int main(int argc, char **argv)
 				toncset32(twlCfgOffset+0x1EC, 0x02E000, 1); // WlFirm RAM size
 				*(u16*)(twlCfgOffset+0x1E2) = swiCRC16(0xFFFF, twlCfgOffset+0x1E4, 0xC); // WlFirm CRC16
 
+				twlCfg = fopen("nand:/sys/HWINFO_N.dat", "rb");
+				fseek(twlCfg, 0x88, SEEK_SET);
+				fread((void*)0x02000600, 1, 0x14, twlCfg);
+				fclose(twlCfg);
+
 				useTwlCfg = true;
 				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
 				*(vu32*)(0x0377C000) = BIT(0);
@@ -1729,7 +1736,7 @@ int main(int argc, char **argv)
 				*(vu32*)(0x0377C000) = BIT(0);
 			} else {
 				tonccpy((void*)0x02000000, (void*)0x0377C000, 0x4000); // Restore from DSi WRAM
-				useTwlCfg = ((*(u8*)0x02000400 == 0x07 || *(u8*)0x02000400 == 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+				useTwlCfg = ((*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 				if (*(vu32*)(0x0377C000) & BIT(0)) {
 					softResetParamsBak |= BIT(0);
 				}
