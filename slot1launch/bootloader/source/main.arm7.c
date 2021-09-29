@@ -317,7 +317,7 @@ void arm7_resetMemory (void)
 
 	if(my_isDSiMode()) {
 		// clear last part of EXRAM
-		toncset ((void*)0x02404000, 0, 0xBFC000);
+		toncset ((void*)0x02400000, 0, 0xC00000);
 	}
 
 	REG_IE = 0;
