@@ -135,7 +135,8 @@ public:
 		EA5200DSLaunch = 13,
 		ENitroGrafxLaunch = 14,
 		EXEGSDSLaunch = 15,
-		ENINTVDSLaunch = 16
+		ENINTVDSLaunch = 16,
+        EGBARunner2Launch = 17
 	};
 
 	/*

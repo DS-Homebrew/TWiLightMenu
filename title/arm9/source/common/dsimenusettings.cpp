@@ -27,6 +27,7 @@ TWLSettings::TWLSettings()
     colorMode = 0;
     blfLevel = 0;
     dsiWareExploit = 0;
+	gbar2DldiAccess = false;
     wifiLed = -1;
     useGbarunner = false;
     showMainMenu = false;
@@ -117,6 +118,7 @@ void TWLSettings::loadSettings()
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	dsiWareExploit = settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
+	gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 	wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", wifiLed);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);

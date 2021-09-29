@@ -2701,6 +2701,8 @@ int main(int argc, char **argv) {
 
 						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
 					} else if (ms().secondaryDevice) {
+						ms().launchType[ms().secondaryDevice] = 17;
+
 						ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						if (dsiFeatures()) {
 							ndsToBoot = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
@@ -2736,7 +2738,7 @@ int main(int argc, char **argv) {
 				} else if (extention(filename[ms().secondaryDevice], ".xex")
 						 || extention(filename[ms().secondaryDevice], ".atr")) {
 					ms().launchType[ms().secondaryDevice] = 15;
-					
+
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
@@ -2744,7 +2746,7 @@ int main(int argc, char **argv) {
 					}
 				} else if (extention(filename[ms().secondaryDevice], ".a26")) {
 					ms().launchType[ms().secondaryDevice] = 9;
-					
+
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
@@ -2752,7 +2754,7 @@ int main(int argc, char **argv) {
 					}
 				} else if (extention(filename[ms().secondaryDevice], ".a52")) {
 					ms().launchType[ms().secondaryDevice] = 13;
-					
+
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
@@ -2760,7 +2762,7 @@ int main(int argc, char **argv) {
 					}
 				} else if (extention(filename[ms().secondaryDevice], ".a78")) {
 					ms().launchType[ms().secondaryDevice] = 12;
-					
+
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 					if(!dsiFeatures()) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS-LITE.nds";
@@ -2771,7 +2773,7 @@ int main(int argc, char **argv) {
 					}
 				} else if (extention(filename[ms().secondaryDevice], ".int")) {
 					ms().launchType[ms().secondaryDevice] = 16;
-					
+
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
@@ -2779,7 +2781,7 @@ int main(int argc, char **argv) {
 					}
 				} else if (extention(filename[ms().secondaryDevice], ".gb") || extention(filename[ms().secondaryDevice], ".sgb") || extention(filename[ms().secondaryDevice], ".gbc")) {
 					ms().launchType[ms().secondaryDevice] = 5;
-					
+
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/gameyob.nds";

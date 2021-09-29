@@ -2016,6 +2016,8 @@ int main(int argc, char **argv) {
 
 						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
 					} else if (ms().secondaryDevice) {
+						ms().launchType[ms().secondaryDevice] = Launch::EGBARunner2Launch;
+
 						ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						if (dsiFeatures()) {
 							ndsToBoot = ms().consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";

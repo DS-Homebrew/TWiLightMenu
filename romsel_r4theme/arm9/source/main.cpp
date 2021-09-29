@@ -2489,6 +2489,8 @@ int main(int argc, char **argv) {
 
 						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
 					} else if (secondaryDevice) {
+						launchType[secondaryDevice] = 17;
+
 						ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						if (dsiFeatures()) {
 							ndsToBoot = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";

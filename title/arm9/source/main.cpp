@@ -1221,6 +1221,25 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to NINTV-DS as argument
 	}
+	else if (ms().launchType[ms().previousUsedDevice] == Launch::EGBARunner2Launch)
+	{
+		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		argarray.at(0) = (char*)(ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds");
+		if (isDSiMode() || REG_SCFG_EXT != 0)
+		{
+			argarray.at(0) = (char*)(ms().consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
+		}
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		{
+			argarray.at(0) = (char*)(ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds");
+			if (isDSiMode() || REG_SCFG_EXT != 0)
+			{
+				argarray.at(0) = (char*)(ms().consoleModel > 0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds");
+			}
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to NINTV-DS as argument
+	}
 	if (err > 0) {
 		consoleDemoInit();
 		iprintf("Start failed. Error %i\n", err);
