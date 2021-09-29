@@ -1096,7 +1096,7 @@ int main(int argc, char **argv) {
 				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					if (ms().theme == 5) {
 						displayGameIcons = false;
-					} else {
+					} else if (ms().theme != 4) {
 						while (!screenFadedOut()) {
 							swiWaitForVBlank();
 						}
@@ -1150,7 +1150,7 @@ int main(int argc, char **argv) {
 				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					if (ms().theme == 5) {
 						displayGameIcons = false;
-					} else {
+					} else if (ms().theme != 4) {
 						while (!fadeType && !screenFadedOut()) {
 							swiWaitForVBlank();
 						}
@@ -1206,7 +1206,7 @@ int main(int argc, char **argv) {
 				}
 
 				if (ms().secondaryDevice && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel == 0)) && sdFound()) {
-					if (ms().theme != 5) {
+					if (ms().theme != 5 && ms().theme != 4) {
 						while (!fadeType && !screenFadedOut()) {
 							swiWaitForVBlank();
 						}
@@ -1505,7 +1505,7 @@ int main(int argc, char **argv) {
 							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 								if (ms().theme == 5) {
 									displayGameIcons = false;
-								} else {
+								} else if (ms().theme != 4) {
 									while (!screenFadedOut()) {
 										swiWaitForVBlank();
 									}
@@ -1648,7 +1648,7 @@ int main(int argc, char **argv) {
 							fadeType = false;		  // Fade to black
 						}
 
-						while (!screenFadedOut()) {
+						while (ms().theme != 4 && !screenFadedOut()) {
 							swiWaitForVBlank();
 						}
 
@@ -1743,7 +1743,7 @@ int main(int argc, char **argv) {
 						fadeType = false;		  // Fade to black
 					}
 
-					while (!screenFadedOut()) {
+					while (ms().theme != 4 && !screenFadedOut()) {
 						swiWaitForVBlank();
 					}
 
@@ -2235,7 +2235,11 @@ int main(int argc, char **argv) {
 				ms().homebrewArg = useNDSB ? "" : ms().romPath[ms().secondaryDevice];
 				ms().saveSettings();
 
-				while (!screenFadedOut()) {
+				if (ms().theme == 5) {
+					fadeType = false;		  // Fade to black
+				}
+
+				while (ms().theme != 4 && !screenFadedOut()) {
 					swiWaitForVBlank();
 				}
 
