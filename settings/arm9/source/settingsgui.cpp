@@ -190,6 +190,7 @@ void SettingsGUI::draw()
 void SettingsGUI::setTopText(const std::string &text)
 {
     _topText.clear();
+    _topTextLines = 0;
     std::u16string _topTextStr(FontGraphic::utf8to16(text));
     std::vector<std::u16string> words;
     std::size_t pos;
@@ -208,25 +209,30 @@ void SettingsGUI::setTopText(const std::string &text)
         if(width > 240) {
             if(temp.length()) {
                 _topText += temp + u"\n";
+                _topTextLines++;
                 temp = u"";
             }
             for(int i = 0; i < width/240.0; i++) {
                 word.insert((float)((i + 1) * word.length()) / ((width/240) + 1), u"\n");
             }
             _topText += word + u"\n";
+            _topTextLines++;
             continue;
         }
 
         width = calcLargeFontWidth(temp + u" " + word);
         if(width > 240) {
             _topText += temp + u"\n";
+            _topTextLines++;
             temp = word;
         } else {
             temp += u" " + word;
         }
     }
-    if(temp.size())
+    if(temp.size()) {
         _topText += temp;
+        _topTextLines++;
+    }
     
     // Ensure there are no newlines at the beggining / end
     while(_topText[0] == '\n')
@@ -281,7 +287,8 @@ void SettingsGUI::drawTopText()
     } else {
         printSmall(true, 4, 0, titleDisplayLength>=60*4 ? STR_SELECT_SETTING_LIST : STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile]);
     }
-    printSmall(true, 256 - 4, 174, VER_NUMBER, Alignment::right);
+    if(_topTextLines < 5 || currentTheme == 4)
+        printSmall(true, 256 - 4, 174, VER_NUMBER, Alignment::right);
     printLarge(true, 0, (currentTheme == 4 ? 96 : 138) - (calcLargeFontHeight(_topText) / 2), _topText, Alignment::center);
 }
 

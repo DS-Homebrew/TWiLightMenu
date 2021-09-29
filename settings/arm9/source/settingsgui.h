@@ -228,6 +228,7 @@ private:
   std::unique_ptr<Option> _subOption;
   std::vector<SettingsPage> _pages;
   std::u16string _topText;
+  int _topTextLines;
 
   std::function<void(void)> _exitCallback;
 
