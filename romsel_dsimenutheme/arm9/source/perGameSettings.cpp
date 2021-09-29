@@ -268,6 +268,56 @@ void revertDonorRomText(void) {
 	setAsDonorRom = STR_SET_AS_DONOR_ROM;
 }
 
+const char* getRegionString(char region) {
+	u8 twlCfgCountry = 0;
+	if (useTwlCfg) {
+		twlCfgCountry = *(u8*)0x02000405;
+	}
+
+	switch (region) {
+		case 'C':
+			return "CHN";
+		case 'D':
+			return "DET";
+		case 'E':
+		case 'L':
+			return "USA";
+		case 'F':
+			return "FRE";
+		case 'H':
+			return "DUT";
+		case 'I':
+			return "ITA";
+		case 'J':
+			return "JPN";
+		case 'K':
+			return "KOR";
+		case 'M':
+			return "SWE";
+		case 'N':
+			return "NOR";
+		case 'P':
+		case 'W':
+		case 'X':
+		case 'Y':
+		case 'Z':
+			return "EUR";
+		case 'Q':
+			return "DAN";
+		case 'R':
+			return "RUS";
+		case 'S':
+			return "SPA";
+		case 'T':
+			return (twlCfgCountry == 0x41 || twlCfgCountry == 0x5F) ? "AUS" : "USA";
+		case 'U':
+			return "AUS";
+		case 'V':
+			return (twlCfgCountry == 0x41 || twlCfgCountry == 0x5F) ? "AUS" : "EUR";
+	}
+	return "N/A";
+}
+
 void perGameSettings (std::string filename) {
 	int pressed = 0, held = 0;
 
@@ -503,7 +553,11 @@ void perGameSettings (std::string filename) {
 		}
 	}
 
-	snprintf (gameTIDText, sizeof(gameTIDText), gameTid[CURPOS][0]==0 ? "" : "TID: %s", gameTid[CURPOS]);
+	if (isHomebrew[CURPOS]) {
+		snprintf (gameTIDText, sizeof(gameTIDText), gameTid[CURPOS][0]==0 ? "" : "TID: %s", gameTid[CURPOS]);
+	} else {
+		snprintf (gameTIDText, sizeof(gameTIDText), "%s-%s-%s", unitCode[CURPOS] > 0 ? "TWL" : "NTR", gameTid[CURPOS], getRegionString(gameTid[CURPOS][3]));
+	}
 
 	if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
 		SDKnumbertext = STR_SDK_VER_1;
@@ -566,7 +620,7 @@ void perGameSettings (std::string filename) {
 		printSmall(false, ms().rtl() ? 256 - 16 : 16, row1Y, dirContName, startAlign);
 		//if (showSDKVersion) printSmall(false, 16, row2Y, (useTwlCfg ? "TwlCfg found!" : SDKnumbertext));
 		if (showSDKVersion) printSmall(false, 16, row2Y, SDKnumbertext);
-		printSmall(false, 176, row2Y, gameTIDText);
+		printSmall(false, 256 - 16, row2Y, gameTIDText, Alignment::right);
 		printSmall(false, 16, botRowY, fileCounter);
 
 		if (showPerGameSettings) {

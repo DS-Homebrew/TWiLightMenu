@@ -36,6 +36,8 @@
 #define ENTRIES_START_ROW 3
 #define ENTRY_PAGE_LENGTH 10
 
+extern bool useTwlCfg;
+
 extern const char *bootstrapinipath;
 
 extern bool arm7SCFGLocked;
@@ -257,6 +259,56 @@ void revertDonorRomText(void) {
 	if (!donorRomTextShown || strncmp(SET_AS_DONOR_ROM, "Done!", 5) != 0) return;
 
 	sprintf(SET_AS_DONOR_ROM, "Set as Donor ROM");
+}
+
+const char* getRegionString(char region) {
+	u8 twlCfgCountry = 0;
+	if (useTwlCfg) {
+		twlCfgCountry = *(u8*)0x02000405;
+	}
+
+	switch (region) {
+		case 'C':
+			return "CHN";
+		case 'D':
+			return "DET";
+		case 'E':
+		case 'L':
+			return "USA";
+		case 'F':
+			return "FRE";
+		case 'H':
+			return "DUT";
+		case 'I':
+			return "ITA";
+		case 'J':
+			return "JPN";
+		case 'K':
+			return "KOR";
+		case 'M':
+			return "SWE";
+		case 'N':
+			return "NOR";
+		case 'P':
+		case 'W':
+		case 'X':
+		case 'Y':
+		case 'Z':
+			return "EUR";
+		case 'Q':
+			return "DAN";
+		case 'R':
+			return "RUS";
+		case 'S':
+			return "SPA";
+		case 'T':
+			return (twlCfgCountry == 0x41 || twlCfgCountry == 0x5F) ? "AUS" : "USA";
+		case 'U':
+			return "AUS";
+		case 'V':
+			return (twlCfgCountry == 0x41 || twlCfgCountry == 0x5F) ? "AUS" : "EUR";
+	}
+	return "N/A";
 }
 
 void perGameSettings (std::string filename) {
@@ -487,7 +539,11 @@ void perGameSettings (std::string filename) {
 		}
 	}
 
-	snprintf (gameTIDText, sizeof(gameTIDText), game_TID[0]==0 ? "" : "TID: %s", game_TID);
+	if (isHomebrew) {
+		snprintf (gameTIDText, sizeof(gameTIDText), game_TID[0]==0 ? "" : "TID: %s", game_TID);
+	} else {
+		snprintf (gameTIDText, sizeof(gameTIDText), "%s-%s-%s", unitCode > 0 ? "TWL" : "NTR", game_TID, getRegionString(game_TID[3]));
+	}
 
 	char saveNoDisplay[16];
 
