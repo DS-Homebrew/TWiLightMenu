@@ -40,6 +40,7 @@ autoboot:
 	mv booter_r4idsn.nds "../7zfile/Flashcard users/Autoboot/R4iDSN, R4 Ultra, R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.DAT"
 	
 	#### Original R4 / M3 Simply specific
+	cp booter_fc.nds _DS_MENU.nds
 	dlditool flashcart_specifics/DLDI/r4tfv2.dldi _DS_MENU.nds
 	r4denc _DS_MENU.nds
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
