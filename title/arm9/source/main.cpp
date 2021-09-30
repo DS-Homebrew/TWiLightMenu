@@ -1708,23 +1708,29 @@ int main(int argc, char **argv)
 			if (fatMountSimple("nand", &io_dsi_nand)) {
 				//toncset((void*)0x02000004, 0, 0x3FFC); // Already done by exploit
 
-				FILE* twlCfg = fopen("nand:/shared1/TWLCFG0.dat", "rb");
-				fseek(twlCfg, 0x88, SEEK_SET);
-				fread((void*)0x02000400, 1, 0x128, twlCfg);
-				fclose(twlCfg);
+				FILE* twlCfgFile = fopen("nand:/shared1/TWLCFG0.dat", "rb");
+				fseek(twlCfgFile, 0x88, SEEK_SET);
+				fread((void*)0x02000400, 1, 0x128, twlCfgFile);
+				fclose(twlCfgFile);
 
 				// WiFi RAM data
-				u8* twlCfgOffset = (u8*)0x02000400;
-				readFirmware(0x1FD, twlCfgOffset+0x1E0, 1); // WlFirm Type (1=DWM-W015, 2=W024, 3=W028)
-				toncset32(twlCfgOffset+0x1E4, 0x500400, 1); // WlFirm RAM vars
-				toncset32(twlCfgOffset+0x1E8, 0x500000, 1); // WlFirm RAM base
-				toncset32(twlCfgOffset+0x1EC, 0x02E000, 1); // WlFirm RAM size
-				*(u16*)(twlCfgOffset+0x1E2) = swiCRC16(0xFFFF, twlCfgOffset+0x1E4, 0xC); // WlFirm CRC16
+				u8* twlCfg = (u8*)0x02000400;
+				readFirmware(0x1FD, twlCfg+0x1E0, 1); // WlFirm Type (1=DWM-W015, 2=W024, 3=W028)
+				if (twlCfg[0x1E0] == 2 || twlCfg[0x1E0] == 3) {
+					toncset32(twlCfg+0x1E4, 0x520000, 1); // WlFirm RAM vars
+					toncset32(twlCfg+0x1E8, 0x520000, 1); // WlFirm RAM base
+					toncset32(twlCfg+0x1EC, 0x020000, 1); // WlFirm RAM size
+				} else {
+					toncset32(twlCfg+0x1E4, 0x500400, 1); // WlFirm RAM vars
+					toncset32(twlCfg+0x1E8, 0x500000, 1); // WlFirm RAM base
+					toncset32(twlCfg+0x1EC, 0x02E000, 1); // WlFirm RAM size
+				}
+				*(u16*)(twlCfg+0x1E2) = swiCRC16(0xFFFF, twlCfg+0x1E4, 0xC); // WlFirm CRC16
 
-				twlCfg = fopen("nand:/sys/HWINFO_N.dat", "rb");
-				fseek(twlCfg, 0x88, SEEK_SET);
-				fread((void*)0x02000600, 1, 0x14, twlCfg);
-				fclose(twlCfg);
+				twlCfgFile = fopen("nand:/sys/HWINFO_N.dat", "rb");
+				fseek(twlCfgFile, 0x88, SEEK_SET);
+				fread((void*)0x02000600, 1, 0x14, twlCfgFile);
+				fclose(twlCfgFile);
 
 				useTwlCfg = true;
 				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
