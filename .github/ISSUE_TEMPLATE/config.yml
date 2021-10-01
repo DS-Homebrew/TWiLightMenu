@@ -5,10 +5,24 @@ contact_links:
     about: "Please use #nds-modding-help on the Discord server to for support-related questions, such as needing assistance to launch TWiLight Menu++"
   - name: DS game issue
     url: https://github.com/ahezard/nds-bootstrap/issues/new
-    about: Please use the nds-bootstrap GitHub repository to report issues related to running Nintendo DS applications as `.nds` files (not as a retail cart) via B4DS/nds-bootstrap (and not via Unlaunch)
+    about: Please use the nds-bootstrap GitHub repository to report issues related to running Nintendo DS applications as `.nds` files (not as a retail Game Card) via nds-bootstrap (and not via Unlaunch)
   - name: GBA game issue
     url: https://github.com/Gericom/GBARunner2/issues/new
     about: Please use the GBARunner2 GitHub repository to report issues related to running Game Boy Advance applications as `.gba` files (not as Slot-2 for DS Phat/Lite consoles), or the GBARunner2 GUI
-  - name: MPEG4 issue
-    url: https://github.com/Gericom/YouTubeDS/issues/new
-    about: Please use the MPEG4Player/YouTubeDS GitHub repository to report issues related to .mp4 playback
+  - name: Atari 2600 game issue
+    url: https://github.com/wavemotion-dave/StellaDS/issues/new
+    about: Please use the StellaDS GitHub repository to report issues related to running Atari 2600 applications as `.a26` files, or the StellaDS GUI
+  - name: Atari 5200 game issue
+    url: https://github.com/wavemotion-dave/A5200DS/issues/new
+    about: Please use the A5200DS GitHub repository to report issues related to running Atari 5200 applications as `.a52` files, or the A5200DS GUI
+  - name: Atari 7800 game issue
+    url: https://github.com/wavemotion-dave/A7800DS/issues/new
+    about: Please use the A7800DS GitHub repository to report issues related to running Atari 7800 applications as `.a78` files, or the A7800DS GUI
+  - name: Atari XEGS game issue
+    url: https://github.com/wavemotion-dave/XEGS-DS/issues/new
+    about: Please use the XEGS-DS GitHub repository to report issues related to running Atari XEGS applications as `.xex` or `.atr` files, or the XEGS-DS GUI
+  - name: Intellivision game issue
+    url: https://github.com/wavemotion-dave/NINTV-DS/issues/new
+    about: Please use the Nintellivision (NINTV-DS) GitHub repository to report issues related to running Intellivision applications as `.int` files, or the NINTV-DS GUI
+  - name: Other emulator issue
+    about: The emulators of other systems supported by TWiLight Menu++ are not currently maintained. You can find their GitHub repositories or webpages in the [TWiLight Menu++ README](https://github.com/DS-Homebrew/TWiLightMenu#app-launchers), but it is unlikely that your issue will be resolved there.
