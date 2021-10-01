@@ -113,7 +113,7 @@ STRING(DESCRIPTION_ZOOMING_ICON, "Display a zoom effect for the selected icon in
 // Emulation / HB settings
 STRING(NDS_ROMS, "NDS ROMs")
 STRING(GBA_ROMS, "GBA ROMs")
-STRING(VIDEOS, "Videos (.RVID and .MP4)")
+STRING(VIDEOS, "Videos (.RVID and .FV)")
 STRING(XEX_ROMS, "Atari XEGS ROMs")
 STRING(A26_ROMS, "Atari 2600 ROMs")
 STRING(A52_ROMS, "Atari 5200 ROMs")
@@ -132,7 +132,7 @@ STRING(GBARUNNER2_ONLY, "GBARunner2 only")
 
 STRING(DESCRIPTION_SHOW_NDS, "Display Nintendo DS/DSi ROMs in the ROM list.")
 STRING(DESCRIPTION_SHOW_GBA, "Display GameBoy Advance ROMs in the ROM list.")
-STRING(DESCRIPTION_SHOW_VIDEO, "Display Rocket Video and MPEG4 files in the ROM list.")
+STRING(DESCRIPTION_SHOW_VIDEO, "Display Rocket Video and FastVideo files in the ROM list.")
 STRING(DESCRIPTION_SHOW_XEX, "Display Atari XEGS ROMs in the ROM list.")
 STRING(DESCRIPTION_SHOW_A26, "Display Atari 2600 ROMs in the ROM list.")
 STRING(DESCRIPTION_SHOW_A52, "Display Atari 5200 ROMs in the ROM list.")
