@@ -64,6 +64,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
      - [therealteamplayer](https://github.com/therealteamplayer): Hicode+DSP merged builds included.
 - [FluBBa](https://gbatemp.net/members/flubba.19963/): [S8DS](https://gbatemp.net/threads/s8ds.392855/) (used to launch Sega Master System/Game Gear ROMs)
 - Alekmaul & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5200DS](https://github.com/wavemotion-dave/A5200DS), [A7800DS](https://github.com/wavemotion-dave/A7800DS), and [XEGS-DS](https://github.com/wavemotion-dave/XEGS-DS) (used to launch Atari 2600/5200/7800/XEGS ROMs)
+- [wavemotion](https://github.com/wavemotion-dave): [Nintellivision/NINTV-DS](https://github.com/wavemotion-dave/NINTV-DS) (used to launch Intellivision ROMs)
 ## Graphics & Themes
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons
@@ -71,7 +72,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi theme's `SELECT` menu
 - [fail0verflow](https://github.com/fail0verflow/), Fluto, and Arkhandar: Homebrew Channel/Launcher graphics
 - davi: Border for GBC theme (originally for GameYob)
-- [NightScript](https://github.com/NightYoshi370/): Reworked Manual pages
+- [NightScript](https://github.com/NightScript370/): Reworked Manual pages
 ## Music
 - IkaMusumeYiyaRoxie: General N64 MIDI Soundfont, used for the title splash fanfare
 - BlastoiseVeteran: Remastered version of Nintendo DSi Shop music
@@ -86,7 +87,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - Nikokaro: Found no-tilt patches for *WarioWare: Twisted!*, and *Yoshi Topsy-Turvy*. ([GBAtemp thread](https://gbatemp.net/threads/gba-no-tilt-patches-for-ds-users.584128/))
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI
-- [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcards
+- [NightScript](https://github.com/NightScript370): Code cleanup, added functionality for Acekard theme in regards to flashcards
 - [SNBeast](https://github.com/SNBeast): Unlaunch patches
 - retrogamefan & Rudolph: Included AP-patches for nds-bootstrap
    - [enler](https://github.com/enler): Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility
@@ -98,7 +99,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - Chinese Traditional: [ccccchoho](https://crowdin.com/profile/ccccchoho), [James-Makoto](https://crowdin.com/profile/VCMOD55), [Rintim](https://crowdin.com/profile/Rintim), [奇诺比奥](https://crowdin.com/profile/Counta6_233)
 - Danish: [jonata](https://github.com/Jonatan6), [Nadia Pedersen](https://crowdin.com/profile/nadiaholmquist)
 - Dutch: [Arthur](https://crowdin.com/profile/arthurr2014.tl), [guusbuk](https://crowdin.com/profile/guusbuk), [Mikosu](https://crowdin.com/profile/miko303), [Xtremegamer007](https://crowdin.com/profile/xtremegamer007)
-- French: [Arcky](https://github.com/ArckyTV), [Benjamin](https://crowdin.com/profile/sombrabsol), [cooolgamer](https://crowdin.com/profile/cooolgamer), [Dhalian](https://crowdin.com/profile/DHALiaN3630), [maximesharp](https://crowdin.com/profile/maximesharp), [Ghost0159](https://crowdin.com/profile/Ghost0159), [Léo](https://crowdin.com/profile/leeo97one), [LinuxCat](https://github.com/L-i-n-u-x-C-a-t), [Martinez](https://github.com/flutterbrony), [NightScript](https://github.com/NightYoshi370), [SLG3](https://crowdin.com/profile/slg3), [TM-47](https://crowdin.com/profile/-tm-), [Yolopix](https://crowdin.com/profile/yolopix)
+- French: [Arcky](https://github.com/ArckyTV), [Benjamin](https://crowdin.com/profile/sombrabsol), [cooolgamer](https://crowdin.com/profile/cooolgamer), [Dhalian](https://crowdin.com/profile/DHALiaN3630), [maximesharp](https://crowdin.com/profile/maximesharp), [Ghost0159](https://crowdin.com/profile/Ghost0159), [Léo](https://crowdin.com/profile/leeo97one), [LinuxCat](https://github.com/L-i-n-u-x-C-a-t), [Martinez](https://github.com/flutterbrony), [NightScript](https://github.com/NightScript370), [SLG3](https://crowdin.com/profile/slg3), [TM-47](https://crowdin.com/profile/-tm-), [Yolopix](https://crowdin.com/profile/yolopix)
 - German: [ariebe9115](https://crowdin.com/profile/ariebe9115), [Christian Schuhmann](https://github.com/c-schuhmann), [Dubsenbert Reaches](https://crowdin.com/profile/Bierjunge), [İlke Hür Eyiol](https://crowdin.com/profile/ilkecan51), [Julian](https://crowdin.com/profile/nailujx86), [Kazuto](https://crowdin.com/profile/Marcmario), [malekairmaroc7](https://github.com/malekairmaroc7), [Oleh Hatsenko](https://github.com/IRONKAGE), [SkilLP](https://github.com/SkilLP), [SuperSaiyajinStackZ](https://github.com/SuperSaiyajinStackZ), [Tcm0](https://github.com/Tcm0), [TheDude](https://crowdin.com/profile/the6771), [TM-47](https://crowdin.com/profile/-tm-), [Uriki](https://github.com/Uriki)
 - Greek: [Anestis1403](https://crowdin.com/profile/anestis1403)
 - Hebrew: [Barawer](https://crowdin.com/profile/barawer), [Yaniv](https://crowdin.com/profile/y4niv)
