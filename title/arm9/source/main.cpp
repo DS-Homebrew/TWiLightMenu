@@ -2130,6 +2130,7 @@ int main(int argc, char **argv)
 	srand(time(NULL));
 
 	while (1) {
+		runGraphicIrq();
 		if (screenmode == 1) {
 			//unloadNds9iAsynch();
 			fadeColor = true;
