@@ -272,6 +272,7 @@ TWL_CODE int lastRunROM() {
 		}
 
 		if (slot1Launched) {
+			wideCheck(wideScreen);
 			return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true, -1);
 		}
 	}
