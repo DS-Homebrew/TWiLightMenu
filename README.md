@@ -15,7 +15,7 @@
 </p>
 
 TWiLight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
-It can launch Nintendo DS(i), SNES, NES, GameBoy (Color), GameBoy Advance, Sega GameGear/Master System & Mega Drive/Genesis, and Atari 2600/5200/7800/XEGS ROMs, as well as DSTWO plugins (if you use a DSTWO).
+It can launch Nintendo DS(i), SNES, NES, GameBoy (Color), GameBoy Advance, Sega GameGear/Master System & Mega Drive/Genesis, and Atari 2600/5200/7800/XEGS ROMs, Intellivision ROMs, as well as DSTWO plugins (if you use a DSTWO).
 
 # Compiling
 
