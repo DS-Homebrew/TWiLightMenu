@@ -13,6 +13,7 @@ static const char twlClockExcludeList[][4] = {
 	"AWI", // Hotel Dusk: Room 215
 	"C6C", // Infinite Space
 	"YLU", // Last Window: The Secret of Cape West
+	"YJB", // LEGO Batman
 	"B6F", // LEGO Batman 2: DC Super Heroes
 	"CS5", // LEGO Battles
 	"TLJ", // LEGO Friends
