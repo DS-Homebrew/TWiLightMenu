@@ -95,8 +95,7 @@ jobs:
           curl -LO https://github.com/wavemotion-dave/A5200DS/releases/latest/download/A5200DS.nds
           curl -LO https://github.com/wavemotion-dave/A7800DS/releases/latest/download/A7800DS.nds
           curl -LO https://github.com/wavemotion-dave/A7800DS/releases/latest/download/A7800DS-LITE.nds
-          #curl -LO https://github.com/wavemotion-dave/NINTV-DS/releases/latest/download/NINTV-DS.nds
-          curl -LO https://github.com/wavemotion-dave/NINTV-DS/raw/main/NINTV-DS.nds
+          curl -LO https://github.com/wavemotion-dave/NINTV-DS/releases/latest/download/NINTV-DS.nds
           # PicoDriveTWL is a prerelease, so get the latest URL from the GH api
           curl -LO $(curl https://api.github.com/repos/DS-Homebrew/PicoDriveTWL/releases | jq --raw-output '.[0].assets[0].browser_download_url' -)
           cd ../../../..
