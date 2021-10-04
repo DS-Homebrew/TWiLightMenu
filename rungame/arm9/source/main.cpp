@@ -37,7 +37,7 @@ std::string filename;
 
 const char *charUnlaunchBg;
 std::string unlaunchBg = "default.gif";
-bool removeLauncherPatches = true;
+bool removeLauncherPatches = false;
 
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
 

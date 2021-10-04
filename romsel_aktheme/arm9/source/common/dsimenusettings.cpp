@@ -9,7 +9,7 @@
 static const char* settingsinipath = DSIMENUPP_INI;
 
 const char *charUnlaunchBg;
-bool removeLauncherPatches = true;
+bool removeLauncherPatches = false;
 
 TWLSettings::TWLSettings()
 {

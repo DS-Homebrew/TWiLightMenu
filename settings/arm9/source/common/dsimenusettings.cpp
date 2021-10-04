@@ -105,7 +105,7 @@ TWLSettings::TWLSettings()
 
     gbaBorder = "default.png";
     unlaunchBg = "default.gif";
-    removeLauncherPatches = true;
+    removeLauncherPatches = false;
     font = "default";
     dsClassicCustomFont = false;
 

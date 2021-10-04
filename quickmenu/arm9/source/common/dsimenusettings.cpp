@@ -8,7 +8,7 @@
 
 extern const char *settingsinipath;
 const char *charUnlaunchBg;
-bool removeLauncherPatches = true;
+bool removeLauncherPatches = false;
 
 extern bool isRegularDS;
 
