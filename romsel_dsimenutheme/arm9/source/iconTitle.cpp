@@ -280,26 +280,29 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			unitCode[num] = ndsHeader.unitCode;
 			headerCRC[num] = ndsHeader.headerCRC16;
 			a7mbk6[num] = ndsHeader.a7mbk6;
+			// Check if ROM needs a donor ROM
 			if (a7mbk6[num] == (hasCycloDSi ? 0x080037C0 : 0x00403000) && isDSiMode() && sys().arm7SCFGLocked()) {
-				requiresDonorRom[num] = hasCycloDSi ? 51 : 52;
+				requiresDonorRom[num] = hasCycloDSi ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
+			} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6[num] == 0x080037C0 && !dsiFeatures()) {
+				requiresDonorRom[num] = 51; // DSi-Enhanced ROM required
 			} else
 			switch (ndsHeader.arm7binarySize) {
 				case 0x22B40:
 				case 0x22BCC:
-					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 51;
+					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 51; // DSi-Enhanced ROM required
 					break;
 				case 0x23708:
 				case 0x2378C:
 				case 0x237F0:
-					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 5;
+					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 5; // SDK5 ROM required
 					break;
 				case 0x235DC:
 				case 0x23CAC:
-					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 20;
+					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 20; // Early SDK2 ROM required
 					break;
 				case 0x24DA8:
 				case 0x24F50:
-					requiresDonorRom[num] = 2;
+					requiresDonorRom[num] = 2; // Late SDK2 ROM required
 					break;
 				case 0x2434C:
 				case 0x2484C:
@@ -307,12 +310,12 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				case 0x25D04:
 				case 0x25D94:
 				case 0x25FFC:
-					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 3;
+					if (usingB4DS || hasCycloDSi) requiresDonorRom[num] = 3; // Early SDK3 ROM required
 					break;
 				case 0x27618:
 				case 0x2762C:
 				case 0x29CEC:
-					requiresDonorRom[num] = 5;
+					requiresDonorRom[num] = 5; // SDK5 ROM required
 					break;
 				default:
 					break;
@@ -356,9 +359,10 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			isDSiWare[num] = true; // Is a DSiWare game
 		}
 
-		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
-		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
-		&& !dsiFeatures()) {
+		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0 // Pop Island
+		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0 // Pop Island: Paperfield
+		  || memcmp(ndsHeader.gameCode, "KGK", 3) == 0 // Glory Days: Tactical Defense
+		) && !dsiFeatures()) {
 			isDSiWare[num] = false;
 		}
 
