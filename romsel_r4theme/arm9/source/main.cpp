@@ -81,7 +81,7 @@ std::string homebrewArg;
 const char *charUnlaunchBg;
 std::string gbaBorder = "default.png";
 std::string unlaunchBg = "default.gif";
-bool removeLauncherPatches = true;
+bool removeLauncherPatches = false;
 
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char16_t hiyaNdsPath[] = u"sdmc:/hiya.dsi";
