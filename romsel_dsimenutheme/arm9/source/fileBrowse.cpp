@@ -567,8 +567,8 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 	startBorderZoomOut = true;
 }
 
-void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
-	if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
+void updateBoxArt(const std::vector<DirEntry> dirContents) {
+	if (CURPOS + PAGENUM * 40 < ((int)dirContents.size())) {
 		showSTARTborder = true;
 		if (ms().theme == 5 || ms().macroMode || !ms().showBoxArt) {
 			return;
@@ -592,7 +592,7 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 					snprintf(boxArtPath, sizeof(boxArtPath),
 						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
 								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-						 dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+						 dirContents.at(CURPOS + PAGENUM * 40).name.c_str());
 					if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
 						snprintf(boxArtPath, sizeof(boxArtPath),
 							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
@@ -1903,7 +1903,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				touchRead(&touch);
 				snd().updateStream();
 
-				updateBoxArt(dirContents, scrn);
+				updateBoxArt(dirContents[scrn]);
 				if (ms().theme < 4) {
 					while (dboxInFrame) {
 						snd().updateStream();
