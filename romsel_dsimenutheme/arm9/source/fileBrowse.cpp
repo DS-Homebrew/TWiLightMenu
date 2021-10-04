@@ -456,12 +456,6 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 	waitForNeedToPlayStopSound = 1;
 	settingsChanged = true;
 	bannerTextShown = false;
-	if (boxArtLoaded) {
-		if (!rocketVideo_playVideo)
-			clearBoxArt();
-		rocketVideo_playVideo = (ms().theme == 1 ? true : false);
-		boxArtLoaded = false;
-	}
 
 	bool firstMove = true;
 	touchPosition touch;
@@ -544,6 +538,16 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 		// Bit of delay the first time to give time to release the button
 		if(firstMove) {
 			firstMove = false;
+			if (boxArtLoaded) {
+				if (!rocketVideo_playVideo)
+					clearBoxArt();
+				rocketVideo_playVideo = (ms().theme == 1 ? true : false);
+				boxArtLoaded = false;
+				if (ms().theme == 4) {
+					for(int i = 0; i < 10; i++)
+						swiWaitForVBlank();
+				}
+			} else
 			for(int i = 0; i < (ms().theme == 4 ? 15 : 4); i++)
 				swiWaitForVBlank();
 		} else {
