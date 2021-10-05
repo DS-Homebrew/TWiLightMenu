@@ -2479,7 +2479,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 							if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
 							&& (requiresDonorRom[CURPOS] == 20 || requiresDonorRom[CURPOS] == 2 || requiresDonorRom[CURPOS] == 3
-							 || requiresDonorRom[CURPOS] == 51 || (requiresDonorRom[CURPOS] == 52 && (isDSiWare[CURPOS] || bstrap_dsiMode > 0)))) {
+							 || requiresDonorRom[CURPOS] == 5 || requiresDonorRom[CURPOS] == 51 || (requiresDonorRom[CURPOS] == 52 && (isDSiWare[CURPOS] || bstrap_dsiMode > 0)))) {
 								proceedToLaunch = donorRomMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 							}
 						}

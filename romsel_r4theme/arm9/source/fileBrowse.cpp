@@ -889,7 +889,7 @@ string browseForFile(const vector<string_view> extensionList) {
 						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 						if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
 						&& (requiresDonorRom == 20 || requiresDonorRom == 2 || requiresDonorRom == 3
-						 || requiresDonorRom == 51 || (requiresDonorRom == 52 && (isDSiWare || dsiModeSetting > 0)))) {
+						 || requiresDonorRom == 5 || requiresDonorRom == 51 || (requiresDonorRom == 52 && (isDSiWare || dsiModeSetting > 0)))) {
 							proceedToLaunch = donorRomMsg();
 						}
 					}
