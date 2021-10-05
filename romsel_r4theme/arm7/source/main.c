@@ -109,6 +109,15 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
+	if (isDSiMode() && REG_SCFG_EXT == 0) {
+		u32 wordBak = *(vu32*)0x037C0000;
+		*(vu32*)0x037C0000 = 0x414C5253;
+		if (*(vu32*)0x037C0000 == 0x414C5253 && *(vu32*)0x037C8000 != 0x414C5253) {
+			*(u32*)0x02FFE1A0 = 0x0800C730;
+		}
+		*(vu32*)0x037C0000 = wordBak;
+	}
+
 	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);

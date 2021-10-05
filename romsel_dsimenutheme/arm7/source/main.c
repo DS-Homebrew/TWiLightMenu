@@ -137,6 +137,15 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 
+	if (isDSiMode() && REG_SCFG_EXT == 0) {
+		u32 wordBak = *(vu32*)0x037C0000;
+		*(vu32*)0x037C0000 = 0x414C5253;
+		if (*(vu32*)0x037C0000 == 0x414C5253 && *(vu32*)0x037C8000 != 0x414C5253) {
+			*(u32*)0x02FFE1A0 = 0x0800C730;
+		}
+		*(vu32*)0x037C0000 = wordBak;
+	}
+
 	u8 readCommand = readPowerManagement(4);
 
 	// 01: Fade Out

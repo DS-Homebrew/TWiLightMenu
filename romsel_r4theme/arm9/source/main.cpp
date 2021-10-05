@@ -1748,7 +1748,7 @@ int main(int argc, char **argv) {
 
 				dsiWareSrlPath = std::string(argarray[0]);
 				dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && secondaryDevice && (!dsiWareToSD || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0))) ? getSavExtension() : getPubExtension());
+				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && secondaryDevice && (!dsiWareToSD || (isDSiMode() && !sdFound()))) ? getSavExtension() : getPubExtension());
 				dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
 				dsiWarePrvPath = replaceAll(dsiWarePrvPath, typeToReplace, getPrvExtension());
 				if (!isArgv) {
@@ -1844,7 +1844,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel > 0) {
+				if (dsiWareBooter || arm7SCFGLocked || consoleModel > 0) {
 					CheatCodelist codelist;
 					u32 gameCode, crc32;
 
@@ -1883,7 +1883,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if ((dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel > 0) && !homebrewBootstrap) {
+				if ((dsiWareBooter || arm7SCFGLocked || consoleModel > 0) && !homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 
@@ -1900,7 +1900,7 @@ int main(int argc, char **argv) {
 						fatGetAliasPath(secondaryDevice ? "fat:/" : "sd:/", dsiWarePrvPath.c_str(), sfnPrv);
 					}
 
-					bootstrapinipath = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? "fat:/_nds/nds-bootstrap.ini" : "sd:/_nds/nds-bootstrap.ini";
+					bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";
 					CIniFile bootstrapini(bootstrapinipath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", secondaryDevice && dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : dsiWareSrlPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);

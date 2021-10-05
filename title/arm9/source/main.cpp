@@ -740,7 +740,7 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (ms().dsiWareBooter || (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || ms().consoleModel > 0)
+		if (ms().dsiWareBooter || sys().arm7SCFGLocked() || ms().consoleModel > 0)
 		{
 			if (ms().homebrewBootstrap) {
 				unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
@@ -772,7 +772,7 @@ void lastRunROM()
 
 				ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && ms().previousUsedDevice && (!ms().dsiWareToSD || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0))) ? getSavExtension() : getPubExtension());
+				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && ms().previousUsedDevice && (!ms().dsiWareToSD || (isDSiMode() && !sdFound()))) ? getSavExtension() : getPubExtension());
 				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
 				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
 				ms().saveSettings();
@@ -900,7 +900,7 @@ void lastRunROM()
 					fatGetAliasPath(ms().previousUsedDevice ? "fat:/" : "sd:/", ms().dsiWarePrvPath.c_str(), sfnPrv);
 				}
 
-				CIniFile bootstrapini((memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI_SD);
+				CIniFile bootstrapini(sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().previousUsedDevice && ms().dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
@@ -925,7 +925,7 @@ void lastRunROM()
 				|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
 				|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 				);
-				bootstrapini.SaveIniFile((memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI_SD);
+				bootstrapini.SaveIniFile(sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC);
 
 				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD))) {
 					*(u32*)(0x02000000) |= BIT(3);

@@ -687,28 +687,29 @@ void getGameInfo(bool isDir, const char* name)
 		}
 
 		bool usingB4DS = (!dsiFeatures() && secondaryDevice);
-		bool hasCycloDSi = (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+		bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && arm7SCFGLocked);
+
 		romVersion = ndsHeader.romversion;
 		a7mbk6 = ndsHeader.a7mbk6;
 		// Check if ROM needs a donor ROM
-		if (a7mbk6 == (hasCycloDSi ? 0x080037C0 : 0x00403000) && isDSiMode() && arm7SCFGLocked) {
-			requiresDonorRom = hasCycloDSi ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
+		if (isDSiMode() && a7mbk6 == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) && arm7SCFGLocked) {
+			requiresDonorRom = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
 		} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6 == 0x080037C0 && !dsiFeatures()) {
 			requiresDonorRom = 51; // DSi-Enhanced ROM required
 		} else
 		switch (ndsHeader.arm7binarySize) {
 			case 0x22B40:
 			case 0x22BCC:
-				if (usingB4DS || hasCycloDSi) requiresDonorRom = 51; // DSi-Enhanced ROM required
+				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 51; // DSi-Enhanced ROM required
 				break;
 			case 0x23708:
 			case 0x2378C:
 			case 0x237F0:
-				if (usingB4DS || hasCycloDSi) requiresDonorRom = 5; // SDK5 ROM required
+				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 5; // SDK5 ROM required
 				break;
 			case 0x235DC:
 			case 0x23CAC:
-				if (usingB4DS || hasCycloDSi) requiresDonorRom = 20; // Early SDK2 ROM required
+				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 20; // Early SDK2 ROM required
 				break;
 			case 0x24DA8:
 			case 0x24F50:
@@ -720,7 +721,7 @@ void getGameInfo(bool isDir, const char* name)
 			case 0x25D04:
 			case 0x25D94:
 			case 0x25FFC:
-				if (usingB4DS || hasCycloDSi) requiresDonorRom = 3; // Early SDK3 ROM required
+				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 3; // Early SDK3 ROM required
 				break;
 			case 0x27618:
 			case 0x2762C:
