@@ -381,20 +381,33 @@ void lastRunROM()
 	if (ms().launchType[ms().previousUsedDevice] == Launch::ESDFlashcardLaunch)
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
-		if (ms().useBootstrap || !ms().previousUsedDevice)
+
+		loadPerGameSettings(filename);
+
+		bool dsiBinariesFound = true;
+		char game_TID[5];
+		u8 unitCode = 0;
+
+		FILE *f_nds_file = fopen(filename.c_str(), "rb");
+		dsiBinariesFound = checkDsiBinaries(f_nds_file);
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+		fread(game_TID, 1, 4, f_nds_file);
+		fseek(f_nds_file, 0x12, SEEK_SET);
+		fread(&unitCode, 1, 1, f_nds_file);
+		game_TID[4] = 0;
+
+		fclose(f_nds_file);
+
+		if (ms().useBootstrap || !ms().previousUsedDevice || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode))
+		|| ((game_TID[0] == 'K' || game_TID[0] == 'Z') && unitCode > 0))
 		{
 			std::string savepath;
-
-			loadPerGameSettings(filename);
 
 			bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 			bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 			bool boostCpu = (perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu);
 			bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? ms().cardReadDMA : perGameSettings_cardReadDMA);
 			bool asyncCardRead = (perGameSettings_asyncCardRead == -1 ? ms().asyncCardRead : perGameSettings_asyncCardRead);
-
-			u8 unitCode = 0;
-			bool dsiBinariesFound = true;
 
 			if (ms().homebrewBootstrap) {
 				argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
@@ -423,18 +436,6 @@ void lastRunROM()
 				} else if (extention(filename, ".app")) {
 					typeToReplace = ".app";
 				}
-
-				char game_TID[5];
-
-				FILE *f_nds_file = fopen(filename.c_str(), "rb");
-				dsiBinariesFound = checkDsiBinaries(f_nds_file);
-				fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-				fread(game_TID, 1, 4, f_nds_file);
-				fseek(f_nds_file, 0x12, SEEK_SET);
-				fread(&unitCode, 1, 1, f_nds_file);
-				game_TID[4] = 0;
-
-				fclose(f_nds_file);
 
 				std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 				std::string romFolderNoSlash = romfolder;

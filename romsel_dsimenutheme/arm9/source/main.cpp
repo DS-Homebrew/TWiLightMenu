@@ -1462,7 +1462,8 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if (useBackend) {
-					if ((ms().useBootstrap || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode))) {
+					if ((ms().useBootstrap || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode))
+					|| ((gameTid[CURPOS][0] == 'K' || gameTid[CURPOS][0] == 'Z') && unitCode[CURPOS] > 0)) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 						std::string ramdiskname = replaceAll(filename, typeToReplace, getImgExtension(perGameSettings_ramDiskNo));

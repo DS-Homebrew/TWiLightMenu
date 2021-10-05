@@ -278,25 +278,39 @@ TWL_CODE int lastRunROM() {
 	}
 
 	switch (launchType[previousUsedDevice]) {
-		case 1:
-			if ((useBootstrap && !homebrewBootstrap) || !previousUsedDevice)
+		case 1: {
+			romfolder = romPath[previousUsedDevice];
+			while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+				romfolder.resize(romfolder.size()-1);
+			}
+			chdir(romfolder.c_str());
+
+			filename = romPath[previousUsedDevice];
+			const size_t last_slash_idx = filename.find_last_of("/");
+			if (std::string::npos != last_slash_idx)
+			{
+				filename.erase(0, last_slash_idx + 1);
+			}
+
+			loadPerGameSettings(filename);
+
+			char game_TID[5];
+			u8 unitCode = 0;
+
+			FILE *f_nds_file = fopen(filename.c_str(), "rb");
+
+			fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+			fread(game_TID, 1, 4, f_nds_file);
+			fseek(f_nds_file, 0x12, SEEK_SET);
+			fread(&unitCode, 1, 1, f_nds_file);
+			game_TID[4] = 0;
+
+			fclose(f_nds_file);
+
+			if ((useBootstrap && !homebrewBootstrap) || !previousUsedDevice || (unitCode > 0 && (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode)))
 			{
 				std::string savepath;
 
-				romfolder = romPath[previousUsedDevice];
-				while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
-					romfolder.resize(romfolder.size()-1);
-				}
-				chdir(romfolder.c_str());
-
-				filename = romPath[previousUsedDevice];
-				const size_t last_slash_idx = filename.find_last_of("/");
-				if (std::string::npos != last_slash_idx)
-				{
-					filename.erase(0, last_slash_idx + 1);
-				}
-
-				loadPerGameSettings(filename);
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
 				bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
 
@@ -314,15 +328,6 @@ TWL_CODE int lastRunROM() {
 						typeToReplace = ".app";
 					}
 
-					char game_TID[5];
-
-					FILE *f_nds_file = fopen(filename.c_str(), "rb");
-
-					fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
-					fread(game_TID, 1, 4, f_nds_file);
-					game_TID[4] = 0;
-
-					fclose(f_nds_file);
 
 					std::string savename = ReplaceAll(filename, typeToReplace, getSavExtension());
 					std::string romFolderNoSlash = romfolder;
@@ -387,14 +392,6 @@ TWL_CODE int lastRunROM() {
 
 				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true, -1);
 			} else {
-				std::string filename = romPath[1];
-				const size_t last_slash_idx = filename.find_last_of("/");
-				if (std::string::npos != last_slash_idx)
-				{
-					filename.erase(0, last_slash_idx + 1);
-				}
-
-				loadPerGameSettings(filename);
 				bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
 				bool runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 
@@ -430,6 +427,7 @@ TWL_CODE int lastRunROM() {
 					return runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
 				}
 			}
+		}
 		case 2: {
 			romfolder = romPath[previousUsedDevice];
 			while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
