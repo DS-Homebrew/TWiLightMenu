@@ -19,7 +19,7 @@ makearm7_fc:
 
 makearm7_r4ils:
 	$(MAKE) -C flashcart_specifics/R4iLS/arm7
-	cp flashcart_specifics/r4ils/arm7/$(TARGET).elf $(TARGET)_r4ils.arm7.elf
+	cp flashcart_specifics/R4iLS/arm7/$(TARGET).elf $(TARGET)_r4ils.arm7.elf
 
 makearm9_fc:
 	$(MAKE) -C arm9
