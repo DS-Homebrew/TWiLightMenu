@@ -1492,18 +1492,7 @@ int main(int argc, char **argv) {
 								}
 							}
 
-							bool saveSizeFixNeeded = false;
-
-							// TODO: If the list gets large enough, switch to bsearch().
-							for (unsigned int i = 0; i < sizeof(saveSizeFixList) / sizeof(saveSizeFixList[0]); i++) {
-								if (memcmp(gameTid[CURPOS], saveSizeFixList[i], 3) == 0) {
-									// Found a match.
-									saveSizeFixNeeded = true;
-									break;
-								}
-							}
-
-							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
+							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
 								if (ms().theme == 5) {
 									displayGameIcons = false;
 								} else if (ms().theme != 4) {
@@ -1530,15 +1519,11 @@ int main(int argc, char **argv) {
 								}
 								showProgressIcon = true;
 
-								if (orgsavesize > 0) {
-									fsizeincrease(savepath.c_str(), sdFound() ? "sd:/_nds/TWiLightMenu/temp.sav" : "fat:/_nds/TWiLightMenu/temp.sav", savesize);
-								} else {
-									FILE *pFile = fopen(savepath.c_str(), "wb");
-									if (pFile) {
-										fseek(pFile, savesize - 1, SEEK_SET);
-										fputc('\0', pFile);
-										fclose(pFile);
-									}
+								FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
+								if (pFile) {
+									fseek(pFile, savesize - 1, SEEK_SET);
+									fputc('\0', pFile);
+									fclose(pFile);
 								}
 								showProgressIcon = false;
 								clearText();

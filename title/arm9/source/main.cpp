@@ -461,18 +461,7 @@ void lastRunROM()
 						}
 					}
 
-					bool saveSizeFixNeeded = false;
-
-					// TODO: If the list gets large enough, switch to bsearch().
-					for (unsigned int i = 0; i < sizeof(saveSizeFixList) / sizeof(saveSizeFixList[0]); i++) {
-						if (memcmp(game_TID, saveSizeFixList[i], 3) == 0) {
-							// Found a match.
-							saveSizeFixNeeded = true;
-							break;
-						}
-					}
-
-					if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
+					if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
 						consoleDemoInit();
 						iprintf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
 						iprintf ("\n");
@@ -489,15 +478,11 @@ void lastRunROM()
 						iprintf ("\n");
 						fadeType = true;
 
-						if (orgsavesize > 0) {
-							fsizeincrease(savepath.c_str(), sdFound() ? "sd:/_nds/TWiLightMenu/temp.sav" : "fat:/_nds/TWiLightMenu/temp.sav", savesize);
-						} else {
-							FILE *pFile = fopen(savepath.c_str(), "wb");
-							if (pFile) {
-								fseek(pFile, savesize - 1, SEEK_SET);
-								fputc('\0', pFile);
-								fclose(pFile);
-							}
+						FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
+						if (pFile) {
+							fseek(pFile, savesize - 1, SEEK_SET);
+							fputc('\0', pFile);
+							fclose(pFile);
 						}
 						iprintf((orgsavesize == 0) ? "Save file created!\n" : "Save file expanded!\n");
 
