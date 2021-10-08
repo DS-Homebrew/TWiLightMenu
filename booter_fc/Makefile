@@ -197,10 +197,12 @@ clean:
 	@rm -fr ./flashcart_specifics/booter_fc.nds ./flashcart_specifics/_DS_MENU.nds
 	@rm -fr $(TARGET)_fc.nds $(TARGET)_fc.arm7.elf $(TARGET)_fc.arm9.elf
 	@rm -fr $(TARGET)_r4idsn.nds $(TARGET)_r4idsn.arm9.elf
+	@rm -fr $(TARGET)_r4ils.arm7.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C flashcart_specifics/r4idsn/arm9 clean
+	@$(MAKE) -C flashcart_specifics/R4iLS/arm7 clean
 	@$(MAKE) -C arm7 clean
 	# echo Cleaning Flashcart Autobooters
 	# rm -fr "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
