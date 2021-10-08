@@ -122,38 +122,47 @@ autoboot:
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Ace3DS/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/Ace3DS/3DSCARD.DAT"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/Ace3DS/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)/iLL.iL"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i Gold Upgrade Revolution (v1.14b kernel)/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i Gold Upgrade Revolution (v1.14b kernel)/R4i.dat"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i Gold Upgrade Revolution (v1.14b kernel)/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4IIISDHC (v3.07 kernel) & R4i SDHC Silver RTS Lite/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4IIISDHC (v3.07 kernel) & R4i SDHC Silver RTS Lite/R4.dat"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4IIISDHC (v3.07 kernel) & R4i SDHC Silver RTS Lite/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i Upgrade Revolution/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i Upgrade Revolution/R4i.3ds"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i Upgrade Revolution/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i SDHC Upgrade Revolution (www.r4i-dshc.com), R4i 3DS (v4.3 kernel) & R4i YES/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i SDHC Upgrade Revolution (www.r4i-dshc.com), R4i 3DS (v4.3 kernel) & R4i YES/R4i.TP"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i SDHC Upgrade Revolution (www.r4i-dshc.com), R4i 3DS (v4.3 kernel) & R4i YES/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i King LL/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i King LL/R4KING"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i King LL/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/R4i.TP"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/iLL.iL"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/TTMenu.dat"
 
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/_BOOT_DS.NDS"
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/TTMENU.DAT"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/_DS_MENU.DAT"
 
 	# Since this is the last one, move it instead of copy
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i-REDANT/"
-	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/Redant.dat"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/Redant.dat"
+	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/TTMenu.dat"
 
 	#### Games N Music
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Games N Music/"
@@ -178,8 +187,8 @@ autoboot:
 
 	#### SuperCard DSONE
 	cp booter_fc.nds TTMenu.DAT
-	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi TTMenu.DAT
-	mv TTMenu.DAT "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/TTMenu.DAT"
+	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi TTMenu.dat
+	mv TTMenu.DAT "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/TTMenu.dat"
 
 	#### M3 DS Real (for YSMenu reset)
 	cp booter_fc.nds SRESET.DAT
