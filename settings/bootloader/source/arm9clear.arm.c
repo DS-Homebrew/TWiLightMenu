@@ -95,6 +95,35 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 	while(1);
 }
 
+void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)) limitedModeMemoryPit_ARM9 (void) 
+{
+	// WRAM-A fully mapped to arm7
+	*((vu32*)REG_MBK1)=0x8D85898D;
+
+	// WRAM-B fully mapped to arm7
+	*((vu32*)REG_MBK2)=0x8D85898D;
+	*((vu32*)REG_MBK3)=0x9195999D;
+
+	// WRAM-C fully mapped to arm7
+	*((vu32*)REG_MBK4)=0x8D85898D;
+	*((vu32*)REG_MBK5)=0x9195999D;
+
+	// WRAM not mapped
+	REG_MBK6=0; // WRAM-A
+	REG_MBK7=0; // WRAM-B
+	REG_MBK8=0; // WRAM-C
+
+	// Return to passme loop
+	*((vu32*)0x02FFFE04) = (u32)0xE59FF018;		// ldr pc, 0x02FFFE24
+	*((vu32*)0x02FFFE24) = (u32)0x02FFFE04;		// Set ARM9 Loop address
+
+	asm volatile(
+		"\tbx %0\n"
+		: : "r" (0x02FFFE04)
+	);
+	while(1);
+}
+
 /*-------------------------------------------------------------------------
 startBinary_ARM9
 Jumps to the ARM9 NDS binary in sync with the display and ARM7

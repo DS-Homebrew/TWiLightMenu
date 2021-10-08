@@ -600,6 +600,10 @@ int main (void) {
 	if (*(u32*)(0x2FFFD0C) == 0x4E44544C) {
 		limitedModeMemoryPit();
 		*(u32*)(0x2FFFD0C) = 0;
+
+		copyLoop((void*)TEMP_MEM, (void*)limitedModeMemoryPit_ARM9, resetMemory2_ARM9_size);
+		(*(vu32*)0x02FFFE24) = (u32)TEMP_MEM;	// Make ARM9 jump to the function
+		while ((*(vu32*)0x02FFFE24) == (u32)TEMP_MEM);
 	} else if (*(u32*)(0x2FFFD0C) == 0x4D44544C) {
 		limitedMode();
 		*(u32*)(0x2FFFD0C) = 0;

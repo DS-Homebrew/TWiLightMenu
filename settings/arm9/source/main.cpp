@@ -614,44 +614,7 @@ void defaultExitHandler()
 	}*/
 
 	if (isDSiMode() && sdFound() && !flashcardFound() && !sys().arm7SCFGLocked() && ms().limitedMode > 0) {
-		if (ms().limitedMode == 2) {
-			// arm7 is master of WRAM A-C
-			REG_MBK9=0x00FFFF0F;
-
-			// WRAM-A fully mapped to arm7
-			*((vu32*)REG_MBK1)=0x8D85898D;
-
-			// WRAM-B fully mapped to arm7
-			*((vu32*)REG_MBK2)=0x8D85898D;
-			*((vu32*)REG_MBK3)=0x9195999D;
-
-			// WRAM-C fully mapped to arm7
-			*((vu32*)REG_MBK4)=0x8D85898D;
-			*((vu32*)REG_MBK5)=0x9195999D;
-
-			// WRAM not mapped
-			REG_MBK6=0; // WRAM-A
-			REG_MBK7=0; // WRAM-B
-			REG_MBK8=0; // WRAM-C
-
-			*(u32*)0x02FFFD0C = 0x4E44544C;
-		} else {
-			// arm7 is master of WRAM-A, arm9 of WRAM-B & C
-			REG_MBK9=0x3000000F;
-
-			// WRAM-A fully mapped to arm7
-			*((vu32*)REG_MBK1)=0x8D898581; // same as dsiware
-
-			// WRAM-B fully mapped to arm9 // inverted order
-			*((vu32*)REG_MBK2)=0x8C888480;
-			*((vu32*)REG_MBK3)=0x9C989490;
-
-			// WRAM-C fully mapped to arm9 // inverted order
-			*((vu32*)REG_MBK4)=0x8C888480;
-			*((vu32*)REG_MBK5)=0x9C989490;
-
-			*(u32*)0x02FFFD0C = 0x4D44544C;
-		}
+		*(u32*)0x02FFFD0C = ms().limitedMode == 2 ? 0x4E44544C : 0x4D44544C;
 		*(u32*)0x020007F0 = 0x4D44544C;
 	}
 
