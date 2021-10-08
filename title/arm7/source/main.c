@@ -67,58 +67,6 @@ void frameRateHack()
 	}
 }*/
 
-void limitedModeMemoryPit(void) {
-	// arm7 is master of WRAM A-C
-	REG_MBK9=0x00FFFF0F;
-
-	// WRAM-A fully mapped to arm7
-	*((vu32*)REG_MBK1)=0x8D85898D;
-
-	// WRAM-B fully mapped to arm7
-	*((vu32*)REG_MBK2)=0x8D85898D;
-	*((vu32*)REG_MBK3)=0x9195999D;
-
-	// WRAM-C fully mapped to arm7
-	*((vu32*)REG_MBK4)=0x8D85898D;
-	*((vu32*)REG_MBK5)=0x9195999D;
-
-	// WRAM mapped to the 0x3700000 - 0x37FFFFF area 
-	// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
-	REG_MBK6=0x080037C0;
-	// WRAM-B mapped to the 0x3780000 - 0x37BFFFF area : 256k // why?
-	REG_MBK7=0x07C03780;
-	// WRAM-C mapped to the 0x3740000 - 0x377FFFF area : 256k
-	REG_MBK8=0x07803740;
-
-	REG_SCFG_EXT &= ~(1UL << 31); // Lock SCFG
-}
-
-void limitedMode(void) {
-	// arm7 is master of WRAM-A, arm9 of WRAM-B & C
-	REG_MBK9=0x3000000F;
-
-	// WRAM-A fully mapped to arm7
-	*((vu32*)REG_MBK1)=0x8D898581; // same as dsiware
-
-	// WRAM-B fully mapped to arm9 // inverted order
-	*((vu32*)REG_MBK2)=0x8C888480;
-	*((vu32*)REG_MBK3)=0x9C989490;
-
-	// WRAM-C fully mapped to arm9 // inverted order
-	*((vu32*)REG_MBK4)=0x8C888480;
-	*((vu32*)REG_MBK5)=0x9C989490;
-
-	// WRAM mapped to the 0x3700000 - 0x37FFFFF area 
-	// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
-	REG_MBK6=0x080037C0; // same as dsiware
-	// WRAM-B mapped to the 0x3740000 - 0x37BFFFF area : 512k // why? only 256k real memory is there
-	REG_MBK7=0x07C03740; // same as dsiware
-	// WRAM-C mapped to the 0x3700000 - 0x373FFFF area : 256k
-	REG_MBK8=0x07403700; // same as dsiware
-
-	REG_SCFG_EXT &= ~(1UL << 31); // Lock SCFG
-}
-
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -303,13 +251,6 @@ int main() {
 		}
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
-		}
-		if (fifoGetValue32(FIFO_USER_08) == 2) {
-			limitedModeMemoryPit();
-			fifoSendValue32(FIFO_USER_08, 0);
-		} else if (fifoGetValue32(FIFO_USER_08) == 1) {
-			limitedMode();
-			fifoSendValue32(FIFO_USER_08, 0);
 		}
 
 		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
