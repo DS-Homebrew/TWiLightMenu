@@ -1185,6 +1185,7 @@ bool donorRomMsg(const char *filename) {
 		}
 		printSmall(false, 16, 66, dirContName.c_str());
 	}
+	bool dsModeAllowed = ((requiresDonorRom[CURPOS] == 52 || requiresDonorRom[CURPOS] == 53) && !isDSiWare[CURPOS]);
 	int yPos = (ms().theme == 4 ? 8 : 96);
 	switch (requiresDonorRom[CURPOS]) {
 		case 20:
@@ -1206,8 +1207,11 @@ bool donorRomMsg(const char *filename) {
 		case 52:
 			printSmall(false, 0, yPos, !isDSiWare[CURPOS] ? STR_DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE : STR_DONOR_ROM_MSG_SDK5TWLONLY, Alignment::center);
 			break;
+		case 53:
+			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWLANY_DSI_MODE, Alignment::center);
+			break;
 	}
-	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), ((requiresDonorRom[CURPOS] == 52 && !isDSiWare[CURPOS]) ? STR_Y_DS_MODE_B_BACK : STR_B_BACK), Alignment::center);
+	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), dsModeAllowed ? STR_Y_DS_MODE_B_BACK : STR_B_BACK, Alignment::center);
 	updateText(false);
 	int pressed = 0;
 	while (1) {
@@ -1221,7 +1225,7 @@ bool donorRomMsg(const char *filename) {
 		drawCurrentDate();
 		snd().updateStream();
 		swiWaitForVBlank();
-		if (requiresDonorRom[CURPOS] == 52 && !isDSiWare[CURPOS] && (pressed & KEY_Y)) {
+		if (dsModeAllowed && (pressed & KEY_Y)) {
 			dsModeForced = true;
 			proceedToLaunch = true;
 			pressed = 0;
@@ -2476,11 +2480,20 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 							int bstrap_dsiMode = (perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode);
 							CIniFile bootstrapini(bootstrapinipath);
-							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-							if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
-							&& (requiresDonorRom[CURPOS] == 20 || requiresDonorRom[CURPOS] == 2 || requiresDonorRom[CURPOS] == 3
-							 || requiresDonorRom[CURPOS] == 5 || requiresDonorRom[CURPOS] == 51 || (requiresDonorRom[CURPOS] == 52 && (isDSiWare[CURPOS] || bstrap_dsiMode > 0)))) {
-								proceedToLaunch = donorRomMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+							if (requiresDonorRom[CURPOS] == 53) {
+								std::string donorRomPath2;
+								donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", "DONORTWL_NDS_PATH", "");
+								donorRomPath2 = bootstrapini.GetString("NDS-BOOTSTRAP", "DONORTWLONLY_NDS_PATH", "");
+								if (((donorRomPath == "" && donorRomPath2 == "") || (access(donorRomPath.c_str(), F_OK) != 0 && access(donorRomPath2.c_str(), F_OK) != 0)) && bstrap_dsiMode > 0) {
+									proceedToLaunch = donorRomMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+								}
+							} else {
+								donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
+								if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
+								&& (requiresDonorRom[CURPOS] == 20 || requiresDonorRom[CURPOS] == 2 || requiresDonorRom[CURPOS] == 3
+								 || requiresDonorRom[CURPOS] == 5 || requiresDonorRom[CURPOS] == 51 || (requiresDonorRom[CURPOS] == 52 && (isDSiWare[CURPOS] || bstrap_dsiMode > 0)))) {
+									proceedToLaunch = donorRomMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+								}
 							}
 						}
 						if (proceedToLaunch && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {

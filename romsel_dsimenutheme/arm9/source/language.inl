@@ -71,6 +71,7 @@ STRING(DONOR_ROM_MSG_SDK5, "This game requires a donor ROM\nto run. Please set a
 STRING(DONOR_ROM_MSG_SDK5TWL, "This game requires a donor ROM\nto run. Please set an existing\nDSi-Enhanced game as a donor ROM.")
 STRING(DONOR_ROM_MSG_SDK5TWLONLY, "This game requires a donor ROM\nto run. Please set an existing\nDSi(Ware) title as a donor ROM.")
 STRING(DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE, "DSi mode requires a donor ROM\nto run. Please set an existing\nDSi(Ware) title as a donor ROM.")
+STRING(DONOR_ROM_MSG_SDK5TWLANY_DSI_MODE, "DSi mode requires a donor ROM\nto run. Please set an existing\nTWL-type title as a donor ROM.")
 
 // Hiding
 STRING(ARE_YOU_SURE_UNHIDE, "Are you sure you want to\nunhide this folder?")

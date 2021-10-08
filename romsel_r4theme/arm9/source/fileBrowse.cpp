@@ -479,6 +479,7 @@ bool dsiBinariesMissingMsg(void) {
 
 bool donorRomMsg(void) {
 	bool proceedToLaunch = true;
+	bool dsModeAllowed = ((requiresDonorRom == 52 || requiresDonorRom == 53) && !isDSiWare);
 
 	if (macroMode) {
 		lcdMainOnBottom();
@@ -487,7 +488,7 @@ bool donorRomMsg(void) {
 	dialogboxHeight = 2;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error!");
-	printSmallCentered(false, 98, (requiresDonorRom == 52 && !isDSiWare) ? "DSi mode requires a donor ROM" : "This game requires a donor ROM");
+	printSmallCentered(false, 98, dsModeAllowed ? "DSi mode requires a donor ROM" : "This game requires a donor ROM");
 	printSmallCentered(false, 110, "to run. Please set an existing");
 	switch (requiresDonorRom) {
 		case 20:
@@ -509,8 +510,11 @@ bool donorRomMsg(void) {
 		case 52:
 			printSmallCentered(false, 122, "DSi(Ware) game as a donor ROM.");
 			break;
+		case 53:
+			printSmallCentered(false, 122, "TWL-type game as a donor ROM.");
+			break;
 	}
-	printSmallCentered(false, 140, (requiresDonorRom == 52 && !isDSiWare) ? "\u2430 Launch in DS mode  \u2428 Back" : "\u2428 Back");
+	printSmallCentered(false, 140, dsModeAllowed ? "\u2430 Launch in DS mode  \u2428 Back" : "\u2428 Back");
 	int pressed = 0;
 	while (1) {
 		scanKeys();
@@ -518,7 +522,7 @@ bool donorRomMsg(void) {
 		checkSdEject();
 		snd().updateStream();
 		swiWaitForVBlank();
-		if (requiresDonorRom == 52 && !isDSiWare && (pressed & KEY_Y)) {
+		if (dsModeAllowed && (pressed & KEY_Y)) {
 			dsModeForced = true;
 			proceedToLaunch = true;
 			pressed = 0;
@@ -886,11 +890,20 @@ string browseForFile(const vector<string_view> extensionList) {
 						loadPerGameSettings(dirContents.at(fileOffset).name);
 						int dsiModeSetting = (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
 						CIniFile bootstrapini(bootstrapinipath);
-						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-						if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
-						&& (requiresDonorRom == 20 || requiresDonorRom == 2 || requiresDonorRom == 3
-						 || requiresDonorRom == 5 || requiresDonorRom == 51 || (requiresDonorRom == 52 && (isDSiWare || dsiModeSetting > 0)))) {
-							proceedToLaunch = donorRomMsg();
+						if (requiresDonorRom == 53) {
+							std::string donorRomPath2;
+							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", "DONORTWL_NDS_PATH", "");
+							donorRomPath2 = bootstrapini.GetString("NDS-BOOTSTRAP", "DONORTWLONLY_NDS_PATH", "");
+							if (((donorRomPath == "" && donorRomPath2 == "") || (access(donorRomPath.c_str(), F_OK) != 0 && access(donorRomPath2.c_str(), F_OK) != 0)) && dsiModeSetting > 0) {
+								proceedToLaunch = donorRomMsg();
+							}
+						} else {
+							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
+							if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
+							&& (requiresDonorRom == 20 || requiresDonorRom == 2 || requiresDonorRom == 3
+							 || requiresDonorRom == 5 || requiresDonorRom == 51 || (requiresDonorRom == 52 && (isDSiWare || dsiModeSetting > 0)))) {
+								proceedToLaunch = donorRomMsg();
+							}
 						}
 					}
 					if (proceedToLaunch && checkIfShowAPMsg(dirContents.at(fileOffset).name))

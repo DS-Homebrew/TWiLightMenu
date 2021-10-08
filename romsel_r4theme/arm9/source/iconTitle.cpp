@@ -700,7 +700,11 @@ void getGameInfo(bool isDir, const char* name)
 		switch (ndsHeader.arm7binarySize) {
 			case 0x22B40:
 			case 0x22BCC:
-				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 51; // DSi-Enhanced ROM required
+				if (usingB4DS || dsiEnhancedMbk) {
+					requiresDonorRom = 51; // DSi-Enhanced ROM required
+				} else {
+					requiresDonorRom = 53; // TWL-type ROM required
+				}
 				break;
 			case 0x23708:
 			case 0x2378C:
