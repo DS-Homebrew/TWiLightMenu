@@ -82,6 +82,7 @@ TWLSettings::TWLSettings()
     slot1AccessSD = false;
     slot1SCFGUnlock = false;
     slot1TouchMode = false;
+    limitedMode = 0;
     dsiWareBooter = true;
     dsiWareToSD = true;
 
@@ -217,6 +218,7 @@ void TWLSettings::loadSettings()
     slot1AccessSD = settingsini.GetInt("SRLOADER", "SLOT1_ENABLESD", slot1AccessSD);
     slot1SCFGUnlock = settingsini.GetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
     slot1TouchMode = settingsini.GetInt("SRLOADER", "SLOT1_TOUCH_MODE", slot1TouchMode);
+    limitedMode = settingsini.GetInt("SRLOADER", "LIMITED_MODE", limitedMode);
     dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 
@@ -338,6 +340,7 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SLOT1_ENABLESD", slot1AccessSD);
     settingsini.SetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
     settingsini.SetInt("SRLOADER", "SLOT1_TOUCH_MODE", slot1TouchMode);
+    settingsini.SetInt("SRLOADER", "LIMITED_MODE", limitedMode);
     settingsini.SetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 	settingsini.SetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 

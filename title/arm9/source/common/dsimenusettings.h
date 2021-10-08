@@ -208,6 +208,7 @@ class TWLSettings
 
 	bool forceSleepPatch;
     bool slot1SCFGUnlock;
+    int limitedMode;
 	bool dsiWareBooter;
 	bool dsiWareToSD;
     bool autorun;

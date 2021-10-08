@@ -63,6 +63,7 @@ TWLSettings::TWLSettings()
 
 	forceSleepPatch = false;
     slot1SCFGUnlock = false;
+    limitedMode = 0;
 	dsiWareBooter = true;
 	dsiWareToSD = true;
 
@@ -164,6 +165,7 @@ void TWLSettings::loadSettings()
 	extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
+    limitedMode = settingsini.GetInt("SRLOADER", "LIMITED_MODE", limitedMode);
 	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 

@@ -2131,6 +2131,30 @@ int main(int argc, char **argv)
 			}
 			runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true, -1);
 		} else {
+			if (isDSiMode() && sdFound() && !flashcardFound() && !sys().arm7SCFGLocked() && ms().limitedMode > 0) {
+				if (ms().limitedMode == 2) {
+					// arm7 is master of WRAM A-C
+					REG_MBK9=0x00FFFF0F;
+
+					// WRAM-A fully mapped to arm7
+					*((vu32*)REG_MBK1)=0x8D85898D;
+
+					// WRAM-B fully mapped to arm7
+					*((vu32*)REG_MBK2)=0x8D85898D;
+					*((vu32*)REG_MBK3)=0x9195999D;
+
+					// WRAM-C fully mapped to arm7
+					*((vu32*)REG_MBK4)=0x8D85898D;
+					*((vu32*)REG_MBK5)=0x9195999D;
+
+					// WRAM not mapped
+					REG_MBK6=0; // WRAM-A
+					REG_MBK7=0; // WRAM-B
+					REG_MBK8=0; // WRAM-C
+				}
+				fifoSendValue32(FIFO_USER_08, ms().limitedMode);
+				*(u32*)0x020007F0 = 0x4D44544C;
+			}
 			if (ms().showMainMenu) {
 				loadMainMenu();
 			}

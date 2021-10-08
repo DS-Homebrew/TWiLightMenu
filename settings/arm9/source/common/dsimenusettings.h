@@ -219,6 +219,7 @@ class TWLSettings
     bool slot1AccessSD;
     bool slot1SCFGUnlock;
     bool slot1TouchMode;
+    int limitedMode;
     bool dsiWareBooter;
     bool dsiWareToSD;
     bool autorun;

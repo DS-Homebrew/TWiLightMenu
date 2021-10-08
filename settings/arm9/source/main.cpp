@@ -163,7 +163,7 @@ void rebootTWLMenuPP()
 	memcpy((u32 *)0x02000300, autoboot_bin, 0x020);
 	for (int i = 0; i < 10; i++)
 		swiWaitForVBlank();
-	fifoSendValue32(FIFO_USER_08, 1); // Reboot TWiLight Menu++ for TWL_FIRM changes to take effect
+	fifoSendValue32(FIFO_USER_02, 1); // Reboot TWiLight Menu++ for TWL_FIRM changes to take effect
 	for (int i = 0; i < 15; i++)
 		swiWaitForVBlank();
 }*/
@@ -612,6 +612,31 @@ void defaultExitHandler()
 		applyTwlFirmSettings();
 		rebootTWLMenuPP();
 	}*/
+
+	if (isDSiMode() && sdFound() && !flashcardFound() && !sys().arm7SCFGLocked() && ms().limitedMode > 0) {
+		if (ms().limitedMode == 2) {
+			// arm7 is master of WRAM A-C
+			REG_MBK9=0x00FFFF0F;
+
+			// WRAM-A fully mapped to arm7
+			*((vu32*)REG_MBK1)=0x8D85898D;
+
+			// WRAM-B fully mapped to arm7
+			*((vu32*)REG_MBK2)=0x8D85898D;
+			*((vu32*)REG_MBK3)=0x9195999D;
+
+			// WRAM-C fully mapped to arm7
+			*((vu32*)REG_MBK4)=0x8D85898D;
+			*((vu32*)REG_MBK5)=0x9195999D;
+
+			// WRAM not mapped
+			REG_MBK6=0; // WRAM-A
+			REG_MBK7=0; // WRAM-B
+			REG_MBK8=0; // WRAM-C
+		}
+		fifoSendValue32(FIFO_USER_08, ms().limitedMode);
+		*(u32*)0x020007F0 = 0x4D44544C;
+	}
 
 	if (previousDSiWareExploit != ms().dsiWareExploit
 	 || previousSysRegion != ms().sysRegion)
@@ -1264,6 +1289,14 @@ int main(int argc, char **argv)
 				 3,
 				 4,
 				 5,});*/
+
+	if (isDSiMode() && sdFound() && !flashcardFound() && (!sys().arm7SCFGLocked() || *(u32*)0x020007F0 == 0x4D44544C)) {
+		miscPage.option(STR_LIMITEDMODE,
+				STR_DESCRIPTION_LIMITEDMODE,
+				Option::Int(&ms().limitedMode),
+				{STR_OFF, STR_GENERAL, "Memory Pit"},
+				{0, 1, 2});
+	}
 
 	if (isDSiMode() && ms().consoleModel == 0 && sdFound()) {
 		miscPage
