@@ -219,7 +219,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	  || arm7size==0x289C0
 	  || arm7size==0x289F8
 	  || arm7size==0x28FFC))
-	 || (SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))		// SDK5 (NTR)
+	 || ((usingB4DS || dsiEnhancedMbk) && SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))		// SDK5 (NTR)
 	 || ((usingB4DS || dsiEnhancedMbk || !arm7SCFGLocked) && SDKVersion > 0x5000000	// SDK5 (TWL)
 	 && (arm7size==0x28F84
 	  || arm7size==0x2909C
