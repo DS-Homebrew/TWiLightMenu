@@ -232,6 +232,7 @@ TWL_CODE void wideCheck(bool useWidescreen) {
 			}
 		} else if (twlBgCxiFound) {
 			// Revert back to 4:3 for when returning to TWLMenu++
+			mkdir("sd:/_nds/TWiLightMenu/TwlBg", 0777);
 			if (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi") != 0) {
 				consoleDemoInit();
 				iprintf("Failed to rename TwlBg.cxi\n");
