@@ -203,7 +203,7 @@ bool checkIfDSiMode (std::string filename) {
 	}
 }
 
-bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
+bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	if (requiresDonorRom[CURPOS]) return false;
 
 	bool usingB4DS = (!dsiFeatures() && ms().secondaryDevice);
@@ -227,7 +227,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	  || arm7size==0x289F8
 	  || arm7size==0x28FFC))
 	 || ((usingB4DS || dsiEnhancedMbk) && SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))		// SDK5 (NTR)
-	 || ((usingB4DS || dsiEnhancedMbk || !sys().arm7SCFGLocked()) && SDKVersion > 0x5000000	// SDK5 (TWL)
+	 || ((usingB4DS || ((dsiEnhancedMbk || !sys().arm7SCFGLocked()) && dsiBinariesFound)) && SDKVersion > 0x5000000	// SDK5 (TWL)
 	 && (arm7size==0x28F84
 	  || arm7size==0x2909C
 	  || arm7size==0x2914C
@@ -398,6 +398,7 @@ void perGameSettings (std::string filename) {
 	fseek(f_nds_file, 0x238, SEEK_SET);
 	fread(&pubSize, sizeof(u32), 1, f_nds_file);
 	fread(&prvSize, sizeof(u32), 1, f_nds_file);
+	bool dsiBinariesFound = checkDsiBinaries(f_nds_file);
 	fclose(f_nds_file);
 
 	if (romSize > 0) {
@@ -494,7 +495,7 @@ void perGameSettings (std::string filename) {
 			}
 			showCheats = true;
 		}
-		if (a7mbk6[CURPOS] == 0x080037C0 ? showSetDonorRomDSiWare(arm7size) : showSetDonorRom(arm7size, SDKVersion)) {
+		if (a7mbk6[CURPOS] == 0x080037C0 ? showSetDonorRomDSiWare(arm7size) : showSetDonorRom(arm7size, SDKVersion, dsiBinariesFound)) {
 			perGameOps++;
 			perGameOp[perGameOps] = 9;	// Set as Donor ROM
 			donorRomTextShown = true;
@@ -545,7 +546,7 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
-			if (a7mbk6[CURPOS] == 0x080037C0 ? showSetDonorRomDSiWare(arm7size) : showSetDonorRom(arm7size, SDKVersion)) {
+			if (a7mbk6[CURPOS] == 0x080037C0 ? showSetDonorRomDSiWare(arm7size) : showSetDonorRom(arm7size, SDKVersion, dsiBinariesFound)) {
 				perGameOps++;
 				perGameOp[perGameOps] = 9;	// Set as Donor ROM
 				donorRomTextShown = true;
