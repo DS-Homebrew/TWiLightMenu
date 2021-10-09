@@ -249,8 +249,10 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 bool showSetDonorRomDSiWare(u32 arm7size) {
 	if (requiresDonorRom[CURPOS] || !isDSiMode() || (*(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked())) return false;
 
-	if (arm7size==0x257DC
+	if (arm7size==0x25664
+	 || arm7size==0x257DC
 	 || arm7size==0x25860
+	 || arm7size==0x26CC8
 	 || arm7size==0x26D10
 	 || arm7size==0x26D50
 	 || arm7size==0x26DF4)
