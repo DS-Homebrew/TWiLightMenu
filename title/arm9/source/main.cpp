@@ -2064,6 +2064,10 @@ int main(int argc, char **argv)
 	|| (ms().autorun ? !(keysHeld() & KEY_B) : (keysHeld() & KEY_B))))
 	{
 		//unloadNds9iAsynch();
+		if (isDSiMode() && sdFound() && !fcFound && !sys().arm7SCFGLocked() && ms().limitedMode > 0) {
+			*(u32*)0x02FFFD0C = ms().limitedMode == 2 ? 0x4E44544C : 0x4D44544C;
+			*(u32*)0x020007F0 = 0x4D44544C;
+		}
 		lastRunROM();
 	}
 
