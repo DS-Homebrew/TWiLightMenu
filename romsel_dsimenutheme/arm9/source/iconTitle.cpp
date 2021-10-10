@@ -300,13 +300,15 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				case 0x237F0:
 					if (usingB4DS || dsiEnhancedMbk) requiresDonorRom[num] = 5; // SDK5 ROM required
 					break;
+				case 0x2352C:
 				case 0x235DC:
 				case 0x23CAC:
 					if (usingB4DS || dsiEnhancedMbk) requiresDonorRom[num] = 20; // Early SDK2 ROM required
 					break;
+				case 0x245C4:
 				case 0x24DA8:
 				case 0x24F50:
-					requiresDonorRom[num] = 2; // Late SDK2 ROM required
+					if (usingB4DS || dsiEnhancedMbk) requiresDonorRom[num] = 2; // Late SDK2 ROM required
 					break;
 				case 0x2434C:
 				case 0x2484C:
