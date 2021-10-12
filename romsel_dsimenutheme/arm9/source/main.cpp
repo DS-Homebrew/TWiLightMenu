@@ -2101,32 +2101,12 @@ int main(int argc, char **argv) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
-					if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().smsGgInRam) {
-						ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
+					ms().launchType[ms().secondaryDevice] = Launch::ES8DSLaunch;
 
-						useNDSB = true;
-
-						ndsToBoot = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
-						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
-					} else {
-						ms().launchType[ms().secondaryDevice] = Launch::ES8DSLaunch;
-
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
-						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
-							boostVram = true;
-						}
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
+						boostVram = true;
 					}
 				} else if (extension(filename, {".gen"})) {
 					bool usePicoDrive = ((isDSiMode() && sdFound() && sys().arm7SCFGLocked())

@@ -346,32 +346,6 @@ void showDirectoryContents (const vector<DirEntry>& dirContents, int startRow) {
 	}
 }
 
-void smsWarning(void) {
-	if (macroMode) {
-		lcdMainOnBottom();
-		lcdSwapped = true;
-	}
-	dialogboxHeight = 3;
-	showdialogbox = true;
-	printLargeCentered(false, 74, "Warning");
-	printSmallCentered(false, 90, "When the game starts, please");
-	printSmallCentered(false, 102, "touch the screen to go into");
-	printSmallCentered(false, 114, "the menu, and exit out of it");
-	printSmallCentered(false, 126, "for the sound to work.");
-	printSmallCentered(false, 144, "\u2427 OK");
-	int pressed = 0;
-	do {
-		scanKeys();
-		pressed = keysDown();
-		checkSdEject();
-		snd().updateStream();
-		swiWaitForVBlank();
-	} while (!(pressed & KEY_A));
-	clearText();
-	showdialogbox = false;
-	dialogboxHeight = 0;
-}
-
 void mdRomTooBig(void) {
 	if (macroMode) {
 		lcdMainOnBottom();
@@ -919,14 +893,6 @@ string browseForFile(const vector<string_view> extensionList) {
 					if (requiresRamDisk && perGameSettings_ramDiskNo == -1) {
 						proceedToLaunch = false;
 						ramDiskMsg();
-					}
-				}
-				else if (bnrRomType == 5 || bnrRomType == 6)
-				{
-					if (!smsGgInRam) {
-						smsWarning();
-						titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
-						showLocation();
 					}
 				}
 				else if (bnrRomType == 7)

@@ -865,60 +865,6 @@ void launchGba(void) {
 	//}
 }
 
-void smsWarning(void) {
-	if (ms().theme == 4) {
-		snd().playStartup();
-		fadeType = false;	   // Fade to black
-		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
-		}
-		currentBg = 1;
-		displayGameIcons = false;
-		fadeType = true;
-	} else {
-		showdialogbox = true;
-	}
-	clearText();
-	if (ms().theme == 4) {
-		while (!screenFadedIn()) { swiWaitForVBlank(); }
-	} else {
-		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
-	}
-	printSmall(false, 0, 64, STR_SMS_WARNING, Alignment::center);
-	printSmall(false, 0, 160, STR_A_OK, Alignment::center);
-	updateText(false);
-	int pressed = 0;
-	do {
-		scanKeys();
-		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-		drawCurrentTime();
-		drawCurrentDate();
-		snd().updateStream();
-		swiWaitForVBlank();
-	} while (!(pressed & KEY_A));
-	showdialogbox = false;
-	if (ms().theme == 4) {
-		fadeType = false;	   // Fade to black
-		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
-		}
-		clearText();
-		updateText(false);
-		currentBg = 0;
-		displayGameIcons = true;
-		fadeType = true;
-		snd().playStartup();
-		while (!screenFadedIn()) { swiWaitForVBlank(); }
-	} else {
-		clearText();
-		updateText(false);
-		for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
-	}
-}
-
 void mdRomTooBig(void) {
 	// int bottomBright = 0;
 
@@ -2508,9 +2454,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							proceedToLaunch = false;
 							ramDiskMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						}
-					} else if (bnrRomType[CURPOS] == 5 || bnrRomType[CURPOS] == 6) {
-						if (!ms().smsGgInRam)
-							smsWarning();
 					} else if (bnrRomType[CURPOS] == 7) {
 						if (ms().showMd==1 && getFileSize(
 							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str()) >
