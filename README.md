@@ -62,7 +62,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - Ryan FB & [xonn83](https://github.com/xonn83): [PicoDriveDS](https://github.com/xonn83/PicodriveDS_GBMacro) (used to launch large Sega Mega Drive/Genesis ROMs)
 - [Gericom](https://github.com/Gericom): [GBARunner2](https://github.com/Gericom/GBARunner2) (used to launch GameBoy Advance ROMs outside of the DS Phat/lite's GBA mode)
      - [therealteamplayer](https://github.com/therealteamplayer): Hicode+DSP merged builds included.
-- [FluBBa](https://gbatemp.net/members/flubba.19963/): [S8DS](https://gbatemp.net/threads/s8ds.392855/) (used to launch Sega Master System/Game Gear ROMs)
+- [FluBBaOfWard](https://github.com/FluBBaOfWard): [S8DS](https://github.com/FluBBaOfWard/S8DS) (used to launch Sega Master System/Game Gear ROMs)
 - Alekmaul & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5200DS](https://github.com/wavemotion-dave/A5200DS), [A7800DS](https://github.com/wavemotion-dave/A7800DS), and [XEGS-DS](https://github.com/wavemotion-dave/XEGS-DS) (used to launch Atari 2600/5200/7800/XEGS ROMs)
 - [wavemotion](https://github.com/wavemotion-dave): [Nintellivision/NINTV-DS](https://github.com/wavemotion-dave/NINTV-DS) (used to launch Intellivision ROMs)
 ## Graphics & Themes
