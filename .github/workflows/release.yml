@@ -97,10 +97,8 @@ jobs:
           curl -LO https://github.com/wavemotion-dave/A7800DS/releases/latest/download/A7800DS-LITE.nds
           curl -LO https://github.com/wavemotion-dave/NINTV-DS/releases/latest/download/NINTV-DS.nds
           curl -LO https://github.com/FluBBaOfWard/S8DS/releases/latest/download/S8DS.zip
-          7z x S8DS.zip
-          rm -rf __MACOSX
-          rm History.txt
-          rm README.md
+          7z x S8DS.zip S8DS.nds
+          rm S8DS.zip
           # PicoDriveTWL is a prerelease, so get the latest URL from the GH api
           curl -LO $(curl https://api.github.com/repos/DS-Homebrew/PicoDriveTWL/releases | jq --raw-output '.[0].assets[0].browser_download_url' -)
           cd ../../../..
