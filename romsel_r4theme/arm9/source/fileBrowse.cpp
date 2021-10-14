@@ -472,7 +472,10 @@ bool donorRomMsg(void) {
 			printSmallCentered(false, 122, "late SDK2 game as a donor ROM.");
 			break;
 		case 3:
-			printSmallCentered(false, 122, "early SDK3 game as a donor ROM.");
+			printSmallCentered(false, 122, "SDK3 game as a donor ROM.");
+			break;
+		case 4:
+			printSmallCentered(false, 122, "SDK4 game as a donor ROM.");
 			break;
 		case 5:
 		default:
@@ -854,6 +857,8 @@ string browseForFile(const vector<string_view> extensionList) {
 							pathDefine = "DONOR2_NDS_PATH";
 						} else if (requiresDonorRom == 3) {
 							pathDefine = "DONOR3_NDS_PATH";
+						} else if (requiresDonorRom == 4) {
+							pathDefine = "DONOR4_NDS_PATH";
 						} else if (requiresDonorRom == 51) {
 							pathDefine = "DONORTWL_NDS_PATH";
 						} else if (requiresDonorRom == 52) {

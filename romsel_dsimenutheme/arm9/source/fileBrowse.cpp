@@ -1141,7 +1141,10 @@ bool donorRomMsg(const char *filename) {
 			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK2, Alignment::center);
 			break;
 		case 3:
-			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_ESDK3, Alignment::center);
+			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK3, Alignment::center);
+			break;
+		case 4:
+			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK4, Alignment::center);
 			break;
 		case 5:
 		default:
@@ -2416,6 +2419,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								pathDefine = "DONOR2_NDS_PATH";
 							} else if (requiresDonorRom[CURPOS] == 3) {
 								pathDefine = "DONOR3_NDS_PATH";
+							} else if (requiresDonorRom[CURPOS] == 4) {
+								pathDefine = "DONOR4_NDS_PATH";
 							} else if (requiresDonorRom[CURPOS] == 51) {
 								pathDefine = "DONORTWL_NDS_PATH";
 							} else if (requiresDonorRom[CURPOS] == 52) {

@@ -219,6 +219,16 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	  || arm7size==0x289C0
 	  || arm7size==0x289F8
 	  || arm7size==0x28FFC))
+	 || ((usingB4DS || dsiEnhancedMbk) && SDKVersion > 0x4000000 && SDKVersion < 0x5000000	// SDK4
+	 && (arm7size==0x26DD8
+	  || arm7size==0x26F28
+	  || arm7size==0x27080
+	  || arm7size==0x270F0
+	  || arm7size==0x27124
+	  || arm7size==0x27130
+	  || arm7size==0x276D8
+	  || arm7size==0x277FC
+	  || arm7size==0x27A04))
 	 || ((usingB4DS || dsiEnhancedMbk) && SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))		// SDK5 (NTR)
 	 || ((usingB4DS || ((dsiEnhancedMbk || !arm7SCFGLocked) && dsiBinariesFound)) && SDKVersion > 0x5000000	// SDK5 (TWL)
 	 && (arm7size==0x28F84
@@ -956,8 +966,10 @@ void perGameSettings (std::string filename) {
 							pathDefine = "DONORE2_NDS_PATH";
 						} else if (SDKVersion > 0x2008000 && SDKVersion < 0x3000000) {
 							pathDefine = "DONOR2_NDS_PATH";
-						} else if (SDKVersion > 0x3000000 && SDKVersion < 0x5000000) {
+						} else if (SDKVersion > 0x3000000 && SDKVersion < 0x4000000) {
 							pathDefine = "DONOR3_NDS_PATH";
+						} else if (SDKVersion > 0x4000000 && SDKVersion < 0x5000000) {
+							pathDefine = "DONOR4_NDS_PATH";
 						} else if (unitCode > 0 && SDKVersion > 0x5000000) {
 							pathDefine = a7mbk6 == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH";
 						}
