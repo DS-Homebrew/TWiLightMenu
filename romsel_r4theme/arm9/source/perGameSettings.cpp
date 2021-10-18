@@ -218,7 +218,11 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	  || arm7size==0x289A4
 	  || arm7size==0x289C0
 	  || arm7size==0x289F8
-	  || arm7size==0x28FFC))
+	  || arm7size==0x28FFC
+	  || arm7size==0x2900C
+	  || arm7size==0x2931C
+	  || arm7size==0x2A140
+	  || arm7size==0x2A6C0))
 	 || ((usingB4DS || dsiEnhancedMbk) && SDKVersion > 0x4000000 && SDKVersion < 0x5000000	// SDK4
 	 && (arm7size==0x26DD8
 	  || arm7size==0x26F28
