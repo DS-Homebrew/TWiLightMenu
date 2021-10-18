@@ -1133,21 +1133,31 @@ bool donorRomMsg(const char *filename) {
 	}
 	bool dsModeAllowed = ((requiresDonorRom[CURPOS] == 52 || requiresDonorRom[CURPOS] == 53) && !isDSiWare[CURPOS]);
 	int yPos = (ms().theme == 4 ? 8 : 96);
+	extern std::string SDKnumbertext;
+	extern std::string replaceAll(std::string str, const std::string &from, const std::string &to);
+	SDKnumbertext = STR_DONOR_ROM_MSG_SDK;
 	switch (requiresDonorRom[CURPOS]) {
 		case 20:
-			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_ESDK2, Alignment::center);
+			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "2.0");
 			break;
 		case 2:
-			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK2, Alignment::center);
+			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "2.x");
 			break;
 		case 3:
-			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK3, Alignment::center);
+			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "3.?");
+			break;
+		case 40:
+			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "4.0");
 			break;
 		case 4:
-			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK4, Alignment::center);
+			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "4.x");
+			break;
+	}
+	switch (requiresDonorRom[CURPOS]) {
+		default:
+			printSmall(false, 0, yPos, SDKnumbertext, Alignment::center);
 			break;
 		case 5:
-		default:
 			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5, Alignment::center);
 			break;
 		case 51:
@@ -2419,6 +2429,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								pathDefine = "DONOR2_NDS_PATH";
 							} else if (requiresDonorRom[CURPOS] == 3) {
 								pathDefine = "DONOR3_NDS_PATH";
+							} else if (requiresDonorRom[CURPOS] == 40) {
+								pathDefine = "DONORE4_NDS_PATH";
 							} else if (requiresDonorRom[CURPOS] == 4) {
 								pathDefine = "DONOR4_NDS_PATH";
 							} else if (requiresDonorRom[CURPOS] == 51) {
@@ -2441,7 +2453,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							} else {
 								donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 								if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
-								&& (requiresDonorRom[CURPOS] == 20 || requiresDonorRom[CURPOS] == 2 || requiresDonorRom[CURPOS] == 3
+								&& (requiresDonorRom[CURPOS] == 20 || requiresDonorRom[CURPOS] == 2 || requiresDonorRom[CURPOS] == 3 || requiresDonorRom[CURPOS] == 40 || requiresDonorRom[CURPOS] == 4
 								 || requiresDonorRom[CURPOS] == 5 || requiresDonorRom[CURPOS] == 51 || (requiresDonorRom[CURPOS] == 52 && (isDSiWare[CURPOS] || bstrap_dsiMode > 0)))) {
 									proceedToLaunch = donorRomMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 								}

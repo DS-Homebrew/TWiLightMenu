@@ -714,27 +714,28 @@ void getGameInfo(bool isDir, const char* name)
 			case 0x2352C:
 			case 0x235DC:
 			case 0x23CAC:
-				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 20; // Early SDK2 ROM required
+				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 20; // SDK2.0 ROM required
 				break;
 			case 0x245C4:
 			case 0x24DA8:
 			case 0x24F50:
-				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 2; // Late SDK2 ROM required
+				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 2; // SDK2.x ROM required
 				break;
-			case 0x2434C:
 			case 0x25D00:
 			case 0x25D04:
 			case 0x25D94:
 			case 0x25FFC:
 				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 3; // SDK3 ROM required
 				break;
+			case 0x2434C:
+				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 40; // SDK4.0 ROM required
 			case 0x2484C:
 			case 0x249DC:
 			case 0x249E8:
 				if ((usingB4DS || dsiEnhancedMbk)
 				&& memcmp(ndsHeader.gameCode, "B7N", 3) != 0 // Ben 10: Triple Pack
 				) {
-					requiresDonorRom = 4; // SDK4 ROM required
+					requiresDonorRom = 4; // SDK4.x ROM required
 				}
 				break;
 			default:

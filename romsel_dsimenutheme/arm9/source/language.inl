@@ -62,16 +62,13 @@ STRING(CANNOT_LAUNCH_HB_ON_3DS, "This homebrew cannot be\nlaunched on 3DS consol
 STRING(PRESS_B_RETURN, "Press \\B to return.")
 STRING(BAD_CLUSTER_SIZE, "Your SD card is not formatted\nusing 32KB clusters, this causes\nsome games to load very slowly.\nIt's recommended to reformat your\nSD card using 32KB clusters.")
 
-// Donor rom
-STRING(DONOR_ROM_MSG_ESDK2, "This game requires a donor ROM\nto run. Please set an existing\nearly SDK2 game as a donor ROM.")
-STRING(DONOR_ROM_MSG_SDK2, "This game requires a donor ROM\nto run. Please set an existing\nlate SDK2 game as a donor ROM.")
-STRING(DONOR_ROM_MSG_SDK3, "This game requires a donor ROM\nto run. Please set an existing\nSDK3 game as a donor ROM.")
-STRING(DONOR_ROM_MSG_SDK4, "This game requires a donor ROM\nto run. Please set an existing\nSDK4 game as a donor ROM.")
-STRING(DONOR_ROM_MSG_SDK5, "This game requires a donor ROM\nto run. Please set an existing\nDS SDK5 game as a donor ROM.")
-STRING(DONOR_ROM_MSG_SDK5TWL, "This game requires a donor ROM\nto run. Please set an existing\nDSi-Enhanced game as a donor ROM.")
-STRING(DONOR_ROM_MSG_SDK5TWLONLY, "This game requires a donor ROM\nto run. Please set an existing\nDSi(Ware) title as a donor ROM.")
-STRING(DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE, "DSi mode requires a donor ROM\nto run. Please set an existing\nDSi(Ware) title as a donor ROM.")
-STRING(DONOR_ROM_MSG_SDK5TWLANY_DSI_MODE, "DSi mode requires a donor ROM\nto run. Please set an existing\nTWL-type title as a donor ROM.")
+// Donor ROM
+STRING(DONOR_ROM_MSG_SDK, "This game requires a donor ROM\nto run. Please set another SDK%s\ngame as a donor ROM.")
+STRING(DONOR_ROM_MSG_SDK5, "This game requires a donor ROM\nto run. Please set another DS\nSDK5 game as a donor ROM.")
+STRING(DONOR_ROM_MSG_SDK5TWL, "This game requires a donor ROM\nto run. Please set another\nDSi-Enhanced game as a donor ROM.")
+STRING(DONOR_ROM_MSG_SDK5TWLONLY, "This game requires a donor ROM\nto run. Please set another\nDSi(Ware) title as a donor ROM.")
+STRING(DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE, "DSi mode requires a donor ROM\nto run. Please set another\nDSi(Ware) title as a donor ROM.")
+STRING(DONOR_ROM_MSG_SDK5TWLANY_DSI_MODE, "DSi mode requires a donor ROM\nto run. Please set another\nTWL-type title as a donor ROM.")
 
 // Hiding
 STRING(ARE_YOU_SURE_UNHIDE, "Are you sure you want to\nunhide this folder?")
@@ -111,12 +108,7 @@ STRING(R, "\\R")
 STRING(NEXT_R, "Next Page \\R")
 
 // Per-game settings
-STRING(SDK_VER_1, "SDK ver: 1")
-STRING(SDK_VER_2, "SDK ver: 2")
-STRING(SDK_VER_3, "SDK ver: 3")
-STRING(SDK_VER_4, "SDK ver: 4")
-STRING(SDK_VER_5, "SDK ver: 5")
-STRING(SDK_VER_Q, "SDK ver: ?")
+STRING(SDK_VER, "SDK ver: %s")
 STRING(LANGUAGE, "Language")
 STRING(REGION, "Region")
 STRING(RAM_DISK, "RAM disk")

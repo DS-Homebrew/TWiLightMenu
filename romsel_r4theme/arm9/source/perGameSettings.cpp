@@ -202,7 +202,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	bool usingB4DS = (!dsiFeatures() && secondaryDevice);
 	bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && arm7SCFGLocked);
 
-	if (((usingB4DS || dsiEnhancedMbk) && SDKVersion > 0x2000000 && SDKVersion < 0x2008000	// Early SDK2
+	if (((usingB4DS || dsiEnhancedMbk) && SDKVersion > 0x2000000 && SDKVersion < 0x2008000	// SDK2.0
 	 && (arm7size==0x25F70
 	  || arm7size==0x25FA4
 	  || arm7size==0x2619C
@@ -210,7 +210,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	  || arm7size==0x27218
 	  || arm7size==0x27224
 	  || arm7size==0x2724C))
-	 || ((usingB4DS || dsiEnhancedMbk) && SDKVersion >= 0x2008000 && SDKVersion < 0x3000000 && (arm7size==0x26F24 || arm7size==0x26F28))	// Late SDK2
+	 || ((usingB4DS || dsiEnhancedMbk) && SDKVersion >= 0x2008000 && SDKVersion < 0x3000000 && (arm7size==0x26F24 || arm7size==0x26F28))	// SDK2.x
 	 || ((usingB4DS || dsiEnhancedMbk) && SDKVersion > 0x3000000 && SDKVersion < 0x4000000	// SDK3
 	 && (arm7size==0x28464
 	  || arm7size==0x28684
@@ -223,7 +223,8 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	  || arm7size==0x2931C
 	  || arm7size==0x2A140
 	  || arm7size==0x2A6C0))
-	 || ((usingB4DS || dsiEnhancedMbk) && SDKVersion > 0x4000000 && SDKVersion < 0x5000000	// SDK4
+	 || ((usingB4DS || dsiEnhancedMbk) && SDKVersion > 0x4000000 && SDKVersion < 0x4008000 && (arm7size==0x26948 || arm7size==0x269A4))	// SDK4.0
+	 || ((usingB4DS || dsiEnhancedMbk) && SDKVersion >= 0x4008000 && SDKVersion < 0x5000000	// SDK4.x
 	 && (arm7size==0x26DD8
 	  || arm7size==0x26F28
 	  || arm7size==0x27080
@@ -565,14 +566,22 @@ void perGameSettings (std::string filename) {
 
 	if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
 		SDKnumbertext = "SDK ver: 1";
-	} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
-		SDKnumbertext = "SDK ver: 2";
-	} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
-		SDKnumbertext = "SDK ver: 3";
-	} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
-		SDKnumbertext = "SDK ver: 4";
-	} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
-		SDKnumbertext = "SDK ver: 5 (TWLSDK)";
+	} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x2008000)) {
+		SDKnumbertext = "SDK ver: 2.0";
+	} else if((SDKVersion > 0x2008000) && (SDKVersion < 0x3000000)) {
+		SDKnumbertext = "SDK ver: 2.x";
+	} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x3008000)) {
+		SDKnumbertext = "SDK ver: 3.0";
+	} else if((SDKVersion > 0x3008000) && (SDKVersion < 0x4000000)) {
+		SDKnumbertext = "SDK ver: 3.x";
+	} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x4008000)) {
+		SDKnumbertext = "SDK ver: 4.0";
+	} else if((SDKVersion > 0x4008000) && (SDKVersion < 0x5000000)) {
+		SDKnumbertext = "SDK ver: 4.x";
+	} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x5008000)) {
+		SDKnumbertext = "SDK ver: 5.0";
+	} else if((SDKVersion > 0x5008000) && (SDKVersion < 0x6000000)) {
+		SDKnumbertext = "SDK ver: 5.x";
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
@@ -971,7 +980,9 @@ void perGameSettings (std::string filename) {
 							pathDefine = "DONOR2_NDS_PATH";
 						} else if (SDKVersion > 0x3000000 && SDKVersion < 0x4000000) {
 							pathDefine = "DONOR3_NDS_PATH";
-						} else if (SDKVersion > 0x4000000 && SDKVersion < 0x5000000) {
+						} else if (SDKVersion > 0x4000000 && SDKVersion < 0x4008000) {
+							pathDefine = "DONORE4_NDS_PATH";
+						} else if (SDKVersion > 0x4008000 && SDKVersion < 0x5000000) {
 							pathDefine = "DONOR4_NDS_PATH";
 						} else if (unitCode > 0 && SDKVersion > 0x5000000) {
 							pathDefine = a7mbk6 == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH";

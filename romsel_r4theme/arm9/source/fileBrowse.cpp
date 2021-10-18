@@ -463,19 +463,22 @@ bool donorRomMsg(void) {
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error!");
 	printSmallCentered(false, 98, dsModeAllowed ? "DSi mode requires a donor ROM" : "This game requires a donor ROM");
-	printSmallCentered(false, 110, "to run. Please set an existing");
+	printSmallCentered(false, 110, "to run. Please set another");
 	switch (requiresDonorRom) {
 		case 20:
-			printSmallCentered(false, 122, "early SDK2 game as a donor ROM.");
+			printSmallCentered(false, 122, "SDK2.0 game as a donor ROM.");
 			break;
 		case 2:
-			printSmallCentered(false, 122, "late SDK2 game as a donor ROM.");
+			printSmallCentered(false, 122, "SDK2.x game as a donor ROM.");
 			break;
 		case 3:
-			printSmallCentered(false, 122, "SDK3 game as a donor ROM.");
+			printSmallCentered(false, 122, "SDK3.? game as a donor ROM.");
+			break;
+		case 40:
+			printSmallCentered(false, 122, "SDK4.0 game as a donor ROM.");
 			break;
 		case 4:
-			printSmallCentered(false, 122, "SDK4 game as a donor ROM.");
+			printSmallCentered(false, 122, "SDK4.x game as a donor ROM.");
 			break;
 		case 5:
 		default:
@@ -857,6 +860,8 @@ string browseForFile(const vector<string_view> extensionList) {
 							pathDefine = "DONOR2_NDS_PATH";
 						} else if (requiresDonorRom == 3) {
 							pathDefine = "DONOR3_NDS_PATH";
+						} else if (requiresDonorRom == 40) {
+							pathDefine = "DONORE4_NDS_PATH";
 						} else if (requiresDonorRom == 4) {
 							pathDefine = "DONOR4_NDS_PATH";
 						} else if (requiresDonorRom == 51) {
@@ -879,7 +884,7 @@ string browseForFile(const vector<string_view> extensionList) {
 						} else {
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 							if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
-							&& (requiresDonorRom == 20 || requiresDonorRom == 2 || requiresDonorRom == 3
+							&& (requiresDonorRom == 20 || requiresDonorRom == 2 || requiresDonorRom == 3 || requiresDonorRom == 40 || requiresDonorRom == 4
 							 || requiresDonorRom == 5 || requiresDonorRom == 51 || (requiresDonorRom == 52 && (isDSiWare || dsiModeSetting > 0)))) {
 								proceedToLaunch = donorRomMsg();
 							}
