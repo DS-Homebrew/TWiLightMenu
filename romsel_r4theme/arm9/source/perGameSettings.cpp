@@ -381,14 +381,11 @@ void perGameSettings (std::string filename) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
-	u8 unitCode = 0;
 	u32 arm9size = 0;
 	u32 arm7size = 0;
 	u32 romSize = 0;
 	u32 pubSize = 0;
 	u32 prvSize = 0;
-	fseek(f_nds_file, 0x12, SEEK_SET);
-	fread(&unitCode, sizeof(u8), 1, f_nds_file);
 	fseek(f_nds_file, 0x2C, SEEK_SET);
 	fread(&arm9size, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x3C, SEEK_SET);
@@ -503,30 +500,30 @@ void perGameSettings (std::string filename) {
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		if (useBootstrap || (dsiFeatures() && unitCode > 0) || !secondaryDevice) {
+		if (useBootstrap || (dsiFeatures() && romUnitCode > 0) || !secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 		}
-		if (((dsiFeatures() && useBootstrap) || !secondaryDevice) && unitCode == 3) {
+		if (((dsiFeatures() && useBootstrap) || !secondaryDevice) && romUnitCode == 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
-		if ((dsiFeatures() && (useBootstrap || unitCode > 0)) || !secondaryDevice) {
+		if ((dsiFeatures() && (useBootstrap || romUnitCode > 0)) || !secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;
 		}
-		if ((dsiFeatures() || !secondaryDevice) && unitCode < 3) {
+		if ((dsiFeatures() || !secondaryDevice) && romUnitCode < 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
-		if (useBootstrap || (dsiFeatures() && unitCode > 0) || !secondaryDevice) {
+		if (useBootstrap || (dsiFeatures() && romUnitCode > 0) || !secondaryDevice) {
 			if (!secondaryDevice) {
-				if (unitCode < 3) {
+				if (romUnitCode < 3) {
 					perGameOps++;
 					perGameOp[perGameOps] = 5;	// Card Read DMA
 				}
@@ -559,7 +556,7 @@ void perGameSettings (std::string filename) {
 	if (isHomebrew) {
 		snprintf (gameTIDText, sizeof(gameTIDText), game_TID[0]==0 ? "" : "TID: %s", game_TID);
 	} else {
-		snprintf (gameTIDText, sizeof(gameTIDText), "%s-%s-%s", unitCode > 0 ? "TWL" : "NTR", game_TID, getRegionString(game_TID[3]));
+		snprintf (gameTIDText, sizeof(gameTIDText), "%s-%s-%s", romUnitCode > 0 ? "TWL" : "NTR", game_TID, getRegionString(game_TID[3]));
 	}
 
 	char saveNoDisplay[16];
@@ -608,7 +605,7 @@ void perGameSettings (std::string filename) {
 		printSmallRightAlign(false, 232, 90, gameTIDText);
 
 		int perGameOpYpos = 102;
-		bool flashcardKernelOnly = (!useBootstrap && secondaryDevice && !isHomebrew && unitCode == 2 && (perGameSettings_dsiMode==-1 ? !bstrap_dsiMode : perGameSettings_dsiMode==0));
+		bool flashcardKernelOnly = (!useBootstrap && secondaryDevice && !isHomebrew && romUnitCode == 2 && (perGameSettings_dsiMode==-1 ? !bstrap_dsiMode : perGameSettings_dsiMode==0));
 
 		if (showPerGameSettings) {
 			printSmall(false, 24, 102+(perGameSettings_cursorPosition*12)-(firstPerGameOpShown*12), ">");
@@ -669,7 +666,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 3:
 				printSmall(false, 32, perGameOpYpos, "ARM9 CPU Speed:");
-				if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode && unitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode && romUnitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "133mhz (TWL)");
 				} else {
 					if (perGameSettings_boostCpu == -1) {
@@ -683,7 +680,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 4:
 				printSmall(false, 32, perGameOpYpos, "VRAM Mode:");
-				if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode && unitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode && romUnitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "DSi mode");
 				} else {
 					if (perGameSettings_boostVram == -1) {
@@ -851,22 +848,22 @@ void perGameSettings (std::string filename) {
 					case 2:
 						perGameSettings_dsiMode--;
 						if (!isHomebrew) {
-							if ((perGameSettings_dsiMode == 1 && unitCode == 0)
-							 || (perGameSettings_dsiMode == 2 && unitCode > 0)) perGameSettings_dsiMode--;
+							if ((perGameSettings_dsiMode == 1 && romUnitCode == 0)
+							 || (perGameSettings_dsiMode == 2 && romUnitCode > 0)) perGameSettings_dsiMode--;
 						}
 						if (perGameSettings_dsiMode < -1) perGameSettings_dsiMode = 2-isHomebrew;
 						if (!isHomebrew) {
-							if (perGameSettings_dsiMode == 2 && unitCode > 0) perGameSettings_dsiMode--;
+							if (perGameSettings_dsiMode == 2 && romUnitCode > 0) perGameSettings_dsiMode--;
 						}
 						break;
 					case 3:
-						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || unitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostCpu--;
 							if (perGameSettings_boostCpu < -1) perGameSettings_boostCpu = 1;
 						}
 						break;
 					case 4:
-						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || unitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostVram--;
 							if (perGameSettings_boostVram < -1) perGameSettings_boostVram = 1;
 						}
@@ -937,19 +934,19 @@ void perGameSettings (std::string filename) {
 					case 2:
 						perGameSettings_dsiMode++;
 						if (!isHomebrew) {
-							if ((perGameSettings_dsiMode == 1 && unitCode == 0)
-							 || (perGameSettings_dsiMode == 2 && unitCode > 0)) perGameSettings_dsiMode++;
+							if ((perGameSettings_dsiMode == 1 && romUnitCode == 0)
+							 || (perGameSettings_dsiMode == 2 && romUnitCode > 0)) perGameSettings_dsiMode++;
 						}
 						if (perGameSettings_dsiMode > 2-isHomebrew) perGameSettings_dsiMode = -1;
 						break;
 					case 3:
-						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || unitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostCpu++;
 							if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
 						}
 						break;
 					case 4:
-						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || unitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostVram++;
 							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
 						}
@@ -984,7 +981,7 @@ void perGameSettings (std::string filename) {
 							pathDefine = "DONORE4_NDS_PATH";
 						} else if (SDKVersion > 0x4008000 && SDKVersion < 0x5000000) {
 							pathDefine = "DONOR4_NDS_PATH";
-						} else if (unitCode > 0 && SDKVersion > 0x5000000) {
+						} else if (romUnitCode > 0 && SDKVersion > 0x5000000) {
 							pathDefine = a7mbk6 == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH";
 						}
 						std::string romFolderNoSlash = romfolder[secondaryDevice];

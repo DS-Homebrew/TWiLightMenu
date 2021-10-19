@@ -1118,7 +1118,6 @@ bool donorRomMsg(const char *filename) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		}
-		titleUpdate(false, filename, CURPOS);
 		dirContName = filename;
 		// About 35 characters fit in the box.
 		if (strlen(dirContName.c_str()) > 35) {
@@ -1129,8 +1128,9 @@ bool donorRomMsg(const char *filename) {
 			dirContName = dirContName.substr(first, (last - first + 1));
 			dirContName.append("...");
 		}
-		printSmall(false, 16, 66, dirContName.c_str());
 	}
+	int msgPage = 0;
+	bool pageLoaded = false;
 	bool dsModeAllowed = ((requiresDonorRom[CURPOS] == 52 || requiresDonorRom[CURPOS] == 53) && !isDSiWare[CURPOS]);
 	int yPos = (ms().theme == 4 ? 8 : 96);
 	extern std::string SDKnumbertext;
@@ -1153,27 +1153,41 @@ bool donorRomMsg(const char *filename) {
 			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "4.x");
 			break;
 	}
-	switch (requiresDonorRom[CURPOS]) {
-		default:
-			printSmall(false, 0, yPos, SDKnumbertext, Alignment::center);
-			break;
-		case 5:
-			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5, Alignment::center);
-			break;
-		case 51:
-			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center);
-			break;
-		case 52:
-			printSmall(false, 0, yPos, !isDSiWare[CURPOS] ? STR_DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE : STR_DONOR_ROM_MSG_SDK5TWLONLY, Alignment::center);
-			break;
-		case 53:
-			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWLANY_DSI_MODE, Alignment::center);
-			break;
-	}
-	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), dsModeAllowed ? STR_Y_DS_MODE_B_BACK : STR_B_BACK, Alignment::center);
-	updateText(false);
 	int pressed = 0;
 	while (1) {
+		if (!pageLoaded) {
+			clearText();
+			if (ms().theme != 4) {
+				titleUpdate(false, filename, CURPOS);
+				printSmall(false, 16, 66, dirContName.c_str());
+			}
+			if (msgPage == 1) {
+				printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM, Alignment::center);
+				printSmall(false, 12, (ms().theme == 4 ? 64 : 160), "<", Alignment::left);
+			} else {
+				switch (requiresDonorRom[CURPOS]) {
+					default:
+						printSmall(false, 0, yPos, SDKnumbertext, Alignment::center);
+						break;
+					case 5:
+						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5, Alignment::center);
+						break;
+					case 51:
+						printSmall(false, 0, yPos, unitCode[CURPOS] == 3 ? STR_DONOR_ROM_MSG_SDK5TWL : STR_DONOR_ROM_MSG_SDK5TWL_ANOTHER, Alignment::center);
+						break;
+					case 52:
+						printSmall(false, 0, yPos, !isDSiWare[CURPOS] ? STR_DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE : STR_DONOR_ROM_MSG_SDK5TWLONLY, Alignment::center);
+						break;
+					case 53:
+						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWLANY_DSI_MODE, Alignment::center);
+						break;
+				}
+				printSmall(false, 256 - 12, (ms().theme == 4 ? 64 : 160), ">", Alignment::right);
+			}
+			printSmall(false, 0, (ms().theme == 4 ? 64 : 160), dsModeAllowed ? STR_Y_DS_MODE_B_BACK : STR_B_BACK, Alignment::center);
+			updateText(false);
+			pageLoaded = true;
+		}
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -1184,6 +1198,15 @@ bool donorRomMsg(const char *filename) {
 		drawCurrentDate();
 		snd().updateStream();
 		swiWaitForVBlank();
+		if ((pressed & KEY_LEFT) && msgPage != 0) {
+			snd().playSelect();
+			msgPage = 0;
+			pageLoaded = false;
+		} else if ((pressed & KEY_RIGHT) && msgPage != 1) {
+			snd().playSelect();
+			msgPage = 1;
+			pageLoaded = false;
+		}
 		if (dsModeAllowed && (pressed & KEY_Y)) {
 			dsModeForced = true;
 			proceedToLaunch = true;

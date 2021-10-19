@@ -690,6 +690,7 @@ void getGameInfo(bool isDir, const char* name)
 		bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && arm7SCFGLocked);
 
 		romVersion = ndsHeader.romversion;
+		romUnitCode = ndsHeader.unitCode;
 		a7mbk6 = ndsHeader.a7mbk6;
 		// Check if ROM needs a donor ROM
 		if (isDSiMode() && a7mbk6 == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) && arm7SCFGLocked) {
@@ -729,6 +730,7 @@ void getGameInfo(bool isDir, const char* name)
 				break;
 			case 0x2434C:
 				if (usingB4DS || dsiEnhancedMbk) requiresDonorRom = 40; // SDK4.0 ROM required
+				break;
 			case 0x2484C:
 			case 0x249DC:
 			case 0x249E8:

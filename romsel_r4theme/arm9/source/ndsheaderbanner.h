@@ -288,6 +288,7 @@ extern int bnrRomType;
 extern bool bnriconisDSi;
 extern int bnrWirelessIcon;	// 0 = None, 1 = Local, 2 = WiFi
 extern u8 romVersion;
+extern u8 romUnitCode;
 extern u32 a7mbk6;
 extern bool isDSiWare;
 extern bool isHomebrew;

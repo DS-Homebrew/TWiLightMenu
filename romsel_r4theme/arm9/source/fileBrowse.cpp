@@ -459,49 +459,86 @@ bool donorRomMsg(void) {
 		lcdMainOnBottom();
 		lcdSwapped = true;
 	}
+	int msgPage = 0;
+	bool pageLoaded = false;
 	dialogboxHeight = 2;
 	showdialogbox = true;
-	printLargeCentered(false, 74, "Error!");
-	printSmallCentered(false, 98, dsModeAllowed ? "DSi mode requires a donor ROM" : "This game requires a donor ROM");
-	printSmallCentered(false, 110, "to run. Please set another");
-	switch (requiresDonorRom) {
-		case 20:
-			printSmallCentered(false, 122, "SDK2.0 game as a donor ROM.");
-			break;
-		case 2:
-			printSmallCentered(false, 122, "SDK2.x game as a donor ROM.");
-			break;
-		case 3:
-			printSmallCentered(false, 122, "SDK3.? game as a donor ROM.");
-			break;
-		case 40:
-			printSmallCentered(false, 122, "SDK4.0 game as a donor ROM.");
-			break;
-		case 4:
-			printSmallCentered(false, 122, "SDK4.x game as a donor ROM.");
-			break;
-		case 5:
-		default:
-			printSmallCentered(false, 122, "DS SDK5 game as a donor ROM.");
-			break;
-		case 51:
-			printSmallCentered(false, 122, "DSi-Enhanced game as a donor ROM.");
-			break;
-		case 52:
-			printSmallCentered(false, 122, "DSi(Ware) game as a donor ROM.");
-			break;
-		case 53:
-			printSmallCentered(false, 122, "TWL-type game as a donor ROM.");
-			break;
-	}
-	printSmallCentered(false, 140, dsModeAllowed ? "\u2430 Launch in DS mode  \u2428 Back" : "\u2428 Back");
 	int pressed = 0;
 	while (1) {
+		if (!pageLoaded) {
+			clearText();
+			printLargeCentered(false, 74, "Error!");
+			if (msgPage == 1) {
+				printSmallCentered(false, 90, "To set a donor ROM, find");
+				printSmallCentered(false, 102, "mentioned ROM, press (Y), and");
+				printSmallCentered(false, 114, "select \"Set as Donor ROM\".");
+				printSmall(false, 18, 132, "<");
+			} else {
+				switch (requiresDonorRom) {
+					case 20:
+						printSmallCentered(false, 90, "This title requires a donor ROM");
+						printSmallCentered(false, 102, "to run. Please set another");
+						printSmallCentered(false, 114, "SDK2.0 title as a donor ROM.");
+						break;
+					case 2:
+						printSmallCentered(false, 90, "This title requires a donor ROM");
+						printSmallCentered(false, 102, "to run. Please set another");
+						printSmallCentered(false, 114, "SDK2.x title as a donor ROM.");
+						break;
+					case 3:
+						printSmallCentered(false, 90, "This title requires a donor ROM");
+						printSmallCentered(false, 102, "to run. Please set another");
+						printSmallCentered(false, 114, "SDK3.? title as a donor ROM.");
+						break;
+					case 40:
+						printSmallCentered(false, 90, "This title requires a donor ROM");
+						printSmallCentered(false, 102, "to run. Please set another");
+						printSmallCentered(false, 114, "SDK4.0 title as a donor ROM.");
+						break;
+					case 4:
+						printSmallCentered(false, 90, "This title requires a donor ROM");
+						printSmallCentered(false, 102, "to run. Please set another");
+						printSmallCentered(false, 114, "SDK4.x title as a donor ROM.");
+						break;
+					case 5:
+					default:
+						printSmallCentered(false, 90, "This title requires a donor ROM");
+						printSmallCentered(false, 102, "to run. Please set another NTR");
+						printSmallCentered(false, 114, "SDK5 title as a donor ROM.");
+						break;
+					case 51:
+						printSmallCentered(false, 90, "This title requires a donor ROM");
+						printSmallCentered(false, 102, romUnitCode == 3 ? "to run. Please set a" : "to run. Please set another");
+						printSmallCentered(false, 114, "DSi-Enhanced title as a donor ROM.");
+						break;
+					case 52:
+						printSmallCentered(false, 90, dsModeAllowed ? "DSi mode requires a donor ROM" : "This title requires a donor ROM");
+						printSmallCentered(false, 102, dsModeAllowed ? "to run. Please set a" : "to run. Please set another");
+						printSmallCentered(false, 114, "DSi(Ware) title as a donor ROM.");
+						break;
+					case 53:
+						printSmallCentered(false, 90, dsModeAllowed ? "DSi mode requires a donor ROM" : "This title requires a donor ROM");
+						printSmallCentered(false, 102, "to run. Please set another");
+						printSmallCentered(false, 114, "TWL-type title as a donor ROM.");
+						break;
+				}
+				printSmallRightAlign(false, 256 - 16, 132, ">");
+			}
+			printSmallCentered(false, 132, dsModeAllowed ? "(Y) Launch in DS mode  \u2428 Back" : "\u2428 Back");
+			pageLoaded = true;
+		}
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
 		snd().updateStream();
 		swiWaitForVBlank();
+		if ((pressed & KEY_LEFT) && msgPage != 0) {
+			msgPage = 0;
+			pageLoaded = false;
+		} else if ((pressed & KEY_RIGHT) && msgPage != 1) {
+			msgPage = 1;
+			pageLoaded = false;
+		}
 		if (dsModeAllowed && (pressed & KEY_Y)) {
 			dsModeForced = true;
 			proceedToLaunch = true;

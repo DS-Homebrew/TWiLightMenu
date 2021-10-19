@@ -2003,14 +2003,11 @@ int main(int argc, char **argv) {
 				bool dsModeDSiWare = false;
 
 				char game_TID[5];
-				u8 unitCode = 0;
 
 				FILE *f_nds_file = fopen(argarray[0], "rb");
 
 				fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
 				fread(game_TID, 1, 4, f_nds_file);
-				fseek(f_nds_file, 0x12, SEEK_SET);
-				fread(&unitCode, 1, 1, f_nds_file);
 				fclose(f_nds_file);
 				game_TID[4] = 0;
 
@@ -2041,8 +2038,8 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if(useBackend) {
-					if ((useBootstrap || !secondaryDevice) || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode))
-					|| ((game_TID[0] == 'K' || game_TID[0] == 'Z') && unitCode > 0)) {
+					if ((useBootstrap || !secondaryDevice) || (dsiFeatures() && romUnitCode > 0 && (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode))
+					|| ((game_TID[0] == 'K' || game_TID[0] == 'Z') && romUnitCode > 0)) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 						std::string ramdiskname = replaceAll(filename, typeToReplace, getImgExtension(perGameSettings_ramDiskNo));
