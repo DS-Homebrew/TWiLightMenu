@@ -19,6 +19,7 @@
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
 #include "graphics/ThemeTextures.h"
+#include "common/tonccpy.h"
 #include "language.h"
 #include "sound.h"
 #include "SwitchState.h"
@@ -394,8 +395,12 @@ void perGameSettings (std::string filename) {
 
 	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
+	u8 sdkSubVer = 0;
+	char sdkSubVerChar[8] = {0};
 	if (memcmp(gameTid[CURPOS], "HND", 3) == 0 || memcmp(gameTid[CURPOS], "HNE", 3) == 0 || !isHomebrew[CURPOS]) {
 		SDKVersion = getSDKVersion(f_nds_file);
+		tonccpy(&sdkSubVer, (u8*)&SDKVersion+2, 1);
+		sprintf(sdkSubVerChar, "%d", sdkSubVer);
 		showSDKVersion = true;
 	}
 	u32 arm9size = 0;
@@ -579,25 +584,17 @@ void perGameSettings (std::string filename) {
 	extern std::string replaceAll(std::string str, const std::string &from, const std::string &to);
 
 	if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "1");
-	} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x2008000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "2.0");
-	} else if((SDKVersion > 0x2008000) && (SDKVersion < 0x3000000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "2.x");
-	} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x3008000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "3.0");
-	} else if((SDKVersion > 0x3008000) && (SDKVersion < 0x4000000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "3.x");
-	} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x4008000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "4.0");
-	} else if((SDKVersion > 0x4008000) && (SDKVersion < 0x5000000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "4.x");
-	} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x5008000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "5.0");
-	} else if((SDKVersion > 0x5008000) && (SDKVersion < 0x6000000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "5.x");
+		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "1."+(std::string)sdkSubVerChar);
+	} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
+		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "2."+(std::string)sdkSubVerChar);
+	} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
+		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "3."+(std::string)sdkSubVerChar);
+	} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
+		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "4."+(std::string)sdkSubVerChar);
+	} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
+		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "5."+(std::string)sdkSubVerChar);
 	} else {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "?");
+		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "???");
 	}
 	if (ms().theme == 5) {
 		dbox_showIcon = true;

@@ -1141,16 +1141,16 @@ bool donorRomMsg(const char *filename) {
 			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "2.0");
 			break;
 		case 2:
-			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "2.x");
+			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "2.1+");
 			break;
 		case 3:
-			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "3.?");
+			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "3");
 			break;
 		case 40:
 			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "4.0");
 			break;
 		case 4:
-			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "4.x");
+			SDKnumbertext = replaceAll(STR_DONOR_ROM_MSG_SDK, "%s", "4.1+");
 			break;
 	}
 	int pressed = 0;

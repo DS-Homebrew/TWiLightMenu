@@ -20,6 +20,7 @@
 #include "graphics/graphics.h"
 #include "graphics/FontGraphic.h"
 #include "graphics/TextPane.h"
+#include "common/tonccpy.h"
 #include "SwitchState.h"
 #include "cheat.h"
 #include "errorScreen.h"
@@ -377,8 +378,12 @@ void perGameSettings (std::string filename) {
 
 	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
+	u8 sdkSubVer = 0;
+	char sdkSubVerChar[8] = {0};
 	if (memcmp(game_TID, "HND", 3) == 0 || memcmp(game_TID, "HNE", 3) == 0 || !isHomebrew) {
 		SDKVersion = getSDKVersion(f_nds_file);
+		tonccpy(&sdkSubVer, (u8*)&SDKVersion+2, 1);
+		sprintf(sdkSubVerChar, "%d", sdkSubVer);
 		showSDKVersion = true;
 	}
 	u32 arm9size = 0;
@@ -562,25 +567,17 @@ void perGameSettings (std::string filename) {
 	char saveNoDisplay[16];
 
 	if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
-		SDKnumbertext = "SDK ver: 1";
-	} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x2008000)) {
-		SDKnumbertext = "SDK ver: 2.0";
-	} else if((SDKVersion > 0x2008000) && (SDKVersion < 0x3000000)) {
-		SDKnumbertext = "SDK ver: 2.x";
-	} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x3008000)) {
-		SDKnumbertext = "SDK ver: 3.0";
-	} else if((SDKVersion > 0x3008000) && (SDKVersion < 0x4000000)) {
-		SDKnumbertext = "SDK ver: 3.x";
-	} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x4008000)) {
-		SDKnumbertext = "SDK ver: 4.0";
-	} else if((SDKVersion > 0x4008000) && (SDKVersion < 0x5000000)) {
-		SDKnumbertext = "SDK ver: 4.x";
-	} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x5008000)) {
-		SDKnumbertext = "SDK ver: 5.0";
-	} else if((SDKVersion > 0x5008000) && (SDKVersion < 0x6000000)) {
-		SDKnumbertext = "SDK ver: 5.x";
+		SDKnumbertext = ("SDK ver: 1."+(std::string)sdkSubVerChar).c_str();
+	} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
+		SDKnumbertext = ("SDK ver: 2."+(std::string)sdkSubVerChar).c_str();
+	} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
+		SDKnumbertext = ("SDK ver: 3."+(std::string)sdkSubVerChar).c_str();
+	} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
+		SDKnumbertext = ("SDK ver: 4."+(std::string)sdkSubVerChar).c_str();
+	} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
+		SDKnumbertext = ("SDK ver: 5."+(std::string)sdkSubVerChar).c_str();
 	} else {
-		SDKnumbertext = "SDK ver: ?";
+		SDKnumbertext = "SDK ver: ???";
 	}
 	if (!showPerGameSettings) {
 		dialogboxHeight = 0;

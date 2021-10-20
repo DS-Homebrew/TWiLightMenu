@@ -483,12 +483,12 @@ bool donorRomMsg(void) {
 					case 2:
 						printSmallCentered(false, 90, "This title requires a donor ROM");
 						printSmallCentered(false, 102, "to run. Please set another");
-						printSmallCentered(false, 114, "SDK2.x title as a donor ROM.");
+						printSmallCentered(false, 114, "SDK2.1+ title as a donor ROM.");
 						break;
 					case 3:
 						printSmallCentered(false, 90, "This title requires a donor ROM");
 						printSmallCentered(false, 102, "to run. Please set another");
-						printSmallCentered(false, 114, "SDK3.? title as a donor ROM.");
+						printSmallCentered(false, 114, "SDK3 title as a donor ROM.");
 						break;
 					case 40:
 						printSmallCentered(false, 90, "This title requires a donor ROM");
@@ -498,7 +498,7 @@ bool donorRomMsg(void) {
 					case 4:
 						printSmallCentered(false, 90, "This title requires a donor ROM");
 						printSmallCentered(false, 102, "to run. Please set another");
-						printSmallCentered(false, 114, "SDK4.x title as a donor ROM.");
+						printSmallCentered(false, 114, "SDK4.1+ title as a donor ROM.");
 						break;
 					case 5:
 					default:
