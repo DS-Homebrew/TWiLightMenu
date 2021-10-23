@@ -192,8 +192,8 @@ void TWLSettings::loadSettings()
     preventDeletion = settingsini.GetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
+    sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
     if (consoleModel < 2) {
-        sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
         launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
     }
 
@@ -313,8 +313,8 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
+    settingsini.SetInt("SRLOADER", "SYS_REGION", sysRegion);
     if (consoleModel < 2) {
-        settingsini.SetInt("SRLOADER", "SYS_REGION", sysRegion);
         settingsini.SetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
     }
 
