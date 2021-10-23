@@ -618,8 +618,9 @@ void defaultExitHandler()
 		*(u32*)0x020007F0 = 0x4D44544C;
 	}
 
-	if (previousDSiWareExploit != ms().dsiWareExploit
-	 || previousSysRegion != ms().sysRegion)
+	if (isDSiMode() && sdFound() && ms().consoleModel >= 2 && sys().arm7SCFGLocked() &&
+	   (previousDSiWareExploit != ms().dsiWareExploit
+	 || previousSysRegion != ms().sysRegion))
 	{
 		u32 currentSrBackendId[2] = {0};
 		u8 sysValue = 0;
@@ -674,7 +675,7 @@ void defaultExitHandler()
 		if (ms().dsiWareExploit > 0) {
 			FILE* file = fopen("sd:/_nds/nds-bootstrap/srBackendId.bin", "wb");
 			if (file) {
-				fwrite(&currentSrBackendId, sizeof(u32), 2, file);
+				fwrite(currentSrBackendId, sizeof(u32), 2, file);
 			}
 			fclose(file);
 		} else {
@@ -1313,7 +1314,7 @@ int main(int argc, char **argv)
 		.option(STR_NINTENDOLOGOCOLOR, STR_DESCRIPTION_NINTENDOLOGOCOLOR, Option::Int(&ms().nintendoLogoColor), {STR_RED, STR_BLUE, STR_MAGENTA, STR_GRAY}, {1, 2, 3, 0})
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false});
 
-	if (isDSiMode() && sdFound()) {
+	if (isDSiMode() && sdFound() && ms().consoleModel >= 2 && sys().arm7SCFGLocked()) {
 		miscPage
 			.option(STR_DSIWARE_EXPLOIT,
 				STR_DESCRIPTION_DSIWARE_EXPLOIT,

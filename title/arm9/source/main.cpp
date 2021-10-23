@@ -1689,9 +1689,11 @@ int main(int argc, char **argv)
 	bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
 
 	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
-	if (REG_SCFG_EXT!=0) {
+	if (REG_SCFG_EXT != 0) {
+		bool nandMounted = false;
 		if (!useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && !is3DS) {
-			if (fatMountSimple("nand", &io_dsi_nand)) {
+			nandMounted = fatMountSimple("nand", &io_dsi_nand);
+			if (nandMounted) {
 				//toncset((void*)0x02000004, 0, 0x3FFC); // Already done by exploit
 
 				FILE* twlCfgFile = fopen("nand:/shared1/TWLCFG0.dat", "rb");
@@ -1733,6 +1735,106 @@ int main(int argc, char **argv)
 					softResetParamsBak |= BIT(0);
 				}
 			}
+		}
+		if (useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && *(u32*)0x020007F0 != 0x4D44544C) {
+			u32 srBackendId[2] = {*(u32*)0x02000428, *(u32*)0x0200042C};
+			u16 tidPart = 0;
+			tonccpy(&tidPart, (void*)((u32)srBackendId+6), sizeof(u16));
+			if (is3DS) {
+				if (tidPart != 0x0003) {
+					u32 currentSrBackendId[2] = {0};
+					u8 sysValue = 0;
+
+					TWLSettings settings;
+					settings.loadSettings();
+
+					switch (settings.dsiWareExploit) {
+						case 1:
+						default:
+							currentSrBackendId[0] = 0x4B344441;		// SUDOKU
+							break;
+						case 2:
+							currentSrBackendId[0] = 0x4B513941;		// Legend of Zelda: Four Swords
+							break;
+						case 3:
+							currentSrBackendId[0] = 0x4B464441;		// Fieldrunners
+							break;
+						case 4:
+							currentSrBackendId[0] = 0x4B475241;		// Guitar Rock Tour
+							break;
+						case 5:
+							currentSrBackendId[0] = 0x4B475541;		// Flipnote Studio
+							break;
+						case 6:
+							currentSrBackendId[0] = 0x4B554E41;		// UNO
+							break;
+						case 7:
+							currentSrBackendId[0] = 0x484E4941;		// Nintendo DSi Camera
+							break;
+					}
+					switch (settings.sysRegion) {
+						case 0:
+							sysValue = 0x4A;		// JPN
+							break;
+						case 1:
+							sysValue = 0x45;		// USA
+							break;
+						case 2:
+							sysValue = (settings.dsiWareExploit==7 ? 0x50 : 0x56);		// EUR
+							break;
+						case 3:
+							sysValue = (settings.dsiWareExploit==7 ? 0x55 : 0x56);		// AUS
+							break;
+						case 4:
+							sysValue = 0x43;		// CHN
+							break;
+						case 5:
+							sysValue = 0x4B;		// KOR
+							break;
+					}
+					tonccpy(&currentSrBackendId, &sysValue, 1);
+					currentSrBackendId[1] = (settings.dsiWareExploit==7 ? 0x00030005 : 0x00030004);
+
+					if (settings.dsiWareExploit > 0) {
+						mkdir("sd:/_nds/nds-bootstrap", 0777);
+						FILE* file = fopen("sd:/_nds/nds-bootstrap/srBackendId.bin", "wb");
+						if (file) {
+							fwrite(currentSrBackendId, sizeof(u32), 2, file);
+						}
+						fclose(file);
+					} else if (access("sd:/_nds/nds-bootstrap/srBackendId.bin", F_OK) == 0) {
+						remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
+					}
+				} else {
+					mkdir("sd:/_nds/nds-bootstrap", 0777);
+					FILE* srBackendIdFile = fopen("sd:/_nds/nds-bootstrap/srBackendId.bin", "wb");
+					fwrite(srBackendId, 1, 8, srBackendIdFile);
+					fclose(srBackendIdFile);
+				}
+			} else {
+				if (tidPart != 0x0003) {
+					if (!nandMounted) {
+						nandMounted = fatMountSimple("nand", &io_dsi_nand);
+					}
+					// Read correct title ID of launched System Menu title
+					FILE* twlCfgFile = fopen("nand:/shared1/TWLCFG0.dat", "rb");
+					fseek(twlCfgFile, 0xB0, SEEK_SET);
+					fread(srBackendId, sizeof(u32), 2, twlCfgFile);
+					fclose(twlCfgFile);
+
+					tonccpy(&tidPart, (void*)((u32)srBackendId+6), sizeof(u16));
+				}
+				if (tidPart == 0x0003) {
+					mkdir("sd:/_nds/nds-bootstrap", 0777);
+					FILE* srBackendIdFile = fopen("sd:/_nds/nds-bootstrap/srBackendId.bin", "wb");
+					fwrite(srBackendId, 1, 8, srBackendIdFile);
+					fclose(srBackendIdFile);
+				} else if (access("sd:/_nds/nds-bootstrap/srBackendId.bin", F_OK) == 0) {
+					remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
+				}
+			}
+		} else if (access("sd:/_nds/nds-bootstrap/srBackendId.bin", F_OK) == 0) {
+			remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
 		}
 	}
 
@@ -1935,11 +2037,6 @@ int main(int argc, char **argv)
 		} else {
 			*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0);		// WiFi On/Off
 		}
-	}
-
-	if (ms().dsiWareExploit == 0) {
-		if (access("sd:/_nds/nds-bootstrap/srBackendId.bin", F_OK) == 0)
-			remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
 	}
 
 	if (sdFound()) {
