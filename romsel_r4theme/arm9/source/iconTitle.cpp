@@ -27,6 +27,7 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <gl2d.h>
+#include "flashcard.h"
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "language.h"
@@ -780,7 +781,7 @@ void getGameInfo(bool isDir, const char* name)
 		 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
 		{ if (ndsHeader.unitCode != 0) {
 			isDSiWare = true; // Is a DSiWare game
-			if (requiresDonorRom == 53 && (!secondaryDevice || dsiWareToSD)) {
+			if ((requiresDonorRom == 53 || (dsiEnhancedMbk && requiresDonorRom == 51)) && (!secondaryDevice || (sdFound() && dsiWareToSD))) {
 				requiresDonorRom = 0; // Donor ROM not required
 			}
 		  }
