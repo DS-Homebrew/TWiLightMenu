@@ -368,7 +368,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
 		{ if (ndsHeader.unitCode != 0) {
 			isDSiWare[num] = true; // Is a DSiWare game
-			if (requiresDonorRom[num] == 53) {
+			if (requiresDonorRom[num] == 53 && (!ms().secondaryDevice || ms().dsiWareToSD)) {
 				requiresDonorRom[num] = 0; // Donor ROM not required
 			}
 		  }
