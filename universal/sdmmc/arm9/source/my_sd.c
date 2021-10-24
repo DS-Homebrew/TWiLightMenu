@@ -1,23 +1,44 @@
 #include <nds/disc_io.h>
 #include <nds/fifocommon.h>
 #include <nds/fifomessages.h>
+#include <nds/ipc.h>
+#include <nds/bios.h>
 #include <nds/system.h>
 #include <nds/arm9/cache.h>
+
+static vu32* sharedAddr = (vu32*)0x02FFFA00;
+
+void sdio_done()
+{
+	sharedAddr[3] = sharedAddr[4];
+}
 
 //---------------------------------------------------------------------------------
 bool my_sdio_Startup() {
 //---------------------------------------------------------------------------------
-	fifoSendValue32(FIFO_SDMMC,SDMMC_HAVE_SD);
-	while(!fifoCheckValue32(FIFO_SDMMC));
-	int result = fifoGetValue32(FIFO_SDMMC);
+	if (isDSiMode()) {
+		sharedAddr = (vu32*)0x0CFFFA00;
+	}
+
+	irqSet(IRQ_IPC_SYNC, sdio_done);
+	irqEnable(IRQ_IPC_SYNC);
+
+	sharedAddr[3] = 0x56484453;
+	IPC_SendSync(8);
+	while(sharedAddr[3] == 0x56484453) {
+		swiDelay(100);
+	}
+	int result = sharedAddr[3];
 
 	if(result==0) return false;
 
-	fifoSendValue32(FIFO_SDMMC,SDMMC_SD_START);
+	sharedAddr[3] = 0x54534453;
+	IPC_SendSync(8);
+	while(sharedAddr[3] == 0x54534453) {
+		swiDelay(100);
+	}
 
-	fifoWaitValue32(FIFO_SDMMC);
-
-	result = fifoGetValue32(FIFO_SDMMC);
+	result = sharedAddr[3];
 
 	return result == 0;
 }
@@ -25,11 +46,12 @@ bool my_sdio_Startup() {
 //---------------------------------------------------------------------------------
 bool my_sdio_IsInserted() {
 //---------------------------------------------------------------------------------
-	fifoSendValue32(FIFO_SDMMC,SDMMC_SD_IS_INSERTED);
-
-	fifoWaitValue32(FIFO_SDMMC);
-
-	int result = fifoGetValue32(FIFO_SDMMC);
+	sharedAddr[3] = 0x4E494453;
+	IPC_SendSync(8);
+	while(sharedAddr[3] == 0x4E494453) {
+		swiDelay(100);
+	}
+	int result = sharedAddr[3];
 
 	return result == 1;
 }
@@ -37,20 +59,19 @@ bool my_sdio_IsInserted() {
 //---------------------------------------------------------------------------------
 bool my_sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 //---------------------------------------------------------------------------------
-	FifoMessage msg;
-
 	DC_FlushRange(buffer,numSectors * 512);
 
-	msg.type = SDMMC_SD_READ_SECTORS;
-	msg.sdParams.startsector = sector;
-	msg.sdParams.numsectors = numSectors;
-	msg.sdParams.buffer = buffer;
+	sharedAddr[0] = sector;
+	sharedAddr[1] = numSectors;
+	sharedAddr[2] = (vu32)buffer;
 	
-	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
+	sharedAddr[3] = 0x44524453;
+	IPC_SendSync(8);
+	while(sharedAddr[3] == 0x44524453) {
+		swiDelay(100);
+	}
 
-	fifoWaitValue32(FIFO_SDMMC);
-
-	int result = fifoGetValue32(FIFO_SDMMC);
+	int result = sharedAddr[3];
 	
 	return result == 0;
 }
@@ -58,20 +79,19 @@ bool my_sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 //---------------------------------------------------------------------------------
 bool my_sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 //---------------------------------------------------------------------------------
-	FifoMessage msg;
-
 	DC_FlushRange(buffer,numSectors * 512);
 
-	msg.type = SDMMC_SD_WRITE_SECTORS;
-	msg.sdParams.startsector = sector;
-	msg.sdParams.numsectors = numSectors;
-	msg.sdParams.buffer = (void*)buffer;
+	sharedAddr[0] = sector;
+	sharedAddr[1] = numSectors;
+	sharedAddr[2] = (vu32)buffer;
 	
-	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
+	sharedAddr[3] = 0x52574453;
+	IPC_SendSync(8);
+	while(sharedAddr[3] == 0x52574453) {
+		swiDelay(100);
+	}
 
-	fifoWaitValue32(FIFO_SDMMC);
-
-	int result = fifoGetValue32(FIFO_SDMMC);
+	int result = sharedAddr[3];
 	
 	return result == 0;
 }

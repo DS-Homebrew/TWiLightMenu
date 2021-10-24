@@ -1171,7 +1171,6 @@ int main(int argc, char **argv) {
 		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white
-		printSmall(false, 0, 24, STR_TAKEWHILE_CLOSELID, Alignment::center);
 		printSmall(false, 0, 86, STR_NOW_COPYING_DATA, Alignment::center);
 		printSmall(false, 0, 100, STR_DO_NOT_TURN_OFF_POWER, Alignment::center);
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -1954,10 +1953,6 @@ int main(int argc, char **argv) {
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
-					} else if (ms().consoleModel >= 2) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
-					} else {
-						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					}
 					printSmall(false, 2, 80, STR_CREATING_PUBLIC_SAVE);
 					if (!fadeType) {
@@ -1995,10 +1990,6 @@ int main(int argc, char **argv) {
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
-					} else if (ms().consoleModel >= 2) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
-					} else {
-						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					}
 					printSmall(false, 2, 80, STR_CREATING_PRIVATE_SAVE);
 					if (!fadeType) {
@@ -2036,7 +2027,6 @@ int main(int argc, char **argv) {
 					fadeSpeed = true;
 					controlTopBright = false;
 					clearText();
-					printSmall(false, 0, 20, ms().consoleModel >= 2 ? STR_TAKEWHILE_PRESSHOME : STR_TAKEWHILE_CLOSELID, Alignment::center);
 					printSmall(false, 0, 86, STR_NOW_COPYING_DATA, Alignment::center);
 					printSmall(false, 0, 100, STR_DO_NOT_TURN_OFF_POWER, Alignment::center);
 					fadeType = true;	// Fade in from white
@@ -2295,10 +2285,6 @@ int main(int argc, char **argv) {
 								clearText();
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
-								} else if (dsiFeatures() && ms().consoleModel >= 2) {
-									printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
-								} else {
-									printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 								}
 								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
 

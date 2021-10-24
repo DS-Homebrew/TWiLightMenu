@@ -488,7 +488,6 @@ void begin_update(int opt)
 	bs().saveSettings();
 
 	clearText();
-	printSmall(true, 0, 124, (ms().consoleModel>1) ? STR_TAKEWHILE_PRESSHOME : STR_TAKEWHILE_CLOSELID, Alignment::center);
 	printLarge(false, ms().rtl() ? 256 - 4 : 4, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
 
 	if (opt == 1) {

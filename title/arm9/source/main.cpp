@@ -468,12 +468,6 @@ void lastRunROM()
 						if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 							iprintf ("If this takes a while, turn off\n");
 							iprintf ("the POWER, and try again.\n");
-						} else if (dsiFeatures() && ms().consoleModel >= 2) {
-							iprintf ("If this takes a while,\n");
-							iprintf ("press HOME, and press B.\n");
-						} else {
-							iprintf ("If this takes a while, close\n");
-							iprintf ("and open the console's lid.\n");
 						}
 						iprintf ("\n");
 						fadeType = true;
@@ -769,12 +763,6 @@ void lastRunROM()
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						iprintf ("If this takes a while, press\n");
 						iprintf ("L+R+START+SELECT to restart.\n");
-					} else if (ms().consoleModel >= 2) {
-						iprintf ("If this takes a while,\n");
-						iprintf ("press HOME, and press B.\n");
-					} else {
-						iprintf ("If this takes a while, close\n");
-						iprintf ("and open the console's lid.\n");
 					}
 					iprintf ("\n");
 					fadeType = true;
@@ -815,12 +803,6 @@ void lastRunROM()
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						iprintf ("If this takes a while, press\n");
 						iprintf ("L+R+START+SELECT to restart.\n");
-					} else if (ms().consoleModel >= 2) {
-						iprintf ("If this takes a while,\n");
-						iprintf ("press HOME, and press B.\n");
-					} else {
-						iprintf ("If this takes a while, close\n");
-						iprintf ("and open the console's lid.\n");
 					}
 					iprintf ("\n");
 					fadeType = true;
@@ -1078,9 +1060,6 @@ void lastRunROM()
 
 		consoleDemoInit();
 		iprintf("Now Loading...\n");
-		iprintf("\n");
-		iprintf("If this takes a while, close\n");
-		iprintf("and open the console's lid.\n");
 		iprintf("\n");
 		fadeType = true;
 

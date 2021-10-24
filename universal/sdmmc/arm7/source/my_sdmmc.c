@@ -2,6 +2,7 @@
 #include <nds/bios.h>
 #include "my_sdmmc.h"
 #include <nds/interrupts.h>
+#include <nds/ipc.h>
 #include <nds/fifocommon.h>
 #include <nds/fifomessages.h>
 
@@ -544,36 +545,6 @@ void my_sdmmc_get_cid(int devicenumber, u32 *cid) {
 }
 
 //---------------------------------------------------------------------------------
-void my_sdmmcMsgHandler(int bytes, void *user_data) {
-//---------------------------------------------------------------------------------
-    FifoMessage msg;
-    int retval = 0;
-
-    fifoGetDatamsg(FIFO_SDMMC, bytes, (u8*)&msg);
-
-    //int oldIME = enterCriticalSection();
-    switch (msg.type) {
-
-    case SDMMC_SD_READ_SECTORS:
-        retval = my_sdmmc_readsectors(&deviceSD, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-        break;
-    case SDMMC_SD_WRITE_SECTORS:
-        retval = my_sdmmc_writesectors(&deviceSD, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-        break;
-    case SDMMC_NAND_READ_SECTORS:
-        retval = my_sdmmc_readsectors(&deviceNAND, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-        break;
-    case SDMMC_NAND_WRITE_SECTORS:
-        retval = my_sdmmc_writesectors(&deviceNAND, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-        break;
-    }
-
-    //leaveCriticalSection(oldIME);
-
-    fifoSendValue32(FIFO_SDMMC, retval);
-}
-
-//---------------------------------------------------------------------------------
 int my_sdmmc_nand_startup() {
 //---------------------------------------------------------------------------------
     my_sdmmc_controller_init(false);
@@ -588,22 +559,22 @@ int my_sdmmc_sd_startup() {
 }
 
 //---------------------------------------------------------------------------------
-void my_sdmmcValueHandler(u32 value, void* user_data) {
+void my_sdmmcHandler() {
 //---------------------------------------------------------------------------------
     int result = 0;
     int sdflag = 0;
-    //int oldIME = enterCriticalSection();
+    int oldIME = enterCriticalSection();
 
-    switch(value) {
+    switch(*(u32*)0x02FFFA0C) {
 
-    case SDMMC_HAVE_SD:
+    case 0x56484453: // SDMMC_HAVE_SD
         result = sdmmc_read16(REG_SDSTATUS0);
         break;
 
-    case SDMMC_SD_START:
+    case 0x54534453: // SDMMC_SD_START
         sdflag = 1;
         /* Falls through. */
-    case SDMMC_NAND_START:
+    case 0x5453414E: // SDMMC_NAND_START
         if (sdmmc_read16(REG_SDSTATUS0) == 0) {
             result = 1;
         } else {
@@ -611,21 +582,36 @@ void my_sdmmcValueHandler(u32 value, void* user_data) {
         }
         break;
 
-    case SDMMC_SD_IS_INSERTED:
+    case 0x4E494453: // SDMMC_SD_IS_INSERTED
         result = my_sdmmc_cardinserted();
         break;
 
-    case SDMMC_SD_STOP:
+    //case SDMMC_SD_STOP:
+    //    break;
+
+    case 0x5A53414E: // SDMMC_NAND_SIZE
+        result = deviceNAND.total_size;
         break;
 
-    case SDMMC_NAND_SIZE:
-        result = deviceNAND.total_size;
+    case 0x44524453: // SDMMC_SD_READ_SECTORS
+        result = my_sdmmc_readsectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
+        break;
+    case 0x52574453: // SDMMC_SD_WRITE_SECTORS
+        result = my_sdmmc_writesectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
+        break;
+    case 0x4452414E: // SDMMC_NAND_READ_SECTORS
+        result = my_sdmmc_readsectors(&deviceNAND, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
+        break;
+    case 0x5257414E: // SDMMC_NAND_WRITE_SECTORS
+        result = my_sdmmc_writesectors(&deviceNAND, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
         break;
     }
 
-    //leaveCriticalSection(oldIME);
+    leaveCriticalSection(oldIME);
 
-    fifoSendValue32(FIFO_SDMMC, result);
+    //fifoSendValue32(FIFO_SDMMC, result);
+	*(u32*)0x02FFFA10 = result;
+	IPC_SendSync(8);
 }
 
 //---------------------------------------------------------------------------------
