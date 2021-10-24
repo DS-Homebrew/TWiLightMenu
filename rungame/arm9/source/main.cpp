@@ -679,9 +679,11 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
-	if (!fatInitDefault()) {
+	extern const DISC_INTERFACE __my_io_dsisd;
+
+	if (!fatMountSimple("sd", &__my_io_dsisd)) {
 		consoleDemoInit();
-		printf("fatInitDefault failed!");
+		iprintf("FAT init failed!");
 		stop();
 	}
 
