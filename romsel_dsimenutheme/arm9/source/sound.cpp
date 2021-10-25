@@ -48,12 +48,6 @@ extern volatile u32 sample_delay_count;
 volatile char* SFX_DATA = (char*)NULL;
 mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
 
-extern bool fadeType;
-extern bool controlTopBright;
-extern bool controlBottomBright;
-extern void takeWhileMsg(void);
-extern bool screenFadedOut(void);
-
 SoundControl::SoundControl()
 	: stream_is_playing(false), stream_source(NULL), startup_sample_length(0)
  {
@@ -179,31 +173,15 @@ SoundControl::SoundControl()
 	if (ms().theme == 4) {
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 	} else {
-		bool msg = false;
 		switch(ms().dsiMusic) {
 			case 5: {
 				std::string startPath = (devicePath+TFN_HBL_START_SOUND_BG_CACHE);
 				if (access(startPath.c_str(), F_OK) != 0) {
-					msg = true;
-					controlTopBright = false;
-					takeWhileMsg();
-					fadeType = true; // Fade in from white
 					adpcm_main(std::string(TFN_HBL_START_SOUND_BG).c_str(), startPath.c_str(), true);
 				}
 				std::string loopPath = (devicePath+TFN_HBL_LOOP_SOUND_BG_CACHE);
 				if (access(loopPath.c_str(), F_OK) != 0) {
-					msg = true;
-					controlTopBright = false;
-					takeWhileMsg();
-					fadeType = true; // Fade in from white
 					adpcm_main(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true);
-				}
-				if (msg) {
-					fadeType = false;
-					while (!screenFadedOut()) {
-						swiWaitForVBlank();
-					}
-					controlTopBright = true;
 				}
 				stream.sampling_rate = 44100;	 		// 44100Hz
 				stream.format = MM_STREAM_8BIT_STEREO;
@@ -214,17 +192,7 @@ SoundControl::SoundControl()
 			case 4: {
 				std::string musicPath = (devicePath+TFN_CLASSIC_SOUND_BG_CACHE);
 				if (access(musicPath.c_str(), F_OK) != 0) {
-					controlTopBright = false;
-					takeWhileMsg();
-					fadeType = true; // Fade in from white
-
 					adpcm_main(std::string(TFN_CLASSIC_SOUND_BG).c_str(), musicPath.c_str(), false);
-
-					fadeType = false;
-					while (!screenFadedOut()) {
-						swiWaitForVBlank();
-					}
-					controlTopBright = true;
 				}
 				stream.sampling_rate = 44100;	 		// 44100Hz
 				stream_source = fopen(musicPath.c_str(), "rb");
@@ -232,28 +200,11 @@ SoundControl::SoundControl()
 			case 2: {
 				std::string startPath = (devicePath+TFN_SHOP_START_SOUND_BG_CACHE);
 				if (access(startPath.c_str(), F_OK) != 0) {
-					msg = true;
-					controlTopBright = false;
-					takeWhileMsg();
-					fadeType = true; // Fade in from white
-
 					adpcm_main(std::string(TFN_SHOP_START_SOUND_BG).c_str(), startPath.c_str(), true);
 				}
 				std::string loopPath = (devicePath+TFN_SHOP_LOOP_SOUND_BG_CACHE);
 				if (access(loopPath.c_str(), F_OK) != 0) {
-					msg = true;
-					controlTopBright = false;
-					takeWhileMsg();
-					fadeType = true; // Fade in from white
-
 					adpcm_main(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true);
-				}
-				if (msg) {
-					fadeType = false;
-					while (!screenFadedOut()) {
-						swiWaitForVBlank();
-					}
-					controlTopBright = true;
 				}
 				stream.sampling_rate = 44100;	 		// 44100Hz
 				stream.format = MM_STREAM_8BIT_STEREO;
@@ -277,17 +228,7 @@ SoundControl::SoundControl()
 					fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
 					fclose(stream_source);
 					if (access(cachePath.c_str(), F_OK) != 0 && wavFormat == 0x11) {
-						controlTopBright = false;
-						takeWhileMsg();
-						fadeType = true; // Fade in from white
-
 						adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2);
-
-						fadeType = false;
-						while (!screenFadedOut()) {
-							swiWaitForVBlank();
-						}
-						controlTopBright = true;
 					}
 				}
 				stream_source = fopen(cachePath.c_str(), "rb");
@@ -296,17 +237,7 @@ SoundControl::SoundControl()
 			default: {
 				std::string musicPath = (devicePath+TFN_DEFAULT_SOUND_BG_CACHE);
 				if (access(musicPath.c_str(), F_OK) != 0) {
-					controlTopBright = false;
-					takeWhileMsg();
-					fadeType = true; // Fade in from white
-
 					adpcm_main(std::string(TFN_DEFAULT_SOUND_BG).c_str(), musicPath.c_str(), true);
-
-					fadeType = false;
-					while (!screenFadedOut()) {
-						swiWaitForVBlank();
-					}
-					controlTopBright = true;
 				}
 				stream.sampling_rate = 32000;	 		// 32000Hz
 				stream.format = MM_STREAM_8BIT_STEREO;

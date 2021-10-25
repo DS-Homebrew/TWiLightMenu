@@ -39,9 +39,15 @@ void SystemDetails::initFilesystem(const char *nitrofsPath, const char *runningP
 	}
 
 	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
-	fatMountSimple("sd", &__my_io_dsisd);
-	fatMountSimple("fat", dldiGetInternal());
-    _fatInitOk = (sdFound() || flashcardFound());
+	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+		*(u32*)(0x2FFFA04) = 0x49444C44;
+		fatMountSimple("fat", &__my_io_dsisd);
+		_fatInitOk = flashcardFound();
+	} else {
+		fatMountSimple("sd", &__my_io_dsisd);
+		fatMountSimple("fat", dldiGetInternal());
+		_fatInitOk = (sdFound() || flashcardFound());
+	}
 	*(u32*)(0x2FFFD0C) = 0;
 	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
     int ntr = nitroFSInit(nitrofsPath);

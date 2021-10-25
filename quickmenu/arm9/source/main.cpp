@@ -946,11 +946,18 @@ int main(int argc, char **argv) {
 	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	extern const DISC_INTERFACE __my_io_dsisd;
+	bool fatInited = false;
 
 	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
-	fatMountSimple("sd", &__my_io_dsisd);
-	fatMountSimple("fat", dldiGetInternal());
-	bool fatInited = (sdFound() || flashcardFound());
+	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+		*(u32*)(0x2FFFA04) = 0x49444C44;
+		fatMountSimple("fat", &__my_io_dsisd);
+		fatInited = flashcardFound();
+	} else {
+		fatMountSimple("sd", &__my_io_dsisd);
+		fatMountSimple("fat", dldiGetInternal());
+		fatInited = (sdFound() || flashcardFound());
+	}
 	*(u32*)(0x2FFFD0C) = 0;
 	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
 
@@ -1951,9 +1958,6 @@ int main(int argc, char **argv) {
 					fadeSpeed = true;
 					controlTopBright = false;
 					clearText();
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
-					}
 					printSmall(false, 2, 80, STR_CREATING_PUBLIC_SAVE);
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
@@ -1988,9 +1992,6 @@ int main(int argc, char **argv) {
 					fadeSpeed = true;
 					controlTopBright = false;
 					clearText();
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
-					}
 					printSmall(false, 2, 80, STR_CREATING_PRIVATE_SAVE);
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
@@ -2283,9 +2284,6 @@ int main(int argc, char **argv) {
 								whiteScreen = true;
 								fadeSpeed = true; // Fast fading
 								clearText();
-								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-									printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
-								}
 								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
 
 								fadeType = true; // Fade in from white

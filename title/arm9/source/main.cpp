@@ -465,11 +465,6 @@ void lastRunROM()
 						consoleDemoInit();
 						iprintf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
 						iprintf ("\n");
-						if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-							iprintf ("If this takes a while, turn off\n");
-							iprintf ("the POWER, and try again.\n");
-						}
-						iprintf ("\n");
 						fadeType = true;
 
 						FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
@@ -760,11 +755,6 @@ void lastRunROM()
 					consoleDemoInit();
 					iprintf("Creating public save file...\n");
 					iprintf ("\n");
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						iprintf ("If this takes a while, press\n");
-						iprintf ("L+R+START+SELECT to restart.\n");
-					}
-					iprintf ("\n");
 					fadeType = true;
 
 					static const int BUFFER_SIZE = 4096;
@@ -799,11 +789,6 @@ void lastRunROM()
 				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					consoleDemoInit();
 					iprintf("Creating private save file...\n");
-					iprintf ("\n");
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						iprintf ("If this takes a while, press\n");
-						iprintf ("L+R+START+SELECT to restart.\n");
-					}
 					iprintf ("\n");
 					fadeType = true;
 

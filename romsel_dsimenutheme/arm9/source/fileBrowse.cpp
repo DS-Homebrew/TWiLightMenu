@@ -401,17 +401,6 @@ void displayNowLoading(void) {
 	fadeType = true; // Fade in from white
 	snd().updateStream();
 	std::string *msg;
-	if (showProgressBar) {
-		if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-			msg = &STR_BARSTOPPED_RESTART;
-			printSmall(false, 0, 20, *msg, Alignment::center);
-		}
-	} else {
-		if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-			msg = &STR_TAKEWHILE_RESTART;
-			printSmall(false, 0, 20, *msg, Alignment::center);
-		}
-	}
 	printLarge(false, 0, 88, STR_NOW_LOADING, Alignment::center);
 	if (!sys().isRegularDS()) {
 		if (ms().theme == 4) {

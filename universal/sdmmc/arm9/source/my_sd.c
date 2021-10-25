@@ -4,7 +4,9 @@
 #include <nds/ipc.h>
 #include <nds/bios.h>
 #include <nds/system.h>
+#include <nds/memory.h>
 #include <nds/arm9/cache.h>
+#include <nds/arm9/dldi.h>
 
 static vu32* sharedAddr = (vu32*)0x02FFFA00;
 
@@ -24,14 +26,21 @@ bool my_sdio_Startup() {
 	irqSet(IRQ_IPC_SYNC, sdio_done);
 	irqEnable(IRQ_IPC_SYNC);
 
-	sharedAddr[3] = 0x56484453;
-	IPC_SendSync(8);
-	while(sharedAddr[3] == 0x56484453) {
-		swiDelay(100);
-	}
-	int result = sharedAddr[3];
+	int result = 0;
 
-	if(result==0) return false;
+	if (sharedAddr[1] == 0x49444C44) {
+		*(u32*)(0x2FFFA00) = (u32)io_dldi_data;
+		sysSetCardOwner(BUS_OWNER_ARM7);
+	} else {
+		sharedAddr[3] = 0x56484453;
+		IPC_SendSync(8);
+		while(sharedAddr[3] == 0x56484453) {
+			swiDelay(100);
+		}
+		result = sharedAddr[3];
+
+		if(result==0) return false;
+	}
 
 	sharedAddr[3] = 0x54534453;
 	IPC_SendSync(8);

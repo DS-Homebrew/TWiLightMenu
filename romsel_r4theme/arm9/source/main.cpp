@@ -1213,11 +1213,18 @@ int main(int argc, char **argv) {
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
 	extern const DISC_INTERFACE __my_io_dsisd;
+	bool fatInited = false;
 
 	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
-	fatMountSimple("sd", &__my_io_dsisd);
-	fatMountSimple("fat", dldiGetInternal());
-    bool fatInited = (sdFound() || flashcardFound());
+	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+		*(u32*)(0x2FFFA04) = 0x49444C44;
+		fatMountSimple("fat", &__my_io_dsisd);
+		fatInited = flashcardFound();
+	} else {
+		fatMountSimple("sd", &__my_io_dsisd);
+		fatMountSimple("fat", dldiGetInternal());
+		fatInited = (sdFound() || flashcardFound());
+	}
 	*(u32*)(0x2FFFD0C) = 0;
 	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
 

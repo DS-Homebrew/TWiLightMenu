@@ -1,15 +1,19 @@
 #include <nds/system.h>
 #include <nds/bios.h>
 #include "my_sdmmc.h"
+#include <nds/arm9/dldi.h>
 #include <nds/interrupts.h>
 #include <nds/ipc.h>
 #include <nds/fifocommon.h>
 #include <nds/fifomessages.h>
 
+#include <string.h>
 #include <stddef.h>
 
 static struct mmcdevice deviceSD;
 static struct mmcdevice deviceNAND;
+
+static bool useDLDI = false;
 
 /*mmcdevice *getMMCDevice(int drive) {
     if(drive==0) return &deviceNAND;
@@ -568,7 +572,7 @@ void my_sdmmcHandler() {
     switch(*(u32*)0x02FFFA0C) {
 
     case 0x56484453: // SDMMC_HAVE_SD
-        result = sdmmc_read16(REG_SDSTATUS0);
+		result = sdmmc_read16(REG_SDSTATUS0);
         break;
 
     case 0x54534453: // SDMMC_SD_START
@@ -578,12 +582,20 @@ void my_sdmmcHandler() {
         if (sdmmc_read16(REG_SDSTATUS0) == 0) {
             result = 1;
         } else {
-            result = (sdflag == 1 ) ? my_sdmmc_sd_startup() : my_sdmmc_nand_startup();
+            result = (sdflag == 1) ? my_sdmmc_sd_startup() : my_sdmmc_nand_startup();
         }
+		if (sdflag == 1 && result != 0 && *(u32*)(0x2FFFA04) == 0x49444C44) {
+			memcpy((void*)io_dldi_data, (void*)*(u32*)0x2FFFA00, 0x4000);
+			dldiFixDriverAddresses((DLDI_INTERFACE*)io_dldi_data);
+			useDLDI = io_dldi_data->ioInterface.startup();
+			if (useDLDI) {
+				result = 0;
+			}
+		}
         break;
 
     case 0x4E494453: // SDMMC_SD_IS_INSERTED
-        result = my_sdmmc_cardinserted();
+        result = useDLDI ? io_dldi_data->ioInterface.isInserted() : my_sdmmc_cardinserted();
         break;
 
     //case SDMMC_SD_STOP:
@@ -594,10 +606,14 @@ void my_sdmmcHandler() {
         break;
 
     case 0x44524453: // SDMMC_SD_READ_SECTORS
-        result = my_sdmmc_readsectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
+        result =
+			useDLDI ? (io_dldi_data->ioInterface.readSectors(*(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08) ? 0 : 1)
+					: my_sdmmc_readsectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
         break;
     case 0x52574453: // SDMMC_SD_WRITE_SECTORS
-        result = my_sdmmc_writesectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
+        result =
+			useDLDI ? (io_dldi_data->ioInterface.writeSectors(*(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08) ? 0 : 1)
+					: my_sdmmc_writesectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
         break;
     case 0x4452414E: // SDMMC_NAND_READ_SECTORS
         result = my_sdmmc_readsectors(&deviceNAND, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);

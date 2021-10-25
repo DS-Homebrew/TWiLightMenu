@@ -757,13 +757,6 @@ void gbaSramAccess(bool open) {
 	}
 }
 
-void takeWhileMsg(void) {
-	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-		printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
-	}
-	updateText(false);
-}
-
 int main(int argc, char **argv) {
 	defaultExceptionHandler();
 	sys().initFilesystem();
@@ -1098,9 +1091,6 @@ int main(int argc, char **argv) {
 						tex().clearTopScreen();
 					}
 					clearText();
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
-					}
 					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_CREATING_PUBLIC_SAVE, Alignment::center);
 					updateText(false);
 					if (ms().theme != 4 && !fadeType) {
@@ -1148,9 +1138,6 @@ int main(int argc, char **argv) {
 						tex().clearTopScreen();
 					}
 					clearText();
-					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-						printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
-					}
 					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_CREATING_PRIVATE_SAVE, Alignment::center);
 					updateText(false);
 					if (ms().theme != 4 && !fadeType) {
@@ -1488,9 +1475,6 @@ int main(int argc, char **argv) {
 									tex().clearTopScreen();
 								}
 								clearText();
-								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-									printSmall(false, 0, 20, STR_TAKEWHILE_RESTART, Alignment::center);
-								}
 								printLarge(false, 0, (ms().theme == 4 ? 80 : 88), (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
 								updateText(false);
 
