@@ -585,10 +585,10 @@ void my_sdmmcHandler() {
             result = (sdflag == 1) ? my_sdmmc_sd_startup() : my_sdmmc_nand_startup();
         }
 		if (sdflag == 1 && result != 0 && *(u32*)(0x2FFFA04) == 0x49444C44) {
-			if (*(vu32*)(0x3034000) != 0x49444C44) {
+			if (*(vu32*)(0x303C000) != 0x49444C44) {
 				memcpy((void*)io_dldi_data, (void*)*(u32*)0x2FFFA00, 0x4000);
 				dldiFixDriverAddresses((DLDI_INTERFACE*)io_dldi_data);
-				*(vu32*)(0x3034000) = 0x49444C44;
+				*(vu32*)(0x303C000) = 0x49444C44;
 			}
 			useDLDI = io_dldi_data->ioInterface.startup();
 			if (useDLDI) {
