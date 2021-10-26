@@ -98,15 +98,15 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)) limitedModeMemoryPit_ARM9 (void) 
 {
 	// WRAM-A fully mapped to arm7
-	*((vu32*)REG_MBK1)=0x8D85898D;
+	*((vu32*)REG_MBK1)=0x8D858981;
 
 	// WRAM-B fully mapped to arm7
-	*((vu32*)REG_MBK2)=0x8D85898D;
-	*((vu32*)REG_MBK3)=0x9195999D;
+	*((vu32*)REG_MBK2)=0x8D858981;
+	*((vu32*)REG_MBK3)=0x9D999591;
 
 	// WRAM-C fully mapped to arm7
-	*((vu32*)REG_MBK4)=0x8D85898D;
-	*((vu32*)REG_MBK5)=0x9195999D;
+	*((vu32*)REG_MBK4)=0x8D858981;
+	*((vu32*)REG_MBK5)=0x9D999591;
 
 	// WRAM not mapped
 	REG_MBK6=0; // WRAM-A

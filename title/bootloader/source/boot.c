@@ -539,15 +539,15 @@ void limitedModeMemoryPit(void) {
 	REG_MBK9=0x00FFFF0F;
 
 	// WRAM-A fully mapped to arm7
-	*((vu32*)REG_MBK1)=0x8D85898D;
+	*((vu32*)REG_MBK1)=0x8D858981;
 
 	// WRAM-B fully mapped to arm7
-	*((vu32*)REG_MBK2)=0x8D85898D;
-	*((vu32*)REG_MBK3)=0x9195999D;
+	*((vu32*)REG_MBK2)=0x8D858981;
+	*((vu32*)REG_MBK3)=0x9D999591;
 
 	// WRAM-C fully mapped to arm7
-	*((vu32*)REG_MBK4)=0x8D85898D;
-	*((vu32*)REG_MBK5)=0x9195999D;
+	*((vu32*)REG_MBK4)=0x8D858981;
+	*((vu32*)REG_MBK5)=0x9D999591;
 
 	// WRAM mapped to the 0x3700000 - 0x37FFFFF area 
 	// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
