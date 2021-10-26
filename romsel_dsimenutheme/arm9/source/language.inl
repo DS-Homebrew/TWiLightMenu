@@ -63,13 +63,9 @@ STRING(PRESS_B_RETURN, "Press \\B to return.")
 STRING(BAD_CLUSTER_SIZE, "Your SD card is not formatted\nusing 32KB clusters, this causes\nsome games to load very slowly.\nIt's recommended to reformat your\nSD card using 32KB clusters.")
 
 // Donor ROM
-STRING(DONOR_ROM_MSG_SDK, "This title requires a donor ROM\nto run. Please set another SDK%s\ntitle as a donor ROM.")
-STRING(DONOR_ROM_MSG_SDK5, "This title requires a donor ROM\nto run. Please set another NTR\nSDK5 title as a donor ROM.")
 STRING(DONOR_ROM_MSG_SDK5TWL, "This title requires a donor ROM\nto run. Please set a\nDSi-Enhanced title as a donor ROM.")
-STRING(DONOR_ROM_MSG_SDK5TWL_ANOTHER, "This title requires a donor ROM\nto run. Please set another\nDSi-Enhanced title as a donor ROM.")
 STRING(DONOR_ROM_MSG_SDK5TWLONLY, "This title requires a donor ROM\nto run. Please set another\nDSi(Ware) title as a donor ROM.")
 STRING(DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE, "DSi mode requires a donor ROM\nto run. Please set a\nDSi(Ware) title as a donor ROM.")
-STRING(DONOR_ROM_MSG_SDK5TWLANY_DSI_MODE, "DSi mode requires a donor ROM\nto run. Please set another\nTWL-type title as a donor ROM.")
 STRING(HOW_TO_SET_DONOR_ROM, "To set a donor ROM, find\nmentioned ROM, press \\Y, and\nselect \"Set as Donor ROM\".")
 
 // Hiding

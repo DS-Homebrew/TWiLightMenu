@@ -475,36 +475,7 @@ bool donorRomMsg(void) {
 				printSmall(false, 18, 132, "<");
 			} else {
 				switch (requiresDonorRom) {
-					case 20:
-						printSmallCentered(false, 90, "This title requires a donor ROM");
-						printSmallCentered(false, 102, "to run. Please set another");
-						printSmallCentered(false, 114, "SDK2.0 title as a donor ROM.");
-						break;
-					case 2:
-						printSmallCentered(false, 90, "This title requires a donor ROM");
-						printSmallCentered(false, 102, "to run. Please set another");
-						printSmallCentered(false, 114, "SDK2.1+ title as a donor ROM.");
-						break;
-					case 3:
-						printSmallCentered(false, 90, "This title requires a donor ROM");
-						printSmallCentered(false, 102, "to run. Please set another");
-						printSmallCentered(false, 114, "SDK3 title as a donor ROM.");
-						break;
-					case 40:
-						printSmallCentered(false, 90, "This title requires a donor ROM");
-						printSmallCentered(false, 102, "to run. Please set another");
-						printSmallCentered(false, 114, "SDK4.0 title as a donor ROM.");
-						break;
-					case 4:
-						printSmallCentered(false, 90, "This title requires a donor ROM");
-						printSmallCentered(false, 102, "to run. Please set another");
-						printSmallCentered(false, 114, "SDK4.1+ title as a donor ROM.");
-						break;
-					case 5:
 					default:
-						printSmallCentered(false, 90, "This title requires a donor ROM");
-						printSmallCentered(false, 102, "to run. Please set another NTR");
-						printSmallCentered(false, 114, "SDK5 title as a donor ROM.");
 						break;
 					case 51:
 						printSmallCentered(false, 90, "This title requires a donor ROM");
@@ -515,11 +486,6 @@ bool donorRomMsg(void) {
 						printSmallCentered(false, 90, dsModeAllowed ? "DSi mode requires a donor ROM" : "This title requires a donor ROM");
 						printSmallCentered(false, 102, dsModeAllowed ? "to run. Please set a" : "to run. Please set another");
 						printSmallCentered(false, 114, "DSi(Ware) title as a donor ROM.");
-						break;
-					case 53:
-						printSmallCentered(false, 90, dsModeAllowed ? "DSi mode requires a donor ROM" : "This title requires a donor ROM");
-						printSmallCentered(false, 102, "to run. Please set another");
-						printSmallCentered(false, 114, "TWL-type title as a donor ROM.");
 						break;
 				}
 				printSmallRightAlign(false, 256 - 16, 132, ">");
@@ -890,20 +856,8 @@ string browseForFile(const vector<string_view> extensionList) {
 					proceedToLaunch = checkForCompatibleGame(game_TID, dirContents.at(fileOffset).name.c_str());
 					if (proceedToLaunch && requiresDonorRom)
 					{
-						const char* pathDefine = "DONOR_NDS_PATH";
-						if (requiresDonorRom == 20) {
-							pathDefine = "DONORE2_NDS_PATH";
-						} else if (requiresDonorRom == 2) {
-							pathDefine = "DONOR2_NDS_PATH";
-						} else if (requiresDonorRom == 3) {
-							pathDefine = "DONOR3_NDS_PATH";
-						} else if (requiresDonorRom == 40) {
-							pathDefine = "DONORE4_NDS_PATH";
-						} else if (requiresDonorRom == 4) {
-							pathDefine = "DONOR4_NDS_PATH";
-						} else if (requiresDonorRom == 51) {
-							pathDefine = "DONORTWL_NDS_PATH";
-						} else if (requiresDonorRom == 52) {
+						const char* pathDefine = "DONORTWL_NDS_PATH";
+						if (requiresDonorRom == 52) {
 							pathDefine = "DONORTWLONLY_NDS_PATH";
 						}
 						std::string donorRomPath;
@@ -911,20 +865,10 @@ string browseForFile(const vector<string_view> extensionList) {
 						loadPerGameSettings(dirContents.at(fileOffset).name);
 						int dsiModeSetting = (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
 						CIniFile bootstrapini(bootstrapinipath);
-						if (requiresDonorRom == 53) {
-							std::string donorRomPath2;
-							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", "DONORTWL_NDS_PATH", "");
-							donorRomPath2 = bootstrapini.GetString("NDS-BOOTSTRAP", "DONORTWLONLY_NDS_PATH", "");
-							if (((donorRomPath == "" && donorRomPath2 == "") || (access(donorRomPath.c_str(), F_OK) != 0 && access(donorRomPath2.c_str(), F_OK) != 0)) && dsiModeSetting > 0) {
-								proceedToLaunch = donorRomMsg();
-							}
-						} else {
-							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-							if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
-							&& (requiresDonorRom == 20 || requiresDonorRom == 2 || requiresDonorRom == 3 || requiresDonorRom == 40 || requiresDonorRom == 4
-							 || requiresDonorRom == 5 || requiresDonorRom == 51 || (requiresDonorRom == 52 && (isDSiWare || dsiModeSetting > 0)))) {
-								proceedToLaunch = donorRomMsg();
-							}
+						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
+						if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
+						&& (requiresDonorRom == 51 || (requiresDonorRom == 52 && (isDSiWare || dsiModeSetting > 0)))) {
+							proceedToLaunch = donorRomMsg();
 						}
 					}
 					if (proceedToLaunch && checkIfShowAPMsg(dirContents.at(fileOffset).name))

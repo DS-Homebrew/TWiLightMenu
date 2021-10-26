@@ -271,9 +271,6 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			}
 		}
 
-		bool usingB4DS = (!dsiFeatures() && ms().secondaryDevice);
-		bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
-
 		if (num < 40) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
 			romVersion[num] = ndsHeader.romversion;
@@ -281,55 +278,11 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			headerCRC[num] = ndsHeader.headerCRC16;
 			a7mbk6[num] = ndsHeader.a7mbk6;
 			// Check if ROM needs a donor ROM
+			bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 			if (isDSiMode() && a7mbk6[num] == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) && sys().arm7SCFGLocked()) {
 				requiresDonorRom[num] = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
 			} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6[num] == 0x080037C0 && !dsiFeatures()) {
-				requiresDonorRom[num] = 51; // DSi-Enhanced ROM required
-			} else
-			switch (ndsHeader.arm7binarySize) {
-				case 0x22B40:
-				case 0x22BCC:
-					if (usingB4DS || dsiEnhancedMbk) {
-						requiresDonorRom[num] = 51; // DSi-Enhanced ROM required
-					} else {
-						requiresDonorRom[num] = 53; // TWL-type ROM required
-					}
-					break;
-				case 0x23708:
-				case 0x2378C:
-				case 0x237F0:
-					if (usingB4DS || dsiEnhancedMbk) requiresDonorRom[num] = 5; // SDK5 ROM required
-					break;
-				case 0x2352C:
-				case 0x235DC:
-				case 0x23CAC:
-					if (usingB4DS || dsiEnhancedMbk) requiresDonorRom[num] = 20; // SDK2.0 ROM required
-					break;
-				case 0x245C4:
-				case 0x24DA8:
-				case 0x24F50:
-					if (usingB4DS || dsiEnhancedMbk) requiresDonorRom[num] = 2; // SDK2.x ROM required
-					break;
-				case 0x25D00:
-				case 0x25D04:
-				case 0x25D94:
-				case 0x25FFC:
-					if (usingB4DS || dsiEnhancedMbk) requiresDonorRom[num] = 3; // SDK3 ROM required
-					break;
-				case 0x2434C:
-					if (usingB4DS || dsiEnhancedMbk) requiresDonorRom[num] = 40; // SDK4.0 ROM required
-					break;
-				case 0x2484C:
-				case 0x249DC:
-				case 0x249E8:
-					if ((usingB4DS || dsiEnhancedMbk)
-					&& memcmp(ndsHeader.gameCode, "B7N", 3) != 0 // Ben 10: Triple Pack
-					) {
-						requiresDonorRom[num] = 4; // SDK4.x ROM required
-					}
-					break;
-				default:
-					break;
+				requiresDonorRom[num] = 51; // SDK5 ROM required
 			}
 		}
 
@@ -366,12 +319,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		 || (ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
-		{ if (ndsHeader.unitCode != 0) {
+		{ if (ndsHeader.unitCode != 0)
 			isDSiWare[num] = true; // Is a DSiWare game
-			if ((requiresDonorRom[num] == 53 || (dsiEnhancedMbk && requiresDonorRom[num] == 51)) && (!ms().secondaryDevice || (sdFound() && ms().dsiWareToSD))) {
-				requiresDonorRom[num] = 0; // Donor ROM not required
-			}
-		  }
 		}
 
 		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0 // Pop Island
