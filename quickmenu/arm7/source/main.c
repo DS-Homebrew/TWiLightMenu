@@ -117,8 +117,8 @@ TWL_CODE void getConsoleID(void) {
 	u8 base[16]={0};
 	u8 in[16]={0};
 	u8 iv[16]={0};
-	u8 *scratch=(u8*)0x02500200; 
-	u8 *out=(u8*)0x02500000;
+	u8 *scratch=(u8*)0x02F00200; 
+	u8 *out=(u8*)0x02F00000;
 	u8 *key3=(u8*)0x40044D0;
 
 	aes(in, base, iv, 2);
