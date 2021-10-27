@@ -237,18 +237,7 @@ void BootstrapConfig::createSaveFileIfNotExists()
 	fseek(sourceFile, 0, SEEK_SET);
 	fclose(sourceFile);
 
-	bool saveSizeFixNeeded = false;
-
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(saveSizeFixList) / sizeof(saveSizeFixList[0]); i++) {
-		if (memcmp(_gametid.c_str(), saveSizeFixList[i], 3) == 0) {
-			// Found a match.
-			saveSizeFixNeeded = true;
-			break;
-		}
-	}
-
-	if ((orgsavesize == 0 && _saveSize > 0) || (orgsavesize < _saveSize && saveSizeFixNeeded))
+	if ((orgsavesize == 0 && _saveSize > 0) || (orgsavesize < _saveSize))
 	{
 		if (orgsavesize > 0)
 		{
@@ -256,7 +245,7 @@ void BootstrapConfig::createSaveFileIfNotExists()
 		}
 		else
 		{
-			FILE *pFile = fopen(savepath.c_str(), "wb");
+			FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
 			if (pFile)
 			{
 				fseek(pFile, _saveSize - 1, SEEK_SET);
