@@ -228,6 +228,8 @@ bool showSetDonorRomDSiWare(u32 arm7size) {
 	if (requiresDonorRom || !isDSiMode() || *(u32*)0x02FFE1A0 == 0x00403000 || !arm7SCFGLocked) return false;
 
 	if (arm7size==0x1D43C
+	 || arm7size==0x1E1E8
+	 || arm7size==0x1E22C
 	 || arm7size==0x25664
 	 || arm7size==0x257DC
 	 || arm7size==0x25860
