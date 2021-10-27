@@ -8,7 +8,7 @@
 #include <nds/arm9/cache.h>
 #include <nds/arm9/dldi.h>
 
-static vu32* sharedAddr = (vu32*)0x02FFFA00;
+vu32* sharedAddr = (vu32*)0x02FFFA00;
 
 void sdio_done()
 {
