@@ -301,7 +301,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         {
 			u16 dsiCrc16 = swiCRC16(0xFFFF, banner.dsi_icon, 0x1180);
             // Check for DSi Banner.
-            if (bannerSize == NDS_BANNER_SIZE_DSi && banner.version == NDS_BANNER_VER_DSi && ndsBanner.crc[3] == dsiCrc16)
+            if (bannerSize == NDS_BANNER_SIZE_DSi && banner.version == NDS_BANNER_VER_DSi && banner.crc[3] == dsiCrc16)
             {
                 dbg_printf("DSi Banner Found!");
                 _isBannerAnimated = ETrue;
