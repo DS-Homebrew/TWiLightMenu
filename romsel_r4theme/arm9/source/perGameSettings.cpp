@@ -236,7 +236,8 @@ bool showSetDonorRomDSiWare(u32 arm7size) {
 	 || arm7size==0x26CC8
 	 || arm7size==0x26D10
 	 || arm7size==0x26D50
-	 || arm7size==0x26DF4)
+	 || arm7size==0x26DF4
+	 || arm7size==0x28E54)
 	{
 		return true;
 	}
