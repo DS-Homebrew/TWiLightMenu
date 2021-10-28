@@ -235,6 +235,7 @@ bool showSetDonorRomDSiWare(u32 arm7size) {
 	if (requiresDonorRom[CURPOS] || !isDSiMode() || *(u32*)0x02FFE1A0 == 0x00403000 || !sys().arm7SCFGLocked()) return false;
 
 	if (arm7size==0x1D43C
+	 || arm7size==0x1D5A8
 	 || arm7size==0x1E1E8
 	 || arm7size==0x1E22C
 	 || arm7size==0x25664
@@ -248,6 +249,7 @@ bool showSetDonorRomDSiWare(u32 arm7size) {
 	 || arm7size==0x26D48
 	 || arm7size==0x26D50
 	 || arm7size==0x26DF4
+	 || arm7size==0x27FB4
 	 || arm7size==0x28E54)
 	{
 		return true;
