@@ -240,6 +240,7 @@ bool showSetDonorRomDSiWare(u32 arm7size) {
 	 || arm7size==0x25664
 	 || arm7size==0x257DC
 	 || arm7size==0x25860
+	 || arm7size==0x268DC
 	 || arm7size==0x26BA8
 	 || arm7size==0x26C5C
 	 || arm7size==0x26CC8
