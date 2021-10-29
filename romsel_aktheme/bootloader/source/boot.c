@@ -599,8 +599,11 @@ int main (void) {
 		(*(vu16*)0x02FFFCFA) = 0x1041;	// NoCash: channel ch1+7+13
 	}
 
+	char ndsHeaderTitle[12];
+	tonccpy(ndsHeaderTitle, (char*)0x02FFFE00, 12);
+
 	if ((dsiMode && ((ARM9_SRC==0x4000 && !(dsiFlags & BIT(0))) || dsMode))
-	|| (!dsiMode && REG_SCFG_EXT != 0 && memcmp((char*)0x02FFFE00, "TWLMENUPP", 9) != 0 && memcmp((char*)0x02FFFE00, "NDSBOOTSTRAP", 12) != 0)) {
+	|| (!dsiMode && REG_SCFG_EXT != 0 && memcmp(ndsHeaderTitle, "TWLMENUPP", 9) != 0 && memcmp(ndsHeaderTitle, "NDSBOOTSTRAP", 12) != 0)) {
 		NDSTouchscreenMode();
 		*(u16*)0x4000500 = 0x807F;
 		if (dsMode) REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
