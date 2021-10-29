@@ -254,7 +254,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 
 	if (clearBSS && (pDH[DO_fixSections] & FIX_BSS)) { 
 		// Initialise the BSS to 0, only if the disc is being re-inited
-		memset (&pAH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
+		toncset (&pAH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
 	}
 
 	return true;
@@ -440,7 +440,7 @@ void unloadNds9iAsynch (void) {
 }*/
 
 void runNds9i (const char* filename) {
-	memset((void*)0x02800000, 0, 0x500000);
+	toncset((void*)0x02800000, 0, 0x500000);
 
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
@@ -501,14 +501,17 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 	extern bool removeLauncherPatches;
 	if (removeLauncherPatches) {
 		// Patch out splash and sound disable patches
-		if (memcmp((char*)0x0280A591, "1.9", 3) == 0) {
-			*(u8*)0x02806E74 = 'S';
-			*(u8*)0x02806E75 = 'A';
-			*(u8*)0x02806E76 = 'N';
-		} else if (memcmp((char*)0x0280A616, "2.0", 3) == 0) {
-			*(u8*)0x02806E91 = 'S';
-			*(u8*)0x02806E92 = 'A';
-			*(u8*)0x02806E93 = 'N';
+		char ver19String[3];
+		tonccpy(ver19String, (char*)0x0280A591, 3);
+		char ver20String[3];
+		tonccpy(ver20String, (char*)0x0280A616, 3);
+
+		char newID[3] = {'S','A','N'};
+
+		if (memcmp(ver19String, "1.9", 3) == 0) {
+			tonccpy((char*)0x02806E74, newID, 3);
+		} else if (memcmp(ver20String, "2.0", 3) == 0) {
+			tonccpy((char*)0x02806E91, newID, 3);
 		}
 	}
 
