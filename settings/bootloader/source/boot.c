@@ -378,7 +378,7 @@ void limitedModeMemoryPit(void) {
 	REG_SCFG_EXT &= ~(1UL << 31); // Lock SCFG
 }
 
-void limitedMode(void) {
+void limitedMode(bool dsiEnhancedMbk) {
 	// arm7 is master of WRAM-A, arm9 of WRAM-B & C
 	REG_MBK9=0x3000000F;
 
@@ -394,8 +394,13 @@ void limitedMode(void) {
 	*((vu32*)REG_MBK5)=0x9C989490;
 
 	// WRAM mapped to the 0x3700000 - 0x37FFFFF area 
-	// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
-	REG_MBK6=0x080037C0; // same as dsiware
+	if (dsiEnhancedMbk) {
+		// WRAM-A mapped to the 0x3000000 - 0x303FFFF area : 256k
+		REG_MBK6=0x00403000; // same as dsi-enhanced and certain dsiware
+	} else {
+		// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
+		REG_MBK6=0x080037C0; // same as dsiware
+	}
 	// WRAM-B mapped to the 0x3740000 - 0x37BFFFF area : 512k // why? only 256k real memory is there
 	REG_MBK7=0x07C03740; // same as dsiware
 	// WRAM-C mapped to the 0x3700000 - 0x373FFFF area : 256k
@@ -422,8 +427,8 @@ int main (void) {
 		copyLoop((void*)TEMP_MEM, (void*)limitedModeMemoryPit_ARM9, resetMemory2_ARM9_size);
 		(*(vu32*)0x02FFFE24) = (u32)TEMP_MEM;	// Make ARM9 jump to the function
 		while ((*(vu32*)0x02FFFE24) == (u32)TEMP_MEM);
-	} else if (*(u32*)(0x2FFFD0C) == 0x4D44544C) {
-		limitedMode();
+	} else if (*(u32*)(0x2FFFD0C) == 0x6D44544C || *(u32*)(0x2FFFD0C) == 0x4D44544C) {
+		limitedMode(*(u32*)(0x2FFFD0C) == 0x6D44544C);
 		*(u32*)(0x2FFFD0C) = 0;
 	}
 

@@ -2197,7 +2197,7 @@ int main(int argc, char **argv)
 			runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true, -1);
 		} else {
 			if (isDSiMode() && sdFound() && !fcFound && !sys().arm7SCFGLocked() && ms().limitedMode > 0) {
-				*(u32*)0x02FFFD0C = ms().limitedMode == 2 ? 0x4E44544C : 0x4D44544C;
+				*(u32*)0x02FFFD0C = ms().limitedMode == 2 ? 0x4E44544C : ms().limitedMode == 3 ? 0x6D44544C : 0x4D44544C;
 				*(u32*)0x020007F0 = 0x4D44544C;
 			}
 			if (ms().showMainMenu) {
