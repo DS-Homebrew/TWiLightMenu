@@ -287,9 +287,9 @@ void SettingsGUI::drawTopText()
     } else {
         printSmall(true, 4, 0, titleDisplayLength>=60*4 ? STR_SELECT_SETTING_LIST : STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile]);
     }
-    if(_topTextLines < 5 || currentTheme == 4)
+    if(_topTextLines < 6 || currentTheme == 4)
         printSmall(true, 256 - 4, 174, VER_NUMBER, Alignment::right);
-    printLarge(true, 0, (currentTheme == 4 ? 96 : 138) - (calcLargeFontHeight(_topText) / 2), _topText, Alignment::center);
+    printSmall(true, 0, (currentTheme == 4 ? 96 : 138) - (calcLargeFontHeight(_topText) / 2), _topText, Alignment::center);
 }
 
 void SettingsGUI::rotatePage(int rotateAmount)
