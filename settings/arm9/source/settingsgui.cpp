@@ -205,7 +205,7 @@ void SettingsGUI::setTopText(const std::string &text)
     std::u16string temp;
     for(auto word : words) {
         // Split word if the word is too long for a line
-        int width = calcLargeFontWidth(word);
+        int width = calcSmallFontWidth(word);
         if(width > 240) {
             if(temp.length()) {
                 _topText += temp + u"\n";
@@ -220,7 +220,7 @@ void SettingsGUI::setTopText(const std::string &text)
             continue;
         }
 
-        width = calcLargeFontWidth(temp + u" " + word);
+        width = calcSmallFontWidth(temp + u" " + word);
         if(width > 240) {
             _topText += temp + u"\n";
             _topTextLines++;
@@ -289,7 +289,7 @@ void SettingsGUI::drawTopText()
     }
     if(_topTextLines < 6 || currentTheme == 4)
         printSmall(true, 256 - 4, 174, VER_NUMBER, Alignment::right);
-    printSmall(true, 0, (currentTheme == 4 ? 96 : 138) - (calcLargeFontHeight(_topText) / 2), _topText, Alignment::center);
+    printSmall(true, 0, (currentTheme == 4 ? 96 : 138) - (calcSmallFontHeight(_topText) / 2), _topText, Alignment::center);
 }
 
 void SettingsGUI::rotatePage(int rotateAmount)
