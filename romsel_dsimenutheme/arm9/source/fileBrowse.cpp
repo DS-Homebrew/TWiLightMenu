@@ -2919,6 +2919,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						if (ms().showBoxArt)
 							clearBoxArt(); // Clear box art
 						boxArtLoaded = false;
+						bannerTextShown = false;
 						rocketVideo_playVideo = true;
 						shouldersRendered = false;
 						currentBg = 0;
