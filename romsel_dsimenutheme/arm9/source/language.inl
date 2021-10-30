@@ -139,7 +139,6 @@ STRING(HI, "Hi")
 STRING(RELEASE, "Release")
 STRING(NIGHTLY, "Nightly")
 STRING(NOT_USED, "Not Used")
-STRING(DSI_MODE_FORCED, "DSi mode (Forced)")
 STRING(DSI_MODE, "DSi mode")
 STRING(DS_MODE, "DS mode")
 

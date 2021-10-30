@@ -675,9 +675,7 @@ void perGameSettings (std::string filename) {
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_RUN_IN + ":", startAlign);
 				if (perGameSettings_dsiMode == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
-				} else if (perGameSettings_dsiMode == 2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DSI_MODE_FORCED, endAlign);
-				} else if (perGameSettings_dsiMode == 1) {
+				} else if (perGameSettings_dsiMode > 0) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DSI_MODE, endAlign);
 				} else {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DS_MODE, endAlign);

@@ -951,12 +951,12 @@ int main(int argc, char **argv)
 	using TRunIn = TWLSettings::TRunIn;
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 
-	if (isDSiMode() || sdFound()) {
-		gamesPage.option((isDSiMode() ? STR_RUNIN : STR_SYSSD_RUNIN),
+	if (dsiFeatures() || sdFound()) {
+		gamesPage.option((dsiFeatures() ? STR_RUNIN : STR_SYSSD_RUNIN),
 						STR_DESCRIPTION_RUNIN_1,
 						Option::Int(&ms().bstrap_dsiMode),
-						{STR_DS_MODE, STR_DSI_MODE, STR_DSI_MODE_FORCED},
-						{TRunIn::EDSMode, TRunIn::EDSiMode, TRunIn::EDSiModeForced});
+						{STR_AUTO, STR_DS_MODE, STR_DSI_MODE},
+						{TRunIn::EDSiMode, TRunIn::EDSMode, TRunIn::EDSiModeForced});
 	}
 
 	if (isDSiMode() && sdFound() && !sys().arm7SCFGLocked())

@@ -633,9 +633,7 @@ void perGameSettings (std::string filename) {
 				printSmall(false, 32, perGameOpYpos, "Run in:");
 				if (perGameSettings_dsiMode == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
-				} else if (perGameSettings_dsiMode == 2) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "DSi mode (Forced)");
-				} else if (perGameSettings_dsiMode == 1) {
+				} else if (perGameSettings_dsiMode > 0) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "DSi mode");
 				} else {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "DS mode");
