@@ -700,7 +700,7 @@ void perGameSettings (std::string filename) {
 			case 4:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_VRAM_BOOST + ":", startAlign);
 				if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode && unitCode[CURPOS] > 0) : perGameSettings_dsiMode > 0) && runInShown) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_AUTO, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, unitCode[CURPOS] == 0 ? STR_DSI_MODE : STR_AUTO, endAlign);
 				} else {
 					if (perGameSettings_boostVram == -1) {
 						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
