@@ -658,7 +658,7 @@ void perGameSettings (std::string filename) {
 			case 4:
 				printSmall(false, 32, perGameOpYpos, "VRAM Mode:");
 				if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode && romUnitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "DSi mode");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Auto");
 				} else {
 					if (perGameSettings_boostVram == -1) {
 						printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
