@@ -19,6 +19,7 @@
 #include "flashcard.h"
 #include "common/tonccpy.h"
 
+#include "twlClockExcludeMap.h"
 #include "saveMap.h"
 #include "ROMList.h"
 
@@ -144,6 +145,23 @@ void stop (void) {
 	}
 }
 
+/**
+ * Disable TWL clock speed for a specific game.
+ */
+bool setClockSpeed(char gameTid[]) {
+	if (perGameSettings_boostCpu == -1) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
+			if (memcmp(gameTid, twlClockExcludeList[i], 3) == 0) {
+				// Found match
+				return false;
+			}
+		}
+	}
+
+	return perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
+}
+
 char filePath[PATH_MAX];
 
 std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
@@ -191,20 +209,18 @@ void unlaunchBootDSiWare(void) {
 		path = u"sdmc:" + path.substr(3);
 	}
 
-	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;			// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
 	*(u32*)(0x02000810) |= BIT(0);			// Load the title at 2000838h
 	*(u32*)(0x02000810) |= BIT(1);			// Use colors 2000814h
 	*(u16*)(0x02000814) = 0x7FFF;			// Unlaunch Upper screen BG color (0..7FFFh)
 	*(u16*)(0x02000816) = 0x7FFF;			// Unlaunch Lower screen BG color (0..7FFFh)
-	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);	// Unlaunch Reserved (zero)
+	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);	// Unlaunch Reserved (zero)
 	for (uint i = 0; i < std::min(path.length(), 0x103u); i++) {
 		((char16_t*)0x02000838)[i] = path[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 	}
-	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
-		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-	}
+	*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 
 	fifoSendValue32(FIFO_USER_08, 1);	// Reboot
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
@@ -386,7 +402,7 @@ TWL_CODE int lastRunROM() {
 					// bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed(game_TID));
 					bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
 					bootstrapini.SaveIniFile(bootstrapinipath);
 				}
