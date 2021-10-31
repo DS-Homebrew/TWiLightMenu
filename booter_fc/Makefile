@@ -186,9 +186,11 @@ autoboot:
 	mv dstwo.nds "../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds"
 
 	#### SuperCard DSONE
-	cp booter_fc.nds TTMenu.DAT
+	cp booter_fc.nds TTMenu.dat
 	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi TTMenu.dat
-	mv TTMenu.DAT "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/TTMenu.dat"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/Non-SDHC/TTMenu.dat"
+	dlditool flashcart_specifics/DLDI/DSTTDLDIboyakkeyver.dldi TTMenu.dat
+	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/SDHC/TTMenu.dat"
 
 	#### M3 DS Real (for YSMenu reset)
 	cp booter_fc.nds SRESET.DAT
