@@ -47,6 +47,7 @@ u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data);
 
 static bool isDSLite = false;
 
+static int soundVolume = 127;
 volatile int rebootTimer = 0;
 
 /*static bool doFrameRateHackAgain = false;
@@ -66,6 +67,15 @@ void frameRateHack()
 		*(vu16*)0x04000006 = *(vu16*)0x04000006;//repeat line
 	}
 }*/
+
+//---------------------------------------------------------------------------------
+void soundFadeOut() {
+//---------------------------------------------------------------------------------
+	soundVolume -= 5;
+	if (soundVolume < 0) {
+		soundVolume = 0;
+	}
+}
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -89,6 +99,12 @@ void VblankHandler(void) {
 		my_i2cWriteRegister(0x4A, 0x71, 0x01);
 		fifoSendValue32(FIFO_USER_01, 0);
 	}
+	if(fifoCheckValue32(FIFO_USER_02)) {
+		soundFadeOut();
+	} else {
+		soundVolume = 127;
+	}
+	REG_MASTER_VOLUME = soundVolume;
 }
 
 //---------------------------------------------------------------------------------
@@ -249,7 +265,7 @@ int main() {
 			}
 			*(u8*)(0x02FFFD00) = 0xFF;
 		}
-		if (fifoCheckValue32(FIFO_USER_02)) {
+		if (fifoCheckValue32(FIFO_USER_08)) {
 			ReturntoDSiMenu();
 		}
 

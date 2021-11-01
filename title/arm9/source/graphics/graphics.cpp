@@ -246,6 +246,10 @@ void runGraphicIrq(void) {
 	graphicIrqRunning = true;
 }
 
+bool screenFadedIn(void) { return (screenBrightness == 0); }
+
+bool screenFadedOut(void) { return (screenBrightness > 24); }
+
 void loadTitleGraphics() {
 	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);

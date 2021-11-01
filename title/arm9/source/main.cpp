@@ -27,6 +27,7 @@
 #include "twlmenuppvideo.h"
 #include "language.h"
 #include "graphics/fontHandler.h"
+#include "sound.h"
 
 #include "autoboot.h"
 
@@ -61,9 +62,6 @@ bool hiyaAutobootFound = false;
 
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 const char *settingsinipath = DSIMENUPP_INI;
-
-char soundBank[0x7D000] = {0};
-bool soundBankInited = false;
 
 static sNDSHeaderExt NDSHeader;
 
@@ -117,17 +115,6 @@ void doPause(void)
 	}
 	scanKeys();
 }*/
-
-void rebootDSiMenuPP()
-{
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
-	for (int i = 0; i < 25; i++)
-		swiWaitForVBlank();
-	memcpy((u32 *)0x02000300, autoboot_bin, 0x020);
-	fifoSendValue32(FIFO_USER_08, 1); // Reboot DSiMenu++ to avoid potential crashing
-	for (int i = 0; i < 15; i++)
-		swiWaitForVBlank();
-}
 
 void loadMainMenu()
 {
@@ -243,7 +230,7 @@ void unlaunchRomBoot(std::string_view rom) {
 	}
 
 	DC_FlushAll();						// Make reboot not fail
-	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
+	fifoSendValue32(FIFO_USER_08, 1);	// Reboot into DSiWare title, booted via Unlaunch
 	stop();
 }
 
@@ -256,7 +243,7 @@ void ntrStartSdGame(void) {
 	} else {
 		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 		DC_FlushAll();						// Make reboot not fail
-		fifoSendValue32(FIFO_USER_02, 1);
+		fifoSendValue32(FIFO_USER_08, 1);
 		stop();
 	}
 }
@@ -270,14 +257,12 @@ void dsCardLaunch() {
 	*(u32 *)(0x02000314) = 0x00000000;
 	*(u32 *)(0x02000318) = 0x00000013;
 	*(u32 *)(0x0200031C) = 0x00000000;
-	while (*(u16 *)(0x02000306) == 0) { // Keep running, so that CRC16 isn't 0
-		*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
-	}
+	*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
 
 	unlaunchSetHiyaBoot();
 
 	DC_FlushAll();						// Make reboot not fail
-	fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
+	fifoSendValue32(FIFO_USER_08, 1); // Reboot into DSiWare title, booted via Launcher
 	stop();
 }
 
@@ -371,7 +356,7 @@ void lastRunROM()
 				if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 					tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 					DC_FlushAll();
-					fifoSendValue32(FIFO_USER_02, 1);
+					fifoSendValue32(FIFO_USER_08, 1);
 					stop();
 				}
 			}
@@ -421,7 +406,7 @@ void lastRunROM()
 					if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 						tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 						DC_FlushAll();
-						fifoSendValue32(FIFO_USER_02, 1);
+						fifoSendValue32(FIFO_USER_08, 1);
 						stop();
 					}
 				}
@@ -700,7 +685,7 @@ void lastRunROM()
 			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 				tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 				DC_FlushAll();
-				fifoSendValue32(FIFO_USER_02, 1);
+				fifoSendValue32(FIFO_USER_08, 1);
 				stop();
 			}
 		}
@@ -895,7 +880,7 @@ void lastRunROM()
 					if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 						tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 						DC_FlushAll();
-						fifoSendValue32(FIFO_USER_02, 1);
+						fifoSendValue32(FIFO_USER_08, 1);
 						stop();
 					}
 				}
@@ -2037,8 +2022,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-	bool soundBankLoaded = false;
-
 	bool softResetParamsFound = false;
 	const char* softResetParamsPath = (!ms().previousUsedDevice ? "sd:/_nds/nds-bootstrap/softResetParams.bin" : "fat:/_nds/nds-bootstrap/softResetParams.bin");
 	u32 softResetParams = 0;
@@ -2060,27 +2043,6 @@ int main(int argc, char **argv)
 			fclose(file);
 			softResetParamsFound = false;
 		}
-	}
-
-	if (!softResetParamsFound && (ms().dsiSplash || ms().showlogo)) {
-		// Get date
-		int birthMonth = (useTwlCfg ? *(u8*)0x02000446 : PersonalData->birthMonth);
-		int birthDay = (useTwlCfg ? *(u8*)0x02000447 : PersonalData->birthDay);
-		char soundBankPath[32], currentDate[16], birthDate[16];
-		time_t Raw;
-		time(&Raw);
-		const struct tm *Time = localtime(&Raw);
-
-		strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
-		sprintf(birthDate, "%02d/%02d", birthMonth, birthDay);
-
-		sprintf(soundBankPath, "nitro:/soundbank%s.bin", (strcmp(currentDate, birthDate) == 0) ? "_bday" : "");
-
-		// Load sound bank into memory
-		FILE* soundBankF = fopen(soundBankPath, "rb");
-		fread(soundBank, 1, sizeof(soundBank), soundBankF);
-		fclose(soundBankF);
-		soundBankLoaded = true;
 	}
 
 	if ((access(settingsinipath, F_OK) != 0)
@@ -2152,14 +2114,6 @@ int main(int argc, char **argv)
 
 	if (ms().showlogo && !(*(u32*)0x02000000 & BIT(1)))
 	{
-		if (!soundBankLoaded || strncmp((char*)soundBank+4, "*maxmod*", 8) != 0) {
-			// Load sound bank into memory
-			FILE* soundBankF = fopen("nitro:/soundbank.bin", "rb");
-			fread(soundBank, 1, sizeof(soundBank), soundBankF);
-			fclose(soundBankF);
-			soundBankLoaded = true;
-		}
-
 		runGraphicIrq();
 		loadTitleGraphics();
 		fadeType = true;
@@ -2168,6 +2122,7 @@ int main(int argc, char **argv)
 			swiWaitForVBlank();
 		}
 		twlMenuVideo();
+		snd().fadeOutStream();
 	}
 	*(u32*)0x02000000 &= ~(1UL << 1);
 

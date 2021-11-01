@@ -10,7 +10,7 @@
 #include "graphics/graphics.h"
 #include "graphics/lodepng.h"
 
-#include "soundbank.h"
+#include "sound.h"
 
 extern bool useTwlCfg;
 
@@ -22,36 +22,6 @@ extern int screenBrightness;
 //extern void loadROMselectAsynch(void);
 
 bool cartInserted;
-
-extern char soundBank[];
-extern bool soundBankInited;
-
-mm_sound_effect dsiboot;
-mm_sound_effect proceed;
-
-void splashSoundInit() {
-	mmInitDefaultMem((mm_addr)soundBank);
-	soundBankInited = true;
-
-	mmLoadEffect( SFX_DSIBOOT );
-	mmLoadEffect( SFX_SELECT );
-
-	dsiboot = {
-		{ SFX_DSIBOOT } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-
-	proceed = {
-		{ SFX_SELECT } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-}
 
 void bootSplashDSi(void) {
 	u16 whiteCol = 0xFFFF;
@@ -178,7 +148,7 @@ void bootSplashDSi(void) {
 			scanKeys();
 
 			if (!custom && splash.currentFrame() == 24)
-				mmEffectEx(&dsiboot);
+				snd().playDSiBoot();
 		}
 	} else {
 		u16 pressed = 0;
@@ -193,19 +163,19 @@ void bootSplashDSi(void) {
 					healthSafety.unpause();
 				if(pressed || ms().dsiSplashAutoSkip) {
 					splash.resume();
-					mmEffectEx(&proceed);
+					snd().playSelect();
 				}
 			}
 
 			if(healthSafety.waitingForInput()) {
 				if(pressed || ms().dsiSplashAutoSkip) {
 					healthSafety.resume();
-					mmEffectEx(&proceed);
+					snd().playSelect();
 				}
 			}
 
 			if (!custom && splash.currentFrame() == 24)
-				mmEffectEx(&dsiboot);
+				snd().playDSiBoot();
 		}
 	}
 
@@ -233,6 +203,6 @@ void bootSplashInit(void) {
 
 	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 
-	splashSoundInit();
+	snd();
 	bootSplashDSi();
 }

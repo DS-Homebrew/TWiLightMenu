@@ -3,13 +3,12 @@
 #include <stdio.h>
 #include <maxmod9.h>
 
-#include "soundbank.h"
-//#include "soundbank_bin.h"
-
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
 #include "common/gl2d.h"
 #include "graphics/lodepng.h"
+#include "graphics/graphics.h"
+#include "sound.h"
 
 #include "logo_twlmenupp.h"
 //#include "logo_anniversary.h"
@@ -518,25 +517,6 @@ extern char soundBank[];
 extern bool soundBankInited;
 mm_sound_effect bootJingle;
 
-void BootJingleTwlMenu() {
-	if (!soundBankInited) {
-		mmInitDefaultMem((mm_addr)soundBank);
-		soundBankInited = true;
-	}
-
-	mmLoadEffect( SFX_TITLE );
-
-	bootJingle = {
-		{ SFX_TITLE } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-
-	mmEffectEx(&bootJingle);
-}
-
 void twlMenuVideo_topGraphicRender(void) {
 	if (twilightCurrentLine < 0 && menuCurrentLine > 191) {
 		videoDonePlaying = true;
@@ -753,7 +733,8 @@ void twlMenuVideo(void) {
 	twlMenuSplash = true;
 	//dmaFillHalfWords(0, BG_GFX, 0x18000);
 
-	BootJingleTwlMenu();
+	snd();
+	snd().beginStream();
 	
 	char currentDate[16], bgPath[256], logoPath[256];
 	time_t Raw;
@@ -784,25 +765,21 @@ void twlMenuVideo(void) {
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenupp.png");
 	}
 
-	for (int i = 0; i < 30; i++) {
-		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
-		//loadROMselectAsynch();
-		swiWaitForVBlank();
-	}
-
-	controlTopBright = false;
-	fadeColor = false;
-	fadeType = false;
-
 	while (!videoDonePlaying)
 	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 		//loadROMselectAsynch();
+		snd().updateStream();
 		swiWaitForVBlank();
 	}
 	while (dmaBusy(0) || dmaBusy(1));
+
+	controlTopBright = false;
+	fadeColor = false;
+	fadeType = false;
+
+	while (!screenFadedOut()) { swiWaitForVBlank(); }
 
 	// Load RocketRobz logo
 	std::vector<unsigned char> image;
@@ -929,6 +906,7 @@ void twlMenuVideo(void) {
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 		//loadROMselectAsynch();
+		snd().updateStream();
 		swiWaitForVBlank();
 	}
 
@@ -1025,6 +1003,7 @@ void twlMenuVideo(void) {
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 		//loadROMselectAsynch();
+		snd().updateStream();
 		swiWaitForVBlank();
 	}
 }
