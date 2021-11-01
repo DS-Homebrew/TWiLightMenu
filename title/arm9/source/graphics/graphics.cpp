@@ -42,6 +42,7 @@ extern void twlMenuVideo_loadTopGraphics(void);
 extern void twlMenuVideo_topGraphicRender(void);
 
 bool doubleBuffer = false;
+bool doubleBufferTop = true;
 bool secondBuffer = false;
 
 u16 frameBuffer[2][256*192];
@@ -117,7 +118,9 @@ void vBlankHandler() {
 	if (controlTopBright) SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
 	if (controlBottomBright && !ms().macroMode) SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
 	if (doubleBuffer) {
-		dmaCopyWordsAsynch(0, frameBuffer[secondBuffer], BG_GFX, 0x18000);
+		if (doubleBufferTop) {
+			dmaCopyWordsAsynch(0, frameBuffer[secondBuffer], BG_GFX, 0x18000);
+		}
 		dmaCopyWordsAsynch(1, frameBufferBot[secondBuffer], BG_GFX_SUB, 0x18000);
 		secondBuffer = !secondBuffer;
 	}
@@ -133,62 +136,69 @@ void LoadBMP(void) {
 	std::vector<unsigned char> image;
 	unsigned width, height;
 
-	if (ms().macroMode) {
-		// Show RocketRobz logo before showing TWiLight Menu++ logo in Macro mode
-		lodepng::decode(image, width, height, sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.png" : "nitro:/graphics/logo_rocketrobz.png");
-		bool alternatePixel = false;
-		for(unsigned i=0;i<image.size()/4;i++) {
-			image[(i*4)+3] = 0;
-			if (alternatePixel) {
-				if (image[(i*4)] >= 0x4) {
-					image[(i*4)] -= 0x4;
-					image[(i*4)+3] |= BIT(0);
-				}
-				if (image[(i*4)+1] >= 0x4) {
-					image[(i*4)+1] -= 0x4;
-					image[(i*4)+3] |= BIT(1);
-				}
-				if (image[(i*4)+2] >= 0x4) {
-					image[(i*4)+2] -= 0x4;
-					image[(i*4)+3] |= BIT(2);
-				}
+	lodepng::decode(image, width, height, ms().macroMode ? (sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobzYear.png" : "nitro:/graphics/logo_rocketrobzYear.png") : (sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.png" : "nitro:/graphics/logo_rocketrobz.png"));
+	bool alternatePixel = false;
+	for(unsigned i=0;i<image.size()/4;i++) {
+		image[(i*4)+3] = 0;
+		if (alternatePixel) {
+			if (image[(i*4)] >= 0x4) {
+				image[(i*4)] -= 0x4;
+				image[(i*4)+3] |= BIT(0);
 			}
-			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				color = convertVramColorToGrayscale(color);
+			if (image[(i*4)+1] >= 0x4) {
+				image[(i*4)+1] -= 0x4;
+				image[(i*4)+3] |= BIT(1);
 			}
-			frameBuffer[0][i] = color;
-			if (alternatePixel) {
-				if (image[(i*4)+3] & BIT(0)) {
-					image[(i*4)] += 0x4;
-				}
-				if (image[(i*4)+3] & BIT(1)) {
-					image[(i*4)+1] += 0x4;
-				}
-				if (image[(i*4)+3] & BIT(2)) {
-					image[(i*4)+2] += 0x4;
-				}
-			} else {
-				if (image[(i*4)] >= 0x4) {
-					image[(i*4)] -= 0x4;
-				}
-				if (image[(i*4)+1] >= 0x4) {
-					image[(i*4)+1] -= 0x4;
-				}
-				if (image[(i*4)+2] >= 0x4) {
-					image[(i*4)+2] -= 0x4;
-				}
+			if (image[(i*4)+2] >= 0x4) {
+				image[(i*4)+2] -= 0x4;
+				image[(i*4)+3] |= BIT(2);
 			}
-			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				color = convertVramColorToGrayscale(color);
-			}
-			frameBuffer[1][i] = color;
-			if ((i % 256) == 255) alternatePixel = !alternatePixel;
-			alternatePixel = !alternatePixel;
 		}
-		image.clear();
-		doubleBuffer = true;
+		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			color = convertVramColorToGrayscale(color);
+		}
+		if (ms().macroMode) {
+			frameBuffer[0][i] = color;
+		} else {
+			frameBufferBot[0][i] = color;
+		}
+		if (alternatePixel) {
+			if (image[(i*4)+3] & BIT(0)) {
+				image[(i*4)] += 0x4;
+			}
+			if (image[(i*4)+3] & BIT(1)) {
+				image[(i*4)+1] += 0x4;
+			}
+			if (image[(i*4)+3] & BIT(2)) {
+				image[(i*4)+2] += 0x4;
+			}
+		} else {
+			if (image[(i*4)] >= 0x4) {
+				image[(i*4)] -= 0x4;
+			}
+				if (image[(i*4)+1] >= 0x4) {
+				image[(i*4)+1] -= 0x4;
+			}
+			if (image[(i*4)+2] >= 0x4) {
+				image[(i*4)+2] -= 0x4;
+			}
+		}
+		color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			color = convertVramColorToGrayscale(color);
+		}
+		if (ms().macroMode) {
+			frameBuffer[1][i] = color;
+		} else {
+			frameBufferBot[1][i] = color;
+		}
+		if ((i % 256) == 255) alternatePixel = !alternatePixel;
+		alternatePixel = !alternatePixel;
+	}
+	image.clear();
+	doubleBuffer = true;
+	if (ms().macroMode) {
 		fadeType = true;
 		for (int i = 0; i < 60 * 3; i++)
 		{
@@ -206,6 +216,7 @@ void LoadBMP(void) {
 		dmaFillHalfWords(0, BG_GFX, 0x18000);
 	}
 
+	doubleBufferTop = false;
 	lodepng::decode(image, width, height, "nitro:/graphics/effect_twilight.png");
 	for(unsigned i=0;i<image.size()/4;i++) {
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);

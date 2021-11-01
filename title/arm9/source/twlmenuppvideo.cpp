@@ -69,6 +69,7 @@ static glImage snesIcon[1];
 extern u16 frameBuffer[2][256*192];
 extern u16 frameBufferBot[2][256*192];
 extern bool doubleBuffer;
+extern bool doubleBufferTop;
 
 extern u16 convertToDsBmp(u16 val);
 
@@ -765,7 +766,7 @@ void twlMenuVideo(void) {
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenupp.png");
 	}
 
-	while (!videoDonePlaying)
+	for (int i = 0; i < (60*2)+30; i++)
 	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
@@ -773,7 +774,6 @@ void twlMenuVideo(void) {
 		snd().updateStream();
 		swiWaitForVBlank();
 	}
-	while (dmaBusy(0) || dmaBusy(1));
 
 	controlTopBright = false;
 	fadeColor = false;
@@ -781,10 +781,10 @@ void twlMenuVideo(void) {
 
 	while (!screenFadedOut()) { swiWaitForVBlank(); }
 
-	// Load RocketRobz logo
+	// Display app's year
 	std::vector<unsigned char> image;
 	unsigned width, height;
-	lodepng::decode(image, width, height, sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.png" : "nitro:/graphics/logo_rocketrobz.png");
+	lodepng::decode(image, width, height, "nitro:/graphics/appYear.png");
 	bool alternatePixel = false;
 	for(unsigned i=0;i<image.size()/4;i++) {
 		image[(i*4)+3] = 0;
@@ -838,11 +838,19 @@ void twlMenuVideo(void) {
 	}
 	image.clear();
 
+	while (!videoDonePlaying)
+	{
+		snd().updateStream();
+		swiWaitForVBlank();
+	}
+	while (dmaBusy(0) || dmaBusy(1));
+
 	dmaFillHalfWords(0, frameBuffer[0], 0x18000);
 	dmaFillHalfWords(0, frameBuffer[1], 0x18000);
 
 	scaleTwlmText = true;
 	doubleBuffer = true;
+	doubleBufferTop = true;
 	fadeType = true;
 	changeBgAlpha = true;
 
