@@ -47,7 +47,7 @@ extern volatile s32 streaming_buf_ptr;
 extern char debug_buf[256];
 #endif
 
-char soundBank[0x7D000] = {0};
+char soundBank[0x2A000] = {0};
 bool soundBankInited = false;
 
 SoundControl::SoundControl()
