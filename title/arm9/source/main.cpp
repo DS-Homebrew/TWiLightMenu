@@ -1099,11 +1099,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
-		if(REG_SCFG_EXT == 0)
-		{
-			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A7800DS-LITE.nds";
-		}
-		if((!isDSiMode() && REG_SCFG_EXT != 0) || access(argarray[0], F_OK) != 0)
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 		}
