@@ -305,6 +305,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				}
 			}
 		} else if ((memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0)
+				 || (memcmp(ndsHeader.gameTitle, "MAGIC FLOOR", 11) == 0)
 				 || (memcmp(ndsHeader.gameTitle, "UNLAUNCH.DSI", 12) == 0)) {
 			isHomebrew[num] = true;
 			isModernHomebrew[num] = true; // No need to use nds-bootstrap
