@@ -18,6 +18,7 @@
 #include "fileCopy.h"
 #include "flashcard.h"
 #include "common/tonccpy.h"
+#include "defaultSettings.h"
 
 #include "twlClockExcludeMap.h"
 #include "saveMap.h"
@@ -80,9 +81,6 @@ static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
 
 static int gameLanguage = -1;
 static int gameRegion = -2;
-static bool boostCpu = false;	// false == NTR, true == TWL
-static bool boostVram = false;
-static bool bstrap_dsiMode = false;
 
 static bool dsiWareBooter = true;
 static bool dsiWareToSD = true;
@@ -107,9 +105,6 @@ TWL_CODE void LoadSettings(void) {
 	// Default nds-bootstrap settings
 	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
 	gameRegion = settingsini.GetInt("NDS-BOOTSTRAP", "REGION", -2);
-	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 1);
 
 	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
@@ -159,7 +154,7 @@ bool setClockSpeed(char gameTid[]) {
 		}
 	}
 
-	return perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
+	return perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
 }
 
 char filePath[PATH_MAX];
@@ -324,7 +319,7 @@ TWL_CODE int lastRunROM() {
 
 			fclose(f_nds_file);
 
-			if ((useBootstrap && !homebrewBootstrap) || !previousUsedDevice || (unitCode > 0 && (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode)))
+			if ((useBootstrap && !homebrewBootstrap) || !previousUsedDevice || (unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode)))
 			{
 				std::string savepath;
 
@@ -401,16 +396,16 @@ TWL_CODE int lastRunROM() {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 					// bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed(game_TID));
-					bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
+					bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram);
 					bootstrapini.SaveIniFile(bootstrapinipath);
 				}
 
 				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true, -1);
 			} else {
-				bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
-				bool runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
+				bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
+				bool runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
 
 				std::string path;
 				if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
@@ -521,8 +516,8 @@ TWL_CODE int lastRunROM() {
 				argarray.push_back((char*)"wide");
 			}
 
-			bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
-			bool runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
+			bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
+			bool runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
 
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram, runNds_language);
 		} case 3: {

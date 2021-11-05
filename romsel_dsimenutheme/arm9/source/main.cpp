@@ -182,7 +182,7 @@ bool setClockSpeed() {
 		}
 	}
 
-	return perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
+	return perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
 }
 
 /**
@@ -199,7 +199,7 @@ bool setCardReadDMA() {
 		}
 	}
 
-	return perGameSettings_cardReadDMA == -1 ? ms().cardReadDMA : perGameSettings_cardReadDMA;
+	return perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA;
 }
 
 /**
@@ -216,7 +216,7 @@ bool setAsyncReadDMA() {
 		}
 	}
 
-	return perGameSettings_asyncCardRead == -1 ? ms().asyncCardRead : perGameSettings_asyncCardRead;
+	return perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead;
 }
 
 /**
@@ -546,8 +546,8 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 	loadPerGameSettings(filename);
 
 	if (dsiFeatures() && dsGame) {
-		runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
-		runNds_boostVram = perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram;
+		runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
+		runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
 	}
 	if (dsGame) {
 		// Move .sav outside of "saves" folder for flashcard kernel usage
@@ -1434,7 +1434,7 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if (useBackend) {
-					if ((ms().useBootstrap || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode))
+					if ((ms().useBootstrap || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| ((gameTid[CURPOS][0] == 'K' || gameTid[CURPOS][0] == 'Z') && unitCode[CURPOS] > 0)) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
@@ -1523,12 +1523,13 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region == -3 ? ms().gameRegion : perGameSettings_region);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", dsModeForced ? 0 : (perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode));
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", dsModeForced ? 0 : (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode));
 						if (dsiFeatures() || !ms().secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed());
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA());
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", setAsyncReadDMA());
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "SWI_HALT_HOOK", perGameSettings_swiHaltHook == -1 ? DEFAULT_SWI_HALT_HOOK : perGameSettings_swiHaltHook);
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", perGameSettings_expandRomSpace == -1 ? ms().extendedMemory : perGameSettings_expandRomSpace);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", SetDonorSDK());
@@ -1771,8 +1772,8 @@ int main(int argc, char **argv) {
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
 					if (dsiFeatures() && !dsModeDSiWare) {
-						runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
-						runNds_boostVram = perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram;
+						runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
+						runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
 					}
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, language);
 					char text[64];

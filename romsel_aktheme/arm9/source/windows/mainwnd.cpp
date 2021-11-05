@@ -859,11 +859,11 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
     BootstrapConfig config(fileName, fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion, gameConfig.heapShrink);
 
-    config.dsiMode(rominfo.isDSiWare() ? true : (gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode))
+    config.dsiMode(rominfo.isDSiWare() ? true : (gameConfig.dsiMode == PerGameSettings::EDefault ? DEFAULT_DSI_MODE : (int)gameConfig.dsiMode))
 		  .saveNo((int)gameConfig.saveNo)
 		  .ramDiskNo((int)gameConfig.ramDiskNo)
-		  .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
-		  .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
+		  .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? DEFAULT_BOOST_CPU : (bool)gameConfig.boostCpu)
+		  .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? DEFAULT_BOOST_VRAM : (bool)gameConfig.boostVram)
 		  .nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile)
 		  .wideScreen(gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen);
 
@@ -958,7 +958,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		}
 	}
 
-	if ((gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode)
+	if ((gameConfig.dsiMode == PerGameSettings::EDefault ? DEFAULT_DSI_MODE : (int)gameConfig.dsiMode)
 	 && !rominfo.isDSiWare() && !rominfo.hasExtendedBinaries()) {
 		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), "The DSi binaries are missing. Please get a clean dump of this ROM, or start in DS mode.", MB_OK);
 		progressWnd().hide();

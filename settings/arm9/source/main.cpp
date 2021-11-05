@@ -930,8 +930,7 @@ int main(int argc, char **argv)
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
-	if (widescreenFound)
-	{
+	if (widescreenFound) {
 		gamesPage.option((dsiFeatures() ? STR_ASPECTRATIO : STR_SD_ASPECTRATIO),
 			STR_DESCRIPTION_ASPECTRATIO,
 			Option::Bool(&ms().wideScreen),
@@ -940,23 +939,11 @@ int main(int argc, char **argv)
 	}
 
 	if (sys().isRegularDS()) {
-		gamesPage
-			.option(STR_GBABORDER,
-				STR_DESCRIPTION_GBABORDER,
-				Option::Nul(opt_gba_border_select),
-				{STR_PRESS_A},
-				{0});
-	}
-
-	using TRunIn = TWLSettings::TRunIn;
-	using TROMReadLED = BootstrapSettings::TROMReadLED;
-
-	if (dsiFeatures() || sdFound()) {
-		gamesPage.option((dsiFeatures() ? STR_RUNIN : STR_SYSSD_RUNIN),
-						STR_DESCRIPTION_RUNIN_1,
-						Option::Int(&ms().bstrap_dsiMode),
-						{STR_AUTO, STR_DS_MODE, STR_DSI_MODE},
-						{TRunIn::EDSiMode, TRunIn::EDSMode, TRunIn::EDSiModeForced});
+		gamesPage.option(STR_GBABORDER,
+			STR_DESCRIPTION_GBABORDER,
+			Option::Nul(opt_gba_border_select),
+			{STR_PRESS_A},
+			{0});
 	}
 
 	if (isDSiMode() && sdFound() && !sys().arm7SCFGLocked())
@@ -969,22 +956,10 @@ int main(int argc, char **argv)
 	}
 
 	if (dsiFeatures() || sdFound()) {
-		gamesPage.option((dsiFeatures() ? STR_CPUSPEED : STR_SYSSD_CPUSPEED),
-				STR_DESCRIPTION_CPUSPEED_1,
-				Option::Bool(&ms().boostCpu),
-				{"133 MHz (TWL)", "67 MHz (NTR)"},
-				{true, false})
-			.option((dsiFeatures() ? STR_VRAMBOOST : STR_SYSSD_VRAMBOOST),
-				STR_DESCRIPTION_VRAMBOOST_1,
-				Option::Bool(&ms().boostVram),
-				{STR_DSI_MODE, STR_DS_MODE},
-				{true, false});
 		if (sdFound() && flashcardFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
-			gamesPage
-				.option("S1SD: "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+			gamesPage.option("S1SD: "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 			if (dsiFeatures()) {
-				gamesPage
-					.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false});
+				gamesPage.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false});
 			}
 		} else if (!isDSiMode() && flashcardFound()) {
 			gamesPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
@@ -1008,55 +983,30 @@ int main(int argc, char **argv)
 
 	if (isDSiMode() && !sys().arm7SCFGLocked()) {
 		if (ms().consoleModel == 0) {
-			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int(&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT, "Unlaunch"},
-				{0, 1, 2});
+			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int(&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT, "Unlaunch"}, {0, 1, 2});
 		} else {
-			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int(&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT},
-				{0, 1});
+			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int(&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT}, {0, 1});
 		}
 	}
 
-	if (!sys().isRegularDS())
-	{
+	if (!sys().isRegularDS()) {
 		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundFreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
 	}
 
-	if (sdFound()) {
-		gamesPage
-			.option((flashcardFound() ? STR_SYSSD_CARDREADDMA : STR_CARDREADDMA),
-				STR_DESCRIPTION_CARDREADDMA,
-				Option::Bool(&ms().cardReadDMA),
-				{STR_ON, STR_OFF},
-				{true, false})
-			.option((flashcardFound() ? STR_SYSSD_ASYNCHCARDREAD : STR_ASYNCHCARDREAD),
-				STR_DESCRIPTION_ASYNCHCARDREAD,
-				Option::Bool(&ms().asyncCardRead),
-				{STR_ON, STR_OFF},
-				{true, false});
-	}
+	using TROMReadLED = BootstrapSettings::TROMReadLED;
 
-	if (dsiFeatures()) {
-		gamesPage
-			.option(STR_SWIHALTHOOK,
-				STR_DESCRIPTION_SWIHALTHOOK,
-				Option::Bool(&bs().swiHaltHook),
-				{STR_ON, STR_OFF},
-				{true, false});
-	}
-
-	if ((isDSiMode() || sdFound()) && ms().consoleModel == 0)
-	{
+	if ((isDSiMode() || sdFound()) && ms().consoleModel == 0) {
 		if (sdFound()) {
 			gamesPage
 				.option((flashcardFound() ? STR_SYSSD_ROMREADLED : STR_ROMREADLED),
 					STR_DESCRIPTION_ROMREADLED_1,
 					Option::Int(&bs().romreadled),
-					{STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
+					{STR_NONE, STR_WIFI, STR_POWER, STR_CAMERA},
 					{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
 				.option((flashcardFound() ? STR_SD_DMAROMREADLED : STR_DMAROMREADLED),
 					STR_DESCRIPTION_DMAROMREADLED,
 					Option::Int(&bs().dmaromreadled),
-					{STR_SAME_AS_REG, STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
+					{STR_SAME_AS_REG, STR_NONE, STR_WIFI, STR_POWER, STR_CAMERA},
 					{TROMReadLED::ELEDSame, TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
 		}
 		gamesPage.option((dsiFeatures() ? STR_PRECISEVOLUMECTRL : STR_SYSSD_PRECISEVOLUMECTRL),
@@ -1064,14 +1014,14 @@ int main(int argc, char **argv)
 			Option::Bool(&bs().preciseVolumeControl),
 			{STR_ON, STR_OFF},
 			{true, false});
-		if (sdFound() && !sys().arm7SCFGLocked()) {
-			gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool(&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"},
-					{true, false});
-		}
 	}
 
 	if (sdFound()) {
-		gamesPage.option(STR_DSIWARETOSD, STR_DESCRIPTION_DSIWARETOSD, Option::Bool(&ms().dsiWareToSD), {STR_YES, STR_NO},
+		gamesPage
+			.option(STR_DSIWARETOSD,
+				STR_DESCRIPTION_DSIWARETOSD,
+				Option::Bool(&ms().dsiWareToSD),
+				{STR_YES, STR_NO},
 				{true, false})
 			.option(sharedFound ? STR_TWLNANDLOCATION : STR_PHOTOLOCATION,
 				sharedFound ? STR_DESCRIPTION_TWLNANDLOCATION : STR_DESCRIPTION_PHOTOLOCATION,
@@ -1082,23 +1032,20 @@ int main(int argc, char **argv)
 
 	if (isDSiMode() || sdFound()) {
 		gamesPage
-		.option((dsiFeatures() ? STR_EXPANDROMSPACE : STR_SD_EXPANDROMSPACE),
-			(ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS),
-			Option::Int(&ms().extendedMemory),
-			{STR_NO, STR_YES, STR_YES_512KB},
-			{0, 1, 2})
-		.option((dsiFeatures() ? STR_SAVEFATTABLECACHE : STR_SYSSD_SAVEFATTABLECACHE),
-			STR_DESCRIPTION_SAVEFATTABLECACHE,
-			Option::Bool(&bs().cacheFatTable),
-			{STR_YES, STR_NO},
-			{true, false});
+			.option((dsiFeatures() ? STR_EXPANDROMSPACE : STR_SD_EXPANDROMSPACE),
+				(ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS),
+				Option::Int(&ms().extendedMemory),
+				{STR_NO, STR_YES, STR_YES_512KB},
+				{0, 1, 2})
+			.option((dsiFeatures() ? STR_SAVEFATTABLECACHE : STR_SYSSD_SAVEFATTABLECACHE),
+				STR_DESCRIPTION_SAVEFATTABLECACHE,
+				Option::Bool(&bs().cacheFatTable),
+				{STR_YES, STR_NO},
+				{true, false});
 	}
 
 	gamesPage
-		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
-				Option::Bool(&ms().bootstrapFile),
-				{STR_NIGHTLY, STR_RELEASE},
-				{true, false})
+		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1, Option::Bool(&ms().bootstrapFile), {STR_NIGHTLY, STR_RELEASE}, {true, false})
 		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().debug), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().logging), {STR_ON, STR_OFF}, {true, false});
 

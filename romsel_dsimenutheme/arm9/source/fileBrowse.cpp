@@ -2407,7 +2407,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							std::string donorRomPath;
 							bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";
 							loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
-							int bstrap_dsiMode = (perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode);
+							int bstrap_dsiMode = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 							CIniFile bootstrapini(bootstrapinipath);
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 							if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
