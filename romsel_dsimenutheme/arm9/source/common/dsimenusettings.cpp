@@ -118,6 +118,7 @@ TWLSettings::TWLSettings()
 	wideScreen = false;
 
 	dontShowClusterWarning = false;
+	ignoreBlacklists = false;
 }
 
 void TWLSettings::loadSettings()
@@ -247,6 +248,7 @@ void TWLSettings::loadSettings()
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 
 	dontShowClusterWarning = settingsini.GetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
+	ignoreBlacklists = settingsini.GetInt("SRLOADER", "IGNORE_BLACKLISTS", ignoreBlacklists);
 }
 
 void TWLSettings::saveSettings()
@@ -284,6 +286,7 @@ void TWLSettings::saveSettings()
 		settingsini.SetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
 	}
 	
+	settingsini.SetInt("SRLOADER", "IGNORE_BLACKLISTS", ignoreBlacklists);
 	settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
 
 	settingsini.SaveIniFile(settingsinipath);

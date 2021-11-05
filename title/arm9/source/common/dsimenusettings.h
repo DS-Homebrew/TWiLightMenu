@@ -236,6 +236,7 @@ class TWLSettings
     std::string font;
 
     bool wideScreen;
+    bool ignoreBlacklists;
 };
 
 typedef singleton<TWLSettings> menuSettings_s;
