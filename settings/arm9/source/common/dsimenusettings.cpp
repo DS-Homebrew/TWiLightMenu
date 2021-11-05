@@ -71,11 +71,6 @@ TWLSettings::TWLSettings()
 
     gameLanguage = ELangDefault;
     gameRegion = ERegionGame;
-    boostCpu = false;
-    boostVram = false;
-    bstrap_dsiMode = EDSMode;
-	cardReadDMA = true;
-	asyncCardRead = false;
     extendedMemory = 0;
 
     forceSleepPatch = false;
@@ -206,12 +201,7 @@ void TWLSettings::loadSettings()
     // Default nds-bootstrap settings
     gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
     gameRegion = settingsini.GetInt("NDS-BOOTSTRAP", "REGION", gameRegion);
-    boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-    boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-    bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
-	cardReadDMA = settingsini.GetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
-	asyncCardRead = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", asyncCardRead);
-	extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
+    extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 
     forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
     soundFreq = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
@@ -220,7 +210,7 @@ void TWLSettings::loadSettings()
     slot1TouchMode = settingsini.GetInt("SRLOADER", "SLOT1_TOUCH_MODE", slot1TouchMode);
     limitedMode = settingsini.GetInt("SRLOADER", "LIMITED_MODE", limitedMode);
     dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
-	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
+    dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 
     ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     ak_scrollSpeed = settingsini.GetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
@@ -328,11 +318,6 @@ void TWLSettings::saveSettings()
     // Default nds-bootstrap settings
     settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
     settingsini.SetInt("NDS-BOOTSTRAP", "REGION", gameRegion);
-    settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-    settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-    settingsini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
-    settingsini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
-	settingsini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", asyncCardRead);
 	settingsini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 
     settingsini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);

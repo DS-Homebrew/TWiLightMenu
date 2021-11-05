@@ -53,9 +53,6 @@ TWLSettings::TWLSettings()
     bootstrapFile = EReleaseBootstrap;
 
     gameLanguage = ELangDefault;
-    boostCpu = false;
-    boostVram = false;
-    bstrap_dsiMode = EDSiMode;
     forceSleepPatch = false;
     dsiWareBooter = false;
 
@@ -153,9 +150,6 @@ void TWLSettings::loadSettings()
 
     // Default nds-bootstrap settings
     gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
-    boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-    boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-    bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
     forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
     dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 
@@ -224,10 +218,7 @@ void TWLSettings::saveSettings()
     if (!isDSiMode()) settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 
     // Default nds-bootstrap settings
-    /*settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
-    settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-    settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-    settingsini.SetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);*/
+    //settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 
     settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     settingsini.SetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);

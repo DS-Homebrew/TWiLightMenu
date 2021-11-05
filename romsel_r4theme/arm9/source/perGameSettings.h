@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "defaultSettings.h"
+
 extern bool perGameSettingsButtons;
 
 extern bool perGameSettings_directBoot;	// Homebrew only
@@ -14,6 +16,7 @@ extern int perGameSettings_boostCpu;
 extern int perGameSettings_boostVram;
 extern int perGameSettings_cardReadDMA;
 extern int perGameSettings_asyncCardRead;
+extern int perGameSettings_swiHaltHook;
 extern int perGameSettings_bootstrapFile;
 extern int perGameSettings_wideScreen;
 extern int perGameSettings_expandRomSpace;

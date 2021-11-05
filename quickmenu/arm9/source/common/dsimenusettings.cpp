@@ -79,11 +79,6 @@ TWLSettings::TWLSettings()
 
     gameLanguage = ELangDefault;
     gameRegion = ERegionGame;
-    boostCpu = false;
-    boostVram = false;
-    bstrap_dsiMode = EDSiMode;
-    cardReadDMA = true;
-    asyncCardRead = false;
     extendedMemory = 0;
 
     forceSleepPatch = false;
@@ -222,16 +217,11 @@ void TWLSettings::loadSettings()
     // Default nds-bootstrap settings
     gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
     gameRegion = settingsini.GetInt("NDS-BOOTSTRAP", "REGION", gameRegion);
-    boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-    boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-    bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
-    cardReadDMA = settingsini.GetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
-    asyncCardRead = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", asyncCardRead);
     extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 
     forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
     dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
-	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
+    dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 
     dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);

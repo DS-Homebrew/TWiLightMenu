@@ -67,6 +67,7 @@ int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
 int perGameSettings_cardReadDMA = -1;
 int perGameSettings_asyncCardRead = -1;
+int perGameSettings_swiHaltHook = -1;
 int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 int perGameSettings_expandRomSpace = -1;
@@ -117,9 +118,10 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
 	perGameSettings_cardReadDMA = pergameini.GetInt("GAMESETTINGS", "CARD_READ_DMA", -1);
 	perGameSettings_asyncCardRead = pergameini.GetInt("GAMESETTINGS", "ASYNC_CARD_READ", -1);
-    perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
-    perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
-    perGameSettings_expandRomSpace = pergameini.GetInt("GAMESETTINGS", "EXTENDED_MEMORY", -1);
+	perGameSettings_swiHaltHook = pergameini.GetInt("GAMESETTINGS", "SWI_HALT_HOOK", -1);
+	perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
+	perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
+	perGameSettings_expandRomSpace = pergameini.GetInt("GAMESETTINGS", "EXTENDED_MEMORY", -1);
 }
 
 void savePerGameSettings (std::string filename) {
@@ -155,6 +157,7 @@ void savePerGameSettings (std::string filename) {
 		if (dsiFeatures()) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
+			pergameini.SetInt("GAMESETTINGS", "SWI_HALT_HOOK", perGameSettings_swiHaltHook);
 		}
 		if (!ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
@@ -198,7 +201,7 @@ bool checkIfDSiMode (std::string filename) {
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew[CURPOS] ? true : -1));
 	if (perGameSettings_dsiMode == -1) {
-		return ms().bstrap_dsiMode;
+		return DEFAULT_DSI_MODE;
 	} else {
 		return perGameSettings_dsiMode;
 	}
@@ -534,6 +537,10 @@ void perGameSettings (std::string filename) {
 					perGameOp[perGameOps] = 12;	// Async Card Read
 				}
 			}
+			if (dsiFeatures()) {
+				perGameOps++;
+				perGameOp[perGameOps] = 13;	// SWI Halt Hook
+			}
 			if ((dsiFeatures() || !ms().secondaryDevice)
 			 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
 				perGameOps++;
@@ -619,7 +626,7 @@ void perGameSettings (std::string filename) {
 		Alignment endAlign = ms().rtl() ? Alignment::left : Alignment::right;
 		int perGameOpStartXpos = ms().rtl() ? 256 - 24 : 24;
 		int perGameOpEndXpos = ms().rtl() ? 24 : 256 - 24;
-		bool flashcardKernelOnly = (!ms().useBootstrap && ms().secondaryDevice && !isHomebrew[CURPOS] && unitCode[CURPOS] == 2 && (perGameSettings_dsiMode==-1 ? !ms().bstrap_dsiMode : perGameSettings_dsiMode==0));
+		bool flashcardKernelOnly = (!ms().useBootstrap && ms().secondaryDevice && !isHomebrew[CURPOS] && unitCode[CURPOS] == 2 && (perGameSettings_dsiMode==-1 ? !DEFAULT_DSI_MODE : perGameSettings_dsiMode==0));
 
 		printSmall(false, ms().rtl() ? 256 - 16 : 16, row1Y, dirContName, startAlign);
 		//if (showSDKVersion) printSmall(false, 16, row2Y, (useTwlCfg ? "TwlCfg found!" : SDKnumbertext));
@@ -683,7 +690,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 3:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_ARM9_CPU_SPEED + ":", startAlign);
-				if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode && unitCode[CURPOS] > 0) : perGameSettings_dsiMode > 0) && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && unitCode[CURPOS] > 0) : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, "133mhz (TWL)", endAlign);
 				} else {
 					if (perGameSettings_boostCpu == -1) {
@@ -697,7 +704,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 4:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_VRAM_BOOST + ":", startAlign);
-				if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode && unitCode[CURPOS] > 0) : perGameSettings_dsiMode > 0) && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && unitCode[CURPOS] > 0) : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, unitCode[CURPOS] == 0 ? STR_DSI_MODE : STR_AUTO, endAlign);
 				} else {
 					if (perGameSettings_boostVram == -1) {
@@ -800,6 +807,16 @@ void perGameSettings (std::string filename) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
 				}
 				break;
+			case 13:
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SWI_HALT_HOOK + ":", startAlign);
+				if (perGameSettings_swiHaltHook == -1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+				} else if (perGameSettings_swiHaltHook == 1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
+				} else {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
+				}
+				break;
 		}
 		perGameOpYpos += 14;
 		}
@@ -882,13 +899,13 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 3:
-						if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode == 0 || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostCpu--;
 							if (perGameSettings_boostCpu < -1) perGameSettings_boostCpu = 1;
 						}
 						break;
 					case 4:
-						if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode == 0 || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostVram--;
 							if (perGameSettings_boostVram < -1) perGameSettings_boostVram = 1;
 						}
@@ -935,6 +952,10 @@ void perGameSettings (std::string filename) {
 						perGameSettings_asyncCardRead--;
 						if (perGameSettings_asyncCardRead < -1) perGameSettings_asyncCardRead = 1;
 						break;
+					case 13:
+						perGameSettings_swiHaltHook--;
+						if (perGameSettings_swiHaltHook < -1) perGameSettings_swiHaltHook = 1;
+						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
@@ -966,13 +987,13 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_dsiMode > 2-isHomebrew[CURPOS]) perGameSettings_dsiMode = -1;
 						break;
 					case 3:
-						if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode == 0 || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostCpu++;
 							if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
 						}
 						break;
 					case 4:
-						if ((perGameSettings_dsiMode==-1 ? (ms().bstrap_dsiMode == 0 || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostVram++;
 							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
 						}
@@ -1030,6 +1051,10 @@ void perGameSettings (std::string filename) {
 					case 12:
 						perGameSettings_asyncCardRead++;
 						if (perGameSettings_asyncCardRead > 1) perGameSettings_asyncCardRead = -1;
+						break;
+					case 13:
+						perGameSettings_swiHaltHook++;
+						if (perGameSettings_swiHaltHook > 1) perGameSettings_swiHaltHook = -1;
 						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();

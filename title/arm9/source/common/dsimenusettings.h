@@ -2,6 +2,7 @@
 #include <nds.h>
 #include <string>
 #include "common/singleton.h"
+#include "defaultSettings.h"
 
 #pragma once
 #ifndef _DSIMENUPPSETTINGS_H_
@@ -96,8 +97,8 @@ class TWLSettings
     enum TRunIn
     {
         EDSMode = 0,
-        EDSiMode = 1,
-        EDSiModeForced = 2
+        EAutoDSiMode = 1,
+        EDSiMode = 2
     };
 
     enum TSlot1LaunchMethod
@@ -199,11 +200,6 @@ class TWLSettings
 
     int gameLanguage;
     int gameRegion;
-    bool boostCpu;
-    bool boostVram;
-    int bstrap_dsiMode;
-	bool cardReadDMA;
-	bool asyncCardRead;
 	int extendedMemory;
 
 	bool forceSleepPatch;

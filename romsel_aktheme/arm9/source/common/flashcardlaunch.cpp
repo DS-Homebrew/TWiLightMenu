@@ -24,8 +24,8 @@ int loadGameOnFlashcard (std::string ndsPath, bool usePerGameSettings) {
 
 		PerGameSettings gameConfig(filename);
 
-		runNds_boostCpu = gameConfig.boostCpu == -1 ? ms().boostCpu : gameConfig.boostCpu;
-		runNds_boostVram = gameConfig.boostVram == -1 ? ms().boostVram : gameConfig.boostVram;
+		runNds_boostCpu = gameConfig.boostCpu == -1 ? DEFAULT_BOOST_CPU : gameConfig.boostCpu;
+		runNds_boostVram = gameConfig.boostVram == -1 ? DEFAULT_BOOST_VRAM : gameConfig.boostVram;
 	}
 
 	std::string launchPath;

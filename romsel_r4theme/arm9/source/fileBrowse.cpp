@@ -106,7 +106,6 @@ extern int showMd;
 extern bool showDirectories;
 extern bool showHidden;
 extern bool preventDeletion;
-extern int bstrap_dsiMode;
 extern int spawnedtitleboxes;
 extern int cursorPosition[2];
 extern int startMenu_cursorPosition;
@@ -863,7 +862,7 @@ string browseForFile(const vector<string_view> extensionList) {
 						std::string donorRomPath;
 						bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";
 						loadPerGameSettings(dirContents.at(fileOffset).name);
-						int dsiModeSetting = (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
+						int dsiModeSetting = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 						CIniFile bootstrapini(bootstrapinipath);
 						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 						if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)

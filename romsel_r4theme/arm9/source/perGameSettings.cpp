@@ -47,7 +47,6 @@ extern int consoleModel;
 extern bool macroMode;
 extern bool lcdSwapped;
 
-extern int bstrap_dsiMode;
 extern bool useBootstrap;
 extern bool dsiWareBooter;
 extern int theme;
@@ -72,6 +71,7 @@ int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
 int perGameSettings_cardReadDMA = -1;
 int perGameSettings_asyncCardRead = -1;
+int perGameSettings_swiHaltHook = -1;
 int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 int perGameSettings_expandRomSpace = -1;
@@ -110,9 +110,10 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
 	perGameSettings_cardReadDMA = pergameini.GetInt("GAMESETTINGS", "CARD_READ_DMA", -1);
 	perGameSettings_asyncCardRead = pergameini.GetInt("GAMESETTINGS", "ASYNC_CARD_READ", -1);
+	perGameSettings_swiHaltHook = pergameini.GetInt("GAMESETTINGS", "SWI_HALT_HOOK", -1);
 	perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
 	perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
-    perGameSettings_expandRomSpace = pergameini.GetInt("GAMESETTINGS", "EXTENDED_MEMORY", -1);
+	perGameSettings_expandRomSpace = pergameini.GetInt("GAMESETTINGS", "EXTENDED_MEMORY", -1);
 }
 
 void savePerGameSettings (std::string filename) {
@@ -148,6 +149,7 @@ void savePerGameSettings (std::string filename) {
 		if (dsiFeatures()) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
+			pergameini.SetInt("GAMESETTINGS", "SWI_HALT_HOOK", perGameSettings_swiHaltHook);
 		}
 		if (!secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
@@ -191,7 +193,7 @@ bool checkIfDSiMode (std::string filename) {
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew ? true : -1));
 	if (perGameSettings_dsiMode == -1) {
-		return bstrap_dsiMode;
+		return DEFAULT_DSI_MODE;
 	} else {
 		return perGameSettings_dsiMode;
 	}
@@ -517,6 +519,10 @@ void perGameSettings (std::string filename) {
 					perGameOp[perGameOps] = 12;	// Async Card Read
 				}
 			}
+			if (dsiFeatures()) {
+				perGameOps++;
+				perGameOp[perGameOps] = 13;	// SWI Halt Hook
+			}
 			if ((dsiFeatures() || !secondaryDevice)
 			 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
 				perGameOps++;
@@ -582,7 +588,7 @@ void perGameSettings (std::string filename) {
 		printSmallRightAlign(false, 232, 90, gameTIDText);
 
 		int perGameOpYpos = 102;
-		bool flashcardKernelOnly = (!useBootstrap && secondaryDevice && !isHomebrew && romUnitCode == 2 && (perGameSettings_dsiMode==-1 ? !bstrap_dsiMode : perGameSettings_dsiMode==0));
+		bool flashcardKernelOnly = (!useBootstrap && secondaryDevice && !isHomebrew && romUnitCode == 2 && (perGameSettings_dsiMode==-1 ? !DEFAULT_DSI_MODE : perGameSettings_dsiMode==0));
 
 		if (showPerGameSettings) {
 			printSmall(false, 24, 102+(perGameSettings_cursorPosition*12)-(firstPerGameOpShown*12), ">");
@@ -641,7 +647,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 3:
 				printSmall(false, 32, perGameOpYpos, "ARM9 CPU Speed:");
-				if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode && romUnitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && romUnitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "133mhz (TWL)");
 				} else {
 					if (perGameSettings_boostCpu == -1) {
@@ -655,7 +661,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 4:
 				printSmall(false, 32, perGameOpYpos, "VRAM Mode:");
-				if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode && romUnitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
+				if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && romUnitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, romUnitCode == 0 ? "DSi mode" : "Auto");
 				} else {
 					if (perGameSettings_boostVram == -1) {
@@ -758,6 +764,16 @@ void perGameSettings (std::string filename) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
 				}
 				break;
+			case 13:
+				printSmall(false, 32, perGameOpYpos, "SWI Halt Hook:");
+				if (perGameSettings_swiHaltHook == -1) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+				} else if (perGameSettings_swiHaltHook == 1) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
+				} else {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
+				}
+				break;
 		}
 		perGameOpYpos += 12;
 		}
@@ -832,13 +848,13 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 3:
-						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostCpu--;
 							if (perGameSettings_boostCpu < -1) perGameSettings_boostCpu = 1;
 						}
 						break;
 					case 4:
-						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostVram--;
 							if (perGameSettings_boostVram < -1) perGameSettings_boostVram = 1;
 						}
@@ -885,6 +901,10 @@ void perGameSettings (std::string filename) {
 						perGameSettings_asyncCardRead--;
 						if (perGameSettings_asyncCardRead < -1) perGameSettings_asyncCardRead = 1;
 						break;
+					case 13:
+						perGameSettings_swiHaltHook--;
+						if (perGameSettings_swiHaltHook < -1) perGameSettings_swiHaltHook = 1;
+						break;
 				}
 				perGameSettingsChanged = true;
 			} else if ((pressed & KEY_A) || (held & KEY_RIGHT)) {
@@ -915,13 +935,13 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_dsiMode > 2-isHomebrew) perGameSettings_dsiMode = -1;
 						break;
 					case 3:
-						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostCpu++;
 							if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
 						}
 						break;
 					case 4:
-						if ((perGameSettings_dsiMode==-1 ? (bstrap_dsiMode == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostVram++;
 							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
 						}
@@ -979,6 +999,10 @@ void perGameSettings (std::string filename) {
 					case 12:
 						perGameSettings_asyncCardRead++;
 						if (perGameSettings_asyncCardRead > 1) perGameSettings_asyncCardRead = -1;
+						break;
+					case 13:
+						perGameSettings_swiHaltHook++;
+						if (perGameSettings_swiHaltHook > 1) perGameSettings_swiHaltHook = -1;
 						break;
 				}
 				perGameSettingsChanged = true;

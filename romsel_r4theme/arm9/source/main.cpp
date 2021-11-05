@@ -173,11 +173,6 @@ int guiLanguage = -1;
 int titleLanguage = -1;
 int gameLanguage = -1;
 int gameRegion = -2;
-bool boostCpu = false;	// false == NTR, true == TWL
-bool boostVram = false;
-int bstrap_dsiMode = 1;
-bool cardReadDMA = true;
-bool asyncCardRead = false;
 int bstrap_extendedMemory = 0;
 bool forceSleepPatch = false;
 bool dsiWareBooter = true;
@@ -281,11 +276,6 @@ void LoadSettings(void) {
 	// Default nds-bootstrap settings
 	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
 	gameRegion = settingsini.GetInt("NDS-BOOTSTRAP", "REGION", -3);
-	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-	cardReadDMA = settingsini.GetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
-	asyncCardRead = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", asyncCardRead);
 	bstrap_extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", 0);
 
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
@@ -583,7 +573,7 @@ bool setClockSpeed(const char* filename) {
 		}
 	}
 
-	return perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
+	return perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
 }
 
 /**
@@ -607,7 +597,7 @@ bool setCardReadDMA(const char* filename) {
 		}
 	}
 
-	return perGameSettings_cardReadDMA == -1 ? cardReadDMA : perGameSettings_cardReadDMA;
+	return perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA;
 }
 
 /**
@@ -631,7 +621,7 @@ bool setAsyncReadDMA(const char* filename) {
 		}
 	}
 
-	return perGameSettings_asyncCardRead == -1 ? asyncCardRead : perGameSettings_asyncCardRead;
+	return perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead;
 }
 
 /**
@@ -1005,8 +995,8 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 	loadPerGameSettings(filename);
 
 	if (dsiFeatures() && dsGame) {
-		runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
-		runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
+		runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
+		runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
 	}
 	if (dsGame) {
 		// Move .sav outside of "saves" folder for flashcard kernel usage
@@ -2045,7 +2035,7 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if(useBackend) {
-					if ((useBootstrap || !secondaryDevice) || (dsiFeatures() && romUnitCode > 0 && (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode))
+					if ((useBootstrap || !secondaryDevice) || (dsiFeatures() && romUnitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| ((game_TID[0] == 'K' || game_TID[0] == 'Z') && romUnitCode > 0)) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
@@ -2111,12 +2101,13 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", getGuiLanguageString());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region == -3 ? gameRegion : perGameSettings_region);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", dsModeForced ? 0 : (perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode));
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", dsModeForced ? 0 : (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode));
 						if (dsiFeatures() || !secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed(argarray[0]));
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_DSI_MODE : perGameSettings_boostVram);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA(argarray[0]));
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", setAsyncReadDMA(argarray[0]));
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "SWI_HALT_HOOK", perGameSettings_swiHaltHook == -1 ? DEFAULT_SWI_HALT_HOOK : perGameSettings_swiHaltHook);
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", perGameSettings_expandRomSpace == -1 ? bstrap_extendedMemory : perGameSettings_expandRomSpace);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", SetDonorSDK(argarray[0]));
@@ -2325,8 +2316,8 @@ int main(int argc, char **argv) {
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
 					if (dsiFeatures() && !dsModeDSiWare) {
-						runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
-						runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
+						runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
+						runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
 					}
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, runNds_language);
 					char text[32];
