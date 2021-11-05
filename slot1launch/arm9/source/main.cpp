@@ -25,6 +25,7 @@
 #include <string.h>
 #include <list>
 
+#include "twlClockExcludeMap.h"
 #include "defaultSettings.h"
 #include "tonccpy.h"
 #include "inifile.h"
@@ -33,6 +34,23 @@
 #include "crc.h"
 
 sNDSHeader ndsHeader;
+
+/**
+ * Disable TWL clock speed for a specific game.
+ */
+bool setClockSpeed(int setting, char gameTid[]) {
+	if (setting == -1) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
+			if (memcmp(gameTid, twlClockExcludeList[i], 3) == 0) {
+				// Found match
+				return false;
+			}
+		}
+	}
+
+	return setting == -1 ? DEFAULT_BOOST_CPU : setting;
+}
 
 u8 cheatData[0x8000] = {0};
 
@@ -58,7 +76,7 @@ int main() {
 	bool consoleInited = false;
 	bool scfgUnlock = false;
 	int TWLMODE = false;
-	int TWLCLK = false;	// false == NTR, true == TWL
+	bool TWLCLK = false;	// false == NTR, true == TWL
 	int TWLVRAM = false;
 	bool TWLTOUCH = false;
 	bool soundFreq = false;
@@ -97,7 +115,7 @@ int main() {
 			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
 
 			TWLMODE = pergameini.GetInt("GAMESETTINGS","DSI_MODE",-1);
-			TWLCLK = pergameini.GetInt("GAMESETTINGS","BOOST_CPU",-1);
+			TWLCLK = setClockSpeed(pergameini.GetInt("GAMESETTINGS","BOOST_CPU",-1), gameTid);
 			TWLVRAM = pergameini.GetInt("GAMESETTINGS","BOOST_VRAM",-1);
 			TWLTOUCH = settingsini.GetInt("SRLOADER","SLOT1_TOUCH_MODE",0);
 			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);
@@ -106,9 +124,6 @@ int main() {
 
 			if (TWLMODE == -1) {
 				TWLMODE = DEFAULT_DSI_MODE;
-			}
-			if (TWLCLK == -1) {
-				TWLCLK = DEFAULT_BOOST_CPU;
 			}
 			if (TWLVRAM == -1) {
 				TWLVRAM = DEFAULT_BOOST_VRAM;
