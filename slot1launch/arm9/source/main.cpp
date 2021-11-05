@@ -23,9 +23,10 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <malloc.h>
 #include <list>
 
+#include "defaultSettings.h"
+#include "tonccpy.h"
 #include "inifile.h"
 #include "nds_card.h"
 #include "launch_engine.h"
@@ -56,9 +57,9 @@ int main() {
 
 	bool consoleInited = false;
 	bool scfgUnlock = false;
-	bool TWLMODE = false;
-	bool TWLCLK = false;	// false == NTR, true == TWL
-	bool TWLVRAM = false;
+	int TWLMODE = false;
+	int TWLCLK = false;	// false == NTR, true == TWL
+	int TWLVRAM = false;
 	bool TWLTOUCH = false;
 	bool soundFreq = false;
 	bool runCardEngine = false;
@@ -72,16 +73,46 @@ int main() {
 	}
 	
 	if (isDSiMode()) {
+		// Tell Arm7 it's ready for card reset (if card reset is nessecery)
+		fifoSendValue32(FIFO_USER_01, 1);
+		// Waits for Arm7 to finish card reset (if nessecery)
+		fifoWaitValue32(FIFO_USER_03);
+
+		// Wait for card to stablize before continuing
+		for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+
+		sysSetCardOwner (BUS_OWNER_ARM9);
+
+		cardReadHeader((uint8*)&ndsHeader);
+
+		for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+
 		if (fatInitDefault()) {
+			char gameTid[5];
+			tonccpy(gameTid, ndsHeader.gameCode, 4);
+			char pergamefilepath[256];
+			sprintf(pergamefilepath, "/_nds/TWiLightMenu/gamesettings/slot1/%s.ini", gameTid);
+
+			CIniFile pergameini(pergamefilepath);
 			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
 
-			TWLMODE = settingsini.GetInt("NDS-BOOTSTRAP","DSI_MODE",0);
-			TWLCLK = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_CPU",0);
-			TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_VRAM",0);
+			TWLMODE = pergameini.GetInt("GAMESETTINGS","DSI_MODE",-1);
+			TWLCLK = pergameini.GetInt("GAMESETTINGS","BOOST_CPU",-1);
+			TWLVRAM = pergameini.GetInt("GAMESETTINGS","BOOST_VRAM",-1);
 			TWLTOUCH = settingsini.GetInt("SRLOADER","SLOT1_TOUCH_MODE",0);
 			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);
 			runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
 			EnableSD = settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0);
+
+			if (TWLMODE == -1) {
+				TWLMODE = DEFAULT_DSI_MODE;
+			}
+			if (TWLCLK == -1) {
+				TWLCLK = DEFAULT_BOOST_CPU;
+			}
+			if (TWLVRAM == -1) {
+				TWLVRAM = DEFAULT_BOOST_VRAM;
+			}
 
 			//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
 			//	consoleOn = true;
@@ -124,20 +155,6 @@ int main() {
 			fifoSendValue32(FIFO_USER_07, 1);
 		}
 
-		// Tell Arm7 it's ready for card reset (if card reset is nessecery)
-		fifoSendValue32(FIFO_USER_01, 1);
-		// Waits for Arm7 to finish card reset (if nessecery)
-		fifoWaitValue32(FIFO_USER_03);
-
-		// Wait for card to stablize before continuing
-		for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
-
-		sysSetCardOwner (BUS_OWNER_ARM9);
-
-		cardReadHeader((uint8*)&ndsHeader);
-
-		for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
-
 		if (ndsHeader.unitCode > 0 && TWLMODE) {
 			runCardEngine = false;
 		}
@@ -147,7 +164,7 @@ int main() {
 		if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 			consoleDemoInit();
 			consoleInited = true;
-			printf ("Please remove your flashcard.\n");
+			iprintf ("Please remove your flashcard.\n");
 			do {
 				swiWaitForVBlank();
 				cardReadHeader((uint8*)&ndsHeader);
@@ -166,7 +183,7 @@ int main() {
 			} else {
 				consoleClear();
 			}
-			printf ("Insert a DS game.\n");
+			iprintf ("Insert a DS game.\n");
 			do {
 				swiWaitForVBlank();
 				cardReadHeader((uint8*)&ndsHeader);
@@ -191,7 +208,7 @@ int main() {
 					fclose(wideCheatFile);
 					cheatData[wideCheatSize+3] = 0xCF;
 				}
-				memcpy((void*)0x023F0000, cheatData, 0x8000);
+				tonccpy((void*)0x023F0000, cheatData, 0x8000);
 			}
 			runLaunchEngine ((memcmp(ndsHeader.gameCode, "UBRP", 4) == 0 || memcmp(ndsHeader.gameCode, "AMFE", 4) == 0 || memcmp(ndsHeader.gameCode, "ALXX", 4) == 0), (memcmp(ndsHeader.gameCode, "UBRP", 4) == 0), EnableSD, language, scfgUnlock, TWLMODE, TWLCLK, TWLVRAM, TWLTOUCH, soundFreq, runCardEngine);
 		}
