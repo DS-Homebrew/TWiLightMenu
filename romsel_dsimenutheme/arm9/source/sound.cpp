@@ -177,11 +177,16 @@ SoundControl::SoundControl()
 			case 5: {
 				std::string startPath = (devicePath+TFN_HBL_START_SOUND_BG_CACHE);
 				if (access(startPath.c_str(), F_OK) != 0) {
-					adpcm_main(std::string(TFN_HBL_START_SOUND_BG).c_str(), startPath.c_str(), true);
+					if (adpcm_main(std::string(TFN_HBL_START_SOUND_BG).c_str(), startPath.c_str(), true) == -1) {
+						remove(startPath.c_str());
+					}
 				}
 				std::string loopPath = (devicePath+TFN_HBL_LOOP_SOUND_BG_CACHE);
 				if (access(loopPath.c_str(), F_OK) != 0) {
-					adpcm_main(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true);
+					if (adpcm_main(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true) == -1) {
+						remove(startPath.c_str());
+						remove(loopPath.c_str());
+					}
 				}
 				stream.sampling_rate = 44100;	 		// 44100Hz
 				stream.format = MM_STREAM_8BIT_STEREO;
@@ -192,7 +197,9 @@ SoundControl::SoundControl()
 			case 4: {
 				std::string musicPath = (devicePath+TFN_CLASSIC_SOUND_BG_CACHE);
 				if (access(musicPath.c_str(), F_OK) != 0) {
-					adpcm_main(std::string(TFN_CLASSIC_SOUND_BG).c_str(), musicPath.c_str(), false);
+					if (adpcm_main(std::string(TFN_CLASSIC_SOUND_BG).c_str(), musicPath.c_str(), false) == -1) {
+						remove(musicPath.c_str());
+					}
 				}
 				stream.sampling_rate = 44100;	 		// 44100Hz
 				stream_source = fopen(musicPath.c_str(), "rb");
@@ -200,11 +207,16 @@ SoundControl::SoundControl()
 			case 2: {
 				std::string startPath = (devicePath+TFN_SHOP_START_SOUND_BG_CACHE);
 				if (access(startPath.c_str(), F_OK) != 0) {
-					adpcm_main(std::string(TFN_SHOP_START_SOUND_BG).c_str(), startPath.c_str(), true);
+					if (adpcm_main(std::string(TFN_SHOP_START_SOUND_BG).c_str(), startPath.c_str(), true) == -1) {
+						remove(startPath.c_str());
+					}
 				}
 				std::string loopPath = (devicePath+TFN_SHOP_LOOP_SOUND_BG_CACHE);
 				if (access(loopPath.c_str(), F_OK) != 0) {
-					adpcm_main(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true);
+					if (adpcm_main(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true) == -1) {
+						remove(startPath.c_str());
+						remove(loopPath.c_str());
+					}
 				}
 				stream.sampling_rate = 44100;	 		// 44100Hz
 				stream.format = MM_STREAM_8BIT_STEREO;
@@ -228,7 +240,9 @@ SoundControl::SoundControl()
 					fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
 					fclose(stream_source);
 					if (access(cachePath.c_str(), F_OK) != 0 && wavFormat == 0x11) {
-						adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2);
+						if (adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2) == -1) {
+							remove(cachePath.c_str());
+						}
 					}
 				}
 				stream_source = fopen(cachePath.c_str(), "rb");
@@ -237,7 +251,9 @@ SoundControl::SoundControl()
 			default: {
 				std::string musicPath = (devicePath+TFN_DEFAULT_SOUND_BG_CACHE);
 				if (access(musicPath.c_str(), F_OK) != 0) {
-					adpcm_main(std::string(TFN_DEFAULT_SOUND_BG).c_str(), musicPath.c_str(), true);
+					if (adpcm_main(std::string(TFN_DEFAULT_SOUND_BG).c_str(), musicPath.c_str(), true) == -1) {
+						remove(musicPath.c_str());
+					}
 				}
 				stream.sampling_rate = 32000;	 		// 32000Hz
 				stream.format = MM_STREAM_8BIT_STEREO;
