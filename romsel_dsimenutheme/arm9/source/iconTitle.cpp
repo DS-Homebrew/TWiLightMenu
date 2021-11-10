@@ -282,7 +282,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			if (isDSiMode() && a7mbk6[num] == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) && sys().arm7SCFGLocked()) {
 				requiresDonorRom[num] = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
 			} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6[num] == 0x080037C0 && !dsiFeatures()) {
-				requiresDonorRom[num] = 51; // SDK5 ROM required
+				requiresDonorRom[num] = 51; // DSi-Enhanced ROM required
 			}
 		}
 
@@ -323,6 +323,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0 // Pop Island
 		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0 // Pop Island: Paperfield
 		  || memcmp(ndsHeader.gameCode, "KGK", 3) == 0 // Glory Days: Tactical Defense
+		  || memcmp(ndsHeader.gameCode, "K2D", 3) == 0 // Nintendo DSi + Internet
 		) && !dsiFeatures()) {
 			isDSiWare[num] = false;
 		}
