@@ -35,6 +35,10 @@
 #include "common/systemdetails.h"
 #include "myDSiMode.h"
 
+#include "twlClockExcludeMap.h"
+#include "dmaExcludeMap.h"
+#include "asyncReadExcludeMap.h"
+
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 15
 #define ENTRIES_START_ROW 3
@@ -100,6 +104,10 @@ int firstPerGameOpShown = 0;
 int perGameOps = -1;
 int perGameOp[10] = {-1};
 
+bool blacklisted_boostCpu = false;
+bool blacklisted_cardReadDma = false;
+bool blacklisted_asyncCardRead = false;
+
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
@@ -122,6 +130,31 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
 	perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
 	perGameSettings_expandRomSpace = pergameini.GetInt("GAMESETTINGS", "EXTENDED_MEMORY", -1);
+
+	// Check if blacklisted
+	if(!ms().ignoreBlacklists) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
+			if (memcmp(gameTid[CURPOS], twlClockExcludeList[i], 3) == 0) {
+				// Found match
+				blacklisted_boostCpu = true;
+			}
+		}
+
+		for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
+			if (memcmp(gameTid[CURPOS], cardReadDMAExcludeList[i], 3) == 0) {
+				// Found match
+				blacklisted_cardReadDma = true;
+			}
+		}
+
+		for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
+			if (memcmp(gameTid[CURPOS], asyncReadExcludeList[i], 3) == 0) {
+				// Found match
+				blacklisted_asyncCardRead = true;
+			}
+		}
+	}
 }
 
 void savePerGameSettings (std::string filename) {
@@ -138,7 +171,7 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
 		if (dsiFeatures()) {
-			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
+			if (!blacklisted_boostCpu) pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
 		if (!ms().secondaryDevice) {
@@ -160,8 +193,8 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "SWI_HALT_HOOK", perGameSettings_swiHaltHook);
 		}
 		if (!ms().secondaryDevice) {
-			pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
-			pergameini.SetInt("GAMESETTINGS", "ASYNC_CARD_READ", perGameSettings_asyncCardRead);
+			if (!blacklisted_cardReadDma) pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
+			if (!blacklisted_asyncCardRead) pergameini.SetInt("GAMESETTINGS", "ASYNC_CARD_READ", perGameSettings_asyncCardRead);
 		}
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
@@ -521,18 +554,20 @@ void perGameSettings (std::string filename) {
 			runInShown = true;
 		}
 		if ((dsiFeatures() || !ms().secondaryDevice) && unitCode[CURPOS] < 3) {
-			perGameOps++;
-			perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
+			if (!blacklisted_boostCpu) {
+				perGameOps++;
+				perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
+			}
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (ms().useBootstrap || (dsiFeatures() && unitCode[CURPOS] > 0) || !ms().secondaryDevice) {
 			if (!ms().secondaryDevice) {
-				if (unitCode[CURPOS] < 3) {
+				if (unitCode[CURPOS] < 3 && !blacklisted_cardReadDma) {
 					perGameOps++;
 					perGameOp[perGameOps] = 5;	// Card Read DMA
 				}
-				if (romSize > romSizeLimit) {
+				if (romSize > romSizeLimit && !blacklisted_asyncCardRead) {
 					perGameOps++;
 					perGameOp[perGameOps] = 12;	// Async Card Read
 				}

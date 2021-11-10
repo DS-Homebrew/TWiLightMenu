@@ -470,7 +470,7 @@ void lastRunROM()
 						}
 					}
 
-					if (perGameSettings_boostCpu == -1) {
+					if (!ms().ignoreBlacklists) {
 						// TODO: If the list gets large enough, switch to bsearch().
 						for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
 							if (memcmp(game_TID, twlClockExcludeList[i], 3) == 0) {
@@ -479,8 +479,7 @@ void lastRunROM()
 								break;
 							}
 						}
-					}
-					if (perGameSettings_cardReadDMA == -1) {
+
 						// TODO: If the list gets large enough, switch to bsearch().
 						for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
 							if (memcmp(game_TID, cardReadDMAExcludeList[i], 3) == 0) {
@@ -489,8 +488,7 @@ void lastRunROM()
 								break;
 							}
 						}
-					}
-					if (perGameSettings_asyncCardRead == -1) {
+
 						// TODO: If the list gets large enough, switch to bsearch().
 						for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
 							if (memcmp(game_TID, asyncReadExcludeList[i], 3) == 0) {

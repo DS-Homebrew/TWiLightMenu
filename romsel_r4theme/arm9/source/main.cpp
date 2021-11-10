@@ -179,6 +179,7 @@ bool dsiWareBooter = true;
 bool dsiWareToSD = true;
 
 bool dontShowClusterWarning = false;
+bool ignoreBlacklists = false;
 
 int updateRecentlyPlayedList = true;
 int sortMethod = 0;
@@ -300,6 +301,7 @@ void LoadSettings(void) {
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 
 	dontShowClusterWarning = settingsini.GetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
+	ignoreBlacklists = settingsini.GetInt("SRLOADER", "IGNORE_BLACKLISTS", ignoreBlacklists);
 
 	updateRecentlyPlayedList = settingsini.GetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
 	sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
@@ -336,6 +338,7 @@ void SaveSettings(void) {
 		settingsini.SetInt("SRLOADER", "HOMEBREW_HAS_WIDE", homebrewHasWide);
 		settingsini.SetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
 	}
+	settingsini.SetInt("SRLOADER", "IGNORE_BLACKLISTS", ignoreBlacklists);
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SaveIniFile(settingsinipath);
 }
@@ -556,7 +559,7 @@ void stop (void) {
  * Disable TWL clock speed for a specific game.
  */
 bool setClockSpeed(const char* filename) {
-	if (perGameSettings_boostCpu == -1) {
+	if (!ignoreBlacklists) {
 		FILE *f_nds_file = fopen(filename, "rb");
 
 		char game_TID[5];
@@ -580,7 +583,7 @@ bool setClockSpeed(const char* filename) {
  * Disable card read DMA for a specific game.
  */
 bool setCardReadDMA(const char* filename) {
-	if (perGameSettings_cardReadDMA == -1) {
+	if (!ignoreBlacklists) {
 		FILE *f_nds_file = fopen(filename, "rb");
 
 		char game_TID[5];
@@ -604,7 +607,7 @@ bool setCardReadDMA(const char* filename) {
  * Disable asynch card read for a specific game.
  */
 bool setAsyncReadDMA(const char* filename) {
-	if (perGameSettings_asyncCardRead == -1) {
+	if (!ignoreBlacklists) {
 		FILE *f_nds_file = fopen(filename, "rb");
 
 		char game_TID[5];

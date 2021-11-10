@@ -87,6 +87,7 @@ TWLSettings::TWLSettings()
 	autostartSlot1 = false;
 
 	wideScreen = false;
+    ignoreBlacklists = false;
 }
 
 void TWLSettings::loadSettings()
@@ -186,6 +187,8 @@ void TWLSettings::loadSettings()
     autostartSlot1 = settingsini.GetInt("SRLOADER", "AUTORUNSLOT1", autostartSlot1);
 
     wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
+
+    ignoreBlacklists = settingsini.GetInt("SRLOADER", "IGNORE_BLACKLISTS", ignoreBlacklists);
 }
 
 void TWLSettings::saveSettings()
@@ -235,6 +238,8 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
     settingsini.SetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
+
+    settingsini.SetInt("SRLOADER", "IGNORE_BLACKLISTS", ignoreBlacklists);
 
     settingsini.SaveIniFile(settingsinipath);
 }

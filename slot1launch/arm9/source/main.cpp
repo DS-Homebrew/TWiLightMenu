@@ -38,8 +38,8 @@ sNDSHeader ndsHeader;
 /**
  * Disable TWL clock speed for a specific game.
  */
-bool setClockSpeed(int setting, char gameTid[]) {
-	if (setting == -1) {
+bool setClockSpeed(int setting, char gameTid[], bool ignoreBlacklists) {
+	if(!ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
 			if (memcmp(gameTid, twlClockExcludeList[i], 3) == 0) {
@@ -82,6 +82,7 @@ int main() {
 	bool soundFreq = false;
 	bool runCardEngine = false;
 	bool EnableSD = false;
+	bool ignoreBlacklists = false;
 	int language = -1;
 
 	// If slot is powered off, tell Arm7 slot power on is required.
@@ -114,8 +115,9 @@ int main() {
 			CIniFile pergameini(pergamefilepath);
 			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
 
+			ignoreBlacklists = settingsini.GetInt("SRLOADER","IGNORE_BLACKLISTS",false);
 			TWLMODE = pergameini.GetInt("GAMESETTINGS","DSI_MODE",-1);
-			TWLCLK = setClockSpeed(pergameini.GetInt("GAMESETTINGS","BOOST_CPU",-1), gameTid);
+			TWLCLK = setClockSpeed(pergameini.GetInt("GAMESETTINGS","BOOST_CPU",-1), gameTid, ignoreBlacklists);
 			TWLVRAM = pergameini.GetInt("GAMESETTINGS","BOOST_VRAM",-1);
 			TWLTOUCH = settingsini.GetInt("SRLOADER","SLOT1_TOUCH_MODE",0);
 			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);

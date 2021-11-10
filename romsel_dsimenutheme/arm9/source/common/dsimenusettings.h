@@ -275,6 +275,7 @@ public:
 	bool wideScreen;
 
 	bool dontShowClusterWarning;
+	bool ignoreBlacklists;
 };
 
 typedef singleton<TWLSettings> menuSettings_s;

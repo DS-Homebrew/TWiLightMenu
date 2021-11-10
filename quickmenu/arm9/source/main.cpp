@@ -176,7 +176,7 @@ void stop (void) {
  * Disable TWL clock speed for a specific game.
  */
 bool setClockSpeed() {
-	if (perGameSettings_boostCpu == -1) {
+	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
 			if (memcmp(gameTid[ms().secondaryDevice], twlClockExcludeList[i], 3) == 0) {
@@ -193,7 +193,7 @@ bool setClockSpeed() {
  * Disable card read DMA for a specific game.
  */
 bool setCardReadDMA() {
-	if (perGameSettings_cardReadDMA == -1) {
+	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
 			if (memcmp(gameTid[ms().secondaryDevice], cardReadDMAExcludeList[i], 3) == 0) {
@@ -210,7 +210,7 @@ bool setCardReadDMA() {
  * Disable asynch card read for a specific game.
  */
 bool setAsyncReadDMA() {
-	if (perGameSettings_asyncCardRead == -1) {
+	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
 			if (memcmp(gameTid[ms().secondaryDevice], asyncReadExcludeList[i], 3) == 0) {

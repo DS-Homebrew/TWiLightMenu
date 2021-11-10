@@ -85,6 +85,8 @@ static int gameRegion = -2;
 static bool dsiWareBooter = true;
 static bool dsiWareToSD = true;
 
+static bool ignoreBlacklists = false;
+
 TWL_CODE void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
@@ -123,6 +125,7 @@ TWL_CODE void LoadSettings(void) {
 	homebrewHasWide = settingsini.GetInt("SRLOADER", "HOMEBREW_HAS_WIDE", 0);
 
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
+	ignoreBlacklists = settingsini.GetInt("SRLOADER", "IGNORE_BLACKLISTS", ignoreBlacklists);
 
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
@@ -144,7 +147,7 @@ void stop (void) {
  * Disable TWL clock speed for a specific game.
  */
 bool setClockSpeed(char gameTid[]) {
-	if (perGameSettings_boostCpu == -1) {
+	if (!ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
 			if (memcmp(gameTid, twlClockExcludeList[i], 3) == 0) {
