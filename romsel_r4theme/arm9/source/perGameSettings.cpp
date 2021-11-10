@@ -519,7 +519,7 @@ void perGameSettings (std::string filename) {
 					perGameOp[perGameOps] = 12;	// Async Card Read
 				}
 			}
-			if (dsiFeatures()) {
+			if (!secondaryDevice || (dsiFeatures() && romSize <= romSizeLimit2+0x80000)) {
 				perGameOps++;
 				perGameOp[perGameOps] = 13;	// SWI Halt Hook
 			}
