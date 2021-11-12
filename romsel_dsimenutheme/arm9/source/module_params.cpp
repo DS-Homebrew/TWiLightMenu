@@ -17,9 +17,13 @@ u32 findModuleParamsOffset(const sNDSHeaderExt *ndsHeader, FILE *ndsFile)
 			offsetOfModuleParams = ndsHeader->arm9romOffset;
 		} else {
 			// Get module params offset from before Auto Load List
-			fseek(ndsFile, (ndsHeader->arm9romOffset + ndsHeader->unknownRAM1 - 0x02000000 - 4), SEEK_SET);
-			fread(buf, sizeof(u32), 2, ndsFile);
-			offsetOfModuleParams = buf[0]-0x02000000+ndsHeader->arm9romOffset;
+			fseek(ndsFile, (ndsHeader->arm9romOffset + (ndsHeader->unknownRAM1 - ndsHeader->arm9destination) - 4), SEEK_SET);
+			fread(buf, sizeof(u32), 1, ndsFile);
+			if (buf[0] >= 0x03000000) {
+				fseek(ndsFile, (ndsHeader->arm9romOffset + (ndsHeader->unknownRAM1 - ndsHeader->arm9destination) - 0x168), SEEK_SET);
+				fread(buf, sizeof(u32), 1, ndsFile);
+			}
+			offsetOfModuleParams = buf[0]-ndsHeader->arm9destination+ndsHeader->arm9romOffset;
 			fseek(ndsFile, offsetOfModuleParams, SEEK_SET);
 		}
 
