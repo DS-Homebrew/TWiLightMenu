@@ -118,7 +118,7 @@ endif
  
 export GAME_TITLE := $(TARGET)
 
-.PHONY: bootloader bootstub clean
+.PHONY: bootloader bootstub $(TARGET).nds $(TARGET)_rungame.nds clean
 
 all:	bootloader bootstub $(TARGET).nds $(TARGET)_rungame.nds
 

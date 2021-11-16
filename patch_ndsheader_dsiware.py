@@ -158,7 +158,12 @@ if args.arm7 is not None:
 	arm7File.close()
 
 filer = open(fname, 'rb')
-data = filer.read(0x180)
+data = filer.read(0xB0)
+flagfile = open("../DoNotZeroFillMem.bin", 'rb')
+data = data+flagfile.read(0x10)
+flagfile.close()
+filer.read(0x10)
+data = data+filer.read(0xC0)
 caddr=0x180
 
 #DS Data 180 bytes
