@@ -864,7 +864,7 @@ void lastRunROM()
 				);
 				bootstrapini.SaveIniFile(sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC);
 
-				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD))) {
+				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD && sdFound()))) {
 					*(u32*)(0x02000000) |= BIT(3);
 					*(u32*)(0x02000004) = 0;
 					*(bool*)(0x02000010) = useNightly;
@@ -885,7 +885,7 @@ void lastRunROM()
 					}
 				}
 
-				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD))) {
+				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD && sdFound()))) {
 					ntrStartSdGame();
 				}
 

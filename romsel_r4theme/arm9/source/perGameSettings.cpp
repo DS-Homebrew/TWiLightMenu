@@ -435,11 +435,12 @@ void perGameSettings (std::string filename) {
 	}
 	u32 romSizeLimit2 = (consoleModel > 0 ? 0x01C00000 : 0xC00000);
 
+	extern bool dsiWareCompatibleB4DS(const char* filename);
 	bool showPerGameSettings =
 		(!isDSiWare
 		&& memcmp(game_TID, "HND", 3) != 0
 		&& memcmp(game_TID, "HNE", 3) != 0);
-	if ((dsiFeatures() || !secondaryDevice) && !isHomebrew && isDSiWare) {
+	if ((dsiFeatures() || dsiWareCompatibleB4DS(filenameForInfo.c_str()) || !secondaryDevice) && !isHomebrew && isDSiWare) {
 		showPerGameSettings = true;
 	}
 	/*if (!useBootstrap && !isHomebrew && REG_SCFG_EXT == 0) {
@@ -495,7 +496,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
 	} else if (showPerGameSettings && isDSiWare) {	// Per-game settings for DSiWare
-		if (dsiWareBooter || consoleModel > 0) {
+		if (dsiWareBooter || arm7SCFGLocked || consoleModel > 0) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 			perGameOps++;
@@ -505,7 +506,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
-		if (dsiWareBooter || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) || consoleModel > 0) {
+		if (dsiWareBooter || arm7SCFGLocked || consoleModel > 0) {
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 			if (((dsiFeatures() && sdFound()) || !secondaryDevice) && consoleModel >= 2 && (!isDSiMode() || !arm7SCFGLocked)) {

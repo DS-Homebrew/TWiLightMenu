@@ -1326,6 +1326,17 @@ bool gameCompatibleMemoryPit(void) {
 	return true;
 }
 
+bool dsiWareCompatibleB4DS(void) {
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DS)/sizeof(compatibleGameListB4DS[0]); i++) {
+		if (memcmp(gameTid[CURPOS], compatibleGameListB4DS[i], 3) == 0) {
+			// Found match
+			return true;
+		}
+	}
+	return false;
+}
+
 void cannotLaunchMsg(const char *filename) {
 	clearText();
 	updateText(false);
@@ -2390,7 +2401,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isDSiWare[CURPOS] && (!dsiFeatures() || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit()))) {
+				} else if (isDSiWare[CURPOS] && ((!dsiFeatures() && !dsiWareCompatibleB4DS()) || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit()))) {
 					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {
 					int hasAP = 0;

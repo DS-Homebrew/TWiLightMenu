@@ -639,6 +639,22 @@ bool gameCompatibleMemoryPit(const char* filename) {
 	return true;
 }
 
+bool dsiWareCompatibleB4DS(const char* filename) {
+	FILE *f_nds_file = fopen(filename, "rb");
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	fclose(f_nds_file);
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DS)/sizeof(compatibleGameListB4DS[0]); i++) {
+		if (memcmp(game_TID, compatibleGameListB4DS[i], 3) == 0) {
+			// Found match
+			return true;
+		}
+	}
+	return false;
+}
+
 void cannotLaunchMsg(void) {
 	if (macroMode) {
 		lcdMainOnBottom();
@@ -838,7 +854,7 @@ string browseForFile(const vector<string_view> extensionList) {
 				settingsChanged = false;
 				return "null";
 			}
-			else if (isDSiWare && (!dsiFeatures() || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && arm7SCFGLocked && !dsiWramAccess && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str())))) {
+			else if (isDSiWare && ((!dsiFeatures() && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str())) || (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && arm7SCFGLocked && !dsiWramAccess && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str())))) {
 				cannotLaunchMsg();
 			} else {
 				int hasAP = 0;

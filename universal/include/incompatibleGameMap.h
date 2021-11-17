@@ -46,4 +46,15 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
+// B4DS DSiWare Whitelist
+static const char compatibleGameListB4DS[][4] = {
+	"KSR", // Aura-Aura Climber
+	"KF3", // Dairojo! Samurai Defenders
+	"KWT", // GO Series: Defense Wars
+	"KGK", // Glory Days: Tactical Defense
+	"K2D", // Nintendo DSi + Internet
+	"KPP", // Pop Island
+	"KPF", // Pop Island: Paperfield
+};
+
 #endif // INCOMPATIBLEMAP_H

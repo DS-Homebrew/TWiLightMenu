@@ -735,16 +735,6 @@ void getGameInfo(bool isDir, const char* name)
 			isDSiWare = true; // Is a DSiWare game
 		}
 
-		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0 // Pop Island
-		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0 // Pop Island: Paperfield
-		  || memcmp(ndsHeader.gameCode, "KSR", 3) == 0 // Aura-Aura Climber
-		  || memcmp(ndsHeader.gameCode, "KWT", 3) == 0 // GO Series: Defense Wars
-		  || memcmp(ndsHeader.gameCode, "KGK", 3) == 0 // Glory Days: Tactical Defense
-		  || memcmp(ndsHeader.gameCode, "K2D", 3) == 0 // Nintendo DSi + Internet
-		) && !dsiFeatures()) {
-			isDSiWare = false;
-		}
-
 		if (isHomebrew == true && !secondaryDevice) {
 			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
 			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2

@@ -1913,7 +1913,7 @@ int main(int argc, char **argv) {
 			ms().slot1Launched = false;
 
 			// Launch DSiWare .nds via Unlaunch
-			if ((isDSiMode() || sdFound()) && isDSiWare[ms().secondaryDevice]) {
+			if (isDSiWare[ms().secondaryDevice]) {
 				const char *typeToReplace = ".nds";
 				if (extention(filename[ms().secondaryDevice], ".dsi")) {
 					typeToReplace = ".dsi";
@@ -2142,7 +2142,7 @@ int main(int argc, char **argv) {
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 					bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
-					if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD))) {
+					if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD && sdFound()))) {
 						*(u32*)(0x02000000) |= BIT(3);
 						*(u32*)(0x02000004) = 0;
 						*(bool*)(0x02000010) = useNightly;
@@ -2151,7 +2151,7 @@ int main(int argc, char **argv) {
 					if (isDSiMode() || !ms().secondaryDevice) {
 						SetWidescreen(filename[ms().secondaryDevice].c_str());
 					}
-					if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD))) {
+					if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD && sdFound()))) {
 						ntrStartSdGame();
 					}
 

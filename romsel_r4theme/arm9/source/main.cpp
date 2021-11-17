@@ -1727,7 +1727,7 @@ int main(int argc, char **argv) {
 			slot1Launched = false;
 
 			// Launch DSiWare .nds via Unlaunch
-			if ((isDSiMode() || sdFound()) && isDSiWare) {
+			if (isDSiWare) {
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				char *name = argarray.at(0);
@@ -1929,7 +1929,7 @@ int main(int argc, char **argv) {
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
 					bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
 
-					if (!isDSiMode() && (!secondaryDevice || (secondaryDevice && dsiWareToSD))) {
+					if (!isDSiMode() && (!secondaryDevice || (secondaryDevice && dsiWareToSD && sdFound()))) {
 						*(u32*)(0x02000000) |= BIT(3);
 						*(u32*)(0x02000004) = 0;
 						*(bool*)(0x02000010) = useNightly;
@@ -1938,7 +1938,7 @@ int main(int argc, char **argv) {
 					if (isDSiMode() || !secondaryDevice) {
 						SetWidescreen(filename.c_str());
 					}
-					if (!isDSiMode() && (!secondaryDevice || (secondaryDevice && dsiWareToSD))) {
+					if (!isDSiMode() && (!secondaryDevice || (secondaryDevice && dsiWareToSD && sdFound()))) {
 						ntrStartSdGame();
 					}
 

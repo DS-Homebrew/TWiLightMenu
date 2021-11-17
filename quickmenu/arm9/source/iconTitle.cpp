@@ -672,12 +672,6 @@ void getGameInfo(int num, bool isDir, const char* name)
 			{ if (ndsHeader.unitCode != 0)
 				isDSiWare[num] = true; // Is a DSiWare game
 			}
-			if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0 // Pop Island
-			  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0 // Pop Island: Paperfield
-			  || memcmp(ndsHeader.gameCode, "KGK", 3) == 0 // Glory Days: Tactical Defense
-			) && !dsiFeatures()) {
-				isDSiWare[num] = false;
-			}
 		}
 
 		if (ndsHeader.dsi_flags & BIT(4))
