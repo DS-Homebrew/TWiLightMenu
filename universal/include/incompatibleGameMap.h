@@ -51,6 +51,15 @@ static const char compatibleGameListB4DS[][4] = {
 	"KSR", // Aura-Aura Climber
 	"KF3", // Dairojo! Samurai Defenders
 	"KWT", // GO Series: Defense Wars
+	"KGB", // Game & Watch: Ball
+	"KGC", // Game & Watch: Chef
+	"KGD", // Game & Watch: Donkey Kong Jr.
+	"KGG", // Game & Watch: Flagman
+	"KGH", // Game & Watch: Helmet
+	"KGJ", // Game & Watch: Judge
+	"KGM", // Game & Watch: Manhole
+	"KGF", // Game & Watch: Mario's Cement Factory
+	"KGV", // Game & Watch: Vermin
 	"KGK", // Glory Days: Tactical Defense
 	"K2D", // Nintendo DSi + Internet
 	"KPP", // Pop Island
