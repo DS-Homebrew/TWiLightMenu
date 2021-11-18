@@ -50,6 +50,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 static const char compatibleGameListB4DS[][4] = {
 	"KSR", // Aura-Aura Climber
 	"KF3", // Dairojo! Samurai Defenders
+	"KDV", // Dark Void Zero
 	"KWT", // GO Series: Defense Wars
 	"KGB", // Game & Watch: Ball
 	"KGC", // Game & Watch: Chef
