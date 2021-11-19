@@ -1327,14 +1327,26 @@ bool gameCompatibleMemoryPit(void) {
 }
 
 bool dsiWareCompatibleB4DS(void) {
+	bool res = false;
+
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DS)/sizeof(compatibleGameListB4DS[0]); i++) {
 		if (memcmp(gameTid[CURPOS], compatibleGameListB4DS[i], 3) == 0) {
 			// Found match
-			return true;
+			res = true;
+			break;
 		}
 	}
-	return false;
+	if (!res && sys().dsDebugRam()) {
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebug)/sizeof(compatibleGameListB4DSDebug[0]); i++) {
+			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSDebug[i], 3) == 0) {
+				// Found match
+				res = true;
+				break;
+			}
+		}
+	}
+	return res;
 }
 
 void cannotLaunchMsg(const char *filename) {

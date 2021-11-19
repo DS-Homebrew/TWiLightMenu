@@ -1,5 +1,6 @@
 #include <nds/arm9/dldi.h>
 #include "systemdetails.h"
+#include "myDSiMode.h"
 #include "common/flashcard.h"
 #include "common/arm7status.h"
 
@@ -57,6 +58,16 @@ SystemDetails::SystemDetails()
     }
     
 	_isDSLite = CHECK_BIT(status, DSLITE_BIT);
+
+	if (!dsiFeatures()) {
+		u32 wordBak = *(vu32*)0x02000000;
+		u32 wordBak2 = *(vu32*)0x02400000;
+		*(vu32*)(0x02000000) = 0x314D454D;
+		*(vu32*)(0x02400000) = 0x324D454D;
+		_dsDebugRam = ((*(vu32*)(0x02000000) == 0x314D454D) && (*(vu32*)(0x02400000) == 0x324D454D));
+		*(vu32*)(0x02000000) = wordBak;
+		*(vu32*)(0x02400000) = wordBak2;
+	}
 
     // force is regular ds
     //_isRegularDS = true;

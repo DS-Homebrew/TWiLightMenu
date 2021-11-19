@@ -95,6 +95,7 @@ int consoleModel = 0;
 	2 = Nintendo 3DS
 	3 = New Nintendo 3DS	*/
 bool isRegularDS = true;
+bool dsDebugRam = false;
 
 extern bool showdialogbox;
 extern int dialogboxHeight;
@@ -1262,6 +1263,14 @@ int main(int argc, char **argv) {
 		*(vu32*)0x03700000 = 0x414C5253;
 		dsiWramAccess = *(vu32*)0x03700000 == 0x414C5253;
 		*(vu32*)0x03700000 = wordBak;
+	} else if (!dsiFeatures()) {
+		u32 wordBak = *(vu32*)0x02000000;
+		u32 wordBak2 = *(vu32*)0x02400000;
+		*(vu32*)(0x02000000) = 0x314D454D;
+		*(vu32*)(0x02400000) = 0x324D454D;
+		dsDebugRam = ((*(vu32*)(0x02000000) == 0x314D454D) && (*(vu32*)(0x02400000) == 0x324D454D));
+		*(vu32*)(0x02000000) = wordBak;
+		*(vu32*)(0x02400000) = wordBak2;
 	}
 
 	fifoWaitValue32(FIFO_USER_06);

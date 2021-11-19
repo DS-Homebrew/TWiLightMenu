@@ -69,4 +69,10 @@ static const char compatibleGameListB4DS[][4] = {
 	"KPF", // Pop Island: Paperfield
 };
 
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM)
+static const char compatibleGameListB4DSDebug[][4] = {
+	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
+	"KWY", // Mighty Milky Way
+};
+
 #endif // INCOMPATIBLEMAP_H

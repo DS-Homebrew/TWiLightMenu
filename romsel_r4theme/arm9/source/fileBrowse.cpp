@@ -79,6 +79,7 @@ extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern int consoleModel;
 extern bool isRegularDS;
+extern bool dsDebugRam;
 extern bool dsiWramAccess;
 extern bool arm7SCFGLocked;
 extern bool smsGgInRam;
@@ -640,6 +641,7 @@ bool gameCompatibleMemoryPit(const char* filename) {
 }
 
 bool dsiWareCompatibleB4DS(const char* filename) {
+	bool res = false;
 	FILE *f_nds_file = fopen(filename, "rb");
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
@@ -649,10 +651,20 @@ bool dsiWareCompatibleB4DS(const char* filename) {
 	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DS)/sizeof(compatibleGameListB4DS[0]); i++) {
 		if (memcmp(game_TID, compatibleGameListB4DS[i], 3) == 0) {
 			// Found match
-			return true;
+			res = true;
+			break;
 		}
 	}
-	return false;
+	if (!res && dsDebugRam) {
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebug)/sizeof(compatibleGameListB4DSDebug[0]); i++) {
+			if (memcmp(game_TID, compatibleGameListB4DSDebug[i], 3) == 0) {
+				// Found match
+				res = true;
+				break;
+			}
+		}
+	}
+	return res;
 }
 
 void cannotLaunchMsg(void) {
