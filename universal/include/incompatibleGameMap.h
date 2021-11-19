@@ -48,6 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 
 // B4DS DSiWare Whitelist
 static const char compatibleGameListB4DS[][4] = {
+	"KQK", // Ace Mathician
 	"KSR", // Aura-Aura Climber
 	"KF3", // Dairojo! Samurai Defenders
 	"KDV", // Dark Void Zero
