@@ -62,6 +62,7 @@ static const char compatibleGameListB4DS[][4] = {
 	"KGF", // Game & Watch: Mario's Cement Factory
 	"KGV", // Game & Watch: Vermin
 	"KGK", // Glory Days: Tactical Defense
+	"KMG", // Mighty Flip Champs!
 	"K2D", // Nintendo DSi + Internet
 	"KPP", // Pop Island
 	"KPF", // Pop Island: Paperfield
