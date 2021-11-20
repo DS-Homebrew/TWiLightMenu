@@ -71,6 +71,8 @@ static const char compatibleGameListB4DS[][4] = {
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM)
 static const char compatibleGameListB4DSDebug[][4] = {
+	"K27", // G.G. Series: All Breaker
+	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KWY", // Mighty Milky Way
 };
