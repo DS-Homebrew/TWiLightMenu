@@ -49,10 +49,13 @@ static const char incompatibleGameListMemoryPit[][4] = {
 // B4DS DSiWare Whitelist
 static const char compatibleGameListB4DS[][4] = {
 	"KQK", // Ace Mathician
+	"KAA", // Art Style: Aquia
 	"KSR", // Aura-Aura Climber
 	"KF3", // Dairojo! Samurai Defenders
 	"KDV", // Dark Void Zero
+	"KDL", // Dragon's Lair
 	"KWT", // GO Series: Defense Wars
+	//"KB8", // GO Series: Earth Saver
 	"KGB", // Game & Watch: Ball
 	"KGC", // Game & Watch: Chef
 	"KGD", // Game & Watch: Donkey Kong Jr.
@@ -67,6 +70,7 @@ static const char compatibleGameListB4DS[][4] = {
 	"K2D", // Nintendo DSi + Internet
 	"KPP", // Pop Island
 	"KPF", // Pop Island: Paperfield
+	"KA6", // Space Ace
 };
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM)
