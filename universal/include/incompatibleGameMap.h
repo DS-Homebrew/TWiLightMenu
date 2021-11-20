@@ -54,6 +54,7 @@ static const char compatibleGameListB4DS[][4] = {
 	"KF3", // Dairojo! Samurai Defenders
 	"KDV", // Dark Void Zero
 	"KDL", // Dragon's Lair
+	"KLY", // Dragon's Lair II: Time Warp
 	"KWT", // GO Series: Defense Wars
 	//"KB8", // GO Series: Earth Saver
 	"KGB", // Game & Watch: Ball
