@@ -47,14 +47,14 @@ static const char incompatibleGameListMemoryPit[][4] = {
 };
 
 // B4DS DSiWare Whitelist
-static const char compatibleGameListB4DS[][4] = {
+static const char compatibleGameListB4DS[][5] = {
 	"KQK", // Ace Mathician
 	"KAA", // Art Style: Aquia
 	"KSR", // Aura-Aura Climber
 	"KF3", // Dairojo! Samurai Defenders
 	"KDV", // Dark Void Zero
 	"KDL", // Dragon's Lair
-	"KLY", // Dragon's Lair II: Time Warp
+	"KLYE", // Dragon's Lair II: Time Warp (USA)
 	"KWT", // GO Series: Defense Wars
 	//"KB8", // GO Series: Earth Saver
 	"KGB", // Game & Watch: Ball

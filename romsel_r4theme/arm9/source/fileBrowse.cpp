@@ -650,7 +650,7 @@ bool dsiWareCompatibleB4DS(const char* filename) {
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DS)/sizeof(compatibleGameListB4DS[0]); i++) {
-		if (memcmp(game_TID, compatibleGameListB4DS[i], 3) == 0) {
+		if (memcmp(game_TID, compatibleGameListB4DS[i], (compatibleGameListB4DS[i][3] != 0 ? 4 : 3)) == 0) {
 			// Found match
 			res = true;
 			break;
