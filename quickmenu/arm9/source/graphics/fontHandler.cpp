@@ -20,8 +20,6 @@ bool shouldClear[] = {false, false};
 extern bool isRegularDS;
 
 void fontInit() {
-	bool useExpansionPak = (isRegularDS && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
-
 	// Unload fonts if already loaded
 	if(smallFont)
 		delete smallFont;
@@ -38,9 +36,9 @@ void fontInit() {
 	// Load font graphics
 	if(ms().dsClassicCustomFont) {
 		std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
-		smallFont = new FontGraphic({fontPath + ((dsiFeatures() || useExpansionPak) ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"}, useExpansionPak);
+		smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"}, false);
 	} else {
-		smallFont = new FontGraphic({"nitro:/graphics/font/small.nftr"}, useExpansionPak);
+		smallFont = new FontGraphic({"nitro:/graphics/font/small.nftr"}, false);
 		palette[3] = 0x8000;
 	}
 
