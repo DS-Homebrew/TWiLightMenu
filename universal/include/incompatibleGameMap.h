@@ -51,6 +51,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KQK", // Ace Mathician
 	"KAA", // Art Style: Aquia
 	"KSR", // Aura-Aura Climber
+	"KAD", // Art Style: BASE 10
 	"KF3", // Dairojo! Samurai Defenders
 	"KDV", // Dark Void Zero
 	"KDL", // Dragon's Lair
