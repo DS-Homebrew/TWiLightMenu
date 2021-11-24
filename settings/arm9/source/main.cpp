@@ -1017,12 +1017,15 @@ int main(int argc, char **argv)
 	}
 
 	if (sdFound()) {
+		if (flashcardFound()) {
+			gamesPage
+				.option(STR_DSIWARETOSD,
+					STR_DESCRIPTION_DSIWARETOSD,
+					Option::Bool(&ms().dsiWareToSD),
+					{STR_YES, STR_NO},
+					{true, false});
+		}
 		gamesPage
-			.option(STR_DSIWARETOSD,
-				STR_DESCRIPTION_DSIWARETOSD,
-				Option::Bool(&ms().dsiWareToSD),
-				{STR_YES, STR_NO},
-				{true, false})
 			.option(sharedFound ? STR_TWLNANDLOCATION : STR_PHOTOLOCATION,
 				sharedFound ? STR_DESCRIPTION_TWLNANDLOCATION : STR_DESCRIPTION_PHOTOLOCATION,
 				Option::Bool(&bs().sdNand),
