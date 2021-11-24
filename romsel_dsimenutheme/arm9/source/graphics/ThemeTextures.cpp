@@ -40,12 +40,12 @@ extern s16 usernameRendered[11];
 extern bool showColon;
 
 static u16 _bmpImageBuffer[256 * 192] = {0};
-static u16* _bmpImageBuffer2 = (u16*)0x02F80000;
+static u16* _bmpImageBuffer2 = (u16*)NULL;
 static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
 static u16 _photoBuffer[208 * 156] = {0};
-static u16* _photoBuffer2 = (u16*)0x02F68000;
-static u16* _bgSubBuffer2 = (u16*)0x02F98000;
+static u16* _photoBuffer2 = (u16*)NULL;
+static u16* _bgSubBuffer2 = (u16*)NULL;
 // DSi mode double-frame buffers
 //static u16* _frameBuffer[2] = {(u16*)0x02F80000, (u16*)0x02F98000};
 static u16* _frameBufferBot[2] = {(u16*)0x02FB0000, (u16*)0x02FC8000};
@@ -1594,6 +1594,12 @@ void ThemeTextures::videoSetup() {
 	}*/
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
+
+	if (dsiFeatures()) {
+		_bmpImageBuffer2 = new u16[256 * 192];
+		_bgSubBuffer2 = new u16[256 * 192];
+		_photoBuffer2 = new u16[208 * 156];
+	}
 
 	if (dsiFeatures() && !ms().macroMode && ms().theme != 5) {
 		if (ms().consoleModel > 0) {
