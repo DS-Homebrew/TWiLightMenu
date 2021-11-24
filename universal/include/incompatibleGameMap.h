@@ -57,6 +57,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDV", // Dark Void Zero
 	"KDL", // Dragon's Lair
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
+	"B88", // DS WiFi Settings
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KWT", // GO Series: Defense Wars
 	"KGB", // Game & Watch: Ball
