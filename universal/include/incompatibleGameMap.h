@@ -48,6 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 
 // B4DS DSiWare Whitelist
 static const char compatibleGameListB4DS[][5] = {
+	"KJU", // GO Series: 10 Second Run
 	"KQK", // Ace Mathician
 	"KAA", // Art Style: Aquia
 	"KSR", // Aura-Aura Climber
@@ -58,7 +59,6 @@ static const char compatibleGameListB4DS[][5] = {
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KWT", // GO Series: Defense Wars
-	//"KB8", // GO Series: Earth Saver
 	"KGB", // Game & Watch: Ball
 	"KGC", // Game & Watch: Chef
 	"KGD", // Game & Watch: Donkey Kong Jr.
