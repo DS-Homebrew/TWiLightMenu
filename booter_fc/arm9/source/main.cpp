@@ -86,10 +86,11 @@ int main(int argc, char **argv) {
 
 	while (1) {
 		scanKeys();
-		if (keysHeld() & KEY_B) {
+		if ((keysHeld() & KEY_B) && !isRegularDS) {
 			fifoSendValue32(FIFO_USER_01, 1);	// Tell ARM7 to reboot into System Menu (power-off/sleep mode screen skipped)
 			break;
 		}
+		swiWaitForVBlank();
 	}
 
 	for (int i = 0; i < 10; i++) {
