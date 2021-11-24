@@ -554,43 +554,37 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 }
 
 void updateBoxArt(const std::vector<DirEntry> dirContents) {
-	if (CURPOS + PAGENUM * 40 < ((int)dirContents.size())) {
-		showSTARTborder = true;
-		if (ms().theme == 5 || ms().macroMode || !ms().showBoxArt) {
-			return;
-		}
+	if (CURPOS + PAGENUM * 40 >= ((int)dirContents.size())) return;
 
-		if (!boxArtLoaded) {
-			if (isDirectory[CURPOS]) {
-				clearBoxArt(); // Clear box art, if it's a directory
-				if (ms().theme == 1 && !rocketVideo_playVideo) {
-					rocketVideo_playVideo = true;
-				}
-			} else {
-				clearBoxArt();		
-				if (ms().theme == 1 && rocketVideo_playVideo) {
-					// Clear top screen cubes
-					rocketVideo_playVideo = false;
-				}
-				if (dsiFeatures() && ms().showBoxArt == 2) {
-					tex().drawBoxArtFromMem(CURPOS); // Load box art
-				} else {
-					snprintf(boxArtPath, sizeof(boxArtPath),
-						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-						 dirContents.at(CURPOS + PAGENUM * 40).name.c_str());
-					if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
-						snprintf(boxArtPath, sizeof(boxArtPath),
-							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-									: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-							 gameTid[CURPOS]);
-					}
-					tex().drawBoxArt(boxArtPath); // Load box art
-				}
+	showSTARTborder = true;
+	if (ms().theme == 5 || ms().macroMode || !ms().showBoxArt) {
+		return;	
+	}
+
+	if (boxArtLoaded) return;
+
+	if (isDirectory[CURPOS]) {
+		clearBoxArt(); // Clear box art, if it's a directory
+		if (ms().theme == 1 && !rocketVideo_playVideo) {
+			rocketVideo_playVideo = true;
+		}
+	} else {
+		clearBoxArt();		
+		if (ms().theme == 1 && rocketVideo_playVideo) {
+			// Clear top screen cubes
+			rocketVideo_playVideo = false;
+		}
+		if (dsiFeatures() && ms().showBoxArt == 2) {
+			tex().drawBoxArtFromMem(CURPOS); // Load box art
+		} else {
+			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sdFound() ? "sd" : "fat", dirContents.at(CURPOS + PAGENUM * 40).name.c_str());
+			if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
+				sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sdFound() ? "sd" : "fat", gameTid[CURPOS]);
 			}
-			boxArtLoaded = true;
+			tex().drawBoxArt(boxArtPath); // Load box art
 		}
 	}
+	boxArtLoaded = true;
 }
 
 
