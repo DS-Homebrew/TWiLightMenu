@@ -1,4 +1,6 @@
 #include <nds.h>
+#include <sys/stat.h>
+#include "common/dsimenusettings.h"
 
 #ifndef __CARD_LAUNCH__
 #define __CARD_LAUNCH__
@@ -7,6 +9,8 @@ const char *unlaunchAutoLoadID = "AutoLoadInfo";
 const char16_t hiyaNdsPath[] = u"sdmc:/hiya.dsi";
 
 void unlaunchSetHiyaBoot(void) {
+	if (access("sdmc:/hiya.dsi", F_OK) != 0) return;
+
 	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
@@ -18,9 +22,7 @@ void unlaunchSetHiyaBoot(void) {
 	for (uint i = 0; i < sizeof(hiyaNdsPath)/sizeof(hiyaNdsPath[0]); i++) {
 		((char16_t*)0x02000838)[i] = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 	}
-	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
-		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-	}
+	*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 }
 
 void dsiSysMenuLaunch()
@@ -36,19 +38,36 @@ void dsiSysMenuLaunch()
 void dsiLaunchSystemSettings()
 {
     char tmdpath[256];
-    u8 titleID[4] = {0};
-    for (u8 i = 0x41; i <= 0x5A; i++)
-    {
-        snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
-        if (access(tmdpath, F_OK) == 0)
-        {
-            titleID[0] = i;
-            titleID[1] = 0x42;
-            titleID[2] = 0x4e;
-            titleID[3] = 0x48;
-            break;
-        }
-    }
+    u8 titleID[4] = {0, 0x42, 0x4E, 0x48};
+	switch (ms().sysRegion) {
+		case 0:
+			titleID[0] = 0x4A;		// JPN
+			break;
+		case 1:
+			titleID[0] = 0x45;		// USA
+			break;
+		case 2:
+		case 3:
+			titleID[0] = 0x56;		// EUR/AUS
+			break;
+		case 4:
+			titleID[0] = 0x43;		// CHN
+			break;
+		case 5:
+			titleID[0] = 0x4B;		// KOR
+			break;
+	}
+	if (ms().sysRegion == -1) {
+		for (u8 i = 0x41; i <= 0x5A; i++)
+		{
+			snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
+			if (access(tmdpath, F_OK) == 0)
+			{
+				titleID[0] = i;
+				break;
+			}
+		}
+	}
 
     *(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
     *(u16 *)(0x02000304) = 0x1801;
@@ -64,15 +83,12 @@ void dsiLaunchSystemSettings()
     *(u32 *)(0x02000314) = 0x00030015;
     *(u32 *)(0x02000318) = 0x00000017;
     *(u32 *)(0x0200031C) = 0x00000000;
-    while (*(u16 *)(0x02000306) == 0x0000)
-    { // Keep running, so that CRC16 isn't 0
-        *(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
-    }
+    *(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
 
 	unlaunchSetHiyaBoot();
 
 	DC_FlushAll();						// Make reboot not fail
-    fifoSendValue32(FIFO_USER_08, 1); // Reboot into System Settings
+    fifoSendValue32(FIFO_USER_02, 1); // Reboot into System Settings
 }
 
 #endif
