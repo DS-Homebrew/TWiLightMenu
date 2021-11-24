@@ -267,23 +267,7 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 		CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(1) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
 		NULL, 0);
 
-	REG_ROMCTRL = 0;
-	REG_AUXSPICNT = 0;
-	for(int i = 0; i < 25; i++) {
-		while(REG_VCOUNT!=191);
-		while(REG_VCOUNT==191);
-	}
-	REG_AUXSPICNT = CARD_CR1_ENABLE | CARD_CR1_IRQ;
-	REG_ROMCTRL = CARD_nRESET | CARD_SEC_SEED;
-	while(REG_ROMCTRL & CARD_BUSY);
-	cardReset();
-	while(REG_ROMCTRL & CARD_BUSY);
-
 	*chipID=cardReadID(CARD_CLK_SLOW);	
-	while(REG_ROMCTRL & CARD_BUSY);
-
-	normalChip = (*chipID & BIT(31)) != 0; // ROM chip ID MSB
-
 	while(REG_ROMCTRL & CARD_BUSY);
 	//u32 iCheapCard=iCardId&0x80000000;
 
@@ -297,16 +281,13 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 	if ((ndsHeader->unitCode != 0) || (ndsHeader->dsi_flags != 0))
 	{
 		// Extended header found
-		if(normalChip) {
-			for(int i = 0; i < 8; i++) {
-				cardParamCommand (CARD_CMD_HEADER_READ, i * 0x200,
-					CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(1) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
-					(u32 *)headerData + i * 0x200 / sizeof(u32), 0x200 / sizeof(u32));
-			}
-		} else {
-			cardParamCommand (CARD_CMD_HEADER_READ, 0,
-				CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(4) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
-				(u32 *)headerData, 0x1000 / sizeof(u32));
+		cardParamCommand (CARD_CMD_HEADER_READ, 0,
+			CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(4) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
+			(void*)headerData, 0x1000/sizeof(u32));
+		if (ndsHeader->dsi1[0]==0xFFFFFFFF && ndsHeader->dsi1[1]==0xFFFFFFFF
+		 && ndsHeader->dsi1[2]==0xFFFFFFFF && ndsHeader->dsi1[3]==0xFFFFFFFF)
+		{
+			toncset((u8*)headerData+0x200, 0, 0xE00);	// Clear out FFs
 		}
 		tonccpy(ndsHeader, headerData, 0x1000);
 	}
@@ -334,6 +315,7 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 		((ndsHeader->cardControlBF & (CARD_CLK_SLOW|CARD_DELAY1(0x1FFF))) + ((ndsHeader->cardControlBF & CARD_DELAY2(0x3F)) >> 16));
 
 	// Adjust card transfer method depending on the most significant bit of the chip ID
+	normalChip = ((*chipID) & 0x80000000) != 0;		// ROM chip ID MSB
 	if (!normalChip) {
 		portFlagsKey1 |= CARD_SEC_LARGE;
 	}
