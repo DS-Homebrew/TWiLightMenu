@@ -421,13 +421,10 @@ void perGameSettings (std::string filename) {
 		sprintf(sdkSubVerChar, "%d", sdkSubVer);
 		showSDKVersion = true;
 	}
-	u32 arm9size = 0;
 	u32 arm7size = 0;
 	u32 romSize = 0;
 	u32 pubSize = 0;
 	u32 prvSize = 0;
-	fseek(f_nds_file, 0x2C, SEEK_SET);
-	fread(&arm9size, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x3C, SEEK_SET);
 	fread(&arm7size, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x80, SEEK_SET);
@@ -446,10 +443,6 @@ void perGameSettings (std::string filename) {
 	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x01800000 : 0x800000);
 	if (SDKVersion > 0x5000000) {
 		romSizeLimit = (ms().consoleModel > 0 ? 0x01000000 : 0);
-	}
-	if (romSizeLimit > 0 && romSize > 0) {
-		romSizeLimit += (arm9size-0x4000);
-		romSizeLimit += arm7size;
 	}
 	u32 romSizeLimit2 = (ms().consoleModel > 0 ? 0x01C00000 : 0xC00000);
 
