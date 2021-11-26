@@ -1034,17 +1034,11 @@ int main(int argc, char **argv)
 	}
 
 	if (isDSiMode() || sdFound()) {
-		gamesPage
-			.option((dsiFeatures() ? STR_EXPANDROMSPACE : STR_SD_EXPANDROMSPACE),
-				(ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS),
-				Option::Int(&ms().extendedMemory),
-				{STR_NO, STR_YES, STR_YES_512KB},
-				{0, 1, 2})
-			.option((dsiFeatures() ? STR_SAVEFATTABLECACHE : STR_SYSSD_SAVEFATTABLECACHE),
-				STR_DESCRIPTION_SAVEFATTABLECACHE,
-				Option::Bool(&bs().cacheFatTable),
-				{STR_YES, STR_NO},
-				{true, false});
+		gamesPage.option((dsiFeatures() ? STR_SAVEFATTABLECACHE : STR_SYSSD_SAVEFATTABLECACHE),
+			STR_DESCRIPTION_SAVEFATTABLECACHE,
+			Option::Bool(&bs().cacheFatTable),
+			{STR_YES, STR_NO},
+			{true, false});
 	}
 
 	gamesPage
