@@ -103,8 +103,6 @@ int main() {
 
 		cardReadHeader((uint8*)&ndsHeader);
 
-		for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
-
 		if (fatInitDefault()) {
 			char gameTid[5];
 			tonccpy(gameTid, ndsHeader.gameCode, 4);

@@ -47,9 +47,6 @@ extern bool runCardEngine;
 extern bool EnableSD;
 extern int language;
 
-typedef signed int addr_t;
-typedef unsigned char data_t;
-
 void runLaunchEngine (bool altBootloader, bool isDSBrowser)
 {
 	nocashMessage("runLaunchEngine");
@@ -69,16 +66,16 @@ void runLaunchEngine (bool altBootloader, bool isDSBrowser)
 	tonccpy (LCDC_BANK_D, altBootloader ? loadAlt_bin : load_bin, altBootloader ? loadAlt_bin_size : load_bin_size);
 
 	// Set the parameters for the loader
-	toncset32 ((data_t*) LCDC_BANK_D+DSIMODE_OFFSET, isDSiMode(), 1);	// Not working?
-	toncset32 ((data_t*) LCDC_BANK_D+LANGUAGE_OFFSET, language, 1);
-	toncset32 ((data_t*) LCDC_BANK_D+SDACCESS_OFFSET, EnableSD, 1);
-	toncset32 ((data_t*) LCDC_BANK_D+SCFGUNLOCK_OFFSET, scfgUnlock, 1);
-	toncset32 ((data_t*) LCDC_BANK_D+TWLMODE_OFFSET, TWLMODE, 1);
-	toncset32 ((data_t*) LCDC_BANK_D+TWLCLOCK_OFFSET, TWLCLK, 1);
-	toncset32 ((data_t*) LCDC_BANK_D+BOOSTVRAM_OFFSET, TWLVRAM, 1);
-	toncset32 ((data_t*) LCDC_BANK_D+TWLTOUCH_OFFSET, TWLTOUCH, 1);
-	toncset32 ((data_t*) LCDC_BANK_D+SOUNDFREQ_OFFSET, soundFreq, 1);
-	toncset32 ((data_t*) LCDC_BANK_D+RUNCARDENGINE_OFFSET, runCardEngine, 1);
+	toncset32 ((u8*)LCDC_BANK_D+DSIMODE_OFFSET, isDSiMode(), 1);	// Not working?
+	toncset32 ((u8*)LCDC_BANK_D+LANGUAGE_OFFSET, language, 1);
+	toncset32 ((u8*)LCDC_BANK_D+SDACCESS_OFFSET, EnableSD, 1);
+	toncset32 ((u8*)LCDC_BANK_D+SCFGUNLOCK_OFFSET, scfgUnlock, 1);
+	toncset32 ((u8*)LCDC_BANK_D+TWLMODE_OFFSET, TWLMODE, 1);
+	toncset32 ((u8*)LCDC_BANK_D+TWLCLOCK_OFFSET, TWLCLK, 1);
+	toncset32 ((u8*)LCDC_BANK_D+BOOSTVRAM_OFFSET, TWLVRAM, 1);
+	toncset32 ((u8*)LCDC_BANK_D+TWLTOUCH_OFFSET, TWLTOUCH, 1);
+	toncset32 ((u8*)LCDC_BANK_D+SOUNDFREQ_OFFSET, soundFreq, 1);
+	toncset32 ((u8*)LCDC_BANK_D+RUNCARDENGINE_OFFSET, runCardEngine, 1);
 
 	nocashMessage("irqDisable(IRQ_ALL);");
 	irqDisable(IRQ_ALL);
