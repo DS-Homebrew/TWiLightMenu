@@ -35,6 +35,18 @@
 
 sNDSHeader ndsHeader;
 
+bool consoleInited = false;
+bool scfgUnlock = false;
+int TWLMODE = false;
+bool TWLCLK = false;	// false == NTR, true == TWL
+int TWLVRAM = false;
+bool TWLTOUCH = false;
+bool soundFreq = false;
+bool runCardEngine = false;
+bool EnableSD = false;
+bool ignoreBlacklists = false;
+int language = -1;
+
 /**
  * Disable TWL clock speed for a specific game.
  */
@@ -72,19 +84,6 @@ off_t getFileSize(const char *fileName)
 bool consoleOn = false;
 
 int main() {
-
-	bool consoleInited = false;
-	bool scfgUnlock = false;
-	int TWLMODE = false;
-	bool TWLCLK = false;	// false == NTR, true == TWL
-	int TWLVRAM = false;
-	bool TWLTOUCH = false;
-	bool soundFreq = false;
-	bool runCardEngine = false;
-	bool EnableSD = false;
-	bool ignoreBlacklists = false;
-	int language = -1;
-
 	// If slot is powered off, tell Arm7 slot power on is required.
 	if (isDSiMode()) {
 		if(REG_SCFG_MC == 0x11) { fifoSendValue32(FIFO_USER_02, 1); }
@@ -227,7 +226,7 @@ int main() {
 				}
 				tonccpy((void*)0x023F0000, cheatData, 0x8000);
 			}
-			runLaunchEngine ((memcmp(ndsHeader.gameCode, "UBRP", 4) == 0 || memcmp(ndsHeader.gameCode, "AMFE", 4) == 0 || memcmp(ndsHeader.gameCode, "ALXX", 4) == 0), (memcmp(ndsHeader.gameCode, "UBRP", 4) == 0), EnableSD, language, scfgUnlock, TWLMODE, TWLCLK, TWLVRAM, TWLTOUCH, soundFreq, runCardEngine);
+			runLaunchEngine ((memcmp(ndsHeader.gameCode, "UBRP", 4) == 0 || memcmp(ndsHeader.gameCode, "AMFE", 4) == 0 || memcmp(ndsHeader.gameCode, "ALXX", 4) == 0), (memcmp(ndsHeader.gameCode, "UBRP", 4) == 0));
 		}
 	}
 	return 0;

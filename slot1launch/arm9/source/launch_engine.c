@@ -22,6 +22,7 @@
 #include "load_bin.h"
 #include "loadAlt_bin.h"
 #include "launch_engine.h"
+#include "tonccpy.h"
 
 #define LCDC_BANK_D (u16*)0x06860000
 
@@ -36,28 +37,20 @@
 #define SOUNDFREQ_OFFSET 36
 #define RUNCARDENGINE_OFFSET 40
 
+extern bool scfgUnlock;
+extern int TWLMODE;
+extern bool TWLCLK;
+extern int TWLVRAM;
+extern bool TWLTOUCH;
+extern bool soundFreq;
+extern bool runCardEngine;
+extern bool EnableSD;
+extern int language;
+
 typedef signed int addr_t;
 typedef unsigned char data_t;
 
-/*static addr_t readAddr (data_t *mem, addr_t offset) {
-	return ((addr_t*)mem)[offset/sizeof(addr_t)];
-}*/
-
-static void writeAddr (data_t *mem, addr_t offset, addr_t value) {
-	((addr_t*)mem)[offset/sizeof(addr_t)] = value;
-}
-
-void vramcpy (void* dst, const void* src, int len)
-{
-	u16* dst16 = (u16*)dst;
-	u16* src16 = (u16*)src;
-	
-	for ( ; len > 0; len -= 2) {
-		*dst16++ = *src16++;
-	}
-}	
-
-void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool TWLTOUCH, bool soundFreq, bool runCardEngine)
+void runLaunchEngine (bool altBootloader, bool isDSBrowser)
 {
 	nocashMessage("runLaunchEngine");
 
@@ -70,22 +63,22 @@ void runLaunchEngine (bool altBootloader, bool isDSBrowser, bool EnableSD, int l
 	VRAM_D_CR = VRAM_ENABLE | VRAM_D_LCD;
 
 	// Clear VRAM
-	memset (LCDC_BANK_D, 0x00, 128 * 1024);
+	toncset (LCDC_BANK_D, 0, 128 * 1024);
 
 	// Load the loader/patcher into the correct address
-	vramcpy (LCDC_BANK_D, altBootloader ? loadAlt_bin : load_bin, altBootloader ? loadAlt_bin_size : load_bin_size);
+	tonccpy (LCDC_BANK_D, altBootloader ? loadAlt_bin : load_bin, altBootloader ? loadAlt_bin_size : load_bin_size);
 
 	// Set the parameters for the loader
-	writeAddr ((data_t*) LCDC_BANK_D, DSIMODE_OFFSET, isDSiMode());	// Not working?
-	writeAddr ((data_t*) LCDC_BANK_D, LANGUAGE_OFFSET, language);
-	writeAddr ((data_t*) LCDC_BANK_D, SDACCESS_OFFSET, EnableSD);
-	writeAddr ((data_t*) LCDC_BANK_D, SCFGUNLOCK_OFFSET, scfgUnlock);
-	writeAddr ((data_t*) LCDC_BANK_D, TWLMODE_OFFSET, TWLMODE);
-	writeAddr ((data_t*) LCDC_BANK_D, TWLCLOCK_OFFSET, TWLCLK);
-	writeAddr ((data_t*) LCDC_BANK_D, BOOSTVRAM_OFFSET, TWLVRAM);
-	writeAddr ((data_t*) LCDC_BANK_D, TWLTOUCH_OFFSET, TWLTOUCH);
-	writeAddr ((data_t*) LCDC_BANK_D, SOUNDFREQ_OFFSET, soundFreq);
-	writeAddr ((data_t*) LCDC_BANK_D, RUNCARDENGINE_OFFSET, runCardEngine);
+	toncset32 ((data_t*) LCDC_BANK_D+DSIMODE_OFFSET, isDSiMode(), 1);	// Not working?
+	toncset32 ((data_t*) LCDC_BANK_D+LANGUAGE_OFFSET, language, 1);
+	toncset32 ((data_t*) LCDC_BANK_D+SDACCESS_OFFSET, EnableSD, 1);
+	toncset32 ((data_t*) LCDC_BANK_D+SCFGUNLOCK_OFFSET, scfgUnlock, 1);
+	toncset32 ((data_t*) LCDC_BANK_D+TWLMODE_OFFSET, TWLMODE, 1);
+	toncset32 ((data_t*) LCDC_BANK_D+TWLCLOCK_OFFSET, TWLCLK, 1);
+	toncset32 ((data_t*) LCDC_BANK_D+BOOSTVRAM_OFFSET, TWLVRAM, 1);
+	toncset32 ((data_t*) LCDC_BANK_D+TWLTOUCH_OFFSET, TWLTOUCH, 1);
+	toncset32 ((data_t*) LCDC_BANK_D+SOUNDFREQ_OFFSET, soundFreq, 1);
+	toncset32 ((data_t*) LCDC_BANK_D+RUNCARDENGINE_OFFSET, runCardEngine, 1);
 
 	nocashMessage("irqDisable(IRQ_ALL);");
 	irqDisable(IRQ_ALL);

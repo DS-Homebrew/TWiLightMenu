@@ -31,8 +31,8 @@ CFLAGS	:=	-g -Wall -O2\
 		-ffast-math \
 		$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9 -std=gnu99
-CXXFLAGS	:= $(CFLAGS) -fno-exceptions
+CFLAGS	+=	$(INCLUDE) -DARM9
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
 
 ASFLAGS	:=	-g $(ARCH) $(INCLUDE)
 LDFLAGS	=	-specs=../../../universal/arm9/ds_arm9_twlm.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
