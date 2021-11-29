@@ -91,35 +91,36 @@ int main() {
 	}
 	
 	if (isDSiMode()) {
-		// Tell Arm7 it's ready for card reset (if card reset is nessecery)
-		fifoSendValue32(FIFO_USER_01, 1);
-		// Waits for Arm7 to finish card reset (if nessecery)
-		fifoWaitValue32(FIFO_USER_03);
-
-		// Wait for card to stablize before continuing
-		for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
-
-		sysSetCardOwner (BUS_OWNER_ARM9);
-
-		cardReadHeader((uint8*)&ndsHeader);
-
 		if (fatInitDefault()) {
+			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
+
+			ignoreBlacklists = settingsini.GetInt("SRLOADER","IGNORE_BLACKLISTS",false);
+			TWLTOUCH = settingsini.GetInt("SRLOADER","SLOT1_TOUCH_MODE",0);
+			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);
+			runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
+			EnableSD = settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0);
+
+			// Tell Arm7 it's ready for card reset (if card reset is nessecery)
+			fifoSendValue32(FIFO_USER_01, 1);
+			// Waits for Arm7 to finish card reset (if nessecery)
+			fifoWaitValue32(FIFO_USER_03);
+
+			// Wait for card to stablize before continuing
+			for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+
+			sysSetCardOwner (BUS_OWNER_ARM9);
+
+			cardReadHeader((uint8*)&ndsHeader);
+
 			char gameTid[5];
 			tonccpy(gameTid, ndsHeader.gameCode, 4);
 			char pergamefilepath[256];
 			sprintf(pergamefilepath, "/_nds/TWiLightMenu/gamesettings/slot1/%s.ini", gameTid);
 
 			CIniFile pergameini(pergamefilepath);
-			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
-
-			ignoreBlacklists = settingsini.GetInt("SRLOADER","IGNORE_BLACKLISTS",false);
 			TWLMODE = pergameini.GetInt("GAMESETTINGS","DSI_MODE",-1);
 			TWLCLK = setClockSpeed(pergameini.GetInt("GAMESETTINGS","BOOST_CPU",-1), gameTid, ignoreBlacklists);
 			TWLVRAM = pergameini.GetInt("GAMESETTINGS","BOOST_VRAM",-1);
-			TWLTOUCH = settingsini.GetInt("SRLOADER","SLOT1_TOUCH_MODE",0);
-			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);
-			runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
-			EnableSD = settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0);
 
 			if (TWLMODE == -1) {
 				TWLMODE = DEFAULT_DSI_MODE;
@@ -165,8 +166,20 @@ int main() {
 			}
 
 		} else {
-			fifoSendValue32(FIFO_USER_02, 1);
-			fifoSendValue32(FIFO_USER_07, 1);
+			//fifoSendValue32(FIFO_USER_02, 1);
+			//fifoSendValue32(FIFO_USER_07, 1);
+
+			// Tell Arm7 it's ready for card reset (if card reset is nessecery)
+			fifoSendValue32(FIFO_USER_01, 1);
+			// Waits for Arm7 to finish card reset (if nessecery)
+			fifoWaitValue32(FIFO_USER_03);
+
+			// Wait for card to stablize before continuing
+			for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+
+			sysSetCardOwner (BUS_OWNER_ARM9);
+
+			cardReadHeader((uint8*)&ndsHeader);
 		}
 
 		if (ndsHeader.unitCode > 0 && TWLMODE) {
@@ -202,11 +215,6 @@ int main() {
 				swiWaitForVBlank();
 				cardReadHeader((uint8*)&ndsHeader);
 			} while ((u32)ndsHeader.gameTitle == 0xffffffff);
-		}
-
-		// Delay half a second for the DS card to stabilise
-		for (int i = 0; i < 30; i++) {
-			swiWaitForVBlank();
 		}
 	}
 
