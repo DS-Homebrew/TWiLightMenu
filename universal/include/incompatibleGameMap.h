@@ -83,6 +83,7 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KWY", // Mighty Milky Way
+	"KMM", // Mixed Messages
 };
 
 #endif // INCOMPATIBLEMAP_H
