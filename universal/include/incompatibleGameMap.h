@@ -84,6 +84,7 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KWY", // Mighty Milky Way
 	"KMM", // Mixed Messages
+	"KPS", // Phantasy Star 0 Mini
 };
 
 #endif // INCOMPATIBLEMAP_H
