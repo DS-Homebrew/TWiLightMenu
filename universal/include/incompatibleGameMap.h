@@ -49,6 +49,8 @@ static const char incompatibleGameListMemoryPit[][4] = {
 // B4DS DSiWare Whitelist
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
+	"K99", // 99Bullets
+	"K9W", // 99Moves
 	"KQK", // Ace Mathician
 	"KAA", // Art Style: Aquia
 	"KSR", // Aura-Aura Climber
@@ -79,6 +81,7 @@ static const char compatibleGameListB4DS[][5] = {
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM)
 static const char compatibleGameListB4DSDebug[][4] = {
+	"KXT", // 99Seconds
 	"K27", // G.G. Series: All Breaker
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
