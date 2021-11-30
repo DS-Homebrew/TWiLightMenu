@@ -32,7 +32,7 @@ u32 prefetchPatch[8] = {
 	0xE59F000C,	// LDR  R0, =0x4000204
 	0xE59F100C, // LDR  R1, =0x4000
 	0xE4A01000, // STRT R1, [R0]
-	0xE59F0008, // LDR  R0, =0x80000C0
+	0xE59F0008, // LDR  R0, =0x80000C0 (this changes, depending on the ROM)
 	0xE1A0F000, // MOV  PC, R0
 	0x04000204,
 	0x00004000,
