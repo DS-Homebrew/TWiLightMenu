@@ -371,6 +371,9 @@ void perGameSettings (std::string filename) {
 	game_TID[4] = 0;
 
 	// Check if blacklisted
+	blacklisted_boostCpu = false;
+	blacklisted_cardReadDma = false;
+	blacklisted_asyncCardRead = false;
 	if(!ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
