@@ -92,6 +92,8 @@ private:
       return "lang_ar";
     case TWLSettings::ELangPortugueseBrazil:
       return "lang_pt-BR";
+    case TWLSettings::ELangVietnamese:
+      return "lang_vi";
     default:
       return "lang_en";
     }

@@ -318,5 +318,7 @@ std::string TWLSettings::getGuiLanguageString()
             return "ar";
         case TWLSettings::ELangPortugueseBrazil:
             return "pt-BR";
+        case TWLSettings::ELangVietnamese:
+            return "vi";
     }
 }
