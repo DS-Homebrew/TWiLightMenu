@@ -79,10 +79,11 @@ static const char compatibleGameListB4DS[][5] = {
 	"KA6", // Space Ace
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 7)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 8)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KXT", // 99Seconds
 	"K27", // G.G. Series: All Breaker
+	"KAZ", // ARC Style: Soccer!
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KWY", // Mighty Milky Way
