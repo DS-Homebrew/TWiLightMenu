@@ -752,7 +752,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 		} else {
 			currentLang = ms().getTitleLanguage();
 		}
-		while (ndsBanner.titles[currentLang][0] == 0) {
+		while (ndsBanner.titles[currentLang][0] == 0 || (ndsBanner.titles[currentLang][0] == 0x20 && ndsBanner.titles[currentLang][1] == 0)) {
 			if (currentLang == 0) break;
 			currentLang--;
 		}
