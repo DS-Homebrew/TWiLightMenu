@@ -202,21 +202,24 @@ public:
 				case 2:
 					return _battery2Texture.get();
 				case 1:
-					return _battery1Texture.get();
-				case -1:
-					return _battery0Texture.get();
 				case 0:
 				default:
 					return _battery1Texture.get();
+				case -1:
+					return _battery0Texture.get();
 			}
 		} else {
 			switch (texture)
 			{
+				case 8:
+					return _batterychargeblinkTexture.get();
+				case 7:
+					return _batterychargeTexture.get();
 				case 1:
-					return _batterylowTexture.get();
-				case 0:
 				default:
 					return regularDS ? _batteryfullDSTexture.get() : _batteryfullTexture.get();
+				case 0:
+					return _batterylowTexture.get();
 			}
 		}
 	}

@@ -185,7 +185,11 @@ int main() {
 				status = (status & ~VOL_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_VOL) << VOL_OFF) & VOL_MASK);
 				status = (status & ~BAT_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) << BAT_OFF) & BAT_MASK);				
 			} else {
-				status = (status & ~BAT_MASK) | ((readPowerManagement(PM_BATTERY_REG) << BAT_OFF) & BAT_MASK);
+				int battery = (readPowerManagement(PM_BATTERY_REG) & 1)?3:15;
+				int backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+				if (backlight & (1<<6)) battery += (backlight & (1<<3))<<4;
+
+				status = (status & ~BAT_MASK) | ((battery << BAT_OFF) & BAT_MASK);
 			}
 			timeTilVolumeLevelRefresh = 0;
 			fifoSendValue32(FIFO_USER_03, status);

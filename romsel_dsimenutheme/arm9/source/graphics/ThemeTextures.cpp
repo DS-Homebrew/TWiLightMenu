@@ -490,6 +490,10 @@ void ThemeTextures::loadBatteryTextures() {
 		_battery3Texture = std::make_unique<Texture>(TFN_BATTERY3, TFN_FALLBACK_BATTERY3);
 		_battery4Texture = std::make_unique<Texture>(TFN_BATTERY4, TFN_FALLBACK_BATTERY4);
 	} else {
+		if (!sys().isDSPhat()) {
+			_batterychargeTexture = std::make_unique<Texture>(TFN_BATTERY_CHARGE, TFN_FALLBACK_BATTERY_CHARGE);
+			_batterychargeblinkTexture = std::make_unique<Texture>(TFN_BATTERY_CHARGE_BLINK, TFN_FALLBACK_BATTERY_CHARGE_BLINK);
+		}
 		_batteryfullTexture = std::make_unique<Texture>(TFN_BATTERY_FULL, TFN_FALLBACK_BATTERY_FULL);
 		_batteryfullDSTexture = std::make_unique<Texture>(TFN_BATTERY_FULLDS, TFN_FALLBACK_BATTERY_FULLDS);
 		_batterylowTexture = std::make_unique<Texture>(TFN_BATTERY_LOW, TFN_FALLBACK_BATTERY_LOW);
@@ -1113,6 +1117,9 @@ ITCM_CODE int ThemeTextures::getVolumeLevel(void) {
 
 ITCM_CODE int ThemeTextures::getBatteryLevel(void) {
 	u8 batteryLevel = sys().batteryStatus();
+	if (!sys().isDSPhat() && (batteryLevel & BIT(7)))
+		return 7;
+
 	if (!dsiFeatures()) {
 		if (batteryLevel & BIT(0))
 			return 1;
@@ -1120,8 +1127,6 @@ ITCM_CODE int ThemeTextures::getBatteryLevel(void) {
 	}
 
 	// DSi Mode
-	if (batteryLevel & BIT(7))
-		return 7;
 	if (batteryLevel == 0xF)
 		return 4;
 	if (batteryLevel == 0xB)
