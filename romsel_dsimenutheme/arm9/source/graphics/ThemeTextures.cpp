@@ -1117,16 +1117,8 @@ ITCM_CODE int ThemeTextures::getVolumeLevel(void) {
 
 ITCM_CODE int ThemeTextures::getBatteryLevel(void) {
 	u8 batteryLevel = sys().batteryStatus();
-	if (!sys().isDSPhat() && (batteryLevel & BIT(7)))
+	if (batteryLevel & BIT(7))
 		return 7;
-
-	if (!dsiFeatures()) {
-		if (batteryLevel & BIT(0))
-			return 1;
-		return 0;
-	}
-
-	// DSi Mode
 	if (batteryLevel == 0xF)
 		return 4;
 	if (batteryLevel == 0xB)

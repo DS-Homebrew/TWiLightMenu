@@ -196,6 +196,7 @@ public:
 				case 7:
 					return _batterychargeTexture.get();
 				case 4:
+				default:
 					return _battery4Texture.get();
 				case 3:
 					return _battery3Texture.get();
@@ -203,7 +204,6 @@ public:
 					return _battery2Texture.get();
 				case 1:
 				case 0:
-				default:
 					return _battery1Texture.get();
 				case -1:
 					return _battery0Texture.get();
@@ -215,9 +215,9 @@ public:
 					return _batterychargeblinkTexture.get();
 				case 7:
 					return _batterychargeTexture.get();
-				case 1:
 				default:
 					return regularDS ? _batteryfullDSTexture.get() : _batteryfullTexture.get();
+				case 1:
 				case 0:
 					return _batterylowTexture.get();
 			}
