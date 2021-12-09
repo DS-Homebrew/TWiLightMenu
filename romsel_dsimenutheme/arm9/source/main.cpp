@@ -753,7 +753,7 @@ void gbaSramAccess(bool open) {
 }
 
 int main(int argc, char **argv) {
-	defaultExceptionHandler();
+	//defaultExceptionHandler();
 	sys().initFilesystem();
 	sys().initArm7RegStatuses();
 
