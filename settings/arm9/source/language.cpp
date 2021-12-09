@@ -9,7 +9,7 @@
 #include "common/inifile.h"
 #include "common/dsimenusettings.h"
 
-#define STRING(what,def) std::string STR_##what = ""#what;
+#define STRING(what,def) std::string STR_##what;
 #include "language.inl"
 #undef STRING
 

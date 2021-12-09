@@ -84,6 +84,7 @@ public:
 		ELangRomanian = 23,
 		ELangArabic = 24,
 		ELangPortugueseBrazil = 25,
+		ELangVietnamese = 26,
 	};
 
     enum TRegion
