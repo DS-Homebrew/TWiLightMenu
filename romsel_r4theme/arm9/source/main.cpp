@@ -1267,13 +1267,13 @@ int main(int argc, char **argv) {
 		dsiWramAccess = *(vu32*)0x03700000 == 0x414C5253;
 		*(vu32*)0x03700000 = wordBak;
 	} else if (!dsiFeatures()) {
-		u32 wordBak = *(vu32*)0x02000000;
-		u32 wordBak2 = *(vu32*)0x02400000;
-		*(vu32*)(0x02000000) = 0x314D454D;
-		*(vu32*)(0x02400000) = 0x324D454D;
-		dsDebugRam = ((*(vu32*)(0x02000000) == 0x314D454D) && (*(vu32*)(0x02400000) == 0x324D454D));
-		*(vu32*)(0x02000000) = wordBak;
-		*(vu32*)(0x02400000) = wordBak2;
+		u32 wordBak = *(vu32*)0x02800000;
+		u32 wordBak2 = *(vu32*)0x02C00000;
+		*(vu32*)(0x02800000) = 0x314D454D;
+		*(vu32*)(0x02C00000) = 0x324D454D;
+		dsDebugRam = ((*(vu32*)(0x02800000) == 0x314D454D) && (*(vu32*)(0x02C00000) == 0x324D454D));
+		*(vu32*)(0x02800000) = wordBak;
+		*(vu32*)(0x02C00000) = wordBak2;
 	}
 
 	fifoWaitValue32(FIFO_USER_06);

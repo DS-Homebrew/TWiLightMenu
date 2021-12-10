@@ -1,5 +1,6 @@
 #include <nds/arm9/dldi.h>
 #include "systemdetails.h"
+#include "myDSiMode.h"
 #include "common/flashcard.h"
 
 SystemDetails::SystemDetails()
@@ -21,6 +22,16 @@ SystemDetails::SystemDetails()
         _isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
     }
     
+	if (!dsiFeatures()) {
+		u32 wordBak = *(vu32*)0x02800000;
+		u32 wordBak2 = *(vu32*)0x02C00000;
+		*(vu32*)(0x02800000) = 0x314D454D;
+		*(vu32*)(0x02C00000) = 0x324D454D;
+		_dsDebugRam = ((*(vu32*)(0x02800000) == 0x314D454D) && (*(vu32*)(0x02C00000) == 0x324D454D));
+		*(vu32*)(0x02800000) = wordBak;
+		*(vu32*)(0x02C00000) = wordBak2;
+	}
+
     // Restore value.
     fifoSendValue32(FIFO_USER_07, arm7_SNDEXCNT);
 }
