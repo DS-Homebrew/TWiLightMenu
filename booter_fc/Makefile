@@ -9,7 +9,7 @@ export TARGET := booter
 
 include $(DEVKITARM)/ds_rules
 
-.PHONY: bootloader bootstub clean makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4idsn
+.PHONY: bootloader bootstub clean makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4idsn makearm9_acekard2
 
 all:	bootloader bootstub $(TARGET).nds
 
@@ -29,6 +29,10 @@ makearm9_r4idsn:
 	$(MAKE) -C flashcart_specifics/r4idsn/arm9
 	cp flashcart_specifics/r4idsn/arm9/$(TARGET).elf $(TARGET)_r4idsn.arm9.elf
 
+makearm9_acekard2:
+	$(MAKE) -C flashcart_specifics/acekard2/arm9
+	cp flashcart_specifics/acekard2/arm9/$(TARGET).elf $(TARGET)_acekard2.arm9.elf
+
 dist:	all autoboot
 	@mkdir -p ../7zfile/debug
 	@cp $(TARGET)_fc.nds "../7zfile/Flashcard users/BOOT.NDS"
@@ -36,6 +40,7 @@ dist:	all autoboot
 	@cp $(TARGET)_fc.arm9.elf ../7zfile/debug/$(TARGET)_fc.arm9.elf
 	@cp $(TARGET)_r4ils.arm7.elf ../7zfile/debug/$(TARGET)_r4ils.arm7.elf
 	@cp $(TARGET)_r4idsn.arm9.elf ../7zfile/debug/$(TARGET)_r4idsn.arm9.elf
+	@cp $(TARGET)_acekard2.arm9.elf ../7zfile/debug/$(TARGET)_acekard2.arm9.elf
 
 .ONESHELL:
 autoboot:
@@ -195,10 +200,16 @@ autoboot:
 	dlditool flashcart_specifics/DLDI/M3DS_DLDI_based_on_r4tf_v2.dldi SRESET.DAT
 	mv SRESET.DAT "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SRESET.DAT"
 
-$(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4idsn
+	#### Acekard 2, 2.1, 2i
+	dlditool flashcart_specifics/DLDI/ak2_sd.dldi booter_acekard2.nds
+	mkdir -p "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1"
+	mv booter_acekard2.nds "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/akmenu4.nds"
+
+$(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4idsn makearm9_acekard2
 	# simple nds srl without dsi extended header
-	ndstool -c $(TARGET)_fc.nds     -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf     -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	ndstool -c $(TARGET)_r4idsn.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_r4idsn.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_fc.nds       -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_r4idsn.nds   -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_r4idsn.arm9.elf   -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_acekard2.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_acekard2.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 
 clean:
 	@echo clean ...
