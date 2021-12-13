@@ -2672,7 +2672,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 
 						if(ms().updateRecentlyPlayedList) {
-							while (ms().theme != 5 && !screenFadedOut()) {
+							while (ms().theme != 4 && ms().theme != 5 && !screenFadedOut()) {
 								swiWaitForVBlank();
 							}
 							clearText();
