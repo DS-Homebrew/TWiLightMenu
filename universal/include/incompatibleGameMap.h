@@ -84,7 +84,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KA6", // Space Ace
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 8)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 9)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KXT", // 99Seconds
 	"K27", // G.G. Series: All Breaker
@@ -93,6 +93,7 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KWY", // Mighty Milky Way
 	"KMM", // Mixed Messages
 	"KPS", // Phantasy Star 0 Mini
+	"KS3", // Shantae: Risky's Revenge
 	"KEV", // Space Invaders Extreme Z
 };
 
