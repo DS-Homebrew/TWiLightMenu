@@ -869,7 +869,7 @@ void vBlankHandler() {
 						 &tex().smallCartImage()[(REG_SCFG_MC == 0x11) ? 1 : 0]); // Slot-1 card
 				}
 				topIconXpos += 28;
-			} else if (ms().showGba == 1) {
+			} else if (ms().showGba == 1 && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
 				// for (int i = 0; i < 2; i++) {
 					topIconXpos -= 14;
 				//}
@@ -878,6 +878,12 @@ void vBlankHandler() {
 				//} else {
 					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[3]); // GBA Mode
 				//}
+				topIconXpos += 28;
+			}
+			if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+				topIconXpos -= 14;
+				glSprite(topIconXpos, 1, GL_FLIP_NONE,
+					 &tex().smallCartImage()[0]); // Slot-1 card
 				topIconXpos += 28;
 			}
 			glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[4]); // Manual
@@ -1008,7 +1014,12 @@ void vBlankHandler() {
 					}
 					selIconYpos += 28;
 				}
-				if (sys().isRegularDS() && ms().showGba != 2) {
+				if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+					glSprite(
+						selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
+						&tex().smallCartImage()[0]); // Slot-1 card
+					selIconYpos += 28;
+				} else if (sys().isRegularDS() && ms().showGba != 2) {
 				/*	drawSmallIconGBA(selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos); // GBARunner2
 				} else {*/
 					glSprite(selIconXpos, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,

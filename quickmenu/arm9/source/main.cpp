@@ -925,7 +925,7 @@ void printNdsCartBannerText() {
 	} else if (arm7SCFGLocked) {
 		printSmall(false, BOX_PX, iconYpos[0] + BOX_PY - (calcSmallFontHeight(STR_START_GAME_CARD) / 2), STR_START_GAME_CARD, Alignment::center);
 	} else {
-		titleUpdate(1, false, "slot1");
+		titleUpdate(1, true, false, "slot1");
 	}
 }
 
@@ -1445,21 +1445,30 @@ int main(int argc, char **argv) {
 				clearText();
 				printSmall(false, ms().rtl() ? 72 : -72, 6, STR_B_BACK, Alignment::center);
 				printSmall(false, ms().rtl() ? -72 : 72, 6, retTime(), Alignment::center);
-				if (flashcardFound()) {
-					if (romFound[1]) {
-						titleUpdate(1, false, filename[1].c_str());
-					} else {
-						printLastPlayedText(0);
-					}
-				} else if (isDSiMode()) {
+				if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
 					printNdsCartBannerText();
-				}
-				if (!sdFound()) {
-					printGbaBannerText();
-				} else if (romFound[0]) {
-					titleUpdate(0, false, filename[0].c_str());
+					if (romFound[1]) {
+						titleUpdate(1, false, false, filename[1].c_str());
+					} else {
+						printLastPlayedText(3);
+					}
 				} else {
-					printLastPlayedText(3);
+					if (flashcardFound()) {
+						if (romFound[1]) {
+							titleUpdate(1, true, false, filename[1].c_str());
+						} else {
+							printLastPlayedText(0);
+						}
+					} else if (isDSiMode()) {
+						printNdsCartBannerText();
+					}
+					if (!sdFound()) {
+						printGbaBannerText();
+					} else if (romFound[0]) {
+						titleUpdate(0, false, false, filename[0].c_str());
+					} else {
+						printLastPlayedText(3);
+					}
 				}
 
 				if (isDSiMode() && !flashcardFound()) {
@@ -1559,7 +1568,7 @@ int main(int argc, char **argv) {
 					default:
 						break;
 					case 0:
-						if (flashcardFound()) {
+						if (flashcardFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
 							// Launch last-run ROM (Secondary)
 						  if (ms().launchType[1] == 0) {
 							showCursor = false;
@@ -1585,7 +1594,7 @@ int main(int argc, char **argv) {
 							}
 						  }
 						  ms().secondaryDevice = true;
-						} else if (!flashcardFound() && REG_SCFG_MC != 0x11) {
+						} else if ((!flashcardFound() && REG_SCFG_MC != 0x11) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 							// Launch Slot-1
 							showCursor = false;
 							fadeType = false;	// Fade to white
@@ -1597,7 +1606,9 @@ int main(int argc, char **argv) {
 							ms().slot1Launched = true;
 							ms().saveSettings();
 
-							if (ms().slot1LaunchMethod == 0 || arm7SCFGLocked) {
+							if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+								directCardLaunch();
+							} else if (ms().slot1LaunchMethod == 0 || arm7SCFGLocked) {
 								dsCardLaunch();
 							} else if (ms().slot1LaunchMethod == 2) {
 								unlaunchRomBoot("cart:");
@@ -1741,7 +1752,33 @@ int main(int argc, char **argv) {
 						}
 						break;
 					case 3:
-						if (sdFound()) {
+						if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+							// Launch last-run ROM (Secondary)
+						  if (ms().launchType[1] == 0) {
+							showCursor = false;
+							fadeType = false;	// Fade to white
+							mmEffectEx(&snd_launch);
+							moveIconUp[3] = true;
+							for (int i = 0; i < 50; i++) {
+								swiWaitForVBlank();
+							}
+							loadROMselect();
+						  } else if (ms().launchType[1] > 0) {
+							showCursor = false;
+							fadeType = false;	// Fade to white
+							mmEffectEx(&snd_launch);
+							moveIconUp[3] = true;
+							if (romFound[1]) {
+								applaunch = true;
+							} else {
+								for (int i = 0; i < 50; i++) {
+									swiWaitForVBlank();
+								}
+								loadROMselect();
+							}
+						  }
+						  ms().secondaryDevice = true;
+						} else if (sdFound()) {
 							// Launch last-run ROM (SD)
 						  if (ms().launchType[0] == 0) {
 							showCursor = false;

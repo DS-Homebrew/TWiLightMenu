@@ -869,7 +869,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 	}
 }
 
-void titleUpdate(int num, bool isDir, const char* name)
+void titleUpdate(int num, bool top, bool isDir, const char* name)
 {
 	if (extention(name, ".plg")
 	 || extention(name, ".rvid")
@@ -894,13 +894,13 @@ void titleUpdate(int num, bool isDir, const char* name)
 	 || extention(name, ".a78")
 	 || extention(name, ".xex")
 	 || extention(name, ".pce")) {
-		printSmall(false, BOX_PX, iconYpos[num==0 ? 3 : 0] + BOX_PY - (calcSmallFontHeight(name) / 2), name, Alignment::center);
+		printSmall(false, BOX_PX, iconYpos[top ? 0 : 3] + BOX_PY - (calcSmallFontHeight(name) / 2), name, Alignment::center);
 	} else {
 		// this is an nds/app file!
 		if (infoFound[num]) {
-			printSmall(false, BOX_PX, iconYpos[num==0 ? 3 : 0] + BOX_PY - (calcSmallFontHeight(cachedTitle[num]) / 2), cachedTitle[num], Alignment::center);
+			printSmall(false, BOX_PX, iconYpos[top ? 0 : 3] + BOX_PY - (calcSmallFontHeight(cachedTitle[num]) / 2), cachedTitle[num], Alignment::center);
 		} else {
-			printSmall(false, BOX_PX, iconYpos[num==0 ? 3 : 0] + BOX_PY - (calcSmallFontHeight(name) / 2), name, Alignment::center);
+			printSmall(false, BOX_PX, iconYpos[top ? 0 : 3] + BOX_PY - (calcSmallFontHeight(name) / 2), name, Alignment::center);
 		}
 	}
 }

@@ -1475,7 +1475,7 @@ int main(int argc, char **argv) {
 						printLargeCentered(false, 166, "Game");
 						break;
 					case 1:
-						if (flashcardFound()) {
+						if (flashcardFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
 							printLargeCentered(false, 166, "Not used");
 						} else {
 							printLargeCentered(false, 166, "Launch Slot-1 card");
@@ -1562,11 +1562,19 @@ int main(int argc, char **argv) {
 
 							slot1Launched = true;
 							SaveSettings();
-							if (slot1LaunchMethod==0 || arm7SCFGLocked) {
+
+							bool directMethod = false;
+							if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+								directMethod = true;
+							} else if (slot1LaunchMethod==0 || arm7SCFGLocked) {
 								dsCardLaunch();
 							} else if (slot1LaunchMethod==2) {
 								unlaunchRomBoot("cart:");
 							} else {
+								directMethod = true;
+							}
+
+							if (directMethod) {
 								SetWidescreen(NULL);
 								if (!isDSiMode()) {
 									chdir("fat:/");

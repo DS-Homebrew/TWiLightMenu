@@ -208,11 +208,28 @@ int main() {
 			} else {
 				consoleClear();
 			}
-			iprintf ("Insert a DS game.\n");
+			if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+				iprintf ("Please insert a DS game\n");
+				iprintf ("or flashcard.\n");
+			} else {
+				iprintf ("Please insert a DS game.\n");
+			}
 			do {
 				swiWaitForVBlank();
 				cardReadHeader((uint8*)&ndsHeader);
 			} while (*(u32*)&ndsHeader == 0xffffffff);
+
+			// Wait for card to stablize before continuing
+			for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+		} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+			// Check header CRC
+			if (ndsHeader.headerCRC16 != swiCRC16(0xFFFF, (void*)&ndsHeader, 0x15E)) {
+				consoleDemoInit();
+				consoleInited = true;
+				iprintf ("Please reboot the console with\n");
+				iprintf ("Slot-1 empty, and try again.\n");
+				while (1);
+			}
 		}
 	}
 

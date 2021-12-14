@@ -340,9 +340,11 @@ void lastRunROM()
 	}
 
 	int err = 0;
-	if (ms().slot1Launched && !flashcardFound())
+	if (ms().slot1Launched && (!flashcardFound() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)))
 	{
-		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
+		if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+			err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, -1);
+		} else if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
 			dsCardLaunch();
 		} else if (ms().slot1LaunchMethod==2) {
 			unlaunchRomBoot("cart:");

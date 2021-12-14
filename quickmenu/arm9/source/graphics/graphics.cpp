@@ -19,6 +19,7 @@
 ------------------------------------------------------------------*/
 
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <maxmod9.h>
 #include <gl2d.h>
 #include "bios_decompress_callback.h"
@@ -375,7 +376,7 @@ void vBlankHandler()
 				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[1]);
 			} else {
 				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[0]);
-				if (isDSiMode() && !flashcardFound() && arm7SCFGLocked) {
+				if ((isDSiMode() && !flashcardFound() && arm7SCFGLocked) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[0]);
 				}
 				else if (bnrRomType[1] == 12) drawIconINT(40, iconYpos[0]+6);
@@ -400,20 +401,21 @@ void vBlankHandler()
 			glSprite(33, iconYpos[1], GL_FLIP_NONE, &pictodlpImage[1-pictochatFound]);
 			glSprite(129, iconYpos[2], GL_FLIP_NONE, &pictodlpImage[3-dlplayFound]);
 			glSprite(33, iconYpos[3], GL_FLIP_NONE, sdFound() ? &iconboxImage[0] : &iconboxImage[1-isRegularDS]);
-			if (!sdFound()) drawIconGBA(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 12) drawIconINT(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 11) drawIconPCE(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 10) drawIconA26(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 9) drawIconPlg(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 8) drawIconSNES(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 7) drawIconMD(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 6) drawIconGG(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 5) drawIconSMS(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 4) drawIconNES(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 3) drawIconGBC(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 2) drawIconGB(40, iconYpos[3]+6);
-			else if (bnrRomType[0] == 1) glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
-			else drawIcon(0, 40, iconYpos[3]+6);
+			int num = (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? 1 : 0;
+			if (!sdFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) drawIconGBA(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 12) drawIconINT(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 11) drawIconPCE(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 10) drawIconA26(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 9) drawIconPlg(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 8) drawIconSNES(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 7) drawIconMD(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 6) drawIconGG(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 5) drawIconSMS(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 4) drawIconNES(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 3) drawIconGBC(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 2) drawIconGB(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 1) glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
+			else drawIcon(num, 40, iconYpos[3]+6);
 			if (isDSiMode() && ms().consoleModel < 2) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, &cornerIcons[0]);
 			}

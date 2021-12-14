@@ -750,11 +750,18 @@ void switchDevice(void) {
 		ms().slot1Launched = true; // 0
 		ms().saveSettings();
 
-		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
+		bool directMethod = false;
+		if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+			directMethod = true;
+		} else if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
 			dsCardLaunch();
 		} else if (ms().slot1LaunchMethod==2) {
 			unlaunchRomBoot("cart:");
 		} else {
+			directMethod = true;
+		}
+
+		if (directMethod) {
 			SetWidescreen(NULL);
 			if (sdFound()) {
 				chdir("sd:/");
@@ -1444,6 +1451,11 @@ bool selectMenu(void) {
 			assignedOp[1] = 1;
 			assignedOp[2] = 4;
 			maxCursors = 2;
+		} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+			assignedOp[0] = 1;
+			assignedOp[1] = 2;
+			assignedOp[2] = 4;
+			maxCursors = 2;
 		} else if (ms().showGba == 2) {
 			assignedOp[0] = 1;
 			assignedOp[1] = 4;
@@ -1481,7 +1493,7 @@ bool selectMenu(void) {
 					} else {
 						printSmall(false, textXpos, textYpos, STR_SWITCH_TO_SLOT_1, align);
 					}
-				} else if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
+				} else if ((isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 					printSmall(false, textXpos, textYpos, (REG_SCFG_MC == 0x11) ? STR_NO_SLOT_1 : STR_LAUNCH_SLOT_1, align);
 				}
 			} else if (assignedOp[i] == 3) {
@@ -1531,7 +1543,7 @@ bool selectMenu(void) {
 				launchSettings();
 				break;
 			case 2:
-				if (REG_SCFG_MC != 0x11) {
+				if (REG_SCFG_MC != 0x11 || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 					switchDevice();
 					inSelectMenu = false;
 					return true;
@@ -2746,7 +2758,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				int topIconXpos = 116;
 				int savedTopIconXpos[3] = {0};
-				if ((isDSiMode() && sdFound()) || bothSDandFlashcard()) {
+				if ((isDSiMode() && sdFound()) || bothSDandFlashcard() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 					//for (int i = 0; i < 2; i++) {
 						topIconXpos -= 14;
 					//}
@@ -2764,7 +2776,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 				}
 
-				if ((isDSiMode() && sdFound()) || bothSDandFlashcard()) {
+				if ((isDSiMode() && sdFound()) || bothSDandFlashcard() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 					// Switch devices or launch Slot-1 by touching button
 					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0] + 24) {
 						if (ms().secondaryDevice || REG_SCFG_MC != 0x11) {
@@ -2781,7 +2793,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1] + 24) {
 						launchManual();
 					}
-				} else if (ms().showGba == 1) {
+				} else if (ms().showGba == 1 && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
 					// Launch GBA by touching button
 					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1] + 24) {
 						launchGba();
@@ -2793,7 +2805,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 				} else {
 					// Open the manual
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0] + 24) {
+					int num = (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? 1 : 0;
+					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[num] && touch.px < savedTopIconXpos[num] + 24) {
 						launchManual();
 					}
 				}
