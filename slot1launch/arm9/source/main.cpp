@@ -84,13 +84,11 @@ off_t getFileSize(const char *fileName)
 bool consoleOn = false;
 
 int main() {
-	// If slot is powered off, tell Arm7 slot power on is required.
 	if (isDSiMode()) {
+		// If slot is powered off, tell Arm7 slot power on is required.
 		if(REG_SCFG_MC == 0x11) { fifoSendValue32(FIFO_USER_02, 1); }
 		if(REG_SCFG_MC == 0x10) { fifoSendValue32(FIFO_USER_02, 1); }
-	}
-	
-	if (isDSiMode()) {
+
 		if (fatInitDefault()) {
 			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
 
@@ -195,7 +193,7 @@ int main() {
 			do {
 				swiWaitForVBlank();
 				cardReadHeader((uint8*)&ndsHeader);
-			} while ((u32)ndsHeader.gameTitle != 0xffffffff);
+			} while (*(u32*)&ndsHeader != 0xffffffff);
 			for (int i = 0; i < 60; i++) {
 				swiWaitForVBlank();
 			}
@@ -203,7 +201,7 @@ int main() {
 
 		cardReadHeader((uint8*)&ndsHeader);
 
-		if ((u32)ndsHeader.gameTitle == 0xffffffff) {
+		if (*(u32*)&ndsHeader == 0xffffffff) {
 			if (!consoleInited) {
 				consoleDemoInit();
 				consoleInited = true;
@@ -214,7 +212,7 @@ int main() {
 			do {
 				swiWaitForVBlank();
 				cardReadHeader((uint8*)&ndsHeader);
-			} while ((u32)ndsHeader.gameTitle == 0xffffffff);
+			} while (*(u32*)&ndsHeader == 0xffffffff);
 		}
 	}
 
