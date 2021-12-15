@@ -207,6 +207,12 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1"
 	mv booter_acekard2.nds "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/akmenu4.nds"
 
+	#### R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+
+	cp booter_fc.nds _DS_MENU.dat
+	dlditool flashcart_specifics/DLDI/r4itt.dldi _DS_MENU.dat
+	mkdir -p "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+"
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/_DS_MENU.DAT"
+
 $(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4idsn makearm9_acekard2
 	# simple nds srl without dsi extended header
 	ndstool -c $(TARGET)_fc.nds       -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
