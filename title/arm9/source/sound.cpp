@@ -2,6 +2,7 @@
 
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
+#include "common/systemdetails.h"
 #include "streamingaudio.h"
 #include "string.h"
 #include "common/tonccpy.h"
@@ -47,7 +48,7 @@ extern volatile s32 streaming_buf_ptr;
 extern char debug_buf[256];
 #endif
 
-char soundBank[0x2A000] = {0};
+char soundBank[0x4C000] = {0};
 bool soundBankInited = false;
 
 SoundControl::SoundControl()
@@ -78,16 +79,26 @@ SoundControl::SoundControl()
 
 	mmInitDefaultMem((mm_addr)soundBank);
 
-	mmLoadEffect( SFX_DSIBOOT );
+	mmLoadEffect( sys().isRegularDS() ? SFX_DSBOOT : SFX_DSIBOOT );
 	mmLoadEffect( SFX_SELECT );
 
-	snd_dsiboot = {
-		{ SFX_DSIBOOT } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
+	if (sys().isRegularDS()) {
+		snd_dsiboot = {
+			{ SFX_DSBOOT } ,			// id
+			(int)(1.0f * (1<<10)),	// rate
+			0,		// handle
+			255,	// volume
+			128,	// panning
+		};
+	} else {
+		snd_dsiboot = {
+			{ SFX_DSIBOOT } ,			// id
+			(int)(1.0f * (1<<10)),	// rate
+			0,		// handle
+			255,	// volume
+			128,	// panning
+		};
+	}
 
 	snd_select = {
 		{ SFX_SELECT } ,			// id
