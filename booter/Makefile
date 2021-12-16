@@ -118,9 +118,9 @@ endif
  
 export GAME_TITLE := $(TARGET)
 
-.PHONY: bootloader bootstub $(TARGET).nds $(TARGET)_rungame.nds clean
+.PHONY: bootloader bootstub arm7/$(TARGET).elf arm9/$(TARGET).elf $(TARGET).nds $(TARGET)_rungame.nds clean
 
-all:	bootloader bootstub $(TARGET).nds $(TARGET)_rungame.nds
+all:	bootloader bootstub arm7/$(TARGET).elf arm9/$(TARGET).elf $(TARGET).nds $(TARGET)_rungame.nds
 
 dist:	all
 	@mkdir -p ../7zfile/debug

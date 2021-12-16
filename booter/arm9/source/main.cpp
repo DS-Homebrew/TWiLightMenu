@@ -102,21 +102,6 @@ int main(int argc, char **argv) {
 
 	int err = runNdsFile (srldrPath, 0, NULL);
 	bool twlmFound = (access("sd:/_nds/TWiLightMenu", F_OK) == 0);
-	bool formatting = true;
-	if (access("_nds", F_OK) == 0) {
-		chdir("_nds");
-		if (access("_nds", F_OK) == 0) {
-			chdir("_nds");
-			if (access("_nds", F_OK) == 0) {
-				formatting = false;	// _nds folder is found 3 times without opening it
-			} else {
-				chdir("..");
-				chdir("..");
-			}
-		} else {
-			chdir("..");
-		}
-	}
 
 	graphicsInit();
 	fontInit();
@@ -124,18 +109,29 @@ int main(int argc, char **argv) {
 
 	int returnTextPos = 28;
 	clearText();
-	if (!twlmFound && !formatting) {
-		printSmall(false, 4, 4, "The SD Card is formatted in a");
-		printSmall(false, 4, 12, "way that TWiLight Menu++ cannot");
-		printSmall(false, 4, 20, "start. Please reformat your");
-		printSmall(false, 4, 28, "SD Card, or try another SD Card.");
-		returnTextPos += 12*2;
-	} else if (!twlmFound) {
-		printSmall(false, 4, 4, "The TWiLight Menu++ files are");
-		printSmall(false, 4, 12, "missing. In order to start");
-		printSmall(false, 4, 20, "TWiLight Menu++, please add the");
-		printSmall(false, 4, 28, "missing files.");
-		returnTextPos += 12*2;
+	if (!twlmFound) {
+		int yPos = 4;
+		printSmall(false, 4, yPos, "The TWiLight Menu++ files are");
+		yPos += 8;
+		printSmall(false, 4, yPos, "missing. In order to start");
+		yPos += 8;
+		printSmall(false, 4, yPos, "TWiLight Menu++, please add the");
+		yPos += 8;
+		printSmall(false, 4, yPos, "missing files.");
+		yPos += 8*2;
+		printSmall(false, 4, yPos, "If they already exist, and the");
+		yPos += 8;
+		printSmall(false, 4, yPos, "above message still appears, then");
+		yPos += 8;
+		printSmall(false, 4, yPos, "the SD Card is formatted in a");
+		yPos += 8;
+		printSmall(false, 4, yPos, "way that TWiLight Menu++ cannot");
+		yPos += 8;
+		printSmall(false, 4, yPos, "start. Please reformat your");
+		yPos += 8;
+		printSmall(false, 4, yPos, "SD Card, or try another SD Card.");
+		yPos += 8*2;
+		returnTextPos = yPos;
 	} else if (err == 1) {
 		printSmall(false, 4, 4, "sd:/_nds/TWiLightMenu/");
 		printSmall(false, 4, 12, runGame ? "resetgame.srldr not found." : "main.srldr not found.");
