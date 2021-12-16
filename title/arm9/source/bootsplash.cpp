@@ -54,7 +54,7 @@ void bootSplashDSi(void) {
 	} else if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashtop.gif", F_OK) == 0) {
 		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", sdFound() ? "sd" : "fat");
 	} else {
-		sprintf(path, "nitro:/video/splash/%s%s.gif", language == TWLSettings::ELangChineseS ? "iquedsi" : "dsi", /*ms().wideScreen && !ms().macroMode ? "_wide" :*/ "");
+		sprintf(path, "nitro:/video/splash/%s.gif", language == TWLSettings::ELangChineseS ? "iquedsi" : (sys().isRegularDS() ? "ds" : "dsi"));
 	}
 	Gif splash(path, true, true);
 
