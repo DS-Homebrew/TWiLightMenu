@@ -31,6 +31,7 @@
 #include "graphics/themefilenames.h"
 
 #include "errorScreen.h"
+#include "esrbSplash.h"
 #include "fileBrowse.h"
 #include "nds_loader_arm9.h"
 #include "gbaswitch.h"
@@ -1043,6 +1044,8 @@ int main(int argc, char **argv) {
 
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiWare[CURPOS]) {
+				remove(sdFound() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
+
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				char *name = argarray.at(0);
@@ -1590,6 +1593,8 @@ int main(int argc, char **argv) {
 						ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch; // 1
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
+
+						createEsrbSplash();
 
 						if (ms().theme == 5) {
 							fadeType = false;		  // Fade to black

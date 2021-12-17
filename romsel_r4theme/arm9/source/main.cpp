@@ -1748,6 +1748,8 @@ int main(int argc, char **argv) {
 
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiWare) {
+				remove(sdFound() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
+
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				char *name = argarray.at(0);
@@ -2017,6 +2019,8 @@ int main(int argc, char **argv) {
 
 			// Launch .nds directly or via nds-bootstrap
 			if (extension(filename, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+				remove(sdFound() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
+
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				bool dsModeSwitch = false;
