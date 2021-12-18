@@ -6,6 +6,7 @@ void fontInit();
 void fontReinit();
 
 void updateText(bool top);
+void updateTextImg(u16* img, bool top);
 void clearText(bool top);
 void clearText();
 

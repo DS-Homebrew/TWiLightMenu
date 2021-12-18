@@ -88,6 +88,40 @@ void updateText(bool top) {
 	tonccpy(bgGetGfxPtr(top ? 6 : 2), FontGraphic::textBuf[top], 256 * 192);
 }
 
+void updateTextImg(u16* img, bool top) {
+	if(!top)	return;
+
+	// Clear before redrawing
+	if(shouldClear[top]) {
+		dmaFillWords(0, FontGraphic::textBuf[top], 256 * 192);
+		shouldClear[top] = false;
+	}
+
+	// Draw text
+	auto &text = getTextQueue(top);
+	for(auto it = text.begin(); it != text.end(); ++it) {
+		FontGraphic *font = getFont(it->large);
+		if(font)
+			font->print(it->x, it->y, top, it->message, it->align);
+	}
+	text.clear();
+
+	u16 palette[] = {
+		0x0000,
+		0x6718,
+		0x4A32,
+		0x1064,
+	};
+
+	// Copy buffer to the image
+	for (int i = 0; i < 256 * 192; i++) {
+		if (FontGraphic::textBuf[top][i] != 0) {
+			//img[i] = top ? BG_PALETTE[FontGraphic::textBuf[true][i]] : BG_PALETTE_SUB[FontGraphic::textBuf[false][i]];
+			img[i] = palette[FontGraphic::textBuf[top][i]];
+		}
+	}
+}
+
 void clearText(bool top) {
 	shouldClear[top] = true;
 }
