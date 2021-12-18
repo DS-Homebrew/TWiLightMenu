@@ -16,7 +16,7 @@
 #include "dsGameInfoMap.h"
 
 void createEsrbSplash(void) {
-	if (isHomebrew[CURPOS] || (gameTid[CURPOS][3] != 'E' && gameTid[CURPOS][3] != 'O' && gameTid[CURPOS][3] != 'T')) {
+	if (isHomebrew[CURPOS] || (gameTid[CURPOS][3] != 'E' && gameTid[CURPOS][3] != 'O' && gameTid[CURPOS][3] != 'T' && gameTid[CURPOS][3] != 'W')) {
 		remove(sdFound() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 		return;
 	}
@@ -74,7 +74,6 @@ void createEsrbSplash(void) {
 				break;
 			} else if (descriptors[i] == ',') {
 				descriptorLines++;
-				descriptorYpos -= 6;
 				currentChar = 0;
 				if (descriptors[i+1] == ' ') {
 					i++;
@@ -85,10 +84,12 @@ void createEsrbSplash(void) {
 			}
 		}
 
+		descriptorYpos -= ((descriptorLines > 4) ? 6 : 8)*(descriptorLines-1);
+
 		clearText(true);
 		for (int i = 0; i < descriptorLines; i++) {
 			printSmall(true, 100, descriptorYpos, descriptorList[i]);
-			descriptorYpos += 12;
+			descriptorYpos += (descriptorLines > 4) ? 12 : 16;
 		}
 		updateTextImg(tex().bmpImageBuffer(), true);
 		clearText(true);
