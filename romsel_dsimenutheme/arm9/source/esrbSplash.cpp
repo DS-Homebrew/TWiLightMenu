@@ -52,6 +52,8 @@ void createEsrbSplash(void) {
 		sprintf(esrbImagePath, "nitro:/graphics/ESRB/%s.png", rating.c_str()); 
 	}
 
+	DC_FlushAll();
+
 	std::vector<unsigned char> image;
 	uint imageWidth, imageHeight;
 	lodepng::decode(image, imageWidth, imageHeight, esrbImagePath);
