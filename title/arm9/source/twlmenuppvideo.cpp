@@ -11,10 +11,8 @@
 #include "graphics/color.h"
 #include "sound.h"
 
-#include "logo_twlmenupp.h"
 //#include "logo_anniversary.h"
 //#include "logoPhat_anniversary.h"
-#include "block_transparent.h"
 #include "icon_nds.h"
 #include "icon_ndsl.h"
 #include "icon_ndsi.h"
