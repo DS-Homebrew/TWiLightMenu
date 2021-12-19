@@ -16,7 +16,7 @@
 #include "dsGameInfoMap.h"
 
 void createEsrbSplash(void) {
-	if (isHomebrew[CURPOS] || (gameTid[CURPOS][3] != 'E' && gameTid[CURPOS][3] != 'O' && gameTid[CURPOS][3] != 'T' && gameTid[CURPOS][3] != 'W')) {
+	if (!ms().esrbRatingScreen || isHomebrew[CURPOS] || (gameTid[CURPOS][3] != 'E' && gameTid[CURPOS][3] != 'O' && gameTid[CURPOS][3] != 'T' && gameTid[CURPOS][3] != 'W')) {
 		remove(sdFound() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 		return;
 	}

@@ -980,7 +980,9 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 	}
 
-	gamesPage.option(STR_HOTKEY, STR_DESCRIPTION_HOTKEY, Option::Nul(opt_set_hotkey), {STR_PRESS_A}, {0});
+	gamesPage
+		.option(STR_ESRBRATINGSCREEN, STR_DESCRIPTION_ESRBRATINGSCREEN, Option::Bool(&ms().esrbRatingScreen), {STR_ON, STR_OFF}, {true, false})
+		.option(STR_HOTKEY, STR_DESCRIPTION_HOTKEY, Option::Nul(opt_set_hotkey), {STR_PRESS_A}, {0});
 
 	if (isDSiMode() && !sys().arm7SCFGLocked()) {
 		if (ms().consoleModel == 0) {

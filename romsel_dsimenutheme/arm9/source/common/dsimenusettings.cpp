@@ -91,6 +91,7 @@ TWLSettings::TWLSettings()
 
 	//snesEmulator = true;
 	smsGgInRam = false;
+	esrbRatingScreen = false;
 
 	ak_viewMode = EViewInternal;
 	ak_scrollSpeed = EScrollFast;
@@ -244,6 +245,7 @@ void TWLSettings::loadSettings()
 
 	//snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 	smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
+	esrbRatingScreen = settingsini.GetInt("SRLOADER", "ESRB_RATING_SCREEN", esrbRatingScreen);
 	
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 

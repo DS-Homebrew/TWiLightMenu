@@ -223,6 +223,7 @@ class TWLSettings
     bool show12hrClock;
     //bool snesEmulator;
     bool smsGgInRam;
+	bool esrbRatingScreen;
 
     int ak_viewMode;
     int ak_scrollSpeed;
