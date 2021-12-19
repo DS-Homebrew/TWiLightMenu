@@ -136,7 +136,7 @@ void LoadBMP(void) {
 	std::vector<unsigned char> image;
 	unsigned width, height;
 
-	lodepng::decode(image, width, height, ms().macroMode ? (sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobzYear.png" : "nitro:/graphics/logo_rocketrobzYear.png") : (sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.png" : "nitro:/graphics/logo_rocketrobz.png"));
+	lodepng::decode(image, width, height, (sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.png" : "nitro:/graphics/logo_rocketrobz.png"));
 	bool alternatePixel = false;
 	for(unsigned i=0;i<image.size()/4;i++) {
 		image[(i*4)+3] = 0;
@@ -217,24 +217,6 @@ void LoadBMP(void) {
 	}
 
 	doubleBufferTop = false;
-	lodepng::decode(image, width, height, "nitro:/graphics/effect_twilight.png");
-	for(unsigned i=0;i<image.size()/4;i++) {
-		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode == 1) {
-			color = convertVramColorToGrayscale(color);
-		}
-		frameBuffer[0][i] = color;
-	}
-	image.clear();
-
-	lodepng::decode(image, width, height, "nitro:/graphics/effect_menupp.png");
-	for(unsigned i=0;i<image.size()/4;i++) {
-		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode == 1) {
-			color = convertVramColorToGrayscale(color);
-		}
-		frameBuffer[1][i] = color;
-	}
 }
 
 static bool graphicIrqRunning = false;

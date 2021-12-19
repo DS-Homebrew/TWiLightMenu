@@ -2116,11 +2116,6 @@ int main(int argc, char **argv)
 	{
 		runGraphicIrq();
 		loadTitleGraphics();
-		fadeType = true;
-		for (int i = 0; i < 15; i++)
-		{
-			swiWaitForVBlank();
-		}
 		twlMenuVideo();
 		snd().fadeOutStream();
 	}
