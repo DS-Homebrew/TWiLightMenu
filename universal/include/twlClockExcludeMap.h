@@ -2,8 +2,9 @@
 #define TWLCLOCKEXCLUDEMAP_H
 
 static const char twlClockExcludeList[][4] = {
+	"YAA", // Arkanoid DS
 	"CRL", // Coraline
-	"CLP", // Club Pengion: Elite Penguin Force
+	"CLP", // Club Penguin: Elite Penguin Force
 	"CY9", // Club Penguin: EPF: Herbert's Revenge
 	"ATD", // Clubhouse Games
 	"YGD", // Diary Girl
@@ -13,7 +14,7 @@ static const char twlClockExcludeList[][4] = {
 	"AWI", // Hotel Dusk: Room 215
 	"C6C", // Infinite Space
 	"YLU", // Last Window: The Secret of Cape West
-	"YJB", // LEGO Batman
+	"YJB", // LEGO Batman: The Videogame
 	"B6F", // LEGO Batman 2: DC Super Heroes
 	"CS5", // LEGO Battles
 	"TLJ", // LEGO Friends
