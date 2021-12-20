@@ -197,7 +197,7 @@ autoboot:
 
 	#### M3 DS Real
 	ndstool -c SRESET.DAT -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_acekard2.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	dlditool flashcart_specifics/DLDI/M3DS_DLDI_based_on_r4tf_v2.dldi SRESET.DAT
+	dlditool "flashcart_specifics/DLDI/M3-DS_(SD_Card).dldi" SRESET.DAT
 	./flashcart_specifics/dsbize/dsbize SRESET.DAT menu.xx 0x12
 	mv menu.xx "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SYSTEM/menu.xx"
 	mv SRESET.DAT "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SRESET.DAT"
