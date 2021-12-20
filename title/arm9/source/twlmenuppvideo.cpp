@@ -501,21 +501,21 @@ void twlMenuVideo_topGraphicRender(void) {
 
 	if (!loadFrameSprite) {
 		frameDelaySprite++;
-		loadFrameSprite = (frameDelaySprite == 2+frameDelaySpriteEven);
+		loadFrameSprite = (frameDelaySprite == 1+frameDelaySpriteEven);
 	}
 
 	if (loadFrameSprite) {
-		zoomingIconXpos[0] += 4;
-		zoomingIconYpos[0] += 5;
-		if (zoomingIconXpos[0] > 32) {
-			zoomingIconXpos[0] = 32;
+		zoomingIconXpos[0] += 2;
+		zoomingIconYpos[0] += 3;
+		if (zoomingIconXpos[0] > 36) {
+			zoomingIconXpos[0] = 36;
 		}
 		if (zoomingIconYpos[0] > 32) {
 			zoomingIconYpos[0] = 32;
 		}
 
-		zoomingIconXpos[1] += 6;
-		zoomingIconYpos[1] += 4;
+		zoomingIconXpos[1] += 3;
+		zoomingIconYpos[1] += 2;
 		if (zoomingIconXpos[1] > 80) {
 			zoomingIconXpos[1] = 80;
 		}
@@ -523,8 +523,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[1] = 12;
 		}
 
-		zoomingIconXpos[2] -= 6;
-		zoomingIconYpos[2] += 4;
+		zoomingIconXpos[2] -= 3;
+		zoomingIconYpos[2] += 2;
 		if (zoomingIconXpos[2] < 154) {
 			zoomingIconXpos[2] = 154;
 		}
@@ -532,8 +532,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[2] = 12;
 		}
 
-		zoomingIconXpos[3] -= 4;
-		zoomingIconYpos[3] += 4;
+		zoomingIconXpos[3] -= 2;
+		zoomingIconYpos[3] += 2;
 		if (zoomingIconXpos[3] < 202) {
 			zoomingIconXpos[3] = 202;
 		}
@@ -541,8 +541,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[3] = 44;
 		}
 
-		zoomingIconXpos[4] += 4;
-		zoomingIconYpos[4] -= 5;
+		zoomingIconXpos[4] += 2;
+		zoomingIconYpos[4] -= 3;
 		if (zoomingIconXpos[4] > 32) {
 			zoomingIconXpos[4] = 32;
 		}
@@ -550,8 +550,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[4] = 120;
 		}
 
-		zoomingIconXpos[5] += 6;
-		zoomingIconYpos[5] -= 4;
+		zoomingIconXpos[5] += 3;
+		zoomingIconYpos[5] -= 2;
 		if (zoomingIconXpos[5] > 80) {
 			zoomingIconXpos[5] = 80;
 		}
@@ -559,8 +559,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[5] = 152;
 		}
 
-		zoomingIconXpos[6] -= 6;
-		zoomingIconYpos[6] -= 5;
+		zoomingIconXpos[6] -= 3;
+		zoomingIconYpos[6] -= 3;
 		if (zoomingIconXpos[6] < 150) {
 			zoomingIconXpos[6] = 150;
 		}
@@ -568,8 +568,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[6] = 142;
 		}
 
-		zoomingIconXpos[7] -= 4;
-		zoomingIconYpos[7] -= 5;
+		zoomingIconXpos[7] -= 2;
+		zoomingIconYpos[7] -= 3;
 		if (zoomingIconXpos[7] < 202) {
 			zoomingIconXpos[7] = 202;
 		}
@@ -577,17 +577,17 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[7] = 120;
 		}
 
-		zoomingIconXpos[8] += 4;
-		zoomingIconYpos[8] += 4;
-		if (zoomingIconXpos[8] > 8) {
-			zoomingIconXpos[8] = 8;
+		zoomingIconXpos[8] += 2;
+		zoomingIconYpos[8] += 2;
+		if (zoomingIconXpos[8] > 4) {
+			zoomingIconXpos[8] = 4;
 		}
 		if (zoomingIconYpos[8] > 8) {
 			zoomingIconYpos[8] = 8;
 		}
 
-		zoomingIconXpos[9] += 4;
-		zoomingIconYpos[9] -= 4;
+		zoomingIconXpos[9] += 2;
+		zoomingIconYpos[9] -= 2;
 		if (zoomingIconXpos[9] > 8) {
 			zoomingIconXpos[9] = 8;
 		}
@@ -595,8 +595,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[9] = 192-40;
 		}
 
-		zoomingIconXpos[10] -= 4;
-		zoomingIconYpos[10] += 4;
+		zoomingIconXpos[10] -= 2;
+		zoomingIconYpos[10] += 2;
 		if (zoomingIconXpos[10] < 256-40) {
 			zoomingIconXpos[10] = 256-40;
 		}
