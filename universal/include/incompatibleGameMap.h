@@ -46,7 +46,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 34)
+// B4DS DSiWare Whitelist (Total: 35)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K99", // 99Bullets
@@ -62,6 +62,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
 	"B88", // DS WiFi Settings
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
+	"KFP", // Flipper
 	"KWT", // GO Series: Defense Wars
 	"KGB", // Game & Watch: Ball
 	"KGC", // Game & Watch: Chef
@@ -84,12 +85,14 @@ static const char compatibleGameListB4DS[][5] = {
 	"KA6", // Space Ace
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 9)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 11)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KXT", // 99Seconds
 	"K27", // G.G. Series: All Breaker
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
+	"K2J", // Cake Ninja
+	"KKN", // Flipper 2: Flush the Goldfish
 	"KWY", // Mighty Milky Way
 	"KMM", // Mixed Messages
 	"KPS", // Phantasy Star 0 Mini
