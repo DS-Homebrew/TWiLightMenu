@@ -708,11 +708,11 @@ void twlMenuVideo(void) {
 	lodepng::decode(image, width, height, "nitro:/graphics/TWL.png");
 
 	u16* twlTextBuffer = new u16[60*14];
-	int x = 25;
+	int x = 19;
 	int y = 81;
 	for (int i=0; i<60*14; i++) {
-		if (x >= 85) {
-			x = 25;
+		if (x >= 79) {
+			x = 19;
 			y++;
 		}
 		if (image[(i*4)+3] > 0) {
@@ -726,11 +726,11 @@ void twlMenuVideo(void) {
 	}
 
 	u16* src = twlTextBuffer;
-	x = 25;
+	x = 19;
 	y = 81;
 	for (int i=0; i<60*14; i++) {
-		if (x >= 85) {
-			x = 25;
+		if (x >= 79) {
+			x = 19;
 			y++;
 		}
 		u16 val = *(src++);
