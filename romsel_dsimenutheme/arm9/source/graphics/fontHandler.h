@@ -4,6 +4,8 @@
 
 void fontInit();
 void fontReinit();
+void esrbDescFontInit(bool dsFont);
+void esrbDescFontDeinit();
 
 void updateText(bool top);
 void updateTextImg(u16* img, bool top);

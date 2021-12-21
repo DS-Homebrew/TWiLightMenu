@@ -84,15 +84,28 @@ void createEsrbSplash(void) {
 			}
 		}
 
+		bool dsFont = false;
+		for (int i = 0; i < descriptorLines; i++) {
+			dsFont = strlen(descriptorList[i]) > 21;
+			if (dsFont) {
+				descriptorYpos += 2;
+				break;
+			}
+		}
+
+		esrbDescFontInit(dsFont);
+
 		descriptorYpos -= ((descriptorLines > 4) ? 6 : 8)*(descriptorLines-1);
 
-		clearText(true);
+		clearText();
 		for (int i = 0; i < descriptorLines; i++) {
-			printSmall(true, 100, descriptorYpos, descriptorList[i]);
+			printSmall(false, 100, descriptorYpos, descriptorList[i]);
 			descriptorYpos += (descriptorLines > 4) ? 12 : 16;
 		}
-		updateTextImg(tex().bmpImageBuffer(), true);
-		clearText(true);
+		updateTextImg(tex().bmpImageBuffer(), false);
+		clearText();
+
+		esrbDescFontDeinit();
 	}
 
 	mkdir(sdFound() ? "sd:/_nds/nds-bootstrap" : "fat:/_nds/nds-bootstrap", 0777);

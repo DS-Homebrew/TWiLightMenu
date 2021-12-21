@@ -13,6 +13,7 @@
 
 FontGraphic *smallFont;
 FontGraphic *largeFont;
+FontGraphic *esrbDescFont;
 
 std::list<TextEntry> topText, bottomText;
 
@@ -58,6 +59,15 @@ void fontReinit() {
 	largeFont = new FontGraphic({fontPath + "/large-ds.nftr", fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"}, false);
 }
 
+void esrbDescFontInit(bool dsFont) {
+	esrbDescFont = new FontGraphic({dsFont ? "nitro:/graphics/font/ds.nftr" : "nitro:/graphics/font/small.nftr"}, false);
+}
+
+void esrbDescFontDeinit() {
+	if(esrbDescFont)
+		delete esrbDescFont;
+}
+
 static std::list<TextEntry> &getTextQueue(bool top) {
 	return top ? topText : bottomText;
 }
@@ -89,7 +99,7 @@ void updateText(bool top) {
 }
 
 void updateTextImg(u16* img, bool top) {
-	if(!top)	return;
+	if(top)	return;
 
 	// Clear before redrawing
 	if(shouldClear[top]) {
@@ -100,9 +110,8 @@ void updateTextImg(u16* img, bool top) {
 	// Draw text
 	auto &text = getTextQueue(top);
 	for(auto it = text.begin(); it != text.end(); ++it) {
-		FontGraphic *font = getFont(it->large);
-		if(font)
-			font->print(it->x, it->y, top, it->message, it->align);
+		if(esrbDescFont)
+			esrbDescFont->print(it->x, it->y, top, it->message, it->align);
 	}
 	text.clear();
 
