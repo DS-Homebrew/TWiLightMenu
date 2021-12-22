@@ -392,7 +392,7 @@ bool runNds9 (const char* filename, bool dsModeSwitch) {
 	return true;
 }
 
-int runUnlaunchDsi (const char* filename, u32 sector)  {
+int runUnlaunchDsi (const char* filename, u32 sector, int argc, const char** argv)  {
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(__DSiHeader, 1, 0x1000, ndsFile);
@@ -458,7 +458,7 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 		fclose(gifFile);
 	}
 
-	return runNds (load_bin, load_bin_size, sector, true, false, true, 0, NULL, true, false, false, true, true, -1);
+	return runNds (load_bin, load_bin_size, sector, true, false, true, argc, argv, true, false, false, true, true, -1);
 }
 
 int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, int language)  {
@@ -472,6 +472,17 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		return 1;
 	}
 
+	if (argc <= 0 || !argv) {
+		// Construct a command line if we weren't supplied with one
+		if (!getcwd (filePath, PATH_MAX)) {
+			return 2;
+		}
+		pathLen = strlen (filePath);
+		strcpy (filePath + pathLen, filename);
+		args[0] = filePath;
+		argv = args;
+	}
+
 	bool havedsiSD = (access("sd:/", F_OK) == 0);
 
 	if (REG_SCFG_EXT != 0 && havedsiSD) {
@@ -482,19 +493,8 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		fclose(ndsFile);
 
 		if (memcmp(gameTitle, "UNLAUNCH.DSI", 0xC) == 0) {
-			return runUnlaunchDsi (filename, st.st_ino);
+			return runUnlaunchDsi (filename, st.st_ino, argc, argv);
 		}
-	}
-
-	if (argc <= 0 || !argv) {
-		// Construct a command line if we weren't supplied with one
-		if (!getcwd (filePath, PATH_MAX)) {
-			return 2;
-		}
-		pathLen = strlen (filePath);
-		strcpy (filePath + pathLen, filename);
-		args[0] = filePath;
-		argv = args;
 	}
 
 	bool lockScfg = (strncmp(filename, "fat:/_nds/GBARunner2", 20) != 0
