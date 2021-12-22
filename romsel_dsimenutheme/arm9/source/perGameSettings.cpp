@@ -38,6 +38,7 @@
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
+#include "swiHaltHookIncludeMap.h"
 
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 15
@@ -107,6 +108,7 @@ int perGameOp[10] = {-1};
 bool blacklisted_boostCpu = false;
 bool blacklisted_cardReadDma = false;
 bool blacklisted_asyncCardRead = false;
+bool whitelisted_swiHaltHook = false;
 
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
@@ -135,6 +137,7 @@ void loadPerGameSettings (std::string filename) {
 	blacklisted_boostCpu = false;
 	blacklisted_cardReadDma = false;
 	blacklisted_asyncCardRead = false;
+	whitelisted_swiHaltHook = false;
 	if(!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
@@ -155,6 +158,13 @@ void loadPerGameSettings (std::string filename) {
 			if (memcmp(gameTid[CURPOS], asyncReadExcludeList[i], 3) == 0) {
 				// Found match
 				blacklisted_asyncCardRead = true;
+			}
+		}
+
+		for (unsigned int i = 0; i < sizeof(swiHaltHookIncludeList)/sizeof(swiHaltHookIncludeList[0]); i++) {
+			if (memcmp(gameTid[CURPOS], swiHaltHookIncludeList[i], 3) == 0) {
+				// Found match
+				whitelisted_swiHaltHook = true;
 			}
 		}
 	}
@@ -571,7 +581,7 @@ void perGameSettings (std::string filename) {
 					perGameOp[perGameOps] = 12;	// Async Card Read
 				}
 			}
-			if ((!ms().secondaryDevice || (dsiFeatures() && romSize <= romSizeLimit2+0x80000)) && unitCode[CURPOS] != 3) {
+			if ((!ms().secondaryDevice || (dsiFeatures() && romSize <= romSizeLimit2+0x80000)) && unitCode[CURPOS] != 3 && !whitelisted_swiHaltHook) {
 				perGameOps++;
 				perGameOp[perGameOps] = 13;	// SWI Halt Hook
 			}

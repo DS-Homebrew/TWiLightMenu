@@ -34,6 +34,7 @@
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
+#include "swiHaltHookIncludeMap.h"
 #include "saveMap.h"
 #include "ROMList.h"
 
@@ -482,7 +483,6 @@ void lastRunROM()
 							}
 						}
 
-						// TODO: If the list gets large enough, switch to bsearch().
 						for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
 							if (memcmp(game_TID, cardReadDMAExcludeList[i], 3) == 0) {
 								// Found match
@@ -491,11 +491,18 @@ void lastRunROM()
 							}
 						}
 
-						// TODO: If the list gets large enough, switch to bsearch().
 						for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
 							if (memcmp(game_TID, asyncReadExcludeList[i], 3) == 0) {
 								// Found match
 								asyncCardRead = false;
+								break;
+							}
+						}
+
+						for (unsigned int i = 0; i < sizeof(swiHaltHookIncludeList)/sizeof(swiHaltHookIncludeList[0]); i++) {
+							if (memcmp(game_TID, swiHaltHookIncludeList[i], 3) == 0) {
+								// Found match
+								swiHaltHook = true;
 								break;
 							}
 						}

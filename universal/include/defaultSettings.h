@@ -6,6 +6,6 @@
 #define DEFAULT_DSI_MODE 1
 #define DEFAULT_CARD_READ_DMA true
 #define DEFAULT_ASYNC_CARD_READ false
-#define DEFAULT_SWI_HALT_HOOK true
+#define DEFAULT_SWI_HALT_HOOK false
 
 #endif // DEFAULT_SETTINGS_H
