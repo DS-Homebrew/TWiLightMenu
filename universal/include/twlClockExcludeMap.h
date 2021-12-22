@@ -37,6 +37,7 @@ static const char twlClockExcludeList[][4] = {
 	"ASC", // Sonic Rush
 	"ASM", // Super Mario 64 DS
 	"COZ", // The Wizard of Oz: Beyond the Yellow Brick Road
+	"CY8", // Yu-Gi-Oh! 5D's Stardust Accelerator: World Championship 2009
 };
 
 #endif // TWLCLOCKEXCLUDEMAP_H
