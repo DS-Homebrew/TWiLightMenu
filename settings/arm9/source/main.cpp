@@ -1017,6 +1017,10 @@ int main(int argc, char **argv)
 			Option::Bool(&bs().preciseVolumeControl),
 			{STR_ON, STR_OFF},
 			{true, false});
+		if (sdFound() && !sys().arm7SCFGLocked()) {
+			gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool(&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"},
+					{true, false});
+		}
 	}
 
 	if (sdFound()) {
