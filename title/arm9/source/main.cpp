@@ -709,7 +709,7 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (ms().dsiWareBooter || sys().arm7SCFGLocked() || ms().consoleModel > 0)
+		if (ms().dsiWareBooter || (ms().previousUsedDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0)
 		{
 			if (ms().homebrewBootstrap) {
 				unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
@@ -741,7 +741,7 @@ void lastRunROM()
 
 				ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && ms().previousUsedDevice && (!sdFound() || !ms().dsiWareToSD)) ? getSavExtension() : getPubExtension());
+				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && ms().previousUsedDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode)) ? getSavExtension() : getPubExtension());
 				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
 				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
 				ms().saveSettings();
@@ -825,7 +825,7 @@ void lastRunROM()
 				char sfnSrl[62];
 				char sfnPub[62];
 				char sfnPrv[62];
-				if (ms().previousUsedDevice && ms().dsiWareToSD && sdFound()) {
+				if (ms().previousUsedDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound()) {
 					if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak", F_OK) == 0) {
 						if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0) {
 							remove("sd:/_nds/TWiLightMenu/tempDSiWare.pub");
@@ -848,7 +848,7 @@ void lastRunROM()
 				}
 
 				CIniFile bootstrapini(sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC);
-				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().previousUsedDevice && ms().dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().previousUsedDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);

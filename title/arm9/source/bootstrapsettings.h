@@ -40,6 +40,7 @@ class BootstrapSettings
     void saveSettings();
 
   public:
+    int b4dsMode;
     bool cacheFatTable;
     bool debug;
 	bool logging;

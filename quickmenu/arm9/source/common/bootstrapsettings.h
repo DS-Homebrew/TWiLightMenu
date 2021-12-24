@@ -15,37 +15,14 @@
 class BootstrapSettings
 {
   public:
-    enum TROMReadLED
-    {
-        ELEDSame = -1,
-        ELEDNone = 0,
-        ELEDWifi = 1,
-        ELEDPower = 2,
-        ELEDCamera = 3
-    };
-
-  public:
     BootstrapSettings();
     ~BootstrapSettings();
 
   public:
     void loadSettings();
-    void saveSettings();
 
   public:
     int b4dsMode;
-    bool cacheFatTable;
-    bool debug;
-    bool logging;
-    int romreadled;
-    int dmaromreadled;
-    bool preciseVolumeControl;
-    bool sdNand;
-
-    int bootstrapHotkey;
-
-  private:
-    bool soundFreq;
 };
 
 typedef singleton<BootstrapSettings> bootstrapSettings_s;

@@ -84,6 +84,7 @@ extern bool dsiWramAccess;
 extern bool arm7SCFGLocked;
 extern bool smsGgInRam;
 extern bool dsiWareToSD;
+extern int b4dsMode;
 
 extern bool showdialogbox;
 extern int dialogboxHeight;
@@ -656,7 +657,7 @@ bool dsiWareCompatibleB4DS(const char* filename) {
 			break;
 		}
 	}
-	if (!res && dsDebugRam) {
+	if (!res && (dsDebugRam || b4dsMode == 2)) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebug)/sizeof(compatibleGameListB4DSDebug[0]); i++) {
 			if (memcmp(game_TID, compatibleGameListB4DSDebug[i], 3) == 0) {
 				// Found match
@@ -867,7 +868,7 @@ string browseForFile(const vector<string_view> extensionList) {
 				settingsChanged = false;
 				return "null";
 			}
-			else if (isDSiWare && ((!dsiFeatures() && secondaryDevice && (!sdFound() || !dsiWareToSD) && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
+			else if (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !dsiWareToSD)) || b4dsMode) && secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
 			|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && arm7SCFGLocked && !dsiWramAccess && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str())))) {
 				cannotLaunchMsg();
 			} else {

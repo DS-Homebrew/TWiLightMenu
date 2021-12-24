@@ -176,6 +176,7 @@ int titleLanguage = -1;
 int gameLanguage = -1;
 int gameRegion = -2;
 int bstrap_extendedMemory = 0;
+int b4dsMode = 0;
 bool forceSleepPatch = false;
 bool dsiWareBooter = true;
 bool dsiWareToSD = true;
@@ -307,6 +308,12 @@ void LoadSettings(void) {
 
 	updateRecentlyPlayedList = settingsini.GetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
 	sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
+
+	CIniFile bootstrapini( sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini" );
+
+	if (dsiFeatures()) {
+		b4dsMode = bootstrapini.GetInt("NDS-BOOTSTRAP", "B4DS_MODE", b4dsMode);
+	}
 }
 
 void SaveSettings(void) {
@@ -1796,7 +1803,7 @@ int main(int argc, char **argv) {
 
 				dsiWareSrlPath = std::string(argarray[0]);
 				dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && secondaryDevice && (!sdFound() || !dsiWareToSD)) ? getSavExtension() : getPubExtension());
+				dsiWarePubPath = replaceAll(dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && secondaryDevice && (!sdFound() || !dsiWareToSD || b4dsMode)) ? getSavExtension() : getPubExtension());
 				dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
 				dsiWarePrvPath = replaceAll(dsiWarePrvPath, typeToReplace, getPrvExtension());
 				if (!isArgv) {
@@ -1865,7 +1872,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
-				if (secondaryDevice && (dsiWareToSD || (!dsiWareBooter && consoleModel == 0)) && sdFound()) {
+				if (secondaryDevice && !b4dsMode && (dsiWareToSD || (!dsiWareBooter && consoleModel == 0)) && sdFound()) {
 					clearText();
 					dialogboxHeight = 0;
 					showdialogbox = true;
@@ -1892,7 +1899,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (dsiWareBooter || arm7SCFGLocked || consoleModel > 0) {
+				if (dsiWareBooter || (secondaryDevice && b4dsMode) || arm7SCFGLocked || consoleModel > 0) {
 					CheatCodelist codelist;
 					u32 gameCode, crc32;
 
@@ -1931,14 +1938,14 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if ((dsiWareBooter || arm7SCFGLocked || consoleModel > 0) && !homebrewBootstrap) {
+				if ((dsiWareBooter || (secondaryDevice && b4dsMode) || arm7SCFGLocked || consoleModel > 0) && !homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 
 					char sfnSrl[62];
 					char sfnPub[62];
 					char sfnPrv[62];
-					if (secondaryDevice && dsiWareToSD && sdFound()) {
+					if (secondaryDevice && !b4dsMode && dsiWareToSD && sdFound()) {
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
@@ -1950,7 +1957,7 @@ int main(int argc, char **argv) {
 
 					bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";
 					CIniFile bootstrapini(bootstrapinipath);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", secondaryDevice && dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : dsiWareSrlPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", secondaryDevice && !b4dsMode && dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : dsiWareSrlPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);

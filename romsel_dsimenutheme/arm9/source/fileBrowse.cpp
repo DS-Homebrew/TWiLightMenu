@@ -31,6 +31,7 @@
 #include "nds_loader_arm9.h"
 
 #include "common/dsimenusettings.h"
+#include "common/bootstrapsettings.h"
 #include "common/flashcard.h"
 #include "common/inifile.h"
 #include "common/systemdetails.h"
@@ -1338,7 +1339,7 @@ bool dsiWareCompatibleB4DS(void) {
 			break;
 		}
 	}
-	if (!res && sys().dsDebugRam()) {
+	if (!res && (sys().dsDebugRam() || bs().b4dsMode == 2)) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebug)/sizeof(compatibleGameListB4DSDebug[0]); i++) {
 			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSDebug[i], 3) == 0) {
 				// Found match
@@ -2419,7 +2420,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isDSiWare[CURPOS] && ((!dsiFeatures() && ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD) && !dsiWareCompatibleB4DS())
+				} else if (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit()))) {
 					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {

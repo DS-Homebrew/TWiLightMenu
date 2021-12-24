@@ -32,6 +32,7 @@
 #include "common/inifile.h"
 #include "common/flashcard.h"
 #include "common/dsimenusettings.h"
+#include "common/bootstrapsettings.h"
 #include "common/systemdetails.h"
 #include "myDSiMode.h"
 
@@ -557,7 +558,7 @@ void perGameSettings (std::string filename) {
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
-		if ((dsiFeatures() && (ms().useBootstrap || unitCode[CURPOS] > 0)) || !ms().secondaryDevice) {
+		if ((dsiFeatures() && (ms().useBootstrap || unitCode[CURPOS] > 0) && !bs().b4dsMode) || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;

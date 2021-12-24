@@ -54,6 +54,7 @@ extern bool lcdSwapped;
 
 extern bool useBootstrap;
 extern bool dsiWareBooter;
+extern int b4dsMode;
 extern int theme;
 
 extern std::string romfolder[2];
@@ -541,7 +542,7 @@ void perGameSettings (std::string filename) {
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
-		if ((dsiFeatures() && (useBootstrap || romUnitCode > 0)) || !secondaryDevice) {
+		if ((dsiFeatures() && (useBootstrap || romUnitCode > 0) && !b4dsMode) || !secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;

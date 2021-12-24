@@ -22,6 +22,7 @@
 #include "graphics/graphics.h"
 
 #include "common/dsimenusettings.h"
+#include "common/bootstrapsettings.h"
 #include "common/flashcard.h"
 #include "common/nitrofs.h"
 #include "common/systemdetails.h"
@@ -797,6 +798,7 @@ int main(int argc, char **argv) {
 
 	//logInit();
 	ms().loadSettings();
+	bs().loadSettings();
 	//widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	tfn(); //
 	tc().loadConfig();
@@ -1078,7 +1080,7 @@ int main(int argc, char **argv) {
 
 				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(gameTid[CURPOS], "Z2E", 3) == 0 && ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD)) ? getSavExtension() : getPubExtension());
+				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(gameTid[CURPOS], "Z2E", 3) == 0 && ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode)) ? getSavExtension() : getPubExtension());
 				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
 				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
 				if (!isArgv) {
@@ -1194,7 +1196,7 @@ int main(int argc, char **argv) {
 					fadeType = false; // Fade to white
 				}
 
-				if (ms().secondaryDevice && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel == 0)) && sdFound()) {
+				if (ms().secondaryDevice && !bs().b4dsMode && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel == 0)) && sdFound()) {
 					if (ms().theme != 5 && ms().theme != 4) {
 						while (!fadeType && !screenFadedOut()) {
 							swiWaitForVBlank();
@@ -1250,7 +1252,7 @@ int main(int argc, char **argv) {
 					fadeType = false;		  // Fade to black
 				}
 
-				if (ms().dsiWareBooter || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+				if (ms().dsiWareBooter || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 					CheatCodelist codelist;
 					u32 gameCode, crc32;
 
@@ -1289,14 +1291,14 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if ((ms().dsiWareBooter || sys().arm7SCFGLocked() || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
+				if ((ms().dsiWareBooter || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 
 					char sfnSrl[62];
 					char sfnPub[62];
 					char sfnPrv[62];
-					if (ms().secondaryDevice && ms().dsiWareToSD && sdFound()) {
+					if (ms().secondaryDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound()) {
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
@@ -1308,7 +1310,7 @@ int main(int argc, char **argv) {
 
 					bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";
 					CIniFile bootstrapini(bootstrapinipath);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().secondaryDevice && ms().dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().secondaryDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
