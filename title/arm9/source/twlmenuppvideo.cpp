@@ -136,7 +136,14 @@ void twlMenuVideo_loadTopGraphics(void) {
 
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
 
-	bool december = (strncmp(currentDate, "12", 2) == 0);
+	bool december = (strncmp(currentDate, "12", 2) == 0
+				   && strcmp(currentDate, "12/25") != 0
+				   && strcmp(currentDate, "12/26") != 0
+				   && strcmp(currentDate, "12/27") != 0
+				   && strcmp(currentDate, "12/28") != 0
+				   && strcmp(currentDate, "12/29") != 0
+				   && strcmp(currentDate, "12/30") != 0
+				   && strcmp(currentDate, "12/31") != 0);
 
 	// NDS
 	glDeleteTextures(1, &ndsTexID);
