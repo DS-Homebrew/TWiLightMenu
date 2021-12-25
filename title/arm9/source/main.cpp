@@ -1286,7 +1286,6 @@ const char *languages[] = {
 	"Русский",
 	"Svenska",
 	"Dansk",
-	"Tiếng Việt",
 	"Türkçe",
 	"Українська",
 	"Magyar",
@@ -1299,6 +1298,7 @@ const char *languages[] = {
 	"Română",
 	"العربية",
 	"Português (Brasil)",
+	"Tiếng Việt",
 };
 
 const int guiLanguages[] = {
@@ -1313,8 +1313,8 @@ const int guiLanguages[] = {
 	TWLSettings::TLanguage::ELangDutch,
 	TWLSettings::TLanguage::ELangNorwegian,
 	TWLSettings::TLanguage::ELangPolish,
-	TWLSettings::TLanguage::ELangPortuguese,
 	TWLSettings::TLanguage::ELangPortugueseBrazil,
+	TWLSettings::TLanguage::ELangPortuguese,
 	TWLSettings::TLanguage::ELangRomanian,
 	TWLSettings::TLanguage::ELangSwedish,
 	TWLSettings::TLanguage::ELangVietnamese,
