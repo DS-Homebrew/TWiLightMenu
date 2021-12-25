@@ -135,7 +135,7 @@ int main() {
 	//fifoSendValue32(FIFO_USER_05, *CPUID);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	if (isDSiMode()) {
-		*(u8*)(0x023FFD00) = 0xFF;
+		*(u8*)(0x02FFFD00) = 0xFF;
 	}
 	fifoSendValue32(FIFO_USER_06, 1);
 	
@@ -144,14 +144,14 @@ int main() {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
-		if (isDSiMode() && *(u8*)(0x023FFD00) != 0xFF) {
-			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x023FFD00));
-			if (*(u8*)(0x023FFD00) == 0x13) {
+		if (isDSiMode() && *(u8*)(0x02FFFD00) != 0xFF) {
+			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x02FFFD00));
+			if (*(u8*)(0x02FFFD00) == 0x13) {
 				REG_SCFG_WL &= BIT(0);
 			} else {
 				REG_SCFG_WL |= BIT(0);
 			}
-			*(u8*)(0x023FFD00) = 0xFF;
+			*(u8*)(0x02FFFD00) = 0xFF;
 		}
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();

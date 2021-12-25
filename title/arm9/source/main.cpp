@@ -1992,7 +1992,7 @@ int main(int argc, char **argv)
 				ms().wifiLed = false;
 			}
 		} else {
-			*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0);		// WiFi On/Off
+			*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0x12);		// WiFi On/Off
 		}
 	}
 

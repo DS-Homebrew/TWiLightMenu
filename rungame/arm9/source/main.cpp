@@ -264,7 +264,7 @@ TWL_CODE int lastRunROM() {
 	LoadSettings();
 
 	if (consoleModel < 2) {
-		*(u8*)(0x023FFD00) = (wifiLed ? 0x13 : 0);		// WiFi On/Off
+		*(u8*)(0x023FFD00) = (wifiLed ? 0x13 : 0x12);		// WiFi On/Off
 	}
 
 	if (macroMode) {

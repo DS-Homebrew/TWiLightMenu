@@ -723,7 +723,7 @@ void opt_hiya_autoboot_toggle(bool prev, bool next)
 
 void opt_wifiLed_toggle(bool prev, bool next)
 {
-	*(u8*)(0x023FFD00) = (next ? 0x13 : 0);		// On/Off
+	*(u8*)(0x02FFFD00) = (next ? 0x13 : 0x12);		// On/Off
 }
 
 /*void opt_twlFirm_changed(int prev, int next)
