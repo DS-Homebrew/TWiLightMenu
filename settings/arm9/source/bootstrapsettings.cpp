@@ -56,6 +56,7 @@ void BootstrapSettings::saveSettings()
 	if (sdFound()) {
 		bootstrapini.SetInt( "NDS-BOOTSTRAP", "SDNAND", sdNand);
 	}
+	bootstrapini.SetInt( "NDS-BOOTSTRAP", "USE_ROM_REGION", ms().useRomRegion);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "MACRO_MODE", ms().macroMode);
 	//bootstrapini.SetInt( "NDS-BOOTSTRAP", "COLOR_MODE", ms().colorMode);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "SOUND_FREQ", ms().soundFreq);

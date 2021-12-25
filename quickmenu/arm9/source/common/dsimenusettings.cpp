@@ -78,7 +78,8 @@ TWLSettings::TWLSettings()
     bootstrapFile = EReleaseBootstrap;
 
     gameLanguage = ELangDefault;
-    gameRegion = ERegionGame;
+    gameRegion = ERegionDefault;
+	useRomRegion = true;
     extendedMemory = 0;
 
     forceSleepPatch = false;
@@ -218,6 +219,7 @@ void TWLSettings::loadSettings()
     // Default nds-bootstrap settings
     gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
     gameRegion = settingsini.GetInt("NDS-BOOTSTRAP", "REGION", gameRegion);
+    useRomRegion = settingsini.GetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", useRomRegion);
     extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 
     forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);

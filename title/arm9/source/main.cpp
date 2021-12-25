@@ -521,7 +521,7 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", (perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
-				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", (perGameSettings_region == -3 ? ms().gameRegion : perGameSettings_region));
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", (perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", !dsiBinariesFound ? 0 : (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", (perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram));
@@ -624,10 +624,10 @@ void lastRunROM()
 		loadPerGameSettings(filename);
 
 		int language = perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language;
-		int gameRegion = perGameSettings_region == -3 ? ms().gameRegion : perGameSettings_region;
+		int gameRegion = perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region;
 
 		// Set region flag
-		if (gameRegion == -2 && game_TID[3] != 'A' && game_TID[3] != '#') {
+		if (ms().useRomRegion && perGameSettings_region < -1 && game_TID[3] != 'A' && game_TID[3] != 'O' && game_TID[3] != '#') {
 			if (game_TID[3] == 'J') {
 				*(u8*)(0x02FFFD70) = 0;
 			} else if (game_TID[3] == 'E' || game_TID[3] == 'T') {
@@ -641,7 +641,7 @@ void lastRunROM()
 			} else if (game_TID[3] == 'K') {
 				*(u8*)(0x02FFFD70) = 5;
 			}
-		} else if (gameRegion == -1 || (gameRegion == -2 && (game_TID[3] == 'A' || game_TID[3] == '#'))) {
+		} else if (gameRegion == -1) {
 		  if (useTwlCfg) {
 			u8 country = *(u8*)0x02000405;
 			if (country == 0x01) {
@@ -857,7 +857,7 @@ void lastRunROM()
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
 					(perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION",
-					(perGameSettings_region == -3 ? ms().gameRegion : perGameSettings_region));
+					(perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
@@ -1516,11 +1516,11 @@ void regionSelect(void) {
 		clearText();
 		printLarge(false, x1, 0, STR_SELECT_YOUR_REGION, align);
 
-		for(uint i = dsiFeatures() ? 0 : 2, p = 0; i < sizeof(regions) / sizeof(regions[0]); i++, p++) {
+		for(uint i = dsiFeatures() ? 0 : 1, p = 0; i < sizeof(regions) / sizeof(regions[0]); i++, p++) {
 			printSmall(false, x2, 20 + p * 14, *regions[i], align);
 		}
 
-		printSmall(false, x1, 20 + (ms().gameRegion + (dsiFeatures() ? 2 : 0)) * 14, ms().rtl() ? "<" : ">", align);
+		printSmall(false, x1, 20 + (ms().gameRegion + (dsiFeatures() ? 1 : 0)) * 14, ms().rtl() ? "<" : ">", align);
 
 		int y = 20 + (sizeof(regions) / sizeof(regions[0])) * 14 + 6 - (dsiFeatures() ? 0 : 28);
 		printSmall(false, x1, y, STR_UP_DOWN_CHOOSE, align);
@@ -1536,7 +1536,7 @@ void regionSelect(void) {
 		} while(!held);
 
 		if (held & KEY_UP) {
-			if (ms().gameRegion > (dsiFeatures() ? -2 : 0))
+			if (ms().gameRegion > (dsiFeatures() ? -1 : 0))
 				ms().gameRegion--;
 		} else if (held & KEY_DOWN) {
 			if (ms().gameRegion < (int)(sizeof(regions) / sizeof(regions[0])) - 3)
@@ -1820,8 +1820,9 @@ int main(int argc, char **argv)
 		languageSelect();
 	}
 
-	if (!ms().regionSet || (!dsiFeatures() && ms().gameRegion < 0)) {
+	if (!ms().regionSet || (!dsiFeatures() && ms().gameRegion < 0) || (dsiFeatures() && ms().gameRegion < -1)) {
 		if (!dsiFeatures() && ms().gameRegion < 0) ms().gameRegion = 0;
+		else if (dsiFeatures() && ms().gameRegion < -1) ms().gameRegion = -1;
 		runGraphicIrq();
 		regionSelect();
 	}
@@ -2063,6 +2064,11 @@ int main(int argc, char **argv)
 			ms().theme = 0;
 		}
 		ms().saveSettings();
+		if (regionNowSet) {
+			CIniFile bootstrapini(BOOTSTRAP_INI);
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", ms().useRomRegion);
+			bootstrapini.SaveIniFileModified(BOOTSTRAP_INI);
+		}
 	}
 
 	if (!softResetParamsFound && ms().dsiSplash && (REG_SCFG_EXT!=0&&ms().consoleModel<2 ? fifoGetValue32(FIFO_USER_01) != 0x01 : !(*(u32*)0x02000000 & BIT(0)))) {

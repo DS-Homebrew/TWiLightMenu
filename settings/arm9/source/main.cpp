@@ -1164,16 +1164,14 @@ int main(int argc, char **argv)
 		.option(STR_GAMEREGION,
 				STR_DESCRIPTION_GAMEREGION,
 				Option::Int(&ms().gameRegion),
-				{STR_GAME,
-				 STR_SYSTEM,
+				{STR_SYSTEM,
 				 STR_JAPAN,
 				 STR_USA,
 				 STR_EUROPE,
 				 STR_AUSTRALIA,
 				 STR_CHINA,
 				 STR_KOREA},
-				{TRegion::ERegionGame, 
-				 TRegion::ERegionDefault,
+				{TRegion::ERegionDefault,
 				 TRegion::ERegionJapan,
 				 TRegion::ERegionUSA,
 				 TRegion::ERegionEurope,
@@ -1183,7 +1181,7 @@ int main(int argc, char **argv)
 	} else {
 		miscPage
 		.option(STR_GAMEREGION,
-				STR_DESCRIPTION_GAMEREGION_DS,
+				STR_DESCRIPTION_GAMEREGION,
 				Option::Int(&ms().gameRegion),
 				{STR_JAPAN,
 				 STR_USA,
@@ -1199,6 +1197,11 @@ int main(int argc, char **argv)
 				 TRegion::ERegionKorea});
 	}
 	miscPage
+		.option(STR_USEROMREGION,
+				STR_DESCRIPTION_USEROMREGION,
+				Option::Bool(&ms().useRomRegion),
+				{STR_YES, STR_NO},
+				{true, false})
 		.option(STR_MACROMODE,
 				STR_DESCRIPTION_MACROMODE,
 				Option::Bool(&ms().macroMode),

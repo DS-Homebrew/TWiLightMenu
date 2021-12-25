@@ -43,7 +43,7 @@ int perGameSettings_cursorPosition = 0;
 bool perGameSettings_directBoot = false;	// Homebrew only
 int perGameSettings_dsiMode = -1;
 int perGameSettings_language = -2;
-int perGameSettings_region = -3;
+int perGameSettings_region = -2;
 int perGameSettings_saveNo = 0;
 int perGameSettings_ramDiskNo = -1;
 int perGameSettings_boostCpu = -1;
@@ -64,7 +64,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew[ms().secondaryDevice] ? true : -1));
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_region = pergameini.GetInt("GAMESETTINGS", "REGION", -3);
-	if (!dsiFeatures() && (perGameSettings_region == -2 || perGameSettings_region == -1)) perGameSettings_region = -3;
+	if (perGameSettings_region < -2 || (!dsiFeatures() && perGameSettings_region == -1)) perGameSettings_region = -2;
 	perGameSettings_saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
 	perGameSettings_ramDiskNo = pergameini.GetInt("GAMESETTINGS", "RAM_DISK", -1);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);

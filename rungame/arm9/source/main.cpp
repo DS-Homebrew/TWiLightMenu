@@ -81,13 +81,14 @@ static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
 
 static int gameLanguage = -1;
 static int gameRegion = -2;
+static bool useRomRegion = true;
 
 static bool dsiWareBooter = true;
 static bool dsiWareToSD = true;
 
 static bool ignoreBlacklists = false;
 
-TWL_CODE void LoadSettings(void) {
+void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
@@ -106,7 +107,8 @@ TWL_CODE void LoadSettings(void) {
 
 	// Default nds-bootstrap settings
 	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
-	gameRegion = settingsini.GetInt("NDS-BOOTSTRAP", "REGION", -2);
+	gameRegion = settingsini.GetInt("NDS-BOOTSTRAP", "REGION", -1);
+    useRomRegion = settingsini.GetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", useRomRegion);
 
 	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
@@ -472,10 +474,10 @@ TWL_CODE int lastRunROM() {
 			loadPerGameSettings(filename);
 
 			int runNds_language = perGameSettings_language == -2 ? gameLanguage : perGameSettings_language;
-			int runNds_gameRegion = perGameSettings_region == -1 ? gameRegion : perGameSettings_region;
+			int runNds_gameRegion = perGameSettings_region < -1 ? gameRegion : perGameSettings_region;
 
 			// Set region flag
-			if (runNds_gameRegion == -2 && game_TID[3] != 'A' && game_TID[3] != '#') {
+			if (useRomRegion && perGameSettings_region < -1 && game_TID[3] != 'A' && game_TID[3] != 'O' && game_TID[3] != '#') {
 				if (game_TID[3] == 'J') {
 					*(u8*)(0x02FFFD70) = 0;
 				} else if (game_TID[3] == 'E' || game_TID[3] == 'T') {
@@ -489,7 +491,7 @@ TWL_CODE int lastRunROM() {
 				} else if (game_TID[3] == 'K') {
 					*(u8*)(0x02FFFD70) = 5;
 				}
-			} else if (runNds_gameRegion == -1 || (runNds_gameRegion == -2 && (game_TID[3] == 'A' || game_TID[3] == '#'))) {
+			} else if (runNds_gameRegion == -1) {
 				u8 country = *(u8*)0x02000405;
 				if (country == 0x01) {
 					*(u8*)(0x02FFFD70) = 0;	// Japan
@@ -597,7 +599,7 @@ TWL_CODE int lastRunROM() {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
 					// bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", (perGameSettings_language == -2 ? gameLanguage : perGameSettings_language));
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", 	(perGameSettings_region == -3 ? gameRegion : perGameSettings_region));
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", 	(perGameSettings_region < -1 ? gameRegion : perGameSettings_region));
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);

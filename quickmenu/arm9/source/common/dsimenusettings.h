@@ -86,7 +86,6 @@ class TWLSettings
 
     enum TRegion
     {
-        ERegionGame = -2,
         ERegionDefault = -1,
         ERegionJapan = 0,
         ERegionUSA = 1,
@@ -232,6 +231,7 @@ class TWLSettings
 
     int gameLanguage;
     int gameRegion;
+    bool useRomRegion;
     int extendedMemory;
 
     bool forceSleepPatch;

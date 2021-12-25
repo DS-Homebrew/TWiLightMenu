@@ -34,7 +34,7 @@ void BootstrapSettings::loadSettings()
 
 void BootstrapSettings::saveSettings()
 {
-     CIniFile bootstrapini(BOOTSTRAP_INI);
+    CIniFile bootstrapini(BOOTSTRAP_INI);
 
     // UI settings.
     bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", debug);
