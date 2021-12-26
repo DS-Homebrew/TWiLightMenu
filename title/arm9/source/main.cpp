@@ -1492,7 +1492,6 @@ void languageSelect(void) {
 }
 
 const std::string *regions[] {
-	&STR_GAME_SPECIFIC,
 	&STR_SYSTEM,
 	&STR_JAPAN,
 	&STR_USA,
@@ -1522,7 +1521,7 @@ void regionSelect(void) {
 
 		printSmall(false, x1, 20 + (ms().gameRegion + (dsiFeatures() ? 1 : 0)) * 14, ms().rtl() ? "<" : ">", align);
 
-		int y = 20 + (sizeof(regions) / sizeof(regions[0])) * 14 + 6 - (dsiFeatures() ? 0 : 28);
+		int y = 20 + (sizeof(regions) / sizeof(regions[0])) * 14 + 6 - (dsiFeatures() ? 0 : 14);
 		printSmall(false, x1, y, STR_UP_DOWN_CHOOSE, align);
 		printSmall(false, x1, y + 14, STR_A_PROCEED, align);
 
@@ -1539,7 +1538,7 @@ void regionSelect(void) {
 			if (ms().gameRegion > (dsiFeatures() ? -1 : 0))
 				ms().gameRegion--;
 		} else if (held & KEY_DOWN) {
-			if (ms().gameRegion < (int)(sizeof(regions) / sizeof(regions[0])) - 3)
+			if (ms().gameRegion < (int)(sizeof(regions) / sizeof(regions[0])) - 2)
 				ms().gameRegion++;
 		}
 
