@@ -59,6 +59,7 @@
 
 extern bool arm7SCFGLocked;
 extern bool secondaryDevice;
+extern int b4dsMode;
 extern bool dsiWareToSD;
 
 extern int theme;
@@ -688,7 +689,6 @@ void getGameInfo(bool isDir, const char* name)
 			}
 		}
 
-		bool usingB4DS = (!dsiFeatures() && secondaryDevice);
 		bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && arm7SCFGLocked);
 
 		romVersion = ndsHeader.romversion;
@@ -697,7 +697,7 @@ void getGameInfo(bool isDir, const char* name)
 		// Check if ROM needs a donor ROM
 		if (isDSiMode() && a7mbk6 == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) && arm7SCFGLocked) {
 			requiresDonorRom = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
-		} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6 == 0x080037C0 && !dsiFeatures()) {
+		} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6 == 0x080037C0 && (!dsiFeatures() || (secondaryDevice && b4dsMode))) {
 			requiresDonorRom = 51; // DSi-Enhanced ROM required
 		}
 
