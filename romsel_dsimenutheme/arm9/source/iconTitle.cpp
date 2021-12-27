@@ -282,7 +282,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 			if (isDSiMode() && a7mbk6[num] == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) && sys().arm7SCFGLocked()) {
 				requiresDonorRom[num] = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
-			} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6[num] == 0x080037C0 && (!dsiFeatures() || (ms().secondaryDevice && bs().b4dsMode))) {
+			} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6[num] == 0x080037C0 && ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode)) {
 				requiresDonorRom[num] = 51; // DSi-Enhanced ROM required
 			}
 		}
