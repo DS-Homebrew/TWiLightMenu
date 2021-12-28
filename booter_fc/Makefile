@@ -217,7 +217,7 @@ $(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4idsn makearm9_a
 	# simple nds srl without dsi extended header
 	ndstool -c $(TARGET)_fc.nds       -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	ndstool -c $(TARGET)_r4idsn.nds   -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_r4idsn.arm9.elf   -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	ndstool -c akmenu4.nds			  -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_acekard2.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c akmenu4.nds            -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_acekard2.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 
 clean:
 	@echo clean ...
