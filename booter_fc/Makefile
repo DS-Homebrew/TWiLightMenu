@@ -227,6 +227,7 @@ clean:
 	@rm -fr $(TARGET)_r4idsn.nds $(TARGET)_r4idsn.arm9.elf
 	@rm -fr $(TARGET)_r4idsn.nds $(TARGET)_r4idsn.arm9.elf
 	@rm -fr $(TARGET)_r4ils.arm7.elf
+	@rm -fr $(TARGET)_acekard2.arm9.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C arm9 clean
