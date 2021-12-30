@@ -852,7 +852,9 @@ void perGameSettings (std::string filename) {
 				break;
 			case 13:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SWI_HALT_HOOK + ":", startAlign);
-				if (perGameSettings_swiHaltHook == -1) {
+				if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && unitCode[CURPOS] > 0) : perGameSettings_dsiMode > 0) && runInShown) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
+				} else if (perGameSettings_swiHaltHook == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
 				} else if (perGameSettings_swiHaltHook == 1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
@@ -991,8 +993,10 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_asyncCardRead < -1) perGameSettings_asyncCardRead = 1;
 						break;
 					case 13:
-						perGameSettings_swiHaltHook--;
-						if (perGameSettings_swiHaltHook < -1) perGameSettings_swiHaltHook = 1;
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+							perGameSettings_swiHaltHook--;
+							if (perGameSettings_swiHaltHook < -1) perGameSettings_swiHaltHook = 1;
+						}
 						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
@@ -1086,8 +1090,10 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_asyncCardRead > 1) perGameSettings_asyncCardRead = -1;
 						break;
 					case 13:
-						perGameSettings_swiHaltHook++;
-						if (perGameSettings_swiHaltHook > 1) perGameSettings_swiHaltHook = -1;
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+							perGameSettings_swiHaltHook++;
+							if (perGameSettings_swiHaltHook > 1) perGameSettings_swiHaltHook = -1;
+						}
 						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();

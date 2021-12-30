@@ -811,7 +811,9 @@ void perGameSettings (std::string filename) {
 				break;
 			case 13:
 				printSmall(false, 32, perGameOpYpos, "SWI Halt Hook:");
-				if (perGameSettings_swiHaltHook == -1) {
+				if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && romUnitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
+				} else if (perGameSettings_swiHaltHook == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_swiHaltHook == 1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
@@ -942,8 +944,10 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_asyncCardRead < -1) perGameSettings_asyncCardRead = 1;
 						break;
 					case 13:
-						perGameSettings_swiHaltHook--;
-						if (perGameSettings_swiHaltHook < -1) perGameSettings_swiHaltHook = 1;
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+							perGameSettings_swiHaltHook--;
+							if (perGameSettings_swiHaltHook < -1) perGameSettings_swiHaltHook = 1;
+						}
 						break;
 				}
 				perGameSettingsChanged = true;
@@ -1036,8 +1040,10 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_asyncCardRead > 1) perGameSettings_asyncCardRead = -1;
 						break;
 					case 13:
-						perGameSettings_swiHaltHook++;
-						if (perGameSettings_swiHaltHook > 1) perGameSettings_swiHaltHook = -1;
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+							perGameSettings_swiHaltHook++;
+							if (perGameSettings_swiHaltHook > 1) perGameSettings_swiHaltHook = -1;
+						}
 						break;
 				}
 				perGameSettingsChanged = true;
