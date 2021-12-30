@@ -9,7 +9,7 @@ export TARGET := booter
 
 include $(DEVKITARM)/ds_rules
 
-.PHONY: bootloader bootstub clean makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4idsn makearm9_acekard2
+.PHONY: bootloader bootstub clean makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4idsn makearm9_acekard2 makearm9_r4igold.cc_wood
 
 all:	bootloader bootstub $(TARGET).nds
 
@@ -32,6 +32,10 @@ makearm9_r4idsn:
 makearm9_acekard2:
 	$(MAKE) -C flashcart_specifics/acekard2/arm9
 	cp flashcart_specifics/acekard2/arm9/$(TARGET).elf $(TARGET)_acekard2.arm9.elf
+
+makearm9_r4igold.cc_wood:
+	$(MAKE) -C flashcart_specifics/r4igold.cc_wood/arm9
+	cp flashcart_specifics/r4igold.cc_wood/arm9/$(TARGET).elf $(TARGET)_r4igold.cc_wood.arm9.elf
 
 dist:	all autoboot
 	@mkdir -p ../7zfile/debug
@@ -213,11 +217,18 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+"
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/_DS_MENU.DAT"
 
-$(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4idsn makearm9_acekard2
+	#### Wood R4igold.cc Upgrade
+	dlditool flashcart_specifics/DLDI/r4idsn_sd.dldi booter_r4igold.cc_wood.nds
+	mkdir -p "../7zfile/Flashcard users/Autoboot/Wood R4igold.cc Upgrade"
+	mv booter_r4igold.cc_wood.nds "../7zfile/Flashcard users/Autoboot/Wood R4igold.cc Upgrade/_DS_MENU.dat"
+
+$(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4idsn makearm9_acekard2 makearm9_r4igold.cc_wood
 	# simple nds srl without dsi extended header
-	ndstool -c $(TARGET)_fc.nds       -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	ndstool -c $(TARGET)_r4idsn.nds   -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_r4idsn.arm9.elf   -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	ndstool -c akmenu4.nds            -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_acekard2.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_fc.nds              -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf              -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_r4idsn.nds          -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_r4idsn.arm9.elf          -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c akmenu4.nds                   -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_acekard2.arm9.elf        -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_r4igold.cc_wood.nds -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_r4igold.cc_wood.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	
 
 clean:
 	@echo clean ...
@@ -226,6 +237,7 @@ clean:
 	@rm -fr $(TARGET)_fc.nds $(TARGET)_fc.arm7.elf $(TARGET)_fc.arm9.elf
 	@rm -fr $(TARGET)_r4idsn.nds $(TARGET)_r4idsn.arm9.elf
 	@rm -fr $(TARGET)_r4idsn.nds $(TARGET)_r4idsn.arm9.elf
+	@rm -fr $(TARGET)_r4igold.cc_wood.nds $(TARGET)_r4igold.cc_wood.arm9.elf
 	@rm -fr $(TARGET)_r4ils.arm7.elf
 	@rm -fr $(TARGET)_acekard2.arm9.elf
 	@$(MAKE) -C bootloader clean
