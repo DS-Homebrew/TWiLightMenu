@@ -21,6 +21,8 @@ SOURCES		:=	../../../arm9/source
 INCLUDES	:=	../../../arm9/include
 DATA		:=	../../../data
 
+CRT0		?=	0x02000000
+
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
@@ -119,7 +121,7 @@ DEPENDS	:=	$(OFILES:.o=.d)
 # main targets
 #---------------------------------------------------------------------------------
 $(OUTPUT).elf	:	$(OFILES)
-	@$(LD)  -Wl,--defsym,__secure_area__=0 -Wl,--section-start,.crt0=0x02000000,--nmagic -Wl,-Map,arm9.map $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -o $@
+	@$(LD)  -Wl,--defsym,__secure_area__=0 -Wl,--section-start,.crt0=$(CRT0),--nmagic -Wl,-Map,arm9.map $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -o $@
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data 

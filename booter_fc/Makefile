@@ -30,12 +30,14 @@ makearm9_r4idsn:
 	cp flashcart_specifics/r4idsn/arm9/$(TARGET).elf $(TARGET)_r4idsn.arm9.elf
 
 makearm9_acekard2:
-	$(MAKE) -C flashcart_specifics/acekard2/arm9
-	cp flashcart_specifics/acekard2/arm9/$(TARGET).elf $(TARGET)_acekard2.arm9.elf
+	$(MAKE) -C flashcart_specifics/address_adapt/arm9 CRT0=0x02000450
+	cp flashcart_specifics/address_adapt/arm9/$(TARGET).elf $(TARGET)_acekard2.arm9.elf
+	$(MAKE) -C flashcart_specifics/address_adapt/arm9 clean
 
 makearm9_r4igold.cc_wood:
-	$(MAKE) -C flashcart_specifics/r4igold.cc_wood/arm9
-	cp flashcart_specifics/r4igold.cc_wood/arm9/$(TARGET).elf $(TARGET)_r4igold.cc_wood.arm9.elf
+	$(MAKE) -C flashcart_specifics/address_adapt/arm9 CRT0=0x02000000
+	cp flashcart_specifics/address_adapt/arm9/$(TARGET).elf $(TARGET)_r4igold.cc_wood.arm9.elf
+	$(MAKE) -C flashcart_specifics/address_adapt/arm9 clean
 
 dist:	all autoboot
 	@mkdir -p ../7zfile/debug
