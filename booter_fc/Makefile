@@ -47,6 +47,7 @@ dist:	all autoboot
 	@cp $(TARGET)_r4ils.arm7.elf ../7zfile/debug/$(TARGET)_r4ils.arm7.elf
 	@cp $(TARGET)_r4idsn.arm9.elf ../7zfile/debug/$(TARGET)_r4idsn.arm9.elf
 	@cp $(TARGET)_acekard2.arm9.elf ../7zfile/debug/$(TARGET)_acekard2.arm9.elf
+	@cp $(TARGET)_r4igold.cc_wood.arm9.elf ../7zfile/debug/$(TARGET)_r4igold.cc_wood.arm9.elf
 
 .ONESHELL:
 autoboot:
@@ -202,11 +203,10 @@ autoboot:
 	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/SDHC/TTMenu.dat"
 
 	#### M3 DS Real
-	ndstool -c SRESET.DAT -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_acekard2.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	dlditool "flashcart_specifics/DLDI/M3-DS_(SD_Card).dldi" SRESET.DAT
-	./flashcart_specifics/dsbize/dsbize SRESET.DAT menu.xx 0x12
+	dlditool "flashcart_specifics/DLDI/M3-DS_(SD_Card).dldi" akmenu4.nds
+	./flashcart_specifics/dsbize/dsbize akmenu4.nds menu.xx 0x12
 	mv menu.xx "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SYSTEM/menu.xx"
-	mv SRESET.DAT "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SRESET.DAT"
+	mv akmenu4.nds "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SRESET.DAT"
 
 	#### Acekard 2, 2.1, 2i
 	dlditool flashcart_specifics/DLDI/ak2_sd.dldi akmenu4.nds
