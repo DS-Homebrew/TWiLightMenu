@@ -941,6 +941,12 @@ int main(int argc, char **argv) {
 	if (ms().showA78) {
 		extensionList.emplace_back(".a78");
 	}
+	if (ms().showCol) {
+		extensionList.emplace_back(".col");
+	}
+	if (ms().showM5) {
+		extensionList.emplace_back(".m5");
+	}
 	if (ms().showInt) {
 		extensionList.emplace_back(".int");
 	}
@@ -952,6 +958,9 @@ int main(int argc, char **argv) {
 	if (ms().showNes) {
 		extensionList.emplace_back(".nes");
 		extensionList.emplace_back(".fds");
+	}
+	if (ms().showSg) {
+		extensionList.emplace_back(".sg");
 	}
 	if (ms().showSmsGg) {
 		extensionList.emplace_back(".sms");
@@ -966,6 +975,12 @@ int main(int argc, char **argv) {
 	}
 	if (ms().showPce) {
 		extensionList.emplace_back(".pce");
+	}
+	if (ms().showWs) {
+		extensionList.emplace_back(".ws");
+	}
+	if (ms().showNgp) {
+		extensionList.emplace_back(".ngp");
 	}
 	srand(time(NULL));
 
@@ -2078,6 +2093,14 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
+				} else if ((extension(filename, {".sg"}) && ms().showSg == 2) || (extension(filename, {".col"}) && ms().showCol == 2) || extension(filename, {".m5"})) {
+					ms().launchType[ms().secondaryDevice] = Launch::EColecoDSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
+						boostVram = true;
+					}
 				} else if (extension(filename, {".int"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::ENINTVDSLaunch;
 
@@ -2103,7 +2126,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename, {".sms", ".gg"})) {
+				} else if ((extension(filename, {".sg"}) && ms().showSg == 1) || (extension(filename, {".sms", ".gg"})) || (extension(filename, {".col"}) && ms().showCol == 1)) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
@@ -2201,6 +2224,22 @@ int main(int argc, char **argv) {
 							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
 							boostVram = true;
 						}
+					}
+				} else if (extension(filename, {".ws"})) {
+					ms().launchType[ms().secondaryDevice] = Launch::ENitroSwanLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename, {".ngp"})) {
+					ms().launchType[ms().secondaryDevice] = Launch::ENGPDSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
+						boostVram = true;
 					}
 				}
 

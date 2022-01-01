@@ -176,7 +176,7 @@ void loadROMselect(void)
 	}
 }*/
 
-bool extention(const std::string& filename, const char* ext) {
+bool extension(const std::string& filename, const char* ext) {
 	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
 		return false;
 	} else {
@@ -416,13 +416,13 @@ void lastRunROM()
 				}
 
 				const char *typeToReplace = ".nds";
-				if (extention(filename, ".dsi")) {
+				if (extension(filename, ".dsi")) {
 					typeToReplace = ".dsi";
-				} else if (extention(filename, ".ids")) {
+				} else if (extension(filename, ".ids")) {
 					typeToReplace = ".ids";
-				} else if (extention(filename, ".srl")) {
+				} else if (extension(filename, ".srl")) {
 					typeToReplace = ".srl";
-				} else if (extention(filename, ".app")) {
+				} else if (extension(filename, ".app")) {
 					typeToReplace = ".app";
 				}
 
@@ -552,13 +552,13 @@ void lastRunROM()
 
 			// Move .sav outside of "saves" folder for flashcard kernel usage
 			const char *typeToReplace = ".nds";
-			if (extention(filename, ".dsi")) {
+			if (extension(filename, ".dsi")) {
 				typeToReplace = ".dsi";
-			} else if (extention(filename, ".ids")) {
+			} else if (extension(filename, ".ids")) {
 				typeToReplace = ".ids";
-			} else if (extention(filename, ".srl")) {
+			} else if (extension(filename, ".srl")) {
 				typeToReplace = ".srl";
-			} else if (extention(filename, ".app")) {
+			} else if (extension(filename, ".app")) {
 				typeToReplace = ".app";
 			}
 
@@ -720,13 +720,13 @@ void lastRunROM()
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
 				const char *typeToReplace = ".nds";
-				if (extention(filename, ".dsi")) {
+				if (extension(filename, ".dsi")) {
 					typeToReplace = ".dsi";
-				} else if (extention(filename, ".ids")) {
+				} else if (extension(filename, ".ids")) {
 					typeToReplace = ".ids";
-				} else if (extention(filename, ".srl")) {
+				} else if (extension(filename, ".srl")) {
 					typeToReplace = ".srl";
-				} else if (extention(filename, ".app")) {
+				} else if (extension(filename, ".app")) {
 					typeToReplace = ".app";
 				}
 
@@ -912,13 +912,13 @@ void lastRunROM()
 			loadPerGameSettings(filename);
 
 			const char *typeToReplace = ".nds";
-			if (extention(filename, ".dsi")) {
+			if (extension(filename, ".dsi")) {
 				typeToReplace = ".dsi";
-			} else if (extention(filename, ".ids")) {
+			} else if (extension(filename, ".ids")) {
 				typeToReplace = ".ids";
-			} else if (extention(filename, ".srl")) {
+			} else if (extension(filename, ".srl")) {
 				typeToReplace = ".srl";
-			} else if (extention(filename, ".app")) {
+			} else if (extension(filename, ".app")) {
 				typeToReplace = ".app";
 			}
 
@@ -972,7 +972,9 @@ void lastRunROM()
 	}
 	else if (ms().launchType[ms().previousUsedDevice] == Launch::ES8DSLaunch)
 	{
-		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().showCol != 1)
+		 || (extension(ms().romPath[ms().previousUsedDevice], ".sg") && ms().showSg != 1)
+		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		mkdir(ms().previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
 		mkdir(ms().previousUsedDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
@@ -1180,6 +1182,41 @@ void lastRunROM()
 			}
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to GBARunner2 as argument
+	}
+	else if (ms().launchType[ms().previousUsedDevice] == Launch::EColecoDSLaunch)
+	{
+		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().showCol != 2)
+		 || (extension(ms().romPath[ms().previousUsedDevice], ".sg") && ms().showSg != 2)
+		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		{
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to NINTV-DS as argument
+	}
+	else if (ms().launchType[ms().previousUsedDevice] == Launch::ENitroSwanLaunch)
+	{
+		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		{
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to NINTV-DS as argument
+	}
+	else if (ms().launchType[ms().previousUsedDevice] == Launch::ENGPDSLaunch)
+	{
+		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		{
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to NINTV-DS as argument
 	}
 	if (err > 0) {
 		consoleDemoInit();
@@ -1846,13 +1883,13 @@ int main(int argc, char **argv)
 		loadPerGameSettings(filename);
 
 		const char *typeToReplace = ".nds";
-		if (extention(filename, ".dsi")) {
+		if (extension(filename, ".dsi")) {
 			typeToReplace = ".dsi";
-		} else if (extention(filename, ".ids")) {
+		} else if (extension(filename, ".ids")) {
 			typeToReplace = ".ids";
-		} else if (extention(filename, ".srl")) {
+		} else if (extension(filename, ".srl")) {
 			typeToReplace = ".srl";
-		} else if (extention(filename, ".app")) {
+		} else if (extension(filename, ".app")) {
 			typeToReplace = ".app";
 		}
 
@@ -1892,13 +1929,13 @@ int main(int argc, char **argv)
 		loadPerGameSettings(filename);
 
 		const char *typeToReplace = ".nds";
-		if (extention(filename, ".dsi")) {
+		if (extension(filename, ".dsi")) {
 			typeToReplace = ".dsi";
-		} else if (extention(filename, ".ids")) {
+		} else if (extension(filename, ".ids")) {
 			typeToReplace = ".ids";
-		} else if (extention(filename, ".srl")) {
+		} else if (extension(filename, ".srl")) {
 			typeToReplace = ".srl";
-		} else if (extention(filename, ".app")) {
+		} else if (extension(filename, ".app")) {
 			typeToReplace = ".app";
 		}
 
@@ -1913,11 +1950,11 @@ int main(int argc, char **argv)
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
 		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
 		if (access(savepathFc.c_str(), F_OK) == 0
-		&& (extention(filename, ".nds")
-		 || extention(filename, ".dsi")
-		 || extention(filename, ".ids")
-		 || extention(filename, ".srl")
-		 || extention(filename, ".app")))
+		&& (extension(filename, ".nds")
+		 || extension(filename, ".dsi")
+		 || extension(filename, ".ids")
+		 || extension(filename, ".srl")
+		 || extension(filename, ".app")))
 		{
 			rename(savepathFc.c_str(), savepath.c_str());
 		}

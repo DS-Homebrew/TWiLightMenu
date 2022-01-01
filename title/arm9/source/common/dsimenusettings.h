@@ -133,7 +133,10 @@ class TWLSettings
         ENitroGrafxLaunch = 14,
         EXEGSDSLaunch = 15,
         ENINTVDSLaunch = 16,
-        EGBARunner2Launch = 17
+        EGBARunner2Launch = 17,
+        EColecoDSLaunch = 18,
+        ENitroSwanLaunch = 19,
+        ENGPDSLaunch = 20
     };
 
     /*	0 = Nintendo DSi (Retail)
@@ -182,6 +185,8 @@ class TWLSettings
     bool showMainMenu;
     int theme;
 	int showGba;
+	int showCol;
+	int showSg;
     int showMd;
     bool showDirectories;
     int showBoxArt;

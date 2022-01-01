@@ -738,6 +738,21 @@ void vBlankHandler() {
 							glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice],
 									 (titleboxYpos - 1) + titleboxYposDropDown[i % 5],
 									 GL_FLIP_NONE, &tex().settingsImage()[1]);
+						else if (bnrRomType[i] == 17)
+							drawIconNGP(iconXpos - titleboxXpos[ms().secondaryDevice],
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						else if (bnrRomType[i] == 16)
+							drawIconWS(iconXpos - titleboxXpos[ms().secondaryDevice],
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						else if (bnrRomType[i] == 15)
+							drawIconSG(iconXpos - titleboxXpos[ms().secondaryDevice],
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						else if (bnrRomType[i] == 14)
+							drawIconM5(iconXpos - titleboxXpos[ms().secondaryDevice],
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						else if (bnrRomType[i] == 13)
+							drawIconCOL(iconXpos - titleboxXpos[ms().secondaryDevice],
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
 						else if (bnrRomType[i] == 12)
 							drawIconINT(iconXpos - titleboxXpos[ms().secondaryDevice],
 										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
@@ -815,6 +830,16 @@ void vBlankHandler() {
 						glSprite(96,
 								 (titleboxYpos - 1) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
 								 GL_FLIP_NONE, &tex().settingsImage()[1]);
+					else if (bnrRomType[movingApp] == 17)
+						drawIconNGP(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 16)
+						drawIconWS(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 15)
+						drawIconSG(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 14)
+						drawIconM5(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 13)
+						drawIconCOL(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
 					else if (bnrRomType[movingApp] == 12)
 						drawIconINT(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
 					else if (bnrRomType[movingApp] == 11)
@@ -905,6 +930,16 @@ void vBlankHandler() {
 				}
 				if (bnrSysSettings[CURPOS])
 					glSprite(84, 83 - titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
+				else if (bnrRomType[CURPOS] == 17)
+					drawIconNGP(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 16)
+					drawIconWS(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 15)
+					drawIconSG(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 14)
+					drawIconM5(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 13)
+					drawIconCOL(112, 96 - titleboxYmovepos);
 				else if (bnrRomType[CURPOS] == 12)
 					drawIconINT(112, 96 - titleboxYmovepos);
 				else if (bnrRomType[CURPOS] == 11)

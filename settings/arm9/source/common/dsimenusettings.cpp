@@ -36,18 +36,23 @@ TWLSettings::TWLSettings()
 
     showNds = true;
 	showGba = 1 + isDSiMode();
-    showRvid = true;
-    showXex = true;
-    showA26 = true;
-    showA52 = true;
-    showA78 = true;
-    showInt = true;
-    showNes = true;
-    showGb = true;
-    showSmsGg = true;
-    showMd = 3;
-    showSnes = true;
-    showPce = true;
+	showRvid = true;
+	showXex = true;
+	showA26 = true;
+	showA52 = true;
+	showA78 = true;
+	showCol = 2;
+	showM5 = true;
+	showInt = true;
+	showNes = true;
+	showGb = true;
+	showSg = 2;
+	showSmsGg = true;
+	showMd = 3;
+	showSnes = true;
+	showPce = true;
+	showWs = true;
+	showNgp = true;
     updateRecentlyPlayedList = true;
     sortMethod = 0;
     showDirectories = true;
@@ -136,21 +141,26 @@ void TWLSettings::loadSettings()
 	if (!sys().isRegularDS() && showGba != 0) {
 		showGba = 2;
 	}
-    showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
-    showXex = settingsini.GetInt("SRLOADER", "SHOW_XEX", showXex);
-    showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", showA26);
-    showA52 = settingsini.GetInt("SRLOADER", "SHOW_A52", showA52);
-    showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", showA78);
-    showInt = settingsini.GetInt("SRLOADER", "SHOW_INT", showInt);
-    showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
-    showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
-    showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
-    showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
+	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
+	showXex = settingsini.GetInt("SRLOADER", "SHOW_XEX", showXex);
+	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", showA26);
+	showA52 = settingsini.GetInt("SRLOADER", "SHOW_A52", showA52);
+	showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", showA78);
+	showCol = settingsini.GetInt("SRLOADER", "SHOW_COL", showCol);
+	showM5 = settingsini.GetInt("SRLOADER", "SHOW_M5", showM5);
+	showInt = settingsini.GetInt("SRLOADER", "SHOW_INT", showInt);
+	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
+	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
+	showSg = settingsini.GetInt("SRLOADER", "SHOW_SG", showSg);
+	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
+	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 	if (isDSiMode() && (access("sd:/", F_OK) == 0) && sys().arm7SCFGLocked() && (ms().showMd == 1 || ms().showMd == 3)) {
 		ms().showMd = 2;	// Use only PicoDriveTWL
 	}
-    showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
-    showPce = settingsini.GetInt("SRLOADER", "SHOW_PCE", showPce);
+	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
+	showPce = settingsini.GetInt("SRLOADER", "SHOW_PCE", showPce);
+	showWs = settingsini.GetInt("SRLOADER", "SHOW_WS", showWs);
+	showNgp = settingsini.GetInt("SRLOADER", "SHOW_NGP", showNgp);
 
     // Customizable UI settings.
     fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
@@ -293,13 +303,18 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_A26", showA26);
     settingsini.SetInt("SRLOADER", "SHOW_A52", showA52);
     settingsini.SetInt("SRLOADER", "SHOW_A78", showA78);
+    settingsini.SetInt("SRLOADER", "SHOW_COL", showCol);
+    settingsini.SetInt("SRLOADER", "SHOW_M5", showM5);
     settingsini.SetInt("SRLOADER", "SHOW_INT", showInt);
     settingsini.SetInt("SRLOADER", "SHOW_NES", showNes);
     settingsini.SetInt("SRLOADER", "SHOW_GB", showGb);
+    settingsini.SetInt("SRLOADER", "SHOW_SG", showSg);
     settingsini.SetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
     settingsini.SetInt("SRLOADER", "SHOW_MDGEN", showMd);
     settingsini.SetInt("SRLOADER", "SHOW_SNES", showSnes);
     settingsini.SetInt("SRLOADER", "SHOW_PCE", showPce);
+    settingsini.SetInt("SRLOADER", "SHOW_WS", showWs);
+    settingsini.SetInt("SRLOADER", "SHOW_NGP", showNgp);
     settingsini.SetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
     settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);

@@ -16,31 +16,39 @@ static u16 _paletteCache[NDS_ICON_BANK_COUNT][16];
 int _gbaTexID;
 int _gbcTexID;
 int _nesTexID;
+int _sgTexID;
 int _smsTexID;
 int _ggTexID;
 int _mdTexID;
 int _snesTexID;
 //int _msxTexID;
-//int _colTexID;
 int _plgTexID;
 int _a26TexID;
+int _colTexID;
+int _m5TexID;
 int _intTexID;
 int _pceTexID;
+int _wsTexID;
+int _ngpTexID;
 
 glImage _ndsIcon[NDS_ICON_BANK_COUNT][TWL_ICON_FRAMES];
 glImage _gbaIcon[(32 / 32) * (64 / 32)];
 glImage _gbcIcon[(32 / 32) * (64 / 32)];
 glImage _nesIcon[1];
+glImage _sgIcon[1];
 glImage _smsIcon[1];
 glImage _ggIcon[1];
 glImage _mdIcon[1];
 glImage _snesIcon[1];
 // glImage _msxIcon[1];
-// glImage _colIcon[1];
 glImage _plgIcon[1];
 glImage _a26Icon[1];
+glImage _colIcon[1];
+glImage _m5Icon[1];
 glImage _intIcon[1];
 glImage _pceIcon[1];
+glImage _wsIcon[1];
+glImage _ngpIcon[1];
 
 static u8 clearTiles[(32 * 256) / 2] = {0};
 static u16 blackPalette[16 * 8] = {0};
@@ -57,6 +65,8 @@ const glImage *getIcon(int num) {
 		return _gbcIcon;
 	if (num == NES_ICON)
 		return _nesIcon;
+	if (num == SG_ICON)
+		return _smsIcon;
 	if (num == SMS_ICON)
 		return _smsIcon;
 	if (num == GG_ICON)
@@ -66,17 +76,23 @@ const glImage *getIcon(int num) {
 	if (num == SNES_ICON)
 		return _snesIcon;
 	/*if (num == MSX_ICON)
-	    return _msxIcon;
-	if (num == COL_ICON)
-	    return _colIcon;*/
+	    return _msxIcon;*/
 	if (num == PLG_ICON)
 		return _plgIcon;
 	if (num == A26_ICON)
 		return _a26Icon;
+	if (num == COL_ICON)
+	    return _colIcon;
+	if (num == M5_ICON)
+	    return _m5Icon;
 	if (num == INT_ICON)
 		return _intIcon;
 	if (num == PCE_ICON)
 		return _pceIcon;
+	if (num == WS_ICON)
+		return _wsIcon;
+	if (num == NGP_ICON)
+		return _ngpIcon;
 	if (BAD_ICON_IDX(num) || !initialized)
 		return NULL;
 	return _ndsIcon[num];
@@ -110,6 +126,10 @@ void glLoadTileSetIntoSlot(int num, int tile_wid, int tile_hei, int bmp_wid, int
 		textureID = _nesTexID;
 		sprite = _nesIcon;
 		break;
+	case SG_ICON:
+		textureID = _sgTexID;
+		sprite = _sgIcon;
+		break;
 	case SMS_ICON:
 		textureID = _smsTexID;
 		sprite = _smsIcon;
@@ -134,6 +154,14 @@ void glLoadTileSetIntoSlot(int num, int tile_wid, int tile_hei, int bmp_wid, int
 		textureID = _a26TexID;
 		sprite = _a26Icon;
 		break;
+	case COL_ICON:
+		textureID = _colTexID;
+		sprite = _colIcon;
+		break;
+	case M5_ICON:
+		textureID = _m5TexID;
+		sprite = _m5Icon;
+		break;
 	case INT_ICON:
 		textureID = _intTexID;
 		sprite = _intIcon;
@@ -141,6 +169,14 @@ void glLoadTileSetIntoSlot(int num, int tile_wid, int tile_hei, int bmp_wid, int
 	case PCE_ICON:
 		textureID = _pceTexID;
 		sprite = _pceIcon;
+		break;
+	case WS_ICON:
+		textureID = _wsTexID;
+		sprite = _wsIcon;
+		break;
+	case NGP_ICON:
+		textureID = _ngpTexID;
+		sprite = _ngpIcon;
 		break;
 	default:
 		if (BAD_ICON_IDX(num))
@@ -254,6 +290,10 @@ void glReloadIconPalette(int num) {
 		textureID = _nesTexID;
 		cachedPalette = tex().iconNESTexture()->palette();
 		break;
+	case SG_ICON:
+		textureID = _sgTexID;
+		cachedPalette = tex().iconSGTexture()->palette();
+		break;
 	case SMS_ICON:
 		textureID = _smsTexID;
 		cachedPalette = tex().iconSMSTexture()->palette();
@@ -278,6 +318,14 @@ void glReloadIconPalette(int num) {
 		textureID = _a26TexID;
 		cachedPalette = tex().iconA26Texture()->palette();
 		break;
+	case COL_ICON:
+		textureID = _colTexID;
+		cachedPalette = tex().iconCOLTexture()->palette();
+		break;
+	case M5_ICON:
+		textureID = _m5TexID;
+		cachedPalette = tex().iconM5Texture()->palette();
+		break;
 	case INT_ICON:
 		textureID = _intTexID;
 		cachedPalette = tex().iconINTTexture()->palette();
@@ -285,6 +333,14 @@ void glReloadIconPalette(int num) {
 	case PCE_ICON:
 		textureID = _pceTexID;
 		cachedPalette = tex().iconPCETexture()->palette();
+		break;
+	case WS_ICON:
+		textureID = _wsTexID;
+		cachedPalette = tex().iconWSTexture()->palette();
+		break;
+	case NGP_ICON:
+		textureID = _ngpTexID;
+		cachedPalette = tex().iconNGPTexture()->palette();
 		break;
 	default:
 		if (BAD_ICON_IDX(num))
@@ -306,14 +362,19 @@ void reloadIconPalettes() {
 	glReloadIconPalette(GBA_ICON);
 	glReloadIconPalette(GBC_ICON);
 	glReloadIconPalette(NES_ICON);
+	glReloadIconPalette(SG_ICON);
 	glReloadIconPalette(SMS_ICON);
 	glReloadIconPalette(GG_ICON);
 	glReloadIconPalette(MD_ICON);
 	glReloadIconPalette(SNES_ICON);
 	glReloadIconPalette(PLG_ICON);
 	glReloadIconPalette(A26_ICON);
+	glReloadIconPalette(COL_ICON);
+	glReloadIconPalette(M5_ICON);
 	glReloadIconPalette(INT_ICON);
 	glReloadIconPalette(PCE_ICON);
+	glReloadIconPalette(WS_ICON);
+	glReloadIconPalette(NGP_ICON);
 
 	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
 		glReloadIconPalette(i);
@@ -354,14 +415,19 @@ void iconManagerInit() {
 	glGenTextures(1, &_gbaTexID);
 	glGenTextures(1, &_gbcTexID);
 	glGenTextures(1, &_nesTexID);
+	glGenTextures(1, &_sgTexID);
 	glGenTextures(1, &_smsTexID);
 	glGenTextures(1, &_ggTexID);
 	glGenTextures(1, &_mdTexID);
 	glGenTextures(1, &_snesTexID);
 	glGenTextures(1, &_plgTexID);
 	glGenTextures(1, &_a26TexID);
+	glGenTextures(1, &_colTexID);
+	glGenTextures(1, &_m5TexID);
 	glGenTextures(1, &_intTexID);
 	glGenTextures(1, &_pceTexID);
+	glGenTextures(1, &_wsTexID);
+	glGenTextures(1, &_ngpTexID);
 
 	// Initialize empty data for the 6 textures.
 	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
@@ -373,6 +439,8 @@ void iconManagerInit() {
 	glLoadIcon(GBC_ICON, tex().iconGBTexture()->palette(), tex().iconGBTexture()->bytes(), 64, true);
 
 	glLoadIcon(NES_ICON, tex().iconNESTexture()->palette(), tex().iconNESTexture()->bytes(), 32, true);
+
+	glLoadIcon(SG_ICON, tex().iconSGTexture()->palette(), tex().iconSGTexture()->bytes(), 32, true);
 
 	glLoadIcon(SMS_ICON, tex().iconSMSTexture()->palette(), tex().iconSMSTexture()->bytes(), 32, true);
 
@@ -388,9 +456,17 @@ void iconManagerInit() {
 
 	glLoadIcon(A26_ICON, tex().iconA26Texture()->palette(), tex().iconA26Texture()->bytes(), 32, true);
 
+	glLoadIcon(COL_ICON, tex().iconCOLTexture()->palette(), tex().iconCOLTexture()->bytes(), 32, true);
+
+	glLoadIcon(M5_ICON, tex().iconM5Texture()->palette(), tex().iconM5Texture()->bytes(), 32, true);
+
 	glLoadIcon(INT_ICON, tex().iconINTTexture()->palette(), tex().iconINTTexture()->bytes(), 32, true);
 
 	glLoadIcon(PCE_ICON, tex().iconPCETexture()->palette(), tex().iconPCETexture()->bytes(), 32, true);
+
+	glLoadIcon(WS_ICON, tex().iconWSTexture()->palette(), tex().iconWSTexture()->bytes(), 32, true);
+
+	glLoadIcon(NGP_ICON, tex().iconNGPTexture()->palette(), tex().iconNGPTexture()->bytes(), 32, true);
 
 	// set initialized.
 	initialized = true;

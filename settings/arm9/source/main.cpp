@@ -903,18 +903,23 @@ int main(int argc, char **argv)
 		.option(STR_A26_ROMS, STR_DESCRIPTION_SHOW_A26, Option::Bool(&ms().showA26), {"StellaDS", STR_HIDE}, {true, false})
 		.option(STR_A52_ROMS, STR_DESCRIPTION_SHOW_A52, Option::Bool(&ms().showA52), {"A5200DS", STR_HIDE}, {true, false})
 		.option(STR_A78_ROMS, STR_DESCRIPTION_SHOW_A78, Option::Bool(&ms().showA78), {"A7800DS", STR_HIDE}, {true, false})
+		.option(STR_COL_ROMS, STR_DESCRIPTION_SHOW_COL, Option::Int(&ms().showCol), {STR_HIDE, "S8DS", "ColecoDS"}, {0, 1, 2})
+		.option(STR_M5_ROMS, STR_DESCRIPTION_SHOW_M5, Option::Bool(&ms().showM5), {"ColecoDS", STR_HIDE}, {true, false})
 		.option(STR_INT_ROMS, STR_DESCRIPTION_SHOW_INT, Option::Bool(&ms().showInt), {"NINTV-DS", STR_HIDE}, {true, false})
 		.option(STR_NES_ROMS, STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {"nesDS", STR_HIDE}, {true, false})
 		.option(STR_GB_ROMS, STR_DESCRIPTION_SHOW_GB, Option::Bool(&ms().showGb), {"GameYob", STR_HIDE}, {true, false})
+		.option(STR_SG_ROMS, STR_DESCRIPTION_SHOW_SG, Option::Int(&ms().showSg), {STR_HIDE, "S8DS", "ColecoDS"}, {0, 1, 2})
 		.option(STR_SMS_ROMS, STR_DESCRIPTION_SHOW_SMS, Option::Bool(&ms().showSmsGg), {"S8DS", STR_HIDE}, {true, false});
 	if (isDSiMode() && sdFound() && sys().arm7SCFGLocked()) {
 		emulationPage.option(STR_MD_ROMS, STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "PicoDriveTWL"}, {0, 2});
 	} else {
-		emulationPage
-			.option(STR_MD_ROMS, STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {0, 1, 2, 3})
-			.option(STR_SNES_ROMS, STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {"SNEmulDS", STR_HIDE}, {true, false})
-			.option(STR_PCE_ROMS, STR_DESCRIPTION_SHOW_PCE, Option::Bool(&ms().showPce), {"NitroGrafx", STR_HIDE}, {true, false});
+		emulationPage.option(STR_MD_ROMS, STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {0, 1, 2, 3});
 	}
+	emulationPage
+		.option(STR_SNES_ROMS, STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {"SNEmulDS", STR_HIDE}, {true, false})
+		.option(STR_PCE_ROMS, STR_DESCRIPTION_SHOW_PCE, Option::Bool(&ms().showPce), {"NitroGrafx", STR_HIDE}, {true, false})
+		.option(STR_NGP_ROMS, STR_DESCRIPTION_SHOW_NGP, Option::Bool(&ms().showNgp), {"NGPDS", STR_HIDE}, {true, false})
+		.option(STR_WS_ROMS, STR_DESCRIPTION_SHOW_WS, Option::Bool(&ms().showWs), {"NitroSwan", STR_HIDE}, {true, false});
 
 	SettingsPage gbar2Page(STR_GBARUNNER2_SETTINGS);
 
@@ -1077,8 +1082,8 @@ int main(int argc, char **argv)
 				 "Nederlands",
 				 "Norsk",
 				 "Polski",
-				 "Português (Brasil)",
 				 "Português (Portugal)",
+				 "Português (Brasil)",
 				 "Română",
 				 "Svenska",
 				 "Tiếng Việt",
@@ -1105,8 +1110,8 @@ int main(int argc, char **argv)
 				 TLanguage::ELangDutch,
 				 TLanguage::ELangNorwegian,
 				 TLanguage::ELangPolish,
-				 TLanguage::ELangPortugueseBrazil,
 				 TLanguage::ELangPortuguese,
+				 TLanguage::ELangPortugueseBrazil,
 				 TLanguage::ELangRomanian,
 				 TLanguage::ELangSwedish,
 				 TLanguage::ELangVietnamese,

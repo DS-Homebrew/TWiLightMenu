@@ -134,7 +134,10 @@ class TWLSettings
         ENitroGrafxLaunch = 14,
         EXEGSDSLaunch = 15,
         ENINTVDSLaunch = 16,
-        EGBARunner2Launch = 17
+        EGBARunner2Launch = 17,
+        EColecoDSLaunch = 18,
+        ENitroSwanLaunch = 19,
+        ENGPDSLaunch = 20
     };
 
     /*
@@ -199,17 +202,23 @@ class TWLSettings
     bool boxArtColorDeband;
     bool showNds;
     int showGba;
-    bool showRvid;
-    bool showXex;
-    bool showA26;
-    bool showA52;
-    bool showA78;
-    bool showNes;
-    bool showGb;
-    bool showSmsGg;
-    int showMd;
-    bool showSnes;
-    bool showPce;
+	bool showRvid;
+	bool showXex;
+	bool showA26;
+	bool showA52;
+	bool showA78;
+	int showCol;
+	bool showM5;
+	bool showInt;
+	bool showNes;
+	bool showGb;
+	int showSg;
+	bool showSmsGg;
+	int showMd;
+	bool showSnes;
+	bool showPce;
+	bool showWs;
+	bool showNgp;
     bool showDirectories;
     bool showHidden;
     bool preventDeletion;

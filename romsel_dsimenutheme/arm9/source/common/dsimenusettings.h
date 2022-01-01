@@ -137,7 +137,10 @@ public:
 		ENitroGrafxLaunch = 14,
 		EXEGSDSLaunch = 15,
 		ENINTVDSLaunch = 16,
-        EGBARunner2Launch = 17
+        EGBARunner2Launch = 17,
+        EColecoDSLaunch = 18,
+        ENitroSwanLaunch = 19,
+        ENGPDSLaunch = 20
 	};
 
 	/*
@@ -207,13 +210,18 @@ public:
 	bool showA26;
 	bool showA52;
 	bool showA78;
+	int showCol;
+	bool showM5;
 	bool showInt;
 	bool showNes;
 	bool showGb;
+	int showSg;
 	bool showSmsGg;
 	int showMd;
 	bool showSnes;
 	bool showPce;
+	bool showWs;
+	bool showNgp;
 	bool showDirectories;
 	bool showHidden;
 	bool preventDeletion;

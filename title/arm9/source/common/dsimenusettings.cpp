@@ -34,6 +34,8 @@ TWLSettings::TWLSettings()
     theme = 0;
 
 	showGba = 1 + isDSiMode();
+	showCol = 2;
+	showSg = 2;
 	showMd = 3;
     showDirectories = true;
     showBoxArt = 1 + isDSiMode();
@@ -109,6 +111,8 @@ void TWLSettings::loadSettings()
 	if (!sys().isRegularDS() && showGba != 0) {
 		showGba = 2;
 	}
+	showCol = settingsini.GetInt("SRLOADER", "SHOW_COL", showCol);
+	showSg = settingsini.GetInt("SRLOADER", "SHOW_SG", showSg);
 	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 
     // Customizable UI settings.

@@ -62,8 +62,8 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - Ryan FB & [xonn83](https://github.com/xonn83): [PicoDriveDS](https://github.com/xonn83/PicodriveDS_GBMacro) (used to launch large Sega Mega Drive/Genesis ROMs)
 - [Gericom](https://github.com/Gericom): [GBARunner2](https://github.com/Gericom/GBARunner2) (used to launch GameBoy Advance ROMs outside of the DS Phat/lite's GBA mode)
      - [therealteamplayer](https://github.com/therealteamplayer): Hicode+DSP merged builds included.
-- [FluBBaOfWard](https://github.com/FluBBaOfWard): [S8DS](https://github.com/FluBBaOfWard/S8DS) (used to launch Sega Master System/Game Gear ROMs)
-- Alekmaul & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5200DS](https://github.com/wavemotion-dave/A5200DS), [A7800DS](https://github.com/wavemotion-dave/A7800DS), and [XEGS-DS](https://github.com/wavemotion-dave/XEGS-DS) (used to launch Atari 2600/5200/7800/XEGS ROMs)
+- [FluBBaOfWard](https://github.com/FluBBaOfWard): [S8DS](https://github.com/FluBBaOfWard/S8DS) (used to launch Sega Master System/Game Gear ROMs), [NitroSwan](https://github.com/FluBBaOfWard/NitroSwan) (used to launch WonderSwan ROMs), and [NGPDS](https://gbatemp.net/threads/neogeo-pocket-emu-for-ds.590633/) (used to launch Neo Geo Pocket ROMs)
+- Alekmaul & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5200DS](https://github.com/wavemotion-dave/A5200DS), [A7800DS](https://github.com/wavemotion-dave/A7800DS), [XEGS-DS](https://github.com/wavemotion-dave/XEGS-DS) (used to launch Atari 2600/5200/7800/XEGS ROMs), and [ColecoDS](https://github.com/wavemotion-dave/ColecoDS) (used to launch ColecoVision, Sord M5, and Sega SG-1000 ROMs)
 - [wavemotion](https://github.com/wavemotion-dave): [Nintellivision/NINTV-DS](https://github.com/wavemotion-dave/NINTV-DS) (used to launch Intellivision ROMs)
 ## Graphics & Themes
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics

@@ -757,10 +757,12 @@ string browseForFile(const vector<string_view> extensionList) {
 			{
 				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
-			} else if (extension(std_romsel_filename, {".pce"})) {
-				bnrRomType = 11;
 			} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 				bnrRomType = 10;
+			} else if (extension(std_romsel_filename, {".col"})) {
+				bnrRomType = 13;
+			} else if (extension(std_romsel_filename, {".m5"})) {
+				bnrRomType = 14;
 			} else if (extension(std_romsel_filename, {".int"})) {
 				bnrRomType = 12;
 			} else if (extension(std_romsel_filename, {".plg", ".rvid", ".fv"})) {
@@ -773,6 +775,8 @@ string browseForFile(const vector<string_view> extensionList) {
 				bnrRomType = 3;
 			} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
 				bnrRomType = 4;
+			} else if(extension(std_romsel_filename, {".sg"})) {
+				bnrRomType = 15;
 			} else if(extension(std_romsel_filename, {".sms"})) {
 				bnrRomType = 5;
 			} else if(extension(std_romsel_filename, {".gg"})) {
@@ -781,6 +785,12 @@ string browseForFile(const vector<string_view> extensionList) {
 				bnrRomType = 7;
 			} else if(extension(std_romsel_filename, {".smc", ".sfc"})) {
 				bnrRomType = 8;
+			} else if (extension(std_romsel_filename, {".pce"})) {
+				bnrRomType = 11;
+			} else if (extension(std_romsel_filename, {".ws"})) {
+				bnrRomType = 16;
+			} else if (extension(std_romsel_filename, {".ngp"})) {
+				bnrRomType = 17;
 			}
 		}
 

@@ -379,6 +379,11 @@ void vBlankHandler()
 				if ((isDSiMode() && !flashcardFound() && arm7SCFGLocked) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[0]);
 				}
+				else if (bnrRomType[1] == 17) drawIconNGP(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 16) drawIconWS(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 15) drawIconSG(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 14) drawIconM5(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 13) drawIconCOL(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 12) drawIconINT(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 11) drawIconPCE(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 10) drawIconA26(40, iconYpos[0]+6);
@@ -403,6 +408,11 @@ void vBlankHandler()
 			glSprite(33, iconYpos[3], GL_FLIP_NONE, sdFound() ? &iconboxImage[0] : &iconboxImage[1-isRegularDS]);
 			int num = (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? 1 : 0;
 			if (!sdFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) drawIconGBA(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 17) drawIconNGP(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 16) drawIconWS(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 15) drawIconSG(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 14) drawIconM5(40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 13) drawIconCOL(40, iconYpos[3]+6);
 			else if (bnrRomType[num] == 12) drawIconINT(40, iconYpos[3]+6);
 			else if (bnrRomType[num] == 11) drawIconPCE(40, iconYpos[3]+6);
 			else if (bnrRomType[num] == 10) drawIconA26(40, iconYpos[3]+6);

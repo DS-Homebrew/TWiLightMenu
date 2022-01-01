@@ -150,12 +150,17 @@ public:
 	const Texture *iconGGTexture() { return _iconGGTexture.get(); }
 	const Texture *iconMDTexture() { return _iconMDTexture.get(); }
 	const Texture *iconNESTexture() { return _iconNESTexture.get(); }
+	const Texture *iconSGTexture() { return _iconSGTexture.get(); }
 	const Texture *iconSMSTexture() { return _iconSMSTexture.get(); }
 	const Texture *iconSNESTexture() { return _iconSNESTexture.get(); }
 	const Texture *iconPLGTexture() { return _iconPLGTexture.get(); }
 	const Texture *iconA26Texture() { return _iconA26Texture.get(); }
+	const Texture *iconCOLTexture() { return _iconCOLTexture.get(); }
+	const Texture *iconM5Texture() { return _iconM5Texture.get(); }
 	const Texture *iconINTTexture() { return _iconINTTexture.get(); }
 	const Texture *iconPCETexture() { return _iconPCETexture.get(); }
+	const Texture *iconWSTexture() { return _iconWSTexture.get(); }
+	const Texture *iconNGPTexture() { return _iconNGPTexture.get(); }
 	const Texture *iconUnknownTexture() { return _iconUnknownTexture.get(); }
 
 	const Texture *dateTimeFontTexture() { return _dateTimeFontTexture.get(); }
@@ -277,12 +282,17 @@ private:
 	unique_ptr<Texture> _iconGGTexture;
 	unique_ptr<Texture> _iconMDTexture;
 	unique_ptr<Texture> _iconNESTexture;
+	unique_ptr<Texture> _iconSGTexture;
 	unique_ptr<Texture> _iconSMSTexture;
 	unique_ptr<Texture> _iconSNESTexture;
 	unique_ptr<Texture> _iconPLGTexture;
 	unique_ptr<Texture> _iconA26Texture;
+	unique_ptr<Texture> _iconCOLTexture;
+	unique_ptr<Texture> _iconM5Texture;
 	unique_ptr<Texture> _iconINTTexture;
 	unique_ptr<Texture> _iconPCETexture;
+	unique_ptr<Texture> _iconWSTexture;
+	unique_ptr<Texture> _iconNGPTexture;
 	unique_ptr<Texture> _iconUnknownTexture;
 
 	unique_ptr<Texture> _volume0Texture;

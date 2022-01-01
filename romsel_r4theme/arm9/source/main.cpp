@@ -157,13 +157,18 @@ bool showXex = true;
 bool showA26 = true;
 bool showA52 = true;
 bool showA78 = true;
+int showCol = 2;
+bool showM5 = true;
 bool showInt = true;
 bool showNes = true;
 bool showGb = true;
+int showSg = 2;
 bool showSmsGg = true;
 int showMd = 3;
 bool showSnes = true;
 bool showPce = true;
+bool showWs = true;
+bool showNgp = true;
 bool showDirectories = true;
 bool showHidden = false;
 bool preventDeletion = false;
@@ -222,13 +227,18 @@ void LoadSettings(void) {
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", true);
 	showA52 = settingsini.GetInt("SRLOADER", "SHOW_A52", true);
 	showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", true);
+	showCol = settingsini.GetInt("SRLOADER", "SHOW_COL", showCol);
+	showM5 = settingsini.GetInt("SRLOADER", "SHOW_M5", showM5);
 	showInt = settingsini.GetInt("SRLOADER", "SHOW_INT", true);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
+	showSg = settingsini.GetInt("SRLOADER", "SHOW_SG", showSg);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", true);
 	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", true);
 	showPce = settingsini.GetInt("SRLOADER", "SHOW_PCE", true);
+	showWs = settingsini.GetInt("SRLOADER", "SHOW_Ws", showWs);
+	showNgp = settingsini.GetInt("SRLOADER", "SHOW_NGP", showNgp);
 
 	// Customizable UI settings.
 	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
@@ -1379,19 +1389,19 @@ int main(int argc, char **argv) {
 
 	std::vector<std::string_view> extensionList;
 	if (showNds) {
-		extensionList.push_back(".nds");
-		extensionList.push_back(".dsi");
-		extensionList.push_back(".ids");
-		extensionList.push_back(".srl");
-		extensionList.push_back(".app");
-		extensionList.push_back(".argv");
+		extensionList.emplace_back(".nds");
+		extensionList.emplace_back(".dsi");
+		extensionList.emplace_back(".ids");
+		extensionList.emplace_back(".srl");
+		extensionList.emplace_back(".app");
+		extensionList.emplace_back(".argv");
 	}
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		extensionList.push_back(".plg");
+		extensionList.emplace_back(".plg");
 	}
 	if (showRvid) {
-		extensionList.push_back(".rvid");
-		extensionList.push_back(".fv");
+		extensionList.emplace_back(".rvid");
+		extensionList.emplace_back(".fv");
 	}
 	if (showGba) {
 		extensionList.emplace_back(".agb");
@@ -1411,31 +1421,46 @@ int main(int argc, char **argv) {
 	if (showA78) {
 		extensionList.emplace_back(".a78");
 	}
+	if (showCol) {
+		extensionList.emplace_back(".col");
+	}
+	if (showM5) {
+		extensionList.emplace_back(".m5");
+	}
 	if (showInt) {
 		extensionList.emplace_back(".int");
 	}
 	if (showGb) {
-		extensionList.push_back(".gb");
-		extensionList.push_back(".sgb");
-		extensionList.push_back(".gbc");
+		extensionList.emplace_back(".gb");
+		extensionList.emplace_back(".sgb");
+		extensionList.emplace_back(".gbc");
 	}
 	if (showNes) {
-		extensionList.push_back(".nes");
-		extensionList.push_back(".fds");
+		extensionList.emplace_back(".nes");
+		extensionList.emplace_back(".fds");
+	}
+	if (showSg) {
+		extensionList.emplace_back(".sg");
 	}
 	if (showSmsGg) {
-		extensionList.push_back(".sms");
-		extensionList.push_back(".gg");
+		extensionList.emplace_back(".sms");
+		extensionList.emplace_back(".gg");
 	}
 	if (showMd) {
-		extensionList.push_back(".gen");
+		extensionList.emplace_back(".gen");
 	}
 	if (showSnes) {
-		extensionList.push_back(".smc");
-		extensionList.push_back(".sfc");
+		extensionList.emplace_back(".smc");
+		extensionList.emplace_back(".sfc");
 	}
 	if (showPce) {
-		extensionList.push_back(".pce");
+		extensionList.emplace_back(".pce");
+	}
+	if (showWs) {
+		extensionList.emplace_back(".ws");
+	}
+	if (showNgp) {
+		extensionList.emplace_back(".ngp");
 	}
 	srand(time(NULL));
 	
@@ -2599,6 +2624,14 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
+				} else if ((extension(filename, {".sg"}) && showSg == 2) || (extension(filename, {".col"}) && showCol == 2) || extension(filename, {".m5"})) {
+					launchType[secondaryDevice] = 18;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
+						boostVram = true;
+					}
 				} else if (extension(filename, {".int"})) {
 					launchType[secondaryDevice] = 16;
 					
@@ -2722,6 +2755,22 @@ int main(int argc, char **argv) {
 							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
 							boostVram = true;
 						}
+					}
+				} else if (extension(filename, {".ws"})) {
+					launchType[secondaryDevice] = 19;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename, {".ngp"})) {
+					launchType[secondaryDevice] = 20;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
+						boostVram = true;
 					}
 				}
 

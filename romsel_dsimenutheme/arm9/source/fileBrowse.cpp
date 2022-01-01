@@ -1608,11 +1608,14 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					getGameInfo(isDirectory[i], dirContents[scrn][i + PAGENUM * 40].name.c_str(), i);
 					bnrRomType[i] = 0;
 					boxArtType[i] = 0;
-				} else if (extension(std_romsel_filename, {".pce"})) {
-					bnrRomType[i] = 11;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 					bnrRomType[i] = 10;
+					boxArtType[i] = 0;
+				} else if (extension(std_romsel_filename, {".col"})) {
+					bnrRomType[i] = 13;
+					boxArtType[i] = 0;
+				} else if (extension(std_romsel_filename, {".m5"})) {
+					bnrRomType[i] = 14;
 					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".int"})) {
 					bnrRomType[i] = 12;
@@ -1638,6 +1641,9 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				} else if (extension(std_romsel_filename, {".fds"})) {
 					bnrRomType[i] = 4;
 					boxArtType[i] = 1;
+				} else if (extension(std_romsel_filename, {".sg"})) {
+					bnrRomType[i] = 15;
+					boxArtType[i] = 2;
 				} else if (extension(std_romsel_filename, {".sms"})) {
 					bnrRomType[i] = 5;
 					boxArtType[i] = 2;
@@ -1653,6 +1659,15 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				} else if (extension(std_romsel_filename, {".sfc"})) {
 					bnrRomType[i] = 8;
 					boxArtType[i] = 2;
+				} else if (extension(std_romsel_filename, {".pce"})) {
+					bnrRomType[i] = 11;
+					boxArtType[i] = 0;
+				} else if (extension(std_romsel_filename, {".ws"})) {
+					bnrRomType[i] = 16;
+					boxArtType[i] = 0;
+				} else if (extension(std_romsel_filename, {".ngp"})) {
+					bnrRomType[i] = 17;
+					boxArtType[i] = 0;
 				}
 
 				if (bnrRomType[i] > 0 && bnrRomType[i] < 10) {

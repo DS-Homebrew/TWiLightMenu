@@ -49,13 +49,18 @@ TWLSettings::TWLSettings()
 	showA26 = true;
 	showA52 = true;
 	showA78 = true;
+	showCol = 2;
+	showM5 = true;
 	showInt = true;
 	showNes = true;
 	showGb = true;
+	showSg = 2;
 	showSmsGg = true;
 	showMd = 3;
 	showSnes = true;
 	showPce = true;
+	showWs = true;
+	showNgp = true;
 	showDirectories = true;
 	showHidden = false;
 	showBoxArt = 1 + isDSiMode();
@@ -157,13 +162,18 @@ void TWLSettings::loadSettings()
 	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", showA26);
 	showA52 = settingsini.GetInt("SRLOADER", "SHOW_A52", showA52);
 	showA78 = settingsini.GetInt("SRLOADER", "SHOW_A78", showA78);
+	showCol = settingsini.GetInt("SRLOADER", "SHOW_COL", showCol);
+	showM5 = settingsini.GetInt("SRLOADER", "SHOW_M5", showM5);
 	showInt = settingsini.GetInt("SRLOADER", "SHOW_INT", showInt);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
+	showSg = settingsini.GetInt("SRLOADER", "SHOW_SG", showSg);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
 	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
 	showPce = settingsini.GetInt("SRLOADER", "SHOW_PCE", showPce);
+	showWs = settingsini.GetInt("SRLOADER", "SHOW_WS", showWs);
+	showNgp = settingsini.GetInt("SRLOADER", "SHOW_NGP", showNgp);
 
 	updateRecentlyPlayedList = settingsini.GetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
 	sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
