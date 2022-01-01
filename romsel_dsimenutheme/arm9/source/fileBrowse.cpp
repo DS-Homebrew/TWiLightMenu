@@ -1929,6 +1929,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				tex().drawProfileName();
 				snd().updateStream();
 				swiWaitForVBlank();
+				/*if (pressed & KEY_LID) {
+					extern void customSleep();
+					customSleep();
+				}*/
 				/*if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
 				}*/

@@ -322,6 +322,8 @@ mm_sfxhand SoundControl::playStop() { return mmEffectEx(&snd_stop); }
 mm_sfxhand SoundControl::playWrong() { return mmEffectEx(&snd_wrong); }
 
 void SoundControl::beginStream() {
+	if (!stream_source) return;
+
 	// open the stream
 	stream_is_playing = true;
 	mmStreamOpen(&stream);
@@ -329,6 +331,8 @@ void SoundControl::beginStream() {
 }
 
 void SoundControl::stopStream() {
+	if (!stream_source) return;
+
 	stream_is_playing = false;
 	mmStreamClose();
 }

@@ -773,8 +773,30 @@ void gbaSramAccess(bool open) {
 	}
 }
 
+// BUG: LID flag doesn't get cleared when waking from sleep mode
+/*void customSleep() {
+	bool topControlBak = controlTopBright;
+	bool botControlBak = controlBottomBright;
+	controlTopBright = true;
+	controlBottomBright = true;
+
+	snd().stopStream();
+	fadeType = false;
+	while (keysHeld() & KEY_LID) {
+		swiWaitForVBlank();
+	}
+	fadeType = true;
+	snd().beginStream();
+	while (!screenFadedIn()) {
+		swiWaitForVBlank();
+	}
+	controlTopBright = topControlBak;
+	controlBottomBright = botControlBak;
+}*/
+
 int main(int argc, char **argv) {
 	defaultExceptionHandler();
+	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
 	sys().initFilesystem();
 	sys().initArm7RegStatuses();
 
