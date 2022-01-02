@@ -1298,7 +1298,7 @@ int main(int argc, char **argv) {
 		} else if (extension(filename[0], ".pce")) {
 			bnrRomType[0] = 11;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".ws")) {
+		} else if (extension(filename[0], ".ws") || extension(filename[0], ".wsc")) {
 			bnrRomType[0] = 16;
 			boxArtType[0] = 0;
 		} else if (extension(filename[0], ".ngp")) {
@@ -1425,7 +1425,7 @@ int main(int argc, char **argv) {
 		} else if (extension(filename[1], ".pce")) {
 			bnrRomType[1] = 11;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".ws")) {
+		} else if (extension(filename[1], ".ws") || extension(filename[1], ".wsc")) {
 			bnrRomType[1] = 16;
 			boxArtType[1] = 0;
 		} else if (extension(filename[1], ".ngp")) {
@@ -2939,7 +2939,10 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".ws")) {
+				} else if (extension(filename[ms().secondaryDevice], ".ws") || extension(filename[ms().secondaryDevice], ".wsc")) {
+					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
+					mkdir(ms().secondaryDevice ? "fat:/data/nitroswan" : "sd:/data/nitroswan", 0777);
+
 					ms().launchType[ms().secondaryDevice] = Launch::ENitroSwanLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
@@ -2948,6 +2951,9 @@ int main(int argc, char **argv) {
 						boostVram = true;
 					}
 				} else if (extension(filename[ms().secondaryDevice], ".ngp")) {
+					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
+					mkdir(ms().secondaryDevice ? "fat:/data/ngpds" : "sd:/data/ngpds", 0777);
+
 					ms().launchType[ms().secondaryDevice] = Launch::ENGPDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";

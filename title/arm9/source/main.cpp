@@ -1200,6 +1200,9 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
+		mkdir(ms().previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
+		mkdir(ms().previousUsedDevice ? "fat:/data/nitroswan" : "sd:/data/nitroswan", 0777);
+
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
 		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
@@ -1210,6 +1213,9 @@ void lastRunROM()
 	else if (ms().launchType[ms().previousUsedDevice] == Launch::ENGPDSLaunch)
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		mkdir(ms().previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
+		mkdir(ms().previousUsedDevice ? "fat:/data/ngpds" : "sd:/data/ngpds", 0777);
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 		if(!isDSiMode() || access(argarray[0], F_OK) != 0)

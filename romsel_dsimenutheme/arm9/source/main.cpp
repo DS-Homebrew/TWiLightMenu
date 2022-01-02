@@ -978,6 +978,7 @@ int main(int argc, char **argv) {
 	}
 	if (ms().showWs) {
 		extensionList.emplace_back(".ws");
+		extensionList.emplace_back(".wsc");
 	}
 	if (ms().showNgp) {
 		extensionList.emplace_back(".ngp");
@@ -2225,7 +2226,10 @@ int main(int argc, char **argv) {
 							boostVram = true;
 						}
 					}
-				} else if (extension(filename, {".ws"})) {
+				} else if (extension(filename, {".ws", ".wsc"})) {
+					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
+					mkdir(ms().secondaryDevice ? "fat:/data/nitroswan" : "sd:/data/nitroswan", 0777);
+
 					ms().launchType[ms().secondaryDevice] = Launch::ENitroSwanLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
@@ -2234,6 +2238,9 @@ int main(int argc, char **argv) {
 						boostVram = true;
 					}
 				} else if (extension(filename, {".ngp"})) {
+					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
+					mkdir(ms().secondaryDevice ? "fat:/data/ngpds" : "sd:/data/ngpds", 0777);
+
 					ms().launchType[ms().secondaryDevice] = Launch::ENGPDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";

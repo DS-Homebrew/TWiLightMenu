@@ -787,7 +787,7 @@ string browseForFile(const vector<string_view> extensionList) {
 				bnrRomType = 8;
 			} else if (extension(std_romsel_filename, {".pce"})) {
 				bnrRomType = 11;
-			} else if (extension(std_romsel_filename, {".ws"})) {
+			} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
 				bnrRomType = 16;
 			} else if (extension(std_romsel_filename, {".ngp"})) {
 				bnrRomType = 17;
