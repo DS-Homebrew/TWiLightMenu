@@ -46,7 +46,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 36)
+// B4DS DSiWare Whitelist (Total: 38)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K99", // 99Bullets
@@ -81,9 +81,11 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAP", // Art Style: PiCTOBiTS
 	"KPP", // Pop Island
 	"KPF", // Pop Island: Paperfield
+	"KAK", // Art Style: precipice
 	"KLB", // Rabi Laby
 	"KLV", // Rabi Laby 2
 	"KA6", // Space Ace
+	"KAS", // Art Style: ZENGAGE
 };
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 11)
