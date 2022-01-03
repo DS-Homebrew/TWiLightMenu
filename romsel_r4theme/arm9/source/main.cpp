@@ -2331,7 +2331,7 @@ int main(int argc, char **argv) {
 					}
 					SaveSettings();
 
-					if (!isDSiMode() && !secondaryDevice) {
+					if (!isDSiMode() && !secondaryDevice && strncmp(filename.c_str(), "GodMode9i", 9) != 0 && strcmp(game_TID, "HGMA") != 0) {
 						ntrStartSdGame();
 					}
 

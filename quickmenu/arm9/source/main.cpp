@@ -2525,7 +2525,7 @@ int main(int argc, char **argv) {
 						swiWaitForVBlank();
 					}
 
-					if (!isDSiMode() && !ms().secondaryDevice) {
+					if (!isDSiMode() && !ms().secondaryDevice && strncmp(filename[ms().secondaryDevice].c_str(), "GodMode9i", 9) != 0 && strcmp(gameTid[ms().secondaryDevice], "HGMA") != 0) {
 						ntrStartSdGame();
 					}
 
