@@ -21,8 +21,21 @@ contact_links:
   - name: Atari XEGS game issue
     url: https://github.com/wavemotion-dave/XEGS-DS/issues/new
     about: Please use the XEGS-DS GitHub repository to report issues related to running Atari XEGS applications as `.xex` or `.atr` files, or the XEGS-DS GUI
+  - name: ColecoVision, Sega SG-1000, or Sord-M5 game issue with ColecoDS
+    url: https://github.com/wavemotion-dave/ColecoDS/issues/new
+    about: Please use the ColecoDS GitHub repository to report issues related to running ColecoVision applications as `.col` files, SG-1000 applications as `.sg` files, or Sord M5 applications as `.m5` files, or the ColecoDS GUI
+  - name: Neo Geo Pocket game issue
+    url: https://github.com/FluBBaOfWard/NGPDS/issues/new
+    about: Please use the NGPDS GitHub repository to report issues related to running Neo Geo Pocket applications as `.ngp` files, or the NGPDS GUI
+  - name: WonderSwan game issue
+    url: https://github.com/FluBBaOfWard/NitroSwan/issues/new
+    about: Please use the NitroSwan GitHub repository to report issues related to running WonderSwan applications as `.ws` files, or the NitroSwan GUI
   - name: Intellivision game issue
     url: https://github.com/wavemotion-dave/NINTV-DS/issues/new
     about: Please use the Nintellivision (NINTV-DS) GitHub repository to report issues related to running Intellivision applications as `.int` files, or the NINTV-DS GUI
+  - name: Sega Master System, Game Gear, SG-1000, or ColecoVision game issue with S8DS
+    url: https://github.com/FluBBaOfWard/S8DS/issues/new
+    about: Please use the S8DS GitHub repository to report issues related to running Sega Master System applications as `.sms` files, Game Gear applications as `.gg` files, SG-1000 applications as `.sg` files, or ColecoVision applications as `.col` files, or the S8DS GUI
   - name: Other emulator issue
+    url: https://github.com/DS-Homebrew/TWiLightMenu
     about: The emulators of other systems supported by TWiLight Menu++ are not currently maintained. You can find their GitHub repositories or webpages in the [TWiLight Menu++ README](https://github.com/DS-Homebrew/TWiLightMenu#app-launchers), but it is unlikely that your issue will be resolved there.
