@@ -1301,7 +1301,7 @@ int main(int argc, char **argv) {
 		} else if (extension(filename[0], ".ws") || extension(filename[0], ".wsc")) {
 			bnrRomType[0] = 16;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".ngp")) {
+		} else if (extension(filename[0], ".ngp") || extension(filename[0], ".ngc")) {
 			bnrRomType[0] = 17;
 			boxArtType[0] = 0;
 		}
@@ -1428,7 +1428,7 @@ int main(int argc, char **argv) {
 		} else if (extension(filename[1], ".ws") || extension(filename[1], ".wsc")) {
 			bnrRomType[1] = 16;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".ngp")) {
+		} else if (extension(filename[1], ".ngp") || extension(filename[1], ".ngc")) {
 			bnrRomType[1] = 17;
 			boxArtType[1] = 0;
 		}
@@ -2950,7 +2950,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".ngp")) {
+				} else if (extension(filename[ms().secondaryDevice], ".ngp") || extension(filename[ms().secondaryDevice], ".ngc")) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/ngpds" : "sd:/data/ngpds", 0777);
 

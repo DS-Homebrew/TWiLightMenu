@@ -982,6 +982,7 @@ int main(int argc, char **argv) {
 	}
 	if (ms().showNgp) {
 		extensionList.emplace_back(".ngp");
+		extensionList.emplace_back(".ngc");
 	}
 	srand(time(NULL));
 
@@ -2237,7 +2238,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename, {".ngp"})) {
+				} else if (extension(filename, {".ngp", ".ngc"})) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/ngpds" : "sd:/data/ngpds", 0777);
 

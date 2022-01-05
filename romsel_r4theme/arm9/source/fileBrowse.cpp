@@ -789,7 +789,7 @@ string browseForFile(const vector<string_view> extensionList) {
 				bnrRomType = 11;
 			} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
 				bnrRomType = 16;
-			} else if (extension(std_romsel_filename, {".ngp"})) {
+			} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
 				bnrRomType = 17;
 			}
 		}
