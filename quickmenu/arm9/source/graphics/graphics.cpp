@@ -405,7 +405,7 @@ void vBlankHandler()
 			}
 			glSprite(33, iconYpos[1], GL_FLIP_NONE, &pictodlpImage[1-pictochatFound]);
 			glSprite(129, iconYpos[2], GL_FLIP_NONE, &pictodlpImage[3-dlplayFound]);
-			glSprite(33, iconYpos[3], GL_FLIP_NONE, sdFound() ? &iconboxImage[0] : &iconboxImage[1-isRegularDS]);
+			glSprite(33, iconYpos[3], GL_FLIP_NONE, sdFound() ? &iconboxImage[0] : &iconboxImage[isRegularDS ? (((u8*)GBAROM)[0xB2] != 0x96) : 1]);
 			int num = (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? 1 : 0;
 			if (!sdFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) drawIconGBA(40, iconYpos[3]+6);
 			else if (bnrRomType[num] == 17) drawIconNGP(40, iconYpos[3]+6);

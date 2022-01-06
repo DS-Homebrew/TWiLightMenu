@@ -952,7 +952,8 @@ void printNdsCartBannerText() {
 }
 
 void printGbaBannerText() {
-	printSmall(false, BOX_PY, iconYpos[3] + BOX_PY - (calcSmallFontHeight(isRegularDS ? STR_START_GBA_GAME : STR_FEATURE_UNAVAILABLE) / 2), isRegularDS ? STR_START_GBA_GAME : STR_FEATURE_UNAVAILABLE, Alignment::center);
+	const std::string &str = isRegularDS ? (((u8*)GBAROM)[0xB2] == 0x96 ? STR_START_GBA_GAME : (*(vu16*)(0x08240000) == 1 ? STR_DS_OPTION_PAK : STR_NO_GAME_PAK)) : STR_FEATURE_UNAVAILABLE;
+	printSmall(false, BOX_PY, iconYpos[3] + BOX_PY - (calcSmallFontHeight(str) / 2), str, Alignment::center);
 }
 
 //---------------------------------------------------------------------------------
@@ -1183,13 +1184,7 @@ int main(int argc, char **argv) {
 	
 	bool menuButtonPressed = false;
 	
-	if (ms().showGba == 1) {
-		if (*(u16*)(0x020000C0) != 0) {
-			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
-		} else {
-			ms().showGba = 0;	// Hide GBA ROMs
-		}
-	}
+	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
 	if (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == 3
 	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
@@ -1857,7 +1852,7 @@ int main(int argc, char **argv) {
 							}
 						  }
 						  ms().secondaryDevice = false;
-						} else if (isRegularDS) {
+						} else if (isRegularDS && ((u8*)GBAROM)[0xB2] == 0x96) {
 							// Switch to GBA mode
 							showCursor = false;
 							fadeType = false;	// Fade to white
