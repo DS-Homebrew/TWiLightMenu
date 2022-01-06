@@ -10,11 +10,6 @@
 
 vu32* sharedAddr = (vu32*)0x02FFFA00;
 
-void sdio_done()
-{
-	sharedAddr[3] = sharedAddr[4];
-}
-
 //---------------------------------------------------------------------------------
 bool my_sdio_Startup() {
 //---------------------------------------------------------------------------------
@@ -23,13 +18,10 @@ bool my_sdio_Startup() {
 		sharedAddr = (vu32*)0x0CFFFA00;
 	}
 
-	irqSet(IRQ_IPC_SYNC, sdio_done);
-	irqEnable(IRQ_IPC_SYNC);
-
 	int result = 0;
 
 	if (sharedAddr[1] == 0x49444C44) {
-		*(u32*)(0x2FFFA00) = (u32)io_dldi_data;
+		sharedAddr[0] = (u32)io_dldi_data;
 		sysSetCardOwner(BUS_OWNER_ARM7);
 	} else {
 		sharedAddr[3] = 0x56484453;

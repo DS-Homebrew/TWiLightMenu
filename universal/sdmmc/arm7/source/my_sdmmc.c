@@ -629,8 +629,7 @@ void my_sdmmcHandler() {
     leaveCriticalSection(oldIME);
 
     //fifoSendValue32(FIFO_SDMMC, result);
-	*(u32*)0x02FFFA10 = result;
-	IPC_SendSync(8);
+	*(u32*)0x02FFFA0C = result;
 }
 
 //---------------------------------------------------------------------------------
