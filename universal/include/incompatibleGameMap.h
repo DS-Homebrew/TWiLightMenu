@@ -46,7 +46,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 38)
+// B4DS DSiWare Whitelist (Total: 39)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K99", // 99Bullets
@@ -75,6 +75,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGV", // Game & Watch: Vermin
 	"KGK", // Glory Days: Tactical Defense
 	"KT9", // Kung Fu Dragon
+	"KJO", // Magnetic Joe
 	"KMG", // Mighty Flip Champs!
 	"KMB", // Mr. Brain
 	"K2D", // Nintendo DSi + Internet
