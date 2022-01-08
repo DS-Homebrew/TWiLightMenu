@@ -42,6 +42,8 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"HNG", // Nintendo DSi Browser
 	"KPS", // Phantasy Star 0 Mini
 	"KHD", // Sparkle Snapshots
+	"KDY", // Starship Defense
+	"KDZ", // Trajectile
 	"KUW", // WarioWare: Snapped!
 	"KDX", // X-Scape
 };
