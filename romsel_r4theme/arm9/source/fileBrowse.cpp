@@ -480,14 +480,14 @@ bool donorRomMsg(void) {
 					default:
 						break;
 					case 51:
-						printSmallCentered(false, 90, "This title requires a donor ROM");
-						printSmallCentered(false, 102, romUnitCode == 3 ? "to run. Please set a" : "to run. Please set another");
-						printSmallCentered(false, 114, "DSi-Enhanced title as a donor ROM.");
+						printSmallCentered(false, 90, "Please set a DSi-Enhanced title");
+						printSmallCentered(false, 102, "as a donor ROM, in order");
+						printSmallCentered(false, 114, "to launch this title.");
 						break;
 					case 52:
-						printSmallCentered(false, 90, dsModeAllowed ? "DSi mode requires a donor ROM" : "This title requires a donor ROM");
-						printSmallCentered(false, 102, dsModeAllowed ? "to run. Please set a" : "to run. Please set another");
-						printSmallCentered(false, 114, "DSi(Ware) title as a donor ROM.");
+						printSmallCentered(false, 90, dsModeAllowed ? "Please set a DSi(Ware) title" : "Please set a different DSi(Ware)");
+						printSmallCentered(false, 102, dsModeAllowed ? "as a donor ROM, in order" : "title as a donor ROM, in order");
+						printSmallCentered(false, 114, dsModeAllowed ? "to launch this title in DSi mode." : "to launch this title.");
 						break;
 				}
 				printSmallRightAlign(false, 256 - 16, 132, ">");
