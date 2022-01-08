@@ -46,7 +46,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 40)
+// B4DS DSiWare Whitelist (Total: 44)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K99", // 99Bullets
@@ -75,6 +75,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGF", // Game & Watch: Mario's Cement Factory
 	"KGV", // Game & Watch: Vermin
 	"KGK", // Glory Days: Tactical Defense
+	"KDH", // Hard-Hat Domo
 	"KT9", // Kung Fu Dragon
 	"KJO", // Magnetic Joe
 	"KMG", // Mighty Flip Champs!
@@ -84,9 +85,12 @@ static const char compatibleGameListB4DS[][5] = {
 	"KPP", // Pop Island
 	"KPF", // Pop Island: Paperfield
 	"KAK", // Art Style: precipice
+	"KDP", // Pro-Putt Domo
 	"KLB", // Rabi Laby
 	"KLV", // Rabi Laby 2
+	"KD6", // Rock-n-Roll Domo
 	"KA6", // Space Ace
+	"KDW", // White-Water Domo
 	"KAS", // Art Style: ZENGAGE
 };
 
