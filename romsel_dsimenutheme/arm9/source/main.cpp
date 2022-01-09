@@ -1868,6 +1868,7 @@ int main(int argc, char **argv) {
 				}
 			} else {
 				bool useNDSB = false;
+				bool tgdsMultiboot = false;
 				bool dsModeSwitch = false;
 				bool boostCpu = true;
 				bool boostVram = false;
@@ -1881,6 +1882,7 @@ int main(int argc, char **argv) {
 				ms().homebrewBootstrap = true;
 
 				const char *ndsToBoot = "sd:/_nds/nds-bootstrap-release.nds";
+				const char *tgdsMultibootPath = "sd:/_nds/TWiLightMenu/apps/ToolchainGenericDS-multiboot.srl";
 				if (extension(filename, {".plg"})) {
 					ndsToBoot = "fat:/_nds/TWiLightMenu/bootplg.srldr";
 					dsModeSwitch = true;
@@ -2170,31 +2172,14 @@ int main(int argc, char **argv) {
 					}
 				} else if (extension(filename, {".smc", ".sfc"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
+					tgdsMultiboot = true;
 
-					if (ms().secondaryDevice) {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
-						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
-							boostCpu = false;
-							boostVram = true;
+					ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
+					if(!isDSiMode()) {
+						boostVram = true;
+						if (ms().secondaryDevice) {
+							dsModeSwitch = true;
 						}
-						dsModeSwitch = true;
-					} else {
-						useNDSB = true;
-
-						ndsToBoot = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
-						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 					}
 				} else if (extension(filename, {".pce"})) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
@@ -2266,11 +2251,27 @@ int main(int argc, char **argv) {
 					ntrStartSdGame();
 				}
 
-				argarray.push_back(ROMpath);
-				argarray.at(0) = (char *)ndsToBoot;
+				if (tgdsMultiboot) {
+					const char* tgdsMultibootFatPath = "fat:/_nds/TWiLightMenu/apps/ToolchainGenericDS-multiboot.srl";
+					if(!isDSiMode() || access(tgdsMultibootPath, F_OK) != 0) {
+						tgdsMultibootPath = tgdsMultibootFatPath;
+					}
+
+					if (!ms().secondaryDevice) {
+						std::string romfolderFat = replaceAll(romfolderNoSlash, "sd:", "fat:");
+						snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderFat.c_str(), filename.c_str());
+					}
+
+					argarray.push_back((char *)ndsToBoot);
+					argarray.push_back(ROMpath);
+					argarray.at(0) = (char *)tgdsMultibootFatPath;
+				} else {
+					argarray.push_back(ROMpath);
+					argarray.at(0) = (char *)ndsToBoot;
+				}
 				snd().stopStream();
 
-				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram, -1);	// Pass ROM to emulator as argument
+				int err = runNdsFile (tgdsMultiboot ? tgdsMultibootPath : argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram, -1);	// Pass ROM to emulator as argument
 
 				char text[64];
 				snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
