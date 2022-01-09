@@ -48,7 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 44)
+// B4DS DSiWare Whitelist (Total: 45)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K99", // 99Bullets
@@ -92,6 +92,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KLV", // Rabi Laby 2
 	"KD6", // Rock-n-Roll Domo
 	"KA6", // Space Ace
+	"K4D", // Sudoku
 	"KDW", // White-Water Domo
 	"KAS", // Art Style: ZENGAGE
 };
