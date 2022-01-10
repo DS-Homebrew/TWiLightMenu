@@ -75,6 +75,7 @@ dsiMode:
 #define DSMODE_SWITCH_OFFSET 40
 #define LOADFROMRAM_OFFSET 44
 #define LANGUAGE_OFFSET 48
+#define TSC_TGDS_OFFSET 52
 
 
 typedef signed int addr_t;
@@ -260,7 +261,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool lockScfg, bool boostCpu, bool boostVram, int language)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, const char* filename, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool lockScfg, bool boostCpu, bool boostVram, bool tscTgds, int language)
 {
 	char* argStart;
 	u16* argData;
@@ -282,7 +283,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	writeAddr ((data_t*) LCDC_BANK_C, INIT_DISC_OFFSET, initDisc);
 
 	writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, isDSiMode());
-	if(argv[0][0]=='s' && argv[0][1]=='d') {
+	if(filename[0]=='s' && filename[1]=='d') {
 		writeAddr ((data_t*) LCDC_BANK_C, HAVE_DSISD_OFFSET, 1);
 	}
 
@@ -292,6 +293,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	}
 	writeAddr ((data_t*) LCDC_BANK_C, LOADFROMRAM_OFFSET, loadFromRam);
 	writeAddr ((data_t*) LCDC_BANK_C, LANGUAGE_OFFSET, language);
+	writeAddr ((data_t*) LCDC_BANK_C, TSC_TGDS_OFFSET, tscTgds);
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
 	writeAddr ((data_t*) LCDC_BANK_C, WANT_TO_PATCH_DLDI_OFFSET, dldiPatchNds);
@@ -392,7 +394,7 @@ bool runNds9 (const char* filename, bool dsModeSwitch) {
 	return true;
 }
 
-int runUnlaunchDsi (const char* filename, u32 sector)  {
+int runUnlaunchDsi (const char* filename, u32 sector, int argc, const char** argv) {
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(__DSiHeader, 1, 0x1000, ndsFile);
@@ -401,7 +403,7 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
 	fread((void*)0x02B80000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
 	fclose(ndsFile);
-
+	
 	extern bool removeLauncherPatches;
 	if (removeLauncherPatches) {
 		// Patch out splash and sound disable patches
@@ -438,31 +440,30 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 		fread(&gifWidth, 1, sizeof(u16), gifFile);
 		fread(&gifHeight, 1, sizeof(u16), gifFile);
 
-		if (gifWidth == 256 && gifHeight == 192) {
-			// Replace Unlaunch background with custom one
+	  if (gifWidth == 256 && gifHeight == 192) {
+		// Replace Unlaunch background with custom one
 
-			//const u32 gifSignature[2] = {0x38464947, 0x01006139};
-			const u32 gifSignatureStart = 0x38464947;
-			const u32 gifSignatureEnd = 0x3B000044;
+		//const u32 gifSignature[2] = {0x38464947, 0x01006139};
+		const u32 gifSignatureStart = 0x38464947;
+		const u32 gifSignatureEnd = 0x3B000044;
 
-			u32 iEnd = 0;
-			for (u32 i = 0x02800000; i < 0x02810000; i += 4) {
-				iEnd = i+0x3C6C;
-				if (*(u32*)i == gifSignatureStart && *(u32*)iEnd == gifSignatureEnd) {
-					fseek(gifFile, 0, SEEK_SET);
-					fread((void*)i, 1, 0x3C70, gifFile);
-					break;
-				}
+		u32 iEnd = 0;
+		for (u32 i = 0x02800000; i < 0x02810000; i += 4) {
+			iEnd = i+0x3C6C;
+			if (*(u32*)i == gifSignatureStart && *(u32*)iEnd == gifSignatureEnd) {
+				fseek(gifFile, 0, SEEK_SET);
+				fread((void*)i, 1, 0x3C70, gifFile);
+				break;
 			}
 		}
-
+	  }
 		fclose(gifFile);
 	}
 
-	return runNds (load_bin, load_bin_size, sector, true, false, true, 0, NULL, true, false, false, true, true, -1);
+	return runNds (load_bin, load_bin_size, sector, true, false, true, filename, argc, argv, true, false, false, true, true, false, -1);
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, int language)  {
+int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, bool tscTgds, int language) {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
@@ -471,20 +472,6 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 	
 	if (stat (filename, &st) < 0) {
 		return 1;
-	}
-
-	bool havedsiSD = (access("sd:/", F_OK) == 0);
-
-	if (REG_SCFG_EXT != 0 && havedsiSD) {
-		// Check for Unlaunch
-		char gameTitle[0xC];
-		FILE* ndsFile = fopen(filename, "rb");
-		fread(&gameTitle, 1, 0xC, ndsFile);
-		fclose(ndsFile);
-
-		if (memcmp(gameTitle, "UNLAUNCH.DSI", 0xC) == 0) {
-			return runUnlaunchDsi (filename, st.st_ino);
-		}
 	}
 
 	if (argc <= 0 || !argv) {
@@ -498,15 +485,28 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		argv = args;
 	}
 
+	bool havedsiSD = (access("sd:/", F_OK) == 0);
+
+	if (REG_SCFG_EXT != 0 && havedsiSD) {
+		// Check for Unlaunch
+		char gameTitle[0xC];
+		FILE* ndsFile = fopen(filename, "rb");
+		fread(&gameTitle, 1, 0xC, ndsFile);
+		fclose(ndsFile);
+
+		if (memcmp(gameTitle, "UNLAUNCH.DSI", 0xC) == 0) {
+			return runUnlaunchDsi (filename, st.st_ino, argc, argv);
+		}
+	}
+
 	bool lockScfg = (strncmp(filename, "fat:/_nds/GBARunner2", 20) != 0
-				  && strncmp(filename, "fat:/_nds/TWiLightMenu/emulators/gameyob", 40) != 0
-				  && strncmp(filename, "/_nds/TWiLightMenu/dstwoLaunch", 30) != 0);
+					&& strncmp(filename, "fat:/_nds/TWiLightMenu/emulators/gameyob", 40) != 0);
 
 	bool loadFromRam = runNds9(filename, dsModeSwitch);
 
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, argc, argv, clearMasterBright, dsModeSwitch, lockScfg, boostCpu, boostVram, language);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, filename, argc, argv, clearMasterBright, dsModeSwitch, lockScfg, boostCpu, boostVram, tscTgds, language);
 }
 
 /*
@@ -540,7 +540,7 @@ bool installBootStub(bool havedsiSD) {
 	bool ret = false;
 
 	bootloader[8] = isDSiMode();
-	if (havedsiSD) {
+	if( havedsiSD) {
 		ret = true;
 		bootloader[3] = 0; // don't dldi patch
 		bootloader[7] = 1; // use internal dsi SD code
