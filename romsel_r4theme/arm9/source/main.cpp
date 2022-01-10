@@ -2703,7 +2703,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 					}
 				} else if (extension(filename, {".smc", ".sfc"})) {
-					launchType[secondaryDevice] = 1;
+					launchType[secondaryDevice] = 21;
 					tgdsMode = true;
 					tscTgds = true;
 

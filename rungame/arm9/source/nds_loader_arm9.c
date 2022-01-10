@@ -75,6 +75,7 @@ dsiMode:
 #define DSMODE_SWITCH_OFFSET 40
 #define LOADFROMRAM_OFFSET 44
 #define LANGUAGE_OFFSET 48
+#define TSC_TGDS_OFFSET 52
 
 
 typedef signed int addr_t;
@@ -272,7 +273,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, int language)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, const char* filename, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, bool tscTgds, int language)
 {
 	char* argStart;
 	u16* argData;
@@ -294,7 +295,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	writeAddr ((data_t*) LCDC_BANK_C, INIT_DISC_OFFSET, initDisc);
 
 	writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, isDSiMode());
-	if(argv[0][0]=='s' && argv[0][1]=='d') {
+	if(filename[0]=='s' && filename[1]=='d') {
 		writeAddr ((data_t*) LCDC_BANK_C, HAVE_DSISD_OFFSET, 1);
 	}
 
@@ -304,6 +305,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	}
 	writeAddr ((data_t*) LCDC_BANK_C, LOADFROMRAM_OFFSET, loadFromRam);
 	writeAddr ((data_t*) LCDC_BANK_C, LANGUAGE_OFFSET, language);
+	writeAddr ((data_t*) LCDC_BANK_C, TSC_TGDS_OFFSET, tscTgds);
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
 	writeAddr ((data_t*) LCDC_BANK_C, WANT_TO_PATCH_DLDI_OFFSET, dldiPatchNds);
@@ -372,7 +374,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
-int runUnlaunchDsi (const char* filename, u32 sector)  {
+int runUnlaunchDsi (const char* filename, u32 sector, int argc, const char** argv) {
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(__DSiHeader, 1, 0x1000, ndsFile);
@@ -438,10 +440,10 @@ int runUnlaunchDsi (const char* filename, u32 sector)  {
 		fclose(gifFile);
 	}
 
-	return runNds (load_bin, load_bin_size, sector, true, false, true, 0, NULL, true, false, true, true, -1);
+	return runNds (load_bin, load_bin_size, sector, true, false, true, filename, argc, argv, true, false, true, true, false, -1);
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, int language)  {
+int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, bool tscTgds, int language)  {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
@@ -451,18 +453,6 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 	if (stat (filename, &st) < 0) {
 		return 1;
 	}
-
-	//if (isDSiMode()) {
-		// Check for Unlaunch
-		char gameTitle[0xC];
-		FILE* ndsFile = fopen(filename, "rb");
-		fread(&gameTitle, 1, 0xC, ndsFile);
-		fclose(ndsFile);
-
-		if (memcmp(gameTitle, "UNLAUNCH.DSI", 0xC) == 0) {
-			return runUnlaunchDsi (filename, st.st_ino);
-		}
-	//}
 
 	if (argc <= 0 || !argv) {
 		// Construct a command line if we weren't supplied with one
@@ -475,13 +465,25 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		argv = args;
 	}
 
+	//if (isDSiMode()) {
+		// Check for Unlaunch
+		char gameTitle[0xC];
+		FILE* ndsFile = fopen(filename, "rb");
+		fread(&gameTitle, 1, 0xC, ndsFile);
+		fclose(ndsFile);
+
+		if (memcmp(gameTitle, "UNLAUNCH.DSI", 0xC) == 0) {
+			return runUnlaunchDsi (filename, st.st_ino, argc, argv);
+		}
+	//}
+
 	bool havedsiSD = false;
 
 	if(access("sd:/", F_OK) == 0) havedsiSD = true;
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), false, argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram, language);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), false, filename, argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram, tscTgds, language);
 }
 
 /*

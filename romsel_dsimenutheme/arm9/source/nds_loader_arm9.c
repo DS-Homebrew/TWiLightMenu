@@ -394,7 +394,7 @@ bool runNds9 (const char* filename, bool dsModeSwitch) {
 	return true;
 }
 
-int runUnlaunchDsi (const char* filename, u32 sector, int argc, const char** argv)  {
+int runUnlaunchDsi (const char* filename, u32 sector, int argc, const char** argv) {
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(__DSiHeader, 1, 0x1000, ndsFile);
@@ -463,7 +463,7 @@ int runUnlaunchDsi (const char* filename, u32 sector, int argc, const char** arg
 	return runNds (load_bin, load_bin_size, sector, true, false, true, filename, argc, argv, true, false, false, true, true, false, -1);
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, bool tscTgds, int language)  {
+int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, bool tscTgds, int language) {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;

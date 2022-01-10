@@ -285,12 +285,12 @@ TWL_CODE int lastRunROM() {
 
 	if (!(*(u32*)(0x02000000) & BIT(3))) {
 		if (access(romPath[previousUsedDevice].c_str(), F_OK) != 0 || launchType[previousUsedDevice] == 0) {
-			return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true, -1);	// Skip to running TWiLight Menu++
+			return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true, false, -1);	// Skip to running TWiLight Menu++
 		}
 
 		if (slot1Launched) {
 			wideCheck(wideScreen);
-			return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true, -1);
+			return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true, false, -1);
 		}
 	}
 
@@ -407,7 +407,7 @@ TWL_CODE int lastRunROM() {
 					bootstrapini.SaveIniFile(bootstrapinipath);
 				}
 
-				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true, -1);
+				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true, false, -1);
 			} else {
 				bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
 				bool runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
@@ -419,19 +419,19 @@ TWL_CODE int lastRunROM() {
 					path = ReplaceAll(romPath[1], "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", path);
 					fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-					return runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
+					return runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 				} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
 					CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
 					path = ReplaceAll(romPath[1], "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", path);
 					fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-					return runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
+					return runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 				} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 					CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 					path = ReplaceAll(romPath[1], "fat:/", dstwofat);
 					fcrompathini.SetString("Dir Info", "fullName", path);
 					fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-					return runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
+					return runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 				} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 						 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
 						 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
@@ -442,7 +442,7 @@ TWL_CODE int lastRunROM() {
 					path = ReplaceAll(romPath[1], "fat:/", slashchar);
 					fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
 					fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-					return runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
+					return runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 				}
 			}
 		}
@@ -525,7 +525,7 @@ TWL_CODE int lastRunROM() {
 			bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
 			bool runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
 
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram, runNds_language);
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram, false, runNds_language);
 		} case 3: {
 			if (dsiWareBooter || consoleModel >= 2) {
 				if (homebrewBootstrap) {
@@ -610,7 +610,7 @@ TWL_CODE int lastRunROM() {
 					bootstrapini.SaveIniFile(bootstrapinipath);
 				  }
 
-					return runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);
+					return runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
 				}
 			} else {
 				const char *typeToReplace = ".nds";
@@ -643,60 +643,68 @@ TWL_CODE int lastRunROM() {
 			break;
 		} case 4:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to nesDS as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass ROM to nesDS as argument
 		case 5:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to GameYob as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass ROM to GameYob as argument
 		case 6:
 			mkdir("sd:/data", 0777);
 			mkdir("sd:/data/s8ds", 0777);
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
-			return runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to S8DS as argument
+			return runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to S8DS as argument
 		case 7:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass video to Rocket Video Player as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass video to Rocket Video Player as argument
 		case 8:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass video to FastVideoDS as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass video to FastVideoDS as argument
 		case 9:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to StellaDS as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass ROM to StellaDS as argument
 		case 10:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to PicoDrive TWL as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass ROM to PicoDrive TWL as argument
 		case 12:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to A7800DS as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass ROM to A7800DS as argument
 		case 13:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to A5200DS as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass ROM to A5200DS as argument
 		case 14:
 			mkdir("sd:/data", 0777);
 			mkdir("sd:/data/NitroGrafx", 0777);
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to NitroGrafx as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass ROM to NitroGrafx as argument
 		case 15:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to XEGS-DS as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass ROM to XEGS-DS as argument
 		case 16:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to NINTV-DS as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass ROM to NINTV-DS as argument
 		case 17:
 			argarray.at(0) = (char*)(consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to GBARunner2 as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass ROM to GBARunner2 as argument
 		case 18:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to ColecoDS as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to ColecoDS as argument
 		case 19:
 			mkdir("sd:/data", 0777);
 			mkdir("sd:/data/nitroswan", 0777);
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to NitroSwan as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to NitroSwan as argument
 		case 20:
 			mkdir("sd:/data", 0777);
 			mkdir("sd:/data/ngpds", 0777);
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to NGPDS as argument
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to NGPDS as argument
+		case 21:
+			const char* ndsToBoot = (char*)"sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
+			if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+			{
+				ndsToBoot = (char*)"fat:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
+			}
+			argarray.at(0) = (char*)"fat:/SNEmulDS.srl";
+			return runNdsFile(ndsToBoot, argarray.size(), (const char **)&argarray[0], true, true, false, true, true, true, -1); // Pass ROM to SNEmulDS as argument
 	}
 	
 	return -1;

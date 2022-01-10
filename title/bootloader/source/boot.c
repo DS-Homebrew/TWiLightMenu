@@ -82,6 +82,7 @@ extern unsigned long clearMasterBright;
 extern unsigned long dsMode;
 extern unsigned long loadFromRam;
 extern unsigned long language;
+extern unsigned long tscTgds;
 
 bool sdRead = false;
 
@@ -677,16 +678,18 @@ int main (void) {
 	char ndsHeaderTitle[12];
 	tonccpy(ndsHeaderTitle, (char*)0x02FFFE00, 12);
 
-	if ((dsiMode && ((ARM9_SRC==0x4000 && !(dsiFlags & BIT(0))) || dsMode))
+	if ((dsiMode && ((ARM9_SRC==0x4000 && !(dsiFlags & BIT(0))) || dsMode || tscTgds))
 	|| (!dsiMode && REG_SCFG_EXT != 0 && memcmp(ndsHeaderTitle, "TWLMENUPP", 9) != 0 && memcmp(ndsHeaderTitle, "NDSBOOTSTRAP", 12) != 0)) {
 		NDSTouchscreenMode();
 		*(u16*)0x4000500 = 0x807F;
 		if (dsMode) REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
 		i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 0);		// Press power button for auto-reset
 		i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);	// Bootflag = Warmboot/SkipHealthSafety
-		if (dsMode && REG_SCFG_EXT != 0) {
+		if ((dsMode || tscTgds) && REG_SCFG_EXT != 0) {
 			REG_SCFG_ROM = 0x703;								// NTR BIOS
-			REG_SCFG_EXT = 0x12A03000;
+			if (dsMode) {
+				REG_SCFG_EXT = 0x12A03000;
+			}
 		}
 		if (dsMode && REG_SCFG_ROM != 0x703) {
 			*(u32*)0x3FFFFC8 = 0x7884;	// Fix sound pitch table

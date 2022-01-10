@@ -140,7 +140,8 @@ public:
         EGBARunner2Launch = 17,
         EColecoDSLaunch = 18,
         ENitroSwanLaunch = 19,
-        ENGPDSLaunch = 20
+        ENGPDSLaunch = 20,
+		ESNEmulDSLaunch = 21
 	};
 
 	/*

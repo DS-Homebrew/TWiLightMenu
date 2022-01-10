@@ -2172,7 +2172,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 					}
 				} else if (extension(filename, {".smc", ".sfc"})) {
-					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
+					ms().launchType[ms().secondaryDevice] = Launch::ESNEmulDSLaunch;
 					tgdsMode = true;
 					tscTgds = true;
 

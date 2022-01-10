@@ -2899,7 +2899,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 					}
 				} else if (extension(filename[ms().secondaryDevice], ".smc") || extension(filename[ms().secondaryDevice], ".sfc")) {
-					ms().launchType[ms().secondaryDevice] = 1;
+					ms().launchType[ms().secondaryDevice] = Launch::ESNEmulDSLaunch;
 					tgdsMode = true;
 					tscTgds = true;
 

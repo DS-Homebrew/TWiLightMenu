@@ -48,7 +48,6 @@ Helpful information:
 #define ARM7
 #include <nds/arm7/audio.h>
 #include <nds/arm7/codec.h>
-#include <string.h> // memcmp
 #include "tonccpy.h"
 #include "sdmmc.h"
 #include "i2c.h"
@@ -65,7 +64,6 @@ void arm7clearRAM();
 #define TWL_HEAD 0x02FFE000
 #define NDS_HEAD 0x02FFFE00
 #define TEMP_ARM9_START_ADDRESS (*(vu32*)0x02FFFFF4)
-#define REG_GPIO_WIFI *(vu16*)0x4004C04
 
 
 const char* bootName = "BOOT.NDS";
@@ -606,14 +604,9 @@ int main (void) {
 		(*(vu16*)0x02FFFCFA) = 0x1041;	// NoCash: channel ch1+7+13
 	}
 
-	char ndsHeaderTitle[12];
-	tonccpy(ndsHeaderTitle, (char*)0x02FFFE00, 12);
-
-	if ((dsiMode && ((ARM9_SRC==0x4000 && !(dsiFlags & BIT(0))) || dsMode || tscTgds))
-	|| (!dsiMode && REG_SCFG_EXT != 0 && memcmp(ndsHeaderTitle, "TWLMENUPP", 9) != 0 && memcmp(ndsHeaderTitle, "NDSBOOTSTRAP", 12) != 0)) {
+	if (dsiMode && ((ARM9_SRC==0x4000 && dsiFlags==0) || dsMode || tscTgds)) {
 		NDSTouchscreenMode();
 		*(u16*)0x4000500 = 0x807F;
-		if (dsMode) REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
 		i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 0);		// Press power button for auto-reset
 		i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);	// Bootflag = Warmboot/SkipHealthSafety
 		if ((dsMode || tscTgds) && REG_SCFG_EXT != 0) {
@@ -621,9 +614,6 @@ int main (void) {
 			if (dsMode) {
 				REG_SCFG_EXT = 0x12A03000;
 			}
-		}
-		if (dsMode && REG_SCFG_ROM != 0x703) {
-			*(u32*)0x3FFFFC8 = 0x7884;	// Fix sound pitch table
 		}
 	}
 
