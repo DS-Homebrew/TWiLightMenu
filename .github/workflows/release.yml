@@ -97,7 +97,7 @@ jobs:
           curl -LO https://github.com/wavemotion-dave/NINTV-DS/releases/latest/download/NINTV-DS.nds
           curl -LO https://github.com/wavemotion-dave/ColecoDS/releases/latest/download/ColecoDS.nds
           curl -LO https://github.com/FluBBaOfWard/S8DS/releases/latest/download/S8DS.zip
-          curl -LO https://bitbucket.org/Coto88/snemulds/raw/master/release/arm7dldi-twl/SNEmulDS.nds
+          curl -LO https://bitbucket.org/Coto88/snemulds/raw/master/release/arm7dldi-ntr/SNEmulDS.nds
           curl -LO https://bitbucket.org/Coto88/snemulds/raw/master/release/arm7dldi-twl/SNEmulDS.srl
           7z x S8DS.zip S8DS.nds
           rm S8DS.zip
