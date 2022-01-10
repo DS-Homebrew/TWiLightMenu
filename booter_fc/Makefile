@@ -196,11 +196,17 @@ autoboot:
 	mv dstwo.nds "../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds"
 
 	#### SuperCard DSONE
+	ndstool -c SCFW.SC -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g "ENG0" -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	dlditool flashcart_specifics/DLDI/DSONESDSC.dldi SCFW.SC
+	mkdir -p "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/"
+	mv SCFW.SC "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/SCFW.SC"
+
+	#### SuperCard DSONE SDHC
 	cp booter_fc.nds TTMenu.dat
 	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi TTMenu.dat
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/Non-SDHC/TTMenu.dat"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE SDHC & SuperCard DSONEi/Non-SDHC/TTMenu.dat"
 	dlditool flashcart_specifics/DLDI/DSTTDLDIboyakkeyver.dldi TTMenu.dat
-	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE & SuperCard DSONEi/SDHC/TTMenu.dat"
+	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE SDHC & SuperCard DSONEi/SDHC/TTMenu.dat"
 
 	#### M3 DS Real
 	dlditool "flashcart_specifics/DLDI/M3-DS_(SD_Card).dldi" akmenu4.nds
