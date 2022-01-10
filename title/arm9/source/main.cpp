@@ -1229,7 +1229,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		const char* ndsToBoot = (char*)"sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0)
 		{
 			ndsToBoot = (char*)"fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 		}
