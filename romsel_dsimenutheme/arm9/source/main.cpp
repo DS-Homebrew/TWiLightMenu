@@ -594,19 +594,19 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 		fcPath = replaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
+		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
 		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
 		fcPath = replaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
+		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 		fcPath = replaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", fcPath);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
+		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
@@ -617,7 +617,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 		fcPath = replaceAll(ndsPath, "fat:/", slashchar);
 		fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
 		fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, -1);
+		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 	}
 
 	char text[64];
@@ -651,7 +651,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 	} else if (sdFound()) {
 		chdir("sd:/");
 	}
-	runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, -1);
+	runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	stop();
 }
 
@@ -1406,7 +1406,7 @@ int main(int argc, char **argv) {
 
 					argarray.at(0) = (char *)ndsToBoot;
 					snd().stopStream();
-					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);
+					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
 					char text[64];
 					snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText();
@@ -1433,7 +1433,7 @@ int main(int argc, char **argv) {
 					} else if (sdFound()) {
 						chdir("sd:/");
 					}
-					runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, -1);
+					runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 					stop();
 				}
 
@@ -1681,7 +1681,7 @@ int main(int argc, char **argv) {
 
 						argarray.at(0) = (char *)ndsToBoot;
 						snd().stopStream();
-						int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true, -1);
+						int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
 						char text[64];
 						snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 						clearText();
@@ -1721,7 +1721,7 @@ int main(int argc, char **argv) {
 						} else if (sdFound()) {
 							chdir("sd:/");
 						}
-						runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, -1);
+						runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 						stop();
 					} else {
 						ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
@@ -1835,7 +1835,7 @@ int main(int argc, char **argv) {
 						runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
 						runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
 					}
-					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, language);
+					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, false, language);
 					char text[64];
 					snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					printLarge(false, 4, 4, text);
@@ -1863,15 +1863,16 @@ int main(int argc, char **argv) {
 					} else if (sdFound()) {
 						chdir("sd:/");
 					}
-					runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, -1);
+					runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 					stop();
 				}
 			} else {
 				bool useNDSB = false;
-				bool tgdsMultiboot = false;
+				bool tgdsMode = false;
 				bool dsModeSwitch = false;
 				bool boostCpu = true;
 				bool boostVram = false;
+				bool tscTgds = false;
 
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1882,7 +1883,7 @@ int main(int argc, char **argv) {
 				ms().homebrewBootstrap = true;
 
 				const char *ndsToBoot = "sd:/_nds/nds-bootstrap-release.nds";
-				const char *tgdsMultibootPath = "sd:/_nds/TWiLightMenu/apps/ToolchainGenericDS-multiboot.srl";
+				const char *tgdsNdsPath = "sd:/_nds/TWiLightMenu/apps/ToolchainGenericDS-multiboot.srl";
 				if (extension(filename, {".plg"})) {
 					ndsToBoot = "fat:/_nds/TWiLightMenu/bootplg.srldr";
 					dsModeSwitch = true;
@@ -2172,12 +2173,15 @@ int main(int argc, char **argv) {
 					}
 				} else if (extension(filename, {".smc", ".sfc"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
-					tgdsMultiboot = true;
+					tgdsMode = true;
+					tscTgds = true;
 
-					ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
-					if(!isDSiMode()) {
-						boostVram = true;
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
+					tgdsNdsPath = "fat:/SNEmulDS.srl";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
 						if (ms().secondaryDevice) {
+							boostVram = true;
 							dsModeSwitch = true;
 						}
 					}
@@ -2251,32 +2255,15 @@ int main(int argc, char **argv) {
 					ntrStartSdGame();
 				}
 
-				if (tgdsMultiboot) {
-					const char* tgdsMultibootFatPath = "fat:/_nds/TWiLightMenu/apps/ToolchainGenericDS-multiboot.srl";
-					if(!isDSiMode() || access(tgdsMultibootPath, F_OK) != 0) {
-						tgdsMultibootPath = tgdsMultibootFatPath;
-					}
-
-					if (!ms().secondaryDevice) {
-						std::string romfolderFat = replaceAll(romfolderNoSlash, "sd:", "fat:");
-						snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderFat.c_str(), filename.c_str());
-					}
-
-					argarray.clear();
-
-					//arg 0: this binary (toolchaingenericds-multiboot.nds / toolchaingenericds-multiboot.srl)
-					//arg 1: the NDS/TWL binary we boot now (SnemulDS)
-					//arg 2: the arg we want to send to the binary being ran
-					argarray.push_back((char *)"fat:/toolchaingenericds-multiboot.srl");
-					argarray.push_back((char *)ndsToBoot);
-					argarray.push_back(ROMpath);
-				} else {
-					argarray.push_back(ROMpath);
-					argarray.at(0) = (char *)ndsToBoot;
+				if (tgdsMode && !ms().secondaryDevice) {
+					std::string romfolderFat = replaceAll(romfolderNoSlash, "sd:", "fat:");
+					snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderFat.c_str(), filename.c_str());
 				}
+				argarray.push_back(ROMpath);
+				argarray.at(0) = (char *)(tgdsMode ? tgdsNdsPath : ndsToBoot);
 				snd().stopStream();
 
-				int err = runNdsFile (tgdsMultiboot ? tgdsMultibootPath : argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram, -1);	// Pass ROM to emulator as argument
+				int err = runNdsFile (ndsToBoot, argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram, tscTgds, -1);	// Pass ROM to emulator as argument
 
 				char text[64];
 				snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
@@ -2309,7 +2296,7 @@ int main(int argc, char **argv) {
 				} else if (sdFound()) {
 					chdir("sd:/");
 				}
-				runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, -1);
+				runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 				stop();
 			}
 
