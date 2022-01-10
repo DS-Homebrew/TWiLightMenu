@@ -230,7 +230,7 @@ std::vector<char*> argarray;
 
 bool twlBgCxiFound = false;
 
-TWL_CODE void wideCheck(bool useWidescreen) {
+void wideCheck(bool useWidescreen) {
 	if (consoleModel < 2) return;
 
 	bool wideCheatFound = (access("sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0 || access("fat:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0);
@@ -262,7 +262,7 @@ TWL_CODE void wideCheck(bool useWidescreen) {
 	}
 }
 
-TWL_CODE int lastRunROM() {
+int lastRunROM() {
 	LoadSettings();
 
 	if (consoleModel < 2) {
@@ -279,7 +279,10 @@ TWL_CODE int lastRunROM() {
 
 	argarray.push_back(strdup("null"));
 
-	if (launchType[previousUsedDevice] > 3) {
+	if (launchType[previousUsedDevice] == 21 && !previousUsedDevice) {
+		std::string homebrewArgFat = ReplaceAll(homebrewArg[previousUsedDevice], "sd:", "fat:");
+		argarray.push_back((char*)homebrewArgFat.c_str());
+	} else if (launchType[previousUsedDevice] > 3) {
 		argarray.push_back(strdup(homebrewArg[previousUsedDevice].c_str()));
 	}
 

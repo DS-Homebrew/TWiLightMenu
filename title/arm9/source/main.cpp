@@ -330,6 +330,13 @@ void lastRunROM()
 	}
 
 	vector<char *> argarray;
+	if (ms().launchType[ms().previousUsedDevice] == Launch::ESNEmulDSLaunch && !ms().previousUsedDevice)
+	{
+		std::string homebrewArgFat = replaceAll(ms().homebrewArg[ms().previousUsedDevice], "sd:", "fat:");
+		argarray.push_back(strdup("null"));
+		argarray.push_back((char*)homebrewArgFat.c_str());
+	}
+	else
 	if (ms().launchType[ms().previousUsedDevice] > Launch::EDSiWareLaunch)
 	{
 		argarray.push_back(strdup("null"));
