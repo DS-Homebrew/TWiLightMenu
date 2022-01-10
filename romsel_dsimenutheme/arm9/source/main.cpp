@@ -2179,7 +2179,7 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
 					tgdsNdsPath = "fat:/SNEmulDS.srl";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						if (ms().secondaryDevice) {
 							boostVram = true;
 							dsModeSwitch = true;

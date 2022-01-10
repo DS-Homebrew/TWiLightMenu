@@ -1231,7 +1231,7 @@ void lastRunROM()
 		const char* ndsToBoot = (char*)"sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
 		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
-			ndsToBoot = (char*)"fat:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
+			ndsToBoot = (char*)"fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 		}
 		argarray.at(0) = (char*)"fat:/SNEmulDS.srl";
 		err = runNdsFile(ndsToBoot, argarray.size(), (const char **)&argarray[0], true, true, false, true, true, true, -1); // Pass ROM to SNEmulDS as argument
