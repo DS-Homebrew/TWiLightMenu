@@ -572,7 +572,7 @@ void my_sdmmcHandler() {
     switch(*(u32*)0x02FFFA0C) {
 
     case 0x56484453: // SDMMC_HAVE_SD
-		result = sdmmc_read16(REG_SDSTATUS0);
+		result = (sdmmc_read16(REG_SDSTATUS0) & BIT(5)) != 0;
         break;
 
     case 0x54534453: // SDMMC_SD_START
