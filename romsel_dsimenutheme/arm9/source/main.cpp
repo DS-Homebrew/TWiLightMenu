@@ -2262,9 +2262,14 @@ int main(int argc, char **argv) {
 						snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderFat.c_str(), filename.c_str());
 					}
 
+					argarray.clear();
+
+					//arg 0: this binary (toolchaingenericds-multiboot.nds / toolchaingenericds-multiboot.srl)
+					//arg 1: the NDS/TWL binary we boot now (SnemulDS)
+					//arg 2: the arg we want to send to the binary being ran
+					argarray.push_back((char *)"fat:/toolchaingenericds-multiboot.srl");
 					argarray.push_back((char *)ndsToBoot);
 					argarray.push_back(ROMpath);
-					argarray.at(0) = (char *)tgdsMultibootFatPath;
 				} else {
 					argarray.push_back(ROMpath);
 					argarray.at(0) = (char *)ndsToBoot;
