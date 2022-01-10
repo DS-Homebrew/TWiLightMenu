@@ -581,6 +581,10 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		argv = args;
 	}
 
+	if (strncmp(filename, "sd", 2) != 0 && strncmp(filename, "fat", 3) != 0) {
+		filename = argv[0];
+	}
+
 	bool havedsiSD = (access("sd:/", F_OK) == 0);
 
 	if (REG_SCFG_EXT != 0 && havedsiSD) {
