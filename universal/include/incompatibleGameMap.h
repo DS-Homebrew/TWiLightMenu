@@ -61,12 +61,12 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDC", // Crash-Course Domo
 	"KF3", // Dairojo! Samurai Defenders
 	"KDV", // Dark Void Zero
+	"KWT", // GO Series: Defense Wars
 	"KDL", // Dragon's Lair
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
 	"B88", // DS WiFi Settings
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KFP", // Flipper
-	"KWT", // GO Series: Defense Wars
 	"KGB", // Game & Watch: Ball
 	"KGC", // Game & Watch: Chef
 	"KGD", // Game & Watch: Donkey Kong Jr.
@@ -97,13 +97,14 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAS", // Art Style: ZENGAGE
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 11)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 12)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KXT", // 99Seconds
 	"K27", // G.G. Series: All Breaker
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"K2J", // Cake Ninja
+	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KWY", // Mighty Milky Way
 	"KMM", // Mixed Messages
