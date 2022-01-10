@@ -681,6 +681,22 @@ TWL_CODE int lastRunROM() {
 		case 16:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to NINTV-DS as argument
+		case 17:
+			argarray.at(0) = (char*)(consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1);	// Pass ROM to GBARunner2 as argument
+		case 18:
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to ColecoDS as argument
+		case 19:
+			mkdir("sd:/data", 0777);
+			mkdir("sd:/data/nitroswan", 0777);
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to NitroSwan as argument
+		case 20:
+			mkdir("sd:/data", 0777);
+			mkdir("sd:/data/ngpds", 0777);
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, -1); // Pass ROM to NGPDS as argument
 	}
 	
 	return -1;
