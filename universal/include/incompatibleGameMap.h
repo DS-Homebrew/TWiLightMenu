@@ -48,7 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 45)
+// B4DS DSiWare Whitelist (Total: 46)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K99", // 99Bullets
@@ -58,6 +58,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAZ", // ARC Style: Soccer!
 	"KSR", // Aura-Aura Climber
 	"KAD", // Art Style: BASE 10
+	"KC5", // Castle Conqueror: Heroes
 	"KDC", // Crash-Course Domo
 	"KF3", // Dairojo! Samurai Defenders
 	"KDV", // Dark Void Zero
@@ -97,13 +98,17 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAS", // Art Style: ZENGAGE
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 12)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 16)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KXT", // 99Seconds
 	"K27", // G.G. Series: All Breaker
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"K2J", // Cake Ninja
+	"KCN", // Castle Conqueror
+	"KQN", // Castle Conqueror: Against
+	"KXC", // Castle Conqueror: Heroes 2
+	"KQN", // Castle Conqueror: Revolution
 	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KWY", // Mighty Milky Way
