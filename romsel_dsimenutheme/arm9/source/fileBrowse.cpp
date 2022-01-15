@@ -268,10 +268,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	if (pdir == nullptr) {
 		printSmall(false, 4, 4, STR_UNABLE_TO_OPEN_DIRECTORY);
 	} else {
-		int currentPos = 0;
-		while (true) {
-			snd().updateStream();
-
+		for (int currentPos = 0; currentPos < 320; currentPos++) {
 			dirent *pent = readdir(pdir);
 			if (pent == nullptr)
 				break;
@@ -293,8 +290,6 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					}
 				}
 			}
-			currentPos++;
-
 			tex().drawVolumeImageCached();
 			tex().drawBatteryImageCached();
 			drawCurrentTime();

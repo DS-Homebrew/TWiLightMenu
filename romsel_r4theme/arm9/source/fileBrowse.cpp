@@ -205,8 +205,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	if (pdir == nullptr) {
 		iprintf("Unable to open the directory.\n");
 	} else {
-		int currentPos = 0;
-		while (true) {
+		for (int currentPos = 0; currentPos < 320; currentPos++) {
 			snd().updateStream();
 
 			dirent *pent = readdir(pdir);
