@@ -920,14 +920,14 @@ string browseForFile(const vector<string_view> extensionList) {
 						int dsiModeSetting = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 						CIniFile bootstrapini(bootstrapinipath);
 						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-						bool donorRomFound = (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0);
+						bool donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
 						if (!donorRomFound && requiresDonorRom < 100) {
 							pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0
 							if (requiresDonorRom == 52) {
 								pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0
 							}
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-							donorRomFound = (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0);
+							donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
 						}
 						if (!donorRomFound
 						&& (requiresDonorRom == 51 || requiresDonorRom == 151
