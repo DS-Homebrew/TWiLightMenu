@@ -834,12 +834,6 @@ void getGameInfo(bool isDir, const char* name)
 		romVersion = ndsHeader.romversion;
 		romUnitCode = ndsHeader.unitCode;
 		a7mbk6 = ndsHeader.a7mbk6;
-		// Check if ROM needs a donor ROM
-		if (isDSiMode() && a7mbk6 == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) && arm7SCFGLocked) {
-			requiresDonorRom = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
-		} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6 == 0x080037C0 && secondaryDevice && (!dsiFeatures() || b4dsMode)) {
-			requiresDonorRom = 51; // DSi-Enhanced ROM required
-		}
 
 		fseek(fp, ndsHeader.arm9romOffset + ndsHeader.arm9executeAddress - ndsHeader.arm9destination, SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, fp);
@@ -875,12 +869,24 @@ void getGameInfo(bool isDir, const char* name)
 			isDSiWare = true; // Is a DSiWare game
 		}
 
-		if (isHomebrew == true && !secondaryDevice) {
+		if (isHomebrew && !secondaryDevice) {
 			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
 			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
 			|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058
 			|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)) {		// XRoar 0.24fp3
 				requiresRamDisk = true;
+			}
+		}
+
+		if (!isHomebrew) {
+			// Check if ROM needs a donor ROM
+			if (isDSiMode() && (a7mbk6 == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) || (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000 && (REG_MBK9 & 0x00FFFFFF) != 0x00FFFF0F)) && arm7SCFGLocked) {
+				requiresDonorRom = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
+				if (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000) {
+					requiresDonorRom += 100;
+				}
+			} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6 == 0x080037C0 && secondaryDevice && (!dsiFeatures() || b4dsMode)) {
+				requiresDonorRom = 51; // DSi-Enhanced ROM required
 			}
 		}
 

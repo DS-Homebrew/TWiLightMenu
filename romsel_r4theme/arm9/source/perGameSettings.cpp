@@ -1009,7 +1009,13 @@ void perGameSettings (std::string filename) {
 						break;
 					case 9:
 					  if (pressed & KEY_A) {
-						const char* pathDefine = a7mbk6 == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH";
+						const char* pathDefine = a7mbk6 == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH"; // SDK5.x
+						if (arm7size == 0x26CC8
+						 || arm7size == 0x28E54
+						 || arm7size == 0x29EE8)
+						{
+							pathDefine = a7mbk6 == 0x080037C0 ? "DONORTWLONLY0_NDS_PATH" : "DONORTWL0_NDS_PATH"; // SDK5.0
+						}
 						std::string romFolderNoSlash = romfolder[secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
 						bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";

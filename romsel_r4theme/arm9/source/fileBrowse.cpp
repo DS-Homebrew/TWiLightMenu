@@ -488,6 +488,16 @@ bool donorRomMsg(void) {
 						printSmallCentered(false, 102, dsModeAllowed ? "as a donor ROM, in order" : "title as a donor ROM, in order");
 						printSmallCentered(false, 114, dsModeAllowed ? "to launch this title in DSi mode." : "to launch this title.");
 						break;
+					case 151:
+						printSmallCentered(false, 90, "Please set an SDK5.0 DSi-Enhanced");
+						printSmallCentered(false, 102, "title as a donor ROM, in order");
+						printSmallCentered(false, 114, "to launch this title.");
+						break;
+					case 152:
+						printSmallCentered(false, 90, "Please set a different SDK5.0");
+						printSmallCentered(false, 102, "DSi(Ware) title as a donor ROM,");
+						printSmallCentered(false, 114, "in order to launch this title.");
+						break;
 				}
 				printSmallRightAlign(false, 256 - 16, 132, ">");
 			}
@@ -895,9 +905,14 @@ string browseForFile(const vector<string_view> extensionList) {
 					proceedToLaunch = checkForCompatibleGame(game_TID, dirContents.at(fileOffset).name.c_str());
 					if (proceedToLaunch && requiresDonorRom)
 					{
-						const char* pathDefine = "DONORTWL_NDS_PATH";
+						const char* pathDefine = "DONORTWL_NDS_PATH"; // SDK5.x
 						if (requiresDonorRom == 52) {
-							pathDefine = "DONORTWLONLY_NDS_PATH";
+							pathDefine = "DONORTWLONLY_NDS_PATH"; // SDK5.x
+						} else if (requiresDonorRom > 100) {
+							pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0
+							if (requiresDonorRom == 152) {
+								pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0
+							}
 						}
 						std::string donorRomPath;
 						bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";
@@ -905,8 +920,19 @@ string browseForFile(const vector<string_view> extensionList) {
 						int dsiModeSetting = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 						CIniFile bootstrapini(bootstrapinipath);
 						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-						if ((donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0)
-						&& (requiresDonorRom == 51 || (requiresDonorRom == 52 && (isDSiWare || dsiModeSetting > 0)))) {
+						bool donorRomFound = (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0);
+						if (!donorRomFound && requiresDonorRom < 100) {
+							pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0
+							if (requiresDonorRom == 52) {
+								pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0
+							}
+							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
+							donorRomFound = (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0);
+						}
+						if (!donorRomFound
+						&& (requiresDonorRom == 51 || requiresDonorRom == 151
+						|| (requiresDonorRom == 52 && (isDSiWare || dsiModeSetting > 0)) || requiresDonorRom == 152)
+						) {
 							proceedToLaunch = donorRomMsg();
 						}
 					}
