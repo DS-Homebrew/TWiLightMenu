@@ -48,7 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 47)
+// B4DS DSiWare Whitelist (Total: 48)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K99", // 99Bullets
@@ -93,13 +93,19 @@ static const char compatibleGameListB4DS[][5] = {
 	"KLB", // Rabi Laby
 	"KLV", // Rabi Laby 2
 	"KD6", // Rock-n-Roll Domo
+	"KS3", // Shantae: Risky's Revenge
 	"KA6", // Space Ace
 	"K4D", // Sudoku
 	"KDW", // White-Water Domo
 	"KAS", // Art Style: ZENGAGE
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 16)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 1)
+static const char compatibleGameListB4DSRAMLimited[][4] = {
+	"KS3", // Shantae: Risky's Revenge
+};
+
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 15)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KXT", // 99Seconds
 	"K27", // G.G. Series: All Breaker
@@ -115,7 +121,6 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KWY", // Mighty Milky Way
 	"KMM", // Mixed Messages
 	"KPS", // Phantasy Star 0 Mini
-	"KS3", // Shantae: Risky's Revenge
 	"KEV", // Space Invaders Extreme Z
 };
 

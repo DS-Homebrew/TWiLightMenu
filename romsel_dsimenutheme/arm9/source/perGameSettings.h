@@ -25,6 +25,8 @@ void loadPerGameSettings(std::string filename);
 void savePerGameSettings(std::string filename);
 bool checkIfShowAPMsg (std::string filename);
 void dontShowAPMsgAgain (std::string filename);
+bool checkIfShowRAMLimitMsg (std::string filename);
+void dontShowRAMLimitMsgAgain (std::string filename);
 bool checkIfDSiMode (std::string filename);
 void perGameSettings(std::string filename);
 std::string getSavExtension(void);

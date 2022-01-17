@@ -651,6 +651,76 @@ bool gameCompatibleMemoryPit(const char* filename) {
 	return true;
 }
 
+bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
+	bool showMsg = false;
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
+		if (memcmp(gameTid, compatibleGameListB4DSRAMLimited[i], 3) == 0) {
+			// Found match
+			showMsg = true;
+			break;
+		}
+	}
+
+	if (!showMsg || !checkIfShowRAMLimitMsg(filename)) {
+		return true;
+	}
+
+	bool proceedToLaunch = true;
+
+	if (macroMode) {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
+	dialogboxHeight = 3;
+	showdialogbox = true;
+	printLargeCentered(false, 74, "Compatibility Warning");
+	printSmallCentered(false, 90, "Due to memory limitations, only part");
+	printSmallCentered(false, 102, "of this game can be played. To play");
+	printSmallCentered(false, 114, "the full game, launch this on");
+	printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
+	printSmallCentered(false, 144, "\u2428 Return   \u2427 Launch");
+
+	int pressed = 0;
+	while (1) {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		snd().updateStream();
+		swiWaitForVBlank();
+		if (pressed & KEY_A) {
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_B) {
+			proceedToLaunch = false;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_X) {
+			dontShowRAMLimitMsgAgain(filename);
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+	}
+	clearText();
+	showdialogbox = false;
+	dialogboxHeight = 0;
+
+	if (proceedToLaunch) {
+		titleUpdate(false, filename.c_str());
+		showLocation();
+	} else if (macroMode) {
+		lcdMainOnTop();
+		lcdSwapped = false;
+	}
+
+	return proceedToLaunch;
+}
+
 bool dsiWareCompatibleB4DS(const char* filename) {
 	bool res = false;
 	FILE *f_nds_file = fopen(filename, "rb");
@@ -936,11 +1006,15 @@ string browseForFile(const vector<string_view> extensionList) {
 							proceedToLaunch = donorRomMsg();
 						}
 					}
-					if (proceedToLaunch && checkIfShowAPMsg(dirContents.at(fileOffset).name))
+					if (proceedToLaunch && !isDSiWare && checkIfShowAPMsg(dirContents.at(fileOffset).name))
 					{
 						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 						hasAP = checkRomAP(f_nds_file);
 						fclose(f_nds_file);
+					}
+					if (proceedToLaunch && isDSiWare && ((!dsiFeatures() && !dsDebugRam) || b4dsMode == 1) && secondaryDevice)
+					{
+						proceedToLaunch = dsiWareRAMLimitMsg(game_TID, dirContents.at(fileOffset).name);
 					}
 				}
 				else if (isHomebrew == 1)

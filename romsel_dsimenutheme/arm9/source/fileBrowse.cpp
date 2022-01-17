@@ -1329,6 +1329,113 @@ bool gameCompatibleMemoryPit(void) {
 	return true;
 }
 
+bool dsiWareRAMLimitMsg(std::string filename) {
+	bool showMsg = false;
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
+		if (memcmp(gameTid[CURPOS], compatibleGameListB4DSRAMLimited[i], 3) == 0) {
+			// Found match
+			showMsg = true;
+			break;
+		}
+	}
+
+	if (!showMsg || !checkIfShowRAMLimitMsg(filename)) {
+		return true;
+	}
+
+	bool proceedToLaunch = true;
+
+	if (ms().theme == 4) {
+		snd().playStartup();
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			snd().updateStream();
+			swiWaitForVBlank();
+		}
+		currentBg = 1;
+		displayGameIcons = false;
+		fadeType = true;
+	} else {
+		dbox_showIcon = true;
+		showdialogbox = true;
+	}
+	clearText();
+	updateText(false);
+	if (ms().theme == 4) {
+		while (!screenFadedIn()) { swiWaitForVBlank(); }
+		dbox_showIcon = true;
+		snd().playWrong();
+	} else {
+		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+	}
+	titleUpdate(false, filename.c_str(), CURPOS);
+	int yPos = (ms().theme == 4 ? 30 : 102);
+	printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_GAME_PART_ONLY) - smallFontHeight()) / 2), STR_RAM_LIMIT_GAME_PART_ONLY, Alignment::center);
+	printSmall(false, 0, (ms().theme == 4 ? 64 : 160), STR_B_A_OK_X_DONT_SHOW, Alignment::center);
+	updateText(false);
+	int pressed = 0;
+	while (1) {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+
+		drawCurrentTime();
+		drawCurrentDate();
+		snd().updateStream();
+		swiWaitForVBlank();
+		if (pressed & KEY_A) {
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_B) {
+			snd().playBack();
+			proceedToLaunch = false;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_X) {
+			dontShowRAMLimitMsgAgain(filename);
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+	}
+	showdialogbox = false;
+	if (ms().theme == 5) {
+		dbox_showIcon = false;
+	}
+	if (ms().theme == 4) {
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		clearText();
+		updateText(false);
+		currentBg = 0;
+		displayGameIcons = true;
+		fadeType = true;
+		snd().playStartup();
+		if (proceedToLaunch) {
+			while (!screenFadedIn()) { swiWaitForVBlank(); }
+		}
+	} else {
+		clearText();
+		updateText(false);
+		for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
+			snd().updateStream();
+			swiWaitForVBlank();
+		}
+	}
+	dbox_showIcon = false;
+
+	return proceedToLaunch;
+}
+
 bool dsiWareCompatibleB4DS(void) {
 	bool res = false;
 
@@ -2482,11 +2589,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								proceedToLaunch = donorRomMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 							}
 						}
-						if (proceedToLaunch && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
+						if (proceedToLaunch && !isDSiWare[CURPOS] && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
 							FILE *f_nds_file = fopen(
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
 							hasAP = checkRomAP(f_nds_file, CURPOS);
 							fclose(f_nds_file);
+						}
+						if (proceedToLaunch && isDSiWare[CURPOS] && ((!dsiFeatures() && !sys().dsDebugRam()) || bs().b4dsMode == 1) && ms().secondaryDevice) {
+							proceedToLaunch = dsiWareRAMLimitMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 						}
 					} else if (isHomebrew[CURPOS] == 1) {
 						loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);

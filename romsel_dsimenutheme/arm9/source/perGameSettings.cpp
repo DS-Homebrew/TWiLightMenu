@@ -241,6 +241,22 @@ void dontShowAPMsgAgain (std::string filename) {
 	pergameini.SaveIniFile( pergamefilepath );
 }
 
+bool checkIfShowRAMLimitMsg (std::string filename) {
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	CIniFile pergameini( pergamefilepath );
+	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_RAM_LIMIT", 0) == 0) {
+		return true;	// Show RAM Limit message
+	}
+	return false;	// Don't show RAM Limit message
+}
+
+void dontShowRAMLimitMsgAgain (std::string filename) {
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	CIniFile pergameini( pergamefilepath );
+	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_RAM_LIMIT_MSG", 1);
+	pergameini.SaveIniFile( pergamefilepath );
+}
+
 bool checkIfDSiMode (std::string filename) {
 	if (ms().secondaryDevice && (!isDSiMode() || !ms().useBootstrap)) {
 		return false;
