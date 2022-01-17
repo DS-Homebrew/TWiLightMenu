@@ -346,6 +346,7 @@ const char* getRegionString(char region) {
 			return "DET";
 		case 'E':
 		case 'L':
+		case 'O':
 			return "USA";
 		case 'F':
 			return "FRE";
