@@ -109,12 +109,15 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 
-	fifoSendValue32(FIFO_USER_07, SNDEXCNT);
-
+	bool isRegularDS = true; 
+	if(SNDEXCNT != 0) isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
+	fifoSendValue32(FIFO_USER_07, isRegularDS);
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if(fifoCheckValue32(FIFO_USER_01)) {
-			ReturntoDSiMenu();
+			if (!isRegularDS) {
+				ReturntoDSiMenu(); // reboot into System Menu (power-off/sleep mode screen skipped)
+			} else exitflag = true; // poweroff if DS
 		}
 		swiWaitForVBlank();
 	}

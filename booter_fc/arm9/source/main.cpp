@@ -53,9 +53,7 @@ int main(int argc, char **argv) {
 	REG_SCFG_CLK = 0x85;					// TWL clock speed
 	REG_SCFG_EXT = 0x8307F100;				// Extended memory, extended VRAM, etc.
 
-	bool isRegularDS = true;
-	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
+	bool isRegularDS = fifoGetValue32(FIFO_USER_07);
 
 	/*bool sdFound = false;
 	#ifndef CYCLODSI
@@ -86,12 +84,8 @@ int main(int argc, char **argv) {
 
 	while (1) {
 		scanKeys();
-		if (keysHeld() & KEY_B) {
-			if (isRegularDS) {
-				systemShutDown();
-			} else {
-				fifoSendValue32(FIFO_USER_01, 1);	// Tell ARM7 to reboot into System Menu (power-off/sleep mode screen skipped)
-			}
+		if (keysDown() & KEY_B) {
+			fifoSendValue32(FIFO_USER_01, 1);	// Tell ARM7 to reboot or poweroff depending on whether DS or DSi
 			break;
 		}
 		swiWaitForVBlank();
