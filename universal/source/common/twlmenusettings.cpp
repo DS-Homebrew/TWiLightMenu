@@ -210,8 +210,8 @@ void TWLSettings::loadSettings()
 		showBoxArt = 1;
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 	preventDeletion = settingsini.GetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
+	sysRegion = (TRegion)settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
 	if (consoleModel < 2) {
-		sysRegion = (TRegion)settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
 	}
 	secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
@@ -346,8 +346,8 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
 	settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 	settingsini.SetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
+	settingsini.SetInt("SRLOADER", "SYS_REGION", sysRegion);
 	if (consoleModel < 2) {
-		settingsini.SetInt("SRLOADER", "SYS_REGION", sysRegion);
 		settingsini.SetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
 	}
 	settingsini.SetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);

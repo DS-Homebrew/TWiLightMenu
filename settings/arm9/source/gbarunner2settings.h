@@ -22,11 +22,12 @@ class GBAR2Settings
 
   public:
     bool useBottomScreen;
-	bool centerMask;
-	bool gbaColors;
+    bool frame;
+    bool centerMask;
+    bool gbaColors;
     bool mainMemICache;
     bool wramICache;
-	bool skipIntro;
+    bool skipIntro;
 };
 
 typedef singleton<GBAR2Settings> gbarunner2Settings_s;
