@@ -126,9 +126,16 @@ jobs:
           # apfix.pck
           cp 7zfile/_nds/TWiLightMenu/extras/apfix.pck ~/artifacts
       - name: Publish build to GH Actions
+        if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
         uses: actions/upload-artifact@v2
         with:
           path: ~/artifacts/*
+          name: build
+      - name: Publish build to GH Actions (PR)
+        if: ${{ success() && startsWith(github.ref, 'refs/pull') }}
+        uses: actions/upload-artifact@v2
+        with:
+          path: ~/artifacts/TWiLightMenu.7z
           name: build
 
   # Only run this for non-PR jobs.
