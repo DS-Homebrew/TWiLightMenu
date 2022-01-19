@@ -1098,7 +1098,7 @@ string browseForFile(const vector<string_view> extensionList) {
 				 && !dsModeForced && isHomebrew == 0
 				 && checkIfDSiMode(dirContents.at(fileOffset).name)) {
 					bool hasDsiBinaries = true;
-					if (!arm7SCFGLocked || memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+					if (dsiFeatures() && (!secondaryDevice || !b4dsMode)) {
 						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 						hasDsiBinaries = checkDsiBinaries(f_nds_file);
 						fclose(f_nds_file);

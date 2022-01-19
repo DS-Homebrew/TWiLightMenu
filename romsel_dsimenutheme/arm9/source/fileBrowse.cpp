@@ -2710,7 +2710,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					 && checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name))
 					{
 						bool hasDsiBinaries = true;
-						if (!sys().arm7SCFGLocked() || memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+						if (dsiFeatures() && (!ms().secondaryDevice || !bs().b4dsMode)) {
 							FILE *f_nds_file = fopen(
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
 							hasDsiBinaries = checkDsiBinaries(f_nds_file);
