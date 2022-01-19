@@ -48,7 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 50)
+// B4DS DSiWare Whitelist (Total: 51)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K99", // 99Bullets
@@ -61,6 +61,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KC5", // Castle Conqueror: Heroes
 	"KUQ", // Chuck E. Cheese's Alien Defense Force
 	"KUC", // Chuck E. Cheese's Arcade Room
+	"KXF", // Color Commando
 	"KDC", // Crash-Course Domo
 	"KF3", // Dairojo! Samurai Defenders
 	"KDV", // Dark Void Zero
