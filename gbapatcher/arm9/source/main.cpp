@@ -120,6 +120,7 @@ ITCM_CODE void gptc_patchWait()
 	// Patch out wait states
 	for (u32 addr = 0x080000C0; addr < searchRange; addr+=4) {
 		if ((*(u8*)(addr-1) == 0x00 || *(u8*)(addr-1) == 0x03 || *(u8*)(addr-1) == 0x04 || *(u8*)(addr+7) == 0x04
+		  || *(u8*)(addr-1) == 0x08 || *(u8*)(addr-1) == 0x09
 		  || *(u8*)(addr-1) == 0x47 || *(u8*)(addr-1) == 0x81 || *(u8*)(addr-1) == 0x85
 		  || *(u8*)(addr-1) == 0xE0 || *(u8*)(addr-1) == 0xE7 || *(u16*)(addr-2) == 0xFFFE)
 		&& *(u32*)addr == 0x04000204) {
