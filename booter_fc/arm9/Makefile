@@ -15,10 +15,11 @@ include $(DEVKITARM)/ds_rules
 # INCLUDES is a list of directories containing extra header files
 # DATA is a list of directories containing binary files embedded using bin2o
 #---------------------------------------------------------------------------------
+UNIVERSAL	:=	../../universal
 TARGET		:=	booter
 BUILD		:=	build
-SOURCES		:=	source ../../universal/source/tonccpy
-INCLUDES    :=  include ../../universal/include
+SOURCES		:=	source $(UNIVERSAL)/source/tonccpy
+INCLUDES    :=  include $(UNIVERSAL)/include
 DATA        :=  ../data
 
 #---------------------------------------------------------------------------------
@@ -35,7 +36,7 @@ CFLAGS	+=	$(INCLUDE) -DARM9 -DNO_SDMMC
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=../../../universal/arm9/ds_arm9_twlm.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+LDFLAGS	=	-specs=../$(UNIVERSAL)/arm9/ds_arm9_twlm.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)

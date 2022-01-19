@@ -12,10 +12,11 @@ endif
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
+UNIVERSAL	:=	../../universal
 TARGET		:=	load
 BUILD		?=	build
-SOURCES		:=	source source/patches ../../universal/source/tonccpy
-INCLUDES	:=	build ../../universal/include
+SOURCES		:=	source source/patches $(UNIVERSAL)/source/tonccpy
+INCLUDES	:=	build $(UNIVERSAL)/include
 SPECS		:=  specs
  
 #---------------------------------------------------------------------------------

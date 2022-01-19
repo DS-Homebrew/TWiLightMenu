@@ -15,10 +15,11 @@ include $(DEVKITARM)/ds_rules
 # INCLUDES is a list of directories containing extra header files
 # DATA is a list of directories containing binary files embedded using bin2o
 #---------------------------------------------------------------------------------
+UNIVERSAL	:=	../../../../universal
 TARGET		:=	booter
 BUILD		:=	build
-SOURCES		:=	../../../arm9/source ../../../../universal/source/tonccpy
-INCLUDES	:=	../../../arm9/include ../../../../universal/include
+SOURCES		:=	../../../arm9/source $(UNIVERSAL)/source/tonccpy
+INCLUDES	:=	../../../arm9/include $(UNIVERSAL)/include
 DATA		:=	../../../data
 
 #---------------------------------------------------------------------------------
