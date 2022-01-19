@@ -1051,7 +1051,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				 && !dsModeForced && isHomebrew == 0
 				 && checkIfDSiMode(dirContents.at(fileOffset).name)) {
 					bool hasDsiBinaries = true;
-					if (dsiFeatures() && (!secondaryDevice || !b4dsMode)) {
+					if (dsiFeatures() && (!ms().secondaryDevice || !bs().b4dsMode)) {
 						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 						hasDsiBinaries = checkDsiBinaries(f_nds_file);
 						fclose(f_nds_file);
