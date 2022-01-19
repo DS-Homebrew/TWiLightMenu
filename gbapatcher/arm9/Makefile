@@ -19,7 +19,7 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	gbapatcher
 BUILD		:=	build
-SOURCES		:=	source source/common source/graphics source/save source/tool ../../universal/source/flashcard
+SOURCES		:=	source source/common source/graphics source/save source/tool ../../universal/source/common ../../universal/source/flashcard ../../universal/source/tonccpy
 INCLUDES	:=	include source source/common source/graphics source/save source/tool ../../universal/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
@@ -36,7 +36,7 @@ CFLAGS	:=	-g -Wall -O3\
 		$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM9
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=../../../universal/arm9/ds_arm9_twlm.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)

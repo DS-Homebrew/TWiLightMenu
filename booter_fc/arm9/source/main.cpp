@@ -30,7 +30,7 @@
 #include <unistd.h>
 
 #include "nds_loader_arm9.h"
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 
 using namespace std;
 

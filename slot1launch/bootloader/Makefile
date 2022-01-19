@@ -14,8 +14,8 @@ endif
 #---------------------------------------------------------------------------------
 TARGET		:=	load
 BUILD		:=	build
-SOURCES		:=	source
-INCLUDES	:=	build source
+SOURCES		:=	source ../../universal/source/tonccpy
+INCLUDES	:=	build source ../../universal/include
 DATA		:=	../data
 SPECS		:=  specs
  

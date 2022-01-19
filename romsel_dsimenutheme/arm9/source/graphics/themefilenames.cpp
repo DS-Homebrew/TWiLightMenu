@@ -1,8 +1,7 @@
 #include "themefilenames.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
-#include "tool/dbgtool.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include <nds.h>
 #include <stdio.h>
 

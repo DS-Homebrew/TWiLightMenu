@@ -14,8 +14,8 @@ endif
 #---------------------------------------------------------------------------------
 TARGET		:=	loadAlt
 BUILD		:=	build
-SOURCES		:=	source source/patches 
-INCLUDES	:=	build ../include
+SOURCES		:=	source source/patches ../../universal/source/tonccpy
+INCLUDES	:=	build ../include ../../universal/include
 DATA		:=	../data
 SPECS		:=  specs
  

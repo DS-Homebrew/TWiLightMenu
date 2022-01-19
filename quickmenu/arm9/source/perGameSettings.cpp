@@ -1,4 +1,4 @@
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
 #include <vector>
@@ -11,11 +11,10 @@
 
 #include <nds.h>
 
-#include "nds_loader_arm9.h"
-
 #include "myDSiMode.h"
 #include "common/inifile.h"
-#include "flashcard.h"
+#include "common/flashcard.h"
+#include "common/nds_loader_arm9.h"
 
 int perGameSettings_cursorPosition = 0;
 bool perGameSettings_directBoot = false;	// Homebrew only

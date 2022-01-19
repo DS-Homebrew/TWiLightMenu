@@ -19,7 +19,7 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	rungame
 BUILD		:=	build
-SOURCES		:=	source source/common dldi-include ../../universal/source ../../universal/arm9/source ../../universal/sdmmc/arm9/source
+SOURCES		:=	source source/common dldi-include ../../universal/source ../../universal/source/common ../../universal/source/nds_loader ../../universal/source/tonccpy ../../universal/arm9/source ../../universal/sdmmc/arm9/source
 INCLUDES	:=	include source dldi-include ../../universal/include ../../universal/arm9/include ../../universal/sdmmc/arm9/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx

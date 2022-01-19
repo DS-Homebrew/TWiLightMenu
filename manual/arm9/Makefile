@@ -19,7 +19,7 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	manual
 BUILD		:=	build
-SOURCES		:=	source source/graphics source/tool source/common ../../universal/sdmmc/arm9/source
+SOURCES		:=	source source/graphics source/tool source/common ../../universal/source/common ../../universal/source/nds_loader ../../universal/source/tonccpy ../../universal/sdmmc/arm9/source
 INCLUDES	:=	source ../../universal/include ../../universal/sdmmc/arm9/include
 DATA		:=	../data
 GRAPHICS	:=	../gfx

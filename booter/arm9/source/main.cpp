@@ -31,7 +31,7 @@
 
 #include "graphics/graphics.h"
 
-#include "nds_loader_arm9.h"
+#include "common/nds_loader_arm9.h"
 
 #include "graphics/fontHandler.h"
 
@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
 
 	const char* srldrPath = (runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" : "sd:/_nds/TWiLightMenu/main.srldr");
 
-	int err = runNdsFile (srldrPath, 0, NULL);
+	int err = runNdsFile(srldrPath, 0, NULL, true, false, false, true, true, false, -1);
 	bool twlmFound = (access("sd:/_nds/TWiLightMenu", F_OK) == 0);
 
 	graphicsInit();

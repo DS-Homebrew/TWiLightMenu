@@ -27,7 +27,7 @@
 #include <sys/stat.h>
 #include <gl2d.h>
 #include "common/tonccpy.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "graphics/graphics.h"
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"

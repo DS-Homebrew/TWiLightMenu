@@ -8,8 +8,7 @@
 
 #include <string>
 #include "common/tonccpy.h"
-
-extern bool show12hrClock;
+#include "common/twlmenusettings.h"
 
 using std::string;
 char date_str[24] = {'\0'};
@@ -74,7 +73,7 @@ string RetTime()
 
 	u8 hours = iTimeParts.tm_hour;
 	u8 minutes = iTimeParts.tm_min;
-	if (show12hrClock) {
+	if (ms().show12hrClock) {
 		if (hours > 12)
 			hours -= 12;
 		if (hours == 0)

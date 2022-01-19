@@ -19,7 +19,7 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	romsel_dsimenutheme
 BUILD		:=	build
-SOURCES		:=	source source/common source/graphics source/tool ../../universal/arm9/source ../../universal/source/flashcard ../../universal/sdmmc/arm9/source
+SOURCES		:=	source source/common source/graphics source/tool ../../universal/arm9/source ../../universal/source/common ../../universal/source/flashcard ../../universal/source/nds_loader ../../universal/source/tonccpy ../../universal/sdmmc/arm9/source
 INCLUDES	:=	include source ../../universal/include ../../universal/arm9/include ../../universal/sdmmc/arm9/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx

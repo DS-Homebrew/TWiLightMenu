@@ -1,6 +1,6 @@
 #include "sound.h"
 
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "streamingaudio.h"

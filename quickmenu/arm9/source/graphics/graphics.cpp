@@ -23,7 +23,7 @@
 #include <maxmod9.h>
 #include <gl2d.h>
 #include "bios_decompress_callback.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 
 // Graphic files
 #include "cursor.h"
@@ -78,6 +78,7 @@ extern int spawnedtitleboxes;
 
 extern bool showCursor;
 extern bool startMenu;
+extern int cursorPosition;
 
 extern bool pictochatFound;
 extern bool dlplayFound;
@@ -217,35 +218,6 @@ void initSubSprites(void)
 	oamUpdate(&oamSub);
 }
 
-u16 convertToDsBmp(u16 val) {
-	if (ms().colorMode == 1) {
-		u16 newVal = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
-
-		u8 b,g,r,max,min;
-		b = ((newVal)>>10)&31;
-		g = ((newVal)>>5)&31;
-		r = (newVal)&31;
-		// Value decomposition of hsv
-		max = (b > g) ? b : g;
-		max = (max > r) ? max : r;
-
-		// Desaturate
-		min = (b < g) ? b : g;
-		min = (min < r) ? min : r;
-		max = (max + min) / 2;
-		
-		newVal = 32768|(max<<10)|(max<<5)|(max);
-
-		b = ((newVal)>>10)&(31-6*ms().blfLevel);
-		g = ((newVal)>>5)&(31-3*ms().blfLevel);
-		r = (newVal)&31;
-
-		return 32768|(b<<10)|(g<<5)|(r);
-	} else {
-		return ((val>>10)&31) | (val&(31-3*ms().blfLevel)<<5) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
-	}
-}
-
 u16 convertVramColorToGrayscale(u16 val) {
 	u8 b,g,r,max,min;
 	b = ((val)>>10)&31;
@@ -269,20 +241,23 @@ void bottomBgLoad(void) {
 	char temp[256];
 
 	switch (ms().theme) {
-		case 0: // DSi Theme
+		case TWLSettings::EThemeDSi: // DSi Theme
 			sprintf(temp, "/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", ms().dsi_theme.c_str());
 			break;
-		case 1:
+		case TWLSettings::ETheme3DS:
 			sprintf(temp, "/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", ms()._3ds_theme.c_str());
 			break;
-		case 2:
+		case TWLSettings::EThemeR4:
 			sprintf(temp, "/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/bottombg.png", ms().r4_theme.c_str());
 			break;
-		case 3:
-			sprintf(temp, "/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/bottombg.png", ms().ak_theme.c_str());
+		case TWLSettings::EThemeWood:
+			// sprintf(temp, "/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/bottombg.png", ms().ak_theme.c_str());
 			break;
-		case 4:
+		case TWLSettings::EThemeSaturn:
 			sprintf(temp, "nitro:/graphics/bottombg_saturn.png");
+			break;
+		case TWLSettings::EThemeHBL:
+		case TWLSettings::EThemeGBC:
 			break;
 	}
 
@@ -357,7 +332,8 @@ void vBlankHandler()
 		if (controlBottomBright) SetBrightness(0, screenBrightness);
 		if (controlTopBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
-		glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
+		// glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
+		glColor(RGB15(31, 31, 31));
 		if (whiteScreen) {
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			if (showProgressBar) {
@@ -439,7 +415,7 @@ void vBlankHandler()
 
 			// Draw cursor
 			if (showCursor) {
-				switch (ms().startMenu_cursorPosition) {
+				switch (cursorPosition) {
 					case 0:
 					default:
 						glSprite(31, 23, GL_FLIP_NONE, &cursorImage[0]);
@@ -575,20 +551,23 @@ void topBgLoad(void) {
 	char temp[256];
 
 	switch (ms().theme) {
-		case 0: // DSi Theme
+		case TWLSettings::EThemeDSi: // DSi Theme
 			sprintf(temp, "/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/%s.png", ms().dsi_theme.c_str(), isDSPhat() ? "phat_topbg" : "topbg");
 			break;
-		case 1:
+		case TWLSettings::ETheme3DS:
 			sprintf(temp, "/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/%s.png", ms()._3ds_theme.c_str(), isDSPhat() ? "phat_topbg" : "topbg");
 			break;
-		case 2:
+		case TWLSettings::EThemeR4:
 			sprintf(temp, "/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/%s.png", ms().r4_theme.c_str(), isDSPhat() ? "phat_topbg" : "topbg");
 			break;
-		case 3:
-			sprintf(temp, "/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/%s.png", ms().ak_theme.c_str(), isDSPhat() ? "phat_topbg" : "topbg");
+		case TWLSettings::EThemeWood:
+			// sprintf(temp, "/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/%s.png", ms().ak_theme.c_str(), isDSPhat() ? "phat_topbg" : "topbg");
 			break;
-		case 4:
+		case TWLSettings::EThemeSaturn:
 			sprintf(temp, "nitro:/graphics/%s.png", isDSPhat() ? "phat_topbg_saturn" : "topbg_saturn");
+			break;
+		case TWLSettings::EThemeHBL:
+		case TWLSettings::EThemeGBC:
 			break;
 	}
 

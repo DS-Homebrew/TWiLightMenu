@@ -4,7 +4,7 @@
 
 // #include "autoboot.h"
 // #include "common/systemdetails.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "graphics/fontHandler.h"
 #include "common/tonccpy.h"
 #include "language.h"

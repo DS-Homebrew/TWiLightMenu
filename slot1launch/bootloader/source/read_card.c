@@ -24,7 +24,7 @@
 #include <nds/card.h>
 #include <string.h>
 
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 #include "encryption.h"
 #include "common.h"
 

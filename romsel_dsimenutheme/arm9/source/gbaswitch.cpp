@@ -1,9 +1,9 @@
-#include "common/dsimenusettings.h"
+#include "common/nds_loader_arm9.h"
+#include "common/twlmenusettings.h"
 #include "common/tonccpy.h"
 #include "graphics/ThemeTextures.h"
 #include "graphics/lodepng.h"
 #include "gbaswitch.h"
-#include "nds_loader_arm9.h"
 
 void loadGbaBorder(const char* filename) {
 	uint imageWidth, imageHeight;

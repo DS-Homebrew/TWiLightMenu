@@ -2,7 +2,8 @@
 
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
-#include "common/dsimenusettings.h"
+#include "common/bootstrapsettings.h"
+#include "common/twlmenusettings.h"
 #include <variant>
 #include <algorithm>
 #include <nds.h>
@@ -10,7 +11,6 @@
 #include "soundeffect.h"
 #include "language.h"
 #include "gbarunner2settings.h"
-#include "bootstrapsettings.h"
 #include "version.h"
 
 // Screen offsets for scrollbar

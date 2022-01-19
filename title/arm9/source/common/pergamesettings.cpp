@@ -1,5 +1,5 @@
 #include "pergamesettings.h"
-#include "dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include <vector>
 #include <algorithm>
 #include <unistd.h>
@@ -11,7 +11,7 @@
 #include <nds.h>
 
 #include "myDSiMode.h"
-#include "inifile.h"
+#include "common/inifile.h"
 
 bool perGameSettings_directBoot = false;	// Homebrew only
 int perGameSettings_dsiMode = -1;

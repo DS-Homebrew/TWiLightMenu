@@ -1,7 +1,7 @@
 #include "graphics.h"
 #include <nds.h>
 
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/tonccpy.h"
 #include "fontHandler.h"
 

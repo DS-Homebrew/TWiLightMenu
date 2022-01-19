@@ -7,7 +7,7 @@
 #include <string>
 
 #include "common/inifile.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 
 #define STRING(what,def) std::string STR_##what;
 #include "language.inl"

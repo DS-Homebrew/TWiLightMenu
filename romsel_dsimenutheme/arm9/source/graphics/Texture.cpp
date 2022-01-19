@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "lodepng.h"
 
 Texture::Texture(const std::string &filePath, const std::string &fallback)
@@ -197,7 +197,7 @@ u16 Texture::bmpToDS(u16 val) {
 	if((val & 0x7FFF) == 0x7C1F)
 		return 0;
 
-	int blfLevel = ms().blfLevel;
+	// int blfLevel = ms().blfLevel;
 	if (ms().colorMode == 1) {
 		u8 b = val & 31;
 		u8 g = (val >> 5) & 31;
@@ -210,8 +210,10 @@ u16 Texture::bmpToDS(u16 val) {
 		// Desaturate
 		max = (max + min) / 2;
 
-		return max | (max & (31 - 3 * blfLevel)) << 5 | (max & (31 - 6 * blfLevel)) << 10 | BIT(15);
+		return max | max << 5 | max << 10 | BIT(15);
+		// return max | (max & (31 - 3 * blfLevel)) << 5 | (max & (31 - 6 * blfLevel)) << 10 | BIT(15);
 	} else {
-		return ((val >> 10) & 31) | ((val >> 5) & (31 - 3 * blfLevel)) << 5 | (val & (31 - 6 * blfLevel)) << 10 | BIT(15);
+		return ((val >> 10) & 31) | (val & (31 << 5)) | ((val & 31) << 10) | BIT(15);
+		// return ((val >> 10) & 31) | ((val >> 5) & (31 - 3 * blfLevel)) << 5 | (val & (31 - 6 * blfLevel)) << 10 | BIT(15);
 	}
 }

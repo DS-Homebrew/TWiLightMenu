@@ -19,9 +19,9 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	booter
 BUILD		:=	build
-SOURCES		:=	source source/graphics ../../universal/sdmmc/arm9/source
-INCLUDES	:=	include source ../../universal/sdmmc/arm9/include
-DATA		:=	../data  
+SOURCES		:=	source source/graphics ../../universal/source/common ../../universal/source/nds_loader ../../universal/source/tonccpy ../../universal/sdmmc/arm9/source
+INCLUDES	:=	include source ../../universal/include ../../universal/sdmmc/arm9/include
+DATA		:=	../data
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music
 
@@ -36,7 +36,7 @@ CFLAGS	:=	-g -Wall -O2\
 		$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM9
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=../../../universal/arm9/ds_arm9_twlm.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)

@@ -48,7 +48,7 @@ Helpful information:
 #define ARM7
 #include <nds/arm7/audio.h>
 #include <nds/arm7/codec.h>
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 #include "i2c.h"
 #include "fat.h"
 #include "dldi_patcher.h"

@@ -6,13 +6,12 @@
 #include <unistd.h>
 #include <string>
 
+#include "common/twlmenusettings.h"
 #include "common/inifile.h"
 
 #define STRING(what,def) std::string STR_##what;
 #include "language.inl"
 #undef STRING
-
-std::string getGuiLanguageString();
 
 /**
  * Get strings from the ini with special processing
@@ -105,7 +104,7 @@ std::string getString(CIniFile &ini, const std::string &item, const std::string 
 void langInit(void)
 {
 	char languageIniPath[64];
-	snprintf(languageIniPath, sizeof(languageIniPath), "nitro:/languages/%s/language.ini", getGuiLanguageString().c_str());
+	snprintf(languageIniPath, sizeof(languageIniPath), "nitro:/languages/%s/language.ini", ms().getGuiLanguageString().c_str());
 
 	CIniFile languageini(languageIniPath);
 

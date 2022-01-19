@@ -20,7 +20,7 @@ include $(DEVKITARM)/ds_rules
 TARGET		:=	romsel_dsimenutheme
 BUILD		:=	build
 SOURCES		:=	source ../../universal/arm7/source ../../universal/sdmmc/arm7/source
-INCLUDES	:=	include build ../../universal/arm7/include ../../universal/sdmmc/arm7/include
+INCLUDES	:=	include build ../../universal/include ../../universal/arm7/include ../../universal/sdmmc/arm7/include
 
 #---------------------------------------------------------------------------------
 # options for code generation

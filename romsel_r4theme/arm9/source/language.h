@@ -2,10 +2,6 @@
 #ifndef DSIMENUPP_LANGUAGE_H
 #define DSIMENUPP_LANGUAGE_H
 
-extern int setLanguage;
-extern int setGameLanguage;
-extern int setTitleLanguage;
-
 /**
  * Initialize translations.
  * Uses the language ID specified in settings.ui.language.

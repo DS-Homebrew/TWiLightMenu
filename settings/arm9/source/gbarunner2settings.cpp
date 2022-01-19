@@ -1,7 +1,7 @@
 
 #include "common/inifile.h"
 #include "common/bootstrappaths.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "gbarunner2settings.h"
 #include <string.h>
 

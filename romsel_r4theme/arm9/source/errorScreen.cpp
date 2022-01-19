@@ -1,21 +1,13 @@
 #include <nds.h>
 #include <stdio.h>
 
+#include "common/twlmenusettings.h"
 #include "graphics/lodepng.h"
 //#include "autoboot.h"
-
-extern bool sdRemoveDetect;
 
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
-
-extern bool arm7SCFGLocked;
-
-extern int consoleModel;
-extern int launcherApp;
-
-extern int guiLanguage;
 
 u16* sdRemovedExtendedImage = (u16*)0x026C8000;
 u16* sdRemovedImage = (u16*)0x026E0000;
@@ -28,8 +20,8 @@ void loadSdRemovedImage(void) {
 	std::vector<unsigned char> image;
 	char sdRemovedError[40];
 	char sdRemoved[40];
-	sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_%i.png", guiLanguage);
-	sprintf(sdRemoved, "nitro:/graphics/sdRemoved_%i.png", guiLanguage);
+	sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_%i.png", ms().getGuiLanguage());
+	sprintf(sdRemoved, "nitro:/graphics/sdRemoved_%i.png", ms().getGuiLanguage());
 	if (access(sdRemovedError, F_OK) != 0 || access(sdRemoved, F_OK) != 0) {
 		sprintf(sdRemovedError, "nitro:/graphics/sdRemovedError_1.png");
 		sprintf(sdRemoved, "nitro:/graphics/sdRemoved_1.png");
@@ -50,7 +42,7 @@ void loadSdRemovedImage(void) {
 }
 
 void checkSdEject(void) {
-	if (!sdRemoveDetect) return;
+	if (!ms().sdRemoveDetect) return;
 
 	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) {
 		timeTillChangeToNonExtendedImage++;
@@ -78,7 +70,7 @@ void checkSdEject(void) {
 		// Works here, but disabled for consistency with the other themes
 		/*scanKeys();
 		if (keysDown() & KEY_B) {
-			if (consoleModel < 2 && launcherApp != -1) {
+			if (ms().consoleModel < 2 && ms().launcherApp != -1) {
 				memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 				*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 				*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
@@ -99,8 +91,8 @@ void checkSdEject(void) {
 			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			swiWaitForVBlank();
 		}
-		if (*(u8*)(0x023FF002) == 2 && !arm7SCFGLocked) {
-			if (consoleModel < 2) {
+		if (*(u8*)(0x023FF002) == 2 && !sys().arm7SCFGLocked()) {
+			if (ms().consoleModel < 2) {
 				unlaunchSetHiyaBoot();
 			}
 			memcpy((u32*)0x02000300, autoboot_bin, 0x020);

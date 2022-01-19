@@ -20,7 +20,7 @@
 #include "encryption.h"
 #include "key1.h"
 #include "key2.h"
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 
 #define KEYSIZE 0x1048
 

@@ -3,7 +3,7 @@
 #include <nds/arm9/dldi.h>
 #include <list>
 
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"

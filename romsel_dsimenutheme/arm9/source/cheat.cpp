@@ -20,10 +20,9 @@
 
 #include <nds/arm9/dldi.h>
 #include "cheat.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/flashcard.h"
-#include "tool/dbgtool.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include "sound.h"
 #include <algorithm>
 
@@ -122,7 +121,7 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
 
 bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
 {
-  dbg_printf("%x, %x\n",gamecode,crc32);
+  // dbg_printf("%x, %x\n",gamecode,crc32);
 
   _data.clear();
 
@@ -130,7 +129,7 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
   if(!searchCheatData(aDat,gamecode,crc32,dataPos,dataSize)) return false;
   fseek(aDat,dataPos,SEEK_SET);
 
-  dbg_printf("record found: %d\n",dataSize);
+  // dbg_printf("record found: %d\n",dataSize);
 
   char* buffer=(char*)malloc(dataSize);
   if(!buffer) return false;
@@ -425,7 +424,7 @@ void CheatCodelist::selectCheats(std::string filename)
         cheatWnd_scrollPosition = 0;
       }
     } else if(pressed & KEY_A) {
-      (ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
+      (ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
       if(currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
         uint i = std::distance(&_data[0], currentList[cheatWnd_cursorPosition]) + 1;
         currentList.clear();
@@ -472,7 +471,7 @@ void CheatCodelist::selectCheats(std::string filename)
       break;
     } else if(pressed & KEY_Y) {
       if(currentList[cheatWnd_cursorPosition]->_comment != "") {
-        (ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
+        (ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
         clearText();
         printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
 

@@ -18,9 +18,9 @@
 #include "common/nds_loader_arm9.h"
 #include "common/inifile.h"
 #include "common/fileCopy.h"
-#include "common/nitrofs.h"
 #include "common/bootstrappaths.h"
-#include "common/dsimenusettings.h"
+#include "common/bootstrapsettings.h"
+#include "common/twlmenusettings.h"
 #include "common/cardlaunch.h"
 #include "common/flashcard.h"
 #include "common/tonccpy.h"
@@ -28,7 +28,7 @@
 #include "settingsgui.h"
 #include "language.h"
 #include "gbarunner2settings.h"
-#include "bootstrapsettings.h"
+#include "twlFlashcard.h"
 
 #include "soundeffect.h"
 #include "common/systemdetails.h"
@@ -48,11 +48,9 @@ bool useTwlCfg = false;
 
 //bool widescreenEffects = false;
 
-const char *settingsinipath = DSIMENUPP_INI;
-
 int currentTheme = 0;
 bool currentMacroMode = false;
-static int previousDSiWareExploit = 0;
+static TWLSettings::TExploit previousDSiWareExploit = TWLSettings::EExploitNone;
 static int previousSysRegion = 0;
 
 std::vector<std::string> akThemeList;
@@ -170,22 +168,22 @@ void rebootTWLMenuPP()
 
 void loadMainMenu()
 {
-	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
+	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 }
 
 void loadROMselect()
 {
-	/*if (ms().theme == 3)
+	/*if (ms().theme == TWLSettings::EThemeWood)
 	{
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
 	}
-	else*/ if (ms().theme == 2 || ms().theme == 6)
+	else*/ if (ms().theme == TWLSettings::EThemeR4 || ms().theme == TWLSettings::EThemeGBC)
 	{
-		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
+		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	}
 	else
 	{
-		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
+		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	}
 }
 
@@ -367,15 +365,15 @@ void loadMenuSrldrList (const char* dirPath) {
 
 std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 {
-	switch (optVal.get())
+	switch ((TWLSettings::TTheme)optVal.get())
 	{
-	case 0:
+	case TWLSettings::EThemeDSi:
 		return Option(STR_SKINSEL_DSI, STR_AB_SETSKIN, Option::Str(&ms().dsi_theme), dsiThemeList);
-	case 2:
+	case TWLSettings::EThemeR4:
 		return Option(STR_SKINSEL_R4, STR_AB_SETSKIN, Option::Str(&ms().r4_theme), r4ThemeList);
-	case 3:
-		return Option(STR_SKINSEL_WOOD, STR_AB_SETSKIN, Option::Str(&ms().ak_theme), akThemeList);
-	case 1:
+	// case TWLSettings::EThemeWood:
+	// 	return Option(STR_SKINSEL_WOOD, STR_AB_SETSKIN, Option::Str(&ms().ak_theme), akThemeList);
+	case TWLSettings::ETheme3DS:
 		return Option(STR_SKINSEL_3DS, STR_AB_SETSKIN, Option::Str(&ms()._3ds_theme), _3dsThemeList);
 	default:
 		return nullopt;
@@ -537,7 +535,7 @@ void begin_update(int opt)
 	snd().stopBgMusic();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 	
-	runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
+	runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	stop();
 }
 
@@ -618,60 +616,62 @@ void defaultExitHandler()
 	}
 
 	if (isDSiMode() && sdFound() && ms().consoleModel >= 2 && sys().arm7SCFGLocked() &&
-	   (previousDSiWareExploit != ms().dsiWareExploit
-	 || previousSysRegion != ms().sysRegion))
+	   (previousDSiWareExploit != ms().dsiWareExploit || previousSysRegion != ms().sysRegion))
 	{
 		u32 currentSrBackendId[2] = {0};
 		u8 sysValue = 0;
 
 		switch (ms().dsiWareExploit) {
-			case 1:
-			default:
+			case TWLSettings::EExploitSudokuhax:
 				currentSrBackendId[0] = 0x4B344441;		// SUDOKU
 				break;
-			case 2:
+			case TWLSettings::EExploit4Swordshax:
 				currentSrBackendId[0] = 0x4B513941;		// Legend of Zelda: Four Swords
 				break;
-			case 3:
+			case TWLSettings::EExploitFieldrunnerhax:
 				currentSrBackendId[0] = 0x4B464441;		// Fieldrunners
 				break;
-			case 4:
+			case TWLSettings::EExploitGrtpwn:
 				currentSrBackendId[0] = 0x4B475241;		// Guitar Rock Tour
 				break;
-			case 5:
+			case TWLSettings::EExploitUgopwn:
 				currentSrBackendId[0] = 0x4B475541;		// Flipnote Studio
 				break;
-			case 6:
+			case TWLSettings::EExploitUnopwn:
 				currentSrBackendId[0] = 0x4B554E41;		// UNO
 				break;
-			case 7:
+			case TWLSettings::EExploitMemoryPit:
 				currentSrBackendId[0] = 0x484E4941;		// Nintendo DSi Camera
+				break;
+			case TWLSettings::EExploitNone:
 				break;
 		}
 		switch (ms().sysRegion) {
-			case 0:
+			case TWLSettings::ERegionJapan:
 				sysValue = 0x4A;		// JPN
 				break;
-			case 1:
+			case TWLSettings::ERegionUSA:
 				sysValue = 0x45;		// USA
 				break;
-			case 2:
-				sysValue = (ms().dsiWareExploit==7 ? 0x50 : 0x56);		// EUR
+			case TWLSettings::ERegionEurope:
+				sysValue = (ms().dsiWareExploit==TWLSettings::EExploitMemoryPit ? 0x50 : 0x56);		// EUR
 				break;
-			case 3:
-				sysValue = (ms().dsiWareExploit==7 ? 0x55 : 0x56);		// AUS
+			case TWLSettings::ERegionAustralia:
+				sysValue = (ms().dsiWareExploit==TWLSettings::EExploitMemoryPit ? 0x55 : 0x56);		// AUS
 				break;
-			case 4:
+			case TWLSettings::ERegionChina:
 				sysValue = 0x43;		// CHN
 				break;
-			case 5:
+			case TWLSettings::ERegionKorea:
 				sysValue = 0x4B;		// KOR
+				break;
+			case TWLSettings::ERegionDefault:
 				break;
 		}
 		tonccpy(&currentSrBackendId, &sysValue, 1);
-		currentSrBackendId[1] = (ms().dsiWareExploit==7 ? 0x00030005 : 0x00030004);
+		currentSrBackendId[1] = (ms().dsiWareExploit==TWLSettings::EExploitMemoryPit ? 0x00030005 : 0x00030004);
 
-		if (ms().dsiWareExploit > 0) {
+		if (ms().dsiWareExploit != TWLSettings::EExploitNone) {
 			FILE* file = fopen("sd:/_nds/nds-bootstrap/srBackendId.bin", "wb");
 			if (file) {
 				fwrite(currentSrBackendId, sizeof(u32), 2, file);
@@ -743,7 +743,7 @@ int main(int argc, char **argv)
 
 //#pragma region init
 
-	sys().initFilesystem();
+	sys().initFilesystem("/_nds/TWiLightMenu/settings.srldr");
 	ms();
 	defaultExceptionHandler();
 
@@ -755,12 +755,6 @@ int main(int argc, char **argv)
 		fadeType = true;
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
-	}
-
-	if (access(settingsinipath, F_OK) != 0 && (access("fat:/", F_OK) == 0)) {
-		settingsinipath =
-		    DSIMENUPP_INI_FC; // Fallback to .ini path on flashcard, if not found on
-							   // SD card, or if SD access is disabled
 	}
 
 	ms().loadSettings();
@@ -820,6 +814,10 @@ int main(int argc, char **argv)
 
 	using TLanguage = TWLSettings::TLanguage;
 	using TRegion = TWLSettings::TRegion;
+	using TTheme = TWLSettings::TTheme;
+	using TDSiMusic = TWLSettings::TDSiMusic;
+	using TSettingsMusic = TWLSettings::TSettingsMusic;
+	using TSortMethod = TWLSettings::TSortMethod;
 	//using TAKScrollSpeed = TWLSettings::TScrollSpeed;
 	if (sdFound() && flashcardFound()) {
 		guiPage.option(STR_UPDATETWLMENU,
@@ -837,21 +835,19 @@ int main(int argc, char **argv)
 		// Theme
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
-				Option::Int(&ms().theme, opt_subtheme_select),
-				/*{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_WOOD_UI, STR_R4_ORIGINAL},
-				{0, 1, 4, 5, 3, 2})*/
+				Option::Int((int *)&ms().theme, opt_subtheme_select),
 				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, STR_GAMEBOY_COLOR},
-				{0, 1, 4, 5, 2, 6})
+				{TTheme::EThemeDSi, TTheme::ETheme3DS, TTheme::EThemeSaturn, TTheme::EThemeHBL, TTheme::EThemeR4, TTheme::EThemeGBC})
 		.option(STR_SETTINGSMUSIC,
 				STR_DESCRIPTION_SETTINGSMUSIC,
-				Option::Int(&ms().settingsMusic),
+				Option::Int((int *)&ms().settingsMusic),
 				{STR_THEME, STR_OFF, STR_NINTENDO_DSI, STR_NINTENDO_3DS},
-				{-1, 0, 1, 2})
+				{TSettingsMusic::ESMusicTheme, TSettingsMusic::ESMusicOff, TSettingsMusic::ESMusicDSi, TSettingsMusic::ESMusic3DS})
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
-				Option::Int(&ms().dsiMusic),
+				Option::Int((int *)&ms().dsiMusic),
 				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, STR_THEME, STR_CLASSIC, "HBL"},
-				{0, 1, 2, 3, 4, 5})
+				{TDSiMusic::EMusicOff, TDSiMusic::EMusicRegular, TDSiMusic::EMusicShop, TDSiMusic::EMusicTheme, TDSiMusic::EMusicClassic, TDSiMusic::EMusicHBL})
 		.option(STR_FONT,
 				STR_DESCRIPTION_FONT,
 				Option::Nul(opt_font_select),
@@ -869,7 +865,7 @@ int main(int argc, char **argv)
 
 	guiPage
 		.option(STR_UPDATE_RECENTLY_PLAYED_LIST, STR_DESCRIPTION_UPDATE_RECENTLY_PLAYED_LIST, Option::Bool(&ms().updateRecentlyPlayedList), {STR_YES, STR_NO}, {true, false})
-		.option(STR_SORT_METHOD, STR_DESCRIPTION_SORT_METHOD, Option::Int(&ms().sortMethod), {STR_ALPHABETICAL, STR_RECENT, STR_MOST_PLAYED, STR_FILE_TYPE, STR_CUSTOM}, {0, 1, 2, 3, 4})
+		.option(STR_SORT_METHOD, STR_DESCRIPTION_SORT_METHOD, Option::Int((int *)&ms().sortMethod), {STR_ALPHABETICAL, STR_RECENT, STR_MOST_PLAYED, STR_FILE_TYPE, STR_CUSTOM}, {TSortMethod::ESortAlphabetical, TSortMethod::ESortRecent, TSortMethod::ESortMostPlayed, TSortMethod::ESortFileType, TSortMethod::ESortCustom})
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_SHOW_HIDDEN, STR_DESCRIPTION_SHOW_HIDDEN_1, Option::Bool(&ms().showHidden), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_PREVENT_ROM_DELETION, STR_DESCRIPTION_PREVENT_ROM_DELETION_1, Option::Bool(&ms().preventDeletion), {STR_YES, STR_NO}, {true, false});
@@ -890,36 +886,27 @@ int main(int argc, char **argv)
 
 	SettingsPage emulationPage(STR_EMULATION_HB_SETTINGS);
 
-	emulationPage
-		.option(STR_NDS_ROMS, STR_DESCRIPTION_SHOW_NDS, Option::Bool(&ms().showNds), {STR_SHOW, STR_HIDE}, {true, false});
-	if (sys().isRegularDS()) {
-		emulationPage.option(STR_GBA_ROMS, STR_DESCRIPTION_SHOW_GBA, Option::Int(&ms().showGba), {STR_HIDE, STR_NATIVE_GBARUNNER2, STR_GBARUNNER2_ONLY}, {0, 1, 2});
-	} else {
-		emulationPage.option(STR_GBA_ROMS, STR_DESCRIPTION_SHOW_GBA, Option::Int(&ms().showGba), {STR_HIDE, "GBARunner2"}, {0, 2});
+	using TDSiWareBooter = TWLSettings::TDSiWareBooter;
+	using TGbaBooter = TWLSettings::TGbaBooter;
+	using TColSegaEmulator = TWLSettings::TColSegaEmulator;
+	using TMegaDriveEmulator = TWLSettings::TMegaDriveEmulator;
+
+	emulationPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
+	if (sdFound() && !sys().arm7SCFGLocked())
+		emulationPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool((bool *)&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"}, {true, false});
+	if (sys().isRegularDS())
+		emulationPage.option(STR_GBA_BOOTER, STR_DESCRIPTION_GBA_BOOTER, Option::Int((int *)&ms().gbaBooter), {STR_NATIVE_GBARUNNER2, STR_GBARUNNER2_ONLY}, {TGbaBooter::EGbaNativeGbar2, TGbaBooter::EGbaGbar2});
+	if (!(isDSiMode() && sdFound() && sys().arm7SCFGLocked()))
+		emulationPage.option(STR_MD_EMULATOR, STR_DESCRIPTION_MD_EMULATOR, Option::Int((int *)&ms().mdEmulator), {"jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {TMegaDriveEmulator::EMegaDriveJenesis, TMegaDriveEmulator::EMegaDrivePico, TMegaDriveEmulator::EMegaDriveHybrid});
+	emulationPage.option(STR_SG_EMULATOR, STR_DESCRIPTION_SG_EMULATOR, Option::Int((int *)&ms().sgEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
+
+	if (isDSiMode() && sdFound() && !sys().arm7SCFGLocked()) {
+		gamesPage.option((flashcardFound() ? STR_SYSSD_RUNFLUBBAEMUSIN : STR_RUNFLUBBAEMUSIN),
+			STR_DESCRIPTION_RUNFLUBBAEMUSIN,
+			Option::Bool(&ms().smsGgInRam),
+			{STR_DS_MODE, STR_DSI_MODE},
+			{true, false});
 	}
-	emulationPage
-		.option(STR_VIDEOS, STR_DESCRIPTION_SHOW_VIDEO, Option::Bool(&ms().showRvid), {STR_SHOW, STR_HIDE}, {true, false})
-		.option(STR_XEX_ROMS, STR_DESCRIPTION_SHOW_XEX, Option::Bool(&ms().showXex), {"XEGS-DS", STR_HIDE}, {true, false})
-		.option(STR_A26_ROMS, STR_DESCRIPTION_SHOW_A26, Option::Bool(&ms().showA26), {"StellaDS", STR_HIDE}, {true, false})
-		.option(STR_A52_ROMS, STR_DESCRIPTION_SHOW_A52, Option::Bool(&ms().showA52), {"A5200DS", STR_HIDE}, {true, false})
-		.option(STR_A78_ROMS, STR_DESCRIPTION_SHOW_A78, Option::Bool(&ms().showA78), {"A7800DS", STR_HIDE}, {true, false})
-		.option(STR_COL_ROMS, STR_DESCRIPTION_SHOW_COL, Option::Int(&ms().showCol), {STR_HIDE, "S8DS", "ColecoDS"}, {0, 1, 2})
-		.option(STR_M5_ROMS, STR_DESCRIPTION_SHOW_M5, Option::Bool(&ms().showM5), {"ColecoDS", STR_HIDE}, {true, false})
-		.option(STR_INT_ROMS, STR_DESCRIPTION_SHOW_INT, Option::Bool(&ms().showInt), {"NINTV-DS", STR_HIDE}, {true, false})
-		.option(STR_NES_ROMS, STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {"nesDS", STR_HIDE}, {true, false})
-		.option(STR_GB_ROMS, STR_DESCRIPTION_SHOW_GB, Option::Bool(&ms().showGb), {"GameYob", STR_HIDE}, {true, false})
-		.option(STR_SG_ROMS, STR_DESCRIPTION_SHOW_SG, Option::Int(&ms().showSg), {STR_HIDE, "S8DS", "ColecoDS"}, {0, 1, 2})
-		.option(STR_SMS_ROMS, STR_DESCRIPTION_SHOW_SMS, Option::Bool(&ms().showSmsGg), {"S8DS", STR_HIDE}, {true, false});
-	if (isDSiMode() && sdFound() && sys().arm7SCFGLocked()) {
-		emulationPage.option(STR_MD_ROMS, STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "PicoDriveTWL"}, {0, 2});
-	} else {
-		emulationPage.option(STR_MD_ROMS, STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {0, 1, 2, 3});
-	}
-	emulationPage
-		.option(STR_SNES_ROMS, STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {"SNEmulDS", STR_HIDE}, {true, false})
-		.option(STR_PCE_ROMS, STR_DESCRIPTION_SHOW_PCE, Option::Bool(&ms().showPce), {"NitroGrafx", STR_HIDE}, {true, false})
-		.option(STR_NGP_ROMS, STR_DESCRIPTION_SHOW_NGP, Option::Bool(&ms().showNgp), {"NGPDS", STR_HIDE}, {true, false})
-		.option(STR_WS_ROMS, STR_DESCRIPTION_SHOW_WS, Option::Bool(&ms().showWs), {"NitroSwan", STR_HIDE}, {true, false});
 
 	SettingsPage gbar2Page(STR_GBARUNNER2_SETTINGS);
 
@@ -949,15 +936,6 @@ int main(int argc, char **argv)
 			Option::Nul(opt_gba_border_select),
 			{STR_PRESS_A},
 			{0});
-	}
-
-	if (isDSiMode() && sdFound() && !sys().arm7SCFGLocked())
-	{
-		gamesPage.option((flashcardFound() ? STR_SYSSD_RUNFLUBBAEMUSIN : STR_RUNFLUBBAEMUSIN),
-			STR_DESCRIPTION_RUNFLUBBAEMUSIN,
-			Option::Bool(&ms().smsGgInRam),
-			{STR_DS_MODE, STR_DSI_MODE},
-			{true, false});
 	}
 
 	if (dsiFeatures() || sdFound()) {
@@ -993,16 +971,18 @@ int main(int argc, char **argv)
 		.option(STR_ESRBRATINGSCREEN, STR_DESCRIPTION_ESRBRATINGSCREEN, Option::Bool(&ms().esrbRatingScreen), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_HOTKEY, STR_DESCRIPTION_HOTKEY, Option::Nul(opt_set_hotkey), {STR_PRESS_A}, {0});
 
+	using TSlot1LaunchMethod = TWLSettings::TSlot1LaunchMethod;
+
 	if (isDSiMode() && !sys().arm7SCFGLocked()) {
 		if (ms().consoleModel == 0) {
-			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int(&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT, "Unlaunch"}, {0, 1, 2});
+			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int((int *)&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT, "Unlaunch"}, {TSlot1LaunchMethod::EReboot, TSlot1LaunchMethod::EDirect, TSlot1LaunchMethod::EUnlaunch});
 		} else {
-			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int(&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT}, {0, 1});
+			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int((int *)&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT}, {TSlot1LaunchMethod::EReboot, TSlot1LaunchMethod::EDirect});
 		}
 	}
 
 	if (!sys().isRegularDS()) {
-		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundFreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
+		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool((bool *)&ms().soundFreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
 	}
 
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
@@ -1058,7 +1038,7 @@ int main(int argc, char **argv)
 	}
 
 	gamesPage
-		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1, Option::Bool(&ms().bootstrapFile), {STR_NIGHTLY, STR_RELEASE}, {true, false})
+		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1, Option::Bool((bool *)&ms().bootstrapFile), {STR_NIGHTLY, STR_RELEASE}, {true, false})
 		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().debug), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().logging), {STR_ON, STR_OFF}, {true, false});
 
@@ -1069,7 +1049,7 @@ int main(int argc, char **argv)
 		// Language
 		.option(STR_LANGUAGE,
 				STR_DESCRIPTION_LANGUAGE_1,
-				Option::Int(&ms().guiLanguage),
+				Option::Int((int *)&ms().guiLanguage),
 				{STR_SYSTEM,
 				 "Bahasa Indonesia",
 				 "Dansk",
@@ -1128,7 +1108,7 @@ int main(int argc, char **argv)
 				 TLanguage::ELangKorean})
 		.option(STR_GAMELANGUAGE,
 				STR_DESCRIPTION_GAMELANGUAGE_1,
-				Option::Int(&ms().gameLanguage),
+				Option::Int((int *)&ms().gameLanguage),
 				{STR_SYSTEM,
 				 "Deutsch",
 				 "English",
@@ -1149,7 +1129,7 @@ int main(int argc, char **argv)
 				 TLanguage::ELangKorean})
 		.option(STR_TITLELANGUAGE,
 				STR_DESCRIPTION_TITLELANGUAGE_1,
-				Option::Int(&ms().titleLanguage),
+				Option::Int((int *)&ms().titleLanguage),
 				{STR_SYSTEM,
 				 "Deutsch",
 				 "English",
@@ -1168,7 +1148,7 @@ int main(int argc, char **argv)
 		miscPage
 		.option(STR_GAMEREGION,
 				STR_DESCRIPTION_GAMEREGION,
-				Option::Int(&ms().gameRegion),
+				Option::Int((int *)&ms().gameRegion),
 				{STR_SYSTEM,
 				 STR_JAPAN,
 				 STR_USA,
@@ -1187,7 +1167,7 @@ int main(int argc, char **argv)
 		miscPage
 		.option(STR_GAMEREGION,
 				STR_DESCRIPTION_GAMEREGION,
-				Option::Int(&ms().gameRegion),
+				Option::Int((int *)&ms().gameRegion),
 				{STR_JAPAN,
 				 STR_USA,
 				 STR_EUROPE,
@@ -1282,17 +1262,17 @@ int main(int argc, char **argv)
 		miscPage
 			.option(STR_DSIWARE_EXPLOIT,
 				STR_DESCRIPTION_DSIWARE_EXPLOIT,
-				Option::Int(&ms().dsiWareExploit),
+				Option::Int((int *)&ms().dsiWareExploit),
 				{STR_NONE, "sudokuhax", "4swordshax", "fieldrunnerhax", "grtpwn", "ugopwn/Lenny", "UNO*pwn", "Memory Pit"},
-				{0, 1, 2, 3, 4, 5, 6, 7});
+				{TExploit::EExploitNone, TExploit::EExploitSudokuhax, TExploit::EExploit4Swordshax, TExploit::EExploitFieldrunnerhax, TExploit::EExploitGrtpwn, TExploit::EExploitUgopwn, TExploit::EExploitUnopwn, TExploit::EExploitMemoryPit});
 	}
 	if (sdFound()) {
 		miscPage
 			.option(STR_SYSREGION,
 				STR_DESCRIPTION_SYSREGION_1,
-				Option::Int(&ms().sysRegion),
+				Option::Int((int *)&ms().sysRegion),
 				{STR_AUTO_HIYA_ONLY, "JPN", "USA", "EUR", "AUS", "CHN", "KOR"},
-				{-1, 0, 1, 2, 3, 4, 5});
+				{TRegion::ERegionDefault, TRegion::ERegionJapan, TRegion::ERegionUSA, TRegion::ERegionEurope, TRegion::ERegionAustralia, TRegion::ERegionChina, TRegion::ERegionKorea});
 	}
 	if (sdFound() && ms().consoleModel < 2) {
 		miscPage

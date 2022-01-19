@@ -49,7 +49,7 @@ Helpful information:
 #include <nds/arm7/audio.h>
 #include <nds/arm7/codec.h>
 #include <string.h> // memcmp
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 #include "sdmmc.h"
 #include "i2c.h"
 #include "fat.h"

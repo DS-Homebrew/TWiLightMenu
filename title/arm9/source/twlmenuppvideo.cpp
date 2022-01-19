@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <maxmod9.h>
 
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
 #include "common/gl2d.h"
 #include "graphics/lodepng.h"
@@ -65,8 +65,6 @@ extern u16 frameBuffer[2][256*192];
 extern u16 frameBufferBot[2][256*192];
 extern bool doubleBuffer;
 extern bool doubleBufferTop;
-
-extern u16 convertToDsBmp(u16 val);
 
 extern bool fadeType;
 extern bool fadeColor;
@@ -488,7 +486,8 @@ mm_sound_effect bootJingle;
 void twlMenuVideo_topGraphicRender(void) {
 	glBegin2D();
 	{
-		glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
+		// glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
+		glColor(RGB15(31, 31, 31));
 		//glSprite(0, anniversaryTextYpos, GL_FLIP_NONE, anniversaryText);
 
 		glSprite(zoomingIconXpos[0], zoomingIconYpos[0], GL_FLIP_NONE, nesIcon);

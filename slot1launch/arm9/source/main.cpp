@@ -27,8 +27,8 @@
 
 #include "twlClockExcludeMap.h"
 #include "defaultSettings.h"
-#include "tonccpy.h"
-#include "inifile.h"
+#include "common/inifile.h"
+#include "common/tonccpy.h"
 #include "nds_card.h"
 #include "launch_engine.h"
 #include "crc.h"

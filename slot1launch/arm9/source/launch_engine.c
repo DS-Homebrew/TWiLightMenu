@@ -22,7 +22,7 @@
 #include "load_bin.h"
 #include "loadAlt_bin.h"
 #include "launch_engine.h"
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 
 #define LCDC_BANK_D (u16*)0x06860000
 

@@ -20,20 +20,21 @@
 #include "graphics/graphics.h"
 #include "graphics/ThemeTextures.h"
 #include "common/tonccpy.h"
+#include "fileBrowse.h"
 #include "language.h"
 #include "sound.h"
 #include "SwitchState.h"
 #include "cheat.h"
 #include "errorScreen.h"
-
 #include "gbaswitch.h"
-#include "nds_loader_arm9.h"
 
 #include "common/inifile.h"
 #include "common/flashcard.h"
-#include "common/dsimenusettings.h"
+#include "common/nds_loader_arm9.h"
+#include "common/twlmenusettings.h"
 #include "common/bootstrapsettings.h"
 #include "common/systemdetails.h"
+#include "defaultSettings.h"
 #include "myDSiMode.h"
 
 #include "twlClockExcludeMap.h"
@@ -48,8 +49,6 @@
 
 
 extern bool useTwlCfg;
-
-extern const char *bootstrapinipath;
 
 extern int currentBg;
 extern bool displayGameIcons;
@@ -389,9 +388,9 @@ void perGameSettings (std::string filename) {
 
 	keysSetRepeat(25, 5); // Slow down key repeat
 
-	if (ms().theme == 5) {
+	if (ms().theme == TWLSettings::EThemeHBL) {
 		displayGameIcons = false;
-	} else if (ms().theme == 4) {
+	} else if (ms().theme == TWLSettings::EThemeSaturn) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
@@ -645,9 +644,9 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "???");
 	}
-	if (ms().theme == 5) {
+	if (ms().theme == TWLSettings::EThemeHBL) {
 		dbox_showIcon = true;
-	} else if (ms().theme == 4) {
+	} else if (ms().theme == TWLSettings::EThemeSaturn) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 		dbox_showIcon = true;
 	} else {
@@ -1016,7 +1015,7 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 				}
-				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
+				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
 			} else if ((pressed & KEY_A) || (held & KEY_RIGHT)) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
@@ -1085,7 +1084,7 @@ void perGameSettings (std::string filename) {
 						}
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";
+						const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, romFolderNoSlash+"/"+filename);
 						bootstrapini.SaveIniFile(bootstrapinipath);
@@ -1119,7 +1118,7 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 				}
-				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
+				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
 			}
 
@@ -1133,16 +1132,16 @@ void perGameSettings (std::string filename) {
 			}
 		}
 		if ((pressed & KEY_X) && !isHomebrew[CURPOS] && showCheats) {
-			(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
+			(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
 			CheatCodelist codelist;
 			codelist.selectCheats(filename);
 		}
 	}
 	showdialogbox = false;
-	if (ms().theme == 5) {
+	if (ms().theme == TWLSettings::EThemeHBL) {
 		displayGameIcons = true;
 		dbox_showIcon = false;
-	} else if (ms().theme == 4) {
+	} else if (ms().theme == TWLSettings::EThemeSaturn) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
 			swiWaitForVBlank();

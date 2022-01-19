@@ -25,7 +25,8 @@
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
 #include "common/inifile.h"
-#include "flashcard.h"
+#include "common/flashcard.h"
+#include "common/twlmenusettings.h"
 
 // Graphic files
 #include "icon_manual.h"
@@ -47,11 +48,6 @@ extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
-extern int fps;
-extern bool macroMode;
-extern int colorMode;
-extern int blfLevel;
-extern int theme;
 int fadeDelay = 0;
 
 extern int colorRvalue;
@@ -72,13 +68,7 @@ extern int spawnedtitleboxes;
 
 extern bool startMenu;
 
-extern bool dsiWareList;
-extern int theme;
-extern int cursorPosition;
-extern int dsiWare_cursorPosition;
 extern int startMenu_cursorPosition;
-extern int pagenum;
-extern int dsiWarePageNum;
 
 bool manualIconNextImg = false;
 
@@ -136,7 +126,7 @@ void frameRateHandler(void) {
 
 	if (!renderFrame) {
 		frameDelay++;
-		switch (fps) {
+		switch (ms().fps) {
 			case 11:
 				renderFrame = (frameDelay == 5+frameDelayEven);
 				break;
@@ -171,7 +161,7 @@ void frameRateHandler(void) {
 							&& frameOf60fps != 58);
 				break;
 			default:
-				renderFrame = (frameDelay == 60/fps);
+				renderFrame = (frameDelay == 60/ms().fps);
 				break;
 		}
 	}
@@ -204,7 +194,7 @@ void initSubSprites(void)
 }
 
 u16 convertToDsBmp(u16 val) {
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		u16 newVal = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
 
 		u8 b,g,r,max,min;
@@ -222,13 +212,13 @@ u16 convertToDsBmp(u16 val) {
 		
 		newVal = 32768|(max<<10)|(max<<5)|(max);
 
-		b = ((newVal)>>10)&(31-6*blfLevel);
-		g = ((newVal)>>5)&(31-3*blfLevel);
+		b = ((newVal)>>10)&31;
+		g = ((newVal)>>5)&31;
 		r = (newVal)&31;
 
 		return 32768|(b<<10)|(g<<5)|(r);
 	} else {
-		return ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+		return ((val>>10)&31) | (val&(31<<5)) | ((val&31)<<10) | BIT(15);
 	}
 }
 
@@ -297,18 +287,19 @@ void vBlankHandler()
 			}
 		}
 		if (renderFrame) {
-			if (macroMode) {
-				SetBrightness(0, lcdSwapped ? (theme==6 ? -screenBrightness : screenBrightness) : (theme==6 ? -31 : 31));
-				SetBrightness(1, !lcdSwapped ? (theme==6 ? -screenBrightness : screenBrightness) : (theme==6 ? -31 : 31));
+			if (ms().macroMode) {
+				SetBrightness(0, lcdSwapped ? (ms().theme==6 ? -screenBrightness : screenBrightness) : (ms().theme==6 ? -31 : 31));
+				SetBrightness(1, !lcdSwapped ? (ms().theme==6 ? -screenBrightness : screenBrightness) : (ms().theme==6 ? -31 : 31));
 			} else {
-				if (controlBottomBright) SetBrightness(0, theme==6 ? -screenBrightness : screenBrightness);
-				if (controlTopBright) SetBrightness(1, theme==6 ? -screenBrightness : screenBrightness);
+				if (controlBottomBright) SetBrightness(0, ms().theme==6 ? -screenBrightness : screenBrightness);
+				if (controlTopBright) SetBrightness(1, ms().theme==6 ? -screenBrightness : screenBrightness);
 			}
 		}
 
-		glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
+		// glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
+		glColor(RGB15(31, 31, 31));
 
-	  if (theme != 6) {
+	  if (ms().theme != TWLSettings::EThemeGBC) {
 		if (startMenu) {
 			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, startBorderColor);
 			glSprite(232, 2, GL_FLIP_NONE, &manualIcon[manualIconNextImg]);
@@ -402,7 +393,7 @@ void graphicsInit()
 	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 	vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
-	if (macroMode && theme == 6) {
+	if (ms().macroMode && ms().theme == TWLSettings::EThemeGBC) {
 		lcdMainOnTop();
 		lcdSwapped = false;
 	} else {
@@ -441,18 +432,19 @@ void graphicsLoad()
 		loadSdRemovedImage();
 	}
 
-	BG_PALETTE_SUB[255] = RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel));
+	// BG_PALETTE_SUB[255] = RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel));
+	BG_PALETTE_SUB[255] = RGB15(31, 31, 31);
 
 	uint imageWidth, imageHeight;
 	std::vector<unsigned char> image;
 	bool alternatePixel = false;
 
-	if (theme == 6) {
+	if (ms().theme == TWLSettings::EThemeGBC) {
 		lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/gbcborder.png");
 
 		for(uint i=0; i<image.size()/4; i++) {
 			topImage[0][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorMode == 1) {
+			if (ms().colorMode == 1) {
 				topImage[0][0][i] = convertVramColorToGrayscale(topImage[0][0][i]);
 			}
 			topImage[0][1][i] = topImage[0][0][i];
@@ -488,39 +480,38 @@ void graphicsLoad()
 	} else
 	for (int startMenu = 0; startMenu < 2; startMenu++) {
 		image.clear();
-		extern std::string r4_theme;
-
-		char pathTop[256];
+		std::string themePath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TwilightMenu/r4menu/themes/" + ms().r4_theme;
+		std::string pathTop;
 		if (startMenu) {
-			FILE* file = fopen((r4_theme+"logo.png").c_str(), "rb");
+			FILE* file = fopen((themePath + "/logo.png").c_str(), "rb");
 			if(file)
-				snprintf(pathTop, sizeof(pathTop), (r4_theme+"logo.png").c_str());
+				pathTop = themePath + "/logo.png";
 			else
-				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/logo.png");
+				pathTop = "nitro:/themes/theme1/logo.png";
 			fclose(file);
 		} else {
-			FILE* file = fopen((r4_theme+"bckgrd_1.png").c_str(), "rb");
+			FILE* file = fopen((themePath + "/bckgrd_1.png").c_str(), "rb");
 			if(file)
-				snprintf(pathTop, sizeof(pathTop), (r4_theme+"bckgrd_1.png").c_str());
+				pathTop = themePath + "/bckgrd_1.png";
 			else
-				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/bckgrd_1.png");
+				pathTop = "nitro:/themes/theme1/bckgrd_1.png";
 			fclose(file);
 		}
 
-		char pathBottom[256];
+		std::string pathBottom;
 		if (startMenu) {
-			FILE* file = fopen((r4_theme+"icons.png").c_str(), "rb");
+			FILE* file = fopen((themePath + "/icons.png").c_str(), "rb");
 			if(file)
-				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"icons.png").c_str());
+				pathBottom = themePath + "/icons.png";
 			else
-				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/icons.png");
+				pathBottom = "nitro:/themes/theme1/icons.png";
 			fclose(file);
 		} else {
-			FILE* file = fopen((r4_theme+"bckgrd_2.png").c_str(), "rb");
+			FILE* file = fopen((themePath + "/bckgrd_2.png").c_str(), "rb");
 			if(file)
-				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"bckgrd_2.png").c_str());
+				pathBottom = themePath + "/bckgrd_2.png";
 			else
-				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/bckgrd_2.png");
+				pathBottom = "nitro:/themes/theme1/bckgrd_2.png";
 			fclose(file);
 		}
 
@@ -543,7 +534,7 @@ void graphicsLoad()
 				}
 			}
 			topImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorMode == 1) {
+			if (ms().colorMode == 1) {
 				topImage[startMenu][0][i] = convertVramColorToGrayscale(topImage[startMenu][0][i]);
 			}
 			if (alternatePixel) {
@@ -568,7 +559,7 @@ void graphicsLoad()
 				}
 			}
 			topImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorMode == 1) {
+			if (ms().colorMode == 1) {
 				topImage[startMenu][1][i] = convertVramColorToGrayscale(topImage[startMenu][1][i]);
 			}
 			if ((i % 256) == 255) alternatePixel = !alternatePixel;
@@ -595,7 +586,7 @@ void graphicsLoad()
 				}
 			}
 			bottomImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorMode == 1) {
+			if (ms().colorMode == 1) {
 				bottomImage[startMenu][0][i] = convertVramColorToGrayscale(bottomImage[startMenu][0][i]);
 			}
 			if (alternatePixel) {
@@ -620,7 +611,7 @@ void graphicsLoad()
 				}
 			}
 			bottomImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorMode == 1) {
+			if (ms().colorMode == 1) {
 				bottomImage[startMenu][1][i] = convertVramColorToGrayscale(bottomImage[startMenu][1][i]);
 			}
 			if ((i % 256) == 255) alternatePixel = !alternatePixel;
@@ -634,7 +625,7 @@ void graphicsLoad()
 	startBorderColor = RGB15(colorRvalue/8, colorGvalue/8, colorBvalue/8);
 	windowColorTop = RGB15(0, 0, 31);
 	windowColorBottom = RGB15(0, 0, 15);
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		startBorderColor = convertVramColorToGrayscale(startBorderColor);
 		windowColorTop = convertVramColorToGrayscale(windowColorTop);
 		windowColorBottom = convertVramColorToGrayscale(windowColorBottom);
@@ -683,7 +674,7 @@ void graphicsLoad()
 	}*/
 
 	u16* newPalette = (u16*)icon_manualPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
@@ -705,7 +696,7 @@ void graphicsLoad()
 							);
 
 	newPalette = (u16*)iconboxPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
@@ -727,7 +718,7 @@ void graphicsLoad()
 							);
 
 	newPalette = (u16*)wirelessiconsPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));

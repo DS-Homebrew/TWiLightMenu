@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <unistd.h>
-#include "flashcard.h"
+#include "common/flashcard.h"
 #include <gl2d.h>
 
 #include "ndsheaderbanner.h"

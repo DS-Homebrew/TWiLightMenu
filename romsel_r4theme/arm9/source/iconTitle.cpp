@@ -27,7 +27,10 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <gl2d.h>
-#include "flashcard.h"
+#include "common/bootstrapsettings.h"
+#include "common/flashcard.h"
+#include "common/systemdetails.h"
+#include "common/twlmenusettings.h"
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "language.h"
@@ -61,16 +64,6 @@
 #include "icon_pce.h"
 #include "icon_ws.h"
 #include "icon_ngp.h"
-
-extern bool arm7SCFGLocked;
-extern bool secondaryDevice;
-extern int b4dsMode;
-extern bool dsiWareToSD;
-
-extern int theme;
-extern int colorMode;
-extern int showGba;
-extern bool animateDsiIcons;
 
 extern u16 convertVramColorToGrayscale(u16 val);
 
@@ -133,7 +126,7 @@ void iconTitleInit()
 
 static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
-	if (theme == 6) {
+	if (ms().theme == TWLSettings::EThemeGBC) {
 		char textAdjusted[18];
 		snprintf(textAdjusted, 17, text1);
 		for (int i = 15; i <= 17; i++) {
@@ -207,7 +200,7 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2
 		glDeleteTextures(1, &iconTexID[i]);
 	}
 	for (int i = 0; i < loadIcon_loopTimes; i++) {
-		if (colorMode == 1) {
+		if (ms().colorMode == 1) {
 			for (int i2 = 0; i2 < 16; i2++) {
 				*(palSrc+i2+(i*16)) = convertVramColorToGrayscale(*(palSrc+i2+(i*16)));
 			}
@@ -258,7 +251,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &folderTexID);
 
 	newPalette = (u16*)icon_folderPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -282,7 +275,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &plgTexID);
 
 	newPalette = (u16*)icon_plgPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -304,9 +297,9 @@ void loadConsoleIcons()
 	// GBA
 	glDeleteTextures(1, &gbaTexID);
 	
-	if (showGba == 2) {
+	if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
 		newPalette = (u16*)icon_gbaPal;
-		if (colorMode == 1) {
+		if (ms().colorMode == 1) {
 			for (int i2 = 0; i2 < 16; i2++) {
 				*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 			}
@@ -326,7 +319,7 @@ void loadConsoleIcons()
 					);
 	} else {
 		newPalette = (u16*)icon_gbamodePal;
-		if (colorMode == 1) {
+		if (ms().colorMode == 1) {
 			for (int i2 = 0; i2 < 16; i2++) {
 				*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 			}
@@ -350,7 +343,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &gbTexID);
 	
 	newPalette = (u16*)icon_gbPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -373,7 +366,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &nesTexID);
 
 	newPalette = (u16*)icon_nesPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -396,7 +389,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &sgTexID);
 	
 	newPalette = (u16*)icon_sgPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -420,7 +413,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &smsTexID);
 	
 	newPalette = (u16*)icon_smsPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -443,7 +436,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &ggTexID);
 	
 	newPalette = (u16*)icon_ggPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -466,7 +459,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &mdTexID);
 	
 	newPalette = (u16*)icon_mdPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -489,7 +482,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &snesTexID);
 	
 	newPalette = (u16*)icon_snesPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -512,7 +505,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &a26TexID);
 	
 	newPalette = (u16*)icon_a26Pal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -536,7 +529,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &colTexID);
 	
 	newPalette = (u16*)icon_colPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -560,7 +553,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &m5TexID);
 	
 	newPalette = (u16*)icon_m5Pal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -584,7 +577,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &intTexID);
 	
 	newPalette = (u16*)icon_intPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -608,7 +601,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &pceTexID);
 	
 	newPalette = (u16*)icon_pcePal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -632,7 +625,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &wsTexID);
 	
 	newPalette = (u16*)icon_wsPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -656,7 +649,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &ngpTexID);
 	
 	newPalette = (u16*)icon_ngpPal;
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
@@ -829,7 +822,7 @@ void getGameInfo(bool isDir, const char* name)
 			}
 		}
 
-		bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && arm7SCFGLocked);
+		bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 
 		romVersion = ndsHeader.romversion;
 		romUnitCode = ndsHeader.unitCode;
@@ -865,7 +858,7 @@ void getGameInfo(bool isDir, const char* name)
 			isDSiWare = true; // Is a DSiWare game
 		}
 
-		if (isHomebrew && !secondaryDevice) {
+		if (isHomebrew && !ms().secondaryDevice) {
 			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
 			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
 			|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058
@@ -876,12 +869,12 @@ void getGameInfo(bool isDir, const char* name)
 
 		if (!isHomebrew) {
 			// Check if ROM needs a donor ROM
-			if (isDSiMode() && (a7mbk6 == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) || (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000 && (REG_MBK9 & 0x00FFFFFF) != 0x00FFFF0F)) && arm7SCFGLocked) {
+			if (isDSiMode() && (a7mbk6 == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) || (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000 && (REG_MBK9 & 0x00FFFFFF) != 0x00FFFF0F)) && sys().arm7SCFGLocked()) {
 				requiresDonorRom = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
 				if (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000) {
 					requiresDonorRom += 100;
 				}
-			} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6 == 0x080037C0 && secondaryDevice && (!dsiFeatures() || b4dsMode)) {
+			} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6 == 0x080037C0 && ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode)) {
 				requiresDonorRom = 51; // DSi-Enhanced ROM required
 			}
 		}
@@ -912,7 +905,7 @@ void getGameInfo(bool isDir, const char* name)
 		fclose(fp);
 
 		// banner sequence
-		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if(ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
 			if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
 				grabBannerSequence();
@@ -924,7 +917,7 @@ void getGameInfo(bool isDir, const char* name)
 
 void iconUpdate(bool isDir, const char* name)
 {
-	if (theme == 6) {
+	if (ms().theme == TWLSettings::EThemeGBC) {
 		return;
 	} else {
 		clearText(false);
@@ -1087,7 +1080,7 @@ void iconUpdate(bool isDir, const char* name)
 
 void titleUpdate(bool isDir, const char* name)
 {
-	if (theme != 6) {
+	if (ms().theme != TWLSettings::EThemeGBC) {
 		clearText(false);
 	}
 
@@ -1246,9 +1239,9 @@ void titleUpdate(bool isDir, const char* name)
 
 		int currentLang = 0;
 		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
-			currentLang = setGameLanguage;
+			currentLang = ms().getGameLanguage();
 		} else {
-			currentLang = setTitleLanguage;
+			currentLang = ms().getTitleLanguage();
 		}
 		while (ndsBanner.titles[currentLang][0] == 0 || (ndsBanner.titles[currentLang][0] == 0x20 && ndsBanner.titles[currentLang][1] == 0)) {
 			if (currentLang == 0) break;

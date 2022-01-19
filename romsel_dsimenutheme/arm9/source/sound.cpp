@@ -2,7 +2,7 @@
 #include "tool/adpcm-xq.h"
 
 #include "graphics/themefilenames.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/flashcard.h"
 #include "streamingaudio.h"
 #include "string.h"
@@ -59,7 +59,7 @@ SoundControl::SoundControl()
 
 	FILE* soundbank_file;
 
-	if (ms().theme == 4) {
+	if (ms().theme == TWLSettings::EThemeSaturn) {
 		soundbank_file = fopen(std::string(TFN_SATURN_SOUND_EFFECTBANK).c_str(), "rb");
 	} else {
 		switch(ms().dsiMusic) {
@@ -156,7 +156,7 @@ SoundControl::SoundControl()
 	};
 
 
-	if (ms().dsiMusic == 0 || ms().theme == 4) {
+	if (ms().dsiMusic == 0 || ms().theme == TWLSettings::EThemeSaturn) {
 		return;
 	}
 
@@ -170,7 +170,7 @@ SoundControl::SoundControl()
 	stream.sampling_rate = 16000;	 		// 16000Hz
 	stream.format = MM_STREAM_16BIT_MONO;  // select format
 
-	if (ms().theme == 4) {
+	if (ms().theme == TWLSettings::EThemeSaturn) {
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 	} else {
 		switch(ms().dsiMusic) {

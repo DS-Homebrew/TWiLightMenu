@@ -27,7 +27,7 @@
 
 #include <unistd.h>
 
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 #include "load_bin.h"
 
 #ifndef _NO_BOOTSTUB_

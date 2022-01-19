@@ -2,7 +2,7 @@
 #include <nds.h>
 #include <maxmod9.h>
 
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
@@ -25,7 +25,7 @@ bool cartInserted;
 
 void bootSplashDSi(void) {
 	u16 whiteCol = 0xFFFF;
-	whiteCol = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
+	// whiteCol = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
 	for (int i = 0; i < 256*256; i++) {
 		BG_GFX[i] = whiteCol;
 		BG_GFX_SUB[i] = whiteCol;

@@ -1,11 +1,10 @@
+#include "common/nds_loader_arm9.h"
 #include "common/tonccpy.h"
+#include "common/twlmenusettings.h"
 #include "graphics/lodepng.h"
 #include "gbaswitch.h"
-#include "nds_loader_arm9.h"
 
 extern u16 bmpImageBuffer[256*192];
-
-extern std::string gbaBorder;
 
 void loadGbaBorder(const char* filename) {
 	uint imageWidth, imageHeight;
@@ -91,7 +90,7 @@ void gbaSwitch(void) {
 	toncset((void*)BG_BMP_RAM(8),0,0x18000);
 
 	char borderPath[256];
-	sprintf(borderPath, "/_nds/TWiLightMenu/gbaborders/%s", gbaBorder.c_str());
+	sprintf(borderPath, "/_nds/TWiLightMenu/gbaborders/%s", ms().gbaBorder.c_str());
 	loadGbaBorder((access(borderPath, F_OK)==0) ? borderPath : "nitro:/graphics/gbaborder.png");
 
 	// Switch to GBA mode

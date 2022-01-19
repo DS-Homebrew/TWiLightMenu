@@ -20,9 +20,8 @@
 
 #include <nds/arm9/dldi.h>
 #include "cheat.h"
-#include "flashcard.h"
-#include "tool/dbgtool.h"
-#include "tool/stringtool.h"
+#include "common/flashcard.h"
+#include "common/stringtool.h"
 #include <algorithm>
 
 #include "ndsheaderbanner.h"
@@ -31,9 +30,9 @@
 #include "graphics/fontHandler.h"
 #include "errorScreen.h"
 #include "common/tonccpy.h"
+#include "common/twlmenusettings.h"
 
 extern int dialogboxHeight;
-extern bool useBootstrap;
 
 CheatCodelist::~CheatCodelist(void) {}
 
@@ -62,8 +61,8 @@ bool CheatCodelist::parse(const std::string& aFileName)
   u32 romcrc32,gamecode;
   if(romData(aFileName,gamecode,romcrc32))
   {
-    const char* usrcheatPath = (sdFound() || !secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
-	if (secondaryDevice && !useBootstrap) {
+    const char* usrcheatPath = (sdFound() || !ms().secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
+	if (ms().secondaryDevice && !ms().useBootstrap) {
 		if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
@@ -118,7 +117,7 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
 
 bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
 {
-  dbg_printf("%x, %x\n",gamecode,crc32);
+  // dbg_printf("%x, %x\n",gamecode,crc32);
 
   _data.clear();
 
@@ -126,7 +125,7 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
   if(!searchCheatData(aDat,gamecode,crc32,dataPos,dataSize)) return false;
   fseek(aDat,dataPos,SEEK_SET);
 
-  dbg_printf("record found: %d\n",dataSize);
+  // dbg_printf("record found: %d\n",dataSize);
 
   char* buffer=(char*)malloc(dataSize);
   if(!buffer) return false;
@@ -512,8 +511,8 @@ static void updateDB(u8 value,u32 offset,FILE* db)
 
 void CheatCodelist::onGenerate(void)
 {
-    const char* usrcheatPath = (sdFound() || !secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
-	if (secondaryDevice && !useBootstrap) {
+  const char* usrcheatPath = (sdFound() || !ms().secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
+	if (ms().secondaryDevice && !ms().useBootstrap) {
 		if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {

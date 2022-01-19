@@ -1,5 +1,5 @@
 #include "graphics/lodepng.h"
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 
