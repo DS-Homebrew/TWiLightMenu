@@ -216,7 +216,7 @@ void dontShowRAMLimitMsgAgain (std::string filename) {
 }
 
 bool checkIfDSiMode (std::string filename) {
-	if (secondaryDevice && (!isDSiMode() || !useBootstrap)) {
+	if (secondaryDevice && (!dsiFeatures() || !useBootstrap)) {
 		return false;
 	}
 
