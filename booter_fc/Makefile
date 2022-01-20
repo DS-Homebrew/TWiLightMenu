@@ -210,7 +210,7 @@ autoboot:
 
 	#### M3 DS Real
 	dlditool "flashcart_specifics/DLDI/M3-DS_(SD_Card).dldi" akmenu4.nds
-	./flashcart_specifics/dsbize/dsbize akmenu4.nds menu.xx 0x12
+	dsbize akmenu4.nds menu.xx 0x12
 	mv menu.xx "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SYSTEM/menu.xx"
 	cp akmenu4.nds "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SRESET.DAT"
 

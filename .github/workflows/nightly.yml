@@ -31,6 +31,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install p7zip-full python -y
+
+          sudo gcc booter_fc/flashcart_specifics/dsbize/dsbize.c -o /usr/local/bin/dsbize
       - name: Get manual pages
         run: |
           cd manual/nitrofiles
