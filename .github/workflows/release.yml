@@ -24,7 +24,9 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get update
-          sudo apt-get install jq p7zip-full python -y
+          sudo apt-get install jq p7zip-full python gcc -y
+
+          sudo gcc booter_fc/flashcart_specifics/dsbize/dsbize.c -o /usr/local/bin/dsbize
       - name: Get manual pages
         run: |
           cd manual/nitrofiles
