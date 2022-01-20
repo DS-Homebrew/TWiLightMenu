@@ -48,7 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 51)
+// B4DS DSiWare Whitelist (Total: 52)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K99", // 99Bullets
@@ -66,6 +66,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KF3", // Dairojo! Samurai Defenders
 	"KDV", // Dark Void Zero
 	"KWT", // GO Series: Defense Wars
+	"KHE", // DotMan
 	"KDL", // Dragon's Lair
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
 	"B88", // DS WiFi Settings
