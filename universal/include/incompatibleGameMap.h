@@ -48,7 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 52)
+// B4DS DSiWare Whitelist (Total: 53)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K99", // 99Bullets
@@ -72,6 +72,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"B88", // DS WiFi Settings
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KFP", // Flipper
+	"KFG", // Frogger Returns
 	"KGB", // Game & Watch: Ball
 	"KGC", // Game & Watch: Chef
 	"KGD", // Game & Watch: Donkey Kong Jr.
