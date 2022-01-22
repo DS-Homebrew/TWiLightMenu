@@ -48,9 +48,10 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 53)
+// B4DS DSiWare Whitelist (Total: 54)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
+	"K95", // 1950s Lawn Mower Kids
 	"K99", // 99Bullets
 	"K9W", // 99Moves
 	"KQK", // Ace Mathician
