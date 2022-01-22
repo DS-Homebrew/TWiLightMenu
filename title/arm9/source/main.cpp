@@ -394,7 +394,7 @@ void lastRunROM()
 		fclose(f_nds_file);
 
 		if (ms().useBootstrap || !ms().previousUsedDevice || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
-		|| ((game_TID[0] == 'K' || game_TID[0] == 'Z') && unitCode > 0))
+		|| (game_TID[0] == 'D' && unitCode == 3))
 		{
 			std::string savepath;
 
