@@ -861,11 +861,7 @@ void getGameInfo(bool isDir, const char* name)
 		} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
 		 || (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)) {
 			isHomebrew = true; // Homebrew is old (requires a DLDI driver to read from SD)
-		} else if ((ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
-		{ if (ndsHeader.unitCode != 0)
+		} else if (ndsHeader.unitCode != 0 && (ndsHeader.accessControl & BIT(4))) {
 			isDSiWare = true; // Is a DSiWare game
 		}
 
