@@ -892,8 +892,8 @@ int main(int argc, char **argv)
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int((int *)&ms().dsiMusic),
-				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, STR_THEME, STR_CLASSIC, "HBL"},
-				{TDSiMusic::EMusicOff, TDSiMusic::EMusicRegular, TDSiMusic::EMusicShop, TDSiMusic::EMusicTheme, TDSiMusic::EMusicClassic, TDSiMusic::EMusicHBL})
+				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, "HBL", STR_THEME},
+				{TDSiMusic::EMusicOff, TDSiMusic::EMusicRegular, TDSiMusic::EMusicShop, TDSiMusic::EMusicHBL, TDSiMusic::EMusicTheme})
 		.option(STR_SETTINGSMUSIC,
 				STR_DESCRIPTION_SETTINGSMUSIC,
 				Option::Int((int *)&ms().settingsMusic),

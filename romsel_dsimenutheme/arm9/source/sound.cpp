@@ -194,16 +194,7 @@ SoundControl::SoundControl()
 				stream_source = fopen(loopPath.c_str(), "rb");
 				loopableMusic = true;
 				break; }
-			case 4: {
-				std::string musicPath = (devicePath+TFN_CLASSIC_SOUND_BG_CACHE);
-				if (access(musicPath.c_str(), F_OK) != 0) {
-					if (adpcm_main(std::string(TFN_CLASSIC_SOUND_BG).c_str(), musicPath.c_str(), false) == -1) {
-						remove(musicPath.c_str());
-					}
-				}
-				stream.sampling_rate = 44100;	 		// 44100Hz
-				stream_source = fopen(musicPath.c_str(), "rb");
-				break; }
+			case 4:
 			case 2: {
 				std::string startPath = (devicePath+TFN_SHOP_START_SOUND_BG_CACHE);
 				if (access(startPath.c_str(), F_OK) != 0) {
