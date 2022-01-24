@@ -744,6 +744,7 @@ int main(int argc, char **argv)
 //#pragma region init
 
 	sys().initFilesystem("/_nds/TWiLightMenu/settings.srldr");
+	sys().initArm7RegStatuses();
 	ms();
 	defaultExceptionHandler();
 

@@ -10,8 +10,8 @@
 #include "myDSiMode.h"
 #include "TextEntry.h"
 
-FontGraphic *smallFont;
-FontGraphic *largeFont;
+FontGraphic *smallFont = nullptr;
+FontGraphic *largeFont = nullptr;
 
 std::list<TextEntry> topText, bottomText;
 
@@ -40,6 +40,18 @@ void fontInit() {
 	};
 	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
+}
+
+void unloadFont() {
+	if(largeFont) {
+		delete largeFont;
+		largeFont = nullptr;
+	}
+	
+	if(smallFont) {
+		delete smallFont;
+		smallFont = nullptr;
+	}
 }
 
 static std::list<TextEntry> &getTextQueue(bool top) {

@@ -84,11 +84,6 @@ char launcherPath[256];
 static char pictochatPath[256];
 static char dlplayPath[256];
 
-bool dsiWramAccess = false;
-bool arm7SCFGLocked = false;
-bool isRegularDS = true;
-bool isDSLite = false;
-
 extern bool showdialogbox;
 
 bool extension(const std::string& filename, const char* ext) {
@@ -142,10 +137,6 @@ bool pictochatFound = false;
 bool dlplayFound = false;
 bool pictochatReboot = false;
 bool dlplayReboot = false;
-
-bool isDSPhat(void) {
-	return (isRegularDS && !isDSLite);
-}
 
 bool useBackend = false;
 
@@ -413,7 +404,7 @@ void SetWidescreen(const char *filename) {
 
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
-	if ((isDSiMode() && arm7SCFGLocked) || ms().consoleModel < 2
+	if ((isDSiMode() && sys().arm7SCFGLocked()) || ms().consoleModel < 2
 	|| !useWidescreen || ms().macroMode) {
 		return;
 	}
@@ -914,7 +905,7 @@ void printLastPlayedText(int num) {
 void refreshNdsCard() {
 	if (cardRefreshed) return;
 
-	if (arm7SCFGLocked && ms().showBoxArt) {
+	if (sys().arm7SCFGLocked() && ms().showBoxArt) {
 		loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 	} else if ((cardInit(true) == 0) && ms().showBoxArt) {
 		char game_TID[5] = {0};
@@ -942,7 +933,7 @@ void refreshNdsCard() {
 void printNdsCartBannerText() {
 	if (cardEjected) {
 		printSmall(false, BOX_PX, iconYpos[0] + BOX_PY - (calcSmallFontHeight(STR_NO_GAME_CARD) / 2), STR_NO_GAME_CARD, Alignment::center);
-	} else if (arm7SCFGLocked) {
+	} else if (sys().arm7SCFGLocked()) {
 		printSmall(false, BOX_PX, iconYpos[0] + BOX_PY - (calcSmallFontHeight(STR_START_GAME_CARD) / 2), STR_START_GAME_CARD, Alignment::center);
 	} else {
 		titleUpdate(1, true, false, "slot1");
@@ -950,7 +941,7 @@ void printNdsCartBannerText() {
 }
 
 void printGbaBannerText() {
-	const std::string &str = isRegularDS ? (((u8*)GBAROM)[0xB2] == 0x96 ? STR_START_GBA_GAME : (*(vu16*)(0x08240000) == 1 ? STR_DS_OPTION_PAK : STR_NO_GAME_PAK)) : STR_FEATURE_UNAVAILABLE;
+	const std::string &str = sys().isRegularDS() ? (((u8*)GBAROM)[0xB2] == 0x96 ? STR_START_GBA_GAME : (*(vu16*)(0x08240000) == 1 ? STR_DS_OPTION_PAK : STR_NO_GAME_PAK)) : STR_FEATURE_UNAVAILABLE;
 	printSmall(false, BOX_PY, iconYpos[3] + BOX_PY - (calcSmallFontHeight(str) / 2), str, Alignment::center);
 }
 
@@ -963,6 +954,7 @@ int main(int argc, char **argv) {
 	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	sys().initFilesystem("/_nds/TWiLightMenu/mainmenu.srldr");
+	sys().initArm7RegStatuses();
 
 	if (!sys().fatInitOk()) {
 		SetBrightness(0, 0);
@@ -985,20 +977,6 @@ int main(int argc, char **argv) {
 
 	std::string filename[2];
 
-	if (isDSiMode()) {
-		u32 wordBak = *(vu32*)0x03700000;
-		*(vu32*)0x03700000 = 0x414C5253;
-		dsiWramAccess = *(vu32*)0x03700000 == 0x414C5253;
-		*(vu32*)0x03700000 = wordBak;
-	}
-
-	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
-	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
-	isDSLite = fifoGetValue32(FIFO_USER_04);
-	fifoSendValue32(FIFO_USER_07, 0);
-
 	ms().loadSettings();
 	bs().loadSettings();
 	//widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
@@ -1006,7 +984,7 @@ int main(int argc, char **argv) {
 	snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
 	pictochatFound = (access(pictochatPath, F_OK) == 0);
 
-	if (isDSiMode() && arm7SCFGLocked) {
+	if (isDSiMode() && sys().arm7SCFGLocked()) {
 		if (ms().consoleModel < 2 && !pictochatFound) {
 			pictochatFound = true;
 			pictochatReboot = true;
@@ -1634,7 +1612,7 @@ int main(int argc, char **argv) {
 
 							if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
 								directCardLaunch();
-							} else if (ms().slot1LaunchMethod == 0 || arm7SCFGLocked) {
+							} else if (ms().slot1LaunchMethod == 0 || sys().arm7SCFGLocked()) {
 								dsCardLaunch();
 							} else if (ms().slot1LaunchMethod == 2) {
 								unlaunchRomBoot("cart:");
@@ -1830,7 +1808,7 @@ int main(int argc, char **argv) {
 							}
 						  }
 						  ms().secondaryDevice = false;
-						} else if (isRegularDS && ((u8*)GBAROM)[0xB2] == 0x96) {
+						} else if (sys().isRegularDS() && ((u8*)GBAROM)[0xB2] == 0x96) {
 							// Switch to GBA mode
 							showCursor = false;
 							fadeType = false;	// Fade to white
@@ -1899,7 +1877,7 @@ int main(int argc, char **argv) {
 				loadROMselect();
 			}
 
-			if ((pressed & KEY_X) && !isRegularDS) {
+			if ((pressed & KEY_X) && !sys().isRegularDS()) {
 				mmEffectEx(&snd_back);
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 50; i++) swiWaitForVBlank();
@@ -2109,7 +2087,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (ms().dsiWareBooter || (ms().secondaryDevice && bs().b4dsMode) || arm7SCFGLocked || ms().consoleModel > 0) {
+				if (ms().dsiWareBooter || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 					CheatCodelist codelist;
 					u32 gameCode, crc32;
 
@@ -2148,7 +2126,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if ((ms().dsiWareBooter || (ms().secondaryDevice && bs().b4dsMode) || arm7SCFGLocked || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
+				if ((ms().dsiWareBooter || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename[ms().secondaryDevice]);
 
@@ -2184,10 +2162,10 @@ int main(int argc, char **argv) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", 0);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 						(ms().forceSleepPatch
-					|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !isRegularDS)
-					|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !isRegularDS)
-					|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !isRegularDS)
-					|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS))
+					|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !sys().isRegularDS())
+					|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !sys().isRegularDS())
+					|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
+					|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 					);
 					bootstrapini.SaveIniFile(bootstrapinipath);
 
@@ -2387,10 +2365,10 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 							(ms().forceSleepPatch
-						|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !isRegularDS)
-						|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !isRegularDS)
-						|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !isRegularDS)
-						|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS))
+						|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !sys().isRegularDS())
+						|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !sys().isRegularDS())
+						|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
+						|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 						);
 						bootstrapini.SaveIniFile( bootstrapinipath );
 
@@ -2748,7 +2726,7 @@ int main(int argc, char **argv) {
 						useNDSB = true;
 
 						const char* gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-						if (isDSiMode() && arm7SCFGLocked && !dsiWramAccess) {
+						if (isDSiMode() && sys().arm7SCFGLocked() && !sys().dsiWramAccess()) {
 							gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
 						}
 
@@ -2845,7 +2823,7 @@ int main(int argc, char **argv) {
 						boostVram = true;
 					}
 				} else if (extension(filename[ms().secondaryDevice], ".gen")) {
-					bool usePicoDrive = ((isDSiMode() && sdFound() && arm7SCFGLocked)
+					bool usePicoDrive = ((isDSiMode() && sdFound() && sys().arm7SCFGLocked())
 						|| ms().mdEmulator==2 || (ms().mdEmulator==3 && getFileSize(filename[ms().secondaryDevice].c_str()) > 0x300000));
 					ms().launchType[ms().secondaryDevice] = (usePicoDrive ? TWLSettings::EPicoDriveTWLLaunch : TWLSettings::ESDFlashcardLaunch);
 

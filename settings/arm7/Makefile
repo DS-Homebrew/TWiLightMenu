@@ -21,7 +21,7 @@ UNIVERSAL	:=	../../universal
 TARGET		:=	settings
 BUILD		:=	build
 SOURCES		:=	source $(UNIVERSAL)/arm7/source $(UNIVERSAL)/sdmmc/arm7/source
-INCLUDES	:=	include build $(UNIVERSAL)/arm7/include $(UNIVERSAL)/sdmmc/arm7/include
+INCLUDES	:=	include build $(UNIVERSAL)/include $(UNIVERSAL)/arm7/include $(UNIVERSAL)/sdmmc/arm7/include
 
 #---------------------------------------------------------------------------------
 # options for code generation

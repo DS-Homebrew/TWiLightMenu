@@ -3,6 +3,7 @@
 #include "FontGraphic.h"
 
 void fontInit();
+void unloadFont();
 
 void updateText(bool top);
 void clearText(bool top);

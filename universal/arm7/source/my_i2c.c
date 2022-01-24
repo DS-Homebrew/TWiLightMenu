@@ -101,11 +101,11 @@ u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data) {
 			REG_I2CDATA = data;
 			my_i2cStop(0);
 			if(my_i2cGetResult() != 0) return 1;
-        }
+		}
 		REG_I2CCNT = 0xC5;
-    }
+	}
 
-    return 0;
+	return 0;
 }
 
 //---------------------------------------------------------------------------------

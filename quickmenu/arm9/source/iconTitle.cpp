@@ -62,8 +62,6 @@
 
 extern bool extension(const std::string& filename, const char* ext);
 
-extern bool arm7SCFGLocked;
-
 extern u16 convertVramColorToGrayscale(u16 val);
 
 static int iconTexID[2][8];

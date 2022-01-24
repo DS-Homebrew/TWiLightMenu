@@ -232,7 +232,7 @@ void unlaunchRomBoot(std::string_view rom) {
 	}
 
 	DC_FlushAll();						// Make reboot not fail
-	fifoSendValue32(FIFO_USER_08, 1);	// Reboot into DSiWare title, booted via Unlaunch
+	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
 	stop();
 }
 
@@ -245,7 +245,7 @@ void ntrStartSdGame(void) {
 	} else {
 		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 		DC_FlushAll();						// Make reboot not fail
-		fifoSendValue32(FIFO_USER_08, 1);
+		fifoSendValue32(FIFO_USER_02, 1);
 		stop();
 	}
 }
@@ -264,7 +264,7 @@ void dsCardLaunch() {
 	unlaunchSetHiyaBoot();
 
 	DC_FlushAll();						// Make reboot not fail
-	fifoSendValue32(FIFO_USER_08, 1); // Reboot into DSiWare title, booted via Launcher
+	fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 	stop();
 }
 
@@ -367,7 +367,7 @@ void lastRunROM()
 				if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 					tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 					DC_FlushAll();
-					fifoSendValue32(FIFO_USER_08, 1);
+					fifoSendValue32(FIFO_USER_02, 1);
 					stop();
 				}
 			}
@@ -418,7 +418,7 @@ void lastRunROM()
 					if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 						tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 						DC_FlushAll();
-						fifoSendValue32(FIFO_USER_08, 1);
+						fifoSendValue32(FIFO_USER_02, 1);
 						stop();
 					}
 				}
@@ -703,7 +703,7 @@ void lastRunROM()
 			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 				tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 				DC_FlushAll();
-				fifoSendValue32(FIFO_USER_08, 1);
+				fifoSendValue32(FIFO_USER_02, 1);
 				stop();
 			}
 		}
@@ -898,7 +898,7 @@ void lastRunROM()
 					if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 						tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 						DC_FlushAll();
-						fifoSendValue32(FIFO_USER_08, 1);
+						fifoSendValue32(FIFO_USER_02, 1);
 						stop();
 					}
 				}
@@ -1634,6 +1634,7 @@ int main(int argc, char **argv)
 
 	defaultExceptionHandler();
 	sys().initFilesystem("/_nds/TWiLightMenu/main.srldr");
+	sys().initArm7RegStatuses();
 	ms();
 
 	if (!sys().fatInitOk())
@@ -1898,6 +1899,11 @@ int main(int argc, char **argv)
 		if (!(keysHeld() & KEY_SELECT)) {
 			flashcardInit();
 		}
+	}
+
+	if(graphicsInited) {
+		unloadFont();
+		graphicsInited = false;
 	}
 
 	bool fcFound = flashcardFound();
