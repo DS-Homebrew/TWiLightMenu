@@ -954,6 +954,7 @@ int main(int argc, char **argv) {
 	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	sys().initFilesystem("/_nds/TWiLightMenu/mainmenu.srldr");
+	sys().initArm7RegStatuses();
 
 	if (!sys().fatInitOk()) {
 		SetBrightness(0, 0);

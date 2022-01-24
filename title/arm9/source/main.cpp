@@ -1634,6 +1634,7 @@ int main(int argc, char **argv)
 
 	defaultExceptionHandler();
 	sys().initFilesystem("/_nds/TWiLightMenu/main.srldr");
+	sys().initArm7RegStatuses();
 	ms();
 
 	if (!sys().fatInitOk())

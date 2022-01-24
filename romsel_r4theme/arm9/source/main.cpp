@@ -898,6 +898,7 @@ int main(int argc, char **argv) {
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
 	sys().initFilesystem("/_nds/TWiLightMenu/r4menu.srldr");
+	sys().initArm7RegStatuses();
 
 	if (!sys().fatInitOk()) {
 		SetBrightness(0, 0);
