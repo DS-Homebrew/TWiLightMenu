@@ -1901,6 +1901,11 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if(graphicsInited) {
+		unloadFont();
+		graphicsInited = false;
+	}
+
 	bool fcFound = flashcardFound();
 
 	if (ms().launchType[true] == Launch::EDSiWareLaunch) {
