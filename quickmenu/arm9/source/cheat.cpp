@@ -19,8 +19,7 @@
 */
 
 #include "cheat.h"
-#include "tool/dbgtool.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include <algorithm>
 
 CheatCodelist::~CheatCodelist(void) {}
@@ -96,7 +95,7 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
 
 bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
 {
-  dbg_printf("%x, %x\n",gamecode,crc32);
+  // dbg_printf("%x, %x\n",gamecode,crc32);
 
   _data.clear();
 
@@ -104,7 +103,7 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
   if(!searchCheatData(aDat,gamecode,crc32,dataPos,dataSize)) return false;
   fseek(aDat,dataPos,SEEK_SET);
 
-  dbg_printf("record found: %d\n",dataSize);
+  // dbg_printf("record found: %d\n",dataSize);
 
   char* buffer=(char*)malloc(dataSize);
   if(!buffer) return false;

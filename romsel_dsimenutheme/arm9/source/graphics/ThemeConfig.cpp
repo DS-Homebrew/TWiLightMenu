@@ -1,7 +1,7 @@
 #include "ThemeConfig.h"
 #include "ThemeTextures.h"
 #include "themefilenames.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/singleton.h"
 #include "common/inifile.h"
 
@@ -40,7 +40,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 		_titleboxTextLarge = false;
 	}
 
-	if (ms().theme == 4 || ms().theme == 5) {
+	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
 		_renderPhoto = false;
 	}
 }

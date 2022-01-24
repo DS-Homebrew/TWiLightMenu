@@ -24,13 +24,15 @@
 #include "SwitchState.h"
 #include "cheat.h"
 #include "errorScreen.h"
-
 #include "gbaswitch.h"
-#include "nds_loader_arm9.h"
 
 #include "myDSiMode.h"
+#include "common/bootstrapsettings.h"
 #include "common/inifile.h"
-#include "flashcard.h"
+#include "common/flashcard.h"
+#include "common/nds_loader_arm9.h"
+#include "common/systemdetails.h"
+#include "common/twlmenusettings.h"
 
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
@@ -44,27 +46,12 @@
 
 extern bool useTwlCfg;
 
-extern const char *bootstrapinipath;
-
-extern bool arm7SCFGLocked;
-extern bool isRegularDS;
-extern int consoleModel;
-extern bool macroMode;
 extern bool lcdSwapped;
-
-extern bool useBootstrap;
-extern bool dsiWareBooter;
-extern int b4dsMode;
-extern int theme;
-
-extern std::string romfolder[2];
 
 const char* SDKnumbertext;
 
 extern bool showdialogbox;
 extern int dialogboxHeight;
-
-extern int ignoreBlacklists;
 
 bool perGameSettingsChanged = false;
 
@@ -106,9 +93,9 @@ bool blacklisted_asyncCardRead = false;
 bool whitelisted_swiHaltHook = false;
 
 void loadPerGameSettings (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
-	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", (isModernHomebrew || previousUsedDevice));	// Homebrew only
+	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", (isModernHomebrew || ms().previousUsedDevice));	// Homebrew only
 	if (isHomebrew) {
 		perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew ? true : false));
 	} else {
@@ -130,31 +117,31 @@ void loadPerGameSettings (std::string filename) {
 }
 
 void savePerGameSettings (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	if (isHomebrew) {
-		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		if (isModernHomebrew) {
 			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
 		}
-		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", perGameSettings_ramDiskNo);
+		if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", perGameSettings_ramDiskNo);
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
-		if (isDSiMode() || !secondaryDevice) {
+		if (isDSiMode() || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
 		if (dsiFeatures()) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
-		if (!secondaryDevice) {
+		if (!ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 		}
-		if (dsiFeatures() && consoleModel >= 2 && sdFound()) {
+		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound()) {
 			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
 		}
 	} else {
-		if (useBootstrap || isDSiWare || !secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
-		if ((dsiFeatures() && useBootstrap) || !secondaryDevice) {
+		if (ms().useBootstrap || isDSiWare || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		if ((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		} else if (isDSiWare) {
@@ -166,17 +153,17 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 			pergameini.SetInt("GAMESETTINGS", "SWI_HALT_HOOK", perGameSettings_swiHaltHook);
 		}
-		if (!secondaryDevice) {
+		if (!ms().secondaryDevice) {
 			if (!blacklisted_cardReadDma) pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
 			if (!blacklisted_asyncCardRead) pergameini.SetInt("GAMESETTINGS", "ASYNC_CARD_READ", perGameSettings_asyncCardRead);
 		}
-		if (useBootstrap || isDSiWare || !secondaryDevice) {
+		if (ms().useBootstrap || isDSiWare || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 		}
-		if (dsiFeatures() && consoleModel >= 2 && sdFound()) {
+		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound()) {
 			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
 		}
-		if ((dsiFeatures() && useBootstrap) || !secondaryDevice) {
+		if ((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "EXTENDED_MEMORY", perGameSettings_expandRomSpace);
 		}
 	}
@@ -184,7 +171,7 @@ void savePerGameSettings (std::string filename) {
 }
 
 bool checkIfShowAPMsg (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0) {
 		return true;	// Show AP message
@@ -193,14 +180,14 @@ bool checkIfShowAPMsg (std::string filename) {
 }
 
 void dontShowAPMsgAgain (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 1);
 	pergameini.SaveIniFile( pergamefilepath );
 }
 
 bool checkIfShowRAMLimitMsg (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_RAM_LIMIT", 0) == 0) {
 		return true;	// Show RAM Limit message
@@ -209,18 +196,18 @@ bool checkIfShowRAMLimitMsg (std::string filename) {
 }
 
 void dontShowRAMLimitMsgAgain (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_RAM_LIMIT_MSG", 1);
 	pergameini.SaveIniFile( pergamefilepath );
 }
 
 bool checkIfDSiMode (std::string filename) {
-	if (secondaryDevice && (!dsiFeatures() || !useBootstrap)) {
+	if (ms().secondaryDevice && (!dsiFeatures() || !ms().useBootstrap)) {
 		return false;
 	}
 
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew ? true : -1));
 	if (perGameSettings_dsiMode == -1) {
@@ -233,8 +220,8 @@ bool checkIfDSiMode (std::string filename) {
 bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	if (requiresDonorRom) return false;
 
-	bool usingB4DS = (!dsiFeatures() && secondaryDevice);
-	bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && arm7SCFGLocked);
+	bool usingB4DS = (!dsiFeatures() && ms().secondaryDevice);
+	bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 
 	if ((usingB4DS || (dsiEnhancedMbk && dsiBinariesFound)) && SDKVersion > 0x5000000	// SDK5 (TWL)
 	 && (arm7size==0x22B40
@@ -258,7 +245,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 }
 
 bool showSetDonorRomDSiWare(u32 arm7size) {
-	if (requiresDonorRom || !isDSiMode() || *(u32*)0x02FFE1A0 == 0x00403000 || !arm7SCFGLocked) return false;
+	if (requiresDonorRom || !isDSiMode() || *(u32*)0x02FFE1A0 == 0x00403000 || !sys().arm7SCFGLocked()) return false;
 
 	if (arm7size==0x1D43C
 	 || arm7size==0x1D5A8
@@ -343,7 +330,7 @@ const char* getRegionString(char region) {
 }
 
 void perGameSettings (std::string filename) {
-	if (macroMode) {
+	if (ms().macroMode) {
 		lcdMainOnBottom();
 		lcdSwapped = true;
 	}
@@ -395,7 +382,7 @@ void perGameSettings (std::string filename) {
 	blacklisted_cardReadDma = false;
 	blacklisted_asyncCardRead = false;
 	whitelisted_swiHaltHook = false;
-	if(!ignoreBlacklists) {
+	if(!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
 			if (memcmp(game_TID, twlClockExcludeList[i], 3) == 0) {
@@ -455,32 +442,32 @@ void perGameSettings (std::string filename) {
 		romSize += 0x88;	// RSA key
 	}
 
-	u32 romSizeLimit = (consoleModel > 0 ? 0x01800000 : 0x800000);
+	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x01800000 : 0x800000);
 	if (SDKVersion > 0x5000000) {
-		romSizeLimit = (consoleModel > 0 ? 0x01000000 : 0);
+		romSizeLimit = (ms().consoleModel > 0 ? 0x01000000 : 0);
 	}
-	u32 romSizeLimit2 = (consoleModel > 0 ? 0x01C00000 : 0xC00000);
+	u32 romSizeLimit2 = (ms().consoleModel > 0 ? 0x01C00000 : 0xC00000);
 
 	extern bool dsiWareCompatibleB4DS(const char* filename);
 	bool showPerGameSettings =
 		(!isDSiWare
 		&& memcmp(game_TID, "HND", 3) != 0
 		&& memcmp(game_TID, "HNE", 3) != 0);
-	if ((dsiFeatures() || dsiWareCompatibleB4DS(filenameForInfo.c_str()) || !secondaryDevice) && !isHomebrew && isDSiWare) {
+	if ((dsiFeatures() || dsiWareCompatibleB4DS(filenameForInfo.c_str()) || !ms().secondaryDevice) && !isHomebrew && isDSiWare) {
 		showPerGameSettings = true;
 	}
-	/*if (!useBootstrap && !isHomebrew && REG_SCFG_EXT == 0) {
+	/*if (!ms().useBootstrap && !isHomebrew && REG_SCFG_EXT == 0) {
 		showPerGameSettings = false;
 	}*/
 	bool runInShown = false;
 
-	bool showCheats = ((useBootstrap
-	/*|| (secondaryDevice && !useBootstrap
+	bool showCheats = ((ms().useBootstrap
+	/*|| (ms().secondaryDevice && !ms().useBootstrap
 		&& ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)))*/
-	|| !secondaryDevice) && !isHomebrew && !isDSiWare
+	|| !ms().secondaryDevice) && !isHomebrew && !isDSiWare
 	&& memcmp(game_TID, "HND", 3) != 0
 	&& memcmp(game_TID, "HNE", 3) != 0);
 
@@ -496,33 +483,33 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
-		if (!secondaryDevice) {
+		if (!ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// RAM disk number
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 6;	// Direct boot
-		if (isDSiMode() || !secondaryDevice) {
+		if (isDSiMode() || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;
 		}
-		if (dsiFeatures() || !secondaryDevice) {
+		if (dsiFeatures() || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
-		if (!secondaryDevice) {
+		if (!ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 		}
-		if (dsiFeatures() && consoleModel >= 2 && sdFound() && (game_TID[0] == 'W' || romVersion == 0x57)) {
+		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound() && (game_TID[0] == 'W' || romVersion == 0x57)) {
 			perGameOps++;
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
 	} else if (showPerGameSettings && isDSiWare) {	// Per-game settings for DSiWare
-		if (dsiWareBooter || arm7SCFGLocked || consoleModel > 0) {
+		if (ms().dsiWareBooter || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 			perGameOps++;
@@ -532,10 +519,10 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
-		if (dsiWareBooter || arm7SCFGLocked || consoleModel > 0) {
+		if (ms().dsiWareBooter || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
-			if (((dsiFeatures() && sdFound()) || !secondaryDevice) && consoleModel >= 2 && (!isDSiMode() || !arm7SCFGLocked)) {
+			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
@@ -549,22 +536,22 @@ void perGameSettings (std::string filename) {
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		if (useBootstrap || (dsiFeatures() && romUnitCode > 0) || !secondaryDevice) {
+		if (ms().useBootstrap || (dsiFeatures() && romUnitCode > 0) || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 		}
-		if (((dsiFeatures() && useBootstrap) || !secondaryDevice) && romUnitCode == 3) {
+		if (((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice) && romUnitCode == 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
-		if ((dsiFeatures() && (useBootstrap || romUnitCode > 0) && !b4dsMode) || !secondaryDevice) {
+		if ((dsiFeatures() && (ms().useBootstrap || romUnitCode > 0) && !bs().b4dsMode) || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;
 		}
-		if ((dsiFeatures() || !secondaryDevice) && romUnitCode < 3) {
+		if ((dsiFeatures() || !ms().secondaryDevice) && romUnitCode < 3) {
 			if (!blacklisted_boostCpu) {
 				perGameOps++;
 				perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
@@ -572,8 +559,8 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
-		if (useBootstrap || (dsiFeatures() && romUnitCode > 0) || !secondaryDevice) {
-			if (!secondaryDevice) {
+		if (ms().useBootstrap || (dsiFeatures() && romUnitCode > 0) || !ms().secondaryDevice) {
+			if (!ms().secondaryDevice) {
 				if (romUnitCode < 3 && !blacklisted_cardReadDma) {
 					perGameOps++;
 					perGameOp[perGameOps] = 5;	// Card Read DMA
@@ -583,18 +570,18 @@ void perGameSettings (std::string filename) {
 					perGameOp[perGameOps] = 12;	// Async Card Read
 				}
 			}
-			if ((!secondaryDevice || (dsiFeatures() && romSize <= romSizeLimit2+0x80000)) && romUnitCode != 3 && !whitelisted_swiHaltHook) {
+			if ((!ms().secondaryDevice || (dsiFeatures() && romSize <= romSizeLimit2+0x80000)) && romUnitCode != 3 && !whitelisted_swiHaltHook) {
 				perGameOps++;
 				perGameOp[perGameOps] = 13;	// SWI Halt Hook
 			}
-			if ((dsiFeatures() || !secondaryDevice)
+			if ((dsiFeatures() || !ms().secondaryDevice)
 			 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
 				perGameOps++;
 				perGameOp[perGameOps] = 10;	// Expand ROM space in RAM
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
-			if (((dsiFeatures() && sdFound()) || !secondaryDevice) && consoleModel >= 2 && (!isDSiMode() || !arm7SCFGLocked)) {
+			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
@@ -641,7 +628,7 @@ void perGameSettings (std::string filename) {
 
 	while (1) {
 		clearText();
-		if (theme == 6) {
+		if (ms().theme == TWLSettings::EThemeGBC) {
 			printLarge(false, 0, 56, filename.c_str());
 		} else {
 			titleUpdate(isDirectory, filename.c_str());
@@ -652,7 +639,7 @@ void perGameSettings (std::string filename) {
 		printSmallRightAlign(false, 232, 90, gameTIDText);
 
 		int perGameOpYpos = 102;
-		bool flashcardKernelOnly = (!useBootstrap && secondaryDevice && !isHomebrew && romUnitCode == 2 && (perGameSettings_dsiMode==-1 ? !DEFAULT_DSI_MODE : perGameSettings_dsiMode==0));
+		bool flashcardKernelOnly = (!ms().useBootstrap && ms().secondaryDevice && !isHomebrew && romUnitCode == 2 && (perGameSettings_dsiMode==-1 ? !DEFAULT_DSI_MODE : perGameSettings_dsiMode==0));
 
 		if (showPerGameSettings) {
 			printSmall(false, 24, 102+(perGameSettings_cursorPosition*12)-(firstPerGameOpShown*12), ">");
@@ -1033,9 +1020,9 @@ void perGameSettings (std::string filename) {
 						{
 							pathDefine = a7mbk6 == 0x080037C0 ? "DONORTWLONLY0_NDS_PATH" : "DONORTWL0_NDS_PATH"; // SDK5.0
 						}
-						std::string romFolderNoSlash = romfolder[secondaryDevice];
+						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						bootstrapinipath = sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini";
+						const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, romFolderNoSlash+"/"+filename);
 						bootstrapini.SaveIniFile(bootstrapinipath);
@@ -1090,7 +1077,7 @@ void perGameSettings (std::string filename) {
 	dialogboxHeight = 0;
 	keysSetRepeat(10, 2); // Reset key repeat
 
-	if (macroMode) {
+	if (ms().macroMode) {
 		lcdMainOnTop();
 		lcdSwapped = false;
 	}

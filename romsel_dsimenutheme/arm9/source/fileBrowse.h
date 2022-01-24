@@ -25,6 +25,9 @@
 #include <string>
 #include <vector>
 
+#define CURPOS (ms().cursorPosition[ms().secondaryDevice])
+#define PAGENUM (ms().pagenum[ms().secondaryDevice])
+
 //#define EMULATE_FILES
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions);

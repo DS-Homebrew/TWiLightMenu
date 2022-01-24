@@ -51,7 +51,7 @@
 #define REG_GPIO_WIFI *(vu16*)0x4004C04
 
 #include "common.h"
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 #include "read_card.h"
 #include "module_params.h"
 #include "cardengine_arm7_bin.h"
@@ -508,7 +508,8 @@ int arm7_loadBinary (void) {
 	*(u16*)(0x027ffc40) = 0x1;						// Boot Indicator -- EXTREMELY IMPORTANT!!! Thanks to cReDiAr
 	
 	cardRead(ndsHeader->arm9romOffset, (u32*)ndsHeader->arm9destination, ndsHeader->arm9binarySize);
-	//ensureBinaryDecompressed(ndsHeader, (module_params_t*) findModuleParamsOffset(ndsHeader));	cardRead(ndsHeader->arm7romOffset, (u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize);
+	//ensureBinaryDecompressed(ndsHeader, (module_params_t*) findModuleParamsOffset(ndsHeader));
+	cardRead(ndsHeader->arm7romOffset, (u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize);
 	return ERR_NONE;
 }
 

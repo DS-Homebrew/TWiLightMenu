@@ -14,11 +14,11 @@
 #include "io_sc_common.h"
 #include "exptools.h"
 
-#include "nitrofs.h"
-#include "inifile.h"
-#include "tonccpy.h"
+#include "common/nitrofs.h"
+#include "common/inifile.h"
+#include "common/stringtool.h"
+#include "common/tonccpy.h"
 #include "fileCopy.h"
-#include "tool/stringtool.h"
 #include "save/Save.h"
 #include "gbaswitch.h"
 

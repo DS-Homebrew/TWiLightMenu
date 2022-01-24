@@ -34,8 +34,6 @@
 #include "uvcoord_small_font.h"
 #include "TextPane.h"
 
-extern int theme;
-
 using namespace std;
 
 FontGraphic smallFont;

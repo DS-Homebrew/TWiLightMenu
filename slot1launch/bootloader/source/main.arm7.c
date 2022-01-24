@@ -51,7 +51,7 @@
 #define REG_GPIO_WIFI *(vu16*)0x4004C04
 
 #include "common.h"
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 #include "read_card.h"
 #include "module_params.h"
 #include "cardengine_arm7_bin.h"

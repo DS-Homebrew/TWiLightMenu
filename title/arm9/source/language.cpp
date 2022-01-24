@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <string>
 
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/inifile.h"
 
 #define STRING(what,def) std::string STR_##what;

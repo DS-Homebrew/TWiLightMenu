@@ -14,8 +14,8 @@
 #include "graphics/graphics.h"
 
 #include "common/systemdetails.h"
-#include "common/nitrofs.h"
-#include "nds_loader_arm9.h"
+#include "common/nds_loader_arm9.h"
+#include "common/twlmenusettings.h"
 #include "errorScreen.h"
 
 #include "graphics/fontHandler.h"
@@ -43,72 +43,16 @@ struct PageLink {
 	PageLink(std::string dest, int x, int y, int w, int h) : dest(dest), x(x), y(y), w(w), h(h) {}
 };
 
-// Do not reorder these, just add to the end
-// This should be in dsimenusettings.h, but the manual currently doesn't have that
-enum TLanguage {
-	ELangDefault = -1,
-	ELangJapanese = 0,
-	ELangEnglish = 1,
-	ELangFrench = 2,
-	ELangGerman = 3,
-	ELangItalian = 4,
-	ELangSpanish = 5,
-	ELangChineseS = 6,
-	ELangKorean = 7,
-	ELangChineseT = 8,
-	ELangPolish = 9,
-	ELangPortuguese = 10,
-	ELangRussian = 11,
-	ELangSwedish = 12,
-	ELangDanish = 13,
-	ELangTurkish = 14,
-	ELangUkrainian = 15,
-	ELangHungarian = 16,
-	ELangNorwegian = 17,
-	ELangHebrew = 18,
-	ELangDutch = 19,
-	ELangIndonesian = 20,
-	ELangGreek = 21,
-	ELangBulgarian = 22,
-	ELangRomanian = 23,
-	ELangArabic = 24,
-	ELangPortugueseBrazil = 25,
-	ELangVietnamese = 26,
-};
-
-int setLanguage = 0;
 bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
-bool macroMode = false;
-int colorMode = 0;
-int blfLevel = 0;
+bool useTwlCfg = false;
 
 extern int bgColor1;
 extern int bgColor2;
 
 extern void ClearBrightness();
-
-const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
-
-int consoleModel = 0;
-/*	0 = Nintendo DSi (Retail)
-	1 = Nintendo DSi (Dev/Panda)
-	2 = Nintendo 3DS
-	3 = New Nintendo 3DS	*/
-
-bool showSelectMenu = false;
-int theme = 0;
-int launcherApp = -1;
-int sysRegion = -1;
-
-std::string font = "default";
-
-int guiLanguage = -1;
-bool rtl = false;
-
-bool sdRemoveDetect = true;
 
 std::vector<DirEntry> manPagesList;
 std::vector<PageLink> manPageLinks;
@@ -128,66 +72,6 @@ mm_sound_effect snd_stop;
 mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
-
-std::string getGuiLanguageString() {
-	switch (setLanguage) {
-		case ELangJapanese:
-			return "ja";
-		case ELangEnglish:
-		default:
-			return "en";
-		case ELangFrench:
-			return "fr";
-		case ELangGerman:
-			return "de";
-		case ELangItalian:
-			return "it";
-		case ELangSpanish:
-			return "es";
-		case ELangChineseS:
-			return "zh-CN";
-		case ELangKorean:
-			return "ko";
-		case ELangChineseT:
-			return "zh-TW";
-		case ELangPolish:
-			return "pl";
-		case ELangPortuguese:
-			return "pt";
-		case ELangRussian:
-			return "ru";
-		case ELangSwedish:
-			return "sv";
-		case ELangDanish:
-			return "da";
-		case ELangTurkish:
-			return "tr";
-		case ELangUkrainian:
-			return "uk";
-		case ELangHungarian:
-			return "hu";
-		case ELangNorwegian:
-			return "no";
-		case ELangHebrew:
-			return "he";
-		case ELangDutch:
-			return "nl";
-		case ELangIndonesian:
-			return "id";
-		case ELangGreek:
-			return "el";
-		case ELangBulgarian:
-			return "bg";
-		case ELangRomanian:
-			return "ro";
-		case ELangArabic:
-			return "ar";
-		case ELangPortugueseBrazil:
-			return "pt-BR";
-		case ELangVietnamese:
-			return "vi";
-	}
-}
 
 bool sortPagesPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
@@ -245,26 +129,6 @@ void loadPageInfo(std::string pagePath) {
 								  pageIni.GetInt(link,"Y",0),
 								  pageIni.GetInt(link,"W",0),
 								  pageIni.GetInt(link,"H",0));
-	}
-}
-
-void LoadSettings(void) {
-	// GUI
-	CIniFile settingsini( settingsinipath );
-
-	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
-	showSelectMenu = settingsini.GetInt("SRLOADER", "SHOW_SELECT_MENU", 0);
-	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
-
-	font = settingsini.GetString("SRLOADER", "FONT", font);
-
-	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
-	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
-	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
-	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
-	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", 1);
-	if (consoleModel < 2) {
-		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
 	}
 }
 
@@ -341,24 +205,28 @@ void loadROMselect() {
 	} else {
 		chdir((access("sd:/", F_OK) == 0) ? "sd:/" : "fat:/");
 	}
-	if (theme == 3)
-	{
-		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
+
+	switch (ms().theme) {
+		case TWLSettings::EThemeDSi:
+		case TWLSettings::EThemeHBL:
+		case TWLSettings::EThemeSaturn:
+			if (!ms().showSelectMenu) {
+				runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
+				break;
+			}
+			// fall through
+		case TWLSettings::ETheme3DS:
+			runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
+			break;
+		case TWLSettings::EThemeR4:
+		case TWLSettings::EThemeGBC:
+			runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true, false, -1);
+			break;
+		case TWLSettings::EThemeWood:
+			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
+			break;
 	}
-	else if (theme == 2 || theme == 6)
-	{
-		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
-	}
-	else if ((showSelectMenu && theme==0)
-			|| (theme==1)
-		|| (showSelectMenu && theme==4))
-	{
-		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
-	}
-	else
-	{
-		runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
-	}
+
 	fadeType = true;	// Fade in from white
 }
 
@@ -366,7 +234,7 @@ void loadROMselect() {
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 	defaultExceptionHandler();
-	sys().initFilesystem();
+	sys().initFilesystem("/_nds/TWiLightMenu/manual.srldr");
 	sys().initArm7RegStatuses();
 
 	if (!sys().fatInitOk()) {
@@ -377,35 +245,28 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	if ((access(settingsinipath, F_OK) != 0) && (access("fat:/", F_OK) == 0)) {
-		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
-	}
-
 	keysSetRepeat(25, 25);
 
-	bool useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
-	LoadSettings();
+	ms().loadSettings();
 
 	graphicsInit();
 	fontInit();
 
 	InitSound();
 
-	int userLanguage = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
-	setLanguage = (guiLanguage == -1) ? userLanguage : guiLanguage;
-	bool rtl = (guiLanguage == ELangHebrew || guiLanguage == ELangArabic);
-	if(rtl) {
+	if(ms().rtl()) {
 		manPageTitleX = 256 - manPageTitleX;
 		manPageTitleAlign = Alignment::right;
 	}
-	int ySizeSub = macroMode ? 176 : 368;
+	int ySizeSub = ms().macroMode ? 176 : 368;
 
 	langInit();
 
-	chdir(("nitro:/pages/" + getGuiLanguageString()).c_str());
+	chdir(("nitro:/pages/" + ms().getGuiLanguageString()).c_str());
 
 	loadPageList();
 	// Move index.gif to the start
@@ -528,7 +389,7 @@ int main(int argc, char **argv) {
 			} else {
 				for(uint i=0;i<manPageLinks.size();i++) {
 					if(((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
-						(((touchStart.py + pageYpos) >= manPageLinks[i].y - (macroMode ? 0 : 176)) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - (macroMode ? 0 : 176) + manPageLinks[i].h)))) {
+						(((touchStart.py + pageYpos) >= manPageLinks[i].y - (ms().macroMode ? 0 : 176)) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - (ms().macroMode ? 0 : 176) + manPageLinks[i].h)))) {
 						pageYpos = 0;
 						returnPage = currentPage;
 						for(uint j=0;j<manPagesList.size();j++) {

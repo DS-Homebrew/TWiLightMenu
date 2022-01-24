@@ -22,7 +22,7 @@
 ------------------------------------------------------------------*/
 
 #include "iconTitle.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/bootstrapsettings.h"
 #include "common/systemdetails.h"
 #include "common/flashcard.h"
@@ -580,7 +580,7 @@ void titleUpdate(bool isDir, std::string_view name, int num) {
 	} else {
 		// this is an nds/app file!
 
-		bool theme_showdialogbox = (showdialogbox || (ms().theme == 4 && currentBg == 1) || (ms().theme == 5 && dbox_showIcon));
+		bool theme_showdialogbox = (showdialogbox || (ms().theme == TWLSettings::EThemeSaturn && currentBg == 1) || (ms().theme == TWLSettings::EThemeHBL && dbox_showIcon));
 		if (theme_showdialogbox) {
 			writeDialogTitle(cachedTitle[num]);
 		} else if (infoFound[num]) {

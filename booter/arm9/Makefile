@@ -17,11 +17,12 @@ include $(DEVKITARM)/ds_rules
 # GRAPHICS is a list of directories containing image files to be converted with grit
 # MAXMOD_SOUNDBANK contains a directory of music and sound effect files
 #---------------------------------------------------------------------------------
+UNIVERSAL	:=	../../universal
 TARGET		:=	booter
 BUILD		:=	build
-SOURCES		:=	source source/graphics ../../universal/sdmmc/arm9/source
-INCLUDES	:=	include source ../../universal/sdmmc/arm9/include
-DATA		:=	../data  
+SOURCES		:=	source source/graphics $(UNIVERSAL)/source/common $(UNIVERSAL)/source/nds_loader $(UNIVERSAL)/source/tonccpy $(UNIVERSAL)/sdmmc/arm9/source
+INCLUDES	:=	include source $(UNIVERSAL)/include $(UNIVERSAL)/sdmmc/arm9/include
+DATA		:=	../data
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music
 
@@ -36,10 +37,10 @@ CFLAGS	:=	-g -Wall -O2\
 		$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM9
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=../../../universal/arm9/ds_arm9_twlm.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+LDFLAGS	=	-specs=../$(UNIVERSAL)/arm9/ds_arm9_twlm.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)

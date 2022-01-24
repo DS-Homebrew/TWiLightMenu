@@ -1,4 +1,4 @@
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 #include "find.h"
 #include "Save.h"
 #include "FlashSave.h"

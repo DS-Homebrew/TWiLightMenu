@@ -22,6 +22,7 @@
 #include "../errorScreen.h"
 #include "fontHandler.h"
 #include "common/tonccpy.h"
+#include "common/twlmenusettings.h"
 #include "graphics/gif.hpp"
 
 #include <nds.h>
@@ -30,9 +31,6 @@ extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
-extern bool macroMode;
-extern int colorMode;
-extern int blfLevel;
 int fadeDelay = 0;
 
 u8 bgColor1 = 0xF6;
@@ -68,35 +66,6 @@ void SetBrightness(u8 screen, s8 bright) {
 	}
 	if (bright > 31) bright = 31;
 	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
-}
-
-u16 convertToDsBmp(u16 val) {
-	if (colorMode == 1) {
-		u16 newVal = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
-
-		u8 b,g,r,max,min;
-		b = ((newVal)>>10)&31;
-		g = ((newVal)>>5)&31;
-		r = (newVal)&31;
-		// Value decomposition of hsv
-		max = (b > g) ? b : g;
-		max = (max > r) ? max : r;
-
-		// Desaturate
-		min = (b < g) ? b : g;
-		min = (min < r) ? min : r;
-		max = (max + min) / 2;
-
-		newVal = 32768|(max<<10)|(max<<5)|(max);
-
-		b = ((newVal)>>10)&(31-6*blfLevel);
-		g = ((newVal)>>5)&(31-3*blfLevel);
-		r = (newVal)&31;
-
-		return 32768|(b<<10)|(g<<5)|(r);
-	} else {
-		return ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
-	}
 }
 
 u16 convertVramColorToGrayscale(u16 val) {
@@ -141,7 +110,7 @@ void vBlankHandler() {
 		}
 	}
 	if (controlTopBright) SetBrightness(0, screenBrightness);
-	if (controlBottomBright && !macroMode) SetBrightness(1, screenBrightness);
+	if (controlBottomBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
 	updateText(true);
 	updateText(false);
@@ -153,16 +122,16 @@ void pageLoad(const std::string &filename) {
 	pageYsize = gif.frame(0).descriptor.h;
 
 	tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
-	if (!macroMode) tonccpy(BG_PALETTE_SUB, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
+	if (!ms().macroMode) tonccpy(BG_PALETTE_SUB, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
 
 	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
-	if (!macroMode) dmaCopyWordsAsynch(1, pageImage.data()+(176*256), bgGetGfxPtr(bg3Sub), 192*256);
+	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+(176*256), bgGetGfxPtr(bg3Sub), 192*256);
 	while (dmaBusy(0) || dmaBusy(1));
 }
 
 void pageScroll(void) {
 	dmaCopyWordsAsynch(0, pageImage.data()+(pageYpos*256), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
-	if (!macroMode) dmaCopyWordsAsynch(1, pageImage.data()+((176+pageYpos)*256), bgGetGfxPtr(bg3Sub), 192*256);
+	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+((176+pageYpos)*256), bgGetGfxPtr(bg3Sub), 192*256);
 	while (dmaBusy(0) || dmaBusy(1));
 }
 
@@ -203,7 +172,7 @@ void graphicsInit() {
 	bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
 	bgSetPriority(bg2Sub, 0);
 
-	if (macroMode) {
+	if (ms().macroMode) {
 		lcdMainOnBottom();
 	}
 

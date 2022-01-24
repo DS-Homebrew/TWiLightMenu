@@ -47,7 +47,7 @@ Helpful information:
 #undef ARM9
 #define ARM7
 #include <nds/arm7/audio.h>
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 #include "sdmmc.h"
 #include "i2c.h"
 #include "fat.h"

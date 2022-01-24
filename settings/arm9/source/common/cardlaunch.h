@@ -1,6 +1,6 @@
 #include <nds.h>
 #include <sys/stat.h>
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 
 #ifndef __CARD_LAUNCH__
 #define __CARD_LAUNCH__
@@ -40,21 +40,23 @@ void dsiLaunchSystemSettings()
     char tmdpath[256];
     u8 titleID[4] = {0, 0x42, 0x4E, 0x48};
 	switch (ms().sysRegion) {
-		case 0:
+		case TWLSettings::ERegionJapan:
 			titleID[0] = 0x4A;		// JPN
 			break;
-		case 1:
+		case TWLSettings::ERegionUSA:
 			titleID[0] = 0x45;		// USA
 			break;
-		case 2:
-		case 3:
+		case TWLSettings::ERegionEurope:
+		case TWLSettings::ERegionAustralia:
 			titleID[0] = 0x56;		// EUR/AUS
 			break;
-		case 4:
+		case TWLSettings::ERegionChina:
 			titleID[0] = 0x43;		// CHN
 			break;
-		case 5:
+		case TWLSettings::ERegionKorea:
 			titleID[0] = 0x4B;		// KOR
+			break;
+		case TWLSettings::ERegionDefault:
 			break;
 	}
 	if (ms().sysRegion == -1) {

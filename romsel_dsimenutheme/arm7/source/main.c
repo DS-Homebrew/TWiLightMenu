@@ -30,7 +30,7 @@
 #include <nds.h>
 #include <string.h>
 #include <maxmod7.h>
-#include "arm7status.h"
+#include "common/arm7status.h"
 
 void my_touchInit();
 void my_installSystemFIFO(void);

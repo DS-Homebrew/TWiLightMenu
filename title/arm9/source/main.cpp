@@ -9,20 +9,21 @@
 #include "nand/nandio.h"
 
 #include "bootsplash.h"
-#include "bootstrapsettings.h"
+#include "common/bootstrapsettings.h"
 #include "common/bootstrappaths.h"
 #include "common/cardlaunch.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/fileCopy.h"
 #include "common/flashcard.h"
 #include "common/inifile.h"
 #include "common/nds_loader_arm9.h"
-#include "common/nitrofs.h"
 #include "ndsheaderbanner.h"
 #include "common/pergamesettings.h"
+#include "common/stringtool.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
-#include "tool/stringtool.h"
+#include "defaultSettings.h"
+#include "twlFlashcard.h"
 #include "graphics/graphics.h"
 #include "twlmenuppvideo.h"
 #include "language.h"
@@ -523,7 +524,7 @@ void lastRunROM()
 				}
 			}
 			if (ms().previousUsedDevice || !ms().homebrewBootstrap) {
-				CIniFile bootstrapini( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
+				CIniFile bootstrapini( sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC );
 				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().previousUsedDevice]);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
@@ -543,7 +544,7 @@ void lastRunROM()
 				|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
 				|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 				);
-				bootstrapini.SaveIniFile( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
+				bootstrapini.SaveIniFile( sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC );
 			}
 			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
 		}
@@ -854,7 +855,7 @@ void lastRunROM()
 					fatGetAliasPath(ms().previousUsedDevice ? "fat:/" : "sd:/", ms().dsiWarePrvPath.c_str(), sfnPrv);
 				}
 
-				CIniFile bootstrapini(sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC);
+				CIniFile bootstrapini(sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().previousUsedDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound() ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
@@ -879,7 +880,7 @@ void lastRunROM()
 				|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
 				|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 				);
-				bootstrapini.SaveIniFile(sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC);
+				bootstrapini.SaveIniFile(sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 
 				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD && sdFound()))) {
 					*(u32*)(0x02000000) |= BIT(3);
@@ -979,8 +980,8 @@ void lastRunROM()
 	}
 	else if (ms().launchType[ms().previousUsedDevice] == Launch::ES8DSLaunch)
 	{
-		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().showCol != 1)
-		 || (extension(ms().romPath[ms().previousUsedDevice], ".sg") && ms().showSg != 1)
+		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().colEmulator != 1)
+		 || (extension(ms().romPath[ms().previousUsedDevice], ".sg") && ms().sgEmulator != 1)
 		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		mkdir(ms().previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
@@ -1028,7 +1029,7 @@ void lastRunROM()
 	}
 	else if (ms().launchType[ms().previousUsedDevice] == Launch::EPicoDriveTWLLaunch)
 	{
-		if (ms().showMd >= 2 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (ms().mdEmulator >= 2 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
 		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
@@ -1039,7 +1040,7 @@ void lastRunROM()
 	}
 	else if (ms().launchType[ms().previousUsedDevice] == Launch::EGBANativeLaunch)
 	{
-		if (!sys().isRegularDS() || *(u16*)(0x020000C0) == 0 || (ms().showGba != 1) || access(ms().romPath[true].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (!sys().isRegularDS() || *(u16*)(0x020000C0) == 0 || (ms().gbaBooter != 1) || access(ms().romPath[true].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
 		u32 romSize = getFileSize(ms().romPath[true].c_str());
@@ -1192,8 +1193,8 @@ void lastRunROM()
 	}
 	else if (ms().launchType[ms().previousUsedDevice] == Launch::EColecoDSLaunch)
 	{
-		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().showCol != 2)
-		 || (extension(ms().romPath[ms().previousUsedDevice], ".sg") && ms().showSg != 2)
+		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().colEmulator != 2)
+		 || (extension(ms().romPath[ms().previousUsedDevice], ".sg") && ms().sgEmulator != 2)
 		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
@@ -1363,7 +1364,7 @@ const char *languages[] = {
 	"Tiếng Việt",
 };
 
-const int guiLanguages[] = {
+const TWLSettings::TLanguage guiLanguages[] = {
 	TWLSettings::TLanguage::ELangIndonesian,
 	TWLSettings::TLanguage::ELangDanish,
 	TWLSettings::TLanguage::ELangGerman,
@@ -1393,7 +1394,7 @@ const int guiLanguages[] = {
 	TWLSettings::TLanguage::ELangKorean,
 };
 
-const int gameLanguages[] = {
+const TWLSettings::TLanguage gameLanguages[] = {
 	TWLSettings::TLanguage::ELangGerman,
 	TWLSettings::TLanguage::ELangEnglish,
 	TWLSettings::TLanguage::ELangSpanish,
@@ -1403,7 +1404,7 @@ const int gameLanguages[] = {
 	TWLSettings::TLanguage::ELangJapanese,
 	TWLSettings::TLanguage::ELangKorean
 };
-const int titleLanguages[] = {
+const TWLSettings::TLanguage titleLanguages[] = {
 	TWLSettings::TLanguage::ELangGerman,
 	TWLSettings::TLanguage::ELangEnglish,
 	TWLSettings::TLanguage::ELangSpanish,
@@ -1502,7 +1503,8 @@ void languageSelect(void) {
 				case 0:
 					if (guiLanguage > -1) {
 						guiLanguage--;
-						ms().guiLanguage = guiLanguage == -1 ? guiLanguage : guiLanguages[guiLanguage];
+						ms().guiLanguage = guiLanguage == -1 ? TWLSettings::ELangDefault : guiLanguages[guiLanguage];
+						ms().currentLanguage = ms().guiLanguage;
 						langInit();
 					}
 					break;
@@ -1520,7 +1522,8 @@ void languageSelect(void) {
 				case 0:
 					if (guiLanguage < (int)(sizeof(languages) / sizeof(languages[0])) - 1) {
 						guiLanguage++;
-						ms().guiLanguage = guiLanguage == -1 ? guiLanguage : guiLanguages[guiLanguage];
+						ms().guiLanguage = guiLanguage == -1 ? TWLSettings::ELangDefault : guiLanguages[guiLanguage];
+						ms().currentLanguage = ms().guiLanguage;
 						langInit();
 					}
 					break;
@@ -1536,8 +1539,8 @@ void languageSelect(void) {
 		}
 
 		if (pressed & KEY_A) {
-			ms().gameLanguage = gameLanguage == -1 ? gameLanguage : gameLanguages[gameLanguage];
-			ms().titleLanguage = titleLanguage == -1 ? titleLanguage : titleLanguages[titleLanguage];
+			ms().gameLanguage = gameLanguage == -1 ? TWLSettings::ELangDefault : gameLanguages[gameLanguage];
+			ms().titleLanguage = titleLanguage == -1 ? TWLSettings::ELangDefault : titleLanguages[titleLanguage];
 			ms().languageSet = true;
 			languageNowSet = true;
 			break;
@@ -1598,10 +1601,10 @@ void regionSelect(void) {
 
 		if (held & KEY_UP) {
 			if (ms().gameRegion > (dsiFeatures() ? -1 : 0))
-				ms().gameRegion--;
+				ms().gameRegion = (TWLSettings::TRegion)((int)ms().gameRegion - 1);
 		} else if (held & KEY_DOWN) {
 			if (ms().gameRegion < (int)(sizeof(regions) / sizeof(regions[0])) - 2)
-				ms().gameRegion++;
+				ms().gameRegion = (TWLSettings::TRegion)((int)ms().gameRegion + 1);
 		}
 
 		if (pressed & KEY_A) {
@@ -1767,47 +1770,51 @@ int main(int argc, char **argv)
 					settings.loadSettings();
 
 					switch (settings.dsiWareExploit) {
-						case 1:
+						case TWLSettings::EExploitSudokuhax:
 						default:
 							currentSrBackendId[0] = 0x4B344441;		// SUDOKU
 							break;
-						case 2:
+						case TWLSettings::EExploit4Swordshax:
 							currentSrBackendId[0] = 0x4B513941;		// Legend of Zelda: Four Swords
 							break;
-						case 3:
+						case TWLSettings::EExploitFieldrunnerhax:
 							currentSrBackendId[0] = 0x4B464441;		// Fieldrunners
 							break;
-						case 4:
+						case TWLSettings::EExploitGrtpwn:
 							currentSrBackendId[0] = 0x4B475241;		// Guitar Rock Tour
 							break;
-						case 5:
+						case TWLSettings::EExploitUgopwn:
 							currentSrBackendId[0] = 0x4B475541;		// Flipnote Studio
 							break;
-						case 6:
+						case TWLSettings::EExploitUnopwn:
 							currentSrBackendId[0] = 0x4B554E41;		// UNO
 							break;
-						case 7:
+						case TWLSettings::EExploitMemoryPit:
 							currentSrBackendId[0] = 0x484E4941;		// Nintendo DSi Camera
+							break;
+						case TWLSettings::EExploitNone:
 							break;
 					}
 					switch (settings.sysRegion) {
-						case 0:
+						case TWLSettings::ERegionJapan:
 							sysValue = 0x4A;		// JPN
 							break;
-						case 1:
+						case TWLSettings::ERegionUSA:
 							sysValue = 0x45;		// USA
 							break;
-						case 2:
+						case TWLSettings::ERegionEurope:
 							sysValue = (settings.dsiWareExploit==7 ? 0x50 : 0x56);		// EUR
 							break;
-						case 3:
+						case TWLSettings::ERegionAustralia:
 							sysValue = (settings.dsiWareExploit==7 ? 0x55 : 0x56);		// AUS
 							break;
-						case 4:
+						case TWLSettings::ERegionChina:
 							sysValue = 0x43;		// CHN
 							break;
-						case 5:
+						case TWLSettings::ERegionKorea:
 							sysValue = 0x4B;		// KOR
+							break;
+						case TWLSettings::ERegionDefault:
 							break;
 					}
 					tonccpy(&currentSrBackendId, &sysValue, 1);
@@ -1859,9 +1866,7 @@ int main(int argc, char **argv)
 	*(u32*)(0x02000000) = softResetParamsBak;
 
 	if (access(settingsinipath, F_OK) != 0 && (access("fat:/", F_OK) == 0)) {
-		settingsinipath =
-		    DSIMENUPP_INI_FC; // Fallback to .ini path on flashcard, if not found on
-							   // SD card, or if SD access is disabled
+		settingsinipath = DSIMENUPP_INI_FC; // Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
 
 	scanKeys();
@@ -1882,8 +1887,8 @@ int main(int argc, char **argv)
 	}
 
 	if (!ms().regionSet || (!dsiFeatures() && ms().gameRegion < 0) || (dsiFeatures() && ms().gameRegion < -1)) {
-		if (!dsiFeatures() && ms().gameRegion < 0) ms().gameRegion = 0;
-		else if (dsiFeatures() && ms().gameRegion < -1) ms().gameRegion = -1;
+		if (!dsiFeatures() && ms().gameRegion < TWLSettings::ERegionJapan) ms().gameRegion = TWLSettings::ERegionJapan;
+		else if (dsiFeatures() && ms().gameRegion < TWLSettings::ERegionDefault) ms().gameRegion = TWLSettings::ERegionDefault;
 		runGraphicIrq();
 		regionSelect();
 	}
@@ -2047,15 +2052,7 @@ int main(int argc, char **argv)
 	}
 
 	if (isDSiMode() && ms().consoleModel < 2) {
-		if (ms().wifiLed == -1) {
-			if (*(u8*)(0x02FFFD01) == 0x13) {
-				ms().wifiLed = true;
-			} else if (*(u8*)(0x02FFFD01) == 0 || *(u8*)(0x02FFFD01) == 0x12) {
-				ms().wifiLed = false;
-			}
-		} else {
-			*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0x12);		// WiFi On/Off
-		}
+		*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0x12); // WiFi On/Off
 	}
 
 	if (sdFound()) {
@@ -2073,7 +2070,7 @@ int main(int argc, char **argv)
 		if (isDevConsole)
 		{
 			// Check for Nintendo 3DS console
-			int resultModel = 1+is3DS;
+			TWLSettings::TConsoleModel resultModel = is3DS ? TWLSettings::E3DSOriginal : TWLSettings::EDSiDebug;
 			if (ms().consoleModel != resultModel || bs().consoleModel != resultModel)
 			{
 				ms().consoleModel = resultModel;
@@ -2085,8 +2082,8 @@ int main(int argc, char **argv)
 		else
 		if (ms().consoleModel != 0 || bs().consoleModel != 0)
 		{
-			ms().consoleModel = 0;
-			bs().consoleModel = 0;
+			ms().consoleModel = TWLSettings::EDSiRetail;
+			bs().consoleModel = TWLSettings::EDSiRetail;
 			ms().saveSettings();
 			bs().saveSettings();
 		}
@@ -2117,18 +2114,18 @@ int main(int argc, char **argv)
 
 	if ((access(settingsinipath, F_OK) != 0)
 	|| languageNowSet || regionNowSet
-	|| (ms().theme < 0) || (ms().theme == 3) || (ms().theme > 6)) {
+	|| (ms().theme < TWLSettings::EThemeDSi) || (ms().theme == TWLSettings::EThemeWood) || (ms().theme > TWLSettings::EThemeHBL)) {
 		// Create or modify "settings.ini"
-		if (ms().theme == 3) {
-			ms().theme = 2;
-		} else if (ms().theme < 0 || ms().theme > 6) {
-			ms().theme = 0;
+		if (ms().theme == TWLSettings::EThemeWood) {
+			ms().theme = TWLSettings::EThemeR4;
+		} else if (ms().theme < TWLSettings::EThemeDSi || ms().theme > TWLSettings::EThemeHBL) {
+			ms().theme = TWLSettings::EThemeDSi;
 		}
 		ms().saveSettings();
 		if (regionNowSet) {
-			CIniFile bootstrapini(BOOTSTRAP_INI);
+			CIniFile bootstrapini(sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", ms().useRomRegion);
-			bootstrapini.SaveIniFileModified(BOOTSTRAP_INI);
+			bootstrapini.SaveIniFileModified(sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 		}
 	}
 
@@ -2139,7 +2136,7 @@ int main(int argc, char **argv)
 	}
 	*(u32*)0x02000000 |= BIT(0);
 
-	if (access(BOOTSTRAP_INI, F_OK) != 0) {
+	if (access(sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC, F_OK) != 0) {
 		u64 driveSize = 0;
 		int gbNumber = 0;
 		struct statvfs st;

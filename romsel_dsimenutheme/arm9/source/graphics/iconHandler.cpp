@@ -1,6 +1,6 @@
 #include "iconHandler.h"
 #include "ThemeTextures.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include <gl2d.h>
 #include "tool/colortool.h"
 #include <ctype.h>

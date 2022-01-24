@@ -1,5 +1,5 @@
 #include <nds.h>
-#include "tonccpy.h"
+#include "common/tonccpy.h"
 #include "EepromSave.h"
 #include "FlashSave.h"
 #include "Save.h"

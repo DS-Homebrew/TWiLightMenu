@@ -3,7 +3,7 @@
 #include <maxmod9.h>
 
 // #include "autoboot.h"
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "graphics/fontHandler.h"

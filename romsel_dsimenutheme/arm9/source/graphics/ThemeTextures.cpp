@@ -4,7 +4,7 @@
 
 #include <nds.h>
 #include <nds/arm9/dldi.h>
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
 #include "myDSiMode.h"
 
@@ -16,7 +16,7 @@
 
 #include "color.h"
 #include "errorScreen.h"
-#include "tool/stringtool.h"
+#include "fileBrowse.h"
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
 #include "common/lzss.h"
@@ -204,10 +204,10 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const Texture &
 }
 
 void ThemeTextures::reloadPalDialogBox() {
-	if (ms().theme == 4 || ms().theme == 5) return;
+	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) return;
 	glBindTexture(0, dialogboxTexID);
 	glColorSubTableEXT(0, 0, _dialogBoxTexture->paletteLength(), 0, 0, _dialogBoxTexture->palette());
-	if (ms().theme != 1) {
+	if (ms().theme != TWLSettings::ETheme3DS) {
 		glBindTexture(0, cornerButtonTexID);
 		glColorSubTableEXT(0, 0, 16, 0, 0, _cornerButtonTexture->palette());
 	}
@@ -220,13 +220,13 @@ void ThemeTextures::loadBackgrounds() {
 	_backgroundTextures.emplace_back(TFN_BG_TOPBG, TFN_FALLBACK_BG_TOPBG);
 		
 	
-	if (ms().theme == 1 && !sys().isRegularDS()) {
+	if (ms().theme == TWLSettings::ETheme3DS && !sys().isRegularDS()) {
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
 		return;
 	}
 
-	if (ms().theme == 1 && sys().isRegularDS()) {
+	if (ms().theme == TWLSettings::ETheme3DS && sys().isRegularDS()) {
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG_DS, TFN_FALLBACK_BG_BOTTOMBG_DS);
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG_DS, TFN_FALLBACK_BG_BOTTOMBUBBLEBG_DS);
 		return;
@@ -241,7 +241,7 @@ void ThemeTextures::loadBackgrounds() {
 	} else {
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
 	}
-	if (ms().theme == 0) _backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
+	if (ms().theme == TWLSettings::EThemeDSi) _backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
 	
 }
 
@@ -502,7 +502,7 @@ void ThemeTextures::loadBatteryTextures() {
 
 void ThemeTextures::loadUITextures() {
 	_dateTimeFontTexture = std::make_unique<Texture>(TFN_UI_DATE_TIME_FONT, TFN_FALLBACK_UI_DATE_TIME_FONT);
-	if (ms().theme != 5) {
+	if (ms().theme != TWLSettings::EThemeHBL) {
 		_leftShoulderTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
 		_rightShoulderTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
 		_leftShoulderGreyedTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER_GREYED, TFN_FALLBACK_UI_LSHOULDER_GREYED);
@@ -652,7 +652,7 @@ void ThemeTextures::drawBottomBg(int index) {
 		index = 1;
 	if (index > 3)
 		index = 3;
-	if (index > 2 && ms().theme == 1)
+	if (index > 2 && ms().theme == TWLSettings::ETheme3DS)
 		index = 2;
 	beginBgMainModify();
 
@@ -679,18 +679,16 @@ void ThemeTextures::clearTopScreen() {
 	beginBgSubModify();
 	u16 val = 0xFFFF;
 	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-		_bgSubBuffer[i] = ((val >> 10) & 31) | (val & (31 - 3 * ms().blfLevel) << 5) |
-				  (val & (31 - 6 * ms().blfLevel)) << 10 | BIT(15);
+		_bgSubBuffer[i] = val;
 		if (boxArtColorDeband) {
-			_bgSubBuffer2[i] = ((val >> 10) & 31) | (val & (31 - 3 * ms().blfLevel) << 5) |
-				  (val & (31 - 6 * ms().blfLevel)) << 10 | BIT(15);
+			_bgSubBuffer2[i] = val;
 		}
 	}
 	commitBgSubModify();
 }
 
 void ThemeTextures::drawProfileName() {
-	if (_profileNameLoaded || ms().theme == 4 || ms().theme == 5) return;
+	if (_profileNameLoaded || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) return;
 
 	// Load username
 	char fontPath[64] = {0};
@@ -1089,7 +1087,7 @@ ITCM_CODE void ThemeTextures::drawVolumeImageMacro(int volumeLevel) {
 }
 
 ITCM_CODE void ThemeTextures::drawVolumeImageCached() {
-	if (ms().macroMode && ms().theme == 4) return;
+	if (ms().macroMode && ms().theme == TWLSettings::EThemeSaturn) return;
 
 	int volumeLevel = getVolumeLevel();
 	if (_cachedVolumeLevel != volumeLevel) {
@@ -1171,7 +1169,7 @@ ITCM_CODE void ThemeTextures::drawBatteryImageMacro(int batteryLevel, bool drawD
 }
 
 ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
-	if (ms().macroMode && ms().theme == 4) return;
+	if (ms().macroMode && ms().theme == TWLSettings::EThemeSaturn) return;
 
 	int batteryLevel = getBatteryLevel();
 	if(batteryLevel == 0 && showColon)	batteryLevel--;
@@ -1316,7 +1314,7 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) 
 }
 
 ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int posY) {
-	if (ms().theme == 4) return;
+	if (ms().theme == TWLSettings::EThemeSaturn) return;
 
 	const Texture *tex = dateTimeFontTexture();
 	const u16 *bitmap = tex->texture();
@@ -1605,12 +1603,12 @@ void ThemeTextures::videoSetup() {
 		_frameBufferBot[1] = new u16[256 * 192];
 	}
 
-	if (dsiFeatures() && !ms().macroMode && ms().theme != 5) {
+	if (dsiFeatures() && !ms().macroMode && ms().theme != TWLSettings::EThemeHBL) {
 		if (ms().consoleModel > 0) {
 			rotatingCubesLocation = (u8*)0x0D700000;
 			boxArtCache = (u8*)0x0D540000;
 		} else {
-			if (ms().theme == 1) {
+			if (ms().theme == TWLSettings::ETheme3DS) {
 				rotatingCubesLocation = new u8[0x700000];
 			}
 			if (ms().showBoxArt == 2) {
@@ -1619,9 +1617,9 @@ void ThemeTextures::videoSetup() {
 		}
 	}
 
-	if (ms().theme == 1 && !ms().macroMode) {
+	if (ms().theme == TWLSettings::ETheme3DS && !ms().macroMode) {
 		loadRotatingCubes();
 	}
 
-	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && ndmaEnabled() && !rotatingCubesLoaded && ms().theme != 5);
+	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && ndmaEnabled() && !rotatingCubesLoaded && ms().theme != TWLSettings::EThemeHBL);
 }

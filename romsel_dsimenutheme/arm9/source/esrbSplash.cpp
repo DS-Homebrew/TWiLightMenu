@@ -1,12 +1,12 @@
 #include <nds.h>
 #include <stdio.h>
 
-#include "common/dsimenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
 #include "common/flashcard.h"
 #include "common/tonccpy.h"
 #include "common/inifile.h"
-#include "tool/stringtool.h"
+#include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "graphics/ThemeTextures.h"
 #include "graphics/lodepng.h"
