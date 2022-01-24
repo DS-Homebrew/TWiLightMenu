@@ -148,7 +148,7 @@ void SoundControl::stopStream() {
 
 void SoundControl::fadeOutStream() {
 	//fade_out = true; // Bugged
-	fifoSendValue32(FIFO_USER_02, 1); // Fade out on ARM7 side
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out on ARM7 side
 }
 
 void SoundControl::cancelFadeOutStream() {

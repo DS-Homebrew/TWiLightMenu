@@ -81,9 +81,11 @@ void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
 	if(fifoCheckValue32(FIFO_USER_01)) {
-		soundFadeOut();
-	} else {
-		soundVolume = 127;
+		if(fifoGetValue32(FIFO_USER_01)) {
+			soundFadeOut();
+		} else {
+			soundVolume = 127;
+		}
 	}
 	REG_MASTER_VOLUME = soundVolume;
 }
@@ -279,7 +281,7 @@ int main() {
 			}
 		}
 
-		if (fifoCheckValue32(FIFO_USER_08)) {
+		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
 

@@ -110,7 +110,7 @@ void dsiLaunchSystemSettings()
 
 	unlaunchSetHiyaBoot();
 
-    fifoSendValue32(FIFO_USER_08, 1); // Reboot into System Settings
+    fifoSendValue32(FIFO_USER_02, 1); // Reboot into System Settings
 }
 
 #endif

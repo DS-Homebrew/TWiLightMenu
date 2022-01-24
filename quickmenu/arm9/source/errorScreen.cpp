@@ -3,7 +3,7 @@
 #include <maxmod9.h>
 
 // #include "autoboot.h"
-// #include "common/systemdetails.h"
+#include "common/systemdetails.h"
 #include "common/twlmenusettings.h"
 #include "graphics/fontHandler.h"
 #include "common/tonccpy.h"
@@ -12,11 +12,6 @@
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
-
-extern bool arm7SCFGLocked;
-
-extern int consoleModel;
-extern int launcherApp;
 
 static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
@@ -88,7 +83,7 @@ void checkSdEject(void) {
 			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			swiWaitForVBlank();
 		}
-		if (*(u8*)(0x02FFF002) == 2 && !arm7SCFGLocked) {
+		if (*(u8*)(0x02FFF002) == 2 && !sys().arm7SCFGLocked()) {
 			if (consoleModel < 2) {
 				unlaunchSetHiyaBoot();
 			}
