@@ -2058,7 +2058,15 @@ int main(int argc, char **argv)
 	}
 
 	if (isDSiMode() && ms().consoleModel < 2) {
-		*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0x12); // WiFi On/Off
+		if (ms().wifiLed == -1) {
+			if (*(u8*)(0x02FFFD01) == 0x13) {
+				ms().wifiLed = true;
+			} else if (*(u8*)(0x02FFFD01) == 0 || *(u8*)(0x02FFFD01) == 0x12) {
+				ms().wifiLed = false;
+			}
+		} else {
+			*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0x12);		// WiFi On/Off
+		}
 	}
 
 	if (sdFound()) {

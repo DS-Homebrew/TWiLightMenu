@@ -244,6 +244,9 @@ int main() {
 	}
 
 	if (isDSiMode()) {
+		*(u8*)(0x02FFFD00) = 0xFF;
+		*(u8*)(0x02FFFD01) = i2cReadRegister(0x4A, 0x30);
+
 		getConsoleID();
 	}
 
