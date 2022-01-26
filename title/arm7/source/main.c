@@ -80,6 +80,10 @@ void ReturntoDSiMenu() {
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
+	if(fifoGetValue32(FIFO_USER_04) == 10) {
+		my_i2cWriteRegister(0x4A, 0x71, 0x01);
+		fifoSendValue32(FIFO_USER_01, 0);
+	}
 	if(fifoCheckValue32(FIFO_USER_01)) {
 		if(fifoGetValue32(FIFO_USER_01)) {
 			soundFadeOut();
@@ -229,6 +233,16 @@ int main() {
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
 
+	if (isDSiMode() || REG_SCFG_EXT != 0) {
+		fifoSendValue32(FIFO_USER_04, my_i2cReadRegister(0x4A, 0x71));
+
+		// Check for 3DS
+		u8 byteBak = my_i2cReadRegister(0x4A, 0x71);
+		my_i2cWriteRegister(0x4A, 0x71, 0xD2);
+		fifoSendValue32(FIFO_USER_05, my_i2cReadRegister(0x4A, 0x71));
+		my_i2cWriteRegister(0x4A, 0x71, byteBak);
+	}
+
 	if (isDSiMode()) {
 		getConsoleID();
 	}
@@ -248,11 +262,6 @@ int main() {
 			}
 			*(u8*)(0x02FFFD00) = 0xFF;
 		}
-		/*if (!gotCartHeader && fifoCheckValue32(FIFO_USER_04)) {
-			UpdateCardInfo();
-			fifoSendValue32(FIFO_USER_04, 0);
-			gotCartHeader = true;
-		}*/
 
 
 		timeTilVolumeLevelRefresh++;
