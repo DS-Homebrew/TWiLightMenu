@@ -1185,7 +1185,6 @@ int main(int argc, char **argv) {
 						tex().clearTopScreen();
 					}
 					clearText();
-					printSmall(false, 0, 20, ms().consoleModel >= 2 ? STR_BARSTOPPED_PRESSHOME : STR_BARSTOPPED_CLOSELID, Alignment::center);
 					printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
 					printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 96 : 104), STR_DONOT_TURNOFF_POWER, Alignment::center);
 					updateText(false);
@@ -1920,7 +1919,6 @@ int main(int argc, char **argv) {
 						}
 
 						clearText();
-						printSmall(false, 0, 20, STR_BARSTOPPED_CLOSELID, Alignment::center);
 						printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), STR_NOW_LOADING, Alignment::center);
 						updateText(false);
 

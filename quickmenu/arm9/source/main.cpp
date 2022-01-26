@@ -2665,7 +2665,6 @@ int main(int argc, char **argv) {
 						}
 
 						clearText();
-						printSmall(false, 0, 20, STR_BARSTOPPED_CLOSELID, Alignment::center);
 						printSmall(false, 0, 88, STR_NOW_LOADING, Alignment::center);
 
 						for (u32 len = romSize; len > 0; len -= 0x8000) {
