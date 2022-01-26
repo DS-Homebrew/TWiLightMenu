@@ -11,7 +11,6 @@
 #include "read_card.h"
 
 /*TWL_CODE bool UpdateCardInfo(char* gameid, char* gamename) {
-	cardReadHeader((uint8*)&ndsCardHeader);
 	memcpy(gameid, ndsCardHeader.gameCode, 4);
 	gameid[4] = 0x00;
 	memcpy(gamename, ndsCardHeader.gameTitle, 12);
@@ -34,17 +33,12 @@ TWL_CODE void twl_flashcardInit(void) {
 		// Reset Slot-1 to allow reading title name and ID
 		cardInit(false);
 
-		//char gamename[13];
-		//char gameid[5];
+		/*char gamename[13];
+		char gameid[5];
 
-		/*fifoSendValue32(FIFO_USER_04, 1);
-		for (int i = 0; i < 10; i++) {
-			swiWaitForVBlank();
-		}
-		memcpy(&nds, (void*)0x02000000, sizeof(nds));*/
-		//UpdateCardInfo(&gameid[0], &gamename[0]);
+		UpdateCardInfo(&gameid[0], &gamename[0]);
 
-		/*consoleDemoInit();
+		consoleDemoInit();
 		iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
 		ShowGameInfo(gameid, gamename);
 
@@ -81,6 +75,7 @@ TWL_CODE void twl_flashcardInit(void) {
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} */
 
+		flashcardFoundReset();
 		if (!flashcardFound()) {
 			disableSlot1();
 		}

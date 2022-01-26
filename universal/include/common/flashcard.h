@@ -3,6 +3,7 @@
 
 bool sdFound(void);
 bool flashcardFound(void);
+void flashcardFoundReset(void);
 bool bothSDandFlashcard(void);
 
 #endif //DSIMENUPP_FLASHCARD_H

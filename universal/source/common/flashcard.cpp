@@ -25,6 +25,10 @@ bool flashcardFound(void) {
 	return flashcardRead;
 }
 
+void flashcardFoundReset(void) {
+	flashcardAccessed = false;
+}
+
 bool bothSDandFlashcard(void) {
 	return (sdFound() && flashcardFound());
 }
