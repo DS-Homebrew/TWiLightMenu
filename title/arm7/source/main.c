@@ -82,7 +82,7 @@ void VblankHandler(void) {
 	resyncClock();
 	if(fifoGetValue32(FIFO_USER_04) == 10) {
 		my_i2cWriteRegister(0x4A, 0x71, 0x01);
-		fifoSendValue32(FIFO_USER_01, 0);
+		fifoSendValue32(FIFO_USER_04, 0);
 	}
 	if(fifoCheckValue32(FIFO_USER_01)) {
 		if(fifoGetValue32(FIFO_USER_01)) {
