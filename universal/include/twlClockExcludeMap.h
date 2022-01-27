@@ -30,6 +30,7 @@ static const char twlClockExcludeList[][4] = {
 	"AL7", // LEGO Star Wars II: The Original Trilogy
 	"YLG", // LEGO Star Wars: The Complete Saga
 	"BL9", // LEGO Star Wars III: The Clone Wars
+	"YNN", // Magician's Quest: Mysterious Times
 	"AY9", // Mario & Sonic at the Olympic Games
 	"BZP", // Peppa Pig: Theme Park Fun
 	"AQW", // Puzzle Quest: Challenge of the Warlords
