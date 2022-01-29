@@ -35,7 +35,6 @@
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
-#include "swiHaltHookIncludeMap.h"
 #include "saveMap.h"
 #include "ROMList.h"
 
@@ -404,7 +403,6 @@ void lastRunROM()
 			bool boostCpu = (perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu);
 			bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
 			bool asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
-			bool swiHaltHook = (perGameSettings_swiHaltHook == -1 ? DEFAULT_SWI_HALT_HOOK : perGameSettings_swiHaltHook);
 
 			if (ms().homebrewBootstrap) {
 				argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
@@ -506,14 +504,6 @@ void lastRunROM()
 								break;
 							}
 						}
-
-						for (unsigned int i = 0; i < sizeof(swiHaltHookIncludeList)/sizeof(swiHaltHookIncludeList[0]); i++) {
-							if (memcmp(game_TID, swiHaltHookIncludeList[i], 3) == 0) {
-								// Found match
-								swiHaltHook = true;
-								break;
-							}
-						}
 					}
 				}
 
@@ -535,7 +525,6 @@ void lastRunROM()
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", (perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", asyncCardRead);
-				bootstrapini.SetInt("NDS-BOOTSTRAP", "SWI_HALT_HOOK", swiHaltHook);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", perGameSettings_expandRomSpace == -1 ? ms().extendedMemory : perGameSettings_expandRomSpace);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
 					(ms().forceSleepPatch

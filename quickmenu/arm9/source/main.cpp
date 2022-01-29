@@ -52,7 +52,6 @@
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
-#include "swiHaltHookIncludeMap.h"
 #include "donorMap.h"
 #include "saveMap.h"
 #include "ROMList.h"
@@ -214,23 +213,6 @@ bool setAsyncCardRead() {
 	}
 
 	return perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead;
-}
-
-/**
- * Enable SWI Halt Hook for a specific game.
- */
-bool setSwiHaltHook() {
-	if (!ms().ignoreBlacklists) {
-		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(swiHaltHookIncludeList)/sizeof(swiHaltHookIncludeList[0]); i++) {
-			if (memcmp(gameTid[ms().secondaryDevice], swiHaltHookIncludeList[i], 3) == 0) {
-				// Found match
-				return true;
-			}
-		}
-	}
-
-	return perGameSettings_swiHaltHook == -1 ? DEFAULT_SWI_HALT_HOOK : perGameSettings_swiHaltHook;
 }
 
 /**
@@ -2357,7 +2339,6 @@ int main(int argc, char **argv) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA());
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", setAsyncCardRead());
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "SWI_HALT_HOOK", setSwiHaltHook());
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", perGameSettings_expandRomSpace == -1 ? ms().extendedMemory : perGameSettings_expandRomSpace);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", SetDonorSDK());

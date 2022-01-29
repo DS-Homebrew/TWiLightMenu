@@ -2,13 +2,11 @@
 #define DMAEXCLUDEMAP_H
 
 static const char cardReadDMAExcludeList[][4] = {
-	"AY6", // Bangai-O Spirits
 	"AWD", // Diddy Kong Racing
 	"A3V", // Digimon World: Dawn
 	"A6R", // Digimon World: Dusk
 	"YV5", // Dragon Quest V: Hand of the Heavenly Bride
 	"APR", // Feel the Magic: XY-XX
-	"AFF", // Final Fantasy III
 	"BO5", // Golden Sun: Dark Dawn
 	"Y8L", // Golden Sun: Dark Dawn (Demo)
 	"AJS", // Jump! Super Stars
@@ -17,7 +15,6 @@ static const char cardReadDMAExcludeList[][4] = {
 	"YLU", // Last Window: The Secret of Cape West
 	"AZE", // The Legend of Zelda: Phantom Hourglass
 	"Y4C", // The Legend of Zelda: Phantom Hourglass (Demo)
-	"COL", // Mario & Sonic at the Olympic Winter Games
 	"AUG", // Need for Speed: Underground 2
 	"A2D", // New(er) Super Mario Bros. (DS)
 	"A2O", // Prey the Stars

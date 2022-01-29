@@ -40,7 +40,6 @@
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
-#include "swiHaltHookIncludeMap.h"
 
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 15
@@ -72,7 +71,6 @@ int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
 int perGameSettings_cardReadDMA = -1;
 int perGameSettings_asyncCardRead = -1;
-int perGameSettings_swiHaltHook = -1;
 int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 int perGameSettings_expandRomSpace = -1;
@@ -108,7 +106,6 @@ int perGameOp[10] = {-1};
 bool blacklisted_boostCpu = false;
 bool blacklisted_cardReadDma = false;
 bool blacklisted_asyncCardRead = false;
-bool whitelisted_swiHaltHook = false;
 
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
@@ -128,7 +125,6 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
 	perGameSettings_cardReadDMA = pergameini.GetInt("GAMESETTINGS", "CARD_READ_DMA", -1);
 	perGameSettings_asyncCardRead = pergameini.GetInt("GAMESETTINGS", "ASYNC_CARD_READ", -1);
-	perGameSettings_swiHaltHook = pergameini.GetInt("GAMESETTINGS", "SWI_HALT_HOOK", -1);
 	perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
 	perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
 	perGameSettings_expandRomSpace = pergameini.GetInt("GAMESETTINGS", "EXTENDED_MEMORY", -1);
@@ -137,7 +133,6 @@ void loadPerGameSettings (std::string filename) {
 	blacklisted_boostCpu = false;
 	blacklisted_cardReadDma = false;
 	blacklisted_asyncCardRead = false;
-	whitelisted_swiHaltHook = false;
 	if(!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
@@ -158,13 +153,6 @@ void loadPerGameSettings (std::string filename) {
 			if (memcmp(gameTid[CURPOS], asyncReadExcludeList[i], 3) == 0) {
 				// Found match
 				blacklisted_asyncCardRead = true;
-			}
-		}
-
-		for (unsigned int i = 0; i < sizeof(swiHaltHookIncludeList)/sizeof(swiHaltHookIncludeList[0]); i++) {
-			if (memcmp(gameTid[CURPOS], swiHaltHookIncludeList[i], 3) == 0) {
-				// Found match
-				whitelisted_swiHaltHook = true;
 			}
 		}
 	}
@@ -205,7 +193,6 @@ void savePerGameSettings (std::string filename) {
 		if (dsiFeatures()) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
-			pergameini.SetInt("GAMESETTINGS", "SWI_HALT_HOOK", perGameSettings_swiHaltHook);
 		}
 		if (!ms().secondaryDevice) {
 			if (!blacklisted_cardReadDma) pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
@@ -598,10 +585,6 @@ void perGameSettings (std::string filename) {
 					perGameOp[perGameOps] = 12;	// Async Card Read
 				}
 			}
-			if ((!ms().secondaryDevice || (dsiFeatures() && romSize <= romSizeLimit2+0x80000)) && unitCode[CURPOS] != 3 && !whitelisted_swiHaltHook) {
-				perGameOps++;
-				perGameOp[perGameOps] = 13;	// SWI Halt Hook
-			}
 			if ((dsiFeatures() || !ms().secondaryDevice)
 			 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
 				perGameOps++;
@@ -866,18 +849,6 @@ void perGameSettings (std::string filename) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
 				}
 				break;
-			case 13:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SWI_HALT_HOOK + ":", startAlign);
-				if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && unitCode[CURPOS] > 0) : perGameSettings_dsiMode > 0) && runInShown) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
-				} else if (perGameSettings_swiHaltHook == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
-				} else if (perGameSettings_swiHaltHook == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
-				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
-				}
-				break;
 		}
 		perGameOpYpos += 14;
 		}
@@ -1008,12 +979,6 @@ void perGameSettings (std::string filename) {
 						perGameSettings_asyncCardRead--;
 						if (perGameSettings_asyncCardRead < -1) perGameSettings_asyncCardRead = 1;
 						break;
-					case 13:
-						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
-							perGameSettings_swiHaltHook--;
-							if (perGameSettings_swiHaltHook < -1) perGameSettings_swiHaltHook = 1;
-						}
-						break;
 				}
 				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
@@ -1110,12 +1075,6 @@ void perGameSettings (std::string filename) {
 					case 12:
 						perGameSettings_asyncCardRead++;
 						if (perGameSettings_asyncCardRead > 1) perGameSettings_asyncCardRead = -1;
-						break;
-					case 13:
-						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
-							perGameSettings_swiHaltHook++;
-							if (perGameSettings_swiHaltHook > 1) perGameSettings_swiHaltHook = -1;
-						}
 						break;
 				}
 				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
