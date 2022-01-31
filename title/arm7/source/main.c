@@ -56,7 +56,7 @@ volatile int status = 0;
 //---------------------------------------------------------------------------------
 void soundFadeOut() {
 //---------------------------------------------------------------------------------
-	soundVolume -= 3;
+	soundVolume -= 5;
 	if (soundVolume < 0) {
 		soundVolume = 0;
 	}
@@ -85,11 +85,9 @@ void VblankHandler(void) {
 		fifoSendValue32(FIFO_USER_04, 0);
 	}
 	if(fifoCheckValue32(FIFO_USER_01)) {
-		if(fifoGetValue32(FIFO_USER_01)) {
-			soundFadeOut();
-		} else {
-			soundVolume = 127;
-		}
+		soundFadeOut();
+	} else {
+		soundVolume = 127;
 	}
 	REG_MASTER_VOLUME = soundVolume;
 }
