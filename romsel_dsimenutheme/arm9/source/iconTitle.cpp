@@ -31,6 +31,7 @@
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
+#include "graphics/lodepng.h"
 #include "graphics/queueControl.h"
 #include "graphics/ThemeConfig.h"
 #include "graphics/ThemeTextures.h"
@@ -151,6 +152,47 @@ void drawIconPCE(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIco
 void drawIconWS(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(WS_ICON)); }
 void drawIconNGP(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(NGP_ICON)); }
 
+void drawRomIcon(int Xpos, int Ypos, int num, int romType) {
+	if (customIcon[num])
+		drawIcon(Xpos, Ypos, num);
+	else if (romType == 17)
+		drawIconNGP(Xpos, Ypos);
+	else if (romType == 16)
+		drawIconWS(Xpos, Ypos);
+	else if (romType == 15)
+		drawIconSG(Xpos, Ypos);
+	else if (romType == 14)
+		drawIconM5(Xpos, Ypos);
+	else if (romType == 13)
+		drawIconCOL(Xpos, Ypos);
+	else if (romType == 12)
+		drawIconINT(Xpos, Ypos);
+	else if (romType == 11)
+		drawIconPCE(Xpos, Ypos);
+	else if (romType == 10)
+		drawIconA26(Xpos, Ypos);
+	else if (romType == 9)
+		drawIconPLG(Xpos, Ypos);
+	else if (romType == 8)
+		drawIconSNES(Xpos, Ypos);
+	else if (romType == 7)
+		drawIconMD(Xpos, Ypos);
+	else if (romType == 6)
+		drawIconGG(Xpos, Ypos);
+	else if (romType == 5)
+		drawIconSMS(Xpos, Ypos);
+	else if (romType == 4)
+		drawIconNES(Xpos, Ypos);
+	else if (romType == 3)
+		drawIconGBC(Xpos, Ypos);
+	else if (romType == 2)
+		drawIconGB(Xpos, Ypos);
+	else if (romType == 1)
+		drawIconGBA(Xpos, Ypos);
+	else
+		drawIcon(Xpos, Ypos, num);
+}
+
 void clearTitle(int num) {
 	cachedTitle[num] = blankTitle;
 }
@@ -170,6 +212,13 @@ void getGameInfo(bool isDir, const char *name, int num) {
 	requiresRamDisk[num] = false;
 	requiresDonorRom[num] = false;
 	infoFound[num] = false;
+	customIcon[num] = false;
+
+	char iconPath[256];
+	snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
+	if (access(iconPath, F_OK) == 0) {
+		customIcon[num] = true;
+	}
 
 	if (isDir) {
 		clearTitle(num);
@@ -430,6 +479,56 @@ void iconUpdate(bool isDir, const char *name, int num) {
 
 	if (isDir) {
 		clearIcon(spriteIdx);
+	} else if (customIcon[num]) {
+		char iconPath[256];
+		snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
+		if (access(iconPath, F_OK) == 0) {
+			std::vector<unsigned char> image;
+			uint imageWidth, imageHeight;
+			lodepng::decode(image, imageWidth, imageHeight, iconPath);
+			if (imageWidth == 32 && imageHeight == 32) {
+				sNDSBannerExt &banner = bnriconTile[num];
+				uint colorCount = 1;
+				for (uint i = 0; i < image.size()/4; i++) {
+					// calculate byte and nibble position of pixel in tiled banner icon
+					uint x = i%32, y = i/32;
+					uint tileX = x/8, tileY = y/8;
+					uint offX = x%8, offY = y%8;
+					uint pos = tileX*32 + tileY*128 + offX/2 + offY*4;
+					bool nibble = offX%2;
+					// clear pixel (using transparent palette slot)
+					banner.icon[pos] &= nibble? 0x0f : 0xf0;
+					// read color
+					u8 r, g, b, a;
+					r = image[i*4];
+					g = image[i*4+1];
+					b = image[i*4+2];
+					a = image[i*4+3];
+					if (a == 255) {
+						// convert to 5-bit bgr
+						b /= 8;
+						g /= 8;
+						r /= 8;
+						u16 color = 0x80 | b<<10 | g<<5 | r;
+						// find color in palette
+						bool found = false;
+						for (uint palIdx = 1; palIdx < colorCount; palIdx++) {
+							if (banner.palette[palIdx] == color) {
+								banner.icon[pos] |= nibble? palIdx<<4 : palIdx;
+								found = true;
+								break;
+							}
+						}
+						// add color to palette if room available
+						if (!found && colorCount < 16) {
+							banner.icon[pos] |= nibble? colorCount<<4 : colorCount;
+							banner.palette[colorCount++] = color;
+						}
+					}
+				}
+				loadIcon(banner.icon, banner.palette, spriteIdx, false);
+			}
+		}
 	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;

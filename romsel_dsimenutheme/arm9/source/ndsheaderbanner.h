@@ -277,6 +277,7 @@ extern u16 headerCRC[40];
 extern u32 a7mbk6[40];
 
 extern sNDSBannerExt bnriconTile[41];
+extern bool customIcon[41];
 
 // bnriconframenum[]
 extern int bnriconPalLine[41];

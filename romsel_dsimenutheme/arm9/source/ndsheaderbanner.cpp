@@ -525,6 +525,7 @@ int checkRomAP(FILE *ndsFile, int num)
 }
 
 sNDSBannerExt bnriconTile[41];
+bool customIcon[41];
 
 // bnriconframeseq[]
 static u16 bnriconframeseq[41][64] = {0x0000};
