@@ -48,7 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 56)
+// B4DS DSiWare Whitelist (Total: 57)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -87,6 +87,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGK", // Glory Days: Tactical Defense
 	"KDH", // Hard-Hat Domo
 	"KT9", // Kung Fu Dragon
+	"KLK", // Lola's Alphabet Train
 	"KJO", // Magnetic Joe
 	"KMG", // Mighty Flip Champs!
 	"KMB", // Mr. Brain
