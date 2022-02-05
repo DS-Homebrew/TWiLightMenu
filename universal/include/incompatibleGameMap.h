@@ -114,9 +114,10 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KS3", // Shantae: Risky's Revenge
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 15)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 16)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KXT", // 99Seconds
+	"KE9", // Absolute Baseball
 	"K27", // G.G. Series: All Breaker
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
