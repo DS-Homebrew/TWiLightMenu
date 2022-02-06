@@ -48,7 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 58)
+// B4DS DSiWare Whitelist (Total: 59)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -92,6 +92,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KMG", // Mighty Flip Champs!
 	"KMB", // Mr. Brain
 	"K2D", // Nintendo DSi + Internet
+	"KSUE", // Number Battle
 	"KAP", // Art Style: PiCTOBiTS
 	"KPP", // Pop Island
 	"KPF", // Pop Island: Paperfield
