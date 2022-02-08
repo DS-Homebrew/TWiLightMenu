@@ -214,6 +214,11 @@ autoboot:
 	mv menu.xx "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SYSTEM/menu.xx"
 	cp akmenu4.nds "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SRESET.DAT"
 
+	#### iTouchDS, R4(i) SDHC (r4rts.com)
+	mkdir -p "../7zfile/Flashcard users/Autoboot/iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data"
+	cp akmenu4.nds "../7zfile/Flashcard users/Autoboot/iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data/r4i.sys"
+	cp akmenu4.nds "../7zfile/Flashcard users/Autoboot/iTouchDS, R4(i) SDHC (r4rts.com)/SRESET.DAT"
+
 	#### Acekard 2, 2.1, 2i
 	dlditool flashcart_specifics/DLDI/ak2_sd.dldi akmenu4.nds
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1"
