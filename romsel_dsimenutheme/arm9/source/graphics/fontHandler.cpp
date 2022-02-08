@@ -19,6 +19,16 @@ std::list<TextEntry> topText, bottomText;
 
 bool shouldClear[] = {false, false};
 
+// Checks if any of the specified files exists
+bool fileExists(std::vector<std::string_view> paths) {
+	for(const std::string_view &path : paths) {
+		if(access(path.data(), F_OK) == 0)
+			return true;
+	}
+
+	return false;
+}
+
 void fontInit() {
 	extern u32 rotatingCubesLoaded;
 	bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (*(u16*)(0x020000C0) != 0 || !rotatingCubesLoaded)
@@ -32,8 +42,13 @@ void fontInit() {
 
 	// Load font graphics
 	std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
-	smallFont = new FontGraphic({fontPath + (((dsiFeatures() && !sys().arm7SCFGLocked()) || sys().dsDebugRam() || useExpansionPak) ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"}, useExpansionPak);
-	largeFont = new FontGraphic({fontPath + (((dsiFeatures() && !sys().arm7SCFGLocked()) || sys().dsDebugRam() || useExpansionPak) ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"}, useExpansionPak);
+	bool dsiFont = (dsiFeatures() && !sys().arm7SCFGLocked()) || sys().dsDebugRam() || useExpansionPak;
+	smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"}, useExpansionPak);
+	// If custom small font but no custom large font, use small font as large font
+	if(fileExists({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr"}) && !fileExists({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr"}))
+		largeFont = smallFont;
+	else
+		largeFont = new FontGraphic({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"}, useExpansionPak);
 
 	// Load palettes
 	u16 palette[] = {
