@@ -227,8 +227,8 @@ autoboot:
 	#### R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+
 	cp booter_fc.nds _DS_MENU.dat
 	dlditool flashcart_specifics/DLDI/r4itt.dldi _DS_MENU.dat
-	mkdir -p "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+"
-	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/_DS_MENU.DAT"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk cards 2013-2019, r4igold.cc 3DS, r4i-gold.me 2013+"
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk cards 2013-2019, r4igold.cc 3DS, r4i-gold.me 2013+/_DS_MENU.DAT"
 
 	#### Wood R4igold.cc Upgrade
 	dlditool flashcart_specifics/DLDI/r4idsn_sd.dldi booter_r4igold.cc_wood.nds
