@@ -568,7 +568,8 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 
 	if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
+	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)) {
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 		fcPath = replaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
