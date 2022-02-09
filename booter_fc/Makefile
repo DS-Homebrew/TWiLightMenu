@@ -163,16 +163,20 @@ autoboot:
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/iLL.iL"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/TTMenu.dat"
 
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/_BOOT_DS.NDS"
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/TTMenu.dat"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/_BOOT_DS.NDS"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/_DS_MENU.DAT"
 
-	# Since this is the last one, move it instead of copy
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i-REDANT/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/Redant.dat"
-	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/TTMenu.dat"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/TTMenu.dat"
+
+	# Since this is the last one, move it instead of copy
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE SDHC & SuperCard DSONEi/SDHC/TTMenu.dat"
+	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi TTMenu.dat
+	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE SDHC & SuperCard DSONEi/Non-SDHC/TTMenu.dat"
 
 	#### Games N Music
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Games N Music/"
@@ -201,13 +205,6 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/"
 	mv SCFW.SC "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/SCFW.SC"
 
-	#### SuperCard DSONE SDHC
-	cp booter_fc.nds TTMenu.dat
-	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi TTMenu.dat
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE SDHC & SuperCard DSONEi/Non-SDHC/TTMenu.dat"
-	dlditool flashcart_specifics/DLDI/DSTTDLDIboyakkeyver.dldi TTMenu.dat
-	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE SDHC & SuperCard DSONEi/SDHC/TTMenu.dat"
-
 	#### M3 DS Real
 	dlditool "flashcart_specifics/DLDI/M3-DS_(SD_Card).dldi" akmenu4.nds
 	dsbize akmenu4.nds menu.xx 0x12
@@ -227,8 +224,8 @@ autoboot:
 	#### R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+
 	cp booter_fc.nds _DS_MENU.dat
 	dlditool flashcart_specifics/DLDI/r4itt.dldi _DS_MENU.dat
-	mkdir -p "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+"
-	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/_DS_MENU.DAT"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk cards 2013-2019, r4igold.cc 3DS, r4i-gold.me 2013+"
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk cards 2013-2019, r4igold.cc 3DS, r4i-gold.me 2013+/_DS_MENU.DAT"
 
 	#### Wood R4igold.cc Upgrade
 	dlditool flashcart_specifics/DLDI/r4idsn_sd.dldi booter_r4igold.cc_wood.nds
