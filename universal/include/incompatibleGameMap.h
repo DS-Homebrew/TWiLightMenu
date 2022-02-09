@@ -48,7 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 60)
+// B4DS DSiWare Whitelist (Total: 61)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -61,6 +61,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAD", // Art Style: BASE 10
 	"KBB", // Bomberman Blitz
 	"KC5", // Castle Conqueror: Heroes
+	"KCV", // Cave Story
 	"KUQ", // Chuck E. Cheese's Alien Defense Force
 	"KUC", // Chuck E. Cheese's Arcade Room
 	"KXF", // Color Commando
