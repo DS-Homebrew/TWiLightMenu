@@ -205,16 +205,12 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/"
 	mv SCFW.SC "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/SCFW.SC"
 
-	#### M3 DS Real
-	dlditool "flashcart_specifics/DLDI/M3-DS_(SD_Card).dldi" akmenu4.nds
-	dsbize akmenu4.nds menu.xx 0x12
-	mv menu.xx "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SYSTEM/menu.xx"
-	cp akmenu4.nds "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003)/SRESET.DAT"
-
-	#### iTouchDS, R4(i) SDHC (r4rts.com)
-	mkdir -p "../7zfile/Flashcard users/Autoboot/iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data"
-	cp akmenu4.nds "../7zfile/Flashcard users/Autoboot/iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data/r4i.sys"
-	cp akmenu4.nds "../7zfile/Flashcard users/Autoboot/iTouchDS, R4(i) SDHC (r4rts.com)/SRESET.DAT"
+	#### M3 DS Real, iTouchDS, R4(i) SDHC (r4rts.com)
+	cp booter_fc.nds r4i.sys
+	dlditool "flashcart_specifics/DLDI/M3-DS_(SD_Card).dldi" r4i.sys
+	mkdir -p "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data"
+	cp r4i.sys "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data/r4i.sys"
+	mv r4i.sys "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/SRESET.DAT"
 
 	#### Acekard 2, 2.1, 2i
 	dlditool flashcart_specifics/DLDI/ak2_sd.dldi akmenu4.nds
