@@ -178,7 +178,7 @@ SoundControl::SoundControl()
 	// Leave top scren white
 	controlTopBright = false;
 
-	printLarge(false, 0, 88, STR_PREPARING_MUSIC, Alignment::center);
+	printLarge(false, 0, 88 - (calcLargeFontHeight(STR_PREPARING_MUSIC) - largeFontHeight()) / 2, STR_PREPARING_MUSIC, Alignment::center);
 	updateText(false);
 
 	if (ms().theme == TWLSettings::EThemeSaturn) {
