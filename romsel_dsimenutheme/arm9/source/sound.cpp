@@ -4,6 +4,9 @@
 #include "graphics/themefilenames.h"
 #include "common/twlmenusettings.h"
 #include "common/flashcard.h"
+#include "graphics/fontHandler.h"
+#include "language.h"
+#include "fileCopy.h"
 #include "streamingaudio.h"
 #include "string.h"
 #include "common/tonccpy.h"
@@ -22,6 +25,8 @@
 #define MSL_NSAMPS		7
 #define MSL_BANKSIZE	7
 
+
+extern bool controlTopBright;
 
 extern volatile s16 fade_counter;
 extern volatile bool fade_out;
@@ -170,19 +175,25 @@ SoundControl::SoundControl()
 	stream.sampling_rate = 16000;	 		// 16000Hz
 	stream.format = MM_STREAM_16BIT_MONO;  // select format
 
+	// Leave top scren white
+	controlTopBright = false;
+
+	printLarge(false, 0, 88, STR_PREPARING_MUSIC, Alignment::center);
+	updateText(false);
+
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 	} else {
 		switch(ms().dsiMusic) {
 			case 5: {
 				std::string startPath = (devicePath+TFN_HBL_START_SOUND_BG_CACHE);
-				if (access(startPath.c_str(), F_OK) != 0) {
+				if (access(startPath.c_str(), F_OK) != 0 || getFileSize(startPath.c_str()) == 0) {
 					if (adpcm_main(std::string(TFN_HBL_START_SOUND_BG).c_str(), startPath.c_str(), true) == -1) {
 						remove(startPath.c_str());
 					}
 				}
 				std::string loopPath = (devicePath+TFN_HBL_LOOP_SOUND_BG_CACHE);
-				if (access(loopPath.c_str(), F_OK) != 0) {
+				if (access(loopPath.c_str(), F_OK) != 0 || getFileSize(loopPath.c_str()) == 0) {
 					if (adpcm_main(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true) == -1) {
 						remove(startPath.c_str());
 						remove(loopPath.c_str());
@@ -197,13 +208,13 @@ SoundControl::SoundControl()
 			case 4:
 			case 2: {
 				std::string startPath = (devicePath+TFN_SHOP_START_SOUND_BG_CACHE);
-				if (access(startPath.c_str(), F_OK) != 0) {
+				if (access(startPath.c_str(), F_OK) != 0 || getFileSize(startPath.c_str()) == 0) {
 					if (adpcm_main(std::string(TFN_SHOP_START_SOUND_BG).c_str(), startPath.c_str(), true) == -1) {
 						remove(startPath.c_str());
 					}
 				}
 				std::string loopPath = (devicePath+TFN_SHOP_LOOP_SOUND_BG_CACHE);
-				if (access(loopPath.c_str(), F_OK) != 0) {
+				if (access(loopPath.c_str(), F_OK) != 0 || getFileSize(loopPath.c_str()) == 0) {
 					if (adpcm_main(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true) == -1) {
 						remove(startPath.c_str());
 						remove(loopPath.c_str());
@@ -218,7 +229,7 @@ SoundControl::SoundControl()
 			case 3: {
 				std::string musicPath = TFN_SOUND_BG;
 				std::string cachePath = TFN_SOUND_BG_CACHE;
-				if (access(musicPath.c_str(), F_OK) == 0) {
+				if ((access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) && access(musicPath.c_str(), F_OK) == 0) {
 					u8 wavFormat = 0;
 					u8 numChannels = 1;
 					stream_source = fopen(musicPath.c_str(), "rb");
@@ -230,7 +241,7 @@ SoundControl::SoundControl()
 					fseek(stream_source, 0x18, SEEK_SET);
 					fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
 					fclose(stream_source);
-					if (access(cachePath.c_str(), F_OK) != 0 && wavFormat == 0x11) {
+					if (wavFormat == 0x11) {
 						if (adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2) == -1) {
 							remove(cachePath.c_str());
 						}
@@ -241,7 +252,7 @@ SoundControl::SoundControl()
 			case 1:
 			default: {
 				std::string musicPath = (devicePath+TFN_DEFAULT_SOUND_BG_CACHE);
-				if (access(musicPath.c_str(), F_OK) != 0) {
+				if (access(musicPath.c_str(), F_OK) != 0 || getFileSize(musicPath.c_str()) == 0) {
 					if (adpcm_main(std::string(TFN_DEFAULT_SOUND_BG).c_str(), musicPath.c_str(), true) == -1) {
 						remove(musicPath.c_str());
 					}
@@ -253,6 +264,8 @@ SoundControl::SoundControl()
 		}
 	}
 
+	clearText();
+	controlTopBright = true;
 
 	fseek(stream_source, 0, SEEK_SET);
 
