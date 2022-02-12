@@ -6,12 +6,19 @@
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
 
+#include <nds.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <ctype.h>
 
 #include "adpcm-lib.h"
+
+extern bool fadeType;
+extern bool showProgressIcon;
+extern bool showProgressBar;
+extern int progressBarLength;
 
 /*static const char *sign_on = "\n"
 " ADPCM-XQ   Xtreme Quality IMA-ADPCM WAV Encoder / Decoder   Version 0.3\n"
@@ -119,6 +126,12 @@ static int adpcm_converter (char *infilename, char *outfilename, int flags, int 
             //fprintf (stderr, "\"%s\" is not a valid .WAV file!\n", infilename);
             return -1;
     }
+
+    // Show progress bar
+    showProgressIcon = true;
+    showProgressBar = true;
+    progressBarLength = 0;
+    fadeType = true; // Fade in from white
 
     // loop through all elements of the RIFF wav header (until the data chuck)
 
@@ -270,6 +283,17 @@ static int adpcm_converter (char *infilename, char *outfilename, int flags, int 
 
     fclose (outfile);
     fclose (infile);
+
+    // Fade out
+    fadeType = false; // Fade to white
+    for (int i = 0; i < 15; i++)
+        swiWaitForVBlank();
+
+    // Hide progress bar
+    showProgressIcon = false;
+    showProgressBar = false;
+    progressBarLength = 0;
+
     return res;
 }
 
@@ -316,11 +340,11 @@ static int adpcm_converter (char *infilename, char *outfilename, int flags, int 
 
 static int adpcm_decode_data (FILE *infile, FILE *outfile, int num_channels, size_t num_samples, int pcm8, int block_size)
 {
-    int samples_per_block = (block_size - num_channels * 4) * (num_channels ^ 3) + 1, percent;
+    int samples_per_block = (block_size - num_channels * 4) * (num_channels ^ 3) + 1;
     void *pcm_block = malloc (samples_per_block * num_channels * 2);
     void *pcm8_block = malloc (pcm8 ? (samples_per_block * num_channels) : 1);
     void *adpcm_block = malloc (block_size);
-    size_t progress_divider = 0;
+    int total_samples = num_samples;
 
     if (!pcm_block || !adpcm_block) {
         //fprintf (stderr, "could not allocate memory for buffers!\n");
@@ -364,14 +388,7 @@ static int adpcm_decode_data (FILE *infile, FILE *outfile, int num_channels, siz
 
         num_samples -= this_block_pcm_samples;
 
-        if (progress_divider) {
-            int new_percent = 100 - num_samples / progress_divider;
-
-            if (new_percent != percent) {
-                //fprintf (stderr, "\rprogress: %d%% ", percent = new_percent);
-                fflush (stderr);
-            }
-        }
+        progressBarLength = 192 * (total_samples - num_samples) / total_samples;
     }
 
     free (adpcm_block);
