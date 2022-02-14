@@ -300,7 +300,7 @@ STRING(DESCRIPTION_COLORMODE, "Changes the color of your screens. May not work i
 STRING(DESCRIPTION_LIMITEDMODE, "Only use for testing. Runs TWiLight Menu++ as if your console is in a DSiWarehax environment. Reboot after disabling for changes to take effect.")
 STRING(DESCRIPTION_SDREMOVALDETECTION, "Enables/Disables SD removal detection. Disable it if an error message is shown instead of the ROM menu.")
 STRING(DESCRIPTION_S1SDACCESS_1, "Allows your flashcard to be used as a secondary device. Turn this off if IR functionality doesn't work or if the app crashes.")
-STRING(DESCRIPTION_WIFI, "Select whether to use Nintendo WiFi Connection. Does not affect DS Download Play.")
+STRING(DESCRIPTION_WIFI, "Select whether to use Wireless Communications. Disable if WiFi card is either broken or not seated correctly.")
 STRING(DESCRIPTION_POWERLEDCOLOR, "Change to either Blue (or Red on low battery) or Purple.")
 STRING(DESCRIPTION_LASTPLAYEDROM_1, "If turned on, hold \\B on startup to skip to the ROM select menu.")
 STRING(DESCRIPTION_AUTOSTARTSLOT1, "Auto-starts the game or flashcard in Slot-1. Useful if TWLMenu++ is on your flashcard with console SD access.")

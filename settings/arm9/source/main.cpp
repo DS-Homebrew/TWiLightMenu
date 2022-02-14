@@ -1214,13 +1214,17 @@ int main(int argc, char **argv)
 		.option(STR_PREVENT_ROM_DELETION, STR_DESCRIPTION_PREVENT_ROM_DELETION_1, Option::Bool(&ms().preventDeletion), {STR_YES, STR_NO}, {true, false})
 		.option(STR_UPDATE_RECENTLY_PLAYED_LIST, STR_DESCRIPTION_UPDATE_RECENTLY_PLAYED_LIST, Option::Bool(&ms().updateRecentlyPlayedList), {STR_YES, STR_NO}, {true, false});
 
-	if (isDSiMode() && ms().consoleModel < 2) {
+	if (isDSiMode()) {
 		miscPage
 			.option(STR_WIFI,
 					STR_DESCRIPTION_WIFI,
 					Option::Bool(&ms().wifiLed, opt_wifiLed_toggle),
 					{STR_ON, STR_OFF},
-					{true, false})
+					{true, false});
+	}
+
+	if (isDSiMode() && ms().consoleModel < 2) {
+		miscPage
 			.option(STR_POWERLEDCOLOR,
 					STR_DESCRIPTION_POWERLEDCOLOR,
 					Option::Bool(&ms().powerLedColor, opt_powerLed_toggle),

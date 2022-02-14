@@ -2048,7 +2048,7 @@ int main(int argc, char **argv)
 	  }
 	}
 
-	if (isDSiMode() && ms().consoleModel < 2) {
+	if (isDSiMode()) {
 		if (ms().wifiLed == -1) {
 			if (*(u8*)(0x02FFFD01) == 0x13) {
 				ms().wifiLed = true;
@@ -2058,7 +2058,9 @@ int main(int argc, char **argv)
 		} else {
 			*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0x12);		// WiFi On/Off
 		}
-		*(u8*)(0x02FFFD02) = (ms().powerLedColor ? 0xFF : 0x00);
+		if (ms().consoleModel < 2) {
+			*(u8*)(0x02FFFD02) = (ms().powerLedColor ? 0xFF : 0x00);
+		}
 	}
 
 	if (sdFound()) {
