@@ -726,6 +726,11 @@ void opt_wifiLed_toggle(bool prev, bool next)
 	*(u8*)(0x02FFFD00) = (next ? 0x13 : 0x12);		// On/Off
 }
 
+void opt_powerLed_toggle(bool prev, bool next)
+{
+	*(u8*)(0x02FFFD02) = (next ? 0xFF : 0x00);
+}
+
 /*void opt_twlFirm_changed(int prev, int next)
 {
 	twlFirmChanged = true;
@@ -1215,6 +1220,11 @@ int main(int argc, char **argv)
 					STR_DESCRIPTION_WIFI,
 					Option::Bool(&ms().wifiLed, opt_wifiLed_toggle),
 					{STR_ON, STR_OFF},
+					{true, false})
+			.option(STR_POWERLEDCOLOR,
+					STR_DESCRIPTION_POWERLEDCOLOR,
+					Option::Bool(&ms().powerLedColor, opt_powerLed_toggle),
+					{STR_PURPLE, STR_BLUE+"/"+STR_RED},
 					{true, false});
 	}
 

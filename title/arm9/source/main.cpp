@@ -2058,6 +2058,7 @@ int main(int argc, char **argv)
 		} else {
 			*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0x12);		// WiFi On/Off
 		}
+		*(u8*)(0x02FFFD02) = (ms().powerLedColor ? 0xFF : 0x00);
 	}
 
 	if (sdFound()) {

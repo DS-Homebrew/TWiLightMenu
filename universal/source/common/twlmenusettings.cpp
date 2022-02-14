@@ -34,7 +34,12 @@ TWLSettings::TWLSettings()
 	colorMode = 0;
 	// blfLevel = 0;
 	dsiWareExploit = EExploitNone;
+	#ifdef WIFILEDINT
+	wifiLed = -1;
+	#else
 	wifiLed = true;
+	#endif
+	powerLedColor = false;
 	sdRemoveDetect = true;
 	showMicroSd = false;
 	gbar2DldiAccess = false;
@@ -170,6 +175,7 @@ void TWLSettings::loadSettings()
 	// blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	dsiWareExploit = (TExploit)settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
 	wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", wifiLed);
+	powerLedColor = settingsini.GetInt("SRLOADER", "POWER_LED_COLOR", powerLedColor);
 	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
 	showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
 	gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
@@ -320,6 +326,7 @@ void TWLSettings::saveSettings()
 	// settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	settingsini.SetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
 	settingsini.SetInt("SRLOADER", "WIFI_LED", wifiLed);
+	settingsini.SetInt("SRLOADER", "POWER_LED_COLOR", powerLedColor);
 	settingsini.SetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
 	settingsini.SetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
 	settingsini.SetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);

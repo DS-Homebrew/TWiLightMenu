@@ -244,6 +244,7 @@ int main() {
 	if (isDSiMode()) {
 		*(u8*)(0x02FFFD00) = 0xFF;
 		*(u8*)(0x02FFFD01) = i2cReadRegister(0x4A, 0x30);
+		*(u8*)(0x02FFFD02) = 0x77;
 
 		getConsoleID();
 	}
@@ -262,6 +263,10 @@ int main() {
 				REG_SCFG_WL |= BIT(0);
 			}
 			*(u8*)(0x02FFFD00) = 0xFF;
+		}
+		if (isDSiMode() && *(u8*)(0x02FFFD02) != 0x77) {
+			i2cWriteRegister(0x4A, 0x63, *(u8*)(0x02FFFD02)); // Change power LED color
+			*(u8*)(0x02FFFD02) = 0x77;
 		}
 
 
