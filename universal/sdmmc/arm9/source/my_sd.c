@@ -61,15 +61,14 @@ bool my_sdio_IsInserted() {
 //---------------------------------------------------------------------------------
 bool my_sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 //---------------------------------------------------------------------------------
+	DC_FlushRange(buffer,numSectors * 512);
+
 	sharedAddr[0] = sector;
 	sharedAddr[1] = numSectors;
 	sharedAddr[2] = (vu32)buffer;
 	
 	sharedAddr[3] = 0x44524453;
 	IPC_SendSync(8);
-
-	DC_FlushRange(buffer,numSectors * 512);
-
 	while(sharedAddr[3] == 0x44524453) {
 		swiDelay(100);
 	}
@@ -82,6 +81,8 @@ bool my_sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 //---------------------------------------------------------------------------------
 bool my_sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 //---------------------------------------------------------------------------------
+	DC_FlushRange(buffer,numSectors * 512);
+
 	sharedAddr[0] = sector;
 	sharedAddr[1] = numSectors;
 	sharedAddr[2] = (vu32)buffer;
