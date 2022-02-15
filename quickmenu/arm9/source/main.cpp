@@ -1271,6 +1271,15 @@ int main(int argc, char **argv) {
 				sprintf (boxArtPath[0], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), gameTid[0]);
 			}
 		}
+		
+		if (ms().showCustomIcons) {
+			char iconPath[256];
+			snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+					sdFound() ? "sd" : "fat",
+					filename[0].c_str());
+			customIcon[0] = (access(iconPath, F_OK) == 0);
+			if (bnrRomType[0] != 0) iconUpdate(0, false, filename[0].c_str());
+		}
 	}
 
 	// Flashcard (Secondary device)
@@ -1397,6 +1406,15 @@ int main(int argc, char **argv) {
 				}
 				sprintf (boxArtPath[1], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), gameTid[1]);
 			}
+		}
+
+		if (ms().showCustomIcons) {
+			char iconPath[256];
+			snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+					sdFound() ? "sd" : "fat",
+					filename[1].c_str());
+			customIcon[1] = (access(iconPath, F_OK) == 0);
+			if (bnrRomType[1] != 0) iconUpdate(1, false, filename[1].c_str());
 		}
 	  }
 	}
