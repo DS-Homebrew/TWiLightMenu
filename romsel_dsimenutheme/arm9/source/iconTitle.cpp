@@ -464,7 +464,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		infoFound[num] = true;
 
 		// banner sequence
-		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi && !customIcon[num]) {
 			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
 			if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
 				grabBannerSequence(num);
