@@ -836,7 +836,15 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			isHomebrew = 0;
 		}
 
-		if (bnrRomType == 0) iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+		if (ms().showCustomIcons) {
+			char iconPath[256];
+			snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+					sdFound() ? "sd" : "fat",
+					dirContents.at(fileOffset).name.c_str());
+			customIcon = (access(iconPath, F_OK) == 0);
+		}
+
+		if (bnrRomType == 0 || customIcon) iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 		titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 
 		showLocation();

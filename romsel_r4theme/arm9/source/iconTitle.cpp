@@ -33,6 +33,7 @@
 #include "common/twlmenusettings.h"
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
+#include "graphics/lodepng.h"
 #include "language.h"
 #include "ndsheaderbanner.h"
 #include "myDSiMode.h"
@@ -708,6 +709,15 @@ void getGameInfo(bool isDir, const char* name)
 	isModernHomebrew = false;
 	requiresRamDisk = false;
 	requiresDonorRom = false;
+	customIcon = false;
+
+	if (ms().showCustomIcons) {
+		char iconPath[256];
+		snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
+		if (access(iconPath, F_OK) == 0) {
+			customIcon = true;
+		}
+	}
 
 	if (isDir) {
 		// banner sequence
@@ -905,7 +915,7 @@ void getGameInfo(bool isDir, const char* name)
 		fclose(fp);
 
 		// banner sequence
-		if(ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if(ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi && !customIcon) {
 			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
 			if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
 				grabBannerSequence();
@@ -927,6 +937,57 @@ void iconUpdate(bool isDir, const char* name)
 	{
 		// icon
 		clearIcon();
+	}
+	else if (customIcon)
+	{
+		char iconPath[256];
+		snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
+		if (access(iconPath, F_OK) == 0) {
+			std::vector<unsigned char> image;
+			uint imageWidth, imageHeight;
+			lodepng::decode(image, imageWidth, imageHeight, iconPath);
+			if (imageWidth == 32 && imageHeight == 32) {
+				uint colorCount = 1;
+				for (uint i = 0; i < image.size()/4; i++) {
+					// calculate byte and nibble position of pixel in tiled banner icon
+					uint x = i%32, y = i/32;
+					uint tileX = x/8, tileY = y/8;
+					uint offX = x%8, offY = y%8;
+					uint pos = tileX*32 + tileY*128 + offX/2 + offY*4;
+					bool nibble = offX%2;
+					// clear pixel (using transparent palette slot)
+					ndsBanner.icon[pos] &= nibble? 0x0f : 0xf0;
+					// read color
+					u8 r, g, b, a;
+					r = image[i*4];
+					g = image[i*4+1];
+					b = image[i*4+2];
+					a = image[i*4+3];
+					if (a == 255) {
+						// convert to 5-bit bgr
+						b /= 8;
+						g /= 8;
+						r /= 8;
+						u16 color = 0x80 | b<<10 | g<<5 | r;
+						// find color in palette
+						bool found = false;
+						for (uint palIdx = 1; palIdx < colorCount; palIdx++) {
+							if (ndsBanner.palette[palIdx] == color) {
+								ndsBanner.icon[pos] |= nibble? palIdx<<4 : palIdx;
+								found = true;
+								break;
+							}
+						}
+						// add color to palette if room available
+						if (!found && colorCount < 16) {
+							ndsBanner.icon[pos] |= nibble? colorCount<<4 : colorCount;
+							ndsBanner.palette[colorCount++] = color;
+						}
+					}
+				}
+				loadIcon(ndsBanner.icon, ndsBanner.palette, false);
+			}
+		}
 	}
 	else if (extension(name, {".argv"}))
 	{
