@@ -214,10 +214,12 @@ void getGameInfo(bool isDir, const char *name, int num) {
 	infoFound[num] = false;
 	customIcon[num] = false;
 
-	char iconPath[256];
-	snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
-	if (access(iconPath, F_OK) == 0) {
-		customIcon[num] = true;
+	if (ms().showCustomIcons) {
+		char iconPath[256];
+		snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
+		if (access(iconPath, F_OK) == 0) {
+			customIcon[num] = true;
+		}
 	}
 
 	if (isDir) {

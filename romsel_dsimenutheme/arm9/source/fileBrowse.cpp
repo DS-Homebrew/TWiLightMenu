@@ -1790,11 +1790,13 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					tex().loadBoxArtToMem(boxArtPath, i);
 				}
 
-				char iconPath[256];
-				snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
-						sdFound() ? "sd" : "fat",
-						dirContents[scrn][i + PAGENUM * 40].name.c_str());
-				customIcon[i] = (access(iconPath, F_OK) == 0);
+				if (ms().showCustomIcons) {
+					char iconPath[256];
+					snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+							sdFound() ? "sd" : "fat",
+							dirContents[scrn][i + PAGENUM * 40].name.c_str());
+					customIcon[i] = (access(iconPath, F_OK) == 0);
+				}
 			}
 			if (reSpawnBoxes)
 				spawnedtitleboxes++;

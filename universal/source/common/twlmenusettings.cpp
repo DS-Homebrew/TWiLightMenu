@@ -56,6 +56,7 @@ TWLSettings::TWLSettings()
 	showHidden = false;
 	showBoxArt = 1 + isDSiMode();
 	animateDsiIcons = true;
+	showCustomIcons = true;
 	preventDeletion = false;
 	sysRegion = ERegionDefault;
 	launcherApp = -1;
@@ -209,6 +210,7 @@ void TWLSettings::loadSettings()
 	if (!dsiFeatures() && showBoxArt == 2) // Reset to 1 if not in DSi mode
 		showBoxArt = 1;
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
+	showCustomIcons = settingsini.GetInt("SRLOADER", "SHOW_CUSTOM_ICONS", showCustomIcons);
 	preventDeletion = settingsini.GetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
 	sysRegion = (TRegion)settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
 	if (consoleModel < 2) {
@@ -345,6 +347,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
 	settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
 	settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
+	settingsini.SetInt("SRLOADER", "SHOW_CUSTOM_ICONS", showCustomIcons);
 	settingsini.SetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
 	settingsini.SetInt("SRLOADER", "SYS_REGION", sysRegion);
 	if (consoleModel < 2) {

@@ -279,6 +279,7 @@ public:
 	bool showHidden;
 	int showBoxArt;
 	bool animateDsiIcons;
+	bool showCustomIcons;
 	bool preventDeletion;
 	TRegion sysRegion;
 	int launcherApp;
