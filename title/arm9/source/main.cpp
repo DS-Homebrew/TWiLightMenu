@@ -520,6 +520,7 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", (perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", (perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region));
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", (perGameSettings_region < -1 ? ms().useRomRegion : 0));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", !dsiBinariesFound ? 0 : (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", (perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram));
@@ -571,7 +572,8 @@ void lastRunROM()
 			std::string fcPath;
 			if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
+			 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+			 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)) {
 				CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 				fcPath = replaceAll(ms().romPath[ms().previousUsedDevice], "fat:/", woodfat);
 				fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
@@ -853,8 +855,8 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
 					(perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
-				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION",
-					(perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region));
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", (perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region));
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", (perGameSettings_region < -1 ? ms().useRomRegion : 0));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
@@ -2046,7 +2048,7 @@ int main(int argc, char **argv)
 	  }
 	}
 
-	if (isDSiMode() && ms().consoleModel < 2) {
+	if (isDSiMode()) {
 		if (ms().wifiLed == -1) {
 			if (*(u8*)(0x02FFFD01) == 0x13) {
 				ms().wifiLed = true;
@@ -2055,6 +2057,9 @@ int main(int argc, char **argv)
 			}
 		} else {
 			*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0x12);		// WiFi On/Off
+		}
+		if (ms().consoleModel < 2) {
+			*(u8*)(0x02FFFD02) = (ms().powerLedColor ? 0xFF : 0x00);
 		}
 	}
 

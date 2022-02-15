@@ -48,7 +48,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 56)
+// B4DS DSiWare Whitelist (Total: 63)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -59,7 +59,9 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAZ", // ARC Style: Soccer!
 	"KSR", // Aura-Aura Climber
 	"KAD", // Art Style: BASE 10
+	"KBB", // Bomberman Blitz
 	"KC5", // Castle Conqueror: Heroes
+	"KCV", // Cave Story
 	"KUQ", // Chuck E. Cheese's Alien Defense Force
 	"KUC", // Chuck E. Cheese's Arcade Room
 	"KXF", // Color Commando
@@ -86,11 +88,15 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGV", // Game & Watch: Vermin
 	"KGK", // Glory Days: Tactical Defense
 	"KDH", // Hard-Hat Domo
+	"KJY", // JellyCar 2
 	"KT9", // Kung Fu Dragon
+	"KLK", // Lola's Alphabet Train
 	"KJO", // Magnetic Joe
 	"KMG", // Mighty Flip Champs!
+	"KXB", // Monster Buster Club
 	"KMB", // Mr. Brain
 	"K2D", // Nintendo DSi + Internet
+	"KSUE", // Number Battle
 	"KAP", // Art Style: PiCTOBiTS
 	"KPP", // Pop Island
 	"KPF", // Pop Island: Paperfield
@@ -103,6 +109,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KS3", // Shantae: Risky's Revenge
 	"KA6", // Space Ace
 	"K4D", // Sudoku
+	"K4F", // Sudoku 4Pockets
 	"KK4", // Wakugumi: Monochrome Puzzle
 	"KDW", // White-Water Domo
 	"KAS", // Art Style: ZENGAGE
@@ -113,9 +120,10 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KS3", // Shantae: Risky's Revenge
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 15)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 16)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KXT", // 99Seconds
+	"KE9", // Absolute Baseball
 	"K27", // G.G. Series: All Breaker
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale

@@ -175,7 +175,8 @@ int lastRunROM() {
 	ms().loadSettings();
 
 	if (ms().consoleModel < 2) {
-		*(u8*)(0x023FFD00) = (ms().wifiLed ? 0x13 : 0x12);		// WiFi On/Off
+		*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0x12);		// WiFi On/Off
+		*(u8*)(0x02FFFD02) = (ms().powerLedColor ? 0xFF : 0x00);
 	}
 
 	if (ms().macroMode) {
@@ -327,7 +328,9 @@ int lastRunROM() {
 
 				std::string path;
 				if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-				 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
+				 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
+				 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+				 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)) {
 					CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 					path = ReplaceAll(ms().romPath[1], "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", path);

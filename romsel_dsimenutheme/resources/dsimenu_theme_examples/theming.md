@@ -94,6 +94,7 @@ You may configure various options on how the theme is drawn in the `theme.ini`, 
 | `MovingArrowUserPalette` | Assign the DSi Profile Theme Palette to the palette of the arrow shown when moving icons                     | N/A           | 1             |
 | `LaunchDotsUserPalette`  | Assign the DSi Profile Theme Palette to the palette of the launch dots                                       | N/A           | 1             |
 | `DialogBoxUserPalette`   | Assign the DSi Profile Theme Palette to the palette of the dialog box                                        | N/A           | 1             |
+| `PurpleBatteryAvailable` | Set this to 1 if you have purple-colored battery icons alongside the blue/red ones                           | 0             | 0             |
 #### Advanced Theming
 
 Occasionally, you may require more than the default number of colors for some paletted textures. In such cases, you may modify the `.grit` compilation file for the texture to increase the size of the palette.
@@ -209,6 +210,7 @@ You may configure various options on how the theme is drawn in the `theme.ini`, 
 | `MovingArrowUserPalette` | Assign the DSi Profile Theme Palette to the palette of the arrow shown when moving icons                     | N/A           | 1             |
 | `LaunchDotsUserPalette`  | Assign the DSi Profile Theme Palette to the palette of the launch dots                                       | N/A           | 1             |
 | `DialogBoxUserPalette`   | Assign the DSi Profile Theme Palette to the palette of the dialog box                                        | N/A           | 1             |
+| `PurpleBatteryAvailable` | Set this to 1 if you have purple-colored battery icons alongside the blue/red ones                           | 0             | 0             |
 #### Advanced Theming
 
 Occasionally, you may require more than the default number of colors for some paletted textures. In such cases, you may modify the `.grit` compilation file for the texture to increase the size of the palette. Note that the `.grit` files for backgrounds **should not** be changed. The background files are not paletted, but losslessly compressed, and you are allowed full 16-bit full color in backgrounds.

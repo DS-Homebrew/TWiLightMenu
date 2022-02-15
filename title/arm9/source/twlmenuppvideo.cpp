@@ -651,8 +651,8 @@ void twlMenuVideo(void) {
 		// Load orange BG for Halloween
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppOrange.png");
 	} else if (strcmp(currentDate, "02/14") == 0) {
-		// Load pink BG for Valentine's Day
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppPink.png");
+		// Load heart-shaped BG for Valentine's Day
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppHeart.png");
 	} else if (strcmp(currentDate, "03/17") == 0 || strcmp(currentDate, "04/22") == 0) {
 		// Load green BG for St. Patrick's Day, or Earth Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppGreen.png");

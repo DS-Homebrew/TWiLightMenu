@@ -24,9 +24,7 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get update
-          sudo apt-get install jq p7zip-full python gcc -y
-
-          sudo gcc booter_fc/flashcart_specifics/dsbize/dsbize.c -o /usr/local/bin/dsbize
+          sudo apt-get install jq p7zip-full python -y
       - name: Get manual pages
         run: |
           cd manual/nitrofiles
@@ -99,8 +97,8 @@ jobs:
           curl -LO https://github.com/wavemotion-dave/NINTV-DS/releases/latest/download/NINTV-DS.nds
           curl -LO https://github.com/wavemotion-dave/ColecoDS/releases/latest/download/ColecoDS.nds
           curl -LO https://github.com/FluBBaOfWard/S8DS/releases/latest/download/S8DS.zip
-          curl -LO https://bitbucket.org/Coto88/snemulds/raw/master/release/arm7dldi-ntr/SNEmulDS.nds
-          curl -LO https://bitbucket.org/Coto88/snemulds/raw/master/release/arm7dldi-twl/SNEmulDS.srl
+          curl -LO https://bitbucket.org/Coto88/snemulds/raw/33f5f469b6e6c19cb3e1be9259b407832fce42b9/release/arm7dldi-ntr/SNEmulDS.nds
+          curl -LO https://bitbucket.org/Coto88/snemulds/raw/33f5f469b6e6c19cb3e1be9259b407832fce42b9/release/arm7dldi-twl/SNEmulDS.srl
           7z x S8DS.zip S8DS.nds
           rm S8DS.zip
           curl -LO https://github.com/FluBBaOfWard/NGPDS/releases/latest/download/NGPDS.zip
