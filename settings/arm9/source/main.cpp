@@ -1162,7 +1162,7 @@ int main(int argc, char **argv)
 	using TSlot1LaunchMethod = TWLSettings::TSlot1LaunchMethod;
 
 	gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
-	if (sdFound() && !sys().arm7SCFGLocked())
+	if (ms().consoleModel == 0 && sdFound() && !sys().arm7SCFGLocked())
 		gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool((bool *)&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"}, {true, false});
 	if (sys().isRegularDS()) {
 		gamesPage
@@ -1281,7 +1281,7 @@ int main(int argc, char **argv)
 				{STR_NONE, "sudokuhax", "4swordshax", "fieldrunnerhax", "grtpwn", "ugopwn/Lenny", "UNO*pwn", "Memory Pit"},
 				{TExploit::EExploitNone, TExploit::EExploitSudokuhax, TExploit::EExploit4Swordshax, TExploit::EExploitFieldrunnerhax, TExploit::EExploitGrtpwn, TExploit::EExploitUgopwn, TExploit::EExploitUnopwn, TExploit::EExploitMemoryPit});
 	}
-	if (sdFound()) {
+	if (sdFound() && (ms().consoleModel < 2 || sys().arm7SCFGLocked())) {
 		miscPage
 			.option(STR_SYSREGION,
 				STR_DESCRIPTION_SYSREGION_1,
