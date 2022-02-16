@@ -577,43 +577,36 @@ void fixDSBrowser(void) {
 	// clear last part of EXRAM
 	arm7_clearmem ((void*)0x02400000, 0x3FF000);
 
-	extern void patchMpu(const tNDSHeader* ndsHeader, const module_params_t* moduleParams);
-	patchMpu(ndsHeader, findModuleParamsOffset(ndsHeader));
-
-	memset((char*)0x02400000, 0xFF, 0xC0);
-	*(u8*)0x024000B2 = 0;
-	*(u8*)0x024000B3 = 0;
-	*(u8*)0x024000B4 = 0;
-	*(u8*)0x024000B5 = 0x24;
-	*(u8*)0x024000B6 = 0x24;
-	*(u8*)0x024000B7 = 0x24;
-	*(u16*)0x024000BE = 0x7FFF;
-	*(u16*)0x024000CE = 0x7FFF;
+	toncset((char*)0x0C400000, 0xFF, 0xC0);
+	toncset((u8*)0x0C4000B2, 0, 3);
+	toncset((u8*)0x0C4000B5, 0x24, 3);
+	*(u16*)0x0C4000BE = 0x7FFF;
+	*(u16*)0x0C4000CE = 0x7FFF;
 
 	// Opera RAM patch (ARM9)
-	*(u32*)0x02003D48 = 0x2400000;
-	*(u32*)0x02003D4C = 0x2400004;
+	*(u32*)0x02003D48 = 0xC400000;
+	*(u32*)0x02003D4C = 0xC400004;
 
-	*(u32*)0x02010FF0 = 0x2400000;
-	*(u32*)0x02010FF4 = 0x24000CE;
+	*(u32*)0x02010FF0 = 0xC400000;
+	*(u32*)0x02010FF4 = 0xC4000CE;
 
-	*(u32*)0x020112AC = 0x2400080;
+	*(u32*)0x020112AC = 0xC400080;
 
-	*(u32*)0x020402BC = 0x24000C2;
-	*(u32*)0x020402C0 = 0x24000C0;
-	*(u32*)0x020402CC = 0x2FFFFFE;
-	*(u32*)0x020402D0 = 0x2800000;
-	*(u32*)0x020402D4 = 0x29FFFFF;
-	*(u32*)0x020402D8 = 0x2BFFFFF;
-	*(u32*)0x020402DC = 0x2FFFFFF;
+	*(u32*)0x020402BC = 0xC4000C2;
+	*(u32*)0x020402C0 = 0xC4000C0;
+	*(u32*)0x020402CC = 0xCFFFFFE;
+	*(u32*)0x020402D0 = 0xC800000;
+	*(u32*)0x020402D4 = 0xC9FFFFF;
+	*(u32*)0x020402D8 = 0xCBFFFFF;
+	*(u32*)0x020402DC = 0xCFFFFFF;
 	*(u32*)0x020402E0 = 0xD7FFFFF;	// ???
-	memset((char*)0x2800000, 0xFF, 0x800000);		// Fill fake MEP with FFs
+	toncset((char*)0xC800000, 0xFF, 0x800000);		// Fill fake MEP with FFs
 
 	// Opera RAM patch (ARM7)
-	*(u32*)0x0238C7BC = 0x2400000;
-	*(u32*)0x0238C7C0 = 0x24000CE;
+	*(u32*)0x0238C7BC = 0xC400000;
+	*(u32*)0x0238C7C0 = 0xC4000CE;
 
-	//*(u32*)0x0238C950 = 0x2400000;
+	//*(u32*)0x0238C950 = 0xC400000;
 }
 
 
