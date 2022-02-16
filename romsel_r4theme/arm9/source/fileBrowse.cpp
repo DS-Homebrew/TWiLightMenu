@@ -837,11 +837,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		}
 
 		if (ms().showCustomIcons) {
-			char iconPath[256];
-			snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
 					sdFound() ? "sd" : "fat",
 					dirContents.at(fileOffset).name.c_str());
-			customIcon = (access(iconPath, F_OK) == 0);
+			customIcon = (access(customIconPath, F_OK) == 0);
+			if (customIcon) bnriconisDSi = false;
 		}
 
 		if (bnrRomType == 0 || customIcon) iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());

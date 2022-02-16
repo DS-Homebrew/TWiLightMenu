@@ -277,7 +277,6 @@ extern u16 headerCRC[40];
 extern u32 a7mbk6[40];
 
 extern sNDSBannerExt bnriconTile[41];
-extern bool customIcon[41];
 
 // bnriconframenum[]
 extern int bnriconPalLine[41];
@@ -295,6 +294,8 @@ extern bool isHomebrew[41];
 extern bool isModernHomebrew[41];		// false == No DSi-Extended header, true == Has DSi-Extended header
 extern bool requiresRamDisk[41];
 extern int requiresDonorRom[41];
+extern bool customIcon[41];
+extern char customIconPath[256];
 
 /**
  * Get banner sequence from banner file.

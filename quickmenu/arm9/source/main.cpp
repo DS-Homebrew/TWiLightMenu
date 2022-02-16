@@ -1273,12 +1273,14 @@ int main(int argc, char **argv) {
 		}
 		
 		if (ms().showCustomIcons) {
-			char iconPath[256];
-			snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
 					sdFound() ? "sd" : "fat",
 					filename[0].c_str());
-			customIcon[0] = (access(iconPath, F_OK) == 0);
-			if (bnrRomType[0] != 0) iconUpdate(0, false, filename[0].c_str());
+			customIcon[0] = (access(customIconPath, F_OK) == 0);
+			if (customIcon[0]) {
+				bnriconisDSi[0] = false;
+				iconUpdate(0, false, filename[0].c_str());
+			}
 		}
 	}
 
@@ -1409,12 +1411,14 @@ int main(int argc, char **argv) {
 		}
 
 		if (ms().showCustomIcons) {
-			char iconPath[256];
-			snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
 					sdFound() ? "sd" : "fat",
 					filename[1].c_str());
-			customIcon[1] = (access(iconPath, F_OK) == 0);
-			if (bnrRomType[1] != 0) iconUpdate(1, false, filename[1].c_str());
+			customIcon[1] = (access(customIconPath, F_OK) == 0);
+			if (customIcon[1]) {
+				bnriconisDSi[1] = false;
+				iconUpdate(0, false, filename[1].c_str());
+			}
 		}
 	  }
 	}

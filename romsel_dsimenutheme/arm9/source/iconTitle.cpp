@@ -212,15 +212,6 @@ void getGameInfo(bool isDir, const char *name, int num) {
 	requiresRamDisk[num] = false;
 	requiresDonorRom[num] = false;
 	infoFound[num] = false;
-	customIcon[num] = false;
-
-	if (ms().showCustomIcons) {
-		char iconPath[256];
-		snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
-		if (access(iconPath, F_OK) == 0) {
-			customIcon[num] = true;
-		}
-	}
 
 	if (isDir) {
 		clearTitle(num);
@@ -464,7 +455,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		infoFound[num] = true;
 
 		// banner sequence
-		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi && !customIcon[num]) {
+		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
 			if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
 				grabBannerSequence(num);
@@ -482,12 +473,11 @@ void iconUpdate(bool isDir, const char *name, int num) {
 	if (isDir) {
 		clearIcon(spriteIdx);
 	} else if (customIcon[num]) {
-		char iconPath[256];
-		snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
-		if (access(iconPath, F_OK) == 0) {
+		snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
+		if (access(customIconPath, F_OK) == 0) {
 			std::vector<unsigned char> image;
 			uint imageWidth, imageHeight;
-			lodepng::decode(image, imageWidth, imageHeight, iconPath);
+			lodepng::decode(image, imageWidth, imageHeight, customIconPath);
 			if (imageWidth == 32 && imageHeight == 32) {
 				sNDSBannerExt &banner = bnriconTile[num];
 				uint colorCount = 1;

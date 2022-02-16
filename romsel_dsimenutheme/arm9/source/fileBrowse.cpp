@@ -1791,11 +1791,11 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				}
 
 				if (ms().showCustomIcons) {
-					char iconPath[256];
-					snprintf(iconPath, sizeof(iconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+					snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
 							sdFound() ? "sd" : "fat",
 							dirContents[scrn][i + PAGENUM * 40].name.c_str());
-					customIcon[i] = (access(iconPath, F_OK) == 0);
+					customIcon[i] = (access(customIconPath, F_OK) == 0);
+					if (customIcon[i]) bnriconisDSi[i] = false;
 				}
 			}
 			if (reSpawnBoxes)

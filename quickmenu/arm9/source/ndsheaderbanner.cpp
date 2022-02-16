@@ -116,6 +116,7 @@ bool isDSiWare[2] = {false};
 bool isHomebrew[2] = {false};
 bool isModernHomebrew[2] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header
 bool customIcon[2] = {false};
+char customIconPath[256];
 
 /**
  * Get banner sequence from banner file.
