@@ -1280,7 +1280,7 @@ int main(int argc, char **argv)
 				{STR_NONE, "sudokuhax", "4swordshax", "fieldrunnerhax", "grtpwn", "ugopwn/Lenny", "UNO*pwn", "Memory Pit"},
 				{TExploit::EExploitNone, TExploit::EExploitSudokuhax, TExploit::EExploit4Swordshax, TExploit::EExploitFieldrunnerhax, TExploit::EExploitGrtpwn, TExploit::EExploitUgopwn, TExploit::EExploitUnopwn, TExploit::EExploitMemoryPit});
 	}
-	if (sdFound()) {
+	if (sdFound() && (ms().consoleModel < 2 || sys().arm7SCFGLocked())) {
 		miscPage
 			.option(STR_SYSREGION,
 				STR_DESCRIPTION_SYSREGION_1,
