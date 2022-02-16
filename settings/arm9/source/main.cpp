@@ -1161,7 +1161,7 @@ int main(int argc, char **argv)
 	using TSlot1LaunchMethod = TWLSettings::TSlot1LaunchMethod;
 
 	gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
-	if (sdFound() && !sys().arm7SCFGLocked())
+	if (ms().consoleModel == 0 && sdFound() && !sys().arm7SCFGLocked())
 		gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool((bool *)&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"}, {true, false});
 	if (sys().isRegularDS()) {
 		gamesPage
