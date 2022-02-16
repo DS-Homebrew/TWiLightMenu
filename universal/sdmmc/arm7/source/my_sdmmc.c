@@ -569,16 +569,16 @@ void my_sdmmcHandler() {
     int sdflag = 0;
     int oldIME = enterCriticalSection();
 
-    switch(*(u32*)0x02FFFA0C) {
+    switch(IPC_GetSync()) {
 
-    case 0x56484453: // SDMMC_HAVE_SD
+    case 0: // 0x56484453: // SDMMC_HAVE_SD
 		result = (sdmmc_read16(REG_SDSTATUS0) & BIT(5)) != 0;
         break;
 
-    case 0x54534453: // SDMMC_SD_START
+    case 1: // 0x54534453: // SDMMC_SD_START
         sdflag = 1;
         /* Falls through. */
-    case 0x5453414E: // SDMMC_NAND_START
+    case 2: // 0x5453414E: // SDMMC_NAND_START
         if (sdmmc_read16(REG_SDSTATUS0) == 0) {
             result = 1;
         } else {
@@ -597,31 +597,31 @@ void my_sdmmcHandler() {
 		}
         break;
 
-    case 0x4E494453: // SDMMC_SD_IS_INSERTED
+    case 3: // 0x4E494453: // SDMMC_SD_IS_INSERTED
         result = useDLDI ? io_dldi_data->ioInterface.isInserted() : my_sdmmc_cardinserted();
         break;
 
     //case SDMMC_SD_STOP:
     //    break;
 
-    case 0x5A53414E: // SDMMC_NAND_SIZE
-        result = deviceNAND.total_size;
-        break;
+    //case 0x5A53414E: // SDMMC_NAND_SIZE
+    //    result = deviceNAND.total_size;
+    //    break;
 
-    case 0x44524453: // SDMMC_SD_READ_SECTORS
+    case 4: // 0x44524453: // SDMMC_SD_READ_SECTORS
         result =
 			useDLDI ? (io_dldi_data->ioInterface.readSectors(*(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08) ? 0 : 1)
 					: my_sdmmc_readsectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
         break;
-    case 0x52574453: // SDMMC_SD_WRITE_SECTORS
+    case 5: // 0x52574453: // SDMMC_SD_WRITE_SECTORS
         result =
 			useDLDI ? (io_dldi_data->ioInterface.writeSectors(*(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08) ? 0 : 1)
 					: my_sdmmc_writesectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
         break;
-    case 0x4452414E: // SDMMC_NAND_READ_SECTORS
+    case 6: // 0x4452414E: // SDMMC_NAND_READ_SECTORS
         result = my_sdmmc_readsectors(&deviceNAND, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
         break;
-    case 0x5257414E: // SDMMC_NAND_WRITE_SECTORS
+    case 7: // 0x5257414E: // SDMMC_NAND_WRITE_SECTORS
         result = my_sdmmc_writesectors(&deviceNAND, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
         break;
     }
