@@ -520,6 +520,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 				}
 				loadIcon(banner.icon, banner.palette, spriteIdx, false);
 			}
+			else loadUnkIcon(spriteIdx);
 		}
 	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file

@@ -957,6 +957,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 				}
 				loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);
 			}
+			else loadUnkIcon(num);
 		}
 	} else if (extension(name, ".argv")) {
 		// look through the argv file for the corresponding nds/app file

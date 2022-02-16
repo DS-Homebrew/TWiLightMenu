@@ -977,6 +977,7 @@ void iconUpdate(bool isDir, const char* name)
 				}
 				loadIcon(ndsBanner.icon, ndsBanner.palette, false);
 			}
+			else loadUnkIcon();
 		}
 	}
 	else if (extension(name, {".argv"}))
