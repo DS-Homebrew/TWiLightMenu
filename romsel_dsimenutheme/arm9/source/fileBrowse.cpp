@@ -1823,7 +1823,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	// Load correct icons depending on cursor position
 	if (CURPOS <= 1) {
 		for (int i = 0; i < 5; i++) {
-			if (bnrRomType[i] == 0 && i + PAGENUM * 40 < file_count) {
+			if ((bnrRomType[i] == 0 || customIcon[i]) && i + PAGENUM * 40 < file_count) {
 				snd().updateStream();
 				swiWaitForVBlank();
 				iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
@@ -1832,7 +1832,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 		}
 	} else if (CURPOS >= 2 && CURPOS <= 36) {
 		for (int i = 0; i < 6; i++) {
-			if (bnrRomType[i] == 0 && (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
+			if ((bnrRomType[i] == 0 || customIcon[CURPOS - 2 + i]) && (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
 				snd().updateStream();
 				swiWaitForVBlank();
 				iconUpdate(dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).isDirectory,
@@ -1842,7 +1842,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 		}
 	} else if (CURPOS >= 37 && CURPOS <= 39) {
 		for (int i = 0; i < 5; i++) {
-			if (bnrRomType[i] == 0 && (35 + i) + PAGENUM * 40 < file_count) {
+			if ((bnrRomType[i] == 0 || customIcon[35 + i]) && (35 + i) + PAGENUM * 40 < file_count) {
 				snd().updateStream();
 				swiWaitForVBlank();
 				iconUpdate(dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
