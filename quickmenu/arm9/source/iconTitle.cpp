@@ -1070,6 +1070,42 @@ void titleUpdate(int num, bool top, bool isDir, const char* name)
 			printSmall(false, BOX_PX, iconYpos[top ? 0 : 3] + BOX_PY - (calcSmallFontHeight(name) / 2), name, Alignment::center);
 		}
 	} else {
-		printSmall(false, BOX_PX, iconYpos[top ? 0 : 3] + BOX_PY - (calcSmallFontHeight(name) / 2), name, Alignment::center);
+		std::vector<std::string> lines;
+		lines.push_back(name);
+
+		for(uint i = 0; i < lines.size(); i++) {
+			int width = calcSmallFontWidth(lines[i]);
+			if(width > 140) {
+				int mid = lines[i].length() / 2;
+				bool foundSpace = false;
+				for(uint j = 0; j < lines[i].length() / 2; j++) {
+					if(lines[i][mid + j] == ' ') {
+						lines.insert(lines.begin() + i, lines[i].substr(0, mid + j));
+						lines[i + 1] = lines[i + 1].substr(mid + j + 1);
+						i--;
+						foundSpace = true;
+						break;
+					} else if(lines[i][mid - j] == ' ') {
+						lines.insert(lines.begin() + i, lines[i].substr(0, mid - j));
+						lines[i + 1] = lines[i + 1].substr(mid - j + 1);
+						i--;
+						foundSpace = true;
+						break;
+					}
+				}
+				if(!foundSpace) {
+					lines.insert(lines.begin() + i, lines[i].substr(0, mid));
+					lines[i + 1] = lines[i + 1].substr(mid);
+					i--;
+				}
+			}
+		}
+
+		std::string out;
+		for(auto line : lines) {
+			out += line + '\n';
+		}
+		out.pop_back();
+		printSmall(false, BOX_PX, iconYpos[top ? 0 : 3] + BOX_PY - (calcSmallFontHeight(out) / 2), out, Alignment::center);
 	}
 }
