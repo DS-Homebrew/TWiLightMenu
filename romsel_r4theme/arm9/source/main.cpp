@@ -248,7 +248,7 @@ bool setClockSpeed(const char* filename) {
 /**
  * Disable card read DMA for a specific game.
  */
-bool setCardReadDMA(const char* filename) {
+int setCardReadDMA(const char* filename) {
 	if (!ms().ignoreBlacklists) {
 		FILE *f_nds_file = fopen(filename, "rb");
 
