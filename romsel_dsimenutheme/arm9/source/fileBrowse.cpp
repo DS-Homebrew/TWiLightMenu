@@ -1795,7 +1795,8 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 							sdFound() ? "sd" : "fat",
 							dirContents[scrn][i + PAGENUM * 40].name.c_str());
 					customIcon[i] = (access(customIconPath, F_OK) == 0);
-					if (customIcon[i]) bnriconisDSi[i] = false;
+					if (customIcon[i])
+						bnriconisDSi[i] = false;
 				}
 			}
 			if (reSpawnBoxes)
@@ -2088,6 +2089,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				getGameInfo(dirContents[scrn][movingApp].isDirectory,
 							dirContents[scrn][movingApp].name.c_str(), -1);
+
+				if (ms().showCustomIcons) {
+					snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+							sdFound() ? "sd" : "fat",
+							dirContents[scrn][movingApp].name.c_str());
+					customIcon[40] = (access(customIconPath, F_OK) == 0);
+					if (customIcon[40])
+						bnriconisDSi[40] = false;
+				}
+
 				iconUpdate(dirContents[scrn][movingApp].isDirectory,
 						   dirContents[scrn][movingApp].name.c_str(), -1);
 

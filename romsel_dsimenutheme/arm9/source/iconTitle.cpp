@@ -153,7 +153,7 @@ void drawIconWS(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon
 void drawIconNGP(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(NGP_ICON)); }
 
 void drawRomIcon(int Xpos, int Ypos, int num, int romType) {
-	if (customIcon[num])
+	if (num == -1 ? customIcon[40] : customIcon[num])
 		drawIcon(Xpos, Ypos, num);
 	else if (romType == 17)
 		drawIconNGP(Xpos, Ypos);
