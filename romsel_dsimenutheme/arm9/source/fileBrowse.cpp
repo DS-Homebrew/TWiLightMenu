@@ -1791,10 +1791,18 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				}
 
 				if (ms().showCustomIcons) {
-					snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+					// First try banner bin
+					snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.bin",
 							sdFound() ? "sd" : "fat",
 							dirContents[scrn][i + PAGENUM * 40].name.c_str());
 					customIcon[i] = (access(customIconPath, F_OK) == 0);
+					if(!customIcon[i]) {
+						// If no banner bin, try png
+						snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+								sdFound() ? "sd" : "fat",
+								dirContents[scrn][i + PAGENUM * 40].name.c_str());
+						customIcon[i] = (access(customIconPath, F_OK) == 0);
+					}
 					if (customIcon[i])
 						bnriconisDSi[i] = false;
 				}
@@ -2091,10 +2099,18 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							dirContents[scrn][movingApp].name.c_str(), -1);
 
 				if (ms().showCustomIcons) {
-					snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+					// First try banner bin
+					snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.bin",
 							sdFound() ? "sd" : "fat",
 							dirContents[scrn][movingApp].name.c_str());
 					customIcon[40] = (access(customIconPath, F_OK) == 0);
+					if(!customIcon[40]) {
+						// If no banner bin, try png
+						snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+								sdFound() ? "sd" : "fat",
+								dirContents[scrn][movingApp].name.c_str());
+						customIcon[40] = (access(customIconPath, F_OK) == 0);
+					}
 					if (customIcon[40])
 						bnriconisDSi[40] = false;
 				}
