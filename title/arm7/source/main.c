@@ -231,19 +231,28 @@ int main() {
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
 
+	bool is3DS = false;
+
 	if (isDSiMode() || REG_SCFG_EXT != 0) {
 		fifoSendValue32(FIFO_USER_04, my_i2cReadRegister(0x4A, 0x71));
 
 		// Check for 3DS
 		u8 byteBak = my_i2cReadRegister(0x4A, 0x71);
 		my_i2cWriteRegister(0x4A, 0x71, 0xD2);
-		fifoSendValue32(FIFO_USER_05, my_i2cReadRegister(0x4A, 0x71));
+		u8 byteNew = my_i2cReadRegister(0x4A, 0x71);
+		fifoSendValue32(FIFO_USER_05, byteNew);
+		is3DS = (byteNew != 0xD2);
 		my_i2cWriteRegister(0x4A, 0x71, byteBak);
 	}
 
 	if (isDSiMode()) {
 		*(u8*)(0x02FFFD00) = 0xFF;
-		*(u8*)(0x02FFFD01) = i2cReadRegister(0x4A, 0x30);
+		if (is3DS) {
+			*(u8*)(0x02FFFD01) = (REG_SCFG_WL & BIT(0)) ? 0x13 : 0x12;
+		} else {
+			*(u8*)(0x02FFFD01) = i2cReadRegister(0x4A, 0x30);
+		}
+		*(u8*)(0x02FFFD02) = 0x77;
 
 		getConsoleID();
 	}
@@ -257,11 +266,15 @@ int main() {
 		if (isDSiMode() && *(u8*)(0x02FFFD00) != 0xFF) {
 			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x02FFFD00));
 			if (*(u8*)(0x02FFFD00) == 0x13) {
-				REG_SCFG_WL &= BIT(0);
-			} else {
 				REG_SCFG_WL |= BIT(0);
+			} else {
+				REG_SCFG_WL &= ~BIT(0);
 			}
 			*(u8*)(0x02FFFD00) = 0xFF;
+		}
+		if (isDSiMode() && *(u8*)(0x02FFFD02) != 0x77) {
+			i2cWriteRegister(0x4A, 0x63, *(u8*)(0x02FFFD02)); // Change power LED color
+			*(u8*)(0x02FFFD02) = 0x77;
 		}
 
 

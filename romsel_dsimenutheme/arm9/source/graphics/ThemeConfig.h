@@ -47,6 +47,7 @@ private:
 	bool _movingArrowUserPalette;
 	bool _launchDotsUserPalette;
 	bool _dialogBoxUserPalette;
+	bool _purpleBatteryAvailable;
 
 	bool _renderPhoto;
 	bool _playStartupJingle;
@@ -103,6 +104,7 @@ public:
 	bool movingArrowUserPalette() const { return _movingArrowUserPalette; }
 	bool launchDotsUserPalette() const { return _launchDotsUserPalette; }
 	bool dialogBoxUserPalette() const { return _dialogBoxUserPalette; }
+	bool purpleBatteryAvailable() const { return _purpleBatteryAvailable; }
 
 	bool renderPhoto() const { return _renderPhoto; }
 

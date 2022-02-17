@@ -401,7 +401,7 @@ void lastRunROM()
 			bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 			bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 			bool boostCpu = (perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu);
-			bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
+			int cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
 			bool asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
 
 			if (ms().homebrewBootstrap) {
@@ -2048,7 +2048,7 @@ int main(int argc, char **argv)
 	  }
 	}
 
-	if (isDSiMode() && ms().consoleModel < 2) {
+	if (isDSiMode()) {
 		if (ms().wifiLed == -1) {
 			if (*(u8*)(0x02FFFD01) == 0x13) {
 				ms().wifiLed = true;
@@ -2057,6 +2057,9 @@ int main(int argc, char **argv)
 			}
 		} else {
 			*(u8*)(0x02FFFD00) = (ms().wifiLed ? 0x13 : 0x12);		// WiFi On/Off
+		}
+		if (ms().consoleModel < 2) {
+			*(u8*)(0x02FFFD02) = (ms().powerLedColor ? 0xFF : 0x00);
 		}
 	}
 

@@ -257,7 +257,12 @@ public:
 	int colorMode;
 	// int blfLevel;
 	TExploit dsiWareExploit;
+	#ifdef WIFILEDINT
+	int wifiLed;
+	#else
 	bool wifiLed;
+	#endif
+	bool powerLedColor;
 	bool sdRemoveDetect;
 	bool showMicroSd;
 	bool gbar2DldiAccess;
@@ -279,6 +284,7 @@ public:
 	bool showHidden;
 	int showBoxArt;
 	bool animateDsiIcons;
+	bool showCustomIcons;
 	bool preventDeletion;
 	TRegion sysRegion;
 	int launcherApp;

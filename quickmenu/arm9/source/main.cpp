@@ -184,7 +184,7 @@ bool setClockSpeed() {
 /**
  * Disable card read DMA for a specific game.
  */
-bool setCardReadDMA() {
+int setCardReadDMA() {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
@@ -1271,6 +1271,17 @@ int main(int argc, char **argv) {
 				sprintf (boxArtPath[0], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), gameTid[0]);
 			}
 		}
+		
+		if (ms().showCustomIcons) {
+			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+					sdFound() ? "sd" : "fat",
+					filename[0].c_str());
+			customIcon[0] = (access(customIconPath, F_OK) == 0);
+			if (customIcon[0]) {
+				bnriconisDSi[0] = false;
+				iconUpdate(0, false, filename[0].c_str());
+			}
+		}
 	}
 
 	// Flashcard (Secondary device)
@@ -1396,6 +1407,17 @@ int main(int argc, char **argv) {
 					temp_filename = argarray.at(0);
 				}
 				sprintf (boxArtPath[1], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), gameTid[1]);
+			}
+		}
+
+		if (ms().showCustomIcons) {
+			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+					sdFound() ? "sd" : "fat",
+					filename[1].c_str());
+			customIcon[1] = (access(customIconPath, F_OK) == 0);
+			if (customIcon[1]) {
+				bnriconisDSi[1] = false;
+				iconUpdate(0, false, filename[1].c_str());
 			}
 		}
 	  }

@@ -19,7 +19,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 	_volumeRenderY(4), _volumeRenderX(16),  _batteryRenderY(5), _batteryRenderX(235),
 	// _photoRenderY(24), _photoRenderX(179),
 	_startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true),
-	_movingArrowUserPalette(true), _launchDotsUserPalette(true), _dialogBoxUserPalette(true),
+	_movingArrowUserPalette(true), _launchDotsUserPalette(true), _dialogBoxUserPalette(true), _purpleBatteryAvailable(false),
 	_renderPhoto(true), _playStartupJingle(false), _startupJingleDelayAdjust(0),
 	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108)
 {
@@ -91,6 +91,7 @@ void ThemeConfig::loadConfig() {
 	_movingArrowUserPalette = themeConfig.GetInt("THEME", "MovingArrowUserPalette", _movingArrowUserPalette);
 	_launchDotsUserPalette = themeConfig.GetInt("THEME", "LaunchDotsUserPalette", _launchDotsUserPalette);
 	_dialogBoxUserPalette = themeConfig.GetInt("THEME", "DialogBoxUserPalette", _dialogBoxUserPalette);
+	_purpleBatteryAvailable = themeConfig.GetInt("THEME", "PurpleBatteryAvailable", _purpleBatteryAvailable);
 	_rotatingCubesRenderY = themeConfig.GetInt("THEME", "RotatingCubesRenderY", _rotatingCubesRenderY);
 	_renderPhoto = themeConfig.GetInt("THEME", "RenderPhoto", _renderPhoto);
 

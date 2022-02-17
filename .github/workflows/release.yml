@@ -66,6 +66,7 @@ jobs:
           mv TWiLightMenu-debug-release.7z ~/artifacts
 
           mkdir -p 7zfile/_nds/TWiLightMenu/boxart/
+          mkdir -p 7zfile/_nds/TWiLightMenu/icons/
           mkdir -p 7zfile/_nds/TWiLightMenu/extras/
           mkdir -p 7zfile/_nds/TWiLightMenu/gamesettings/
 

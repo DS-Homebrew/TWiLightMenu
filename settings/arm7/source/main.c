@@ -240,11 +240,15 @@ int main() {
 		if (isDSiMode() && *(u8*)(0x02FFFD00) != 0xFF) {
 			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x02FFFD00));
 			if (*(u8*)(0x02FFFD00) == 0x13) {
-				REG_SCFG_WL &= BIT(0);
-			} else {
 				REG_SCFG_WL |= BIT(0);
+			} else {
+				REG_SCFG_WL &= ~BIT(0);
 			}
 			*(u8*)(0x02FFFD00) = 0xFF;
+		}
+		if (isDSiMode() && *(u8*)(0x02FFFD02) != 0x77) {
+			i2cWriteRegister(0x4A, 0x63, *(u8*)(0x02FFFD02)); // Change power LED color
+			*(u8*)(0x02FFFD02) = 0x77;
 		}
 		/*if (!gotCartHeader && fifoCheckValue32(FIFO_USER_04)) {
 			UpdateCardInfo();

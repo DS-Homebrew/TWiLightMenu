@@ -58,7 +58,7 @@ bool my_nand_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	sharedAddr[2] = (vu32)buffer;
 	
 	sharedAddr[3] = 0x4452414E;
-	IPC_SendSync(8);
+	IPC_SendSync(6);
 	while(sharedAddr[3] == 0x4452414E) {
 		swiDelay(100);
 	}
@@ -72,7 +72,7 @@ bool nandio_startup() {
 	int result = 0;
 
 	sharedAddr[3] = 0x56484453;
-	IPC_SendSync(8);
+	IPC_SendSync(0);
 	while(sharedAddr[3] == 0x56484453) {
 		swiDelay(100);
 	}
@@ -81,7 +81,7 @@ bool nandio_startup() {
 	if(result==0) return false;
 
 	sharedAddr[3] = 0x5453414E;
-	IPC_SendSync(8);
+	IPC_SendSync(2);
 	while(sharedAddr[3] == 0x5453414E) {
 		swiDelay(100);
 	}

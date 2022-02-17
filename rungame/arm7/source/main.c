@@ -102,16 +102,23 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
 	fifoSendValue32(FIFO_USER_06, 1);
 	
+	*(u8*)(0x02FFFD00) = 0xFF;
+	*(u8*)(0x02FFFD02) = 0x77;
+
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
-		if (isDSiMode() && *(u8*)(0x023FFD00) != 0) {
-			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x023FFD00));
-			if (*(u8*)(0x023FFD00) == 0x13) {
-				REG_SCFG_WL &= BIT(0);
-			} else {
+		if (isDSiMode() && *(u8*)(0x02FFFD00) != 0xFF) {
+			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x02FFFD00));
+			if (*(u8*)(0x02FFFD00) == 0x13) {
 				REG_SCFG_WL |= BIT(0);
+			} else {
+				REG_SCFG_WL &= ~BIT(0);
 			}
-			*(u8*)(0x023FFD00) = 0;
+			*(u8*)(0x02FFFD00) = 0xFF;
+		}
+		if (isDSiMode() && *(u8*)(0x02FFFD02) != 0x77) {
+			i2cWriteRegister(0x4A, 0x63, *(u8*)(0x02FFFD02)); // Change power LED color
+			*(u8*)(0x02FFFD02) = 0x77;
 		}
 		if(fifoCheckValue32(FIFO_USER_08)) {
 			ReturntoDSiMenu();
