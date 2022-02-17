@@ -26,6 +26,7 @@
 void getGameInfo(bool isDir, const char* name, int num);
 void iconUpdate(bool isDir, const char* name, int num);
 void titleUpdate(bool isDir, std::string_view name, int num);
+void drawRomIcon(int Xpos, int Ypos, int num, int romType);
 void drawIcon(int Xpos, int Ypos, int num);
 void drawIconGBA(int Xpos, int Ypos);
 void drawSmallIconGBA(int Xpos, int Ypos);

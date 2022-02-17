@@ -471,7 +471,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 		}
 
 		int pos = CURPOS + (right ? 2 : -2);
-		if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < (int)dirContents.size()) {
+		if ((bnrRomType[pos] == 0 || customIcon[pos]) && pos >= 0 && pos + PAGENUM * 40 < (int)dirContents.size()) {
 			iconUpdate(dirContents[pos + PAGENUM * 40].isDirectory,
 						dirContents[pos + PAGENUM * 40].name.c_str(),
 						pos);
@@ -1789,6 +1789,15 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					}
 					tex().loadBoxArtToMem(boxArtPath, i);
 				}
+
+				if (ms().showCustomIcons) {
+					snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+							sdFound() ? "sd" : "fat",
+							dirContents[scrn][i + PAGENUM * 40].name.c_str());
+					customIcon[i] = (access(customIconPath, F_OK) == 0);
+					if (customIcon[i])
+						bnriconisDSi[i] = false;
+				}
 			}
 			if (reSpawnBoxes)
 				spawnedtitleboxes++;
@@ -2080,6 +2089,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				getGameInfo(dirContents[scrn][movingApp].isDirectory,
 							dirContents[scrn][movingApp].name.c_str(), -1);
+
+				if (ms().showCustomIcons) {
+					snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
+							sdFound() ? "sd" : "fat",
+							dirContents[scrn][movingApp].name.c_str());
+					customIcon[40] = (access(customIconPath, F_OK) == 0);
+					if (customIcon[40])
+						bnriconisDSi[40] = false;
+				}
+
 				iconUpdate(dirContents[scrn][movingApp].isDirectory,
 						   dirContents[scrn][movingApp].name.c_str(), -1);
 
@@ -2271,7 +2290,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if(prevPos != CURPOS) {
 						for (int i = 0; i < 6; i++) {
 							int pos = (CURPOS - 2 + i);
-							if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+							if ((bnrRomType[pos] == 0 || customIcon[pos]) && pos >= 0 && pos + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
 										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
 										pos);
@@ -2354,7 +2373,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						// Load icons
 						for (int i = 0; i < 6; i++) {
 							int pos = (CURPOS - 2 + i);
-							if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+							if ((bnrRomType[pos] == 0 || customIcon[pos]) && pos >= 0 && pos + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
 										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
 										pos);
@@ -2405,7 +2424,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 									// Load icons
 									for (int i = 0; i < 6; i++) {
 										int pos = (CURPOS - 2 + i);
-										if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+										if ((bnrRomType[pos] == 0 || customIcon[pos]) && pos >= 0 && pos + PAGENUM * 40 < file_count) {
 											iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
 													dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
 													pos);
@@ -2457,7 +2476,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							// Load icons
 							for (int i = 0; i < 6; i++) {
 								int pos = (CURPOS - 2 + i);
-								if (bnrRomType[pos] == 0 && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+								if ((bnrRomType[pos] == 0 || customIcon[pos]) && pos >= 0 && pos + PAGENUM * 40 < file_count) {
 									iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
 											dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
 											pos);
