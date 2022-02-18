@@ -883,7 +883,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 5:
 						perGameSettings_cardReadDMA--;
-						if (romUnitCode == 3 && perGameSettings_cardReadDMA == 1) {
+						if (romUnitCode < 3 && perGameSettings_cardReadDMA == 1) {
 							perGameSettings_cardReadDMA--;
 						}
 						if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = (ms().secondaryDevice ? 1 : 2);
@@ -964,7 +964,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 5:
 						perGameSettings_cardReadDMA++;
-						if (romUnitCode == 3 && perGameSettings_cardReadDMA == 1) {
+						if (romUnitCode < 3 && perGameSettings_cardReadDMA == 1) {
 							perGameSettings_cardReadDMA++;
 						}
 						if (perGameSettings_cardReadDMA > (ms().secondaryDevice ? 1 : 2)) perGameSettings_cardReadDMA = -1;
