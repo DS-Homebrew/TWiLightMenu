@@ -184,7 +184,7 @@ bool setClockSpeed() {
 /**
  * Disable card read DMA for a specific game.
  */
-int setCardReadDMA() {
+bool setCardReadDMA() {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {

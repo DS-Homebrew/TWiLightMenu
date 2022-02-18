@@ -473,55 +473,81 @@ void iconUpdate(bool isDir, const char *name, int num) {
 	if (isDir) {
 		clearIcon(spriteIdx);
 	} else if (customIcon[num]) {
-		snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
+		sNDSBannerExt &banner = bnriconTile[num];
+		bool customIconGood = false;
+
+		snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.bin", sdFound() ? "sd" : "fat", name);
 		if (access(customIconPath, F_OK) == 0) {
-			std::vector<unsigned char> image;
-			uint imageWidth, imageHeight;
-			lodepng::decode(image, imageWidth, imageHeight, customIconPath);
-			if (imageWidth == 32 && imageHeight == 32) {
-				sNDSBannerExt &banner = bnriconTile[num];
-				uint colorCount = 1;
-				for (uint i = 0; i < image.size()/4; i++) {
-					// calculate byte and nibble position of pixel in tiled banner icon
-					uint x = i%32, y = i/32;
-					uint tileX = x/8, tileY = y/8;
-					uint offX = x%8, offY = y%8;
-					uint pos = tileX*32 + tileY*128 + offX/2 + offY*4;
-					bool nibble = offX%2;
-					// clear pixel (using transparent palette slot)
-					banner.icon[pos] &= nibble? 0x0f : 0xf0;
-					// read color
-					u8 r, g, b, a;
-					r = image[i*4];
-					g = image[i*4+1];
-					b = image[i*4+2];
-					a = image[i*4+3];
-					if (a == 255) {
-						// convert to 5-bit bgr
-						b /= 8;
-						g /= 8;
-						r /= 8;
-						u16 color = 0x80 | b<<10 | g<<5 | r;
-						// find color in palette
-						bool found = false;
-						for (uint palIdx = 1; palIdx < colorCount; palIdx++) {
-							if (banner.palette[palIdx] == color) {
-								banner.icon[pos] |= nibble? palIdx<<4 : palIdx;
-								found = true;
-								break;
+			FILE *file = fopen(customIconPath, "rb");
+			if(file) {
+				size_t read = fread(&banner, 1, sizeof(sNDSBannerExt), file);
+				fclose(file);
+
+				if(read >= NDS_BANNER_SIZE_ORIGINAL)
+					customIconGood = true;
+				if(ms().animateDsiIcons && read == NDS_BANNER_SIZE_DSi) {
+					u16 crc16 = swiCRC16(0xFFFF, banner.dsi_icon, 0x1180);
+					if (banner.crc[3] == crc16) { // Check if CRC16 is valid
+						bnriconisDSi[num] = true;
+						grabBannerSequence(num);
+					}
+				}
+			}
+		} else {
+			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
+			if (access(customIconPath, F_OK) != 0) {
+				std::vector<unsigned char> image;
+				uint imageWidth, imageHeight;
+				lodepng::decode(image, imageWidth, imageHeight, customIconPath);
+				if (imageWidth == 32 && imageHeight == 32) {
+					customIconGood = true;
+
+					uint colorCount = 1;
+					for (uint i = 0; i < image.size()/4; i++) {
+						// calculate byte and nibble position of pixel in tiled banner icon
+						uint x = i%32, y = i/32;
+						uint tileX = x/8, tileY = y/8;
+						uint offX = x%8, offY = y%8;
+						uint pos = tileX*32 + tileY*128 + offX/2 + offY*4;
+						bool nibble = offX%2;
+						// clear pixel (using transparent palette slot)
+						banner.icon[pos] &= nibble? 0x0f : 0xf0;
+						// read color
+						u8 r, g, b, a;
+						r = image[i*4];
+						g = image[i*4+1];
+						b = image[i*4+2];
+						a = image[i*4+3];
+						if (a == 255) {
+							// convert to 5-bit bgr
+							b /= 8;
+							g /= 8;
+							r /= 8;
+							u16 color = 0x80 | b<<10 | g<<5 | r;
+							// find color in palette
+							bool found = false;
+							for (uint palIdx = 1; palIdx < colorCount; palIdx++) {
+								if (banner.palette[palIdx] == color) {
+									banner.icon[pos] |= nibble? palIdx<<4 : palIdx;
+									found = true;
+									break;
+								}
 							}
-						}
-						// add color to palette if room available
-						if (!found && colorCount < 16) {
-							banner.icon[pos] |= nibble? colorCount<<4 : colorCount;
-							banner.palette[colorCount++] = color;
+							// add color to palette if room available
+							if (!found && colorCount < 16) {
+								banner.icon[pos] |= nibble? colorCount<<4 : colorCount;
+								banner.palette[colorCount++] = color;
+							}
 						}
 					}
 				}
-				loadIcon(banner.icon, banner.palette, spriteIdx, false);
 			}
-			else loadUnkIcon(spriteIdx);
 		}
+
+		if(customIconGood)
+			loadIcon(bnriconisDSi[num] ? banner.dsi_icon[0] : banner.icon, banner.palette, spriteIdx, bnriconisDSi[num]);
+		else 
+			loadUnkIcon(spriteIdx);
 	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
