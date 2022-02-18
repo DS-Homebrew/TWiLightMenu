@@ -575,13 +575,15 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (ms().useBootstrap || (dsiFeatures() && unitCode[CURPOS] > 0) || !ms().secondaryDevice) {
-			if ((!ms().secondaryDevice || unitCode[CURPOS] < 3) && !blacklisted_cardReadDma) {
-				perGameOps++;
-				perGameOp[perGameOps] = 5;	// Card Read DMA
-			}
-			if (!ms().secondaryDevice && romSize > romSizeLimit && !blacklisted_asyncCardRead) {
-				perGameOps++;
-				perGameOp[perGameOps] = 12;	// Async Card Read
+			if (!ms().secondaryDevice) {
+				if (unitCode[CURPOS] < 3 && !blacklisted_cardReadDma) {
+					perGameOps++;
+					perGameOp[perGameOps] = 5;	// Card Read DMA
+				}
+				if (romSize > romSizeLimit && !blacklisted_asyncCardRead) {
+					perGameOps++;
+					perGameOp[perGameOps] = 12;	// Async Card Read
+				}
 			}
 			if ((dsiFeatures() || !ms().secondaryDevice)
 			 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
@@ -762,10 +764,8 @@ void perGameSettings (std::string filename) {
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_CARD_READ_DMA + ":", startAlign);
 				if (perGameSettings_cardReadDMA == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
-				} else if (perGameSettings_cardReadDMA == 2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_IMPROVED, endAlign);
 				} else if (perGameSettings_cardReadDMA == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_REGULAR, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
 				} else {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
 				}
@@ -944,10 +944,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 5:
 						perGameSettings_cardReadDMA--;
-						if (unitCode[CURPOS] < 3 && perGameSettings_cardReadDMA == 1) {
-							perGameSettings_cardReadDMA--;
-						}
-						if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = (ms().secondaryDevice ? 1 : 2);
+						if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = 1;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
@@ -1026,10 +1023,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 5:
 						perGameSettings_cardReadDMA++;
-						if (unitCode[CURPOS] < 3 && perGameSettings_cardReadDMA == 1) {
-							perGameSettings_cardReadDMA++;
-						}
-						if (perGameSettings_cardReadDMA > (ms().secondaryDevice ? 1 : 2)) perGameSettings_cardReadDMA = -1;
+						if (perGameSettings_cardReadDMA > 1) perGameSettings_cardReadDMA = -1;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
