@@ -123,6 +123,8 @@ jobs:
 
           # apfix.pck
           cp 7zfile/_nds/TWiLightMenu/extras/apfix.pck ~/artifacts
+          # widescreen.pck
+          cp 7zfile/_nds/TWiLightMenu/extras/widescreen.pck ~/artifacts
       - name: Publish build to GH Actions
         if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
         uses: actions/upload-artifact@v2
@@ -168,6 +170,7 @@ jobs:
           cd Builds/
           cp ${{ github.workspace }}/build/*.7z .
           mv ${{ github.workspace }}/build/apfix.pck extras
+          mv ${{ github.workspace }}/build/widescreen.pck extras
           git stage .
           git commit -m "TWiLightMenu | $COMMIT_HASH"
           git tag v$CURRENT_DATE

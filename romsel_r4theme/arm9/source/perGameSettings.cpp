@@ -547,13 +547,15 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (ms().useBootstrap || (dsiFeatures() && romUnitCode > 0) || !ms().secondaryDevice) {
-			if ((!ms().secondaryDevice || romUnitCode < 3) && !blacklisted_cardReadDma) {
-				perGameOps++;
-				perGameOp[perGameOps] = 5;	// Card Read DMA
-			}
-			if (!ms().secondaryDevice && romSize > romSizeLimit && !blacklisted_asyncCardRead) {
-				perGameOps++;
-				perGameOp[perGameOps] = 12;	// Async Card Read
+			if (!ms().secondaryDevice) {
+				if (romUnitCode < 3 && !blacklisted_cardReadDma) {
+					perGameOps++;
+					perGameOp[perGameOps] = 5;	// Card Read DMA
+				}
+				if (romSize > romSizeLimit && !blacklisted_asyncCardRead) {
+					perGameOps++;
+					perGameOp[perGameOps] = 12;	// Async Card Read
+				}
 			}
 			if ((dsiFeatures() || !ms().secondaryDevice)
 			 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
@@ -709,10 +711,8 @@ void perGameSettings (std::string filename) {
 				printSmall(false, 32, perGameOpYpos, "Card Read DMA:");
 				if (perGameSettings_cardReadDMA == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
-				} else if (perGameSettings_cardReadDMA == 2) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Improved");
 				} else if (perGameSettings_cardReadDMA == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Regular");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
 				} else {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
 				}
@@ -883,10 +883,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 5:
 						perGameSettings_cardReadDMA--;
-						if (romUnitCode == 3 && perGameSettings_cardReadDMA == 1) {
-							perGameSettings_cardReadDMA--;
-						}
-						if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = (ms().secondaryDevice ? 1 : 2);
+						if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = 1;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
@@ -964,10 +961,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 5:
 						perGameSettings_cardReadDMA++;
-						if (romUnitCode == 3 && perGameSettings_cardReadDMA == 1) {
-							perGameSettings_cardReadDMA++;
-						}
-						if (perGameSettings_cardReadDMA > (ms().secondaryDevice ? 1 : 2)) perGameSettings_cardReadDMA = -1;
+						if (perGameSettings_cardReadDMA > 1) perGameSettings_cardReadDMA = -1;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
