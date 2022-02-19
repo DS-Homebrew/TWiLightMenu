@@ -147,9 +147,9 @@ void savePerGameSettings (std::string filename) {
 		if (dsiFeatures()) {
 			if (!blacklisted_boostCpu) pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
+			if (!blacklisted_cardReadDma) pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
 		}
 		if (!ms().secondaryDevice) {
-			if (!blacklisted_cardReadDma) pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
 			if (!blacklisted_asyncCardRead) pergameini.SetInt("GAMESETTINGS", "ASYNC_CARD_READ", perGameSettings_asyncCardRead);
 		}
 		if (ms().useBootstrap || isDSiWare || !ms().secondaryDevice) {
@@ -507,6 +507,10 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 1;	// Save number
 		}
 		if (ms().dsiWareBooter || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+			if (dsiFeatures() && ms().secondaryDevice && (!ms().dsiWareToSD || sys().arm7SCFGLocked()) && !bs().b4dsMode && !blacklisted_cardReadDma) {
+				perGameOps++;
+				perGameOp[perGameOps] = 5;	// Card Read DMA
+			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
@@ -547,17 +551,15 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (ms().useBootstrap || (dsiFeatures() && romUnitCode > 0) || !ms().secondaryDevice) {
-			if (!ms().secondaryDevice) {
-				if (romUnitCode < 3 && !blacklisted_cardReadDma) {
-					perGameOps++;
-					perGameOp[perGameOps] = 5;	// Card Read DMA
-				}
-				if (romSize > romSizeLimit && !blacklisted_asyncCardRead) {
-					perGameOps++;
-					perGameOp[perGameOps] = 12;	// Async Card Read
-				}
+			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_cardReadDma) {
+				perGameOps++;
+				perGameOp[perGameOps] = 5;	// Card Read DMA
 			}
-			if ((dsiFeatures() || !ms().secondaryDevice)
+			if (!ms().secondaryDevice && romSize > romSizeLimit && !blacklisted_asyncCardRead) {
+				perGameOps++;
+				perGameOp[perGameOps] = 12;	// Async Card Read
+			}
+			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice)
 			 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
 				perGameOps++;
 				perGameOp[perGameOps] = 10;	// Expand ROM space in RAM
