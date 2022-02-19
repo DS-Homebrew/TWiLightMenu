@@ -644,10 +644,97 @@ void getGameInfo(int num, bool isDir, const char* name)
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnriconisDSi[num] = false;
 	bnrWirelessIcon[num] = 0;
+	customIcon[num] = 0;
 	isDSiWare[num] = false;
 	isHomebrew[num] = false;
 	isModernHomebrew[num] = false;
 	infoFound[num] = false;
+
+	if (ms().showCustomIcons) {
+		bool customIconGood = false;
+
+		// First try banner bin
+		snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.bin", sdFound() ? "sd" : "fat", name);
+		customIcon[num] = (access(customIconPath, F_OK) == 0);
+		if (customIcon[num]) {
+			customIcon[num] = 2; // custom icon is a banner bin
+			FILE *file = fopen(customIconPath, "rb");
+			if(file) {
+				size_t read = fread(&ndsBanner, 1, sizeof(sNDSBannerExt), file);
+				fclose(file);
+
+				if(read >= NDS_BANNER_SIZE_ORIGINAL) {
+					customIconGood = true;
+
+					if(ms().animateDsiIcons && read == NDS_BANNER_SIZE_DSi) {
+						u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
+						if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
+							bnriconisDSi[num] = true;
+							grabBannerSequence(num);
+						}
+					}
+
+					tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
+					
+					infoFound[num] = true;
+				}
+			}
+		} else {
+			// If no banner bin, try png
+			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
+			customIcon[num] = (access(customIconPath, F_OK) == 0);
+			if (customIcon[num]) {
+				std::vector<unsigned char> image;
+				uint imageWidth, imageHeight;
+				lodepng::decode(image, imageWidth, imageHeight, customIconPath);
+				if (imageWidth == 32 && imageHeight == 32) {
+					customIconGood = true;
+
+					uint colorCount = 1;
+					for (uint i = 0; i < image.size()/4; i++) {
+						// calculate byte and nibble position of pixel in tiled banner icon
+						uint x = i%32, y = i/32;
+						uint tileX = x/8, tileY = y/8;
+						uint offX = x%8, offY = y%8;
+						uint pos = tileX*32 + tileY*128 + offX/2 + offY*4;
+						bool nibble = offX%2;
+						// clear pixel (using transparent palette slot)
+						ndsBanner.icon[pos] &= nibble? 0x0f : 0xf0;
+						// read color
+						u8 r, g, b, a;
+						r = image[i*4];
+						g = image[i*4+1];
+						b = image[i*4+2];
+						a = image[i*4+3];
+						if (a == 255) {
+							// convert to 5-bit bgr
+							b /= 8;
+							g /= 8;
+							r /= 8;
+							u16 color = 0x80 | b<<10 | g<<5 | r;
+							// find color in palette
+							bool found = false;
+							for (uint palIdx = 1; palIdx < colorCount; palIdx++) {
+								if (ndsBanner.palette[palIdx] == color) {
+									ndsBanner.icon[pos] |= nibble? palIdx<<4 : palIdx;
+									found = true;
+									break;
+								}
+							}
+							// add color to palette if room available
+							if (!found && colorCount < 16) {
+								ndsBanner.icon[pos] |= nibble? colorCount<<4 : colorCount;
+								ndsBanner.palette[colorCount++] = color;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (customIcon[num] && !customIconGood)
+			customIcon[num] = -1; // display as unknown
+	}
 
 	if (extension(name, ".argv")) {
 		// look through the argv file for the corresponding nds file
@@ -815,6 +902,21 @@ void getGameInfo(int num, bool isDir, const char* name)
 		else if (ndsHeader.dsi_flags & BIT(3))
 			bnrWirelessIcon[num] = 2;
 
+		if (customIcon[num] == 2) { // custom banner bin
+			// we're done early
+			if (!isSlot1)
+				fclose(fp);
+			return;
+		}
+		
+		u8 iconCopy[512];
+		u16 paletteCopy[16];
+		if (customIcon[num] == 1) { // custom png icon
+			// copy the icon and palette before they get overwritten
+			memcpy(iconCopy, ndsBanner.icon, sizeof(iconCopy));
+			memcpy(paletteCopy, ndsBanner.palette, sizeof(paletteCopy));
+		}
+
 		if (ndsHeader.bannerOffset == 0)
 		{
 			if (!isSlot1)
@@ -825,6 +927,12 @@ void getGameInfo(int num, bool isDir, const char* name)
 			fclose(bannerFile);
 
 			tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
+
+			// restore png icon
+			if (customIcon[num] == 1) {
+				memcpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
+				memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
+			}
 
 			return;
 		}
@@ -841,6 +949,12 @@ void getGameInfo(int num, bool isDir, const char* name)
 				fclose(bannerFile);
 
 				tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
+
+				// restore png icon
+				if (customIcon[num] == 1) {
+					memcpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
+					memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
+				}
 
 				return;
 			}
@@ -872,6 +986,12 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 					tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
 
+					// restore png icon
+					if (customIcon[num] == 1) {
+						memcpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
+						memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
+					}
+
 					return;
 				}
 			}
@@ -895,6 +1015,12 @@ void getGameInfo(int num, bool isDir, const char* name)
 		tonccpy(cachedTitle[num], ndsBanner.titles[currentLang], TITLE_CACHE_SIZE*sizeof(u16));
 		infoFound[num] = true;
 
+		// restore png icon
+		if (customIcon[num] == 1) {
+			memcpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
+			memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
+			return;
+		}
 		// banner sequence
 		if(ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
@@ -911,53 +1037,12 @@ void iconUpdate(int num, bool isDir, const char* name)
 	clearText(false);
 
 	if (customIcon[num]) {
-		snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
-		if (access(customIconPath, F_OK) == 0) {
-			std::vector<unsigned char> image;
-			uint imageWidth, imageHeight;
-			lodepng::decode(image, imageWidth, imageHeight, customIconPath);
-			if (imageWidth == 32 && imageHeight == 32) {
-				uint colorCount = 1;
-				for (uint i = 0; i < image.size()/4; i++) {
-					// calculate byte and nibble position of pixel in tiled banner icon
-					uint x = i%32, y = i/32;
-					uint tileX = x/8, tileY = y/8;
-					uint offX = x%8, offY = y%8;
-					uint pos = tileX*32 + tileY*128 + offX/2 + offY*4;
-					bool nibble = offX%2;
-					// clear pixel (using transparent palette slot)
-					ndsBanner.icon[pos] &= nibble? 0x0f : 0xf0;
-					// read color
-					u8 r, g, b, a;
-					r = image[i*4];
-					g = image[i*4+1];
-					b = image[i*4+2];
-					a = image[i*4+3];
-					if (a == 255) {
-						// convert to 5-bit bgr
-						b /= 8;
-						g /= 8;
-						r /= 8;
-						u16 color = 0x80 | b<<10 | g<<5 | r;
-						// find color in palette
-						bool found = false;
-						for (uint palIdx = 1; palIdx < colorCount; palIdx++) {
-							if (ndsBanner.palette[palIdx] == color) {
-								ndsBanner.icon[pos] |= nibble? palIdx<<4 : palIdx;
-								found = true;
-								break;
-							}
-						}
-						// add color to palette if room available
-						if (!found && colorCount < 16) {
-							ndsBanner.icon[pos] |= nibble? colorCount<<4 : colorCount;
-							ndsBanner.palette[colorCount++] = color;
-						}
-					}
-				}
-				loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);
-			}
-			else loadUnkIcon(num);
+		if (customIcon[num] == -1) {
+			loadUnkIcon(num);
+		} else if (bnriconisDSi[num]) {
+			loadIcon(num, ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
+		} else {
+			loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);
 		}
 	} else if (extension(name, ".argv")) {
 		// look through the argv file for the corresponding nds/app file
@@ -1061,9 +1146,11 @@ void titleUpdate(int num, bool top, bool isDir, const char* name)
 	 || extension(name, ".dsi")
 	 || extension(name, ".ids")
 	 || extension(name, ".srl")
-	 || extension(name, ".app"))
+	 || extension(name, ".app")
+	 || infoFound[num])
 	{
 		// this is an nds/app file!
+		// or a file with custom banner text
 		if (infoFound[num]) {
 			printSmall(false, BOX_PX, iconYpos[top ? 0 : 3] + BOX_PY - (calcSmallFontHeight(cachedTitle[num]) / 2), cachedTitle[num], Alignment::center);
 		} else {

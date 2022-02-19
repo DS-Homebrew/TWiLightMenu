@@ -562,7 +562,7 @@ bool isHomebrew = false;
 bool isModernHomebrew = false;		// false == No DSi-Extended header, true == Has DSi-Extended header
 bool requiresRamDisk = false;
 int requiresDonorRom = 0;
-int customIcon = 0;
+int customIcon = 0;					// 0 = None, 1 = png, 2 = banner.bin, -1 = error
 char customIconPath[256];
 
 static u16 bannerDelayNum = 0x0000;

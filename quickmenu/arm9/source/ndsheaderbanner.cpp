@@ -115,7 +115,7 @@ int bnrWirelessIcon[2] = {0}; 			// 0 = None, 1 = Local, 2 = WiFi
 bool isDSiWare[2] = {false};
 bool isHomebrew[2] = {false};
 bool isModernHomebrew[2] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header
-bool customIcon[2] = {false};
+int customIcon[2] = {0};				// 0 = None, 1 = png, 2 = banner.bin, -1 = error
 char customIconPath[256];
 
 /**

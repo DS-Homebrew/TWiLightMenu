@@ -1171,10 +1171,10 @@ int main(int argc, char **argv) {
 		{
 			filename[0].erase(0, last_slash_idx + 1);
 		}
+		getGameInfo(0, false, filename[0].c_str());
+		iconUpdate (0, false, filename[0].c_str());
 
 		if (extension(filename[0], ".nds") || extension(filename[0], ".dsi") || extension(filename[0], ".ids") || extension(filename[0], ".app") || extension(filename[0], ".srl") || extension(filename[0], ".argv")) {
-			getGameInfo(0, false, filename[0].c_str());
-			iconUpdate (0, false, filename[0].c_str());
 			bnrRomType[0] = 0;
 			boxArtType[0] = 0;
 		} else if (extension(filename[0], ".xex") || extension(filename[0], ".atr")
@@ -1271,17 +1271,6 @@ int main(int argc, char **argv) {
 				sprintf (boxArtPath[0], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), gameTid[0]);
 			}
 		}
-		
-		if (ms().showCustomIcons) {
-			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
-					sdFound() ? "sd" : "fat",
-					filename[0].c_str());
-			customIcon[0] = (access(customIconPath, F_OK) == 0);
-			if (customIcon[0]) {
-				bnriconisDSi[0] = false;
-				iconUpdate(0, false, filename[0].c_str());
-			}
-		}
 	}
 
 	// Flashcard (Secondary device)
@@ -1309,10 +1298,10 @@ int main(int argc, char **argv) {
 		{
 			filename[1].erase(0, last_slash_idx + 1);
 		}
+		getGameInfo(1, false, filename[1].c_str());
+		iconUpdate (1, false, filename[1].c_str());
 
 		if (extension(filename[1], ".nds") || extension(filename[1], ".dsi") || extension(filename[1], ".ids") || extension(filename[1], ".app") || extension(filename[1], ".srl") || extension(filename[1], ".argv")) {
-			getGameInfo(1, false, filename[1].c_str());
-			iconUpdate (1, false, filename[1].c_str());
 			bnrRomType[1] = 0;
 			boxArtType[1] = 0;
 		} else if (extension(filename[1], ".xex") || extension(filename[1], ".atr")
@@ -1407,17 +1396,6 @@ int main(int argc, char **argv) {
 					temp_filename = argarray.at(0);
 				}
 				sprintf (boxArtPath[1], (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), gameTid[1]);
-			}
-		}
-
-		if (ms().showCustomIcons) {
-			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
-					sdFound() ? "sd" : "fat",
-					filename[1].c_str());
-			customIcon[1] = (access(customIconPath, F_OK) == 0);
-			if (customIcon[1]) {
-				bnriconisDSi[1] = false;
-				iconUpdate(0, false, filename[1].c_str());
 			}
 		}
 	  }
