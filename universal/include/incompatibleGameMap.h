@@ -20,6 +20,7 @@ static const char incompatibleGameListB4DS[][4] = {
 	"B6Z", // Rockman Zero Collection/MegaMan Zero Collection
 	"CS3", // Sonic & Sega All-Stars Racing
 	"AH9", // Tony Hawk's American Sk8land
+	"CTX", // Tropix
 };
 
 static const char incompatibleGameListFC[][4] = {
@@ -29,7 +30,6 @@ static const char incompatibleGameListFC[][4] = {
 
 static const char incompatibleGameList[][4] = {
 	"BO5", // Golden Sun: Dark Dawn
-	"CTX", // Tropix
 };
 
 // DSiWare
