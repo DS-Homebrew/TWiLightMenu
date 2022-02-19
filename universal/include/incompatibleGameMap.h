@@ -10,6 +10,7 @@ static const char incompatibleGameListB4DS[][4] = {
 	"YKR", // Culdcept DS
 	"AWD", // Diddy Kong Racing
 	"AK4", // Kabu Trader Shun
+	"B7F", // The Magic School Bus: Oceans
 	"ARM", // Mario & Luigi: Partners in Time
 	"CLJ", // Mario & Luigi: Bowser's Inside Story
 	"COL", // Mario & Sonic at the Olympic Winter Games
@@ -19,6 +20,7 @@ static const char incompatibleGameListB4DS[][4] = {
 	"B6Z", // Rockman Zero Collection/MegaMan Zero Collection
 	"CS3", // Sonic & Sega All-Stars Racing
 	"AH9", // Tony Hawk's American Sk8land
+	"CTX", // Tropix
 };
 
 static const char incompatibleGameListFC[][4] = {
@@ -28,9 +30,6 @@ static const char incompatibleGameListFC[][4] = {
 
 static const char incompatibleGameList[][4] = {
 	"BO5", // Golden Sun: Dark Dawn
-	"APD", // Pokemon Dash
-	"A24", // Pokemon Dash (Kiosk Demo)
-	"CTX", // Tropix
 };
 
 // DSiWare
