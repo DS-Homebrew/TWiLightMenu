@@ -295,7 +295,7 @@ extern bool isHomebrew;
 extern bool isModernHomebrew;		// false == No DSi-Extended header, true == Has DSi-Extended header
 extern bool requiresRamDisk;
 extern int requiresDonorRom;
-extern int customIcon;
+extern int customIcon;				// 0 = None, 1 = png, 2 = banner.bin, -1 = error
 extern char customIconPath[256];
 
 /**

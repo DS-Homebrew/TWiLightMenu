@@ -788,10 +788,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		} else {
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
+			getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 
 			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"}))
 			{
-				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
 			} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 				bnrRomType = 10;
@@ -836,15 +836,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			isHomebrew = 0;
 		}
 
-		if (ms().showCustomIcons) {
-			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png",
-					sdFound() ? "sd" : "fat",
-					dirContents.at(fileOffset).name.c_str());
-			customIcon = (access(customIconPath, F_OK) == 0);
-			if (customIcon) bnriconisDSi = false;
-		}
-
-		if (bnrRomType == 0 || customIcon) iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+		iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 		titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 
 		showLocation();
