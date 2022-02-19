@@ -588,7 +588,7 @@ void perGameSettings (std::string filename) {
 				perGameOp[perGameOps] = 12;	// Async Card Read
 			}
 			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice)
-			 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
+			 && unitCode[CURPOS] < 3 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
 				perGameOps++;
 				perGameOp[perGameOps] = 10;	// Expand ROM space in RAM
 			}
