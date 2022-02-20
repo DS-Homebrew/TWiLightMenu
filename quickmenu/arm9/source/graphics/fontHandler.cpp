@@ -36,8 +36,9 @@ void fontInit() {
 	// Load font graphics
 	if(ms().dsClassicCustomFont) {
 		std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
-		smallFont = new FontGraphic({fontPath + ((dsiFeatures() || sys().dsDebugRam() || useExpansionPak) ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"}, useExpansionPak);
-
+		std::string defaultPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
+		bool dsiFont = (dsiFeatures() && !sys().arm7SCFGLocked()) || sys().dsDebugRam() || useExpansionPak;
+		smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", defaultPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), "nitro:/graphics/font/small.nftr"}, useExpansionPak);
 	} else {
 		smallFont = new FontGraphic({"nitro:/graphics/font/small.nftr"}, false);
 		palette[3] = 0x8000;

@@ -42,13 +42,14 @@ void fontInit() {
 
 	// Load font graphics
 	std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
+	std::string defaultPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
 	bool dsiFont = (dsiFeatures() && !sys().arm7SCFGLocked()) || sys().dsDebugRam() || useExpansionPak;
-	smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"}, useExpansionPak);
+	smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", defaultPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), "nitro:/graphics/font/small.nftr"}, useExpansionPak);
 	// If custom small font but no custom large font, use small font as large font
 	if(fileExists({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr"}) && !fileExists({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr"}))
 		largeFont = smallFont;
 	else
-		largeFont = new FontGraphic({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"}, useExpansionPak);
+		largeFont = new FontGraphic({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", defaultPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), "nitro:/graphics/font/large.nftr"}, useExpansionPak);
 
 	// Load palettes
 	u16 palette[] = {
@@ -69,9 +70,10 @@ void fontReinit() {
 		delete largeFont;
 
 	// Load font graphics
-	std::string fontPath = std::string("fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
-	smallFont = new FontGraphic({fontPath + "/small-ds.nftr", fontPath + "/small.nftr", "nitro:/graphics/font/small.nftr"}, false);
-	largeFont = new FontGraphic({fontPath + "/large-ds.nftr", fontPath + "/large.nftr", "nitro:/graphics/font/large.nftr"}, false);
+	std::string fontPath = "fat:/_nds/TWiLightMenu/extras/fonts/" + ms().font;
+	std::string defaultPath = "fat:/_nds/TWiLightMenu/extras/fonts/Default";
+	smallFont = new FontGraphic({fontPath + "/small-ds.nftr", fontPath + "/small.nftr", defaultPath + "/small-ds.nftr", "nitro:/graphics/font/small.nftr"}, false);
+	largeFont = new FontGraphic({fontPath + "/large-ds.nftr", fontPath + "/large.nftr", defaultPath + "/large-ds.nftr", "nitro:/graphics/font/large.nftr"}, false);
 }
 
 void esrbDescFontInit(bool dsFont) {
