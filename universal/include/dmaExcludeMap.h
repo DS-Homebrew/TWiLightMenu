@@ -13,7 +13,6 @@ static const char cardReadDMAExcludeList[][4] = {
 	"AZE", // The Legend of Zelda: Phantom Hourglass
 	"Y4C", // The Legend of Zelda: Phantom Hourglass (Demo)
 	"AUG", // Need for Speed: Underground 2
-	"A2D", // New(er) Super Mario Bros. (DS)
 	"A2O", // Prey the Stars
 	"B8I", // Spider-Man: Edge of Time
 	"AST", // Star Wars: Episode III: Revenge of the Sith
