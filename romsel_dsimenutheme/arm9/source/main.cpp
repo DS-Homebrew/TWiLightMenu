@@ -255,6 +255,7 @@ std::string setApFix(const char *filename) {
 	bool ipsFound = false;
 	bool cheatVer = true;
 	char ipsPath[256];
+	char ipsPath2[256];
 	if (!ipsFound) {
 		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/cht/%s.bin", sdFound() ? "sd" : "fat", filename);
 		ipsFound = (access(ipsPath, F_OK) == 0);
@@ -342,6 +343,10 @@ std::string setApFix(const char *filename) {
 					mkdir("fat:/_nds/nds-bootstrap", 0777);
 				}
 				snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apFix%s", ms().secondaryDevice ? "fat" : "sd", cheatVer ? "Cheat.bin" : ".ips");
+				snprintf(ipsPath2, sizeof(ipsPath2), "%s:/_nds/nds-bootstrap/apFix%s", ms().secondaryDevice ? "fat" : "sd", cheatVer ? ".ips" : "Cheat.bin");
+				if (access(ipsPath2, F_OK) == 0) {
+					remove(ipsPath2); // Delete leftover AP-fix file of opposite format
+				}
 				FILE *out = fopen(ipsPath, "wb");
 				if(out) {
 					fwrite(buffer, 1, size, out);
