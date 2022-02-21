@@ -68,6 +68,7 @@ jobs:
           mkdir -p 7zfile/_nds/TWiLightMenu/boxart/
           mkdir -p 7zfile/_nds/TWiLightMenu/icons/
           mkdir -p 7zfile/_nds/TWiLightMenu/extras/
+          mkdir -p 7zfile/_nds/TWiLightMenu/extras/fonts/
           mkdir -p 7zfile/_nds/TWiLightMenu/gamesettings/
 
           # nds-bootstrap
