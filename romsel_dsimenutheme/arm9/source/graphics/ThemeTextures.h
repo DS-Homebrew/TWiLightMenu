@@ -230,8 +230,6 @@ public:
 	}
 
 private:
-	int previouslyDrawnBottomBg;
-
 	vector<Texture> _backgroundTextures;
 
 	unique_ptr<glImage[]> _progressImage;

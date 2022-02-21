@@ -57,7 +57,7 @@ static bool boxArtFound[40] = {false};
 int boxArtType[40] = {0};	// 0: NDS, 1: FDS/GBA/GBC/GB, 2: NES/GEN/MD/SFC, 3: SNES
 
 ThemeTextures::ThemeTextures()
-    : previouslyDrawnBottomBg(-1), bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
+    : bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
       movingarrowTexID(0), launchdotTexID(0), startTexID(0), startbrdTexID(0), settingsTexID(0), manualTexID(0), braceTexID(0),
       boxfullTexID(0), boxemptyTexID(0), folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0),
       dialogboxTexID(0), wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1), _profileNameLoaded(false) {
@@ -637,7 +637,7 @@ void ThemeTextures::commitBgMainModifyAsync() {
 void ThemeTextures::drawTopBg() {
 	beginBgSubModify();
 
-	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
+	_backgroundTextures[0].copy(_bgSubBuffer, false);
 
 	if(ms().colorMode == 1) {
 		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
@@ -663,14 +663,7 @@ void ThemeTextures::drawBottomBg(int index) {
 		index = 2;
 	beginBgMainModify();
 
-	if (previouslyDrawnBottomBg != index) {
-		LZ77_Decompress((u8*)_backgroundTextures[index].texture(), (u8*)_bgMainBuffer);
-		previouslyDrawnBottomBg = index;
-	} else {
-		DC_FlushRange(_backgroundTextures[index].texture(), 0x18000);
-		dmaCopyWords(0, _backgroundTextures[index].texture(), BG_GFX, 0x18000);
-		LZ77_Decompress((u8*)_backgroundTextures[index].texture(), (u8*)_bgMainBuffer);
-	}
+	_backgroundTextures[index].copy(_bgMainBuffer, false);
 
 	if(ms().colorMode == 1) {
 		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
@@ -1206,7 +1199,7 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 	}
 
 	// Throw the entire top background into the sub buffer.
-	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
+	_backgroundTextures[0].copy(_bgSubBuffer, false);
 	if (boxArtColorDeband) {
 		tonccpy((u8*)_bgSubBuffer2, (u8*)_bgSubBuffer, 0x18000);
 	}
