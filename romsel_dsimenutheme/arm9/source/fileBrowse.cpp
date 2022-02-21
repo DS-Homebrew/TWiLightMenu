@@ -1537,7 +1537,7 @@ bool selectMenu(void) {
 	int selCursorPosition = 0;
 	int assignedOp[5] = {-1};
 	int selIconYpos = 96;
-	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
+	if (dsiFeatures() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
 		for (int i = 0; i < 4; i++) {
 			selIconYpos -= 14;
 		}
