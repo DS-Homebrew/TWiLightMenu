@@ -24,6 +24,7 @@
 
 #include "myDSiMode.h"
 #include "common/bootstrapsettings.h"
+#include "common/fatHeader.h"
 #include "common/flashcard.h"
 #include "common/inifile.h"
 #include "common/nds_loader_arm9.h"
@@ -774,6 +775,87 @@ void unlaunchSetHiyaBoot(void) {
 		((char16_t*)0x02000838)[i] = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 	}
 	*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
+}
+
+// From NTM
+// https://github.com/Epicpkmn11/NTM/blob/db69aca1b49733da51f64ee857ac9b861b1c468c/arm9/src/sav.c#L7-L93
+bool createDSiWareSave(const char *path, int size) {
+	const u16 sectorSize = 0x200;
+
+	if(!path || size < sectorSize)
+		return false;
+
+	//fit maximum sectors for the size
+	const u16 maxSectors = size / sectorSize;
+	u16 sectorCount = 1;
+	u16 secPerTrk = 1;
+	u16 numHeads = 1;
+	u16 sectorCountNext = 0;
+	while (sectorCountNext <= maxSectors) {
+		sectorCountNext = secPerTrk * (numHeads + 1) * (numHeads + 1);
+		if (sectorCountNext <= maxSectors) {
+			numHeads++;
+			sectorCount = sectorCountNext;
+
+			secPerTrk++;
+			sectorCountNext = secPerTrk * numHeads * numHeads;
+			if (sectorCountNext <= maxSectors) {
+				sectorCount = sectorCountNext;
+			}
+		}
+	}
+	sectorCountNext = (secPerTrk + 1) * numHeads * numHeads;
+	if (sectorCountNext <= maxSectors) {
+		secPerTrk++;
+		sectorCount = sectorCountNext;
+	}
+
+	u8 secPerCluster = (sectorCount > (8 << 10)) ? 8 : (sectorCount > (1 << 10) ? 4 : 1);
+
+	u16 rootEntryCount = size < 0x8C000 ? 0x20 : 0x200;
+
+	#define ALIGN(v, a) (((v) % (a)) ? ((v) + (a) - ((v) % (a))) : (v))
+	u16 totalClusters = ALIGN(sectorCount, secPerCluster) / secPerCluster;
+	u32 fatBytes = (ALIGN(totalClusters, 2) / 2) * 3; // 2 sectors -> 3 byte
+	u16 fatSize = ALIGN(fatBytes, sectorSize) / sectorSize;
+
+
+	FATHeader h;
+	toncset(&h, 0, sizeof(FATHeader));
+
+	h.BS_JmpBoot[0] = 0xE9;
+	h.BS_JmpBoot[1] = 0;
+	h.BS_JmpBoot[2] = 0;
+
+	tonccpy(h.BS_OEMName, "MSWIN4.1", 8);
+
+	h.BPB_BytesPerSec = sectorSize;
+	h.BPB_SecPerClus = secPerCluster;
+	h.BPB_RsvdSecCnt = 0x0001;
+	h.BPB_NumFATs = 0x02;
+	h.BPB_RootEntCnt = rootEntryCount;
+	h.BPB_TotSec16 = sectorCount;
+	h.BPB_Media = 0xF8; // "hard drive"
+	h.BPB_FATSz16 = fatSize;
+	h.BPB_SecPerTrk = secPerTrk;
+	h.BPB_NumHeads = numHeads;
+	h.BS_DrvNum = 0x05;
+	h.BS_BootSig = 0x29;
+	h.BS_VolID = 0x12345678;
+	tonccpy(h.BS_VolLab, "VOLUMELABEL", 11);
+	tonccpy(h.BS_FilSysType,"FAT12   ", 8);
+	h.BS_BootSign = 0xAA55;
+
+	FILE *file = fopen(path, "wb");
+	if(file) {
+		fwrite(&h, sizeof(FATHeader), 1, file); // Write header
+		fseek(file, size - 1, SEEK_SET); // Pad rest of the file
+		fputc('\0', file);
+		fclose(file);
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -1986,22 +2068,8 @@ int main(int argc, char **argv) {
 						for (int i = 0; i < 35; i++) swiWaitForVBlank();
 					}
 
-					static const int BUFFER_SIZE = 4096;
-					char buffer[BUFFER_SIZE];
-					memset(buffer, 0, sizeof(buffer));
-					char savHdrPath[64];
-					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%X.savhdr", (unsigned int)NDSHeader.pubSavSize);
-					FILE *hdrFile = fopen(savHdrPath, "rb");
-					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
-					fclose(hdrFile);
+					createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
 
-					FILE *pFile = fopen(ms().dsiWarePubPath.c_str(), "wb");
-					if (pFile) {
-						fwrite(buffer, 1, sizeof(buffer), pFile);
-						fseek(pFile, NDSHeader.pubSavSize - 1, SEEK_SET);
-						fputc('\0', pFile);
-						fclose(pFile);
-					}
 					printSmall(false, 2, 88, STR_PUBLIC_SAVE_CREATED);
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
@@ -2020,22 +2088,8 @@ int main(int argc, char **argv) {
 						for (int i = 0; i < 35; i++) swiWaitForVBlank();
 					}
 
-					static const int BUFFER_SIZE = 4096;
-					char buffer[BUFFER_SIZE];
-					memset(buffer, 0, sizeof(buffer));
-					char savHdrPath[64];
-					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%X.savhdr", (unsigned int)NDSHeader.prvSavSize);
-					FILE *hdrFile = fopen(savHdrPath, "rb");
-					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
-					fclose(hdrFile);
+					createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
 
-					FILE *pFile = fopen(ms().dsiWarePrvPath.c_str(), "wb");
-					if (pFile) {
-						fwrite(buffer, 1, sizeof(buffer), pFile);
-						fseek(pFile, NDSHeader.prvSavSize - 1, SEEK_SET);
-						fputc('\0', pFile);
-						fclose(pFile);
-					}
 					printSmall(false, 2, 88, STR_PRIVATE_SAVE_CREATED);
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}

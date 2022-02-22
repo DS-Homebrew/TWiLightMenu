@@ -1,4 +1,5 @@
 #include "unlaunchboot.h"
+#include "common/fatHeader.h"
 #include "tool/stringtool.h"
 #include <nds.h>
 #include "dsimenusettings.h"
@@ -22,22 +23,75 @@ void UnlaunchBoot::createSaveIfNotExists(const std::string &fileExt, const std::
 	}
 
 	if (saveSize > 0) {
-		static const int BUFFER_SIZE = 0x1000;
-		char buffer[BUFFER_SIZE];
-		memset(buffer, 0, sizeof(buffer));
-		char savHdrPath[64];
-		snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", (unsigned int)saveSize);
-		FILE *hdrFile = fopen(savHdrPath, "rb");
-		if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
-		fclose(hdrFile);
+		const u16 sectorSize = 0x200;
 
-		FILE *pFile = fopen(saveName.c_str(), "wb");
-		if (pFile)
-		{
-			fwrite(buffer, 1, sizeof(buffer), pFile);
-			fseek(pFile, saveSize - 1, SEEK_SET);
-			fputc('\0', pFile);
-			fclose(pFile);
+		//fit maximum sectors for the size
+		const u16 maxSectors = saveSize / sectorSize;
+		u16 sectorCount = 1;
+		u16 secPerTrk = 1;
+		u16 numHeads = 1;
+		u16 sectorCountNext = 0;
+		while (sectorCountNext <= maxSectors) {
+			sectorCountNext = secPerTrk * (numHeads + 1) * (numHeads + 1);
+			if (sectorCountNext <= maxSectors) {
+				numHeads++;
+				sectorCount = sectorCountNext;
+
+				secPerTrk++;
+				sectorCountNext = secPerTrk * numHeads * numHeads;
+				if (sectorCountNext <= maxSectors) {
+					sectorCount = sectorCountNext;
+				}
+			}
+		}
+		sectorCountNext = (secPerTrk + 1) * numHeads * numHeads;
+		if (sectorCountNext <= maxSectors) {
+			secPerTrk++;
+			sectorCount = sectorCountNext;
+		}
+
+		u8 secPerCluster = (sectorCount > (8 << 10)) ? 8 : (sectorCount > (1 << 10) ? 4 : 1);
+
+		u16 rootEntryCount = saveSize < 0x8C000 ? 0x20 : 0x200;
+
+		#define ALIGN(v, a) (((v) % (a)) ? ((v) + (a) - ((v) % (a))) : (v))
+		u16 totalClusters = ALIGN(sectorCount, secPerCluster) / secPerCluster;
+		u32 fatBytes = (ALIGN(totalClusters, 2) / 2) * 3; // 2 sectors -> 3 byte
+		u16 fatSize = ALIGN(fatBytes, sectorSize) / sectorSize;
+
+
+		FATHeader h;
+		memset(&h, 0, sizeof(FATHeader));
+
+		h.BS_JmpBoot[0] = 0xE9;
+		h.BS_JmpBoot[1] = 0;
+		h.BS_JmpBoot[2] = 0;
+
+		memcpy(h.BS_OEMName, "MSWIN4.1", 8);
+
+		h.BPB_BytesPerSec = sectorSize;
+		h.BPB_SecPerClus = secPerCluster;
+		h.BPB_RsvdSecCnt = 0x0001;
+		h.BPB_NumFATs = 0x02;
+		h.BPB_RootEntCnt = rootEntryCount;
+		h.BPB_TotSec16 = sectorCount;
+		h.BPB_Media = 0xF8; // "hard drive"
+		h.BPB_FATSz16 = fatSize;
+		h.BPB_SecPerTrk = secPerTrk;
+		h.BPB_NumHeads = numHeads;
+		h.BS_DrvNum = 0x05;
+		h.BS_BootSig = 0x29;
+		h.BS_VolID = 0x12345678;
+		memcpy(h.BS_VolLab, "VOLUMELABEL", 11);
+		memcpy(h.BS_FilSysType,"FAT12   ", 8);
+		h.BS_BootSign = 0xAA55;
+
+		FILE *file = fopen(saveName.c_str(), "wb");
+		if(file) {
+			fwrite(&h, sizeof(FATHeader), 1, file); // Write header
+			fseek(file, saveSize - 1, SEEK_SET); // Pad rest of the file
+			fputc('\0', file);
+			fclose(file);
 		}
 	}
 }
