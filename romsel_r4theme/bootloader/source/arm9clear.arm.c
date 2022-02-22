@@ -23,7 +23,7 @@ Modified by Chishm:
 --------------------------------------------------------------------------*/
 void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)) resetMemory2_ARM9 (void) 
 {
- 	register int i;
+ 	register int i, reg;
   
 	//clear out ARM9 DMA channels
 	for (i=0; i<4; i++) {
@@ -32,6 +32,7 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 		DMA_DEST(i) = 0;
 		TIMER_CR(i) = 0;
 		TIMER_DATA(i) = 0;
+		for(reg=0; reg<0x1c; reg+=4)*((vu32*)(0x04004104 + ((i*0x1c)+reg))) = 0;//Reset NDMA.
 	}
 
 	// Clear out FIFO
