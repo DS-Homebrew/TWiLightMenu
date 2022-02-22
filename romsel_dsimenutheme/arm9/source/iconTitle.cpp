@@ -312,7 +312,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 	if (isDir) {
 		clearTitle(num);
-		clearBannerSequence(num); // banner sequence
+		if (customIcon[num] != 2)
+			clearBannerSequence(num); // banner sequence
 	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
@@ -599,9 +600,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 	if (num == -1)
 		num = 40;
 
-	if (isDir) {
-		clearIcon(spriteIdx);
-	} else if (customIcon[num]) {
+	if (customIcon[num]) {
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
 		if (customIcon[num] == -1) {
 			loadUnkIcon(spriteIdx);
@@ -610,6 +609,8 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, spriteIdx, false);
 		}
+	} else if (isDir) {
+		clearIcon(spriteIdx);
 	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
