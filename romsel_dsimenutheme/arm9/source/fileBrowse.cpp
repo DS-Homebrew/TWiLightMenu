@@ -1699,14 +1699,13 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 		spawnedtitleboxes = 0;
 	for (int i = 0; i < 40; i++) {
 		if (i + PAGENUM * 40 < file_count) {
-			if (dirContents[scrn][i + PAGENUM * 40].isDirectory) {
-				isDirectory[i] = true;
+			isDirectory[i] = dirContents[scrn][i + PAGENUM * 40].isDirectory;
+			const std::string &std_romsel_filename = dirContents[scrn][i + PAGENUM * 40].name;
+			getGameInfo(isDirectory[i], std_romsel_filename.c_str(), i);
+
+			if (isDirectory[i]) {
 				bnrWirelessIcon[i] = 0;
 			} else {
-				isDirectory[i] = false;
-				const std::string &std_romsel_filename = dirContents[scrn][i + PAGENUM * 40].name;
-				getGameInfo(isDirectory[i], dirContents[scrn][i + PAGENUM * 40].name.c_str(), i);
-
 				if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 					bnrRomType[i] = 0;
 					boxArtType[i] = 0;

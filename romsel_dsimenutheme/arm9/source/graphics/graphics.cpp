@@ -719,6 +719,10 @@ void vBlankHandler() {
 							glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice],
 									 (titleboxYpos - 3) + titleboxYposDropDown[i % 5],
 									 GL_FLIP_NONE, tex().folderImage());
+						if (customIcon[i])
+							drawIcon(iconXpos - titleboxXpos[ms().secondaryDevice],
+									 (titleboxYpos + 12) + titleboxYposDropDown[i % 5],
+									 i);
 					} else if (!applaunchprep || CURPOS != i) { // Only draw the icon if we're not launching the selcted app
 						if (!bnrSysSettings[i]) {
 							if (ms().theme == TWLSettings::ETheme3DS) {
@@ -762,6 +766,10 @@ void vBlankHandler() {
 					else
 						glSprite(96, titleboxYpos - movingAppYpos + titleboxYposDropDown[movingApp % 5],
 								 GL_FLIP_NONE, tex().folderImage());
+					if (customIcon[movingApp])
+						drawIcon(112,
+								 (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
+								 -1);
 				} else {
 					if (!bnrSysSettings[movingApp]) {
 						if (ms().theme == TWLSettings::ETheme3DS) {
@@ -838,6 +846,8 @@ void vBlankHandler() {
 
 			if (isDirectory[CURPOS]) {
 				glSprite(96, 87 - titleboxYmovepos, GL_FLIP_NONE, tex().folderImage());
+				if (customIcon[CURPOS])
+					drawIcon(112, 96 - titleboxYmovepos, CURPOS);
 			} else {
 				if (!bnrSysSettings[CURPOS]) {
 					glSprite(96, 84 - titleboxYmovepos, GL_FLIP_NONE, tex().boxfullImage());
