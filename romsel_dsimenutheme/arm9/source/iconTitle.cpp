@@ -285,7 +285,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 							b /= 8;
 							g /= 8;
 							r /= 8;
-							u16 color = 0x80 | b<<10 | g<<5 | r;
+							u16 color = 0x8000 | b<<10 | g<<5 | r;
 							// find color in palette
 							bool found = false;
 							for (uint palIdx = 1; palIdx < colorCount; palIdx++) {
