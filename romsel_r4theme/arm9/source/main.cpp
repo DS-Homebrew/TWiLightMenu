@@ -1729,7 +1729,7 @@ int main(int argc, char **argv) {
 						}
 						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
-						if (!isHomebrew && (strncmp(game_TID, "NTR", 3) != 0)) {
+						if (!isHomebrew) {
 							// Create or expand save if game isn't homebrew
 							u32 orgsavesize = getFileSize(savepath.c_str());
 							u32 savesize = 524288;	// 512KB (default size)

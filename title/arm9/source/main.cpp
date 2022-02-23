@@ -523,68 +523,66 @@ void lastRunROM()
 					savepath = replaceAll(savepath, "fat:/", "sd:/");
 				}
 
-				if ((strcmp(game_TID, "####") != 0) && (strncmp(game_TID, "NTR", 3) != 0)) {
-					u32 orgsavesize = getFileSize(savepath.c_str());
-					u32 savesize = 524288;	// 512KB (default size for most games)
+				u32 orgsavesize = getFileSize(savepath.c_str());
+				u32 savesize = 524288;	// 512KB (default size for most games)
 
-					u32 gameTidHex = 0;
-					tonccpy(&gameTidHex, &game_TID, 4);
+				u32 gameTidHex = 0;
+				tonccpy(&gameTidHex, &game_TID, 4);
 
-					for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
-						ROMListEntry* curentry = &ROMList[i];
-						if (gameTidHex == curentry->GameCode) {
-							if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
+				for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
+					ROMListEntry* curentry = &ROMList[i];
+					if (gameTidHex == curentry->GameCode) {
+						if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
+						break;
+					}
+				}
+
+				if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
+					consoleDemoInit();
+					iprintf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
+					iprintf ("\n");
+					fadeType = true;
+
+					FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
+					if (pFile) {
+						fseek(pFile, savesize - 1, SEEK_SET);
+						fputc('\0', pFile);
+						fclose(pFile);
+					}
+					iprintf((orgsavesize == 0) ? "Save file created!\n" : "Save file expanded!\n");
+
+					for (int i = 0; i < 30; i++) {
+						swiWaitForVBlank();
+					}
+					fadeType = false;
+					for (int i = 0; i < 25; i++) {
+						swiWaitForVBlank();
+					}
+				}
+
+				if (!ms().ignoreBlacklists) {
+					// TODO: If the list gets large enough, switch to bsearch().
+					for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
+						if (memcmp(game_TID, twlClockExcludeList[i], 3) == 0) {
+							// Found match
+							boostCpu = false;
 							break;
 						}
 					}
 
-					if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
-						consoleDemoInit();
-						iprintf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
-						iprintf ("\n");
-						fadeType = true;
-
-						FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
-						if (pFile) {
-							fseek(pFile, savesize - 1, SEEK_SET);
-							fputc('\0', pFile);
-							fclose(pFile);
-						}
-						iprintf((orgsavesize == 0) ? "Save file created!\n" : "Save file expanded!\n");
-
-						for (int i = 0; i < 30; i++) {
-							swiWaitForVBlank();
-						}
-						fadeType = false;
-						for (int i = 0; i < 25; i++) {
-							swiWaitForVBlank();
+					for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
+						if (memcmp(game_TID, cardReadDMAExcludeList[i], 3) == 0) {
+							// Found match
+							cardReadDMA = false;
+							break;
 						}
 					}
 
-					if (!ms().ignoreBlacklists) {
-						// TODO: If the list gets large enough, switch to bsearch().
-						for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
-							if (memcmp(game_TID, twlClockExcludeList[i], 3) == 0) {
-								// Found match
-								boostCpu = false;
-								break;
-							}
-						}
-
-						for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
-							if (memcmp(game_TID, cardReadDMAExcludeList[i], 3) == 0) {
-								// Found match
-								cardReadDMA = false;
-								break;
-							}
-						}
-
-						for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
-							if (memcmp(game_TID, asyncReadExcludeList[i], 3) == 0) {
-								// Found match
-								asyncCardRead = false;
-								break;
-							}
+					for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
+						if (memcmp(game_TID, asyncReadExcludeList[i], 3) == 0) {
+							// Found match
+						asyncCardRead = false;
+							break;
 						}
 					}
 				}

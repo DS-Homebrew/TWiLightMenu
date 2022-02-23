@@ -258,7 +258,6 @@ int lastRunROM() {
 						typeToReplace = ".app";
 					}
 
-
 					std::string savename = ReplaceAll(filename, typeToReplace, getSavExtension());
 					std::string romFolderNoSlash = ms().romfolder[ms().previousUsedDevice];
 					RemoveTrailingSlashes(romFolderNoSlash);
@@ -268,35 +267,35 @@ int lastRunROM() {
 						savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 					}
 
-					if ((getFileSize(savepath.c_str()) == 0) && (strcmp(game_TID, "####") != 0) && (strncmp(game_TID, "NTR", 3) != 0)) {
-						u32 savesize = 524288;	// 512KB (default size for most games)
+					// Create or expand save if game isn't homebrew
+					u32 orgsavesize = getFileSize(savepath.c_str());
+					u32 savesize = 524288;	// 512KB (default size)
 
-						u32 gameTidHex = 0;
-						memcpy(&gameTidHex, &game_TID, 4);
+					u32 gameTidHex = 0;
+					tonccpy(&gameTidHex, &game_TID, 4);
 
-						for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
-							ROMListEntry* curentry = &ROMList[i];
-							if (gameTidHex == curentry->GameCode) {
-								if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
-								break;
-							}
+					for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
+						ROMListEntry* curentry = &ROMList[i];
+						if (gameTidHex == curentry->GameCode) {
+							if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
+							break;
 						}
+					}
 
-						if (savesize > 0) {
-							consoleDemoInit();
-							printf("Creating save file...\n");
+					if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
+						consoleDemoInit();
+						iprintf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
 
-							FILE *pFile = fopen(savepath.c_str(), "wb");
-							if (pFile) {
-								fseek(pFile, savesize - 1, SEEK_SET);
-								fputc('\0', pFile);
-								fclose(pFile);
-							}
-							printf("Save file created!\n");
-						
-							for (int i = 0; i < 30; i++) {
-								swiWaitForVBlank();
-							}
+						FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
+						if (pFile) {
+							fseek(pFile, savesize - 1, SEEK_SET);
+							fputc('\0', pFile);
+							fclose(pFile);
+						}
+						iprintf((orgsavesize == 0) ? "Save file created!\n" : "Save file expanded!\n");
+
+						for (int i = 0; i < 30; i++) {
+							swiWaitForVBlank();
 						}
 					}
 				}
