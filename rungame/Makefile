@@ -7,6 +7,16 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
+ifneq (,$(shell which python3))
+PYTHON	:= python3
+else ifneq (,$(shell which python2))
+PYTHON	:= python2
+else ifneq (,$(shell which python))
+PYTHON	:= python
+else
+$(error "Python not found in PATH, please install it.")
+endif
+
 include $(DEVKITARM)/ds_rules
 
 export VERSION_MAJOR	:= 7
@@ -133,7 +143,7 @@ $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 			-g SLRN 01 "TWLMENUPP-LR" -a 00000138 -z 80040000 -b icon.bmp "TWiLight Menu++;Last-run ROM;RocketRobz"
 
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
-		python2 ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch
+		$(PYTHON) ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch
 endif
 
 $(TARGET).arm7: arm7/$(TARGET).elf
