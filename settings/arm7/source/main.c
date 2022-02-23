@@ -285,7 +285,7 @@ int main() {
 			}
 		}
 
-		if (fifoCheckValue32(FIFO_USER_08)) {
+		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
 
