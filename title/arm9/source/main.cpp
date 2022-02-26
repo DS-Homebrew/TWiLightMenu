@@ -2111,7 +2111,10 @@ int main(int argc, char **argv)
 
 	if (isDSiMode()) {
 		if (ms().wifiLed == -1) {
-			if (*(u8*)(0x02FFFD01) == 0x13) {
+			if (ms().consoleModel >= 2) {
+				ms().wifiLed = true;
+				*(u8*)(0x02FFFD00) = 0x13;		// WiFi On
+			} else if (*(u8*)(0x02FFFD01) == 0x13) {
 				ms().wifiLed = true;
 			} else if (*(u8*)(0x02FFFD01) == 0 || *(u8*)(0x02FFFD01) == 0x12) {
 				ms().wifiLed = false;
