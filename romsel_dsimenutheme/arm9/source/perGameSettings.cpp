@@ -95,6 +95,8 @@ extern mm_sound_effect snd_switch;
 extern char usernameRendered[11];
 extern bool usernameRenderedDone;
 
+extern void bgOperations(bool waitFrame);
+
 char fileCounter[8];
 char gameTIDText[16];
 char saveNoDisplay[8];
@@ -381,7 +383,7 @@ void perGameSettings (std::string filename) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		currentBg = 1;
 		displayGameIcons = false;
@@ -632,10 +634,10 @@ void perGameSettings (std::string filename) {
 	if (ms().theme == TWLSettings::EThemeHBL) {
 		dbox_showIcon = true;
 	} else if (ms().theme == TWLSettings::EThemeSaturn) {
-		while (!screenFadedIn()) { swiWaitForVBlank(); }
+		while (!screenFadedIn()) { bgOperations(true); }
 		dbox_showIcon = true;
 	} else {
-		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+		for (int i = 0; i < 30; i++) { bgOperations(true); }
 	}
 
 	setAsDonorRom = STR_SET_AS_DONOR_ROM;
@@ -864,13 +866,7 @@ void perGameSettings (std::string filename) {
 			scanKeys();
 			pressed = keysDown();
 			held = keysDownRepeat();
-			checkSdEject();
-			tex().drawVolumeImageCached();
-			tex().drawBatteryImageCached();
-			drawCurrentTime();
-			drawCurrentDate();
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		} while (!held);
 
 		if (!showPerGameSettings) {
@@ -1105,7 +1101,7 @@ void perGameSettings (std::string filename) {
 	} else if (ms().theme == TWLSettings::EThemeSaturn) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		clearText();
 		currentBg = 0;

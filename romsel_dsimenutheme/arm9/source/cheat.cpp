@@ -38,6 +38,8 @@
 
 extern bool dbox_showIcon;
 
+extern void bgOperations(bool waitFrame);
+
 CheatCodelist::~CheatCodelist(void) {}
 
 inline u32 gamecode(const char *aGameCode)
@@ -325,13 +327,7 @@ void CheatCodelist::selectCheats(std::string filename)
     while(1) {
       scanKeys();
       pressed = keysDownRepeat();
-      checkSdEject();
-      tex().drawVolumeImageCached();
-      tex().drawBatteryImageCached();
-      drawCurrentTime();
-      drawCurrentDate();
-      snd().updateStream();
-      swiWaitForVBlank();
+      bgOperations(true);
       if(pressed & KEY_B) {
         snd().playBack();
         break;
@@ -368,12 +364,6 @@ void CheatCodelist::selectCheats(std::string filename)
       scanKeys();
       pressed = keysDown();
       held = keysDownRepeat();
-      checkSdEject();
-      tex().drawVolumeImageCached();
-      tex().drawBatteryImageCached();
-      drawCurrentTime();
-      drawCurrentDate();
-      snd().updateStream();
       if(currentList[cheatWnd_cursorPosition]->_title.length() > 30u) {
         if(cheatWnd_scrollTimer > 0) {
           cheatWnd_scrollTimer--;
@@ -392,7 +382,7 @@ void CheatCodelist::selectCheats(std::string filename)
           updateText(false);
         }
       }
-      swiWaitForVBlank();
+      bgOperations(true);
     } while(!pressed && !held);
 
     if(held & KEY_UP) {
@@ -522,13 +512,7 @@ void CheatCodelist::selectCheats(std::string filename)
         while(1) {
           scanKeys();
           pressed = keysDown();
-          checkSdEject();
-          tex().drawVolumeImageCached();
-          tex().drawBatteryImageCached();
-          drawCurrentTime();
-          drawCurrentDate();
-          snd().updateStream();
-          swiWaitForVBlank();
+          bgOperations(true);
           if(pressed & KEY_B) {
             snd().playBack();
             break;

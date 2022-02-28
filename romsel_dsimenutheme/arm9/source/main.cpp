@@ -861,6 +861,18 @@ void gbaSramAccess(bool open) {
 	controlBottomBright = botControlBak;
 }*/
 
+void bgOperations(bool waitFrame) {
+	checkSdEject();
+	tex().drawVolumeImageCached();
+	tex().drawBatteryImageCached();
+	drawCurrentTime();
+	drawCurrentDate();
+	snd().updateStream();
+	if (waitFrame) {
+		swiWaitForVBlank();
+	}
+}
+
 int main(int argc, char **argv) {
 	defaultExceptionHandler();
 	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode

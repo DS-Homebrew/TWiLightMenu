@@ -133,6 +133,8 @@ extern bool rocketVideo_playVideo;
 extern char usernameRendered[11];
 extern bool usernameRenderedDone;
 
+extern void bgOperations(bool waitFrame);
+
 std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
 
 static bool inSelectMenu = false;
@@ -288,13 +290,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					}
 				}
 			}
-			tex().drawVolumeImageCached();
-			tex().drawBatteryImageCached();
-			drawCurrentTime();
-			drawCurrentDate();
-			tex().drawProfileName();
-
-			snd().updateStream();
+			bgOperations(false);
 		}
 
 		if (ms().sortMethod == 0) { // Alphabetical
@@ -375,15 +371,7 @@ void waitForFadeOut(void) {
 	if (!dropDown && ms().theme == TWLSettings::EThemeDSi) {
 		dropDown = true;
 		for (int i = 0; i < 60; i++) {
-			snd().updateStream();
-			checkSdEject();
-			tex().drawVolumeImageCached();
-			tex().drawBatteryImageCached();
-			drawCurrentTime();
-			drawCurrentDate();
-			tex().drawProfileName();
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 	}
 }
@@ -393,7 +381,6 @@ bool nowLoadingDisplaying = false;
 void displayNowLoading(void) {
 	displayGameIcons = false;
 	fadeType = true; // Fade in from white
-	snd().updateStream();
 	std::string *msg;
 	printLarge(false, 0, 88, STR_NOW_LOADING, Alignment::center);
 	if (!sys().isRegularDS()) {
@@ -415,9 +402,9 @@ void displayNowLoading(void) {
 	nowLoadingDisplaying = true;
 	while (!screenFadedIn()) 
 	{
-		snd().updateStream();
+		bgOperations(true);
 	}
-	snd().updateStream();
+	bgOperations(false);
 	showProgressIcon = true;
 }
 
@@ -477,13 +464,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 						pos);
 		}
 
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-		drawCurrentTime();
-		drawCurrentDate();
-		tex().drawProfileName();
-		snd().updateStream();
+		bgOperations(false);
 
 		if(ms().theme != TWLSettings::EThemeSaturn) {
 			for(int i = 0; i < 8; i++) {
@@ -589,8 +570,7 @@ void launchDsClassicMenu(void) {
 	fadeType = false;		  // Fade to white
 	snd().fadeOutStream();
 	for (int i = 0; i < 60; i++) {
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 	}
 	mmEffectCancelAll();
 	snd().stopStream();
@@ -616,8 +596,7 @@ void launchSettings(void) {
 	fadeType = false;		  // Fade to white
 	snd().fadeOutStream();
 	for (int i = 0; i < 60; i++) {
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 	}
 	mmEffectCancelAll();
 	snd().stopStream();
@@ -644,8 +623,7 @@ void launchManual(void) {
 	fadeType = false;		  // Fade to white
 	snd().fadeOutStream();
 	for (int i = 0; i < 60; i++) {
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 	}
 	
 	mmEffectCancelAll();
@@ -672,8 +650,7 @@ void exitToSystemMenu(void) {
 	fadeType = false;		  // Fade to white
 	snd().fadeOutStream();
 	for (int i = 0; i < 60; i++) {
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 	}
 	
 	mmEffectCancelAll();
@@ -701,8 +678,7 @@ void switchDevice(void) {
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 			fadeType = false; // Fade to white
 			for (int i = 0; i < 25; i++) {
-				snd().updateStream();
-				swiWaitForVBlank();
+				bgOperations(true);
 			}
 		}
 		ms().secondaryDevice = !ms().secondaryDevice;
@@ -730,15 +706,14 @@ void switchDevice(void) {
 			fadeType = false;		  // Fade to white
 			snd().fadeOutStream();
 			for (int i = 0; i < 60; i++) {
-				snd().updateStream();
-				swiWaitForVBlank();
+				bgOperations(true);
 			}
 			mmEffectCancelAll();
 
 			snd().stopStream();
 		}
 
-		ms().slot1Launched = true; // 0
+		ms().slot1Launched = true;
 		ms().saveSettings();
 
 		bool directMethod = false;
@@ -774,8 +749,7 @@ void launchGba(void) {
 	fadeType = false;		  // Fade to white
 	snd().fadeOutStream();
 	for (int i = 0; i < 60; i++) {
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 	}
 	
 	mmEffectCancelAll();
@@ -846,7 +820,7 @@ void mdRomTooBig(void) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		currentBg = 1;
 		displayGameIcons = false;
@@ -859,10 +833,10 @@ void mdRomTooBig(void) {
 	clearText();
 	updateText(false);
 	if (ms().theme == TWLSettings::EThemeSaturn) {
-		while (!screenFadedIn()) { swiWaitForVBlank(); }
+		while (!screenFadedIn()) { bgOperations(true); }
 		snd().playWrong();
 	} else {
-		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+		for (int i = 0; i < 30; i++) { bgOperations(true); }
 	}
 	printSmall(false, 0, 64, STR_MD_ROM_TOO_BIG, Alignment::center);
 	printSmall(false, 0, 160, STR_A_OK, Alignment::center);
@@ -870,13 +844,7 @@ void mdRomTooBig(void) {
 	do {
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-		drawCurrentTime();
-		drawCurrentDate();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 
 		// Debug code for changing brightness of BG layer
 
@@ -948,7 +916,7 @@ void mdRomTooBig(void) {
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		clearText();
 		currentBg = 0;
@@ -969,8 +937,7 @@ void ramDiskMsg(const char *filename) {
 		dbox_showIcon = true;
 		showdialogbox = true;
 		for (int i = 0; i < 30; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		titleUpdate(false, filename, CURPOS);
 	}
@@ -992,14 +959,7 @@ void ramDiskMsg(const char *filename) {
 	do {
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-
-		drawCurrentTime();
-		drawCurrentDate();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 	} while (!(pressed & KEY_A));
 	clearText();
 	updateText(false);
@@ -1023,8 +983,7 @@ bool dsiBinariesMissingMsg(const char *filename) {
 		dbox_showIcon = true;
 		showdialogbox = true;
 		for (int i = 0; i < 30; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		titleUpdate(false, filename, CURPOS);
 		dirContName = filename;
@@ -1046,14 +1005,7 @@ bool dsiBinariesMissingMsg(const char *filename) {
 	while (1) {
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-
-		drawCurrentTime();
-		drawCurrentDate();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 		if (pressed & KEY_Y) {
 			dsModeForced = true;
 			proceedToLaunch = true;
@@ -1089,8 +1041,7 @@ bool donorRomMsg(const char *filename) {
 		dbox_showIcon = true;
 		showdialogbox = true;
 		for (int i = 0; i < 30; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		dirContName = filename;
 		// About 35 characters fit in the box.
@@ -1143,14 +1094,7 @@ bool donorRomMsg(const char *filename) {
 		}
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-
-		drawCurrentTime();
-		drawCurrentDate();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 		if ((pressed & KEY_LEFT) && msgPage != 0) {
 			snd().playSelect();
 			msgPage = 0;
@@ -1185,8 +1129,7 @@ bool donorRomMsg(const char *filename) {
 		clearText();
 		updateText(false);
 		for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 	}
 
@@ -1235,8 +1178,7 @@ bool checkForCompatibleGame(const char *filename) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		currentBg = 1;
 		displayGameIcons = false;
@@ -1248,11 +1190,11 @@ bool checkForCompatibleGame(const char *filename) {
 	clearText();
 	updateText(false);
 	if (ms().theme == TWLSettings::EThemeSaturn) {
-		while (!screenFadedIn()) { swiWaitForVBlank(); }
+		while (!screenFadedIn()) { bgOperations(true); }
 		dbox_showIcon = true;
 		snd().playWrong();
 	} else {
-		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+		for (int i = 0; i < 30; i++) { bgOperations(true); }
 	}
 	titleUpdate(false, filename, CURPOS);
 	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG, Alignment::center);
@@ -1262,14 +1204,7 @@ bool checkForCompatibleGame(const char *filename) {
 	while (1) {
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-
-		drawCurrentTime();
-		drawCurrentDate();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 		if (pressed & KEY_A) {
 			proceedToLaunch = true;
 			pressed = 0;
@@ -1289,7 +1224,7 @@ bool checkForCompatibleGame(const char *filename) {
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		clearText();
 		updateText(false);
@@ -1304,8 +1239,7 @@ bool checkForCompatibleGame(const char *filename) {
 		clearText();
 		updateText(false);
 		for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 	}
 	dbox_showIcon = false;
@@ -1346,8 +1280,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		currentBg = 1;
 		displayGameIcons = false;
@@ -1359,11 +1292,11 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	clearText();
 	updateText(false);
 	if (ms().theme == TWLSettings::EThemeSaturn) {
-		while (!screenFadedIn()) { swiWaitForVBlank(); }
+		while (!screenFadedIn()) { bgOperations(true); }
 		dbox_showIcon = true;
 		snd().playWrong();
 	} else {
-		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+		for (int i = 0; i < 30; i++) { bgOperations(true); }
 	}
 	titleUpdate(false, filename.c_str(), CURPOS);
 	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : 102);
@@ -1374,14 +1307,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	while (1) {
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-
-		drawCurrentTime();
-		drawCurrentDate();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 		if (pressed & KEY_A) {
 			proceedToLaunch = true;
 			pressed = 0;
@@ -1407,7 +1333,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		clearText();
 		updateText(false);
@@ -1416,14 +1342,13 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		fadeType = true;
 		snd().playStartup();
 		if (proceedToLaunch) {
-			while (!screenFadedIn()) { swiWaitForVBlank(); }
+			while (!screenFadedIn()) { bgOperations(true); }
 		}
 	} else {
 		clearText();
 		updateText(false);
 		for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 	}
 	dbox_showIcon = false;
@@ -1462,8 +1387,7 @@ void cannotLaunchMsg(const char *filename) {
 		dbox_showIcon = bnrRomType[CURPOS]==0;
 		showdialogbox = true;
 		for (int i = 0; i < 30; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		if (bnrRomType[CURPOS] == 0) {
 			titleUpdate(false, filename, CURPOS);
@@ -1490,14 +1414,7 @@ void cannotLaunchMsg(const char *filename) {
 	do {
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-
-		drawCurrentTime();
-		drawCurrentDate();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 	} while (!(pressed & KEY_A));
 	clearText();
 	updateText(false);
@@ -1518,7 +1435,7 @@ bool selectMenu(void) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		currentBg = 1;
 		displayGameIcons = false;
@@ -1572,10 +1489,10 @@ bool selectMenu(void) {
 		}
 	}
 	if (ms().theme == TWLSettings::EThemeSaturn) {
-		while (!screenFadedIn()) { swiWaitForVBlank(); }
+		while (!screenFadedIn()) { bgOperations(true); }
 		dbox_selectMenu = true;
 	} else {
-		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+		for (int i = 0; i < 30; i++) { bgOperations(true); }
 	}
 	int pressed = 0;
 	while (1) {
@@ -1613,13 +1530,7 @@ bool selectMenu(void) {
 		do {
 			scanKeys();
 			pressed = keysDown();
-			checkSdEject();
-			tex().drawVolumeImageCached();
-			tex().drawBatteryImageCached();
-			drawCurrentTime();
-			drawCurrentDate();
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 			if (REG_SCFG_MC != current_SCFG_MC) {
 				break;
 			}
@@ -1671,7 +1582,7 @@ bool selectMenu(void) {
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		clearText();
 		dbox_selectMenu = false;
@@ -1794,13 +1705,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 
 			progressBarLength += (200/((file_count - (PAGENUM*40)) > 40 ? 40 : (file_count - (PAGENUM*40))));
 			if (progressBarLength > 192) progressBarLength = 192;
-			checkSdEject();
-			tex().drawVolumeImageCached();
-			tex().drawBatteryImageCached();
-			drawCurrentTime();
-			drawCurrentDate();
-			tex().drawProfileName();
-			snd().updateStream();
+			bgOperations(false);
 		}
 	}
 	if (nowLoadingDisplaying) {
@@ -1814,8 +1719,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	if (CURPOS <= 1) {
 		for (int i = 0; i < 5; i++) {
 			if ((bnrRomType[i] == 0 || customIcon[i]) && i + PAGENUM * 40 < file_count) {
-				snd().updateStream();
-				swiWaitForVBlank();
+				bgOperations(true);
 				iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
 					   dirContents[scrn].at(i + PAGENUM * 40).name.c_str(), i);
 			}
@@ -1823,8 +1727,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	} else if (CURPOS >= 2 && CURPOS <= 36) {
 		for (int i = 0; i < 6; i++) {
 			if ((bnrRomType[i] == 0 || customIcon[CURPOS - 2 + i]) && (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
-				snd().updateStream();
-				swiWaitForVBlank();
+				bgOperations(true);
 				iconUpdate(dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).isDirectory,
 					   dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).name.c_str(),
 					   CURPOS - 2 + i);
@@ -1833,8 +1736,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	} else if (CURPOS >= 37 && CURPOS <= 39) {
 		for (int i = 0; i < 5; i++) {
 			if ((bnrRomType[i] == 0 || customIcon[35 + i]) && (35 + i) + PAGENUM * 40 < file_count) {
-				snd().updateStream();
-				swiWaitForVBlank();
+				bgOperations(true);
 				iconUpdate(dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
 					   dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(), 35 + i);
 			}
@@ -1850,8 +1752,7 @@ static bool previousPage(void) {
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 			fadeType = false; // Fade to white
 			for (int i = 0; i < 6; i++) {
-				snd().updateStream();
-				swiWaitForVBlank();
+				bgOperations(true);
 			}
 		}
 		if (showLshoulder)
@@ -1887,8 +1788,7 @@ static bool nextPage(void) {
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 			fadeType = false; // Fade to white
 			for (int i = 0; i < 6; i++) {
-				snd().updateStream();
-				swiWaitForVBlank();
+				bgOperations(true);
 			}
 		}
 		if (showRshoulder) {
@@ -1954,8 +1854,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		displayGameIcons = true;
 		fadeType = true; // Fade in from white
 		for (int i = 0; i < 5; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+			bgOperations(true);
 		}
 		clearText(false);
 		updateText(false);
@@ -2037,14 +1936,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				updateText(false);
 				buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
 				buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
-				checkSdEject();
-				tex().drawVolumeImageCached();
-				tex().drawBatteryImageCached();
-				drawCurrentTime();
-				drawCurrentDate();
-				tex().drawProfileName();
-				snd().updateStream();
-				swiWaitForVBlank();
+				bgOperations(true);
 				/*if (pressed & KEY_LID) {
 					extern void customSleep();
 					customSleep();
@@ -2097,14 +1989,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					scanKeys();
 					pressed = keysDown();
 					held = keysDownRepeat();
-					checkSdEject();
-					tex().drawVolumeImageCached();
-					tex().drawBatteryImageCached();
-					drawCurrentTime();
-					drawCurrentDate();
-					tex().drawProfileName();
-					snd().updateStream();
-					swiWaitForVBlank();
+					bgOperations(true);
 
 					// RocketVideo video extraction
 					/*if (pressed & KEY_X) {
@@ -2127,8 +2012,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						showMovingArrow = false;
 						while(movingAppYpos > 0) {
 							movingAppYpos -= std::max(movingAppYpos / 3, 1);
-							snd().updateStream();
-							swiWaitForVBlank();
+							bgOperations(true);
 						}
 						break;
 					} else if (pressed & KEY_L) {
@@ -2136,8 +2020,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							snd().playSwitch();
 							fadeType = false; // Fade to white
 							for (int i = 0; i < 6; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
+								bgOperations(true);
 							}
 							PAGENUM -= 1;
 							CURPOS = 0;
@@ -2150,15 +2033,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							getFileInfo(scrn, dirContents, true);
 
 							while (!screenFadedOut()) {
-								snd().updateStream();
+								bgOperations(true);
 							}
 							nowLoadingDisplaying = false;
 							whiteScreen = false;
 							displayGameIcons = true;
 							fadeType = true; // Fade in from white
 							for (int i = 0; i < 5; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
+								bgOperations(true);
 							}
 							reloadIconPalettes();
 							clearText();
@@ -2184,14 +2066,15 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							getDirectoryContents(dirContents[scrn], extensionList);
 							getFileInfo(scrn, dirContents, true);
 
-							while (!screenFadedOut());
+							while (!screenFadedOut()) {
+								bgOperations(true);
+							}
 							nowLoadingDisplaying = false;
 							whiteScreen = false;
 							displayGameIcons = true;
 							fadeType = true; // Fade in from white
 							for (int i = 0; i < 5; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
+								bgOperations(true);
 							}
 							reloadIconPalettes();
 							clearText();
@@ -2242,14 +2125,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				while (1) {
 					scanKeys();
 					touchRead(&touch);
-					checkSdEject();
-					tex().drawVolumeImageCached();
-					tex().drawBatteryImageCached();
-					drawCurrentTime();
-					drawCurrentDate();
-					tex().drawProfileName();
-					snd().updateStream();
-					swiWaitForVBlank();
+					bgOperations(true);
 
 					if (keysHeld() & KEY_TOUCH) {
 						titlewindowXdest[ms().secondaryDevice] = std::clamp(touch.px - 30, 0, 192);
@@ -2311,14 +2187,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				while (1) {
 					scanKeys();
 					touchRead(&touch);
-					checkSdEject();
-					tex().drawVolumeImageCached();
-					tex().drawBatteryImageCached();
-					drawCurrentTime();
-					drawCurrentDate();
-					tex().drawProfileName();
-					snd().updateStream();
-					swiWaitForVBlank();
+					bgOperations(true);
 
 					prevTouch2 = prevTouch1;
 					prevTouch1 = touch;
@@ -2367,14 +2236,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					while (1) {
 						scanKeys();
 						touchRead(&touch);
-						checkSdEject();
-						tex().drawVolumeImageCached();
-						tex().drawBatteryImageCached();
-						drawCurrentTime();
-						drawCurrentDate();
-						tex().drawProfileName();
-						snd().updateStream();
-						swiWaitForVBlank();
+						bgOperations(true);
 
 						if (!(keysHeld() & KEY_TOUCH)) {
 							titleboxXspeed = 6;
@@ -2434,7 +2296,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 							// Wait a little bit to give time to re-grab
 							for(int i = 0; i < 10 && !(keysHeld() & KEY_TOUCH); i++) {
-								swiWaitForVBlank();
+								bgOperations(true);
 								scanKeys();
 							}
 
@@ -2516,8 +2378,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 						fadeType = false; // Fade to white
 						for (int i = 0; i < 6; i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
+							bgOperations(true);
 						}
 					}
 					ms().pagenum[ms().secondaryDevice] = 0;
@@ -2614,8 +2475,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							snd().playStartup();
 							fadeType = false;	   // Fade to black
 							for (int i = 0; i < 25; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
+								bgOperations(true);
 							}
 							currentBg = 1;
 							displayGameIcons = false;
@@ -2647,14 +2507,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						while (1) {
 							scanKeys();
 							pressed = keysDown();
-							checkSdEject();
-							tex().drawVolumeImageCached();
-							tex().drawBatteryImageCached();
-
-							drawCurrentTime();
-							drawCurrentDate();
-							snd().updateStream();
-							swiWaitForVBlank();
+							bgOperations(true);
 							if (pressed & KEY_A) {
 								pressed = 0;
 								break;
@@ -2676,7 +2529,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						if (ms().theme == TWLSettings::EThemeSaturn) {
 							fadeType = false;	   // Fade to black
 							for (int i = 0; i < 25; i++) {
-								swiWaitForVBlank();
+								bgOperations(true);
 							}
 							clearText();
 							updateText(false);
@@ -2685,14 +2538,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							fadeType = true;
 							snd().playStartup();
 							if (proceedToLaunch) {
-								while (!screenFadedIn()) { swiWaitForVBlank(); }
+								while (!screenFadedIn()) { bgOperations(true); }
 							}
 						} else {
 							clearText();
 							updateText(false);
 							for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
+								bgOperations(true);;
 							}
 						}
 						dbox_showIcon = false;
@@ -2723,8 +2575,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							snd().playStartup();
 							fadeType = false; // Fade to black
 							for (int i = 0; i < 25; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
+								bgOperations(true);
 							}
 							currentBg = 1;
 							displayGameIcons = false;
@@ -2749,14 +2600,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						while (1) {
 							scanKeys();
 							pressed = keysDown();
-							checkSdEject();
-							tex().drawVolumeImageCached();
-							tex().drawBatteryImageCached();
-
-							drawCurrentTime();
-							drawCurrentDate();
-							snd().updateStream();
-							swiWaitForVBlank();
+							bgOperations(true);
 							if (pressed & KEY_A) {
 								pressed = 0;
 								break;
@@ -2786,14 +2630,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							fadeType = true;
 							snd().playStartup();
 							if (proceedToLaunch) {
-								while (!screenFadedIn()) { swiWaitForVBlank(); }
+								while (!screenFadedIn()) { bgOperations(true); }
 							}
 						} else {
 							clearText();
 							updateText(false);
 							for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
+								bgOperations(true);
 							}
 						}
 					}
@@ -2969,8 +2812,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 					fadeType = false; // Fade to white
 					for (int i = 0; i < 6; i++) {
-						snd().updateStream();
-						swiWaitForVBlank();
+						bgOperations(true);
 					}
 				}
 				PAGENUM = 0;
@@ -3006,7 +2848,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					snd().playStartup();
 					fadeType = false;	   // Fade to black
 					for (int i = 0; i < 25; i++) {
-						swiWaitForVBlank();
+						bgOperations(true);
 					}
 					currentBg = 1;
 					displayGameIcons = false;
@@ -3018,10 +2860,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				clearText();
 				updateText(false);
 				if (ms().theme == TWLSettings::EThemeSaturn) {
-					while (!screenFadedIn()) { swiWaitForVBlank(); }
+					while (!screenFadedIn()) { bgOperations(true); }
 					dbox_showIcon = true;
 				} else {
-					for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+					for (int i = 0; i < 30; i++) { bgOperations(true); }
 				}
 				snprintf(fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS + 1) + PAGENUM * 40,
 					 file_count);
@@ -3052,8 +2894,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 				updateText(false);
 				for (int i = 0; i < 90; i++) {
-					snd().updateStream();
-					swiWaitForVBlank();
+					bgOperations(true);
 				}
 				if (isDirectory[CURPOS]) {
 					printSmall(false, 240, 160, (unHide ? STR_Y_UNHIDE : STR_Y_HIDE) + "  " + STR_B_NO, Alignment::right);
@@ -3065,13 +2906,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					do {
 						scanKeys();
 						pressed = keysDown();
-						checkSdEject();
-						tex().drawVolumeImageCached();
-						tex().drawBatteryImageCached();
-						drawCurrentTime();
-						drawCurrentDate();
-						snd().updateStream();
-						swiWaitForVBlank();
+						bgOperations(true);
 					} while (!pressed);
 
 					if (pressed & KEY_A && !isDirectory[CURPOS]) {
@@ -3079,8 +2914,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 							fadeType = false; // Fade to white
 							for (int i = 0; i < 30; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
+								bgOperations(true);
 							}
 							whiteScreen = true;
 						}
@@ -3115,8 +2949,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 							fadeType = false; // Fade to white
 							for (int i = 0; i < 30; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
+								bgOperations(true);
 							}
 							whiteScreen = true;
 						}
@@ -3152,7 +2985,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				if (ms().theme == TWLSettings::EThemeSaturn) {
 					fadeType = false;	   // Fade to black
 					for (int i = 0; i < 25; i++) {
-						swiWaitForVBlank();
+						bgOperations(true);
 					}
 					clearText();
 					updateText(false);
@@ -3163,7 +2996,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				} else {
 					clearText();
 					updateText(false);
-					for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
+					for (int i = 0; i < 15; i++) { bgOperations(true); }
 				}
 				dbox_showIcon = false;
 				bannerTextShown = false;
@@ -3183,13 +3016,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					scanKeys();
 					pressed = keysDown();
 					held = keysHeld();
-					checkSdEject();
-					tex().drawVolumeImageCached();
-					tex().drawBatteryImageCached();
-					drawCurrentTime();
-					drawCurrentDate();
-					snd().updateStream();
-					swiWaitForVBlank();
+					bgOperations(true);
 
 					// page switch
 					if (pressed & KEY_LEFT) {
