@@ -261,13 +261,17 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				std::vector<unsigned char> image;
 				uint imageWidth, imageHeight;
 				lodepng::decode(image, imageWidth, imageHeight, customIconPath);
-				if (imageWidth == 32 && imageHeight == 32) {
+				if (imageWidth <= 32 && imageHeight <= 32) {
 					customIconGood = true;
+
+					// if smaller than 32x32, center it
+					int xOfs = (32 - imageWidth) / 2;
+					int yOfs = (32 - imageHeight) / 2;
 
 					uint colorCount = 1;
 					for (uint i = 0; i < image.size()/4; i++) {
 						// calculate byte and nibble position of pixel in tiled banner icon
-						uint x = i%32, y = i/32;
+						uint x = xOfs + (i%imageWidth), y = yOfs + (i/imageWidth);
 						uint tileX = x/8, tileY = y/8;
 						uint offX = x%8, offY = y%8;
 						uint pos = tileX*32 + tileY*128 + offX/2 + offY*4;
