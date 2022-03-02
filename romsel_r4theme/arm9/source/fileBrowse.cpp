@@ -171,7 +171,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 
 			if (ms().showDirectories) {
 				if (strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
-					&& strcmp(pent->d_name, "saves") != 0
+					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") !=0
 					&& (pent->d_type == DT_DIR || nameEndsWith(pent->d_name, extensionList))) {
 					if (ms().showHidden || !(FAT_getAttr(pent->d_name) & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0))) {
 						dirContents.emplace_back(pent->d_name, pent->d_type == DT_DIR, currentPos, false);
