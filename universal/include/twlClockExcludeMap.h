@@ -35,6 +35,9 @@ static const char twlClockExcludeList[][4] = {
 	"BZP", // Peppa Pig: Theme Park Fun
 	"AQW", // Puzzle Quest: Challenge of the Warlords
 	"BRJ", // Radiant Historia
+	"ARF", // Rune Factory: A Fantasy Harvest Moon
+	"AN6", // Rune Factory 2: A Fantasy Harvest Moon
+	"BRF", // Rune Factory 3: A Fantasy Harvest Moon
 	"ASC", // Sonic Rush
 	"ASM", // Super Mario 64 DS
 	"COZ", // The Wizard of Oz: Beyond the Yellow Brick Road
