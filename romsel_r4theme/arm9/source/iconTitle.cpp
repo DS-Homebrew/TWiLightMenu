@@ -30,6 +30,7 @@
 #include "common/bootstrapsettings.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
+#include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
@@ -712,6 +713,7 @@ void getGameInfo(bool isDir, const char* name)
 	requiresDonorRom = false;
 
 	if (ms().showCustomIcons) {
+		toncset(&ndsBanner, 0, sizeof(sNDSBannerExt));
 		bool customIconGood = false;
 
 		// First try banner bin
