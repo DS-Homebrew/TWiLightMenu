@@ -651,6 +651,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 	infoFound[num] = false;
 
 	if (ms().showCustomIcons) {
+		toncset(&ndsBanner, 0, sizeof(sNDSBannerExt));
 		bool customIconGood = false;
 
 		// First try banner bin
