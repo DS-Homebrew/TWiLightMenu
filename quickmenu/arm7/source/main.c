@@ -77,6 +77,17 @@ void ReturntoDSiMenu() {
 }
 
 //---------------------------------------------------------------------------------
+void changeBacklightLevel() {
+//---------------------------------------------------------------------------------
+	u8 backlightLevel = i2cReadRegister(0x4A, 0x41);
+	backlightLevel++;
+	if (backlightLevel > 0x04) {
+		backlightLevel = 0;
+	}
+	i2cWriteRegister(0x4A, 0x41, backlightLevel);
+}
+
+//---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
@@ -281,6 +292,11 @@ int main() {
 
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
+		}
+
+		if(fifoGetValue32(FIFO_USER_04) == 1) {
+			changeBacklightLevel();
+			fifoSendValue32(FIFO_USER_04, 0);
 		}
 
 		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
