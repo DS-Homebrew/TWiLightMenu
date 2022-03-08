@@ -47,8 +47,10 @@ void dsiLaunchSystemSettings()
 			titleID[0] = 0x45;		// USA
 			break;
 		case TWLSettings::ERegionEurope:
+			titleID[0] = 0x50;		// EUR
+			break;
 		case TWLSettings::ERegionAustralia:
-			titleID[0] = 0x56;		// EUR/AUS
+			titleID[0] = 0x55;		// AUS
 			break;
 		case TWLSettings::ERegionChina:
 			titleID[0] = 0x43;		// CHN
