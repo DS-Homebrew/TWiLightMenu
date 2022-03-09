@@ -48,7 +48,7 @@ TWLSettings::TWLSettings()
 	theme = EThemeDSi;
 	settingsMusic = ESMusicTheme;
 	dsiMusic = EMusicRegular;
-	boxArtColorDeband = true;
+	boxArtColorDeband = false;
 
 	gbaBooter = isDSiMode() ? EGbaGbar2 : EGbaNativeGbar2;
 	colEmulator = EColSegaColecoDS;
