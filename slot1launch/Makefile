@@ -31,7 +31,7 @@ dist:	all
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
-			-b $(CURDIR)/icon.bmp "TWiLight Menu++;Slot-1 Launcher;Apache Thunder & Rocket Robz" \
+			-b $(CURDIR)/icon.bmp "Slot-1 Launcher;TWiLight Menu++;Apache Thunder & Rocket Robz" \
 			-g TWL1 01 "TWLMENUPP-S1" -z 80040000 -u 00030004
 
 $(TARGET).arm7	: arm7/$(TARGET).elf

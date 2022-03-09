@@ -30,7 +30,7 @@ dist:	all
 
 $(TARGET).nds:	makearm7 makearm9
 	ndstool	-u 00030004 -g SRLA 01 "TWLMENUPP" -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -d $(NITRODATA) \
-  -b icon.bmp "TWiLight Menu++;Wood UI;Rocket Robz & chyyran"
+  -b icon.bmp "Wood UI;TWiLight Menu++;Rocket Robz & chyyran"
 
 clean:
 	@echo clean ...
