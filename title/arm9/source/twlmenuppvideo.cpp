@@ -653,6 +653,9 @@ void twlMenuVideo(void) {
 	} else if (strcmp(currentDate, "02/14") == 0) {
 		// Load heart-shaped BG for Valentine's Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppHeart.png");
+	} else if (strcmp(currentDate, "03/10") == 0) {
+		// Load Mario-themed BG & logo for MAR10 Day
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppMario.png");
 	} else if (strcmp(currentDate, "03/17") == 0 || strcmp(currentDate, "04/22") == 0) {
 		// Load green BG for St. Patrick's Day, or Earth Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppGreen.png");
