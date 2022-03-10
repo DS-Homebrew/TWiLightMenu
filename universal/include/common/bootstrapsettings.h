@@ -36,7 +36,6 @@ public:
 
 public:
 	int b4dsMode;
-	bool cacheFatTable;
 	bool debug;
 	bool logging;
 	int romreadled;

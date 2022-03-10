@@ -10,7 +10,6 @@
 BootstrapSettings::BootstrapSettings()
 {
 	b4dsMode = 0;
-	cacheFatTable = false;
 	debug = false;
 	logging = false;
 	romreadled = BootstrapSettings::ELEDNone;
@@ -34,7 +33,6 @@ void BootstrapSettings::loadSettings()
 	logging = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOGGING", logging);
 	if (dsiFeatures()) {
 		b4dsMode = bootstrapini.GetInt("NDS-BOOTSTRAP", "B4DS_MODE", b4dsMode);
-		cacheFatTable = bootstrapini.GetInt("NDS-BOOTSTRAP", "CACHE_FAT_TABLE", cacheFatTable);
 		romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", romreadled);
 		dmaromreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "DMA_ROMREAD_LED", dmaromreadled);
 		preciseVolumeControl = bootstrapini.GetInt("NDS-BOOTSTRAP", "PRECISE_VOLUME_CONTROL", preciseVolumeControl);
@@ -53,7 +51,6 @@ void BootstrapSettings::saveSettings()
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", logging);
 	if (dsiFeatures()) {
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "B4DS_MODE", b4dsMode);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "CACHE_FAT_TABLE", cacheFatTable);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", romreadled);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DMA_ROMREAD_LED", dmaromreadled);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "PRECISE_VOLUME_CONTROL", preciseVolumeControl);

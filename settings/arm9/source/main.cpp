@@ -1111,14 +1111,6 @@ int main(int argc, char **argv)
 			{true, false});
 	}
 
-	if (isDSiMode() || sdFound()) {
-		bootstrapPage.option((dsiFeatures() ? STR_SAVEFATTABLECACHE : STR_SYSSD_SAVEFATTABLECACHE),
-			STR_DESCRIPTION_SAVEFATTABLECACHE,
-			Option::Bool(&bs().cacheFatTable),
-			{STR_YES, STR_NO},
-			{true, false});
-	}
-
 	bootstrapPage
 		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1, Option::Bool((bool *)&ms().bootstrapFile), {STR_NIGHTLY, STR_RELEASE}, {true, false})
 		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().debug), {STR_ON, STR_OFF}, {true, false})
