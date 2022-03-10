@@ -2209,17 +2209,6 @@ int main(int argc, char **argv)
 	*(u32*)0x02000000 |= BIT(0);
 
 	if (access(sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC, F_OK) != 0) {
-		u64 driveSize = 0;
-		int gbNumber = 0;
-		struct statvfs st;
-		if (statvfs(sdFound() ? "sd:/" : "fat:/", &st) == 0) {
-			driveSize = st.f_bsize * st.f_blocks;
-		}
-		for (u64 i = 0; i <= driveSize; i += 0x40000000) {
-			gbNumber++;	// Get GB number
-		}
-		bs().cacheFatTable = (gbNumber < 32);	// Enable saving FAT table cache, if SD/Flashcard is 32GB or less
-
 		// Create "nds-bootstrap.ini"
 		bs().saveSettings();
 	}
