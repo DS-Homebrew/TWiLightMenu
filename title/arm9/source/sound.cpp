@@ -62,7 +62,7 @@ SoundControl::SoundControl()
 	extern bool useTwlCfg;
 	int birthMonth = (useTwlCfg ? *(u8*)0x02000446 : PersonalData->birthMonth);
 	int birthDay = (useTwlCfg ? *(u8*)0x02000447 : PersonalData->birthDay);
-	char soundBankPath[32], currentDate[16], birthDate[16];
+	char soundBankPath[32], wavPath[32], currentDate[16], birthDate[16];
 	time_t Raw;
 	time(&Raw);
 	const struct tm *Time = localtime(&Raw);
@@ -71,6 +71,13 @@ SoundControl::SoundControl()
 	sprintf(birthDate, "%02d/%02d", birthMonth, birthDay);
 
 	sprintf(soundBankPath, "nitro:/soundbank%s.bin", (strcmp(currentDate, birthDate) == 0) ? "_bday" : "");
+
+	if (strcmp(currentDate, "03/10") == 0) {
+		// Load Mario coin sound for MAR10 Day
+		sprintf(wavPath, "nitro:/sound/coin.wav");
+	} else {
+		sprintf(wavPath, "nitro:/sound/title.wav");
+	}
 
 	// Load sound bank into memory
 	FILE* soundBankF = fopen(soundBankPath, "rb");
@@ -109,7 +116,7 @@ SoundControl::SoundControl()
 	};
 
 
-	stream_source = fopen("nitro:/title.wav", "rb");
+	stream_source = fopen(wavPath, "rb");
 
 
 	WavHeader wavHeader;
