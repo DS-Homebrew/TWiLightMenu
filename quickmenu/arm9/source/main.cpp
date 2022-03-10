@@ -2377,7 +2377,7 @@ int main(int argc, char **argv) {
 								FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
 								if (pFile) {
 									showProgressBar = true;
-									for (u32 i = 0x200; i < savesize; i += 0x200) {
+									for (u32 i = (orgsavesize>0 ? orgsavesize : 0)+0x200; i < savesize; i += 0x200) {
 										if (i > savesize) i = savesize;
 										progressBarLength = i/(savesize/192);
 										fseek(pFile, i - 1, SEEK_SET);
