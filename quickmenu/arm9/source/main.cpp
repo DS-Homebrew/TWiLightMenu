@@ -850,11 +850,14 @@ bool createDSiWareSave(const char *path, int size) {
 	if(file) {
 		showProgressBar = true;
 		fwrite(&h, sizeof(FATHeader), 1, file); // Write header
-		for (int i = 0x8000; i < size; i += 0x8000) {
+		int i = 0;
+		while (1) {
+			i += 0x8000;
 			if (i > size) i = size;
 			progressBarLength = i/(size/192);
 			fseek(file, i - 1, SEEK_SET); // Pad rest of the file
 			fputc('\0', file);
+			if (i == size) break;
 		}
 		fclose(file);
 		showProgressBar = false;
@@ -2377,11 +2380,14 @@ int main(int argc, char **argv) {
 								FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
 								if (pFile) {
 									showProgressBar = true;
-									for (u32 i = (orgsavesize>0 ? orgsavesize : 0)+0x8000; i < savesize; i += 0x8000) {
+									u32 i = (orgsavesize>0 ? orgsavesize : 0);
+									while (1) {
+										i += 0x8000;
 										if (i > savesize) i = savesize;
 										progressBarLength = i/(savesize/192);
 										fseek(pFile, i - 1, SEEK_SET);
 										fputc('\0', pFile);
+										if (i == savesize) break;
 									}
 									fclose(pFile);
 									showProgressBar = false;
