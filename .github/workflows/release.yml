@@ -65,11 +65,14 @@ jobs:
           7z a TWiLightMenu-debug-release.7z debug
           mv TWiLightMenu-debug-release.7z ~/artifacts
 
+          mkdir -p 7zfile/_nds/TWiLightMenu/3dsmenu/themes/
           mkdir -p 7zfile/_nds/TWiLightMenu/boxart/
+          mkdir -p 7zfile/_nds/TWiLightMenu/dsimenu/themes/
           mkdir -p 7zfile/_nds/TWiLightMenu/icons/
           mkdir -p 7zfile/_nds/TWiLightMenu/extras/
           mkdir -p 7zfile/_nds/TWiLightMenu/extras/fonts/
           mkdir -p 7zfile/_nds/TWiLightMenu/gamesettings/
+          mkdir -p 7zfile/_nds/TWiLightMenu/r4menu/themes/
 
           # nds-bootstrap
           mkdir -p nds-bootstrap
