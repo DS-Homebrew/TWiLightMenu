@@ -140,7 +140,7 @@ dist:	all
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-u 00030015 -g SLRN -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
-			-g SLRN 01 "TWLMENUPP-LR" -a 00000138 -z 80040000 -b icon.bmp "TWiLight Menu++;Last-run ROM;RocketRobz"
+			-g SLRN 01 "TWLMENUPP-LR" -a 00000138 -z 80040000 -b icon.bmp "Last-run ROM;TWiLight Menu++;RocketRobz"
 
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
 		$(PYTHON) ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch
