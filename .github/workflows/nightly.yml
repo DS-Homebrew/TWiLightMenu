@@ -63,11 +63,7 @@ jobs:
           # Make artifacts directory
           mkdir -p ~/artifacts
 
-          # Theme is currently unused
-          rm -rf 7zfile/_nds/TWiLightMenu/akmenu
-
-          # Don't include skins or fonts in nightlies
-          rm -rf 7zfile/_nds/TWiLightMenu/*menu/
+          # Don't include fonts in nightlies
           rm -rf 7zfile/_nds/TWiLightMenu/extras/fonts
 
           # Debug 7z
