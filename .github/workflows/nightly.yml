@@ -63,13 +63,9 @@ jobs:
           # Make artifacts directory
           mkdir -p ~/artifacts
 
-          # Don't include fonts in nightlies
+          # Don't include fonts or debug files in nightlies
           rm -rf 7zfile/_nds/TWiLightMenu/extras/fonts
-
-          # Debug 7z
-          mv 7zfile/debug debug
-          7z a TWiLightMenu-debug.7z debug
-          mv TWiLightMenu-debug.7z ~/artifacts
+          rm -rf 7zfile/debug
 
           cp -r 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
