@@ -614,9 +614,14 @@ void my_sdmmcHandler() {
 					: my_sdmmc_readsectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
         break;
     case 5: // 0x52574453: // SDMMC_SD_WRITE_SECTORS
+		u32 sector = *(u32*)0x02FFFA00;
+		u32 numSectors = *(u32*)0x02FFFA04;
+		void* buffer = (void*)*(u32*)0x02FFFA08;
+		for (int i = 0; i < numSectors; i++) {
         result =
-			useDLDI ? (io_dldi_data->ioInterface.writeSectors(*(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08) ? 0 : 1)
-					: my_sdmmc_writesectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
+			useDLDI ? (io_dldi_data->ioInterface.writeSectors(sector+i, 1, buffer+(i*512)) ? 0 : 1)
+					: my_sdmmc_writesectors(&deviceSD, sector+i, 1, buffer+(i*512));
+		}
         break;
     case 6: // 0x4452414E: // SDMMC_NAND_READ_SECTORS
         result = my_sdmmc_readsectors(&deviceNAND, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
