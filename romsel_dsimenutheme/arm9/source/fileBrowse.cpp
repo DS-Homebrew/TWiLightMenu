@@ -544,11 +544,11 @@ void updateBoxArt(const std::vector<DirEntry> dirContents) {
 			rocketVideo_playVideo = true;
 		}
 	} else {
-		clearBoxArt();		
 		if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
-			// Clear top screen cubes
-			rocketVideo_playVideo = false;
+			while (dmaBusy(1)); // Wait for frame to finish rendering
+			rocketVideo_playVideo = false; // Clear top screen cubes
 		}
+		clearBoxArt();
 		if (dsiFeatures() && ms().showBoxArt == 2) {
 			tex().drawBoxArtFromMem(CURPOS); // Load box art
 		} else {
