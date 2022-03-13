@@ -169,9 +169,6 @@ jobs:
           git push origin v$CURRENT_DATE master
       - name: Release to TWLBot/Builds
         run: |
-          # Delete debug 7z
-          rm ${{ github.workspace }}/build/TWiLightMenu-debug.7z
-
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
           API_URL="https://api.github.com/repos/TWLBot/Builds/releases"
