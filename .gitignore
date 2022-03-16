@@ -32,40 +32,38 @@ data/
 .vscode/
 ipch/
 
-7zfile/Flashcard users/Autoboot/EZ Flash V/ez5sys.bin
+7zfile/Flashcard users/Autoboot/Ace3DS
+7zfile/Flashcard users/Autoboot/Ace3DS+, Ace3DS X, R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version
+7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1
+7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)
+7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42
+7zfile/Flashcard users/Autoboot/EZ Flash V
 7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_.NDS
 7zfile/Flashcard users/Autoboot/Galaxy Eagle/_MENU_B.NDS
-7zfile/Flashcard users/Autoboot/Games N Music/Non-SDHC/bootme.nds
-7zfile/Flashcard users/Autoboot/Games N Music/SDHC/bootme.nds
-7zfile/Flashcard users/Autoboot/GBAMP + PassMe, FlashMe or WifiMe/_BOOT_MP.NDS
-7zfile/Flashcard users/Autoboot/iSmart Premium/system/ismat.dat
-7zfile/Flashcard users/Autoboot/R4iDSN, R4 Ultra, R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/*
-7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds
-7zfile/Flashcard users/Autoboot/SuperCard DSONE/*
-7zfile/Flashcard users/Autoboot/SuperCard DSONE SDHC & SuperCard DSONEi/*/TTMenu.dat
-7zfile/Flashcard users/Autoboot/Ace3DS
-7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)
-7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/TTMenu.dat
+7zfile/Flashcard users/Autoboot/Games N Music
+7zfile/Flashcard users/Autoboot/Gateway Blue
+7zfile/Flashcard users/Autoboot/GBAMP + PassMe, FlashMe or WifiMe
+7zfile/Flashcard users/Autoboot/iSmart Premium
 7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/SRESET.DAT
 7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/_system_
-7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/_DS_MENU.DAT
+7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply
+7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20
+7zfile/Flashcard users/Autoboot/R4 Ultra, R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS
 7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5
 7zfile/Flashcard users/Autoboot/R4i Gold Upgrade Revolution (v1.14b kernel)
 7zfile/Flashcard users/Autoboot/R4i King LL
 7zfile/Flashcard users/Autoboot/R4i SDHC Upgrade Revolution (www.r4i-dshc.com), R4i 3DS (v4.3 kernel) & R4i YES
 7zfile/Flashcard users/Autoboot/R4i Upgrade Revolution
 7zfile/Flashcard users/Autoboot/R4i-REDANT
-7zfile/Flashcard users/Autoboot/R4IIISDHC (v3.07 kernel), R4i SDHC Silver RTS Lite, R4iTT v1.6
 7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/_BOOT_DS.NDS
 7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/TTMenu.dat
-7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply
-7zfile/Flashcard users/Autoboot/Ace3DS+, Ace3DS X, R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version
-7zfile/Flashcard users/Autoboot/Gateway Blue
-7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1
+7zfile/Flashcard users/Autoboot/R4iDSN
+7zfile/Flashcard users/Autoboot/R4IIISDHC (v3.07 kernel), R4i SDHC Silver RTS Lite, R4iTT v1.6
 7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk cards 2013-2019, r4igold.cc 3DS, r4i-gold.me 2013+
+7zfile/Flashcard users/Autoboot/SuperCard DSONE
+7zfile/Flashcard users/Autoboot/SuperCard DSONE SDHC & SuperCard DSONEi/*/TTMenu.dat
+7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds
 7zfile/Flashcard users/Autoboot/Wood R4igold.cc Upgrade
-7zfile/Flashcard users/Autoboot/iTouchDS, R4(i) SDHC (r4rts.com)/_system_
-7zfile/Flashcard users/Autoboot/iTouchDS, R4(i) SDHC (r4rts.com)/SRESET.DAT
 
 
 7zfile/_nds/TWiLightMenu/extras/apfix.pck
