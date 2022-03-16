@@ -53,32 +53,34 @@ dist:	all autoboot
 autoboot:
 	### Special carts first
 	#### Acekard 2, 2.1, 2i
-	dlditool flashcart_specifics/DLDI/ak2_sd.dldi booter_acekard2.nds
+	cp booter_acekard2.nds akmenu4.nds
+	dlditool flashcart_specifics/DLDI/ak2_sd.dldi akmenu4.nds
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1"
-	mv booter_acekard2.nds "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/akmenu4.nds"
+	mv akmenu4.nds "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/akmenu4.nds"
 
 	#### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS & R4 Ultra
-	dlditool flashcart_specifics/DLDI/r4idsn_sd_r4ig.dldi booter_r4ig.nds
+	cp booter_r4ig.nds _DS_MENU.dat
+	dlditool flashcart_specifics/DLDI/r4idsn_sd_r4ig.dldi _DS_MENU.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Ultra, R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/"
-	mv booter_r4ig.nds "../7zfile/Flashcard users/Autoboot/R4 Ultra, R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.dat"
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra, R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.dat"
 	
 	#### R4iDSN
-	dlditool flashcart_specifics/DLDI/r4idsn_sd.dldi booter_r4idsn.nds
+	cp booter_r4idsn.nds _DSMENU.dat
+	dlditool flashcart_specifics/DLDI/r4idsn_sd.dldi _DSMENU.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4iDSN"
-	cp booter_r4idsn.nds "../7zfile/Flashcard users/Autoboot/R4iDSN/_DSMENU.DAT"
+	mv _DSMENU.dat "../7zfile/Flashcard users/Autoboot/R4iDSN/_DSMENU.DAT"
 
 	#### Wood R4igold.cc Upgrade
-	dlditool flashcart_specifics/DLDI/r4idsn_sd_r4ig.dldi booter_r4idsn.nds
+	cp booter_r4idsn.nds _DS_MENU.dat
+	dlditool flashcart_specifics/DLDI/r4idsn_sd_r4ig.dldi _DS_MENU.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Wood R4igold.cc Upgrade"
-	mv booter_r4idsn.nds "../7zfile/Flashcard users/Autoboot/Wood R4igold.cc Upgrade/_DS_MENU.dat"
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Wood R4igold.cc Upgrade/_DS_MENU.dat"
 
 	#### Ace3DS+, Ace3DS X, R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version
 	dlditool flashcart_specifics/DLDI/ace3ds_sd.dldi booter_ace3dsplus.nds
 	r4denc -k 0x4002 booter_ace3dsplus.nds _DS_MENU.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Ace3DS+, Ace3DS X, R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version/"
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Ace3DS+, Ace3DS X, R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version/_DS_MENU.dat"
-	# no longer need booter_ace3dsplus.nds
-	rm -f booter_ace3dsplus.nds
 	
 	##### Some carts require gamecode to be R4XX, but are still considered as Ace3DS+ clones
 	ndstool -c _DSMENU.nds -7 $(TARGET)_r4ils.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g "####" "##" "R4XX" -b icon.bmp "TWiLight Menu++;Rocket Robz"
@@ -239,11 +241,11 @@ autoboot:
 
 $(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4ig makearm9_acekard2 makearm9_r4idsn
 	# simple nds srl without dsi extended header
-	ndstool -c $(TARGET)_fc.nds         -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	ndstool -c $(TARGET)_r4ig.nds       -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_r4ig.arm9.elf     -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	ndstool -c $(TARGET)_r4idsn.nds     -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_r4idsn.arm9.elf   -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	ndstool -c $(TARGET)_acekard2.nds   -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_acekard2.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	ndstool -c $(TARGET)_ace3dsplus.nds -7 $(TARGET)_r4ils.arm7.elf -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_fc.nds       -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_r4ig.nds     -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_r4ig.arm9.elf     -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_r4idsn.nds   -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_r4idsn.arm9.elf   -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_acekard2.nds -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_acekard2.arm9.elf -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
+	ndstool -c $(TARGET)_r4ils.nds    -7 $(TARGET)_r4ils.arm7.elf -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	
 
 clean:
@@ -254,7 +256,7 @@ clean:
 	@rm -fr $(TARGET)_r4ig.nds $(TARGET)_r4ig.arm9.elf
 	@rm -fr $(TARGET)_r4idsn.nds $(TARGET)_r4idsn.arm9.elf
 	@rm -fr $(TARGET)_acekard2.nds $(TARGET)_acekard2.arm9.elf
-	@rm -fr $(TARGET)_r4ils.arm7.elf
+	@rm -fr $(TARGET)_r4ils.nds $(TARGET)_r4ils.arm7.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C arm9 clean
