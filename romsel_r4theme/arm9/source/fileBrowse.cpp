@@ -917,7 +917,21 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				int hasAP = 0;
 				bool proceedToLaunch = true;
 				bool useBootstrapAnyway = (ms().useBootstrap || !ms().secondaryDevice);
-				if (useBootstrapAnyway && bnrRomType == 0 && isHomebrew == 0)
+				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare
+				 && isHomebrew == 0
+				 && checkIfDSiMode(dirContents.at(fileOffset).name)) {
+					bool hasDsiBinaries = true;
+					if (dsiFeatures() && (!ms().secondaryDevice || !bs().b4dsMode)) {
+						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
+						hasDsiBinaries = checkDsiBinaries(f_nds_file);
+						fclose(f_nds_file);
+					}
+
+					if (!hasDsiBinaries) {
+						proceedToLaunch = dsiBinariesMissingMsg();
+					}
+				}
+				if (proceedToLaunch && useBootstrapAnyway && bnrRomType == 0 && !dsModeForced && isHomebrew == 0)
 				{
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 					char game_TID[5];
@@ -1044,21 +1058,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					} else if (ms().macroMode) {
 						lcdMainOnTop();
 						lcdSwapped = false;
-					}
-				}
-
-				if (proceedToLaunch && useBootstrapAnyway && bnrRomType == 0 && !isDSiWare
-				 && !dsModeForced && isHomebrew == 0
-				 && checkIfDSiMode(dirContents.at(fileOffset).name)) {
-					bool hasDsiBinaries = true;
-					if (dsiFeatures() && (!ms().secondaryDevice || !bs().b4dsMode)) {
-						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-						hasDsiBinaries = checkDsiBinaries(f_nds_file);
-						fclose(f_nds_file);
-					}
-
-					if (!hasDsiBinaries) {
-						proceedToLaunch = dsiBinariesMissingMsg();
 					}
 				}
 

@@ -2408,7 +2408,23 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					int hasAP = 0;
 					bool proceedToLaunch = true;
 					bool useBootstrapAnyway = (ms().useBootstrap || !ms().secondaryDevice);
-					if (useBootstrapAnyway && bnrRomType[CURPOS] == 0 && isHomebrew[CURPOS] == 0)
+					if (useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
+					 && isHomebrew[CURPOS] == 0
+					 && checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name))
+					{
+						bool hasDsiBinaries = true;
+						if (dsiFeatures() && (!ms().secondaryDevice || !bs().b4dsMode)) {
+							FILE *f_nds_file = fopen(
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
+							hasDsiBinaries = checkDsiBinaries(f_nds_file);
+							fclose(f_nds_file);
+						}
+
+						if (!hasDsiBinaries) {
+							proceedToLaunch = dsiBinariesMissingMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+						}
+					}
+					if (proceedToLaunch && useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !dsModeForced && isHomebrew[CURPOS] == 0)
 					{
 						proceedToLaunch = checkForCompatibleGame(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						if (proceedToLaunch && requiresDonorRom[CURPOS]) {
@@ -2548,23 +2564,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 						}
 						dbox_showIcon = false;
-					}
-
-					if (proceedToLaunch && useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
-					 && !dsModeForced && isHomebrew[CURPOS] == 0
-					 && checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name))
-					{
-						bool hasDsiBinaries = true;
-						if (dsiFeatures() && (!ms().secondaryDevice || !bs().b4dsMode)) {
-							FILE *f_nds_file = fopen(
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
-							hasDsiBinaries = checkDsiBinaries(f_nds_file);
-							fclose(f_nds_file);
-						}
-
-						if (!hasDsiBinaries) {
-							proceedToLaunch = dsiBinariesMissingMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
-						}
 					}
 
 					// If SD card's cluster size is less than 32KB, then show warning for DS games with nds-bootstrap
