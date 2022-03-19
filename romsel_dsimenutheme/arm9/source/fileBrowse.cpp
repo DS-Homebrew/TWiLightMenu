@@ -1067,7 +1067,22 @@ bool donorRomMsg(const char *filename) {
 				printSmall(false, 16, 66, dirContName.c_str());
 			}
 			if (msgPage == 1) {
-				printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM, Alignment::center);
+				switch (requiresDonorRom[CURPOS]) {
+					default:
+						break;
+					case 51:
+						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK5TWL, Alignment::center);
+						break;
+					case 52:
+						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK5TWLONLY, Alignment::center);
+						break;
+					case 151:
+						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK50TWL, Alignment::center);
+						break;
+					case 152:
+						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK50TWLONLY, Alignment::center);
+						break;
+				}
 				printSmall(false, 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), "<", Alignment::left);
 			} else {
 				switch (requiresDonorRom[CURPOS]) {

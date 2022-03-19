@@ -427,9 +427,24 @@ bool donorRomMsg(void) {
 			clearText();
 			printLargeCentered(false, 74, "Error!");
 			if (msgPage == 1) {
-				printSmallCentered(false, 90, "To set a donor ROM, find");
-				printSmallCentered(false, 102, "mentioned ROM, press (Y), and");
-				printSmallCentered(false, 114, "select \"Set as Donor ROM\".");
+				switch (requiresDonorRom) {
+					default:
+						break;
+					case 51:
+						printSmallCentered(false, 90, "Find the DSi-Enhanced title,");
+						break;
+					case 52:
+						printSmallCentered(false, 90, "Find the DSi(Ware) title,");
+						break;
+					case 151:
+						printSmallCentered(false, 90, "Find the SDK5.0 DSi-Enhanced title,");
+						break;
+					case 152:
+						printSmallCentered(false, 90, "Find the SDK5.0 DSi(Ware) title,");
+						break;
+				}
+				printSmallCentered(false, 102, "press (Y), and select");
+				printSmallCentered(false, 114, "\"Set as Donor ROM\".");
 				printSmall(false, 18, 132, "<");
 			} else {
 				switch (requiresDonorRom) {

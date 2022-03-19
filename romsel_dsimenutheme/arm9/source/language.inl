@@ -61,7 +61,10 @@ STRING(DONOR_ROM_MSG_SDK50TWL, "Please set an SDK5.0 DSi-Enhanced\ntitle as a do
 STRING(DONOR_ROM_MSG_SDK5TWLONLY, "Please set a different DSi(Ware)\ntitle as a donor ROM, in order\nto launch this title.")
 STRING(DONOR_ROM_MSG_SDK50TWLONLY, "Please set a different SDK5.0\nDSi(Ware) title as a donor ROM,\nin order to launch this title.")
 STRING(DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE, "Please set a DSi(Ware) title\nas a donor ROM, in order\nto launch this title in DSi mode.")
-STRING(HOW_TO_SET_DONOR_ROM, "To set a donor ROM, find\nmentioned ROM, press \\Y, and\nselect \"Set as Donor ROM\".")
+STRING(HOW_TO_SET_DONOR_ROM_SDK5TWL, "Find the DSi-Enhanced title,\npress \\Y, and select\n\"Set as Donor ROM\".")
+STRING(HOW_TO_SET_DONOR_ROM_SDK50TWL, "Find the SDK5.0 DSi-Enhanced\ntitle, press \\Y, and\nselect \"Set as Donor ROM\".")
+STRING(HOW_TO_SET_DONOR_ROM_SDK5TWLONLY, "Find the DSi(Ware) title,\npress \\Y, and select\n\"Set as Donor ROM\".")
+STRING(HOW_TO_SET_DONOR_ROM_SDK50TWLONLY, "Find the SDK5.0 DSi(Ware)\ntitle, press \\Y, and\nselect \"Set as Donor ROM\".")
 
 // Hiding
 STRING(ARE_YOU_SURE_UNHIDE, "Are you sure you want to\nunhide this folder?")
