@@ -1074,6 +1074,7 @@ int main(int argc, char **argv) {
 		".ws", ".wsc", // WonderSwan
 		".ngp", ".ngc", // Neo Geo Pocket
 		".pce", // PC Engine/TurboGrafx-16
+		".dsk", // Amstrad CPC
 		".rvid", // Rocket Video
 		".fv" // FastVideo
 	};
@@ -2358,6 +2359,17 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename, {".dsk"})) {
+					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
+					mkdir(ms().secondaryDevice ? "fat:/data/ameds" : "sd:/data/ameds", 0777);
+
+					ms().launchType[ms().secondaryDevice] = TWLSettings::EAmEDSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/AmEDS.nds";
 						boostVram = true;
 					}
 				}

@@ -130,7 +130,8 @@ public:
 		EColecoDSLaunch = 18,
 		ENitroSwanLaunch = 19,
 		ENGPDSLaunch = 20,
-		ESNEmulDSLaunch = 21
+		ESNEmulDSLaunch = 21,
+		EAmEDSLaunch = 22
 	};
 
 	enum TConsoleModel : int

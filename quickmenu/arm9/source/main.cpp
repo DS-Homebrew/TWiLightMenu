@@ -1334,6 +1334,9 @@ int main(int argc, char **argv) {
 		} else if (extension(filename[0], ".ngp") || extension(filename[0], ".ngc")) {
 			bnrRomType[0] = 17;
 			boxArtType[0] = 0;
+		} else if (extension(filename[0], ".dsk")) {
+			bnrRomType[0] = 18;
+			boxArtType[0] = 0;
 		}
 
 		if (ms().showBoxArt) {
@@ -1460,6 +1463,9 @@ int main(int argc, char **argv) {
 			boxArtType[1] = 0;
 		} else if (extension(filename[1], ".ngp") || extension(filename[1], ".ngc")) {
 			bnrRomType[1] = 17;
+			boxArtType[1] = 0;
+		} else if (extension(filename[1], ".dsk")) {
+			bnrRomType[1] = 18;
 			boxArtType[1] = 0;
 		}
 
@@ -2959,6 +2965,17 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename[ms().secondaryDevice], ".dsk")) {
+					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
+					mkdir(ms().secondaryDevice ? "fat:/data/ameds" : "sd:/data/ameds", 0777);
+
+					ms().launchType[ms().secondaryDevice] = TWLSettings::EAmEDSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat/_nds/TWiLightMenu/emulators/AmEDS.nds";
 						boostVram = true;
 					}
 				}

@@ -47,6 +47,7 @@
 #include "icon_pce.h"
 #include "icon_ws.h"
 #include "icon_ngp.h"
+#include "icon_cpc.h"
 #include "icon_a26.h"
 #include "icon_col.h"
 #include "icon_m5.h"
@@ -83,6 +84,7 @@ static int intTexID;
 static int pceTexID;
 static int wsTexID;
 static int ngpTexID;
+static int cpcTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
@@ -112,6 +114,7 @@ static glImage intIcon[1];
 static glImage pceIcon[1];
 static glImage wsIcon[1];
 static glImage ngpIcon[1];
+static glImage cpcIcon[1];
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -590,6 +593,30 @@ void loadConsoleIcons()
 				(u16*) newPalette, // Image palette
 				(u8*) icon_ngpBitmap // Raw image data
 				);
+
+	// CPC
+	glDeleteTextures(1, &cpcTexID);
+
+	newPalette = (u16*)icon_cpcPal;
+	if (ms().colorMode == 1) {
+		for (int i2 = 0; i2 < 16; i2++) {
+			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		}
+	}
+	cpcTexID =
+	glLoadTileSet(cpcIcon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) newPalette, // Image palette
+				(u8*) icon_cpcBitmap // Raw image data
+				);
 }
 
 static void clearIcon(int num)
@@ -616,6 +643,7 @@ void drawIconINT(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, intIco
 void drawIconPCE(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, pceIcon); }
 void drawIconWS(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, wsIcon); }
 void drawIconNGP(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, ngpIcon); }
+void drawIconCPC(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, cpcIcon); }
 
 void loadFixedBanner(bool isSlot1) {
 	if (isSlot1 && memcmp(ndsHeader.gameCode, "ALXX", 4) == 0) {

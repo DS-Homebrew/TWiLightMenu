@@ -827,6 +827,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bnrRomType = 16;
 			} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
 				bnrRomType = 17;
+			} else if (extension(std_romsel_filename, {".dsk"})) {
+				bnrRomType = 18;
 			}
 		}
 

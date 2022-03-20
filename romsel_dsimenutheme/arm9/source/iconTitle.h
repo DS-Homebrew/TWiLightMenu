@@ -46,6 +46,7 @@ void drawIconINT(int Xpos, int Ypos);
 void drawIconPCE(int Xpos, int Ypos);
 void drawIconWS(int Xpos, int Ypos);
 void drawIconNGP(int Xpos, int Ypos);
+void drawIconCPC(int Xpos, int Ypos);
 void execDeferredIconUpdates();
 void writeBannerText(std::string_view text);
 void writeBannerText(std::u16string text);
