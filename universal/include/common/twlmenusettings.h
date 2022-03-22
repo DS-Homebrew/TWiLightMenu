@@ -131,7 +131,8 @@ public:
 		ENitroSwanLaunch = 19,
 		ENGPDSLaunch = 20,
 		ESNEmulDSLaunch = 21,
-		EAmEDSLaunch = 22
+		EAmEDSLaunch = 22,
+		ECrocoDSLaunch = 23
 	};
 
 	enum TConsoleModel : int
@@ -199,6 +200,12 @@ public:
 	{
 		EColSegaS8DS = 1,
 		EColSegaColecoDS = 2,
+	};
+
+	enum TCpcEmulator : int
+	{
+		ECpcAmEDS = 1,
+		ECpcCrocoDS = 2,
 	};
 
 	enum TMegaDriveEmulator : int
@@ -278,6 +285,7 @@ public:
 	TColSegaEmulator colEmulator;
 	TColSegaEmulator sgEmulator;
 	TMegaDriveEmulator mdEmulator;
+	TCpcEmulator cpcEmulator;
 	//int snesEmulator;
 	bool updateRecentlyPlayedList;
 	TSortMethod sortMethod;

@@ -2361,15 +2361,20 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename, {".dsk"})) {
-					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
-					mkdir(ms().secondaryDevice ? "fat:/data/ameds" : "sd:/data/ameds", 0777);
-
+				} else if (extension(filename, {".dsk"}) && ms().cpcEmulator == TWLSettings::ECpcAmEDS) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EAmEDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename, {".dsk"}) && ms().cpcEmulator == TWLSettings::ECpcCrocoDS) {
+					ms().launchType[ms().secondaryDevice] = TWLSettings::ECrocoDSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
 						boostVram = true;
 					}
 				}
