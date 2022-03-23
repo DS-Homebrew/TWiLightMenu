@@ -667,14 +667,14 @@ void arm7_main (void) {
 		fixDSBrowser();
 	}
 
-	if ((*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x52544E	// Download Play ROMs
-	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x4D5341	// Super Mario 64 DS
-	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x434D41	// Mario Kart DS
-	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x443241	// New Super Mario Bros.
-	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x5A5241	// Rockman ZX/MegaMan ZX
-	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x574B41	// Kirby Squeak Squad/Mouse Attack
-	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x585A59	// Rockman ZX Advent/MegaMan ZX Advent
-	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x5A3642)	// Rockman Zero Collection/MegaMan Zero Collection
+	if (memcmp((char*)NDS_HEAD+0xC, "NTR", 3) == 0		// Download Play ROMs
+	 || memcmp((char*)NDS_HEAD+0xC, "ASM", 3) == 0		// Super Mario 64 DS
+	 || memcmp((char*)NDS_HEAD+0xC, "AMC", 3) == 0		// Mario Kart DS
+	 || memcmp((char*)NDS_HEAD+0xC, "A2D", 3) == 0		// New Super Mario Bros.
+	 || memcmp((char*)NDS_HEAD+0xC, "ARZ", 3) == 0		// Rockman ZX/MegaMan ZX
+	 || memcmp((char*)NDS_HEAD+0xC, "AKW", 3) == 0		// Kirby Squeak Squad/Mouse Attack
+	 || memcmp((char*)NDS_HEAD+0xC, "YZX", 3) == 0		// Rockman ZX Advent/MegaMan ZX Advent
+	 || memcmp((char*)NDS_HEAD+0xC, "B6Z", 3) == 0)	// Rockman Zero Collection/MegaMan Zero Collection
 	{
 		gameSoftReset = true;
 	}
