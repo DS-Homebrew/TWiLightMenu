@@ -95,6 +95,10 @@ void myIrqHandlerVBlank(void) {
 		leaveCriticalSection(oldIME);
 	}
 
+	if (REG_IE & IRQ_NETWORK) {
+		REG_IE &= ~IRQ_NETWORK; // DSi RTC fix
+	}
+
 	#ifdef DEBUG
 	nocashMessage("cheat_engine_start\n");
 	#endif	
