@@ -621,6 +621,12 @@ int lastRunROM() {
 			mkdir("sd:/data/ngpds", 0777);
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to NGPDS as argument
+		case TWLSettings::EAmEDSLaunch:
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to AmEDS as argument
+		case TWLSettings::ECrocoDSLaunch:
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to CrocoDS as argument
 		case TWLSettings::ESNEmulDSLaunch:
 			{
 				const char* ndsToBoot = (char*)"sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";

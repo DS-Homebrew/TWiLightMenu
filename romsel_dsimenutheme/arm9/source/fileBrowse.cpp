@@ -1695,6 +1695,9 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
 					bnrRomType[i] = 17;
 					boxArtType[i] = 0;
+				} else if (extension(std_romsel_filename, {".dsk"})) {
+					bnrRomType[i] = 18;
+					boxArtType[i] = 0;
 				}
 
 				if (bnrRomType[i] > 0 && bnrRomType[i] < 10) {

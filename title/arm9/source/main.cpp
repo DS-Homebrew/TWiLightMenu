@@ -1296,6 +1296,28 @@ void lastRunROM()
 		argarray.at(0) = (char*)"fat:/SNEmulDS.srl";
 		err = runNdsFile(ndsToBoot, argarray.size(), (const char **)&argarray[0], true, true, false, true, true, true, -1); // Pass ROM to SNEmulDS as argument
 	}
+	else if (ms().launchType[ms().previousUsedDevice] == Launch::EAmEDSLaunch)
+	{
+		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		{
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to AmEDS as argument
+	}
+	else if (ms().launchType[ms().previousUsedDevice] == Launch::ECrocoDSLaunch)
+	{
+		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
+		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		{
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to CrocoDS as argument
+	}
 	if (err > 0) {
 		consoleDemoInit();
 		iprintf("Start failed. Error %i\n", err);

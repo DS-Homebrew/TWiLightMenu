@@ -15,6 +15,7 @@ void drawIconWS(int Xpos, int Ypos);
 void drawIconNGP(int Xpos, int Ypos);
 void drawIconINT(int Xpos, int Ypos);
 void drawIconA26(int Xpos, int Ypos);
+void drawIconCPC(int Xpos, int Ypos);
 void drawIconCOL(int Xpos, int Ypos);
 void drawIconM5(int Xpos, int Ypos);
 void drawIconPlg(int Xpos, int Ypos);

@@ -1150,6 +1150,7 @@ int main(int argc, char **argv)
 	using TDSiWareBooter = TWLSettings::TDSiWareBooter;
 	using TGbaBooter = TWLSettings::TGbaBooter;
 	using TColSegaEmulator = TWLSettings::TColSegaEmulator;
+	using TCpcEmulator = TWLSettings::TCpcEmulator;
 	using TMegaDriveEmulator = TWLSettings::TMegaDriveEmulator;
 	using TSlot1LaunchMethod = TWLSettings::TSlot1LaunchMethod;
 
@@ -1164,6 +1165,7 @@ int main(int argc, char **argv)
 	if (!(isDSiMode() && sdFound() && sys().arm7SCFGLocked()))
 		gamesPage.option(STR_MD_EMULATOR, STR_DESCRIPTION_MD_EMULATOR, Option::Int((int *)&ms().mdEmulator), {"jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {TMegaDriveEmulator::EMegaDriveJenesis, TMegaDriveEmulator::EMegaDrivePico, TMegaDriveEmulator::EMegaDriveHybrid});
 	gamesPage.option(STR_SG_EMULATOR, STR_DESCRIPTION_SG_EMULATOR, Option::Int((int *)&ms().sgEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
+	gamesPage.option(STR_CPC_EMULATOR, STR_DESCRIPTION_CPC_EMULATOR, Option::Int((int *)&ms().cpcEmulator), {"AmEDS", "CrocoDS"}, {TCpcEmulator::ECpcAmEDS, TCpcEmulator::ECpcCrocoDS});
 
 	if (isDSiMode() && sdFound() && !sys().arm7SCFGLocked()) {
 		gamesPage

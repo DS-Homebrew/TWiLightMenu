@@ -1009,6 +1009,7 @@ int main(int argc, char **argv) {
 		".ws", ".wsc", // WonderSwan
 		".ngp", ".ngc", // Neo Geo Pocket
 		".pce", // PC Engine/TurboGrafx-16
+		".dsk", // Amstrad CPC
 		".rvid", // Rocket Video
 		".fv" // FastVideo
 	};
@@ -2242,6 +2243,22 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename, {".dsk"}) && ms().cpcEmulator == TWLSettings::ECpcAmEDS) {
+					ms().launchType[ms().secondaryDevice] = Launch::EAmEDSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+						boostVram = true;
+					}
+				} else if (extension(filename, {".dsk"}) && ms().cpcEmulator == TWLSettings::ECpcCrocoDS) {
+					ms().launchType[ms().secondaryDevice] = Launch::ECrocoDSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
 						boostVram = true;
 					}
 				}
