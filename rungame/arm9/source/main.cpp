@@ -198,12 +198,12 @@ int lastRunROM() {
 
 	if (!(*(u32*)(0x02000000) & BIT(3))) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0 || ms().launchType[ms().previousUsedDevice] == 0) {
-			return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true, false, -1);	// Skip to running TWiLight Menu++
+			return runNdsFile ("sd:/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true, false, -1);	// Skip to running TWiLight Menu++
 		}
 
 		if (ms().slot1Launched) {
 			wideCheck(ms().wideScreen);
-			return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true, false, -1);
+			return runNdsFile ("sd:/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true, false, -1);
 		}
 	}
 
