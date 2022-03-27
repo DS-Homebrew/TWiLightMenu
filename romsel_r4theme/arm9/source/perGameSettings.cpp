@@ -136,8 +136,8 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
 		}
 	} else {
-		if (ms().useBootstrap || isDSiWare || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
-		if ((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice) {
+		if (ms().useBootstrap || (dsiFeatures() && romUnitCode > 0) || isDSiWare || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		if (!isDSiWare && ((dsiFeatures() && (ms().useBootstrap || romUnitCode > 0)) || !ms().secondaryDevice)) {
 			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		} else if (isDSiWare) {
@@ -152,7 +152,7 @@ void savePerGameSettings (std::string filename) {
 		if (!ms().secondaryDevice) {
 			if (!blacklisted_asyncCardRead) pergameini.SetInt("GAMESETTINGS", "ASYNC_CARD_READ", perGameSettings_asyncCardRead);
 		}
-		if (ms().useBootstrap || isDSiWare || !ms().secondaryDevice) {
+		if (ms().useBootstrap || (dsiFeatures() && romUnitCode > 0) || isDSiWare || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 		}
 		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound()) {
