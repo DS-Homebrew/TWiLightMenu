@@ -436,7 +436,7 @@ void SettingsGUI::saveAndExit(int currentTheme)
     draw();
 
     fadeType = false;
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 25; i++) {
         swiWaitForVBlank();
     }
     ms().saveSettings();

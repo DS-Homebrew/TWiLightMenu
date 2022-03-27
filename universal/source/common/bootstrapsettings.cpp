@@ -45,7 +45,7 @@ void BootstrapSettings::loadSettings()
 
 void BootstrapSettings::saveSettings()
 {
-	CIniFile bootstrapini(BOOTSTRAP_INI);
+	CIniFile bootstrapini(bootstrapinipath);
 
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", logging);
@@ -66,5 +66,5 @@ void BootstrapSettings::saveSettings()
 	itoa(bootstrapHotkey, hotkey, 16);
 	bootstrapini.SetString("NDS-BOOTSTRAP", "HOTKEY", hotkey);
 
-	bootstrapini.SaveIniFile(BOOTSTRAP_INI);
+	bootstrapini.SaveIniFile(bootstrapinipath);
 }
