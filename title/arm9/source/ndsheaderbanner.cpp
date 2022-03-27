@@ -16,7 +16,8 @@ bool checkDsiBinaries(FILE* ndsFile) {
 		return true;
 	}
 
-	if (ndsHeader.arm9iromOffset == 0 || ndsHeader.arm7iromOffset == 0) {
+	if (ndsHeader.arm9iromOffset < 0x8000 || ndsHeader.arm9iromOffset >= 0x20000000
+	 || ndsHeader.arm7iromOffset < 0x8000 || ndsHeader.arm7iromOffset >= 0x20000000) {
 		return false;
 	}
 
