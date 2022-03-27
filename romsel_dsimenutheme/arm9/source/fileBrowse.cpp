@@ -1019,6 +1019,7 @@ bool dsiBinariesMissingMsg(const char *filename) {
 		}
 	}
 	clearText();
+	updateText(false);
 	if (ms().theme == TWLSettings::EThemeHBL) {
 		dbox_showIcon = false;
 	}
@@ -1026,8 +1027,10 @@ bool dsiBinariesMissingMsg(const char *filename) {
 		snd().playLaunch();
 	} else {
 		showdialogbox = false;
+		for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
+			bgOperations(true);
+		}
 	}
-	updateText(false);
 
 	return proceedToLaunch;
 }
