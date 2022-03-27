@@ -1613,7 +1613,11 @@ void ThemeTextures::videoSetup() {
 				rotatingCubesLocation = new u8[0x700000];
 			}
 			if (ms().showBoxArt == 2) {
-				boxArtCache = new u8[0x1B8000];
+				if (!sys().arm7SCFGLocked()) {
+					boxArtCache = new u8[0x1B8000];
+				} else {
+					boxArtCache = (u8*)0x02E00000; // DSiWarehax workaround
+				}
 			}
 		}
 	}
