@@ -137,7 +137,7 @@ void savePerGameSettings (std::string filename) {
 		}
 	} else {
 		if (ms().useBootstrap || (dsiFeatures() && romUnitCode > 0) || isDSiWare || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
-		if (!isDSiWare && ((dsiFeatures() && (ms().useBootstrap || romUnitCode > 0)) || !ms().secondaryDevice)) {
+		if (!isDSiWare && (ms().useBootstrap || (dsiFeatures() && romUnitCode > 0) || !ms().secondaryDevice)) {
 			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		} else if (isDSiWare) {
