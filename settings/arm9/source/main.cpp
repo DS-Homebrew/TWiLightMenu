@@ -517,15 +517,15 @@ void begin_update(int opt)
 	if (opt == 1) {
 		// Slot-1 microSD > Console SD
 		fcopy("fat:/_nds/nds-bootstrap-release.nds", "sd:/_nds/nds-bootstrap-release.nds");
-		fcopy("fat:/_nds/TWiLightMenu/release-bootstrap.ver", "sd:/_nds/TWiLightMenu/release-bootstrap.ver");
+		fcopy("fat:/_nds/release-bootstrap.ver", "sd:/_nds/release-bootstrap.ver");
 		fcopy("fat:/_nds/nds-bootstrap-nightly.nds", "sd:/_nds/nds-bootstrap-nightly.nds");
-		fcopy("fat:/_nds/TWiLightMenu/nightly-bootstrap.ver", "sd:/_nds/TWiLightMenu/nightly-bootstrap.ver");
+		fcopy("fat:/_nds/nightly-bootstrap.ver", "sd:/_nds/nightly-bootstrap.ver");
 	} else {
 		// Console SD > Slot-1 microSD
 		fcopy("sd:/_nds/nds-bootstrap-release.nds", "fat:/_nds/nds-bootstrap-release.nds");
-		fcopy("sd:/_nds/TWiLightMenu/release-bootstrap.ver", "fat:/_nds/TWiLightMenu/release-bootstrap.ver");
+		fcopy("sd:/_nds/release-bootstrap.ver", "fat:/_nds/release-bootstrap.ver");
 		fcopy("sd:/_nds/nds-bootstrap-nightly.nds", "fat:/_nds/nds-bootstrap-nightly.nds");
-		fcopy("sd:/_nds/TWiLightMenu/nightly-bootstrap.ver", "fat:/_nds/TWiLightMenu/nightly-bootstrap.ver");
+		fcopy("sd:/_nds/nightly-bootstrap.ver", "fat:/_nds/nightly-bootstrap.ver");
 	}
 
 	fadeType = false;
