@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
 	extern char *fake_heap_end;
 	*fake_heap_end = 0;
 
-	REG_SCFG_CLK &= (BIT(1) | BIT(2));	// Disable DSP and Camera Interface clocks
+	REG_SCFG_CLK &= ~(BIT(1) | BIT(2));	// Disable DSP and Camera Interface clocks
 
 	// Turn on screen backlights if they're disabled
 	powerOn(PM_BACKLIGHT_TOP);
