@@ -24,9 +24,9 @@ public:
     FILE* bsVerFile;
     for (int i = 0; i < 2; i++) {
       if (i == 1) {
-        bsVerFile = fopen("/_nds/TWiLightMenu/nightly-bootstrap.ver", "rb");
+        bsVerFile = fopen("/_nds/nightly-bootstrap.ver", "rb");
       } else {
-        bsVerFile = fopen("/_nds/TWiLightMenu/release-bootstrap.ver", "rb");
+        bsVerFile = fopen("/_nds/release-bootstrap.ver", "rb");
       }
       if (bsVerFile) {
         fseek(bsVerFile, 0, SEEK_END);
