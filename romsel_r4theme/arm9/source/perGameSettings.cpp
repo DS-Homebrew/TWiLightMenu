@@ -660,10 +660,22 @@ void perGameSettings (std::string filename) {
 			case 1:
 				if (isHomebrew) {
 					printSmall(false, 32, perGameOpYpos, "RAM disk:");
-					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_ramDiskNo);
+					std::string path("ramdisks/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getImgExtension(perGameSettings_ramDiskNo));
+					if(perGameSettings_ramDiskNo > 0)
+						path += std::to_string(perGameSettings_ramDiskNo);
+					bool exists = access(path.c_str(), F_OK) == 0;
+					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i%s", perGameSettings_ramDiskNo, exists ? "*" : "");
 				} else {
 					printSmall(false, 32, perGameOpYpos, "Save Number:");
-					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_saveNo);
+					bool exists;
+					if(isDSiWare) {
+						std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')));
+						exists = access((path + getPubExtension()).c_str(), F_OK) == 0 || access((path + getPrvExtension()).c_str(), F_OK) == 0;
+					} else {
+						std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getSavExtension());
+						exists = access(path.c_str(), F_OK) == 0;
+					}
+					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i%s", perGameSettings_saveNo, exists ? "*" : "");
 				}
 				if (isHomebrew && perGameSettings_ramDiskNo == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "None");
