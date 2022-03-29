@@ -68,6 +68,7 @@ int perGameSettings_asyncCardRead = -1;
 int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 int perGameSettings_expandRomSpace = -1;
+int perGameSettings_dsiwareBooter = -1;
 
 static char SET_AS_DONOR_ROM[32];
 
@@ -110,6 +111,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
 	perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
 	perGameSettings_expandRomSpace = pergameini.GetInt("GAMESETTINGS", "EXTENDED_MEMORY", -1);
+	perGameSettings_dsiwareBooter = pergameini.GetInt("GAMESETTINGS", "DSIWARE_BOOTER", -1);
 }
 
 void savePerGameSettings (std::string filename) {
@@ -160,6 +162,10 @@ void savePerGameSettings (std::string filename) {
 		}
 		if ((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "EXTENDED_MEMORY", perGameSettings_expandRomSpace);
+		}
+		// 
+		if (isDSiWare && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
+			pergameini.SetInt("GAMESETTINGS", "DSIWARE_BOOTER", perGameSettings_dsiwareBooter);
 		}
 	}
 	pergameini.SaveIniFile( pergamefilepath );
@@ -496,7 +502,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
 	} else if (showPerGameSettings && isDSiWare) {	// Per-game settings for DSiWare
-		if (ms().dsiWareBooter || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 			perGameOps++;
@@ -506,7 +512,11 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
-		if (ms().dsiWareBooter || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+		if (!sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
+			perGameOps++;
+			perGameOp[perGameOps] = 13;	// DSiWare booter
+		}
+		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 			if (dsiFeatures() && ms().secondaryDevice && (!ms().dsiWareToSD || sys().arm7SCFGLocked()) && !bs().b4dsMode && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
@@ -810,6 +820,16 @@ void perGameSettings (std::string filename) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
 				}
 				break;
+			case 13:
+				printSmall(false, 32, perGameOpYpos, "DSiWare Booter:");
+				if (perGameSettings_dsiwareBooter == -1) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+				} else if (perGameSettings_dsiwareBooter == 1) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "nds-bootstrap");
+				} else {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Unlaunch");
+				}
+				break;
 		}
 		perGameOpYpos += 12;
 		}
@@ -932,6 +952,10 @@ void perGameSettings (std::string filename) {
 						perGameSettings_asyncCardRead--;
 						if (perGameSettings_asyncCardRead < -1) perGameSettings_asyncCardRead = 1;
 						break;
+					case 13:
+						perGameSettings_dsiwareBooter--;
+						if (perGameSettings_dsiwareBooter < -1) perGameSettings_dsiwareBooter = 1;
+						break;
 				}
 				perGameSettingsChanged = true;
 			} else if ((pressed & KEY_A) || (held & KEY_RIGHT)) {
@@ -1027,6 +1051,10 @@ void perGameSettings (std::string filename) {
 					case 12:
 						perGameSettings_asyncCardRead++;
 						if (perGameSettings_asyncCardRead > 1) perGameSettings_asyncCardRead = -1;
+						break;
+					case 13:
+						perGameSettings_dsiwareBooter++;
+						if (perGameSettings_dsiwareBooter > 1) perGameSettings_dsiwareBooter = -1;
 						break;
 				}
 				perGameSettingsChanged = true;
