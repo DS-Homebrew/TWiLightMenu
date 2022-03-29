@@ -1280,7 +1280,8 @@ int main(int argc, char **argv) {
 								if (isDSiMode()) {
 									gbaRunner2Path = ms().consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
 								}
-								if (ms().useBootstrap) {
+								loadPerGameSettings(filename);
+								if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)) {
 									int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false, false, -1);
 									iprintf ("Start failed. Error %i\n", err);
 								} else {
@@ -1689,14 +1690,14 @@ int main(int argc, char **argv) {
 				fclose(f_nds_file);
 				game_TID[4] = 0;
 
+				loadPerGameSettings(filename);
 				if (memcmp(game_TID, "HND", 3) == 0 || memcmp(game_TID, "HNE", 3) == 0) {
 					dsModeSwitch = true;
 					dsModeDSiWare = true;
 					useBackend = false;	// Bypass nds-bootstrap
 					ms().homebrewBootstrap = true;
 				} else if (isHomebrew) {
-					loadPerGameSettings(filename);
-					if (perGameSettings_directBoot || (ms().useBootstrap && ms().secondaryDevice)) {
+					if (perGameSettings_directBoot || ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && ms().secondaryDevice)) {
 						useBackend = false;	// Bypass nds-bootstrap
 					} else {
 						useBackend = true;
@@ -1706,7 +1707,6 @@ int main(int argc, char **argv) {
 					}
 					ms().homebrewBootstrap = true;
 				} else {
-					loadPerGameSettings(filename);
 					useBackend = true;
 					ms().homebrewBootstrap = false;
 				}
@@ -1716,7 +1716,7 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if(useBackend) {
-					if ((ms().useBootstrap || !ms().secondaryDevice) || (dsiFeatures() && romUnitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
+					if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && romUnitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| (game_TID[0] == 'D' && romUnitCode == 3)) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
