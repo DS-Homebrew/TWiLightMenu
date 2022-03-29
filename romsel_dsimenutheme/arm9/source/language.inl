@@ -120,6 +120,7 @@ STRING(SCREEN_ASPECT_RATIO, "Screen Aspect Ratio")
 STRING(SET_AS_DONOR_ROM, "Set as Donor ROM")
 STRING(EXPAND_ROM_SPACE, "Ex. ROM space in RAM")
 STRING(DSIWAREBOOTER, "DSiWare Booter")
+STRING(USEBOOTSTRAP, "Use nds-bootstrap")
 STRING(DONE, "Done!")
 STRING(X_CHEATS_B_BACK, "\\X Cheats  \\B Back")
 

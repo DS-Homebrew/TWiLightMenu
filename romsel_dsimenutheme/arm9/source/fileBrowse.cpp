@@ -765,7 +765,7 @@ void launchGba(void) {
 			if (isDSiMode()) {
 				gbar2Path = ms().consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
 			}
-			if (ms().useBootstrap) {
+			if (perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) {
 				int err = runNdsFile(gbar2Path, 0, NULL, true, true, false, true, false, -1);
 				iprintf("Start failed. Error %i\n", err);
 			} else {
@@ -2426,9 +2426,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit()))) {
 					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {
+					loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 					int hasAP = 0;
 					bool proceedToLaunch = true;
-					bool useBootstrapAnyway = (ms().useBootstrap || !ms().secondaryDevice);
+					bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);
 					if (useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
 					 && isHomebrew[CURPOS] == 0
 					 && checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name))
@@ -2460,7 +2461,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 							std::string donorRomPath;
 							const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
-							loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 							int bstrap_dsiMode = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 							CIniFile bootstrapini(bootstrapinipath);
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");

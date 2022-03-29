@@ -1465,14 +1465,14 @@ int main(int argc, char **argv) {
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 
+				loadPerGameSettings(filename);
 				if (memcmp(gameTid[CURPOS], "HND", 3) == 0 || memcmp(gameTid[CURPOS], "HNE", 3) == 0) {
 					dsModeSwitch = true;
 					dsModeDSiWare = true;
 					useBackend = false; // Bypass nds-bootstrap
 					ms().homebrewBootstrap = true;
 				} else if (isHomebrew[CURPOS]) {
-					loadPerGameSettings(filename);
-					if (perGameSettings_directBoot || (ms().useBootstrap && ms().secondaryDevice)) {
+					if (perGameSettings_directBoot || ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && ms().secondaryDevice)) {
 						useBackend = false; // Bypass nds-bootstrap
 					} else {
 						useBackend = true;
@@ -1482,7 +1482,6 @@ int main(int argc, char **argv) {
 					}
 					ms().homebrewBootstrap = true;
 				} else {
-					loadPerGameSettings(filename);
 					useBackend = true;
 					ms().homebrewBootstrap = false;
 				}
@@ -1492,7 +1491,7 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if (useBackend) {
-					if ((ms().useBootstrap || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
+					if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| (gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3)) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());

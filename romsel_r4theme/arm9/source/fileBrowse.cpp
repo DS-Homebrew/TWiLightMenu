@@ -931,9 +931,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str())))) {
 				cannotLaunchMsg();
 			} else {
+				loadPerGameSettings(dirContents.at(fileOffset).name);
 				int hasAP = 0;
 				bool proceedToLaunch = true;
-				bool useBootstrapAnyway = (ms().useBootstrap || !ms().secondaryDevice);
+				bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);
 				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare
 				 && isHomebrew == 0
 				 && checkIfDSiMode(dirContents.at(fileOffset).name)) {
@@ -970,7 +971,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 						std::string donorRomPath;
 						const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
-						loadPerGameSettings(dirContents.at(fileOffset).name);
 						int dsiModeSetting = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 						CIniFile bootstrapini(bootstrapinipath);
 						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
