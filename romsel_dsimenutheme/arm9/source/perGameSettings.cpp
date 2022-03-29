@@ -74,6 +74,7 @@ int perGameSettings_asyncCardRead = -1;
 int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 int perGameSettings_expandRomSpace = -1;
+int perGameSettings_dsiwareBooter = -1;
 
 std::string setAsDonorRom = "";
 
@@ -130,6 +131,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
 	perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
 	perGameSettings_expandRomSpace = pergameini.GetInt("GAMESETTINGS", "EXTENDED_MEMORY", -1);
+	perGameSettings_dsiwareBooter = pergameini.GetInt("GAMESETTINGS", "DSIWARE_BOOTER", -1);
 
 	// Check if blacklisted
 	blacklisted_boostCpu = false;
@@ -208,6 +210,9 @@ void savePerGameSettings (std::string filename) {
 		}
 		if ((dsiFeatures() && ms().useBootstrap) || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "EXTENDED_MEMORY", perGameSettings_expandRomSpace);
+		}
+		if (isDSiWare[CURPOS] && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
+			pergameini.SetInt("GAMESETTINGS", "DSIWARE_BOOTER", perGameSettings_dsiwareBooter);
 		}
 	}
 	pergameini.SaveIniFile( pergamefilepath );
@@ -526,7 +531,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
 	} else if (showPerGameSettings && isDSiWare[CURPOS]) {	// Per-game settings for DSiWare
-		if (ms().dsiWareBooter || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 			perGameOps++;
@@ -536,7 +541,11 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
-		if (ms().dsiWareBooter || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+		if (!sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
+			perGameOps++;
+			perGameOp[perGameOps] = 13;	// DSiWare booter
+		}
+		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 			if (dsiFeatures() && ms().secondaryDevice && (!ms().dsiWareToSD || sys().arm7SCFGLocked()) && !bs().b4dsMode && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
@@ -865,6 +874,16 @@ void perGameSettings (std::string filename) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
 				}
 				break;
+			case 13:
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_DSIWAREBOOTER + ":", startAlign);
+				if (perGameSettings_dsiwareBooter == -1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+				} else if (perGameSettings_dsiwareBooter == 1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "nds-bootstrap", endAlign);
+				} else {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Unlaunch", endAlign);
+				}
+				break;
 		}
 		perGameOpYpos += 14;
 		}
@@ -989,6 +1008,10 @@ void perGameSettings (std::string filename) {
 						perGameSettings_asyncCardRead--;
 						if (perGameSettings_asyncCardRead < -1) perGameSettings_asyncCardRead = 1;
 						break;
+					case 13:
+						perGameSettings_dsiwareBooter--;
+						if (perGameSettings_dsiwareBooter < -1) perGameSettings_dsiwareBooter = 1;
+						break;
 				}
 				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
@@ -1085,6 +1108,10 @@ void perGameSettings (std::string filename) {
 					case 12:
 						perGameSettings_asyncCardRead++;
 						if (perGameSettings_asyncCardRead > 1) perGameSettings_asyncCardRead = -1;
+						break;
+					case 13:
+						perGameSettings_dsiwareBooter++;
+						if (perGameSettings_dsiwareBooter > 1) perGameSettings_dsiwareBooter = -1;
 						break;
 				}
 				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
