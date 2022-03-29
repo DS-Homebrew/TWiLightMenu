@@ -2111,7 +2111,7 @@ int main(int argc, char **argv) {
 
 				fadeType = false;	// Fade to white
 
-				if (ms().secondaryDevice && !bs().b4dsMode && (ms().dsiWareToSD || (!ms().dsiWareBooter && ms().consoleModel == 0)) && sdFound()) {
+				if (ms().secondaryDevice && !bs().b4dsMode && (ms().dsiWareToSD || (!(perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) && ms().consoleModel == 0)) && sdFound()) {
 					while (!fadeType && !screenFadedOut()) {
 						swiWaitForVBlank();
 					}
@@ -2144,7 +2144,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (ms().dsiWareBooter || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+				if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 					CheatCodelist codelist;
 					u32 gameCode, crc32;
 
@@ -2183,7 +2183,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if ((ms().dsiWareBooter || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
+				if (((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename[ms().secondaryDevice]);
 
@@ -2322,7 +2322,7 @@ int main(int argc, char **argv) {
 					ms().homebrewBootstrap = true;
 				} else if (isHomebrew[ms().secondaryDevice]) {
 					loadPerGameSettings(filename[ms().secondaryDevice]);
-					if (perGameSettings_directBoot || (ms().useBootstrap && ms().secondaryDevice)) {
+					if (perGameSettings_directBoot || ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && ms().secondaryDevice)) {
 						useBackend = false;	// Bypass nds-bootstrap
 					} else {
 						useBackend = true;
@@ -2342,7 +2342,7 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if(useBackend) {
-					if ((ms().useBootstrap || !ms().secondaryDevice) || (dsiFeatures() && unitCode[ms().secondaryDevice] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
+					if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[ms().secondaryDevice] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| (gameTid[ms().secondaryDevice][0] == 'D' && unitCode[ms().secondaryDevice] == 3)) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename[ms().secondaryDevice], typeToReplace, getSavExtension());

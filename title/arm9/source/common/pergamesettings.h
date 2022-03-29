@@ -17,6 +17,8 @@ extern int perGameSettings_asyncCardRead;
 extern int perGameSettings_bootstrapFile;
 extern int perGameSettings_wideScreen;
 extern int perGameSettings_expandRomSpace;
+extern int perGameSettings_dsiwareBooter;
+extern int perGameSettings_useBootstrap;
 
 void loadPerGameSettings(std::string filename);
 std::string getSavExtension(void);

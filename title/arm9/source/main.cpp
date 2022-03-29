@@ -475,7 +475,7 @@ void lastRunROM()
 
 		fclose(f_nds_file);
 
-		if (ms().useBootstrap || !ms().previousUsedDevice || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
+		if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().previousUsedDevice || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 		|| (game_TID[0] == 'D' && unitCode == 3))
 		{
 			std::string savepath;
@@ -788,7 +788,7 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (ms().dsiWareBooter || (ms().previousUsedDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0)
+		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().previousUsedDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0)
 		{
 			if (ms().homebrewBootstrap) {
 				unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);

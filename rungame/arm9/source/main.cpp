@@ -237,7 +237,7 @@ int lastRunROM() {
 
 			fclose(f_nds_file);
 
-			if ((ms().useBootstrap && !ms().homebrewBootstrap) || !ms().previousUsedDevice || (unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode)))
+			if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().previousUsedDevice || (unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode)))
 			{
 				std::string savepath;
 
@@ -442,7 +442,7 @@ int lastRunROM() {
 
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram, false, runNds_language);
 		} case TWLSettings::EDSiWareLaunch: {
-			if (ms().dsiWareBooter || ms().consoleModel >= 2) {
+			if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || ms().consoleModel >= 2) {
 				if (ms().homebrewBootstrap) {
 					unlaunchBootDSiWare();
 				} else {
