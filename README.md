@@ -65,6 +65,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [FluBBaOfWard](https://github.com/FluBBaOfWard): [S8DS](https://github.com/FluBBaOfWard/S8DS) (used to launch Sega Master System, Game Gear, SG-1000, and ColecoVision ROMs), [NitroGrafx](https://github.com/FluBBaOfWard/NitroGrafx) (used to launch PC Engine/TurboGrafx-16 ROMs), [NitroSwan](https://github.com/FluBBaOfWard/NitroSwan) (used to launch WonderSwan ROMs), and [NGPDS](https://github.com/FluBBaOfWard/NGPDS) (used to launch Neo Geo Pocket ROMs)
 - Alekmaul & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5200DS](https://github.com/wavemotion-dave/A5200DS), [A7800DS](https://github.com/wavemotion-dave/A7800DS), [XEGS-DS](https://github.com/wavemotion-dave/XEGS-DS) (used to launch Atari 2600/5200/7800/XEGS ROMs), and [ColecoDS](https://github.com/wavemotion-dave/ColecoDS) (used to launch ColecoVision, Sord M5, and Sega SG-1000 ROMs)
 - [wavemotion](https://github.com/wavemotion-dave): [Nintellivision/NINTV-DS](https://github.com/wavemotion-dave/NINTV-DS) (used to launch Intellivision ROMs)
+- [xonn83](https://github.com/xonn83): GBMacro version of [jEnesisDS](https://github.com/xonn83/jEnesisDS_macro).
 ## Graphics & Themes
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons
