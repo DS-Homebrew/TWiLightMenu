@@ -123,6 +123,9 @@ int main() {
 			if (TWLMODE == -1) {
 				TWLMODE = DEFAULT_DSI_MODE;
 			}
+			if (TWLCLK == -1) {
+				TWLCLK = DEFAULT_BOOST_CPU;
+			}
 			if (TWLVRAM == -1) {
 				TWLVRAM = DEFAULT_BOOST_VRAM;
 			}
