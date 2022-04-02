@@ -37,9 +37,9 @@ sNDSHeader ndsHeader;
 
 bool consoleInited = false;
 bool scfgUnlock = false;
-int TWLMODE = false;
+int TWLMODE = 0;
 bool TWLCLK = false;	// false == NTR, true == TWL
-int TWLVRAM = false;
+int TWLVRAM = 0;
 bool TWLTOUCH = false;
 bool soundFreq = false;
 bool runCardEngine = false;
@@ -132,7 +132,7 @@ int main() {
 			//	consoleDemoInit();
 			//}
 
-			if(!TWLCLK && !TWLMODE) {
+			if(!TWLCLK && (ndsHeader.unitCode == 0 || !TWLMODE)) {
 				//if(settingsini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				//	printf("TWL_CLOCK ON\n");		
 				//}
