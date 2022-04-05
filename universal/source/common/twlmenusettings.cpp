@@ -541,3 +541,31 @@ bool TWLSettings::rtl()
 			return false;
 	}
 }
+
+TWLSettings::TRegion TWLSettings::getGameRegion()
+{
+	if (dsiFeatures() && gameRegion == ERegionDefault)
+	{
+		extern bool useTwlCfg;
+		if (!useTwlCfg) {
+			return ERegionUSA;
+		}
+
+		u8 twlCfgCountry = *(u8*)0x02000405;
+		if (twlCfgCountry == 0x01) {
+			return ERegionJapan;
+		} else if (twlCfgCountry == 0xA0) {
+			return ERegionChina;
+		} else if (twlCfgCountry == 0x88) {
+			return ERegionKorea;
+		} else if (twlCfgCountry == 0x41 || twlCfgCountry == 0x5F) {
+			return ERegionAustralia;
+		} else if ((twlCfgCountry >= 0x08 && twlCfgCountry <= 0x34) || twlCfgCountry == 0x99 || twlCfgCountry == 0xA8) {
+			return ERegionUSA;
+		} else if (twlCfgCountry >= 0x40 && twlCfgCountry <= 0x70) {
+			return ERegionEurope;
+		}
+		return ERegionUSA;
+	}
+	return (TRegion)gameRegion;
+}

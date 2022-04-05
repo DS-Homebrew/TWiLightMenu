@@ -247,6 +247,8 @@ public:
 	// Get if the current language is right to left
 	bool rtl();
 
+	TRegion getGameRegion();
+
 	const char* getAppName();
 public:
 	std::string romfolder[2];

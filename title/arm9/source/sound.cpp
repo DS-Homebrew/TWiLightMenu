@@ -12,29 +12,35 @@
 #include "soundbank.h"
 
 static inline const char* sm64dsReleaseDate(void) {
-	if (ms().gameRegion == 5) {
-		return "07/26"; // KOR
-	} else if (ms().gameRegion == 4) {
-		return "06/21"; // CHN
-	} else if (ms().gameRegion == 3) {
-		return "02/24"; // AUS
-	} else if (ms().gameRegion == 2) {
-		return "03/11"; // EUR
-	} else if (ms().gameRegion == 1) {
-		return "11/21"; // USA
+	using TRegion = TWLSettings::TRegion;
+	int gameRegion = ms().getGameRegion();
+
+	if (gameRegion == TRegion::ERegionKorea) {
+		return "07/26";
+	} else if (gameRegion == TRegion::ERegionChina) {
+		return "06/21";
+	} else if (gameRegion == TRegion::ERegionAustralia) {
+		return "02/24";
+	} else if (gameRegion == TRegion::ERegionEurope) {
+		return "03/11";
+	} else if (gameRegion == TRegion::ERegionUSA) {
+		return "11/21";
 	}
-	return "12/02"; // JAP
+	return "12/02"; // Japan
 }
 
 static inline const char* styleSavvyReleaseDate(void) {
-	if (ms().gameRegion == 5) {
-		return "09/06"; // KOR
-	} else if (ms().gameRegion == 3) {
-		return "11/19"; // AUS
-	} else if (ms().gameRegion == 1) {
-		return "11/02"; // USA
+	using TRegion = TWLSettings::TRegion;
+	int gameRegion = ms().getGameRegion();
+
+	if (gameRegion == TRegion::ERegionKorea) {
+		return "09/06";
+	} else if (gameRegion == TRegion::ERegionAustralia) {
+		return "11/19";
+	} else if (gameRegion == TRegion::ERegionUSA) {
+		return "11/02";
 	}
-	return "10/23"; // JAP/EUR
+	return "10/23"; // Japan
 }
 
 
