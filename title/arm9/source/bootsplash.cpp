@@ -44,7 +44,7 @@ void bootSplashDSi(void) {
 	const struct tm *Time = localtime(&Raw);
 
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
-	bool virtualPain = (strcmp(currentDate, "04/01") == 0 || (ms().gameRegion == 0 ? (strcmp(currentDate, "07/21") == 0) : (strcmp(currentDate, "08/14") == 0))); // If April Fools, or the release date of the Virtual Boy
+	bool virtualPain = (strcmp(currentDate, "04/01") == 0 || (ms().getGameRegion() == 0 ? (strcmp(currentDate, "07/21") == 0) : (strcmp(currentDate, "08/14") == 0))); // If April Fools, or the release date of the Virtual Boy
 
 	bool custom = ms().dsiSplash == 3;
 
