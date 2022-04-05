@@ -675,8 +675,12 @@ void twlMenuVideo(void) {
 	const struct tm *Time = localtime(&Raw);
 
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
+	bool starship = (strcmp(currentDate, "04/01") == 0);
 
-	if (strncmp(currentDate, "12", 2) == 0) {
+	if (starship) {
+		// Load Starship Menu++ BG
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppStarship.png");
+	} else if (strncmp(currentDate, "12", 2) == 0) {
 		// Load christmas BG for December
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppXmas.png");
 	} else if (strcmp(currentDate, "10/31") == 0) {
@@ -752,45 +756,47 @@ void twlMenuVideo(void) {
 	doubleBuffer = true;
 	doubleBufferTop = true;
 
-	lodepng::decode(image, width, height, "nitro:/graphics/TWL.png");
+	if (!starship) {
+		lodepng::decode(image, width, height, "nitro:/graphics/TWL.png");
 
-	u16* twlTextBuffer = new u16[60*14];
-	int x = 19;
-	int y = 81;
-	for (int i=0; i<60*14; i++) {
-		if (x >= 79) {
-			x = 19;
-			y++;
+		u16* twlTextBuffer = new u16[60*14];
+		int x = 19;
+		int y = 81;
+		for (int i=0; i<60*14; i++) {
+			if (x >= 79) {
+				x = 19;
+				y++;
+			}
+			if (image[(i*4)+3] > 0) {
+				const u16 color = twlColors[(int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme)];
+				const u16 bgColor = frameBuffer[0][y*256+x];
+				twlTextBuffer[i] = alphablend(color, bgColor, image[(i*4)+3]);
+			} else {
+				twlTextBuffer[i] = 0;
+			}
+			x++;
 		}
-		if (image[(i*4)+3] > 0) {
-			const u16 color = twlColors[(int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme)];
-			const u16 bgColor = frameBuffer[0][y*256+x];
-			twlTextBuffer[i] = alphablend(color, bgColor, image[(i*4)+3]);
-		} else {
-			twlTextBuffer[i] = 0;
+
+		u16* src = twlTextBuffer;
+		x = 19;
+		y = 81;
+		for (int i=0; i<60*14; i++) {
+			if (x >= 79) {
+				x = 19;
+				y++;
+			}
+			u16 val = *(src++);
+			if (image[(i*4)+3] > 0) {
+				frameBuffer[0][y*256+x] = val;
+				frameBuffer[1][y*256+x] = val;
+			}
+			x++;
 		}
-		x++;
+
+		delete[] twlTextBuffer;
+
+		image.clear();
 	}
-
-	u16* src = twlTextBuffer;
-	x = 19;
-	y = 81;
-	for (int i=0; i<60*14; i++) {
-		if (x >= 79) {
-			x = 19;
-			y++;
-		}
-		u16 val = *(src++);
-		if (image[(i*4)+3] > 0) {
-			frameBuffer[0][y*256+x] = val;
-			frameBuffer[1][y*256+x] = val;
-		}
-		x++;
-	}
-
-	delete[] twlTextBuffer;
-
-	image.clear();
 
 	if (ms().colorMode == 1) {
 		for (int i=0; i<256*192; i++) {
