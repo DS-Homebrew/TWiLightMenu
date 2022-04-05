@@ -29,6 +29,21 @@
 #include "icon_snes.h"
 #include "icon_present.h"
 
+static inline const char* sm64dsReleaseDate(void) {
+	if (ms().gameRegion == 5) {
+		return "07/26"; // KOR
+	} else if (ms().gameRegion == 4) {
+		return "06/21"; // CHN
+	} else if (ms().gameRegion == 3) {
+		return "02/24"; // AUS
+	} else if (ms().gameRegion == 2) {
+		return "03/11"; // EUR
+	} else if (ms().gameRegion == 1) {
+		return "11/21"; // USA
+	}
+	return "12/02"; // JAP
+}
+
 static inline const char* styleSavvyReleaseDate(void) {
 	if (ms().gameRegion == 5) {
 		return "09/06"; // KOR
@@ -670,7 +685,7 @@ void twlMenuVideo(void) {
 	} else if (strcmp(currentDate, "02/14") == 0) {
 		// Load heart-shaped BG for Valentine's Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppHeart.png");
-	} else if (strcmp(currentDate, "03/10") == 0) {
+	} else if (strcmp(currentDate, "03/10") == 0 || strcmp(currentDate, sm64dsReleaseDate()) == 0) {
 		// Load Mario-themed BG & logo for MAR10 Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppMario.png");
 	} else if (strcmp(currentDate, "03/17") == 0 || strcmp(currentDate, "04/22") == 0) {
