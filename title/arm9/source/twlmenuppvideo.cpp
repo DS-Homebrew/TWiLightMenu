@@ -689,7 +689,7 @@ void twlMenuVideo(void) {
 	} else if (strcmp(currentDate, styleSavvyReleaseDate()) == 0) {
 		// Load Style Savvy BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppFashion.png");
-	} else if (ms().gameRegion == 0 ? (strcmp(currentDate, "07/21") == 0) : (strcmp(currentDate, "08/14") == 0)) {
+	} else if (ms().getGameRegion() == 0 ? (strcmp(currentDate, "07/21") == 0) : (strcmp(currentDate, "08/14") == 0)) {
 		// Load Virtual Boy BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppVirtualBoy.png");
 	} else if (strcmp(currentDate, "02/14") == 0) {
