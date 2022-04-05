@@ -650,6 +650,9 @@ void twlMenuVideo(void) {
 	} else if (strcmp(currentDate, "10/31") == 0) {
 		// Load orange BG for Halloween
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppOrange.png");
+	} else if (ms().gameRegion == 0 ? (strcmp(currentDate, "07/21") == 0) : (strcmp(currentDate, "08/14") == 0)) {
+		// Load Virtual Boy BG on it's release date
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppVirtualBoy.png");
 	} else if (strcmp(currentDate, "02/14") == 0) {
 		// Load heart-shaped BG for Valentine's Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppHeart.png");
