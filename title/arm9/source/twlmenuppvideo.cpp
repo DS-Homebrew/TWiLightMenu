@@ -29,6 +29,17 @@
 #include "icon_snes.h"
 #include "icon_present.h"
 
+static inline const char* styleSavvyReleaseDate(void) {
+	if (ms().gameRegion == 5) {
+		return "09/06"; // KOR
+	} else if (ms().gameRegion == 3) {
+		return "11/19"; // AUS
+	} else if (ms().gameRegion == 1) {
+		return "11/02"; // USA
+	}
+	return "10/23"; // JAP/EUR
+}
+
 extern bool useTwlCfg;
 
 //extern void loadROMselectAsynch(void);
@@ -650,8 +661,11 @@ void twlMenuVideo(void) {
 	} else if (strcmp(currentDate, "10/31") == 0) {
 		// Load orange BG for Halloween
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppOrange.png");
+	} else if (strcmp(currentDate, styleSavvyReleaseDate()) == 0) {
+		// Load Style Savvy BG
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppFashion.png");
 	} else if (ms().gameRegion == 0 ? (strcmp(currentDate, "07/21") == 0) : (strcmp(currentDate, "08/14") == 0)) {
-		// Load Virtual Boy BG on it's release date
+		// Load Virtual Boy BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppVirtualBoy.png");
 	} else if (strcmp(currentDate, "02/14") == 0) {
 		// Load heart-shaped BG for Valentine's Day

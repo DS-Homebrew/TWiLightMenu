@@ -11,6 +11,17 @@
 
 #include "soundbank.h"
 
+static inline const char* styleSavvyReleaseDate(void) {
+	if (ms().gameRegion == 5) {
+		return "09/06"; // KOR
+	} else if (ms().gameRegion == 3) {
+		return "11/19"; // AUS
+	} else if (ms().gameRegion == 1) {
+		return "11/02"; // USA
+	}
+	return "10/23"; // JAP/EUR
+}
+
 
 // Reference: http://yannesposito.com/Scratch/en/blog/2010-10-14-Fun-with-wav/
 typedef struct _WavHeader {
@@ -72,7 +83,10 @@ SoundControl::SoundControl()
 
 	sprintf(soundBankPath, "nitro:/soundbank%s.bin", (strcmp(currentDate, birthDate) == 0) ? "_bday" : "");
 
-	if (strcmp(currentDate, "03/10") == 0) {
+	if (strcmp(currentDate, styleSavvyReleaseDate()) == 0) {
+		// Load Style Savvy title theme
+		sprintf(wavPath, "nitro:/sound/fashion.wav");
+	} else if (strcmp(currentDate, "03/10") == 0) {
 		// Load Mario coin sound for MAR10 Day
 		sprintf(wavPath, "nitro:/sound/coin.wav");
 	} else {
