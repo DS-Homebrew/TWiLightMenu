@@ -26,6 +26,10 @@ def patch(path, banner):
         # new animated banner location
         outfile.seek(0x68, 0)
         outfile.write(pack("<I", filesize))
+        outfile.seek(0x208, 0)
+        outfile.write(b'\xC0')
+        outfile.seek(0x209, 0)
+        outfile.write(b'\x23')
         outfile.seek(filesize, 0)
         infile = open(banner, "rb")
         outfile.write(infile.read())
