@@ -28,6 +28,17 @@ std::string gbaBorder = "default.png";
 
 u32 romSize = 0;
 
+u32 greenSwapPatch[8] = {
+	0xE59F000C,	// LDR  R0, =0x4000002
+	0xE59F100C, // LDR  R1, =1
+	0xE5C01000, // STRB R1, [R0]
+	0xE59F0008, // LDR  R0, =0x9FFFFDC
+	0xE1A0F000, // MOV  PC, R0
+	0x04000002,
+	0x00000001,
+	0x09FFFFDC
+};
+
 u32 prefetchPatch[8] = {
 	0xE59F000C,	// LDR  R0, =0x4000204
 	0xE59F100C, // LDR  R1, =0x4000
@@ -107,6 +118,10 @@ ITCM_CODE void gptc_patchWait()
 	entryPoint += 2;
 	prefetchPatch[7] = 0x08000000+(entryPoint*4);
 
+	scanKeys();
+	int keys = keysHeld();
+	bool greenSwap = (keys & KEY_LEFT) && (keys & KEY_R);
+
 	u32 patchOffset = 0x01FFFFDC;
 	tonccpy((u8*)0x08000000+patchOffset, prefetchPatch, 8*sizeof(u32));
 
@@ -115,6 +130,16 @@ ITCM_CODE void gptc_patchWait()
 
 	u32 searchRange = 0x08000000+romSize;
 	if (romSize > 0x01FFFFDC) searchRange = 0x09FFFFDC;
+
+	if (greenSwap) {
+		u32 gsPatchOffset = 0x01FFFFB0;
+		tonccpy((u8*)0x08000000+gsPatchOffset, greenSwapPatch, 8*sizeof(u32));
+
+		branchCode = 0xEA000000+(gsPatchOffset/sizeof(u32))-2;
+		tonccpy((u16*)0x08000000, &branchCode, sizeof(u32));
+
+		if (romSize > 0x01FFFFB0) searchRange = 0x09FFFFB0;
+	}
 
 	// General fix for white screen crash
 	// Patch out wait states
