@@ -144,7 +144,7 @@ dist:	all
 	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
-	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
+	ndstool	-c $@ -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
 			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004 -a 00000138 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 
 $(TARGET)_rungame.nds:	$(TARGET).arm7 $(TARGET).arm9
@@ -153,6 +153,7 @@ $(TARGET)_rungame.nds:	$(TARGET).arm7 $(TARGET).arm9
 
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
 		$(PYTHON) ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch
+		$(PYTHON) animatedbannerpatch.py $(TARGET).nds twl_banner.bin
 		$(PYTHON) ../patch_ndsheader_dsiware.py $(TARGET)_rungame.nds --twlTouch
 endif
 
