@@ -531,6 +531,7 @@ sNDSBannerExt bnriconTile[41];
 static u16 bnriconframeseq[41][64] = {0x0000};
 
 // bnriconframenum[]
+int bnriconPalLoaded[41] = {0};
 int bnriconPalLine[41] = {0};
 int bnriconframenumY[41] = {0};
 int bannerFlip[41] = {GL_FLIP_NONE};
