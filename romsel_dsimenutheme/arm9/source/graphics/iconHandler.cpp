@@ -277,6 +277,13 @@ void glLoadIcon(int num, const u16 *_palette, const u8 *_tiles, int texHeight, b
 			      init);
 }
 
+void glLoadPalette(int num, const u16 *_palette) {
+	if (!BAD_ICON_IDX(num))
+		swiCopy(_palette, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
+
+	glReloadIconPalette(num);
+}
+
 /**
  * Reloads the palette in the given slot from
  * the palette cache.

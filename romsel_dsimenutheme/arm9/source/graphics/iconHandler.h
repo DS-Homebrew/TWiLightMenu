@@ -57,6 +57,14 @@ void iconManagerInit();
  */
 void glLoadIcon(int num, const u16 *palette, const u8 *tiles, int texHeight = 32);
 
+/**
+ * Loads an icon's palette into one of 6 existing banks,
+ * overwritting the previous data.
+ * num must be in the range [0, 5] else this function
+ * does nothing.
+ */
+void glLoadPalette(int num, const u16 *palette);
+
 
 /**
  * Clears an icon in the bank.

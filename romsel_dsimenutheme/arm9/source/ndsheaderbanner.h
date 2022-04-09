@@ -279,6 +279,7 @@ extern u32 a7mbk6[40];
 extern sNDSBannerExt bnriconTile[41];
 
 // bnriconframenum[]
+extern int bnriconPalLoaded[41];
 extern int bnriconPalLine[41];
 extern int bnriconframenumY[41];
 extern int bannerFlip[41];

@@ -128,8 +128,16 @@ static inline void clearIcon(int num) { glClearIcon(num); }
 void drawIcon(int Xpos, int Ypos, int num) {
 	if(num == -1) { // Moving app icon
 		glSprite(Xpos, Ypos, bannerFlip[40], &getIcon(6)[bnriconframenumY[40]]);
+		if(bnriconPalLine[40] != bnriconPalLoaded[40]) {
+			glLoadPalette(6, bnriconTile[40].dsi_palette[bnriconPalLine[40]]);
+			bnriconPalLoaded[40] = bnriconPalLine[40];
+		}
 	} else {
 		glSprite(Xpos, Ypos, bannerFlip[num], &getIcon(num % 6)[bnriconframenumY[num]]);
+		if(bnriconPalLine[num] != bnriconPalLoaded[num]) {
+			glLoadPalette(num % 6, bnriconTile[num].dsi_palette[bnriconPalLine[num]]);
+			bnriconPalLoaded[num] = bnriconPalLine[num];
+		}
 	}
 }
 
@@ -205,6 +213,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		num = 40;
 
 	bnriconPalLine[num] = 0;
+	bnriconPalLoaded[num] = 0;
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnriconisDSi[num] = false;
@@ -613,7 +622,8 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		if (customIcon[num] == -1) {
 			loadUnkIcon(spriteIdx);
 		} else if (bnriconisDSi[num]) {
-			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], spriteIdx, true);
+			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[bnriconPalLine[num]], spriteIdx, true);
+			bnriconPalLoaded[num] = bnriconPalLine[num];
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, spriteIdx, false);
 		}
@@ -682,7 +692,8 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		// this is an nds/app file!
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
 		if (bnriconisDSi[num]) {
-			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], spriteIdx, true);
+			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[bnriconPalLine[num]], spriteIdx, true);
+			bnriconPalLoaded[num] = bnriconPalLine[num];
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, spriteIdx, false);
 		}
