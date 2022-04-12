@@ -62,7 +62,6 @@ bool hiyaAutobootFound = false;
 	6: SuperCard DSTWO
 */
 
-const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 const char *settingsinipath = DSIMENUPP_INI;
 
 static sNDSHeaderExt NDSHeader;
@@ -1785,8 +1784,8 @@ int main(int argc, char **argv)
 	bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
 
 	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+	bool nandMounted = false;
 	if (REG_SCFG_EXT != 0) {
-		bool nandMounted = false;
 		if (!useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && !is3DS) {
 			nandMounted = fatMountSimple("nand", &io_dsi_nand);
 			if (nandMounted) {
@@ -1940,10 +1939,6 @@ int main(int argc, char **argv)
 
 	*(u32*)(0x02000000) = softResetParamsBak;
 
-	if (access(settingsinipath, F_OK) != 0 && (access("fat:/", F_OK) == 0)) {
-		settingsinipath = DSIMENUPP_INI_FC; // Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
-	}
-
 	scanKeys();
 	if ((keysHeld() & KEY_A)
 	 && (keysHeld() & KEY_B)
@@ -1956,6 +1951,45 @@ int main(int argc, char **argv)
 
 	ms().loadSettings();
 	bs().loadSettings();
+
+	// Get SysNAND region and launcher app
+	if(isDSiMode() && sdFound() && !is3DS && (ms().sysRegion == TWLSettings::ERegionDefault || ms().launcherApp == -1)) {
+		if (!nandMounted) {
+			nandMounted = fatMountSimple("nand", &io_dsi_nand);
+		}
+
+		FILE *hwinfo_s = fopen("nand:/sys/HWINFO_S.dat", "rb");
+		if(hwinfo_s) {
+			if(ms().sysRegion == TWLSettings::ERegionDefault) {
+				fseek(hwinfo_s, 0x90, SEEK_SET);
+				ms().sysRegion = (TWLSettings::TRegion)fgetc(hwinfo_s);
+			}
+
+			if(ms().launcherApp == -1) {
+				if(access("nand:/launcher.dsi", F_OK) == 0) {
+					// DSi Language Patcher
+					ms().launcherApp = 9;
+				} else {
+					fseek(hwinfo_s, 0xA0, SEEK_SET);
+					u32 launcherTid;
+					fread(&launcherTid, sizeof(u32), 1, hwinfo_s);
+					
+					char tmdPath[64];
+					snprintf(tmdPath, sizeof(tmdPath), "nand:/title/00030017/%08lx/content/title.tmd", launcherTid);
+					FILE *launcherTmd = fopen(tmdPath, "rb");
+					if(launcherTmd) {
+						fseek(launcherTmd, 0x1E7, SEEK_SET);
+						ms().launcherApp = fgetc(launcherTmd);
+						fclose(launcherTmd);
+					}
+				}
+			}
+
+			fclose(hwinfo_s);
+			ms().saveSettings();
+		}
+
+	}
 
 	if (!ms().languageSet) {
 		languageSelect();
