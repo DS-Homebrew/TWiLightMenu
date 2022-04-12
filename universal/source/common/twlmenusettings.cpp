@@ -141,10 +141,10 @@ void TWLSettings::loadSettings()
 	// UI settings.
 	romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
 	romfolder[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
-	if (strncmp(romfolder[0].c_str(), "sd:", 3) != 0) {
+	if (strncmp(romfolder[0].c_str(), "sd:", 3) != 0 || access(romfolder[0].c_str(), F_OK) != 0) {
 		romfolder[0] = "sd:/";
 	}
-	if (strncmp(romfolder[1].c_str(), "fat:", 4) != 0) {
+	if (strncmp(romfolder[1].c_str(), "fat:", 4) != 0 || access(romfolder[1].c_str(), F_OK) != 0) {
 		romfolder[1] = "fat:/";
 	}
 
