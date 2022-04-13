@@ -1,6 +1,6 @@
 import os
 from argparse import ArgumentParser
-from struct import pack
+from struct import pack, unpack
 
 
 # GBATEK swiCRC16 pseudocode
@@ -18,32 +18,50 @@ def crc16(data):
 
 
 def patch(path, banner):
-    # we're going to make this look nice
-    filesize = os.path.getsize(path)
-    while(filesize % 16 != 0):
-        filesize += 1
-    with open(path, "rb+") as outfile:
+    with open(path, "rb+") as f:
+        # get total TWL ROM size
+        f.seek(0x210, 0)
+        romsize = unpack("<I", f.read(0x4))[0]
+
+        # we're going to make this look nice in a hex editor
+        while (romsize % 16 != 0):
+            romsize += 1
+
         # new animated banner location
-        outfile.seek(0x68, 0)
-        outfile.write(pack("<I", filesize))
-        outfile.seek(0x208, 0)
-        outfile.write(pack("<I", 0x23c0))
-        outfile.seek(filesize, 0)
+        f.seek(0x68, 0)
+        f.write(pack("<I", romsize))
+
+        # total ROM size update, both DS and DSi header entry
+        # NTR ROM size is supposed to be NTR data only, meaning TWL ROM size is different.
+        # Ignore it, as new banner is added to EOF, so the whole thing has to be included anyway.
+        f.seek(0x80, 0)
+        f.write(pack("<I", romsize + 0x23c0))
+        f.seek(0x210, 0)
+        f.write(pack("<I", romsize + 0x23c0))
+
+        # total icon size update in TWL header
+        f.seek(0x208, 0)
+        f.write(pack("<I", 0x23c0))
+
+        # actually write the banner now
+        f.seek(romsize, 0)
         infile = open(banner, "rb")
-        outfile.write(infile.read())
+        f.write(infile.read())
         infile.close()
+
         # update header CRC
-        outfile.seek(0, 0)
-        crc = crc16(outfile.read(0x15E))
-        outfile.seek(0x15E, 0)
-        outfile.write(crc)
-        outfile.close()
+        f.seek(0, 0)
+        crc = crc16(f.read(0x15E))
+        f.seek(0x15E, 0)
+        f.write(crc)
+        f.close()
     return 0
 
 
 if __name__ == "__main__":
     description = "Animated banner injector tool\n\
-        This must have a prepared animated banner binary!"
+        This must have a prepared animated banner binary!\n\
+        Only compatible with DSi-mode ROMs."
     parser = ArgumentParser(description=description)
     parser.add_argument("input", metavar="input.nds", type=str, nargs=1, help="DS ROM path")
     parser.add_argument("banner", metavar="banner.bin", type=str, nargs=1, help="Animated banner path")
