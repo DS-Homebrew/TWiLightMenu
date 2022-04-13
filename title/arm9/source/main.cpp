@@ -1992,6 +1992,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!ms().languageSet) {
+		runGraphicIrq();
 		languageSelect();
 	}
 
