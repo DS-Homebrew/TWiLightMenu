@@ -118,10 +118,6 @@ ITCM_CODE void gptc_patchWait()
 	entryPoint += 2;
 	prefetchPatch[7] = 0x08000000+(entryPoint*4);
 
-	scanKeys();
-	int keys = keysHeld();
-	bool greenSwap = (keys & KEY_LEFT) && (keys & KEY_R);
-
 	u32 patchOffset = 0x01FFFFDC;
 	tonccpy((u8*)0x08000000+patchOffset, prefetchPatch, 8*sizeof(u32));
 
@@ -130,16 +126,6 @@ ITCM_CODE void gptc_patchWait()
 
 	u32 searchRange = 0x08000000+romSize;
 	if (romSize > 0x01FFFFDC) searchRange = 0x09FFFFDC;
-
-	if (greenSwap) {
-		u32 gsPatchOffset = 0x01FFFFB0;
-		tonccpy((u8*)0x08000000+gsPatchOffset, greenSwapPatch, 8*sizeof(u32));
-
-		branchCode = 0xEA000000+(gsPatchOffset/sizeof(u32))-2;
-		tonccpy((u16*)0x08000000, &branchCode, sizeof(u32));
-
-		if (romSize > 0x01FFFFB0) searchRange = 0x09FFFFB0;
-	}
 
 	// General fix for white screen crash
 	// Patch out wait states
@@ -156,6 +142,18 @@ ITCM_CODE void gptc_patchWait()
 	// Also check at 0x410
 	if (*(u32*)0x08000410 == 0x04000204) {
 		toncset((u16*)0x08000410, 0, sizeof(u32));
+	}
+
+	scanKeys();
+	int keys = keysHeld();
+
+	if ((keys & KEY_LEFT) && (keys & KEY_R)) {
+		// Activate green swap
+		u32 gsPatchOffset = 0x01FFFFB0;
+		tonccpy((u8*)0x08000000+gsPatchOffset, greenSwapPatch, 8*sizeof(u32));
+
+		branchCode = 0xEA000000+(gsPatchOffset/sizeof(u32))-2;
+		tonccpy((u16*)0x08000000, &branchCode, sizeof(u32));
 	}
 }
 
