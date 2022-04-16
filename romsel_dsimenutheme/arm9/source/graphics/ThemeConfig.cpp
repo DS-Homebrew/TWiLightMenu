@@ -21,7 +21,10 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 	_startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true),
 	_movingArrowUserPalette(true), _launchDotsUserPalette(true), _dialogBoxUserPalette(true), _purpleBatteryAvailable(false),
 	_renderPhoto(true), _playStartupJingle(false), _startupJingleDelayAdjust(0),
-	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108)
+	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108),
+	_fontPaletteTitlebox1(0x0000), _fontPaletteTitlebox2(0xDEF7), _fontPaletteTitlebox3(0xC631), _fontPaletteTitlebox4(0xA108),
+	_fontPaletteDialog1(0x0000), _fontPaletteDialog2(0xDEF7), _fontPaletteDialog3(0xC631), _fontPaletteDialog4(0xA108),
+	_fontPaletteOverlay1(0x0000), _fontPaletteOverlay2(0xDEF7), _fontPaletteOverlay3(0xC631), _fontPaletteOverlay4(0xA108)
 {
 	// hack to reassign 3ds defaults
 	if (_3dsDefaults) {
@@ -102,4 +105,16 @@ void ThemeConfig::loadConfig() {
 	_fontPalette2 = themeConfig.GetInt("THEME", "FontPalette2", _fontPalette2);
 	_fontPalette3 = themeConfig.GetInt("THEME", "FontPalette3", _fontPalette3);
 	_fontPalette4 = themeConfig.GetInt("THEME", "FontPalette4", _fontPalette4);
+	_fontPaletteTitlebox1 = themeConfig.GetInt("THEME", "FontPaletteTitlebox1", _fontPalette1);
+	_fontPaletteTitlebox2 = themeConfig.GetInt("THEME", "FontPaletteTitlebox2", _fontPalette2);
+	_fontPaletteTitlebox3 = themeConfig.GetInt("THEME", "FontPaletteTitlebox3", _fontPalette3);
+	_fontPaletteTitlebox4 = themeConfig.GetInt("THEME", "FontPaletteTitlebox4", _fontPalette4);
+	_fontPaletteDialog1 = themeConfig.GetInt("THEME", "FontPaletteDialog1", _fontPalette1);
+	_fontPaletteDialog2 = themeConfig.GetInt("THEME", "FontPaletteDialog2", _fontPalette2);
+	_fontPaletteDialog3 = themeConfig.GetInt("THEME", "FontPaletteDialog3", _fontPalette3);
+	_fontPaletteDialog4 = themeConfig.GetInt("THEME", "FontPaletteDialog4", _fontPalette4);
+	_fontPaletteOverlay1 = themeConfig.GetInt("THEME", "FontPaletteOverlay1", _fontPalette1);
+	_fontPaletteOverlay2 = themeConfig.GetInt("THEME", "FontPaletteOverlay2", _fontPalette2);
+	_fontPaletteOverlay3 = themeConfig.GetInt("THEME", "FontPaletteOverlay3", _fontPalette3);
+	_fontPaletteOverlay4 = themeConfig.GetInt("THEME", "FontPaletteOverlay4", _fontPalette4);
 }

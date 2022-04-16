@@ -12,6 +12,12 @@ enum class Alignment {
 	center,
 	right,
 };
+enum class FontPalette {
+	regular = 0,
+	titlebox = 1,
+	dialog = 2,
+	overlay = 3
+};
 
 class FontGraphic {
 private:
@@ -51,7 +57,7 @@ public:
 	int calcWidth(std::string_view text) { return calcWidth(utf8to16(text)); }
 	int calcWidth(std::u16string_view text);
 
-	void print(int x, int y, bool top, int value, Alignment align, bool rtl = false) { print(x, y, top, std::to_string(value), align, rtl); }
-	void print(int x, int y, bool top, std::string_view text, Alignment align, bool rtl = false) { print(x, y, top, utf8to16(text), align, rtl); }
-	void print(int x, int y, bool top, std::u16string_view text, Alignment align, bool rtl = false);
+	void print(int x, int y, bool top, int value, Alignment align, bool rtl = false, FontPalette palette = FontPalette::regular) { print(x, y, top, std::to_string(value), align, rtl, palette); }
+	void print(int x, int y, bool top, std::string_view text, Alignment align, bool rtl = false, FontPalette palette = FontPalette::regular) { print(x, y, top, utf8to16(text), align, rtl, palette); }
+	void print(int x, int y, bool top, std::u16string_view text, Alignment align, bool rtl = false, FontPalette palette = FontPalette::regular);
 };

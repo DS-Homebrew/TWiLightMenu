@@ -447,12 +447,12 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 					currentBg = 0;
 			}
 			if (ms().theme == TWLSettings::EThemeHBL) {
-				printLarge(false, 0, 142, "^", Alignment::center);
-				printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
-				printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+				printLarge(false, 0, 142, "^", Alignment::center, FontPalette::overlay);
+				printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L), Alignment::left, FontPalette::overlay);
+				printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right, FontPalette::overlay);
 			} else if (ms().macroMode && ms().theme != TWLSettings::EThemeSaturn) {
-				printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
-				printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+				printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L), Alignment::left, FontPalette::overlay);
+				printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right, FontPalette::overlay);
 			}
 			updateText(false);
 		}
@@ -838,8 +838,8 @@ void mdRomTooBig(void) {
 	} else {
 		for (int i = 0; i < 30; i++) { bgOperations(true); }
 	}
-	printSmall(false, 0, 64, STR_MD_ROM_TOO_BIG, Alignment::center);
-	printSmall(false, 0, 160, STR_A_OK, Alignment::center);
+	printSmall(false, 0, 64, STR_MD_ROM_TOO_BIG, Alignment::center, FontPalette::dialog);
+	printSmall(false, 0, 160, STR_A_OK, Alignment::center, FontPalette::dialog);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -951,9 +951,9 @@ void ramDiskMsg(const char *filename) {
 		dirContName = dirContName.substr(first, (last - first + 1));
 		dirContName.append("...");
 	}
-	printSmall(false, 16, 66, dirContName);
-	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 24 : 112), STR_RAM_DISK_REQUIRED, Alignment::center);
-	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_A_OK, Alignment::center);
+	printSmall(false, 16, 66, dirContName, Alignment::left, FontPalette::dialog);
+	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 24 : 112), STR_RAM_DISK_REQUIRED, Alignment::center, FontPalette::dialog);
+	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_A_OK, Alignment::center, FontPalette::dialog);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -996,10 +996,10 @@ bool dsiBinariesMissingMsg(const char *filename) {
 			dirContName = dirContName.substr(first, (last - first + 1));
 			dirContName.append("...");
 		}
-		printSmall(false, 16, 66, dirContName);
+		printSmall(false, 16, 66, dirContName, Alignment::left, FontPalette::dialog);
 	}
-	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 8 : 96), STR_DSIBINARIES_MISSING, Alignment::center);
-	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_Y_DS_MODE_B_BACK, Alignment::center);
+	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 8 : 96), STR_DSIBINARIES_MISSING, Alignment::center, FontPalette::dialog);
+	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_Y_DS_MODE_B_BACK, Alignment::center, FontPalette::dialog);
 	updateText(false);
 	int pressed = 0;
 	while (1) {
@@ -1067,46 +1067,46 @@ bool donorRomMsg(const char *filename) {
 			clearText();
 			if (ms().theme != TWLSettings::EThemeSaturn) {
 				titleUpdate(false, filename, CURPOS);
-				printSmall(false, 16, 66, dirContName.c_str());
+				printSmall(false, 16, 66, dirContName.c_str(), Alignment::left, FontPalette::dialog);
 			}
 			if (msgPage == 1) {
 				switch (requiresDonorRom[CURPOS]) {
 					default:
 						break;
 					case 51:
-						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK5TWL, Alignment::center);
+						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK5TWL, Alignment::center, FontPalette::dialog);
 						break;
 					case 52:
-						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK5TWLONLY, Alignment::center);
+						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK5TWLONLY, Alignment::center, FontPalette::dialog);
 						break;
 					case 151:
-						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK50TWL, Alignment::center);
+						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK50TWL, Alignment::center, FontPalette::dialog);
 						break;
 					case 152:
-						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK50TWLONLY, Alignment::center);
+						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK50TWLONLY, Alignment::center, FontPalette::dialog);
 						break;
 				}
-				printSmall(false, 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), "<", Alignment::left);
+				printSmall(false, 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), "<", Alignment::left, FontPalette::dialog);
 			} else {
 				switch (requiresDonorRom[CURPOS]) {
 					default:
 						break;
 					case 51:
-						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center);
+						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center, FontPalette::dialog);
 						break;
 					case 52:
-						printSmall(false, 0, yPos, !isDSiWare[CURPOS] ? STR_DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE : STR_DONOR_ROM_MSG_SDK5TWLONLY, Alignment::center);
+						printSmall(false, 0, yPos, !isDSiWare[CURPOS] ? STR_DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE : STR_DONOR_ROM_MSG_SDK5TWLONLY, Alignment::center, FontPalette::dialog);
 						break;
 					case 151:
-						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK50TWL, Alignment::center);
+						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK50TWL, Alignment::center, FontPalette::dialog);
 						break;
 					case 152:
-						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK50TWLONLY, Alignment::center);
+						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK50TWLONLY, Alignment::center, FontPalette::dialog);
 						break;
 				}
-				printSmall(false, 256 - 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), ">", Alignment::right);
+				printSmall(false, 256 - 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), ">", Alignment::right, FontPalette::dialog);
 			}
-			printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), dsModeAllowed ? STR_Y_DS_MODE_B_BACK : STR_B_BACK, Alignment::center);
+			printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), dsModeAllowed ? STR_Y_DS_MODE_B_BACK : STR_B_BACK, Alignment::center, FontPalette::dialog);
 			updateText(false);
 			pageLoaded = true;
 		}
@@ -1215,8 +1215,8 @@ bool checkForCompatibleGame(const char *filename) {
 		for (int i = 0; i < 30; i++) { bgOperations(true); }
 	}
 	titleUpdate(false, filename, CURPOS);
-	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG, Alignment::center);
-	printSmall(false, 0, 160, STR_A_IGNORE_B_DONT_LAUNCH, Alignment::center);
+	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG, Alignment::center, FontPalette::dialog);
+	printSmall(false, 0, 160, STR_A_IGNORE_B_DONT_LAUNCH, Alignment::center, FontPalette::dialog);
 	updateText(false);
 	int pressed = 0;
 	while (1) {
@@ -1318,8 +1318,8 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	}
 	titleUpdate(false, filename.c_str(), CURPOS);
 	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : 102);
-	printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_GAME_PART_ONLY) - smallFontHeight()) / 2), STR_RAM_LIMIT_GAME_PART_ONLY, Alignment::center);
-	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_B_A_OK_X_DONT_SHOW, Alignment::center);
+	printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_GAME_PART_ONLY) - smallFontHeight()) / 2), STR_RAM_LIMIT_GAME_PART_ONLY, Alignment::center, FontPalette::dialog);
+	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
 	updateText(false);
 	int pressed = 0;
 	while (1) {
@@ -1424,9 +1424,9 @@ void cannotLaunchMsg(const char *filename) {
 		str = /*isDSiMode() ? &STR_CANNOT_LAUNCH_WITHOUT_SD :*/ &STR_CANNOT_LAUNCH_IN_DS_MODE;
 	}
 	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : (bnrRomType[CURPOS] == 0 ? 102 : 82));
-	printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center);
+	printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center, FontPalette::dialog);
 
-	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_A_OK, Alignment::center);
+	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_A_OK, Alignment::center, FontPalette::dialog);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -1517,32 +1517,33 @@ bool selectMenu(void) {
 		int textYpos = selIconYpos + 4;
 		int textXpos = ms().rtl() ? 256 - 64 : 64;
 		Alignment align = ms().rtl() ? Alignment::right : Alignment::left;
+		FontPalette pal = FontPalette::dialog;
 		clearText();
-		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 8 : 16), STR_SELECT_MENU, Alignment::center);
-		printSmall(false, ms().rtl() ? 256 - 24: 24, -2 + textYpos + (28 * selCursorPosition), ms().rtl() ? "<" : ">", align);
+		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 8 : 16), STR_SELECT_MENU, Alignment::center, pal);
+		printSmall(false, ms().rtl() ? 256 - 24: 24, -2 + textYpos + (28 * selCursorPosition), ms().rtl() ? "<" : ">", align, pal);
 		for (int i = 0; i <= maxCursors; i++) {
 			if (assignedOp[i] == 0) {
-				printSmall(false, textXpos, textYpos, (ms().consoleModel < 2) ? STR_DSI_MENU : STR_3DS_HOME_MENU, align);
+				printSmall(false, textXpos, textYpos, (ms().consoleModel < 2) ? STR_DSI_MENU : STR_3DS_HOME_MENU, align, pal);
 			} else if (assignedOp[i] == 1) {
-				printSmall(false, textXpos, textYpos, STR_TWLMENU_SETTINGS, align);
+				printSmall(false, textXpos, textYpos, STR_TWLMENU_SETTINGS, align, pal);
 			} else if (assignedOp[i] == 2) {
 				if (bothSDandFlashcard()) {
 					if (ms().secondaryDevice) {
-						printSmall(false, textXpos, textYpos, ms().showMicroSd ? STR_SWITCH_TO_MICRO_SD : STR_SWITCH_TO_SD, align);
+						printSmall(false, textXpos, textYpos, ms().showMicroSd ? STR_SWITCH_TO_MICRO_SD : STR_SWITCH_TO_SD, align, pal);
 					} else {
-						printSmall(false, textXpos, textYpos, STR_SWITCH_TO_SLOT_1, align);
+						printSmall(false, textXpos, textYpos, STR_SWITCH_TO_SLOT_1, align, pal);
 					}
 				} else if ((isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
-					printSmall(false, textXpos, textYpos, (REG_SCFG_MC == 0x11) ? STR_NO_SLOT_1 : STR_LAUNCH_SLOT_1, align);
+					printSmall(false, textXpos, textYpos, (REG_SCFG_MC == 0x11) ? STR_NO_SLOT_1 : STR_LAUNCH_SLOT_1, align, pal);
 				}
 			} else if (assignedOp[i] == 3) {
-				printSmall(false, textXpos, textYpos, "Start GBA Mode", align);
+				printSmall(false, textXpos, textYpos, "Start GBA Mode", align, pal);
 			} else if (assignedOp[i] == 4) {
-				printSmall(false, textXpos, textYpos, STR_OPEN_MANUAL, align);
+				printSmall(false, textXpos, textYpos, STR_OPEN_MANUAL, align, pal);
 			}
 			textYpos += 28;
 		}
-		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 164 : 160), STR_SELECT_B_BACK_A_SELECT, Alignment::center);
+		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 164 : 160), STR_SELECT_B_BACK_A_SELECT, Alignment::center, pal);
 		updateText(false);
 		u8 current_SCFG_MC = REG_SCFG_MC;
 		do {
@@ -1925,8 +1926,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				dbox_selectMenu = false;
 
 				if (ms().macroMode && ms().theme == TWLSettings::EThemeSaturn) {
-					printSmall(false, 4, 4, (showLshoulder ? STR_L_PREV : STR_L));
-					printSmall(false, 256-4, 4, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+					printSmall(false, 4, 4, (showLshoulder ? STR_L_PREV : STR_L), Alignment::left, FontPalette::overlay);
+					printSmall(false, 256-4, 4, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right, FontPalette::overlay);
 				}
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					currentBg = (ms().theme == TWLSettings::EThemeSaturn ? 0 : 1), displayBoxArt = ms().showBoxArt;
@@ -1947,12 +1948,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					showSTARTborder = rocketVideo_playVideo = (ms().theme == TWLSettings::ETheme3DS ? true : false);
 				}
 				if (ms().theme == TWLSettings::EThemeHBL) {
-					printLarge(false, 0, 142, "^", Alignment::center);
-					printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
-					printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+					printLarge(false, 0, 142, "^", Alignment::center, FontPalette::overlay);
+					printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L), Alignment::left, FontPalette::overlay);
+					printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right, FontPalette::overlay);
 				} else if (ms().macroMode && ms().theme != TWLSettings::EThemeSaturn) {
-					printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
-					printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+					printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L), Alignment::left, FontPalette::overlay);
+					printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right, FontPalette::overlay);
 				}
 				updateText(false);
 				buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
@@ -2304,12 +2305,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 										currentBg = 0;
 									}
 									if (ms().theme == TWLSettings::EThemeHBL) {
-										printLarge(false, 0, 142, "^", Alignment::center);
-										printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
-										printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+										printLarge(false, 0, 142, "^", Alignment::center, FontPalette::overlay);
+										printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L), Alignment::left, FontPalette::overlay);
+										printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right, FontPalette::overlay);
 									} else if (ms().macroMode && ms().theme != TWLSettings::EThemeSaturn) {
-										printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
-										printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+										printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L), Alignment::left, FontPalette::overlay);
+										printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right, FontPalette::overlay);
 									}
 									updateText(false);
 								}
@@ -2357,12 +2358,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							currentBg = 0;
 						}
 						if (ms().theme == TWLSettings::EThemeHBL) {
-							printLarge(false, 0, 142, "^", Alignment::center);
-							printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
-							printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+							printLarge(false, 0, 142, "^", Alignment::center, FontPalette::overlay);
+							printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L), Alignment::left, FontPalette::overlay);
+							printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right, FontPalette::overlay);
 						} else if (ms().macroMode && ms().theme != TWLSettings::EThemeSaturn) {
-							printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L));
-							printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
+							printSmall(false, 4, 152, (showLshoulder ? STR_L_PREV : STR_L), Alignment::left, FontPalette::overlay);
+							printSmall(false, 256-4, 152, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right, FontPalette::overlay);
 						}
 						updateText(false);
 
@@ -2534,11 +2535,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
 								CURPOS);
 						if (hasAP == 2) {
-							printSmall(false, 0, 80, STR_AP_PATCH_RGF, Alignment::center);
+							printSmall(false, 0, 80, STR_AP_PATCH_RGF, Alignment::center, FontPalette::dialog);
 						} else {
-							printSmall(false, 0, 72, STR_AP_USE_LATEST, Alignment::center);
+							printSmall(false, 0, 72, STR_AP_USE_LATEST, Alignment::center, FontPalette::dialog);
 						}
-						printSmall(false, 0, 160, STR_B_A_OK_X_DONT_SHOW, Alignment::center);
+						printSmall(false, 0, 160, STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
 						updateText(false);
 						pressed = 0;
 						while (1) {
@@ -2613,8 +2614,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 						}
 
-						printSmall(false, 0, 40, STR_BAD_CLUSTER_SIZE, Alignment::center);
-						printSmall(false, 0, 160, STR_B_A_OK_X_DONT_SHOW, Alignment::center);
+						printSmall(false, 0, 40, STR_BAD_CLUSTER_SIZE, Alignment::center, FontPalette::dialog);
+						printSmall(false, 0, 160, STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
 						updateText(false);
 						pressed = 0;
 						while (1) {
@@ -2899,27 +2900,27 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					dirContName = dirContName.substr(first, (last - first + 1));
 					dirContName.append("...");
 				}
-				printSmall(false, 16, 66, dirContName);
-				printSmall(false, 16, 160, fileCounter);
+				printSmall(false, 16, 66, dirContName, Alignment::left, FontPalette::dialog);
+				printSmall(false, 16, 160, fileCounter, Alignment::left, FontPalette::dialog);
 				if (isDirectory[CURPOS]) {
 					if (unHide)
-						printSmall(false, 0, 112, STR_ARE_YOU_SURE_UNHIDE, Alignment::center);
+						printSmall(false, 0, 112, STR_ARE_YOU_SURE_UNHIDE, Alignment::center, FontPalette::dialog);
 					else
-						printSmall(false, 0, 112, STR_ARE_YOU_SURE_HIDE, Alignment::center);
+						printSmall(false, 0, 112, STR_ARE_YOU_SURE_HIDE, Alignment::center, FontPalette::dialog);
 				} else {
 					if (unHide)
-						printSmall(false, 0, 112, STR_ARE_YOU_SURE_DELETE_UNHIDE, Alignment::center);
+						printSmall(false, 0, 112, STR_ARE_YOU_SURE_DELETE_UNHIDE, Alignment::center, FontPalette::dialog);
 					else
-						printSmall(false, 0, 112, STR_ARE_YOU_SURE_DELETE_HIDE, Alignment::center);
+						printSmall(false, 0, 112, STR_ARE_YOU_SURE_DELETE_HIDE, Alignment::center, FontPalette::dialog);
 				}
 				updateText(false);
 				for (int i = 0; i < 90; i++) {
 					bgOperations(true);
 				}
 				if (isDirectory[CURPOS]) {
-					printSmall(false, 240, 160, (unHide ? STR_Y_UNHIDE : STR_Y_HIDE) + "  " + STR_B_NO, Alignment::right);
+					printSmall(false, 240, 160, (unHide ? STR_Y_UNHIDE : STR_Y_HIDE) + "  " + STR_B_NO, Alignment::right, FontPalette::dialog);
 				} else {
-					printSmall(false, 240, 160, (unHide ? STR_Y_UNHIDE : STR_Y_HIDE) + "  " + STR_A_DEL + "  " + STR_B_NO, Alignment::right);
+					printSmall(false, 240, 160, (unHide ? STR_Y_UNHIDE : STR_Y_HIDE) + "  " + STR_A_DEL + "  " + STR_B_NO, Alignment::right, FontPalette::dialog);
 				}
 				updateText(false);
 				while (1) {

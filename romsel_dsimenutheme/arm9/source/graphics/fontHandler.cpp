@@ -57,6 +57,18 @@ void fontInit() {
 		tc().fontPalette2(),
 		tc().fontPalette3(),
 		tc().fontPalette4(),
+		tc().fontPaletteTitlebox1(),
+		tc().fontPaletteTitlebox2(),
+		tc().fontPaletteTitlebox3(),
+		tc().fontPaletteTitlebox4(),
+		tc().fontPaletteDialog1(),
+		tc().fontPaletteDialog2(),
+		tc().fontPaletteDialog3(),
+		tc().fontPaletteDialog4(),
+		tc().fontPaletteOverlay1(),
+		tc().fontPaletteOverlay2(),
+		tc().fontPaletteOverlay3(),
+		tc().fontPaletteOverlay4(),
 	};
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
@@ -107,7 +119,7 @@ void updateText(bool top) {
 	for(auto it = text.begin(); it != text.end(); ++it) {
 		FontGraphic *font = getFont(it->large);
 		if(font)
-			font->print(it->x, it->y, top, it->message, it->align);
+			font->print(it->x, it->y, top, it->message, it->align, false, it->palette);
 	}
 	text.clear();
 
@@ -157,18 +169,18 @@ void clearText() {
 	clearText(false);
 }
 
-void printSmall(bool top, int x, int y, std::string_view message, Alignment align) {
-	getTextQueue(top).emplace_back(false, x, y, message, align);
+void printSmall(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(false, x, y, message, align, palette);
 }
-void printSmall(bool top, int x, int y, std::u16string_view message, Alignment align) {
-	getTextQueue(top).emplace_back(false, x, y, message, align);
+void printSmall(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(false, x, y, message, align, palette);
 }
 
-void printLarge(bool top, int x, int y, std::string_view message, Alignment align) {
-	getTextQueue(top).emplace_back(true, x, y, message, align);
+void printLarge(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(true, x, y, message, align, palette);
 }
-void printLarge(bool top, int x, int y, std::u16string_view message, Alignment align) {
-	getTextQueue(top).emplace_back(true, x, y, message, align);
+void printLarge(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(true, x, y, message, align, palette);
 }
 
 int calcSmallFontWidth(std::string_view text) {
