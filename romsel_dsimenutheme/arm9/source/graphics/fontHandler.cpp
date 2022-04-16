@@ -10,6 +10,7 @@
 #include "myDSiMode.h"
 #include "TextEntry.h"
 #include "ThemeConfig.h"
+#include "themefilenames.h"
 
 FontGraphic *smallFont;
 FontGraphic *largeFont;
@@ -43,6 +44,8 @@ void fontInit() {
 	// Load font graphics
 	std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 	std::string defaultPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
+	if (ms().font == "Default")
+		fontPath = TFN_FONT_DIRECTORY; // load custom theme's font when font is set to Default
 	bool dsiFont = (dsiFeatures() && !sys().arm7SCFGLocked()) || sys().dsDebugRam() || useExpansionPak;
 	smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", defaultPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), "nitro:/graphics/font/small.nftr"}, useExpansionPak);
 	// If custom small font but no custom large font, use small font as large font

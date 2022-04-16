@@ -127,6 +127,8 @@
 #define TFN_LZ77_RVID_CUBES         TFN_UI_DIRECTORY"/video/3dsRotatingCubes.lz77.rvid"
 #define TFN_LZ77_RVID_CUBES_BW      TFN_UI_DIRECTORY"/video/3dsRotatingCubes_bw.lz77.rvid"
 
+#define TFN_FONT_DIRECTORY          TFN_UI_DIRECTORY"/font"
+
 #define TFN_SOUND_EFFECTBANK        TFN_UI_DIRECTORY"/sound/sfx.bin"
 #define TFN_SOUND_BG                TFN_UI_DIRECTORY"/sound/bgm.wav"
 #define TFN_SOUND_BG_CACHE          TFN_UI_DIRECTORY"/sound/bgm.pcm.raw"
