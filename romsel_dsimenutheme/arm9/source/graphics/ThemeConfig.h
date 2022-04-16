@@ -57,6 +57,18 @@ private:
 	u16 _fontPalette2;
 	u16 _fontPalette3;
 	u16 _fontPalette4;
+	u16 _fontPaletteTitlebox1;
+	u16 _fontPaletteTitlebox2;
+	u16 _fontPaletteTitlebox3;
+	u16 _fontPaletteTitlebox4;
+	u16 _fontPaletteDialog1;
+	u16 _fontPaletteDialog2;
+	u16 _fontPaletteDialog3;
+	u16 _fontPaletteDialog4;
+	u16 _fontPaletteOverlay1;
+	u16 _fontPaletteOverlay2;
+	u16 _fontPaletteOverlay3;
+	u16 _fontPaletteOverlay4;
 
 public:
 	ThemeConfig();
@@ -115,6 +127,18 @@ public:
 	u16 fontPalette2() const { return _fontPalette2; }
 	u16 fontPalette3() const { return _fontPalette3; }
 	u16 fontPalette4() const { return _fontPalette4; }
+	u16 fontPaletteTitlebox1() const { return _fontPaletteTitlebox1; }
+	u16 fontPaletteTitlebox2() const { return _fontPaletteTitlebox2; }
+	u16 fontPaletteTitlebox3() const { return _fontPaletteTitlebox3; }
+	u16 fontPaletteTitlebox4() const { return _fontPaletteTitlebox4; }
+	u16 fontPaletteDialog1() const { return _fontPaletteDialog1; }
+	u16 fontPaletteDialog2() const { return _fontPaletteDialog2; }
+	u16 fontPaletteDialog3() const { return _fontPaletteDialog3; }
+	u16 fontPaletteDialog4() const { return _fontPaletteDialog4; }
+	u16 fontPaletteOverlay1() const { return _fontPaletteOverlay1; }
+	u16 fontPaletteOverlay2() const { return _fontPaletteOverlay2; }
+	u16 fontPaletteOverlay3() const { return _fontPaletteOverlay3; }
+	u16 fontPaletteOverlay4() const { return _fontPaletteOverlay4; }
 };
 
 typedef singleton<ThemeConfig> themeConfig_s;

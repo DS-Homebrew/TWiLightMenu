@@ -261,24 +261,24 @@ std::vector<u32> CheatCodelist::getCheats()
 
 void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& list, uint curPos, uint screenPos, uint scrollPos) {
   // Print Cheats at the top
-  printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
+  printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
 
   // Print bottom text
   if(list[curPos]->_comment != "") {
     if(list[curPos]->_flags&cParsedItem::EFolder) {
-      printSmall(false, 0, 160, STR_CHEATS_FOLDER_INFO, Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_FOLDER_INFO, Alignment::center, FontPalette::dialog);
     } else if(list[curPos]->_flags&cParsedItem::ESelected) {
-      printSmall(false, 0, 160, STR_CHEATS_SELECTED_INFO, Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_SELECTED_INFO, Alignment::center, FontPalette::dialog);
     } else {
-      printSmall(false, 0, 160, STR_CHEATS_DESELECTED_INFO, Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_DESELECTED_INFO, Alignment::center, FontPalette::dialog);
     }
   } else {
     if(list[curPos]->_flags&cParsedItem::EFolder) {
-      printSmall(false, 0, 160, STR_CHEATS_FOLDER, Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_FOLDER, Alignment::center, FontPalette::dialog);
     } else if(list[curPos]->_flags&cParsedItem::ESelected) {
-      printSmall(false, 0, 160, STR_CHEATS_SELECTED, Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_SELECTED, Alignment::center, FontPalette::dialog);
     } else {
-      printSmall(false, 0, 160, STR_CHEATS_DESELECTED, Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_DESELECTED, Alignment::center, FontPalette::dialog);
     }
   }
 
@@ -288,14 +288,14 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& lis
   // Print the list
   for(uint i=0;i<8 && i<list.size();i++) {
     if(list[screenPos+i]->_flags&cParsedItem::EFolder) {
-      printSmall(false, (ms().rtl() ? 256 - 15 : 15) + ((screenPos+i == curPos) ? 5 * rtlNegative : 0), 60+(i*12), ms().rtl() ? "<" : ">", align);
-      printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title.substr((screenPos+i == curPos) ? scrollPos : 0, 30), align);
+      printSmall(false, (ms().rtl() ? 256 - 15 : 15) + ((screenPos+i == curPos) ? 5 * rtlNegative : 0), 60+(i*12), ms().rtl() ? "<" : ">", align, FontPalette::dialog);
+      printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title.substr((screenPos+i == curPos) ? scrollPos : 0, 30), align, FontPalette::dialog);
     } else {
       if(list[screenPos+i]->_flags&cParsedItem::ESelected) {
-        printSmall(false, (ms().rtl() ? 256 - 13 : 13), 60+(i*12), "x", align);
+        printSmall(false, (ms().rtl() ? 256 - 13 : 13), 60+(i*12), "x", align, FontPalette::dialog);
       }
-      printSmall(false, (ms().rtl() ? 256 - 21 : 21) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), "-", align);
-      printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 7 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title.substr((screenPos+i == curPos) ? scrollPos : 0, 30), align);
+      printSmall(false, (ms().rtl() ? 256 - 21 : 21) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), "-", align, FontPalette::dialog);
+      printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 7 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title.substr((screenPos+i == curPos) ? scrollPos : 0, 30), align, FontPalette::dialog);
     }
   }
 }
@@ -309,8 +309,8 @@ void CheatCodelist::selectCheats(std::string filename)
 
   dbox_showIcon = true;
 
-  printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
-  printSmall(false, 0, 100, STR_LOADING, Alignment::center);
+  printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
+  printSmall(false, 0, 100, STR_LOADING, Alignment::center, FontPalette::dialog);
   updateText(false);
   
   parse(filename);
@@ -321,9 +321,9 @@ void CheatCodelist::selectCheats(std::string filename)
     snd().playWrong();
     cheatsFound = false;
     clearText();
-    printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
-    printSmall(false, 0, 100, STR_NO_CHEATS_FOUND, Alignment::center);
-    printSmall(false, 0, 160, STR_B_BACK, Alignment::center);
+    printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
+    printSmall(false, 0, 100, STR_NO_CHEATS_FOUND, Alignment::center, FontPalette::dialog);
+    printSmall(false, 0, 160, STR_B_BACK, Alignment::center, FontPalette::dialog);
 	updateText(false);
 
     while(1) {
@@ -456,8 +456,8 @@ void CheatCodelist::selectCheats(std::string filename)
     } else if(pressed & KEY_X) {
       snd().playLaunch();
       clearText();
-      printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
-      printSmall(false, 0, 100, STR_SAVING, Alignment::center);
+      printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
+      printSmall(false, 0, 100, STR_SAVING, Alignment::center, FontPalette::dialog);
 	  updateText(false);
       onGenerate();
       break;
@@ -465,7 +465,7 @@ void CheatCodelist::selectCheats(std::string filename)
       if(currentList[cheatWnd_cursorPosition]->_comment != "") {
         (ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
         clearText();
-        printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
+        printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
 
         std::string _topText = "";
         std::string _topTextStr(currentList[cheatWnd_cursorPosition]->_comment);
@@ -505,10 +505,10 @@ void CheatCodelist::selectCheats(std::string filename)
           _topText += temp;
         
         // Print comment
-        printSmall(false, 0, 60, _topText, Alignment::center);
+        printSmall(false, 0, 60, _topText, Alignment::center, FontPalette::dialog);
 
         // Print 'Back' text
-        printSmall(false, 0, 160, STR_B_BACK, Alignment::center);
+        printSmall(false, 0, 160, STR_B_BACK, Alignment::center, FontPalette::dialog);
 
         updateText(false);
         while(1) {

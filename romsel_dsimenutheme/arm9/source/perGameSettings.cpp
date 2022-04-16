@@ -693,52 +693,52 @@ void perGameSettings (std::string filename) {
 		int perGameOpEndXpos = ms().rtl() ? 24 : 256 - 24;
 		bool flashcardKernelOnly = (!(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && ms().secondaryDevice && !isHomebrew[CURPOS] && unitCode[CURPOS] == 2 && (perGameSettings_dsiMode==-1 ? !DEFAULT_DSI_MODE : perGameSettings_dsiMode==0));
 
-		printSmall(false, ms().rtl() ? 256 - 16 : 16, row1Y, dirContName, startAlign);
+		printSmall(false, ms().rtl() ? 256 - 16 : 16, row1Y, dirContName, startAlign, FontPalette::dialog);
 		//if (showSDKVersion) printSmall(false, 16, row2Y, (useTwlCfg ? "TwlCfg found!" : SDKnumbertext));
-		if (showSDKVersion) printSmall(false, 16, row2Y, SDKnumbertext);
-		printSmall(false, 256 - 16, row2Y, gameTIDText, Alignment::right);
-		printSmall(false, 16, botRowY, fileCounter);
+		if (showSDKVersion) printSmall(false, 16, row2Y, SDKnumbertext, Alignment::left, FontPalette::dialog);
+		printSmall(false, 256 - 16, row2Y, gameTIDText, Alignment::right, FontPalette::dialog);
+		printSmall(false, 16, botRowY, fileCounter, Alignment::left, FontPalette::dialog);
 
 		if (showPerGameSettings) {
-			printSmall(false, ms().rtl() ? 256 - 16 : 16, perGameOpYpos+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ms().rtl() ? "<" : ">", startAlign);
+			printSmall(false, ms().rtl() ? 256 - 16 : 16, perGameOpYpos+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ms().rtl() ? "<" : ">", startAlign, FontPalette::dialog);
 		}
 		for (int i = firstPerGameOpShown; i < firstPerGameOpShown+4; i++) {
 		if (!showPerGameSettings || perGameOp[i] == -1) break;
 		switch (perGameOp[i]) {
 			case 0:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_LANGUAGE + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_LANGUAGE + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_language == -1 || flashcardKernelOnly) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SYSTEM, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SYSTEM, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_language == -2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_language == 0) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_JAPANESE, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_JAPANESE, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_language == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ENGLISH, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ENGLISH, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_language == 2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_FRENCH, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_FRENCH, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_language == 3) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_GERMAN, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_GERMAN, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_language == 4) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ITALIAN, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ITALIAN, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_language == 5) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SPANISH, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SPANISH, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_language == 6) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_CHINESE, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_CHINESE, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_language == 7) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_KOREAN, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_KOREAN, endAlign, FontPalette::dialog);
 				}
 				break;
 			case 1:
 				if (isHomebrew[CURPOS]) {
-					printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_RAM_DISK + ":", startAlign);
+					printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_RAM_DISK + ":", startAlign, FontPalette::dialog);
 					std::string path("ramdisks/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getImgExtension(perGameSettings_ramDiskNo));
 					if(perGameSettings_ramDiskNo > 0)
 						path += std::to_string(perGameSettings_ramDiskNo);
 					bool exists = access(path.c_str(), F_OK) == 0;
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i%s", perGameSettings_ramDiskNo, exists ? "*" : "");
 				} else {
-					printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SAVE_NO + ":", startAlign);
+					printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SAVE_NO + ":", startAlign, FontPalette::dialog);
 					bool exists;
 					if(isDSiWare[CURPOS]) {
 						std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')));
@@ -750,165 +750,165 @@ void perGameSettings (std::string filename) {
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i%s", perGameSettings_saveNo, exists ? "*" : "");
 				}
 				if (isHomebrew[CURPOS] && perGameSettings_ramDiskNo == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NONE, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NONE, endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, saveNoDisplay, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, saveNoDisplay, endAlign, FontPalette::dialog);
 				}
 				break;
 			case 2:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_RUN_IN + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_RUN_IN + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_dsiMode == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_dsiMode > 0) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DSI_MODE, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DSI_MODE, endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DS_MODE, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DS_MODE, endAlign, FontPalette::dialog);
 				}
 				break;
 			case 3:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_ARM9_CPU_SPEED + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_ARM9_CPU_SPEED + ":", startAlign, FontPalette::dialog);
 				if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && unitCode[CURPOS] > 0) : perGameSettings_dsiMode > 0) && runInShown) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "133mhz (TWL)", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "133mhz (TWL)", endAlign, FontPalette::dialog);
 				} else {
 					if (perGameSettings_boostCpu == -1) {
-						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 					} else if (perGameSettings_boostCpu == 1) {
-						printSmall(false, perGameOpEndXpos, perGameOpYpos, "133mhz (TWL)", endAlign);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, "133mhz (TWL)", endAlign, FontPalette::dialog);
 					} else {
-						printSmall(false, perGameOpEndXpos, perGameOpYpos, "67mhz (NTR)", endAlign);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, "67mhz (NTR)", endAlign, FontPalette::dialog);
 					}
 				}
 				break;
 			case 4:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_VRAM_BOOST + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_VRAM_BOOST + ":", startAlign, FontPalette::dialog);
 				if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && unitCode[CURPOS] > 0) : perGameSettings_dsiMode > 0) && runInShown) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, unitCode[CURPOS] == 0 ? STR_DSI_MODE : STR_AUTO, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, unitCode[CURPOS] == 0 ? STR_DSI_MODE : STR_AUTO, endAlign, FontPalette::dialog);
 				} else {
 					if (perGameSettings_boostVram == -1) {
-						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 					} else if (perGameSettings_boostVram == 1) {
-						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DSI_MODE, endAlign);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DSI_MODE, endAlign, FontPalette::dialog);
 					} else {
-						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DS_MODE, endAlign);
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DS_MODE, endAlign, FontPalette::dialog);
 					}
 				}
 				break;
 			case 5:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_CARD_READ_DMA + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_CARD_READ_DMA + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_cardReadDMA == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_cardReadDMA == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign, FontPalette::dialog);
 				}
 				break;
 			case 6:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_DIRECT_BOOT + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_DIRECT_BOOT + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_directBoot) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_YES, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_YES, endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign, FontPalette::dialog);
 				}
 				break;
 			case 7:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, ms().rtl() ? ":Bootstrap" : "Bootstrap:", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, ms().rtl() ? ":Bootstrap" : "Bootstrap:", startAlign, FontPalette::dialog);
 				if (flashcardKernelOnly) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_bootstrapFile == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_bootstrapFile == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NIGHTLY, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NIGHTLY, endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_RELEASE, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_RELEASE, endAlign, FontPalette::dialog);
 				}
 				break;
 			case 8:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SCREEN_ASPECT_RATIO + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SCREEN_ASPECT_RATIO + ":", startAlign, FontPalette::dialog);
 				if (flashcardKernelOnly) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_wideScreen == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_wideScreen == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "16:10", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "16:10", endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "4:3", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "4:3", endAlign, FontPalette::dialog);
 				}
 				break;
 			case 9:
-				printSmall(false, 0, perGameOpYpos, setAsDonorRom, Alignment::center);
+				printSmall(false, 0, perGameOpYpos, setAsDonorRom, Alignment::center, FontPalette::dialog);
 				break;
 			case 10:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_EXPAND_ROM_SPACE + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_EXPAND_ROM_SPACE + ":", startAlign, FontPalette::dialog);
 				if (flashcardKernelOnly) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_expandRomSpace == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_expandRomSpace == 2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_Y_512KB, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_Y_512KB, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_expandRomSpace == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_YES, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_YES, endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign, FontPalette::dialog);
 				}
 				break;
 			case 11:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_REGION + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_REGION + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_region == -2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_region == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SYSTEM, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SYSTEM, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_region == 0) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_JAPAN, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_JAPAN, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_region == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_USA, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_USA, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_region == 2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_EUROPE, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_EUROPE, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_region == 3) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_AUSTRALIA, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_AUSTRALIA, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_region == 4) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_CHINA, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_CHINA, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_region == 5) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_KOREA, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_KOREA, endAlign, FontPalette::dialog);
 				}
 				break;
 			case 12:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_ASYNCH_CARD_READ + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_ASYNCH_CARD_READ + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_asyncCardRead == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_asyncCardRead == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign, FontPalette::dialog);
 				}
 				break;
 			case 13:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_DSIWAREBOOTER + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_DSIWAREBOOTER + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_dsiwareBooter == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_dsiwareBooter == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "nds-bootstrap", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "nds-bootstrap", endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Unlaunch", endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "Unlaunch", endAlign, FontPalette::dialog);
 				}
 				break;
 			case 14:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_USEBOOTSTRAP + ":", startAlign);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_USEBOOTSTRAP + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_useBootstrap == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_useBootstrap == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_YES, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_YES, endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign, FontPalette::dialog);
 				}
 				break;
 		}
 		perGameOpYpos += 14;
 		}
 		if (!showPerGameSettings && !showCheats) {
-			printSmall(false, 240, botRowY, STR_A_OK, Alignment::right);
+			printSmall(false, 240, botRowY, STR_A_OK, Alignment::right, FontPalette::dialog);
 		} else {
-			printSmall(false, 240, botRowY, showCheats ? STR_X_CHEATS_B_BACK : STR_B_BACK, Alignment::right);
+			printSmall(false, 240, botRowY, showCheats ? STR_X_CHEATS_B_BACK : STR_B_BACK, Alignment::right, FontPalette::dialog);
 		}
 		updateText(false);
 		do {

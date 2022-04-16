@@ -734,9 +734,9 @@ void writeBannerText(std::u16string text) {
 		out += line + u'\n';
 	}
 	if (tc().titleboxTextLarge() && !ms().macroMode) {
-		printLarge(false, 0, tc().titleboxTextY() - (((lines.size() - 1) * largeFontHeight()) / 2), out, Alignment::center);
+		printLarge(false, 0, tc().titleboxTextY() - (((lines.size() - 1) * largeFontHeight()) / 2), out, Alignment::center, FontPalette::titlebox);
 	} else {
-		printSmall(false, 0, tc().titleboxTextY() - (((lines.size() - 1) * smallFontHeight()) / 2), out, Alignment::center);
+		printSmall(false, 0, tc().titleboxTextY() - (((lines.size() - 1) * smallFontHeight()) / 2), out, Alignment::center, FontPalette::titlebox);
 	}
 }
 
@@ -748,7 +748,17 @@ static inline void writeDialogTitle(std::u16string text) {
 		}
 	}
 
-	printLarge(false, ms().rtl() ? 256 - 70 : 70, 31 - (lines * largeFontHeight() / 2), text, ms().rtl() ? Alignment::right : Alignment::left);
+	printLarge(false, ms().rtl() ? 256 - 70 : 70, 31 - (lines * largeFontHeight() / 2), text, ms().rtl() ? Alignment::right : Alignment::left, FontPalette::dialog);
+}
+static inline void writeDialogTitleFolder(std::u16string text) {
+	int lines = 0;
+	for(auto c : text) {
+		if(c == '\n') {
+			lines++;
+		}
+	}
+
+	printLarge(false, 0, tc().titleboxTextY() - (lines * largeFontHeight() / 2), text, Alignment::center, FontPalette::dialog);
 }
 
 static inline std::u16string splitLongDialogTitle(std::string_view text) {
@@ -792,17 +802,17 @@ static inline std::u16string splitLongDialogTitle(std::string_view text) {
 }
 
 void titleUpdate(bool isDir, std::string_view name, int num) {
+	bool theme_showdialogbox = (showdialogbox || (ms().theme == TWLSettings::EThemeSaturn && currentBg == 1) || (ms().theme == TWLSettings::EThemeHBL && dbox_showIcon));
 	if (isDir) {
-		if (name == "..") {
-			writeBannerText(STR_BACK);
-		} else {
-			writeBannerText(name);
+		if (theme_showdialogbox) {
+			writeDialogTitleFolder(splitLongDialogTitle(name == ".." ? STR_BACK : name));
+		}
+		else {
+			writeBannerText(name == ".." ? STR_BACK : name);
 		}
 	} else if (infoFound[num] || extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		// or a file with custom banner text
-
-		bool theme_showdialogbox = (showdialogbox || (ms().theme == TWLSettings::EThemeSaturn && currentBg == 1) || (ms().theme == TWLSettings::EThemeHBL && dbox_showIcon));
 		if (theme_showdialogbox) {
 			writeDialogTitle(cachedTitle[num]);
 		} else if (infoFound[num]) {
@@ -811,7 +821,6 @@ void titleUpdate(bool isDir, std::string_view name, int num) {
 			writeBannerText(name);
 		}
 	} else {
-		bool theme_showdialogbox = (showdialogbox || (ms().theme == TWLSettings::EThemeSaturn && currentBg == 1) || (ms().theme == TWLSettings::EThemeHBL && dbox_showIcon));
 		if (theme_showdialogbox) {
 			writeDialogTitle(splitLongDialogTitle(name.substr(0, name.rfind('.'))));
 		} else {
