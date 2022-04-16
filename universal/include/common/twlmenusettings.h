@@ -323,6 +323,7 @@ public:
 	std::string unlaunchBg;
 	bool removeLauncherPatches;
 	std::string font;
+	bool useThemeFont;
 	bool dsClassicCustomFont;
 
 	bool dontShowClusterWarning;

@@ -910,6 +910,11 @@ int main(int argc, char **argv)
 				Option::Nul(opt_font_select),
 				{STR_PRESS_A},
 				{0})
+		.option(STR_USE_THEME_FONT,
+				STR_DESCRIPTION_USE_THEME_FONT,
+				Option::Bool(&ms().useThemeFont),
+				{STR_YES, STR_NO},
+				{true, false})
 		.option(STR_DS_CLASSIC_CUSTOM_FONT,
 				STR_DESCRIPTION_DS_CLASSIC_CUSTOM_FONT,
 				Option::Bool(&ms().dsClassicCustomFont),

@@ -128,6 +128,12 @@
 #define TFN_LZ77_RVID_CUBES_BW      TFN_UI_DIRECTORY"/video/3dsRotatingCubes_bw.lz77.rvid"
 
 #define TFN_FONT_DIRECTORY          TFN_UI_DIRECTORY"/font"
+#define TFN_FONT_SMALL              TFN_UI_DIRECTORY"/font/small.nftr"
+#define TFN_FONT_SMALL_DS           TFN_UI_DIRECTORY"/font/small-ds.nftr"
+#define TFN_FONT_SMALL_DSI          TFN_UI_DIRECTORY"/font/small-dsi.nftr"
+#define TFN_FONT_LARGE              TFN_UI_DIRECTORY"/font/large.nftr"
+#define TFN_FONT_LARGE_DS           TFN_UI_DIRECTORY"/font/large-ds.nftr"
+#define TFN_FONT_LARGE_DSI          TFN_UI_DIRECTORY"/font/large-dsi.nftr"
 
 #define TFN_SOUND_EFFECTBANK        TFN_UI_DIRECTORY"/sound/sfx.bin"
 #define TFN_SOUND_BG                TFN_UI_DIRECTORY"/sound/bgm.wav"

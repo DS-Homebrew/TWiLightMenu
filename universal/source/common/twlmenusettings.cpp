@@ -91,6 +91,7 @@ TWLSettings::TWLSettings()
 	unlaunchBg = "default.gif";
 	removeLauncherPatches = false;
 	font = "default";
+	useThemeFont = true;
 	dsClassicCustomFont = false;
 
 	dontShowClusterWarning = false;
@@ -253,6 +254,7 @@ void TWLSettings::loadSettings()
 	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
 	removeLauncherPatchesPtr = &removeLauncherPatches;
 	font = settingsini.GetString("SRLOADER", "FONT", font);
+	useThemeFont = settingsini.GetInt("SRLOADER", "USE_THEME_FONT", useThemeFont);
 	dsClassicCustomFont = settingsini.GetInt("SRLOADER", "DS_CLASSIC_CUSTOM_FONT", dsClassicCustomFont);
 
 	dontShowClusterWarning = settingsini.GetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
@@ -392,6 +394,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 	settingsini.SetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
 	settingsini.SetString("SRLOADER", "FONT", font);
+	settingsini.SetInt("SRLOADER", "USE_THEME_FONT", useThemeFont);
 	settingsini.SetInt("SRLOADER", "DS_CLASSIC_CUSTOM_FONT", dsClassicCustomFont);
 
 	settingsini.SetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
