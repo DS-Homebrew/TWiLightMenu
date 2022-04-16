@@ -44,9 +44,9 @@ void fontInit() {
 	// Load font graphics
 	std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 	std::string defaultPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
-	if (ms().font == "Default")
-		fontPath = TFN_FONT_DIRECTORY; // load custom theme's font when font is set to Default
 	bool dsiFont = (dsiFeatures() && !sys().arm7SCFGLocked()) || sys().dsDebugRam() || useExpansionPak;
+	if (ms().useThemeFont && fileExists({dsiFont ? TFN_FONT_SMALL_DSI : TFN_FONT_SMALL_DS, TFN_FONT_SMALL, dsiFont ? TFN_FONT_LARGE_DSI : TFN_FONT_LARGE_DS, TFN_FONT_LARGE}))
+		fontPath = TFN_FONT_DIRECTORY;
 	smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", defaultPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), "nitro:/graphics/font/small.nftr"}, useExpansionPak);
 	// If custom small font but no custom large font, use small font as large font
 	if(fileExists({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr"}) && !fileExists({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr"}))
