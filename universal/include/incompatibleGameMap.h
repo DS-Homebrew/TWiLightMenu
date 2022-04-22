@@ -47,7 +47,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 63)
+// B4DS DSiWare Whitelist (Total: 64)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -92,6 +92,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KLK", // Lola's Alphabet Train
 	"KJO", // Magnetic Joe
 	"KMG", // Mighty Flip Champs!
+	"KWY", // Mighty Milky Way
 	"KXB", // Monster Buster Club
 	"KMB", // Mr. Brain
 	"K2D", // Nintendo DSi + Internet
@@ -133,7 +134,6 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KQN", // Castle Conqueror: Revolution
 	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
-	"KWY", // Mighty Milky Way
 	"KMM", // Mixed Messages
 	"KPS", // Phantasy Star 0 Mini
 	"KEV", // Space Invaders Extreme Z
