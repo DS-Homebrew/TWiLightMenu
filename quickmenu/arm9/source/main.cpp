@@ -537,6 +537,35 @@ void SetWidescreen(const char *filename) {
 	}
 }
 
+/**
+ * Gets the in-game manual for a game
+ */
+std::string getGameManual(const char *filename) {
+	char manualPath[256];
+	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", sdFound() ? "sd" : "fat", filename);
+	if(access(manualPath, F_OK) == 0)
+		return manualPath;
+
+	FILE *f_nds_file = fopen(filename, "rb");
+	if(f_nds_file) {
+		char game_TID[5];
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+		fread(game_TID, 1, 4, f_nds_file);
+		fclose(f_nds_file);
+		game_TID[4] = 0;
+
+		snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", sdFound() ? "sd" : "fat", game_TID);
+		if(access(manualPath, F_OK) == 0)
+			return manualPath;
+
+		snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%.3s.txt", sdFound() ? "sd" : "fat", game_TID);
+		if(access(manualPath, F_OK) == 0)
+			return manualPath;
+	}
+
+	return "";
+}
+
 char filePath[PATH_MAX];
 
 //---------------------------------------------------------------------------------
@@ -2207,6 +2236,7 @@ int main(int argc, char **argv) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
+					bootstrapini.SetString("NDS-BOOTSTRAP", "MANUAL_PATH", getGameManual(filename[ms().secondaryDevice].c_str()));
 					bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
@@ -2415,6 +2445,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 						if (!isHomebrew[ms().secondaryDevice]) {
 							bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", setApFix(argarray[0]));
+							bootstrapini.SetString("NDS-BOOTSTRAP", "MANUAL_PATH", getGameManual(filename[ms().secondaryDevice].c_str()));
 						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && (gameTid[ms().secondaryDevice][0] == 'W' || romVersion[ms().secondaryDevice] == 0x57)) ? "wide" : "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img");
