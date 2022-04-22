@@ -47,7 +47,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 67)
+// B4DS DSiWare Whitelist (Total: 68)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -90,6 +90,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGV", // Game & Watch: Vermin
 	"KGK", // Glory Days: Tactical Defense
 	"KDH", // Hard-Hat Domo
+	"K6S", // Heathcliff: Spot On
 	"KJY", // JellyCar 2
 	"KT9", // Kung Fu Dragon
 	"KLK", // Lola's Alphabet Train
