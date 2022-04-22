@@ -120,7 +120,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KS3", // Shantae: Risky's Revenge
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 16)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 15)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KXT", // 99Seconds
 	"KE9", // Absolute Baseball
