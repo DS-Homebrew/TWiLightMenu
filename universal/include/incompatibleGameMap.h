@@ -124,7 +124,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KS3", // Shantae: Risky's Revenge
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 15)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 16)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KXT", // 99Seconds
 	"KE9", // Absolute Baseball
@@ -141,6 +141,7 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KMM", // Mixed Messages
 	"KPS", // Phantasy Star 0 Mini
 	"KEV", // Space Invaders Extreme Z
+	"KSL", // Touch Solitaire
 };
 
 #endif // INCOMPATIBLEMAP_H
