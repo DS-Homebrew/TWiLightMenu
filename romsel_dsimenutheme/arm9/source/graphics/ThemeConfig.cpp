@@ -16,7 +16,8 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 	_titleboxRenderY(85), _titleboxMaxLines(4), _titleboxTextY(30), _titleboxTextW(240), _titleboxTextLarge(true),
 	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11),
 	_rotatingCubesRenderY(78), _shoulderLRenderY(172), _shoulderLRenderX(0), _shoulderRRenderY(172), _shoulderRRenderX(178),
-	_volumeRenderY(4), _volumeRenderX(16),  _batteryRenderY(5), _batteryRenderX(235),
+	_volumeRenderY(4), _volumeRenderX(16), _batteryRenderY(5), _batteryRenderX(235), _usernameRenderY(15), _usernameRenderX(28),
+	_usernameRenderXDS(4), _dateRenderY(7), _dateRenderX(162), _timeRenderY(7), _timeRenderX(200),
 	// _photoRenderY(24), _photoRenderX(179),
 	_startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true),
 	_movingArrowUserPalette(true), _launchDotsUserPalette(true), _dialogBoxUserPalette(true), _purpleBatteryAvailable(false),
@@ -87,6 +88,13 @@ void ThemeConfig::loadConfig() {
 	_shoulderRRenderX = themeConfig.GetInt("THEME", "ShoulderRRenderX", _shoulderRRenderX);
 	_batteryRenderY = themeConfig.GetInt("THEME", "BatteryRenderY", _batteryRenderY);
 	_batteryRenderX = themeConfig.GetInt("THEME", "BatteryRenderX", _batteryRenderX);
+	_usernameRenderY = themeConfig.GetInt("THEME", "UsernameRenderY", _usernameRenderY);
+	_usernameRenderX = themeConfig.GetInt("THEME", "UsernameRenderX", _usernameRenderX);
+	_usernameRenderXDS = themeConfig.GetInt("THEME", "UsernameRenderXDS", _usernameRenderXDS);
+	_dateRenderY = themeConfig.GetInt("THEME", "DateRenderY", _dateRenderY);
+	_dateRenderX = themeConfig.GetInt("THEME", "DateRenderX", _dateRenderX);
+	_timeRenderY = themeConfig.GetInt("THEME", "TimeRenderY", _timeRenderY);
+	_timeRenderX = themeConfig.GetInt("THEME", "TimeRenderX", _timeRenderX);
 
 	_startTextUserPalette = themeConfig.GetInt("THEME", "StartTextUserPalette", _startTextUserPalette);
 	_startBorderUserPalette = themeConfig.GetInt("THEME", "StartBorderUserPalette", _startBorderUserPalette);

@@ -66,8 +66,6 @@ static int frontBubblesYpos_def[3] = {256, 256+64, 256+32};
 static int backBubblesYpos[4] = {256, 256+56, 256+32, 256+16};
 static int frontBubblesYpos[3] = {256, 256+64, 256+32};
 
-extern u16 usernameRendered[11];
-
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
@@ -1343,19 +1341,13 @@ static std::string loadedDate;
 
 ITCM_CODE void drawCurrentDate() {
 	// Load date
-	int x = (ms().theme >= 4 ? 122 : 162);
-	if (ms().theme == TWLSettings::EThemeHBL) {
-		x -= 28;
-	}
-	int y = (ms().theme == TWLSettings::EThemeSaturn ? 12 : 7);
-
 	std::string currentDate = getDate();
 	if (currentDate == loadedDate && !reloadDate)
 		return;
 
 	loadedDate = currentDate;
 
-	ms().macroMode ? tex().drawDateTimeMacro(loadedDate.c_str(), x, y) : tex().drawDateTime(loadedDate.c_str(), x, y);
+	ms().macroMode ? tex().drawDateTimeMacro(loadedDate.c_str(), tc().dateRenderX(), tc().dateRenderY()) : tex().drawDateTime(loadedDate.c_str(), tc().dateRenderX(), tc().dateRenderY());
 
 	reloadDate = false;
 }
@@ -1364,12 +1356,6 @@ static std::string loadedTime;
 
 ITCM_CODE void drawCurrentTime() {
 	// Load time
-	int x = (ms().theme >= 4 ? 162 : 200);
-	if (ms().theme == TWLSettings::EThemeHBL) {
-		x -= 28;
-	}
-	int y = (ms().theme == TWLSettings::EThemeSaturn ? 12 : 7);
-
 	std::string currentTime = retTime();
 	if (currentTime[0] == ' ')
 		currentTime[0] = '0';
@@ -1380,7 +1366,7 @@ ITCM_CODE void drawCurrentTime() {
 
 	loadedTime = currentTime;
 
-	ms().macroMode ? tex().drawDateTimeMacro(currentTime.c_str(), x, y) : tex().drawDateTime(currentTime.c_str(), x, y);
+	ms().macroMode ? tex().drawDateTimeMacro(currentTime.c_str(), tc().timeRenderX(), tc().timeRenderY()) : tex().drawDateTime(currentTime.c_str(), tc().timeRenderX(), tc().timeRenderY());
 
 	reloadTime = false;
 }

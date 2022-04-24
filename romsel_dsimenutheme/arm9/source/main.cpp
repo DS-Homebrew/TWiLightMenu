@@ -130,9 +130,6 @@ bool applaunchprep = false;
 
 int spawnedtitleboxes = 0;
 
-s16 usernameRendered[11] = {0};
-bool usernameRenderedDone = false;
-
 bool showColon = true;
 
 struct statvfs st[2];
@@ -938,13 +935,6 @@ int main(int argc, char **argv) {
 		tex().load3DSTheme();
 	} else {
 		tex().loadDSiTheme();
-	}
-
-	//printf("Username copied\n");
-	if(useTwlCfg) {
-		tonccpy(usernameRendered, (s16*)0x02000448, sizeof(s16) * 10);
-	} else {
-		tonccpy(usernameRendered, PersonalData->name, sizeof(s16) * PersonalData->nameLen);
 	}
 
 	if (sdFound()) statvfs("sd:/", &st[0]);

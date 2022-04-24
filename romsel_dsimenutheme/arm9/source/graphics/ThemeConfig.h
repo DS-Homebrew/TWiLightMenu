@@ -38,6 +38,15 @@ private:
 	int _batteryRenderY;
 	int _batteryRenderX;
 
+	int _usernameRenderY;
+	int _usernameRenderX;
+	int _usernameRenderXDS;
+
+	int _dateRenderY;
+	int _dateRenderX;
+	int _timeRenderY;
+	int _timeRenderX;
+
 	// int _photoRenderY;
 	// int _photoRenderX;
 
@@ -106,6 +115,15 @@ public:
 	
 	int batteryRenderY() const { return _batteryRenderY; }
 	int batteryRenderX() const { return _batteryRenderX; }
+
+	int usernameRenderY() const { return _usernameRenderY; }
+	int usernameRenderX() const { return _usernameRenderX; }
+	int usernameRenderXDS() const { return _usernameRenderXDS; }
+
+	int dateRenderY() const { return _dateRenderY; }
+	int dateRenderX() const { return _dateRenderX; }
+	int timeRenderY() const { return _timeRenderY; }
+	int timeRenderX() const { return _timeRenderX; }
 
 	// int photoRenderY() const { return _photoRenderY; }
 	// int photoRenderX() const { return _photoRenderX; }

@@ -36,7 +36,6 @@ extern u8 *rotatingCubesLocation;
 
 // #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
-extern s16 usernameRendered[11];
 extern bool showColon;
 
 static u16 _bmpImageBuffer[256 * 192] = {0};
@@ -694,10 +693,11 @@ void ThemeTextures::drawProfileName() {
 	// Load username
 	char fontPath[64] = {0};
 	FILE *file;
-	int x = (dsiFeatures() ? 28 : 4);
+	int x = (dsiFeatures() ? tc().usernameRenderX() : tc().usernameRenderXDS());
+	s16 *username = useTwlCfg ? (s16 *)0x02000448 : PersonalData->name;
 
 	for (int c = 0; c < 10; c++) {
-		unsigned int charIndex = getTopFontSpriteIndex(usernameRendered[c]);
+		unsigned int charIndex = getTopFontSpriteIndex(username[c]);
 		// 42 characters per line.
 		unsigned int texIndex = charIndex / 42;
 		sprintf(fontPath, "nitro:/graphics/top_font/small_font_%u.bmp", texIndex);
@@ -710,7 +710,7 @@ void ThemeTextures::drawProfileName() {
 			fseek(file, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
 			fseek(file, pixelStart, SEEK_SET);
-			for (int y = 15; y >= 0; y--) {
+			for (int y = tc().usernameRenderY(); y >= 0; y--) {
 				fread(_bmpImageBuffer, 2, 0x200, file);
 				u16 *src = _bmpImageBuffer + (top_font_texcoords[0 + (4 * charIndex)]);
 
