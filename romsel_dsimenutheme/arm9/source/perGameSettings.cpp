@@ -94,9 +94,6 @@ extern mm_sound_effect snd_wrong;
 extern mm_sound_effect snd_back;
 extern mm_sound_effect snd_switch;
 
-extern char usernameRendered[11];
-extern bool usernameRenderedDone;
-
 extern void bgOperations(bool waitFrame);
 
 char fileCounter[8];

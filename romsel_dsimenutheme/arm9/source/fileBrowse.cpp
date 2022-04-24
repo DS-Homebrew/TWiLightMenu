@@ -130,9 +130,6 @@ extern void SetWidescreen(const char *filename);
 
 extern bool rocketVideo_playVideo;
 
-extern char usernameRendered[11];
-extern bool usernameRenderedDone;
-
 extern void bgOperations(bool waitFrame);
 
 std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
