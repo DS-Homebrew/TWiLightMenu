@@ -3,7 +3,6 @@
 #include "themefilenames.h"
 #include "common/twlmenusettings.h"
 #include "common/singleton.h"
-#include "common/inifile.h"
 
 #include <nds.h>
 #include <string>
@@ -49,6 +48,12 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 	}
 }
 
+int ThemeConfig::getInt(CIniFile &ini, const std::string &item, int defaultVal) {
+	if(ms().macroMode)
+		return ini.GetInt("MACRO", item, ini.GetInt("THEME", item, defaultVal));
+
+	return ini.GetInt("THEME", item, defaultVal);
+}
 
 void ThemeConfig::loadConfig() {
 	//iprintf("tc().loadConfig()\n");
@@ -56,73 +61,73 @@ void ThemeConfig::loadConfig() {
 	int macroW = 0;
 
 	CIniFile themeConfig(TFN_THEME_SETTINGS);
-	_startBorderRenderY = themeConfig.GetInt("THEME", "StartBorderRenderY", _startBorderRenderY);
-	_startBorderSpriteW = themeConfig.GetInt("THEME", "StartBorderSpriteW", _startBorderSpriteW);
-	_startBorderSpriteH = themeConfig.GetInt("THEME", "StartBorderSpriteH", _startBorderSpriteH);
-	_startTextRenderY = themeConfig.GetInt("THEME", "StartTextRenderY", _startTextRenderY);
+	_startBorderRenderY = getInt(themeConfig, "StartBorderRenderY", _startBorderRenderY);
+	_startBorderSpriteW = getInt(themeConfig, "StartBorderSpriteW", _startBorderSpriteW);
+	_startBorderSpriteH = getInt(themeConfig, "StartBorderSpriteH", _startBorderSpriteH);
+	_startTextRenderY = getInt(themeConfig, "StartTextRenderY", _startTextRenderY);
 
-	_bubbleTipRenderY = themeConfig.GetInt("THEME", "BubbleTipRenderY", _bubbleTipRenderY);
-	_bubbleTipRenderX = themeConfig.GetInt("THEME", "BubbleTipRenderX", _bubbleTipRenderX);
-	_bubbleTipSpriteW = themeConfig.GetInt("THEME", "BubbleTipSpriteW", _bubbleTipSpriteW);
-	_bubbleTipSpriteH = themeConfig.GetInt("THEME", "BubbleTipSpriteH", _bubbleTipSpriteH);
+	_bubbleTipRenderY = getInt(themeConfig, "BubbleTipRenderY", _bubbleTipRenderY);
+	_bubbleTipRenderX = getInt(themeConfig, "BubbleTipRenderX", _bubbleTipRenderX);
+	_bubbleTipSpriteW = getInt(themeConfig, "BubbleTipSpriteW", _bubbleTipSpriteW);
+	_bubbleTipSpriteH = getInt(themeConfig, "BubbleTipSpriteH", _bubbleTipSpriteH);
 
-	_titleboxRenderY = themeConfig.GetInt("THEME", "TitleboxRenderY", _titleboxRenderY);
-	_titleboxMaxLines = themeConfig.GetInt("THEME", "TitleboxMaxLines", _titleboxMaxLines);
-	macroY = themeConfig.GetInt("THEME", "MacroTitleboxTextY", -1);
-	macroW = themeConfig.GetInt("THEME", "MacroTitleboxTextW", -1);
-	_titleboxTextY = themeConfig.GetInt("THEME", "TitleboxTextY", _titleboxTextY);
-	_titleboxTextW = themeConfig.GetInt("THEME", "TitleboxTextW", _titleboxTextW);
+	_titleboxRenderY = getInt(themeConfig, "TitleboxRenderY", _titleboxRenderY);
+	_titleboxMaxLines = getInt(themeConfig, "TitleboxMaxLines", _titleboxMaxLines);
+	macroY = getInt(themeConfig, "MacroTitleboxTextY", -1);
+	macroW = getInt(themeConfig, "MacroTitleboxTextW", -1);
+	_titleboxTextY = getInt(themeConfig, "TitleboxTextY", _titleboxTextY);
+	_titleboxTextW = getInt(themeConfig, "TitleboxTextW", _titleboxTextW);
 	if (ms().macroMode) {
 		if (macroY != -1) _titleboxTextY = macroY;
 		if (macroW != -1) _titleboxTextW = macroW;
 	}
-	_titleboxTextLarge = themeConfig.GetInt("THEME", "TitleboxTextLarge", _titleboxTextLarge);
+	_titleboxTextLarge = getInt(themeConfig, "TitleboxTextLarge", _titleboxTextLarge);
 
-	_volumeRenderX = themeConfig.GetInt("THEME", "VolumeRenderX", _volumeRenderX);
-	_volumeRenderY = themeConfig.GetInt("THEME", "VolumeRenderY", _volumeRenderY);
-	// _photoRenderX = themeConfig.GetInt("THEME", "PhotoRenderX", _photoRenderX);
-	// _photoRenderY = themeConfig.GetInt("THEME", "PhotoRenderY", _photoRenderY);
-	_shoulderLRenderY = themeConfig.GetInt("THEME", "ShoulderLRenderY", _shoulderLRenderY);
-	_shoulderLRenderX = themeConfig.GetInt("THEME", "ShoulderLRenderX", _shoulderLRenderX);
-	_shoulderRRenderY = themeConfig.GetInt("THEME", "ShoulderRRenderY", _shoulderRRenderY);
-	_shoulderRRenderX = themeConfig.GetInt("THEME", "ShoulderRRenderX", _shoulderRRenderX);
-	_batteryRenderY = themeConfig.GetInt("THEME", "BatteryRenderY", _batteryRenderY);
-	_batteryRenderX = themeConfig.GetInt("THEME", "BatteryRenderX", _batteryRenderX);
-	_usernameRenderY = themeConfig.GetInt("THEME", "UsernameRenderY", _usernameRenderY);
-	_usernameRenderX = themeConfig.GetInt("THEME", "UsernameRenderX", _usernameRenderX);
-	_usernameRenderXDS = themeConfig.GetInt("THEME", "UsernameRenderXDS", _usernameRenderXDS);
-	_dateRenderY = themeConfig.GetInt("THEME", "DateRenderY", _dateRenderY);
-	_dateRenderX = themeConfig.GetInt("THEME", "DateRenderX", _dateRenderX);
-	_timeRenderY = themeConfig.GetInt("THEME", "TimeRenderY", _timeRenderY);
-	_timeRenderX = themeConfig.GetInt("THEME", "TimeRenderX", _timeRenderX);
+	_volumeRenderX = getInt(themeConfig, "VolumeRenderX", _volumeRenderX);
+	_volumeRenderY = getInt(themeConfig, "VolumeRenderY", _volumeRenderY);
+	// _photoRenderX = getInt(themeConfig, "PhotoRenderX", _photoRenderX);
+	// _photoRenderY = getInt(themeConfig, "PhotoRenderY", _photoRenderY);
+	_shoulderLRenderY = getInt(themeConfig, "ShoulderLRenderY", _shoulderLRenderY);
+	_shoulderLRenderX = getInt(themeConfig, "ShoulderLRenderX", _shoulderLRenderX);
+	_shoulderRRenderY = getInt(themeConfig, "ShoulderRRenderY", _shoulderRRenderY);
+	_shoulderRRenderX = getInt(themeConfig, "ShoulderRRenderX", _shoulderRRenderX);
+	_batteryRenderY = getInt(themeConfig, "BatteryRenderY", _batteryRenderY);
+	_batteryRenderX = getInt(themeConfig, "BatteryRenderX", _batteryRenderX);
+	_usernameRenderY = getInt(themeConfig, "UsernameRenderY", _usernameRenderY);
+	_usernameRenderX = getInt(themeConfig, "UsernameRenderX", _usernameRenderX);
+	_usernameRenderXDS = getInt(themeConfig, "UsernameRenderXDS", _usernameRenderXDS);
+	_dateRenderY = getInt(themeConfig, "DateRenderY", _dateRenderY);
+	_dateRenderX = getInt(themeConfig, "DateRenderX", _dateRenderX);
+	_timeRenderY = getInt(themeConfig, "TimeRenderY", _timeRenderY);
+	_timeRenderX = getInt(themeConfig, "TimeRenderX", _timeRenderX);
 
-	_startTextUserPalette = themeConfig.GetInt("THEME", "StartTextUserPalette", _startTextUserPalette);
-	_startBorderUserPalette = themeConfig.GetInt("THEME", "StartBorderUserPalette", _startBorderUserPalette);
-	_buttonArrowUserPalette = themeConfig.GetInt("THEME", "ButtonArrowUserPalette", _buttonArrowUserPalette);
-	_movingArrowUserPalette = themeConfig.GetInt("THEME", "MovingArrowUserPalette", _movingArrowUserPalette);
-	_launchDotsUserPalette = themeConfig.GetInt("THEME", "LaunchDotsUserPalette", _launchDotsUserPalette);
-	_dialogBoxUserPalette = themeConfig.GetInt("THEME", "DialogBoxUserPalette", _dialogBoxUserPalette);
-	_purpleBatteryAvailable = themeConfig.GetInt("THEME", "PurpleBatteryAvailable", _purpleBatteryAvailable);
-	_rotatingCubesRenderY = themeConfig.GetInt("THEME", "RotatingCubesRenderY", _rotatingCubesRenderY);
-	_renderPhoto = themeConfig.GetInt("THEME", "RenderPhoto", _renderPhoto);
+	_startTextUserPalette = getInt(themeConfig, "StartTextUserPalette", _startTextUserPalette);
+	_startBorderUserPalette = getInt(themeConfig, "StartBorderUserPalette", _startBorderUserPalette);
+	_buttonArrowUserPalette = getInt(themeConfig, "ButtonArrowUserPalette", _buttonArrowUserPalette);
+	_movingArrowUserPalette = getInt(themeConfig, "MovingArrowUserPalette", _movingArrowUserPalette);
+	_launchDotsUserPalette = getInt(themeConfig, "LaunchDotsUserPalette", _launchDotsUserPalette);
+	_dialogBoxUserPalette = getInt(themeConfig, "DialogBoxUserPalette", _dialogBoxUserPalette);
+	_purpleBatteryAvailable = getInt(themeConfig, "PurpleBatteryAvailable", _purpleBatteryAvailable);
+	_rotatingCubesRenderY = getInt(themeConfig, "RotatingCubesRenderY", _rotatingCubesRenderY);
+	_renderPhoto = getInt(themeConfig, "RenderPhoto", _renderPhoto);
 
-	_playStartupJingle = themeConfig.GetInt("THEME", "PlayStartupJingle", _playStartupJingle);
-	_startupJingleDelayAdjust = themeConfig.GetInt("THEME", "StartupJingleDelayAdjust", _startupJingleDelayAdjust);
+	_playStartupJingle = getInt(themeConfig, "PlayStartupJingle", _playStartupJingle);
+	_startupJingleDelayAdjust = getInt(themeConfig, "StartupJingleDelayAdjust", _startupJingleDelayAdjust);
 
-	_fontPalette1 = themeConfig.GetInt("THEME", "FontPalette1", _fontPalette1);
-	_fontPalette2 = themeConfig.GetInt("THEME", "FontPalette2", _fontPalette2);
-	_fontPalette3 = themeConfig.GetInt("THEME", "FontPalette3", _fontPalette3);
-	_fontPalette4 = themeConfig.GetInt("THEME", "FontPalette4", _fontPalette4);
-	_fontPaletteTitlebox1 = themeConfig.GetInt("THEME", "FontPaletteTitlebox1", _fontPalette1);
-	_fontPaletteTitlebox2 = themeConfig.GetInt("THEME", "FontPaletteTitlebox2", _fontPalette2);
-	_fontPaletteTitlebox3 = themeConfig.GetInt("THEME", "FontPaletteTitlebox3", _fontPalette3);
-	_fontPaletteTitlebox4 = themeConfig.GetInt("THEME", "FontPaletteTitlebox4", _fontPalette4);
-	_fontPaletteDialog1 = themeConfig.GetInt("THEME", "FontPaletteDialog1", _fontPalette1);
-	_fontPaletteDialog2 = themeConfig.GetInt("THEME", "FontPaletteDialog2", _fontPalette2);
-	_fontPaletteDialog3 = themeConfig.GetInt("THEME", "FontPaletteDialog3", _fontPalette3);
-	_fontPaletteDialog4 = themeConfig.GetInt("THEME", "FontPaletteDialog4", _fontPalette4);
-	_fontPaletteOverlay1 = themeConfig.GetInt("THEME", "FontPaletteOverlay1", _fontPalette1);
-	_fontPaletteOverlay2 = themeConfig.GetInt("THEME", "FontPaletteOverlay2", _fontPalette2);
-	_fontPaletteOverlay3 = themeConfig.GetInt("THEME", "FontPaletteOverlay3", _fontPalette3);
-	_fontPaletteOverlay4 = themeConfig.GetInt("THEME", "FontPaletteOverlay4", _fontPalette4);
+	_fontPalette1 = getInt(themeConfig, "FontPalette1", _fontPalette1);
+	_fontPalette2 = getInt(themeConfig, "FontPalette2", _fontPalette2);
+	_fontPalette3 = getInt(themeConfig, "FontPalette3", _fontPalette3);
+	_fontPalette4 = getInt(themeConfig, "FontPalette4", _fontPalette4);
+	_fontPaletteTitlebox1 = getInt(themeConfig, "FontPaletteTitlebox1", _fontPalette1);
+	_fontPaletteTitlebox2 = getInt(themeConfig, "FontPaletteTitlebox2", _fontPalette2);
+	_fontPaletteTitlebox3 = getInt(themeConfig, "FontPaletteTitlebox3", _fontPalette3);
+	_fontPaletteTitlebox4 = getInt(themeConfig, "FontPaletteTitlebox4", _fontPalette4);
+	_fontPaletteDialog1 = getInt(themeConfig, "FontPaletteDialog1", _fontPalette1);
+	_fontPaletteDialog2 = getInt(themeConfig, "FontPaletteDialog2", _fontPalette2);
+	_fontPaletteDialog3 = getInt(themeConfig, "FontPaletteDialog3", _fontPalette3);
+	_fontPaletteDialog4 = getInt(themeConfig, "FontPaletteDialog4", _fontPalette4);
+	_fontPaletteOverlay1 = getInt(themeConfig, "FontPaletteOverlay1", _fontPalette1);
+	_fontPaletteOverlay2 = getInt(themeConfig, "FontPaletteOverlay2", _fontPalette2);
+	_fontPaletteOverlay3 = getInt(themeConfig, "FontPaletteOverlay3", _fontPalette3);
+	_fontPaletteOverlay4 = getInt(themeConfig, "FontPaletteOverlay4", _fontPalette4);
 }

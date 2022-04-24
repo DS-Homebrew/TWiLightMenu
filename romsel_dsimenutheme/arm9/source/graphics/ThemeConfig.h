@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <string>
+#include "common/inifile.h"
 #include "common/singleton.h"
 
 #pragma once
@@ -8,6 +9,8 @@
 
 class ThemeConfig {
 private:
+	int getInt(CIniFile &ini, const std::string &item, int defaultVal);
+
 	int _startBorderRenderY;
 	int _startBorderSpriteW;
 	int _startBorderSpriteH;
