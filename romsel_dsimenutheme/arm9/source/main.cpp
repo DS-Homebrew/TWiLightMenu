@@ -925,6 +925,10 @@ int main(int argc, char **argv) {
 	tc().loadConfig();
 	tex().videoSetup(); // allocate texture pointers
 
+	SetBrightness(0, 0);
+	SetBrightness(1, 0);
+	consoleDemoInit();
+
 	fontInit();
 
 	if (ms().theme == TWLSettings::EThemeHBL) {
