@@ -245,18 +245,18 @@ void ThemeTextures::loadBackgrounds() {
 }
 
 void ThemeTextures::loadHBTheme() {	
-	//printf("tex().loadHBTheme()\n");
+	//iprintf("tex().loadHBTheme()\n");
 
-	// printf("tex().loadBackgrounds()\n");
+	// iprintf("tex().loadBackgrounds()\n");
 	loadBackgrounds();
-	// printf("tex().loadUITextures()\n");
+	// iprintf("tex().loadUITextures()\n");
 	loadUITextures();
 
-	// printf("tex().loadVolumeTextures()\n");
+	// iprintf("tex().loadVolumeTextures()\n");
 	loadVolumeTextures();
-	// printf("tex().loadBatteryTextures()\n");
+	// iprintf("tex().loadBatteryTextures()\n");
 	loadBatteryTextures();
-	// printf("tex().loadIconTextures()\n");
+	// iprintf("tex().loadIconTextures()\n");
 	loadIconTextures();
 
 	_boxFullTexture = std::make_unique<Texture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
@@ -274,41 +274,41 @@ void ThemeTextures::loadHBTheme() {
 	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
 
 	if (ms().colorMode == 1) {
-		// printf("tex().applyGrayscaleToAllGrfTextures()\n");
+		// iprintf("tex().applyGrayscaleToAllGrfTextures()\n");
 		applyGrayscaleToAllGrfTextures();
 	}
 
 	
-	// printf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
+	// iprintf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
 	loadWirelessIcons(*_wirelessIconsTexture);
-	// printf("tex().loadSettingsImage(*_settingsIconTexture)\n");
+	// iprintf("tex().loadSettingsImage(*_settingsIconTexture)\n");
 	loadSettingsImage(*_settingsIconTexture);
-	// printf("tex().loadBraceImage(*_braceTexture)\n");
+	// iprintf("tex().loadBraceImage(*_braceTexture)\n");
 	loadBraceImage(*_braceTexture);
 
-	// printf("tex().loadBoxfullImage(*_boxFullTexture)\n");
+	// iprintf("tex().loadBoxfullImage(*_boxFullTexture)\n");
 	loadBoxfullImage(*_boxFullTexture);
-	// printf("tex().loadBoxEmptyImage(*_boxFullTexture)\n");
+	// iprintf("tex().loadBoxEmptyImage(*_boxFullTexture)\n");
 	loadBoxemptyImage(*_boxEmptyTexture);
 
-	// printf("tex().loadManualImage(*_manualIconTexture)\n");
+	// iprintf("tex().loadManualImage(*_manualIconTexture)\n");
 	loadManualImage(*_manualIconTexture);
-	// printf("tex().loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32)\n");
+	// iprintf("tex().loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32)\n");
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
-	// printf("tex().loadSmallCartImage(*_smallCartTexture)\n");
+	// iprintf("tex().loadSmallCartImage(*_smallCartTexture)\n");
 	loadSmallCartImage(*_smallCartTexture);
-	// printf("tex().loadFolderImage(*_folderTexture)\n");
+	// iprintf("tex().loadFolderImage(*_folderTexture)\n");
 	loadFolderImage(*_folderTexture);
 	
-	// printf("tex().loadProgressImage(*_progressTexture)\n");
+	// iprintf("tex().loadProgressImage(*_progressTexture)\n");
 	loadProgressImage(*_progressTexture);
-	// printf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
+	// iprintf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
 	loadWirelessIcons(*_wirelessIconsTexture);
 	
 }
 
 void ThemeTextures::loadSaturnTheme() {	
-	//printf("tex().loadSaturnTheme()\n");
+	//iprintf("tex().loadSaturnTheme()\n");
 
 	loadBackgrounds();
 	loadUITextures();
@@ -351,7 +351,7 @@ void ThemeTextures::loadSaturnTheme() {
 }
 
 void ThemeTextures::load3DSTheme() {
-	//printf("tex().load3DSTheme()\n");
+	//iprintf("tex().load3DSTheme()\n");
 
 	loadBackgrounds();
 	loadUITextures();
@@ -392,18 +392,18 @@ void ThemeTextures::load3DSTheme() {
 }
 
 void ThemeTextures::loadDSiTheme() {	
-	iprintf("tex().loadDSiTheme()\n");
+	//iprintf("tex().loadDSiTheme()\n");
 
-	iprintf("loadBackgrounds()\n");
+	//iprintf("loadBackgrounds()\n");
 	loadBackgrounds();
-	iprintf("loadUITextures()\n");
+	//iprintf("loadUITextures()\n");
 	loadUITextures();
 
-	iprintf("loadVolumeTextures()\n");
+	//iprintf("loadVolumeTextures()\n");
 	loadVolumeTextures();
-	iprintf("loadBatteryTextures()\n");
+	//iprintf("loadBatteryTextures()\n");
 	loadBatteryTextures();
-	iprintf("loadIconTextures()\n");
+	//iprintf("loadIconTextures()\n");
 	loadIconTextures();
 
 	_bipsTexture = std::make_unique<Texture>(TFN_GRF_BIPS, TFN_FALLBACK_GRF_BIPS);
@@ -446,50 +446,50 @@ void ThemeTextures::loadDSiTheme() {
 		applyGrayscaleToAllGrfTextures();
 	}
 
-	iprintf("loadBipsImage(*_bipsTexture)\n");
+	//iprintf("loadBipsImage(*_bipsTexture)\n");
 	loadBipsImage(*_bipsTexture);
 
-	iprintf("loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH())\n");
+	//iprintf("loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH())\n");
 	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH());
-	iprintf("loadScrollwindowImage(*_scrollWindowTexture)\n");
+	//iprintf("loadScrollwindowImage(*_scrollWindowTexture)\n");
 	loadScrollwindowImage(*_scrollWindowTexture);
-	iprintf("loadWirelessIcons(*_wirelessIconsTexture)\n");
+	//iprintf("loadWirelessIcons(*_wirelessIconsTexture)\n");
 	loadWirelessIcons(*_wirelessIconsTexture);
-	iprintf("loadSettingsImage(*_settingsIconTexture)\n");
+	//iprintf("loadSettingsImage(*_settingsIconTexture)\n");
 	loadSettingsImage(*_settingsIconTexture);
-	iprintf("loadBraceImage(*_braceTexture)\n");
+	//iprintf("loadBraceImage(*_braceTexture)\n");
 	loadBraceImage(*_braceTexture);
 
-	iprintf("loadStartImage(*_startTextTexture)\n");
+	//iprintf("loadStartImage(*_startTextTexture)\n");
 	loadStartImage(*_startTextTexture);
-	iprintf("loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH())\n");
+	//iprintf("loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH())\n");
 	loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH());
 
-	iprintf("loadButtonarrowImage(*_buttonArrowTexture)\n");
+	//iprintf("loadButtonarrowImage(*_buttonArrowTexture)\n");
 	loadButtonarrowImage(*_buttonArrowTexture);
-	iprintf("loadMovingarrowImage(*_movingArrowTexture)\n");
+	//iprintf("loadMovingarrowImage(*_movingArrowTexture)\n");
 	loadMovingarrowImage(*_movingArrowTexture);
-	iprintf("loadLaunchdotImage(*_launchDotTexture)\n");
+	//iprintf("loadLaunchdotImage(*_launchDotTexture)\n");
 	loadLaunchdotImage(*_launchDotTexture);
-	iprintf("loadDialogboxImage(*_dialogBoxTexture)\n");
+	//iprintf("loadDialogboxImage(*_dialogBoxTexture)\n");
 	loadDialogboxImage(*_dialogBoxTexture);
 
 	// careful here, it's boxTexture, not boxFulltexture.
-	iprintf("loadBoxfullImage(*_boxTexture)\n");
+	//iprintf("loadBoxfullImage(*_boxTexture)\n");
 	loadBoxfullImage(*_boxTexture);
 
-	iprintf("loadManualImage(*_manualIconTexture)\n");
+	//iprintf("loadManualImage(*_manualIconTexture)\n");
 	loadManualImage(*_manualIconTexture);
-	iprintf("loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32)\n");
+	//iprintf("loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32)\n");
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
-	iprintf("loadSmallCartImage(*_smallCartTexture)\n");
+	//iprintf("loadSmallCartImage(*_smallCartTexture)\n");
 	loadSmallCartImage(*_smallCartTexture);
-	iprintf("loadFolderImage(*_folderTexture)\n");
+	//iprintf("loadFolderImage(*_folderTexture)\n");
 	loadFolderImage(*_folderTexture);
 
-	iprintf("loadProgressImage(*_progressTexture)\n");
+	//iprintf("loadProgressImage(*_progressTexture)\n");
 	loadProgressImage(*_progressTexture);
-	iprintf("loadWirelessIcons(*_wirelessIconsTexture)\n");
+	//iprintf("loadWirelessIcons(*_wirelessIconsTexture)\n");
 	loadWirelessIcons(*_wirelessIconsTexture);
 }
 
