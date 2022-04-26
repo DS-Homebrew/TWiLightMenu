@@ -185,7 +185,7 @@ SoundControl::SoundControl()
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 	} else {
 		switch(ms().dsiMusic) {
-			case 5: {
+			case 5: { // HBL
 				std::string startPath = (devicePath+TFN_HBL_START_SOUND_BG_CACHE);
 				if (access(startPath.c_str(), F_OK) != 0 || getFileSize(startPath.c_str()) == 0) {
 					if (adpcm_main(std::string(TFN_HBL_START_SOUND_BG).c_str(), startPath.c_str(), true) == -1) {
@@ -206,7 +206,7 @@ SoundControl::SoundControl()
 				loopableMusic = true;
 				break; }
 			case 4:
-			case 2: {
+			case 2: { // DSi Shop
 				std::string startPath = (devicePath+TFN_SHOP_START_SOUND_BG_CACHE);
 				if (access(startPath.c_str(), F_OK) != 0 || getFileSize(startPath.c_str()) == 0) {
 					if (adpcm_main(std::string(TFN_SHOP_START_SOUND_BG).c_str(), startPath.c_str(), true) == -1) {
@@ -226,29 +226,47 @@ SoundControl::SoundControl()
 				stream_source = fopen(loopPath.c_str(), "rb");
 				loopableMusic = true;
 				break; }
-			case 3: {
-				std::string musicPath = TFN_SOUND_BG;
-				std::string cachePath = TFN_SOUND_BG_CACHE;
-				if ((access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) && access(musicPath.c_str(), F_OK) == 0) {
-					u8 wavFormat = 0;
-					u8 numChannels = 1;
-					stream_source = fopen(musicPath.c_str(), "rb");
-					fseek(stream_source, 0x14, SEEK_SET);
-					fread(&wavFormat, sizeof(u8), 1, stream_source);
-					fseek(stream_source, 0x16, SEEK_SET);
-					fread(&numChannels, sizeof(u8), 1, stream_source);
-					stream.format = numChannels == 2 ? MM_STREAM_8BIT_STEREO : MM_STREAM_16BIT_MONO;
-					fseek(stream_source, 0x18, SEEK_SET);
-					fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
-					fclose(stream_source);
-					if (wavFormat == 0x11) {
-						if (adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2) == -1) {
-							remove(cachePath.c_str());
+			case 3: { // Theme
+				bool customSkin = false;
+				switch (ms().theme) {
+					case 0:
+					default:
+						customSkin = (tfn().uiDirectory() != TFN_FALLBACK_DSI_UI_DIRECTORY);
+						break;
+					case 1:
+						customSkin = (tfn().uiDirectory() != TFN_FALLBACK_3DS_UI_DIRECTORY);
+						break;
+					//case 4:
+					//	customSkin = (tfn().uiDirectory() != TFN_FALLBACK_SATURN_UI_DIRECTORY);
+					//	break;
+					case 5:
+						customSkin = (tfn().uiDirectory() != TFN_FALLBACK_HBLAUNCHER_UI_DIRECTORY);
+						break;
+				}
+				if (customSkin) {
+					std::string musicPath = TFN_SOUND_BG;
+					std::string cachePath = TFN_SOUND_BG_CACHE;
+					if ((access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) && access(musicPath.c_str(), F_OK) == 0) {
+						u8 wavFormat = 0;
+						u8 numChannels = 1;
+						stream_source = fopen(musicPath.c_str(), "rb");
+						fseek(stream_source, 0x14, SEEK_SET);
+						fread(&wavFormat, sizeof(u8), 1, stream_source);
+						fseek(stream_source, 0x16, SEEK_SET);
+						fread(&numChannels, sizeof(u8), 1, stream_source);
+						stream.format = numChannels == 2 ? MM_STREAM_8BIT_STEREO : MM_STREAM_16BIT_MONO;
+						fseek(stream_source, 0x18, SEEK_SET);
+						fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
+						fclose(stream_source);
+						if (wavFormat == 0x11) {
+							if (adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2) == -1) {
+								remove(cachePath.c_str());
+							}
 						}
 					}
+					stream_source = fopen(cachePath.c_str(), "rb");
+					if (stream_source) break; } // fallthrough if stream_source fails.
 				}
-				stream_source = fopen(cachePath.c_str(), "rb");
-				if (stream_source) break; } // fallthrough if stream_source fails.
 			case 1:
 			default: {
 				std::string musicPath = (devicePath+TFN_DEFAULT_SOUND_BG_CACHE);
