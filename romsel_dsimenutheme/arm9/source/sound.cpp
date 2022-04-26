@@ -185,7 +185,7 @@ SoundControl::SoundControl()
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 	} else {
 		switch(ms().dsiMusic) {
-			case 5: {
+			case 5: { // HBL
 				std::string startPath = (devicePath+TFN_HBL_START_SOUND_BG_CACHE);
 				if (access(startPath.c_str(), F_OK) != 0 || getFileSize(startPath.c_str()) == 0) {
 					if (adpcm_main(std::string(TFN_HBL_START_SOUND_BG).c_str(), startPath.c_str(), true) == -1) {
@@ -206,7 +206,7 @@ SoundControl::SoundControl()
 				loopableMusic = true;
 				break; }
 			case 4:
-			case 2: {
+			case 2: { // DSi Shop
 				std::string startPath = (devicePath+TFN_SHOP_START_SOUND_BG_CACHE);
 				if (access(startPath.c_str(), F_OK) != 0 || getFileSize(startPath.c_str()) == 0) {
 					if (adpcm_main(std::string(TFN_SHOP_START_SOUND_BG).c_str(), startPath.c_str(), true) == -1) {
@@ -226,7 +226,7 @@ SoundControl::SoundControl()
 				stream_source = fopen(loopPath.c_str(), "rb");
 				loopableMusic = true;
 				break; }
-			case 3: {
+			case 3: { // Theme
 				std::string musicPath = TFN_SOUND_BG;
 				std::string cachePath = TFN_SOUND_BG_CACHE;
 				if ((access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) && access(musicPath.c_str(), F_OK) == 0) {
@@ -247,8 +247,11 @@ SoundControl::SoundControl()
 						}
 					}
 				}
-				stream_source = fopen(cachePath.c_str(), "rb");
-				if (stream_source) break; } // fallthrough if stream_source fails.
+				if (access(cachePath.c_str(), F_OK) == 0) {
+					stream_source = fopen(cachePath.c_str(), "rb");
+					if (stream_source) break;
+				}
+				}// fallthrough if stream_source fails.
 			case 1:
 			default: {
 				std::string musicPath = (devicePath+TFN_DEFAULT_SOUND_BG_CACHE);
