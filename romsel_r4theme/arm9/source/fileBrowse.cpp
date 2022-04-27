@@ -625,12 +625,14 @@ bool gameCompatibleMemoryPit(const char* filename) {
 
 bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 	bool showMsg = false;
+	int msgId = 0;
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
 		if (memcmp(gameTid, compatibleGameListB4DSRAMLimited[i], 3) == 0) {
 			// Found match
 			showMsg = true;
+			msgId = compatibleGameListB4DSRAMLimitedID[i];
 			break;
 		}
 	}
@@ -648,10 +650,20 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Compatibility Warning");
-	printSmallCentered(false, 90, "Due to memory limitations, only part");
-	printSmallCentered(false, 102, "of this game can be played. To play");
-	printSmallCentered(false, 114, "the full game, launch this on");
-	printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
+	switch (msgId) {
+		case 0:
+			printSmallCentered(false, 90, "Due to memory limitations, only part");
+			printSmallCentered(false, 102, "of this game can be played. To play");
+			printSmallCentered(false, 114, "the full game, launch this on");
+			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
+			break;
+		case 1:
+			printSmallCentered(false, 90, "Due to memory limitations, audio");
+			printSmallCentered(false, 102, "will not be played. To play this");
+			printSmallCentered(false, 114, "with audio, launch this on");
+			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
+			break;
+	}
 	printSmallCentered(false, 144, "\u2428 Return   \u2427 Launch");
 
 	int pressed = 0;

@@ -120,9 +120,16 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAS", // Art Style: ZENGAGE
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 1)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 2)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
+	"KWY", // Mighty Milky Way
 	"KS3", // Shantae: Risky's Revenge
+};
+
+// B4DS DSiWare Whitelist (RAM limitation message ID)
+static int compatibleGameListB4DSRAMLimitedID[] = {
+	1, // Mighty Milky Way (No audio)
+	0, // Shantae: Risky's Revenge (Game part only)
 };
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 16)

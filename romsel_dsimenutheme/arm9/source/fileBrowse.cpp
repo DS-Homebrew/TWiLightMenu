@@ -1275,12 +1275,14 @@ bool gameCompatibleMemoryPit(void) {
 
 bool dsiWareRAMLimitMsg(std::string filename) {
 	bool showMsg = false;
+	int msgId = 0;
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
 		if (memcmp(gameTid[CURPOS], compatibleGameListB4DSRAMLimited[i], 3) == 0) {
 			// Found match
 			showMsg = true;
+			msgId = compatibleGameListB4DSRAMLimitedID[i];
 			break;
 		}
 	}
@@ -1315,7 +1317,14 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	}
 	titleUpdate(false, filename.c_str(), CURPOS);
 	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : 102);
-	printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_GAME_PART_ONLY) - smallFontHeight()) / 2), STR_RAM_LIMIT_GAME_PART_ONLY, Alignment::center, FontPalette::dialog);
+	switch (msgId) {
+		case 0:
+			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_GAME_PART_ONLY) - smallFontHeight()) / 2), STR_RAM_LIMIT_GAME_PART_ONLY, Alignment::center, FontPalette::dialog);
+			break;
+		case 1:
+			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_NO_AUDIO) - smallFontHeight()) / 2), STR_RAM_LIMIT_NO_AUDIO, Alignment::center, FontPalette::dialog);
+			break;
+	}
 	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
 	updateText(false);
 	int pressed = 0;

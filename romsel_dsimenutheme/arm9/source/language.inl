@@ -49,6 +49,7 @@ STRING(RELAUNCH_DSIWARE_3DS_HOME, "To launch this title, please restart\nTWiLigh
 STRING(GAME_INCOMPATIBLE_MSG, "This game is known to not run.\nIf there's an nds-bootstrap\nversion that fixes this,\nplease ignore this message.")
 STRING(FOR_USE_WITH_DSI_ONLY, "For use with Nintendo DSi\nsystems only. Cannot be used with\nNintendo DS/DS Lite systems.")
 STRING(RAM_LIMIT_GAME_PART_ONLY, "Due to memory limitations,\nonly part of this game can be\nplayed. To play the full game,\nlaunch this on Nintendo DSi\nor 3DS systems.")
+STRING(RAM_LIMIT_NO_AUDIO, "Due to memory limitations,\naudio will not be played.\nTo play this with audio,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(CANNOT_LAUNCH_WITHOUT_SD, "This game cannot be launched\nwithout an SD card.")
 STRING(CANNOT_LAUNCH_IN_DS_MODE, "This game cannot be launched\nin DS mode.")
 STRING(CANNOT_LAUNCH_HB_ON_3DS, "This homebrew cannot be\nlaunched on 3DS consoles.")
