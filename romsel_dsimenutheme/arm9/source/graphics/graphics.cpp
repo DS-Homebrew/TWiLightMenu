@@ -976,15 +976,16 @@ void vBlankHandler() {
 				barXpos += ms().rtl() ? -12 : 12;
 				barYpos += 12;
 			}
+			int fillColor = ms().colorMode == 1 ? convertVramColorToGrayscale(RGB15(0, 0, 31)) : RGB15(0, 0, 31);
 			if(ms().rtl()) {
 				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, RGB15(23, 23, 23));
 				if (progressBarLength > 0) {
-					glBoxFilled(barXpos, barYpos, barXpos-progressBarLength, barYpos+5, RGB15(0, 0, 31));
+					glBoxFilled(barXpos, barYpos, barXpos-progressBarLength, barYpos+5, fillColor);
 				}
 			} else {
 				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, RGB15(23, 23, 23));
 				if (progressBarLength > 0) {
-					glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, RGB15(0, 0, 31));
+					glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, fillColor);
 				}
 			}
 		}
@@ -1291,6 +1292,8 @@ void loadBootstrapScreenshot(FILE *file) {
 
 			// RGB 565 -> BGR 5551
 			val = ((val >> 11) & 0x1F) | ((val & (0x1F << 6)) >> 1) | ((val & 0x1F) << 10) | BIT(15);
+			if (ms().colorMode == 1)
+				val = convertVramColorToGrayscale(val);
 
 			u8 y = photoHeight - row - 1;
 			bgSubBuffer[(24 + y) * 256 + 24 + col] = val;

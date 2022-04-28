@@ -961,7 +961,7 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 			}
 			_bmpImageBuffer2[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (ms().colorMode == 1) {
-				_bmpImageBuffer2[i] = convertVramColorToGrayscale(tex().photoBuffer()[i]);
+				_bmpImageBuffer2[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
 			}
 			if ((i % imageWidth) == imageWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
@@ -1046,7 +1046,7 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 			}
 			_bmpImageBuffer2[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (ms().colorMode == 1) {
-				_bmpImageBuffer2[i] = convertVramColorToGrayscale(tex().photoBuffer()[i]);
+				_bmpImageBuffer2[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
 			}
 			if ((i % imageWidth) == imageWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
@@ -1233,6 +1233,8 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 			_bgSubBuffer[i] =
 			    convertVramColorToGrayscale(_bgSubBuffer[i]);
+			if (boxArtColorDeband)
+				_bgSubBuffer2[i] = _bgSubBuffer[i];
 		}
 	}
 

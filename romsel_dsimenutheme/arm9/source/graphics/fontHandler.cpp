@@ -11,6 +11,7 @@
 #include "TextEntry.h"
 #include "ThemeConfig.h"
 #include "themefilenames.h"
+#include "tool/colortool.h"
 
 FontGraphic *smallFont;
 FontGraphic *largeFont;
@@ -73,6 +74,11 @@ void fontInit() {
 		tc().fontPaletteOverlay3(),
 		tc().fontPaletteOverlay4(),
 	};
+	if (ms().colorMode == 1) {
+		for (int i = 0; i < 4*4; i++) {
+			palette[i] = convertVramColorToGrayscale(palette[i]);
+		}
+	}
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
 }
