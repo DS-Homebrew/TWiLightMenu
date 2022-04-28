@@ -268,6 +268,9 @@ void bottomBgLoad(void) {
 
 	for(uint i=0;i<image.size()/4;i++) {
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
+		}
 	}
 
 	// Start loading
@@ -582,6 +585,9 @@ void topBgLoad(void) {
 
 	for(uint i=0;i<image.size()/4;i++) {
 		topImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			topImageBuffer[i] = convertVramColorToGrayscale(topImageBuffer[i]);
+		}
 	}
 
 	// Start loading

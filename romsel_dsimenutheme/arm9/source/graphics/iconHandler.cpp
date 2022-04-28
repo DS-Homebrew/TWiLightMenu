@@ -368,9 +368,16 @@ void glReloadIconPalette(int num) {
 		cachedPalette = _paletteCache[num];
 		break;
 	}
+	
+	u16 *newPalette = (u16*) cachedPalette;
+	if (ms().colorMode == 1) {
+		for (int i = 0; i < 16; i++) {
+			*(newPalette + i) = convertVramColorToGrayscale(*(newPalette + i));
+		}
+	}
 
 	glBindTexture(0, textureID);
-	glColorTableEXT(0, 0, 16, 0, 0, cachedPalette);
+	glColorTableEXT(0, 0, 16, 0, 0, newPalette);
 }
 
 /**
