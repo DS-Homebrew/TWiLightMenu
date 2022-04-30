@@ -1324,6 +1324,9 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		case 1:
 			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_NO_AUDIO) - smallFontHeight()) / 2), STR_RAM_LIMIT_NO_AUDIO, Alignment::center, FontPalette::dialog);
 			break;
+		case 2:
+			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_NO_MUSIC) - smallFontHeight()) / 2), STR_RAM_LIMIT_NO_MUSIC, Alignment::center, FontPalette::dialog);
+			break;
 	}
 	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
 	updateText(false);
