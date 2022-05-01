@@ -686,14 +686,14 @@ int main (void) {
 		if (dsMode) REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
 		i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 0);		// Press power button for auto-reset
 		i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);	// Bootflag = Warmboot/SkipHealthSafety
-		if ((dsMode || tscTgds) && REG_SCFG_EXT != 0) {
+		if (dsMode || tscTgds) {
 			REG_SCFG_ROM = 0x703;								// NTR BIOS
-			if (dsMode) {
-				REG_SCFG_EXT = 0x12A03000;
-			}
 		}
 		if (dsMode && REG_SCFG_ROM != 0x703) {
 			*(u32*)0x3FFFFC8 = 0x7884;	// Fix sound pitch table
+		}
+		if (dsMode) {
+			REG_SCFG_EXT = 0x12A03000;
 		}
 	}
 
