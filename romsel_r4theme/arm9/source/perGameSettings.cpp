@@ -595,6 +595,14 @@ void perGameSettings (std::string filename) {
 			} else {
 				donorRomTextShown = false;
 			}
+		} else if (!dsiFeatures()) {
+			if (a7mbk6 != 0x080037C0 && showSetDonorRom(arm7size, SDKVersion, dsiBinariesFound)) {
+				perGameOps++;
+				perGameOp[perGameOps] = 9;	// Set as Donor ROM
+				donorRomTextShown = true;
+			} else {
+				donorRomTextShown = false;
+			}
 		}
 	}
 
