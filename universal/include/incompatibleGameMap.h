@@ -47,7 +47,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 69)
+// B4DS DSiWare Whitelist (Total: 70)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -107,6 +107,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KOQ", // GO Series: Portable Shrine Wars
 	"KAK", // Art Style: precipice
 	"KDP", // Pro-Putt Domo
+	"KPN", // Puzzle League: Express
 	"KUM", // Quick Fill Q
 	"KLB", // Rabi Laby
 	"KLV", // Rabi Laby 2
