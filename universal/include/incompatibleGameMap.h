@@ -47,7 +47,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
-// B4DS DSiWare Whitelist (Total: 72)
+// B4DS DSiWare Whitelist (Total: 73)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -113,6 +113,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KUM", // Quick Fill Q
 	"KLB", // Rabi Laby
 	"KLV", // Rabi Laby 2
+	"KRT", // Robot Rescue
 	"KD6", // Rock-n-Roll Domo
 	"KS3", // Shantae: Risky's Revenge
 	"KA6", // Space Ace
