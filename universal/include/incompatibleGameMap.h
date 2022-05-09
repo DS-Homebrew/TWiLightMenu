@@ -136,7 +136,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Art Style: Aquia (No audio)
 	2, // Flipper (No music)
-	1, // Mighty Milky Way (No audio)
+	2, // Mighty Milky Way (No music)
 	0, // Shantae: Risky's Revenge (Game part only)
 };
 
