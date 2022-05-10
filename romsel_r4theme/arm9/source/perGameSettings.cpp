@@ -606,10 +606,31 @@ void perGameSettings (std::string filename) {
 		}
 	}
 
+	bool savExists[10] = {false};
 	if (isHomebrew) {
 		snprintf (gameTIDText, sizeof(gameTIDText), game_TID[0]==0 ? "" : "TID: %s", game_TID);
+
+		for (int i = 0; i < 10; i++) {
+			std::string path("ramdisks/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getImgExtension(i));
+			if(i > 0)
+				path += std::to_string(i);
+			savExists[i] = access(path.c_str(), F_OK) == 0;
+		}
 	} else {
 		snprintf (gameTIDText, sizeof(gameTIDText), "%s-%s-%s", romUnitCode > 0 ? "TWL" : "NTR", game_TID, getRegionString(game_TID[3]));
+
+		int saveNoBak = perGameSettings_saveNo;
+		for (int i = 0; i < 10; i++) {
+			perGameSettings_saveNo = i;
+			if(isDSiWare) {
+				std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')));
+				savExists[i] = access((path + getPubExtension()).c_str(), F_OK) == 0 || access((path + getPrvExtension()).c_str(), F_OK) == 0;
+			} else {
+				std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getSavExtension());
+				savExists[i] = access(path.c_str(), F_OK) == 0;
+			}
+		}
+		perGameSettings_saveNo = saveNoBak;
 	}
 
 	char saveNoDisplay[16];
@@ -686,22 +707,10 @@ void perGameSettings (std::string filename) {
 			case 1:
 				if (isHomebrew) {
 					printSmall(false, 32, perGameOpYpos, "RAM disk:");
-					std::string path("ramdisks/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getImgExtension(perGameSettings_ramDiskNo));
-					if(perGameSettings_ramDiskNo > 0)
-						path += std::to_string(perGameSettings_ramDiskNo);
-					bool exists = access(path.c_str(), F_OK) == 0;
-					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i%s", perGameSettings_ramDiskNo, exists ? "*" : "");
+					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i%s", perGameSettings_ramDiskNo, savExists[perGameSettings_ramDiskNo] ? "*" : "");
 				} else {
 					printSmall(false, 32, perGameOpYpos, "Save Number:");
-					bool exists;
-					if(isDSiWare) {
-						std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')));
-						exists = access((path + getPubExtension()).c_str(), F_OK) == 0 || access((path + getPrvExtension()).c_str(), F_OK) == 0;
-					} else {
-						std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getSavExtension());
-						exists = access(path.c_str(), F_OK) == 0;
-					}
-					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i%s", perGameSettings_saveNo, exists ? "*" : "");
+					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i%s", perGameSettings_saveNo, savExists[perGameSettings_saveNo] ? "*" : "");
 				}
 				if (isHomebrew && perGameSettings_ramDiskNo == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "None");
