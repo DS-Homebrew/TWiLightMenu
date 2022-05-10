@@ -2247,11 +2247,11 @@ int main(int argc, char **argv)
 
 	if ((access(settingsinipath, F_OK) != 0)
 	|| languageNowSet || regionNowSet
-	|| (ms().theme < TWLSettings::EThemeDSi) || (ms().theme == TWLSettings::EThemeWood) || (ms().theme > TWLSettings::EThemeHBL)) {
+	|| (ms().theme < TWLSettings::EThemeDSi) || (ms().theme == TWLSettings::EThemeWood) || (ms().theme > TWLSettings::EThemeGBC)) {
 		// Create or modify "settings.ini"
 		if (ms().theme == TWLSettings::EThemeWood) {
 			ms().theme = TWLSettings::EThemeR4;
-		} else if (ms().theme < TWLSettings::EThemeDSi || ms().theme > TWLSettings::EThemeHBL) {
+		} else if (ms().theme < TWLSettings::EThemeDSi || ms().theme > TWLSettings::EThemeGBC) {
 			ms().theme = TWLSettings::EThemeDSi;
 		}
 		ms().saveSettings();
