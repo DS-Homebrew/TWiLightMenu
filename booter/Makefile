@@ -128,9 +128,9 @@ endif
  
 export GAME_TITLE := $(TARGET)
 
-.PHONY: bootloader bootstub arm7/$(TARGET).elf arm9/$(TARGET).elf $(TARGET).nds $(TARGET)_rungame.nds clean
+.PHONY: bootloader bootstub arm7/$(TARGET).elf arm9/$(TARGET).elf $(TARGET).nds $(TARGET)_hiya.nds $(TARGET)_rungame.nds clean
 
-all:	bootloader bootstub arm7/$(TARGET).elf arm9/$(TARGET).elf $(TARGET).nds $(TARGET)_rungame.nds
+all:	bootloader bootstub arm7/$(TARGET).elf arm9/$(TARGET).elf $(TARGET).nds $(TARGET)_hiya.nds $(TARGET)_rungame.nds
 
 dist:	all
 	@mkdir -p ../7zfile/debug
@@ -138,7 +138,7 @@ dist:	all
 	@cp "$(TARGET).nds" "../7zfile/DSi&3DS - SD card users/BOOT.NDS"
 	@mkdir -p "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content"
 	@mkdir -p "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content"
-	@cp $(TARGET).nds "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
+	@cp $(TARGET)_hiya.nds "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
 	@cp $(TARGET)_rungame.nds "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
 	@cp $(TARGET).arm7.elf ../7zfile/debug/$(TARGET).arm7.elf
 	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
@@ -147,6 +147,10 @@ $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $@ -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
 			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004 -a 00000138 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	$(PYTHON) animatedbannerpatch.py $@ twl_banner.bin
+
+$(TARGET)_hiya.nds:	$(TARGET).arm7 $(TARGET).arm9
+	ndstool	-c $@ -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
+			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004 -a 00000138 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 
 $(TARGET)_rungame.nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $@ -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
