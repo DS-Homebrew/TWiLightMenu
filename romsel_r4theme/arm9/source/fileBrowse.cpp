@@ -962,7 +962,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						proceedToLaunch = dsiBinariesMissingMsg();
 					}
 				}
-				if (proceedToLaunch && useBootstrapAnyway && bnrRomType == 0 && !dsModeForced && isHomebrew == 0)
+				if (proceedToLaunch && (useBootstrapAnyway || ((!dsiFeatures() || bs().b4dsMode) && isDSiWare)) && bnrRomType == 0 && !dsModeForced && isHomebrew == 0)
 				{
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 					char game_TID[5];

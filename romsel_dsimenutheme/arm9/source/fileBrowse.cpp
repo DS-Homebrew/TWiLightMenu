@@ -2456,7 +2456,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							proceedToLaunch = dsiBinariesMissingMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						}
 					}
-					if (proceedToLaunch && useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !dsModeForced && isHomebrew[CURPOS] == 0)
+					if (proceedToLaunch && (useBootstrapAnyway || ((!dsiFeatures() || bs().b4dsMode) && isDSiWare[CURPOS])) && bnrRomType[CURPOS] == 0 && !dsModeForced && isHomebrew[CURPOS] == 0)
 					{
 						proceedToLaunch = checkForCompatibleGame(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						if (proceedToLaunch && requiresDonorRom[CURPOS]) {
