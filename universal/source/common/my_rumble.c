@@ -34,7 +34,7 @@ bool my_isRumbleInserted(void) {
 //---------------------------------------------------------------------------------
 	//sysSetCartOwner(BUS_OWNER_ARM9);
 	// First, make sure DLDI is Slot-1
-	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+	if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || *(u16*)0x020000C0 != 0 || *(vu16*)0x08240000 == 1 || GBA_BUS[1] == 0xFFFF) {
 		return false;
 	}
 	// Then, check for 0x96 to see if it's a GBA game
@@ -50,7 +50,6 @@ bool my_isRumbleInserted(void) {
 			WARIOWARE_ENABLE = 8;
 			return true;
 		}
-		return false;
 	} else {
 		rumbleType = MY_RUMBLE;
 		for (int i = 0; i < 60000; i++) { // Run 60000 times to make sure it works
@@ -60,8 +59,8 @@ bool my_isRumbleInserted(void) {
 				}
 			}
 		}
-		return false;
 	}
+	return false;
 }
 //---------------------------------------------------------------------------------
 void my_setRumble(bool position) {
