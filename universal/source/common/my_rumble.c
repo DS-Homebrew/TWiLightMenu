@@ -24,6 +24,7 @@
 ---------------------------------------------------------------------------------*/
 #include <nds/ndstypes.h>
 #include <nds/memory.h>
+#include <nds/arm9/dldi.h>
 #include "common/my_rumble.h"
 
 static MY_RUMBLE_TYPE rumbleType;
@@ -32,7 +33,11 @@ static MY_RUMBLE_TYPE rumbleType;
 bool my_isRumbleInserted(void) {
 //---------------------------------------------------------------------------------
 	//sysSetCartOwner(BUS_OWNER_ARM9);
-	// First, check for 0x96 to see if it's a GBA game
+	// First, make sure DLDI is Slot-1
+	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+		return false;
+	}
+	// Then, check for 0x96 to see if it's a GBA game
 	if (GBA_HEADER.is96h == 0x96) {
 		//if it is a game, we check the game code
 		//to see if it is warioware twisted
@@ -48,9 +53,11 @@ bool my_isRumbleInserted(void) {
 		return false;
 	} else {
 		rumbleType = MY_RUMBLE;
-		for (int i = 0; i < 0x1000/2; i++) {
-			if (GBA_BUS[1+(i*2)] == 0xFFFD) {
-				return true;
+		for (int i = 0; i < 60000; i++) { // Run 60000 times to make sure it works
+			for (int p = 0; p < 0x1000/2; p++) {
+				if (GBA_BUS[1+(p*2)] == 0xFFFD) {
+					return true;
+				}
 			}
 		}
 		return false;

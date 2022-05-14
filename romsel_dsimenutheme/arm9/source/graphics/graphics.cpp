@@ -1057,11 +1057,15 @@ void vBlankHandler() {
 		}
 	} else if (startBorderZoomOut) {
 		if (useRumble) {
-			my_setRumble(rumblePos);
 			rumblePos = !rumblePos;
+			my_setRumble(rumblePos);
 		}
 		startBorderZoomAnimNum++;
 		if (startBorderZoomAnimSeq[startBorderZoomAnimNum] == 0) {
+			if (useRumble) {
+				rumblePos = false;
+				my_setRumble(rumblePos);
+			}
 			startBorderZoomAnimNum = 0;
 			startBorderZoomOut = false;
 		}

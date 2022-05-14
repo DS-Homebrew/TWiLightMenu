@@ -919,13 +919,12 @@ int main(int argc, char **argv) {
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
-	if (sys().isRegularDS()) {
-		useRumble = my_isRumbleInserted();
-	}
-
 	//logInit();
 	ms().loadSettings();
 	bs().loadSettings();
+	if (ms().theme == TWLSettings::EThemeDSi && sys().isRegularDS()) {
+		useRumble = my_isRumbleInserted();
+	}
 	//widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	tfn(); //
 	tc().loadConfig();
