@@ -2,6 +2,7 @@
 #define ASYNCHREADEXCLUDEMAP_H
 
 static const char asyncReadExcludeList[][4] = {
+	"CD6", // 7th Dragon
 	"ADM", // Animal Crossing: Wild World
 	"VAA", // Art Academy
 	"CBB", // Big Bang Mini
