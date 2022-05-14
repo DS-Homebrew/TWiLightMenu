@@ -27,6 +27,7 @@
 #include "common/flashcard.h"
 #include "common/nds_loader_arm9.h"
 #include "common/systemdetails.h"
+#include "common/my_rumble.h"
 #include "myDSiMode.h"
 #include "graphics/ThemeConfig.h"
 #include "graphics/ThemeTextures.h"
@@ -125,6 +126,7 @@ int currentBg = 0;
 bool showSTARTborder = false;
 bool buttonArrowTouched[2] = {false};
 bool scrollWindowTouched = false;
+bool useRumble = false;
 
 bool applaunchprep = false;
 
@@ -916,6 +918,10 @@ int main(int argc, char **argv) {
 	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
+
+	if (sys().isRegularDS()) {
+		useRumble = my_isRumbleInserted();
+	}
 
 	//logInit();
 	ms().loadSettings();

@@ -33,6 +33,7 @@
 #include <gl2d.h>
 #include "common/lzss.h"
 #include "common/systemdetails.h"
+#include "common/my_rumble.h"
 #include "myDSiMode.h"
 #include "date.h"
 #include "iconHandler.h"
@@ -99,9 +100,11 @@ float movingArrowYpos = 59;
 bool movingArrowYdirection = true;
 bool showMovingArrow = false;
 bool displayGameIcons = false;
+bool rumblePos = false;
 
 extern bool buttonArrowTouched[2];
 extern bool scrollWindowTouched;
+extern bool useRumble;
 
 extern bool applaunchprep;
 
@@ -1053,6 +1056,10 @@ void vBlankHandler() {
 			startBorderZoomAnimDelay = 0;
 		}
 	} else if (startBorderZoomOut) {
+		if (useRumble) {
+			my_setRumble(rumblePos);
+			rumblePos = !rumblePos;
+		}
 		startBorderZoomAnimNum++;
 		if (startBorderZoomAnimSeq[startBorderZoomAnimNum] == 0) {
 			startBorderZoomAnimNum = 0;
