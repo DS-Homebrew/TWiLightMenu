@@ -619,18 +619,20 @@ void perGameSettings (std::string filename) {
 	} else {
 		snprintf (gameTIDText, sizeof(gameTIDText), "%s-%s-%s", romUnitCode > 0 ? "TWL" : "NTR", game_TID, getRegionString(game_TID[3]));
 
-		int saveNoBak = perGameSettings_saveNo;
-		for (int i = 0; i < 10; i++) {
-			perGameSettings_saveNo = i;
-			if(isDSiWare) {
-				std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')));
-				savExists[i] = access((path + getPubExtension()).c_str(), F_OK) == 0 || access((path + getPrvExtension()).c_str(), F_OK) == 0;
-			} else {
-				std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getSavExtension());
-				savExists[i] = access(path.c_str(), F_OK) == 0;
+		if (showPerGameSettings) {
+			int saveNoBak = perGameSettings_saveNo;
+			for (int i = 0; i < 10; i++) {
+				perGameSettings_saveNo = i;
+				if(isDSiWare && (pubSize > 0 || prvSize > 0)) {
+					std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')));
+					savExists[i] = access((path + getPubExtension()).c_str(), F_OK) == 0 || access((path + getPrvExtension()).c_str(), F_OK) == 0;
+				} else {
+					std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getSavExtension());
+					savExists[i] = access(path.c_str(), F_OK) == 0;
+				}
 			}
+			perGameSettings_saveNo = saveNoBak;
 		}
-		perGameSettings_saveNo = saveNoBak;
 	}
 
 	char saveNoDisplay[16];
