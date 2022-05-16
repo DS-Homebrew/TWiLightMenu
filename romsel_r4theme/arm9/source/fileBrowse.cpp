@@ -420,6 +420,7 @@ bool donorRomMsg(void) {
 	}
 	int msgPage = 0;
 	bool pageLoaded = false;
+	bool secondPageViewed = false;
 	dialogboxHeight = 2;
 	showdialogbox = true;
 	int pressed = 0;
@@ -474,7 +475,9 @@ bool donorRomMsg(void) {
 				}
 				printSmallRightAlign(false, 256 - 16, 132, ">");
 			}
-			printSmallCentered(false, 132, dsModeAllowed ? "(Y) Launch in DS mode  \u2428 Back" : "\u2428 Back");
+			if (secondPageViewed) {
+				printSmallCentered(false, 132, dsModeAllowed ? "(Y) Launch in DS mode  \u2428 Back" : "\u2428 Back");
+			}
 			pageLoaded = true;
 		}
 		scanKeys();
@@ -485,17 +488,16 @@ bool donorRomMsg(void) {
 		if ((pressed & KEY_LEFT) && msgPage != 0) {
 			msgPage = 0;
 			pageLoaded = false;
-		} else if ((pressed & KEY_RIGHT) && msgPage != 1) {
+		} else if (((pressed & KEY_RIGHT) || (((pressed & KEY_B) || (pressed & KEY_A)) && !secondPageViewed)) && msgPage != 1) {
 			msgPage = 1;
+			secondPageViewed = true;
 			pageLoaded = false;
-		}
-		if (dsModeAllowed && (pressed & KEY_Y)) {
+		} else if (dsModeAllowed && (pressed & KEY_Y)) {
 			dsModeForced = true;
 			proceedToLaunch = true;
 			pressed = 0;
 			break;
-		}
-		if (pressed & KEY_B) {
+		} else if ((pressed & KEY_B) && secondPageViewed) {
 			proceedToLaunch = false;
 			pressed = 0;
 			break;
