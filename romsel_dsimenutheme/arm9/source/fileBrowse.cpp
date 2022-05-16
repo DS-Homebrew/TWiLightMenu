@@ -26,6 +26,7 @@
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
 #include "incompatibleGameMap.h"
+#include "compatibleDSiWareMap.h"
 #include "gbaswitch.h"
 
 #include "common/twlmenusettings.h"

@@ -51,6 +51,7 @@
 #include "perGameSettings.h"
 #include "errorScreen.h"
 #include "incompatibleGameMap.h"
+#include "compatibleDSiWareMap.h"
 
 #include "gbaswitch.h"
 #include "myDSiMode.h"
