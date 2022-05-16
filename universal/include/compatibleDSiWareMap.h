@@ -51,8 +51,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KT9", // Kung Fu Dragon
 	"KLK", // Lola's Alphabet Train
 	"KJO", // Magnetic Joe
-	"KMG", // Mighty Flip Champs! (R)
-	"KWY", // Mighty Milky Way (R)
+	"KMG", // Mighty Flip Champs!
+	"KWY", // Mighty Milky Way
 	"KXB", // Monster Buster Club
 	"KMB", // Mr. Brain
 	"K2D", // Nintendo DSi + Internet
@@ -69,7 +69,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KLV", // Rabi Laby 2
 	"KRT", // Robot Rescue
 	"KD6", // Rock-n-Roll Domo
-	"KS3", // Shantae: Risky's Revenge (R)
+	"KS3", // Shantae: Risky's Revenge
 	"KA6", // Space Ace
 	"K4D", // Sudoku
 	"K4F", // Sudoku 4Pockets
