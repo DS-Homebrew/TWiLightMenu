@@ -544,17 +544,9 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			if (ret != 1) {
 				fclose(fp);
 
-				FILE *bannerFile = fopen("nitro:/noinfo.bnr", "rb");
-				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
-				fclose(bannerFile);
-
-				cachedTitle[num] = (char16_t*)&ndsBanner.titles[ms().getGameLanguage()];
-
-				// restore png icon
-				if (customIcon[num] == 1) {
-					memcpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
-					memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
-				}
+				// If no custom icon, display as unknown
+				if (customIcon[num] == 0)
+					customIcon[num] = -1;
 
 				return;
 			}
