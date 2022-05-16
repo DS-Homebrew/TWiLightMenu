@@ -158,6 +158,7 @@ int startBorderZoomAnimDelay = 0;
 
 bool showdialogbox = false;
 bool dboxInFrame = false;
+bool dboxStopped = true;
 bool dbox_showIcon = false;
 bool dbox_selectMenu = false;
 float dbox_movespeed = 22;
@@ -458,9 +459,14 @@ void vBlankHandler() {
 	if (showdialogbox) {
 		// Dialogbox moving into view...
 		dboxInFrame = true;
+		if (ms().theme == TWLSettings::ETheme3DS) {
+			dbox_movespeed = 0;
+			dbox_Ypos = 0;
+		}
 		if (dbox_movespeed <= 1) {
 			if (dbox_Ypos >= 0) {
 				// dbox stopped
+				dboxStopped = true;
 				dbox_movespeed = 0;
 				dbox_Ypos = 0;
 				bottomScreenBrightness = 127;
@@ -471,6 +477,7 @@ void vBlankHandler() {
 			}
 		} else {
 			// Dbox decel
+			dboxStopped = false;
 			dbox_movespeed -= 1.25;
 			bottomScreenBrightness -= 7;
 			if (bottomScreenBrightness < 127) {
@@ -490,8 +497,9 @@ void vBlankHandler() {
 		dbox_Ypos += dbox_movespeed;
 	} else {
 		// Dialogbox moving down...
-		if (dbox_Ypos <= -192 || dbox_Ypos >= 192) {
+		if (ms().theme == TWLSettings::ETheme3DS || dbox_Ypos <= -192 || dbox_Ypos >= 192) {
 			dboxInFrame = false;
+			dboxStopped = false;
 			dbox_movespeed = 22;
 			dbox_Ypos = -192;
 			bottomScreenBrightness = 255;

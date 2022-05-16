@@ -70,6 +70,7 @@ extern touchPosition touch;
 
 extern bool showdialogbox;
 extern bool dboxInFrame;
+extern bool dboxStopped;
 extern bool dbox_showIcon;
 extern bool dbox_selectMenu;
 
@@ -833,7 +834,7 @@ void mdRomTooBig(void) {
 		while (!screenFadedIn()) { bgOperations(true); }
 		snd().playWrong();
 	} else {
-		for (int i = 0; i < 30; i++) { bgOperations(true); }
+		while (!dboxStopped) { bgOperations(true); }
 	}
 	printSmall(false, 0, 64, STR_MD_ROM_TOO_BIG, Alignment::center, FontPalette::dialog);
 	printSmall(false, 0, 160, STR_A_OK, Alignment::center, FontPalette::dialog);
@@ -1209,7 +1210,7 @@ bool checkForCompatibleGame(const char *filename) {
 		dbox_showIcon = true;
 		snd().playWrong();
 	} else {
-		for (int i = 0; i < 30; i++) { bgOperations(true); }
+		while (!dboxStopped) { bgOperations(true); }
 	}
 	titleUpdate(false, filename, CURPOS);
 	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG, Alignment::center, FontPalette::dialog);
@@ -1313,7 +1314,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		dbox_showIcon = true;
 		snd().playWrong();
 	} else {
-		for (int i = 0; i < 30; i++) { bgOperations(true); }
+		while (!dboxStopped) { bgOperations(true); }
 	}
 	titleUpdate(false, filename.c_str(), CURPOS);
 	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : 102);
@@ -1519,7 +1520,7 @@ bool selectMenu(void) {
 		while (!screenFadedIn()) { bgOperations(true); }
 		dbox_selectMenu = true;
 	} else {
-		for (int i = 0; i < 30; i++) { bgOperations(true); }
+		while (!dboxStopped) { bgOperations(true); }
 	}
 	int pressed = 0;
 	while (1) {
@@ -2893,7 +2894,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					while (!screenFadedIn()) { bgOperations(true); }
 					dbox_showIcon = true;
 				} else {
-					for (int i = 0; i < 30; i++) { bgOperations(true); }
+					while (!dboxStopped) { bgOperations(true); }
 				}
 				snprintf(fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS + 1) + PAGENUM * 40,
 					 file_count);

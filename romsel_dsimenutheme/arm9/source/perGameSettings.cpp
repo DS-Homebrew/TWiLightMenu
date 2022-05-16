@@ -56,6 +56,7 @@ std::string SDKnumbertext;
 
 extern bool fadeType;
 extern bool showdialogbox;
+extern bool dboxStopped;
 extern bool dbox_showIcon;
 
 bool perGameSettingsChanged = false;
@@ -682,7 +683,7 @@ void perGameSettings (std::string filename) {
 		while (!screenFadedIn()) { bgOperations(true); }
 		dbox_showIcon = true;
 	} else {
-		for (int i = 0; i < 30; i++) { bgOperations(true); }
+		while (!dboxStopped) { bgOperations(true); }
 	}
 
 	setAsDonorRom = STR_SET_AS_DONOR_ROM;
