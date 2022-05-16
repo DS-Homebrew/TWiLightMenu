@@ -1315,19 +1315,19 @@ bool dsiWareInDSModeMsg(std::string filename) {
 		if (!pageLoaded) {
 			clearText();
 			titleUpdate(false, filename.c_str(), CURPOS);
-			int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : 102);
+			int yPos = 102;
 			switch (msgPage) {
 				case 0:
 					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_DSIWARE_DS_MODE_P1) - smallFontHeight()) / 2), STR_DSIWARE_DS_MODE_P1, Alignment::center, FontPalette::dialog);
-					printSmall(false, 256 - 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), ">", Alignment::right, FontPalette::dialog);
+					printSmall(false, 256 - 12, 160, ">", Alignment::right, FontPalette::dialog);
 					break;
 				case 1:
 					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_DSIWARE_DS_MODE_P2) - smallFontHeight()) / 2), STR_DSIWARE_DS_MODE_P2, Alignment::center, FontPalette::dialog);
-					printSmall(false, 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), "<", Alignment::left, FontPalette::dialog);
+					printSmall(false, 12, 160, "<", Alignment::left, FontPalette::dialog);
 					break;
 			}
 			if (secondPageViewed) {
-				printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
+				printSmall(false, 0, 160, STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
 			}
 			updateText(false);
 			pageLoaded = true;
