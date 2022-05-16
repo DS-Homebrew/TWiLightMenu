@@ -623,6 +623,63 @@ bool gameCompatibleMemoryPit(const char* filename) {
 	return true;
 }
 
+bool dsiWareInDSModeMsg(void) {
+	if (ms().dontShowDSiWareInDSModeWarning) {
+		return true;
+	}
+
+	bool proceedToLaunch = true;
+
+	if (ms().macroMode) {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
+	dialogboxHeight = 4;
+	showdialogbox = true;
+	printLargeCentered(false, 74, "Compatibility Warning");
+	printSmallCentered(false, 90, "You are attempting to launch a DSiWare");
+	printSmallCentered(false, 102, "title in DS mode on a DSi or 3DS system.");
+	printSmallCentered(false, 114, "For increased compatibility, as well as");
+	printSmallCentered(false, 126, "the ability to save data, please relaunch");
+	printSmallCentered(false, 138, "TWLMenu++ from the console's SD Card slot.");
+	printSmallCentered(false, 154, "\u2428 Return   \u2427 Launch");
+
+	int pressed = 0;
+	while (1) {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		snd().updateStream();
+		swiWaitForVBlank();
+		if (pressed & KEY_A) {
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_B) {
+			proceedToLaunch = false;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_X) {
+			ms().dontShowDSiWareInDSModeWarning = true;
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+	}
+	clearText();
+	showdialogbox = false;
+	dialogboxHeight = 0;
+
+	if (ms().macroMode) {
+		lcdMainOnTop();
+		lcdSwapped = false;
+	}
+
+	return proceedToLaunch;
+}
+
 bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 	bool showMsg = false;
 	int msgId = 0;
@@ -665,7 +722,7 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
 			break;
 	}
-	printSmallCentered(false, 144, "\u2428 Return   \u2427 Launch");
+	printSmallCentered(false, 142, "\u2428 Return   \u2427 Launch");
 
 	int pressed = 0;
 	while (1) {
@@ -1011,7 +1068,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 					if (proceedToLaunch && isDSiWare && ((!dsiFeatures() && !sys().dsDebugRam()) || bs().b4dsMode == 1) && ms().secondaryDevice)
 					{
-						proceedToLaunch = dsiWareRAMLimitMsg(game_TID, dirContents.at(fileOffset).name);
+						if (!sys().isRegularDS()) {
+							proceedToLaunch = dsiWareInDSModeMsg();
+						}
+						if (proceedToLaunch) {
+							proceedToLaunch = dsiWareRAMLimitMsg(game_TID, dirContents.at(fileOffset).name);
+						}
 					}
 				}
 				else if (isHomebrew == 1)

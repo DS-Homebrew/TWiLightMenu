@@ -934,7 +934,7 @@ void ramDiskMsg(const char *filename) {
 	if (ms().theme != TWLSettings::EThemeSaturn) {
 		dbox_showIcon = true;
 		showdialogbox = true;
-		for (int i = 0; i < 30; i++) {
+		while (!dboxStopped) {
 			bgOperations(true);
 		}
 		titleUpdate(false, filename, CURPOS);
@@ -980,7 +980,7 @@ bool dsiBinariesMissingMsg(const char *filename) {
 	if (ms().theme != TWLSettings::EThemeSaturn) {
 		dbox_showIcon = true;
 		showdialogbox = true;
-		for (int i = 0; i < 30; i++) {
+		while (!dboxStopped) {
 			bgOperations(true);
 		}
 		titleUpdate(false, filename, CURPOS);
@@ -1011,6 +1011,7 @@ bool dsiBinariesMissingMsg(const char *filename) {
 			break;
 		}
 		if (pressed & KEY_B) {
+			snd().playBack();
 			proceedToLaunch = false;
 			pressed = 0;
 			break;
@@ -1041,7 +1042,7 @@ bool donorRomMsg(const char *filename) {
 	if (ms().theme != TWLSettings::EThemeSaturn) {
 		dbox_showIcon = true;
 		showdialogbox = true;
-		for (int i = 0; i < 30; i++) {
+		while (!dboxStopped) {
 			bgOperations(true);
 		}
 		dirContName = filename;
@@ -1057,6 +1058,7 @@ bool donorRomMsg(const char *filename) {
 	}
 	int msgPage = 0;
 	bool pageLoaded = false;
+	bool secondPageViewed = false;
 	bool dsModeAllowed = ((requiresDonorRom[CURPOS] == 52 || requiresDonorRom[CURPOS] == 53) && !isDSiWare[CURPOS]);
 	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 8 : 96);
 	int pressed = 0;
@@ -1104,7 +1106,9 @@ bool donorRomMsg(const char *filename) {
 				}
 				printSmall(false, 256 - 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), ">", Alignment::right, FontPalette::dialog);
 			}
-			printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), dsModeAllowed ? STR_Y_DS_MODE_B_BACK : STR_B_BACK, Alignment::center, FontPalette::dialog);
+			if (secondPageViewed) {
+				printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), dsModeAllowed ? STR_Y_DS_MODE_B_BACK : STR_B_BACK, Alignment::center, FontPalette::dialog);
+			}
 			updateText(false);
 			pageLoaded = true;
 		}
@@ -1115,18 +1119,18 @@ bool donorRomMsg(const char *filename) {
 			snd().playSelect();
 			msgPage = 0;
 			pageLoaded = false;
-		} else if ((pressed & KEY_RIGHT) && msgPage != 1) {
+		} else if (((pressed & KEY_RIGHT) || (((pressed & KEY_B) || (pressed & KEY_A)) && !secondPageViewed)) && msgPage != 1) {
 			snd().playSelect();
 			msgPage = 1;
+			secondPageViewed = true;
 			pageLoaded = false;
-		}
-		if (dsModeAllowed && (pressed & KEY_Y)) {
+		} else if (dsModeAllowed && (pressed & KEY_Y)) {
 			dsModeForced = true;
 			proceedToLaunch = true;
 			pressed = 0;
 			break;
-		}
-		if (pressed & KEY_B) {
+		} else if ((pressed & KEY_B) && secondPageViewed) {
+			snd().playBack();
 			proceedToLaunch = false;
 			pressed = 0;
 			break;
@@ -1272,6 +1276,118 @@ bool gameCompatibleMemoryPit(void) {
 		}
 	}
 	return true;
+}
+
+bool dsiWareInDSModeMsg(std::string filename) {
+	if (ms().dontShowDSiWareInDSModeWarning) {
+		return true;
+	}
+
+	bool proceedToLaunch = true;
+
+	if (ms().theme == TWLSettings::EThemeSaturn) {
+		snd().playStartup();
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			bgOperations(true);
+		}
+		currentBg = 1;
+		displayGameIcons = false;
+		fadeType = true;
+	} else {
+		dbox_showIcon = true;
+		showdialogbox = true;
+	}
+	clearText();
+	updateText(false);
+	if (ms().theme == TWLSettings::EThemeSaturn) {
+		while (!screenFadedIn()) { bgOperations(true); }
+		dbox_showIcon = true;
+		snd().playWrong();
+	} else {
+		while (!dboxStopped) { bgOperations(true); }
+	}
+	int msgPage = 0;
+	bool pageLoaded = false;
+	bool secondPageViewed = false;
+	int pressed = 0;
+	while (1) {
+		if (!pageLoaded) {
+			clearText();
+			titleUpdate(false, filename.c_str(), CURPOS);
+			int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : 102);
+			switch (msgPage) {
+				case 0:
+					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_DSIWARE_DS_MODE_P1) - smallFontHeight()) / 2), STR_DSIWARE_DS_MODE_P1, Alignment::center, FontPalette::dialog);
+					printSmall(false, 256 - 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), ">", Alignment::right, FontPalette::dialog);
+					break;
+				case 1:
+					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_DSIWARE_DS_MODE_P2) - smallFontHeight()) / 2), STR_DSIWARE_DS_MODE_P2, Alignment::center, FontPalette::dialog);
+					printSmall(false, 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), "<", Alignment::left, FontPalette::dialog);
+					break;
+			}
+			if (secondPageViewed) {
+				printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
+			}
+			updateText(false);
+			pageLoaded = true;
+		}
+		scanKeys();
+		pressed = keysDown();
+		bgOperations(true);
+		if ((pressed & KEY_LEFT) && msgPage != 0) {
+			snd().playSelect();
+			msgPage = 0;
+			pageLoaded = false;
+		} else if (((pressed & KEY_RIGHT) || (((pressed & KEY_B) || (pressed & KEY_A)) && !secondPageViewed)) && msgPage != 1) {
+			snd().playSelect();
+			msgPage = 1;
+			secondPageViewed = true;
+			pageLoaded = false;
+		} else if ((pressed & KEY_A) && secondPageViewed) {
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		} else if ((pressed & KEY_B) && secondPageViewed) {
+			snd().playBack();
+			proceedToLaunch = false;
+			pressed = 0;
+			break;
+		} else if (pressed & KEY_X) {
+			ms().dontShowDSiWareInDSModeWarning = true;
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+	}
+	showdialogbox = false;
+	if (ms().theme == TWLSettings::EThemeHBL) {
+		dbox_showIcon = false;
+	}
+	if (ms().theme == TWLSettings::EThemeSaturn) {
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			bgOperations(true);
+		}
+		clearText();
+		updateText(false);
+		currentBg = 0;
+		displayGameIcons = true;
+		fadeType = true;
+		snd().playStartup();
+		if (proceedToLaunch) {
+			while (!screenFadedIn()) { bgOperations(true); }
+		}
+	} else {
+		clearText();
+		updateText(false);
+		for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
+			bgOperations(true);
+		}
+	}
+	dbox_showIcon = false;
+
+	return proceedToLaunch;
 }
 
 bool dsiWareRAMLimitMsg(std::string filename) {
@@ -2498,7 +2614,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							fclose(f_nds_file);
 						}
 						if (proceedToLaunch && isDSiWare[CURPOS] && ((!dsiFeatures() && !sys().dsDebugRam()) || bs().b4dsMode == 1) && ms().secondaryDevice) {
-							proceedToLaunch = dsiWareRAMLimitMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+							if (!sys().isRegularDS()) {
+								proceedToLaunch = dsiWareInDSModeMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+							}
+							if (proceedToLaunch) {
+								proceedToLaunch = dsiWareRAMLimitMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+							}
 						}
 					} else if (isHomebrew[CURPOS] == 1) {
 						loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
@@ -2592,7 +2713,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							clearText();
 							updateText(false);
 							for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
-								bgOperations(true);;
+								bgOperations(true);
 							}
 						}
 						dbox_showIcon = false;
@@ -2618,10 +2739,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						clearText();
 						updateText(false);
 						if (ms().theme == TWLSettings::EThemeSaturn) {
-							while (!screenFadedIn()) { swiWaitForVBlank(); }
+							while (!screenFadedIn()) { bgOperations(true); }
 							snd().playWrong();
 						} else {
-							for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+							while (!dboxStopped) { bgOperations(true); }
 						}
 
 						printSmall(false, 0, 40, STR_BAD_CLUSTER_SIZE, Alignment::center, FontPalette::dialog);

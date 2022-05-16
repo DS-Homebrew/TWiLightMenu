@@ -333,6 +333,7 @@ public:
 	bool slot1SCFGUnlock;
 	bool slot1TouchMode;
 	int limitedMode;
+	bool dontShowDSiWareInDSModeWarning;
 	TDSiWareBooter dsiWareBooter;
 	bool dsiWareToSD;
 	bool smsGgInRam;
