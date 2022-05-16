@@ -43,7 +43,7 @@ bool my_isRumbleInserted(void) {
 		//to see if it is WarioWare Twisted, Drill Dozer, or Pokemon Pinball: Ruby & Sapphire
 		if (((GBA_HEADER.gamecode[0] == 'R') && (GBA_HEADER.gamecode[1] == 'Z') && (GBA_HEADER.gamecode[2] == 'W'))
 		  || ((GBA_HEADER.gamecode[0] == 'V') && (GBA_HEADER.gamecode[1] == '4') && (GBA_HEADER.gamecode[2] == '9'))
-		  || ((GBA_HEADER.gamecode[0] == 'V') && (GBA_HEADER.gamecode[1] == 'P') && (GBA_HEADER.gamecode[2] == 'P')))
+		  || ((GBA_HEADER.gamecode[0] == 'B') && (GBA_HEADER.gamecode[1] == 'P') && (GBA_HEADER.gamecode[2] == 'P')))
 		{
 			rumbleType = MY_WARIOWARE;
 			WARIOWARE_ENABLE = 8;
