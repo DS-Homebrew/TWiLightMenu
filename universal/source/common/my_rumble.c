@@ -37,17 +37,11 @@ bool my_isRumbleInserted(void) {
 	if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || *(u16*)0x020000C0 != 0 || *(vu16*)0x08240000 == 1 || GBA_BUS[0] == 0xFFFE || GBA_BUS[1] == 0xFFFF) {
 		return false;
 	}
-	// Then, check for 0x96 to see if it's a GBA game
+	// Then, check for 0x96 to see if it's a GBA game or flashcart
 	if (GBA_HEADER.is96h == 0x96) {
-		//if it is a game, we check the game code
-		//to see if it is WarioWare: Twisted, or Drill Dozer
-		if (((GBA_HEADER.gamecode[0] == 'R') && (GBA_HEADER.gamecode[1] == 'Z') && (GBA_HEADER.gamecode[2] == 'W'))
-		 || ((GBA_HEADER.gamecode[0] == 'V') && (GBA_HEADER.gamecode[1] == '4') && (GBA_HEADER.gamecode[2] == '9')))
-		{
-			rumbleType = MY_WARIOWARE;
-			WARIOWARE_ENABLE = 8;
-			return true;
-		}
+		rumbleType = MY_WARIOWARE;
+		WARIOWARE_ENABLE = 8;
+		return true;
 	} else {
 		rumbleType = MY_RUMBLE;
 		for (int i = 0; i < 10000; i++) { // Run 10000 times to make sure it works
