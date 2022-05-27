@@ -798,19 +798,16 @@ void titleUpdate(bool isDir, std::string_view name, int num) {
 	if (isDir) {
 		if (theme_showdialogbox) {
 			writeDialogTitleFolder(splitLongDialogTitle(name == ".." ? STR_BACK : name));
-		}
-		else {
+		} else {
 			writeBannerText(name == ".." ? STR_BACK : name);
 		}
 	} else if (infoFound[num] || extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		// or a file with custom banner text
 		if (theme_showdialogbox) {
-			writeDialogTitle(cachedTitle[num]);
-		} else if (infoFound[num]) {
-			writeBannerText(cachedTitle[num]);
+			infoFound[num] ? writeDialogTitle(cachedTitle[num]) : writeDialogTitle(u"???");
 		} else {
-			writeBannerText(name);
+			infoFound[num] ? writeBannerText(cachedTitle[num]) : writeBannerText(name);
 		}
 	} else {
 		if (theme_showdialogbox) {
