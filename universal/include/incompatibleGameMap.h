@@ -37,9 +37,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KFZ", // Faceez
 	"KGU", // Flipnote Studio
 	"KHJ", // Hidden Photo (DSiWare)
-	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"HNG", // Nintendo DSi Browser
-	"KPS", // Phantasy Star 0 Mini
 	"KHD", // Sparkle Snapshots
 	"KDY", // Starship Defense
 	"KDZ", // Trajectile
