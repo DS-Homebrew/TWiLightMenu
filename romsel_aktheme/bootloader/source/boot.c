@@ -180,7 +180,7 @@ Modified by Chishm:
 --------------------------------------------------------------------------*/
 void resetMemory_ARM7 (void)
 {
-	int i;
+	int i, reg;
 	u8 settings1, settings2;
 	u32 settingsOffset = 0;
 
@@ -194,6 +194,13 @@ void resetMemory_ARM7 (void)
 	}
 
 	REG_SOUNDCNT = 0;
+	REG_SNDCAP0CNT = 0;
+	REG_SNDCAP1CNT = 0;
+
+	REG_SNDCAP0DAD = 0;
+	REG_SNDCAP0LEN = 0;
+	REG_SNDCAP1DAD = 0;
+	REG_SNDCAP1LEN = 0;
 
 	//clear out ARM7 DMA channels and timers
 	for (i=0; i<4; i++) {
@@ -202,6 +209,7 @@ void resetMemory_ARM7 (void)
 		DMA_DEST(i) = 0;
 		TIMER_CR(i) = 0;
 		TIMER_DATA(i) = 0;
+		for(reg=0; reg<0x1c; reg+=4)*((vu32*)(0x04004104 + ((i*0x1c)+reg))) = 0;//Reset NDMA.
 	}
 
 	// Clear out FIFO

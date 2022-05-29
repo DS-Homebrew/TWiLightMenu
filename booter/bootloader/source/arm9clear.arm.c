@@ -4,6 +4,7 @@
 #include <nds/ndstypes.h>
 #include <nds/dma.h>
 #include <nds/system.h>
+#include <nds/ipc.h>
 #include <nds/interrupts.h>
 #include <nds/timers.h>
 
@@ -22,7 +23,7 @@ Modified by Chishm:
 --------------------------------------------------------------------------*/
 void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)) resetMemory2_ARM9 (void) 
 {
- 	register int i;
+ 	register int i, reg;
   
 	//clear out ARM9 DMA channels
 	for (i=0; i<4; i++) {
@@ -31,7 +32,13 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 		DMA_DEST(i) = 0;
 		TIMER_CR(i) = 0;
 		TIMER_DATA(i) = 0;
+		for(reg=0; reg<0x1c; reg+=4)*((vu32*)(0x04004104 + ((i*0x1c)+reg))) = 0;//Reset NDMA.
 	}
+
+	// Clear out FIFO
+	REG_IPC_SYNC = 0;
+	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
+	REG_IPC_FIFO_CR = 0;
 
 	VRAM_CR = (VRAM_CR & 0xffff0000) | 0x00008080 ;
 	
