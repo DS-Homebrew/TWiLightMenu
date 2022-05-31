@@ -1632,7 +1632,7 @@ int main(int argc, char **argv) {
 			}
 
 			if (pressed & KEY_LEFT) {
-				if (cursorPosition == 2 || (cursorPosition == 5 && isDSiMode() && ms().consoleModel < 2)
+				if (cursorPosition == 2 || (cursorPosition == 5 && (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2)))
 				|| cursorPosition == 6) {
 					cursorPosition--;
 					mmEffectEx(&snd_select);
@@ -1660,7 +1660,7 @@ int main(int argc, char **argv) {
 					cursorPosition = 3;
 					menuButtonPressed = true;
 				} else if (touch.px >= 10 && touch.px <= 20 && touch.py >= 175 && touch.py <= 185
-							&& isDSiMode() && ms().consoleModel < 2)
+							&& (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2)))
 				{
 					cursorPosition = 4;
 					menuButtonPressed = true;
