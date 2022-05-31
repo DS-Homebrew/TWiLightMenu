@@ -888,10 +888,23 @@ void customSleep() {
 	snd().stopStream();
 	fadeSleep = true;
 	fadeType = false;
+	while (!screenFadedOut()) {
+		swiWaitForVBlank();
+	}
+	if (!ms().macroMode) {
+		powerOff(PM_BACKLIGHT_TOP);
+	}
+	powerOff(PM_BACKLIGHT_BOTTOM);
+	irqDisable(IRQ_VBLANK & IRQ_VCOUNT);
 	while (keysHeld() & KEY_LID) {
 		scanKeys();
 		swiWaitForVBlank();
 	}
+	irqEnable(IRQ_VBLANK & IRQ_VCOUNT);
+	if (!ms().macroMode) {
+		powerOn(PM_BACKLIGHT_TOP);
+	}
+	powerOn(PM_BACKLIGHT_BOTTOM);
 	fadeType = true;
 	snd().beginStream();
 	while (!screenFadedIn()) {

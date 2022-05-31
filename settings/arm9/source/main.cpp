@@ -744,10 +744,23 @@ inline bool between_incl(int x, int a, int b)
 void customSleep() {
 	*(int*)0x02003004 = 1; // Fade out sound
 	fadeType = false;
+	while (!screenFadedOut()) {
+		swiWaitForVBlank();
+	}
+	if (!currentMacroMode) {
+		powerOff(PM_BACKLIGHT_TOP);
+	}
+	powerOff(PM_BACKLIGHT_BOTTOM);
+	irqDisable(IRQ_VBLANK & IRQ_VCOUNT);
 	while (keysHeld() & KEY_LID) {
 		scanKeys();
 		swiWaitForVBlank();
 	}
+	irqEnable(IRQ_VBLANK & IRQ_VCOUNT);
+	if (!currentMacroMode) {
+		powerOn(PM_BACKLIGHT_TOP);
+	}
+	powerOn(PM_BACKLIGHT_BOTTOM);
 	fadeType = true;
 	*(int*)0x02003004 = 2; // Fade in sound
 }
