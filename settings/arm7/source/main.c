@@ -63,6 +63,15 @@ void soundFadeOut() {
 }
 
 //---------------------------------------------------------------------------------
+void soundFadeIn() {
+//---------------------------------------------------------------------------------
+	soundVolume += 3;
+	if (soundVolume > 127) {
+		soundVolume = 127;
+	}
+}
+
+//---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 	nocashMessage("ARM7 ReturnToDSiMenu");
@@ -80,7 +89,10 @@ void ReturntoDSiMenu() {
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
-	if(fifoCheckValue32(FIFO_USER_01)) {
+	u32 fifo1Value = fifoCheckValue32(FIFO_USER_01);
+	if (fifo1Value == 2) {
+		soundFadeIn();
+	} else if (fifo1Value == 1) {
 		soundFadeOut();
 	} else {
 		soundVolume = 127;

@@ -234,6 +234,7 @@ void loadROMselect() {
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 	defaultExceptionHandler();
+	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
 	sys().initFilesystem("/_nds/TWiLightMenu/manual.srldr");
 	sys().initArm7RegStatuses();
 

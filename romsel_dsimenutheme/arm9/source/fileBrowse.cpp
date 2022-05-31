@@ -2086,10 +2086,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
 				buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
 				bgOperations(true);
-				/*if (pressed & KEY_LID) {
-					extern void customSleep();
-					customSleep();
-				}*/
 				/*if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
 				}*/

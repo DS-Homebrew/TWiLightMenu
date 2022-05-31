@@ -1716,6 +1716,7 @@ int main(int argc, char **argv)
 	*fake_heap_end = 0;*/
 
 	defaultExceptionHandler();
+	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
 	sys().initFilesystem("/_nds/TWiLightMenu/main.srldr");
 	sys().initArm7RegStatuses();
 	ms();

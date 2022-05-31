@@ -19,6 +19,9 @@
 ------------------------------------------------------------------*/
 #pragma once
 
+bool screenFadedIn(void);
+bool screenFadedOut(void);
+
 void graphicsInit();
 
 void clearScroller(void);

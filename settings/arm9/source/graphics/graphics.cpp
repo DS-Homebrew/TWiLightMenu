@@ -22,6 +22,10 @@ int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
 bool renderFrame = true;
 
+bool screenFadedIn(void) { return (screenBrightness == 0); }
+
+bool screenFadedOut(void) { return (screenBrightness > 24); }
+
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
 	u16 mode = 1 << 14;

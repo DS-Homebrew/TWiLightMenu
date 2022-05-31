@@ -741,6 +741,21 @@ inline bool between_incl(int x, int a, int b)
 	return (a <= x && x >= b);
 }
 
+void customSleep() {
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	fadeType = false;
+	while (keysHeld() & KEY_LID) {
+		scanKeys();
+		swiWaitForVBlank();
+	}
+	fadeType = true;
+	fifoSendValue32(FIFO_USER_01, 2); // Fade in sound
+	while (!screenFadedIn()) {
+		swiWaitForVBlank();
+	}
+	fifoSendValue32(FIFO_USER_01, 0);
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
@@ -748,10 +763,11 @@ int main(int argc, char **argv)
 
 //#pragma region init
 
+	defaultExceptionHandler();
+	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
 	sys().initFilesystem("/_nds/TWiLightMenu/settings.srldr");
 	sys().initArm7RegStatuses();
 	ms();
-	defaultExceptionHandler();
 
 	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
@@ -1361,6 +1377,9 @@ int main(int argc, char **argv)
 			}
 			scanKeys();
 			pressed = keysDownRepeat();
+			if (pressed & KEY_LID) {
+				customSleep();
+			}
 			touchRead(&touch);
 			swiWaitForVBlank();
 		} while (!pressed);
