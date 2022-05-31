@@ -85,7 +85,7 @@ void changeBacklightLevel() {
 		if (backlightLevel > 3) {
 			backlightLevel = 0;
 		}
-		u32 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+		u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 		if(pmBacklight & 0xF0) // DS Lite
 			writePowerManagement(PM_BACKLIGHT_LEVEL, (pmBacklight & ~3) | backlightLevel);
 		writePowerManagement(PM_CONTROL_REG, readPowerManagement(PM_CONTROL_REG) | 0xC);
@@ -231,7 +231,7 @@ int main() {
 		*(vu32*)0x037C0000 = wordBak;
 	}
 
-	u8 readCommand = readPowerManagement(4);
+	u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 
 	// 01: Fade Out
 	// 02: Return
@@ -247,13 +247,12 @@ int main() {
 
 	u8 initStatus = (BIT_SET(!!(SNDEXCNT), SNDEXCNT_BIT)
 									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT)
-									| BIT_SET(!!(readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7)), DSLITE_BIT));
+									| BIT_SET(!!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7)), DSLITE_BIT));
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
 
 	if (SNDEXCNT == 0) {
-		u32 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 		if(pmBacklight & 0xF0) // DS Lite
 			backlightLevel = ((pmBacklight & 3) + ((readPowerManagement(PM_CONTROL_REG) & 0xC) != 0)) << 8; // Brightness
 	}
@@ -267,6 +266,9 @@ int main() {
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
+		}
+		if (SNDEXCNT == 0) {
+			*(int*)0x02003000 = backlightLevel;
 		}
 		if (isDSiMode() && *(u8*)(0x02FFFD00) != 0xFF) {
 			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x02FFFD00));

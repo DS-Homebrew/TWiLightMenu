@@ -653,12 +653,22 @@ void lastRunROM()
 			 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)) {
+				if (sys().isDSLite()) {
+					CIniFile backlightini("fat:/_wfwd/backlight.ini");
+					backlightini.SetInt("brightness", "brightness", *(int*)0x02003000);
+					backlightini.SaveIniFile("fat:/_wfwd/backlight.ini");
+				}
 				CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 				fcPath = replaceAll(ms().romPath[ms().previousUsedDevice], "fat:/", woodfat);
 				fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 				fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 				err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 			} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
+				if (sys().isDSLite()) {
+					CIniFile backlightini("fat:/_afwd/backlight.ini");
+					backlightini.SetInt("brightness", "brightness", *(int*)0x02003000);
+					backlightini.SaveIniFile("fat:/_afwd/backlight.ini");
+				}
 				CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
 				fcPath = replaceAll(ms().romPath[ms().previousUsedDevice], "fat:/", woodfat);
 				fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
