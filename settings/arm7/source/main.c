@@ -89,10 +89,9 @@ void ReturntoDSiMenu() {
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
-	u32 fifo1Value = fifoCheckValue32(FIFO_USER_01);
-	if (fifo1Value == 2) {
+	if (*(int*)0x02003004 == 2) {
 		soundFadeIn();
-	} else if (fifo1Value == 1) {
+	} else if (*(int*)0x02003004 == 1) {
 		soundFadeOut();
 	} else {
 		soundVolume = 127;

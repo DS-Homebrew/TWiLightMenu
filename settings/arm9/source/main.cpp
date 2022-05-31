@@ -133,11 +133,11 @@ bool extention(const std::string& filename, const char* ext) {
 
 void launchSystemSettings()
 {
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	*(int*)0x02003004 = 1; // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	snd().stopBgMusic();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
+	*(int*)0x02003004 = 0; // Cancel sound fade out
 	dsiLaunchSystemSettings();
 
 	for (int i = 0; i < 15; i++)
@@ -529,11 +529,11 @@ void begin_update(int opt)
 	}
 
 	fadeType = false;
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	*(int*)0x02003004 = 1; // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	snd().stopBgMusic();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
+	*(int*)0x02003004 = 0; // Cancel sound fade out
 	
 	runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	stop();
@@ -742,18 +742,14 @@ inline bool between_incl(int x, int a, int b)
 }
 
 void customSleep() {
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	*(int*)0x02003004 = 1; // Fade out sound
 	fadeType = false;
 	while (keysHeld() & KEY_LID) {
 		scanKeys();
 		swiWaitForVBlank();
 	}
 	fadeType = true;
-	fifoSendValue32(FIFO_USER_01, 2); // Fade in sound
-	while (!screenFadedIn()) {
-		swiWaitForVBlank();
-	}
-	fifoSendValue32(FIFO_USER_01, 0);
+	*(int*)0x02003004 = 2; // Fade in sound
 }
 
 //---------------------------------------------------------------------------------
