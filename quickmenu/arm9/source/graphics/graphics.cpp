@@ -23,6 +23,7 @@
 #include <maxmod9.h>
 #include <gl2d.h>
 #include "bios_decompress_callback.h"
+#include "myDSiMode.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/twlmenusettings.h"
@@ -406,7 +407,7 @@ void vBlankHandler()
 			else if (bnrRomType[num] == 2) drawIconGB(40, iconYpos[3]+6);
 			else if (bnrRomType[num] == 1) glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
 			else drawIcon(num, 40, iconYpos[3]+6);
-			if (isDSiMode() && ms().consoleModel < 2) {
+			if (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2)) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, &cornerIcons[0]);
 			}
 			if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[1]-1) & 31]);

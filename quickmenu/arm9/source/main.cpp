@@ -1938,7 +1938,7 @@ int main(int argc, char **argv) {
 						break;
 					case 4:
 						// Adjust backlight level
-						if (isDSiMode() && ms().consoleModel < 2) {
+						if (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2)) {
 							fifoSendValue32(FIFO_USER_04, 1);
 							mmEffectEx(&snd_backlight);
 						}

@@ -49,6 +49,7 @@ volatile int timeTilVolumeLevelRefresh = 0;
 static int soundVolume = 127;
 volatile int rebootTimer = 0;
 volatile int status = 0;
+static int backlightLevel = 0;
 
 //static bool gotCartHeader = false;
 
@@ -79,12 +80,25 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void changeBacklightLevel() {
 //---------------------------------------------------------------------------------
-	u8 backlightLevel = i2cReadRegister(0x4A, 0x41);
+	if (SNDEXCNT == 0) {
+		backlightLevel++;
+		if (backlightLevel > 3) {
+			backlightLevel = 0;
+		}
+		u32 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+		if(pmBacklight & 0xF0) // DS Lite
+			writePowerManagement(PM_BACKLIGHT_LEVEL, (pmBacklight & ~3) | backlightLevel);
+		writePowerManagement(PM_CONTROL_REG, readPowerManagement(PM_CONTROL_REG) | 0xC);
+		return;
+	}
+
+	// DSi
+	u8 backlightLevel = my_i2cReadRegister(0x4A, 0x41);
 	backlightLevel++;
-	if (backlightLevel > 0x04) {
+	if (backlightLevel > 4) {
 		backlightLevel = 0;
 	}
-	i2cWriteRegister(0x4A, 0x41, backlightLevel);
+	my_i2cWriteRegister(0x4A, 0x41, backlightLevel);
 }
 
 //---------------------------------------------------------------------------------
@@ -237,6 +251,12 @@ int main() {
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
+
+	if (SNDEXCNT == 0) {
+		u32 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+		if(pmBacklight & 0xF0) // DS Lite
+			backlightLevel = ((pmBacklight & 3) + ((readPowerManagement(PM_CONTROL_REG) & 0xC) != 0)) << 8; // Brightness
+	}
 
 	if (isDSiMode()) {
 		getConsoleID();

@@ -36,6 +36,7 @@ public:
 	bool fatInitOk() { return _fatInitOk; }
 	bool useNitroFS() { return _nitroFsInitOk; }
 	bool isDSPhat() { return (_isRegularDS && !_isDSLite); }
+	bool isDSLite() { return (_isRegularDS && _isDSLite); }
 	bool dsDebugRam() { return (_dsDebugRam); }
 	void initFilesystem(const char *runningPath);
 	void initArm7RegStatuses();
