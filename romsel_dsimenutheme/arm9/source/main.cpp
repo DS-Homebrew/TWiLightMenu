@@ -69,6 +69,7 @@ bool useTwlCfg = false;
 bool whiteScreen = true;
 bool fadeType = false; // false = out, true = in
 bool fadeSpeed = true; // false = slow (for DSi launch effect), true = fast
+bool fadeSleep = false;
 bool fadeColor = true; // false = black, true = white
 bool controlTopBright = true;
 bool controlBottomBright = true;
@@ -885,6 +886,7 @@ void customSleep() {
 	controlBottomBright = true;
 
 	snd().stopStream();
+	fadeSleep = true;
 	fadeType = false;
 	while (keysHeld() & KEY_LID) {
 		scanKeys();
@@ -895,6 +897,7 @@ void customSleep() {
 	while (!screenFadedIn()) {
 		swiWaitForVBlank();
 	}
+	fadeSleep = false;
 	controlTopBright = topControlBak;
 	controlBottomBright = botControlBak;
 }

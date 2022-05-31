@@ -70,6 +70,7 @@ static int frontBubblesYpos[3] = {256, 256+64, 256+32};
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
+extern bool fadeSleep;
 extern bool fadeColor;
 extern bool controlTopBright;
 extern bool controlBottomBright;
@@ -425,7 +426,7 @@ void vBlankHandler() {
 
 	if (fadeType == true) {
 		if (!fadeDelay) {
-			screenBrightness -= 1+(ms().theme<4 && fadeSpeed);
+			screenBrightness -= fadeSleep ? 1 : 1+(ms().theme<4 && fadeSpeed);
 			if (screenBrightness < 0)
 				screenBrightness = 0;
 		}
@@ -438,7 +439,7 @@ void vBlankHandler() {
 		}
 	} else {
 		if (!fadeDelay) {
-			screenBrightness += 1+(ms().theme<4 && fadeSpeed);
+			screenBrightness += fadeSleep ? 1 : 1+(ms().theme<4 && fadeSpeed);
 			if (screenBrightness > 31)
 				screenBrightness = 31;
 		}
