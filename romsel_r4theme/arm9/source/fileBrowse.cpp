@@ -82,6 +82,8 @@ extern bool dsModeForced;
 
 extern bool startMenu;
 
+extern void bgOperations(bool waitFrame);
+
 std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
 
 char path[PATH_MAX] = {0};
@@ -322,9 +324,7 @@ void mdRomTooBig(void) {
 	do {
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 	} while (!(pressed & KEY_A));
 	clearText();
 	showdialogbox = false;
@@ -349,11 +349,9 @@ void ramDiskMsg(void) {
 	printSmallCentered(false, 120, "\u2427 OK");
 	int pressed = 0;
 	do {
-		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		swiWaitForVBlank();
+		bgOperations(true);
 	} while (!(pressed & KEY_A));
 	clearText();
 	showdialogbox = false;
@@ -383,9 +381,7 @@ bool dsiBinariesMissingMsg(void) {
 	while (1) {
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 		if (pressed & KEY_Y) {
 			dsModeForced = true;
 			proceedToLaunch = true;
@@ -482,9 +478,7 @@ bool donorRomMsg(void) {
 		}
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 		if ((pressed & KEY_LEFT) && msgPage != 0) {
 			msgPage = 0;
 			pageLoaded = false;
@@ -581,9 +575,7 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 	while (1) {
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 		if (pressed & KEY_A) {
 			proceedToLaunch = true;
 			pressed = 0;
@@ -651,9 +643,7 @@ bool dsiWareInDSModeMsg(void) {
 	while (1) {
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 		if (pressed & KEY_A) {
 			proceedToLaunch = true;
 			pressed = 0;
@@ -731,9 +721,7 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 	while (1) {
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		snd().updateStream();
-		swiWaitForVBlank();
+		bgOperations(true);
 		if (pressed & KEY_A) {
 			proceedToLaunch = true;
 			pressed = 0;
@@ -804,11 +792,9 @@ void cannotLaunchMsg(void) {
 	printSmallCentered(false, 108, "\u2427 OK");
 	int pressed = 0;
 	do {
-		snd().updateStream();
 		scanKeys();
 		pressed = keysDown();
-		checkSdEject();
-		swiWaitForVBlank();
+		bgOperations(true);
 	} while (!(pressed & KEY_A));
 	showdialogbox = false;
 	if (ms().macroMode) {
@@ -933,11 +919,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
-			snd().updateStream();
 			scanKeys();
 			pressed = keysDownRepeat();
-			checkSdEject();
-			swiWaitForVBlank();
+			bgOperations(true);
 		} while (!pressed);
 
 		if (pressed & KEY_UP) {
@@ -1123,11 +1107,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 					pressed = 0;
 					while (1) {
-						snd().updateStream();
 						scanKeys();
 						pressed = keysDown();
-						checkSdEject();
-						swiWaitForVBlank();
+						bgOperations(true);
 						if (pressed & KEY_A) {
 							pressed = 0;
 							break;
@@ -1181,11 +1163,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 					pressed = 0;
 					while (1) {
-						snd().updateStream();
 						scanKeys();
 						pressed = keysDown();
-						checkSdEject();
-						swiWaitForVBlank();
+						bgOperations(true);
 						if (pressed & KEY_A) {
 							pressed = 0;
 							break;
@@ -1342,11 +1322,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 			while (1) {
 				do {
-					snd().updateStream();
 					scanKeys();
 					pressed = keysDown();
-					checkSdEject();
-					swiWaitForVBlank();
+					bgOperations(true);
 				} while (!pressed);
 				
 				if ((pressed & KEY_A && !isDirectory) || (pressed & KEY_Y)) {
@@ -1430,7 +1408,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (ms().theme == TWLSettings::EThemeGBC) {
 				gbnpBottomInfo();
 			}
-			for (int i = 0; i < 25; i++) swiWaitForVBlank();
+			for (int i = 0; i < 25; i++) bgOperations(true);
 		}
 
 	}

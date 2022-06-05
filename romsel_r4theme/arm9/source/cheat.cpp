@@ -35,6 +35,8 @@
 
 extern int dialogboxHeight;
 
+extern void bgOperations(bool waitFrame);
+
 CheatCodelist::~CheatCodelist(void) {}
 
 inline u32 gamecode(const char *aGameCode)
@@ -305,11 +307,9 @@ void CheatCodelist::selectCheats(std::string filename)
     printSmallCentered(false, 160, "B: Back");
 
     while(1) {
-	  snd().updateStream();
       scanKeys();
       pressed = keysDownRepeat();
-      checkSdEject();
-      swiWaitForVBlank();
+      bgOperations(true);
       if(pressed & KEY_B) {
         break;
       }
@@ -361,12 +361,10 @@ void CheatCodelist::selectCheats(std::string filename)
     drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition);
 
     do {
-	  snd().updateStream();
       scanKeys();
       pressed = keysDown();
       held = keysDownRepeat();
-      checkSdEject();
-      swiWaitForVBlank();
+      bgOperations(true);
     } while(!pressed && !held);
 
     if(held & KEY_UP) {
@@ -472,11 +470,9 @@ void CheatCodelist::selectCheats(std::string filename)
         // Print 'Back' text
         printSmallCentered(false, 167, "B: Back");
         while(1) {
-		  snd().updateStream();
           scanKeys();
           pressed = keysDown();
-          checkSdEject();
-          swiWaitForVBlank();
+          bgOperations(true);
           if(pressed & KEY_B) {
             break;
           }

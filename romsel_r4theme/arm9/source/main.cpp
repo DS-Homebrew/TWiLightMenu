@@ -992,6 +992,55 @@ void gbaSramAccess(bool open) {
 	}
 }
 
+void customSleep() {
+	bool topControlBak = controlTopBright;
+	bool botControlBak = controlBottomBright;
+	controlTopBright = true;
+	controlBottomBright = true;
+
+	if (ms().theme == TWLSettings::EThemeGBC) {
+		snd().stopStream();
+	}
+	fadeType = false;
+	while (!screenFadedOut()) {
+		swiWaitForVBlank();
+	}
+	if (!ms().macroMode) {
+		powerOff(PM_BACKLIGHT_TOP);
+	}
+	powerOff(PM_BACKLIGHT_BOTTOM);
+	irqDisable(IRQ_VBLANK & IRQ_VCOUNT);
+	while (keysHeld() & KEY_LID) {
+		scanKeys();
+		swiWaitForVBlank();
+	}
+	irqEnable(IRQ_VBLANK & IRQ_VCOUNT);
+	if (!ms().macroMode) {
+		powerOn(PM_BACKLIGHT_TOP);
+	}
+	powerOn(PM_BACKLIGHT_BOTTOM);
+	fadeType = true;
+	if (ms().theme == TWLSettings::EThemeGBC) {
+		snd().beginStream();
+	}
+	while (!screenFadedIn()) {
+		swiWaitForVBlank();
+	}
+	controlTopBright = topControlBak;
+	controlBottomBright = botControlBak;
+}
+
+void bgOperations(bool waitFrame) {
+	if (keysHeld() & KEY_LID) {
+		customSleep();
+	}
+	checkSdEject();
+	snd().updateStream();
+	if (waitFrame) {
+		swiWaitForVBlank();
+	}
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -1221,8 +1270,7 @@ int main(int argc, char **argv) {
 				scanKeys();
 				pressed = keysDownRepeat();
 				touchRead(&touch);
-				checkSdEject();
-				swiWaitForVBlank();
+				bgOperations(true);
 			} while (!pressed);
 
 			if (pressed & KEY_LEFT) startMenu_cursorPosition--;

@@ -19,6 +19,8 @@
 ------------------------------------------------------------------*/
 #pragma once
 
+bool screenFadedIn(void);
+bool screenFadedOut(void);
 void SetBrightness(u8 screen, s8 bright);
 void initSubSprites(void);
 void bottomBgLoad(bool startMenu);

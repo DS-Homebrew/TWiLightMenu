@@ -77,6 +77,8 @@ char pergamefilepath[256];
 
 extern void RemoveTrailingSlashes(std::string &path);
 
+extern void bgOperations(bool waitFrame);
+
 extern char usernameRendered[10];
 extern bool usernameRenderedDone;
 
@@ -876,12 +878,10 @@ void perGameSettings (std::string filename) {
 			printSmallCentered(false, perGameOpYpos+6, showCheats ? "\u2429 Cheats  \u2428 Back" : "\u2428 Back");
 		}
 		do {
-			snd().updateStream();
 			scanKeys();
 			pressed = keysDown();
 			held = keysDownRepeat();
-			checkSdEject();
-			swiWaitForVBlank();
+			bgOperations(true);
 		} while (!held);
 
 		if (!showPerGameSettings) {
