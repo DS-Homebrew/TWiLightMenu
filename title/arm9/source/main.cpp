@@ -51,6 +51,7 @@ extern bool controlBottomBright;
 
 //bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
+bool externalFirmsModules = false;
 //static int flashcard;
 /* Flashcard value
 	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
@@ -428,6 +429,11 @@ void lastRunROM()
 		}
 	}
 
+	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
+		CIniFile lumaConfig("sd:/luma/config.ini");
+		externalFirmsModules = (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true);
+	}
+
 	int err = 0;
 	if (ms().slot1Launched && (!flashcardFound() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)))
 	{
@@ -438,7 +444,7 @@ void lastRunROM()
 		} else if (ms().slot1LaunchMethod==2) {
 			unlaunchRomBoot("cart:");
 		} else {
-			if ((ms().consoleModel >= 2 && !ms().wideScreen) || ms().consoleModel < 2 || ms().macroMode) {
+			if ((ms().consoleModel >= 2 && !ms().wideScreen) || ms().consoleModel < 2 || !externalFirmsModules || ms().macroMode) {
 				remove("/_nds/nds-bootstrap/wideCheatData.bin");
 			} else if (access("sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0 && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
 				if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
@@ -488,7 +494,7 @@ void lastRunROM()
 			if (ms().homebrewBootstrap) {
 				argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
 			} else {
-				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || ms().macroMode) {
+				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || !externalFirmsModules || ms().macroMode) {
 					remove("/_nds/nds-bootstrap/wideCheatData.bin");
 				} else if ((access(ms().previousUsedDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0) && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
 					if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
@@ -775,7 +781,7 @@ void lastRunROM()
 
 		bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
-		if (ms().consoleModel >= 2 && useWidescreen && ms().homebrewHasWide) {
+		if (ms().consoleModel >= 2 && useWidescreen && externalFirmsModules && ms().homebrewHasWide) {
 			//argarray.push_back((char*)"wide");
 			if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
 				rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
@@ -950,7 +956,7 @@ void lastRunROM()
 					*(bool*)(0x02000014) = useWidescreen;
 				}
 
-				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || ms().macroMode) {
+				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || !externalFirmsModules || ms().macroMode) {
 					remove((ms().previousUsedDevice && !ms().dsiWareToSD) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
 				} else if ((access((ms().previousUsedDevice && !ms().dsiWareToSD) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0) && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
 					if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {

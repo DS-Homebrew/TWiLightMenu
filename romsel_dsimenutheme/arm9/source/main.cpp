@@ -73,6 +73,7 @@ bool fadeSleep = false;
 bool fadeColor = true; // false = black, true = white
 bool controlTopBright = true;
 bool controlBottomBright = true;
+bool externalFirmsModules = false;
 //bool widescreenEffects = false;
 
 extern void ClearBrightness();
@@ -377,7 +378,7 @@ void SetWidescreen(const char *filename) {
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 	if ((isDSiMode() && sys().arm7SCFGLocked()) || ms().consoleModel < 2
-	|| !useWidescreen || ms().macroMode) {
+	|| !useWidescreen || !externalFirmsModules || ms().macroMode) {
 		return;
 	}
 	
@@ -951,6 +952,10 @@ int main(int argc, char **argv) {
 	//logInit();
 	ms().loadSettings();
 	bs().loadSettings();
+	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
+		CIniFile lumaConfig("sd:/luma/config.ini");
+		externalFirmsModules = (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true);
+	}
 	if (ms().theme == TWLSettings::EThemeDSi && sys().isRegularDS()) {
 		useRumble = my_isRumbleInserted();
 	}

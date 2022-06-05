@@ -66,6 +66,7 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
+bool externalFirmsModules = false;
 //bool widescreenEffects = false;
 
 extern bool showProgressBar;
@@ -393,7 +394,7 @@ void SetWidescreen(const char *filename) {
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 	if ((isDSiMode() && sys().arm7SCFGLocked()) || ms().consoleModel < 2
-	|| !useWidescreen || ms().macroMode) {
+	|| !useWidescreen || !externalFirmsModules || ms().macroMode) {
 		return;
 	}
 	
@@ -1099,6 +1100,10 @@ int main(int argc, char **argv) {
 	ms().loadSettings();
 	bs().loadSettings();
 	//widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
+	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
+		CIniFile lumaConfig("sd:/luma/config.ini");
+		externalFirmsModules = (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true);
+	}
 
 	snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
 	pictochatFound = (access(pictochatPath, F_OK) == 0);

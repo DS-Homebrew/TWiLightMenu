@@ -30,6 +30,7 @@
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
 
 bool useTwlCfg = false;
+bool externalFirmsModules = false;
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -142,8 +143,10 @@ bool twlBgCxiFound = false;
 void wideCheck(bool useWidescreen) {
 	if (ms().consoleModel < 2) return;
 
+	CIniFile lumaConfig("sd:/luma/config.ini");
+
 	bool wideCheatFound = (access("sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0 || access("fat:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0);
-	if (useWidescreen && wideCheatFound) {
+	if (useWidescreen && wideCheatFound && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true)) {
 		if (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) {
 			// If title previously launched in widescreen, move Widescreen.cxi again, and reboot again
 			if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {

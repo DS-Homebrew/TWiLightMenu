@@ -808,8 +808,9 @@ int main(int argc, char **argv)
 	keysSetRepeat(25, 5);
 
 	bool widescreenFound = false;
-	if (sdFound()) {
-		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (ms().consoleModel >= 2) && (!sys().arm7SCFGLocked()));
+	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
+		CIniFile lumaConfig("sd:/luma/config.ini");
+		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
 	}
 
 	bool sharedFound = (access("sd:/shared2", F_OK) == 0);
