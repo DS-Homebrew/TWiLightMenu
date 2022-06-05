@@ -747,6 +747,7 @@ void customSleep() {
 	while (!screenFadedOut()) {
 		swiWaitForVBlank();
 	}
+	mmPause();
 	if (!currentMacroMode) {
 		powerOff(PM_BACKLIGHT_TOP);
 	}
@@ -761,6 +762,7 @@ void customSleep() {
 		powerOn(PM_BACKLIGHT_TOP);
 	}
 	powerOn(PM_BACKLIGHT_BOTTOM);
+	mmResume();
 	fadeType = true;
 	*(int*)0x02003004 = 2; // Fade in sound
 }
