@@ -157,6 +157,7 @@ void bootSplashDSi(void) {
 			//loadROMselectAsynch();
 			scanKeys();
 			pressed = keysDown();
+			pressed &= ~KEY_LID;
 
 			if (splash.waitingForInput()) {
 				if(!custom && healthSafety.paused())
