@@ -1064,6 +1064,33 @@ void printGbaBannerText() {
 	printSmall(false, BOX_PY, iconYpos[3] + BOX_PY - (calcSmallFontHeight(str) / 2), str, Alignment::center);
 }
 
+void customSleep() {
+	fadeSpeed = true;
+	fadeType = false;
+	while (!screenFadedOut()) {
+		swiWaitForVBlank();
+	}
+	if (!ms().macroMode) {
+		powerOff(PM_BACKLIGHT_TOP);
+	}
+	powerOff(PM_BACKLIGHT_BOTTOM);
+	irqDisable(IRQ_VBLANK & IRQ_VCOUNT);
+	while (keysHeld() & KEY_LID) {
+		scanKeys();
+		swiWaitForVBlank();
+	}
+	irqEnable(IRQ_VBLANK & IRQ_VCOUNT);
+	if (!ms().macroMode) {
+		powerOn(PM_BACKLIGHT_TOP);
+	}
+	powerOn(PM_BACKLIGHT_BOTTOM);
+	fadeType = true;
+	while (!screenFadedIn()) {
+		swiWaitForVBlank();
+	}
+	fadeSpeed = false;
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -1623,6 +1650,10 @@ int main(int argc, char **argv) {
 				checkSdEject();
 				swiWaitForVBlank();
 			} while (!pressed);
+
+			if (pressed & KEY_LID) {
+				customSleep();
+			}
 
 			if (pressed & KEY_UP) {
 				if (cursorPosition == 2 || cursorPosition == 3 || cursorPosition == 5) {
