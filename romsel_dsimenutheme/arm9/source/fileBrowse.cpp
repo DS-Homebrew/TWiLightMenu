@@ -482,6 +482,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 			titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 			swiWaitForVBlank();
 		} else {
+			snd().playSelect();
 			if(right) {
 				titleboxXdest[ms().secondaryDevice] += titleboxXspacing;
 				titlewindowXdest[ms().secondaryDevice] += 5;
