@@ -230,6 +230,28 @@ void loadROMselect() {
 	fadeType = true;	// Fade in from white
 }
 
+void customSleep() {
+	fadeType = false;
+	for (int i = 0; i < 25; i++) {
+		swiWaitForVBlank();
+	}
+	if (!ms().macroMode) {
+		powerOff(PM_BACKLIGHT_TOP);
+	}
+	powerOff(PM_BACKLIGHT_BOTTOM);
+	irqDisable(IRQ_VBLANK & IRQ_VCOUNT);
+	while (keysHeld() & KEY_LID) {
+		scanKeys();
+		swiWaitForVBlank();
+	}
+	irqEnable(IRQ_VBLANK & IRQ_VCOUNT);
+	if (!ms().macroMode) {
+		powerOn(PM_BACKLIGHT_TOP);
+	}
+	powerOn(PM_BACKLIGHT_BOTTOM);
+	fadeType = true;
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -296,6 +318,10 @@ int main(int argc, char **argv) {
 			checkSdEject();
 			swiWaitForVBlank();
 		} while(!held);
+
+		if (pressed & KEY_LID) {
+			customSleep();
+		}
 
 		if (pressed & KEY_B) {
 			if(returnPage != -1) {
