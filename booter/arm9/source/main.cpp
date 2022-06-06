@@ -32,6 +32,7 @@
 #include "graphics/graphics.h"
 
 #include "common/nds_loader_arm9.h"
+#include "common/tonccpy.h"
 
 #include "graphics/fontHandler.h"
 
@@ -45,6 +46,54 @@ void stop (void) {
 	while (1) {
 		swiWaitForVBlank();
 	}
+}
+
+const char *unlaunchAutoLoadID = "AutoLoadInfo";
+
+std::u16string utf8to16(std::string_view text) {
+	std::u16string out;
+	for(uint i=0;i<text.size();) {
+		char16_t c;
+		if(!(text[i] & 0x80)) {
+			c = text[i++];
+		} else if((text[i] & 0xE0) == 0xC0) {
+			c  = (text[i++] & 0x1F) << 6;
+			c |=  text[i++] & 0x3F;
+		} else if((text[i] & 0xF0) == 0xE0) {
+			c  = (text[i++] & 0x0F) << 12;
+			c |= (text[i++] & 0x3F) << 6;
+			c |=  text[i++] & 0x3F;
+		} else {
+			i++; // out of range or something (This only does up to 0xFFFF since it goes to a U16 anyways)
+		}
+		out += c;
+	}
+	return out;
+}
+
+void unlaunchRomBoot(std::string_view rom) {
+	std::u16string path(utf8to16(rom));
+	if (path.substr(0, 3) == u"sd:") {
+		path = u"sdmc:" + path.substr(3);
+	}
+
+	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
+	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
+	*(u32*)(0x02000810) = 0;			// Unlaunch Flags
+	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
+	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
+	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
+	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
+	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+	for (uint i = 0; i < std::min(path.length(), 0x103u); i++) {
+		((char16_t*)0x02000838)[i] = path[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+	}
+	*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
+
+	DC_FlushAll();						// Make reboot not fail
+	fifoSendValue32(FIFO_USER_01, 1);	// Reboot into DSiWare title, booted via Unlaunch
+	stop();
 }
 
 char filePath[PATH_MAX];
@@ -72,6 +121,14 @@ int main(int argc, char **argv) {
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
 	
+	bool runGame = (strncmp((char*)0x02FFFE0C, "SLRN", 4) == 0);
+
+	const char* srldrPath = (runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" : "sd:/_nds/TWiLightMenu/main.srldr");
+
+	if (*(u32*)0x02800000 == 0x00060041) { // If using hiyaCFW...
+		unlaunchRomBoot(srldrPath); // Start via Unlaunch
+	}
+
 	extern const DISC_INTERFACE __my_io_dsisd;
 
 	if (!fatMountSimple("sd", &__my_io_dsisd)) {
@@ -95,10 +152,6 @@ int main(int argc, char **argv) {
 	/*FILE* deviceList = fopen("sd:/_nds/TWiLightMenu/deviceList.bin", "wb");
 	fwrite((void*)0x02480000, 1, 0x400, deviceList);
 	fclose(deviceList);*/
-
-	bool runGame = (strncmp((char*)0x02FFFE0C, "SLRN", 4) == 0);
-
-	const char* srldrPath = (runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" : "sd:/_nds/TWiLightMenu/main.srldr");
 
 	int err = runNdsFile(srldrPath, 0, NULL, true, false, false, true, true, false, -1);
 	bool twlmFound = (access("sd:/_nds/TWiLightMenu", F_OK) == 0);

@@ -40,6 +40,7 @@ parser.add_argument('--ntrHb', help='NTR homebrew', action="store_true")
 parser.add_argument('--ntrTouch', help='Toggle NTR Touch or not', action="store_true")
 parser.add_argument('--twlTouch', help='Toggle TWL Touch or not', action="store_true")
 parser.add_argument('--twlIcon', help='Toggle TWL Icon size or not', action="store_true")
+parser.add_argument('--structParam', help='Set device list', action="store_true")
 args = parser.parse_args()
 
 if args.mode is None:
@@ -355,6 +356,11 @@ if not args.read:
 		if args.twlIcon:
 			srlTwlExtHeader=srlTwlExtHeader._replace(
 				iconSize=			0x23C0,
+				)
+
+		if args.structParam:
+			srlTwlExtHeader=srlTwlExtHeader._replace(
+				struct_param_baseAddress=			0x02800000,
 				)
 
 		if args.accessControl is not None:

@@ -153,8 +153,8 @@ $(TARGET)_rungame.nds:	$(TARGET).arm7 $(TARGET).arm9
 			-g SLRN 01 "TWLMENUPP-LR" -z 80040000 -u 00030015 -a 00000138 -b icon.bmp "Last-run ROM;TWiLight Menu++;Rocket Robz"
 
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
-		$(PYTHON) ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch
-		$(PYTHON) ../patch_ndsheader_dsiware.py $(TARGET)_rungame.nds --twlTouch
+		$(PYTHON) ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch --structParam
+		$(PYTHON) ../patch_ndsheader_dsiware.py $(TARGET)_rungame.nds --twlTouch --structParam
 endif
 
 $(TARGET).arm7: arm7/$(TARGET).elf
