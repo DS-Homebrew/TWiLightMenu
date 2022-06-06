@@ -71,6 +71,10 @@ int main() {
 		*(vu16*)(0x04004012) = 0x1988;
 		*(vu16*)(0x04004014) = 0x264C;
 		*(vu16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
+
+		if ((REG_SCFG_ROM & BIT(1)) || (REG_SCFG_ROM & BIT(9))) {
+			ReturntoDSiMenu(); // Reboot if DS BIOS is set while in DSi mode
+		}
 	}
 
 	*(vu16*)(0x04004700) |= BIT(13);	// Set 48khz sound/mic frequency
