@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
 
 	const char* srldrPath = (runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" : "sd:/_nds/TWiLightMenu/main.srldr");
 
-	if (*(u32*)0x02800000 == 0x00060041) { // If using hiyaCFW...
+	if (*(u32*)0x02800000 == 0x00000041 || *(u32*)0x02800000 == 0x00060041) { // If using hiyaCFW...
 		unlaunchRomBoot(srldrPath); // Start via Unlaunch
 	}
 
@@ -150,7 +150,7 @@ int main(int argc, char **argv) {
 	// Test code to extract device list
 	// Only works, if booted via HiyaCFW or launched from 3DS HOME Menu
 	/*FILE* deviceList = fopen("sd:/_nds/TWiLightMenu/deviceList.bin", "wb");
-	fwrite((void*)0x02480000, 1, 0x400, deviceList);
+	fwrite((void*)0x02800000, 1, 0x400, deviceList);
 	fclose(deviceList);*/
 
 	int err = runNdsFile(srldrPath, 0, NULL, true, false, false, true, true, false, -1);
