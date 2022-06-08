@@ -875,7 +875,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bnrRomType = 14;
 			} else if (extension(std_romsel_filename, {".int"})) {
 				bnrRomType = 12;
-			} else if (extension(std_romsel_filename, {".plg", ".rvid", ".fv"})) {
+			} else if (extension(std_romsel_filename, {".plg", ".avi", ".rvid", ".fv"})) {
 				bnrRomType = 9;
 			} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
 				bnrRomType = 1;

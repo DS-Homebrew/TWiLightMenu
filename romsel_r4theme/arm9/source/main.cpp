@@ -1170,6 +1170,7 @@ int main(int argc, char **argv) {
 		".ngp", ".ngc", // Neo Geo Pocket
 		".pce", // PC Engine/TurboGrafx-16
 		".dsk", // Amstrad CPC
+		".avi", // Xvid (AVI)
 		".rvid", // Rocket Video
 		".fv" // FastVideo
 	};
@@ -2156,6 +2157,14 @@ int main(int argc, char **argv) {
 					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+				} else if (extension(filename, {".avi"})) {
+					ms().launchType[ms().secondaryDevice] = TWLSettings::ETunaViDSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/tuna-vids.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/tuna-vids.nds";
+						boostVram = true;
+					}
 				} else if (extension(filename, {".rvid"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::ERVideoLaunch;
 
@@ -2165,7 +2174,7 @@ int main(int argc, char **argv) {
 						boostVram = true;
 					}
 				} else if (extension(filename, {".fv"})) {
-					ms().launchType[ms().secondaryDevice] = TWLSettings::EMPEG4Launch;
+					ms().launchType[ms().secondaryDevice] = TWLSettings::EFastVideoLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {

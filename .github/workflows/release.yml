@@ -114,6 +114,14 @@ jobs:
           curl -LO $(curl https://api.github.com/repos/DS-Homebrew/PicoDriveTWL/releases | jq --raw-output '.[0].assets[0].browser_download_url' -)
           cd ../../../..
 
+          # Players
+          mkdir -p 7zfile/_nds/TWiLightMenu/apps
+          cd 7zfile/_nds/TWiLightMenu/apps
+          curl -LO https://github.com/chishm/tuna-vids/releases/latest/download/tuna-vids_v1.2.zip
+          7z x tuna-vids_v1.2.zip tuna-vids.nds
+          rm tuna-vids_v1.2.zip
+          cd ../../../..
+
           # version.txt
           printf "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(cat 7zfile/_nds/release-bootstrap.ver)\n\nRocketRobz, ahezard\n" > 7zfile/version.txt
 

@@ -1782,7 +1782,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				} else if (extension(std_romsel_filename, {".plg"})) {
 					bnrRomType[i] = 9;
 					boxArtType[i] = 0;
-				} else if (extension(std_romsel_filename, {".rvid", ".fv"})) {
+				} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
 					bnrRomType[i] = 9;
 					boxArtType[i] = 2;
 				} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {

@@ -117,7 +117,7 @@ public:
 		EGameYobLaunch = 5,
 		ES8DSLaunch = 6,
 		ERVideoLaunch = 7,
-		EMPEG4Launch = 8,
+		EFastVideoLaunch = 8,
 		EStellaDSLaunch = 9,
 		EPicoDriveTWLLaunch = 10,
 		EGBANativeLaunch = 11,
@@ -132,7 +132,8 @@ public:
 		ENGPDSLaunch = 20,
 		ESNEmulDSLaunch = 21,
 		EAmEDSLaunch = 22,
-		ECrocoDSLaunch = 23
+		ECrocoDSLaunch = 23,
+		ETunaViDSLaunch = 24
 	};
 
 	enum TConsoleModel : int

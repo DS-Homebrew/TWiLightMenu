@@ -94,6 +94,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
    - [enler](https://github.com/enler): Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility
    - [Rocket Robz](https://github.com/RocketRobz): Fixing some DS⁽ⁱ⁾-Enhanced game AP-patches for DS⁽ⁱ⁾ mode compatibility
 - fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, [gamemasterplc](https://github.com/gamemasterplc), [Rocket Robz](https://github.com/RocketRobz), [ChampionLeake](https://github.com/ChampionLeake), [DeadSkullzJr](https://github.com/DeadSkullzJr), [spellboundtriangle](https://github.com/spellboundtriangle), [LedyBacer](https://github.com/LedyBacer): Widescreen Cheats
+- [chishm](https://github.com/chishm): [tuna-viDS](https://github.com/chishm/tuna-vids) for Xvid video playback
 ## Translators
 - Arabic: [Ken Brown](https://crowdin.com/profile/kenkenkenneth), [SLG3](https://crowdin.com/profile/slg3)
 - Bulgarian: [Peter0x44](https://github.com/Peter0x44), [Tescu](https://crowdin.com/profile/tescu48)

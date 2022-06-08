@@ -1361,7 +1361,7 @@ int main(int argc, char **argv) {
 		} else if (extension(filename[0], ".plg")) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".rvid") || extension(filename[0], ".fv")) {
+		} else if (extension(filename[0], ".avi") || extension(filename[0], ".rvid") || extension(filename[0], ".fv")) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = 2;
 		} else if (extension(filename[0], ".agb") || extension(filename[0], ".gba") || extension(filename[0], ".mb")) {
@@ -1491,7 +1491,7 @@ int main(int argc, char **argv) {
 		} else if (extension(filename[1], ".plg")) {
 			bnrRomType[1] = 9;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".rvid") || extension(filename[1], ".fv")) {
+		} else if (extension(filename[1], ".avi") || extension(filename[1], ".rvid") || extension(filename[1], ".fv")) {
 			bnrRomType[1] = 9;
 			boxArtType[1] = 2;
 		} else if (extension(filename[1], ".agb") || extension(filename[1], ".gba") || extension(filename[1], ".mb")) {
@@ -2746,6 +2746,14 @@ int main(int argc, char **argv) {
 					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+				} else if (extension(filename[ms().secondaryDevice], {".avi"})) {
+					ms().launchType[ms().secondaryDevice] = Launch::ETunaViDSLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/tuna-vids.nds";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/tuna-vids.nds";
+						boostVram = true;
+					}
 				} else if (extension(filename[ms().secondaryDevice], ".rvid")) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::ERVideoLaunch;
 
@@ -2755,7 +2763,7 @@ int main(int argc, char **argv) {
 						boostVram = true;
 					}
 				} else if (extension(filename[ms().secondaryDevice], ".fv")) {
-					ms().launchType[ms().secondaryDevice] = TWLSettings::EMPEG4Launch;
+					ms().launchType[ms().secondaryDevice] = TWLSettings::EFastVideoLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {

@@ -582,7 +582,7 @@ int lastRunROM() {
 		case TWLSettings::ERVideoLaunch:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass video to Rocket Video Player as argument
-		case TWLSettings::EMPEG4Launch:
+		case TWLSettings::EFastVideoLaunch:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);	// Pass video to FastVideoDS as argument
 		case TWLSettings::EStellaDSLaunch:
@@ -624,12 +624,6 @@ int lastRunROM() {
 			mkdir("sd:/data/ngpds", 0777);
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to NGPDS as argument
-		case TWLSettings::EAmEDSLaunch:
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to AmEDS as argument
-		case TWLSettings::ECrocoDSLaunch:
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to CrocoDS as argument
 		case TWLSettings::ESNEmulDSLaunch:
 			{
 				const char* ndsToBoot = (char*)"sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
@@ -643,6 +637,15 @@ int lastRunROM() {
 		case TWLSettings::EGBANativeLaunch:
 		case TWLSettings::ENoLaunch:
 			break;
+		case TWLSettings::EAmEDSLaunch:
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to AmEDS as argument
+		case TWLSettings::ECrocoDSLaunch:
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to CrocoDS as argument
+		case TWLSettings::ETunaViDSLaunch:
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/tuna-vids.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass video to tuna-viDS as argument
 	}
 	
 	return -1;
