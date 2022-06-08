@@ -1362,7 +1362,7 @@ int main(int argc, char **argv) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = 0;
 		} else if (extension(filename[0], ".avi") || extension(filename[0], ".rvid") || extension(filename[0], ".fv")) {
-			bnrRomType[0] = 9;
+			bnrRomType[0] = 19;
 			boxArtType[0] = 2;
 		} else if (extension(filename[0], ".agb") || extension(filename[0], ".gba") || extension(filename[0], ".mb")) {
 			bnrRomType[0] = 1;
@@ -1492,7 +1492,7 @@ int main(int argc, char **argv) {
 			bnrRomType[1] = 9;
 			boxArtType[1] = 0;
 		} else if (extension(filename[1], ".avi") || extension(filename[1], ".rvid") || extension(filename[1], ".fv")) {
-			bnrRomType[1] = 9;
+			bnrRomType[1] = 19;
 			boxArtType[1] = 2;
 		} else if (extension(filename[1], ".agb") || extension(filename[1], ".gba") || extension(filename[1], ".mb")) {
 			bnrRomType[1] = 1;

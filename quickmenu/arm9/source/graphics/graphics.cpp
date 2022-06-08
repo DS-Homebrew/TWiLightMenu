@@ -357,6 +357,7 @@ void vBlankHandler()
 					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[0]);
 				}
 				else if (customIcon[1]) drawIcon(1, 40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 19) drawIconVideo(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 18) drawIconCPC(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 17) drawIconNGP(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 16) drawIconWS(40, iconYpos[0]+6);
@@ -388,6 +389,7 @@ void vBlankHandler()
 			int num = (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? 1 : 0;
 			if (!sdFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) drawIconGBA(40, iconYpos[3]+6);
 			else if (customIcon[num]) drawIcon(num, 40, iconYpos[3]+6);
+			else if (bnrRomType[num] == 19) drawIconVideo(40, iconYpos[3]+6);
 			else if (bnrRomType[num] == 18) drawIconCPC(40, iconYpos[3]+6);
 			else if (bnrRomType[num] == 17) drawIconNGP(40, iconYpos[3]+6);
 			else if (bnrRomType[num] == 16) drawIconWS(40, iconYpos[3]+6);

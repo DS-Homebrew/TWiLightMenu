@@ -160,10 +160,13 @@ void drawIconPCE(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIco
 void drawIconWS(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(WS_ICON)); }
 void drawIconNGP(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(NGP_ICON)); }
 void drawIconCPC(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(CPC_ICON)); }
+void drawIconVID(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(VID_ICON)); }
 
 void drawRomIcon(int Xpos, int Ypos, int num, int romType) {
 	if (num == -1 ? customIcon[40] : customIcon[num])
 		drawIcon(Xpos, Ypos, num);
+	else if (romType == 19)
+		drawIconVID(Xpos, Ypos);
 	else if (romType == 18)
 		drawIconCPC(Xpos, Ypos);
 	else if (romType == 17)

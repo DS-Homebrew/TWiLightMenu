@@ -14,6 +14,7 @@ void iconUpdate(bool isDir, const char* name);
 void titleUpdate(bool isDir, const char* name);
 void drawIcon(int Xpos, int Ypos);
 void drawIconFolder(int Xpos, int Ypos);
+void drawIconVideo(int Xpos, int Ypos);
 void drawIconPlg(int Xpos, int Ypos);
 void drawIconPCE(int Xpos, int Ypos);
 void drawIconWS(int Xpos, int Ypos);
