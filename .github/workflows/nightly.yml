@@ -24,7 +24,7 @@ jobs:
       commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
         with:
           submodules: recursive
       - name: Install tools
@@ -119,13 +119,13 @@ jobs:
           cp 7zfile/_nds/TWiLightMenu/extras/widescreen.pck ~/artifacts
       - name: Publish build to GH Actions
         if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: ~/artifacts/*
           name: build
       - name: Publish build to GH Actions (PR)
         if: ${{ success() && startsWith(github.ref, 'refs/pull') }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: ~/artifacts/TWiLightMenu.7z
           name: build
@@ -146,7 +146,7 @@ jobs:
       current_date: ${{ steps.commit.outputs.current_date }}
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
           path: build

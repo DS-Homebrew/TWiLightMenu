@@ -18,7 +18,7 @@ jobs:
       commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
         with:
           submodules: recursive
       - name: Install tools
@@ -177,7 +177,7 @@ jobs:
           7z a TWiLightMenu-Flashcard.7z
           mv TWiLightMenu-Flashcard.7z ~/artifacts
       - name: Publish build to GH Actions
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: ~/artifacts/*
           name: build
@@ -196,7 +196,7 @@ jobs:
       twlbot_commit: ${{ steps.commit.outputs.twlbot_commit }}
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build
           path: build
