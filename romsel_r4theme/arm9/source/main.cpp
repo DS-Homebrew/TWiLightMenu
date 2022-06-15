@@ -2401,18 +2401,43 @@ int main(int argc, char **argv) {
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 					}
 				} else if (extension(filename, {".smc", ".sfc"})) {
-					ms().launchType[ms().secondaryDevice] = TWLSettings::ESNEmulDSLaunch;
-					tgdsMode = true;
-					tscTgds = true;
+					ms().launchType[ms().secondaryDevice] = (ms().newSnesEmuVer ? TWLSettings::ESNEmulDSLaunch : TWLSettings::ESDFlashcardLaunch);
+					if (ms().newSnesEmuVer) {
+						tgdsMode = true;
+						tscTgds = true;
 
-					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
-					tgdsNdsPath = "fat:/SNEmulDS.srl";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
-						if (ms().secondaryDevice) {
-							boostVram = true;
-							dsModeSwitch = true;
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
+						tgdsNdsPath = "fat:/SNEmulDS.srl";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
+							if (ms().secondaryDevice) {
+								boostVram = true;
+								dsModeSwitch = true;
+							}
 						}
+					} else if (ms().secondaryDevice) {
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds";
+						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds";
+						}
+						boostCpu = false;
+						dsModeSwitch = true;
+					} else {
+						useNDSB = true;
+
+						ndsToBoot = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						CIniFile bootstrapini(BOOTSTRAP_INI);
+
+						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.SMC");
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
+						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 					}
 				} else if (extension(filename, {".pce"})) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);

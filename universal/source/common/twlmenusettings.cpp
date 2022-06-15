@@ -104,6 +104,7 @@ TWLSettings::TWLSettings()
 	dontShowDSiWareInDSModeWarning = false;
 	dsiWareBooter = EDSiWareBootstrap;
 	dsiWareToSD = true;
+	newSnesEmuVer = false;
 	smsGgInRam = false;
 	esrbRatingScreen = false;
 
@@ -268,6 +269,7 @@ void TWLSettings::loadSettings()
 	dontShowDSiWareInDSModeWarning = settingsini.GetInt("SRLOADER", "DONT_SHOW_DSIWARE_IN_DS_MODE_WARNING", dontShowDSiWareInDSModeWarning);
 	dsiWareBooter = (TDSiWareBooter)settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
+	newSnesEmuVer = settingsini.GetInt("SRLOADER", "NEW_SNES_EMU_VER", newSnesEmuVer);
 	smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 	esrbRatingScreen = settingsini.GetInt("SRLOADER", "ESRB_RATING_SCREEN", esrbRatingScreen);
 
