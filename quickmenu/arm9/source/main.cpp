@@ -2399,12 +2399,13 @@ int main(int argc, char **argv) {
 					ms().homebrewBootstrap = true;
 				} else if (isHomebrew[ms().secondaryDevice]) {
 					loadPerGameSettings(filename[ms().secondaryDevice]);
-					if (perGameSettings_directBoot || ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && ms().secondaryDevice)) {
+					int pgsDSiMode = (perGameSettings_dsiMode == -1 ? isModernHomebrew[ms().secondaryDevice] : perGameSettings_dsiMode);
+					if ((perGameSettings_directBoot && ms().secondaryDevice) || (isModernHomebrew[ms().secondaryDevice] && pgsDSiMode && (ms().secondaryDevice || perGameSettings_ramDiskNo == -1))) {
 						useBackend = false;	// Bypass nds-bootstrap
 					} else {
 						useBackend = true;
 					}
-					if (isDSiMode() && !perGameSettings_dsiMode) {
+					if (isDSiMode() && !pgsDSiMode) {
 						dsModeSwitch = true;
 					}
 					ms().homebrewBootstrap = true;
