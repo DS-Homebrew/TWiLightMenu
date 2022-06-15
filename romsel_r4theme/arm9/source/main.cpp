@@ -1793,7 +1793,7 @@ int main(int argc, char **argv) {
 					useBackend = false;	// Bypass nds-bootstrap
 					ms().homebrewBootstrap = true;
 				} else if (isHomebrew) {
-					int pgsDSiMode = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
+					int pgsDSiMode = (perGameSettings_dsiMode == -1 ? isModernHomebrew : perGameSettings_dsiMode);
 					if ((perGameSettings_directBoot && ms().secondaryDevice) || (isModernHomebrew && pgsDSiMode && (ms().secondaryDevice || perGameSettings_ramDiskNo == -1))) {
 						useBackend = false;	// Bypass nds-bootstrap
 					} else {
