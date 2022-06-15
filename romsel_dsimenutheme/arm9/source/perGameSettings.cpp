@@ -510,9 +510,10 @@ void perGameSettings (std::string filename) {
 		if (!ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// RAM disk number
+		} else {
+			perGameOps++;
+			perGameOp[perGameOps] = 6;	// Direct boot
 		}
-		perGameOps++;
-		perGameOp[perGameOps] = 6;	// Direct boot
 		if (isDSiMode() || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
