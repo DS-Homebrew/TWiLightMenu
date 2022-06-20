@@ -2301,6 +2301,7 @@ int main(int argc, char **argv) {
 						dsModeSwitch = true;
 					} else {
 						useNDSB = true;
+						boostCpu = false;
 						romToRamDisk = 1;
 
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds";

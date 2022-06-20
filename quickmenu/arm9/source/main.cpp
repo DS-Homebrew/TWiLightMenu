@@ -3031,6 +3031,7 @@ int main(int argc, char **argv) {
 						dsModeSwitch = true;
 					} else {
 						useNDSB = true;
+						boostCpu = false;
 
 						ndsToBoot = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini(BOOTSTRAP_INI);
