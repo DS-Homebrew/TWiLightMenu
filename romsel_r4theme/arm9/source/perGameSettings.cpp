@@ -756,8 +756,8 @@ void perGameSettings (std::string filename) {
 				break;
 			case 4:
 				printSmall(false, 32, perGameOpYpos, "VRAM Mode:");
-				if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && romUnitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, romUnitCode == 0 ? "DSi mode" : "Auto");
+				if (romUnitCode > 0 && (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode > 0) && runInShown) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, isHomebrew ? "DSi mode" : "Auto");
 				} else {
 					if (perGameSettings_boostVram == -1) {
 						printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
@@ -955,7 +955,7 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 4:
-						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((!isHomebrew && romUnitCode == 0) || (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE == TWLSettings::EDSMode : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostVram--;
 							if (perGameSettings_boostVram < -1) perGameSettings_boostVram = 1;
 						}
@@ -1041,7 +1041,7 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 4:
-						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
+						if ((!isHomebrew && romUnitCode == 0) || (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE == TWLSettings::EDSMode : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_boostVram++;
 							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
 						}
