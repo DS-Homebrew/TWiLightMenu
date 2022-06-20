@@ -227,19 +227,18 @@ int bootstrapHbRunNdsFile (const char* filename, const char* fatFilename, const 
 	int pathLen;
 	const char* args[1];
 
-	/*FILE *ramDiskTemplate;
 	if (romIsCompressed) {
-		ramDiskTemplate = fopen(ramDiskFilename, "rb");
+		FILE *ramDiskTemplate = fopen(ramDiskFilename, "rb");
 		if (ramDiskTemplate) {
-			fread((void*)RAM_DISK_LOCATION_LZ77ROM, 1, ramDiskSize, ramDiskTemplate);
+			fread((void*)0x02900000, 1, ramDiskSize, ramDiskTemplate);
 			fclose(ramDiskTemplate);
 			if (romToRamDisk == 1) {
-				LZ77_Decompress((u8*)RAM_DISK_LOCATION_LZ77ROM, (u8*)RAM_DISK_LOCATION+RAM_DISK_SNESROM);
+				LZ77_Decompress((u8*)0x02900000, (u8*)0x02400000+0xEA00);
 			} else if (romToRamDisk == 0 || romToRamDisk == 2 || romToRamDisk == 3 || romToRamDisk == 4) {
-				LZ77_Decompress((u8*)RAM_DISK_LOCATION_LZ77ROM, (u8*)RAM_DISK_LOCATION+RAM_DISK_MDROM);
+				LZ77_Decompress((u8*)0x02900000, (u8*)0x02400000+0xDE00);
 			}
 		}
-	}*/
+	}
 
 	if (stat (filename, &st) < 0) {
 		return 1;
@@ -316,7 +315,7 @@ void bootstrapHbRunPrep (int romToRamDisk) {
 		ramDiskTemplate = fopen("boot:/imgTemplate_PCE.bin", "rb");
 		if (ramDiskTemplate) fread(imgTemplateBuffer, 1, 0xEA00, ramDiskTemplate);
 		fclose(ramDiskTemplate);
-	} else if (romToRamDisk == 3) {
+	} /*else if (romToRamDisk == 3) {
 		ramDiskTemplate = fopen("boot:/imgTemplate_GG.bin", "rb");
 		if (ramDiskTemplate) fread(imgTemplateBuffer, 1, 0xEA00, ramDiskTemplate);
 		fclose(ramDiskTemplate);
@@ -324,7 +323,7 @@ void bootstrapHbRunPrep (int romToRamDisk) {
 		ramDiskTemplate = fopen("boot:/imgTemplate_SMS.bin", "rb");
 		if (ramDiskTemplate) fread(imgTemplateBuffer, 1, 0xEA00, ramDiskTemplate);
 		fclose(ramDiskTemplate);
-	} else if (romToRamDisk == 1) {
+	}*/ else if (romToRamDisk == 1) {
 		ramDiskTemplate = fopen("boot:/imgTemplate_SNES.bin", "rb");
 		if (ramDiskTemplate) fread(imgTemplateBuffer, 1, 0xEA00, ramDiskTemplate);
 		fclose(ramDiskTemplate);

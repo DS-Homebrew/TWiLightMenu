@@ -2460,6 +2460,15 @@ int main(int argc, char **argv) {
 
 				int err = 0;
 				if (useNDSB) {
+					bool romIsCompressed = false;
+					if (romToRamDisk == 0) {
+						romIsCompressed = (extension(ROMpath, {".lz77.gen"}));
+					} else if (romToRamDisk == 1) {
+						romIsCompressed = (extension(ROMpath, {".lz77.smc", ".lz77.sfc"}));
+					} else if (romToRamDisk == 4) {
+						romIsCompressed = (extension(ROMpath, {".lz77.pce"}));
+					}
+
 					FILE* ndsFile = fopen(ndsToBoot, "rb");
 					fseek(ndsFile, 0xC, SEEK_SET);
 					fread(&gameTid[0], 1, 4, ndsFile);
@@ -2478,7 +2487,7 @@ int main(int argc, char **argv) {
 					patchOffsetCacheFilePath,
 					getFileSize("sd:/snemulds.cfg"),
 					romToRamDisk,
-					false,
+					romIsCompressed,
 					argarray.size(),
 					(const char **)&argarray[0],
 					ms().gameLanguage,
