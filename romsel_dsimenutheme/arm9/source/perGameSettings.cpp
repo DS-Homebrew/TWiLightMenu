@@ -806,7 +806,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 4:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_VRAM_BOOST + ":", startAlign, FontPalette::dialog);
-				if (unitCode[CURPOS] > 0 && (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode > 0) && runInShown) {
+				if ((isHomebrew[CURPOS] || unitCode[CURPOS] > 0) && (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode > 0) && runInShown) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, isHomebrew[CURPOS] ? STR_DSI_MODE : STR_AUTO, endAlign, FontPalette::dialog);
 				} else {
 					if (perGameSettings_boostVram == -1) {
