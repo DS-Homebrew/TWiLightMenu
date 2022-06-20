@@ -47,17 +47,26 @@ extern "C"
 #endif
 
     int nitroFSInit(const char *ndsfile);
+    int bootFSInit(const char *ndsfile);
     DIR_ITER *nitroFSDirOpen(struct _reent *r, DIR_ITER *dirState, const char *path);
+    DIR_ITER *bootFSDirOpen(struct _reent *r, DIR_ITER *dirState, const char *path);
     int nitroDirReset(struct _reent *r, DIR_ITER *dirState);
+    int bootDirReset(struct _reent *r, DIR_ITER *dirState);
     int nitroFSDirNext(struct _reent *r, DIR_ITER *dirState, char *filename, struct stat *st);
+    int bootFSDirNext(struct _reent *r, DIR_ITER *dirState, char *filename, struct stat *st);
     int nitroFSDirClose(struct _reent *r, DIR_ITER *dirState);
     int nitroFSOpen(struct _reent *r, void *fileStruct, const char *path, int flags, int mode);
+    int bootFSOpen(struct _reent *r, void *fileStruct, const char *path, int flags, int mode);
     int nitroFSClose(struct _reent *r, void *fd);
     ssize_t nitroFSRead(struct _reent *r, void *fd, char *ptr, size_t len);
+    ssize_t bootFSRead(struct _reent *r, void *fd, char *ptr, size_t len);
     off_t nitroFSSeek(struct _reent *r, void *fd, off_t pos, int dir);
+    off_t bootFSSeek(struct _reent *r, void *fd, off_t pos, int dir);
     int nitroFSFstat(struct _reent *r, void *fd, struct stat *st);
     int nitroFSstat(struct _reent *r, const char *file, struct stat *st);
+    int bootFSstat(struct _reent *r, const char *file, struct stat *st);
     int nitroFSChdir(struct _reent *r, const char *name);
+    int bootFSChdir(struct _reent *r, const char *name);
 #define LOADERSTR "PASS" //look for this
 #define LOADERSTROFFSET 0xac
 #define LOADEROFFSET 0x0200

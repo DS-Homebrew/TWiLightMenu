@@ -2215,12 +2215,16 @@ int main(int argc, char **argv)
 	if (sdFound()) {
 		mkdir("sd:/_gba", 0777);
 		mkdir("sd:/_nds", 0777);
+		mkdir("sd:/_nds/nds-bootstrap", 0777);
+		mkdir("sd:/_nds/nds-bootstrap/patchOffsetCache", 0777);
 		mkdir("sd:/_nds/TWiLightMenu", 0777);
 		mkdir("sd:/_nds/TWiLightMenu/gamesettings", 0777);
 	}
 	if (flashcardFound()) {
 		mkdir("fat:/_gba", 0777);
 		mkdir("fat:/_nds", 0777);
+		mkdir("fat:/_nds/nds-bootstrap", 0777);
+		mkdir("fat:/_nds/nds-bootstrap/patchOffsetCache", 0777);
 		mkdir("fat:/_nds/TWiLightMenu", 0777);
 		mkdir("fat:/_nds/TWiLightMenu/gamesettings", 0777);
 	}
