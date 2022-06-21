@@ -474,7 +474,6 @@ void vBlankHandler()
 			glBoxFilledGradient(16, 80, 240, 94, RGB15(0, 0, 31), RGB15(0, 0, 15), RGB15(0, 0, 15), RGB15(0, 0, 31));
 			glBoxFilled(16, 96, 240, 128+(dialogboxHeight*8), RGB15(31, 31, 31));
 		}*/
-		updateText(false);
 	  }
 	  glEnd2D();
 	  GFX_FLUSH = 0;

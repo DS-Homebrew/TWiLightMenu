@@ -1,0 +1,8 @@
+%rename link                old_link
+
+*link:
+%(old_link) -T ../../../universal/arm9/ds_arm9_small.mem%s -T ds_arm9.ld%s --gc-sections
+
+*startfile:
+ds_arm9_crt0%O%s crti%O%s crtbegin%O%s
+

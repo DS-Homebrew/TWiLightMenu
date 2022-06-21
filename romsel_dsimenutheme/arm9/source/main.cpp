@@ -1765,10 +1765,10 @@ int main(int argc, char **argv) {
 							argarray.size(),
 							(const char **)&argarray[0],
 							perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language,
-							perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode,
+							perGameSettings_dsiMode == -1 ? isModernHomebrew[CURPOS] : perGameSettings_dsiMode,
 							perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu,
 							perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram,
-							ms().consoleModel);
+							ms().consoleModel, false);
 						} else {
 							argarray.at(0) = (char *)ndsToBoot;
 							err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
@@ -2494,7 +2494,7 @@ int main(int argc, char **argv) {
 					0,
 					boostCpu,
 					boostVram,
-					ms().consoleModel);
+					ms().consoleModel, false);
 				} else {
 					err = runNdsFile (ndsToBoot, argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram, tscTgds, -1);	// Pass ROM to emulator as argument
 				}

@@ -77,6 +77,7 @@ dsiSD:
 #define ROM_IS_COMPRESSED_OFFSET 64
 #define PATCHCACHE_FILE_OFFSET 68
 #define SOFTRESET_FILE_OFFSET 72
+#define PRELOADED_OFFSET 76
 
 
 typedef signed int addr_t;
@@ -94,7 +95,7 @@ char* hbLoad_bin = (char*)0x02FC0000;
 char* hbLoadInject_bin = (char*)0x02FD0000;
 char* imgTemplateBuffer = (char*)0x02FB0000;
 
-int bootstrapHbRunNds (const void* loader, u32 loaderSize, u32 cluster, u32 ramDiskCluster, u32 ramDiskSize, u32 srParamsCluster, u32 patchOffsetCacheCluster, u32 cfgCluster, u32 cfgSize, int romToRamDisk, bool romIsCompressed, bool initDisc, bool dldiPatchNds, int argc, const char** argv, int language, int dsiMode, bool boostCpu, bool boostVram, int consoleModel, u32 srTid1, u32 srTid2)
+int bootstrapHbRunNds (const void* loader, u32 loaderSize, u32 cluster, u32 ramDiskCluster, u32 ramDiskSize, u32 srParamsCluster, u32 patchOffsetCacheCluster, u32 cfgCluster, u32 cfgSize, int romToRamDisk, bool romIsCompressed, bool initDisc, bool dldiPatchNds, int argc, const char** argv, int language, int dsiMode, bool boostCpu, bool boostVram, int consoleModel, u32 srTid1, u32 srTid2, bool ndsPreloaded)
 {
 	char* argStart;
 	u16* argData;
@@ -179,6 +180,7 @@ int bootstrapHbRunNds (const void* loader, u32 loaderSize, u32 cluster, u32 ramD
 	writeAddr ((data_t*) LCDC_BANK_D, ROM_IS_COMPRESSED_OFFSET, romIsCompressed);
 	writeAddr ((data_t*) LCDC_BANK_D, PATCHCACHE_FILE_OFFSET, patchOffsetCacheCluster);
 	writeAddr ((data_t*) LCDC_BANK_D, SOFTRESET_FILE_OFFSET, srParamsCluster);
+	writeAddr ((data_t*) LCDC_BANK_D, PRELOADED_OFFSET, ndsPreloaded);
 
 
 	//nocashMessage("irqDisable(IRQ_ALL);");
@@ -212,7 +214,7 @@ int bootstrapHbRunNds (const void* loader, u32 loaderSize, u32 cluster, u32 ramD
 	return true;
 }
 
-int bootstrapHbRunNdsFile (const char* filename, const char* fatFilename, const char* ramDiskFilename, const char* cfgFilename, u32 ramDiskSize, const char* srParamsFilename, const char* patchOffsetCacheFilename, u32 cfgSize, int romToRamDisk, bool romIsCompressed, int argc, const char** argv, int language, int dsiMode, bool boostCpu, bool boostVram, int consoleModel) {
+int bootstrapHbRunNdsFile (const char* filename, const char* fatFilename, const char* ramDiskFilename, const char* cfgFilename, u32 ramDiskSize, const char* srParamsFilename, const char* patchOffsetCacheFilename, u32 cfgSize, int romToRamDisk, bool romIsCompressed, int argc, const char** argv, int language, int dsiMode, bool boostCpu, bool boostVram, int consoleModel, bool ndsPreloaded) {
 	u32 srBackendId[2] = {0};
 	struct stat st;
 	struct stat stRam;
@@ -293,7 +295,7 @@ int bootstrapHbRunNdsFile (const char* filename, const char* fatFilename, const 
 	
 	//installBootStub(havedsiSD);
 
-	return bootstrapHbRunNds (hbLoad_bin, 0x10000, st.st_ino, clusterRam, ramDiskSize, clusterSr, clusterPatchCache, clusterCfg, cfgSize, romToRamDisk, romIsCompressed, true, true, argc, argv, language, dsiMode, boostCpu, boostVram, consoleModel, srBackendId[0], srBackendId[1]);
+	return bootstrapHbRunNds (hbLoad_bin, 0x10000, st.st_ino, clusterRam, ramDiskSize, clusterSr, clusterPatchCache, clusterCfg, cfgSize, romToRamDisk, romIsCompressed, true, true, argc, argv, language, dsiMode, boostCpu, boostVram, consoleModel, srBackendId[0], srBackendId[1], ndsPreloaded);
 }
 
 void bootstrapHbRunPrep (int romToRamDisk) {
