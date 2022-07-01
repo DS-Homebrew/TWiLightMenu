@@ -2668,6 +2668,9 @@ int main(int argc, char **argv) {
 
 						int err = 0;
 						if (isHomebrew[ms().secondaryDevice]) {
+							if (gameTid[ms().secondaryDevice][0] == 0) {
+								toncset(gameTid[ms().secondaryDevice], '#', 4); // Fix blank TID
+							}
 							char patchOffsetCacheFilePath[64];
 							sprintf(patchOffsetCacheFilePath, "sd:/_nds/nds-bootstrap/patchOffsetCache/%s-%04X.bin", gameTid[ms().secondaryDevice], headerCRC[ms().secondaryDevice]);
 							std::string fatPath = replaceAll(path, "sd:/", "fat:/");
@@ -3312,6 +3315,9 @@ int main(int argc, char **argv) {
 					fread(&headerCRC[0], sizeof(u16), 1, ndsFile);
 					fclose(ndsFile);
 
+					if (gameTid[0][0] == 0) {
+						toncset(gameTid[0], '#', 4); // Fix blank TID
+					}
 					char patchOffsetCacheFilePath[64];
 					sprintf(patchOffsetCacheFilePath, "sd:/_nds/nds-bootstrap/patchOffsetCache/%s-%04X.bin", gameTid[0], headerCRC[0]);
 
