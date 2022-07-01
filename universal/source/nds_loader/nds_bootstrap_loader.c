@@ -91,6 +91,8 @@ static void writeAddr (data_t *mem, addr_t offset, addr_t value) {
 	((addr_t*)mem)[offset/sizeof(addr_t)] = value;
 }
 
+static bool bootloaderFound = false;
+
 char* hbLoad_bin = (char*)0x02FC0000;
 char* hbLoadInject_bin = (char*)0x02FD0000;
 char* imgTemplateBuffer = (char*)0x02FB0000;
@@ -215,6 +217,10 @@ int bootstrapHbRunNds (const void* loader, u32 loaderSize, u32 cluster, u32 ramD
 }
 
 int bootstrapHbRunNdsFile (const char* filename, const char* fatFilename, const char* ramDiskFilename, const char* cfgFilename, u32 ramDiskSize, const char* srParamsFilename, const char* patchOffsetCacheFilename, u32 cfgSize, int romToRamDisk, bool romIsCompressed, int argc, const char** argv, int language, int dsiMode, bool boostCpu, bool boostVram, int consoleModel, bool ndsPreloaded) {
+	if (!bootloaderFound) {
+		return 3;
+	}
+
 	u32 srBackendId[2] = {0};
 	struct stat st;
 	struct stat stRam;
@@ -304,6 +310,9 @@ void bootstrapHbRunPrep (int romToRamDisk) {
 		//hbLoad_bin = (char*)malloc(0x10000);
 		fread((void*)hbLoad_bin, 1, 0x10000, ramDiskTemplate);
 		fclose(ramDiskTemplate);
+		bootloaderFound = true;
+	} else {
+		return;
 	}
 
 	ramDiskTemplate = fopen("boot:/loadInject.bin", "rb");
