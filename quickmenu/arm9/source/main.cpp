@@ -2668,29 +2668,33 @@ int main(int argc, char **argv) {
 
 						int err = 0;
 						if (isHomebrew[ms().secondaryDevice]) {
-							if (gameTid[ms().secondaryDevice][0] == 0) {
-								toncset(gameTid[ms().secondaryDevice], '#', 4); // Fix blank TID
-							}
-							char patchOffsetCacheFilePath[64];
-							sprintf(patchOffsetCacheFilePath, "sd:/_nds/nds-bootstrap/patchOffsetCache/%s-%04X.bin", gameTid[ms().secondaryDevice], headerCRC[ms().secondaryDevice]);
-							std::string fatPath = replaceAll(path, "sd:/", "fat:/");
+							if (access(ndsToBoot, F_OK) == 0) {
+								if (gameTid[ms().secondaryDevice][0] == 0) {
+									toncset(gameTid[ms().secondaryDevice], '#', 4); // Fix blank TID
+								}
+								char patchOffsetCacheFilePath[64];
+								sprintf(patchOffsetCacheFilePath, "sd:/_nds/nds-bootstrap/patchOffsetCache/%s-%04X.bin", gameTid[ms().secondaryDevice], headerCRC[ms().secondaryDevice]);
+								std::string fatPath = replaceAll(path, "sd:/", "fat:/");
 
-							err = bootstrapHbRunNdsFile (path.c_str(), fatPath.c_str(),
-							perGameSettings_ramDiskNo >= 0 ? ramdiskpath.c_str() : "sd:/null.img",
-							"sd:/snemulds.cfg",
-							perGameSettings_ramDiskNo >= 0 ? getFileSize(ramdiskpath.c_str()) : 0,
-							"sd:/_nds/nds-bootstrap/softResetParams.bin",
-							patchOffsetCacheFilePath,
-							getFileSize("sd:/snemulds.cfg"),
-							-1,
-							false,
-							argarray.size(),
-							(const char **)&argarray[0],
-							perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language,
-							perGameSettings_dsiMode == -1 ? isModernHomebrew[ms().secondaryDevice] : perGameSettings_dsiMode,
-							perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu,
-							perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram,
-							ms().consoleModel, ndsPreloaded);
+								err = bootstrapHbRunNdsFile (path.c_str(), fatPath.c_str(),
+								perGameSettings_ramDiskNo >= 0 ? ramdiskpath.c_str() : "sd:/null.img",
+								"sd:/snemulds.cfg",
+								perGameSettings_ramDiskNo >= 0 ? getFileSize(ramdiskpath.c_str()) : 0,
+								"sd:/_nds/nds-bootstrap/softResetParams.bin",
+								patchOffsetCacheFilePath,
+								getFileSize("sd:/snemulds.cfg"),
+								-1,
+								false,
+								argarray.size(),
+								(const char **)&argarray[0],
+								perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language,
+								perGameSettings_dsiMode == -1 ? isModernHomebrew[ms().secondaryDevice] : perGameSettings_dsiMode,
+								perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu,
+								perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram,
+								ms().consoleModel, ndsPreloaded);
+							} else {
+								err = 1;
+							}
 						} else {
 							argarray.at(0) = (char *)ndsToBoot;
 							err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
@@ -3299,44 +3303,48 @@ int main(int argc, char **argv) {
 
 				int err = 0;
 				if (useNDSB) {
-					bool romIsCompressed = false;
-					if (romToRamDisk == 0) {
-						romIsCompressed = (extension(ROMpath, ".lz77.gen"));
-					} else if (romToRamDisk == 1) {
-						romIsCompressed = (extension(ROMpath, ".lz77.smc") || extension(ROMpath, ".lz77.sfc"));
-					} else if (romToRamDisk == 4) {
-						romIsCompressed = (extension(ROMpath, ".lz77.pce"));
+					if (access(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", F_OK) == 0) {
+						bool romIsCompressed = false;
+						if (romToRamDisk == 0) {
+							romIsCompressed = (extension(ROMpath, ".lz77.gen"));
+						} else if (romToRamDisk == 1) {
+							romIsCompressed = (extension(ROMpath, ".lz77.smc") || extension(ROMpath, ".lz77.sfc"));
+						} else if (romToRamDisk == 4) {
+							romIsCompressed = (extension(ROMpath, ".lz77.pce"));
+						}
+
+						FILE* ndsFile = fopen(ndsToBoot, "rb");
+						fseek(ndsFile, 0xC, SEEK_SET);
+						fread(&gameTid[0], 1, 4, ndsFile);
+						fseek(ndsFile, 0x15E, SEEK_SET);
+						fread(&headerCRC[0], sizeof(u16), 1, ndsFile);
+						fclose(ndsFile);
+
+						if (gameTid[0][0] == 0) {
+							toncset(gameTid[0], '#', 4); // Fix blank TID
+						}
+						char patchOffsetCacheFilePath[64];
+						sprintf(patchOffsetCacheFilePath, "sd:/_nds/nds-bootstrap/patchOffsetCache/%s-%04X.bin", gameTid[0], headerCRC[0]);
+
+						err = bootstrapHbRunNdsFile (ndsToBoot, ndsToBootFat.c_str(),
+						romToRamDisk != -1 ? ROMpath : "",
+						"sd:/snemulds.cfg",
+						romToRamDisk != -1 ? getFileSize(ROMpath) : 0,
+						"sd:/_nds/nds-bootstrap/softResetParams.bin",
+						patchOffsetCacheFilePath,
+						getFileSize("sd:/snemulds.cfg"),
+						romToRamDisk,
+						romIsCompressed,
+						argarray.size(),
+						(const char **)&argarray[0],
+						ms().gameLanguage,
+						0,
+						boostCpu,
+						boostVram,
+						ms().consoleModel, false);
+					} else {
+						err = 1;
 					}
-
-					FILE* ndsFile = fopen(ndsToBoot, "rb");
-					fseek(ndsFile, 0xC, SEEK_SET);
-					fread(&gameTid[0], 1, 4, ndsFile);
-					fseek(ndsFile, 0x15E, SEEK_SET);
-					fread(&headerCRC[0], sizeof(u16), 1, ndsFile);
-					fclose(ndsFile);
-
-					if (gameTid[0][0] == 0) {
-						toncset(gameTid[0], '#', 4); // Fix blank TID
-					}
-					char patchOffsetCacheFilePath[64];
-					sprintf(patchOffsetCacheFilePath, "sd:/_nds/nds-bootstrap/patchOffsetCache/%s-%04X.bin", gameTid[0], headerCRC[0]);
-
-					err = bootstrapHbRunNdsFile (ndsToBoot, ndsToBootFat.c_str(),
-					romToRamDisk != -1 ? ROMpath : "",
-					"sd:/snemulds.cfg",
-					romToRamDisk != -1 ? getFileSize(ROMpath) : 0,
-					"sd:/_nds/nds-bootstrap/softResetParams.bin",
-					patchOffsetCacheFilePath,
-					getFileSize("sd:/snemulds.cfg"),
-					romToRamDisk,
-					romIsCompressed,
-					argarray.size(),
-					(const char **)&argarray[0],
-					ms().gameLanguage,
-					0,
-					boostCpu,
-					boostVram,
-					ms().consoleModel, false);
 				} else {
 					err = runNdsFile (ndsToBoot, argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram, tscTgds, -1);	// Pass ROM to emulator as argument
 				}
