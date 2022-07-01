@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve the menu screens. For games, please select `DS game issue`
+about: Create a report to help us improve the menu screens. For games, please select the relevant page for them
 title: ''
 labels: bug
 assignees: ''
@@ -13,8 +13,10 @@ assignees: ''
 ###### Please keep this issues relevant to the menu and not the ingame stuff (like nds-bootstrap, GBARunner2, GameYob, etc...)
 -->
 
-**Console Configuration:** <!--Tell us which console you have along with its configuration (for example, A Nintendo DS Phat/Lite with a SuperCard DSTWO, a Nintendo DSi with hiyaCFW + Unlaunch or a New Nintendo 3DS with Luma3DS). Please include firmwares where possible. --> 
-**TWiLight Menu++ Version:** <!-- Include the release version/nightly commit. Saying "latest" isn't helpful -->
+**Flashcard or Exploits?** <!-- Please list the relevant details alongside (aka name, version, etc) -->
+**Base Console:** <!-- No need to mention specific model revisions (Phat vs Lite, XL, New), but if the device has a firmware version, list it -->
+
+**TWiLight Menu++ Version:** <!-- Specify the release version/nightly commit. Note, though, that any issue opened with a release that isn't the latest will be closed -->
 **TWiLight Menu++ Theme:** <!-- [Nintendo DSi/Nintendo 3DS/Wood UI/Original R4/SEGA Saturn/Gameboy Color/Homebrew Launcher] + Skin used-->
 
 ### Expected behaviour
