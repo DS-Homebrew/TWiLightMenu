@@ -817,6 +817,8 @@ void perGameSettings (std::string filename) {
 				printSmall(false, 32, perGameOpYpos, "Ex. ROM space in RAM:");
 				if (flashcardKernelOnly) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Not Used");
+				} else if ((perGameSettings_dsiMode==-1 ? (romUnitCode > 0 && DEFAULT_DSI_MODE) : perGameSettings_dsiMode > 0) && runInShown) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "No");
 				} else if (perGameSettings_expandRomSpace == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_expandRomSpace == 2) {
@@ -978,13 +980,15 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_wideScreen > 1) perGameSettings_wideScreen = -1;
 						break;
 					case 10:
-						perGameSettings_expandRomSpace--;
-						if (perGameSettings_expandRomSpace==1 && romSize > romSizeLimit2) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_expandRomSpace--;
-						} else if (perGameSettings_expandRomSpace==2 && romSize <= romSizeLimit2) {
-							perGameSettings_expandRomSpace--;
+							if (perGameSettings_expandRomSpace==1 && romSize > romSizeLimit2) {
+								perGameSettings_expandRomSpace--;
+							} else if (perGameSettings_expandRomSpace==2 && romSize <= romSizeLimit2) {
+								perGameSettings_expandRomSpace--;
+							}
+							if (perGameSettings_expandRomSpace < -1) perGameSettings_expandRomSpace = 2;
 						}
-						if (perGameSettings_expandRomSpace < -1) perGameSettings_expandRomSpace = 2;
 						break;
 					case 11:
 						perGameSettings_region--;
@@ -1082,13 +1086,15 @@ void perGameSettings (std::string filename) {
 					  }
 						break;
 					case 10:
-						perGameSettings_expandRomSpace++;
-						if (perGameSettings_expandRomSpace==1 && romSize > romSizeLimit2) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_expandRomSpace++;
-						} else if (perGameSettings_expandRomSpace==2 && romSize <= romSizeLimit2) {
-							perGameSettings_expandRomSpace++;
+							if (perGameSettings_expandRomSpace==1 && romSize > romSizeLimit2) {
+								perGameSettings_expandRomSpace++;
+							} else if (perGameSettings_expandRomSpace==2 && romSize <= romSizeLimit2) {
+								perGameSettings_expandRomSpace++;
+							}
+							if (perGameSettings_expandRomSpace > 2) perGameSettings_expandRomSpace = -1;
 						}
-						if (perGameSettings_expandRomSpace > 2) perGameSettings_expandRomSpace = -1;
 						break;
 					case 11:
 						perGameSettings_region++;

@@ -867,6 +867,8 @@ void perGameSettings (std::string filename) {
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_EXPAND_ROM_SPACE + ":", startAlign, FontPalette::dialog);
 				if (flashcardKernelOnly) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign, FontPalette::dialog);
+				} else if ((perGameSettings_dsiMode==-1 ? (unitCode[CURPOS] > 0 && DEFAULT_DSI_MODE) : perGameSettings_dsiMode > 0) && runInShown) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_expandRomSpace == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_expandRomSpace == 2) {
@@ -1032,13 +1034,15 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_wideScreen < -1) perGameSettings_wideScreen = 1;
 						break;
 					case 10:
-						perGameSettings_expandRomSpace--;
-						if (perGameSettings_expandRomSpace==1 && romSize > romSizeLimit2) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_expandRomSpace--;
-						} else if (perGameSettings_expandRomSpace==2 && romSize <= romSizeLimit2) {
-							perGameSettings_expandRomSpace--;
+							if (perGameSettings_expandRomSpace==1 && romSize > romSizeLimit2) {
+								perGameSettings_expandRomSpace--;
+							} else if (perGameSettings_expandRomSpace==2 && romSize <= romSizeLimit2) {
+								perGameSettings_expandRomSpace--;
+							}
+							if (perGameSettings_expandRomSpace < -1) perGameSettings_expandRomSpace = 2;
 						}
-						if (perGameSettings_expandRomSpace < -1) perGameSettings_expandRomSpace = 2;
 						break;
 					case 11:
 						perGameSettings_region--;
@@ -1137,13 +1141,15 @@ void perGameSettings (std::string filename) {
 					  }
 						break;
 					case 10:
-						perGameSettings_expandRomSpace++;
-						if (perGameSettings_expandRomSpace==1 && romSize > romSizeLimit2) {
+						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_expandRomSpace++;
-						} else if (perGameSettings_expandRomSpace==2 && romSize <= romSizeLimit2) {
-							perGameSettings_expandRomSpace++;
+							if (perGameSettings_expandRomSpace==1 && romSize > romSizeLimit2) {
+								perGameSettings_expandRomSpace++;
+							} else if (perGameSettings_expandRomSpace==2 && romSize <= romSizeLimit2) {
+								perGameSettings_expandRomSpace++;
+							}
+							if (perGameSettings_expandRomSpace > 2) perGameSettings_expandRomSpace = -1;
 						}
-						if (perGameSettings_expandRomSpace > 2) perGameSettings_expandRomSpace = -1;
 						break;
 					case 11:
 						perGameSettings_region++;
