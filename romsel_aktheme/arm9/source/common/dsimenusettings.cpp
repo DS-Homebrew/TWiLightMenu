@@ -320,5 +320,7 @@ std::string TWLSettings::getGuiLanguageString()
             return "pt-BR";
         case TWLSettings::ELangVietnamese:
             return "vi";
+        case TWLSettings::ELangValencian:
+            return "val";
     }
 }

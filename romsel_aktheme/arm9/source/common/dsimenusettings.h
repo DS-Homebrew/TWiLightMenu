@@ -61,6 +61,7 @@ class TWLSettings
         ELangArabic = 24,
         ELangPortugueseBrazil = 25,
         ELangVietnamese = 26,
+        ELangValencian = 27,
     };
 
     enum TRunIn
