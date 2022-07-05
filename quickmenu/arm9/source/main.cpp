@@ -131,6 +131,7 @@ int mpuregion = 0;
 int mpusize = 0;
 
 bool applaunch = false;
+bool dsModeForced = false;
 bool showCursor = true;
 bool startMenu = false;
 int cursorPosition = 0;
@@ -177,6 +178,7 @@ bool setClockSpeed() {
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
 			if (memcmp(gameTid[ms().secondaryDevice], twlClockExcludeList[i], 3) == 0) {
 				// Found match
+				dsModeForced = true;
 				return false;
 			}
 		}
@@ -2573,7 +2575,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", perGameSettings_region < -1 ? ms().useRomRegion : 0);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", !dsiBinariesFound ? 0 : (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode));
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", (dsModeForced || !dsiBinariesFound) ? 0 : (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode));
 						if (dsiFeatures() || !ms().secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed());
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram);
