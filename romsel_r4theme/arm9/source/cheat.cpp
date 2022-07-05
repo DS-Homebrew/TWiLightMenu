@@ -255,12 +255,12 @@ std::vector<u32> CheatCodelist::getCheats()
   return cheats;
 }
 
-void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& list, uint curPos, uint screenPos) {
+void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& list, uint curPos, uint screenPos, uint scrollPos) {
   for(uint i=0;(int)i<(dialogboxHeight+2) && i<list.size();i++) {
     if(list[screenPos+i]->_flags&cParsedItem::EFolder) {
       if(screenPos+i == curPos) {
         printSmall(false, 27, 90+(i*10), ">");
-        printSmall(false, 35, 90+(i*10), list[screenPos+i]->_title.c_str());
+        printSmall(false, 35, 90+(i*10), list[screenPos+i]->_title.c_str() + scrollPos);
       } else {
         printSmall(false, 22, 90+(i*10), ">");
         printSmall(false, 30, 90+(i*10), list[screenPos+i]->_title.c_str());
@@ -271,7 +271,7 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& lis
       }
       if(screenPos+i == curPos) {
         printSmall(false, 25, 90+(i*10), "-");
-        printSmall(false, 32, 90+(i*10), list[screenPos+i]->_title.c_str());
+        printSmall(false, 32, 90+(i*10), list[screenPos+i]->_title.c_str() + scrollPos);
       } else {
         printSmall(false, 21, 90+(i*10), "-");
         printSmall(false, 28, 90+(i*10), list[screenPos+i]->_title.c_str());
@@ -325,7 +325,9 @@ void CheatCodelist::selectCheats(std::string filename)
   }
 
   int mainListCurPos = -1, mainListScreenPos = -1,
-      cheatWnd_cursorPosition = 0, cheatWnd_screenPosition = 0;
+      cheatWnd_cursorPosition = 0, cheatWnd_screenPosition = 0,
+      cheatWnd_scrollPosition = 0, cheatWnd_scrollTimer = 120,
+      cheatWnd_scrollDirection = 1;
 
   while(cheatsFound) {
     clearText();
@@ -358,27 +360,49 @@ void CheatCodelist::selectCheats(std::string filename)
       cheatWnd_screenPosition = cheatWnd_cursorPosition - (dialogboxHeight+2) + 1;
     }
 
-    drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition);
+    drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition, cheatWnd_scrollPosition);
 
     do {
       scanKeys();
       pressed = keysDown();
       held = keysDownRepeat();
       bgOperations(true);
+      if(cheatWnd_scrollTimer > 0) {
+        cheatWnd_scrollTimer--;
+      } else {
+        if((cheatWnd_scrollDirection == 1 && cheatWnd_scrollPosition < (int)currentList[cheatWnd_cursorPosition]->_title.length() - 40)
+        || (cheatWnd_scrollDirection == -1 && cheatWnd_scrollPosition > 0)) {
+          cheatWnd_scrollPosition += cheatWnd_scrollDirection;
+          cheatWnd_scrollTimer = 6;
+        } else {
+          cheatWnd_scrollDirection *= -1;
+          cheatWnd_scrollTimer = 120;
+        }
+
+        break;
+      }
     } while(!pressed && !held);
 
     if(held & KEY_UP) {
       if(cheatWnd_cursorPosition>0) {
         cheatWnd_cursorPosition--;
+        cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
       }
     } else if(held & KEY_DOWN) {
       if(cheatWnd_cursorPosition<((int)currentList.size()-1)) {
         cheatWnd_cursorPosition++;
+        cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
       }
     } else if(held & KEY_LEFT) {
       cheatWnd_cursorPosition -= (cheatWnd_cursorPosition > (dialogboxHeight+2) ? (dialogboxHeight+2) : cheatWnd_cursorPosition);
+      cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
     } else if(held & KEY_RIGHT) {
       cheatWnd_cursorPosition += (cheatWnd_cursorPosition < (int)(currentList.size()-(dialogboxHeight+2)) ? (dialogboxHeight+2) : currentList.size()-cheatWnd_cursorPosition-1);
+      cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
     } else if(pressed & KEY_A) {
       if(currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
         uint i = std::distance(&_data[0], currentList[cheatWnd_cursorPosition]) + 1;
@@ -389,6 +413,8 @@ void CheatCodelist::selectCheats(std::string filename)
         mainListCurPos = cheatWnd_cursorPosition;
         mainListScreenPos = cheatWnd_screenPosition;
         cheatWnd_cursorPosition = 0;
+        cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
       } else {
         cParsedItem &cheat = *currentList[cheatWnd_cursorPosition];
         bool select = !(cheat._flags & cParsedItem::ESelected);
@@ -408,6 +434,8 @@ void CheatCodelist::selectCheats(std::string filename)
         cheatWnd_cursorPosition = mainListCurPos;
         cheatWnd_screenPosition = mainListScreenPos;
         mainListCurPos = -1;
+        cheatWnd_scrollTimer = 60;
+        cheatWnd_scrollPosition = 0;
       } else {
         break;
       }
