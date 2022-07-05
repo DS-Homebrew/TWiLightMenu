@@ -586,7 +586,7 @@ void perGameSettings (std::string filename) {
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 1;	// Save number
-		if ((dsiFeatures() && ((perGameSettings_useBootstrap == - 1 ? ms().useBootstrap : perGameSettings_useBootstrap) || unitCode[CURPOS] > 0) && !bs().b4dsMode) || !ms().secondaryDevice) {
+		if (((dsiFeatures() && ((perGameSettings_useBootstrap == - 1 ? ms().useBootstrap : perGameSettings_useBootstrap) || unitCode[CURPOS] > 0) && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_boostCpu) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;

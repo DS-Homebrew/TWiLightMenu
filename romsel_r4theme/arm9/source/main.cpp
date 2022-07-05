@@ -239,6 +239,7 @@ bool setClockSpeed(const char* filename) {
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
 			if (memcmp(game_TID, twlClockExcludeList[i], 3) == 0) {
 				// Found match
+				dsModeForced = true;
 				return false;
 			}
 		}

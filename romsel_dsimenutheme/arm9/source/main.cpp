@@ -179,6 +179,7 @@ bool setClockSpeed() {
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
 			if (memcmp(gameTid[CURPOS], twlClockExcludeList[i], 3) == 0) {
 				// Found match
+				dsModeForced = true;
 				return false;
 			}
 		}
