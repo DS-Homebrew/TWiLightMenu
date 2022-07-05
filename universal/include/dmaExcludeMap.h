@@ -3,6 +3,7 @@
 
 static const char cardReadDMAExcludeList[][4] = {
 	"TAM", // The Amazing Spider-Man
+	"CBX", // Black Sigil: Blade of the Exiled
 	"AWD", // Diddy Kong Racing
 	"BO5", // Golden Sun: Dark Dawn
 	"Y8L", // Golden Sun: Dark Dawn (Demo)
