@@ -2589,14 +2589,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							int bstrap_dsiMode = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 							CIniFile bootstrapini(bootstrapinipath);
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-							bool donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
+							bool donorRomFound = (strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
 							if (!donorRomFound && requiresDonorRom[CURPOS] < 100) {
 								pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0
 								if (requiresDonorRom[CURPOS] == 52) {
 									pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0
 								}
 								donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-								donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
+								donorRomFound = (strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
 							}
 							if (!donorRomFound
 							&& (requiresDonorRom[CURPOS] == 51 || requiresDonorRom[CURPOS] == 151
