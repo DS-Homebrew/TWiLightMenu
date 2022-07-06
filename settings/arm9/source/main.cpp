@@ -1146,6 +1146,11 @@ int main(int argc, char **argv)
 			{true, false});
 	}
 
+	if (sdFound()) {
+		bootstrapPage
+			.option(STR_LOAD_BOOTLOADER, STR_DESCRIPTION_LOAD_BOOTLOADER, Option::Bool(&ms().btsrpBootloaderDirect), {STR_DIRECT, STR_THRU_NDS_BS}, {true, false});
+	}
+
 	bootstrapPage
 		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1, Option::Bool((bool *)&ms().bootstrapFile), {STR_NIGHTLY, STR_RELEASE}, {true, false})
 		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().debug), {STR_ON, STR_OFF}, {true, false})

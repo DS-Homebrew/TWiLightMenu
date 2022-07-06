@@ -1732,7 +1732,7 @@ int main(int argc, char **argv) {
 							sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						}
 
-						if (isHomebrew[CURPOS]) {
+						if (ms().btsrpBootloaderDirect && isHomebrew[CURPOS]) {
 							bootFSInit(ndsToBoot);
 							bootstrapHbRunPrep(-1);
 						}
@@ -1750,7 +1750,7 @@ int main(int argc, char **argv) {
 
 						snd().stopStream();
 						int err = 0;
-						if (isHomebrew[CURPOS]) {
+						if (ms().btsrpBootloaderDirect && isHomebrew[CURPOS]) {
 							if (access(ndsToBoot, F_OK) == 0) {
 								if (gameTid[CURPOS][0] == 0) {
 									toncset(gameTid[CURPOS], '#', 4); // Fix blank TID
@@ -2446,7 +2446,7 @@ int main(int argc, char **argv) {
 					fadeType = false;		  // Fade to black
 				}
 
-				if (useNDSB) {
+				if (ms().btsrpBootloaderDirect && useNDSB) {
 					bootFSInit(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 					bootstrapHbRunPrep(romToRamDisk);
 				}
@@ -2464,11 +2464,14 @@ int main(int argc, char **argv) {
 					snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderFat.c_str(), filename.c_str());
 				}
 				argarray.push_back(useNDSB ? (char*)ROMpathFAT.c_str() : ROMpath);
+				if (!ms().btsrpBootloaderDirect && useNDSB) {
+					ndsToBoot = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+				}
 				argarray.at(0) = (char *)(tgdsMode ? tgdsNdsPath : ndsToBoot);
 				snd().stopStream();
 
 				int err = 0;
-				if (useNDSB) {
+				if (ms().btsrpBootloaderDirect && useNDSB) {
 					if (access(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", F_OK) == 0) {
 						bool romIsCompressed = false;
 						if (romToRamDisk == 0) {

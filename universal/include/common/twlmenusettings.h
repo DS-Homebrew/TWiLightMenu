@@ -348,6 +348,7 @@ public:
 	// std::string ak_theme;
 
 	bool useBootstrap;
+	bool btsrpBootloaderDirect;
 	TBootstrapFile bootstrapFile;
 
 	std::string dsiWareSrlPath;

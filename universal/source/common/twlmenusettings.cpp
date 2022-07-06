@@ -114,6 +114,7 @@ TWLSettings::TWLSettings()
 	// ak_zoomIcons = true;
 
 	useBootstrap = isDSiMode();
+	btsrpBootloaderDirect = false;
 	bootstrapFile = EReleaseBootstrap;
 
 	slot1Launched = false;
@@ -283,6 +284,7 @@ void TWLSettings::loadSettings()
 	} else {
 		useBootstrap = true;
 	}
+	btsrpBootloaderDirect = settingsini.GetInt("SRLOADER", "BOOTSTRAP_BOOTLOADER_DIRECT", btsrpBootloaderDirect);
 	bootstrapFile = (TBootstrapFile)settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
 
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
@@ -422,6 +424,7 @@ void TWLSettings::saveSettings()
 	if (!(io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 		settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	}
+	settingsini.SetInt("SRLOADER", "BOOTSTRAP_BOOTLOADER_DIRECT", btsrpBootloaderDirect);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
 
 	settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
