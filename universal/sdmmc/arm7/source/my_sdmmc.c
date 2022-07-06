@@ -375,10 +375,9 @@ int my_sdmmc_sdcard_init() {
     my_sdmmc_send_command(&deviceSD,0x10609,deviceSD.initarg << 0x10);
     if (deviceSD.error & 0x4) return -1;
 
-	// Command Class 10 support
-	const bool cmd6Supported = ((u8*)deviceSD.ret)[10] & 0x40;
     deviceSD.total_size = calcSDSize((u8*)&deviceSD.ret[0],-1);
-    setckl(0x201); // 16.756991 MHz
+    deviceSD.clk = 1;
+    setckl(1);
 
     my_sdmmc_send_command(&deviceSD,0x10507,deviceSD.initarg << 0x10);
     if (deviceSD.error & 0x4) return -1;
@@ -398,30 +397,13 @@ int my_sdmmc_sdcard_init() {
     deviceSD.SDOPT = 1;
     my_sdmmc_send_command(&deviceSD,0x10446,0x2);
     if (deviceSD.error & 0x4) return -8;
-	sdmmc_mask16(REG_SDOPT, 0x8000, 0); // Switch to 4 bit mode.
-
-	// TODO: CMD6 to switch to high speed mode.
-	if(cmd6Supported)
-	{
-		sdmmc_write16(REG_SDSTOP,0);
-		sdmmc_write16(REG_SDBLKLEN32,64);
-		sdmmc_write16(REG_SDBLKLEN,64);
-		deviceSD.rData = NULL;
-		deviceSD.size = 64;
-		my_sdmmc_send_command(&deviceSD,0x31C06,0x80FFFFF1);
-		sdmmc_write16(REG_SDBLKLEN,512);
-		if(deviceSD.error & 0x4) return -9;
-
-		deviceSD.clk = 0x200; // 33.513982 MHz
-		setckl(0x200);
-	}
-	else deviceSD.clk = 0x201; // 16.756991 MHz
 
     my_sdmmc_send_command(&deviceSD,0x1040D,deviceSD.initarg << 0x10);
     if (deviceSD.error & 0x4) return -9;
 
     my_sdmmc_send_command(&deviceSD,0x10410,0x200);
     if (deviceSD.error & 0x4) return -10;
+    deviceSD.clk |= 0x200;
 
     return 0;
 
