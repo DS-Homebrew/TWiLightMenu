@@ -316,7 +316,8 @@ void arm7_resetMemory (void)
 
 	if(my_isDSiMode()) {
 		// clear last part of EXRAM
-		toncset ((void*)0x02400000, 0, 0xC00000);
+		memset_addrs_arm7(0x02400000, 0x02FFD7BC); // Leave eMMC CID intact
+		memset_addrs_arm7(0x02FFD7CC, 0x03000000);
 	}
 
 	REG_IE = 0;
