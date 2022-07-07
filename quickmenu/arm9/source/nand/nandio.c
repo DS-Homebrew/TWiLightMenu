@@ -96,8 +96,10 @@ bool nandio_startup() {
 
 	if (*(u32*)(0x2FFD7BC) == 0) {
 		// Get eMMC CID
-		*(u32*)(0x2FFFD0C) = 0x454D4D43;
-		while (*(u32*)(0x2FFFD0C) != 0);
+		*(u32*)(0xCFFFD0C) = 0x454D4D43;
+		while (*(u32*)(0xCFFFD0C) != 0) {
+			swiDelay(100);
+		}
 	}
 
 	u8 consoleID[8];
