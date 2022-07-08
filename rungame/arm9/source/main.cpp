@@ -31,6 +31,7 @@ static const char *unlaunchAutoLoadID = "AutoLoadInfo";
 
 bool useTwlCfg = false;
 bool externalFirmsModules = false;
+bool dsModeForced = false;
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -63,7 +64,8 @@ bool setClockSpeed(char gameTid[]) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
 			if (memcmp(gameTid, twlClockExcludeList[i], 3) == 0) {
-				// Found match
+				// Found match	
+				dsModeForced = true;
 				return false;
 			}
 		}
@@ -311,14 +313,16 @@ int lastRunROM() {
 
 				argarray.at(0) = (char *)ndsToBoot;
 				if (ms().previousUsedDevice || !ms().homebrewBootstrap) {
+					bool boostCpu = setClockSpeed(game_TID);
+
 					const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
 					CIniFile bootstrapini(bootstrapinipath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().previousUsedDevice]);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 					// bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().getGameLanguage() : perGameSettings_language);
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed(game_TID));
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", dsModeForced ? 0 : (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode));
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 					bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram);
 					bootstrapini.SaveIniFile(bootstrapinipath);
 				}
