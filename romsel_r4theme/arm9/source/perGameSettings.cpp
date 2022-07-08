@@ -448,9 +448,9 @@ void perGameSettings (std::string filename) {
 
 	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x01800000 : 0x800000);
 	if (SDKVersion > 0x5000000) {
-		romSizeLimit = (ms().consoleModel > 0 ? 0x01000000 : 0x700000);
+		romSizeLimit = (ms().consoleModel > 0 ? 0x01000000 : 0x7E0000);
 	}
-	u32 romSizeLimit2 = (ms().consoleModel > 0 ? 0x01C00000 : 0xC00000);
+	u32 romSizeLimit2 = (ms().consoleModel > 0 ? 0x01BFE000 : 0xBFE000);
 
 	extern bool dsiWareCompatibleB4DS(const char* filename);
 	bool showPerGameSettings =
