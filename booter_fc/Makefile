@@ -183,7 +183,7 @@ autoboot:
 	mv bootme.nds "../7zfile/Flashcard users/Autoboot/Games N Music/Non-SDHC/bootme.nds"
 
 	#### DSTT and its (many) clones
-	cp booter_fc.nds TTMenu.dat
+	cp booter_acekard2.nds TTMenu.dat
 	dlditool flashcart_specifics/DLDI/DSTTDLDIboyakkeyver.dldi TTMenu.dat
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/"
@@ -222,7 +222,14 @@ autoboot:
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/iLL.iL"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/TTMenu.dat"
 
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/_BOOT_DS.NDS"
+	# R4i-SDHC has funny protection. Defeat it.
+	ndstool -x TTMenu.dat -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
+	./flashcart_specifics/r4isdhc/r4isdhc arm9.bin new9.bin
+	ndstool -c R4.dat -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
+	rm -rf new9.bin arm9.bin arm7.bin banner.bin header.bin
+	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/"
+	mv R4.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/R4.dat"
+	## For YSMenu softreset, use the original TTMenu.dat
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/"

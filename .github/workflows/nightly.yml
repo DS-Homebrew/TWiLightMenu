@@ -32,7 +32,9 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get update
-          sudo apt-get install p7zip-full python -y
+          sudo apt-get install p7zip-full python gcc -y
+          gcc -o booter_fc/flashcart_specifics/r4isdhc/r4isdhc booter_fc/flashcart_specifics/r4isdhc/r4isdhc.c
+          chmod +x booter_fc/flashcart_specifics/r4isdhc/r4isdhc
       - name: Get manual pages
         run: |
           cd manual/nitrofiles
