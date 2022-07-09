@@ -5,6 +5,16 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
+ifneq (,$(shell which python3))
+PYTHON	:= python3
+else ifneq (,$(shell which python2))
+PYTHON	:= python2
+else ifneq (,$(shell which python))
+PYTHON	:= python
+else
+$(error "Python not found in PATH, please install it.")
+endif
+
 export TARGET := booter
 
 include $(DEVKITARM)/ds_rules
@@ -224,7 +234,7 @@ autoboot:
 
 	# R4i-SDHC has funny protection. Defeat it.
 	ndstool -x TTMenu.dat -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
-	./flashcart_specifics/r4isdhc/r4isdhc arm9.bin new9.bin
+	$(PYTHON) flashcart_specifics/r4isdhc/r4isdhc.py arm9.bin new9.bin
 	ndstool -c R4.dat -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
 	rm -rf new9.bin arm9.bin arm7.bin banner.bin header.bin
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/"
