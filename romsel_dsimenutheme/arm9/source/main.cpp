@@ -598,7 +598,8 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 	if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)) {
+	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)) {
 		if (sys().isDSLite()) {
 			CIniFile backlightini("fat:/_wfwd/backlight.ini");
 			backlightini.SetInt("brightness", "brightness", *(int*)0x02003000);
@@ -609,17 +610,6 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
-	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-		if (sys().isDSLite()) {
-			CIniFile backlightini("fat:/_afwd/backlight.ini");
-			backlightini.SetInt("brightness", "brightness", *(int*)0x02003000);
-			backlightini.SaveIniFile("fat:/_afwd/backlight.ini");
-		}
-		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-		fcPath = replaceAll(ndsPath, "fat:/", woodfat);
-		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
-		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 		fcPath = replaceAll(ndsPath, "fat:/", dstwofat);
