@@ -24,12 +24,9 @@ extern int screenBrightness;
 bool cartInserted;
 
 void bootSplashDSi(void) {
-	u16 whiteCol = 0xFFFF;
-	// whiteCol = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
-	for (int i = 0; i < 256*256; i++) {
-		BG_GFX[i] = whiteCol;
-		BG_GFX_SUB[i] = whiteCol;
-	}
+	// u16 whiteCol = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
+	toncset16(BG_GFX, 0xFFFF, 256*256);
+	toncset16(BG_GFX_SUB, 0xFFFF, 256*256);
 
 	cartInserted = (REG_SCFG_MC != 0x11);
 
