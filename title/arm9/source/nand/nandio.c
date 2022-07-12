@@ -18,7 +18,7 @@ static bool is3DS;
 
 extern bool nand_Startup();
 
-static u8* crypt_buf = 0;
+static u8 crypt_buf[SECTOR_SIZE * CRYPT_BUF_LEN] ALIGN(32);
 
 static u32 fat_sig_fix_offset = 0;
 
@@ -119,13 +119,7 @@ bool nandio_startup() {
 	mbr_t *mbr = (mbr_t*)sector_buf;
 	nandio_set_fat_sig_fix(is3DS ? 0 : mbr->partitions[0].offset);
 
-	if (crypt_buf == 0) {
-		crypt_buf = (u8*)memalign(32, SECTOR_SIZE * CRYPT_BUF_LEN);
-		//if (crypt_buf == 0) {
-			//printf("nandio: failed to alloc buffer\n");
-		//}
-	}
-	return crypt_buf != 0;
+	return true;
 }
 
 bool nandio_is_inserted() {
@@ -180,8 +174,6 @@ bool nandio_clear_status() {
 }
 
 bool nandio_shutdown() {
-	free(crypt_buf);
-	crypt_buf = 0;
 	return true;
 }
 

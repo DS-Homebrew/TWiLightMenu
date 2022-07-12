@@ -1275,7 +1275,7 @@ int main(int argc, char **argv) {
 
 		if (nandInited) {
 			fatUnmount("nand");
-			io_dsi_nand.shutdown();
+			//io_dsi_nand.shutdown();
 		}
 	}
 
