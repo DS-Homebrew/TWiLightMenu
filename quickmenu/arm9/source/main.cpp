@@ -1272,11 +1272,6 @@ int main(int argc, char **argv) {
 			dlplayFound = true;
 			dlplayReboot = true;
 		}
-
-		if (nandInited) {
-			fatUnmount("nand");
-			//io_dsi_nand.shutdown();
-		}
 	}
 
 	if (sdFound() && ms().consoleModel < 2 && ms().launcherApp != -1) {

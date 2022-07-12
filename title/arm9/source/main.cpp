@@ -2274,11 +2274,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (nandMounted) {
-		fatUnmount("nand");
-		//io_dsi_nand.shutdown();
-	}
-
 	if (!ms().languageSet) {
 		runGraphicIrq();
 		languageSelect();
