@@ -68,11 +68,11 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1"
 	mv akmenu4.nds "../7zfile/Flashcard users/Autoboot/Acekard 2i & Acekard 2.1/akmenu4.nds"
 
-	#### R4i Gold 3DS Plus/R4i Gold 3DS Deluxe/R4i Gold 3DS RTS & R4 Ultra
+	#### R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+
 	cp booter_r4ig.nds _DS_MENU.dat
-	dlditool flashcart_specifics/DLDI/r4idsn_sd_r4ig.dldi _DS_MENU.dat
-	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Ultra, R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/"
-	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra, R4i Gold 3DS Plus, R4i Gold 3DS Deluxe & R4i Gold 3DS RTS/_DS_MENU.dat"
+	dlditool flashcart_specifics/DLDI/ak2_sd.dldi _DS_MENU.dat
+	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/"
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/_DS_MENU.dat"
 	
 	#### R4iDSN
 	cp booter_r4idsn.nds _DSMENU.dat
@@ -82,7 +82,7 @@ autoboot:
 
 	#### Wood R4igold.cc Upgrade
 	cp booter_r4idsn.nds _DS_MENU.dat
-	dlditool flashcart_specifics/DLDI/r4idsn_sd_r4ig.dldi _DS_MENU.dat
+	dlditool flashcart_specifics/DLDI/ak2_sd.dldi _DS_MENU.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Wood R4igold.cc Upgrade"
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Wood R4igold.cc Upgrade/_DS_MENU.dat"
 
@@ -164,12 +164,6 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data"
 	cp r4i.sys "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data/r4i.sys"
 	mv r4i.sys "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/SRESET.dat"
-
-	#### R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW cards, r4isdhc.com 2013 cards, r4isdhc.hk cards before 2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+
-	cp booter_fc.nds _DS_MENU.dat
-	dlditool flashcart_specifics/DLDI/r4itt.dldi _DS_MENU.dat
-	mkdir -p "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk cards 2013-2019, r4igold.cc 3DS, r4i-gold.me 2013+"
-	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk cards 2013-2019, r4igold.cc 3DS, r4i-gold.me 2013+/_DS_MENU.dat"
 
 	#### SuperCard DSTWO
 	cp booter_fc.nds dstwo.nds
