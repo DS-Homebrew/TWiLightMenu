@@ -495,6 +495,7 @@ void perGameSettings (std::string filename) {
 		&& ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+	 	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)))*/
 	|| !ms().secondaryDevice) && !isHomebrew[CURPOS] && !isDSiWare[CURPOS]
 	&& memcmp(gameTid[CURPOS], "HND", 3) != 0

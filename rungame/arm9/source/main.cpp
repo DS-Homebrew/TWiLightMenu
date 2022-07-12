@@ -336,18 +336,13 @@ int lastRunROM() {
 				if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 				 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 				 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
-				 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)) {
+				 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
+				 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)) {
 					CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 					path = ReplaceAll(ms().romPath[1], "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", path);
 					fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 					return runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
-				} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-					CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-					path = ReplaceAll(ms().romPath[1], "fat:/", woodfat);
-					fcrompathini.SetString("Save Info", "lastLoaded", path);
-					fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-					return runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 				} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 					CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 					path = ReplaceAll(ms().romPath[1], "fat:/", dstwofat);

@@ -69,10 +69,10 @@ bool CheatCodelist::parse(const std::string& aFileName)
 	if (ms().secondaryDevice && !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)) {
 		if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
+		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+	   || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
+     || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)) {
 			usrcheatPath = "fat:/_wfwd/cheats/usrcheat.dat";
-		} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-			usrcheatPath = "fat:/_afwd/cheats/usrcheat.dat";
 		}
 	}
     FILE* dat=fopen(usrcheatPath,"rb");
@@ -541,10 +541,10 @@ void CheatCodelist::onGenerate(void)
 	if (ms().secondaryDevice && !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)) {
 		if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
+		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+	   || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
+     || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)) {
 			usrcheatPath = "fat:/_wfwd/cheats/usrcheat.dat";
-		} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-			usrcheatPath = "fat:/_afwd/cheats/usrcheat.dat";
 		}
 	}
   FILE* db=fopen(usrcheatPath,"r+b");
