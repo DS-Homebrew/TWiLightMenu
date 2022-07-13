@@ -23,7 +23,7 @@
 #include "common/tonccpy.h"
 #include "graphics/lodepng.h"
 #include "ndsheaderbanner.h"
-//#include "ndma.h"
+#include "ndma.h"
 
 
 extern bool useTwlCfg;
@@ -1649,5 +1649,5 @@ void ThemeTextures::videoSetup() {
 		loadRotatingCubes();
 	}
 
-	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && dsiFeatures() && !rotatingCubesLoaded && ms().theme != TWLSettings::EThemeHBL);
+	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && ndmaEnabled() && !rotatingCubesLoaded && ms().theme != TWLSettings::EThemeHBL);
 }
