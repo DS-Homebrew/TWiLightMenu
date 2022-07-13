@@ -23,7 +23,7 @@
 #include "common/tonccpy.h"
 #include "graphics/lodepng.h"
 #include "ndsheaderbanner.h"
-#include "ndma.h"
+//#include "ndma.h"
 
 
 extern bool useTwlCfg;
@@ -904,10 +904,10 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 			}
 			if (image[(i*4)+3] == 0) {
 				_bmpImageBuffer[i] = color;
-				if (ndmaEnabled()) _bmpImageBuffer2[i] = color;
+				if (boxArtColorDeband) _bmpImageBuffer2[i] = color;
 			} else {
 				_bmpImageBuffer[i] = alphablend(color, imgSrc, image[(i*4)+3]);
-				if (ndmaEnabled()) _bmpImageBuffer2[i] = alphablend(color, imgSrc2, image[(i*4)+3]);
+				if (boxArtColorDeband) _bmpImageBuffer2[i] = alphablend(color, imgSrc2, image[(i*4)+3]);
 			}
 			photoX++;
 			if (photoX == photoXend) {
@@ -1649,5 +1649,5 @@ void ThemeTextures::videoSetup() {
 		loadRotatingCubes();
 	}
 
-	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && ndmaEnabled() && !rotatingCubesLoaded && ms().theme != TWLSettings::EThemeHBL);
+	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && dsiFeatures() && !rotatingCubesLoaded && ms().theme != TWLSettings::EThemeHBL);
 }

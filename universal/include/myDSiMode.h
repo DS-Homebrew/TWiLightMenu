@@ -4,6 +4,10 @@
 #include <nds/ndstypes.h>
 #include <nds/system.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // Checks if DSi features are enabled,
 // regardless if the console runs in DS or DSi mode
 static inline 
@@ -11,4 +15,10 @@ bool dsiFeatures(void) {
 	return (isDSiMode() || REG_SCFG_EXT != 0);
 }
 
+// Checks for TWL clock speed without SCFG access
+extern bool isTwlSpeed(void);
+
+#ifdef __cplusplus
+}
+#endif
 #endif
