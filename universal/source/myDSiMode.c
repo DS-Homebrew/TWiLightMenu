@@ -2,6 +2,7 @@
 #include <nds/interrupts.h>
 #include <nds/system.h>
 
+#ifdef ARM9
 static bool twlSpeedChecked = false;
 static bool twlSpeed = false;
 
@@ -28,3 +29,4 @@ ITCM_CODE bool isTwlSpeed(void) {
 	}
 	return twlSpeed;
 }
+#endif

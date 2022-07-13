@@ -15,8 +15,10 @@ bool dsiFeatures(void) {
 	return (isDSiMode() || REG_SCFG_EXT != 0);
 }
 
+#ifdef ARM9
 // Checks for TWL clock speed without SCFG access
 extern bool isTwlSpeed(void);
+#endif
 
 #ifdef __cplusplus
 }
