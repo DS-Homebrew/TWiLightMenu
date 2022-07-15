@@ -1069,15 +1069,18 @@ void refreshNdsCard() {
 
 	if (sys().arm7SCFGLocked() && ms().showBoxArt) {
 		loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
-	} else if ((cardInit(true) == 0) && ms().showBoxArt) {
-		char game_TID[5] = {0};
-		tonccpy(&game_TID, ndsCardHeader.gameCode, 4);
+	} else {
+		my_cardReset(true);
+		if ((cardInit() == 0) && ms().showBoxArt) {
+			char game_TID[5] = {0};
+			tonccpy(&game_TID, ndsCardHeader.gameCode, 4);
 
-		char boxArtPath[256];
-		sprintf (boxArtPath, (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
-		loadBoxArt(boxArtPath, true);	// Load box art
-	} else if (ms().showBoxArt) {
-		loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
+			char boxArtPath[256];
+			sprintf (boxArtPath, (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
+			loadBoxArt(boxArtPath, true);	// Load box art
+		} else if (ms().showBoxArt) {
+			loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
+		}
 	}
 
 	getGameInfo(1, false, "slot1");
