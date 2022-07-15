@@ -213,7 +213,7 @@ int main(int argc, char **argv) {
 	imageLoad((argc >= 2) ? argv[1] : "nitro:/graphics/test.png");
 	bgLoad();
 	if (!ms().macroMode) {
-		printSmall(false, 8, 174, STR_BACK, Alignment::left);
+		printSmall(false, -88, 174, STR_BACK, Alignment::center);
 		updateText(false);
 	}
 
