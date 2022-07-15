@@ -35,7 +35,7 @@ extern bool controlBottomBright;
 int fadeDelay = 0;
 
 int screenBrightness = 31;
-bool isPng = false;
+int imageType = 0;
 
 u8* dsImageBuffer8;
 u16* dsImageBuffer[2];
@@ -108,7 +108,7 @@ void vBlankHandler() {
 	if (controlTopBright) SetBrightness(0, screenBrightness);
 	if (controlBottomBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
-	if (isPng) {
+	if (imageType > 1) {
 		static bool secondBuffer = false;
 		dmaCopyHalfWordsAsynch(0, dsImageBuffer[secondBuffer], BG_GFX, (256*192)*2);
 		secondBuffer = !secondBuffer;
@@ -119,7 +119,7 @@ void vBlankHandler() {
 }
 
 void imageLoad(const char* filename) {
-	if (isPng) {
+	if (imageType == 2) { // PNG
 		std::vector<unsigned char> image;
 		unsigned width, height;
 		lodepng::decode(image, width, height, filename);
@@ -192,6 +192,47 @@ void imageLoad(const char* filename) {
 			alternatePixel = !alternatePixel;
 		}
 		return;
+	} else if (imageType == 1) { // BMP
+		FILE* file = fopen(filename, "rb");
+		if (!file)
+			return;
+
+		// Read width & height
+		fseek(file, 0x12, SEEK_SET);
+		u32 width, height;
+		fread(&width, 1, sizeof(width), file);
+		fread(&height, 1, sizeof(height), file);
+
+		if (width > 256 || height > 192) {
+			fclose(file);
+			return;
+		}
+
+		fseek(file, 0xE, SEEK_SET);
+		u8 headerSize = fgetc(file);
+		bool rgb565 = false;
+		if(headerSize == 0x38) {
+			// Check the upper byte green mask for if it's got 5 or 6 bits
+			fseek(file, 0x2C, SEEK_CUR);
+			rgb565 = fgetc(file) == 0x07;
+			fseek(file, headerSize - 0x2E, SEEK_CUR);
+		} else {
+			fseek(file, headerSize - 1, SEEK_CUR);
+		}
+		u16 *bmpImageBuffer = new u16[width * height];
+		fread(bmpImageBuffer, 2, width * height, file);
+		u16 *dst = BG_GFX + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
+		u16 *src = bmpImageBuffer;
+		for (uint y = 0; y < height; y++, dst -= 256) {
+			for (uint x = 0; x < width; x++) {
+				u16 val = *(src++);
+				*(dst + x) = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
+			}
+		}
+
+		delete[] bmpImageBuffer;
+		fclose(file);
+		return;
 	}
 
 	Gif gif(filename, false, false, true);
@@ -261,7 +302,7 @@ void graphicsInit() {
 	//vramSetBankB(VRAM_B_MAIN_BG); // May be needed for larger images
 	vramSetBankC(VRAM_C_SUB_BG);
 
-	if (isPng) {
+	if (imageType > 0) {
 		//bg3Main = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
 
 		videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
@@ -274,10 +315,12 @@ void graphicsInit() {
 		REG_BG3PC = 0;
 		REG_BG3PD = 1<<8;
 
-		dsImageBuffer[0] = new u16[256*192];
-		dsImageBuffer[1] = new u16[256*192];
-		toncset16(dsImageBuffer[0], 0, 256*192);
-		toncset16(dsImageBuffer[1], 0, 256*192);
+		if (imageType > 1) {
+			dsImageBuffer[0] = new u16[256*192];
+			dsImageBuffer[1] = new u16[256*192];
+			toncset16(dsImageBuffer[0], 0, 256*192);
+			toncset16(dsImageBuffer[1], 0, 256*192);
+		}
 	} else {
 		bg3Main = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
 		dsImageBuffer8 = new u8[256*192];

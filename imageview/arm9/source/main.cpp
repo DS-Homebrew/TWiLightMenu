@@ -35,7 +35,7 @@ bool controlBottomBright = true;
 bool useTwlCfg = false;
 
 extern void ClearBrightness();
-extern bool isPng;
+extern int imageType;
 
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
@@ -192,9 +192,15 @@ int main(int argc, char **argv) {
 	ms().loadSettings();
 
 	if (argc >= 2) {
-		isPng = extension(argv[1], {".png"});
+		if (extension(argv[1], {".gif"})) {
+			imageType = 0;
+		} else if (extension(argv[1], {".bmp"})) {
+			imageType = 1;
+		} else if (extension(argv[1], {".png"})) {
+			imageType = 2;
+		}
 	} else {
-		isPng = true;
+		imageType = 2;
 	}
 
 	graphicsInit();

@@ -1055,6 +1055,7 @@ int main(int argc, char **argv) {
 		".rvid", // Rocket Video
 		".fv", // FastVideo
 		".gif", // GIF
+		".bmp", // BMP
 		".png" // Portable Network Graphics
 	};
 
