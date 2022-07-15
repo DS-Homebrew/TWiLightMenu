@@ -52,6 +52,7 @@ void checkSdEject(void) {
 		0xFFFF,
 	};
 	//tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
+	toncset16(BG_PALETTE_SUB, 0, 256);
 	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
 
 	swiWaitForVBlank();
@@ -64,6 +65,7 @@ void checkSdEject(void) {
 		printLarge(false, 0, 37, STR_ERROR_HAS_OCCURRED, Alignment::center);
 		printSmall(false, 0, 67, STR_DISABLE_SD_REMOVAL_CHECK, Alignment::center);
 	}
+	updateText(false);
 
 	while(1) {
 		// Currently not working
