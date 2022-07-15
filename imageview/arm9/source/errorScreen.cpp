@@ -3,6 +3,7 @@
 #include <maxmod9.h>
 
 // #include "autoboot.h"
+#include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
 #include "graphics/fontHandler.h"
 #include "common/tonccpy.h"
@@ -55,6 +56,9 @@ void checkSdEject(void) {
 	toncset16(BG_PALETTE_SUB, 0, 256);
 	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
 
+	if (ms().macroMode) {
+		lcdMainOnTop();
+	}
 	swiWaitForVBlank();
 	clearText();
 
