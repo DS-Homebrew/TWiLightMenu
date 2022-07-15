@@ -39,6 +39,7 @@ SOURCES		:=	source source/graphics
 INCLUDES	:=	include
 DATA		:=	data  
 GRAPHICS	:=  gfx
+NITRODATA	:=	nitrofiles
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -139,8 +140,8 @@ dist:	all
 	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
-	ndstool	-u 00030015 -g SLRN -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
-			-g SLRN 01 "TWLMENUPP-LR" -a 00000138 -z 80040000 -b icon.bmp "Last-run ROM;TWiLight Menu++;RocketRobz"
+	ndstool	-u 00030015 -g SLRN -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -d $(NITRODATA) \
+			-g SLRN 01 "TWLMENUPP-LR" -a 00000138 -z 80040000 -b icon.bmp "Last-run ROM;TWiLight Menu++;Rocket Robz"
 
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
 		$(PYTHON) ../patch_ndsheader_dsiware.py $(TARGET).nds --twlTouch

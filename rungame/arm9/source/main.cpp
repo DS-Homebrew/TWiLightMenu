@@ -17,6 +17,7 @@
 #include "common/nds_loader_arm9.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
+#include "common/nitrofs.h"
 #include "defaultSettings.h"
 #include "myDSiMode.h"
 #include "twlFlashcard.h"
@@ -667,6 +668,12 @@ int main(int argc, char **argv) {
 	if (!fatMountSimple("sd", &__my_io_dsisd)) {
 		consoleDemoInit();
 		iprintf("FAT init failed!");
+		stop();
+	}
+
+	if (!nitroFSInit("sd:/_nds/TWiLightMenu/resetgame.srldr")) {
+		consoleDemoInit();
+		iprintf("NitroFS init failed!");
 		stop();
 	}
 
