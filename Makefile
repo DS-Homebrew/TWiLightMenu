@@ -16,6 +16,7 @@ package:
 	@$(MAKE) -C gbapatcher dist
 	@$(MAKE) -C quickmenu dist
 	@$(MAKE) -C manual dist
+	@$(MAKE) -C imageview dist
 	@$(MAKE) -C resources
 	#@$(MAKE) -C romsel_aktheme dist
 	@$(MAKE) -C romsel_dsimenutheme dist
@@ -42,6 +43,9 @@ quickmenu:
 
 manual:
 	@$(MAKE) -C manual
+
+imageview:
+	@$(MAKE) -C imageview
 
 resources:
 	@$(MAKE) -C resources
@@ -74,6 +78,7 @@ clean:
 	@$(MAKE) -C gbapatcher clean
 	@$(MAKE) -C quickmenu clean
 	@$(MAKE) -C manual clean
+	@$(MAKE) -C imageview clean
 	#@$(MAKE) -C romsel_aktheme clean
 	@$(MAKE) -C romsel_dsimenutheme clean
 	@$(MAKE) -C romsel_r4theme clean
@@ -96,6 +101,7 @@ clean:
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/manual.srldr"
+	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/imageview.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/r4menu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/settings.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/slot1launch.srldr"
