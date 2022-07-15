@@ -52,6 +52,7 @@ class SoundControl {
         FILE* stream_start_source;
         FILE* stream_source;
         u32 startup_sample_length;
+        u32 seekPos;
 };
 
 typedef singleton<SoundControl> soundCtl_s;

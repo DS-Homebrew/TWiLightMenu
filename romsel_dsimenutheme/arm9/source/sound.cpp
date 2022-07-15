@@ -54,7 +54,7 @@ volatile char* SFX_DATA = (char*)NULL;
 mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
 
 SoundControl::SoundControl()
-	: stream_is_playing(false), stream_source(NULL), startup_sample_length(0)
+	: stream_is_playing(false), stream_source(NULL), startup_sample_length(0), seekPos(0)
  {
 
 	sys.mod_count = MSL_NSONGS;
@@ -246,6 +246,7 @@ SoundControl::SoundControl()
 				if (customSkin) {
 					std::string musicPath = TFN_SOUND_BG;
 					std::string cachePath = TFN_SOUND_BG_CACHE;
+					bool closed = false;
 					if ((access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) && access(musicPath.c_str(), F_OK) == 0) {
 						u8 wavFormat = 0;
 						u8 numChannels = 1;
@@ -257,14 +258,17 @@ SoundControl::SoundControl()
 						stream.format = numChannels == 2 ? MM_STREAM_8BIT_STEREO : MM_STREAM_16BIT_MONO;
 						fseek(stream_source, 0x18, SEEK_SET);
 						fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
-						fclose(stream_source);
 						if (wavFormat == 0x11) {
 							if (adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2) == -1) {
 								remove(cachePath.c_str());
 							}
+							fclose(stream_source);
+							closed = true;
+						} else {
+							seekPos = 0x2C;
 						}
 					}
-					stream_source = fopen(cachePath.c_str(), "rb");
+					if (closed) stream_source = fopen(cachePath.c_str(), "rb");
 					if (stream_source) break; } // fallthrough if stream_source fails.
 				}
 			case 1:
@@ -285,7 +289,7 @@ SoundControl::SoundControl()
 	clearText();
 	controlTopBright = true;
 
-	fseek(stream_source, 0, SEEK_SET);
+	fseek(stream_source, seekPos, SEEK_SET);
 
 	stream.buffer_length = 0x1000;	  			// should be adequate
 	stream.callback = on_stream_request;    
@@ -407,7 +411,7 @@ volatile void SoundControl::updateStream() {
 		// If we don't read enough samples, loop from the beginning of the file.
 		instance_filled = fread((s16*)fill_stream_buf + filled_samples, sizeof(s16), instance_to_fill, loopingPoint ? stream_source : stream_start_source);		
 		if (instance_filled < instance_to_fill) {
-			fseek(stream_source, 0, SEEK_SET);
+			fseek(stream_source, seekPos, SEEK_SET);
 			instance_filled += fread((s16*)fill_stream_buf + filled_samples + instance_filled,
 				 sizeof(s16), (instance_to_fill - instance_filled), stream_source);
 			loopingPoint = true;
