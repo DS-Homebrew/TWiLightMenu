@@ -122,7 +122,15 @@ void imageLoad(const char* filename) {
 		std::vector<unsigned char> image;
 		unsigned width, height;
 		lodepng::decode(image, width, height, filename);
-		if (width != 256 || height > 192) return;
+		if (width > 256 || height > 192) return;
+
+		int xPos = 0;
+		if (width <= 254) {
+			// Adjust X position
+			for (int i = width; i < 256; i += 2) {
+				xPos++;
+			}
+		}
 
 		int yPos = 0;
 		if (height <= 190) {
@@ -149,7 +157,7 @@ void imageLoad(const char* filename) {
 					image[(i*4)+3] |= BIT(2);
 				}
 			}
-			pngDsImageBuffer[0][i+(yPos*256)] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			pngDsImageBuffer[0][(xPos+i)+(yPos*256)] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -171,7 +179,7 @@ void imageLoad(const char* filename) {
 					image[(i*4)+2] -= 0x4;
 				}
 			}
-			pngDsImageBuffer[1][i+(yPos*256)] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			pngDsImageBuffer[1][(xPos+i)+(yPos*256)] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if ((i % 256) == 255) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
 		}
@@ -182,7 +190,15 @@ void imageLoad(const char* filename) {
 	std::vector<u8> pageImage = gif.frame(0).image.imageData;
 	int width = gif.frame(0).descriptor.w;
 	int height = gif.frame(0).descriptor.h;
-	if (width != 256 || height > 192) return;
+	if (width > 256 || height > 192) return;
+
+	int xPos = 0;
+	if (width <= 254) {
+		// Adjust X position
+		for (int i = width; i < 256; i += 2) {
+			xPos++;
+		}
+	}
 
 	int yPos = 0;
 	if (height <= 190) {
@@ -193,7 +209,7 @@ void imageLoad(const char* filename) {
 	}
 
 	tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
-	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(yPos*256), 256*192);
+	dmaCopyWordsAsynch(0, pageImage.data(), (bgGetGfxPtr(bg3Main)+xPos)+(yPos*256), 256*192);
 }
 
 void bgLoad(void) {
