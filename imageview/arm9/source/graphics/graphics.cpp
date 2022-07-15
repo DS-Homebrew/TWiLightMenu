@@ -37,7 +37,8 @@ int fadeDelay = 0;
 int screenBrightness = 31;
 bool isPng = false;
 
-u16* pngDsImageBuffer[2];
+u8* dsImageBuffer8;
+u16* dsImageBuffer[2];
 
 int bg3Sub;
 int bg2Main;
@@ -109,7 +110,7 @@ void vBlankHandler() {
 
 	if (isPng) {
 		static bool secondBuffer = false;
-		dmaCopyHalfWordsAsynch(0, pngDsImageBuffer[secondBuffer], BG_GFX, (256*192)*2);
+		dmaCopyHalfWordsAsynch(0, dsImageBuffer[secondBuffer], BG_GFX, (256*192)*2);
 		secondBuffer = !secondBuffer;
 	}
 
@@ -141,6 +142,8 @@ void imageLoad(const char* filename) {
 		}
 
 		bool alternatePixel = false;
+		int x = 0;
+		int y = 0;
 		for(unsigned i=0;i<image.size()/4;i++) {
 			image[(i*4)+3] = 0;
 			if (alternatePixel) {
@@ -157,7 +160,7 @@ void imageLoad(const char* filename) {
 					image[(i*4)+3] |= BIT(2);
 				}
 			}
-			pngDsImageBuffer[0][(xPos+i)+(yPos*256)] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -179,8 +182,13 @@ void imageLoad(const char* filename) {
 					image[(i*4)+2] -= 0x4;
 				}
 			}
-			pngDsImageBuffer[1][(xPos+i)+(yPos*256)] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if ((i % 256) == 255) alternatePixel = !alternatePixel;
+			dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			x++;
+			if ((unsigned)x == width) {
+				alternatePixel = !alternatePixel;
+				x=0;
+				y++;
+			}
 			alternatePixel = !alternatePixel;
 		}
 		return;
@@ -208,8 +216,19 @@ void imageLoad(const char* filename) {
 		}
 	}
 
-	tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
-	dmaCopyWordsAsynch(0, pageImage.data(), (bgGetGfxPtr(bg3Main)+xPos)+(yPos*256), 256*192);
+	tonccpy(BG_PALETTE, gif.gct().data(), gif.gct().size() * 2);
+
+	int x = 0;
+	int y = 0;
+	for (int i = 0; i < width*height; i++) {
+		dsImageBuffer8[(xPos+x+(y*256))+(yPos*256)] = pageImage[i];
+		x++;
+		if (x == width) {
+			x=0;
+			y++;
+		}
+	}
+	dmaCopyWordsAsynch(0, dsImageBuffer8, bgGetGfxPtr(bg3Main), 256*192);
 }
 
 void bgLoad(void) {
@@ -255,12 +274,14 @@ void graphicsInit() {
 		REG_BG3PC = 0;
 		REG_BG3PD = 1<<8;
 
-		pngDsImageBuffer[0] = new u16[256*192];
-		pngDsImageBuffer[1] = new u16[256*192];
-		toncset16(pngDsImageBuffer[0], 0, 256*192);
-		toncset16(pngDsImageBuffer[1], 0, 256*192);
+		dsImageBuffer[0] = new u16[256*192];
+		dsImageBuffer[1] = new u16[256*192];
+		toncset16(dsImageBuffer[0], 0, 256*192);
+		toncset16(dsImageBuffer[1], 0, 256*192);
 	} else {
 		bg3Main = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+		dsImageBuffer8 = new u8[256*192];
+		toncset(dsImageBuffer8, 0, 256*192);
 	}
 	bgSetPriority(bg3Main, 3);
 
