@@ -25,8 +25,7 @@
 #include "common/tonccpy.h"
 #include "language.h"
 
-#include "soundbank.h"
-#include "soundbank_bin.h"
+#include "sound.h"
 
 bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
@@ -37,13 +36,6 @@ bool useTwlCfg = false;
 extern void ClearBrightness();
 extern int imageType;
 
-mm_sound_effect snd_launch;
-mm_sound_effect snd_select;
-mm_sound_effect snd_stop;
-mm_sound_effect snd_wrong;
-mm_sound_effect snd_back;
-mm_sound_effect snd_switch;
-
 //---------------------------------------------------------------------------------
 void stop (void) {
 //---------------------------------------------------------------------------------
@@ -52,62 +44,8 @@ void stop (void) {
 	}
 }
 
-void InitSound() {
-	mmInitDefaultMem((mm_addr)soundbank_bin);
-
-	mmLoadEffect( SFX_LAUNCH );
-	mmLoadEffect( SFX_SELECT );
-	mmLoadEffect( SFX_STOP );
-	mmLoadEffect( SFX_WRONG );
-	mmLoadEffect( SFX_BACK );
-	mmLoadEffect( SFX_SWITCH );
-
-	snd_launch = {
-		{ SFX_LAUNCH } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-	snd_select = {
-		{ SFX_SELECT } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-	snd_stop = {
-		{ SFX_STOP } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-	snd_wrong = {
-		{ SFX_WRONG } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-	snd_back = {
-		{ SFX_BACK } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-	snd_switch = {
-		{ SFX_SWITCH } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-}
-
 void loadROMselect() {
-	mmEffectEx(&snd_back);
+	snd().playBack();
 	fadeType = false;	// Fade out to white
 	for (int i = 0; i < 25; i++) {
 		swiWaitForVBlank();
@@ -148,6 +86,7 @@ bool extension(const std::string_view filename, const std::vector<std::string_vi
 }
 
 void customSleep() {
+	snd().stopStream();
 	fadeType = false;
 	for (int i = 0; i < 25; i++) {
 		swiWaitForVBlank();
@@ -167,6 +106,7 @@ void customSleep() {
 	}
 	powerOn(PM_BACKLIGHT_BOTTOM);
 	fadeType = true;
+	snd().beginStream();
 }
 
 //---------------------------------------------------------------------------------
@@ -206,8 +146,6 @@ int main(int argc, char **argv) {
 	graphicsInit();
 	fontInit();
 
-	InitSound();
-
 	langInit();
 
 	imageLoad((argc >= 2) ? argv[1] : "nitro:/graphics/test.png");
@@ -216,6 +154,9 @@ int main(int argc, char **argv) {
 		printSmall(false, -88, 174, STR_BACK, Alignment::center);
 		updateText(false);
 	}
+
+	snd();
+	snd().beginStream();
 
 	int pressed = 0;
 	int held = 0;
@@ -232,6 +173,7 @@ int main(int argc, char **argv) {
 			held = keysHeld();
 			//repeat = keysDownRepeat();
 			checkSdEject();
+			snd().updateStream();
 			swiWaitForVBlank();
 		} while(!held);
 
