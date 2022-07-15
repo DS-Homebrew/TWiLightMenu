@@ -1830,9 +1830,12 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				} else if (extension(std_romsel_filename, {".dsk"})) {
 					bnrRomType[i] = 18;
 					boxArtType[i] = 0;
+				} else {
+					bnrRomType[i] = 9;
+					boxArtType[i] = -1;
 				}
 
-				if (bnrRomType[i] > 0 && bnrRomType[i] < 10) {
+				if (bnrRomType[i] != 0) {
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;

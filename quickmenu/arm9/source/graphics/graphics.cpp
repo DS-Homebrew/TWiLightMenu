@@ -497,6 +497,8 @@ void loadBoxArt(const char* filename, bool secondaryDevice) {
 
 	if(access(filename, F_OK) != 0) {
 		switch (boxArtType[secondaryDevice]) {
+			case -1:
+				return;
 			case 0:
 			default:
 				filename = "nitro:/graphics/boxart_unknown.png";

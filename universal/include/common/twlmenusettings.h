@@ -134,7 +134,8 @@ public:
 		ESNEmulDSLaunch = 21,
 		EAmEDSLaunch = 22,
 		ECrocoDSLaunch = 23,
-		ETunaViDSLaunch = 24
+		ETunaViDSLaunch = 24,
+		EImageLaunch = 25
 	};
 
 	enum TConsoleModel : int

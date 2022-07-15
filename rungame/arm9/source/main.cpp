@@ -646,6 +646,9 @@ int lastRunROM() {
 		case TWLSettings::ETunaViDSLaunch:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/tuna-vids.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass video to tuna-viDS as argument
+		case TWLSettings::EImageLaunch:
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/imageview.srldr";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass image to image viewer as argument
 	}
 	
 	return -1;

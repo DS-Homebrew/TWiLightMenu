@@ -905,10 +905,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bnrRomType = 17;
 			} else if (extension(std_romsel_filename, {".dsk"})) {
 				bnrRomType = 18;
+			} else {
+				bnrRomType = 9;
 			}
 		}
 
-		if (bnrRomType > 0 && bnrRomType < 10) {
+		if (bnrRomType != 0) {
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;

@@ -856,6 +856,8 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 
 	if(access(filename, F_OK) != 0) {
 		switch (boxArtType[CURPOS]) {
+			case -1:
+				return;
 			case 0:
 			default:
 				filename = "nitro:/graphics/boxart_unknown.png";
@@ -988,7 +990,9 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 	}
 
 	if (!boxArtFound[num]) {
-		drawBoxArt("nitro:/null.png");
+		if (boxArtType[CURPOS] != -1) {
+			drawBoxArt("nitro:/null.png");
+		}
 		return;
 	}
 

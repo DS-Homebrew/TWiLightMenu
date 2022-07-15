@@ -1163,7 +1163,9 @@ int main(int argc, char **argv) {
 		".dsk", // Amstrad CPC
 		".avi", // Xvid (AVI)
 		".rvid", // Rocket Video
-		".fv" // FastVideo
+		".fv", // FastVideo
+		".gif", // GIF
+		".png" // Portable Network Graphics
 	};
 
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
@@ -2536,6 +2538,14 @@ int main(int argc, char **argv) {
 
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
+					}
+				} else if (extension(filename, {".gif", ".png"})) {
+					ms().launchType[ms().secondaryDevice] = TWLSettings::EImageLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/imageview.srldr";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/imageview.srldr";
+						boostVram = true;
 					}
 				}
 

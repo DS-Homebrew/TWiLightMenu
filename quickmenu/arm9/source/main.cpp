@@ -1455,6 +1455,9 @@ int main(int argc, char **argv) {
 		} else if (extension(filename[0], ".dsk")) {
 			bnrRomType[0] = 18;
 			boxArtType[0] = 0;
+		} else {
+			bnrRomType[0] = 9;
+			boxArtType[0] = -1;
 		}
 
 		if (ms().showBoxArt) {
@@ -1585,6 +1588,9 @@ int main(int argc, char **argv) {
 		} else if (extension(filename[1], ".dsk")) {
 			bnrRomType[1] = 18;
 			boxArtType[1] = 0;
+		} else {
+			bnrRomType[1] = 9;
+			boxArtType[1] = -1;
 		}
 
 		if (ms().showBoxArt) {
@@ -3272,6 +3278,14 @@ int main(int argc, char **argv) {
 
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
+					}
+				} else if (extension(filename[ms().secondaryDevice], ".gif") || extension(filename[ms().secondaryDevice], ".png")) {
+					ms().launchType[ms().secondaryDevice] = Launch::EImageLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/imageview.srldr";
+					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/imageview.srldr";
+						boostVram = true;
 					}
 				}
 
