@@ -50,9 +50,9 @@ void fontInit() {
 	// Load palettes
 	u16 palette[] = {
 		0x0000,
-		0xDEF7,
-		0xC631,
-		0xA108,
+		0x45F1,
+		0x2D0A,
+		0x1044,
 	};
 	//tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));

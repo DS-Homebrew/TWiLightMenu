@@ -122,7 +122,7 @@ void imageLoad(const char* filename) {
 		std::vector<unsigned char> image;
 		unsigned width, height;
 		lodepng::decode(image, width, height, filename);
-		if (width != 256) return;
+		if (width != 256 || height > 192) return;
 
 		int yPos = 0;
 		if (height <= 190) {
@@ -180,8 +180,9 @@ void imageLoad(const char* filename) {
 
 	Gif gif(filename, false, false, true);
 	std::vector<u8> pageImage = gif.frame(0).image.imageData;
-	if (gif.frame(0).descriptor.w != 256) return;
+	int width = gif.frame(0).descriptor.w;
 	int height = gif.frame(0).descriptor.h;
+	if (width != 256 || height > 192) return;
 
 	int yPos = 0;
 	if (height <= 190) {

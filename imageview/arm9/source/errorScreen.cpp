@@ -37,6 +37,8 @@ void checkSdEject(void) {
 	// Show "SD removed" screen
 	mmEffectCancelAll();
 
+	irqDisable(IRQ_VBLANK);
+
 	videoSetMode(MODE_5_2D | DISPLAY_BG2_ACTIVE);
 	videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
 
@@ -49,7 +51,7 @@ void checkSdEject(void) {
 		0xD6B5,
 		0xFFFF,
 	};
-	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
+	//tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
 
 	swiWaitForVBlank();
