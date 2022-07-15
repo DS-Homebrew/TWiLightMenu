@@ -2575,7 +2575,7 @@ int main(int argc, char **argv)
 		lastRunROM();
 	}
 
-	// If in DSi mode with no flashcard & SCFG access, attempt to cut slot1 power to save battery
+	// If in DSi mode with no flashcard & with SCFG access, attempt to cut slot1 power to save battery
 	if (isDSiMode() && !fcFound && !sys().arm7SCFGLocked() && !ms().autostartSlot1) {
 		disableSlot1();
 	}

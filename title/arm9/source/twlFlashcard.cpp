@@ -25,13 +25,16 @@ TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
 TWL_CODE void twl_flashcardInit(void) {
 	if (REG_SCFG_MC != 0x11 && !sys().arm7SCFGLocked()) {
 		// Reset Slot-1 to allow reading title name and ID
-		cardInit(false);
+		my_cardReset(false);
 
 		CIniFile settingsini( DSIMENUPP_INI );
 
 		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
 			return;
 		}
+
+		// Read title name and ID
+		cardInit();
 
 		/*char gamename[13];
 		char gameid[5];

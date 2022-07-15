@@ -274,18 +274,12 @@ static void switchToTwlBlowfish(void) {
 }
 
 
-int cardInit (bool properReset)
+void my_cardReset (bool properReset)
 {
-	u32 portFlagsKey1, portFlagsSecRead;
-	normalChip = false;	// As defined by GBAtek, normal chip secure area is accessed in blocks of 0x200, other chip in blocks of 0x1000
-	int secureBlockNumber;
 	int i;
-	u8 cmdData[8] __attribute__ ((aligned));
-	GameCode* gameCode;
-
-	twlBlowfish = false;
 
 	sysSetCardOwner (BUS_OWNER_ARM9);	// Allow arm9 to access NDS cart
+
 	if (isDSiMode()) { 
 		// Reset card slot
 		disableSlot1();
@@ -313,6 +307,20 @@ int cardInit (bool properReset)
 	}
 
 	toncset(headerData, 0, 0x1000);
+}
+
+int cardInit (void)
+{
+	u32 portFlagsKey1, portFlagsSecRead;
+	normalChip = false;	// As defined by GBAtek, normal chip secure area is accessed in blocks of 0x200, other chip in blocks of 0x1000
+	int secureBlockNumber;
+	int i;
+	u8 cmdData[8] __attribute__ ((aligned));
+	GameCode* gameCode;
+
+	twlBlowfish = false;
+
+	sysSetCardOwner (BUS_OWNER_ARM9);	// Allow arm9 to access NDS cart
 
 	u32 iCardId=cardReadID(CARD_CLK_SLOW);	
 	while(REG_ROMCTRL & CARD_BUSY);
