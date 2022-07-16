@@ -50,6 +50,7 @@
 #include "icon_unk.h"
 #include "icon_folder.h"
 #include "icon_vid.h"
+#include "icon_img.h"
 #include "icon_plg.h"
 #include "icon_gbamode.h"
 #include "icon_gba.h"
@@ -74,6 +75,7 @@ extern u16 convertVramColorToGrayscale(u16 val);
 static int iconTexID[8];
 static int folderTexID;
 static int vidTexID;
+static int imgTexID;
 static int plgTexID;
 static int gbaTexID;
 static int gbTexID;
@@ -100,6 +102,7 @@ static u32 arm9StartSig[4];
 
 static glImage folderIcon[1];
 static glImage vidIcon[1];
+static glImage imgIcon[1];
 static glImage plgIcon[1];
 
 static glImage ndsIcon[8][(32 / 32) * (256 / 32)];
@@ -301,6 +304,30 @@ void loadConsoleIcons()
 				16, // Length of the palette to use (16 colors)
 				(u16*) newPalette, // Image palette
 				(u8*) icon_vidBitmap // Raw image data
+				);
+
+	// Image
+	glDeleteTextures(1, &imgTexID);
+
+	newPalette = (u16*)icon_imgPal;
+	if (ms().colorMode == 1) {
+		for (int i2 = 0; i2 < 16; i2++) {
+			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		}
+	}
+	imgTexID =
+	glLoadTileSet(imgIcon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) newPalette, // Image palette
+				(u8*) icon_imgBitmap // Raw image data
 				);
 
 	// DSTWO Plugin
@@ -734,7 +761,8 @@ static void clearIcon()
 void drawIcon(int Xpos, int Ypos) { glSprite(Xpos, Ypos, bannerFlip, &ndsIcon[bnriconPalLine][bnriconframenumY & 31]); }
 
 void drawIconFolder(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, folderIcon); }
-void drawIconVideo(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, vidIcon); }
+void drawIconVID(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, vidIcon); }
+void drawIconIMG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, imgIcon); }
 void drawIconPlg(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, plgIcon); }
 void drawIconGBA(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, gbaIcon); }
 void drawIconGB(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[0 & 31]); }

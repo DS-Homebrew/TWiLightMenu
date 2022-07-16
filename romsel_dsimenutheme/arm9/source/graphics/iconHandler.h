@@ -21,6 +21,7 @@
 #define NGP_ICON 0xAF
 #define CPC_ICON 0xCC
 #define VID_ICON 0x1D
+#define IMG_ICON 0x13
 #define NDS_ICON_BANK_COUNT 7
 #define TWL_ICON_FRAMES 8
 #define TWL_TEX_HEIGHT 256

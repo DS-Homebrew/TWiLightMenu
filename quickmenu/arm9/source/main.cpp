@@ -1410,6 +1410,9 @@ int main(int argc, char **argv) {
 		} else if (extension(filename[0], ".avi") || extension(filename[0], ".rvid") || extension(filename[0], ".fv")) {
 			bnrRomType[0] = 19;
 			boxArtType[0] = 2;
+		} else if (extension(filename[0], ".gif") || extension(filename[0], ".bmp") || extension(filename[0], ".png")) {
+			bnrRomType[0] = 20;
+			boxArtType[0] = -1;
 		} else if (extension(filename[0], ".agb") || extension(filename[0], ".gba") || extension(filename[0], ".mb")) {
 			bnrRomType[0] = 1;
 			boxArtType[0] = 1;
@@ -1543,6 +1546,9 @@ int main(int argc, char **argv) {
 		} else if (extension(filename[1], ".avi") || extension(filename[1], ".rvid") || extension(filename[1], ".fv")) {
 			bnrRomType[1] = 19;
 			boxArtType[1] = 2;
+		} else if (extension(filename[1], ".gif") || extension(filename[1], ".bmp") || extension(filename[1], ".png")) {
+			bnrRomType[1] = 20;
+			boxArtType[1] = -1;
 		} else if (extension(filename[1], ".agb") || extension(filename[1], ".gba") || extension(filename[1], ".mb")) {
 			bnrRomType[1] = 1;
 			boxArtType[1] = 1;

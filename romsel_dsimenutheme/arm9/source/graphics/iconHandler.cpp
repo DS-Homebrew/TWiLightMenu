@@ -32,6 +32,7 @@ int _wsTexID;
 int _ngpTexID;
 int _cpcTexID;
 int _vidTexID;
+int _imgTexID;
 
 glImage _ndsIcon[NDS_ICON_BANK_COUNT][TWL_ICON_FRAMES];
 glImage _gbaIcon[(32 / 32) * (64 / 32)];
@@ -53,6 +54,7 @@ glImage _wsIcon[1];
 glImage _ngpIcon[1];
 glImage _cpcIcon[1];
 glImage _vidIcon[1];
+glImage _imgIcon[1];
 
 static u8 clearTiles[(32 * 256) / 2] = {0};
 static u16 blackPalette[16 * 8] = {0};
@@ -101,6 +103,8 @@ const glImage *getIcon(int num) {
 		return _cpcIcon;
 	if (num == VID_ICON)
 		return _vidIcon;
+	if (num == IMG_ICON)
+		return _imgIcon;
 	if (BAD_ICON_IDX(num) || !initialized)
 		return NULL;
 	return _ndsIcon[num];
@@ -193,6 +197,10 @@ void glLoadTileSetIntoSlot(int num, int tile_wid, int tile_hei, int bmp_wid, int
 	case VID_ICON:
 		textureID = _vidTexID;
 		sprite = _vidIcon;
+		break;
+	case IMG_ICON:
+		textureID = _imgTexID;
+		sprite = _imgIcon;
 		break;
 	default:
 		if (BAD_ICON_IDX(num))
@@ -373,6 +381,10 @@ void glReloadIconPalette(int num) {
 		textureID = _vidTexID;
 		cachedPalette = tex().iconVIDTexture()->palette();
 		break;
+	case IMG_ICON:
+		textureID = _imgTexID;
+		cachedPalette = tex().iconIMGTexture()->palette();
+		break;
 	default:
 		if (BAD_ICON_IDX(num))
 			return;
@@ -415,6 +427,7 @@ void reloadIconPalettes() {
 	glReloadIconPalette(NGP_ICON);
 	glReloadIconPalette(CPC_ICON);
 	glReloadIconPalette(VID_ICON);
+	glReloadIconPalette(IMG_ICON);
 
 	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
 		glReloadIconPalette(i);
@@ -470,6 +483,7 @@ void iconManagerInit() {
 	glGenTextures(1, &_ngpTexID);
 	glGenTextures(1, &_cpcTexID);
 	glGenTextures(1, &_vidTexID);
+	glGenTextures(1, &_imgTexID);
 
 	// Initialize empty data for the 6 textures.
 	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
@@ -513,6 +527,8 @@ void iconManagerInit() {
 	glLoadIcon(CPC_ICON, tex().iconCPCTexture()->palette(), tex().iconCPCTexture()->bytes(), 32, true);
 
 	glLoadIcon(VID_ICON, tex().iconVIDTexture()->palette(), tex().iconVIDTexture()->bytes(), 32, true);
+
+	glLoadIcon(IMG_ICON, tex().iconIMGTexture()->palette(), tex().iconIMGTexture()->bytes(), 32, true);
 
 	// set initialized.
 	initialized = true;

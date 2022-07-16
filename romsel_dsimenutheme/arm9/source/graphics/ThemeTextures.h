@@ -163,6 +163,7 @@ public:
 	const Texture *iconNGPTexture() { return _iconNGPTexture.get(); }
 	const Texture *iconCPCTexture() { return _iconCPCTexture.get(); }
 	const Texture *iconVIDTexture() { return _iconVIDTexture.get(); }
+	const Texture *iconIMGTexture() { return _iconIMGTexture.get(); }
 	const Texture *iconUnknownTexture() { return _iconUnknownTexture.get(); }
 
 	const Texture *dateTimeFontTexture() { return _dateTimeFontTexture.get(); }
@@ -295,6 +296,7 @@ private:
 	unique_ptr<Texture> _iconNGPTexture;
 	unique_ptr<Texture> _iconCPCTexture;
 	unique_ptr<Texture> _iconVIDTexture;
+	unique_ptr<Texture> _iconIMGTexture;
 	unique_ptr<Texture> _iconUnknownTexture;
 
 	unique_ptr<Texture> _volume0Texture;

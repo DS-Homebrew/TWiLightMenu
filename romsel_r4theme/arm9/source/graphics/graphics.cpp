@@ -313,7 +313,8 @@ void vBlankHandler()
 			glSprite(36, 24, GL_FLIP_NONE, iconboxImage);
 			if (isDirectory) drawIconFolder(40, 28);
 			else if (customIcon) drawIcon(40, 28);
-			else if (bnrRomType == 19) drawIconVideo(40, 28);
+			else if (bnrRomType == 20) drawIconIMG(40, 28);
+			else if (bnrRomType == 19) drawIconVID(40, 28);
 			else if (bnrRomType == 18) drawIconCPC(40, 28);
 			else if (bnrRomType == 17) drawIconNGP(40, 28);
 			else if (bnrRomType == 16) drawIconWS(40, 28);
