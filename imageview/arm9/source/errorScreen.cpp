@@ -9,6 +9,8 @@
 #include "common/tonccpy.h"
 #include "language.h"
 
+#include "sound.h"
+
 extern bool sdRemoveDetect;
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
@@ -23,8 +25,6 @@ static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
 
 void checkSdEject(void) {
-	/*if (!sdRemoveDetect)*/ return;
-
 	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode()) {
 		if(!showNonExtendedImage) {
 			timeTillChangeToNonExtendedImage++;
@@ -37,29 +37,8 @@ void checkSdEject(void) {
 
 	// Show "SD removed" screen
 	mmEffectCancelAll();
+	snd().stopStream();
 
-	irqDisable(IRQ_VBLANK);
-
-	videoSetMode(MODE_5_2D | DISPLAY_BG2_ACTIVE);
-	videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
-
-	REG_BLDY = 0;
-
-	// Change to white text palette
-	u16 palette[] = {
-		0x0000,
-		0xB9CE,
-		0xD6B5,
-		0xFFFF,
-	};
-	//tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
-	toncset16(BG_PALETTE_SUB, 0, 256);
-	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
-
-	if (ms().macroMode) {
-		lcdMainOnTop();
-	}
-	swiWaitForVBlank();
 	clearText();
 
 	if(showNonExtendedImage) {
@@ -71,6 +50,29 @@ void checkSdEject(void) {
 	}
 	updateText(false);
 
+	irqDisable(IRQ_VBLANK);
+
+	videoSetMode(MODE_5_2D | DISPLAY_BG2_ACTIVE);
+	//videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
+
+	REG_BLDY = 0;
+
+	// Change to white text palette
+	u16 palette[] = {
+		0x0000,
+		0xB9CE,
+		0xD6B5,
+		0xFFFF,
+	};
+	//tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
+	toncset16(BG_PALETTE, 0, 256);
+	toncset16(BG_PALETTE_SUB, 0, 256);
+	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
+
+	if (ms().macroMode) {
+		lcdMainOnTop();
+	}
+	swiWaitForVBlank();
 	while(1) {
 		// Currently not working
 		/*scanKeys();

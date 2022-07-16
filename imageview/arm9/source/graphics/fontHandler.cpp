@@ -42,10 +42,10 @@ void fontInit() {
 	bool dsiFont = dsiFeatures() || sys().dsDebugRam() || useExpansionPak;
 	smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", defaultPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), "nitro:/graphics/font/small.nftr"}, useExpansionPak);
 	// If custom small font but no custom large font, use small font as large font
-	//if(fileExists({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr"}) && !fileExists({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr"}))
-	//	largeFont = smallFont;
-	//else
-	//	largeFont = new FontGraphic({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", defaultPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), "nitro:/graphics/font/large.nftr"}, useExpansionPak);
+	if(fileExists({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr"}) && !fileExists({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr"}))
+		largeFont = smallFont;
+	else
+		largeFont = new FontGraphic({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", defaultPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), "nitro:/graphics/font/large.nftr"}, useExpansionPak);
 
 	// Load palettes
 	u16 palette[] = {
@@ -69,7 +69,7 @@ FontGraphic *getFont(bool large) {
 void updateText(bool top) {
 	// Clear before redrawing
 	if(shouldClear) {
-		dmaFillWords(1, FontGraphic::textBuf, 256 * 192);
+		dmaFillWords(0, FontGraphic::textBuf, 256 * 192);
 		shouldClear = false;
 	}
 

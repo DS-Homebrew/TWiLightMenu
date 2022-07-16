@@ -141,7 +141,7 @@ int main() {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
-		/*if (isDSiMode()) {
+		if (isDSiMode()) {
 			if (SD_IRQ_STATUS & BIT(4)) {
 				status = (status & ~SD_MASK) | ((2 << SD_OFF) & SD_MASK);
 				fifoSendValue32(FIFO_USER_03, status);
@@ -149,7 +149,7 @@ int main() {
 				status = (status & ~SD_MASK) | ((1 << SD_OFF) & SD_MASK);
 				fifoSendValue32(FIFO_USER_03, status);
 			}
-		}*/
+		}
 		if(fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
