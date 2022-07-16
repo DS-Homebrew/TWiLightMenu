@@ -267,6 +267,8 @@ SoundControl::SoundControl()
 						} else {
 							seekPos = 0x2C;
 						}
+					} else {
+						closed = true;
 					}
 					if (closed) stream_source = fopen(cachePath.c_str(), "rb");
 					if (stream_source) break; } // fallthrough if stream_source fails.
