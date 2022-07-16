@@ -36,6 +36,7 @@ int fadeDelay = 0;
 
 int screenBrightness = 31;
 int imageType = 0;
+bool doubleBuffer = false;
 
 u8* dsImageBuffer8;
 u16* dsImageBuffer[2];
@@ -108,7 +109,7 @@ void vBlankHandler() {
 	if (controlTopBright) SetBrightness(0, screenBrightness);
 	if (controlBottomBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
-	if (imageType > 1) {
+	if (doubleBuffer) {
 		static bool secondBuffer = false;
 		dmaCopyHalfWordsAsynch(0, dsImageBuffer[secondBuffer], BG_GFX, (256*192)*2);
 		secondBuffer = !secondBuffer;
@@ -120,6 +121,11 @@ void vBlankHandler() {
 
 void imageLoad(const char* filename) {
 	if (imageType == 2) { // PNG
+		dsImageBuffer[0] = new u16[256*192];
+		dsImageBuffer[1] = new u16[256*192];
+		toncset16(dsImageBuffer[0], 0, 256*192);
+		toncset16(dsImageBuffer[1], 0, 256*192);
+
 		std::vector<unsigned char> image;
 		unsigned width, height;
 		lodepng::decode(image, width, height, filename);
@@ -191,6 +197,7 @@ void imageLoad(const char* filename) {
 			}
 			alternatePixel = !alternatePixel;
 		}
+		doubleBuffer = true;
 		return;
 	} else if (imageType == 1) { // BMP
 		FILE* file = fopen(filename, "rb");
@@ -208,6 +215,8 @@ void imageLoad(const char* filename) {
 			return;
 		}
 
+		fseek(file, 0x1C, SEEK_SET);
+		u8 bitsPerPixel = fgetc(file);
 		fseek(file, 0xE, SEEK_SET);
 		u8 headerSize = fgetc(file);
 		bool rgb565 = false;
@@ -219,18 +228,100 @@ void imageLoad(const char* filename) {
 		} else {
 			fseek(file, headerSize - 1, SEEK_CUR);
 		}
-		u16 *bmpImageBuffer = new u16[width * height];
-		fread(bmpImageBuffer, 2, width * height, file);
-		u16 *dst = BG_GFX + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
-		u16 *src = bmpImageBuffer;
-		for (uint y = 0; y < height; y++, dst -= 256) {
-			for (uint x = 0; x < width; x++) {
-				u16 val = *(src++);
-				*(dst + x) = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
-			}
-		}
+		if (bitsPerPixel == 0x18 || bitsPerPixel == 0x20) { // 24-bit or 32-bit
+			dsImageBuffer[0] = new u16[256*192];
+			dsImageBuffer[1] = new u16[256*192];
+			toncset16(dsImageBuffer[0], 0, 256*192);
+			toncset16(dsImageBuffer[1], 0, 256*192);
 
-		delete[] bmpImageBuffer;
+			int bits = (bitsPerPixel == 0x20) ? 4 : 3;
+
+			u8 *bmpImageBuffer = new u8[(width * height)*bits];
+			fread(bmpImageBuffer, bits, width * height, file);
+
+			int xPos = 0;
+			if (width <= 254) {
+				// Adjust X position
+				for (int i = width; i < 256; i += 2) {
+					xPos++;
+				}
+			}
+
+			int yPos = 0;
+			if (height <= 190) {
+				// Adjust Y position
+				for (int i = height; i < 192; i += 2) {
+					yPos++;
+				}
+			}
+
+			bool alternatePixel = false;
+			int x = 0;
+			int y = height-1;
+			u8 pixelAdjustInfo = 0;
+			for(u32 i = 0; i < width*height; i++) {
+				pixelAdjustInfo = 0;
+				if (alternatePixel) {
+					if (bmpImageBuffer[(i*bits)] >= 0x4) {
+						bmpImageBuffer[(i*bits)] -= 0x4;
+						pixelAdjustInfo |= BIT(0);
+					}
+					if (bmpImageBuffer[(i*bits)+1] >= 0x4) {
+						bmpImageBuffer[(i*bits)+1] -= 0x4;
+						pixelAdjustInfo |= BIT(1);
+					}
+					if (bmpImageBuffer[(i*bits)+2] >= 0x4) {
+						bmpImageBuffer[(i*bits)+2] -= 0x4;
+						pixelAdjustInfo |= BIT(2);
+					}
+				}
+				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
+				if (alternatePixel) {
+					if (pixelAdjustInfo & BIT(0)) {
+						bmpImageBuffer[(i*bits)] += 0x4;
+					}
+					if (pixelAdjustInfo & BIT(1)) {
+						bmpImageBuffer[(i*bits)+1] += 0x4;
+					}
+					if (pixelAdjustInfo & BIT(2)) {
+						bmpImageBuffer[(i*bits)+2] += 0x4;
+					}
+				} else {
+					if (bmpImageBuffer[(i*bits)] >= 0x4) {
+						bmpImageBuffer[(i*bits)] -= 0x4;
+					}
+					if (bmpImageBuffer[(i*bits)+1] >= 0x4) {
+						bmpImageBuffer[(i*bits)+1] -= 0x4;
+					}
+					if (bmpImageBuffer[(i*bits)+2] >= 0x4) {
+						bmpImageBuffer[(i*bits)+2] -= 0x4;
+					}
+				}
+				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
+				x++;
+				if (x == (int)width) {
+					alternatePixel = !alternatePixel;
+					x=0;
+					y--;
+				}
+				alternatePixel = !alternatePixel;
+			}
+			delete[] bmpImageBuffer;
+			doubleBuffer = true;
+		} else { // 16-bit
+			u16 *bmpImageBuffer = new u16[width * height];
+			fread(bmpImageBuffer, 2, width * height, file);
+			u16 *dst = BG_GFX + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
+			u16 *src = bmpImageBuffer;
+			for (uint y = 0; y < height; y++, dst -= 256) {
+				for (uint x = 0; x < width; x++) {
+					u16 val = *(src++);
+					*(dst + x) = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
+				}
+			}
+
+			delete[] bmpImageBuffer;
+		}
 		fclose(file);
 		return;
 	}
@@ -314,13 +405,6 @@ void graphicsInit() {
 		REG_BG3PB = 0;
 		REG_BG3PC = 0;
 		REG_BG3PD = 1<<8;
-
-		if (imageType > 1) {
-			dsImageBuffer[0] = new u16[256*192];
-			dsImageBuffer[1] = new u16[256*192];
-			toncset16(dsImageBuffer[0], 0, 256*192);
-			toncset16(dsImageBuffer[1], 0, 256*192);
-		}
 	} else {
 		bg3Main = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
 		dsImageBuffer8 = new u8[256*192];
