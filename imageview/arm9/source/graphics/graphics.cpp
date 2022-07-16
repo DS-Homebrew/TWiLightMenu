@@ -250,7 +250,7 @@ void imageLoad(const char* filename) {
 			toncset16(dsImageBuffer[0], 0, 256*192);
 			toncset16(dsImageBuffer[1], 0, 256*192);
 
-			int bits = (bitsPerPixel == 0x20) ? 4 : 3;
+			int bits = (bitsPerPixel == 32) ? 4 : 3;
 
 			u8 *bmpImageBuffer = new u8[(width * height)*bits];
 			fread(bmpImageBuffer, bits, width * height, file);
