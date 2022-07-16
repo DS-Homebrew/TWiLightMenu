@@ -25,6 +25,7 @@
 #include "common/twlmenusettings.h"
 #include "graphics/gif.hpp"
 #include "graphics/lodepng.h"
+#include "graphics/color.h"
 
 #include <nds.h>
 
@@ -150,31 +151,37 @@ void imageLoad(const char* filename) {
 		bool alternatePixel = false;
 		int x = 0;
 		int y = 0;
+		u8 pixelAdjustInfo = 0;
 		for(unsigned i=0;i<image.size()/4;i++) {
-			image[(i*4)+3] = 0;
+			pixelAdjustInfo = 0;
 			if (alternatePixel) {
 				if (image[(i*4)] >= 0x4) {
 					image[(i*4)] -= 0x4;
-					image[(i*4)+3] |= BIT(0);
+					pixelAdjustInfo |= BIT(0);
 				}
 				if (image[(i*4)+1] >= 0x4) {
 					image[(i*4)+1] -= 0x4;
-					image[(i*4)+3] |= BIT(1);
+					pixelAdjustInfo |= BIT(1);
 				}
 				if (image[(i*4)+2] >= 0x4) {
 					image[(i*4)+2] -= 0x4;
-					image[(i*4)+3] |= BIT(2);
+					pixelAdjustInfo |= BIT(2);
 				}
 			}
-			dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (image[(i*4)+3] > 0) {
+				const u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = alphablend(color, 0, image[(i*4)+3]);
+			} else {
+				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = 0;
+			}
 			if (alternatePixel) {
-				if (image[(i*4)+3] & BIT(0)) {
+				if (pixelAdjustInfo & BIT(0)) {
 					image[(i*4)] += 0x4;
 				}
-				if (image[(i*4)+3] & BIT(1)) {
+				if (pixelAdjustInfo & BIT(1)) {
 					image[(i*4)+1] += 0x4;
 				}
-				if (image[(i*4)+3] & BIT(2)) {
+				if (pixelAdjustInfo & BIT(2)) {
 					image[(i*4)+2] += 0x4;
 				}
 			} else {
@@ -188,7 +195,12 @@ void imageLoad(const char* filename) {
 					image[(i*4)+2] -= 0x4;
 				}
 			}
-			dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (image[(i*4)+3] > 0) {
+				const u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = alphablend(color, 0, image[(i*4)+3]);
+			} else {
+				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = 0;
+			}
 			x++;
 			if ((unsigned)x == width) {
 				alternatePixel = !alternatePixel;
