@@ -215,6 +215,22 @@ void imageLoad(const char* filename) {
 			return;
 		}
 
+		int xPos = 0;
+		if (width <= 254) {
+			// Adjust X position
+			for (int i = width; i < 256; i += 2) {
+				xPos++;
+			}
+		}
+
+		int yPos = 0;
+		if (height <= 190) {
+			// Adjust Y position
+			for (int i = height; i < 192; i += 2) {
+				yPos++;
+			}
+		}
+
 		fseek(file, 0x1C, SEEK_SET);
 		u8 bitsPerPixel = fgetc(file);
 		fseek(file, 0xE, SEEK_SET);
@@ -228,7 +244,7 @@ void imageLoad(const char* filename) {
 		} else {
 			fseek(file, headerSize - 1, SEEK_CUR);
 		}
-		if (bitsPerPixel == 0x18 || bitsPerPixel == 0x20) { // 24-bit or 32-bit
+		if (bitsPerPixel == 24 || bitsPerPixel == 32) { // 24-bit or 32-bit
 			dsImageBuffer[0] = new u16[256*192];
 			dsImageBuffer[1] = new u16[256*192];
 			toncset16(dsImageBuffer[0], 0, 256*192);
@@ -238,22 +254,6 @@ void imageLoad(const char* filename) {
 
 			u8 *bmpImageBuffer = new u8[(width * height)*bits];
 			fread(bmpImageBuffer, bits, width * height, file);
-
-			int xPos = 0;
-			if (width <= 254) {
-				// Adjust X position
-				for (int i = width; i < 256; i += 2) {
-					xPos++;
-				}
-			}
-
-			int yPos = 0;
-			if (height <= 190) {
-				// Adjust Y position
-				for (int i = height; i < 192; i += 2) {
-					yPos++;
-				}
-			}
 
 			bool alternatePixel = false;
 			int x = 0;
@@ -308,7 +308,7 @@ void imageLoad(const char* filename) {
 			}
 			delete[] bmpImageBuffer;
 			doubleBuffer = true;
-		} else { // 16-bit
+		} else if (bitsPerPixel == 16) { // 16-bit
 			u16 *bmpImageBuffer = new u16[width * height];
 			fread(bmpImageBuffer, 2, width * height, file);
 			u16 *dst = BG_GFX + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
@@ -320,6 +320,63 @@ void imageLoad(const char* filename) {
 				}
 			}
 
+			delete[] bmpImageBuffer;
+		} else if (bitsPerPixel == 8) { // 8-bit
+			u16* pixelBuffer = new u16[256];
+			for (int i = 0; i < 256; i++) {
+				u8 pixelB = 0;
+				u8 pixelG = 0;
+				u8 pixelR = 0;
+				u8 unk = 0;
+				fread(&pixelB, 1, 1, file);
+				fread(&pixelG, 1, 1, file);
+				fread(&pixelR, 1, 1, file);
+				fread(&unk, 1, 1, file);
+				pixelBuffer[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
+			}
+			u8 *bmpImageBuffer = new u8[width * height];
+			fread(bmpImageBuffer, 1, width * height, file);
+
+			int x = 0;
+			int y = height-1;
+			for(u32 i = 0; i < width*height; i++) {
+				BG_GFX[(xPos+x+(y*256))+(yPos*256)] = pixelBuffer[bmpImageBuffer[i]];
+				x++;
+				if (x == (int)width) {
+					x=0;
+					y--;
+				}
+			}
+			delete[] pixelBuffer;
+			delete[] bmpImageBuffer;
+		} else if (bitsPerPixel == 1) { // 1-bit
+			u16 monoPixel[2] = {0};
+			for (int i = 0; i < 2; i++) {
+				u8 pixelB = 0;
+				u8 pixelG = 0;
+				u8 pixelR = 0;
+				u8 unk = 0;
+				fread(&pixelB, 1, 1, file);
+				fread(&pixelG, 1, 1, file);
+				fread(&pixelR, 1, 1, file);
+				fread(&unk, 1, 1, file);
+				monoPixel[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
+			}
+			u8 *bmpImageBuffer = new u8[(width * height)/8];
+			fread(bmpImageBuffer, 1, (width * height)/8, file);
+
+			int x = 0;
+			int y = height-1;
+			for(u32 i = 0; i < (width*height)/8; i++) {
+				for (int b = 7; b >= 0; b--) {
+					BG_GFX[(xPos+x+(y*256))+(yPos*256)] = monoPixel[(bmpImageBuffer[i] & (BIT(b))) ? 1 : 0];
+					x++;
+					if (x == (int)width) {
+						x=0;
+						y--;
+					}
+				}
+			}
 			delete[] bmpImageBuffer;
 		}
 		fclose(file);
