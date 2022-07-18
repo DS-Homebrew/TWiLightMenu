@@ -1333,12 +1333,13 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) 
 			const u16 *src = bitmap + (y * 128) + (date_time_font_texcoords[4 * charIndex]);
 			for (uint x = 0; x < date_time_font_texcoords[2 + (4 * charIndex)]; x++) {
 				u16 val = *(src++);
-				if (val & BIT(15)) { // Do not render transparent pixel
-					BG_GFX_SUB[(posY + y) * 256 + (posX + x)] = val;
-					if (boxArtColorDeband) {
-						_frameBufferBot[0][(posY + y) * 256 + (posX + x)] = val;
-						_frameBufferBot[1][(posY + y) * 256 + (posX + x)] = val;
-					}
+				if (!(val & BIT(15))) // If transparent, restore background image
+					val = _backgroundTextures[0].texture()[(posY + y) * 256 + (posX + x)];
+
+				BG_GFX_SUB[(posY + y) * 256 + (posX + x)] = val;
+				if (boxArtColorDeband) {
+					_frameBufferBot[0][(posY + y) * 256 + (posX + x)] = val;
+					_frameBufferBot[1][(posY + y) * 256 + (posX + x)] = val;
 				}
 			}
 		}
@@ -1360,9 +1361,10 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 			const u16 *src = bitmap + (y * 128) + (date_time_font_texcoords[4 * charIndex]);
 			for (uint x = 0; x < date_time_font_texcoords[2 + (4 * charIndex)]; x++) {
 				u16 val = *(src++);
-				if (val >> 15) { // Do not render transparent pixel
-					BG_GFX[(posY + y) * 256 + (posX + x)] = val;
-				}
+				if (!(val & BIT(15))) // If transparent, restore background image
+					val = _backgroundTextures[0].texture()[(posY + y) * 256 + (posX + x)];
+
+				BG_GFX[(posY + y) * 256 + (posX + x)] = val;
 			}
 		}
 		posX += date_time_font_texcoords[2 + (4 * charIndex)];
