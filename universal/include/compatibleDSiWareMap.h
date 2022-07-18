@@ -28,7 +28,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDV", // Dark Void Zero
 	"KWT", // GO Series: Defense Wars
 	"KHE", // DotMan
-	"KD9E", // Dr. Mario Express
+	"KD9", // Dr. Mario Express
 	"KDL", // Dragon's Lair
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
 	"B88", // DS WiFi Settings
