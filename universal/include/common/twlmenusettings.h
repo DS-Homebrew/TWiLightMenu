@@ -270,11 +270,8 @@ public:
 	int colorMode;
 	// int blfLevel;
 	TExploit dsiWareExploit;
-	#ifdef WIFILEDINT
-	int wifiLed;
-	#else
 	bool wifiLed;
-	#endif
+	int wifiLedVer;
 	bool powerLedColor;
 	bool sdRemoveDetect;
 	bool showMicroSd;
