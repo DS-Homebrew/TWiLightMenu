@@ -96,7 +96,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	0, // Shantae: Risky's Revenge (Game part only)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 19)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 20)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KII", // 101 Pinball World
 	"KXT", // 99Seconds
@@ -105,6 +105,7 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"K2J", // Cake Ninja
+	"K9Y", // Candle Route
 	"KCN", // Castle Conqueror
 	"KQN", // Castle Conqueror: Against
 	"KXC", // Castle Conqueror: Heroes 2
