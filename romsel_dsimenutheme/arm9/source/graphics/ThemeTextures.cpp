@@ -1086,11 +1086,12 @@ ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
 	for (uint y = 0; y < tex->texHeight(); y++) {
 		for (uint x = 0; x < tex->texWidth(); x++) {
 			u16 val = *(src++);
-			if (val >> 15) { // Do not render transparent pixel
-				_bgSubBuffer[(startY + y) * 256 + startX + x] = val;
-				if (boxArtColorDeband) {
-					_bgSubBuffer2[(startY + y) * 256 + startX + x] = val;
-				}
+			if (!(val & BIT(15))) // If transparent, restore background image
+					val = _backgroundTextures[0].texture()[(startY + y) * 256 + startX + x];
+
+			_bgSubBuffer[(startY + y) * 256 + startX + x] = val;
+			if (boxArtColorDeband) {
+				_bgSubBuffer2[(startY + y) * 256 + startX + x] = val;
 			}
 		}
 	}
@@ -1109,9 +1110,10 @@ ITCM_CODE void ThemeTextures::drawVolumeImageMacro(int volumeLevel) {
 	for (uint y = 0; y < tex->texHeight(); y++) {
 		for (uint x = 0; x < tex->texWidth(); x++) {
 			u16 val = *(src++);
-			if (val >> 15) { // Do not render transparent pixel
-				_bgMainBuffer[(startY + y) * 256 + startX + x] = val;
-			}
+			if (!(val & BIT(15))) // If transparent, restore background image
+					val = _backgroundTextures[1].texture()[(startY + y) * 256 + startX + x];
+
+			_bgMainBuffer[(startY + y) * 256 + startX + x] = val;
 		}
 	}
 	commitBgMainModify();
@@ -1172,11 +1174,12 @@ ITCM_CODE void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMod
 	for (uint y = tc().batteryRenderY(); y < tc().batteryRenderY() + tex->texHeight(); y++) {
 		for (uint x = tc().batteryRenderX(); x < tc().batteryRenderX() + tex->texWidth(); x++) {
 			u16 val = *(src++);
-			if (val >> 15) { // Do not render transparent pixel
-				_bgSubBuffer[y * 256 + x] = val;
-				if (boxArtColorDeband) {
-					_bgSubBuffer2[y * 256 + x] = val;
-				}
+			if (!(val & BIT(15))) // If transparent, restore background image
+				val = _backgroundTextures[0].texture()[y * 256 + x];
+
+			_bgSubBuffer[y * 256 + x] = val;
+			if (boxArtColorDeband) {
+				_bgSubBuffer2[y * 256 + x] = val;
 			}
 		}
 	}
@@ -1191,9 +1194,10 @@ ITCM_CODE void ThemeTextures::drawBatteryImageMacro(int batteryLevel, bool drawD
 	for (uint y = tc().batteryRenderY(); y < tc().batteryRenderY() + tex->texHeight(); y++) {
 		for (uint x = tc().batteryRenderX(); x < tc().batteryRenderX() + tex->texWidth(); x++) {
 			u16 val = *(src++);
-			if (val >> 15) { // Do not render transparent pixel
-				_bgMainBuffer[y * 256 + x] = val;
-			}
+			if (!(val & BIT(15))) // If transparent, restore background image
+					val = _backgroundTextures[1].texture()[y * 256 + x];
+
+			_bgMainBuffer[y * 256 + x] = val;
 		}
 	}
 	commitBgMainModify();
@@ -1362,7 +1366,7 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 			for (uint x = 0; x < date_time_font_texcoords[2 + (4 * charIndex)]; x++) {
 				u16 val = *(src++);
 				if (!(val & BIT(15))) // If transparent, restore background image
-					val = _backgroundTextures[0].texture()[(posY + y) * 256 + (posX + x)];
+					val = _backgroundTextures[1].texture()[(posY + y) * 256 + (posX + x)];
 
 				BG_GFX[(posY + y) * 256 + (posX + x)] = val;
 			}
