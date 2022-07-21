@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 79)
+// B4DS DSiWare Whitelist (Total: 80)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -34,6 +34,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDL", // Dragon's Lair
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
 	"B88", // DS WiFi Settings
+	"KB8", // GO Series: Earth Saver
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KFS", // Flashlight
 	"KFP", // Flipper
