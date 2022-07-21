@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 77)
+// B4DS DSiWare Whitelist (Total: 79)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -61,6 +61,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KMB", // Mr. Brain
 	"K2D", // Nintendo DSi + Internet
 	"KSUE", // Number Battle
+	"KPJ", // Paul's Shooting Adventure
+	"KUS", // Paul's Shooting Adventure 2
 	"KAP", // Art Style: PiCTOBiTS
 	"KPP", // Pop Island
 	"KPF", // Pop Island: Paperfield
