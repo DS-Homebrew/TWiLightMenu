@@ -1526,17 +1526,6 @@ u16 *ThemeTextures::frameBufferBot(bool secondBuffer) { return _frameBufferBot[s
 void loadRotatingCubes() {
 	bool rvidCompressed = false;
 	std::string cubes = TFN_RVID_CUBES;
-	/*if (isDSiMode()) {
-		rvidCompressed = true;
-		cubes = TFN_LZ77_RVID_CUBES;
-		if (ms().colorMode == 1) {
-			cubes = TFN_LZ77_RVID_CUBES_BW;
-		}
-	} else {*/
-		if (ms().colorMode == 1) {
-			cubes = TFN_RVID_CUBES_BW;
-		}
-	//}
 	FILE *videoFrameFile = fopen(cubes.c_str(), "rb");
 
 	/*if (!videoFrameFile && isDSiMode()) {
@@ -1612,6 +1601,14 @@ void loadRotatingCubes() {
 				LZ77_Decompress((u8*)0x02D80000, (u8*)rotatingCubesLocation);
 			} else {
 				fread(rotatingCubesLocation, 1, 0x700000, videoFrameFile);
+			}
+			if (ms().colorMode == 1) {
+				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
+				for (int i = 0; i < 0x700000/2; i++) {
+					if (rotatingCubesLocation16[i] != 0) {
+						rotatingCubesLocation16[i] = convertVramColorToGrayscale(rotatingCubesLocation16[i]);
+					}
+				}
 			}
 			rotatingCubesLoaded = true;
 			rocketVideo_playVideo = true;
