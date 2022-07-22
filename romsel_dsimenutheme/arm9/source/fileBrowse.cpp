@@ -1540,7 +1540,9 @@ void cannotLaunchMsg(const char *filename) {
 		}
 	}
 	const std::string *str = nullptr;
-	if (bnrRomType[CURPOS] != 0) {
+	if (isTwlm[CURPOS]) {
+		str = &STR_TWLMENU_ALREADY_RUNNING;
+	} else if (bnrRomType[CURPOS] != 0) {
 		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_3DS_HOME : &STR_RELAUNCH_UNLAUNCH;
 	} else if (isDSiMode() && isDSiWare[CURPOS]) {
 		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_DSIWARE_3DS_HOME : &STR_RELAUNCH_DSIWARE_UNLAUNCH;
@@ -1840,6 +1842,8 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 
 				if (bnrRomType[i] != 0) {
 					bnrWirelessIcon[i] = 0;
+					bnrSysSettings[i] = false;
+					isTwlm[i] = false;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
 				}
@@ -2553,8 +2557,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
-				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit()))) {
+				} else if (isTwlm[CURPOS] || (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
+				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))) {
 					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {
 					loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);

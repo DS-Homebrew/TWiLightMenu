@@ -787,8 +787,8 @@ void cannotLaunchMsg(void) {
 		lcdSwapped = true;
 	}
 	showdialogbox = true;
-	printLargeCentered(false, 74, "Error!");
-	printSmallCentered(false, 90, "This game cannot be launched.");
+	printLargeCentered(false, 74, isTwlm ? "Information" : "Error!");
+	printSmallCentered(false, 90, isTwlm ? "TWiLight Menu++ is already running." : "This game cannot be launched.");
 	printSmallCentered(false, 108, "\u2427 OK");
 	int pressed = 0;
 	do {
@@ -914,6 +914,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		if (bnrRomType != 0) {
 			bnrWirelessIcon = 0;
+			isTwlm = false;
 			isDSiWare = false;
 			isHomebrew = 0;
 		}
@@ -990,8 +991,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				return "null";
 			}
-			else if (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
-			|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str())))) {
+			else if (isTwlm || (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
+			|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str()))))) {
 				cannotLaunchMsg();
 			} else {
 				loadPerGameSettings(dirContents.at(fileOffset).name);

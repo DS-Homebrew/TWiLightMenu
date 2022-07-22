@@ -53,6 +53,7 @@ STRING(DSIWARE_DS_MODE_P2, "For increased compatibility,\nas well as the ability
 STRING(RAM_LIMIT_GAME_PART_ONLY, "Due to memory limitations,\nonly part of this game can be\nplayed. To play the full game,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_NO_AUDIO, "Due to memory limitations,\naudio will not be played.\nTo play this game with audio,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_NO_MUSIC, "Due to memory limitations,\nmusic will not be played.\nTo play this game with music,\nlaunch this on Nintendo DSi\nor 3DS systems.")
+STRING(TWLMENU_ALREADY_RUNNING, "TWiLight Menu++ is\nalready running.")
 STRING(CANNOT_LAUNCH_WITHOUT_SD, "This game cannot be launched\nwithout an SD card.")
 STRING(CANNOT_LAUNCH_IN_DS_MODE, "This game cannot be launched\nin DS mode.")
 STRING(CANNOT_LAUNCH_HB_ON_3DS, "This homebrew cannot be\nlaunched on 3DS consoles.")

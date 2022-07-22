@@ -551,6 +551,7 @@ int bnriconframenumY = 0;
 int bannerFlip = GL_FLIP_NONE;
 
 // bnriconisDSi[]
+bool isTwlm = false;
 bool isDirectory = false;
 int bnrRomType = 0;
 bool bnriconisDSi = false;

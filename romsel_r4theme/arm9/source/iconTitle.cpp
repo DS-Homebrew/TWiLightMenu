@@ -998,6 +998,7 @@ void getGameInfo(bool isDir, const char* name)
 
 		bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 
+		isTwlm = (strncmp(ndsHeader.gameCode, "SRLA", 4) == 0);
 		romVersion = ndsHeader.romversion;
 		romUnitCode = ndsHeader.unitCode;
 		a7mbk6 = ndsHeader.a7mbk6;
