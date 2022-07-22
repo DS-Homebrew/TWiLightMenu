@@ -101,7 +101,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	0, // Shantae: Risky's Revenge (Game part only)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 20)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 21)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KII", // 101 Pinball World
 	"KXT", // 99Seconds
@@ -118,6 +118,7 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KMM", // Mixed Messages
+	"KNP", // Need for Speed: Nitro-X
 	"KNV", // Neko Reversi
 	"KPS", // Phantasy Star 0 Mini
 	"KRR", // Robot Rescue 2
