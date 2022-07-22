@@ -1312,14 +1312,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				printSmallCentered(false, 98, "What would you like");
 				printSmallCentered(false, 110, "to do with this folder?");
 			} else {
-				printLargeCentered(false, 74, "ROM Management options");
+				printLargeCentered(false, 74, "Title Management options");
 				printSmallCentered(false, 98, "What would you like");
-				printSmallCentered(false, 110, "to do with this ROM?");
+				printSmallCentered(false, 110, "to do with this title?");
 			}
 
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 
-			if (isDirectory) {
+			if (isTwlm || isDirectory) {
 				if(unHide)	printSmallCentered(false, 128, "Y: Unhide  \u2428 Nothing");
 				else		printSmallCentered(false, 128, "Y: Hide    \u2428 Nothing");
 			} else {
@@ -1334,7 +1334,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					bgOperations(true);
 				} while (!pressed);
 				
-				if ((pressed & KEY_A && !isDirectory) || (pressed & KEY_Y)) {
+				if (((pressed & KEY_A) && !isTwlm && !isDirectory) || (pressed & KEY_Y)) {
 					clearText();
 					showdialogbox = false;
 					consoleClear();
@@ -1408,7 +1408,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";		
 		}
 
-		if ((pressed & KEY_Y) && (isDirectory == false) && (bnrRomType == 0))
+		if ((pressed & KEY_Y) && !isTwlm && !isDirectory && (bnrRomType == 0))
 		{
 			ms().cursorPosition[ms().secondaryDevice] = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);

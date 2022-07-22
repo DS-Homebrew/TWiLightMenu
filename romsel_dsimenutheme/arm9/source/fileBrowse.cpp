@@ -3041,7 +3041,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 				printSmall(false, 16, 66, dirContName, Alignment::left, FontPalette::dialog);
 				printSmall(false, 16, 160, fileCounter, Alignment::left, FontPalette::dialog);
-				if (isDirectory[CURPOS]) {
+				if (isTwlm[CURPOS]) {
+					if (unHide)
+						printSmall(false, 0, 112, STR_ARE_YOU_SURE_UNHIDE_TITLE, Alignment::center, FontPalette::dialog);
+					else
+						printSmall(false, 0, 112, STR_ARE_YOU_SURE_HIDE_TITLE, Alignment::center, FontPalette::dialog);
+				} else if (isDirectory[CURPOS]) {
 					if (unHide)
 						printSmall(false, 0, 112, STR_ARE_YOU_SURE_UNHIDE, Alignment::center, FontPalette::dialog);
 					else
@@ -3056,7 +3061,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				for (int i = 0; i < 90; i++) {
 					bgOperations(true);
 				}
-				if (isDirectory[CURPOS]) {
+				if (isTwlm[CURPOS] || isDirectory[CURPOS]) {
 					printSmall(false, 240, 160, (unHide ? STR_Y_UNHIDE : STR_Y_HIDE) + "  " + STR_B_NO, Alignment::right, FontPalette::dialog);
 				} else {
 					printSmall(false, 240, 160, (unHide ? STR_Y_UNHIDE : STR_Y_HIDE) + "  " + STR_A_DEL + "  " + STR_B_NO, Alignment::right, FontPalette::dialog);
@@ -3069,7 +3074,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						bgOperations(true);
 					} while (!pressed);
 
-					if (pressed & KEY_A && !isDirectory[CURPOS]) {
+					if ((pressed & KEY_A) && !isTwlm[CURPOS] && !isDirectory[CURPOS]) {
 						snd().playLaunch();
 						if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 							fadeType = false; // Fade to white
@@ -3162,7 +3167,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bannerTextShown = false;
 			}
 
-			if ((pressed & KEY_Y) && (isDirectory[CURPOS] == false) &&
+			if ((pressed & KEY_Y) && !isTwlm[CURPOS] && !isDirectory[CURPOS] &&
 				(bnrRomType[CURPOS] == 0) && bannerTextShown && showSTARTborder) {
 				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 				bannerTextShown = false;

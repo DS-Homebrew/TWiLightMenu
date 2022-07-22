@@ -74,8 +74,10 @@ STRING(HOW_TO_SET_DONOR_ROM_SDK50TWLONLY, "Find the SDK5.0 DSi(Ware)\ntitle, pre
 // Hiding
 STRING(ARE_YOU_SURE_UNHIDE, "Are you sure you want to\nunhide this folder?")
 STRING(ARE_YOU_SURE_HIDE, "Are you sure you want to\nhide this folder?")
-STRING(ARE_YOU_SURE_DELETE_UNHIDE, "Are you sure you want to\ndelete/unhide this game?")
-STRING(ARE_YOU_SURE_DELETE_HIDE, "Are you sure you want to\ndelete/hide this game?")
+STRING(ARE_YOU_SURE_UNHIDE_TITLE, "Are you sure you want to\nunhide this title?")
+STRING(ARE_YOU_SURE_HIDE_TITLE, "Are you sure you want to\nhide this title?")
+STRING(ARE_YOU_SURE_DELETE_UNHIDE, "Are you sure you want to\ndelete/unhide this title?")
+STRING(ARE_YOU_SURE_DELETE_HIDE, "Are you sure you want to\ndelete/hide this title?")
 STRING(Y_UNHIDE, "\\Y Unhide")
 STRING(Y_HIDE, "\\Y Hide")
 STRING(A_DEL, "\\A Del.")
