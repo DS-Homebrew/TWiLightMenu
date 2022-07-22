@@ -169,7 +169,10 @@ void imageLoad(const char* filename) {
 				}
 			}
 			if (image[(i*4)+3] > 0) {
-				const u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+				u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+				if (ms().colorMode == 1) {
+					color = convertVramColorToGrayscale(color);
+				}
 				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = alphablend(color, 0, image[(i*4)+3]);
 			} else {
 				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = 0;
@@ -196,7 +199,10 @@ void imageLoad(const char* filename) {
 				}
 			}
 			if (image[(i*4)+3] > 0) {
-				const u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+				u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+				if (ms().colorMode == 1) {
+					color = convertVramColorToGrayscale(color);
+				}
 				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = alphablend(color, 0, image[(i*4)+3]);
 			} else {
 				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = 0;
@@ -287,7 +293,11 @@ void imageLoad(const char* filename) {
 						pixelAdjustInfo |= BIT(2);
 					}
 				}
-				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
+				u16 color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
+				if (ms().colorMode == 1) {
+					color = convertVramColorToGrayscale(color);
+				}
+				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = color;
 				if (alternatePixel) {
 					if (pixelAdjustInfo & BIT(0)) {
 						bmpImageBuffer[(i*bits)] += 0x4;
@@ -309,7 +319,11 @@ void imageLoad(const char* filename) {
 						bmpImageBuffer[(i*bits)+2] -= 0x4;
 					}
 				}
-				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
+				color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
+				if (ms().colorMode == 1) {
+					color = convertVramColorToGrayscale(color);
+				}
+				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = color;
 				x++;
 				if (x == (int)width) {
 					alternatePixel = !alternatePixel;
@@ -328,7 +342,11 @@ void imageLoad(const char* filename) {
 			for (uint y = 0; y < height; y++, dst -= 256) {
 				for (uint x = 0; x < width; x++) {
 					u16 val = *(src++);
-					*(dst + x) = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
+					u16 color = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
+					if (ms().colorMode == 1) {
+						color = convertVramColorToGrayscale(color);
+					}
+					*(dst + x) = color;
 				}
 			}
 
@@ -345,6 +363,9 @@ void imageLoad(const char* filename) {
 				fread(&pixelR, 1, 1, file);
 				fread(&unk, 1, 1, file);
 				pixelBuffer[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
+				if (ms().colorMode == 1) {
+					pixelBuffer[i] = convertVramColorToGrayscale(pixelBuffer[i]);
+				}
 			}
 			u8 *bmpImageBuffer = new u8[width * height];
 			fread(bmpImageBuffer, 1, width * height, file);
@@ -373,6 +394,9 @@ void imageLoad(const char* filename) {
 				fread(&pixelR, 1, 1, file);
 				fread(&unk, 1, 1, file);
 				monoPixel[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
+				if (ms().colorMode == 1) {
+					monoPixel[i] = convertVramColorToGrayscale(monoPixel[i]);
+				}
 			}
 			u8 *bmpImageBuffer = new u8[(width * height)/8];
 			fread(bmpImageBuffer, 1, (width * height)/8, file);
@@ -418,6 +442,11 @@ void imageLoad(const char* filename) {
 	}
 
 	tonccpy(BG_PALETTE, gif.gct().data(), gif.gct().size() * 2);
+	if (ms().colorMode == 1) {
+		for (int i = 0; i < (int)gif.gct().size(); i++) {
+			BG_PALETTE[i] = convertVramColorToGrayscale(BG_PALETTE[i]);
+		}
+	}
 
 	int x = 0;
 	int y = 0;
@@ -442,6 +471,11 @@ void bgLoad(void) {
 	u16 *dst = bgGetGfxPtr(bg3Sub);
 
 	tonccpy(BG_PALETTE_SUB, gif.gct().data(), gif.gct().size() * 2);
+	if (ms().colorMode == 1) {
+		for (int i = 0; i < (int)gif.gct().size(); i++) {
+			BG_PALETTE_SUB[i] = convertVramColorToGrayscale(BG_PALETTE_SUB[i]);
+		}
+	}
 
 	for(uint i = 0; i < frame.image.imageData.size() - 2; i += 2) {
 		toncset16(dst++, (frame.image.imageData[i]) | (frame.image.imageData[i + 1]) << 8, 1);
