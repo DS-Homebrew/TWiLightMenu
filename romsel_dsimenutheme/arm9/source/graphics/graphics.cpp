@@ -1244,7 +1244,7 @@ void loadPhoto(const std::string &path) {
 			}
 			tex().photoBuffer2()[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (ms().colorMode == 1) {
-				tex().photoBuffer2()[i] = convertVramColorToGrayscale(tex().photoBuffer()[i]);
+				tex().photoBuffer2()[i] = convertVramColorToGrayscale(tex().photoBuffer2()[i]);
 			}
 			if ((i % photoWidth) == photoWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;

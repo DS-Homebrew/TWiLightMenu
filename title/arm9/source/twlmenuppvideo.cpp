@@ -801,7 +801,7 @@ void twlMenuVideo(void) {
 	if (ms().colorMode == 1) {
 		for (int i=0; i<256*192; i++) {
 			frameBuffer[0][i] = convertVramColorToGrayscale(frameBuffer[0][i]);
-			frameBufferBot[1][i] = convertVramColorToGrayscale(frameBuffer[1][i]);
+			frameBuffer[1][i] = convertVramColorToGrayscale(frameBuffer[1][i]);
 		}
 	}
 
