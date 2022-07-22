@@ -43,12 +43,14 @@ static u16* _bmpImageBuffer2 = (u16*)_bmpImageBuffer;
 static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
 static u16 _photoBuffer[208 * 156] = {0};
+static u16 _topBorderBuffer[256 * 192] = {0};
 static u16* _bgSubBuffer2 = (u16*)_bgSubBuffer;
 static u16* _photoBuffer2 = (u16*)_photoBuffer;
 // DSi mode double-frame buffers
 //static u16* _frameBuffer[2] = {(u16*)0x02F80000, (u16*)0x02F98000};
 static u16* _frameBufferBot[2] = {(u16*)_bmpImageBuffer, (u16*)_bmpImageBuffer};
 
+static bool topBorderBufferLoaded = false;
 bool boxArtColorDeband = false;
 
 static u8* boxArtCache = (u8*)NULL;	// Size: 0x1B8000
@@ -1087,7 +1089,7 @@ ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
 		for (uint x = 0; x < tex->texWidth(); x++) {
 			u16 val = *(src++);
 			if (!(val & BIT(15))) // If transparent, restore background image
-					val = _backgroundTextures[0].texture()[(startY + y) * 256 + startX + x];
+					val = _topBorderBuffer[(startY + y) * 256 + startX + x];
 
 			_bgSubBuffer[(startY + y) * 256 + startX + x] = val;
 			if (boxArtColorDeband) {
@@ -1111,7 +1113,7 @@ ITCM_CODE void ThemeTextures::drawVolumeImageMacro(int volumeLevel) {
 		for (uint x = 0; x < tex->texWidth(); x++) {
 			u16 val = *(src++);
 			if (!(val & BIT(15))) // If transparent, restore background image
-					val = _backgroundTextures[1].texture()[(startY + y) * 256 + startX + x];
+					val = _topBorderBuffer[(startY + y) * 256 + startX + x];
 
 			_bgMainBuffer[(startY + y) * 256 + startX + x] = val;
 		}
@@ -1125,6 +1127,14 @@ ITCM_CODE void ThemeTextures::drawVolumeImageCached() {
 	int volumeLevel = getVolumeLevel();
 	if (_cachedVolumeLevel != volumeLevel) {
 		_cachedVolumeLevel = volumeLevel;
+		if (!topBorderBufferLoaded) {
+			_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
+			for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+				_topBorderBuffer[i] =
+					convertVramColorToGrayscale(_topBorderBuffer[i]);
+			}
+			topBorderBufferLoaded = true;
+		}
 		ms().macroMode ? drawVolumeImageMacro(volumeLevel) : drawVolumeImage(volumeLevel);
 	}
 }
@@ -1175,7 +1185,7 @@ ITCM_CODE void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMod
 		for (uint x = tc().batteryRenderX(); x < tc().batteryRenderX() + tex->texWidth(); x++) {
 			u16 val = *(src++);
 			if (!(val & BIT(15))) // If transparent, restore background image
-				val = _backgroundTextures[0].texture()[y * 256 + x];
+				val = _topBorderBuffer[y * 256 + x];
 
 			_bgSubBuffer[y * 256 + x] = val;
 			if (boxArtColorDeband) {
@@ -1195,7 +1205,7 @@ ITCM_CODE void ThemeTextures::drawBatteryImageMacro(int batteryLevel, bool drawD
 		for (uint x = tc().batteryRenderX(); x < tc().batteryRenderX() + tex->texWidth(); x++) {
 			u16 val = *(src++);
 			if (!(val & BIT(15))) // If transparent, restore background image
-					val = _backgroundTextures[1].texture()[y * 256 + x];
+					val = _topBorderBuffer[y * 256 + x];
 
 			_bgMainBuffer[y * 256 + x] = val;
 		}
@@ -1211,6 +1221,14 @@ ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
 	else if(batteryLevel == 7 && showColon)	batteryLevel++;
 	if (_cachedBatteryLevel != batteryLevel) {
 		_cachedBatteryLevel = batteryLevel;
+		if (!topBorderBufferLoaded) {
+			_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
+			for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+				_topBorderBuffer[i] =
+					convertVramColorToGrayscale(_topBorderBuffer[i]);
+			}
+			topBorderBufferLoaded = true;
+		}
 		ms().macroMode ? drawBatteryImageMacro(batteryLevel, dsiFeatures(), sys().isRegularDS()) : drawBatteryImage(batteryLevel, dsiFeatures(), sys().isRegularDS());
 	}
 }
@@ -1325,6 +1343,15 @@ ITCM_CODE unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 lette
 }
 
 ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) {
+	if (!topBorderBufferLoaded) {
+		_backgroundTextures[0].copy(_topBorderBuffer, false);
+		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+			_topBorderBuffer[i] =
+				convertVramColorToGrayscale(_topBorderBuffer[i]);
+		}
+		topBorderBufferLoaded = true;
+	}
+
 	const Texture *tex = dateTimeFontTexture();
 	const u16 *bitmap = tex->texture();
 
@@ -1338,7 +1365,7 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) 
 			for (uint x = 0; x < date_time_font_texcoords[2 + (4 * charIndex)]; x++) {
 				u16 val = *(src++);
 				if (!(val & BIT(15))) // If transparent, restore background image
-					val = _backgroundTextures[0].texture()[(posY + y) * 256 + (posX + x)];
+					val = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
 
 				BG_GFX_SUB[(posY + y) * 256 + (posX + x)] = val;
 				if (boxArtColorDeband) {
@@ -1354,6 +1381,15 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) 
 ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int posY) {
 	if (ms().theme == TWLSettings::EThemeSaturn) return;
 
+	if (!topBorderBufferLoaded) {
+		_backgroundTextures[1].copy(_topBorderBuffer, false);
+		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+			_topBorderBuffer[i] =
+				convertVramColorToGrayscale(_topBorderBuffer[i]);
+		}
+		topBorderBufferLoaded = true;
+	}
+
 	const Texture *tex = dateTimeFontTexture();
 	const u16 *bitmap = tex->texture();
 
@@ -1366,7 +1402,7 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 			for (uint x = 0; x < date_time_font_texcoords[2 + (4 * charIndex)]; x++) {
 				u16 val = *(src++);
 				if (!(val & BIT(15))) // If transparent, restore background image
-					val = _backgroundTextures[1].texture()[(posY + y) * 256 + (posX + x)];
+					val = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
 
 				BG_GFX[(posY + y) * 256 + (posX + x)] = val;
 			}
