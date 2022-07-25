@@ -1129,9 +1129,11 @@ ITCM_CODE void ThemeTextures::drawVolumeImageCached() {
 		_cachedVolumeLevel = volumeLevel;
 		if (!topBorderBufferLoaded) {
 			_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
-			for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-				_topBorderBuffer[i] =
-					convertVramColorToGrayscale(_topBorderBuffer[i]);
+			if (ms().colorMode == 1) {
+				for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+					_topBorderBuffer[i] =
+						convertVramColorToGrayscale(_topBorderBuffer[i]);
+				}
 			}
 			topBorderBufferLoaded = true;
 		}
@@ -1223,9 +1225,11 @@ ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
 		_cachedBatteryLevel = batteryLevel;
 		if (!topBorderBufferLoaded) {
 			_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
-			for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-				_topBorderBuffer[i] =
-					convertVramColorToGrayscale(_topBorderBuffer[i]);
+			if (ms().colorMode == 1) {
+				for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+					_topBorderBuffer[i] =
+						convertVramColorToGrayscale(_topBorderBuffer[i]);
+				}
 			}
 			topBorderBufferLoaded = true;
 		}
@@ -1345,9 +1349,11 @@ ITCM_CODE unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 lette
 ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) {
 	if (!topBorderBufferLoaded) {
 		_backgroundTextures[0].copy(_topBorderBuffer, false);
-		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-			_topBorderBuffer[i] =
-				convertVramColorToGrayscale(_topBorderBuffer[i]);
+		if (ms().colorMode == 1) {
+			for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+				_topBorderBuffer[i] =
+					convertVramColorToGrayscale(_topBorderBuffer[i]);
+			}
 		}
 		topBorderBufferLoaded = true;
 	}
@@ -1383,9 +1389,11 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 
 	if (!topBorderBufferLoaded) {
 		_backgroundTextures[1].copy(_topBorderBuffer, false);
-		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-			_topBorderBuffer[i] =
-				convertVramColorToGrayscale(_topBorderBuffer[i]);
+		if (ms().colorMode == 1) {
+			for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+				_topBorderBuffer[i] =
+					convertVramColorToGrayscale(_topBorderBuffer[i]);
+			}
 		}
 		topBorderBufferLoaded = true;
 	}
