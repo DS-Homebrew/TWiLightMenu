@@ -1166,7 +1166,7 @@ int main(int argc, char **argv)
 		.option(STR_WRAM_I_CACHE, STR_DESCRIPTION_GBAR2_WRAMICACHE, Option::Bool(&gs().wramICache), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_BIOS_INTRO, STR_DESCRIPTION_BIOSINTRO, Option::Bool(&gs().skipIntro), {STR_OFF, STR_ON}, {true, false});
 	if (!ms().macroMode) {
-		gbar2Page.option(STR_USE_BOTTOM_SCREEN, STR_DESCRIPTION_USEBOTTOMSCREEN, Option::Bool(&gs().useBottomScreen), {STR_YES, STR_NO}, {true, false});
+		gbar2Page.option(STR_DISPLAY_SCREEN, STR_DESCRIPTION_DISPLAY_SCREEN, Option::Bool(&gs().useBottomScreen), {STR_BOTTOM, STR_TOP}, {true, false});
 	}
 	gbar2Page
 		.option(STR_BORDER_FRAME, STR_DESCRIPTION_BORDER_FRAME, Option::Bool(&gs().frame), {STR_ON, STR_OFF}, {true, false})
