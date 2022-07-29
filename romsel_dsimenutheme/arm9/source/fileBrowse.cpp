@@ -1544,7 +1544,7 @@ void cannotLaunchMsg(const char *filename) {
 		str = &STR_TWLMENU_ALREADY_RUNNING;
 	} else if (bnrRomType[CURPOS] != 0) {
 		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_3DS_HOME : &STR_RELAUNCH_UNLAUNCH;
-	} else if (isDSiMode() && isDSiWare[CURPOS]) {
+	} else if (isDSiMode() && isDSiWare[CURPOS] && !ms().secondaryDevice && sys().arm7SCFGLocked()) {
 		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_DSIWARE_3DS_HOME : &STR_RELAUNCH_DSIWARE_UNLAUNCH;
 	} else /*if (isHomebrew[CURPOS] && ms().consoleModel >= 2) {
 		str = &STR_CANNOT_LAUNCH_HB_ON_3DS;
