@@ -1982,15 +1982,15 @@ int main(int argc, char **argv)
 		resetSettingsPrompt();
 	}
 
-	ms().loadSettings();
-	bs().loadSettings();
-
 	if (isDSiMode()) {
 		scanKeys();
 		if (!(keysHeld() & KEY_SELECT)) {
 			flashcardInit();
 		}
 	}
+
+	ms().loadSettings();
+	bs().loadSettings();
 
 	// Get SysNAND region and launcher app
 	if (isDSiMode() && sdFound() && !is3DS && (ms().sysRegion == TWLSettings::ERegionDefault || ms().launcherApp == -1)) {
