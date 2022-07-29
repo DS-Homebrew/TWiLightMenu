@@ -1985,6 +1985,13 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	bs().loadSettings();
 
+	if (isDSiMode()) {
+		scanKeys();
+		if (!(keysHeld() & KEY_SELECT)) {
+			flashcardInit();
+		}
+	}
+
 	// Get SysNAND region and launcher app
 	if (isDSiMode() && sdFound() && !is3DS && (ms().sysRegion == TWLSettings::ERegionDefault || ms().launcherApp == -1)) {
 		if (!nandMounted) {
@@ -2295,13 +2302,6 @@ int main(int argc, char **argv)
 		else if (dsiFeatures() && ms().gameRegion < TWLSettings::ERegionDefault) ms().gameRegion = TWLSettings::ERegionDefault;
 		runGraphicIrq();
 		regionSelect();
-	}
-
-	if (isDSiMode()) {
-		scanKeys();
-		if (!(keysHeld() & KEY_SELECT)) {
-			flashcardInit();
-		}
 	}
 
 	if(graphicsInited) {
