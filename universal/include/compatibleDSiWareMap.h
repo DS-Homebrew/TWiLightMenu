@@ -98,14 +98,13 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Art Style: Aquia (No audio)
 	2, // Flipper (No music)
 	2, // Mighty Milky Way (No music)
-	0, // Shantae: Risky's Revenge (Game part only)
+	0, // Shantae: Risky's Revenge (One part of the game only)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 23)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 22)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KII", // 101 Pinball World
 	"KXT", // 99Seconds
-	"KE9", // Absolute Baseball
 	"K27", // G.G. Series: All Breaker
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
