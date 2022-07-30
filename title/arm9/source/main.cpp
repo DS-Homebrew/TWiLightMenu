@@ -1564,31 +1564,46 @@ void languageSelect(void) {
 	printSmall(true, 2, 172, "\uE07E를 사용하여 언어를 선택해주세요.");
 	updateText(true);
 
+	if (ms().macroMode) {
+		u16 pressed = 0;
+		for (int i = 0; i < 60*10; i++) {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			if ((pressed & KEY_A) || (pressed & KEY_START) || (pressed & KEY_TOUCH)) break;
+		}
+		fadeType = false;
+		for (int i = 0; i < 25; i++)
+			swiWaitForVBlank();
+
+		fadeType = true;
+	}
+
 	int cursorPosition = 0;
 	char buffer[64] = {0};
 	u16 held = 0, pressed = 0;
 	while (1) {
-		clearText(false);
+		clearText(ms().macroMode);
 
 		Alignment align = ms().rtl() ? Alignment::right : Alignment::left;
 		int x1 = ms().rtl() ? 256 - 2 : 2, x2 = ms().rtl() ? 256 - 15 : 15;
 
-		printLarge(false, x1, 0, STR_SELECT_YOUR_LANGUAGE, align);
+		printLarge(ms().macroMode, x1, 0, STR_SELECT_YOUR_LANGUAGE, align);
 
 		snprintf(buffer, sizeof(buffer), STR_GUI.c_str(), displayLanguage(guiLanguage, 0));
-		printSmall(false, x2, 20, buffer, align);
+		printSmall(ms().macroMode, x2, 20, buffer, align);
 		snprintf(buffer, sizeof(buffer), STR_GAME.c_str(), displayLanguage(gameLanguage, 1));
-		printSmall(false, x2, 34, buffer, align);
+		printSmall(ms().macroMode, x2, 34, buffer, align);
 		snprintf(buffer, sizeof(buffer), STR_DS_BANNER_TITLE.c_str(), displayLanguage(titleLanguage, 2));
-		printSmall(false, x2, 48, buffer, align);
+		printSmall(ms().macroMode, x2, 48, buffer, align);
 
-		printSmall(false, x1, 20 + cursorPosition * 14, ms().rtl() ? "<" : ">", align);
+		printSmall(ms().macroMode, x1, 20 + cursorPosition * 14, ms().rtl() ? "<" : ">", align);
 
-		printSmall(false, x1, 68, STR_UP_DOWN_CHOOSE, align);
-		printSmall(false, x1, 82, STR_LEFT_RIGHT_CHANGE_LANGUAGE, align);
-		printSmall(false, x1, 96, STR_A_PROCEED, align);
+		printSmall(ms().macroMode, x1, 68, STR_UP_DOWN_CHOOSE, align);
+		printSmall(ms().macroMode, x1, 82, STR_LEFT_RIGHT_CHANGE_LANGUAGE, align);
+		printSmall(ms().macroMode, x1, 96, STR_A_PROCEED, align);
 
-		updateText(false);
+		updateText(ms().macroMode);
 
 		do {
 			swiWaitForVBlank();
@@ -1683,19 +1698,19 @@ void regionSelect(void) {
 	u16 held = 0, pressed = 0;
 	while (1) {
 		clearText();
-		printLarge(false, x1, 0, STR_SELECT_YOUR_REGION, align);
+		printLarge(ms().macroMode, x1, 0, STR_SELECT_YOUR_REGION, align);
 
 		for(uint i = dsiFeatures() ? 0 : 1, p = 0; i < sizeof(regions) / sizeof(regions[0]); i++, p++) {
-			printSmall(false, x2, 20 + p * 14, *regions[i], align);
+			printSmall(ms().macroMode, x2, 20 + p * 14, *regions[i], align);
 		}
 
-		printSmall(false, x1, 20 + (ms().gameRegion + (dsiFeatures() ? 1 : 0)) * 14, ms().rtl() ? "<" : ">", align);
+		printSmall(ms().macroMode, x1, 20 + (ms().gameRegion + (dsiFeatures() ? 1 : 0)) * 14, ms().rtl() ? "<" : ">", align);
 
 		int y = 20 + (sizeof(regions) / sizeof(regions[0])) * 14 + 6 - (dsiFeatures() ? 0 : 14);
-		printSmall(false, x1, y, STR_UP_DOWN_CHOOSE, align);
-		printSmall(false, x1, y + 14, STR_A_PROCEED, align);
+		printSmall(ms().macroMode, x1, y, STR_UP_DOWN_CHOOSE, align);
+		printSmall(ms().macroMode, x1, y + 14, STR_A_PROCEED, align);
 
-		updateText(false);
+		updateText(ms().macroMode);
 
 		do {
 			swiWaitForVBlank();
@@ -1725,7 +1740,7 @@ void regionSelect(void) {
 		swiWaitForVBlank();
 
 	clearText();
-	updateText(false);
+	updateText(ms().macroMode);
 }
 
 //---------------------------------------------------------------------------------
