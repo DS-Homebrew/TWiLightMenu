@@ -50,6 +50,8 @@ void bootSplashDSi(void) {
 		sprintf(path, "nitro:/video/splash/virtualPain%s.gif", /*ms().wideScreen && !ms().macroMode ? "_wide" :*/ "");
 	} else if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashtop.gif", F_OK) == 0) {
 		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", sdFound() ? "sd" : "fat");
+	} else if (ms().macroMode) {
+		sprintf(path, "nitro:/video/splash/gameBoy.gif");
 	} else {
 		sprintf(path, "nitro:/video/splash/%s.gif", language == TWLSettings::ELangChineseS ? "iquedsi" : (sys().isRegularDS() ? "ds" : "dsi"));
 	}
@@ -77,9 +79,13 @@ void bootSplashDSi(void) {
 
 	if (cartInserted && !custom) {
 		u16 *gfx[2];
+		int yPos = virtualPain ? 130 : 142;
+		if (ms().macroMode && !virtualPain) {
+			yPos = 128;
+		}
 		for(int i = 0; i < 2; i++) {
 			gfx[i] = oamAllocateGfx(&oamMain, SpriteSize_64x32, SpriteColorFormat_Bmp);
-			oamSet(&oamMain, i, 67 + (i * 64), virtualPain ? 130 : 142, 0, 15, SpriteSize_64x32, SpriteColorFormat_Bmp, gfx[i], 0, false, false, false, false, false);
+			oamSet(&oamMain, i, 67 + (i * 64), yPos, 0, 15, SpriteSize_64x32, SpriteColorFormat_Bmp, gfx[i], 0, false, false, false, false, false);
 		}
 
 		std::vector<unsigned char> image;
@@ -144,7 +150,7 @@ void bootSplashDSi(void) {
 			//loadROMselectAsynch();
 			scanKeys();
 
-			if (!custom && splash.currentFrame() == 24)
+			if (!custom && splash.currentFrame() == 14)
 				snd().playDSiBoot();
 		}
 	} else {

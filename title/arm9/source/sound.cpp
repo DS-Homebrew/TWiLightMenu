@@ -124,10 +124,10 @@ SoundControl::SoundControl()
 
 	mmInitDefaultMem((mm_addr)soundBank);
 
-	mmLoadEffect( sys().isRegularDS() ? SFX_DSBOOT : SFX_DSIBOOT );
+	mmLoadEffect( (sys().isRegularDS() || ms().macroMode) ? SFX_DSBOOT : SFX_DSIBOOT );
 	mmLoadEffect( SFX_SELECT );
 
-	if (sys().isRegularDS()) {
+	if (sys().isRegularDS() || ms().macroMode) {
 		snd_dsiboot = {
 			{ SFX_DSBOOT } ,			// id
 			(int)(1.0f * (1<<10)),	// rate
