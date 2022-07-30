@@ -951,9 +951,16 @@ int main(int argc, char **argv)
 				{STR_DEFAULT, STR_CUSTOM_SPLASH},
 				{false, true})
 		.option(STR_SORT_METHOD, STR_DESCRIPTION_SORT_METHOD, Option::Int((int *)&ms().sortMethod), {STR_ALPHABETICAL, STR_RECENT, STR_MOST_PLAYED, STR_FILE_TYPE, STR_CUSTOM}, {TSortMethod::ESortAlphabetical, TSortMethod::ESortRecent, TSortMethod::ESortMostPlayed, TSortMethod::ESortFileType, TSortMethod::ESortCustom})
-		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false})
-		.option(sys().isRegularDS() ? STR_DSSPLASH : STR_DSISPLASH, sys().isRegularDS() ? STR_DESCRIPTION_DSSPLASH : STR_DESCRIPTION_DSISPLASH, Option::Int(&ms().dsiSplash), {STR_WITHOUT_HS, STR_WITH_HS, STR_CUSTOM_SPLASH, STR_HIDE}, {1, 2, 3, 0})
-		.option(sys().isRegularDS() ? STR_DSSPLASHAUTOSKIP : STR_DSISPLASHAUTOSKIP, sys().isRegularDS() ? STR_DESCRIPTION_DSSPLASHAUTOSKIP : STR_DESCRIPTION_DSISPLASHAUTOSKIP, Option::Bool(&ms().dsiSplashAutoSkip), {STR_OFF, STR_ON}, {false, true})
+		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false});
+	if (ms().macroMode) {
+		guiPage
+			.option(STR_GBSPLASH, STR_DESCRIPTION_GBSPLASH, Option::Int(&ms().dsiSplash), {STR_SHOW, STR_CUSTOM_SPLASH, STR_HIDE}, {(ms().dsiSplash==2 ? 2 : 1), 3, 0});
+	} else {
+		guiPage
+			.option(sys().isRegularDS() ? STR_DSSPLASH : STR_DSISPLASH, sys().isRegularDS() ? STR_DESCRIPTION_DSSPLASH : STR_DESCRIPTION_DSISPLASH, Option::Int(&ms().dsiSplash), {STR_WITHOUT_HS, STR_WITH_HS, STR_CUSTOM_SPLASH, STR_HIDE}, {1, 2, 3, 0})
+			.option(sys().isRegularDS() ? STR_DSSPLASHAUTOSKIP : STR_DSISPLASHAUTOSKIP, sys().isRegularDS() ? STR_DESCRIPTION_DSSPLASHAUTOSKIP : STR_DESCRIPTION_DSISPLASHAUTOSKIP, Option::Bool(&ms().dsiSplashAutoSkip), {STR_OFF, STR_ON}, {false, true});
+	}
+	guiPage
 		.option(STR_NINTENDOLOGOCOLOR, STR_DESCRIPTION_NINTENDOLOGOCOLOR, Option::Int(&ms().nintendoLogoColor), {STR_RED, STR_BLUE, STR_MAGENTA, STR_GRAY}, {1, 2, 3, 0})
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_SHOW_HIDDEN, STR_DESCRIPTION_SHOW_HIDDEN_1, Option::Bool(&ms().showHidden), {STR_SHOW, STR_HIDE}, {true, false});
