@@ -1466,10 +1466,12 @@ const char *languages[] = {
 	"Português (Brasil)",
 	"Tiếng Việt",
 	"Valencià",
+	"Català",
 };
 
 const TWLSettings::TLanguage guiLanguages[] = {
 	TWLSettings::TLanguage::ELangIndonesian,
+	TWLSettings::TLanguage::ELangCatalan,
 	TWLSettings::TLanguage::ELangDanish,
 	TWLSettings::TLanguage::ELangGerman,
 	TWLSettings::TLanguage::ELangEnglish,
