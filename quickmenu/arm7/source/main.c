@@ -254,7 +254,7 @@ int main() {
 
 	if (SNDEXCNT == 0) {
 		if(pmBacklight & 0xF0) // DS Lite
-			backlightLevel = ((pmBacklight & 3) + ((readPowerManagement(PM_CONTROL_REG) & 0xC) != 0)) << 8; // Brightness
+			backlightLevel = pmBacklight & 3; // Brightness
 	}
 
 	if (isDSiMode()) {

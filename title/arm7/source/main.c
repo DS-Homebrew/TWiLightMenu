@@ -233,7 +233,7 @@ int main() {
 
 	if (SNDEXCNT == 0) {
 		if(pmBacklight & 0xF0) { // DS Lite
-			int backlightLevel = ((pmBacklight & 3) + ((readPowerManagement(PM_CONTROL_REG) & 0xC) != 0)) << 8; // Brightness
+			int backlightLevel = pmBacklight & 3; // Brightness
 			*(int*)0x02003000 = backlightLevel;
 		}
 	}
