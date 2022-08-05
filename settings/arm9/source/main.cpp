@@ -830,10 +830,7 @@ int main(int argc, char **argv)
 
 	if (sdFound() && ms().consoleModel < 2)
 	{
-		if (access("sd:/hiya/autoboot.bin", F_OK) == 0)
-			hiyaAutobootFound = true;
-		else
-			hiyaAutobootFound = false;
+		hiyaAutobootFound = (access("sd:/hiya/autoboot.bin", F_OK) == 0);
 	}
 
 	currentTheme = ms().theme;
@@ -1072,20 +1069,20 @@ int main(int argc, char **argv)
 				{STR_YES, STR_NO},
 				{true, false});
 
-	if (dsiFeatures() || sdFound()) {
-		if (sdFound() && flashcardFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
+	if (flashcardFound() && (dsiFeatures() || sdFound())) {
+		if (sdFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
 			bootstrapPage.option("S1SD: "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 			if (dsiFeatures()) {
 				bootstrapPage
 					.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false})
 					.option(STR_S1SD_B4DSMODE, STR_DESCRIPTION_B4DSMODE, Option::Int(&bs().b4dsMode), {STR_OFF, STR_4MB_RAM, STR_8MB_RAM}, {0, 1, 2});
 			}
-		} else if (isDSiMode() && flashcardFound()) {
+		} else if (isDSiMode()) {
 			bootstrapPage.option(STR_B4DSMODE, STR_DESCRIPTION_B4DSMODE, Option::Int(&bs().b4dsMode), {STR_OFF, STR_4MB_RAM, STR_8MB_RAM}, {0, 1, 2});
-		} else if (!isDSiMode() && flashcardFound()) {
+		} else {
 			bootstrapPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 		}
-	} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+	} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS && !(dsiFeatures() || sdFound())) {
 		bootstrapPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 	}
 
@@ -1143,17 +1140,15 @@ int main(int argc, char **argv)
 				Option::Bool(&bs().sdNand),
 				{ms().showMicroSd ? STR_MICRO_SD_CARD : STR_SD_CARD, sharedFound ? STR_SYSTEM : STR_NAND},
 				{true, false});
-	}
 
-	if (dsiFeatures() && sdFound() && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
-		bootstrapPage.option((isDSiMode() ? STR_FORCESLEEPPATCH : STR_SYSSD_FORCESLEEPPATCH),
-			STR_DESCRIPTION_FORCESLEEPMODE,
-			Option::Bool(&ms().forceSleepPatch),
-			{STR_ON, STR_OFF},
-			{true, false});
-	}
+		if (dsiFeatures() && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
+			bootstrapPage.option((isDSiMode() ? STR_FORCESLEEPPATCH : STR_SYSSD_FORCESLEEPPATCH),
+				STR_DESCRIPTION_FORCESLEEPMODE,
+				Option::Bool(&ms().forceSleepPatch),
+				{STR_ON, STR_OFF},
+				{true, false});
+		}
 
-	if (sdFound()) {
 		bootstrapPage
 			.option(STR_LOAD_BOOTLOADER, STR_DESCRIPTION_LOAD_BOOTLOADER, Option::Bool(&ms().btsrpBootloaderDirect), {STR_DIRECT, STR_THRU_NDS_BS}, {true, false});
 	}
@@ -1275,15 +1270,15 @@ int main(int argc, char **argv)
 					Option::Bool(&ms().powerLedColor, opt_powerLed_toggle),
 					{STR_PURPLE, STR_BLUE+"/"+STR_RED},
 					{true, false});
-	}
 
-	if (isDSiMode() && ms().consoleModel == 0 && sdFound()) {
-		miscPage
-			.option(STR_SDREMOVALDETECTION,
-				STR_DESCRIPTION_SDREMOVALDETECTION,
-				Option::Bool(&ms().sdRemoveDetect),
-				{STR_ON, STR_OFF},
-				{true, false});
+		if (ms().consoleModel == 0 && sdFound()) {
+			miscPage
+				.option(STR_SDREMOVALDETECTION,
+					STR_DESCRIPTION_SDREMOVALDETECTION,
+					Option::Bool(&ms().sdRemoveDetect),
+					{STR_ON, STR_OFF},
+					{true, false});
+		}
 	}
 
 	miscPage.option(STR_MACROMODE,
