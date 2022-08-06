@@ -63,7 +63,7 @@ bool fadeType = true;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
-bool externalFirmsModules = false;
+bool widescreenFound = false;
 
 extern void ClearBrightness();
 extern bool lcdSwapped;
@@ -488,11 +488,11 @@ void SetWidescreen(const char *filename) {
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 	if ((isDSiMode() && sys().arm7SCFGLocked()) || ms().consoleModel < 2
-	|| !useWidescreen || !externalFirmsModules || ms().macroMode) {
+	|| !useWidescreen || !widescreenFound || ms().macroMode) {
 		return;
 	}
 
-	if (isHomebrew && ms().homebrewHasWide && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
+	if (isHomebrew && ms().homebrewHasWide && widescreenFound) {
 		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
 			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
 		}
@@ -633,7 +633,7 @@ void SetWidescreen(const char *filename) {
 			fclose(file);
 		}
 	}
-	if (wideCheatFound && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
+	if (wideCheatFound && widescreenFound) {
 		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
 			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
 		}
@@ -1079,7 +1079,7 @@ int main(int argc, char **argv) {
 
 	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
 		CIniFile lumaConfig("sd:/luma/config.ini");
-		externalFirmsModules = (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true);
+		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
 	}
 
 	langInit();

@@ -55,6 +55,7 @@ extern bool displayGameIcons;
 std::string SDKnumbertext;
 
 extern bool fadeType;
+extern bool widescreenFound;
 extern bool showdialogbox;
 extern bool dboxStopped;
 extern bool dbox_showIcon;
@@ -620,7 +621,7 @@ void perGameSettings (std::string filename) {
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
-			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
+			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && widescreenFound) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
