@@ -99,6 +99,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## Translators
 - Arabic: [Ken Brown](https://crowdin.com/profile/kenkenkenneth), [SLG3](https://crowdin.com/profile/slg3)
 - Bulgarian: [Peter0x44](https://github.com/Peter0x44), [Tescu](https://crowdin.com/profile/tescu48)
+- Catalan:
 - Chinese Simplified: [cai_miao](https://crowdin.com/profile/cai_miao), [Chris](https://crowdin.com/profile/z0287yyy), [Forbidden](https://crowdin.com/profile/Origami), [James-Makoto](https://crowdin.com/profile/VCMOD55), [R-YaTian](https://github.com/R-YaTian), [Yukino Song](https://crowdin.com/profile/ClassicOldSong), [曾国立](https://crowdin.com/profile/notthingtosay), [天天地地人人](https://crowdin.com/profile/realworld), [百地 希留耶](https://crowdin.com/profile/FIve201)
 - Chinese Traditional: [cai_miao](https://crowdin.com/profile/cai_miao), [ccccchoho](https://crowdin.com/profile/ccccchoho), [James-Makoto](https://crowdin.com/profile/VCMOD55), [Rintim](https://crowdin.com/profile/Rintim), [奇诺比奥](https://crowdin.com/profile/Counta6_233)
 - Danish: [jonata](https://github.com/Jonatan6), [Michael Millet](https://crowdin.com/profile/duroluro), [Nadia Pedersen](https://crowdin.com/profile/nadiaholmquist)

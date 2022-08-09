@@ -322,5 +322,7 @@ std::string TWLSettings::getGuiLanguageString()
             return "vi";
         case TWLSettings::ELangValencian:
             return "val";
+        case TWLSettings::ELangCatalan:
+            return "ca";
     }
 }

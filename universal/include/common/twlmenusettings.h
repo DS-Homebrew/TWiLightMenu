@@ -75,6 +75,7 @@ public:
 		ELangPortugueseBrazil = 25,
 		ELangVietnamese = 26,
 		ELangValencian = 27,
+		ELangCatalan = 28,
 	};
 
 	enum TRegion : int
