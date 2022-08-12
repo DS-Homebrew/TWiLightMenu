@@ -585,7 +585,7 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
 			}
-			if (!ms().secondaryDevice && romSize > romSizeLimit && !blacklisted_asyncCardRead) {
+			if (!ms().secondaryDevice && (romSize > romSizeLimit || (ms().consoleModel == 0 && unitCode[CURPOS] > 0)) && !blacklisted_asyncCardRead) {
 				perGameOps++;
 				perGameOp[perGameOps] = 12;	// Async Card Read
 			}
