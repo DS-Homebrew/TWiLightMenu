@@ -9,7 +9,6 @@ static const char cardReadDMAExcludeList[][4] = {
 	"Y8L", // Golden Sun: Dark Dawn (Demo)
 	"AJS", // Jump! Super Stars
 	"AJU", // Jump! Ultimate Stars
-	"VPY", // Pokémon Conquest
 	"B8I", // Spider-Man: Edge of Time
 	"CTX", // Tropix
 	"CP3", // Viva Pinata
