@@ -133,6 +133,7 @@ static u16 twlColors[16] = {
 
 static int zoomingIconXpos[11] = {-32, -32, 256, 256+16, -32, -32, 256, 256+16, -32, -32, 256+16};
 static int zoomingIconYpos[11] = {-32, -48, -48, -32, 192+32, 192+48, 192+48, 192+32, -32, 192, -32};
+static int gbaIconYpos = 44;
 
 void twlMenuVideo_loadTopGraphics(void) {
 	// Anniversary
@@ -575,8 +576,8 @@ void twlMenuVideo_topGraphicRender(void) {
 		if (zoomingIconXpos[3] < 202) {
 			zoomingIconXpos[3] = 202;
 		}
-		if (zoomingIconYpos[3] > 44) {
-			zoomingIconYpos[3] = 44;
+		if (zoomingIconYpos[3] > gbaIconYpos) {
+			zoomingIconYpos[3] = gbaIconYpos;
 		}
 
 		zoomingIconXpos[4] += 2;
@@ -689,6 +690,7 @@ void twlMenuVideo(void) {
 	} else if (strcmp(currentDate, styleSavvyReleaseDate()) == 0) {
 		// Load Style Savvy BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppFashion.png");
+		gbaIconYpos -= 8;
 	} else if (ms().getGameRegion() == 0 ? (strcmp(currentDate, "07/21") == 0) : (strcmp(currentDate, "08/14") == 0)) {
 		// Load Virtual Boy BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppVirtualBoy.png");
