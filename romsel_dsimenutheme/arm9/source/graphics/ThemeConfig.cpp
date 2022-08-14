@@ -133,12 +133,12 @@ void ThemeConfig::loadConfig() {
 	_fontPaletteOverlay2 = getInt(themeConfig, "FontPaletteOverlay2", _fontPalette2);
 	_fontPaletteOverlay3 = getInt(themeConfig, "FontPaletteOverlay3", _fontPalette3);
 	_fontPaletteOverlay4 = getInt(themeConfig, "FontPaletteOverlay4", _fontPalette4);
-	_fontPaletteUsername1 = getInt(themeConfig, "FontPaletteUsername1", _fontPaletteUsername1);
-	_fontPaletteUsername2 = getInt(themeConfig, "FontPaletteUsername2", _fontPaletteUsername2);
-	_fontPaletteUsername3 = getInt(themeConfig, "FontPaletteUsername3", _fontPaletteUsername3);
-	_fontPaletteUsername4 = getInt(themeConfig, "FontPaletteUsername4", _fontPaletteUsername4);
-	_fontPaletteDateTime1 = getInt(themeConfig, "FontPaletteDateTime1", _fontPaletteDateTime1);
-	_fontPaletteDateTime2 = getInt(themeConfig, "FontPaletteDateTime2", _fontPaletteDateTime2);
-	_fontPaletteDateTime3 = getInt(themeConfig, "FontPaletteDateTime3", _fontPaletteDateTime3);
-	_fontPaletteDateTime4 = getInt(themeConfig, "FontPaletteDateTime4", _fontPaletteDateTime4);
+	_fontPaletteUsername1 = getInt(themeConfig, "FontPaletteUsername1", _fontPalette1);
+	_fontPaletteUsername2 = getInt(themeConfig, "FontPaletteUsername2", _fontPalette2);
+	_fontPaletteUsername3 = getInt(themeConfig, "FontPaletteUsername3", _fontPalette3);
+	_fontPaletteUsername4 = getInt(themeConfig, "FontPaletteUsername4", _fontPalette4);
+	_fontPaletteDateTime1 = getInt(themeConfig, "FontPaletteDateTime1", _fontPalette1);
+	_fontPaletteDateTime2 = getInt(themeConfig, "FontPaletteDateTime2", _fontPalette2);
+	_fontPaletteDateTime3 = getInt(themeConfig, "FontPaletteDateTime3", _fontPalette3);
+	_fontPaletteDateTime4 = getInt(themeConfig, "FontPaletteDateTime4", _fontPalette4);
 }
