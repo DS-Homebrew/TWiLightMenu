@@ -17,8 +17,6 @@
 #include "color.h"
 #include "errorScreen.h"
 #include "fileBrowse.h"
-#include "uvcoord_date_time_font.h"
-#include "uvcoord_top_font.h"
 #include "common/lzss.h"
 #include "common/tonccpy.h"
 #include "graphics/lodepng.h"
@@ -533,7 +531,11 @@ void ThemeTextures::loadBatteryTextures() {
 }
 
 void ThemeTextures::loadUITextures() {
-	_dateTimeFontTexture = std::make_unique<Texture>(TFN_UI_DATE_TIME_FONT, TFN_FALLBACK_UI_DATE_TIME_FONT);
+	_dateTimeFont = std::make_unique<FontGraphic>(std::vector<std::string>({TFN_FONT_DATE_TIME, TFN_FALLBACK_FONT_DATE_TIME}), false);
+	if(access((TFN_FONT_USERNAME).c_str(), F_OK) == 0) {
+		_usernameFont = std::make_unique<FontGraphic>(std::vector<std::string>({TFN_FONT_USERNAME}), false);
+	}
+
 	if (ms().theme != TWLSettings::EThemeHBL) {
 		_leftShoulderTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
 		_rightShoulderTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
@@ -718,118 +720,52 @@ void ThemeTextures::clearTopScreen() {
 void ThemeTextures::drawProfileName() {
 	if (_profileNameLoaded || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) return;
 
-	// Load username
-	char fontPath[64] = {0};
-	FILE *file;
-	int x = (dsiFeatures() ? tc().usernameRenderX() : tc().usernameRenderXDS());
-	s16 *username = useTwlCfg ? (s16 *)0x02000448 : PersonalData->name;
-
-	for (int c = 0; c < 10; c++) {
-		unsigned int charIndex = getTopFontSpriteIndex(username[c]);
-		// 42 characters per line.
-		unsigned int texIndex = charIndex / 42;
-		sprintf(fontPath, "nitro:/graphics/top_font/small_font_%u.bmp", texIndex);
-
-		file = fopen(fontPath, "rb");
-
-		if (file) {
-			ms().macroMode ? beginBgMainModify() : beginBgSubModify();
-			// Start loading
-			fseek(file, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(file) + 0xe;
-			fseek(file, pixelStart, SEEK_SET);
-			for (int y = tc().usernameRenderY(); y >= 0; y--) {
-				fread(_bmpImageBuffer, 2, 0x200, file);
-				u16 *src = _bmpImageBuffer + (top_font_texcoords[0 + (4 * charIndex)]);
-
-				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
-					u16 val = *(src++);
-
-					// Blend with pixel
-					const u16 bg =
-					    ms().macroMode ? _bgMainBuffer[(y + 2) * 256 + (i + x)] : _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
-					// Apply palette here.
-
-					// Magic numbers were found by dumping val to stdout
-					// on case default.
-					switch (val) {
-					// #ff00ff
-					case 0xFC1F:
-						break;
-					// #404040
-					case 0xA108:
-						val = alphablend(bmpPal_topSmallFont[1 + ((useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme) * 16)],
-								 bg, 224U);
-						break;
-					// #808080
-					case 0xC210:
-						// blend the colors with the background to make it look better.
-						// Fills in the
-						// 1 for light
-						val = alphablend(bmpPal_topSmallFont[1 + ((useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme) * 16)],
-								 bg, 224U);
-						break;
-					// #b8b8b8
-					case 0xDEF7:
-						// 6 looks good on lighter themes
-						// 3 do an average blend twice
-						//
-						val = alphablend(bmpPal_topSmallFont[3 + ((useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme) * 16)],
-								 bg, 128U);
-						break;
-					default:
-						break;
-					}
-					if (val != 0xFC1F && val != 0x7C1F) { // Do not render magneta pixel
-						if (ms().macroMode) {
-							_bgMainBuffer[(y + 2) * 256 + (i + x)] = Texture::bmpToDS(val);
-						} else {
-							_bgSubBuffer[(y + 2) * 256 + (i + x)] = Texture::bmpToDS(val);
-							if (boxArtColorDeband) {
-								_bgSubBuffer2[(y + 2) * 256 + (i + x)] = _bgSubBuffer[(y + 2) * 256 + (i + x)];
-							}
-						}
-					}
-				}
+	if (!topBorderBufferLoaded) {
+		_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
+		if (ms().colorMode == 1) {
+			for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+				_topBorderBuffer[i] =
+					convertVramColorToGrayscale(_topBorderBuffer[i]);
 			}
-			x += top_font_texcoords[2 + (4 * charIndex)];
-			ms().macroMode ? commitBgMainModify() : commitBgSubModify();
 		}
-
-		fclose(file);
+		topBorderBufferLoaded = true;
 	}
 
+	// Load username
+	int xPos = (dsiFeatures() ? tc().usernameRenderX() : tc().usernameRenderXDS());
+	int yPos = tc().usernameRenderY();
+	char16_t username[10];
+	tonccpy(username, useTwlCfg ? (s16 *)0x02000448 : PersonalData->name, 10 * sizeof(char16_t));
+
+	toncset16(FontGraphic::textBuf[1], 0, 256 * usernameFont()->height());
+	usernameFont()->print(0, 0, true, username, Alignment::left, FontPalette::name);
+	int width = usernameFont()->calcWidth(username);
+
+	// Copy to background
+	for (int y = 0; y < usernameFont()->height(); y++) {
+		for (int x = 0; x < width; x++) {
+			u16 val = BG_PALETTE[FontGraphic::textBuf[1][y * 256 + x]];
+			if (!(val & BIT(15))) // If transparent, restore background image
+				val = _topBorderBuffer[(yPos + y) * 256 + (xPos + x)];
+
+			if (ms().macroMode) {
+				_bgMainBuffer[(yPos + y) * 256 + (xPos + x)] = val;
+			} else {
+				_bgSubBuffer[(yPos + y) * 256 + (xPos + x)] = val;
+				if (boxArtColorDeband) {
+					_bgSubBuffer2[(yPos + y) * 256 + (xPos + x)] = val;
+				}
+			}
+		}
+	}
+
+	ms().macroMode ? commitBgMainModify() : commitBgSubModify();
 	_profileNameLoaded = true;
 }
 
 
 ITCM_CODE void ThemeTextures::resetProfileName() {
 	_profileNameLoaded = false;
-}
-
-/**
- * Get the index in the UV coordinate array where the letter appears
- */
-unsigned int ThemeTextures::getTopFontSpriteIndex(const u16 letter) {
-	unsigned int spriteIndex = 0;
-	long int left = 0;
-	long int right = TOP_FONT_NUM_IMAGES;
-	long int mid = 0;
-
-	while (left <= right) {
-		mid = left + ((right - left) / 2);
-		if (top_utf16_lookup_table[mid] == letter) {
-			spriteIndex = mid;
-			break;
-		}
-
-		if (top_utf16_lookup_table[mid] < letter) {
-			left = mid + 1;
-		} else {
-			right = mid - 1;
-		}
-	}
-	return spriteIndex;
 }
 
 void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
@@ -1324,28 +1260,6 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 	commitBgSubModify();
 }
 
-ITCM_CODE unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 letter) {
-	unsigned int spriteIndex = 0;
-	long int left = 0;
-	long int right = DATE_TIME_FONT_NUM_IMAGES;
-	long int mid = 0;
-
-	while (left <= right) {
-		mid = left + ((right - left) / 2);
-		if (date_time_utf16_lookup_table[mid] == letter) {
-			spriteIndex = mid;
-			break;
-		}
-
-		if (date_time_utf16_lookup_table[mid] < letter) {
-			left = mid + 1;
-		} else {
-			right = mid - 1;
-		}
-	}
-	return spriteIndex;
-}
-
 ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) {
 	if (!topBorderBufferLoaded) {
 		_backgroundTextures[0].copy(_topBorderBuffer, false);
@@ -1358,29 +1272,23 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) 
 		topBorderBufferLoaded = true;
 	}
 
-	const Texture *tex = dateTimeFontTexture();
-	const u16 *bitmap = tex->texture();
+	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
+	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
+	int width = dateTimeFont()->calcWidth(str);
 
-	while(*str) {
-		char c = *(str++);
-		unsigned int charIndex = getDateTimeFontSpriteIndex(c);
+	// Copy to background
+	for (int y = 0; y < dateTimeFont()->height(); y++) {
+		for (int x = 0; x < width; x++) {
+			u16 val = BG_PALETTE_SUB[FontGraphic::textBuf[1][y * 256 + x]];
+			if (!(val & BIT(15))) // If transparent, restore background image
+				val = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
 
-		// Start date
-		for (uint y = 0; y < tex->texHeight(); y++) {
-			const u16 *src = bitmap + (y * 128) + (date_time_font_texcoords[4 * charIndex]);
-			for (uint x = 0; x < date_time_font_texcoords[2 + (4 * charIndex)]; x++) {
-				u16 val = *(src++);
-				if (!(val & BIT(15))) // If transparent, restore background image
-					val = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
-
-				BG_GFX_SUB[(posY + y) * 256 + (posX + x)] = val;
-				if (boxArtColorDeband) {
-					_frameBufferBot[0][(posY + y) * 256 + (posX + x)] = val;
-					_frameBufferBot[1][(posY + y) * 256 + (posX + x)] = val;
-				}
+			BG_GFX_SUB[(posY + y) * 256 + (posX + x)] = val;
+			if (boxArtColorDeband) {
+				_frameBufferBot[0][(posY + y) * 256 + (posX + x)] = val;
+				_frameBufferBot[1][(posY + y) * 256 + (posX + x)] = val;
 			}
 		}
-		posX += date_time_font_texcoords[2 + (4 * charIndex)];
 	}
 }
 
@@ -1398,24 +1306,19 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 		topBorderBufferLoaded = true;
 	}
 
-	const Texture *tex = dateTimeFontTexture();
-	const u16 *bitmap = tex->texture();
+	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
+	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
+	int width = dateTimeFont()->calcWidth(str);
 
-	while(*str) {
-		char c = *(str++);
-		unsigned int charIndex = getDateTimeFontSpriteIndex(c);
-		// Start date
-		for (uint y = 0; y < tex->texHeight(); y++) {
-			const u16 *src = bitmap + (y * 128) + (date_time_font_texcoords[4 * charIndex]);
-			for (uint x = 0; x < date_time_font_texcoords[2 + (4 * charIndex)]; x++) {
-				u16 val = *(src++);
-				if (!(val & BIT(15))) // If transparent, restore background image
-					val = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
+	// Copy to background
+	for (int y = 0; y < dateTimeFont()->height(); y++) {
+		for (int x = 0; x < width; x++) {
+			u16 val = BG_PALETTE[FontGraphic::textBuf[1][y * 256 + x]];
+			if (!(val & BIT(15))) // If transparent, restore background image
+				val = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
 
-				BG_GFX[(posY + y) * 256 + (posX + x)] = val;
-			}
+			BG_GFX[(posY + y) * 256 + (posX + x)] = val;
 		}
-		posX += date_time_font_texcoords[2 + (4 * charIndex)];
 	}
 }
 

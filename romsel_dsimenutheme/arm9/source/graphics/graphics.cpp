@@ -50,9 +50,6 @@
 #include "tool/colortool.h"
 //#include "tool/logging.h"
 
-#include "uvcoord_date_time_font.h"
-#include "uvcoord_top_font.h"
-
 #include "bubbles.h"	// For HBL theme
 
 #define CONSOLE_SCREEN_WIDTH 32
@@ -1382,7 +1379,7 @@ ITCM_CODE void drawCurrentTime() {
 	std::string currentTime = retTime();
 	if (currentTime[0] == ' ')
 		currentTime[0] = '0';
-	currentTime[2] = showColon ? ':' : ';';
+	currentTime[2] = showColon ? ':' : ' ';
 
 	if (currentTime == loadedTime && !reloadTime)
 		return;
