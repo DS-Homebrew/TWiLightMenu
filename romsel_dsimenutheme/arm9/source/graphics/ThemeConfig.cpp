@@ -15,16 +15,18 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 	_titleboxRenderY(85), _titleboxMaxLines(4), _titleboxTextY(30), _titleboxTextW(240), _titleboxTextLarge(true),
 	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11),
 	_rotatingCubesRenderY(78), _shoulderLRenderY(172), _shoulderLRenderX(0), _shoulderRRenderY(172), _shoulderRRenderX(178),
-	_volumeRenderY(4), _volumeRenderX(16), _batteryRenderY(5), _batteryRenderX(235), _usernameRenderY(15), _usernameRenderX(28),
-	_usernameRenderXDS(4), _dateRenderY(7), _dateRenderX(162), _timeRenderY(7), _timeRenderX(200),
+	_volumeRenderY(4), _volumeRenderX(16), _batteryRenderY(5), _batteryRenderX(235), _usernameRenderY(3), _usernameRenderX(28),
+	_usernameRenderXDS(4), _dateRenderY(5), _dateRenderX(162), _timeRenderY(5), _timeRenderX(200),
 	// _photoRenderY(24), _photoRenderX(179),
-	_startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true),
-	_movingArrowUserPalette(true), _launchDotsUserPalette(true), _dialogBoxUserPalette(true), _purpleBatteryAvailable(false),
-	_renderPhoto(true), _playStartupJingle(false), _startupJingleDelayAdjust(0),
+	_startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true), _movingArrowUserPalette(true),
+	_launchDotsUserPalette(true), _dialogBoxUserPalette(true), _usernameUserPalette(true),
+	_purpleBatteryAvailable(false), _renderPhoto(true), _playStartupJingle(false), _startupJingleDelayAdjust(0),
 	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108),
 	_fontPaletteTitlebox1(0x0000), _fontPaletteTitlebox2(0xDEF7), _fontPaletteTitlebox3(0xC631), _fontPaletteTitlebox4(0xA108),
 	_fontPaletteDialog1(0x0000), _fontPaletteDialog2(0xDEF7), _fontPaletteDialog3(0xC631), _fontPaletteDialog4(0xA108),
-	_fontPaletteOverlay1(0x0000), _fontPaletteOverlay2(0xDEF7), _fontPaletteOverlay3(0xC631), _fontPaletteOverlay4(0xA108)
+	_fontPaletteOverlay1(0x0000), _fontPaletteOverlay2(0xDEF7), _fontPaletteOverlay3(0xC631), _fontPaletteOverlay4(0xA108),
+	_fontPaletteName1(0x0000), _fontPaletteName2(0xDEF7), _fontPaletteName3(0xC631), _fontPaletteName4(0xA108),
+	_fontPaletteDateTime1(0x0000), _fontPaletteDateTime2(0xDEF7), _fontPaletteDateTime3(0xC631), _fontPaletteDateTime4(0xA108)
 {
 	// hack to reassign 3ds defaults
 	if (_3dsDefaults) {
@@ -107,6 +109,7 @@ void ThemeConfig::loadConfig() {
 	_movingArrowUserPalette = getInt(themeConfig, "MovingArrowUserPalette", _movingArrowUserPalette);
 	_launchDotsUserPalette = getInt(themeConfig, "LaunchDotsUserPalette", _launchDotsUserPalette);
 	_dialogBoxUserPalette = getInt(themeConfig, "DialogBoxUserPalette", _dialogBoxUserPalette);
+	_usernameUserPalette = getInt(themeConfig, "UsernameUserPalette", _usernameUserPalette);
 	_purpleBatteryAvailable = getInt(themeConfig, "PurpleBatteryAvailable", _purpleBatteryAvailable);
 	_rotatingCubesRenderY = getInt(themeConfig, "RotatingCubesRenderY", _rotatingCubesRenderY);
 	_renderPhoto = getInt(themeConfig, "RenderPhoto", _renderPhoto);
@@ -130,4 +133,12 @@ void ThemeConfig::loadConfig() {
 	_fontPaletteOverlay2 = getInt(themeConfig, "FontPaletteOverlay2", _fontPalette2);
 	_fontPaletteOverlay3 = getInt(themeConfig, "FontPaletteOverlay3", _fontPalette3);
 	_fontPaletteOverlay4 = getInt(themeConfig, "FontPaletteOverlay4", _fontPalette4);
+	_fontPaletteName1 = getInt(themeConfig, "FontPaletteName1", _fontPaletteName1);
+	_fontPaletteName2 = getInt(themeConfig, "FontPaletteName2", _fontPaletteName2);
+	_fontPaletteName3 = getInt(themeConfig, "FontPaletteName3", _fontPaletteName3);
+	_fontPaletteName4 = getInt(themeConfig, "FontPaletteName4", _fontPaletteName4);
+	_fontPaletteDateTime1 = getInt(themeConfig, "FontPaletteDateTime1", _fontPaletteDateTime1);
+	_fontPaletteDateTime2 = getInt(themeConfig, "FontPaletteDateTime2", _fontPaletteDateTime2);
+	_fontPaletteDateTime3 = getInt(themeConfig, "FontPaletteDateTime3", _fontPaletteDateTime3);
+	_fontPaletteDateTime4 = getInt(themeConfig, "FontPaletteDateTime4", _fontPaletteDateTime4);
 }

@@ -53,7 +53,6 @@
 #define TFN_BG_BOTTOMMOVING_LBG     TFN_UI_DIRECTORY"/background/bottom_moving_l"
 #define TFN_BG_BOTTOMMOVING_RBG     TFN_UI_DIRECTORY"/background/bottom_moving_r"
 
-#define TFN_UI_DATE_TIME_FONT       TFN_UI_DIRECTORY"/ui/date_time_font"
 #define TFN_UI_LSHOULDER            TFN_UI_DIRECTORY"/ui/Lshoulder"
 #define TFN_UI_LSHOULDER_GREYED     TFN_UI_DIRECTORY"/ui/Lshoulder_greyed"
 #define TFN_UI_RSHOULDER            TFN_UI_DIRECTORY"/ui/Rshoulder"
@@ -157,6 +156,9 @@
 
 #define TFN_SATURN_SOUND_EFFECTBANK       TFN_SYSTEM_SOUND_DIRECTORY"/saturnfx.bin"
 
+#define TFN_FONT_DATE_TIME          TFN_UI_DIRECTORY"/font/date_time.nftr"
+#define TFN_FONT_USERNAME           TFN_UI_DIRECTORY"/font/username.nftr"
+
 // We need fallbacks, because unlike akmenu, a bad GRF file could crash the theme
 // Leaving the user with no way to fix it well.
 
@@ -174,7 +176,6 @@
 #define TFN_FALLBACK_BG_BOTTOMBG_DS          TFN_FALLBACK_UI_DIRECTORY"/background/bottom_ds.grf"
 #define TFN_FALLBACK_BG_BOTTOMBUBBLEBG_DS    TFN_FALLBACK_UI_DIRECTORY"/background/bottom_bubble_ds.grf"
 
-#define TFN_FALLBACK_UI_DATE_TIME_FONT       TFN_FALLBACK_UI_DIRECTORY"/ui/date_time_font.png"
 #define TFN_FALLBACK_UI_LSHOULDER            TFN_FALLBACK_UI_DIRECTORY"/ui/Lshoulder.png"
 #define TFN_FALLBACK_UI_LSHOULDER_GREYED     TFN_FALLBACK_UI_DIRECTORY"/ui/Lshoulder_greyed.png"
 #define TFN_FALLBACK_UI_RSHOULDER            TFN_FALLBACK_UI_DIRECTORY"/ui/Rshoulder.png"
@@ -246,6 +247,8 @@
 #define TFN_FALLBACK_GRF_BOX_FULL            TFN_FALLBACK_UI_DIRECTORY"/grf/box_full.grf"
 #define TFN_FALLBACK_GRF_BOX_EMPTY           TFN_FALLBACK_UI_DIRECTORY"/grf/box_empty.grf"
 #define TFN_FALLBACK_GRF_CURSOR              TFN_FALLBACK_UI_DIRECTORY"/grf/cursor.grf"
+
+#define TFN_FALLBACK_FONT_DATE_TIME          "nitro:/graphics/font/date_time.nftr"
 
 
 class ThemeFilenames

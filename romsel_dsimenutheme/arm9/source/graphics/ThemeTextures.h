@@ -3,6 +3,7 @@
 #define __DSIMENUPP_THEME_TEXTURES__
 #include <gl2d.h>
 #include "common/singleton.h"
+#include "FontGraphic.h"
 #include "Texture.h"
 #include <memory>
 #include <string>
@@ -102,9 +103,6 @@ private:
 
 	void loadBackgrounds();
 
-	static unsigned int getTopFontSpriteIndex(const u16 character);
-	static unsigned int getDateTimeFontSpriteIndex(const u16 character);
-
 	static int getVolumeLevel();
 	static int getBatteryLevel();
 
@@ -166,11 +164,13 @@ public:
 	const Texture *iconIMGTexture() { return _iconIMGTexture.get(); }
 	const Texture *iconUnknownTexture() { return _iconUnknownTexture.get(); }
 
-	const Texture *dateTimeFontTexture() { return _dateTimeFontTexture.get(); }
 	const Texture *leftShoulderTexture() { return _leftShoulderTexture.get(); }
 	const Texture *rightShoulderTexture() { return _rightShoulderTexture.get(); }
 	const Texture *leftShoulderGreyedTexture() { return _leftShoulderGreyedTexture.get(); }
 	const Texture *rightShoulderGreyedTexture() { return _rightShoulderGreyedTexture.get(); }
+
+	FontGraphic *dateTimeFont() { return _dateTimeFont.get(); }
+	FontGraphic *usernameFont() { extern FontGraphic *smallFont; return _usernameFont ? _usernameFont.get() : smallFont; }
 
 	static u16* bmpImageBuffer();
 	static u16* bgSubBuffer2();
@@ -316,11 +316,13 @@ private:
 	unique_ptr<Texture> _batteryfullDSTexture;
 	unique_ptr<Texture> _batterylowTexture;
 
-	unique_ptr<Texture> _dateTimeFontTexture;
 	unique_ptr<Texture> _leftShoulderTexture;
 	unique_ptr<Texture> _rightShoulderTexture;
 	unique_ptr<Texture> _leftShoulderGreyedTexture;
 	unique_ptr<Texture> _rightShoulderGreyedTexture;
+
+	unique_ptr<FontGraphic> _dateTimeFont;
+	unique_ptr<FontGraphic> _usernameFont;
 
 private:
 	int bubbleTexID;

@@ -8,6 +8,7 @@
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "myDSiMode.h"
+#include "startborderpal.h"
 #include "TextEntry.h"
 #include "ThemeConfig.h"
 #include "themefilenames.h"
@@ -55,6 +56,9 @@ void fontInit() {
 	else
 		largeFont = new FontGraphic({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", defaultPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), "nitro:/graphics/font/large.nftr"}, useExpansionPak);
 
+	extern bool useTwlCfg;
+	int themeColor = useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme;
+
 	// Load palettes
 	u16 palette[] = {
 		tc().fontPalette1(),
@@ -73,6 +77,14 @@ void fontInit() {
 		tc().fontPaletteOverlay2(),
 		tc().fontPaletteOverlay3(),
 		tc().fontPaletteOverlay4(),
+		tc().usernameUserPalette() ? bmpPal_topSmallFont[themeColor][0] : tc().fontPaletteName1(),
+		tc().usernameUserPalette() ? bmpPal_topSmallFont[themeColor][1] : tc().fontPaletteName2(),
+		tc().usernameUserPalette() ? bmpPal_topSmallFont[themeColor][2] : tc().fontPaletteName3(),
+		tc().usernameUserPalette() ? bmpPal_topSmallFont[themeColor][3] : tc().fontPaletteName4(),
+		tc().fontPaletteDateTime1(),
+		tc().fontPaletteDateTime2(),
+		tc().fontPaletteDateTime3(),
+		tc().fontPaletteDateTime4(),
 	};
 	if (ms().colorMode == 1) {
 		for (int i = 0; i < 4*4; i++) {
@@ -115,7 +127,7 @@ FontGraphic *getFont(bool large) {
 }
 
 void updateText(bool top) {
-	if(top)	return; // Assign some VRAM and remove this to be able to print to top
+	sassert(!top, "Top screen text must be copied\nmanually.");
 
 	// Clear before redrawing
 	if(shouldClear[top]) {
@@ -128,7 +140,7 @@ void updateText(bool top) {
 	for(auto it = text.begin(); it != text.end(); ++it) {
 		FontGraphic *font = getFont(it->large);
 		if(font)
-			font->print(it->x, it->y, top, it->message, it->align, false, it->palette);
+			font->print(it->x, it->y, top, it->message, it->align, it->palette);
 	}
 	text.clear();
 
@@ -149,7 +161,7 @@ void updateTextImg(u16* img, bool top) {
 	auto &text = getTextQueue(top);
 	for(auto it = text.begin(); it != text.end(); ++it) {
 		if(esrbDescFont)
-			esrbDescFont->print(it->x, it->y, top, it->message, it->align);
+			esrbDescFont->print(it->x, it->y, top, it->message, it->align, it->palette);
 	}
 	text.clear();
 

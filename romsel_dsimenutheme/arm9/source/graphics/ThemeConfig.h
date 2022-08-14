@@ -59,6 +59,7 @@ private:
 	bool _movingArrowUserPalette;
 	bool _launchDotsUserPalette;
 	bool _dialogBoxUserPalette;
+	bool _usernameUserPalette;
 	bool _purpleBatteryAvailable;
 
 	bool _renderPhoto;
@@ -81,6 +82,14 @@ private:
 	u16 _fontPaletteOverlay2;
 	u16 _fontPaletteOverlay3;
 	u16 _fontPaletteOverlay4;
+	u16 _fontPaletteName1;
+	u16 _fontPaletteName2;
+	u16 _fontPaletteName3;
+	u16 _fontPaletteName4;
+	u16 _fontPaletteDateTime1;
+	u16 _fontPaletteDateTime2;
+	u16 _fontPaletteDateTime3;
+	u16 _fontPaletteDateTime4;
 
 public:
 	ThemeConfig();
@@ -137,6 +146,7 @@ public:
 	bool movingArrowUserPalette() const { return _movingArrowUserPalette; }
 	bool launchDotsUserPalette() const { return _launchDotsUserPalette; }
 	bool dialogBoxUserPalette() const { return _dialogBoxUserPalette; }
+	bool usernameUserPalette() const { return _usernameUserPalette; }
 	bool purpleBatteryAvailable() const { return _purpleBatteryAvailable; }
 
 	bool renderPhoto() const { return _renderPhoto; }
@@ -160,6 +170,14 @@ public:
 	u16 fontPaletteOverlay2() const { return _fontPaletteOverlay2; }
 	u16 fontPaletteOverlay3() const { return _fontPaletteOverlay3; }
 	u16 fontPaletteOverlay4() const { return _fontPaletteOverlay4; }
+	u16 fontPaletteName1() const { return _fontPaletteName1; }
+	u16 fontPaletteName2() const { return _fontPaletteName2; }
+	u16 fontPaletteName3() const { return _fontPaletteName3; }
+	u16 fontPaletteName4() const { return _fontPaletteName4; }
+	u16 fontPaletteDateTime1() const { return _fontPaletteDateTime1; }
+	u16 fontPaletteDateTime2() const { return _fontPaletteDateTime2; }
+	u16 fontPaletteDateTime3() const { return _fontPaletteDateTime3; }
+	u16 fontPaletteDateTime4() const { return _fontPaletteDateTime4; }
 };
 
 typedef singleton<ThemeConfig> themeConfig_s;

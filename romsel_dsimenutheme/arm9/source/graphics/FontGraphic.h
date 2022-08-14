@@ -16,7 +16,9 @@ enum class FontPalette {
 	regular = 0,
 	titlebox = 1,
 	dialog = 2,
-	overlay = 3
+	overlay = 3,
+	name = 4,
+	dateTime = 5
 };
 
 class FontGraphic {
@@ -44,7 +46,7 @@ private:
 	u16 getCharIndex(char16_t c);
 
 public:
-	static u8 textBuf[1][256 * 192]; // Increase to two if adding top screen support
+	static u8 textBuf[2][256 * 192];
 
 	static std::u16string utf8to16(std::string_view text);
 
@@ -57,7 +59,7 @@ public:
 	int calcWidth(std::string_view text) { return calcWidth(utf8to16(text)); }
 	int calcWidth(std::u16string_view text);
 
-	void print(int x, int y, bool top, int value, Alignment align, bool rtl = false, FontPalette palette = FontPalette::regular) { print(x, y, top, std::to_string(value), align, rtl, palette); }
-	void print(int x, int y, bool top, std::string_view text, Alignment align, bool rtl = false, FontPalette palette = FontPalette::regular) { print(x, y, top, utf8to16(text), align, rtl, palette); }
-	void print(int x, int y, bool top, std::u16string_view text, Alignment align, bool rtl = false, FontPalette palette = FontPalette::regular);
+	void print(int x, int y, bool top, int value, Alignment align, FontPalette palette, bool rtl = false) { print(x, y, top, std::to_string(value), align, palette, rtl); }
+	void print(int x, int y, bool top, std::string_view text, Alignment align, FontPalette palette, bool rtl = false) { print(x, y, top, utf8to16(text), align, palette, rtl); }
+	void print(int x, int y, bool top, std::u16string_view text, Alignment align, FontPalette palette, bool rtl = false);
 };

@@ -4,7 +4,7 @@
 
 u8 *FontGraphic::lastUsedLoc = (u8*)0x08000000;
 
-u8 FontGraphic::textBuf[1][256 * 192]; // Increase to two if adding top screen support
+u8 FontGraphic::textBuf[2][256 * 192]; // Increase to two if adding top screen support
 
 std::map<char16_t, std::array<char16_t, 3>> FontGraphic::arabicPresentationForms = {
 	// Initial, Medial, Final
@@ -273,7 +273,7 @@ int FontGraphic::calcWidth(std::u16string_view text) {
 	return x;
 }
 
-ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view text, Alignment align, bool rtl, FontPalette palette) {
+ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view text, Alignment align, FontPalette palette, bool rtl) {
 	// If RTL isn't forced, check for RTL text
 	if(!rtl) {
 		for(const auto c : text) {
@@ -292,7 +292,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 		} case Alignment::center: {
 			size_t newline = text.find('\n');
 			while(newline != text.npos) {
-				print(x, y, top, text.substr(0, newline), align, rtl, palette);
+				print(x, y, top, text.substr(0, newline), align, palette, rtl);
 				text = text.substr(newline + 1);
 				newline = text.find('\n');
 				y += tileHeight;
@@ -303,7 +303,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 		} case Alignment::right: {
 			size_t newline = text.find('\n');
 			while(newline != text.npos) {
-				print(x - calcWidth(text.substr(0, newline)), y, top, text.substr(0, newline), Alignment::left, rtl, palette);
+				print(x - calcWidth(text.substr(0, newline)), y, top, text.substr(0, newline), Alignment::left, palette, rtl);
 				text = text.substr(newline + 1);
 				newline = text.find('\n');
 				y += tileHeight;
@@ -437,7 +437,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 				for(int j = 0; j < tileWidth; j++) {
 					u8 px = fontTiles[(index * tileSize) + (i * tileWidth + j) / 4] >> ((3 - ((i * tileWidth + j) % 4)) * 2) & 3;
 					if(px)
-						dst[(y + i) * 256 + j] = 4*((int)palette) + px;
+						dst[(y + i) * 256 + j] = 4 * ((int)palette) + px;
 				}
 			}
 		}
