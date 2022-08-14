@@ -82,10 +82,10 @@ private:
 	u16 _fontPaletteOverlay2;
 	u16 _fontPaletteOverlay3;
 	u16 _fontPaletteOverlay4;
-	u16 _fontPaletteName1;
-	u16 _fontPaletteName2;
-	u16 _fontPaletteName3;
-	u16 _fontPaletteName4;
+	u16 _fontPaletteUsername1;
+	u16 _fontPaletteUsername2;
+	u16 _fontPaletteUsername3;
+	u16 _fontPaletteUsername4;
 	u16 _fontPaletteDateTime1;
 	u16 _fontPaletteDateTime2;
 	u16 _fontPaletteDateTime3;
@@ -170,10 +170,10 @@ public:
 	u16 fontPaletteOverlay2() const { return _fontPaletteOverlay2; }
 	u16 fontPaletteOverlay3() const { return _fontPaletteOverlay3; }
 	u16 fontPaletteOverlay4() const { return _fontPaletteOverlay4; }
-	u16 fontPaletteName1() const { return _fontPaletteName1; }
-	u16 fontPaletteName2() const { return _fontPaletteName2; }
-	u16 fontPaletteName3() const { return _fontPaletteName3; }
-	u16 fontPaletteName4() const { return _fontPaletteName4; }
+	u16 fontPaletteUsername1() const { return _fontPaletteUsername1; }
+	u16 fontPaletteUsername2() const { return _fontPaletteUsername2; }
+	u16 fontPaletteUsername3() const { return _fontPaletteUsername3; }
+	u16 fontPaletteUsername4() const { return _fontPaletteUsername4; }
 	u16 fontPaletteDateTime1() const { return _fontPaletteDateTime1; }
 	u16 fontPaletteDateTime2() const { return _fontPaletteDateTime2; }
 	u16 fontPaletteDateTime3() const { return _fontPaletteDateTime3; }

@@ -25,7 +25,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 	_fontPaletteTitlebox1(0x0000), _fontPaletteTitlebox2(0xDEF7), _fontPaletteTitlebox3(0xC631), _fontPaletteTitlebox4(0xA108),
 	_fontPaletteDialog1(0x0000), _fontPaletteDialog2(0xDEF7), _fontPaletteDialog3(0xC631), _fontPaletteDialog4(0xA108),
 	_fontPaletteOverlay1(0x0000), _fontPaletteOverlay2(0xDEF7), _fontPaletteOverlay3(0xC631), _fontPaletteOverlay4(0xA108),
-	_fontPaletteName1(0x0000), _fontPaletteName2(0xDEF7), _fontPaletteName3(0xC631), _fontPaletteName4(0xA108),
+	_fontPaletteUsername1(0x0000), _fontPaletteUsername2(0xDEF7), _fontPaletteUsername3(0xC631), _fontPaletteUsername4(0xA108),
 	_fontPaletteDateTime1(0x0000), _fontPaletteDateTime2(0xDEF7), _fontPaletteDateTime3(0xC631), _fontPaletteDateTime4(0xA108)
 {
 	// hack to reassign 3ds defaults
@@ -133,10 +133,10 @@ void ThemeConfig::loadConfig() {
 	_fontPaletteOverlay2 = getInt(themeConfig, "FontPaletteOverlay2", _fontPalette2);
 	_fontPaletteOverlay3 = getInt(themeConfig, "FontPaletteOverlay3", _fontPalette3);
 	_fontPaletteOverlay4 = getInt(themeConfig, "FontPaletteOverlay4", _fontPalette4);
-	_fontPaletteName1 = getInt(themeConfig, "FontPaletteName1", _fontPaletteName1);
-	_fontPaletteName2 = getInt(themeConfig, "FontPaletteName2", _fontPaletteName2);
-	_fontPaletteName3 = getInt(themeConfig, "FontPaletteName3", _fontPaletteName3);
-	_fontPaletteName4 = getInt(themeConfig, "FontPaletteName4", _fontPaletteName4);
+	_fontPaletteUsername1 = getInt(themeConfig, "FontPaletteUsername1", _fontPaletteUsername1);
+	_fontPaletteUsername2 = getInt(themeConfig, "FontPaletteUsername2", _fontPaletteUsername2);
+	_fontPaletteUsername3 = getInt(themeConfig, "FontPaletteUsername3", _fontPaletteUsername3);
+	_fontPaletteUsername4 = getInt(themeConfig, "FontPaletteUsername4", _fontPaletteUsername4);
 	_fontPaletteDateTime1 = getInt(themeConfig, "FontPaletteDateTime1", _fontPaletteDateTime1);
 	_fontPaletteDateTime2 = getInt(themeConfig, "FontPaletteDateTime2", _fontPaletteDateTime2);
 	_fontPaletteDateTime3 = getInt(themeConfig, "FontPaletteDateTime3", _fontPaletteDateTime3);
