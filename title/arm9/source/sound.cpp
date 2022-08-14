@@ -114,7 +114,7 @@ SoundControl::SoundControl()
 		// Load Mario coin sound for MAR10 Day
 		sprintf(wavPath, "nitro:/sound/coin.wav");
 	} else {
-		sprintf(wavPath, "nitro:/sound/title.wav");
+		sprintf(wavPath, ms().longSplashJingle ? "nitro:/sound/titleLong.wav" : "nitro:/sound/title.wav");
 	}
 
 	// Load sound bank into memory

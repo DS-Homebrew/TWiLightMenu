@@ -103,8 +103,9 @@ extern bool fadeColor;
 extern bool controlTopBright;
 
 static int frameDelaySprite = 0;
-static bool frameDelaySpriteEven = true;	// For 24FPS
+static bool frameDelaySpriteEven = true;	// For 24FPS or 48FPS
 static bool loadFrameSprite = true;
+static bool longVersion = false;
 
 /*static int anniversaryTextYpos = -14;
 static bool anniversaryTextYposMove = false;
@@ -540,7 +541,7 @@ void twlMenuVideo_topGraphicRender(void) {
 
 	if (!loadFrameSprite) {
 		frameDelaySprite++;
-		loadFrameSprite = (frameDelaySprite == 1+frameDelaySpriteEven);
+		loadFrameSprite = (frameDelaySprite == (longVersion ? 2 : 1)+frameDelaySpriteEven);
 	}
 
 	if (loadFrameSprite) {
@@ -681,12 +682,15 @@ void twlMenuVideo(void) {
 	if (starship) {
 		// Load Starship Menu++ BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppStarship.png");
+		longVersion = ms().longSplashJingle;
 	} else if (strncmp(currentDate, "12", 2) == 0) {
 		// Load christmas BG for December
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppXmas.png");
+		longVersion = ms().longSplashJingle;
 	} else if (strcmp(currentDate, "10/31") == 0) {
 		// Load orange BG for Halloween
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppOrange.png");
+		longVersion = ms().longSplashJingle;
 	} else if (strcmp(currentDate, styleSavvyReleaseDate()) == 0) {
 		// Load Style Savvy BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppFashion.png");
@@ -694,18 +698,22 @@ void twlMenuVideo(void) {
 	} else if (ms().getGameRegion() == 0 ? (strcmp(currentDate, "07/21") == 0) : (strcmp(currentDate, "08/14") == 0)) {
 		// Load Virtual Boy BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppVirtualBoy.png");
+		longVersion = ms().longSplashJingle;
 	} else if (strcmp(currentDate, "02/14") == 0) {
 		// Load heart-shaped BG for Valentine's Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppHeart.png");
+		longVersion = ms().longSplashJingle;
 	} else if (strcmp(currentDate, "03/10") == 0 || strcmp(currentDate, sm64dsReleaseDate()) == 0) {
 		// Load Mario-themed BG & logo for MAR10 Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppMario.png");
 	} else if (strcmp(currentDate, "03/17") == 0 || strcmp(currentDate, "04/22") == 0) {
 		// Load green BG for St. Patrick's Day, or Earth Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppGreen.png");
+		longVersion = ms().longSplashJingle;
 	} else {
 		// Load normal BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenupp.png");
+		longVersion = ms().longSplashJingle;
 	}
 
 	// Load TWLMenu++ logo
@@ -820,7 +828,7 @@ void twlMenuVideo(void) {
 	extern bool twlMenuSplash;
 	twlMenuSplash = true;
 
-	for (int i = 0; i < (60 * 3); i++)
+	for (int i = 0; i < (longVersion ? ((60 * 6) + 30) : (60 * 3)); i++)
 	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
