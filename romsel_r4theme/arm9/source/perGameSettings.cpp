@@ -995,12 +995,12 @@ void perGameSettings (std::string filename) {
 					case 10:
 						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == 0 || romUnitCode == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
 							perGameSettings_expandRomSpace--;
+							if (perGameSettings_expandRomSpace < -1) perGameSettings_expandRomSpace = 2;
 							if (perGameSettings_expandRomSpace==1 && romSize > romSizeLimit2) {
 								perGameSettings_expandRomSpace--;
 							} else if (perGameSettings_expandRomSpace==2 && romSize <= romSizeLimit2) {
 								perGameSettings_expandRomSpace--;
 							}
-							if (perGameSettings_expandRomSpace < -1) perGameSettings_expandRomSpace = 2;
 						}
 						break;
 					case 11:
