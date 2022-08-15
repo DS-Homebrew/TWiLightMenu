@@ -448,11 +448,15 @@ void perGameSettings (std::string filename) {
 		sprintf(sdkSubVerChar, "%d", sdkSubVer);
 		showSDKVersion = true;
 	}
+	u32 arm9off = 0;
 	u32 arm9size = 0;
 	u32 arm7size = 0;
 	u32 romSize = 0;
 	u32 pubSize = 0;
 	u32 prvSize = 0;
+	u32 clonebootFlag = 0;
+	fseek(f_nds_file, 0x20, SEEK_SET);
+	fread(&arm9off, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x2C, SEEK_SET);
 	fread(&arm9size, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x3C, SEEK_SET);
@@ -462,14 +466,21 @@ void perGameSettings (std::string filename) {
 	fseek(f_nds_file, 0x238, SEEK_SET);
 	fread(&pubSize, sizeof(u32), 1, f_nds_file);
 	fread(&prvSize, sizeof(u32), 1, f_nds_file);
+	fseek(f_nds_file, romSize, SEEK_SET);
+	fread(&clonebootFlag, sizeof(u32), 1, f_nds_file);
 	bool dsiBinariesFound = checkDsiBinaries(f_nds_file);
 	fclose(f_nds_file);
 
 	bool largeArm9 = (arm9size >= 0x380000 && isModernHomebrew[CURPOS]);
 
 	if (romSize > 0) {
-		romSize -= 0x8000;	// First 32KB
-		romSize += 0x88;	// RSA key
+		if (clonebootFlag == 0x16361) {
+			romSize -= 0x8000;	// First 32KB
+			romSize += 0x88;	// RSA key
+		} else {
+			romSize -= arm9off;
+			romSize -= arm9size;
+		}
 	}
 
 	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x01800000 : 0x800000);
