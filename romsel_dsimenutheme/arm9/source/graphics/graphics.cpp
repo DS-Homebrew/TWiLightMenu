@@ -268,6 +268,11 @@ void bottomBgLoad(int drawBubble, bool init = false) {
 		tex().resetCachedVolumeLevel();
 		tex().resetCachedBatteryLevel();
 		tex().resetProfileName();
+		drawCurrentDate();
+		drawCurrentTime();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+		tex().drawProfileName();
 		prevBottomBgState = bottomBgState;
 	}
 }
