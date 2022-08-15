@@ -22,6 +22,7 @@ class GBAR2Settings
 
   public:
     bool useBottomScreen;
+    bool bottomScreenPrefered;
     bool frame;
     bool centerMask;
     bool gbaColors;
