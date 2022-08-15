@@ -45,11 +45,13 @@
 
 #define TFN_BG_TOPBG                TFN_UI_DIRECTORY"/background/top"
 #define TFN_BG_BOTTOMBG             TFN_UI_DIRECTORY"/background/bottom"
+#define TFN_BG_BOTTOMBG_MACRO       TFN_UI_DIRECTORY"/background/bottom_macro"
 #define TFN_BG_BOTTOMBUBBLEBG       TFN_UI_DIRECTORY"/background/bottom_bubble"
 #define TFN_BG_BOTTOMBUBBLEBG_MACRO TFN_UI_DIRECTORY"/background/bottom_bubble_macro"
 #define TFN_BG_BOTTOMBG_DS          TFN_UI_DIRECTORY"/background/bottom_ds"
 #define TFN_BG_BOTTOMBUBBLEBG_DS    TFN_UI_DIRECTORY"/background/bottom_bubble_ds"
 #define TFN_BG_BOTTOMMOVINGBG       TFN_UI_DIRECTORY"/background/bottom_moving"
+#define TFN_BG_BOTTOMMOVINGBG_MACRO TFN_UI_DIRECTORY"/background/bottom_moving_macro"
 #define TFN_BG_BOTTOMMOVING_LBG     TFN_UI_DIRECTORY"/background/bottom_moving_l"
 #define TFN_BG_BOTTOMMOVING_RBG     TFN_UI_DIRECTORY"/background/bottom_moving_r"
 
