@@ -527,6 +527,9 @@ void twlMenuVideo_topGraphicRender(void) {
 		for (int i = 0; i < 11; i++) {
 			oamSetXY(&oamMain, i, zoomingIconXpos[i], zoomingIconYpos[i]);
 		}
+		if (highFPS) {
+			while (REG_VCOUNT < 88); // Fix/Hide screen tearing
+		}
 		oamUpdate(&oamMain);
 
 		frameDelaySprite = 0;
