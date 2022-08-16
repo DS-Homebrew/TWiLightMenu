@@ -721,7 +721,7 @@ void twlMenuVideo(void) {
 	extern bool twlMenuSplash;
 	twlMenuSplash = true;
 
-	for (int i = 0; i < (longVersion ? ((75 * 6) + 30) : (75 * 3)); i++)
+	for (int i = 0; i < (highFPS ? (longVersion ? ((75 * 6) + 30) : (75 * 3)) : (longVersion ? ((60 * 6) + 35) : (60 * 3))); i++)
 	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
