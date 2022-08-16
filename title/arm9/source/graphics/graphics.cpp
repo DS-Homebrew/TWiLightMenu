@@ -96,9 +96,6 @@ void vBlankHandler() {
 		dmaCopyWordsAsynch(1, frameBufferBot[secondBuffer], BG_GFX_SUB, 0x18000);
 		secondBuffer = !secondBuffer;
 	}
-	if (twlMenuSplash) {
-		twlMenuVideo_topGraphicRender();
-	}
 }
 
 void LoadBMP(void) {
@@ -219,15 +216,6 @@ void loadTitleGraphics() {
 	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 
-	// Initialize gl2d
-	glScreen2D();
-	// Make gl2d render on transparent stage.
-	glClearColor(31,31,31,0);
-	glDisable(GL_CLEAR_BMP);
-
-	// Clear the GL texture state
-	glResetTextures();
-
 	// sprites
 	vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
@@ -235,7 +223,7 @@ void loadTitleGraphics() {
 	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
 	vramSetBankE(VRAM_E_TEX_PALETTE);
 	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
-	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT5); // 16Kb of palette ram, and font textures take up 8*16 bytes.
+	vramSetBankG(VRAM_G_MAIN_SPRITE);
 	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 	vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
@@ -257,11 +245,11 @@ void loadTitleGraphics() {
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
 
-	twlMenuVideo_loadTopGraphics();
-
 	// Clear the background palettes
 	toncset16(BG_PALETTE, 0, 256);
 	toncset16(BG_PALETTE_SUB, 0, 256);
+
+	twlMenuVideo_loadTopGraphics();
 
 	// Display TWiLightMenu++ logo
 	LoadBMP();

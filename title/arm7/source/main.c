@@ -51,6 +51,7 @@ volatile int rebootTimer = 0;
 volatile int status = 0;
 
 //static bool gotCartHeader = false;
+static bool activateFpsChange = false;
 
 
 //---------------------------------------------------------------------------------
@@ -97,6 +98,14 @@ void VcountHandler() {
 //---------------------------------------------------------------------------------
 	void my_inputGetAndSend(void);
 	my_inputGetAndSend();
+
+	if (activateFpsChange) {
+		// Change FPS to 75
+		REG_VCOUNT += 55;
+		if (REG_VCOUNT < 260) {
+			REG_VCOUNT = 260;
+		}
+	}
 }
 
 volatile bool exitflag = false;
@@ -189,7 +198,7 @@ int main() {
 	fifoInit();
 
 	mmInstall(FIFO_MAXMOD);
-	SetYtrigger(80);
+	SetYtrigger(202);
 
 	installSoundFIFO();
 	my_installSystemFIFO();
@@ -327,6 +336,11 @@ int main() {
 
 		if (*(u32*)(0x2FFFD0C) == 0x454D4D43) {
 			sdmmc_nand_cid((u32*)0x2FFD7BC);	// Get eMMC CID
+			*(u32*)(0x2FFFD0C) = 0;
+		}
+
+		if (*(u32*)(0x2FFFD0C) == 0x43535046) {
+			activateFpsChange = true;
 			*(u32*)(0x2FFFD0C) = 0;
 		}
 		swiWaitForVBlank();
