@@ -418,7 +418,7 @@ void twlMenuVideo_topGraphicRender(void) {
 	if (!loadFrameSprite) {
 		frameDelaySprite++;
 		if (highFPS) {
-			loadFrameSprite = (frameDelaySprite == (longVersion ? 4 : 2));
+			loadFrameSprite = (frameDelaySprite == (longVersion ? 3 : 2));
 		} else {
 			loadFrameSprite = (frameDelaySprite == (longVersion ? 2 : 1)+frameDelaySpriteEven);
 		}
