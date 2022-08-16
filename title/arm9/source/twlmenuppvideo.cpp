@@ -533,7 +533,7 @@ void twlMenuVideo_topGraphicRender(void) {
 		oamUpdate(&oamMain);
 
 		frameDelaySprite = 0;
-		//frameDelaySpriteEven = !frameDelaySpriteEven;
+		frameDelaySpriteEven = !frameDelaySpriteEven;
 		loadFrameSprite = false;
 	}
 	
