@@ -1538,9 +1538,15 @@ int main(int argc, char **argv) {
 
 				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(NDSHeader.gameCode, "Z2E", 3) == 0 && ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode)) ? getSavExtension() : getPubExtension());
-				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
+				ms().dsiWarePrvPath = ms().dsiWarePubPath;
+				bool savFormat = (ms().secondaryDevice && (!sdFound() || (!ms().dsiWareToSD && strncmp(NDSHeader.gameCode, "Z2E", 3) == 0) || bs().b4dsMode));
+				if (savFormat) {
+					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
+					ms().dsiWarePrvPath = ms().dsiWarePubPath;
+				} else {
+					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
+					ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
+				}
 				if (!isArgv) {
 					ms().romPath[ms().secondaryDevice] = argarray[0];
 				}
@@ -1549,34 +1555,57 @@ int main(int argc, char **argv) {
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
 
-				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
-					clearText();
-					dialogboxHeight = 0;
-					showdialogbox = true;
-					printLargeCentered(false, 74, "Save creation");
-					printSmallCentered(false, 98, "Creating public save file...");
+				if (savFormat) {
+					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {
+						clearText();
+						dialogboxHeight = 0;
+						showdialogbox = true;
+						printLargeCentered(false, 74, "Save creation");
+						printSmallCentered(false, 98, "Creating save file...");
 
-					createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
+						FILE *pFile = fopen(ms().dsiWarePubPath.c_str(), "wb");
+						if (pFile) {
+							u32 savesize = ((NDSHeader.pubSavSize > 0) ? NDSHeader.pubSavSize : NDSHeader.prvSavSize);
+							fseek(pFile, savesize - 1, SEEK_SET);
+							fputc('\0', pFile);
+							fclose(pFile);
+						}
 
-					clearText();
-					printLargeCentered(false, 74, "Save creation");
-					printSmallCentered(false, 98, "Public save file created!");
-					for (int i = 0; i < 60; i++) swiWaitForVBlank();
-				}
+						clearText();
+						printLargeCentered(false, 74, "Save creation");
+						printSmallCentered(false, 98, "Save file created!");
+						for (int i = 0; i < 60; i++) swiWaitForVBlank();
+					}
+				} else {
+					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
+						clearText();
+						dialogboxHeight = 0;
+						showdialogbox = true;
+						printLargeCentered(false, 74, "Save creation");
+						printSmallCentered(false, 98, "Creating public save file...");
 
-				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
-					clearText();
-					dialogboxHeight = 0;
-					showdialogbox = true;
-					printLargeCentered(false, 74, "Save creation");
-					printSmallCentered(false, 98, "Creating private save file...");
+						createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
 
-					createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
+						clearText();
+						printLargeCentered(false, 74, "Save creation");
+						printSmallCentered(false, 98, "Public save file created!");
+						for (int i = 0; i < 60; i++) swiWaitForVBlank();
+					}
 
-					clearText();
-					printLargeCentered(false, 74, "Save creation");
-					printSmallCentered(false, 98, "Private save file created!");
-					for (int i = 0; i < 60; i++) swiWaitForVBlank();
+					if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
+						clearText();
+						dialogboxHeight = 0;
+						showdialogbox = true;
+						printLargeCentered(false, 74, "Save creation");
+						printSmallCentered(false, 98, "Creating private save file...");
+
+						createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
+
+						clearText();
+						printLargeCentered(false, 74, "Save creation");
+						printSmallCentered(false, 98, "Private save file created!");
+						for (int i = 0; i < 60; i++) swiWaitForVBlank();
+					}
 				}
 
 				loadPerGameSettings(filename);

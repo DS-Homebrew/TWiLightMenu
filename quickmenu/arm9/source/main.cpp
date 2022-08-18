@@ -2210,9 +2210,15 @@ int main(int argc, char **argv) {
 
 				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename[ms().secondaryDevice];
-				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(gameTid[ms().secondaryDevice], "Z2E", 3) == 0 && ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode)) ? getSavExtension() : getPubExtension());
-				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename[ms().secondaryDevice];
-				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
+				ms().dsiWarePrvPath = ms().dsiWarePubPath;
+				bool savFormat = (ms().secondaryDevice && (!sdFound() || (!ms().dsiWareToSD && strncmp(gameTid[ms().secondaryDevice], "Z2E", 3) == 0) || bs().b4dsMode));
+				if (savFormat) {
+					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
+					ms().dsiWarePrvPath = ms().dsiWarePubPath;
+				} else {
+					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
+					ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
+				}
 				ms().homebrewBootstrap = isHomebrew[ms().secondaryDevice];
 				ms().launchType[ms().secondaryDevice] = TWLSettings::EDSiWareLaunch;
 				ms().saveSettings();
@@ -2224,44 +2230,81 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
-				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
-					while (!screenFadedOut()) {
-						swiWaitForVBlank();
+				if (savFormat) {
+					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {
+						while (!screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+						whiteScreen = true;
+						fadeSpeed = true;
+						controlTopBright = false;
+						clearText();
+						printSmall(false, 2, 80, STR_CREATING_SAVE);
+						if (!fadeType) {
+							fadeType = true;	// Fade in from white
+							for (int i = 0; i < 35; i++) swiWaitForVBlank();
+						}
+
+						FILE *pFile = fopen(ms().dsiWarePubPath.c_str(), "wb");
+						if (pFile) {
+							showProgressBar = true;
+							u32 savesize = ((NDSHeader.pubSavSize > 0) ? NDSHeader.pubSavSize : NDSHeader.prvSavSize);
+							u32 i = 0;
+							while (1) {
+								i += 0x8000;
+								if (i > savesize) i = savesize;
+								progressBarLength = i/(savesize/192);
+								fseek(pFile, i - 1, SEEK_SET);
+								fputc('\0', pFile);
+								if (i == savesize) break;
+							}
+							fclose(pFile);
+							showProgressBar = false;
+						}
+
+						printSmall(false, 2, 88, STR_SAVE_CREATED);
+						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
-					whiteScreen = true;
-					fadeSpeed = true;
-					controlTopBright = false;
-					clearText();
-					printSmall(false, 2, 80, STR_CREATING_PUBLIC_SAVE);
-					if (!fadeType) {
-						fadeType = true;	// Fade in from white
-						for (int i = 0; i < 35; i++) swiWaitForVBlank();
+				} else {
+					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
+						while (!screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+						whiteScreen = true;
+						fadeSpeed = true;
+						controlTopBright = false;
+						clearText();
+						printSmall(false, 2, 80, STR_CREATING_PUBLIC_SAVE);
+						if (!fadeType) {
+							fadeType = true;	// Fade in from white
+							for (int i = 0; i < 35; i++) swiWaitForVBlank();
+						}
+
+						createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
+
+						printSmall(false, 2, 88, STR_PUBLIC_SAVE_CREATED);
+						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
 
-					createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
+					if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
+						while (!fadeType && !screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+						whiteScreen = true;
+						fadeSpeed = true;
+						controlTopBright = false;
+						clearText();
+						printSmall(false, 2, 80, STR_CREATING_PRIVATE_SAVE);
+						if (!fadeType) {
+							fadeType = true;	// Fade in from white
+							for (int i = 0; i < 35; i++) swiWaitForVBlank();
+						}
 
-					printSmall(false, 2, 88, STR_PUBLIC_SAVE_CREATED);
-					for (int i = 0; i < 60; i++) swiWaitForVBlank();
-				}
+						createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
 
-				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
-					while (!fadeType && !screenFadedOut()) {
-						swiWaitForVBlank();
+						printSmall(false, 2, 88, STR_PRIVATE_SAVE_CREATED);
+						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
-					whiteScreen = true;
-					fadeSpeed = true;
-					controlTopBright = false;
-					clearText();
-					printSmall(false, 2, 80, STR_CREATING_PRIVATE_SAVE);
-					if (!fadeType) {
-						fadeType = true;	// Fade in from white
-						for (int i = 0; i < 35; i++) swiWaitForVBlank();
-					}
-
-					createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
-
-					printSmall(false, 2, 88, STR_PRIVATE_SAVE_CREATED);
-					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
 				fadeType = false;	// Fade to white

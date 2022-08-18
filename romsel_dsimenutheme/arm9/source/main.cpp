@@ -1196,9 +1196,15 @@ int main(int argc, char **argv) {
 
 				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, (strncmp(gameTid[CURPOS], "Z2E", 3) == 0 && ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode)) ? getSavExtension() : getPubExtension());
-				ms().dsiWarePrvPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
+				ms().dsiWarePrvPath = ms().dsiWarePubPath;
+				bool savFormat = (ms().secondaryDevice && (!sdFound() || (!ms().dsiWareToSD && strncmp(gameTid[CURPOS], "Z2E", 3) == 0) || bs().b4dsMode));
+				if (savFormat) {
+					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
+					ms().dsiWarePrvPath = ms().dsiWarePubPath;
+				} else {
+					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
+					ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
+				}
 				if (!isArgv) {
 					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 				}
@@ -1214,62 +1220,108 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
-				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
-					if (ms().theme == TWLSettings::EThemeHBL) {
-						displayGameIcons = false;
-					} else if (ms().theme != TWLSettings::EThemeSaturn) {
-						while (!screenFadedOut()) {
+				if (savFormat) {
+					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {
+						if (ms().theme == TWLSettings::EThemeHBL) {
+							displayGameIcons = false;
+						} else if (ms().theme != TWLSettings::EThemeSaturn) {
+							while (!screenFadedOut()) {
+								swiWaitForVBlank();
+							}
+							fadeSpeed = true; // Fast fading
+							whiteScreen = true;
+							tex().clearTopScreen();
+						}
+						clearText();
+						printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), STR_CREATING_SAVE, Alignment::center);
+						updateText(false);
+						if (ms().theme != TWLSettings::EThemeSaturn && !fadeType) {
+							fadeType = true; // Fade in from white
+						}
+						showProgressIcon = true;
+						FILE *pFile = fopen(ms().dsiWarePubPath.c_str(), "wb");
+						if (pFile) {
+							showProgressBar = true;
+							u32 savesize = ((NDSHeader.pubSavSize > 0) ? NDSHeader.pubSavSize : NDSHeader.prvSavSize);
+							u32 i = 0;
+							while (1) {
+								i += 0x8000;
+								if (i > savesize) i = savesize;
+								progressBarLength = i/(savesize/192);
+								fseek(pFile, i - 1, SEEK_SET);
+								fputc('\0', pFile);
+								if (i == savesize) break;
+							}
+							fclose(pFile);
+							showProgressBar = false;
+						}
+						showProgressIcon = false;
+						clearText();
+						printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 32 : 88), STR_SAVE_CREATED, Alignment::center);
+						updateText(false);
+						for (int i = 0; i < 60; i++) {
 							swiWaitForVBlank();
 						}
-						fadeSpeed = true; // Fast fading
-						whiteScreen = true;
-						tex().clearTopScreen();
+						if (ms().theme == TWLSettings::EThemeHBL) displayGameIcons = true;
 					}
-					clearText();
-					printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), STR_CREATING_PUBLIC_SAVE, Alignment::center);
-					updateText(false);
-					if (ms().theme != TWLSettings::EThemeSaturn && !fadeType) {
-						fadeType = true; // Fade in from white
+				} else {
+					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
+						if (ms().theme == TWLSettings::EThemeHBL) {
+							displayGameIcons = false;
+						} else if (ms().theme != TWLSettings::EThemeSaturn) {
+							while (!screenFadedOut()) {
+								swiWaitForVBlank();
+							}
+							fadeSpeed = true; // Fast fading
+							whiteScreen = true;
+							tex().clearTopScreen();
+						}
+						clearText();
+						printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), STR_CREATING_PUBLIC_SAVE, Alignment::center);
+						updateText(false);
+						if (ms().theme != TWLSettings::EThemeSaturn && !fadeType) {
+							fadeType = true; // Fade in from white
+						}
+						showProgressIcon = true;
+						createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
+						showProgressIcon = false;
+						clearText();
+						printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 32 : 88), STR_PUBLIC_SAVE_CREATED, Alignment::center);
+						updateText(false);
+						for (int i = 0; i < 60; i++) {
+							swiWaitForVBlank();
+						}
+						if (ms().theme == TWLSettings::EThemeHBL) displayGameIcons = true;
 					}
-					showProgressIcon = true;
-					createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
-					showProgressIcon = false;
-					clearText();
-					printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 32 : 88), STR_PUBLIC_SAVE_CREATED, Alignment::center);
-					updateText(false);
-					for (int i = 0; i < 60; i++) {
-						swiWaitForVBlank();
-					}
-					if (ms().theme == TWLSettings::EThemeHBL) displayGameIcons = true;
-				}
 
-				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
-					if (ms().theme == TWLSettings::EThemeHBL) {
-						displayGameIcons = false;
-					} else if (ms().theme != TWLSettings::EThemeSaturn) {
-						while (!fadeType && !screenFadedOut()) {
+					if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
+						if (ms().theme == TWLSettings::EThemeHBL) {
+							displayGameIcons = false;
+						} else if (ms().theme != TWLSettings::EThemeSaturn) {
+							while (!fadeType && !screenFadedOut()) {
+								swiWaitForVBlank();
+							}
+							fadeSpeed = true; // Fast fading
+							whiteScreen = true;
+							tex().clearTopScreen();
+						}
+						clearText();
+						printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), STR_CREATING_PRIVATE_SAVE, Alignment::center);
+						updateText(false);
+						if (ms().theme != TWLSettings::EThemeSaturn && !fadeType) {
+							fadeType = true; // Fade in from white
+						}
+						showProgressIcon = true;
+						createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
+						showProgressIcon = false;
+						clearText();
+						printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 32 : 88), STR_PRIVATE_SAVE_CREATED, Alignment::center);
+						updateText(false);
+						for (int i = 0; i < 60; i++) {
 							swiWaitForVBlank();
 						}
-						fadeSpeed = true; // Fast fading
-						whiteScreen = true;
-						tex().clearTopScreen();
+						if (ms().theme == TWLSettings::EThemeHBL) displayGameIcons = true;
 					}
-					clearText();
-					printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), STR_CREATING_PRIVATE_SAVE, Alignment::center);
-					updateText(false);
-					if (ms().theme != TWLSettings::EThemeSaturn && !fadeType) {
-						fadeType = true; // Fade in from white
-					}
-					showProgressIcon = true;
-					createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
-					showProgressIcon = false;
-					clearText();
-					printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 32 : 88), STR_PRIVATE_SAVE_CREATED, Alignment::center);
-					updateText(false);
-					for (int i = 0; i < 60; i++) {
-						swiWaitForVBlank();
-					}
-					if (ms().theme == TWLSettings::EThemeHBL) displayGameIcons = true;
 				}
 
 				if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL && fadeType) {
