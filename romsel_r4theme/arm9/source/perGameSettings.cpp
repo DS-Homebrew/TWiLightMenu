@@ -462,7 +462,7 @@ void perGameSettings (std::string filename) {
 	if (SDKVersion > 0x5000000) {
 		romSizeLimit = (ms().consoleModel > 0 ? 0x01000000 : 0x7E0000);
 	}
-	u32 romSizeLimit2 = (ms().consoleModel > 0 ? 0x01BF6000 : 0xBF6000);
+	u32 romSizeLimit2 = (ms().consoleModel > 0 ? 0x01BFE000 : 0xBFE000);
 
 	extern bool dsiWareCompatibleB4DS(const char* filename);
 	bool showPerGameSettings =
@@ -601,7 +601,7 @@ void perGameSettings (std::string filename) {
 				perGameOp[perGameOps] = 12;	// Async Card Read
 			}
 			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice)
-			 && romUnitCode < 3 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x80000) {
+			 && romUnitCode < 3 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x78000) {
 				perGameOps++;
 				perGameOp[perGameOps] = 10;	// Expand ROM space in RAM
 			}
