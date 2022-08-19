@@ -55,6 +55,7 @@ public:
 	~FontGraphic(void);
 
 	u8 height(void) { return tileHeight; }
+	u8 width(void) { return tileWidth + 1; }
 
 	int calcWidth(std::string_view text) { return calcWidth(utf8to16(text)); }
 	int calcWidth(std::u16string_view text);

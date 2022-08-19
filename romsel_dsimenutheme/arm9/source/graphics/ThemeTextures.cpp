@@ -762,7 +762,7 @@ void ThemeTextures::drawProfileName() {
 
 	toncset16(FontGraphic::textBuf[1], 0, 256 * usernameFont()->height());
 	usernameFont()->print(0, 0, true, username, Alignment::left, FontPalette::name);
-	int width = usernameFont()->calcWidth(username);
+	int width = usernameFont()->width() * 10;
 
 	// Copy to background
 	for (int y = 0; y < usernameFont()->height(); y++) {
@@ -1297,7 +1297,7 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) 
 
 	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
-	int width = dateTimeFont()->calcWidth(str);
+	int width = dateTimeFont()->width() * strlen(str);
 
 	// Copy to background
 	for (int y = 0; y < dateTimeFont()->height(); y++) {
@@ -1331,7 +1331,7 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 
 	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
-	int width = dateTimeFont()->calcWidth(str);
+	int width = dateTimeFont()->width() * strlen(str);
 
 	// Copy to background
 	for (int y = 0; y < dateTimeFont()->height(); y++) {
