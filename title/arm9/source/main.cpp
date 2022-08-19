@@ -829,7 +829,7 @@ void lastRunROM()
 				ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
-				bool savFormat = (ms().previousUsedDevice && (!sdFound() || (!ms().dsiWareToSD && strncmp(NDSHeader.gameCode, "Z2E", 3) == 0) || bs().b4dsMode));
+				bool savFormat = (ms().previousUsedDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode));
 				if (savFormat) {
 					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
 					ms().dsiWarePrvPath = ms().dsiWarePubPath;
