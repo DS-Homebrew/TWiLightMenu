@@ -634,8 +634,8 @@ bool dsiWareInDSModeMsg(void) {
 	printLargeCentered(false, 74, "Compatibility Warning");
 	printSmallCentered(false, 90, "You are attempting to launch a DSiWare");
 	printSmallCentered(false, 102, "title in DS mode on a DSi or 3DS system.");
-	printSmallCentered(false, 114, "For increased compatibility, as well as");
-	printSmallCentered(false, 126, "the ability to save data, please relaunch");
+	printSmallCentered(false, 114, "For increased compatibility, and saving");
+	printSmallCentered(false, 126, "data in more titles, please relaunch");
 	printSmallCentered(false, 138, "TWLMenu++ from the console's SD Card slot.");
 	printSmallCentered(false, 154, "\u2428 Return   \u2427 Launch");
 

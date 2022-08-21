@@ -49,7 +49,7 @@ STRING(RELAUNCH_DSIWARE_3DS_HOME, "To launch this title, please restart\nTWiLigh
 STRING(GAME_INCOMPATIBLE_MSG, "This game is known to not run.\nIf there's an nds-bootstrap\nversion that fixes this,\nplease ignore this message.")
 STRING(FOR_USE_WITH_DSI_ONLY, "For use with Nintendo DSi\nsystems only. Cannot be used with\nNintendo DS/DS Lite systems.")
 STRING(DSIWARE_DS_MODE_P1, "You are attempting to launch\na DSiWare title in DS mode\non a DSi or 3DS system.")
-STRING(DSIWARE_DS_MODE_P2, "For increased compatibility,\nas well as the ability to\nsave data, please relaunch\nTWiLight Menu++ from the\nconsole's SD Card slot.")
+STRING(DSIWARE_DS_MODE_P2, "For increased compatibility,\nand saving data in\nmore titles, please relaunch\nTWiLight Menu++ from the\nconsole's SD Card slot.")
 STRING(RAM_LIMIT_GAME_PART_ONLY, "Due to memory limitations,\nonly part of this game can be\nplayed. To play the full game,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_NO_AUDIO, "Due to memory limitations,\naudio will not be played.\nTo play this game with audio,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_NO_MUSIC, "Due to memory limitations,\nmusic will not be played.\nTo play this game with music,\nlaunch this on Nintendo DSi\nor 3DS systems.")
