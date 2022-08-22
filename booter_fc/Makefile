@@ -160,7 +160,7 @@ autoboot:
 
 	#### M3 DS Real, iTouchDS, R4(i) SDHC (r4rts.com)
 	cp booter_fc.nds r4i.sys
-	dlditool "flashcart_specifics/DLDI/M3-DS_(SD_Card).dldi" r4i.sys
+	dlditool "flashcart_specifics/DLDI/m3r4_m3ds.dldi" r4i.sys
 	mkdir -p "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data"
 	cp r4i.sys "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data/r4i.sys"
 	mv r4i.sys "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/SRESET.dat"
