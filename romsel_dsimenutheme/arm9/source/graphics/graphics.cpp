@@ -1372,7 +1372,7 @@ ITCM_CODE void drawCurrentDate() {
 
 	loadedDate = currentDate;
 
-	ms().macroMode ? tex().drawDateTimeMacro(loadedDate.c_str(), tc().dateRenderX(), tc().dateRenderY()) : tex().drawDateTime(loadedDate.c_str(), tc().dateRenderX(), tc().dateRenderY());
+	ms().macroMode ? tex().drawDateTimeMacro(loadedDate.c_str(), tc().dateRenderX(), tc().dateRenderY(), true) : tex().drawDateTime(loadedDate.c_str(), tc().dateRenderX(), tc().dateRenderY(), true);
 
 	reloadDate = false;
 }
@@ -1391,7 +1391,7 @@ ITCM_CODE void drawCurrentTime() {
 
 	loadedTime = currentTime;
 
-	ms().macroMode ? tex().drawDateTimeMacro(currentTime.c_str(), tc().timeRenderX(), tc().timeRenderY()) : tex().drawDateTime(currentTime.c_str(), tc().timeRenderX(), tc().timeRenderY());
+	ms().macroMode ? tex().drawDateTimeMacro(currentTime.c_str(), tc().timeRenderX(), tc().timeRenderY(), false) : tex().drawDateTime(currentTime.c_str(), tc().timeRenderX(), tc().timeRenderY(), false);
 
 	reloadTime = false;
 }

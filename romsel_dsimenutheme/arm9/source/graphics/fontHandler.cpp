@@ -87,7 +87,7 @@ void fontInit() {
 		tc().fontPaletteDateTime4(),
 	};
 	if (ms().colorMode == 1) {
-		for (int i = 0; i < 4*4; i++) {
+		for (int i = 0; i < sizeof(palette); i++) {
 			palette[i] = convertVramColorToGrayscale(palette[i]);
 		}
 	}

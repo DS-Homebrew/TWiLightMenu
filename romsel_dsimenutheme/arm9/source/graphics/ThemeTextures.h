@@ -72,8 +72,8 @@ public:
 	void resetCachedBatteryLevel();
 
 	void drawShoulders(bool LShoulderActive, bool RShoulderActive);
-	void drawDateTime(const char* date, int posX, int posY);
-	void drawDateTimeMacro(const char* date, int posX, int posY);
+	void drawDateTime(const char* date, int posX, int posY, bool isDate);
+	void drawDateTimeMacro(const char* date, int posX, int posY, bool isDate);
 
 	void clearTopScreen();
 	static void videoSetup();
@@ -350,6 +350,8 @@ private:
 	int _cachedVolumeLevel;
 	int _cachedBatteryLevel;
 	bool _profileNameLoaded;
+	int _previousDateWidth = 0;
+	int _previousTimeWidth = 0;
 };
 
 

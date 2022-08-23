@@ -757,12 +757,12 @@ void ThemeTextures::drawProfileName() {
 	// Load username
 	int xPos = (dsiFeatures() ? tc().usernameRenderX() : tc().usernameRenderXDS());
 	int yPos = tc().usernameRenderY();
-	char16_t username[10];
+	char16_t username[11] = {0};
 	tonccpy(username, useTwlCfg ? (s16 *)0x02000448 : PersonalData->name, 10 * sizeof(char16_t));
 
 	toncset16(FontGraphic::textBuf[1], 0, 256 * usernameFont()->height());
 	usernameFont()->print(0, 0, true, username, Alignment::left, FontPalette::name);
-	int width = usernameFont()->width() * 10;
+	int width = usernameFont()->calcWidth(username);
 
 	// Copy to background
 	for (int y = 0; y < usernameFont()->height(); y++) {
@@ -1283,7 +1283,7 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 	commitBgSubModify();
 }
 
-ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) {
+ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, bool isDate) {
 	if (!topBorderBufferLoaded) {
 		_backgroundTextures[0].copy(_topBorderBuffer, false);
 		if (ms().colorMode == 1) {
@@ -1297,7 +1297,7 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) 
 
 	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
-	int width = dateTimeFont()->width() * strlen(str);
+	int width = max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
 
 	// Copy to background
 	for (int y = 0; y < dateTimeFont()->height(); y++) {
@@ -1313,9 +1313,15 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY) 
 			}
 		}
 	}
+
+	if (isDate) {
+		_previousDateWidth = dateTimeFont()->calcWidth(str);
+	} else {
+		_previousTimeWidth = dateTimeFont()->calcWidth(str);
+	}
 }
 
-ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int posY) {
+ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int posY, bool isDate) {
 	if (ms().theme == TWLSettings::EThemeSaturn) return;
 
 	if (!topBorderBufferLoaded) {
@@ -1331,7 +1337,7 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 
 	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
-	int width = dateTimeFont()->width() * strlen(str);
+	int width = max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
 
 	// Copy to background
 	for (int y = 0; y < dateTimeFont()->height(); y++) {
@@ -1342,6 +1348,12 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 
 			BG_GFX[(posY + y) * 256 + (posX + x)] = val;
 		}
+	}
+
+	if (isDate) {
+		_previousDateWidth = dateTimeFont()->calcWidth(str);
+	} else {
+		_previousTimeWidth = dateTimeFont()->calcWidth(str);
 	}
 }
 
