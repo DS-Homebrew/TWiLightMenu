@@ -14,5 +14,5 @@ unsigned short convertVramColorToGrayscale(unsigned short val) {
 	min = (min < r) ? min : r;
 	max = (max + min) / 2;
 
-	return 32768|(max<<10)|(max<<5)|(max);
+	return (val & 32768)|(max<<10)|(max<<5)|(max);
 }
