@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 80)
+// B4DS DSiWare Whitelist (Total: 81)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -81,6 +81,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K4D", // Sudoku
 	"K4F", // Sudoku 4Pockets
 	"KK4", // Wakugumi: Monochrome Puzzle
+	"Z2A", // WarioWare: Touched! DL
 	"KDW", // White-Water Domo
 	"KAS", // Art Style: ZENGAGE
 };
@@ -99,6 +100,26 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Flipper (No music)
 	2, // Mighty Milky Way (No music)
 	0, // Shantae: Risky's Revenge (One part of the game only)
+};
+
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Show RAM limitation message) (Total: 1)
+static const char compatibleGameListB4DSDebugRAMLimited[][4] = {
+	"KS3", // Shantae: Risky's Revenge
+};
+
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (RAM limitation message ID)
+static int compatibleGameListB4DSDebugRAMLimitedID[] = {
+	2, // Shantae: Risky's Revenge (No music)
+};
+
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 1)
+static const char compatibleGameListB4DSAllRAMLimited[][4] = {
+	"Z2A", // WarioWare: Touched! DL
+};
+
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (RAM limitation message ID)
+static int compatibleGameListB4DSAllRAMLimitedID[] = {
+	1, // WarioWare: Touched! DL (No audio)
 };
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 22)

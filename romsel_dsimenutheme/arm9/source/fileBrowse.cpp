@@ -1396,13 +1396,36 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	bool showMsg = false;
 	int msgId = 0;
 
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
-		if (memcmp(gameTid[CURPOS], compatibleGameListB4DSRAMLimited[i], 3) == 0) {
-			// Found match
-			showMsg = true;
-			msgId = compatibleGameListB4DSRAMLimitedID[i];
-			break;
+	if (sys().dsDebugRam() || (dsiFeatures() && bs().b4dsMode == 2)) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebugRAMLimited)/sizeof(compatibleGameListB4DSDebugRAMLimited[0]); i++) {
+			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSDebugRAMLimited[i], 3) == 0) {
+				// Found match
+				showMsg = true;
+				msgId = compatibleGameListB4DSDebugRAMLimitedID[i];
+				break;
+			}
+		}
+	} else {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
+			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSRAMLimited[i], 3) == 0) {
+				// Found match
+				showMsg = true;
+				msgId = compatibleGameListB4DSRAMLimitedID[i];
+				break;
+			}
+		}
+	}
+	if (!showMsg) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSAllRAMLimited)/sizeof(compatibleGameListB4DSAllRAMLimited[0]); i++) {
+			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSAllRAMLimited[i], 3) == 0) {
+				// Found match
+				showMsg = true;
+				msgId = compatibleGameListB4DSAllRAMLimitedID[i];
+				break;
+			}
 		}
 	}
 
@@ -2621,8 +2644,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							hasAP = checkRomAP(f_nds_file, CURPOS);
 							fclose(f_nds_file);
 						}
-						if (proceedToLaunch && isDSiWare[CURPOS] && ((!dsiFeatures() && !sys().dsDebugRam()) || bs().b4dsMode == 1) && ms().secondaryDevice) {
-							if (!sys().isRegularDS()) {
+						if (proceedToLaunch && isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
+							if (!dsiFeatures() && !sys().isRegularDS()) {
 								proceedToLaunch = dsiWareInDSModeMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 							}
 							if (proceedToLaunch) {
