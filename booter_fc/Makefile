@@ -133,7 +133,7 @@ autoboot:
 
 	#### EZ-Flash 5
 	cp booter_fc.nds ez5sys.bin
-	dlditool flashcart_specifics/DLDI/EZ5V2.dldi ez5sys.bin
+	dlditool flashcart_specifics/DLDI/ez5h.dldi ez5sys.bin
 	mkdir -p "../7zfile/Flashcard users/Autoboot/EZ Flash V/"
 	mv ez5sys.bin "../7zfile/Flashcard users/Autoboot/EZ Flash V/ez5sys.bin"
 
