@@ -227,9 +227,9 @@ autoboot:
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i DSi XL & R4V-R4i v2.2 + v2.5/TTMenu.dat"
 
 	# R4i-SDHC has funny protection. Defeat it.
-	ndstool -x TTMenu.dat -9 arm9.bin -7 arm7.bin -t banner.bin -h header.bin
+	ndstool -x TTMenu.dat -9 arm9.bin
 	$(PYTHON) flashcart_specifics/r4isdhc/r4isdhc.py arm9.bin new9.bin
-	ndstool -c R4.dat -9 new9.bin -7 arm7.bin -t banner.bin -h header.bin -r9 0x02000000
+	ndstool -c R4.dat -9 new9.bin -7 $(TARGET)_fc.arm7.elf -r9 0x02000000 -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	rm -rf new9.bin arm9.bin arm7.bin banner.bin header.bin
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/"
 	mv R4.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/R4.dat"
