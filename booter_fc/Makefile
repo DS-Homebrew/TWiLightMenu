@@ -125,6 +125,11 @@ autoboot:
 	# delete _DS_MENU.nds for the next cart
 	rm -f _DS_MENU.nds
 
+	# N5
+	cp booter_fc.nds _DS_MENU.dat
+	dlditool flashcart_specifics/DLDI/m3r4_r4tf.dldi _DS_MENU.dat
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/N5/_DS_MENU.dat"
+
 	#### EDGE (TODO: Find out how to encrypt the .dat file)
 	# cp booter_fc.nds EDGE.dat
 	# dlditool flashcart_specifics/DLDI/EDGEv1.0.dldi EDGE.dat
