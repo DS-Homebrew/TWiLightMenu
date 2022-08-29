@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 83)
+// B4DS DSiWare Whitelist (Total: 85)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -10,6 +10,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KQK", // Ace Mathician
 	"KAC", // Advanced Circuits
 	"K5H", // Ah! Heaven
+	"KF2", // Amakuchi! Dairoujou
 	"KVI", // Anonymous Notes 1: From The Abyss
 	"KAA", // Art Style: Aquia
 	"KAZ", // ARC Style: Soccer!
@@ -24,6 +25,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KCV", // Cave Story
 	"KUQ", // Chuck E. Cheese's Alien Defense Force
 	"KUC", // Chuck E. Cheese's Arcade Room
+	"KQL", // Chuukara! Dairoujou
 	"KXF", // Color Commando
 	"KDC", // Crash-Course Domo
 	"K32", // CuteWitch! runner
