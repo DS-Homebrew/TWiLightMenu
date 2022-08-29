@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 82)
+// B4DS DSiWare Whitelist (Total: 83)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -37,6 +37,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"B88", // DS WiFi Settings
 	"KB8", // GO Series: Earth Saver
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
+	"KU7E", // Fashion Tycoon (USA)
 	"KFS", // Flashlight
 	"KFP", // Flipper
 	"KFG", // Frogger Returns
