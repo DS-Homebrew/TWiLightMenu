@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 85)
+// B4DS DSiWare Whitelist (Total: 86)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -81,6 +81,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KRT", // Robot Rescue
 	"KD6", // Rock-n-Roll Domo
 	"KS3", // Shantae: Risky's Revenge
+	"KX5", // SnowBoard Xtreme
 	"KA6", // Space Ace
 	"K4D", // Sudoku
 	"K4F", // Sudoku 4Pockets
