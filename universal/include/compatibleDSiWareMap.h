@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 86)
+// B4DS DSiWare Whitelist (Total: 87)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -20,6 +20,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KBB", // Bomberman Blitz
 	"KAH", // Art Style: Boxlife
 	"KKQ", // Bugs'N'Balls
+	"K2J", // Cake Ninja
 	"KCY", // Calculator
 	"KC5", // Castle Conqueror: Heroes
 	"KCV", // Cave Story
@@ -134,7 +135,6 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"K27", // G.G. Series: All Breaker
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
-	"K2J", // Cake Ninja
 	"K2N", // Cake Ninja 2
 	"KYN", // Cake Ninja: XMAS
 	"KCN", // Castle Conqueror
