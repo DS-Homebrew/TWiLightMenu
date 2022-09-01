@@ -925,7 +925,7 @@ void vBlankHandler() {
 			if (dbox_selectMenu) {
 				int selIconYpos = 96;
 				int selIconXpos = ms().rtl() ? 256 - 56 : 32;
-				if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
+				if (sdFound()) {
 					for (int i = 0; i < 4; i++) {
 						selIconYpos -= 14;
 					}
@@ -942,7 +942,7 @@ void vBlankHandler() {
 				glSprite(selIconXpos, (ms().theme == TWLSettings::EThemeSaturn ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 					 &tex().cornerButtonImage()[0]); // Settings
 				selIconYpos += 28;
-				if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
+				if (sdFound()) {
 					if (ms().secondaryDevice) {
 						glSprite(selIconXpos, (ms().theme == TWLSettings::EThemeSaturn ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 							 &tex().smallCartImage()[2]); // SD card
