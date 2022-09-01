@@ -2940,6 +2940,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						savedTopIconXpos[i] = topIconXpos;
 						topIconXpos += 28;
 					}
+				} else {
+					savedTopIconXpos[0] = topIconXpos;
 				}
 
 				if ((isDSiMode() && sdFound()) || bothSDandFlashcard() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
