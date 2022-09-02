@@ -133,7 +133,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 22)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 23)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KII", // 101 Pinball World
 	"KXT", // 99Seconds
@@ -146,6 +146,7 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KQN", // Castle Conqueror: Against
 	"KXC", // Castle Conqueror: Heroes 2
 	"KQN", // Castle Conqueror: Revolution
+	"KDQ", // Dragon Quest Wars
 	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
