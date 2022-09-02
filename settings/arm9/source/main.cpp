@@ -885,6 +885,7 @@ int main(int argc, char **argv)
 				 "中文 (简体)",
 				 "中文 (繁體)",
 				 "日本語",
+				 "琉球諸語",
 				 "한국어"},
 				{TLanguage::ELangDefault,
 				 TLanguage::ELangIndonesian,
@@ -915,6 +916,7 @@ int main(int argc, char **argv)
 				 TLanguage::ELangChineseS,
 				 TLanguage::ELangChineseT,
 				 TLanguage::ELangJapanese,
+				 TLanguage::ELangRyukyuan,
 				 TLanguage::ELangKorean})
 		// Theme
 		.option(STR_THEME,
