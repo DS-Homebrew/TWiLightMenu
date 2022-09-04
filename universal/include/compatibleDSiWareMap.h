@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 94)
+// B4DS DSiWare Whitelist (Total: 95)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -73,6 +73,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDR", // Mr. Driller: Drill Till You Drop
 	"K2D", // Nintendo DSi + Internet
 	"KSUE", // Number Battle
+	"K6T", // Orion's Odyssey
 	"KP9", // Paul's Monster Adventure
 	"KPJ", // Paul's Shooting Adventure
 	"KUS", // Paul's Shooting Adventure 2
