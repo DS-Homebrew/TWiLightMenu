@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 95)
+// B4DS DSiWare Whitelist (Total: 96)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -78,6 +78,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KPJ", // Paul's Shooting Adventure
 	"KUS", // Paul's Shooting Adventure 2
 	"KAP", // Art Style: PiCTOBiTS
+	"KHR", // Picture Perfect: Pocket Stylist
 	"KPP", // Pop Island
 	"KPF", // Pop Island: Paperfield
 	"KOQ", // GO Series: Portable Shrine Wars
@@ -100,12 +101,13 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAS", // Art Style: ZENGAGE
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 5)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 6)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KAA", // Art Style: Aquia
 	"KFP", // Flipper
 	"KWY", // Mighty Milky Way
 	"K6T", // Orion's Odyssey
+	"KHR", // Picture Perfect: Pocket Stylist
 	"KS3", // Shantae: Risky's Revenge
 };
 
@@ -115,6 +117,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Flipper (No music)
 	2, // Mighty Milky Way (No music)
 	4, // Orion's Odyssey (Crashes at certain points)
+	0, // Picture Perfect: Pocket Stylist (Parts of the game only)
 	3, // Shantae: Risky's Revenge (Crashes at the Lighthouse after first fight)
 };
 
