@@ -100,11 +100,12 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAS", // Art Style: ZENGAGE
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 4)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 5)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KAA", // Art Style: Aquia
 	"KFP", // Flipper
 	"KWY", // Mighty Milky Way
+	"K6T", // Orion's Odyssey
 	"KS3", // Shantae: Risky's Revenge
 };
 
@@ -113,7 +114,8 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Art Style: Aquia (No audio)
 	2, // Flipper (No music)
 	2, // Mighty Milky Way (No music)
-	0, // Shantae: Risky's Revenge (One part of the game only)
+	4, // Orion's Odyssey (Crashes at certain points)
+	3, // Shantae: Risky's Revenge (Crashes at the Lighthouse after first fight)
 };
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Show RAM limitation message) (Total: 1)

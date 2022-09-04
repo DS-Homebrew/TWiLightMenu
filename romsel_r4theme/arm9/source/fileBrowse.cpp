@@ -737,6 +737,13 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 			printSmallCentered(false, 114, msgId == 2 ? "game with music, launch this on" : "game with audio, launch this on");
 			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
 			break;
+		case 3:
+		case 4:
+			printSmallCentered(false, 90, "Due to memory limitations, the game");
+			printSmallCentered(false, 102, msgId == 4 ? "will crash at certain point(s). To work" : "will crash at a specific area. To work");
+			printSmallCentered(false, 114, "around the crash, launch this on");
+			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
+			break;
 	}
 	printSmallCentered(false, 142, "\u2428 Return   \u2427 Launch");
 
