@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 96)
+// B4DS DSiWare Whitelist (Total: 97)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -95,6 +95,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KA6", // Space Ace
 	"K4D", // Sudoku
 	"K4F", // Sudoku 4Pockets
+	"KVT", // VT Tennis
 	"KK4", // Wakugumi: Monochrome Puzzle
 	"Z2A", // WarioWare: Touched! DL
 	"KDW", // White-Water Domo
