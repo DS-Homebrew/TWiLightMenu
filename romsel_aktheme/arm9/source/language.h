@@ -98,6 +98,8 @@ private:
       return "lang_val";
     case TWLSettings::ELangCatalan:
       return "lang_ca";
+    case TWLSettings::ELangRyukyuan:
+      return "lang_ry";
     default:
       return "lang_en";
     }

@@ -1500,6 +1500,7 @@ const char *languages[] = {
 	"Tiếng Việt",
 	"Valencià",
 	"Català",
+	"琉球諸語",
 };
 
 const TWLSettings::TLanguage guiLanguages[] = {
@@ -1531,6 +1532,7 @@ const TWLSettings::TLanguage guiLanguages[] = {
 	TWLSettings::TLanguage::ELangChineseS,
 	TWLSettings::TLanguage::ELangChineseT,
 	TWLSettings::TLanguage::ELangJapanese,
+	TWLSettings::TLanguage::ELangRyukyuan,
 	TWLSettings::TLanguage::ELangKorean,
 };
 

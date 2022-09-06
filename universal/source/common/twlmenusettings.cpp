@@ -549,6 +549,8 @@ std::string TWLSettings::getGuiLanguageString()
 			return "val";
 		case TWLSettings::ELangCatalan:
 			return "ca";
+		case TWLSettings::ELangRyukyuan:
+			return "ry";
 	}
 }
 
