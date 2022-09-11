@@ -267,29 +267,46 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	if (pdir == nullptr) {
 		printSmall(false, 4, 4, STR_UNABLE_TO_OPEN_DIRECTORY);
 	} else {
-		for (int currentPos = 0; currentPos < 320; currentPos++) {
+		while (1) {
+			bgOperations(false);
+
+			// This has to be done *before* readdir, since readdir increments
+			// the internal state's DIR_ENTRY for the next time
+			int attrs = 0;
+			if (!ms().showHidden) {
+				// Get FAT attrs, this is equivalent to FAT_getAttr(pent->d_name)
+				// but much quicker since we don't have to search the filesystem
+				// for the name.
+				// It's also *very* heavily dependant on internal libfat structs
+				// being exactly as they are now.
+				static_assert(_LIBFAT_MAJOR_ == 1 && _LIBFAT_MINOR_ == 1 && _LIBFAT_PATCH_ == 5, "libfat updated! Check that this is still correct");
+
+				// state->currentEntry.entryData[DIR_ENTRY_attributes]
+				u8 *state = (u8 *)pdir->dirData->dirStruct;
+				attrs = state[4 + 0xB];
+			}
+
 			dirent *pent = readdir(pdir);
-			if (pent == nullptr)
+			if (pent == nullptr || file_count > 320)
 				break;
 
+			// Now that we've got the attrs and the name, skip if we should be hiding this
+			if (!ms().showHidden && (attrs & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0)))
+				continue;
+
 			if (ms().showDirectories) {
-				if (strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
-					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") !=0
-					&& (pent->d_type == DT_DIR || nameEndsWith(pent->d_name, extensionList))) {
-					if (ms().showHidden || !(FAT_getAttr(pent->d_name) & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0))) {
-						dirContents.emplace_back(pent->d_name, pent->d_type == DT_DIR, currentPos, false);
-						file_count++;
-					}
+				if ((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
+					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
+					|| nameEndsWith(pent->d_name, extensionList)) {
+					dirContents.emplace_back(pent->d_name, pent->d_type == DT_DIR, file_count, false);
+					file_count++;
 				}
 			} else {
 				if (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList)) {
-					if (ms().showHidden || !(FAT_getAttr(pent->d_name) & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0))) {
-						dirContents.emplace_back(pent->d_name, false, currentPos, false);
-						file_count++;
-					}
+					dirContents.emplace_back(pent->d_name, false, file_count, false);
+					file_count++;
 				}
 			}
-			bgOperations(false);
 		}
 
 		if (ms().sortMethod == 0) { // Alphabetical
@@ -380,14 +397,14 @@ bool nowLoadingDisplaying = false;
 void displayNowLoading(void) {
 	displayGameIcons = false;
 	fadeType = true; // Fade in from white
-	std::string *msg;
+	std::string msg;
 	printLarge(false, 0, 88, STR_NOW_LOADING, Alignment::center);
 	if (!sys().isRegularDS()) {
 		if (ms().theme == TWLSettings::EThemeSaturn) {
 			if (ms().secondaryDevice) {
-				printSmall(false, 0, 20 + calcSmallFontHeight(*msg), STR_LOCATION_SLOT_1, Alignment::center);
+				printSmall(false, 0, 20 + smallFontHeight(), STR_LOCATION_SLOT_1, Alignment::center);
 			} else {
-				printSmall(false, 0, 20 + calcSmallFontHeight(*msg), ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
+				printSmall(false, 0, 20 + smallFontHeight(), ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
 			}
 		} else {
 			if (ms().secondaryDevice) {
