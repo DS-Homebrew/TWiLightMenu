@@ -165,26 +165,45 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	if (pdir == nullptr) {
 		iprintf("Unable to open the directory.\n");
 	} else {
-		for (int currentPos = 0; currentPos < 320; currentPos++) {
-			snd().updateStream();
+		int file_count = 0;
+		while (1) {
+			bgOperations(false);
+
+			// This has to be done *before* readdir, since readdir increments
+			// the internal state's DIR_ENTRY for the next time
+			int attrs = 0;
+			if (!ms().showHidden) {
+				// Get FAT attrs, this is equivalent to FAT_getAttr(pent->d_name)
+				// but much quicker since we don't have to search the filesystem
+				// for the name.
+				// It's also *very* heavily dependant on internal libfat structs
+				// being exactly as they are now.
+				static_assert(_LIBFAT_MAJOR_ == 1 && _LIBFAT_MINOR_ == 1 && _LIBFAT_PATCH_ == 5, "libfat updated! Check that this is still correct");
+
+				// state->currentEntry.entryData[DIR_ENTRY_attributes]
+				u8 *state = (u8 *)pdir->dirData->dirStruct;
+				attrs = state[4 + 0xB];
+			}
 
 			dirent *pent = readdir(pdir);
-			if (pent == nullptr)
+			if (pent == nullptr || file_count > 320)
 				break;
 
+			// Now that we've got the attrs and the name, skip if we should be hiding this
+			if (!ms().showHidden && (attrs & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0)))
+				continue;
+
 			if (ms().showDirectories) {
-				if (strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
-					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") !=0
-					&& (pent->d_type == DT_DIR || nameEndsWith(pent->d_name, extensionList))) {
-					if (ms().showHidden || !(FAT_getAttr(pent->d_name) & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0))) {
-						dirContents.emplace_back(pent->d_name, pent->d_type == DT_DIR, currentPos, false);
-					}
+				if ((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
+					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
+					|| nameEndsWith(pent->d_name, extensionList)) {
+					dirContents.emplace_back(pent->d_name, pent->d_type == DT_DIR, file_count, false);
+					file_count++;
 				}
 			} else {
 				if (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList)) {
-					if (ms().showHidden || !(FAT_getAttr(pent->d_name) & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0))) {
-						dirContents.emplace_back(pent->d_name, false, currentPos, false);
-					}
+					dirContents.emplace_back(pent->d_name, false, file_count, false);
+					file_count++;
 				}
 			}
 		}
