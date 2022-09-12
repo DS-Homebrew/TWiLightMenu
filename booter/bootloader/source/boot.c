@@ -80,28 +80,28 @@ extern unsigned long dsiMode;
 #define FW_READ        0x03
 
 void boot_readFirmware (uint32 address, uint8 * buffer, uint32 size) {
-  uint32 index;
+	uint32 index;
 
-  // Read command
-  while (REG_SPICNT & SPI_BUSY);
-  REG_SPICNT = SPI_ENABLE | SPI_CONTINUOUS | SPI_DEVICE_NVRAM;
-  REG_SPIDATA = FW_READ;
-  while (REG_SPICNT & SPI_BUSY);
+	// Read command
+	while (REG_SPICNT & SPI_BUSY);
+	REG_SPICNT = SPI_ENABLE | SPI_CONTINUOUS | SPI_DEVICE_NVRAM;
+	REG_SPIDATA = FW_READ;
+	while (REG_SPICNT & SPI_BUSY);
 
-  // Set the address
-  REG_SPIDATA =  (address>>16) & 0xFF;
-  while (REG_SPICNT & SPI_BUSY);
-  REG_SPIDATA =  (address>>8) & 0xFF;
-  while (REG_SPICNT & SPI_BUSY);
-  REG_SPIDATA =  (address) & 0xFF;
-  while (REG_SPICNT & SPI_BUSY);
+	// Set the address
+	REG_SPIDATA = (address>>16) & 0xFF;
+	while (REG_SPICNT & SPI_BUSY);
+	REG_SPIDATA = (address>>8) & 0xFF;
+	while (REG_SPICNT & SPI_BUSY);
+	REG_SPIDATA = (address) & 0xFF;
+	while (REG_SPICNT & SPI_BUSY);
 
-  for (index = 0; index < size; index++) {
-    REG_SPIDATA = 0;
-    while (REG_SPICNT & SPI_BUSY);
-    buffer[index] = REG_SPIDATA & 0xFF;
-  }
-  REG_SPICNT = 0;
+	for (index = 0; index < size; index++) {
+		REG_SPIDATA = 0;
+		while (REG_SPICNT & SPI_BUSY);
+		buffer[index] = REG_SPIDATA & 0xFF;
+	}
+	REG_SPICNT = 0;
 }
 
 

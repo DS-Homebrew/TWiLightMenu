@@ -80,62 +80,62 @@ char debug_buf[256] = {0};
  */
 mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format) {
    
-    // Debug stuff
-    // if (fill_requested) {
-    //     nocashMessage("missed fill");
-    // }
+	// Debug stuff
+	// if (fill_requested) {
+	//	 nocashMessage("missed fill");
+	// }
 
-    int len = length;
+	int len = length;
 	s16 *target = dest;
    
-    // fill delay with silence
-    for (; sample_delay_count && len; len--, sample_delay_count--) {
-        *target++ = 0;
-    }
+	// fill delay with silence
+	for (; sample_delay_count && len; len--, sample_delay_count--) {
+		*target++ = 0;
+	}
 
-    for (; len; len--)
+	for (; len; len--)
 	{
-        // Loop the streaming_buf_ptr
-        if (streaming_buf_ptr >= STREAMING_BUF_LENGTH) {
-            streaming_buf_ptr = 0;
-        }
+		// Loop the streaming_buf_ptr
+		if (streaming_buf_ptr >= STREAMING_BUF_LENGTH) {
+			streaming_buf_ptr = 0;
+		}
 
-        // Stream the next sample
+		// Stream the next sample
 		*target++ = (*(play_stream_buf + streaming_buf_ptr) >> (FADE_STEPS - fade_counter));
 
-        // Copy the next sample that will be played the next time
-        // the streaming_buf_ptr is at this location from
-        // fill_stream_buf
-        *(play_stream_buf + streaming_buf_ptr) = *(fill_stream_buf + streaming_buf_ptr);
+		// Copy the next sample that will be played the next time
+		// the streaming_buf_ptr is at this location from
+		// fill_stream_buf
+		*(play_stream_buf + streaming_buf_ptr) = *(fill_stream_buf + streaming_buf_ptr);
 
-        // Zero out fill_stream_buf at this location, preventing
-        // glitched sound if fills don't keep up.
-        *(fill_stream_buf + streaming_buf_ptr) = 0;
+		// Zero out fill_stream_buf at this location, preventing
+		// glitched sound if fills don't keep up.
+		*(fill_stream_buf + streaming_buf_ptr) = 0;
 
-        // Increment the streaming buf pointer.
-        streaming_buf_ptr++;
-        
-    }
+		// Increment the streaming buf pointer.
+		streaming_buf_ptr++;
+		
+	}
 
-    /*if (!sample_delay_count && fade_out && (fade_counter > 0)) {
-	    // sprintf(debug_buf, "Fade i: %i", fade_counter);
-        // nocashMessage(debug_buf);
-        fade_counter--;
-    }*/
+	/*if (!sample_delay_count && fade_out && (fade_counter > 0)) {
+		// sprintf(debug_buf, "Fade i: %i", fade_counter);
+		// nocashMessage(debug_buf);
+		fade_counter--;
+	}*/
 
-    
-    #ifdef SOUND_DEBUG
+	
+	#ifdef SOUND_DEBUG
 	sprintf(debug_buf, "Stream filled, pointer at %li, samples filed %li", streaming_buf_ptr, filled_samples);
-    nocashMessage(debug_buf);
-    #endif
-    // Request a new fill from sound.cpp, refreshing the fill buffer.
-    // Ensure that fills are requested only if the streaming buf ptr is more than
-    // the filled samples.
-    if (!fill_requested && abs(streaming_buf_ptr - filled_samples) >= SAMPLES_PER_FILL) {
-        #ifdef SOUND_DEBUG
-        nocashMessage("Fill requested!");
-        #endif
-        fill_requested = true;
-    } 
-    return length;
+	nocashMessage(debug_buf);
+	#endif
+	// Request a new fill from sound.cpp, refreshing the fill buffer.
+	// Ensure that fills are requested only if the streaming buf ptr is more than
+	// the filled samples.
+	if (!fill_requested && abs(streaming_buf_ptr - filled_samples) >= SAMPLES_PER_FILL) {
+		#ifdef SOUND_DEBUG
+		nocashMessage("Fill requested!");
+		#endif
+		fill_requested = true;
+	} 
+	return length;
 }
