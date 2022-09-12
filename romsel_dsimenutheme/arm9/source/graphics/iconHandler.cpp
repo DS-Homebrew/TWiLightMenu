@@ -67,45 +67,45 @@ static u16 blackPalette[16 * 8] = {0};
 const glImage *getIcon(int num) {
 	if (num == GBA_ICON)
 		return _gbaIcon;
-	if (num == GBC_ICON)
+	else if (num == GBC_ICON)
 		return _gbcIcon;
-	if (num == NES_ICON)
+	else if (num == NES_ICON)
 		return _nesIcon;
-	if (num == SG_ICON)
+	else if (num == SG_ICON)
 		return _smsIcon;
-	if (num == SMS_ICON)
+	else if (num == SMS_ICON)
 		return _smsIcon;
-	if (num == GG_ICON)
+	else if (num == GG_ICON)
 		return _ggIcon;
-	if (num == MD_ICON)
+	else if (num == MD_ICON)
 		return _mdIcon;
-	if (num == SNES_ICON)
+	else if (num == SNES_ICON)
 		return _snesIcon;
-	/*if (num == MSX_ICON)
-	    return _msxIcon;*/
-	if (num == PLG_ICON)
+	/*else if (num == MSX_ICON)
+		return _msxIcon;*/
+	else if (num == PLG_ICON)
 		return _plgIcon;
-	if (num == A26_ICON)
+	else if (num == A26_ICON)
 		return _a26Icon;
-	if (num == COL_ICON)
-	    return _colIcon;
-	if (num == M5_ICON)
-	    return _m5Icon;
-	if (num == INT_ICON)
+	else if (num == COL_ICON)
+		return _colIcon;
+	else if (num == M5_ICON)
+		return _m5Icon;
+	else if (num == INT_ICON)
 		return _intIcon;
-	if (num == PCE_ICON)
+	else if (num == PCE_ICON)
 		return _pceIcon;
-	if (num == WS_ICON)
+	else if (num == WS_ICON)
 		return _wsIcon;
-	if (num == NGP_ICON)
+	else if (num == NGP_ICON)
 		return _ngpIcon;
-	if (num == CPC_ICON)
+	else if (num == CPC_ICON)
 		return _cpcIcon;
-	if (num == VID_ICON)
+	else if (num == VID_ICON)
 		return _vidIcon;
-	if (num == IMG_ICON)
+	else if (num == IMG_ICON)
 		return _imgIcon;
-	if (BAD_ICON_IDX(num) || !initialized)
+	else if (BAD_ICON_IDX(num) || !initialized)
 		return NULL;
 	return _ndsIcon[num];
 }

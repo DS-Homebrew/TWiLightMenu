@@ -654,7 +654,7 @@ int main(int argc, char **argv) {
 	nitroFSInit("/_nds/TWiLightMenu/gbapatcher.srldr");
 
 	CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
-    gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
+	gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
 
 	char borderPath[256];
 	sprintf(borderPath, "/_nds/TWiLightMenu/gbaborders/%s", gbaBorder.c_str());

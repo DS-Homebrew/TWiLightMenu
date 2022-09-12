@@ -798,10 +798,7 @@ void vBlankHandler() {
 								 (titleboxYpos - 1) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
 								 GL_FLIP_NONE, &tex().settingsImage()[1]);
 					else
-						drawRomIcon(112,
-								    (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
-								    -1,
-								    bnrRomType[movingApp]);
+						drawRomIcon(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5], -1, bnrRomType[movingApp]);
 				}
 			}
 

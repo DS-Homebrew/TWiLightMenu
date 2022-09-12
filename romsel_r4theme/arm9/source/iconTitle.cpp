@@ -1290,17 +1290,14 @@ void titleUpdate(bool isDir, const char* name)
 		clearText(false);
 	}
 
-	if (isDir)
-	{
+	if (isDir) {
 		// text
 		if (strcmp(name, "..") == 0) {
 			writeBannerText(0, "Back", "", "");
 		} else {
 			writeBannerText(0, name, "", "");
 		}
-	}
-	else if (!extension(name, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"}) && customIcon != 2)
-	{
+	} else if (!extension(name, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"}) && customIcon != 2) {
 		std::vector<std::string> lines;
 		lines.push_back(name);
 
@@ -1334,7 +1331,7 @@ void titleUpdate(bool isDir, const char* name)
 
 		int lineCount = lines.size();
 		if (lineCount > 3) lineCount = 3;
-		strcpy(titleToDisplay[0],                 lines[0].c_str());
+		strcpy(titleToDisplay[0], lines[0].c_str());
 		strcpy(titleToDisplay[1], lineCount > 1 ? lines[1].c_str() : "");
 		strcpy(titleToDisplay[2], lineCount > 2 ? lines[2].c_str() : "");
 

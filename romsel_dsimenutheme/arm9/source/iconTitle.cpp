@@ -79,10 +79,8 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl) {
 	for (int tileY = 0; tileY < PY / TILE_SIZE_Y; ++tileY) {
 		for (int tileX = 0; tileX < PX / TILE_SIZE_X; ++tileX)
 			for (int pY = 0; pY < TILE_SIZE_Y; ++pY)
-				for (int pX = 0; pX < TILE_SIZE_X;
-				     ++pX) // TILE_SIZE/2 since one u8 equals two pixels (4 bit depth)
-					tilesNew[pX + tileX * TILE_SIZE_X + PX * (pY + tileY * TILE_SIZE_Y)] =
-					    tilesSrc[index++];
+				for (int pX = 0; pX < TILE_SIZE_X; ++pX) // TILE_SIZE/2 since one u8 equals two pixels (4 bit depth)
+					tilesNew[pX + tileX * TILE_SIZE_X + PX * (pY + tileY * TILE_SIZE_Y)] = tilesSrc[index++];
 	}
 }
 
@@ -502,8 +500,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			}
 		}
 
-		bnrSysSettings[num] =
-		    (ndsHeader.gameCode[0] == 0x48 && ndsHeader.gameCode[1] == 0x4E && ndsHeader.gameCode[2] == 0x42);
+		bnrSysSettings[num] = (ndsHeader.gameCode[0] == 0x48 && ndsHeader.gameCode[1] == 0x4E && ndsHeader.gameCode[2] == 0x42);
 
 		if (ndsHeader.dsi_flags & BIT(4))
 			bnrWirelessIcon[num] = 1;

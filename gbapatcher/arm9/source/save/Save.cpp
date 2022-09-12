@@ -47,21 +47,16 @@ ITCM_CODE const save_type_t* save_findTag()
 	char saveTag[16];
 	while (curAddr < 0x08000000+romSize)
 	{
-		u32      fst = *(u32*)curAddr;
+		u32 fst = *(u32*)curAddr;
 		tonccpy(&saveTag, (u8*)curAddr, 16);
 		SaveType type = SAVE_TYPE_NONE;
-		if (fst == 0x53414C46 && (saveTag[5] == '_' || saveTag[5] == '5' || saveTag[5] == '1'))
-		{
+		if (fst == 0x53414C46 && (saveTag[5] == '_' || saveTag[5] == '5' || saveTag[5] == '1')) {
 			//FLAS
 			type = SAVE_TYPE_FLASH;
-		}
-		else if (fst == 0x4D415253)
-		{
+		} else if (fst == 0x4D415253) {
 			//SRAM
 			type = SAVE_TYPE_SRAM;
-		}
-		else if (fst == 0x52504545 && saveTag[6] == '_')
-		{
+		} else if (fst == 0x52504545 && saveTag[6] == '_') {
 			//EEPR
 			type = SAVE_TYPE_EEPROM;
 		}

@@ -1349,12 +1349,10 @@ int main(int argc, char **argv) {
 					showProgressIcon = true;
 					fcopy(ms().dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0) && (NDSHeader.pubSavSize > 0)) {
-						fcopy(ms().dsiWarePubPath.c_str(),
-						      "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
+						fcopy(ms().dsiWarePubPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
 					}
 					if ((access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) && (NDSHeader.prvSavSize > 0)) {
-						fcopy(ms().dsiWarePrvPath.c_str(),
-						      "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
+						fcopy(ms().dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
 					showProgressIcon = false;
 					if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {

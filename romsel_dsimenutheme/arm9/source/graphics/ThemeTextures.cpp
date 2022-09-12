@@ -694,8 +694,7 @@ void ThemeTextures::drawTopBg() {
 
 	if (ms().colorMode == 1) {
 		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-			_bgSubBuffer[i] =
-			    convertVramColorToGrayscale(_bgSubBuffer[i]);
+			_bgSubBuffer[i] = convertVramColorToGrayscale(_bgSubBuffer[i]);
 		}
 	}
 
@@ -720,8 +719,7 @@ void ThemeTextures::drawBottomBg(int index) {
 
 	if (ms().colorMode == 1) {
 		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-			_bgMainBuffer[i] =
-			    convertVramColorToGrayscale(_bgMainBuffer[i]);
+			_bgMainBuffer[i] = convertVramColorToGrayscale(_bgMainBuffer[i]);
 		}
 	}
 
@@ -1222,8 +1220,7 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 
  	if (ms().colorMode == 1) {
 		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-			_bgSubBuffer[i] =
-			    convertVramColorToGrayscale(_bgSubBuffer[i]);
+			_bgSubBuffer[i] = convertVramColorToGrayscale(_bgSubBuffer[i]);
 			if (boxArtColorDeband)
 				_bgSubBuffer2[i] = _bgSubBuffer[i];
 		}

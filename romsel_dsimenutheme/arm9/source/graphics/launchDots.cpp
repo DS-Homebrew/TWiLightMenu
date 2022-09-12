@@ -26,7 +26,7 @@
 
 // Gets the radius for the given frame
 inline int getRadius(int frame) {
-     return DOT_INIT_RADIUS + std::min((int)(4 * frame * log(frame)), 10);
+	return DOT_INIT_RADIUS + std::min((int)(4 * frame * log(frame)), 10);
 }
 
 // Gets the angular velocity of the radius in brads for the given frame
@@ -39,25 +39,22 @@ inline int getVelocity(int frame) {
 // This curve could be improved...
 // Gets the weight/ frame of the dot from 0 (empty) to 5 (largest) for the given index and frame
 inline int getDotRadiusFrame(int dotIndex, int frame) {
-    if (frame - dotIndex < 2) return 5;
-    if (frame - dotIndex > 8) return 0;
-    // Sin between [-1. 1] => [0, 2]
-    float SIN = fixedToFloat(sinLerp((dotIndex * DOT_INTERVAL) - BRAD_90_DEG - (frame * getVelocity(frame))), 12) + 1; 
+	if (frame - dotIndex < 2) return 5;
+	if (frame - dotIndex > 8) return 0;
+	// Sin between [-1. 1] => [0, 2]
+	float SIN = fixedToFloat(sinLerp((dotIndex * DOT_INTERVAL) - BRAD_90_DEG - (frame * getVelocity(frame))), 12) + 1; 
 
-    return std::min((SIN * 10 / 4), (float)5);
-    
+	return std::min((SIN * 10 / 4), (float)5);
 	// return ((frame % 4) + dotIndex) % 5; return 5
 }
 
 
 inline int getDotX(int dotIndex, int frame) {
-	return getRadius(frame) *
-	       fixedToFloat(cosLerp((dotIndex * DOT_INTERVAL) - BRAD_90_DEG - (frame * getVelocity(frame))), 12);
+	return getRadius(frame) * fixedToFloat(cosLerp((dotIndex * DOT_INTERVAL) - BRAD_90_DEG - (frame * getVelocity(frame))), 12);
 }
 
 inline int getDotY(int dotIndex, int frame) {
-	return getRadius(frame) *
-	       fixedToFloat(sinLerp((dotIndex * DOT_INTERVAL) - BRAD_90_DEG - (frame * getVelocity(frame))), 12);
+	return getRadius(frame) * fixedToFloat(sinLerp((dotIndex * DOT_INTERVAL) - BRAD_90_DEG - (frame * getVelocity(frame))), 12);
 }
 
 static int radFrame = 0;
@@ -74,7 +71,7 @@ void LaunchDots::drawFrame(int frame) {
 	}
 }
 void LaunchDots::drawAuto() {
-    drawFrame(radFrame);
+	drawFrame(radFrame);
 	if (radFrame < DOTS_NUM_TIMESTEPS) {
 		radFrame++;
 	} else {

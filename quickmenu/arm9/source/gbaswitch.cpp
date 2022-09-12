@@ -34,8 +34,8 @@ void loadGbaBorder(const char* filename) {
 		if ((i % 256) == 255) alternatePixel = !alternatePixel;
 		alternatePixel = !alternatePixel;
 	}
-    DC_FlushRange(bmpImageBuffer,SCREEN_WIDTH*SCREEN_HEIGHT*2);
-    dmaCopy(bmpImageBuffer,(void*)BG_BMP_RAM(0),SCREEN_WIDTH*SCREEN_HEIGHT*2);
+	DC_FlushRange(bmpImageBuffer,SCREEN_WIDTH*SCREEN_HEIGHT*2);
+	dmaCopy(bmpImageBuffer,(void*)BG_BMP_RAM(0),SCREEN_WIDTH*SCREEN_HEIGHT*2);
 
 	alternatePixel = false;
 	for(uint i = 0; i < image.size()/4; i++) {
@@ -64,8 +64,8 @@ void loadGbaBorder(const char* filename) {
 		if ((i % 256) == 255) alternatePixel = !alternatePixel;
 		alternatePixel = !alternatePixel;
 	}
-    DC_FlushRange(bmpImageBuffer,SCREEN_WIDTH*SCREEN_HEIGHT*2);
-    dmaCopy(bmpImageBuffer,(void*)BG_BMP_RAM(8),SCREEN_WIDTH*SCREEN_HEIGHT*2);
+	DC_FlushRange(bmpImageBuffer,SCREEN_WIDTH*SCREEN_HEIGHT*2);
+	dmaCopy(bmpImageBuffer,(void*)BG_BMP_RAM(8),SCREEN_WIDTH*SCREEN_HEIGHT*2);
 }
 
 void gbaSwitch(void) {
