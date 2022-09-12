@@ -50,6 +50,6 @@ Window& CalendarWnd::loadAppearance(const std::string& aFileName )
 
 void CalendarWnd::draw()
 {
-    if( _background.valid() )
+    if ( _background.valid() )
         gdi().bitBlt( _background.buffer(), 0, 0, 256, 192, selectedEngine() );
 }

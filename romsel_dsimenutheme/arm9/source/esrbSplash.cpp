@@ -57,7 +57,7 @@ void createEsrbSplash(void) {
 	std::vector<unsigned char> image;
 	uint imageWidth, imageHeight;
 	lodepng::decode(image, imageWidth, imageHeight, esrbImagePath);
-	if(imageWidth > 256 || imageHeight > 192) return;
+	if (imageWidth > 256 || imageHeight > 192) return;
 
 	for(uint i=0;i<image.size()/4;i++) {
 		tex().bmpImageBuffer()[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);

@@ -12,7 +12,7 @@ int PowerOnSlot() {
 }
 
 int PowerOffSlot() {
-    if(REG_SCFG_MC&1) return 1; 
+    if (REG_SCFG_MC&1) return 1; 
     
     REG_SCFG_MC = 0x0C; // set state=3 
     while(REG_SCFG_MC&1);

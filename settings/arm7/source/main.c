@@ -160,7 +160,7 @@ TWL_CODE void getConsoleID(void) {
 		for(int j=0;j<256;j++){
 			*(key3+i)=j & 0xFF;
 			aes(in, scratch, iv, 2);
-			if(memcmp(scratch, base, 16)==0){
+			if (memcmp(scratch, base, 16)==0){
 				out[i]=j;
 				//hit++;
 				break;

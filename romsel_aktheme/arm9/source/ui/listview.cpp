@@ -106,7 +106,7 @@ bool ListView::appendRow(const std::vector<std::string>&& texts)
     }
     _rows.emplace_back(std::move(row));
     nocashMessage("listview:106");
-    //if( _visibleRowCount > _rows.size() ) _visibleRowCount = _rows.size();
+    //if ( _visibleRowCount > _rows.size() ) _visibleRowCount = _rows.size();
 
     return true;
 }
@@ -129,7 +129,7 @@ void ListView::draw()
 
 void ListView::drawSelectionBar()
 {
-    //if( _touchMovedAfterTouchDown )
+    //if ( _touchMovedAfterTouchDown )
     //    return;
 
     s16 x = _position.x - 2;
@@ -146,7 +146,7 @@ void ListView::drawSelectionBar()
             gdi().fillRectBlend(_selectionBarColor2, _selectionBarColor1, x, y + i, w, 1, _engine, _selectionBarOpacity);
     }
 
-    if(_showSelectionBarBg)
+    if (_showSelectionBarBg)
     {
         gdi().maskBlt(_barPic.buffer(), x, y, _barPic.width(), _barPic.height(), GE_MAIN);
     }
@@ -196,7 +196,7 @@ void ListView::selectRow(int id)
     if (id < 0)
         id = 0;
 
-    //if( (int)_selectedRowId == id ) return;
+    //if ( (int)_selectedRowId == id ) return;
 
     size_t lastVisibleRowId = _firstVisibleRowId + _visibleRowCount - 1;
     if (lastVisibleRowId > _rows.size() - 1)
@@ -233,7 +233,7 @@ void ListView::scrollTo(int id)
 {
     if (0 == _rows.size())
         return;
-    //if( _rows.size() < _visibleRowCount ) return;
+    //if ( _rows.size() < _visibleRowCount ) return;
     //dbg_printf("rows size %d, visibleRowCount %d\n", _rows.size(), _visibleRowCount );
 
     if (id > (int)_rows.size() - 1)
@@ -270,7 +270,7 @@ bool ListView::process(const Message &msg)
     bool ret = false;
     if (isVisible())
     {
-        //if( msg.id() > Message::keyMessageStart
+        //if ( msg.id() > Message::keyMessageStart
         //    && msg.id() < Message::keyMessageEnd )
         //{
         //    ret = processKeyMessage( (KeyMessage &)msg );

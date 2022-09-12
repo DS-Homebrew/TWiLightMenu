@@ -189,13 +189,13 @@ int main() {
 			}
 		}
 
-		if(fifoCheckValue32(FIFO_USER_01)) {
+		if (fifoCheckValue32(FIFO_USER_01)) {
 			soundFadeOut();
 		} else {
 			soundVolume = 127;
 		}
 		REG_MASTER_VOLUME = soundVolume;
-		if(fifoCheckValue32(FIFO_USER_02)) {
+		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
 		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {

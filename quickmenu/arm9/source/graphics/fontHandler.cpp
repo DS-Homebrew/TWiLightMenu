@@ -21,9 +21,9 @@ void fontInit() {
 	bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
 
 	// Unload fonts if already loaded
-	if(smallFont)
+	if (smallFont)
 		delete smallFont;
-	if(largeFont)
+	if (largeFont)
 		delete largeFont;
 
 	u16 palette[] = {
@@ -34,7 +34,7 @@ void fontInit() {
 	};
 
 	// Load font graphics
-	if(ms().dsClassicCustomFont) {
+	if (ms().dsClassicCustomFont) {
 		std::string fontPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 		std::string defaultPath = std::string(sdFound() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
 		bool dsiFont = dsiFeatures() || sys().dsDebugRam() || useExpansionPak;
@@ -59,11 +59,11 @@ FontGraphic *getFont(bool large) {
 
 void updateText(bool top) {
 	// Remove if adding top support
-	if(top)
+	if (top)
 		return;
 
 	// Clear before redrawing
-	if(shouldClear[top]) {
+	if (shouldClear[top]) {
 		dmaFillWords(0, FontGraphic::textBuf[top], 256 * 192);
 		shouldClear[top] = false;
 	}
@@ -72,7 +72,7 @@ void updateText(bool top) {
 	auto &text = getTextQueue(top);
 	for(auto it = text.begin(); it != text.end(); ++it) {
 		FontGraphic *font = getFont(it->large);
-		if(font)
+		if (font)
 			font->print(it->x, it->y, top, it->message, it->align);
 	}
 	text.clear();
@@ -105,33 +105,33 @@ void printLarge(bool top, int x, int y, std::u16string_view message, Alignment a
 }
 
 int calcSmallFontWidth(std::string_view text) {
-	if(smallFont)
+	if (smallFont)
 		return smallFont->calcWidth(text);
 	return 0;
 }
 int calcSmallFontWidth(std::u16string_view text) {
-	if(smallFont)
+	if (smallFont)
 		return smallFont->calcWidth(text);
 	return 0;
 }
 
 int calcLargeFontWidth(std::string_view text) {
-	if(largeFont)
+	if (largeFont)
 		return largeFont->calcWidth(text);
 	return 0;
 }
 int calcLargeFontWidth(std::u16string_view text) {
-	if(largeFont)
+	if (largeFont)
 		return largeFont->calcWidth(text);
 	return 0;
 }
 
 int calcSmallFontHeight(std::string_view text) { return calcSmallFontHeight(FontGraphic::utf8to16(text)); }
 int calcSmallFontHeight(std::u16string_view text) {
-	if(smallFont) {
+	if (smallFont) {
 		int lines = 1;
 		for(auto c : text) {
-			if(c == '\n')
+			if (c == '\n')
 				lines++;
 		}
 		return lines * smallFont->height();
@@ -142,10 +142,10 @@ int calcSmallFontHeight(std::u16string_view text) {
 
 int calcLargeFontHeight(std::string_view text) { return calcLargeFontHeight(FontGraphic::utf8to16(text)); }
 int calcLargeFontHeight(std::u16string_view text) {
-	if(largeFont) {
+	if (largeFont) {
 		int lines = 1;
 		for(auto c : text) {
-			if(c == '\n')
+			if (c == '\n')
 				lines++;
 		}
 		return lines * largeFont->height();
@@ -155,13 +155,13 @@ int calcLargeFontHeight(std::u16string_view text) {
 }
 
 u8 smallFontHeight(void) {
-	if(smallFont)
+	if (smallFont)
 		return smallFont->height();
 	return 0;
 }
 
 u8 largeFontHeight(void) {
-	if(largeFont)
+	if (largeFont)
 		return largeFont->height();
 	return 0;
 }

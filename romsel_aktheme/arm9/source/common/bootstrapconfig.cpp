@@ -262,13 +262,13 @@ void BootstrapConfig::loadCheats()
 	
 	bool cheatsEnabled = true;
 	mkdir(ms().secondaryDevice ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
-	if(CheatWnd::romData(_fullPath,gameCode,crc32))
+	if (CheatWnd::romData(_fullPath,gameCode,crc32))
       {
 				long cheatOffset; size_t cheatSize;
         FILE* dat=fopen(SFN_CHEATS,"rb");
-        if(dat)
+        if (dat)
         {
-          if(CheatWnd::searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
+          if (CheatWnd::searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
           {
 						CheatWnd chtwnd((256)/2,(192)/2,100,100,NULL,_fullPath);
 
@@ -335,7 +335,7 @@ int BootstrapConfig::launch()
 
 	std::string bootstrapPath;
 
-	if(_useGbarBootstrap) {
+	if (_useGbarBootstrap) {
 		if (_useNightlyBootstrap)
 			bootstrapPath = BOOTSTRAP_NIGHTLY_GBAR;
 		if (!_useNightlyBootstrap)
@@ -351,7 +351,7 @@ int BootstrapConfig::launch()
 		if (!_useNightlyBootstrap && !_isHomebrew)
 			bootstrapPath = BOOTSTRAP_RELEASE;
 
-		if(access(bootstrapPath.c_str(), F_OK) != 0) {
+		if (access(bootstrapPath.c_str(), F_OK) != 0) {
 			if (_useNightlyBootstrap && _isHomebrew)
 				bootstrapPath = BOOTSTRAP_NIGHTLY_HB_FC;
 			if (_useNightlyBootstrap && !_isHomebrew)

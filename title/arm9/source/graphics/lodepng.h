@@ -1693,7 +1693,7 @@ int main(int argc, char *argv[]) {
   unsigned error = lodepng::decode(image, width, height, filename);
 
   //if there's an error, display it
-  if(error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+  if (error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
 
   //the pixels are now in the vector "image", 4 bytes per pixel, ordered RGBARGBA..., use it as texture, draw it, ...
 }
@@ -1711,7 +1711,7 @@ int main(int argc, char *argv[]) {
 
   error = lodepng_decode32_file(&image, &width, &height, filename);
 
-  if(error) printf("decoder error %u: %s\n", error, lodepng_error_text(error));
+  if (error) printf("decoder error %u: %s\n", error, lodepng_error_text(error));
 
   / * use image here * /
 

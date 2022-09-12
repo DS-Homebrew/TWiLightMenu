@@ -100,7 +100,7 @@ _List(0,0,w-8,h-44,this,"cheat tree", ms().ak_scrollSpeed)
   _List.setRelativePosition(Point(4, 20));
 
   CIniFile ini(SFN_UI_SETTINGS);
-  if(ini.GetInt("cheat menu","textColor",-1)!=-1)
+  if (ini.GetInt("cheat menu","textColor",-1)!=-1)
   {
     _List.setColors(ini.GetInt("cheat menu","textColor",RGB15(7,7,7)),ini.GetInt("cheat menu","textColorHilight",RGB15(31,0,31)),ini.GetInt("cheat menu","selectionBarColor1",RGB15(16,20,24)),ini.GetInt("cheat menu","selectionBarColor2",RGB15(20,25,0)));
   }
@@ -134,9 +134,9 @@ bool CheatWnd::process(const akui::Message& msg)
 {
   bool ret=false;
   ret=Form::process(msg);
-  if(!ret)
+  if (!ret)
   {
-    if(msg.id()>Message::keyMessageStart&&msg.id()<Message::keyMessageEnd)
+    if (msg.id()>Message::keyMessageStart&&msg.id()<Message::keyMessageEnd)
     {
       ret=processKeyMessage((KeyMessage&)msg);
     }
@@ -147,7 +147,7 @@ bool CheatWnd::process(const akui::Message& msg)
 bool CheatWnd::processKeyMessage(const KeyMessage& msg)
 {
   bool ret=false;
-  if(msg.id() == Message::keyDown)
+  if (msg.id() == Message::keyDown)
   {
     switch(msg.keyCode())
     {
@@ -164,7 +164,7 @@ bool CheatWnd::processKeyMessage(const KeyMessage& msg)
           size_t ii = _List.selectedRowId();
           while(ii-- > 0)
           {
-            if(_data[_indexes[ii]]._flags&cParsedItem::EFolder) break;
+            if (_data[_indexes[ii]]._flags&cParsedItem::EFolder) break;
           }
           _List.selectRow(ii);
         }
@@ -175,7 +175,7 @@ bool CheatWnd::processKeyMessage(const KeyMessage& msg)
           size_t ii=_List.selectedRowId(),top=_List.getRowCount();
           while(++ii < top)
           {
-            if(_data[_indexes[ii]]._flags&cParsedItem::EFolder) break;
+            if (_data[_indexes[ii]]._flags&cParsedItem::EFolder) break;
           }
           _List.selectRow(ii);
         }
@@ -224,7 +224,7 @@ void CheatWnd::onItemClicked(u32 index)
 void CheatWnd::onSelect(void)
 {
   size_t index=_indexes[_List.selectedRowId()];
-  if(_data[index]._flags&cParsedItem::EFolder)
+  if (_data[index]._flags&cParsedItem::EFolder)
   {
     _data[index]._flags^=cParsedItem::EOpen;
     u32 first=_List.firstVisibleRowId(),row=_List.selectedRowId();
@@ -234,8 +234,8 @@ void CheatWnd::onSelect(void)
   else
   {
     bool deselect=(_data[index]._flags&(cParsedItem::EOne|cParsedItem::ESelected))==(cParsedItem::EOne|cParsedItem::ESelected);
-    if(_data[index]._flags&cParsedItem::EOne) deselectFolder(index);
-    if(!deselect) _data[index]._flags^=cParsedItem::ESelected;
+    if (_data[index]._flags&cParsedItem::EOne) deselectFolder(index);
+    if (!deselect) _data[index]._flags^=cParsedItem::ESelected;
   }
 }
 
@@ -266,13 +266,13 @@ void CheatWnd::onCancel(void)
 static void updateDB(u8 value,u32 offset,FILE* db)
 {
   u8 oldvalue;
-  if(!db) return;
-  if(!offset) return;
-  if(fseek(db,offset,SEEK_SET)) return;
-  if(fread(&oldvalue,sizeof(oldvalue),1,db)!=1) return;
-  if(oldvalue!=value)
+  if (!db) return;
+  if (!offset) return;
+  if (fseek(db,offset,SEEK_SET)) return;
+  if (fread(&oldvalue,sizeof(oldvalue),1,db)!=1) return;
+  if (oldvalue!=value)
   {
-    if(fseek(db,offset,SEEK_SET)) return;
+    if (fseek(db,offset,SEEK_SET)) return;
     fwrite(&value,sizeof(value),1,db);
   }
 }
@@ -280,7 +280,7 @@ static void updateDB(u8 value,u32 offset,FILE* db)
 void CheatWnd::onGenerate(void)
 {
   FILE* db=fopen(SFN_CHEATS,"r+b");
-  if(db)
+  if (db)
   {
     std::vector<cParsedItem>::iterator itr=_data.begin();
     while(itr!=_data.end())
@@ -304,29 +304,29 @@ void CheatWnd::onDraw(const ListView::OwnerDraw& od)
 {
   size_t index=_indexes[od._row];
   u32 flags=_data[index]._flags;
-  if(od._col==EIconColumn)
+  if (od._col==EIconColumn)
   {
-    if(flags&cParsedItem::EFolder)
+    if (flags&cParsedItem::EFolder)
     {
       u16 size=od._size.y-EFolderTop*2;
       s16 x1=od._position.x+((od._size.x-size)>>1)-1,x2=x1+(size>>1),y1=od._position.y+EFolderTop,y2=y1+(size>>1);
       gdi().frameRect(x1,y1,size,size,od._engine);
       gdi().drawLine(x1,y2,x1+size,y2,od._engine);
-      if(!(flags&cParsedItem::EOpen)) gdi().drawLine(x2,y1,x2,y1+size,od._engine);
+      if (!(flags&cParsedItem::EOpen)) gdi().drawLine(x2,y1,x2,y1+size,od._engine);
     }
-    else if(!(flags&cParsedItem::EInFolder))
+    else if (!(flags&cParsedItem::EInFolder))
     {
-      if(flags&cParsedItem::ESelected) drawMark(od,od._size.x);
+      if (flags&cParsedItem::ESelected) drawMark(od,od._size.x);
     }
   }
-  else if(od._col==ETextColumn)
+  else if (od._col==ETextColumn)
   {
-    if(flags&cParsedItem::EInFolder)
+    if (flags&cParsedItem::EInFolder)
     {
-      if(flags&cParsedItem::ESelected) drawMark(od,EFolderWidth);
+      if (flags&cParsedItem::ESelected) drawMark(od,EFolderWidth);
     }
     s16 x=od._position.x; u16 w=od._size.x;
-    if(flags&cParsedItem::EInFolder)
+    if (flags&cParsedItem::EInFolder)
     {
       x+=EFolderWidth;
       w-=EFolderWidth;
@@ -340,10 +340,10 @@ bool CheatWnd::parse(const std::string& aFileName)
   bool res=false;
   _fileName=aFileName;
   u32 romcrc32,gamecode;
-  if(romData(_fileName,gamecode,romcrc32))
+  if (romData(_fileName,gamecode,romcrc32))
   {
     FILE* dat=fopen(SFN_CHEATS,"rb");
-    if(dat)
+    if (dat)
     {
       res=parseInternal(dat,gamecode,romcrc32);
       fclose(dat);
@@ -356,10 +356,10 @@ bool CheatWnd::romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32)
 {
   bool res=false;
   FILE* rom=fopen(aFileName.c_str(),"rb");
-  if(rom)
+  if (rom)
   {
     u8 header[512];
-    if(1==fread(header,sizeof(header),1,rom))
+    if (1==fread(header,sizeof(header),1,rom))
     {
       aCrc32=crc32(header,sizeof(header));
       aGameCode=gamecode((const char*)(header+12));
@@ -377,7 +377,7 @@ bool CheatWnd::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size
   const char* KHeader="R4 CheatCode";
   char header[12];
   fread(header,12,1,aDat);
-  if(strncmp(KHeader,header,12)) return false;
+  if (strncmp(KHeader,header,12)) return false;
 
   sDatIndex idx,nidx;
 
@@ -393,13 +393,13 @@ bool CheatWnd::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size
   {
     memcpy(&idx,&nidx,sizeof(idx));
     fread(&nidx,sizeof(nidx),1,aDat);
-    if(gamecode==idx._gameCode&&crc32==idx._crc32)
+    if (gamecode==idx._gameCode&&crc32==idx._crc32)
     {
       aSize=((nidx._offset)?nidx._offset:fileSize)-idx._offset;
       aPos=idx._offset;
       done=true;
     }
-    if(!nidx._offset) done=true;
+    if (!nidx._offset) done=true;
   }
   return (aPos&&aSize);
 }
@@ -411,13 +411,13 @@ bool CheatWnd::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
   _data.clear();
 
   long dataPos; size_t dataSize;
-  if(!searchCheatData(aDat,gamecode,crc32,dataPos,dataSize)) return false;
+  if (!searchCheatData(aDat,gamecode,crc32,dataPos,dataSize)) return false;
   fseek(aDat,dataPos,SEEK_SET);
 
   dbg_printf("record found: %d\n",dataSize);
 
   char* buffer=(char*)malloc(dataSize);
-  if(!buffer) return false;
+  if (!buffer) return false;
   fread(buffer,dataSize,1,aDat);
   char* gameTitle=buffer;
 
@@ -433,10 +433,10 @@ bool CheatWnd::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
     char* folderName=NULL;
     char* folderNote=NULL;
     u32 flagItem=0;
-    if((*ccode>>28)&1)
+    if ((*ccode>>28)&1)
     {
       flagItem|=cParsedItem::EInFolder;
-      if((*ccode>>24)==0x11) flagItem|=cParsedItem::EOne;
+      if ((*ccode>>24)==0x11) flagItem|=cParsedItem::EOne;
       folderCount=*ccode&0x00ffffff;
       folderName=(char*)((u32)ccode+4);
       folderNote=(char*)((u32)folderName+strlen(folderName)+1);
@@ -453,10 +453,10 @@ bool CheatWnd::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
       u32* cheatData=(u32*)(((u32)cheatNote+strlen(cheatNote)+1+3)&~3);
       u32 cheatDataLen=*cheatData++;
 
-      if(cheatDataLen)
+      if (cheatDataLen)
       {
         _data.push_back(cParsedItem(cheatName,cheatNote,flagItem|((*ccode&0xff000000)?selectValue:0),dataPos+(((char*)ccode+3)-buffer)));
-        if((*ccode&0xff000000)&&(flagItem&cParsedItem::EOne)) selectValue=0;
+        if ((*ccode&0xff000000)&&(flagItem&cParsedItem::EOne)) selectValue=0;
         _data.back()._cheat.resize(cheatDataLen);
         tonccpy(_data.back()._cheat.data(),cheatData,cheatDataLen*4);
       }
@@ -484,7 +484,7 @@ void CheatWnd::generateList(void)
     _indexes.push_back(itr-_data.begin());
     u32 flags=(*itr)._flags;
     ++itr;
-    if((flags&cParsedItem::EFolder)&&(flags&cParsedItem::EOpen)==0)
+    if ((flags&cParsedItem::EFolder)&&(flags&cParsedItem::EOpen)==0)
     {
       while(((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end()) ++itr;
     }
@@ -496,7 +496,7 @@ void CheatWnd::deselectFolder(size_t anIndex)
   std::vector<cParsedItem>::iterator itr=_data.begin()+anIndex;
   while(--itr>=_data.begin())
   {
-    if((*itr)._flags&cParsedItem::EFolder)
+    if ((*itr)._flags&cParsedItem::EFolder)
     {
       ++itr;
       break;
@@ -514,7 +514,7 @@ std::vector<u32> CheatWnd::getCheats()
   std::vector<u32> cheats;
   for(uint i=0;i<_data.size();i++)
   {
-    if(_data[i]._flags&cParsedItem::ESelected)
+    if (_data[i]._flags&cParsedItem::ESelected)
     {
       cheats.insert(cheats.end(),_data[i]._cheat.begin(),_data[i]._cheat.end());
     }
@@ -524,7 +524,7 @@ std::vector<u32> CheatWnd::getCheats()
 
 void CheatWnd::writeCheatsToFile(const char* path) {
   FILE *file = fopen(path, "wb");
-  if(file) {
+  if (file) {
     std::vector<u32> cheats(getCheats());
     fwrite(cheats.data(),4,cheats.size(),file);
     fwrite("\0\0\0\xCF",4,1,file);

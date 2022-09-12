@@ -109,7 +109,7 @@ void cExpansion::Block_Erase(u32 blockAdd)
   u32 Address;
   u32 loop;
   u32 off=0;
-  if((blockAdd>=0x1000000)&&(iId==0x227E2202))
+  if ((blockAdd>=0x1000000)&&(iId==0x227E2202))
   {
     off=0x1000000;
     *((vu16*)(FlashBase+off+0x555*2))=0xF0;
@@ -120,7 +120,7 @@ void cExpansion::Block_Erase(u32 blockAdd)
   Address=blockAdd;
   *((vu16*)(FlashBase+0x555*2))=0xF0;
   *((vu16*)(FlashBase+0x1555*2))=0xF0;
-  if((blockAdd==0)||(blockAdd==0x1FC0000)||(blockAdd==0xFC0000)||(blockAdd==0x1000000))
+  if ((blockAdd==0)||(blockAdd==0x1FC0000)||(blockAdd==0xFC0000)||(blockAdd==0x1000000))
   {
     for(loop=0;loop<0x40000;loop+=0x8000)
     {
@@ -237,13 +237,13 @@ void cExpansion::WriteNorFlash(u32 address,const u8* buffer,u32 size)
   u32 j;
   v1=0;v2=1;
   u32 off=0;
-  if((address>=0x1000000)&&(iId==0x227E2202))
+  if ((address>=0x1000000)&&(iId==0x227E2202))
   {
     off=0x1000000;
   }
   else
     off=0;
-  if(size>0x4000)
+  if (size>0x4000)
   {
     size2=size>>1;
     lop=2;
@@ -256,7 +256,7 @@ void cExpansion::WriteNorFlash(u32 address,const u8* buffer,u32 size)
   mapaddress=address;
   for(j=0;j<lop;j++)
   {
-    if(j!=0)
+    if (j!=0)
     {
       mapaddress+=0x4000;
       buf=(vu16*)(buffer+0x4000);
@@ -332,16 +332,16 @@ void cExpansion::ReadNorFlashID(void)
 
   id1=*((vu16*)(FlashBase+0x2));
   id2=*((vu16*)(FlashBase+0x2002));
-  if((id1!=0x227E)||(id2!=0x227E)) return;
+  if ((id1!=0x227E)||(id2!=0x227E)) return;
 
   id1=*((vu16*)(FlashBase+0xE*2));
   id2=*((vu16*)(FlashBase+0x100e*2));
-  if(id1==0x2218&&id2==0x2218) //H6H6
+  if (id1==0x2218&&id2==0x2218) //H6H6
   {
     iId=0x227E2218;
     return;
   }
-  if((id1==0x2202&&id2==0x2202)
+  if ((id1==0x2202&&id2==0x2202)
    ||(id1==0x2202&&id2==0x2220)
    ||(id1==0x2202&&id2==0x2215)) //VZ064
   {
@@ -354,7 +354,7 @@ void cExpansion::ChipReset(void)
 {
   *((vu16*)(FlashBase))=0xF0;
   *((vu16*)(FlashBase+0x1000*2))=0xF0;
-  if(iId==0x227E2202)
+  if (iId==0x227E2202)
   {
     *((vu16*)(FlashBase+0x1000000))=0xF0 ;
     *((vu16*)(FlashBase+0x1000000+0x1000*2))=0xF0;

@@ -81,11 +81,11 @@ void ReturntoDSiMenu() {
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
-	if(fifoGetValue32(FIFO_USER_04) == 10) {
+	if (fifoGetValue32(FIFO_USER_04) == 10) {
 		my_i2cWriteRegister(0x4A, 0x71, 0x01);
 		fifoSendValue32(FIFO_USER_04, 0);
 	}
-	if(fifoCheckValue32(FIFO_USER_01)) {
+	if (fifoCheckValue32(FIFO_USER_01)) {
 		soundFadeOut();
 	} else {
 		soundVolume = 127;
@@ -162,7 +162,7 @@ TWL_CODE void getConsoleID(void) {
 		for(int j=0;j<256;j++){
 			*(key3+i)=j & 0xFF;
 			aes(in, scratch, iv, 2);
-			if(memcmp(scratch, base, 16)==0){
+			if (memcmp(scratch, base, 16)==0){
 				out[i]=j;
 				//hit++;
 				break;
@@ -241,7 +241,7 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, status);
 
 	if (SNDEXCNT == 0) {
-		if(pmBacklight & 0xF0) { // DS Lite
+		if (pmBacklight & 0xF0) { // DS Lite
 			int backlightLevel = pmBacklight & 3; // Brightness
 			*(int*)0x02003000 = backlightLevel;
 		}

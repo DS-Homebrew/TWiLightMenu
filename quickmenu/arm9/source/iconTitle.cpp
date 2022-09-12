@@ -136,7 +136,7 @@ void iconTitleInit()
 static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 {
 	int PY = 32;
-	if(twl) PY = 32*8;
+	if (twl) PY = 32*8;
 	const int PX = 16;
 	const int TILE_SIZE_Y = 8;
 	const int TILE_SIZE_X = 4;
@@ -159,7 +159,7 @@ void loadIcon(int num, u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 
 	int Ysize = 32;
 	int textureSizeY = TEXTURE_SIZE_32;
 	loadIcon_loopTimes = 1;
-	if(twl) {
+	if (twl) {
 		Ysize = 256;
 		textureSizeY = TEXTURE_SIZE_256;
 		loadIcon_loopTimes = 8;
@@ -744,14 +744,14 @@ void getGameInfo(int num, bool isDir, const char* name)
 		if (customIcon[num]) {
 			customIcon[num] = 2; // custom icon is a banner bin
 			FILE *file = fopen(customIconPath, "rb");
-			if(file) {
+			if (file) {
 				size_t read = fread(&ndsBanner, 1, sizeof(sNDSBannerExt), file);
 				fclose(file);
 
-				if(read >= NDS_BANNER_SIZE_ORIGINAL) {
+				if (read >= NDS_BANNER_SIZE_ORIGINAL) {
 					customIconGood = true;
 
-					if(ms().animateDsiIcons && read == NDS_BANNER_SIZE_DSi) {
+					if (ms().animateDsiIcons && read == NDS_BANNER_SIZE_DSi) {
 						u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
 						if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
 							bnriconisDSi[num] = true;
@@ -1112,7 +1112,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			return;
 		}
 		// banner sequence
-		if(ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
 			if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
 				grabBannerSequence(num);
@@ -1252,17 +1252,17 @@ void titleUpdate(int num, bool top, bool isDir, const char* name)
 
 		for(uint i = 0; i < lines.size(); i++) {
 			int width = calcSmallFontWidth(lines[i]);
-			if(width > 140) {
+			if (width > 140) {
 				int mid = lines[i].length() / 2;
 				bool foundSpace = false;
 				for(uint j = 0; j < lines[i].length() / 2; j++) {
-					if(lines[i][mid + j] == ' ') {
+					if (lines[i][mid + j] == ' ') {
 						lines.insert(lines.begin() + i, lines[i].substr(0, mid + j));
 						lines[i + 1] = lines[i + 1].substr(mid + j + 1);
 						i--;
 						foundSpace = true;
 						break;
-					} else if(lines[i][mid - j] == ' ') {
+					} else if (lines[i][mid - j] == ' ') {
 						lines.insert(lines.begin() + i, lines[i].substr(0, mid - j));
 						lines[i + 1] = lines[i + 1].substr(mid - j + 1);
 						i--;
@@ -1270,7 +1270,7 @@ void titleUpdate(int num, bool top, bool isDir, const char* name)
 						break;
 					}
 				}
-				if(!foundSpace) {
+				if (!foundSpace) {
 					lines.insert(lines.begin() + i, lines[i].substr(0, mid));
 					lines[i + 1] = lines[i + 1].substr(mid);
 					i--;

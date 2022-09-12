@@ -94,9 +94,9 @@ class Gif {
 public:
 	static void timerHandler(void);
 
-	Gif() {}
-	Gif(const char *path, bool top, bool animate, bool forceDecompress) { load(path, top, animate, forceDecompress); }
-	~Gif() {}
+	Gif () {}
+	Gif (const char *path, bool top, bool animate, bool forceDecompress) { load(path, top, animate, forceDecompress); }
+	~Gif () {}
 
 	bool load(const char *path, bool top, bool animate, bool forceDecompress);
 

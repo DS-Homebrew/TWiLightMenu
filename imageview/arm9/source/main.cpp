@@ -77,7 +77,7 @@ void loadROMselect() {
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
 	for(std::string_view extension : extensions) {
-		if(strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
+		if (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
 			return true;
 		}
 	}

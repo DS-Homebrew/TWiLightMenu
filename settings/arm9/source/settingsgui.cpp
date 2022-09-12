@@ -139,7 +139,7 @@ void SettingsGUI::draw()
     drawTopText();
 
     // If the language is set to RTL, mirror everything
-    if(ms().rtl()) {
+    if (ms().rtl()) {
         printLarge(false, SCREEN_WIDTH - 6, 1, titleDisplayLength>=60*4 ? STR_SELECT_SEE_DESC_VER : _pages[_selectedPage].title().c_str(), Alignment::right);
 
         for (int i = _topCursor; i < _bottomCursor; i++)
@@ -200,14 +200,14 @@ void SettingsGUI::setTopText(const std::string &text)
         words.push_back(_topTextStr.substr(0, pos));
         _topTextStr = _topTextStr.substr(pos + 1);
     }
-    if(_topTextStr.size())
+    if (_topTextStr.size())
         words.push_back(_topTextStr);
     std::u16string temp;
     for(auto word : words) {
         // Split word if the word is too long for a line
         int width = calcSmallFontWidth(word);
-        if(width > 240) {
-            if(temp.length()) {
+        if (width > 240) {
+            if (temp.length()) {
                 _topText += temp + u"\n";
                 _topTextLines++;
                 temp = u"";
@@ -221,7 +221,7 @@ void SettingsGUI::setTopText(const std::string &text)
         }
 
         width = calcSmallFontWidth(temp + u" " + word);
-        if(width > 240) {
+        if (width > 240) {
             _topText += temp + u"\n";
             _topTextLines++;
             temp = word;
@@ -229,7 +229,7 @@ void SettingsGUI::setTopText(const std::string &text)
             temp += u" " + word;
         }
     }
-    if(temp.size()) {
+    if (temp.size()) {
         _topText += temp;
         _topTextLines++;
     }
@@ -247,7 +247,7 @@ void SettingsGUI::drawSub()
     drawTopText();
     int selected = _subOption->selected();
 
-    if(ms().rtl()) {
+    if (ms().rtl()) {
         printLarge(false, SCREEN_WIDTH - 6, 1, titleDisplayLength>=60*4 ? STR_SELECT_SEE_DESC_VER : _subOption->displayName().c_str(), Alignment::right);
         for (int i = _subTopCursor; i < _subBottomCursor; i++)
         {
@@ -282,12 +282,12 @@ void SettingsGUI::drawSub()
 
 void SettingsGUI::drawTopText()
 {
-    if(ms().rtl()) {
+    if (ms().rtl()) {
         printSmall(true, SCREEN_WIDTH - 4, 0, titleDisplayLength>=60*4 ? STR_SELECT_SETTING_LIST : STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile], Alignment::right);
     } else {
         printSmall(true, 4, 0, titleDisplayLength>=60*4 ? STR_SELECT_SETTING_LIST : STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile]);
     }
-    if(_topTextLines < 6 || currentTheme == 4)
+    if (_topTextLines < 6 || currentTheme == 4)
         printSmall(true, 256 - 4, 174, VER_NUMBER, Alignment::right);
     printSmall(true, 0, (currentTheme == 4 ? 96 : 138) - (calcSmallFontHeight(_topText) / 2), _topText, Alignment::center);
 }

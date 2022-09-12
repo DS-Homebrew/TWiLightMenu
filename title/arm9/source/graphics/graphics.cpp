@@ -80,7 +80,7 @@ u16 convertVramColorToGrayscale(u16 val) {
 }
 
 void vBlankHandler() {
-	if(fadeType == true) {
+	if (fadeType == true) {
 		screenBrightness--;
 		if (screenBrightness < 0) screenBrightness = 0;
 	} else {

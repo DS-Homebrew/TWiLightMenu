@@ -115,12 +115,12 @@ bool Button::processTouchMessage(const TouchMessage &msg)
             ret = true;
         }
     }
-    //    if( inputs.touchDown ) {
+    //    if ( inputs.touchDown ) {
     //        Point clickedPt( inputs.touchPt.px, inputs.touchPt.py );
     //        Rect myRect( _position.x, _position.y, _position.x + _size.x, _position.y + _size.y );
     ////        dbg_printf("%d %d %d %d, %d %d\n",
     ////            _position.x, _position.y, _position.x + _size.x, _position.y + _size.y, clickedPt.x, clickedPt.y );
-    //        if( myRect.surrounds( clickedPt ) ) {
+    //        if ( myRect.surrounds( clickedPt ) ) {
     //            //dbg_printf("in!\n");
     //            _state = down;
     //        } else {
@@ -152,7 +152,7 @@ ButtonDesc::ButtonDesc()
 
 ButtonDesc::~ButtonDesc()
 {
-    //if( NULL != _background )
+    //if ( NULL != _background )
     //    destroyBMP15( _background );
 }
 

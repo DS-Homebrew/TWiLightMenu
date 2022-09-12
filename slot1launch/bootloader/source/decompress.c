@@ -20,7 +20,7 @@
 /*static void decompressLZ77Backwards(u8* addr, u32 size) {
 	u32 len = *(u32*)(addr + size - 4) + size;
 	
-	if(len == size) {
+	if (len == size) {
 		size -= 12;
 	}
 		

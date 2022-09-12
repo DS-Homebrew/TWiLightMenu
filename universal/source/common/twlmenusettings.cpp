@@ -213,7 +213,7 @@ void TWLSettings::loadSettings()
 		cpcEmulator = ECpcAmEDS;
 	if (!(isDSiMode() && (access("sd:/", F_OK) == 0) && sys().arm7SCFGLocked())) {
 		mdEmulator = (TMegaDriveEmulator)settingsini.GetInt("SRLOADER", "SHOW_MDGEN", mdEmulator);
-		if(mdEmulator == 0) // 0 (don't show) is deprecated
+		if (mdEmulator == 0) // 0 (don't show) is deprecated
 			mdEmulator = EMegaDriveHybrid;
 	} else {
 		mdEmulator = EMegaDrivePico; // Use only PicoDriveTWL

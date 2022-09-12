@@ -78,7 +78,7 @@ static void initKey1Encryption (u8* cmdData, int iCardDevice) {
 	key1data.mmm = getRandomNumber() & 0x00000fff;
 	key1data.nnn = getRandomNumber() & 0x00000fff;
 
-    if(iCardDevice) //DSi
+    if (iCardDevice) //DSi
       cmdData[7]=0x3D;	// CARD_CMD_ACTIVATE_BF2
     else
       cmdData[7]=CARD_CMD_ACTIVATE_BF;
@@ -384,7 +384,7 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 	cardPolledTransfer(portFlagsKey1, NULL, 0, cmdData);
 
     //CycloDS doesn't like the dsi secure area being decrypted
-    if((ndsHeader->arm9romOffset != 0x4000) || secureArea[0] || secureArea[1])
+    if ((ndsHeader->arm9romOffset != 0x4000) || secureArea[0] || secureArea[1])
     {
 		decryptSecureArea (gameCode->key, secureArea, 0);
 	}

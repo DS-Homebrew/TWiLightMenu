@@ -66,7 +66,7 @@ bool CheatCodelist::parse(const std::string& aFileName)
 {
   bool res=false;
   u32 romcrc32,gamecode;
-  if(romData(aFileName,gamecode,romcrc32))
+  if (romData(aFileName,gamecode,romcrc32))
   {
     const char* usrcheatPath = (sdFound() || !ms().secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
     loadPerGameSettings(aFileName.substr(aFileName.find_last_of('/') + 1));
@@ -80,7 +80,7 @@ bool CheatCodelist::parse(const std::string& aFileName)
 		}
 	}
     FILE* dat=fopen(usrcheatPath,"rb");
-    if(dat)
+    if (dat)
     {
       res=parseInternal(dat,gamecode,romcrc32);
       fclose(dat);
@@ -96,7 +96,7 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
   const char* KHeader="R4 CheatCode";
   char header[12];
   fread(header,12,1,aDat);
-  if(strncmp(KHeader,header,12)) return false;
+  if (strncmp(KHeader,header,12)) return false;
 
   sDatIndex idx,nidx;
 
@@ -112,13 +112,13 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
   {
     tonccpy(&idx,&nidx,sizeof(idx));
     fread(&nidx,sizeof(nidx),1,aDat);
-    if(gamecode==idx._gameCode&&crc32==idx._crc32)
+    if (gamecode==idx._gameCode&&crc32==idx._crc32)
     {
       aSize=((nidx._offset)?nidx._offset:fileSize)-idx._offset;
       aPos=idx._offset;
       done=true;
     }
-    if(!nidx._offset) done=true;
+    if (!nidx._offset) done=true;
   }
   return (aPos&&aSize);
 }
@@ -130,13 +130,13 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
   _data.clear();
 
   long dataPos; size_t dataSize;
-  if(!searchCheatData(aDat,gamecode,crc32,dataPos,dataSize)) return false;
+  if (!searchCheatData(aDat,gamecode,crc32,dataPos,dataSize)) return false;
   fseek(aDat,dataPos,SEEK_SET);
 
   // dbg_printf("record found: %d\n",dataSize);
 
   char* buffer=(char*)malloc(dataSize);
-  if(!buffer) return false;
+  if (!buffer) return false;
   fread(buffer,dataSize,1,aDat);
   char* gameTitle=buffer;
 
@@ -152,10 +152,10 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
     char* folderName=NULL;
     char* folderNote=NULL;
     u32 flagItem=0;
-    if((*ccode>>28)&1)
+    if ((*ccode>>28)&1)
     {
       flagItem|=cParsedItem::EInFolder;
-      if((*ccode>>24)==0x11) flagItem|=cParsedItem::EOne;
+      if ((*ccode>>24)==0x11) flagItem|=cParsedItem::EOne;
       folderCount=*ccode&0x00ffffff;
       folderName=(char*)((u32)ccode+4);
       folderNote=(char*)((u32)folderName+strlen(folderName)+1);
@@ -172,10 +172,10 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
       u32* cheatData=(u32*)(((u32)cheatNote+strlen(cheatNote)+1+3)&~3);
       u32 cheatDataLen=*cheatData++;
 
-      if(cheatDataLen)
+      if (cheatDataLen)
       {
         _data.push_back(cParsedItem(cheatName,cheatNote,flagItem|((*ccode&0xff000000)?selectValue:0),dataPos+(((char*)ccode+3)-buffer)));
-        if((*ccode&0xff000000)&&(flagItem&cParsedItem::EOne)) selectValue=0;
+        if ((*ccode&0xff000000)&&(flagItem&cParsedItem::EOne)) selectValue=0;
         _data.back()._cheat.resize(cheatDataLen);
         tonccpy(_data.back()._cheat.data(),cheatData,cheatDataLen*4);
       }
@@ -203,7 +203,7 @@ void CheatCodelist::generateList(void)
     _indexes.push_back(itr-_data.begin());
     u32 flags=(*itr)._flags;
     ++itr;
-    if((flags&cParsedItem::EFolder)&&(flags&cParsedItem::EOpen)==0)
+    if ((flags&cParsedItem::EFolder)&&(flags&cParsedItem::EOpen)==0)
     {
       while(((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end()) ++itr;
     }
@@ -215,7 +215,7 @@ void CheatCodelist::deselectFolder(size_t anIndex)
   std::vector<cParsedItem>::iterator itr=_data.begin()+anIndex;
   while(--itr>=_data.begin())
   {
-    if((*itr)._flags&cParsedItem::EFolder)
+    if ((*itr)._flags&cParsedItem::EFolder)
     {
       ++itr;
       break;
@@ -232,10 +232,10 @@ bool CheatCodelist::romData(const std::string& aFileName,u32& aGameCode,u32& aCr
 {
   bool res=false;
   FILE* rom=fopen(aFileName.c_str(),"rb");
-  if(rom)
+  if (rom)
   {
     u8 header[512];
-    if(1==fread(header,sizeof(header),1,rom))
+    if (1==fread(header,sizeof(header),1,rom))
     {
       aCrc32=crc32(header,sizeof(header));
       aGameCode=gamecode((const char*)(header+12));
@@ -251,7 +251,7 @@ std::vector<u32> CheatCodelist::getCheats()
   std::vector<u32> cheats;
   for(uint i=0;i<_data.size();i++)
   {
-    if(_data[i]._flags&cParsedItem::ESelected)
+    if (_data[i]._flags&cParsedItem::ESelected)
     {
       cheats.insert(cheats.end(),_data[i]._cheat.begin(),_data[i]._cheat.end());
     }
@@ -264,18 +264,18 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& lis
   printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
 
   // Print bottom text
-  if(list[curPos]->_comment != "") {
-    if(list[curPos]->_flags&cParsedItem::EFolder) {
+  if (list[curPos]->_comment != "") {
+    if (list[curPos]->_flags&cParsedItem::EFolder) {
       printSmall(false, 0, 160, STR_CHEATS_FOLDER_INFO, Alignment::center, FontPalette::dialog);
-    } else if(list[curPos]->_flags&cParsedItem::ESelected) {
+    } else if (list[curPos]->_flags&cParsedItem::ESelected) {
       printSmall(false, 0, 160, STR_CHEATS_SELECTED_INFO, Alignment::center, FontPalette::dialog);
     } else {
       printSmall(false, 0, 160, STR_CHEATS_DESELECTED_INFO, Alignment::center, FontPalette::dialog);
     }
   } else {
-    if(list[curPos]->_flags&cParsedItem::EFolder) {
+    if (list[curPos]->_flags&cParsedItem::EFolder) {
       printSmall(false, 0, 160, STR_CHEATS_FOLDER, Alignment::center, FontPalette::dialog);
-    } else if(list[curPos]->_flags&cParsedItem::ESelected) {
+    } else if (list[curPos]->_flags&cParsedItem::ESelected) {
       printSmall(false, 0, 160, STR_CHEATS_SELECTED, Alignment::center, FontPalette::dialog);
     } else {
       printSmall(false, 0, 160, STR_CHEATS_DESELECTED, Alignment::center, FontPalette::dialog);
@@ -287,11 +287,11 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& lis
 
   // Print the list
   for(uint i=0;i<8 && i<list.size();i++) {
-    if(list[screenPos+i]->_flags&cParsedItem::EFolder) {
+    if (list[screenPos+i]->_flags&cParsedItem::EFolder) {
       printSmall(false, (ms().rtl() ? 256 - 15 : 15) + ((screenPos+i == curPos) ? 5 * rtlNegative : 0), 60+(i*12), ms().rtl() ? "<" : ">", align, FontPalette::dialog);
       printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title.substr((screenPos+i == curPos) ? scrollPos : 0, 30), align, FontPalette::dialog);
     } else {
-      if(list[screenPos+i]->_flags&cParsedItem::ESelected) {
+      if (list[screenPos+i]->_flags&cParsedItem::ESelected) {
         printSmall(false, (ms().rtl() ? 256 - 13 : 13), 60+(i*12), "x", align, FontPalette::dialog);
       }
       printSmall(false, (ms().rtl() ? 256 - 21 : 21) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), "-", align, FontPalette::dialog);
@@ -317,7 +317,7 @@ void CheatCodelist::selectCheats(std::string filename)
 
   bool cheatsFound = true;
   // If no cheats are found
-  if(_data.size() == 0) {
+  if (_data.size() == 0) {
     snd().playWrong();
     cheatsFound = false;
     clearText();
@@ -330,7 +330,7 @@ void CheatCodelist::selectCheats(std::string filename)
       scanKeys();
       pressed = keysDownRepeat();
       bgOperations(true);
-      if(pressed & KEY_B) {
+      if (pressed & KEY_B) {
         snd().playBack();
         break;
       }
@@ -340,7 +340,7 @@ void CheatCodelist::selectCheats(std::string filename)
   // Make list of all cheats not in folders and folders
   std::vector<CheatCodelist::cParsedItem *> currentList;
   for(uint i=0;i<_data.size();i++) {
-    if(!(_data[i]._flags&cParsedItem::EInFolder)) {
+    if (!(_data[i]._flags&cParsedItem::EInFolder)) {
       currentList.push_back(&_data[i]);
     }
   }
@@ -352,9 +352,9 @@ void CheatCodelist::selectCheats(std::string filename)
 
   while(cheatsFound) {
     // Scroll screen if needed
-    if(cheatWnd_cursorPosition < cheatWnd_screenPosition) {
+    if (cheatWnd_cursorPosition < cheatWnd_screenPosition) {
       cheatWnd_screenPosition = cheatWnd_cursorPosition;
-    } else if(cheatWnd_cursorPosition > cheatWnd_screenPosition + 8 - 1) {
+    } else if (cheatWnd_cursorPosition > cheatWnd_screenPosition + 8 - 1) {
       cheatWnd_screenPosition = cheatWnd_cursorPosition - 8 + 1;
     }
 
@@ -366,11 +366,11 @@ void CheatCodelist::selectCheats(std::string filename)
       scanKeys();
       pressed = keysDown();
       held = keysDownRepeat();
-      if(currentList[cheatWnd_cursorPosition]->_title.length() > 30u) {
-        if(cheatWnd_scrollTimer > 0) {
+      if (currentList[cheatWnd_cursorPosition]->_title.length() > 30u) {
+        if (cheatWnd_scrollTimer > 0) {
           cheatWnd_scrollTimer--;
         } else {
-          if((cheatWnd_scrollDirection == 1 && cheatWnd_scrollPosition < (int)currentList[cheatWnd_cursorPosition]->_title.length() - 30)
+          if ((cheatWnd_scrollDirection == 1 && cheatWnd_scrollPosition < (int)currentList[cheatWnd_cursorPosition]->_title.length() - 30)
           || (cheatWnd_scrollDirection == -1 && cheatWnd_scrollPosition > 0)) {
             cheatWnd_scrollPosition += cheatWnd_scrollDirection;
             cheatWnd_scrollTimer = 6;
@@ -387,37 +387,37 @@ void CheatCodelist::selectCheats(std::string filename)
       bgOperations(true);
     } while(!pressed && !held);
 
-    if(held & KEY_UP) {
-      if(cheatWnd_cursorPosition>0) {
+    if (held & KEY_UP) {
+      if (cheatWnd_cursorPosition>0) {
         snd().playSelect();
         cheatWnd_cursorPosition--;
         cheatWnd_scrollTimer = 60;
         cheatWnd_scrollPosition = 0;
       }
-    } else if(held & KEY_DOWN) {
-      if(cheatWnd_cursorPosition<((int)currentList.size()-1)) {
+    } else if (held & KEY_DOWN) {
+      if (cheatWnd_cursorPosition<((int)currentList.size()-1)) {
         snd().playSelect();
         cheatWnd_cursorPosition++;
         cheatWnd_scrollTimer = 60;
         cheatWnd_scrollPosition = 0;
       }
-    } else if(held & KEY_LEFT) {
+    } else if (held & KEY_LEFT) {
       snd().playSelect();
-      if(cheatWnd_cursorPosition != 0) {
+      if (cheatWnd_cursorPosition != 0) {
         cheatWnd_cursorPosition -= (cheatWnd_cursorPosition > 8 ? 8 : cheatWnd_cursorPosition);
         cheatWnd_scrollTimer = 60;
         cheatWnd_scrollPosition = 0;
       }
-    } else if(held & KEY_RIGHT) {
+    } else if (held & KEY_RIGHT) {
       snd().playSelect();
-      if(cheatWnd_cursorPosition != (int)currentList.size() - 1) {
+      if (cheatWnd_cursorPosition != (int)currentList.size() - 1) {
         cheatWnd_cursorPosition += (cheatWnd_cursorPosition < (int)(currentList.size()-8) ? 8 : currentList.size()-cheatWnd_cursorPosition-1);
         cheatWnd_scrollTimer = 60;
         cheatWnd_scrollPosition = 0;
       }
-    } else if(pressed & KEY_A) {
+    } else if (pressed & KEY_A) {
       (ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
-      if(currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
+      if (currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
         uint i = std::distance(&_data[0], currentList[cheatWnd_cursorPosition]) + 1;
         currentList.clear();
         for(; !(_data[i]._flags & cParsedItem::EFolder) && i < _data.size(); i++) {
@@ -431,17 +431,17 @@ void CheatCodelist::selectCheats(std::string filename)
       } else {
         cParsedItem &cheat = *currentList[cheatWnd_cursorPosition];
         bool select = !(cheat._flags & cParsedItem::ESelected);
-        if(cheat._flags & cParsedItem::EOne)
+        if (cheat._flags & cParsedItem::EOne)
           deselectFolder(std::distance(&_data[0], currentList[cheatWnd_cursorPosition]));
-        if(select || !(cheat._flags & cParsedItem::EOne))
+        if (select || !(cheat._flags & cParsedItem::EOne))
           cheat._flags ^= cParsedItem::ESelected;
       }
-    } else if(pressed & KEY_B) {
+    } else if (pressed & KEY_B) {
       snd().playBack();
-      if(mainListCurPos != -1) {
+      if (mainListCurPos != -1) {
         currentList.clear();
         for(uint i=0;i<_data.size();i++) {
-          if(!(_data[i]._flags&cParsedItem::EInFolder)) {
+          if (!(_data[i]._flags&cParsedItem::EInFolder)) {
             currentList.push_back(&_data[i]);
           }
         }
@@ -453,7 +453,7 @@ void CheatCodelist::selectCheats(std::string filename)
       } else {
         break;
       }
-    } else if(pressed & KEY_X) {
+    } else if (pressed & KEY_X) {
       snd().playLaunch();
       clearText();
       printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
@@ -461,8 +461,8 @@ void CheatCodelist::selectCheats(std::string filename)
 	  updateText(false);
       onGenerate();
       break;
-    } else if(pressed & KEY_Y) {
-      if(currentList[cheatWnd_cursorPosition]->_comment != "") {
+    } else if (pressed & KEY_Y) {
+      if (currentList[cheatWnd_cursorPosition]->_comment != "") {
         (ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
         clearText();
         printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
@@ -477,14 +477,14 @@ void CheatCodelist::selectCheats(std::string filename)
           words.push_back(_topTextStr.substr(0, pos));
           _topTextStr = _topTextStr.substr(pos + 1);
         }
-        if(_topTextStr.size())
+        if (_topTextStr.size())
           words.push_back(_topTextStr);
         std::string temp;
         for(auto word : words) {
           // Split word if the word is too long for a line
           int width = calcSmallFontWidth(word);
-          if(width > 240) {
-            if(temp.length())
+          if (width > 240) {
+            if (temp.length())
               _topText += temp + '\n';
             for(int i = 0; i < width/240; i++) {
               word.insert((float)((i + 1) * word.length()) / ((width/240) + 1), "\n");
@@ -494,14 +494,14 @@ void CheatCodelist::selectCheats(std::string filename)
           }
 
           width = calcSmallFontWidth(temp + " " + word);
-          if(width > 240) {
+          if (width > 240) {
             _topText += temp + '\n';
             temp = word;
           } else {
             temp += " " + word;
           }
         }
-        if(temp.size())
+        if (temp.size())
           _topText += temp;
         
         // Print comment
@@ -515,13 +515,13 @@ void CheatCodelist::selectCheats(std::string filename)
           scanKeys();
           pressed = keysDown();
           bgOperations(true);
-          if(pressed & KEY_B) {
+          if (pressed & KEY_B) {
             snd().playBack();
             break;
           }
         }
       }
-    } else if(pressed & KEY_L) {
+    } else if (pressed & KEY_L) {
       // Delect all in the actual data so it doesn't just get the folder
       for(auto itr = _data.begin(); itr != _data.end(); itr++) {
         (*itr)._flags &= ~cParsedItem::ESelected;
@@ -537,13 +537,13 @@ void CheatCodelist::selectCheats(std::string filename)
 static void updateDB(u8 value,u32 offset,FILE* db)
 {
   u8 oldvalue;
-  if(!db) return;
-  if(!offset) return;
-  if(fseek(db,offset,SEEK_SET)) return;
-  if(fread(&oldvalue,sizeof(oldvalue),1,db)!=1) return;
-  if(oldvalue!=value)
+  if (!db) return;
+  if (!offset) return;
+  if (fseek(db,offset,SEEK_SET)) return;
+  if (fread(&oldvalue,sizeof(oldvalue),1,db)!=1) return;
+  if (oldvalue!=value)
   {
-    if(fseek(db,offset,SEEK_SET)) return;
+    if (fseek(db,offset,SEEK_SET)) return;
     fwrite(&value,sizeof(value),1,db);
   }
 }
@@ -561,7 +561,7 @@ void CheatCodelist::onGenerate(void)
 		}
 	}
   FILE* db=fopen(usrcheatPath,"r+b");
-  if(db)
+  if (db)
   {
     std::vector<cParsedItem>::iterator itr=_data.begin();
     while(itr!=_data.end())
@@ -575,7 +575,7 @@ void CheatCodelist::onGenerate(void)
 
 void CheatCodelist::writeCheatsToFile(const char *path) {
   FILE *file = fopen(path, "wb");
-  if(file) {
+  if (file) {
     std::vector<u32> cheats(getCheats());
     fwrite(cheats.data(),4,cheats.size(),file);
     fwrite("\0\0\0\xCF",4,1,file);

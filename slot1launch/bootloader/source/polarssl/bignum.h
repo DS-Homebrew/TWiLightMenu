@@ -45,7 +45,7 @@
 #define MBEDTLS_ERR_MPI_NOT_ACCEPTABLE                    -0x000E  /**< The input arguments are not acceptable. */
 #define MBEDTLS_ERR_MPI_ALLOC_FAILED                      -0x0010  /**< Memory allocation failed. */
 
-#define MBEDTLS_MPI_CHK(f) do { if( ( ret = f ) != 0 ) goto cleanup; } while( 0 )
+#define MBEDTLS_MPI_CHK(f) do { if ( ( ret = f ) != 0 ) goto cleanup; } while( 0 )
 
 /*
  * Maximum size MPIs are allowed to grow to in number of limbs.
@@ -252,7 +252,7 @@ void mbedtls_mpi_swap( mbedtls_mpi *X, mbedtls_mpi *Y );
  *                 MBEDTLS_ERR_MPI_ALLOC_FAILED if memory allocation failed,
  *
  * \note           This function is equivalent to
- *                      if( assign ) mbedtls_mpi_copy( X, Y );
+ *                      if ( assign ) mbedtls_mpi_copy( X, Y );
  *                 except that it avoids leaking any information about whether
  *                 the assignment was done or not (the above code may leak
  *                 information through branch prediction and/or memory access
@@ -271,7 +271,7 @@ int mbedtls_mpi_safe_cond_assign( mbedtls_mpi *X, const mbedtls_mpi *Y, unsigned
  *                 MBEDTLS_ERR_MPI_ALLOC_FAILED if memory allocation failed,
  *
  * \note           This function is equivalent to
- *                      if( assign ) mbedtls_mpi_swap( X, Y );
+ *                      if ( assign ) mbedtls_mpi_swap( X, Y );
  *                 except that it avoids leaking any information about whether
  *                 the assignment was done or not (the above code may leak
  *                 information through branch prediction and/or memory access

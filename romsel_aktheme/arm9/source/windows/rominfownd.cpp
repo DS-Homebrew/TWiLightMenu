@@ -398,7 +398,7 @@ void RomInfoWnd::pressGameSettings(void)
 
 void RomInfoWnd::pressCheats(void)
 {
-  if(!isDSiMode()||!_romInfo.isDSRom()||_romInfo.isHomebrew()) return;
+  if (!isDSiMode()||!_romInfo.isDSRom()||_romInfo.isHomebrew()) return;
   showCheats(_fullName);
 }
 
@@ -408,7 +408,7 @@ void RomInfoWnd::showCheats(const std::string& aFileName)
   u32 h=179;
 
   CheatWnd cheatWnd((256-w)/2,(192-h)/2,w,h,NULL,LANG("cheats","title"));
-  if(cheatWnd.parse(aFileName)) cheatWnd.doModal();
+  if (cheatWnd.parse(aFileName)) cheatWnd.doModal();
 }
 
 Window &RomInfoWnd::loadAppearance(const std::string &aFileName)

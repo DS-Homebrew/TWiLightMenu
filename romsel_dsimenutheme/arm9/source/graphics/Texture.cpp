@@ -10,9 +10,9 @@ Texture::Texture(const std::string &filePath, const std::string &fallback)
 	FILE *file;
 	for(const char *extension : extensions) {
 		file = fopen((filePath + extension).c_str(), "rb");
-		if(file) {
+		if (file) {
 			_type = findType(file);
-			if(_type == TextureType::Unknown) {
+			if (_type == TextureType::Unknown) {
 				fclose(file);
 
 			} else {
@@ -64,9 +64,9 @@ TextureType Texture::findType(FILE *file) {
 
 	if (((u16)magic[0] & 0xffff) == BMP_ID('B', 'M')) {
 		// Only 4 and 16 bit are supported currently
-		if((magic[7] & 0xFFFF) == 4)
+		if ((magic[7] & 0xFFFF) == 4)
 			return TextureType::PalettedBmp;
-		else if((magic[7] & 0xFFFF) == 16)
+		else if ((magic[7] & 0xFFFF) == 16)
 			return TextureType::Bmp;
 		return TextureType::Unknown;
 	} else if (magic[0] == CHUNK_ID('\x89', 'P', 'N', 'G')) {
@@ -116,11 +116,11 @@ void Texture::loadBitmap(FILE *file) noexcept {
 	_texture = std::make_unique<u16[]>(_texLength);
 
 	// Load palette
-	if(bitDepth <= 8) {
+	if (bitDepth <= 8) {
 		fseek(file, sizeof(u32) * 2, SEEK_CUR);
 		u32 paletteLength;
 		fread(&paletteLength, sizeof(u32), 1, file);
-		if(paletteLength == 0)
+		if (paletteLength == 0)
 			_paletteLength = 1 << bitDepth;
 		else
 			_paletteLength = paletteLength;
@@ -144,11 +144,11 @@ void Texture::loadBitmap(FILE *file) noexcept {
 		fseek(file, offset + ((_texHeight - y - 1) * _texWidth) * bitDepth / 8, SEEK_SET);
 		fread((u8 *)_texture.get() + (y * _texWidth) * bitDepth / 8, 1, _texWidth * bitDepth / 8, file);
 
-		if(bitDepth == 16) { // Filter
+		if (bitDepth == 16) { // Filter
 			for(uint x = 0; x < _texWidth; x++) {
 				_texture[(y * _texWidth) + x] = bmpToDS(_texture[(y * _texWidth) + x]);
 			}
-		} else if(bitDepth == 4) { // Swap nibbles
+		} else if (bitDepth == 4) { // Swap nibbles
 			for(uint x = 0; x < _texWidth; x += 2) {
 				u8 *px = (u8 *)_texture.get() + ((y * _texWidth) + x) / 2;
 				*px = *px << 4 | *px >> 4;
@@ -168,7 +168,7 @@ void Texture::loadPNG(const std::string &path) {
 	// Convert to DS bitmap format
 	_texture = std::make_unique<u16[]>(_texWidth * _texHeight);
 	for(uint i=0;i<buffer.size()/4;i++) {
-		if(buffer[(i * 4) + 3] == 0xFF) { // Only keep full opacity pixels
+		if (buffer[(i * 4) + 3] == 0xFF) { // Only keep full opacity pixels
 			_texture[i] = bmpToDS((buffer[i * 4] >> 3) << 10 | (buffer[(i * 4) + 1] >> 3) << 5 | buffer[(i * 4) + 2] >> 3);
 		}
 	}
@@ -243,7 +243,7 @@ void Texture::applyBitmapEffect(Texture::BitmapEffect effect) {
 
 u16 Texture::bmpToDS(u16 val) {
 	// Return 0 for #ff00ff
-	if((val & 0x7FFF) == 0x7C1F)
+	if ((val & 0x7FFF) == 0x7C1F)
 		return 0;
 
 	// int blfLevel = ms().blfLevel;

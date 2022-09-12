@@ -90,17 +90,17 @@ void loadPageList() {
 			DirEntry dirEntry;
 
 			struct dirent* pent = readdir(pdir);
-			if(pent == NULL) break;
+			if (pent == NULL) break;
 
 			stat(pent->d_name, &st);
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
-			if(dirEntry.name.substr(dirEntry.name.find_last_of(".") + 1) == "gif" && dirEntry.name.substr(0, 2) != "._") {
+			if (dirEntry.name.substr(dirEntry.name.find_last_of(".") + 1) == "gif" && dirEntry.name.substr(0, 2) != "._") {
 				char path[PATH_MAX] = {0};
 				getcwd(path, PATH_MAX);
 				manPagesList.push_back(dirEntry);
-			} else if((dirEntry.isDirectory) && (dirEntry.name.compare(".") != 0) && (dirEntry.name.compare("..") != 0)) {
+			} else if ((dirEntry.isDirectory) && (dirEntry.name.compare(".") != 0) && (dirEntry.name.compare("..") != 0)) {
 				chdir(dirEntry.name.c_str());
 				loadPageList();
 				chdir("..");
@@ -121,7 +121,7 @@ void loadPageInfo(std::string pagePath) {
 
 	for(int i=1;true;i++) {
 		std::string link = "LINK" + std::to_string(i);
-		if(pageIni.GetString(link,"DEST","NONE") == "NONE")
+		if (pageIni.GetString(link,"DEST","NONE") == "NONE")
 			break;
 
 		manPageLinks.emplace_back(pageIni.GetString(link,"DEST","NONE"),
@@ -281,7 +281,7 @@ int main(int argc, char **argv) {
 
 	InitSound();
 
-	if(ms().rtl()) {
+	if (ms().rtl()) {
 		manPageTitleX = 256 - manPageTitleX;
 		manPageTitleAlign = Alignment::right;
 	}
@@ -324,7 +324,7 @@ int main(int argc, char **argv) {
 		}
 
 		if (pressed & KEY_B) {
-			if(returnPage != -1) {
+			if (returnPage != -1) {
 				currentPage = returnPage;
 				returnPage = -1;
 				pageYpos = 0;
@@ -342,7 +342,7 @@ int main(int argc, char **argv) {
 			if (pageYpos > pageYsize-ySizeSub) pageYpos = pageYsize-ySizeSub;
 			pageScroll();
 		} else if (repeat & KEY_LEFT) {
-			if(currentPage > 0) {
+			if (currentPage > 0) {
 				pageYpos = 0;
 				currentPage--;
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
@@ -351,7 +351,7 @@ int main(int argc, char **argv) {
 				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 			}
 		} else if (repeat & KEY_RIGHT) {
-			if(currentPage < (int)manPagesList.size()-1) {
+			if (currentPage < (int)manPagesList.size()-1) {
 				pageYpos = 0;
 				currentPage++;
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
@@ -365,13 +365,13 @@ int main(int argc, char **argv) {
 				touchRead(&touch);
 			}
 			scanKeys();
-			if(keysHeld() & KEY_TOUCH) {
+			if (keysHeld() & KEY_TOUCH) {
 				touchStart = touch;
 				touchPosition prevTouch2 = touch;
 				while(1) {
 					touchRead(&touch);
 					scanKeys();
-					if(!(keysHeld() & KEY_TOUCH)) {
+					if (!(keysHeld() & KEY_TOUCH)) {
 						bool tapped = false;
 						int dY = (-(touchStart.py - prevTouch2.py));
 						while(!(dY < 0.25 && dY > -0.25)) {
@@ -396,7 +396,7 @@ int main(int argc, char **argv) {
 							dY = dY / 1.125;
 							swiWaitForVBlank();
 						}
-						if(tapped) {
+						if (tapped) {
 							touchStart = touch;
 							prevTouch2 = touch;
 							continue;
@@ -405,7 +405,7 @@ int main(int argc, char **argv) {
 						}
 					}
 
-					if(((pageYpos + touchStart.py - touch.py) > 0) && ((pageYpos + touchStart.py - touch.py) < (pageYsize - ySizeSub)))
+					if (((pageYpos + touchStart.py - touch.py) > 0) && ((pageYpos + touchStart.py - touch.py) < (pageYsize - ySizeSub)))
 						pageYpos += touchStart.py - touch.py;
 					pageScroll();
 
@@ -415,12 +415,12 @@ int main(int argc, char **argv) {
 				}
 			} else {
 				for(uint i=0;i<manPageLinks.size();i++) {
-					if(((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
+					if (((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
 						(((touchStart.py + pageYpos) >= manPageLinks[i].y - (ms().macroMode ? 0 : 176)) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - (ms().macroMode ? 0 : 176) + manPageLinks[i].h)))) {
 						pageYpos = 0;
 						returnPage = currentPage;
 						for(uint j=0;j<manPagesList.size();j++) {
-							if(manPagesList[j].name == (manPageLinks[i].dest + ".gif")) {
+							if (manPagesList[j].name == (manPageLinks[i].dest + ".gif")) {
 								currentPage = j;
 								break;
 							}

@@ -49,10 +49,10 @@ static std::string _srcFilename = "";
 
 bool loadFile(void * buffer, const std::string & filename, size_t offset, size_t & readCount)
 {
-    if("" == filename)
+    if ("" == filename)
         return false;
 
-    if(NULL == buffer) {
+    if (NULL == buffer) {
         dbg_printf("invalid buffer pointer\n");
         struct stat st;
         stat(filename.c_str(), &st);
@@ -61,7 +61,7 @@ bool loadFile(void * buffer, const std::string & filename, size_t offset, size_t
     }
 
     FILE * f = fopen(filename.c_str(), "rb");
-    if(NULL == f) {
+    if (NULL == f) {
         dbg_printf("file does not exist\n");
         readCount = 0;
         return false;
@@ -70,7 +70,7 @@ bool loadFile(void * buffer, const std::string & filename, size_t offset, size_t
     fseek(f, 0, SEEK_END);
     int fileSize = ftell(f);
 
-    if(-1 == fileSize) {
+    if (-1 == fileSize) {
         fclose(f);
         readCount = 0;
         return false;
@@ -81,7 +81,7 @@ bool loadFile(void * buffer, const std::string & filename, size_t offset, size_t
     fclose(f);
 
     readCount = readed;
-    if(readed != (size_t)fileSize-offset) {
+    if (readed != (size_t)fileSize-offset) {
         dbg_printf("fread fail: %d/%d\n", readed, fileSize);
         readCount = 0;
         return false;
@@ -92,11 +92,11 @@ bool loadFile(void * buffer, const std::string & filename, size_t offset, size_t
 
 int getFileSize(const std::string & filename)
 {
-    if("" == filename)
+    if ("" == filename)
         return -1;
 
     struct stat st;
-    if(-1 == stat(filename.c_str(), &st)) {
+    if (-1 == stat(filename.c_str(), &st)) {
         return -1;
     }
     return st.st_size;
@@ -112,7 +112,7 @@ bool copyFile(const std::string & srcFilename, const std::string & destFilename,
 {
     dbg_printf("copy %s to %s\n", srcFilename.c_str(), destFilename.c_str());
     struct stat srcSt;
-    if(0 != stat(srcFilename.c_str(), &srcSt)) {
+    if (0 != stat(srcFilename.c_str(), &srcSt)) {
         messageBox(NULL, LANG("copy file error","title"), LANG("copy file error","text"), MB_OK);
         return false;
     }
@@ -122,42 +122,42 @@ bool copyFile(const std::string & srcFilename, const std::string & destFilename,
     u64 freeSpace = 0;
 
     std::string destDiskName = destFilename.substr(0, 6);
-    if(destDiskName != "fat0:/" && destDiskName != "fat1:/") {
+    if (destDiskName != "fat0:/" && destDiskName != "fat1:/") {
 		destDiskName = destFilename.substr(0, 5);
-		if(destDiskName != "fat:/") {
+		if (destDiskName != "fat:/") {
 			destDiskName = destFilename.substr(0, 4);
-			if(destDiskName != "sd:/") {
+			if (destDiskName != "sd:/") {
 				return false;
 			}
 		}
 	}
 
-    if(!getDiskSpaceInfo(destDiskName, total, used, freeSpace)) {
+    if (!getDiskSpaceInfo(destDiskName, total, used, freeSpace)) {
         messageBox(NULL, LANG("no free space","title"), LANG("no free space","text"), MB_OK);
         return false;
     }
 	
 	dbg_printf("copyLength", copyLength);
 
-    if(0 == copyLength || copyLength > (size_t)srcSt.st_size)
+    if (0 == copyLength || copyLength > (size_t)srcSt.st_size)
         copyLength = srcSt.st_size;
 		
 	dbg_printf("copyLength %X", copyLength);
 		
 	dbg_printf("freeSpace %X", freeSpace);
 
-    if(freeSpace < copyLength) {
+    if (freeSpace < copyLength) {
         messageBox(NULL, LANG("no free space","title"), LANG("no free space","text"), MB_OK);
         return false;
     }
 
-    if(!silently) {
+    if (!silently) {
         struct stat destSt;
-        if(0 == stat(destFilename.c_str(), &destSt)) {
-            if(!(destSt.st_mode & S_IFDIR)) {
+        if (0 == stat(destFilename.c_str(), &destSt)) {
+            if (!(destSt.st_mode & S_IFDIR)) {
                 u32 ret = messageBox(NULL, LANG("copy file exists","title"),
                     LANG("copy file exists","text"), MB_YES | MB_NO);
-                if(ret != ID_YES)
+                if (ret != ID_YES)
                     return false;
             } else {
                 messageBox(NULL, LANG("copy dest is directory","title"),
@@ -169,7 +169,7 @@ bool copyFile(const std::string & srcFilename, const std::string & destFilename,
 
     u32 copyBufferSize=ms().CopyBufferSize();
     u8* copyBuffer=new(std::nothrow)u8[copyBufferSize];
-    if(copyBuffer==NULL)
+    if (copyBuffer==NULL)
     {
       messageBox(NULL,LANG("ram allocation","title"),LANG("ram allocation","memory allocation error"),MB_OK);
       return false;
@@ -195,19 +195,19 @@ bool copyFile(const std::string & srcFilename, const std::string & destFilename,
     dbg_printf("start: %s", datetime().getTimeString().c_str());
 
     u32 writeCount = copyLength / copyBufferSize;
-    if(copyLength % copyBufferSize)
+    if (copyLength % copyBufferSize)
         writeCount++;
     dbg_printf("write count %d\n", writeCount);
 
     u32 remain = copyLength;
 
     for(size_t i = 0; i < writeCount; ++i) {
-        if(stopCopying) {
+        if (stopCopying) {
             copyingFile = false;
             u32 ret = messageBox(&progressWnd(), LANG("stop copying file","title"),
                 LANG("stop copying file","text"), MB_YES | MB_NO);
 
-            if(ID_YES == ret) {
+            if (ID_YES == ret) {
 #ifdef USE_OPEN
                 close(rf);
                 close(wf);
@@ -232,7 +232,7 @@ bool copyFile(const std::string & srcFilename, const std::string & destFilename,
         u32 readed = fread(copyBuffer, 1, toRead, rf);
         u32 written = fwrite(copyBuffer, 1, (int)readed, wf);
 #endif
-        if(written != readed) {
+        if (written != readed) {
             dbg_printf("err %d\n", errno);
             dbg_printf("COPY FILE ERROR! %d/%d\n", readed, written);
             // todo: judge error types in errno
@@ -270,15 +270,15 @@ bool copyFile(const std::string & srcFilename, const std::string & destFilename,
 
 bool renameFile(const std::string & oldName, const std::string & newName)
 {
-    if("" == oldName || "" == newName)
+    if ("" == oldName || "" == newName)
         return false;
 
     struct stat destSt;
-    if(0 == stat(newName.c_str(), &destSt)) {
-        if(!(destSt.st_mode & S_IFDIR)) {
+    if (0 == stat(newName.c_str(), &destSt)) {
+        if (!(destSt.st_mode & S_IFDIR)) {
             u32 ret = messageBox(NULL, LANG("copy file exists","title"),
                 LANG("copy file exists","text"), MB_YES | MB_NO);
-            if(ret != ID_YES)
+            if (ret != ID_YES)
                 return false;
         } else {
             messageBox(NULL, LANG("move dest is directory","title"),
@@ -287,8 +287,8 @@ bool renameFile(const std::string & oldName, const std::string & newName)
         }
     }
 
-    if(0 != rename(oldName.c_str(), newName.c_str())) {
-        if(EEXIST == errno || EXDEV == errno) {
+    if (0 != rename(oldName.c_str(), newName.c_str())) {
+        if (EEXIST == errno || EXDEV == errno) {
             return (copyFile(oldName, newName, true));
         }
         return false;
@@ -299,35 +299,35 @@ bool renameFile(const std::string & oldName, const std::string & newName)
 
 bool deleteFile(const std::string & filename)
 {
-    if("" == filename)
+    if ("" == filename)
         return false;
 
     struct stat destSt;
-    if(0 != stat(filename.c_str(), &destSt)) {
+    if (0 != stat(filename.c_str(), &destSt)) {
         return false;
     }
 
     std::string confirmText = LANG("confirm delete file","text");
     std::string showname,realname;
-    if('/' == filename[filename.size()-1])
+    if ('/' == filename[filename.size()-1])
         showname = filename.substr(0, filename.size() - 1);
     else
         showname = filename;
     realname = showname;
 
     size_t slashPos = showname.find_last_of('/');
-    if(showname.npos != slashPos)
+    if (showname.npos != slashPos)
         showname = showname.substr(slashPos + 1);
 
     confirmText = formatString(confirmText.c_str(), showname.c_str());
     u32 result = messageBox(NULL, LANG("confirm delete file","title"), confirmText.c_str(), MB_YES | MB_NO);
-    if(result != ID_YES) {
+    if (result != ID_YES) {
         return false;
     }
 
     int ret = unlink(realname.c_str());
-    if(0 != ret) {
-        if(EACCES == errno) {
+    if (0 != ret) {
+        if (EACCES == errno) {
             messageBox(NULL, LANG("do not delete directory","title"), LANG("do not delete directory","text"), MB_OK);
         }
         return false;
@@ -338,11 +338,11 @@ bool deleteFile(const std::string & filename)
 
 bool hideFile(const std::string & filename)
 {
-    if("" == filename)
+    if ("" == filename)
         return false;
 
     struct stat destSt;
-    if(0 != stat(filename.c_str(), &destSt)) {
+    if (0 != stat(filename.c_str(), &destSt)) {
         return false;
     }
 
@@ -350,19 +350,19 @@ bool hideFile(const std::string & filename)
 
     std::string confirmText = LANG("confirm hide file", isHidden ? "unhide" : "hide");
     std::string showname,realname;
-    if('/' == filename[filename.size()-1])
+    if ('/' == filename[filename.size()-1])
         showname = filename.substr(0, filename.size() - 1);
     else
         showname = filename;
     realname = showname;
 
     size_t slashPos = showname.find_last_of('/');
-    if(showname.npos != slashPos)
+    if (showname.npos != slashPos)
         showname = showname.substr(slashPos + 1);
 
     confirmText = formatString(confirmText.c_str(), showname.c_str());
     u32 result = messageBox(NULL, LANG("confirm hide file","title"), confirmText.c_str(), MB_YES | MB_NO);
-    if(result != ID_YES) {
+    if (result != ID_YES) {
         return false;
     }
 
@@ -384,42 +384,42 @@ const std::string& getSrcFile(void)
 
 bool copyOrMoveFile(const std::string & destDir)
 {
-    if("" == _srcFilename)
+    if ("" == _srcFilename)
         return false;
 
     const char * pPath = _srcFilename.c_str();
     const char * pName = NULL;
     while(pPath < _srcFilename.c_str() + _srcFilename.size())
     {
-        if('/' == *pPath++)
+        if ('/' == *pPath++)
             pName = pPath;
     }
 
-    if(0 == *pName)
+    if (0 == *pName)
         return false;
 
     std::string destPath = destDir + pName;
-    if(destPath == _srcFilename)
+    if (destPath == _srcFilename)
         return false;
 
-    if(SFM_COPY == _srcFileMode)
+    if (SFM_COPY == _srcFileMode)
     {
         u32 copyLength = 0;
 
-        // if(ms().romTrim)    {
+        // if (ms().romTrim)    {
         //     std::string extName;
         //     size_t lastDotPos = _srcFilename.find_last_of('.');
-        //     if(_srcFilename.npos != lastDotPos)
+        //     if (_srcFilename.npos != lastDotPos)
         //         extName = _srcFilename.substr(lastDotPos);
         //     else
         //         extName = "";
         //     for(size_t i = 0; i < extName.size(); ++i)
         //         extName[i] = tolower(extName[i]);
 
-        //     if(".nds" == extName) {
+        //     if (".nds" == extName) {
         //         DSRomInfo info;
         //         info.MayBeDSRom(_srcFilename);
-        //         if(info.isDSRom() && !info.isHomebrew()) {
+        //         if (info.isDSRom() && !info.isHomebrew()) {
         //             FILE * f = fopen(_srcFilename.c_str(), "rb");
         //             fseek(f, 0x80, SEEK_SET);
         //             fread(&copyLength, 1, 4, f);
@@ -430,16 +430,16 @@ bool copyOrMoveFile(const std::string & destDir)
         // }
 
         bool copyOK = copyFile(_srcFilename, destPath, false, copyLength);
-        if(copyOK) {
+        if (copyOK) {
             _srcFilename = "";
         }
         return copyOK;
     }
 
-    if(SFM_CUT == _srcFileMode)
+    if (SFM_CUT == _srcFileMode)
     {
         bool moveOK = renameFile(_srcFilename, destPath);
-        if(moveOK) {
+        if (moveOK) {
             // cFavorites::UpdateFavorites(_srcFilename,destPath);
             _srcFilename = "";
         }
@@ -450,15 +450,15 @@ bool copyOrMoveFile(const std::string & destDir)
 
 // bool getDirSize(const std::string & path, bool includeSubdirs, u64 * dirSize)
 // {
-//     if("" == path)
+//     if ("" == path)
 //         return false;
 
 //     u64 size = 0;
 
 //     std::string dirPath = path;
-//     if(dirPath[dirPath.size()-1] != '/')
+//     if (dirPath[dirPath.size()-1] != '/')
 //         dirPath += "/";
-//     if(dirPath.size() > PATH_MAX)
+//     if (dirPath.size() > PATH_MAX)
 //         return false;
 
 //     DIR *dir = NULL;
@@ -487,7 +487,7 @@ bool copyOrMoveFile(const std::string & destDir)
 //             u64 subDirSize = 0;
 //             bool succ = getDirSize(dirPath + filename, includeSubdirs, &subDirSize);
 //             /* ignore failure in subdirs */
-//             if(succ) {
+//             if (succ) {
 //                 size += subDirSize;
 //             }
 //         }
@@ -500,7 +500,7 @@ bool copyOrMoveFile(const std::string & destDir)
 
 // static bool getDiskFromString(const std::string& diskName,u32& disk)
 // {
-//   if(tolower(diskName[0])=='f'&&tolower(diskName[1])=='a'&&tolower(diskName[2])=='t'&&(diskName[3]=='0'||diskName[3]=='1')&&diskName[4]==':')
+//   if (tolower(diskName[0])=='f'&&tolower(diskName[1])=='a'&&tolower(diskName[2])=='t'&&(diskName[3]=='0'||diskName[3]=='1')&&diskName[4]==':')
 //   {
 //     disk=diskName[3]-'0';
 //     return true;
@@ -511,7 +511,7 @@ bool copyOrMoveFile(const std::string & destDir)
 // static bool getDiskTotalSpace(u32 disk,u64& diskSpace)
 // {
 //   u32 clusters,clusterSize;
-//   if(ELM_ClusterSizeFromDisk(disk,&clusterSize)&&ELM_ClustersFromDisk(disk,&clusters))
+//   if (ELM_ClusterSizeFromDisk(disk,&clusterSize)&&ELM_ClustersFromDisk(disk,&clusters))
 //   {
 //     diskSpace=(u64)clusters*(u64)clusterSize;
 //     return true;
@@ -522,7 +522,7 @@ bool copyOrMoveFile(const std::string & destDir)
 // static bool getDiskFreeSpace(u32 disk,u64& freeSpace)
 // {
 //   u32 clusters,clusterSize;
-//   if(ELM_ClusterSizeFromDisk(disk,&clusterSize)&&ELM_FreeClustersFromDisk(disk,&clusters))
+//   if (ELM_ClusterSizeFromDisk(disk,&clusterSize)&&ELM_FreeClustersFromDisk(disk,&clusters))
 //   {
 //     freeSpace=(u64)clusters*(u64)clusterSize;
 //     return true;
@@ -532,11 +532,11 @@ bool copyOrMoveFile(const std::string & destDir)
 
 bool getDiskSpaceInfo(const std::string& diskName,u64& total,u64& used,u64& freeSpace)
 {
-  if(""==diskName) return false;
+  if (""==diskName) return false;
   
   struct statvfs info;
   
-  if(statvfs(diskName.c_str(), &info) != 0) return false;
+  if (statvfs(diskName.c_str(), &info) != 0) return false;
     
   total = info.f_frsize*info.f_blocks;
   freeSpace = info.f_frsize*info.f_bfree;

@@ -447,7 +447,7 @@ int aes_setkey_enc( aes_context *ctx, const unsigned char *key, int keysize )
     unsigned long *RK;
 
 #if !defined(POLARSSL_AES_ROM_TABLES)
-    if( aes_init_done == 0 )
+    if ( aes_init_done == 0 )
     {
         aes_gen_tables();
         aes_init_done = 1;
@@ -569,7 +569,7 @@ int aes_setkey_dec( aes_context *ctx, const unsigned char *key, int keysize )
 #endif
 
     ret = aes_setkey_enc( &cty, key, keysize );
-    if( ret != 0 )
+    if ( ret != 0 )
         return( ret );
 
     SK = cty.rk + cty.nr * 4;
@@ -658,9 +658,9 @@ int aes_crypt_ecb( aes_context *ctx,
     unsigned long *RK, X0, X1, X2, X3, Y0, Y1, Y2, Y3;
 
 #if defined(POLARSSL_PADLOCK_C) && defined(POLARSSL_HAVE_X86)
-    if( padlock_supports( PADLOCK_ACE ) )
+    if ( padlock_supports( PADLOCK_ACE ) )
     {
-        if( padlock_xcryptecb( ctx, mode, input, output ) == 0 )
+        if ( padlock_xcryptecb( ctx, mode, input, output ) == 0 )
             return( 0 );
 
         // If padlock data misaligned, we just fall back to
@@ -676,7 +676,7 @@ int aes_crypt_ecb( aes_context *ctx,
     GET_ULONG_LE( X2, input,  8 ); X2 ^= *RK++;
     GET_ULONG_LE( X3, input, 12 ); X3 ^= *RK++;
 
-    if( mode == AES_DECRYPT )
+    if ( mode == AES_DECRYPT )
     {
         for( i = (ctx->nr >> 1) - 1; i > 0; i-- )
         {
@@ -766,13 +766,13 @@ int aes_crypt_cbc( aes_context *ctx,
     int i;
     unsigned char temp[16];
 
-    if( length % 16 )
+    if ( length % 16 )
         return( POLARSSL_ERR_AES_INVALID_INPUT_LENGTH );
 
 #if defined(POLARSSL_PADLOCK_C) && defined(POLARSSL_HAVE_X86)
-    if( padlock_supports( PADLOCK_ACE ) )
+    if ( padlock_supports( PADLOCK_ACE ) )
     {
-        if( padlock_xcryptcbc( ctx, mode, length, iv, input, output ) == 0 )
+        if ( padlock_xcryptcbc( ctx, mode, length, iv, input, output ) == 0 )
             return( 0 );
         
         // If padlock data misaligned, we just fall back to
@@ -781,7 +781,7 @@ int aes_crypt_cbc( aes_context *ctx,
     }
 #endif
 
-    if( mode == AES_DECRYPT )
+    if ( mode == AES_DECRYPT )
     {
         while( length > 0 )
         {
@@ -830,11 +830,11 @@ int aes_crypt_cfb128( aes_context *ctx,
 {
     int c, n = *iv_off;
 
-    if( mode == AES_DECRYPT )
+    if ( mode == AES_DECRYPT )
     {
         while( length-- )
         {
-            if( n == 0 )
+            if ( n == 0 )
                 aes_crypt_ecb( ctx, AES_ENCRYPT, iv, iv );
 
             c = *input++;
@@ -848,7 +848,7 @@ int aes_crypt_cfb128( aes_context *ctx,
     {
         while( length-- )
         {
-            if( n == 0 )
+            if ( n == 0 )
                 aes_crypt_ecb( ctx, AES_ENCRYPT, iv, iv );
 
             iv[n] = *output++ = (unsigned char)( iv[n] ^ *input++ );
@@ -997,22 +997,22 @@ int aes_self_test( int verbose )
         u = i >> 1;
         v = i  & 1;
 
-        if( verbose != 0 )
+        if ( verbose != 0 )
             printf( "  AES-ECB-%3d (%s): ", 128 + u * 64,
                     ( v == AES_DECRYPT ) ? "dec" : "enc" );
 
         memset( buf, 0, 16 );
 
-        if( v == AES_DECRYPT )
+        if ( v == AES_DECRYPT )
         {
             aes_setkey_dec( &ctx, key, 128 + u * 64 );
 
             for( j = 0; j < 10000; j++ )
                 aes_crypt_ecb( &ctx, v, buf, buf );
 
-            if( memcmp( buf, aes_test_ecb_dec[u], 16 ) != 0 )
+            if ( memcmp( buf, aes_test_ecb_dec[u], 16 ) != 0 )
             {
-                if( verbose != 0 )
+                if ( verbose != 0 )
                     printf( "failed\n" );
 
                 return( 1 );
@@ -1025,20 +1025,20 @@ int aes_self_test( int verbose )
             for( j = 0; j < 10000; j++ )
                 aes_crypt_ecb( &ctx, v, buf, buf );
 
-            if( memcmp( buf, aes_test_ecb_enc[u], 16 ) != 0 )
+            if ( memcmp( buf, aes_test_ecb_enc[u], 16 ) != 0 )
             {
-                if( verbose != 0 )
+                if ( verbose != 0 )
                     printf( "failed\n" );
 
                 return( 1 );
             }
         }
 
-        if( verbose != 0 )
+        if ( verbose != 0 )
             printf( "passed\n" );
     }
 
-    if( verbose != 0 )
+    if ( verbose != 0 )
         printf( "\n" );
 
     /*
@@ -1049,7 +1049,7 @@ int aes_self_test( int verbose )
         u = i >> 1;
         v = i  & 1;
 
-        if( verbose != 0 )
+        if ( verbose != 0 )
             printf( "  AES-CBC-%3d (%s): ", 128 + u * 64,
                     ( v == AES_DECRYPT ) ? "dec" : "enc" );
 
@@ -1057,16 +1057,16 @@ int aes_self_test( int verbose )
         memset( prv, 0, 16 );
         memset( buf, 0, 16 );
 
-        if( v == AES_DECRYPT )
+        if ( v == AES_DECRYPT )
         {
             aes_setkey_dec( &ctx, key, 128 + u * 64 );
 
             for( j = 0; j < 10000; j++ )
                 aes_crypt_cbc( &ctx, v, 16, iv, buf, buf );
 
-            if( memcmp( buf, aes_test_cbc_dec[u], 16 ) != 0 )
+            if ( memcmp( buf, aes_test_cbc_dec[u], 16 ) != 0 )
             {
-                if( verbose != 0 )
+                if ( verbose != 0 )
                     printf( "failed\n" );
 
                 return( 1 );
@@ -1087,20 +1087,20 @@ int aes_self_test( int verbose )
                 memcpy( buf, tmp, 16 );
             }
 
-            if( memcmp( prv, aes_test_cbc_enc[u], 16 ) != 0 )
+            if ( memcmp( prv, aes_test_cbc_enc[u], 16 ) != 0 )
             {
-                if( verbose != 0 )
+                if ( verbose != 0 )
                     printf( "failed\n" );
 
                 return( 1 );
             }
         }
 
-        if( verbose != 0 )
+        if ( verbose != 0 )
             printf( "passed\n" );
     }
 
-    if( verbose != 0 )
+    if ( verbose != 0 )
         printf( "\n" );
 
     /*
@@ -1111,7 +1111,7 @@ int aes_self_test( int verbose )
         u = i >> 1;
         v = i  & 1;
 
-        if( verbose != 0 )
+        if ( verbose != 0 )
             printf( "  AES-CFB128-%3d (%s): ", 128 + u * 64,
                     ( v == AES_DECRYPT ) ? "dec" : "enc" );
 
@@ -1121,14 +1121,14 @@ int aes_self_test( int verbose )
         offset = 0;
         aes_setkey_enc( &ctx, key, 128 + u * 64 );
 
-        if( v == AES_DECRYPT )
+        if ( v == AES_DECRYPT )
         {
             memcpy( buf, aes_test_cfb128_ct[u], 64 );
             aes_crypt_cfb128( &ctx, v, 64, &offset, iv, buf, buf );
 
-            if( memcmp( buf, aes_test_cfb128_pt, 64 ) != 0 )
+            if ( memcmp( buf, aes_test_cfb128_pt, 64 ) != 0 )
             {
-                if( verbose != 0 )
+                if ( verbose != 0 )
                     printf( "failed\n" );
 
                 return( 1 );
@@ -1139,21 +1139,21 @@ int aes_self_test( int verbose )
             memcpy( buf, aes_test_cfb128_pt, 64 );
             aes_crypt_cfb128( &ctx, v, 64, &offset, iv, buf, buf );
 
-            if( memcmp( buf, aes_test_cfb128_ct[u], 64 ) != 0 )
+            if ( memcmp( buf, aes_test_cfb128_ct[u], 64 ) != 0 )
             {
-                if( verbose != 0 )
+                if ( verbose != 0 )
                     printf( "failed\n" );
 
                 return( 1 );
             }
         }
 
-        if( verbose != 0 )
+        if ( verbose != 0 )
             printf( "passed\n" );
     }
 
 
-    if( verbose != 0 )
+    if ( verbose != 0 )
         printf( "\n" );
 
     return( 0 );

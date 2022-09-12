@@ -70,7 +70,7 @@ void bootSplashDSi(void) {
 	Gif healthSafety(path, false, true);
 
 	// For the default splashes, draw first frame, then wait until the top is done
-	if(!custom) {
+	if (!custom) {
 		healthSafety.displayFrame();
 		healthSafety.pause();
 	}
@@ -119,7 +119,7 @@ void bootSplashDSi(void) {
 				color = (color & 0x8000) | (convertVramColorToGrayscale(color) & 0x7FFF);
 			}
 
-			if(x >= width) {
+			if (x >= width) {
 				x = 0;
 				y++;
 			}
@@ -130,7 +130,7 @@ void bootSplashDSi(void) {
 		oamUpdate(&oamMain);
 	}
 
-	if(!custom && !virtualPain) {
+	if (!custom && !virtualPain) {
 		controlBottomBright = false;
 		fadeType = false;
 		screenBrightness = 0;
@@ -144,7 +144,7 @@ void bootSplashDSi(void) {
 	fadeType = true;
 
 	// If both will loop forever, show for 3s or until button press
-	if((!custom && ms().macroMode) || (splash.loopForever() && healthSafety.loopForever())) {
+	if ((!custom && ms().macroMode) || (splash.loopForever() && healthSafety.loopForever())) {
 		for (int i = 0; i < 60 * 3 && !keysDown(); i++) {
 			swiWaitForVBlank();
 			//loadROMselectAsynch();
@@ -163,16 +163,16 @@ void bootSplashDSi(void) {
 			pressed &= ~KEY_LID;
 
 			if (splash.waitingForInput()) {
-				if(!custom && healthSafety.paused())
+				if (!custom && healthSafety.paused())
 					healthSafety.unpause();
-				if(pressed || ms().dsiSplashAutoSkip) {
+				if (pressed || ms().dsiSplashAutoSkip) {
 					splash.resume();
 					snd().playSelect();
 				}
 			}
 
-			if(healthSafety.waitingForInput()) {
-				if(pressed || ms().dsiSplashAutoSkip) {
+			if (healthSafety.waitingForInput()) {
+				if (pressed || ms().dsiSplashAutoSkip) {
 					healthSafety.resume();
 					snd().playSelect();
 				}

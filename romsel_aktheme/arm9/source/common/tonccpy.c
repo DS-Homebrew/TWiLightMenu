@@ -13,7 +13,7 @@
 */
 void tonccpy(void *dst, const void *src, uint size)
 {
-    if(size==0 || dst==NULL || src==NULL)
+    if (size==0 || dst==NULL || src==NULL)
         return;
 
     uint count;
@@ -21,7 +21,7 @@ void tonccpy(void *dst, const void *src, uint size)
     u8  *src8;      // byte source
 
     // Ideal case: copy by 4x words. Leaves tail for later.
-    if( ((u32)src|(u32)dst)%4==0 && size>=4)
+    if ( ((u32)src|(u32)dst)%4==0 && size>=4)
     {
         u32 *src32= (u32*)src, *dst32= (u32*)dst;
 
@@ -40,7 +40,7 @@ void tonccpy(void *dst, const void *src, uint size)
 
         // Check for tail
         size &= 3;
-        if(size == 0)
+        if (size == 0)
             return;
 
         src8= (u8*)src32;
@@ -53,11 +53,11 @@ void tonccpy(void *dst, const void *src, uint size)
         dst16= (u16*)(dst-dstOfs);
 
         // Head: 1 byte.
-        if(dstOfs != 0)
+        if (dstOfs != 0)
         {
             *dst16= (*dst16 & 0xFF) | *src8++<<8;
             dst16++;
-            if(--size==0)
+            if (--size==0)
                 return;
         }
     }
@@ -71,7 +71,7 @@ void tonccpy(void *dst, const void *src, uint size)
     }
 
     // Tail: 1 byte.
-    if(size&1)
+    if (size&1)
         *dst16= (*dst16 &~ 0xFF) | *src8;
 }
 //# toncset.c
@@ -89,7 +89,7 @@ void tonccpy(void *dst, const void *src, uint size)
 */
 void __toncset(void *dst, u32 fill, uint size)
 {
-    if(size==0 || dst==NULL)
+    if (size==0 || dst==NULL)
         return;
 
     uint left= (u32)dst&3;
@@ -97,10 +97,10 @@ void __toncset(void *dst, u32 fill, uint size)
     u32 count, mask;
 
     // Unaligned head.
-    if(left != 0)
+    if (left != 0)
     {
         // Adjust for very small stint.
-        if(left+size<4)
+        if (left+size<4)
         {
             mask= BIT_MASK(size*8)<<(left*8);   
             *dst32= (*dst32 &~ mask) | (fill & mask);
@@ -128,7 +128,7 @@ void __toncset(void *dst, u32 fill, uint size)
 
     // Tail
     size &= 3;
-    if(size)
+    if (size)
     {
         mask= BIT_MASK(size*8);
         *dst32= (*dst32 &~ mask) | (fill & mask);

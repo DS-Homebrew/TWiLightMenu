@@ -126,7 +126,7 @@ int bootstrapHbRunNds (const void* loader, u32 loaderSize, u32 cluster, u32 ramD
 	// INIT_DISC = initDisc;
 	writeAddr ((data_t*) LCDC_BANK_D, INIT_DISC_OFFSET, initDisc);
 
-	/*if(argv[0][0]=='s' && argv[0][1]=='d') {
+	/*if (argv[0][0]=='s' && argv[0][1]=='d') {
 		dldiPatchNds = false;
 		writeAddr ((data_t*) LCDC_BANK_D, HAVE_DSISD_OFFSET, 1);
 	}*/
@@ -297,7 +297,7 @@ int bootstrapHbRunNdsFile (const char* filename, const char* fatFilename, const 
 
 	//bool havedsiSD = false;
 
-	//if(argv[0][0]=='s' && argv[0][1]=='d') havedsiSD = true;
+	//if (argv[0][0]=='s' && argv[0][1]=='d') havedsiSD = true;
 	
 	//installBootStub(havedsiSD);
 
@@ -374,7 +374,7 @@ dsiSD:
 	memcpy(fake_heap_end+bootstub_bin_size,load_bin,load_bin_size);
 	bool ret = false;
 
-	if( havedsiSD) {
+	if ( havedsiSD) {
 		ret = true;
 		u32 *bootcode = (u32*)(fake_heap_end+bootstub_bin_size);
 		bootcode[3] = 0; // don't dldi patch

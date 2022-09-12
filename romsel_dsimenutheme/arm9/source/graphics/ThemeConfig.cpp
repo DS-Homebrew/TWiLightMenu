@@ -51,7 +51,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 }
 
 int ThemeConfig::getInt(CIniFile &ini, const std::string &item, int defaultVal) {
-	if(ms().macroMode)
+	if (ms().macroMode)
 		return ini.GetInt("MACRO", item, ini.GetInt("THEME", item, defaultVal));
 
 	return ini.GetInt("THEME", item, defaultVal);

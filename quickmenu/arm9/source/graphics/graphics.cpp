@@ -265,7 +265,7 @@ void bottomBgLoad(void) {
 	std::vector<unsigned char> image;
 	uint imageWidth, imageHeight;
 	lodepng::decode(image, imageWidth, imageHeight, bottomBGFile);
-	if(imageWidth > 256 || imageHeight > 192)	return;
+	if (imageWidth > 256 || imageHeight > 192)	return;
 
 	for(uint i=0;i<image.size()/4;i++) {
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
@@ -303,8 +303,8 @@ void bottomBgLoad(void) {
 
 void vBlankHandler()
 {
-	if(fadeType == true) {
-		if(!fadeDelay) {
+	if (fadeType == true) {
+		if (!fadeDelay) {
 			screenBrightness--;
 			if (screenBrightness < 0) screenBrightness = 0;
 		}
@@ -315,7 +315,7 @@ void vBlankHandler()
 			fadeDelay = 0;
 		}
 	} else {
-		if(!fadeDelay) {
+		if (!fadeDelay) {
 			screenBrightness++;
 			if (screenBrightness > 31) screenBrightness = 31;
 		}
@@ -381,7 +381,7 @@ void vBlankHandler()
 			}
 			if (bnrWirelessIcon[0] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[0]-1) & 31]);
 			// Playback animated icon
-			if(bnriconisDSi[0]==true) {
+			if (bnriconisDSi[0]==true) {
 				playBannerSequence(0);
 			}
 			glSprite(33, iconYpos[1], GL_FLIP_NONE, &pictodlpImage[1-pictochatFound]);
@@ -416,7 +416,7 @@ void vBlankHandler()
 			}
 			if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[1]-1) & 31]);
 			// Playback animated icon
-			if(bnriconisDSi[1]==true) {
+			if (bnriconisDSi[1]==true) {
 				playBannerSequence(1);
 			}
 			glSprite(117, iconYpos[5], GL_FLIP_NONE, settingsIconImage);
@@ -497,7 +497,7 @@ void vBlankHandler()
 void loadBoxArt(const char* filename, bool secondaryDevice) {
 	if (ms().macroMode) return;
 
-	if(access(filename, F_OK) != 0) {
+	if (access(filename, F_OK) != 0) {
 		switch (boxArtType[secondaryDevice]) {
 			case -1:
 				return;
@@ -520,7 +520,7 @@ void loadBoxArt(const char* filename, bool secondaryDevice) {
 	std::vector<unsigned char> image;
 	uint imageXpos, imageYpos, imageWidth, imageHeight;
 	lodepng::decode(image, imageWidth, imageHeight, filename);
-	if(imageWidth > 256 || imageHeight > 192)	return;
+	if (imageWidth > 256 || imageHeight > 192)	return;
 
 	for(uint i=0;i<image.size()/4;i++) {
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
@@ -587,7 +587,7 @@ void topBgLoad(void) {
 	std::vector<unsigned char> image;
 	uint imageWidth, imageHeight;
 	lodepng::decode(image, imageWidth, imageHeight, std::string(filePath));
-	if(imageWidth > 256 || imageHeight > 192)	return;
+	if (imageWidth > 256 || imageHeight > 192)	return;
 
 	for(uint i=0;i<image.size()/4;i++) {
 		topImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);

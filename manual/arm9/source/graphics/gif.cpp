@@ -53,7 +53,7 @@ void Gif::displayFrame(void) {
 	if (frame.gce.disposalMethod == 2)
 		toncset(_top ? BG_GFX : BG_GFX_SUB, header.bgColor, 256 * 192);
 
-	if(_compressed) { // Was left compressed to be able to fit
+	if (_compressed) { // Was left compressed to be able to fit
 		int x = 0, y = 0;
 		u8 *dst = (u8*)(_top ? BG_GFX : BG_GFX_SUB) + (frame.descriptor.y + y + (192 - header.height) / 2) * 256 + frame.descriptor.x + (256 - header.width) / 2;
 		u8 row[frame.descriptor.w];
@@ -98,7 +98,7 @@ bool Gif::load(const char *path, bool top, bool animate, bool forceDecompress) {
 	if (!file)
 		return false;
 
-	if(forceDecompress) {
+	if (forceDecompress) {
 		_compressed = false;
 	} else {
 		fseek(file, 0, SEEK_END);
@@ -139,7 +139,7 @@ bool Gif::load(const char *path, bool top, bool animate, bool forceDecompress) {
 					case 0xF9: { // Graphics Control
 						frame.hasGCE = true;
 						fread(&frame.gce, 1, fgetc(file), file);
-						if(frame.gce.delay < 2) // If delay is less then 2, change it to 10
+						if (frame.gce.delay < 2) // If delay is less then 2, change it to 10
 							frame.gce.delay = 10;
 						fgetc(file); // Terminator
 						break;
@@ -164,7 +164,7 @@ bool Gif::load(const char *path, bool top, bool animate, bool forceDecompress) {
 							if (strcmp(buffer, "NETSCAPE2.0") == 0) { // Check for Netscape loop count
 								fseek(file, 2, SEEK_CUR);
 								fread(&_loopCount, 1, sizeof(_loopCount), file);
-								if(_loopCount == 0) // If loop count 0 is specified, loop forever
+								if (_loopCount == 0) // If loop count 0 is specified, loop forever
 									_loopCount = 0xFFFF;
 								fgetc(file); //terminator
 								break;
@@ -191,7 +191,7 @@ bool Gif::load(const char *path, bool top, bool animate, bool forceDecompress) {
 				}
 
 				frame.image.lzwMinimumCodeSize = fgetc(file);
-				if(_compressed) { // Leave compressed to fit more in RAM
+				if (_compressed) { // Leave compressed to fit more in RAM
 					while (u8 size = fgetc(file)) {
 						size_t end = frame.image.imageData.size();
 						frame.image.imageData.resize(end + size);
@@ -228,7 +228,7 @@ bool Gif::load(const char *path, bool top, bool animate, bool forceDecompress) {
 	_paused = false;
 	_finished = loopForever();
 	_frames.shrink_to_fit();
-	if(animate)
+	if (animate)
 		_animating.push_back(this);
 
 	return true;

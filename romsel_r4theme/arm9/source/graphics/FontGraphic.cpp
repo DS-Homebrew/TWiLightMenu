@@ -19,12 +19,12 @@ std::u16string FontGraphic::utf8to16(std::string_view text) {
 	std::u16string out;
 	for(uint i=0;i<text.size();) {
 		char16_t c;
-		if(!(text[i] & 0x80)) {
+		if (!(text[i] & 0x80)) {
 			c = text[i++];
-		} else if((text[i] & 0xE0) == 0xC0) {
+		} else if ((text[i] & 0xE0) == 0xC0) {
 			c  = (text[i++] & 0x1F) << 6;
 			c |=  text[i++] & 0x3F;
-		} else if((text[i] & 0xF0) == 0xE0) {
+		} else if ((text[i] & 0xF0) == 0xE0) {
 			c  = (text[i++] & 0x0F) << 12;
 			c |= (text[i++] & 0x3F) << 6;
 			c |=  text[i++] & 0x3F;
@@ -99,24 +99,24 @@ unsigned int FontGraphic::getSpriteIndex(const u16 letter) {
 
 char16_t FontGraphic::getCharacter(const char *&text) {
 	// UTF-8 handling
-	if((*text & 0x80) == 0) {
+	if ((*text & 0x80) == 0) {
 		return getSpriteIndex(*text++);
-	} else if((*text & 0xE0) == 0xC0) {
+	} else if ((*text & 0xE0) == 0xC0) {
 		char16_t c = ((*text++ & 0x1F) << 6);
-		if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+		if ((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
 
 		return getSpriteIndex(c);
-	} else if((*text & 0xF0) == 0xE0) {
+	} else if ((*text & 0xF0) == 0xE0) {
 		char16_t c = (*text++ & 0xF) << 12;
-		if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-		if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
+		if ((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+		if ((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
 
 		return getSpriteIndex(c);
-	} else if((*text & 0xF8) == 0xF0) {
+	} else if ((*text & 0xF8) == 0xF0) {
 		char16_t c = (*text++ & 0x7) << 18;
-		if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
-		if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-		if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
+		if ((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
+		if ((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+		if ((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
 
 		return getSpriteIndex(c);
 	} else {

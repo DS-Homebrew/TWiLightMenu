@@ -57,7 +57,7 @@ static inline void add_128(uint32_t *a, const uint32_t *b){
 
 static inline void add_128_32(uint32_t *a, uint32_t b){
 	a[0] += b;
-	if(a[0] < b){
+	if (a[0] < b){
 		a[1] += 1;
 		if (a[1] == 0) {
 			a[2] += 1;

@@ -86,7 +86,7 @@ void changeBacklightLevel() {
 			backlightLevel = 0;
 		}
 		u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
-		if(pmBacklight & 0xF0) // DS Lite
+		if (pmBacklight & 0xF0) // DS Lite
 			writePowerManagement(PM_BACKLIGHT_LEVEL, (pmBacklight & ~3) | backlightLevel);
 		writePowerManagement(PM_CONTROL_REG, readPowerManagement(PM_CONTROL_REG) | 0xC);
 		return;
@@ -105,7 +105,7 @@ void changeBacklightLevel() {
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
-	if(fifoCheckValue32(FIFO_USER_01)) {
+	if (fifoCheckValue32(FIFO_USER_01)) {
 		soundFadeOut();
 	} else {
 		soundVolume = 127;
@@ -174,7 +174,7 @@ TWL_CODE void getConsoleID(void) {
 		for(int j=0;j<256;j++){
 			*(key3+i)=j & 0xFF;
 			aes(in, scratch, iv, 2);
-			if(memcmp(scratch, base, 16)==0){
+			if (memcmp(scratch, base, 16)==0){
 				out[i]=j;
 				//hit++;
 				break;
@@ -253,7 +253,7 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, status);
 
 	if (SNDEXCNT == 0) {
-		if(pmBacklight & 0xF0) // DS Lite
+		if (pmBacklight & 0xF0) // DS Lite
 			backlightLevel = pmBacklight & 3; // Brightness
 	}
 
@@ -316,7 +316,7 @@ int main() {
 			ReturntoDSiMenu();
 		}
 
-		if(fifoGetValue32(FIFO_USER_04) == 1) {
+		if (fifoGetValue32(FIFO_USER_04) == 1) {
 			changeBacklightLevel();
 			fifoSendValue32(FIFO_USER_04, 0);
 		}

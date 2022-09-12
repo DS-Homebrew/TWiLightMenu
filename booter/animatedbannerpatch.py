@@ -70,5 +70,5 @@ if __name__ == "__main__":
     path = args.input[0]
     banner = args.banner[0]
 
-    if(patch(path, banner)) == 0:
+    if (patch(path, banner)) == 0:
         print("\nSuccess.")

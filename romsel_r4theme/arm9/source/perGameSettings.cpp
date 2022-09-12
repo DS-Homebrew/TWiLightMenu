@@ -353,7 +353,7 @@ void perGameSettings (std::string filename) {
 	loadPerGameSettings(filename);
 
 	std::string filenameForInfo = filename;
-	if((filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "argv")
+	if ((filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "argv")
 	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "ARGV"))
 	{
 		std::vector<char*> argarray;
@@ -364,7 +364,7 @@ void perGameSettings (std::string filename) {
 
 		while( fgets(str, PATH_MAX, argfile) ) {
 			// Find comment and end string there
-			if( (pstr = strchr(str, '#')) )
+			if ( (pstr = strchr(str, '#')) )
 				*pstr= '\0';
 
 			// Tokenize arguments
@@ -389,7 +389,7 @@ void perGameSettings (std::string filename) {
 	blacklisted_boostCpu = false;
 	blacklisted_cardReadDma = false;
 	blacklisted_asyncCardRead = false;
-	if(!ms().ignoreBlacklists) {
+	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
 			if (memcmp(game_TID, twlClockExcludeList[i], 3) == 0) {
@@ -635,7 +635,7 @@ void perGameSettings (std::string filename) {
 
 		for (int i = 0; i < 10; i++) {
 			std::string path("ramdisks/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getImgExtension(i));
-			if(i > 0)
+			if (i > 0)
 				path += std::to_string(i);
 			savExists[i] = access(path.c_str(), F_OK) == 0;
 		}
@@ -646,7 +646,7 @@ void perGameSettings (std::string filename) {
 			int saveNoBak = perGameSettings_saveNo;
 			for (int i = 0; i < 10; i++) {
 				perGameSettings_saveNo = i;
-				if(isDSiWare && (pubSize > 0 || prvSize > 0)) {
+				if (isDSiWare && (pubSize > 0 || prvSize > 0)) {
 					std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')));
 					savExists[i] = access((path + getPubExtension()).c_str(), F_OK) == 0 || access((path + getPrvExtension()).c_str(), F_OK) == 0;
 				} else {
@@ -660,15 +660,15 @@ void perGameSettings (std::string filename) {
 
 	char saveNoDisplay[16];
 
-	if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
+	if ((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
 		SDKnumbertext = ("SDK ver: 1."+(std::string)sdkSubVerChar).c_str();
-	} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
+	} else if ((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
 		SDKnumbertext = ("SDK ver: 2."+(std::string)sdkSubVerChar).c_str();
-	} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
+	} else if ((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
 		SDKnumbertext = ("SDK ver: 3."+(std::string)sdkSubVerChar).c_str();
-	} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
+	} else if ((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
 		SDKnumbertext = ("SDK ver: 4."+(std::string)sdkSubVerChar).c_str();
-	} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
+	} else if ((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
 		SDKnumbertext = ("SDK ver: 5."+(std::string)sdkSubVerChar).c_str();
 	} else {
 		SDKnumbertext = "SDK ver: ???";

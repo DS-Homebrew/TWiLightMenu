@@ -78,7 +78,7 @@ void ReturntoDSiMenu() {
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
-	if(fifoCheckValue32(FIFO_USER_01)) {
+	if (fifoCheckValue32(FIFO_USER_01)) {
 		soundFadeOut();
 	} else {
 		soundVolume = 127;
@@ -168,7 +168,7 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, status);
 
 	if (SNDEXCNT == 0) {
-		if(pmBacklight & 0xF0) { // DS Lite
+		if (pmBacklight & 0xF0) { // DS Lite
 			int backlightLevel = pmBacklight & 3; // Brightness
 			*(int*)0x02003000 = backlightLevel;
 		}

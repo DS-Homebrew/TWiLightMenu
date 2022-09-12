@@ -31,7 +31,7 @@ bool my_sdio_Startup() {
 		}
 		result = sharedAddr[3];
 
-		if(result==0) return false;
+		if (result==0) return false;
 	}
 
 	sharedAddr[3] = 0x54534453;

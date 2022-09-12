@@ -371,7 +371,7 @@ int main (void) {
 	u32 fileCluster = storedFileCluster;
 	if (!loadFromRam) {
 		// Init card
-		if(!FAT_InitFiles(initDisc))
+		if (!FAT_InitFiles(initDisc))
 		{
 			return -1;
 		}

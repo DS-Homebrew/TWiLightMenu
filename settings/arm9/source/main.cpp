@@ -434,7 +434,7 @@ void opt_set_hotkey(void) {
 			keys = keys.substr(0, keys.size() - 1);
 
 			clearText(false);
-			if(ms().rtl())
+			if (ms().rtl())
 				printLarge(false, 256 - 4, 0, STR_HOLD_1S_SET, Alignment::right);
 			else
 				printLarge(false, 4, 0, STR_HOLD_1S_SET);
@@ -449,11 +449,11 @@ void opt_set_hotkey(void) {
 			scanKeys();
 			held = keysHeld();
 			swiWaitForVBlank();
-			if(set)
+			if (set)
 				timer++;
 		} while (held == set && timer < 60);
 
-		if(held != set) {
+		if (held != set) {
 			timer = 0;
 			set = held;
 			updateText = true;
@@ -465,7 +465,7 @@ void opt_set_hotkey(void) {
 	mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
 
 	clearText(false);
-	if(ms().rtl())
+	if (ms().rtl())
 		printLarge(false, 256 - 4, 0, STR_HOTKEY_SET, Alignment::right);
 	else
 		printLarge(false, 4, 0, STR_HOTKEY_SET);
@@ -546,7 +546,7 @@ void opt_update()
 	while (1) {
 		if (updateText) {
 			clearText();
-			if(ms().rtl()) {
+			if (ms().rtl()) {
 				printLarge(false, 256 - 4, 0, STR_HOW_WANT_UPDATE, Alignment::right);
 				printSmall(false, 256 - 12, 29, ms().showMicroSd ? STR_CONSOLE_MICRO_SLOT1_MICRO : STR_CONSOLE_SD_SLOT1_MICRO, Alignment::right);
 				printSmall(false, 256 - 12, 43, ms().showMicroSd ? STR_SLOT1_MICRO_CONSOLE_MICRO : STR_SLOT1_MICRO_CONSOLE_SD, Alignment::right);
@@ -1243,7 +1243,7 @@ int main(int argc, char **argv)
 	}
 
 	if (sdFound() && isDSiMode()) {
-		if(!sys().arm7SCFGLocked()) {
+		if (!sys().arm7SCFGLocked()) {
 			miscPage
 				.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false})
 				.option(STR_SLOT1SDACCESS, STR_DESCRIPTION_SLOT1SDACCESS, Option::Bool(&ms().slot1AccessSD), {STR_ON, STR_OFF}, {true, false})

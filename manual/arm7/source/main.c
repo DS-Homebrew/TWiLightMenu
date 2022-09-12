@@ -150,7 +150,7 @@ int main() {
 				fifoSendValue32(FIFO_USER_03, status);
 			}
 		}*/
-		if(fifoCheckValue32(FIFO_USER_02)) {
+		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
 		swiWaitForVBlank();

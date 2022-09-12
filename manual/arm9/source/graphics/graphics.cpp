@@ -86,8 +86,8 @@ u16 convertVramColorToGrayscale(u16 val) {
 }
 
 void vBlankHandler() {
-	if(fadeType == true) {
-		if(!fadeDelay) {
+	if (fadeType == true) {
+		if (!fadeDelay) {
 			screenBrightness--;
 			if (screenBrightness < 0) screenBrightness = 0;
 		}
@@ -98,7 +98,7 @@ void vBlankHandler() {
 			fadeDelay = 0;
 		}
 	} else {
-		if(!fadeDelay) {
+		if (!fadeDelay) {
 			screenBrightness++;
 			if (screenBrightness > 31) screenBrightness = 31;
 		}
@@ -117,7 +117,7 @@ void vBlankHandler() {
 }
 
 void pageLoad(const std::string &filename) {
-	Gif gif(filename.c_str(), false, false, true);
+	Gif gif (filename.c_str(), false, false, true);
 	pageImage = gif.frame(0).image.imageData;
 	pageYsize = gif.frame(0).descriptor.h;
 
@@ -136,7 +136,7 @@ void pageScroll(void) {
 }
 
 void topBarLoad(void) {
-	Gif gif("nitro:/graphics/topbar.gif", false, false, true);
+	Gif gif ("nitro:/graphics/topbar.gif", false, false, true);
 	const auto &frame = gif.frame(0);
 	u16 *dst = bgGetGfxPtr(bg3Main);
 

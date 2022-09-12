@@ -14,7 +14,7 @@ if (!$?) {
 
 docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args
 
-if($args.Count -eq 0 -and $?) {
+if ($args.Count -eq 0 -and $?) {
     Copy-Item "booter.nds" "../7zfile/DSi&3DS - SD card users/BOOT.NDS"
     Copy-Item "booter.nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
     Copy-Item "booter_rungame.nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"

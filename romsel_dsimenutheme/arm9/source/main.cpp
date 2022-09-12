@@ -352,7 +352,7 @@ std::string setApFix(const char *filename) {
 					remove(ipsPath2); // Delete leftover AP-fix file of opposite format
 				}
 				FILE *out = fopen(ipsPath, "wb");
-				if(out) {
+				if (out) {
 					fwrite(buffer, 1, size, out);
 					fclose(out);
 				}
@@ -506,7 +506,7 @@ void SetWidescreen(const char *filename) {
 
 				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat" : "sd");
 				FILE *out = fopen(wideBinPath, "wb");
-				if(out) {
+				if (out) {
 					fwrite(buffer, 1, size, out);
 					fclose(out);
 				}
@@ -535,15 +535,15 @@ void SetWidescreen(const char *filename) {
 std::string getGameManual(const char *filename) {
 	char manualPath[256];
 	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", sdFound() ? "sd" : "fat", filename);
-	if(access(manualPath, F_OK) == 0)
+	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
 	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", sdFound() ? "sd" : "fat", gameTid[CURPOS]);
-	if(access(manualPath, F_OK) == 0)
+	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
 	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%.3s.txt", sdFound() ? "sd" : "fat", gameTid[CURPOS]);
-	if(access(manualPath, F_OK) == 0)
+	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
 	return "";
@@ -712,7 +712,7 @@ void unlaunchSetHiyaBoot(void) {
 bool createDSiWareSave(const char *path, int size) {
 	const u16 sectorSize = 0x200;
 
-	if(!path || size < sectorSize)
+	if (!path || size < sectorSize)
 		return false;
 
 	//fit maximum sectors for the size
@@ -777,7 +777,7 @@ bool createDSiWareSave(const char *path, int size) {
 	h.BS_BootSign = 0xAA55;
 
 	FILE *file = fopen(path, "wb");
-	if(file) {
+	if (file) {
 		showProgressBar = true;
 		fwrite(&h, sizeof(FATHeader), 1, file); // Write header
 		int i = 0;
@@ -1393,7 +1393,7 @@ int main(int argc, char **argv) {
 					const char* cheatDataBin = (ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "/_nds/nds-bootstrap/cheatData.bin";
 					mkdir((ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds" : "/_nds", 0777);
 					mkdir((ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
-					if(codelist.romData(ms().dsiWareSrlPath,gameCode,crc32)) {
+					if (codelist.romData(ms().dsiWareSrlPath,gameCode,crc32)) {
 						long cheatOffset; size_t cheatSize;
 						FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
 						if (dat) {
@@ -1498,7 +1498,7 @@ int main(int argc, char **argv) {
 
 					char ndsToBoot[256];
 					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
-					if(access(ndsToBoot, F_OK) != 0) {
+					if (access(ndsToBoot, F_OK) != 0) {
 						sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
 					}
 
@@ -1724,7 +1724,7 @@ int main(int argc, char **argv) {
 							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
 							mkdir("/_nds", 0777);
 							mkdir("/_nds/nds-bootstrap", 0777);
-							if(codelist.romData(path,gameCode,crc32)) {
+							if (codelist.romData(path,gameCode,crc32)) {
 								long cheatOffset; size_t cheatSize;
 								FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
 								if (dat) {
@@ -1773,7 +1773,7 @@ int main(int argc, char **argv) {
 
 						char ndsToBoot[256];
 						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
-						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						}
 
@@ -1832,13 +1832,13 @@ int main(int argc, char **argv) {
 						clearText();
 						printLarge(false, 4, 4, text);
 						if (err == 1) {
-							if(ms().homebrewBootstrap == true) {
+							if (ms().homebrewBootstrap == true) {
 								printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
 							} else {
 								printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 							}
 						}
-						if(ms().homebrewBootstrap == true) {
+						if (ms().homebrewBootstrap == true) {
 							printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 						} else {
 							printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
@@ -2058,7 +2058,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::ETunaViDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/tuna-vids.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/tuna-vids.nds";
 						boostVram = true;
 					}
@@ -2066,7 +2066,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::ERVideoLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 						boostVram = true;
 					}
@@ -2074,7 +2074,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::EFastVideoLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 						boostVram = true;
 					}
@@ -2195,7 +2195,7 @@ int main(int argc, char **argv) {
 						if (dsiFeatures()) {
 							ndsToBoot = ms().consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
 						}
-						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
 							if (dsiFeatures()) {
 								ndsToBoot = ms().consoleModel > 0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
@@ -2228,7 +2228,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::EXEGSDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
 						boostVram = true;
 					}
@@ -2236,7 +2236,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::EStellaDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 						boostVram = true;
 					}
@@ -2244,7 +2244,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::EA5200DSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 						boostVram = true;
 					}
@@ -2252,7 +2252,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::EA7800DSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
@@ -2260,7 +2260,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::EColecoDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
 						boostVram = true;
 					}
@@ -2268,7 +2268,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::ENINTVDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
 						boostVram = true;
 					}
@@ -2276,7 +2276,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::EGameYobLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/gameyob.nds";
 						dsModeSwitch = !isDSiMode();
 						boostVram = true;
@@ -2285,7 +2285,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::ENESDSLaunch;
 
 					ndsToBoot = (ms().secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 						boostVram = true;
 					}
@@ -2296,7 +2296,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::ES8DSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
 						boostVram = true;
 					}
@@ -2307,7 +2307,7 @@ int main(int argc, char **argv) {
 
 					if (usePicoDrive || ms().secondaryDevice) {
 						ndsToBoot = usePicoDrive ? "sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds" : (ms().macroMode ? "sd:/_nds/TWiLightMenu/emulators/jEnesisDS_macro.nds" : "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
-						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = usePicoDrive ? "fat:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds" : (ms().macroMode ? "fat:/_nds/TWiLightMenu/emulators/jEnesisDS_macro.nds" : "fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
 							boostVram = true;
 						}
@@ -2339,7 +2339,7 @@ int main(int argc, char **argv) {
 
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
 						tgdsNdsPath = "fat:/SNEmulDS.srl";
-						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 							if (ms().secondaryDevice) {
 								boostVram = true;
@@ -2348,7 +2348,7 @@ int main(int argc, char **argv) {
 						}
 					} else if (ms().secondaryDevice) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds";
-						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds";
 						}
 						boostCpu = false;
@@ -2401,7 +2401,7 @@ int main(int argc, char **argv) {
 						ms().launchType[ms().secondaryDevice] = Launch::ENitroGrafxLaunch;
 
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
-						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
 							boostVram = true;
 						}
@@ -2413,7 +2413,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::ENitroSwanLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
 						boostVram = true;
 					}
@@ -2424,7 +2424,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::ENGPDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 						boostVram = true;
 					}
@@ -2433,7 +2433,7 @@ int main(int argc, char **argv) {
 
 					if (ms().secondaryDevice) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
-						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/AmEDS.nds";
 							boostVram = true;
 						}
@@ -2460,7 +2460,7 @@ int main(int argc, char **argv) {
 
 					if (ms().secondaryDevice) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-						if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
 							boostVram = true;
 						}
@@ -2486,7 +2486,7 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::EImageLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/imageview.srldr";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/imageview.srldr";
 						boostVram = true;
 					}

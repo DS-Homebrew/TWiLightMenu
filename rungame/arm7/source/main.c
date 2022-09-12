@@ -122,7 +122,7 @@ int main() {
 			}
 			*(u8*)(0x02FFFD02) = 0x77;
 		}
-		if(fifoCheckValue32(FIFO_USER_08)) {
+		if (fifoCheckValue32(FIFO_USER_08)) {
 			ReturntoDSiMenu();
 		}
 		// fifocheck();

@@ -71,10 +71,10 @@ void IRQ::vBlank()
 
     // get inputs when file copying because the main route
     // can't do any thing at that time
-    if( true == copyingFile) {
-        if( false == stopCopying ) {
+    if ( true == copyingFile) {
+        if ( false == stopCopying ) {
             INPUT & input = updateInput();
-            if( (input.keysDown & KEY_B) ) {
+            if ( (input.keysDown & KEY_B) ) {
                 stopCopying = true;
             }
         }
@@ -95,7 +95,7 @@ void IRQ::vBlank()
         bigClock().draw();
         smallClock().draw();
         userWindow().draw();
-        if(!copyingFile) {
+        if (!copyingFile) {
             batteryIcon().draw();
             volumeIcon().draw();
         }
@@ -111,7 +111,7 @@ void IRQ::vBlank()
 
     animationManager().update();
 
-    // if( REG_ROMCTRL & CARD_BUSY )
+    // if ( REG_ROMCTRL & CARD_BUSY )
     //     diskIcon().turnOn();
     // else
     //     diskIcon().turnOff();

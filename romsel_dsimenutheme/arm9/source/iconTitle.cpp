@@ -126,15 +126,15 @@ static inline void loadUnkIcon(int num) { glLoadIcon(num, tex().iconUnknownTextu
 static inline void clearIcon(int num) { glClearIcon(num); }
 
 void drawIcon(int Xpos, int Ypos, int num) {
-	if(num == -1) { // Moving app icon
+	if (num == -1) { // Moving app icon
 		glSprite(Xpos, Ypos, bannerFlip[40], &getIcon(6)[bnriconframenumY[40]]);
-		if(bnriconPalLine[40] != bnriconPalLoaded[40]) {
+		if (bnriconPalLine[40] != bnriconPalLoaded[40]) {
 			glLoadPalette(6, bnriconTile[40].dsi_palette[bnriconPalLine[40]]);
 			bnriconPalLoaded[40] = bnriconPalLine[40];
 		}
 	} else {
 		glSprite(Xpos, Ypos, bannerFlip[num], &getIcon(num % 6)[bnriconframenumY[num]]);
-		if(bnriconPalLine[num] != bnriconPalLoaded[num]) {
+		if (bnriconPalLine[num] != bnriconPalLoaded[num]) {
 			glLoadPalette(num % 6, bnriconTile[num].dsi_palette[bnriconPalLine[num]]);
 			bnriconPalLoaded[num] = bnriconPalLine[num];
 		}
@@ -243,14 +243,14 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		if (customIcon[num]) {
 			customIcon[num] = 2; // custom icon is a banner bin
 			FILE *file = fopen(customIconPath, "rb");
-			if(file) {
+			if (file) {
 				size_t read = fread(&banner, 1, sizeof(sNDSBannerExt), file);
 				fclose(file);
 
-				if(read >= NDS_BANNER_SIZE_ORIGINAL) {
+				if (read >= NDS_BANNER_SIZE_ORIGINAL) {
 					customIconGood = true;
 
-					if(ms().animateDsiIcons && read == NDS_BANNER_SIZE_DSi) {
+					if (ms().animateDsiIcons && read == NDS_BANNER_SIZE_DSi) {
 						u16 crc16 = swiCRC16(0xFFFF, banner.dsi_icon, 0x1180);
 						if (banner.crc[3] == crc16) { // Check if CRC16 is valid
 							bnriconisDSi[num] = true;
@@ -698,17 +698,17 @@ void writeBannerText(std::u16string text) {
 	// Insert line breaks if lines are too long
 	for(uint i = 0; i < lines.size(); i++) {
 		int width = tc().titleboxTextLarge() ? calcLargeFontWidth(lines[i]) : calcSmallFontWidth(lines[i]);
-		if(width > tc().titleboxTextW()) {
+		if (width > tc().titleboxTextW()) {
 			int mid = lines[i].length() / 2;
 			bool foundSpace = false;
 			for(uint j = 0; j < lines[i].length() / 2; j++) {
-				if(lines[i][mid + j] == ' ') {
+				if (lines[i][mid + j] == ' ') {
 					lines.insert(lines.begin() + i, lines[i].substr(0, mid + j));
 					lines[i + 1] = lines[i + 1].substr(mid + j + 1);
 					i--;
 					foundSpace = true;
 					break;
-				} else if(lines[i][mid - j] == ' ') {
+				} else if (lines[i][mid - j] == ' ') {
 					lines.insert(lines.begin() + i, lines[i].substr(0, mid - j));
 					lines[i + 1] = lines[i + 1].substr(mid - j + 1);
 					i--;
@@ -716,7 +716,7 @@ void writeBannerText(std::u16string text) {
 					break;
 				}
 			}
-			if(!foundSpace) {
+			if (!foundSpace) {
 				lines.insert(lines.begin() + i, lines[i].substr(0, mid));
 				lines[i + 1] = lines[i + 1].substr(mid);
 				i--;
@@ -725,7 +725,7 @@ void writeBannerText(std::u16string text) {
 	}
 
 	// Trim to the max lines if too big
-	if((int)lines.size() > tc().titleboxMaxLines())
+	if ((int)lines.size() > tc().titleboxMaxLines())
 		lines.resize(tc().titleboxMaxLines());
 
 	// Re-combine to a single string
@@ -743,7 +743,7 @@ void writeBannerText(std::u16string text) {
 static inline void writeDialogTitle(std::u16string text) {
 	int lines = 0;
 	for(auto c : text) {
-		if(c == '\n') {
+		if (c == '\n') {
 			lines++;
 		}
 	}
@@ -753,7 +753,7 @@ static inline void writeDialogTitle(std::u16string text) {
 static inline void writeDialogTitleFolder(std::u16string text) {
 	int lines = 0;
 	for(auto c : text) {
-		if(c == '\n') {
+		if (c == '\n') {
 			lines++;
 		}
 	}
@@ -767,17 +767,17 @@ static inline std::u16string splitLongDialogTitle(std::string_view text) {
 
 	for(uint i = 0; i < lines.size(); i++) {
 		int width = calcLargeFontWidth(lines[i]);
-		if(width > 256 - 78) {
+		if (width > 256 - 78) {
 			int mid = lines[i].length() / 2;
 			bool foundSpace = false;
 			for(uint j = 0; j < lines[i].length() / 2; j++) {
-				if(lines[i][mid + j] == ' ') {
+				if (lines[i][mid + j] == ' ') {
 					lines.insert(lines.begin() + i, lines[i].substr(0, mid + j));
 					lines[i + 1] = lines[i + 1].substr(mid + j + 1);
 					i--;
 					foundSpace = true;
 					break;
-				} else if(lines[i][mid - j] == ' ') {
+				} else if (lines[i][mid - j] == ' ') {
 					lines.insert(lines.begin() + i, lines[i].substr(0, mid - j));
 					lines[i + 1] = lines[i + 1].substr(mid - j + 1);
 					i--;
@@ -785,7 +785,7 @@ static inline std::u16string splitLongDialogTitle(std::string_view text) {
 					break;
 				}
 			}
-			if(!foundSpace) {
+			if (!foundSpace) {
 				lines.insert(lines.begin() + i, lines[i].substr(0, mid));
 				lines[i + 1] = lines[i + 1].substr(mid);
 				i--;

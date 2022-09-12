@@ -51,7 +51,7 @@ int language = -1;
  * Disable TWL clock speed for a specific game.
  */
 bool setClockSpeed(int setting, char gameTid[], bool ignoreBlacklists) {
-	if(!ignoreBlacklists) {
+	if (!ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
 			if (memcmp(gameTid, twlClockExcludeList[i], 3) == 0) {
@@ -86,8 +86,8 @@ bool consoleOn = false;
 int main() {
 	if (isDSiMode()) {
 		// If slot is powered off, tell Arm7 slot power on is required.
-		if(REG_SCFG_MC == 0x11) { fifoSendValue32(FIFO_USER_02, 1); }
-		if(REG_SCFG_MC == 0x10) { fifoSendValue32(FIFO_USER_02, 1); }
+		if (REG_SCFG_MC == 0x11) { fifoSendValue32(FIFO_USER_02, 1); }
+		if (REG_SCFG_MC == 0x10) { fifoSendValue32(FIFO_USER_02, 1); }
 
 		if (fatInitDefault()) {
 			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
@@ -127,13 +127,13 @@ int main() {
 				TWLVRAM = DEFAULT_BOOST_VRAM;
 			}
 
-			//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
+			//if (settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
 			//	consoleOn = true;
 			//	consoleDemoInit();
 			//}
 
-			if(!TWLCLK && (ndsHeader.unitCode == 0 || !TWLMODE)) {
-				//if(settingsini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+			if (!TWLCLK && (ndsHeader.unitCode == 0 || !TWLMODE)) {
+				//if (settingsini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				//	printf("TWL_CLOCK ON\n");		
 				//}
 				fifoSendValue32(FIFO_USER_04, 1);
@@ -143,15 +143,15 @@ int main() {
 				swiWaitForVBlank();
 			}
 
-			//if(EnableSD) {
-				//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
+			//if (EnableSD) {
+				//if (settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
 				//	printf("SD access ON\n");		
 				//}
 			//}
 
 			scfgUnlock = settingsini.GetInt("SRLOADER","SLOT1_SCFG_UNLOCK",0);
 
-			if(settingsini.GetInt("SRLOADER","RESET_SLOT1",1) == 1) {
+			if (settingsini.GetInt("SRLOADER","RESET_SLOT1",1) == 1) {
 				fifoSendValue32(FIFO_USER_02, 1);
 				fifoSendValue32(FIFO_USER_07, 1);
 			}
@@ -234,7 +234,7 @@ int main() {
 	}
 
 	while(1) {
-		if(REG_SCFG_MC == 0x11) {
+		if (REG_SCFG_MC == 0x11) {
 		break; } else {
 			if (runCardEngine) {
 				cheatData[3] = 0xCF;

@@ -58,7 +58,7 @@ bool my_isRumbleInserted(void) {
 void my_setRumble(bool position) {
 //---------------------------------------------------------------------------------
 
-	if( rumbleType == MY_WARIOWARE) {
+	if ( rumbleType == MY_WARIOWARE) {
 		WARIOWARE_PAK = (position ? 8 : 0); 
 	} else {
 		RUMBLE_PAK = (position ? 2 : 0);

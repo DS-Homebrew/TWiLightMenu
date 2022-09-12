@@ -20,7 +20,7 @@ void checkSdEject(void) {
 	if (!ms().sdRemoveDetect) return;
 
 	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) {
-		if(!showNonExtendedImage) {
+		if (!showNonExtendedImage) {
 			timeTillChangeToNonExtendedImage++;
 			if (timeTillChangeToNonExtendedImage > 10) {
 				showNonExtendedImage = true;
@@ -50,7 +50,7 @@ void checkSdEject(void) {
 	swiWaitForVBlank();
 	clearText();
 
-	if(showNonExtendedImage) {
+	if (showNonExtendedImage) {
 		printSmall(false, 0, 45, STR_SD_WAS_REMOVED, Alignment::center);
 		printSmall(false, 0, 75, STR_REINSERT_SD_CARD, Alignment::center);
 	} else {

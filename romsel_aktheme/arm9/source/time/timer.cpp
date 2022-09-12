@@ -53,7 +53,7 @@ double Timer::updateTimer()
 
 double Timer::updateFps()
 {
-    if( _fpsCounter++ > 60 )
+    if ( _fpsCounter++ > 60 )
     {
         double elapsedTime = _currentTime - _lastTime;
         _fps = _fpsCounter / elapsedTime;
@@ -74,7 +74,7 @@ vu64 Timer::getTick()
     DC_FlushAll();
     static vu64 lastTick = 0;
     vu64 tick = _overFlow + TIMER0_DATA;
-    if( tick < lastTick )
+    if ( tick < lastTick )
         tick += 65536;
     lastTick = tick;
     irqEnable( IRQ_TIMER0 );

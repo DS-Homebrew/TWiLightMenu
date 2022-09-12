@@ -48,7 +48,7 @@ static inline void _cwl(const char *file,int line)
   const char *seek=file;
 
   while(*seek!=0){
-    if(*seek=='/') file=seek;
+    if (*seek=='/') file=seek;
     seek++;
   }
   dbg_printf("%s(%d)\n",file,line);

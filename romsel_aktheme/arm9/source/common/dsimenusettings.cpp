@@ -246,7 +246,7 @@ void TWLSettings::saveSettings()
 
 u32 TWLSettings::CopyBufferSize(void)
 {
-//   if(font().FontRAM()<300*1024) return 1024*1024;
+//   if (font().FontRAM()<300*1024) return 1024*1024;
 //   return 512*1024;
 return 0x8000;
 }

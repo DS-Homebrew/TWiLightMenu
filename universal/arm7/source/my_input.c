@@ -25,7 +25,7 @@ void my_inputGetAndSend(void){
 	u16 keys= REG_KEYXY;
 
 
-	if(!my_touchPenDown()) {
+	if (!my_touchPenDown()) {
 		keys |= KEY_TOUCH;
   	} else {
 		keys &= ~KEY_TOUCH;
@@ -33,15 +33,15 @@ void my_inputGetAndSend(void){
 
 	msg.SystemInput.keys = keys;
 
-	if(keys & KEY_TOUCH) {
+	if (keys & KEY_TOUCH) {
 		penDown = false;	
 	} else {
 		msg.SystemInput.keys |= KEY_TOUCH;
 
-		if(penDown) {
+		if (penDown) {
 			my_touchReadXY(&tempPos);	
 			
-			if(tempPos.rawx && tempPos.rawy) {
+			if (tempPos.rawx && tempPos.rawy) {
 				msg.SystemInput.keys &= ~KEY_TOUCH;
 				msg.SystemInput.touch = tempPos;
 			} else {
@@ -52,13 +52,13 @@ void my_inputGetAndSend(void){
 		}
 	}	
 
-	if(keys & KEY_LID) 
+	if (keys & KEY_LID) 
 		sleepCounter++;
 	else
 		sleepCounter = 0;
 
 	//sleep if lid has been closed for 5 frames
-	if(sleepCounter >= 5) 
+	if (sleepCounter >= 5) 
 	{
 		systemSleep();
 		sleepCounter = 0;

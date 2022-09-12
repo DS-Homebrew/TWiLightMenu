@@ -476,7 +476,7 @@ u32 getBootFileCluster (const char* bootName)
 		{
 			found = false;
 		}
-		if(namelen<8 && dir.name[namelen]!=0x20) found = false;
+		if (namelen<8 && dir.name[namelen]!=0x20) found = false;
 		for (nameOffset = 0; nameOffset < namelen && found; nameOffset++)
 		{
 			if (ucase(dir.name[nameOffset]) != bootName[nameOffset])
@@ -557,7 +557,7 @@ u32 fileRead (char* buffer, u32 cluster, u32 startOffset, u32 length)
 
 		// Calculate how many sectors to read (read a maximum of discSecPerClus at a time)
 		sectorsToRead = discSecPerClus - curSect;
-		if(chunks < sectorsToRead)
+		if (chunks < sectorsToRead)
 			sectorsToRead = chunks;
 
 		// Read the sectors

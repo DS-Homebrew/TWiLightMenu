@@ -87,7 +87,7 @@ void UnlaunchBoot::createSaveIfNotExists(const std::string &fileExt, const std::
 		h.BS_BootSign = 0xAA55;
 
 		FILE *file = fopen(saveName.c_str(), "wb");
-		if(file) {
+		if (file) {
 			fwrite(&h, sizeof(FATHeader), 1, file); // Write header
 			fseek(file, saveSize - 1, SEEK_SET); // Pad rest of the file
 			fputc('\0', file);

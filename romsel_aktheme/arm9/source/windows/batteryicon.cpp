@@ -33,7 +33,7 @@ BatteryIcon::BatteryIcon() : Window(NULL, "batteryicon")
     CIniFile ini(SFN_UI_SETTINGS);
     _size = Size(0, 0);
     _position = Point(0, 0);
-    if(ini.GetInt("battery icon", "screen", true)) {
+    if (ini.GetInt("battery icon", "screen", true)) {
         _engine = GE_SUB;
     } else {
         _engine = GE_MAIN;
@@ -49,7 +49,7 @@ BatteryIcon::BatteryIcon() : Window(NULL, "batteryicon")
     _icon.setPosition(226, 174);
     _icon.setPriority(3);
     _icon.setBufferOffset(16);
-    if(ini.GetInt("battery icon", "show", false))
+    if (ini.GetInt("battery icon", "show", false))
     {
         _icon.show();
     }
@@ -60,7 +60,7 @@ BatteryIcon::BatteryIcon() : Window(NULL, "batteryicon")
 void BatteryIcon::draw()
 {
     CIniFile ini(SFN_UI_SETTINGS);
-    if(ini.GetInt("battery icon", "show", false)) {
+    if (ini.GetInt("battery icon", "show", false)) {
         u8 batteryLevel = sys().batteryStatus();
 
 		if (isDSiMode()) {
@@ -96,7 +96,7 @@ void BatteryIcon::drawIcon(BMP15 &icon)
     u16 y = ini.GetInt("battery icon", "y", 172);
     _icon.setPosition(x, y);
 
-    if(ini.GetInt("battery icon", "screen", true)) {
+    if (ini.GetInt("battery icon", "screen", true)) {
         gdi().maskBlt(icon.buffer(), x, y, icon.width(), icon.height(), _engine);
     }
 

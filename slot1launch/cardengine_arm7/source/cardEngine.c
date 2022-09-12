@@ -71,7 +71,7 @@ void myIrqHandlerVBlank(void) {
 	}
 
 	if (0 == (REG_KEYINPUT & (KEY_L | KEY_R | KEY_DOWN | KEY_B))) {
-		if(softResetTimer == 60*2) {
+		if (softResetTimer == 60*2) {
 			REG_MASTER_VOLUME = 0;
 			int oldIME = enterCriticalSection();
 			unlaunchSetFilename(true);

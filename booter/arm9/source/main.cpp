@@ -54,12 +54,12 @@ std::u16string utf8to16(std::string_view text) {
 	std::u16string out;
 	for(uint i=0;i<text.size();) {
 		char16_t c;
-		if(!(text[i] & 0x80)) {
+		if (!(text[i] & 0x80)) {
 			c = text[i++];
-		} else if((text[i] & 0xE0) == 0xC0) {
+		} else if ((text[i] & 0xE0) == 0xC0) {
 			c  = (text[i++] & 0x1F) << 6;
 			c |=  text[i++] & 0x3F;
-		} else if((text[i] & 0xF0) == 0xE0) {
+		} else if ((text[i] & 0xF0) == 0xE0) {
 			c  = (text[i++] & 0x0F) << 12;
 			c |= (text[i++] & 0x3F) << 6;
 			c |=  text[i++] & 0x3F;
@@ -105,7 +105,7 @@ void doPause(int x, int y) {
 	printSmall(false, x, y, "Press start...");
 	while(1) {
 		scanKeys();
-		if(keysDown() & KEY_START)
+		if (keysDown() & KEY_START)
 			break;
 	}
 	scanKeys();

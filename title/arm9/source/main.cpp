@@ -178,7 +178,7 @@ void loadROMselect(void)
 }*/
 
 bool extension(const std::string& filename, const char* ext) {
-	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
+	if (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
 		return false;
 	} else {
 		return true;
@@ -192,12 +192,12 @@ std::u16string utf8to16(std::string_view text) {
 	std::u16string out;
 	for(uint i=0;i<text.size();) {
 		char16_t c;
-		if(!(text[i] & 0x80)) {
+		if (!(text[i] & 0x80)) {
 			c = text[i++];
-		} else if((text[i] & 0xE0) == 0xC0) {
+		} else if ((text[i] & 0xE0) == 0xC0) {
 			c  = (text[i++] & 0x1F) << 6;
 			c |=  text[i++] & 0x3F;
-		} else if((text[i] & 0xF0) == 0xE0) {
+		} else if ((text[i] & 0xF0) == 0xE0) {
 			c  = (text[i++] & 0x0F) << 12;
 			c |= (text[i++] & 0x3F) << 6;
 			c |=  text[i++] & 0x3F;
@@ -241,7 +241,7 @@ void unlaunchRomBoot(std::string_view rom) {
 bool createDSiWareSave(const char *path, int size) {
 	const u16 sectorSize = 0x200;
 
-	if(!path || size < sectorSize)
+	if (!path || size < sectorSize)
 		return false;
 
 	//fit maximum sectors for the size
@@ -306,7 +306,7 @@ bool createDSiWareSave(const char *path, int size) {
 	h.BS_BootSign = 0xAA55;
 
 	FILE *file = fopen(path, "wb");
-	if(file) {
+	if (file) {
 		fwrite(&h, sizeof(FATHeader), 1, file); // Write header
 		fseek(file, size - 1, SEEK_SET); // Pad rest of the file
 		fputc('\0', file);
@@ -1053,7 +1053,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 		}
@@ -1064,7 +1064,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/gameyob.nds";
 		}
@@ -1080,7 +1080,7 @@ void lastRunROM()
 		mkdir(ms().previousUsedDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
 		}
@@ -1091,7 +1091,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 		}
@@ -1102,7 +1102,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 		}
@@ -1113,7 +1113,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 		}
@@ -1124,7 +1124,7 @@ void lastRunROM()
 		if (ms().mdEmulator >= 2 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
 		}
@@ -1211,7 +1211,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 		}
@@ -1222,7 +1222,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 		}
@@ -1236,7 +1236,7 @@ void lastRunROM()
 		mkdir(ms().previousUsedDevice ? "fat:/data/NitroGrafx" : "sd:/data/NitroGrafx", 0777);
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
 		}
@@ -1247,7 +1247,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
 		}
@@ -1258,7 +1258,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
 		}
@@ -1273,7 +1273,7 @@ void lastRunROM()
 		{
 			argarray.at(0) = (char*)(ms().consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
 		}
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)(ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds");
 			if (isDSiMode() || REG_SCFG_EXT != 0)
@@ -1290,7 +1290,7 @@ void lastRunROM()
 		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
 		}
@@ -1304,7 +1304,7 @@ void lastRunROM()
 		mkdir(ms().previousUsedDevice ? "fat:/data/nitroswan" : "sd:/data/nitroswan", 0777);
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
 		}
@@ -1318,7 +1318,7 @@ void lastRunROM()
 		mkdir(ms().previousUsedDevice ? "fat:/data/ngpds" : "sd:/data/ngpds", 0777);
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/NGPDS.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 		}
@@ -1329,7 +1329,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		const char* ndsToBoot = (char*)"sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
-		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0)
+		if (!isDSiMode() || access(ndsToBoot, F_OK) != 0)
 		{
 			ndsToBoot = (char*)"fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 		}
@@ -1341,7 +1341,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/AmEDS.nds";
 		}
@@ -1352,7 +1352,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
 		}
@@ -1363,7 +1363,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/tuna-vids.nds";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/apps/tuna-vids.nds";
 		}
@@ -1374,7 +1374,7 @@ void lastRunROM()
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/imageview.srldr";
-		if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 		{
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/imageview.srldr";
 		}
@@ -1396,7 +1396,7 @@ void lastRunROM()
 
 bool graphicsInited = false;
 void graphicsInit(void) {
-	if(graphicsInited)
+	if (graphicsInited)
 		return;
 
 	graphicsInited = true;
@@ -1556,7 +1556,7 @@ const TWLSettings::TLanguage titleLanguages[] = {
 };
 
 static const char* displayLanguage(int l, int type) {
-	if(l == -1) {
+	if (l == -1) {
 		return STR_SYSTEM.c_str();
 	} else {
 		switch(type) {
@@ -1579,15 +1579,15 @@ void languageSelect(void) {
 
 	int guiLanguage = -1, gameLanguage = -1, titleLanguage = -1;
 	for(uint i = 0; i < sizeof(guiLanguages) / sizeof(guiLanguages[0]); i++) {
-		if(guiLanguages[i] == ms().guiLanguage)
+		if (guiLanguages[i] == ms().guiLanguage)
 			guiLanguage = i;
 	}
 	for(uint i = 0; i < sizeof(gameLanguages) / sizeof(gameLanguages[0]); i++) {
-		if(gameLanguages[i] == ms().gameLanguage)
+		if (gameLanguages[i] == ms().gameLanguage)
 			gameLanguage = i;
 	}
 	for(uint i = 0; i < sizeof(titleLanguages) / sizeof(titleLanguages[0]); i++) {
-		if(titleLanguages[i] == ms().titleLanguage)
+		if (titleLanguages[i] == ms().titleLanguage)
 			titleLanguage = i;
 	}
 
@@ -2051,14 +2051,14 @@ int main(int argc, char **argv)
 		}
 
 		FILE *hwinfo_s = fopen("nand:/sys/HWINFO_S.dat", "rb");
-		if(hwinfo_s) {
-			if(ms().sysRegion == TWLSettings::ERegionDefault) {
+		if (hwinfo_s) {
+			if (ms().sysRegion == TWLSettings::ERegionDefault) {
 				fseek(hwinfo_s, 0x90, SEEK_SET);
 				ms().sysRegion = (TWLSettings::TRegion)fgetc(hwinfo_s);
 			}
 
-			if(ms().launcherApp == -1) {
-				if(access("nand:/launcher.dsi", F_OK) == 0) {
+			if (ms().launcherApp == -1) {
+				if (access("nand:/launcher.dsi", F_OK) == 0) {
 					// DSi Language Patcher
 					ms().launcherApp = 9;
 				} else {
@@ -2069,7 +2069,7 @@ int main(int argc, char **argv)
 					char tmdPath[64];
 					snprintf(tmdPath, sizeof(tmdPath), "nand:/title/00030017/%08lx/content/title.tmd", launcherTid);
 					FILE *launcherTmd = fopen(tmdPath, "rb");
-					if(launcherTmd) {
+					if (launcherTmd) {
 						fseek(launcherTmd, 0x1E7, SEEK_SET);
 						ms().launcherApp = fgetc(launcherTmd);
 						fclose(launcherTmd);
@@ -2356,7 +2356,7 @@ int main(int argc, char **argv)
 		regionSelect();
 	}
 
-	if(graphicsInited) {
+	if (graphicsInited) {
 		unloadFont();
 		graphicsInited = false;
 	}

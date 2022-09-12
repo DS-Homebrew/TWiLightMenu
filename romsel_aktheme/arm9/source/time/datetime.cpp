@@ -26,7 +26,7 @@ const char * DateTime::weekdayStrings[]= { "Sun", "Mon", "Tue", "Wed", "Thu", "F
 void DateTime::FillTimeParts(void)
 {
   time_t epochTime;
-  if(time(&epochTime)==(time_t)-1)
+  if (time(&epochTime)==(time_t)-1)
   {
     toncset(&iTimeParts,0,sizeof(iTimeParts));
   }

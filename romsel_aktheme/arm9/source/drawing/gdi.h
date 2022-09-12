@@ -65,7 +65,7 @@ class Gdi
 
     void drawPixel(u8 x, u8 y, GRAPHICS_ENGINE engine)
     {
-        //if( y > (u8)SCREEN_HEIGHT - 1 ) y = (u8)SCREEN_WIDTH - 1;
+        //if ( y > (u8)SCREEN_HEIGHT - 1 ) y = (u8)SCREEN_WIDTH - 1;
         if (GE_MAIN == engine)
             *(_bufferMain2 + ((u32)y << 8) + x + _layerPitch) = _penColor; //_bufferMain2[y * SCREEN_WIDTH + x] = _penColor;
         else

@@ -103,7 +103,7 @@ void SetBrightness(u8 screen, s8 bright)
 }
 
 bool extention(const std::string& filename, const char* ext) {
-	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
+	if (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
 		return false;
 	} else {
 		return true;
@@ -178,7 +178,7 @@ int main(int argc, char **argv)
 
 	
 	// init unicode
-	//if( initUnicode() )
+	//if ( initUnicode() )
 	//    _FAT_unicode_init( unicodeL2UTable, unicodeU2LTable, unicodeAnkTable );
 	cwl();
 

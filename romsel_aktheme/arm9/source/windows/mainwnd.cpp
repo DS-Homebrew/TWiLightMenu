@@ -140,9 +140,9 @@ void MainWnd::init()
 	    showBatt = ini.GetInt("battery icon", "show", 0);
 
 	
-	    if(showBatt)
+	    if (showBatt)
 	    {
-            if(!ini.GetInt("battery icon", "screen", true))
+            if (!ini.GetInt("battery icon", "screen", true))
             {
                 _batteryIcon = new Button(x, y, w, h, this, "");
                 _batteryIcon->setRelativePosition(Point(x,y));
@@ -237,7 +237,7 @@ void MainWnd::listSelChange(u32 i)
 void MainWnd::startMenuItemClicked(s16 i)
 {
     CIniFile ini(SFN_UI_SETTINGS);
-    if(!ini.GetInt("start menu", "showFileOperations", true)) i += 4;
+    if (!ini.GetInt("start menu", "showFileOperations", true)) i += 4;
     
     dbg_printf("start menu item %d\n", i);
 
@@ -610,7 +610,7 @@ std::string apFix(const char *filename, bool isHomebrew)
 				}
 				snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apFix%s", ms().secondaryDevice ? "fat" : "sd", cheatVer ? "Cheat.bin" : ".ips");
 				FILE *out = fopen(ipsPath, "wb");
-				if(out) {
+				if (out) {
 					fwrite(buffer, 1, size, out);
 					fclose(out);
 				}
@@ -837,7 +837,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 				}
 				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice ? "fat" : "sd");
 				FILE *out = fopen(wideBinPath, "wb");
-				if(out) {
+				if (out) {
 					fwrite(buffer, 1, size, out);
 					fclose(out);
 				}
@@ -1573,7 +1573,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 
 		ndsToBoot = RVIDPLAYER_SD;
-		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+		if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 			ndsToBoot = RVIDPLAYER_FC;
 		}
 
@@ -1588,7 +1588,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 
 		ndsToBoot = MPEG4PLAYER_SD;
-		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+		if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 			ndsToBoot = MPEG4PLAYER_FC;
 		}
 
@@ -1606,14 +1606,14 @@ void MainWnd::launchSelected()
 			if (REG_SCFG_EXT != 0)
 			{
 				ndsToBoot = ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI;
-				if(access(ndsToBoot, F_OK) != 0) {
+				if (access(ndsToBoot, F_OK) != 0) {
 					ndsToBoot = ms().consoleModel>0 ? GBARUNNER_3DS_FC : GBARUNNER_DSI_FC;
 				}
 			}
 			else
 			{
 				ndsToBoot = ms().gbar2DldiAccess ? GBARUNNER_A7_SD : GBARUNNER_A9_SD;
-				if(access(ndsToBoot, F_OK) != 0) {
+				if (access(ndsToBoot, F_OK) != 0) {
 					ndsToBoot = ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9;
 				}
 			}
@@ -1658,7 +1658,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 
 		ndsToBoot = STELLADS_SD;
-		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+		if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 			ndsToBoot = STELLADS_FC;
 		}
 
@@ -1673,7 +1673,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 
 		ndsToBoot = (ms().secondaryDevice ? NESDS_SD : NESTWL_SD);
-		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+		if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 			ndsToBoot = NESDS_FC;
 		}
 
@@ -1688,7 +1688,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 
 		ndsToBoot = GAMEYOB_SD;
-		if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+		if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 			ndsToBoot = GAMEYOB_FC;
 		}
 
@@ -1734,7 +1734,7 @@ void MainWnd::launchSelected()
 			ms().saveSettings();
 
 			ndsToBoot = S8DS_ROM;
-			if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+			if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 				ndsToBoot = S8DS_FC;
 			}
 
@@ -1753,7 +1753,7 @@ void MainWnd::launchSelected()
 		if (usePicoDrive || ms().secondaryDevice)
         {
 			ndsToBoot = usePicoDrive ? PICODRIVETWL_ROM : JENESISDS_ROM;
-			if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+			if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 				ndsToBoot = usePicoDrive ? PICODRIVETWL_FC : JENESISDS_FC;
 			}
 
@@ -1793,7 +1793,7 @@ void MainWnd::launchSelected()
 		if (ms().secondaryDevice)
         {
 			ndsToBoot = SNEMULDS_ROM;
-			if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+			if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 				ndsToBoot = SNEMULDS_FC;
 			}
 
@@ -1833,7 +1833,7 @@ void MainWnd::launchSelected()
 		if (ms().secondaryDevice)
         {
 			ndsToBoot = NITROGRAFX_ROM;
-			if(access(ndsToBoot, F_OK) != 0) {
+			if (access(ndsToBoot, F_OK) != 0) {
 				ndsToBoot = NITROGRAFX_FC;
 			}
 

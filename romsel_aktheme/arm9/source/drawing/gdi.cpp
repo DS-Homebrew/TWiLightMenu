@@ -340,11 +340,11 @@ void Gdi::drawLine(s16 x1, s16 y1, s16 x2, s16 y2, GRAPHICS_ENGINE engine)
 
         while (py != ye)
         {
-            //if(AALineFlag==false){
+            //if (AALineFlag==false){
             drawPixel(x1 + (int)px, y1 + py, engine);
             //}else{
             //    int Alpha=(int)(px*32);
-            //    if(Alpha<0){
+            //    if (Alpha<0){
             //        while(Alpha<=0) Alpha+=32;
             //    }else{
             //        while(32<=Alpha) Alpha-=32;
@@ -688,7 +688,7 @@ void Gdi::present(GRAPHICS_ENGINE engine)
     {
         if (SEM_GRAPHICS == _subEngineMode)
             dmaCopyWordsGdi(3, (void *)_bufferSub2, (void *)_bufferSub1, 256 * 192 * 2);
-        //else if( SEM_TEXT == _subEngineMode )
+        //else if ( SEM_TEXT == _subEngineMode )
         //    dmaCopyWords( 3, (void *)_bufferSub3, (void *)_bufferSub1, 32768 );
         fillMemory((void *)_bufferSub2, 0x18000, 0xffffffff);
     }

@@ -102,7 +102,7 @@ void vBlankHandler()
 {
 	glBegin2D();
 	{
-		if(fadeType == true) {
+		if (fadeType == true) {
 			screenBrightness--;
 			if (screenBrightness < 0) screenBrightness = 0;
 		} else {

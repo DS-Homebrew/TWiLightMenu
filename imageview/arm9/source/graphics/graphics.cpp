@@ -84,8 +84,8 @@ u16 convertVramColorToGrayscale(u16 val) {
 }
 
 void vBlankHandler() {
-	if(fadeType == true) {
-		if(!fadeDelay) {
+	if (fadeType == true) {
+		if (!fadeDelay) {
 			screenBrightness--;
 			if (screenBrightness < 0) screenBrightness = 0;
 		}
@@ -96,7 +96,7 @@ void vBlankHandler() {
 			fadeDelay = 0;
 		}
 	} else {
-		if(!fadeDelay) {
+		if (!fadeDelay) {
 			screenBrightness++;
 			if (screenBrightness > 31) screenBrightness = 31;
 		}
@@ -254,7 +254,7 @@ void imageLoad(const char* filename) {
 		fseek(file, 0xE, SEEK_SET);
 		u8 headerSize = fgetc(file);
 		bool rgb565 = false;
-		if(headerSize == 0x38) {
+		if (headerSize == 0x38) {
 			// Check the upper byte green mask for if it's got 5 or 6 bits
 			fseek(file, 0x2C, SEEK_CUR);
 			rgb565 = fgetc(file) == 0x07;
@@ -419,7 +419,7 @@ void imageLoad(const char* filename) {
 		return;
 	}
 
-	Gif gif(filename, false, false, true);
+	Gif gif (filename, false, false, true);
 	std::vector<u8> pageImage = gif.frame(0).image.imageData;
 	int width = gif.frame(0).descriptor.w;
 	int height = gif.frame(0).descriptor.h;
@@ -466,7 +466,7 @@ void bgLoad(void) {
 		return;
 	}
 
-	Gif gif("nitro:/graphics/bg.gif", false, false, true);
+	Gif gif ("nitro:/graphics/bg.gif", false, false, true);
 	const auto &frame = gif.frame(0);
 	u16 *dst = bgGetGfxPtr(bg3Sub);
 

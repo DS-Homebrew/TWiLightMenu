@@ -126,7 +126,7 @@ bool SettingWnd::process(const akui::Message &msg)
     {
       ret = processKeyMessage((KeyMessage &)msg);
     }
-    //if(msg.id()>cMessage::touchMessageStart&&msg.id()<Message::touchMessageEnd)
+    //if (msg.id()>cMessage::touchMessageStart&&msg.id()<Message::touchMessageEnd)
     //{
     //  ret=processTouchMessage((TouchMessage&)msg);
     //}

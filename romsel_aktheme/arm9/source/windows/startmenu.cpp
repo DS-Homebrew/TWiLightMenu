@@ -29,7 +29,7 @@ using namespace akui;
 void StartMenu::init()
 {
     CIniFile ini(SFN_UI_SETTINGS);
-    if(ini.GetInt("start menu", "showFileOperations", true))
+    if (ini.GetInt("start menu", "showFileOperations", true))
     {
         addItem(START_MENU_ITEM_COPY, LANG("start menu", "Copy"));
         addItem(START_MENU_ITEM_CUT, LANG("start menu", "Cut"));

@@ -7,11 +7,11 @@
 swiSHA1context_t sha1ctx;
 
 static inline int htoi(char a){
-	if(a >= '0' && a <= '9'){
+	if (a >= '0' && a <= '9'){
 		return a - '0';
-	}else if(a >= 'a' && a <= 'f'){
+	}else if (a >= 'a' && a <= 'f'){
 		return a - ('a' - 0xa);
-	}else if(a >= 'A' && a <= 'F'){
+	}else if (a >= 'A' && a <= 'F'){
 		return a - ('A' - 0xa);
 	}else{
 		return -1;
@@ -26,7 +26,7 @@ int hex2bytes(uint8_t *out, unsigned byte_len, const char *in){
 	}
 	for(unsigned i = 0; i < byte_len; ++i){
 		int h = htoi(*in++), l = htoi(*in++);
-		if(h == -1 || l == -1){
+		if (h == -1 || l == -1){
 			iprintf("%s: invalid input \"%c%c\"\n",
 				__FUNCTION__, *(in - 2), *(in - 1));
 			return -2;

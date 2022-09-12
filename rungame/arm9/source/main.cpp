@@ -87,7 +87,7 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 }
 
 bool extention(const std::string& filename, const char* ext) {
-	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
+	if (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
 		return false;
 	} else {
 		return true;
@@ -99,12 +99,12 @@ std::u16string utf8to16(std::string_view text) {
 	std::u16string out;
 	for(uint i=0;i<text.size();) {
 		char16_t c;
-		if(!(text[i] & 0x80)) {
+		if (!(text[i] & 0x80)) {
 			c = text[i++];
-		} else if((text[i] & 0xE0) == 0xC0) {
+		} else if ((text[i] & 0xE0) == 0xC0) {
 			c  = (text[i++] & 0x1F) << 6;
 			c |=  text[i++] & 0x3F;
-		} else if((text[i] & 0xF0) == 0xE0) {
+		} else if ((text[i] & 0xF0) == 0xE0) {
 			c  = (text[i++] & 0x0F) << 12;
 			c |= (text[i++] & 0x3F) << 6;
 			c |=  text[i++] & 0x3F;
@@ -308,7 +308,7 @@ int lastRunROM() {
 
 				char ndsToBoot[256];
 				sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
-				if(access(ndsToBoot, F_OK) != 0) {
+				if (access(ndsToBoot, F_OK) != 0) {
 					sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 				}
 
@@ -477,7 +477,7 @@ int lastRunROM() {
 
 					char ndsToBoot[256];
 					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
-					if(access(ndsToBoot, F_OK) != 0) {
+					if (access(ndsToBoot, F_OK) != 0) {
 						sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
 					}
 
@@ -627,7 +627,7 @@ int lastRunROM() {
 		case TWLSettings::ESNEmulDSLaunch:
 			{
 				const char* ndsToBoot = (char*)"sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
-				if(!isDSiMode() || access(argarray[0], F_OK) != 0)
+				if (!isDSiMode() || access(argarray[0], F_OK) != 0)
 				{
 					ndsToBoot = (char*)"fat:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
 				}

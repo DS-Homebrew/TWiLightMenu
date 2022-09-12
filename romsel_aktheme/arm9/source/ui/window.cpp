@@ -39,7 +39,7 @@ Window::Window(Window* aParent, const std::string& aText) :
 
 Window::~Window()
 {
-    if( isFocused() )
+    if ( isFocused() )
         windowManager().setFocusedWindow( NULL );
 }
 
@@ -81,9 +81,9 @@ Window& Window::disableFocused()
 Window* Window::windowBelow(const Point & p)
 {
     Window* ret = 0;
-    if(isVisible())
+    if (isVisible())
     {
-        if(windowRectangle().surrounds(p)) ret = this;
+        if (windowRectangle().surrounds(p)) ret = this;
     }
     return ret;
 }
@@ -132,7 +132,7 @@ bool Window::process( const Message & msg )
 Window& Window::render()
 {
     ////dbg_printf("cWindow::render this is %08x\n", this );
-    if( isVisible() )
+    if ( isVisible() )
         draw();
     return *this;
 }

@@ -20,7 +20,7 @@ bool shouldClear[] = {false, false};
 // Checks if any of the specified files exists
 bool fileExists(std::vector<std::string_view> paths) {
 	for(const std::string_view &path : paths) {
-		if(access(path.data(), F_OK) == 0)
+		if (access(path.data(), F_OK) == 0)
 			return true;
 	}
 
@@ -31,9 +31,9 @@ void fontInit() {
 	bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
 
 	// Unload fonts if already loaded
-	if(smallFont)
+	if (smallFont)
 		delete smallFont;
-	if(largeFont)
+	if (largeFont)
 		delete largeFont;
 
 	// Load font graphics
@@ -42,7 +42,7 @@ void fontInit() {
 	bool dsiFont = dsiFeatures() || sys().dsDebugRam() || useExpansionPak;
 	smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", defaultPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), "nitro:/graphics/font/small.nftr"}, useExpansionPak);
 	// If custom small font but no custom large font, use small font as large font
-	if(fileExists({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr"}) && !fileExists({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr"}))
+	if (fileExists({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr"}) && !fileExists({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr"}))
 		largeFont = smallFont;
 	else
 		largeFont = new FontGraphic({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", defaultPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), "nitro:/graphics/font/large.nftr"}, useExpansionPak);
@@ -59,12 +59,12 @@ void fontInit() {
 }
 
 void unloadFont() {
-	if(largeFont) {
+	if (largeFont) {
 		delete largeFont;
 		largeFont = nullptr;
 	}
 	
-	if(smallFont) {
+	if (smallFont) {
 		delete smallFont;
 		smallFont = nullptr;
 	}
@@ -80,7 +80,7 @@ FontGraphic *getFont(bool large) {
 
 void updateText(bool top) {
 	// Clear before redrawing
-	if(shouldClear[top]) {
+	if (shouldClear[top]) {
 		dmaFillWords(0, FontGraphic::textBuf[top], 256 * 192);
 		shouldClear[top] = false;
 	}
@@ -89,7 +89,7 @@ void updateText(bool top) {
 	auto &text = getTextQueue(top);
 	for(auto it = text.begin(); it != text.end(); ++it) {
 		FontGraphic *font = getFont(it->large);
-		if(font)
+		if (font)
 			font->print(it->x, it->y, top, it->message, it->align);
 	}
 	text.clear();
@@ -122,33 +122,33 @@ void printLarge(bool top, int x, int y, std::u16string_view message, Alignment a
 }
 
 int calcSmallFontWidth(std::string_view text) {
-	if(smallFont)
+	if (smallFont)
 		return smallFont->calcWidth(text);
 	return 0;
 }
 int calcSmallFontWidth(std::u16string_view text) {
-	if(smallFont)
+	if (smallFont)
 		return smallFont->calcWidth(text);
 	return 0;
 }
 
 int calcLargeFontWidth(std::string_view text) {
-	if(largeFont)
+	if (largeFont)
 		return largeFont->calcWidth(text);
 	return 0;
 }
 int calcLargeFontWidth(std::u16string_view text) {
-	if(largeFont)
+	if (largeFont)
 		return largeFont->calcWidth(text);
 	return 0;
 }
 
 int calcSmallFontHeight(std::string_view text) { return calcSmallFontHeight(FontGraphic::utf8to16(text)); }
 int calcSmallFontHeight(std::u16string_view text) {
-	if(smallFont) {
+	if (smallFont) {
 		int lines = 1;
 		for(auto c : text) {
-			if(c == '\n')
+			if (c == '\n')
 				lines++;
 		}
 		return lines * smallFont->height();
@@ -159,10 +159,10 @@ int calcSmallFontHeight(std::u16string_view text) {
 
 int calcLargeFontHeight(std::string_view text) { return calcLargeFontHeight(FontGraphic::utf8to16(text)); }
 int calcLargeFontHeight(std::u16string_view text) {
-	if(largeFont) {
+	if (largeFont) {
 		int lines = 1;
 		for(auto c : text) {
-			if(c == '\n')
+			if (c == '\n')
 				lines++;
 		}
 		return lines * largeFont->height();
@@ -172,13 +172,13 @@ int calcLargeFontHeight(std::u16string_view text) {
 }
 
 u8 smallFontHeight(void) {
-	if(smallFont)
+	if (smallFont)
 		return smallFont->height();
 	return 0;
 }
 
 u8 largeFontHeight(void) {
-	if(largeFont)
+	if (largeFont)
 		return largeFont->height();
 	return 0;
 }

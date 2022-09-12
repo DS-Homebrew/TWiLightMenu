@@ -168,7 +168,7 @@ void chdirFake(const char *dir) {
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
 	for(std::string_view extension : extensions) {
-		if(strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
+		if (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
 			return true;
 		}
 	}
@@ -187,7 +187,7 @@ bool nameEndsWith(const std::string_view name, const std::vector<std::string_vie
 		return false; // Don't show macOS's index files
 
 	for (const std::string_view &ext : extensionList) {
-		if(name.length() > ext.length() && strcasecmp(name.substr(name.length() - ext.length()).data(), ext.data()) == 0)
+		if (name.length() > ext.length() && strcasecmp(name.substr(name.length() - ext.length()).data(), ext.data()) == 0)
 			return true;
 	}
 	return false;
@@ -201,10 +201,10 @@ bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 		return false;
 	}
 	if (lhs.customPos || rhs.customPos) {
-		if(!lhs.customPos)	return false;
-		else if(!rhs.customPos)	return true;
+		if (!lhs.customPos)	return false;
+		else if (!rhs.customPos)	return true;
 
-		if(lhs.position < rhs.position)	return true;
+		if (lhs.position < rhs.position)	return true;
 		else return false;
 	}
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
@@ -357,7 +357,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 						return true;
 
 					int extCmp = strcasecmp(lhs.name.substr(lhs.name.find_last_of('.') + 1).c_str(), rhs.name.substr(rhs.name.find_last_of('.') + 1).c_str());
-					if(extCmp == 0)
+					if (extCmp == 0)
 						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 					else
 						return extCmp < 0;
@@ -425,8 +425,8 @@ void displayNowLoading(void) {
 }
 
 void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntry = 0xFFFF) {
-	if((right && CURPOS >= 39) || (!right && CURPOS <= 0)) {
-		if(!edgeBumpSoundPlayed)
+	if ((right && CURPOS >= 39) || (!right && CURPOS <= 0)) {
+		if (!edgeBumpSoundPlayed)
 			snd().playWrong();
 		edgeBumpSoundPlayed = true;
 		return;
@@ -439,27 +439,27 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 	bool firstMove = true;
 	touchPosition touch;
 	do {
-		if(right && CURPOS < 39 && CURPOS < maxEntry) {
+		if (right && CURPOS < 39 && CURPOS < maxEntry) {
 			CURPOS++;
-		} else if(!right && CURPOS > 0) {
+		} else if (!right && CURPOS > 0) {
 			CURPOS--;
 		} else {
-			if(!edgeBumpSoundPlayed)
+			if (!edgeBumpSoundPlayed)
 				snd().playWrong();
 			edgeBumpSoundPlayed = true;
 			return;
 		}
 
-		if(movingApp == -1) {
+		if (movingApp == -1) {
 			clearText(false);
-			if(CURPOS + PAGENUM * 40 < (int)dirContents.size()) {
-				if(ms().theme != TWLSettings::EThemeSaturn)
+			if (CURPOS + PAGENUM * 40 < (int)dirContents.size()) {
+				if (ms().theme != TWLSettings::EThemeSaturn)
 					currentBg = 1;
 				titleUpdate(dirContents[CURPOS + PAGENUM * 40].isDirectory,
 							dirContents[CURPOS + PAGENUM * 40].name,
 							CURPOS);
 			} else {
-				if(ms().theme != TWLSettings::EThemeSaturn)
+				if (ms().theme != TWLSettings::EThemeSaturn)
 					currentBg = 0;
 			}
 			if (ms().theme == TWLSettings::EThemeHBL) {
@@ -482,17 +482,17 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 
 		bgOperations(false);
 
-		if(ms().theme != TWLSettings::EThemeSaturn) {
+		if (ms().theme != TWLSettings::EThemeSaturn) {
 			for(int i = 0; i < 8; i++) {
 				swiWaitForVBlank();
 
-				if(right) {
+				if (right) {
 					titleboxXdest[ms().secondaryDevice] += titleboxXspacing / 8;
-					if(i % 3)
+					if (i % 3)
 						titlewindowXdest[ms().secondaryDevice]++;
 				} else {
 					titleboxXdest[ms().secondaryDevice] -= titleboxXspacing / 8;
-					if(i % 3)
+					if (i % 3)
 						titlewindowXdest[ms().secondaryDevice]--;
 				}
 			}
@@ -500,7 +500,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 			swiWaitForVBlank();
 		} else {
 			snd().playSelect();
-			if(right) {
+			if (right) {
 				titleboxXdest[ms().secondaryDevice] += titleboxXspacing;
 				titlewindowXdest[ms().secondaryDevice] += 5;
 			} else {
@@ -510,7 +510,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 		}
 
 		// Bit of delay the first time to give time to release the button
-		if(firstMove) {
+		if (firstMove) {
 			firstMove = false;
 			if (boxArtLoaded) {
 				if (!rocketVideo_playVideo)
@@ -525,7 +525,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 			for(int i = 0; i < (ms().theme == TWLSettings::EThemeSaturn ? 15 : 4); i++)
 				swiWaitForVBlank();
 		} else {
-			if(ms().theme != TWLSettings::ETheme3DS)
+			if (ms().theme != TWLSettings::ETheme3DS)
 				showSTARTborder = false;
 		}
 
@@ -538,7 +538,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 	while(titleboxXdest[ms().secondaryDevice] != titleboxXpos[ms().secondaryDevice] && !(keysHeld() & KEY_TOUCH))
 		swiWaitForVBlank();
 
-	if(movingApp == -1 && CURPOS + PAGENUM * 40 < (int)dirContents.size())
+	if (movingApp == -1 && CURPOS + PAGENUM * 40 < (int)dirContents.size())
 		showSTARTborder = true;
 	edgeBumpSoundPlayed = false;
 	needToPlayStopSound = true;
@@ -2115,7 +2115,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					currentBg = (ms().theme == TWLSettings::EThemeSaturn ? 0 : 1), displayBoxArt = ms().showBoxArt;
-					if(!bannerTextShown) {
+					if (!bannerTextShown) {
 						clearText();
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
@@ -2308,7 +2308,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					gameOrderIni.SetStringVector("ORDER", path, dirNames, ':');
 					gameOrderIni.SaveIniFile(gameOrderIniPath);
 
-					if(ms().sortMethod != TWLSettings::ESortCustom) {
+					if (ms().sortMethod != TWLSettings::ESortCustom) {
 						ms().sortMethod = TWLSettings::ESortCustom;
 						ms().saveSettings();
 					}
@@ -2337,7 +2337,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						titlewindowXdest[ms().secondaryDevice] = dest * 5;
 						titleboxXdest[ms().secondaryDevice] = dest * titleboxXspacing;
 
-						if(titleboxXdest[ms().secondaryDevice] == titleboxXpos[ms().secondaryDevice])
+						if (titleboxXdest[ms().secondaryDevice] == titleboxXpos[ms().secondaryDevice])
 							break;
 					}
 
@@ -2345,7 +2345,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					CURPOS = std::clamp((titleboxXpos[ms().secondaryDevice] + 28) / titleboxXspacing, 0, 39);
 
 					// Load icons
-					if(prevPos != CURPOS) {
+					if (prevPos != CURPOS) {
 						for (int i = 0; i < 6; i++) {
 							int pos = (CURPOS - 2 + i);
 							if ((bnrRomType[pos] == 0 || customIcon[pos]) && pos >= 0 && pos + PAGENUM * 40 < file_count) {
@@ -2403,22 +2403,22 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 				}
 
-				if(tapped) {
+				if (tapped) {
 					int moveBy;
-					if(startTouch.px < 39)
+					if (startTouch.px < 39)
 						moveBy = -2;
-					else if(startTouch.px < 96)
+					else if (startTouch.px < 96)
 						moveBy = -1;
-					else if(startTouch.px < 160)
+					else if (startTouch.px < 160)
 						moveBy = 0;
-					else if(startTouch.px < 217)
+					else if (startTouch.px < 217)
 						moveBy = 1;
 					else
 						moveBy = 2;
 
-					if(moveBy == 0) {
+					if (moveBy == 0) {
 						gameTapped = bannerTextShown && showSTARTborder;
-					} else if(ms().theme != TWLSettings::EThemeSaturn) {
+					} else if (ms().theme != TWLSettings::EThemeSaturn) {
 						CURPOS = std::clamp(CURPOS + moveBy, 0, 39);
 
 						// Load icons
@@ -2431,7 +2431,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 						}
 					}
-				} else if(ms().theme != TWLSettings::EThemeSaturn) {
+				} else if (ms().theme != TWLSettings::EThemeSaturn) {
 					int prevPos = CURPOS;
 					showSTARTborder = false;
 
@@ -2448,7 +2448,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							titlewindowXdest[ms().secondaryDevice] = dest * 5;
 
 							int boxDest = std::clamp(titleboxXdest[ms().secondaryDevice] + dx * titleboxXspacing, -160, titleboxXspacing * 39 + 160);
-							if(boxDest < 0 || boxDest > titleboxXspacing * 39) {
+							if (boxDest < 0 || boxDest > titleboxXspacing * 39) {
 								titleboxXdest[ms().secondaryDevice] = boxDest;
 							} else {
 								titleboxXdest[ms().secondaryDevice] = dest * titleboxXspacing;
@@ -2457,14 +2457,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							int prevPos;
 							while(titleboxXdest[ms().secondaryDevice] != titleboxXpos[ms().secondaryDevice] && !(keysHeld() & KEY_TOUCH)) {
 								scanKeys();
-								if(keysDown() & KEY_TOUCH)
+								if (keysDown() & KEY_TOUCH)
 									touchRead(&touch);
 								swiWaitForVBlank();
 
 								prevPos = CURPOS;
 								CURPOS = std::clamp(titleboxXpos[ms().secondaryDevice] / titleboxXspacing, 0, 39);
 
-								if(CURPOS != prevPos) {
+								if (CURPOS != prevPos) {
 									// Load icons
 									for (int i = 0; i < 6; i++) {
 										int pos = (CURPOS - 2 + i);
@@ -2502,7 +2502,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								scanKeys();
 							}
 
-							if(keysHeld() & KEY_TOUCH) {
+							if (keysHeld() & KEY_TOUCH) {
 								prevTouch2 = touch;
 								touchRead(&prevTouch1);
 								titleboxXspeed = 3;
@@ -2872,7 +2872,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							rocketVideo_playVideo = false;
 						}
 
-						if(ms().updateRecentlyPlayedList) {
+						if (ms().updateRecentlyPlayedList) {
 							while (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL && !screenFadedOut()) {
 								swiWaitForVBlank();
 							}
@@ -2906,7 +2906,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							recentlyPlayedIni.GetStringVector("RECENT", path, recentlyPlayed, ':'); // : isn't allowed in FAT-32 names, so its a good deliminator
 
 							std::vector<std::string>::iterator it = std::find(recentlyPlayed.begin(), recentlyPlayed.end(), entry->name);
-							if(it != recentlyPlayed.end()) {
+							if (it != recentlyPlayed.end()) {
 								recentlyPlayed.erase(it);
 							}
 
@@ -3168,7 +3168,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 
 						// Remove leading . if it exists
-						if((strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != "..")) {
+						if ((strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != "..")) {
 							rename(entry->name.c_str(), entry->name.substr(1).c_str());
 						} else { // Otherwise toggle the hidden attribute bit
 							FAT_setAttr(entry->name.c_str(), FAT_getAttr(entry->name.c_str()) ^ ATTR_HIDDEN);

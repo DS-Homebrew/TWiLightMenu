@@ -405,16 +405,16 @@ void vBlankHandler() {
 	}
 
 	// Move title box/window closer to destination if moved
-	if(ms().theme != TWLSettings::EThemeSaturn) {
-		if(titleboxXpos[ms().secondaryDevice] > titleboxXdest[ms().secondaryDevice]) {
+	if (ms().theme != TWLSettings::EThemeSaturn) {
+		if (titleboxXpos[ms().secondaryDevice] > titleboxXdest[ms().secondaryDevice]) {
 			titleboxXpos[ms().secondaryDevice] -= std::max((titleboxXpos[ms().secondaryDevice] - titleboxXdest[ms().secondaryDevice]) / titleboxXspeed, 1);
-		} else if(titleboxXpos[ms().secondaryDevice] < titleboxXdest[ms().secondaryDevice]) {
+		} else if (titleboxXpos[ms().secondaryDevice] < titleboxXdest[ms().secondaryDevice]) {
 			titleboxXpos[ms().secondaryDevice] += std::max((titleboxXdest[ms().secondaryDevice] - titleboxXpos[ms().secondaryDevice]) / titleboxXspeed, 1);
 		}
 
-		if(titlewindowXpos[ms().secondaryDevice] > titlewindowXdest[ms().secondaryDevice]) {
+		if (titlewindowXpos[ms().secondaryDevice] > titlewindowXdest[ms().secondaryDevice]) {
 			titlewindowXpos[ms().secondaryDevice] -= std::max((titlewindowXpos[ms().secondaryDevice] - titlewindowXdest[ms().secondaryDevice]) / titleboxXspeed, 1);
-		} else if(titlewindowXpos[ms().secondaryDevice] < titlewindowXdest[ms().secondaryDevice]) {
+		} else if (titlewindowXpos[ms().secondaryDevice] < titlewindowXdest[ms().secondaryDevice]) {
 			titlewindowXpos[ms().secondaryDevice] += std::max((titlewindowXdest[ms().secondaryDevice] - titlewindowXpos[ms().secondaryDevice]) / titleboxXspeed, 1);
 		}
 	} else { // In saturn theme just move instantly
@@ -991,7 +991,7 @@ void vBlankHandler() {
 				barYpos += 12;
 			}
 			int fillColor = ms().colorMode == 1 ? convertVramColorToGrayscale(RGB15(0, 0, 31)) : RGB15(0, 0, 31);
-			if(ms().rtl()) {
+			if (ms().rtl()) {
 				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, RGB15(23, 23, 23));
 				if (progressBarLength > 0) {
 					glBoxFilled(barXpos, barYpos, barXpos-progressBarLength, barYpos+5, fillColor);
@@ -1155,7 +1155,7 @@ void loadPhotoList() {
 			photoList.emplace_back(dirPath + photoDir);
 		}
 		closedir(dir);
-		if(photoList.size() > 0) {
+		if (photoList.size() > 0) {
 			loadPhoto(photoList[rand() / ((RAND_MAX + 1u) / photoList.size())]);
 			return;
 		}
@@ -1163,19 +1163,19 @@ void loadPhotoList() {
 
 	// If no photos found, try find a bootstrap screenshot
 	FILE *file = fopen("sd:/_nds/nds-bootstrap/screenshots.tar", "rb");
-	if(!file)
+	if (!file)
 		file = fopen("fat:/_nds/nds-bootstrap/screenshots.tar", "rb");
 	
-	if(file) {
+	if (file) {
 		std::vector<int> screenshots;
 		fseek(file, 0x200, SEEK_SET);
 		for(int i = 0; i < 50; i++) {
-			if(fgetc(file) == 'B')
+			if (fgetc(file) == 'B')
 				screenshots.push_back(i);
 			fseek(file, 0x18400 - 1, SEEK_CUR);
 		}
 
-		if(screenshots.size() > 0) {
+		if (screenshots.size() > 0) {
 			fseek(file, 0x200 + 0x18400 * (screenshots[rand() % screenshots.size()]), SEEK_SET);
 			loadBootstrapScreenshot(file);
 			return;
@@ -1194,7 +1194,7 @@ void loadPhoto(const std::string &path) {
 
 	lodepng::decode(image, photoWidth, photoHeight, path);
 
-	if(photoWidth > 208 || photoHeight > 156) {
+	if (photoWidth > 208 || photoHeight > 156) {
 		image.clear();
 		// Image is too big, load the default
 		lodepng::decode(image, photoWidth, photoHeight, "nitro:/graphics/photo_default.png");
@@ -1283,7 +1283,7 @@ void loadPhoto(const std::string &path) {
 
 void loadBootstrapScreenshot(FILE *file) {
 	// Simple check to ensure we're seeked to a BMP
-	if(fgetc(file) != 'B' || fgetc(file) != 'M')
+	if (fgetc(file) != 'B' || fgetc(file) != 'M')
 		return;
 
 	photoWidth = 208;
@@ -1292,7 +1292,7 @@ void loadBootstrapScreenshot(FILE *file) {
 	// All nds-bootstrap screenshots should be this size, if it's not something's wrong
 	u32 bmpSize;
 	fread(&bmpSize, 4, 1, file);
-	if(bmpSize != 0x18046)
+	if (bmpSize != 0x18046)
 		return;
 
 	fseek(file, 0x40, SEEK_CUR);
@@ -1351,7 +1351,7 @@ void loadPhotoPart() {
 		if (x >= startX + photoWidth) {
 			x = startX;
 			y++;
-			if(y >= 172)	break;
+			if (y >= 172)	break;
 		}
 		bgSubBuffer[y * 256 + x] = *(src++);
 		if (boxArtColorDeband) {

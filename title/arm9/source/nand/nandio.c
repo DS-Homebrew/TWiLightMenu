@@ -78,7 +78,7 @@ bool nandio_startup() {
 	}
 	result = sharedAddr[3];
 
-	if(result==0) return false;
+	if (result==0) return false;
 
 	sharedAddr[3] = 0x5453414E;
 	IPC_SendSync(2);

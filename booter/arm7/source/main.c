@@ -42,7 +42,7 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoCheckValue32(FIFO_USER_01)) {
+	if (fifoCheckValue32(FIFO_USER_01)) {
 		ReturntoDSiMenu();
 	}
 }

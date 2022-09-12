@@ -257,7 +257,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	writeAddr ((data_t*) LCDC_BANK_C, INIT_DISC_OFFSET, initDisc);
 
 	writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, isDSiMode());
-	if(argv[0][0]=='s' && argv[0][1]=='d') {
+	if (argv[0][0]=='s' && argv[0][1]=='d') {
 		writeAddr ((data_t*) LCDC_BANK_C, HAVE_DSISD_OFFSET, 1);
 	}
 
@@ -300,7 +300,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	writeAddr ((data_t*) LCDC_BANK_C, ARG_SIZE_OFFSET, argSize);
 
 		
-	if(dldiPatchNds) {
+	if (dldiPatchNds) {
 		// Patch the loader with a DLDI for the card
 		if (!dldiPatchLoader ((data_t*)LCDC_BANK_C, loaderSize, initDisc)) {
 			return 3;
@@ -414,7 +414,7 @@ bool installBootStub(bool havedsiSD) {
 	bool ret = false;
 
 	bootloader[8] = isDSiMode();
-	if( havedsiSD) {
+	if ( havedsiSD) {
 		ret = true;
 		bootloader[3] = 0; // don't dldi patch
 		bootloader[7] = 1; // use internal dsi SD code

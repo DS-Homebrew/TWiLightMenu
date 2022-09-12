@@ -33,7 +33,7 @@ VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
     CIniFile ini(SFN_UI_SETTINGS);
     _size = Size(0, 0);
     _position = Point(0, 0);
-    if(ini.GetInt("volume icon", "screen", true)) {
+    if (ini.GetInt("volume icon", "screen", true)) {
         _engine = GE_SUB;
     } else {
         _engine = GE_MAIN;
@@ -49,7 +49,7 @@ VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
     _icon.setPosition(226, 174);
     _icon.setPriority(3);
     _icon.setBufferOffset(16);
-    if(ini.GetInt("volume icon", "show", false))
+    if (ini.GetInt("volume icon", "show", false))
     {
         _icon.show();
     }
@@ -60,7 +60,7 @@ VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
 void VolumeIcon::draw()
 {
     CIniFile ini(SFN_UI_SETTINGS);
-    if(ini.GetInt("volume icon", "show", false))
+    if (ini.GetInt("volume icon", "show", false))
     {
         u8 volumeLevel = sys().volumeStatus();
         
@@ -87,7 +87,7 @@ void VolumeIcon::drawIcon(const BMP15 &icon)
     u16 y = ini.GetInt("volume icon", "y", 172);
     _icon.setPosition(x, y);
 
-    if(ini.GetInt("volume icon", "screen", true)) {
+    if (ini.GetInt("volume icon", "screen", true)) {
     gdi().maskBlt(icon.buffer(), x, y, icon.width(), icon.height(), _engine);
     } else {
         u32 pitch = icon.pitch() >> 1;

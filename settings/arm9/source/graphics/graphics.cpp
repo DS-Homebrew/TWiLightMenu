@@ -104,7 +104,7 @@ u16 convertVramColorToGrayscale(u16 val) {
 
 // Copys a palette and applies filtering if enabled
 void copyPalette(u16 *dst, const u16 *src, int size) {
-	if(ms().colorMode == 1) { // Grayscale
+	if (ms().colorMode == 1) { // Grayscale
 		for(int i = 0; i < size; i++) {
 			dst[i] = convertVramColorToGrayscale(src[i]);
 		}
@@ -133,7 +133,7 @@ void drawScroller(int y, int h, bool onLeft) {
 
 void vBlankHandler()
 {
-	if(fadeType == true) {
+	if (fadeType == true) {
 		screenBrightness--;
 		if (screenBrightness < 0) screenBrightness = 0;
 	} else {
@@ -187,7 +187,7 @@ void graphicsInit() {
 	int bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
 	bgSetPriority(bg2Sub, 0);
 
-	if(currentTheme != 4) {
+	if (currentTheme != 4) {
 		tonccpy(bgGetGfxPtr(bg3Main), (/*widescreenEffects ? top_bg_wideBitmap :*/ top_bgBitmap), (/*widescreenEffects ? top_bg_wideBitmapLen :*/ top_bgBitmapLen));
 		copyPalette(BG_PALETTE + 0x10, (/*widescreenEffects ? top_bg_widePal :*/ top_bgPal), (/*widescreenEffects ? top_bg_widePalLen :*/ top_bgPalLen));
 		tonccpy(bgGetGfxPtr(bg3Sub), sub_bgBitmap, sub_bgBitmapLen);

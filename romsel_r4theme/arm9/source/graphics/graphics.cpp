@@ -267,8 +267,8 @@ void vBlankHandler()
 
 	glBegin2D();
 	{
-		if(fadeType == true) {
-			if(!fadeDelay) {
+		if (fadeType == true) {
+			if (!fadeDelay) {
 				screenBrightness--;
 				if (screenBrightness < 0) screenBrightness = 0;
 			}
@@ -279,7 +279,7 @@ void vBlankHandler()
 				fadeDelay = 0;
 			}
 		} else {
-			if(!fadeDelay) {
+			if (!fadeDelay) {
 				screenBrightness++;
 				if (screenBrightness > 31) screenBrightness = 31;
 			}
@@ -336,7 +336,7 @@ void vBlankHandler()
 			else drawIcon(40, 28);
 			if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 			// Playback animated icons
-			if(bnriconisDSi==true) {
+			if (bnriconisDSi==true) {
 				playBannerSequence();
 			}
 		}
@@ -497,14 +497,14 @@ void graphicsLoad()
 		std::string pathTop;
 		if (startMenu) {
 			FILE* file = fopen((themePath + "/logo.png").c_str(), "rb");
-			if(file)
+			if (file)
 				pathTop = themePath + "/logo.png";
 			else
 				pathTop = "nitro:/themes/theme1/logo.png";
 			fclose(file);
 		} else {
 			FILE* file = fopen((themePath + "/bckgrd_1.png").c_str(), "rb");
-			if(file)
+			if (file)
 				pathTop = themePath + "/bckgrd_1.png";
 			else
 				pathTop = "nitro:/themes/theme1/bckgrd_1.png";
@@ -514,14 +514,14 @@ void graphicsLoad()
 		std::string pathBottom;
 		if (startMenu) {
 			FILE* file = fopen((themePath + "/icons.png").c_str(), "rb");
-			if(file)
+			if (file)
 				pathBottom = themePath + "/icons.png";
 			else
 				pathBottom = "nitro:/themes/theme1/icons.png";
 			fclose(file);
 		} else {
 			FILE* file = fopen((themePath + "/bckgrd_2.png").c_str(), "rb");
-			if(file)
+			if (file)
 				pathBottom = themePath + "/bckgrd_2.png";
 			else
 				pathBottom = "nitro:/themes/theme1/bckgrd_2.png";

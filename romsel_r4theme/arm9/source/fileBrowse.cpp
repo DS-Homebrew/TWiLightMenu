@@ -115,7 +115,7 @@ struct DirEntry {
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
 	for(std::string_view extension : extensions) {
-		if(strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
+		if (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
 			return true;
 		}
 	}
@@ -134,7 +134,7 @@ bool nameEndsWith(const std::string_view name, const std::vector<std::string_vie
 		return false; // Don't show macOS's index files
 
 	for (const std::string_view &ext : extensionList) {
-		if(name.length() > ext.length() && strcasecmp(name.substr(name.length() - ext.length()).data(), ext.data()) == 0)
+		if (name.length() > ext.length() && strcasecmp(name.substr(name.length() - ext.length()).data(), ext.data()) == 0)
 			return true;
 	}
 	return false;
@@ -148,10 +148,10 @@ bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 		return false;
 	}
 	if (lhs.customPos || rhs.customPos) {
-		if(!lhs.customPos)	return false;
-		else if(!rhs.customPos)	return true;
+		if (!lhs.customPos)	return false;
+		else if (!rhs.customPos)	return true;
 
-		if(lhs.position < rhs.position)	return true;
+		if (lhs.position < rhs.position)	return true;
 		else return false;
 	}
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
@@ -256,7 +256,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 						return true;
 
 					int extCmp = strcasecmp(lhs.name.substr(lhs.name.find_last_of('.') + 1).c_str(), rhs.name.substr(rhs.name.find_last_of('.') + 1).c_str());
-					if(extCmp == 0)
+					if (extCmp == 0)
 						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 					else
 						return extCmp < 0;
@@ -938,15 +938,15 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bnrRomType = 3;
 			} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
 				bnrRomType = 4;
-			} else if(extension(std_romsel_filename, {".sg"})) {
+			} else if (extension(std_romsel_filename, {".sg"})) {
 				bnrRomType = 15;
-			} else if(extension(std_romsel_filename, {".sms"})) {
+			} else if (extension(std_romsel_filename, {".sms"})) {
 				bnrRomType = 5;
-			} else if(extension(std_romsel_filename, {".gg"})) {
+			} else if (extension(std_romsel_filename, {".gg"})) {
 				bnrRomType = 6;
-			} else if(extension(std_romsel_filename, {".gen"})) {
+			} else if (extension(std_romsel_filename, {".gen"})) {
 				bnrRomType = 7;
-			} else if(extension(std_romsel_filename, {".smc", ".sfc"})) {
+			} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
 				bnrRomType = 8;
 			} else if (extension(std_romsel_filename, {".pce"})) {
 				bnrRomType = 11;
@@ -1269,7 +1269,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 					}
 
-					if(ms().updateRecentlyPlayedList) {
+					if (ms().updateRecentlyPlayedList) {
 						dialogboxHeight = 2;
 						showdialogbox = true;
 
@@ -1287,7 +1287,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						recentlyPlayedIni.GetStringVector("RECENT", path, recentlyPlayed, ':'); // : isn't allowed in FAT-32 names, so its a good deliminator
 
 						std::vector<std::string>::iterator it = std::find(recentlyPlayed.begin(), recentlyPlayed.end(), entry->name);
-						if(it != recentlyPlayed.end()) {
+						if (it != recentlyPlayed.end()) {
 							recentlyPlayed.erase(it);
 						}
 
@@ -1369,10 +1369,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 
 			if (isTwlm || isDirectory) {
-				if(unHide)	printSmallCentered(false, 128, "Y: Unhide  \u2428 Nothing");
+				if (unHide)	printSmallCentered(false, 128, "Y: Unhide  \u2428 Nothing");
 				else		printSmallCentered(false, 128, "Y: Hide    \u2428 Nothing");
 			} else {
-				if(unHide)	printSmallCentered(false, 128, "Y: Unhide  \u2427 Delete  \u2428 Nothing");
+				if (unHide)	printSmallCentered(false, 128, "Y: Unhide  \u2427 Delete  \u2428 Nothing");
 				else		printSmallCentered(false, 128, "Y: Hide   \u2427 Delete   \u2428 Nothing");
 			}
 
@@ -1396,7 +1396,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						remove(dirContents.at(fileOffset).name.c_str());
 					} else if (pressed & KEY_Y) {
 						// Remove leading . if it exists
-						if((strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != "..")) {
+						if ((strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != "..")) {
 							rename(entry->name.c_str(), entry->name.substr(1).c_str());
 						} else { // Otherwise toggle the hidden attribute bit
 							FAT_setAttr(entry->name.c_str(), FAT_getAttr(entry->name.c_str()) ^ ATTR_HIDDEN);

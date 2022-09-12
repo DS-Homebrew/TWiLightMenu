@@ -101,7 +101,7 @@ class ListView : public Window
     {
         setSize(Size(w, h));
         _visibleRowCount = h / _rowHeight;
-        //if( _visibleRowCount > _rows.size() ) _visibleRowCount = _rows.size();
+        //if ( _visibleRowCount > _rows.size() ) _visibleRowCount = _rows.size();
     }
 
     void arangeColumnsSize();

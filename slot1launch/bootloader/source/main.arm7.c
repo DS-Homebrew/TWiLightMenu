@@ -289,7 +289,7 @@ void arm7_resetMemory (void)
 		DMA_DEST(i) = 0;
 		TIMER_CR(i) = 0;
 		TIMER_DATA(i) = 0;
-		if(my_isDSiMode())
+		if (my_isDSiMode())
 		{
 			for(reg=0; reg<0x1c; reg+=4)*((u32*)(0x04004104 + ((i*0x1c)+reg))) = 0;//Reset NDMA.
 		}
@@ -300,7 +300,7 @@ void arm7_resetMemory (void)
 	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
 	REG_IPC_FIFO_CR = 0;
 
-	if(my_isDSiMode()) {
+	if (my_isDSiMode()) {
 		memset_addrs_arm7(0x03000000, 0x0380FFC0);
 		memset_addrs_arm7(0x0380FFD0, 0x03800000 + 0x10000);
 	} else {
@@ -314,7 +314,7 @@ void arm7_resetMemory (void)
 	// clear more of EXRAM, skipping the cheat data section
 	toncset ((void*)0x023F8000, 0, 0x8000);
 
-	if(my_isDSiMode()) {
+	if (my_isDSiMode()) {
 		// clear last part of EXRAM
 		memset_addrs_arm7(0x02400000, 0x02FFD7BC); // Leave eMMC CID intact
 		memset_addrs_arm7(0x02FFD7CC, 0x03000000);
@@ -986,7 +986,7 @@ void arm7_main (void) {
 
 		copyLoop ((u32*)ENGINE_LOCATION_ARM7, (u32*)cardengine_arm7_bin, cardengine_arm7_bin_size);
 		errorCode = hookNdsRetail(ndsHeader, (u32*)ENGINE_LOCATION_ARM7);
-		if(errorCode == ERR_NONE) {
+		if (errorCode == ERR_NONE) {
 			nocashMessage("card hook Sucessfull");
 		} else {
 			nocashMessage("error during card hook");

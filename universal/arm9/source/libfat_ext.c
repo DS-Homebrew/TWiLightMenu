@@ -30,7 +30,7 @@ static int fatGetAlias (const char* drive, const char* name, const char* nameEnd
 	char *buf;
 	int drivelen/*,namelen*/,i;
 
-	if(!drive || !name)
+	if (!drive || !name)
 		return -1;
 
 	drivelen = strlen(drive);

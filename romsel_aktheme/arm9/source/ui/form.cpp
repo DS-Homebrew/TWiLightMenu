@@ -38,7 +38,7 @@ Form::Form(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
 
 Form::~Form()
 {
-    //if( _renderDesc )
+    //if ( _renderDesc )
     //    delete _renderDesc;
 }
 
@@ -100,9 +100,9 @@ bool Form::process(const Message &msg)
 
     // NOTE: Form does not translate key messages to children in this case
 
-    //if( !ret ) {
+    //if ( !ret ) {
     //    dbg_printf("change child focus\n");
-    //    if( msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd ) {
+    //    if ( msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd ) {
     //        ret = processKeyMessage( (KeyMessage &)msg );
     //    }
     //}

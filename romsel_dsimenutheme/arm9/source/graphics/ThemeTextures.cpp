@@ -555,7 +555,7 @@ void ThemeTextures::loadBatteryTextures() {
 
 void ThemeTextures::loadUITextures() {
 	_dateTimeFont = std::make_unique<FontGraphic>(std::vector<std::string>({TFN_FONT_DATE_TIME, TFN_FALLBACK_FONT_DATE_TIME}), false);
-	if(access((TFN_FONT_USERNAME).c_str(), F_OK) == 0) {
+	if (access((TFN_FONT_USERNAME).c_str(), F_OK) == 0) {
 		_usernameFont = std::make_unique<FontGraphic>(std::vector<std::string>({TFN_FONT_USERNAME}), false);
 	}
 
@@ -692,7 +692,7 @@ void ThemeTextures::drawTopBg() {
 
 	_backgroundTextures[0].copy(_bgSubBuffer, false);
 
-	if(ms().colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 			_bgSubBuffer[i] =
 			    convertVramColorToGrayscale(_bgSubBuffer[i]);
@@ -718,7 +718,7 @@ void ThemeTextures::drawBottomBg(int index) {
 
 	_backgroundTextures[index].copy(_bgMainBuffer, false);
 
-	if(ms().colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 			_bgMainBuffer[i] =
 			    convertVramColorToGrayscale(_bgMainBuffer[i]);
@@ -816,7 +816,7 @@ void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 void ThemeTextures::drawBoxArt(const char *filename) {
 	bool found = true;
 
-	if(access(filename, F_OK) != 0) {
+	if (access(filename, F_OK) != 0) {
 		switch (boxArtType[CURPOS]) {
 			case -1:
 				return;
@@ -843,7 +843,7 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 	uint imageXpos, imageYpos, imageWidth, imageHeight;
 	lodepng::decode(image, imageWidth, imageHeight, filename);
 	bool alternatePixel = false;
-	if(imageWidth > 256 || imageHeight > 192)	return;
+	if (imageWidth > 256 || imageHeight > 192)	return;
 
 	imageXpos = (256-imageWidth)/2;
 	imageYpos = (192-imageHeight)/2;
@@ -965,7 +965,7 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 	std::vector<unsigned char> image;
 	lodepng::decode(image, imageWidth, imageHeight, (unsigned char*)boxArtCache+(num*0xB000), 0xB000);
 	bool alternatePixel = false;
-	if(imageWidth > 256 || imageHeight > 192)	return;
+	if (imageWidth > 256 || imageHeight > 192)	return;
 
 	for(uint i=0;i<image.size()/4;i++) {
 		if (boxArtColorDeband) {
@@ -1178,8 +1178,8 @@ ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
 	if (ms().macroMode && ms().theme == TWLSettings::EThemeSaturn) return;
 
 	int batteryLevel = getBatteryLevel();
-	if(batteryLevel == 0 && showColon)	batteryLevel--;
-	else if(batteryLevel == 7 && showColon)	batteryLevel++;
+	if (batteryLevel == 0 && showColon)	batteryLevel--;
+	else if (batteryLevel == 7 && showColon)	batteryLevel++;
 	if (_cachedBatteryLevel != batteryLevel) {
 		_cachedBatteryLevel = batteryLevel;
 		if (!topBorderBufferLoaded) {
@@ -1220,7 +1220,7 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 		tonccpy((u8*)_bgSubBuffer2, (u8*)_bgSubBuffer, 0x18000);
 	}
 
- 	if(ms().colorMode == 1) {
+ 	if (ms().colorMode == 1) {
 		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 			_bgSubBuffer[i] =
 			    convertVramColorToGrayscale(_bgSubBuffer[i]);
