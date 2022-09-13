@@ -93,7 +93,7 @@ WindowManager &WindowManager::removeWindow(Window *aWindow)
 const WindowManager &WindowManager::update(void)
 {
 #if 0
-    for(Windows::iterator it=_backgroundWindows.begin();it!=_backgroundWindows.end();++it)
+    for (Windows::iterator it=_backgroundWindows.begin();it!=_backgroundWindows.end();++it)
     {
       dbg_printf("background (%s)\n",(*it)()->text().c_str());
     }

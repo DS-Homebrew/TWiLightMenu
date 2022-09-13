@@ -77,10 +77,10 @@ void Gif::displayFrame(void) {
 		reader.decode(frame.image.imageData.begin(), frame.image.imageData.end());
 	} else { // Already decompressed, just copy
 		auto it = frame.image.imageData.begin();
-		for(int y = 0; y < frame.descriptor.h; y++) {
+		for (int y = 0; y < frame.descriptor.h; y++) {
 			u8 *dst = (u8*)(_top ? BG_GFX : BG_GFX_SUB) + (frame.descriptor.y + y + (192 - header.height) / 2) * 256 + frame.descriptor.x + (256 - header.width) / 2;
 			u8 row[frame.descriptor.w];
-			for(int x = 0; x < frame.descriptor.w; x++, it++) {
+			for (int x = 0; x < frame.descriptor.w; x++, it++) {
 				if (!frame.gce.transparentColorFlag || *it != frame.gce.transparentColor)
 					row[x] = *it;
 				else

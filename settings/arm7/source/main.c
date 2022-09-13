@@ -156,8 +156,8 @@ TWL_CODE void getConsoleID(void) {
 
 	//write consecutive 0-255 values to any byte in key3 until we get the same aes output as "base" above - this reveals the hidden byte. this way we can uncover all 16 bytes of the key3 normalkey pretty easily.
 	//greets to Martin Korth for this trick https://problemkaputt.de/gbatek.htm#dsiaesioports (Reading Write-Only Values)
-	for(int i=0;i<16;i++){
-		for(int j=0;j<256;j++){
+	for (int i=0;i<16;i++){
+		for (int j=0;j<256;j++){
 			*(key3+i)=j & 0xFF;
 			aes(in, scratch, iv, 2);
 			if (memcmp(scratch, base, 16)==0){

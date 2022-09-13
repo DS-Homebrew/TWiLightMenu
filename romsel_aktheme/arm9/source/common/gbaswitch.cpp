@@ -12,7 +12,7 @@ void loadGbaBorder(const char* filename) {
 	lodepng::decode(image, imageWidth, imageHeight, filename);
 	bool alternatePixel = false;
 
-	for(uint i = 0; i < image.size()/4; i++) {
+	for (uint i = 0; i < image.size()/4; i++) {
 		image[(i*4)+3] = 0;
 		if (alternatePixel) {
 			if (image[(i*4)] >= 0x4) {
@@ -36,7 +36,7 @@ void loadGbaBorder(const char* filename) {
     dmaCopy(bmpImageBuffer,(void*)BG_BMP_RAM(0),SCREEN_WIDTH*SCREEN_HEIGHT*2);
 
 	alternatePixel = false;
-	for(uint i = 0; i < image.size()/4; i++) {
+	for (uint i = 0; i < image.size()/4; i++) {
 		if (alternatePixel) {
 			if (image[(i*4)+3] & BIT(0)) {
 				image[(i*4)] += 0x4;

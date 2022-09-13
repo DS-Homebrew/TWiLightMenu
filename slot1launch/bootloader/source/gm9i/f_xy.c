@@ -31,7 +31,7 @@ void F_XY(uint8_t *key, const uint8_t *key_x, const uint8_t *key_y)
 {
 	uint8_t key_xy[16];
 
-	for(int i=0; i<16; i++)
+	for (int i=0; i<16; i++)
     key_xy[i] = key_x[i] ^ key_y[i];
 
   memcpy(key, DSi_KEY_MAGIC, sizeof(DSi_KEY_MAGIC));

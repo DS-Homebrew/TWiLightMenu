@@ -57,7 +57,7 @@ static u32 crc32(const u8* p,size_t len)
   while(len--)
   {
     crc^=*p++;
-    for(int ii=0;ii<8;++ii) crc=(crc>>1)^((crc&1)?CRCPOLY:0);
+    for (int ii=0;ii<8;++ii) crc=(crc>>1)^((crc&1)?CRCPOLY:0);
   }
   return crc;
 }
@@ -165,7 +165,7 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
     }
 
     u32 selectValue=cParsedItem::ESelected;
-    for(size_t ii=0;ii<folderCount;++ii)
+    for (size_t ii=0;ii<folderCount;++ii)
     {
       char* cheatName=(char*)((u32)ccode+4);
       char* cheatNote=(char*)((u32)cheatName+strlen(cheatName)+1);
@@ -249,7 +249,7 @@ bool CheatCodelist::romData(const std::string& aFileName,u32& aGameCode,u32& aCr
 std::vector<u32> CheatCodelist::getCheats()
 {
   std::vector<u32> cheats;
-  for(uint i=0;i<_data.size();i++)
+  for (uint i=0;i<_data.size();i++)
   {
     if (_data[i]._flags&cParsedItem::ESelected)
     {
@@ -286,7 +286,7 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& lis
   int rtlNegative = ms().rtl() ? -1 : 1;
 
   // Print the list
-  for(uint i=0;i<8 && i<list.size();i++) {
+  for (uint i=0;i<8 && i<list.size();i++) {
     if (list[screenPos+i]->_flags&cParsedItem::EFolder) {
       printSmall(false, (ms().rtl() ? 256 - 15 : 15) + ((screenPos+i == curPos) ? 5 * rtlNegative : 0), 60+(i*12), ms().rtl() ? "<" : ">", align, FontPalette::dialog);
       printSmall(false, (ms().rtl() ? 256 - 28 : 28) + ((screenPos+i == curPos) ? 4 * rtlNegative : 0), 60+(i*12), list[screenPos+i]->_title.substr((screenPos+i == curPos) ? scrollPos : 0, 30), align, FontPalette::dialog);
@@ -339,7 +339,7 @@ void CheatCodelist::selectCheats(std::string filename)
 
   // Make list of all cheats not in folders and folders
   std::vector<CheatCodelist::cParsedItem *> currentList;
-  for(uint i=0;i<_data.size();i++) {
+  for (uint i=0;i<_data.size();i++) {
     if (!(_data[i]._flags&cParsedItem::EInFolder)) {
       currentList.push_back(&_data[i]);
     }
@@ -420,7 +420,7 @@ void CheatCodelist::selectCheats(std::string filename)
       if (currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
         uint i = std::distance(&_data[0], currentList[cheatWnd_cursorPosition]) + 1;
         currentList.clear();
-        for(; !(_data[i]._flags & cParsedItem::EFolder) && i < _data.size(); i++) {
+        for (; !(_data[i]._flags & cParsedItem::EFolder) && i < _data.size(); i++) {
           currentList.push_back(&_data[i]);
         }
         mainListCurPos = cheatWnd_cursorPosition;
@@ -440,7 +440,7 @@ void CheatCodelist::selectCheats(std::string filename)
       snd().playBack();
       if (mainListCurPos != -1) {
         currentList.clear();
-        for(uint i=0;i<_data.size();i++) {
+        for (uint i=0;i<_data.size();i++) {
           if (!(_data[i]._flags&cParsedItem::EInFolder)) {
             currentList.push_back(&_data[i]);
           }
@@ -480,13 +480,13 @@ void CheatCodelist::selectCheats(std::string filename)
         if (_topTextStr.size())
           words.push_back(_topTextStr);
         std::string temp;
-        for(auto word : words) {
+        for (auto word : words) {
           // Split word if the word is too long for a line
           int width = calcSmallFontWidth(word);
           if (width > 240) {
             if (temp.length())
               _topText += temp + '\n';
-            for(int i = 0; i < width/240; i++) {
+            for (int i = 0; i < width/240; i++) {
               word.insert((float)((i + 1) * word.length()) / ((width/240) + 1), "\n");
             }
             _topText += word + '\n';
@@ -523,11 +523,11 @@ void CheatCodelist::selectCheats(std::string filename)
       }
     } else if (pressed & KEY_L) {
       // Delect all in the actual data so it doesn't just get the folder
-      for(auto itr = _data.begin(); itr != _data.end(); itr++) {
+      for (auto itr = _data.begin(); itr != _data.end(); itr++) {
         (*itr)._flags &= ~cParsedItem::ESelected;
       }
       // Also deselect them in the current list so that it updates the display
-      for(auto itr = currentList.begin(); itr != currentList.end(); itr++) {
+      for (auto itr = currentList.begin(); itr != currentList.end(); itr++) {
         (*itr)->_flags &= ~cParsedItem::ESelected;
       }
     }

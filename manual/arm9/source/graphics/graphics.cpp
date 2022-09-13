@@ -142,7 +142,7 @@ void topBarLoad(void) {
 
 	tonccpy(BG_PALETTE + 0xFC, gif.gct().data(), gif.gct().size() * 2);
 
-	for(uint i = 0; i < frame.image.imageData.size() - 2; i += 2) {
+	for (uint i = 0; i < frame.image.imageData.size() - 2; i += 2) {
 		toncset16(dst++, (frame.image.imageData[i] + 0xFC) | (frame.image.imageData[i + 1] + 0xFC) << 8, 1);
 	}
 }

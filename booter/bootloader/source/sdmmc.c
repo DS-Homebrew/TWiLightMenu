@@ -83,14 +83,14 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 						#ifdef DATA32_SUPPORT
 						if (!((u32)rDataPtr32 & 3))
 						{
-							for(u32 i = 0; i < blkSize; i += 4)
+							for (u32 i = 0; i < blkSize; i += 4)
 							{
 								*rDataPtr32++ = sdmmc_read32(REG_SDFIFO32);
 							}
 						}
 						else
 						{
-							for(u32 i = 0; i < blkSize; i += 4)
+							for (u32 i = 0; i < blkSize; i += 4)
 							{
 								u32 data = sdmmc_read32(REG_SDFIFO32);
 								*rDataPtr8++ = data;
@@ -102,14 +102,14 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 						#else
 						if (!((u32)rDataPtr16 & 1))
 						{
-							for(u32 i = 0; i < blkSize; i += 4)
+							for (u32 i = 0; i < blkSize; i += 4)
 							{
 								*rDataPtr16++ = sdmmc_read16(REG_SDFIFO);
 							}
 						}
 						else
 						{
-							for(u32 i = 0; i < blkSize; i += 4)
+							for (u32 i = 0; i < blkSize; i += 4)
 							{
 								u16 data = sdmmc_read16(REG_SDFIFO);
 								*rDataPtr8++ = data;
@@ -140,14 +140,14 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 						#ifdef DATA32_SUPPORT
 						if (!((u32)tDataPtr32 & 3))
 						{
-							for(u32 i = 0; i < blkSize; i += 4)
+							for (u32 i = 0; i < blkSize; i += 4)
 							{
 								sdmmc_write32(REG_SDFIFO32, *tDataPtr32++);
 							}
 						}
 						else
 						{
-							for(u32 i = 0; i < blkSize; i += 4)
+							for (u32 i = 0; i < blkSize; i += 4)
 							{
 								u32 data = *tDataPtr8++;
 								data |= (u32)*tDataPtr8++ << 8;
@@ -159,14 +159,14 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 						#else
 						if (!((u32)tDataPtr16 & 1))
 						{
-							for(u32 i = 0; i < blkSize; i += 2)
+							for (u32 i = 0; i < blkSize; i += 2)
 							{
 								sdmmc_write16(REG_SDFIFO, *tDataPtr16++);
 							}
 						}
 						else
 						{
-							for(u32 i = 0; i < blkSize; i += 2)
+							for (u32 i = 0; i < blkSize; i += 2)
 							{
 								u16 data = *tDataPtr8++;
 								data |= (u16)(*tDataPtr8++ << 8);

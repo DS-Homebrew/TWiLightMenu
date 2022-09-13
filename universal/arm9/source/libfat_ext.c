@@ -55,7 +55,7 @@ static int fatGetAlias (const char* drive, const char* name, const char* nameEnd
 
 	devops = (devoptab_t*)GetDeviceOpTab(buf);
 
-	for(i=0;buf[i]!='\0' && buf[i]!=':';i++);  
+	for (i=0;buf[i]!='\0' && buf[i]!=':';i++);  
 	if (!devops || strncasecmp(buf,devops->name,i)) {
 		_FAT_mem_free(buf);
 		return -1;

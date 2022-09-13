@@ -119,7 +119,7 @@ void loadPageInfo(std::string pagePath) {
 	toncset16(BG_PALETTE_SUB + 0xF6, pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B), 1);
 	toncset16(BG_PALETTE_SUB + 0xF7, pageIni.GetInt("INFO","BG_COLOR_2",0x77BD), 1);
 
-	for(int i=1;true;i++) {
+	for (int i=1;true;i++) {
 		std::string link = "LINK" + std::to_string(i);
 		if (pageIni.GetString(link,"DEST","NONE") == "NONE")
 			break;
@@ -414,12 +414,12 @@ int main(int argc, char **argv) {
 					swiWaitForVBlank();
 				}
 			} else {
-				for(uint i=0;i<manPageLinks.size();i++) {
+				for (uint i=0;i<manPageLinks.size();i++) {
 					if (((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
 						(((touchStart.py + pageYpos) >= manPageLinks[i].y - (ms().macroMode ? 0 : 176)) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - (ms().macroMode ? 0 : 176) + manPageLinks[i].h)))) {
 						pageYpos = 0;
 						returnPage = currentPage;
-						for(uint j=0;j<manPagesList.size();j++) {
+						for (uint j=0;j<manPagesList.size();j++) {
 							if (manPagesList[j].name == (manPageLinks[i].dest + ".gif")) {
 								currentPage = j;
 								break;

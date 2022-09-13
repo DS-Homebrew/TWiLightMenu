@@ -209,10 +209,10 @@ void gptc_patchRom()
 		{
 			*(u16*)(0x08000000 + 0xE27E) = 0x400;
 
-			for(int i = 0; i < (int)sizeof(sDbzLoGUPatch1); i += 2)
+			for (int i = 0; i < (int)sizeof(sDbzLoGUPatch1); i += 2)
 				*(u16*)(0x08000000 + 0xE280 + i) = *(u16*)&sDbzLoGUPatch1[i];
 
-			for(int i = 0; i < (int)sizeof(sDbzLoGUPatch2); i += 2)
+			for (int i = 0; i < (int)sizeof(sDbzLoGUPatch2); i += 2)
 				*(u16*)(0x08000000 + 0xE32C + i) = *(u16*)&sDbzLoGUPatch2[i];
 		}
 	}
@@ -327,10 +327,10 @@ void gptc_patchRom()
 		{
 			*(u16*)(0x08000000 + 0x4E316) = 0x400;
 
-			for(int i = 0; i < sizeof(sDbzLoGUPatch1); i += 2)
+			for (int i = 0; i < sizeof(sDbzLoGUPatch1); i += 2)
 				*(u16*)(0x08000000 + 0x4E318 + i) = *(u16*)&sDbzLoGUPatch1[i];
 
-			for(int i = 0; i < sizeof(sDbzLoGUPatch2); i += 2)
+			for (int i = 0; i < sizeof(sDbzLoGUPatch2); i += 2)
 				*(u16*)(0x08000000 + 0x????? + i) = *(u16*)&sDbzLoGUPatch2[i];
 		}*/
 

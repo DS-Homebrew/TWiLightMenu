@@ -36,7 +36,7 @@ static u32 crc32(const u8* p,size_t len)
   while(len--)
   {
     crc^=*p++;
-    for(int ii=0;ii<8;++ii) crc=(crc>>1)^((crc&1)?CRCPOLY:0);
+    for (int ii=0;ii<8;++ii) crc=(crc>>1)^((crc&1)?CRCPOLY:0);
   }
   return crc;
 }
@@ -446,7 +446,7 @@ bool CheatWnd::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
     }
 
     u32 selectValue=cParsedItem::ESelected;
-    for(size_t ii=0;ii<folderCount;++ii)
+    for (size_t ii=0;ii<folderCount;++ii)
     {
       char* cheatName=(char*)((u32)ccode+4);
       char* cheatNote=(char*)((u32)cheatName+strlen(cheatName)+1);
@@ -512,7 +512,7 @@ void CheatWnd::deselectFolder(size_t anIndex)
 std::vector<u32> CheatWnd::getCheats()
 {
   std::vector<u32> cheats;
-  for(uint i=0;i<_data.size();i++)
+  for (uint i=0;i<_data.size();i++)
   {
     if (_data[i]._flags&cParsedItem::ESelected)
     {

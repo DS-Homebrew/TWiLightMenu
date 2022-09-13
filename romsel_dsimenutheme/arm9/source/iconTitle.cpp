@@ -693,12 +693,12 @@ void writeBannerText(std::u16string text) {
 	lines.push_back(text.data());
 	
 	// Insert line breaks if lines are too long
-	for(uint i = 0; i < lines.size(); i++) {
+	for (uint i = 0; i < lines.size(); i++) {
 		int width = tc().titleboxTextLarge() ? calcLargeFontWidth(lines[i]) : calcSmallFontWidth(lines[i]);
 		if (width > tc().titleboxTextW()) {
 			int mid = lines[i].length() / 2;
 			bool foundSpace = false;
-			for(uint j = 0; j < lines[i].length() / 2; j++) {
+			for (uint j = 0; j < lines[i].length() / 2; j++) {
 				if (lines[i][mid + j] == ' ') {
 					lines.insert(lines.begin() + i, lines[i].substr(0, mid + j));
 					lines[i + 1] = lines[i + 1].substr(mid + j + 1);
@@ -727,7 +727,7 @@ void writeBannerText(std::u16string text) {
 
 	// Re-combine to a single string
 	std::u16string out;
-	for(auto line : lines) {
+	for (auto line : lines) {
 		out += line + u'\n';
 	}
 	if (tc().titleboxTextLarge() && !ms().macroMode) {
@@ -739,7 +739,7 @@ void writeBannerText(std::u16string text) {
 
 static inline void writeDialogTitle(std::u16string text) {
 	int lines = 0;
-	for(auto c : text) {
+	for (auto c : text) {
 		if (c == '\n') {
 			lines++;
 		}
@@ -749,7 +749,7 @@ static inline void writeDialogTitle(std::u16string text) {
 }
 static inline void writeDialogTitleFolder(std::u16string text) {
 	int lines = 0;
-	for(auto c : text) {
+	for (auto c : text) {
 		if (c == '\n') {
 			lines++;
 		}
@@ -762,12 +762,12 @@ static inline std::u16string splitLongDialogTitle(std::string_view text) {
 	std::vector<std::u16string> lines;
 	lines.push_back(FontGraphic::utf8to16(text));
 
-	for(uint i = 0; i < lines.size(); i++) {
+	for (uint i = 0; i < lines.size(); i++) {
 		int width = calcLargeFontWidth(lines[i]);
 		if (width > 256 - 78) {
 			int mid = lines[i].length() / 2;
 			bool foundSpace = false;
-			for(uint j = 0; j < lines[i].length() / 2; j++) {
+			for (uint j = 0; j < lines[i].length() / 2; j++) {
 				if (lines[i][mid + j] == ' ') {
 					lines.insert(lines.begin() + i, lines[i].substr(0, mid + j));
 					lines[i + 1] = lines[i + 1].substr(mid + j + 1);
@@ -791,7 +791,7 @@ static inline std::u16string splitLongDialogTitle(std::string_view text) {
 	}
 
 	std::u16string out;
-	for(auto line : lines) {
+	for (auto line : lines) {
 		out += line + u'\n';
 	}
 	out.erase(out.end()-1);

@@ -61,7 +61,7 @@ void F_XY(uint32_t *key, uint32_t *key_x, uint32_t *key_y)
 
 	toncset(key_xy, 0, 16);
 	toncset(key, 0, 16);
-	for(i=0; i<16; i++)key_xy[i] = ((unsigned char*)key_x)[i] ^ ((unsigned char*)key_y)[i];
+	for (i=0; i<16; i++)key_xy[i] = ((unsigned char*)key_x)[i] ^ ((unsigned char*)key_y)[i];
 
 	key[0] = 0x1a4f3e79;
 	key[1] = 0x2a680f5f;

@@ -24,7 +24,7 @@ int hex2bytes(uint8_t *out, unsigned byte_len, const char *in){
 			__FUNCTION__, (unsigned)byte_len << 1, (unsigned)strlen(in));
 		return -1;
 	}
-	for(unsigned i = 0; i < byte_len; ++i){
+	for (unsigned i = 0; i < byte_len; ++i){
 		int h = htoi(*in++), l = htoi(*in++);
 		if (h == -1 || l == -1){
 			iprintf("%s: invalid input \"%c%c\"\n",
@@ -160,7 +160,7 @@ int save_sha1_file(const char *filename) {
 
 void print_bytes(const void *buf, size_t len) {
 	const unsigned char *p = (const unsigned char *)buf;
-	for(size_t i = 0; i < len; ++i) {
+	for (size_t i = 0; i < len; ++i) {
 		iprintf("%02x", *p++);
 	}
 }

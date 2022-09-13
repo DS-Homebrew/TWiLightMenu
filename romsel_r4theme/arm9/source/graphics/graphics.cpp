@@ -455,7 +455,7 @@ void graphicsLoad()
 	if (ms().theme == TWLSettings::EThemeGBC) {
 		lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/gbcborder.png");
 
-		for(uint i=0; i<image.size()/4; i++) {
+		for (uint i=0; i<image.size()/4; i++) {
 			topImage[0][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (ms().colorMode == 1) {
 				topImage[0][0][i] = convertVramColorToGrayscale(topImage[0][0][i]);
@@ -530,7 +530,7 @@ void graphicsLoad()
 
 		lodepng::decode(image, imageWidth, imageHeight, pathTop);
 
-		for(unsigned i=0;i<image.size()/4;i++) {
+		for (unsigned i=0;i<image.size()/4;i++) {
 			image[(i*4)+3] = 0;
 			if (alternatePixel) {
 				if (image[(i*4)] >= 0x4) {
@@ -582,7 +582,7 @@ void graphicsLoad()
 		image.clear();
 		lodepng::decode(image, imageWidth, imageHeight, pathBottom);
 
-		for(unsigned i=0;i<image.size()/4;i++) {
+		for (unsigned i=0;i<image.size()/4;i++) {
 			image[(i*4)+3] = 0;
 			if (alternatePixel) {
 				if (image[(i*4)] >= 0x4) {

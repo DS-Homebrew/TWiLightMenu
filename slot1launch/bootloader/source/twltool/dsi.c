@@ -22,11 +22,11 @@ void dsi_add_ctr( dsi_context* ctx,
     int sum;
     signed int i;
 
-    for(i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++)
         counter[i] = (outctr[i * 4 + 0] << 24) | (outctr[i * 4 + 1] << 16) |
                      (outctr[i * 4 + 2] <<  8) | (outctr[i * 4 + 3] << 0);
 
-    for(i = 3; i >= 0; i--)
+    for (i = 3; i >= 0; i--)
     {
         sum = counter[i] + carry;
 
@@ -38,7 +38,7 @@ void dsi_add_ctr( dsi_context* ctx,
         counter[i] = sum;
     }
 
-    for(i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++)
     {
         outctr[i * 4 + 0] = counter[i] >> 24;
         outctr[i * 4 + 1] = counter[i] >> 16;
@@ -52,7 +52,7 @@ void dsi_set_ctr( dsi_context* ctx,
 {
 	int i;
 
-	for(i=0; i<16; i++)
+	for (i=0; i<16; i++)
 		ctx->ctr[i] = ctr[15-i];
 }
 
@@ -70,7 +70,7 @@ void dsi_crypt_ctr( dsi_context* ctx,
                     unsigned int len)
 {
     unsigned int i;
-    for(i = 0; i < len; i += 0x10)
+    for (i = 0; i < len; i += 0x10)
 		{
         dsi_crypt_ctr_block(ctx, in+i, out+i);
 		}
@@ -89,14 +89,14 @@ void dsi_crypt_ctr_block( dsi_context* ctx,
 
 	if (input)
 	{
-		for(i=0; i<16; i++)
+		for (i=0; i<16; i++)
 		{
 			output[i] = stream[15-i] ^ input[i];
 		}
 	}
 	else
 	{
-		for(i=0; i<16; i++)
+		for (i=0; i<16; i++)
 			output[i] = stream[15-i];
 	}
 
@@ -128,7 +128,7 @@ void dsi_init_ccm( dsi_context* ctx,
 	ctx->mac[0] = (maclength<<3) | 2;
 	if (assoclength)
 		ctx->mac[0] |= (1<<6);
-	for(i=0; i<12; i++)
+	for (i=0; i<12; i++)
 		ctx->mac[1+i] = nonce[11-i];
 	ctx->mac[13] = payloadlength>>16;
 	ctx->mac[14] = payloadlength>>8;
@@ -139,7 +139,7 @@ void dsi_init_ccm( dsi_context* ctx,
 	// CCM CTR:
 	// [1-byte flags] [12-byte nonce] [3-byte ctr]
 	ctx->ctr[0] = 2;
-	for(i=0; i<12; i++)
+	for (i=0; i<12; i++)
 		ctx->ctr[1+i] = nonce[11-i];
 	ctx->ctr[13] = 0;
 	ctx->ctr[14] = 0;
@@ -155,14 +155,14 @@ void dsi_encrypt_ccm_block( dsi_context* ctx,
 {
 	int i;
 
-	for(i=0; i<16; i++)
+	for (i=0; i<16; i++)
 		ctx->mac[i] ^= input[15-i];
 
 	aes_crypt_ecb(&ctx->aes, AES_ENCRYPT, ctx->mac, ctx->mac);
 
 	if (mac)
 	{
-		for(i=0; i<16; i++)
+		for (i=0; i<16; i++)
 			mac[i] = ctx->mac[15-i] ^ ctx->S0[i];
 	}
 
@@ -184,12 +184,12 @@ void dsi_decrypt_ccm_block( dsi_context* ctx,
 		dsi_crypt_ctr_block(ctx, input, output);
 
 
-		for(i=0; i<16; i++)
+		for (i=0; i<16; i++)
 			ctx->mac[i] ^= output[15-i];
 	}
 	else
 	{
-		for(i=0; i<16; i++)
+		for (i=0; i<16; i++)
 			ctx->mac[i] ^= input[15-i];
 	}
 
@@ -198,7 +198,7 @@ void dsi_decrypt_ccm_block( dsi_context* ctx,
 
 	if (mac)
 	{
-		for(i=0; i<16; i++)
+		for (i=0; i<16; i++)
 			mac[i] = ctx->mac[15-i] ^ ctx->S0[i];
 	}
 }
@@ -350,7 +350,7 @@ void dsi_es_encrypt( dsi_es_context* ctx,
 	{
 		srand( (unsigned int)time(0) );
 
-		for(i=0; i<12; i++)
+		for (i=0; i<12; i++)
 			nonce[i] = rand();
 	}
 	else

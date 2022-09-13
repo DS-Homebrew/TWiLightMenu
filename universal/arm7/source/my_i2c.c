@@ -95,7 +95,7 @@ u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data) {
 	my_i2cSetDelay(device);
 	int i;
 
-	for(i = 0; i < 8; i++) {
+	for (i = 0; i < 8; i++) {
 		if ((my_i2cSelectDevice(device) != 0) && (my_i2cSelectRegister(reg) != 0)) {
 			my_i2cDelay();
 			REG_I2CDATA = data;
@@ -114,7 +114,7 @@ u8 my_i2cReadRegister(u8 device, u8 reg) {
 	my_i2cSetDelay(device);
 	int i;
 
-	for(i = 0; i < 8; i++) {
+	for (i = 0; i < 8; i++) {
 		
 		if ((my_i2cSelectDevice(device) != 0) && (my_i2cSelectRegister(reg) != 0)) {
 			my_i2cDelay();

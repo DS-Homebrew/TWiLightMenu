@@ -201,7 +201,7 @@ bool copyFile(const std::string & srcFilename, const std::string & destFilename,
 
     u32 remain = copyLength;
 
-    for(size_t i = 0; i < writeCount; ++i) {
+    for (size_t i = 0; i < writeCount; ++i) {
         if (stopCopying) {
             copyingFile = false;
             u32 ret = messageBox(&progressWnd(), LANG("stop copying file","title"),
@@ -413,7 +413,7 @@ bool copyOrMoveFile(const std::string & destDir)
         //         extName = _srcFilename.substr(lastDotPos);
         //     else
         //         extName = "";
-        //     for(size_t i = 0; i < extName.size(); ++i)
+        //     for (size_t i = 0; i < extName.size(); ++i)
         //         extName[i] = tolower(extName[i]);
 
         //     if (".nds" == extName) {

@@ -856,7 +856,7 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 			photoY = imageYpos;
 		}
 		int photoX = photoXstart;
-		for(uint i=0;i<image.size()/4;i++) {
+		for (uint i=0;i<image.size()/4;i++) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			u16 imgSrc = _photoBuffer[(photoY*208)+photoX];
 			u16 imgSrc2 = _photoBuffer2[(photoY*208)+photoX];
@@ -878,7 +878,7 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 			}
 		}
 	} else
-	for(uint i=0;i<image.size()/4;i++) {
+	for (uint i=0;i<image.size()/4;i++) {
 		if (boxArtColorDeband) {
 			image[(i*4)+3] = 0;
 			if (alternatePixel) {
@@ -933,8 +933,8 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 
 	u16 *src = _bmpImageBuffer;
 	u16 *src2 = _bmpImageBuffer2;
-	for(uint y = 0; y < imageHeight; y++) {
-		for(uint x = 0; x < imageWidth; x++) {
+	for (uint y = 0; y < imageHeight; y++) {
+		for (uint x = 0; x < imageWidth; x++) {
 			_bgSubBuffer[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
 			if (boxArtColorDeband) {
 				_bgSubBuffer2[(y+imageYpos) * 256 + imageXpos + x] = *(src2++);
@@ -965,7 +965,7 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 	bool alternatePixel = false;
 	if (imageWidth > 256 || imageHeight > 192)	return;
 
-	for(uint i=0;i<image.size()/4;i++) {
+	for (uint i=0;i<image.size()/4;i++) {
 		if (boxArtColorDeband) {
 			image[(i*4)+3] = 0;
 			if (alternatePixel) {
@@ -1022,8 +1022,8 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 	imageYpos = (192-imageHeight)/2;
 	u16 *src = _bmpImageBuffer;
 	u16 *src2 = _bmpImageBuffer2;
-	for(uint y = 0; y < imageHeight;y++) {
-		for(uint x = 0; x < imageWidth; x++) {
+	for (uint y = 0; y < imageHeight;y++) {
+		for (uint x = 0; x < imageWidth; x++) {
 			_bgSubBuffer[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
 			if (boxArtColorDeband) {
 				_bgSubBuffer2[(y+imageYpos) * 256 + imageXpos + x] = *(src2++);

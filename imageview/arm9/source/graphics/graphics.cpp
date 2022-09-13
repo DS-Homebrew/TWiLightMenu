@@ -152,7 +152,7 @@ void imageLoad(const char* filename) {
 		int x = 0;
 		int y = 0;
 		u8 pixelAdjustInfo = 0;
-		for(unsigned i=0;i<image.size()/4;i++) {
+		for (unsigned i=0;i<image.size()/4;i++) {
 			pixelAdjustInfo = 0;
 			if (alternatePixel) {
 				if (image[(i*4)] >= 0x4) {
@@ -277,7 +277,7 @@ void imageLoad(const char* filename) {
 			int x = 0;
 			int y = height-1;
 			u8 pixelAdjustInfo = 0;
-			for(u32 i = 0; i < width*height; i++) {
+			for (u32 i = 0; i < width*height; i++) {
 				pixelAdjustInfo = 0;
 				if (alternatePixel) {
 					if (bmpImageBuffer[(i*bits)] >= 0x4) {
@@ -372,7 +372,7 @@ void imageLoad(const char* filename) {
 
 			int x = 0;
 			int y = height-1;
-			for(u32 i = 0; i < width*height; i++) {
+			for (u32 i = 0; i < width*height; i++) {
 				BG_GFX[(xPos+x+(y*256))+(yPos*256)] = pixelBuffer[bmpImageBuffer[i]];
 				x++;
 				if (x == (int)width) {
@@ -403,7 +403,7 @@ void imageLoad(const char* filename) {
 
 			int x = 0;
 			int y = height-1;
-			for(u32 i = 0; i < (width*height)/8; i++) {
+			for (u32 i = 0; i < (width*height)/8; i++) {
 				for (int b = 7; b >= 0; b--) {
 					BG_GFX[(xPos+x+(y*256))+(yPos*256)] = monoPixel[(bmpImageBuffer[i] & (BIT(b))) ? 1 : 0];
 					x++;
@@ -477,7 +477,7 @@ void bgLoad(void) {
 		}
 	}
 
-	for(uint i = 0; i < frame.image.imageData.size() - 2; i += 2) {
+	for (uint i = 0; i < frame.image.imageData.size() - 2; i += 2) {
 		toncset16(dst++, (frame.image.imageData[i]) | (frame.image.imageData[i + 1]) << 8, 1);
 	}
 }

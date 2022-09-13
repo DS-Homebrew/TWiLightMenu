@@ -151,12 +151,12 @@ static void switchToTwlBlowfish(sNDSHeaderExt* ndsHeader) {
 
 	// Reset card slot
 	disableSlot1();
-	for(int i = 0; i < 25; i++) {
+	for (int i = 0; i < 25; i++) {
 		while(REG_VCOUNT!=191);
 		while(REG_VCOUNT==191);
 	}
 	enableSlot1();
-	for(int i = 0; i < 15; i++) {
+	for (int i = 0; i < 15; i++) {
 		while(REG_VCOUNT!=191);
 		while(REG_VCOUNT==191);
 	}

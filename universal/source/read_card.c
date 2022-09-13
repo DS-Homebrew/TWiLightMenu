@@ -167,9 +167,9 @@ static void switchToTwlBlowfish(void) {
 	if (isDSiMode()) { 
 		// Reset card slot
 		disableSlot1();
-		for(int i = 0; i < 25; i++) { swiWaitForVBlank(); }
+		for (int i = 0; i < 25; i++) { swiWaitForVBlank(); }
 		enableSlot1();
-		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
+		for (int i = 0; i < 15; i++) { swiWaitForVBlank(); }
 
 		// Dummy command sent after card reset
 		cardParamCommand (CARD_CMD_DUMMY, 0,
@@ -179,7 +179,7 @@ static void switchToTwlBlowfish(void) {
 		REG_ROMCTRL=0;
 		REG_AUXSPICNT=0;
 		//ioDelay2(167550);
-		for(i = 0; i < 25; i++) { swiWaitForVBlank(); }
+		for (i = 0; i < 25; i++) { swiWaitForVBlank(); }
 		REG_AUXSPICNT=CARD_CR1_ENABLE|CARD_CR1_IRQ;
 		REG_ROMCTRL=CARD_nRESET|CARD_SEC_SEED;
 		while(REG_ROMCTRL&CARD_BUSY) ;
@@ -283,9 +283,9 @@ void my_cardReset (bool properReset)
 	if (isDSiMode()) { 
 		// Reset card slot
 		disableSlot1();
-		for(i = 0; i < 25; i++) { swiWaitForVBlank(); }
+		for (i = 0; i < 25; i++) { swiWaitForVBlank(); }
 		enableSlot1();
-		for(i = 0; i < 15; i++) { swiWaitForVBlank(); }
+		for (i = 0; i < 15; i++) { swiWaitForVBlank(); }
 
 		if (!properReset) {
 			// Dummy command sent after card reset
@@ -298,7 +298,7 @@ void my_cardReset (bool properReset)
 		REG_ROMCTRL=0;
 		REG_AUXSPICNT=0;
 		//ioDelay2(167550);
-		for(i = 0; i < 25; i++) { swiWaitForVBlank(); }
+		for (i = 0; i < 25; i++) { swiWaitForVBlank(); }
 		REG_AUXSPICNT=CARD_CR1_ENABLE|CARD_CR1_IRQ;
 		REG_ROMCTRL=CARD_nRESET|CARD_SEC_SEED;
 		while(REG_ROMCTRL&CARD_BUSY) ;

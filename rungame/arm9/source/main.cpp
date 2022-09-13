@@ -97,7 +97,7 @@ bool extention(const std::string& filename, const char* ext) {
 // From FontGraphic class
 std::u16string utf8to16(std::string_view text) {
 	std::u16string out;
-	for(uint i=0;i<text.size();) {
+	for (uint i=0;i<text.size();) {
 		char16_t c;
 		if (!(text[i] & 0x80)) {
 			c = text[i++];

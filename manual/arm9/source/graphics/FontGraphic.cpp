@@ -92,7 +92,7 @@ char16_t FontGraphic::arabicForm(char16_t current, char16_t prev, char16_t next)
 
 FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansionPak) : useExpansionPak(useExpansionPak) {
 	FILE *file = nullptr;
-	for(const auto &path : paths) {
+	for (const auto &path : paths) {
 		file = fopen(path.c_str(), "rb");
 		if (file)
 			break;
@@ -178,12 +178,12 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansio
 				case 0: {
 					u16 firstTile;
 					fread(&firstTile, 2, 1, file);
-					for(unsigned i=firstChar;i<=lastChar;i++) {
+					for (unsigned i=firstChar;i<=lastChar;i++) {
 						fontMap[firstTile+(i-firstChar)] = i;
 					}
 					break;
 				} case 1: {
-					for(int i=firstChar;i<=lastChar;i++) {
+					for (int i=firstChar;i<=lastChar;i++) {
 						u16 tile;
 						fread(&tile, 2, 1, file);
 						fontMap[tile] = i;
@@ -192,7 +192,7 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansio
 				} case 2: {
 					u16 groupAmount;
 					fread(&groupAmount, 2, 1, file);
-					for(int i=0;i<groupAmount;i++) {
+					for (int i=0;i<groupAmount;i++) {
 						u16 charNo, tileNo;
 						fread(&charNo, 2, 1, file);
 						fread(&tileNo, 2, 1, file);
@@ -243,7 +243,7 @@ u16 FontGraphic::getCharIndex(char16_t c) {
 
 std::u16string FontGraphic::utf8to16(std::string_view text) {
 	std::u16string out;
-	for(uint i=0;i<text.size();) {
+	for (uint i=0;i<text.size();) {
 		char16_t c;
 		if (!(text[i] & 0x80)) {
 			c = text[i++];
@@ -265,7 +265,7 @@ std::u16string FontGraphic::utf8to16(std::string_view text) {
 int FontGraphic::calcWidth(std::u16string_view text) {
 	uint x = 0;
 
-	for(auto it = text.begin(); it != text.end(); ++it) {
+	for (auto it = text.begin(); it != text.end(); ++it) {
 		u16 index = getCharIndex(arabicForm(*it, it > text.begin() ? *(it - 1) : 0, it < text.end() - 1 ? *(it + 1) : 0));
 		x += fontWidths[(index * 3) + 2];
 	}
@@ -276,7 +276,7 @@ int FontGraphic::calcWidth(std::u16string_view text) {
 ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view text, Alignment align, bool rtl) {
 	// If RTL isn't forced, check for RTL text
 	if (!rtl) {
-		for(const auto c : text) {
+		for (const auto c : text) {
 			if (isStrongRTL(c)) {
 				rtl = true;
 				break;
@@ -315,7 +315,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 	const int xStart = x;
 
 	// Loop through string and print it
-	for(auto it = (rtl ? text.end() - 1 : text.begin()); true; it += (rtl ? -1 : 1)) {
+	for (auto it = (rtl ? text.end() - 1 : text.begin()); true; it += (rtl ? -1 : 1)) {
 		// If we hit the end of the string in an LTR section of an RTL
 		// string, it may not be done, if so jump back to printing RTL
 		if (it == (rtl ? text.begin() - 1 : text.end())) {
@@ -433,8 +433,8 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 		// Don't draw off screen chars
 		if (x >= 0 && x + fontWidths[(index * 3) + 2] < 256 && y >= 0 && y + tileHeight < 192) {
 			u8 *dst = textBuf[top] + x + fontWidths[(index * 3)];
-			for(int i = 0; i < tileHeight; i++) {
-				for(int j = 0; j < tileWidth; j++) {
+			for (int i = 0; i < tileHeight; i++) {
+				for (int j = 0; j < tileWidth; j++) {
 					u8 px = fontTiles[(index * tileSize) + (i * tileWidth + j) / 4] >> ((3 - ((i * tileWidth + j) % 4)) * 2) & 3;
 					if (px)
 						dst[(y + i) * 256 + j] = px + 0xF8;

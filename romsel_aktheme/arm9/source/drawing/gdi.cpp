@@ -281,7 +281,7 @@ void Gdi::drawLine(s16 x1, s16 y1, s16 x2, s16 y2, GRAPHICS_ENGINE engine)
             xs = x2 + 1;
             xe = x1;
         }
-        //for(int px=xs;px<=xe;px++) {
+        //for (int px=xs;px<=xe;px++) {
         //    drawPixel(px,y1,engine);
         //    //SetPixel(px,y1,Color);
         //}

@@ -82,7 +82,7 @@ void Sprite::init(u16 id)
 
     setScale(1, 1);
 
-    //for(int i=0;i<32*32;i++)
+    //for (int i=0;i<32*32;i++)
     //    SPRITE_GFX[i]=RGB15(0,0,27)|(1<<15); //dont forget alpha bit
 
     //update();

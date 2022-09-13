@@ -709,9 +709,9 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 		// Reset Slot-1 to allow reading card header
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
-		for(int i = 0; i < 25; i++) { swiWaitForVBlank(); }
+		for (int i = 0; i < 25; i++) { swiWaitForVBlank(); }
 		enableSlot1();
-		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
+		for (int i = 0; i < 15; i++) { swiWaitForVBlank(); }
 
 		cardReadHeader((uint8*)&ndsCart);
 

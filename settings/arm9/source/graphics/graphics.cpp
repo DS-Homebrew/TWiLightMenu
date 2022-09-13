@@ -105,7 +105,7 @@ u16 convertVramColorToGrayscale(u16 val) {
 // Copys a palette and applies filtering if enabled
 void copyPalette(u16 *dst, const u16 *src, int size) {
 	if (ms().colorMode == 1) { // Grayscale
-		for(int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 			dst[i] = convertVramColorToGrayscale(src[i]);
 		}
 	} else {
@@ -125,7 +125,7 @@ void drawScroller(int y, int h, bool onLeft) {
 	const u8 scroller[4] = {2, 3, 3, 2};
 	u8 *dst = (u8*)bgGetGfxPtr(7) + (onLeft ? 2 : 250);
 	toncset16(dst + y * 256, 2 | 2 << 8, 2);
-	for(int i = 1; i < h - 1; i++) {
+	for (int i = 1; i < h - 1; i++) {
 		tonccpy(dst + (y + i) * 256, scroller, sizeof(scroller));
 	}
 	toncset16(dst + (y + h - 1) * 256, 2 | 2 << 8, 2);

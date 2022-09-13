@@ -1250,12 +1250,12 @@ void titleUpdate(int num, bool top, bool isDir, const char* name)
 		std::vector<std::string> lines;
 		lines.push_back(name);
 
-		for(uint i = 0; i < lines.size(); i++) {
+		for (uint i = 0; i < lines.size(); i++) {
 			int width = calcSmallFontWidth(lines[i]);
 			if (width > 140) {
 				int mid = lines[i].length() / 2;
 				bool foundSpace = false;
-				for(uint j = 0; j < lines[i].length() / 2; j++) {
+				for (uint j = 0; j < lines[i].length() / 2; j++) {
 					if (lines[i][mid + j] == ' ') {
 						lines.insert(lines.begin() + i, lines[i].substr(0, mid + j));
 						lines[i + 1] = lines[i + 1].substr(mid + j + 1);
@@ -1279,7 +1279,7 @@ void titleUpdate(int num, bool top, bool isDir, const char* name)
 		}
 
 		std::string out;
-		for(auto line : lines) {
+		for (auto line : lines) {
 			out += line + '\n';
 		}
 		out.pop_back();

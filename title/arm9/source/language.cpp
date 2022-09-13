@@ -20,7 +20,7 @@ std::string getString(CIniFile &ini, const std::string &item, const std::string 
 	std::string out = ini.GetString("LANGUAGE", item, defaultValue);
 
 	// Convert "\n" to actual newlines
-	for(uint i = 0; i < out.length() - 1; i++) {
+	for (uint i = 0; i < out.length() - 1; i++) {
 		if (out[i] == '\\') {
 			switch(out[i + 1]) {
 				case 'n':

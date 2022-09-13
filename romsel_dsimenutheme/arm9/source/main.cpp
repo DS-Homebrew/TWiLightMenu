@@ -410,9 +410,9 @@ void SetWidescreen(const char *filename) {
 		// Reset Slot-1 to allow reading card header
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
-		for(int i = 0; i < 25; i++) { swiWaitForVBlank(); }
+		for (int i = 0; i < 25; i++) { swiWaitForVBlank(); }
 		enableSlot1();
-		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
+		for (int i = 0; i < 15; i++) { swiWaitForVBlank(); }
 
 		cardReadHeader((uint8*)&ndsCart);
 
@@ -2125,7 +2125,7 @@ int main(int argc, char **argv) {
 							expansion().SetRampage(cExpansion::ENorPage);
 							cExpansion::OpenNorWrite();
 							cExpansion::SetSerialMode();
-							for(u32 address=0;address<romSize&&address<0x2000000;address+=0x40000)
+							for (u32 address=0;address<romSize&&address<0x2000000;address+=0x40000)
 							{
 								expansion().Block_Erase(address);
 								progressBarLength = (address+0x40000)/(romSize/192);

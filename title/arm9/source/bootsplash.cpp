@@ -83,7 +83,7 @@ void bootSplashDSi(void) {
 		if (ms().macroMode && !virtualPain) {
 			yPos = 128;
 		}
-		for(int i = 0; i < 2; i++) {
+		for (int i = 0; i < 2; i++) {
 			gfx[i] = oamAllocateGfx(&oamMain, SpriteSize_64x32, SpriteColorFormat_Bmp);
 			oamSet(&oamMain, i, 67 + (i * 64), yPos, 0, 15, SpriteSize_64x32, SpriteColorFormat_Bmp, gfx[i], 0, false, false, false, false, false);
 		}
@@ -92,7 +92,7 @@ void bootSplashDSi(void) {
 		unsigned int width, height;
 		lodepng::decode(image, width, height, virtualPain ? "nitro:/graphics/nintendoPain.png" : "nitro:/graphics/nintendo.png");
 
-		for(unsigned int i = 0, y = 0, x = 0;i < image.size() / 4; i++, x++) {
+		for (unsigned int i = 0, y = 0, x = 0;i < image.size() / 4; i++, x++) {
 			if (!virtualPain && image[(i * 4) + 3] > 0) {
 				switch (ms().nintendoLogoColor) {
 					default: // Gray (Original color)

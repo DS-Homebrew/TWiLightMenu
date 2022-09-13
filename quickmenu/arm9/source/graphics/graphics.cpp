@@ -267,7 +267,7 @@ void bottomBgLoad(void) {
 	lodepng::decode(image, imageWidth, imageHeight, bottomBGFile);
 	if (imageWidth > 256 || imageHeight > 192)	return;
 
-	for(uint i=0;i<image.size()/4;i++) {
+	for (uint i=0;i<image.size()/4;i++) {
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (ms().colorMode == 1) {
 			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
@@ -522,7 +522,7 @@ void loadBoxArt(const char* filename, bool secondaryDevice) {
 	lodepng::decode(image, imageWidth, imageHeight, filename);
 	if (imageWidth > 256 || imageHeight > 192)	return;
 
-	for(uint i=0;i<image.size()/4;i++) {
+	for (uint i=0;i<image.size()/4;i++) {
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (ms().colorMode == 1) {
 			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
@@ -545,8 +545,8 @@ void loadBoxArt(const char* filename, bool secondaryDevice) {
 	imageXpos = (256-imageWidth)/2;
 	imageYpos = (192-imageHeight)/2;
 	src = bmpImageBuffer;
-	for(uint y = 0; y < imageHeight; y++) {
-		for(uint x = 0; x < imageWidth; x++) {
+	for (uint y = 0; y < imageHeight; y++) {
+		for (uint x = 0; x < imageWidth; x++) {
 			BG_GFX_SUB[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
 		}
 	}
@@ -589,7 +589,7 @@ void topBgLoad(void) {
 	lodepng::decode(image, imageWidth, imageHeight, std::string(filePath));
 	if (imageWidth > 256 || imageHeight > 192)	return;
 
-	for(uint i=0;i<image.size()/4;i++) {
+	for (uint i=0;i<image.size()/4;i++) {
 		topImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (ms().colorMode == 1) {
 			topImageBuffer[i] = convertVramColorToGrayscale(topImageBuffer[i]);
@@ -622,7 +622,7 @@ void topBarLoad(void) {
 		std::vector<unsigned char> image;
 		unsigned width, height;
 		lodepng::decode(image, width, height, filePath);
-		for(unsigned i=0;i<image.size()/4;i++) {
+		for (unsigned i=0;i<image.size()/4;i++) {
 			bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (ms().colorMode == 1) {
 				bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);

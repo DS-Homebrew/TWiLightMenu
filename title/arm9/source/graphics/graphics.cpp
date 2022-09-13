@@ -107,7 +107,7 @@ void LoadBMP(void) {
 
 	lodepng::decode(image, width, height, (sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.png" : "nitro:/graphics/logo_rocketrobz.png"));
 	bool alternatePixel = false;
-	for(unsigned i=0;i<image.size()/4;i++) {
+	for (unsigned i=0;i<image.size()/4;i++) {
 		image[(i*4)+3] = 0;
 		if (alternatePixel) {
 			if (image[(i*4)] >= 0x4) {

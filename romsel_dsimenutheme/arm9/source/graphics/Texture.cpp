@@ -8,7 +8,7 @@ Texture::Texture(const std::string &filePath, const std::string &fallback)
 	: _paletteLength(0), _texLength(0), _texCmpLength(0), _texHeight(0), _texWidth(0), _type(TextureType::Unknown) {
 	std::string pngPath;
 	FILE *file;
-	for(const char *extension : extensions) {
+	for (const char *extension : extensions) {
 		file = fopen((filePath + extension).c_str(), "rb");
 		if (file) {
 			_type = findType(file);
@@ -129,7 +129,7 @@ void Texture::loadBitmap(FILE *file) noexcept {
 
 		_palette = std::make_unique<u16[]>(_paletteLength);
 
-		for(int i = 0; i < _paletteLength; i++) {
+		for (int i = 0; i < _paletteLength; i++) {
 			u32 color;
 			fread(&color, sizeof(u32), 1, file);
 			u8 r = lroundf(((color >> 16) & 0xFF) * 31 / 255.0f) & 0x1F;
@@ -140,16 +140,16 @@ void Texture::loadBitmap(FILE *file) noexcept {
 		}
 	}
 
-	for(uint y = 0; y < _texHeight; y++) {
+	for (uint y = 0; y < _texHeight; y++) {
 		fseek(file, offset + ((_texHeight - y - 1) * _texWidth) * bitDepth / 8, SEEK_SET);
 		fread((u8 *)_texture.get() + (y * _texWidth) * bitDepth / 8, 1, _texWidth * bitDepth / 8, file);
 
 		if (bitDepth == 16) { // Filter
-			for(uint x = 0; x < _texWidth; x++) {
+			for (uint x = 0; x < _texWidth; x++) {
 				_texture[(y * _texWidth) + x] = bmpToDS(_texture[(y * _texWidth) + x]);
 			}
 		} else if (bitDepth == 4) { // Swap nibbles
-			for(uint x = 0; x < _texWidth; x += 2) {
+			for (uint x = 0; x < _texWidth; x += 2) {
 				u8 *px = (u8 *)_texture.get() + ((y * _texWidth) + x) / 2;
 				*px = *px << 4 | *px >> 4;
 			}
@@ -167,7 +167,7 @@ void Texture::loadPNG(const std::string &path) {
 
 	// Convert to DS bitmap format
 	_texture = std::make_unique<u16[]>(_texWidth * _texHeight);
-	for(uint i=0;i<buffer.size()/4;i++) {
+	for (uint i=0;i<buffer.size()/4;i++) {
 		if (buffer[(i * 4) + 3] == 0xFF) { // Only keep full opacity pixels
 			_texture[i] = bmpToDS((buffer[i * 4] >> 3) << 10 | (buffer[(i * 4) + 1] >> 3) << 5 | buffer[(i * 4) + 2] >> 3);
 		}
@@ -271,7 +271,7 @@ void Texture::copy(u16 *dst, bool vram) const {
 	switch(_type) {
 		case TextureType::PalettedGrf:
 		case TextureType::PalettedBmp:
-			for(u32 i = 0; i < _texWidth * _texHeight / 2; i++) {
+			for (u32 i = 0; i < _texWidth * _texHeight / 2; i++) {
 				u8 byte = ((u8 *)_texture.get())[i];
 				*(dst++) = _palette[byte & 0xF];
 				*(dst++) = _palette[byte >> 4];

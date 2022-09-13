@@ -167,7 +167,7 @@ void chdirFake(const char *dir) {
 #endif
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
-	for(std::string_view extension : extensions) {
+	for (std::string_view extension : extensions) {
 		if (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
 			return true;
 		}
@@ -518,11 +518,11 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 				rocketVideo_playVideo = (ms().theme == TWLSettings::ETheme3DS ? true : false);
 				boxArtLoaded = false;
 				if (ms().theme == TWLSettings::EThemeSaturn) {
-					for(int i = 0; i < 10; i++)
+					for (int i = 0; i < 10; i++)
 						swiWaitForVBlank();
 				}
 			} else
-			for(int i = 0; i < (ms().theme == TWLSettings::EThemeSaturn ? 15 : 4); i++)
+			for (int i = 0; i < (ms().theme == TWLSettings::EThemeSaturn ? 15 : 4); i++)
 				swiWaitForVBlank();
 		} else {
 			if (ms().theme != TWLSettings::ETheme3DS)
@@ -2292,7 +2292,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					dirContents[scrn].insert(dirContents[scrn].begin() + dest, entry);
 
 					std::vector<std::string> dirNames(dirContents[scrn].size());
-					for(uint i=0;i<dirContents[scrn].size();i++) {
+					for (uint i=0;i<dirContents[scrn].size();i++) {
 						dirNames[i] = dirContents[scrn][i].name;
 					}
 
@@ -2490,7 +2490,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 
 							// Wait a little bit to give time to re-grab
-							for(int i = 0; i < 10 && !(keysHeld() & KEY_TOUCH); i++) {
+							for (int i = 0; i < 10 && !(keysHeld() & KEY_TOUCH); i++) {
 								bgOperations(true);
 								scanKeys();
 							}

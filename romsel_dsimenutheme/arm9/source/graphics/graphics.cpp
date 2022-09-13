@@ -1166,7 +1166,7 @@ void loadPhotoList() {
 	if (file) {
 		std::vector<int> screenshots;
 		fseek(file, 0x200, SEEK_SET);
-		for(int i = 0; i < 50; i++) {
+		for (int i = 0; i < 50; i++) {
 			if (fgetc(file) == 'B')
 				screenshots.push_back(i);
 			fseek(file, 0x18400 - 1, SEEK_CUR);
@@ -1197,7 +1197,7 @@ void loadPhoto(const std::string &path) {
 		lodepng::decode(image, photoWidth, photoHeight, "nitro:/graphics/photo_default.png");
 	}
 
-	for(uint i=0;i<image.size()/4;i++) {
+	for (uint i=0;i<image.size()/4;i++) {
 		if (boxArtColorDeband) {
 			image[(i*4)+3] = 0;
 			if (alternatePixel) {
@@ -1254,7 +1254,7 @@ void loadPhoto(const std::string &path) {
 	u16* bgSubBuffer2 = tex().bgSubBuffer2();
 
 	// Fill area with black
-	for(int y = 24; y < 180; y++) {
+	for (int y = 24; y < 180; y++) {
 		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
 	}
 
@@ -1300,7 +1300,7 @@ void loadBootstrapScreenshot(FILE *file) {
 	u16* bgSubBuffer2 = tex().bgSubBuffer2();
 
 	// Fill area with black
-	for(int y = 24; y < 180; y++) {
+	for (int y = 24; y < 180; y++) {
 		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
 	}
 
@@ -1334,7 +1334,7 @@ void loadPhotoPart() {
 	u16* bgSubBuffer2 = tex().bgSubBuffer2();
 
 	// Fill area with black
-	for(int y = 24; y < 172; y++) {
+	for (int y = 24; y < 172; y++) {
 		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
 	}
 

@@ -369,7 +369,7 @@ static void aes_gen_tables( void )
     /*
      * compute pow and log tables over GF(2^8)
      */
-    for( i = 0, x = 1; i < 256; i++ )
+    for ( i = 0, x = 1; i < 256; i++ )
     {
         pow[i] = x;
         log[x] = i;
@@ -379,7 +379,7 @@ static void aes_gen_tables( void )
     /*
      * calculate the round constants
      */
-    for( i = 0, x = 1; i < 10; i++ )
+    for ( i = 0, x = 1; i < 10; i++ )
     {
         RCON[i] = (unsigned long) x;
         x = XTIME( x ) & 0xFF;
@@ -391,7 +391,7 @@ static void aes_gen_tables( void )
     FSb[0x00] = 0x63;
     RSb[0x63] = 0x00;
 
-    for( i = 1; i < 256; i++ )
+    for ( i = 1; i < 256; i++ )
     {
         x = pow[255 - log[i]];
 
@@ -408,7 +408,7 @@ static void aes_gen_tables( void )
     /*
      * generate the forward and reverse tables
      */
-    for( i = 0; i < 256; i++ )
+    for ( i = 0; i < 256; i++ )
     {
         x = FSb[i];
         y = XTIME( x ) & 0xFF;
@@ -468,7 +468,7 @@ int aes_setkey_enc( aes_context *ctx, const unsigned char *key, int keysize )
     ctx->rk = RK = ctx->buf;
 #endif
 
-    for( i = 0; i < (keysize >> 5); i++ )
+    for ( i = 0; i < (keysize >> 5); i++ )
     {
         GET_ULONG_LE( RK[i], key, i << 2 );
     }
@@ -477,7 +477,7 @@ int aes_setkey_enc( aes_context *ctx, const unsigned char *key, int keysize )
     {
         case 10:
 
-            for( i = 0; i < 10; i++, RK += 4 )
+            for ( i = 0; i < 10; i++, RK += 4 )
             {
                 RK[4]  = RK[0] ^ RCON[i] ^
                 ( (unsigned long) FSb[ ( RK[3] >>  8 ) & 0xFF ]       ) ^
@@ -493,7 +493,7 @@ int aes_setkey_enc( aes_context *ctx, const unsigned char *key, int keysize )
 
         case 12:
 
-            for( i = 0; i < 8; i++, RK += 6 )
+            for ( i = 0; i < 8; i++, RK += 6 )
             {
                 RK[6]  = RK[0] ^ RCON[i] ^
                 ( (unsigned long) FSb[ ( RK[5] >>  8 ) & 0xFF ]       ) ^
@@ -511,7 +511,7 @@ int aes_setkey_enc( aes_context *ctx, const unsigned char *key, int keysize )
 
         case 14:
 
-            for( i = 0; i < 7; i++, RK += 8 )
+            for ( i = 0; i < 7; i++, RK += 8 )
             {
                 RK[8]  = RK[0] ^ RCON[i] ^
                 ( (unsigned long) FSb[ ( RK[7] >>  8 ) & 0xFF ]       ) ^
@@ -579,9 +579,9 @@ int aes_setkey_dec( aes_context *ctx, const unsigned char *key, int keysize )
     *RK++ = *SK++;
     *RK++ = *SK++;
 
-    for( i = ctx->nr - 1, SK -= 8; i > 0; i--, SK -= 8 )
+    for ( i = ctx->nr - 1, SK -= 8; i > 0; i--, SK -= 8 )
     {
-        for( j = 0; j < 4; j++, SK++ )
+        for ( j = 0; j < 4; j++, SK++ )
         {
             *RK++ = RT0[ FSb[ ( *SK       ) & 0xFF ] ] ^
                     RT1[ FSb[ ( *SK >>  8 ) & 0xFF ] ] ^
@@ -678,7 +678,7 @@ int aes_crypt_ecb( aes_context *ctx,
 
     if ( mode == AES_DECRYPT )
     {
-        for( i = (ctx->nr >> 1) - 1; i > 0; i-- )
+        for ( i = (ctx->nr >> 1) - 1; i > 0; i-- )
         {
             AES_RROUND( Y0, Y1, Y2, Y3, X0, X1, X2, X3 );
             AES_RROUND( X0, X1, X2, X3, Y0, Y1, Y2, Y3 );
@@ -712,7 +712,7 @@ int aes_crypt_ecb( aes_context *ctx,
     }
     else /* AES_ENCRYPT */
     {
-        for( i = (ctx->nr >> 1) - 1; i > 0; i-- )
+        for ( i = (ctx->nr >> 1) - 1; i > 0; i-- )
         {
             AES_FROUND( Y0, Y1, Y2, Y3, X0, X1, X2, X3 );
             AES_FROUND( X0, X1, X2, X3, Y0, Y1, Y2, Y3 );
@@ -788,7 +788,7 @@ int aes_crypt_cbc( aes_context *ctx,
             memcpy( temp, input, 16 );
             aes_crypt_ecb( ctx, mode, input, output );
 
-            for( i = 0; i < 16; i++ )
+            for ( i = 0; i < 16; i++ )
                 output[i] = (unsigned char)( output[i] ^ iv[i] );
 
             memcpy( iv, temp, 16 );
@@ -802,7 +802,7 @@ int aes_crypt_cbc( aes_context *ctx,
     {
         while( length > 0 )
         {
-            for( i = 0; i < 16; i++ )
+            for ( i = 0; i < 16; i++ )
                 output[i] = (unsigned char)( input[i] ^ iv[i] );
 
             aes_crypt_ecb( ctx, mode, output, output );
@@ -992,7 +992,7 @@ int aes_self_test( int verbose )
     /*
      * ECB mode
      */
-    for( i = 0; i < 6; i++ )
+    for ( i = 0; i < 6; i++ )
     {
         u = i >> 1;
         v = i  & 1;
@@ -1007,7 +1007,7 @@ int aes_self_test( int verbose )
         {
             aes_setkey_dec( &ctx, key, 128 + u * 64 );
 
-            for( j = 0; j < 10000; j++ )
+            for ( j = 0; j < 10000; j++ )
                 aes_crypt_ecb( &ctx, v, buf, buf );
 
             if ( memcmp( buf, aes_test_ecb_dec[u], 16 ) != 0 )
@@ -1022,7 +1022,7 @@ int aes_self_test( int verbose )
         {
             aes_setkey_enc( &ctx, key, 128 + u * 64 );
 
-            for( j = 0; j < 10000; j++ )
+            for ( j = 0; j < 10000; j++ )
                 aes_crypt_ecb( &ctx, v, buf, buf );
 
             if ( memcmp( buf, aes_test_ecb_enc[u], 16 ) != 0 )
@@ -1044,7 +1044,7 @@ int aes_self_test( int verbose )
     /*
      * CBC mode
      */
-    for( i = 0; i < 6; i++ )
+    for ( i = 0; i < 6; i++ )
     {
         u = i >> 1;
         v = i  & 1;
@@ -1061,7 +1061,7 @@ int aes_self_test( int verbose )
         {
             aes_setkey_dec( &ctx, key, 128 + u * 64 );
 
-            for( j = 0; j < 10000; j++ )
+            for ( j = 0; j < 10000; j++ )
                 aes_crypt_cbc( &ctx, v, 16, iv, buf, buf );
 
             if ( memcmp( buf, aes_test_cbc_dec[u], 16 ) != 0 )
@@ -1076,7 +1076,7 @@ int aes_self_test( int verbose )
         {
             aes_setkey_enc( &ctx, key, 128 + u * 64 );
 
-            for( j = 0; j < 10000; j++ )
+            for ( j = 0; j < 10000; j++ )
             {
                 unsigned char tmp[16];
 
@@ -1106,7 +1106,7 @@ int aes_self_test( int verbose )
     /*
      * CFB128 mode
      */
-    for( i = 0; i < 6; i++ )
+    for ( i = 0; i < 6; i++ )
     {
         u = i >> 1;
         v = i  & 1;

@@ -291,7 +291,7 @@ void arm7_resetMemory (void)
 		TIMER_DATA(i) = 0;
 		if (my_isDSiMode())
 		{
-			for(reg=0; reg<0x1c; reg+=4)*((u32*)(0x04004104 + ((i*0x1c)+reg))) = 0;//Reset NDMA.
+			for (reg=0; reg<0x1c; reg+=4)*((u32*)(0x04004104 + ((i*0x1c)+reg))) = 0;//Reset NDMA.
 		}
 	}
 

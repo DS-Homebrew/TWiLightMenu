@@ -190,7 +190,7 @@ bool extension(const std::string& filename, const char* ext) {
 // it's copied here. Remove this if adding FontGraphic to title.
 std::u16string utf8to16(std::string_view text) {
 	std::u16string out;
-	for(uint i=0;i<text.size();) {
+	for (uint i=0;i<text.size();) {
 		char16_t c;
 		if (!(text[i] & 0x80)) {
 			c = text[i++];
@@ -1578,15 +1578,15 @@ void languageSelect(void) {
 	fadeType = true;
 
 	int guiLanguage = -1, gameLanguage = -1, titleLanguage = -1;
-	for(uint i = 0; i < sizeof(guiLanguages) / sizeof(guiLanguages[0]); i++) {
+	for (uint i = 0; i < sizeof(guiLanguages) / sizeof(guiLanguages[0]); i++) {
 		if (guiLanguages[i] == ms().guiLanguage)
 			guiLanguage = i;
 	}
-	for(uint i = 0; i < sizeof(gameLanguages) / sizeof(gameLanguages[0]); i++) {
+	for (uint i = 0; i < sizeof(gameLanguages) / sizeof(gameLanguages[0]); i++) {
 		if (gameLanguages[i] == ms().gameLanguage)
 			gameLanguage = i;
 	}
-	for(uint i = 0; i < sizeof(titleLanguages) / sizeof(titleLanguages[0]); i++) {
+	for (uint i = 0; i < sizeof(titleLanguages) / sizeof(titleLanguages[0]); i++) {
 		if (titleLanguages[i] == ms().titleLanguage)
 			titleLanguage = i;
 	}
@@ -1737,7 +1737,7 @@ void regionSelect(void) {
 		clearText();
 		printLarge(ms().macroMode, x1, 0, STR_SELECT_YOUR_REGION, align);
 
-		for(uint i = dsiFeatures() ? 0 : 1, p = 0; i < sizeof(regions) / sizeof(regions[0]); i++, p++) {
+		for (uint i = dsiFeatures() ? 0 : 1, p = 0; i < sizeof(regions) / sizeof(regions[0]); i++, p++) {
 			printSmall(ms().macroMode, x2, 20 + p * 14, *regions[i], align);
 		}
 

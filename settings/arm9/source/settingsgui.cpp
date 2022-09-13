@@ -189,7 +189,7 @@ void SettingsGUI::setTopText(const std::string &text)
 				_topTextLines++;
 				temp = u"";
 			}
-			for(int i = 0; i < width/240.0; i++) {
+			for (int i = 0; i < width/240.0; i++) {
 				word.insert((float)((i + 1) * word.length()) / ((width/240) + 1), u"\n");
 			}
 			_topText += word + u"\n";

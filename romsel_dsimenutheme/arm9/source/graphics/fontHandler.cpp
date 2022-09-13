@@ -24,7 +24,7 @@ bool shouldClear[] = {false, false};
 
 // Checks if any of the specified files exists
 bool fileExists(std::vector<std::string_view> paths) {
-	for(const std::string_view &path : paths) {
+	for (const std::string_view &path : paths) {
 		if (access(path.data(), F_OK) == 0)
 			return true;
 	}
@@ -137,7 +137,7 @@ void updateText(bool top) {
 
 	// Draw text
 	auto &text = getTextQueue(top);
-	for(auto it = text.begin(); it != text.end(); ++it) {
+	for (auto it = text.begin(); it != text.end(); ++it) {
 		FontGraphic *font = getFont(it->large);
 		if (font)
 			font->print(it->x, it->y, top, it->message, it->align, it->palette);
@@ -159,7 +159,7 @@ void updateTextImg(u16* img, bool top) {
 
 	// Draw text
 	auto &text = getTextQueue(top);
-	for(auto it = text.begin(); it != text.end(); ++it) {
+	for (auto it = text.begin(); it != text.end(); ++it) {
 		if (esrbDescFont)
 			esrbDescFont->print(it->x, it->y, top, it->message, it->align, it->palette);
 	}
@@ -230,7 +230,7 @@ int calcSmallFontHeight(std::string_view text) { return calcSmallFontHeight(Font
 int calcSmallFontHeight(std::u16string_view text) {
 	if (smallFont) {
 		int lines = 1;
-		for(auto c : text) {
+		for (auto c : text) {
 			if (c == '\n')
 				lines++;
 		}
@@ -244,7 +244,7 @@ int calcLargeFontHeight(std::string_view text) { return calcLargeFontHeight(Font
 int calcLargeFontHeight(std::u16string_view text) {
 	if (largeFont) {
 		int lines = 1;
-		for(auto c : text) {
+		for (auto c : text) {
 			if (c == '\n')
 				lines++;
 		}

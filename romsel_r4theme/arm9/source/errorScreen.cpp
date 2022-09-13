@@ -29,14 +29,14 @@ void loadSdRemovedImage(void) {
 
 	lodepng::decode(image, imageWidth, imageHeight, sdRemovedError);
 
-	for(uint i=0;i<image.size()/4;i++) {
+	for (uint i=0;i<image.size()/4;i++) {
 		sdRemovedExtendedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 
 	image.clear();
 	lodepng::decode(image, imageWidth, imageHeight, sdRemoved);
 
-	for(uint i=0;i<image.size()/4;i++) {
+	for (uint i=0;i<image.size()/4;i++) {
 		sdRemovedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 }
