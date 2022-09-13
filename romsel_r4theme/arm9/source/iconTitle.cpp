@@ -34,7 +34,7 @@
 #include "common/twlmenusettings.h"
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "language.h"
 #include "ndsheaderbanner.h"
 #include "myDSiMode.h"

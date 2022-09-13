@@ -20,7 +20,7 @@ include $(DEVKITARM)/ds_rules
 UNIVERSAL	:=	../../universal
 TARGET		:=	imageview
 BUILD		:=	build
-SOURCES		:=	source source/graphics source/tool source/common $(UNIVERSAL)/source/common $(UNIVERSAL)/source/nds_loader $(UNIVERSAL)/source/tonccpy $(UNIVERSAL)/sdmmc/arm9/source
+SOURCES		:=	source source/graphics source/tool source/common $(UNIVERSAL)/source/common $(UNIVERSAL)/source/nds_loader $(UNIVERSAL)/source/lodepng $(UNIVERSAL)/source/tonccpy $(UNIVERSAL)/sdmmc/arm9/source
 INCLUDES	:=	source $(UNIVERSAL)/include $(UNIVERSAL)/sdmmc/arm9/include
 DATA		:=	../data
 GRAPHICS	:=	../gfx

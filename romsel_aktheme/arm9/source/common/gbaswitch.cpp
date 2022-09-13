@@ -1,6 +1,6 @@
 #include "common/dsimenusettings.h"
 #include "common/tonccpy.h"
-#include "drawing/lodepng.h"
+#include "common/lodepng.h"
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 

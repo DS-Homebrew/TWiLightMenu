@@ -29,20 +29,16 @@ u32 findModuleParamsOffset(const sNDSHeaderExt *ndsHeader, FILE *ndsFile)
 
 		// Offset of the module params
 		u32 offset = 0;
-		while (fread(buf, sizeof(u32), 2, ndsFile) == 2)
-		{
+		while (fread(buf, sizeof(u32), 2, ndsFile) == 2) {
 			// The first word of the signature is on an even offset (relative to arm9romOffset)
-			if (buf[0] == moduleParamsSignature[0] && buf[1] == moduleParamsSignature[1])
-			{
+			if (buf[0] == moduleParamsSignature[0] && buf[1] == moduleParamsSignature[1]) {
 				return offsetOfModuleParams + offset - 0x1C;
 				break;
-			}
-			// The first word of the signature is on an odd offset (relative to arm9romOffset)
-			else if (buf[1] == moduleParamsSignature[0])
-			{
+			} else if (buf[1] == moduleParamsSignature[0]) {
+				// The first word of the signature is on an odd offset (relative to arm9romOffset)
+
 				// Read the next byte and check if the next byte is the paramSignature.
-				if (fread(buf, sizeof(u32), 1, ndsFile) == 1 && buf[0] == moduleParamsSignature[1])
-				{
+				if (fread(buf, sizeof(u32), 1, ndsFile) == 1 && buf[0] == moduleParamsSignature[1]) {
 					// The offset of moduleParamsSignature is at offset + 1.
 					offset += sizeof(u32);
 					return offsetOfModuleParams + offset - 0x1C;
@@ -61,9 +57,7 @@ u32 findModuleParamsOffset(const sNDSHeaderExt *ndsHeader, FILE *ndsFile)
 	return (u32)NULL;
 }
 
-module_params_t *getModuleParams(const sNDSHeaderExt *ndsHeader, FILE *ndsFile)
-{
-
+module_params_t *getModuleParams(const sNDSHeaderExt *ndsHeader, FILE *ndsFile) {
 	u32 moduleParamsOffset = findModuleParamsOffset(ndsHeader, ndsFile);
 	fseek(ndsFile, moduleParamsOffset, SEEK_SET);
 	fread(moduleParamsBuf, sizeof(module_params_t), 1, ndsFile);

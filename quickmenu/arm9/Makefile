@@ -20,7 +20,7 @@ include $(DEVKITARM)/ds_rules
 UNIVERSAL	:=	../../universal
 TARGET		:=	mainmenu
 BUILD		:=	build
-SOURCES		:=	source source/nand source/graphics source/tool source/common mbedtls $(UNIVERSAL)/source $(UNIVERSAL)/source/common $(UNIVERSAL)/source/nds_loader $(UNIVERSAL)/source/tonccpy $(UNIVERSAL)/arm9/source $(UNIVERSAL)/source/flashcard $(UNIVERSAL)/sdmmc/arm9/source
+SOURCES		:=	source source/nand source/graphics source/tool source/common mbedtls $(UNIVERSAL)/source $(UNIVERSAL)/source/common $(UNIVERSAL)/source/nds_loader $(UNIVERSAL)/source/tonccpy $(UNIVERSAL)/arm9/source $(UNIVERSAL)/source/flashcard $(UNIVERSAL)/source/lodepng $(UNIVERSAL)/sdmmc/arm9/source
 INCLUDES	:=	include source $(UNIVERSAL)/include $(UNIVERSAL)/arm9/include $(UNIVERSAL)/sdmmc/arm9/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx

@@ -31,7 +31,7 @@
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "graphics/queueControl.h"
 #include "graphics/ThemeConfig.h"
 #include "graphics/ThemeTextures.h"

@@ -27,7 +27,7 @@
 #include "common/gl2d.h"
 #include "common/tonccpy.h"
 #include "graphics.h"
-#include "lodepng.h"
+#include "common/lodepng.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24

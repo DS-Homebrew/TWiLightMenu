@@ -24,7 +24,7 @@
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
 #include "graphics/gif.hpp"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "graphics/color.h"
 
 #include <nds.h>

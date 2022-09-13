@@ -31,7 +31,7 @@
 #include "common/flashcard.h"
 #include "graphics/graphics.h"
 #include "graphics/fontHandler.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "ndsheaderbanner.h"
 #include "myDSiMode.h"
 #include "language.h"

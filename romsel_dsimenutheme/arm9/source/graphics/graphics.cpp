@@ -40,7 +40,7 @@
 #include "fileBrowse.h"
 #include "fontHandler.h"
 #include "graphics/ThemeTextures.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "launchDots.h"
 #include "queueControl.h"
 #include "sound.h"

@@ -311,18 +311,16 @@ bool FAT_InitFiles (bool initCard)
 	int bootSector;
 	BOOT_SEC* bootSec;
 	
-	if (initCard && !CARD_StartUp())
-	{
+	if (initCard && !CARD_StartUp()) {
 		return (false);
 	}
 	
 	// Read first sector of card
-	if (!CARD_ReadSector (0, globalBuffer)) 
-	{
+	if (!CARD_ReadSector (0, globalBuffer)) {
 		return false;
 	}
-	if ((globalBuffer[0x36] == 'F') && (globalBuffer[0x37] == 'A') && (globalBuffer[0x38] == 'T') // Check if there is a FAT string, which indicates this is a boot sector
-	 || (globalBuffer[0x52] == 'F') && (globalBuffer[0x53] == 'A') && (globalBuffer[0x54] == 'T')) { // Check for FAT32
+	if (((globalBuffer[0x36] == 'F') && (globalBuffer[0x37] == 'A') && (globalBuffer[0x38] == 'T')) // Check if there is a FAT string, which indicates this is a boot sector
+	 || ((globalBuffer[0x52] == 'F') && (globalBuffer[0x53] == 'A') && (globalBuffer[0x54] == 'T'))) { // Check for FAT32
 		bootSector = 0;
 	}
 	else	// This is an MBR

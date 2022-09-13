@@ -1,7 +1,7 @@
 #include "Texture.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
-#include "lodepng.h"
+#include "common/lodepng.h"
 #include <math.h>
 
 Texture::Texture(const std::string &filePath, const std::string &fallback)

@@ -19,7 +19,7 @@
 #include "fileBrowse.h"
 #include "common/lzss.h"
 #include "common/tonccpy.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "ndsheaderbanner.h"
 #include "ndma.h"
 

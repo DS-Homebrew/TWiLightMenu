@@ -8,7 +8,7 @@
 #include "common/systemdetails.h"
 #include "common/flashcard.h"
 #include "common/tonccpy.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "graphics/graphics.h"
 #include "graphics/color.h"
 #include "sound.h"

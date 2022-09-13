@@ -21,7 +21,7 @@
 #include <nds.h>
 #include <maxmod9.h>
 #include <gl2d.h>
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
 #include "common/inifile.h"

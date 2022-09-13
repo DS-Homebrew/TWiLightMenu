@@ -1,4 +1,4 @@
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "common/tonccpy.h"
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"

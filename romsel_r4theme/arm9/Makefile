@@ -20,7 +20,7 @@ include $(DEVKITARM)/ds_rules
 UNIVERSAL	:=	../../universal
 TARGET		:=	romsel_r4theme
 BUILD		:=	build
-SOURCES		:=	source source/graphics source/tool source/common $(UNIVERSAL)/arm9/source $(UNIVERSAL)/source/common $(UNIVERSAL)/source/flashcard $(UNIVERSAL)/source/nds_loader $(UNIVERSAL)/source/tonccpy $(UNIVERSAL)/sdmmc/arm9/source
+SOURCES		:=	source source/graphics source/tool source/common $(UNIVERSAL)/arm9/source $(UNIVERSAL)/source/common $(UNIVERSAL)/source/flashcard $(UNIVERSAL)/source/nds_loader $(UNIVERSAL)/source/tonccpy $(UNIVERSAL)/source/lodepng $(UNIVERSAL)/sdmmc/arm9/source
 INCLUDES	:=	include source $(UNIVERSAL)/include $(UNIVERSAL)/arm9/include $(UNIVERSAL)/sdmmc/arm9/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx

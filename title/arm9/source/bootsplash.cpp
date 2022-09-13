@@ -8,7 +8,7 @@
 #include "common/tonccpy.h"
 #include "graphics/gif.hpp"
 #include "graphics/graphics.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 
 #include "sound.h"
 

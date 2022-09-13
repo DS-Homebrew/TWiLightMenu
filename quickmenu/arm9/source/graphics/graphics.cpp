@@ -44,7 +44,7 @@
 
 #include "../iconTitle.h"
 #include "graphics.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "fontHandler.h"
 #include "../ndsheaderbanner.h"
 #include "../errorScreen.h"

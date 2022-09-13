@@ -20,7 +20,7 @@ include $(DEVKITARM)/ds_rules
 UNIVERSAL	:=	../../universal
 TARGET		:=	romsel_aktheme
 BUILD		:=	build
-SOURCES		:=	source source/graphics source/tool source/drawing source/font source/time source/ui source/windows source/common $(UNIVERSAL)/sdmmc/arm9/source
+SOURCES		:=	source source/graphics source/tool source/drawing source/font source/time source/ui source/windows source/common $(UNIVERSAL)/sdmmc/arm9/source $(UNIVERSAL)/source/lodepng
 INCLUDES	:=	include source $(UNIVERSAL)/include $(UNIVERSAL)/sdmmc/arm9/include
 DATA		:=	../data ../gfx_bin
 GRAPHICS	:=  ../gfx

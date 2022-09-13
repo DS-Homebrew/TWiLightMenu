@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "common/twlmenusettings.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 //#include "autoboot.h"
 
 extern const char *unlaunchAutoLoadID;

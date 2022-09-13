@@ -1,7 +1,7 @@
 #include "common/nds_loader_arm9.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "gbaswitch.h"
 
 extern u16 bmpImageBuffer[256*192];

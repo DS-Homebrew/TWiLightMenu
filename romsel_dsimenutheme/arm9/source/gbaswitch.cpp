@@ -2,7 +2,7 @@
 #include "common/twlmenusettings.h"
 #include "common/tonccpy.h"
 #include "graphics/ThemeTextures.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "gbaswitch.h"
 
 void loadGbaBorder(const char* filename) {

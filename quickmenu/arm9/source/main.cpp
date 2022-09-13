@@ -2159,8 +2159,7 @@ int main(int argc, char **argv) {
 			int pathLen = strlen(filePath);
 			vector<char*> argarray;
 
-			if (extension(filename[ms().secondaryDevice], ".argv"))
-			{
+			if (extension(filename[ms().secondaryDevice], ".argv")) {
 				FILE *argfile = fopen(filename[ms().secondaryDevice].c_str(),"rb");
 					char str[PATH_MAX], *pstr;
 				const char seps[]= "\n\r\t ";
@@ -2168,7 +2167,7 @@ int main(int argc, char **argv) {
 				while (fgets(str, PATH_MAX, argfile)) {
 					// Find comment and end string there
 					if ((pstr = strchr(str, '#')))
-						*pstr= '\0';
+						*pstr = '\0';
 
 					// Tokenize arguments
 					pstr = strtok(str, seps);
@@ -2352,12 +2351,12 @@ int main(int argc, char **argv) {
 					mkdir((ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
 					if (codelist.romData(ms().dsiWareSrlPath,gameCode,crc32)) {
 						long cheatOffset; size_t cheatSize;
-						FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
+						FILE* dat = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
 						if (dat) {
 							if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
 								codelist.parse(ms().dsiWareSrlPath);
 								codelist.writeCheatsToFile(cheatDataBin);
-								FILE* cheatData=fopen(cheatDataBin,"rb");
+								FILE* cheatData = fopen(cheatDataBin,"rb");
 								if (cheatData) {
 									u32 check[2];
 									fread(check, 1, 8, cheatData);
@@ -2476,12 +2475,10 @@ int main(int argc, char **argv) {
 				std::string prvnameUl = replaceAll(filename[ms().secondaryDevice], typeToReplace, ".prv");
 				std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
 				std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
-				if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0)
-				{
+				if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 					rename(ms().dsiWarePubPath.c_str(), pubpathUl.c_str());
 				}
-				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0)
-				{
+				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
 					rename(ms().dsiWarePrvPath.c_str(), prvpathUl.c_str());
 				}
 
@@ -2522,11 +2519,7 @@ int main(int argc, char **argv) {
 				} else if (isHomebrew[ms().secondaryDevice]) {
 					loadPerGameSettings(filename[ms().secondaryDevice]);
 					int pgsDSiMode = (perGameSettings_dsiMode == -1 ? isModernHomebrew[ms().secondaryDevice] : perGameSettings_dsiMode);
-					if ((perGameSettings_directBoot && ms().secondaryDevice) || (isModernHomebrew[ms().secondaryDevice] && pgsDSiMode && (ms().secondaryDevice || perGameSettings_ramDiskNo == -1))) {
-						useBackend = false;	// Bypass nds-bootstrap
-					} else {
-						useBackend = true;
-					}
+					useBackend = !((perGameSettings_directBoot && ms().secondaryDevice) || (isModernHomebrew[ms().secondaryDevice] && pgsDSiMode && (ms().secondaryDevice || perGameSettings_ramDiskNo == -1)));
 					if (isDSiMode() && !pgsDSiMode) {
 						dsModeSwitch = true;
 					}
@@ -2550,7 +2543,7 @@ int main(int argc, char **argv) {
 						std::string romFolderNoSlash = romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
 						mkdir (isHomebrew[ms().secondaryDevice] ? "ramdisks" : "saves", 0777);
-						std::string savepath = romFolderNoSlash+"/saves/"+savename;
+						std::string savepath = romFolderNoSlash + "/saves/" + savename;
 						if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
 							savepath = replaceAll(savepath, "fat:/", "sd:/");
 						}
@@ -2755,7 +2748,7 @@ int main(int argc, char **argv) {
 						clearText();
 						printSmall(false, 4, 4, text);
 						if (err == 1) {
-							if (ms().homebrewBootstrap == true) {
+							if (ms().homebrewBootstrap) {
 								printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
 							} else {
 								printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
@@ -2915,7 +2908,7 @@ int main(int argc, char **argv) {
 					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
-				} else if (extension(filename[ms().secondaryDevice], {".avi"})) {
+				} else if (extension(filename[ms().secondaryDevice], ".avi")) {
 					ms().launchType[ms().secondaryDevice] = Launch::ETunaViDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/tuna-vids.nds";

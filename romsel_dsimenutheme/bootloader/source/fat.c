@@ -321,14 +321,8 @@ bool FAT_InitFiles (bool initCard)
 	{
 		return false;
 	}
-	// Check if there is a FAT string, which indicates this is a boot sector
-	if ((globalBuffer[0x36] == 'F') && (globalBuffer[0x37] == 'A') && (globalBuffer[0x38] == 'T'))
-	{
-		bootSector = 0;
-	}
-	// Check for FAT32
-	else if ((globalBuffer[0x52] == 'F') && (globalBuffer[0x53] == 'A') && (globalBuffer[0x54] == 'T'))
-	{
+	if (((globalBuffer[0x36] == 'F') && (globalBuffer[0x37] == 'A') && (globalBuffer[0x38] == 'T')) // Check if there is a FAT string, which indicates this is a boot sector
+	 || ((globalBuffer[0x52] == 'F') && (globalBuffer[0x53] == 'A') && (globalBuffer[0x54] == 'T'))) { // Check for FAT32
 		bootSector = 0;
 	}
 	else	// This is an MBR

@@ -9,7 +9,7 @@
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "graphics/ThemeTextures.h"
-#include "graphics/lodepng.h"
+#include "common/lodepng.h"
 #include "ndsheaderbanner.h"
 #include "language.h"
 
