@@ -132,7 +132,7 @@ void SettingsGUI::draw()
 			}
 
 			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str(), Alignment::right);
-			if (selected < 0 ) continue;
+			if (selected < 0) continue;
 			printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
 		}
 	} else {
@@ -147,7 +147,7 @@ void SettingsGUI::draw()
 			}
 
 			printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str());
-			if (selected < 0 ) continue;
+			if (selected < 0) continue;
 			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str(), Alignment::right);
 		}
 	}

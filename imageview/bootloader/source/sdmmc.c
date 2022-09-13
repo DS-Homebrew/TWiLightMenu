@@ -59,8 +59,8 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 	const u32 *tDataPtr32 = (u32*)ctx->tData;
 	const u8  *tDataPtr8  = ctx->tData;
 
-	bool rUseBuf = ( NULL != rDataPtr32 );
-	bool tUseBuf = ( NULL != tDataPtr32 );
+	bool rUseBuf = ( NULL != rDataPtr32);
+	bool tUseBuf = ( NULL != tDataPtr32);
 
 	u16 status0 = 0;
 	while (1)
@@ -316,7 +316,7 @@ int sdmmc_sdcard_init() {
 			// ACMD41
 			sdmmc_send_command(&deviceSD,0x10769,0x00FF8000 | temp);
 			temp2 = 1;
-		} while ( !(deviceSD.error & 1) );
+		} while (!(deviceSD.error & 1));
 
 	} while ((deviceSD.ret[0] & 0x80000000) == 0);
 

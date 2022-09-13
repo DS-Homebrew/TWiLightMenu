@@ -598,13 +598,13 @@ mm_sound_effect snd_backlight;
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
 	
-	mmLoadEffect( SFX_LAUNCH );
-	mmLoadEffect( SFX_SELECT );
-	mmLoadEffect( SFX_STOP );
-	mmLoadEffect( SFX_WRONG );
-	mmLoadEffect( SFX_BACK );
-	mmLoadEffect( SFX_SWITCH );
-	mmLoadEffect( SFX_BACKLIGHT );
+	mmLoadEffect(SFX_LAUNCH);
+	mmLoadEffect(SFX_SELECT);
+	mmLoadEffect(SFX_STOP);
+	mmLoadEffect(SFX_WRONG);
+	mmLoadEffect(SFX_BACK);
+	mmLoadEffect(SFX_SWITCH);
+	mmLoadEffect(SFX_BACKLIGHT);
 
 	snd_launch = {
 		{ SFX_LAUNCH } ,			// id
@@ -1472,13 +1472,13 @@ int main(int argc, char **argv) {
 					vector<char*> argarray;
 
 					FILE *argfile = fopen(filename[0].c_str(),"rb");
-						char str[PATH_MAX], *pstr;
+					char str[PATH_MAX], *pstr;
 					const char seps[]= "\n\r\t ";
 
 					while (fgets(str, PATH_MAX, argfile)) {
 						// Find comment and end string there
-						if ( (pstr = strchr(str, '#')) )
-							*pstr= '\0';
+						if (pstr = strchr(str, '#'))
+							*pstr = '\0';
 
 						// Tokenize arguments
 						pstr = strtok(str, seps);
@@ -2604,7 +2604,7 @@ int main(int argc, char **argv) {
 						bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 						const char *bootstrapinipath = ((!ms().secondaryDevice || sdFound()) ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
-						CIniFile bootstrapini( bootstrapinipath );
+						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 						if (!isHomebrew[ms().secondaryDevice]) {
@@ -2635,7 +2635,7 @@ int main(int argc, char **argv) {
 						|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
 						|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 						);
-						bootstrapini.SaveIniFile( bootstrapinipath );
+						bootstrapini.SaveIniFile(bootstrapinipath);
 
 						CheatCodelist codelist;
 						u32 gameCode,crc32;
@@ -2905,9 +2905,9 @@ int main(int argc, char **argv) {
 						fcopy(ROMpath, "fat:/_nds/TWiLightMenu/tempPlugin.plg");
 					}
 
-					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
+					CIniFile dstwobootini("fat:/_dstwo/twlm.ini");
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
-					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+					dstwobootini.SaveIniFile("fat:/_dstwo/twlm.ini");
 				} else if (extension(filename[ms().secondaryDevice], ".avi")) {
 					ms().launchType[ms().secondaryDevice] = Launch::ETunaViDSLaunch;
 
@@ -3417,7 +3417,7 @@ int main(int argc, char **argv) {
 				fadeType = true; // Fade in
 				stop();
 
-				while (argarray.size() !=0 ) {
+				while (argarray.size() !=0) {
 					free(argarray.at(0));
 					argarray.erase(argarray.begin());
 				}

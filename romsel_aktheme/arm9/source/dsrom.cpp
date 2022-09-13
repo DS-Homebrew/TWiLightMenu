@@ -484,15 +484,15 @@ void DSRomInfo::drawDSRomIconMem(void *mem)
 			u8 idx1 = (a_byte & 0xf0) >> 4;
 			if (skiptransparent || idx1 != 0) {
 				pmem[py * 32 + px + 1] = _banner.palette[idx1] | BIT(15);
-				//gdi().setPenColor(_banner.palette[idx1] );
-				//gdi().drawPixel(px + 1 + x, py + y, engine );
+				//gdi().setPenColor(_banner.palette[idx1]);
+				//gdi().drawPixel(px + 1 + x, py + y, engine);
 			}
 
 			u8 idx2 = (a_byte & 0x0f);
 			if (skiptransparent || 0 != idx2) {
 				pmem[py * 32 + px]  = _banner.palette[idx2] | BIT(15);
-				//gdi().setPenColor(_banner.palette[idx2] );
-				//gdi().drawPixel(px+x, py+y, engine );
+				//gdi().setPenColor(_banner.palette[idx2]);
+				//gdi().drawPixel(px+x, py+y, engine);
 			}
 		}
 	}

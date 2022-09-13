@@ -122,7 +122,7 @@ void loadPerGameSettings (std::string filename) {
 
 void savePerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	CIniFile pergameini( pergamefilepath );
+	CIniFile pergameini( pergamefilepath);
 	if (isHomebrew) {
 		if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		if (isModernHomebrew) {
@@ -171,7 +171,6 @@ void savePerGameSettings (std::string filename) {
 		if ((dsiFeatures() && (perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)) || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "EXTENDED_MEMORY", perGameSettings_expandRomSpace);
 		}
-		// 
 		if (isDSiWare && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
 			pergameini.SetInt("GAMESETTINGS", "DSIWARE_BOOTER", perGameSettings_dsiwareBooter);
 		}
@@ -181,34 +180,28 @@ void savePerGameSettings (std::string filename) {
 
 bool checkIfShowAPMsg (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	CIniFile pergameini( pergamefilepath );
-	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0) {
-		return true;	// Show AP message
-	}
-	return false;	// Don't show AP message
+	CIniFile pergameini(pergamefilepath);
+	return (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0);
 }
 
 void dontShowAPMsgAgain (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	CIniFile pergameini( pergamefilepath );
+	CIniFile pergameini(pergamefilepath);
 	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 1);
-	pergameini.SaveIniFile( pergamefilepath );
+	pergameini.SaveIniFile(pergamefilepath);
 }
 
 bool checkIfShowRAMLimitMsg (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
-	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_RAM_LIMIT", 0) == 0) {
-		return true;	// Show RAM Limit message
-	}
-	return false;	// Don't show RAM Limit message
+	return (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_RAM_LIMIT", 0) == 0);
 }
 
 void dontShowRAMLimitMsgAgain (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	CIniFile pergameini( pergamefilepath );
+	CIniFile pergameini(pergamefilepath);
 	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_RAM_LIMIT_MSG", 1);
-	pergameini.SaveIniFile( pergamefilepath );
+	pergameini.SaveIniFile(pergamefilepath);
 }
 
 bool checkIfDSiMode (std::string filename) {
@@ -232,7 +225,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	bool usingB4DS = (!dsiFeatures() && ms().secondaryDevice);
 	bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 
-	if ((usingB4DS || (dsiEnhancedMbk && dsiBinariesFound)) && SDKVersion > 0x5000000	// SDK5 (TWL)
+	return ((usingB4DS || (dsiEnhancedMbk && dsiBinariesFound)) && SDKVersion > 0x5000000	// SDK5 (TWL)
 	 && (arm7size==0x22B40
 	  || arm7size==0x22BCC
 	  || arm7size==0x28F84
@@ -245,18 +238,13 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	  || arm7size==0x2AF18
 	  || arm7size==0x2B184
 	  || arm7size==0x2B24C
-	  || arm7size==0x2C5B4))
-	{
-		return true;
-	}
-
-	return false;
+	  || arm7size==0x2C5B4));
 }
 
 bool showSetDonorRomDSiWare(u32 arm7size) {
 	if (requiresDonorRom || !isDSiMode() || *(u32*)0x02FFE1A0 == 0x00403000 || !sys().arm7SCFGLocked()) return false;
 
-	if (arm7size==0x1D43C
+	return (arm7size==0x1D43C
 	 || arm7size==0x1D5A8
 	 || arm7size==0x1E1E8
 	 || arm7size==0x1E22C
@@ -272,12 +260,7 @@ bool showSetDonorRomDSiWare(u32 arm7size) {
 	 || arm7size==0x26D50
 	 || arm7size==0x26DF4
 	 || arm7size==0x27FB4
-	 || arm7size==0x28E54)
-	{
-		return true;
-	}
-
-	return false;
+	 || arm7size==0x28E54);
 }
 
 bool donorRomTextShown = false;

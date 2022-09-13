@@ -26,7 +26,7 @@ void createEsrbSplash(void) {
 		gameTid3[i] = gameTid[CURPOS][i];
 	}
 
-	CIniFile esrbInfo( "nitro:/ESRB.ini" );
+	CIniFile esrbInfo("nitro:/ESRB.ini");
 	std::string rating = esrbInfo.GetString(gameTid3, "Rating", "");
 	if (rating == "") {
 		remove(sdFound() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
