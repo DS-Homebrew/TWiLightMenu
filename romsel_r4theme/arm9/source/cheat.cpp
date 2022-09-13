@@ -50,7 +50,7 @@ inline u32 gamecode(const char *aGameCode)
 static u32 crc32(const u8* p,size_t len)
 {
   u32 crc=-1;
-  while(len--)
+  while (len--)
   {
     crc^=*p++;
     for (int ii=0;ii<8;++ii) crc=(crc>>1)^((crc&1)?CRCPOLY:0);
@@ -104,7 +104,7 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
 
   bool done=false;
 
-  while(!done)
+  while (!done)
   {
     tonccpy(&idx,&nidx,sizeof(idx));
     fread(&nidx,sizeof(nidx),1,aDat);
@@ -142,7 +142,7 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
   ccode+=9;
 
   u32 cc=0;
-  while(cc<cheatCount)
+  while (cc<cheatCount)
   {
     u32 folderCount=1;
     char* folderName=NULL;
@@ -190,7 +190,7 @@ void CheatCodelist::generateList(void)
   // _List.removeAllRows();
 
   std::vector<cParsedItem>::iterator itr=_data.begin();
-  while(itr!=_data.end())
+  while (itr!=_data.end())
   {
     std::vector<std::string> row;
     row.push_back("");
@@ -201,7 +201,7 @@ void CheatCodelist::generateList(void)
     ++itr;
     if ((flags&cParsedItem::EFolder)&&(flags&cParsedItem::EOpen)==0)
     {
-      while(((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end()) ++itr;
+      while (((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end()) ++itr;
     }
   }
 }
@@ -209,7 +209,7 @@ void CheatCodelist::generateList(void)
 void CheatCodelist::deselectFolder(size_t anIndex)
 {
   std::vector<cParsedItem>::iterator itr=_data.begin()+anIndex;
-  while(--itr>=_data.begin())
+  while (--itr>=_data.begin())
   {
     if ((*itr)._flags&cParsedItem::EFolder)
     {
@@ -217,7 +217,7 @@ void CheatCodelist::deselectFolder(size_t anIndex)
       break;
     }
   }
-  while(((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end())
+  while (((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end())
   {
     (*itr)._flags&=~cParsedItem::ESelected;
     ++itr;
@@ -306,7 +306,7 @@ void CheatCodelist::selectCheats(std::string filename)
     printSmallCentered(false, 100, "No cheats found");
     printSmallCentered(false, 160, "B: Back");
 
-    while(1) {
+    while (1) {
       scanKeys();
       pressed = keysDownRepeat();
       bgOperations(true);
@@ -329,7 +329,7 @@ void CheatCodelist::selectCheats(std::string filename)
       cheatWnd_scrollPosition = 0, cheatWnd_scrollTimer = 120,
       cheatWnd_scrollDirection = 1;
 
-  while(cheatsFound) {
+  while (cheatsFound) {
     clearText();
     titleUpdate(isDirectory, filename.c_str());
     printLargeCentered(false, 74, "Cheats");
@@ -381,7 +381,7 @@ void CheatCodelist::selectCheats(std::string filename)
 
         break;
       }
-    } while(!pressed && !held);
+    } while (!pressed && !held);
 
     if (held & KEY_UP) {
       if (cheatWnd_cursorPosition>0) {
@@ -459,7 +459,7 @@ void CheatCodelist::selectCheats(std::string filename)
         std::size_t pos;
 
         // Process comment to stay within the box
-        while((pos = _topTextStr.find(' ')) != std::string::npos) {
+        while ((pos = _topTextStr.find(' ')) != std::string::npos) {
           words.push_back(_topTextStr.substr(0, pos));
           _topTextStr = _topTextStr.substr(pos + 1);
         }
@@ -497,7 +497,7 @@ void CheatCodelist::selectCheats(std::string filename)
 
         // Print 'Back' text
         printSmallCentered(false, 167, "B: Back");
-        while(1) {
+        while (1) {
           scanKeys();
           pressed = keysDown();
           bgOperations(true);
@@ -551,7 +551,7 @@ void CheatCodelist::onGenerate(void)
   if (db)
   {
     std::vector<cParsedItem>::iterator itr=_data.begin();
-    while(itr!=_data.end())
+    while (itr!=_data.end())
     {
       updateDB(((*itr)._flags&cParsedItem::ESelected)?1:0,(*itr)._offset,db);
       ++itr;

@@ -42,7 +42,7 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 	}
 
 	ctx->error = 0;
-	while((sdmmc_read16(REG_SDSTATUS1) & TMIO_STAT1_CMD_BUSY)); //mmc working?
+	while ((sdmmc_read16(REG_SDSTATUS1) & TMIO_STAT1_CMD_BUSY)); //mmc working?
 	sdmmc_write16(REG_SDIRMASK0,0);
 	sdmmc_write16(REG_SDIRMASK1,0);
 	sdmmc_write16(REG_SDSTATUS0,0);
@@ -59,12 +59,11 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 	const u32 *tDataPtr32 = (u32*)ctx->tData;
 	const u8  *tDataPtr8  = ctx->tData;
 
-	bool rUseBuf = ( NULL != rDataPtr32 );
-	bool tUseBuf = ( NULL != tDataPtr32 );
+	bool rUseBuf = (NULL != rDataPtr32);
+	bool tUseBuf = (NULL != tDataPtr32);
 
 	u16 status0 = 0;
-	while(1)
-	{
+	while (1) {
 		volatile u16 status1 = sdmmc_read16(REG_SDSTATUS1);
 #ifdef DATA32_SUPPORT
 		volatile u16 ctl32 = sdmmc_read16(REG_SDDATACTL32);
@@ -316,9 +315,9 @@ int sdmmc_sdcard_init() {
 			// ACMD41
 			sdmmc_send_command(&deviceSD,0x10769,0x00FF8000 | temp);
 			temp2 = 1;
-		} while ( !(deviceSD.error & 1) );
+		} while (!(deviceSD.error & 1));
 
-	} while((deviceSD.ret[0] & 0x80000000) == 0);
+	} while ((deviceSD.ret[0] & 0x80000000) == 0);
 
 	if (!((deviceSD.ret[0] >> 30) & 1) || !temp)
 		temp2 = 0;

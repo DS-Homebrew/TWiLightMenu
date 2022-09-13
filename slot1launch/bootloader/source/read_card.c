@@ -152,13 +152,13 @@ static void switchToTwlBlowfish(sNDSHeaderExt* ndsHeader) {
 	// Reset card slot
 	disableSlot1();
 	for (int i = 0; i < 25; i++) {
-		while(REG_VCOUNT!=191);
-		while(REG_VCOUNT==191);
+		while (REG_VCOUNT!=191);
+		while (REG_VCOUNT==191);
 	}
 	enableSlot1();
 	for (int i = 0; i < 15; i++) {
-		while(REG_VCOUNT!=191);
-		while(REG_VCOUNT==191);
+		while (REG_VCOUNT!=191);
+		while (REG_VCOUNT==191);
 	}
 
 	// Dummy command sent after card reset
@@ -268,7 +268,7 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 		NULL, 0);
 
 	*chipID=cardReadID(CARD_CLK_SLOW);	
-	while(REG_ROMCTRL & CARD_BUSY);
+	while (REG_ROMCTRL & CARD_BUSY);
 	//u32 iCheapCard=iCardId&0x80000000;
 
 	// Read the header

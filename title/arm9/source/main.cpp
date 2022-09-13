@@ -1647,7 +1647,7 @@ void languageSelect(void) {
 			scanKeys();
 			pressed = keysDown();
 			held = keysDownRepeat();
-		} while(!held);
+		} while (!held);
 
 		if (held & KEY_UP) {
 			if (cursorPosition > 0)
@@ -1754,7 +1754,7 @@ void regionSelect(void) {
 			scanKeys();
 			pressed = keysDown();
 			held = keysDownRepeat();
-		} while(!held);
+		} while (!held);
 
 		if (held & KEY_UP) {
 			if (ms().gameRegion > (dsiFeatures() ? -1 : 0))

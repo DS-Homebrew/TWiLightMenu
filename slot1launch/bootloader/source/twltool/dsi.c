@@ -213,7 +213,7 @@ void dsi_decrypt_ccm( dsi_context* ctx,
 	unsigned char block[16];
 	unsigned char ctr[16];
 
-	while(size > 16)
+	while (size > 16)
 	{
 		dsi_decrypt_ccm_block(ctx, input, output, mac);
 
@@ -245,7 +245,7 @@ void dsi_encrypt_ccm( dsi_context* ctx,
 {
 	unsigned char block[16];
 
-	while(size > 16)
+	while (size > 16)
 	{
 		dsi_encrypt_ccm_block(ctx, input, output, mac);
 

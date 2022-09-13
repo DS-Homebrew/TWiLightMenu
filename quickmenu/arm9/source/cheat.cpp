@@ -35,7 +35,7 @@ inline u32 gamecode(const char *aGameCode)
 static u32 crc32(const u8* p,size_t len)
 {
   u32 crc=-1;
-  while(len--)
+  while (len--)
   {
     crc^=*p++;
     for (int ii=0;ii<8;++ii) crc=(crc>>1)^((crc&1)?CRCPOLY:0);
@@ -78,7 +78,7 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
 
   bool done=false;
 
-  while(!done)
+  while (!done)
   {
     memcpy(&idx,&nidx,sizeof(idx));
     fread(&nidx,sizeof(nidx),1,aDat);
@@ -116,7 +116,7 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
   ccode+=9;
 
   u32 cc=0;
-  while(cc<cheatCount)
+  while (cc<cheatCount)
   {
     u32 folderCount=1;
     char* folderName=NULL;
@@ -164,7 +164,7 @@ void CheatCodelist::generateList(void)
   // _List.removeAllRows();
 
   std::vector<cParsedItem>::iterator itr=_data.begin();
-  while(itr!=_data.end())
+  while (itr!=_data.end())
   {
     std::vector<std::string> row;
     row.push_back("");
@@ -175,7 +175,7 @@ void CheatCodelist::generateList(void)
     ++itr;
     if ((flags&cParsedItem::EFolder)&&(flags&cParsedItem::EOpen)==0)
     {
-      while(((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end()) ++itr;
+      while (((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end()) ++itr;
     }
   }
 }

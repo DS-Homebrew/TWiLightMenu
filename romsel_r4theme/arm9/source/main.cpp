@@ -680,7 +680,7 @@ char filePath[PATH_MAX];
 //---------------------------------------------------------------------------------
 void doPause() {
 //---------------------------------------------------------------------------------
-	while(1) {
+	while (1) {
 		scanKeys();
 		if (keysDown() & KEY_START)
 			break;
@@ -1218,7 +1218,7 @@ int main(int argc, char **argv) {
 		blackScreen = false;
 	}
 
-	while(1) {
+	while (1) {
 
 		if (startMenu) {
 			fadeType = true;	// Fade in from white
@@ -1492,7 +1492,7 @@ int main(int argc, char **argv) {
 					char str[PATH_MAX], *pstr;
 				const char seps[]= "\n\r\t ";
 
-				while( fgets(str, PATH_MAX, argfile) ) {
+				while ( fgets(str, PATH_MAX, argfile) ) {
 					// Find comment and end string there
 					if ( (pstr = strchr(str, '#')) )
 						*pstr= '\0';
@@ -1500,7 +1500,7 @@ int main(int argc, char **argv) {
 					// Tokenize arguments
 					pstr= strtok(str, seps);
 
-					while( pstr != NULL ) {
+					while ( pstr != NULL ) {
 						argarray.push_back(strdup(pstr));
 						pstr= strtok(NULL, seps);
 					}
@@ -2619,7 +2619,7 @@ int main(int argc, char **argv) {
 				runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true, false, -1);
 			}
 
-			while(argarray.size() !=0 ) {
+			while (argarray.size() !=0 ) {
 				free(argarray.at(0));
 				argarray.erase(argarray.begin());
 			}

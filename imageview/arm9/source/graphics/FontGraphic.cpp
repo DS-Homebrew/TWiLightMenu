@@ -166,7 +166,7 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansio
 		u32 locPAMC, mapType;
 		fread(&locPAMC, 4, 1, file);
 
-		while(locPAMC < fileSize) {
+		while (locPAMC < fileSize) {
 			u16 firstChar, lastChar;
 			fseek(file, locPAMC, SEEK_SET);
 			fread(&firstChar, 2, 1, file);
@@ -225,7 +225,7 @@ u16 FontGraphic::getCharIndex(char16_t c) {
 	int left = 0;
 	int right = tileAmount;
 
-	while(left <= right) {
+	while (left <= right) {
 		int mid = left + ((right - left) / 2);
 		if (fontMap[mid] == c) {
 			return mid;
@@ -291,7 +291,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			break;
 		} case Alignment::center: {
 			size_t newline = text.find('\n');
-			while(newline != text.npos) {
+			while (newline != text.npos) {
 				print(x, y, top, text.substr(0, newline), align, rtl);
 				text = text.substr(newline + 1);
 				newline = text.find('\n');
@@ -302,7 +302,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			break;
 		} case Alignment::right: {
 			size_t newline = text.find('\n');
-			while(newline != text.npos) {
+			while (newline != text.npos) {
 				print(x - calcWidth(text.substr(0, newline)), y, top, text.substr(0, newline), Alignment::left, rtl);
 				text = text.substr(newline + 1);
 				newline = text.find('\n');
@@ -343,7 +343,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 
 			// Go back until an RTL character or the start of the string
 			bool allNumbers = true;
-			while(!isStrongRTL(*it) && it != text.begin()) {
+			while (!isStrongRTL(*it) && it != text.begin()) {
 				// Check for if the LTR section is only numbers,
 				// if so they won't be removed from the end
 				if (allNumbers && !isNumber(*it) && !isWeak(*it))
@@ -362,13 +362,13 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			// Remove all punctuation and, if the section isn't only numbers,
 			// numbers from the end of the LTR section
 			if (allNumbers) {
-				while(isWeak(*it) && !isNumber(*it)) {
+				while (isWeak(*it) && !isNumber(*it)) {
 					if (it != text.begin())
 						ltrBegin++;
 					it++;
 				}
 			} else {
-				while(isWeak(*it)) {
+				while (isWeak(*it)) {
 					if (it != text.begin())
 						ltrBegin++;
 					it++;
@@ -376,7 +376,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			}
 
 			// But then allow all numbers directly touching the strong LTR or with 1 weak between
-			while((it - 1 >= text.begin() && isNumber(*(it - 1))) || (it - 2 >= text.begin() && isWeak(*(it - 1)) && isNumber(*(it - 2)))) {
+			while ((it - 1 >= text.begin() && isNumber(*(it - 1))) || (it - 2 >= text.begin() && isWeak(*(it - 1)) && isNumber(*(it - 2)))) {
 				if (it - 1 != text.begin())
 					ltrBegin--;
 				it--;

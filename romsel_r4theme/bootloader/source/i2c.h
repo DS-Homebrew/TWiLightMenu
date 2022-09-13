@@ -36,7 +36,7 @@
 #define REG_I2CCNT	(*(vu8 *)0x4004501)
 
 static inline void i2cWaitBusy() {
-	while(REG_I2CCNT & 0x80);
+	while (REG_I2CCNT & 0x80);
 }
 
 enum i2cDevices {

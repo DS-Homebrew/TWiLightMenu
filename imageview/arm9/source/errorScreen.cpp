@@ -75,7 +75,7 @@ void checkSdEject(void) {
 		lcdMainOnTop();
 	}
 	swiWaitForVBlank();
-	while(1) {
+	while (1) {
 		// Currently not working
 		/*scanKeys();
 		if (keysDown() & KEY_B) {

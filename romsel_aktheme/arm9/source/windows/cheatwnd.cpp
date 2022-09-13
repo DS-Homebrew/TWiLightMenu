@@ -33,7 +33,7 @@ using namespace akui;
 static u32 crc32(const u8* p,size_t len)
 {
   u32 crc=-1;
-  while(len--)
+  while (len--)
   {
     crc^=*p++;
     for (int ii=0;ii<8;++ii) crc=(crc>>1)^((crc&1)?CRCPOLY:0);
@@ -162,7 +162,7 @@ bool CheatWnd::processKeyMessage(const KeyMessage& msg)
       case KeyMessage::UI_KEY_LEFT:
         {
           size_t ii = _List.selectedRowId();
-          while(ii-- > 0)
+          while (ii-- > 0)
           {
             if (_data[_indexes[ii]]._flags&cParsedItem::EFolder) break;
           }
@@ -173,7 +173,7 @@ bool CheatWnd::processKeyMessage(const KeyMessage& msg)
       case KeyMessage::UI_KEY_RIGHT:
         {
           size_t ii=_List.selectedRowId(),top=_List.getRowCount();
-          while(++ii < top)
+          while (++ii < top)
           {
             if (_data[_indexes[ii]]._flags&cParsedItem::EFolder) break;
           }
@@ -242,7 +242,7 @@ void CheatWnd::onSelect(void)
 void CheatWnd::onDeselectAll(void)
 {
   std::vector<cParsedItem>::iterator itr=_data.begin();
-  while(itr!=_data.end())
+  while (itr!=_data.end())
   {
     (*itr)._flags&=~cParsedItem::ESelected;
     ++itr;
@@ -283,7 +283,7 @@ void CheatWnd::onGenerate(void)
   if (db)
   {
     std::vector<cParsedItem>::iterator itr=_data.begin();
-    while(itr!=_data.end())
+    while (itr!=_data.end())
     {
       updateDB(((*itr)._flags&cParsedItem::ESelected)?1:0,(*itr)._offset,db);
       ++itr;
@@ -389,7 +389,7 @@ bool CheatWnd::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size
 
   bool done=false;
 
-  while(!done)
+  while (!done)
   {
     memcpy(&idx,&nidx,sizeof(idx));
     fread(&nidx,sizeof(nidx),1,aDat);
@@ -427,7 +427,7 @@ bool CheatWnd::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
   ccode+=9;
 
   u32 cc=0;
-  while(cc<cheatCount)
+  while (cc<cheatCount)
   {
     u32 folderCount=1;
     char* folderName=NULL;
@@ -475,7 +475,7 @@ void CheatWnd::generateList(void)
   _List.removeAllRows();
 
   std::vector<cParsedItem>::iterator itr=_data.begin();
-  while(itr!=_data.end())
+  while (itr!=_data.end())
   {
     std::vector<std::string> row;
     row.push_back("");
@@ -486,7 +486,7 @@ void CheatWnd::generateList(void)
     ++itr;
     if ((flags&cParsedItem::EFolder)&&(flags&cParsedItem::EOpen)==0)
     {
-      while(((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end()) ++itr;
+      while (((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end()) ++itr;
     }
   }
 }
@@ -494,7 +494,7 @@ void CheatWnd::generateList(void)
 void CheatWnd::deselectFolder(size_t anIndex)
 {
   std::vector<cParsedItem>::iterator itr=_data.begin()+anIndex;
-  while(--itr>=_data.begin())
+  while (--itr>=_data.begin())
   {
     if ((*itr)._flags&cParsedItem::EFolder)
     {
@@ -502,7 +502,7 @@ void CheatWnd::deselectFolder(size_t anIndex)
       break;
     }
   }
-  while(((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end())
+  while (((*itr)._flags&cParsedItem::EInFolder)&&itr!=_data.end())
   {
     (*itr)._flags&=~cParsedItem::ESelected;
     ++itr;

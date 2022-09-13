@@ -135,7 +135,7 @@ static size_t lodepng_strlen(const char* a) {
   const char* orig = a;
   /* avoid warning about unused function in case of disabled COMPILE... macros */
   (void)(&lodepng_strlen);
-  while(*a) a++;
+  while (*a) a++;
   return (size_t)(a - orig);
 }
 
@@ -1046,7 +1046,7 @@ unsigned lodepng_huffman_code_lengths(unsigned* lengths, const unsigned* frequen
 static unsigned HuffmanTree_makeFromFrequencies(HuffmanTree* tree, const unsigned* frequencies,
                                                 size_t mincodes, size_t numcodes, unsigned maxbitlen) {
   unsigned error = 0;
-  while(!frequencies[numcodes - 1] && numcodes > mincodes) --numcodes; /*trim zeroes*/
+  while (!frequencies[numcodes - 1] && numcodes > mincodes) --numcodes; /*trim zeroes*/
   tree->lengths = (unsigned*)lodepng_malloc(numcodes * sizeof(unsigned));
   if (!tree->lengths) return 83; /*alloc fail*/
   tree->maxbitlen = maxbitlen;
@@ -1154,7 +1154,7 @@ static unsigned getTreeInflateDynamic(HuffmanTree* tree_ll, HuffmanTree* tree_d,
 
   HuffmanTree_init(&tree_cl);
 
-  while(!error) {
+  while (!error) {
     /*read the code length codes out of 3 * (amount of code length codes) bits*/
     if (lodepng_gtofl(reader->bp, HCLEN * 3, reader->bitsize)) {
       ERROR_BREAK(50); /*error: the bit pointer is or will go past the memory*/
@@ -1179,7 +1179,7 @@ static unsigned getTreeInflateDynamic(HuffmanTree* tree_ll, HuffmanTree* tree_d,
 
     /*i is the current symbol we're reading in the part that contains the code lengths of lit/len and dist codes*/
     i = 0;
-    while(i < HLIT + HDIST) {
+    while (i < HLIT + HDIST) {
       unsigned code;
       ensureBits25(reader, 22); /* up to 15 bits for huffman code, up to 7 extra bits below*/
       code = huffmanDecodeSymbol(reader, &tree_cl);
@@ -1272,7 +1272,7 @@ static unsigned inflateHuffmanBlock(ucvector* out, LodePNGBitReader* reader,
   if (btype == 1) error = getTreeInflateFixed(&tree_ll, &tree_d);
   else /*if (btype == 2)*/ error = getTreeInflateDynamic(&tree_ll, &tree_d, reader);
 
-  while(!error) /*decode all symbols until end reached, breaks at end code*/ {
+  while (!error) /*decode all symbols until end reached, breaks at end code*/ {
     /*code_ll is literal, length or end code*/
     unsigned code_ll;
     ensureBits25(reader, 20); /* up to 15 for the huffman symbol, up to 5 for the length extra bits */
@@ -1391,7 +1391,7 @@ static unsigned lodepng_inflatev(ucvector* out,
 
   if (error) return error;
 
-  while(!BFINAL) {
+  while (!BFINAL) {
     unsigned BTYPE;
     if (!ensureBits9(&reader, 3)) return 52; /*error, bit pointer will jump past memory*/
     BFINAL = readBits(&reader, 1);
@@ -1445,7 +1445,7 @@ static size_t searchCodeIndex(const unsigned* array, size_t array_size, size_t v
   size_t left = 1;
   size_t right = array_size - 1;
 
-  while(left <= right) {
+  while (left <= right) {
     size_t mid = (left + right) >> 1;
     if (array[mid] >= value) right = mid - 1;
     else left = mid + 1;
@@ -1556,7 +1556,7 @@ static unsigned countZeros(const unsigned char* data, size_t size, size_t pos) {
   const unsigned char* end = start + MAX_SUPPORTED_DEFLATE_LENGTH;
   if (end > data + size) end = data + size;
   data = start;
-  while(data != end && *data == 0) ++data;
+  while (data != end && *data == 0) ++data;
   /*subtracting two addresses returned as 32-bit number (max value is MAX_SUPPORTED_DEFLATE_LENGTH)*/
   return (unsigned)(data - start);
 }
@@ -1652,7 +1652,7 @@ static unsigned encodeLZ77(uivector* out, Hash* hash,
           foreptr += skip;
         }
 
-        while(foreptr != lastptr && *backptr == *foreptr) /*maximum supported length by deflate is max length*/ {
+        while (foreptr != lastptr && *backptr == *foreptr) /*maximum supported length by deflate is max length*/ {
           ++backptr;
           ++foreptr;
         }
@@ -1850,7 +1850,7 @@ static unsigned deflateDynamic(LodePNGBitWriter* writer, Hash* hash,
 
   /*This while loop never loops due to a break at the end, it is here to
   allow breaking out of it to the cleanup phase on error conditions.*/
-  while(!error) {
+  while (!error) {
     lodepng_memset(frequencies_ll, 0, 286 * sizeof(*frequencies_ll));
     lodepng_memset(frequencies_d, 0, 30 * sizeof(*frequencies_d));
     lodepng_memset(frequencies_cl, 0, NUM_CODE_LENGTH_CODES * sizeof(*frequencies_cl));
@@ -1900,7 +1900,7 @@ static unsigned deflateDynamic(LodePNGBitWriter* writer, Hash* hash,
     17 (3-10 zeroes), 18 (11-138 zeroes)*/
     for (i = 0; i != numcodes_lld; ++i) {
       unsigned j = 0; /*amount of repetitions*/
-      while(i + j + 1 < numcodes_lld && bitlen_lld[i + j + 1] == bitlen_lld[i]) ++j;
+      while (i + j + 1 < numcodes_lld && bitlen_lld[i + j + 1] == bitlen_lld[i]) ++j;
 
       if (bitlen_lld[i] == 0 && j >= 2) /*repeat code for zeroes*/ {
         ++j; /*include the first zero*/
@@ -1947,7 +1947,7 @@ static unsigned deflateDynamic(LodePNGBitWriter* writer, Hash* hash,
     /*compute amount of code-length-code-lengths to output*/
     numcodes_cl = NUM_CODE_LENGTH_CODES;
     /*trim zeros at the end (using CLCL_ORDER), but minimum size must be 4 (see HCLEN below)*/
-    while(numcodes_cl > 4u && tree_cl.lengths[CLCL_ORDER[numcodes_cl - 1u]] == 0) {
+    while (numcodes_cl > 4u && tree_cl.lengths[CLCL_ORDER[numcodes_cl - 1u]] == 0) {
       numcodes_cl--;
     }
 
@@ -2133,7 +2133,7 @@ static unsigned update_adler32(unsigned adler, const unsigned char* data, unsign
   unsigned s1 = adler & 0xffffu;
   unsigned s2 = (adler >> 16u) & 0xffffu;
 
-  while(len != 0u) {
+  while (len != 0u) {
     unsigned i;
     /*at least 5552 sums can be done before the sums overflow, saving a lot of module divisions*/
     unsigned amount = len > 5552u ? 5552u : len;
@@ -4412,11 +4412,11 @@ static unsigned readChunk_tEXt(LodePNGInfo* info, const unsigned char* data, siz
   unsigned error = 0;
   char *key = 0, *str = 0;
 
-  while(!error) /*not really a while loop, only used to break on error*/ {
+  while (!error) /*not really a while loop, only used to break on error*/ {
     unsigned length, string2_begin;
 
     length = 0;
-    while(length < chunkLength && data[length] != 0) ++length;
+    while (length < chunkLength && data[length] != 0) ++length;
     /*even though it's not allowed by the standard, no error is thrown if
     there's no null termination char, if the text is empty*/
     if (length < 1 || length > 79) CERROR_BREAK(error, 89); /*keyword too short or long*/
@@ -4457,7 +4457,7 @@ static unsigned readChunk_zTXt(LodePNGInfo* info, const LodePNGDecompressSetting
   unsigned char* str = 0;
   size_t size = 0;
 
-  while(!error) /*not really a while loop, only used to break on error*/ {
+  while (!error) /*not really a while loop, only used to break on error*/ {
     for (length = 0; length < chunkLength && data[length] != 0; ++length) ;
     if (length + 2 >= chunkLength) CERROR_BREAK(error, 75); /*no null termination, corrupt?*/
     if (length < 1 || length > 79) CERROR_BREAK(error, 89); /*keyword too short or long*/
@@ -4498,7 +4498,7 @@ static unsigned readChunk_iTXt(LodePNGInfo* info, const LodePNGDecompressSetting
   unsigned length, begin, compressed;
   char *key = 0, *langtag = 0, *transkey = 0;
 
-  while(!error) /*not really a while loop, only used to break on error*/ {
+  while (!error) /*not really a while loop, only used to break on error*/ {
     /*Quick check if the chunk length isn't too small. Even without check
     it'd still fail with other error checks below if it's too short. This just gives a different error code.*/
     if (chunkLength < 5) CERROR_BREAK(error, 30); /*iTXt chunk too short*/
@@ -4755,7 +4755,7 @@ static void decodeGeneric(unsigned char** out, unsigned* w, unsigned* h,
 
   /*loop through the chunks, ignoring unknown chunks and stopping at IEND chunk.
   IDAT data is put at the start of the in buffer*/
-  while(!IEND && !state->error) {
+  while (!IEND && !state->error) {
     unsigned chunkLength;
     const unsigned char* data; /*the data in the chunk*/
 
@@ -5739,7 +5739,7 @@ static unsigned preProcessScanlines(unsigned char** out, size_t* outsize, const 
 #ifdef LODEPNG_COMPILE_ANCILLARY_CHUNKS
 static unsigned addUnknownChunks(ucvector* out, unsigned char* data, size_t datasize) {
   unsigned char* inchunk = data;
-  while((size_t)(inchunk - data) < datasize) {
+  while ((size_t)(inchunk - data) < datasize) {
     CERROR_TRY_RETURN(lodepng_chunk_append(&out->data, &out->size, inchunk));
     out->allocsize = out->size; /*fix the allocsize again*/
     inchunk = lodepng_chunk_next(inchunk, data + datasize);

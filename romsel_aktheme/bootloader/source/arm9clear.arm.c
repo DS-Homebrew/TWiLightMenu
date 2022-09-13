@@ -74,7 +74,7 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 		"\tbx %0\n"
 		: : "r" (0x02FFFE04)
 	);
-	while(1);
+	while (1);
 }
 
 void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)) clearMasterBright_ARM9 (void) 
@@ -92,7 +92,7 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 		"\tbx %0\n"
 		: : "r" (0x02FFFE04)
 	);
-	while(1);
+	while (1);
 }
 
 /*-------------------------------------------------------------------------
@@ -108,11 +108,11 @@ void __attribute__ ((long_call)) __attribute__((noreturn)) __attribute__((naked)
 	REG_EXMEMCNT = 0xE880;
 	// set ARM9 load address to 0 and wait for it to change again
 	ARM9_START_FLAG = 0;
-	while(REG_VCOUNT!=191);
-	while(REG_VCOUNT==191);
+	while (REG_VCOUNT!=191);
+	while (REG_VCOUNT==191);
 	while ( ARM9_START_FLAG != 1 );
 	VoidFn arm9code = *(VoidFn*)(0x2FFFE24);
 	arm9code();
-	while(1);
+	while (1);
 }
 

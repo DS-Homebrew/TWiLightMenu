@@ -345,9 +345,9 @@ void Gdi::drawLine(s16 x1, s16 y1, s16 x2, s16 y2, GRAPHICS_ENGINE engine)
             //}else{
             //    int Alpha=(int)(px*32);
             //    if (Alpha<0){
-            //        while(Alpha<=0) Alpha+=32;
+            //        while (Alpha<=0) Alpha+=32;
             //    }else{
-            //        while(32<=Alpha) Alpha-=32;
+            //        while (32<=Alpha) Alpha-=32;
             //    }
             //    SetPixelAlpha(x1+(int)px+0,y1+py,Color,32-Alpha);
             //    SetPixelAlpha(x1+(int)px+1,y1+py,Color,Alpha);

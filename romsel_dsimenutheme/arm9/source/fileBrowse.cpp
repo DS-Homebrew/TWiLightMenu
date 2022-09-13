@@ -1722,7 +1722,7 @@ bool selectMenu(void) {
 			if (REG_SCFG_MC != current_SCFG_MC) {
 				break;
 			}
-		} while(!pressed);
+		} while (!pressed);
 		if (pressed & KEY_UP) {
 			snd().playSelect();
 			selCursorPosition--;
@@ -2170,7 +2170,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						   dirContents[scrn][movingApp].name.c_str(), -1);
 
 				int movingAppYmax = ms().theme == TWLSettings::ETheme3DS ? 64 : 82;
-				while(movingAppYpos < movingAppYmax) {
+				while (movingAppYpos < movingAppYmax) {
 					movingAppYpos += std::max((movingAppYmax - movingAppYpos) / 3, 1);
 					snd().updateStream();
 					swiWaitForVBlank();
@@ -2205,7 +2205,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 					} else if (pressed & KEY_DOWN) {
 						showMovingArrow = false;
-						while(movingAppYpos > 0) {
+						while (movingAppYpos > 0) {
 							movingAppYpos -= std::max(movingAppYpos / 3, 1);
 							bgOperations(true);
 						}
@@ -2448,7 +2448,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 
 							int prevPos;
-							while(titleboxXdest[ms().secondaryDevice] != titleboxXpos[ms().secondaryDevice] && !(keysHeld() & KEY_TOUCH)) {
+							while (titleboxXdest[ms().secondaryDevice] != titleboxXpos[ms().secondaryDevice] && !(keysHeld() & KEY_TOUCH)) {
 								scanKeys();
 								if (keysDown() & KEY_TOUCH)
 									touchRead(&touch);

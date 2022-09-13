@@ -139,7 +139,7 @@ static void errorOutput (u32 code) {
 	arm9_errorClearBG = true;
 	arm9_stateFlag = ARM9_DISPERR;
 	// Stop
-	while(1);
+	while (1);
 }
 */
 
@@ -642,7 +642,7 @@ static bool ROMsupportsDsiMode(const tNDSHeader* ndsHeader) {
 	uint32_t len = size / 0x10;
 	u8 block[0x10];
 
-	while(len>0)
+	while (len>0)
 	{
 		toncset(block, 0, 0x10);
 		dsi_crypt_ctr_block(ctx, buffer, block);
@@ -706,8 +706,8 @@ void arm7_startBinary (void) {
 	// Get the ARM9 to boot
 	arm9_stateFlag = ARM9_BOOTBIN;
 
-	while(REG_VCOUNT!=191);
-	while(REG_VCOUNT==191);
+	while (REG_VCOUNT!=191);
+	while (REG_VCOUNT==191);
 
 	// Start ARM7
 	VoidFn arm7code = (VoidFn)ndsHeader->arm7executeAddress;

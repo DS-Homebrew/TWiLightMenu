@@ -155,22 +155,22 @@ void cExpansion::Block_Erase(u32 blockAdd)
       {
         v1=*((vu16*)(FlashBase+Address+loop));
         v2=*((vu16*)(FlashBase+Address+loop));
-      } while(v1!=v2);
+      } while (v1!=v2);
       do
       {
         v1=*((vu16*)(FlashBase+Address+loop+0x2000));
         v2=*((vu16*)(FlashBase+Address+loop+0x2000));
-      } while(v1!=v2);
+      } while (v1!=v2);
       do
       {
         v1=*((vu16*)(FlashBase+Address+loop+0x4000));
         v2=*((vu16*)(FlashBase+Address+loop+0x4000));
-      }while(v1!=v2);
+      }while (v1!=v2);
       do
       {
         v1=*((vu16*)(FlashBase+Address+loop+0x6000));
         v2=*((vu16*)(FlashBase+Address+loop+0x6000));
-      }while(v1!=v2);
+      }while (v1!=v2);
     }
   }
   else
@@ -193,12 +193,12 @@ void cExpansion::Block_Erase(u32 blockAdd)
     {
       v1=*((vu16*)(FlashBase+Address));
       v2=*((vu16*)(FlashBase+Address));
-    }while(v1!=v2);
+    }while (v1!=v2);
     do
     {
       v1=*((vu16*)(FlashBase+Address+0x2000));
       v2=*((vu16*)(FlashBase+Address+0x2000));
-    }while(v1!=v2);
+    }while (v1!=v2);
 
     *((vu16*)(FlashBase+off+0x555*2))=0xAA;
     *((vu16*)(FlashBase+off+0x2AA*2))=0x55;
@@ -218,12 +218,12 @@ void cExpansion::Block_Erase(u32 blockAdd)
     {
       v1=*((vu16*)(FlashBase+Address+0x20000));
       v2=*((vu16*)(FlashBase+Address+0x20000));
-    } while(v1!=v2);
+    } while (v1!=v2);
     do
     {
       v1=*((vu16*)(FlashBase+Address+0x2000+0x20000));
       v2=*((vu16*)(FlashBase+Address+0x2000+0x20000));
-    } while(v1!=v2);
+    } while (v1!=v2);
   }
 }
 
@@ -276,12 +276,12 @@ void cExpansion::WriteNorFlash(u32 address,const u8* buffer,u32 size)
       {
         v1=*((vu16*)(FlashBase+mapaddress+loopwrite*2));
         v2=*((vu16*)(FlashBase+mapaddress+loopwrite*2));
-      }while(v1!=v2);
+      }while (v1!=v2);
       do
       {
         v1=*((vu16*)(FlashBase+mapaddress+0x2000+loopwrite*2));
         v2=*((vu16*)(FlashBase+mapaddress+0x2000+loopwrite*2));
-      }while(v1!=v2);
+      }while (v1!=v2);
     }
   }
 }

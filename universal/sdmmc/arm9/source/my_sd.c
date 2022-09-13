@@ -26,7 +26,7 @@ bool my_sdio_Startup() {
 	} else {
 		sharedAddr[3] = 0x56484453;
 		IPC_SendSync(0);
-		while(sharedAddr[3] == 0x56484453) {
+		while (sharedAddr[3] == 0x56484453) {
 			swiDelay(100);
 		}
 		result = sharedAddr[3];
@@ -36,7 +36,7 @@ bool my_sdio_Startup() {
 
 	sharedAddr[3] = 0x54534453;
 	IPC_SendSync(1);
-	while(sharedAddr[3] == 0x54534453) {
+	while (sharedAddr[3] == 0x54534453) {
 		swiDelay(100);
 	}
 
@@ -50,7 +50,7 @@ bool my_sdio_IsInserted() {
 //---------------------------------------------------------------------------------
 	sharedAddr[3] = 0x4E494453;
 	IPC_SendSync(3);
-	while(sharedAddr[3] == 0x4E494453) {
+	while (sharedAddr[3] == 0x4E494453) {
 		swiDelay(100);
 	}
 	int result = sharedAddr[3];
@@ -69,7 +69,7 @@ bool my_sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	
 	sharedAddr[3] = 0x44524453;
 	IPC_SendSync(4);
-	while(sharedAddr[3] == 0x44524453) {
+	while (sharedAddr[3] == 0x44524453) {
 		swiDelay(100);
 	}
 
@@ -89,7 +89,7 @@ bool my_sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 	
 	sharedAddr[3] = 0x52574453;
 	IPC_SendSync(5);
-	while(sharedAddr[3] == 0x52574453) {
+	while (sharedAddr[3] == 0x52574453) {
 		swiDelay(100);
 	}
 

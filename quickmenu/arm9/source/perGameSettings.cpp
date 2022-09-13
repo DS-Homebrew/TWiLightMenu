@@ -37,7 +37,7 @@ char pergamefilepath[256];
 
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	CIniFile pergameini( pergamefilepath );
+	CIniFile pergameini(pergamefilepath);
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", (isModernHomebrew[ms().secondaryDevice] || ms().secondaryDevice));	// Homebrew only
 	if (isHomebrew[ms().secondaryDevice]) {
 		perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew[ms().secondaryDevice] ? true : false));

@@ -134,7 +134,7 @@ void passArgs_ARM7 (void) {
 
 	if (!argStart || !argSize) return;
 
-	if ( ARM9_DST == 0 && ARM9_LEN == 0) {
+	if (ARM9_DST == 0 && ARM9_LEN == 0) {
 		ARM9_DST = *((u32*)(NDS_HEAD + 0x038));
 		ARM9_LEN = *((u32*)(NDS_HEAD + 0x03C));
 	}
@@ -242,7 +242,7 @@ void resetMemory_ARM7 (void)
 
 	((vu32*)0x040044f0)[2] = 0x202DDD1D;
 	((vu32*)0x040044f0)[3] = 0xE1A00005;
-	while((*(vu32*)0x04004400) & 0x2000000);
+	while ((*(vu32*)0x04004400) & 0x2000000);
 
 }
 
@@ -347,8 +347,8 @@ Modified by Chishm:
 --------------------------------------------------------------------------*/
 void startBinary_ARM7 (void) {
 	REG_IME=0;
-	while(REG_VCOUNT!=191);
-	while(REG_VCOUNT==191);
+	while (REG_VCOUNT!=191);
+	while (REG_VCOUNT==191);
 	// copy NDS ARM9 start address into the header, starting ARM9
 	*((vu32*)0x02FFFE24) = TEMP_ARM9_START_ADDRESS;
 	ARM9_START_FLAG = 1;

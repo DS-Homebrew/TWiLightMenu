@@ -103,7 +103,7 @@ void doPause(int x, int y) {
 //---------------------------------------------------------------------------------
 	// iprintf("Press start...\n");
 	printSmall(false, x, y, "Press start...");
-	while(1) {
+	while (1) {
 		scanKeys();
 		if (keysDown() & KEY_START)
 			break;

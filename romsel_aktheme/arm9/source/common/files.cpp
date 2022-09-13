@@ -389,7 +389,7 @@ bool copyOrMoveFile(const std::string & destDir)
 
     const char * pPath = _srcFilename.c_str();
     const char * pName = NULL;
-    while(pPath < _srcFilename.c_str() + _srcFilename.size())
+    while (pPath < _srcFilename.c_str() + _srcFilename.size())
     {
         if ('/' == *pPath++)
             pName = pPath;

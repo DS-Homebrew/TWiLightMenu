@@ -703,7 +703,7 @@ int main(int argc, char **argv) {
 					swiWaitForVBlank();
 					scanKeys();
 					pressed = keysDown();
-				} while(!(pressed & KEY_A));
+				} while (!(pressed & KEY_A));
 
 				consoleClear();
 			}

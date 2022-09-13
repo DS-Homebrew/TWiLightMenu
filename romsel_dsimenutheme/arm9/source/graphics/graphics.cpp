@@ -1474,7 +1474,7 @@ void graphicsInit() {
 	drawCurrentTime();
 
 	// printf("drawn bgload");
-	// while(1) {}
+	// while (1) {}
 	if (!ms().macroMode && tc().renderPhoto()) {
 		srand(time(NULL));
 		loadPhotoList();

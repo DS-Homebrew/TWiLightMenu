@@ -282,11 +282,11 @@ void __attribute__((target("arm"))) arm9_main (void) {
 
 	// set ARM9 state to ready and wait for it to change again
 	arm9_stateFlag = ARM9_READY;
-	while ( arm9_stateFlag != ARM9_BOOTBIN ) {
+	while (arm9_stateFlag != ARM9_BOOTBIN) {
 		if (arm9_stateFlag == ARM9_DISPERR) {
 			// Re-enable for debugging
 			arm9_errorOutput (arm9_errorCode, arm9_errorClearBG);
-			if ( arm9_stateFlag == ARM9_DISPERR) {
+			if (arm9_stateFlag == ARM9_DISPERR) {
 				arm9_stateFlag = ARM9_READY;
 			}
 		}
@@ -313,8 +313,8 @@ void __attribute__((target("arm"))) arm9_main (void) {
 	}
 	
 	// wait for vblank then boot
-	while(REG_VCOUNT!=191);
-	while(REG_VCOUNT==191);
+	while (REG_VCOUNT!=191);
+	while (REG_VCOUNT==191);
 	
 	// arm9_errorOutput (*(u32*)(first), true);
 

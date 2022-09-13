@@ -58,7 +58,7 @@ void checkSdEject(void) {
 		printSmall(false, 0, 67, STR_DISABLE_SD_REMOVAL_CHECK, Alignment::center);
 	}
 
-	while(1) {
+	while (1) {
 		// Currently not working
 		/*scanKeys();
 		if (keysDown() & KEY_B) {

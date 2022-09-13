@@ -43,8 +43,8 @@ bool IRQ::_vblankStarted(false);
 
 void IRQ::init()
 {
-    irqSet(IRQ_VBLANK, vBlank);
-    // irqSet(IRQ_CARD_LINE, cardMC);
+	irqSet(IRQ_VBLANK, vBlank);
+	// irqSet(IRQ_CARD_LINE, cardMC);
 }
 
 // void IRQ::cardMC()
@@ -56,63 +56,62 @@ void IRQ::init()
 
 void IRQ::vblankStart()
 {
-    _vblankStarted = true;
+	_vblankStarted = true;
 }
 
 void IRQ::vblankStop()
 {
-    _vblankStarted = false;
+	_vblankStarted = false;
 }
 
 void IRQ::vBlank()
 {
-    if (!_vblankStarted)
-        return;
+	if (!_vblankStarted)
+		return;
 
-    // get inputs when file copying because the main route
-    // can't do any thing at that time
-    if ( true == copyingFile) {
-        if ( false == stopCopying ) {
-            INPUT & input = updateInput();
-            if ( (input.keysDown & KEY_B) ) {
-                stopCopying = true;
-            }
-        }
-    }
+	// get inputs when file copying because the main route
+	// can't do any thing at that time
+	if (copyingFile == true) {
+		if (stopCopying == false) {
+			INPUT & input = updateInput();
+			if (input.keysDown & KEY_B) {
+				stopCopying = true;
+			}
+		}
+	}
 
-    timer().updateTimer();
+	timer().updateTimer();
 
-    static u32 vBlankCounter = 0;
+	static u32 vBlankCounter = 0;
 
-    if (vBlankCounter++ > 60)
-    {
-        vBlankCounter = 0;
-        bigClock().blinkColon();
-        smallClock().blinkColon();
-        calendarWnd().draw();
-        calendar().draw();
-        calendar_2().draw();
-        bigClock().draw();
-        smallClock().draw();
-        userWindow().draw();
-        if (!copyingFile) {
-            batteryIcon().draw();
-            volumeIcon().draw();
-        }
+	if (vBlankCounter++ > 60) {
+		vBlankCounter = 0;
+		bigClock().blinkColon();
+		smallClock().blinkColon();
+		calendarWnd().draw();
+		calendar().draw();
+		calendar_2().draw();
+		bigClock().draw();
+		smallClock().draw();
+		userWindow().draw();
+		if (!copyingFile) {
+			batteryIcon().draw();
+			volumeIcon().draw();
+		}
 #if 0
-        char fpsText[16];
-        sprintf( fpsText, "fps %.2f\n", timer().getFps() );
-        gdi().setPenColor( 1, GE_SUB );
-        gdi().textOut( 40, 178, fpsText, GE_SUB );
+		char fpsText[16];
+		sprintf( fpsText, "fps %.2f\n", timer().getFps() );
+		gdi().setPenColor( 1, GE_SUB );
+		gdi().textOut( 40, 178, fpsText, GE_SUB );
 #endif
 
-        gdi().present(GE_SUB);
-    }
+		gdi().present(GE_SUB);
+	}
 
-    animationManager().update();
+	animationManager().update();
 
-    // if ( REG_ROMCTRL & CARD_BUSY )
-    //     diskIcon().turnOn();
-    // else
-    //     diskIcon().turnOff();
+	// if ( REG_ROMCTRL & CARD_BUSY )
+	//     diskIcon().turnOn();
+	// else
+	//     diskIcon().turnOff();
 }

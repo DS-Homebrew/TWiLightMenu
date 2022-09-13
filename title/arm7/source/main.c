@@ -136,7 +136,7 @@ TWL_CODE void aes(void* in, void* out, void* iv, u32 method){ //this is sort of 
 	REG_AES_CNT |= 0x80000000;
 
 	for (int j = 0; j < 0x10; j+=4) REG_AES_WRFIFO = *((u32*)(in+j));
-	while(((REG_AES_CNT >> 0x5) & 0x1F) < 0x4); //wait for every word to get processed
+	while (((REG_AES_CNT >> 0x5) & 0x1F) < 0x4); //wait for every word to get processed
 	for (int j = 0; j < 0x10; j+=4) *((u32*)(out+j)) = REG_AES_RDFIFO;
 	//REG_AES_CNT &= ~0x80000000;
 	//if (method & (AES_CTR_DECRYPT | AES_CTR_ENCRYPT)) add_ctr((u8*)iv);
@@ -276,7 +276,7 @@ int main() {
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
-		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
+		if ((REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R)) == 0) {
 			exitflag = true;
 		}
 		if (isDSiMode() && *(u8*)(0x02FFFD00) != 0xFF) {

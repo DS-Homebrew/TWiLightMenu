@@ -165,7 +165,7 @@ int main(int argc, char **argv) {
 
 	fadeType = true;	// Fade in from white
 
-	while(1) {
+	while (1) {
 		do {
 			scanKeys();
 			touchRead(&touch);
@@ -175,7 +175,7 @@ int main(int argc, char **argv) {
 			checkSdEject();
 			snd().updateStream();
 			swiWaitForVBlank();
-		} while(!held);
+		} while (!held);
 
 		if (pressed & KEY_LID) {
 			customSleep();

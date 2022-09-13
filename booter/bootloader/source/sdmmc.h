@@ -107,20 +107,20 @@
 typedef struct mmcdevice {
 	u8* rData;
 	const u8* tData;
-    u32 size;
-    u32 startOffset;
-    u32 endOffset;
-    u32 error;
-    u16 stat0;
-    u16 stat1;
-    u32 ret[4];
-    u32 initarg;
-    u32 isSDHC;
-    u32 clk;
-    u32 SDOPT;
-    u32 devicenumber;
-    u32 total_size; //size in sectors of the device
-    u32 res;
+	u32 size;
+	u32 startOffset;
+	u32 endOffset;
+	u32 error;
+	u16 stat0;
+	u16 stat1;
+	u32 ret[4];
+	u32 initarg;
+	u32 isSDHC;
+	u32 clk;
+	u32 SDOPT;
+	u32 devicenumber;
+	u32 total_size; //size in sectors of the device
+	u32 res;
 } mmcdevice;
 
 enum {
@@ -136,12 +136,12 @@ int sdmmc_sdcard_init();
 int sdmmc_nand_init();
 void sdmmc_get_cid(int devicenumber, u32 *cid);
 
-static inline void sdmmc_nand_cid( u32 *cid) {
-    sdmmc_get_cid(MMC_DEVICE_NAND,cid);
+static inline void sdmmc_nand_cid(u32 *cid) {
+	sdmmc_get_cid(MMC_DEVICE_NAND,cid);
 }
 
-static inline void sdmmc_sdcard_cid( u32 *cid) {
-    sdmmc_get_cid(MMC_DEVICE_SDCARD,cid);
+static inline void sdmmc_sdcard_cid(u32 *cid) {
+	sdmmc_get_cid(MMC_DEVICE_SDCARD,cid);
 }
 
 int sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out);

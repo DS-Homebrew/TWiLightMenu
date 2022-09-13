@@ -42,7 +42,7 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 	}
 
 	ctx->error = 0;
-	while((sdmmc_read16(REG_SDSTATUS1) & TMIO_STAT1_CMD_BUSY)); //mmc working?
+	while ((sdmmc_read16(REG_SDSTATUS1) & TMIO_STAT1_CMD_BUSY)); //mmc working?
 	sdmmc_write16(REG_SDIRMASK0,0);
 	sdmmc_write16(REG_SDIRMASK1,0);
 	sdmmc_write16(REG_SDSTATUS0,0);
@@ -59,12 +59,11 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 	const u32 *tDataPtr32 = (u32*)ctx->tData;
 	const u8  *tDataPtr8  = ctx->tData;
 
-	bool rUseBuf = ( NULL != rDataPtr32 );
-	bool tUseBuf = ( NULL != tDataPtr32 );
+	bool rUseBuf = (NULL != rDataPtr32 );
+	bool tUseBuf = (NULL != tDataPtr32 );
 
 	u16 status0 = 0;
-	while(1)
-	{
+	while (1) {
 		volatile u16 status1 = sdmmc_read16(REG_SDSTATUS1);
 #ifdef DATA32_SUPPORT
 		volatile u16 ctl32 = sdmmc_read16(REG_SDDATACTL32);
@@ -298,75 +297,74 @@ setTarget(&deviceSD);
 int sdmmc_sdcard_init() {
 //---------------------------------------------------------------------------------
 	// We need to send at least 74 clock pulses.
-setTarget(&deviceSD);
+	setTarget(&deviceSD);
 	swiDelay(0x1980); // ~75-76 clocks
 
-// card reset
-sdmmc_send_command(&deviceSD,0,0);
+	// card reset
+	sdmmc_send_command(&deviceSD,0,0);
 
-// CMD8 0x1AA
-sdmmc_send_command(&deviceSD,0x10408,0x1AA);
-u32 temp = (deviceSD.error & 0x1) << 0x1E;
+	// CMD8 0x1AA
+	sdmmc_send_command(&deviceSD,0x10408,0x1AA);
+	u32 temp = (deviceSD.error & 0x1) << 0x1E;
 
-u32 temp2 = 0;
-do {
-do {
-// CMD55
-sdmmc_send_command(&deviceSD,0x10437,deviceSD.initarg << 0x10);
-// ACMD41
-sdmmc_send_command(&deviceSD,0x10769,0x00FF8000 | temp);
-temp2 = 1;
-} while ( !(deviceSD.error & 1) );
+	u32 temp2 = 0;
+	do {
+		do {
+			// CMD55
+			sdmmc_send_command(&deviceSD,0x10437,deviceSD.initarg << 0x10);
 
-} while((deviceSD.ret[0] & 0x80000000) == 0);
+			// ACMD41
+			sdmmc_send_command(&deviceSD,0x10769,0x00FF8000 | temp);
+			temp2 = 1;
+		} while (!(deviceSD.error & 1) );
+	} while ((deviceSD.ret[0] & 0x80000000) == 0);
 
-if (!((deviceSD.ret[0] >> 30) & 1) || !temp)
-temp2 = 0;
+	if (!((deviceSD.ret[0] >> 30) & 1) || !temp)
+		temp2 = 0;
 
-deviceSD.isSDHC = temp2;
+	deviceSD.isSDHC = temp2;
 
-sdmmc_send_command(&deviceSD,0x10602,0);
-if (deviceSD.error & 0x4) return -1;
+	sdmmc_send_command(&deviceSD,0x10602,0);
+	if (deviceSD.error & 0x4) return -1;
 
-sdmmc_send_command(&deviceSD,0x10403,0);
-if (deviceSD.error & 0x4) return -1;
-deviceSD.initarg = deviceSD.ret[0] >> 0x10;
+	sdmmc_send_command(&deviceSD,0x10403,0);
+	if (deviceSD.error & 0x4) return -1;
+	deviceSD.initarg = deviceSD.ret[0] >> 0x10;
 
-sdmmc_send_command(&deviceSD,0x10609,deviceSD.initarg << 0x10);
-if (deviceSD.error & 0x4) return -1;
+	sdmmc_send_command(&deviceSD,0x10609,deviceSD.initarg << 0x10);
+	if (deviceSD.error & 0x4) return -1;
 
-deviceSD.total_size = calcSDSize((u8*)&deviceSD.ret[0],-1);
-deviceSD.clk = 1;
-setckl(1);
+	deviceSD.total_size = calcSDSize((u8*)&deviceSD.ret[0],-1);
+	deviceSD.clk = 1;
+	setckl(1);
 
-sdmmc_send_command(&deviceSD,0x10507,deviceSD.initarg << 0x10);
-if (deviceSD.error & 0x4) return -1;
+	sdmmc_send_command(&deviceSD,0x10507,deviceSD.initarg << 0x10);
+	if (deviceSD.error & 0x4) return -1;
 
-// CMD55
-sdmmc_send_command(&deviceSD,0x10437,deviceSD.initarg << 0x10);
-if (deviceSD.error & 0x4) return -1;
+	// CMD55
+	sdmmc_send_command(&deviceSD,0x10437,deviceSD.initarg << 0x10);
+	if (deviceSD.error & 0x4) return -1;
 
-// ACMD42
-sdmmc_send_command(&deviceSD,0x1076A,0x0);
-if (deviceSD.error & 0x4) return -1;
+	// ACMD42
+	sdmmc_send_command(&deviceSD,0x1076A,0x0);
+	if (deviceSD.error & 0x4) return -1;
 
-// CMD55
-sdmmc_send_command(&deviceSD,0x10437,deviceSD.initarg << 0x10);
-if (deviceSD.error & 0x4) return -1;
+	// CMD55
+	sdmmc_send_command(&deviceSD,0x10437,deviceSD.initarg << 0x10);
+	if (deviceSD.error & 0x4) return -1;
 
-deviceSD.SDOPT = 1;
-sdmmc_send_command(&deviceSD,0x10446,0x2);
-if (deviceSD.error & 0x4) return -1;
+	deviceSD.SDOPT = 1;
+	sdmmc_send_command(&deviceSD,0x10446,0x2);
+	if (deviceSD.error & 0x4) return -1;
 
-sdmmc_send_command(&deviceSD,0x1040D,deviceSD.initarg << 0x10);
-if (deviceSD.error & 0x4) return -1;
+	sdmmc_send_command(&deviceSD,0x1040D,deviceSD.initarg << 0x10);
+	if (deviceSD.error & 0x4) return -1;
 
-sdmmc_send_command(&deviceSD,0x10410,0x200);
-if (deviceSD.error & 0x4) return -1;
-deviceSD.clk |= 0x200;
+	sdmmc_send_command(&deviceSD,0x10410,0x200);
+	if (deviceSD.error & 0x4) return -1;
+	deviceSD.clk |= 0x200;
 
-return 0;
-
+	return 0;
 }
 
 //---------------------------------------------------------------------------------

@@ -783,7 +783,7 @@ int aes_crypt_cbc( aes_context *ctx,
 
     if ( mode == AES_DECRYPT )
     {
-        while( length > 0 )
+        while ( length > 0 )
         {
             memcpy( temp, input, 16 );
             aes_crypt_ecb( ctx, mode, input, output );
@@ -800,7 +800,7 @@ int aes_crypt_cbc( aes_context *ctx,
     }
     else
     {
-        while( length > 0 )
+        while ( length > 0 )
         {
             for ( i = 0; i < 16; i++ )
                 output[i] = (unsigned char)( input[i] ^ iv[i] );
@@ -832,7 +832,7 @@ int aes_crypt_cfb128( aes_context *ctx,
 
     if ( mode == AES_DECRYPT )
     {
-        while( length-- )
+        while ( length-- )
         {
             if ( n == 0 )
                 aes_crypt_ecb( ctx, AES_ENCRYPT, iv, iv );
@@ -846,7 +846,7 @@ int aes_crypt_cfb128( aes_context *ctx,
     }
     else
     {
-        while( length-- )
+        while ( length-- )
         {
             if ( n == 0 )
                 aes_crypt_ecb( ctx, AES_ENCRYPT, iv, iv );

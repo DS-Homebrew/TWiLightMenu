@@ -341,7 +341,7 @@ bool FAT_InitFiles (bool initCard)
 			for (i=0x1BE; (i < 0x1FE) && (globalBuffer[i+0x04] == 0x00); i+= 0x10);
 		
 		// Go to first valid partition
-		if ( i != 0x1FE)	// Make sure it found a partition
+		if (i != 0x1FE)	// Make sure it found a partition
 		{
 			bootSector = globalBuffer[0x8 + i] + (globalBuffer[0x9 + i] << 8) + (globalBuffer[0xA + i] << 16) + ((globalBuffer[0xB + i] << 24) & 0x0F);
 		} else {
@@ -531,7 +531,7 @@ u32 fileRead (char* buffer, u32 cluster, u32 startOffset, u32 length)
 	curByte = startOffset % BYTES_PER_SECTOR;
 
 	// Load sector buffer for new position in file
-	CARD_ReadSector( curSect + FAT_ClustToSect(cluster), globalBuffer);
+	CARD_ReadSector(curSect + FAT_ClustToSect(cluster), globalBuffer);
 	curSect++;
 
 	// Number of bytes needed to read to align with a sector
@@ -578,7 +578,7 @@ u32 fileRead (char* buffer, u32 cluster, u32 startOffset, u32 length)
 			curSect = 0;
 			cluster = FAT_NextCluster (cluster);
 		}
-		CARD_ReadSector( curSect + FAT_ClustToSect( cluster), globalBuffer);
+		CARD_ReadSector(curSect + FAT_ClustToSect(cluster), globalBuffer);
 		
 		// Read in last partial chunk
 		for (; dataPos < length; dataPos++)

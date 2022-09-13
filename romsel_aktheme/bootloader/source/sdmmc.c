@@ -42,7 +42,7 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 	}
 
 	ctx->error = 0;
-	while((sdmmc_read16(REG_SDSTATUS1) & TMIO_STAT1_CMD_BUSY)); //mmc working?
+	while ((sdmmc_read16(REG_SDSTATUS1) & TMIO_STAT1_CMD_BUSY)); //mmc working?
 	sdmmc_write16(REG_SDIRMASK0,0);
 	sdmmc_write16(REG_SDIRMASK1,0);
 	sdmmc_write16(REG_SDSTATUS0,0);
@@ -63,7 +63,7 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 	bool tUseBuf = ( NULL != tDataPtr32 );
 
 	u16 status0 = 0;
-	while(1)
+	while (1)
 	{
 		volatile u16 status1 = sdmmc_read16(REG_SDSTATUS1);
 #ifdef DATA32_SUPPORT
@@ -318,7 +318,7 @@ int sdmmc_sdcard_init() {
 			temp2 = 1;
 		} while ( !(deviceSD.error & 1) );
 
-	} while((deviceSD.ret[0] & 0x80000000) == 0);
+	} while ((deviceSD.ret[0] & 0x80000000) == 0);
 
 	if (!((deviceSD.ret[0] >> 30) & 1) || !temp)
 		temp2 = 0;

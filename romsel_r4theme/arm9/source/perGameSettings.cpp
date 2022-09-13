@@ -77,6 +77,7 @@ static char SET_AS_DONOR_ROM[32];
 char pergamefilepath[256];
 
 extern void RemoveTrailingSlashes(std::string &path);
+extern bool extension(const std::string& filename, const char* ext);
 
 extern void bgOperations(bool waitFrame);
 
@@ -348,31 +349,29 @@ void perGameSettings (std::string filename) {
 	keysSetRepeat(25, 5); // Slow down key repeat
 
 	clearText();
-	
+
 	perGameSettings_cursorPosition = 0;
 	loadPerGameSettings(filename);
 
 	std::string filenameForInfo = filename;
-	if ((filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "argv")
-	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "ARGV"))
-	{
+	if (extension(filenameForInfo, {".argv"})) {
 		std::vector<char*> argarray;
 
 		FILE *argfile = fopen(filenameForInfo.c_str(),"rb");
-			char str[PATH_MAX], *pstr;
-		const char seps[]= "\n\r\t ";
+		char str[PATH_MAX], *pstr;
+		const char seps[] = "\n\r\t ";
 
-		while( fgets(str, PATH_MAX, argfile) ) {
+		while (fgets(str, PATH_MAX, argfile)) {
 			// Find comment and end string there
-			if ( (pstr = strchr(str, '#')) )
-				*pstr= '\0';
+			if ((pstr = strchr(str, '#')) )
+				*pstr = '\0';
 
 			// Tokenize arguments
-			pstr= strtok(str, seps);
+			pstr = strtok(str, seps);
 
-			while( pstr != NULL ) {
+			while (pstr != NULL) {
 				argarray.push_back(strdup(pstr));
-				pstr= strtok(NULL, seps);
+				pstr = strtok(NULL, seps);
 			}
 		}
 		fclose(argfile);

@@ -86,7 +86,7 @@ void loadPageList() {
 		printSmall(false, 0, 64, "Unable to open the directory.\n", Alignment::center);
 	} else {
 
-		while(true) {
+		while (true) {
 			DirEntry dirEntry;
 
 			struct dirent* pent = readdir(pdir);
@@ -143,12 +143,12 @@ void stop (void) {
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
 
-	mmLoadEffect( SFX_LAUNCH );
-	mmLoadEffect( SFX_SELECT );
-	mmLoadEffect( SFX_STOP );
-	mmLoadEffect( SFX_WRONG );
-	mmLoadEffect( SFX_BACK );
-	mmLoadEffect( SFX_SWITCH );
+	mmLoadEffect(SFX_LAUNCH);
+	mmLoadEffect(SFX_SELECT);
+	mmLoadEffect(SFX_STOP);
+	mmLoadEffect(SFX_WRONG);
+	mmLoadEffect(SFX_BACK);
+	mmLoadEffect(SFX_SWITCH);
 
 	snd_launch = {
 		{ SFX_LAUNCH } ,			// id
@@ -308,7 +308,7 @@ int main(int argc, char **argv) {
 
 	fadeType = true;	// Fade in from white
 
-	while(1) {
+	while (1) {
 		do {
 			scanKeys();
 			touchRead(&touch);
@@ -317,7 +317,7 @@ int main(int argc, char **argv) {
 			repeat = keysDownRepeat();
 			checkSdEject();
 			swiWaitForVBlank();
-		} while(!held);
+		} while (!held);
 
 		if (pressed & KEY_LID) {
 			customSleep();
@@ -361,20 +361,20 @@ int main(int argc, char **argv) {
 			}
 		} else if (pressed & KEY_TOUCH) {
 			touchPosition touchStart = touch;
-			while((touch.px < touchStart.px+10) && (touch.px > touchStart.px-10) && (touch.py < touchStart.py+10) && (touch.py > touchStart.py-10)) {
+			while ((touch.px < touchStart.px+10) && (touch.px > touchStart.px-10) && (touch.py < touchStart.py+10) && (touch.py > touchStart.py-10)) {
 				touchRead(&touch);
 			}
 			scanKeys();
 			if (keysHeld() & KEY_TOUCH) {
 				touchStart = touch;
 				touchPosition prevTouch2 = touch;
-				while(1) {
+				while (1) {
 					touchRead(&touch);
 					scanKeys();
 					if (!(keysHeld() & KEY_TOUCH)) {
 						bool tapped = false;
 						int dY = (-(touchStart.py - prevTouch2.py));
-						while(!(dY < 0.25 && dY > -0.25)) {
+						while (!(dY < 0.25 && dY > -0.25)) {
 							pageYpos += dY;
 							if (pageYpos < 0) {
 								pageYpos = 0;

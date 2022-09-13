@@ -474,7 +474,7 @@ void opt_set_hotkey(void) {
 		scanKeys();
 		held = keysHeld();
 		swiWaitForVBlank();
-	} while(held & set);
+	} while (held & set);
 
 	clearText();
 }

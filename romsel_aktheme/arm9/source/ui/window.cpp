@@ -115,7 +115,7 @@ Window* Window::topLevelWindow() const
 {
     Window* ret = (Window*)(this);
     Window* test = ret;
-    while(test != 0)
+    while (test != 0)
     {
         ret = test;
         test = ret->parent();

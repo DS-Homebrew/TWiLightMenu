@@ -36,7 +36,7 @@ void tonccpy(void *dst, const void *src, uint size)
         case 3:     *dst32++ = *src32++;
         case 2:     *dst32++ = *src32++;
         case 1:     *dst32++ = *src32++;
-        case 0:     ; } while(count--);
+        case 0:     ; } while (count--);
         }
 
         // Check for tail
@@ -65,7 +65,7 @@ void tonccpy(void *dst, const void *src, uint size)
 
     // Unaligned main: copy by 2x byte.
     count= size/2;
-    while(count--)
+    while (count--)
     {
         *dst16++ = src8[0] | src8[1]<<8;
         src8 += 2;
@@ -124,7 +124,7 @@ void __toncset(void *dst, u32 fill, uint size)
     case 3:     *dst32++ = fill;
     case 2:     *dst32++ = fill;
     case 1:     *dst32++ = fill;
-    case 0:     ; } while(count--);
+    case 0:     ; } while (count--);
     }
 
     // Tail

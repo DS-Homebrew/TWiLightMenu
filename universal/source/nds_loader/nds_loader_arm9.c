@@ -544,7 +544,7 @@ bool installBootStub(bool havedsiSD) {
 	bool ret = false;
 
 	bootloader[8] = isDSiMode();
-	if ( havedsiSD) {
+	if (havedsiSD) {
 		ret = true;
 		bootloader[3] = 0; // don't dldi patch
 		bootloader[7] = 1; // use internal dsi SD code

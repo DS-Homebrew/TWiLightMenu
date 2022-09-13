@@ -111,7 +111,7 @@ int main() {
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
 
-	irqEnable( IRQ_VBLANK | IRQ_VCOUNT );
+	irqEnable(IRQ_VBLANK | IRQ_VCOUNT);
 
 	setPowerButtonCB(powerButtonCB);
 
@@ -138,7 +138,7 @@ int main() {
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
-		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
+		if ((REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R)) == 0) {
 			exitflag = true;
 		}
 		/*if (isDSiMode()) {

@@ -139,7 +139,7 @@ void passArgs_ARM7 (void) {
 
 	if (!argStart || !argSize) return;
 
-	if ( ARM9_DST == 0 && ARM9_LEN == 0) {
+	if (ARM9_DST == 0 && ARM9_LEN == 0) {
 		ARM9_DST = *((u32*)(NDS_HEAD + 0x038));
 		ARM9_LEN = *((u32*)(NDS_HEAD + 0x03C));
 	}
@@ -150,13 +150,10 @@ void passArgs_ARM7 (void) {
 
 	if (ARM9_LEN > 0x380000) {
 		argDst = (u32*)0x02FFA000;
-	} else
-	if (dsiMode && (*(u8*)(NDS_HEAD + 0x012) & BIT(1)))
-	{
+	} else if (dsiMode && (*(u8*)(NDS_HEAD + 0x012) & BIT(1))) {
 		u32 ARM9i_DST = *((u32*)(TWL_HEAD + 0x1C8));
 		u32 ARM9i_LEN = *((u32*)(TWL_HEAD + 0x1CC));
-		if (ARM9i_LEN)
-		{
+		if (ARM9i_LEN) {
 			u32* argDst2 = (u32*)((ARM9i_DST + ARM9i_LEN + 3) & ~3);		// Word aligned
 			if (argDst2 > argDst)
 				argDst = argDst2;
@@ -180,15 +177,14 @@ Written by Darkain.
 Modified by Chishm:
  * Added STMIA clear mem loop
 --------------------------------------------------------------------------*/
-void resetMemory_ARM7 (void)
-{
+void resetMemory_ARM7 (void) {
 	int i, reg;
 	u8 settings1, settings2;
 	u32 settingsOffset = 0;
 
 	REG_IME = 0;
 
-	for (i=0; i<16; i++) {
+	for (i = 0; i < 16; i++) {
 		SCHANNEL_CR(i) = 0;
 		SCHANNEL_TIMER(i) = 0;
 		SCHANNEL_SOURCE(i) = 0;
@@ -256,7 +252,7 @@ void resetMemory_ARM7 (void)
 
 	((vu32*)0x040044f0)[2] = 0x202DDD1D;
 	((vu32*)0x040044f0)[3] = 0xE1A00005;
-	while((*(vu32*)0x04004400) & 0x2000000);
+	while ((*(vu32*)0x04004400) & 0x2000000);
 
 }
 
@@ -533,8 +529,8 @@ Modified by Chishm:
 --------------------------------------------------------------------------*/
 void startBinary_ARM7 (void) {
 	REG_IME=0;
-	while(REG_VCOUNT!=191);
-	while(REG_VCOUNT==191);
+	while (REG_VCOUNT!=191);
+	while (REG_VCOUNT==191);
 	// copy NDS ARM9 start address into the header, starting ARM9
 	*((vu32*)0x02FFFE24) = TEMP_ARM9_START_ADDRESS;
 	ARM9_START_FLAG = 1;

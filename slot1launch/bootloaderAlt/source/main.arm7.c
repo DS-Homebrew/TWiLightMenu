@@ -118,7 +118,7 @@ static void errorOutput (u32 code) {
 	arm9_errorClearBG = true;
 	arm9_stateFlag = ARM9_DISPERR;
 	// Stop
-	while(1);
+	while (1);
 }
 */
 
@@ -524,14 +524,14 @@ void arm7_startBinary (void)
 	// Wait until the ARM9 is ready
 	while (arm9_stateFlag != ARM9_READY);
 
-	while(REG_VCOUNT!=191);
-	while(REG_VCOUNT==191);
+	while (REG_VCOUNT!=191);
+	while (REG_VCOUNT==191);
 	
 	// Get the ARM9 to boot
 	arm9_stateFlag = ARM9_BOOTBIN;
 
-	while(REG_VCOUNT!=191);
-	while(REG_VCOUNT==191);
+	while (REG_VCOUNT!=191);
+	while (REG_VCOUNT==191);
 
 	// Start ARM7
 	VoidFn arm7code = *(VoidFn*)(0x27FFE34);

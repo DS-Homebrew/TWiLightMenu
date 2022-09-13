@@ -182,9 +182,9 @@ static void switchToTwlBlowfish(void) {
 		for (i = 0; i < 25; i++) { swiWaitForVBlank(); }
 		REG_AUXSPICNT=CARD_CR1_ENABLE|CARD_CR1_IRQ;
 		REG_ROMCTRL=CARD_nRESET|CARD_SEC_SEED;
-		while(REG_ROMCTRL&CARD_BUSY) ;
+		while (REG_ROMCTRL&CARD_BUSY) ;
 		cardReset();
-		while(REG_ROMCTRL&CARD_BUSY) ;
+		while (REG_ROMCTRL&CARD_BUSY) ;
 	}
 
 	//int iCardDevice = 1;
@@ -301,9 +301,9 @@ void my_cardReset (bool properReset)
 		for (i = 0; i < 25; i++) { swiWaitForVBlank(); }
 		REG_AUXSPICNT=CARD_CR1_ENABLE|CARD_CR1_IRQ;
 		REG_ROMCTRL=CARD_nRESET|CARD_SEC_SEED;
-		while(REG_ROMCTRL&CARD_BUSY) ;
+		while (REG_ROMCTRL&CARD_BUSY) ;
 		cardReset();
-		while(REG_ROMCTRL&CARD_BUSY) ;
+		while (REG_ROMCTRL&CARD_BUSY) ;
 	}
 
 	toncset(headerData, 0, 0x1000);
@@ -323,7 +323,7 @@ int cardInit (void)
 	sysSetCardOwner (BUS_OWNER_ARM9);	// Allow arm9 to access NDS cart
 
 	u32 iCardId=cardReadID(CARD_CLK_SLOW);	
-	while(REG_ROMCTRL & CARD_BUSY);
+	while (REG_ROMCTRL & CARD_BUSY);
 	//u32 iCheapCard=iCardId&0x80000000;
 
 	// Read the header

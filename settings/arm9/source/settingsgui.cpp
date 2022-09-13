@@ -173,7 +173,7 @@ void SettingsGUI::setTopText(const std::string &text)
 	std::size_t pos;
 
 	// Process comment to stay within the box
-	while((pos = _topTextStr.find(' ')) != std::string::npos) {
+	while ((pos = _topTextStr.find(' ')) != std::string::npos) {
 		words.push_back(_topTextStr.substr(0, pos));
 		_topTextStr = _topTextStr.substr(pos + 1);
 	}
@@ -212,9 +212,9 @@ void SettingsGUI::setTopText(const std::string &text)
 	}
 	
 	// Ensure there are no newlines at the beggining / end
-	while(_topText[0] == '\n')
+	while (_topText[0] == '\n')
 		_topText = _topText.substr(1);
-	while(_topText[_topText.length() - 1] == '\n')
+	while (_topText[_topText.length() - 1] == '\n')
 		_topText = _topText.substr(0, _topText.length() - 2);
 }
 
@@ -270,7 +270,7 @@ void SettingsGUI::rotatePage(int rotateAmount)
 	// int pageIndex = (_selectedPage + rotateAmount) % (_pages.size());
 	int pageIndex = (_selectedPage + rotateAmount);
 	if (pageIndex < 0) pageIndex = _pages.size()-1;
-	else if ( pageIndex > ((int)_pages.size()) - 1) pageIndex = 0;
+	else if (pageIndex > ((int)_pages.size()) - 1) pageIndex = 0;
 	_selectedPage = pageIndex;
 	_bottomCursor = std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS);
 	_topCursor = 0;

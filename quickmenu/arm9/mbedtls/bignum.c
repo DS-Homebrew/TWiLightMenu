@@ -60,7 +60,7 @@
 
 /* Implementation that should never be optimized out by the compiler */
 static void mbedtls_mpi_zeroize( mbedtls_mpi_uint *v, size_t n ) {
-    volatile mbedtls_mpi_uint *p = v; while( n-- ) *p++ = 0;
+    volatile mbedtls_mpi_uint *p = v; while ( n-- ) *p++ = 0;
 }
 
 #define ciL    (sizeof(mbedtls_mpi_uint))         /* chars in limb  */
@@ -622,7 +622,7 @@ int mbedtls_mpi_read_file( mbedtls_mpi *X, int radix, FILE *fin )
     if ( slen > 0 && s[slen - 1] == '\r' ) { slen--; s[slen] = '\0'; }
 
     p = s + slen;
-    while( p-- > s )
+    while ( p-- > s )
         if ( mpi_get_digit( &d, radix, *p ) != 0 )
             break;
 
@@ -923,7 +923,7 @@ int mbedtls_mpi_add_abs( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
         *p += tmp; c += ( *p < tmp );
     }
 
-    while( c != 0 )
+    while ( c != 0 )
     {
         if ( i >= X->n )
         {
@@ -953,7 +953,7 @@ static void mpi_sub_hlp( size_t n, mbedtls_mpi_uint *s, mbedtls_mpi_uint *d )
         c = ( *d < *s ) + z; *d -= *s;
     }
 
-    while( c != 0 )
+    while ( c != 0 )
     {
         z = ( *d < c ); *d -= c;
         c = z; i++; d++;
@@ -1166,7 +1166,7 @@ void mpi_mul_hlp( size_t i, mbedtls_mpi_uint *s, mbedtls_mpi_uint *d, mbedtls_mp
     do {
         *d += c; c = ( *d < c ); d++;
     }
-    while( c != 0 );
+    while ( c != 0 );
 }
 
 /*
@@ -1289,7 +1289,7 @@ static mbedtls_mpi_uint mbedtls_int_div_int( mbedtls_mpi_uint u1,
     q1 = u1 / d1;
     r0 = u1 - d1 * q1;
 
-    while( q1 >= radix || ( q1 * d0 > radix * r0 + u0_msw ) )
+    while ( q1 >= radix || ( q1 * d0 > radix * r0 + u0_msw ) )
     {
         q1 -= 1;
         r0 += d1;
@@ -1301,7 +1301,7 @@ static mbedtls_mpi_uint mbedtls_int_div_int( mbedtls_mpi_uint u1,
     q0 = rAX / d1;
     r0 = rAX - q0 * d1;
 
-    while( q0 >= radix || ( q0 * d0 > radix * r0 + u0_lsw ) )
+    while ( q0 >= radix || ( q0 * d0 > radix * r0 + u0_lsw ) )
     {
         q0 -= 1;
         r0 += d1;
@@ -1362,7 +1362,7 @@ int mbedtls_mpi_div_mpi( mbedtls_mpi *Q, mbedtls_mpi *R, const mbedtls_mpi *A, c
     t = Y.n - 1;
     MBEDTLS_MPI_CHK( mbedtls_mpi_shift_l( &Y, biL * ( n - t ) ) );
 
-    while( mbedtls_mpi_cmp_mpi( &X, &Y ) >= 0 )
+    while ( mbedtls_mpi_cmp_mpi( &X, &Y ) >= 0 )
     {
         Z.p[n - t]++;
         MBEDTLS_MPI_CHK( mbedtls_mpi_sub_mpi( &X, &X, &Y ) );
@@ -1394,7 +1394,7 @@ int mbedtls_mpi_div_mpi( mbedtls_mpi *Q, mbedtls_mpi *R, const mbedtls_mpi *A, c
             T2.p[1] = ( i < 1 ) ? 0 : X.p[i - 1];
             T2.p[2] = X.p[i];
         }
-        while( mbedtls_mpi_cmp_mpi( &T1, &T2 ) > 0 );
+        while ( mbedtls_mpi_cmp_mpi( &T1, &T2 ) > 0 );
 
         MBEDTLS_MPI_CHK( mbedtls_mpi_mul_int( &T1, &Y, Z.p[i - t - 1] ) );
         MBEDTLS_MPI_CHK( mbedtls_mpi_shift_l( &T1,  biL * ( i - t - 1 ) ) );
@@ -1461,10 +1461,10 @@ int mbedtls_mpi_mod_mpi( mbedtls_mpi *R, const mbedtls_mpi *A, const mbedtls_mpi
 
     MBEDTLS_MPI_CHK( mbedtls_mpi_div_mpi( NULL, R, A, B ) );
 
-    while( mbedtls_mpi_cmp_int( R, 0 ) < 0 )
+    while ( mbedtls_mpi_cmp_int( R, 0 ) < 0 )
       MBEDTLS_MPI_CHK( mbedtls_mpi_add_mpi( R, R, B ) );
 
-    while( mbedtls_mpi_cmp_mpi( R, B ) >= 0 )
+    while ( mbedtls_mpi_cmp_mpi( R, B ) >= 0 )
       MBEDTLS_MPI_CHK( mbedtls_mpi_sub_mpi( R, R, B ) );
 
 cleanup:
@@ -1716,7 +1716,7 @@ int mbedtls_mpi_exp_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
     wbits   = 0;
     state   = 0;
 
-    while( 1 )
+    while ( 1 )
     {
         if ( bufsize == 0 )
         {
@@ -1837,7 +1837,7 @@ int mbedtls_mpi_gcd( mbedtls_mpi *G, const mbedtls_mpi *A, const mbedtls_mpi *B 
 
     TA.s = TB.s = 1;
 
-    while( mbedtls_mpi_cmp_int( &TA, 0 ) != 0 )
+    while ( mbedtls_mpi_cmp_int( &TA, 0 ) != 0 )
     {
         MBEDTLS_MPI_CHK( mbedtls_mpi_shift_r( &TA, mbedtls_mpi_lsb( &TA ) ) );
         MBEDTLS_MPI_CHK( mbedtls_mpi_shift_r( &TB, mbedtls_mpi_lsb( &TB ) ) );
@@ -1923,7 +1923,7 @@ int mbedtls_mpi_inv_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
 
     do
     {
-        while( ( TU.p[0] & 1 ) == 0 )
+        while ( ( TU.p[0] & 1 ) == 0 )
         {
             MBEDTLS_MPI_CHK( mbedtls_mpi_shift_r( &TU, 1 ) );
 
@@ -1937,7 +1937,7 @@ int mbedtls_mpi_inv_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
             MBEDTLS_MPI_CHK( mbedtls_mpi_shift_r( &U2, 1 ) );
         }
 
-        while( ( TV.p[0] & 1 ) == 0 )
+        while ( ( TV.p[0] & 1 ) == 0 )
         {
             MBEDTLS_MPI_CHK( mbedtls_mpi_shift_r( &TV, 1 ) );
 
@@ -1964,12 +1964,12 @@ int mbedtls_mpi_inv_mod( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi
             MBEDTLS_MPI_CHK( mbedtls_mpi_sub_mpi( &V2, &V2, &U2 ) );
         }
     }
-    while( mbedtls_mpi_cmp_int( &TU, 0 ) != 0 );
+    while ( mbedtls_mpi_cmp_int( &TU, 0 ) != 0 );
 
-    while( mbedtls_mpi_cmp_int( &V1, 0 ) < 0 )
+    while ( mbedtls_mpi_cmp_int( &V1, 0 ) < 0 )
         MBEDTLS_MPI_CHK( mbedtls_mpi_add_mpi( &V1, &V1, N ) );
 
-    while( mbedtls_mpi_cmp_mpi( &V1, N ) >= 0 )
+    while ( mbedtls_mpi_cmp_mpi( &V1, N ) >= 0 )
         MBEDTLS_MPI_CHK( mbedtls_mpi_sub_mpi( &V1, &V1, N ) );
 
     MBEDTLS_MPI_CHK( mbedtls_mpi_copy( X, &V1 ) );
@@ -2115,7 +2115,7 @@ static int mpi_miller_rabin( const mbedtls_mpi *X,
             continue;
 
         j = 1;
-        while( j < s && mbedtls_mpi_cmp_mpi( &A, &W ) != 0 )
+        while ( j < s && mbedtls_mpi_cmp_mpi( &A, &W ) != 0 )
         {
             /*
              * A = A * A mod |X|
@@ -2209,7 +2209,7 @@ int mbedtls_mpi_gen_prime( mbedtls_mpi *X, size_t nbits, int dh_flag,
 
     if ( dh_flag == 0 )
     {
-        while( ( ret = mbedtls_mpi_is_prime( X, f_rng, p_rng ) ) != 0 )
+        while ( ( ret = mbedtls_mpi_is_prime( X, f_rng, p_rng ) ) != 0 )
         {
             if ( ret != MBEDTLS_ERR_MPI_NOT_ACCEPTABLE )
                 goto cleanup;
@@ -2237,7 +2237,7 @@ int mbedtls_mpi_gen_prime( mbedtls_mpi *X, size_t nbits, int dh_flag,
         MBEDTLS_MPI_CHK( mbedtls_mpi_copy( &Y, X ) );
         MBEDTLS_MPI_CHK( mbedtls_mpi_shift_r( &Y, 1 ) );
 
-        while( 1 )
+        while ( 1 )
         {
             /*
              * First, check small factors for X and Y

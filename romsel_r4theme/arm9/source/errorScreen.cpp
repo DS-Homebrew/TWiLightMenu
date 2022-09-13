@@ -66,7 +66,7 @@ void checkSdEject(void) {
 	dmaCopyWordsAsynch(0, (showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), BG_GFX, 0x18000);
 	dmaFillWords(1, (u16*)BG_GFX_SUB+(256*32), 0x18000);
 
-	while(1) {
+	while (1) {
 		// Works here, but disabled for consistency with the other themes
 		/*scanKeys();
 		if (keysDown() & KEY_B) {
