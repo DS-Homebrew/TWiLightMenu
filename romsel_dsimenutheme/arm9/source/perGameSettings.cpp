@@ -110,7 +110,7 @@ bool blacklisted_boostCpu = false;
 bool blacklisted_cardReadDma = false;
 bool blacklisted_asyncCardRead = false;
 
-extern bool extension(const std::string& filename, const char* ext);
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions);
 
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
@@ -395,7 +395,7 @@ void perGameSettings (std::string filename) {
 	loadPerGameSettings(filename);
 
 	std::string filenameForInfo = filename;
-	if (extension(filenameForInfo, {".argv"}) {
+	if (extension(filenameForInfo, {".argv"})) {
 		std::vector<char*> argarray;
 
 		FILE *argfile = fopen(filenameForInfo.c_str(),"rb");

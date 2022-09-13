@@ -77,7 +77,7 @@ static char SET_AS_DONOR_ROM[32];
 char pergamefilepath[256];
 
 extern void RemoveTrailingSlashes(std::string &path);
-extern bool extension(const std::string& filename, const char* ext);
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions);
 
 extern void bgOperations(bool waitFrame);
 
