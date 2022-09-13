@@ -872,15 +872,15 @@ int mbedtls_mpi_cmp_mpi( const mbedtls_mpi *X, const mbedtls_mpi *Y )
  */
 int mbedtls_mpi_cmp_int( const mbedtls_mpi *X, mbedtls_mpi_sint z )
 {
-    mbedtls_mpi Y;
-    mbedtls_mpi_uint p[1];
+	mbedtls_mpi Y;
+	mbedtls_mpi_uint p[1];
 
-    *p  = ( z < 0 ) ? -z : z;
-    Y.s = ( z < 0 ) ? -1 : 1;
-    Y.n = 1;
-    Y.p = p;
+	*p  = ( z < 0 ) ? -z : z;
+	Y.s = ( z < 0 ) ? -1 : 1;
+	Y.n = 1;
+	Y.p = p;
 
-    return( mbedtls_mpi_cmp_mpi( X, &Y ) );
+	return(mbedtls_mpi_cmp_mpi( X, &Y ));
 }
 
 /*
@@ -888,28 +888,27 @@ int mbedtls_mpi_cmp_int( const mbedtls_mpi *X, mbedtls_mpi_sint z )
  */
 int mbedtls_mpi_add_abs( mbedtls_mpi *X, const mbedtls_mpi *A, const mbedtls_mpi *B )
 {
-    int ret;
-    size_t i, j;
-    mbedtls_mpi_uint *o, *p, c, tmp;
+	int ret;
+	size_t i, j;
+	mbedtls_mpi_uint *o, *p, c, tmp;
 
-    if ( X == B )
-    {
-        const mbedtls_mpi *T = A; A = X; B = T;
-    }
+	if (X == B) {
+		const mbedtls_mpi *T = A; A = X; B = T;
+	}
 
-    if ( X != A )
-        MBEDTLS_MPI_CHK( mbedtls_mpi_copy( X, A ) );
+    if (X != A)
+		MBEDTLS_MPI_CHK( mbedtls_mpi_copy( X, A ) );
 
     /*
      * X should always be positive as a result of unsigned additions.
      */
     X->s = 1;
 
-    for ( j = B->n; j > 0; j-- )
-        if ( B->p[j - 1] != 0 )
-            break;
+	for (j = B->n; j > 0; j--)
+		if (B->p[j - 1] != 0)
+			break;
 
-    MBEDTLS_MPI_CHK( mbedtls_mpi_grow( X, j ) );
+    MBEDTLS_MPI_CHK(mbedtls_mpi_grow(X, j));
 
     o = B->p; p = X->p; c = 0;
 

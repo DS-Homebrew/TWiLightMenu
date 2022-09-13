@@ -110,6 +110,8 @@ bool blacklisted_boostCpu = false;
 bool blacklisted_cardReadDma = false;
 bool blacklisted_asyncCardRead = false;
 
+extern bool extension(const std::string& filename, const char* ext);
+
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
@@ -224,10 +226,7 @@ void savePerGameSettings (std::string filename) {
 bool checkIfShowAPMsg (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
-	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0) {
-		return true;	// Show AP message
-	}
-	return false;	// Don't show AP message
+	return (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0);
 }
 
 void dontShowAPMsgAgain (std::string filename) {
@@ -240,10 +239,7 @@ void dontShowAPMsgAgain (std::string filename) {
 bool checkIfShowRAMLimitMsg (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
-	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_RAM_LIMIT", 0) == 0) {
-		return true;	// Show RAM Limit message
-	}
-	return false;	// Don't show RAM Limit message
+	return (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_RAM_LIMIT", 0) == 0);
 }
 
 void dontShowRAMLimitMsgAgain (std::string filename) {
@@ -274,7 +270,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	bool usingB4DS = (!dsiFeatures() && ms().secondaryDevice);
 	bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 
-	if ((usingB4DS || (dsiEnhancedMbk && dsiBinariesFound)) && SDKVersion > 0x5000000	// SDK5 (TWL)
+	return ((usingB4DS || (dsiEnhancedMbk && dsiBinariesFound)) && SDKVersion > 0x5000000	// SDK5 (TWL)
 	 && (arm7size==0x22B40
 	  || arm7size==0x22BCC
 	  || arm7size==0x28F84
@@ -287,18 +283,13 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	  || arm7size==0x2AF18
 	  || arm7size==0x2B184
 	  || arm7size==0x2B24C
-	  || arm7size==0x2C5B4))
-	{
-		return true;
-	}
-
-	return false;
+	  || arm7size==0x2C5B4));
 }
 
 bool showSetDonorRomDSiWare(u32 arm7size) {
 	if (requiresDonorRom[CURPOS] || !isDSiMode() || *(u32*)0x02FFE1A0 == 0x00403000 || !sys().arm7SCFGLocked()) return false;
 
-	if (arm7size==0x1D43C
+	return (arm7size==0x1D43C
 	 || arm7size==0x1D5A8
 	 || arm7size==0x1E1E8
 	 || arm7size==0x1E22C
@@ -314,12 +305,7 @@ bool showSetDonorRomDSiWare(u32 arm7size) {
 	 || arm7size==0x26D50
 	 || arm7size==0x26DF4
 	 || arm7size==0x27FB4
-	 || arm7size==0x28E54)
-	{
-		return true;
-	}
-
-	return false;
+	 || arm7size==0x28E54);
 }
 
 bool donorRomTextShown = false;
@@ -409,27 +395,24 @@ void perGameSettings (std::string filename) {
 	loadPerGameSettings(filename);
 
 	std::string filenameForInfo = filename;
-	if ((filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "argv")
-	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "ARGV"))
-	{
-
+	if (extension(filenameForInfo, {".argv"}) {
 		std::vector<char*> argarray;
 
 		FILE *argfile = fopen(filenameForInfo.c_str(),"rb");
 			char str[PATH_MAX], *pstr;
 		const char seps[]= "\n\r\t ";
 
-		while( fgets(str, PATH_MAX, argfile) ) {
+		while (fgets(str, PATH_MAX, argfile)) {
 			// Find comment and end string there
-			if ( (pstr = strchr(str, '#')) )
+			if ((pstr = strchr(str, '#')))
 				*pstr= '\0';
 
 			// Tokenize arguments
-			pstr= strtok(str, seps);
+			pstr = strtok(str, seps);
 
-			while( pstr != NULL ) {
+			while (pstr != NULL) {
 				argarray.push_back(strdup(pstr));
-				pstr= strtok(NULL, seps);
+				pstr = strtok(NULL, seps);
 			}
 		}
 		fclose(argfile);

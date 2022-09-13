@@ -1475,17 +1475,17 @@ int main(int argc, char **argv) {
 						char str[PATH_MAX], *pstr;
 					const char seps[]= "\n\r\t ";
 
-					while( fgets(str, PATH_MAX, argfile) ) {
+					while (fgets(str, PATH_MAX, argfile)) {
 						// Find comment and end string there
 						if ( (pstr = strchr(str, '#')) )
 							*pstr= '\0';
 
 						// Tokenize arguments
-						pstr= strtok(str, seps);
+						pstr = strtok(str, seps);
 
-						while( pstr != NULL ) {
+						while (pstr != NULL) {
 							argarray.push_back(strdup(pstr));
-							pstr= strtok(NULL, seps);
+							pstr = strtok(NULL, seps);
 						}
 					}
 					fclose(argfile);
@@ -1608,20 +1608,20 @@ int main(int argc, char **argv) {
 					vector<char*> argarray;
 
 					FILE *argfile = fopen(filename[1].c_str(),"rb");
-						char str[PATH_MAX], *pstr;
+					char str[PATH_MAX], *pstr;
 					const char seps[]= "\n\r\t ";
 
-					while( fgets(str, PATH_MAX, argfile) ) {
+					while (fgets(str, PATH_MAX, argfile)) {
 						// Find comment and end string there
-						if ( (pstr = strchr(str, '#')) )
-							*pstr= '\0';
+						if ((pstr = strchr(str, '#')))
+							*pstr = '\0';
 
 						// Tokenize arguments
-						pstr= strtok(str, seps);
+						pstr = strtok(str, seps);
 
-						while( pstr != NULL ) {
+						while (pstr != NULL) {
 							argarray.push_back(strdup(pstr));
-							pstr= strtok(NULL, seps);
+							pstr = strtok(NULL, seps);
 						}
 					}
 					fclose(argfile);
@@ -2165,17 +2165,17 @@ int main(int argc, char **argv) {
 					char str[PATH_MAX], *pstr;
 				const char seps[]= "\n\r\t ";
 
-				while( fgets(str, PATH_MAX, argfile) ) {
+				while (fgets(str, PATH_MAX, argfile)) {
 					// Find comment and end string there
-					if ( (pstr = strchr(str, '#')) )
+					if ((pstr = strchr(str, '#')))
 						*pstr= '\0';
 
 					// Tokenize arguments
-					pstr= strtok(str, seps);
+					pstr = strtok(str, seps);
 
-					while( pstr != NULL ) {
+					while (pstr != NULL) {
 						argarray.push_back(strdup(pstr));
-						pstr= strtok(NULL, seps);
+						pstr = strtok(NULL, seps);
 					}
 				}
 				fclose(argfile);

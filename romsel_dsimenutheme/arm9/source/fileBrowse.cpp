@@ -309,7 +309,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			}
 		}
 
-		if (ms().sortMethod == TWLSettings::ESortAlphabetical0) { // Alphabetical
+		if (ms().sortMethod == TWLSettings::ESortAlphabetical) { // Alphabetical
 			std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 		} else if (ms().sortMethod == TWLSettings::ESortRecent) { // Recent
 			CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
