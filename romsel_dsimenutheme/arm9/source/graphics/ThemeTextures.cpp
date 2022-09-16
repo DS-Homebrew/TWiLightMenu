@@ -628,9 +628,12 @@ void ThemeTextures::commitBgSubModify() {
 		bgLoc = _frameBufferBot[0];
 	}
 	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	dmaCopyWords(2, _bgSubBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	if (boxArtColorDeband) {
 		DC_FlushRange(_bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	}
+	while (REG_VCOUNT != 191); // Fix screen tearing
+	dmaCopyWords(2, _bgSubBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	if (boxArtColorDeband) {
 		dmaCopyWords(2, _bgSubBuffer2, _frameBufferBot[1], sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}
 }
@@ -644,9 +647,12 @@ void ThemeTextures::commitBgSubModifyAsync() {
 		bgLoc = _frameBufferBot[0];
 	}
 	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	dmaCopyWordsAsynch(2, _bgSubBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	if (boxArtColorDeband) {
 		DC_FlushRange(_bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	}
+	while (REG_VCOUNT != 191); // Fix screen tearing
+	dmaCopyWordsAsynch(2, _bgSubBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	if (boxArtColorDeband) {
 		ndmaCopyWordsAsynch(2, _bgSubBuffer2, _frameBufferBot[1], sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}
 }
