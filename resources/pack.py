@@ -29,9 +29,9 @@ files = sorted(files, key=lambda x: x["name"])
 
 # Write file
 with open(args.output[0], "wb") as f:
-	f.write(b".PCK") # Format magic
-	f.write(struct.pack("<l", len(files))) # File count
-	f.write(b"\x00" * 8) # Padding
+	f.write(b".PCK")  # Format magic
+	f.write(struct.pack("<l", len(files)))  # File count
+	f.write(b"\x00" * 8)  # Padding
 
 	# Position of data, starts after the file list
 	position = 16 + len(files) * 16
@@ -39,9 +39,9 @@ with open(args.output[0], "wb") as f:
 	# Write file list
 	for file in files:
 		if sys.version_info[0] == 3:
-			f.write(bytes(file["name"][:4], "ASCII")) # TID
+			f.write(bytes(file["name"][:4], "ASCII"))  # TID
 		else:
-			f.write(file["name"][:4]) # TID
+			f.write(file["name"][:4])  # TID
 		# Header CRC-16, Position of data, Size of data, Flags (bit 0 is cheat), Padding
 		f.write(struct.pack("<Hllbx", int(file["name"][5:file["name"].find(".")], 16), position, len(file["data"]), 1 if file["name"][-3:] == "bin" else 0))
 		position += len(file["data"])

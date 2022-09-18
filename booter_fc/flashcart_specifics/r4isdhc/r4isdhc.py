@@ -6,6 +6,7 @@ TARGET_SIZE = 0x69C70
 HEADER_SIZE = 0x450
 
 def main():
+
 	argc = len(argv)
 	if (argc < 3):
 		print("r4isdhc.py <in> <out>")
@@ -41,5 +42,6 @@ def main():
 
 	print("Success.\n")
 	exit(0)
+
 
 main()
