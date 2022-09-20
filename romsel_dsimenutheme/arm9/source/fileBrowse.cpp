@@ -1012,21 +1012,17 @@ bool dsiBinariesMissingMsg(const char *filename) {
 	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 8 : 96), STR_DSIBINARIES_MISSING, Alignment::center, FontPalette::dialog);
 	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_Y_DS_MODE_B_BACK, Alignment::center, FontPalette::dialog);
 	updateText(false);
-	int pressed = 0;
 	while (1) {
 		scanKeys();
-		pressed = keysDown();
+		int pressed = keysDown();
 		bgOperations(true);
 		if (pressed & KEY_Y) {
 			dsModeForced = true;
 			proceedToLaunch = true;
-			pressed = 0;
 			break;
-		}
-		if (pressed & KEY_B) {
+		} else if (pressed & KEY_B) {
 			snd().playBack();
 			proceedToLaunch = false;
-			pressed = 0;
 			break;
 		}
 	}
@@ -1235,20 +1231,16 @@ bool checkForCompatibleGame(const char *filename) {
 	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG, Alignment::center, FontPalette::dialog);
 	printSmall(false, 0, 160, STR_A_IGNORE_B_DONT_LAUNCH, Alignment::center, FontPalette::dialog);
 	updateText(false);
-	int pressed = 0;
 	while (1) {
 		scanKeys();
-		pressed = keysDown();
+		int pressed = keysDown();
 		bgOperations(true);
 		if (pressed & KEY_A) {
 			proceedToLaunch = true;
-			pressed = 0;
 			break;
-		}
-		else if (pressed & KEY_B) {
+		} else if (pressed & KEY_B) {
 			snd().playBack();
 			proceedToLaunch = false;
-			pressed = 0;
 			break;
 		}
 	}
@@ -1327,7 +1319,6 @@ bool dsiWareInDSModeMsg(std::string filename) {
 	int msgPage = 0;
 	bool pageLoaded = false;
 	bool secondPageViewed = false;
-	int pressed = 0;
 	while (1) {
 		if (!pageLoaded) {
 			clearText();
@@ -1350,7 +1341,7 @@ bool dsiWareInDSModeMsg(std::string filename) {
 			pageLoaded = true;
 		}
 		scanKeys();
-		pressed = keysDown();
+		int pressed = keysDown();
 		bgOperations(true);
 		if ((pressed & KEY_LEFT) && msgPage != 0) {
 			snd().playSelect();
@@ -1363,17 +1354,14 @@ bool dsiWareInDSModeMsg(std::string filename) {
 			pageLoaded = false;
 		} else if ((pressed & KEY_A) && secondPageViewed) {
 			proceedToLaunch = true;
-			pressed = 0;
 			break;
 		} else if ((pressed & KEY_B) && secondPageViewed) {
 			snd().playBack();
 			proceedToLaunch = false;
-			pressed = 0;
 			break;
 		} else if (pressed & KEY_X) {
 			ms().dontShowDSiWareInDSModeWarning = true;
 			proceedToLaunch = true;
-			pressed = 0;
 			break;
 		}
 	}
