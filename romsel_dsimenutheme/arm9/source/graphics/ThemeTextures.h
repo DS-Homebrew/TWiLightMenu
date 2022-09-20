@@ -217,8 +217,7 @@ public:
 					return _battery0Texture.get();
 			}
 		} else {
-			switch (texture)
-			{
+			switch (texture) {
 				case 8:
 					return _batterychargeblinkTexture.get();
 				case 7:

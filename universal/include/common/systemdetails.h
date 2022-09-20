@@ -21,12 +21,10 @@ public:
 
 	bool dsiWramAccess() { return _dsiWramAccess; }
 	bool arm7SCFGLocked() { return _arm7SCFGLocked; }
-	bool flashcardUsed()
-	{
+	bool flashcardUsed() {
 		if (_flashcardUsed)
 			return _flashcardUsed;
-		if (!access("fat:/", F_OK))
-		{
+		if (!access("fat:/", F_OK)) {
 			_flashcardUsed = true;
 		}
 

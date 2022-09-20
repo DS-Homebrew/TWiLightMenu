@@ -286,8 +286,7 @@ void loadBinary_ARM7 (u32 fileCluster)
 		*(u32*)(TWL_HEAD+0x24) = TEMP_ARM9_START_ADDRESS;
 
 		dsiFlags = *(u8*)(TWL_HEAD+0x1BF);
-		if (!dsMode && dsiMode && (*(u8*)(TWL_HEAD+0x12) > 0))
-		{
+		if (!dsMode && dsiMode && (*(u8*)(TWL_HEAD+0x12) > 0)) {
 			//char* ARM9i_SRC = (char*)*(u32*)(TWL_HEAD+0x1C0);
 			char* ARM9i_DST = (char*)*(u32*)(TWL_HEAD+0x1C8);
 			u32 ARM9i_LEN = *(u32*)(TWL_HEAD+0x1CC);
@@ -333,8 +332,7 @@ void loadBinary_ARM7 (u32 fileCluster)
 	ndsHeader[0x024>>2] = 0;
 	dmaCopyWords(3, (void*)ndsHeader, (void*)NDS_HEAD, 0x170);
 
-	if (!dsMode && dsiMode && (ndsHeader[0x10>>2]&BIT(16+1)))
-	{
+	if (!dsMode && dsiMode && (ndsHeader[0x10>>2]&BIT(16+1))) {
 		// Read full TWL header
 		fileRead((char*)TWL_HEAD, fileCluster, 0, 0x1000);
 
@@ -622,16 +620,14 @@ int main (void) {
 	u32 fileCluster = storedFileCluster;
 	if (!loadFromRam) {
 		// Init card
-		if (!FAT_InitFiles(initDisc))
-		{
+		if (!FAT_InitFiles(initDisc)) {
 			return -1;
 		}
 		if ((fileCluster < CLUSTER_FIRST) || (fileCluster >= CLUSTER_EOF)) 	/* Invalid file cluster specified */
 		{
 			fileCluster = getBootFileCluster(bootName);
 		}
-		if (fileCluster == CLUSTER_FREE)
-		{
+		if (fileCluster == CLUSTER_FREE) {
 			return -1;
 		}
 	}

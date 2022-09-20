@@ -755,12 +755,10 @@ void loadROMselect()
 	} else if (sdFound()) {
 		chdir("sd:/");
 	}
-	/*if (ms().theme == TWLSettings::EThemeWood)
-	{
+	/*if (ms().theme == TWLSettings::EThemeWood) {
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	}
-	else */if (ms().theme == TWLSettings::EThemeR4 || ms().theme == TWLSettings::EThemeGBC)
-	{
+	else */if (ms().theme == TWLSettings::EThemeR4 || ms().theme == TWLSettings::EThemeGBC) {
 		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	}
 	else
@@ -1034,8 +1032,7 @@ void directCardLaunch() {
 		 && arm9StartSig[1] == 0xE1500005
 		 && arm9StartSig[2] == 0xBAFFFFC5
 		 && arm9StartSig[3] == 0xE59D100C)
-		 || alxxBannerCrc != 0xBA52)
-		{
+		 || alxxBannerCrc != 0xBA52) {
 			if (sdFound()) {
 				chdir("sd:/");
 			}
@@ -1194,11 +1191,9 @@ int main(int argc, char **argv) {
 		u8 regions[3] = {0x41, 0x43, 0x4B};
 
 		if (!pictochatFound && ms().consoleModel == 0) {
-			for (int i = 0; i < 3; i++)
-			{
+			for (int i = 0; i < 3; i++) {
 				snprintf(pictochatPath, sizeof(pictochatPath), "/title/00030005/484e45%x/content/00000000.app", regions[i]);
-				if (access(pictochatPath, F_OK) == 0)
-				{
+				if (access(pictochatPath, F_OK) == 0) {
 					pictochatFound = true;
 					break;
 				}
@@ -1210,11 +1205,9 @@ int main(int argc, char **argv) {
 				nandInited = true;
 			}
 			if (access("nand:/", F_OK) == 0) {
-				for (int i = 0; i < 3; i++)
-				{
+				for (int i = 0; i < 3; i++) {
 					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e45%x/content/00000000.app", regions[i]);
-					if (access(srcPath, F_OK) == 0)
-					{
+					if (access(srcPath, F_OK) == 0) {
 						snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
 						remove(pictochatPath);
 						fcopy(srcPath, pictochatPath);	// Copy from NAND
@@ -1228,8 +1221,7 @@ int main(int argc, char **argv) {
 		snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
 		dlplayFound = (access(dlplayPath, F_OK) == 0);
 		if (!dlplayFound && ms().consoleModel == 0) {
-			for (int i = 0; i < 3; i++)
-			{
+			for (int i = 0; i < 3; i++) {
 				snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000000.app", regions[i]);
 				if (access(dlplayPath, F_OK) == 0) {
 					dlplayFound = true;
@@ -1249,8 +1241,7 @@ int main(int argc, char **argv) {
 				nandInited = true;
 			}
 			if (access("nand:/", F_OK) == 0) {
-				for (int i = 0; i < 3; i++)
-				{
+				for (int i = 0; i < 3; i++) {
 					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e44%x/content/00000000.app", regions[i]);
 					if (access(srcPath, F_OK) == 0) {
 						snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
@@ -1282,11 +1273,9 @@ int main(int argc, char **argv) {
 		if (ms().sysRegion == -1) {
 			// Determine SysNAND region by searching region of System Settings on SDNAND
 			char tmdpath[256];
-			for (u8 i = 0x41; i <= 0x5A; i++)
-			{
+			for (u8 i = 0x41; i <= 0x5A; i++) {
 				snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
-				if (access(tmdpath, F_OK) == 0)
-				{
+				if (access(tmdpath, F_OK) == 0) {
 					setRegion = i;
 					break;
 				}
@@ -1381,8 +1370,7 @@ int main(int argc, char **argv) {
 
 		filename[0] = ms().romPath[0];
 		const size_t last_slash_idx = filename[0].find_last_of("/");
-		if (std::string::npos != last_slash_idx)
-		{
+		if (std::string::npos != last_slash_idx) {
 			filename[0].erase(0, last_slash_idx + 1);
 		}
 		getGameInfo(0, false, filename[0].c_str());
@@ -1517,8 +1505,7 @@ int main(int argc, char **argv) {
 
 		filename[1] = ms().romPath[1];
 		const size_t last_slash_idx = filename[1].find_last_of("/");
-		if (std::string::npos != last_slash_idx)
-		{
+		if (std::string::npos != last_slash_idx) {
 			filename[1].erase(0, last_slash_idx + 1);
 		}
 		getGameInfo(1, false, filename[1].c_str());
@@ -1786,8 +1773,7 @@ int main(int argc, char **argv) {
 					cursorPosition = 3;
 					menuButtonPressed = true;
 				} else if (touch.px >= 10 && touch.px <= 20 && touch.py >= 175 && touch.py <= 185
-							&& (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2)))
-				{
+							&& (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2))) {
 					cursorPosition = 4;
 					menuButtonPressed = true;
 				} else if (touch.px >= 117 && touch.px <= 137 && touch.py >= 170 && touch.py <= 190) {
@@ -1902,8 +1888,7 @@ int main(int argc, char **argv) {
 								*(u32 *)(0x02000314) = 0x00030005;
 								*(u32 *)(0x02000318) = 0x00000017;
 								*(u32 *)(0x0200031C) = 0x00000000;
-								while (*(u16 *)(0x02000306) == 0x0000)
-								{ // Keep running, so that CRC16 isn't 0
+								while (*(u16 *)(0x02000306) == 0x0000) { // Keep running, so that CRC16 isn't 0
 									*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
 								}
 
@@ -1968,8 +1953,7 @@ int main(int argc, char **argv) {
 								*(u32 *)(0x02000314) = 0x00030005;
 								*(u32 *)(0x02000318) = 0x00000017;
 								*(u32 *)(0x0200031C) = 0x00000000;
-								while (*(u16 *)(0x02000306) == 0x0000)
-								{ // Keep running, so that CRC16 isn't 0
+								while (*(u16 *)(0x02000306) == 0x0000) { // Keep running, so that CRC16 isn't 0
 									*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
 								}
 
@@ -2971,8 +2955,7 @@ int main(int argc, char **argv) {
 							expansion().SetRampage(cExpansion::ENorPage);
 							cExpansion::OpenNorWrite();
 							cExpansion::SetSerialMode();
-							for (u32 address=0;address<romSize&&address<0x2000000;address+=0x40000)
-							{
+							for (u32 address=0;address<romSize&&address<0x2000000;address+=0x40000) {
 								expansion().Block_Erase(address);
 								progressBarLength = (address+0x40000)/(romSize/192);
 								if (progressBarLength > 192) progressBarLength = 192;

@@ -76,7 +76,7 @@ static addr_t quickFind (const data_t* data, const data_t* search, size_t dataLe
 	addr_t i;
 	addr_t dataChunkEnd = (addr_t)(dataLen / sizeof(int));
 
-	for ( i = 0; i < dataChunkEnd; i++) {
+	for (i = 0; i < dataChunkEnd; i++) {
 		if (dataChunk[i] == searchChunk) {
 			if ((i*sizeof(int) + searchLen) > dataLen) {
 				return -1;

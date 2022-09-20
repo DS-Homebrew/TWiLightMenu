@@ -1067,8 +1067,7 @@ void perGameSettings (std::string filename) {
 						const char* pathDefine = a7mbk6 == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH"; // SDK5.x
 						if (arm7size == 0x26CC8
 						 || arm7size == 0x28E54
-						 || arm7size == 0x29EE8)
-						{
+						 || arm7size == 0x29EE8) {
 							pathDefine = a7mbk6 == 0x080037C0 ? "DONORTWLONLY0_NDS_PATH" : "DONORTWL0_NDS_PATH"; // SDK5.0
 						}
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];

@@ -160,8 +160,7 @@ int checkRomAP(FILE *ndsFile)
 	if ((memcmp(game_TID, "AZLJ", 4) == 0)	// Girls Mode (JAP version of Style Savvy)
 	 || (memcmp(game_TID, "YEEJ", 4) == 0)	// Inazuma Eleven (Japan)
 	 || (memcmp(game_TID, "CNSX", 4) == 0)	// Naruto Shippuden: Naruto vs Sasuke (Europe)
-	 || (memcmp(game_TID, "BH2J", 4) == 0))	// Super Scribblenauts (Japan)
-	{
+	 || (memcmp(game_TID, "BH2J", 4) == 0))	// Super Scribblenauts (Japan) {
 		return 0;
 	}
 	else
@@ -399,8 +398,7 @@ int checkRomAP(FILE *ndsFile)
 	 || (memcmp(game_TID, "B5DJ", 4) == 0)	// Yamanote-sen Meimei 100 Shuunen Kinen: Densha de Go!: Tokubetsu Hen: Fukkatsu! Shouwa no Yamanote-sen (Japan)
 	 || (memcmp(game_TID, "BYMJ", 4) == 0)	// Yumeiro Patissiere: My Sweets Cooking (Japan)
 	 || (memcmp(game_TID, "BZQJ", 4) == 0)	// Zac to Ombra: Maboroshi no Yuuenchi (Japan)
-	 || (memcmp(game_TID, "BZBJ", 4) == 0))	// Zombie Daisuki (Japan)
-	{
+	 || (memcmp(game_TID, "BZBJ", 4) == 0))	// Zombie Daisuki (Japan) {
 		return 1;
 	} else {
 		static const char ap_list[][4] = {
@@ -596,8 +594,7 @@ void clearBannerSequence()
  */
 void playBannerSequence()
 {
-	if (bnriconframeseq[currentbnriconframeseq + 1] == 0x0100)
-	{
+	if (bnriconframeseq[currentbnriconframeseq + 1] == 0x0100) {
 		// Do nothing if icon isn't animated
 		bnriconPalLine = 0;
 		bnriconframenumY = 0;
@@ -611,30 +608,24 @@ void playBannerSequence()
 		bool flipH = SEQ_FLIPH(setframeseq);
 		bool flipV = SEQ_FLIPV(setframeseq);
 
-		if (flipH && flipV)
-		{
+		if (flipH && flipV) {
 			bannerFlip = GL_FLIP_H | GL_FLIP_V;
 		}
-		else if (!flipH && !flipV)
-		{
+		else if (!flipH && !flipV) {
 			bannerFlip = GL_FLIP_NONE;
 		}
-		else if (flipH && !flipV)
-		{
+		else if (flipH && !flipV) {
 			bannerFlip = GL_FLIP_H;
 		}
-		else if (!flipH && flipV)
-		{
+		else if (!flipH && flipV) {
 			bannerFlip = GL_FLIP_V;
 		}
 
 		bannerDelayNum++;
-		if (bannerDelayNum >= (setframeseq & 0x00FF))
-		{
+		if (bannerDelayNum >= (setframeseq & 0x00FF)) {
 			bannerDelayNum = 0x0000;
 			currentbnriconframeseq++;
-			if (bnriconframeseq[currentbnriconframeseq] == 0x0000)
-			{
+			if (bnriconframeseq[currentbnriconframeseq] == 0x0000) {
 				currentbnriconframeseq = 0; // Reset sequence
 			}
 		}

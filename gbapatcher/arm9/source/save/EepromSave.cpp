@@ -110,8 +110,7 @@ bool eeprom_patchV120(const save_type_t* type)
 			if (romPos[0] == startSig[0]
 			&& romPos[1] == startSig[1]
 			&& romPos[2] == startSig[2]
-			&& romPos[3] == startSig[3])
-			{
+			&& romPos[3] == startSig[3]) {
 				break;
 			}
 		}
@@ -155,8 +154,7 @@ bool eeprom_patchV124(const save_type_t* type)
 			if (romPos[0] == startSig[0]
 			&& romPos[1] == startSig[1]
 			&& romPos[2] == startSig[2]
-			&& romPos[3] == startSig[3])
-			{
+			&& romPos[3] == startSig[3]) {
 				break;
 			}
 		}

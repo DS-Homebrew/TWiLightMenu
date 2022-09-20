@@ -374,8 +374,7 @@ void SettingsGUI::rotateOption(int rotateAmount)
 				int value = *std::get_if<int>(&nextValue);
 				subaction->set(value);
 			}
-			if (auto subaction = std::get_if<Option::Nul>(&sub.action()))
-			{
+			if (auto subaction = std::get_if<Option::Nul>(&sub.action())) {
 				subaction->set();
 			}
 		}

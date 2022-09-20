@@ -46,8 +46,7 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 	progressBarLength = 0;
 	off_t offset = 0;
 	int numr;
-	while (1)
-	{
+	while (1) {
 		/* scanKeys();
 		if (keysHeld() & KEY_A) {
 			// Cancel copying

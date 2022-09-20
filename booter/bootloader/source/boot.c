@@ -139,12 +139,10 @@ void passArgs_ARM7 (void) {
 	if (ARM9_LEN > 0x380000) {
 		argDst = (u32*)0x02FFA000;
 	} else
-	if (dsiMode && (*(u8*)(NDS_HEAD + 0x012) & BIT(1)))
-	{
+	if (dsiMode && (*(u8*)(NDS_HEAD + 0x012) & BIT(1))) {
 		u32 ARM9i_DST = *((u32*)(TWL_HEAD + 0x1C8));
 		u32 ARM9i_LEN = *((u32*)(TWL_HEAD + 0x1CC));
-		if (ARM9i_LEN)
-		{
+		if (ARM9i_LEN) {
 			u32* argDst2 = (u32*)((ARM9i_DST + ARM9i_LEN + 3) & ~3);		// Word aligned
 			if (argDst2 > argDst)
 				argDst = argDst2;
@@ -261,8 +259,7 @@ void loadBinary_ARM7 (u32 fileCluster)
 	ndsHeader[0x024>>2] = 0;
 	dmaCopyWords(3, (void*)ndsHeader, (void*)NDS_HEAD, 0x170);
 
-	if (dsiMode && (ndsHeader[0x10>>2]&BIT(16+1)))
-	{
+	if (dsiMode && (ndsHeader[0x10>>2]&BIT(16+1))) {
 		// Read full TWL header
 		fileRead((char*)TWL_HEAD, fileCluster, 0, 0x1000);
 
@@ -332,16 +329,14 @@ int main (void) {
 #endif
 	u32 fileCluster = storedFileCluster;
 	// Init card
-	if (!FAT_InitFiles(initDisc))
-	{
+	if (!FAT_InitFiles(initDisc)) {
 		return -1;
 	}
 	if ((fileCluster < CLUSTER_FIRST) || (fileCluster >= CLUSTER_EOF)) 	/* Invalid file cluster specified */
 	{
 		fileCluster = getBootFileCluster(bootName);
 	}
-	if (fileCluster == CLUSTER_FREE)
-	{
+	if (fileCluster == CLUSTER_FREE) {
 		return -1;
 	}
 

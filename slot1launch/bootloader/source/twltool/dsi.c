@@ -70,8 +70,7 @@ void dsi_crypt_ctr( dsi_context* ctx,
                     unsigned int len)
 {
     unsigned int i;
-    for (i = 0; i < len; i += 0x10)
-		{
+    for (i = 0; i < len; i += 0x10) {
         dsi_crypt_ctr_block(ctx, in+i, out+i);
 		}
 }
@@ -87,10 +86,8 @@ void dsi_crypt_ctr_block( dsi_context* ctx,
 	aes_crypt_ecb(&ctx->aes, AES_ENCRYPT, ctx->ctr, stream);
 
 
-	if (input)
-	{
-		for (i=0; i<16; i++)
-		{
+	if (input) {
+		for (i=0; i<16; i++) {
 			output[i] = stream[15-i] ^ input[i];
 		}
 	}
@@ -160,8 +157,7 @@ void dsi_encrypt_ccm_block( dsi_context* ctx,
 
 	aes_crypt_ecb(&ctx->aes, AES_ENCRYPT, ctx->mac, ctx->mac);
 
-	if (mac)
-	{
+	if (mac) {
 		for (i=0; i<16; i++)
 			mac[i] = ctx->mac[15-i] ^ ctx->S0[i];
 	}
@@ -179,8 +175,7 @@ void dsi_decrypt_ccm_block( dsi_context* ctx,
 	int i;
 
 
-	if (output)
-	{
+	if (output) {
 		dsi_crypt_ctr_block(ctx, input, output);
 
 
@@ -196,8 +191,7 @@ void dsi_decrypt_ccm_block( dsi_context* ctx,
 	aes_crypt_ecb(&ctx->aes, AES_ENCRYPT, ctx->mac, ctx->mac);
 
 
-	if (mac)
-	{
+	if (mac) {
 		for (i=0; i<16; i++)
 			mac[i] = ctx->mac[15-i] ^ ctx->S0[i];
 	}
@@ -213,8 +207,7 @@ void dsi_decrypt_ccm( dsi_context* ctx,
 	unsigned char block[16];
 	unsigned char ctr[16];
 
-	while (size > 16)
-	{
+	while (size > 16) {
 		dsi_decrypt_ccm_block(ctx, input, output, mac);
 
 		if (input)
@@ -245,8 +238,7 @@ void dsi_encrypt_ccm( dsi_context* ctx,
 {
 	unsigned char block[16];
 
-	while (size > 16)
-	{
+	while (size > 16) {
 		dsi_encrypt_ccm_block(ctx, input, output, mac);
 
 		if (input)
@@ -346,8 +338,7 @@ void dsi_es_encrypt( dsi_es_context* ctx,
 	unsigned char scratchpad[16];
 	dsi_context cryptoctx;
 
-	if (ctx->randomnonce)
-	{
+	if (ctx->randomnonce) {
 		srand( (unsigned int)time(0) );
 
 		for (i=0; i<12; i++)

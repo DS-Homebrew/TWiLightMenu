@@ -203,8 +203,7 @@ void initSubSprites(void)
 
 	//set up a 4x3 grid of 64x64 sprites to cover the screen
 	for (int y = 0; y < 3; y++)
-		for (int x = 0; x < 4; x++)
-		{
+		for (int x = 0; x < 4; x++) {
 			oamSub.oamMemory[id].attribute[0] = ATTR0_BMP | ATTR0_SQUARE | (64 * y);
 			oamSub.oamMemory[id].attribute[1] = ATTR1_SIZE_64 | (64 * x);
 			oamSub.oamMemory[id].attribute[2] = ATTR2_ALPHA(1) | (8 * 32 * y) | (8 * x);

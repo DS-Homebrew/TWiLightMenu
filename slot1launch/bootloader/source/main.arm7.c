@@ -289,8 +289,7 @@ void arm7_resetMemory (void)
 		DMA_DEST(i) = 0;
 		TIMER_CR(i) = 0;
 		TIMER_DATA(i) = 0;
-		if (my_isDSiMode())
-		{
+		if (my_isDSiMode()) {
 			for (reg=0; reg<0x1c; reg+=4)*((u32*)(0x04004104 + ((i*0x1c)+reg))) = 0;//Reset NDMA.
 		}
 	}
@@ -642,8 +641,7 @@ static bool ROMsupportsDsiMode(const tNDSHeader* ndsHeader) {
 	uint32_t len = size / 0x10;
 	u8 block[0x10];
 
-	while (len>0)
-	{
+	while (len>0) {
 		toncset(block, 0, 0x10);
 		dsi_crypt_ctr_block(ctx, buffer, block);
 		tonccpy(buffer, block, 0x10);
@@ -869,12 +867,10 @@ void arm7_main (void) {
 
 		/*uint8_t *target = (uint8_t *)0x02FFC000 ;
 
-		if (target[0x01C] & 2)
-		{
+		if (target[0x01C] & 2) {
 			u8 key[16] = {0} ;
 			u8 keyp[16] = {0} ;
-			if (target[0x01C] & 4)
-			{
+			if (target[0x01C] & 4) {
 				// Debug Key
 				tonccpy(key, target, 16) ;
 			} else
@@ -882,8 +878,7 @@ void arm7_main (void) {
 				//Retail key
 				char modcrypt_shared_key[8] = {'N','i','n','t','e','n','d','o'};
 				tonccpy(keyp, modcrypt_shared_key, 8) ;
-				for (int i=0;i<4;i++)
-				{
+				for (int i=0;i<4;i++) {
 					keyp[8+i] = target[0x0c+i] ;
 					keyp[15-i] = target[0x0c+i] ;
 				}
@@ -903,20 +898,17 @@ void arm7_main (void) {
 			dsi_context ctx;
 			dsi_set_key(&ctx, key);
 			dsi_set_ctr(&ctx, &target[0x300]);
-			if (modcryptLengths[0])
-			{
+			if (modcryptLengths[0]) {
 				decrypt_modcrypt_area(&ctx, (u8*)dsiHeaderTemp->arm9idestination, modcryptLengths[0]);
 			}
 
 			dsi_set_key(&ctx, key);
 			dsi_set_ctr(&ctx, &target[0x314]);
-			if (modcryptLengths[1])
-			{
+			if (modcryptLengths[1]) {
 				decrypt_modcrypt_area(&ctx, (u8*)dsiHeaderTemp->arm7idestination, modcryptLengths[1]);
 			}
 
-			for (int i=0;i<4;i++)
-			{
+			for (int i=0;i<4;i++) {
 				((uint32_t *)(target+0x220))[i] = 0;
 			}
 		}*/

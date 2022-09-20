@@ -258,8 +258,7 @@ u32 FAT_NextCluster(u32 cluster)
 			// read the nextCluster value
 			nextCluster = ((u16*)globalBuffer)[offset];
 			
-			if (nextCluster >= 0xFFF7)
-			{
+			if (nextCluster >= 0xFFF7) {
 				nextCluster = CLUSTER_EOF;
 			}
 			break;
@@ -272,8 +271,7 @@ u32 FAT_NextCluster(u32 cluster)
 			// read the nextCluster value
 			nextCluster = (((u32*)globalBuffer)[offset]) & 0x0FFFFFFF;
 			
-			if (nextCluster >= 0x0FFFFFF7)
-			{
+			if (nextCluster >= 0x0FFFFFF7) {
 				nextCluster = CLUSTER_EOF;
 			}
 			break;
@@ -311,8 +309,7 @@ bool FAT_InitFiles (bool initCard)
 	int bootSector;
 	BOOT_SEC* bootSec;
 	
-	if (initCard && !CARD_StartUp())
-	{
+	if (initCard && !CARD_StartUp()) {
 		return (false);
 	}
 	
@@ -349,8 +346,7 @@ bool FAT_InitFiles (bool initCard)
 	CARD_ReadSector (bootSector,  bootSec);
 	
 	// Store required information about the file system
-	if (bootSec->bpb.sectorsPerFAT != 0)
-	{
+	if (bootSec->bpb.sectorsPerFAT != 0) {
 		discSecPerFAT = bootSec->bpb.sectorsPerFAT;
 	}
 	else
@@ -358,8 +354,7 @@ bool FAT_InitFiles (bool initCard)
 		discSecPerFAT = bootSec->extBlock.fat32.sectorsPerFAT32;
 	}
 	
-	if (bootSec->bpb.numSectorsSmall != 0)
-	{
+	if (bootSec->bpb.numSectorsSmall != 0) {
 		discNumSec = bootSec->bpb.numSectorsSmall;
 	}
 	else
@@ -375,12 +370,10 @@ bool FAT_InitFiles (bool initCard)
 	discRootDir = discFAT + (bootSec->bpb.numFATs * discSecPerFAT);
 	discData = discRootDir + ((bootSec->bpb.rootEntries * sizeof(DIR_ENT)) / BYTES_PER_SECTOR);
 
-	if ((discNumSec - discData) / bootSec->bpb.sectorsPerCluster < 4085)
-	{
+	if ((discNumSec - discData) / bootSec->bpb.sectorsPerCluster < 4085) {
 		discFileSystem = FS_FAT12;
 	}
-	else if ((discNumSec - discData) / bootSec->bpb.sectorsPerCluster < 65525)
-	{
+	else if ((discNumSec - discData) / bootSec->bpb.sectorsPerCluster < 65525) {
 		discFileSystem = FS_FAT16;
 	}
 	else
@@ -388,16 +381,14 @@ bool FAT_InitFiles (bool initCard)
 		discFileSystem = FS_FAT32;
 	}
 
-	if (discFileSystem != FS_FAT32)
-	{
+	if (discFileSystem != FS_FAT32) {
 		discRootDirClus = FAT16_ROOT_DIR_CLUSTER;
 	}
 	else	// Set up for the FAT32 way
 	{
 		discRootDirClus = bootSec->extBlock.fat32.rootClus;
 		// Check if FAT mirroring is enabled
-		if (!(bootSec->extBlock.fat32.extFlags & 0x80))
-		{
+		if (!(bootSec->extBlock.fat32.extFlags & 0x80)) {
 			// Use the active FAT
 			discFAT = discFAT + ( discSecPerFAT * (bootSec->extBlock.fat32.extFlags & 0x0F));
 		}
@@ -427,8 +418,7 @@ u32 getBootFileCluster (const char* bootName)
 	
 
 	// Check if fat has been initialised
-	if (discBytePerSec == 0)
-	{
+	if (discBytePerSec == 0) {
 		return (CLUSTER_FREE);
 	}
 	
@@ -445,52 +435,43 @@ u32 getBootFileCluster (const char* bootName)
 	wrkDirOffset = -1;	// Start at entry zero, Compensating for increment
 	while (!found && !notFound) {
 		wrkDirOffset++;
-		if (wrkDirOffset == BYTES_PER_SECTOR / sizeof (DIR_ENT))
-		{
+		if (wrkDirOffset == BYTES_PER_SECTOR / sizeof (DIR_ENT)) {
 			wrkDirOffset = 0;
 			wrkDirSector++;
-			if ((wrkDirSector == discSecPerClus) && (wrkDirCluster != FAT16_ROOT_DIR_CLUSTER))
-			{
+			if ((wrkDirSector == discSecPerClus) && (wrkDirCluster != FAT16_ROOT_DIR_CLUSTER)) {
 				wrkDirSector = 0;
 				wrkDirCluster = FAT_NextCluster(wrkDirCluster);
-				if (wrkDirCluster == CLUSTER_EOF)
-				{
+				if (wrkDirCluster == CLUSTER_EOF) {
 					notFound = true;
 				}
 				firstSector = FAT_ClustToSect(wrkDirCluster);		
 			}
-			else if ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER) && (wrkDirSector == (discData - discRootDir)))
-			{
+			else if ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER) && (wrkDirSector == (discData - discRootDir))) {
 				notFound = true;	// Got to end of root dir
 			}
 			CARD_ReadSector (firstSector + wrkDirSector, globalBuffer);
 		}
 		dir = ((DIR_ENT*) globalBuffer)[wrkDirOffset];
 		found = true;
-		if ((dir.attrib & ATTRIB_DIR) || (dir.attrib & ATTRIB_VOL))
-		{
+		if ((dir.attrib & ATTRIB_DIR) || (dir.attrib & ATTRIB_VOL)) {
 			found = false;
 		}
 		if (namelen<8 && dir.name[namelen]!=0x20) found = false;
-		for (nameOffset = 0; nameOffset < namelen && found; nameOffset++)
-		{
+		for (nameOffset = 0; nameOffset < namelen && found; nameOffset++) {
 			if (ucase(dir.name[nameOffset]) != bootName[nameOffset])
 				found = false;
 		}
-		for (nameOffset = 0; nameOffset < 3 && found; nameOffset++)
-		{
+		for (nameOffset = 0; nameOffset < 3 && found; nameOffset++) {
 			if (ucase(dir.ext[nameOffset]) != bootName[nameOffset+namelen+1])
 				found = false;
 		}
-		if (dir.name[0] == FILE_LAST)
-		{
+		if (dir.name[0] == FILE_LAST) {
 			notFound = true;
 		}
 	} 
 	
 	// If no file is found, return CLUSTER_FREE
-	if (notFound)
-	{
+	if (notFound) {
 		return CLUSTER_FREE;
 	}
 
@@ -515,8 +496,7 @@ u32 fileRead (char* buffer, u32 cluster, u32 startOffset, u32 length)
 	}
 	
 	// Follow cluster list until desired one is found
-	for (chunks = startOffset / discBytePerClus; chunks > 0; chunks--)
-	{
+	for (chunks = startOffset / discBytePerClus; chunks > 0; chunks--) {
 		cluster = FAT_NextCluster (cluster);
 	}
 	
@@ -533,19 +513,16 @@ u32 fileRead (char* buffer, u32 cluster, u32 startOffset, u32 length)
 	beginBytes = (BYTES_PER_SECTOR < length + curByte ? (BYTES_PER_SECTOR - curByte) : length);
 
 	// Read first part from buffer, to align with sector boundary
-	for (dataPos = 0 ; dataPos < beginBytes; dataPos++)
-	{
+	for (dataPos = 0 ; dataPos < beginBytes; dataPos++) {
 		buffer[dataPos] = globalBuffer[curByte++];
 	}
 
 	// Read in all the 512 byte chunks of the file directly, saving time
-	for ( chunks = ((int)length - beginBytes) / BYTES_PER_SECTOR; chunks > 0;)
-	{
+	for ( chunks = ((int)length - beginBytes) / BYTES_PER_SECTOR; chunks > 0;) {
 		int sectorsToRead;
 
 		// Move to the next cluster if necessary
-		if (curSect >= discSecPerClus)
-		{
+		if (curSect >= discSecPerClus) {
 			curSect = 0;
 			cluster = FAT_NextCluster (cluster);
 		}
@@ -563,21 +540,18 @@ u32 fileRead (char* buffer, u32 cluster, u32 startOffset, u32 length)
 	}
 
 	// Take care of any bytes left over before end of read
-	if (dataPos < length)
-	{
+	if (dataPos < length) {
 
 		// Update the read buffer
 		curByte = 0;
-		if (curSect >= discSecPerClus)
-		{
+		if (curSect >= discSecPerClus) {
 			curSect = 0;
 			cluster = FAT_NextCluster (cluster);
 		}
 		CARD_ReadSector( curSect + FAT_ClustToSect( cluster), globalBuffer);
 		
 		// Read in last partial chunk
-		for (; dataPos < length; dataPos++)
-		{
+		for (; dataPos < length; dataPos++) {
 			buffer[dataPos] = globalBuffer[curByte];
 			curByte++;
 		}

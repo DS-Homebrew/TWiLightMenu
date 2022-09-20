@@ -265,8 +265,7 @@ bool flash_patch512V130(const save_type_t* type)
 			if (romPos[0] == startSig[0]
 			&& romPos[1] == startSig[1]
 			&& romPos[2] == startSig[2]
-			&& romPos[3] == startSig[3])
-			{
+			&& romPos[3] == startSig[3]) {
 				break;
 			}
 		}

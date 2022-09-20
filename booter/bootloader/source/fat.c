@@ -258,8 +258,7 @@ u32 FAT_NextCluster(u32 cluster)
 			// read the nextCluster value
 			nextCluster = ((u16*)globalBuffer)[offset];
 			
-			if (nextCluster >= 0xFFF7)
-			{
+			if (nextCluster >= 0xFFF7) {
 				nextCluster = CLUSTER_EOF;
 			}
 			break;
@@ -272,8 +271,7 @@ u32 FAT_NextCluster(u32 cluster)
 			// read the nextCluster value
 			nextCluster = (((u32*)globalBuffer)[offset]) & 0x0FFFFFFF;
 			
-			if (nextCluster >= 0x0FFFFFF7)
-			{
+			if (nextCluster >= 0x0FFFFFF7) {
 				nextCluster = CLUSTER_EOF;
 			}
 			break;
@@ -408,8 +406,7 @@ u32 getBootFileCluster (const char* bootName)
 	
 
 	// Check if fat has been initialised
-	if (discBytePerSec == 0)
-	{
+	if (discBytePerSec == 0) {
 		return (CLUSTER_FREE);
 	}
 	

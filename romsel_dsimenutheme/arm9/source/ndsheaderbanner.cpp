@@ -143,8 +143,7 @@ int checkRomAP(FILE *ndsFile, int num)
 	if ((memcmp(gameTid[num], "AZLJ", 4) == 0)	// Girls Mode (JAP version of Style Savvy)
 	 || (memcmp(gameTid[num], "YEEJ", 4) == 0)	// Inazuma Eleven (Japan)
 	 || (memcmp(gameTid[num], "CNSX", 4) == 0)	// Naruto Shippuden: Naruto vs Sasuke (Europe)
-	 || (memcmp(gameTid[num], "BH2J", 4) == 0))	// Super Scribblenauts (Japan)
-	{
+	 || (memcmp(gameTid[num], "BH2J", 4) == 0))	// Super Scribblenauts (Japan) {
 		return 0;
 	}
 	else
@@ -382,8 +381,7 @@ int checkRomAP(FILE *ndsFile, int num)
 	 || (memcmp(gameTid[num], "B5DJ", 4) == 0)	// Yamanote-sen Meimei 100 Shuunen Kinen: Densha de Go!: Tokubetsu Hen: Fukkatsu! Shouwa no Yamanote-sen (Japan)
 	 || (memcmp(gameTid[num], "BYMJ", 4) == 0)	// Yumeiro Patissiere: My Sweets Cooking (Japan)
 	 || (memcmp(gameTid[num], "BZQJ", 4) == 0)	// Zac to Ombra: Maboroshi no Yuuenchi (Japan)
-	 || (memcmp(gameTid[num], "BZBJ", 4) == 0))	// Zombie Daisuki (Japan)
-	{
+	 || (memcmp(gameTid[num], "BZBJ", 4) == 0))	// Zombie Daisuki (Japan) {
 		return 1;
 	} else {
 		static const char ap_list[][4] = {
@@ -580,8 +578,7 @@ void clearBannerSequence(int iconnum)
  */
 void playBannerSequence(int iconnum)
 {
-	if (bnriconframeseq[iconnum][currentbnriconframeseq[iconnum] + 1] == 0x0100)
-	{
+	if (bnriconframeseq[iconnum][currentbnriconframeseq[iconnum] + 1] == 0x0100) {
 		// Do nothing if icon isn't animated
 		bnriconPalLine[iconnum] = 0;
 		bnriconframenumY[iconnum] = 0;
@@ -595,30 +592,24 @@ void playBannerSequence(int iconnum)
 		bool flipH = SEQ_FLIPH(setframeseq);
 		bool flipV = SEQ_FLIPV(setframeseq);
 
-		if (flipH && flipV)
-		{
+		if (flipH && flipV) {
 			bannerFlip[iconnum] = GL_FLIP_H | GL_FLIP_V;
 		}
-		else if (!flipH && !flipV)
-		{
+		else if (!flipH && !flipV) {
 			bannerFlip[iconnum] = GL_FLIP_NONE;
 		}
-		else if (flipH && !flipV)
-		{
+		else if (flipH && !flipV) {
 			bannerFlip[iconnum] = GL_FLIP_H;
 		}
-		else if (!flipH && flipV)
-		{
+		else if (!flipH && flipV) {
 			bannerFlip[iconnum] = GL_FLIP_V;
 		}
 
 		bannerDelayNum[iconnum]++;
-		if (bannerDelayNum[iconnum] >= (setframeseq & 0x00FF))
-		{
+		if (bannerDelayNum[iconnum] >= (setframeseq & 0x00FF)) {
 			bannerDelayNum[iconnum] = 0x0000;
 			currentbnriconframeseq[iconnum]++;
-			if (bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]] == 0x0000)
-			{
+			if (bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]] == 0x0000) {
 				currentbnriconframeseq[iconnum] = 0; // Reset sequence
 			}
 		}

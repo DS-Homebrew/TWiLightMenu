@@ -94,8 +94,7 @@ using namespace std;
 void stop(void)
 {
 	//---------------------------------------------------------------------------------
-	while (1)
-	{
+	while (1) {
 		swiWaitForVBlank();
 	}
 }
@@ -107,8 +106,7 @@ void doPause(void)
 {
 	//---------------------------------------------------------------------------------
 	printf("Press start...\n");
-	while (1)
-	{
+	while (1) {
 		scanKeys();
 		if (keysDown() & KEY_START)
 			break;
@@ -119,8 +117,7 @@ void doPause(void)
 std::string ReplaceAll(std::string str, const std::string &from, const std::string &to)
 {
 	size_t start_pos = 0;
-	while ((start_pos = str.find(from, start_pos)) != std::string::npos)
-	{
+	while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
 		str.replace(start_pos, from.length(), to);
 		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
 	}
@@ -173,12 +170,10 @@ void loadMainMenu()
 
 void loadROMselect()
 {
-	/*if (ms().theme == TWLSettings::EThemeWood)
-	{
+	/*if (ms().theme == TWLSettings::EThemeWood) {
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
 	}
-	else*/ if (ms().theme == TWLSettings::EThemeR4 || ms().theme == TWLSettings::EThemeGBC)
-	{
+	else*/ if (ms().theme == TWLSettings::EThemeR4 || ms().theme == TWLSettings::EThemeGBC) {
 		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	}
 	else
@@ -193,11 +188,9 @@ void loadDSiThemeList()
 	DIR *dir;
 	struct dirent *ent;
 	std::string themeDir;
-	if ((dir = opendir(DSI_SYSTEM_UI_DIRECTORY)) != NULL)
-	{
+	if ((dir = opendir(DSI_SYSTEM_UI_DIRECTORY)) != NULL) {
 		// print all the files and directories within directory
-		while ((ent = readdir(dir)) != NULL)
-		{
+		while ((ent = readdir(dir)) != NULL) {
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
@@ -215,11 +208,9 @@ void load3DSThemeList()
 	DIR *dir;
 	struct dirent *ent;
 	std::string themeDir;
-	if ((dir = opendir(_3DS_SYSTEM_UI_DIRECTORY)) != NULL)
-	{
+	if ((dir = opendir(_3DS_SYSTEM_UI_DIRECTORY)) != NULL) {
 		// print all the files and directories within directory
-		while ((ent = readdir(dir)) != NULL)
-		{
+		while ((ent = readdir(dir)) != NULL) {
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
@@ -237,11 +228,9 @@ void loadAkThemeList()
 	DIR *dir;
 	struct dirent *ent;
 	std::string themeDir;
-	if ((dir = opendir(AK_SYSTEM_UI_DIRECTORY)) != NULL)
-	{
+	if ((dir = opendir(AK_SYSTEM_UI_DIRECTORY)) != NULL) {
 		// print all the files and directories within directory
-		while ((ent = readdir(dir)) != NULL)
-		{
+		while ((ent = readdir(dir)) != NULL) {
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
@@ -258,11 +247,9 @@ void loadR4ThemeList()
 	DIR *dir;
 	struct dirent *ent;
 	std::string themeDir;
-	if ((dir = opendir(R4_SYSTEM_UI_DIRECTORY)) != NULL)
-	{
+	if ((dir = opendir(R4_SYSTEM_UI_DIRECTORY)) != NULL) {
 		// print all the files and directories within directory 
-		while ((ent = readdir(dir)) != NULL)
-		{
+		while ((ent = readdir(dir)) != NULL) {
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
@@ -279,11 +266,9 @@ void loadUnlaunchBgList()
 	DIR *dir;
 	struct dirent *ent;
 	std::string themeDir;
-	if ((dir = opendir(UNLAUNCH_BG_DIRECTORY)) != NULL)
-	{
+	if ((dir = opendir(UNLAUNCH_BG_DIRECTORY)) != NULL) {
 		// print all the files and directories within directory 
-		while ((ent = readdir(dir)) != NULL)
-		{
+		while ((ent = readdir(dir)) != NULL) {
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
@@ -302,11 +287,9 @@ void loadFontList()
 	DIR *dir;
 	struct dirent *ent;
 	std::string fontDir;
-	if ((dir = opendir(FONT_DIRECTORY)) != NULL)
-	{
+	if ((dir = opendir(FONT_DIRECTORY)) != NULL) {
 		// print all the files and directories within directory
-		while ((ent = readdir(dir)) != NULL)
-		{
+		while ((ent = readdir(dir)) != NULL) {
 			// Reallocation here, but prevents our vector from being filled with
 
 			fontDir = ent->d_name;
@@ -323,11 +306,9 @@ void loadGbaBorderList()
 	DIR *dir;
 	struct dirent *ent;
 	std::string themeDir;
-	if ((dir = opendir(GBA_BORDER_DIRECTORY)) != NULL)
-	{
+	if ((dir = opendir(GBA_BORDER_DIRECTORY)) != NULL) {
 		// print all the files and directories within directory 
-		while ((ent = readdir(dir)) != NULL)
-		{
+		while ((ent = readdir(dir)) != NULL) {
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
@@ -345,11 +326,9 @@ void loadMenuSrldrList (const char* dirPath) {
 	DIR *dir;
 	struct dirent *ent;
 	std::string srldrDir;
-	if ((dir = opendir(dirPath)) != NULL)
-	{
+	if ((dir = opendir(dirPath)) != NULL) {
 		// print all the files and directories within directory 
-		while ((ent = readdir(dir)) != NULL)
-		{
+		while ((ent = readdir(dir)) != NULL) {
 			// Reallocation here, but prevents our vector from being filled with
 
 			srldrDir = ent->d_name;
@@ -365,8 +344,7 @@ void loadMenuSrldrList (const char* dirPath) {
 
 std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 {
-	switch ((TWLSettings::TTheme)optVal.get())
-	{
+	switch ((TWLSettings::TTheme)optVal.get()) {
 	case TWLSettings::EThemeDSi:
 		return Option(STR_SKINSEL_DSI, STR_AB_SETSKIN, Option::Str(&ms().dsi_theme), dsiThemeList);
 	case TWLSettings::EThemeR4:
@@ -560,8 +538,7 @@ void opt_update()
 			updateText = false;
 		}
 
-		if (!gui().isExited())
-		{
+		if (!gui().isExited()) {
 			snd().playBgMusic(ms().settingsMusic);
 		}
 
@@ -616,8 +593,7 @@ void defaultExitHandler()
 	}
 
 	if (isDSiMode() && sdFound() && ms().consoleModel >= 2 && sys().arm7SCFGLocked() &&
-	   (previousDSiWareExploit != ms().dsiWareExploit || previousSysRegion != ms().sysRegion))
-	{
+	   (previousDSiWareExploit != ms().dsiWareExploit || previousSysRegion != ms().sysRegion)) {
 		u32 currentSrBackendId[2] = {0};
 		u8 sysValue = 0;
 
@@ -686,16 +662,14 @@ void defaultExitHandler()
 	if (!isDSiMode()) {
 		chdir("fat:/");
 	}
-	if (ms().macroMode)
-	{
+	if (ms().macroMode) {
 		powerOff(PM_BACKLIGHT_TOP);
 	}
 	else
 	{
 		powerOn(PM_BACKLIGHT_TOP);
 	}
-	if (ms().showMainMenu)
-	{
+	if (ms().showMainMenu) {
 		loadMainMenu();
 	}
 	loadROMselect();
@@ -828,8 +802,7 @@ int main(int argc, char **argv)
 
 	srand(time(NULL));
 
-	if (sdFound() && ms().consoleModel < 2)
-	{
+	if (sdFound() && ms().consoleModel < 2) {
 		hiyaAutobootFound = (access("sd:/hiya/autoboot.bin", F_OK) == 0);
 	}
 
@@ -1352,8 +1325,7 @@ int main(int argc, char **argv)
 				{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
 	}
 
-	if (isDSiMode() && ms().consoleModel < 2)
-	{
+	if (isDSiMode() && ms().consoleModel < 2) {
 		// Actions do not have to bound to an object.
 		// See for exam here we have bound an option to
 		// hiyaAutobootFound.
@@ -1389,10 +1361,8 @@ int main(int argc, char **argv)
 		// Prep and show the first page.
 		.show();
 	//	stop();
-	while (1)
-	{
-		if (!gui().isExited())
-		{
+	while (1) {
+		if (!gui().isExited()) {
 			snd().playBgMusic(ms().settingsMusic);
 		}
 

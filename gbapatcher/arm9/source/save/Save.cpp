@@ -45,8 +45,7 @@ ITCM_CODE const save_type_t* save_findTag()
 {
 	u32  curAddr = 0x080000C0;
 	char saveTag[16];
-	while (curAddr < 0x08000000+romSize)
-	{
+	while (curAddr < 0x08000000+romSize) {
 		u32 fst = *(u32*)curAddr;
 		tonccpy(&saveTag, (u8*)curAddr, 16);
 		SaveType type = SAVE_TYPE_NONE;
@@ -61,10 +60,8 @@ ITCM_CODE const save_type_t* save_findTag()
 			type = SAVE_TYPE_EEPROM;
 		}
 
-		if (type != SAVE_TYPE_NONE)
-		{
-			for (int i = 0; i < SAVE_TYPE_COUNT; i++)
-			{
+		if (type != SAVE_TYPE_NONE) {
+			for (int i = 0; i < SAVE_TYPE_COUNT; i++) {
 				if (strncmp(saveTag, sSaveTypes[i].tag, sSaveTypes[i].tagLength) != 0)
 					continue;
 				return &sSaveTypes[i];

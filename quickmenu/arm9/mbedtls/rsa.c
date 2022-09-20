@@ -39,8 +39,7 @@ int rsa_public(rsa_context_t *ctx, const unsigned char *input, unsigned char *ou
 
 	MBEDTLS_MPI_CHK(mbedtls_mpi_read_binary(&T, input, ctx->len));
 
-	if (mbedtls_mpi_cmp_mpi(&T, &ctx->N) >= 0)
-	{
+	if (mbedtls_mpi_cmp_mpi(&T, &ctx->N) >= 0) {
 		ret = MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
 		goto cleanup;
 	}

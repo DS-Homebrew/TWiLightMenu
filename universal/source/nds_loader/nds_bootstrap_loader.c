@@ -154,8 +154,7 @@ int bootstrapHbRunNds (const void* loader, u32 loaderSize, u32 cluster, u32 ramD
 				argTempVal = *argChar;
 			}
 		}
-		if (argSize & 1)
-		{
+		if (argSize & 1) {
 			*argData = argTempVal;
 			++argData;
 		}

@@ -107,8 +107,7 @@ uint32_t crc32(const char *buf, size_t size)
 
 	len = 0;
 	nr=size;
-	for (len += nr, p = buf; nr--; ++p)
-	{
+	for (len += nr, p = buf; nr--; ++p) {
 		_CRC32_(crc, *p);
 	}
 	return ~crc;
