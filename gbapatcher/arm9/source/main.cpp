@@ -169,20 +169,17 @@ void gptc_patchRom()
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x50118) == 0x4014)
 			*(u16*)(0x08000000 + 0x50118) = 0x4000;
-	}
-	else if (gameCode == 0x454D4441) {
+	} else if (gameCode == 0x454D4441) {
 		//Doom (USA)
 		//Fix black screen crash
 		if (*(u16*)(0x08000000 + 0x51C) == 0x45B6)
 			*(u16*)(0x08000000 + 0x51C) = 0x4002;
-	}
-	else if (gameCode == 0x45443941 || gameCode == 0x50443941) {
+	} else if (gameCode == 0x45443941 || gameCode == 0x50443941) {
 		//Doom II (USA/Europe)
 		//Fix black screen crash
 		if (*(u16*)(0x08000000 + 0x2856) == 0x5281)
 			*(u16*)(0x08000000 + 0x2856) = 0x46C0;
-	}
-	else if (gameCode == 0x45474C41) {
+	} else if (gameCode == 0x45474C41) {
 		//Dragon Ball Z - The Legacy of Goku (USA)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x96E8) == 0x80A8)
@@ -210,8 +207,7 @@ void gptc_patchRom()
 			for (int i = 0; i < (int)sizeof(sDbzLoGUPatch2); i += 2)
 				*(u16*)(0x08000000 + 0xE32C + i) = *(u16*)&sDbzLoGUPatch2[i];
 		}
-	}
-	else if (gameCode == 0x50474C41) {
+	} else if (gameCode == 0x50474C41) {
 		//Dragon Ball Z - The Legacy of Goku (Europe)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x9948) == 0x80B0)
@@ -256,8 +252,7 @@ void gptc_patchRom()
 
 		if (*(u16*)(0x08000000 + 0x9992) == 0x7068)
 			*(u16*)(0x08000000 + 0x9992) = 0x46C0;
-	}
-	else if (gameCode == 0x45464C41) {
+	} else if (gameCode == 0x45464C41) {
 		//Dragon Ball Z - The Legacy of Goku II (USA)
 		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
 
@@ -267,8 +262,7 @@ void gptc_patchRom()
 
 		if (*(u16*)(0x08000000 + 0x3B8EAE) == 0x0003)
 			*(u16*)(0x08000000 + 0x3B8EAE) = 0;
-	}
-	else if (gameCode == 0x4A464C41) {
+	} else if (gameCode == 0x4A464C41) {
 		//Dragon Ball Z - The Legacy of Goku II International (Japan)
 		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
 
@@ -278,8 +272,7 @@ void gptc_patchRom()
 
 		if (*(u16*)(0x08000000 + 0x3FC906) == 0x0003)
 			*(u16*)(0x08000000 + 0x3FC906) = 0;
-	}
-	else if (gameCode == 0x50464C41) {
+	} else if (gameCode == 0x50464C41) {
 		//Dragon Ball Z - The Legacy of Goku II (Europe)
 		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
 
@@ -289,8 +282,7 @@ void gptc_patchRom()
 
 		if (*(u16*)(0x08000000 + 0x6F42C2) == 0x0003)
 			*(u16*)(0x08000000 + 0x6F42C2) = 0;
-	}
-	else if (gameCode == 0x45464C42) {
+	} else if (gameCode == 0x45464C42) {
 		//2 Games in 1 - Dragon Ball Z - The Legacy of Goku I & II (USA)
 		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
 
@@ -329,8 +321,7 @@ void gptc_patchRom()
 
 		if (*(u16*)(0x08000000 + 0xBB9026) == 0x0003)
 			*(u16*)(0x08000000 + 0xBB9026) = 0;
-	}
-	else if (gameCode == 0x45424442) {
+	} else if (gameCode == 0x45424442) {
 		//Dragon Ball Z - Taiketsu (USA)
 		//Fix "game cannot be played on this hardware" error
 		if (*(u16*)(0x08000000 + 0x2BD54) == 0x7818)
@@ -356,8 +347,7 @@ void gptc_patchRom()
 
 		if (*(u16*)(0x08000000 + 0x2BDB2) == 0x7008)
 			*(u16*)(0x08000000 + 0x2BDB2) = 0x1C00;
-	}
-	else if (gameCode == 0x50424442) {
+	} else if (gameCode == 0x50424442) {
 		//Dragon Ball Z - Taiketsu (Europe)
 		//Fix "game cannot be played on this hardware" error
 		if (*(u16*)(0x08000000 + 0x3FE08) == 0x7818)
@@ -383,8 +373,7 @@ void gptc_patchRom()
 
 		if (*(u16*)(0x08000000 + 0x3FE66) == 0x7008)
 			*(u16*)(0x08000000 + 0x3FE66) = 0x1C00;
-	}
-	else if (gameCode == 0x45334742) {
+	} else if (gameCode == 0x45334742) {
 		//Dragon Ball Z - Buu's Fury (USA)
 		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
 
@@ -403,12 +392,10 @@ void gptc_patchRom()
 
 		if (*(u16*)(0x08000000 + 0x8B90) == 0x7071)
 			*(u16*)(0x08000000 + 0x8B90) = 0;
-	}
-	else if (gameCode == 0x45345442) {
+	} else if (gameCode == 0x45345442) {
 		//Dragon Ball GT - Transformation (USA)
 		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
-	}
-	else if (gameCode == 0x45465542) {
+	} else if (gameCode == 0x45465542) {
 		//2 Games in 1 - Dragon Ball Z - Buu's Fury & Dragon Ball GT - Transformation (USA)
 		tonccpy((u16*)0x080000E0, &nop, sizeof(u32));	// Fix white screen crash
 		tonccpy((u16*)0x080300E0, &nop, sizeof(u32));
@@ -429,74 +416,62 @@ void gptc_patchRom()
 
 		if (*(u16*)(0x08000000 + 0x38B90) == 0x7071)
 			*(u16*)(0x08000000 + 0x38B90) = 0;
-	}
-	else if (gameCode == 0x45564442) {
+	} else if (gameCode == 0x45564442) {
 		//Dragon Ball - Advanced Adventure (USA)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x10C240) == 0x8008)
 			*(u16*)(0x08000000 + 0x10C240) = 0x46C0;
-	}
-	else if (gameCode == 0x50564442) {
+	} else if (gameCode == 0x50564442) {
 		//Dragon Ball - Advanced Adventure (Europe)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x10CE3C) == 0x8008)
 			*(u16*)(0x08000000 + 0x10CE3C) = 0x46C0;
-	}
-	else if (gameCode == 0x4A564442) {
+	} else if (gameCode == 0x4A564442) {
 		//Dragon Ball - Advanced Adventure (Japan)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x10B078) == 0x8008)
 			*(u16*)(0x08000000 + 0x10B078) = 0x46C0;
-	}
-	else if (gameCode == 0x454B3842) {
+	} else if (gameCode == 0x454B3842) {
 		//Kirby and the Amazing Mirror (USA)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x1515A4) == 0x8008)
 			*(u16*)(0x08000000 + 0x1515A4) = 0x46C0;
-	}
-	else if (gameCode == 0x504B3842) {
+	} else if (gameCode == 0x504B3842) {
 		//Kirby and the Amazing Mirror (Europe)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x151EE0) == 0x8008)
 			*(u16*)(0x08000000 + 0x151EE0) = 0x46C0;
-	}
-	else if (gameCode == 0x4A4B3842) {
+	} else if (gameCode == 0x4A4B3842) {
 		//Hoshi no Kirby - Kagami no Daimeikyuu (Japan) (V1.1)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x151564) == 0x8008)
 			*(u16*)(0x08000000 + 0x151564) = 0x46C0;
-	}
-	else if (gameCode == 0x45533342) {
+	} else if (gameCode == 0x45533342) {
 		//Sonic Advance 3 (USA)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0xBB67C) == 0x8008)
 			*(u16*)(0x08000000 + 0xBB67C) = 0x46C0;
-	}
-	else if (gameCode == 0x50533342) {
+	} else if (gameCode == 0x50533342) {
 		//Sonic Advance 3 (Europe)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0xBBA04) == 0x8008)
 			*(u16*)(0x08000000 + 0xBBA04) = 0x46C0;
-	}
-	else if (gameCode == 0x4A533342) {
+	} else if (gameCode == 0x4A533342) {
 		//Sonic Advance 3 (Japan)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0xBB9F8) == 0x8008)
 			*(u16*)(0x08000000 + 0xBB9F8) = 0x46C0;
-	}
-	else if (gameCode == 0x45415741 || gameCode == 0x4A415741) {
+	} else if (gameCode == 0x45415741 || gameCode == 0x4A415741) {
 		//Wario Land 4/Advance (USA/Europe/Japan)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x726) == 0x8008)
 			*(u16*)(0x08000000 + 0x726) = 0x46C0;
-	}
-	else if (gameCode == 0x43415741) {
+	} else if (gameCode == 0x43415741) {
 		//Wario Land Advance (iQue)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0xE92) == 0x8008)
 			*(u16*)(0x08000000 + 0xE92) = 0x46C0;
-	}
-	else if (gameCode == 0x45575A52) {
+	} else if (gameCode == 0x45575A52) {
 		//WarioWare: Twisted! (USA)
 		//Patch out tilt controls
 		if (*(u16*)(0x08000000 + 0x1348) == 0x8800)
@@ -508,8 +483,7 @@ void gptc_patchRom()
 
 			tonccpy((u8*)0x08E93C6C, &wwTwistedPatch, 0xF0);
 		}
-	}
-	else if (gameCode == 0x4547594B) {
+	} else if (gameCode == 0x4547594B) {
 		//Yoshi Topsy-Turvy (USA)
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x16E4) == 0x8008)

@@ -309,9 +309,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 				argTempVal |= (*argChar) << 8;
 				*argData = argTempVal;
 				++argData;
-			}
-			else
-			{
+			} else {
 				argTempVal = *argChar;
 			}
 		}

@@ -930,30 +930,22 @@ void getGameInfo(bool isDir, const char* name)
 				if (rc != 0) {
 					// stat failed
 					clearBannerSequence();
-				}
-				else if (S_ISDIR(st.st_mode)) {
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					clearBannerSequence();
-				}
-				else
-				{
+				} else {
 					getGameInfo(false, p);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				clearBannerSequence();
 			}
-		}
-		else
-		{
+		} else {
 			clearBannerSequence();
 		}
 		// clean up the allocated line
 		free(line);
-	}
-	else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp;
 		int ret;
@@ -1113,8 +1105,7 @@ void iconUpdate(bool isDir, const char* name)
 	if (isDir) {
 		// icon
 		clearIcon();
-	}
-	else if (customIcon) {
+	} else if (customIcon) {
 		if (customIcon == -1) {
 			loadUnkIcon();
 		} else if (bnriconisDSi) {
@@ -1122,8 +1113,7 @@ void iconUpdate(bool isDir, const char* name)
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, false);
 		}
-	}
-	else if (extension(name, {".argv"})) {
+	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -1168,30 +1158,22 @@ void iconUpdate(bool isDir, const char* name)
 				if (rc != 0) {
 					// stat failed
 					clearIcon();
-				}
-				else if (S_ISDIR(st.st_mode)) {
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					clearIcon();
-				}
-				else
-				{
+				} else {
 					iconUpdate(false, p);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				clearIcon();
 			}
-		}
-		else
-		{
+		} else {
 			clearIcon();
 		}
 		// clean up the allocated line
 		free(line);
-	}
-	else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp;
 		unsigned int iconTitleOffset;
@@ -1312,8 +1294,7 @@ void titleUpdate(bool isDir, const char* name)
 		strcpy(titleToDisplay[2], lineCount > 2 ? lines[2].c_str() : "");
 
 		writeBannerText(lineCount-1, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
-	}
-	else if (extension(name, {".argv"})) {
+	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -1358,30 +1339,22 @@ void titleUpdate(bool isDir, const char* name)
 				if (rc != 0) {
 					// stat failed
 					writeBannerText(0, "(can't find argument!)", "", "");
-				}
-				else if (S_ISDIR(st.st_mode)) {
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					writeBannerText(1, "(invalid argv file!)", "This is a directory.", "");
-				}
-				else
-				{
+				} else {
 					titleUpdate(false, p);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				writeBannerText(1, "(invalid argv file!)", "No .nds/.app file.", "");
 			}
-		}
-		else
-		{
+		} else {
 			writeBannerText(0, "(no argument!)", "", "");
 		}
 		// clean up the allocated line
 		free(line);
-	}
-	else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || customIcon == 2) {
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || customIcon == 2) {
 		// this is an nds/app file!
 		// or a file with custom banner text
 		if (customIcon != 2) {

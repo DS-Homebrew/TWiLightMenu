@@ -321,8 +321,7 @@ bool FAT_InitFiles (bool initCard)
 	if (((globalBuffer[0x36] == 'F') && (globalBuffer[0x37] == 'A') && (globalBuffer[0x38] == 'T')) // Check if there is a FAT string, which indicates this is a boot sector
 	 || ((globalBuffer[0x52] == 'F') && (globalBuffer[0x53] == 'A') && (globalBuffer[0x54] == 'T'))) { // Check for FAT32
 		bootSector = 0;
-	}
-	else	// This is an MBR
+	} else	// This is an MBR
 	{
 		// Find first valid partition from MBR
 		// First check for an active partition
@@ -347,17 +346,13 @@ bool FAT_InitFiles (bool initCard)
 	// Store required information about the file system
 	if (bootSec->bpb.sectorsPerFAT != 0) {
 		discSecPerFAT = bootSec->bpb.sectorsPerFAT;
-	}
-	else
-	{
+	} else {
 		discSecPerFAT = bootSec->extBlock.fat32.sectorsPerFAT32;
 	}
 	
 	if (bootSec->bpb.numSectorsSmall != 0) {
 		discNumSec = bootSec->bpb.numSectorsSmall;
-	}
-	else
-	{
+	} else {
 		discNumSec = bootSec->bpb.numSectors;
 	}
 
@@ -371,19 +366,15 @@ bool FAT_InitFiles (bool initCard)
 
 	if ((discNumSec - discData) / bootSec->bpb.sectorsPerCluster < 4085) {
 		discFileSystem = FS_FAT12;
-	}
-	else if ((discNumSec - discData) / bootSec->bpb.sectorsPerCluster < 65525) {
+	} else if ((discNumSec - discData) / bootSec->bpb.sectorsPerCluster < 65525) {
 		discFileSystem = FS_FAT16;
-	}
-	else
-	{
+	} else {
 		discFileSystem = FS_FAT32;
 	}
 
 	if (discFileSystem != FS_FAT32) {
 		discRootDirClus = FAT16_ROOT_DIR_CLUSTER;
-	}
-	else	// Set up for the FAT32 way
+	} else	// Set up for the FAT32 way
 	{
 		discRootDirClus = bootSec->extBlock.fat32.rootClus;
 		// Check if FAT mirroring is enabled
@@ -444,8 +435,7 @@ u32 getBootFileCluster (const char* bootName)
 					notFound = true;
 				}
 				firstSector = FAT_ClustToSect(wrkDirCluster);		
-			}
-			else if ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER) && (wrkDirSector == (discData - discRootDir))) {
+			} else if ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER) && (wrkDirSector == (discData - discRootDir))) {
 				notFound = true;	// Got to end of root dir
 			}
 			CARD_ReadSector (firstSector + wrkDirSector, globalBuffer);

@@ -154,9 +154,7 @@ void playBannerSequence(int num)
 		bnriconPalLine[num] = 0;
 		bnriconframenumY[num] = 0;
 		bannerFlip[num] = GL_FLIP_NONE;
-	}
-	else
-	{
+	} else {
 		u16 setframeseq = bnriconframeseq[num][currentbnriconframeseq[num]];
 		bnriconPalLine[num] = SEQ_PAL(setframeseq);
 		bnriconframenumY[num] =  SEQ_BMP(setframeseq);
@@ -165,14 +163,11 @@ void playBannerSequence(int num)
 
 		if (flipH && flipV) {
 			bannerFlip[num] = GL_FLIP_H | GL_FLIP_V;
-		}
-		else if (!flipH && !flipV) {
+		} else if (!flipH && !flipV) {
 			bannerFlip[num] = GL_FLIP_NONE;
-		}
-		else if (flipH && !flipV) {
+		} else if (flipH && !flipV) {
 			bannerFlip[num] = GL_FLIP_H;
-		}
-		else if (!flipH && flipV) {
+		} else if (!flipH && flipV) {
 			bannerFlip[num] = GL_FLIP_V;
 		}
 

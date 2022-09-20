@@ -172,12 +172,9 @@ void loadROMselect()
 {
 	/*if (ms().theme == TWLSettings::EThemeWood) {
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
-	}
-	else*/ if (ms().theme == TWLSettings::EThemeR4 || ms().theme == TWLSettings::EThemeGBC) {
+	} else*/ if (ms().theme == TWLSettings::EThemeR4 || ms().theme == TWLSettings::EThemeGBC) {
 		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true, false, -1);
-	}
-	else
-	{
+	} else {
 		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	}
 }
@@ -664,9 +661,7 @@ void defaultExitHandler()
 	}
 	if (ms().macroMode) {
 		powerOff(PM_BACKLIGHT_TOP);
-	}
-	else
-	{
+	} else {
 		powerOn(PM_BACKLIGHT_TOP);
 	}
 	if (ms().showMainMenu) {

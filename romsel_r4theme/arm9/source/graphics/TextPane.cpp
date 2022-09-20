@@ -79,17 +79,13 @@ void TextPane::slideTransition(bool transitionIn, bool right, int delay, int cli
 		if (transitionIn) {
 			it->x = TextEntry::PRECISION * (it->initX = it->finalX - SLIDE_X);
 			it->delayShown = false;
-		}
-		else
-		{
+		} else {
 			if (it->delay > TextEntry::ACTIVE) {
 				it->finalX = it->x / TextEntry::PRECISION;
 				it->finalY = it->y / TextEntry::PRECISION;
 				it->delay = TextEntry::ACTIVE;
 				it->delayShown = false;
-			}
-			else
-			{
+			} else {
 				it->initX = it->x / TextEntry::PRECISION;
 				it->initY = it->y / TextEntry::PRECISION;
 				it->finalX = it->x / TextEntry::PRECISION + SLIDE_X;

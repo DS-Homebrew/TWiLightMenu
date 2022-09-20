@@ -9,50 +9,42 @@ void dsi_set_key( dsi_context* ctx,
 				 const unsigned char key[16] )
 {
 	unsigned char keyswap[16];
-  u128_swap(keyswap, key) ;
+	u128_swap(keyswap, key) ;
 
 	aes_setkey_enc(&ctx->aes, keyswap, 128);
 }
 
 void dsi_add_ctr( dsi_context* ctx,
                   unsigned int carry)
-{    
-    unsigned int counter[4];
-    unsigned char *outctr = (unsigned char*)ctx->ctr;
-    int sum;
-    signed int i;
+{
+	unsigned int counter[4];
+	unsigned char *outctr = (unsigned char*)ctx->ctr;
+	int sum;
+	signed int i;
 
-    for (i = 0; i < 4; i++)
-        counter[i] = (outctr[i * 4 + 0] << 24) | (outctr[i * 4 + 1] << 16) |
-                     (outctr[i * 4 + 2] <<  8) | (outctr[i * 4 + 3] << 0);
+	for (i = 0; i < 4; i++)
+		counter[i] = (outctr[i * 4 + 0] << 24) | (outctr[i * 4 + 1] << 16) |
+		             (outctr[i * 4 + 2] <<  8) | (outctr[i * 4 + 3] << 0);
 
-    for (i = 3; i >= 0; i--)
-    {
-        sum = counter[i] + carry;
+	for (i = 3; i >= 0; i--) {
+		sum = counter[i] + carry;
+		carry = (uint)(sum < counter[i]);
 
-        if (sum < counter[i])
-            carry = 1;
-        else
-            carry = 0;
+		counter[i] = sum;
+	}
 
-        counter[i] = sum;
-    }
-
-    for (i = 0; i < 4; i++)
-    {
-        outctr[i * 4 + 0] = counter[i] >> 24;
-        outctr[i * 4 + 1] = counter[i] >> 16;
-        outctr[i * 4 + 2] = counter[i] >> 8;
-        outctr[i * 4 + 3] = counter[i] >> 0;
-    }
+	for (i = 0; i < 4; i++) {
+		outctr[i * 4 + 0] = counter[i] >> 24;
+		outctr[i * 4 + 1] = counter[i] >> 16;
+		outctr[i * 4 + 2] = counter[i] >> 8;
+		outctr[i * 4 + 3] = counter[i] >> 0;
+	}
 }
-				  
+
 void dsi_set_ctr( dsi_context* ctx,
 				  const unsigned char ctr[16] )
 {
-	int i;
-
-	for (i=0; i<16; i++)
+	for (int i = 0; i < 16; i++)
 		ctx->ctr[i] = ctr[15-i];
 }
 
@@ -69,10 +61,10 @@ void dsi_crypt_ctr( dsi_context* ctx,
                     void* out,
                     unsigned int len)
 {
-    unsigned int i;
-    for (i = 0; i < len; i += 0x10) {
-        dsi_crypt_ctr_block(ctx, in+i, out+i);
-		}
+	unsigned int i;
+	for (i = 0; i < len; i += 0x10) {
+		dsi_crypt_ctr_block(ctx, in+i, out+i);
+	}
 }
 
 void dsi_crypt_ctr_block( dsi_context* ctx, 
@@ -90,9 +82,7 @@ void dsi_crypt_ctr_block( dsi_context* ctx,
 		for (i=0; i<16; i++) {
 			output[i] = stream[15-i] ^ input[i];
 		}
-	}
-	else
-	{
+	} else {
 		for (i=0; i<16; i++)
 			output[i] = stream[15-i];
 	}
@@ -109,8 +99,6 @@ void dsi_init_ccm( dsi_context* ctx,
 				   unsigned char nonce[12] )
 {
 	int i;
-
-
 
 	dsi_set_key(ctx, key);
 
@@ -181,9 +169,7 @@ void dsi_decrypt_ccm_block( dsi_context* ctx,
 
 		for (i=0; i<16; i++)
 			ctx->mac[i] ^= output[15-i];
-	}
-	else
-	{
+	} else {
 		for (i=0; i<16; i++)
 			ctx->mac[i] ^= input[15-i];
 	}
@@ -273,7 +259,6 @@ void dsi_es_set_random_nonce( dsi_es_context* ctx )
 {
 	ctx->randomnonce = 1;
 }
-							 
 
 int dsi_es_decrypt( dsi_es_context* ctx,
 				    unsigned char* buffer,
@@ -302,26 +287,23 @@ int dsi_es_decrypt( dsi_es_context* ctx,
 
 	chksize = (scratchpad[13]<<16) | (scratchpad[14]<<8) | (scratchpad[15]<<0);
 
-	if (scratchpad[0] != 0x3A)
-  {
+	if (scratchpad[0] != 0x3A) {
 		return -1;
-  }
-     
-  if (chksize != size)
-  {
-      return -2;
-  }
+	}
+
+	if (chksize != size) {
+		return -2;
+	}
 
 	memcpy(nonce, metablock + 17, 12);
 
 	dsi_init_ccm(&cryptoctx, ctx->key, 16, size, 0, nonce);
 	dsi_decrypt_ccm(&cryptoctx, buffer, buffer, size, genmac);
 
-	if (memcmp(genmac, chkmac, 16) != 0)
-  {
+	if (memcmp(genmac, chkmac, 16) != 0) {
 		return -3;
-  }
-  
+	}
+
 	return 0;
 }
 
@@ -343,9 +325,7 @@ void dsi_es_encrypt( dsi_es_context* ctx,
 
 		for (i=0; i<12; i++)
 			nonce[i] = rand();
-	}
-	else
-	{
+	} else {
 		memcpy(nonce, ctx->nonce, 12);
 	}
 

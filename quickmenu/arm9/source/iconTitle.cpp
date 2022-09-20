@@ -872,30 +872,22 @@ void getGameInfo(int num, bool isDir, const char* name)
 				if (rc != 0) {
 					// stat failed
 					clearBannerSequence(num);
-				}
-				else if (S_ISDIR(st.st_mode)) {
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					clearBannerSequence(num);
-				}
-				else
-				{
+				} else {
 					getGameInfo(num, false, p);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				clearBannerSequence(num);
 			}
-		}
-		else
-		{
+		} else {
 			clearBannerSequence(num);
 		}
 		// clean up the allocated line
 		free(line);
-	}
-	else if (strcmp(name, "slot1")==0
+	} else if (strcmp(name, "slot1")==0
 			 || extension(name, ".nds")
 			 || extension(name, ".dsi")
 			 || extension(name, ".ids")
@@ -908,9 +900,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 		if (isSlot1) {
 			cardRead(0, &ndsHeader, sizeof(ndsHeader));
-		}
-		else
-		{
+		} else {
 			// open file for reading info
 			fp = fopen(name, "rb");
 			if (fp == NULL) {
@@ -1017,9 +1007,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 		if (isSlot1) {
 			if ((ndsCardHeader.bannerOffset > 0) && cardInited) {
 				cardRead(ndsCardHeader.bannerOffset, &ndsBanner, NDS_BANNER_SIZE_DSi);
-			}
-			else
-			{
+			} else {
 				FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
@@ -1034,9 +1022,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 				return;
 			}
-		}
-		else
-		{
+		} else {
 			ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
 			if (ret == 0)
 				ret = fread(&ndsBanner, NDS_BANNER_SIZE_DSi, 1, fp); // read if seek succeed
@@ -1167,24 +1153,17 @@ void iconUpdate(int num, bool isDir, const char* name)
 				if (rc != 0) {
 					// stat failed
 					clearIcon(num);
-				}
-				else if (S_ISDIR(st.st_mode)) {
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					clearIcon(num);
-				}
-				else
-				{
+				} else {
 					iconUpdate(num, false, p);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				clearIcon(num);
 			}
-		}
-		else
-		{
+		} else {
 			clearIcon(num);
 		}
 		// clean up the allocated line

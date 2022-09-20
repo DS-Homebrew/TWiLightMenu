@@ -162,8 +162,7 @@ int checkRomAP(FILE *ndsFile)
 	 || (memcmp(game_TID, "CNSX", 4) == 0)   	// Naruto Shippuden: Naruto vs Sasuke (Europe)
 	 || (memcmp(game_TID, "BH2J", 4) == 0)) {	// Super Scribblenauts (Japan)
 		return 0;
-	}
-	else
+	} else
 	// Check for ROMs that have AP measures.
 	if ((memcmp(game_TID, "VETP", 4) == 0)   	// 1000 Cooking Recipes from Elle a Table (Europe)
 	 || (memcmp(game_TID, "CQQP", 4) == 0)   	// AFL Mascot Manor (Australia)
@@ -599,9 +598,7 @@ void playBannerSequence()
 		bnriconPalLine = 0;
 		bnriconframenumY = 0;
 		bannerFlip = GL_FLIP_NONE;
-	}
-	else
-	{
+	} else {
 		u16 setframeseq = bnriconframeseq[currentbnriconframeseq];
 		bnriconPalLine = SEQ_PAL(setframeseq);
 		bnriconframenumY =  SEQ_BMP(setframeseq);
@@ -610,14 +607,11 @@ void playBannerSequence()
 
 		if (flipH && flipV) {
 			bannerFlip = GL_FLIP_H | GL_FLIP_V;
-		}
-		else if (!flipH && !flipV) {
+		} else if (!flipH && !flipV) {
 			bannerFlip = GL_FLIP_NONE;
-		}
-		else if (flipH && !flipV) {
+		} else if (flipH && !flipV) {
 			bannerFlip = GL_FLIP_H;
-		}
-		else if (!flipH && flipV) {
+		} else if (!flipH && flipV) {
 			bannerFlip = GL_FLIP_V;
 		}
 

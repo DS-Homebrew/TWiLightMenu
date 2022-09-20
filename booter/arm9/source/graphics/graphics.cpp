@@ -112,9 +112,7 @@ void vBlankHandler()
 		/*if (renderingTop) {
 			drawBG(mainBgImage);
 			updateText(renderingTop);
-		}
-		else
-		{*/
+		} else {*/
 			drawBG(subBgImage);
 			glColor(RGB15(31, 31, 31));
 			updateText(false);

@@ -59,9 +59,7 @@ static void trimString(std::string &str)
 	size_t first = str.find_first_not_of(" \t"), last;
 	if (first == str.npos) {
 		str = "";
-	}
-	else
-	{
+	} else {
 		last = str.find_last_not_of(" \t");
 		if (first > 0 || (last + 1) < str.length())
 			str = str.substr(first, last - first + 1);
@@ -296,8 +294,7 @@ std::string CIniFile::GetFileString(const std::string &Section, const std::strin
 								m_bLastResult = true;
 								return strValue;
 							}
-						}
-						else if ('[' == strline[0]) {
+						} else if ('[' == strline[0]) {
 							break;
 						}
 					}
@@ -344,8 +341,7 @@ void CIniFile::SetFileString(const std::string &Section, const std::string &Item
 							ReplaceLine(ii - 1, Item + (gbar2Fix ? "=" : " = ") + Value);
 							return;
 						}
-					}
-					else if ('[' == strline[0]) {
+					} else if ('[' == strline[0]) {
 						InsertLine(ii - 1, Item + (gbar2Fix ? "=" : " = ") + Value);
 						return;
 					}

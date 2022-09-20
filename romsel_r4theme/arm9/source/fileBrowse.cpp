@@ -1037,8 +1037,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				ms().saveSettings();
 
 				return "null";
-			}
-			else if (isTwlm || (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
+			} else if (isTwlm || (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
 			|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str()))))) {
 				cannotLaunchMsg();
 			} else {
@@ -1112,21 +1111,18 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							proceedToLaunch = dsiWareRAMLimitMsg(game_TID, dirContents.at(fileOffset).name);
 						}
 					}
-				}
-				else if (isHomebrew == 1) {
+				} else if (isHomebrew == 1) {
 					loadPerGameSettings(dirContents.at(fileOffset).name);
 					if (requiresRamDisk && perGameSettings_ramDiskNo == -1) {
 						proceedToLaunch = false;
 						ramDiskMsg();
 					}
-				}
-				else if (bnrRomType == 7) {
+				} else if (bnrRomType == 7) {
 					if (ms().mdEmulator==1 && getFileSize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
 						proceedToLaunch = false;
 						mdRomTooBig();
 					}
-				}
-				else if ((bnrRomType == 8 || (bnrRomType == 11 && ms().smsGgInRam))
+				} else if ((bnrRomType == 8 || (bnrRomType == 11 && ms().smsGgInRam))
 							&& isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()) {
 					proceedToLaunch = false;
 					cannotLaunchMsg();

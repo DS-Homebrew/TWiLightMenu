@@ -320,8 +320,7 @@ bool FAT_InitFiles (bool initCard)
 	if (((globalBuffer[0x36] == 'F') && (globalBuffer[0x37] == 'A') && (globalBuffer[0x38] == 'T')) // Check if there is a FAT string, which indicates this is a boot sector
 	 || ((globalBuffer[0x52] == 'F') && (globalBuffer[0x53] == 'A') && (globalBuffer[0x54] == 'T'))) { // Check for FAT32
 		bootSector = 0;
-	}
-	else	// This is an MBR
+	} else	// This is an MBR
 	{
 		// Find first valid partition from MBR
 		// First check for an active partition

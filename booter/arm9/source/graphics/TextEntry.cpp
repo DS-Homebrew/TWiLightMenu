@@ -42,8 +42,7 @@ int TextEntry::calcAlpha()
 		else
 			alpha += MAX_ALPHA;
 		return max(alpha, 0);
-	}
-	else
+	} else
 		return MAX_ALPHA;
 }
 
@@ -57,9 +56,7 @@ bool TextEntry::update()
 		if (anim == AnimType::IN) {
 			dX = (finalX * TextEntry::PRECISION - x) / invAccel;
 			dY = (finalY * TextEntry::PRECISION - y) / invAccel;
-		}
-		else
-		{
+		} else {
 			int diffX = finalX * TextEntry::PRECISION - x;
 			int diffY = finalY * TextEntry::PRECISION - y;
 			dX = (diffX == 0 ? 0 : 1000 / (diffX));
