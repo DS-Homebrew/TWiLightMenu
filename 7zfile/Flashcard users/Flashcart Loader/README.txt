@@ -3,12 +3,14 @@ Please see the following list for which flashcart loader to use.
 Acekard 2(i) folder:
 - Acekard 2, 2.1, 2i
 - R4 Ultra, R4i Ultra
-- R4iTT 3DS
-- R4i3D carts 2012 or later
-- r4isdhc.com NEW or 2013 carts
+- R4iTT 3DS NEW, RTS
+- R4i3D NEW, 2012 or later
+- r4isdhc.com NEW, 2013
+- r4isdhc.com Dual-Core (no year number)
 - r4isdhc.hk carts before 2019
 - translucent r4igold.cc 3DS carts
 - r4i-gold.me carts 2013 or later
+- r4infinity.com Dual-Core
 
 Ace3DS+ folder:
 - Ace3DS+
