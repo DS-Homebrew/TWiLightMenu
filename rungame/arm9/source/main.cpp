@@ -223,8 +223,7 @@ int lastRunROM() {
 
 			std::string filename = ms().romPath[ms().previousUsedDevice];
 			const size_t last_slash_idx = filename.find_last_of("/");
-			if (std::string::npos != last_slash_idx)
-			{
+			if (std::string::npos != last_slash_idx) {
 				filename.erase(0, last_slash_idx + 1);
 			}
 
@@ -243,8 +242,7 @@ int lastRunROM() {
 
 			fclose(f_nds_file);
 
-			if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().previousUsedDevice || (unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode)))
-			{
+			if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().previousUsedDevice || (unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))) {
 				std::string savepath;
 
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
@@ -373,8 +371,7 @@ int lastRunROM() {
 
 			std::string filename = ms().romPath[ms().previousUsedDevice];
 			const size_t last_slash_idx = filename.find_last_of("/");
-			if (std::string::npos != last_slash_idx)
-			{
+			if (std::string::npos != last_slash_idx) {
 				filename.erase(0, last_slash_idx + 1);
 			}
 
@@ -457,8 +454,7 @@ int lastRunROM() {
 
 					std::string filename = ms().romPath[ms().previousUsedDevice];
 					const size_t last_slash_idx = filename.find_last_of("/");
-					if (std::string::npos != last_slash_idx)
-					{
+					if (std::string::npos != last_slash_idx) {
 						filename.erase(0, last_slash_idx + 1);
 					}
 
@@ -556,12 +552,10 @@ int lastRunROM() {
 				std::string prvnameUl = ReplaceAll(filename, typeToReplace, ".prv");
 				std::string pubpathUl = ms().romfolder[ms().previousUsedDevice] + "/" + pubnameUl;
 				std::string prvpathUl = ms().romfolder[ms().previousUsedDevice] + "/" + prvnameUl;
-				if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0)
-				{
+				if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 					rename(ms().dsiWarePubPath.c_str(), pubpathUl.c_str());
 				}
-				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0)
-				{
+				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
 					rename(ms().dsiWarePrvPath.c_str(), prvpathUl.c_str());
 				}
 
@@ -627,8 +621,7 @@ int lastRunROM() {
 		case TWLSettings::ESNEmulDSLaunch:
 			{
 				const char* ndsToBoot = (char*)"sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
-				if (!isDSiMode() || access(argarray[0], F_OK) != 0)
-				{
+				if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
 					ndsToBoot = (char*)"fat:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
 				}
 				argarray.at(0) = (char*)"fat:/SNEmulDS.srl";

@@ -48,13 +48,11 @@ SystemDetails::SystemDetails()
 		*(vu32*)0x03700000 = wordBak;
 	}
 
-	if (CHECK_BIT(status, REGSCFG_BIT) == 0)
-	{
+	if (CHECK_BIT(status, REGSCFG_BIT) == 0) {
 		_arm7SCFGLocked = true; // If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	}
 
-	if (CHECK_BIT(status, SNDEXCNT_BIT) != 0)
-	{
+	if (CHECK_BIT(status, SNDEXCNT_BIT) != 0) {
 		_isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
 	}
 
@@ -117,8 +115,7 @@ void SystemDetails::initFilesystem(const char *runningPath)
 	*(u32*)(0x2FFFD0C) = 0;
 	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
 
-	if (!_nitroFsInitOk && runningPath != NULL)
-	{
+	if (!_nitroFsInitOk && runningPath != NULL) {
 		_nitroFsInitOk = nitroFSInit(runningPath) == 1;
 	}
 }

@@ -19,15 +19,13 @@ public:
 
 	SwitchState(const SwitchState& orig) : state(orig.state), SIZE(orig.SIZE) { }
 
-	SwitchState& operator++()
-	{
+	SwitchState& operator++() {
 		if (++state >= SIZE)
 			state = 0;
 		return *this;
 	}
 
-	SwitchState operator++(int)
-	{
+	SwitchState operator++(int) {
 		SwitchState tmp(*this);
 		if (++state >= SIZE)
 			state = 0;

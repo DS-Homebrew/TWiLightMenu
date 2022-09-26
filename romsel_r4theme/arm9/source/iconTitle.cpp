@@ -183,8 +183,7 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 	const int TILE_SIZE_Y = 8;
 	const int TILE_SIZE_X = 4;
 	int index = 0;
-	for (int tileY = 0; tileY < PY / TILE_SIZE_Y; ++tileY)
-	{
+	for (int tileY = 0; tileY < PY / TILE_SIZE_Y; ++tileY) {
 		for (int tileX = 0; tileX < PX / TILE_SIZE_X; ++tileX)
 			for (int pY = 0; pY < TILE_SIZE_Y; ++pY)
 				for (int pX = 0; pX < TILE_SIZE_X; ++pX)//TILE_SIZE/2 since one u8 equals two pixels (4 bit depth)
@@ -918,56 +917,42 @@ void getGameInfo(bool isDir, const char* name)
 		// done with the file at this point
 		fclose(fp);
 
-		if (p && *p)
-		{
+		if (p && *p) {
 			// we found an argument
 			struct stat st;
 
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"}))
-			{
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
-				if (rc != 0)
-				{
+				if (rc != 0) {
 					// stat failed
 					clearBannerSequence();
-				}
-				else if (S_ISDIR(st.st_mode))
-				{
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					clearBannerSequence();
-				}
-				else
-				{
+				} else {
 					getGameInfo(false, p);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				clearBannerSequence();
 			}
-		}
-		else
-		{
+		} else {
 			clearBannerSequence();
 		}
 		// clean up the allocated line
 		free(line);
-	}
-	else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}))
-	{
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp;
 		int ret;
 
 		// open file for reading info
 		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
+		if (fp == NULL) {
 			// banner sequence
 			clearBannerSequence();
 			fclose(fp);
@@ -1074,8 +1059,7 @@ void getGameInfo(bool isDir, const char* name)
 			memcpy(paletteCopy, ndsBanner.palette, sizeof(paletteCopy));
 		}
 
-		if (ndsHeader.bannerOffset == 0)
-		{
+		if (ndsHeader.bannerOffset == 0) {
 			fclose(fp);
 			return;
 		}
@@ -1085,8 +1069,7 @@ void getGameInfo(bool isDir, const char* name)
 		else
 			ret = 0; // if seek fails set to !=1
 
-		if (ret != 1)
-		{
+		if (ret != 1) {
 			fclose(fp);
 			return;
 		}
@@ -1119,13 +1102,10 @@ void iconUpdate(bool isDir, const char* name)
 		clearText(false);
 	}
 
-	if (isDir)
-	{
+	if (isDir) {
 		// icon
 		clearIcon();
-	}
-	else if (customIcon)
-	{
+	} else if (customIcon) {
 		if (customIcon == -1) {
 			loadUnkIcon();
 		} else if (bnriconisDSi) {
@@ -1133,9 +1113,7 @@ void iconUpdate(bool isDir, const char* name)
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, false);
 		}
-	}
-	else if (extension(name, {".argv"}))
-	{
+	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -1144,16 +1122,14 @@ void iconUpdate(bool isDir, const char* name)
 
 		// open the argv file
 		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
+		if (fp == NULL) {
 			clearIcon();
 			fclose(fp);
 			return;
 		}
 
 		// read each line
-		while ((rc = __getline(&line, &size, fp)) > 0)
-		{
+		while ((rc = __getline(&line, &size, fp)) > 0) {
 			// remove comments
 			if ((p = strchr(line, '#')) != NULL)
 				*p = 0;
@@ -1169,48 +1145,35 @@ void iconUpdate(bool isDir, const char* name)
 		// done with the file at this point
 		fclose(fp);
 
-		if (p && *p)
-		{
+		if (p && *p) {
 			// we found an argument
 			struct stat st;
 
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"}))
-			{
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
-				if (rc != 0)
-				{
+				if (rc != 0) {
 					// stat failed
 					clearIcon();
-				}
-				else if (S_ISDIR(st.st_mode))
-				{
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					clearIcon();
-				}
-				else
-				{
+				} else {
 					iconUpdate(false, p);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				clearIcon();
 			}
-		}
-		else
-		{
+		} else {
 			clearIcon();
 		}
 		// clean up the allocated line
 		free(line);
-	}
-	else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}))
-	{
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp;
 		unsigned int iconTitleOffset;
@@ -1218,8 +1181,7 @@ void iconUpdate(bool isDir, const char* name)
 
 		// open file for reading info
 		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
+		if (fp == NULL) {
 			// icon
 			clearIcon();
 			fclose(fp);
@@ -1233,16 +1195,14 @@ void iconUpdate(bool isDir, const char* name)
 		else
 			ret = 0; // if seek fails set to !=1
 
-		if (ret != 1)
-		{
+		if (ret != 1) {
 			// icon
 			loadUnkIcon();
 			fclose(fp);
 			return;
 		}
 
-		if (iconTitleOffset == 0)
-		{
+		if (iconTitleOffset == 0) {
 			// icon
 			loadUnkIcon();
 			fclose(fp);
@@ -1254,8 +1214,7 @@ void iconUpdate(bool isDir, const char* name)
 		else
 			ret = 0; // if seek fails set to !=1
 
-		if (ret != 1)
-		{
+		if (ret != 1) {
 			// try again, but using regular banner size
 			ret = fseek(fp, iconTitleOffset, SEEK_SET);
 			if (ret == 0)
@@ -1263,8 +1222,7 @@ void iconUpdate(bool isDir, const char* name)
 			else
 				ret = 0; // if seek fails set to !=1
 
-			if (ret != 1)
-			{
+			if (ret != 1) {
 				// icon
 				loadUnkIcon();
 				fclose(fp);
@@ -1336,9 +1294,7 @@ void titleUpdate(bool isDir, const char* name)
 		strcpy(titleToDisplay[2], lineCount > 2 ? lines[2].c_str() : "");
 
 		writeBannerText(lineCount-1, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
-	}
-	else if (extension(name, {".argv"}))
-	{
+	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -1347,16 +1303,14 @@ void titleUpdate(bool isDir, const char* name)
 
 		// open the argv file
 		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
+		if (fp == NULL) {
 			writeBannerText(0, "(can't open file!)", "", "");
 			fclose(fp);
 			return;
 		}
 
 		// read each line
-		while ((rc = __getline(&line, &size, fp)) > 0)
-		{
+		while ((rc = __getline(&line, &size, fp)) > 0) {
 			// remove comments
 			if ((p = strchr(line, '#')) != NULL)
 				*p = 0;
@@ -1372,48 +1326,35 @@ void titleUpdate(bool isDir, const char* name)
 		// done with the file at this point
 		fclose(fp);
 
-		if (p && *p)
-		{
+		if (p && *p) {
 			// we found an argument
 			struct stat st;
 
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"}))
-			{
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
-				if (rc != 0)
-				{
+				if (rc != 0) {
 					// stat failed
 					writeBannerText(0, "(can't find argument!)", "", "");
-				}
-				else if (S_ISDIR(st.st_mode))
-				{
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					writeBannerText(1, "(invalid argv file!)", "This is a directory.", "");
-				}
-				else
-				{
+				} else {
 					titleUpdate(false, p);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				writeBannerText(1, "(invalid argv file!)", "No .nds/.app file.", "");
 			}
-		}
-		else
-		{
+		} else {
 			writeBannerText(0, "(no argument!)", "", "");
 		}
 		// clean up the allocated line
 		free(line);
-	}
-	else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || customIcon == 2)
-	{
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || customIcon == 2) {
 		// this is an nds/app file!
 		// or a file with custom banner text
 		if (customIcon != 2) {
@@ -1423,8 +1364,7 @@ void titleUpdate(bool isDir, const char* name)
 
 			// open file for reading info
 			fp = fopen(name, "rb");
-			if (fp == NULL)
-			{
+			if (fp == NULL) {
 				// text
 				writeBannerText(0, "(can't open file!)", "", "");
 				fclose(fp);
@@ -1437,16 +1377,14 @@ void titleUpdate(bool isDir, const char* name)
 			else
 				ret = 0; // if seek fails set to !=1
 
-			if (ret != 1)
-			{
+			if (ret != 1) {
 				// text
 				writeBannerText(0, "(can't read file!)", "", "");
 				fclose(fp);
 				return;
 			}
 
-			if (iconTitleOffset == 0)
-			{
+			if (iconTitleOffset == 0) {
 				// text
 				writeBannerText(1, name, "(no title/icon)", "");
 				fclose(fp);
@@ -1458,8 +1396,7 @@ void titleUpdate(bool isDir, const char* name)
 			else
 				ret = 0; // if seek fails set to !=1
 
-			if (ret != 1)
-			{
+			if (ret != 1) {
 				// try again, but using regular banner size
 				ret = fseek(fp, iconTitleOffset, SEEK_SET);
 				if (ret == 0)
@@ -1467,8 +1404,7 @@ void titleUpdate(bool isDir, const char* name)
 				else
 					ret = 0; // if seek fails set to !=1
 
-				if (ret != 1)
-				{
+				if (ret != 1) {
 					// text
 					writeBannerText(1, name, "(can't read icon/title!)", "");
 					fclose(fp);
@@ -1496,8 +1432,7 @@ void titleUpdate(bool isDir, const char* name)
 		int bannerlines = 0;
 		// The index of the character array
 		int charIndex = 0;
-		for (int i = 0; i < TITLE_CACHE_SIZE; i++)
-		{
+		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 			// todo: fix crash on titles that are too long (homebrew)
 			if ((ndsBanner.titles[currentLang][i] == 0x000A) || (ndsBanner.titles[currentLang][i] == 0xFFFF)) {
 				titleToDisplay[bannerlines][charIndex] = 0;

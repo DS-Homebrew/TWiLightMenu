@@ -1538,12 +1538,10 @@ int main(int argc, char **argv) {
 				std::string prvnameUl = replaceAll(filename, typeToReplace, ".prv");
 				std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
 				std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
-				if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0)
-				{
+				if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 					rename(ms().dsiWarePubPath.c_str(), pubpathUl.c_str());
 				}
-				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0)
-				{
+				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
 					rename(ms().dsiWarePrvPath.c_str(), prvpathUl.c_str());
 				}
 
@@ -1602,8 +1600,7 @@ int main(int argc, char **argv) {
 						}
 						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
 
-						if (!isHomebrew[CURPOS])
-						{ // Create or expand save if game isn't homebrew
+						if (!isHomebrew[CURPOS]) { // Create or expand save if game isn't homebrew
 							u32 orgsavesize = getFileSize(savepath.c_str());
 							u32 savesize = 524288; // 512KB (default size for most games)
 
@@ -2125,8 +2122,7 @@ int main(int argc, char **argv) {
 							expansion().SetRampage(cExpansion::ENorPage);
 							cExpansion::OpenNorWrite();
 							cExpansion::SetSerialMode();
-							for (u32 address=0;address<romSize&&address<0x2000000;address+=0x40000)
-							{
+							for (u32 address=0;address<romSize&&address<0x2000000;address+=0x40000) {
 								expansion().Block_Erase(address);
 								progressBarLength = (address+0x40000)/(romSize/192);
 								if (progressBarLength > 192) progressBarLength = 192;

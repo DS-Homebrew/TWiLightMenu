@@ -93,8 +93,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
         *target++ = 0;
     }
 
-    for (; len; len--)
-	{
+    for (; len; len--) {
         // Loop the streaming_buf_ptr
         if (streaming_buf_ptr >= STREAMING_BUF_LENGTH) {
             streaming_buf_ptr = 0;

@@ -169,15 +169,13 @@ void LoadBMP(void) {
 	doubleBuffer = true;
 	if (ms().macroMode) {
 		fadeType = true;
-		for (int i = 0; i < 60 * 3; i++)
-		{
+		for (int i = 0; i < 60 * 3; i++) {
 			scanKeys();
 			if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) break;
 			swiWaitForVBlank();
 		}
 		fadeType = false;
-		for (int i = 0; i < 25; i++)
-		{
+		for (int i = 0; i < 25; i++) {
 			swiWaitForVBlank();
 		}
 		doubleBuffer = false;

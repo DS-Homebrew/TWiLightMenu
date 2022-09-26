@@ -1121,8 +1121,7 @@ int glLoadSpriteSet( glImage              *sprite,
 	
 	int i;
 	// init sprites texture coords and texture ID
-	for ( i=0; i < numframes; i++)
-	{
+	for (i=0; i < numframes; i++) {
 		int j = i * 4; // texcoords array is u_off, wid, hei
 		sprite[i].textureID = textureID;
 		sprite[i].u_off = texcoords[j];			// set x-coord
@@ -1179,8 +1178,7 @@ int glLoadTileSet( glImage              *sprite,
 	int x, y;
 	
 	// init sprites texture coords and texture ID
-	for (y = 0; y < (bmp_hei/tile_hei); y++)
-	{
+	for (y = 0; y < (bmp_hei/tile_hei); y++) {
 		for (x = 0; x < (bmp_wid/tile_wid); x++) 
 		{
 			sprite[i].width 			= tile_wid;

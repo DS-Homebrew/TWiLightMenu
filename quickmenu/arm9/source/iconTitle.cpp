@@ -141,8 +141,7 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 	const int TILE_SIZE_Y = 8;
 	const int TILE_SIZE_X = 4;
 	int index = 0;
-	for (int tileY = 0; tileY < PY / TILE_SIZE_Y; ++tileY)
-	{
+	for (int tileY = 0; tileY < PY / TILE_SIZE_Y; ++tileY) {
 		for (int tileX = 0; tileX < PX / TILE_SIZE_X; ++tileX)
 			for (int pY = 0; pY < TILE_SIZE_Y; ++pY)
 				for (int pX = 0; pX < TILE_SIZE_X; ++pX)//TILE_SIZE/2 since one u8 equals two pixels (4 bit depth)
@@ -710,8 +709,7 @@ void loadFixedBanner(bool isSlot1) {
 		 && arm9StartSig[1] == 0xE1500005
 		 && arm9StartSig[2] == 0xBAFFFFC5
 		 && arm9StartSig[3] == 0xE59D100C)
-		 || alxxBannerCrc != 0xBA52)
-		{
+		 || alxxBannerCrc != 0xBA52) {
 			// It's a SuperCard DSTWO, so use correct banner.
 			//cardRead(0x1843400, &ndsBanner, NDS_BANNER_SIZE_ORIGINAL);
 			FILE *fixedBannerFile = fopen("nitro:/fixedbanners/SuperCard DSTWO.bnr", "rb");
@@ -834,16 +832,14 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 		// open the argv file
 		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
+		if (fp == NULL) {
 			clearBannerSequence(num);
 			fclose(fp);
 			return;
 		}
 
 		// read each line
-		while ((rc = __getline(&line, &size, fp)) > 0)
-		{
+		while ((rc = __getline(&line, &size, fp)) > 0) {
 			// remove comments
 			if ((p = strchr(line, '#')) != NULL)
 				*p = 0;
@@ -859,8 +855,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 		// done with the file at this point
 		fclose(fp);
 
-		if (p && *p)
-		{
+		if (p && *p) {
 			// we found an argument
 			struct stat st;
 
@@ -871,60 +866,44 @@ void getGameInfo(int num, bool isDir, const char* name)
 			 || extension(p, ".dsi")
 			 || extension(p, ".ids")
 			 || extension(p, ".srl")
-			 || extension(p, ".app"))
-			{
+			 || extension(p, ".app")) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
-				if (rc != 0)
-				{
+				if (rc != 0) {
 					// stat failed
 					clearBannerSequence(num);
-				}
-				else if (S_ISDIR(st.st_mode))
-				{
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					clearBannerSequence(num);
-				}
-				else
-				{
+				} else {
 					getGameInfo(num, false, p);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				clearBannerSequence(num);
 			}
-		}
-		else
-		{
+		} else {
 			clearBannerSequence(num);
 		}
 		// clean up the allocated line
 		free(line);
-	}
-	else if (strcmp(name, "slot1")==0
+	} else if (strcmp(name, "slot1")==0
 			 || extension(name, ".nds")
 			 || extension(name, ".dsi")
 			 || extension(name, ".ids")
 			 || extension(name, ".srl")
-			 || extension(name, ".app"))
-	{
+			 || extension(name, ".app")) {
 		// this is an nds/app file!
 		FILE *fp = NULL;
 		int ret;
 		bool isSlot1 = (strcmp(name, "slot1") == 0);
 
-		if (isSlot1)
-		{
+		if (isSlot1) {
 			cardRead(0, &ndsHeader, sizeof(ndsHeader));
-		}
-		else
-		{
+		} else {
 			// open file for reading info
 			fp = fopen(name, "rb");
-			if (fp == NULL)
-			{
+			if (fp == NULL) {
 				// banner sequence
 				fclose(fp);
 				return;
@@ -1007,8 +986,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			memcpy(paletteCopy, ndsBanner.palette, sizeof(paletteCopy));
 		}
 
-		if (ndsHeader.bannerOffset == 0)
-		{
+		if (ndsHeader.bannerOffset == 0) {
 			if (!isSlot1)
 				fclose(fp);
 
@@ -1026,14 +1004,10 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 			return;
 		}
-		if (isSlot1)
-		{
-			if ((ndsCardHeader.bannerOffset > 0) && cardInited)
-			{
+		if (isSlot1) {
+			if ((ndsCardHeader.bannerOffset > 0) && cardInited) {
 				cardRead(ndsCardHeader.bannerOffset, &ndsBanner, NDS_BANNER_SIZE_DSi);
-			}
-			else
-			{
+			} else {
 				FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
@@ -1048,17 +1022,14 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 				return;
 			}
-		}
-		else
-		{
+		} else {
 			ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
 			if (ret == 0)
 				ret = fread(&ndsBanner, NDS_BANNER_SIZE_DSi, 1, fp); // read if seek succeed
 			else
 				ret = 0; // if seek fails set to !=1
 
-			if (ret != 1)
-			{
+			if (ret != 1) {
 				// try again, but using regular banner size
 				ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
 				if (ret == 0)
@@ -1066,8 +1037,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 				else
 					ret = 0; // if seek fails set to !=1
 
-				if (ret != 1)
-				{
+				if (ret != 1) {
 					fclose(fp);
 
 					FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
@@ -1143,16 +1113,14 @@ void iconUpdate(int num, bool isDir, const char* name)
 
 		// open the argv file
 		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
+		if (fp == NULL) {
 			clearIcon(num);
 			fclose(fp);
 			return;
 		}
 
 		// read each line
-		while ((rc = __getline(&line, &size, fp)) > 0)
-		{
+		while ((rc = __getline(&line, &size, fp)) > 0) {
 			// remove comments
 			if ((p = strchr(line, '#')) != NULL)
 				*p = 0;
@@ -1168,8 +1136,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 		// done with the file at this point
 		fclose(fp);
 
-		if (p && *p)
-		{
+		if (p && *p) {
 			// we found an argument
 			struct stat st;
 
@@ -1180,33 +1147,23 @@ void iconUpdate(int num, bool isDir, const char* name)
 			 || extension(p, ".dsi")
 			 || extension(p, ".ids")
 			 || extension(p, ".srl")
-			 || extension(p, ".app"))
-			{
+			 || extension(p, ".app")) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
-				if (rc != 0)
-				{
+				if (rc != 0) {
 					// stat failed
 					clearIcon(num);
-				}
-				else if (S_ISDIR(st.st_mode))
-				{
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					clearIcon(num);
-				}
-				else
-				{
+				} else {
 					iconUpdate(num, false, p);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				clearIcon(num);
 			}
-		}
-		else
-		{
+		} else {
 			clearIcon(num);
 		}
 		// clean up the allocated line
@@ -1216,8 +1173,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 			 || extension(name, ".dsi")
 			 || extension(name, ".ids")
 			 || extension(name, ".srl")
-			 || extension(name, ".app"))
-	{
+			 || extension(name, ".app")) {
 		// this is an nds/app file!
 
 		// icon
@@ -1237,8 +1193,7 @@ void titleUpdate(int num, bool top, bool isDir, const char* name)
 	 || extension(name, ".ids")
 	 || extension(name, ".srl")
 	 || extension(name, ".app")
-	 || infoFound[num])
-	{
+	 || infoFound[num]) {
 		// this is an nds/app file!
 		// or a file with custom banner text
 		if (infoFound[num]) {

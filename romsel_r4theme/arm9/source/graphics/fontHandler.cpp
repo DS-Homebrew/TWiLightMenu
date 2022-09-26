@@ -96,27 +96,22 @@ FontGraphic &getFont(bool large)
 void updateText(bool top)
 {
 	auto &text = getTextQueue(top);
-	for (auto it = text.begin(); it != text.end(); ++it)
-	{
-		if (it->update())
-		{
+	for (auto it = text.begin(); it != text.end(); ++it) {
+		if (it->update()) {
 			it = text.erase(it);
 			--it;
 			continue;
 		}
 		int alpha = it->calcAlpha();
-		if (alpha > 0)
-		{
+		if (alpha > 0) {
 			glPolyFmt(POLY_ALPHA(alpha) | POLY_CULL_NONE | POLY_ID(1));
 			// if (top)
 			// 	glColor(RGB15(0, 0, 0));
 			getFont(it->large).print(it->x / TextEntry::PRECISION, it->y / TextEntry::PRECISION, it->message);
 		}
 	}
-	for (auto it = panes.begin(); it != panes.end(); ++it)
-	{
-		if (it->update(top))
-		{
+	for (auto it = panes.begin(); it != panes.end(); ++it) {
+		if (it->update(top)) {
 			it = panes.erase(it);
 			--it;
 			continue;
@@ -127,8 +122,7 @@ void updateText(bool top)
 void clearText(bool top)
 {
 	list<TextEntry> &text = getTextQueue(top);
-	for (auto it = text.begin(); it != text.end(); ++it)
-	{
+	for (auto it = text.begin(); it != text.end(); ++it) {
 		if (it->immune)
 			continue;
 		it = text.erase(it);

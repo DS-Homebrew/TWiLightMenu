@@ -35,8 +35,7 @@ void TextPane::wrapTransition()
 	bool atBottom = startIndex > 0;
 	const int SLIDE_Y = 16;
 	int numElements = 0;
-	for (auto it = shownText.begin(); it != shownText.end(); ++it)
-	{
+	for (auto it = shownText.begin(); it != shownText.end(); ++it) {
 		if (it->fade == TextEntry::FadeType::OUT)
 			continue;
 		it->delay = TextEntry::ACTIVE;
@@ -46,8 +45,7 @@ void TextPane::wrapTransition()
 		it->fade = TextEntry::FadeType::OUT;
 		it->polyID++;
 	}
-	for (int i = atBottom ? 0 : (text.size() - SHOWN_ELEMENTS); i < (atBottom ? SHOWN_ELEMENTS : (int) text.size()); ++i)
-	{
+	for (int i = atBottom ? 0 : (text.size() - SHOWN_ELEMENTS); i < (atBottom ? SHOWN_ELEMENTS : (int) text.size()); ++i) {
 		int pY = START_PY + FONT_SY * numElements++ + (atBottom ? -1 : 1) * SLIDE_Y;
 		shownText.emplace_back(false, START_PX, pY, text[i]);
 		TextEntry &entry = shownText.back();
@@ -67,12 +65,10 @@ void TextPane::slideTransition(bool transitionIn, bool right, int delay, int cli
 {
 	const int SLIDE_X = 16 * (right ? 1 : -1);
 	int numElements = 0;
-	for (auto it = shownText.begin(); it != shownText.end(); ++it)
-	{
+	for (auto it = shownText.begin(); it != shownText.end(); ++it) {
 		it->fade = transitionIn ? TextEntry::FadeType::IN : TextEntry::FadeType::OUT;
 		it->anim = transitionIn ? TextEntry::AnimType::IN : TextEntry::AnimType::OUT;
-		if (clickedIndex == numElements)
-		{
+		if (clickedIndex == numElements) {
 			++numElements;
 			it->x = TextEntry::PRECISION * (it->initX = it->finalX);
 			it->finalX += abs(SLIDE_X);
@@ -80,22 +76,16 @@ void TextPane::slideTransition(bool transitionIn, bool right, int delay, int cli
 			it->delayShown = true;
 			continue;
 		}
-		if (transitionIn)
-		{
+		if (transitionIn) {
 			it->x = TextEntry::PRECISION * (it->initX = it->finalX - SLIDE_X);
 			it->delayShown = false;
-		}
-		else
-		{
-			if (it->delay > TextEntry::ACTIVE)
-			{
+		} else {
+			if (it->delay > TextEntry::ACTIVE) {
 				it->finalX = it->x / TextEntry::PRECISION;
 				it->finalY = it->y / TextEntry::PRECISION;
 				it->delay = TextEntry::ACTIVE;
 				it->delayShown = false;
-			}
-			else
-			{
+			} else {
 				it->initX = it->x / TextEntry::PRECISION;
 				it->initY = it->y / TextEntry::PRECISION;
 				it->finalX = it->x / TextEntry::PRECISION + SLIDE_X;
@@ -111,14 +101,12 @@ void TextPane::slideTransition(bool transitionIn, bool right, int delay, int cli
 void TextPane::scroll(bool up)
 {
 	startIndex += up ? 1 : -1;
-	if (startIndex < 0 || startIndex + SHOWN_ELEMENTS > (int) text.size())
-	{
+	if (startIndex < 0 || startIndex + SHOWN_ELEMENTS > (int) text.size()) {
 		wrapTransition();
 		startIndex = up ? 0 : (text.size() - SHOWN_ELEMENTS);
 		return;
 	}
-	for (auto it = shownText.begin(); it != shownText.end(); ++it)
-	{
+	for (auto it = shownText.begin(); it != shownText.end(); ++it) {
 		if (it->fade == TextEntry::FadeType::OUT)
 			continue;
 		it->delay = TextEntry::ACTIVE;
@@ -157,17 +145,14 @@ bool TextPane::update(bool top)
 {
 	if (top)
 		return false;
-	for (auto it = shownText.begin(); it != shownText.end(); ++it)
-	{
-		if (it->update())
-		{
+	for (auto it = shownText.begin(); it != shownText.end(); ++it) {
+		if (it->update()) {
 			it = shownText.erase(it);
 			--it;
 			continue;
 		}
 		int alpha = it->calcAlpha();
-		if (alpha > 0)
-		{
+		if (alpha > 0) {
 			glPolyFmt(POLY_ALPHA(alpha) | POLY_CULL_NONE | POLY_ID(it->polyID));
 			getFont(it->large).print(it->x / TextEntry::PRECISION, it->y / TextEntry::PRECISION, it->message);
 		}

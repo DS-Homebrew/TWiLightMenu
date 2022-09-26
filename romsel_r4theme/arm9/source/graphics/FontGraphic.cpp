@@ -80,8 +80,7 @@ unsigned int FontGraphic::getSpriteIndex(const u16 letter) {
 	long int right = imageCount;
 	long int mid = 0;
 
-	while (left <= right)
-	{
+	while (left <= right) {
 		mid = left + ((right - left) / 2);
 		if (mapping[mid] == letter) {
 			spriteIndex = mid;
@@ -128,8 +127,7 @@ char16_t FontGraphic::getCharacter(const char *&text) {
 
 void FontGraphic::print(int x, int y, const char *text)
 {
-	while (*text)
-	{
+	while (*text) {
 		char16_t fontChar = getCharacter(text);
 		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
 		x += fontSprite[fontChar].width;
@@ -140,8 +138,7 @@ int FontGraphic::calcWidth(const char *text)
 {
 	int x = 0;
 
-	while (*text)
-	{
+	while (*text) {
 		x += fontSprite[getCharacter(text)].width;
 	}
 	return x;
@@ -156,8 +153,7 @@ void FontGraphic::print(int x, int y, int value)
 int FontGraphic::getCenteredX(const char *text)
 {
 	int total_width = 0;
-	while (*text)
-	{
+	while (*text) {
 		total_width += fontSprite[getCharacter(text)].width;
 	}
 	return (SCREEN_WIDTH - total_width) / 2;
@@ -166,8 +162,7 @@ int FontGraphic::getCenteredX(const char *text)
 void FontGraphic::printCentered(int y, const char *text)
 {
 	int x = getCenteredX(text);
-	while (*text)
-	{
+	while (*text) {
 		char16_t fontChar = getCharacter(text);
 		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
 		x += fontSprite[fontChar].width;

@@ -36,8 +36,7 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 	const bool readdata = cmd & 0x20000;
 	const bool writedata = cmd & 0x40000;
 
-	if (readdata || writedata)
-	{
+	if (readdata || writedata) {
 		flags |= TMIO_STAT0_DATAEND;
 	}
 
@@ -163,8 +162,7 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 			if (sdmmc_read16(REG_SDSTATUS0) & TMIO_STAT0_CMDRESPEND) {
 				ctx->error |= 0x1;
 			}
-			if (status0 & TMIO_STAT0_DATAEND)
-			{
+			if (status0 & TMIO_STAT0_DATAEND) {
 				ctx->error |= 0x2;
 			}
 

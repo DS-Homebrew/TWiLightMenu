@@ -333,15 +333,13 @@ int cardInit (void)
 
 	tonccpy(&ndsCardHeader, headerData, sizeof(sNDSHeaderExt));
 
-	if ((ndsCardHeader.unitCode != 0) || (ndsCardHeader.dsi_flags != 0))
-	{
+	if ((ndsCardHeader.unitCode != 0) || (ndsCardHeader.dsi_flags != 0)) {
 		// Extended header found
 		cardParamCommand (CARD_CMD_HEADER_READ, 0,
 			CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(4) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
 			(void*)headerData, 0x1000/sizeof(u32));
 		if (ndsCardHeader.dsi1[0]==0xFFFFFFFF && ndsCardHeader.dsi1[1]==0xFFFFFFFF
-		 && ndsCardHeader.dsi1[2]==0xFFFFFFFF && ndsCardHeader.dsi1[3]==0xFFFFFFFF)
-		{
+		 && ndsCardHeader.dsi1[2]==0xFFFFFFFF && ndsCardHeader.dsi1[3]==0xFFFFFFFF) {
 			toncset((u8*)headerData+0x200, 0, 0xE00);	// Clear out FFs
 		}
 		tonccpy(&ndsCardHeader, headerData, sizeof(sNDSHeaderExt));

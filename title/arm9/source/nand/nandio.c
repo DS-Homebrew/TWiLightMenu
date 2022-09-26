@@ -134,8 +134,7 @@ static bool read_sectors(sec_t start, sec_t len, void *buffer) {
 			start == fat_sig_fix_offset
 			&& ((u8*)buffer)[0x36] == 0
 			&& ((u8*)buffer)[0x37] == 0
-			&& ((u8*)buffer)[0x38] == 0)
-		{
+			&& ((u8*)buffer)[0x38] == 0) {
 			((u8*)buffer)[0x36] = 'F';
 			((u8*)buffer)[0x37] = 'A';
 			((u8*)buffer)[0x38] = 'T';

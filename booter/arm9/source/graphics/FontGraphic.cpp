@@ -49,8 +49,7 @@ void FontGraphic::print(int x, int y, const char *text)
 {
 	unsigned char font_char;
 
-	while (*text)
-	{
+	while (*text) {
 		font_char = (*(unsigned char*) text++) - 32;
 		glSprite(x, y, GL_FLIP_NONE, &fontSprite[font_char]);
 		x += fontSprite[font_char].width;
@@ -62,8 +61,7 @@ int FontGraphic::calcWidth(const char *text)
 	unsigned char font_char;
 	int x = 0;
 
-	while (*text)
-	{
+	while (*text) {
 		font_char = (*(unsigned char*) text++) - 32;
 		x += fontSprite[font_char].width;
 	}
@@ -80,8 +78,7 @@ int FontGraphic::getCenteredX(const char *text)
 {
 	unsigned char fontChar;
 	int total_width = 0;
-	while (*text)
-	{
+	while (*text) {
 		fontChar = (*(unsigned char*) text++) - 32;
 		total_width += fontSprite[fontChar].width;
 	}
@@ -92,8 +89,7 @@ void FontGraphic::printCentered(int y, const char *text)
 {
 	unsigned char fontChar;
 	int x = getCenteredX(text);
-	while (*text)
-	{
+	while (*text) {
 		fontChar = (*(unsigned char*) text++) - 32;
 		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
 		x += fontSprite[fontChar].width;

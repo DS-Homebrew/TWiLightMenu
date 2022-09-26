@@ -60,8 +60,7 @@ void aes_gen_tables(void)
 	/*
 	 * compute pow and log tables over GF(2^8)
 	 */
-	for (i = 0, x = 1; i < 256; i++)
-	{
+	for (i = 0, x = 1; i < 256; i++) {
 		pow[i] = x;
 		log[x] = i;
 		x = (x ^ XTIME(x)) & 0xFF;
@@ -70,8 +69,7 @@ void aes_gen_tables(void)
 	/*
 	 * calculate the round constants
 	 */
-	for (i = 0, x = 1; i < 10; i++)
-	{
+	for (i = 0, x = 1; i < 10; i++) {
 		RCON[i] = (uint32_t)x;
 		x = XTIME(x) & 0xFF;
 	}
@@ -82,8 +80,7 @@ void aes_gen_tables(void)
 	FSb[0x00] = 0x63;
 	RSb[0x63] = 0x00;
 
-	for (i = 1; i < 256; i++)
-	{
+	for (i = 1; i < 256; i++) {
 		x = pow[255 - log[i]];
 
 		y = x; y = ((y << 1) | (y >> 7)) & 0xFF;
@@ -99,8 +96,7 @@ void aes_gen_tables(void)
 	/*
 	 * generate the forward and reverse tables
 	 */
-	for (i = 0; i < 256; i++)
-	{
+	for (i = 0; i < 256; i++) {
 		x = FSb[i];
 		y = XTIME(x) & 0xFF;
 		z = (y ^ x) & 0xFF;

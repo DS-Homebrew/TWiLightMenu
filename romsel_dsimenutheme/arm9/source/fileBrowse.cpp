@@ -1012,21 +1012,17 @@ bool dsiBinariesMissingMsg(const char *filename) {
 	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 8 : 96), STR_DSIBINARIES_MISSING, Alignment::center, FontPalette::dialog);
 	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_Y_DS_MODE_B_BACK, Alignment::center, FontPalette::dialog);
 	updateText(false);
-	int pressed = 0;
 	while (1) {
 		scanKeys();
-		pressed = keysDown();
+		int pressed = keysDown();
 		bgOperations(true);
 		if (pressed & KEY_Y) {
 			dsModeForced = true;
 			proceedToLaunch = true;
-			pressed = 0;
 			break;
-		}
-		if (pressed & KEY_B) {
+		} else if (pressed & KEY_B) {
 			snd().playBack();
 			proceedToLaunch = false;
-			pressed = 0;
 			break;
 		}
 	}
@@ -1235,20 +1231,16 @@ bool checkForCompatibleGame(const char *filename) {
 	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG, Alignment::center, FontPalette::dialog);
 	printSmall(false, 0, 160, STR_A_IGNORE_B_DONT_LAUNCH, Alignment::center, FontPalette::dialog);
 	updateText(false);
-	int pressed = 0;
 	while (1) {
 		scanKeys();
-		pressed = keysDown();
+		int pressed = keysDown();
 		bgOperations(true);
 		if (pressed & KEY_A) {
 			proceedToLaunch = true;
-			pressed = 0;
 			break;
-		}
-		else if (pressed & KEY_B) {
+		} else if (pressed & KEY_B) {
 			snd().playBack();
 			proceedToLaunch = false;
-			pressed = 0;
 			break;
 		}
 	}
@@ -1327,7 +1319,6 @@ bool dsiWareInDSModeMsg(std::string filename) {
 	int msgPage = 0;
 	bool pageLoaded = false;
 	bool secondPageViewed = false;
-	int pressed = 0;
 	while (1) {
 		if (!pageLoaded) {
 			clearText();
@@ -1350,7 +1341,7 @@ bool dsiWareInDSModeMsg(std::string filename) {
 			pageLoaded = true;
 		}
 		scanKeys();
-		pressed = keysDown();
+		int pressed = keysDown();
 		bgOperations(true);
 		if ((pressed & KEY_LEFT) && msgPage != 0) {
 			snd().playSelect();
@@ -1363,17 +1354,14 @@ bool dsiWareInDSModeMsg(std::string filename) {
 			pageLoaded = false;
 		} else if ((pressed & KEY_A) && secondPageViewed) {
 			proceedToLaunch = true;
-			pressed = 0;
 			break;
 		} else if ((pressed & KEY_B) && secondPageViewed) {
 			snd().playBack();
 			proceedToLaunch = false;
-			pressed = 0;
 			break;
 		} else if (pressed & KEY_X) {
 			ms().dontShowDSiWareInDSModeWarning = true;
 			proceedToLaunch = true;
-			pressed = 0;
 			break;
 		}
 	}
@@ -2606,8 +2594,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);
 					if (useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
 					 && isHomebrew[CURPOS] == 0
-					 && checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name))
-					{
+					 && checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
 						bool hasDsiBinaries = true;
 						if (dsiFeatures() && (!ms().secondaryDevice || !bs().b4dsMode)) {
 							FILE *f_nds_file = fopen(
@@ -2620,8 +2607,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							proceedToLaunch = dsiBinariesMissingMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						}
 					}
-					if (proceedToLaunch && (useBootstrapAnyway || ((!dsiFeatures() || bs().b4dsMode) && isDSiWare[CURPOS])) && bnrRomType[CURPOS] == 0 && !dsModeForced && isHomebrew[CURPOS] == 0)
-					{
+					if (proceedToLaunch && (useBootstrapAnyway || ((!dsiFeatures() || bs().b4dsMode) && isDSiWare[CURPOS])) && bnrRomType[CURPOS] == 0 && !dsModeForced && isHomebrew[CURPOS] == 0) {
 						proceedToLaunch = checkForCompatibleGame(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						if (proceedToLaunch && requiresDonorRom[CURPOS]) {
 							const char* pathDefine = "DONORTWL_NDS_PATH"; // SDK5.x
@@ -3238,8 +3224,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 
 					if (ms().theme == TWLSettings::EThemeDSi || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
-						if (bothSDandFlashcard() && ((pressed & KEY_UP) || (pressed & KEY_DOWN)))
-						{
+						if (bothSDandFlashcard() && ((pressed & KEY_UP) || (pressed & KEY_DOWN))) {
 							switchDevice();
 							return "null";
 						}

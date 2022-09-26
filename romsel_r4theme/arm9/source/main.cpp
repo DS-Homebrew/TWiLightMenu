@@ -1097,11 +1097,9 @@ int main(int argc, char **argv) {
 		if (ms().sysRegion == -1) {
 			// Determine SysNAND region by searching region of System Settings on SDNAND
 			char tmdpath[256];
-			for (u8 i = 0x41; i <= 0x5A; i++)
-			{
+			for (u8 i = 0x41; i <= 0x5A; i++) {
 				snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
-				if (access(tmdpath, F_OK) == 0)
-				{
+				if (access(tmdpath, F_OK) == 0) {
 					setRegion = i;
 					break;
 				}
@@ -1200,8 +1198,7 @@ int main(int argc, char **argv) {
 
 	char path[256];
 
-	if (copyDSiWareSavBack)
-	{
+	if (copyDSiWareSavBack) {
 		printLargeCentered(false, 16, "If this takes a while, close");
 		printLargeCentered(false, 24, "and open the console's lid.");
 		printLargeCentered(false, 88, "Now copying data...");
@@ -1486,8 +1483,7 @@ int main(int argc, char **argv) {
 			vector<char*> argarray;
 
 			bool isArgv = false;
-			if (extension(filename, {".argv"}))
-			{
+			if (extension(filename, {".argv"})) {
 				FILE *argfile = fopen(filename.c_str(),"rb");
 					char str[PATH_MAX], *pstr;
 				const char seps[]= "\n\r\t ";
@@ -1779,12 +1775,10 @@ int main(int argc, char **argv) {
 				std::string prvnameUl = replaceAll(filename, typeToReplace, ".prv");
 				std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
 				std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
-				if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0)
-				{
+				if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 					rename(ms().dsiWarePubPath.c_str(), pubpathUl.c_str());
 				}
-				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0)
-				{
+				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
 					rename(ms().dsiWarePrvPath.c_str(), prvpathUl.c_str());
 				}
 
@@ -2234,8 +2228,7 @@ int main(int argc, char **argv) {
 							expansion().SetRampage(cExpansion::ENorPage);
 							cExpansion::OpenNorWrite();
 							cExpansion::SetSerialMode();
-							for (u32 address=0;address<romSize&&address<0x2000000;address+=0x40000)
-							{
+							for (u32 address=0;address<romSize&&address<0x2000000;address+=0x40000) {
 								expansion().Block_Erase(address);
 							}
 							nor = true;

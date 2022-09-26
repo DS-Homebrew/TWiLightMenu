@@ -29,8 +29,7 @@ int TextEntry::calcAlpha()
 
 	if (delay > 0 && !delayShown)
 		return 0;
-	else if (delay != TextEntry::COMPLETE && fade != FadeType::NONE)
-	{
+	else if (delay != TextEntry::COMPLETE && fade != FadeType::NONE) {
 		int routeLength = abs(initX - finalX) + abs(initY - finalY);
 		if (routeLength == 0)
 			return MAX_ALPHA;
@@ -43,8 +42,7 @@ int TextEntry::calcAlpha()
 		else
 			alpha += MAX_ALPHA;
 		return max(alpha, 0);
-	}
-	else
+	} else
 		return MAX_ALPHA;
 }
 
@@ -52,17 +50,13 @@ bool TextEntry::update()
 {
 	if (delay > TextEntry::ACTIVE)
 		--delay;
-	else if (delay == TextEntry::ACTIVE)
-	{
+	else if (delay == TextEntry::ACTIVE) {
 		int dX;
 		int dY;
-		if (anim == AnimType::IN)
-		{
+		if (anim == AnimType::IN) {
 			dX = (finalX * TextEntry::PRECISION - x) / invAccel;
 			dY = (finalY * TextEntry::PRECISION - y) / invAccel;
-		}
-		else
-		{
+		} else {
 			int diffX = finalX * TextEntry::PRECISION - x;
 			int diffY = finalY * TextEntry::PRECISION - y;
 			dX = (diffX == 0 ? 0 : 1000 / (diffX));
@@ -78,8 +72,7 @@ bool TextEntry::update()
 		}
 		x += dX;
 		y += dY;
-		if ((abs(dX) + abs(dY)) == 0)
-		{
+		if ((abs(dX) + abs(dY)) == 0) {
 			if (fade == TextEntry::FadeType::OUT)
 				return true;
 			x = finalX * TextEntry::PRECISION;

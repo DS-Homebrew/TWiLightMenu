@@ -460,8 +460,7 @@ void TWLSettings::saveSettings()
 
 TWLSettings::TLanguage TWLSettings::getGuiLanguage()
 {
-	if (currentLanguage == ELangDefault)
-	{
+	if (currentLanguage == ELangDefault) {
 		extern bool useTwlCfg;
 		return (TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 	}
@@ -470,8 +469,7 @@ TWLSettings::TLanguage TWLSettings::getGuiLanguage()
 
 TWLSettings::TLanguage TWLSettings::getGameLanguage()
 {
-	if (gameLanguage == ELangDefault)
-	{
+	if (gameLanguage == ELangDefault) {
 		extern bool useTwlCfg;
 		return (TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 	}
@@ -480,8 +478,7 @@ TWLSettings::TLanguage TWLSettings::getGameLanguage()
 
 TWLSettings::TLanguage TWLSettings::getTitleLanguage()
 {
-	if (titleLanguage == ELangDefault)
-	{
+	if (titleLanguage == ELangDefault) {
 		return (TLanguage)PersonalData->language;
 	}
 	return (TLanguage)titleLanguage;
@@ -567,8 +564,7 @@ bool TWLSettings::rtl()
 
 TWLSettings::TRegion TWLSettings::getGameRegion()
 {
-	if (dsiFeatures() && gameRegion == ERegionDefault)
-	{
+	if (dsiFeatures() && gameRegion == ERegionDefault) {
 		extern bool useTwlCfg;
 		if (!useTwlCfg) {
 			return ERegionUSA;

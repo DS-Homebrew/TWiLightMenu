@@ -62,11 +62,9 @@ void dsiLaunchSystemSettings()
 			break;
 	}
 	if (ms().sysRegion == -1) {
-		for (u8 i = 0x41; i <= 0x5A; i++)
-		{
+		for (u8 i = 0x41; i <= 0x5A; i++) {
 			snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
-			if (access(tmdpath, F_OK) == 0)
-			{
+			if (access(tmdpath, F_OK) == 0) {
 				titleID[0] = i;
 				break;
 			}

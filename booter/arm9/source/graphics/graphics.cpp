@@ -73,8 +73,7 @@ void initSubSprites(void)
 
 	//set up a 4x3 grid of 64x64 sprites to cover the screen
 	for (int y = 0; y < 3; y++)
-		for (int x = 0; x < 4; x++)
-		{
+		for (int x = 0; x < 4; x++) {
 			oamSub.oamMemory[id].attribute[0] = ATTR0_BMP | ATTR0_SQUARE | (64 * y);
 			oamSub.oamMemory[id].attribute[1] = ATTR1_SIZE_64 | (64 * x);
 			oamSub.oamMemory[id].attribute[2] = ATTR2_ALPHA(1) | (8 * 32 * y) | (8 * x);
@@ -88,10 +87,8 @@ void initSubSprites(void)
 
 void drawBG(glImage *images)
 {
-	for (int y = 0; y < 256 / 16; y++)
-	{
-		for (int x = 0; x < 256 / 16; x++)
-		{
+	for (int y = 0; y < 256 / 16; y++) {
+		for (int x = 0; x < 256 / 16; x++) {
 			int i = y * 16 + x;
 			glSprite(x * 16, y * 16, GL_FLIP_NONE, &images[i & 255]);
 		}
@@ -112,13 +109,10 @@ void vBlankHandler()
 		SetBrightness(0, screenBrightness);
 		SetBrightness(1, screenBrightness);
 
-		/*if (renderingTop)
-		{
+		/*if (renderingTop) {
 			drawBG(mainBgImage);
 			updateText(renderingTop);
-		}
-		else
-		{*/
+		} else {*/
 			drawBG(subBgImage);
 			glColor(RGB15(31, 31, 31));
 			updateText(false);

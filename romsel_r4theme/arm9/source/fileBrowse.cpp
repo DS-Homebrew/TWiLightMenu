@@ -879,8 +879,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		fileOffset += ms().pagenum[ms().secondaryDevice]*40;
 	}
 
-	while (true)
-	{
+	while (true) {
 		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
 		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
 
@@ -913,8 +912,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 			getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 
-			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"}))
-			{
+			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 				bnrRomType = 0;
 			} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 				bnrRomType = 10;
@@ -1039,8 +1037,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				ms().saveSettings();
 
 				return "null";
-			}
-			else if (isTwlm || (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
+			} else if (isTwlm || (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
 			|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str()))))) {
 				cannotLaunchMsg();
 			} else {
@@ -1062,8 +1059,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						proceedToLaunch = dsiBinariesMissingMsg();
 					}
 				}
-				if (proceedToLaunch && (useBootstrapAnyway || ((!dsiFeatures() || bs().b4dsMode) && isDSiWare)) && bnrRomType == 0 && !dsModeForced && isHomebrew == 0)
-				{
+				if (proceedToLaunch && (useBootstrapAnyway || ((!dsiFeatures() || bs().b4dsMode) && isDSiWare)) && bnrRomType == 0 && !dsModeForced && isHomebrew == 0) {
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 					char game_TID[5];
 					grabTID(f_nds_file, game_TID);
@@ -1071,8 +1067,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					fclose(f_nds_file);
 
 					proceedToLaunch = checkForCompatibleGame(game_TID, dirContents.at(fileOffset).name.c_str());
-					if (proceedToLaunch && requiresDonorRom)
-					{
+					if (proceedToLaunch && requiresDonorRom) {
 						const char* pathDefine = "DONORTWL_NDS_PATH"; // SDK5.x
 						if (requiresDonorRom == 52) {
 							pathDefine = "DONORTWLONLY_NDS_PATH"; // SDK5.x
@@ -1103,14 +1098,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							proceedToLaunch = donorRomMsg();
 						}
 					}
-					if (proceedToLaunch && !isDSiWare && checkIfShowAPMsg(dirContents.at(fileOffset).name))
-					{
+					if (proceedToLaunch && !isDSiWare && checkIfShowAPMsg(dirContents.at(fileOffset).name)) {
 						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 						hasAP = checkRomAP(f_nds_file);
 						fclose(f_nds_file);
 					}
-					if (proceedToLaunch && isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice)
-					{
+					if (proceedToLaunch && isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
 						if (!dsiFeatures() && !sys().isRegularDS()) {
 							proceedToLaunch = dsiWareInDSModeMsg();
 						}
@@ -1118,25 +1111,19 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							proceedToLaunch = dsiWareRAMLimitMsg(game_TID, dirContents.at(fileOffset).name);
 						}
 					}
-				}
-				else if (isHomebrew == 1)
-				{
+				} else if (isHomebrew == 1) {
 					loadPerGameSettings(dirContents.at(fileOffset).name);
 					if (requiresRamDisk && perGameSettings_ramDiskNo == -1) {
 						proceedToLaunch = false;
 						ramDiskMsg();
 					}
-				}
-				else if (bnrRomType == 7)
-				{
+				} else if (bnrRomType == 7) {
 					if (ms().mdEmulator==1 && getFileSize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
 						proceedToLaunch = false;
 						mdRomTooBig();
 					}
-				}
-				else if ((bnrRomType == 8 || (bnrRomType == 11 && ms().smsGgInRam))
-							&& isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked())
-				{
+				} else if ((bnrRomType == 8 || (bnrRomType == 11 && ms().smsGgInRam))
+							&& isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()) {
 					proceedToLaunch = false;
 					cannotLaunchMsg();
 				}
@@ -1343,8 +1330,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";
 		}
 
-		if ((pressed & KEY_X) && !ms().preventDeletion && dirContents.at(fileOffset).name != "..")
-		{
+		if ((pressed & KEY_X) && !ms().preventDeletion && dirContents.at(fileOffset).name != "..") {
 			if (ms().macroMode) {
 				lcdMainOnBottom();
 				lcdSwapped = true;
@@ -1433,8 +1419,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			}
 		}
 
-		if ((ms().theme!=6 && (pressed & KEY_START)) || (ms().theme==6 && (pressed & KEY_SELECT)))
-		{
+		if ((ms().theme!=6 && (pressed & KEY_START)) || (ms().theme==6 && (pressed & KEY_SELECT))) {
 			if (ms().theme == TWLSettings::EThemeGBC) {
 				snd().playLaunch();
 				snd().stopStream();
@@ -1457,8 +1442,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";		
 		}
 
-		if ((pressed & KEY_Y) && !isTwlm && !isDirectory && (bnrRomType == 0))
-		{
+		if ((pressed & KEY_Y) && !isTwlm && !isDirectory && (bnrRomType == 0)) {
 			ms().cursorPosition[ms().secondaryDevice] = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);
 			if (ms().theme == TWLSettings::EThemeGBC) {

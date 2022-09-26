@@ -303,23 +303,17 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	argData = (u16*)argStart;
 	argSize = 0;
 
-	for (; argc > 0 && *argv; ++argv, --argc)
-	{
-		for (argChar = *argv; *argChar != 0; ++argChar, ++argSize)
-		{
-			if (argSize & 1)
-			{
+	for (; argc > 0 && *argv; ++argv, --argc) {
+		for (argChar = *argv; *argChar != 0; ++argChar, ++argSize) {
+			if (argSize & 1) {
 				argTempVal |= (*argChar) << 8;
 				*argData = argTempVal;
 				++argData;
-			}
-			else
-			{
+			} else {
 				argTempVal = *argChar;
 			}
 		}
-		if (argSize & 1)
-		{
+		if (argSize & 1) {
 			*argData = argTempVal;
 			++argData;
 		}
