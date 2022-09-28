@@ -780,12 +780,11 @@ void lastRunROM()
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
+		loadPerGameSettings(filename);
 		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().previousUsedDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 			if (ms().homebrewBootstrap) {
 				unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 			} else {
-				loadPerGameSettings(filename);
-
 				bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 				bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
