@@ -546,8 +546,9 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 }
 
 void updateBoxArt(const std::vector<DirEntry> dirContents) {
-	if (CURPOS + PAGENUM * 40 >= ((int)dirContents.size()) || ms().theme == TWLSettings::EThemeHBL || ms().macroMode || !ms().showBoxArt || boxArtLoaded) return;
+	if (CURPOS + PAGENUM * 40 >= ((int)dirContents.size())) return;
 	showSTARTborder = true;
+	if (ms().theme == TWLSettings::EThemeHBL || ms().macroMode || !ms().showBoxArt || boxArtLoaded) return;
 
 	if (isDirectory[CURPOS]) {
 		clearBoxArt(); // Clear box art, if it's a directory
