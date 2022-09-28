@@ -1932,7 +1932,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	}
 }
 
-static bool previousPage(void) {
+static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 	if (CURPOS == 0 && !showLshoulder) {
 		snd().playWrong();
 		return false;
@@ -1964,11 +1964,43 @@ static bool previousPage(void) {
 	updateText(false);
 	ms().saveSettings();
 	settingsChanged = false;
-	displayNowLoading();
-	return true;
+	if (showLshoulder) {
+		displayNowLoading();
+	} else {
+		// Load correct icons depending on cursor position
+		if (CURPOS <= 1) {
+			for (int i = 0; i < 5; i++) {
+				if ((bnrRomType[i] == 0 || customIcon[i]) && i + PAGENUM * 40 < file_count) {
+					bgOperations(true);
+					iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
+						   dirContents[scrn].at(i + PAGENUM * 40).name.c_str(), i);
+				}
+			}
+		} else if (CURPOS >= 2 && CURPOS <= 36) {
+			for (int i = 0; i < 6; i++) {
+				if ((bnrRomType[i] == 0 || customIcon[CURPOS - 2 + i]) && (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
+					bgOperations(true);
+					iconUpdate(dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).isDirectory,
+						   dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).name.c_str(),
+						   CURPOS - 2 + i);
+				}
+			}
+		} else if (CURPOS >= 37 && CURPOS <= 39) {
+			for (int i = 0; i < 5; i++) {
+				if ((bnrRomType[i] == 0 || customIcon[35 + i]) && (35 + i) + PAGENUM * 40 < file_count) {
+					bgOperations(true);
+					iconUpdate(dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
+						   dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(), 35 + i);
+				}
+			}
+		}
+		whiteScreen = false;
+		fadeType = true; // Fade in from white
+	}
+	return showLshoulder;
 }
 
-static bool nextPage(void) {
+static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 	if (CURPOS == (file_count - 1) - PAGENUM * 40 && !showRshoulder) {
 		snd().playWrong();
 		return false;
@@ -2006,8 +2038,40 @@ static bool nextPage(void) {
 	updateText(false);
 	ms().saveSettings();
 	settingsChanged = false;
-	displayNowLoading();
-	return true;
+	if (showRshoulder) {
+		displayNowLoading();
+	} else {
+		// Load correct icons depending on cursor position
+		if (CURPOS <= 1) {
+			for (int i = 0; i < 5; i++) {
+				if ((bnrRomType[i] == 0 || customIcon[i]) && i + PAGENUM * 40 < file_count) {
+					bgOperations(true);
+					iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
+						   dirContents[scrn].at(i + PAGENUM * 40).name.c_str(), i);
+				}
+			}
+		} else if (CURPOS >= 2 && CURPOS <= 36) {
+			for (int i = 0; i < 6; i++) {
+				if ((bnrRomType[i] == 0 || customIcon[CURPOS - 2 + i]) && (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
+					bgOperations(true);
+					iconUpdate(dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).isDirectory,
+						   dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).name.c_str(),
+						   CURPOS - 2 + i);
+				}
+			}
+		} else if (CURPOS >= 37 && CURPOS <= 39) {
+			for (int i = 0; i < 5; i++) {
+				if ((bnrRomType[i] == 0 || customIcon[35 + i]) && (35 + i) + PAGENUM * 40 < file_count) {
+					bgOperations(true);
+					iconUpdate(dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
+						   dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(), 35 + i);
+				}
+			}
+		}
+		whiteScreen = false;
+		fadeType = true; // Fade in from white
+	}
+	return showRshoulder;
 }
 
 std::string browseForFile(const std::vector<std::string_view> extensionList) {
@@ -2983,11 +3047,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 			// page switch
 			if (pressed & KEY_L) {
-				if (previousPage()) {
+				if (previousPage(scrn, dirContents)) {
 					break;
 				}
 			} else if (pressed & KEY_R) {
-				if (nextPage()) {
+				if (nextPage(scrn, dirContents)) {
 					break;
 				}
 			}
@@ -3212,13 +3276,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					// page switch
 					if (pressed & KEY_LEFT) {
 						runSelectMenu = false;
-						if (previousPage()) {
+						if (previousPage(scrn, dirContents)) {
 							break2 = true;
 							break;
 						}
 					} else if (pressed & KEY_RIGHT) {
 						runSelectMenu = false;
-						if (nextPage()) {
+						if (nextPage(scrn, dirContents)) {
 							break2 = true;
 							break;
 						}
