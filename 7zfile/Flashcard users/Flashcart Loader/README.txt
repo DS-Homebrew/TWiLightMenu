@@ -11,6 +11,7 @@ Acekard 2(i) folder:
 - translucent r4igold.cc 3DS carts
 - r4i-gold.me carts 2013 or later
 - r4infinity.com Dual-Core
+- r4ids.cn R4i Gold 3DS Plus with faulty DS mode
 
 Ace3DS+ folder:
 - Ace3DS+
