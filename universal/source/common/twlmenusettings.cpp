@@ -57,7 +57,7 @@ TWLSettings::TWLSettings()
 	sortMethod = ESortAlphabetical;
 	showDirectories = true;
 	showHidden = false;
-	showBoxArt = 1 + isDSiMode();
+	showBoxArt = 0;
 	animateDsiIcons = true;
 	showCustomIcons = true;
 	preventDeletion = false;
