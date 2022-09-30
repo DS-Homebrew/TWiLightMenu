@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 100)
+// B4DS DSiWare Whitelist (Total: 105)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -12,6 +12,11 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAC", // Advanced Circuits
 	"K5H", // Ah! Heaven
 	"KF2", // Amakuchi! Dairoujou
+	"KY8", // Anne's Doll Studio: Antique Collection
+	"K54", // Anne's Doll Studio: Gothic Collection
+	"KLQ", // Anne's Doll Studio: Lolita Collection
+	"K2S", // Anne's Doll Studio: Princess Collection
+	"KSQ", // Anne's Doll Studio: Tokyo Collection
 	"KVI", // Anonymous Notes 1: From The Abyss
 	"KV2", // Anonymous Notes 2: From The Abyss
 	"KV3", // Anonymous Notes 3: From The Abyss
