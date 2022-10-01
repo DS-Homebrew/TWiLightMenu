@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 106)
+// B4DS DSiWare Whitelist (Total: 107)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -74,6 +74,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KJO", // Magnetic Joe
 	"KMG", // Mighty Flip Champs!
 	"KWY", // Mighty Milky Way
+	"KM7", // Missy Mila Twisted Tales
 	"K8M", // Model Academy
 	"KXB", // Monster Buster Club
 	"KMB", // Mr. Brain
