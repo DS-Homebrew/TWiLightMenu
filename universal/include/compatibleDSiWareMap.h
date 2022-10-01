@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 105)
+// B4DS DSiWare Whitelist (Total: 106)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -44,6 +44,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDV", // Dark Void Zero
 	"KWT", // GO Series: Defense Wars
 	"KHE", // DotMan
+	"K9E", // Dreamwalker
 	"KD9", // Dr. Mario Express
 	"KDL", // Dragon's Lair
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
