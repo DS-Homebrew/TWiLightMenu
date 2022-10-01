@@ -94,6 +94,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
    - [enler](https://github.com/enler): Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility
    - [Rocket Robz](https://github.com/RocketRobz): Fixing some DS⁽ⁱ⁾-Enhanced game AP-patches for DS⁽ⁱ⁾ mode compatibility
 - fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, [gamemasterplc](https://github.com/gamemasterplc), [Rocket Robz](https://github.com/RocketRobz), [ChampionLeake](https://github.com/ChampionLeake), [DeadSkullzJr](https://github.com/DeadSkullzJr), [spellboundtriangle](https://github.com/spellboundtriangle), [LedyBacer](https://github.com/LedyBacer): Widescreen Cheats
+- [Gericom](https://github.com/Gericom): [FastVideoDSPlayer](https://github.com/Gericom/FastVideoDSPlayer) for FastVideoDS video playback
 - [chishm](https://github.com/chishm): [tuna-viDS](https://github.com/chishm/tuna-vids) for Xvid video playback
 - Taiju Yamada: code used to bypass R4i-SDHC boot file protection
 ## Translators
