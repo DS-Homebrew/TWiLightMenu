@@ -116,7 +116,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAS", // Art Style: ZENGAGE
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 6)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 10)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KAA", // Art Style: Aquia
 	"KFP", // Flipper
@@ -124,6 +124,10 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"K6T", // Orion's Odyssey
 	"KHR", // Picture Perfect: Pocket Stylist
 	"KS3", // Shantae: Risky's Revenge
+	"KZU", // Tales to Enjoy!: Little Red Riding Hood
+	"KZV", // Tales to Enjoy!: Puss in Boots
+	"KZ7", // Tales to Enjoy!: The Three Little Pigs
+	"KZ8", // Tales to Enjoy!: The Ugly Duckling
 };
 
 // B4DS DSiWare Whitelist (RAM limitation message ID)
@@ -134,6 +138,10 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Orion's Odyssey (Crashes at certain points)
 	0, // Picture Perfect: Pocket Stylist (Parts of the game only)
 	3, // Shantae: Risky's Revenge (Crashes at the Lighthouse after first fight)
+	4, // Tales to Enjoy!: Little Red Riding Hood (Crashes at certain points)
+	4, // Tales to Enjoy!: Puss in Boots (Crashes at certain points)
+	4, // Tales to Enjoy!: The Three Little Pigs (Crashes at certain points)
+	4, // Tales to Enjoy!: The Ugly Duckling (Crashes at certain points)
 };
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Show RAM limitation message) (Total: 1)
