@@ -44,10 +44,10 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDV", // Dark Void Zero
 	"KWT", // GO Series: Defense Wars
 	"KHE", // DotMan
-	"K9E", // Dreamwalker
 	"KD9", // Dr. Mario Express
 	"KDL", // Dragon's Lair
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
+	"K9E", // Dreamwalker
 	"B88", // DS WiFi Settings
 	"KB8", // GO Series: Earth Saver
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
