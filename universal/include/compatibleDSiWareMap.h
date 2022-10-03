@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 113)
+// B4DS DSiWare Whitelist (Total: 114)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -110,6 +110,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
 	"KZ8", // Tales to Enjoy!: The Ugly Duckling
 	"KYY", // Tangrams
+	"KTE", // Tetris Party Live
 	"K6P", // Unou to Sanougaren Sasuru: Uranoura
 	"KVT", // VT Tennis
 	"KK4", // Wakugumi: Monochrome Puzzle
