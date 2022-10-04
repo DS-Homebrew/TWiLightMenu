@@ -173,7 +173,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 26)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 27)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KII", // 101 Pinball World
 	"KXT", // 99Seconds
@@ -198,6 +198,7 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KNV", // Neko Reversi
 	"KPS", // Phantasy Star 0 Mini
 	"KZL", // Plants vs. Zombies
+	"KQR", // Remote Racers
 	"KRR", // Robot Rescue 2
 	"KEV", // Space Invaders Extreme Z
 	"KSL", // Touch Solitaire
