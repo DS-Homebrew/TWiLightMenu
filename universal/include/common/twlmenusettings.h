@@ -1,6 +1,7 @@
 
 #include <nds.h>
 #include <string>
+#include <vector>
 #include "common/bootstrappaths.h"
 #include "common/singleton.h"
 
@@ -305,6 +306,7 @@ public:
 	bool previousUsedDevice;
 	bool secondaryDevice;
 	bool fcSaveOnSd;
+	std::vector<std::string> blockedExtensions;
 
 	int flashcard;
 	TSlot1LaunchMethod slot1LaunchMethod;

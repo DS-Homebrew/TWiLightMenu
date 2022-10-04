@@ -1171,6 +1171,13 @@ int main(int argc, char **argv) {
 		extensionList.emplace_back(".plg"); // DSTWO Plugin
 	}
 
+	if(ms().blockedExtensions.size() > 0) {
+		auto toErase = std::remove_if(extensionList.begin(), extensionList.end(), [](std::string_view str) {
+			return std::find(ms().blockedExtensions.begin(), ms().blockedExtensions.end(), str) != ms().blockedExtensions.end();
+		});
+		extensionList.erase(toErase, extensionList.end());
+	}
+
 	srand(time(NULL));
 	
 	bool copyDSiWareSavBack =
