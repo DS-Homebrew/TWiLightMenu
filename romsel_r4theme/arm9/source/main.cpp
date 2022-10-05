@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <limits.h>
 
+#include <algorithm>
 #include <string.h>
 #include <unistd.h>
 #include <gl2d.h>
