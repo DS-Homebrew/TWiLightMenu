@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 120)
+// B4DS DSiWare Whitelist (Total: 127)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -97,6 +97,13 @@ static const char compatibleGameListB4DS[][5] = {
 	"KUM", // Quick Fill Q
 	"KLB", // Rabi Laby
 	"KLV", // Rabi Laby 2
+	"KJZ", // Renjuku Kanji: Shougaku 1 Nensei
+	"KJ2", // Renjuku Kanji: Shougaku 2 Nensei
+	"KJ3", // Renjuku Kanji: Shougaku 3 Nensei
+	"KJ4", // Renjuku Kanji: Shougaku 4 Nensei
+	"KJ5", // Renjuku Kanji: Shougaku 5 Nensei
+	"KJ6", // Renjuku Kanji: Shougaku 6 Nensei
+	"KJ8", // Renjuku Kanji: Chuugakusei
 	"KRT", // Robot Rescue
 	"KD6", // Rock-n-Roll Domo
 	"KS3", // Shantae: Risky's Revenge
