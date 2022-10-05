@@ -237,6 +237,7 @@ void TWLSettings::loadSettings()
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	secondaryDevice = bothSDandFlashcard() ? settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice) : flashcardFound();
 	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
+	settingsini.GetStringVector("SRLOADER", "BLOCKED_EXTENSIONS", blockedExtensions, ':');
 
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
 	slot1LaunchMethod = (TSlot1LaunchMethod)settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);

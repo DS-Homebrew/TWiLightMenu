@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <limits.h>
 
+#include <algorithm>
 #include <string.h>
 #include <unistd.h>
 #include <gl2d.h>
@@ -1169,6 +1170,13 @@ int main(int argc, char **argv) {
 
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		extensionList.emplace_back(".plg"); // DSTWO Plugin
+	}
+
+	if(ms().blockedExtensions.size() > 0) {
+		auto toErase = std::remove_if(extensionList.begin(), extensionList.end(), [](std::string_view str) {
+			return std::find(ms().blockedExtensions.begin(), ms().blockedExtensions.end(), str) != ms().blockedExtensions.end();
+		});
+		extensionList.erase(toErase, extensionList.end());
 	}
 
 	srand(time(NULL));
