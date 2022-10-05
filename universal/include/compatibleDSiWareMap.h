@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 127)
+// B4DS DSiWare Whitelist (Total: 128)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -97,6 +97,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KUM", // Quick Fill Q
 	"KLB", // Rabi Laby
 	"KLV", // Rabi Laby 2
+	"KRC", // Real Crimes: Jack the Ripper
 	"KJZ", // Renjuku Kanji: Shougaku 1 Nensei
 	"KJ2", // Renjuku Kanji: Shougaku 2 Nensei
 	"KJ3", // Renjuku Kanji: Shougaku 3 Nensei
