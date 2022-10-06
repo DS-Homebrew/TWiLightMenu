@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 129)
+// B4DS DSiWare Whitelist (Total: 130)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -132,6 +132,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDW", // White-Water Domo
 	"KAS", // Art Style: ZENGAGE
 	"K7K", // Zombie Blaster
+	"KZY", // Zombie Skape
 };
 
 // B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 10)
