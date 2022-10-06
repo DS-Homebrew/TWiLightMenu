@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 131)
+// B4DS DSiWare Whitelist (Total: 132)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -89,6 +89,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KPQ", // GO Series: Picdun
 	"KAP", // Art Style: PiCTOBiTS
 	"KHR", // Picture Perfect: Pocket Stylist
+	"KZL", // Plants vs. Zombies
 	"KPP", // Pop Island
 	"KPF", // Pop Island: Paperfield
 	"KOQ", // GO Series: Portable Shrine Wars
@@ -184,7 +185,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 27)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 26)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KII", // 101 Pinball World
 	"KXT", // 99Seconds
@@ -208,7 +209,6 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KNP", // Need for Speed: Nitro-X
 	"KNV", // Neko Reversi
 	"KPS", // Phantasy Star 0 Mini
-	"KZL", // Plants vs. Zombies
 	"KQR", // Remote Racers
 	"KRR", // Robot Rescue 2
 	"KEV", // Space Invaders Extreme Z
