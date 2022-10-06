@@ -185,7 +185,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 26)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 27)
 static const char compatibleGameListB4DSDebug[][4] = {
 	"KII", // 101 Pinball World
 	"KXT", // 99Seconds
@@ -203,6 +203,7 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KKN", // Flipper 2: Flush the Goldfish
 	"K3G", // Go! Go! Kokopolo
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
+	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KYL", // Make Up & Style
 	"K59", // Metal Torrent
 	"KMM", // Mixed Messages
