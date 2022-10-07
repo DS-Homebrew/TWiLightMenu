@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 132)
+// B4DS DSiWare Whitelist (Total: 133)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -27,6 +27,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KSR", // Aura-Aura Climber
 	"KAD", // Art Style: BASE 10
 	"K8B", // Beauty Academy
+	"KBEE", // Bejeweled Twist (USA)
 	"KBB", // Bomberman Blitz
 	"KAH", // Art Style: Boxlife
 	"KKQ", // Bugs'N'Balls
@@ -187,6 +188,10 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 27)
 static const char compatibleGameListB4DSDebug[][4] = {
+	// Not counted towards total
+	"KBE", // Bejeweled Twist (Europe, Australia)
+
+	// Counted
 	"KII", // 101 Pinball World
 	"KXT", // 99Seconds
 	"K27", // G.G. Series: All Breaker
