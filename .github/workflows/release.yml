@@ -65,6 +65,7 @@ jobs:
           7z a TWiLightMenu-debug-release.7z debug
           mv TWiLightMenu-debug-release.7z ~/artifacts
 
+          mkdir -p 7zfile/_nds/nds-bootstrap/
           mkdir -p 7zfile/_nds/TWiLightMenu/3dsmenu/themes/
           mkdir -p 7zfile/_nds/TWiLightMenu/boxart/
           mkdir -p 7zfile/_nds/TWiLightMenu/dsimenu/themes/
@@ -80,6 +81,8 @@ jobs:
           curl -LO https://github.com/DS-Homebrew/nds-bootstrap/releases/latest/download/nds-bootstrap.7z
           7z x nds-bootstrap.7z
           mv nds-bootstrap.* ..
+          curl -LO https://github.com/DS-Homebrew/nds-bootstrap-extras/raw/main/preLoadSettings/preLoadSettingsDSi.pck
+          curl -LO https://github.com/DS-Homebrew/nds-bootstrap-extras/raw/main/preLoadSettings/preLoadSettings3DS.pck
           cd ..
           curl -L https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true -o nds-bootstrap.7z
           7z x nds-bootstrap.7z
@@ -89,6 +92,8 @@ jobs:
           mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
+          mv nds-bootstrap/preLoadSettingsDSi.pck 7zfile/_nds/nds-bootstrap/
+          mv nds-bootstrap/preLoadSettings3DS.pck 7zfile/_nds/nds-bootstrap/
 
           # Emulators
           mkdir -p 7zfile/_nds/TWiLightMenu/emulators
