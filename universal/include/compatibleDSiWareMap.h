@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 148)
+// B4DS DSiWare Whitelist (Total: 149)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -150,6 +150,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAS", // Art Style: ZENGAGE
 	"K7K", // Zombie Blaster
 	"KZY", // Zombie Skape
+	"KZS", // Zoonies: Escape from Makatu
 	"KZT", // Zuma's Revenge!
 };
 
