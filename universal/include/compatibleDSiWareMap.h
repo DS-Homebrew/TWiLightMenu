@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 140)
+// B4DS DSiWare Whitelist (Total: 147)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -51,6 +51,13 @@ static const char compatibleGameListB4DS[][5] = {
 	"K9E", // Dreamwalker
 	"B88", // DS WiFi Settings
 	"KB8", // GO Series: Earth Saver
+	"KEB", // Electroplankton: Hanenbow
+	"KEC", // Electroplankton: Luminarrow
+	"KEH", // Electroplankton: Marine-Crystals
+	"KEF", // Electroplankton: Nanocarp
+	"KEE", // Electroplankton: Rec-Rec
+	"KED", // Electroplankton: Sun-Animalcule
+	"KEJ", // Electroplankton: Varvoice
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KU7E", // Fashion Tycoon (USA)
 	"KFS", // Flashlight
@@ -193,7 +200,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 27)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 30)
 static const char compatibleGameListB4DSDebug[][4] = {
 	// Not counted towards total
 	"KBE", // Bejeweled Twist (Europe, Australia)
@@ -211,6 +218,9 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KXC", // Castle Conqueror: Heroes 2
 	"KQN", // Castle Conqueror: Revolution
 	"KDQ", // Dragon Quest Wars
+	"KEI", // Electroplankton: Beatnes
+	"KEG", // Electroplankton: Lumiloop
+	"KEA", // Electroplankton: Trapy
 	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
 	"K3G", // Go! Go! Kokopolo
