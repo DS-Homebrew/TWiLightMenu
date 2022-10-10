@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 150)
+// B4DS DSiWare Whitelist (Total: 151)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -97,6 +97,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KUS", // Paul's Shooting Adventure 2
 	"KPQ", // GO Series: Picdun
 	"KAP", // Art Style: PiCTOBiTS
+	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist
 	"KPY", // GO Series: Pinball Attack!
 	"KZL", // Plants vs. Zombies
@@ -155,12 +156,13 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 10)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 11)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KAA", // Art Style: Aquia
 	"KFP", // Flipper
 	"KWY", // Mighty Milky Way
 	"K6T", // Orion's Odyssey
+	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist
 	"KS3", // Shantae: Risky's Revenge
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
@@ -175,6 +177,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Flipper (No music)
 	2, // Mighty Milky Way (No music)
 	4, // Orion's Odyssey (Crashes at certain points)
+	1, // PictureBook Games: The Royal Bluff (No audio)
 	0, // Picture Perfect: Pocket Stylist (Parts of the game only)
 	3, // Shantae: Risky's Revenge (Crashes at the Lighthouse after first fight)
 	4, // Tales to Enjoy!: Little Red Riding Hood (Crashes at certain points)
