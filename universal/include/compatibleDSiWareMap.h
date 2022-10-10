@@ -202,7 +202,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 30)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 31)
 static const char compatibleGameListB4DSDebug[][4] = {
 	// Not counted towards total
 	"KBE", // Bejeweled Twist (Europe, Australia)
@@ -234,6 +234,7 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KNP", // Need for Speed: Nitro-X
 	"KNV", // Neko Reversi
 	"KPS", // Phantasy Star 0 Mini
+	"KXA", // Pirates Assault
 	"KQR", // Remote Racers
 	"KRR", // Robot Rescue 2
 	"KEV", // Space Invaders Extreme Z
