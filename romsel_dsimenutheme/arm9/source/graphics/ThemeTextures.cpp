@@ -554,9 +554,9 @@ void ThemeTextures::loadBatteryTextures() {
 }
 
 void ThemeTextures::loadUITextures() {
-	_dateTimeFont = std::make_unique<FontGraphic>(std::vector<std::string>({TFN_FONT_DATE_TIME, TFN_FALLBACK_FONT_DATE_TIME}), false);
+	_dateTimeFont = std::make_unique<FontGraphic>(((access((TFN_FONT_DATE_TIME).c_str(), F_OK) == 0) ? TFN_FONT_DATE_TIME : TFN_FALLBACK_FONT_DATE_TIME).c_str(), false);
 	if (access((TFN_FONT_USERNAME).c_str(), F_OK) == 0) {
-		_usernameFont = std::make_unique<FontGraphic>(std::vector<std::string>({TFN_FONT_USERNAME}), false);
+		_usernameFont = std::make_unique<FontGraphic>((TFN_FONT_USERNAME).c_str(), false);
 	}
 
 	if (ms().theme != TWLSettings::EThemeHBL) {

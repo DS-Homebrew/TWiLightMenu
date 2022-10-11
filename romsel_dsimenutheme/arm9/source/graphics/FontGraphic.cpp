@@ -1,5 +1,6 @@
 #include "FontGraphic.h"
 
+#include "common/logging.h"
 #include "common/tonccpy.h"
 
 u8 *FontGraphic::lastUsedLoc = (u8*)0x08000000;
@@ -90,14 +91,13 @@ char16_t FontGraphic::arabicForm(char16_t current, char16_t prev, char16_t next)
 	return current;
 }
 
-FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansionPak) : useExpansionPak(useExpansionPak) {
-	FILE *file = nullptr;
-	for (const auto &path : paths) {
-		file = fopen(path.c_str(), "rb");
-		if (file)
-			break;
-	}
+FontGraphic::FontGraphic(const char* path, bool useExpansionPak) : useExpansionPak(useExpansionPak) {
+	/*logPrint("FontGraphic::FontGraphic(");
+	logPrint(path);
+	logPrint(", false)\n");
+	logPrint("\n");*/
 
+	FILE *file = fopen(path, "rb");
 	if (file) {
 		if (useExpansionPak && *(u16*)(0x020000C0) == 0 && lastUsedLoc == (u8*)0x08000000) {
 			lastUsedLoc += 0x01000000;

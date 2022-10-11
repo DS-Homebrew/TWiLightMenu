@@ -50,7 +50,7 @@ public:
 
 	static std::u16string utf8to16(std::string_view text);
 
-	FontGraphic(const std::vector<std::string> &paths, const bool useExpansionPak);
+	FontGraphic(const char* path, const bool useExpansionPak);
 
 	~FontGraphic(void);
 
