@@ -266,6 +266,7 @@ public:
 	bool languageSet;
 	bool regionSet;
 
+	bool logging;
 	TLanguage guiLanguage, currentLanguage;
 	TLanguage titleLanguage;
 	int fps;

@@ -113,6 +113,7 @@ STRING(DESCRIPTION_CUSTOMICONS, "Show custom game icons for all ROM types.")
 STRING(DESCRIPTION_CLOCK_SYSTEM, "Use either a 12-hour clock or a 24-hour clock.")
 STRING(DESCRIPTION_AK_SCROLLSPEED, "Sets the scroll speed in the Wood UI theme.")
 STRING(DESCRIPTION_ZOOMING_ICON, "Display a zoom effect for the selected icon in the Wood UI theme.")
+STRING(DESCRIPTION_LOGGING_TWLMENU, "Logs the TWiLight Menu++ process to sd:/_nds/TWiLightMenu/log.txt")
 
 // Emulation / HB settings
 STRING(COL_EMULATOR, "ColecoVision emulator")

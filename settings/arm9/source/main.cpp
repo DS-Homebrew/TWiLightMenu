@@ -17,6 +17,7 @@
 
 #include "common/nds_loader_arm9.h"
 #include "common/inifile.h"
+#include "common/logging.h"
 #include "common/fileCopy.h"
 #include "common/bootstrappaths.h"
 #include "common/bootstrapsettings.h"
@@ -165,16 +166,20 @@ void rebootTWLMenuPP()
 
 void loadMainMenu()
 {
+	logPrint("Opening DS Classic Menu...\n");
 	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 }
 
 void loadROMselect()
 {
 	/*if (ms().theme == TWLSettings::EThemeWood) {
+		logPrint("Opening Wood theme...\n");
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
 	} else*/ if (ms().theme == TWLSettings::EThemeR4 || ms().theme == TWLSettings::EThemeGBC) {
+		logPrint("Opening R4 Original or GameBoy Color theme...\n");
 		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	} else {
+		logPrint("Opening DSi, 3DS, Saturn, or HBL theme...\n");
 		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	}
 }
@@ -463,25 +468,37 @@ void begin_update(int opt)
 	clearText();
 	printLarge(false, ms().rtl() ? 256 - 4 : 4, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
 
+	logPrint("\n");
 	if (opt == 1) {
 		// Slot-1 microSD > Console SD
+		logPrint("Copying main.srldr from fat to sd\n");
 		fcopy("fat:/_nds/TWiLightMenu/main.srldr", "sd:/_nds/TWiLightMenu/main.srldr");
+		logPrint("Copying manual.srldr from fat to sd\n");
 		fcopy("fat:/_nds/TWiLightMenu/manual.srldr", "sd:/_nds/TWiLightMenu/manual.srldr");
+		logPrint("Copying slot1launch.srldr from fat to sd\n");
 		fcopy("fat:/_nds/TWiLightMenu/slot1launch.srldr", "sd:/_nds/TWiLightMenu/slot1launch.srldr");
+		logPrint("Copying resetgame.srldr from fat to sd\n");
 		fcopy("fat:/_nds/TWiLightMenu/resetgame.srldr", "sd:/_nds/TWiLightMenu/resetgame.srldr");
+		logPrint("Copying settings.srldr from fat to sd\n");
 		fcopy("fat:/_nds/TWiLightMenu/settings.srldr", "sd:/_nds/TWiLightMenu/settings.srldr");
 	} else {
 		// Console SD > Slot-1 microSD
+		logPrint("Copying main.srldr from sd to fat\n");
 		fcopy("sd:/_nds/TWiLightMenu/main.srldr", "fat:/_nds/TWiLightMenu/main.srldr");
+		logPrint("Copying manual.srldr from sd to fat\n");
 		fcopy("sd:/_nds/TWiLightMenu/manual.srldr", "fat:/_nds/TWiLightMenu/manual.srldr");
+		logPrint("Copying slot1launch.srldr from sd to fat\n");
 		fcopy("sd:/_nds/TWiLightMenu/slot1launch.srldr", "fat:/_nds/TWiLightMenu/slot1launch.srldr");
+		logPrint("Copying resetgame.srldr from sd to fat\n");
 		fcopy("sd:/_nds/TWiLightMenu/resetgame.srldr", "fat:/_nds/TWiLightMenu/resetgame.srldr");
+		logPrint("Copying settings.srldr from sd to fat\n");
 		fcopy("sd:/_nds/TWiLightMenu/settings.srldr", "fat:/_nds/TWiLightMenu/settings.srldr");
 	}
 
 	loadMenuSrldrList(opt==1 ? "fat:/_nds/TWiLightMenu/" : "sd:/_nds/TWiLightMenu/");
 
 	// Copy theme srldr files
+	logPrint(opt==1 ? "Copying *menu.srldr from fat to sd\n" : "Copying *menu.srldr from sd to fat\n");
 	char srldrPath[2][256];
 	for (int i = 0; i < (int)menuSrldrList.size(); i++) {
 		sprintf(srldrPath[0], opt==1 ? "fat:/_nds/TWiLightMenu/%s" : "sd:/_nds/TWiLightMenu/%s", menuSrldrList[i].c_str());
@@ -491,14 +508,18 @@ void begin_update(int opt)
 
 	if (opt == 1) {
 		// Slot-1 microSD > Console SD
+		logPrint("Copying nds-bootstrap release from fat to sd\n");
 		fcopy("fat:/_nds/nds-bootstrap-release.nds", "sd:/_nds/nds-bootstrap-release.nds");
 		fcopy("fat:/_nds/release-bootstrap.ver", "sd:/_nds/release-bootstrap.ver");
+		logPrint("Copying nds-bootstrap nightly from fat to sd\n");
 		fcopy("fat:/_nds/nds-bootstrap-nightly.nds", "sd:/_nds/nds-bootstrap-nightly.nds");
 		fcopy("fat:/_nds/nightly-bootstrap.ver", "sd:/_nds/nightly-bootstrap.ver");
 	} else {
 		// Console SD > Slot-1 microSD
+		logPrint("Copying nds-bootstrap release from sd to fat\n");
 		fcopy("sd:/_nds/nds-bootstrap-release.nds", "fat:/_nds/nds-bootstrap-release.nds");
 		fcopy("sd:/_nds/release-bootstrap.ver", "fat:/_nds/release-bootstrap.ver");
+		logPrint("Copying nds-bootstrap nightly from sd to fat\n");
 		fcopy("sd:/_nds/nds-bootstrap-nightly.nds", "fat:/_nds/nds-bootstrap-nightly.nds");
 		fcopy("sd:/_nds/nightly-bootstrap.ver", "fat:/_nds/nightly-bootstrap.ver");
 	}
@@ -762,6 +783,7 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	gs().loadSettings();
 	bs().loadSettings();
+	logInit();
 	//loadAkThemeList();
 	loadR4ThemeList();
 	load3DSThemeList();
@@ -782,6 +804,7 @@ int main(int argc, char **argv)
 	if (sdFound() && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
 		CIniFile lumaConfig("sd:/luma/config.ini");
 		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
+		logPrint(widescreenFound ? "Widescreen found\n" : "Widescreen not found\n");
 	}
 
 	bool sharedFound = (access("sd:/shared2", F_OK) == 0);
@@ -799,6 +822,7 @@ int main(int argc, char **argv)
 
 	if (sdFound() && ms().consoleModel < 2) {
 		hiyaAutobootFound = (access("sd:/hiya/autoboot.bin", F_OK) == 0);
+		logPrint(hiyaAutobootFound ? "hiya autoboot file found\n" : "hiya autoboot file not found\n");
 	}
 
 	currentTheme = ms().theme;
@@ -953,6 +977,7 @@ int main(int argc, char **argv)
 		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
 		.option(STR_CUSTOMICONS, STR_DESCRIPTION_CUSTOMICONS, Option::Bool(&ms().showCustomIcons), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_FRAMERATE, STR_DESCRIPTION_FRAMERATE, Option::Int(&ms().fps), {STR_15FPS, STR_20FPS, STR_24FPS, STR_30FPS, STR_50FPS, STR_60FPS}, {15, 20, 24, 30, 50, 60})
+		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_TWLMENU, Option::Bool(&ms().logging), {STR_ON, STR_OFF}, {true, false})
 		/*.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {STR_FAST, STR_MEDIUM, STR_SLOW},
 				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
 		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false})*/;

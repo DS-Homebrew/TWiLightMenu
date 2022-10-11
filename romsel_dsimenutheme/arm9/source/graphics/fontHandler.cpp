@@ -12,6 +12,7 @@
 #include "TextEntry.h"
 #include "ThemeConfig.h"
 #include "themefilenames.h"
+#include "common/logging.h"
 #include "tool/colortool.h"
 
 FontGraphic *smallFont;
@@ -33,6 +34,8 @@ bool fileExists(std::vector<std::string_view> paths) {
 }
 
 void fontInit() {
+	logPrint("fontInit() ");
+
 	extern u32 rotatingCubesLoaded;
 	bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (*(u16*)(0x020000C0) != 0 || !rotatingCubesLoaded)
 							&& (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
@@ -93,6 +96,7 @@ void fontInit() {
 	}
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
+	logPrint("Font inited\n");
 }
 
 void fontReinit() {

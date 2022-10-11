@@ -5,6 +5,7 @@
 
 #include "common/twlmenusettings.h"
 #include "common/flashcard.h"
+#include "common/logging.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "myDSiMode.h"
@@ -28,6 +29,8 @@ bool fileExists(std::vector<std::string_view> paths) {
 }
 
 void fontInit() {
+	logPrint("fontInit() ");
+
 	bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
 
 	// Unload fonts if already loaded
@@ -56,6 +59,7 @@ void fontInit() {
 	};
 	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
+	logPrint("Font inited\n");
 }
 
 void unloadFont() {

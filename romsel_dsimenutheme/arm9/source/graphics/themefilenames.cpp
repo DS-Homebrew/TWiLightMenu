@@ -1,12 +1,13 @@
 #include "themefilenames.h"
 #include "common/twlmenusettings.h"
+#include "common/logging.h"
 #include "common/systemdetails.h"
 #include "common/stringtool.h"
 #include <nds.h>
 #include <stdio.h>
 
 ThemeFilenames::ThemeFilenames() {
-	printf("tfn()\n");
+	logPrint("tfn()\n");
 	std::string systemDirectory;
 	switch (ms().theme) {
 		case 0:

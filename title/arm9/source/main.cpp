@@ -17,6 +17,7 @@
 #include "common/fatHeader.h"
 #include "common/flashcard.h"
 #include "common/inifile.h"
+#include "common/logging.h"
 #include "common/nds_loader_arm9.h"
 #include "ndsheaderbanner.h"
 #include "common/pergamesettings.h"
@@ -127,6 +128,7 @@ void loadMainMenu()
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
+	logPrint("Opening DS Classic Menu...\n");
 	if (!isDSiMode()) {
 		chdir("fat:/");
 	}
@@ -149,13 +151,16 @@ void loadROMselect(void)
 	}
 	switch (ms().theme) {
 		/*case 3:
+			logPrint("Opening Wood theme...\n");
 			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 			break;*/
 		case 2:
 		case 6:
+			logPrint("Opening R4 Original or GameBoy Color theme...\n");
 			runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 			break;
 		default:
+			logPrint("Opening DSi, 3DS, Saturn, or HBL theme...\n");
 			runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 			break;
 	}
@@ -1955,6 +1960,7 @@ int main(int argc, char **argv)
 
 	ms().loadSettings();
 	bs().loadSettings();
+	logInit();
 
 	// Get SysNAND region and launcher app
 	if (isDSiMode() && sdFound() && !is3DS && (ms().sysRegion == TWLSettings::ERegionDefault || ms().launcherApp == -1)) {
@@ -2180,6 +2186,7 @@ int main(int argc, char **argv)
 				}
 			}
 			if (validDonor) {
+				logPrint("Donor ROM has been automatically set!\n");
 				bootstrapini.SaveIniFile(bootstrapinipath);
 			}
 		}
@@ -2247,6 +2254,7 @@ int main(int argc, char **argv)
 			}
 
 			if (validDonor) {
+				logPrint("Donor ROM has been automatically set!\n");
 				bootstrapini.SaveIniFile(bootstrapinipath);
 			}
 		}
@@ -2308,9 +2316,21 @@ int main(int argc, char **argv)
 		std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
 		if (access(pubpathUl.c_str(), F_OK) == 0) {
 			rename(pubpathUl.c_str(), pubpath.c_str());
+			logPrint("Moved back to saves folder:\n");
+			logPrint(pubpathUl.c_str());
+			logPrint("\n");
+			logPrint(pubpath.c_str());
+			logPrint("\n");
+			logPrint("\n");
 		}
 		if (access(prvpathUl.c_str(), F_OK) == 0) {
 			rename(prvpathUl.c_str(), prvpath.c_str());
+			logPrint("Moved back to saves folder:\n");
+			logPrint(prvpathUl.c_str());
+			logPrint("\n");
+			logPrint(prvpath.c_str());
+			logPrint("\n");
+			logPrint("\n");
 		}
 	}
 
@@ -2353,6 +2373,12 @@ int main(int argc, char **argv)
 		 || extension(filename, ".srl")
 		 || extension(filename, ".app"))) {
 			rename(savepathFc.c_str(), savepath.c_str());
+			logPrint("Moved back to saves folder:\n");
+			logPrint(savepathFc.c_str());
+			logPrint("\n");
+			logPrint(savepath.c_str());
+			logPrint("\n");
+			logPrint("\n");
 		}
 	  } else if (sys().isRegularDS() && (*(u16*)(0x020000C0) != 0) && (ms().launchType[true] == Launch::EGBANativeLaunch)) {
 			u8 byteBak = *(vu8*)(0x0A000000);
@@ -2404,6 +2430,7 @@ int main(int argc, char **argv)
 						len -= 0x8000;
 					}
 					fclose(savFile);
+					logPrint("Restored GBA save from Slot-2 flashcard\n");
 
 					gbaSramAccess(true);	// Switch to GBA SRAM
 					// Wipe out SRAM after restoring save
@@ -2483,6 +2510,7 @@ int main(int argc, char **argv)
 	fclose(file);
 
 	if (softResetParamsFound) {
+		logPrint("Soft-reset parameters found\n");
 		scanKeys();
 		if (keysHeld() & KEY_X) {
 			softResetParams = 0xFFFFFFFF;
@@ -2491,6 +2519,7 @@ int main(int argc, char **argv)
 			fseek(file, 0x10 - 1, SEEK_SET);
 			fputc('\0', file);
 			fclose(file);
+			logPrint("Cleared soft-reset parameters\n");
 			softResetParamsFound = false;
 		}
 	}
@@ -2582,6 +2611,7 @@ int main(int argc, char **argv)
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
 			}
+			logPrint("Opening TWLMenu++ Settings...\n");
 			if (!isDSiMode()) {
 				chdir("fat:/");
 			}

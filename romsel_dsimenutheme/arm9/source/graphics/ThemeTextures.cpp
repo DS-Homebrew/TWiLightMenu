@@ -6,6 +6,7 @@
 #include <nds/arm9/dldi.h>
 #include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
+#include "common/logging.h"
 #include "myDSiMode.h"
 
 #include "paletteEffects.h"
@@ -267,7 +268,7 @@ void ThemeTextures::loadBackgrounds() {
 }
 
 void ThemeTextures::loadHBTheme() {	
-	//iprintf("tex().loadHBTheme()\n");
+	logPrint("tex().loadHBTheme()\n");
 
 	// iprintf("tex().loadBackgrounds()\n");
 	loadBackgrounds();
@@ -330,7 +331,7 @@ void ThemeTextures::loadHBTheme() {
 }
 
 void ThemeTextures::loadSaturnTheme() {	
-	//iprintf("tex().loadSaturnTheme()\n");
+	logPrint("tex().loadSaturnTheme()\n");
 
 	loadBackgrounds();
 	loadUITextures();
@@ -373,7 +374,7 @@ void ThemeTextures::loadSaturnTheme() {
 }
 
 void ThemeTextures::load3DSTheme() {
-	//iprintf("tex().load3DSTheme()\n");
+	logPrint("tex().load3DSTheme()\n");
 
 	loadBackgrounds();
 	loadUITextures();
@@ -414,7 +415,7 @@ void ThemeTextures::load3DSTheme() {
 }
 
 void ThemeTextures::loadDSiTheme() {	
-	//iprintf("tex().loadDSiTheme()\n");
+	logPrint("tex().loadDSiTheme()\n");
 
 	//iprintf("loadBackgrounds()\n");
 	loadBackgrounds();
@@ -1564,7 +1565,7 @@ void loadRotatingCubes() {
 	}
 }
 void ThemeTextures::videoSetup() {
-	//printf("tex().videoSetup()\n");
+	logPrint("tex().videoSetup()\n");
 	//////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);

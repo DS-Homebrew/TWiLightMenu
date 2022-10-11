@@ -6,6 +6,7 @@
 #include "common/flashcard.h"
 #include "common/tonccpy.h"
 #include "common/inifile.h"
+#include "common/logging.h"
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "graphics/ThemeTextures.h"
@@ -51,6 +52,12 @@ void createEsrbSplash(void) {
 	} else {
 		sprintf(esrbImagePath, "nitro:/graphics/ESRB/%s.png", rating.c_str()); 
 	}
+	logPrint("ESRB Rating: ");
+	logPrint(rating.c_str());
+	logPrint("\n");
+	logPrint("ESRB Descriptors: ");
+	logPrint(descriptors.c_str());
+	logPrint("\n");
 
 	DC_FlushAll();
 

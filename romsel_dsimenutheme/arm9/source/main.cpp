@@ -41,12 +41,12 @@
 #include "gbaswitch.h"
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
-//#include "tool/logging.h"
 
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
 
 #include "common/inifile.h"
+#include "common/logging.h"
 #include "common/stringtool.h"
 #include "common/tonccpy.h"
 
@@ -941,22 +941,24 @@ int main(int argc, char **argv) {
 
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
-	//logInit();
 	ms().loadSettings();
 	bs().loadSettings();
+	logInit();
 	if (sdFound() && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
 		CIniFile lumaConfig("sd:/luma/config.ini");
 		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
+		logPrint(widescreenFound ? "Widescreen found\n" : "Widescreen not found\n");
 	}
 	if (ms().theme == TWLSettings::EThemeDSi && sys().isRegularDS()) {
 		useRumble = my_isRumbleInserted();
+		logPrint(useRumble ? "Rumble found\n" : "Rumble not found\n");
 	}
-	//widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	tfn(); //
 	tc().loadConfig();
 	tex().videoSetup(); // allocate texture pointers
 
 	fontInit();
+	logPrint("\n");
 
 	if (ms().theme == TWLSettings::EThemeHBL) {
 		tex().loadHBTheme();

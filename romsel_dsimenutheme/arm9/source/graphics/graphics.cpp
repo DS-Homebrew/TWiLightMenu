@@ -34,6 +34,7 @@
 #include "common/lzss.h"
 #include "common/systemdetails.h"
 #include "common/my_rumble.h"
+#include "common/logging.h"
 #include "myDSiMode.h"
 #include "date.h"
 #include "iconHandler.h"
@@ -48,7 +49,6 @@
 #include "ThemeConfig.h"
 #include "themefilenames.h"
 #include "tool/colortool.h"
-//#include "tool/logging.h"
 
 #include "bubbles.h"	// For HBL theme
 

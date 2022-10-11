@@ -6,8 +6,9 @@
 #include <unistd.h>
 #include <string>
 
-#include "common/inifile.h"
 #include "common/twlmenusettings.h"
+#include "common/inifile.h"
+#include "common/logging.h"
 
 #define STRING(what,def) std::string STR_##what;
 #include "language.inl"
@@ -105,6 +106,8 @@ std::string getString(CIniFile &ini, const std::string &item, const std::string 
  */
 void langInit(void)
 {
+	logPrint("langInit() ");
+
 	char languageIniPath[64];
 	snprintf(languageIniPath, sizeof(languageIniPath), "nitro:/languages/%s/language.ini", ms().getGuiLanguageString().c_str());
 
@@ -113,4 +116,6 @@ void langInit(void)
 #define STRING(what,def) STR_##what = getString(languageini, ""#what, def);
 #include "language.inl"
 #undef STRING
+
+	logPrint("Language inited\n");
 }

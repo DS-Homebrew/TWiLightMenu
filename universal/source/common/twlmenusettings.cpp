@@ -26,6 +26,7 @@ TWLSettings::TWLSettings()
 	languageSet = false;
 	regionSet = false;
 
+	logging = false;
 	guiLanguage = ELangDefault;
 	currentLanguage = ELangDefault;
 	titleLanguage = ELangDefault;
@@ -170,6 +171,7 @@ void TWLSettings::loadSettings()
 	regionSet = settingsini.GetInt("SRLOADER", "REGION_SET", regionSet);
 
 	// Customizable UI settings.
+	logging = settingsini.GetInt("SRLOADER", "LOGGING", logging);
 	guiLanguage = (TLanguage)settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
 	currentLanguage = guiLanguage;
 	titleLanguage = (TLanguage)settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
@@ -337,6 +339,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "REGION_SET", regionSet);
 
 	// Customizable UI settings.
+	settingsini.SetInt("SRLOADER", "LOGGING", logging);
 	settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
 	settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
 	settingsini.SetInt("SRLOADER", "FRAME_RATE", fps);
