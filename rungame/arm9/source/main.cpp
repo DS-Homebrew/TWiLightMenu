@@ -442,22 +442,23 @@ int lastRunROM() {
 
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram, false, runNds_language);
 		} case TWLSettings::EDSiWareLaunch: {
+			ms().romfolder[ms().previousUsedDevice] = ms().romPath[ms().previousUsedDevice];
+			while (!ms().romfolder[ms().previousUsedDevice].empty() && ms().romfolder[ms().previousUsedDevice][ms().romfolder[ms().previousUsedDevice].size()-1] != '/') {
+				ms().romfolder[ms().previousUsedDevice].resize(ms().romfolder[ms().previousUsedDevice].size()-1);
+			}
+			chdir(ms().romfolder[ms().previousUsedDevice].c_str());
+
+			std::string filename = ms().romPath[ms().previousUsedDevice];
+			const size_t last_slash_idx = filename.find_last_of("/");
+			if (std::string::npos != last_slash_idx) {
+				filename.erase(0, last_slash_idx + 1);
+			}
+
+			loadPerGameSettings(filename);
 			if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || ms().consoleModel >= 2) {
 				if (ms().homebrewBootstrap) {
 					unlaunchBootDSiWare();
 				} else {
-					ms().romfolder[ms().previousUsedDevice] = ms().romPath[ms().previousUsedDevice];
-					while (!ms().romfolder[ms().previousUsedDevice].empty() && ms().romfolder[ms().previousUsedDevice][ms().romfolder[ms().previousUsedDevice].size()-1] != '/') {
-						ms().romfolder[ms().previousUsedDevice].resize(ms().romfolder[ms().previousUsedDevice].size()-1);
-					}
-					chdir(ms().romfolder[ms().previousUsedDevice].c_str());
-
-					std::string filename = ms().romPath[ms().previousUsedDevice];
-					const size_t last_slash_idx = filename.find_last_of("/");
-					if (std::string::npos != last_slash_idx) {
-						filename.erase(0, last_slash_idx + 1);
-					}
-
 					loadPerGameSettings(filename);
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 					if (*(u32*)(0x02000000) & BIT(3)) {
