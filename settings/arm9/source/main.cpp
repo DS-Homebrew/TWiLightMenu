@@ -1183,9 +1183,9 @@ int main(int argc, char **argv)
 				{0})
 			.option(STR_LAUNCHER_PATCHES,
 				STR_DESCRIPTION_LAUNCHER_PATCHES,
-				Option::Bool(&ms().removeLauncherPatches),
-				{STR_OFF, STR_ON},
-				{true, false});
+				Option::Int(&ms().removeLauncherPatches),
+				{STR_OFF, STR_FULL, STR_DEFAULT},
+				{0, 1, 2});
 	}
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);

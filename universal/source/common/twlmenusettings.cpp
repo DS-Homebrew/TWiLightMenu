@@ -9,7 +9,7 @@
 #include <string.h>
 
 const char *charUnlaunchBg;
-bool *removeLauncherPatchesPtr;
+int *removeLauncherPatchesPtr;
 
 TWLSettings::TWLSettings()
 {
@@ -88,7 +88,7 @@ TWLSettings::TWLSettings()
 
 	gbaBorder = "default.png";
 	unlaunchBg = "default.gif";
-	removeLauncherPatches = false;
+	removeLauncherPatches = 2; // 2 == 'Default', keep splash/sound but allow the rest of the patches
 	font = "default";
 	useThemeFont = true;
 	dsClassicCustomFont = false;
@@ -261,7 +261,7 @@ void TWLSettings::loadSettings()
 	gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
 	unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 	charUnlaunchBg = unlaunchBg.c_str();
-	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
+	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_LAUNCHER_PATCHES", removeLauncherPatches);
 	removeLauncherPatchesPtr = &removeLauncherPatches;
 	font = settingsini.GetString("SRLOADER", "FONT", font);
 	useThemeFont = settingsini.GetInt("SRLOADER", "USE_THEME_FONT", useThemeFont);
@@ -408,7 +408,7 @@ void TWLSettings::saveSettings()
 
 	settingsini.SetString("SRLOADER", "GBA_BORDER", gbaBorder);
 	settingsini.SetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
-	settingsini.SetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
+	settingsini.SetInt("SRLOADER", "UNLAUNCH_LAUNCHER_PATCHES", removeLauncherPatches);
 	settingsini.SetString("SRLOADER", "FONT", font);
 	settingsini.SetInt("SRLOADER", "USE_THEME_FONT", useThemeFont);
 	settingsini.SetInt("SRLOADER", "DS_CLASSIC_CUSTOM_FONT", dsClassicCustomFont);
