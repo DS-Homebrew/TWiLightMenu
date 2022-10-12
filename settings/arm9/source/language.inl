@@ -341,7 +341,9 @@ STRING(BACKGROUND, "Background")
 STRING(LAUNCHER_PATCHES, "Launcher Patches")
 
 STRING(DESCRIPTION_UNLAUNCH_BG, "Changes the default background of Unlaunch. Requires re-installation of Unlaunch.")
-STRING(DESCRIPTION_LAUNCHER_PATCHES, "Enables or disables the DSi Splash Screen and the DSi Menu music.")
+STRING(DESCRIPTION_LAUNCHER_PATCHES, "Changes whether Unlaunch will patch the DSi Menu. 'Off' for no patches, 'Default' to keep the splash screen and sound, 'Full' for all of Unlaunch's patches.")
+
+STRING(FULL, "Full")
 
 // Flashcard settings
 // STRING(FLASHCARD_SELECT, "Select Flashcard")
