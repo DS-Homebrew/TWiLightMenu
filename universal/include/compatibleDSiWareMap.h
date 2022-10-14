@@ -209,7 +209,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 31)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 30)
 static const char compatibleGameListB4DSDebug[][4] = {
 	// Not counted towards total
 	"KBE", // Bejeweled Twist (Europe, Australia)
@@ -245,7 +245,6 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KQR", // Remote Racers
 	"KRR", // Robot Rescue 2
 	"KEV", // Space Invaders Extreme Z
-	"KSL", // Touch Solitaire
 };
 
 #endif // COMPATIBLEDSIWAREMAP_H
