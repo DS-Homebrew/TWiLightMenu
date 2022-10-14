@@ -158,7 +158,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 13)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 12)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KAA", // Art Style: Aquia
 	"KFP", // Flipper
@@ -166,7 +166,6 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"K6T", // Orion's Odyssey
 	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist
-	"KPY", // GO Series: Pinball Attack!
 	"KS3", // Shantae: Risky's Revenge
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
 	"KZV", // Tales to Enjoy!: Puss in Boots
@@ -183,7 +182,6 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Orion's Odyssey (Crashes at certain points)
 	1, // PictureBook Games: The Royal Bluff (No audio)
 	0, // Picture Perfect: Pocket Stylist (No audio + Parts of the game only)
-	4, // GO Series: Pinball Attack! (Crashes at certain point)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
 	4, // Tales to Enjoy!: Little Red Riding Hood (Crashes at certain points)
 	4, // Tales to Enjoy!: Puss in Boots (Crashes at certain points)
