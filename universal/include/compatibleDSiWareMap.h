@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 152)
+// B4DS DSiWare Whitelist (Total: 153)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -150,6 +150,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KK4", // Wakugumi: Monochrome Puzzle
 	"Z2A", // WarioWare: Touched! DL
 	"KDW", // White-Water Domo
+	"KBS", // Wonderful Sports: Bowling
 	"KAS", // Art Style: ZENGAGE
 	"K7K", // Zombie Blaster
 	"KZY", // Zombie Skape
@@ -157,7 +158,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 12)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 13)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KAA", // Art Style: Aquia
 	"KFP", // Flipper
@@ -171,6 +172,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KZV", // Tales to Enjoy!: Puss in Boots
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
 	"KZ8", // Tales to Enjoy!: The Ugly Duckling
+	"KBS", // Wonderful Sports: Bowling
 };
 
 // B4DS DSiWare Whitelist (RAM limitation message ID)
@@ -180,13 +182,14 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Mighty Milky Way (No music)
 	4, // Orion's Odyssey (Crashes at certain points)
 	1, // PictureBook Games: The Royal Bluff (No audio)
-	0, // Picture Perfect: Pocket Stylist (Parts of the game only)
-	4, // GO Series: Pinball Attack! (Crashes at certain points)
-	3, // Shantae: Risky's Revenge (Crashes at the Lighthouse after first fight)
+	0, // Picture Perfect: Pocket Stylist (No audio + Parts of the game only)
+	4, // GO Series: Pinball Attack! (Crashes at certain point)
+	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
 	4, // Tales to Enjoy!: Little Red Riding Hood (Crashes at certain points)
 	4, // Tales to Enjoy!: Puss in Boots (Crashes at certain points)
 	4, // Tales to Enjoy!: The Three Little Pigs (Crashes at certain points)
 	4, // Tales to Enjoy!: The Ugly Duckling (Crashes at certain points)
+	4, // Wonderful Sports: Bowling (No music + Crashes at certain point)
 };
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Show RAM limitation message) (Total: 1)
