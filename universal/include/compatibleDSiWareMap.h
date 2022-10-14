@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 151)
+// B4DS DSiWare Whitelist (Total: 152)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -95,6 +95,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KP9", // Paul's Monster Adventure
 	"KPJ", // Paul's Shooting Adventure
 	"KUS", // Paul's Shooting Adventure 2
+	"KP8", // Peg Solitaire
 	"KPQ", // GO Series: Picdun
 	"KAP", // Art Style: PiCTOBiTS
 	"KE3", // PictureBook Games: The Royal Bluff
