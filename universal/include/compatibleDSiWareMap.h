@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 162)
+// B4DS DSiWare Whitelist (Total: 163)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -140,6 +140,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KO7", // Sokuren Keisa: Nanmon-Hen
 	"KA6", // Space Ace
 	"KEV", // Space Invaders Extreme Z
+	"KQ6", // Spin Six
 	"K4D", // Sudoku
 	"K4F", // Sudoku 4Pockets
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
