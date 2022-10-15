@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 161)
+// B4DS DSiWare Whitelist (Total: 162)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -139,6 +139,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KO6", // Sokuren Keisa: Shougaku 6 Nensei
 	"KO7", // Sokuren Keisa: Nanmon-Hen
 	"KA6", // Space Ace
+	"KEV", // Space Invaders Extreme Z
 	"K4D", // Sudoku
 	"K4F", // Sudoku 4Pockets
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
@@ -218,7 +219,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 30)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 29)
 static const char compatibleGameListB4DSDebug[][4] = {
 	// Not counted towards total
 	"KBE", // Bejeweled Twist (Europe, Australia)
@@ -253,7 +254,6 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KXA", // Pirates Assault
 	"KQR", // Remote Racers
 	"KRR", // Robot Rescue 2
-	"KEV", // Space Invaders Extreme Z
 };
 
 #endif // COMPATIBLEDSIWAREMAP_H
