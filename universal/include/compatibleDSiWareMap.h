@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 153)
+// B4DS DSiWare Whitelist (Total: 154)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -87,6 +87,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KM7", // Missy Mila Twisted Tales
 	"K8M", // Model Academy
 	"KXB", // Monster Buster Club
+	"K9S", // Motto Me de Unou o Kitaeru: DS Sokudoku Jutsu Light
 	"KMB", // Mr. Brain
 	"KDR", // Mr. Driller: Drill Till You Drop
 	"K2D", // Nintendo DSi + Internet
