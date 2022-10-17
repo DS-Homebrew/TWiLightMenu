@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 163)
+// B4DS DSiWare Whitelist (Total: 164)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -77,6 +77,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K6S", // Heathcliff: Spot On
 	"KJY", // JellyCar 2
 	"KT9", // Kung Fu Dragon
+	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KLP", // Littlest Pet Shop
 	"KLK", // Lola's Alphabet Train
 	"KOF", // Lola's Fruit Shop Sudoku
@@ -168,10 +169,16 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 12)
+// B4DS DSiWare Whitelist (Memory Expansion Pak required) (Total: 1)
+static const char compatibleGameListB4DSMEP[][4] = {
+	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
+};
+
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 13)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KAA", // Art Style: Aquia
 	"KFP", // Flipper
+	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KWY", // Mighty Milky Way
 	"K6T", // Orion's Odyssey
 	"KE3", // PictureBook Games: The Royal Bluff
@@ -188,6 +195,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Art Style: Aquia (No audio)
 	2, // Flipper (No music)
+	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
 	2, // Mighty Milky Way (No music)
 	4, // Orion's Odyssey (Crashes at certain points)
 	1, // PictureBook Games: The Royal Bluff (No audio)
@@ -220,7 +228,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 29)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 28)
 static const char compatibleGameListB4DSDebug[][4] = {
 	// Not counted towards total
 	"KBE", // Bejeweled Twist (Europe, Australia)
@@ -244,7 +252,6 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
 	"K3G", // Go! Go! Kokopolo
-	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KYL", // Make Up & Style
 	"K59", // Metal Torrent

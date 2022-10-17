@@ -1413,12 +1413,30 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		}
 	} else {
 		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
-			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSRAMLimited[i], 3) == 0) {
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
+			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSMEP[i], 3) == 0) {
 				// Found match
-				showMsg = true;
-				msgId = compatibleGameListB4DSRAMLimitedID[i];
+				if (sys().isRegularDS()) {
+					u16 hwordBak = *(vu16*)(0x08240000);
+					*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
+					showMsg = (*(vu16*)(0x08240000) != 1); // Show message if not found
+					*(vu16*)(0x08240000) = hwordBak;
+				} else {
+					showMsg = true;
+				}
+				msgId = 10;
 				break;
+			}
+		}
+		if (!showMsg) {
+			// TODO: If the list gets large enough, switch to bsearch().
+			for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
+				if (memcmp(gameTid[CURPOS], compatibleGameListB4DSRAMLimited[i], 3) == 0) {
+					// Found match
+					showMsg = true;
+					msgId = compatibleGameListB4DSRAMLimitedID[i];
+					break;
+				}
 			}
 		}
 	}
@@ -1434,7 +1452,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		}
 	}
 
-	if (!showMsg || !checkIfShowRAMLimitMsg(filename)) {
+	if (!showMsg || (!checkIfShowRAMLimitMsg(filename) && msgId != 10)) {
 		return true;
 	}
 
@@ -1480,24 +1498,48 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		case 4:
 			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_CERTAIN_POINT) - smallFontHeight()) / 2), STR_RAM_LIMIT_CERTAIN_POINT, Alignment::center, FontPalette::dialog);
 			break;
+		case 10:
+			if (sys().isRegularDS()) {
+				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_MEMORY_EXPANSION_PAK) - smallFontHeight()) / 2), STR_INSERT_MEMORY_EXPANSION_PAK, Alignment::center, FontPalette::dialog);
+			} else {
+				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_CANNOT_LAUNCH_IN_DS_MODE) - smallFontHeight()) / 2), STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center, FontPalette::dialog);
+			}
+			break;
 	}
-	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
+	if (msgId == 10) {
+		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_A_OK, Alignment::center, FontPalette::dialog);
+	} else {
+		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
+	}
 	updateText(false);
-	while (1) {
-		scanKeys();
-		int pressed = keysDown();
-		bgOperations(true);
-		if (pressed & KEY_A) {
-			proceedToLaunch = true;
-			break;
-		} else if (pressed & KEY_B) {
-			snd().playBack();
-			proceedToLaunch = false;
-			break;
-		} else if (pressed & KEY_X) {
-			dontShowRAMLimitMsgAgain(filename);
-			proceedToLaunch = true;
-			break;
+	if (msgId == 10) {
+		while (1) {
+			scanKeys();
+			int pressed = keysDown();
+			bgOperations(true);
+			if ((pressed & KEY_A) || (pressed & KEY_B)) {
+				snd().playBack();
+				proceedToLaunch = false;
+				break;
+			}
+		}
+	} else {
+		while (1) {
+			scanKeys();
+			int pressed = keysDown();
+			bgOperations(true);
+			if (pressed & KEY_A) {
+				proceedToLaunch = true;
+				break;
+			} else if (pressed & KEY_B) {
+				snd().playBack();
+				proceedToLaunch = false;
+				break;
+			} else if (pressed & KEY_X) {
+				dontShowRAMLimitMsgAgain(filename);
+				proceedToLaunch = true;
+				break;
+			}
 		}
 	}
 	showdialogbox = false;

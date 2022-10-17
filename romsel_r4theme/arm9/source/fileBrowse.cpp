@@ -708,12 +708,30 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 		}
 	} else {
 		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
-			if (memcmp(gameTid, compatibleGameListB4DSRAMLimited[i], 3) == 0) {
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
+			if (memcmp(gameTid, compatibleGameListB4DSMEP[i], 3) == 0) {
 				// Found match
-				showMsg = true;
-				msgId = compatibleGameListB4DSRAMLimitedID[i];
+				if (sys().isRegularDS()) {
+					u16 hwordBak = *(vu16*)(0x08240000);
+					*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
+					showMsg = (*(vu16*)(0x08240000) != 1); // Show message if not found
+					*(vu16*)(0x08240000) = hwordBak;
+				} else {
+					showMsg = true;
+				}
+				msgId = 10;
 				break;
+			}
+		}
+		if (!showMsg) {
+			// TODO: If the list gets large enough, switch to bsearch().
+			for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
+				if (memcmp(gameTid, compatibleGameListB4DSRAMLimited[i], 3) == 0) {
+					// Found match
+					showMsg = true;
+					msgId = compatibleGameListB4DSRAMLimitedID[i];
+					break;
+				}
 			}
 		}
 	}
@@ -729,7 +747,7 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 		}
 	}
 
-	if (!showMsg || !checkIfShowRAMLimitMsg(filename)) {
+	if (!showMsg || (!checkIfShowRAMLimitMsg(filename) && msgId != 10)) {
 		return true;
 	}
 
@@ -763,29 +781,50 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 			printSmallCentered(false, 114, "around the crash, launch this on");
 			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
 			break;
+		case 10:
+			printSmallCentered(false, 102, "To launch this title, please");
+			printSmallCentered(false, 114, "insert the Memory Expansion Pak.");
+			break;
 	}
-	printSmallCentered(false, 142, "\u2428 Return   \u2427 Launch");
+	if (msgId == 10) {
+		printSmallCentered(false, 142, "\u2427 OK");
+	} else {
+		printSmallCentered(false, 142, "\u2428 Return   \u2427 Launch");
+	}
 
 	int pressed = 0;
-	while (1) {
-		scanKeys();
-		pressed = keysDown();
-		bgOperations(true);
-		if (pressed & KEY_A) {
-			proceedToLaunch = true;
-			pressed = 0;
-			break;
+	if (msgId == 10) {
+		while (1) {
+			scanKeys();
+			pressed = keysDown();
+			bgOperations(true);
+			if ((pressed & KEY_A) || (pressed & KEY_B)) {
+				proceedToLaunch = false;
+				pressed = 0;
+				break;
+			}
 		}
-		if (pressed & KEY_B) {
-			proceedToLaunch = false;
-			pressed = 0;
-			break;
-		}
-		if (pressed & KEY_X) {
-			dontShowRAMLimitMsgAgain(filename);
-			proceedToLaunch = true;
-			pressed = 0;
-			break;
+	} else {
+		while (1) {
+			scanKeys();
+			pressed = keysDown();
+			bgOperations(true);
+			if (pressed & KEY_A) {
+				proceedToLaunch = true;
+				pressed = 0;
+				break;
+			}
+			if (pressed & KEY_B) {
+				proceedToLaunch = false;
+				pressed = 0;
+				break;
+			}
+			if (pressed & KEY_X) {
+				dontShowRAMLimitMsgAgain(filename);
+				proceedToLaunch = true;
+				pressed = 0;
+				break;
+			}
 		}
 	}
 	clearText();
