@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 167)
+// B4DS DSiWare Whitelist (Total: 168)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -165,6 +165,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"Z2A", // WarioWare: Touched! DL
 	"KDW", // White-Water Domo
 	"KBS", // Wonderful Sports: Bowling
+	"KYU", // Yummy Yummy Cooking Jam
 	"KAS", // Art Style: ZENGAGE
 	"K7K", // Zombie Blaster
 	"KZY", // Zombie Skape
@@ -221,13 +222,15 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	2, // Shantae: Risky's Revenge (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 1)
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 2)
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
+	"KYU", // Yummy Yummy Cooking Jam
 	"Z2A", // WarioWare: Touched! DL
 };
 
 // B4DS DSiWare Whitelist (DS Retail & Debug consoles) (RAM limitation message ID)
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
+	2, // Yummy Yummy Cooking Jam (No music)
 	1, // WarioWare: Touched! DL (No audio)
 };
 
