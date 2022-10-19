@@ -56,6 +56,7 @@ STRING(RAM_LIMIT_NO_MUSIC, "Due to memory limitations,\nmusic will not be played
 STRING(RAM_LIMIT_SPECIFIC_AREA, "Due to memory limitations, the\ngame will crash at a specific\narea. To work around the crash,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_CERTAIN_POINT, "Due to memory limitations,\nthe game will crash at certain\npoint(s). To work around the crash,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(INSERT_MEMORY_EXPANSION_PAK, "To launch this title, please\ninsert the Memory Expansion Pak.")
+STRING(RELAUNCH_FROM_SLOT1, "To launch this title, please\nrestart the console, and\nlaunch from a Slot-1 flashcard.")
 STRING(TWLMENU_ALREADY_RUNNING, "TWiLight Menu++ is\nalready running.")
 STRING(CANNOT_LAUNCH_WITHOUT_SD, "This game cannot be launched\nwithout an SD card.")
 STRING(CANNOT_LAUNCH_IN_DS_MODE, "This game cannot be launched\nin DS mode.")

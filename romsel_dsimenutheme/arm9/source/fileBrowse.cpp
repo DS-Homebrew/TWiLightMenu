@@ -1416,7 +1416,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
 			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSMEP[i], 3) == 0) {
 				// Found match
-				if (sys().isRegularDS()) {
+				if (sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
 					u16 hwordBak = *(vu16*)(0x08240000);
 					*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
 					showMsg = (*(vu16*)(0x08240000) != 1); // Show message if not found
@@ -1478,6 +1478,9 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		dbox_showIcon = true;
 		snd().playWrong();
 	} else {
+		if (msgId == 10) {
+			snd().playWrong();
+		}
 		while (!dboxStopped) { bgOperations(true); }
 	}
 	titleUpdate(false, filename.c_str(), CURPOS);
@@ -1500,7 +1503,11 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			break;
 		case 10:
 			if (sys().isRegularDS()) {
-				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_MEMORY_EXPANSION_PAK) - smallFontHeight()) / 2), STR_INSERT_MEMORY_EXPANSION_PAK, Alignment::center, FontPalette::dialog);
+				if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RELAUNCH_FROM_SLOT1) - smallFontHeight()) / 2), STR_RELAUNCH_FROM_SLOT1, Alignment::center, FontPalette::dialog);
+				} else {
+					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_MEMORY_EXPANSION_PAK) - smallFontHeight()) / 2), STR_INSERT_MEMORY_EXPANSION_PAK, Alignment::center, FontPalette::dialog);
+				}
 			} else {
 				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_CANNOT_LAUNCH_IN_DS_MODE) - smallFontHeight()) / 2), STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center, FontPalette::dialog);
 			}
