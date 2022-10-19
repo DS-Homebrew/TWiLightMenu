@@ -1,4 +1,5 @@
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <fat.h>
 #include <stdio.h>
 #include <maxmod9.h>
@@ -703,7 +704,7 @@ void twlMenuVideo(void) {
 		}
 	}
 
-	highFPS = (sys().isRegularDS() || ((dsiFeatures() || sdFound()) && ms().consoleModel < 2));
+	highFPS = ((sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) || ((dsiFeatures() || sdFound()) && ms().consoleModel < 2));
 
 	if (highFPS) {
 		*(u32*)(0x2FFFD0C) = 0x43535046;
