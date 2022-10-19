@@ -1416,11 +1416,15 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
 			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSMEP[i], 3) == 0) {
 				// Found match
-				if (sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
-					u16 hwordBak = *(vu16*)(0x08240000);
-					*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
-					showMsg = (*(vu16*)(0x08240000) != 1); // Show message if not found
-					*(vu16*)(0x08240000) = hwordBak;
+				if (sys().isRegularDS()) {
+					if (*(u16*)0x020000C0 == 0x5A45) {
+						showMsg = true;
+					} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+						u16 hwordBak = *(vu16*)(0x08240000);
+						*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
+						showMsg = (*(vu16*)(0x08240000) != 1); // Show message if not found
+						*(vu16*)(0x08240000) = hwordBak;
+					}
 				} else {
 					showMsg = true;
 				}
@@ -1503,11 +1507,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			break;
 		case 10:
 			if (sys().isRegularDS()) {
-				if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
-					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RELAUNCH_FROM_SLOT1) - smallFontHeight()) / 2), STR_RELAUNCH_FROM_SLOT1, Alignment::center, FontPalette::dialog);
-				} else {
-					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_MEMORY_EXPANSION_PAK) - smallFontHeight()) / 2), STR_INSERT_MEMORY_EXPANSION_PAK, Alignment::center, FontPalette::dialog);
-				}
+				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_MEMORY_EXPANSION_PAK) - smallFontHeight()) / 2), STR_INSERT_MEMORY_EXPANSION_PAK, Alignment::center, FontPalette::dialog);
 			} else {
 				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_CANNOT_LAUNCH_IN_DS_MODE) - smallFontHeight()) / 2), STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center, FontPalette::dialog);
 			}

@@ -711,11 +711,15 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
 			if (memcmp(gameTid, compatibleGameListB4DSMEP[i], 3) == 0) {
 				// Found match
-				if (sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
-					u16 hwordBak = *(vu16*)(0x08240000);
-					*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
-					showMsg = (*(vu16*)(0x08240000) != 1); // Show message if not found
-					*(vu16*)(0x08240000) = hwordBak;
+				if (sys().isRegularDS()) {
+					if (*(u16*)0x020000C0 == 0x5A45) {
+						showMsg = true;
+					} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+						u16 hwordBak = *(vu16*)(0x08240000);
+						*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
+						showMsg = (*(vu16*)(0x08240000) != 1); // Show message if not found
+						*(vu16*)(0x08240000) = hwordBak;
+					}
 				} else {
 					showMsg = true;
 				}
@@ -782,13 +786,8 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
 			break;
 		case 10:
-			if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
-				printSmallCentered(false, 102, "To launch this title, please restart the");
-				printSmallCentered(false, 114, "console, and launch from a Slot-1 flashcard.");
-			} else {
-				printSmallCentered(false, 102, "To launch this title, please");
-				printSmallCentered(false, 114, "insert the Memory Expansion Pak.");
-			}
+			printSmallCentered(false, 102, "To launch this title, please");
+			printSmallCentered(false, 114, "insert the Memory Expansion Pak.");
 			break;
 	}
 	if (msgId == 10) {
