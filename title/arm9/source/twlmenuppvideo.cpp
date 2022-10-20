@@ -704,7 +704,7 @@ void twlMenuVideo(void) {
 		}
 	}
 
-	highFPS = ((sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) || ((dsiFeatures() || sdFound()) && ms().consoleModel < 2));
+	highFPS = ((sys().isRegularDS() && !sys().isDSPhat()) || ((dsiFeatures() || sdFound()) && ms().consoleModel < 2));
 
 	if (highFPS) {
 		*(u32*)(0x2FFFD0C) = 0x43535046;
