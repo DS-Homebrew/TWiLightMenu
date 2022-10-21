@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 169)
+// B4DS DSiWare Whitelist (Total: 170)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -35,6 +35,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KCY", // Calculator
 	"KCNE", // Castle Conqueror (USA)
 	"KC5", // Castle Conqueror: Heroes
+	"KXC", // Castle Conqueror: Heroes 2
 	"KCV", // Cave Story
 	"KUQ", // Chuck E. Cheese's Alien Defense Force
 	"KUC", // Chuck E. Cheese's Arcade Room
@@ -174,8 +175,9 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (Memory Expansion Pak required) (Total: 1)
+// B4DS DSiWare Whitelist (Memory Expansion Pak required) (Total: 2)
 static const char compatibleGameListB4DSMEP[][4] = {
+	"KXC", // Castle Conqueror: Heroes 2
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 };
 
@@ -235,7 +237,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 27)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 26)
 static const char compatibleGameListB4DSDebug[][4] = {
 	// Not counted towards total
 	"KBE", // Bejeweled Twist (Europe, Australia)
@@ -249,7 +251,6 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"K2N", // Cake Ninja 2
 	"KYN", // Cake Ninja: XMAS
 	"KQN", // Castle Conqueror: Against
-	"KXC", // Castle Conqueror: Heroes 2
 	"KQN", // Castle Conqueror: Revolution
 	"KDQ", // Dragon Quest Wars
 	"KEI", // Electroplankton: Beatnes
