@@ -863,7 +863,7 @@ bool dsiWareCompatibleB4DS(const char* filename) {
 	}
 	if (!res && (sys().dsDebugRam() || bs().b4dsMode == 2)) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebug)/sizeof(compatibleGameListB4DSDebug[0]); i++) {
-			if (memcmp(game_TID, compatibleGameListB4DSDebug[i], 3) == 0) {
+			if (memcmp(game_TID, compatibleGameListB4DSDebug[i], (compatibleGameListB4DSDebug[i][3] != 0 ? 4 : 3)) == 0) {
 				// Found match
 				res = true;
 				break;

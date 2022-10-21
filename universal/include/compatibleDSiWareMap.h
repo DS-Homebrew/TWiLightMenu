@@ -238,9 +238,9 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 };
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 27)
-static const char compatibleGameListB4DSDebug[][4] = {
+static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
-	"KBE", // Bejeweled Twist (Europe, Australia)
+	"KBEV", // Bejeweled Twist (Europe, Australia)
 
 	// Counted
 	"KII", // 101 Pinball World
@@ -261,7 +261,7 @@ static const char compatibleGameListB4DSDebug[][4] = {
 	"K3G", // Go! Go! Kokopolo
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KYL", // Make Up & Style
-	"KDM", // Mario vs. Donkey Kong: Minis March Again!
+	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
 	"K59", // Metal Torrent
 	"KMM", // Mixed Messages
 	"KNP", // Need for Speed: Nitro-X
