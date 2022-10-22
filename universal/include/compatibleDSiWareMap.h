@@ -95,7 +95,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDR", // Mr. Driller: Drill Till You Drop
 	"KIC", // Music on: Playing Piano
 	"KRH", // Music on: Retro Keyboard
-	"KAU", // Nintendo Cowndown Calendar
+	"KAU", // Nintendo Countdown Calendar
 	"K2D", // Nintendo DSi + Internet
 	"KSUE", // Number Battle
 	"K6T", // Orion's Odyssey
@@ -179,7 +179,7 @@ static const char compatibleGameListB4DS[][5] = {
 // B4DS DSiWare Whitelist (Memory Expansion Pak required) (Total: 3)
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KXC", // Castle Conqueror: Heroes 2
-	"KAU", // Nintendo Cowndown Calendar
+	"KAU", // Nintendo Countdown Calendar
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 };
 
