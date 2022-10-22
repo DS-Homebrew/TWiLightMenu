@@ -273,6 +273,7 @@ public:
 	bool macroMode;
 	int colorMode;
 	// int blfLevel;
+	bool sleepMode;
 	TExploit dsiWareExploit;
 	bool wifiLed;
 	int wifiLedVer;

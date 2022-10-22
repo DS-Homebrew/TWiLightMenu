@@ -84,6 +84,8 @@ off_t getFileSize(const char *fileName)
 bool consoleOn = false;
 
 int main() {
+	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);
+
 	if (isDSiMode()) {
 		// If slot is powered off, tell Arm7 slot power on is required.
 		if (REG_SCFG_MC == 0x11) { fifoSendValue32(FIFO_USER_02, 1); }

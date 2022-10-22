@@ -255,8 +255,8 @@ void customSleep() {
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
-	defaultExceptionHandler();
 	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
+	defaultExceptionHandler();
 	sys().initFilesystem("/_nds/TWiLightMenu/manual.srldr");
 	sys().initArm7RegStatuses();
 
@@ -319,7 +319,7 @@ int main(int argc, char **argv) {
 			swiWaitForVBlank();
 		} while (!held);
 
-		if (pressed & KEY_LID) {
+		if ((pressed & KEY_LID) && ms().sleepMode) {
 			customSleep();
 		}
 

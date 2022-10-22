@@ -1396,7 +1396,7 @@ int main(int argc, char **argv)
 			}
 			scanKeys();
 			pressed = keysDownRepeat();
-			if (pressed & KEY_LID) {
+			if ((pressed & KEY_LID) && ms().sleepMode) {
 				customSleep();
 			}
 			touchRead(&touch);

@@ -909,7 +909,7 @@ void customSleep() {
 }
 
 void bgOperations(bool waitFrame) {
-	if (keysHeld() & KEY_LID) {
+	if ((keysHeld() & KEY_LID) && ms().sleepMode) {
 		customSleep();
 	}
 	checkSdEject();

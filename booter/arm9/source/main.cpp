@@ -114,6 +114,7 @@ void doPause(int x, int y) {
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
+	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);
 
 	REG_SCFG_CLK &= ~(BIT(1) | BIT(2));	// Disable DSP and Camera Interface clocks
 

@@ -34,6 +34,7 @@ TWLSettings::TWLSettings()
 	macroMode = false;
 	colorMode = 0;
 	// blfLevel = 0;
+	sleepMode = true;
 	dsiWareExploit = EExploitNone;
 	wifiLed = true;
 	wifiLedVer = 0;
@@ -179,6 +180,7 @@ void TWLSettings::loadSettings()
 	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	// blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
+	sleepMode = settingsini.GetInt("SRLOADER", "SLEEP_MODE", sleepMode);
 	dsiWareExploit = (TExploit)settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
 	wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", wifiLed);
 	wifiLedVer = settingsini.GetInt("SRLOADER", "WIFI_LED_VER", wifiLedVer);

@@ -651,6 +651,7 @@ int lastRunROM() {
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
+	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);
 
 	// overwrite reboot stub identifier
 	extern char *fake_heap_end;

@@ -1714,7 +1714,7 @@ int main(int argc, char **argv) {
 				}
 			} while (!pressed);
 
-			if (pressed & KEY_LID) {
+			if ((pressed & KEY_LID) && ms().sleepMode) {
 				customSleep();
 			}
 
