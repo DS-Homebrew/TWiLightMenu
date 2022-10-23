@@ -1679,38 +1679,69 @@ bool selectMenu(void) {
 	int selCursorPosition = 0;
 	int assignedOp[5] = {-1};
 	int selIconYpos = 96;
-	if (dsiFeatures() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
-		for (int i = 0; i < 4; i++) {
-			selIconYpos -= 14;
-		}
-		assignedOp[0] = 0;
-		assignedOp[1] = 1;
-		assignedOp[2] = 2;
-		assignedOp[3] = 4;
-		maxCursors = 3;
-	} else {
-		for (int i = 0; i < 3; i++) {
-			selIconYpos -= 14;
-		}
-		if (!sys().isRegularDS()) {
+	if (ms().kioskMode) {
+		if (dsiFeatures() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
+			for (int i = 0; i < 3; i++) {
+				selIconYpos -= 14;
+			}
 			assignedOp[0] = 0;
-			assignedOp[1] = 1;
-			assignedOp[2] = 4;
-			maxCursors = 2;
-		} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
-			assignedOp[0] = 1;
 			assignedOp[1] = 2;
 			assignedOp[2] = 4;
 			maxCursors = 2;
-		} else if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
-			assignedOp[0] = 1;
-			assignedOp[1] = 4;
-			maxCursors = 1;
 		} else {
-			assignedOp[0] = 1;
-			assignedOp[1] = 3;
-			assignedOp[2] = 4;
-			maxCursors = 2;
+			for (int i = 0; i < 2; i++) {
+				selIconYpos -= 14;
+			}
+			if (!sys().isRegularDS()) {
+				assignedOp[0] = 0;
+				assignedOp[1] = 4;
+				maxCursors = 1;
+			} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+				assignedOp[0] = 2;
+				assignedOp[1] = 4;
+				maxCursors = 1;
+			} else if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
+				assignedOp[0] = 4;
+			} else {
+				assignedOp[0] = 3;
+				assignedOp[1] = 4;
+				maxCursors = 1;
+			}
+		}
+	} else {
+		if (dsiFeatures() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
+			for (int i = 0; i < 4; i++) {
+				selIconYpos -= 14;
+			}
+			assignedOp[0] = 0;
+			assignedOp[1] = 1;
+			assignedOp[2] = 2;
+			assignedOp[3] = 4;
+			maxCursors = 3;
+		} else {
+			for (int i = 0; i < 3; i++) {
+				selIconYpos -= 14;
+			}
+			if (!sys().isRegularDS()) {
+				assignedOp[0] = 0;
+				assignedOp[1] = 1;
+				assignedOp[2] = 4;
+				maxCursors = 2;
+			} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
+				assignedOp[0] = 1;
+				assignedOp[1] = 2;
+				assignedOp[2] = 4;
+				maxCursors = 2;
+			} else if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
+				assignedOp[0] = 1;
+				assignedOp[1] = 4;
+				maxCursors = 1;
+			} else {
+				assignedOp[0] = 1;
+				assignedOp[1] = 3;
+				assignedOp[2] = 4;
+				maxCursors = 2;
+			}
 		}
 	}
 	if (ms().theme == TWLSettings::EThemeSaturn) {
@@ -3028,7 +3059,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (ms().theme == TWLSettings::ETheme3DS) {
 				// Launch TWLMenu++ Settings by touching corner button
 				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44) {
-					launchSettings();
+					if (ms().kioskMode) {
+						snd().playWrong();
+					} else {
+						launchSettings();
+					}
 				}
 
 				// Exit to system menu by touching corner button
@@ -3139,7 +3174,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				return "null";
 			}
 
-			if ((pressed & KEY_X) && !ms().preventDeletion && bannerTextShown && showSTARTborder
+			if ((pressed & KEY_X) && !ms().kioskMode && !ms().preventDeletion && bannerTextShown && showSTARTborder
 			&& dirContents[scrn].at(CURPOS + PAGENUM * 40).name != "..") {
 				DirEntry *entry = &dirContents[scrn].at((PAGENUM * 40) + (CURPOS));
 				bool unHide = (FAT_getAttr(entry->name.c_str()) & ATTR_HIDDEN || (strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != ".."));
@@ -3306,7 +3341,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bannerTextShown = false;
 			}
 
-			if ((pressed & KEY_Y) && !isTwlm[CURPOS] && !isDirectory[CURPOS] &&
+			if ((pressed & KEY_Y) && !ms().kioskMode && !isTwlm[CURPOS] && !isDirectory[CURPOS] &&
 				(bnrRomType[CURPOS] == 0) && bannerTextShown && showSTARTborder) {
 				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 				bannerTextShown = false;

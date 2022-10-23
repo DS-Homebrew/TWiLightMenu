@@ -1734,6 +1734,9 @@ int main(int argc, char **argv) {
 			if (pressed & KEY_DOWN) {
 				if (cursorPosition == 1 || cursorPosition == 3) {
 					cursorPosition += 2;
+					if (cursorPosition == 5 && ms().kioskMode) {
+						cursorPosition++;
+					}
 					mmEffectEx(&snd_select);
 				} else if (cursorPosition >= 0 && cursorPosition <= 3) {
 					cursorPosition++;
@@ -1745,6 +1748,9 @@ int main(int argc, char **argv) {
 				if (cursorPosition == 2 || (cursorPosition == 5 && (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2)))
 				|| cursorPosition == 6) {
 					cursorPosition--;
+					if (cursorPosition == 5 && ms().kioskMode) {
+						cursorPosition--;
+					}
 					mmEffectEx(&snd_select);
 				}
 			}
@@ -1752,6 +1758,9 @@ int main(int argc, char **argv) {
 			if (pressed & KEY_RIGHT) {
 				if (cursorPosition == 1 || cursorPosition == 4 || cursorPosition == 5) {
 					cursorPosition++;
+					if (cursorPosition == 5 && ms().kioskMode) {
+						cursorPosition++;
+					}
 					mmEffectEx(&snd_select);
 				}
 			}
@@ -1773,7 +1782,7 @@ int main(int argc, char **argv) {
 							&& (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2))) {
 					cursorPosition = 4;
 					menuButtonPressed = true;
-				} else if (touch.px >= 117 && touch.px <= 137 && touch.py >= 170 && touch.py <= 190) {
+				} else if (touch.px >= 117 && touch.px <= 137 && touch.py >= 170 && touch.py <= 190 && !ms().kioskMode) {
 					cursorPosition = 5;
 					menuButtonPressed = true;
 				} else if (touch.px >= 235 && touch.px <= 244 && touch.py >= 175 && touch.py <= 185) {

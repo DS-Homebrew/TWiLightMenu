@@ -1244,7 +1244,9 @@ int main(int argc, char **argv) {
 			do {
 				clearText();
 				printLargeCentered(false, -112, 166, DrawDate());
-				printLargeCentered(false, 180, "SELECT: Settings menu");
+				if (!ms().kioskMode) {
+					printLargeCentered(false, 180, "SELECT: Settings menu");
+				}
 				switch (startMenu_cursorPosition) {
 					case 0:
 					default:
@@ -1433,7 +1435,7 @@ int main(int argc, char **argv) {
 				fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			}
 
-			if ((pressed & KEY_START) || (pressed & KEY_SELECT)) {
+			if (((pressed & KEY_START) || (pressed & KEY_SELECT)) && !ms().kioskMode) {
 				// Launch settings
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 25; i++) {

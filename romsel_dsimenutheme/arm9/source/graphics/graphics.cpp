@@ -922,13 +922,25 @@ void vBlankHandler() {
 			if (dbox_selectMenu) {
 				int selIconYpos = 96;
 				int selIconXpos = ms().rtl() ? 256 - 56 : 32;
-				if (sdFound()) {
-					for (int i = 0; i < 4; i++) {
-						selIconYpos -= 14;
+				if (ms().kioskMode) {
+					if (sdFound()) {
+						for (int i = 0; i < 3; i++) {
+							selIconYpos -= 14;
+						}
+					} else {
+						for (int i = 0; i < 2; i++) {
+							selIconYpos -= 14;
+						}
 					}
 				} else {
-					for (int i = 0; i < 3; i++) {
-						selIconYpos -= 14;
+					if (sdFound()) {
+						for (int i = 0; i < 4; i++) {
+							selIconYpos -= 14;
+						}
+					} else {
+						for (int i = 0; i < 3; i++) {
+							selIconYpos -= 14;
+						}
 					}
 				}
 				if (!sys().isRegularDS()) {
@@ -936,9 +948,11 @@ void vBlankHandler() {
 						 &tex().cornerButtonImage()[1]); // System Menu
 					selIconYpos += 28;
 				}
-				glSprite(selIconXpos, (ms().theme == TWLSettings::EThemeSaturn ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
-					 &tex().cornerButtonImage()[0]); // Settings
-				selIconYpos += 28;
+				if (!ms().kioskMode) {
+					glSprite(selIconXpos, (ms().theme == TWLSettings::EThemeSaturn ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
+						 &tex().cornerButtonImage()[0]); // Settings
+					selIconYpos += 28;
+				}
 				if (sdFound()) {
 					if (ms().secondaryDevice) {
 						glSprite(selIconXpos, (ms().theme == TWLSettings::EThemeSaturn ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,

@@ -274,6 +274,7 @@ public:
 	int colorMode;
 	// int blfLevel;
 	bool sleepMode;
+	bool kioskMode;
 	TExploit dsiWareExploit;
 	bool wifiLed;
 	int wifiLedVer;

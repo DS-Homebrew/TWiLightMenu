@@ -417,7 +417,9 @@ void vBlankHandler()
 			if (bnriconisDSi[1]==true) {
 				playBannerSequence(1);
 			}
-			glSprite(117, iconYpos[5], GL_FLIP_NONE, settingsIconImage);
+			if (!ms().kioskMode) {
+				glSprite(117, iconYpos[5], GL_FLIP_NONE, settingsIconImage);
+			}
 			glSprite(235, iconYpos[6], GL_FLIP_NONE, &cornerIcons[3]);
 
 			// Draw cursor

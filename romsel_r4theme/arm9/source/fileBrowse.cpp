@@ -89,14 +89,17 @@ std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
 char path[PATH_MAX] = {0};
 
 static void gbnpBottomInfo(void) {
-	if (ms().theme == TWLSettings::EThemeGBC) {
-		getcwd(path, PATH_MAX);
+	if (ms().theme != TWLSettings::EThemeGBC) {
+		return;
+	}
+	getcwd(path, PATH_MAX);
 
-		clearText(false);
+	clearText(false);
 
-		// Print the path
-		printLarge(false, 0, 0, path);
+	// Print the path
+	printLarge(false, 0, 0, path);
 
+	if (!ms().kioskMode) {
 		printLargeCentered(false, 96, "SELECT: Settings menu");
 	}
 }
@@ -1373,7 +1376,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";
 		}
 
-		if ((pressed & KEY_X) && !ms().preventDeletion && dirContents.at(fileOffset).name != "..") {
+		if ((pressed & KEY_X) && !ms().kioskMode && !ms().preventDeletion && dirContents.at(fileOffset).name != "..") {
 			if (ms().macroMode) {
 				lcdMainOnBottom();
 				lcdSwapped = true;
@@ -1462,7 +1465,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			}
 		}
 
-		if ((ms().theme!=6 && (pressed & KEY_START)) || (ms().theme==6 && (pressed & KEY_SELECT))) {
+		if ((ms().theme != TWLSettings::EThemeGBC && (pressed & KEY_START)) || (ms().theme == TWLSettings::EThemeGBC && (pressed & KEY_SELECT) && !ms().kioskMode)) {
 			if (ms().theme == TWLSettings::EThemeGBC) {
 				snd().playLaunch();
 				snd().stopStream();
@@ -1485,7 +1488,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";		
 		}
 
-		if ((pressed & KEY_Y) && !isTwlm && !isDirectory && (bnrRomType == 0)) {
+		if ((pressed & KEY_Y) && !ms().kioskMode && !isTwlm && !isDirectory && (bnrRomType == 0)) {
 			ms().cursorPosition[ms().secondaryDevice] = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);
 			if (ms().theme == TWLSettings::EThemeGBC) {
