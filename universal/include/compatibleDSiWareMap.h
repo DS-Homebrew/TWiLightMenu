@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 172)
+// B4DS DSiWare Whitelist (Total: 173)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -32,6 +32,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAH", // Art Style: Boxlife
 	"KKQ", // Bugs'N'Balls
 	"K2J", // Cake Ninja
+	"K2N", // Cake Ninja 2
 	"KCY", // Calculator
 	"KCNE", // Castle Conqueror (USA)
 	"KC5", // Castle Conqueror: Heroes
@@ -241,7 +242,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 26)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 25)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -252,7 +253,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"K27", // G.G. Series: All Breaker
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
-	"K2N", // Cake Ninja 2
 	"KYN", // Cake Ninja: XMAS
 	"KQN", // Castle Conqueror: Against
 	"KQN", // Castle Conqueror: Revolution
