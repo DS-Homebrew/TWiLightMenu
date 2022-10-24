@@ -278,4 +278,9 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KRR", // Robot Rescue 2
 };
 
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles with 16MB or more of RAM expansion) (Total: 1)
+static const char compatibleGameListB4DSLargeS2RAM[][5] = {
+	"KD4", // Meikyou Kokugo: Rakubiki Jiten
+};
+
 #endif // COMPATIBLEDSIWAREMAP_H

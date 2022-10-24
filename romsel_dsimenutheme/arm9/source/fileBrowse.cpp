@@ -1399,47 +1399,70 @@ bool dsiWareInDSModeMsg(std::string filename) {
 
 bool dsiWareRAMLimitMsg(std::string filename) {
 	bool showMsg = false;
+	bool mepFound = false;
 	int msgId = 0;
 
-	if (sys().dsDebugRam() || (dsiFeatures() && bs().b4dsMode == 2)) {
+	if (sys().isRegularDS()) {
+		// Find DSiWare title which requires Slot-2 RAM expansion larger than the Memory Expansion Pak
 		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebugRAMLimited)/sizeof(compatibleGameListB4DSDebugRAMLimited[0]); i++) {
-			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSDebugRAMLimited[i], 3) == 0) {
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSLargeS2RAM)/sizeof(compatibleGameListB4DSLargeS2RAM[0]); i++) {
+			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSLargeS2RAM[i], 3) == 0) {
 				// Found match
-				showMsg = true;
-				msgId = compatibleGameListB4DSDebugRAMLimitedID[i];
-				break;
-			}
-		}
-	} else {
-		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
-			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSMEP[i], 3) == 0) {
-				// Found match
-				if (sys().isRegularDS()) {
-					if (*(u16*)0x020000C0 == 0x5A45) {
-						showMsg = true;
-					} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
-						u16 hwordBak = *(vu16*)(0x08240000);
-						*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
-						showMsg = (*(vu16*)(0x08240000) != 1); // Show message if not found
-						*(vu16*)(0x08240000) = hwordBak;
-					}
-				} else {
-					showMsg = true;
+				if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+					u16 hwordBak = *(vu16*)(0x08240000);
+					*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
+					mepFound = (*(vu16*)(0x08240000) == 1);
+					*(vu16*)(0x08240000) = hwordBak;
+					showMsg = (!mepFound || *(u16*)0x020000C0 == 0); // Show message if not found
 				}
-				msgId = 10;
+				msgId = 11;
 				break;
 			}
 		}
-		if (!showMsg) {
+	}
+	if (!showMsg && msgId != 11) {
+		if (sys().dsDebugRam() || (dsiFeatures() && bs().b4dsMode == 2)) {
 			// TODO: If the list gets large enough, switch to bsearch().
-			for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
-				if (memcmp(gameTid[CURPOS], compatibleGameListB4DSRAMLimited[i], 3) == 0) {
+			for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebugRAMLimited)/sizeof(compatibleGameListB4DSDebugRAMLimited[0]); i++) {
+				if (memcmp(gameTid[CURPOS], compatibleGameListB4DSDebugRAMLimited[i], 3) == 0) {
 					// Found match
 					showMsg = true;
-					msgId = compatibleGameListB4DSRAMLimitedID[i];
+					msgId = compatibleGameListB4DSDebugRAMLimitedID[i];
 					break;
+				}
+			}
+		} else {
+			// Find DSiWare title which requires the Memory Expansion Pak
+			// TODO: If the list gets large enough, switch to bsearch().
+			for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
+				if (memcmp(gameTid[CURPOS], compatibleGameListB4DSMEP[i], 3) == 0) {
+					// Found match
+					if (sys().isRegularDS()) {
+						if (*(u16*)0x020000C0 == 0x5A45) {
+							showMsg = true;
+						} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+							u16 hwordBak = *(vu16*)(0x08240000);
+							*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
+							mepFound = (*(vu16*)(0x08240000) == 1);
+							*(vu16*)(0x08240000) = hwordBak;
+							showMsg = !mepFound; // Show message if not found
+						}
+					} else {
+						showMsg = true;
+					}
+					msgId = 10;
+					break;
+				}
+			}
+			if (!showMsg) {
+				// TODO: If the list gets large enough, switch to bsearch().
+				for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
+					if (memcmp(gameTid[CURPOS], compatibleGameListB4DSRAMLimited[i], 3) == 0) {
+						// Found match
+						showMsg = true;
+						msgId = compatibleGameListB4DSRAMLimitedID[i];
+						break;
+					}
 				}
 			}
 		}
@@ -1456,7 +1479,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		}
 	}
 
-	if (!showMsg || (!checkIfShowRAMLimitMsg(filename) && msgId != 10)) {
+	if (!showMsg || (!checkIfShowRAMLimitMsg(filename) && msgId < 10)) {
 		return true;
 	}
 
@@ -1512,14 +1535,21 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_CANNOT_LAUNCH_IN_DS_MODE) - smallFontHeight()) / 2), STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center, FontPalette::dialog);
 			}
 			break;
+		case 11:
+			if (mepFound) {
+				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_LARGER_THAN_MEP) - smallFontHeight()) / 2), STR_INSERT_LARGER_THAN_MEP, Alignment::center, FontPalette::dialog);
+			} else {
+				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_SLOT2_RAM_CART) - smallFontHeight()) / 2), STR_INSERT_SLOT2_RAM_CART, Alignment::center, FontPalette::dialog);
+			}
+			break;
 	}
-	if (msgId == 10) {
+	if (msgId >= 10) {
 		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_A_OK, Alignment::center, FontPalette::dialog);
 	} else {
 		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
 	}
 	updateText(false);
-	if (msgId == 10) {
+	if (msgId >= 10) {
 		while (1) {
 			scanKeys();
 			int pressed = keysDown();
@@ -1582,12 +1612,25 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 bool dsiWareCompatibleB4DS(void) {
 	bool res = false;
 
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DS)/sizeof(compatibleGameListB4DS[0]); i++) {
-		if (memcmp(gameTid[CURPOS], compatibleGameListB4DS[i], (compatibleGameListB4DS[i][3] != 0 ? 4 : 3)) == 0) {
-			// Found match
-			res = true;
-			break;
+	if (sys().isRegularDS()) {
+		// Find DSiWare title which requires Slot-2 RAM expansion larger than the Memory Expansion Pak
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSLargeS2RAM)/sizeof(compatibleGameListB4DSLargeS2RAM[0]); i++) {
+			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSLargeS2RAM[i], (compatibleGameListB4DSLargeS2RAM[i][3] != 0 ? 4 : 3)) == 0) {
+				// Found match
+				res = true;
+				break;
+			}
+		}
+	}
+	if (!res) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DS)/sizeof(compatibleGameListB4DS[0]); i++) {
+			if (memcmp(gameTid[CURPOS], compatibleGameListB4DS[i], (compatibleGameListB4DS[i][3] != 0 ? 4 : 3)) == 0) {
+				// Found match
+				res = true;
+				break;
+			}
 		}
 	}
 	if (!res && (sys().dsDebugRam() || bs().b4dsMode == 2)) {

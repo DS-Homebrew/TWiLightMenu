@@ -640,6 +640,29 @@ bool gameCompatibleMemoryPit(const char* filename) {
 	return true;
 }
 
+void cannotLaunchMsg(void) {
+	if (ms().macroMode) {
+		lcdMainOnBottom();
+		lcdSwapped = true;
+	}
+	showdialogbox = true;
+	printLargeCentered(false, 74, isTwlm ? "Information" : "Error!");
+	printSmallCentered(false, 90, isTwlm ? "TWiLight Menu++ is already running." : "This game cannot be launched.");
+	printSmallCentered(false, 108, "\u2427 OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		bgOperations(true);
+	} while (!(pressed & KEY_A));
+	showdialogbox = false;
+	if (ms().macroMode) {
+		lcdMainOnTop();
+		lcdSwapped = false;
+	}
+	for (int i = 0; i < 25; i++) swiWaitForVBlank();
+}
+
 bool dsiWareInDSModeMsg(void) {
 	if (ms().dontShowDSiWareInDSModeWarning) {
 		return true;
@@ -697,47 +720,70 @@ bool dsiWareInDSModeMsg(void) {
 
 bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 	bool showMsg = false;
+	bool mepFound = false;
 	int msgId = 0;
 
-	if (sys().dsDebugRam() || (dsiFeatures() && bs().b4dsMode == 2)) {
+	if (sys().isRegularDS()) {
+		// Find DSiWare title which requires Slot-2 RAM expansion larger than the Memory Expansion Pak
 		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebugRAMLimited)/sizeof(compatibleGameListB4DSDebugRAMLimited[0]); i++) {
-			if (memcmp(gameTid, compatibleGameListB4DSDebugRAMLimited[i], 3) == 0) {
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSLargeS2RAM)/sizeof(compatibleGameListB4DSLargeS2RAM[0]); i++) {
+			if (memcmp(gameTid, compatibleGameListB4DSLargeS2RAM[i], 3) == 0) {
 				// Found match
-				showMsg = true;
-				msgId = compatibleGameListB4DSDebugRAMLimitedID[i];
-				break;
-			}
-		}
-	} else {
-		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
-			if (memcmp(gameTid, compatibleGameListB4DSMEP[i], 3) == 0) {
-				// Found match
-				if (sys().isRegularDS()) {
-					if (*(u16*)0x020000C0 == 0x5A45) {
-						showMsg = true;
-					} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
-						u16 hwordBak = *(vu16*)(0x08240000);
-						*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
-						showMsg = (*(vu16*)(0x08240000) != 1); // Show message if not found
-						*(vu16*)(0x08240000) = hwordBak;
-					}
-				} else {
-					showMsg = true;
+				if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+					u16 hwordBak = *(vu16*)(0x08240000);
+					*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
+					mepFound = (*(vu16*)(0x08240000) == 1);
+					*(vu16*)(0x08240000) = hwordBak;
+					showMsg = (!mepFound || *(u16*)0x020000C0 == 0); // Show message if not found
 				}
-				msgId = 10;
+				msgId = 11;
 				break;
 			}
 		}
-		if (!showMsg) {
+	}
+	if (!showMsg && msgId != 11) {
+		if (sys().dsDebugRam() || (dsiFeatures() && bs().b4dsMode == 2)) {
 			// TODO: If the list gets large enough, switch to bsearch().
-			for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
-				if (memcmp(gameTid, compatibleGameListB4DSRAMLimited[i], 3) == 0) {
+			for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebugRAMLimited)/sizeof(compatibleGameListB4DSDebugRAMLimited[0]); i++) {
+				if (memcmp(gameTid, compatibleGameListB4DSDebugRAMLimited[i], 3) == 0) {
 					// Found match
 					showMsg = true;
-					msgId = compatibleGameListB4DSRAMLimitedID[i];
+					msgId = compatibleGameListB4DSDebugRAMLimitedID[i];
 					break;
+				}
+			}
+		} else {
+			// Find DSiWare title which requires the Memory Expansion Pak
+			// TODO: If the list gets large enough, switch to bsearch().
+			for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
+				if (memcmp(gameTid, compatibleGameListB4DSMEP[i], 3) == 0) {
+					// Found match
+					if (sys().isRegularDS()) {
+						if (*(u16*)0x020000C0 == 0x5A45) {
+							showMsg = true;
+						} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+							u16 hwordBak = *(vu16*)(0x08240000);
+							*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
+							mepFound = (*(vu16*)(0x08240000) == 1);
+							*(vu16*)(0x08240000) = hwordBak;
+							showMsg = !mepFound; // Show message if not found
+						}
+					} else {
+						showMsg = true;
+					}
+					msgId = 10;
+					break;
+				}
+			}
+			if (!showMsg) {
+				// TODO: If the list gets large enough, switch to bsearch().
+				for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
+					if (memcmp(gameTid, compatibleGameListB4DSRAMLimited[i], 3) == 0) {
+						// Found match
+						showMsg = true;
+						msgId = compatibleGameListB4DSRAMLimitedID[i];
+						break;
+					}
 				}
 			}
 		}
@@ -754,11 +800,16 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 		}
 	}
 
-	if (!showMsg || (!checkIfShowRAMLimitMsg(filename) && msgId != 10)) {
+	if (!showMsg || (!checkIfShowRAMLimitMsg(filename) && msgId < 10)) {
 		return true;
 	}
 
 	bool proceedToLaunch = true;
+
+	if (msgId == 10 && !sys().isRegularDS()) {
+		cannotLaunchMsg();
+		return false;
+	}
 
 	if (ms().macroMode) {
 		lcdMainOnBottom();
@@ -792,15 +843,27 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 			printSmallCentered(false, 102, "To launch this title, please");
 			printSmallCentered(false, 114, "insert the Memory Expansion Pak.");
 			break;
+		case 11:
+			if (mepFound) {
+				printSmallCentered(false, 90, "This title requires a larger amount");
+				printSmallCentered(false, 102, "amount of memory than the Expansion Pak.");
+				printSmallCentered(false, 114, "Please turn off the POWER, and insert");
+				printSmallCentered(false, 126, "a Slot-2 cart with more memory.");
+			} else {
+				printSmallCentered(false, 90, "To launch this title, please turn off the");
+				printSmallCentered(false, 102, "POWER, and insert a Slot-2 memory expansion");
+				printSmallCentered(false, 114, "cart which isn't the Memory Expansion Pak.");
+			}
+			break;
 	}
-	if (msgId == 10) {
+	if (msgId >= 10) {
 		printSmallCentered(false, 142, "\u2427 OK");
 	} else {
 		printSmallCentered(false, 142, "\u2428 Return   \u2427 Launch");
 	}
 
 	int pressed = 0;
-	if (msgId == 10) {
+	if (msgId >= 10) {
 		while (1) {
 			scanKeys();
 			pressed = keysDown();
@@ -856,12 +919,25 @@ bool dsiWareCompatibleB4DS(const char* filename) {
 	grabTID(f_nds_file, game_TID);
 	fclose(f_nds_file);
 
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DS)/sizeof(compatibleGameListB4DS[0]); i++) {
-		if (memcmp(game_TID, compatibleGameListB4DS[i], (compatibleGameListB4DS[i][3] != 0 ? 4 : 3)) == 0) {
-			// Found match
-			res = true;
-			break;
+	if (sys().isRegularDS()) {
+		// Find DSiWare title which requires Slot-2 RAM expansion larger than the Memory Expansion Pak
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSLargeS2RAM)/sizeof(compatibleGameListB4DSLargeS2RAM[0]); i++) {
+			if (memcmp(game_TID, compatibleGameListB4DSLargeS2RAM[i], (compatibleGameListB4DSLargeS2RAM[i][3] != 0 ? 4 : 3)) == 0) {
+				// Found match
+				res = true;
+				break;
+			}
+		}
+	}
+	if (!res) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DS)/sizeof(compatibleGameListB4DS[0]); i++) {
+			if (memcmp(game_TID, compatibleGameListB4DS[i], (compatibleGameListB4DS[i][3] != 0 ? 4 : 3)) == 0) {
+				// Found match
+				res = true;
+				break;
+			}
 		}
 	}
 	if (!res && (sys().dsDebugRam() || bs().b4dsMode == 2)) {
@@ -874,29 +950,6 @@ bool dsiWareCompatibleB4DS(const char* filename) {
 		}
 	}
 	return res;
-}
-
-void cannotLaunchMsg(void) {
-	if (ms().macroMode) {
-		lcdMainOnBottom();
-		lcdSwapped = true;
-	}
-	showdialogbox = true;
-	printLargeCentered(false, 74, isTwlm ? "Information" : "Error!");
-	printSmallCentered(false, 90, isTwlm ? "TWiLight Menu++ is already running." : "This game cannot be launched.");
-	printSmallCentered(false, 108, "\u2427 OK");
-	int pressed = 0;
-	do {
-		scanKeys();
-		pressed = keysDown();
-		bgOperations(true);
-	} while (!(pressed & KEY_A));
-	showdialogbox = false;
-	if (ms().macroMode) {
-		lcdMainOnTop();
-		lcdSwapped = false;
-	}
-	for (int i = 0; i < 25; i++) swiWaitForVBlank();
 }
 
 std::string browseForFile(const std::vector<std::string_view> extensionList) {
