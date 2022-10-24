@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 173)
+// B4DS DSiWare Whitelist (Total: 174)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -28,6 +28,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAD", // Art Style: BASE 10
 	"K8B", // Beauty Academy
 	"KBEE", // Bejeweled Twist (USA)
+	"K9G", // Big Bass Arcade
 	"KBB", // Bomberman Blitz
 	"KAH", // Art Style: Boxlife
 	"KKQ", // Bugs'N'Balls
@@ -186,9 +187,10 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KQR", // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 13)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 14)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KAA", // Art Style: Aquia
+	"K9G", // Big Bass Arcade
 	"KFP", // Flipper
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KWY", // Mighty Milky Way
@@ -206,6 +208,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 // B4DS DSiWare Whitelist (RAM limitation message ID)
 static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Art Style: Aquia (No audio)
+	4, // Big Bass Arcade (Crashes at certain points)
 	2, // Flipper (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
 	2, // Mighty Milky Way (No music)
