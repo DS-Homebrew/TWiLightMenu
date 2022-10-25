@@ -566,12 +566,13 @@ void twlMenuVideo(void) {
 	const struct tm *Time = localtime(&Raw);
 
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
-	bool starship = (strcmp(currentDate, "04/01") == 0);
+	bool showTwl = true;
 
-	if (starship) {
+	if (strcmp(currentDate, "04/01") == 0) {
 		// Load Starship Menu++ BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppStarship.png");
 		longVersion = ms().longSplashJingle;
+		showTwl = false;
 	} else if (strncmp(currentDate, "12", 2) == 0) {
 		// Load christmas BG for December
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppXmas.png");
@@ -599,6 +600,11 @@ void twlMenuVideo(void) {
 		// Load green BG for St. Patrick's Day, or Earth Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppGreen.png");
 		longVersion = ms().longSplashJingle;
+	} else if (strcmp(currentDate, "06/11") == 0 || strcmp(currentDate, "09/23") == 0) {
+		// CiTRadvance SRLDSiSion Menu X++ii++++++++oader X++X Menu++ logo for TWiLight's rename days
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppCitradvancesrldsisionmenuoadmenu.png");
+		longVersion = ms().longSplashJingle;
+		showTwl = false;
 	} else {
 		// Load normal BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenupp.png");
@@ -655,7 +661,7 @@ void twlMenuVideo(void) {
 	doubleBuffer = true;
 	doubleBufferTop = true;
 
-	if (!starship) {
+	if (showTwl) {
 		lodepng::decode(image, width, height, "nitro:/graphics/TWL.png");
 
 		u16* twlTextBuffer = new u16[60*14];
