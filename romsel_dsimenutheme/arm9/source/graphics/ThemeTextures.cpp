@@ -771,9 +771,9 @@ void ThemeTextures::drawProfileName() {
 	// Copy to background
 	for (int y = 0; y < usernameFont()->height(); y++) {
 		for (int x = 0; x < width; x++) {
-			u16 val = BG_PALETTE[FontGraphic::textBuf[1][y * 256 + x]];
-			if (!(val & BIT(15))) // If transparent, restore background image
-				val = _topBorderBuffer[(yPos + y) * 256 + (xPos + x)];
+			int px = FontGraphic::textBuf[1][y * 256 + x];
+			u16 bg = _topBorderBuffer[(yPos + y) * 256 + (xPos + x)];
+			u16 val = px ? alphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
 
 			if (ms().macroMode) {
 				_bgMainBuffer[(yPos + y) * 256 + (xPos + x)] = val;
@@ -1305,9 +1305,9 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 	// Copy to background
 	for (int y = 0; y < dateTimeFont()->height(); y++) {
 		for (int x = 0; x < width; x++) {
-			u16 val = BG_PALETTE_SUB[FontGraphic::textBuf[1][y * 256 + x]];
-			if (!(val & BIT(15))) // If transparent, restore background image
-				val = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
+			int px = FontGraphic::textBuf[1][y * 256 + x];
+			u16 bg = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
+			u16 val = px ? alphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
 
 			BG_GFX_SUB[(posY + y) * 256 + (posX + x)] = val;
 			if (boxArtColorDeband) {
@@ -1345,9 +1345,9 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 	// Copy to background
 	for (int y = 0; y < dateTimeFont()->height(); y++) {
 		for (int x = 0; x < width; x++) {
-			u16 val = BG_PALETTE[FontGraphic::textBuf[1][y * 256 + x]];
-			if (!(val & BIT(15))) // If transparent, restore background image
-				val = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
+			int px = FontGraphic::textBuf[1][y * 256 + x];
+			u16 bg = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
+			u16 val = px ? alphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
 
 			BG_GFX[(posY + y) * 256 + (posX + x)] = val;
 		}
