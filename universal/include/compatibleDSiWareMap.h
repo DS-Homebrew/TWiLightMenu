@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 174)
+// B4DS DSiWare Whitelist (Total: 175)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -118,6 +118,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KPH", // Prehistorik Man
 	"KDP", // Pro-Putt Domo
 	"KPN", // Puzzle League: Express
+	"KYE", // Puzzler Brain Games
 	"KBY", // Puzzle to Go: Baby Animals
 	"KPU", // Puzzle to Go: Diddl
 	"KBX", // Puzzle to Go: Planets and Universe
@@ -245,7 +246,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 25)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 27)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -275,6 +276,8 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KNV", // Neko Reversi
 	"KPS", // Phantasy Star 0 Mini
 	"KXA", // Pirates Assault
+	"KYG", // Puzzler World 2013
+	"KUO", // Puzzler World XL
 	"KRR", // Robot Rescue 2
 };
 
