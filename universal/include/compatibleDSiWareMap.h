@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 175)
+// B4DS DSiWare Whitelist (Total: 176)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -99,6 +99,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KRH", // Music on: Retro Keyboard
 	"KAU", // Nintendo Countdown Calendar
 	"K2D", // Nintendo DSi + Internet
+	"K9K", // Nintendoji
 	"KSUE", // Number Battle
 	"K6T", // Orion's Odyssey
 	"KP9", // Paul's Monster Adventure
@@ -180,21 +181,23 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (Memory Expansion Pak required) (Total: 4)
+// B4DS DSiWare Whitelist (Memory Expansion Pak required) (Total: 5)
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KXC", // Castle Conqueror: Heroes 2
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KAU", // Nintendo Countdown Calendar
+	"K9K", // Nintendoji
 	"KQR", // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 14)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 15)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KAA", // Art Style: Aquia
 	"K9G", // Big Bass Arcade
 	"KFP", // Flipper
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KWY", // Mighty Milky Way
+	"K9K", // Nintendoji
 	"K6T", // Orion's Odyssey
 	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist
@@ -213,6 +216,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Flipper (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
 	2, // Mighty Milky Way (No music)
+	0, // Nintendoji (No audio + Part of the game only)
 	4, // Orion's Odyssey (Crashes at certain points)
 	1, // PictureBook Games: The Royal Bluff (No audio)
 	0, // Picture Perfect: Pocket Stylist (No audio + Parts of the game only)
