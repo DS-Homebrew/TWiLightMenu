@@ -42,6 +42,7 @@ void bootSplashDSi(void) {
 
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
 	bool virtualPain = (strcmp(currentDate, "04/01") == 0 || (ms().getGameRegion() == 0 ? (strcmp(currentDate, "07/21") == 0) : (strcmp(currentDate, "08/14") == 0))); // If April Fools, or the release date of the Virtual Boy
+	bool super = (*(u16*)(0x020000C0) == 0x334D || *(u16*)(0x020000C0) == 0x3647 || *(u16*)(0x020000C0) == 0x4353); // Slot-2 flashcard
 
 	bool custom = ms().dsiSplash == 3;
 
@@ -52,6 +53,8 @@ void bootSplashDSi(void) {
 		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", sdFound() ? "sd" : "fat");
 	} else if (ms().macroMode) {
 		sprintf(path, "nitro:/video/splash/gameBoy.gif");
+	} else if (super) {
+		sprintf(path, "nitro:/video/splash/superDS.gif");
 	} else {
 		sprintf(path, "nitro:/video/splash/%s.gif", language == TWLSettings::ELangChineseS ? "iquedsi" : (sys().isRegularDS() ? "ds" : "dsi"));
 	}
@@ -178,7 +181,7 @@ void bootSplashDSi(void) {
 				}
 			}
 
-			if (!custom && splash.currentFrame() == 24)
+			if (!custom && splash.currentFrame() == (super ? 1 : 24))
 				snd().playDSiBoot();
 		}
 	}
