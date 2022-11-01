@@ -59,6 +59,7 @@ void BootstrapSettings::saveSettings()
 		bootstrapini.SetInt( "NDS-BOOTSTRAP", "SDNAND", sdNand);
 	}
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "MACRO_MODE", ms().macroMode);
+	bootstrapini.SetInt( "NDS-BOOTSTRAP", "SLEEP_MODE", ms().sleepMode);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "SOUND_FREQ", ms().soundFreq);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "CONSOLE_MODEL", consoleModel);
 
