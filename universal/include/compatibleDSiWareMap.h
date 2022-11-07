@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 184)
+// B4DS DSiWare Whitelist (Total: 185)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -62,6 +62,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KEE", // Electroplankton: Rec-Rec
 	"KED", // Electroplankton: Sun-Animalcule
 	"KEJ", // Electroplankton: Varvoice
+	"K4E", // Fall in the Dark
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KFK", // Farm Frenzy
 	"KU7E", // Fashion Tycoon (USA)
