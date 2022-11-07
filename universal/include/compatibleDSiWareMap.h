@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 180)
+// B4DS DSiWare Whitelist (Total: 181)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -97,6 +97,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDR", // Mr. Driller: Drill Till You Drop
 	"KIC", // Music on: Playing Piano
 	"KRH", // Music on: Retro Keyboard
+	"K7ZE", "K9RP", // My Aquarium: Seven Oceans
 	"KL3", // My Asian Farm
 	"KL4", // My Australian Farm
 	"KMV", // My Exotic Farm
