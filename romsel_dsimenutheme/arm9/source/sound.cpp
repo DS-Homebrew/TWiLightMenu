@@ -247,7 +247,8 @@ SoundControl::SoundControl()
 					std::string musicPath = TFN_SOUND_BG;
 					std::string cachePath = TFN_SOUND_BG_CACHE;
 					bool closed = false;
-					if ((access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) && access(musicPath.c_str(), F_OK) == 0) {
+					if (access(musicPath.c_str(), F_OK) == 0) {
+						// Read properties from WAV header
 						u8 wavFormat = 0;
 						u8 numChannels = 1;
 						stream_source = fopen(musicPath.c_str(), "rb");
@@ -258,9 +259,13 @@ SoundControl::SoundControl()
 						stream.format = numChannels == 2 ? MM_STREAM_8BIT_STEREO : MM_STREAM_16BIT_MONO;
 						fseek(stream_source, 0x18, SEEK_SET);
 						fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
+
 						if (wavFormat == 0x11) {
-							if (adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2) == -1) {
-								remove(cachePath.c_str());
+							// If ADPCM and hasn't been successfully converted yet, do so now
+							if(access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) {
+								if (adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2) == -1) {
+									remove(cachePath.c_str());
+								}
 							}
 							fclose(stream_source);
 							closed = true;
