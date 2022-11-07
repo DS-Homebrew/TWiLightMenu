@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 181)
+// B4DS DSiWare Whitelist (Total: 182)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -67,6 +67,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KFS", // Flashlight
 	"KFP", // Flipper
 	"KFG", // Frogger Returns
+	"K6J", // Fuuu! Dairoujou Kai
 	"KGB", // Game & Watch: Ball
 	"KGC", // Game & Watch: Chef
 	"KGD", // Game & Watch: Donkey Kong Jr.
