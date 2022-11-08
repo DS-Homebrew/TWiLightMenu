@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 185)
+// B4DS DSiWare Whitelist (Total: 186)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -35,6 +35,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K2J", // Cake Ninja
 	"K2N", // Cake Ninja 2
 	"KCY", // Calculator
+	"K3N", // GO Series: Captain Sub
 	"KCNE", // Castle Conqueror (USA)
 	"KC5", // Castle Conqueror: Heroes
 	"KXC", // Castle Conqueror: Heroes 2
