@@ -238,13 +238,15 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Wonderful Sports: Bowling (No music + Crashes at certain point)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Show RAM limitation message) (Total: 1)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Show RAM limitation message) (Total: 2)
 static const char compatibleGameListB4DSDebugRAMLimited[][4] = {
+	"KUV", // Bloons TD 4
 	"KS3", // Shantae: Risky's Revenge
 };
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (RAM limitation message ID)
 static int compatibleGameListB4DSDebugRAMLimitedID[] = {
+	1, // Bloons TD 4 (No audio)
 	2, // Shantae: Risky's Revenge (No music)
 };
 
