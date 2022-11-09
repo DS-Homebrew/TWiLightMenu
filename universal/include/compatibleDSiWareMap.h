@@ -260,7 +260,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 27)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 28)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -271,6 +271,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"K27", // G.G. Series: All Breaker
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
+	"KUV", // Bloons TD 4
 	"KYN", // Cake Ninja: XMAS
 	"KQN", // Castle Conqueror: Against
 	"KQN", // Castle Conqueror: Revolution
