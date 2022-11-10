@@ -265,7 +265,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // WarioWare: Touched! DL (No audio)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 28)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 29)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -299,6 +299,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KYG", // Puzzler World 2013
 	"KUO", // Puzzler World XL
 	"KRR", // Robot Rescue 2
+	"KSJ", // Shawn Johnson Gymnastics
 };
 
 // B4DS DSiWare Whitelist (DS Retail & Debug consoles with 16MB or more of RAM expansion) (Total: 1)
