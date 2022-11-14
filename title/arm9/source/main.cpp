@@ -1738,7 +1738,16 @@ int main(int argc, char **argv)
 		3: Skip flashcard ROM check (Used for launching DSiWare from flashcards booted in DS mode)
 	*/
 
-	if (sys().isRegularDS()) {
+	if (isDSiMode() && sdFound() && (access("sd:/_nds/bios9i.bin", F_OK) != 0)) {
+		u8* bios9i = new u8[0x10000];
+		tonccpy(bios9i, (u8*)0xFFFF0000, 0x10000);
+
+		FILE* bios = fopen("sd:/_nds/bios9i.bin", "wb");
+		fwrite(bios9i, 1, 0x10000, bios);
+		fclose(bios);
+
+		delete[] bios9i;
+	} else if (sys().isRegularDS()) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 		if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353 && *(u16*)(0x020000C0) != 0x5A45) {
 			*(u16*)(0x020000C0) = 0;	// Clear Slot-2 flashcard flag
