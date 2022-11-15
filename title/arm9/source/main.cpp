@@ -1749,11 +1749,11 @@ int main(int argc, char **argv)
 		}
 		if ((access("sd:/_nds/bios7i.bin", F_OK) != 0) && (access("sd:/_nds/bios7i_part1.bin", F_OK) != 0)) {
 			*(u32*)0xCFFFD0C = 0x534F4942; // 'BIOS'
-			toncset((char*)0x02F80000, 0, 0x20);
+			toncset((char*)0x0CF80000, 0, 0x20);
 			while (*(u32*)0xCFFFD0C == 0x534F4942);
 
 			FILE* bios = fopen("sd:/_nds/bios7i_part1.bin", "wb");
-			fwrite((char*)0x02F80000, 1, 0x8000, bios);
+			fwrite((char*)0x0CF80000, 1, 0x8000, bios);
 			fclose(bios);
 		}
 	} else if (sys().isRegularDS()) {

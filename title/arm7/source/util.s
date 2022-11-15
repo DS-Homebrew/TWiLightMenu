@@ -1,7 +1,6 @@
 .thumb
 
 .global biosRead16
-.global hijackFunc
 
 biosRead16:
 	mov r1, r0
