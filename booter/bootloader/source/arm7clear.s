@@ -40,6 +40,14 @@ arm7clearRAM:
 	sub	r8, #0x00008000
 	mov	r9, #0x03800000
 	orr	r9, r9, #0x10000
+
+	ldr	r9,=0x4004008
+	ldr	r9,[r9]
+	ands	r9,r9,#0x8000
+	beq	clear_IWRAM_loop @ ds_mode
+
+	sub	r9, #0x00004000
+
 clear_IWRAM_loop:
 	stmia	r8!, {r0, r1, r2, r3, r4, r5, r6, r7}
 	cmp	r8, r9
