@@ -231,6 +231,11 @@ int main() {
 		*(vu32*)0x037C0000 = wordBak;
 	}
 
+	if (isDSiMode()) {
+		memset((void*)0x0CF80000, 0, 0x20);
+		biosDump((void*)0x02F80020, (const void*)0x00000020, 0x7FE0);
+	}
+
 	u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 
 	// 01: Fade Out
@@ -344,11 +349,6 @@ int main() {
 				*(u32*)(0x2FFFD0C) = 0;
 			}
 			rebootTimer++;
-		}
-
-		if (*(u32*)(0x2FFFD0C) == 0x534F4942) { // 'BIOS'
-			biosDump((void*)0x02F80020, (const void*)0x00000020, 0x7FE0);
-			*(u32*)(0x2FFFD0C) = 0;
 		}
 
 		if (*(u32*)(0x2FFFD0C) == 0x454D4D43) {
