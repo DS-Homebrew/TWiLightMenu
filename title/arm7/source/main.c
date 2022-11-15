@@ -116,6 +116,18 @@ void powerButtonCB() {
 	exitflag = true;
 }
 
+extern u16 biosRead16(u32 addr);
+
+void biosDump(void* dst, const void* src, u32 len)
+{
+	u16* _dst = (u16*)dst;
+	
+	for (u32 i = 0; i < len; i+=2)
+	{
+		_dst[i>>1] = biosRead16(((u32)src) + i);
+	}
+}
+
 TWL_CODE void set_ctr(u32* ctr){
 	for (int i = 0; i < 4; i++) REG_AES_IV[i] = ctr[3-i];
 }
@@ -332,6 +344,11 @@ int main() {
 				*(u32*)(0x2FFFD0C) = 0;
 			}
 			rebootTimer++;
+		}
+
+		if (*(u32*)(0x2FFFD0C) == 0x534F4942) { // 'BIOS'
+			biosDump((void*)0x02F80020, (const void*)0x00000020, 0x7FE0);
+			*(u32*)(0x2FFFD0C) = 0;
 		}
 
 		if (*(u32*)(0x2FFFD0C) == 0x454D4D43) {

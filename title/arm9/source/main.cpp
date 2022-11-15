@@ -1738,15 +1738,24 @@ int main(int argc, char **argv)
 		3: Skip flashcard ROM check (Used for launching DSiWare from flashcards booted in DS mode)
 	*/
 
-	if (isDSiMode() && sdFound() && (access("sd:/_nds/bios9i.bin", F_OK) != 0)) {
-		u8* bios9i = new u8[0x10000];
-		tonccpy(bios9i, (u8*)0xFFFF0000, 0x10000);
+	if (isDSiMode() && sdFound()) {
+		if ((access("sd:/_nds/bios9i.bin", F_OK) != 0) && (access("sd:/_nds/bios9i_part1.bin", F_OK) != 0)) {
+			extern char copyBuf[0x8000];
+			tonccpy(copyBuf, (u8*)0xFFFF0000, 0x8000);
 
-		FILE* bios = fopen("sd:/_nds/bios9i.bin", "wb");
-		fwrite(bios9i, 1, 0x10000, bios);
-		fclose(bios);
+			FILE* bios = fopen("sd:/_nds/bios9i_part1.bin", "wb");
+			fwrite(copyBuf, 1, 0x8000, bios);
+			fclose(bios);
+		}
+		if ((access("sd:/_nds/bios7i.bin", F_OK) != 0) && (access("sd:/_nds/bios7i_part1.bin", F_OK) != 0)) {
+			*(u32*)0xCFFFD0C = 0x534F4942; // 'BIOS'
+			toncset((char*)0x02F80000, 0, 0x20);
+			while (*(u32*)0xCFFFD0C == 0x534F4942);
 
-		delete[] bios9i;
+			FILE* bios = fopen("sd:/_nds/bios7i_part1.bin", "wb");
+			fwrite((char*)0x02F80000, 1, 0x8000, bios);
+			fclose(bios);
+		}
 	} else if (sys().isRegularDS()) {
 		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 		if (*(u16*)(0x020000C0) != 0x334D && *(u16*)(0x020000C0) != 0x3647 && *(u16*)(0x020000C0) != 0x4353 && *(u16*)(0x020000C0) != 0x5A45) {

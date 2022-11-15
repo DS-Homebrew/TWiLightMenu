@@ -82,7 +82,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [Firexploit](https://github.com/Firexploit): 3DS UI sounds for the 3DS theme, which some are also used in the DSi theme.
 - [dbry](https://github.com/dbry): Xtreme Quality IMA-ADPCM decoder code from [adpcm-xq](https://github.com/dbry/adpcm-xq).
 ## Others
-- [Arisotura](https://github.com/Arisotura): ROM list from melonDS
+- [Arisotura](https://github.com/Arisotura): ROM list from melonDS, and BIOS dumper code from [dsibiosdumper](https://github.com/Arisotura/dsibiosdumper)
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS
 - [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap
 - [Gericom](https://github.com/Gericom), TrolleyDave, and FAST6191: GBA SRAM-patching code, used in gbapatcher ([SRAM patching thread at GBAtemp](https://gbatemp.net/threads/reverse-engineering-gba-patching.60168/))
