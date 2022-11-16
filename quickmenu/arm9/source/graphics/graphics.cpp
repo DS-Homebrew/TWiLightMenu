@@ -239,16 +239,16 @@ void bottomBgLoad(void) {
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", ms().dsi_theme.c_str());
+			sprintf(temp, "%s:/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str());
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", ms()._3ds_theme.c_str());
+			sprintf(temp, "%s:/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str());
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/bottombg.png", ms().r4_theme.c_str());
+			sprintf(temp, "%s:/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str());
 			break;
 		case TWLSettings::EThemeWood:
-			// sprintf(temp, "/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/bottombg.png", ms().ak_theme.c_str());
+			// sprintf(temp, "%s:/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str());
 			break;
 		case TWLSettings::EThemeSaturn:
 			sprintf(temp, "nitro:/graphics/bottombg_saturn.png");
@@ -562,16 +562,16 @@ void topBgLoad(void) {
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/%s.png", ms().dsi_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
+			sprintf(temp, "%s:/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/%s.png", ms()._3ds_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
+			sprintf(temp, "%s:/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/%s.png", ms().r4_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
+			sprintf(temp, "%s:/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
 			break;
 		case TWLSettings::EThemeWood:
-			// sprintf(temp, "/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/%s.png", ms().ak_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
+			// sprintf(temp, "%s:/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
 			break;
 		case TWLSettings::EThemeSaturn:
 			sprintf(temp, "nitro:/graphics/%s.png", sys().isDSPhat() ? "phat_topbg_saturn" : "topbg_saturn");
