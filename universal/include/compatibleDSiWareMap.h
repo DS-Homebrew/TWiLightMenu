@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 188)
+// B4DS DSiWare Whitelist (Total: 189)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -91,6 +91,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KLP", // Littlest Pet Shop
 	"KLK", // Lola's Alphabet Train
 	"KOF", // Lola's Fruit Shop Sudoku
+	"KMUE", "KM6V", // Maestro! Green Groove
 	"KWM", // Magical Whip
 	"KJO", // Magnetic Joe
 	"KMG", // Mighty Flip Champs!
