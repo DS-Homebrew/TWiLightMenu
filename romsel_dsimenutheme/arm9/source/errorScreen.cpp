@@ -5,6 +5,7 @@
 // #include "autoboot.h"
 #include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
+#include "common/flashcard.h"
 #include "common/tonccpy.h"
 #include "graphics/fontHandler.h"
 // #include "graphics/ThemeTextures.h"
@@ -26,7 +27,7 @@ static bool showNonExtendedImage = false;
 void checkSdEject(void) {
 	if (!ms().sdRemoveDetect) return;
 
-	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode()) {
+	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode() || !sdFound()) {
 		if (!showNonExtendedImage) {
 			timeTillChangeToNonExtendedImage++;
 			if (timeTillChangeToNonExtendedImage > 10) {

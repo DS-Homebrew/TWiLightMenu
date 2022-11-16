@@ -2,6 +2,8 @@
 #include <stdio.h>
 
 #include "common/twlmenusettings.h"
+#include "common/systemdetails.h"
+#include "common/flashcard.h"
 #include "common/lodepng.h"
 //#include "autoboot.h"
 
@@ -44,7 +46,7 @@ void loadSdRemovedImage(void) {
 void checkSdEject(void) {
 	if (!ms().sdRemoveDetect) return;
 
-	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) {
+	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode() || !sdFound()) {
 		timeTillChangeToNonExtendedImage++;
 		if (timeTillChangeToNonExtendedImage > 10) {
 			showNonExtendedImage = true;
