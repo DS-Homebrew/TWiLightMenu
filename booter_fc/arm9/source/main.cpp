@@ -56,14 +56,14 @@ int main(int argc, char **argv) {
 	bool isRegularDS = fifoGetValue32(FIFO_USER_07);
 
 	bool sdFound = false;
-	if (isDSiMode() || (!isRegularDS && REG_SCFG_EXT != 0)) {
+	bool flashcardFound = fatMountSimple("fat", dldiGetInternal());
+	if ((isDSiMode() || (!isRegularDS && REG_SCFG_EXT != 0)) && (access("fat:/_nds/primary", F_OK) != 0)) {
 		extern const DISC_INTERFACE __my_io_dsisd;
 		sdFound = fatMountSimple("sd", &__my_io_dsisd);
 	}
 	if (sdFound) {
 		sdFound = (access("sd:/_nds/TWiLightMenu/main.srldr", F_OK) == 0);
 	}
-	bool flashcardFound = fatMountSimple("fat", dldiGetInternal());
 
 	if (/* !sdFound && */ !flashcardFound) {
 		consoleDemoInit();

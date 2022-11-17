@@ -37,7 +37,11 @@ bool isRunFromSd(void) {
 	static bool checked = false;
 	static bool result = false;
 	if (!checked) {
-		result = (access("sd:/_nds/TWiLightMenu/main.srldr", F_OK) == 0);
+		if (flashcardFound()) {
+			result = ((access("fat:/_nds/primary", F_OK) != 0) || (access("fat:/_nds/TWiLightMenu/main.srldr", F_OK) != 0));
+		} else {
+			result = (access("sd:/_nds/TWiLightMenu/main.srldr", F_OK) == 0);
+		}
 		checked = true;
 	}
 	return result;
