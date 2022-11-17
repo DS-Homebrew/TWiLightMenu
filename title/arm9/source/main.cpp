@@ -1840,6 +1840,12 @@ int main(int argc, char **argv)
 
 				useTwlCfg = true;
 				u32 params = BIT(0);
+				if (softResetParamsBak & BIT(1)) {
+					params |= BIT(1);
+				}
+				if (softResetParamsBak & BIT(2)) {
+					params |= BIT(2);
+				}
 				twlCfgFile = fopen(cachePath, "wb");
 				fwrite(&params, 1, 4, twlCfgFile);
 				fwrite((void*)0x02000004, 1, 0x3FFC, twlCfgFile);
@@ -1848,6 +1854,12 @@ int main(int argc, char **argv)
 		} else {
 			if (useTwlCfg) {
 				u32 params = BIT(0);
+				if (softResetParamsBak & BIT(1)) {
+					params |= BIT(1);
+				}
+				if (softResetParamsBak & BIT(2)) {
+					params |= BIT(2);
+				}
 				FILE* twlCfgFile = fopen(cachePath, "wb");
 				fwrite(&params, 1, 4, twlCfgFile);
 				fwrite((void*)0x02000004, 1, 0x3FFC, twlCfgFile);
@@ -1861,6 +1873,12 @@ int main(int argc, char **argv)
 					useTwlCfg = ((*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 					if (*(u32*)0x02000000 & BIT(0)) {
 						softResetParamsBak |= BIT(0);
+					}
+					if (*(u32*)0x02000000 & BIT(1)) {
+						softResetParamsBak |= BIT(1);
+					}
+					if (*(u32*)0x02000000 & BIT(2)) {
+						softResetParamsBak |= BIT(2);
 					}
 				}
 			}
@@ -2621,7 +2639,9 @@ int main(int argc, char **argv)
 		twlMenuVideo();
 		snd().fadeOutStream();
 	}
-	*(u32*)0x02000000 &= ~(1UL << 1);
+	*(u32*)0x02000000 &= ~BIT(1);
+	*(u32*)0x02000000 &= ~BIT(2);
+	*(u32*)0x02000000 &= ~BIT(3);
 
 	scanKeys();
 
