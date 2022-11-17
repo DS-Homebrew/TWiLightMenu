@@ -958,9 +958,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		lcdSwapped = false;
 	}
 
-	gameOrderIniPath = std::string(sdFound() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
-	recentlyPlayedIniPath = std::string(sdFound() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/recentlyplayed.ini";
-	timesPlayedIniPath = std::string(sdFound() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/timesplayed.ini";
+	gameOrderIniPath = std::string(isRunFromSd() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
+	recentlyPlayedIniPath = std::string(isRunFromSd() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/recentlyplayed.ini";
+	timesPlayedIniPath = std::string(isRunFromSd() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/timesplayed.ini";
 
 	int pressed = 0;
 	int screenOffset = 0;
@@ -1177,7 +1177,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 						}
 						std::string donorRomPath;
-						const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
+						const char *bootstrapinipath = isRunFromSd() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
 						int dsiModeSetting = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 						CIniFile bootstrapini(bootstrapinipath);
 						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
@@ -1364,7 +1364,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						printSmallCentered(false, 0, 98, "If this crashes with an error, please");
 						printSmallCentered(false, 0, 110, "disable \"Update recently played list\".");
 
-						mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
+						mkdir(isRunFromSd() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
 
 						CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 						std::vector<std::string> recentlyPlayed;

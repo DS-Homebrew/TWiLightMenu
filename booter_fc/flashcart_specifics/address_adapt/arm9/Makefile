@@ -18,7 +18,7 @@ include $(DEVKITARM)/ds_rules
 UNIVERSAL	:=	../../../../universal
 TARGET		:=	booter
 BUILD		:=	build
-SOURCES		:=	../../../arm9/source $(UNIVERSAL)/source/tonccpy
+SOURCES		:=	../../../arm9/source $(UNIVERSAL)/source/tonccpy $(UNIVERSAL)/sdmmc/arm9/source
 INCLUDES	:=	../../../arm9/include $(UNIVERSAL)/include
 DATA		:=	../../../data
 

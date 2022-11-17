@@ -168,9 +168,9 @@ SoundControl::SoundControl()
 	bool loopableMusic = false;
 	loopingPoint = false;
 
-	mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/cache" : "fat:/_nds/TWiLightMenu/cache", 0777);
-	mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/cache/music" : "fat:/_nds/TWiLightMenu/cache/music", 0777);
-	std::string devicePath = sdFound() ? "sd:" : "fat:";
+	mkdir(isRunFromSd() ? "sd:/_nds/TWiLightMenu/cache" : "fat:/_nds/TWiLightMenu/cache", 0777);
+	mkdir(isRunFromSd() ? "sd:/_nds/TWiLightMenu/cache/music" : "fat:/_nds/TWiLightMenu/cache/music", 0777);
+	std::string devicePath = isRunFromSd() ? "sd:" : "fat:";
 
 	stream.sampling_rate = 16000;	 		// 16000Hz
 	stream.format = MM_STREAM_16BIT_MONO;  // select format

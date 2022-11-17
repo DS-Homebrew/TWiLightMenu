@@ -18,7 +18,7 @@
 
 void createEsrbSplash(void) {
 	if (!ms().esrbRatingScreen || isHomebrew[CURPOS] || (gameTid[CURPOS][3] != 'E' && gameTid[CURPOS][3] != 'O' && gameTid[CURPOS][3] != 'T' && gameTid[CURPOS][3] != 'W')) {
-		remove(sdFound() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
+		remove(isRunFromSd() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 		return;
 	}
 
@@ -30,7 +30,7 @@ void createEsrbSplash(void) {
 	CIniFile esrbInfo("nitro:/ESRB.ini");
 	std::string rating = esrbInfo.GetString(gameTid3, "Rating", "");
 	if (rating == "") {
-		remove(sdFound() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
+		remove(isRunFromSd() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 		return;
 	}
 
@@ -115,7 +115,7 @@ void createEsrbSplash(void) {
 		esrbDescFontDeinit();
 	}
 
-	mkdir(sdFound() ? "sd:/_nds/nds-bootstrap" : "fat:/_nds/nds-bootstrap", 0777);
+	mkdir(isRunFromSd() ? "sd:/_nds/nds-bootstrap" : "fat:/_nds/nds-bootstrap", 0777);
 
 	FILE *file = fopen(sdFound() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin", "wb");
 	fwrite(tex().bmpImageBuffer(), sizeof(u16), 256*192, file);

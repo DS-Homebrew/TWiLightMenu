@@ -5,5 +5,6 @@ bool sdFound(void);
 bool flashcardFound(void);
 void flashcardFoundReset(void);
 bool bothSDandFlashcard(void);
+bool isRunFromSd(void);
 
 #endif //DSIMENUPP_FLASHCARD_H

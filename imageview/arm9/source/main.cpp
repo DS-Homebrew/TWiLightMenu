@@ -16,6 +16,7 @@
 #include "common/systemdetails.h"
 #include "common/nds_loader_arm9.h"
 #include "common/twlmenusettings.h"
+#include "common/flashcard.h"
 #include "errorScreen.h"
 
 #include "graphics/fontHandler.h"
@@ -50,11 +51,7 @@ void loadROMselect() {
 	for (int i = 0; i < 25; i++) {
 		swiWaitForVBlank();
 	}
-	if (!isDSiMode()) {
-		chdir("fat:/");
-	} else {
-		chdir((access("sd:/", F_OK) == 0) ? "sd:/" : "fat:/");
-	}
+	chdir(isRunFromSd() ? "sd:/" : "fat:/");
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi:

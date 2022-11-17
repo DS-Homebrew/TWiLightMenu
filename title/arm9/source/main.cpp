@@ -129,7 +129,7 @@ void loadMainMenu()
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
 	logPrint("Opening DS Classic Menu...\n");
-	if (!isDSiMode()) {
+	if (!isRunFromSd()) {
 		chdir("fat:/");
 	}
 	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
@@ -146,7 +146,7 @@ void loadROMselect(void)
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
-	if (!isDSiMode()) {
+	if (!isRunFromSd()) {
 		chdir("fat:/");
 	}
 	switch (ms().theme) {
@@ -590,14 +590,14 @@ void lastRunROM()
 					}
 				}
 
-				if (sdFound() && !ms().previousUsedDevice) {
+				if (isRunFromSd() && !ms().previousUsedDevice) {
 					argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds"));
 				} else {
 					argarray.push_back((char*)(useNightly ? "/_nds/nds-bootstrap-nightly.nds" : "/_nds/nds-bootstrap-release.nds"));
 				}
 			}
 			if (ms().previousUsedDevice || !ms().homebrewBootstrap) {
-				CIniFile bootstrapini( sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC );
+				CIniFile bootstrapini( isRunFromSd() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC );
 				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().previousUsedDevice]);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
@@ -617,7 +617,7 @@ void lastRunROM()
 				|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
 				|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 				);
-				bootstrapini.SaveIniFile( sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC );
+				bootstrapini.SaveIniFile( isRunFromSd() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC );
 			}
 			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
 		} else {
@@ -903,7 +903,7 @@ void lastRunROM()
 					}
 				}
 
-				if (sdFound() && !ms().previousUsedDevice) {
+				if (isRunFromSd() && !ms().previousUsedDevice) {
 					argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds"));
 				} else {
 					argarray.push_back((char*)(useNightly ? "/_nds/nds-bootstrap-nightly.nds" : "/_nds/nds-bootstrap-release.nds"));
@@ -1715,7 +1715,6 @@ int main(int argc, char **argv)
 	ms();
 
 	if (!sys().fatInitOk()) {
-		consoleDemoInit();
 		iprintf("FAT init failed!");
 		stop();
 	}
@@ -2024,7 +2023,7 @@ int main(int argc, char **argv)
 		const char* pathDefine0 = *(u32*)0x02FFE1A0 == 0x080037C0 ? "DONORTWLONLY0_NDS_PATH" : "DONORTWL0_NDS_PATH"; // SDK5.0
 		const char* pathDefine = *(u32*)0x02FFE1A0 == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH"; // SDK5.x
 
-		const char *bootstrapinipath = BOOTSTRAP_INI;
+		const char *bootstrapinipath = isRunFromSd() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
 		CIniFile bootstrapini(bootstrapinipath);
 		std::string donorRomPath0 = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine0, "");
 		std::string donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
@@ -2549,9 +2548,9 @@ int main(int argc, char **argv)
 		}
 		ms().saveSettings();
 		if (regionNowSet) {
-			CIniFile bootstrapini(sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
+			CIniFile bootstrapini(isRunFromSd() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", ms().useRomRegion);
-			bootstrapini.SaveIniFileModified(sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
+			bootstrapini.SaveIniFileModified(isRunFromSd() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 		}
 	}
 
@@ -2562,7 +2561,7 @@ int main(int argc, char **argv)
 	}
 	*(u32*)0x02000000 |= BIT(0);
 
-	if (access(sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC, F_OK) != 0) {
+	if (access(isRunFromSd() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC, F_OK) != 0) {
 		// Create "nds-bootstrap.ini"
 		bs().saveSettings();
 	}
@@ -2626,7 +2625,7 @@ int main(int argc, char **argv)
 				swiWaitForVBlank();
 			}
 			logPrint("Opening TWLMenu++ Settings...\n");
-			if (!isDSiMode()) {
+			if (!isRunFromSd()) {
 				chdir("fat:/");
 			}
 			runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true, false, -1);

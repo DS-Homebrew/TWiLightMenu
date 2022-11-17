@@ -261,17 +261,17 @@ std::string setApFix(const char *filename) {
 	char ipsPath[256];
 	char ipsPath2[256];
 	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/cht/%s.bin", sdFound() ? "sd" : "fat", filename);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/cht/%s.bin", isRunFromSd() ? "sd" : "fat", filename);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 	}
 
 	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/cht/%s-%X.bin", sdFound() ? "sd" : "fat", gameTid[CURPOS], headerCRC[CURPOS]);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/cht/%s-%X.bin", isRunFromSd() ? "sd" : "fat", gameTid[CURPOS], headerCRC[CURPOS]);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 	}
 
 	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s.ips", sdFound() ? "sd" : "fat", filename);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s.ips", isRunFromSd() ? "sd" : "fat", filename);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 		if (ipsFound) {
 			cheatVer = false;
@@ -279,7 +279,7 @@ std::string setApFix(const char *filename) {
 	}
 
 	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid[CURPOS], headerCRC[CURPOS]);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", isRunFromSd() ? "sd" : "fat", gameTid[CURPOS], headerCRC[CURPOS]);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 		if (ipsFound) {
 			cheatVer = false;
@@ -287,7 +287,7 @@ std::string setApFix(const char *filename) {
 	}
 
 	if (ipsFound) {
-		if (ms().secondaryDevice && sdFound()) {
+		if (ms().secondaryDevice && isRunFromSd()) {
 			mkdir("fat:/_nds", 0777);
 			mkdir("fat:/_nds/nds-bootstrap", 0777);
 			fcopy(ipsPath, cheatVer ? "fat:/_nds/nds-bootstrap/apFixCheat.bin" : "fat:/_nds/nds-bootstrap/apFix.ips");
@@ -295,7 +295,7 @@ std::string setApFix(const char *filename) {
 		}
 		return ipsPath;
 	} else {
-		FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
+		FILE *file = fopen(isRunFromSd() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
 		if (file) {
 			char buf[5] = {0};
 			fread(buf, 1, 4, file);
@@ -457,7 +457,7 @@ void SetWidescreen(const char *filename) {
 		char *tid = ms().slot1Launched ? s1GameTid : gameTid[CURPOS];
 		u16 crc16 = ms().slot1Launched ? ndsCart.headerCRC16 : headerCRC[CURPOS];
 
-		FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/widescreen.pck" : "fat:/_nds/TWiLightMenu/extras/widescreen.pck", "rb");
+		FILE *file = fopen(isRunFromSd() ? "sd:/_nds/TWiLightMenu/extras/widescreen.pck" : "fat:/_nds/TWiLightMenu/extras/widescreen.pck", "rb");
 		if (file) {
 			char buf[5] = {0};
 			fread(buf, 1, 4, file);
@@ -534,15 +534,15 @@ void SetWidescreen(const char *filename) {
  */
 std::string getGameManual(const char *filename) {
 	char manualPath[256];
-	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", sdFound() ? "sd" : "fat", filename);
+	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", isRunFromSd() ? "sd" : "fat", filename);
 	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
-	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", sdFound() ? "sd" : "fat", gameTid[CURPOS]);
+	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", isRunFromSd() ? "sd" : "fat", gameTid[CURPOS]);
 	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
-	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%.3s.txt", sdFound() ? "sd" : "fat", gameTid[CURPOS]);
+	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%.3s.txt", isRunFromSd() ? "sd" : "fat", gameTid[CURPOS]);
 	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
@@ -655,11 +655,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 	for (int i = 0; i < 25; i++) {
 		swiWaitForVBlank();
 	}
-	if (!isDSiMode()) {
-		chdir("fat:/");
-	} else if (sdFound()) {
-		chdir("sd:/");
-	}
+	chdir(isRunFromSd() ? "sd:/" : "fat:/");
 	runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 	stop();
 }
@@ -1190,7 +1186,7 @@ int main(int argc, char **argv) {
 
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiWare[CURPOS]) {
-				remove(sdFound() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
+				remove(isRunFromSd() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
@@ -1402,7 +1398,7 @@ int main(int argc, char **argv) {
 					mkdir((ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
 					if (codelist.romData(ms().dsiWareSrlPath,gameCode,crc32)) {
 						long cheatOffset; size_t cheatSize;
-						FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
+						FILE* dat=fopen(isRunFromSd() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
 						if (dat) {
 							if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
 								codelist.parse(ms().dsiWareSrlPath);
@@ -1533,11 +1529,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
 					}
-					if (!isDSiMode()) {
-						chdir("fat:/");
-					} else if (sdFound()) {
-						chdir("sd:/");
-					}
+					chdir(isRunFromSd() ? "sd:/" : "fat:/");
 					runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 					stop();
 				}
@@ -1681,7 +1673,7 @@ int main(int argc, char **argv) {
 						bool boostCpu = setClockSpeed();
 						bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
-						const char *bootstrapinipath = ((!ms().secondaryDevice || sdFound()) ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
+						const char *bootstrapinipath = (isRunFromSd() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
@@ -1730,7 +1722,7 @@ int main(int argc, char **argv) {
 							mkdir("/_nds/nds-bootstrap", 0777);
 							if (codelist.romData(path,gameCode,crc32)) {
 								long cheatOffset; size_t cheatSize;
-								FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
+								FILE* dat=fopen(isRunFromSd() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
 								if (dat) {
 									if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
 										codelist.parse(path);
@@ -1865,11 +1857,7 @@ int main(int argc, char **argv) {
 						for (int i = 0; i < 25; i++) {
 							swiWaitForVBlank();
 						}
-						if (!isDSiMode()) {
-							chdir("fat:/");
-						} else if (sdFound()) {
-							chdir("sd:/");
-						}
+						chdir(isRunFromSd() ? "sd:/" : "fat:/");
 						runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 						stop();
 					} else {
@@ -2007,11 +1995,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
 					}
-					if (!isDSiMode()) {
-						chdir("fat:/");
-					} else if (sdFound()) {
-						chdir("sd:/");
-					}
+					chdir(isRunFromSd() ? "sd:/" : "fat:/");
 					runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 					stop();
 				}
@@ -2488,9 +2472,8 @@ int main(int argc, char **argv) {
 				} else if (extension(filename, {".gif", ".png"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EImageLaunch;
 
-					ndsToBoot = "sd:/_nds/TWiLightMenu/imageview.srldr";
-					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "fat:/_nds/TWiLightMenu/imageview.srldr";
+					ndsToBoot = isRunFromSd() ? "sd:/_nds/TWiLightMenu/imageview.srldr" : "fat:/_nds/TWiLightMenu/imageview.srldr";
+					if (!isDSiMode()) {
 						boostVram = true;
 					}
 				}
@@ -2600,11 +2583,7 @@ int main(int argc, char **argv) {
 				for (int i = 0; i < 25; i++) {
 					swiWaitForVBlank();
 				}
-				if (!isDSiMode()) {
-					chdir("fat:/");
-				} else if (sdFound()) {
-					chdir("sd:/");
-				}
+				chdir(isRunFromSd() ? "sd:/" : "fat:/");
 				runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 				stop();
 			}

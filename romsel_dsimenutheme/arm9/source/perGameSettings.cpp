@@ -1128,7 +1128,7 @@ void perGameSettings (std::string filename) {
 						}
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
+						const char *bootstrapinipath = isRunFromSd() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, romFolderNoSlash+"/"+filename);
 						bootstrapini.SaveIniFile(bootstrapinipath);

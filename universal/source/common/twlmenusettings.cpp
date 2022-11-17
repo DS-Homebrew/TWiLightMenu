@@ -137,8 +137,8 @@ TWLSettings::TWLSettings()
 
 void TWLSettings::loadSettings()
 {
-	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
-		settingsinipath = DSIMENUPP_INI_FC; // Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+	if (!isRunFromSd()) {
+		settingsinipath = DSIMENUPP_INI_FC; // Fallback to .ini path on flashcard, if TWLMenu++ is not found on SD card
 	}
 
 	CIniFile settingsini(settingsinipath);

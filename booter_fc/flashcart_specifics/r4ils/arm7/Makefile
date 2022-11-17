@@ -17,10 +17,11 @@ include $(DEVKITARM)/ds_rules
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
+UNIVERSAL	:=	../../../../universal
 TARGET		:=	booter
 BUILD		:=	build
-SOURCES		:=	../../../arm7/source
-INCLUDES	:=	../../../arm7/include build
+SOURCES		:=	../../../arm7/source $(UNIVERSAL)/sdmmc/arm7/source
+INCLUDES	:=	../../../arm7/include build $(UNIVERSAL)/sdmmc/arm7/include
 
 #---------------------------------------------------------------------------------
 # options for code generation

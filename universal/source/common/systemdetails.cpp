@@ -113,7 +113,7 @@ void SystemDetails::initFilesystem(const char *runningPath)
 		_fatInitOk = (sdFound() || flashcardFound());
 	}
 	*(u32*)(0x2FFFD0C) = 0;
-	chdir(sdFound()&&isDSiMode() ? "sd:/" : "fat:/");
+	chdir(isRunFromSd() ? "sd:/" : "fat:/");
 
 	if (!_nitroFsInitOk && runningPath != NULL) {
 		_nitroFsInitOk = nitroFSInit(runningPath) == 1;

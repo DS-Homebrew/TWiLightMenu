@@ -51,17 +51,18 @@ int main(int argc, char **argv) {
 	powerOn(PM_BACKLIGHT_BOTTOM);
 	
 	REG_SCFG_CLK = 0x85;					// TWL clock speed
-	REG_SCFG_EXT = 0x8307F100;				// Extended memory, extended VRAM, etc.
+	REG_SCFG_EXT = 0x8307F100;				// Extended memory, 32-bit VRAM bus, etc.
 
 	bool isRegularDS = fifoGetValue32(FIFO_USER_07);
 
-	/*bool sdFound = false;
-	#ifndef CYCLODSI
+	bool sdFound = false;
 	if (isDSiMode() || (!isRegularDS && REG_SCFG_EXT != 0)) {
 		extern const DISC_INTERFACE __my_io_dsisd;
 		sdFound = fatMountSimple("sd", &__my_io_dsisd);
 	}
-	#endif*/
+	if (sdFound) {
+		sdFound = (access("sd:/_nds/TWiLightMenu/main.srldr", F_OK) == 0);
+	}
 	bool flashcardFound = fatMountSimple("fat", dldiGetInternal());
 
 	if (/* !sdFound && */ !flashcardFound) {
@@ -69,7 +70,7 @@ int main(int argc, char **argv) {
 		printf ("FAT init failed!\n");
 	} else {
 		int err = 0;
-		err = runNdsFile ((/*sdFound ? "sd:/_nds/TWiLightMenu/main.srldr" :*/ "fat:/_nds/TWiLightMenu/main.srldr"), 0, NULL);
+		err = runNdsFile ((sdFound ? "sd:/_nds/TWiLightMenu/main.srldr" : "fat:/_nds/TWiLightMenu/main.srldr"), 0, NULL);
 
 		consoleDemoInit();
 

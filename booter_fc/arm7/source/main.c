@@ -29,9 +29,7 @@
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 
-/*#ifndef CYCLODSI
 void my_installSystemFIFO(void);
-#endif*/
 
 #define SNDEXCNT (*(vu16*)0x4004700)
 
@@ -98,9 +96,7 @@ int main() {
 
 	SetYtrigger(80);
 
-	/*#ifndef CYCLODSI
 	my_installSystemFIFO();
-	#endif*/
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
