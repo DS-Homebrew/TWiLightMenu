@@ -46,6 +46,7 @@ Helpful information:
 #undef ARM9
 #define ARM7
 #include <nds/arm7/audio.h>
+#include <string.h> // memcmp
 #include "common/tonccpy.h"
 #include "sdmmc.h"
 #include "fat.h"
@@ -368,6 +369,12 @@ int main (void) {
 		{
 			return -1;
 		}
+	}
+
+	if ((REG_SCFG_EXT != 0) && (memcmp((u8*)0x02000000, (u8*)0x02400000, 0x4000) != 0)) {
+		// Restore TWLCFG backup
+		tonccpy((u8*)0x02000000, (u8*)0x02400000, 0x4000);
+		toncset((u8*)0x02400000, 0, 0x4000);
 	}
 
 	// ARM9 clears its memory part 2

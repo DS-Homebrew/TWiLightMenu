@@ -57,9 +57,15 @@ int main(int argc, char **argv) {
 
 	bool sdFound = false;
 	bool flashcardFound = fatMountSimple("fat", dldiGetInternal());
-	if ((isDSiMode() || (!isRegularDS && REG_SCFG_EXT != 0)) && (access("fat:/_nds/primary", F_OK) != 0)) {
+	bool primaryIsFat = (access("fat:/_nds/primary", F_OK) == 0);
+	if ((isDSiMode() || (!isRegularDS && REG_SCFG_EXT != 0)) && !primaryIsFat) {
 		extern const DISC_INTERFACE __my_io_dsisd;
 		sdFound = fatMountSimple("sd", &__my_io_dsisd);
+	}
+	if (REG_SCFG_EXT != 0) {
+		FILE* twlCfgFile = fopen(!primaryIsFat ? "sd:/_nds/TWiLightMenu/16KBcache.bin" : "fat:/_nds/TWiLightMenu/16KBcache.bin", "rb");
+		fread((void*)0x02400000, 1, 0x4000, twlCfgFile);
+		fclose(twlCfgFile);
 	}
 	if (sdFound) {
 		sdFound = (access("sd:/_nds/TWiLightMenu/main.srldr", F_OK) == 0);

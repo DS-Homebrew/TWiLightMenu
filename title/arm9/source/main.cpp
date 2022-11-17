@@ -1802,12 +1802,19 @@ int main(int argc, char **argv)
 	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 	bool nandMounted = false;
 	if (REG_SCFG_EXT != 0) {
-		if (!useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && !is3DS) {
-			nandMounted = fatMountSimple("nand", &io_dsi_nand);
-			if (nandMounted) {
+		const char* cachePath = isRunFromSd() ? "sd:/_nds/TWiLightMenu/16KBcache.bin" : "fat:/_nds/TWiLightMenu/16KBcache.bin";
+		if (!useTwlCfg && isDSiMode() && sdFound() && !is3DS) {
+			u32 srBackendId[2] = {*(u32*)0x02000428, *(u32*)0x0200042C};
+
+			if ((srBackendId[0] != 0x53524C41 && srBackendId[1] != 0x00030004) || (access("sd:/hiya.dsi", F_OK) != 0)) {
+				// Mount NAND, if not using hiyaCFW
+				nandMounted = fatMountSimple("nand", &io_dsi_nand);
+			}
+
+			//if (nandMounted) {
 				//toncset((void*)0x02000004, 0, 0x3FFC); // Already done by exploit
 
-				FILE* twlCfgFile = fopen("nand:/shared1/TWLCFG0.dat", "rb");
+				FILE* twlCfgFile = fopen(nandMounted ? "nand:/shared1/TWLCFG0.dat" : "sd:/shared1/TWLCFG0.dat", "rb");
 				fseek(twlCfgFile, 0x88, SEEK_SET);
 				fread((void*)0x02000400, 1, 0x128, twlCfgFile);
 				fclose(twlCfgFile);
@@ -1826,24 +1833,35 @@ int main(int argc, char **argv)
 				}
 				*(u16*)(twlCfg+0x1E2) = swiCRC16(0xFFFF, twlCfg+0x1E4, 0xC); // WlFirm CRC16
 
-				twlCfgFile = fopen("nand:/sys/HWINFO_N.dat", "rb");
+				twlCfgFile = fopen(nandMounted ? "nand:/sys/HWINFO_N.dat" : "sd:/sys/HWINFO_N.dat", "rb");
 				fseek(twlCfgFile, 0x88, SEEK_SET);
 				fread((void*)0x02000600, 1, 0x14, twlCfgFile);
 				fclose(twlCfgFile);
 
 				useTwlCfg = true;
-				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
-				*(vu32*)(0x0377C000) = BIT(0);
-			}
+				u32 params = BIT(0);
+				twlCfgFile = fopen(cachePath, "wb");
+				fwrite(&params, 1, 4, twlCfgFile);
+				fwrite((void*)0x02000004, 1, 0x3FFC, twlCfgFile);
+				fclose(twlCfgFile);
+			//}
 		} else {
 			if (useTwlCfg) {
-				tonccpy((void*)0x0377C000, (void*)0x02000000, 0x4000);
-				*(vu32*)(0x0377C000) = BIT(0);
+				u32 params = BIT(0);
+				FILE* twlCfgFile = fopen(cachePath, "wb");
+				fwrite(&params, 1, 4, twlCfgFile);
+				fwrite((void*)0x02000004, 1, 0x3FFC, twlCfgFile);
+				fclose(twlCfgFile);
 			} else {
-				tonccpy((void*)0x02000000, (void*)0x0377C000, 0x4000); // Restore from DSi WRAM
-				useTwlCfg = ((*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
-				if (*(vu32*)(0x0377C000) & BIT(0)) {
-					softResetParamsBak |= BIT(0);
+				FILE* twlCfgFile = fopen(cachePath, "rb");
+				if (twlCfgFile) {
+					fread((void*)0x02000000, 1, 0x4000, twlCfgFile);
+					fclose(twlCfgFile);
+
+					useTwlCfg = ((*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
+					if (*(u32*)0x02000000 & BIT(0)) {
+						softResetParamsBak |= BIT(0);
+					}
 				}
 			}
 		}
