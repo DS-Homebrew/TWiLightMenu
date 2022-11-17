@@ -2542,7 +2542,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 					}
-				} else if (extension(filename, {".gif", ".png"})) {
+				} else if (extension(filename, {".gif", ".bmp", ".png"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EImageLaunch;
 
 					ndsToBoot = isRunFromSd() ? "sd:/_nds/TWiLightMenu/imageview.srldr" : "fat:/_nds/TWiLightMenu/imageview.srldr";
@@ -2554,7 +2554,7 @@ int main(int argc, char **argv) {
 				ms().homebrewArg[ms().secondaryDevice] = useNDSB ? "" : ms().romPath[ms().secondaryDevice];
 				ms().saveSettings();
 
-				if (!isDSiMode() && !ms().secondaryDevice && !extension(filename, {".plg"})) {
+				if (!isDSiMode() && !ms().secondaryDevice && !extension(filename, {".plg", ".gif", ".bmp", ".png"})) {
 					ntrStartSdGame();
 				}
 
