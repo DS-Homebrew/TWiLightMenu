@@ -590,10 +590,10 @@ void lastRunROM()
 					}
 				}
 
-				if (isRunFromSd() && !ms().previousUsedDevice) {
+				if (isRunFromSd()) {
 					argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds"));
 				} else {
-					argarray.push_back((char*)(useNightly ? "/_nds/nds-bootstrap-nightly.nds" : "/_nds/nds-bootstrap-release.nds"));
+					argarray.push_back((char*)(useNightly ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds"));
 				}
 			}
 			if (ms().previousUsedDevice || !ms().homebrewBootstrap) {
@@ -903,10 +903,10 @@ void lastRunROM()
 					}
 				}
 
-				if (isRunFromSd() && !ms().previousUsedDevice) {
+				if (sdFound() && !ms().previousUsedDevice) {
 					argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds"));
 				} else {
-					argarray.push_back((char*)(useNightly ? "/_nds/nds-bootstrap-nightly.nds" : "/_nds/nds-bootstrap-release.nds"));
+					argarray.push_back((char*)(useNightly ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds"));
 				}
 
 				char sfnSrl[62];
