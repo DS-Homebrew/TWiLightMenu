@@ -30,6 +30,7 @@ TWL_CODE void twl_flashcardInit(void) {
 		CIniFile settingsini( DSIMENUPP_INI );
 
 		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
+			disableSlot1();
 			return;
 		}
 
