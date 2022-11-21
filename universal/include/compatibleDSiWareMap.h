@@ -1,10 +1,12 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 191)
+// B4DS DSiWare Whitelist (Total: 193)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
+	"KTF", // 4 Travellers: Play French
+	"KTS", // 4 Travellers: Play Spanish
 	"K45", // 40-in-1: Explosive Megamix
 	"K2O", // 505 Tangram
 	"K99", // 99Bullets
