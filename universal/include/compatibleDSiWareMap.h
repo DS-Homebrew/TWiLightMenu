@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 193)
+// B4DS DSiWare Whitelist (Total: 197)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -158,6 +158,10 @@ static const char compatibleGameListB4DS[][5] = {
 	"KD6", // Rock-n-Roll Domo
 	"KRW", // Sea Battle
 	"KS3", // Shantae: Risky's Revenge
+	"K4J", // Simply Mahjong
+	"KM3", // Simply Minesweeper
+	"K4L", // Simply Solitaire
+	"KS4", // Simply Sudoku
 	"K2F", // Smart Girl's Playhouse Mini
 	"KX5", // SnowBoard Xtreme
 	"KL9", // Sokuren Keisa: Shougaku 1 Nensei
