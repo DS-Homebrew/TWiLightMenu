@@ -67,8 +67,8 @@ TWLSettings::TWLSettings()
 	sysRegion = ERegionDefault;
 	launcherApp = -1;
 	secondaryAccess = false;
-	previousUsedDevice = false;
-	secondaryDevice = false;
+	previousUsedDevice = !sys().isRunFromSD();
+	secondaryDevice = !sys().isRunFromSD();
 	fcSaveOnSd = false;
 
 	flashcard = EDSTTClone;
