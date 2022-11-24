@@ -54,8 +54,8 @@ void fontInit() {
 		delete largeFont;
 
 	// Load font graphics
-	std::string fontPath = std::string(isRunFromSd() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
-	std::string defaultPath = std::string(isRunFromSd() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
+	std::string fontPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
+	std::string defaultPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
 	bool dsiFont = dsiFeatures() || sys().dsDebugRam() || useExpansionPak;
 	if (ms().useThemeFont && (fileExists((dsiFont ? TFN_FONT_SMALL_DSI : TFN_FONT_SMALL_DS).c_str()) || fileExists((TFN_FONT_SMALL).c_str()) || fileExists((dsiFont ? TFN_FONT_LARGE_DSI : TFN_FONT_LARGE_DS).c_str()) || fileExists((TFN_FONT_LARGE).c_str())))
 		fontPath = TFN_FONT_DIRECTORY;

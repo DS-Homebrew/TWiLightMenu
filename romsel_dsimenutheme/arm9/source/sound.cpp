@@ -3,7 +3,7 @@
 
 #include "graphics/themefilenames.h"
 #include "common/twlmenusettings.h"
-#include "common/flashcard.h"
+#include "common/systemdetails.h"
 #include "graphics/fontHandler.h"
 #include "language.h"
 #include "fileCopy.h"
@@ -57,10 +57,10 @@ SoundControl::SoundControl()
 	: stream_is_playing(false), stream_source(NULL), startup_sample_length(0), seekPos(0)
  {
 
-	sys.mod_count = MSL_NSONGS;
-	sys.samp_count = MSL_NSAMPS;
-	sys.mem_bank = SOUNDBANK;
-	sys.fifo_channel = FIFO_MAXMOD;
+	sndSys.mod_count = MSL_NSONGS;
+	sndSys.samp_count = MSL_NSAMPS;
+	sndSys.mem_bank = SOUNDBANK;
+	sndSys.fifo_channel = FIFO_MAXMOD;
 
 	FILE* soundbank_file;
 
@@ -98,7 +98,7 @@ SoundControl::SoundControl()
 	// sprintf(debug_buf, "Read sample length %li for startup", startup_sample_length);
     // nocashMessage(debug_buf);
 
-	mmInit(&sys);
+	mmInit(&sndSys);
 	mmSoundBankInMemory((mm_addr)SFX_DATA);
 
 	mmLoadEffect(SFX_LAUNCH);
@@ -168,9 +168,9 @@ SoundControl::SoundControl()
 	bool loopableMusic = false;
 	loopingPoint = false;
 
-	mkdir(isRunFromSd() ? "sd:/_nds/TWiLightMenu/cache" : "fat:/_nds/TWiLightMenu/cache", 0777);
-	mkdir(isRunFromSd() ? "sd:/_nds/TWiLightMenu/cache/music" : "fat:/_nds/TWiLightMenu/cache/music", 0777);
-	std::string devicePath = isRunFromSd() ? "sd:" : "fat:";
+	mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/cache" : "fat:/_nds/TWiLightMenu/cache", 0777);
+	mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/cache/music" : "fat:/_nds/TWiLightMenu/cache/music", 0777);
+	std::string devicePath = sys().isRunFromSD() ? "sd:" : "fat:";
 
 	stream.sampling_rate = 16000;	 		// 16000Hz
 	stream.format = MM_STREAM_16BIT_MONO;  // select format

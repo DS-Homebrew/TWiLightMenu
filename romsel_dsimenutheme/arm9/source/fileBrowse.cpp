@@ -564,9 +564,9 @@ void updateBoxArt(const std::vector<DirEntry> dirContents) {
 		if (dsiFeatures() && ms().showBoxArt == 2) {
 			tex().drawBoxArtFromMem(CURPOS); // Load box art
 		} else {
-			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", isRunFromSd() ? "sd" : "fat", dirContents.at(CURPOS + PAGENUM * 40).name.c_str());
+			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", dirContents.at(CURPOS + PAGENUM * 40).name.c_str());
 			if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
-				sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", isRunFromSd() ? "sd" : "fat", gameTid[CURPOS]);
+				sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
 			}
 			tex().drawBoxArt(boxArtPath); // Load box art
 		}
@@ -588,8 +588,9 @@ void launchDsClassicMenu(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch DS Classic Menu
-	chdir(isRunFromSd() ? "sd:/" : "fat:/");
-	int err = runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
+	vector<char *> argarray;
+	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/mainmenu.srldr" : "fat:/_nds/TWiLightMenu/mainmenu.srldr"));
+	int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 	char text[32];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	fadeType = true;
@@ -610,8 +611,9 @@ void launchSettings(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch TWLMenu++ Settings
-	chdir(isRunFromSd() ? "sd:/" : "fat:/");
-	int err = runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true, false, -1);
+	vector<char *> argarray;
+	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr"));
+	int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 	char text[32];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	fadeType = true;
@@ -621,7 +623,6 @@ void launchSettings(void) {
 
 void launchManual(void) {
 	snd().playLaunch();
-	
 	controlTopBright = true;
 
 	fadeType = false;		  // Fade to white
@@ -629,13 +630,13 @@ void launchManual(void) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	
 	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch manual
-	chdir(isRunFromSd() ? "sd:/" : "fat:/");
-	int err = runNdsFile("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, false, false, true, true, false, -1);
+	vector<char *> argarray;
+	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/manual.srldr" : "fat:/_nds/TWiLightMenu/manual.srldr"));
+	int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 	char text[32];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	fadeType = true;
@@ -729,7 +730,7 @@ void switchDevice(void) {
 
 		if (directMethod) {
 			SetWidescreen(NULL);
-			chdir(isRunFromSd() ? "sd:/" : "fat:/");
+			chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
 			int err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, false, -1);
 			char text[32];
 			snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
@@ -1987,11 +1988,11 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 
 				if (dsiFeatures() && !ms().macroMode && ms().showBoxArt == 2 && ms().theme != TWLSettings::EThemeHBL && !isDirectory[i]) {
 					snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
-							 isRunFromSd() ? "sd" : "fat",
+							 sys().isRunFromSD() ? "sd" : "fat",
 							 dirContents[scrn][i + PAGENUM * 40].name.c_str());
 					if ((bnrRomType[i] == 0) && (access(boxArtPath, F_OK) != 0)) {
 						snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
-								 (isRunFromSd() ? "sd" : "fat"),
+								 (sys().isRunFromSD() ? "sd" : "fat"),
 								 gameTid[i]);
 					}
 					tex().loadBoxArtToMem(boxArtPath, i);
@@ -2187,9 +2188,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	snd().updateStream();
 	displayNowLoading();
 	snd().updateStream();
-	gameOrderIniPath = std::string(isRunFromSd() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
-	recentlyPlayedIniPath = std::string(isRunFromSd() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/recentlyplayed.ini";
-	timesPlayedIniPath = std::string(isRunFromSd() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/timesplayed.ini";
+	gameOrderIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
+	recentlyPlayedIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/recentlyplayed.ini";
+	timesPlayedIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/timesplayed.ini";
 
 	bool displayBoxArt = ms().showBoxArt;
 
@@ -2316,7 +2317,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				currentBg = 2;
 				clearText();
 				updateText(false);
-				mkdir(isRunFromSd() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
+				mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
 				movingApp = (PAGENUM * 40) + (CURPOS);
 				titleboxXspacing = 76;
 				titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
@@ -2794,7 +2795,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								}
 							}
 							std::string donorRomPath;
-							const char *bootstrapinipath = isRunFromSd() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
+							const char *bootstrapinipath = sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
 							int bstrap_dsiMode = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 							CIniFile bootstrapini(bootstrapinipath);
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
@@ -3047,7 +3048,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							printSmall(false, 0, 20, STR_IF_CRASH_DISABLE_RECENT, Alignment::center);
 							updateText(false);
 
-							mkdir(isRunFromSd() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
+							mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 						  0777);
 
 							CIniFile recentlyPlayedIni(recentlyPlayedIniPath);

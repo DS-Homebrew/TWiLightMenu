@@ -21,15 +21,7 @@ public:
 
 	bool dsiWramAccess() { return _dsiWramAccess; }
 	bool arm7SCFGLocked() { return _arm7SCFGLocked; }
-	bool flashcardUsed() {
-		if (_flashcardUsed)
-			return _flashcardUsed;
-		if (!access("fat:/", F_OK)) {
-			_flashcardUsed = true;
-		}
-
-		return _flashcardUsed;
-	}
+	bool isRunFromSD() { return _isRunFromSD; }
 	bool isRegularDS() { return _isRegularDS; }
 	bool fatInitOk() { return _fatInitOk; }
 	bool useNitroFS() { return _nitroFsInitOk; }
@@ -45,7 +37,7 @@ public:
 private:
 	bool _dsiWramAccess;
 	bool _arm7SCFGLocked;
-	bool _flashcardUsed;
+	bool _isRunFromSD;
 	bool _isRegularDS;
 	bool _isDSLite;
 	bool _dsDebugRam;

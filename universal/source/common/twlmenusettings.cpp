@@ -137,7 +137,7 @@ TWLSettings::TWLSettings()
 
 void TWLSettings::loadSettings()
 {
-	if (!isRunFromSd()) {
+	if (!sys().isRunFromSD()) {
 		settingsinipath = DSIMENUPP_INI_FC; // Fallback to .ini path on flashcard, if TWLMenu++ is not found on SD card
 	}
 

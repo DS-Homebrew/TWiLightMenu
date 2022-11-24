@@ -50,7 +50,7 @@ void bootSplashDSi(void) {
 	if (virtualPain) {
 		sprintf(path, "nitro:/video/splash/virtualPain%s.gif", /*ms().wideScreen && !ms().macroMode ? "_wide" :*/ "");
 	} else if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashtop.gif", F_OK) == 0) {
-		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", isRunFromSd() ? "sd" : "fat");
+		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashtop.gif", sys().isRunFromSD() ? "sd" : "fat");
 	} else if (ms().macroMode) {
 		sprintf(path, "nitro:/video/splash/gameBoy.gif");
 	} else if (super) {
@@ -68,7 +68,7 @@ void bootSplashDSi(void) {
 	} else if (ms().dsiSplash == 2) { // Load H&S image
 		sprintf(path, "nitro:/video/hsmsg/%i.gif", language);
 	} else if (ms().dsiSplash == 3 && access("/_nds/TWiLightMenu/extras/splashbottom.gif", F_OK) == 0) { // Load custom bottom image
-		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashbottom.gif", isRunFromSd() ? "sd" : "fat");
+		sprintf(path, "%s:/_nds/TWiLightMenu/extras/splashbottom.gif", sys().isRunFromSD() ? "sd" : "fat");
 	}
 	Gif healthSafety(path, false, true);
 

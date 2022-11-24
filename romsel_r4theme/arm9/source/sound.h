@@ -44,7 +44,7 @@ class SoundControl {
         mm_sound_effect snd_back;
         mm_sound_effect snd_switch;
         mm_stream stream;
-        mm_ds_system sys;
+        mm_ds_system sndSys;
         bool stream_is_playing;
         //mm_sound_effect snd_loading;
         mm_sound_effect mus_startup;

@@ -18,9 +18,14 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <nds/arm9/dldi.h>
 #include "cheat.h"
+#include "common/twlmenusettings.h"
+#include "common/systemdetails.h"
 #include "common/stringtool.h"
 #include <algorithm>
+
+#include "perGameSettings.h"
 
 CheatCodelist::~CheatCodelist(void) {}
 
@@ -49,7 +54,18 @@ bool CheatCodelist::parse(const std::string& aFileName)
   u32 romcrc32,gamecode;
   if (romData(aFileName,gamecode,romcrc32))
   {
-    FILE* dat=fopen("sd:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
+    const char* usrcheatPath = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
+    loadPerGameSettings(aFileName.substr(aFileName.find_last_of('/') + 1));
+	if (ms().secondaryDevice && !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)) {
+		if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
+		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+	   || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
+     || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)) {
+			usrcheatPath = "fat:/_wfwd/cheats/usrcheat.dat";
+		}
+	}
+    FILE* dat=fopen(usrcheatPath,"rb");
     if (dat)
     {
       res=parseInternal(dat,gamecode,romcrc32);

@@ -25,8 +25,8 @@
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
 #include "common/inifile.h"
-#include "common/flashcard.h"
 #include "common/twlmenusettings.h"
+#include "common/systemdetails.h"
 
 // Graphic files
 #include "icon_manual.h"
@@ -492,7 +492,7 @@ void graphicsLoad()
 	} else
 	for (int startMenu = 0; startMenu < 2; startMenu++) {
 		image.clear();
-		std::string themePath = std::string(isRunFromSd() ? "sd:" : "fat:") + "/_nds/TwilightMenu/r4menu/themes/" + ms().r4_theme;
+		std::string themePath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TwilightMenu/r4menu/themes/" + ms().r4_theme;
 		std::string pathTop;
 		if (startMenu) {
 			FILE* file = fopen((themePath + "/logo.png").c_str(), "rb");

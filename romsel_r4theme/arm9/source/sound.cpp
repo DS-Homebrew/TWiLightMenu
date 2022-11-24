@@ -43,10 +43,10 @@ SoundControl::SoundControl()
 	: stream_is_playing(false), stream_source(NULL), startup_sample_length(0)
  {
 
-	sys.mod_count = MSL_NSONGS;
-	sys.samp_count = MSL_NSAMPS;
-	sys.mem_bank = SOUNDBANK;
-	sys.fifo_channel = FIFO_MAXMOD;
+	sndSys.mod_count = MSL_NSONGS;
+	sndSys.samp_count = MSL_NSAMPS;
+	sndSys.mem_bank = SOUNDBANK;
+	sndSys.fifo_channel = FIFO_MAXMOD;
 
 	FILE* soundbank_file;
 
@@ -66,7 +66,7 @@ SoundControl::SoundControl()
 	// sprintf(debug_buf, "Read sample length %li for startup", startup_sample_length);
     // nocashMessage(debug_buf);
 
-	mmInit(&sys);
+	mmInit(&sndSys);
 	mmSoundBankInMemory((mm_addr)SFX_DATA);
 
 	mmLoadEffect(SFX_SELECT);

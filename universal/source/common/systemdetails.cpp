@@ -27,7 +27,7 @@ extern "C" {
 SystemDetails::SystemDetails()
 {
 
-	_flashcardUsed = false;
+	_isRunFromSD = false;
 	_dsiWramAccess = false;
 	_arm7SCFGLocked = false;
 	_isRegularDS = true;
@@ -113,7 +113,8 @@ void SystemDetails::initFilesystem(const char *runningPath)
 		_fatInitOk = (sdFound() || flashcardFound());
 	}
 	*(u32*)(0x2FFFD0C) = 0;
-	chdir(isRunFromSd() ? "sd:/" : "fat:/");
+	_isRunFromSD = (strncmp(runningPath, "sd:/", 4) == 0);
+	chdir(_isRunFromSD ? "sd:/" : "fat:/");
 
 	if (!_nitroFsInitOk && runningPath != NULL) {
 		_nitroFsInitOk = nitroFSInit(runningPath) == 1;

@@ -154,7 +154,10 @@ int main(int argc, char **argv) {
 	fwrite((void*)0x02800000, 1, 0x400, deviceList);
 	fclose(deviceList);*/
 
-	int err = runNdsFile(srldrPath, 0, NULL, true, false, false, true, true, false, -1);
+	vector<char *> argarray;
+	argarray.push_back((char*)srldrPath);
+
+	int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 	bool twlmFound = (access("sd:/_nds/TWiLightMenu", F_OK) == 0);
 
 	graphicsInit();

@@ -21,7 +21,7 @@
 #include <nds/arm9/dldi.h>
 #include "cheat.h"
 #include "common/twlmenusettings.h"
-#include "common/flashcard.h"
+#include "common/systemdetails.h"
 #include "common/stringtool.h"
 #include "sound.h"
 #include <algorithm>
@@ -68,7 +68,7 @@ bool CheatCodelist::parse(const std::string& aFileName)
   u32 romcrc32,gamecode;
   if (romData(aFileName,gamecode,romcrc32))
   {
-    const char* usrcheatPath = isRunFromSd() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
+    const char* usrcheatPath = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
     loadPerGameSettings(aFileName.substr(aFileName.find_last_of('/') + 1));
 	if (ms().secondaryDevice && !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)) {
 		if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
@@ -550,7 +550,7 @@ static void updateDB(u8 value,u32 offset,FILE* db)
 
 void CheatCodelist::onGenerate(void)
 {
-    const char* usrcheatPath = isRunFromSd() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
+    const char* usrcheatPath = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
 	if (ms().secondaryDevice && !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)) {
 		if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
