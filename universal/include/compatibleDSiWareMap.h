@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 198)
+// B4DS DSiWare Whitelist (Total: 200)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -135,6 +135,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAK", // Art Style: precipice
 	"KPH", // Prehistorik Man
 	"KDP", // Pro-Putt Domo
+	"KLF", // Puffins: Let's Fish!
+	"KLR", // Puffins: Let's Race!
 	"KPN", // Puzzle League: Express
 	"KYE", // Puzzler Brain Games
 	"KBY", // Puzzle to Go: Baby Animals
