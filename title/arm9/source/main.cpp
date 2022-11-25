@@ -1806,20 +1806,30 @@ int main(int argc, char **argv)
 	if (REG_SCFG_EXT != 0) {
 		const char* cachePath = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/16KBcache.bin" : "fat:/_nds/TWiLightMenu/16KBcache.bin";
 		if (!useTwlCfg && isDSiMode() && sdFound() && !is3DS) {
-			u32 srBackendId[2] = {*(u32*)0x02000428, *(u32*)0x0200042C};
-
-			if ((srBackendId[0] != 0x53524C41 && srBackendId[1] != 0x00030004) || (access("sd:/hiya.dsi", F_OK) != 0)) {
+			bool hiyaFound = (access("sd:/hiya.dsi", F_OK) == 0);
+			if (!hiyaFound) {
 				// Mount NAND, if not using hiyaCFW
 				nandMounted = fatMountSimple("nand", &io_dsi_nand);
 			}
 
-			//if (nandMounted) {
+			if (nandMounted || hiyaFound) {
 				//toncset((void*)0x02000004, 0, 0x3FFC); // Already done by exploit
 
 				FILE* twlCfgFile = fopen(nandMounted ? "nand:/shared1/TWLCFG0.dat" : "sd:/shared1/TWLCFG0.dat", "rb");
 				fseek(twlCfgFile, 0x88, SEEK_SET);
 				fread((void*)0x02000400, 1, 0x128, twlCfgFile);
 				fclose(twlCfgFile);
+
+				u32 srBackendId[2] = {*(u32*)0x02000428, *(u32*)0x0200042C};
+				if ((srBackendId[0] != 0x53524C41 || srBackendId[1] != 0x00030004) && isDSiMode() && !nandMounted) {
+					nandMounted = fatMountSimple("nand", &io_dsi_nand);
+					if (nandMounted) {
+						twlCfgFile = fopen("nand:/shared1/TWLCFG0.dat", "rb");
+						fseek(twlCfgFile, 0x88, SEEK_SET);
+						fread((void*)0x02000400, 1, 0x128, twlCfgFile);
+						fclose(twlCfgFile);
+					}
+				}
 
 				// WiFi RAM data
 				u8* twlCfg = (u8*)0x02000400;
@@ -1852,7 +1862,7 @@ int main(int argc, char **argv)
 				fwrite(&params, 1, 4, twlCfgFile);
 				fwrite((void*)0x02000004, 1, 0x3FFC, twlCfgFile);
 				fclose(twlCfgFile);
-			//}
+			}
 		} else {
 			if (useTwlCfg) {
 				u32 params = BIT(0);
