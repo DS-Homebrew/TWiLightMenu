@@ -681,10 +681,6 @@ int main(int argc, char **argv) {
 
 	flashcardInit();
 
-	if (!flashcardFound()) {
-		disableSlot1();
-	}
-
 	fifoWaitValue32(FIFO_USER_06);
 
 	int err = lastRunROM();
