@@ -2,19 +2,10 @@
 #define INCOMPATIBLEMAP_H
 
 static const char incompatibleGameListB4DS[][4] = {
-	"ADM", // Animal Crossing: Wild World
-	"YRC", // Crayon Shin-chan - Arashi o Yobu Cinemaland Kachinko Gachinko Daikatsugeki!
-	"CL4", // Crayon Shin-Chan - Arashi o Yobu Nendororoon Daihenshin!
-	"BQB", // Crayon Shin-chan - Obaka Dainin Den - Susume! Kasukabe Ninja Tai!
-	"YKR", // Culdcept DS
 	"AWD", // Diddy Kong Racing
 	"B7F", // The Magic School Bus: Oceans
 	"ARM", // Mario & Luigi: Partners in Time
-	"CLJ", // Mario & Luigi: Bowser's Inside Story
-	"COL", // Mario & Sonic at the Olympic Winter Games
 	"AMM", // Minna no Mahjong DS
-	"B6Z", // Rockman Zero Collection/MegaMan Zero Collection
-	"CS3", // Sonic & Sega All-Stars Racing
 	"AH9", // Tony Hawk's American Sk8land
 	"CTX", // Tropix
 };
