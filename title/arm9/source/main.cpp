@@ -1712,7 +1712,7 @@ int main(int argc, char **argv)
 
 	defaultExceptionHandler();
 	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
-	sys().initFilesystem(argv[0]);
+	sys().initFilesystem(argc==0 ? "/_nds/TWiLightMenu/main.srldr" : argv[0]);
 	sys().initArm7RegStatuses();
 	ms();
 

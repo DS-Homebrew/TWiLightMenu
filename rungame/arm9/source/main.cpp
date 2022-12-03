@@ -668,8 +668,9 @@ int main(int argc, char **argv) {
 		iprintf("FAT init failed!");
 		stop();
 	}
+	chdir("sd:/");
 
-	if (!nitroFSInit("sd:/_nds/TWiLightMenu/resetgame.srldr")) {
+	if (!nitroFSInit(argc==0 ? "sd:/_nds/TWiLightMenu/resetgame.srldr" : argv[0])) {
 		consoleDemoInit();
 		iprintf("NitroFS init failed!");
 		stop();

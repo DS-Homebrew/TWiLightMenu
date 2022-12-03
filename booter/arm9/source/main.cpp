@@ -48,7 +48,7 @@ void stop (void) {
 	}
 }
 
-/*const char *unlaunchAutoLoadID = "AutoLoadInfo";
+const char *unlaunchAutoLoadID = "AutoLoadInfo";
 
 std::u16string utf8to16(std::string_view text) {
 	std::u16string out;
@@ -94,7 +94,7 @@ void unlaunchRomBoot(std::string_view rom) {
 	DC_FlushAll();						// Make reboot not fail
 	fifoSendValue32(FIFO_USER_01, 1);	// Reboot into DSiWare title, booted via Unlaunch
 	stop();
-}*/
+}
 
 char filePath[PATH_MAX];
 
@@ -126,9 +126,9 @@ int main(int argc, char **argv) {
 
 	const char* srldrPath = (runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" : "sd:/_nds/TWiLightMenu/main.srldr");
 
-	/*if (*(u32*)0x02800000 == 0x00000041 || *(u32*)0x02800000 == 0x00060041) { // If using hiyaCFW...
+	if (*(u32*)0x02800000 == 0x00000041 || *(u32*)0x02800000 == 0x00060041) { // If using hiyaCFW...
 		unlaunchRomBoot(srldrPath); // Start via Unlaunch
-	}*/
+	}
 
 	extern const DISC_INTERFACE __my_io_dsisd;
 
