@@ -111,7 +111,7 @@ autoboot:
 	
 	#### SuperCard DSONE
 	ndstool -c SCFW.SC -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g "ENG0" -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	dlditool flashcart_specifics/DLDI/DSONESDSC.dldi SCFW.SC
+	dlditool flashcart_specifics/DLDI/scds1.dldi SCFW.SC
 	mkdir -p "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/"
 	mv SCFW.SC "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/SCFW.SC"
 	
@@ -151,7 +151,7 @@ autoboot:
 	#### iSmart Premium
 	##### research done entirely by devkitPro
 	cp booter_fc.nds ismat.dat
-	dlditool flashcart_specifics/DLDI/Mat.dldi ismat.dat
+	dlditool flashcart_specifics/DLDI/mati.dldi ismat.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/iSmart Premium/system/"
 	mv ismat.dat "../7zfile/Flashcard users/Autoboot/iSmart Premium/system/ismat.dat"
 
