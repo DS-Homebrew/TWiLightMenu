@@ -2799,7 +2799,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							int bstrap_dsiMode = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 							CIniFile bootstrapini(bootstrapinipath);
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-							bool donorRomFound = (strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
+							bool donorRomFound = (((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && access("fat:/_nds/nds-bootstrap/b4dsTwlDonor.bin", F_OK) == 0) || strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
 							if (!donorRomFound && requiresDonorRom[CURPOS] < 100) {
 								pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0
 								if (requiresDonorRom[CURPOS] == 52) {
