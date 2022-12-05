@@ -101,6 +101,7 @@ TWLSettings::TWLSettings()
 	slot1AccessSD = false;
 	slot1SCFGUnlock = false;
 	slot1TouchMode = false;
+	ezFlashRam = false;
 	limitedMode = 0;
 	dontShowDSiWareInDSModeWarning = false;
 	dsiWareBooter = EDSiWareBootstrap;
