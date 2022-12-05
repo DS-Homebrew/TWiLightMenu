@@ -340,6 +340,7 @@ public:
 	bool slot1AccessSD;
 	bool slot1SCFGUnlock;
 	bool slot1TouchMode;
+	bool ezFlashRam;
 	int limitedMode;
 	bool dontShowDSiWareInDSModeWarning;
 	TDSiWareBooter dsiWareBooter;

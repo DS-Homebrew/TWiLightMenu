@@ -277,6 +277,7 @@ void TWLSettings::loadSettings()
 	slot1AccessSD = settingsini.GetInt("SRLOADER", "SLOT1_ENABLESD", slot1AccessSD);
 	slot1SCFGUnlock = settingsini.GetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
 	slot1TouchMode = settingsini.GetInt("SRLOADER", "SLOT1_TOUCH_MODE", slot1TouchMode);
+	ezFlashRam = settingsini.GetInt("SRLOADER", "EZ_FLASH_RAM", ezFlashRam);
 	limitedMode = settingsini.GetInt("SRLOADER", "LIMITED_MODE", limitedMode);
 	dontShowDSiWareInDSModeWarning = settingsini.GetInt("SRLOADER", "DONT_SHOW_DSIWARE_IN_DS_MODE_WARNING", dontShowDSiWareInDSModeWarning);
 	dsiWareBooter = (TDSiWareBooter)settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
