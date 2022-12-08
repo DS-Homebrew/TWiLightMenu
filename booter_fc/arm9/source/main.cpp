@@ -58,22 +58,18 @@ int main(int argc, char **argv) {
 
 	bool isRegularDS = fifoGetValue32(FIFO_USER_07);
 
-	bool sdFound = false;
 	//iprintf("Initing flashcard...\n");
 	bool flashcardFound = fatMountSimple("fat", dldiGetInternal());
-	bool primaryIsFat = (access("fat:/_nds/primary", F_OK) == 0);
-	if ((isDSiMode() || (!isRegularDS && REG_SCFG_EXT != 0)) && !primaryIsFat) {
+	if (isDSiMode() || (!isRegularDS && REG_SCFG_EXT != 0)) {
 		extern const DISC_INTERFACE __my_io_dsisd;
 		//iprintf("Initing SD...\n");
-		sdFound = fatMountSimple("sd", &__my_io_dsisd);
+		fatMountSimple("sd", &__my_io_dsisd);
 	}
+	bool primaryIsSd = (access("sd:/_nds/primary", F_OK) == 0);
 	if (REG_SCFG_EXT != 0) {
-		FILE* twlCfgFile = fopen(!primaryIsFat ? "sd:/_nds/TWiLightMenu/16KBcache.bin" : "fat:/_nds/TWiLightMenu/16KBcache.bin", "rb");
+		FILE* twlCfgFile = fopen(primaryIsSd ? "sd:/_nds/TWiLightMenu/16KBcache.bin" : "fat:/_nds/TWiLightMenu/16KBcache.bin", "rb");
 		fread((void*)0x02400000, 1, 0x4000, twlCfgFile);
 		fclose(twlCfgFile);
-	}
-	if (sdFound) {
-		sdFound = (access("sd:/_nds/TWiLightMenu/main.srldr", F_OK) == 0);
 	}
 
 	if (/* !sdFound && */ !flashcardFound) {
@@ -81,7 +77,7 @@ int main(int argc, char **argv) {
 		printf ("FAT init failed!\n");
 	} else {
 		vector<char *> argarray;
-		argarray.push_back((char*)(sdFound ? "sd:/_nds/TWiLightMenu/main.srldr" : "fat:/_nds/TWiLightMenu/main.srldr"));
+		argarray.push_back((char*)(primaryIsSd ? "sd:/_nds/TWiLightMenu/main.srldr" : "fat:/_nds/TWiLightMenu/main.srldr"));
 
 		//iprintf(sdFound ? "Running from SD...\n" : "Running from flashcard...\n");
 		int err = runNdsFile (argarray[0], argarray.size(), (const char**)&argarray[0]);
