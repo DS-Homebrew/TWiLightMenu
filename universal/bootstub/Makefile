@@ -1,6 +1,7 @@
 include $(DEVKITARM)/base_tools
 
 TARGET	:=	bootstub
+export BOOTSTUB	?= $(TARGET).bin
 
 $(BOOTSTUB): $(TARGET).elf
 	$(OBJCOPY) -O binary $< $@

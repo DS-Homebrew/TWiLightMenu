@@ -12,7 +12,7 @@ endif
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-UNIVERSAL	:=	../../universal
+UNIVERSAL	:=	../
 TARGET		:=	load
 BUILD		?=	build
 SOURCES		:=	source source/patches $(UNIVERSAL)/source/tonccpy
@@ -34,7 +34,7 @@ CFLAGS	+=	$(INCLUDE) $(EXTRA_CFLAGS) -DARM7
 ASFLAGS	:=	-g $(ARCH) $(EXTRA_CFLAGS) $(INCLUDE)
 LDFLAGS	=	-nostartfiles -T $(TOPDIR)/load.ld -g $(ARCH) -Wl,-Map,$(TARGET).map
 
-LIBS	:=
+LIBS	:=	-lnds7
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -51,7 +51,7 @@ ifneq ($(BUILD),$(notdir $(CURDIR)))
 #---------------------------------------------------------------------------------
  
 export TOPDIR	:=	$(CURDIR)
-export LOADBIN	:=	$(CURDIR)/../data/$(TARGET).bin
+export LOADBIN	:=	$(CURDIR)/$(TARGET).bin
 export LOADELF	:=	$(CURDIR)/$(TARGET).elf
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 

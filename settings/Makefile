@@ -5,6 +5,10 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
+ifeq ($(strip $(PROJECT)),)
+export PROJECT	:=	$(CURDIR)/../
+endif
+
 export TARGET	:=	settings
 NITRODATA		:=	nitrofiles
 
@@ -39,7 +43,7 @@ clean:
 	@rm -fr $(TARGET).arm7.elf
 	@rm -fr $(TARGET).arm9.elf
 	@$(MAKE) -C bootloader clean
-	@$(MAKE) -C bootstub clean
+	@$(MAKE) -C $(PROJECT)/universal/bootstub clean
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C arm7 clean
 
@@ -50,4 +54,4 @@ bootloader: data
 	@$(MAKE) -C bootloader
 
 bootstub: data
-	@$(MAKE) -C bootstub
+	@$(MAKE) -C $(PROJECT)/universal/bootstub BOOTSTUB=$(CURDIR)/data/bootstub.bin

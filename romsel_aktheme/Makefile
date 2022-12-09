@@ -5,6 +5,10 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
+ifeq ($(strip $(PROJECT)),)
+export PROJECT	:=	$(CURDIR)/../
+endif
+
 export TARGET	:=	romsel_aktheme
 NITRODATA		:=	nitrofiles
 
@@ -50,4 +54,4 @@ bootloader: data
 	@$(MAKE) -C bootloader
 
 bootstub: data
-	@$(MAKE) -C bootstub
+	@$(MAKE) -C $(PROJECT)/universal/bootstub BOOTSTUB=$(CURDIR)/data/bootstub.bin
