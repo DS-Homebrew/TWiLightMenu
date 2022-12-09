@@ -5,6 +5,10 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
+ifeq ($(strip $(PROJECT)),)
+export PROJECT	:=	$(CURDIR)/../
+endif
+
 export TARGET	:=	romsel_dsimenutheme
 NITRODATA		:=	nitrofiles
 
@@ -38,8 +42,8 @@ clean:
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds
 	@rm -fr $(TARGET).arm7.elf
 	@rm -fr $(TARGET).arm9.elf
-	@$(MAKE) -C bootloader clean
-	@$(MAKE) -C bootstub clean
+	@$(MAKE) -C $(PROJECT)/menu_common/bootloader clean
+	@$(MAKE) -C $(PROJECT)/menu_common/bootstub clean
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C arm7 clean
 
@@ -47,7 +51,7 @@ data:
 	@mkdir -p data
 
 bootloader: data
-	@$(MAKE) -C bootloader
+	@$(MAKE) -C $(PROJECT)/menu_common/bootloader LOADBIN=$(CURDIR)/data/load.bin
 
 bootstub: data
-	@$(MAKE) -C bootstub
+	@$(MAKE) -C $(PROJECT)/menu_common/bootstub BOOTSTUB=$(CURDIR)/data/bootstub.bin

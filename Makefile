@@ -1,7 +1,9 @@
 #---------------------------------------------------------------------------------
 # PACKAGE is the directory where final published files will be placed
+# PROJECT is the root directory of the build system
 #---------------------------------------------------------------------------------
 PACKAGE		:=	7zfile
+export PROJECT	:=	$(CURDIR)
 
 #---------------------------------------------------------------------------------
 # Goals for Build
