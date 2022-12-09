@@ -2,7 +2,7 @@ include $(DEVKITARM)/base_tools
 
 TARGET	:=	bootstub
 
-../data/$(TARGET).bin: $(TARGET).elf
+$(BOOTSTUB): $(TARGET).elf
 	$(OBJCOPY) -O binary $< $@
 
 $(TARGET).elf: $(TARGET).s Makefile
