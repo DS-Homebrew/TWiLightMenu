@@ -759,9 +759,9 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 				if (memcmp(gameTid, compatibleGameListB4DSMEP[i], 3) == 0) {
 					// Found match
 					if (sys().isRegularDS()) {
-						if (*(u16*)0x020000C0 == 0x5A45) {
+						/*if (*(u16*)0x020000C0 == 0x5A45) {
 							showMsg = true;
-						} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+						} else*/ if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 							u16 hwordBak = *(vu16*)(0x08240000);
 							*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
 							mepFound = (*(vu16*)(0x08240000) == 1);
