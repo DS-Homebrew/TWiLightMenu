@@ -139,8 +139,6 @@ void unlaunchBootDSiWare(void) {
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 }
 
-std::vector<char*> argarray;
-
 bool twlBgCxiFound = false;
 
 void wideCheck(bool useWidescreen) {
@@ -178,6 +176,7 @@ void wideCheck(bool useWidescreen) {
 }
 
 int lastRunROM() {
+	//iprintf("Loading settings...\n");
 	ms().loadSettings();
 
 	if (ms().consoleModel < 2) {
@@ -191,14 +190,18 @@ int lastRunROM() {
 
 	if (ms().consoleModel >= 2) {
 		twlBgCxiFound = (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
+		/*if (twlBgCxiFound) {
+			iprintf("TwlBg.cxi found!\n");
+		}*/
 	}
 
-	argarray.push_back(strdup("null"));
-
+	std::vector<char*> argarray;
 	if (ms().launchType[ms().previousUsedDevice] == 21 && !ms().previousUsedDevice) {
+		argarray.push_back(strdup("null"));
 		std::string homebrewArgFat = ReplaceAll(ms().homebrewArg[ms().previousUsedDevice], "sd:", "fat:");
 		argarray.push_back((char*)homebrewArgFat.c_str());
 	} else if (ms().launchType[ms().previousUsedDevice] > 3) {
+		argarray.push_back(strdup("null"));
 		argarray.push_back(strdup(ms().homebrewArg[ms().previousUsedDevice].c_str()));
 	}
 
@@ -214,7 +217,9 @@ int lastRunROM() {
 	}
 
 	switch (ms().launchType[ms().previousUsedDevice]) {
+		//iprintf("switch (ms().launchType[])\n");
 		case TWLSettings::ESDFlashcardLaunch: {
+			//iprintf("TWLSettings::ESDFlashcardLaunch\n");
 			ms().romfolder[ms().previousUsedDevice] = ms().romPath[ms().previousUsedDevice];
 			while (!ms().romfolder[ms().previousUsedDevice].empty() && ms().romfolder[ms().previousUsedDevice][ms().romfolder[ms().previousUsedDevice].size()-1] != '/') {
 				ms().romfolder[ms().previousUsedDevice].resize(ms().romfolder[ms().previousUsedDevice].size()-1);
@@ -310,11 +315,11 @@ int lastRunROM() {
 					sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 				}
 
-				argarray.at(0) = (char *)ndsToBoot;
+				argarray.push_back(ndsToBoot);
 				if (ms().previousUsedDevice || !ms().homebrewBootstrap) {
 					bool boostCpu = setClockSpeed(game_TID);
 
-					const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
+					const char *bootstrapinipath = BOOTSTRAP_INI;
 					CIniFile bootstrapini(bootstrapinipath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().previousUsedDevice]);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
@@ -326,6 +331,7 @@ int lastRunROM() {
 					bootstrapini.SaveIniFile(bootstrapinipath);
 				}
 
+				//iprintf("Starting nds-bootstrap...\n");
 				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
 			} else {
 				bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
@@ -375,7 +381,7 @@ int lastRunROM() {
 				filename.erase(0, last_slash_idx + 1);
 			}
 
-			argarray.at(0) = (char*)ms().romPath[ms().previousUsedDevice].c_str();
+			argarray.push_back((char*)ms().romPath[ms().previousUsedDevice].c_str());
 
 			char game_TID[5];
 
@@ -478,7 +484,7 @@ int lastRunROM() {
 						sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
 					}
 
-					argarray.at(0) = (char *)ndsToBoot;
+					argarray.push_back(ndsToBoot);
 
 				  if (!(*(u32*)(0x02000000) & BIT(3))) {
 					char sfnSrl[62];
@@ -506,7 +512,7 @@ int lastRunROM() {
 						fatGetAliasPath(ms().previousUsedDevice ? "fat:/" : "sd:/", ms().dsiWarePrvPath.c_str(), sfnPrv);
 					}
 
-					const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
+					const char *bootstrapinipath = BOOTSTRAP_INI;
 					CIniFile bootstrapini(bootstrapinipath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().previousUsedDevice && ms().dsiWareToSD ? "sd:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
@@ -661,8 +667,11 @@ int main(int argc, char **argv) {
 
 	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
+	//consoleDemoInit();
+
 	extern const DISC_INTERFACE __my_io_dsisd;
 
+	//iprintf("Initing FAT...\n");
 	if (!fatMountSimple("sd", &__my_io_dsisd)) {
 		consoleDemoInit();
 		iprintf("FAT init failed!");
@@ -670,6 +679,7 @@ int main(int argc, char **argv) {
 	}
 	chdir("sd:/");
 
+	//iprintf("Initing NitroFS...\n");
 	if (!nitroFSInit(argc==0 ? "sd:/_nds/TWiLightMenu/resetgame.srldr" : argv[0])) {
 		consoleDemoInit();
 		iprintf("NitroFS init failed!");
@@ -682,8 +692,10 @@ int main(int argc, char **argv) {
 
 	flashcardInit();
 
+	//iprintf("Waiting on FIFO_USER_06...\n");
 	fifoWaitValue32(FIFO_USER_06);
 
+	//iprintf("lastRunROM()\n");
 	int err = lastRunROM();
 	consoleDemoInit();
 	iprintf ("Start failed. Error %i", err);
