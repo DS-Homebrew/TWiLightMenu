@@ -63,14 +63,9 @@ void powerButtonCB() {
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
-	REG_SCFG_ROM = 0x101;
-	REG_SCFG_CLK = (BIT(0) | BIT(1) | BIT(2) | BIT(7) | BIT(8));
-	REG_SCFG_EXT = 0x93FFFB06;
-	*(vu16*)(0x04004012) = 0x1988;
-	*(vu16*)(0x04004014) = 0x264C;
-	*(vu16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
-
-	*(vu16*)(0x04004700) |= BIT(13);	// Set 48khz sound/mic frequency
+	// Grab from DS header in GBA slot
+	*(u16*)0x02FFFC36 = *(u16*)0x0800015E;	// Header CRC16
+	*(u32*)0x02FFFC38 = *(u32*)0x0800000C;	// Game Code
 
 	// clear sound registers
 	dmaFillWords(0, (void*)0x04000400, 0x100);
