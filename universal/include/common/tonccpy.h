@@ -12,7 +12,7 @@ extern "C" {
 
 typedef unsigned int uint;
 #define BIT_MASK(len)       ( (1<<(len))-1 )
-static inline u32 quad8(u8 x)   {   x |= x<<8; return x | x<<16;    }
+static inline u32 quad8(u16 x)   {   x |= x<<8; return x | x<<16;    }
 
 
 //# Declarations and inlines.
