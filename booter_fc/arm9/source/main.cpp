@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 		//iprintf("Initing SD...\n");
 		fatMountSimple("sd", &__my_io_dsisd);
 	}
-	bool primaryIsSd = (access("sd:/_nds/primary", F_OK) == 0);
+	bool primaryIsSd = (access("sd:/_nds/primary", F_OK) == 0 || access("fat:/_nds/TWiLightMenu/main.srldr", F_OK) != 0);
 	if (REG_SCFG_EXT != 0) {
 		FILE* twlCfgFile = fopen(primaryIsSd ? "sd:/_nds/TWiLightMenu/16KBcache.bin" : "fat:/_nds/TWiLightMenu/16KBcache.bin", "rb");
 		fread((void*)0x02400000, 1, 0x4000, twlCfgFile);
