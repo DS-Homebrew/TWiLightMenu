@@ -5,40 +5,46 @@ contact_links:
     about: "Please use #nds-help on the Discord server to for support-related questions, such as needing assistance to launch TWiLight Menu++"
   - name: DS game issue
     url: https://github.com/DS-Homebrew/nds-bootstrap/issues/new
-    about: Please use the nds-bootstrap GitHub repository to report issues related to running `.nds`, `.dsi`, `.srl`, or `.app` files via nds-bootstrap (and not via Unlaunch, flashcard kernel or a modern homebrew without a RAM disk)
+    about: Please use the nds-bootstrap GitHub repository to report issues related to running .nds, .dsi, .srl, or .app files via nds-bootstrap (and not via Unlaunch, flashcard kernel or a modern homebrew without a RAM disk)
   - name: GBA game issue
     url: https://github.com/Gericom/GBARunner2/issues/new
-    about: Please use the GBARunner2 GitHub repository to report issues related to running Game Boy Advance applications as `.gba` files (not as Slot-2 for DS Phat/Lite consoles), or the GBARunner2 GUI
+    about: Please use the GBARunner2 GitHub repository to report issues related to running Game Boy Advance applications as .gba files (not as Slot-2 for DS Phat/Lite consoles), or the GBARunner2 GUI
   - name: Atari 2600 game issue
     url: https://github.com/wavemotion-dave/StellaDS/issues/new
-    about: Please use the StellaDS GitHub repository to report issues related to running Atari 2600 applications as `.a26` files, or the StellaDS GUI
+    about: Please use the StellaDS GitHub repository to report issues related to running Atari 2600 applications as .a26 files, or the StellaDS GUI
   - name: Atari 5200 game issue
     url: https://github.com/wavemotion-dave/A5200DS/issues/new
-    about: Please use the A5200DS GitHub repository to report issues related to running Atari 5200 applications as `.a52` files, or the A5200DS GUI
+    about: Please use the A5200DS GitHub repository to report issues related to running Atari 5200 applications as .a52 files, or the A5200DS GUI
   - name: Atari 7800 game issue
     url: https://github.com/wavemotion-dave/A7800DS/issues/new
-    about: Please use the A7800DS GitHub repository to report issues related to running Atari 7800 applications as `.a78` files, or the A7800DS GUI
+    about: Please use the A7800DS GitHub repository to report issues related to running Atari 7800 applications as .a78 files, or the A7800DS GUI
   - name: Atari XEGS game issue
     url: https://github.com/wavemotion-dave/XEGS-DS/issues/new
-    about: Please use the XEGS-DS GitHub repository to report issues related to running Atari XEGS applications as `.xex` or `.atr` files, or the XEGS-DS GUI
+    about: Please use the XEGS-DS GitHub repository to report issues related to running Atari XEGS applications as .xex or .atr files, or the XEGS-DS GUI
   - name: ColecoVision, Sega SG-1000, or Sord-M5 game issue with ColecoDS
     url: https://github.com/wavemotion-dave/ColecoDS/issues/new
-    about: Please use the ColecoDS GitHub repository to report issues related to running ColecoVision applications as `.col` files, SG-1000 applications as `.sg` files, or Sord M5 applications as `.m5` files, or the ColecoDS GUI
+    about: Please use the ColecoDS GitHub repository to report issues related to running ColecoVision applications as .col files, SG-1000 applications as .sg files, or Sord M5 applications as .m5 files, or the ColecoDS GUI
+  - name: FastVideoDS video issue
+    url: https://github.com/Gericom/FastVideoDSPlayer/issues/new
+    about: Please use the FastVideoDS Player GitHub repository to report issues relateed to playing FastVideoDS videos as .fv files, or the FastVideoDS Player GUI
   - name: Neo Geo Pocket game issue
     url: https://github.com/FluBBaOfWard/NGPDS/issues/new
-    about: Please use the NGPDS GitHub repository to report issues related to running Neo Geo Pocket applications as `.ngp` files, or the NGPDS GUI
+    about: Please use the NGPDS GitHub repository to report issues related to running Neo Geo Pocket applications as .ngp files, or the NGPDS GUI
+  - name: Tuna-viDS video issue
+    url: https://github.com/chishm/tuna-vids/issues/new
+    about: Please use the Tuna-viDS GitHub repository to report issues relating to playing Tuna-viDS videos as .avi files, or the Tuna-viDS GUI
   - name: WonderSwan game issue
     url: https://github.com/FluBBaOfWard/NitroSwan/issues/new
-    about: Please use the NitroSwan GitHub repository to report issues related to running WonderSwan applications as `.ws` files, or the NitroSwan GUI
+    about: Please use the NitroSwan GitHub repository to report issues related to running WonderSwan applications as .ws files, or the NitroSwan GUI
   - name: Intellivision game issue
     url: https://github.com/wavemotion-dave/NINTV-DS/issues/new
-    about: Please use the Nintellivision (NINTV-DS) GitHub repository to report issues related to running Intellivision applications as `.int` files, or the NINTV-DS GUI
+    about: Please use the Nintellivision (NINTV-DS) GitHub repository to report issues related to running Intellivision applications as .int files, or the NINTV-DS GUI
   - name: PC Engine/TurboGrafx-16 game issue
     url: https://github.com/FluBBaOfWard/NitroGrafx/issues/new
     about: Please use the NitroGrafx GitHub repository to report issues related to running PC Engine/TurboGrafx-16 ROMs, or the NitroGrafx GUI
   - name: Sega Master System, Game Gear, SG-1000, or ColecoVision game issue with S8DS
     url: https://github.com/FluBBaOfWard/S8DS/issues/new
-    about: Please use the S8DS GitHub repository to report issues related to running Sega Master System applications as `.sms` files, Game Gear applications as `.gg` files, SG-1000 applications as `.sg` files, or ColecoVision applications as `.col` files, or the S8DS GUI
+    about: Please use the S8DS GitHub repository to report issues related to running Sega Master System applications as .sms files, Game Gear applications as .gg files, SG-1000 applications as .sg files, or ColecoVision applications as .col files, or the S8DS GUI
   - name: Other emulator issue
-    url: https://github.com/DS-Homebrew/TWiLightMenu
-    about: The emulators of other systems supported by TWiLight Menu++ are not currently maintained. You can find their GitHub repositories or webpages in the [TWiLight Menu++ README](https://github.com/DS-Homebrew/TWiLightMenu#app-launchers), but it is unlikely that your issue will be resolved there.
+    url: https://github.com/DS-Homebrew/TWiLightMenu#app-launchers
+    about: The emulators of other systems supported by TWiLight Menu++ are not currently maintained. You can find their GitHub repositories or webpages in the TWiLight Menu++ README, but it is unlikely that your issue will be resolved there.
