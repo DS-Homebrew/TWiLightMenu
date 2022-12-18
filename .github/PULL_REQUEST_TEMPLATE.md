@@ -1,11 +1,11 @@
 <!-- ##### REMEMBER TO ALWAYS TEST YOUR PR! -->
 #### What's changed?
 
-_Tell us what you've changed._
+<!-- Describe what you've changed. -->
 
 #### Where have you tested it?
 
-_Tell us where you've tested it._
+<!-- Specify where you've tested it. -->
 
 ***
 
