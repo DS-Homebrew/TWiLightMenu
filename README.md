@@ -4,10 +4,10 @@
    <img src="https://img.shields.io/badge/GBAtemp-Thread-blue.svg" alt="GBAtemp Thread">
   </a>
   <a href="https://discord.gg/yD3spjv">
-   <img src="https://img.shields.io/badge/Discord%20Server-%23twilight--menu-dev-green.svg" alt="Discord Server">
+   <img src="https://img.shields.io/badge/Discord%20Server-%23twilight--menu--dev-green.svg" alt="Discord Server">
   </a>
   <a href="https://github.com/DS-Homebrew/TWiLightMenu/actions?query=workflow%3A%22Build+TWiLight+Menu%2B%2B%22">
-   <img src="https://github.com/DS-Homebrew/TWiLightMenu/workflows/Build%20TWiLight%20Menu++/badge.svg" height="20" alt="Build status on GitHub Actions">
+   <img src="https://github.com/DS-Homebrew/TWiLightMenu/actions/workflows/nightly.yml/badge.svg" height="20" alt="Build status on GitHub Actions">
   </a>
   <a href="https://crowdin.com/project/TwilightMenu">
     <img src="https://badges.crowdin.net/TwilightMenu/localized.svg" alt="Localized on Crowdin">
