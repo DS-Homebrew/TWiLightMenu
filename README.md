@@ -57,7 +57,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## Secondary Developers
 - [DieGo](https://github.com/DieGo367): Adding support for custom ROM/folder icons and improvements for custom skins
 - [lifehackerhansol](https://github.com/lifehackerhansol): Improving support for flashcard autobooting and kernel loading
-- [NightScript](https://github.com/NightScript370): Code cleanup, added functionality for Acekard theme in regards to flashcards
+- [NightScript](https://github.com/NightScript370): Code cleanup, defining code standards, added flashcard functionality for Wood UI theme, manual pages
 ## App Launchers
 - [ahezard](https://github.com/ahezard), [shutterbug2000](https://github.com/shutterbug2000), and [Rocket Robz](https://github.com/RocketRobz): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used for launching Nintendo DS(i) ROMs off the SD card)
 - [Alekmaul](https://github.com/alekmaul): [AmeDS](https://www.gamebrew.org/wiki/AmeDS) (used for launching Amstrad CPC ROMs)
@@ -83,7 +83,6 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [fail0verflow](https://github.com/fail0verflow/), Fluto, and Arkhandar: Homebrew Channel/Launcher graphics
 - [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi theme's `SELECT` menu
 - [Mr. Start](https://github.com/Arthur-Start): Super Nintendo DS splash screen
-- [NightScript](https://github.com/NightScript370/): Reworked Manual pages
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons
 ## Music
