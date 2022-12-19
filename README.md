@@ -59,7 +59,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [lifehackerhansol](https://github.com/lifehackerhansol): Improving support for flashcard autobooting and kernel loading
 - [NightScript](https://github.com/NightScript370): Code cleanup, defining code standards, added flashcard functionality for Wood UI theme, manual pages
 ## App Launchers
-- [ahezard](https://github.com/ahezard), [shutterbug2000](https://github.com/shutterbug2000), and [Rocket Robz](https://github.com/RocketRobz): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used for launching Nintendo DS(i) ROMs off the SD card)
+- [ahezard](https://github.com/ahezard), [shutterbug2000](https://github.com/shutterbug2000) and [Rocket Robz](https://github.com/RocketRobz): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used for launching Nintendo DS(i) ROMs off the SD card)
 - [Alekmaul](https://github.com/alekmaul): [AmeDS](https://www.gamebrew.org/wiki/AmeDS) (used for launching Amstrad CPC ROMs)
 - [Alekmaul](https://github.com/alekmaul) & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5200DS](https://github.com/wavemotion-dave/A5200DS), [A7800DS](https://github.com/wavemotion-dave/A7800DS), [XEGS-DS](https://github.com/wavemotion-dave/XEGS-DS) (used for launching Atari 2600/5200/7800/XEGS ROMs), and [ColecoDS](https://github.com/wavemotion-dave/ColecoDS) (used for launching ColecoVision, Sord M5, and Sega SG-1000 ROMs)
 - archiede: [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS) (used for launching SNES ROMs)
