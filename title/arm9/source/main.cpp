@@ -405,7 +405,7 @@ void wideCheck(bool useWidescreen, bool checkCheatData) {
 
 	CIniFile lumaConfig("sd:/luma/config.ini");
 
-	bool wideCheatFound = !checkCheatData ? true : (access("/nds-bootstrap/wideCheatData.bin", F_OK) == 0);
+	bool wideCheatFound = !checkCheatData ? true : (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0);
 	if (useWidescreen && wideCheatFound && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true)) {
 		if (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0 && !autoRunBit) {
 			// If title previously launched in widescreen, move Widescreen.cxi again, and reboot again
