@@ -320,7 +320,7 @@ bool createDSiWareSave(const char *path, int size) {
 }
 
 /**
- * Can be used to reboot into an SD game when in DS mode.
+ * Used to reboot into an SD game when in DS mode.
  */
 void ntrStartSdGame(void) {
 	*(u32*)0x02000000 |= BIT(3);
