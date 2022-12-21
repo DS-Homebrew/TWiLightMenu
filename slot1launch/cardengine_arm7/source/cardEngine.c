@@ -33,7 +33,7 @@
 
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static const char bootNdsPath[15] = "sdmc:/boot.nds";
-static const char resetGameSrldrPath[40] = "sdmc:/_nds/TWiLightMenu/resetgame.srldr";
+static const char resetGameSrldrPath[40] = "sdmc:/_nds/TWiLightMenu/main.srldr";
 
 extern void cheat_engine_start(void);
 
@@ -74,8 +74,9 @@ void myIrqHandlerVBlank(void) {
 		if (softResetTimer == 60*2) {
 			REG_MASTER_VOLUME = 0;
 			int oldIME = enterCriticalSection();
+			memset((u32*)0x02000000, 0, 0x400);
 			unlaunchSetFilename(true);
-			memcpy((u32*)0x02000300,sr_data_srloader,0x020);
+			memcpy((u32*)0x02000300, sr_data_srloader, 0x20);
 			i2cWriteRegister(0x4a,0x70,0x01);
 			i2cWriteRegister(0x4a,0x11,0x01);	// Reboot into TWiLight Menu++
 			leaveCriticalSection(oldIME);
@@ -89,9 +90,11 @@ void myIrqHandlerVBlank(void) {
 		REG_MASTER_VOLUME = 0;
 		int oldIME = enterCriticalSection();
 		unlaunchSetFilename(false);
-    	memcpy((u32*)0x02000300,sr_data_srllastran,0x020);
-    	i2cWriteRegister(0x4a,0x70,0x01);
-    	i2cWriteRegister(0x4a,0x11,0x01);	// Reboot game
+		memset((u32*)0x02000000, 0, 0x400);
+		*(u32*)(0x02000000) = BIT(3);
+		memcpy((u32*)0x02000300, sr_data_srllastran, 0x20);
+		i2cWriteRegister(0x4a,0x70,0x01);
+		i2cWriteRegister(0x4a,0x11,0x01);	// Reboot game
 		leaveCriticalSection(oldIME);
 	}
 
