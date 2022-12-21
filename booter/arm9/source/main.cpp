@@ -122,9 +122,9 @@ int main(int argc, char **argv) {
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
 	
-	bool runGame = (strncmp((char*)0x02FFFE0C, "SLRN", 4) == 0);
+	//bool runGame = (strncmp((char*)0x02FFFE0C, "SLRN", 4) == 0);
 
-	const char* srldrPath = (runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" : "sd:/_nds/TWiLightMenu/main.srldr");
+	const char* srldrPath = (/*runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" :*/ "sd:/_nds/TWiLightMenu/main.srldr");
 
 	if (*(u32*)0x02800000 == 0x00000041 || *(u32*)0x02800000 == 0x00060041) { // If using hiyaCFW...
 		unlaunchRomBoot(srldrPath); // Start via Unlaunch
@@ -191,11 +191,11 @@ int main(int argc, char **argv) {
 		returnTextPos = yPos;
 	} else if (err == 1) {
 		printSmall(false, 4, 4, "sd:/_nds/TWiLightMenu/");
-		printSmall(false, 4, 12, runGame ? "resetgame.srldr not found." : "main.srldr not found.");
+		printSmall(false, 4, 12, /*runGame ? "resetgame.srldr not found." :*/ "main.srldr not found.");
 	} else {
 		char errorText[16];
 		snprintf(errorText, sizeof(errorText), "Error %i", err);
-		printSmall(false, 4, 4, runGame ? "Unable to start resetgame.srldr" : "Unable to start main.srldr");
+		printSmall(false, 4, 4, /*runGame ? "Unable to start resetgame.srldr" :*/ "Unable to start main.srldr");
 		printSmall(false, 4, 12, errorText);
 	}
 	printSmall(false, 4, returnTextPos, "Press B to return to menu.");

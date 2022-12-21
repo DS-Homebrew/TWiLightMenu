@@ -32,15 +32,13 @@
 #include "graphics/fontHandler.h"
 #include "sound.h"
 
-#include "autoboot.h"
+#include "autoboot.h"		 // For rebooting into the game
 
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
 #include "saveMap.h"
 #include "ROMList.h"
-
-#include "sr_data_srllastran.h"		 // For rebooting into the game
 
 bool useTwlCfg = false;
 
@@ -52,7 +50,6 @@ extern bool controlBottomBright;
 
 //bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
-bool externalFirmsModules = false;
 //static int flashcard;
 /* Flashcard value
 	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
@@ -323,13 +320,14 @@ bool createDSiWareSave(const char *path, int size) {
 }
 
 /**
- * Reboot into an SD game when in DS mode.
+ * Can be used to reboot into an SD game when in DS mode.
  */
 void ntrStartSdGame(void) {
+	*(u32*)0x02000000 |= BIT(3);
 	if (ms().consoleModel == 0) {
-		unlaunchRomBoot("sd:/_nds/TWiLightMenu/resetgame.srldr");
+		unlaunchRomBoot("sd:/_nds/TWiLightMenu/main.srldr");
 	} else {
-		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+		tonccpy((u32 *)0x02000300, autoboot_bin, 0x20);
 		DC_FlushAll();						// Make reboot not fail
 		fifoSendValue32(FIFO_USER_02, 1);
 		stop();
@@ -396,6 +394,43 @@ void gbaSramAccess(bool open) {
 	}
 }
 
+bool autoRunBit = false;
+bool twlBgCxiFound = false;
+
+void wideCheck(bool useWidescreen, bool checkCheatData) {
+	if ((isDSiMode() && sys().arm7SCFGLocked()) || ms().consoleModel < 2 || !useWidescreen || ms().macroMode) {
+		remove("/_nds/nds-bootstrap/wideCheatData.bin");
+		return;
+	}
+
+	CIniFile lumaConfig("sd:/luma/config.ini");
+
+	bool wideCheatFound = !checkCheatData ? true : (access("/nds-bootstrap/wideCheatData.bin", F_OK) == 0);
+	if (useWidescreen && wideCheatFound && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true)) {
+		if (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0 && !autoRunBit) {
+			// If title previously launched in widescreen, move Widescreen.cxi again, and reboot again
+			if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
+				rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
+			}
+			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+				ntrStartSdGame();
+			}
+		} else if (twlBgCxiFound) {
+			// Revert back to 4:3 for when returning to TWLMenu++
+			mkdir("sd:/_nds/TWiLightMenu/TwlBg", 0777);
+			if (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi") != 0) {
+				consoleDemoInit();
+				iprintf("Failed to rename TwlBg.cxi\n");
+				iprintf("back to Widescreen.cxi\n");
+				for (int i = 0; i < 60*3; i++) swiWaitForVBlank();
+			}
+			if (access("sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak", F_OK) == 0) {
+				rename("sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak", "sd:/luma/sysmodules/TwlBg.cxi");
+			}
+		}
+	}
+}
+
 void lastRunROM()
 {
 	/*fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
@@ -430,9 +465,8 @@ void lastRunROM()
 		}
 	}
 
-	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
-		CIniFile lumaConfig("sd:/luma/config.ini");
-		externalFirmsModules = (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true);
+	if (ms().consoleModel >= 2) {
+		twlBgCxiFound = (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	}
 
 	int err = 0;
@@ -444,19 +478,7 @@ void lastRunROM()
 		} else if (ms().slot1LaunchMethod==2) {
 			unlaunchRomBoot("cart:");
 		} else {
-			if ((ms().consoleModel >= 2 && !ms().wideScreen) || ms().consoleModel < 2 || !externalFirmsModules || ms().macroMode) {
-				remove("/_nds/nds-bootstrap/wideCheatData.bin");
-			} else if (access("sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0 && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
-				if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
-					rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
-				}
-				if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-					tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-					DC_FlushAll();
-					fifoSendValue32(FIFO_USER_02, 1);
-					stop();
-				}
-			}
+			wideCheck(ms().wideScreen, true);
 			err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, false, -1);
 		}
 	}
@@ -490,23 +512,11 @@ void lastRunROM()
 			bool asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
 			bool dsModeForced = false;
 
+			wideCheck(useWidescreen, !ms().homebrewBootstrap);
+
 			if (ms().homebrewBootstrap) {
 				argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
 			} else {
-				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || !externalFirmsModules || ms().macroMode) {
-					remove("/_nds/nds-bootstrap/wideCheatData.bin");
-				} else if ((access(ms().previousUsedDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0) && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
-					if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
-						rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
-					}
-					if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-						tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-						DC_FlushAll();
-						fifoSendValue32(FIFO_USER_02, 1);
-						stop();
-					}
-				}
-
 				const char *typeToReplace = ".nds";
 				if (extension(filename, ".dsi")) {
 					typeToReplace = ".dsi";
@@ -767,17 +777,9 @@ void lastRunROM()
 
 		bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
-		if (ms().consoleModel >= 2 && useWidescreen && externalFirmsModules && ms().homebrewHasWide) {
+		if (ms().consoleModel >= 2 && useWidescreen && ms().homebrewHasWide) {
 			//argarray.push_back((char*)"wide");
-			if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
-				rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
-			}
-			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-				tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-				DC_FlushAll();
-				fifoSendValue32(FIFO_USER_02, 1);
-				stop();
-			}
+			wideCheck(useWidescreen, false);
 		}
 
 		runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
@@ -795,6 +797,8 @@ void lastRunROM()
 				bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 				bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
+
+				wideCheck(useWidescreen, true);
 
 				const char *typeToReplace = ".nds";
 				if (extension(filename, ".dsi")) {
@@ -969,20 +973,6 @@ void lastRunROM()
 					*(u32*)(0x02000004) = 0;
 					*(bool*)(0x02000010) = useNightly;
 					*(bool*)(0x02000014) = useWidescreen;
-				}
-
-				if ((ms().consoleModel >= 2 && !useWidescreen) || ms().consoleModel < 2 || !externalFirmsModules || ms().macroMode) {
-					remove((ms().previousUsedDevice && !ms().dsiWareToSD) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
-				} else if ((access((ms().previousUsedDevice && !ms().dsiWareToSD) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0) && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
-					if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
-						rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
-					}
-					if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-						tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-						DC_FlushAll();
-						fifoSendValue32(FIFO_USER_02, 1);
-						stop();
-					}
 				}
 
 				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD && sdFound()))) {
@@ -1736,7 +1726,7 @@ int main(int argc, char **argv)
 		0: Skip DS(i) splash
 		1: Skip TWLMenu++ splash
 		2: Skip last-run game
-		3: Skip flashcard ROM check (Used for launching DSiWare from flashcards booted in DS mode)
+		3: Auto-start ROM
 	*/
 
 	if (isDSiMode() && sdFound()) {
@@ -2607,7 +2597,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (!softResetParamsFound && ms().dsiSplash && (REG_SCFG_EXT!=0&&ms().consoleModel<2 ? fifoGetValue32(FIFO_USER_04) != 0x01 : !(*(u32*)0x02000000 & BIT(0)))) {
+	if (!softResetParamsFound && !(*(u32*)0x02000000 & BIT(3)) && ms().dsiSplash && (REG_SCFG_EXT!=0&&ms().consoleModel<2 ? fifoGetValue32(FIFO_USER_04) != 0x01 : !(*(u32*)0x02000000 & BIT(0)))) {
 		runGraphicIrq();
 		bootSplashInit();
 		if (REG_SCFG_EXT != 0 && ms().consoleModel < 2) fifoSendValue32(FIFO_USER_04, 10);
@@ -2621,9 +2611,11 @@ int main(int argc, char **argv)
 	
 	scanKeys();
 
-	if (!(*(u32*)0x02000000 & BIT(2))
+	autoRunBit = (*(u32*)0x02000000 & BIT(3));
+	if (autoRunBit || (!(*(u32*)0x02000000 & BIT(2))
 	&& ((softResetParamsFound && (ms().launchType[ms().previousUsedDevice] == Launch::ESDFlashcardLaunch || ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch))
-	|| (ms().autorun ? !(keysHeld() & KEY_B) : (keysHeld() & KEY_B)))) {
+	|| (ms().autorun ? !(keysHeld() & KEY_B) : (keysHeld() & KEY_B))))) {
+		*(u32*)0x02000000 &= ~BIT(3);
 		//unloadNds9iAsynch();
 		if (isDSiMode() && sdFound() && !fcFound && !sys().arm7SCFGLocked() && ms().limitedMode > 0) {
 			*(u32*)0x02FFFD0C = ms().limitedMode == 2 ? 0x4E44544C : ms().limitedMode == 3 ? 0x6D44544C : 0x4D44544C;
@@ -2658,7 +2650,6 @@ int main(int argc, char **argv)
 	}
 	*(u32*)0x02000000 &= ~BIT(1);
 	*(u32*)0x02000000 &= ~BIT(2);
-	*(u32*)0x02000000 &= ~BIT(3);
 
 	scanKeys();
 

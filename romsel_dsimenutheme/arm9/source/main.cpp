@@ -56,14 +56,14 @@
 #include "cheat.h"
 #include "crc.h"
 
+#include "autoboot.h"		 // For rebooting into the game
+
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
 #include "donorMap.h"
 #include "saveMap.h"
 #include "ROMList.h"
-
-#include "sr_data_srllastran.h"		 // For rebooting into the game
 
 bool useTwlCfg = false;
 
@@ -247,6 +247,83 @@ void SetMPUSettings() {
 	}
 }
 
+void unlaunchRomBoot(std::string_view rom) {
+	snd().stopStream();
+	std::u16string path(FontGraphic::utf8to16(rom));
+	if (path.substr(0, 3) == u"sd:") {
+		path = u"sdmc:" + path.substr(3);
+	}
+
+	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
+	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
+	*(u32*)(0x02000810) = 0;			// Unlaunch Flags
+	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
+	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
+	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
+	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
+	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+	for (uint i = 0; i < std::min(path.length(), 0x103u); i++) {
+		((char16_t*)0x02000838)[i] = path[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+	}
+	*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
+
+	DC_FlushAll();						// Make reboot not fail
+	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
+	stop();
+}
+
+void unlaunchSetHiyaBoot(void) {
+	if (access("sdmc:/hiya.dsi", F_OK) != 0) return;
+
+	tonccpy((u8 *)0x02000800, unlaunchAutoLoadID, 12);
+	*(u16 *)(0x0200080C) = 0x3F0;			   // Unlaunch Length for CRC16 (fixed, must be 3F0h)
+	*(u16 *)(0x0200080E) = 0;			   // Unlaunch CRC16 (empty)
+	*(u32 *)(0x02000810) = (BIT(0) | BIT(1));	  // Load the title at 2000838h
+							   // Use colors 2000814h
+	*(u16 *)(0x02000814) = 0x7FFF;			   // Unlaunch Upper screen BG color (0..7FFFh)
+	*(u16 *)(0x02000816) = 0x7FFF;			   // Unlaunch Lower screen BG color (0..7FFFh)
+	toncset((u8 *)0x02000818, 0, 0x20 + 0x208 + 0x1C0); // Unlaunch Reserved (zero)
+	for (uint i = 0; i < sizeof(hiyaNdsPath)/sizeof(hiyaNdsPath[0]); i++) {
+		((char16_t*)0x02000838)[i] = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+	}
+	*(u16 *)(0x0200080E) = swiCRC16(0xFFFF, (void *)0x02000810, 0x3F0); // Unlaunch CRC16
+}
+
+/**
+ * Reboot into an SD game when in DS mode.
+ */
+void ntrStartSdGame(void) {
+	*(u32*)(0x02000000) |= BIT(3);
+	if (ms().consoleModel == 0) {
+		unlaunchRomBoot("sd:/_nds/TWiLightMenu/main.srldr");
+	} else {
+		tonccpy((u32 *)0x02000300, autoboot_bin, 0x20);
+		DC_FlushAll();						// Make reboot not fail
+		fifoSendValue32(FIFO_USER_02, 1);
+		stop();
+	}
+}
+
+void dsCardLaunch() {
+	snd().stopStream();
+	*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
+	*(u16 *)(0x02000304) = 0x1801;
+	*(u32 *)(0x02000308) = 0x43415254; // "CART"
+	*(u32 *)(0x0200030C) = 0x00000000;
+	*(u32 *)(0x02000310) = 0x43415254; // "CART"
+	*(u32 *)(0x02000314) = 0x00000000;
+	*(u32 *)(0x02000318) = 0x00000013;
+	*(u32 *)(0x0200031C) = 0x00000000;
+	*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
+
+	unlaunchSetHiyaBoot();
+
+	DC_FlushAll();						// Make reboot not fail
+	fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
+	stop();
+}
+
 /**
  * Fix AP for some games.
  */
@@ -389,10 +466,7 @@ void SetWidescreen(const char *filename) {
 			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
 		}
 		if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-			tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-			DC_FlushAll();
-			fifoSendValue32(FIFO_USER_02, 1);
-			stop();
+			ntrStartSdGame();
 		}
 		return;
 	}
@@ -521,10 +595,7 @@ void SetWidescreen(const char *filename) {
 			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
 		}
 		if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
-			tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-			DC_FlushAll();
-			fifoSendValue32(FIFO_USER_02, 1);
-			stop();
+			ntrStartSdGame();
 		}
 	}
 }
@@ -661,49 +732,6 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 	stop();
 }
 
-void unlaunchRomBoot(std::string_view rom) {
-	snd().stopStream();
-	std::u16string path(FontGraphic::utf8to16(rom));
-	if (path.substr(0, 3) == u"sd:") {
-		path = u"sdmc:" + path.substr(3);
-	}
-
-	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
-	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
-	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
-	*(u32*)(0x02000810) = 0;			// Unlaunch Flags
-	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
-	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
-	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
-	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
-	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
-	for (uint i = 0; i < std::min(path.length(), 0x103u); i++) {
-		((char16_t*)0x02000838)[i] = path[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-	}
-	*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-
-	DC_FlushAll();						// Make reboot not fail
-	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
-	stop();
-}
-
-void unlaunchSetHiyaBoot(void) {
-	if (access("sdmc:/hiya.dsi", F_OK) != 0) return;
-
-	tonccpy((u8 *)0x02000800, unlaunchAutoLoadID, 12);
-	*(u16 *)(0x0200080C) = 0x3F0;			   // Unlaunch Length for CRC16 (fixed, must be 3F0h)
-	*(u16 *)(0x0200080E) = 0;			   // Unlaunch CRC16 (empty)
-	*(u32 *)(0x02000810) = (BIT(0) | BIT(1));	  // Load the title at 2000838h
-							   // Use colors 2000814h
-	*(u16 *)(0x02000814) = 0x7FFF;			   // Unlaunch Upper screen BG color (0..7FFFh)
-	*(u16 *)(0x02000816) = 0x7FFF;			   // Unlaunch Lower screen BG color (0..7FFFh)
-	toncset((u8 *)0x02000818, 0, 0x20 + 0x208 + 0x1C0); // Unlaunch Reserved (zero)
-	for (uint i = 0; i < sizeof(hiyaNdsPath)/sizeof(hiyaNdsPath[0]); i++) {
-		((char16_t*)0x02000838)[i] = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
-	}
-	*(u16 *)(0x0200080E) = swiCRC16(0xFFFF, (void *)0x02000810, 0x3F0); // Unlaunch CRC16
-}
-
 // From NTM
 // https://github.com/Epicpkmn11/NTM/blob/db69aca1b49733da51f64ee857ac9b861b1c468c/arm9/src/sav.c#L7-L93
 bool createDSiWareSave(const char *path, int size) {
@@ -792,39 +820,6 @@ bool createDSiWareSave(const char *path, int size) {
 	}
 
 	return false;
-}
-
-/**
- * Reboot into an SD game when in DS mode.
- */
-void ntrStartSdGame(void) {
-	if (ms().consoleModel == 0) {
-		unlaunchRomBoot("sd:/_nds/TWiLightMenu/resetgame.srldr");
-	} else {
-		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-		DC_FlushAll();						// Make reboot not fail
-		fifoSendValue32(FIFO_USER_02, 1);
-		stop();
-	}
-}
-
-void dsCardLaunch() {
-	snd().stopStream();
-	*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
-	*(u16 *)(0x02000304) = 0x1801;
-	*(u32 *)(0x02000308) = 0x43415254; // "CART"
-	*(u32 *)(0x0200030C) = 0x00000000;
-	*(u32 *)(0x02000310) = 0x43415254; // "CART"
-	*(u32 *)(0x02000314) = 0x00000000;
-	*(u32 *)(0x02000318) = 0x00000013;
-	*(u32 *)(0x0200031C) = 0x00000000;
-	*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
-
-	unlaunchSetHiyaBoot();
-
-	DC_FlushAll();						// Make reboot not fail
-	fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
-	stop();
 }
 
 void s2RamAccess(bool open) {
@@ -1488,7 +1483,6 @@ int main(int argc, char **argv) {
 					bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 					if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD && sdFound()))) {
-						*(u32*)(0x02000000) |= BIT(3);
 						*(u32*)(0x02000004) = 0;
 						*(bool*)(0x02000010) = useNightly;
 						*(bool*)(0x02000014) = useWidescreen;

@@ -8,9 +8,9 @@ export PROJECT	:=	$(CURDIR)
 #---------------------------------------------------------------------------------
 # Goals for Build
 #---------------------------------------------------------------------------------
-.PHONY: all package booter booter_fc gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+.PHONY: all package booter booter_fc gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme settings slot1launch title
 
-all:	booter booter_fc gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+all:	booter booter_fc gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme settings slot1launch title
 
 package:
 	@$(MAKE) -C booter dist
@@ -23,7 +23,7 @@ package:
 	#@$(MAKE) -C romsel_aktheme dist
 	@$(MAKE) -C romsel_dsimenutheme dist
 	@$(MAKE) -C romsel_r4theme dist
-	@$(MAKE) -C rungame dist
+	#@$(MAKE) -C rungame dist
 	@$(MAKE) -C settings dist
 	@$(MAKE) -C slot1launch dist
 	@$(MAKE) -C title dist
@@ -84,7 +84,7 @@ clean:
 	#@$(MAKE) -C romsel_aktheme clean
 	@$(MAKE) -C romsel_dsimenutheme clean
 	@$(MAKE) -C romsel_r4theme clean
-	@$(MAKE) -C rungame clean
+	#@$(MAKE) -C rungame clean
 	@$(MAKE) -C settings clean
 	@$(MAKE) -C slot1launch clean
 	@$(MAKE) -C title clean

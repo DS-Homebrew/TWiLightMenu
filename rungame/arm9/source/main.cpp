@@ -465,7 +465,6 @@ int lastRunROM() {
 				if (ms().homebrewBootstrap) {
 					unlaunchBootDSiWare();
 				} else {
-					loadPerGameSettings(filename);
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 					if (*(u32*)(0x02000000) & BIT(3)) {
 						useNightly = *(bool*)(0x02000010);
