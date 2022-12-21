@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 200)
+// B4DS DSiWare Whitelist (Total: 201)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -86,6 +86,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGF", // Game & Watch: Mario's Cement Factory
 	"KGV", // Game & Watch: Vermin
 	"KGK", // Glory Days: Tactical Defense
+	"K9A", // Goooooal America
 	"KDH", // Hard-Hat Domo
 	"K6S", // Heathcliff: Spot On
 	"KJY", // JellyCar 2
