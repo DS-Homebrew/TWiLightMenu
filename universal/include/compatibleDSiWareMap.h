@@ -267,16 +267,18 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	2, // Shantae: Risky's Revenge (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 2)
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 3)
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
-	"KYU", // Yummy Yummy Cooking Jam
+	"K9A", // Goooooal America
 	"Z2A", // WarioWare: Touched! DL
+	"KYU", // Yummy Yummy Cooking Jam
 };
 
 // B4DS DSiWare Whitelist (DS Retail & Debug consoles) (RAM limitation message ID)
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
-	2, // Yummy Yummy Cooking Jam (No music)
+	1, // Goooooal America (No audio)
 	1, // WarioWare: Touched! DL (No audio)
+	2, // Yummy Yummy Cooking Jam (No music)
 };
 
 // B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 29)
