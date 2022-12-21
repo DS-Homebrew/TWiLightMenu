@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 201)
+// B4DS DSiWare Whitelist (Total: 202)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -167,6 +167,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K4L", // Simply Solitaire
 	"KS4", // Simply Sudoku
 	"K2F", // Smart Girl's Playhouse Mini
+	"K4N", // Snakenoid Deluxe
 	"KX5", // SnowBoard Xtreme
 	"KL9", // Sokuren Keisa: Shougaku 1 Nensei
 	"KH2", // Sokuren Keisa: Shougaku 2 Nensei
@@ -267,9 +268,10 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	2, // Shantae: Risky's Revenge (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 3)
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 4)
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 	"K9A", // Goooooal America
+	"K4N", // Snakenoid Deluxe
 	"Z2A", // WarioWare: Touched! DL
 	"KYU", // Yummy Yummy Cooking Jam
 };
@@ -277,6 +279,7 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 // B4DS DSiWare Whitelist (DS Retail & Debug consoles) (RAM limitation message ID)
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // Goooooal America (No audio)
+	1, // Snakenoid Deluxe (No audio)
 	1, // WarioWare: Touched! DL (No audio)
 	2, // Yummy Yummy Cooking Jam (No music)
 };
