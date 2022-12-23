@@ -324,6 +324,7 @@ bool createDSiWareSave(const char *path, int size) {
  */
 void ntrStartSdGame(void) {
 	*(u32*)0x02000000 |= BIT(3);
+	*(u32*)0x02000004 = 0;
 	if (ms().consoleModel == 0) {
 		unlaunchRomBoot("sd:/_nds/TWiLightMenu/main.srldr");
 	} else {
@@ -969,8 +970,6 @@ void lastRunROM()
 				bootstrapini.SaveIniFile(sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 
 				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD && sdFound()))) {
-					*(u32*)(0x02000000) |= BIT(3);
-					*(u32*)(0x02000004) = 0;
 					*(bool*)(0x02000010) = useNightly;
 					*(bool*)(0x02000014) = useWidescreen;
 				}
@@ -1702,7 +1701,7 @@ int main(int argc, char **argv)
 
 	defaultExceptionHandler();
 	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
-	sys().initFilesystem(argc==0 ? "/_nds/TWiLightMenu/main.srldr" : argv[0]);
+	sys().initFilesystem(argc==0 ? "sd:/_nds/TWiLightMenu/main.srldr" : argv[0]);
 	sys().initArm7RegStatuses();
 	ms();
 
