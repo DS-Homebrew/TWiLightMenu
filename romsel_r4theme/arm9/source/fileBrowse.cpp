@@ -450,6 +450,9 @@ bool donorRomMsg(void) {
 				switch (requiresDonorRom) {
 					default:
 						break;
+					case 20:
+						printSmallCentered(false, 90, "Find the SDK2.0 title,");
+						break;
 					case 51:
 						printSmallCentered(false, 90, "Find the DSi-Enhanced title,");
 						break;
@@ -469,6 +472,11 @@ bool donorRomMsg(void) {
 			} else {
 				switch (requiresDonorRom) {
 					default:
+						break;
+					case 20:
+						printSmallCentered(false, 90, "Please set a different SDK2.0");
+						printSmallCentered(false, 102, "title as a donor ROM, in order");
+						printSmallCentered(false, 114, "to launch this title.");
 						break;
 					case 51:
 						printSmallCentered(false, 90, "Please set a DSi-Enhanced title");
@@ -1175,14 +1183,17 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							if (requiresDonorRom == 152) {
 								pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0
 							}
+						} else if (requiresDonorRom == 20) {
+							pathDefine = "DONOR20_NDS_PATH"; // SDK2.0
 						}
 						std::string donorRomPath;
 						const char *bootstrapinipath = sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
 						int dsiModeSetting = (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
 						CIniFile bootstrapini(bootstrapinipath);
 						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-						bool donorRomFound = (((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && access("fat:/_nds/nds-bootstrap/b4dsTwlDonor.bin", F_OK) == 0) || strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
-						if (!donorRomFound && requiresDonorRom < 100) {
+						bool donorRomFound = (((!dsiFeatures() || bs().b4dsMode) && requiresDonorRom != 20 && ms().secondaryDevice && access("fat:/_nds/nds-bootstrap/b4dsTwlDonor.bin", F_OK) == 0)
+											|| strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
+						if (!donorRomFound && requiresDonorRom != 20 && requiresDonorRom < 100) {
 							pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0
 							if (requiresDonorRom == 52) {
 								pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0
@@ -1191,7 +1202,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							donorRomFound = (strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
 						}
 						if (!donorRomFound
-						&& (requiresDonorRom == 51 || requiresDonorRom == 151
+						&& (requiresDonorRom == 20 || requiresDonorRom == 51 || requiresDonorRom == 151
 						|| (requiresDonorRom == 52 && (isDSiWare || dsiModeSetting > 0)) || requiresDonorRom == 152)
 						) {
 							proceedToLaunch = donorRomMsg();

@@ -225,7 +225,14 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	bool usingB4DS = (!dsiFeatures() && ms().secondaryDevice);
 	bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 
-	return ((usingB4DS || (dsiEnhancedMbk && dsiBinariesFound)) && SDKVersion > 0x5000000	// SDK5 (TWL)
+	return (arm7size == 0x2619C // SDK2.0
+		 || arm7size == 0x262A0
+		 || arm7size == 0x26A60
+		 || arm7size == 0x27218
+		 || arm7size == 0x27224
+		 || arm7size == 0x2724C
+		 || arm7size == 0x27280
+	|| ((usingB4DS || (dsiEnhancedMbk && dsiBinariesFound)) && SDKVersion > 0x5000000	// SDK5 (TWL)
 	 && (arm7size==0x22B40
 	  || arm7size==0x22BCC
 	  || arm7size==0x28F84
@@ -238,7 +245,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	  || arm7size==0x2AF18
 	  || arm7size==0x2B184
 	  || arm7size==0x2B24C
-	  || arm7size==0x2C5B4));
+	  || arm7size==0x2C5B4)));
 }
 
 bool showSetDonorRomDSiWare(u32 arm7size) {
@@ -1069,6 +1076,14 @@ void perGameSettings (std::string filename) {
 						 || arm7size == 0x28E54
 						 || arm7size == 0x29EE8) {
 							pathDefine = a7mbk6 == 0x080037C0 ? "DONORTWLONLY0_NDS_PATH" : "DONORTWL0_NDS_PATH"; // SDK5.0
+						} else if (arm7size == 0x2619C
+								 || arm7size == 0x262A0
+								 || arm7size == 0x26A60
+								 || arm7size == 0x27218
+								 || arm7size == 0x27224
+								 || arm7size == 0x2724C
+								 || arm7size == 0x27280) {
+							pathDefine = "DONOR20_NDS_PATH"; // SDK2.0
 						}
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);

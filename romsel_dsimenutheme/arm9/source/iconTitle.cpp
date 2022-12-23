@@ -497,6 +497,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				}
 			} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6[num] == 0x080037C0 && ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode)) {
 				requiresDonorRom[num] = 51; // DSi-Enhanced ROM required
+			} else if (ndsHeader.arm7binarySize == 0x25F70) {
+				requiresDonorRom[num] = 20; // SDK2.0 ROM required
 			}
 		}
 
