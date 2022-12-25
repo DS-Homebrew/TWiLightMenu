@@ -381,50 +381,56 @@ std::optional<Option> opt_font_select(void)
 	return Option(STR_FONTSEL, STR_AB_SETFONT, Option::Str(&ms().font), fontList);
 }
 
+std::string keyString(u16 pressed) {
+	std::string keys = "";
+
+	if (pressed & KEY_L)
+		keys += " ";
+	if (pressed & KEY_R)
+		keys += " ";
+	if (pressed & KEY_UP)
+		keys += " ";
+	if (pressed & KEY_DOWN)
+		keys += " ";
+	if (pressed & KEY_LEFT)
+		keys += " ";
+	if (pressed & KEY_RIGHT)
+		keys += " ";
+	if (pressed & KEY_START)
+		keys += "START ";
+	if (pressed & KEY_SELECT)
+		keys += "SELECT ";
+	if (pressed & KEY_A)
+		keys += " ";
+	if (pressed & KEY_B)
+		keys += " ";
+	if (pressed & KEY_X)
+		keys += " ";
+	if (pressed & KEY_Y)
+		keys += " ";
+	if (pressed & KEY_TOUCH)
+		keys += STR_TOUCH + " ";
+
+	return keys.substr(0, keys.size() - 1); // Remove trailing space
+}
+
 void opt_set_hotkey(void) {
 	clearScroller();
 	bool updateText = true;
 	u16 held = 0, set = 0, timer = 0;
+	int buttonsHeld = 0;
 	std::string keys = "";
-	while (timer < 60) {
+	while (timer < 60 || !(buttonsHeld >= 2 || set == KEY_B)) {
 		if (updateText) {
-			keys = "";
-			if (set & KEY_L)
-				keys += " ";
-			if (set & KEY_R)
-				keys += " ";
-			if (set & KEY_UP)
-				keys += " ";
-			if (set & KEY_DOWN)
-				keys += " ";
-			if (set & KEY_LEFT)
-				keys += " ";
-			if (set & KEY_RIGHT)
-				keys += " ";
-			if (set & KEY_START)
-				keys += "START ";
-			if (set & KEY_SELECT)
-				keys += "SELECT ";
-			if (set & KEY_A)
-				keys += " ";
-			if (set & KEY_B)
-				keys += " ";
-			if (set & KEY_X)
-				keys += " ";
-			if (set & KEY_Y)
-				keys += " ";
-			if (set & KEY_TOUCH)
-				keys += STR_TOUCH + " ";
-
-			// Remove trailing space
-			keys = keys.substr(0, keys.size() - 1);
-
 			clearText(false);
 			if (ms().rtl())
 				printLarge(false, 256 - 4, 0, STR_HOLD_1S_SET, Alignment::right);
 			else
 				printLarge(false, 4, 0, STR_HOLD_1S_SET);
+
+			keys = keyString(set);
 			printSmall(false, 0, 48, keys, Alignment::center);
+			printSmall(false, 0, 170 - calcSmallFontHeight(STR_HOLD_1S_DETAILS), STR_HOLD_1S_DETAILS, Alignment::center);
 			updateText = false;
 		}
 
@@ -443,18 +449,28 @@ void opt_set_hotkey(void) {
 			timer = 0;
 			set = held;
 			updateText = true;
+			buttonsHeld = 0;
+			for(int i = 0; i < 16; i++) {
+				if(set & BIT(i))
+					buttonsHeld++;
+			}
 		}
 	}
 
-	bs().bootstrapHotkey = set;
+	// Holding *only* B cancels
+	if(set == KEY_B) {
+		keys = keyString(bs().bootstrapHotkey);
+	} else {
+		bs().bootstrapHotkey = set;
+	}
 
-	mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
+	mmEffectEx(currentTheme == 4 ? &snd().snd_saturn_select : &snd().snd_select);
 
 	clearText(false);
 	if (ms().rtl())
-		printLarge(false, 256 - 4, 0, STR_HOTKEY_SET, Alignment::right);
+		printLarge(false, 256 - 4, 0, set == KEY_B ? STR_HOTKEY_SETTING_CANCELLED : STR_HOTKEY_SET, Alignment::right);
 	else
-		printLarge(false, 4, 0, STR_HOTKEY_SET);
+		printLarge(false, 4, 0, set == KEY_B ? STR_HOTKEY_SETTING_CANCELLED : STR_HOTKEY_SET);
 	printSmall(false, 0, 48, keys, Alignment::center);
 	do {
 		scanKeys();
@@ -1196,7 +1212,6 @@ int main(int argc, char **argv)
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
-	using TDSiWareBooter = TWLSettings::TDSiWareBooter;
 	using TGbaBooter = TWLSettings::TGbaBooter;
 	using TColSegaEmulator = TWLSettings::TColSegaEmulator;
 	using TCpcEmulator = TWLSettings::TCpcEmulator;
