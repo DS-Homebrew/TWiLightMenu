@@ -367,8 +367,10 @@ STRING(AB_SETBG, "\\A / \\B: Set background")
 STRING(AB_SETFONT, "\\A / \\B: Set font")
 
 STRING(HOLD_1S_SET, "Hold keys to set hotkey")
+STRING(HOLD_1S_DETAILS, "Hold at least two keys for 1 second.\nThe default is \\L \\DD SELECT.\nHold \\B to cancel.")
 STRING(TOUCH, "Touch")
 STRING(HOTKEY_SET, "Hotkey set!")
+STRING(HOTKEY_SETTING_CANCELLED, "Hotkey setting cancelled!")
 
 // STRING(SNES_EMULATOR, "Choose a SNES emulator")
 // STRING(DESCRIPTION_SNES_EMULATOR, "Choose whether you would rather use SNEmulDS or lolSNES.")

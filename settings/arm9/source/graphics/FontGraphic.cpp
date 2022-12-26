@@ -256,6 +256,7 @@ std::u16string FontGraphic::utf8to16(std::string_view text) {
 			c |=  text[i++] & 0x3F;
 		} else {
 			i++; // out of range or something (This only does up to 0xFFFF since it goes to a U16 anyways)
+			continue;
 		}
 		out += c;
 	}
