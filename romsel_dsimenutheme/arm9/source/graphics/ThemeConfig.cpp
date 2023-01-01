@@ -20,7 +20,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 	// _photoRenderY(24), _photoRenderX(179),
 	_startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true), _movingArrowUserPalette(true),
 	_launchDotsUserPalette(true), _dialogBoxUserPalette(true), _usernameUserPalette(true),
-	_purpleBatteryAvailable(false), _renderPhoto(true), _playStartupJingle(false), _startupJingleDelayAdjust(0),
+	_purpleBatteryAvailable(false), _renderPhoto(true), _darkLoading(false), _playStartupJingle(false), _startupJingleDelayAdjust(0),
 	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108),
 	_fontPaletteTitlebox1(0x0000), _fontPaletteTitlebox2(0xDEF7), _fontPaletteTitlebox3(0xC631), _fontPaletteTitlebox4(0xA108),
 	_fontPaletteDialog1(0x0000), _fontPaletteDialog2(0xDEF7), _fontPaletteDialog3(0xC631), _fontPaletteDialog4(0xA108),
@@ -47,6 +47,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 
 	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
 		_renderPhoto = false;
+		_darkLoading = true;
 	}
 }
 
@@ -113,6 +114,7 @@ void ThemeConfig::loadConfig() {
 	_purpleBatteryAvailable = getInt(themeConfig, "PurpleBatteryAvailable", _purpleBatteryAvailable);
 	_rotatingCubesRenderY = getInt(themeConfig, "RotatingCubesRenderY", _rotatingCubesRenderY);
 	_renderPhoto = getInt(themeConfig, "RenderPhoto", _renderPhoto);
+	_darkLoading = getInt(themeConfig, "DarkLoading", _darkLoading);
 
 	_playStartupJingle = getInt(themeConfig, "PlayStartupJingle", _playStartupJingle);
 	_startupJingleDelayAdjust = getInt(themeConfig, "StartupJingleDelayAdjust", _startupJingleDelayAdjust);
