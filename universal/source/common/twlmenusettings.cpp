@@ -47,7 +47,7 @@ TWLSettings::TWLSettings()
 	showSelectMenu = false;
 	theme = EThemeDSi;
 	settingsMusic = ESMusicTheme;
-	dsiMusic = EMusicRegular;
+	dsiMusic = EMusicTheme;
 	boxArtColorDeband = false;
 
 	gbaBooter = isDSiMode() ? EGbaGbar2 : EGbaNativeGbar2;
