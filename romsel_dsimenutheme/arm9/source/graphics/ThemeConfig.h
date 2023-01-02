@@ -63,6 +63,7 @@ private:
 	bool _purpleBatteryAvailable;
 
 	bool _renderPhoto;
+	bool _darkLoading;
 	bool _playStartupJingle;
 	int _startupJingleDelayAdjust;
 
@@ -150,6 +151,7 @@ public:
 	bool purpleBatteryAvailable() const { return _purpleBatteryAvailable; }
 
 	bool renderPhoto() const { return _renderPhoto; }
+	bool darkLoading() const { return _darkLoading; }
 
 	bool playStartupJingle() const { return _playStartupJingle; }
 	int startupJingleDelayAdjust() const { return _startupJingleDelayAdjust; }

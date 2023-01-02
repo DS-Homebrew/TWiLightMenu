@@ -68,7 +68,6 @@ extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 extern bool fadeSleep;
-extern bool fadeColor;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 int fadeDelay = 0;
@@ -455,9 +454,9 @@ void vBlankHandler() {
 	}
 
 	if (controlBottomBright && renderFrame)
-		SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
+		SetBrightness(0, tc().darkLoading() ? -screenBrightness : screenBrightness);
 	if (controlTopBright && !ms().macroMode && renderFrame)
-		SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
+		SetBrightness(1, tc().darkLoading() ? -screenBrightness : screenBrightness);
 
 	if (showdialogbox) {
 		// Dialogbox moving into view...
@@ -989,7 +988,7 @@ void vBlankHandler() {
 				}
 			}*/
 		if (whiteScreen) {
-			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+			glBoxFilled(0, 0, 256, 192, tc().darkLoading() ? RGB15(0, 0, 0) : RGB15(31, 31, 31));
 		}
 		if (showProgressIcon && ms().theme != TWLSettings::EThemeSaturn) {
 			glSprite(ms().rtl() ? 16 : 224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
@@ -1003,12 +1002,12 @@ void vBlankHandler() {
 			}
 			int fillColor = ms().colorMode == 1 ? convertVramColorToGrayscale(RGB15(0, 0, 31)) : RGB15(0, 0, 31);
 			if (ms().rtl()) {
-				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, RGB15(23, 23, 23));
+				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
 				if (progressBarLength > 0) {
 					glBoxFilled(barXpos, barYpos, barXpos-progressBarLength, barYpos+5, fillColor);
 				}
 			} else {
-				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, RGB15(23, 23, 23));
+				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
 				if (progressBarLength > 0) {
 					glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, fillColor);
 				}

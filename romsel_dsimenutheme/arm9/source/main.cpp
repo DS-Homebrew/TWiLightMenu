@@ -71,7 +71,6 @@ bool whiteScreen = true;
 bool fadeType = false; // false = out, true = in
 bool fadeSpeed = true; // false = slow (for DSi launch effect), true = fast
 bool fadeSleep = false;
-bool fadeColor = true; // false = black, true = white
 bool controlTopBright = true;
 bool controlBottomBright = true;
 bool widescreenFound = false;
@@ -968,7 +967,6 @@ int main(int argc, char **argv) {
 
 	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
 		whiteScreen = false;
-		fadeColor = false;
 	}
 
 	langInit();
