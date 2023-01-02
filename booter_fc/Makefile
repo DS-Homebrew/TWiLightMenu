@@ -40,8 +40,9 @@ makearm9_fc:
 	cp arm9/$(TARGET).elf $(TARGET)_fc.arm9.elf
 
 makearm9_r4ig:
-	$(MAKE) -C flashcart_specifics/r4ig/arm9
-	cp flashcart_specifics/r4ig/arm9/$(TARGET).elf $(TARGET)_r4ig.arm9.elf
+	$(MAKE) -C flashcart_specifics/address_adapt/arm9 CRT0=0x02000800
+	cp flashcart_specifics/address_adapt/arm9/$(TARGET).elf $(TARGET)_r4ig.arm9.elf
+	$(MAKE) -C flashcart_specifics/address_adapt/arm9 clean
 
 makearm9_acekard2:
 	$(MAKE) -C flashcart_specifics/address_adapt/arm9 CRT0=0x02000450
