@@ -138,7 +138,7 @@ static int adpcm_converter (char *infilename, char *outfilename, int flags, int 
     while (1) {
 
         if (!fread (&chunk_header, sizeof (ChunkHeader), 1, infile)) {
-            fprintf (stderr, "\"%s\" is not a valid .WAV file!\n", infilename);
+            //fprintf (stderr, "\"%s\" is not a valid .WAV file!\n", infilename);
             return -1;
         }
 
