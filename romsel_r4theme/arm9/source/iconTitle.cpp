@@ -1037,7 +1037,7 @@ void getGameInfo(bool isDir, const char* name)
 				}
 			} else if (ndsHeader.gameCode[0] != 'D' && a7mbk6 == 0x080037C0 && ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode)) {
 				requiresDonorRom = 51; // DSi-Enhanced ROM required
-			} else if (ndsHeader.arm7binarySize == 0x25F70) {
+			} else if (memcmp(ndsHeader.gameCode, "AYI", 3) == 0 && ndsHeader.arm7binarySize == 0x25F70) {
 				requiresDonorRom = 20; // SDK2.0 ROM required
 			}
 		}
