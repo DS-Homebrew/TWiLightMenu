@@ -155,9 +155,7 @@ if args.arm7 is not None:
 
 filer = open(fname, 'rb')
 data = filer.read(0xB0)
-flagfile = open("../DoNotZeroFillMem.bin", 'rb')
-data = data + flagfile.read(0x10)
-flagfile.close()
+data += b'DoNotZeroFillMem'
 filer.read(0x10)
 data = data + filer.read(0xC0)
 caddr = 0x180
