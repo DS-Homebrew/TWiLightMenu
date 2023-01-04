@@ -267,6 +267,13 @@ u16 Texture::bmpToDS(u16 val) {
 	}
 }
 
+bool Texture::exists(const std::string &filePath) {
+	for (const char *extension : extensions) {
+		if (access((filePath + extension).c_str(), F_OK) == 0) return true;
+	}
+	return false;
+}
+
 void Texture::copy(u16 *dst, bool vram) const {
 	switch(_type) {
 		case TextureType::PalettedGrf:

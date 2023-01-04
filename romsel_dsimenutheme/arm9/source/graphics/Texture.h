@@ -77,6 +77,8 @@ class Texture
 
 		TextureType type() const { return _type; }
 
+		static bool exists(const std::string &filePath);
+
 		void copy(u16 *dst, bool vram) const;
 
 	private:

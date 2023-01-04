@@ -213,13 +213,6 @@ void ThemeTextures::reloadPalDialogBox() {
 	}
 }
 
-inline bool textureExists(std::string textureName) {
-	return (access((textureName + ".grf").c_str(), F_OK) == 0
-	 || access((textureName + ".png").c_str(), F_OK) == 0
-	 || access((textureName + ".bmp").c_str(), F_OK) == 0
-	);
-}
-
 void ThemeTextures::loadBackgrounds() {
 	// 0: Top, 1: Bottom, 2: Bottom Bubble, 3: Moving, 4: MovingLeft, 5: MovingRight
 
@@ -240,21 +233,19 @@ void ThemeTextures::loadBackgrounds() {
 	}
 	// DSi Theme
 	if (ms().macroMode) {
-		if (textureExists((std::string) TFN_BG_BOTTOMBG_MACRO)) {
+		if (Texture::exists(TFN_BG_BOTTOMBG_MACRO)) {
 			_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG_MACRO, TFN_FALLBACK_BG_BOTTOMBG);
 		} else {
 			_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
 		}
 
-		if (textureExists((std::string)TFN_BG_BOTTOMBUBBLEBG_MACRO)
-		 || textureExists((std::string)TFN_FALLBACK_BG_BOTTOMBUBBLEBG_MACRO)
-		) {
+		if (Texture::exists(TFN_BG_BOTTOMBUBBLEBG_MACRO)) {
 			_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG_MACRO, TFN_FALLBACK_BG_BOTTOMBUBBLEBG_MACRO);
 		} else {
 			_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
 		}
 
-		if (ms().theme == TWLSettings::EThemeDSi && textureExists((std::string)TFN_BG_BOTTOMMOVINGBG_MACRO)) {
+		if (ms().theme == TWLSettings::EThemeDSi && Texture::exists(TFN_BG_BOTTOMMOVINGBG_MACRO)) {
 			_backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG_MACRO, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
 		} else {
 			_backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
