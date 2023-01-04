@@ -1415,6 +1415,12 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 		_boxEmptyTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 
+	if (_iconA26Texture) {
+		_iconA26Texture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconCOLTexture) {
+		_iconCOLTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
 	if (_iconGBTexture) {
 		_iconGBTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
@@ -1427,11 +1433,32 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 	if (_iconGGTexture) {
 		_iconGGTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
+	if (_iconIMGTexture) {
+		_iconIMGTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconINTTexture) {
+		_iconINTTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconM5Texture) {
+		_iconM5Texture->applyPaletteEffect(effectGrayscalePalette);
+	}
 	if (_iconMDTexture) {
 		_iconMDTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconNESTexture) {
 		_iconNESTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconNGPTexture) {
+		_iconNGPTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconPCETexture) {
+		_iconPCETexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconPLGTexture) {
+		_iconPLGTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconSGTexture) {
+		_iconSGTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconSMSTexture) {
 		_iconSMSTexture->applyPaletteEffect(effectGrayscalePalette);
@@ -1439,20 +1466,11 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 	if (_iconSNESTexture) {
 		_iconSNESTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
-	if (_iconPLGTexture) {
-		_iconPLGTexture->applyPaletteEffect(effectGrayscalePalette);
-	}
-	if (_iconA26Texture) {
-		_iconA26Texture->applyPaletteEffect(effectGrayscalePalette);
-	}
-	if (_iconINTTexture) {
-		_iconINTTexture->applyPaletteEffect(effectGrayscalePalette);
-	}
-	if (_iconPCETexture) {
-		_iconPCETexture->applyPaletteEffect(effectGrayscalePalette);
-	}
 	if (_iconUnknownTexture) {
 		_iconUnknownTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconWSTexture) {
+		_iconWSTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 }
 
