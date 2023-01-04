@@ -53,15 +53,49 @@ private:
 	// int _photoRenderY;
 	// int _photoRenderX;
 
-	bool _startTextUserPalette;
-	bool _startBorderUserPalette;
+	bool _bipsUserPalette;
+	bool _boxUserPalette;
+	bool _boxEmptyUserPalette;
+	bool _boxFullUserPalette;
+	bool _braceUserPalette;
+	bool _bubbleUserPalette;
 	bool _buttonArrowUserPalette;
-	bool _movingArrowUserPalette;
-	bool _launchDotsUserPalette;
+	bool _cornerButtonUserPalette;
+	bool _cursorUserPalette;
 	bool _dialogBoxUserPalette;
+	bool _folderUserPalette;
+	bool _launchDotsUserPalette;
+	bool _movingArrowUserPalette;
+	bool _progressUserPalette;
+	bool _scrollWindowUserPalette;
+	bool _smallCartUserPalette;
+	bool _startBorderUserPalette;
+	bool _startTextUserPalette;
+	bool _wirelessIconsUserPalette;
+	bool _iconA26UserPalette;
+	bool _iconCOLUserPalette;
+	bool _iconGBUserPalette;
+	bool _iconGBAUserPalette;
+	bool _iconGBAModeUserPalette;
+	bool _iconGGUserPalette;
+	bool _iconIMGUserPalette;
+	bool _iconINTUserPalette;
+	bool _iconM5UserPalette;
+	bool _iconManualUserPalette;
+	bool _iconMDUserPalette;
+	bool _iconNESUserPalette;
+	bool _iconNGPUserPalette;
+	bool _iconPCEUserPalette;
+	bool _iconPLGUserPalette;
+	bool _iconSettingsUserPalette;
+	bool _iconSGUserPalette;
+	bool _iconSMSUserPalette;
+	bool _iconSNESUserPalette;
+	bool _iconUnknownUserPalette;
+	bool _iconWSUserPalette;
 	bool _usernameUserPalette;
-	bool _purpleBatteryAvailable;
 
+	bool _purpleBatteryAvailable;
 	bool _renderPhoto;
 	bool _darkLoading;
 	bool _playStartupJingle;
@@ -141,15 +175,49 @@ public:
 	// int photoRenderY() const { return _photoRenderY; }
 	// int photoRenderX() const { return _photoRenderX; }
 
-	bool startTextUserPalette() const { return _startTextUserPalette; }
-	bool startBorderUserPalette() const { return _startBorderUserPalette; }
+	bool bipsUserPalette() const { return _bipsUserPalette; }
+	bool boxUserPalette() const { return _boxUserPalette; }
+	bool boxEmptyUserPalette() const { return _boxEmptyUserPalette; }
+	bool boxFullUserPalette() const { return _boxFullUserPalette; }
+	bool braceUserPalette() const { return _braceUserPalette; }
+	bool bubbleUserPalette() const { return _bubbleUserPalette; }
 	bool buttonArrowUserPalette() const { return _buttonArrowUserPalette; }
-	bool movingArrowUserPalette() const { return _movingArrowUserPalette; }
-	bool launchDotsUserPalette() const { return _launchDotsUserPalette; }
+	bool cornerButtonUserPalette() const { return _cornerButtonUserPalette; }
+	bool cursorUserPalette() const { return _cursorUserPalette; }
 	bool dialogBoxUserPalette() const { return _dialogBoxUserPalette; }
+	bool folderUserPalette() const { return _folderUserPalette; }
+	bool launchDotsUserPalette() const { return _launchDotsUserPalette; }
+	bool movingArrowUserPalette() const { return _movingArrowUserPalette; }
+	bool progressUserPalette() const { return _progressUserPalette; }
+	bool scrollWindowUserPalette() const { return _scrollWindowUserPalette; }
+	bool smallCartUserPalette() const { return _smallCartUserPalette; }
+	bool startBorderUserPalette() const { return _startBorderUserPalette; }
+	bool startTextUserPalette() const { return _startTextUserPalette; }
+	bool wirelessIconsUserPalette() const { return _wirelessIconsUserPalette; }
+	bool iconA26UserPalette() const { return _iconA26UserPalette; }
+	bool iconCOLUserPalette() const { return _iconCOLUserPalette; }
+	bool iconGBUserPalette() const { return _iconGBUserPalette; }
+	bool iconGBAUserPalette() const { return _iconGBAUserPalette; }
+	bool iconGBAModeUserPalette() const { return _iconGBAModeUserPalette; }
+	bool iconGGUserPalette() const { return _iconGGUserPalette; }
+	bool iconIMGUserPalette() const { return _iconIMGUserPalette; }
+	bool iconINTUserPalette() const { return _iconINTUserPalette; }
+	bool iconM5UserPalette() const { return _iconM5UserPalette; }
+	bool iconManualUserPalette() const { return _iconManualUserPalette; }
+	bool iconMDUserPalette() const { return _iconMDUserPalette; }
+	bool iconNESUserPalette() const { return _iconNESUserPalette; }
+	bool iconNGPUserPalette() const { return _iconNGPUserPalette; }
+	bool iconPCEUserPalette() const { return _iconPCEUserPalette; }
+	bool iconPLGUserPalette() const { return _iconPLGUserPalette; }
+	bool iconSettingsUserPalette() const { return _iconSettingsUserPalette; }
+	bool iconSGUserPalette() const { return _iconSGUserPalette; }
+	bool iconSMSUserPalette() const { return _iconSMSUserPalette; }
+	bool iconSNESUserPalette() const { return _iconSNESUserPalette; }
+	bool iconUnknownUserPalette() const { return _iconUnknownUserPalette; }
+	bool iconWSUserPalette() const { return _iconWSUserPalette; }
 	bool usernameUserPalette() const { return _usernameUserPalette; }
-	bool purpleBatteryAvailable() const { return _purpleBatteryAvailable; }
 
+	bool purpleBatteryAvailable() const { return _purpleBatteryAvailable; }
 	bool renderPhoto() const { return _renderPhoto; }
 	bool darkLoading() const { return _darkLoading; }
 
