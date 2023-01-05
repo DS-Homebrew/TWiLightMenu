@@ -4,6 +4,8 @@
 #include "common/lodepng.h"
 #include <math.h>
 
+extern bool useTwlCfg;
+
 Texture::Texture(const std::string &filePath, const std::string &fallback)
 	: _paletteLength(0), _texLength(0), _texCmpLength(0), _texHeight(0), _texWidth(0), _type(TextureType::Unknown) {
 	std::string pngPath;
@@ -238,6 +240,26 @@ void Texture::applyPaletteEffect(Texture::PaletteEffect effect) {
 void Texture::applyBitmapEffect(Texture::BitmapEffect effect) {
 	if (_type & TextureType::Bitmap) {
 		effect(_texture.get(), _texLength);
+	}
+}
+
+void Texture::applyUserPaletteFile(const std::string &filePath, Texture::PaletteEffect fallbackEffect) {
+	if (_type & TextureType::Paletted) {
+		FILE *file = fopen(filePath.c_str(), "rb");
+		if (file) {
+			u16 *pal = _palette.get();
+			int offset = ((useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme) * _paletteLength);
+			fseek(file, sizeof(u16) * offset, SEEK_SET);
+			fread(pal, sizeof(u16), _paletteLength, file);
+			fclose(file);
+			// swap palette bytes
+			for (int i = 0; i < _paletteLength; i++) {
+				pal[i] = (pal[i] << 8 & 0xFF00) | pal[i] >> 8;
+			}
+		}
+		else {
+			fallbackEffect(_palette.get(), _paletteLength);
+		}
 	}
 }
 

@@ -61,6 +61,7 @@ class Texture
 
 		void applyPaletteEffect(PaletteEffect effect);
 		void applyBitmapEffect(BitmapEffect effect);
+		void applyUserPaletteFile(const std::string &filePath, PaletteEffect fallbackEffect);
 
 		static u16 bmpToDS(u16 val);
 

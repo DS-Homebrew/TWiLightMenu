@@ -443,46 +443,80 @@ void ThemeTextures::loadDSiTheme() {
 	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
 
 	// Apply the DSi palette shifts
-	if (tc().bipsUserPalette()) _bipsTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().boxUserPalette()) _boxTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	// if (tc().boxEmptyUserPalette()) _boxEmptyTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	// if (tc().boxFullUserPalette()) _boxFullTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().braceUserPalette()) _braceTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().bubbleUserPalette()) _bubbleTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().buttonArrowUserPalette()) _buttonArrowTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().cornerButtonUserPalette()) _cornerButtonTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	// if (tc().cursorUserPalette()) _startBorderTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().dialogBoxUserPalette()) _dialogBoxTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().folderUserPalette()) _folderTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().launchDotsUserPalette()) _launchDotTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().movingArrowUserPalette()) _movingArrowTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().progressUserPalette()) _progressTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().scrollWindowUserPalette()) _scrollWindowTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().smallCartUserPalette()) _smallCartTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().startBorderUserPalette()) _startBorderTexture->applyPaletteEffect(effectDSiStartBorderPalettes);
-	if (tc().startTextUserPalette()) _startTextTexture->applyPaletteEffect(effectDSiStartTextPalettes);
-	if (tc().wirelessIconsUserPalette()) _wirelessIconsTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconA26UserPalette()) _iconA26Texture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconCOLUserPalette()) _iconCOLTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconGBUserPalette()) _iconGBTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconGBAUserPalette()) _iconGBATexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconGBAModeUserPalette()) _iconGBAModeTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconGGUserPalette()) _iconGGTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconIMGUserPalette()) _iconIMGTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconINTUserPalette()) _iconINTTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconM5UserPalette()) _iconM5Texture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconManualUserPalette()) _manualIconTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconMDUserPalette()) _iconMDTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconNESUserPalette()) _iconNESTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconNGPUserPalette()) _iconNGPTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconPCEUserPalette()) _iconPCETexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconPLGUserPalette()) _iconPLGTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconSettingsUserPalette()) _settingsIconTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconSGUserPalette()) _iconSGTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconSMSUserPalette()) _iconSMSTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconSNESUserPalette()) _iconSNESTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconUnknownUserPalette()) _iconUnknownTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
-	if (tc().iconWSUserPalette()) _iconWSTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
+	if (tc().bipsUserPalette())
+		_bipsTexture->applyUserPaletteFile(TFN_PALETTE_BIPS, effectDSiArrowButtonPalettes);
+	if (tc().boxUserPalette())
+		_boxTexture->applyUserPaletteFile(TFN_PALETTE_BOX, effectDSiArrowButtonPalettes);
+	if (tc().braceUserPalette())
+		_braceTexture->applyUserPaletteFile(TFN_PALETTE_BRACE, effectDSiArrowButtonPalettes);
+	if (tc().bubbleUserPalette())
+		_bubbleTexture->applyUserPaletteFile(TFN_PALETTE_BUBBLE, effectDSiArrowButtonPalettes);
+	if (tc().buttonArrowUserPalette())
+		_buttonArrowTexture->applyUserPaletteFile(TFN_PALETTE_BUTTON_ARROW, effectDSiArrowButtonPalettes);
+	if (tc().cornerButtonUserPalette())
+		_cornerButtonTexture->applyUserPaletteFile(TFN_PALETTE_CORNERBUTTON, effectDSiArrowButtonPalettes);
+	if (tc().dialogBoxUserPalette())
+		_dialogBoxTexture->applyUserPaletteFile(TFN_PALETTE_DIALOGBOX, effectDSiArrowButtonPalettes);
+	if (tc().folderUserPalette())
+		_folderTexture->applyUserPaletteFile(TFN_PALETTE_FOLDER, effectDSiArrowButtonPalettes);
+	if (tc().launchDotsUserPalette())
+		_launchDotTexture->applyUserPaletteFile(TFN_PALETTE_LAUNCH_DOT, effectDSiArrowButtonPalettes);
+	if (tc().movingArrowUserPalette())
+		_movingArrowTexture->applyUserPaletteFile(TFN_PALETTE_MOVING_ARROW, effectDSiArrowButtonPalettes);
+	if (tc().progressUserPalette())
+		_progressTexture->applyUserPaletteFile(TFN_PALETTE_PROGRESS, effectDSiArrowButtonPalettes);
+	if (tc().scrollWindowUserPalette())
+		_scrollWindowTexture->applyUserPaletteFile(TFN_PALETTE_SCROLL_WINDOW, effectDSiArrowButtonPalettes);
+	if (tc().smallCartUserPalette())
+		_smallCartTexture->applyUserPaletteFile(TFN_PALETTE_SMALL_CART, effectDSiArrowButtonPalettes);
+	if (tc().startBorderUserPalette())
+		_startBorderTexture->applyUserPaletteFile(TFN_PALETTE_START_BORDER, effectDSiStartBorderPalettes);
+	if (tc().startTextUserPalette())
+		_startTextTexture->applyUserPaletteFile(TFN_PALETTE_START_TEXT, effectDSiStartTextPalettes);
+	if (tc().wirelessIconsUserPalette())
+		_wirelessIconsTexture->applyUserPaletteFile(TFN_PALETTE_WIRELESSICONS, effectDSiArrowButtonPalettes);
+	if (tc().iconA26UserPalette())
+		_iconA26Texture->applyUserPaletteFile(TFN_PALETTE_ICON_A26, effectDSiArrowButtonPalettes);
+	if (tc().iconCOLUserPalette())
+		_iconCOLTexture->applyUserPaletteFile(TFN_PALETTE_ICON_COL, effectDSiArrowButtonPalettes);
+	if (tc().iconGBUserPalette())
+		_iconGBTexture->applyUserPaletteFile(TFN_PALETTE_ICON_GB, effectDSiArrowButtonPalettes);
+	if (tc().iconGBAUserPalette())
+		_iconGBATexture->applyUserPaletteFile(TFN_PALETTE_ICON_GBA, effectDSiArrowButtonPalettes);
+	if (tc().iconGBAModeUserPalette())
+		_iconGBAModeTexture->applyUserPaletteFile(TFN_PALETTE_ICON_GBAMODE, effectDSiArrowButtonPalettes);
+	if (tc().iconGGUserPalette())
+		_iconGGTexture->applyUserPaletteFile(TFN_PALETTE_ICON_GG, effectDSiArrowButtonPalettes);
+	if (tc().iconIMGUserPalette())
+		_iconIMGTexture->applyUserPaletteFile(TFN_PALETTE_ICON_IMG, effectDSiArrowButtonPalettes);
+	if (tc().iconINTUserPalette())
+		_iconINTTexture->applyUserPaletteFile(TFN_PALETTE_ICON_INT, effectDSiArrowButtonPalettes);
+	if (tc().iconM5UserPalette())
+		_iconM5Texture->applyUserPaletteFile(TFN_PALETTE_ICON_M5, effectDSiArrowButtonPalettes);
+	if (tc().iconManualUserPalette())
+		_manualIconTexture->applyUserPaletteFile(TFN_PALETTE_ICON_MANUAL, effectDSiArrowButtonPalettes);
+	if (tc().iconMDUserPalette())
+		_iconMDTexture->applyUserPaletteFile(TFN_PALETTE_ICON_MD, effectDSiArrowButtonPalettes);
+	if (tc().iconNESUserPalette())
+		_iconNESTexture->applyUserPaletteFile(TFN_PALETTE_ICON_NES, effectDSiArrowButtonPalettes);
+	if (tc().iconNGPUserPalette())
+		_iconNGPTexture->applyUserPaletteFile(TFN_PALETTE_ICON_NGP, effectDSiArrowButtonPalettes);
+	if (tc().iconPCEUserPalette())
+		_iconPCETexture->applyUserPaletteFile(TFN_PALETTE_ICON_PCE, effectDSiArrowButtonPalettes);
+	if (tc().iconPLGUserPalette())
+		_iconPLGTexture->applyUserPaletteFile(TFN_PALETTE_ICON_PLG, effectDSiArrowButtonPalettes);
+	if (tc().iconSettingsUserPalette())
+		_settingsIconTexture->applyUserPaletteFile(TFN_PALETTE_ICON_SETTINGS, effectDSiArrowButtonPalettes);
+	if (tc().iconSGUserPalette())
+		_iconSGTexture->applyUserPaletteFile(TFN_PALETTE_ICON_SG, effectDSiArrowButtonPalettes);
+	if (tc().iconSMSUserPalette())
+		_iconSMSTexture->applyUserPaletteFile(TFN_PALETTE_ICON_SMS, effectDSiArrowButtonPalettes);
+	if (tc().iconSNESUserPalette())
+		_iconSNESTexture->applyUserPaletteFile(TFN_PALETTE_ICON_SNES, effectDSiArrowButtonPalettes);
+	if (tc().iconUnknownUserPalette())
+		_iconUnknownTexture->applyUserPaletteFile(TFN_PALETTE_ICON_UNK, effectDSiArrowButtonPalettes);
+	if (tc().iconWSUserPalette())
+		_iconWSTexture->applyUserPaletteFile(TFN_PALETTE_ICON_WS, effectDSiArrowButtonPalettes);
 
 	if (ms().colorMode == 1) {
 		applyGrayscaleToAllGrfTextures();
