@@ -78,6 +78,7 @@ public:
 	void clearTopScreen();
 	static void videoSetup();
 private:
+	void applyUserPaletteToAllGrfTextures();
 	void applyGrayscaleToAllGrfTextures();
 
 	void loadBubbleImage(const Texture& tex, int sprW, int sprH);

@@ -128,7 +128,6 @@ private:
 
 public:
 	ThemeConfig();
-	ThemeConfig(bool _3dsDefaults);
 	virtual ~ThemeConfig() = default;
 
 	void loadConfig();

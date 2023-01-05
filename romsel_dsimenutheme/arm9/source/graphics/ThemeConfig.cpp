@@ -7,10 +7,8 @@
 #include <nds.h>
 #include <string>
 
-ThemeConfig::ThemeConfig() : ThemeConfig(false) {}
-
 // Magic numbers derived from default dark theme
-ThemeConfig::ThemeConfig(bool _3dsDefaults)
+ThemeConfig::ThemeConfig()
 	: _startBorderRenderY(81), _startBorderSpriteW(32), _startBorderSpriteH(80), _startTextRenderY(143),
 	_titleboxRenderY(85), _titleboxMaxLines(4), _titleboxTextY(30), _titleboxTextW(240), _titleboxTextLarge(true),
 	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11),
@@ -38,21 +36,9 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 	_fontPaletteUsername1(0x0000), _fontPaletteUsername2(0xDEF7), _fontPaletteUsername3(0xC631), _fontPaletteUsername4(0xA108),
 	_fontPaletteDateTime1(0x0000), _fontPaletteDateTime2(0xDEF7), _fontPaletteDateTime3(0xC631), _fontPaletteDateTime4(0xA108)
 {
-	// hack to reassign 3ds defaults
-	if (_3dsDefaults) {
-		_startBorderRenderY = 92;
-		_startBorderSpriteH = 64;
-		_titleboxRenderY = 96;
-		_bubbleTipRenderX = 125;
-		_bubbleTipRenderY = 98;
-		_bubbleTipSpriteH = 7;
-		_bubbleTipSpriteW = 7;
-		_renderPhoto = false;
-
-		_titleboxMaxLines = 3;
-		_titleboxTextY = 55;
-		_titleboxTextW = 200;
-		_titleboxTextLarge = false;
+	if (ms().theme == TWLSettings::ETheme3DS) {
+		_startBorderUserPalette = false;
+		_dialogBoxUserPalette = false;
 	}
 
 	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
