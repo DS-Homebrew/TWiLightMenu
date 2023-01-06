@@ -472,7 +472,8 @@ void perGameSettings (std::string filename) {
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
 	 	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)))*/
+		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
+    	 || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)))*/
 	|| !ms().secondaryDevice) && !isHomebrew && !isDSiWare
 	&& memcmp(game_TID, "HND", 3) != 0
 	&& memcmp(game_TID, "HNE", 3) != 0);

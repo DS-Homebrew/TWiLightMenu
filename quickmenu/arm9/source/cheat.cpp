@@ -61,7 +61,8 @@ bool CheatCodelist::parse(const std::string& aFileName)
 		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
 	   || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
-     || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)) {
+     || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
+     || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)) {
 			usrcheatPath = "fat:/_wfwd/cheats/usrcheat.dat";
 		}
 	}
