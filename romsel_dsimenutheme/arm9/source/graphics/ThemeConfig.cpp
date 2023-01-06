@@ -19,7 +19,7 @@ ThemeConfig::ThemeConfig()
 	_bipsUserPalette(false), _boxUserPalette(false), _boxEmptyUserPalette(false), _boxFullUserPalette(false),
 	_braceUserPalette(false), _bubbleUserPalette(false), _buttonArrowUserPalette(true), _cornerButtonUserPalette(false),
 	_cursorUserPalette(false), _dialogBoxUserPalette(true), _folderUserPalette(false), _launchDotsUserPalette(true),
-	_movingArrowUserPalette(true), _progressUserPalette(false), _scrollWindowUserPalette(false), _smallCartUserPalette(false),
+	_movingArrowUserPalette(true), _progressUserPalette(true), _scrollWindowUserPalette(false), _smallCartUserPalette(false),
 	_startBorderUserPalette(true), _startTextUserPalette(true), _wirelessIconsUserPalette(false),
 	_iconA26UserPalette(false), _iconCOLUserPalette(false), _iconGBUserPalette(false), _iconGBAUserPalette(false),
 	_iconGBAModeUserPalette(false),	_iconGGUserPalette(false), _iconIMGUserPalette(false), _iconINTUserPalette(false),
@@ -27,8 +27,9 @@ ThemeConfig::ThemeConfig()
 	_iconNGPUserPalette(false), _iconPCEUserPalette(false), _iconPLGUserPalette(false), _iconSettingsUserPalette(false),
 	_iconSGUserPalette(false), _iconSMSUserPalette(false), _iconSNESUserPalette(false), _iconUnknownUserPalette(false),
 	_iconWSUserPalette(false),
-	_usernameUserPalette(true),
+	_usernameUserPalette(true), _progressBarUserPalette(true),
 	_purpleBatteryAvailable(false), _renderPhoto(true), _darkLoading(false), _playStartupJingle(false), _startupJingleDelayAdjust(0),
+	_progressBarColor(0x7C00),
 	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108),
 	_fontPaletteTitlebox1(0x0000), _fontPaletteTitlebox2(0xDEF7), _fontPaletteTitlebox3(0xC631), _fontPaletteTitlebox4(0xA108),
 	_fontPaletteDialog1(0x0000), _fontPaletteDialog2(0xDEF7), _fontPaletteDialog3(0xC631), _fontPaletteDialog4(0xA108),
@@ -143,6 +144,7 @@ void ThemeConfig::loadConfig() {
 	_iconWSUserPalette = getInt(themeConfig, "IconWSUserPalette", _iconWSUserPalette);
 
 	_usernameUserPalette = getInt(themeConfig, "UsernameUserPalette", _usernameUserPalette);
+	_progressBarUserPalette = getInt(themeConfig, "ProgressBarUserPalette", _progressBarUserPalette);
 
 	_purpleBatteryAvailable = getInt(themeConfig, "PurpleBatteryAvailable", _purpleBatteryAvailable);
 	_rotatingCubesRenderY = getInt(themeConfig, "RotatingCubesRenderY", _rotatingCubesRenderY);
@@ -151,6 +153,7 @@ void ThemeConfig::loadConfig() {
 
 	_playStartupJingle = getInt(themeConfig, "PlayStartupJingle", _playStartupJingle);
 	_startupJingleDelayAdjust = getInt(themeConfig, "StartupJingleDelayAdjust", _startupJingleDelayAdjust);
+	_progressBarColor = getInt(themeConfig, "ProgressBarColor", _progressBarColor);
 
 	_fontPalette1 = getInt(themeConfig, "FontPalette1", _fontPalette1);
 	_fontPalette2 = getInt(themeConfig, "FontPalette2", _fontPalette2);

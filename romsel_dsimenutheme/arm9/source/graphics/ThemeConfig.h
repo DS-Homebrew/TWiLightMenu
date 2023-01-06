@@ -94,12 +94,14 @@ private:
 	bool _iconUnknownUserPalette;
 	bool _iconWSUserPalette;
 	bool _usernameUserPalette;
-
+	bool _progressBarUserPalette;
+	
 	bool _purpleBatteryAvailable;
 	bool _renderPhoto;
 	bool _darkLoading;
 	bool _playStartupJingle;
 	int _startupJingleDelayAdjust;
+	u16 _progressBarColor;
 
 	u16 _fontPalette1;
 	u16 _fontPalette2;
@@ -215,6 +217,7 @@ public:
 	bool iconUnknownUserPalette() const { return _iconUnknownUserPalette; }
 	bool iconWSUserPalette() const { return _iconWSUserPalette; }
 	bool usernameUserPalette() const { return _usernameUserPalette; }
+	bool progressBarUserPalette() const { return _progressBarUserPalette; }
 
 	bool purpleBatteryAvailable() const { return _purpleBatteryAvailable; }
 	bool renderPhoto() const { return _renderPhoto; }
@@ -222,6 +225,7 @@ public:
 
 	bool playStartupJingle() const { return _playStartupJingle; }
 	int startupJingleDelayAdjust() const { return _startupJingleDelayAdjust; }
+	u16 progressBarColor() const { return _progressBarColor; }
 
 	u16 fontPalette1() const { return _fontPalette1; }
 	u16 fontPalette2() const { return _fontPalette2; }

@@ -45,6 +45,7 @@
 #include "launchDots.h"
 #include "queueControl.h"
 #include "sound.h"
+#include "startborderpal.h"
 //#include "ndma.h"
 #include "ThemeConfig.h"
 #include "themefilenames.h"
@@ -139,6 +140,7 @@ bool showRshoulder = false;
 bool showProgressIcon = false;
 bool showProgressBar = false;
 int progressBarLength = 0;
+extern bool useTwlCfg;
 
 int progressAnimNum = 0;
 int progressAnimDelay = 0;
@@ -1000,7 +1002,8 @@ void vBlankHandler() {
 				barXpos += ms().rtl() ? -12 : 12;
 				barYpos += 12;
 			}
-			int fillColor = ms().colorMode == 1 ? convertVramColorToGrayscale(RGB15(0, 0, 31)) : RGB15(0, 0, 31);
+			int fillColor = tc().progressBarUserPalette() ? progressBarColors[(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme)] : tc().progressBarColor();
+			if (ms().colorMode == 1) fillColor = convertVramColorToGrayscale(fillColor);
 			if (ms().rtl()) {
 				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
 				if (progressBarLength > 0) {
