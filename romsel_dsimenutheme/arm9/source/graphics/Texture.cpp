@@ -4,6 +4,8 @@
 #include "common/lodepng.h"
 #include <math.h>
 
+extern bool useTwlCfg;
+
 Texture::Texture(const std::string &filePath, const std::string &fallback)
 	: _paletteLength(0), _texLength(0), _texCmpLength(0), _texHeight(0), _texWidth(0), _type(TextureType::Unknown) {
 	std::string pngPath;
@@ -241,6 +243,26 @@ void Texture::applyBitmapEffect(Texture::BitmapEffect effect) {
 	}
 }
 
+void Texture::applyUserPaletteFile(const std::string &filePath, Texture::PaletteEffect fallbackEffect) {
+	if (_type & TextureType::Paletted) {
+		FILE *file = fopen(filePath.c_str(), "rb");
+		if (file) {
+			u16 *pal = _palette.get();
+			int offset = ((useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme) * _paletteLength);
+			fseek(file, sizeof(u16) * offset, SEEK_SET);
+			fread(pal, sizeof(u16), _paletteLength, file);
+			fclose(file);
+			// swap palette bytes
+			for (int i = 0; i < _paletteLength; i++) {
+				pal[i] = (pal[i] << 8 & 0xFF00) | pal[i] >> 8;
+			}
+		}
+		else {
+			fallbackEffect(_palette.get(), _paletteLength);
+		}
+	}
+}
+
 u16 Texture::bmpToDS(u16 val) {
 	// Return 0 for #ff00ff
 	if ((val & 0x7FFF) == 0x7C1F)
@@ -265,6 +287,13 @@ u16 Texture::bmpToDS(u16 val) {
 		return ((val >> 10) & 31) | (val & (31 << 5)) | ((val & 31) << 10) | BIT(15);
 		// return ((val >> 10) & 31) | ((val >> 5) & (31 - 3 * blfLevel)) << 5 | (val & (31 - 6 * blfLevel)) << 10 | BIT(15);
 	}
+}
+
+bool Texture::exists(const std::string &filePath) {
+	for (const char *extension : extensions) {
+		if (access((filePath + extension).c_str(), F_OK) == 0) return true;
+	}
+	return false;
 }
 
 void Texture::copy(u16 *dst, bool vram) const {

@@ -7,10 +7,8 @@
 #include <nds.h>
 #include <string>
 
-ThemeConfig::ThemeConfig() : ThemeConfig(false) {}
-
 // Magic numbers derived from default dark theme
-ThemeConfig::ThemeConfig(bool _3dsDefaults)
+ThemeConfig::ThemeConfig()
 	: _startBorderRenderY(81), _startBorderSpriteW(32), _startBorderSpriteH(80), _startTextRenderY(143),
 	_titleboxRenderY(85), _titleboxMaxLines(4), _titleboxTextY(30), _titleboxTextW(240), _titleboxTextLarge(true),
 	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11),
@@ -18,9 +16,20 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 	_volumeRenderY(4), _volumeRenderX(16), _batteryRenderY(5), _batteryRenderX(235), _usernameRenderY(3), _usernameRenderX(28),
 	_usernameRenderXDS(4), _dateRenderY(5), _dateRenderX(162), _timeRenderY(5), _timeRenderX(200),
 	// _photoRenderY(24), _photoRenderX(179),
-	_startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true), _movingArrowUserPalette(true),
-	_launchDotsUserPalette(true), _dialogBoxUserPalette(true), _usernameUserPalette(true),
+	_bipsUserPalette(false), _boxUserPalette(false), _boxEmptyUserPalette(false), _boxFullUserPalette(false),
+	_braceUserPalette(false), _bubbleUserPalette(false), _buttonArrowUserPalette(true), _cornerButtonUserPalette(false),
+	_cursorUserPalette(false), _dialogBoxUserPalette(true), _folderUserPalette(false), _launchDotsUserPalette(true),
+	_movingArrowUserPalette(true), _progressUserPalette(true), _scrollWindowUserPalette(false), _smallCartUserPalette(false),
+	_startBorderUserPalette(true), _startTextUserPalette(true), _wirelessIconsUserPalette(false),
+	_iconA26UserPalette(false), _iconCOLUserPalette(false), _iconGBUserPalette(false), _iconGBAUserPalette(false),
+	_iconGBAModeUserPalette(false),	_iconGGUserPalette(false), _iconIMGUserPalette(false), _iconINTUserPalette(false),
+	_iconM5UserPalette(false), _iconManualUserPalette(false), _iconMDUserPalette(false), _iconNESUserPalette(false),
+	_iconNGPUserPalette(false), _iconPCEUserPalette(false), _iconPLGUserPalette(false), _iconSettingsUserPalette(false),
+	_iconSGUserPalette(false), _iconSMSUserPalette(false), _iconSNESUserPalette(false), _iconUnknownUserPalette(false),
+	_iconWSUserPalette(false),
+	_usernameUserPalette(true), _progressBarUserPalette(true),
 	_purpleBatteryAvailable(false), _renderPhoto(true), _darkLoading(false), _playStartupJingle(false), _startupJingleDelayAdjust(0),
+	_progressBarColor(0x7C00),
 	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108),
 	_fontPaletteTitlebox1(0x0000), _fontPaletteTitlebox2(0xDEF7), _fontPaletteTitlebox3(0xC631), _fontPaletteTitlebox4(0xA108),
 	_fontPaletteDialog1(0x0000), _fontPaletteDialog2(0xDEF7), _fontPaletteDialog3(0xC631), _fontPaletteDialog4(0xA108),
@@ -28,21 +37,9 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 	_fontPaletteUsername1(0x0000), _fontPaletteUsername2(0xDEF7), _fontPaletteUsername3(0xC631), _fontPaletteUsername4(0xA108),
 	_fontPaletteDateTime1(0x0000), _fontPaletteDateTime2(0xDEF7), _fontPaletteDateTime3(0xC631), _fontPaletteDateTime4(0xA108)
 {
-	// hack to reassign 3ds defaults
-	if (_3dsDefaults) {
-		_startBorderRenderY = 92;
-		_startBorderSpriteH = 64;
-		_titleboxRenderY = 96;
-		_bubbleTipRenderX = 125;
-		_bubbleTipRenderY = 98;
-		_bubbleTipSpriteH = 7;
-		_bubbleTipSpriteW = 7;
-		_renderPhoto = false;
-
-		_titleboxMaxLines = 3;
-		_titleboxTextY = 55;
-		_titleboxTextW = 200;
-		_titleboxTextLarge = false;
+	if (ms().theme == TWLSettings::ETheme3DS) {
+		_startBorderUserPalette = false;
+		_dialogBoxUserPalette = false;
 	}
 
 	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
@@ -104,13 +101,51 @@ void ThemeConfig::loadConfig() {
 	_timeRenderY = getInt(themeConfig, "TimeRenderY", _timeRenderY);
 	_timeRenderX = getInt(themeConfig, "TimeRenderX", _timeRenderX);
 
-	_startTextUserPalette = getInt(themeConfig, "StartTextUserPalette", _startTextUserPalette);
-	_startBorderUserPalette = getInt(themeConfig, "StartBorderUserPalette", _startBorderUserPalette);
+	_bipsUserPalette = getInt(themeConfig, "BipsUserPalette", _bipsUserPalette);
+	_boxUserPalette = getInt(themeConfig, "BoxUserPalette", _boxUserPalette);
+	_boxEmptyUserPalette = getInt(themeConfig, "BoxEmptyUserPalette", _boxEmptyUserPalette);
+	_boxFullUserPalette = getInt(themeConfig, "BoxFullUserPalette", _boxFullUserPalette);
+	_braceUserPalette = getInt(themeConfig, "BraceUserPalette", _braceUserPalette);
+	_bubbleUserPalette = getInt(themeConfig, "BubbleUserPalette", _bubbleUserPalette);
 	_buttonArrowUserPalette = getInt(themeConfig, "ButtonArrowUserPalette", _buttonArrowUserPalette);
-	_movingArrowUserPalette = getInt(themeConfig, "MovingArrowUserPalette", _movingArrowUserPalette);
-	_launchDotsUserPalette = getInt(themeConfig, "LaunchDotsUserPalette", _launchDotsUserPalette);
+	_cornerButtonUserPalette = getInt(themeConfig, "CornerButtonUserPalette", _cornerButtonUserPalette);
+	_cursorUserPalette = getInt(themeConfig, "CursorUserPalette", _cursorUserPalette);
 	_dialogBoxUserPalette = getInt(themeConfig, "DialogBoxUserPalette", _dialogBoxUserPalette);
+	_folderUserPalette = getInt(themeConfig, "FolderUserPalette", _folderUserPalette);
+	_launchDotsUserPalette = getInt(themeConfig, "LaunchDotsUserPalette", _launchDotsUserPalette);
+	_movingArrowUserPalette = getInt(themeConfig, "MovingArrowUserPalette", _movingArrowUserPalette);
+	_progressUserPalette = getInt(themeConfig, "ProgressUserPalette", _progressUserPalette);
+	_scrollWindowUserPalette = getInt(themeConfig, "ScrollWindowUserPalette", _scrollWindowUserPalette);
+	_smallCartUserPalette = getInt(themeConfig, "SmallCartUserPalette", _smallCartUserPalette);
+	_startBorderUserPalette = getInt(themeConfig, "StartBorderUserPalette", _startBorderUserPalette);
+	_startTextUserPalette = getInt(themeConfig, "StartTextUserPalette", _startTextUserPalette);
+	_wirelessIconsUserPalette = getInt(themeConfig, "WirelessIconsUserPalette", _wirelessIconsUserPalette);
+
+	_iconA26UserPalette = getInt(themeConfig, "IconA26UserPalette", _iconA26UserPalette);
+	_iconCOLUserPalette = getInt(themeConfig, "IconCOLUserPalette", _iconCOLUserPalette);
+	_iconGBUserPalette = getInt(themeConfig, "IconGBUserPalette", _iconGBUserPalette);
+	_iconGBAUserPalette = getInt(themeConfig, "IconGBAUserPalette", _iconGBAUserPalette);
+	_iconGBAModeUserPalette = getInt(themeConfig, "IconGBAModeUserPalette", _iconGBAModeUserPalette);
+	_iconGGUserPalette = getInt(themeConfig, "IconGGUserPalette", _iconGGUserPalette);
+	_iconIMGUserPalette = getInt(themeConfig, "IconIMGUserPalette", _iconIMGUserPalette);
+	_iconINTUserPalette = getInt(themeConfig, "IconINTUserPalette", _iconINTUserPalette);
+	_iconM5UserPalette = getInt(themeConfig, "IconM5UserPalette", _iconM5UserPalette);
+	_iconManualUserPalette = getInt(themeConfig, "IconManualUserPalette", _iconManualUserPalette);
+	_iconMDUserPalette = getInt(themeConfig, "IconMDUserPalette", _iconMDUserPalette);
+	_iconNESUserPalette = getInt(themeConfig, "IconNESUserPalette", _iconNESUserPalette);
+	_iconNGPUserPalette = getInt(themeConfig, "IconNGPUserPalette", _iconNGPUserPalette);
+	_iconPCEUserPalette = getInt(themeConfig, "IconPCEUserPalette", _iconPCEUserPalette);
+	_iconPLGUserPalette = getInt(themeConfig, "IconPLGUserPalette", _iconPLGUserPalette);
+	_iconSettingsUserPalette = getInt(themeConfig, "IconSettingsUserPalette", _iconSettingsUserPalette);
+	_iconSGUserPalette = getInt(themeConfig, "IconSGUserPalette", _iconSGUserPalette);
+	_iconSMSUserPalette = getInt(themeConfig, "IconSMSUserPalette", _iconSMSUserPalette);
+	_iconSNESUserPalette = getInt(themeConfig, "IconSNESUserPalette", _iconSNESUserPalette);
+	_iconUnknownUserPalette = getInt(themeConfig, "IconUnknownUserPalette", _iconUnknownUserPalette);
+	_iconWSUserPalette = getInt(themeConfig, "IconWSUserPalette", _iconWSUserPalette);
+
 	_usernameUserPalette = getInt(themeConfig, "UsernameUserPalette", _usernameUserPalette);
+	_progressBarUserPalette = getInt(themeConfig, "ProgressBarUserPalette", _progressBarUserPalette);
+
 	_purpleBatteryAvailable = getInt(themeConfig, "PurpleBatteryAvailable", _purpleBatteryAvailable);
 	_rotatingCubesRenderY = getInt(themeConfig, "RotatingCubesRenderY", _rotatingCubesRenderY);
 	_renderPhoto = getInt(themeConfig, "RenderPhoto", _renderPhoto);
@@ -118,6 +153,7 @@ void ThemeConfig::loadConfig() {
 
 	_playStartupJingle = getInt(themeConfig, "PlayStartupJingle", _playStartupJingle);
 	_startupJingleDelayAdjust = getInt(themeConfig, "StartupJingleDelayAdjust", _startupJingleDelayAdjust);
+	_progressBarColor = getInt(themeConfig, "ProgressBarColor", _progressBarColor);
 
 	_fontPalette1 = getInt(themeConfig, "FontPalette1", _fontPalette1);
 	_fontPalette2 = getInt(themeConfig, "FontPalette2", _fontPalette2);

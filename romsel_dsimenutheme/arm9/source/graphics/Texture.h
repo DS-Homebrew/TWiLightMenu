@@ -61,6 +61,7 @@ class Texture
 
 		void applyPaletteEffect(PaletteEffect effect);
 		void applyBitmapEffect(BitmapEffect effect);
+		void applyUserPaletteFile(const std::string &filePath, PaletteEffect fallbackEffect);
 
 		static u16 bmpToDS(u16 val);
 
@@ -76,6 +77,8 @@ class Texture
 		u32 texCmpLength() const { return _texCmpLength; };
 
 		TextureType type() const { return _type; }
+
+		static bool exists(const std::string &filePath);
 
 		void copy(u16 *dst, bool vram) const;
 
