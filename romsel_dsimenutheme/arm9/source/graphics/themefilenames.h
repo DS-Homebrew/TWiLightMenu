@@ -206,6 +206,8 @@
 #define TFN_PALETTE_START_TEXT          TFN_UI_DIRECTORY"/palettes/start_text.bin"
 #define TFN_PALETTE_WIRELESSICONS       TFN_UI_DIRECTORY"/palettes/wirelessicons.bin"
 
+#define TFN_PALETTE_USERNAME            TFN_UI_DIRECTORY"/palettes/username.bin"
+
 // We need fallbacks, because unlike akmenu, a bad GRF file could crash the theme
 // Leaving the user with no way to fix it well.
 

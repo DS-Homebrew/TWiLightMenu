@@ -104,15 +104,30 @@ void fontInit() {
 		tc().fontPaletteOverlay2(),
 		tc().fontPaletteOverlay3(),
 		tc().fontPaletteOverlay4(),
-		tc().usernameUserPalette() ? bmpPal_topSmallFont[themeColor][0] : tc().fontPaletteUsername1(),
-		tc().usernameUserPalette() ? bmpPal_topSmallFont[themeColor][1] : tc().fontPaletteUsername2(),
-		tc().usernameUserPalette() ? bmpPal_topSmallFont[themeColor][2] : tc().fontPaletteUsername3(),
-		tc().usernameUserPalette() ? bmpPal_topSmallFont[themeColor][3] : tc().fontPaletteUsername4(),
+		tc().fontPaletteUsername1(),
+		tc().fontPaletteUsername2(),
+		tc().fontPaletteUsername3(),
+		tc().fontPaletteUsername4(),
 		tc().fontPaletteDateTime1(),
 		tc().fontPaletteDateTime2(),
 		tc().fontPaletteDateTime3(),
 		tc().fontPaletteDateTime4(),
 	};
+	if (tc().usernameUserPalette()) {
+		FILE *file = fopen((TFN_PALETTE_USERNAME).c_str(), "rb");
+		if (file) {
+			fseek(file, themeColor * 4 * sizeof(u16), SEEK_SET);
+			fread(palette + 16, sizeof(u16), 4, file);
+			fclose(file);
+			// swap palette bytes
+			for (int i = 0; i < 4; i++) {
+				palette[16 + i] = (palette[16 + i] << 8 & 0xFF00) | palette[16 + i] >> 8;
+			}
+		}
+		else {
+			tonccpy(palette + 16, bmpPal_topSmallFont + themeColor, 4 * sizeof(u16));
+		}
+	}
 	if (ms().colorMode == 1) {
 		for (uint i = 0; i < sizeof(palette) / sizeof(palette[0]); i++) {
 			palette[i] = convertVramColorToGrayscale(palette[i]);
