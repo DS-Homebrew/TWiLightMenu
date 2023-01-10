@@ -1189,7 +1189,7 @@ bool checkForCompatibleGame(const char *filename) {
 	if (proceedToLaunch) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
-			if (memcmp(gameTid[CURPOS], incompatibleGameList[i], 3) == 0) {
+			if (memcmp(gameTid[CURPOS], incompatibleGameList[i], (incompatibleGameList[i][3] != 0 ? 4 : 3)) == 0) {
 				// Found match
 				proceedToLaunch = false;
 				break;

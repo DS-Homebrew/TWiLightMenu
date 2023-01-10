@@ -15,8 +15,9 @@ static const char incompatibleGameListFC[][4] = {
 	"YUT", // Ultimate Mortal Kombat
 };
 
-static const char incompatibleGameList[][4] = {
+static const char incompatibleGameList[][5] = {
 	"BO5", // Golden Sun: Dark Dawn
+	"YP2J", // Pokemon Ranger: Batonnage (Japan)
 };
 
 // DSiWare
