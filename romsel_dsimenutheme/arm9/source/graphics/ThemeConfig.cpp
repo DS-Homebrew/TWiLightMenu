@@ -28,8 +28,8 @@ ThemeConfig::ThemeConfig()
 	_iconSGUserPalette(false), _iconSMSUserPalette(false), _iconSNESUserPalette(false), _iconUnknownUserPalette(false),
 	_iconWSUserPalette(false),
 	_usernameUserPalette(true), _progressBarUserPalette(true),
-	_purpleBatteryAvailable(false), _renderPhoto(true), _darkLoading(false), _playStartupJingle(false), _startupJingleDelayAdjust(0),
-	_progressBarColor(0x7C00),
+	_purpleBatteryAvailable(false), _renderPhoto(true), _darkLoading(false), _useAlphaBlend(true),
+	_playStartupJingle(false), _startupJingleDelayAdjust(0), _progressBarColor(0x7C00),
 	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108),
 	_fontPaletteTitlebox1(0x0000), _fontPaletteTitlebox2(0xDEF7), _fontPaletteTitlebox3(0xC631), _fontPaletteTitlebox4(0xA108),
 	_fontPaletteDialog1(0x0000), _fontPaletteDialog2(0xDEF7), _fontPaletteDialog3(0xC631), _fontPaletteDialog4(0xA108),
@@ -150,6 +150,7 @@ void ThemeConfig::loadConfig() {
 	_rotatingCubesRenderY = getInt(themeConfig, "RotatingCubesRenderY", _rotatingCubesRenderY);
 	_renderPhoto = getInt(themeConfig, "RenderPhoto", _renderPhoto);
 	_darkLoading = getInt(themeConfig, "DarkLoading", _darkLoading);
+	_useAlphaBlend = getInt(themeConfig, "UseAlphaBlend", _useAlphaBlend);
 
 	_playStartupJingle = getInt(themeConfig, "PlayStartupJingle", _playStartupJingle);
 	_startupJingleDelayAdjust = getInt(themeConfig, "StartupJingleDelayAdjust", _startupJingleDelayAdjust);
