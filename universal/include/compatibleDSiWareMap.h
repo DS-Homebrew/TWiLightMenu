@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 204)
+// B4DS DSiWare Whitelist (Total: 205)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -106,6 +106,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K9S", // Motto Me de Unou o Kitaeru: DS Sokudoku Jutsu Light
 	"KMB", // Mr. Brain
 	"KDR", // Mr. Driller: Drill Till You Drop
+	"KG6", // Music on: Acoustic Guitar
 	"KQD", // Music on: Drums
 	"KIE", // Music on: Electric Guitar
 	"KK7", // Music on: Electronic Keyboard
