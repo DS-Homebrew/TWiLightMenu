@@ -1801,7 +1801,7 @@ int main(int argc, char **argv)
 	if (REG_SCFG_EXT != 0) {
 		const char* cachePath = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/16KBcache.bin" : "fat:/_nds/TWiLightMenu/16KBcache.bin";
 		if (!useTwlCfg && isDSiMode() && sdFound() && !is3DS) {
-			bool hiyaFound = (access("sd:/hiya.dsi", F_OK) == 0);
+			bool hiyaFound = (access("sd:/hiya.dsi", F_OK) == 0 && access("sd:/shared1/TWLCFG0.dat", F_OK) == 0 && access("sd:/sys/HWINFO_N.dat", F_OK) == 0 && !sys().arm7SCFGLocked());
 			if (!hiyaFound) {
 				// Mount NAND, if not using hiyaCFW
 				nandMounted = fatMountSimple("nand", &io_dsi_nand);
