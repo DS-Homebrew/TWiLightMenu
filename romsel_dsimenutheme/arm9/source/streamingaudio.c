@@ -4,12 +4,12 @@
 // Private members
 
 // The main stream buffer that is streamed to maxmod
-static volatile s16 streaming_buf_main[STREAMING_BUF_LENGTH] = {0}; 
+//static volatile s16 streaming_buf_main[STREAMING_BUF_LENGTH] = {0}; 
 
 /* The swap buffer, which is filled with bytes from the file
  * before it is streamed to maxmod.
  */
-static volatile s16 streaming_buf_swap[STREAMING_BUF_LENGTH] = {0}; 
+//static volatile s16 streaming_buf_swap[STREAMING_BUF_LENGTH] = {0}; 
 
 /* Not a actual pointer, but the index to the current location of the 
  * buffers that are being streamed.
@@ -22,8 +22,9 @@ volatile s32 streaming_buf_ptr = 0;
 volatile s32 filled_samples = 0;
 
 // Pointers to the stream buffers.
-volatile s16* play_stream_buf = streaming_buf_main;
-volatile s16* fill_stream_buf = streaming_buf_swap;
+volatile s16* play_stream_buf = NULL;
+volatile s16* fill_stream_buf = NULL;
+int stream_buf_len = STREAMING_BUF_LENGTH;
 
 
 // Toggle this to true to trigger a fill as soon as possible.
@@ -95,7 +96,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
 
     for (; len; len--) {
         // Loop the streaming_buf_ptr
-        if (streaming_buf_ptr >= STREAMING_BUF_LENGTH) {
+        if (streaming_buf_ptr >= stream_buf_len) {
             streaming_buf_ptr = 0;
         }
 

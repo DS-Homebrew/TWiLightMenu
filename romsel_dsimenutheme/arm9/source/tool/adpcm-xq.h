@@ -13,7 +13,8 @@
 extern "C" {
 #endif
 
-int adpcm_main (const char* infilename, const char* outfilename, int pcm8);
+int adpcm_main (const char* infilename, int pcm8, bool loopingPoint);
+int adpcm_decode_data (FILE *infile, void *buffer, int instance_to_fill, int num_channels, int pcm8, bool loopingPoint);
 
 #ifdef __cplusplus
 }

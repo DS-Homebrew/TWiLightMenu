@@ -41,8 +41,8 @@ extern volatile bool fill_requested;
 extern volatile s32 samples_left_until_next_fill;
 extern volatile s32 streaming_buf_ptr;
 
-#define SAMPLES_USED (STREAMING_BUF_LENGTH - samples_left)
-#define REFILL_THRESHOLD STREAMING_BUF_LENGTH >> 2
+#define SAMPLES_USED (stream_buf_len - samples_left)
+#define REFILL_THRESHOLD stream_buf_len >> 2
 
 #ifdef SOUND_DEBUG
 extern char debug_buf[256];
@@ -168,63 +168,47 @@ SoundControl::SoundControl()
 	bool loopableMusic = false;
 	loopingPoint = false;
 
-	mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/cache" : "fat:/_nds/TWiLightMenu/cache", 0777);
-	mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/cache/music" : "fat:/_nds/TWiLightMenu/cache/music", 0777);
 	std::string devicePath = sys().isRunFromSD() ? "sd:" : "fat:";
 
 	stream.sampling_rate = 16000;	 		// 16000Hz
 	stream.format = MM_STREAM_16BIT_MONO;  // select format
-
-	// Leave top scren white
-	controlTopBright = false;
-
-	printLarge(false, 0, 88 - (calcLargeFontHeight(STR_PREPARING_MUSIC) - largeFontHeight()) / 2, STR_PREPARING_MUSIC, Alignment::center);
-	updateText(false);
 
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 	} else {
 		switch(ms().dsiMusic) {
 			case 5: { // HBL
-				std::string startPath = (devicePath+TFN_HBL_START_SOUND_BG_CACHE);
-				if (access(startPath.c_str(), F_OK) != 0 || getFileSize(startPath.c_str()) == 0) {
-					if (adpcm_main(std::string(TFN_HBL_START_SOUND_BG).c_str(), startPath.c_str(), true) == -1) {
-						remove(startPath.c_str());
-					}
+				std::string startPath = TFN_HBL_START_SOUND_BG;
+				std::string loopPath = TFN_HBL_LOOP_SOUND_BG;
+				if (adpcm_main(startPath.c_str(), true, false) == 0) {
+				//	isAdpcm = true;
 				}
-				std::string loopPath = (devicePath+TFN_HBL_LOOP_SOUND_BG_CACHE);
-				if (access(loopPath.c_str(), F_OK) != 0 || getFileSize(loopPath.c_str()) == 0) {
-					if (adpcm_main(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true) == -1) {
-						remove(startPath.c_str());
-						remove(loopPath.c_str());
-					}
+				if (adpcm_main(loopPath.c_str(), true, true) == 0) {
+					isAdpcm = true;
 				}
 				stream.sampling_rate = 44100;	 		// 44100Hz
 				stream.format = MM_STREAM_8BIT_STEREO;
 				stream_start_source = fopen(startPath.c_str(), "rb");
 				stream_source = fopen(loopPath.c_str(), "rb");
 				loopableMusic = true;
+				seekPos = 0x2C;
 				break; }
 			case 4:
 			case 2: { // DSi Shop
-				std::string startPath = (devicePath+TFN_SHOP_START_SOUND_BG_CACHE);
-				if (access(startPath.c_str(), F_OK) != 0 || getFileSize(startPath.c_str()) == 0) {
-					if (adpcm_main(std::string(TFN_SHOP_START_SOUND_BG).c_str(), startPath.c_str(), true) == -1) {
-						remove(startPath.c_str());
-					}
+				std::string startPath = TFN_SHOP_START_SOUND_BG;
+				std::string loopPath = TFN_SHOP_LOOP_SOUND_BG;
+				if (adpcm_main(startPath.c_str(), true, false) == 0) {
+				//	isAdpcm = true;
 				}
-				std::string loopPath = (devicePath+TFN_SHOP_LOOP_SOUND_BG_CACHE);
-				if (access(loopPath.c_str(), F_OK) != 0 || getFileSize(loopPath.c_str()) == 0) {
-					if (adpcm_main(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true) == -1) {
-						remove(startPath.c_str());
-						remove(loopPath.c_str());
-					}
+				if (adpcm_main(loopPath.c_str(), true, true) == 0) {
+					isAdpcm = true;
 				}
 				stream.sampling_rate = 44100;	 		// 44100Hz
 				stream.format = MM_STREAM_8BIT_STEREO;
 				stream_start_source = fopen(startPath.c_str(), "rb");
 				stream_source = fopen(loopPath.c_str(), "rb");
 				loopableMusic = true;
+				seekPos = 0x2C;
 				break; }
 			case 3: { // Theme
 				bool customSkin = false;
@@ -245,8 +229,6 @@ SoundControl::SoundControl()
 				}
 				if (customSkin) {
 					std::string musicPath = TFN_SOUND_BG;
-					std::string cachePath = TFN_SOUND_BG_CACHE;
-					bool closed = false;
 					if (access(musicPath.c_str(), F_OK) == 0) {
 						// Read properties from WAV header
 						u8 wavFormat = 0;
@@ -260,41 +242,29 @@ SoundControl::SoundControl()
 						fseek(stream_source, 0x18, SEEK_SET);
 						fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
 
-						if (wavFormat == 0x11) {
-							// If ADPCM and hasn't been successfully converted yet, do so now
-							if(access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) {
-								if (adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2) == -1) {
-									remove(cachePath.c_str());
-								}
-							}
-							fclose(stream_source);
-							closed = true;
-						} else {
-							seekPos = 0x2C;
+						if (wavFormat == 0x11 && adpcm_main(musicPath.c_str(), numChannels == 2, true) == 0) {
+							isAdpcm = true;
 						}
-					} else {
-						closed = true;
+						seekPos = 0x2C;
 					}
-					if (closed) stream_source = fopen(cachePath.c_str(), "rb");
 					if (stream_source) break; } // fallthrough if stream_source fails.
 				}
 			case 1:
 			default: {
-				std::string musicPath = (devicePath+TFN_DEFAULT_SOUND_BG_CACHE);
-				if (access(musicPath.c_str(), F_OK) != 0 || getFileSize(musicPath.c_str()) == 0) {
-					if (adpcm_main(std::string(TFN_DEFAULT_SOUND_BG).c_str(), musicPath.c_str(), true) == -1) {
-						remove(musicPath.c_str());
-					}
+				std::string musicPath = TFN_DEFAULT_SOUND_BG;
+				if (adpcm_main(musicPath.c_str(), true, true) == 0) {
+					isAdpcm = true;
 				}
 				stream.sampling_rate = 32000;	 		// 32000Hz
 				stream.format = MM_STREAM_8BIT_STEREO;
 				stream_source = fopen(musicPath.c_str(), "rb");
+				seekPos = 0x2C;
 				break; }
 		}
 	}
 
-	clearText();
-	controlTopBright = true;
+	play_stream_buf = new s16[stream_buf_len];
+	fill_stream_buf = new s16[stream_buf_len];
 
 	fseek(stream_source, seekPos, SEEK_SET);
 
@@ -305,44 +275,45 @@ SoundControl::SoundControl()
 
 	if (loopableMusic) {
 		fseek(stream_start_source, 0, SEEK_END);
-		size_t fileSize = ftell(stream_start_source);
-		fseek(stream_start_source, 0, SEEK_SET);
+		size_t fileSize = ftell(stream_start_source) - seekPos;
+		if (isAdpcm) {
+			fileSize *= 4;
+		}
+		fseek(stream_start_source, seekPos, SEEK_SET);
 
 		// Prep the first section of the stream
-		fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_start_source);
-		if (fileSize < STREAMING_BUF_LENGTH*sizeof(s16)) {
+		readStream((s16*)play_stream_buf, stream_buf_len, 0);
+		if (fileSize < stream_buf_len*sizeof(s16)) {
 			size_t fillerSize = 0;
-			while (fileSize+fillerSize < STREAMING_BUF_LENGTH*sizeof(s16)) {
+			while (fileSize+fillerSize < stream_buf_len*sizeof(s16)) {
 				fillerSize++;
 			}
-			fread((void*)play_stream_buf+fileSize, 1, fillerSize, stream_source);
+			loopingPoint = true;
+			readStream((s16*)((void*)play_stream_buf+fileSize), fillerSize/sizeof(s16), 0);
 
 			// Fill the next section premptively
-			fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
-
-			loopingPoint = true;
+			readStream((s16*)fill_stream_buf, stream_buf_len, 0);
 		} else {
 			// Fill the next section premptively
-			fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_start_source);
-			fileSize -= STREAMING_BUF_LENGTH*sizeof(s16);
-			if (fileSize < STREAMING_BUF_LENGTH*sizeof(s16)) {
+			readStream((s16*)fill_stream_buf, stream_buf_len, 0);
+			fileSize -= stream_buf_len*sizeof(s16);
+			if (fileSize < stream_buf_len*sizeof(s16)) {
 				size_t fillerSize = 0;
-				while (fileSize+fillerSize < STREAMING_BUF_LENGTH*sizeof(s16)) {
+				while (fileSize+fillerSize < stream_buf_len*sizeof(s16)) {
 					fillerSize++;
 				}
-				fread((void*)fill_stream_buf+fileSize, 1, fillerSize, stream_source);
-
 				loopingPoint = true;
+				readStream((s16*)((void*)play_stream_buf+fileSize), fillerSize/sizeof(s16), 0);
 			}
 		}
 	} else {
+		loopingPoint = true;
+
 		// Prep the first section of the stream
-		fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+		readStream((s16*)play_stream_buf, stream_buf_len, 0);
 
 		// Fill the next section premptively
-		fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
-
-		loopingPoint = true;
+		readStream((s16*)fill_stream_buf, stream_buf_len, 0);
 	}
 }
 
@@ -385,8 +356,16 @@ void SoundControl::setStreamDelay(u32 delay) {
 }
 
 
+volatile int SoundControl::readStream(s16* buffer, int instance_to_fill, int instance_filled) {
+	if (isAdpcm) {
+		return adpcm_decode_data (loopingPoint ? stream_source : stream_start_source, buffer, (instance_to_fill - instance_filled), stream.format == MM_STREAM_8BIT_STEREO ? 2 : 1, stream.format == MM_STREAM_8BIT_STEREO, loopingPoint);
+	}
+
+	return fread(buffer, sizeof(s16), (instance_to_fill - instance_filled), loopingPoint ? stream_source : stream_start_source);
+}
+
 // Samples remaining in the fill buffer.
-#define SAMPLES_LEFT_TO_FILL (abs(STREAMING_BUF_LENGTH - filled_samples))
+#define SAMPLES_LEFT_TO_FILL (abs(stream_buf_len - filled_samples))
 
 // Samples that were already streamed and need to be refilled into the buffer.
 #define SAMPLES_TO_FILL (abs(streaming_buf_ptr - filled_samples))
@@ -396,18 +375,18 @@ void SoundControl::setStreamDelay(u32 delay) {
 // last fill request and this.
 
 // Precondition Invariants:
-// filled_samples <= STREAMING_BUF_LENGTH
+// filled_samples <= stream_buf_len
 // filled_samples <= streaming_buf_ptr
 
 // Postcondition Invariants:
-// filled_samples <= STREAMING_BUF_LENGTH
+// filled_samples <= stream_buf_len
 // filled_samples <= streaming_buf_ptr
 // fill_requested == false
 volatile void SoundControl::updateStream() {
 	
 	if (!stream_is_playing) return;
-	if (fill_requested && filled_samples < STREAMING_BUF_LENGTH) {
-			
+	if (fill_requested && filled_samples < stream_buf_len) {
+
 		// Reset the fill request
 		fill_requested = false;
 		int instance_filled = 0;
@@ -416,12 +395,11 @@ volatile void SoundControl::updateStream() {
 		int instance_to_fill = std::min(SAMPLES_LEFT_TO_FILL, SAMPLES_TO_FILL);
 
 		// If we don't read enough samples, loop from the beginning of the file.
-		instance_filled = fread((s16*)fill_stream_buf + filled_samples, sizeof(s16), instance_to_fill, loopingPoint ? stream_source : stream_start_source);		
+		instance_filled = readStream((s16*)fill_stream_buf + filled_samples, instance_to_fill, 0);
 		if (instance_filled < instance_to_fill) {
 			fseek(stream_source, seekPos, SEEK_SET);
-			instance_filled += fread((s16*)fill_stream_buf + filled_samples + instance_filled,
-				 sizeof(s16), (instance_to_fill - instance_filled), stream_source);
 			loopingPoint = true;
+			instance_filled += readStream((s16*)fill_stream_buf + filled_samples + instance_filled, instance_to_fill, instance_filled);
 		}
 
 		#ifdef SOUND_DEBUG
@@ -429,12 +407,12 @@ volatile void SoundControl::updateStream() {
     	nocashMessage(debug_buf);
 		#endif
 
-		// maintain invariant 0 < filled_samples <= STREAMING_BUF_LENGTH
-		filled_samples = std::min<s32>(filled_samples + instance_filled, STREAMING_BUF_LENGTH);
+		// maintain invariant 0 < filled_samples <= stream_buf_len
+		filled_samples = std::min<s32>(filled_samples + instance_filled, stream_buf_len);
 
 	
-	} else if (fill_requested && filled_samples >= STREAMING_BUF_LENGTH) {
-		// filled_samples == STREAMING_BUF_LENGTH is the only possible case
+	} else if (fill_requested && filled_samples >= stream_buf_len) {
+		// filled_samples == stream_buf_len is the only possible case
 		// but we'll keep it at gte to be safe.
 		filled_samples = 0;
 		// fill_count = 0;

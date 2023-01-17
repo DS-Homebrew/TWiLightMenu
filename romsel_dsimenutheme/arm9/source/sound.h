@@ -21,7 +21,9 @@ class SoundControl {
         mm_sfxhand playStartup();
         mm_sfxhand playStop();
         mm_sfxhand playWrong();
-        
+
+        volatile int readStream(s16* buffer, int instance_to_fill, int instance_filled);
+
         // Refill the stream buffers
         volatile void updateStream();
 
@@ -33,9 +35,9 @@ class SoundControl {
         // Sets the number of samples of silence to
         // stream before continuing.
         void setStreamDelay(u32 stream_delay);
-        
+
         u32 getStartupSoundLength() { return startup_sample_length; }
-      
+
     private:
         mm_sound_effect snd_launch;
         mm_sound_effect snd_select;
@@ -46,6 +48,7 @@ class SoundControl {
         mm_stream stream;
 		mm_ds_system sndSys;
         bool stream_is_playing;
+        bool isAdpcm;
         bool loopingPoint;
         //mm_sound_effect snd_loading;
         mm_sound_effect mus_startup;
