@@ -102,7 +102,7 @@ static void little_endian_to_native (void *data, char *format);
 
 static size_t num_samples[2] = {0};
 static size_t wav_num_samples[2] = {0};
-static int block_size[2] = {0};
+static int wav_block_size[2] = {0};
 
 static void *pcm_block = NULL;
 static void *pcm8_block = NULL;
@@ -273,7 +273,7 @@ static int adpcm_converter (char *infilename, int flags, int pcm8, int blocksize
         //}
 
         //res = adpcm_decode_data (infile, outfile, num_channels, num_samples, pcm8, WaveHeader.BlockAlign);
-		block_size[loopingPoint] = WaveHeader.BlockAlign;
+		wav_block_size[loopingPoint] = WaveHeader.BlockAlign;
 		stream_buf_len = WaveHeader.BlockAlign;
 		if (!pcm8) {
 			stream_buf_len *= 2;
@@ -330,7 +330,8 @@ static int adpcm_converter (char *infilename, int flags, int pcm8, int blocksize
 
 int adpcm_decode_data (FILE *infile, void *buffer, int instance_to_fill, int num_channels, int pcm8, bool loopingPoint)
 {
-	int samples_per_block = (block_size[loopingPoint] - num_channels * 4) * (num_channels ^ 3) + 1;
+	int block_size = stream_buf_len - ((instance_to_fill * 2) / (pcm8 ? (wav_block_size[loopingPoint] / 2) : wav_block_size[loopingPoint]));
+	int samples_per_block = (block_size - num_channels * 4) * (num_channels ^ 3) + 1;
 
 	static bool blocksAllocated = false;
 	if (!blocksAllocated) {
@@ -338,7 +339,7 @@ int adpcm_decode_data (FILE *infile, void *buffer, int instance_to_fill, int num
 		if (pcm8) {
 			pcm8_block = malloc (samples_per_block * num_channels);
 		}
-		adpcm_block = malloc (block_size[loopingPoint]);
+		adpcm_block = malloc (block_size);
 
 		if (!pcm_block || !adpcm_block) {
 			//fprintf (stderr, "could not allocate memory for buffers!\n");
@@ -348,27 +349,23 @@ int adpcm_decode_data (FILE *infile, void *buffer, int instance_to_fill, int num
 		blocksAllocated = true;
 	}
 
-	int total_samples = 0;
+	int ret = stream_buf_len;
 
-	for (int l = 0; l < instance_to_fill/block_size[loopingPoint]; l++) {
 		int this_block_adpcm_samples = samples_per_block;
 		int this_block_pcm_samples = samples_per_block;
 
 		if (this_block_adpcm_samples > num_samples[loopingPoint]) {
 			this_block_adpcm_samples = ((num_samples[loopingPoint] + 6) & ~7) + 1;
-			block_size[loopingPoint] = (this_block_adpcm_samples - 1) / (num_channels ^ 3) + (num_channels * 4);
+			block_size = (this_block_adpcm_samples - 1) / (num_channels ^ 3) + (num_channels * 4);
 			this_block_pcm_samples = num_samples[loopingPoint];
 		}
 
-		if (!fread (adpcm_block, block_size[loopingPoint], 1, infile)) {
+		if (!fread (adpcm_block, block_size, 1, infile)) {
 			//fprintf (stderr, "could not read all audio data from input file!\n");
 			return -1;
 		}
 
-		if (adpcm_decode_block (pcm_block, adpcm_block, block_size[loopingPoint], num_channels) != this_block_adpcm_samples) {
-			//fprintf (stderr, "adpcm_decode_block() did not return expected value!\n");
-			return -1;
-		}
+		adpcm_decode_block (pcm_block, adpcm_block, block_size, num_channels);
 
 		if (pcm8) {
 			// Convert PCM16 to PCM8
@@ -380,17 +377,15 @@ int adpcm_decode_data (FILE *infile, void *buffer, int instance_to_fill, int num
 			}
 		}
 
-		tonccpy (buffer+total_samples, pcm8 ? pcm8_block : pcm_block, this_block_pcm_samples * (pcm8 ? num_channels : num_channels*2));
-		total_samples += this_block_pcm_samples * (pcm8 ? num_channels : num_channels*2);
+		tonccpy (buffer, pcm8 ? pcm8_block : pcm_block, this_block_pcm_samples * (pcm8 ? num_channels : num_channels*2));
 
 		num_samples[loopingPoint] -= this_block_pcm_samples;
 		if (!num_samples[loopingPoint]) {
 			num_samples[loopingPoint] = wav_num_samples[loopingPoint];
-			break;
+			ret -= this_block_pcm_samples * (pcm8 ? num_channels : num_channels*2);
 		}
-	}
 
-    return total_samples;
+    return ret * 2;
 }
 
 static void little_endian_to_native (void *data, char *format)
