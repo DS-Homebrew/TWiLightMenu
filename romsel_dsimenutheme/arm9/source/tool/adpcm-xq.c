@@ -278,7 +278,7 @@ static int adpcm_converter (char *infilename, int flags, int pcm8, int blocksize
 		if (!pcm8) {
 			stream_buf_len *= 2;
 		}
-		stream_buf_len *= 32;
+		stream_buf_len *= 16;
 
         res = 0;
     }
