@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 211)
+// B4DS DSiWare Whitelist (Total: 212)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -31,6 +31,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAZ", // ARC Style: Soccer!
 	"K4B", // Arcade Bowling
 	"KSA", // Arcade Hoops Basketball
+	"KRD", // Armada
 	"KAY", // Army Defender
 	"KSR", // Aura-Aura Climber
 	"KAD", // Art Style: BASE 10
