@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 209)
+// B4DS DSiWare Whitelist (Total: 210)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -64,6 +64,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K9E", // Dreamwalker
 	"B88", // DS WiFi Settings
 	"KB8", // GO Series: Earth Saver
+	"KB9", // Earth Saver: Inseki Bakuha Dai Sakuse
 	"KEB", // Electroplankton: Hanenbow
 	"KEC", // Electroplankton: Luminarrow
 	"KEH", // Electroplankton: Marine-Crystals
