@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 215)
+// B4DS DSiWare Whitelist (Total: 217)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -41,6 +41,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K8B", // Beauty Academy
 	"KBEE", // Bejeweled Twist (USA)
 	"K9G", // Big Bass Arcade
+	"KP6J", // Bird & Beans / Tori to Mame (Japan)
 	"KLN", // Bloons TD
 	"KBB", // Bomberman Blitz
 	"KAH", // Art Style: Boxlife
@@ -132,6 +133,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K9K", // Nintendoji
 	"KSUE", // Number Battle
 	"K6T", // Orion's Odyssey
+	"KAMJ", // Paper Airplane Chase / Kami Hikouki (Japan)
 	"KP9", // Paul's Monster Adventure
 	"KPJ", // Paul's Shooting Adventure
 	"KUS", // Paul's Shooting Adventure 2
