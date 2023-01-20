@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 214)
+// B4DS DSiWare Whitelist (Total: 215)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -27,6 +27,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KV2", // Anonymous Notes 2: From The Abyss
 	"KV3", // Anonymous Notes 3: From The Abyss
 	"KV4", // Anonymous Notes 4: From The Abyss
+	"KL8", // Anyohaseyo!: Kankokugo Wado Pazuru
 	"KAA", // Art Style: Aquia
 	"KAZ", // ARC Style: Soccer!
 	"K4B", // Arcade Bowling
