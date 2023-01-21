@@ -48,7 +48,12 @@ list<TextPane> panes;
 
 void fontInit()
 {
-	// Set  Bank A to texture (128 kb)
+	static bool inited = false;
+	if (inited) {
+		return;
+	}
+
+	// Set Bank A to texture (128 kb)
 	vramSetBankA(VRAM_A_TEXTURE);
 	smallFont.load(smallFontImages, // pointer to glImage array
 				FONT_SI_NUM_IMAGES, // Texture packer auto-generated #define
@@ -74,6 +79,8 @@ void fontInit()
 				(u16*) font_siPal,
 				(u8*) font_16x16Bitmap
 				);
+
+	inited = true;
 }
 
 TextPane &createTextPane(int startX, int startY, int shownElements)

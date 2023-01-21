@@ -122,6 +122,39 @@ int main(int argc, char **argv) {
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
 	
+	scanKeys();
+	if ((keysHeld() & KEY_RIGHT) && (keysHeld() & KEY_A)) {
+		graphicsInit();
+		fontInit();
+		fadeType = true;
+
+		clearText();
+		int yPos = 4;
+		printSmall(false, 4, yPos, "Please remove the SD Card and");
+		yPos += 8;
+		printSmall(false, 4, yPos, "insert the SD Card containing");
+		yPos += 8;
+		printSmall(false, 4, yPos, "TWiLight Menu++, then press A");
+		yPos += 8;
+		printSmall(false, 4, yPos, "to continue.");
+
+		// Prevent accidential presses
+		for (int i = 0; i < 60; i++) {
+			swiWaitForVBlank();
+		}
+
+		while (1) {
+			scanKeys();
+			if (keysHeld() & KEY_A) break;
+			swiWaitForVBlank();
+		}
+
+		fadeType = false;
+		for (int i = 0; i < 24; i++) {
+			swiWaitForVBlank();
+		}
+	}
+
 	//bool runGame = (strncmp((char*)0x02FFFE0C, "SLRN", 4) == 0);
 
 	const char* srldrPath = (/*runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" :*/ "sd:/_nds/TWiLightMenu/main.srldr");
@@ -140,71 +173,74 @@ int main(int argc, char **argv) {
 		clearText();
 		printSmall(false, 4, 4, "FAT init failed!");
 		printSmall(false, 4, 28, "Press B to return to menu.");
-
-		while (1) {
-			scanKeys();
-			if (keysHeld() & KEY_B) fifoSendValue32(FIFO_USER_01, 1);	// Tell ARM7 to reboot into 3DS HOME Menu (power-off/sleep mode screen skipped)
-			swiWaitForVBlank();
-		}
-	}
-
-	// Test code to extract device list
-	// Only works, if booted via HiyaCFW or launched from 3DS HOME Menu
-	/*FILE* deviceList = fopen("sd:/_nds/TWiLightMenu/deviceList.bin", "wb");
-	fwrite((void*)0x02800000, 1, 0x400, deviceList);
-	fclose(deviceList);*/
-
-	vector<char *> argarray;
-	argarray.push_back((char*)srldrPath);
-
-	int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
-	bool twlmFound = (access("sd:/_nds/TWiLightMenu", F_OK) == 0);
-
-	graphicsInit();
-	fontInit();
-	fadeType = true;
-
-	int returnTextPos = 28;
-	clearText();
-	if (!twlmFound) {
-		int yPos = 4;
-		printSmall(false, 4, yPos, "The TWiLight Menu++ files are");
-		yPos += 8;
-		printSmall(false, 4, yPos, "missing. In order to start");
-		yPos += 8;
-		printSmall(false, 4, yPos, "TWiLight Menu++, please add the");
-		yPos += 8;
-		printSmall(false, 4, yPos, "missing files.");
-		yPos += 8*2;
-		printSmall(false, 4, yPos, "If they already exist, and the");
-		yPos += 8;
-		printSmall(false, 4, yPos, "above message still appears, then");
-		yPos += 8;
-		printSmall(false, 4, yPos, "the SD Card is formatted in a");
-		yPos += 8;
-		printSmall(false, 4, yPos, "way that TWiLight Menu++ cannot");
-		yPos += 8;
-		printSmall(false, 4, yPos, "start. Please reformat your");
-		yPos += 8;
-		printSmall(false, 4, yPos, "SD Card, or try another SD Card.");
-		yPos += 8*2;
-		returnTextPos = yPos;
-	} else if (err == 1) {
-		printSmall(false, 4, 4, "sd:/_nds/TWiLightMenu/");
-		printSmall(false, 4, 12, /*runGame ? "resetgame.srldr not found." :*/ "main.srldr not found.");
 	} else {
-		char errorText[16];
-		snprintf(errorText, sizeof(errorText), "Error %i", err);
-		printSmall(false, 4, 4, /*runGame ? "Unable to start resetgame.srldr" :*/ "Unable to start main.srldr");
-		printSmall(false, 4, 12, errorText);
+		// Test code to extract device list
+		// Only works, if booted via HiyaCFW or launched from 3DS HOME Menu
+		/*FILE* deviceList = fopen("sd:/_nds/TWiLightMenu/deviceList.bin", "wb");
+		fwrite((void*)0x02800000, 1, 0x400, deviceList);
+		fclose(deviceList);*/
+
+		vector<char *> argarray;
+		argarray.push_back((char*)srldrPath);
+
+		int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
+		bool twlmFound = (access("sd:/_nds/TWiLightMenu", F_OK) == 0);
+
+		graphicsInit();
+		fontInit();
+		fadeType = true;
+
+		int returnTextPos = 28;
+		clearText();
+		if (!twlmFound) {
+			int yPos = 4;
+			printSmall(false, 4, yPos, "The TWiLight Menu++ files are");
+			yPos += 8;
+			printSmall(false, 4, yPos, "missing. In order to start");
+			yPos += 8;
+			printSmall(false, 4, yPos, "TWiLight Menu++, please add the");
+			yPos += 8;
+			printSmall(false, 4, yPos, "missing files.");
+			yPos += 8*2;
+			printSmall(false, 4, yPos, "If they already exist, and the");
+			yPos += 8;
+			printSmall(false, 4, yPos, "above message still appears, then");
+			yPos += 8;
+			printSmall(false, 4, yPos, "the SD Card is formatted in a");
+			yPos += 8;
+			printSmall(false, 4, yPos, "way that TWiLight Menu++ cannot");
+			yPos += 8;
+			printSmall(false, 4, yPos, "start. Please reformat your");
+			yPos += 8;
+			printSmall(false, 4, yPos, "SD Card, or try another SD Card.");
+			yPos += 8*2;
+			returnTextPos = yPos;
+		} else if (err == 1) {
+			printSmall(false, 4, 4, "sd:/_nds/TWiLightMenu/");
+			printSmall(false, 4, 12, /*runGame ? "resetgame.srldr not found." :*/ "main.srldr not found.");
+		} else {
+			char errorText[16];
+			snprintf(errorText, sizeof(errorText), "Error %i", err);
+			printSmall(false, 4, 4, /*runGame ? "Unable to start resetgame.srldr" :*/ "Unable to start main.srldr");
+			printSmall(false, 4, 12, errorText);
+		}
+		printSmall(false, 4, returnTextPos, "Press B to return to menu.");
 	}
-	printSmall(false, 4, returnTextPos, "Press B to return to menu.");
 
 	while (1) {
 		scanKeys();
-		if (keysHeld() & KEY_B) fifoSendValue32(FIFO_USER_01, 1);	// Tell ARM7 to reboot into 3DS HOME Menu (power-off/sleep mode screen skipped)
+		if (keysHeld() & KEY_B) break;
 		swiWaitForVBlank();
 	}
 
-	return 0;
+	fadeType = false;
+	for (int i = 0; i < 24; i++) {
+		swiWaitForVBlank();
+	}
+
+	fifoSendValue32(FIFO_USER_01, 1);	// Tell ARM7 to reboot into 3DS HOME Menu (power-off/sleep mode screen skipped)
+
+	while (1) {
+		swiWaitForVBlank();
+	}
 }
