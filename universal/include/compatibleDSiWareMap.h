@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 219)
+// B4DS DSiWare Whitelist (Total: 220)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -11,6 +11,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K2O", // 505 Tangram
 	"K99", // 99Bullets
 	"K9W", // 99Moves
+	"K2K", // Aa! Nikaku Dori
 	"KQK", // Ace Mathician
 	"KAC", // Advanced Circuits
 	"K5H", // Ah! Heaven
