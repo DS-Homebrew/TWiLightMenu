@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 220)
+// B4DS DSiWare Whitelist (Total: 223)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
 	"K95", // 1950s Lawn Mower Kids
@@ -60,6 +60,9 @@ static const char compatibleGameListB4DS[][5] = {
 	"KUQ", // Chuck E. Cheese's Alien Defense Force
 	"KUC", // Chuck E. Cheese's Arcade Room
 	"KQL", // Chuukara! Dairoujou
+	"KTR", // Clubhouse Games Express: Card Classics
+	"KTCT", "KTP", // Clubhouse Games Express: Family Favorites
+	"KTDT", "KTB", // Clubhouse Games Express: Strategy Pack
 	"KXF", // Color Commando
 	"KDC", // Crash-Course Domo
 	"K32", // CuteWitch! runner
