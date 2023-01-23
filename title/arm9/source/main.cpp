@@ -2205,7 +2205,7 @@ int main(int argc, char **argv)
 								case TWLSettings::ERegionEurope:
 									continue; // Not SDK5.0
 								case TWLSettings::ERegionChina:
-									continue; // Unavailable
+									continue; // Not SDK5.0
 								case TWLSettings::ERegionKorea:
 									continue; // Not SDK5.0
 							}
