@@ -123,9 +123,7 @@ jobs:
           curl -LO https://github.com/chishm/tuna-vids/releases/latest/download/tuna-vids_v1.2.zip
           7z x tuna-vids_v1.2.zip tuna-vids.nds
           rm tuna-vids_v1.2.zip
-          curl -LO https://nightly.link/Gericom/FastVideoDSPlayer/workflows/nightly/master/build.zip
-          7z x build.zip FastVideoDS.nds
-          rm build.zip
+          curl -LO https://github.com/Gericom/FastVideoDSPlayer/releases/download/v0.0.1/FastVideoDS.nds
           cd ../../../..
 
           # version.txt
