@@ -306,13 +306,14 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 29)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 30)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
 
 	// Counted
 	"KII", // 101 Pinball World
+	"KXO", // 18th Gate
 	"KXT", // 99Seconds
 	"K27", // G.G. Series: All Breaker
 	"KAB", // G.G. Series: Assault Buster
