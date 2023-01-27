@@ -1,9 +1,10 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 224)
+// B4DS DSiWare Whitelist (Total: 225)
 static const char compatibleGameListB4DS[][5] = {
 	"KJU", // GO Series: 10 Second Run
+	"KOK", // 1001 Crystal Mazes Collection
 	"K95", // 1950s Lawn Mower Kids
 	"KTF", // 4 Travellers: Play French
 	"KTS", // 4 Travellers: Play Spanish
@@ -238,8 +239,9 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KQR", // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 16)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 17)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
+	"KOK", // 1001 Crystal Mazes Collection
 	"KAA", // Art Style: Aquia
 	"K9G", // Big Bass Arcade
 	"KLN", // Bloons TD
@@ -260,6 +262,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 
 // B4DS DSiWare Whitelist (RAM limitation message ID)
 static int compatibleGameListB4DSRAMLimitedID[] = {
+	2, // 1001 Crystal Mazes Collection (No music)
 	1, // Art Style: Aquia (No audio)
 	4, // Big Bass Arcade (Crashes at certain points)
 	1, // Bloons TD (No audio)
