@@ -1,8 +1,9 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 225)
+// B4DS DSiWare Whitelist (Total: 226)
 static const char compatibleGameListB4DS[][5] = {
+	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
 	"KOK", // 1001 Crystal Mazes Collection
 	"K95", // 1950s Lawn Mower Kids
