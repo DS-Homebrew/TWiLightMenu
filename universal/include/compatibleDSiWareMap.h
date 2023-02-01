@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 228)
+// B4DS DSiWare Whitelist (Total: 231)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -9,6 +9,9 @@ static const char compatibleGameListB4DS[][5] = {
 	"K95", // 1950s Lawn Mower Kids
 	"KVM", // 200 Vmaja: Charen Ji Supirittsu
 	"K4I", // 24/7 Solitaire
+	"K3B", // 3 Punten Katou Itsu: Bakumatsu Kuizu He
+	"KHG", // 3 Punten Katou Itsu: Higashi Nihon Sengoku Kuizu He
+	"K24", // 3 Punten Katou Itsu: Nishinihon Sengoku Kuizu He
 	"KTF", // 4 Travellers: Play French
 	"KTS", // 4 Travellers: Play Spanish
 	"K45", // 40-in-1: Explosive Megamix
