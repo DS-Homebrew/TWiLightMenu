@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 237)
+// B4DS DSiWare Whitelist (Total: 238)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -22,6 +22,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KRJ", // 5 in 1 Mahjong
 	"K2O", // 505 Tangram
 	"K7C", // 7 Card Games
+	"K7W", // 7 Wonders II
 	"K99", // 99Bullets
 	"K9W", // 99Moves
 	"K2K", // Aa! Nikaku Dori
