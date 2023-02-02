@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 234)
+// B4DS DSiWare Whitelist (Total: 235)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -15,6 +15,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KHG", // 3 Punten Katou Itsu: Higashi Nihon Sengoku Kuizu He
 	"K24", // 3 Punten Katou Itsu: Nishinihon Sengoku Kuizu He
 	"K5R", // 3450 Algo
+	"K7A", // 4 Elements
 	"KTF", // 4 Travellers: Play French
 	"KTS", // 4 Travellers: Play Spanish
 	"K45", // 40-in-1: Explosive Megamix
