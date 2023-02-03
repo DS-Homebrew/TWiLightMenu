@@ -1,197 +1,201 @@
-#ifndef __SDMMC_H__
-#define __SDMMC_H__
+#pragma once
 
-#include <nds/ndstypes.h>
+// SPDX-License-Identifier: MIT
 
-#define DATA32_SUPPORT
-
-#define SDMMC_BASE	0x04004800
+#include <nds.h>
 
 
-#define REG_SDCMD       0x00
-#define REG_SDPORTSEL   0x02
-#define REG_SDCMDARG    0x04
-#define REG_SDCMDARG0   0x04
-#define REG_SDCMDARG1  	0x06
-#define REG_SDSTOP      0x08
-#define REG_SDRESP      0x0c
-#define REG_SDBLKCOUNT  0x0a
-
-#define REG_SDRESP0     0x0c
-#define REG_SDRESP1     0x0e
-#define REG_SDRESP2     0x10
-#define REG_SDRESP3     0x12
-#define REG_SDRESP4     0x14
-#define REG_SDRESP5     0x16
-#define REG_SDRESP6     0x18
-#define REG_SDRESP7     0x1a
-
-#define REG_SDSTATUS0   0x1c
-#define REG_SDSTATUS1   0x1e
-
-#define REG_SDIRMASK0   0x20
-#define REG_SDIRMASK1   0x22
-#define REG_SDCLKCTL    0x24
-
-#define REG_SDBLKLEN    0x26
-#define REG_SDOPT       0x28
-#define REG_SDFIFO      0x30
-
-#define REG_SDDATACTL   0xd8
-#define REG_SDRESET     0xe0
-#define REG_SDPROTECTED 0xf6 //bit 0 determines if sd is protected or not?
-
-#define REG_SDDATACTL32         0x100
-#define REG_SDBLKLEN32          0x104
-#define REG_SDBLKCOUNT32        0x108
-#define REG_SDFIFO32            0x10C
-
-#define REG_CLK_AND_WAIT_CTL    0x138
-#define REG_RESET_SDIO          0x1e0
-//The below defines are from linux kernel drivers/mmc tmio_mmc.h.
-/* Definitions for values the CTRL_STATUS register can take. */
-#define TMIO_STAT0_CMDRESPEND    0x0001
-#define TMIO_STAT0_DATAEND       0x0004
-#define TMIO_STAT0_CARD_REMOVE   0x0008
-#define TMIO_STAT0_CARD_INSERT   0x0010
-#define TMIO_STAT0_SIGSTATE      0x0020
-#define TMIO_STAT0_WRPROTECT     0x0080
-#define TMIO_STAT0_CARD_REMOVE_A 0x0100
-#define TMIO_STAT0_CARD_INSERT_A 0x0200
-#define TMIO_STAT0_SIGSTATE_A    0x0400
-
-#define TMIO_STAT1_CMD_IDX_ERR   0x0001
-#define TMIO_STAT1_CRCFAIL       0x0002
-#define TMIO_STAT1_STOPBIT_ERR   0x0004
-#define TMIO_STAT1_DATATIMEOUT   0x0008
-#define TMIO_STAT1_RXOVERFLOW    0x0010
-#define TMIO_STAT1_TXUNDERRUN    0x0020
-#define TMIO_STAT1_CMDTIMEOUT    0x0040
-#define TMIO_STAT1_RXRDY         0x0100
-#define TMIO_STAT1_TXRQ          0x0200
-#define TMIO_STAT1_ILL_FUNC      0x2000
-#define TMIO_STAT1_CMD_BUSY      0x4000
-#define TMIO_STAT1_ILL_ACCESS    0x8000
-
-#define SDMC_NORMAL              0x00000000
-#define SDMC_ERR_COMMAND         0x00000001
-#define SDMC_ERR_CRC             0x00000002
-#define SDMC_ERR_END             0x00000004
-#define SDMC_ERR_TIMEOUT         0x00000008
-#define SDMC_ERR_FIFO_OVF        0x00000010
-#define SDMC_ERR_FIFO_UDF        0x00000020
-#define SDMC_ERR_WP              0x00000040
-#define SDMC_ERR_ABORT           0x00000080
-#define SDMC_ERR_FPGA_TIMEOUT    0x00000100
-#define SDMC_ERR_PARAM           0x00000200
-#define SDMC_ERR_R1_STATUS       0x00000800
-#define SDMC_ERR_NUM_WR_SECTORS  0x00001000
-#define SDMC_ERR_RESET           0x00002000
-#define SDMC_ERR_ILA             0x00004000
-#define SDMC_ERR_INFO_DETECT     0x00008000
-
-#define SDMC_STAT_ERR_UNKNOWN    0x00080000
-#define SDMC_STAT_ERR_CC         0x00100000
-#define SDMC_STAT_ERR_ECC_FAILED 0x00200000
-#define SDMC_STAT_ERR_CRC        0x00800000
-#define SDMC_STAT_ERR_OTHER      0xf9c70008
-
-#define TMIO_MASK_ALL           0x837f031d
-
-#define TMIO_MASK_GW      (TMIO_STAT1_ILL_ACCESS | TMIO_STAT1_CMDTIMEOUT | TMIO_STAT1_TXUNDERRUN | TMIO_STAT1_RXOVERFLOW | \
-                           TMIO_STAT1_DATATIMEOUT | TMIO_STAT1_STOPBIT_ERR | TMIO_STAT1_CRCFAIL | TMIO_STAT1_CMD_IDX_ERR)
-
-#define TMIO_MASK_READOP  (TMIO_STAT1_RXRDY | TMIO_STAT1_DATAEND)
-#define TMIO_MASK_WRITEOP (TMIO_STAT1_TXRQ | TMIO_STAT1_DATAEND)
-
-typedef struct mmcdevice {
-	u8* rData;
-	const u8* tData;
-    u32 size;
-    u32 startOffset;
-    u32 endOffset;
-    u32 error;
-    u16 stat0;
-    u16 stat1;
-    u32 ret[4];
-    u32 initarg;
-    u32 isSDHC;
-    u32 clk;
-    u32 SDOPT;
-    u32 devicenumber;
-    u32 total_size; //size in sectors of the device
-    u32 res;
-} mmcdevice;
-
-enum {
-    MMC_DEVICE_SDCARD,
-    MMC_DEVICE_NAND,
+// Possible error codes for most of the functions below.
+enum
+{
+	SDMMC_ERR_NONE           =  0u, // No error.
+	SDMMC_ERR_INVAL_PARAM    =  1u, // Invalid parameter.
+	SDMMC_ERR_INITIALIZED    =  2u, // The device is already initialized.
+	SDMMC_ERR_GO_IDLE_STATE  =  3u, // GO_IDLE_STATE CMD error.
+	SDMMC_ERR_SEND_IF_COND   =  4u, // SEND_IF_COND CMD error.
+	SDMMC_ERR_IF_COND_RESP   =  5u, // IF_COND response pattern mismatch or unsupported voltage.
+	SDMMC_ERR_SEND_OP_COND   =  6u, // SEND_OP_COND CMD error.
+	SDMMC_ERR_OP_COND_TMOUT  =  7u, // Card initialization timeout.
+	SDMMC_ERR_VOLT_SUPPORT   =  8u, // Voltage not supported.
+	SDMMC_ERR_ALL_SEND_CID   =  9u, // ALL_SEND_CID CMD error.
+	SDMMC_ERR_SET_SEND_RCA   = 10u, // SET/SEND_RELATIVE_ADDR CMD error.
+	SDMMC_ERR_SEND_CSD       = 11u, // SEND_CSD CMD error.
+	SDMMC_ERR_SELECT_CARD    = 12u, // SELECT_CARD CMD error.
+	SDMMC_ERR_LOCKED         = 13u, // Card is locked with a password.
+	SDMMC_ERR_SEND_EXT_CSD   = 14u, // SEND_EXT_CSD CMD error.
+	SDMMC_ERR_SWITCH_HS      = 15u, // Error on switching to high speed mode.
+	SDMMC_ERR_SET_CLR_CD     = 16u, // SET_CLR_CARD_DETECT CMD error.
+	SDMMC_ERR_SET_BUS_WIDTH  = 17u, // Error on switching to a different bus width.
+	SDMMC_ERR_SEND_STATUS    = 18u, // SEND_STATUS CMD error.
+	SDMMC_ERR_CARD_STATUS    = 19u, // The card returned an error via its status.
+	SDMMC_ERR_NO_CARD        = 20u, // Card unitialized or not inserted.
+	SDMMC_ERR_SECT_RW        = 21u, // Sector read/write error.
+	SDMMC_ERR_WRITE_PROT     = 22u, // The card is write protected.
+	SDMMC_ERR_SEND_CMD       = 23u  // An error occured while sending a custom CMD via SDMMC_sendCommand().
 };
 
-void my_sdmmc_controller_init(bool force_init);
-void my_sdmmc_initirq();
-int my_sdmmc_cardinserted();
+// (e)MMC/SD device numbers.
+enum
+{
+	SDMMC_DEV_CARD = 0u, // SD card/MMC.
+	SDMMC_DEV_eMMC = 1u, // Builtin eMMC.
 
-int my_sdmmc_sdcard_init();
-int my_sdmmc_nand_init();
-void my_sdmmc_get_cid(int devicenumber, u32 *cid);
+    // Alias for internal use only.
+    SDMMC_MAX_DEV_NUM = SDMMC_DEV_eMMC
+};
 
-static inline void sdmmc_nand_cid( u32 *cid) {
-    my_sdmmc_get_cid(MMC_DEVICE_NAND,cid);
-}
+// Bit definition for SdmmcInfo.wrProt and SDMMC_getWriteProtBits().
+// Each bit 1 = protected.
+#define SDMMC_WR_PROT_SLIDER  (1u)    // SD card write protection slider.
+#define SDMMC_WR_PROT_TEMP    (1u<<1) // Temporary write protection (CSD).
+#define SDMMC_WR_PROT_PERM    (1u<<2) // Permanent write protection (CSD).
 
-static inline void sdmmc_sdcard_cid( u32 *cid) {
-    my_sdmmc_get_cid(MMC_DEVICE_SDCARD,cid);
-}
+typedef struct
+{
+	u8 type;     // 0 = none, 1 = (e)MMC, 2 = High capacity (e)MMC, 3 = SDSC, 4 = SDHC/SDXC, 5 = SDUC.
+	u8 wrProt;   // See SDMMC_WR_PROT_ defines above for details.
+	u16 rca;     // Relative Card Address (RCA).
+	u32 sectors; // Size in 512 byte units.
+	u32 clock;   // The current clock frequency in Hz.
+	u32 cid[4];  // Raw CID without the CRC.
+	u16 ccc;     // (e)MMC/SD command class support from CSD. One per bit starting at 0.
+	u8 busWidth; // The current bus width used to talk to the card.
+} SdmmcInfo;
 
-int my_sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out);
-int my_sdmmc_sdcard_writesectors(u32 sector_no, u32 numsectors, void *in);
-int my_sdmmc_nand_readsectors(u32 sector_no, u32 numsectors, void *out);
-int my_sdmmc_nand_writesectors(u32 sector_no, u32 numsectors, void *in);
-
-extern u32 sdmmc_cid[];
-extern int sdmmc_curdevice;
-
-//---------------------------------------------------------------------------------
-static inline u16 sdmmc_read16(u16 reg) {
-//---------------------------------------------------------------------------------
-	return *(vu16*)(SDMMC_BASE + reg);
-}
-
-//---------------------------------------------------------------------------------
-static inline void sdmmc_write16(u16 reg, u16 val) {
-//---------------------------------------------------------------------------------
-	*(vu16*)(SDMMC_BASE + reg) = val;
-}
-
-//---------------------------------------------------------------------------------
-static inline u32 sdmmc_read32(u16 reg) {
-//---------------------------------------------------------------------------------
-    return *(vu32*)(SDMMC_BASE + reg);
-}
-
-//---------------------------------------------------------------------------------
-static inline void sdmmc_write32(u16 reg, u32 val) {
-//---------------------------------------------------------------------------------
-    *(vu32*)(SDMMC_BASE + reg) = val;
-}
-
-//---------------------------------------------------------------------------------
-static inline void sdmmc_mask16(u16 reg, u16 clear, u16 set) {
-//---------------------------------------------------------------------------------
-	u16 val = sdmmc_read16(reg);
-	val &= ~clear;
-	val |= set;
-	sdmmc_write16(reg, val);
-}
+typedef struct
+{
+	u16 cmd;     // Command. T̲h̲e̲ ̲f̲o̲r̲m̲a̲t̲ ̲i̲s̲ ̲c̲o̲n̲t̲r̲o̲l̲l̲e̲r̲ ̲s̲p̲e̲c̲i̲f̲i̲c̲!̲
+	u32 arg;     // Command argument.
+	u32 resp[4]; // Card response. Length depends on command.
+	u32 *buf;    // In/out data buffer.
+	u16 blkLen;  // Block length. Usually 512.
+	u16 count;   // Number of blkSize blocks to transfer.
+} MmcCommand;
 
 
-//---------------------------------------------------------------------------------
-static inline void setckl(u32 data) {
-//---------------------------------------------------------------------------------
-    sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-    sdmmc_mask16(REG_SDCLKCTL, 0x2FF, data & 0x2FF);
-    sdmmc_mask16(REG_SDCLKCTL, 0x0, 0x100);
-}
 
-#endif
+/**
+ * @brief      Initializes a (e)MMC/SD card device.
+ *
+ * @param[in]  devNum  The device to initialize.
+ *
+ * @return     Returns SDMMC_ERR_NONE on success or
+ *             one of the errors listed above on failure.
+ */
+u32 SDMMC_init(const u8 devNum);
+
+/**
+ * @brief      Deinitializes a (e)MMC/SD card device.
+ *
+ * @param[in]  devNum  The device to deinitialize.
+ *
+ * @return     Returns SDMMC_ERR_NONE on success or SDMMC_ERR_INVAL_PARAM on failure.
+ */
+u32 SDMMC_deinit(const u8 devNum);
+
+/**
+ * @brief      Exports the internal device state for fast init (bootloaders ect.).
+ *
+ * @param[in]  devNum  The device state to export.
+ * @param      devOut  A pointer to a u8[60] array.
+ *
+ * @return     Returns SDMMC_ERR_NONE on success or SDMMC_ERR_INVAL_PARAM/SDMMC_ERR_NO_CARD on failure.
+ */
+u32 SDMMC_exportDevState(const u8 devNum, u8 devOut[64]);
+
+/**
+ * @brief      Imports a device state for fast init (bootloaders ect.).
+ *             The state should be validated for example with a checksum.
+ *
+ * @param[in]  devNum  The device state to import.
+ * @param[in]  devIn   A pointer to a u8[60] array.
+ *
+ * @return     Returns SDMMC_ERR_NONE on success or
+ *             SDMMC_ERR_INVAL_PARAM/SDMMC_ERR_NO_CARD/SDMMC_ERR_INITIALIZED on failure.
+ */
+u32 SDMMC_importDevState(const u8 devNum, const u8 devIn[64]);
+
+/**
+ * @brief      Outputs infos about a (e)MMC/SD card device.
+ *
+ * @param[in]  devNum   The device.
+ * @param      infoOut  A pointer to a SdmmcInfo struct.
+ *
+ * @return     Returns SDMMC_ERR_NONE on success or SDMMC_ERR_INVAL_PARAM on failure.
+ */
+u32 SDMMC_getDevInfo(const u8 devNum, SdmmcInfo *const infoOut);
+
+/**
+ * @brief      Outputs the CID of a (e)MMC/SD card device.
+ *
+ * @param[in]  devNum  The device.
+ * @param      cidOut  A u32[4] pointer for storing the CID.
+ *
+ * @return     Returns SDMMC_ERR_NONE on success or SDMMC_ERR_INVAL_PARAM on failure.
+ */
+u32 SDMMC_getCid(const u8 devNum, u32 cidOut[4]);
+
+/**
+ * @brief      Returns the DSTATUS bits of a (e)MMC/SD card device. See FatFs diskio.h.
+ *
+ * @param[in]  devNum  The device.
+ *
+ * @return     Returns the DSTATUS bits or STA_NODISK | STA_NOINIT on failure.
+ */
+//u8 SDMMC_getDiskStatus(const u8 devNum);
+
+/**
+ * @brief      Outputs the number of sectors for a (e)MMC/SD card device.
+ *
+ * @param[in]  devNum  The device.
+ *
+ * @return     Returns the number of sectors or 0 on failure.
+ */
+u32 SDMMC_getSectors(const u8 devNum);
+
+/**
+ * @brief      Reads one or more sectors from a (e)MMC/SD card device.
+ *
+ * @param[in]  devNum  The device.
+ * @param[in]  sect    The start sector.
+ * @param      buf     The output buffer pointer. NULL for DMA.
+ * @param[in]  count   The number of sectors to read.
+ *
+ * @return     Returns SDMMC_ERR_NONE on success or
+ *             one of the errors listed above on failure.
+ */
+u32 SDMMC_readSectors(const u8 devNum, u32 sect, u32 *const buf, const u16 count);
+
+/**
+ * @brief      Writes one or more sectors to a (e)MMC/SD card device.
+ *
+ * @param[in]  devNum  The device.
+ * @param[in]  sect    The start sector.
+ * @param[in]  buf     The input buffer pointer. NULL for DMA.
+ * @param[in]  count   The count
+ *
+ * @return     Returns SDMMC_ERR_NONE on success or
+ *             one of the errors listed above on failure.
+ */
+u32 SDMMC_writeSectors(const u8 devNum, u32 sect, const u32 *const buf, const u16 count);
+
+/**
+ * @brief      Sends a custom command to a (e)MMC/SD card device.
+ *
+ * @param[in]  devNum  The device.
+ * @param      cmd     MMC command struct pointer (see above).
+ *
+ * @return     Returns SDMMC_ERR_NONE on success or SDMMC_ERR_SEND_CMD on failure.
+ */
+u32 SDMMC_sendCommand(const u8 devNum, MmcCommand *const mmcCmd);
+
+/**
+ * @brief      Returns the R1 card status of a previously failed command for a (e)MMC/SD card device.
+ *
+ * @param[in]  devNum  The device.
+ *
+ * @return     Returns the R1 card status or 0 if there was either no command error or invalid devNum.
+ */
+u32 SDMMC_getLastR1error(const u8 devNum);
+
+// TODO: TRIM/erase support.

@@ -327,6 +327,9 @@ int main (void) {
 		_io_dldi.fn_startup = sdmmc_startup;
 	}
 #endif
+	REG_AUXIE = 0;
+	REG_AUXIF = ~0;
+
 	u32 fileCluster = storedFileCluster;
 	// Init card
 	if (!FAT_InitFiles(initDisc)) {

@@ -112,6 +112,7 @@ int main() {
 			exitflag = true;
 		}
 		// fifocheck();
+		my_sdmmcHandler();
 		swiWaitForVBlank();
 	}
 	return 0;

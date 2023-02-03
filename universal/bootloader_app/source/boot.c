@@ -364,6 +364,9 @@ int main (void) {
 #ifndef NO_SDMMC
 	sdRead = (dsiSD && dsiMode);
 #endif
+	REG_AUXIE = 0;
+	REG_AUXIF = ~0;
+
 	u32 fileCluster = storedFileCluster;
 	if (!loadFromRam) {
 		// Init card

@@ -618,6 +618,9 @@ int main (void) {
 		*(u32*)(0x2FFFD0C) = 0;
 	}
 
+	REG_AUXIE = 0;
+	REG_AUXIF = ~0;
+
 	u32 fileCluster = storedFileCluster;
 	if (!loadFromRam) {
 		// Init card

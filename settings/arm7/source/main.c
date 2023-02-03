@@ -312,6 +312,7 @@ int main() {
 			sdmmc_nand_cid((u32*)0x2FFD7BC);	// Get eMMC CID
 			*(u32*)(0x2FFFD0C) = 0;
 		}
+		my_sdmmcHandler();
 		swiWaitForVBlank();
 	}
 	return 0;

@@ -223,6 +223,7 @@ int main() {
 			}
 			rebootTimer++;
 		}
+		my_sdmmcHandler();
 		swiWaitForVBlank();
 	}
 	return 0;
