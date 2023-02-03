@@ -172,7 +172,7 @@ static void doCpuTransfer(Tmio *const regs, const u16 cmd, u32 *buf, const u32 *
 	{
 		do
 		{
-			while ((REG_AUXIF & IRQ_SDMMC) || (REG_AUXIF & BIT(10))) { swiDelay(100); };
+			while ((REG_AUXIF & IRQ_SDMMC) || (REG_AUXIF & BIT(10)));
 			if(regs->sd_fifo32_cnt & FIFO32_FULL) // RX ready.
 			{
 				const u32 *const blockEnd = buf + wordBlockLen;
@@ -194,7 +194,7 @@ static void doCpuTransfer(Tmio *const regs, const u16 cmd, u32 *buf, const u32 *
 		// gbatek Command/Param/Response/Data at bottom of page.
 		do
 		{
-			while ((REG_AUXIF & IRQ_SDMMC) || (REG_AUXIF & BIT(10))) { swiDelay(100); };
+			while ((REG_AUXIF & IRQ_SDMMC) || (REG_AUXIF & BIT(10)));
 			if(!(regs->sd_fifo32_cnt & FIFO32_NOT_EMPTY)) // TX request.
 			{
 				const u32 *const blockEnd = buf + wordBlockLen;
@@ -238,7 +238,7 @@ u32 TMIO_sendCommand(TmioPort *const port, const u16 cmd, const u32 arg)
 	// Response end comes immediately after the
 	// command so we need to check before __wfi().
 	// On error response end still fires.
-	while((GET_STATUS(statusPtr) & STATUS_RESP_END) == 0) while (controller == 0 ? (REG_AUXIF & IRQ_SDMMC) : (REG_AUXIF & BIT(10))) { swiDelay(100); };
+	while((GET_STATUS(statusPtr) & STATUS_RESP_END) == 0) while (controller == 0 ? (REG_AUXIF & IRQ_SDMMC) : (REG_AUXIF & BIT(10)));
 	getResponse(regs, port, cmd);
 
 	if((cmd & CMD_DT_EN) != 0)
@@ -248,7 +248,7 @@ u32 TMIO_sendCommand(TmioPort *const port, const u16 cmd, const u32 arg)
 
 		// Wait for data end if needed.
 		// On error data end still fires.
-		while((GET_STATUS(statusPtr) & STATUS_DATA_END) == 0) while (controller == 0 ? (REG_AUXIF & IRQ_SDMMC) : (REG_AUXIF & BIT(10))) { swiDelay(100); };
+		while((GET_STATUS(statusPtr) & STATUS_DATA_END) == 0) while (controller == 0 ? (REG_AUXIF & IRQ_SDMMC) : (REG_AUXIF & BIT(10)));
 	}
 
 	// STATUS_CMD_BUSY is no longer set at this point.
