@@ -33,6 +33,7 @@
 
 void my_touchInit();
 void my_installSystemFIFO(void);
+void my_sdmmcHandler();
 
 #define BIT_SET(c, n) ((c) << (n))
 
@@ -57,6 +58,18 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
+	/*if (isDSiMode()) {
+		if (SD_IRQ_STATUS & BIT(4)) {
+			status = (status & ~SD_MASK) | ((2 << SD_OFF) & SD_MASK);
+			fifoSendValue32(FIFO_USER_03, status);
+		} else if (SD_IRQ_STATUS & BIT(3)) {
+			status = (status & ~SD_MASK) | ((1 << SD_OFF) & SD_MASK);
+			fifoSendValue32(FIFO_USER_03, status);
+		}
+	}*/
+	if (fifoCheckValue32(FIFO_USER_02)) {
+		ReturntoDSiMenu();
+	}
 }
 
 //---------------------------------------------------------------------------------
@@ -108,13 +121,6 @@ int main() {
 	installSoundFIFO();
 	my_installSystemFIFO();
 
-	irqSet(IRQ_VCOUNT, VcountHandler);
-	irqSet(IRQ_VBLANK, VblankHandler);
-
-	irqEnable(IRQ_VBLANK | IRQ_VCOUNT);
-
-	setPowerButtonCB(powerButtonCB);
-
 	u8 readCommand = readPowerManagement(4);
 
 	// 01: Fade Out
@@ -136,24 +142,21 @@ int main() {
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
 
+	irqSet(IRQ_VCOUNT, VcountHandler);
+	irqSet(IRQ_VBLANK, VblankHandler);
+
+	irqEnable(IRQ_VBLANK | IRQ_VCOUNT);
+
+	setPowerButtonCB(powerButtonCB);
+
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ((REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R)) == 0) {
 			exitflag = true;
 		}
-		/*if (isDSiMode()) {
-			if (SD_IRQ_STATUS & BIT(4)) {
-				status = (status & ~SD_MASK) | ((2 << SD_OFF) & SD_MASK);
-				fifoSendValue32(FIFO_USER_03, status);
-			} else if (SD_IRQ_STATUS & BIT(3)) {
-				status = (status & ~SD_MASK) | ((1 << SD_OFF) & SD_MASK);
-				fifoSendValue32(FIFO_USER_03, status);
-			}
-		}*/
-		if (fifoCheckValue32(FIFO_USER_02)) {
-			ReturntoDSiMenu();
-		}
-		swiWaitForVBlank();
+		my_sdmmcHandler();
+		swiDelay(2000);
+		// swiWaitForVBlank();
 	}
 	return 0;
 }

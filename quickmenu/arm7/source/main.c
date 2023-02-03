@@ -36,6 +36,7 @@
 
 void my_touchInit();
 void my_installSystemFIFO(void);
+void my_sdmmcHandler();
 
 u8 my_i2cReadRegister(u8 device, u8 reg);
 u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data);
@@ -111,6 +112,62 @@ void VblankHandler(void) {
 		soundVolume = 127;
 	}
 	REG_MASTER_VOLUME = soundVolume;
+
+	if (SNDEXCNT == 0) {
+		*(int*)0x02003000 = backlightLevel;
+	}
+	if (isDSiMode() && *(u8*)(0x02FFFD00) != 0xFF) {
+		i2cWriteRegister(0x4A, 0x30, *(u8*)(0x02FFFD00));
+		if (*(u8*)(0x02FFFD00) == 0x13) {
+			REG_SCFG_WL &= BIT(0);
+		} else {
+			REG_SCFG_WL |= BIT(0);
+		}
+		*(u8*)(0x02FFFD00) = 0xFF;
+	}
+
+	timeTilVolumeLevelRefresh++;
+	if (timeTilVolumeLevelRefresh == 8) {
+		if (isDSiMode() || REG_SCFG_EXT != 0) { //vol
+			status = (status & ~VOL_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_VOL) << VOL_OFF) & VOL_MASK);
+			status = (status & ~BAT_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) << BAT_OFF) & BAT_MASK);
+		} else {
+			int battery = (readPowerManagement(PM_BATTERY_REG) & 1)?3:15;
+			int backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+			if (backlight & (1<<6)) battery += (backlight & (1<<3))<<4;
+
+			status = (status & ~BAT_MASK) | ((battery << BAT_OFF) & BAT_MASK);
+		}
+		timeTilVolumeLevelRefresh = 0;
+		fifoSendValue32(FIFO_USER_03, status);
+	}
+
+	if (isDSiMode()) {
+		if (SD_IRQ_STATUS & BIT(4)) {
+			status = (status & ~SD_MASK) | ((2 << SD_OFF) & SD_MASK);
+			fifoSendValue32(FIFO_USER_03, status);
+		} else if (SD_IRQ_STATUS & BIT(3)) {
+			status = (status & ~SD_MASK) | ((1 << SD_OFF) & SD_MASK);
+			fifoSendValue32(FIFO_USER_03, status);
+		}
+	}
+
+	if (fifoCheckValue32(FIFO_USER_02)) {
+		ReturntoDSiMenu();
+	}
+
+	if (fifoGetValue32(FIFO_USER_04) == 1) {
+		changeBacklightLevel();
+		fifoSendValue32(FIFO_USER_04, 0);
+	}
+
+	if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
+		if (rebootTimer == 60*2) {
+			ReturntoDSiMenu();	// Reboot, if fat init code is stuck in a loop
+			*(u32*)(0x2FFFD0C) = 0;
+		}
+		rebootTimer++;
+	}
 }
 
 //---------------------------------------------------------------------------------
@@ -215,13 +272,6 @@ int main() {
 	installSoundFIFO();
 	my_installSystemFIFO();
 
-	irqSet(IRQ_VCOUNT, VcountHandler);
-	irqSet(IRQ_VBLANK, VblankHandler);
-
-	irqEnable(IRQ_VBLANK | IRQ_VCOUNT);
-
-	setPowerButtonCB(powerButtonCB);
-
 	if (isDSiMode() && REG_SCFG_EXT == 0) {
 		u32 wordBak = *(vu32*)0x037C0000;
 		*(vu32*)0x037C0000 = 0x414C5253;
@@ -261,72 +311,17 @@ int main() {
 		getConsoleID();
 	}
 
+	irqSet(IRQ_VCOUNT, VcountHandler);
+	irqSet(IRQ_VBLANK, VblankHandler);
+
+	irqEnable(IRQ_VBLANK | IRQ_VCOUNT);
+
+	setPowerButtonCB(powerButtonCB);
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ((REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R)) == 0) {
 			exitflag = true;
-		}
-		if (SNDEXCNT == 0) {
-			*(int*)0x02003000 = backlightLevel;
-		}
-		if (isDSiMode() && *(u8*)(0x02FFFD00) != 0xFF) {
-			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x02FFFD00));
-			if (*(u8*)(0x02FFFD00) == 0x13) {
-				REG_SCFG_WL &= BIT(0);
-			} else {
-				REG_SCFG_WL |= BIT(0);
-			}
-			*(u8*)(0x02FFFD00) = 0xFF;
-		}
-		/*if (!gotCartHeader && fifoCheckValue32(FIFO_USER_04)) {
-			UpdateCardInfo();
-			fifoSendValue32(FIFO_USER_04, 0);
-			gotCartHeader = true;
-		}*/
-
-
-		timeTilVolumeLevelRefresh++;
-		if (timeTilVolumeLevelRefresh == 8) {
-			if (isDSiMode() || REG_SCFG_EXT != 0) { //vol
-				status = (status & ~VOL_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_VOL) << VOL_OFF) & VOL_MASK);
-				status = (status & ~BAT_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) << BAT_OFF) & BAT_MASK);
-			} else {
-				int battery = (readPowerManagement(PM_BATTERY_REG) & 1)?3:15;
-				int backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);
-				if (backlight & (1<<6)) battery += (backlight & (1<<3))<<4;
-
-				status = (status & ~BAT_MASK) | ((battery << BAT_OFF) & BAT_MASK);
-			}
-			timeTilVolumeLevelRefresh = 0;
-			fifoSendValue32(FIFO_USER_03, status);
-		}
-
-		if (isDSiMode()) {
-			if (SD_IRQ_STATUS & BIT(4)) {
-				status = (status & ~SD_MASK) | ((2 << SD_OFF) & SD_MASK);
-				fifoSendValue32(FIFO_USER_03, status);
-			} else if (SD_IRQ_STATUS & BIT(3)) {
-				status = (status & ~SD_MASK) | ((1 << SD_OFF) & SD_MASK);
-				fifoSendValue32(FIFO_USER_03, status);
-			}
-		}
-
-		if (fifoCheckValue32(FIFO_USER_02)) {
-			ReturntoDSiMenu();
-		}
-
-		if (fifoGetValue32(FIFO_USER_04) == 1) {
-			changeBacklightLevel();
-			fifoSendValue32(FIFO_USER_04, 0);
-		}
-
-		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
-			if (rebootTimer == 60*2) {
-				ReturntoDSiMenu();	// Reboot, if fat init code is stuck in a loop
-				*(u32*)(0x2FFFD0C) = 0;
-			}
-			rebootTimer++;
 		}
 
 		if (*(u32*)(0x2FFFD0C) == 0x454D4D43) {
@@ -334,7 +329,8 @@ int main() {
 			*(u32*)(0x2FFFD0C) = 0;
 		}
 		my_sdmmcHandler();
-		swiWaitForVBlank();
+		swiDelay(2000);
+		// swiWaitForVBlank();
 	}
 	return 0;
 }

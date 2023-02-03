@@ -269,14 +269,14 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	int argSize;
 	const char* argChar;
 
-	if (filename[0]=='s' && filename[1]=='d') {
+	//if (filename[0]=='s' && filename[1]=='d') {
 		extern vu32* sharedAddr;
 
 		sharedAddr[3] = 0x44454453;
 		while (sharedAddr[3] == 0x44454453);
 		sharedAddr[3] = 0x4445414E;
 		while (sharedAddr[3] == 0x4445414E);
-	}
+	//}
 
 	irqDisable(IRQ_ALL);
 

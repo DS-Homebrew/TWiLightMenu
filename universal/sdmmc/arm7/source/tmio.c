@@ -29,20 +29,20 @@ static void tmio1Isr(void) // SD/eMMC.
 	// TODO: Some kind of event to notify the main loop for remove/insert.
 }
 
-static void tmio2Isr(void) // WiFi SDIO.
+/*static void tmio2Isr(void) // WiFi SDIO.
 {
 	Tmio *const regs = getTmioRegs(1);
 	g_status[1] |= regs->sd_status;
 	regs->sd_status = STATUS_CMD_BUSY; // Never acknowledge STATUS_CMD_BUSY.
-}
+}*/
 
 void TMIO_init(void)
 {
 	// Register ISR and enable IRQs.
 	irqSetAUX(IRQ_SDMMC, tmio1Isr);
-	irqSetAUX(BIT(10), tmio2Isr); // Controller 2.
+	//irqSetAUX(BIT(10), tmio2Isr); // Controller 2.
 	irqEnableAUX(IRQ_SDMMC);
-	irqEnableAUX(BIT(10));        // Controller 2.
+	//irqEnableAUX(BIT(10));        // Controller 2.
 
 	// Reset all controllers.
 	for(u32 i = 0; i < 2; i++)
@@ -81,7 +81,7 @@ void TMIO_deinit(void)
 {
 	// Unregister ISR and disable IRQs.
 	irqClearAUX(IRQ_SDMMC);
-	irqClearAUX(BIT(10)); // Controller 2.
+	//irqClearAUX(BIT(10)); // Controller 2.
 
 	// Mask all IRQs.
 	for(u32 i = 0; i < 2; i++)
@@ -172,7 +172,7 @@ static void doCpuTransfer(Tmio *const regs, const u16 cmd, u32 *buf, const u32 *
 	{
 		do
 		{
-			while ((REG_AUXIF & IRQ_SDMMC) || (REG_AUXIF & BIT(10)));
+			swiHalt();
 			if(regs->sd_fifo32_cnt & FIFO32_FULL) // RX ready.
 			{
 				const u32 *const blockEnd = buf + wordBlockLen;
@@ -194,7 +194,7 @@ static void doCpuTransfer(Tmio *const regs, const u16 cmd, u32 *buf, const u32 *
 		// gbatek Command/Param/Response/Data at bottom of page.
 		do
 		{
-			while ((REG_AUXIF & IRQ_SDMMC) || (REG_AUXIF & BIT(10)));
+			swiHalt();
 			if(!(regs->sd_fifo32_cnt & FIFO32_NOT_EMPTY)) // TX request.
 			{
 				const u32 *const blockEnd = buf + wordBlockLen;
@@ -238,7 +238,7 @@ u32 TMIO_sendCommand(TmioPort *const port, const u16 cmd, const u32 arg)
 	// Response end comes immediately after the
 	// command so we need to check before __wfi().
 	// On error response end still fires.
-	while((GET_STATUS(statusPtr) & STATUS_RESP_END) == 0) while (controller == 0 ? (REG_AUXIF & IRQ_SDMMC) : (REG_AUXIF & BIT(10)));
+	while((GET_STATUS(statusPtr) & STATUS_RESP_END) == 0) swiHalt();
 	getResponse(regs, port, cmd);
 
 	if((cmd & CMD_DT_EN) != 0)
@@ -248,7 +248,7 @@ u32 TMIO_sendCommand(TmioPort *const port, const u16 cmd, const u32 arg)
 
 		// Wait for data end if needed.
 		// On error data end still fires.
-		while((GET_STATUS(statusPtr) & STATUS_DATA_END) == 0) while (controller == 0 ? (REG_AUXIF & IRQ_SDMMC) : (REG_AUXIF & BIT(10)));
+		while((GET_STATUS(statusPtr) & STATUS_DATA_END) == 0) swiHalt();
 	}
 
 	// STATUS_CMD_BUSY is no longer set at this point.

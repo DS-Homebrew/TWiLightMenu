@@ -30,6 +30,7 @@
 #include <nds.h>
 
 void my_installSystemFIFO(void);
+void my_sdmmcHandler();
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -113,7 +114,8 @@ int main() {
 		}
 		// fifocheck();
 		my_sdmmcHandler();
-		swiWaitForVBlank();
+		swiDelay(2000);
+		// swiWaitForVBlank();
 	}
 	return 0;
 }

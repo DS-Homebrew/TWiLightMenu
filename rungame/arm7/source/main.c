@@ -32,6 +32,7 @@
 #define REG_SCFG_WL *(vu16*)0x4004020
 
 void my_installSystemFIFO(void);
+void my_sdmmcHandler();
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -44,6 +45,24 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
+	if (isDSiMode() && *(u8*)(0x02FFFD00) != 0xFF) {
+		i2cWriteRegister(0x4A, 0x30, *(u8*)(0x02FFFD00));
+		if (*(u8*)(0x02FFFD00) == 0x13) {
+			REG_SCFG_WL |= BIT(0);
+		} else {
+			REG_SCFG_WL &= ~BIT(0);
+		}
+		*(u8*)(0x02FFFD00) = 0xFF;
+	}
+	if (isDSiMode() && *(u8*)(0x02FFFD02) != 0x77) {
+		if (i2cReadRegister(0x4A, 0x63) != *(u8*)(0x02FFFD02)) {
+			i2cWriteRegister(0x4A, 0x63, *(u8*)(0x02FFFD02)); // Change power LED color
+		}
+		*(u8*)(0x02FFFD02) = 0x77;
+	}
+	if (fifoCheckValue32(FIFO_USER_08)) {
+		ReturntoDSiMenu();
+	}
 }
 
 //---------------------------------------------------------------------------------
@@ -94,41 +113,25 @@ int main() {
 	
 	my_installSystemFIFO();
 
-	irqSet(IRQ_VCOUNT, VcountHandler);
-	irqSet(IRQ_VBLANK, VblankHandler);
-
-	irqEnable( IRQ_VBLANK | IRQ_VCOUNT );
-
-	setPowerButtonCB(powerButtonCB);
-	
 	fifoSendValue32(FIFO_USER_03, REG_SCFG_EXT);
 	fifoSendValue32(FIFO_USER_06, 1);
 	
 	*(u8*)(0x02FFFD00) = 0xFF;
 	*(u8*)(0x02FFFD02) = 0x77;
 
+	irqSet(IRQ_VCOUNT, VcountHandler);
+	irqSet(IRQ_VBLANK, VblankHandler);
+
+	irqEnable( IRQ_VBLANK | IRQ_VCOUNT );
+
+	setPowerButtonCB(powerButtonCB);
+
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
-		if (isDSiMode() && *(u8*)(0x02FFFD00) != 0xFF) {
-			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x02FFFD00));
-			if (*(u8*)(0x02FFFD00) == 0x13) {
-				REG_SCFG_WL |= BIT(0);
-			} else {
-				REG_SCFG_WL &= ~BIT(0);
-			}
-			*(u8*)(0x02FFFD00) = 0xFF;
-		}
-		if (isDSiMode() && *(u8*)(0x02FFFD02) != 0x77) {
-			if (i2cReadRegister(0x4A, 0x63) != *(u8*)(0x02FFFD02)) {
-				i2cWriteRegister(0x4A, 0x63, *(u8*)(0x02FFFD02)); // Change power LED color
-			}
-			*(u8*)(0x02FFFD02) = 0x77;
-		}
-		if (fifoCheckValue32(FIFO_USER_08)) {
-			ReturntoDSiMenu();
-		}
 		// fifocheck();
-		swiWaitForVBlank();
+		my_sdmmcHandler();
+		swiDelay(2000);
+		// swiWaitForVBlank();
 	}
 	return 0;
 }
