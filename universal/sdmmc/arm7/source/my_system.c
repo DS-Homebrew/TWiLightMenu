@@ -44,8 +44,8 @@ void my_installSystemFIFO(void) {
 	fifoSetDatamsgHandler(FIFO_FIRMWARE, firmwareMsgHandler, 0);
 	
 	//if (isDSiMode() || (REG_SCFG_EXT & BIT(18))) {
-	irqSet(IRQ_IPC_SYNC, my_sdmmcHandler);
-	irqEnable(IRQ_IPC_SYNC);
+	// irqSet(IRQ_IPC_SYNC, my_sdmmcHandler);
+	// irqEnable(IRQ_IPC_SYNC);
 	//}
 }
 
