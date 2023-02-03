@@ -253,9 +253,10 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KQR", // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 17)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 18)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KOK", // 1001 Crystal Mazes Collection
+	"KXP", // 90's Pool
 	"KAA", // Art Style: Aquia
 	"K9G", // Big Bass Arcade
 	"KLN", // Bloons TD
@@ -277,6 +278,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 // B4DS DSiWare Whitelist (RAM limitation message ID)
 static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // 1001 Crystal Mazes Collection (No music)
+	1, // 90's Pool (No audio)
 	1, // Art Style: Aquia (No audio)
 	4, // Big Bass Arcade (Crashes at certain points)
 	1, // Bloons TD (No audio)
