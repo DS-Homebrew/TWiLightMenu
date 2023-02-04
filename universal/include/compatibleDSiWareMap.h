@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 240)
+// B4DS DSiWare Whitelist (Total: 241)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -119,6 +119,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGV", // Game & Watch: Vermin
 	"KGS", // Globulos Party
 	"KGK", // Glory Days: Tactical Defense
+	"K3G", // Go! Go! Kokopolo
 	"K9A", // Goooooal America
 	"KDH", // Hard-Hat Domo
 	"K6S", // Heathcliff: Spot On
@@ -326,7 +327,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 32)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 31)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -350,7 +351,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KFV", // ARC Style: Furo Jump!! Girutegia Gaiden!
-	"K3G", // Go! Go! Kokopolo
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KYL", // Make Up & Style
 	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
