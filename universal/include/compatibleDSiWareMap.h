@@ -326,7 +326,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 31)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 32)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -349,6 +349,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KEA", // Electroplankton: Trapy
 	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
+	"KFV", // ARC Style: Furo Jump!! Girutegia Gaiden!
 	"K3G", // Go! Go! Kokopolo
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KYL", // Make Up & Style
