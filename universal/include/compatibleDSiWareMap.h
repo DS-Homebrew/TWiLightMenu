@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 243)
+// B4DS DSiWare Whitelist (Total: 244)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -83,6 +83,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDC", // Crash-Course Domo
 	"K32", // CuteWitch! runner
 	"KF3", // Dairojo! Samurai Defenders
+	"KIN", // Dancing Academy
 	"KDV", // Dark Void Zero
 	"KWT", // GO Series: Defense Wars
 	"KHE", // DotMan
