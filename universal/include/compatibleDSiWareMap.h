@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 242)
+// B4DS DSiWare Whitelist (Total: 243)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -237,6 +237,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KVT", // VT Tennis
 	"KK4", // Wakugumi: Monochrome Puzzle
 	"Z2A", // WarioWare: Touched! DL
+	"KWQ", // Whack-A-Friend
 	"KDW", // White-Water Domo
 	"KBS", // Wonderful Sports: Bowling
 	"KYU", // Yummy Yummy Cooking Jam
