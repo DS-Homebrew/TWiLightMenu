@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 244)
+// B4DS DSiWare Whitelist (Total: 245)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -86,6 +86,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KIN", // Dancing Academy
 	"KDV", // Dark Void Zero
 	"KWT", // GO Series: Defense Wars
+	"KCP", // Dekisugi Tingle Pack
 	"KHE", // DotMan
 	"KD9", // Dr. Mario Express
 	"KDL", // Dragon's Lair
