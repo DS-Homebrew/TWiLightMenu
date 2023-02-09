@@ -1,10 +1,11 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 250)
+// B4DS DSiWare Whitelist (Total: 251)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
+	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
 	"K95", // 1950s Lawn Mower Kids
 	"KVM", // 200 Vmaja: Charen Ji Supirittsu
@@ -264,8 +265,9 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KQR", // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 19)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 20)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
+	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
 	"KXP", // 90's Pool
 	"KAA", // Art Style: Aquia
@@ -289,6 +291,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 
 // B4DS DSiWare Whitelist (RAM limitation message ID)
 static int compatibleGameListB4DSRAMLimitedID[] = {
+	4, // 101 Pinball World (No audio + Crashes at certain points)
 	2, // 1001 Crystal Mazes Collection (No music)
 	1, // 90's Pool (No audio)
 	1, // Art Style: Aquia (No audio)
@@ -338,13 +341,12 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 33)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 32)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
 
 	// Counted
-	"KII", // 101 Pinball World
 	"KXO", // 18th Gate
 	"K3Y", // 3 Heroes: Crystal Soul
 	"KXT", // 99Seconds
