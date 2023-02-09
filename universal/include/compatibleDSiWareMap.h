@@ -264,7 +264,7 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KQR", // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 18)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 19)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KOK", // 1001 Crystal Mazes Collection
 	"KXP", // 90's Pool
@@ -272,6 +272,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"K9G", // Big Bass Arcade
 	"KLN", // Bloons TD
 	"KFP", // Flipper
+	"KZH", // Halloween Trick or Treat
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KWY", // Mighty Milky Way
 	"K9K", // Nintendoji
@@ -294,6 +295,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Big Bass Arcade (Crashes at certain points)
 	1, // Bloons TD (No audio)
 	2, // Flipper (No music)
+	2, // Halloween Trick or Treat (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
 	2, // Mighty Milky Way (No music)
 	0, // Nintendoji (No audio + Part of the game only)
