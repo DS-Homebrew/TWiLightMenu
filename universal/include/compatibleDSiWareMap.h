@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 249)
+// B4DS DSiWare Whitelist (Total: 250)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -125,6 +125,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGK", // Glory Days: Tactical Defense
 	"K3G", // Go! Go! Kokopolo
 	"K9A", // Goooooal America
+	"KZH", // Halloween Trick or Treat
 	"KDH", // Hard-Hat Domo
 	"KHQ", // Hearts Spades Euchre
 	"K6S", // Heathcliff: Spot On
