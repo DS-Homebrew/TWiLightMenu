@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 256)
+// B4DS DSiWare Whitelist (Total: 257)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -52,6 +52,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KSA", // Arcade Hoops Basketball
 	"KRD", // Armada
 	"KAY", // Army Defender
+	"K7B", // Around the World in 80 Days
 	"K9Z", // Artillery: Knights vs. Orcs
 	"K7D", // Astro
 	"KVU", // ATV Fever
