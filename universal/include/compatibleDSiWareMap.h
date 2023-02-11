@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 257)
+// B4DS DSiWare Whitelist (Total: 258)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -53,6 +53,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KRD", // Armada
 	"KAY", // Army Defender
 	"K7B", // Around the World in 80 Days
+	"KYA", // Arrow of Laputa
 	"K9Z", // Artillery: Knights vs. Orcs
 	"K7D", // Astro
 	"KVU", // ATV Fever
@@ -271,12 +272,13 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KQR", // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 20)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 21)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
 	"KXP", // 90's Pool
 	"KAA", // Art Style: Aquia
+	"KYA", // Arrow of Laputa
 	"K9G", // Big Bass Arcade
 	"KLN", // Bloons TD
 	"KFP", // Flipper
@@ -301,6 +303,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // 1001 Crystal Mazes Collection (No music)
 	1, // 90's Pool (No audio)
 	1, // Art Style: Aquia (No audio)
+	1, // Arrow of Laputa (No audio)
 	4, // Big Bass Arcade (Crashes at certain points)
 	1, // Bloons TD (No audio)
 	2, // Flipper (No music)
