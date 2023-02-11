@@ -53,6 +53,7 @@ STRING(DSIWARE_DS_MODE_P2, "For increased compatibility,\nand saving data in\nmo
 STRING(RAM_LIMIT_GAME_PART_ONLY, "Due to memory limitations,\nonly part of this game can be\nplayed. To play the full game,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_NO_AUDIO, "Due to memory limitations,\naudio will not be played.\nTo play this game with audio,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_NO_MUSIC, "Due to memory limitations,\nmusic will not be played.\nTo play this game with music,\nlaunch this on Nintendo DSi\nor 3DS systems.")
+STRING(RAM_LIMIT_NO_FMV, "Due to memory limitations,\nFMVs will not be played.\nFor playback of FMVs,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_SPECIFIC_AREA, "Due to memory limitations, the\ngame will crash at a specific\narea. To work around the crash,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_CERTAIN_POINT, "Due to memory limitations,\nthe game will crash at certain\npoint(s). To work around the crash,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(INSERT_MEMORY_EXPANSION_PAK, "To launch this title, please\ninsert the Memory Expansion Pak.")

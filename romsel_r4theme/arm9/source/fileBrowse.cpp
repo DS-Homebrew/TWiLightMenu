@@ -847,6 +847,12 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 			printSmallCentered(false, 114, "around the crash, launch this on");
 			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
 			break;
+		case 5:
+			printSmallCentered(false, 90, "Due to memory limitations, FMVs");
+			printSmallCentered(false, 102, "will not be played. For playback");
+			printSmallCentered(false, 114, "of FMVs, launch this on");
+			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
+			break;
 		case 10:
 			printSmallCentered(false, 102, "To launch this title, please");
 			printSmallCentered(false, 114, "insert the Memory Expansion Pak.");
