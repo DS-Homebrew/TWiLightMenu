@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 259)
+// B4DS DSiWare Whitelist (Total: 260)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -57,6 +57,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K9Z", // Artillery: Knights vs. Orcs
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"K7D", // Astro
+	"KZ3", // Atama o Yoku Suru Anzan DS: Zou no Hana Fuusen
 	"KVU", // ATV Fever
 	"K9U", // ATV Quad Kings
 	"KSR", // Aura-Aura Climber
