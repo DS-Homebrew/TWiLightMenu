@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 261)
+// B4DS DSiWare Whitelist (Total: 262)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -69,6 +69,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KP6J", // Bird & Beans / Tori to Mame (Japan)
 	"KLN", // Bloons TD
 	"KBB", // Bomberman Blitz
+	"KQB", // Box Pusher
 	"KAH", // Art Style: Boxlife
 	"KKQ", // Bugs'N'Balls
 	"K2J", // Cake Ninja
