@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 260)
+// B4DS DSiWare Whitelist (Total: 261)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -61,6 +61,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KVU", // ATV Fever
 	"K9U", // ATV Quad Kings
 	"KSR", // Aura-Aura Climber
+	"KBO", // Ball Fighter
 	"KAD", // Art Style: BASE 10
 	"K8B", // Beauty Academy
 	"KBEE", // Bejeweled Twist (USA)
