@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 264)
+// B4DS DSiWare Whitelist (Total: 265)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -154,6 +154,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KMUE", "KM6V", // Maestro! Green Groove
 	"KWM", // Magical Whip
 	"KJO", // Magnetic Joe
+	"K59", // Metal Torrent
 	"KMG", // Mighty Flip Champs!
 	"KWY", // Mighty Milky Way
 	"KM7", // Missy Mila Twisted Tales
@@ -279,7 +280,7 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KQR", // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 22)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 23)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -292,6 +293,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KFP", // Flipper
 	"KZH", // Halloween Trick or Treat
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
+	"K59", // Metal Torrent
 	"KWY", // Mighty Milky Way
 	"K9K", // Nintendoji
 	"K6T", // Orion's Odyssey
@@ -318,6 +320,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Flipper (No music)
 	2, // Halloween Trick or Treat (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
+	2, // Metal Torrent (No music)
 	2, // Mighty Milky Way (No music)
 	0, // Nintendoji (No audio + Part of the game only)
 	4, // Orion's Odyssey (Crashes at certain points)
@@ -359,7 +362,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 34)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 33)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -388,7 +391,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KYL", // Make Up & Style
 	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
-	"K59", // Metal Torrent
 	"KMM", // Mixed Messages
 	"KNP", // Need for Speed: Nitro-X
 	"KNV", // Neko Reversi
