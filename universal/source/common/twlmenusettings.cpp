@@ -56,7 +56,7 @@ TWLSettings::TWLSettings()
 	cpcEmulator = ECpcAmEDS;
 	mdEmulator = EMegaDriveHybrid;
 	//snesEmulator = true;
-	updateRecentlyPlayedList = isDSiMode();
+	updateRecentlyPlayedList = true;
 	sortMethod = ESortAlphabetical;
 	showDirectories = true;
 	showHidden = false;
