@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 265)
+// B4DS DSiWare Whitelist (Total: 266)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -68,6 +68,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K9G", // Big Bass Arcade
 	"KP6J", // Bird & Beans / Tori to Mame (Japan)
 	"KLN", // Bloons TD
+	"KA5", // Boardwalk Ball Toss
 	"KBB", // Bomberman Blitz
 	"KQV", // Bookstore Dream
 	"KZE", // Bounce & Break
@@ -174,7 +175,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KL4", // My Australian Farm
 	"KMV", // My Exotic Farm
 	"KMR", // My Farm
-	"KAU", // Nintendo Countdown Calendar
+	"KAUE", "KAUV", // Nintendo Countdown Calendar
 	"K2D", // Nintendo DSi + Internet
 	"K9K", // Nintendoji
 	"KSUE", // Number Battle
