@@ -703,6 +703,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 
 	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+	clearText(false);
 	if (err == 0) {
 		printLarge(false, 4, 4, STR_ERROR_FLASHCARD_UNSUPPORTED);
 		printLarge(false, 4, 68, io_dldi_data->friendlyName);
@@ -710,6 +711,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 		printLarge(false, 4, 4, text);
 	}
 	printSmall(false, 4, 90, STR_PRESS_B_RETURN);
+	updateText(false);
 	fadeSpeed = true; // Fast fading
 	if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 		whiteScreen = true;
