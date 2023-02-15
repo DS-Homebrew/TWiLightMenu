@@ -1,20 +1,34 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 227)
+// B4DS DSiWare Whitelist (Total: 266)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
+	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
 	"K95", // 1950s Lawn Mower Kids
 	"KVM", // 200 Vmaja: Charen Ji Supirittsu
+	"K4I", // 24/7 Solitaire
+	"KMJ", // 3D Mahjong
+	"K3CE", "K3UP", // 3D Twist Match
+	"K3B", // 3 Punten Katou Itsu: Bakumatsu Kuizu He
+	"KHG", // 3 Punten Katou Itsu: Higashi Nihon Sengoku Kuizu He
+	"K24", // 3 Punten Katou Itsu: Nishinihon Sengoku Kuizu He
+	"K5R", // 3450 Algo
+	"K7A", // 4 Elements
 	"KTF", // 4 Travellers: Play French
 	"KTS", // 4 Travellers: Play Spanish
 	"K45", // 40-in-1: Explosive Megamix
+	"KRJ", // 5 in 1 Mahjong
 	"K2O", // 505 Tangram
+	"K7C", // 7 Card Games
+	"K7W", // 7 Wonders II
+	"KXP", // 90's Pool
 	"K99", // 99Bullets
 	"K9W", // 99Moves
 	"K2K", // Aa! Nikaku Dori
+	"KXG", // Abyss
 	"KQK", // Ace Mathician
 	"KAC", // Advanced Circuits
 	"K5H", // Ah! Heaven
@@ -26,7 +40,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K54", // Anne's Doll Studio: Gothic Collection
 	"KLQ", // Anne's Doll Studio: Lolita Collection
 	"K2S", // Anne's Doll Studio: Princess Collection
-	"KSQ", // Anne's Doll Studio: Tokyo Collection
+	"KSQ", "KDUJ", // Anne's Doll Studio: Tokyo Collection
 	"KVI", // Anonymous Notes 1: From The Abyss
 	"KV2", // Anonymous Notes 2: From The Abyss
 	"KV3", // Anonymous Notes 3: From The Abyss
@@ -38,18 +52,27 @@ static const char compatibleGameListB4DS[][5] = {
 	"KSA", // Arcade Hoops Basketball
 	"KRD", // Armada
 	"KAY", // Army Defender
+	"K7B", // Around the World in 80 Days
+	"KYA", // Arrow of Laputa
 	"K9Z", // Artillery: Knights vs. Orcs
+	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"K7D", // Astro
+	"KZ3", // Atama o Yoku Suru Anzan DS: Zou no Hana Fuusen
 	"KVU", // ATV Fever
 	"K9U", // ATV Quad Kings
 	"KSR", // Aura-Aura Climber
+	"KBO", // Ball Fighter
 	"KAD", // Art Style: BASE 10
 	"K8B", // Beauty Academy
 	"KBEE", // Bejeweled Twist (USA)
 	"K9G", // Big Bass Arcade
 	"KP6J", // Bird & Beans / Tori to Mame (Japan)
 	"KLN", // Bloons TD
+	"KA5", // Boardwalk Ball Toss
 	"KBB", // Bomberman Blitz
+	"KQV", // Bookstore Dream
+	"KZE", // Bounce & Break
+	"KQB", // Box Pusher
 	"KAH", // Art Style: Boxlife
 	"KKQ", // Bugs'N'Balls
 	"K2J", // Cake Ninja
@@ -70,8 +93,11 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDC", // Crash-Course Domo
 	"K32", // CuteWitch! runner
 	"KF3", // Dairojo! Samurai Defenders
+	"KIN", // Dancing Academy
 	"KDV", // Dark Void Zero
 	"KWT", // GO Series: Defense Wars
+	"KCP", // Dekisugi Tingle Pack
+	"KRF", // Divergent Shift
 	"KHE", // DotMan
 	"KD9", // Dr. Mario Express
 	"KDL", // Dragon's Lair
@@ -107,18 +133,29 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGV", // Game & Watch: Vermin
 	"KGS", // Globulos Party
 	"KGK", // Glory Days: Tactical Defense
+	"K3G", // Go! Go! Kokopolo
 	"K9A", // Goooooal America
+	"K83", // Hachiwandaiba DS: Naru Zouku Ha Samishougi
+	"KZH", // Halloween Trick or Treat
+	"KHO", // Handy Hockey
+	"KHM", // Handy Mahjong
 	"KDH", // Hard-Hat Domo
+	"KHQ", // Hearts Spades Euchre
 	"K6S", // Heathcliff: Spot On
+	"KHL", // Hell's Kitchen VS
+	"KTX", // High Stakes Texas Hold'em
+	"KHI", // Hints Hunter
 	"KJY", // JellyCar 2
 	"KT9", // Kung Fu Dragon
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
+	"KLD", // Legendary Wars: T-Rex Rumble
 	"KLP", // Littlest Pet Shop
 	"KLK", // Lola's Alphabet Train
 	"KOF", // Lola's Fruit Shop Sudoku
 	"KMUE", "KM6V", // Maestro! Green Groove
 	"KWM", // Magical Whip
 	"KJO", // Magnetic Joe
+	"K59", // Metal Torrent
 	"KMG", // Mighty Flip Champs!
 	"KWY", // Mighty Milky Way
 	"KM7", // Missy Mila Twisted Tales
@@ -138,7 +175,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KL4", // My Australian Farm
 	"KMV", // My Exotic Farm
 	"KMR", // My Farm
-	"KAU", // Nintendo Countdown Calendar
+	"KAUE", "KAUV", // Nintendo Countdown Calendar
 	"K2D", // Nintendo DSi + Internet
 	"K9K", // Nintendoji
 	"KSUE", // Number Battle
@@ -217,11 +254,13 @@ static const char compatibleGameListB4DS[][5] = {
 	"KJL", // Tantei Jinguuji Saburou: Rensa Suru Noroi
 	"KJ7", // Tantei Jinguuji Saburou: Nakiko no Shouzou
 	"KTE", // Tetris Party Live
+	"KSLE", "KSLV", // Touch Solitaire
 	"KTI", // Turn: The Lost Artifact
 	"K6P", // Unou to Sanougaren Sasuru: Uranoura
 	"KVT", // VT Tennis
 	"KK4", // Wakugumi: Monochrome Puzzle
 	"Z2A", // WarioWare: Touched! DL
+	"KWQ", // Whack-A-Friend
 	"KDW", // White-Water Domo
 	"KBS", // Wonderful Sports: Bowling
 	"KYU", // Yummy Yummy Cooking Jam
@@ -232,8 +271,9 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (Memory Expansion Pak required) (Total: 5)
+// B4DS DSiWare Whitelist (Memory Expansion Pak required) (Total: 6)
 static const char compatibleGameListB4DSMEP[][4] = {
+	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"KXC", // Castle Conqueror: Heroes 2
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KAU", // Nintendo Countdown Calendar
@@ -241,14 +281,20 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KQR", // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 17)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 23)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
+	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
+	"KXP", // 90's Pool
 	"KAA", // Art Style: Aquia
+	"KYA", // Arrow of Laputa
+	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"K9G", // Big Bass Arcade
 	"KLN", // Bloons TD
 	"KFP", // Flipper
+	"KZH", // Halloween Trick or Treat
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
+	"K59", // Metal Torrent
 	"KWY", // Mighty Milky Way
 	"K9K", // Nintendoji
 	"K6T", // Orion's Odyssey
@@ -264,12 +310,18 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 
 // B4DS DSiWare Whitelist (RAM limitation message ID)
 static int compatibleGameListB4DSRAMLimitedID[] = {
+	4, // 101 Pinball World (No audio + Crashes at certain points)
 	2, // 1001 Crystal Mazes Collection (No music)
+	1, // 90's Pool (No audio)
 	1, // Art Style: Aquia (No audio)
+	1, // Arrow of Laputa (No audio)
+	5, // Aru Seishun no Monogatari: Kouenji Joshi Sakka (No FMVs)
 	4, // Big Bass Arcade (Crashes at certain points)
 	1, // Bloons TD (No audio)
 	2, // Flipper (No music)
+	2, // Halloween Trick or Treat (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
+	2, // Metal Torrent (No music)
 	2, // Mighty Milky Way (No music)
 	0, // Nintendoji (No audio + Part of the game only)
 	4, // Orion's Odyssey (Crashes at certain points)
@@ -311,33 +363,35 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 30)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 33)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
 
 	// Counted
-	"KII", // 101 Pinball World
 	"KXO", // 18th Gate
+	"K3Y", // 3 Heroes: Crystal Soul
 	"KXT", // 99Seconds
 	"K27", // G.G. Series: All Breaker
+	"KAX", // Animal Boxing
 	"KAB", // G.G. Series: Assault Buster
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KUV", // Bloons TD 4
 	"KYN", // Cake Ninja: XMAS
 	"KQN", // Castle Conqueror: Against
 	"KQN", // Castle Conqueror: Revolution
+	"K6B", // Deep Sea Creatures
+	"KN2", // Devil Band: Rock the Underworld
 	"KDQ", // Dragon Quest Wars
 	"KEI", // Electroplankton: Beatnes
 	"KEG", // Electroplankton: Lumiloop
 	"KEA", // Electroplankton: Trapy
 	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
-	"K3G", // Go! Go! Kokopolo
+	"KFV", // ARC Style: Furo Jump!! Girutegia Gaiden!
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KYL", // Make Up & Style
 	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
-	"K59", // Metal Torrent
 	"KMM", // Mixed Messages
 	"KNP", // Need for Speed: Nitro-X
 	"KNV", // Neko Reversi
@@ -347,6 +401,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KUO", // Puzzler World XL
 	"KRR", // Robot Rescue 2
 	"KSJ", // Shawn Johnson Gymnastics
+	"KYS", // Spot the Difference
 };
 
 // B4DS DSiWare Whitelist (DS Retail & Debug consoles with 16MB or more of RAM expansion) (Total: 1)
