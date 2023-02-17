@@ -344,9 +344,10 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 		// open the argv file
 		fp = fopen(name, "rb");
-		if (fp == NULL) {
+		if (!fp) {
 			clearTitle(num);
-			clearBannerSequence(num);
+			if (customIcon[num] != 2)
+				clearBannerSequence(num);
 			fclose(fp);
 			return;
 		}
@@ -381,58 +382,52 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				if (rc != 0) {
 					// stat failed
 					clearTitle(num);
-					clearBannerSequence(num);
+					if (customIcon[num] != 2)
+						clearBannerSequence(num);
 				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					clearTitle(num);
-					clearBannerSequence(num);
+					if (customIcon[num] != 2)
+						clearBannerSequence(num);
 				} else {
 					getGameInfo(false, p, num);
 				}
 			} else {
 				// this is not an nds/app file!
 				clearTitle(num);
-				clearBannerSequence(num);
+				if (customIcon[num] != 2)
+					clearBannerSequence(num);
 			}
 		} else {
 			clearTitle(num);
-			clearBannerSequence(num);
+			if (customIcon[num] != 2)
+				clearBannerSequence(num);
 		}
 		// clean up the allocated line
 		free(line);
 	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp;
-		int ret;
 
 		// open file for reading info
 		fp = fopen(name, "rb");
-		if (fp == NULL) {
+		if (!fp) {
 			clearTitle(num);
-			clearBannerSequence(num); // banner sequence
+			if (customIcon[num] != 2)
+				clearBannerSequence(num); // banner sequence
 			fclose(fp);
 			return;
 		}
 
 		sNDSHeaderExt ndsHeader;
 
-		ret = fseek(fp, 0, SEEK_SET);
-		if (ret == 0)
-			ret = fread(&ndsHeader, sizeof(ndsHeader), 1, fp); // read if seek succeed
-		else
-			ret = 0; // if seek fails set to !=1
-
-		if (ret != 1) {
+		if (!fread(&ndsHeader, sizeof(ndsHeader), 1, fp)) {
 			// try again, but using regular header size
-			ret = fseek(fp, 0, SEEK_SET);
-			if (ret == 0)
-				ret = fread(&ndsHeader, 0x160, 1, fp); // read if seek succeed
-			else
-				ret = 0; // if seek fails set to !=1
-
-			if (ret != 1) {
+			fseek(fp, 0, SEEK_SET);
+			if (!fread(&ndsHeader, 0x160, 1, fp)) {
 				clearTitle(num);
-				clearBannerSequence(num);
+				if (customIcon[num] != 2)
+					clearBannerSequence(num);
 				fclose(fp);
 				return;
 			}
@@ -534,21 +529,11 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 			return;
 		}
-		ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
-		if (ret == 0)
-			ret = fread(&ndsBanner, sizeof(ndsBanner), 1, fp); // read if seek succeed
-		else
-			ret = 0; // if seek fails set to !=1
-
-		if (ret != 1) {
+		fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
+		if (!fread(&ndsBanner, sizeof(ndsBanner), 1, fp)) {
 			// try again, but using regular banner size
-			ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
-			if (ret == 0)
-				ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp); // read if seek succeed
-			else
-				ret = 0; // if seek fails set to !=1
-
-			if (ret != 1) {
+			fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
+			if (!fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp)) {
 				fclose(fp);
 
 				// If no custom icon, display as unknown
