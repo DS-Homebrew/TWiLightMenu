@@ -25,6 +25,8 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KGU", // Flipnote Studio
 	"KHJ", // Hidden Photo (DSiWare)
 	"HNG", // Nintendo DSi Browser
+	"KPB", // Photo Dojo
+	"KRM", // Rayman
 	"KHD", // Sparkle Snapshots
 	"KDY", // Starship Defense
 	"KDZ", // Trajectile
