@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 268)
+// B4DS DSiWare Whitelist (Total: 269)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -85,6 +85,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KC5", // Castle Conqueror: Heroes
 	"KXC", // Castle Conqueror: Heroes 2
 	"KCV", // Cave Story
+	"KZ9", // Chiri Kuizu: Shouga Kusei
 	"KUQ", // Chuck E. Cheese's Alien Defense Force
 	"KUC", // Chuck E. Cheese's Arcade Room
 	"KQL", // Chuukara! Dairoujou
