@@ -1895,6 +1895,7 @@ int main(int argc, char **argv) {
 									unlaunchSetHiyaBoot();
 								}
 
+								DC_FlushAll();						// Make reboot not fail
 								fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 								for (int i = 0; i < 15; i++) swiWaitForVBlank();
 							} else {
@@ -1958,6 +1959,7 @@ int main(int argc, char **argv) {
 									unlaunchSetHiyaBoot();
 								}
 
+								DC_FlushAll();						// Make reboot not fail
 								fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 								for (int i = 0; i < 15; i++) swiWaitForVBlank();
 							} else {
