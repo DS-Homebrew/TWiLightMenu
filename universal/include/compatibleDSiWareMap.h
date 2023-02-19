@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 267)
+// B4DS DSiWare Whitelist (Total: 268)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -75,6 +75,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZE", // Bounce & Break
 	"KQB", // Box Pusher
 	"KAH", // Art Style: Boxlife
+	"K9F", // Bridge
 	"KKQ", // Bugs'N'Balls
 	"K2J", // Cake Ninja
 	"K2N", // Cake Ninja 2
