@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 270)
+// B4DS DSiWare Whitelist (Total: 272)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -87,6 +87,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KCV", // Cave Story
 	"KZ9", // Chiri Kuizu: Shouga Kusei
 	"KBG", // Chotto DS Bun ga Kuzenshuu: Sekai no Bungaku 20
+	"KXW", // Christmas Wonderland
+	"K2W", // Christmas Wonderland 2
 	"KUQ", // Chuck E. Cheese's Alien Defense Force
 	"KUC", // Chuck E. Cheese's Arcade Room
 	"KQL", // Chuukara! Dairoujou
@@ -285,7 +287,7 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KQR", // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 23)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 25)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -295,6 +297,8 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"K9G", // Big Bass Arcade
 	"KLN", // Bloons TD
+	"KXW", // Christmas Wonderland
+	"K2W", // Christmas Wonderland 2
 	"KFP", // Flipper
 	"KZH", // Halloween Trick or Treat
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
@@ -322,6 +326,8 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	5, // Aru Seishun no Monogatari: Kouenji Joshi Sakka (No FMVs)
 	4, // Big Bass Arcade (Crashes at certain points)
 	1, // Bloons TD (No audio)
+	1, // Christmas Wonderland (No audio)
+	2, // Christmas Wonderland 2 (No music)
 	2, // Flipper (No music)
 	2, // Halloween Trick or Treat (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
