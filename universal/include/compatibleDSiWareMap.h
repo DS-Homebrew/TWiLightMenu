@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 272)
+// B4DS DSiWare Whitelist (Total: 274)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -89,6 +89,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KBG", // Chotto DS Bun ga Kuzenshuu: Sekai no Bungaku 20
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
+	"KVW", // Chronicles of Vampires: Origins
+	"KVV", // Chronicles of Vampires: Awakening
 	"KUQ", // Chuck E. Cheese's Alien Defense Force
 	"KUC", // Chuck E. Cheese's Arcade Room
 	"KQL", // Chuukara! Dairoujou
