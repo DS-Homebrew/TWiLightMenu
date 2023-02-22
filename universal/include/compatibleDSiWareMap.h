@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 275)
+// B4DS DSiWare Whitelist (Total: 277)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -93,6 +93,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KVV", // Chronicles of Vampires: Awakening
 	"KUQ", // Chuck E. Cheese's Alien Defense Force
 	"KUC", // Chuck E. Cheese's Arcade Room
+	"KJC", // Chuugaku Eijukugo: Kiho 150 Go Master
+	"KET", // Chuugaku Eitango: Kiho 400 Go Master
 	"KWP", // Chuuga Kukihon' Eitango: Wado Pazuru
 	"KQL", // Chuukara! Dairoujou
 	"KTR", // Clubhouse Games Express: Card Classics
