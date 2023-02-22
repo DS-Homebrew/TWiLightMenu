@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 277)
+// B4DS DSiWare Whitelist (Total: 278)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -166,6 +166,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KMUE", "KM6V", // Maestro! Green Groove
 	"KWM", // Magical Whip
 	"KJO", // Magnetic Joe
+	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"K59", // Metal Torrent
 	"KMG", // Mighty Flip Champs!
 	"KWY", // Mighty Milky Way
@@ -282,14 +283,28 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (Memory Expansion Pak required) (Total: 6)
+// B4DS DSiWare Whitelist (More RAM required) (Total: 7)
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"KXC", // Castle Conqueror: Heroes 2
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
+	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"KAU", // Nintendo Countdown Calendar
 	"K9K", // Nintendoji
 	"KQR", // Remote Racers
+};
+
+// B4DS DSiWare Whitelist (Extra RAM ID)
+// 0: Memory Expansion Pak or Debug console required
+// 1: 16MB+ RAM expansion required
+static int compatibleGameListB4DSMEPID[] = {
+	0, // Aru Seishun no Monogatari: Kouenji Joshi Sakka
+	0, // Castle Conqueror: Heroes 2
+	0, // The Legend of Zelda: Four Swords: Anniversary Edition
+	1, // Meikyou Kokugo: Rakubiki Jiten
+	0, // Nintendo Countdown Calendar
+	0, // Nintendoji
+	0, // Remote Racers
 };
 
 // B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 25)
@@ -417,11 +432,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KRR", // Robot Rescue 2
 	"KSJ", // Shawn Johnson Gymnastics
 	"KYS", // Spot the Difference
-};
-
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles with 16MB or more of RAM expansion) (Total: 1)
-static const char compatibleGameListB4DSLargeS2RAM[][5] = {
-	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 };
 
 #endif // COMPATIBLEDSIWAREMAP_H
