@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 278)
+// B4DS DSiWare Whitelist (Total: 279)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -108,6 +108,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDV", // Dark Void Zero
 	"KWT", // GO Series: Defense Wars
 	"KCP", // Dekisugi Tingle Pack
+	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"KRF", // Divergent Shift
 	"KHE", // DotMan
 	"KD9", // Dr. Mario Express
@@ -307,7 +308,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 25)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 26)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -319,6 +320,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KLN", // Bloons TD
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
+	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"KFP", // Flipper
 	"KZH", // Halloween Trick or Treat
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
@@ -348,6 +350,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Bloons TD (No audio)
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
+	6, // Art Style: DIGIDRIVE / INTERSECT (Demo version)
 	2, // Flipper (No music)
 	2, // Halloween Trick or Treat (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
