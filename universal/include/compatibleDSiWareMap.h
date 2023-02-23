@@ -350,7 +350,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Bloons TD (No audio)
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
-	6, // Art Style: DIGIDRIVE / INTERSECT (Demo version)
+	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state)
 	2, // Flipper (No music)
 	2, // Halloween Trick or Treat (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)

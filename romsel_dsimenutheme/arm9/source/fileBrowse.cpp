@@ -1510,7 +1510,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_NO_FMV) - smallFontHeight()) / 2), STR_RAM_LIMIT_NO_FMV, Alignment::center, FontPalette::dialog);
 			break;
 		case 6:
-			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_DEMO_VER) - smallFontHeight()) / 2), STR_RAM_LIMIT_DEMO_VER, Alignment::center, FontPalette::dialog);
+			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_STATE) - smallFontHeight()) / 2), STR_RAM_LIMIT_STATE, Alignment::center, FontPalette::dialog);
 			break;
 		case 10:
 			if (sys().isRegularDS()) {

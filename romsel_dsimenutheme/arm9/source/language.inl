@@ -56,7 +56,7 @@ STRING(RAM_LIMIT_NO_MUSIC, "Due to memory limitations,\nmusic will not be played
 STRING(RAM_LIMIT_NO_FMV, "Due to memory limitations,\nFMVs will not be played.\nFor playback of FMVs,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_SPECIFIC_AREA, "Due to memory limitations, the\ngame will crash at a specific\narea. To work around the crash,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_CERTAIN_POINT, "Due to memory limitations,\nthe game will crash at certain\npoint(s). To work around the crash,\nlaunch this on Nintendo DSi\nor 3DS systems.")
-STRING(RAM_LIMIT_DEMO_VER, "Due to memory limitations, only\na demo version can be played.\nTo play the full version,\nlaunch this on Nintendo DSi\nor 3DS systems.")
+STRING(RAM_LIMIT_STATE, "Due to memory limitations, the\ngame will run in a limited\nstate. To play the full version,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(INSERT_MEMORY_EXPANSION_PAK, "To launch this title, please\ninsert the Memory Expansion Pak.")
 STRING(INSERT_SLOT2_RAM_CART, "To launch this title, please\nturn off the POWER, and\ninsert a Slot-2 memory\nexpansion cart which isn't the\nMemory Expansion Pak.")
 STRING(INSERT_LARGER_THAN_MEP, "This title requires a larger\namount of memory than the\nExpansion Pak. Please turn off\nthe POWER, and insert a\nSlot-2 cart with more memory.")
