@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 284)
+// B4DS DSiWare Whitelist (Total: 285)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -106,6 +106,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDC", // Crash-Course Domo
 	"KZG", // Crazy Golf
 	"KCR", // Crazy Sudoku
+	"KXD", // Crystal Adventure
 	"KQQ", // Crystal Caverns of Amon-Ra
 	"K32", // CuteWitch! runner
 	"KF3", // Dairojo! Samurai Defenders
@@ -313,7 +314,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 26)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 27)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -325,6 +326,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KLN", // Bloons TD
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
+	"KXD", // Crystal Adventure
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"KFP", // Flipper
 	"KZH", // Halloween Trick or Treat
@@ -355,6 +357,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Bloons TD (No audio)
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
+	4, // Crystal Adventure (Crashes at certain points)
 	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state)
 	2, // Flipper (No music)
 	2, // Halloween Trick or Treat (No music)
