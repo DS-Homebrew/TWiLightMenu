@@ -490,7 +490,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				if (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000) {
 					requiresDonorRom[num] += 100;
 				}
-			} else if (ndsHeader.gameCode[0] != 'D' && memcmp(ndsHeader.gameCode, "KAV", 3) != 0 && a7mbk6[num] == 0x080037C0 && ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode)) {
+			} else if (ndsHeader.gameCode[0] != 'D' && memcmp(ndsHeader.gameCode, "KCX", 3) != 0 && memcmp(ndsHeader.gameCode, "KAV", 3) != 0 && a7mbk6[num] == 0x080037C0 && ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode)) {
 				requiresDonorRom[num] = 51; // DSi-Enhanced ROM required
 			} else if (memcmp(ndsHeader.gameCode, "AYI", 3) == 0 && ndsHeader.arm7binarySize == 0x25F70) {
 				requiresDonorRom[num] = 20; // SDK2.0 ROM required for Yoshi Touch & Go (Europe)
