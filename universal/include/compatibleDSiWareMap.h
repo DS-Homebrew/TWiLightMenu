@@ -315,7 +315,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 27)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 26)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -328,7 +328,6 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
 	"KXD", // Crystal Adventure
-	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"KFP", // Flipper
 	"KZH", // Halloween Trick or Treat
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
@@ -359,7 +358,6 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
 	4, // Crystal Adventure (Crashes at certain points)
-	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state)
 	2, // Flipper (No music)
 	2, // Halloween Trick or Treat (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
@@ -389,9 +387,10 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	2, // Shantae: Risky's Revenge (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 5)
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 6)
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 	"KUI", // Decathlon 2012
+	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"K9A", // Goooooal America
 	"K4N", // Snakenoid Deluxe
 	"Z2A", // WarioWare: Touched! DL
@@ -401,6 +400,7 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 // B4DS DSiWare Whitelist (DS Retail & Debug consoles) (RAM limitation message ID)
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // Decathlon 2012 (No audio)
+	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state)
 	1, // Goooooal America (No audio)
 	1, // Snakenoid Deluxe (No audio)
 	1, // WarioWare: Touched! DL (No audio)
