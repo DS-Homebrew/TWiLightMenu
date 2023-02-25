@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 287)
+// B4DS DSiWare Whitelist (Total: 288)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -125,6 +125,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"B88", // DS WiFi Settings
 	"KB8", // GO Series: Earth Saver
 	"KB9", // Earth Saver: Inseki Bakuha Dai Sakuse
+	"K2E", // Easter Eggztravaganza
 	"KHW", // EJ Puzzles: Hooked
 	"KEB", // Electroplankton: Hanenbow
 	"KEC", // Electroplankton: Luminarrow
@@ -316,7 +317,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 26)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 27)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -329,6 +330,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
 	"KXD", // Crystal Adventure
+	"K2E", // Easter Eggztravaganza
 	"KFP", // Flipper
 	"KZH", // Halloween Trick or Treat
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
@@ -359,6 +361,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
 	4, // Crystal Adventure (Crashes at certain points)
+	0, // Easter Eggztravaganza (Part of the game only)
 	2, // Flipper (No music)
 	2, // Halloween Trick or Treat (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
