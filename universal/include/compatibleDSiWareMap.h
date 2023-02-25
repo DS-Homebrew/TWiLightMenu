@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 285)
+// B4DS DSiWare Whitelist (Total: 286)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -112,6 +112,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KF3", // Dairojo! Samurai Defenders
 	"KIN", // Dancing Academy
 	"KDV", // Dark Void Zero
+	"KUI", // Decathlon 2012
 	"KWT", // GO Series: Defense Wars
 	"KCP", // Dekisugi Tingle Pack
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
@@ -388,8 +389,9 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	2, // Shantae: Risky's Revenge (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 4)
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 5)
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
+	"KUI", // Decathlon 2012
 	"K9A", // Goooooal America
 	"K4N", // Snakenoid Deluxe
 	"Z2A", // WarioWare: Touched! DL
@@ -398,6 +400,7 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 
 // B4DS DSiWare Whitelist (DS Retail & Debug consoles) (RAM limitation message ID)
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
+	1, // Decathlon 2012 (No audio)
 	1, // Goooooal America (No audio)
 	1, // Snakenoid Deluxe (No audio)
 	1, // WarioWare: Touched! DL (No audio)
