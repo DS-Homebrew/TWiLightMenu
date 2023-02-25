@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 286)
+// B4DS DSiWare Whitelist (Total: 287)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -125,6 +125,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"B88", // DS WiFi Settings
 	"KB8", // GO Series: Earth Saver
 	"KB9", // Earth Saver: Inseki Bakuha Dai Sakuse
+	"KHW", // EJ Puzzles: Hooked
 	"KEB", // Electroplankton: Hanenbow
 	"KEC", // Electroplankton: Luminarrow
 	"KEH", // Electroplankton: Marine-Crystals
@@ -387,10 +388,11 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	2, // Shantae: Risky's Revenge (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 6)
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 7)
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 	"KUI", // Decathlon 2012
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
+	"KHW", // EJ Puzzles: Hooked
 	"K9A", // Goooooal America
 	"K4N", // Snakenoid Deluxe
 	"Z2A", // WarioWare: Touched! DL
@@ -401,6 +403,7 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // Decathlon 2012 (No audio)
 	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state)
+	2, // EJ Puzzles: Hooked (No music)
 	1, // Goooooal America (No audio)
 	1, // Snakenoid Deluxe (No audio)
 	1, // WarioWare: Touched! DL (No audio)
