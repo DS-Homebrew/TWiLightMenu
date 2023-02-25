@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 288)
+// B4DS DSiWare Whitelist (Total: 289)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -138,6 +138,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KFK", // Farm Frenzy
 	"KU7E", // Fashion Tycoon (USA)
+	"KF8", // Fire Panic
 	"KZZ", // Fizz
 	"KFS", // Flashlight
 	"KFP", // Flipper
