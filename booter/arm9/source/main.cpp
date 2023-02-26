@@ -155,6 +155,27 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	u32 sdIrqStatus = fifoGetValue32(FIFO_USER_04);
+	if ((sdIrqStatus & BIT(5)) != 0 && (sdIrqStatus & BIT(7)) == 0) {
+		graphicsInit();
+		fontInit();
+		fadeType = true;
+
+		clearText();
+		int yPos = 4;
+		printSmall(false, 4, yPos, "The SD card is write-locked.");
+		yPos += 8*2;
+		printSmall(false, 4, yPos, "Please turn off the POWER,");
+		yPos += 8;
+		printSmall(false, 4, yPos, "remove the SD card, move the");
+		yPos += 8;
+		printSmall(false, 4, yPos, "write-lock switch up, re-insert");
+		yPos += 8;
+		printSmall(false, 4, yPos, "the SD card, then try again.");
+
+		stop();
+	}
+
 	//bool runGame = (strncmp((char*)0x02FFFE0C, "SLRN", 4) == 0);
 
 	const char* srldrPath = (/*runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" :*/ "sd:/_nds/TWiLightMenu/main.srldr");
