@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 289)
+// B4DS DSiWare Whitelist (Total: 290)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -141,6 +141,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KF8", // Fire Panic
 	"KZZ", // Fizz
 	"KFS", // Flashlight
+	"KKR", // Flip the Core
 	"KFP", // Flipper
 	"KFG", // Frogger Returns
 	"K6J", // Fuuu! Dairoujou Kai
