@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 290)
+// B4DS DSiWare Whitelist (Total: 297)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -143,6 +143,13 @@ static const char compatibleGameListB4DS[][5] = {
 	"KFS", // Flashlight
 	"KKR", // Flip the Core
 	"KFP", // Flipper
+	"KFU", // Flips: The Bubonic Builders
+	"KFF", // Flips: The Enchanted Wood
+	"KF6", // Flips: The Folk of the Faraway Tree
+	"KFT", // Flips: The Magic Faraway Tree
+	"KFH", // Flips: More Bloody Horowitz
+	"KF4", // Flips: Silent But Deadly
+	"KF9", // Flips: Terror in Cubicle Four
 	"KFG", // Frogger Returns
 	"K6J", // Fuuu! Dairoujou Kai
 	"KGB", // Game & Watch: Ball
