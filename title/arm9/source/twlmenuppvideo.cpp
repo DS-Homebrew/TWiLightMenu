@@ -673,7 +673,9 @@ void twlMenuVideo(void) {
 				y++;
 			}
 			if (image[(i*4)+3] > 0) {
-				const u16 color = twlColors[(int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme)];
+				int favoriteColor = (int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme);
+				if (favoriteColor < 0 || favoriteColor >= 16) favoriteColor = 2; // Invalid color found, so default to red
+				const u16 color = twlColors[favoriteColor];
 				const u16 bgColor = frameBuffer[0][y*256+x];
 				twlTextBuffer[i] = alphablend(color, bgColor, image[(i*4)+3]);
 			} else {

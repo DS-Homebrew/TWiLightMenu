@@ -1002,7 +1002,8 @@ void vBlankHandler() {
 				barXpos += ms().rtl() ? -12 : 12;
 				barYpos += 12;
 			}
-			int fillColor = tc().progressBarUserPalette() ? progressBarColors[(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme)] : tc().progressBarColor();
+			extern int getFavoriteColor(void);
+			int fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
 			if (ms().colorMode == 1) fillColor = convertVramColorToGrayscale(fillColor);
 			if (ms().rtl()) {
 				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));

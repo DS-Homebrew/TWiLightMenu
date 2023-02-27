@@ -215,6 +215,12 @@ void initSubSprites(void)
 	oamUpdate(&oamSub);
 }
 
+int getFavoriteColor(void) {
+	int favoriteColor = (int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme);
+	if (favoriteColor < 0 || favoriteColor >= 16) favoriteColor = 0; // Invalid color found, so default to gray
+	return favoriteColor;
+}
+
 u16 convertVramColorToGrayscale(u16 val) {
 	u8 b,g,r,max,min;
 	b = ((val)>>10)&31;
@@ -614,7 +620,7 @@ void topBarLoad(void) {
 	if (ms().macroMode) return;
 
 	char filePath[256];
-	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", sys().isDSPhat() ? "phat_topbar" : "topbar", (useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme));
+	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", sys().isDSPhat() ? "phat_topbar" : "topbar", getFavoriteColor());
 	FILE* file = fopen(filePath, "rb");
 
 	if (file) {
@@ -702,7 +708,7 @@ void graphicsInit()
 
 	swiWaitForVBlank();
 
-	u16* newPalette = (u16*)cursorPals+((useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme)*16);
+	u16* newPalette = (u16*)cursorPals+(getFavoriteColor()*16);
 	if (ms().colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 3; i2++) {
