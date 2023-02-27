@@ -396,6 +396,7 @@ void gbaSramAccess(bool open) {
 }
 
 bool autoRunBit = false;
+bool runTempDSiWare = false;
 bool twlBgCxiFound = false;
 
 void wideCheck(bool useWidescreen, bool checkCheatData) {
@@ -471,7 +472,7 @@ void lastRunROM()
 	}
 
 	int err = 0;
-	if (ms().slot1Launched && (!flashcardFound() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA))) {
+	if (!runTempDSiWare && ms().slot1Launched && (!flashcardFound() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA))) {
 		if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
 			err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, false, -1);
 		} else if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
@@ -483,7 +484,7 @@ void lastRunROM()
 			err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, false, -1);
 		}
 	}
-	if (ms().launchType[ms().previousUsedDevice] == Launch::ESDFlashcardLaunch) {
+	if (!runTempDSiWare && ms().launchType[ms().previousUsedDevice] == Launch::ESDFlashcardLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		loadPerGameSettings(filename);
@@ -699,7 +700,7 @@ void lastRunROM()
 				err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 			}
 		}
-	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ESDFlashcardDirectLaunch) {
+	} else if (!runTempDSiWare && ms().launchType[ms().previousUsedDevice] == Launch::ESDFlashcardDirectLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.push_back((char*)ms().romPath[ms().previousUsedDevice].c_str());
@@ -788,8 +789,8 @@ void lastRunROM()
 		runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
 
 		err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram, false, language);
-	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch) {
-		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+	} else if (runTempDSiWare || ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch) {
+		if (!runTempDSiWare && access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		loadPerGameSettings(filename);
 		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().previousUsedDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
@@ -799,7 +800,10 @@ void lastRunROM()
 				bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 				bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
-
+				if (runTempDSiWare) {
+					useWidescreen = *(bool*)(0x02000014);
+					useNightly = *(bool*)(0x02000010);
+				}
 				wideCheck(useWidescreen, true);
 
 				const char *typeToReplace = ".nds";
@@ -822,18 +826,21 @@ void lastRunROM()
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
-				ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
-				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
-				ms().dsiWarePrvPath = ms().dsiWarePubPath;
 				bool savFormat = (ms().previousUsedDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode));
-				if (savFormat) {
-					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
+
+				if (!runTempDSiWare) {
+					ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
+					ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
 					ms().dsiWarePrvPath = ms().dsiWarePubPath;
-				} else {
-					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
-					ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
+					if (savFormat) {
+						ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
+						ms().dsiWarePrvPath = ms().dsiWarePubPath;
+					} else {
+						ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
+						ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
+					}
+					ms().saveSettings();
 				}
-				ms().saveSettings();
 
 				if (savFormat) {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {
@@ -911,7 +918,7 @@ void lastRunROM()
 					}
 				}
 
-				if (sdFound() && !ms().previousUsedDevice) {
+				if (sdFound() && (runTempDSiWare || !ms().previousUsedDevice)) {
 					argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds"));
 				} else {
 					argarray.push_back((char*)(useNightly ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds"));
@@ -973,9 +980,7 @@ void lastRunROM()
 				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD && sdFound()))) {
 					*(bool*)(0x02000010) = useNightly;
 					*(bool*)(0x02000014) = useWidescreen;
-				}
-
-				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD && sdFound()))) {
+					*(u32*)0x02000000 |= BIT(4);
 					ntrStartSdGame();
 				}
 
@@ -1727,6 +1732,7 @@ int main(int argc, char **argv)
 		1: Skip TWLMenu++ splash
 		2: Skip last-run game
 		3: Auto-start ROM
+		4: Run temporary DSiWare
 	*/
 
 	if (isDSiMode() && sdFound()) {
@@ -2612,10 +2618,12 @@ int main(int argc, char **argv)
 	scanKeys();
 
 	autoRunBit = (*(u32*)0x02000000 & BIT(3));
+	runTempDSiWare = (*(u32*)0x02000000 & BIT(4));
 	if (autoRunBit || (!(*(u32*)0x02000000 & BIT(2))
 	&& ((softResetParamsFound && (ms().launchType[ms().previousUsedDevice] == Launch::ESDFlashcardLaunch || ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch))
 	|| (ms().autorun ? !(keysHeld() & KEY_B) : (keysHeld() & KEY_B))))) {
 		*(u32*)0x02000000 &= ~BIT(3);
+		*(u32*)0x02000000 &= ~BIT(4);
 		//unloadNds9iAsynch();
 		if (isDSiMode() && sdFound() && !fcFound && !sys().arm7SCFGLocked() && ms().limitedMode > 0) {
 			*(u32*)0x02FFFD0C = ms().limitedMode == 2 ? 0x4E44544C : ms().limitedMode == 3 ? 0x6D44544C : 0x4D44544C;
