@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 301)
+// B4DS DSiWare Whitelist (Total: 302)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -165,6 +165,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGM", // Game & Watch: Manhole
 	"KGF", // Game & Watch: Mario's Cement Factory
 	"KGV", // Game & Watch: Vermin
+	"K2M", // Ginsei Tsume-Shougi
 	"KGS", // Globulos Party
 	"KGK", // Glory Days: Tactical Defense
 	"K3G", // Go! Go! Kokopolo
