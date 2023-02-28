@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 298)
+// B4DS DSiWare Whitelist (Total: 299)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -113,6 +113,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KIN", // Dancing Academy
 	"KDV", // Dark Void Zero
 	"KUI", // Decathlon 2012
+	"K6B", // Deep Sea Creatures
 	"KWT", // GO Series: Defense Wars
 	"KCP", // Dekisugi Tingle Pack
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
@@ -425,7 +426,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 33)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 32)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -442,7 +443,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KYN", // Cake Ninja: XMAS
 	"KQN", // Castle Conqueror: Against
 	"KQN", // Castle Conqueror: Revolution
-	"K6B", // Deep Sea Creatures
 	"KN2", // Devil Band: Rock the Underworld
 	"KDQ", // Dragon Quest Wars
 	"KEI", // Electroplankton: Beatnes
