@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 297)
+// B4DS DSiWare Whitelist (Total: 298)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -150,6 +150,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KFH", // Flips: More Bloody Horowitz
 	"KF4", // Flips: Silent But Deadly
 	"KF9", // Flips: Terror in Cubicle Four
+	"KFO", // Frenzic
 	"KFG", // Frogger Returns
 	"K6J", // Fuuu! Dairoujou Kai
 	"KGB", // Game & Watch: Ball
@@ -326,7 +327,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 27)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 28)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -341,6 +342,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KXD", // Crystal Adventure
 	"K2E", // Easter Eggztravaganza
 	"KFP", // Flipper
+	"KFO", // Frenzic
 	"KZH", // Halloween Trick or Treat
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"K59", // Metal Torrent
@@ -372,6 +374,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Crystal Adventure (Crashes at certain points)
 	0, // Easter Eggztravaganza (Part of the game only)
 	2, // Flipper (No music)
+	4, // Frenzic (Crashes at certain point)
 	2, // Halloween Trick or Treat (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
 	2, // Metal Torrent (No music)
