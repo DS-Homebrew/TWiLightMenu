@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 299)
+// B4DS DSiWare Whitelist (Total: 300)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -139,6 +139,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KFK", // Farm Frenzy
 	"KU7E", // Fashion Tycoon (USA)
+	"KFD", // Fieldrunners
 	"KF8", // Fire Panic
 	"KZZ", // Fizz
 	"KFS", // Flashlight
@@ -328,7 +329,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 28)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 29)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -342,6 +343,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"K2W", // Christmas Wonderland 2
 	"KXD", // Crystal Adventure
 	"K2E", // Easter Eggztravaganza
+	"KFD", // Fieldrunners
 	"KFP", // Flipper
 	"KFO", // Frenzic
 	"KZH", // Halloween Trick or Treat
@@ -374,6 +376,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Christmas Wonderland 2 (No music)
 	4, // Crystal Adventure (Crashes at certain points)
 	0, // Easter Eggztravaganza (Part of the game only)
+	1, // Fieldrunners (No audio)
 	2, // Flipper (No music)
 	4, // Frenzic (Crashes at certain point)
 	2, // Halloween Trick or Treat (No music)
@@ -426,7 +429,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 32)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 31)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -448,7 +451,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KEI", // Electroplankton: Beatnes
 	"KEG", // Electroplankton: Lumiloop
 	"KEA", // Electroplankton: Trapy
-	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KFV", // ARC Style: Furo Jump!! Girutegia Gaiden!
 	"KZB", // Little Red Riding Hood's Zombie BBQ
