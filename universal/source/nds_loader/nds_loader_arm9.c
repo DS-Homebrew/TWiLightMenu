@@ -388,7 +388,7 @@ bool runNds9 (const char* filename, bool dsModeSwitch) {
 	return true;
 }
 
-int runUnlaunchDsi (const char* filename, u32 sector, int argc, const char** argv) {
+int runUnlaunchDsi (const char* filename, u32 sector) {
 	FILE* ndsFile = fopen(filename, "rb");
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(__DSiHeader, 1, 0x1000, ndsFile);
@@ -484,7 +484,7 @@ int runUnlaunchDsi (const char* filename, u32 sector, int argc, const char** arg
 		fclose(gifFile);
 	}
 
-	return runNds (load_bin, load_bin_size, sector, true, false, true, filename, argc, argv, true, false, false, true, true, false, -1);
+	return runNds (load_bin, load_bin_size, sector, true, false, true, filename, 0, NULL, true, false, false, true, true, false, -1);
 }
 
 int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, bool tscTgds, int language) {
@@ -523,7 +523,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		fclose(ndsFile);
 
 		if (memcmp(gameTitle, "UNLAUNCH.DSI", 0xC) == 0) {
-			return runUnlaunchDsi (filename, st.st_ino, argc, argv);
+			return runUnlaunchDsi (filename, st.st_ino);
 		}
 	}
 
