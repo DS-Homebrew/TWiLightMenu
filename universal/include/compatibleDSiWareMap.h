@@ -170,7 +170,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGK", // Glory Days: Tactical Defense
 	"KGX", // Go Fetch!
 	"KKF", // Go Fetch! 2
-	"KGQ", // Go! Go! Island Rescue
+	"KGQ", // Go! Go! Island Rescue!
 	"K3G", // Go! Go! Kokopolo
 	"K9A", // Goooooal America / Goooooal Europa 2012
 	"K83", // Hachiwandaiba DS: Naru Zouku Ha Samishougi
