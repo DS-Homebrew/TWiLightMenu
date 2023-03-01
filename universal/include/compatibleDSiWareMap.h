@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 305)
+// B4DS DSiWare Whitelist (Total: 306)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -183,6 +183,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KHL", // Hell's Kitchen VS
 	"KTX", // High Stakes Texas Hold'em
 	"KHI", // Hints Hunter
+	"KNK", // Ideyou Sukeno: Kenkou Maja DSi
 	"KJY", // JellyCar 2
 	"KT9", // Kung Fu Dragon
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
@@ -412,12 +413,13 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	2, // Shantae: Risky's Revenge (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 7)
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 8)
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 	"KUI", // Decathlon 2012
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"KHW", // EJ Puzzles: Hooked
 	"K9A", // Goooooal America / Goooooal Europa 2012
+	"KNK", // Ideyou Sukeno: Kenkou Maja DSi
 	"K4N", // Snakenoid Deluxe
 	"Z2A", // WarioWare: Touched! DL
 	"KYU", // Yummy Yummy Cooking Jam
@@ -426,9 +428,10 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 // B4DS DSiWare Whitelist (DS Retail & Debug consoles) (RAM limitation message ID)
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // Decathlon 2012 (No audio)
-	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state)
+	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state due to RAM limitation)
 	2, // EJ Puzzles: Hooked (No music)
 	1, // Goooooal America / Goooooal Europa 2012 (No audio)
+	7, // Ideyou Sukeno: Kenkou Maja DSi (Limited state due to no save support)
 	1, // Snakenoid Deluxe (No audio)
 	1, // WarioWare: Touched! DL (No audio)
 	2, // Yummy Yummy Cooking Jam (No music)
