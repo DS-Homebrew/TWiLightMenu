@@ -1719,9 +1719,14 @@ int main(int argc, char **argv) {
 						*(bool*)(0x02000014) = useWidescreen;
 					}
 					if (isDSiMode() || !ms().secondaryDevice) {
+						if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD && sdFound()))) {
+							*(u32*)0x02000000 |= BIT(4);
+						}
 						SetWidescreen(filename.c_str());
+						*(u32*)0x02000000 &= ~BIT(4);
 					}
 					if (!isDSiMode() && (!ms().secondaryDevice || (ms().secondaryDevice && ms().dsiWareToSD && sdFound()))) {
+						*(u32*)0x02000000 |= BIT(4);
 						ntrStartSdGame();
 					}
 

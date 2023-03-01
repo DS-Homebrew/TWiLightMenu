@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 290)
+// B4DS DSiWare Whitelist (Total: 306)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -113,6 +113,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KIN", // Dancing Academy
 	"KDV", // Dark Void Zero
 	"KUI", // Decathlon 2012
+	"K6B", // Deep Sea Creatures
 	"KWT", // GO Series: Defense Wars
 	"KCP", // Dekisugi Tingle Pack
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
@@ -138,13 +139,23 @@ static const char compatibleGameListB4DS[][5] = {
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KFK", // Farm Frenzy
 	"KU7E", // Fashion Tycoon (USA)
+	"KFD", // Fieldrunners
 	"KF8", // Fire Panic
 	"KZZ", // Fizz
 	"KFS", // Flashlight
 	"KKR", // Flip the Core
 	"KFP", // Flipper
+	"KFU", // Flips: The Bubonic Builders
+	"KFF", // Flips: The Enchanted Wood
+	"KF6", // Flips: The Folk of the Faraway Tree
+	"KFT", // Flips: The Magic Faraway Tree
+	"KFH", // Flips: More Bloody Horowitz
+	"KF4", // Flips: Silent But Deadly
+	"KF9", // Flips: Terror in Cubicle Four
+	"KFO", // Frenzic
 	"KFG", // Frogger Returns
 	"K6J", // Fuuu! Dairoujou Kai
+	"KKG", // Gaia's Moon
 	"KGB", // Game & Watch: Ball
 	"KGC", // Game & Watch: Chef
 	"KGD", // Game & Watch: Donkey Kong Jr.
@@ -154,10 +165,14 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGM", // Game & Watch: Manhole
 	"KGF", // Game & Watch: Mario's Cement Factory
 	"KGV", // Game & Watch: Vermin
+	"K2M", // Ginsei Tsume-Shougi
 	"KGS", // Globulos Party
 	"KGK", // Glory Days: Tactical Defense
+	"KGX", // Go Fetch!
+	"KKF", // Go Fetch! 2
+	"KGQ", // Go! Go! Island Rescue!
 	"K3G", // Go! Go! Kokopolo
-	"K9A", // Goooooal America
+	"K9A", // Goooooal America / Goooooal Europa 2012
 	"K83", // Hachiwandaiba DS: Naru Zouku Ha Samishougi
 	"KZH", // Halloween Trick or Treat
 	"KHO", // Handy Hockey
@@ -168,6 +183,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KHL", // Hell's Kitchen VS
 	"KTX", // High Stakes Texas Hold'em
 	"KHI", // Hints Hunter
+	"KNK", // Ideyou Sukeno: Kenkou Maja DSi
 	"KJY", // JellyCar 2
 	"KT9", // Kung Fu Dragon
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
@@ -319,7 +335,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 27)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 29)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -333,7 +349,9 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"K2W", // Christmas Wonderland 2
 	"KXD", // Crystal Adventure
 	"K2E", // Easter Eggztravaganza
+	"KFD", // Fieldrunners
 	"KFP", // Flipper
+	"KFO", // Frenzic
 	"KZH", // Halloween Trick or Treat
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"K59", // Metal Torrent
@@ -364,7 +382,9 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Christmas Wonderland 2 (No music)
 	4, // Crystal Adventure (Crashes at certain points)
 	0, // Easter Eggztravaganza (Part of the game only)
+	1, // Fieldrunners (No audio)
 	2, // Flipper (No music)
+	4, // Frenzic (Crashes at certain point)
 	2, // Halloween Trick or Treat (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
 	2, // Metal Torrent (No music)
@@ -393,12 +413,13 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	2, // Shantae: Risky's Revenge (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 7)
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 8)
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 	"KUI", // Decathlon 2012
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"KHW", // EJ Puzzles: Hooked
-	"K9A", // Goooooal America
+	"K9A", // Goooooal America / Goooooal Europa 2012
+	"KNK", // Ideyou Sukeno: Kenkou Maja DSi
 	"K4N", // Snakenoid Deluxe
 	"Z2A", // WarioWare: Touched! DL
 	"KYU", // Yummy Yummy Cooking Jam
@@ -407,15 +428,16 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 // B4DS DSiWare Whitelist (DS Retail & Debug consoles) (RAM limitation message ID)
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // Decathlon 2012 (No audio)
-	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state)
+	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state due to RAM limitation)
 	2, // EJ Puzzles: Hooked (No music)
-	1, // Goooooal America (No audio)
+	1, // Goooooal America / Goooooal Europa 2012 (No audio)
+	7, // Ideyou Sukeno: Kenkou Maja DSi (Limited state due to no save support)
 	1, // Snakenoid Deluxe (No audio)
 	1, // WarioWare: Touched! DL (No audio)
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 33)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 31)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -432,13 +454,11 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KYN", // Cake Ninja: XMAS
 	"KQN", // Castle Conqueror: Against
 	"KQN", // Castle Conqueror: Revolution
-	"K6B", // Deep Sea Creatures
 	"KN2", // Devil Band: Rock the Underworld
 	"KDQ", // Dragon Quest Wars
 	"KEI", // Electroplankton: Beatnes
 	"KEG", // Electroplankton: Lumiloop
 	"KEA", // Electroplankton: Trapy
-	"KFD", // Fieldrunners
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KFV", // ARC Style: Furo Jump!! Girutegia Gaiden!
 	"KZB", // Little Red Riding Hood's Zombie BBQ

@@ -165,7 +165,7 @@ inline GL_TEXTURE_SIZE_ENUM get_tex_size(int texSize) {
 }
 
 inline const unsigned short *apply_personal_theme(const unsigned short *palette) {
-	return palette + ((useTwlCfg ? *(unsigned short*)0x02000444 : PersonalData->theme) * 16);
+	return palette + (getFavoriteColor() * 16);
 }
 
 unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const Texture &texture, unsigned int arraySize,
