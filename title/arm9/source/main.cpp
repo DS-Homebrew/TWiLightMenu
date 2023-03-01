@@ -193,7 +193,7 @@ bool extension(const std::string& filename, const char* ext) {
 std::u16string utf8to16(std::string_view text) {
 	std::u16string out;
 	for (uint i=0;i<text.size();) {
-		char16_t c;
+		char16_t c = 0;
 		if (!(text[i] & 0x80)) {
 			c = text[i++];
 		} else if ((text[i] & 0xE0) == 0xC0) {
@@ -275,10 +275,10 @@ bool createDSiWareSave(const char *path, int size) {
 
 	u16 rootEntryCount = size < 0x8C000 ? 0x20 : 0x200;
 
-	#define ALIGN(v, a) (((v) % (a)) ? ((v) + (a) - ((v) % (a))) : (v))
-	u16 totalClusters = ALIGN(sectorCount, secPerCluster) / secPerCluster;
-	u32 fatBytes = (ALIGN(totalClusters, 2) / 2) * 3; // 2 sectors -> 3 byte
-	u16 fatSize = ALIGN(fatBytes, sectorSize) / sectorSize;
+	#define ALIGN_TO_MULTIPLE(v, a) (((v) % (a)) ? ((v) + (a) - ((v) % (a))) : (v))
+	u16 totalClusters = ALIGN_TO_MULTIPLE(sectorCount, secPerCluster) / secPerCluster;
+	u32 fatBytes = (ALIGN_TO_MULTIPLE(totalClusters, 2) / 2) * 3; // 2 sectors -> 3 byte
+	u16 fatSize = ALIGN_TO_MULTIPLE(fatBytes, sectorSize) / sectorSize;
 
 
 	FATHeader h;

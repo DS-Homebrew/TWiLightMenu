@@ -105,7 +105,7 @@ static void little_endian_to_native (void *data, char *format);
 
 static int adpcm_converter (char *infilename, char *outfilename, int flags, int pcm8, int blocksize_pow2, int lookahead)
 {
-    int format = 0, res = 0, bits_per_sample, sample_rate, num_channels;
+    int format = 0, res = 0, bits_per_sample, /*sample_rate,*/ num_channels;
     uint32_t fact_samples = 0;
     size_t num_samples = 0;
     FILE *infile, *outfile;
@@ -252,7 +252,7 @@ static int adpcm_converter (char *infilename, char *outfilename, int flags, int 
             }
 
             num_channels = WaveHeader.NumChannels;
-            sample_rate = WaveHeader.SampleRate;
+            // sample_rate = WaveHeader.SampleRate;
             break;
         }
         else {          // just ignore unknown chunks

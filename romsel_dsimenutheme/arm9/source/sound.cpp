@@ -315,7 +315,7 @@ SoundControl::SoundControl()
 			while (fileSize+fillerSize < STREAMING_BUF_LENGTH*sizeof(s16)) {
 				fillerSize++;
 			}
-			fread((void*)play_stream_buf+fileSize, 1, fillerSize, stream_source);
+			fread((void*)(play_stream_buf+fileSize), 1, fillerSize, stream_source);
 
 			// Fill the next section premptively
 			fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
@@ -330,7 +330,7 @@ SoundControl::SoundControl()
 				while (fileSize+fillerSize < STREAMING_BUF_LENGTH*sizeof(s16)) {
 					fillerSize++;
 				}
-				fread((void*)fill_stream_buf+fileSize, 1, fillerSize, stream_source);
+				fread((void*)(fill_stream_buf+fileSize), 1, fillerSize, stream_source);
 
 				loopingPoint = true;
 			}

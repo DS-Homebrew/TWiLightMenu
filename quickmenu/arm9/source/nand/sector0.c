@@ -28,16 +28,16 @@ int parse_ncsd(const uint8_t sector0[SECTOR_SIZE], int verbose) {
 		if (fs_type == 0) {
 			break;
 		}
-		const char *s_fs_type;
+		//const char *s_fs_type;
 		switch (fs_type) {
 			case 1:
-				s_fs_type = "Normal";
+				//s_fs_type = "Normal";
 				break;
 			case 3:
-				s_fs_type = "FIRM";
+				//s_fs_type = "FIRM";
 				break;
 			case 4:
-				s_fs_type = "AGB_FIRM save";
+				//s_fs_type = "AGB_FIRM save";
 				break;
 			default:
 				if (verbose) {

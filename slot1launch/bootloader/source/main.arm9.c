@@ -121,7 +121,7 @@ static void arm9_errorOutput (u32 code, bool clearBG) {
 	int i, j, k;
 	u16 colour;
 	
-	REG_POWERCNT = POWER_LCD | POWER_2D_A;
+	REG_POWERCNT = (vu16) (POWER_LCD | POWER_2D_A);
 	REG_DISPCNT = MODE_FB0;
 	VRAM_A_CR = VRAM_ENABLE;
 	

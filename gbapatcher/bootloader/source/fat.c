@@ -193,7 +193,7 @@ int discBytePerClus;
 enum {FS_UNKNOWN, FS_FAT12, FS_FAT16, FS_FAT32} discFileSystem;
 
 // Global sector buffer to save on stack space
-unsigned char globalBuffer[BYTES_PER_SECTOR];
+unsigned char globalBuffer[sizeof(BOOT_SEC)];
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
