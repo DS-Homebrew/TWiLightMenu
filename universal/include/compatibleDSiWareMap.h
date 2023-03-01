@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 302)
+// B4DS DSiWare Whitelist (Total: 304)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -168,8 +168,10 @@ static const char compatibleGameListB4DS[][5] = {
 	"K2M", // Ginsei Tsume-Shougi
 	"KGS", // Globulos Party
 	"KGK", // Glory Days: Tactical Defense
+	"KGX", // Go Fetch!
+	"KKF", // Go Fetch! 2
 	"K3G", // Go! Go! Kokopolo
-	"K9A", // Goooooal America
+	"K9A", // Goooooal America / Goooooal Europa 2012
 	"K83", // Hachiwandaiba DS: Naru Zouku Ha Samishougi
 	"KZH", // Halloween Trick or Treat
 	"KHO", // Handy Hockey
@@ -414,7 +416,7 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 	"KUI", // Decathlon 2012
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"KHW", // EJ Puzzles: Hooked
-	"K9A", // Goooooal America
+	"K9A", // Goooooal America / Goooooal Europa 2012
 	"K4N", // Snakenoid Deluxe
 	"Z2A", // WarioWare: Touched! DL
 	"KYU", // Yummy Yummy Cooking Jam
@@ -425,7 +427,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // Decathlon 2012 (No audio)
 	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state)
 	2, // EJ Puzzles: Hooked (No music)
-	1, // Goooooal America (No audio)
+	1, // Goooooal America / Goooooal Europa 2012 (No audio)
 	1, // Snakenoid Deluxe (No audio)
 	1, // WarioWare: Touched! DL (No audio)
 	2, // Yummy Yummy Cooking Jam (No music)
