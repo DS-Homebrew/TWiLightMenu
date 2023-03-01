@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 304)
+// B4DS DSiWare Whitelist (Total: 305)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -170,6 +170,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGK", // Glory Days: Tactical Defense
 	"KGX", // Go Fetch!
 	"KKF", // Go Fetch! 2
+	"KGQ", // Go! Go! Island Rescue
 	"K3G", // Go! Go! Kokopolo
 	"K9A", // Goooooal America / Goooooal Europa 2012
 	"K83", // Hachiwandaiba DS: Naru Zouku Ha Samishougi
