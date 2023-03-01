@@ -919,10 +919,10 @@ bool createDSiWareSave(const char *path, int size) {
 
 	u16 rootEntryCount = size < 0x8C000 ? 0x20 : 0x200;
 
-	#define ALIGN(v, a) (((v) % (a)) ? ((v) + (a) - ((v) % (a))) : (v))
-	u16 totalClusters = ALIGN(sectorCount, secPerCluster) / secPerCluster;
-	u32 fatBytes = (ALIGN(totalClusters, 2) / 2) * 3; // 2 sectors -> 3 byte
-	u16 fatSize = ALIGN(fatBytes, sectorSize) / sectorSize;
+	#define ALIGN_TO_MULTIPLE(v, a) (((v) % (a)) ? ((v) + (a) - ((v) % (a))) : (v))
+	u16 totalClusters = ALIGN_TO_MULTIPLE(sectorCount, secPerCluster) / secPerCluster;
+	u32 fatBytes = (ALIGN_TO_MULTIPLE(totalClusters, 2) / 2) * 3; // 2 sectors -> 3 byte
+	u16 fatSize = ALIGN_TO_MULTIPLE(fatBytes, sectorSize) / sectorSize;
 
 
 	FATHeader h;
@@ -1455,7 +1455,7 @@ int main(int argc, char **argv) {
 
 					while (fgets(str, PATH_MAX, argfile)) {
 						// Find comment and end string there
-						if (pstr = strchr(str, '#'))
+						if ((pstr = strchr(str, '#')) != NULL)
 							*pstr = '\0';
 
 						// Tokenize arguments

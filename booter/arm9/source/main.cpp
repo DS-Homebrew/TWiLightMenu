@@ -53,7 +53,7 @@ const char *unlaunchAutoLoadID = "AutoLoadInfo";
 std::u16string utf8to16(std::string_view text) {
 	std::u16string out;
 	for (uint i=0;i<text.size();) {
-		char16_t c;
+		char16_t c = 0;
 		if (!(text[i] & 0x80)) {
 			c = text[i++];
 		} else if ((text[i] & 0xE0) == 0xC0) {

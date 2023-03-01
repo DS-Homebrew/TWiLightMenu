@@ -31,6 +31,7 @@
 #endif
 #include <nds/ndstypes.h>
 #include <nds/arm7/codec.h>
+#include <nds/debug.h>
 #include <nds/system.h>
 #include <nds/interrupts.h>
 #include <nds/timers.h>
@@ -489,7 +490,7 @@ int arm7_loadBinary (void) {
 	) {
 		// Make the Pokemon game code ADAJ.
 		const char gameCodePokemon[] = { 'A', 'D', 'A', 'J' };
-		copyLoop((u32*)0x027FF00C, gameCodePokemon, 4);
+		copyLoop((u32*)0x027FF00C, (u32*)gameCodePokemon, 4);
 	}
 
 	// Set memory values expected by loaded NDS

@@ -772,10 +772,10 @@ bool createDSiWareSave(const char *path, int size) {
 
 	u16 rootEntryCount = size < 0x8C000 ? 0x20 : 0x200;
 
-	#define ALIGN(v, a) (((v) % (a)) ? ((v) + (a) - ((v) % (a))) : (v))
-	u16 totalClusters = ALIGN(sectorCount, secPerCluster) / secPerCluster;
-	u32 fatBytes = (ALIGN(totalClusters, 2) / 2) * 3; // 2 sectors -> 3 byte
-	u16 fatSize = ALIGN(fatBytes, sectorSize) / sectorSize;
+	#define ALIGN_TO_MULTIPLE(v, a) (((v) % (a)) ? ((v) + (a) - ((v) % (a))) : (v))
+	u16 totalClusters = ALIGN_TO_MULTIPLE(sectorCount, secPerCluster) / secPerCluster;
+	u32 fatBytes = (ALIGN_TO_MULTIPLE(totalClusters, 2) / 2) * 3; // 2 sectors -> 3 byte
+	u16 fatSize = ALIGN_TO_MULTIPLE(fatBytes, sectorSize) / sectorSize;
 
 
 	FATHeader h;
