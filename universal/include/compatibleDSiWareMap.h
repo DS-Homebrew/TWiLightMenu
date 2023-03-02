@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 308)
+// B4DS DSiWare Whitelist (Total: 309)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -187,6 +187,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KIK", // Ivy the Kiwi? mini
 	"K9B", // Jazzy Billiards
 	"KJY", // JellyCar 2
+	"KYJ", // Jewel Adventures
 	"KT9", // Kung Fu Dragon
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KLD", // Legendary Wars: T-Rex Rumble
