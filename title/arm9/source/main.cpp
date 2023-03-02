@@ -2378,21 +2378,11 @@ int main(int argc, char **argv)
 		std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
 		if (access(pubpathUl.c_str(), F_OK) == 0) {
 			rename(pubpathUl.c_str(), pubpath.c_str());
-			logPrint("Moved back to saves folder:\n");
-			logPrint(pubpathUl.c_str());
-			logPrint("\n");
-			logPrint(pubpath.c_str());
-			logPrint("\n");
-			logPrint("\n");
+			logPrint("Moved back to saves folder:\n%s\n%s\n\n", pubpathUl.c_str(), pubpath.c_str());
 		}
 		if (access(prvpathUl.c_str(), F_OK) == 0) {
 			rename(prvpathUl.c_str(), prvpath.c_str());
-			logPrint("Moved back to saves folder:\n");
-			logPrint(prvpathUl.c_str());
-			logPrint("\n");
-			logPrint(prvpath.c_str());
-			logPrint("\n");
-			logPrint("\n");
+			logPrint("Moved back to saves folder:\n%s\n%s\n\n", prvpathUl.c_str(), prvpath.c_str());
 		}
 	}
 
@@ -2435,12 +2425,7 @@ int main(int argc, char **argv)
 		 || extension(filename, ".srl")
 		 || extension(filename, ".app"))) {
 			rename(savepathFc.c_str(), savepath.c_str());
-			logPrint("Moved back to saves folder:\n");
-			logPrint(savepathFc.c_str());
-			logPrint("\n");
-			logPrint(savepath.c_str());
-			logPrint("\n");
-			logPrint("\n");
+			logPrint("Moved back to saves folder:\n%s\n%s\n\n", savepathFc.c_str(), savepath.c_str());
 		}
 	  } else if (sys().isRegularDS() && (*(u16*)(0x020000C0) != 0) && (ms().launchType[true] == Launch::EGBANativeLaunch)) {
 			u8 byteBak = *(vu8*)(0x0A000000);

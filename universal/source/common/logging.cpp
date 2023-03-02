@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <cstdio>
+#include <stdarg.h>
 #include "common/flashcard.h"
 #include "common/twlmenusettings.h"
 
@@ -32,10 +33,13 @@ void logInit(void) {
 	position += 19;
 }
 
-void logPrint(const char* text) {
+void logPrint(const char* format, ...) {
 	if (!inited) return;
 
-	sprintf(logText, text);
+	va_list args;
+	va_start(args, format);
+	vsnprintf(logText, sizeof(logText), format, args);
+	va_end(args);
 
 	int i = 0;
 	for (i = 0; i < 255; i++) {

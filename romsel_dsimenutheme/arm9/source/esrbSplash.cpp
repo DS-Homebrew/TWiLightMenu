@@ -52,12 +52,8 @@ void createEsrbSplash(void) {
 	} else {
 		sprintf(esrbImagePath, "nitro:/graphics/ESRB/%s.png", rating.c_str()); 
 	}
-	logPrint("ESRB Rating: ");
-	logPrint(rating.c_str());
-	logPrint("\n");
-	logPrint("ESRB Descriptors: ");
-	logPrint(descriptors.c_str());
-	logPrint("\n");
+	logPrint("ESRB Rating: %s\n", rating.c_str());
+	logPrint("ESRB Descriptors: %s\n", descriptors.c_str());
 
 	DC_FlushAll();
 
