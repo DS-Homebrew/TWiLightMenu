@@ -92,10 +92,7 @@ char16_t FontGraphic::arabicForm(char16_t current, char16_t prev, char16_t next)
 }
 
 FontGraphic::FontGraphic(const char* path, bool useExpansionPak) : useExpansionPak(useExpansionPak) {
-	/*logPrint("FontGraphic::FontGraphic(");
-	logPrint(path);
-	logPrint(", false)\n");
-	logPrint("\n");*/
+	// logPrint("FontGraphic::FontGraphic(%s, false)\n\n", path);
 
 	FILE *file = fopen(path, "rb");
 	if (file) {
