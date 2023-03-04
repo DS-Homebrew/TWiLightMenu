@@ -1413,12 +1413,12 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 					*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
 					mepFound = (*(vu16*)(0x08240000) == 1);
 					*(vu16*)(0x08240000) = hwordBak;
-					showMsg = (!mepFound || (compatibleGameListB4DSMEPID[i] == 1 && *(u16*)0x020000C0 == 0)); // Show message if not found
+					showMsg = (!mepFound || (compatibleGameListB4DSMEPID[i] == 2 && *(u16*)0x020000C0 == 0)); // Show message if not found
 				}
 			} else {
 				showMsg = true;
 			}
-			msgId = 10+compatibleGameListB4DSMEPID[i];
+			msgId = (compatibleGameListB4DSMEPID[i] == 2) ? 11 : 10;
 			break;
 		}
 	}

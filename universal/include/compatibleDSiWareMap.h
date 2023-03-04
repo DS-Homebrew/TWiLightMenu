@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 311)
+// B4DS DSiWare Whitelist (Total: 313)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -190,6 +190,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KYJ", // Jewel Adventures
 	"KJB", // Jewel Keepers: Easter Island
 	"KUK", // Jewel Legends: Tree of Life
+	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
+	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
 	"KT9", // Kung Fu Dragon
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KLD", // Legendary Wars: T-Rex Rumble
@@ -316,10 +318,12 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (More RAM required) (Total: 7)
+// B4DS DSiWare Whitelist (More RAM required) (Total: 9)
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"KXC", // Castle Conqueror: Heroes 2
+	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
+	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"KAU", // Nintendo Countdown Calendar
@@ -329,12 +333,15 @@ static const char compatibleGameListB4DSMEP[][4] = {
 
 // B4DS DSiWare Whitelist (Extra RAM ID)
 // 0: Memory Expansion Pak or Debug console required
-// 1: 16MB+ RAM expansion required
+// 1: Memory Expansion Pak always required
+// 2: 16MB+ RAM expansion required
 static int compatibleGameListB4DSMEPID[] = {
 	0, // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	0, // Castle Conqueror: Heroes 2
+	2, // Jinia Supasonaru: Eiwa Rakubiki Jiten
+	1, // Jinia Supasonaru: Waei Rakubiki Jiten
 	0, // The Legend of Zelda: Four Swords: Anniversary Edition
-	1, // Meikyou Kokugo: Rakubiki Jiten
+	2, // Meikyou Kokugo: Rakubiki Jiten
 	0, // Nintendo Countdown Calendar
 	0, // Nintendoji
 	0, // Remote Racers
