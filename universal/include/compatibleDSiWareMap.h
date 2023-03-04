@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 313)
+// B4DS DSiWare Whitelist (Total: 317)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -85,7 +85,6 @@ static const char compatibleGameListB4DS[][5] = {
 	"KC5", // Castle Conqueror: Heroes
 	"KXC", // Castle Conqueror: Heroes 2
 	"KCV", // Cave Story
-	"KZ9", // Chiri Kuizu: Shouga Kusei
 	"KBG", // Chotto DS Bun ga Kuzenshuu: Sekai no Bungaku 20
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
@@ -271,6 +270,11 @@ static const char compatibleGameListB4DS[][5] = {
 	"KD6", // Rock-n-Roll Domo
 	"KRW", // Sea Battle
 	"KS3", // Shantae: Risky's Revenge
+	"KK5", // Kakitori Rekishi: Shouga Kusei (01)
+	"KZ9", // Chiri Kuizu: Shouga Kusei (02)
+	"KZ3", // Koumin Kuizu: Shouga Kusei (03)
+	"K48", // Rika Kuizu Shouga Kusei: Seibutsu Chigaku He (04)
+	"K49", // Jukugo Kuizu (05)
 	"K4J", // Simply Mahjong
 	"KM3", // Simply Minesweeper
 	"K4L", // Simply Solitaire
