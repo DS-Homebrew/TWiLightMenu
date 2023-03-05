@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 317)
+// B4DS DSiWare Whitelist (Total: 318)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -191,6 +191,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KUK", // Jewel Legends: Tree of Life
 	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
+	"KJF", // Just SING! 80's
 	"KT9", // Kung Fu Dragon
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KLD", // Legendary Wars: T-Rex Rumble
