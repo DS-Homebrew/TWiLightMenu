@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 318)
+// B4DS DSiWare Whitelist (Total: 319)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -282,6 +282,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KS4", // Simply Sudoku
 	"K2F", // Smart Girl's Playhouse Mini
 	"K4N", // Snakenoid Deluxe
+	"KTY", // Snapdots
 	"KX5", // SnowBoard Xtreme
 	"KL9", // Sokuren Keisa: Shougaku 1 Nensei
 	"KH2", // Sokuren Keisa: Shougaku 2 Nensei
