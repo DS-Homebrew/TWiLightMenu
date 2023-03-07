@@ -221,7 +221,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KK7", // Music on: Electronic Keyboard
 	"KIC", // Music on: Playing Piano
 	"KRH", // Music on: Retro Keyboard
-	"K7ZE", "K9RP", // My Aquarium: Seven Oceans
+	"K7ZE", "K9R", // My Aquarium: Seven Oceans
 	"KL3", // My Asian Farm
 	"KL4", // My Australian Farm
 	"KMV", // My Exotic Farm
