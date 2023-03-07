@@ -163,7 +163,7 @@ FontGraphic::FontGraphic(const char* path, bool useExpansionPak) : useExpansionP
 		u32 locPAMC, mapType;
 		fread(&locPAMC, 4, 1, file);
 
-		while (locPAMC < fileSize) {
+		while (locPAMC && locPAMC < fileSize) {
 			u16 firstChar, lastChar;
 			fseek(file, locPAMC, SEEK_SET);
 			fread(&firstChar, 2, 1, file);
