@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 324)
+// B4DS DSiWare Whitelist (Total: 325)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -197,6 +197,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K3D", // Keisan 100 Renda
 	"KMX", // Kemonomix
 	"K9C", // Kokoro no Herusumeta: Kokoron (Requires TWLFontTable.dat)
+	"KON", // Koneko no ie: Kiri Shima Keto-San Biki no Koneko
 	"KT9", // Kung Fu Dragon
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KLD", // Legendary Wars: T-Rex Rumble
