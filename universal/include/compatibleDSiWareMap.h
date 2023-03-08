@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 325)
+// B4DS DSiWare Whitelist (Total: 326)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -101,6 +101,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KTDT", "KTB", // Clubhouse Games Express: Strategy Pack
 	"KXF", // Color Commando
 	"KC7", // Commando: Steel Disaster
+	"K56", // Coropata
 	"KCX", // Cosmo Fighters
 	"KDC", // Crash-Course Domo
 	"KZG", // Crazy Golf
