@@ -23,7 +23,7 @@
 
 #include <string_view>
 
-void getGameInfo(bool isDir, const char* name, int num);
+void getGameInfo(bool isDir, const char* name, int num, bool fromArgv = false);
 void iconUpdate(bool isDir, const char* name, int num);
 void titleUpdate(bool isDir, std::string_view name, int num);
 void drawRomIcon(int Xpos, int Ypos, int num, int romType);
