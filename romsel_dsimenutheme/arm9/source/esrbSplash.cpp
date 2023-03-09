@@ -49,6 +49,8 @@ void createEsrbSplash(void) {
 			}
 		}
 		sprintf(esrbImagePath, "nitro:/graphics/ESRB/E-%s.png", sideways ? "side" : "nodesc"); 
+	} else if (rating == "EC" || rating == "RP") {
+		sprintf(esrbImagePath, "nitro:/graphics/ESRB/%s%s.png", rating.c_str(), sideways ? "-side" : ""); 
 	} else {
 		sprintf(esrbImagePath, "nitro:/graphics/ESRB/%s.png", rating.c_str()); 
 	}
