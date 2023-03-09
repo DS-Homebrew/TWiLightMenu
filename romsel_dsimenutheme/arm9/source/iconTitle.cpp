@@ -232,25 +232,38 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 		infoFound[num] = false;
 	}
 
-	if (!fromArgv && ms().showCustomIcons) {
+	if (ms().showCustomIcons && customIcon[num] < 2) {
 		sNDSBannerExt &banner = bnriconTile[num];
+		bool argvHadPng = customIcon[num] == 1;
+		u8 iconCopy[512];
+		u16 paletteCopy[16];
+		if (argvHadPng) { // custom png icon from argv
+			// copy the icon and palette before they get overwritten
+			memcpy(iconCopy, banner.icon, sizeof(iconCopy));
+			memcpy(paletteCopy, banner.palette, sizeof(paletteCopy));
+		}
 		toncset(&banner, 0, sizeof(sNDSBannerExt));
 		bool customIconGood = false;
 
 		// First try banner bin
 		snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.bin", sdFound() ? "sd" : "fat", name);
-		customIcon[num] = (access(customIconPath, F_OK) == 0);
-		if (customIcon[num]) {
+		if (access(customIconPath, F_OK) == 0) {
 			customIcon[num] = 2; // custom icon is a banner bin
 			FILE *file = fopen(customIconPath, "rb");
 			if (file) {
 				size_t read = fread(&banner, 1, sizeof(sNDSBannerExt), file);
 				fclose(file);
 
+				// restore png icon
+				if (argvHadPng) {
+					memcpy(banner.icon, iconCopy, sizeof(iconCopy));
+					memcpy(banner.palette, paletteCopy, sizeof(paletteCopy));
+				}
+
 				if (read >= NDS_BANNER_SIZE_ORIGINAL) {
 					customIconGood = true;
 
-					if (ms().animateDsiIcons && read == NDS_BANNER_SIZE_DSi) {
+					if (!argvHadPng && ms().animateDsiIcons && read == NDS_BANNER_SIZE_DSi) {
 						u16 crc16 = swiCRC16(0xFFFF, banner.dsi_icon, 0x1180);
 						if (banner.crc[3] == crc16) { // Check if CRC16 is valid
 							bnriconisDSi[num] = true;
@@ -272,7 +285,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 					infoFound[num] = true;
 				}
 			}
-		} else {
+		} else if (customIcon[num] == 0) {
 			// If no banner bin, try png
 			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
 			customIcon[num] = (access(customIconPath, F_OK) == 0);
