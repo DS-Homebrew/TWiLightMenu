@@ -118,7 +118,7 @@ void createEsrbSplash(void) {
 
 	mkdir(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap" : "fat:/_nds/nds-bootstrap", 0777);
 
-	FILE *file = fopen(sdFound() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin", "wb");
+	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin", "wb");
 	fwrite(tex().bmpImageBuffer(), sizeof(u16), 256*192, file);
 	fclose(file);
 }
