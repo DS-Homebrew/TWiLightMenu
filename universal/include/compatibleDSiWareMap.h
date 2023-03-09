@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 328)
+// B4DS DSiWare Whitelist (Total: 330)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -224,6 +224,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KQD", // Music on: Drums
 	"KIE", // Music on: Electric Guitar
 	"KK7", // Music on: Electronic Keyboard
+	"K88", // Music on: Learning Piano
+	"KI7", // Music on: Learning Piano Vol. 2
 	"KIC", // Music on: Playing Piano
 	"KRH", // Music on: Retro Keyboard
 	"K7ZE", "K9R", // My Aquarium: Seven Oceans
