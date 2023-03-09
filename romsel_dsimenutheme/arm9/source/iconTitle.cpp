@@ -212,7 +212,7 @@ void clearTitle(int num) {
 	cachedTitle[num] = blankTitle;
 }
 
-void getGameInfo(bool isDir, const char *name, int num) {
+void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 	if (num == -1)
 		num = 40;
 
@@ -220,17 +220,19 @@ void getGameInfo(bool isDir, const char *name, int num) {
 	bnriconPalLoaded[num] = 0;
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
-	bnriconisDSi[num] = false;
 	bnrWirelessIcon[num] = 0;
-	customIcon[num] = 0;
 	isDSiWare[num] = false;
 	isHomebrew[num] = false;
 	isModernHomebrew[num] = false;
 	requiresRamDisk[num] = false;
 	requiresDonorRom[num] = false;
-	infoFound[num] = false;
+	if (!fromArgv) {
+		bnriconisDSi[num] = false;
+		customIcon[num] = 0;
+		infoFound[num] = false;
+	}
 
-	if (ms().showCustomIcons) {
+	if (!fromArgv && ms().showCustomIcons) {
 		sNDSBannerExt &banner = bnriconTile[num];
 		toncset(&banner, 0, sizeof(sNDSBannerExt));
 		bool customIconGood = false;
@@ -390,7 +392,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 					if (customIcon[num] != 2)
 						clearBannerSequence(num);
 				} else {
-					getGameInfo(false, p, num);
+					getGameInfo(false, p, num, true);
 				}
 			} else {
 				// this is not an nds/app file!
