@@ -36,10 +36,9 @@ void createEsrbSplash(void) {
 
 	std::string descriptors = esrbInfo.GetString(gameTid3, "Descriptors en", "");
 
-	char esrbImagePath[64];
-	if (rating == "E" && descriptors == "") {
+	bool sideways = false;
+	if ((rating == "E" || rating == "EC" || rating == "RP") && descriptors == "") {
 		// Search for games starting sideways
-		bool sideways = false;
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(sidewaysGameList)/sizeof(sidewaysGameList[0]); i++) {
 			if (memcmp(gameTid[CURPOS], sidewaysGameList[i], 3) == 0) {
@@ -48,6 +47,10 @@ void createEsrbSplash(void) {
 				break;
 			}
 		}
+	}
+
+	char esrbImagePath[64];
+	if (rating == "E" && descriptors == "") {
 		sprintf(esrbImagePath, "nitro:/graphics/ESRB/E-%s.png", sideways ? "side" : "nodesc"); 
 	} else if (rating == "EC" || rating == "RP") {
 		sprintf(esrbImagePath, "nitro:/graphics/ESRB/%s%s.png", rating.c_str(), sideways ? "-side" : ""); 
