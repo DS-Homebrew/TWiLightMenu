@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 331)
+// B4DS DSiWare Whitelist (Total: 332)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -205,6 +205,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KLD", // Legendary Wars: T-Rex Rumble
 	"K5C", // Letter Challenge
+	"KPT", // Link 'n' Launch
 	"KLP", // Littlest Pet Shop
 	"KLK", // Lola's Alphabet Train
 	"KOF", // Lola's Fruit Shop Sudoku
@@ -365,7 +366,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 29)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 30)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -384,6 +385,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KFO", // Frenzic
 	"KZH", // Halloween Trick or Treat
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
+	"KPT", // Link 'n' Launch
 	"K59", // Metal Torrent
 	"KWY", // Mighty Milky Way
 	"K9K", // Nintendoji
@@ -417,6 +419,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Frenzic (Crashes at certain point)
 	2, // Halloween Trick or Treat (No music)
 	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
+	2, // Link 'n' Launch (No music)
 	2, // Metal Torrent (No music)
 	2, // Mighty Milky Way (No music)
 	0, // Nintendoji (No audio + Part of the game only)
