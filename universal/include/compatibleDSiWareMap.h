@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 338)
+// B4DS DSiWare Whitelist (Total: 339)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -241,6 +241,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KMV", // My Exotic Farm
 	"KMR", // My Farm
 	"KJW", // Nandoku 500 Kanji: Wado Pazuru
+	"K9N", // Neko Neko Bakery: Pan de Pazurunya!
 	"KAUE", "KAUV", // Nintendo Countdown Calendar
 	"K2D", // Nintendo DSi + Internet
 	"K9K", // Nintendoji
@@ -372,7 +373,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 30)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 31)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -394,6 +395,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KPT", // Link 'n' Launch
 	"K59", // Metal Torrent
 	"KWY", // Mighty Milky Way
+	"K9N", // Neko Neko Bakery: Pan de Pazurunya!
 	"K9K", // Nintendoji
 	"K6T", // Orion's Odyssey
 	"KE3", // PictureBook Games: The Royal Bluff
@@ -428,6 +430,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Link 'n' Launch (No music)
 	2, // Metal Torrent (No music)
 	2, // Mighty Milky Way (No music)
+	2, // Neko Neko Bakery: Pan de Pazurunya! (No music)
 	0, // Nintendoji (No audio + Part of the game only)
 	4, // Orion's Odyssey (Crashes at certain points)
 	1, // PictureBook Games: The Royal Bluff (No audio)
