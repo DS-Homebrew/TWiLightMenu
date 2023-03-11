@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 332)
+// B4DS DSiWare Whitelist (Total: 337)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -119,7 +119,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"KRF", // Divergent Shift
 	"KHE", // DotMan
-	"KD9", // Dr. Mario Express
+	"KD9", // Dr. Mario Express / A Little Bit of... Dr. Mario
 	"KDL", // Dragon's Lair
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
 	"K9E", // Dreamwalker
@@ -212,6 +212,11 @@ static const char compatibleGameListB4DS[][5] = {
 	"KMUE", "KM6V", // Maestro! Green Groove
 	"KWM", // Magical Whip
 	"KJO", // Magnetic Joe
+	"KM9", // Master of Illusion Express: Deep Psyche / A Little Bit of... Magic Made Fun: Deep Psyche
+	"KMFT", "KMFP", "KMFJ", // Master of Illusion Express: Funny Face / A Little Bit of... Magic Made Fun: Funny Face
+	"KMD", // Master of Illusion Express: Matchmaker / A Little Bit of... Magic Made Fun: Matchmaker
+	"KMI", // Master of Illusion Express: Mind Probe / A Little Bit of... Magic Made Fun: Mind Probe
+	"KMS", // Master of Illusion Express: Shuffle Games / A Little Bit of... Magic Made Fun: Shuffle Games
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"K59", // Metal Torrent
 	"KMG", // Mighty Flip Champs!
@@ -260,7 +265,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDP", // Pro-Putt Domo
 	"KLF", // Puffins: Let's Fish!
 	"KLR", // Puffins: Let's Race!
-	"KPN", // Puzzle League: Express
+	"KPN", // Puzzle League: Express / A Little Bit of... Puzzle League
 	"KYE", // Puzzler Brain Games
 	"KBY", // Puzzle to Go: Baby Animals
 	"KPU", // Puzzle to Go: Diddl
