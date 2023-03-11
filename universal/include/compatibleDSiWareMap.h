@@ -40,7 +40,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K54", // Anne's Doll Studio: Gothic Collection
 	"KLQ", // Anne's Doll Studio: Lolita Collection
 	"K2S", // Anne's Doll Studio: Princess Collection
-	"KSQ", "KDUJ", // Anne's Doll Studio: Tokyo Collection
+	"KSQ", "KDU", // Anne's Doll Studio: Tokyo Collection
 	"KVI", // Anonymous Notes 1: From The Abyss
 	"KV2", // Anonymous Notes 2: From The Abyss
 	"KV3", // Anonymous Notes 3: From The Abyss
