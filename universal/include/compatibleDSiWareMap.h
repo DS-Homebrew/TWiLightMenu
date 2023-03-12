@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 343)
+// B4DS DSiWare Whitelist (Total: 344)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -330,6 +330,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KJQ", // Tantei Jinguuji Saburou: Kadannoitte
 	"KJL", // Tantei Jinguuji Saburou: Rensa Suru Noroi
 	"KJ7", // Tantei Jinguuji Saburou: Nakiko no Shouzou
+	"KOS", // Tell me Darling
 	"KTE", // Tetris Party Live
 	"KSLE", "KSLV", // Touch Solitaire
 	"KTI", // Turn: The Lost Artifact
