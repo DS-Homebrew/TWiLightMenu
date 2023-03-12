@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 340)
+// B4DS DSiWare Whitelist (Total: 342)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -248,6 +248,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"K9K", // Nintendoji
 	"KSUE", // Number Battle
 	"K6T", // Orion's Odyssey
+	"KOT", // Oscar in Toyland
+	"KOY", // Oscar in Toyland 2
 	"KAMJ", // Paper Airplane Chase / Kami Hikouki (Japan)
 	"KP9", // Paul's Monster Adventure
 	"KPJ", // Paul's Shooting Adventure
@@ -374,7 +376,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 32)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 33)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -400,6 +402,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"K9N", // Neko Neko Bakery: Pan de Pazurunya!
 	"K9K", // Nintendoji
 	"K6T", // Orion's Odyssey
+	"KOY", // Oscar in Toyland 2
 	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist
 	"KS3", // Shantae: Risky's Revenge
@@ -436,6 +439,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Neko Neko Bakery: Pan de Pazurunya! (No music)
 	0, // Nintendoji (No audio + Part of the game only)
 	4, // Orion's Odyssey (Crashes at certain points)
+	4, // Oscar in Toyland 2 (Crashes at certain point)
 	1, // PictureBook Games: The Royal Bluff (No audio)
 	0, // Picture Perfect: Pocket Stylist (No audio + Parts of the game only)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
