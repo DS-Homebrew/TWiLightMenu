@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 345)
+// B4DS DSiWare Whitelist (Total: 347)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -252,6 +252,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KOY", // Oscar in Toyland 2
 	"KTV", // Otegaru Pazuru Shirizu: Yurito Fushigina Meikyuu
 	"KOL", // Othello
+	"KL7", // Otona no Nihonshi Pazuru
+	"KL6", // Otona no Sekaishi Pazuru
 	"KAMJ", // Paper Airplane Chase / Kami Hikouki (Japan)
 	"KP9", // Paul's Monster Adventure
 	"KPJ", // Paul's Shooting Adventure
