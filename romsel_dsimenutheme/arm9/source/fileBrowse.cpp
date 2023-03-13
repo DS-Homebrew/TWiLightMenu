@@ -18,6 +18,7 @@
 
 #include "SwitchState.h"
 #include "errorScreen.h"
+#include "graphics/ThemeConfig.h"
 #include "graphics/ThemeTextures.h"
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
@@ -116,6 +117,7 @@ bool boxArtLoaded = false;
 bool shouldersRendered = false;
 bool settingsChanged = false;
 
+static bool musicplaying = false;
 bool edgeBumpSoundPlayed = false;
 bool needToPlayStopSound = false;
 bool stopSoundPlayed = false;
@@ -2192,8 +2194,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 	getDirectoryContents(dirContents[scrn], extensionList);
 
-	controlTopBright = false;
-
 	while (1) {
 		snd().updateStream();
 		updateDirectoryContents(dirContents[scrn]);
@@ -2204,16 +2204,38 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		}
 		nowLoadingDisplaying = false;
 		whiteScreen = false;
-		displayGameIcons = true;
 		fadeType = true; // Fade in from white
 		for (int i = 0; i < 5; i++) {
 			bgOperations(true);
 		}
+		if (!musicplaying && ms().theme == TWLSettings::EThemeDSi) {
+			fadeSpeed = false; // Slow fade speed
+		}
+		displayGameIcons = true;
 		clearText(false);
 		updateText(false);
 
+		if (!musicplaying && ms().theme != TWLSettings::EThemeSaturn && ms().dsiMusic != 0) {
+			if ((ms().theme == TWLSettings::ETheme3DS && ms().dsiMusic == 1) || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
+				//logPrint("snd().playStartup()\n");
+				snd().playStartup();
+				//logPrint("snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust())\n");
+				snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
+			}
+			//logPrint("snd().beginStream()\n");
+			snd().beginStream();
+
+			controlTopBright = true;
+			if (ms().theme != TWLSettings::EThemeDSi) {
+				while (!screenFadedIn());
+			}
+			musicplaying = true;
+		}
+
 		snd().updateStream();
 		waitForFadeOut();
+		controlTopBright = false;
+		fadeSpeed = true; // Fast fade speed
 		bool gameTapped = false;
 
 		while (1) {

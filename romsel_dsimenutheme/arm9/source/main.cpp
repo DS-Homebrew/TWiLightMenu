@@ -1076,15 +1076,8 @@ int main(int argc, char **argv) {
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		//logPrint("snd().playStartup()\n");
 		snd().playStartup();
-	} else if (ms().dsiMusic != 0) {
-		if ((ms().theme == TWLSettings::ETheme3DS && ms().dsiMusic == 1) || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
-			//logPrint("snd().playStartup()\n");
-			snd().playStartup();
-			//logPrint("snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust())\n");
-			snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
-		}
-		//logPrint("snd().beginStream()\n");
-		snd().beginStream();
+	} else if (ms().theme != TWLSettings::EThemeHBL) {
+		controlTopBright = false;
 	}
 
 	if (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch
@@ -1095,11 +1088,9 @@ int main(int argc, char **argv) {
 		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 96 : 104), STR_DONOT_TURNOFF_POWER, Alignment::center);
 		updateText(false);
 		for (int i = 0; i < 30; i++) {
-			snd().updateStream();
 			swiWaitForVBlank();
 		}
 		showProgressIcon = true;
-		controlTopBright = false;
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", ms().dsiWarePubPath.c_str());
 			rename("sd:/_nds/TWiLightMenu/tempDSiWare.pub", "sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak");
@@ -1112,7 +1103,6 @@ int main(int argc, char **argv) {
 		if (ms().theme != TWLSettings::EThemeSaturn) {
 			fadeType = false; // Fade to white
 			for (int i = 0; i < 25; i++) {
-				snd().updateStream();
 				swiWaitForVBlank();
 			}
 		}
