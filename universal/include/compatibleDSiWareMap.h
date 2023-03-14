@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 350)
+// B4DS DSiWare Whitelist (Total: 351)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -275,6 +275,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAK", // Art Style: precipice
 	"KPH", // Prehistorik Man
 	"KDP", // Pro-Putt Domo
+	"KXU", // Publisher Dream
 	"KLF", // Puffins: Let's Fish!
 	"KLR", // Puffins: Let's Race!
 	"KPN", // Puzzle League: Express / A Little Bit of... Puzzle League
@@ -386,7 +387,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 34)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 35)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -416,6 +417,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KOY", // Oscar in Toyland 2
 	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist
+	"KXU", // Publisher Dream
 	"KS3", // Shantae: Risky's Revenge
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
 	"KZV", // Tales to Enjoy!: Puss in Boots
@@ -454,6 +456,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Oscar in Toyland 2 (Crashes at certain point)
 	1, // PictureBook Games: The Royal Bluff (No audio)
 	0, // Picture Perfect: Pocket Stylist (No audio + Parts of the game only)
+	1, // Publisher Dream (No audio)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
 	4, // Tales to Enjoy!: Little Red Riding Hood (Crashes at certain points)
 	4, // Tales to Enjoy!: Puss in Boots (Crashes at certain points)
