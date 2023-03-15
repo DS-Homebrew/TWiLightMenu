@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 353)
+// B4DS DSiWare Whitelist (Total: 355)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -270,6 +270,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZL", // Plants vs. Zombies
 	"KFX", // PlayLearn Chinese
 	"KFQ", // PlayLearn Spanish
+	"KSG", // Pocket Pack: Strategy Games
+	"KWN", // Pocket Pack: Words & Numbers
 	"KPP", // Pop Island
 	"KPF", // Pop Island: Paperfield
 	"KPI", // Pop+ Solo
