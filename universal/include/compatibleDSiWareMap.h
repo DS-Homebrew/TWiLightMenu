@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 357)
+// B4DS DSiWare Whitelist (Total: 358)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -280,6 +280,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAK", // Art Style: precipice
 	"KPH", // Prehistorik Man
 	"KPR", // The Price Is Right
+	"K2R", // Primrose
 	"KDP", // Pro-Putt Domo
 	"KXU", // Publisher Dream
 	"KLF", // Puffins: Let's Fish!
