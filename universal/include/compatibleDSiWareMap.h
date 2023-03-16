@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 358)
+// B4DS DSiWare Whitelist (Total: 359)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -283,6 +283,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K2R", // Primrose
 	"KDP", // Pro-Putt Domo
 	"KXU", // Publisher Dream
+	"KNU", // Pucca: Noodle Rush
 	"KLF", // Puffins: Let's Fish!
 	"KLR", // Puffins: Let's Race!
 	"KPN", // Puzzle League: Express / A Little Bit of... Puzzle League
