@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 362)
+// B4DS DSiWare Whitelist (Total: 364)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -247,6 +247,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAUE", "KAUV", // Nintendo Countdown Calendar
 	"K2D", // Nintendo DSi + Internet
 	"K9K", // Nintendoji
+	"KJI", // Noroi no Game: Chi
+	"KG9", // Noroi no Game: Oku
 	"KSUE", // Number Battle
 	"K6T", // Orion's Odyssey
 	"KOT", // Oscar in Toyland
