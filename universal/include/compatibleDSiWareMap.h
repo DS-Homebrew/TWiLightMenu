@@ -166,7 +166,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGF", // Game & Watch: Mario's Cement Factory
 	"KGV", // Game & Watch: Vermin
 	"K2M", // Ginsei Tsume-Shougi
-	"KGS", // Globulos Party
+	"KGS", "KU2J", // Globulos Party
 	"KGK", // Glory Days: Tactical Defense
 	"KGX", // Go Fetch!
 	"KKF", // Go Fetch! 2
