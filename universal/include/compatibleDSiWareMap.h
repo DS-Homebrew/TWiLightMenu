@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 361)
+// B4DS DSiWare Whitelist (Total: 362)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -310,6 +310,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KJ8", // Renjuku Kanji: Chuugakusei
 	"KRT", // Robot Rescue
 	"KD6", // Rock-n-Roll Domo
+	"KRP", // RPG Dashutsu Game
 	"KRW", // Sea Battle
 	"KS3", // Shantae: Risky's Revenge
 	"KK5", // Kakitori Rekishi: Shouga Kusei (01)
