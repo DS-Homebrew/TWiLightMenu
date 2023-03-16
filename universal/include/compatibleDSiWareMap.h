@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 360)
+// B4DS DSiWare Whitelist (Total: 361)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -295,6 +295,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KB3", // Puzzle to Go: Sightseeing
 	"KPD", // Puzzle to Go: Wildlife
 	"KUM", // Quick Fill Q
+	"K9P", // QuickPick Farmer
 	"KLB", // Rabi Laby
 	"KLV", // Rabi Laby 2
 	"KRC", // Real Crimes: Jack the Ripper
