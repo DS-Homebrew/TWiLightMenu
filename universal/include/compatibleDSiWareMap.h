@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 359)
+// B4DS DSiWare Whitelist (Total: 360)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -287,6 +287,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KLF", // Puffins: Let's Fish!
 	"KLR", // Puffins: Let's Race!
 	"KPN", // Puzzle League: Express / A Little Bit of... Puzzle League
+	"KPL", // Puzzle Rocks
 	"KYE", // Puzzler Brain Games
 	"KBY", // Puzzle to Go: Baby Animals
 	"KPU", // Puzzle to Go: Diddl
@@ -485,13 +486,14 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	2, // Shantae: Risky's Revenge (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 8)
+// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 9)
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 	"KUI", // Decathlon 2012
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"KHW", // EJ Puzzles: Hooked
 	"K9A", // Goooooal America / Goooooal Europa 2012
 	"KNK", // Ideyou Sukeno: Kenkou Maja DSi
+	"KPL", // Puzzle Rocks
 	"K4N", // Snakenoid Deluxe
 	"Z2A", // WarioWare: Touched! DL
 	"KYU", // Yummy Yummy Cooking Jam
@@ -504,6 +506,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // EJ Puzzles: Hooked (No music)
 	1, // Goooooal America / Goooooal Europa 2012 (No audio)
 	7, // Ideyou Sukeno: Kenkou Maja DSi (Limited state due to no save support)
+	1, // Puzzle Rocks (No audio)
 	1, // Snakenoid Deluxe (No audio)
 	1, // WarioWare: Touched! DL (No audio)
 	2, // Yummy Yummy Cooking Jam (No music)
