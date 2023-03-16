@@ -531,7 +531,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KEG", // Electroplankton: Lumiloop
 	"KEA", // Electroplankton: Trapy
 	"KKN", // Flipper 2: Flush the Goldfish
-	"KFV", // ARC Style: Furo Jump!! Girutegia Gaiden!
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
 	"KMM", // Mixed Messages
@@ -539,6 +538,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KNV", // Neko Reversi
 	"KPS", // Phantasy Star 0 Mini
 	"KXA", // Pirates Assault
+	"KFV", // Pro-Jumper! Chimaki's Hot Spring Tour! Guilty Gear Tangent!?
 	"KYG", // Puzzler World 2013
 	"KUO", // Puzzler World XL
 	"KRR", // Robot Rescue 2
