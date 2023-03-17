@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 365)
+// B4DS DSiWare Whitelist (Total: 366)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -314,6 +314,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KD6", // Rock-n-Roll Domo
 	"KRL", // Roller Angels
 	"KRP", // RPG Dashutsu Game
+	"KG4", // Saikyou Ginsei Shougi
 	"KRW", // Sea Battle
 	"KS3", // Shantae: Risky's Revenge
 	"KK5", // Kakitori Rekishi: Shouga Kusei (01)
@@ -401,7 +402,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 35)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 36)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -432,6 +433,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist
 	"KXU", // Publisher Dream
+	"KG4", // Saikyou Ginsei Shougi
 	"KS3", // Shantae: Risky's Revenge
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
 	"KZV", // Tales to Enjoy!: Puss in Boots
@@ -471,6 +473,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // PictureBook Games: The Royal Bluff (No audio)
 	0, // Picture Perfect: Pocket Stylist (No audio + Parts of the game only)
 	1, // Publisher Dream (No audio)
+	4, // Saikyou Ginsei Shougi (Crashes at certain points)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
 	4, // Tales to Enjoy!: Little Red Riding Hood (Crashes at certain points)
 	4, // Tales to Enjoy!: Puss in Boots (Crashes at certain points)
