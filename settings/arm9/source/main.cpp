@@ -829,7 +829,7 @@ int main(int argc, char **argv)
 		logPrint(widescreenFound ? "Widescreen found\n" : "Widescreen not found\n");
 	}
 
-	bool sharedFound = (access("sd:/shared2", F_OK) == 0);
+	const bool sharedFound = (access("sd:/shared1", F_OK) == 0);
 
 	//widescreenEffects = (ms().wideScreen && widescreenFound);
 
@@ -1154,13 +1154,14 @@ int main(int argc, char **argv)
 					{STR_YES, STR_NO},
 					{true, false});
 		}
-		bootstrapPage
-			.option(sharedFound ? STR_TWLNANDLOCATION : STR_PHOTOLOCATION,
-				sharedFound ? STR_DESCRIPTION_TWLNANDLOCATION : STR_DESCRIPTION_PHOTOLOCATION,
-				Option::Bool(&bs().sdNand),
-				{ms().showMicroSd ? STR_MICRO_SD_CARD : STR_SD_CARD, sharedFound ? STR_SYSTEM : STR_NAND},
-				{true, false});
-
+		if (sharedFound) {
+			bootstrapPage
+				.option(STR_TWLNANDLOCATION,
+					STR_DESCRIPTION_TWLNANDLOCATION,
+					Option::Bool(&bs().sdNand),
+					{ms().showMicroSd ? STR_MICRO_SD_CARD : STR_SD_CARD, STR_SYSTEM},
+					{true, false});
+		}
 		if (dsiFeatures() && (!isDSiMode() || (isDSiMode() && !sys().arm7SCFGLocked()))) {
 			bootstrapPage.option((isDSiMode() ? STR_FORCESLEEPPATCH : STR_SYSSD_FORCESLEEPPATCH),
 				STR_DESCRIPTION_FORCESLEEPMODE,
