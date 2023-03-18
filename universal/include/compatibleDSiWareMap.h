@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 367)
+// B4DS DSiWare Whitelist (Total: 368)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -317,6 +317,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KG4", // Saikyou Ginsei Shougi
 	"K3P", // Sakurai Miho No Kouno: Megami Serapi Uranai
 	"KRW", // Sea Battle
+	"KLL", // The Seller
 	"KS3", // Shantae: Risky's Revenge
 	"KK5", // Kakitori Rekishi: Shouga Kusei (01)
 	"KZ9", // Chiri Kuizu: Shouga Kusei (02)
