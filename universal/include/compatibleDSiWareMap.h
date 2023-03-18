@@ -521,7 +521,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 30)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 31)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -555,6 +555,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KYG", // Puzzler World 2013
 	"KUO", // Puzzler World XL
 	"KRR", // Robot Rescue 2
+	"K7T", // Save the Turtles
 	"KSJ", // Shawn Johnson Gymnastics
 	"KYS", // Spot the Difference
 };
