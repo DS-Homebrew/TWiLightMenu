@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 368)
+// B4DS DSiWare Whitelist (Total: 369)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -328,6 +328,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KM3", // Simply Minesweeper
 	"K4L", // Simply Solitaire
 	"KS4", // Simply Sudoku
+	"K3S", // Slingo Supreme
 	"K2F", // Smart Girl's Playhouse Mini
 	"K4N", // Snakenoid Deluxe
 	"KTY", // Snapdots
