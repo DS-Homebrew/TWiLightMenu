@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 370)
+// B4DS DSiWare Whitelist (Total: 371)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -334,6 +334,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KTY", // Snapdots
 	"KX5", // SnowBoard Xtreme
 	"KSO", // Sokomania
+	"KSV", // Sokomania 2: Cool Job
 	"KL9", // Sokuren Keisa: Shougaku 1 Nensei
 	"KH2", // Sokuren Keisa: Shougaku 2 Nensei
 	"KH3", // Sokuren Keisa: Shougaku 3 Nensei
@@ -406,7 +407,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 36)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 37)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -439,6 +440,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KXU", // Publisher Dream
 	"KG4", // Saikyou Ginsei Shougi
 	"KS3", // Shantae: Risky's Revenge
+	"KSV", // Sokomania 2: Cool Job
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
 	"KZV", // Tales to Enjoy!: Puss in Boots
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
@@ -479,6 +481,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Publisher Dream (No audio)
 	4, // Saikyou Ginsei Shougi (Crashes at certain points)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
+	1, // Sokomania 2: Cool Job (No audio)
 	4, // Tales to Enjoy!: Little Red Riding Hood (Crashes at certain points)
 	4, // Tales to Enjoy!: Puss in Boots (Crashes at certain points)
 	4, // Tales to Enjoy!: The Three Little Pigs (Crashes at certain points)
