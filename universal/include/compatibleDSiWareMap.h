@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 371)
+// B4DS DSiWare Whitelist (Total: 372)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -342,6 +342,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KO5", // Sokuren Keisa: Shougaku 5 Nensei
 	"KO6", // Sokuren Keisa: Shougaku 6 Nensei
 	"KO7", // Sokuren Keisa: Nanmon-Hen
+	"KU4", // Sora Kake Girl: Shojo Shooting
 	"KA6", // Space Ace
 	"KEV", // Space Invaders Extreme Z
 	"KQ6", // Spin Six
