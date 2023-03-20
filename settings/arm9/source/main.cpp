@@ -829,7 +829,7 @@ int main(int argc, char **argv)
 		logPrint(widescreenFound ? "Widescreen found\n" : "Widescreen not found\n");
 	}
 
-	bool sharedFound = (access("sd:/shared2", F_OK) == 0);
+	const bool sharedFound = (access("sd:/shared1", F_OK) == 0);
 
 	//widescreenEffects = (ms().wideScreen && widescreenFound);
 
