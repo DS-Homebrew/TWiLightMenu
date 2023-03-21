@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 375)
+// B4DS DSiWare Whitelist (Total: 377)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -349,6 +349,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KA6", // Space Ace
 	"KEV", // Space Invaders Extreme Z
 	"KQ6", // Spin Six
+	"KIT", // Spot It! Challenge
+	"K2U", // Spot It! Challenge: Mean Machines
 	"K4D", // Sudoku
 	"K4F", // Sudoku 4Pockets
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
