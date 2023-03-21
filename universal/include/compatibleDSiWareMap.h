@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 372)
+// B4DS DSiWare Whitelist (Total: 373)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -82,6 +82,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KCY", // Calculator
 	"K3N", // GO Series: Captain Sub
 	"KCNE", // Castle Conqueror (USA)
+	"KQO", // Castle Conqueror: Against
 	"KC5", // Castle Conqueror: Heroes
 	"KXC", // Castle Conqueror: Heroes 2
 	"KCV", // Cave Story
@@ -377,10 +378,9 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (More RAM required) (Total: 10)
+// B4DS DSiWare Whitelist (More RAM required) (Total: 9)
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
-	"KXC", // Castle Conqueror: Heroes 2
 	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
@@ -397,7 +397,6 @@ static const char compatibleGameListB4DSMEP[][4] = {
 // 2: 16MB+ RAM expansion required
 static int compatibleGameListB4DSMEPID[] = {
 	0, // Aru Seishun no Monogatari: Kouenji Joshi Sakka
-	0, // Castle Conqueror: Heroes 2
 	2, // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	1, // Jinia Supasonaru: Waei Rakubiki Jiten
 	0, // The Legend of Zelda: Four Swords: Anniversary Edition
@@ -408,7 +407,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Remote Racers
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 37)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 36)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -420,7 +419,6 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KLN", // Bloons TD
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
-	"KXD", // Crystal Adventure
 	"K2E", // Easter Eggztravaganza
 	"KFD", // Fieldrunners
 	"KFP", // Flipper
@@ -461,7 +459,6 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Bloons TD (No audio)
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
-	4, // Crystal Adventure (Crashes at certain points)
 	0, // Easter Eggztravaganza (Part of the game only)
 	1, // Fieldrunners (No audio)
 	2, // Flipper (No music)
@@ -528,7 +525,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 31)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 30)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -543,7 +540,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KUV", // Bloons TD 4
 	"KYN", // Cake Ninja: XMAS
-	"KQN", // Castle Conqueror: Against
 	"KQN", // Castle Conqueror: Revolution
 	"KN2", // Devil Band: Rock the Underworld
 	"KDQ", // Dragon Quest Wars
