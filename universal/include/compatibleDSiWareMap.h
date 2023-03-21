@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 374)
+// B4DS DSiWare Whitelist (Total: 375)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -271,6 +271,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist
 	"KPY", // GO Series: Pinball Attack!
+	"KXA", // Pirates Assault
 	"KZL", // Plants vs. Zombies
 	"KFX", // PlayLearn Chinese
 	"KFQ", // PlayLearn Spanish
@@ -528,7 +529,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 29)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 28)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -555,7 +556,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KNP", // Need for Speed: Nitro-X
 	"KNV", // Neko Reversi
 	"KPS", // Phantasy Star 0 Mini
-	"KXA", // Pirates Assault
 	"KFV", // Pro-Jumper! Chimaki's Hot Spring Tour! Guilty Gear Tangent!?
 	"KYG", // Puzzler World 2013
 	"KUO", // Puzzler World XL
