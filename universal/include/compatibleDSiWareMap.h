@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 377)
+// B4DS DSiWare Whitelist (Total: 389)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -351,6 +351,18 @@ static const char compatibleGameListB4DS[][5] = {
 	"KQ6", // Spin Six
 	"KIT", // Spot It! Challenge
 	"K2U", // Spot It! Challenge: Mean Machines
+	"KEU", // Successfully Learning: English, Year 2
+	"KEZ", // Successfully Learning: English, Year 3
+	"KE6", // Successfully Learning: English, Year 4
+	"KE7", // Successfully Learning: English, Year 5
+	"KHU", // Successfully Learning: German, Year 2
+	"KHV", // Successfully Learning: German, Year 3
+	"KHY", // Successfully Learning: German, Year 4
+	"KHZ", // Successfully Learning: German, Year 5
+	"KKU", // Successfully Learning: Mathematics, Year 2
+	"KKV", // Successfully Learning: Mathematics, Year 3
+	"KKW", // Successfully Learning: Mathematics, Year 4
+	"KKX", // Successfully Learning: Mathematics, Year 5
 	"K4D", // Sudoku
 	"K4F", // Sudoku 4Pockets
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
