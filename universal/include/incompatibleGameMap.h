@@ -29,6 +29,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KRM", // Rayman
 	"KHD", // Sparkle Snapshots
 	"KUW", // WarioWare: Snapped!
+	"KDX", // X-Scape
 };
 
 #endif // INCOMPATIBLEMAP_H
