@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 392)
+// B4DS DSiWare Whitelist (Total: 393)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -22,6 +22,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KTS", // 4 Travellers: Play Spanish
 	"K45", // 40-in-1: Explosive Megamix
 	"KRJ", // 5 in 1 Mahjong
+	"K5I", // 5 in 1 Solitaire
 	"K2O", // 505 Tangram
 	"K7C", // 7 Card Games
 	"K7W", // 7 Wonders II
@@ -397,9 +398,10 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (More RAM required) (Total: 10)
+// B4DS DSiWare Whitelist (More RAM required) (Total: 11)
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KBJ", // 21 Blackjack
+	"K5I", // 5 in 1 Solitaire
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
@@ -417,6 +419,7 @@ static const char compatibleGameListB4DSMEP[][4] = {
 // 2: 16MB+ RAM expansion required
 static int compatibleGameListB4DSMEPID[] = {
 	0, // 21 Blackjack
+	0, // 5 in 1 Solitaire
 	0, // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	2, // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	1, // Jinia Supasonaru: Waei Rakubiki Jiten
