@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 396)
+// B4DS DSiWare Whitelist (Total: 397)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -401,7 +401,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (More RAM required) (Total: 14)
+// B4DS DSiWare Whitelist (More RAM required) (Total: 15)
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
@@ -417,6 +417,7 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KAU", // Nintendo Countdown Calendar
 	"K9K", // Nintendoji
 	"KQR", // Remote Racers
+	"KSC", // Sudoku Challenge!
 };
 
 // B4DS DSiWare Whitelist (Extra RAM ID)
@@ -438,6 +439,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Nintendo Countdown Calendar
 	0, // Nintendoji
 	0, // Remote Racers
+	0, // Sudoku Challenge!
 };
 
 // B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 37)
