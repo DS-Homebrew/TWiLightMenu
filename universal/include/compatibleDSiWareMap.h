@@ -554,7 +554,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 32)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 33)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -578,6 +578,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
+	"KWK", // Mega Words
 	"KMM", // Mixed Messages
 	"KNP", // Need for Speed: Nitro-X
 	"KNV", // Neko Reversi
