@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 393)
+// B4DS DSiWare Whitelist (Total: 394)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -222,6 +222,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KMD", // Master of Illusion Express: Matchmaker / A Little Bit of... Magic Made Fun: Matchmaker
 	"KMI", // Master of Illusion Express: Mind Probe / A Little Bit of... Magic Made Fun: Mind Probe
 	"KMS", // Master of Illusion Express: Shuffle Games / A Little Bit of... Magic Made Fun: Shuffle Games
+	"KUP", // Match Up!
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"K59", // Metal Torrent
 	"KMG", // Mighty Flip Champs!
@@ -398,7 +399,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (More RAM required) (Total: 11)
+// B4DS DSiWare Whitelist (More RAM required) (Total: 12)
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
@@ -407,6 +408,7 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KYL", // Make Up & Style
+	"KUP", // Match Up!
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"KAU", // Nintendo Countdown Calendar
 	"K9K", // Nintendoji
@@ -425,6 +427,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	1, // Jinia Supasonaru: Waei Rakubiki Jiten
 	0, // The Legend of Zelda: Four Swords: Anniversary Edition
 	0, // Make Up & Style
+	0, // Match Up!
 	2, // Meikyou Kokugo: Rakubiki Jiten
 	0, // Nintendo Countdown Calendar
 	0, // Nintendoji
