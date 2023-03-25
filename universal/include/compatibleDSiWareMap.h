@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 397)
+// B4DS DSiWare Whitelist (Total: 399)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -372,6 +372,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"K4F", // Sudoku 4Pockets
 	"KWU", // Sudoku & Kakuro: Welt Edition
 	"KOW", // Surfacer+
+	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
+	"K98", // Sutanoberuzu: Shirogane no Torikago
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
 	"KZV", // Tales to Enjoy!: Puss in Boots
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
@@ -401,7 +403,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (More RAM required) (Total: 15)
+// B4DS DSiWare Whitelist (More RAM required) (Total: 17)
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
@@ -418,6 +420,8 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"K9K", // Nintendoji
 	"KQR", // Remote Racers
 	"KSC", // Sudoku Challenge!
+	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
+	"K98", // Sutanoberuzu: Shirogane no Torikago
 };
 
 // B4DS DSiWare Whitelist (Extra RAM ID)
@@ -440,9 +444,11 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Nintendoji
 	0, // Remote Racers
 	0, // Sudoku Challenge!
+	0, // Sutanoberuzu: Kono Hareta Sora no Shita de
+	0, // Sutanoberuzu: Shirogane no Torikago
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 37)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 39)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -476,6 +482,8 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KG4", // Saikyou Ginsei Shougi
 	"KS3", // Shantae: Risky's Revenge
 	"KSV", // Sokomania 2: Cool Job
+	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
+	"K98", // Sutanoberuzu: Shirogane no Torikago
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
 	"KZV", // Tales to Enjoy!: Puss in Boots
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
@@ -517,6 +525,8 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Saikyou Ginsei Shougi (Crashes at certain points)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
 	1, // Sokomania 2: Cool Job (No audio)
+	2, // Sutanoberuzu: Kono Hareta Sora no Shita de (No music + No FMV)
+	5, // Sutanoberuzu: Shirogane no Torikago (No FMV)
 	4, // Tales to Enjoy!: Little Red Riding Hood (Crashes at certain points)
 	4, // Tales to Enjoy!: Puss in Boots (Crashes at certain points)
 	4, // Tales to Enjoy!: The Three Little Pigs (Crashes at certain points)
