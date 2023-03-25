@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 394)
+// B4DS DSiWare Whitelist (Total: 395)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -89,6 +89,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KXC", // Castle Conqueror: Heroes 2
 	"KQN", // Castle Conqueror: Revolution
 	"KCV", // Cave Story
+	"KCT", // Chess Challenge!
 	"KBG", // Chotto DS Bun ga Kuzenshuu: Sekai no Bungaku 20
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
@@ -399,11 +400,12 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (More RAM required) (Total: 12)
+// B4DS DSiWare Whitelist (More RAM required) (Total: 13)
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
+	"KCT", // Chess Challenge!
 	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
@@ -423,6 +425,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // 21 Blackjack
 	0, // 5 in 1 Solitaire
 	0, // Aru Seishun no Monogatari: Kouenji Joshi Sakka
+	0, // Chess Challenge!
 	2, // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	1, // Jinia Supasonaru: Waei Rakubiki Jiten
 	0, // The Legend of Zelda: Four Swords: Anniversary Edition
@@ -554,7 +557,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 33)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 32)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -569,7 +572,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KUV", // Bloons TD 4
 	"KYN", // Cake Ninja: XMAS
-	"KCT", // Chess Challenge!
 	"KN2", // Devil Band: Rock the Underworld
 	"KDQ", // Dragon Quest Wars
 	"KEI", // Electroplankton: Beatnes
