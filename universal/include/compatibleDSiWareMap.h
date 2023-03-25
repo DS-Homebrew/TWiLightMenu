@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 395)
+// B4DS DSiWare Whitelist (Total: 396)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -224,6 +224,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KMI", // Master of Illusion Express: Mind Probe / A Little Bit of... Magic Made Fun: Mind Probe
 	"KMS", // Master of Illusion Express: Shuffle Games / A Little Bit of... Magic Made Fun: Shuffle Games
 	"KUP", // Match Up!
+	"KWK", // Mega Words
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"K59", // Metal Torrent
 	"KMG", // Mighty Flip Champs!
@@ -400,7 +401,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (More RAM required) (Total: 13)
+// B4DS DSiWare Whitelist (More RAM required) (Total: 14)
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
@@ -411,6 +412,7 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KYL", // Make Up & Style
 	"KUP", // Match Up!
+	"KWK", // Mega Words
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"KAU", // Nintendo Countdown Calendar
 	"K9K", // Nintendoji
@@ -431,6 +433,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // The Legend of Zelda: Four Swords: Anniversary Edition
 	0, // Make Up & Style
 	0, // Match Up!
+	0, // Mega Words
 	2, // Meikyou Kokugo: Rakubiki Jiten
 	0, // Nintendo Countdown Calendar
 	0, // Nintendoji
@@ -557,7 +560,7 @@ static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	2, // Yummy Yummy Cooking Jam (No music)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 32)
+// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 31)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -580,7 +583,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
-	"KWK", // Mega Words
 	"KMM", // Mixed Messages
 	"KNP", // Need for Speed: Nitro-X
 	"KNV", // Neko Reversi
