@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 401)
+// B4DS DSiWare Whitelist (Total: 402)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -225,6 +225,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KMS", // Master of Illusion Express: Shuffle Games / A Little Bit of... Magic Made Fun: Shuffle Games
 	"KUP", // Match Up!
 	"KWK", // Mega Words
+	"KMK", // Mehr Kreuzwortratsel: Welt Edition
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"K59", // Metal Torrent
 	"KMG", // Mighty Flip Champs!
