@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 403
+// Total: 406
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -392,6 +392,9 @@ static const char compatibleGameListB4DS[][5] = {
 	"KTE", // Tetris Party Live
 	"KTW", // Thorium Wars
 	"KSLE", "KSLV", // Touch Solitaire
+	"KWW", // The Tower DS: Classic
+	"KWV", // The Tower DS: Hotel
+	"KW4", // The Tower DS: Shopping Santa
 	"KTI", // Turn: The Lost Artifact
 	"K6P", // Unou to Sanougaren Sasuru: Uranoura
 	"KVT", // VT Tennis
