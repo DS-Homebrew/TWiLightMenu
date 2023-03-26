@@ -543,7 +543,8 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Wonderful Sports: Bowling (No music + Crashes at certain point)
 };
 
-// B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM) (Total: 31)
+// B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
+// Total: 31
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
