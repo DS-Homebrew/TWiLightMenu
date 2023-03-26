@@ -1,7 +1,7 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 402)
+// B4DS DSiWare Whitelist (Total: 403)
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -389,6 +389,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KXL", // Telegraph Sudoku & Kakuro
 	"KOS", // Tell me Darling
 	"KTE", // Tetris Party Live
+	"KTW", // Thorium Wars
 	"KSLE", "KSLV", // Touch Solitaire
 	"KTI", // Turn: The Lost Artifact
 	"K6P", // Unou to Sanougaren Sasuru: Uranoura
@@ -451,7 +452,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Sutanoberuzu: Shirogane no Torikago
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 39)
+// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 40)
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -491,6 +492,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KZV", // Tales to Enjoy!: Puss in Boots
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
 	"KZ8", // Tales to Enjoy!: The Ugly Duckling
+	"KTW", // Thorium Wars
 	"KBS", // Wonderful Sports: Bowling
 };
 
@@ -534,6 +536,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Tales to Enjoy!: Puss in Boots (Crashes at certain points)
 	4, // Tales to Enjoy!: The Three Little Pigs (Crashes at certain points)
 	4, // Tales to Enjoy!: The Ugly Duckling (Crashes at certain points)
+	5, // Thorium Wars (No FMVs)
 	4, // Wonderful Sports: Bowling (No music + Crashes at certain point)
 };
 
