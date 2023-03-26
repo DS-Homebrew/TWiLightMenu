@@ -1,7 +1,8 @@
 #ifndef COMPATIBLEDSIWAREMAP_H
 #define COMPATIBLEDSIWAREMAP_H
 
-// B4DS DSiWare Whitelist (Total: 403)
+// B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
+// Total: 403
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -407,7 +408,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZT", // Zuma's Revenge!
 };
 
-// B4DS DSiWare Whitelist (More RAM required) (Total: 17)
+// Titles requiring more RAM
+// Total: 17
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
@@ -428,7 +430,7 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"K98", // Sutanoberuzu: Shirogane no Torikago
 };
 
-// B4DS DSiWare Whitelist (Extra RAM ID)
+// Extra RAM ID
 // 0: Memory Expansion Pak or Debug console required
 // 1: Memory Expansion Pak always required
 // 2: 16MB+ RAM expansion required
@@ -452,7 +454,8 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Sutanoberuzu: Shirogane no Torikago
 };
 
-// B4DS DSiWare Whitelist (Show RAM limitation message) (Total: 40)
+// Show RAM limitation message
+// Total: 40
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -496,7 +499,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KBS", // Wonderful Sports: Bowling
 };
 
-// B4DS DSiWare Whitelist (RAM limitation message ID)
+// RAM limitation message ID
 static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // 101 Pinball World (No audio + Crashes at certain points)
 	2, // 1001 Crystal Mazes Collection (No music)
@@ -540,45 +543,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Wonderful Sports: Bowling (No music + Crashes at certain point)
 };
 
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Show RAM limitation message) (Total: 2)
-static const char compatibleGameListB4DSDebugRAMLimited[][4] = {
-	"KUV", // Bloons TD 4
-	"KS3", // Shantae: Risky's Revenge
-};
-
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (RAM limitation message ID)
-static int compatibleGameListB4DSDebugRAMLimitedID[] = {
-	1, // Bloons TD 4 (No audio)
-	2, // Shantae: Risky's Revenge (No music)
-};
-
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (Show RAM limitation message) (Total: 9)
-static const char compatibleGameListB4DSAllRAMLimited[][4] = {
-	"KUI", // Decathlon 2012
-	"KAV", // Art Style: DIGIDRIVE / INTERSECT
-	"KHW", // EJ Puzzles: Hooked
-	"K9A", // Goooooal America / Goooooal Europa 2012
-	"KNK", // Ideyou Sukeno: Kenkou Maja DSi
-	"KPL", // Puzzle Rocks
-	"K4N", // Snakenoid Deluxe
-	"Z2A", // WarioWare: Touched! DL
-	"KYU", // Yummy Yummy Cooking Jam
-};
-
-// B4DS DSiWare Whitelist (DS Retail & Debug consoles) (RAM limitation message ID)
-static int compatibleGameListB4DSAllRAMLimitedID[] = {
-	1, // Decathlon 2012 (No audio)
-	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state due to RAM limitation)
-	2, // EJ Puzzles: Hooked (No music)
-	1, // Goooooal America / Goooooal Europa 2012 (No audio)
-	7, // Ideyou Sukeno: Kenkou Maja DSi (Limited state due to no save support)
-	1, // Puzzle Rocks (No audio)
-	1, // Snakenoid Deluxe (No audio)
-	1, // WarioWare: Touched! DL (No audio)
-	2, // Yummy Yummy Cooking Jam (No music)
-};
-
-// B4DS DSiWare Whitelist (DS Debug consoles with 8MB of RAM) (Total: 31)
+// B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM) (Total: 31)
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -615,6 +580,46 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"K4W", // Super Swap
 	"K4P", // Super Yum Yum: Puzzle Adventures
 	"KDZ", // Trajectile / Reflect Missile
+};
+
+// Show RAM limitation message
+// Total: 2
+static const char compatibleGameListB4DSDebugRAMLimited[][4] = {
+	"KUV", // Bloons TD 4
+	"KS3", // Shantae: Risky's Revenge
+};
+
+// RAM limitation message ID
+static int compatibleGameListB4DSDebugRAMLimitedID[] = {
+	1, // Bloons TD 4 (No audio)
+	2, // Shantae: Risky's Revenge (No music)
+};
+
+// Show RAM limitation message for both DS Retail & Debug consoles
+// Total: 9
+static const char compatibleGameListB4DSAllRAMLimited[][4] = {
+	"KUI", // Decathlon 2012
+	"KAV", // Art Style: DIGIDRIVE / INTERSECT
+	"KHW", // EJ Puzzles: Hooked
+	"K9A", // Goooooal America / Goooooal Europa 2012
+	"KNK", // Ideyou Sukeno: Kenkou Maja DSi
+	"KPL", // Puzzle Rocks
+	"K4N", // Snakenoid Deluxe
+	"Z2A", // WarioWare: Touched! DL
+	"KYU", // Yummy Yummy Cooking Jam
+};
+
+// RAM limitation message ID
+static int compatibleGameListB4DSAllRAMLimitedID[] = {
+	1, // Decathlon 2012 (No audio)
+	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state due to RAM limitation)
+	2, // EJ Puzzles: Hooked (No music)
+	1, // Goooooal America / Goooooal Europa 2012 (No audio)
+	7, // Ideyou Sukeno: Kenkou Maja DSi (Limited state due to no save support)
+	1, // Puzzle Rocks (No audio)
+	1, // Snakenoid Deluxe (No audio)
+	1, // WarioWare: Touched! DL (No audio)
+	2, // Yummy Yummy Cooking Jam (No music)
 };
 
 #endif // COMPATIBLEDSIWAREMAP_H
