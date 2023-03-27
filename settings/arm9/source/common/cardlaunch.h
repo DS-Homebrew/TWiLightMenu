@@ -9,7 +9,7 @@ const char *unlaunchAutoLoadID = "AutoLoadInfo";
 const char16_t hiyaNdsPath[] = u"sdmc:/hiya.dsi";
 
 void unlaunchSetHiyaBoot(void) {
-	if (access("sdmc:/hiya.dsi", F_OK) != 0) return;
+	if (access("sd:/hiya.dsi", F_OK) != 0) return;
 
 	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
@@ -88,7 +88,6 @@ void dsiLaunchSystemSettings()
     *(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
 
 	unlaunchSetHiyaBoot();
-
 	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_02, 1); // Reboot into System Settings
 }

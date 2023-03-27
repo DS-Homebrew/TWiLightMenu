@@ -18,9 +18,7 @@ void unlaunchSetHiyaBoot(void) {
 	for (uint i = 0; i < sizeof(hiyaNdsPath)/sizeof(hiyaNdsPath[0]); i++) {
 		((char16_t*)0x02000838)[i] = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 	}
-	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
-		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-	}
+	*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 }
 
 void cardLaunch()
@@ -33,13 +31,10 @@ void cardLaunch()
     *(u32 *)(0x02000314) = 0x00000000;
     *(u32 *)(0x02000318) = 0x00000013;
     *(u32 *)(0x0200031C) = 0x00000000;
-    while (*(u16 *)(0x02000306) == 0x0000)
-    { // Keep running, so that CRC16 isn't 0
-        *(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
-    }
+    *(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
 
 	unlaunchSetHiyaBoot();
-
+	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 }
 
@@ -49,6 +44,7 @@ void dsiSysMenuLaunch()
     *(u16 *)(0x02000304) = 0x1801;
     *(u32 *)(0x02000310) = 0x4D454E55; // "MENU"
 	unlaunchSetHiyaBoot();
+	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_02, 1);  // ReturntoDSiMenu
 }
 
@@ -63,13 +59,10 @@ void dsiLaunch(u32 *tid)
     *(u32 *)(0x02000314) = tid[1];
     *(u32 *)(0x02000318) = 0x00000017;
     *(u32 *)(0x0200031C) = 0x00000000;
-    while (*(u16 *)(0x02000306) == 0x0000)
-    { // Keep running, so that CRC16 isn't 0
-        *(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
-    }
+    *(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
 
 	unlaunchSetHiyaBoot();
-
+	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 }
 void dsiLaunchSystemSettings()
@@ -103,13 +96,10 @@ void dsiLaunchSystemSettings()
     *(u32 *)(0x02000314) = 0x00030015;
     *(u32 *)(0x02000318) = 0x00000017;
     *(u32 *)(0x0200031C) = 0x00000000;
-    while (*(u16 *)(0x02000306) == 0x0000)
-    { // Keep running, so that CRC16 isn't 0
-        *(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
-    }
+    *(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
 
 	unlaunchSetHiyaBoot();
-
+	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_02, 1); // Reboot into System Settings
 }
 
