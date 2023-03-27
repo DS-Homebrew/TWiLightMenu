@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 407
+// Total: 408
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -276,7 +276,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KPQ", // GO Series: Picdun
 	"KAP", // Art Style: PiCTOBiTS
 	"KE3", // PictureBook Games: The Royal Bluff
-	"KHR", // Picture Perfect: Pocket Stylist
+	"KHR", // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist
 	"KPY", // GO Series: Pinball Attack!
 	"KXA", // Pirates Assault
 	"KZL", // Plants vs. Zombies
@@ -396,6 +396,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KWV", // The Tower DS: Hotel
 	"KW4", // The Tower DS: Shopping Santa
 	"KB7", // Trollboarder
+	"K72", // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf
 	"KTI", // Turn: The Lost Artifact
 	"K6P", // Unou to Sanougaren Sasuru: Uranoura
 	"KVT", // VT Tennis
@@ -459,7 +460,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 41
+// Total: 42
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -488,7 +489,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"K6T", // Orion's Odyssey
 	"KOY", // Oscar in Toyland 2
 	"KE3", // PictureBook Games: The Royal Bluff
-	"KHR", // Picture Perfect: Pocket Stylist
+	"KHR", // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist
 	"KXU", // Publisher Dream
 	"KG4", // Saikyou Ginsei Shougi
 	"KS3", // Shantae: Risky's Revenge
@@ -501,6 +502,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KZ8", // Tales to Enjoy!: The Ugly Duckling
 	"KTW", // Thorium Wars
 	"KB7", // Trollboarder
+	"K72", // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf
 	"KBS", // Wonderful Sports: Bowling
 };
 
@@ -533,7 +535,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Orion's Odyssey (Crashes at certain points)
 	4, // Oscar in Toyland 2 (Crashes at certain point)
 	1, // PictureBook Games: The Royal Bluff (No audio)
-	0, // Picture Perfect: Pocket Stylist (No audio + Parts of the game only)
+	0, // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist (No audio + Parts of the game only)
 	1, // Publisher Dream (No audio)
 	4, // Saikyou Ginsei Shougi (Crashes at certain points)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
@@ -546,6 +548,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Tales to Enjoy!: The Ugly Duckling (Crashes at certain points)
 	5, // Thorium Wars (No FMVs)
 	1, // Trollboarder (No audio)
+	1, // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf (No audio)
 	4, // Wonderful Sports: Bowling (No music + Crashes at certain point)
 };
 
