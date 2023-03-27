@@ -459,7 +459,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 40
+// Total: 41
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -500,6 +500,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
 	"KZ8", // Tales to Enjoy!: The Ugly Duckling
 	"KTW", // Thorium Wars
+	"KB7", // Trollboarder
 	"KBS", // Wonderful Sports: Bowling
 };
 
@@ -544,6 +545,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Tales to Enjoy!: The Three Little Pigs (Crashes at certain points)
 	4, // Tales to Enjoy!: The Ugly Duckling (Crashes at certain points)
 	5, // Thorium Wars (No FMVs)
+	1, // Trollboarder (No audio)
 	4, // Wonderful Sports: Bowling (No music + Crashes at certain point)
 };
 
