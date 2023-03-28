@@ -549,7 +549,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Tales to Enjoy!: Puss in Boots (Crashes at certain points)
 	4, // Tales to Enjoy!: The Three Little Pigs (Crashes at certain points)
 	4, // Tales to Enjoy!: The Ugly Duckling (Crashes at certain points)
-	5, // Thorium Wars (No FMVs)
+	1, // Thorium Wars (No audio + No FMVs)
 	1, // Trollboarder (No audio)
 	1, // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf (No audio)
 	4, // Wonderful Sports: Bowling (No music + Crashes at certain point)
