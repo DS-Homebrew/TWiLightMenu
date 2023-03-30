@@ -421,7 +421,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 17
+// Total: 21
 static const char compatibleGameListB4DSMEP[][4] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
@@ -440,6 +440,10 @@ static const char compatibleGameListB4DSMEP[][4] = {
 	"KSC", // Sudoku Challenge!
 	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
 	"K98", // Sutanoberuzu: Shirogane no Torikago
+	"KWS", // Word Searcher
+	"KWR", // Word Searcher II
+	"KW6", // Word Searcher III
+	"KW8", // Word Searcher IV
 };
 
 // Extra RAM ID
@@ -464,6 +468,10 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Sudoku Challenge!
 	0, // Sutanoberuzu: Kono Hareta Sora no Shita de
 	0, // Sutanoberuzu: Shirogane no Torikago
+	0, // Word Searcher
+	0, // Word Searcher II
+	0, // Word Searcher III
+	0, // Word Searcher IV
 };
 
 // Show RAM limitation message
