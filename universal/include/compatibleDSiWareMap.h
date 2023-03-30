@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 419
+// Total: 420
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -418,6 +418,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KYU", // Yummy Yummy Cooking Jam
 	"KZX", // Za Curosu
 	"KAS", // Art Style: ZENGAGE
+	"KKH", // Zimo: Mahjong Fanatic
 	"K7K", // Zombie Blaster
 	"KZY", // Zombie Skape
 	"KZS", // Zoonies: Escape from Makatu
