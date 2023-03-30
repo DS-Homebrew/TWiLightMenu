@@ -416,7 +416,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KYW", // Working Dawgs: A-maze-ing Pipes
 	"KU3", // Working Dawgs: Rivet Retriever
 	"KYU", // Yummy Yummy Cooking Jam
-	"KZX", // Za Curuso
+	"KZX", // Za Curosu
 	"KAS", // Art Style: ZENGAGE
 	"K7K", // Zombie Blaster
 	"KZY", // Zombie Skape
