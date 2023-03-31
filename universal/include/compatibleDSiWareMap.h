@@ -373,6 +373,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K4D", // Sudoku
 	"K4F", // Sudoku 4Pockets
 	"KWU", // Sudoku & Kakuro: Welt Edition
+	"KSC", // Sudoku Challenge!
 	"KOW", // Surfacer+
 	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
 	"K98", // Sutanoberuzu: Shirogane no Torikago
