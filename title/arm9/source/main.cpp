@@ -1297,6 +1297,14 @@ void lastRunROM()
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/imageview.srldr";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass image to image viewer as argument
+	} else if (ms().launchType[ms().previousUsedDevice] == Launch::E3DSLaunch) {
+		if (!dsiFeatures() || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		argarray.at(0) = (char*)"sd:/_nds/3ds-bootstrap-release.nds";
+		if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
+			argarray.at(0) = (char*)"fat:/_nds/3ds-bootstrap-release.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to 3ds-bootstrap as argument
 	}
 	if (err > 0) {
 		consoleDemoInit();

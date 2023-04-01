@@ -1055,6 +1055,13 @@ int main(int argc, char **argv) {
 		".png" // Portable Network Graphics
 	};
 
+	if (dsiFeatures() && ms().consoleModel < 2) {
+		// 3DS
+		extensionList.emplace_back(".3ds");
+		extensionList.emplace_back(".cia");
+		extensionList.emplace_back(".cxi");
+	}
+
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		extensionList.emplace_back(".plg"); // DSTWO Plugin
 	}
@@ -2462,6 +2469,13 @@ int main(int argc, char **argv) {
 
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
+					}
+				} else if (extension(filename, {".3ds", ".cia", ".cxi"})) {
+					ms().launchType[ms().secondaryDevice] = Launch::E3DSLaunch;
+
+					ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/3ds-bootstrap-release.nds" : "fat:/_nds/3ds-bootstrap-release.nds";
+					if (!isDSiMode()) {
+						boostVram = true;
 					}
 				} else if (extension(filename, {".gif", ".bmp", ".png"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EImageLaunch;

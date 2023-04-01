@@ -3298,6 +3298,13 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 					}
+				} else if (extension(filename[ms().secondaryDevice], ".3ds") || extension(filename[ms().secondaryDevice], ".cia") || extension(filename[ms().secondaryDevice], ".cxi")) {
+					ms().launchType[ms().secondaryDevice] = Launch::E3DSLaunch;
+
+					ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/3ds-bootstrap-release.nds" : "fat:/_nds/3ds-bootstrap-release.nds";
+					if (!isDSiMode()) {
+						boostVram = true;
+					}
 				} else if (extension(filename[ms().secondaryDevice], ".gif") || extension(filename[ms().secondaryDevice], ".bmp") || extension(filename[ms().secondaryDevice], ".png")) {
 					ms().launchType[ms().secondaryDevice] = Launch::EImageLaunch;
 
