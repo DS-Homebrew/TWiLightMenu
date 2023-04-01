@@ -28,7 +28,7 @@ makearm9:
 
 dist:	all
 	@mkdir -p ../7zfile/debug
-	@cp $(TARGET).nds ../7zfile/3ds-bootstrap-release.nds
+	@cp $(TARGET).nds ../7zfile/_nds/3ds-bootstrap-release.nds
 	@cp $(TARGET).arm7.elf ../7zfile/debug/$(TARGET).arm7.elf
 	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
 

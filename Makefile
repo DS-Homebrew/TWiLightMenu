@@ -103,7 +103,7 @@ clean:
 	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/53524c41/content/00000000.app"
 	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
 	#@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
-	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/3dsloader.srldr"
+	@rm -rf "$(PACKAGE)/_nds/3ds-bootstrap-release.nds"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/gbapatcher.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
