@@ -108,17 +108,14 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
-	bool sdIrqStatusRefreshed = false;
-	fifoSendValue32(FIFO_USER_04, SD_IRQ_STATUS);
-
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ((REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R)) == 0) {
 			exitflag = true;
 		}
-		if (((REG_KEYINPUT & KEY_A) == 0) && !sdIrqStatusRefreshed) {
+		if (*(u32*)0x02FFFD0C == 0x54534453) { // 'SDST'
 			fifoSendValue32(FIFO_USER_04, SD_IRQ_STATUS);
-			sdIrqStatusRefreshed = true;
+			*(u32*)0x02FFFD0C = 0;
 		}
 		// fifocheck();
 		swiWaitForVBlank();
