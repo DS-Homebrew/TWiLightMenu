@@ -1300,11 +1300,11 @@ void lastRunROM()
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::E3DSLaunch) {
 		if (!dsiFeatures() || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		argarray.at(0) = (char*)"sd:/_nds/3ds-bootstrap-release.nds";
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/3dssplash.srldr";
 		if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
-			argarray.at(0) = (char*)"fat:/_nds/3ds-bootstrap-release.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/3dssplash.srldr";
 		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to 3ds-bootstrap as argument
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to 3DS Splash as argument (Does nothing)
 	}
 	if (err > 0) {
 		consoleDemoInit();

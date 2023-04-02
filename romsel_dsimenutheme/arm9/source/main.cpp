@@ -1056,10 +1056,19 @@ int main(int argc, char **argv) {
 	};
 
 	if (dsiFeatures() && ms().consoleModel < 2) {
-		// 3DS
-		extensionList.emplace_back(".3ds");
-		extensionList.emplace_back(".cia");
-		extensionList.emplace_back(".cxi");
+		char currentDate[16];
+		time_t Raw;
+		time(&Raw);
+		const struct tm *Time = localtime(&Raw);
+
+		strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
+
+		if (strcmp(currentDate, "04/01") == 0) {
+			// 3DS (for April Fools)
+			extensionList.emplace_back(".3ds");
+			extensionList.emplace_back(".cia");
+			extensionList.emplace_back(".cxi");
+		}
 	}
 
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
@@ -2473,7 +2482,7 @@ int main(int argc, char **argv) {
 				} else if (extension(filename, {".3ds", ".cia", ".cxi"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::E3DSLaunch;
 
-					ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/3ds-bootstrap-release.nds" : "fat:/_nds/3ds-bootstrap-release.nds";
+					ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/3dssplash.srldr" : "fat:/_nds/TWiLightMenu/3dssplash.srldr";
 					if (!isDSiMode()) {
 						boostVram = true;
 					}

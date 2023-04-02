@@ -3301,7 +3301,7 @@ int main(int argc, char **argv) {
 				} else if (extension(filename[ms().secondaryDevice], ".3ds") || extension(filename[ms().secondaryDevice], ".cia") || extension(filename[ms().secondaryDevice], ".cxi")) {
 					ms().launchType[ms().secondaryDevice] = Launch::E3DSLaunch;
 
-					ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/3ds-bootstrap-release.nds" : "fat:/_nds/3ds-bootstrap-release.nds";
+					ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/3dssplash.srldr" : "fat:/_nds/TWiLightMenu/3dssplash.srldr";
 					if (!isDSiMode()) {
 						boostVram = true;
 					}

@@ -15,5 +15,5 @@ if (!$?) {
 docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args
 
 if($args.Count -eq 0 -and $?) {
-    Copy-Item "3dsloader.nds" "../7zfile/_nds/3ds-bootstrap-release.nds"
+    Copy-Item "3dssplash.nds" "../7zfile/_nds/TWiLightMenu/3dssplash.srldr"
 }

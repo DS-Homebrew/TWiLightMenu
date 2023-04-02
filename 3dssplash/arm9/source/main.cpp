@@ -60,26 +60,8 @@ int main(int argc, char **argv) {
 		swiWaitForVBlank();
 	}
 
-	for (int i = 0; i < 60*30; i++) { // 30 seconds, because of the slow CPU speed. A speedup will cause issues!
-		loop.displayFrame();
-		// loadRomDataAsync(); // Secret!
-		swiWaitForVBlank();
-	}
-
-	fadeType = false;	// Fade out to black
-
-	for (int i = 0; i < 30; i++) {
-		loop.displayFrame();
-		swiWaitForVBlank();
-	}
-
-	// Boot the ROM!
-
-	/*
-		Sorry! The ROM loading code is a secret, so the below code is used in place!
-		Please use the actual relase, as building from source will not give the expected result.
-	*/
 	while (1) {
+		loop.displayFrame();
 		swiWaitForVBlank();
 	}
 }

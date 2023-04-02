@@ -9,7 +9,7 @@ ifeq ($(strip $(PROJECT)),)
 export PROJECT	:=	$(CURDIR)/../
 endif
 
-export TARGET := 3dsloader
+export TARGET := 3dssplash
 NITRODATA	:=	nitrofiles
 
 include $(DEVKITARM)/ds_rules
@@ -28,13 +28,13 @@ makearm9:
 
 dist:	all
 	@mkdir -p ../7zfile/debug
-	@cp $(TARGET).nds ../7zfile/_nds/3ds-bootstrap-release.nds
+	@cp $(TARGET).nds ../7zfile/_nds/TWiLightMenu/3dssplash.srldr
 	@cp $(TARGET).arm7.elf ../7zfile/debug/$(TARGET).arm7.elf
 	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
 
 $(TARGET).nds:	makearm7 makearm9
 	ndstool	-u 00030004 -g SRLA 01 "TWLMENUPP" -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -d $(NITRODATA) \
-	-b icon.bmp "3ds-bootstrap;Rocket Robz"
+	-b icon.bmp "Nintendo 3DS Splash;TWiLight Menu++;Rocket Robz"
 
 clean:
 	@echo clean ...

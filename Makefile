@@ -8,14 +8,14 @@ export PROJECT	:=	$(CURDIR)
 #---------------------------------------------------------------------------------
 # Goals for Build
 #---------------------------------------------------------------------------------
-.PHONY: all package booter booter_fc 3dsloader gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme settings slot1launch title
+.PHONY: all package booter booter_fc 3dssplash gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme settings slot1launch title
 
-all:	booter booter_fc 3dsloader gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme settings slot1launch title
+all:	booter booter_fc 3dssplash gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme settings slot1launch title
 
 package:
 	@$(MAKE) -C booter dist
 	@$(MAKE) -C booter_fc dist
-	@$(MAKE) -C 3dsloader dist
+	@$(MAKE) -C 3dssplash dist
 	@$(MAKE) -C gbapatcher dist
 	@$(MAKE) -C quickmenu dist
 	@$(MAKE) -C manual dist
@@ -38,8 +38,8 @@ booter:
 booter_fc:
 	@$(MAKE) -C booter_fc
 
-3dsloader:
-	@$(MAKE) -C 3dsloader
+3dssplash:
+	@$(MAKE) -C 3dssplash
 
 gbapatcher:
 	@$(MAKE) -C gbapatcher
@@ -81,7 +81,7 @@ clean:
 	@echo clean build directories
 	@$(MAKE) -C booter clean
 	@$(MAKE) -C booter_fc clean
-	@$(MAKE) -C 3dsloader clean
+	@$(MAKE) -C 3dssplash clean
 	@$(MAKE) -C gbapatcher clean
 	@$(MAKE) -C quickmenu clean
 	@$(MAKE) -C manual clean
@@ -103,7 +103,7 @@ clean:
 	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/53524c41/content/00000000.app"
 	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
 	#@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
-	@rm -rf "$(PACKAGE)/_nds/3ds-bootstrap-release.nds"
+	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/3dssplash.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/gbapatcher.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
