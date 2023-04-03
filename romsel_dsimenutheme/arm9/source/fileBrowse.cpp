@@ -2215,15 +2215,17 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		clearText(false);
 		updateText(false);
 
-		if (!musicplaying && ms().theme != TWLSettings::EThemeSaturn && ms().dsiMusic != 0) {
-			if ((ms().theme == TWLSettings::ETheme3DS && ms().dsiMusic == 1) || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
-				//logPrint("snd().playStartup()\n");
-				snd().playStartup();
-				//logPrint("snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust())\n");
-				snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
+		if (!musicplaying && ms().theme != TWLSettings::EThemeSaturn) {
+			if (ms().dsiMusic != 0) {
+				if ((ms().theme == TWLSettings::ETheme3DS && ms().dsiMusic == 1) || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
+					//logPrint("snd().playStartup()\n");
+					snd().playStartup();
+					//logPrint("snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust())\n");
+					snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
+				}
+				//logPrint("snd().beginStream()\n");
+				snd().beginStream();
 			}
-			//logPrint("snd().beginStream()\n");
-			snd().beginStream();
 
 			controlTopBright = true;
 			if (ms().theme != TWLSettings::EThemeDSi) {
