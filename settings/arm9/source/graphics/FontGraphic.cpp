@@ -2,8 +2,6 @@
 
 #include "common/tonccpy.h"
 
-u8 *FontGraphic::lastUsedLoc = (u8*)0x08000000;
-
 u8 FontGraphic::textBuf[2][256 * 192];
 
 std::map<char16_t, std::array<char16_t, 3>> FontGraphic::arabicPresentationForms = {
@@ -90,7 +88,7 @@ char16_t FontGraphic::arabicForm(char16_t current, char16_t prev, char16_t next)
 	return current;
 }
 
-FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansionPak) : useExpansionPak(useExpansionPak) {
+FontGraphic::FontGraphic(const std::vector<std::string> &paths) {
 	FILE *file = nullptr;
 	for (const auto &path : paths) {
 		file = fopen(path.c_str(), "rb");
@@ -99,10 +97,6 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansio
 	}
 
 	if (file) {
-		if (useExpansionPak && *(u16*)(0x020000C0) == 0 && lastUsedLoc == (u8*)0x08000000) {
-			lastUsedLoc += 0x01000000;
-		}
-
 		// Get file size
 		fseek(file, 0, SEEK_END);
 		u32 fileSize = ftell(file);
@@ -121,18 +115,8 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansio
 		// Load character glyphs
 		tileAmount = (chunkSize - 0x10) / tileSize;
 		fseek(file, 4, SEEK_CUR);
-		if (useExpansionPak) {
-			fontTiles = lastUsedLoc;
-			lastUsedLoc += tileSize * tileAmount;
-
-			u8 *buf = new u8[tileSize * tileAmount];
-			fread(buf, tileSize, tileAmount, file);
-			tonccpy(fontTiles, buf, tileSize * tileAmount);
-			delete[] buf;
-		} else {
-			fontTiles = new u8[tileSize * tileAmount];
-			fread(fontTiles, tileSize, tileAmount, file);
-		}
+		fontTiles = new u8[tileSize * tileAmount];
+		fread(fontTiles, tileSize, tileAmount, file);
 
 		// Load character widths
 		fseek(file, 0x24, SEEK_SET);
@@ -141,26 +125,11 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, bool useExpansio
 		fseek(file, locHDWC-4, SEEK_SET);
 		fread(&chunkSize, 4, 1, file);
 		fseek(file, 8, SEEK_CUR);
-		if (useExpansionPak) {
-			fontWidths = lastUsedLoc;
-			lastUsedLoc += 3 * tileAmount;
-
-			u8 *buf = new u8[3 * tileAmount];
-			fread(buf, 3, tileAmount, file);
-			tonccpy(fontWidths, buf, 3 * tileAmount);
-			delete[] buf;
-		} else {
-			fontWidths = new u8[3 * tileAmount];
-			fread(fontWidths, 3, tileAmount, file);
-		}
+		fontWidths = new u8[3 * tileAmount];
+		fread(fontWidths, 3, tileAmount, file);
 
 		// Load character maps
-		if (useExpansionPak) {
-			fontMap = (u16*)lastUsedLoc;
-			lastUsedLoc += tileAmount * sizeof(u16);
-		} else {
-			fontMap = new u16[tileAmount];
-		}
+		fontMap = new u16[tileAmount];
 
 		fseek(file, 0x28, SEEK_SET);
 		u32 locPAMC, mapType;
