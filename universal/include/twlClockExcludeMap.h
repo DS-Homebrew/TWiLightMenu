@@ -2,6 +2,7 @@
 #define TWLCLOCKEXCLUDEMAP_H
 
 static const char twlClockExcludeList[][4] = {
+	"YCQ", // Cooking Mama 2 - Dinner with Friend
 	"CRL", // Coraline
 	"YGD", // Diary Girl
 	"YGX", // Grand Theft Auto: Chinatown Wars
