@@ -28,8 +28,6 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KPB", // Photo Dojo
 	"KRM", // Rayman
 	"KHD", // Sparkle Snapshots
-	"KDY", // Starship Defense
-	"KDZ", // Trajectile
 	"KUW", // WarioWare: Snapped!
 	"KDX", // X-Scape
 };

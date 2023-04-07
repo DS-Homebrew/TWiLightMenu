@@ -155,6 +155,9 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	*(u32*)0x0CFFFD0C = 0x54534453; // 'SDST'
+	while (*(u32*)0x0CFFFD0C != 0) { swiDelay(100); }
+
 	u32 sdIrqStatus = fifoGetValue32(FIFO_USER_04);
 	if ((sdIrqStatus & BIT(5)) != 0 && (sdIrqStatus & BIT(7)) == 0) {
 		graphicsInit();

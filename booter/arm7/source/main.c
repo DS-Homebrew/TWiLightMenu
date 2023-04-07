@@ -113,8 +113,11 @@ int main() {
 		if ((REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R)) == 0) {
 			exitflag = true;
 		}
+		if (*(u32*)0x02FFFD0C == 0x54534453) { // 'SDST'
+			fifoSendValue32(FIFO_USER_04, SD_IRQ_STATUS);
+			*(u32*)0x02FFFD0C = 0;
+		}
 		// fifocheck();
-		fifoSendValue32(FIFO_USER_04, SD_IRQ_STATUS);
 		swiWaitForVBlank();
 	}
 	return 0;

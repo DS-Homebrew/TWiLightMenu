@@ -273,7 +273,7 @@ void unlaunchRomBoot(std::string_view rom) {
 }
 
 void unlaunchSetHiyaBoot(void) {
-	if (access("sdmc:/hiya.dsi", F_OK) != 0) return;
+	if (access("sd:/hiya.dsi", F_OK) != 0) return;
 
 	tonccpy((u8 *)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16 *)(0x0200080C) = 0x3F0;			   // Unlaunch Length for CRC16 (fixed, must be 3F0h)
@@ -1054,6 +1054,22 @@ int main(int argc, char **argv) {
 		".bmp", // BMP
 		".png" // Portable Network Graphics
 	};
+
+	if (dsiFeatures() && ms().consoleModel < 2) {
+		char currentDate[16];
+		time_t Raw;
+		time(&Raw);
+		const struct tm *Time = localtime(&Raw);
+
+		strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
+
+		if (strcmp(currentDate, "04/01") == 0) {
+			// 3DS (for April Fools)
+			extensionList.emplace_back(".3ds");
+			extensionList.emplace_back(".cia");
+			extensionList.emplace_back(".cxi");
+		}
+	}
 
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		extensionList.emplace_back(".plg"); // DSTWO Plugin
@@ -2462,6 +2478,13 @@ int main(int argc, char **argv) {
 
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
+					}
+				} else if (extension(filename, {".3ds", ".cia", ".cxi"})) {
+					ms().launchType[ms().secondaryDevice] = Launch::E3DSLaunch;
+
+					ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/3dssplash.srldr" : "fat:/_nds/TWiLightMenu/3dssplash.srldr";
+					if (!isDSiMode()) {
+						boostVram = true;
 					}
 				} else if (extension(filename, {".gif", ".bmp", ".png"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EImageLaunch;

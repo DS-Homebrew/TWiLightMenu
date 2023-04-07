@@ -363,9 +363,7 @@ void unlaunchRomBoot(std::string_view rom) {
 	for (uint i = 0; i < std::min(path.length(), 0x103u); i++) {
 		((char16_t*)0x02000838)[i] = path[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 	}
-	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
-		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-	}
+	*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 
 	DC_FlushAll();						// Make reboot not fail
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
@@ -373,6 +371,8 @@ void unlaunchRomBoot(std::string_view rom) {
 }
 
 void unlaunchSetHiyaBoot(void) {
+	if (access("sd:/hiya.dsi", F_OK) != 0) return;
+
 	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
@@ -384,9 +384,7 @@ void unlaunchSetHiyaBoot(void) {
 	for (uint i = 0; i < sizeof(hiyaNdsPath)/sizeof(hiyaNdsPath[0]); i++) {
 		((char16_t*)0x02000838)[i] = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 	}
-	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
-		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-	}
+	*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 }
 
 /**
@@ -414,9 +412,7 @@ void dsCardLaunch() {
 	*(u32*)(0x02000314) = 0x00000000;
 	*(u32*)(0x02000318) = 0x00000013;
 	*(u32*)(0x0200031C) = 0x00000000;
-	while (*(u16*)(0x02000306) == 0) {	// Keep running, so that CRC16 isn't 0
-		*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
-	}
+	*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
 	
 	unlaunchSetHiyaBoot();
 
@@ -1163,6 +1159,22 @@ int main(int argc, char **argv) {
 		".bmp", // BMP
 		".png" // Portable Network Graphics
 	};
+
+	if (dsiFeatures() && ms().consoleModel < 2) {
+		char currentDate[16];
+		time_t Raw;
+		time(&Raw);
+		const struct tm *Time = localtime(&Raw);
+
+		strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
+
+		if (strcmp(currentDate, "04/01") == 0) {
+			// 3DS (for April Fools)
+			extensionList.emplace_back(".3ds");
+			extensionList.emplace_back(".cia");
+			extensionList.emplace_back(".cxi");
+		}
+	}
 
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		extensionList.emplace_back(".plg"); // DSTWO Plugin
@@ -2546,6 +2558,13 @@ int main(int argc, char **argv) {
 
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
+					}
+				} else if (extension(filename, {".3ds", ".cia", ".cxi"})) {
+					ms().launchType[ms().secondaryDevice] = TWLSettings::E3DSLaunch;
+
+					ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/3dssplash.srldr" : "fat:/_nds/TWiLightMenu/3dssplash.srldr";
+					if (!isDSiMode()) {
+						boostVram = true;
 					}
 				} else if (extension(filename, {".gif", ".bmp", ".png"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EImageLaunch;

@@ -115,7 +115,7 @@ TWLSettings::TWLSettings()
 	// ak_theme = "zelda";
 	// ak_zoomIcons = true;
 
-	useBootstrap = isDSiMode();
+	useBootstrap = true;
 	btsrpBootloaderDirect = false;
 	bootstrapFile = EReleaseBootstrap;
 

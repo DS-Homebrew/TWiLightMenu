@@ -289,7 +289,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			}
 
 			dirent *pent = readdir(pdir);
-			if (pent == nullptr || file_count > 320)
+			if (pent == nullptr || file_count > ((dsiFeatures() || sys().dsDebugRam()) ? 1024 : 512))
 				break;
 
 			// Now that we've got the attrs and the name, skip if we should be hiding this
@@ -2215,15 +2215,17 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		clearText(false);
 		updateText(false);
 
-		if (!musicplaying && ms().theme != TWLSettings::EThemeSaturn && ms().dsiMusic != 0) {
-			if ((ms().theme == TWLSettings::ETheme3DS && ms().dsiMusic == 1) || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
-				//logPrint("snd().playStartup()\n");
-				snd().playStartup();
-				//logPrint("snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust())\n");
-				snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
+		if (!musicplaying && ms().theme != TWLSettings::EThemeSaturn) {
+			if (ms().dsiMusic != 0) {
+				if ((ms().theme == TWLSettings::ETheme3DS && ms().dsiMusic == 1) || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
+					//logPrint("snd().playStartup()\n");
+					snd().playStartup();
+					//logPrint("snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust())\n");
+					snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
+				}
+				//logPrint("snd().beginStream()\n");
+				snd().beginStream();
 			}
-			//logPrint("snd().beginStream()\n");
-			snd().beginStream();
 
 			controlTopBright = true;
 			if (ms().theme != TWLSettings::EThemeDSi) {

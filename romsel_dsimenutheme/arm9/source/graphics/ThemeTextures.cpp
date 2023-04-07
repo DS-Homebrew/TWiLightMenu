@@ -751,8 +751,10 @@ void ThemeTextures::drawProfileName() {
 	int width = usernameFont()->calcWidth(username);
 
 	// Copy to background
-	for (int y = 0; y < usernameFont()->height(); y++) {
-		for (int x = 0; x < width; x++) {
+	for (int y = 0; y < usernameFont()->height() && yPos + y < SCREEN_HEIGHT; y++) {
+		if (yPos + y < 0) continue;
+		for (int x = 0; x < width && xPos + x < SCREEN_WIDTH; x++) {
+			if (xPos + x < 0) continue;
 			int px = FontGraphic::textBuf[1][y * 256 + x];
 			u16 bg = _topBorderBuffer[(yPos + y) * 256 + (xPos + x)];
 			u16 val = px ? alphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
@@ -1285,8 +1287,10 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 	int width = max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
 
 	// Copy to background
-	for (int y = 0; y < dateTimeFont()->height(); y++) {
-		for (int x = 0; x < width; x++) {
+	for (int y = 0; y < dateTimeFont()->height() && posY + y < SCREEN_HEIGHT; y++) {
+		if (posY + y < 0) continue;
+		for (int x = 0; x < width && posX + x < SCREEN_WIDTH; x++) {
+			if (posX + x < 0) continue;
 			int px = FontGraphic::textBuf[1][y * 256 + x];
 			u16 bg = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
 			u16 val = px ? alphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
@@ -1325,8 +1329,10 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 	int width = max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
 
 	// Copy to background
-	for (int y = 0; y < dateTimeFont()->height(); y++) {
-		for (int x = 0; x < width; x++) {
+	for (int y = 0; y < dateTimeFont()->height() && posY + y < SCREEN_HEIGHT; y++) {
+		if (posY + y < 0) continue;
+		for (int x = 0; x < width && posX + x < SCREEN_WIDTH; x++) {
+			if (posX + x < 0) continue;
 			int px = FontGraphic::textBuf[1][y * 256 + x];
 			u16 bg = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
 			u16 val = px ? alphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
