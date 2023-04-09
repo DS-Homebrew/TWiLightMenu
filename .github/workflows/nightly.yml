@@ -33,6 +33,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install p7zip-full python -y
+      - name: Workaround Git issue by chowning the repo
+        run: |
+          # when will github fix this
+          chown -R $(id -u):$(id -g) $PWD
       - name: Get manual pages
         run: |
           cd manual/nitrofiles
@@ -50,14 +54,14 @@ jobs:
           mkdir -p "../7zfile/3DS - CFW users/"
           cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
 
-          echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
-          echo ::set-output name=commit_hash::$(git log --format=%h -1)
+          echo "commit_tag=$(git describe --abbrev=0 --tags)" >> $GITHUB_OUTPUT
+          echo "commit_hash=$(git log --format=%h -1)" >> $GITHUB_OUTPUT
 
           # Webhook info
-          echo "::set-output name=author_name::$(git log -1 $GITHUB_SHA --pretty=%aN)"
-          echo "::set-output name=committer_name::$(git log -1 $GITHUB_SHA --pretty=%cN)"
-          echo "::set-output name=commit_subject::$(git log -1 $GITHUB_SHA --pretty=%s)"
-          echo "::set-output name=commit_message::$(git log -1 $GITHUB_SHA --pretty=%b)"
+          echo "author_name=$(git log -1 $GITHUB_SHA --pretty=%aN)" >> $GITHUB_OUTPUT
+          echo "committer_name=$(git log -1 $GITHUB_SHA --pretty=%cN)" >> $GITHUB_OUTPUT
+          echo "commit_subject=$(git log -1 $GITHUB_SHA --pretty=%s)" >> $GITHUB_OUTPUT
+          echo "commit_message=$(git log -1 $GITHUB_SHA --pretty=%b)" >> $GITHUB_OUTPUT
       - name: Pack 7z Package for nightly
         run: |
           # Make artifacts directory
@@ -154,7 +158,7 @@ jobs:
         id: commit
         run: |
           CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
-          echo ::set-output name=current_date::$CURRENT_DATE
+          echo "current_date=$CURRENT_DATE" >> $GITHUB_OUTPUT
 
           git config --global user.email "flamekat54@aol.com"
           git config --global user.name "TWLBot"
