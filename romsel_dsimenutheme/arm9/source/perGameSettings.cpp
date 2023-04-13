@@ -605,7 +605,7 @@ void perGameSettings (std::string filename) {
 		}
 		if (ms().secondaryDevice) {
 			perGameOps++;
-			perGameOp[perGameOps] = 14;	// Use nds-bootstrap
+			perGameOp[perGameOps] = 14;	// Game Loader
 		}
 		if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || !ms().secondaryDevice) {
 			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_cardReadDma) {
@@ -924,13 +924,13 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 14:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_USEBOOTSTRAP + ":", startAlign, FontPalette::dialog);
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_GAME_LOADER + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_useBootstrap == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_useBootstrap == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_YES, endAlign, FontPalette::dialog);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "nds-bootstrap", endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign, FontPalette::dialog);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_KERNEL, endAlign, FontPalette::dialog);
 				}
 				break;
 		}

@@ -579,7 +579,7 @@ void perGameSettings (std::string filename) {
 		}
 		if (ms().secondaryDevice) {
 			perGameOps++;
-			perGameOp[perGameOps] = 14;	// Use nds-bootstrap
+			perGameOp[perGameOps] = 14;	// Game Loader
 		}
 		if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && romUnitCode > 0) || !ms().secondaryDevice) {
 			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_cardReadDma) {
@@ -873,13 +873,13 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 14:
-				printSmall(false, 32, perGameOpYpos, "Use nds-bootstrap:");
+				printSmall(false, 32, perGameOpYpos, "Game Loader:");
 				if (perGameSettings_useBootstrap == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_useBootstrap == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Yes");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "nds-bootstrap");
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "No");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Kernel");
 				}
 				break;
 		}
