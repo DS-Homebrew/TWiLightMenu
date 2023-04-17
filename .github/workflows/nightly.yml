@@ -33,10 +33,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install p7zip-full python -y
-      - name: Workaround Git issue by chowning the repo
-        run: |
-          # when will github fix this
-          chown -R $(id -u):$(id -g) $PWD
+      - name: Setup environment
+        run: git config --global safe.directory '*'
       - name: Get manual pages
         run: |
           cd manual/nitrofiles
