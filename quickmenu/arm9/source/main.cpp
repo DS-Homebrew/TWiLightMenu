@@ -2137,6 +2137,7 @@ int main(int argc, char **argv) {
 					if (filePath[i] == 0) {
 						filePath[i] = '/';
 						filePath[i+1] = 0;
+						pathLen++;
 						break;
 					}
 				}
