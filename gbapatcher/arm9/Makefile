@@ -20,7 +20,7 @@ include $(DEVKITARM)/ds_rules
 UNIVERSAL	:=	../../universal
 TARGET		:=	gbapatcher
 BUILD		:=	build
-SOURCES		:=	source source/common source/graphics source/save source/tool $(UNIVERSAL)/source/common $(UNIVERSAL)/source/flashcard $(UNIVERSAL)/source/tonccpy
+SOURCES		:=	source source/common source/graphics source/save source/tool $(UNIVERSAL)/source/common $(UNIVERSAL)/source/flashcard $(UNIVERSAL)/source/lodepng $(UNIVERSAL)/source/tonccpy
 INCLUDES	:=	include source source/common source/graphics source/save source/tool $(UNIVERSAL)/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
