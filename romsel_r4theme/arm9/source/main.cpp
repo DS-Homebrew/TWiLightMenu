@@ -1485,15 +1485,10 @@ int main(int argc, char **argv) {
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);
-			if (pathLen < 254) {
-				for (int i = 0; i < PATH_MAX; i++) {
-					if (filePath[i] == 0) {
-						filePath[i] = '/';
-						filePath[i+1] = 0;
-						pathLen++;
-						break;
-					}
-				}
+			if (pathLen < PATH_MAX && filePath[pathLen - 1] != '/') { // Ensure the path ends in a slash
+				filePath[pathLen] = '/';
+				filePath[pathLen + 1] = '\0';
+				pathLen++;
 			}
 			vector<char*> argarray;
 
