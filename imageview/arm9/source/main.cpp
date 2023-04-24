@@ -32,7 +32,6 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
-bool useTwlCfg = false;
 
 extern void ClearBrightness();
 extern int imageType;
@@ -109,33 +108,21 @@ void customSleep() {
 }
 
 //---------------------------------------------------------------------------------
-int main(int argc, char **argv) {
+int imageViewer(void) {
 //---------------------------------------------------------------------------------
-	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
-	defaultExceptionHandler();
-	sys().initFilesystem(argv[0]);
-	sys().initArm7RegStatuses();
-
-	if (!sys().fatInitOk()) {
-		SetBrightness(0, 0);
-		SetBrightness(1, 0);
-		consoleDemoInit();
-		iprintf("FAT init failed!");
-		stop();
-	}
-
 	keysSetRepeat(25, 25);
-
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 
 	ms().loadSettings();
 
-	if (argc >= 2) {
-		if (extension(argv[1], {".gif"})) {
+	std::string imagePath = ms().homebrewArg[ms().previousUsedDevice];
+	const char* imagePathChar = imagePath.c_str();
+
+	if (strlen(imagePathChar) >= 2) {
+		if (extension(imagePathChar, {".gif"})) {
 			imageType = 0;
-		} else if (extension(argv[1], {".bmp"})) {
+		} else if (extension(imagePathChar, {".bmp"})) {
 			imageType = 1;
-		} else if (extension(argv[1], {".png"})) {
+		} else if (extension(imagePathChar, {".png"})) {
 			imageType = 2;
 		}
 	} else {
@@ -147,7 +134,7 @@ int main(int argc, char **argv) {
 
 	langInit();
 
-	imageLoad((argc >= 2) ? argv[1] : "nitro:/graphics/test.png");
+	imageLoad((strlen(imagePathChar) >= 2) ? imagePathChar : "nitro:/graphics/test.png");
 	bgLoad();
 	if (!ms().macroMode) {
 		printSmall(false, -88, 174, STR_BACK, Alignment::center);

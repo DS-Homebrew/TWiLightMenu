@@ -60,7 +60,7 @@
 #include "saveMap.h"
 #include "ROMList.h"
 
-bool useTwlCfg = false;
+extern bool useTwlCfg;
 
 bool whiteScreen = true;
 bool fadeType = false;		// false = out, true = in
@@ -1125,25 +1125,8 @@ void customSleep() {
 }
 
 //---------------------------------------------------------------------------------
-int main(int argc, char **argv) {
+int dsClassicMenu(void) {
 //---------------------------------------------------------------------------------
-
-	defaultExceptionHandler();
-	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
-
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
-
-	sys().initFilesystem(argv[0]);
-	sys().initArm7RegStatuses();
-
-	if (!sys().fatInitOk()) {
-		SetBrightness(0, 0);
-		SetBrightness(1, 0);
-		consoleDemoInit();
-		iprintf("FAT init failed!");
-		stop();
-	}
-
 	// Read user name
 	/*char *username = (char*)PersonalData->name;
 		

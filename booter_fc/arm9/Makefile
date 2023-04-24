@@ -32,7 +32,7 @@ CFLAGS	:=	-g -Wall -O2\
 		-ffast-math \
 		$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9 -DNO_SDMMC
+CFLAGS	+=	$(INCLUDE) -DARM9 -DNO_SDMMC -DSTANDALONE -D_NO_MAIN_ALL
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)

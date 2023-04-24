@@ -56,7 +56,7 @@
 #include "saveMap.h"
 #include "ROMList.h"
 
-bool useTwlCfg = false;
+extern bool useTwlCfg;
 
 bool whiteScreen = false;
 bool blackScreen = false;
@@ -1026,27 +1026,8 @@ void bgOperations(bool waitFrame) {
 }
 
 //---------------------------------------------------------------------------------
-int main(int argc, char **argv) {
+int r4Theme(void) {
 //---------------------------------------------------------------------------------
-
-	defaultExceptionHandler();
-	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
-
-	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
-
-	sys().initFilesystem(argv[0]);
-	sys().initArm7RegStatuses();
-
-	if (!sys().fatInitOk()) {
-		SetBrightness(0, 0);
-		SetBrightness(1, 0);
-		consoleDemoInit();
-		iprintf("FAT init failed!");
-		stop();
-	}
-
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
-
 	graphicsInit();
 
 	if (sdFound()) statvfs("sd:/", &st[0]);

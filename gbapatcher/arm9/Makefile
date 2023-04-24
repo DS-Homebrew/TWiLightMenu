@@ -20,7 +20,7 @@ include $(DEVKITARM)/ds_rules
 UNIVERSAL	:=	../../universal
 TARGET		:=	gbapatcher
 BUILD		:=	build
-SOURCES		:=	source source/common source/graphics source/save source/tool $(UNIVERSAL)/source/common $(UNIVERSAL)/source/flashcard $(UNIVERSAL)/source/lodepng $(UNIVERSAL)/source/tonccpy
+SOURCES		:=	source source/common source/graphics source/save source/tool $(UNIVERSAL)/source/common $(UNIVERSAL)/source/flashcard $(UNIVERSAL)/source/tonccpy
 INCLUDES	:=	include source source/common source/graphics source/save source/tool $(UNIVERSAL)/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
@@ -36,7 +36,7 @@ CFLAGS	:=	-g -Wall -O3\
 		-ffast-math \
 		$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9
+CFLAGS	+=	$(INCLUDE) -DARM9 -DSTANDALONE -D_NO_MAIN_ALL
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
 
 ASFLAGS	:=	-g $(ARCH)

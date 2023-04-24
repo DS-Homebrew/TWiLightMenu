@@ -8,6 +8,8 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
+CURRENT_SCREEN_MODE := 6
+
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
@@ -20,8 +22,8 @@ include $(DEVKITARM)/ds_rules
 UNIVERSAL	:=	../../universal
 TARGET		:=	imageview
 BUILD		:=	build
-SOURCES		:=	source source/graphics source/tool source/common $(UNIVERSAL)/source/common $(UNIVERSAL)/source/nds_loader $(UNIVERSAL)/source/lodepng $(UNIVERSAL)/source/tonccpy $(UNIVERSAL)/sdmmc/arm9/source
-INCLUDES	:=	source $(UNIVERSAL)/include $(UNIVERSAL)/sdmmc/arm9/include
+SOURCES		:=	source source/graphics source/tool source/common $(UNIVERSAL)/source/common $(UNIVERSAL)/source/nds_loader $(UNIVERSAL)/source/lodepng $(UNIVERSAL)/source/tonccpy $(UNIVERSAL)/arm9/source $(UNIVERSAL)/sdmmc/arm9/source
+INCLUDES	:=	source $(UNIVERSAL)/include $(UNIVERSAL)/arm9/include $(UNIVERSAL)/sdmmc/arm9/include
 DATA		:=	../data
 GRAPHICS	:=	../gfx
 MUSIC		:=	../music
@@ -36,7 +38,7 @@ CFLAGS	:=	-g -Wall -O2\
 		-ffast-math \
 		$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9
+CFLAGS	+=	$(INCLUDE) -DARM9 -DSTANDALONE -DCURRENT_SCREEN_MODE=$(CURRENT_SCREEN_MODE)
 CXXFLAGS	:= $(CFLAGS) -fno-exceptions -std=gnu++17
 
 ASFLAGS	:=	-g $(ARCH)

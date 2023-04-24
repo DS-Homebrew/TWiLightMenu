@@ -40,7 +40,7 @@
 #include "saveMap.h"
 #include "ROMList.h"
 
-bool useTwlCfg = false;
+extern bool useTwlCfg;
 
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
@@ -1707,25 +1707,9 @@ void regionSelect(void) {
 }
 
 //---------------------------------------------------------------------------------
-int main(int argc, char **argv)
+int titleMode(void)
 {
 //---------------------------------------------------------------------------------
-
-	// overwrite reboot stub identifier
-	/*extern char *fake_heap_end;
-	*fake_heap_end = 0;*/
-
-	defaultExceptionHandler();
-	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
-	sys().initFilesystem(argc==0 ? "sd:/_nds/TWiLightMenu/main.srldr" : argv[0]);
-	sys().initArm7RegStatuses();
-	ms();
-
-	if (!sys().fatInitOk()) {
-		iprintf("FAT init failed!");
-		stop();
-	}
-
 	keysSetRepeat(25, 5);
 
 	*(u32*)0x02FFFDFC = 0; // Reset TWLCFG location

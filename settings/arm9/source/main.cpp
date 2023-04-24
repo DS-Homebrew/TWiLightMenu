@@ -45,8 +45,6 @@
 #define UNLAUNCH_BG_DIRECTORY "/_nds/TWiLightMenu/unlaunch/backgrounds/"
 #define FONT_DIRECTORY "/_nds/TWiLightMenu/extras/fonts/"
 
-bool useTwlCfg = false;
-
 //bool widescreenEffects = false;
 
 int currentTheme = 0;
@@ -780,28 +778,9 @@ void customSleep() {
 }
 
 //---------------------------------------------------------------------------------
-int main(int argc, char **argv)
+int settingsMode(void)
 {
-	//---------------------------------------------------------------------------------
-
-//#pragma region init
-
-	defaultExceptionHandler();
-	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
-	sys().initFilesystem(argv[0]);
-	sys().initArm7RegStatuses();
-	ms();
-
-	useTwlCfg = (dsiFeatures() && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
-
-	if (!sys().fatInitOk()) {
-		graphicsInit();
-		fontInit();
-		fadeType = true;
-		printSmall(false, 4, 4, "fatinitDefault failed!");
-		stop();
-	}
-
+//---------------------------------------------------------------------------------
 	ms().loadSettings();
 	gs().loadSettings();
 	bs().loadSettings();
