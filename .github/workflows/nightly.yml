@@ -34,7 +34,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install p7zip-full python -y
       - name: Setup environment
-        run: git config --global safe.directory '*'
+        run: |
+          git config --global safe.directory '*'
+
+          echo "commit_tag=$(git describe --abbrev=0 --tags)" >> $GITHUB_OUTPUT
+          echo "commit_hash=$(git log --format=%h -1)" >> $GITHUB_OUTPUT
+
+          # Webhook info
+          echo "author_name=$(git log -1 $GITHUB_SHA --pretty=%aN)" >> $GITHUB_OUTPUT
+          echo "committer_name=$(git log -1 $GITHUB_SHA --pretty=%cN)" >> $GITHUB_OUTPUT
+          echo "commit_subject=$(git log -1 $GITHUB_SHA --pretty=%s)" >> $GITHUB_OUTPUT
+          echo "commit_message=$(git log -1 $GITHUB_SHA --pretty=%b)" >> $GITHUB_OUTPUT
       - name: Get manual pages
         run: |
           cd manual/nitrofiles
@@ -51,15 +61,6 @@ jobs:
           ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
           mkdir -p "../7zfile/3DS - CFW users/"
           cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
-
-          echo "commit_tag=$(git describe --abbrev=0 --tags)" >> $GITHUB_OUTPUT
-          echo "commit_hash=$(git log --format=%h -1)" >> $GITHUB_OUTPUT
-
-          # Webhook info
-          echo "author_name=$(git log -1 $GITHUB_SHA --pretty=%aN)" >> $GITHUB_OUTPUT
-          echo "committer_name=$(git log -1 $GITHUB_SHA --pretty=%cN)" >> $GITHUB_OUTPUT
-          echo "commit_subject=$(git log -1 $GITHUB_SHA --pretty=%s)" >> $GITHUB_OUTPUT
-          echo "commit_message=$(git log -1 $GITHUB_SHA --pretty=%b)" >> $GITHUB_OUTPUT
       - name: Pack 7z Package for nightly
         run: |
           # Make artifacts directory
