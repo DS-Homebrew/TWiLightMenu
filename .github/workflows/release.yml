@@ -15,7 +15,6 @@ jobs:
       author_name: ${{ steps.make-cias.outputs.author_name }}
       committer_name: ${{ steps.make-cias.outputs.committer_name }}
       commit_subject: ${{ steps.make-cias.outputs.commit_subject }}
-      commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -37,7 +36,6 @@ jobs:
           echo "author_name=$(git log -1 $GITHUB_SHA --pretty=%aN)" >> $GITHUB_OUTPUT
           echo "committer_name=$(git log -1 $GITHUB_SHA --pretty=%cN)" >> $GITHUB_OUTPUT
           echo "commit_subject=$(git log -1 $GITHUB_SHA --pretty=%s)" >> $GITHUB_OUTPUT
-          echo "commit_message=$(git log -1 $GITHUB_SHA --pretty=%b)" >> $GITHUB_OUTPUT
       - name: Get manual pages
         run: |
           cd manual/nitrofiles
@@ -198,7 +196,6 @@ jobs:
     needs: build
     env:
       COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
-      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
     outputs:
       current_date: ${{ steps.commit.outputs.current_date }}
       twlbot_commit: ${{ steps.commit.outputs.twlbot_commit }}
@@ -248,7 +245,6 @@ jobs:
       AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
       COMMITTER_NAME: ${{ needs.build.outputs.committer_name }}
       COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
-      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
     steps:
       - name: Send success webhook
         run: |

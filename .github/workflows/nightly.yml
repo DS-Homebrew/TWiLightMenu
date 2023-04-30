@@ -23,7 +23,6 @@ jobs:
       author_name: ${{ steps.make-cias.outputs.author_name }}
       committer_name: ${{ steps.make-cias.outputs.committer_name }}
       commit_subject: ${{ steps.make-cias.outputs.commit_subject }}
-      commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -45,7 +44,6 @@ jobs:
           echo "author_name=$(git log -1 $GITHUB_SHA --pretty=%aN)" >> $GITHUB_OUTPUT
           echo "committer_name=$(git log -1 $GITHUB_SHA --pretty=%cN)" >> $GITHUB_OUTPUT
           echo "commit_subject=$(git log -1 $GITHUB_SHA --pretty=%s)" >> $GITHUB_OUTPUT
-          echo "commit_message=$(git log -1 $GITHUB_SHA --pretty=%b)" >> $GITHUB_OUTPUT
       - name: Get manual pages
         run: |
           cd manual/nitrofiles
@@ -176,7 +174,7 @@ jobs:
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
           API_URL="https://api.github.com/repos/TWLBot/Builds/releases"
-          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"TWiLightMenu | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_SUBJECT\\n\\n$COMMIT_MESSAGE\", \"prerelease\": true}"
+          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"TWiLightMenu | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_SUBJECT\", \"prerelease\": true}"
 
           RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
 
