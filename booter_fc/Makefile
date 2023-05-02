@@ -115,7 +115,7 @@ autoboot:
 	
 	#### SuperCard DSONE
 	ndstool -c SCFW.SC -7 $(TARGET)_fc.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g "ENG0" -b icon.bmp "TWiLight Menu++;Rocket Robz"
-	dlditool flashcart_specifics/DLDI/scds1.dldi SCFW.SC
+	dlditool flashcart_specifics/DLDI/scds3.dldi SCFW.SC
 	mkdir -p "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/"
 	mv SCFW.SC "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/SCFW.SC"
 	
@@ -174,6 +174,11 @@ autoboot:
 	cp r4i.sys "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data/r4i.sys"
 	mv r4i.sys "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/SRESET.dat"
 
+	#### SuperCard DSONE SDHC / DSONEi
+	cp booter_fc.nds TTMenu.dat
+	dlditool flashcart_specifics/DLDI/scdssdhc2.dldi TTMenu.dat
+	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE SDHC & SuperCard DSONEi/TTMenu.dat"
+
 	#### SuperCard DSTWO
 	cp booter_fc.nds dstwo.nds
 	dlditool flashcart_specifics/DLDI/dstwo.dldi dstwo.nds
@@ -197,7 +202,7 @@ autoboot:
 
 	#### DSTT and its (many) clones
 	cp booter_acekard2.nds TTMenu.dat
-	dlditool flashcart_specifics/DLDI/DSTTDLDIboyakkeyver.dldi TTMenu.dat
+	dlditool flashcart_specifics/DLDI/ttio_sdhc.dldi TTMenu.dat
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/TTMenu.dat"
@@ -250,13 +255,8 @@ autoboot:
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i-REDANT/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/Redant.dat"
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/TTMenu.dat"
-
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE SDHC & SuperCard DSONEi/SDHC/TTMenu.dat"
-	# DSONE SDHC using a non-SDHC SD uses its own DLDI, but boots from TTMenu.dat
-	dlditool flashcart_specifics/DLDI/DSONESlot-1.dldi TTMenu.dat
 	# Since this is the last one, move it instead of copy
-	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/SuperCard DSONE SDHC & SuperCard DSONEi/Non-SDHC/TTMenu.dat"
+	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/TTMenu.dat"
 
 
 $(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4ig makearm9_acekard2 makearm9_r4idsn
