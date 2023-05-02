@@ -63,7 +63,7 @@ dist:	all autoboot
 	@cp $(TARGET)_acekard2.arm9.elf ../7zfile/debug/$(TARGET)_acekard2.arm9.elf
 	@cp $(TARGET)_r4idsn.arm9.elf ../7zfile/debug/$(TARGET)_r4idsn.arm9.elf
 
-.ONESHELL:
+.SILENT: autoboot
 autoboot:
 	### Special carts first
 	#### Acekard 2, 2.1, 2i
