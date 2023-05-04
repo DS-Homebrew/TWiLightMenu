@@ -1,3 +1,4 @@
 [submodule "booter_fc/flashcart_specifics/DLDI"]
 	path = booter_fc/flashcart_specifics/DLDI
 	url = https://github.com/DS-Homebrew/DLDI
+	branch = builds
