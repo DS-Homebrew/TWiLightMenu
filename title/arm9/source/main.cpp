@@ -1197,11 +1197,11 @@ void lastRunROM()
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EXEGSDSLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A8DS.nds";
 		if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
-			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A8DS.nds";
 		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to XEGS-DS as argument
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to A8DS as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ENINTVDSLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 

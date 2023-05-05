@@ -3029,9 +3029,9 @@ int dsClassicMenu(void) {
 						 || extension(filename[ms().secondaryDevice], ".atr")) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EXEGSDSLaunch;
 
-					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A8DS.nds";
 					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/XEGS-DS.nds";
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A8DS.nds";
 						boostVram = true;
 					}
 				} else if (extension(filename[ms().secondaryDevice], ".a26")) {

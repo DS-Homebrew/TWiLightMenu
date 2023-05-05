@@ -98,7 +98,7 @@ jobs:
           # Emulators
           mkdir -p 7zfile/_nds/TWiLightMenu/emulators
           cd 7zfile/_nds/TWiLightMenu/emulators
-          curl -LO https://github.com/wavemotion-dave/XEGS-DS/releases/latest/download/XEGS-DS.nds
+          curl -LO https://github.com/wavemotion-dave/A8DS/releases/latest/download/A8DS.nds
           curl -LO https://github.com/wavemotion-dave/StellaDS/releases/latest/download/StellaDS.nds
           curl -LO https://github.com/wavemotion-dave/A5200DS/releases/latest/download/A5200DS.nds
           curl -LO https://github.com/wavemotion-dave/A7800DS/releases/latest/download/A7800DS.nds
