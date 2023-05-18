@@ -122,7 +122,7 @@ autoboot:
 	### The following use booter_fc.nds for everything
 	#### Original R4 / M3 Simply
 	cp booter_fc.nds _DS_MENU.nds
-	dlditool flashcart_specifics/DLDI/r4tfv2.dldi _DS_MENU.nds
+	dlditool flashcart_specifics/DLDI/r4tfv3.dldi _DS_MENU.nds
 	r4denc _DS_MENU.nds
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.dat"
