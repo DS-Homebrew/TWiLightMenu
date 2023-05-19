@@ -131,7 +131,7 @@ autoboot:
 
 	# N5
 	cp booter_fc.nds _DS_MENU.dat
-	dlditool flashcart_specifics/DLDI/r4tf_sdhc.dldi _DS_MENU.dat
+	dlditool flashcart_specifics/DLDI/r4tfv3.dldi _DS_MENU.dat
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/N5/_DS_MENU.dat"
 
 	#### EDGE (TODO: Find out how to encrypt the .dat file)
