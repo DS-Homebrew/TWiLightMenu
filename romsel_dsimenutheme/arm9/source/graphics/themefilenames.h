@@ -28,7 +28,7 @@
 #define TFN_SYSTEM_DIR              "/_nds/TWiLightMenu/%smenu/"
 
 
-#define TFN_FALLBACK_DSI_UI_DIRECTORY         "nitro:/themes/dsi/dark"
+#define TFN_FALLBACK_DSI_UI_DIRECTORY         "nitro:/themes/dsi/white"
 #define TFN_FALLBACK_3DS_UI_DIRECTORY         "nitro:/themes/3ds/light"
 #define TFN_FALLBACK_SATURN_UI_DIRECTORY      "nitro:/themes/saturn/default"
 #define TFN_FALLBACK_HBLAUNCHER_UI_DIRECTORY  "nitro:/themes/hbLauncher/default"
