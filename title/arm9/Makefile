@@ -138,14 +138,14 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------
 soundbank.bin : $(AUDIOFILES)
 #---------------------------------------------------------------------------------
-	@mmutil $^ -d -o../../nitrofiles/soundbank.bin -hsoundbank.h
+	@mmutil $^ -d -o"../../nitrofiles/soundbank.bin" -hsoundbank.h
 
 #---------------------------------------------------------------------------------
 # rule to build soundbank from music files
 #---------------------------------------------------------------------------------
 soundbank_bday.bin : $(AUDIOFILESBDAY)
 #---------------------------------------------------------------------------------
-	@mmutil $^ -d -o../../nitrofiles/soundbank_bday.bin -hsoundbank_bday.h
+	@mmutil $^ -d -o"../../nitrofiles/soundbank_bday.bin" -hsoundbank_bday.h
 
 #---------------------------------------------------------------------------------
 %.bin.o	:	%.bin
