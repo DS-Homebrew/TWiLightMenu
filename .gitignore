@@ -8,7 +8,6 @@
 *.arm7
 *.arm9
 *.DS_Store
-*soundbank*.bin
 thumbs.db
 !GBARunner2_arm9dldi_ds.nds
 !GBARunner2_arm7dldi_ds.nds

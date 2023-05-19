@@ -80,7 +80,7 @@ CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 BMPFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.bmp)))
 PNGFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*))) soundbank.bin soundbank_bday.bin
+BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
  
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -138,14 +138,14 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------
 soundbank.bin : $(AUDIOFILES)
 #---------------------------------------------------------------------------------
-	@mmutil $^ -d -o"../../nitrofiles/soundbank.bin" -hsoundbank.h
+	@mmutil $^ -d -osoundbank.bin -hsoundbank.h
 
 #---------------------------------------------------------------------------------
 # rule to build soundbank from music files
 #---------------------------------------------------------------------------------
 soundbank_bday.bin : $(AUDIOFILESBDAY)
 #---------------------------------------------------------------------------------
-	@mmutil $^ -d -o"../../nitrofiles/soundbank_bday.bin" -hsoundbank_bday.h
+	@mmutil $^ -d -osoundbank_bday.bin -hsoundbank_bday.h
 
 #---------------------------------------------------------------------------------
 %.bin.o	:	%.bin
