@@ -2020,41 +2020,44 @@ int titleMode(void)
 
 	// Get SysNAND region and launcher app
 	if (isDSiMode() && sdFound() && !is3DS && (ms().sysRegion == TWLSettings::ERegionDefault || ms().launcherApp == -1)) {
-		if (!nandMounted) {
-			nandMounted = fatMountSimple("nand", &io_dsi_nand);
-		}
-
-		FILE *hwinfo_s = fopen("nand:/sys/HWINFO_S.dat", "rb");
-		if (hwinfo_s) {
-			if (ms().sysRegion == TWLSettings::ERegionDefault) {
-				fseek(hwinfo_s, 0x90, SEEK_SET);
-				ms().sysRegion = (TWLSettings::TRegion)fgetc(hwinfo_s);
+		bool hiyaFound = (access("sd:/hiya.dsi", F_OK) == 0 && !sys().arm7SCFGLocked()); // Check for hiyaCFW
+		if (!hiyaFound) {
+			// hiyaCFW is not found
+			if (!nandMounted) {
+				nandMounted = fatMountSimple("nand", &io_dsi_nand);
 			}
 
-			if (ms().launcherApp == -1) {
-				if (access("nand:/launcher.dsi", F_OK) == 0) {
-					// DSi Language Patcher
-					ms().launcherApp = 9;
-				} else {
-					fseek(hwinfo_s, 0xA0, SEEK_SET);
-					u32 launcherTid;
-					fread(&launcherTid, sizeof(u32), 1, hwinfo_s);
+			FILE *hwinfo_s = fopen("nand:/sys/HWINFO_S.dat", "rb");
+			if (hwinfo_s) {
+				if (ms().sysRegion == TWLSettings::ERegionDefault) {
+					fseek(hwinfo_s, 0x90, SEEK_SET);
+					ms().sysRegion = (TWLSettings::TRegion)fgetc(hwinfo_s);
+				}
 
-					char tmdPath[64];
-					snprintf(tmdPath, sizeof(tmdPath), "nand:/title/00030017/%08lx/content/title.tmd", launcherTid);
-					FILE *launcherTmd = fopen(tmdPath, "rb");
-					if (launcherTmd) {
-						fseek(launcherTmd, 0x1E7, SEEK_SET);
-						ms().launcherApp = fgetc(launcherTmd);
-						fclose(launcherTmd);
+				if (ms().launcherApp == -1) {
+					if (access("nand:/launcher.dsi", F_OK) == 0) {
+						// DSi Language Patcher
+						ms().launcherApp = 9;
+					} else {
+						fseek(hwinfo_s, 0xA0, SEEK_SET);
+						u32 launcherTid;
+						fread(&launcherTid, sizeof(u32), 1, hwinfo_s);
+
+						char tmdPath[64];
+						snprintf(tmdPath, sizeof(tmdPath), "nand:/title/00030017/%08lx/content/title.tmd", launcherTid);
+						FILE *launcherTmd = fopen(tmdPath, "rb");
+						if (launcherTmd) {
+							fseek(launcherTmd, 0x1E7, SEEK_SET);
+							ms().launcherApp = fgetc(launcherTmd);
+							fclose(launcherTmd);
+						}
 					}
 				}
+
+				fclose(hwinfo_s);
+				ms().saveSettings();
 			}
-
-			fclose(hwinfo_s);
-			ms().saveSettings();
 		}
-
 	}
 
 	// Set DSi donor ROM
