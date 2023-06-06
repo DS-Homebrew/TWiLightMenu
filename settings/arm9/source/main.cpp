@@ -922,8 +922,8 @@ int settingsMode(void)
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int((int *)&ms().dsiMusic),
-				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, "HBL", STR_THEME},
-				{TDSiMusic::EMusicOff, TDSiMusic::EMusicRegular, TDSiMusic::EMusicShop, TDSiMusic::EMusicHBL, TDSiMusic::EMusicTheme})
+				{STR_OFF, STR_REGULAR+" (DSi)", STR_REGULAR+" (3DS)", STR_DSI_SHOP, "HBL", STR_THEME},
+				{TDSiMusic::EMusicOff, TDSiMusic::EMusicRegular, TDSiMusic::EMusicRegular3D, TDSiMusic::EMusicShop, TDSiMusic::EMusicHBL, TDSiMusic::EMusicTheme})
 		.option(STR_SETTINGSMUSIC,
 				STR_DESCRIPTION_SETTINGSMUSIC,
 				Option::Int((int *)&ms().settingsMusic),

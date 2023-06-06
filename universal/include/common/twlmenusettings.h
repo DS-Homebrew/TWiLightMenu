@@ -179,7 +179,7 @@ public:
 		EMusicRegular = 1,
 		EMusicShop = 2,
 		EMusicTheme = 3,
-		EMusicClassic = 4,
+		EMusicRegular3D = 4,
 		EMusicHBL = 5
 	};
 

@@ -144,7 +144,7 @@
 
 #define TFN_DEFAULT_SOUND_EFFECTBANK      TFN_SYSTEM_SOUND_DIRECTORY"/defaultfx.bin"
 #define TFN_DEFAULT_SOUND_BG              TFN_SYSTEM_SOUND_DIRECTORY"/defaultbg.wav"
-#define TFN_DEFAULT_SOUND_BG_CACHE        TFN_SYSTEM_SOUND_CACHE_DIRECTORY"/defaultbg.raw"
+#define TFN_DEFAULT_SOUND_BG_3D           TFN_SYSTEM_SOUND_DIRECTORY"/defaultbg3d.wav"
 
 #define TFN_SHOP_START_SOUND_BG           TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.start.wav"
 #define TFN_SHOP_LOOP_SOUND_BG            TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.loop.wav"

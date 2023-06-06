@@ -205,7 +205,6 @@ SoundControl::SoundControl()
 				stream_source = fopen(loopPath.c_str(), "rb");
 				loopableMusic = true;
 				break; }
-			case 4:
 			case 2: { // DSi Shop
 				std::string startPath = (devicePath+TFN_SHOP_START_SOUND_BG_CACHE);
 				if (access(startPath.c_str(), F_OK) != 0 || getFileSize(startPath.c_str()) == 0) {
@@ -278,17 +277,13 @@ SoundControl::SoundControl()
 					if (closed) stream_source = fopen(cachePath.c_str(), "rb");
 					if (stream_source) break; } // fallthrough if stream_source fails.
 				}
+			case 4:
 			case 1:
 			default: {
-				std::string musicPath = (devicePath+TFN_DEFAULT_SOUND_BG_CACHE);
-				if (access(musicPath.c_str(), F_OK) != 0 || getFileSize(musicPath.c_str()) == 0) {
-					if (adpcm_main(std::string(TFN_DEFAULT_SOUND_BG).c_str(), musicPath.c_str(), true) == -1) {
-						remove(musicPath.c_str());
-					}
-				}
-				stream.sampling_rate = 32000;	 		// 32000Hz
-				stream.format = MM_STREAM_8BIT_STEREO;
-				stream_source = fopen(musicPath.c_str(), "rb");
+				stream.sampling_rate = ms().dsiMusic == 4 ? 32000 : 16000;	 		// 32000Hz or 16000Hz
+				stream.format = MM_STREAM_16BIT_MONO;
+				stream_source = fopen(std::string(ms().dsiMusic == 4 ? TFN_DEFAULT_SOUND_BG_3D : TFN_DEFAULT_SOUND_BG).c_str(), "rb");
+				seekPos = 0x2C;
 				break; }
 		}
 	}
