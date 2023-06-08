@@ -114,8 +114,7 @@ int imageViewer(void) {
 
 	ms().loadSettings();
 
-	std::string imagePath = ms().homebrewArg[ms().previousUsedDevice];
-	const char* imagePathChar = imagePath.c_str();
+	const char* imagePathChar = ms().romPath[ms().previousUsedDevice].c_str();
 
 	if (strlen(imagePathChar) >= 2) {
 		if (extension(imagePathChar, {".gif"})) {
