@@ -593,22 +593,61 @@ void opt_update()
 			cursorPosition--;
 			if (cursorPosition < 0) cursorPosition = 1;
 			updateText = true;
-		}
-
-		if (pressed & KEY_DOWN) {
+		} else if (pressed & KEY_DOWN) {
 			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
 			cursorPosition++;
 			if (cursorPosition > 1) cursorPosition = 0;
 			updateText = true;
-		}
-
-		if (pressed & KEY_A) {
+		} else if (pressed & KEY_A) {
 			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_launch : &snd().snd_launch);
 			begin_update(cursorPosition);
 			break;
+		} else if (pressed & KEY_B) {
+			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_back : &snd().snd_back);
+			break;
+		}
+	}
+	clearText();
+}
+
+void opt_set_luma_autoboot()
+{
+	std::string currentString = "";
+
+	CIniFile lumaConfig("sd:/luma/config.ini");
+	currentString = lumaConfig.GetString("boot", "autoboot_mode", "0"); // Work around a bug
+	lumaConfig.SetString("boot", "autoboot_mode", "2");
+	lumaConfig.SetString("autoboot", "autoboot_dsi_titleid", "0003000453524c41");
+	lumaConfig.SaveIniFile("sd:/luma/config.ini");
+
+	clearText(false);
+	if (ms().rtl()) {
+		printLarge(false, 256 - 4, 0, STR_DONE, Alignment::right);
+		printSmall(false, 256 - 12, 29, STR_LUMA_AUTOBOOT_REVERT, Alignment::right);
+	} else {
+		printLarge(false, 4, 0, STR_DONE);
+		printSmall(false, 12, 29, STR_LUMA_AUTOBOOT_REVERT);
+	}
+
+	printSmall(false, 0, 173, STR_OK, Alignment::center);
+
+	while (1) {
+		if (!gui().isExited()) {
+			snd().playBgMusic(ms().settingsMusic);
 		}
 
-		if (pressed & KEY_B) {
+		do
+		{
+			scanKeys();
+			pressed = keysDownRepeat();
+			touchRead(&touch);
+			swiWaitForVBlank();
+		} while (!pressed);
+
+		if ((pressed & KEY_A) || (pressed & KEY_TOUCH && touch.py >= 170)) {
+			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_launch : &snd().snd_launch);
+			break;
+		} else if (pressed & KEY_B) {
 			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_back : &snd().snd_back);
 			break;
 		}
@@ -802,7 +841,10 @@ int settingsMode(void)
 	keysSetRepeat(25, 5);
 
 	bool widescreenFound = false;
+	bool lumaFound = false;
 	if (sdFound() && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
+		lumaFound = (access("sd:/luma/config.ini", F_OK) == 0);
+
 		CIniFile lumaConfig("sd:/luma/config.ini");
 		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
 		logPrint(widescreenFound ? "Widescreen found\n" : "Widescreen not found\n");
@@ -1356,6 +1398,12 @@ int settingsMode(void)
 			.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {"TWiLight Menu++", STR_SYSTEM_MENU}, {true, false})
 			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
 	}
+
+	// Disabled due to saving Luma's .ini file clearing comments, causing the settings to reset
+	/* if (lumaFound) {
+		miscPage
+			.option(STR_SET_LUMA_AUTOBOOT, STR_DESCRIPTION_SET_LUMA_AUTOBOOT, Option::Nul(opt_set_luma_autoboot), {}, {});
+	} */
 
 	/*SettingsPage twlfirmPage(STR_TWLFIRM_SETTINGS);
 	if (isDSiMode() && ms().consoleModel >= 2) {
