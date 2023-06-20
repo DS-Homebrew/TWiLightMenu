@@ -2477,12 +2477,12 @@ int dsClassicMenu(void) {
 				bool dsiBinariesFound = checkDsiBinaries(f_nds_file);
 				fclose(f_nds_file);
 
-				if (memcmp(gameTid[ms().secondaryDevice], "HND", 3) == 0 || memcmp(gameTid[ms().secondaryDevice], "HNE", 3) == 0) {
+				/* if (memcmp(gameTid[ms().secondaryDevice], "HND", 3) == 0 || memcmp(gameTid[ms().secondaryDevice], "HNE", 3) == 0) {
 					dsModeSwitch = true;
 					dsModeDSiWare = true;
 					useBackend = false;	// Bypass nds-bootstrap
 					ms().homebrewBootstrap = true;
-				} else if (isHomebrew[ms().secondaryDevice]) {
+				} else */ if (isHomebrew[ms().secondaryDevice]) {
 					loadPerGameSettings(filename[ms().secondaryDevice]);
 					int pgsDSiMode = (perGameSettings_dsiMode == -1 ? isModernHomebrew[ms().secondaryDevice] : perGameSettings_dsiMode);
 					useBackend = !((perGameSettings_directBoot && ms().secondaryDevice) || (isModernHomebrew[ms().secondaryDevice] && pgsDSiMode && (ms().secondaryDevice || perGameSettings_ramDiskNo == -1)));

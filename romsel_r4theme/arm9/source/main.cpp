@@ -1795,12 +1795,12 @@ int r4Theme(void) {
 				game_TID[4] = 0;
 
 				loadPerGameSettings(filename);
-				if (memcmp(game_TID, "HND", 3) == 0 || memcmp(game_TID, "HNE", 3) == 0) {
+				/* if (memcmp(game_TID, "HND", 3) == 0 || memcmp(game_TID, "HNE", 3) == 0) {
 					dsModeSwitch = true;
 					dsModeDSiWare = true;
 					useBackend = false;	// Bypass nds-bootstrap
 					ms().homebrewBootstrap = true;
-				} else if (isHomebrew) {
+				} else */ if (isHomebrew) {
 					int pgsDSiMode = (perGameSettings_dsiMode == -1 ? isModernHomebrew : perGameSettings_dsiMode);
 					if ((perGameSettings_directBoot && ms().secondaryDevice) || (isModernHomebrew && pgsDSiMode && (ms().secondaryDevice || perGameSettings_ramDiskNo == -1))) {
 						useBackend = false;	// Bypass nds-bootstrap

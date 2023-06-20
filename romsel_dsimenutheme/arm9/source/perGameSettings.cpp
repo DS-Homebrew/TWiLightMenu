@@ -480,10 +480,7 @@ void perGameSettings (std::string filename) {
 	u32 romSizeLimit2 = (ms().consoleModel > 0 ? 0x01BFE000 : 0xBFE000);
 
 	extern bool dsiWareCompatibleB4DS(void);
-	bool showPerGameSettings =
-		(!isDSiWare[CURPOS]
-		&& memcmp(gameTid[CURPOS], "HND", 3) != 0
-		&& memcmp(gameTid[CURPOS], "HNE", 3) != 0);
+	bool showPerGameSettings = !isDSiWare[CURPOS];
 	if ((dsiFeatures() || dsiWareCompatibleB4DS() || !ms().secondaryDevice) && !isHomebrew[CURPOS] && isDSiWare[CURPOS]) {
 		showPerGameSettings = true;
 	}
