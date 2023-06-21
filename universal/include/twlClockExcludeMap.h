@@ -2,7 +2,7 @@
 #define TWLCLOCKEXCLUDEMAP_H
 
 static const char twlClockExcludeList[][4] = {
-	"YCQ", // Cooking Mama 2 - Dinner with Friend
+	"YCQ", // Cooking Mama 2: Dinner with Friends
 	"CRL", // Coraline
 	"YGD", // Diary Girl
 	"YGX", // Grand Theft Auto: Chinatown Wars
@@ -12,6 +12,7 @@ static const char twlClockExcludeList[][4] = {
 	"YLJ", // LEGO Indiana Jones: The Original Adventures
 	"YLG", // LEGO Star Wars: The Complete Saga
 	"AY9", // Mario & Sonic at the Olympic Games
+	"VCK", // My Healthy Cooking Coach: Easy Way to Cook Healthy
 	"BZP", // Peppa Pig: Theme Park Fun
 	"ARF", // Rune Factory: A Fantasy Harvest Moon
 	"AN6", // Rune Factory 2: A Fantasy Harvest Moon
