@@ -10,6 +10,7 @@ static const char cardReadDMAExcludeList[][4] = {
 	"VAV", // James Cameron's Avatar
 	"AJS", // Jump! Super Stars
 	"AJU", // Jump! Ultimate Stars
+	"VCK", // My Healthy Cooking Coach: Easy Way to Cook Healthy
 	"B8I", // Spider-Man: Edge of Time
 	"AFZ", // Transformets: Autobots
 	"AFY", // Transformets: Decepticons
