@@ -148,8 +148,6 @@
 
 #define TFN_SHOP_START_SOUND_BG           TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.start.wav"
 #define TFN_SHOP_LOOP_SOUND_BG            TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.loop.wav"
-#define TFN_SHOP_START_SOUND_BG_CACHE     TFN_SYSTEM_SOUND_CACHE_DIRECTORY"/shopbg.start.raw"
-#define TFN_SHOP_LOOP_SOUND_BG_CACHE      TFN_SYSTEM_SOUND_CACHE_DIRECTORY"/shopbg.loop.raw"
 
 #define TFN_HBL_START_SOUND_BG           TFN_SYSTEM_SOUND_DIRECTORY"/hbl.start.wav"
 #define TFN_HBL_LOOP_SOUND_BG            TFN_SYSTEM_SOUND_DIRECTORY"/hbl.loop.wav"

@@ -206,23 +206,11 @@ SoundControl::SoundControl()
 				loopableMusic = true;
 				break; }
 			case 2: { // DSi Shop
-				std::string startPath = (devicePath+TFN_SHOP_START_SOUND_BG_CACHE);
-				if (access(startPath.c_str(), F_OK) != 0 || getFileSize(startPath.c_str()) == 0) {
-					if (adpcm_main(std::string(TFN_SHOP_START_SOUND_BG).c_str(), startPath.c_str(), true) == -1) {
-						remove(startPath.c_str());
-					}
-				}
-				std::string loopPath = (devicePath+TFN_SHOP_LOOP_SOUND_BG_CACHE);
-				if (access(loopPath.c_str(), F_OK) != 0 || getFileSize(loopPath.c_str()) == 0) {
-					if (adpcm_main(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), loopPath.c_str(), true) == -1) {
-						remove(startPath.c_str());
-						remove(loopPath.c_str());
-					}
-				}
 				stream.sampling_rate = 44100;	 		// 44100Hz
-				stream.format = MM_STREAM_8BIT_STEREO;
-				stream_start_source = fopen(startPath.c_str(), "rb");
-				stream_source = fopen(loopPath.c_str(), "rb");
+				stream.format = MM_STREAM_16BIT_MONO;
+				stream_start_source = fopen(std::string(TFN_SHOP_START_SOUND_BG).c_str(), "rb");
+				stream_source = fopen(std::string(TFN_SHOP_LOOP_SOUND_BG).c_str(), "rb");
+				seekPos = 0x2C;
 				loopableMusic = true;
 				break; }
 			case 3: { // Theme
