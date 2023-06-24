@@ -139,7 +139,9 @@
 #define TFN_FONT_LARGE_DSI          TFN_UI_DIRECTORY"/font/large-dsi.nftr"
 
 #define TFN_SOUND_EFFECTBANK        TFN_UI_DIRECTORY"/sound/sfx.bin"
+#define TFN_START_SOUND_BG          TFN_UI_DIRECTORY"/sound/bgm.start.wav"
 #define TFN_SOUND_BG                TFN_UI_DIRECTORY"/sound/bgm.wav"
+#define TFN_START_SOUND_BG_CACHE    TFN_UI_DIRECTORY"/sound/bgm.start.pcm.raw"
 #define TFN_SOUND_BG_CACHE          TFN_UI_DIRECTORY"/sound/bgm.pcm.raw"
 
 #define TFN_DEFAULT_SOUND_EFFECTBANK      TFN_SYSTEM_SOUND_DIRECTORY"/defaultfx.bin"

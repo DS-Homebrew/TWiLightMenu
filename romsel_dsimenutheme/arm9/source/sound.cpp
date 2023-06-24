@@ -212,10 +212,17 @@ SoundControl::SoundControl()
 						break;
 				}
 				if (customSkin) {
+					std::string musicStartPath = TFN_START_SOUND_BG;
 					std::string musicPath = TFN_SOUND_BG;
+					std::string cacheStartPath = TFN_START_SOUND_BG_CACHE;
 					std::string cachePath = TFN_SOUND_BG_CACHE;
 					bool closed = false;
 					if (access(musicPath.c_str(), F_OK) == 0) {
+						loopableMusic = (access(musicStartPath.c_str(), F_OK) == 0);
+						if (loopableMusic) {
+							stream_start_source = fopen(musicStartPath.c_str(), "rb");
+						}
+
 						// Read properties from WAV header
 						u8 wavFormat = 0;
 						u8 numChannels = 1;
@@ -229,11 +236,19 @@ SoundControl::SoundControl()
 						fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
 
 						if (wavFormat == 0x11) {
-							// If ADPCM and hasn't been successfully converted yet, do so now
-							if(access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) {
+							// If music is ADPCM and hasn't been successfully converted yet, do so now
+							if (loopableMusic && (access(cacheStartPath.c_str(), F_OK) != 0 || getFileSize(cacheStartPath.c_str()) == 0)) { // Start point
+								if (adpcm_main(musicStartPath.c_str(), cacheStartPath.c_str(), numChannels == 2) == -1) {
+									remove(cacheStartPath.c_str());
+								}
+							}
+							if (access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) { // Loop point
 								if (adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2) == -1) {
 									remove(cachePath.c_str());
 								}
+							}
+							if (loopableMusic) {
+								fclose(stream_start_source);
 							}
 							fclose(stream_source);
 							closed = true;
@@ -241,9 +256,15 @@ SoundControl::SoundControl()
 							seekPos = 0x2C;
 						}
 					} else {
+						loopableMusic = (access(cacheStartPath.c_str(), F_OK) == 0);
 						closed = true;
 					}
-					if (closed) stream_source = fopen(cachePath.c_str(), "rb");
+					if (closed) {
+						if (loopableMusic) {
+							stream_start_source = fopen(cacheStartPath.c_str(), "rb");
+						}
+						stream_source = fopen(cachePath.c_str(), "rb");
+					}
 					if (stream_source) break; } // fallthrough if stream_source fails.
 				}
 			case 4:
