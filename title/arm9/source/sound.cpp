@@ -43,6 +43,18 @@ static inline const char* styleSavvyReleaseDate(void) {
 	return "10/23"; // Japan
 }
 
+static inline const char* sonic1ReleaseDate(void) {
+	using TRegion = TWLSettings::TRegion;
+	int gameRegion = ms().getGameRegion();
+
+	if (gameRegion == TRegion::ERegionEurope || gameRegion == TRegion::ERegionAustralia) {
+		return "06/21";
+	} else if (gameRegion == TRegion::ERegionUSA) {
+		return "06/23";
+	}
+	return "07/26"; // Japan
+}
+
 
 // Reference: http://yannesposito.com/Scratch/en/blog/2010-10-14-Fun-with-wav/
 typedef struct _WavHeader {
@@ -110,6 +122,9 @@ SoundControl::SoundControl()
 	} else if (strcmp(currentDate, sm64dsReleaseDate()) == 0) {
 		// Load Mario 64 coin sound
 		sprintf(wavPath, "nitro:/sound/coin64.wav");
+	} else if (strcmp(currentDate, sonic1ReleaseDate()) == 0) {
+		// Load Sonic 1 extra life sound
+		sprintf(wavPath, "nitro:/sound/sonic.wav");
 	} else if (strcmp(currentDate, "03/10") == 0) {
 		// Load Mario coin sound for MAR10 Day
 		sprintf(wavPath, "nitro:/sound/coin.wav");
