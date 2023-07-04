@@ -558,6 +558,10 @@ std::string TWLSettings::getGuiLanguageString()
 			return "ca";
 		case TWLSettings::ELangRyukyuan:
 			return "ry";
+		case TWLSettings::ELangCzech:
+			return "cs";
+		case TWLSettings::ELangFinnish:
+			return "fi";
 	}
 }
 

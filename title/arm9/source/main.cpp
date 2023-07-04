@@ -1427,11 +1427,14 @@ const char *languages[] = {
 	"Valencià",
 	"Català",
 	"琉球諸語",
+	"Čeština",
+	"Suomi",
 };
 
 const TWLSettings::TLanguage guiLanguages[] = {
 	TWLSettings::TLanguage::ELangIndonesian,
 	TWLSettings::TLanguage::ELangCatalan,
+	TWLSettings::TLanguage::ELangCzech,
 	TWLSettings::TLanguage::ELangDanish,
 	TWLSettings::TLanguage::ELangGerman,
 	TWLSettings::TLanguage::ELangEnglish,
@@ -1445,6 +1448,7 @@ const TWLSettings::TLanguage guiLanguages[] = {
 	TWLSettings::TLanguage::ELangPortugueseBrazil,
 	TWLSettings::TLanguage::ELangPortuguese,
 	TWLSettings::TLanguage::ELangRomanian,
+	TWLSettings::TLanguage::ELangFinnish,
 	TWLSettings::TLanguage::ELangSwedish,
 	TWLSettings::TLanguage::ELangVietnamese,
 	TWLSettings::TLanguage::ELangTurkish,
