@@ -1,4 +1,4 @@
-project_id_env: TWILIGHT_CROWDIN_ID
+project_id: 407378
 api_token_env: CROWDIN_TOKEN
 preserve_hierarchy: true
 
