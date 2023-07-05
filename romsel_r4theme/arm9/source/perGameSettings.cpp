@@ -551,11 +551,12 @@ void perGameSettings (std::string filename) {
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && romUnitCode > 0) || !ms().secondaryDevice) {
+		bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && romUnitCode > 0) || (ms().secondaryDevice && romUnitCode == 3) || !ms().secondaryDevice);
+		if (bootstrapEnabled) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 		}
-		if (((dsiFeatures() && (perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)) || !ms().secondaryDevice) && romUnitCode == 3) {
+		if (bootstrapEnabled && romUnitCode == 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
@@ -574,11 +575,11 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
-		if (ms().secondaryDevice) {
+		if (ms().secondaryDevice && romUnitCode < 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}
-		if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && romUnitCode > 0) || !ms().secondaryDevice) {
+		if (bootstrapEnabled) {
 			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA

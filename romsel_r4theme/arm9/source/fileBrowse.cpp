@@ -648,27 +648,44 @@ bool gameCompatibleMemoryPit(const char* filename) {
 	return true;
 }
 
-void cannotLaunchMsg(void) {
+bool cannotLaunchMsg(char tid1) {
+	bool res = false;
+
 	if (ms().macroMode) {
 		lcdMainOnBottom();
 		lcdSwapped = true;
 	}
 	showdialogbox = true;
 	printLargeCentered(false, 74, isTwlm ? "Information" : "Error!");
-	printSmallCentered(false, 90, isTwlm ? "TWiLight Menu++ is already running." : "This game cannot be launched.");
+	if (!isTwlm && bnrRomType == 0 && sys().isRegularDS()) {
+		printSmallCentered(false, 90, "For use with Nintendo DSi systems only.");
+	} else {
+		printSmallCentered(false, 90, isTwlm ? "TWiLight Menu++ is already running." : "This game cannot be launched.");
+	}
 	printSmallCentered(false, 108, "\u2427 OK");
 	int pressed = 0;
-	do {
+	while (1) {
 		scanKeys();
 		pressed = keysDown();
 		bgOperations(true);
-	} while (!(pressed & KEY_A));
+
+		if (pressed & KEY_A) {
+			break;
+		}
+		if ((pressed & KEY_Y) && bnrRomType == 0 && !isDSiWare && tid1 == 'D') {
+			// Hidden button to launch anyways
+			res = true;
+			break;
+		}
+	}
 	showdialogbox = false;
 	if (ms().macroMode) {
 		lcdMainOnTop();
 		lcdSwapped = false;
 	}
 	for (int i = 0; i < 25; i++) swiWaitForVBlank();
+
+	return res;
 }
 
 bool dsiWareInDSModeMsg(void) {
@@ -800,7 +817,7 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 	bool proceedToLaunch = true;
 
 	if (msgId >= 10 && !sys().isRegularDS()) {
-		cannotLaunchMsg();
+		cannotLaunchMsg(0);
 		return false;
 	}
 
@@ -1129,15 +1146,25 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				ms().saveSettings();
 
 				return "null";
-			} else if (isTwlm || (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
-			|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str()))))) {
-				cannotLaunchMsg();
 			} else {
-				loadPerGameSettings(dirContents.at(fileOffset).name);
+				char game_TID[5] = {0};
+				if (!isTwlm) {
+					loadPerGameSettings(dirContents.at(fileOffset).name);
+
+					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
+					grabTID(f_nds_file, game_TID);
+					fclose(f_nds_file);
+				}
 				int hasAP = 0;
 				bool proceedToLaunch = true;
+
+				if (isTwlm || (!isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType == 0 && game_TID[0] == 'D' && romUnitCode == 3 && requiresDonorRom != 51)
+				|| (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
+				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str()))))) {
+					proceedToLaunch = cannotLaunchMsg(game_TID[0]);
+				}
 				bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);
-				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare
+				if (proceedToLaunch && useBootstrapAnyway && bnrRomType == 0 && !isDSiWare
 				 && isHomebrew == 0
 				 && checkIfDSiMode(dirContents.at(fileOffset).name)) {
 					bool hasDsiBinaries = true;
@@ -1219,8 +1246,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 				} else if ((bnrRomType == 8 || (bnrRomType == 11 && ms().smsGgInRam))
 							&& isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()) {
-					proceedToLaunch = false;
-					cannotLaunchMsg();
+					proceedToLaunch = cannotLaunchMsg(0);
 				}
 
 				if (hasAP > 0) {

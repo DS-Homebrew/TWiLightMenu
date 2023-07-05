@@ -1625,7 +1625,9 @@ bool dsiWareCompatibleB4DS(void) {
 	return res;
 }
 
-void cannotLaunchMsg(const char *filename) {
+bool cannotLaunchMsg(const char *filename) {
+	bool res = false;
+
 	clearText();
 	updateText(false);
 	snd().playWrong();
@@ -1659,11 +1661,20 @@ void cannotLaunchMsg(const char *filename) {
 	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_A_OK, Alignment::center, FontPalette::dialog);
 	updateText(false);
 	int pressed = 0;
-	do {
+	while (1) {
 		scanKeys();
 		pressed = keysDown();
 		bgOperations(true);
-	} while (!(pressed & KEY_A));
+
+		if (pressed & KEY_A) {
+			break;
+		}
+		if ((pressed & KEY_Y) && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS] && gameTid[CURPOS][0] == 'D') {
+			// Hidden button to launch anyways
+			res = true;
+			break;
+		}
+	}
 	clearText();
 	updateText(false);
 	if (ms().theme == TWLSettings::EThemeSaturn) {
@@ -1674,6 +1685,8 @@ void cannotLaunchMsg(const char *filename) {
 		}
 		showdialogbox = false;
 	}
+
+	return res;
 }
 
 bool selectMenu(void) {
@@ -2774,15 +2787,19 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if (isTwlm[CURPOS] || (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
-				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))) {
-					cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				} else {
-					loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+					if (!isTwlm[CURPOS]) {
+						loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+					}
 					int hasAP = 0;
 					bool proceedToLaunch = true;
+					if (isTwlm[CURPOS] || (!isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[CURPOS] == 0 && gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3 && requiresDonorRom[CURPOS] != 51)
+					|| (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
+					|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))) {
+						proceedToLaunch = cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+					}
 					bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);
-					if (useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
+					if (proceedToLaunch && useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
 					 && isHomebrew[CURPOS] == 0
 					 && checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
 						bool hasDsiBinaries = true;
@@ -2862,8 +2879,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 					} else if ((bnrRomType[CURPOS] == 8 || (bnrRomType[CURPOS] == 11 && ms().smsGgInRam))
 							&& isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()) {
-						proceedToLaunch = false;
-						cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+						proceedToLaunch = cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 					}
 					if (hasAP > 0) {
 						if (ms().theme == TWLSettings::EThemeSaturn) {
