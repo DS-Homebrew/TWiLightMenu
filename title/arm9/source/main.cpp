@@ -504,7 +504,7 @@ void lastRunROM()
 		fclose(f_nds_file);
 
 		if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().previousUsedDevice || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
-		|| (game_TID[0] == 'D' && unitCode == 3)) {
+		|| unitCode == 3) {
 			std::string savepath;
 
 			bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
