@@ -1584,7 +1584,7 @@ int dsiMenuTheme(void) {
 				argarray.at(0) = filePath;
 				if (useBackend) {
 					if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
-					|| (gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3)) {
+					|| unitCode[CURPOS] == 3) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 						std::string ramdiskname = replaceAll(filename, typeToReplace, getImgExtension(perGameSettings_ramDiskNo));
