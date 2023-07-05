@@ -2502,6 +2502,7 @@ int dsClassicMenu(void) {
 				argarray.at(0) = filePath;
 				if (useBackend) {
 					if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[ms().secondaryDevice] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
+					|| (ms().secondaryDevice && (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA))
 					|| unitCode[ms().secondaryDevice] == 3) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename[ms().secondaryDevice], typeToReplace, getSavExtension());

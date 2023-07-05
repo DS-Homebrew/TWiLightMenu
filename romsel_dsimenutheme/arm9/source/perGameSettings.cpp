@@ -577,7 +577,7 @@ void perGameSettings (std::string filename) {
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && unitCode[CURPOS] == 3) || !ms().secondaryDevice);
+		bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || unitCode[CURPOS] == 3)) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
@@ -601,7 +601,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
-		if (ms().secondaryDevice && unitCode[CURPOS] < 3) {
+		if (ms().secondaryDevice && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) && unitCode[CURPOS] < 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}
