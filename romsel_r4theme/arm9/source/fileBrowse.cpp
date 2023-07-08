@@ -651,16 +651,16 @@ bool gameCompatibleMemoryPit(const char* filename) {
 bool checkForGbaBiosRequirement(const char* filename) {
 	extern bool gbaBiosFound[2];
 
+	if (gbaBiosFound[ms().secondaryDevice]) {
+		return false;
+	}
+
 	FILE *gbaFile = fopen(filename, "rb");
 	char game_TID[5];
 	fseek(gbaFile, 0xAC, SEEK_SET);
 	fread(game_TID, 1, 4, gbaFile);
 	fclose(gbaFile);
 	game_TID[4] = 0;
-
-	if (gbaBiosFound[ms().secondaryDevice]) {
-		return false;
-	}
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(gbaGameListBiosReqiure)/sizeof(gbaGameListBiosReqiure[0]); i++) {
