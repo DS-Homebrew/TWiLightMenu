@@ -221,6 +221,8 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnrWirelessIcon[num] = 0;
+	toncset(gameTid[num], 0, 4);
+	isTwlm[num] = false;
 	isDSiWare[num] = false;
 	isHomebrew[num] = false;
 	isModernHomebrew[num] = false;
@@ -420,6 +422,21 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 		}
 		// clean up the allocated line
 		free(line);
+	} else if (extension(name, {".gbc"})) {
+		// this is a gbc file!
+		FILE *fp;
+
+		// open file for reading info
+		fp = fopen(name, "rb");
+		if (!fp) {
+			fclose(fp);
+			return;
+		}
+
+		fseek(fp, 0x13F, SEEK_SET);
+		fread(gameTid[num], 1, 4, fp);
+
+		fclose(fp);
 	} else if (extension(name, {".gba", ".agb", ".mb"})) {
 		// this is a gba file!
 		FILE *fp;

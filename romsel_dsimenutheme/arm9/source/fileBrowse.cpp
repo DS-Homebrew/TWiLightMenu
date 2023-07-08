@@ -3424,8 +3424,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bannerTextShown = false;
 			}
 
-			if ((pressed & KEY_Y) && !ms().kioskMode && !isTwlm[CURPOS] && !isDirectory[CURPOS] &&
-				(bnrRomType[CURPOS] == 0) && bannerTextShown && showSTARTborder) {
+			if ((pressed & KEY_Y) && !ms().kioskMode && !isTwlm[CURPOS] && !isDirectory[CURPOS] && bannerTextShown && showSTARTborder) {
 				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 				bannerTextShown = false;
 			}

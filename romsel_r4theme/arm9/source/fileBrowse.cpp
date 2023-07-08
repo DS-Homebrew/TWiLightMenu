@@ -1593,7 +1593,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";		
 		}
 
-		if ((pressed & KEY_Y) && !ms().kioskMode && !isTwlm && !isDirectory && (bnrRomType == 0)) {
+		if ((pressed & KEY_Y) && !ms().kioskMode && !isTwlm && !isDirectory) {
 			ms().cursorPosition[ms().secondaryDevice] = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);
 			if (ms().theme == TWLSettings::EThemeGBC) {

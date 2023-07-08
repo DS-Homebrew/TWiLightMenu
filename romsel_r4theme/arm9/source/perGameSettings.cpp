@@ -277,6 +277,13 @@ void revertDonorRomText(void) {
 	sprintf(SET_AS_DONOR_ROM, "Set as Donor ROM");
 }
 
+const char* getCodenameString(void) {
+	if (bnrRomType == 3) {
+		return "CGB";
+	}
+	return bnrRomType == 1 ? "AGB" : (romUnitCode > 0 ? "TWL" : "NTR");
+}
+
 const char* getRegionString(char region) {
 	u8 twlCfgCountry = 0;
 	if (useTwlCfg) {
@@ -370,9 +377,19 @@ void perGameSettings (std::string filename) {
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");
 
-	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
-	game_TID[4] = 0;
+	char game_TID[5] = {0};
+	u32 tidOffset = 0xC;
+	if (bnrRomType == 1) {
+		tidOffset = 0xAC;
+	} else if (bnrRomType == 3) {
+		tidOffset = 0x13F;
+	} else if (bnrRomType != 0) {
+		tidOffset = 0;
+	}
+	if (tidOffset > 0) {
+		fseek(f_nds_file, tidOffset, SEEK_SET);
+		fread(game_TID, 1, 4, f_nds_file);
+	}
 
 	// Check if blacklisted
 	blacklisted_boostCpu = false;
@@ -406,7 +423,7 @@ void perGameSettings (std::string filename) {
 	u32 SDKVersion = 0;
 	u8 sdkSubVer = 0;
 	char sdkSubVerChar[8] = {0};
-	if (memcmp(game_TID, "HND", 3) == 0 || memcmp(game_TID, "HNE", 3) == 0 || !isHomebrew) {
+	if (bnrRomType == 0 && (memcmp(game_TID, "HND", 3) == 0 || memcmp(game_TID, "HNE", 3) == 0 || !isHomebrew)) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		tonccpy(&sdkSubVer, (u8*)&SDKVersion+2, 1);
 		sprintf(sdkSubVerChar, "%d", sdkSubVer);
@@ -419,20 +436,23 @@ void perGameSettings (std::string filename) {
 	u32 pubSize = 0;
 	u32 prvSize = 0;
 	u32 clonebootFlag = 0;
-	fseek(f_nds_file, 0x20, SEEK_SET);
-	fread(&arm9off, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, 0x2C, SEEK_SET);
-	fread(&arm9size, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, 0x3C, SEEK_SET);
-	fread(&arm7size, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, 0x80, SEEK_SET);
-	fread(&romSize, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, 0x238, SEEK_SET);
-	fread(&pubSize, sizeof(u32), 1, f_nds_file);
-	fread(&prvSize, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, romSize, SEEK_SET);
-	fread(&clonebootFlag, sizeof(u32), 1, f_nds_file);
-	bool dsiBinariesFound = checkDsiBinaries(f_nds_file);
+	bool dsiBinariesFound = false;
+	if (bnrRomType == 0) {
+		fseek(f_nds_file, 0x20, SEEK_SET);
+		fread(&arm9off, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, 0x2C, SEEK_SET);
+		fread(&arm9size, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, 0x3C, SEEK_SET);
+		fread(&arm7size, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, 0x80, SEEK_SET);
+		fread(&romSize, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, 0x238, SEEK_SET);
+		fread(&pubSize, sizeof(u32), 1, f_nds_file);
+		fread(&prvSize, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, romSize, SEEK_SET);
+		fread(&clonebootFlag, sizeof(u32), 1, f_nds_file);
+		dsiBinariesFound = checkDsiBinaries(f_nds_file);
+	}
 	fclose(f_nds_file);
 
 	bool largeArm9 = (arm9size >= 0x380000 && isModernHomebrew);
@@ -454,8 +474,8 @@ void perGameSettings (std::string filename) {
 	u32 romSizeLimit2 = (ms().consoleModel > 0 ? 0x01BFE000 : 0xBFE000);
 
 	extern bool dsiWareCompatibleB4DS(const char* filename);
-	bool showPerGameSettings = !isDSiWare;
-	if ((dsiFeatures() || dsiWareCompatibleB4DS(filenameForInfo.c_str()) || !ms().secondaryDevice) && !isHomebrew && isDSiWare) {
+	bool showPerGameSettings = (bnrRomType == 0 && !isDSiWare);
+	if (bnrRomType == 0 && (dsiFeatures() || dsiWareCompatibleB4DS(filenameForInfo.c_str()) || !ms().secondaryDevice) && !isHomebrew && isDSiWare) {
 		showPerGameSettings = true;
 	}
 	/*if (!(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !isHomebrew && REG_SCFG_EXT == 0) {
@@ -471,7 +491,7 @@ void perGameSettings (std::string filename) {
 	 	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
     	 || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)))*/
-	|| !ms().secondaryDevice) && !isHomebrew && !isDSiWare
+	|| !ms().secondaryDevice) && bnrRomType == 0 && !isHomebrew && !isDSiWare
 	&& memcmp(game_TID, "HND", 3) != 0
 	&& memcmp(game_TID, "HNE", 3) != 0);
 
@@ -628,7 +648,7 @@ void perGameSettings (std::string filename) {
 			savExists[i] = access(path.c_str(), F_OK) == 0;
 		}
 	} else if (!isHomebrew) {
-		snprintf (gameTIDText, sizeof(gameTIDText), "%s-%s-%s", romUnitCode > 0 ? "TWL" : "NTR", game_TID, getRegionString(game_TID[3]));
+		snprintf (gameTIDText, sizeof(gameTIDText), game_TID[0]==0 ? "" : "%s-%s-%s", getCodenameString(), game_TID, getRegionString(game_TID[3]));
 
 		if (showPerGameSettings) {
 			int saveNoBak = perGameSettings_saveNo;
@@ -648,18 +668,20 @@ void perGameSettings (std::string filename) {
 
 	char saveNoDisplay[16];
 
-	if ((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
-		SDKnumbertext = ("SDK ver: 1."+(std::string)sdkSubVerChar).c_str();
-	} else if ((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
-		SDKnumbertext = ("SDK ver: 2."+(std::string)sdkSubVerChar).c_str();
-	} else if ((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
-		SDKnumbertext = ("SDK ver: 3."+(std::string)sdkSubVerChar).c_str();
-	} else if ((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
-		SDKnumbertext = ("SDK ver: 4."+(std::string)sdkSubVerChar).c_str();
-	} else if ((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
-		SDKnumbertext = ("SDK ver: 5."+(std::string)sdkSubVerChar).c_str();
-	} else {
-		SDKnumbertext = "SDK ver: ???";
+	if (bnrRomType == 0) {
+		if ((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
+			SDKnumbertext = ("SDK ver: 1."+(std::string)sdkSubVerChar).c_str();
+		} else if ((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
+			SDKnumbertext = ("SDK ver: 2."+(std::string)sdkSubVerChar).c_str();
+		} else if ((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
+			SDKnumbertext = ("SDK ver: 3."+(std::string)sdkSubVerChar).c_str();
+		} else if ((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
+			SDKnumbertext = ("SDK ver: 4."+(std::string)sdkSubVerChar).c_str();
+		} else if ((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
+			SDKnumbertext = ("SDK ver: 5."+(std::string)sdkSubVerChar).c_str();
+		} else {
+			SDKnumbertext = "SDK ver: ???";
+		}
 	}
 	if (!showPerGameSettings) {
 		dialogboxHeight = 0;

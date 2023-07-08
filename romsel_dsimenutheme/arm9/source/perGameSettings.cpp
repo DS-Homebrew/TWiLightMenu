@@ -322,6 +322,13 @@ void revertDonorRomText(void) {
 	setAsDonorRom = STR_SET_AS_DONOR_ROM;
 }
 
+const char* getCodenameString(void) {
+	if (bnrRomType[CURPOS] == 3) {
+		return "CGB";
+	}
+	return bnrRomType[CURPOS] == 1 ? "AGB" : (unitCode[CURPOS] > 0 ? "TWL" : "NTR");
+}
+
 const char* getRegionString(char region) {
 	u8 twlCfgCountry = 0;
 	if (useTwlCfg) {
@@ -432,7 +439,7 @@ void perGameSettings (std::string filename) {
 	u32 SDKVersion = 0;
 	u8 sdkSubVer = 0;
 	char sdkSubVerChar[8] = {0};
-	if (memcmp(gameTid[CURPOS], "HND", 3) == 0 || memcmp(gameTid[CURPOS], "HNE", 3) == 0 || !isHomebrew[CURPOS]) {
+	if (bnrRomType[CURPOS] == 0 && (memcmp(gameTid[CURPOS], "HND", 3) == 0 || memcmp(gameTid[CURPOS], "HNE", 3) == 0 || !isHomebrew[CURPOS])) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		tonccpy(&sdkSubVer, (u8*)&SDKVersion+2, 1);
 		sprintf(sdkSubVerChar, "%d", sdkSubVer);
@@ -445,20 +452,23 @@ void perGameSettings (std::string filename) {
 	u32 pubSize = 0;
 	u32 prvSize = 0;
 	u32 clonebootFlag = 0;
-	fseek(f_nds_file, 0x20, SEEK_SET);
-	fread(&arm9off, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, 0x2C, SEEK_SET);
-	fread(&arm9size, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, 0x3C, SEEK_SET);
-	fread(&arm7size, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, 0x80, SEEK_SET);
-	fread(&romSize, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, 0x238, SEEK_SET);
-	fread(&pubSize, sizeof(u32), 1, f_nds_file);
-	fread(&prvSize, sizeof(u32), 1, f_nds_file);
-	fseek(f_nds_file, romSize, SEEK_SET);
-	fread(&clonebootFlag, sizeof(u32), 1, f_nds_file);
-	bool dsiBinariesFound = checkDsiBinaries(f_nds_file);
+	bool dsiBinariesFound = false;
+	if (bnrRomType[CURPOS] == 0) {
+		fseek(f_nds_file, 0x20, SEEK_SET);
+		fread(&arm9off, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, 0x2C, SEEK_SET);
+		fread(&arm9size, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, 0x3C, SEEK_SET);
+		fread(&arm7size, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, 0x80, SEEK_SET);
+		fread(&romSize, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, 0x238, SEEK_SET);
+		fread(&pubSize, sizeof(u32), 1, f_nds_file);
+		fread(&prvSize, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, romSize, SEEK_SET);
+		fread(&clonebootFlag, sizeof(u32), 1, f_nds_file);
+		dsiBinariesFound = checkDsiBinaries(f_nds_file);
+	}
 	fclose(f_nds_file);
 
 	bool largeArm9 = (arm9size >= 0x380000 && isModernHomebrew[CURPOS]);
@@ -480,8 +490,8 @@ void perGameSettings (std::string filename) {
 	u32 romSizeLimit2 = (ms().consoleModel > 0 ? 0x01BFE000 : 0xBFE000);
 
 	extern bool dsiWareCompatibleB4DS(void);
-	bool showPerGameSettings = !isDSiWare[CURPOS];
-	if ((dsiFeatures() || dsiWareCompatibleB4DS() || !ms().secondaryDevice) && !isHomebrew[CURPOS] && isDSiWare[CURPOS]) {
+	bool showPerGameSettings = (bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]);
+	if (bnrRomType[CURPOS] == 0 && (dsiFeatures() || dsiWareCompatibleB4DS() || !ms().secondaryDevice) && !isHomebrew[CURPOS] && isDSiWare[CURPOS]) {
 		showPerGameSettings = true;
 	}
 	/*if (!(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !isHomebrew[CURPOS] && !dsiFeatures()) {
@@ -497,7 +507,7 @@ void perGameSettings (std::string filename) {
 	 	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
 		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
      	 || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)))*/
-	|| !ms().secondaryDevice) && !isHomebrew[CURPOS] && !isDSiWare[CURPOS]
+	|| !ms().secondaryDevice) && bnrRomType[CURPOS] == 0 && !isHomebrew[CURPOS] && !isDSiWare[CURPOS]
 	&& memcmp(gameTid[CURPOS], "HND", 3) != 0
 	&& memcmp(gameTid[CURPOS], "HNE", 3) != 0);
 
@@ -654,7 +664,7 @@ void perGameSettings (std::string filename) {
 			savExists[i] = access(path.c_str(), F_OK) == 0;
 		}
 	} else if (!isHomebrew[CURPOS]) {
-		snprintf (gameTIDText, sizeof(gameTIDText), "%s-%s-%s", unitCode[CURPOS] > 0 ? "TWL" : "NTR", gameTid[CURPOS], getRegionString(gameTid[CURPOS][3]));
+		snprintf (gameTIDText, sizeof(gameTIDText), gameTid[CURPOS][0]==0 ? "" : "%s-%s-%s", getCodenameString(), gameTid[CURPOS], getRegionString(gameTid[CURPOS][3]));
 
 		if (showPerGameSettings) {
 			int saveNoBak = perGameSettings_saveNo;
@@ -674,18 +684,20 @@ void perGameSettings (std::string filename) {
 
 	extern std::string replaceAll(std::string str, const std::string &from, const std::string &to);
 
-	if ((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "1."+(std::string)sdkSubVerChar);
-	} else if ((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "2."+(std::string)sdkSubVerChar);
-	} else if ((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "3."+(std::string)sdkSubVerChar);
-	} else if ((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "4."+(std::string)sdkSubVerChar);
-	} else if ((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "5."+(std::string)sdkSubVerChar);
-	} else {
-		SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "???");
+	if (bnrRomType[CURPOS] == 0) {
+		if ((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
+			SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "1."+(std::string)sdkSubVerChar);
+		} else if ((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
+			SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "2."+(std::string)sdkSubVerChar);
+		} else if ((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
+			SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "3."+(std::string)sdkSubVerChar);
+		} else if ((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
+			SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "4."+(std::string)sdkSubVerChar);
+		} else if ((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
+			SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "5."+(std::string)sdkSubVerChar);
+		} else {
+			SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "???");
+		}
 	}
 	if (ms().theme == TWLSettings::EThemeHBL) {
 		dbox_showIcon = true;

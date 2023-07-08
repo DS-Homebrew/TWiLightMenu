@@ -789,6 +789,7 @@ void getGameInfo(bool isDir, const char* name)
 	bnriconisDSi = false;
 	bnrWirelessIcon = 0;
 	customIcon = 0;
+	isTwlm = false;
 	isDSiWare = false;
 	isHomebrew = false;
 	isModernHomebrew = false;
