@@ -837,23 +837,14 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 	imageYpos = (192-imageHeight)/2;
 
 	if (!found) {
-		int photoXstart = imageXpos-24;
-		int photoXend = (imageXpos+imageWidth)-24;
-		int photoY = imageYpos-24;
-		if (!tc().renderPhoto()) {
-			photoXstart = imageXpos;
-			photoXend = imageXpos+imageWidth;
-			photoY = imageYpos;
-		}
+		int photoXstart = imageXpos;
+		int photoXend = imageXpos+imageWidth;
 		int photoX = photoXstart;
+		int photoY = imageYpos;
 		for (uint i=0;i<image.size()/4;i++) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			u16 imgSrc = _photoBuffer[(photoY*208)+photoX];
-			u16 imgSrc2 = _photoBuffer2[(photoY*208)+photoX];
-			if (!tc().renderPhoto()) {
-				imgSrc = _bgSubBuffer[(photoY*256)+photoX];
-				imgSrc2 = imgSrc;
-			}
+			u16 imgSrc = _bgSubBuffer[(photoY*256)+photoX];
+			u16 imgSrc2 = _bgSubBuffer2[(photoY*256)+photoX];
 			if (image[(i*4)+3] == 0) {
 				_bmpImageBuffer[i] = color;
 				if (boxArtColorDeband) _bmpImageBuffer2[i] = color;
