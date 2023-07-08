@@ -1650,14 +1650,12 @@ bool cannotLaunchMsg(const char *filename) {
 	updateText(false);
 	snd().playWrong();
 	if (ms().theme != TWLSettings::EThemeSaturn) {
-		dbox_showIcon = bnrRomType[CURPOS]==0;
+		dbox_showIcon = true;
 		showdialogbox = true;
 		for (int i = 0; i < 30; i++) {
 			bgOperations(true);
 		}
-		if (bnrRomType[CURPOS] == 0) {
-			titleUpdate(false, filename, CURPOS);
-		}
+		titleUpdate(false, filename, CURPOS);
 	}
 	const std::string *str = nullptr;
 	if (isTwlm[CURPOS]) {
@@ -1675,7 +1673,7 @@ bool cannotLaunchMsg(const char *filename) {
 	} else {
 		str = /*isDSiMode() ? &STR_CANNOT_LAUNCH_WITHOUT_SD :*/ &STR_CANNOT_LAUNCH_IN_DS_MODE;
 	}
-	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : (bnrRomType[CURPOS] == 0 ? 102 : 82));
+	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : 102);
 	printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center, FontPalette::dialog);
 
 	printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), STR_A_OK, Alignment::center, FontPalette::dialog);
