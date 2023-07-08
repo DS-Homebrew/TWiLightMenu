@@ -648,6 +648,31 @@ bool gameCompatibleMemoryPit(const char* filename) {
 	return true;
 }
 
+bool checkForGbaBiosRequirement(const char* filename) {
+	extern bool gbaBiosFound[2];
+
+	FILE *gbaFile = fopen(filename, "rb");
+	char game_TID[5];
+	fseek(gbaFile, 0xAC, SEEK_SET);
+	fread(game_TID, 1, 4, gbaFile);
+	fclose(gbaFile);
+	game_TID[4] = 0;
+
+	if (gbaBiosFound[ms().secondaryDevice]) {
+		return false;
+	}
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(gbaGameListBiosReqiure)/sizeof(gbaGameListBiosReqiure[0]); i++) {
+		if (memcmp(game_TID, gbaGameListBiosReqiure[i], 3) == 0) {
+			// Found match
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool cannotLaunchMsg(char tid1) {
 	bool res = false;
 
@@ -659,6 +684,8 @@ bool cannotLaunchMsg(char tid1) {
 	printLargeCentered(false, 74, isTwlm ? "Information" : "Error!");
 	if (!isTwlm && bnrRomType == 0 && sys().isRegularDS()) {
 		printSmallCentered(false, 90, "For use with Nintendo DSi systems only.");
+	} else if (bnrRomType == 1) {
+		printSmallCentered(false, 90, "GBA BIOS is missing!");
 	} else {
 		printSmallCentered(false, 90, isTwlm ? "TWiLight Menu++ is already running." : "This game cannot be launched.");
 	}
@@ -1151,16 +1178,19 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				if (!isTwlm) {
 					loadPerGameSettings(dirContents.at(fileOffset).name);
 
-					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-					grabTID(f_nds_file, game_TID);
-					fclose(f_nds_file);
+					if (bnrRomType == 0) {
+						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
+						grabTID(f_nds_file, game_TID);
+						fclose(f_nds_file);
+					}
 				}
 				int hasAP = 0;
 				bool proceedToLaunch = true;
 
 				if (isTwlm || (!isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType == 0 && game_TID[0] == 'D' && romUnitCode == 3 && requiresDonorRom != 51)
 				|| (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
-				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str()))))) {
+				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str()))))
+				|| (bnrRomType == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement(dirContents.at(fileOffset).name.c_str()))) {
 					proceedToLaunch = cannotLaunchMsg(game_TID[0]);
 				}
 				bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);

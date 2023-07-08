@@ -1283,6 +1283,24 @@ bool gameCompatibleMemoryPit(void) {
 	return true;
 }
 
+bool checkForGbaBiosRequirement(void) {
+	extern bool gbaBiosFound[2];
+
+	if (gbaBiosFound[ms().secondaryDevice]) {
+		return false;
+	}
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(gbaGameListBiosReqiure)/sizeof(gbaGameListBiosReqiure[0]); i++) {
+		if (memcmp(gameTid[CURPOS], gbaGameListBiosReqiure[i], 3) == 0) {
+			// Found match
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool dsiWareInDSModeMsg(std::string filename) {
 	if (ms().dontShowDSiWareInDSModeWarning) {
 		return true;
@@ -1644,6 +1662,8 @@ bool cannotLaunchMsg(const char *filename) {
 	const std::string *str = nullptr;
 	if (isTwlm[CURPOS]) {
 		str = &STR_TWLMENU_ALREADY_RUNNING;
+	} else if (bnrRomType[CURPOS] == 1) {
+		str = &STR_GBA_BIOS_ERROR_DESC;
 	} else if (bnrRomType[CURPOS] != 0) {
 		str = ms().consoleModel >= 2 ? &STR_RELAUNCH_3DS_HOME : &STR_RELAUNCH_UNLAUNCH;
 	} else if (isDSiMode() && isDSiWare[CURPOS] && !ms().secondaryDevice && sys().arm7SCFGLocked()) {
@@ -2795,7 +2815,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					bool proceedToLaunch = true;
 					if (isTwlm[CURPOS] || (!isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[CURPOS] == 0 && gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3 && requiresDonorRom[CURPOS] != 51)
 					|| (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
-					|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))) {
+					|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
+					|| (bnrRomType[CURPOS] == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
 						proceedToLaunch = cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 					}
 					bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);

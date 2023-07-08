@@ -420,6 +420,21 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 		}
 		// clean up the allocated line
 		free(line);
+	} else if (extension(name, {".gba", ".agb", ".mb"})) {
+		// this is a gba file!
+		FILE *fp;
+
+		// open file for reading info
+		fp = fopen(name, "rb");
+		if (!fp) {
+			fclose(fp);
+			return;
+		}
+
+		fseek(fp, 0xAC, SEEK_SET);
+		fread(gameTid[num], 1, 4, fp);
+
+		fclose(fp);
 	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp;

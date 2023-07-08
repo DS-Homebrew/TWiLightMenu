@@ -137,6 +137,7 @@ int spawnedtitleboxes = 0;
 bool showColon = true;
 
 struct statvfs st[2];
+bool gbaBiosFound[2] = {false};
 
 touchPosition touch;
 
@@ -948,8 +949,20 @@ int dsiMenuTheme(void) {
 		tex().loadDSiTheme();
 	}
 
-	if (sdFound()) statvfs("sd:/", &st[0]);
-	if (flashcardFound()) statvfs("fat:/", &st[1]);
+	if (sdFound()) {
+		statvfs("sd:/", &st[0]);
+
+		gbaBiosFound[0] = (access("sd:/_gba/bios.bin", F_OK) == 0);
+		if (!gbaBiosFound[0]) gbaBiosFound[0] = (access("sd:/gba/bios.bin", F_OK) == 0);
+		if (!gbaBiosFound[0]) gbaBiosFound[0] = (access("sd:/bios.bin", F_OK) == 0);
+	}
+	if (flashcardFound()) {
+		statvfs("fat:/", &st[1]);
+
+		gbaBiosFound[1] = (access("fat:/_gba/bios.bin", F_OK) == 0);
+		if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/gba/bios.bin", F_OK) == 0);
+		if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/bios.bin", F_OK) == 0);
+	}
 
 	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
 		whiteScreen = false;

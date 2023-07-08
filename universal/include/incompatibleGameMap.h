@@ -32,4 +32,10 @@ static const char incompatibleGameListMemoryPit[][4] = {
 	"KDX", // X-Scape
 };
 
+// GameBoy Advance (BIOS required)
+static const char gbaGameListBiosReqiure[][4] = {
+	"AMT", // Metroid Fusion
+	"BMX", // Metroid: Zero Mission
+};
+
 #endif // INCOMPATIBLEMAP_H
