@@ -71,7 +71,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
      - [Apache Thunder](https://github.com/ApacheThunder): [TWL Edition](https://github.com/ApacheThunder/NesDS) of nesDS
 - [Gericom](https://github.com/Gericom): [FastVideoDSPlayer](https://github.com/Gericom/FastVideoDSPlayer) (used for launching FastVideoDS videos) & [GBARunner2](https://github.com/Gericom/GBARunner2) (used for launching GameBoy Advance ROMs outside of the DS Phat/Lite's GBA mode)
      - [therealteamplayer](https://github.com/therealteamplayer): [Hicode+DSP](https://github.com/therealteamplayer/GBARunner2) merged builds of GBARunner2 included for DSi/3DS
-     - [unresolvedsymbol](https://github.com/unresolvedsymbol): [rom3M+master "DSL-Enhanced"](https://github.com/unresolvedsymbol/GBARunner2-DSL-Enhanced) builds of GBARunner2 included for flashcards
+     - [unresolvedsymbol](https://github.com/unresolvedsymbol): [rom3M+master "DSL-Enhanced"](https://github.com/unresolvedsymbol/GBARunner2-DSL-Enhanced) builds of GBARunner2 included for playing *Pokémon: Emerald Version* on flashcards
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS) (used for launching Sega Mega Drive/Genesis ROMs)
      - [xonn83](https://github.com/xonn83): GBMacro version of [jEnesisDS](https://github.com/xonn83/jEnesisDS_macro)
 - [redbug26](https://github.com/redbug26): [CrocoDS](https://github.com/redbug26/crocods-nds) (used for launching Amstrad CPC ROMs)

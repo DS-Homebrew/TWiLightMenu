@@ -2108,21 +2108,17 @@ int dsiMenuTheme(void) {
 
 						u32 ptr = 0x08000000;
 						u32 romSize = getFileSize(filename.c_str());
-						char titleID[4];
 						FILE* gbaFile = fopen(filename.c_str(), "rb");
-						fseek(gbaFile, 0xAC, SEEK_SET);
-						fread(&titleID, 1, 4, gbaFile);
-						if (strncmp(titleID, "AGBJ", 4) == 0 && romSize <= 0x40000) {
+						if (strncmp(gameTid[CURPOS], "AGBJ", 4) == 0 && romSize <= 0x40000) {
 							ptr += 0x400;
 						}
 						u32 curPtr = ptr;
-						fseek(gbaFile, 0, SEEK_SET);
 
 						extern char copyBuf[0x8000];
 						if (romSize > 0x2000000) romSize = 0x2000000;
 
 						bool nor = false;
-						if (*(u16*)(0x020000C0) == 0x5A45 && strncmp(titleID, "AGBJ", 4) != 0) {
+						if (*(u16*)(0x020000C0) == 0x5A45 && strncmp(gameTid[CURPOS], "AGBJ", 4) != 0) {
 							cExpansion::SetRompage(0);
 							expansion().SetRampage(cExpansion::ENorPage);
 							cExpansion::OpenNorWrite();
@@ -2190,14 +2186,20 @@ int dsiMenuTheme(void) {
 					} else if (ms().secondaryDevice) {
 						ms().launchType[ms().secondaryDevice] = Launch::EGBARunner2Launch;
 
-						ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						if (dsiFeatures()) {
 							ndsToBoot = ms().consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
+						} else if (memcmp(gameTid[CURPOS], "BPE", 3) == 0) { // If game is Pokemon Emerald...
+							ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_rom3m_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_rom3m_ds.nds";
+						} else {
+							ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						}
 						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
 							if (dsiFeatures()) {
 								ndsToBoot = ms().consoleModel > 0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
+							} else if (memcmp(gameTid[CURPOS], "BPE", 3) == 0) { // If game is Pokemon Emerald...
+								ndsToBoot = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_rom3m_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_rom3m_ds.nds";
+							} else {
+								ndsToBoot = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
 							}
 						}
 						boostVram = false;
