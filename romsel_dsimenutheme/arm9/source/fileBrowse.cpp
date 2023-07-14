@@ -3155,59 +3155,75 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 
 				int topIconXpos = 116;
-				int savedTopIconXpos[3] = {0};
+				for (int i = 0; i < 3; i++) {
+					topIconXpos -= 16;
+				}
+				int savedTopIconXpos[5] = {0};
+				int topIconOp[5] = {0};
+				int topIconCount = 5;
 				if ((isDSiMode() && sdFound()) || bothSDandFlashcard() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 					//for (int i = 0; i < 2; i++) {
-						topIconXpos -= 14;
+						topIconXpos -= 16;
 					//}
-					for (int i = 0; i < 2; i++) {
+					for (int i = 0; i < 5; i++) {
 						savedTopIconXpos[i] = topIconXpos;
-						topIconXpos += 28;
+						topIconXpos += 32;
 					}
+
+					topIconOp[0] = 0;
+					topIconOp[1] = 2;
+					topIconOp[2] = 3;
+					topIconOp[3] = 4;
+					topIconOp[4] = 5;
 				} else if (ms().gbaBooter == TWLSettings::EGbaNativeGbar2) {
 					// for (int i = 0; i < 2; i++) {
-						topIconXpos -= 14;
+						topIconXpos -= 16;
 					//}
-					for (int i = 1; i < 3; i++) {
+					for (int i = 0; i < 5; i++) {
 						savedTopIconXpos[i] = topIconXpos;
-						topIconXpos += 28;
+						topIconXpos += 32;
 					}
+
+					topIconOp[0] = 1;
+					topIconOp[1] = 2;
+					topIconOp[2] = 3;
+					topIconOp[3] = 4;
+					topIconOp[4] = 5;
 				} else {
-					savedTopIconXpos[0] = topIconXpos;
+					topIconCount = 4;
+					for (int i = 0; i < 4; i++) {
+						savedTopIconXpos[i] = topIconXpos;
+						topIconXpos += 32;
+					}
+
+					topIconOp[0] = 2;
+					topIconOp[1] = 3;
+					topIconOp[2] = 4;
+					topIconOp[3] = 5;
 				}
 
-				if ((isDSiMode() && sdFound()) || bothSDandFlashcard() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
-					// Switch devices or launch Slot-1 by touching button
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0] + 24) {
-						if (ms().secondaryDevice || REG_SCFG_MC != 0x11) {
-							switchDevice();
-							return "null";
-						} else {
-							snd().playWrong();
+				for (int i = 0; i < topIconCount; i++) {
+					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[i] && touch.px < savedTopIconXpos[i] + 24) {
+						switch (topIconOp[i]) {
+							case 0: { // Switch devices or launch Slot-1 by touching button
+								if (ms().secondaryDevice || REG_SCFG_MC != 0x11) {
+									switchDevice();
+									return "null";
+								} else {
+									snd().playWrong();
+								}
+							} break;
+							case 1: // Launch GBA
+								launchGba();
+								break;
+							case 5: // Open the manual
+								launchManual();
+								break;
+							default: // Not implemented yet
+								snd().playWrong();
+								break;
 						}
-					}
-				}
-
-				if ((isDSiMode() && sdFound()) || bothSDandFlashcard()) {
-					// Open the manual
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1] + 24) {
-						launchManual();
-					}
-				} else if (ms().gbaBooter == TWLSettings::EGbaNativeGbar2 && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
-					// Launch GBA by touching button
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1] + 24) {
-						launchGba();
-					}
-
-					// Open the manual
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[2] && touch.px < savedTopIconXpos[2] + 24) {
-						launchManual();
-					}
-				} else {
-					// Open the manual
-					int num = (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? 1 : 0;
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[num] && touch.px < savedTopIconXpos[num] + 24) {
-						launchManual();
+						break;
 					}
 				}
 			}

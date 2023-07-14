@@ -815,9 +815,12 @@ void vBlankHandler() {
 		// Top icons for 3DS theme
 		if (ms().theme == TWLSettings::ETheme3DS) {
 			int topIconXpos = 116;
+			for (int i = 0; i < 3; i++) {
+				topIconXpos -= 16;
+			}
 			if ((isDSiMode() && sdFound()) || bothSDandFlashcard()) {
 				//for (int i = 0; i < 2; i++) {
-					topIconXpos -= 14;
+					topIconXpos -= 16;
 				//}
 				if (ms().secondaryDevice) {
 					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[2]); // SD card
@@ -825,24 +828,30 @@ void vBlankHandler() {
 					glSprite(topIconXpos, 1, GL_FLIP_NONE,
 						 &tex().smallCartImage()[(REG_SCFG_MC == 0x11) ? 1 : 0]); // Slot-1 card
 				}
-				topIconXpos += 28;
+				topIconXpos += 32;
 			} else if (ms().gbaBooter == TWLSettings::EGbaNativeGbar2 && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
 				// for (int i = 0; i < 2; i++) {
-					topIconXpos -= 14;
+					topIconXpos -= 16;
 				//}
 				//if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
 				//	drawSmallIconGBA(topIconXpos, 1); // GBARunner2
 				//} else {
 					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[3]); // GBA Mode
 				//}
-				topIconXpos += 28;
+				topIconXpos += 32;
 			}
 			if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
-				topIconXpos -= 14;
+				topIconXpos -= 16;
 				glSprite(topIconXpos, 1, GL_FLIP_NONE,
 					 &tex().smallCartImage()[0]); // Slot-1 card
-				topIconXpos += 28;
+				topIconXpos += 32;
 			}
+			glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[5]); // Pictochat
+			topIconXpos += 32;
+			glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[6]); // DS Download Play
+			topIconXpos += 32;
+			glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[7]); // Internet Browser
+			topIconXpos += 32;
 			glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[4]); // Manual
 
 			// Replace by baked-in backgrounds on 3DS.
