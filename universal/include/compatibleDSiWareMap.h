@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 420
+// Total: 421
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -260,6 +260,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KG9", // Noroi no Game: Oku
 	"KSUE", // Number Battle
 	"K6T", // Orion's Odyssey
+	"KO4", // Oscar in Movieland
 	"KOT", // Oscar in Toyland
 	"KOY", // Oscar in Toyland 2
 	"KTV", // Otegaru Pazuru Shirizu: Yurito Fushigina Meikyuu
