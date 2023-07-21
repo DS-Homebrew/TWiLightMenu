@@ -1360,13 +1360,22 @@ int settingsMode(void)
 				{STR_NONE, "sudokuhax", "4swordshax", "fieldrunnerhax", "grtpwn", "ugopwn/Lenny", "UNO*pwn", "Memory Pit"},
 				{TExploit::EExploitNone, TExploit::EExploitSudokuhax, TExploit::EExploit4Swordshax, TExploit::EExploitFieldrunnerhax, TExploit::EExploitGrtpwn, TExploit::EExploitUgopwn, TExploit::EExploitUnopwn, TExploit::EExploitMemoryPit});
 	}
-	if (sdFound() && (ms().consoleModel < 2 || sys().arm7SCFGLocked())) {
-		miscPage
-			.option(STR_SYSREGION,
-				STR_DESCRIPTION_SYSREGION_1,
-				Option::Int((int *)&ms().sysRegion),
-				{STR_AUTO_HIYA_ONLY, "JPN", "USA", "EUR", "AUS", "CHN", "KOR"},
-				{TRegion::ERegionDefault, TRegion::ERegionJapan, TRegion::ERegionUSA, TRegion::ERegionEurope, TRegion::ERegionAustralia, TRegion::ERegionChina, TRegion::ERegionKorea});
+	if (sdFound()) {
+		if (ms().consoleModel < 2) {
+			miscPage
+				.option(STR_SYSREGION,
+					STR_DESCRIPTION_SYSREGION_1,
+					Option::Int((int *)&ms().sysRegion),
+					{STR_AUTO_HIYA_ONLY, "JPN", "USA", "EUR", "AUS", "CHN", "KOR"},
+					{TRegion::ERegionDefault, TRegion::ERegionJapan, TRegion::ERegionUSA, TRegion::ERegionEurope, TRegion::ERegionAustralia, TRegion::ERegionChina, TRegion::ERegionKorea});
+		} else {
+			miscPage
+				.option(STR_SYSREGION,
+					STR_DESCRIPTION_SYSREGION_1,
+					Option::Int((int *)&ms().sysRegion),
+					{"JPN", "USA", "EUR", "AUS", "CHN", "KOR"},
+					{TRegion::ERegionJapan, TRegion::ERegionUSA, TRegion::ERegionEurope, TRegion::ERegionAustralia, TRegion::ERegionChina, TRegion::ERegionKorea});
+		}
 	}
 	if (sdFound() && ms().consoleModel < 2) {
 		miscPage
