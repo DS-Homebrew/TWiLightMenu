@@ -623,6 +623,83 @@ void launchSettings(void) {
 	stop();
 }
 
+void launchPictochat(void) {
+	snd().playLaunch();
+	controlTopBright = true;
+
+	fadeType = false;		  // Fade to white
+	snd().fadeOutStream();
+	for (int i = 0; i < 60; i++) {
+		bgOperations(true);
+	}
+	mmEffectCancelAll();
+	snd().stopStream();
+	ms().saveSettings();
+	// Launch Pictochat
+	int err = runNdsFile(sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds", 0, NULL, true, true, true, false, false, false, ms().gameLanguage);
+	char text[32];
+	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+	fadeType = true;
+	printLarge(false, 4, 4, text);
+	stop();
+}
+
+void launchDownloadPlay(void) {
+	snd().playLaunch();
+	controlTopBright = true;
+
+	fadeType = false;		  // Fade to white
+	snd().fadeOutStream();
+	for (int i = 0; i < 60; i++) {
+		bgOperations(true);
+	}
+	mmEffectCancelAll();
+	snd().stopStream();
+	ms().saveSettings();
+	// Launch Pictochat
+	if (isDSiMode() && sys().arm7SCFGLocked()) {
+		*(u32*)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
+		*(u16*)(0x02000304) = 0x1801;
+
+		switch (ms().sysRegion) {
+			case 4:
+				*(u32*)(0x02000308) = 0x484E4443;
+				*(u32*)(0x0200030C) = 0x00030005;
+				*(u32*)(0x02000310) = 0x484E4443;
+				break;
+			case 5:
+				*(u32*)(0x02000308) = 0x484E444B;
+				*(u32*)(0x0200030C) = 0x00030005;
+				*(u32*)(0x02000310) = 0x484E444B;
+				break;
+			default:
+				*(u32*)(0x02000308) = 0x484E4441;	// "HNDA"
+				*(u32*)(0x0200030C) = 0x00030005;
+				*(u32*)(0x02000310) = 0x484E4441;	// "HNDA"
+		}
+
+		*(u32*)(0x02000314) = 0x00030005;
+		*(u32*)(0x02000318) = 0x00000017;
+		*(u32*)(0x0200031C) = 0x00000000;
+		*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
+
+		if (ms().consoleModel < 2) {
+			unlaunchSetHiyaBoot();
+		}
+
+		DC_FlushAll();						// Make reboot not fail
+		fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
+		for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	} else {
+		int err = runNdsFile(sys().isRunFromSD() ? "sd:/_nds/dlplay.nds" : "fat:/_nds/dlplay.nds", 0, NULL, true, true, true, false, false, false, ms().gameLanguage);
+		char text[32];
+		snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+		fadeType = true;
+		printLarge(false, 4, 4, text);
+		stop();
+	}
+}
+
 void launchManual(void) {
 	snd().playLaunch();
 	controlTopBright = true;
@@ -3215,6 +3292,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							} break;
 							case 1: // Launch GBA
 								launchGba();
+								break;
+							case 2: // Launch Pictochat
+								launchPictochat();
+								break;
+							case 3: // Launch Download Play
+								launchDownloadPlay();
 								break;
 							case 5: // Open the manual
 								launchManual();
