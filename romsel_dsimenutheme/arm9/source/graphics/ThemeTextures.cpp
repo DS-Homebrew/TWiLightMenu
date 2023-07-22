@@ -1574,6 +1574,7 @@ void loadRotatingCubes() {
 		}
 
 		if (doRead) {
+			// Compatible with RVID v2
 			extern int rocketVideo_videoFrames;
 			fseek(videoFrameFile, 0x8, SEEK_SET);
 			fread((void*)&rocketVideo_videoFrames, sizeof(u32), 1, videoFrameFile);
@@ -1597,7 +1598,11 @@ void loadRotatingCubes() {
 				}
 			}
 
-			fseek(videoFrameFile, 0x200, SEEK_SET);
+			u32 framesOffset = 0x200;
+			fseek(videoFrameFile, 0x14, SEEK_SET);
+			fread((void*)&framesOffset, sizeof(u32), 1, videoFrameFile);
+
+			fseek(videoFrameFile, framesOffset, SEEK_SET);
 
 			fread(rotatingCubesLocation, 1, framesSize, videoFrameFile);
 			if (ms().colorMode == 1) {
