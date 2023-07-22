@@ -1553,62 +1553,11 @@ u16 *ThemeTextures::photoBuffer2() { return _photoBuffer2; }
 u16 *ThemeTextures::frameBufferBot(bool secondBuffer) { return _frameBufferBot[secondBuffer]; }
 
 void loadRotatingCubes() {
-	bool rvidCompressed = false;
 	std::string cubes = TFN_RVID_CUBES;
 	FILE *videoFrameFile = fopen(cubes.c_str(), "rb");
 
-	/*if (!videoFrameFile && isDSiMode()) {
-		// Fallback to uncompressed RVID
-		rvidCompressed = false;
-		cubes = TFN_RVID_CUBES;
-		if (ms().colorMode == 1) {
-			cubes = TFN_RVID_CUBES_BW;
-		}
-		videoFrameFile = fopen(cubes.c_str(), "rb");
-	}*/
-
-	// if (!videoFrameFile) {
-	// 	videoFrameFile = fopen(std::string(TFN_FALLBACK_RVID_CUBES).c_str(), "rb");
-	// }
-	// FILE* videoFrameFile;
-
-	/*for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
-		if (selectedFrame < 0x10) {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename),
-	"nitro:/video/3dsRotatingCubes/0x0%x.bmp", (int)selectedFrame); } else { snprintf(videoFrameFilename,
-	sizeof(videoFrameFilename), "nitro:/video/3dsRotatingCubes/0x%x.bmp", (int)selectedFrame);
-		}
-		videoFrameFile = fopen(videoFrameFilename, "rb");
-
-		if (videoFrameFile) {
-			// Start loading
-			fseek(videoFrameFile, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x7000, videoFrameFile);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 55;
-			for (int i=0; i<256*56; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				renderedImageBuffer[y*256+x] = Texture::bmpToDS(val);
-				x++;
-			}
-		}
-		fclose(videoFrameFile);
-		memcpy(rotatingCubesLocation+(selectedFrame*0x7000), renderedImageBuffer, 0x7000);
-	}*/
-
 	if (videoFrameFile) {
 		bool doRead = false;
-		if (!rvidCompressed) {
-			fseek(videoFrameFile, 0x200, SEEK_SET);
-		}
-
 		if (dsiFeatures()) {
 			doRead = true;
 		} else if (sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
@@ -1625,15 +1574,35 @@ void loadRotatingCubes() {
 		}
 
 		if (doRead) {
-			if (rvidCompressed) {
-				fread((void*)0x02D80000, 1, 0x200000, videoFrameFile);
-				LZ77_Decompress((u8*)0x02D80000, (u8*)rotatingCubesLocation);
-			} else {
-				fread(rotatingCubesLocation, 1, 0x700000, videoFrameFile);
+			extern int rocketVideo_videoFrames;
+			fseek(videoFrameFile, 0x8, SEEK_SET);
+			fread((void*)&rocketVideo_videoFrames, sizeof(u32), 1, videoFrameFile);
+			rocketVideo_videoFrames--;
+
+			extern u8 rocketVideo_height;
+			fseek(videoFrameFile, 0xD, SEEK_SET);
+			fread((void*)&rocketVideo_height, sizeof(u8), 1, videoFrameFile);
+
+			u32 framesSize = (0x200*rocketVideo_height)*(rocketVideo_videoFrames+1);
+			if (framesSize > 0x700000) {
+				fclose(videoFrameFile);
+				return;
 			}
+
+			if (rocketVideo_height >= 58) {
+				// Adjust video positioning
+				extern int rocketVideo_videoYpos;
+				for (int i = 58; i < rocketVideo_height; i += 2) {
+					rocketVideo_videoYpos--;
+				}
+			}
+
+			fseek(videoFrameFile, 0x200, SEEK_SET);
+
+			fread(rotatingCubesLocation, 1, framesSize, videoFrameFile);
 			if (ms().colorMode == 1) {
 				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
-				for (int i = 0; i < 0x700000/2; i++) {
+				for (u32 i = 0; i < framesSize/2; i++) {
 					if (rotatingCubesLocation16[i] != 0) {
 						rotatingCubesLocation16[i] = convertVramColorToGrayscale(rotatingCubesLocation16[i]);
 					}
@@ -1642,6 +1611,7 @@ void loadRotatingCubes() {
 			rotatingCubesLoaded = true;
 			rocketVideo_playVideo = true;
 		}
+		fclose(videoFrameFile);
 	}
 }
 void ThemeTextures::videoSetup() {

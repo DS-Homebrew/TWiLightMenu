@@ -176,6 +176,7 @@ int rocketVideo_videoYpos = 78;
 int frameOf60fps = 60;
 int rocketVideo_videoFrames = 249;
 int rocketVideo_currentFrame = -1;
+u8 rocketVideo_height = 56;
 //int rocketVideo_frameDelay = 0;
 int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
@@ -380,7 +381,7 @@ void playRotatingCubesVideo(void) {
 	if (rocketVideo_loadFrame) {
 		//if (renderFrame) {
 			//DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
-			dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x200*56);
+			dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*rocketVideo_height)), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x200*rocketVideo_height);
 		//}
 
 		rocketVideo_currentFrame++;
