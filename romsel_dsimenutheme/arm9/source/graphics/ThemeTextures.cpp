@@ -1584,7 +1584,7 @@ void loadRotatingCubes() {
 			fread((void*)&rocketVideo_height, sizeof(u8), 1, videoFrameFile);
 
 			u32 framesSize = (0x200*rocketVideo_height)*(rocketVideo_videoFrames+1);
-			if (framesSize > 0x700000) {
+			if (rocketVideo_height > 144 || framesSize > 0x700000) {
 				fclose(videoFrameFile);
 				return;
 			}
