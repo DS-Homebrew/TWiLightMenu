@@ -84,7 +84,7 @@ jobs:
           curl -LO https://github.com/DS-Homebrew/nds-bootstrap-extras/raw/main/preLoadSettings/preLoadSettingsDSi.pck
           curl -LO https://github.com/DS-Homebrew/nds-bootstrap-extras/raw/main/preLoadSettings/preLoadSettings3DS.pck
           cd ..
-          curl -L https://github.com/DS-Homebrew/Builds/blob/master/nds-bootstrap.7z?raw=true -o nds-bootstrap.7z
+          curl -L https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true -o nds-bootstrap.7z
           7z x nds-bootstrap.7z
           mv nds-bootstrap/release-bootstrap.ver 7zfile/_nds/
           mv nds-bootstrap/nightly-bootstrap.ver 7zfile/_nds/
@@ -205,13 +205,15 @@ jobs:
         with:
           name: build
           path: build
-      - name: Commit and push debug files to DS-Homebrew/Builds
+      - name: Commit and push debug files to TWLBot/Builds
         id: commit
         run: |
           CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
           echo "current_date=$CURRENT_DATE" >> $GITHUB_OUTPUT
 
-          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/DS-Homebrew/Builds.git
+          git config --global user.email "flamekat54@aol.com"
+          git config --global user.name "TWLBot"
+          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
           cd Builds/
           cp ${{ github.workspace }}/build/TWiLightMenu-debug-release.7z .
           git stage .

@@ -135,7 +135,7 @@ jobs:
   # Only run this for non-PR jobs.
   publish_build:
     runs-on: ubuntu-latest
-    name: Publish build to Builds repo
+    name: Publish build to TWLBot
     if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
     needs: build
     env:
@@ -152,13 +152,15 @@ jobs:
         with:
           name: build
           path: build
-      - name: Commit and push to DS-Homebrew/Builds
+      - name: Commit and push to TWLBot/Builds
         id: commit
         run: |
           CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
           echo "current_date=$CURRENT_DATE" >> $GITHUB_OUTPUT
 
-          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/DS-Homebrew/Builds.git
+          git config --global user.email "flamekat54@aol.com"
+          git config --global user.name "TWLBot"
+          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
           cd Builds/
           cp ${{ github.workspace }}/build/*.7z .
           mv ${{ github.workspace }}/build/apfix.pck extras
@@ -167,11 +169,11 @@ jobs:
           git commit -m "TWiLightMenu | $COMMIT_HASH"
           git tag v$CURRENT_DATE
           git push origin v$CURRENT_DATE master
-      - name: Release to DS-Homebrew/Builds
+      - name: Release to TWLBot/Builds
         run: |
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
-          API_URL="https://api.github.com/repos/DS-Homebrew/Builds/releases"
+          API_URL="https://api.github.com/repos/TWLBot/Builds/releases"
           RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"TWiLightMenu | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_SUBJECT\", \"prerelease\": true}"
 
           RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
@@ -182,7 +184,7 @@ jobs:
             AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
             CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
             CONTENT_TYPE="Content-Type: application/7z-x-compressed"
-            UPLOAD_URL="https://uploads.github.com/repos/DS-Homebrew/Builds/releases/$ID/assets?name=$(basename $file)"
+            UPLOAD_URL="https://uploads.github.com/repos/TWLBot/Builds/releases/$ID/assets?name=$(basename $file)"
 
             curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
