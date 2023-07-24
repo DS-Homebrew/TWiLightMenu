@@ -1880,13 +1880,35 @@ int dsClassicMenu(void) {
 								fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 								for (int i = 0; i < 15; i++) swiWaitForVBlank();
 							} else {
-								chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
-								int err = runNdsFile (pictochatPath, 0, NULL, true, true, true, false, false, false, ms().gameLanguage);
+								char ndsToBoot[256];
+								sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "sd" : "fat", ms().bootstrapFile ? "nightly" : "release");
+								if (access(ndsToBoot, F_OK) != 0) {
+									sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", ms().bootstrapFile ? "nightly" : "release");
+								}
+
+								std::vector<char*> argarray;
+								argarray.push_back(ndsToBoot);
+
+								const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
+								CIniFile bootstrapini(bootstrapinipath);
+								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+								bootstrapini.SaveIniFile(bootstrapinipath);
+								int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText();
 								ClearBrightness();
 								printSmall(false, 4, 4, text);
+								if (err == 1) {
+									printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+								}
 								stop();
 							}
 						} else {
