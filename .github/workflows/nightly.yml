@@ -158,8 +158,6 @@ jobs:
           CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
           echo "current_date=$CURRENT_DATE" >> $GITHUB_OUTPUT
 
-          git config --global user.email "flamekat54@aol.com"
-          git config --global user.name "TWLBot"
           git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/DS-Homebrew/Builds.git
           cd Builds/
           cp ${{ github.workspace }}/build/*.7z .
