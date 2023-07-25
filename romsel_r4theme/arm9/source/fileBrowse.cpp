@@ -454,7 +454,7 @@ bool donorRomMsg(void) {
 						printSmallCentered(false, 90, "Find the SDK2.0 title,");
 						break;
 					case 51:
-						printSmallCentered(false, 90, "Find the DSi-Enhanced title,");
+						printSmallCentered(false, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) ? "Find the SDK5 DS title," : "Find the DSi-Enhanced title,");
 						break;
 					case 52:
 						printSmallCentered(false, 90, "Find the DSi(Ware) title,");
@@ -479,7 +479,7 @@ bool donorRomMsg(void) {
 						printSmallCentered(false, 114, "to launch this title.");
 						break;
 					case 51:
-						printSmallCentered(false, 90, "Please set a DSi-Enhanced title");
+						printSmallCentered(false, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) ? "Please set an SDK5 Nintendo DS title" : "Please set a DSi-Enhanced title");
 						printSmallCentered(false, 102, "as a donor ROM, in order");
 						printSmallCentered(false, 114, "to launch this title.");
 						break;
@@ -1217,13 +1217,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 					proceedToLaunch = checkForCompatibleGame(game_TID, dirContents.at(fileOffset).name.c_str());
 					if (proceedToLaunch && requiresDonorRom) {
-						const char* pathDefine = "DONORTWL_NDS_PATH"; // SDK5.x
+						const char* pathDefine = "DONORTWL_NDS_PATH"; // SDK5.x (TWL)
 						if (requiresDonorRom == 52) {
-							pathDefine = "DONORTWLONLY_NDS_PATH"; // SDK5.x
+							pathDefine = "DONORTWLONLY_NDS_PATH"; // SDK5.x (TWL)
 						} else if (requiresDonorRom > 100) {
-							pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0
+							pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0 (TWL)
 							if (requiresDonorRom == 152) {
-								pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0
+								pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0 (TWL)
 							}
 						} else if (requiresDonorRom == 20) {
 							pathDefine = "DONOR20_NDS_PATH"; // SDK2.0
@@ -1236,12 +1236,17 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						bool donorRomFound = (((!dsiFeatures() || bs().b4dsMode) && requiresDonorRom != 20 && ms().secondaryDevice && access("fat:/_nds/nds-bootstrap/b4dsTwlDonor.bin", F_OK) == 0)
 											|| strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
 						if (!donorRomFound && requiresDonorRom != 20 && requiresDonorRom < 100) {
-							pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0
+							pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0 (TWL)
 							if (requiresDonorRom == 52) {
-								pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0
+								pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0 (TWL)
 							}
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 							donorRomFound = (strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
+						}
+						if (!donorRomFound && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && requiresDonorRom != 20) {
+							pathDefine = "DONOR5_NDS_PATH"; // SDK5.x (NTR)
+							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
+							donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
 						}
 						if (!donorRomFound
 						&& (requiresDonorRom == 20 || requiresDonorRom == 51 || requiresDonorRom == 151

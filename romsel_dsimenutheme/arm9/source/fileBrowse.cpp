@@ -1196,7 +1196,7 @@ bool donorRomMsg(const char *filename) {
 						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK20, Alignment::center, FontPalette::dialog);
 						break;
 					case 51:
-						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK5TWL, Alignment::center, FontPalette::dialog);
+						printSmall(false, 0, yPos, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) ? STR_HOW_TO_SET_DONOR_ROM_SDK5 : STR_HOW_TO_SET_DONOR_ROM_SDK5TWL, Alignment::center, FontPalette::dialog);
 						break;
 					case 52:
 						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK5TWLONLY, Alignment::center, FontPalette::dialog);
@@ -1217,7 +1217,7 @@ bool donorRomMsg(const char *filename) {
 						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK20, Alignment::center, FontPalette::dialog);
 						break;
 					case 51:
-						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center, FontPalette::dialog);
+						printSmall(false, 0, yPos, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) ? STR_DONOR_ROM_MSG_SDK5 : STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center, FontPalette::dialog);
 						break;
 					case 52:
 						printSmall(false, 0, yPos, !isDSiWare[CURPOS] ? STR_DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE : STR_DONOR_ROM_MSG_SDK5TWLONLY, Alignment::center, FontPalette::dialog);
@@ -2955,13 +2955,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if (proceedToLaunch && (useBootstrapAnyway || ((!dsiFeatures() || bs().b4dsMode) && isDSiWare[CURPOS])) && bnrRomType[CURPOS] == 0 && !dsModeForced && isHomebrew[CURPOS] == 0) {
 						proceedToLaunch = checkForCompatibleGame(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						if (proceedToLaunch && requiresDonorRom[CURPOS]) {
-							const char* pathDefine = "DONORTWL_NDS_PATH"; // SDK5.x
+							const char* pathDefine = "DONORTWL_NDS_PATH"; // SDK5.x (TWL)
 							if (requiresDonorRom[CURPOS] == 52) {
-								pathDefine = "DONORTWLONLY_NDS_PATH"; // SDK5.x
+								pathDefine = "DONORTWLONLY_NDS_PATH"; // SDK5.x (TWL)
 							} else if (requiresDonorRom[CURPOS] > 100) {
-								pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0
+								pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0 (TWL)
 								if (requiresDonorRom[CURPOS] == 152) {
-									pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0
+									pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0 (TWL)
 								}
 							} else if (requiresDonorRom[CURPOS] == 20) {
 								pathDefine = "DONOR20_NDS_PATH"; // SDK2.0
@@ -2974,12 +2974,17 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							bool donorRomFound = (((!dsiFeatures() || bs().b4dsMode) && requiresDonorRom[CURPOS] != 20 && ms().secondaryDevice && access("fat:/_nds/nds-bootstrap/b4dsTwlDonor.bin", F_OK) == 0)
 												|| strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
 							if (!donorRomFound && requiresDonorRom[CURPOS] != 20 && requiresDonorRom[CURPOS] < 100) {
-								pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0
+								pathDefine = "DONORTWL0_NDS_PATH"; // SDK5.0 (TWL)
 								if (requiresDonorRom[CURPOS] == 52) {
-									pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0
+									pathDefine = "DONORTWLONLY0_NDS_PATH"; // SDK5.0 (TWL)
 								}
 								donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 								donorRomFound = (strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
+							}
+							if (!donorRomFound && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && requiresDonorRom[CURPOS] != 20) {
+								pathDefine = "DONOR5_NDS_PATH"; // SDK5.x (NTR)
+								donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
+								donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
 							}
 							if (!donorRomFound
 							&& (requiresDonorRom[CURPOS] == 20 || requiresDonorRom[CURPOS] == 51 || requiresDonorRom[CURPOS] == 151

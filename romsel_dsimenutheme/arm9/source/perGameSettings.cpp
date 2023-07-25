@@ -267,16 +267,25 @@ bool checkIfDSiMode (std::string filename) {
 bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	if (requiresDonorRom[CURPOS]) return false;
 
-	bool usingB4DS = (!dsiFeatures() && ms().secondaryDevice);
+	bool usingB4DS = ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice);
 	bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 
-	return (arm7size == 0x2619C // SDK2.0
+	return ((SDKVersion > 0x2000000 && SDKVersion < 0x3000000
+		&& (arm7size == 0x2619C // SDK2.0
 		 || arm7size == 0x262A0
 		 || arm7size == 0x26A60
 		 || arm7size == 0x27218
 		 || arm7size == 0x27224
 		 || arm7size == 0x2724C
-		 || arm7size == 0x27280
+		 || arm7size == 0x27280))
+	|| (usingB4DS && SDKVersion > 0x5000000	// SDK5 (NTR)
+	 && (arm7size==0x23708
+	  || arm7size==0x2378C
+	  || arm7size==0x237F0
+	  || arm7size==0x26370
+	  || arm7size==0x2642C
+	  || arm7size==0x26488
+	  || arm7size==0x2762C))
 	|| ((usingB4DS || (dsiEnhancedMbk && dsiBinariesFound)) && SDKVersion > 0x5000000	// SDK5 (TWL)
 	 && (arm7size==0x22B40
 	  || arm7size==0x22BCC
@@ -1138,18 +1147,28 @@ void perGameSettings (std::string filename) {
 						break;
 					case 9:
 					  if (pressed & KEY_A) {
-						const char* pathDefine = a7mbk6[CURPOS] == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH"; // SDK5.x
+						const char* pathDefine = a7mbk6[CURPOS] == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH"; // SDK5.x (TWL)
 						if (arm7size == 0x26CC8
 						 || arm7size == 0x28E54
 						 || arm7size == 0x29EE8) {
-							pathDefine = a7mbk6[CURPOS] == 0x080037C0 ? "DONORTWLONLY0_NDS_PATH" : "DONORTWL0_NDS_PATH"; // SDK5.0
-						} else if (arm7size == 0x2619C
+							pathDefine = a7mbk6[CURPOS] == 0x080037C0 ? "DONORTWLONLY0_NDS_PATH" : "DONORTWL0_NDS_PATH"; // SDK5.0 (TWL)
+						} else if (SDKVersion > 0x5000000
+								 && (arm7size==0x23708
+								  || arm7size==0x2378C
+								  || arm7size==0x237F0
+								  || arm7size==0x26370
+								  || arm7size==0x2642C
+								  || arm7size==0x26488
+								  || arm7size==0x2762C)) {
+							pathDefine = "DONOR5_NDS_PATH"; // SDK5.x (NTR)
+						} else if (SDKVersion > 0x2000000 && SDKVersion < 0x3000000
+								&& (arm7size == 0x2619C
 								 || arm7size == 0x262A0
 								 || arm7size == 0x26A60
 								 || arm7size == 0x27218
 								 || arm7size == 0x27224
 								 || arm7size == 0x2724C
-								 || arm7size == 0x27280) {
+								 || arm7size == 0x27280)) {
 							pathDefine = "DONOR20_NDS_PATH"; // SDK2.0
 						}
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
