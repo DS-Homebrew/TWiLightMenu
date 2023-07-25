@@ -64,8 +64,9 @@ jobs:
         run: |
           # Make artifacts directory
           mkdir -p ~/artifacts
-
-          # Don't include fonts or debug files in nightlies
+          
+          # Don't include skins, fonts or debug files in nightlies
+          rm -rf 7zfile/_nds/TWiLightMenu/*menu/
           rm -rf 7zfile/_nds/TWiLightMenu/extras/fonts
           rm -rf 7zfile/debug
 
