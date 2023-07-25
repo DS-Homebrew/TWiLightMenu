@@ -436,6 +436,7 @@ bool donorRomMsg(void) {
 		lcdMainOnBottom();
 		lcdSwapped = true;
 	}
+	bool ubongo = (memcmp(gameTid, "KUB", 3) == 0);
 	int msgPage = 0;
 	bool pageLoaded = false;
 	bool secondPageViewed = false;
@@ -454,7 +455,7 @@ bool donorRomMsg(void) {
 						printSmallCentered(false, 90, "Find the SDK2.0 title,");
 						break;
 					case 51:
-						printSmallCentered(false, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) ? "Find the SDK5 DS title," : "Find the DSi-Enhanced title,");
+						printSmallCentered(false, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? "Find the SDK5 DS title," : "Find the DSi-Enhanced title,");
 						break;
 					case 52:
 						printSmallCentered(false, 90, "Find the DSi(Ware) title,");
@@ -479,7 +480,7 @@ bool donorRomMsg(void) {
 						printSmallCentered(false, 114, "to launch this title.");
 						break;
 					case 51:
-						printSmallCentered(false, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) ? "Please set an SDK5 Nintendo DS title" : "Please set a DSi-Enhanced title");
+						printSmallCentered(false, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? "Please set an SDK5 Nintendo DS title" : "Please set a DSi-Enhanced title");
 						printSmallCentered(false, 102, "as a donor ROM, in order");
 						printSmallCentered(false, 114, "to launch this title.");
 						break;
@@ -550,7 +551,7 @@ void showLocation(void) {
 	}
 }
 
-bool checkForCompatibleGame(char gameTid[5], const char *filename) {
+bool checkForCompatibleGame(const char *filename) {
 	bool proceedToLaunch = true;
 
 	if (!dsiFeatures() && ms().secondaryDevice) {
@@ -633,14 +634,9 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 }
 
 bool gameCompatibleMemoryPit(const char* filename) {
-	FILE *f_nds_file = fopen(filename, "rb");
-	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
-	fclose(f_nds_file);
-
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(incompatibleGameListMemoryPit)/sizeof(incompatibleGameListMemoryPit[0]); i++) {
-		if (memcmp(game_TID, incompatibleGameListMemoryPit[i], 3) == 0) {
+		if (memcmp(gameTid, incompatibleGameListMemoryPit[i], 3) == 0) {
 			// Found match
 			return false;
 		}
@@ -655,16 +651,9 @@ bool checkForGbaBiosRequirement(const char* filename) {
 		return false;
 	}
 
-	FILE *gbaFile = fopen(filename, "rb");
-	char game_TID[5];
-	fseek(gbaFile, 0xAC, SEEK_SET);
-	fread(game_TID, 1, 4, gbaFile);
-	fclose(gbaFile);
-	game_TID[4] = 0;
-
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(gbaGameListBiosReqiure)/sizeof(gbaGameListBiosReqiure[0]); i++) {
-		if (memcmp(game_TID, gbaGameListBiosReqiure[i], 3) == 0) {
+		if (memcmp(gameTid, gbaGameListBiosReqiure[i], 3) == 0) {
 			// Found match
 			return true;
 		}
@@ -770,7 +759,7 @@ bool dsiWareInDSModeMsg(void) {
 	return proceedToLaunch;
 }
 
-bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
+bool dsiWareRAMLimitMsg(std::string filename) {
 	bool showMsg = false;
 	bool mepFound = false;
 	int msgId = 0;
@@ -964,14 +953,10 @@ bool dsiWareRAMLimitMsg(char gameTid[5], std::string filename) {
 
 bool dsiWareCompatibleB4DS(const char* filename) {
 	bool res = false;
-	FILE *f_nds_file = fopen(filename, "rb");
-	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
-	fclose(f_nds_file);
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DS)/sizeof(compatibleGameListB4DS[0]); i++) {
-		if (memcmp(game_TID, compatibleGameListB4DS[i], (compatibleGameListB4DS[i][3] != 0 ? 4 : 3)) == 0) {
+		if (memcmp(gameTid, compatibleGameListB4DS[i], (compatibleGameListB4DS[i][3] != 0 ? 4 : 3)) == 0) {
 			// Found match
 			res = true;
 			break;
@@ -979,7 +964,7 @@ bool dsiWareCompatibleB4DS(const char* filename) {
 	}
 	if (!res && (sys().dsDebugRam() || bs().b4dsMode == 2)) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebug)/sizeof(compatibleGameListB4DSDebug[0]); i++) {
-			if (memcmp(game_TID, compatibleGameListB4DSDebug[i], (compatibleGameListB4DSDebug[i][3] != 0 ? 4 : 3)) == 0) {
+			if (memcmp(gameTid, compatibleGameListB4DSDebug[i], (compatibleGameListB4DSDebug[i][3] != 0 ? 4 : 3)) == 0) {
 				// Found match
 				res = true;
 				break;
@@ -1174,24 +1159,17 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				return "null";
 			} else {
-				char game_TID[5] = {0};
 				if (!isTwlm) {
 					loadPerGameSettings(dirContents.at(fileOffset).name);
-
-					if (bnrRomType == 0) {
-						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-						grabTID(f_nds_file, game_TID);
-						fclose(f_nds_file);
-					}
 				}
 				int hasAP = 0;
 				bool proceedToLaunch = true;
 
-				if (isTwlm || (!isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType == 0 && game_TID[0] == 'D' && romUnitCode == 3 && requiresDonorRom != 51)
+				if (isTwlm || (!isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType == 0 && gameTid[0] == 'D' && romUnitCode == 3 && requiresDonorRom != 51)
 				|| (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
 				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str()))))
 				|| (bnrRomType == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement(dirContents.at(fileOffset).name.c_str()))) {
-					proceedToLaunch = cannotLaunchMsg(game_TID[0]);
+					proceedToLaunch = cannotLaunchMsg(gameTid[0]);
 				}
 				bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);
 				if (proceedToLaunch && useBootstrapAnyway && bnrRomType == 0 && !isDSiWare
@@ -1209,13 +1187,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 				}
 				if (proceedToLaunch && (useBootstrapAnyway || ((!dsiFeatures() || bs().b4dsMode) && isDSiWare)) && bnrRomType == 0 && !dsModeForced && isHomebrew == 0) {
-					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-					char game_TID[5];
-					grabTID(f_nds_file, game_TID);
-					game_TID[4] = 0;
-					fclose(f_nds_file);
-
-					proceedToLaunch = checkForCompatibleGame(game_TID, dirContents.at(fileOffset).name.c_str());
+					proceedToLaunch = checkForCompatibleGame(dirContents.at(fileOffset).name.c_str());
 					if (proceedToLaunch && requiresDonorRom) {
 						const char* pathDefine = "DONORTWL_NDS_PATH"; // SDK5.x (TWL)
 						if (requiresDonorRom == 52) {
@@ -1243,7 +1215,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 							donorRomFound = (strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
 						}
-						if (!donorRomFound && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && requiresDonorRom != 20) {
+						if (!donorRomFound && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && memcmp(gameTid, "KUB", 3) != 0 && requiresDonorRom != 20) {
 							pathDefine = "DONOR5_NDS_PATH"; // SDK5.x (NTR)
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 							donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
@@ -1265,7 +1237,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							proceedToLaunch = dsiWareInDSModeMsg();
 						}
 						if (proceedToLaunch) {
-							proceedToLaunch = dsiWareRAMLimitMsg(game_TID, dirContents.at(fileOffset).name);
+							proceedToLaunch = dsiWareRAMLimitMsg(dirContents.at(fileOffset).name);
 						}
 					}
 				} else if (isHomebrew == 1) {

@@ -388,20 +388,6 @@ void perGameSettings (std::string filename) {
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");
 
-	char game_TID[5] = {0};
-	u32 tidOffset = 0xC;
-	if (bnrRomType == 1) {
-		tidOffset = 0xAC;
-	} else if (bnrRomType == 3) {
-		tidOffset = 0x13F;
-	} else if (bnrRomType != 0) {
-		tidOffset = 0;
-	}
-	if (tidOffset > 0) {
-		fseek(f_nds_file, tidOffset, SEEK_SET);
-		fread(game_TID, 1, 4, f_nds_file);
-	}
-
 	// Check if blacklisted
 	blacklisted_boostCpu = false;
 	blacklisted_cardReadDma = false;
@@ -409,21 +395,21 @@ void perGameSettings (std::string filename) {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
-			if (memcmp(game_TID, twlClockExcludeList[i], 3) == 0) {
+			if (memcmp(gameTid, twlClockExcludeList[i], 3) == 0) {
 				// Found match
 				blacklisted_boostCpu = true;
 			}
 		}
 
 		for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
-			if (memcmp(game_TID, cardReadDMAExcludeList[i], 3) == 0) {
+			if (memcmp(gameTid, cardReadDMAExcludeList[i], 3) == 0) {
 				// Found match
 				blacklisted_cardReadDma = true;
 			}
 		}
 
 		for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
-			if (memcmp(game_TID, asyncReadExcludeList[i], 3) == 0) {
+			if (memcmp(gameTid, asyncReadExcludeList[i], 3) == 0) {
 				// Found match
 				blacklisted_asyncCardRead = true;
 			}
@@ -434,7 +420,7 @@ void perGameSettings (std::string filename) {
 	u32 SDKVersion = 0;
 	u8 sdkSubVer = 0;
 	char sdkSubVerChar[8] = {0};
-	if (bnrRomType == 0 && (memcmp(game_TID, "HND", 3) == 0 || memcmp(game_TID, "HNE", 3) == 0 || !isHomebrew)) {
+	if (bnrRomType == 0 && (memcmp(gameTid, "HND", 3) == 0 || memcmp(gameTid, "HNE", 3) == 0 || !isHomebrew)) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		tonccpy(&sdkSubVer, (u8*)&SDKVersion+2, 1);
 		sprintf(sdkSubVerChar, "%d", sdkSubVer);
@@ -503,8 +489,8 @@ void perGameSettings (std::string filename) {
 		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
     	 || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)))*/
 	|| !ms().secondaryDevice) && bnrRomType == 0 && !isHomebrew && !isDSiWare
-	&& memcmp(game_TID, "HND", 3) != 0
-	&& memcmp(game_TID, "HNE", 3) != 0);
+	&& memcmp(gameTid, "HND", 3) != 0
+	&& memcmp(gameTid, "HNE", 3) != 0);
 
 	firstPerGameOpShown = 0;
 	perGameOps = -1;
@@ -542,7 +528,7 @@ void perGameSettings (std::string filename) {
 				perGameOp[perGameOps] = 7;	// Bootstrap
 			}
 		}
-		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound() && (game_TID[0] == 'W' || romVersion == 0x57)) {
+		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound() && (gameTid[0] == 'W' || romVersion == 0x57)) {
 			perGameOps++;
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
@@ -650,7 +636,7 @@ void perGameSettings (std::string filename) {
 
 	bool savExists[10] = {false};
 	if (isHomebrew && !largeArm9) {
-		snprintf (gameTIDText, sizeof(gameTIDText), game_TID[0]==0 ? "" : "TID: %s", game_TID);
+		snprintf (gameTIDText, sizeof(gameTIDText), gameTid[0]==0 ? "" : "TID: %s", gameTid);
 
 		for (int i = 0; i < 10; i++) {
 			std::string path("ramdisks/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getImgExtension(i));
@@ -659,7 +645,7 @@ void perGameSettings (std::string filename) {
 			savExists[i] = access(path.c_str(), F_OK) == 0;
 		}
 	} else if (!isHomebrew) {
-		snprintf (gameTIDText, sizeof(gameTIDText), game_TID[0]==0 ? "" : "%s-%s-%s", getCodenameString(), game_TID, getRegionString(game_TID[3]));
+		snprintf (gameTIDText, sizeof(gameTIDText), gameTid[0]==0 ? "" : "%s-%s-%s", getCodenameString(), gameTid, getRegionString(gameTid[3]));
 
 		if (showPerGameSettings) {
 			int saveNoBak = perGameSettings_saveNo;

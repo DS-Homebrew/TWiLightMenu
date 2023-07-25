@@ -789,6 +789,7 @@ void getGameInfo(bool isDir, const char* name)
 	bnriconisDSi = false;
 	bnrWirelessIcon = 0;
 	customIcon = 0;
+	toncset(gameTid, 0, 4);
 	isTwlm = false;
 	isDSiWare = false;
 	isHomebrew = false;
@@ -946,6 +947,36 @@ void getGameInfo(bool isDir, const char* name)
 		}
 		// clean up the allocated line
 		free(line);
+	} else if (extension(name, {".gbc"})) {
+		// this is a gbc file!
+		FILE *fp;
+
+		// open file for reading info
+		fp = fopen(name, "rb");
+		if (!fp) {
+			fclose(fp);
+			return;
+		}
+
+		fseek(fp, 0x13F, SEEK_SET);
+		fread(gameTid, 1, 4, fp);
+
+		fclose(fp);
+	} else if (extension(name, {".gba", ".agb", ".mb"})) {
+		// this is a gba file!
+		FILE *fp;
+
+		// open file for reading info
+		fp = fopen(name, "rb");
+		if (!fp) {
+			fclose(fp);
+			return;
+		}
+
+		fseek(fp, 0xAC, SEEK_SET);
+		fread(gameTid, 1, 4, fp);
+
+		fclose(fp);
 	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp;
@@ -984,7 +1015,8 @@ void getGameInfo(bool isDir, const char* name)
 
 		bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 
-		isTwlm = (strncmp(ndsHeader.gameCode, "SRLA", 4) == 0);
+		tonccpy(gameTid, ndsHeader.gameCode, 4);
+		isTwlm = (strcmp(gameTid, "SRLA") == 0);
 		romVersion = ndsHeader.romversion;
 		romUnitCode = ndsHeader.unitCode;
 		a7mbk6 = ndsHeader.a7mbk6;

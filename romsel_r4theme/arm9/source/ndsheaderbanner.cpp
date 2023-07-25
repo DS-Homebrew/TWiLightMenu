@@ -553,6 +553,7 @@ bool isDirectory = false;
 int bnrRomType = 0;
 bool bnriconisDSi = false;
 int bnrWirelessIcon = 0; // 0 = None, 1 = Local, 2 = WiFi
+char gameTid[5] = {0};
 u8 romVersion = 0;
 u8 romUnitCode = 0;
 u32 a7mbk6 = 0;

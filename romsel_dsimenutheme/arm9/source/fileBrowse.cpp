@@ -1175,6 +1175,7 @@ bool donorRomMsg(const char *filename) {
 			dirContName.append("...");
 		}
 	}
+	bool ubongo = (memcmp(gameTid[CURPOS], "KUB", 3) == 0);
 	int msgPage = 0;
 	bool pageLoaded = false;
 	bool secondPageViewed = false;
@@ -1196,7 +1197,7 @@ bool donorRomMsg(const char *filename) {
 						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK20, Alignment::center, FontPalette::dialog);
 						break;
 					case 51:
-						printSmall(false, 0, yPos, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) ? STR_HOW_TO_SET_DONOR_ROM_SDK5 : STR_HOW_TO_SET_DONOR_ROM_SDK5TWL, Alignment::center, FontPalette::dialog);
+						printSmall(false, 0, yPos, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? STR_HOW_TO_SET_DONOR_ROM_SDK5 : STR_HOW_TO_SET_DONOR_ROM_SDK5TWL, Alignment::center, FontPalette::dialog);
 						break;
 					case 52:
 						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK5TWLONLY, Alignment::center, FontPalette::dialog);
@@ -1217,7 +1218,7 @@ bool donorRomMsg(const char *filename) {
 						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK20, Alignment::center, FontPalette::dialog);
 						break;
 					case 51:
-						printSmall(false, 0, yPos, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) ? STR_DONOR_ROM_MSG_SDK5 : STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center, FontPalette::dialog);
+						printSmall(false, 0, yPos, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? STR_DONOR_ROM_MSG_SDK5 : STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center, FontPalette::dialog);
 						break;
 					case 52:
 						printSmall(false, 0, yPos, !isDSiWare[CURPOS] ? STR_DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE : STR_DONOR_ROM_MSG_SDK5TWLONLY, Alignment::center, FontPalette::dialog);
@@ -2981,7 +2982,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 								donorRomFound = (strncmp(donorRomPath.c_str(), "nand:", 5) == 0 || (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0));
 							}
-							if (!donorRomFound && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && requiresDonorRom[CURPOS] != 20) {
+							if (!donorRomFound && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && requiresDonorRom[CURPOS] != 20 && memcmp(gameTid[CURPOS], "KUB", 3) != 0) {
 								pathDefine = "DONOR5_NDS_PATH"; // SDK5.x (NTR)
 								donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 								donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
