@@ -2162,20 +2162,16 @@ int r4Theme(void) {
 
 						u32 ptr = 0x08000000;
 						u32 romSize = getFileSize(filename.c_str());
-						char titleID[4];
 						FILE* gbaFile = fopen(filename.c_str(), "rb");
-						fseek(gbaFile, 0xAC, SEEK_SET);
-						fread(&titleID, 1, 4, gbaFile);
-						if (strncmp(titleID, "AGBJ", 4) == 0 && romSize <= 0x40000) {
+						if (strncmp(gameTid, "AGBJ", 4) == 0 && romSize <= 0x40000) {
 							ptr += 0x400;
 						}
-						fseek(gbaFile, 0, SEEK_SET);
 
 						extern char copyBuf[0x8000];
 						if (romSize > 0x2000000) romSize = 0x2000000;
 
 						bool nor = false;
-						if (*(u16*)(0x020000C0) == 0x5A45 && strncmp(titleID, "AGBJ", 4) != 0) {
+						if (*(u16*)(0x020000C0) == 0x5A45 && strncmp(gameTid, "AGBJ", 4) != 0) {
 							cExpansion::SetRompage(0);
 							expansion().SetRampage(cExpansion::ENorPage);
 							cExpansion::OpenNorWrite();
