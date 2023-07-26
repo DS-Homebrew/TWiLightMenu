@@ -293,8 +293,6 @@ void ThemeTextures::loadHBTheme() {
 	}
 
 	
-	// iprintf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
-	loadWirelessIcons(*_wirelessIconsTexture);
 	// iprintf("tex().loadSettingsImage(*_settingsIconTexture)\n");
 	loadSettingsImage(*_settingsIconTexture);
 	// iprintf("tex().loadBraceImage(*_braceTexture)\n");
@@ -348,7 +346,6 @@ void ThemeTextures::loadSaturnTheme() {
 		applyGrayscaleToAllGrfTextures();
 	}
 
-	loadWirelessIcons(*_wirelessIconsTexture);
 	loadSettingsImage(*_settingsIconTexture);
 	loadBraceImage(*_braceTexture);
 
@@ -384,6 +381,7 @@ void ThemeTextures::load3DSTheme() {
 	_progressTexture = std::make_unique<Texture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
 
 	_smallCartTexture = std::make_unique<Texture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
+	_wirelessIconsTexture = std::make_unique<Texture>(TFN_GRF_WIRELESSICONS, TFN_FALLBACK_GRF_WIRELESSICONS);
 	_startBorderTexture = std::make_unique<Texture>(TFN_GRF_CURSOR, TFN_FALLBACK_GRF_CURSOR);
 	_dialogBoxTexture = std::make_unique<Texture>(TFN_GRF_DIALOGBOX, TFN_FALLBACK_GRF_DIALOGBOX);
 
@@ -458,8 +456,6 @@ void ThemeTextures::loadDSiTheme() {
 	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH());
 	//iprintf("loadScrollwindowImage(*_scrollWindowTexture)\n");
 	loadScrollwindowImage(*_scrollWindowTexture);
-	//iprintf("loadWirelessIcons(*_wirelessIconsTexture)\n");
-	loadWirelessIcons(*_wirelessIconsTexture);
 	//iprintf("loadSettingsImage(*_settingsIconTexture)\n");
 	loadSettingsImage(*_settingsIconTexture);
 	//iprintf("loadBraceImage(*_braceTexture)\n");
