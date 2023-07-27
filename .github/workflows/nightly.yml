@@ -65,9 +65,13 @@ jobs:
           # Make artifacts directory
           mkdir -p ~/artifacts
 
-          # Don't include fonts or debug files in nightlies
+          # Don't include unnecessary files in nightlies
           rm -rf 7zfile/_nds/TWiLightMenu/extras/fonts
           rm -rf 7zfile/debug
+          rm -rf 7zfile/roms
+          rm "7zfile/3DS - CFW users/Games supported with widescreen.txt"
+          rm "7zfile/AP-patched games.txt"
+          rm 7zfile/snemul.cfg
 
           cp -r 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
