@@ -1221,10 +1221,10 @@ int r4Theme(void) {
 						}
 						break;
 					case 2:
-						if (sys().isRegularDS() && ms().gbaBooter != 2) {
-							printLargeCentered(false, 166, "Start GBA Mode");
+						if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || ms().gbaBooter == TWLSettings::EGbaGbar2) {
+							printLargeCentered(false, 166, "Not used");
 						} else {
-							printLargeCentered(false, 166, "Start GBARunner2");
+							printLargeCentered(false, 166, "Start GBA Mode");
 						}
 						break;
 				}
@@ -1289,7 +1289,7 @@ int r4Theme(void) {
 						startMenu = false;
 						break;
 					case 1:
-						if (!flashcardFound() && REG_SCFG_MC != 0x11) {
+						if ((!flashcardFound() && REG_SCFG_MC != 0x11) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 25; i++) {
 								swiWaitForVBlank();
@@ -1318,56 +1318,59 @@ int r4Theme(void) {
 						}
 						break;
 					case 2:
-						// Switch to GBA mode
-						fadeType = false;	// Fade to white
-						for (int i = 0; i < 25; i++) {
-							swiWaitForVBlank();
-						}
-						ms().slot1Launched = false;
-						if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
-							if (ms().secondaryDevice) {
-								const char* gbaRunner2Path = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
-								if (isDSiMode()) {
-									gbaRunner2Path = ms().consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
-								}
-								loadPerGameSettings(filename);
-								if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)) {
-									int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false, false, -1);
-									iprintf ("Start failed. Error %i\n", err);
-								} else {
-									loadGameOnFlashcard(gbaRunner2Path, false);
-								}
-							} else {
-								std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-
-								std::vector<char*> argarray;
-								argarray.push_back(strdup(bootstrapPath.c_str()));
-								argarray.at(0) = (char*)bootstrapPath.c_str();
-
-								const char* gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-								if (sys().arm7SCFGLocked() && !sys().dsiWramAccess()) {
-									gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
-								}
-
-								CIniFile bootstrapini( BOOTSTRAP_INI );
-								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2Path);
-								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
-								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-								bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().getGameLanguage());
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-								bootstrapini.SaveIniFile( BOOTSTRAP_INI );
-								int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true, false, -1);
-								iprintf ("Start failed. Error %i\n", err);
-								if (err == 1) {
-									iprintf(ms().bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)");
-									iprintf("\nnot found.");
-								}
+						if (/* sys().isRegularDS() && */ (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) && ms().gbaBooter == TWLSettings::EGbaNativeGbar2) {
+							// Switch to GBA mode
+							fadeType = false;	// Fade to white
+							for (int i = 0; i < 25; i++) {
+								swiWaitForVBlank();
 							}
-						} else {
-							gbaSwitch();
+							ms().slot1Launched = false;
+							/* if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
+								if (ms().secondaryDevice) {
+									const char* gbaRunner2Path = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
+									if (isDSiMode()) {
+										gbaRunner2Path = ms().consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
+									}
+									loadPerGameSettings(filename);
+									if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)) {
+										int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false, false, -1);
+										iprintf ("Start failed. Error %i\n", err);
+									} else {
+										loadGameOnFlashcard(gbaRunner2Path, false);
+									}
+								} else {
+									std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+
+									std::vector<char*> argarray;
+									argarray.push_back(strdup(bootstrapPath.c_str()));
+									argarray.at(0) = (char*)bootstrapPath.c_str();
+
+									const char* gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
+									if (sys().arm7SCFGLocked() && !sys().dsiWramAccess()) {
+										gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
+									}
+
+									CIniFile bootstrapini( BOOTSTRAP_INI );
+									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2Path);
+									bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+									bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+									bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
+									bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().getGameLanguage());
+									bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+									bootstrapini.SaveIniFile( BOOTSTRAP_INI );
+									int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true, false, -1);
+									iprintf ("Start failed. Error %i\n", err);
+									if (err == 1) {
+										iprintf(ms().bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)");
+										iprintf("\nnot found.");
+									}
+								}
+							} else { */
+							if (((u8*)GBAROM)[0xB2] == 0x96) {
+								gbaSwitch();
+							}
 						}
 						break;
 				}
@@ -2151,9 +2154,9 @@ int r4Theme(void) {
 						boostVram = true;
 					}
 				} else if (extension(filename, {".agb", ".gba", ".mb"})) {
-					ms().launchType[ms().secondaryDevice] = (ms().gbaBooter == TWLSettings::EGbaNativeGbar2) ? TWLSettings::EGBANativeLaunch : TWLSettings::ESDFlashcardLaunch;
+					ms().launchType[ms().secondaryDevice] = (ms().gbaBooter == TWLSettings::EGbaNativeGbar2 && *(u16*)(0x020000C0) != 0) ? TWLSettings::EGBANativeLaunch : TWLSettings::ESDFlashcardLaunch;
 
-					if (ms().gbaBooter == TWLSettings::EGbaNativeGbar2) {
+					if (ms().launchType[ms().secondaryDevice] == TWLSettings::EGBANativeLaunch) {
 						clearText();
 						dialogboxHeight = 0;
 						showdialogbox = true;

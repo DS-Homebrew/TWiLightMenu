@@ -2079,9 +2079,9 @@ int dsiMenuTheme(void) {
 						boostVram = true;
 					}
 				} else if (extension(filename, {".agb", ".gba", ".mb"})) {
-					ms().launchType[ms().secondaryDevice] = (ms().gbaBooter == TWLSettings::EGbaNativeGbar2) ? Launch::EGBANativeLaunch : Launch::ESDFlashcardLaunch;
+					ms().launchType[ms().secondaryDevice] = (ms().gbaBooter == TWLSettings::EGbaNativeGbar2 && *(u16*)(0x020000C0) != 0) ? Launch::EGBANativeLaunch : Launch::ESDFlashcardLaunch;
 
-					if (ms().gbaBooter == TWLSettings::EGbaNativeGbar2) {
+					if (ms().launchType[ms().secondaryDevice] == Launch::EGBANativeLaunch) {
 						fontReinit();	// Re-load font into main memory
 
 						if (ms().theme == TWLSettings::EThemeHBL) {

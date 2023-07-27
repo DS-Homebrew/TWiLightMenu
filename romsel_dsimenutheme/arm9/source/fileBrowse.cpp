@@ -863,6 +863,11 @@ void switchDevice(void) {
 }
 
 void launchGba(void) {
+	if (((u8*)GBAROM)[0xB2] != 0x96) {
+		snd().playWrong();
+		return;
+	}
+
 	snd().playLaunch();
 	controlTopBright = true;
 

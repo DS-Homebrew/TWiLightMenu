@@ -202,7 +202,7 @@ void TWLSettings::loadSettings()
 	dsiMusic = (TDSiMusic)settingsini.GetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
 	boxArtColorDeband = settingsini.GetInt("SRLOADER", "PHOTO_BOXART_COLOR_DEBAND", boxArtColorDeband);
 
-	if (sys().isRegularDS() && *(u16*)(0x020000C0) != 0) {
+	if (sys().isRegularDS()) {
 		gbaBooter = (TGbaBooter)settingsini.GetInt("SRLOADER", "SHOW_GBA", gbaBooter);
 		if (gbaBooter == 0) // 0 (don't show) is deprecated
 			gbaBooter = EGbaNativeGbar2;
@@ -366,7 +366,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
 	settingsini.SetInt("SRLOADER", "PHOTO_BOXART_COLOR_DEBAND", boxArtColorDeband);
 
-	if (sys().isRegularDS() && *(u16*)(0x020000C0) != 0) {
+	if (sys().isRegularDS()) {
 		settingsini.SetInt("SRLOADER", "SHOW_GBA", gbaBooter);
 	}
 	settingsini.SetInt("SRLOADER", "SHOW_COL", colEmulator);
