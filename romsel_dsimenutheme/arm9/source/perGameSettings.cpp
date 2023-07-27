@@ -748,6 +748,7 @@ void perGameSettings (std::string filename) {
 		clearText();
 		titleUpdate(isDirectory[CURPOS], filename, CURPOS);
 
+		int filenameXpos = (ms().theme == TWLSettings::ETheme3DS) ? 24 : 16;
 		int perGameOpYpos = (ms().theme==5 ? 110 : 98);
 		Alignment startAlign = ms().rtl() ? Alignment::right : Alignment::left;
 		Alignment endAlign = ms().rtl() ? Alignment::left : Alignment::right;
@@ -755,11 +756,10 @@ void perGameSettings (std::string filename) {
 		int perGameOpEndXpos = ms().rtl() ? 24 : 256 - 24;
 		bool flashcardKernelOnly = (!(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && ms().secondaryDevice && !isHomebrew[CURPOS] && unitCode[CURPOS] == 2 && (perGameSettings_dsiMode==-1 ? !DEFAULT_DSI_MODE : perGameSettings_dsiMode==0));
 
-		printSmall(false, ms().rtl() ? 256 - 16 : 16, row1Y, dirContName, startAlign, FontPalette::dialog);
-		//if (showSDKVersion) printSmall(false, 16, row2Y, (useTwlCfg ? "TwlCfg found!" : SDKnumbertext));
-		if (showSDKVersion) printSmall(false, 16, row2Y, SDKnumbertext, Alignment::left, FontPalette::dialog);
-		printSmall(false, 256 - 16, row2Y, gameTIDText, Alignment::right, FontPalette::dialog);
-		printSmall(false, 16, botRowY, fileCounter, Alignment::left, FontPalette::dialog);
+		printSmall(false, ms().rtl() ? 256 - filenameXpos : filenameXpos, row1Y, dirContName, startAlign, FontPalette::dialog);
+		if (showSDKVersion) printSmall(false, filenameXpos, row2Y, SDKnumbertext, Alignment::left, FontPalette::dialog);
+		printSmall(false, 256 - filenameXpos, row2Y, gameTIDText, Alignment::right, FontPalette::dialog);
+		printSmall(false, filenameXpos, botRowY, fileCounter, Alignment::left, FontPalette::dialog);
 
 		if (showPerGameSettings) {
 			printSmall(false, ms().rtl() ? 256 - 16 : 16, perGameOpYpos+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ms().rtl() ? "<" : ">", startAlign, FontPalette::dialog);
@@ -957,10 +957,11 @@ void perGameSettings (std::string filename) {
 		}
 		perGameOpYpos += 14;
 		}
+		filenameXpos = (ms().theme == TWLSettings::ETheme3DS) ? 232 : 240;
 		if (!showPerGameSettings && !showCheats) {
-			printSmall(false, 240, botRowY, STR_A_OK, Alignment::right, FontPalette::dialog);
+			printSmall(false, filenameXpos, botRowY, STR_A_OK, Alignment::right, FontPalette::dialog);
 		} else {
-			printSmall(false, 240, botRowY, showCheats ? STR_X_CHEATS_B_BACK : STR_B_BACK, Alignment::right, FontPalette::dialog);
+			printSmall(false, filenameXpos, botRowY, showCheats ? STR_X_CHEATS_B_BACK : STR_B_BACK, Alignment::right, FontPalette::dialog);
 		}
 		updateText(false);
 		do {

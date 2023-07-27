@@ -1185,14 +1185,18 @@ bool donorRomMsg(const char *filename) {
 	bool pageLoaded = false;
 	bool secondPageViewed = false;
 	bool dsModeAllowed = ((requiresDonorRom[CURPOS] == 52 || requiresDonorRom[CURPOS] == 53) && !isDSiWare[CURPOS]);
-	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 8 : 96);
+
+	int arrowXpos = (ms().theme == TWLSettings::ETheme3DS) ? 20 : 12;
+	int arrowYpos = (ms().theme == TWLSettings::EThemeSaturn) ? 64 : 160;
+	int yPos = (ms().theme == TWLSettings::EThemeSaturn) ? 8 : 96;
+
 	int pressed = 0;
 	while (1) {
 		if (!pageLoaded) {
 			clearText();
 			if (ms().theme != TWLSettings::EThemeSaturn) {
 				titleUpdate(false, filename, CURPOS);
-				printSmall(false, 16, 66, dirContName.c_str(), Alignment::left, FontPalette::dialog);
+				printSmall(false, (ms().theme == TWLSettings::ETheme3DS) ? 24 : 16, 66, dirContName.c_str(), Alignment::left, FontPalette::dialog);
 			}
 			if (msgPage == 1) {
 				switch (requiresDonorRom[CURPOS]) {
@@ -1214,7 +1218,7 @@ bool donorRomMsg(const char *filename) {
 						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK50TWLONLY, Alignment::center, FontPalette::dialog);
 						break;
 				}
-				printSmall(false, 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), "<", Alignment::left, FontPalette::dialog);
+				printSmall(false, arrowXpos, arrowYpos, "<", Alignment::left, FontPalette::dialog);
 			} else {
 				switch (requiresDonorRom[CURPOS]) {
 					default:
@@ -1235,10 +1239,10 @@ bool donorRomMsg(const char *filename) {
 						printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK50TWLONLY, Alignment::center, FontPalette::dialog);
 						break;
 				}
-				printSmall(false, 256 - 12, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), ">", Alignment::right, FontPalette::dialog);
+				printSmall(false, 256 - arrowXpos, arrowYpos, ">", Alignment::right, FontPalette::dialog);
 			}
 			if (secondPageViewed) {
-				printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 64 : 160), dsModeAllowed ? STR_Y_DS_MODE_B_BACK : STR_B_BACK, Alignment::center, FontPalette::dialog);
+				printSmall(false, 0, arrowYpos, dsModeAllowed ? STR_Y_DS_MODE_B_BACK : STR_B_BACK, Alignment::center, FontPalette::dialog);
 			}
 			updateText(false);
 			pageLoaded = true;
@@ -1458,19 +1462,22 @@ bool dsiWareInDSModeMsg(std::string filename) {
 	int msgPage = 0;
 	bool pageLoaded = false;
 	bool secondPageViewed = false;
+
+	int arrowXpos = (ms().theme == TWLSettings::ETheme3DS) ? 20 : 12;
+	int yPos = 102;
+
 	while (1) {
 		if (!pageLoaded) {
 			clearText();
 			titleUpdate(false, filename.c_str(), CURPOS);
-			int yPos = 102;
 			switch (msgPage) {
 				case 0:
 					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_DSIWARE_DS_MODE_P1) - smallFontHeight()) / 2), STR_DSIWARE_DS_MODE_P1, Alignment::center, FontPalette::dialog);
-					printSmall(false, 256 - 12, 160, ">", Alignment::right, FontPalette::dialog);
+					printSmall(false, 256 - arrowXpos, 160, ">", Alignment::right, FontPalette::dialog);
 					break;
 				case 1:
 					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_DSIWARE_DS_MODE_P2) - smallFontHeight()) / 2), STR_DSIWARE_DS_MODE_P2, Alignment::center, FontPalette::dialog);
-					printSmall(false, 12, 160, "<", Alignment::left, FontPalette::dialog);
+					printSmall(false, arrowXpos, 160, "<", Alignment::left, FontPalette::dialog);
 					break;
 			}
 			if (secondPageViewed) {
