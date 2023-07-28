@@ -636,53 +636,75 @@ void launchPictochat(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch Pictochat
-	char ndsToBoot[256];
-	sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "sd" : "fat", ms().bootstrapFile ? "nightly" : "release");
-	if (access(ndsToBoot, F_OK) != 0) {
-		sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", ms().bootstrapFile ? "nightly" : "release");
-	}
+	if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
+		int err = runNdsFile(sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds", 0, NULL, true, true, true, false, false, false, ms().gameLanguage);
+		char text[32];
+		snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+		fadeType = true;
+		printLarge(false, 4, 4, text);
+		int pressed = 0;
+		do {
+			scanKeys();
+			pressed = keysDownRepeat();
+			checkSdEject();
+			swiWaitForVBlank();
+		} while (!(pressed & KEY_B));
+		fadeType = false;	// Fade to white
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		std::vector<char*> argarray;
+		argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
+		runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
+	} else {
+		char ndsToBoot[256];
+		sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "sd" : "fat", ms().bootstrapFile ? "nightly" : "release");
+		if (access(ndsToBoot, F_OK) != 0) {
+			sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", ms().bootstrapFile ? "nightly" : "release");
+		}
 
-	std::vector<char*> argarray;
-	argarray.push_back(ndsToBoot);
+		std::vector<char*> argarray;
+		argarray.push_back(ndsToBoot);
 
-	const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
-	CIniFile bootstrapini(bootstrapinipath);
-	bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds");
-	bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
-	bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
-	bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-	bootstrapini.SaveIniFile(bootstrapinipath);
-	int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
-	char text[32];
-	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-	printLarge(false, 4, 4, text);
-	if (err == 1) {
-		printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+		const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
+		CIniFile bootstrapini(bootstrapinipath);
+		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+		bootstrapini.SaveIniFile(bootstrapinipath);
+		int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
+		char text[32];
+		snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+		printLarge(false, 4, 4, text);
+		if (err == 1) {
+			printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+		}
+		printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+		updateText(false);
+		fadeType = true;
+		int pressed = 0;
+		do {
+			scanKeys();
+			pressed = keysDownRepeat();
+			checkSdEject();
+			swiWaitForVBlank();
+		} while (!(pressed & KEY_B));
+		fadeType = false;	// Fade to white
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		// while (argarray.size() != 0) {
+			free(argarray.at(0));
+			argarray.erase(argarray.begin());
+		// }
+		argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
+		runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 	}
-	printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
-	updateText(false);
-	fadeType = true;
-	int pressed = 0;
-	do {
-		scanKeys();
-		pressed = keysDownRepeat();
-		checkSdEject();
-		swiWaitForVBlank();
-	} while (!(pressed & KEY_B));
-	fadeType = false;	// Fade to white
-	for (int i = 0; i < 25; i++) {
-		swiWaitForVBlank();
-	}
-	// while (argarray.size() != 0) {
-		free(argarray.at(0));
-		argarray.erase(argarray.begin());
-	// }
-	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
-	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 	stop();
 }
 
@@ -738,6 +760,20 @@ void launchDownloadPlay(void) {
 		snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 		fadeType = true;
 		printLarge(false, 4, 4, text);
+		int pressed = 0;
+		do {
+			scanKeys();
+			pressed = keysDownRepeat();
+			checkSdEject();
+			swiWaitForVBlank();
+		} while (!(pressed & KEY_B));
+		fadeType = false;	// Fade to white
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		std::vector<char*> argarray;
+		argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
+		runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 		stop();
 	}
 }

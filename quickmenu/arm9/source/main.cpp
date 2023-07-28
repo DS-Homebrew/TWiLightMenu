@@ -1846,7 +1846,16 @@ int dsClassicMenu(void) {
 							controlTopBright = false;
 							clearText();
 
-							if (pictochatReboot) {
+							if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
+								chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
+								int err = runNdsFile (pictochatPath, 0, NULL, true, true, true, false, false, false, ms().gameLanguage);
+								char text[64];
+								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+								clearText();
+								ClearBrightness();
+								printSmall(false, 4, 4, text);
+								stop();
+							} else if (pictochatReboot) {
 								*(u32*)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
 								*(u16*)(0x02000304) = 0x1801;
 
