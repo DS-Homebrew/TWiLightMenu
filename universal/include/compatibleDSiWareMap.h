@@ -483,7 +483,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 42
+// Total: 43
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -496,6 +496,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KQN", // Castle Conqueror: Revolution
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
+	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"K2E", // Easter Eggztravaganza
 	"KFD", // Fieldrunners
 	"KFP", // Flipper
@@ -542,6 +543,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Castle Conqueror: Revolution (Crashes at certain point(s))
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
+	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state due to RAM limitation)
 	0, // Easter Eggztravaganza (Part of the game only)
 	1, // Fieldrunners (No audio)
 	2, // Flipper (No music)
@@ -629,10 +631,9 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 };
 
 // Show RAM limitation message for both DS Retail & Debug consoles
-// Total: 9
+// Total: 8
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 	"KUI", // Decathlon 2012
-	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"KHW", // EJ Puzzles: Hooked
 	"K9A", // Goooooal America / Goooooal Europa 2012
 	"KNK", // Ideyou Sukeno: Kenkou Maja DSi
@@ -645,7 +646,6 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 // RAM limitation message ID
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // Decathlon 2012 (No audio)
-	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state due to RAM limitation)
 	2, // EJ Puzzles: Hooked (No music)
 	1, // Goooooal America / Goooooal Europa 2012 (No audio)
 	7, // Ideyou Sukeno: Kenkou Maja DSi (Limited state due to no save support)
