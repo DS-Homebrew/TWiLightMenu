@@ -1068,6 +1068,8 @@ void getGameInfo(bool isDir, const char* name)
 				requiresDonorRom = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
 				if (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000) {
 					requiresDonorRom += 100;
+				} else if (memcmp(ndsHeader.gameCode, "KCX", 3) == 0 && dsiEnhancedMbk) {
+					requiresDonorRom = 0;
 				}
 			} else if (a7mbk6 == 0x080037C0 && ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode)
 			&& (((sys().dsDebugRam() || (dsiFeatures() && bs().b4dsMode == 2)) ? (memcmp(ndsHeader.gameCode, "DME", 3) == 0 || memcmp(ndsHeader.gameCode, "DMD", 3) == 0 || memcmp(ndsHeader.gameCode, "DMP", 3) == 0 || memcmp(ndsHeader.gameCode, "DHS", 3) == 0) : (memcmp(ndsHeader.gameCode, "DMP", 3) == 0))
