@@ -1295,7 +1295,6 @@ void mdRomTooBig(void) {
 		fadeType = true;
 	} else {
 		snd().playWrong();
-		dbox_showIcon = true;
 		showdialogbox = true;
 	}
 	clearText();
@@ -1308,6 +1307,7 @@ void mdRomTooBig(void) {
 	}
 	printSmall(false, 0, 64, STR_MD_ROM_TOO_BIG, Alignment::center, FontPalette::dialog);
 	printSmall(false, 0, 160, STR_A_OK, Alignment::center, FontPalette::dialog);
+	updateText(false);
 	int pressed = 0;
 	do {
 		scanKeys();
