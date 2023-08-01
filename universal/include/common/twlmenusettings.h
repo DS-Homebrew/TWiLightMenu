@@ -10,7 +10,7 @@
 #define _DSIMENUPPSETTINGS_H_
 
 /**
- * Multi use class for DSiMenuPlusPlus INI file.
+ * Multi use class for TWiLight Menu++ INI file.
  * 
  * Try not to change settings that are not related to the current theme.
  */
@@ -32,17 +32,6 @@ public:
 	// 	EViewIcon = 1,
 	// 	EViewInternal = 2
 	// };
-
-	enum TFlashCard : int
-	{
-		EDSTTClone = 0,     // DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-		ER4Original = 1,    // R4DS (Original Non-SDHC version)/ M3 Simply
-		ER4iGoldClone = 2,  // R4iDSN/R4i Gold RTS/R4 Ultra
-		EAcekard2i = 3,     // Acekard 2(i)/Galaxy Eagle/M3DS Real
-		EAcekardRPG = 4,    // Acekard RPG
-		EGatewayBlue = 5,   // Ace 3DS+/Gateway Blue Card/R4iTT
-		ESupercardDSTWO = 6 // SuperCard DSTWO
-	};
 
 	// Do not reorder these, just add to the end
 	enum TLanguage : int
@@ -312,7 +301,6 @@ public:
 	bool fcSaveOnSd;
 	std::vector<std::string> blockedExtensions;
 
-	int flashcard;
 	TSlot1LaunchMethod slot1LaunchMethod;
 
 	int dsiSplash;
@@ -359,6 +347,8 @@ public:
 	bool btsrpBootloaderDirect;
 	TBootstrapFile bootstrapFile;
 
+	std::string internetBrowserPath;
+	bool internetBrowserLaunched;
 	std::string dsiWareSrlPath;
 	std::string dsiWarePubPath;
 	std::string dsiWarePrvPath;

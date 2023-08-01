@@ -71,7 +71,6 @@ TWLSettings::TWLSettings()
 	secondaryDevice = !sys().isRunFromSD();
 	fcSaveOnSd = false;
 
-	flashcard = EDSTTClone;
 	slot1LaunchMethod = EDirect;
 
 	dsiSplash = isDSiMode();
@@ -119,6 +118,7 @@ TWLSettings::TWLSettings()
 	btsrpBootloaderDirect = false;
 	bootstrapFile = EReleaseBootstrap;
 
+	internetBrowserLaunched = false;
 	slot1Launched = false;
 	launchType[0] = ENoLaunch;
 	launchType[1] = ENoLaunch;
@@ -246,7 +246,6 @@ void TWLSettings::loadSettings()
 	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 	settingsini.GetStringVector("SRLOADER", "BLOCKED_EXTENSIONS", blockedExtensions, ':');
 
-	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
 	slot1LaunchMethod = (TSlot1LaunchMethod)settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
 
 	dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
@@ -300,6 +299,8 @@ void TWLSettings::loadSettings()
 	btsrpBootloaderDirect = settingsini.GetInt("SRLOADER", "BOOTSTRAP_BOOTLOADER_DIRECT", btsrpBootloaderDirect);
 	bootstrapFile = (TBootstrapFile)settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
 
+	internetBrowserPath = settingsini.GetString("SRLOADER", "INTERNET_BROWSER_PATH", internetBrowserPath);
+	internetBrowserLaunched = settingsini.GetInt("SRLOADER", "INTERNET_BROWSER_LAUNCHED", internetBrowserLaunched);
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 	dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
@@ -395,7 +396,6 @@ void TWLSettings::saveSettings()
 	}
 	settingsini.SetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
-	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 	settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
 
 	settingsini.SetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
@@ -443,6 +443,8 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_BOOTLOADER_DIRECT", btsrpBootloaderDirect);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
 
+	settingsini.SetString("SRLOADER", "INTERNET_BROWSER_PATH", internetBrowserPath);
+	settingsini.SetInt("SRLOADER", "INTERNET_BROWSER_LAUNCHED", internetBrowserLaunched);
 	settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 	settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 	settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);

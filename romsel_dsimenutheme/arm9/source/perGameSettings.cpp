@@ -79,6 +79,7 @@ int perGameSettings_expandRomSpace = -1;
 int perGameSettings_dsiwareBooter = -1;
 int perGameSettings_useBootstrap = -1;
 
+std::string setAsInternetBrowser = "";
 std::string setAsDonorRom = "";
 
 extern int file_count;
@@ -324,6 +325,13 @@ bool showSetDonorRomDSiWare(u32 arm7size) {
 	 || arm7size==0x26DF4
 	 || arm7size==0x27FB4
 	 || arm7size==0x28E54);
+}
+
+bool internetBrowserTextShown = false;
+void revertInternetBrowserText(void) {
+	if (!internetBrowserTextShown || setAsInternetBrowser != STR_DONE) return;
+
+	setAsInternetBrowser = STR_SET_AS_INTERNET_BROWSER;
 }
 
 bool donorRomTextShown = false;
@@ -646,6 +654,13 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
+			if (memcmp(gameTid[CURPOS], "UBR", 3) == 0 || (dsiFeatures() && memcmp(gameTid[CURPOS], "HNG", 3) == 0)) {
+				perGameOps++;
+				perGameOp[perGameOps] = 15;	// Set as Internet Browser
+				internetBrowserTextShown = true;
+			} else {
+				internetBrowserTextShown = false;
+			}
 			if (a7mbk6[CURPOS] == 0x080037C0 ? showSetDonorRomDSiWare(arm7size) : showSetDonorRom(arm7size, SDKVersion, dsiBinariesFound)) {
 				perGameOps++;
 				perGameOp[perGameOps] = 9;	// Set as Donor ROM
@@ -654,6 +669,13 @@ void perGameSettings (std::string filename) {
 				donorRomTextShown = false;
 			}
 		} else if (!dsiFeatures()) {
+			if (memcmp(gameTid[CURPOS], "UBR", 3) == 0) {
+				perGameOps++;
+				perGameOp[perGameOps] = 15;	// Set as Internet Browser
+				internetBrowserTextShown = true;
+			} else {
+				internetBrowserTextShown = false;
+			}
 			if (a7mbk6[CURPOS] != 0x080037C0 && showSetDonorRom(arm7size, SDKVersion, dsiBinariesFound)) {
 				perGameOps++;
 				perGameOp[perGameOps] = 9;	// Set as Donor ROM
@@ -719,6 +741,7 @@ void perGameSettings (std::string filename) {
 		while (!dboxStopped) { bgOperations(true); }
 	}
 
+	setAsInternetBrowser = STR_SET_AS_INTERNET_BROWSER;
 	setAsDonorRom = STR_SET_AS_DONOR_ROM;
 
 	// About 35 characters fit in the box.
@@ -954,6 +977,9 @@ void perGameSettings (std::string filename) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_KERNEL, endAlign, FontPalette::dialog);
 				}
 				break;
+			case 15:
+				printSmall(false, 0, perGameOpYpos, setAsInternetBrowser, Alignment::center, FontPalette::dialog);
+				break;
 		}
 		perGameOpYpos += 14;
 		}
@@ -979,6 +1005,7 @@ void perGameSettings (std::string filename) {
 		} else {
 			if (held & KEY_UP) {
 				snd().playSelect();
+				revertInternetBrowserText();
 				revertDonorRomText();
 				perGameSettings_cursorPosition--;
 				if (perGameSettings_cursorPosition < 0) {
@@ -990,6 +1017,7 @@ void perGameSettings (std::string filename) {
 			}
 			if (held & KEY_DOWN) {
 				snd().playSelect();
+				revertInternetBrowserText();
 				revertDonorRomText();
 				perGameSettings_cursorPosition++;
 				if (perGameSettings_cursorPosition > perGameOps) {
@@ -1214,6 +1242,15 @@ void perGameSettings (std::string filename) {
 					case 14:
 						perGameSettings_useBootstrap++;
 						if (perGameSettings_useBootstrap > 1) perGameSettings_useBootstrap = -1;
+						break;
+					case 15:
+					  if (pressed & KEY_A) {
+						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
+						RemoveTrailingSlashes(romFolderNoSlash);
+						ms().internetBrowserPath = romFolderNoSlash+"/"+filename;
+						ms().saveSettings();
+						setAsInternetBrowser = STR_DONE;
+					  }
 						break;
 				}
 				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();

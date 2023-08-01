@@ -723,7 +723,7 @@ void doPause() {
 	scanKeys();
 }
 
-void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
+void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
 	std::string filename = ndsPath;
@@ -744,7 +744,11 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 
 		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 		std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
-		std::string romFolderNoSlash = ms().romfolder[true];
+		std::string romfolder = ndsPath;
+		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+			romfolder.resize(romfolder.size()-1);
+		}
+		std::string romFolderNoSlash = romfolder;
 		RemoveTrailingSlashes(romFolderNoSlash);
 		mkdir("saves", 0777);
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;

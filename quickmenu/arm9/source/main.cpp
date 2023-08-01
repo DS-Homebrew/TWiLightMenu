@@ -727,7 +727,7 @@ void InitSound() {
 	};
 }
 
-void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
+void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
 	std::string filename = ndsPath;
@@ -757,7 +757,11 @@ void loadGameOnFlashcard (const char* ndsPath, bool dsGame) {
 
 		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 		std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
-		std::string romFolderNoSlash = romfolder[true];
+		std::string romfolder = ndsPath;
+		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+			romfolder.resize(romfolder.size()-1);
+		}
+		std::string romFolderNoSlash = romfolder;
 		RemoveTrailingSlashes(romFolderNoSlash);
 		std::string saveFolder = romFolderNoSlash + "/saves";
 		mkdir(saveFolder.c_str(), 0777);

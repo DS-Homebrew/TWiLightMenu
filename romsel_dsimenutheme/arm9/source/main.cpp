@@ -634,7 +634,7 @@ void doPause() {
 	scanKeys();
 }
 
-void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
+void loadGameOnFlashcard(const char *ndsPath, bool dsGame) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
 	std::string filename = ndsPath;
@@ -655,7 +655,11 @@ void loadGameOnFlashcard (const char *ndsPath, bool dsGame) {
 
 		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 		std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
-		std::string romFolderNoSlash = ms().romfolder[true];
+		std::string romfolder = ndsPath;
+		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+			romfolder.resize(romfolder.size()-1);
+		}
+		std::string romFolderNoSlash = romfolder;
 		RemoveTrailingSlashes(romFolderNoSlash);
 		mkdir("saves", 0777);
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
@@ -824,6 +828,77 @@ bool createDSiWareSave(const char *path, int size) {
 	}
 
 	return false;
+}
+
+void createSaveFile(const char* savePath, const bool isHomebrew, const char* gameTid) {
+	if (isHomebrew) { // Create or expand save if game isn't homebrew
+		return;
+	}
+
+	u32 orgsavesize = getFileSize(savePath);
+	u32 savesize = 524288; // 512KB (default size for most games)
+
+	u32 gameTidHex = 0;
+	tonccpy(&gameTidHex, &gameTid, 4);
+
+	for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
+		ROMListEntry* curentry = &ROMList[i];
+		if (gameTidHex == curentry->GameCode) {
+			if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
+			break;
+		}
+	}
+
+	if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
+		if (ms().theme == TWLSettings::EThemeHBL) {
+			displayGameIcons = false;
+		} else if (ms().theme != TWLSettings::EThemeSaturn) {
+			while (!screenFadedOut()) {
+				swiWaitForVBlank();
+			}
+			whiteScreen = true;
+			tex().clearTopScreen();
+		}
+		clearText();
+		printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
+		updateText(false);
+
+		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
+			fadeSpeed = true; // Fast fading
+			fadeType = true; // Fade in from white
+		}
+		showProgressIcon = true;
+
+		FILE *pFile = fopen(savePath, orgsavesize > 0 ? "r+" : "wb");
+		if (pFile) {
+			showProgressBar = true;
+			u32 i = (orgsavesize>0 ? orgsavesize : 0);
+			while (1) {
+				i += 0x8000;
+				if (i > savesize) i = savesize;
+				progressBarLength = i/(savesize/192);
+				fseek(pFile, i - 1, SEEK_SET);
+				fputc('\0', pFile);
+				if (i == savesize) break;
+			}
+			fclose(pFile);
+			showProgressBar = false;
+		}
+		showProgressIcon = false;
+		clearText();
+		printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 32 : 88), (orgsavesize == 0) ? STR_SAVE_CREATED : STR_SAVE_EXPANDED, Alignment::center);
+		updateText(false);
+		for (int i = 0; i < 30; i++) {
+			swiWaitForVBlank();
+		}
+		if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
+			clearText();
+			updateText(false);
+		} else {
+			fadeType = false;	   // Fade to white
+		}
+		if (ms().theme == TWLSettings::EThemeHBL) displayGameIcons = true;
+	}
 }
 
 void s2RamAccess(bool open) {
@@ -1226,7 +1301,6 @@ int dsiMenuTheme(void) {
 				sNDSHeaderExt NDSHeader;
 
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");
-
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
@@ -1611,72 +1685,7 @@ int dsiMenuTheme(void) {
 						}
 						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
 
-						if (!isHomebrew[CURPOS]) { // Create or expand save if game isn't homebrew
-							u32 orgsavesize = getFileSize(savepath.c_str());
-							u32 savesize = 524288; // 512KB (default size for most games)
-
-							u32 gameTidHex = 0;
-							tonccpy(&gameTidHex, &gameTid[CURPOS], 4);
-
-							for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
-								ROMListEntry* curentry = &ROMList[i];
-								if (gameTidHex == curentry->GameCode) {
-									if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
-									break;
-								}
-							}
-
-							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
-								if (ms().theme == TWLSettings::EThemeHBL) {
-									displayGameIcons = false;
-								} else if (ms().theme != TWLSettings::EThemeSaturn) {
-									while (!screenFadedOut()) {
-										swiWaitForVBlank();
-									}
-									whiteScreen = true;
-									tex().clearTopScreen();
-								}
-								clearText();
-								printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
-								updateText(false);
-
-								if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
-									fadeSpeed = true; // Fast fading
-									fadeType = true; // Fade in from white
-								}
-								showProgressIcon = true;
-
-								FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
-								if (pFile) {
-									showProgressBar = true;
-									u32 i = (orgsavesize>0 ? orgsavesize : 0);
-									while (1) {
-										i += 0x8000;
-										if (i > savesize) i = savesize;
-										progressBarLength = i/(savesize/192);
-										fseek(pFile, i - 1, SEEK_SET);
-										fputc('\0', pFile);
-										if (i == savesize) break;
-									}
-									fclose(pFile);
-									showProgressBar = false;
-								}
-								showProgressIcon = false;
-								clearText();
-								printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 32 : 88), (orgsavesize == 0) ? STR_SAVE_CREATED : STR_SAVE_EXPANDED, Alignment::center);
-								updateText(false);
-								for (int i = 0; i < 30; i++) {
-									swiWaitForVBlank();
-								}
-								if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
-									clearText();
-									updateText(false);
-								} else {
-									fadeType = false;	   // Fade to white
-								}
-								if (ms().theme == TWLSettings::EThemeHBL) displayGameIcons = true;
-							}
-						}
+						createSaveFile(savepath.c_str(), isHomebrew[CURPOS], gameTid[CURPOS]);
 
 						SetMPUSettings();
 

@@ -2400,9 +2400,10 @@ int titleMode(void)
 	}
 
 	if (fcFound) {
-	  if (ms().launchType[true] == Launch::ESDFlashcardLaunch) {
+	  if (ms().internetBrowserLaunched || ms().launchType[true] == Launch::ESDFlashcardLaunch) {
 		// Move .sav back to "saves" folder
-		std::string filename = ms().romPath[true];
+		std::string romPath = ms().internetBrowserLaunched ? ms().internetBrowserPath : ms().romPath[true];
+		std::string filename = romPath;
 		const size_t last_slash_idx = filename.find_last_of("/");
 		if (std::string::npos != last_slash_idx) {
 			filename.erase(0, last_slash_idx + 1);
@@ -2423,7 +2424,7 @@ int titleMode(void)
 
 		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 		std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
-		std::string romfolder = ms().romPath[true];
+		std::string romfolder = romPath;
 		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
 			romfolder.resize(romfolder.size()-1);
 		}
@@ -2599,6 +2600,11 @@ int titleMode(void)
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", ms().useRomRegion);
 			bootstrapini.SaveIniFileModified(sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 		}
+	}
+
+	if (ms().internetBrowserLaunched) {
+		ms().internetBrowserLaunched = false;
+		ms().saveSettings();
 	}
 
 	if (!softResetParamsFound && !(*(u32*)0x02000000 & BIT(3)) && ms().dsiSplash && (REG_SCFG_EXT!=0&&ms().consoleModel<2 ? fifoGetValue32(FIFO_USER_04) != 0x01 : !(*(u32*)0x02000000 & BIT(0)))) {

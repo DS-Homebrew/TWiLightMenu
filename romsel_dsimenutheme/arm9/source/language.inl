@@ -68,6 +68,10 @@ STRING(CANNOT_LAUNCH_HB_ON_3DS, "This homebrew cannot be\nlaunched on 3DS consol
 STRING(PRESS_B_RETURN, "Press \\B to return.")
 STRING(BAD_CLUSTER_SIZE, "Your SD card is not formatted\nusing 32KB clusters, this causes\nsome games to load very slowly.\nIt's recommended to reformat your\nSD card using 32KB clusters.")
 
+// Internet Browser
+STRING(NO_INTERNET_BROWSER_MSG_NTR, "There is no Internet Browser\ncurrently set. Look for\nthe Nintendo DS\nBrowser, press \\Y, and select\n\"Set as Internet Browser\".")
+STRING(NO_INTERNET_BROWSER_MSG, "There is no Internet Browser\ncurrently set. Look for\nthe Nintendo DS or DSi\nBrowser, press \\Y, and select\n\"Set as Internet Browser\".")
+
 // Donor ROM
 STRING(DONOR_ROM_MSG_SDK20, "Please set a different SDK2.0\ntitle as a donor ROM, in order\nto launch this title.")
 STRING(DONOR_ROM_MSG_SDK5, "Please set an SDK5 Nintendo DS\ntitle as a donor ROM, in order\nto launch this title.")
@@ -140,6 +144,7 @@ STRING(SET_AS_DONOR_ROM, "Set as Donor ROM")
 STRING(EXPAND_ROM_SPACE, "Ex. ROM space in RAM")
 STRING(DSIWAREBOOTER, "DSiWare Booter")
 STRING(GAME_LOADER, "Game Loader")
+STRING(SET_AS_INTERNET_BROWSER, "Set as Internet Browser")
 STRING(DONE, "Done!")
 STRING(X_CHEATS_B_BACK, "\\X Cheats  \\B Back")
 

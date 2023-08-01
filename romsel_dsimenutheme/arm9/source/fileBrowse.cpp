@@ -13,6 +13,7 @@
 #include <nds.h>
 #include <nds/arm9/dldi.h>
 #include <fat.h>
+#include "fat_ext.h"
 
 #include "date.h"
 
@@ -35,7 +36,9 @@
 #include "common/flashcard.h"
 #include "common/inifile.h"
 #include "common/nds_loader_arm9.h"
+#include "common/stringtool.h"
 #include "common/systemdetails.h"
+#include "common/tonccpy.h"
 #include "defaultSettings.h"
 #include "myDSiMode.h"
 #include "language.h"
@@ -127,10 +130,13 @@ bool bannerTextShown = false;
 
 extern void stop();
 
+extern void RemoveTrailingSlashes(std::string &path);
 extern void loadGameOnFlashcard(const char *ndsPath, bool dsGame);
 extern void dsCardLaunch();
 extern void unlaunchSetHiyaBoot();
 extern void SetWidescreen(const char *filename);
+extern bool createDSiWareSave(const char *path, int size);
+extern void createSaveFile(const char* savePath, const bool isHomebrew, const char* gameTid);
 
 extern bool rocketVideo_playVideo;
 
@@ -721,7 +727,7 @@ void launchDownloadPlay(void) {
 	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
-	// Launch Pictochat
+	// Launch DS Download Play
 	if (isDSiMode() && sys().arm7SCFGLocked()) {
 		*(u32*)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
 		*(u16*)(0x02000304) = 0x1801;
@@ -797,6 +803,257 @@ void launchDownloadPlay(void) {
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 		bootstrapini.SaveIniFile(bootstrapinipath);
+		int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
+		char text[32];
+		snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+		printLarge(false, 4, 4, text);
+		if (err == 1) {
+			printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+		}
+		printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+		updateText(false);
+		fadeType = true;
+		int pressed = 0;
+		do {
+			scanKeys();
+			pressed = keysDownRepeat();
+			checkSdEject();
+			swiWaitForVBlank();
+		} while (!(pressed & KEY_B));
+		fadeType = false;	// Fade to white
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		// while (argarray.size() != 0) {
+			free(argarray.at(0));
+			argarray.erase(argarray.begin());
+		// }
+		argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
+		runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
+	}
+	stop();
+}
+
+void launchInternetBrowser(std::string filename) {
+	if (ms().internetBrowserPath == "" || access(ms().internetBrowserPath.c_str(), F_OK) != 0) {
+		if (ms().theme == TWLSettings::EThemeSaturn) {
+			snd().playStartup();
+			fadeType = false;	   // Fade to black
+			for (int i = 0; i < 25; i++) {
+				bgOperations(true);
+			}
+			currentBg = 1;
+			displayGameIcons = false;
+			fadeType = true;
+		} else {
+			snd().playWrong();
+			showdialogbox = true;
+		}
+		clearText();
+		updateText(false);
+		if (ms().theme == TWLSettings::EThemeSaturn) {
+			while (!screenFadedIn()) { bgOperations(true); }
+			snd().playWrong();
+		} else {
+			while (!dboxStopped) { bgOperations(true); }
+		}
+		printSmall(false, 0, 52, dsiFeatures() ? STR_NO_INTERNET_BROWSER_MSG : STR_NO_INTERNET_BROWSER_MSG_NTR, Alignment::center, FontPalette::dialog);
+		printSmall(false, 0, 160, STR_A_OK, Alignment::center, FontPalette::dialog);
+		updateText(false);
+		int pressed = 0;
+		do {
+			scanKeys();
+			pressed = keysDown();
+			bgOperations(true);
+		} while (!(pressed & KEY_A));
+		snd().playBack();
+		showdialogbox = false;
+		if (ms().theme == TWLSettings::EThemeSaturn) {
+			fadeType = false;	   // Fade to black
+			for (int i = 0; i < 25; i++) {
+				bgOperations(true);
+			}
+			clearText();
+			currentBg = 0;
+			displayGameIcons = true;
+			fadeType = true;
+			snd().playStartup();
+		} else {
+			clearText();
+			updateText(false);
+			if (ms().theme == TWLSettings::EThemeDSi) {
+				for (int i = 0; i < 25; i++) {
+					bgOperations(true);
+				}
+			}
+		}
+		titleUpdate(false, filename.c_str(), CURPOS);
+		updateText(false);
+		return;
+	}
+
+	snd().playLaunch();
+	controlTopBright = true;
+
+	fadeType = false;		  // Fade to white
+	snd().fadeOutStream();
+	for (int i = 0; i < 60; i++) {
+		bgOperations(true);
+	}
+	mmEffectCancelAll();
+	snd().stopStream();
+	ms().internetBrowserLaunched = true;
+	ms().saveSettings();
+	// Launch Internet Browser
+	if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && ms().internetBrowserPath[0] == 'f' && ms().internetBrowserPath[1] == 'a' && ms().internetBrowserPath[2] == 't') {
+		loadGameOnFlashcard(ms().internetBrowserPath.c_str(), true);
+	} else {
+		sNDSHeaderExt NDSHeader;
+
+		std::string filename = ms().internetBrowserPath;
+		const size_t last_slash_idx = filename.find_last_of("/");
+		if (std::string::npos != last_slash_idx) {
+			filename.erase(0, last_slash_idx + 1);
+		}
+
+		FILE *f_nds_file = fopen(filename.c_str(), "rb");
+		fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+		fclose(f_nds_file);
+
+		if (!dsiFeatures() && NDSHeader.unitCode == 3) {
+			stop();
+		}
+
+		std::string typeToReplace = filename.substr(filename.rfind('.'));
+
+		char browserTid[5] = {0};
+		tonccpy(browserTid, NDSHeader.gameCode, 4);
+
+		std::string romfolder = ms().internetBrowserPath;
+		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+			romfolder.resize(romfolder.size()-1);
+		}
+		std::string romFolderNoSlash = romfolder;
+		RemoveTrailingSlashes(romFolderNoSlash);
+		mkdir("saves", 0777);
+		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
+		std::string savenamePub = replaceAll(filename, typeToReplace, getPubExtension());
+		std::string savenamePrv = replaceAll(filename, typeToReplace, getPrvExtension());
+		std::string savepath = romFolderNoSlash + "/saves/" + savename;
+		std::string savepathPub = romFolderNoSlash + "/saves/" + savenamePub;
+		std::string savepathPrv = romFolderNoSlash + "/saves/" + savenamePrv;
+
+		char sfnSrl[62];
+		char sfnPub[62];
+		char sfnPrv[62];
+
+		if (NDSHeader.unitCode == 3) {
+			if ((getFileSize(savepathPub.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
+				if (ms().theme == TWLSettings::EThemeHBL) {
+					displayGameIcons = false;
+				} else if (ms().theme != TWLSettings::EThemeSaturn) {
+					while (!screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+					fadeSpeed = true; // Fast fading
+					whiteScreen = true;
+					tex().clearTopScreen();
+				}
+				clearText();
+				printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), STR_CREATING_PUBLIC_SAVE, Alignment::center);
+				updateText(false);
+				if (ms().theme != TWLSettings::EThemeSaturn && !fadeType) {
+					fadeType = true; // Fade in from white
+				}
+				showProgressIcon = true;
+				createDSiWareSave(savepathPub.c_str(), NDSHeader.pubSavSize);
+				showProgressIcon = false;
+				clearText();
+				printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 32 : 88), STR_PUBLIC_SAVE_CREATED, Alignment::center);
+				updateText(false);
+				for (int i = 0; i < 60; i++) {
+					swiWaitForVBlank();
+				}
+				if (ms().theme == TWLSettings::EThemeHBL) displayGameIcons = true;
+			}
+
+			if ((getFileSize(savepathPrv.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
+				if (ms().theme == TWLSettings::EThemeHBL) {
+					displayGameIcons = false;
+				} else if (ms().theme != TWLSettings::EThemeSaturn) {
+					while (!fadeType && !screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+					fadeSpeed = true; // Fast fading
+					whiteScreen = true;
+					tex().clearTopScreen();
+				}
+				clearText();
+				printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), STR_CREATING_PRIVATE_SAVE, Alignment::center);
+				updateText(false);
+				if (ms().theme != TWLSettings::EThemeSaturn && !fadeType) {
+					fadeType = true; // Fade in from white
+				}
+				showProgressIcon = true;
+				createDSiWareSave(savepathPrv.c_str(), NDSHeader.prvSavSize);
+				showProgressIcon = false;
+				clearText();
+				printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 32 : 88), STR_PRIVATE_SAVE_CREATED, Alignment::center);
+				updateText(false);
+				for (int i = 0; i < 60; i++) {
+					swiWaitForVBlank();
+				}
+				if (ms().theme == TWLSettings::EThemeHBL) displayGameIcons = true;
+			}
+
+			if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL && fadeType) {
+				fadeType = false; // Fade to white
+			}
+
+			fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().internetBrowserPath.c_str(), sfnSrl);
+			fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", savepathPub.c_str(), sfnPub);
+			fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", savepathPrv.c_str(), sfnPrv);
+		} else {
+			createSaveFile(savepath.c_str(), false, browserTid);
+		}
+
+		char ndsToBoot[256];
+		sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "sd" : "fat", ms().bootstrapFile ? "nightly" : "release");
+		if (access(ndsToBoot, F_OK) != 0) {
+			sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", ms().bootstrapFile ? "nightly" : "release");
+		}
+
+		std::vector<char*> argarray;
+		argarray.push_back(ndsToBoot);
+
+		const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
+		CIniFile bootstrapini(bootstrapinipath);
+		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().internetBrowserPath.c_str());
+		if (NDSHeader.unitCode == 3) {
+			bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
+			bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
+			bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
+		} else {
+			bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath.c_str());
+			bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", "");
+		}
+		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 1);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+		bootstrapini.SaveIniFile(bootstrapinipath);
+
+		if (ms().theme == TWLSettings::EThemeHBL) {
+			fadeType = false;		  // Fade to black
+		}
+
+		while (!screenFadedOut()) {
+			swiWaitForVBlank();
+		}
+
 		int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
 		char text[32];
 		snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
@@ -3442,13 +3699,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							case 2: // Launch Pictochat
 								launchPictochat();
 								break;
-							case 3: // Launch Download Play
+							case 3: // Launch DS Download Play
 								launchDownloadPlay();
+								break;
+							case 4: // Launch Internet Browser
+								launchInternetBrowser(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 								break;
 							case 5: // Open the manual
 								launchManual();
 								break;
-							default: // Not implemented yet
+							default:
 								snd().playWrong();
 								break;
 						}
