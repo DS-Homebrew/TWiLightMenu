@@ -360,28 +360,7 @@ void vBlankHandler()
 				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[0]);
 				if ((isDSiMode() && !flashcardFound() && sys().arm7SCFGLocked()) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[0]);
-				} else if (customIcon[1]) drawIcon(1, 40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 20) drawIconIMG(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 19) drawIconVID(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 18) drawIconCPC(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 17) drawIconNGP(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 16) drawIconWS(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 15) drawIconSG(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 14) drawIconM5(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 13) drawIconCOL(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 12) drawIconINT(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 11) drawIconPCE(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 10) drawIconA26(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 9) drawIconPlg(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 8) drawIconSNES(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 7) drawIconMD(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 6) drawIconGG(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 5) drawIconSMS(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 4) drawIconNES(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 3) drawIconGBC(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 2) drawIconGB(40, iconYpos[0]+6);
-				else if (bnrRomType[1] == 1) glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, gbaIconImage);
-				else drawIcon(1, 40, iconYpos[0]+6);
+				} else drawIcon(1, 40, iconYpos[0]+6);
 			}
 			if (bnrWirelessIcon[0] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[0]-1) & 31]);
 			// Playback animated icon
@@ -392,29 +371,7 @@ void vBlankHandler()
 			glSprite(129, iconYpos[2], GL_FLIP_NONE, &pictodlpImage[3-dlplayFound]);
 			glSprite(33, iconYpos[3], GL_FLIP_NONE, sdFound() ? &iconboxImage[0] : &iconboxImage[sys().isRegularDS() ? (((u8*)GBAROM)[0xB2] != 0x96) : 1]);
 			int num = (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? 1 : 0;
-			if (!sdFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) drawIconGBA(40, iconYpos[3]+6);
-			else if (customIcon[num]) drawIcon(num, 40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 20) drawIconIMG(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 19) drawIconVID(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 18) drawIconCPC(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 17) drawIconNGP(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 16) drawIconWS(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 15) drawIconSG(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 14) drawIconM5(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 13) drawIconCOL(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 12) drawIconINT(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 11) drawIconPCE(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 10) drawIconA26(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 9) drawIconPlg(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 8) drawIconSNES(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 7) drawIconMD(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 6) drawIconGG(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 5) drawIconSMS(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 4) drawIconNES(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 3) drawIconGBC(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 2) drawIconGB(40, iconYpos[3]+6);
-			else if (bnrRomType[num] == 1) glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
-			else drawIcon(num, 40, iconYpos[3]+6);
+			drawIcon(num, 40, iconYpos[3]+6);
 			if (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2)) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, &cornerIcons[0]);
 			}

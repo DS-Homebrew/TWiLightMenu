@@ -482,7 +482,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 		}
 
 		int pos = CURPOS + (right ? 2 : -2);
-		if ((bnrRomType[pos] == 0 || customIcon[pos]) && pos >= 0 && pos + PAGENUM * 40 < (int)dirContents.size()) {
+		if (pos >= 0 && pos + PAGENUM * 40 < (int)dirContents.size()) {
 			iconUpdate(dirContents[pos + PAGENUM * 40].isDirectory,
 						dirContents[pos + PAGENUM * 40].name.c_str(),
 						pos);
@@ -2515,7 +2515,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	// Load correct icons depending on cursor position
 	if (CURPOS <= 1) {
 		for (int i = 0; i < 5; i++) {
-			if ((bnrRomType[i] == 0 || customIcon[i]) && i + PAGENUM * 40 < file_count) {
+			if (i + PAGENUM * 40 < file_count) {
 				bgOperations(true);
 				iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
 					   dirContents[scrn].at(i + PAGENUM * 40).name.c_str(), i);
@@ -2523,7 +2523,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 		}
 	} else if (CURPOS >= 2 && CURPOS <= 36) {
 		for (int i = 0; i < 6; i++) {
-			if ((bnrRomType[i] == 0 || customIcon[CURPOS - 2 + i]) && (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
+			if ((CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
 				bgOperations(true);
 				iconUpdate(dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).isDirectory,
 					   dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).name.c_str(),
@@ -2532,7 +2532,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 		}
 	} else if (CURPOS >= 37 && CURPOS <= 39) {
 		for (int i = 0; i < 5; i++) {
-			if ((bnrRomType[i] == 0 || customIcon[35 + i]) && (35 + i) + PAGENUM * 40 < file_count) {
+			if ((35 + i) + PAGENUM * 40 < file_count) {
 				bgOperations(true);
 				iconUpdate(dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
 					   dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(), 35 + i);
@@ -2579,7 +2579,7 @@ static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents)
 		// Load correct icons depending on cursor position
 		if (CURPOS <= 1) {
 			for (int i = 0; i < 5; i++) {
-				if ((bnrRomType[i] == 0 || customIcon[i]) && i + PAGENUM * 40 < file_count) {
+				if (i + PAGENUM * 40 < file_count) {
 					bgOperations(true);
 					iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
 						   dirContents[scrn].at(i + PAGENUM * 40).name.c_str(), i);
@@ -2587,7 +2587,7 @@ static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents)
 			}
 		} else if (CURPOS >= 2 && CURPOS <= 36) {
 			for (int i = 0; i < 6; i++) {
-				if ((bnrRomType[i] == 0 || customIcon[CURPOS - 2 + i]) && (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
+				if ((CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
 					bgOperations(true);
 					iconUpdate(dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).isDirectory,
 						   dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).name.c_str(),
@@ -2596,7 +2596,7 @@ static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents)
 			}
 		} else if (CURPOS >= 37 && CURPOS <= 39) {
 			for (int i = 0; i < 5; i++) {
-				if ((bnrRomType[i] == 0 || customIcon[35 + i]) && (35 + i) + PAGENUM * 40 < file_count) {
+				if ((35 + i) + PAGENUM * 40 < file_count) {
 					bgOperations(true);
 					iconUpdate(dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
 						   dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(), 35 + i);
@@ -2653,7 +2653,7 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 		// Load correct icons depending on cursor position
 		if (CURPOS <= 1) {
 			for (int i = 0; i < 5; i++) {
-				if ((bnrRomType[i] == 0 || customIcon[i]) && i + PAGENUM * 40 < file_count) {
+				if (i + PAGENUM * 40 < file_count) {
 					bgOperations(true);
 					iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
 						   dirContents[scrn].at(i + PAGENUM * 40).name.c_str(), i);
@@ -2661,7 +2661,7 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 			}
 		} else if (CURPOS >= 2 && CURPOS <= 36) {
 			for (int i = 0; i < 6; i++) {
-				if ((bnrRomType[i] == 0 || customIcon[CURPOS - 2 + i]) && (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
+				if ((CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
 					bgOperations(true);
 					iconUpdate(dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).isDirectory,
 						   dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).name.c_str(),
@@ -2670,7 +2670,7 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 			}
 		} else if (CURPOS >= 37 && CURPOS <= 39) {
 			for (int i = 0; i < 5; i++) {
-				if ((bnrRomType[i] == 0 || customIcon[35 + i]) && (35 + i) + PAGENUM * 40 < file_count) {
+				if ((35 + i) + PAGENUM * 40 < file_count) {
 					bgOperations(true);
 					iconUpdate(dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
 						   dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(), 35 + i);
@@ -3025,7 +3025,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if (prevPos != CURPOS) {
 						for (int i = 0; i < 6; i++) {
 							int pos = (CURPOS - 2 + i);
-							if ((bnrRomType[pos] == 0 || customIcon[pos]) && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+							if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
 										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
 										pos);
@@ -3101,7 +3101,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						// Load icons
 						for (int i = 0; i < 6; i++) {
 							int pos = (CURPOS - 2 + i);
-							if ((bnrRomType[pos] == 0 || customIcon[pos]) && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+							if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
 										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
 										pos);
@@ -3145,7 +3145,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 									// Load icons
 									for (int i = 0; i < 6; i++) {
 										int pos = (CURPOS - 2 + i);
-										if ((bnrRomType[pos] == 0 || customIcon[pos]) && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+										if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
 											iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
 													dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
 													pos);
@@ -3197,7 +3197,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							// Load icons
 							for (int i = 0; i < 6; i++) {
 								int pos = (CURPOS - 2 + i);
-								if ((bnrRomType[pos] == 0 || customIcon[pos]) && pos >= 0 && pos + PAGENUM * 40 < file_count) {
+								if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
 									iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
 											dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
 											pos);

@@ -70,25 +70,6 @@ extern bool extension(const std::string& filename, const char* ext);
 extern u16 convertVramColorToGrayscale(u16 val);
 
 static int iconTexID[2][8];
-static int vidTexID;
-static int imgTexID;
-static int plgTexID;
-static int gbaModeTexID;
-static int gbTexID;
-static int nesTexID;
-static int sgTexID;
-static int smsTexID;
-static int ggTexID;
-static int mdTexID;
-static int snesTexID;
-static int a26TexID;
-static int colTexID;
-static int m5TexID;
-static int intTexID;
-static int pceTexID;
-static int wsTexID;
-static int ngpTexID;
-static int cpcTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
@@ -99,28 +80,7 @@ static char16_t cachedTitle[2][TITLE_CACHE_SIZE];
 
 static u32 arm9StartSig[4];
 
-static glImage vidIcon[1];
-static glImage imgIcon[1];
-static glImage plgIcon[1];
-
 static glImage ndsIcon[2][8][(32 / 32) * (256 / 32)];
-
-static glImage gbaModeIcon[1];
-static glImage gbIcon[(32 / 32) * (64 / 32)];
-static glImage nesIcon[1];
-static glImage sgIcon[1];
-static glImage smsIcon[1];
-static glImage ggIcon[1];
-static glImage mdIcon[1];
-static glImage snesIcon[1];
-static glImage a26Icon[1];
-static glImage colIcon[1];
-static glImage m5Icon[1];
-static glImage intIcon[1];
-static glImage pceIcon[1];
-static glImage wsIcon[1];
-static glImage ngpIcon[1];
-static glImage cpcIcon[1];
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -211,92 +171,27 @@ void loadUnkIcon(int num)
 				);
 }
 
-void loadConsoleIcons()
+void loadGBAIcon(int num)
 {
-	u16* newPalette;
-
-	// Video
-	glDeleteTextures(1, &vidTexID);
-
-	newPalette = (u16*)icon_vidPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	vidTexID =
-	glLoadTileSet(vidIcon, // pointer to glImage array
-				32, // sprite width
-				32, // sprite height
-				32, // bitmap image width
-				32, // bitmap image height
-				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
-				(u8*) icon_vidBitmap // Raw image data
-				);
-
-	// Image
-	glDeleteTextures(1, &imgTexID);
-
-	newPalette = (u16*)icon_imgPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
-	}
-	imgTexID =
-	glLoadTileSet(imgIcon, // pointer to glImage array
-				32, // sprite width
-				32, // sprite height
-				32, // bitmap image width
-				32, // bitmap image height
-				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
-				(u8*) icon_imgBitmap // Raw image data
-				);
-
-	// DSTWO Plugin
-	glDeleteTextures(1, &plgTexID);
-	
-	newPalette = (u16*)icon_plgPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
-	}
-	plgTexID =
-	glLoadTileSet(plgIcon, // pointer to glImage array
-				32, // sprite width
-				32, // sprite height
-				32, // bitmap image width
-				32, // bitmap image height
-				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
-				(u8*) icon_plgBitmap // Raw image data
-				);
-
-	if (!isDSiMode()) {
-		// GBA Mode
-		newPalette = (u16*)icon_gbamodePal;
-		if (ms().colorMode == 1) {
-			for (int i2 = 0; i2 < 16; i2++) {
-				*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-			}
-		}
-		gbaModeTexID =
-		glLoadTileSet(gbaModeIcon, // pointer to glImage array
+	if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
+		iconTexID[num][0] = glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
+					32, // sprite width
+					32, // sprite height
+					32, // bitmap image width
+					32, // bitmap image height
+					GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+					TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+					TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+					TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+					16, // Length of the palette to use (16 colors)
+					(u16*) icon_gbaPal, // Image palette
+					(u8*) icon_gbaBitmap // Raw image data
+					);
+	} else {
+		iconTexID[num][0] = glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 					32, // sprite width
 					32, // sprite height
 					32, // bitmap width
@@ -306,46 +201,40 @@ void loadConsoleIcons()
 					TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 					TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 					16, // Length of the palette to use (16 colors)
-					(u16*) newPalette, // Load our 16 color tiles palette
+					(u16*) icon_gbamodePal, // Load our 16 color tiles palette
 					(u8*) icon_gbamodeBitmap // image data generated by GRIT
 					);
 	}
+}
 
-	// GB/GBC
-	glDeleteTextures(1, &gbTexID);
-	
-	newPalette = (u16*)icon_gbPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadGBIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	gbTexID =
-	glLoadTileSet(gbIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
-				64, // bitmap image height
+				32, // bitmap image height
 				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_gbPal, // Image palette
 				(u8*) icon_gbBitmap // Raw image data
 				);
+}
 
-	// NES
-	glDeleteTextures(1, &nesTexID);
-
-	newPalette = (u16*)icon_nesPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadGBCIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	nesTexID =
-	glLoadTileSet(nesIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -355,21 +244,39 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_gbPal, // Image palette
+				(u8*) icon_gbBitmap+(32*16) // Raw image data
+				);
+}
+
+void loadNESIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
+	}
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) icon_nesPal, // Image palette
 				(u8*) icon_nesBitmap // Raw image data
 				);
+}
 
-	// SG
-	glDeleteTextures(1, &sgTexID);
-	
-	newPalette = (u16*)icon_sgPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadSGIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	sgTexID =
-	glLoadTileSet(sgIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -379,21 +286,18 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_sgPal, // Image palette
 				(u8*) icon_sgBitmap // Raw image data
 				);
+}
 
-	// SMS
-	glDeleteTextures(1, &smsTexID);
-	
-	newPalette = (u16*)icon_smsPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadSMSIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	smsTexID =
-	glLoadTileSet(smsIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -403,21 +307,18 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_smsPal, // Image palette
 				(u8*) icon_smsBitmap // Raw image data
 				);
+}
 
-	// GG
-	glDeleteTextures(1, &ggTexID);
-	
-	newPalette = (u16*)icon_ggPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadGGIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	ggTexID =
-	glLoadTileSet(ggIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -427,21 +328,18 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_ggPal, // Image palette
 				(u8*) icon_ggBitmap // Raw image data
 				);
+}
 
-	// MD
-	glDeleteTextures(1, &mdTexID);
-	
-	newPalette = (u16*)icon_mdPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadMDIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	mdTexID =
-	glLoadTileSet(mdIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -451,21 +349,18 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_mdPal, // Image palette
 				(u8*) icon_mdBitmap // Raw image data
 				);
+}
 
-	// SNES
-	glDeleteTextures(1, &snesTexID);
-	
-	newPalette = (u16*)icon_snesPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadSNESIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	snesTexID =
-	glLoadTileSet(snesIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -475,21 +370,18 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_snesPal, // Image palette
 				(u8*) icon_snesBitmap // Raw image data
 				);
+}
 
-	// A26
-	glDeleteTextures(1, &a26TexID);
-	
-	newPalette = (u16*)icon_a26Pal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadPLGIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	a26TexID =
-	glLoadTileSet(a26Icon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -499,21 +391,39 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_plgPal, // Image palette
+				(u8*) icon_plgBitmap // Raw image data
+				);
+}
+
+void loadA26Icon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
+	}
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) icon_a26Pal, // Image palette
 				(u8*) icon_a26Bitmap // Raw image data
 				);
+}
 
-	// COL
-	glDeleteTextures(1, &colTexID);
-	
-	newPalette = (u16*)icon_colPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadCOLIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	colTexID =
-	glLoadTileSet(colIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -523,21 +433,18 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_colPal, // Image palette
 				(u8*) icon_colBitmap // Raw image data
 				);
+}
 
-	// M5
-	glDeleteTextures(1, &m5TexID);
-	
-	newPalette = (u16*)icon_m5Pal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadM5Icon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	m5TexID =
-	glLoadTileSet(m5Icon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -547,21 +454,18 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_m5Pal, // Image palette
 				(u8*) icon_m5Bitmap // Raw image data
 				);
+}
 
-	// INT
-	glDeleteTextures(1, &intTexID);
-
-	newPalette = (u16*)icon_intPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadINTIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	intTexID =
-	glLoadTileSet(intIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -571,21 +475,18 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_intPal, // Image palette
 				(u8*) icon_intBitmap // Raw image data
 				);
+}
 
-	// PCE
-	glDeleteTextures(1, &pceTexID);
-	
-	newPalette = (u16*)icon_pcePal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadPCEIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	pceTexID =
-	glLoadTileSet(pceIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -595,21 +496,18 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_pcePal, // Image palette
 				(u8*) icon_pceBitmap // Raw image data
 				);
+}
 
-	// WS
-	glDeleteTextures(1, &wsTexID);
-	
-	newPalette = (u16*)icon_wsPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadWSIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	wsTexID =
-	glLoadTileSet(wsIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -619,21 +517,18 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_wsPal, // Image palette
 				(u8*) icon_wsBitmap // Raw image data
 				);
+}
 
-	// NGP
-	glDeleteTextures(1, &ngpTexID);
-	
-	newPalette = (u16*)icon_ngpPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadNGPIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	ngpTexID =
-	glLoadTileSet(ngpIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -643,21 +538,18 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_ngpPal, // Image palette
 				(u8*) icon_ngpBitmap // Raw image data
 				);
+}
 
-	// CPC
-	glDeleteTextures(1, &cpcTexID);
-
-	newPalette = (u16*)icon_cpcPal;
-	if (ms().colorMode == 1) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
+void loadCPCIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	cpcTexID =
-	glLoadTileSet(cpcIcon, // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -667,9 +559,178 @@ void loadConsoleIcons()
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
+				(u16*) icon_cpcPal, // Image palette
 				(u8*) icon_cpcBitmap // Raw image data
 				);
+}
+
+void loadVIDIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
+	}
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) icon_vidPal, // Image palette
+				(u8*) icon_vidBitmap // Raw image data
+				);
+}
+
+void loadIMGIcon(int num)
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
+	}
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) icon_imgPal, // Image palette
+				(u8*) icon_imgBitmap // Raw image data
+				);
+}
+
+void loadConsoleIcons()
+{
+	if (ms().colorMode == 0) {
+		return;
+	}
+
+	u16* newPalette;
+
+	// GBA
+	if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
+		newPalette = (u16*)icon_gbaPal;
+	} else {
+		newPalette = (u16*)icon_gbamodePal;
+	}
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// GB/GBC
+	newPalette = (u16*)icon_gbPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// NES
+	newPalette = (u16*)icon_nesPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// SG
+	newPalette = (u16*)icon_sgPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// SMS
+	newPalette = (u16*)icon_smsPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// GG
+	newPalette = (u16*)icon_ggPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// MD
+	newPalette = (u16*)icon_ggPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// SNES
+	newPalette = (u16*)icon_snesPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// DSTWO Plugin
+	newPalette = (u16*)icon_plgPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// A26
+	newPalette = (u16*)icon_a26Pal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// COL
+	newPalette = (u16*)icon_colPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// M5
+	newPalette = (u16*)icon_m5Pal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// INT
+	newPalette = (u16*)icon_intPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// PCE
+	newPalette = (u16*)icon_pcePal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// WS
+	newPalette = (u16*)icon_wsPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// NGP
+	newPalette = (u16*)icon_ngpPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// CPC
+	newPalette = (u16*)icon_cpcPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// Video
+	newPalette = (u16*)icon_vidPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// Image
+	newPalette = (u16*)icon_imgPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
 }
 
 static void clearIcon(int num)
@@ -678,27 +739,6 @@ static void clearIcon(int num)
 }
 
 void drawIcon(int num, int Xpos, int Ypos) { glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconPalLine[num]][bnriconframenumY[num] & 31]); }
-
-void drawIconVID(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, vidIcon); }
-void drawIconIMG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, imgIcon); }
-void drawIconPlg(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, plgIcon); }
-void drawIconGBA(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, gbaModeIcon); }
-void drawIconGB(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[0 & 31]); }
-void drawIconGBC(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[1 & 31]); }
-void drawIconNES(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, nesIcon); }
-void drawIconSG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, sgIcon); }
-void drawIconSMS(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, smsIcon); }
-void drawIconGG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, ggIcon); }
-void drawIconMD(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, mdIcon); }
-void drawIconSNES(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, snesIcon); }
-void drawIconA26(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, a26Icon); }
-void drawIconCOL(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, colIcon); }
-void drawIconM5(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, m5Icon); }
-void drawIconINT(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, intIcon); }
-void drawIconPCE(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, pceIcon); }
-void drawIconWS(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, wsIcon); }
-void drawIconNGP(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, ngpIcon); }
-void drawIconCPC(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, cpcIcon); }
 
 void loadFixedBanner(bool isSlot1) {
 	if (isSlot1 && memcmp(ndsHeader.gameCode, "ALXX", 4) == 0) {
@@ -1097,7 +1137,9 @@ void iconUpdate(int num, bool isDir, const char* name)
 {
 	clearText(false);
 
-	if (customIcon[num]) {
+	const bool isNds = (bnrRomType[num] == 0);
+
+	if (customIcon[num] > 0 || (customIcon[num] && isNds)) {
 		if (customIcon[num] == -1) {
 			loadUnkIcon(num);
 		} else if (bnriconisDSi[num]) {
@@ -1169,12 +1211,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 		}
 		// clean up the allocated line
 		free(line);
-	} else if (strcmp(name, "slot1")==0
-			 || extension(name, ".nds")
-			 || extension(name, ".dsi")
-			 || extension(name, ".ids")
-			 || extension(name, ".srl")
-			 || extension(name, ".app")) {
+	} else if (isNds) {
 		// this is an nds/app file!
 
 		// icon
@@ -1183,6 +1220,48 @@ void iconUpdate(int num, bool isDir, const char* name)
 		} else {
 			loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);
 		}
+	} else if (bnrRomType[num] == 10) {
+		loadA26Icon(num);
+	} else if (bnrRomType[num] == 13) {
+		loadCOLIcon(num);
+	} else if (bnrRomType[num] == 14) {
+		loadM5Icon(num);
+	} else if (bnrRomType[num] == 12) {
+		loadINTIcon(num);
+	} else if (bnrRomType[num] == 9) {
+		loadPLGIcon(num);
+	} else if (bnrRomType[num] == 19) {
+		loadVIDIcon(num);
+	} else if (bnrRomType[num] == 20) {
+		loadIMGIcon(num);
+	} else if (bnrRomType[num] == 1) {
+		loadGBAIcon(num);
+	} else if (bnrRomType[num] == 2) {
+		loadGBIcon(num);
+	} else if (bnrRomType[num] == 3) {
+		loadGBCIcon(num);
+	} else if (bnrRomType[num] == 4) {
+		loadNESIcon(num);
+	} else if (bnrRomType[num] == 15) {
+		loadSGIcon(num);
+	} else if (bnrRomType[num] == 5) {
+		loadSMSIcon(num);
+	} else if (bnrRomType[num] == 6) {
+		loadGGIcon(num);
+	} else if (bnrRomType[num] == 7) {
+		loadMDIcon(num);
+	} else if (bnrRomType[num] == 8) {
+		loadSNESIcon(num);
+	} else if (bnrRomType[num] == 11) {
+		loadPCEIcon(num);
+	} else if (bnrRomType[num] == 16) {
+		loadWSIcon(num);
+	} else if (bnrRomType[num] == 17) {
+		loadNGPIcon(num);
+	} else if (bnrRomType[num] == 18) {
+		loadCPCIcon(num);
+	} else {
+		loadUnkIcon(num);
 	}
 }
 

@@ -1350,8 +1350,6 @@ int dsClassicMenu(void) {
 		if (std::string::npos != last_slash_idx) {
 			filename[0].erase(0, last_slash_idx + 1);
 		}
-		getGameInfo(0, false, filename[0].c_str());
-		iconUpdate (0, false, filename[0].c_str());
 
 		if (extension(filename[0], ".nds") || extension(filename[0], ".dsi") || extension(filename[0], ".ids") || extension(filename[0], ".app") || extension(filename[0], ".srl") || extension(filename[0], ".argv")) {
 			bnrRomType[0] = 0;
@@ -1427,6 +1425,8 @@ int dsClassicMenu(void) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = -1;
 		}
+		getGameInfo(0, false, filename[0].c_str());
+		iconUpdate (0, false, filename[0].c_str());
 
 		if (ms().showBoxArt) {
 			// Store box art path
@@ -1463,6 +1463,11 @@ int dsClassicMenu(void) {
 
 	// Flashcard (Secondary device)
 	if (flashcardFound()) {
+		if (!sdFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
+			bnrRomType[0] = 1;
+			iconUpdate (0, false, "null");
+		}
+
 		CIniFile autoruninf("fat:/autorun.inf");
 		std::string autorunOpen = autoruninf.GetString("autorun.twl", "open", "");
 
@@ -1485,8 +1490,6 @@ int dsClassicMenu(void) {
 		if (std::string::npos != last_slash_idx) {
 			filename[1].erase(0, last_slash_idx + 1);
 		}
-		getGameInfo(1, false, filename[1].c_str());
-		iconUpdate (1, false, filename[1].c_str());
 
 		if (extension(filename[1], ".nds") || extension(filename[1], ".dsi") || extension(filename[1], ".ids") || extension(filename[1], ".app") || extension(filename[1], ".srl") || extension(filename[1], ".argv")) {
 			bnrRomType[1] = 0;
@@ -1562,6 +1565,8 @@ int dsClassicMenu(void) {
 			bnrRomType[1] = 9;
 			boxArtType[1] = -1;
 		}
+		getGameInfo(1, false, filename[1].c_str());
+		iconUpdate (1, false, filename[1].c_str());
 
 		if (ms().showBoxArt) {
 			// Store box art path

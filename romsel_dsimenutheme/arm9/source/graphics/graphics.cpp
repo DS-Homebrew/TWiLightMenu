@@ -754,10 +754,9 @@ void vBlankHandler() {
 									 (titleboxYpos - 1) + titleboxYposDropDown[i % 5],
 									 GL_FLIP_NONE, &tex().settingsImage()[1]);
 						else
-							drawRomIcon(iconXpos - titleboxXpos[ms().secondaryDevice],
+							drawIcon(iconXpos - titleboxXpos[ms().secondaryDevice],
 										(titleboxYpos + 12) + titleboxYposDropDown[i % 5],
-										i,
-										bnrRomType[i]);
+										i);
 					}
 				} else {
 					// Empty box
@@ -800,7 +799,7 @@ void vBlankHandler() {
 								 (titleboxYpos - 1) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
 								 GL_FLIP_NONE, &tex().settingsImage()[1]);
 					else
-						drawRomIcon(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5], -1, bnrRomType[movingApp]);
+						drawIcon(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5], -1);
 				}
 			}
 
@@ -875,7 +874,7 @@ void vBlankHandler() {
 				if (bnrSysSettings[CURPOS])
 					glSprite(84, 83 - titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
 				else
-					drawRomIcon(112, 96 - titleboxYmovepos, CURPOS, bnrRomType[CURPOS]);
+					drawIcon(112, 96 - titleboxYmovepos, CURPOS);
 			}
 			// Draw dots after selecting a game/app
 
@@ -925,10 +924,9 @@ void vBlankHandler() {
 			// Draw the dialog box.
 			if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) drawDbox();
 			if (dbox_showIcon && !isDirectory[CURPOS]) {
-				drawRomIcon(ms().rtl() ? 256 - 56 : 24,
+				drawIcon(ms().rtl() ? 256 - 56 : 24,
 							((ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) ? 0 : dbox_Ypos) + 24,
-							CURPOS,
-							bnrRomType[CURPOS]);
+							CURPOS);
 			}
 			if (dbox_selectMenu) {
 				int selIconYpos = 96;

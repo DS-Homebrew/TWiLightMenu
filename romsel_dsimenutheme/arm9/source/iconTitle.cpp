@@ -120,6 +120,26 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
 }
 
 static inline void loadUnkIcon(int num) { glLoadIcon(num, tex().iconUnknownTexture()->palette(), tex().iconUnknownTexture()->bytes()); }
+static inline void loadGBAIcon(int num) { glLoadIcon(num, tex().iconGBATexture()->palette(), tex().iconGBATexture()->bytes()); }
+static inline void loadGBIcon(int num) { glLoadIcon(num, tex().iconGBTexture()->palette(), tex().iconGBTexture()->bytes()); }
+static inline void loadGBCIcon(int num) { glLoadIcon(num, tex().iconGBTexture()->palette(), tex().iconGBTexture()->bytes()+(32*16)); }
+static inline void loadNESIcon(int num) { glLoadIcon(num, tex().iconNESTexture()->palette(), tex().iconNESTexture()->bytes()); }
+static inline void loadSGIcon(int num) { glLoadIcon(num, tex().iconSGTexture()->palette(), tex().iconSGTexture()->bytes()); }
+static inline void loadSMSIcon(int num) { glLoadIcon(num, tex().iconSMSTexture()->palette(), tex().iconSMSTexture()->bytes()); }
+static inline void loadGGIcon(int num) { glLoadIcon(num, tex().iconGGTexture()->palette(), tex().iconGGTexture()->bytes()); }
+static inline void loadMDIcon(int num) { glLoadIcon(num, tex().iconMDTexture()->palette(), tex().iconMDTexture()->bytes()); }
+static inline void loadSNESIcon(int num) { glLoadIcon(num, tex().iconSNESTexture()->palette(), tex().iconSNESTexture()->bytes()); }
+static inline void loadPLGIcon(int num) { glLoadIcon(num, tex().iconPLGTexture()->palette(), tex().iconPLGTexture()->bytes()); }
+static inline void loadA26Icon(int num) { glLoadIcon(num, tex().iconA26Texture()->palette(), tex().iconA26Texture()->bytes()); }
+static inline void loadCOLIcon(int num) { glLoadIcon(num, tex().iconCOLTexture()->palette(), tex().iconCOLTexture()->bytes()); }
+static inline void loadM5Icon(int num) { glLoadIcon(num, tex().iconM5Texture()->palette(), tex().iconM5Texture()->bytes()); }
+static inline void loadINTIcon(int num) { glLoadIcon(num, tex().iconINTTexture()->palette(), tex().iconINTTexture()->bytes()); }
+static inline void loadPCEIcon(int num) { glLoadIcon(num, tex().iconPCETexture()->palette(), tex().iconPCETexture()->bytes()); }
+static inline void loadWSIcon(int num) { glLoadIcon(num, tex().iconWSTexture()->palette(), tex().iconWSTexture()->bytes()); }
+static inline void loadNGPIcon(int num) { glLoadIcon(num, tex().iconNGPTexture()->palette(), tex().iconNGPTexture()->bytes()); }
+static inline void loadCPCIcon(int num) { glLoadIcon(num, tex().iconCPCTexture()->palette(), tex().iconCPCTexture()->bytes()); }
+static inline void loadVIDIcon(int num) { glLoadIcon(num, tex().iconVIDTexture()->palette(), tex().iconVIDTexture()->bytes()); }
+static inline void loadIMGIcon(int num) { glLoadIcon(num, tex().iconIMGTexture()->palette(), tex().iconIMGTexture()->bytes()); }
 
 static inline void clearIcon(int num) { glClearIcon(num); }
 
@@ -137,75 +157,6 @@ void drawIcon(int Xpos, int Ypos, int num) {
 			bnriconPalLoaded[num] = bnriconPalLine[num];
 		}
 	}
-}
-
-void drawIconGBA(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBA_ICON)[0 & 31]); }
-void drawSmallIconGBA(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBA_ICON)[1 & 31]); }
-void drawIconGB(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBC_ICON)[0 & 31]); }
-void drawIconGBC(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBC_ICON)[1 & 31]); }
-void drawIconNES(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(NES_ICON)); }
-void drawIconSG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(SG_ICON)); }
-void drawIconSMS(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(SMS_ICON)); }
-void drawIconGG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(GG_ICON)); }
-void drawIconMD(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(MD_ICON)); }
-void drawIconSNES(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(SNES_ICON)); }
-void drawIconPLG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(PLG_ICON)); }
-void drawIconA26(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(A26_ICON)); }
-void drawIconCOL(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(COL_ICON)); }
-void drawIconM5(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(M5_ICON)); }
-void drawIconINT(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(INT_ICON)); }
-void drawIconPCE(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(PCE_ICON)); }
-void drawIconWS(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(WS_ICON)); }
-void drawIconNGP(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(NGP_ICON)); }
-void drawIconCPC(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(CPC_ICON)); }
-void drawIconVID(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(VID_ICON)); }
-void drawIconIMG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(IMG_ICON)); }
-
-void drawRomIcon(int Xpos, int Ypos, int num, int romType) {
-	if (num == -1 ? customIcon[40] : customIcon[num])
-		drawIcon(Xpos, Ypos, num);
-	else if (romType == 20)
-		drawIconIMG(Xpos, Ypos);
-	else if (romType == 19)
-		drawIconVID(Xpos, Ypos);
-	else if (romType == 18)
-		drawIconCPC(Xpos, Ypos);
-	else if (romType == 17)
-		drawIconNGP(Xpos, Ypos);
-	else if (romType == 16)
-		drawIconWS(Xpos, Ypos);
-	else if (romType == 15)
-		drawIconSG(Xpos, Ypos);
-	else if (romType == 14)
-		drawIconM5(Xpos, Ypos);
-	else if (romType == 13)
-		drawIconCOL(Xpos, Ypos);
-	else if (romType == 12)
-		drawIconINT(Xpos, Ypos);
-	else if (romType == 11)
-		drawIconPCE(Xpos, Ypos);
-	else if (romType == 10)
-		drawIconA26(Xpos, Ypos);
-	else if (romType == 9)
-		drawIconPLG(Xpos, Ypos);
-	else if (romType == 8)
-		drawIconSNES(Xpos, Ypos);
-	else if (romType == 7)
-		drawIconMD(Xpos, Ypos);
-	else if (romType == 6)
-		drawIconGG(Xpos, Ypos);
-	else if (romType == 5)
-		drawIconSMS(Xpos, Ypos);
-	else if (romType == 4)
-		drawIconNES(Xpos, Ypos);
-	else if (romType == 3)
-		drawIconGBC(Xpos, Ypos);
-	else if (romType == 2)
-		drawIconGB(Xpos, Ypos);
-	else if (romType == 1)
-		drawIconGBA(Xpos, Ypos);
-	else
-		drawIcon(Xpos, Ypos, num);
 }
 
 void clearTitle(int num) {
@@ -437,7 +388,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 		fread(gameTid[num], 1, 4, fp);
 
 		fclose(fp);
-	} else if (extension(name, {".gba", ".agb", ".mb"})) {
+	} else if (extension(name, {".agb", ".gba", ".mb"})) {
 		// this is a gba file!
 		FILE *fp;
 
@@ -636,7 +587,9 @@ void iconUpdate(bool isDir, const char *name, int num) {
 	if (num == -1)
 		num = 40;
 
-	if (customIcon[num]) {
+	const bool isNds = (bnrRomType[num] == 0);
+
+	if (customIcon[num] > 0 || (customIcon[num] && isNds)) {
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
 		if (customIcon[num] == -1) {
 			loadUnkIcon(spriteIdx);
@@ -707,7 +660,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		}
 		// clean up the allocated line
 		free(line);
-	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+	} else if (isNds) {
 		// this is an nds/app file!
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
 		if (bnriconisDSi[num]) {
@@ -716,6 +669,48 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, spriteIdx, false);
 		}
+	} else if (bnrRomType[num] == 10) {
+		loadA26Icon(spriteIdx);
+	} else if (bnrRomType[num] == 13) {
+		loadCOLIcon(spriteIdx);
+	} else if (bnrRomType[num] == 14) {
+		loadM5Icon(spriteIdx);
+	} else if (bnrRomType[num] == 12) {
+		loadINTIcon(spriteIdx);
+	} else if (bnrRomType[num] == 9) {
+		loadPLGIcon(spriteIdx);
+	} else if (bnrRomType[num] == 19) {
+		loadVIDIcon(spriteIdx);
+	} else if (bnrRomType[num] == 20) {
+		loadIMGIcon(spriteIdx);
+	} else if (bnrRomType[num] == 1) {
+		loadGBAIcon(spriteIdx);
+	} else if (bnrRomType[num] == 2) {
+		loadGBIcon(spriteIdx);
+	} else if (bnrRomType[num] == 3) {
+		loadGBCIcon(spriteIdx);
+	} else if (bnrRomType[num] == 4) {
+		loadNESIcon(spriteIdx);
+	} else if (bnrRomType[num] == 15) {
+		loadSGIcon(spriteIdx);
+	} else if (bnrRomType[num] == 5) {
+		loadSMSIcon(spriteIdx);
+	} else if (bnrRomType[num] == 6) {
+		loadGGIcon(spriteIdx);
+	} else if (bnrRomType[num] == 7) {
+		loadMDIcon(spriteIdx);
+	} else if (bnrRomType[num] == 8) {
+		loadSNESIcon(spriteIdx);
+	} else if (bnrRomType[num] == 11) {
+		loadPCEIcon(spriteIdx);
+	} else if (bnrRomType[num] == 16) {
+		loadWSIcon(spriteIdx);
+	} else if (bnrRomType[num] == 17) {
+		loadNGPIcon(spriteIdx);
+	} else if (bnrRomType[num] == 18) {
+		loadCPCIcon(spriteIdx);
+	} else {
+		loadUnkIcon(spriteIdx);
 	}
 }
 
