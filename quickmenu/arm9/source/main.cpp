@@ -1391,7 +1391,7 @@ int dsClassicMenu(void) {
 		} else if (extension(filename[0], ".fds")) {
 			bnrRomType[0] = 4;
 			boxArtType[0] = 1;
-		} else if (extension(filename[0], ".sg")) {
+		} else if (extension(filename[0], ".sg") || extension(filename[0], ".sc")) {
 			bnrRomType[0] = 15;
 			boxArtType[0] = 2;
 		} else if (extension(filename[0], ".sms")) {
@@ -1531,7 +1531,7 @@ int dsClassicMenu(void) {
 		} else if (extension(filename[1], ".fds")) {
 			bnrRomType[1] = 4;
 			boxArtType[1] = 1;
-		} else if (extension(filename[1], ".sg")) {
+		} else if (extension(filename[1], ".sg") || extension(filename[0], ".sc")) {
 			bnrRomType[1] = 15;
 			boxArtType[1] = 2;
 		} else if (extension(filename[1], ".sms")) {
@@ -3143,7 +3143,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
-				} else if ((extension(filename[ms().secondaryDevice], ".sg") && ms().sgEmulator == TWLSettings::EColSegaColecoDS) || (extension(filename[ms().secondaryDevice], ".col") && ms().colEmulator == TWLSettings::EColSegaColecoDS) || extension(filename[ms().secondaryDevice], ".m5")) {
+				} else if (((extension(filename[ms().secondaryDevice], ".sg") || extension(filename[ms().secondaryDevice], ".sc")) && ms().sgEmulator == TWLSettings::EColSegaColecoDS) || (extension(filename[ms().secondaryDevice], ".col") && ms().colEmulator == TWLSettings::EColSegaColecoDS) || extension(filename[ms().secondaryDevice], ".m5")) {
 					ms().launchType[ms().secondaryDevice] = Launch::EColecoDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
@@ -3176,7 +3176,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 						boostVram = true;
 					}
-				} else if ((extension(filename[ms().secondaryDevice], ".sg") && ms().colEmulator == TWLSettings::EColSegaS8DS)
+				} else if (((extension(filename[ms().secondaryDevice], ".sg") || extension(filename[ms().secondaryDevice], ".sc")) && ms().sgEmulator == TWLSettings::EColSegaS8DS)
 				|| extension(filename[ms().secondaryDevice], ".sms") || extension(filename[ms().secondaryDevice], ".gg")
 				|| (extension(filename[ms().secondaryDevice], ".col") && ms().colEmulator == TWLSettings::EColSegaS8DS)) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);

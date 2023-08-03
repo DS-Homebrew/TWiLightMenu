@@ -2442,7 +2442,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				} else if (extension(std_romsel_filename, {".fds"})) {
 					bnrRomType[i] = 4;
 					boxArtType[i] = 1;
-				} else if (extension(std_romsel_filename, {".sg"})) {
+				} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
 					bnrRomType[i] = 15;
 					boxArtType[i] = 2;
 				} else if (extension(std_romsel_filename, {".sms"})) {

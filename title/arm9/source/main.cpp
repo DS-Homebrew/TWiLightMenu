@@ -1051,7 +1051,7 @@ void lastRunROM()
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to GameYob as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ES8DSLaunch) {
 		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().colEmulator != 1)
-		 || (extension(ms().romPath[ms().previousUsedDevice], ".sg") && ms().sgEmulator != 1)
+		 || ((extension(ms().romPath[ms().previousUsedDevice], ".sg") || extension(ms().romPath[ms().previousUsedDevice], ".sc")) && ms().sgEmulator != 1)
 		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		mkdir(ms().previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
@@ -1242,14 +1242,14 @@ void lastRunROM()
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to GBARunner2 as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EColecoDSLaunch) {
 		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().colEmulator != 2)
-		 || (extension(ms().romPath[ms().previousUsedDevice], ".sg") && ms().sgEmulator != 2)
+		 || ((extension(ms().romPath[ms().previousUsedDevice], ".sg") || extension(ms().romPath[ms().previousUsedDevice], ".sc")) && ms().sgEmulator != 2)
 		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
 		if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
 		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to NINTV-DS as argument
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to ColecoDS as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ENitroSwanLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
@@ -1271,7 +1271,7 @@ void lastRunROM()
 		if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to NINTV-DS as argument
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to NGPDS as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ESNEmulDSLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 

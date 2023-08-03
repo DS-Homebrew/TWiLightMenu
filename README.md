@@ -15,7 +15,7 @@
 </p>
 
 TWiLight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
-It can launch Nintendo DS(i), SNES, NES, GameBoy (Color), GameBoy Advance, Sega GameGear/Master System/SG-1000 & Mega Drive/Genesis, Atari 2600/5200/7800/XEGS, Intellivision, Neo Geo Pocket, Sord M5, PC Engine/TurboGrafx-16, WonderSwan, and ColecoVision ROMs, as well as DSTWO plugins (if you use a DSTWO).
+It can launch Nintendo DS(i), SNES, NES, GameBoy (Color), GameBoy Advance, Sega GameGear/Master System, SG-1000/SC-3000 & Mega Drive/Genesis, Atari 2600/5200/7800/XEGS, Intellivision, Neo Geo Pocket, Sord M5, PC Engine/TurboGrafx-16, WonderSwan, and ColecoVision ROMs, as well as DSTWO plugins (if you use a DSTWO).
 
 # Compiling
 
@@ -61,12 +61,12 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## App Launchers
 - [ahezard](https://github.com/ahezard), [shutterbug2000](https://github.com/shutterbug2000) and [Rocket Robz](https://github.com/RocketRobz): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used for launching Nintendo DS(i) ROMs off the SD card)
 - [Alekmaul](https://github.com/alekmaul): [AmeDS](https://www.gamebrew.org/wiki/AmeDS) (used for launching Amstrad CPC ROMs)
-- [Alekmaul](https://github.com/alekmaul) & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5200DS](https://github.com/wavemotion-dave/A5200DS), [A7800DS](https://github.com/wavemotion-dave/A7800DS), [A8DS](https://github.com/wavemotion-dave/A8DS) (used for launching Atari 2600/5200/7800/XEGS ROMs), and [ColecoDS](https://github.com/wavemotion-dave/ColecoDS) (used for launching ColecoVision, Sord M5, and Sega SG-1000 ROMs)
+- [Alekmaul](https://github.com/alekmaul) & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5200DS](https://github.com/wavemotion-dave/A5200DS), [A7800DS](https://github.com/wavemotion-dave/A7800DS), [A8DS](https://github.com/wavemotion-dave/A8DS) (used for launching Atari 2600/5200/7800/XEGS ROMs), and [ColecoDS](https://github.com/wavemotion-dave/ColecoDS) (used for launching ColecoVision, Sord M5, and Sega SG-1000/SC-3000 ROMs)
 - archiede: [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS) (used for launching SNES ROMs)
      - [Coto](https://coto88.bitbucket.io/): [SNEmulDS Revival](https://bitbucket.org/Coto88/snemulds)
 - [chishm](https://github.com/chishm): [tuna-viDS](https://github.com/chishm/tuna-vids) (used for playing Xvid videos)
 - [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob) (used for launching Gameboy ROMs)
-- [FluBBaOfWard](https://github.com/FluBBaOfWard): [S8DS](https://github.com/FluBBaOfWard/S8DS) (used for launching Sega Master System, Game Gear, SG-1000, and ColecoVision ROMs), [NitroGrafx](https://github.com/FluBBaOfWard/NitroGrafx) (used for launching PC Engine/TurboGrafx-16 ROMs), [NitroSwan](https://github.com/FluBBaOfWard/NitroSwan) (used for launching WonderSwan ROMs), and [NGPDS](https://github.com/FluBBaOfWard/NGPDS) (used for launching Neo Geo Pocket ROMs)
+- [FluBBaOfWard](https://github.com/FluBBaOfWard): [S8DS](https://github.com/FluBBaOfWard/S8DS) (used for launching Sega Master System, Game Gear, SG-1000/SG-3000, and ColecoVision ROMs), [NitroGrafx](https://github.com/FluBBaOfWard/NitroGrafx) (used for launching PC Engine/TurboGrafx-16 ROMs), [NitroSwan](https://github.com/FluBBaOfWard/NitroSwan) (used for launching WonderSwan ROMs), and [NGPDS](https://github.com/FluBBaOfWard/NGPDS) (used for launching Neo Geo Pocket ROMs)
 - [FluBBaOfWard](https://github.com/FluBBaOfWard), [Coto](https://coto88.bitbucket.io/), and Loopy: [nesDS](https://github.com/DS-Homebrew/NesDS) (used for launching NES ROMs)
      - [Apache Thunder](https://github.com/ApacheThunder): [TWL Edition](https://github.com/ApacheThunder/NesDS) of nesDS
 - [Gericom](https://github.com/Gericom): [FastVideoDSPlayer](https://github.com/Gericom/FastVideoDSPlayer) (used for launching FastVideoDS videos) & [GBARunner2](https://github.com/Gericom/GBARunner2) (used for launching GameBoy Advance ROMs outside of the DS Phat/Lite's GBA mode)

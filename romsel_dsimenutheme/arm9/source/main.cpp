@@ -1110,6 +1110,7 @@ int dsiMenuTheme(void) {
 		".gb", ".sgb", ".gbc", // Game Boy
 		".nes", ".fds", // NES
 		".sg", // Sega SG-1000
+		".sc", // Sega SC-3000
 		".sms", // Sega Master System
 		".gg", // Sega Game Gear
 		".gen", // Sega Mega Drive/Genesis
@@ -2266,7 +2267,7 @@ int dsiMenuTheme(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
-				} else if ((extension(filename, {".sg"}) && ms().sgEmulator == TWLSettings::EColSegaColecoDS) || (extension(filename, {".col"}) && ms().colEmulator == TWLSettings::EColSegaColecoDS) || extension(filename, {".m5"})) {
+				} else if ((extension(filename, {".sg", ".sc"}) && ms().sgEmulator == TWLSettings::EColSegaColecoDS) || (extension(filename, {".col"}) && ms().colEmulator == TWLSettings::EColSegaColecoDS) || extension(filename, {".m5"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EColecoDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
@@ -2299,7 +2300,7 @@ int dsiMenuTheme(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 						boostVram = true;
 					}
-				} else if ((extension(filename, {".sg"}) && ms().colEmulator == TWLSettings::EColSegaS8DS) || (extension(filename, {".sms", ".gg"})) || (extension(filename, {".col"}) && ms().colEmulator == TWLSettings::EColSegaS8DS)) {
+				} else if ((extension(filename, {".sg", ".sc"}) && ms().sgEmulator == TWLSettings::EColSegaS8DS) || (extension(filename, {".sms", ".gg"})) || (extension(filename, {".col"}) && ms().colEmulator == TWLSettings::EColSegaS8DS)) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 

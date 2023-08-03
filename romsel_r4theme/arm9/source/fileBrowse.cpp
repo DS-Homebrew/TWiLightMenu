@@ -1057,7 +1057,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bnrRomType = 3;
 			} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
 				bnrRomType = 4;
-			} else if (extension(std_romsel_filename, {".sg"})) {
+			} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
 				bnrRomType = 15;
 			} else if (extension(std_romsel_filename, {".sms"})) {
 				bnrRomType = 5;
