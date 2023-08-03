@@ -566,6 +566,7 @@ void ThemeTextures::loadIconTextures() {
 	_iconCPCTexture = std::make_unique<Texture>(TFN_GRF_ICON_CPC, TFN_FALLBACK_GRF_ICON_CPC);
 	_iconVIDTexture = std::make_unique<Texture>(TFN_GRF_ICON_VID, TFN_FALLBACK_GRF_ICON_VID);
 	_iconIMGTexture = std::make_unique<Texture>(TFN_GRF_ICON_IMG, TFN_FALLBACK_GRF_ICON_IMG);
+	_iconMSXTexture = std::make_unique<Texture>(TFN_GRF_ICON_MSX, TFN_FALLBACK_GRF_ICON_MSX);
 	_iconUnknownTexture = std::make_unique<Texture>(TFN_GRF_ICON_UNK, TFN_FALLBACK_GRF_ICON_UNK);
 
 	// if (ms().colorMode == 1)
@@ -1396,6 +1397,8 @@ void ThemeTextures::applyUserPaletteToAllGrfTextures() {
 		_manualIconTexture->applyUserPaletteFile(TFN_PALETTE_ICON_MANUAL, effectDSiArrowButtonPalettes);
 	if (_iconMDTexture && tc().iconMDUserPalette())
 		_iconMDTexture->applyUserPaletteFile(TFN_PALETTE_ICON_MD, effectDSiArrowButtonPalettes);
+	if (_iconMSXTexture && tc().iconMSXUserPalette())
+		_iconMSXTexture->applyUserPaletteFile(TFN_PALETTE_ICON_MSX, effectDSiArrowButtonPalettes);
 	if (_iconNESTexture && tc().iconNESUserPalette())
 		_iconNESTexture->applyUserPaletteFile(TFN_PALETTE_ICON_NES, effectDSiArrowButtonPalettes);
 	if (_iconNGPTexture && tc().iconNGPUserPalette())
@@ -1414,6 +1417,8 @@ void ThemeTextures::applyUserPaletteToAllGrfTextures() {
 		_iconSNESTexture->applyUserPaletteFile(TFN_PALETTE_ICON_SNES, effectDSiArrowButtonPalettes);
 	if (_iconUnknownTexture && tc().iconUnknownUserPalette())
 		_iconUnknownTexture->applyUserPaletteFile(TFN_PALETTE_ICON_UNK, effectDSiArrowButtonPalettes);
+	if (_iconVIDTexture && tc().iconVIDUserPalette())
+		_iconVIDTexture->applyUserPaletteFile(TFN_PALETTE_ICON_VID, effectDSiArrowButtonPalettes);
 	if (_iconWSTexture && tc().iconWSUserPalette())
 		_iconWSTexture->applyUserPaletteFile(TFN_PALETTE_ICON_WS, effectDSiArrowButtonPalettes);
 }
@@ -1512,6 +1517,9 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 	if (_iconMDTexture) {
 		_iconMDTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
+	if (_iconMSXTexture) {
+		_iconMSXTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
 	if (_iconNESTexture) {
 		_iconNESTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
@@ -1535,6 +1543,9 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 	}
 	if (_iconUnknownTexture) {
 		_iconUnknownTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconVIDTexture) {
+		_iconVIDTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconWSTexture) {
 		_iconWSTexture->applyPaletteEffect(effectGrayscalePalette);

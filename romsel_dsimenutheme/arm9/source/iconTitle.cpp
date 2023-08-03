@@ -140,6 +140,7 @@ static inline void loadNGPIcon(int num) { glLoadIcon(num, tex().iconNGPTexture()
 static inline void loadCPCIcon(int num) { glLoadIcon(num, tex().iconCPCTexture()->palette(), tex().iconCPCTexture()->bytes()); }
 static inline void loadVIDIcon(int num) { glLoadIcon(num, tex().iconVIDTexture()->palette(), tex().iconVIDTexture()->bytes()); }
 static inline void loadIMGIcon(int num) { glLoadIcon(num, tex().iconIMGTexture()->palette(), tex().iconIMGTexture()->bytes()); }
+static inline void loadMSXIcon(int num) { glLoadIcon(num, tex().iconMSXTexture()->palette(), tex().iconMSXTexture()->bytes()); }
 
 static inline void clearIcon(int num) { glClearIcon(num); }
 
@@ -671,6 +672,8 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		}
 	} else if (bnrRomType[num] == 10) {
 		loadA26Icon(spriteIdx);
+	} else if (bnrRomType[num] == 21) {
+		loadMSXIcon(spriteIdx);
 	} else if (bnrRomType[num] == 13) {
 		loadCOLIcon(spriteIdx);
 	} else if (bnrRomType[num] == 14) {

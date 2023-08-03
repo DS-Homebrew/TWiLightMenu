@@ -1243,6 +1243,7 @@ void lastRunROM()
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EColecoDSLaunch) {
 		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().colEmulator != 2)
 		 || ((extension(ms().romPath[ms().previousUsedDevice], ".sg") || extension(ms().romPath[ms().previousUsedDevice], ".sc")) && ms().sgEmulator != 2)
+		 || extension(ms().romPath[ms().previousUsedDevice], ".m5") || extension(ms().romPath[ms().previousUsedDevice], ".msx")
 		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";

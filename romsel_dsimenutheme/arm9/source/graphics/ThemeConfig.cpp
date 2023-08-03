@@ -23,10 +23,10 @@ ThemeConfig::ThemeConfig()
 	_startBorderUserPalette(true), _startTextUserPalette(true), _wirelessIconsUserPalette(false),
 	_iconA26UserPalette(false), _iconCOLUserPalette(false), _iconGBUserPalette(false), _iconGBAUserPalette(false),
 	_iconGBAModeUserPalette(false),	_iconGGUserPalette(false), _iconIMGUserPalette(false), _iconINTUserPalette(false),
-	_iconM5UserPalette(false), _iconManualUserPalette(false), _iconMDUserPalette(false), _iconNESUserPalette(false),
+	_iconM5UserPalette(false), _iconManualUserPalette(false), _iconMDUserPalette(false), _iconMSXUserPalette(false), _iconNESUserPalette(false),
 	_iconNGPUserPalette(false), _iconPCEUserPalette(false), _iconPLGUserPalette(false), _iconSettingsUserPalette(false),
 	_iconSGUserPalette(false), _iconSMSUserPalette(false), _iconSNESUserPalette(false), _iconUnknownUserPalette(false),
-	_iconWSUserPalette(false),
+	_iconVIDUserPalette(false), _iconWSUserPalette(false),
 	_usernameUserPalette(true), _progressBarUserPalette(true),
 	_purpleBatteryAvailable(false), _renderPhoto(true), _darkLoading(false), _useAlphaBlend(true),
 	_playStartupJingle(false), _startupJingleDelayAdjust(0), _progressBarColor(0x7C00),
@@ -132,6 +132,7 @@ void ThemeConfig::loadConfig() {
 	_iconM5UserPalette = getInt(themeConfig, "IconM5UserPalette", _iconM5UserPalette);
 	_iconManualUserPalette = getInt(themeConfig, "IconManualUserPalette", _iconManualUserPalette);
 	_iconMDUserPalette = getInt(themeConfig, "IconMDUserPalette", _iconMDUserPalette);
+	_iconMSXUserPalette = getInt(themeConfig, "IconMSXUserPalette", _iconMDUserPalette);
 	_iconNESUserPalette = getInt(themeConfig, "IconNESUserPalette", _iconNESUserPalette);
 	_iconNGPUserPalette = getInt(themeConfig, "IconNGPUserPalette", _iconNGPUserPalette);
 	_iconPCEUserPalette = getInt(themeConfig, "IconPCEUserPalette", _iconPCEUserPalette);
@@ -141,6 +142,7 @@ void ThemeConfig::loadConfig() {
 	_iconSMSUserPalette = getInt(themeConfig, "IconSMSUserPalette", _iconSMSUserPalette);
 	_iconSNESUserPalette = getInt(themeConfig, "IconSNESUserPalette", _iconSNESUserPalette);
 	_iconUnknownUserPalette = getInt(themeConfig, "IconUnknownUserPalette", _iconUnknownUserPalette);
+	_iconVIDUserPalette = getInt(themeConfig, "IconVIDUserPalette", _iconWSUserPalette);
 	_iconWSUserPalette = getInt(themeConfig, "IconWSUserPalette", _iconWSUserPalette);
 
 	_usernameUserPalette = getInt(themeConfig, "UsernameUserPalette", _usernameUserPalette);

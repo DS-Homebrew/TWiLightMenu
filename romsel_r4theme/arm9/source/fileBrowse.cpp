@@ -1037,6 +1037,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bnrRomType = 0;
 			} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 				bnrRomType = 10;
+			} else if (extension(std_romsel_filename, {".msx"})) {
+				bnrRomType = 21;
 			} else if (extension(std_romsel_filename, {".col"})) {
 				bnrRomType = 13;
 			} else if (extension(std_romsel_filename, {".m5"})) {

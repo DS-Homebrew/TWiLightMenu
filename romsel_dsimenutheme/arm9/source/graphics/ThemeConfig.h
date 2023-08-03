@@ -83,6 +83,7 @@ private:
 	bool _iconM5UserPalette;
 	bool _iconManualUserPalette;
 	bool _iconMDUserPalette;
+	bool _iconMSXUserPalette;
 	bool _iconNESUserPalette;
 	bool _iconNGPUserPalette;
 	bool _iconPCEUserPalette;
@@ -92,6 +93,7 @@ private:
 	bool _iconSMSUserPalette;
 	bool _iconSNESUserPalette;
 	bool _iconUnknownUserPalette;
+	bool _iconVIDUserPalette;
 	bool _iconWSUserPalette;
 	bool _usernameUserPalette;
 	bool _progressBarUserPalette;
@@ -207,6 +209,7 @@ public:
 	bool iconM5UserPalette() const { return _iconM5UserPalette; }
 	bool iconManualUserPalette() const { return _iconManualUserPalette; }
 	bool iconMDUserPalette() const { return _iconMDUserPalette; }
+	bool iconMSXUserPalette() const { return _iconMSXUserPalette; }
 	bool iconNESUserPalette() const { return _iconNESUserPalette; }
 	bool iconNGPUserPalette() const { return _iconNGPUserPalette; }
 	bool iconPCEUserPalette() const { return _iconPCEUserPalette; }
@@ -216,6 +219,7 @@ public:
 	bool iconSMSUserPalette() const { return _iconSMSUserPalette; }
 	bool iconSNESUserPalette() const { return _iconSNESUserPalette; }
 	bool iconUnknownUserPalette() const { return _iconUnknownUserPalette; }
+	bool iconVIDUserPalette() const { return _iconVIDUserPalette; }
 	bool iconWSUserPalette() const { return _iconWSUserPalette; }
 	bool usernameUserPalette() const { return _usernameUserPalette; }
 	bool progressBarUserPalette() const { return _progressBarUserPalette; }

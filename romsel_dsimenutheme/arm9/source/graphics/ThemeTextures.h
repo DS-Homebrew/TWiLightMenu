@@ -163,6 +163,7 @@ public:
 	const Texture *iconCPCTexture() { return _iconCPCTexture.get(); }
 	const Texture *iconVIDTexture() { return _iconVIDTexture.get(); }
 	const Texture *iconIMGTexture() { return _iconIMGTexture.get(); }
+	const Texture *iconMSXTexture() { return _iconMSXTexture.get(); }
 	const Texture *iconUnknownTexture() { return _iconUnknownTexture.get(); }
 
 	const Texture *leftShoulderTexture() { return _leftShoulderTexture.get(); }
@@ -297,6 +298,7 @@ private:
 	unique_ptr<Texture> _iconCPCTexture;
 	unique_ptr<Texture> _iconVIDTexture;
 	unique_ptr<Texture> _iconIMGTexture;
+	unique_ptr<Texture> _iconMSXTexture;
 	unique_ptr<Texture> _iconUnknownTexture;
 
 	unique_ptr<Texture> _volume0Texture;

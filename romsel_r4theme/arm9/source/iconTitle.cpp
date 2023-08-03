@@ -49,8 +49,6 @@
 // Graphic files
 #include "icon_unk.h"
 #include "icon_folder.h"
-#include "icon_vid.h"
-#include "icon_img.h"
 #include "icon_plg.h"
 #include "icon_gbamode.h"
 #include "icon_gba.h"
@@ -69,6 +67,9 @@
 #include "icon_ws.h"
 #include "icon_ngp.h"
 #include "icon_cpc.h"
+#include "icon_vid.h"
+#include "icon_img.h"
+#include "icon_msx.h"
 
 extern u16 convertVramColorToGrayscale(u16 val);
 
@@ -629,6 +630,26 @@ void loadIMGIcon()
 				);
 }
 
+void loadMSXIcon()
+{
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[i]);
+	}
+	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) icon_msxPal, // Image palette
+				(u8*) icon_msxBitmap // Raw image data
+				);
+}
+
 void loadConsoleIcons()
 {
 	u16* newPalette;
@@ -776,6 +797,12 @@ void loadConsoleIcons()
 
 	// Image
 	newPalette = (u16*)icon_imgPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+	}
+
+	// MSX
+	newPalette = (u16*)icon_msxPal;
 	for (int i2 = 0; i2 < 16; i2++) {
 		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 	}
@@ -1291,6 +1318,8 @@ void iconUpdate(bool isDir, const char* name)
 		}
 	} else if (bnrRomType == 10) {
 		loadA26Icon();
+	} else if (bnrRomType == 21) {
+		loadMSXIcon();
 	} else if (bnrRomType == 13) {
 		loadCOLIcon();
 	} else if (bnrRomType == 14) {

@@ -1358,6 +1358,9 @@ int dsClassicMenu(void) {
 				 || extension(filename[0], ".a26") || extension(filename[0], ".a52") || extension(filename[0], ".a78")) {
 			bnrRomType[0] = 10;
 			boxArtType[0] = 0;
+		} else if (extension(filename[0], ".msx")) {
+			bnrRomType[0] = 21;
+			boxArtType[0] = 0;
 		} else if (extension(filename[0], ".col")) {
 			bnrRomType[0] = 13;
 			boxArtType[0] = 0;
@@ -1497,6 +1500,9 @@ int dsClassicMenu(void) {
 		} else if (extension(filename[1], ".xex") || extension(filename[1], ".atr")
 				 || extension(filename[1], ".a26") || extension(filename[1], ".a52") || extension(filename[1], ".a78")) {
 			bnrRomType[1] = 10;
+			boxArtType[1] = 0;
+		} else if (extension(filename[1], ".msx")) {
+			bnrRomType[1] = 21;
 			boxArtType[1] = 0;
 		} else if (extension(filename[1], ".col")) {
 			bnrRomType[1] = 13;
@@ -3143,7 +3149,8 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
-				} else if (((extension(filename[ms().secondaryDevice], ".sg") || extension(filename[ms().secondaryDevice], ".sc")) && ms().sgEmulator == TWLSettings::EColSegaColecoDS) || (extension(filename[ms().secondaryDevice], ".col") && ms().colEmulator == TWLSettings::EColSegaColecoDS) || extension(filename[ms().secondaryDevice], ".m5")) {
+				} else if (((extension(filename[ms().secondaryDevice], ".sg") || extension(filename[ms().secondaryDevice], ".sc")) && ms().sgEmulator == TWLSettings::EColSegaColecoDS) || (extension(filename[ms().secondaryDevice], ".col") && ms().colEmulator == TWLSettings::EColSegaColecoDS)
+				|| extension(filename[ms().secondaryDevice], ".m5") || extension(filename[ms().secondaryDevice], ".msx")) {
 					ms().launchType[ms().secondaryDevice] = Launch::EColecoDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
