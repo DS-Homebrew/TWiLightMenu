@@ -1114,6 +1114,7 @@ int r4Theme(void) {
 		".ngp", ".ngc", // Neo Geo Pocket
 		".pce", // PC Engine/TurboGrafx-16
 		".dsk", // Amstrad CPC
+		".min", // Pokémon mini
 		".avi", // Xvid (AVI)
 		".rvid", // Rocket Video
 		".fv", // FastVideo
@@ -2522,6 +2523,14 @@ int r4Theme(void) {
 
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
+					}
+				} else if (extension(filename, {".min"})) {
+					ms().launchType[ms().secondaryDevice] = TWLSettings::EPokeMiniLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/PokeMini.nds";
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/PokeMini.nds";
+						boostVram = true;
 					}
 				} else if (extension(filename, {".3ds", ".cia", ".cxi"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::E3DSLaunch;

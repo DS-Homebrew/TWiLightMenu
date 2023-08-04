@@ -1424,6 +1424,9 @@ int dsClassicMenu(void) {
 		} else if (extension(filename[0], ".dsk")) {
 			bnrRomType[0] = 18;
 			boxArtType[0] = 0;
+		} else if (extension(filename[0], ".min")) {
+			bnrRomType[0] = 22;
+			boxArtType[0] = 0;
 		} else {
 			bnrRomType[0] = 9;
 			boxArtType[0] = -1;
@@ -1566,6 +1569,9 @@ int dsClassicMenu(void) {
 			boxArtType[1] = 0;
 		} else if (extension(filename[1], ".dsk")) {
 			bnrRomType[1] = 18;
+			boxArtType[1] = 0;
+		} else if (extension(filename[1], ".min")) {
+			bnrRomType[1] = 22;
 			boxArtType[1] = 0;
 		} else {
 			bnrRomType[1] = 9;
@@ -3377,6 +3383,14 @@ int dsClassicMenu(void) {
 
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
+					}
+				} else if (extension(filename[ms().secondaryDevice], ".min")) {
+					ms().launchType[ms().secondaryDevice] = Launch::EPokeMiniLaunch;
+
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/PokeMini.nds";
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/PokeMini.nds";
+						boostVram = true;
 					}
 				} else if (extension(filename[ms().secondaryDevice], ".3ds") || extension(filename[ms().secondaryDevice], ".cia") || extension(filename[ms().secondaryDevice], ".cxi")) {
 					ms().launchType[ms().secondaryDevice] = Launch::E3DSLaunch;

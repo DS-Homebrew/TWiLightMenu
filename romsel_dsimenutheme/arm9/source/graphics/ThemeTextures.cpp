@@ -567,6 +567,7 @@ void ThemeTextures::loadIconTextures() {
 	_iconVIDTexture = std::make_unique<Texture>(TFN_GRF_ICON_VID, TFN_FALLBACK_GRF_ICON_VID);
 	_iconIMGTexture = std::make_unique<Texture>(TFN_GRF_ICON_IMG, TFN_FALLBACK_GRF_ICON_IMG);
 	_iconMSXTexture = std::make_unique<Texture>(TFN_GRF_ICON_MSX, TFN_FALLBACK_GRF_ICON_MSX);
+	_iconMINITexture = std::make_unique<Texture>(TFN_GRF_ICON_MINI, TFN_FALLBACK_GRF_ICON_MINI);
 	_iconUnknownTexture = std::make_unique<Texture>(TFN_GRF_ICON_UNK, TFN_FALLBACK_GRF_ICON_UNK);
 
 	// if (ms().colorMode == 1)
@@ -1397,6 +1398,8 @@ void ThemeTextures::applyUserPaletteToAllGrfTextures() {
 		_manualIconTexture->applyUserPaletteFile(TFN_PALETTE_ICON_MANUAL, effectDSiArrowButtonPalettes);
 	if (_iconMDTexture && tc().iconMDUserPalette())
 		_iconMDTexture->applyUserPaletteFile(TFN_PALETTE_ICON_MD, effectDSiArrowButtonPalettes);
+	if (_iconMINITexture && tc().iconMINIUserPalette())
+		_iconMINITexture->applyUserPaletteFile(TFN_PALETTE_ICON_MINI, effectDSiArrowButtonPalettes);
 	if (_iconMSXTexture && tc().iconMSXUserPalette())
 		_iconMSXTexture->applyUserPaletteFile(TFN_PALETTE_ICON_MSX, effectDSiArrowButtonPalettes);
 	if (_iconNESTexture && tc().iconNESUserPalette())
@@ -1516,6 +1519,9 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 	}
 	if (_iconMDTexture) {
 		_iconMDTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_iconMINITexture) {
+		_iconMINITexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconMSXTexture) {
 		_iconMSXTexture->applyPaletteEffect(effectGrayscalePalette);

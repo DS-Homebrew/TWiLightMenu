@@ -128,7 +128,8 @@ public:
 		ECrocoDSLaunch = 23,
 		ETunaViDSLaunch = 24,
 		EImageLaunch = 25,
-		E3DSLaunch = 26
+		E3DSLaunch = 26,
+		EPokeMiniLaunch = 27
 	};
 
 	enum TConsoleModel : int

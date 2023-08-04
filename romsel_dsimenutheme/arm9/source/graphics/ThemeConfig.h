@@ -83,6 +83,7 @@ private:
 	bool _iconM5UserPalette;
 	bool _iconManualUserPalette;
 	bool _iconMDUserPalette;
+	bool _iconMINIUserPalette;
 	bool _iconMSXUserPalette;
 	bool _iconNESUserPalette;
 	bool _iconNGPUserPalette;
@@ -209,6 +210,7 @@ public:
 	bool iconM5UserPalette() const { return _iconM5UserPalette; }
 	bool iconManualUserPalette() const { return _iconManualUserPalette; }
 	bool iconMDUserPalette() const { return _iconMDUserPalette; }
+	bool iconMINIUserPalette() const { return _iconMINIUserPalette; }
 	bool iconMSXUserPalette() const { return _iconMSXUserPalette; }
 	bool iconNESUserPalette() const { return _iconNESUserPalette; }
 	bool iconNGPUserPalette() const { return _iconNGPUserPalette; }

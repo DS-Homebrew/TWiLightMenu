@@ -1077,6 +1077,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bnrRomType = 17;
 			} else if (extension(std_romsel_filename, {".dsk"})) {
 				bnrRomType = 18;
+			} else if (extension(std_romsel_filename, {".min"})) {
+				bnrRomType = 22;
 			} else {
 				bnrRomType = 9;
 			}

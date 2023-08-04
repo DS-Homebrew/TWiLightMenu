@@ -117,6 +117,7 @@ jobs:
           rm NitroSwan.zip
           # PicoDriveTWL is a prerelease, so get the latest URL from the GH api
           curl -LO $(curl https://api.github.com/repos/DS-Homebrew/PicoDriveTWL/releases | jq --raw-output '.[0].assets[0].browser_download_url' -)
+          curl -LO https://github.com/DS-Homebrew/PokeMini/releases/latest/download/PokeMini.nds
           cd ../../../..
 
           # Players
