@@ -969,6 +969,22 @@ void customSleep() {
 		powerOn(PM_BACKLIGHT_TOP);
 	}
 	powerOn(PM_BACKLIGHT_BOTTOM);
+	if (!ms().macroMode && tc().renderPhoto()) {
+		srand(time(NULL));
+		loadPhotoList();
+
+		extern bool boxArtLoaded;
+		extern bool showLshoulder;
+		extern bool showRshoulder;
+		extern int file_count;
+
+		boxArtLoaded = false;
+		showLshoulder = (PAGENUM != 0);
+		showRshoulder = (file_count > 40 + PAGENUM * 40);
+		if (ms().theme != TWLSettings::EThemeHBL) {
+			tex().drawShoulders(showLshoulder, showRshoulder);
+		}
+	}
 	fadeType = true;
 	snd().beginStream();
 	while (!screenFadedIn()) {
