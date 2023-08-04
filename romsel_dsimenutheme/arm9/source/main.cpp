@@ -1030,6 +1030,7 @@ int dsiMenuTheme(void) {
 		gbaBiosFound[0] = (access("sd:/_gba/bios.bin", F_OK) == 0);
 		if (!gbaBiosFound[0]) gbaBiosFound[0] = (access("sd:/gba/bios.bin", F_OK) == 0);
 		if (!gbaBiosFound[0]) gbaBiosFound[0] = (access("sd:/bios.bin", F_OK) == 0);
+		logPrint(gbaBiosFound[0] ? "GBA BIOS found on sd\n" : "GBA BIOS not found on sd\n");
 	}
 	if (flashcardFound()) {
 		statvfs("fat:/", &st[1]);
@@ -1037,6 +1038,7 @@ int dsiMenuTheme(void) {
 		gbaBiosFound[1] = (access("fat:/_gba/bios.bin", F_OK) == 0);
 		if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/gba/bios.bin", F_OK) == 0);
 		if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/bios.bin", F_OK) == 0);
+		logPrint(gbaBiosFound[0] ? "GBA BIOS found on fat\n" : "GBA BIOS not found on fat\n");
 	}
 
 	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
@@ -1190,6 +1192,7 @@ int dsiMenuTheme(void) {
 			rename("sd:/_nds/TWiLightMenu/tempDSiWare.prv", "sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak");
 		}
 		showProgressIcon = false;
+		logPrint("Copied DSiWare save back to flashcard\n");
 		if (ms().theme != TWLSettings::EThemeSaturn) {
 			fadeType = false; // Fade to white
 			for (int i = 0; i < 25; i++) {
