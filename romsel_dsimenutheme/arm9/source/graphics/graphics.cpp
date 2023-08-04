@@ -1157,11 +1157,11 @@ void loadPhotoList() {
 	DIR *dir;
 	struct dirent *ent;
 	std::string photoDir;
-	std::string dirPath = "sd:/_nds/TWiLightMenu/dsimenu/photos/";
+	std::string dirPath = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu/photos/" : "fat:/_nds/TWiLightMenu/dsimenu/photos/";
 	std::vector<std::string> photoList;
 
 	if ((dir = opendir(dirPath.c_str())) == NULL) {
-		dirPath = "fat:/_nds/TWiLightMenu/dsimenu/photos/";
+		dirPath = sys().isRunFromSD() ? "fat:/_nds/TWiLightMenu/dsimenu/photos/" : "sd:/_nds/TWiLightMenu/dsimenu/photos/";
 		dir = opendir(dirPath.c_str());
 	}
 
@@ -1184,9 +1184,9 @@ void loadPhotoList() {
 	}
 
 	// If no photos found, try find a bootstrap screenshot
-	FILE *file = fopen("sd:/_nds/nds-bootstrap/screenshots.tar", "rb");
+	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/screenshots.tar" : "fat:/_nds/nds-bootstrap/screenshots.tar", "rb");
 	if (!file)
-		file = fopen("fat:/_nds/nds-bootstrap/screenshots.tar", "rb");
+		file = fopen(sys().isRunFromSD() ? "fat:/_nds/nds-bootstrap/screenshots.tar" : "sd:/_nds/nds-bootstrap/screenshots.tar", "rb");
 	
 	if (file) {
 		std::vector<int> screenshots;
