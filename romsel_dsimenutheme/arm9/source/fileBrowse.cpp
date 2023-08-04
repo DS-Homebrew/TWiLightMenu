@@ -115,7 +115,9 @@ bool lockOutDirContentBlankFilling = false;
 std::string dirContName;
 
 char boxArtPath[256];
+const char* boxArtFilename;
 
+bool boxArtFound = false;
 bool boxArtLoaded = false;
 bool shouldersRendered = false;
 bool settingsChanged = false;
@@ -553,8 +555,8 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 	startBorderZoomOut = true;
 }
 
-void updateBoxArt(const std::vector<DirEntry> dirContents) {
-	if (CURPOS + PAGENUM * 40 >= ((int)dirContents.size())) return;
+void updateBoxArt(void) {
+	if (!boxArtFound) return;
 	showSTARTborder = true;
 	if (ms().theme == TWLSettings::EThemeHBL || ms().macroMode || !ms().showBoxArt || boxArtLoaded) return;
 
@@ -572,7 +574,7 @@ void updateBoxArt(const std::vector<DirEntry> dirContents) {
 		if (dsiFeatures() && ms().showBoxArt == 2) {
 			tex().drawBoxArtFromMem(CURPOS); // Load box art
 		} else {
-			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", dirContents.at(CURPOS + PAGENUM * 40).name.c_str());
+			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", boxArtFilename);
 			if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
 				sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
 			}
@@ -1312,6 +1314,7 @@ void mdRomTooBig(void) {
 	do {
 		scanKeys();
 		pressed = keysDown();
+		updateBoxArt();
 		bgOperations(true);
 
 		// Debug code for changing brightness of BG layer
@@ -1427,6 +1430,7 @@ void ramDiskMsg(const char *filename) {
 	do {
 		scanKeys();
 		pressed = keysDown();
+		updateBoxArt();
 		bgOperations(true);
 	} while (!(pressed & KEY_A));
 	clearText();
@@ -1472,6 +1476,7 @@ bool dsiBinariesMissingMsg(const char *filename) {
 	while (1) {
 		scanKeys();
 		int pressed = keysDown();
+		updateBoxArt();
 		bgOperations(true);
 		if (pressed & KEY_Y) {
 			dsModeForced = true;
@@ -1592,6 +1597,7 @@ bool donorRomMsg(const char *filename) {
 		}
 		scanKeys();
 		pressed = keysDown();
+		updateBoxArt();
 		bgOperations(true);
 		if ((pressed & KEY_LEFT) && msgPage != 0) {
 			snd().playSelect();
@@ -1702,6 +1708,7 @@ bool checkForCompatibleGame(const char *filename) {
 	while (1) {
 		scanKeys();
 		int pressed = keysDown();
+		updateBoxArt();
 		bgOperations(true);
 		if (pressed & KEY_A) {
 			proceedToLaunch = true;
@@ -1831,6 +1838,7 @@ bool dsiWareInDSModeMsg(std::string filename) {
 		}
 		scanKeys();
 		int pressed = keysDown();
+		updateBoxArt();
 		bgOperations(true);
 		if ((pressed & KEY_LEFT) && msgPage != 0) {
 			snd().playSelect();
@@ -2039,6 +2047,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		while (1) {
 			scanKeys();
 			int pressed = keysDown();
+			updateBoxArt();
 			bgOperations(true);
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				snd().playBack();
@@ -2050,6 +2059,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		while (1) {
 			scanKeys();
 			int pressed = keysDown();
+			updateBoxArt();
 			bgOperations(true);
 			if (pressed & KEY_A) {
 				proceedToLaunch = true;
@@ -2157,6 +2167,7 @@ bool cannotLaunchMsg(const char *filename) {
 	while (1) {
 		scanKeys();
 		pressed = keysDown();
+		updateBoxArt();
 		bgOperations(true);
 
 		if (pressed & KEY_A) {
@@ -2782,7 +2793,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				touchRead(&touch);
 				snd().updateStream();
 
-				updateBoxArt(dirContents[scrn]);
+				boxArtFound = ((CURPOS + PAGENUM * 40) < ((int)dirContents[scrn].size()));
+				if (boxArtFound) {
+					boxArtFilename = dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str();
+				}
+				updateBoxArt();
 				if (ms().theme < 4) {
 					while (dboxInFrame) {
 						snd().updateStream();
@@ -3423,6 +3438,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						while (1) {
 							scanKeys();
 							pressed = keysDown();
+							updateBoxArt();
 							bgOperations(true);
 							if (pressed & KEY_A) {
 								pressed = 0;
@@ -3497,6 +3513,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						while (1) {
 							scanKeys();
 							pressed = keysDown();
+							updateBoxArt();
 							bgOperations(true);
 							if (pressed & KEY_A) {
 								pressed = 0;

@@ -83,6 +83,7 @@ std::string setAsInternetBrowser = "";
 std::string setAsDonorRom = "";
 
 extern int file_count;
+extern void updateBoxArt(void);
 
 char pergamefilepath[256];
 
@@ -994,6 +995,7 @@ void perGameSettings (std::string filename) {
 			scanKeys();
 			pressed = keysDown();
 			held = keysDownRepeat();
+			updateBoxArt();
 			bgOperations(true);
 		} while (!held);
 

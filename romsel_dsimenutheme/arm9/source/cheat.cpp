@@ -39,6 +39,7 @@
 
 extern bool dbox_showIcon;
 
+extern void updateBoxArt(void);
 extern void bgOperations(bool waitFrame);
 
 CheatCodelist::~CheatCodelist(void) {}
@@ -330,6 +331,7 @@ void CheatCodelist::selectCheats(std::string filename)
     while (1) {
       scanKeys();
       pressed = keysDownRepeat();
+	  updateBoxArt();
       bgOperations(true);
       if (pressed & KEY_B) {
         snd().playBack();
@@ -385,6 +387,7 @@ void CheatCodelist::selectCheats(std::string filename)
           updateText(false);
         }
       }
+	  updateBoxArt();
       bgOperations(true);
     } while (!pressed && !held);
 
@@ -515,6 +518,7 @@ void CheatCodelist::selectCheats(std::string filename)
         while (1) {
           scanKeys();
           pressed = keysDown();
+		  updateBoxArt();
           bgOperations(true);
           if (pressed & KEY_B) {
             snd().playBack();
