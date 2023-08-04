@@ -25,9 +25,19 @@ Texture::Texture(const std::string &filePath, const std::string &fallback)
 	}
 
 	if (!file) {
-		file = fopen(fallback.c_str(), "rb");
-		_type = findType(file);
-		pngPath = fallback;
+		for (const char *extension : extensions) {
+			file = fopen((fallback + extension).c_str(), "rb");
+			if (file) {
+				_type = findType(file);
+				if (_type == TextureType::Unknown) {
+					fclose(file);
+
+				} else {
+					pngPath = fallback + extension;
+					break;
+				}
+			}
+		}
 	}
 
 	switch (_type) {
