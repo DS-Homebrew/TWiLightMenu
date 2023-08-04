@@ -30,6 +30,7 @@
 #include "icon_pce.h"
 #include "icon_md.h"
 #include "icon_snes.h"
+#include "icon_msx.h"
 #include "icon_present.h"
 
 static inline const char* sm64dsReleaseDate(void) {
@@ -110,8 +111,8 @@ static u16 twlColors[16] = {
 	0x5C17
 };
 
-static int zoomingIconXpos[11] = {-32, -32, 256, 256+16, -32, -32, 256, 256+16, -32, -32, 256+16};
-static int zoomingIconYpos[11] = {-32, -48, -48, -32, 192+32, 192+48, 192+48, 192+32, -32, 192, -32};
+static int zoomingIconXpos[12] = {-32, -32, 256, 256+16, -32, -32, 256, 256+16, -32, -32, 256+16, 256+40};
+static int zoomingIconYpos[12] = {-32, -48, -48, -32, 192+32, 192+48, 192+48, 192+32, -32, 192, -32, 192+48};
 static int gbaIconYpos = 44;
 
 void twlMenuVideo_loadTopGraphics(void) {
@@ -409,6 +410,28 @@ void twlMenuVideo_loadTopGraphics(void) {
 	tonccpy(gfx, icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*2), icon_Pal, icon_PalLen);
 	oamSet(&oamMain, 2, zoomingIconXpos[2], zoomingIconYpos[2], 0, 2, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+
+	// MSX
+	if (december) {
+		icon_Tiles = (u8*)icon_presentTiles;
+		icon_TilesLen = icon_presentTilesLen;
+		icon_Pal = (u16*)icon_presentPal;
+		icon_PalLen = icon_presentPalLen;
+	} else 	{
+		icon_Tiles = (u8*)icon_msxTiles;
+		icon_TilesLen = icon_msxTilesLen;
+		icon_Pal = (u16*)icon_msxPal;
+		icon_PalLen = icon_msxPalLen;
+	}
+	if (ms().colorMode == 1) {
+		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
+			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+		}
+	}
+	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
+	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(SPRITE_PALETTE+(16*11), icon_Pal, icon_PalLen);
+	oamSet(&oamMain, 11, zoomingIconXpos[11], zoomingIconYpos[11], 0, 11, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
 }
 
 extern char soundBank[];
@@ -525,7 +548,16 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[10] = 8;
 		}
 
-		for (int i = 0; i < 11; i++) {
+		zoomingIconXpos[11] -= 2;
+		zoomingIconYpos[11] -= 2;
+		if (zoomingIconXpos[11] < 256-36) {
+			zoomingIconXpos[11] = 256-36;
+		}
+		if (zoomingIconYpos[11] < 192-40) {
+			zoomingIconYpos[11] = 192-40;
+		}
+
+		for (int i = 0; i < 12; i++) {
 			oamSetXY(&oamMain, i, zoomingIconXpos[i], zoomingIconYpos[i]);
 		}
 		if (highFPS) {
