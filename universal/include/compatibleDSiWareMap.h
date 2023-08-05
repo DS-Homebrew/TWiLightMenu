@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 424
+// Total: 425
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -36,7 +36,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAC", // Advanced Circuits
 	"K5H", // Ah! Heaven
 	"KP7", // Alien Puzzle Adventure
-	"K27", // G.G. Series: All Breaker
+	"K27", // G.G Series: All Breaker
 	"KAO", // All-Star Air Hockey
 	"KF2", // Amakuchi! Dairoujou
 	"KPC", // Animal Puzzle Adventure
@@ -60,7 +60,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KYA", // Arrow of Laputa
 	"K9Z", // Artillery: Knights vs. Orcs
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
-	"KAB", // G.G. Series: Assault Buster
+	"KAB", // G.G Series: Assault Buster
 	"K7D", // Astro
 	"KZ3", // Atama o Yoku Suru Anzan DS: Zou no Hana Fuusen
 	"KVU", // ATV Fever
@@ -72,6 +72,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KBEE", // Bejeweled Twist (USA)
 	"K9G", // Big Bass Arcade
 	"KP6J", // Bird & Beans / Tori to Mame (Japan)
+	"K96", // G.G Series: Black x Block
 	"KLN", // Bloons TD
 	"KA5", // Boardwalk Ball Toss
 	"KBB", // Bomberman Blitz
