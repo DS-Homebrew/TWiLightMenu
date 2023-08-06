@@ -487,7 +487,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 44
+// Total: 43
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -516,7 +516,6 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"K9N", // Neko Neko Bakery: Pan de Pazurunya!
 	"K9K", // Nintendoji
 	"K6T", // Orion's Odyssey
-	"KOY", // Oscar in Toyland 2
 	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist
 	"KXU", // Publisher Dream
@@ -564,7 +563,6 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Neko Neko Bakery: Pan de Pazurunya! (No music)
 	0, // Nintendoji (No audio + Part of the game only)
 	4, // Orion's Odyssey (Crashes at certain points)
-	4, // Oscar in Toyland 2 (Crashes at certain point)
 	1, // PictureBook Games: The Royal Bluff (No audio)
 	0, // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist (No audio + Parts of the game only)
 	1, // Publisher Dream (No audio)
