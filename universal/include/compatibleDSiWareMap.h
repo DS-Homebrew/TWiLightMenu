@@ -582,7 +582,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 30
+// Total: 31
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -591,6 +591,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K3Y", // 3 Heroes: Crystal Soul
 	"KXT", // 99Seconds
+	"K25", // G.G Series: Air Pinball Hockey
 	"KAX", // Animal Boxing
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KUV", // Bloons TD 4
