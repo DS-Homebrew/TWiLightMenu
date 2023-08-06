@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 425
+// Total: 426
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -132,6 +132,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDL", // Dragon's Lair
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
 	"K9E", // Dreamwalker
+	"KIF", // Drift Street International
 	"B88", // DS WiFi Settings
 	"KB8", // GO Series: Earth Saver
 	"KB9", // Earth Saver: Inseki Bakuha Dai Sakuse
@@ -486,7 +487,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 43
+// Total: 44
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -500,6 +501,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
+	"KIF", // Drift Street International
 	"K2E", // Easter Eggztravaganza
 	"KFD", // Fieldrunners
 	"KFP", // Flipper
@@ -547,6 +549,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
 	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state due to RAM limitation)
+	2, // Drift Street International (No music)
 	0, // Easter Eggztravaganza (Part of the game only)
 	1, // Fieldrunners (No audio)
 	2, // Flipper (No music)
