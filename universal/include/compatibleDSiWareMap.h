@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 426
+// Total: 427
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -35,6 +35,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KQK", // Ace Mathician
 	"KAC", // Advanced Circuits
 	"K5H", // Ah! Heaven
+	"K25", // G.G Series: Air Pinball Hockey
 	"KP7", // Alien Puzzle Adventure
 	"K27", // G.G Series: All Breaker
 	"KAO", // All-Star Air Hockey
@@ -582,7 +583,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 32
+// Total: 31
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -591,7 +592,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K3Y", // 3 Heroes: Crystal Soul
 	"KXT", // 99Seconds
-	"K25", // G.G Series: Air Pinball Hockey
 	"K2Z", // G.G Series: Altered Weapon
 	"KAX", // Animal Boxing
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
