@@ -599,6 +599,13 @@ void perGameSettings (std::string filename) {
 			}
 			showCheats = true;
 		}
+		if (dsiFeatures() && memcmp(gameTid[CURPOS], "HNG", 3) == 0) {
+			perGameOps++;
+			perGameOp[perGameOps] = 15;	// Set as Internet Browser
+			internetBrowserTextShown = true;
+		} else {
+			internetBrowserTextShown = false;
+		}
 		if (a7mbk6[CURPOS] == 0x080037C0 ? showSetDonorRomDSiWare(arm7size) : showSetDonorRom(arm7size, SDKVersion, dsiBinariesFound)) {
 			perGameOps++;
 			perGameOp[perGameOps] = 9;	// Set as Donor ROM
@@ -655,7 +662,7 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
-			if (memcmp(gameTid[CURPOS], "UBR", 3) == 0 || (dsiFeatures() && memcmp(gameTid[CURPOS], "HNG", 3) == 0)) {
+			if (memcmp(gameTid[CURPOS], "UBR", 3) == 0) {
 				perGameOps++;
 				perGameOp[perGameOps] = 15;	// Set as Internet Browser
 				internetBrowserTextShown = true;
