@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 430
+// Total: 431
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -122,6 +122,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KXD", // Crystal Adventure
 	"KQQ", // Crystal Caverns of Amon-Ra
 	"K32", // CuteWitch! runner
+	"KTA", // G.G Series: D-Tank
 	"KF3", // Dairojo! Samurai Defenders
 	"KIN", // Dancing Academy
 	"KDV", // Dark Void Zero
