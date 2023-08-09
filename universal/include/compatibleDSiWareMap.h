@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 434
+// Total: 435
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -141,6 +141,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K2C", // G.G Series: Drift Circuit
 	"KUG", // G.G Series: Drift Circuit 2
 	"KIF", // Drift Street International
+	"KDA", // G.G Series: Drilling Attack!!
 	"B88", // DS WiFi Settings
 	"KB8", // GO Series: Earth Saver
 	"KB9", // Earth Saver: Inseki Bakuha Dai Sakuse
