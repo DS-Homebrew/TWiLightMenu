@@ -592,7 +592,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 30
+// Total: 31
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -610,6 +610,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KEI", // Electroplankton: Beatnes
 	"KEG", // Electroplankton: Lumiloop
 	"KEA", // Electroplankton: Trapy
+	"KER", // G.G Series: Exciting River
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
