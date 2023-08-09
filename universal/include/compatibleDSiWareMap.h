@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 432
+// Total: 434
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -138,6 +138,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KDL", // Dragon's Lair
 	"KLYE", // Dragon's Lair II: Time Warp (USA)
 	"K9E", // Dreamwalker
+	"K2C", // G.G Series: Drift Circuit
+	"KUG", // G.G Series: Drift Circuit 2
 	"KIF", // Drift Street International
 	"B88", // DS WiFi Settings
 	"KB8", // GO Series: Earth Saver
