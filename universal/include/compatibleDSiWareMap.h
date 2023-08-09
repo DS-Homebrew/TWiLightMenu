@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 436
+// Total: 437
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -193,6 +193,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KGQ", // Go! Go! Island Rescue!
 	"K3G", // Go! Go! Kokopolo
 	"K9A", // Goooooal America / Goooooal Europa 2012
+	"KVQ", // G.G Series: Great Whip Adventure
 	"K83", // Hachiwandaiba DS: Naru Zouku Ha Samishougi
 	"KZH", // Halloween Trick or Treat
 	"KHO", // Handy Hockey
