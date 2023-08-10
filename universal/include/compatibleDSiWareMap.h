@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 439
+// Total: 440
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -203,6 +203,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K6S", // Heathcliff: Spot On
 	"KHL", // Hell's Kitchen VS
 	"K5E", // G.G Series: Hero Puzzle
+	"K5J", // G.G Series: The Hidden Ninja Kagemaru
 	"KTX", // High Stakes Texas Hold'em
 	"KHI", // Hints Hunter
 	"KT2", // G.G Series: Horizontal Bar / GO Series: Let's Swing!
