@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 443
+// Total: 444
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -281,6 +281,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KJI", // Noroi no Game: Chi
 	"KG9", // Noroi no Game: Oku
 	"KSUE", // Number Battle
+	"KU9", // G.G Series: Nyokki
 	"K6T", // Orion's Odyssey
 	"KO4", // Oscar in Movieland
 	"KOT", // Oscar in Toyland
