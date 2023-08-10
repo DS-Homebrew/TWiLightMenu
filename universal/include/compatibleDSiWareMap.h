@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 440
+// Total: 441
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -227,6 +227,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KJC", // Koukou Eijukugo: Kiho 200 Go Master
 	"KEK", // Koukou Eitango: Kiho 400 Go Master
 	"KT9", // Kung Fu Dragon
+	"K5M", // G.G Series: The Last Knight
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KLD", // Legendary Wars: T-Rex Rumble
 	"K5C", // Letter Challenge
