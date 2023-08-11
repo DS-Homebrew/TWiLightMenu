@@ -2796,6 +2796,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				boxArtFound = ((CURPOS + PAGENUM * 40) < ((int)dirContents[scrn].size()));
 				if (boxArtFound) {
 					boxArtFilename = dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str();
+
+					logPrint("boxArtFilename: ");
+					logPrint(boxArtFilename);
+					logPrint("\n");
 				}
 				updateBoxArt();
 				if (ms().theme < 4) {
