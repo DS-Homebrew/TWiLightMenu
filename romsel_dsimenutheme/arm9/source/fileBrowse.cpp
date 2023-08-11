@@ -35,6 +35,7 @@
 #include "common/bootstrapsettings.h"
 #include "common/flashcard.h"
 #include "common/inifile.h"
+#include "common/logging.h"
 #include "common/nds_loader_arm9.h"
 #include "common/stringtool.h"
 #include "common/systemdetails.h"
