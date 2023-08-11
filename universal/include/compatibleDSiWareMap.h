@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 445
+// Total: 446
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -351,6 +351,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K5F", // G.G Series: Run & Strike
 	"KG4", // Saikyou Ginsei Shougi
 	"K3P", // Sakurai Miho No Kouno: Megami Serapi Uranai
+	"K5G", // G.G Series: Score Attacker
 	"KRW", // Sea Battle
 	"KLL", // The Seller
 	"KS3", // Shantae: Risky's Revenge
