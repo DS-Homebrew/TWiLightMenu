@@ -651,7 +651,7 @@ void perGameSettings (std::string filename) {
 			int saveNoBak = perGameSettings_saveNo;
 			for (int i = 0; i < 10; i++) {
 				perGameSettings_saveNo = i;
-				if (isDSiWare && (pubSize > 0 || prvSize > 0)) {
+				if (dsiFeatures() && (!bs().b4dsMode || !ms().secondaryDevice) && isDSiWare && (pubSize > 0 || prvSize > 0)) {
 					std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')));
 					savExists[i] = access((path + getPubExtension()).c_str(), F_OK) == 0 || access((path + getPrvExtension()).c_str(), F_OK) == 0;
 				} else {
