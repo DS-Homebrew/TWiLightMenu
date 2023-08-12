@@ -240,6 +240,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 	  || arm7size==0x26370
 	  || arm7size==0x2642C
 	  || arm7size==0x26488
+	  || arm7size==0x26BEC
 	  || arm7size==0x27618
 	  || arm7size==0x2762C
 	  || arm7size==0x29CEC))
@@ -1105,6 +1106,9 @@ void perGameSettings (std::string filename) {
 								  || arm7size==0x2762C
 								  || arm7size==0x29CEC)) {
 							pathDefine = "DONOR5_NDS_PATH"; // SDK5.x (NTR)
+						} else if (SDKVersion > 0x5000000
+								 && (arm7size==0x26BEC)) {
+							pathDefine = "DONOR5_NDS_PATH_ALT"; // SDK5.x (NTR)
 						} else if (SDKVersion > 0x2000000 && SDKVersion < 0x3000000
 								&& (arm7size == 0x2619C
 								 || arm7size == 0x262A0

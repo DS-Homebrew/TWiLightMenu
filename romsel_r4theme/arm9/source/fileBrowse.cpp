@@ -1223,6 +1223,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							pathDefine = "DONOR5_NDS_PATH"; // SDK5.x (NTR)
 							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 							donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
+							if (!donorRomFound) {
+								pathDefine = "DONOR5_NDS_PATH_ALT"; // SDK5.x (NTR)
+								donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
+								donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
+							}
 						}
 						if (!donorRomFound
 						&& (requiresDonorRom == 20 || requiresDonorRom == 51 || requiresDonorRom == 151
