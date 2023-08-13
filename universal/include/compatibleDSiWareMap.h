@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 449
+// Total: 450
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -431,6 +431,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KKM", // Uchi Makure!: Touch the Chameleon
 	"K6P", // Unou to Sanougaren Sasuru: Uranoura
 	"K5O", // G.G Series: Vector
+	"KVE", // G.G Series: Vertex
 	"KVK", // Viking Invasion
 	"KVT", // VT Tennis
 	"KK4", // Wakugumi: Monochrome Puzzle
