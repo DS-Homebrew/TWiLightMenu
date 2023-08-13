@@ -604,7 +604,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 33
+// Total: 34
 static const char compatibleGameListB4DSDebug[][5] = {
 	// Not counted towards total
 	"KBEV", // Bejeweled Twist (Europe, Australia)
@@ -642,6 +642,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KOZ", // G.G Series: Super Hero Ogre 2
 	"K4W", // Super Swap
 	"K4P", // Super Yum Yum: Puzzle Adventures
+	"K3O", // G.G Series: Throw Out
 	"KDZ", // Trajectile / Reflect Missile
 };
 
