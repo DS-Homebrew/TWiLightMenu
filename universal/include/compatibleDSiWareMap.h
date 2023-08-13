@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 450
+// Total: 451
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -438,6 +438,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"Z2A", // WarioWare: Touched! DL
 	"KWQ", // Whack-A-Friend
 	"KDW", // White-Water Domo
+	"KWL", // G.G Series: Wonder Land
 	"KBS", // Wonderful Sports: Bowling
 	"KWS", // Word Searcher
 	"KWR", // Word Searcher II
