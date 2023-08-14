@@ -71,7 +71,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KBO", // Ball Fighter
 	"KAD", // Art Style: BASE 10
 	"K8B", // Beauty Academy
-	"KBEE", // Bejeweled Twist (USA)
+	"KBE", // Bejeweled Twist
 	"K9G", // Big Bass Arcade
 	"KP6J", // Bird & Beans / Tori to Mame (Japan)
 	"K96", // G.G Series: Black x Block
@@ -609,10 +609,6 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
 // Total: 34
 static const char compatibleGameListB4DSDebug[][5] = {
-	// Not counted towards total
-	"KBEV", // Bejeweled Twist (Europe, Australia)
-
-	// Counted
 	"KXO", // 18th Gate
 	"K3Y", // 3 Heroes: Crystal Soul
 	"KXT", // 99Seconds
