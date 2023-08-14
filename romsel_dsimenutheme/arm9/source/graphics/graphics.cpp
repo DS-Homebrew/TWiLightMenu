@@ -176,11 +176,12 @@ int rocketVideo_videoYpos = 78;
 int frameOf60fps = 60;
 int rocketVideo_videoFrames = 249;
 int rocketVideo_currentFrame = -1;
+u8 rocketVideo_fps = 25;
 u8 rocketVideo_height = 56;
-//int rocketVideo_frameDelay = 0;
+int rocketVideo_frameDelay = 0;
 int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
-//bool rocketVideo_frameDelayEven = true;
+bool rocketVideo_frameDelayEven = true;
 bool rocketVideo_loadFrame = true;
 bool renderFrame = true;
 
@@ -345,53 +346,87 @@ void frameRateHandler(void) {
 	if (!rocketVideo_playVideo)
 		return;
 	if (!rocketVideo_loadFrame) {
-		// 25FPS
-		rocketVideo_loadFrame = (frameOf60fps == 1
-							  || frameOf60fps == 3
-							  || frameOf60fps == 5
-							  || frameOf60fps == 7
-							  || frameOf60fps == 9
-							  || frameOf60fps == 11
-							  || frameOf60fps == 14
-							  || frameOf60fps == 16
-							  || frameOf60fps == 19
-							  || frameOf60fps == 21
-							  || frameOf60fps == 24
-							  || frameOf60fps == 26
-							  || frameOf60fps == 29
-							  || frameOf60fps == 31
-							  || frameOf60fps == 34
-							  || frameOf60fps == 36
-							  || frameOf60fps == 39
-							  || frameOf60fps == 41
-							  || frameOf60fps == 44
-							  || frameOf60fps == 46
-							  || frameOf60fps == 49
-							  || frameOf60fps == 51
-							  || frameOf60fps == 54
-							  || frameOf60fps == 56
-							  || frameOf60fps == 59);
+		rocketVideo_frameDelay++;
+		switch (rocketVideo_fps) {
+			case 11:
+				rocketVideo_loadFrame = (rocketVideo_frameDelay == 5+rocketVideo_frameDelayEven);
+				break;
+			case 24:
+				rocketVideo_loadFrame = (rocketVideo_frameDelay == 2+rocketVideo_frameDelayEven);
+				break;
+			case 25:
+				rocketVideo_loadFrame = (frameOf60fps == 1
+									  || frameOf60fps == 3
+									  || frameOf60fps == 5
+									  || frameOf60fps == 7
+									  || frameOf60fps == 9
+									  || frameOf60fps == 11
+									  || frameOf60fps == 14
+									  || frameOf60fps == 16
+									  || frameOf60fps == 19
+									  || frameOf60fps == 21
+									  || frameOf60fps == 24
+									  || frameOf60fps == 26
+									  || frameOf60fps == 29
+									  || frameOf60fps == 31
+									  || frameOf60fps == 34
+									  || frameOf60fps == 36
+									  || frameOf60fps == 39
+									  || frameOf60fps == 41
+									  || frameOf60fps == 44
+									  || frameOf60fps == 46
+									  || frameOf60fps == 49
+									  || frameOf60fps == 51
+									  || frameOf60fps == 54
+									  || frameOf60fps == 56
+									  || frameOf60fps == 59);
+				break;
+			case 48:
+				rocketVideo_loadFrame = (frameOf60fps != 3
+							&& frameOf60fps != 8
+							&& frameOf60fps != 13
+							&& frameOf60fps != 18
+							&& frameOf60fps != 23
+							&& frameOf60fps != 28
+							&& frameOf60fps != 33
+							&& frameOf60fps != 38
+							&& frameOf60fps != 43
+							&& frameOf60fps != 48
+							&& frameOf60fps != 53
+							&& frameOf60fps != 58);
+				break;
+			case 50:
+				rocketVideo_loadFrame = (frameOf60fps != 3
+							&& frameOf60fps != 9
+							&& frameOf60fps != 16
+							&& frameOf60fps != 22
+							&& frameOf60fps != 28
+							&& frameOf60fps != 34
+							&& frameOf60fps != 40
+							&& frameOf60fps != 46
+							&& frameOf60fps != 51
+							&& frameOf60fps != 58);
+				break;
+			default:
+				rocketVideo_loadFrame = (rocketVideo_frameDelay == 60/rocketVideo_fps);
+				break;
+		}
 	}
 }
 
 void playRotatingCubesVideo(void) {
-	if (!rocketVideo_playVideo)
+	if (!rocketVideo_playVideo || !rocketVideo_loadFrame)
 		return;
 
-	if (rocketVideo_loadFrame) {
-		//if (renderFrame) {
-			//DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
-			dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*rocketVideo_height)), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x200*rocketVideo_height);
-		//}
+	dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*rocketVideo_height)), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x200*rocketVideo_height);
 
-		rocketVideo_currentFrame++;
-		if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
-			rocketVideo_currentFrame = 0;
-		}
-		//rocketVideo_frameDelay = 0;
-		//rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
-		rocketVideo_loadFrame = false;
+	rocketVideo_currentFrame++;
+	if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
+		rocketVideo_currentFrame = 0;
 	}
+	rocketVideo_frameDelay = 0;
+	rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
+	rocketVideo_loadFrame = false;
 }
 
 void vBlankHandler() {

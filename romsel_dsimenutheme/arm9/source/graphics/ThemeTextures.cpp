@@ -1615,8 +1615,12 @@ void loadRotatingCubes() {
 			fread((void*)&rocketVideo_videoFrames, sizeof(u32), 1, videoFrameFile);
 			rocketVideo_videoFrames--;
 
+			extern u8 rocketVideo_fps;
+			fseek(videoFrameFile, 0xC, SEEK_SET);
+			fread((void*)&rocketVideo_fps, sizeof(u8), 1, videoFrameFile);
+
 			extern u8 rocketVideo_height;
-			fseek(videoFrameFile, 0xD, SEEK_SET);
+			// fseek(videoFrameFile, 0xD, SEEK_SET);
 			fread((void*)&rocketVideo_height, sizeof(u8), 1, videoFrameFile);
 
 			u32 framesSize = (0x200*rocketVideo_height)*(rocketVideo_videoFrames+1);
