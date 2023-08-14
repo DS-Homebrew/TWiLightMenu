@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 451
+// Total: 453
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -147,12 +147,14 @@ static const char compatibleGameListB4DS[][5] = {
 	"KB9", // Earth Saver: Inseki Bakuha Dai Sakuse
 	"K2E", // Easter Eggztravaganza
 	"KHW", // EJ Puzzles: Hooked
+	"KEI", // Electroplankton: Beatnes
 	"KEB", // Electroplankton: Hanenbow
 	"KEC", // Electroplankton: Luminarrow
 	"KEH", // Electroplankton: Marine-Crystals
 	"KEF", // Electroplankton: Nanocarp
 	"KEE", // Electroplankton: Rec-Rec
 	"KED", // Electroplankton: Sun-Animalcule
+	"KEA", // Electroplankton: Trapy
 	"KEJ", // Electroplankton: Varvoice
 	"KD7", // G.G Series: Energy Chain
 	"K4E", // Fall in the Dark
@@ -607,7 +609,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 34
+// Total: 32
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K3Y", // 3 Heroes: Crystal Soul
@@ -618,9 +620,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KYN", // Cake Ninja: XMAS
 	"KN2", // Devil Band: Rock the Underworld
 	"KDQ", // Dragon Quest Wars
-	"KEI", // Electroplankton: Beatnes
 	"KEG", // Electroplankton: Lumiloop
-	"KEA", // Electroplankton: Trapy
 	"KER", // G.G Series: Exciting River
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KZB", // Little Red Riding Hood's Zombie BBQ
