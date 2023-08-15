@@ -516,7 +516,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 43
+// Total: 42
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -536,7 +536,6 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KFP", // Flipper
 	"KFO", // Frenzic
 	"KZH", // Halloween Trick or Treat
-	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KPT", // Link 'n' Launch
 	"KYL", // Make Up & Style
 	"K59", // Metal Torrent
@@ -583,7 +582,6 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Flipper (No music)
 	4, // Frenzic (Crashes at certain point)
 	2, // Halloween Trick or Treat (No music)
-	1, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio)
 	2, // Link 'n' Launch (No music)
 	5, // Make Up & Style (No FMV)
 	2, // Metal Torrent (No music)
