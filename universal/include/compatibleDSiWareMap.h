@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 455
+// Total: 456
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -226,6 +226,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KMX", // Kemonomix
 	"K9C", // Kokoro no Herusumeta: Kokoron (Requires TWLFontTable.dat)
 	"KON", // Koneko no ie: Kiri Shima Keto-San Biki no Koneko
+	"KTM", // Korogashi Pazuru: Katamari Damacy
 	"KJC", // Koukou Eijukugo: Kiho 200 Go Master
 	"KEK", // Koukou Eitango: Kiho 400 Go Master
 	"KT9", // Kung Fu Dragon
