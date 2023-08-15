@@ -77,7 +77,13 @@ autoboot:
 	dlditool flashcart_specifics/DLDI/ak2_sd.dldi _DS_MENU.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/"
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/_DS_MENU.dat"
-	
+
+	#### EDGEi (not EDGE or iEDGE)
+	cp booter_r4ig.nds _DS_MENU.dat
+	dlditool flashcart_specifics/DLDI/ak2_sd.dldi _DS_MENU.dat
+	mkdir -p "../7zfile/Flashcard users/Autoboot/EDGEi/"
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/EDGEi/dsedgei.dat"
+
 	#### R4iDSN
 	cp booter_r4idsn.nds _DSMENU.dat
 	dlditool flashcart_specifics/DLDI/r4idsn_sd.dldi _DSMENU.dat
