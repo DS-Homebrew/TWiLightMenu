@@ -1,3 +1,14 @@
+#
+# ARM9 relocator
+# Patch an ARM9 binary to change RAM location to 0x02000000
+# and entrypoint to 0x02000450
+# Inspired by Xenon++'s r4isdhc patcher
+#
+# Copyright (C) 2022-2023 DS-Homebrew
+#
+# SPDX-License-Identifier: 0BSD
+#
+
 from array import array
 from os import stat
 from sys import argv, exit
