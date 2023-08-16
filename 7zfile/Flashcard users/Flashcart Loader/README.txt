@@ -2,6 +2,7 @@ Please see the following list for which flashcart loader to use.
 
 Acekard 2(i) folder:
 - Acekard 2, 2.1, 2i
+- EDGEi (not the original EDGE or the original iEDGE)
 - R4 Ultra, R4i Ultra
 - R4iTT 3DS NEW, RTS
 - R4i3D NEW, 2012 or later
