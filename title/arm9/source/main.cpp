@@ -1744,6 +1744,7 @@ int titleMode(void)
 	} else {
 		softResetParamsBak = *(u32*)(0x02000000);
 	}
+	*(u32*)0x02000004 = 0x54455352; // 'RSET'
 	// Soft-reset parameters
 	/*
 		0: Skip DS(i) splash
