@@ -314,7 +314,7 @@ void unlaunchSetHiyaBoot(void) {
  */
 void ntrStartSdGame(void) {
 	*(u32*)0x02000000 |= BIT(3);
-	*(u32*)0x02000004 = 0;
+	*(u32*)0x02000004 = 0x54455352; // 'RSET'
 	if (ms().consoleModel == 0) {
 		unlaunchRomBoot("sd:/_nds/TWiLightMenu/main.srldr");
 	} else {

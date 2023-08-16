@@ -324,7 +324,7 @@ bool createDSiWareSave(const char *path, int size) {
  */
 void ntrStartSdGame(void) {
 	*(u32*)0x02000000 |= BIT(3);
-	*(u32*)0x02000004 = 0;
+	*(u32*)0x02000004 = 0x54455352; // 'RSET'
 	if (ms().consoleModel == 0) {
 		unlaunchRomBoot("sd:/_nds/TWiLightMenu/main.srldr");
 	} else {
@@ -1739,7 +1739,7 @@ int titleMode(void)
 	*(u32*)0x02FFFDFC = 0; // Reset TWLCFG location
 
 	u32 softResetParamsBak = 0;
-	if (*(u32*)(0x02000004) != 0) {
+	if (*(u32*)(0x02000004) != 0x54455352) { // 'RSET'
 		*(u32*)(0x02000000) = 0; // Clear soft-reset params
 	} else {
 		softResetParamsBak = *(u32*)(0x02000000);
