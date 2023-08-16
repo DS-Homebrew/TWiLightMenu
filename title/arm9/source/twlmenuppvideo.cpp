@@ -632,6 +632,10 @@ void twlMenuVideo(void) {
 		// Load green BG for St. Patrick's Day, or Earth Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppGreen.png");
 		longVersion = ms().longSplashJingle;
+	} else if (strcmp(currentDate, "04/24") == 0) {
+		// Load Kirby-themed BG & logo for Kirby's anniversary
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppKirby.png");
+		longVersion = ms().longSplashJingle;
 	} else if (strcmp(currentDate, "06/11") == 0 || strcmp(currentDate, "09/23") == 0) {
 		// CiTRadvance SRLDSiSion Menu X++ii++++++++oader X++X Menu++ logo for TWiLight's rename days
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppCitradvancesrldsisionmenuoadmenu.png");

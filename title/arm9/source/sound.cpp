@@ -128,6 +128,9 @@ SoundControl::SoundControl()
 	} else if (strcmp(currentDate, "03/10") == 0) {
 		// Load Mario coin sound for MAR10 Day
 		sprintf(wavPath, "nitro:/sound/coin.wav");
+	} else if (strcmp(currentDate, "04/24") == 0) {
+		// Load Kirby dance jingle for Kirby's anniversary
+		sprintf(wavPath, ms().longSplashJingle ? "nitro:/sound/kirbyLong.wav" : "nitro:/sound/kirby.wav");
 	} else {
 		sprintf(wavPath, ms().longSplashJingle ? "nitro:/sound/titleLong.wav" : "nitro:/sound/title.wav");
 	}
