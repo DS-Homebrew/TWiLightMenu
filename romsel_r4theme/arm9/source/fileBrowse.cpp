@@ -431,6 +431,18 @@ bool dsiBinariesMissingMsg(void) {
 bool donorRomMsg(void) {
 	bool proceedToLaunch = true;
 	bool dsModeAllowed = ((requiresDonorRom == 52 || requiresDonorRom == 53) && !isDSiWare);
+	bool vramWifi = false;
+	if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && isDSiWare) {
+		// Find DSiWare title which requires VRAM-WiFi donor ROM
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
+			if (memcmp(gameTid, compatibleGameListB4DSMEP[i], (compatibleGameListB4DSMEP[i][3] != 0 ? 4 : 3)) == 0) {
+				// Found match
+				vramWifi = (compatibleGameListB4DSMEPID[i] == 3);
+				break;
+			}
+		}
+	}
 
 	if (ms().macroMode) {
 		lcdMainOnBottom();
@@ -455,7 +467,7 @@ bool donorRomMsg(void) {
 						printSmallCentered(false, 90, "Find the SDK2.0 title,");
 						break;
 					case 51:
-						printSmallCentered(false, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? "Find the SDK5 DS title," : "Find the DSi-Enhanced title,");
+						printSmallCentered(false, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? (vramWifi ? "Find the VRAM-WiFi SDK5 DS title," : "Find the SDK5 DS title,") : "Find the DSi-Enhanced title,");
 						break;
 					case 52:
 						printSmallCentered(false, 90, "Find the DSi(Ware) title,");
@@ -769,10 +781,20 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	// Find DSiWare title which requires Slot-2 RAM expansion such as the Memory Expansion Pak
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
-		if (memcmp(gameTid, compatibleGameListB4DSMEP[i], 3) == 0) {
+		if (memcmp(gameTid, compatibleGameListB4DSMEP[i], (compatibleGameListB4DSMEP[i][3] != 0 ? 4 : 3)) == 0) {
 			// Found match
-			if (compatibleGameListB4DSMEPID[i] == 0 && b4dsDebugConsole) {
+			msgId = (compatibleGameListB4DSMEPID[i] == 2) ? 11 : 10;
+			if ((compatibleGameListB4DSMEPID[i] == 0 || compatibleGameListB4DSMEPID[i] == 3) && b4dsDebugConsole) {
 				// Do nothing
+			} else if (compatibleGameListB4DSMEPID[i] == 3) {
+				msgId = 12;
+
+				const char *bootstrapinipath = sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
+				CIniFile bootstrapini(bootstrapinipath);
+				std::string donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", "DONOR5_NDS_PATH_ALT", "");
+				const bool donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
+
+				showMsg = !donorRomFound;
 			} else if (sys().isRegularDS()) {
 				/*if (*(u16*)0x020000C0 == 0x5A45) {
 					showMsg = true;
@@ -787,7 +809,6 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			} else {
 				showMsg = true;
 			}
-			msgId = (compatibleGameListB4DSMEPID[i] == 2) ? 11 : 10;
 			break;
 		}
 	}
@@ -893,6 +914,11 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 				printSmallCentered(false, 102, "POWER, and insert a Slot-2 memory expansion");
 				printSmallCentered(false, 114, "cart which isn't the Memory Expansion Pak.");
 			}
+			break;
+		case 12:
+			printSmallCentered(false, 90, "The currently set donor ROM is incompatible");
+			printSmallCentered(false, 102, "with this title. Please find a VRAM-WiFi");
+			printSmallCentered(false, 114, "SDK5 DS title to set as a donor ROM.");
 			break;
 	}
 	if (msgId >= 10) {

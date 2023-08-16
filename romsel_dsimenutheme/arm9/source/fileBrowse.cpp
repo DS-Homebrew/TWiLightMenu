@@ -1534,6 +1534,18 @@ bool donorRomMsg(const char *filename) {
 	bool pageLoaded = false;
 	bool secondPageViewed = false;
 	bool dsModeAllowed = ((requiresDonorRom[CURPOS] == 52 || requiresDonorRom[CURPOS] == 53) && !isDSiWare[CURPOS]);
+	bool vramWifi = false;
+	if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && isDSiWare[CURPOS]) {
+		// Find DSiWare title which requires VRAM-WiFi donor ROM
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
+			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSMEP[i], (compatibleGameListB4DSMEP[i][3] != 0 ? 4 : 3)) == 0) {
+				// Found match
+				vramWifi = (compatibleGameListB4DSMEPID[i] == 3);
+				break;
+			}
+		}
+	}
 
 	int arrowXpos = (ms().theme == TWLSettings::ETheme3DS) ? 20 : 12;
 	int arrowYpos = (ms().theme == TWLSettings::EThemeSaturn) ? 64 : 160;
@@ -1555,7 +1567,7 @@ bool donorRomMsg(const char *filename) {
 						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK20, Alignment::center, FontPalette::dialog);
 						break;
 					case 51:
-						printSmall(false, 0, yPos, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? STR_HOW_TO_SET_DONOR_ROM_SDK5 : STR_HOW_TO_SET_DONOR_ROM_SDK5TWL, Alignment::center, FontPalette::dialog);
+						printSmall(false, 0, yPos, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? (vramWifi ? STR_HOW_TO_SET_DONOR_ROM_VRAM_WIFI_SDK5 : STR_HOW_TO_SET_DONOR_ROM_SDK5) : STR_HOW_TO_SET_DONOR_ROM_SDK5TWL, Alignment::center, FontPalette::dialog);
 						break;
 					case 52:
 						printSmall(false, 0, yPos, STR_HOW_TO_SET_DONOR_ROM_SDK5TWLONLY, Alignment::center, FontPalette::dialog);
@@ -1904,10 +1916,20 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	// Find DSiWare title which requires Slot-2 RAM expansion such as the Memory Expansion Pak
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
-		if (memcmp(gameTid[CURPOS], compatibleGameListB4DSMEP[i], 3) == 0) {
+		if (memcmp(gameTid[CURPOS], compatibleGameListB4DSMEP[i], (compatibleGameListB4DSMEP[i][3] != 0 ? 4 : 3)) == 0) {
 			// Found match
-			if (compatibleGameListB4DSMEPID[i] == 0 && b4dsDebugConsole) {
+			msgId = (compatibleGameListB4DSMEPID[i] == 2) ? 11 : 10;
+			if ((compatibleGameListB4DSMEPID[i] == 0 || compatibleGameListB4DSMEPID[i] == 3) && b4dsDebugConsole) {
 				// Do nothing
+			} else if (compatibleGameListB4DSMEPID[i] == 3) {
+				msgId = 12;
+
+				const char *bootstrapinipath = sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
+				CIniFile bootstrapini(bootstrapinipath);
+				std::string donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", "DONOR5_NDS_PATH_ALT", "");
+				const bool donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
+
+				showMsg = !donorRomFound;
 			} else if (sys().isRegularDS()) {
 				/*if (*(u16*)0x020000C0 == 0x5A45) {
 					showMsg = true;
@@ -1922,7 +1944,6 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			} else {
 				showMsg = true;
 			}
-			msgId = (compatibleGameListB4DSMEPID[i] == 2) ? 11 : 10;
 			break;
 		}
 	}
@@ -2036,6 +2057,9 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			} else {
 				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_CANNOT_LAUNCH_IN_DS_MODE) - smallFontHeight()) / 2), STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center, FontPalette::dialog);
 			}
+			break;
+		case 12:
+			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_DONOR_ROM_INCOMPATIBLE_VRAM_WIFI_SDK5) - smallFontHeight()) / 2), STR_DONOR_ROM_INCOMPATIBLE_VRAM_WIFI_SDK5, Alignment::center, FontPalette::dialog);
 			break;
 	}
 	if (msgId >= 10) {

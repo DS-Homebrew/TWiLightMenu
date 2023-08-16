@@ -82,10 +82,12 @@ STRING(DONOR_ROM_MSG_SDK50TWLONLY, "Please set a different SDK5.0\nDSi(Ware) tit
 STRING(DONOR_ROM_MSG_SDK5TWLONLY_DSI_MODE, "Please set a DSi(Ware) title\nas a donor ROM, in order\nto launch this title in DSi mode.")
 STRING(HOW_TO_SET_DONOR_ROM_SDK20, "Find the SDK2.0 title,\npress \\Y, and select\n\"Set as Donor ROM\".")
 STRING(HOW_TO_SET_DONOR_ROM_SDK5, "Find the SDK5 DS title,\npress \\Y, and select\n\"Set as Donor ROM\".")
+STRING(HOW_TO_SET_DONOR_ROM_VRAM_WIFI_SDK5, "Find the VRAM-WiFi SDK5 DS\ntitle, press \\Y, and select\n\"Set as Donor ROM\".")
 STRING(HOW_TO_SET_DONOR_ROM_SDK5TWL, "Find the DSi-Enhanced title,\npress \\Y, and select\n\"Set as Donor ROM\".")
 STRING(HOW_TO_SET_DONOR_ROM_SDK50TWL, "Find the SDK5.0 DSi-Enhanced\ntitle, press \\Y, and\nselect \"Set as Donor ROM\".")
 STRING(HOW_TO_SET_DONOR_ROM_SDK5TWLONLY, "Find the DSi(Ware) title,\npress \\Y, and select\n\"Set as Donor ROM\".")
 STRING(HOW_TO_SET_DONOR_ROM_SDK50TWLONLY, "Find the SDK5.0 DSi(Ware)\ntitle, press \\Y, and\nselect \"Set as Donor ROM\".")
+STRING(DONOR_ROM_INCOMPATIBLE_VRAM_WIFI_SDK5, "The currently set donor ROM is\nincompatible with this title.\nPlease find a VRAM-WiFi SDK5\nDStitle to set as a donor ROM.")
 
 // Hiding
 STRING(ARE_YOU_SURE_UNHIDE, "Are you sure you want to\nunhide this folder?")

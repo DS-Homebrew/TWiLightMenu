@@ -463,14 +463,20 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 21
-static const char compatibleGameListB4DSMEP[][4] = {
+// Total: 27
+static const char compatibleGameListB4DSMEP[][5] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
+	"K2Z", // G.G Series: Altered Weapon
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
+	"KBEV", // Bejeweled Twist (Europe, Australia)
 	"KCT", // Chess Challenge!
+	"KUG", // G.G Series: Drift Circuit 2
+	"KEI", // Electroplankton: Beatnes
+	"KEA", // Electroplankton: Trapy
 	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
+	"K5M", // G.G Series: The Last Knight
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KYL", // Make Up & Style
 	"KUP", // Match Up!
@@ -492,13 +498,20 @@ static const char compatibleGameListB4DSMEP[][4] = {
 // 0: Memory Expansion Pak or Debug console required
 // 1: Memory Expansion Pak always required
 // 2: 16MB+ RAM expansion required
+// 3: VRAM-WiFi Donor ROM or Debug console required
 static int compatibleGameListB4DSMEPID[] = {
 	0, // 21 Blackjack
 	0, // 5 in 1 Solitaire
+	3, // G.G Series: Altered Weapon
 	0, // Aru Seishun no Monogatari: Kouenji Joshi Sakka
+	3, // Bejeweled Twist (Europe, Australia)
 	0, // Chess Challenge!
+	3, // G.G Series: Drift Circuit 2
+	3, // Electroplankton: Beatnes
+	3, // Electroplankton: Trapy
 	2, // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	1, // Jinia Supasonaru: Waei Rakubiki Jiten
+	3, // G.G Series: The Last Knight
 	0, // The Legend of Zelda: Four Swords: Anniversary Edition
 	0, // Make Up & Style
 	0, // Match Up!
