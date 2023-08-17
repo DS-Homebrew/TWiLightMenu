@@ -623,7 +623,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 32
+// Total: 33
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K3Y", // 3 Heroes: Crystal Soul
@@ -640,6 +640,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
 	"KMM", // Mixed Messages
+	"KLT", // My Little Restaurant
 	"KNP", // Need for Speed: Nitro-X
 	"KNV", // Neko Reversi
 	"KO9", // Oscar's World Tour
