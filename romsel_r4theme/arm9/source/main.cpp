@@ -1818,7 +1818,7 @@ int r4Theme(void) {
 							u32 savesize = 524288;	// 512KB (default size)
 
 							u32 gameTidHex = 0;
-							tonccpy(&gameTidHex, &gameTid, 4);
+							tonccpy(&gameTidHex, gameTid, 4);
 
 							for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
 								ROMListEntry* curentry = &ROMList[i];

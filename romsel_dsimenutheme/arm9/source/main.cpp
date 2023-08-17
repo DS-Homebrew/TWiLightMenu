@@ -839,7 +839,7 @@ void createSaveFile(const char* savePath, const bool isHomebrew, const char* gam
 	u32 savesize = 524288; // 512KB (default size for most games)
 
 	u32 gameTidHex = 0;
-	tonccpy(&gameTidHex, &gameTid, 4);
+	tonccpy(&gameTidHex, gameTid, 4);
 
 	for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
 		ROMListEntry* curentry = &ROMList[i];
