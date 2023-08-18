@@ -32,6 +32,7 @@
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
 #include "perGameSettings.h"
+#include "myDSiMode.h"
 
 extern int dialogboxHeight;
 
@@ -88,6 +89,10 @@ bool CheatCodelist::parse(const std::string& aFileName)
 
 bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize)
 {
+	if (!dsiFeatures() && memcmp(gameTid, "ADM", 3) == 0) {
+		return false; // Not enough RAM space to load cheat data
+	}
+
   aPos=0;
   aSize=0;
   const char* KHeader="R4 CheatCode";
@@ -304,7 +309,7 @@ void CheatCodelist::selectCheats(std::string filename)
     clearText();
     titleUpdate(isDirectory, filename.c_str());
     printLargeCentered(false, 74, "Cheats");
-    printSmallCentered(false, 100, "No cheats found");
+    printSmallCentered(false, 100, (!dsiFeatures() && memcmp(gameTid, "ADM", 3) == 0) ? "Cheats cannot be used." : "No cheats found");
     printSmallCentered(false, 160, "B: Back");
 
     while (1) {

@@ -35,7 +35,8 @@
 #include "errorScreen.h"
 #include "language.h"
 #include "common/tonccpy.h"
-
+#include "fileBrowse.h"
+#include "myDSiMode.h"
 
 extern bool dbox_showIcon;
 
@@ -93,6 +94,10 @@ bool CheatCodelist::parse(const std::string& aFileName)
 
 bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize)
 {
+	if (!dsiFeatures() && memcmp(gameTid[CURPOS], "ADM", 3) == 0) {
+		return false; // Not enough RAM space to load cheat data
+	}
+
   aPos=0;
   aSize=0;
   const char* KHeader="R4 CheatCode";
@@ -324,7 +329,7 @@ void CheatCodelist::selectCheats(std::string filename)
     cheatsFound = false;
     clearText();
     printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
-    printSmall(false, 0, 100, STR_NO_CHEATS_FOUND, Alignment::center, FontPalette::dialog);
+    printSmall(false, 0, 100, (!dsiFeatures() && memcmp(gameTid[CURPOS], "ADM", 3) == 0) ? STR_CHEATS_CANNOT_BE_USED : STR_NO_CHEATS_FOUND, Alignment::center, FontPalette::dialog);
     printSmall(false, 0, 160, STR_B_BACK, Alignment::center, FontPalette::dialog);
 	updateText(false);
 
