@@ -531,7 +531,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 43
+// Total: 42
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -549,7 +549,6 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KIF", // Drift Street International
 	"K2E", // Easter Eggztravaganza
 	"KFD", // Fieldrunners
-	"KFP", // Flipper
 	"KFO", // Frenzic
 	"KZH", // Halloween Trick or Treat
 	"KPT", // Link 'n' Launch
@@ -596,7 +595,6 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Drift Street International (No music)
 	0, // Easter Eggztravaganza (Part of the game only)
 	1, // Fieldrunners (No audio)
-	2, // Flipper (No music)
 	4, // Frenzic (Crashes at certain point)
 	2, // Halloween Trick or Treat (No music)
 	2, // Link 'n' Launch (No music)
