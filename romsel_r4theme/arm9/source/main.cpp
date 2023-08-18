@@ -1796,7 +1796,14 @@ int r4Theme(void) {
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
-				if (useBackend) {
+				if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && isHomebrew && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
+					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
+					ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
+					ms().previousUsedDevice = ms().secondaryDevice;
+					ms().saveSettings();
+
+					unlaunchRomBoot(argarray[0]);
+				} else if (useBackend) {
 					if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && romUnitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| (ms().secondaryDevice && (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA))
 					|| romUnitCode == 3) {

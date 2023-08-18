@@ -1691,7 +1691,22 @@ int dsiMenuTheme(void) {
 				strcpy(filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
-				if (useBackend) {
+				if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && isHomebrew[CURPOS] && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
+					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
+					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
+					ms().previousUsedDevice = ms().secondaryDevice;
+					ms().saveSettings();
+
+					if (ms().theme == TWLSettings::EThemeHBL) {
+						fadeType = false;		  // Fade to black
+					}
+
+					while (ms().theme != TWLSettings::EThemeSaturn && !screenFadedOut()) {
+						swiWaitForVBlank();
+					}
+
+					unlaunchRomBoot(argarray[0]);
+				} else if (useBackend) {
 					if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| (ms().secondaryDevice && (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA))
 					|| unitCode[CURPOS] == 3) {
@@ -1912,7 +1927,7 @@ int dsiMenuTheme(void) {
 							fadeType = false;		  // Fade to black
 						}
 
-						while (!screenFadedOut()) {
+						while (ms().theme != TWLSettings::EThemeSaturn && !screenFadedOut()) {
 							swiWaitForVBlank();
 						}
 

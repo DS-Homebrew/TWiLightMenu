@@ -152,6 +152,7 @@ STRING(X_CHEATS_B_BACK, "\\X Cheats  \\B Back")
 
 // Per-game settings options
 STRING(DEFAULT, "Default")
+STRING(DIRECT, "Direct")
 STRING(GAME, "Game")
 STRING(SYSTEM, "System")
 STRING(NONE, "None")

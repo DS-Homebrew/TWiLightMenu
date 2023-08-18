@@ -139,6 +139,7 @@ void savePerGameSettings (std::string filename) {
 		}
 		if (!ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
+			pergameini.SetInt("GAMESETTINGS", "USE_BOOTSTRAP", perGameSettings_useBootstrap);
 		}
 		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound()) {
 			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
@@ -509,6 +510,10 @@ void perGameSettings (std::string filename) {
 			if (!ms().secondaryDevice) {
 				perGameOps++;
 				perGameOp[perGameOps] = 1;	// RAM disk number
+				if (!sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
+					perGameOps++;
+					perGameOp[perGameOps] = 14;	// Game Loader
+				}
 			} else {
 				perGameOps++;
 				perGameOp[perGameOps] = 6;	// Direct boot
@@ -894,10 +899,18 @@ void perGameSettings (std::string filename) {
 				printSmall(false, 32, perGameOpYpos, "Game Loader:");
 				if (perGameSettings_useBootstrap == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
-				} else if (perGameSettings_useBootstrap == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "nds-bootstrap");
+				} else if (isHomebrew) {
+					if (perGameSettings_useBootstrap == 1) {
+						printSmallRightAlign(false, 256-24, perGameOpYpos, isModernHomebrew ? "Direct" : "nds-bootstrap");
+					} else {
+						printSmallRightAlign(false, 256-24, perGameOpYpos, "Unlaunch");
+					}
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Kernel");
+					if (perGameSettings_useBootstrap == 1) {
+						printSmallRightAlign(false, 256-24, perGameOpYpos, "nds-bootstrap");
+					} else {
+						printSmallRightAlign(false, 256-24, perGameOpYpos, "Kernel");
+					}
 				}
 				break;
 		}

@@ -186,6 +186,7 @@ void savePerGameSettings (std::string filename) {
 		}
 		if (!ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
+			pergameini.SetInt("GAMESETTINGS", "USE_BOOTSTRAP", perGameSettings_useBootstrap);
 		}
 		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound()) {
 			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
@@ -548,6 +549,10 @@ void perGameSettings (std::string filename) {
 			if (!ms().secondaryDevice) {
 				perGameOps++;
 				perGameOp[perGameOps] = 1;	// RAM disk number
+				if (!sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
+					perGameOps++;
+					perGameOp[perGameOps] = 14;	// Game Loader
+				}
 			} else {
 				perGameOps++;
 				perGameOp[perGameOps] = 6;	// Direct boot
@@ -980,10 +985,18 @@ void perGameSettings (std::string filename) {
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_GAME_LOADER + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_useBootstrap == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
-				} else if (perGameSettings_useBootstrap == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, "nds-bootstrap", endAlign, FontPalette::dialog);
+				} else if (isHomebrew[CURPOS]) {
+					if (perGameSettings_useBootstrap == 1) {
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, isModernHomebrew[CURPOS] ? STR_DIRECT : "nds-bootstrap", endAlign, FontPalette::dialog);
+					} else {
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, "Unlaunch", endAlign, FontPalette::dialog);
+					}
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_KERNEL, endAlign, FontPalette::dialog);
+					if (perGameSettings_useBootstrap == 1) {
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, "nds-bootstrap", endAlign, FontPalette::dialog);
+					} else {
+						printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_KERNEL, endAlign, FontPalette::dialog);
+					}
 				}
 				break;
 			case 15:
