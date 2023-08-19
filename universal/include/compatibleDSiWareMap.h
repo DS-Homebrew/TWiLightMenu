@@ -614,7 +614,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Neko Neko Bakery: Pan de Pazurunya! (No music)
 	0, // Nintendoji (No audio + Part of the game only)
 	4, // Orion's Odyssey (Crashes at certain points)
-	4, // Phantasy Star 0 Mini (Incorrect character animations + Crashes after finishing a stage)
+	4, // Phantasy Star 0 Mini (Crashes after finishing a stage)
 	1, // PictureBook Games: The Royal Bluff (No audio)
 	0, // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist (No audio + Parts of the game only)
 	1, // Publisher Dream (No audio)
