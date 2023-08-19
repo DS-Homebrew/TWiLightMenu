@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 458
+// Total: 459
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -302,6 +302,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KPJ", // Paul's Shooting Adventure
 	"KUS", // Paul's Shooting Adventure 2
 	"KP8", // Peg Solitaire
+	"KPS", // Phantasy Star 0 Mini
 	"KPQ", // GO Series: Picdun
 	"KAP", // Art Style: PiCTOBiTS
 	"KE3", // PictureBook Games: The Royal Bluff
@@ -465,7 +466,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 28
+// Total: 29
 static const char compatibleGameListB4DSMEP[][5] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
@@ -487,6 +488,7 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KNP", // Need for Speed: Nitro-X
 	"KAU", // Nintendo Countdown Calendar
 	"K9K", // Nintendoji
+	"KPS", // Phantasy Star 0 Mini
 	"KQR", // Remote Racers
 	"KSC", // Sudoku Challenge!
 	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
@@ -523,6 +525,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	3, // Need for Speed: Nitro-X
 	0, // Nintendo Countdown Calendar
 	0, // Nintendoji
+	3, // Phantasy Star 0 Mini
 	0, // Remote Racers
 	0, // Sudoku Challenge!
 	0, // Sutanoberuzu: Kono Hareta Sora no Shita de
@@ -534,7 +537,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 43
+// Total: 44
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -563,6 +566,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"K9N", // Neko Neko Bakery: Pan de Pazurunya!
 	"K9K", // Nintendoji
 	"K6T", // Orion's Odyssey
+	"KPS", // Phantasy Star 0 Mini
 	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist
 	"KXU", // Publisher Dream
@@ -610,6 +614,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Neko Neko Bakery: Pan de Pazurunya! (No music)
 	0, // Nintendoji (No audio + Part of the game only)
 	4, // Orion's Odyssey (Crashes at certain points)
+	4, // Phantasy Star 0 Mini (Incorrect character animations + Crashes after finishing a stage)
 	1, // PictureBook Games: The Royal Bluff (No audio)
 	0, // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist (No audio + Parts of the game only)
 	1, // Publisher Dream (No audio)
@@ -629,7 +634,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 32
+// Total: 31
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K3Y", // 3 Heroes: Crystal Soul
@@ -649,7 +654,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KLT", // My Little Restaurant
 	"KNV", // Neko Reversi
 	"KO9", // Oscar's World Tour
-	"KPS", // Phantasy Star 0 Mini
 	"KFV", // Pro-Jumper! Chimaki's Hot Spring Tour! Guilty Gear Tangent!?
 	"KYG", // Puzzler World 2013
 	"KUO", // Puzzler World XL
