@@ -75,7 +75,6 @@ int perGameSettings_cardReadDMA = -1;
 int perGameSettings_asyncCardRead = -1;
 int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
-int perGameSettings_expandRomSpace = -1;
 int perGameSettings_dsiwareBooter = -1;
 int perGameSettings_useBootstrap = -1;
 
@@ -134,7 +133,6 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_asyncCardRead = pergameini.GetInt("GAMESETTINGS", "ASYNC_CARD_READ", -1);
 	perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
 	perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
-	perGameSettings_expandRomSpace = pergameini.GetInt("GAMESETTINGS", "EXTENDED_MEMORY", -1);
 	perGameSettings_dsiwareBooter = pergameini.GetInt("GAMESETTINGS", "DSIWARE_BOOTER", -1);
 	perGameSettings_useBootstrap = pergameini.GetInt("GAMESETTINGS", "USE_BOOTSTRAP", -1);
 
@@ -215,9 +213,6 @@ void savePerGameSettings (std::string filename) {
 		}
 		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound()) {
 			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
-		}
-		if ((dsiFeatures() && (perGameSettings_useBootstrap ? ms().useBootstrap : perGameSettings_useBootstrap)) || !ms().secondaryDevice) {
-			pergameini.SetInt("GAMESETTINGS", "EXTENDED_MEMORY", perGameSettings_expandRomSpace);
 		}
 		if (isDSiWare[CURPOS] && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
 			pergameini.SetInt("GAMESETTINGS", "DSIWARE_BOOTER", perGameSettings_dsiwareBooter);
@@ -497,7 +492,7 @@ void perGameSettings (std::string filename) {
 
 	if (romSize > 0) {
 		if (clonebootFlag == 0x16361) {
-			romSize -= 0x8000;	// First 32KB
+			romSize -= 0x4000;	// First 16KB
 			romSize += 0x88;	// RSA key
 		} else {
 			romSize -= arm9off;
@@ -505,11 +500,8 @@ void perGameSettings (std::string filename) {
 		}
 	}
 
-	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x01800000 : 0x800000);
-	if (SDKVersion > 0x5000000) {
-		romSizeLimit = (ms().consoleModel > 0 ? 0x01000000 : 0x7E0000);
-	}
-	u32 romSizeLimit2 = (ms().consoleModel > 0 ? 0x01BFE000 : 0xBFE000);
+	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BC0000 : 0xBC0000);
+	u32 romSizeLimitTwl = (ms().consoleModel > 0 ? 0x1000000 : 0);
 
 	extern bool dsiWareCompatibleB4DS(void);
 	bool showPerGameSettings = (bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]);
@@ -653,14 +645,9 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
 			}
-			if (!ms().secondaryDevice && (romSize > romSizeLimit || (ms().consoleModel == 0 && unitCode[CURPOS] > 0)) && !blacklisted_asyncCardRead) {
+			if (!ms().secondaryDevice && (romSize > (unitCode[CURPOS] > 0 ? romSizeLimitTwl : romSizeLimit)) && !blacklisted_asyncCardRead) {
 				perGameOps++;
 				perGameOp[perGameOps] = 12;	// Async Card Read
-			}
-			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice)
-			 && unitCode[CURPOS] < 3 && romSize > romSizeLimit && romSize <= romSizeLimit2+0x78000) {
-				perGameOps++;
-				perGameOp[perGameOps] = 10;	// Expand ROM space in RAM
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
@@ -925,22 +912,6 @@ void perGameSettings (std::string filename) {
 			case 9:
 				printSmall(false, 0, perGameOpYpos, setAsDonorRom, Alignment::center, FontPalette::dialog);
 				break;
-			case 10:
-				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_EXPAND_ROM_SPACE + ":", startAlign, FontPalette::dialog);
-				if (flashcardKernelOnly) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign, FontPalette::dialog);
-				} else if ((perGameSettings_dsiMode==-1 ? (unitCode[CURPOS] > 0 && DEFAULT_DSI_MODE) : perGameSettings_dsiMode > 0) && runInShown) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign, FontPalette::dialog);
-				} else if (perGameSettings_expandRomSpace == -1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
-				} else if (perGameSettings_expandRomSpace == 2) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_Y_512KB, endAlign, FontPalette::dialog);
-				} else if (perGameSettings_expandRomSpace == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_YES, endAlign, FontPalette::dialog);
-				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NO, endAlign, FontPalette::dialog);
-				}
-				break;
 			case 11:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_REGION + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_region == -2) {
@@ -1110,17 +1081,6 @@ void perGameSettings (std::string filename) {
 						perGameSettings_wideScreen--;
 						if (perGameSettings_wideScreen < -1) perGameSettings_wideScreen = 1;
 						break;
-					case 10:
-						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
-							perGameSettings_expandRomSpace--;
-							if (perGameSettings_expandRomSpace < -1) perGameSettings_expandRomSpace = 2;
-							if (perGameSettings_expandRomSpace==1 && romSize > romSizeLimit2) {
-								perGameSettings_expandRomSpace--;
-							} else if (perGameSettings_expandRomSpace==2 && romSize <= romSizeLimit2) {
-								perGameSettings_expandRomSpace--;
-							}
-						}
-						break;
 					case 11:
 						perGameSettings_region--;
 						if (!dsiFeatures() && perGameSettings_region == -1) {
@@ -1238,17 +1198,6 @@ void perGameSettings (std::string filename) {
 						bootstrapini.SaveIniFile(bootstrapinipath);
 						setAsDonorRom = STR_DONE;
 					  }
-						break;
-					case 10:
-						if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode || unitCode[CURPOS] == 0) : perGameSettings_dsiMode < 1) || !runInShown) {
-							perGameSettings_expandRomSpace++;
-							if (perGameSettings_expandRomSpace==1 && romSize > romSizeLimit2) {
-								perGameSettings_expandRomSpace++;
-							} else if (perGameSettings_expandRomSpace==2 && romSize <= romSizeLimit2) {
-								perGameSettings_expandRomSpace++;
-							}
-							if (perGameSettings_expandRomSpace > 2) perGameSettings_expandRomSpace = -1;
-						}
 						break;
 					case 11:
 						perGameSettings_region++;
