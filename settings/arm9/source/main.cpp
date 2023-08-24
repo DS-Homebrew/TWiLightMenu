@@ -485,8 +485,14 @@ void begin_update(int opt)
 	gs().saveSettings();
 	bs().saveSettings();
 
+	const int textLargeXpos = ms().rtl() ? 256 - 4 : 4;
+	const int textLargeXpos2 = ms().rtl() ? 4 : 256 - 4;
+	const int textSmallXpos = ms().rtl() ? 256 - 12 : 12;
+
 	clearText();
-	printLarge(false, ms().rtl() ? 256 - 4 : 4, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
+	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
+	printLarge(false, textLargeXpos2, 0, "(1/3)", ms().rtl() ? Alignment::left : Alignment::right);
+	printSmall(false, textSmallXpos, 29, STR_UPDATING_MISC_SRLDR, ms().rtl() ? Alignment::right : Alignment::left);
 
 	logPrint("\n");
 	if (opt == 1) {
@@ -515,16 +521,34 @@ void begin_update(int opt)
 		fcopy("sd:/_nds/TWiLightMenu/settings.srldr", "fat:/_nds/TWiLightMenu/settings.srldr");
 	}
 
+	clearText();
+	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
+	printLarge(false, textLargeXpos2, 0, "(2/3)", ms().rtl() ? Alignment::left : Alignment::right);
+	printSmall(false, textSmallXpos, 29, STR_GETTING_MENU_SRLDR, ms().rtl() ? Alignment::right : Alignment::left);
+
 	loadMenuSrldrList(opt==1 ? "fat:/_nds/TWiLightMenu/" : "sd:/_nds/TWiLightMenu/");
+
+	clearText();
+	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
+	printLarge(false, textLargeXpos2, 0, "(2/3)", ms().rtl() ? Alignment::left : Alignment::right);
+	printSmall(false, textSmallXpos, 29, STR_UPDATING_MENU_SRLDR, ms().rtl() ? Alignment::right : Alignment::left);
 
 	// Copy theme srldr files
 	logPrint(opt==1 ? "Copying *menu.srldr from fat to sd\n" : "Copying *menu.srldr from sd to fat\n");
 	char srldrPath[2][256];
+	char menuUpdateLogText[256];
 	for (int i = 0; i < (int)menuSrldrList.size(); i++) {
 		sprintf(srldrPath[0], opt==1 ? "fat:/_nds/TWiLightMenu/%s" : "sd:/_nds/TWiLightMenu/%s", menuSrldrList[i].c_str());
 		sprintf(srldrPath[1], opt==1 ? "sd:/_nds/TWiLightMenu/%s" : "fat:/_nds/TWiLightMenu/%s", menuSrldrList[i].c_str());
+		sprintf(menuUpdateLogText, "Copying %s from %s to %s\n", menuSrldrList[i].c_str(), opt==1 ? "fat" : "sd", opt==1 ? "sd" : "fat");
+		logPrint(menuUpdateLogText);
 		fcopy(srldrPath[0], srldrPath[1]);
 	}
+
+	clearText();
+	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
+	printLarge(false, textLargeXpos2, 0, "(3/3)", ms().rtl() ? Alignment::left : Alignment::right);
+	printSmall(false, textSmallXpos, 29, STR_UPDATING_NDS_BOOTSTRAP, ms().rtl() ? Alignment::right : Alignment::left);
 
 	if (opt == 1) {
 		// Slot-1 microSD > Console SD
@@ -543,6 +567,12 @@ void begin_update(int opt)
 		fcopy("sd:/_nds/nds-bootstrap-nightly.nds", "fat:/_nds/nds-bootstrap-nightly.nds");
 		fcopy("sd:/_nds/nightly-bootstrap.ver", "fat:/_nds/nightly-bootstrap.ver");
 	}
+
+	clearText();
+	printLarge(false, textLargeXpos, 0, STR_DONE, ms().rtl() ? Alignment::right : Alignment::left);
+
+	for (int i = 0; i < 60*2; i++)
+		swiWaitForVBlank();
 
 	fadeType = false;
 	*(int*)0x02003004 = 1; // Fade out sound
@@ -841,9 +871,9 @@ int settingsMode(void)
 	keysSetRepeat(25, 5);
 
 	bool widescreenFound = false;
-	bool lumaFound = false;
+	// bool lumaFound = false;
 	if (sdFound() && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
-		lumaFound = (access("sd:/luma/config.ini", F_OK) == 0);
+		// lumaFound = (access("sd:/luma/config.ini", F_OK) == 0);
 
 		CIniFile lumaConfig("sd:/luma/config.ini");
 		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
