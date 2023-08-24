@@ -100,6 +100,10 @@ private:
       return "lang_ca";
     case TWLSettings::ELangRyukyuan:
       return "lang_ry";
+    case TWLSettings::ELangCzech:
+      return "lang_cs";
+    case TWLSettings::ELangFinnish:
+      return "lang_fi";
     default:
       return "lang_en";
     }

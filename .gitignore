@@ -9,6 +9,7 @@
 *.arm9
 *.DS_Store
 thumbs.db
+*:Zone.Identifier
 !GBARunner2_arm9dldi_ds.nds
 !GBARunner2_arm7dldi_ds.nds
 !GBARunner2_arm9dldi_rom3m_ds.nds
