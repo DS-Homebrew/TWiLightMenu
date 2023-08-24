@@ -503,26 +503,30 @@ void begin_update(int opt)
 	logPrint("\n");
 	if (opt == 1) {
 		// Slot-1 microSD > Console SD
+		logPrint("Copying 3dssplash.srldr from fat to sd\n");
+		fcopy("fat:/_nds/TWiLightMenu/3dssplash.srldr", "sd:/_nds/TWiLightMenu/3dssplash.srldr");
+		logPrint("Copying imageview.srldr from fat to sd\n");
+		fcopy("fat:/_nds/TWiLightMenu/imageview.srldr", "sd:/_nds/TWiLightMenu/imageview.srldr");
 		logPrint("Copying main.srldr from fat to sd\n");
 		fcopy("fat:/_nds/TWiLightMenu/main.srldr", "sd:/_nds/TWiLightMenu/main.srldr");
 		logPrint("Copying manual.srldr from fat to sd\n");
 		fcopy("fat:/_nds/TWiLightMenu/manual.srldr", "sd:/_nds/TWiLightMenu/manual.srldr");
 		logPrint("Copying slot1launch.srldr from fat to sd\n");
 		fcopy("fat:/_nds/TWiLightMenu/slot1launch.srldr", "sd:/_nds/TWiLightMenu/slot1launch.srldr");
-		logPrint("Copying resetgame.srldr from fat to sd\n");
-		fcopy("fat:/_nds/TWiLightMenu/resetgame.srldr", "sd:/_nds/TWiLightMenu/resetgame.srldr");
 		logPrint("Copying settings.srldr from fat to sd\n");
 		fcopy("fat:/_nds/TWiLightMenu/settings.srldr", "sd:/_nds/TWiLightMenu/settings.srldr");
 	} else {
 		// Console SD > Slot-1 microSD
+		logPrint("Copying 3dssplash.srldr from sd to fat\n");
+		fcopy("sd:/_nds/TWiLightMenu/3dssplash.srldr", "fat:/_nds/TWiLightMenu/3dssplash.srldr");
+		logPrint("Copying imageview.srldr from sd to fat\n");
+		fcopy("sd:/_nds/TWiLightMenu/imageview.srldr", "fat:/_nds/TWiLightMenu/imageview.srldr");
 		logPrint("Copying main.srldr from sd to fat\n");
 		fcopy("sd:/_nds/TWiLightMenu/main.srldr", "fat:/_nds/TWiLightMenu/main.srldr");
 		logPrint("Copying manual.srldr from sd to fat\n");
 		fcopy("sd:/_nds/TWiLightMenu/manual.srldr", "fat:/_nds/TWiLightMenu/manual.srldr");
 		logPrint("Copying slot1launch.srldr from sd to fat\n");
 		fcopy("sd:/_nds/TWiLightMenu/slot1launch.srldr", "fat:/_nds/TWiLightMenu/slot1launch.srldr");
-		logPrint("Copying resetgame.srldr from sd to fat\n");
-		fcopy("sd:/_nds/TWiLightMenu/resetgame.srldr", "fat:/_nds/TWiLightMenu/resetgame.srldr");
 		logPrint("Copying settings.srldr from sd to fat\n");
 		fcopy("sd:/_nds/TWiLightMenu/settings.srldr", "fat:/_nds/TWiLightMenu/settings.srldr");
 	}
