@@ -34,7 +34,7 @@ SystemDetails::SystemDetails()
 
     fifoWaitValue32(FIFO_USER_03);
 
-    // status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: sndExcnt)
+    // status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT)
     u32 status = ((fifoGetValue32(FIFO_USER_03)) >> INIT_OFF);
 
     if (CHECK_BIT(status, REGSCFG_BIT) == 0) 
@@ -42,7 +42,7 @@ SystemDetails::SystemDetails()
         _arm7SCFGLocked = true; // If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
     }
 
-    if (CHECK_BIT(status, SNDEXCNT_BIT) != 0)
+    if (CHECK_BIT(status, REG_SNDEXTCNT_BIT) != 0)
     {
         _isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
     }

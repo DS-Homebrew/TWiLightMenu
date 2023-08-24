@@ -36,7 +36,6 @@ void my_installSystemFIFO(void);
 
 #define BIT_SET(c, n) ((c) << (n))
 
-#define SNDEXCNT (*(vu16*)0x4004700)
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
 volatile int status = 0;
@@ -119,7 +118,7 @@ int main() {
 
 	// 01: Fade Out
 	// 02: Return
-	// 03: status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: sndExcnt)
+	// 03: status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT)
 	
 
 	// 03: Status: Init/Volume/Battery/SD
@@ -127,9 +126,9 @@ int main() {
 	// Battery is 7 bits -- bits 0-7
 	// Volume is 00h to 1Fh = 5 bits -- bits 8-12
 	// SD status -- bits 13-14
-	// Init status -- bits 15-17 (Bit 0 (15): isDSLite, Bit 1 (16): scfgEnabled, Bit 2 (17): sndExcnt)
+	// Init status -- bits 15-17 (Bit 0 (15): isDSLite, Bit 1 (16): scfgEnabled, Bit 2 (17): REG_SNDEXTCNT)
 
-	u8 initStatus = (BIT_SET(!!(SNDEXCNT), SNDEXCNT_BIT) 
+	u8 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT) 
 									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT) 
 									| BIT_SET(!!(readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7)), DSLITE_BIT));
 

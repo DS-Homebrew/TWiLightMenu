@@ -2,7 +2,7 @@
 #ifndef A7STAT_H
 #define A7STAT_H
 
-#define SNDEXCNT_BIT 2
+#define SNDEXTCNT_BIT 2
 #define REGSCFG_BIT 1
 #define DSLITE_BIT 0
 
