@@ -15,10 +15,16 @@ off_t getFileSize(const char *fileName)
 	return fsize;
 }
 
-char copyBuf[0x8000];
+char* copyBuf = (char*)NULL;
 
 int fcopy(const char *sourcePath, const char *destinationPath)
 {
+	static bool copyBufInited = false;
+	if (!copyBufInited) {
+		copyBuf = new char[0x100000];
+		copyBufInited = true;
+	}
+
 	FILE* sourceFile = fopen(sourcePath, "rb");
 	off_t fsize = 0;
 	if (sourceFile) {
@@ -50,9 +56,9 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 		} */
 
 		// Copy file to destination path
-		numr = fread(copyBuf, 1, 0x8000, sourceFile);
+		numr = fread(copyBuf, 1, 0x100000, sourceFile);
 		fwrite(copyBuf, 1, numr, destinationFile);
-		offset += 0x8000;
+		offset += 0x100000;
 
 		if (offset > fsize) {
 			fclose(sourceFile);
