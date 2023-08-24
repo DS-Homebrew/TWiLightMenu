@@ -492,6 +492,7 @@ void begin_update(int opt)
 	const int textSmallXpos = ms().rtl() ? 256 - 12 : 12;
 
 	clearText();
+	printSmall(true, 0, 128, STR_PLEASE_WAIT_TAKE_WHILE, Alignment::center);
 	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
 	printLarge(false, textLargeXpos2, 0, "(1/3)", ms().rtl() ? Alignment::left : Alignment::right);
 	printSmall(false, textSmallXpos, 29, STR_UPDATING_MISC_SRLDR, ms().rtl() ? Alignment::right : Alignment::left);
@@ -528,6 +529,7 @@ void begin_update(int opt)
 	}
 
 	clearText();
+	printSmall(true, 0, 128, STR_PLEASE_WAIT_TAKE_WHILE, Alignment::center);
 	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
 	printLarge(false, textLargeXpos2, 0, "(2/3)", ms().rtl() ? Alignment::left : Alignment::right);
 	printSmall(false, textSmallXpos, 29, STR_GETTING_MENU_SRLDR, ms().rtl() ? Alignment::right : Alignment::left);
@@ -535,6 +537,7 @@ void begin_update(int opt)
 	loadMenuSrldrList(opt==1 ? "fat:/_nds/TWiLightMenu/" : "sd:/_nds/TWiLightMenu/");
 
 	clearText();
+	printSmall(true, 0, 128, STR_PLEASE_WAIT_TAKE_WHILE, Alignment::center);
 	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
 	printLarge(false, textLargeXpos2, 0, "(2/3)", ms().rtl() ? Alignment::left : Alignment::right);
 	printSmall(false, textSmallXpos, 29, STR_UPDATING_MENU_SRLDR, ms().rtl() ? Alignment::right : Alignment::left);
@@ -552,6 +555,7 @@ void begin_update(int opt)
 	}
 
 	clearText();
+	printSmall(true, 0, 128, STR_PLEASE_WAIT_TAKE_WHILE, Alignment::center);
 	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
 	printLarge(false, textLargeXpos2, 0, "(3/3)", ms().rtl() ? Alignment::left : Alignment::right);
 	printSmall(false, textSmallXpos, 29, STR_UPDATING_NDS_BOOTSTRAP, ms().rtl() ? Alignment::right : Alignment::left);
