@@ -31,8 +31,6 @@
 
 void my_installSystemFIFO(void);
 
-#define SNDEXCNT (*(vu16*)0x4004700)
-
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -106,7 +104,7 @@ int main() {
 	setPowerButtonCB(powerButtonCB);
 
 	bool isRegularDS = true; 
-	if (SNDEXCNT != 0) isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
+	if (REG_SNDEXTCNT != 0) isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
 	fifoSendValue32(FIFO_USER_07, isRegularDS);
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {

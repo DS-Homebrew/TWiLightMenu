@@ -37,7 +37,6 @@
 void my_touchInit();
 void my_installSystemFIFO(void);
 
-#define SNDEXCNT (*(vu16*)0x4004700)
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
 volatile int soundVolume = 127;
@@ -136,7 +135,7 @@ int main() {
 	
 	// 01: Fade Out
 	// 02: Return
-	// 03: status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: sndExcnt)
+	// 03: status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT)
 	
 
 	// 05: Volume/Battery/SD
@@ -147,7 +146,7 @@ int main() {
 
 	u8 readCommand = readPowerManagement(4);
 
-	u32 initStatus = (BIT_SET(!!(SNDEXCNT), SNDEXCNT_BIT) 
+	u32 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT) 
 									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT) 
 									| BIT_SET(!!(readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7)), DSLITE_BIT));
 

@@ -40,7 +40,6 @@ u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data);
 
 #define BIT_SET(c, n) ((c) << (n))
 
-#define SNDEXCNT (*(vu16*)0x4004700)
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
 volatile int timeTilVolumeLevelRefresh = 0;
@@ -150,7 +149,7 @@ int main() {
 
 	// 01: Fade Out
 	// 02: Return
-	// 03: status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: sndExcnt)
+	// 03: status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT)
 	
 
 	// 03: Status: Init/Volume/Battery/SD
@@ -158,16 +157,16 @@ int main() {
 	// Battery is 7 bits -- bits 0-7
 	// Volume is 00h to 1Fh = 5 bits -- bits 8-12
 	// SD status -- bits 13-14
-	// Init status -- bits 15-17 (Bit 0 (15): isDSLite, Bit 1 (16): scfgEnabled, Bit 2 (17): sndExcnt)
+	// Init status -- bits 15-17 (Bit 0 (15): isDSLite, Bit 1 (16): scfgEnabled, Bit 2 (17): REG_SNDEXTCNT)
 
-	u8 initStatus = (BIT_SET(!!(SNDEXCNT), SNDEXCNT_BIT) 
+	u8 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT) 
 									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT) 
 									| BIT_SET(!!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7)), DSLITE_BIT));
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
 
-	if (SNDEXCNT == 0) {
+	if (REG_SNDEXTCNT == 0) {
 		if (pmBacklight & 0xF0) { // DS Lite
 			int backlightLevel = pmBacklight & 3; // Brightness
 			*(int*)0x02003000 = backlightLevel;
