@@ -485,11 +485,7 @@ void begin_update(int opt)
 	gs().saveSettings();
 	bs().saveSettings();
 
-	*(int*)0x02003004 = 1; // Fade out sound
-	for (int i = 0; i < 25; i++)
-		swiWaitForVBlank();
 	snd().stopBgMusic();
-	*(int*)0x02003004 = 0; // Cancel sound fade out
 
 	const int textLargeXpos = ms().rtl() ? 256 - 4 : 4;
 	const int textLargeXpos2 = ms().rtl() ? 4 : 256 - 4;
