@@ -744,16 +744,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 	}
 	if (dsGame) {
 		// Move .sav outside of "saves" folder for flashcard kernel usage
-		const char *typeToReplace = ".nds";
-		if (extension(filename, ".dsi")) {
-			typeToReplace = ".dsi";
-		} else if (extension(filename, ".ids")) {
-			typeToReplace = ".ids";
-		} else if (extension(filename, ".srl")) {
-			typeToReplace = ".srl";
-		} else if (extension(filename, ".app")) {
-			typeToReplace = ".app";
-		}
+		std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 		std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
@@ -2231,16 +2222,7 @@ int dsClassicMenu(void) {
 
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiWare[ms().secondaryDevice]) {
-				const char *typeToReplace = ".nds";
-				if (extension(filename[ms().secondaryDevice], ".dsi")) {
-					typeToReplace = ".dsi";
-				} else if (extension(filename[ms().secondaryDevice], ".ids")) {
-					typeToReplace = ".ids";
-				} else if (extension(filename[ms().secondaryDevice], ".srl")) {
-					typeToReplace = ".srl";
-				} else if (extension(filename[ms().secondaryDevice], ".app")) {
-					typeToReplace = ".app";
-				}
+				std::string typeToReplace = filename[ms().secondaryDevice].substr(filename[ms().secondaryDevice].rfind('.'));
 
 				char *name = argarray.at(0);
 				strcpy (filePath + pathLen, name);
@@ -2540,16 +2522,7 @@ int dsClassicMenu(void) {
 			if (extension(filename[ms().secondaryDevice], ".nds") || extension(filename[ms().secondaryDevice], ".dsi")
 			 || extension(filename[ms().secondaryDevice], ".ids") || extension(filename[ms().secondaryDevice], ".srl")
 			 || extension(filename[ms().secondaryDevice], ".app")) {
-				const char *typeToReplace = ".nds";
-				if (extension(filename[ms().secondaryDevice], ".dsi")) {
-					typeToReplace = ".dsi";
-				} else if (extension(filename[ms().secondaryDevice], ".ids")) {
-					typeToReplace = ".ids";
-				} else if (extension(filename[ms().secondaryDevice], ".srl")) {
-					typeToReplace = ".srl";
-				} else if (extension(filename[ms().secondaryDevice], ".app")) {
-					typeToReplace = ".app";
-				}
+				std::string typeToReplace = filename[ms().secondaryDevice].substr(filename[ms().secondaryDevice].rfind('.'));
 
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;

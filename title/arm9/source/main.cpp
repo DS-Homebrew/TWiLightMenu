@@ -522,16 +522,7 @@ void lastRunROM()
 			if (ms().homebrewBootstrap) {
 				argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
 			} else {
-				const char *typeToReplace = ".nds";
-				if (extension(filename, ".dsi")) {
-					typeToReplace = ".dsi";
-				} else if (extension(filename, ".ids")) {
-					typeToReplace = ".ids";
-				} else if (extension(filename, ".srl")) {
-					typeToReplace = ".srl";
-				} else if (extension(filename, ".app")) {
-					typeToReplace = ".app";
-				}
+				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 				std::string romFolderNoSlash = romfolder;
@@ -646,16 +637,7 @@ void lastRunROM()
 			}
 
 			// Move .sav outside of "saves" folder for flashcard kernel usage
-			const char *typeToReplace = ".nds";
-			if (extension(filename, ".dsi")) {
-				typeToReplace = ".dsi";
-			} else if (extension(filename, ".ids")) {
-				typeToReplace = ".ids";
-			} else if (extension(filename, ".srl")) {
-				typeToReplace = ".srl";
-			} else if (extension(filename, ".app")) {
-				typeToReplace = ".app";
-			}
+			std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 			std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 			std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
@@ -808,16 +790,7 @@ void lastRunROM()
 				}
 				wideCheck(useWidescreen, true);
 
-				const char *typeToReplace = ".nds";
-				if (extension(filename, ".dsi")) {
-					typeToReplace = ".dsi";
-				} else if (extension(filename, ".ids")) {
-					typeToReplace = ".ids";
-				} else if (extension(filename, ".srl")) {
-					typeToReplace = ".srl";
-				} else if (extension(filename, ".app")) {
-					typeToReplace = ".app";
-				}
+				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				std::string romFolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romFolderNoSlash);
@@ -1000,16 +973,7 @@ void lastRunROM()
 
 			loadPerGameSettings(filename);
 
-			const char *typeToReplace = ".nds";
-			if (extension(filename, ".dsi")) {
-				typeToReplace = ".dsi";
-			} else if (extension(filename, ".ids")) {
-				typeToReplace = ".ids";
-			} else if (extension(filename, ".srl")) {
-				typeToReplace = ".srl";
-			} else if (extension(filename, ".app")) {
-				typeToReplace = ".app";
-			}
+			std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 			std::string pubname = replaceAll(filename, typeToReplace, getPubExtension());
 			std::string prvname = replaceAll(filename, typeToReplace, getPrvExtension());
@@ -2378,16 +2342,7 @@ int titleMode(void)
 
 		loadPerGameSettings(filename);
 
-		const char *typeToReplace = ".nds";
-		if (extension(filename, ".dsi")) {
-			typeToReplace = ".dsi";
-		} else if (extension(filename, ".ids")) {
-			typeToReplace = ".ids";
-		} else if (extension(filename, ".srl")) {
-			typeToReplace = ".srl";
-		} else if (extension(filename, ".app")) {
-			typeToReplace = ".app";
-		}
+		std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 		std::string pubname = replaceAll(filename, typeToReplace, getPubExtension());
 		std::string prvname = replaceAll(filename, typeToReplace, getPrvExtension());
@@ -2425,16 +2380,7 @@ int titleMode(void)
 
 		loadPerGameSettings(filename);
 
-		const char *typeToReplace = ".nds";
-		if (extension(filename, ".dsi")) {
-			typeToReplace = ".dsi";
-		} else if (extension(filename, ".ids")) {
-			typeToReplace = ".ids";
-		} else if (extension(filename, ".srl")) {
-			typeToReplace = ".srl";
-		} else if (extension(filename, ".app")) {
-			typeToReplace = ".app";
-		}
+		std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 		std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
