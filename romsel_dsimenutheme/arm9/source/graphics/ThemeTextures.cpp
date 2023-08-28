@@ -777,7 +777,7 @@ void ThemeTextures::drawProfileName() {
 			if (xPos + x < 0) continue;
 			int px = FontGraphic::textBuf[1][y * 256 + x];
 			u16 bg = _topBorderBuffer[(yPos + y) * 256 + (xPos + x)];
-			u16 val = px ? alphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
+			u16 val = px ? themealphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
 
 			if (ms().macroMode) {
 				_bgMainBuffer[(yPos + y) * 256 + (xPos + x)] = val;
@@ -856,33 +856,16 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 	imageXpos = (256-imageWidth)/2;
 	imageYpos = (192-imageHeight)/2;
 
-	if (!found) {
-		int photoXstart = imageXpos;
-		int photoXend = imageXpos+imageWidth;
-		int photoX = photoXstart;
-		int photoY = imageYpos;
-		for (uint i=0;i<image.size()/4;i++) {
-			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			u16 imgSrc = _bgSubBuffer[(photoY*256)+photoX];
-			u16 imgSrc2 = _bgSubBuffer2[(photoY*256)+photoX];
-			if (image[(i*4)+3] == 0) {
-				_bmpImageBuffer[i] = color;
-				if (boxArtColorDeband) _bmpImageBuffer2[i] = color;
-			} else {
-				_bmpImageBuffer[i] = alphablend(color, imgSrc, image[(i*4)+3]);
-				if (boxArtColorDeband) _bmpImageBuffer2[i] = alphablend(color, imgSrc2, image[(i*4)+3]);
-			}
-			photoX++;
-			if (photoX == photoXend) {
-				photoX = photoXstart;
-				photoY++;
-			}
-		}
-	} else
+	int photoXstart = imageXpos;
+	int photoXend = imageXpos+imageWidth;
+	int photoX = photoXstart;
+	int photoY = imageYpos;
+
 	for (uint i=0;i<image.size()/4;i++) {
+		const u8 alpha = image[(i*4)+3];
 		if (boxArtColorDeband) {
 			image[(i*4)+3] = 0;
-			if (alternatePixel) {
+			if (alternatePixel && found) {
 				if (image[(i*4)] >= 0x4) {
 					image[(i*4)] -= 0x4;
 					image[(i*4)+3] |= BIT(0);
@@ -897,38 +880,55 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 				}
 			}
 		}
-		_bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode == 1) {
+		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (alpha == 0) {
+			_bmpImageBuffer[i] = color;
+		} else {
+			_bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], alpha);
+		}
+		if (ms().colorMode == 1 && found) {
 			_bmpImageBuffer[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
 		}
 		if (boxArtColorDeband) {
-			if (alternatePixel) {
-				if (image[(i*4)+3] & BIT(0)) {
-					image[(i*4)] += 0x4;
-				}
-				if (image[(i*4)+3] & BIT(1)) {
-					image[(i*4)+1] += 0x4;
-				}
-				if (image[(i*4)+3] & BIT(2)) {
-					image[(i*4)+2] += 0x4;
-				}
-			} else {
-				if (image[(i*4)] >= 0x4) {
-					image[(i*4)] -= 0x4;
-				}
-				if (image[(i*4)+1] >= 0x4) {
-					image[(i*4)+1] -= 0x4;
-				}
-				if (image[(i*4)+2] >= 0x4) {
-					image[(i*4)+2] -= 0x4;
+			if (found) {
+				if (alternatePixel) {
+					if (image[(i*4)+3] & BIT(0)) {
+						image[(i*4)] += 0x4;
+					}
+					if (image[(i*4)+3] & BIT(1)) {
+						image[(i*4)+1] += 0x4;
+					}
+					if (image[(i*4)+3] & BIT(2)) {
+						image[(i*4)+2] += 0x4;
+					}
+				} else {
+					if (image[(i*4)] >= 0x4) {
+						image[(i*4)] -= 0x4;
+					}
+					if (image[(i*4)+1] >= 0x4) {
+						image[(i*4)+1] -= 0x4;
+					}
+					if (image[(i*4)+2] >= 0x4) {
+						image[(i*4)+2] -= 0x4;
+					}
 				}
 			}
-			_bmpImageBuffer2[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
+			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (alpha == 0) {
+				_bmpImageBuffer2[i] = color;
+			} else {
+				_bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], alpha);
+			}
+			if (ms().colorMode == 1 && found) {
 				_bmpImageBuffer2[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
 			}
 			if ((i % imageWidth) == imageWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
+		}
+		photoX++;
+		if (photoX == photoXend) {
+			photoX = photoXstart;
+			photoY++;
 		}
 	}
 
@@ -1304,7 +1304,7 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 			if (posX + x < 0) continue;
 			int px = FontGraphic::textBuf[1][y * 256 + x];
 			u16 bg = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
-			u16 val = px ? alphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
+			u16 val = px ? themealphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
 
 			BG_GFX_SUB[(posY + y) * 256 + (posX + x)] = val;
 			if (boxArtColorDeband) {
@@ -1346,7 +1346,7 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 			if (posX + x < 0) continue;
 			int px = FontGraphic::textBuf[1][y * 256 + x];
 			u16 bg = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
-			u16 val = px ? alphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
+			u16 val = px ? themealphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
 
 			BG_GFX[(posY + y) * 256 + (posX + x)] = val;
 		}

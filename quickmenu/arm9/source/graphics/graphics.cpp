@@ -45,6 +45,7 @@
 #include "../iconTitle.h"
 #include "graphics.h"
 #include "common/lodepng.h"
+#include "color.h"
 #include "fontHandler.h"
 #include "../ndsheaderbanner.h"
 #include "../errorScreen.h"
@@ -485,10 +486,25 @@ void loadBoxArt(const char* filename, bool secondaryDevice) {
 	lodepng::decode(image, imageWidth, imageHeight, filename);
 	if (imageWidth > 256 || imageHeight > 192)	return;
 
+	imageXpos = (256-imageWidth)/2;
+	imageYpos = (192-imageHeight)/2;
+
+	int photoXstart = imageXpos;
+	int photoXend = imageXpos+imageWidth;
+	int photoX = photoXstart;
+	int photoY = imageYpos;
+
 	for (uint i=0;i<image.size()/4;i++) {
-		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode == 1) {
-			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
+		const u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (image[(i*4)+3] == 0) {
+			bmpImageBuffer[i] = color;
+		} else {
+			bmpImageBuffer[i] = alphablend(color, topImageBuffer[(photoY*256)+photoX], image[(i*4)+3]);
+		}
+		photoX++;
+		if (photoX == photoXend) {
+			photoX = photoXstart;
+			photoY++;
 		}
 	}
 
@@ -505,8 +521,6 @@ void loadBoxArt(const char* filename, bool secondaryDevice) {
 		x++;
 	}
 
-	imageXpos = (256-imageWidth)/2;
-	imageYpos = (192-imageHeight)/2;
 	src = bmpImageBuffer;
 	for (uint y = 0; y < imageHeight; y++) {
 		for (uint x = 0; x < imageWidth; x++) {
