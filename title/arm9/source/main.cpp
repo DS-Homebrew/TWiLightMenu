@@ -2332,7 +2332,7 @@ int titleMode(void)
 
 	bool fcFound = flashcardFound();
 
-	if (ms().launchType[true] == Launch::EDSiWareLaunch) {
+	if (dsiFeatures() && ms().consoleModel == 0 && !ms().previousUsedDevice && ms().launchType[false] == Launch::EDSiWareLaunch && ms().dsiWareBooter == TWLSettings::EDSiWareUnlaunch) {
 		// Move .pub and/or .prv back to "saves" folder
 		std::string filename = ms().romPath[ms().previousUsedDevice];
 		const size_t last_slash_idx = filename.find_last_of("/");
