@@ -362,8 +362,8 @@ void vBlankHandler()
 				if ((isDSiMode() && !flashcardFound() && sys().arm7SCFGLocked()) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[0]);
 				} else drawIcon(1, 40, iconYpos[0]+6);
+				if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[0]-1) & 31]);
 			}
-			if (bnrWirelessIcon[0] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[0]-1) & 31]);
 			// Playback animated icon
 			if (bnriconisDSi[0]==true) {
 				playBannerSequence(0);
@@ -376,7 +376,7 @@ void vBlankHandler()
 			if (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2)) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, &cornerIcons[0]);
 			}
-			if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[1]-1) & 31]);
+			if (bnrWirelessIcon[num] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[1]-1) & 31]);
 			// Playback animated icon
 			if (bnriconisDSi[1]==true) {
 				playBannerSequence(1);
