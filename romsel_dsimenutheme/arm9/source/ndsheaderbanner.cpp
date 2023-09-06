@@ -418,7 +418,7 @@ int checkRomAP(FILE *ndsFile, int num)
 			"BFX",	// Final Fantasy: The 4 Heroes of Light
 			"VDE",	// Fossil Fighters Champions
 			"BJC",	// GoldenEye 007
-			"BO5",	// Golden Sun: Dark Dawn
+			// "BO5",	// Golden Sun: Dark Dawn (Patched by nds-bootstrap)
 			"YGX",	// Grand Theft Auto: Chinatown Wars
 			"BGT",	// Ghost Trick: Phantom Detective
 			"B7H",	// Harry Potter and the Deathly Hallows: Part 1
