@@ -3,6 +3,7 @@
 
 static const char incompatibleGameListB4DS[][4] = {
 	"AWD", // Diddy Kong Racing
+	"BO5", // Golden Sun: Dark Dawn
 	"B7F", // The Magic School Bus: Oceans
 	"ARM", // Mario & Luigi: Partners in Time
 	"AMM", // Minna no Mahjong DS
@@ -15,9 +16,8 @@ static const char incompatibleGameListFC[][4] = {
 	"YUT", // Ultimate Mortal Kombat
 };
 
-static const char incompatibleGameList[][4] = {
-	"BO5", // Golden Sun: Dark Dawn
-};
+// static const char incompatibleGameList[][4] = {
+// };
 
 // DSiWare
 static const char incompatibleGameListMemoryPit[][4] = {

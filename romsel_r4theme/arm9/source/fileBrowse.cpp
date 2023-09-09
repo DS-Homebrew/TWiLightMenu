@@ -588,7 +588,7 @@ bool checkForCompatibleGame(const char *filename) {
 		}
 	}
 
-	if (proceedToLaunch) {
+	/* if (proceedToLaunch) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
 			if (memcmp(gameTid, incompatibleGameList[i], 3) == 0) {
@@ -597,7 +597,7 @@ bool checkForCompatibleGame(const char *filename) {
 				break;
 			}
 		}
-	}
+	} */
 
 	if (proceedToLaunch) return true;	// Game is compatible
 
