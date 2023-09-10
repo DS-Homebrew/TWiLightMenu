@@ -249,7 +249,7 @@ int main() {
 				}
 				tonccpy((void*)0x023F0000, cheatData, 0x8000);
 			}
-			runLaunchEngine ((memcmp(ndsHeader.gameCode, "UBRP", 4) == 0 || memcmp(ndsHeader.gameCode, "AMFE", 4) == 0 || memcmp(ndsHeader.gameCode, "ALXX", 4) == 0), (memcmp(ndsHeader.gameCode, "UBRP", 4) == 0));
+			runLaunchEngine ((memcmp(ndsHeader.gameCode, "UBRP", 4) == 0 || memcmp(ndsHeader.gameCode, "AMFE", 4) == 0 || memcmp(ndsHeader.gameCode, "ALXX", 4) == 0 || memcmp(ndsHeader.gameTitle, "D!S!XTREME", 10) == 0), (memcmp(ndsHeader.gameCode, "UBRP", 4) == 0));
 		}
 	}
 	return 0;
