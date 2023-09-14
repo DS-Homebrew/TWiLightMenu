@@ -51,6 +51,7 @@ TWLSettings::TWLSettings()
 	boxArtColorDeband = false;
 
 	gbaBooter = isDSiMode() ? EGbaGbar2 : EGbaNativeGbar2;
+	gbaR3Test = false;
 	colEmulator = EColSegaColecoDS;
 	sgEmulator = EColSegaColecoDS;
 	cpcEmulator = ECpcAmEDS;
@@ -209,6 +210,7 @@ void TWLSettings::loadSettings()
 	} else {
 		gbaBooter = EGbaGbar2;
 	}
+	gbaR3Test = settingsini.GetInt("SRLOADER", "GBARUNNER3_TEST", gbaR3Test);
 	colEmulator = (TColSegaEmulator)settingsini.GetInt("SRLOADER", "SHOW_COL", colEmulator);
 	if (colEmulator == 0) // 0 (don't show) is deprecated
 		colEmulator = EColSegaColecoDS;

@@ -2238,6 +2238,14 @@ int r4Theme(void) {
 						}
 
 						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
+					} else if (ms().gbaR3Test) {
+						ms().launchType[ms().secondaryDevice] = TWLSettings::EGBARunner2Launch;
+
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
+						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
+							boostVram = true;
+						}
 					} else if (ms().secondaryDevice) {
 						ms().launchType[ms().secondaryDevice] = TWLSettings::EGBARunner2Launch;
 

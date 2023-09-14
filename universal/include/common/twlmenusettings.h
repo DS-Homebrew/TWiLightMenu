@@ -283,6 +283,7 @@ public:
 	bool boxArtColorDeband;
 
 	TGbaBooter gbaBooter;
+	bool gbaR3Test;
 	TColSegaEmulator colEmulator;
 	TColSegaEmulator sgEmulator;
 	TMegaDriveEmulator mdEmulator;
