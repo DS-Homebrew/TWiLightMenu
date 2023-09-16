@@ -5,7 +5,6 @@ static const char incompatibleGameListB4DS[][4] = {
 	"AWD", // Diddy Kong Racing
 	"BO5", // Golden Sun: Dark Dawn
 	"B7F", // The Magic School Bus: Oceans
-	"ARM", // Mario & Luigi: Partners in Time
 	"AMM", // Minna no Mahjong DS
 	"AH9", // Tony Hawk's American Sk8land
 	"CTX", // Tropix
