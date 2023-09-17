@@ -913,6 +913,15 @@ void launchInternetBrowser(std::string filename) {
 	} else {
 		sNDSHeaderExt NDSHeader;
 
+		std::string romfolder = ms().internetBrowserPath;
+		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+			romfolder.resize(romfolder.size()-1);
+		}
+		std::string romFolderNoSlash = romfolder;
+		RemoveTrailingSlashes(romFolderNoSlash);
+
+		chdir(romFolderNoSlash.c_str());
+
 		std::string filename = ms().internetBrowserPath;
 		const size_t last_slash_idx = filename.find_last_of("/");
 		if (std::string::npos != last_slash_idx) {
@@ -927,17 +936,13 @@ void launchInternetBrowser(std::string filename) {
 			stop();
 		}
 
+		loadPerGameSettings(filename);
+
 		std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 		char browserTid[5] = {0};
 		tonccpy(browserTid, NDSHeader.gameCode, 4);
 
-		std::string romfolder = ms().internetBrowserPath;
-		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
-			romfolder.resize(romfolder.size()-1);
-		}
-		std::string romFolderNoSlash = romfolder;
-		RemoveTrailingSlashes(romFolderNoSlash);
 		mkdir("saves", 0777);
 		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 		std::string savenamePub = replaceAll(filename, typeToReplace, getPubExtension());
@@ -1036,17 +1041,22 @@ void launchInternetBrowser(std::string filename) {
 			bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 			bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 			bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 1);
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
 		} else {
+			extern bool setClockSpeed(void);
+
 			bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath.c_str());
 			bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", "");
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed());
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram);
 		}
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 1);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 		bootstrapini.SaveIniFile(bootstrapinipath);
 
 		if (ms().theme == TWLSettings::EThemeHBL) {
