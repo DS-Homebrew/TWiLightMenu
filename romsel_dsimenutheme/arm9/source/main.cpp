@@ -661,6 +661,7 @@ void loadGameOnFlashcard(const char *ndsPath, bool dsGame) {
 		}
 		std::string romFolderNoSlash = romfolder;
 		RemoveTrailingSlashes(romFolderNoSlash);
+		chdir(romFolderNoSlash.c_str());
 		mkdir("saves", 0777);
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
 		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
