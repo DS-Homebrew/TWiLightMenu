@@ -68,6 +68,12 @@ STRING(CANNOT_LAUNCH_HB_ON_3DS, "This homebrew cannot be\nlaunched on 3DS consol
 STRING(PRESS_B_RETURN, "Press \\B to return.")
 STRING(BAD_CLUSTER_SIZE, "Your SD card is not formatted\nusing 32KB clusters, this causes\nsome games to load very slowly.\nIt's recommended to reformat your\nSD card using 32KB clusters.")
 
+// Pictochat
+STRING(NO_PICTOCHAT_MSG, "Unable to launch Pictochat.\nPlease place \"pictochat.nds\"\nin the \"_nds\" folder.")
+
+// DS Download Play
+STRING(NO_DLPLAY_MSG, "Unable to launch DS Download\nPlay. Please place \"dlplay.nds\"\nin the \"_nds\" folder.")
+
 // Internet Browser
 STRING(NO_INTERNET_BROWSER_MSG_NTR, "There is no Internet Browser\ncurrently set. Look for\nthe Nintendo DS\nBrowser, press \\Y, and select\n\"Set as Internet Browser\".")
 STRING(NO_INTERNET_BROWSER_MSG, "There is no Internet Browser\ncurrently set. Look for\nthe Nintendo DS or DSi\nBrowser, press \\Y, and select\n\"Set as Internet Browser\".")
