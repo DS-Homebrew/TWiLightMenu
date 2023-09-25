@@ -4,11 +4,11 @@ contact_links:
     url: https://discord.gg/yD3spjv
     about: "Please use #nds-help on the Discord server to for support-related questions, such as needing assistance to launch TWiLight Menu++"
   - name: DS game issue
-    url: https://github.com/DS-Homebrew/nds-bootstrap/issues/new
-    about: Please use the nds-bootstrap GitHub repository to report issues related to running .nds, .dsi, .srl, or .app files via nds-bootstrap (and not via Unlaunch, flashcard kernel or a modern homebrew without a RAM disk)
+    url: https://github.com/DS-Homebrew/nds-bootstrap/issues/new/choose
+    about: Please use the nds-bootstrap GitHub repository to report issues related to running DS(i) games via nds-bootstrap (and not via Unlaunch, flashcard kernel or a modern homebrew without a RAM disk)
   - name: GBA game issue
-    url: https://github.com/Gericom/GBARunner2/issues/new
-    about: Please use the GBARunner2 GitHub repository to report issues related to running Game Boy Advance applications as .gba files (not as Slot-2 for DS Phat/Lite consoles), or the GBARunner2 GUI
+    url: https://github.com/Gericom/GBARunner3/issues/new
+    about: If you're using the GBARunner3 test feature, please use the GBARunner3 GitHub repository to report issues related to running Game Boy Advance applications as .gba files (not as Slot-2 for DS Phat/Lite consoles)
   - name: Atari 2600 game issue
     url: https://github.com/wavemotion-dave/StellaDS/issues/new
     about: Please use the StellaDS GitHub repository to report issues related to running Atari 2600 applications as .a26 files, or the StellaDS GUI
@@ -19,8 +19,8 @@ contact_links:
     url: https://github.com/wavemotion-dave/A7800DS/issues/new
     about: Please use the A7800DS GitHub repository to report issues related to running Atari 7800 applications as .a78 files, or the A7800DS GUI
   - name: Atari XEGS game issue
-    url: https://github.com/wavemotion-dave/XEGS-DS/issues/new
-    about: Please use the XEGS-DS GitHub repository to report issues related to running Atari XEGS applications as .xex or .atr files, or the XEGS-DS GUI
+    url: https://github.com/wavemotion-dave/A8DS/issues/new
+    about: Please use the A8DS GitHub repository to report issues related to running Atari XEGS applications as .xex or .atr files, or the A8DS GUI
   - name: ColecoVision, Sega SG-1000, or Sord-M5 game issue with ColecoDS
     url: https://github.com/wavemotion-dave/ColecoDS/issues/new
     about: Please use the ColecoDS GitHub repository to report issues related to running ColecoVision applications as .col files, SG-1000 applications as .sg files, or Sord M5 applications as .m5 files, or the ColecoDS GUI
