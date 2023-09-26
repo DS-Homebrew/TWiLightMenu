@@ -948,10 +948,8 @@ void perGameSettings (std::string filename) {
 						break;
 					case 1:
 						if (isHomebrew) {
-							if (!perGameSettings_directBoot) {
-								perGameSettings_ramDiskNo--;
-								if (perGameSettings_ramDiskNo < -1) perGameSettings_ramDiskNo = 9;
-							}
+							perGameSettings_ramDiskNo--;
+							if (perGameSettings_ramDiskNo < -1) perGameSettings_ramDiskNo = 9;
 						} else {
 							perGameSettings_saveNo--;
 							if (perGameSettings_saveNo < 0) perGameSettings_saveNo = 9;
@@ -1028,10 +1026,8 @@ void perGameSettings (std::string filename) {
 						break;
 					case 1:
 						if (isHomebrew) {
-							if (!perGameSettings_directBoot) {
-								perGameSettings_ramDiskNo++;
-								if (perGameSettings_ramDiskNo > 9) perGameSettings_ramDiskNo = -1;
-							}
+							perGameSettings_ramDiskNo++;
+							if (perGameSettings_ramDiskNo > 9) perGameSettings_ramDiskNo = -1;
 						} else {
 							perGameSettings_saveNo++;
 							if (perGameSettings_saveNo > 9) perGameSettings_saveNo = 0;
