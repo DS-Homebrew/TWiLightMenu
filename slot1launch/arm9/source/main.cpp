@@ -137,7 +137,7 @@ int main() {
 			//	consoleDemoInit();
 			//}
 
-			if (!TWLCLK && (ndsHeader.unitCode == 0 || !TWLMODE)) {
+			if (!TWLCLK && (ndsHeader.header.unitCode == 0 || !TWLMODE)) {
 				//if (settingsini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				//	printf("TWL_CLOCK ON\n");		
 				//}
