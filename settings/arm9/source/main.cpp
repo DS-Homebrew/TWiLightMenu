@@ -1044,13 +1044,14 @@ int settingsMode(void)
 		.option(STR_SHOW_HIDDEN, STR_DESCRIPTION_SHOW_HIDDEN_1, Option::Bool(&ms().showHidden), {STR_SHOW, STR_HIDE}, {true, false});
 
 	if (dsiFeatures()) {
-		guiPage
-			.option(STR_BOXART, STR_DESCRIPTION_BOXART_DSI, Option::Int(&ms().showBoxArt), {STR_NON_CACHED, STR_CACHED, STR_HIDE}, {1, 2, 0})
-			.option(STR_PHOTO_BOXART_COLOR_DEBAND, STR_DESCRIPTION_PHOTO_BOXART_COLOR_DEBAND, Option::Bool(&ms().boxArtColorDeband), {STR_ON, STR_OFF}, {true, false});
+		guiPage.option(STR_BOXART, STR_DESCRIPTION_BOXART_DSI, Option::Int(&ms().showBoxArt), {STR_NON_CACHED, STR_CACHED, STR_HIDE}, {1, 2, 0});
 	} else {
 		guiPage.option(STR_BOXART, STR_DESCRIPTION_BOXART, Option::Int(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {1, 0});
 	}
-
+	if (dsiFeatures() || (sys().isRegularDS() && sys().dsDebugRam())) {
+		guiPage.option(STR_PHOTO_BOXART_COLOR_DEBAND, STR_DESCRIPTION_PHOTO_BOXART_COLOR_DEBAND, Option::Bool(&ms().boxArtColorDeband), {STR_ON, STR_OFF}, {true, false});
+	}
+	
 	if (sdFound()) {
 		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {STR_MICRO_SD_CARD, STR_SD_CARD}, {true, false});
 	}

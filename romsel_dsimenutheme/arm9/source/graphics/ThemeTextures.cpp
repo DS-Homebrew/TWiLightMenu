@@ -649,13 +649,17 @@ void ThemeTextures::commitBgSubModifyAsync() {
 		bgLoc = _frameBufferBot[0];
 	}
 	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	if (boxArtColorDeband) {
+	if (boxArtColorDeband && ndmaEnabled()) {
 		DC_FlushRange(_bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}
 	while (REG_VCOUNT != 191); // Fix screen tearing
 	dmaCopyWordsAsynch(2, _bgSubBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	if (boxArtColorDeband) {
-		ndmaCopyWordsAsynch(2, _bgSubBuffer2, _frameBufferBot[1], sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+		if (ndmaEnabled()) {
+			ndmaCopyWordsAsynch(2, _bgSubBuffer2, _frameBufferBot[1], sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+		} else {
+			tonccpy(_frameBufferBot[1], _bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+		}
 	}
 }
 
@@ -1710,14 +1714,6 @@ void ThemeTextures::videoSetup() {
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 
-	if (dsiFeatures()) {
-		_bmpImageBuffer2 = new u16[256 * 192];
-		_bgSubBuffer2 = new u16[256 * 192];
-		_photoBuffer2 = new u16[208 * 156];
-		_frameBufferBot[0] = new u16[256 * 192];
-		_frameBufferBot[1] = new u16[256 * 192];
-	}
-
 	if (dsiFeatures() && !ms().macroMode && ms().theme != TWLSettings::EThemeHBL) {
 		if (ms().consoleModel > 0) {
 			rotatingCubesLocation = (u8*)0x0D700000;
@@ -1736,5 +1732,13 @@ void ThemeTextures::videoSetup() {
 		loadRotatingCubes();
 	}
 
-	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && ndmaEnabled() && !rotatingCubesLoaded && ms().theme != TWLSettings::EThemeHBL);
+	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && (sys().isRegularDS() ? sys().dsDebugRam() : ndmaEnabled()) && !rotatingCubesLoaded && ms().theme != TWLSettings::EThemeHBL);
+
+	if (boxArtColorDeband) {
+		_bmpImageBuffer2 = new u16[256 * 192];
+		_bgSubBuffer2 = new u16[256 * 192];
+		_photoBuffer2 = new u16[208 * 156];
+		_frameBufferBot[0] = new u16[256 * 192];
+		_frameBufferBot[1] = new u16[256 * 192];
+	}
 }
