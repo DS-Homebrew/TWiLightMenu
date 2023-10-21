@@ -1,7 +1,9 @@
 #include "Texture.h"
+#include "paletteEffects.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
 #include "common/lodepng.h"
+#include "common/ColorLut.h"
 #include <math.h>
 
 extern bool useTwlCfg;
@@ -212,10 +214,11 @@ void Texture::loadPaletted(FILE *file) noexcept {
 	fseek(file, 2 * sizeof(u32), SEEK_CUR);
 	u32 paletteLength = 0;
 	fread(&paletteLength, sizeof(u32), 1, file);
-	_paletteLength = (paletteLength >> 9); // palette length in shorts. / sizoef(unsighed shor)
+	_paletteLength = (paletteLength >> 9); // palette length in shorts. / sizeof(unsighed shor)
 
 	_palette = std::make_unique<u16[]>(_paletteLength);
 	fread(_palette.get(), sizeof(u16), _paletteLength, file);
+	effectColorModePalette(_palette.get(), _paletteLength);
 }
 
 
@@ -279,7 +282,9 @@ u16 Texture::bmpToDS(u16 val) {
 		return 0;
 
 	// int blfLevel = ms().blfLevel;
-	if (ms().colorMode == 1) {
+	if (ms().colorMode == 2) {
+		return convertDSColorToPhat(((val >> 10) & 31) | (val & (31 << 5)) | ((val & 31) << 10) | BIT(15));
+	} else if (ms().colorMode == 1) {
 		u8 b = val & 31;
 		u8 g = (val >> 5) & 31;
 		u8 r = (val >> 10) & 31;

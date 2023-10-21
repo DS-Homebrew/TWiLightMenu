@@ -58,8 +58,7 @@ public:
 	void drawBottomBg(int bg);
 
 	void loadBoxArtToMem(const char *filename, int num);
-	void drawBoxArt(const char* filename);
-	void drawBoxArtFromMem(int num);
+	void drawBoxArt(const char* filename, bool inMem);
 
 	void drawVolumeImage(int volumeLevel);
 	void drawVolumeImageMacro(int volumeLevel);
@@ -79,7 +78,6 @@ public:
 	static void videoSetup();
 private:
 	void applyUserPaletteToAllGrfTextures();
-	void applyGrayscaleToAllGrfTextures();
 
 	void loadBubbleImage(const Texture& tex, int sprW, int sprH);
 	void loadProgressImage(const Texture& tex);

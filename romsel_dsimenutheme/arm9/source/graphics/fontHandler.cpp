@@ -13,7 +13,7 @@
 #include "TextEntry.h"
 #include "ThemeConfig.h"
 #include "themefilenames.h"
-#include "tool/colortool.h"
+#include "paletteEffects.h"
 
 FontGraphic *smallFont;
 FontGraphic *largeFont;
@@ -128,11 +128,7 @@ void fontInit() {
 			tonccpy(palette + 16, bmpPal_topSmallFont + themeColor, 4 * sizeof(u16));
 		}
 	}
-	if (ms().colorMode == 1) {
-		for (uint i = 0; i < sizeof(palette) / sizeof(palette[0]); i++) {
-			palette[i] = convertVramColorToGrayscale(palette[i]);
-		}
-	}
+	effectColorModePalette(palette, sizeof(palette) / sizeof(palette[0]));
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
 	logPrint("Font inited\n");

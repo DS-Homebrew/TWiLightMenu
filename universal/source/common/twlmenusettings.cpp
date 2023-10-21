@@ -182,6 +182,7 @@ void TWLSettings::loadSettings()
 	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
 	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
+	if (sys().isDSPhat() && colorMode == 2) colorMode = 0;
 	// blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	sleepMode = settingsini.GetInt("SRLOADER", "SLEEP_MODE", sleepMode);
 	kioskMode = settingsini.GetInt("SRLOADER", "KIOSK_MODE", kioskMode);

@@ -49,12 +49,15 @@
 //#include "ndma.h"
 #include "ThemeConfig.h"
 #include "themefilenames.h"
+#include "common/ColorLut.h"
 #include "tool/colortool.h"
 
 #include "bubbles.h"	// For HBL theme
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
+
+#define colorsToCache (208*16)
 
 static glImage hblBubbles[32 * 64];
 static int hblBubblesID = 0;
@@ -1257,6 +1260,16 @@ void loadPhoto(const std::string &path) {
 		lodepng::decode(image, photoWidth, photoHeight, "nitro:/graphics/photo_default.png");
 	}
 
+	u16* prevColor = (ms().colorMode > 0) ? new u16[colorsToCache] : NULL;
+	u16* colorConv = (ms().colorMode > 0) ? new u16[colorsToCache] : NULL;
+	u16* prevColor2 = (ms().colorMode > 0 && boxArtColorDeband) ? new u16[colorsToCache] : NULL;
+	u16* colorConv2 = (ms().colorMode > 0 && boxArtColorDeband) ? new u16[colorsToCache] : NULL;
+
+	int colorsCached = 0;
+	int colorsCached2 = 0;
+	int accessCounter = 0;
+	int accessCounter2 = 0;
+
 	for (uint i=0;i<image.size()/4;i++) {
 		if (boxArtColorDeband) {
 			image[(i*4)+3] = 0;
@@ -1275,10 +1288,36 @@ void loadPhoto(const std::string &path) {
 				}
 			}
 		}
-		tex().photoBuffer()[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode == 1) {
-			tex().photoBuffer()[i] = convertVramColorToGrayscale(tex().photoBuffer()[i]);
+		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode > 0) {
+			int c = 0;
+			bool cachedColorFound = false;
+			if (i > 0) {
+				for (c = 0; c < colorsCached; c++) {
+					if (prevColor[c] == color) {
+						cachedColorFound = true;
+						break;
+					}
+				}
+			}
+			if (!cachedColorFound) {
+				c = accessCounter;
+
+				if (ms().colorMode == 2) {
+					colorConv[c] = convertDSColorToPhat(color);
+				} else if (ms().colorMode == 1) {
+					colorConv[c] = convertVramColorToGrayscale(color);
+				}
+				colorsCached++;
+				if (colorsCached > colorsToCache) colorsCached = colorsToCache;
+				accessCounter++;
+				if (accessCounter >= colorsToCache) accessCounter = 0;
+
+				prevColor[c] = color;
+			}
+			color = colorConv[c];
 		}
+		tex().photoBuffer()[i] = color;
 		if (boxArtColorDeband) {
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
@@ -1301,12 +1340,61 @@ void loadPhoto(const std::string &path) {
 					image[(i*4)+2] -= 0x4;
 				}
 			}
-			tex().photoBuffer2()[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				tex().photoBuffer2()[i] = convertVramColorToGrayscale(tex().photoBuffer2()[i]);
+			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (ms().colorMode > 0) {
+				int c = 0;
+				bool cachedColorFound = false;
+				bool reuseColorConv = false;
+				u16 reusedColorConv = 0;
+
+				for (c = 0; c < colorsCached; c++) {
+					if (prevColor[c] == color) {
+						reuseColorConv = true;
+						reusedColorConv = colorConv[c];
+						break;
+					}
+				}
+
+				c = 0;
+				if (i > 0) {
+					for (c = 0; c < colorsCached2; c++) {
+						if (prevColor2[c] == color) {
+							cachedColorFound = true;
+							break;
+						}
+					}
+				}
+				if (!cachedColorFound) {
+					c = accessCounter2;
+
+					if (reuseColorConv) {
+						colorConv2[c] = reusedColorConv;
+					} else if (ms().colorMode == 2) {
+						colorConv2[c] = convertDSColorToPhat(color);
+					} else if (ms().colorMode == 1) {
+						colorConv2[c] = convertVramColorToGrayscale(color);
+					}
+					colorsCached2++;
+					if (colorsCached2 > colorsToCache) colorsCached2 = colorsToCache;
+					accessCounter2++;
+					if (accessCounter2 >= colorsToCache) accessCounter2 = 0;
+
+					prevColor2[c] = color;
+				}
+				color = colorConv2[c];
 			}
+			tex().photoBuffer2()[i] = color;
 			if ((i % photoWidth) == photoWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
+		}
+	}
+
+	if (ms().colorMode > 0) {
+		delete[] prevColor;
+		delete[] colorConv;
+		if (boxArtColorDeband) {
+			delete[] prevColor2;
+			delete[] colorConv2;
 		}
 	}
 
@@ -1364,6 +1452,12 @@ void loadBootstrapScreenshot(FILE *file) {
 		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
 	}
 
+	u16* prevColor = (ms().colorMode > 0) ? new u16[colorsToCache] : NULL;
+	u16* colorConv = (ms().colorMode > 0) ? new u16[colorsToCache] : NULL;
+
+	int colorsCached = 0;
+	int accessCounter = 0;
+
 	// Start loading
 	for (uint row = 0; row < photoHeight; row++) {
 		for (uint col = 0; col < photoWidth; col++) {
@@ -1371,8 +1465,34 @@ void loadBootstrapScreenshot(FILE *file) {
 
 			// RGB 565 -> BGR 5551
 			val = ((val >> 11) & 0x1F) | ((val & (0x1F << 6)) >> 1) | ((val & 0x1F) << 10) | BIT(15);
-			if (ms().colorMode == 1)
-				val = convertVramColorToGrayscale(val);
+			if (ms().colorMode > 0) {
+				int c = 0;
+				bool cachedColorFound = false;
+				if (row > 0 || col > 0) {
+					for (c = 0; c < colorsCached; c++) {
+						if (prevColor[c] == val) {
+							cachedColorFound = true;
+							break;
+						}
+					}
+				}
+				if (!cachedColorFound) {
+					c = accessCounter;
+
+					if (ms().colorMode == 2) {
+						colorConv[c] = convertDSColorToPhat(val);
+					} else if (ms().colorMode == 1) {
+						colorConv[c] = convertVramColorToGrayscale(val);
+					}
+					colorsCached++;
+					if (colorsCached > colorsToCache) colorsCached = colorsToCache;
+					accessCounter++;
+					if (accessCounter >= colorsToCache) accessCounter = 0;
+
+					prevColor[c] = val;
+				}
+				val = colorConv[c];
+			}
 
 			u8 y = photoHeight - row - 1;
 			bgSubBuffer[(24 + y) * 256 + 24 + col] = val;
@@ -1386,6 +1506,10 @@ void loadBootstrapScreenshot(FILE *file) {
 	tex().commitBgSubModify();
 
 	delete[] buffer;
+	if (ms().colorMode > 0) {
+		delete[] prevColor;
+		delete[] colorConv;
+	}
 }
 
 // Load photo without overwriting shoulder button images

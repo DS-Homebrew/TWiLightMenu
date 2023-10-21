@@ -572,15 +572,11 @@ void updateBoxArt(void) {
 			rocketVideo_playVideo = false; // Clear top screen cubes
 		}
 		clearBoxArt();
-		if (dsiFeatures() && ms().showBoxArt == 2) {
-			tex().drawBoxArtFromMem(CURPOS); // Load box art
-		} else {
-			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", boxArtFilename);
-			if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
-				sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
-			}
-			tex().drawBoxArt(boxArtPath); // Load box art
+		sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", boxArtFilename);
+		if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
+			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
 		}
+		tex().drawBoxArt(boxArtPath, (dsiFeatures() && ms().showBoxArt == 2)); // Load box art
 	}
 	boxArtLoaded = true;
 }

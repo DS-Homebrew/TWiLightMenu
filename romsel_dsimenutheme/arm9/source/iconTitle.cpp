@@ -32,6 +32,7 @@
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
 #include "common/lodepng.h"
+#include "graphics/paletteEffects.h"
 #include "graphics/queueControl.h"
 #include "graphics/ThemeConfig.h"
 #include "graphics/ThemeTextures.h"
@@ -145,6 +146,16 @@ static inline void loadMINIcon(int num) { glLoadIcon(num, tex().iconMINITexture(
 
 static inline void clearIcon(int num) { glClearIcon(num); }
 
+void convertIconPalette(sNDSBannerExt* ndsBanner) {
+	effectColorModePalette(ndsBanner->palette, 16);
+
+	if (ms().animateDsiIcons && ndsBanner->version == NDS_BANNER_VER_DSi) {
+		for (int i = 0; i < 8; i++) {
+			effectColorModePalette(ndsBanner->dsi_palette[i], 16);
+		}
+	}
+}
+
 void drawIcon(int Xpos, int Ypos, int num) {
 	if (num == -1) { // Moving app icon
 		glSprite(Xpos, Ypos, bannerFlip[40], &getIcon(6)[bnriconframenumY[40]]);
@@ -238,6 +249,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 					}
 					cachedTitle[num] = (char16_t*)&banner.titles[currentLang];
 					infoFound[num] = true;
+					convertIconPalette(&banner);
 				}
 			}
 		} else if (customIcon[num] == 0) {
@@ -292,6 +304,8 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 								banner.palette[colorCount++] = color;
 							}
 						}
+	
+						convertIconPalette(&banner);
 					}
 				}
 			}
@@ -508,7 +522,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 			bnrWirelessIcon[num] = 1;
 		else if (ndsHeader.dsi_flags & BIT(3))
 			bnrWirelessIcon[num] = 2;
-		
+
 		if (customIcon[num] == 2) { // custom banner bin
 			// we're done early, close the file
 			fclose(fp);
@@ -573,13 +587,17 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 			memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
 			return;
 		}
+
 		// banner sequence
 		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
+			convertIconPalette(&ndsBanner);
 			if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
 				grabBannerSequence(num);
 				bnriconisDSi[num] = true;
 			}
+		} else {
+			convertIconPalette(&ndsBanner);
 		}
 	}
 }
