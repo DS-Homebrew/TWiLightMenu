@@ -97,6 +97,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI
 - [Arisotura](https://github.com/Arisotura): ROM list from melonDS, and BIOS dumper code from [dsibiosdumper](https://github.com/Arisotura/dsibiosdumper)
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat
+- [edo9300](https://github.com/edo9300): DS Phat check code
 - [Gericom](https://github.com/Gericom), TrolleyDave, and FAST6191: GBA SRAM-patching code, used in gbapatcher ([SRAM patching thread at GBAtemp](https://gbatemp.net/threads/reverse-engineering-gba-patching.60168/))
 - [Gericom](https://github.com/Gericom) & [profi200](https://github.com/profi200): GBA color correction code, used in [GBARunner3](https://github.com/Gericom/GBARunner3)
 - Nikokaro: Found no-tilt patches for *WarioWare: Twisted!*, and *Yoshi Topsy-Turvy*. ([GBAtemp thread](https://gbatemp.net/threads/gba-no-tilt-patches-for-ds-users.584128/))

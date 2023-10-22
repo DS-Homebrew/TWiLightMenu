@@ -7,6 +7,9 @@
 
 #define CHECK_BIT(v, n) (((v) >> (n)) & 1)
 
+#define FLASHM_BACKUPHEADER 0x3f680
+#define FLASHME_MAJOR_VER 0x17c
+
 // Make this link C-like for volatility
 extern "C" {
 	static volatile int _batteryLevel = 0;
@@ -31,7 +34,7 @@ SystemDetails::SystemDetails()
 	_dsiWramAccess = false;
 	_arm7SCFGLocked = false;
 	_isRegularDS = true;
-	_isDSLite = false;
+	_isDSPhat = false;
 	_nitroFsInitOk = false;
 	_fatInitOk = false;
 	_fifoOk = false;
@@ -56,7 +59,23 @@ SystemDetails::SystemDetails()
 		_isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
 	}
 
-	_isDSLite = CHECK_BIT(status, DSLITE_BIT);
+	if (_isRegularDS) {
+		u8 consoleType = 0;
+		readFirmware(0x1D, &consoleType, 1);
+		if(consoleType == 0xff) {
+			_isDSPhat = true;
+		} else {
+			u8 flashmeVersion = 0;
+			readFirmware(FLASHME_MAJOR_VER, &flashmeVersion, 1);
+			
+			if(flashmeVersion != 0xff){
+				u8 contentsOnLite[6] = {0xff,0xff,0xff,0xff,0xff,0x00};
+				u8 unusedShouldBeZeroFilledOnPhat[6];
+				readFirmware(FLASHM_BACKUPHEADER+0x30, &unusedShouldBeZeroFilledOnPhat, 6);
+				_isDSPhat = memcmp(unusedShouldBeZeroFilledOnPhat, contentsOnLite, 6) != 0;
+			}
+		}
+	}
 
 	if (!dsiFeatures()) {
 		u32 wordBak = *(vu32*)0x02800000;

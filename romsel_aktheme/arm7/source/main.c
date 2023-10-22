@@ -144,11 +144,8 @@ int main() {
 	// Volume is 00h to 1Fh = 5 bits -- bits 8-12
 	// SD status -- bit 13
 
-	u8 readCommand = readPowerManagement(4);
-
 	u32 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT) 
-									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT) 
-									| BIT_SET(!!(readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7)), DSLITE_BIT));
+									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT));
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);

@@ -235,8 +235,6 @@ int main() {
 		biosDump((void*)0x02F80020, (const void*)0x00000020, 0x7FE0);
 	}
 
-	u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
-
 	// 01: Fade Out
 	// 02: Return
 	// 03: status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT)
@@ -250,13 +248,14 @@ int main() {
 	// Init status -- bits 15-17 (Bit 0 (15): isDSLite, Bit 1 (16): scfgEnabled, Bit 2 (17): REG_SNDEXTCNT)
 
 	u8 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT)
-									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT)
-									| BIT_SET(!!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7)), DSLITE_BIT));
+									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT));
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
 
 	if (REG_SNDEXTCNT == 0) {
+		u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+
 		if (pmBacklight & 0xF0) { // DS Lite
 			int backlightLevel = pmBacklight & 3; // Brightness
 			*(int*)0x02003000 = backlightLevel;

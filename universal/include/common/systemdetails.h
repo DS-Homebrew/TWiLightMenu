@@ -25,8 +25,8 @@ public:
 	bool isRegularDS() { return _isRegularDS; }
 	bool fatInitOk() { return _fatInitOk; }
 	bool useNitroFS() { return _nitroFsInitOk; }
-	bool isDSPhat() { return (_isRegularDS && !_isDSLite); }
-	bool isDSLite() { return (_isRegularDS && _isDSLite); }
+	bool isDSPhat() { return (_isRegularDS && _isDSPhat); }
+	bool isDSLite() { return (_isRegularDS && !_isDSPhat); }
 	bool dsDebugRam() { return (_dsDebugRam); }
 	void initFilesystem(const char *runningPath);
 	void initArm7RegStatuses();
@@ -39,7 +39,7 @@ private:
 	bool _arm7SCFGLocked;
 	bool _isRunFromSD;
 	bool _isRegularDS;
-	bool _isDSLite;
+	bool _isDSPhat;
 	bool _dsDebugRam;
 	bool _fatInitOk;
 	bool _fifoOk;

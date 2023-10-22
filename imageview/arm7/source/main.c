@@ -129,8 +129,7 @@ int main() {
 	// Init status -- bits 15-17 (Bit 0 (15): isDSLite, Bit 1 (16): scfgEnabled, Bit 2 (17): REG_SNDEXTCNT)
 
 	u8 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT) 
-									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT) 
-									| BIT_SET(!!(readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7)), DSLITE_BIT));
+									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT));
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
