@@ -145,8 +145,6 @@ int main() {
 		*(vu32*)0x037C0000 = wordBak;
 	}
 
-	u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
-
 	// 01: Fade Out
 	// 02: Return
 	// 03: status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT)
@@ -166,6 +164,8 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, status);
 
 	if (REG_SNDEXTCNT == 0) {
+		u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+
 		if (pmBacklight & 0xF0) { // DS Lite
 			int backlightLevel = pmBacklight & 3; // Brightness
 			*(int*)0x02003000 = backlightLevel;
