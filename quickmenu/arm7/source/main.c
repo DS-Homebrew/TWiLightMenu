@@ -268,9 +268,7 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, status);
 
 	if (REG_SNDEXTCNT == 0) {
-		u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
-
-		if (pmBacklight & 0xF0) // DS Lite
+		if (hasRegulableBacklight)
 			backlightLevel = pmBacklight & 3; // Brightness
 		
 		if((readPowerManagement(PM_CONTROL_REG) & 0xC) == 0) // DS Phat backlight off

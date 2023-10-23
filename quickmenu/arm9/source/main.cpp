@@ -2101,7 +2101,7 @@ int dsClassicMenu(void) {
 					case 4:
 						// Adjust backlight level
 						if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
-							fifoSendValue32(FIFO_USER_04, 1 | (sys().isDSPhat() << 1) | (sys().hasRegulableBacklight() << 2));
+							fifoSendValue32(FIFO_USER_04, 1);
 							mmEffectEx(&snd_backlight);
 						}
 						break;
