@@ -35,6 +35,7 @@ SystemDetails::SystemDetails()
 	_arm7SCFGLocked = false;
 	_isRegularDS = true;
 	_isDSPhat = false;
+	_hasRegulableBacklight = true;
 	_nitroFsInitOk = false;
 	_fatInitOk = false;
 	_fifoOk = false;
@@ -59,23 +60,9 @@ SystemDetails::SystemDetails()
 		_isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
 	}
 
-	if (_isRegularDS) {
-		u8 consoleType = 0;
-		readFirmware(0x1D, &consoleType, 1);
-		if(consoleType == 0xff) {
-			_isDSPhat = true;
-		} else {
-			u8 flashmeVersion = 0;
-			readFirmware(FLASHME_MAJOR_VER, &flashmeVersion, 1);
-			
-			if(flashmeVersion != 0xff){
-				u8 contentsOnLite[6] = {0xff,0xff,0xff,0xff,0xff,0x00};
-				u8 unusedShouldBeZeroFilledOnPhat[6];
-				readFirmware(FLASHM_BACKUPHEADER+0x30, &unusedShouldBeZeroFilledOnPhat, 6);
-				_isDSPhat = memcmp(unusedShouldBeZeroFilledOnPhat, contentsOnLite, 6) != 0;
-			}
-		}
-	}
+	_isDSPhat = CHECK_BIT(status, DSPHAT_BIT) != 0;
+
+	_hasRegulableBacklight = CHECK_BIT(status, BACKLIGHT_BIT) != 0;
 
 	if (!dsiFeatures()) {
 		u32 wordBak = *(vu32*)0x02800000;

@@ -769,7 +769,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
      || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)) {
-		if (sys().isDSLite()) {
+		if (sys().hasRegulableBacklight()) {
 			CIniFile backlightini("fat:/_wfwd/backlight.ini");
 			backlightini.SetInt("brightness", "brightness", *(int*)0x02003000);
 			backlightini.SaveIniFile("fat:/_wfwd/backlight.ini");
@@ -1733,7 +1733,7 @@ int dsClassicMenu(void) {
 			}
 
 			if (pressed & KEY_LEFT) {
-				if (cursorPosition == 2 || (cursorPosition == 5 && (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2)))
+				if (cursorPosition == 2 || (cursorPosition == 5 && (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)))
 				|| cursorPosition == 6) {
 					cursorPosition--;
 					if (cursorPosition == 5 && ms().kioskMode) {
@@ -1767,7 +1767,7 @@ int dsClassicMenu(void) {
 					cursorPosition = 3;
 					menuButtonPressed = true;
 				} else if (touch.px >= 10 && touch.px <= 20 && touch.py >= 175 && touch.py <= 185
-							&& (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2))) {
+							&& (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2))) {
 					cursorPosition = 4;
 					menuButtonPressed = true;
 				} else if (touch.px >= 117 && touch.px <= 137 && touch.py >= 170 && touch.py <= 190 && !ms().kioskMode) {
@@ -2100,8 +2100,8 @@ int dsClassicMenu(void) {
 						break;
 					case 4:
 						// Adjust backlight level
-						if (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2)) {
-							fifoSendValue32(FIFO_USER_04, 1);
+						if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
+							fifoSendValue32(FIFO_USER_04, 1 | (sys().isDSPhat() << 1) | (sys().hasRegulableBacklight() << 2));
 							mmEffectEx(&snd_backlight);
 						}
 						break;

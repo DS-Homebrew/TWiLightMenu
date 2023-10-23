@@ -678,7 +678,7 @@ void loadGameOnFlashcard(const char *ndsPath, bool dsGame) {
 	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
      || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)) {
-		if (sys().isDSLite()) {
+		if (sys().hasRegulableBacklight()) {
 			CIniFile backlightini("fat:/_wfwd/backlight.ini");
 			backlightini.SetInt("brightness", "brightness", *(int*)0x02003000);
 			backlightini.SaveIniFile("fat:/_wfwd/backlight.ini");

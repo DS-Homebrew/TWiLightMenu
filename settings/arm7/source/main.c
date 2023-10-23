@@ -30,6 +30,7 @@
 #include <nds.h>
 #include <string.h>
 #include <maxmod7.h>
+#include "common/isPhatCheck.h"
 #include "common/arm7status.h"
 
 #define REG_SCFG_WL *(vu16*)0x4004020
@@ -216,11 +217,11 @@ int main() {
 		*(vu32*)0x037C0000 = wordBak;
 	}
 
-	u8 readCommand = readPowerManagement(4);
+	u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 
 	// 01: Fade Out
 	// 02: Return
-	// 03: status (Bit 0: isDSLite, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT)
+	// 03: status (Bit 0: hasRegulableBacklight, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT, Bit 3: isDSPhat)
 
 
 	// 03: Status: Init/Volume/Battery/SD
@@ -228,10 +229,12 @@ int main() {
 	// Battery is 7 bits -- bits 0-7
 	// Volume is 00h to 1Fh = 5 bits -- bits 8-12
 	// SD status -- bits 13-14
-	// Init status -- bits 15-17 (Bit 0 (15): isDSLite, Bit 1 (16): scfgEnabled, Bit 2 (17): REG_SNDEXTCNT)
+	// Init status -- bits 15-18 (Bit 0 (15): hasRegulableBacklight, Bit 1 (16): scfgEnabled, Bit 2 (17): REG_SNDEXTCNT, Bit 3 (18): isDSPhat)
 
 	u8 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT)
-									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT));
+									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT)
+									| BIT_SET(!!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7)), BACKLIGHT_BIT)
+									| BIT_SET(isPhat(), DSPHAT_BIT));
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);

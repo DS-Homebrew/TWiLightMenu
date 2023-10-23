@@ -49,6 +49,7 @@
 
 int currentTheme = 0;
 bool currentMacroMode = false;
+bool wasBacklightOff = false;
 static TWLSettings::TExploit previousDSiWareExploit = TWLSettings::EExploitNone;
 static int previousSysRegion = 0;
 
@@ -778,7 +779,7 @@ void defaultExitHandler()
 	}
 	if (ms().macroMode) {
 		powerOff(PM_BACKLIGHT_TOP);
-	} else {
+	} else if(!wasBacklightOff) {
 		powerOn(PM_BACKLIGHT_TOP);
 	}
 	if (ms().showMainMenu) {
@@ -844,10 +845,12 @@ void customSleep() {
 		swiWaitForVBlank();
 	}
 	irqEnable(IRQ_VBLANK & IRQ_VCOUNT);
-	if (!currentMacroMode) {
-		powerOn(PM_BACKLIGHT_TOP);
+	if(!wasBacklightOff) {
+		if (!currentMacroMode) {
+			powerOn(PM_BACKLIGHT_TOP);
+		}
+		powerOn(PM_BACKLIGHT_BOTTOM);
 	}
-	powerOn(PM_BACKLIGHT_BOTTOM);
 	mmResume();
 	fadeType = true;
 	*(int*)0x02003004 = 2; // Fade in sound
@@ -876,6 +879,8 @@ int settingsMode(void)
 
 	snd().init();
 	keysSetRepeat(25, 5);
+	
+	wasBacklightOff = sys().isRegularDS() && (REG_POWERCNT & 0xC) == 0;
 
 	bool widescreenFound = false;
 	// bool lumaFound = false;
