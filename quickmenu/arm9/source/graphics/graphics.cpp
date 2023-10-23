@@ -373,7 +373,7 @@ void vBlankHandler()
 			glSprite(33, iconYpos[3], GL_FLIP_NONE, sdFound() ? &iconboxImage[0] : &iconboxImage[sys().isRegularDS() ? (((u8*)GBAROM)[0xB2] != 0x96) : 1]);
 			int num = (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? 1 : 0;
 			drawIcon(num, 40, iconYpos[3]+6);
-			if (sys().isDSLite() || (dsiFeatures() && ms().consoleModel < 2)) {
+			if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, &cornerIcons[0]);
 			}
 			if (bnrWirelessIcon[num] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[1]-1) & 31]);

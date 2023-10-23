@@ -508,7 +508,7 @@ void ThemeTextures::loadBatteryTextures() {
 			_battery4Texture = std::make_unique<Texture>(TFN_BATTERY4, TFN_FALLBACK_BATTERY4);
 		}
 	} else {
-		if (!sys().isDSPhat()) {
+		if (sys().hasRegulableBacklight()) {
 			_batterychargeTexture = std::make_unique<Texture>(TFN_BATTERY_CHARGE, TFN_FALLBACK_BATTERY_CHARGE);
 			_batterychargeblinkTexture = std::make_unique<Texture>(TFN_BATTERY_CHARGE_BLINK, TFN_FALLBACK_BATTERY_CHARGE_BLINK);
 		}
