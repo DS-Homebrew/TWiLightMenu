@@ -193,7 +193,7 @@ void LoadBMP(void) {
 						break;
 					}
 				}
-				for (c2 = 0; c2 < colorsCached; c2++) {
+				for (c2 = 0; c2 < colorsCached2; c2++) {
 					if (prevColor2[c2] == color2) {
 						cachedColorFound2 = true;
 						break;
