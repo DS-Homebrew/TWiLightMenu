@@ -888,9 +888,6 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		} else {
 			_bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], alpha);
 		}
-		if (ms().colorMode == 1 && found) {
-			_bmpImageBuffer[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
-		}
 		if (boxArtColorDeband) {
 			if (found) {
 				if (alternatePixel) {
@@ -962,9 +959,6 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 				_bmpImageBuffer2[i] = color;
 			} else {
 				_bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], alpha);
-			}
-			if (ms().colorMode == 1 && found) {
-				_bmpImageBuffer2[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
 			}
 			if ((i % imageWidth) == imageWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
