@@ -10,6 +10,7 @@
 #include "common/flashcard.h"
 #include "common/tonccpy.h"
 #include "common/lodepng.h"
+#include "common/ColorLut.h"
 #include "graphics/graphics.h"
 #include "graphics/color.h"
 #include "sound.h"
@@ -728,7 +729,7 @@ void twlMenuVideo(void) {
 				x = 19;
 				y++;
 			}
-			u16 val = *(src++);
+			const u16 val = *(src++);
 			if (image[(i*4)+3] > 0) {
 				frameBuffer[0][y*256+x] = val;
 				frameBuffer[1][y*256+x] = val;
@@ -741,11 +742,86 @@ void twlMenuVideo(void) {
 		image.clear();
 	}
 
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
+		#define colorsToCache (256*32)
+
+		u16* prevColor = new u16[colorsToCache];
+		u16* colorConv = new u16[colorsToCache];
+		u16* prevColor2 = new u16[colorsToCache];
+		u16* colorConv2 = new u16[colorsToCache];
+
+		int colorsCached = 0;
+		int colorsCached2 = 0;
+		int accessCounter = 0;
+		int accessCounter2 = 0;
+
 		for (int i=0; i<256*192; i++) {
-			frameBuffer[0][i] = convertVramColorToGrayscale(frameBuffer[0][i]);
-			frameBuffer[1][i] = convertVramColorToGrayscale(frameBuffer[1][i]);
+			u16 color = frameBuffer[0][i];
+			u16 color2 = frameBuffer[1][i];
+
+			int c = 0;
+			int c2 = 0;
+			bool cachedColorFound = false;
+			bool cachedColorFound2 = false;
+			if (i > 0) {
+				for (c = 0; c < colorsCached; c++) {
+					if (prevColor[c] == color) {
+						cachedColorFound = true;
+						break;
+					}
+				}
+				for (c2 = 0; c2 < colorsCached; c2++) {
+					if (prevColor2[c2] == color2) {
+						cachedColorFound2 = true;
+						break;
+					}
+				}
+			}
+			if (!cachedColorFound) {
+				c = accessCounter;
+
+				if (ms().colorMode == 2) {
+					colorConv[c] = convertDSColorToPhat(color);
+				} else if (ms().colorMode == 1) {
+					colorConv[c] = convertVramColorToGrayscale(color);
+				}
+				colorsCached++;
+				if (colorsCached > colorsToCache) colorsCached = colorsToCache;
+				accessCounter++;
+				if (accessCounter >= colorsToCache) accessCounter = 0;
+
+				prevColor[c] = color;
+			}
+			if (!cachedColorFound2) {
+				c2 = accessCounter2;
+
+				if (color2 == color) {
+					colorConv2[c2] = colorConv[c];
+				} else {
+					if (ms().colorMode == 2) {
+						colorConv2[c2] = convertDSColorToPhat(color2);
+					} else if (ms().colorMode == 1) {
+						colorConv2[c2] = convertVramColorToGrayscale(color2);
+					}
+				}
+				colorsCached2++;
+				if (colorsCached2 > colorsToCache) colorsCached2 = colorsToCache;
+				accessCounter2++;
+				if (accessCounter2 >= colorsToCache) accessCounter2 = 0;
+
+				prevColor2[c2] = color2;
+			}
+			color = colorConv[c];
+			color2 = colorConv2[c2];
+
+			frameBuffer[0][i] = color;
+			frameBuffer[1][i] = color2;
 		}
+
+		delete[] prevColor;
+		delete[] colorConv;
+		delete[] prevColor2;
+		delete[] colorConv2;
 	}
 
 	highFPS = ((sys().isRegularDS() && !sys().isDSPhat()) || ((dsiFeatures() || sdFound()) && ms().consoleModel < 2));
