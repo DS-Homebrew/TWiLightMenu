@@ -1014,24 +1014,29 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	int screenOffset = 0;
 	int fileOffset = 0;
 	std::vector<DirEntry> dirContents;
-	
 	getDirectoryContents (dirContents, extensionList);
-	showDirectoryContents (dirContents, screenOffset);
-	
-	whiteScreen = false;
-	fadeType = true;	// Fade in from white
+
+	const int entriesStartRow = (ms().theme==6 ? ENTRIES_START_ROW_GBNP : ENTRIES_START_ROW);
+	const int entriesPerScreen = (ms().theme==6 ? ENTRIES_PER_SCREEN_GBNP : ENTRIES_PER_SCREEN);
 
 	fileOffset = ms().cursorPosition[ms().secondaryDevice];
 	if (ms().pagenum[ms().secondaryDevice] > 0) {
 		fileOffset += ms().pagenum[ms().secondaryDevice]*40;
 	}
 
+	// Scroll screen if needed
+	if (fileOffset > screenOffset + entriesPerScreen - 1) {
+		screenOffset = fileOffset - entriesPerScreen + 1;
+	}
+
+	showDirectoryContents (dirContents, screenOffset);
+	
+	whiteScreen = false;
+	fadeType = true;	// Fade in from white
+
 	while (true) {
 		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
 		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
-
-		int entriesStartRow = (ms().theme==6 ? ENTRIES_START_ROW_GBNP : ENTRIES_START_ROW);
-		int entriesPerScreen = (ms().theme==6 ? ENTRIES_PER_SCREEN_GBNP : ENTRIES_PER_SCREEN);
 
 		// Clear old cursors
 		for (int i = entriesStartRow; i < entriesPerScreen + entriesStartRow; i++) {
