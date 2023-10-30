@@ -110,6 +110,7 @@ glImage settingsIconImage[(32 / 32) * (32 / 32)];
 
 u16 bmpImageBuffer[256*192] = {0};
 u16 topImageBuffer[256*192] = {0};
+u16* colorTable = NULL;
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -222,7 +223,7 @@ int getFavoriteColor(void) {
 	return favoriteColor;
 }
 
-u16 convertVramColorToGrayscale(u16 val) {
+/* u16 convertVramColorToGrayscale(u16 val) {
 	u8 b,g,r,max,min;
 	b = ((val)>>10)&31;
 	g = ((val)>>5)&31;
@@ -237,7 +238,7 @@ u16 convertVramColorToGrayscale(u16 val) {
 	max = (max + min) / 2;
 
 	return 32768|(max<<10)|(max<<5)|(max);
-}
+} */
 
 void bottomBgLoad(void) {
 	std::string bottomBGFile = "nitro:/graphics/bottombg.png";
@@ -275,8 +276,8 @@ void bottomBgLoad(void) {
 
 	for (uint i=0;i<image.size()/4;i++) {
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode == 1) {
-			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
+		if (ms().colorMode > 0) {
+			bmpImageBuffer[i] = colorTable[bmpImageBuffer[i]];
 		}
 	}
 
@@ -495,7 +496,10 @@ void loadBoxArt(const char* filename, bool secondaryDevice) {
 	int photoY = imageYpos;
 
 	for (uint i=0;i<image.size()/4;i++) {
-		const u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode > 0) {
+			color = colorTable[color];
+		}
 		if (image[(i*4)+3] == 0) {
 			bmpImageBuffer[i] = color;
 		} else {
@@ -539,19 +543,19 @@ void topBgLoad(void) {
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "%s:/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
+			sprintf(temp, "%s:/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str(), (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbg" : "topbg");
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "%s:/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
+			sprintf(temp, "%s:/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str(), (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbg" : "topbg");
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "%s:/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
+			sprintf(temp, "%s:/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str(), (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbg" : "topbg");
 			break;
 		case TWLSettings::EThemeWood:
-			// sprintf(temp, "%s:/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str(), sys().isDSPhat() ? "phat_topbg" : "topbg");
+			// sprintf(temp, "%s:/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str(), (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbg" : "topbg");
 			break;
 		case TWLSettings::EThemeSaturn:
-			sprintf(temp, "nitro:/graphics/%s.png", sys().isDSPhat() ? "phat_topbg_saturn" : "topbg_saturn");
+			sprintf(temp, "nitro:/graphics/%s.png", (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbg_saturn" : "topbg_saturn");
 			break;
 		case TWLSettings::EThemeHBL:
 		case TWLSettings::EThemeGBC:
@@ -568,8 +572,8 @@ void topBgLoad(void) {
 
 	for (uint i=0;i<image.size()/4;i++) {
 		topImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode == 1) {
-			topImageBuffer[i] = convertVramColorToGrayscale(topImageBuffer[i]);
+		if (ms().colorMode > 0) {
+			topImageBuffer[i] = colorTable[topImageBuffer[i]];
 		}
 	}
 
@@ -591,7 +595,7 @@ void topBarLoad(void) {
 	if (ms().macroMode) return;
 
 	char filePath[256];
-	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", sys().isDSPhat() ? "phat_topbar" : "topbar", getFavoriteColor());
+	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbar" : "topbar", getFavoriteColor());
 	FILE* file = fopen(filePath, "rb");
 
 	if (file) {
@@ -601,8 +605,8 @@ void topBarLoad(void) {
 		lodepng::decode(image, width, height, filePath);
 		for (unsigned i=0;i<image.size()/4;i++) {
 			bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
+			if (ms().colorMode > 0) {
+				bmpImageBuffer[i] = colorTable[bmpImageBuffer[i]];
 			}
 		}
 		u16* src = bmpImageBuffer;
@@ -627,6 +631,19 @@ void graphicsInit()
 	*(u16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
+
+	if (ms().colorMode > 0) {
+		colorTable = new u16[0x20000/sizeof(u16)];
+
+		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
+		if (ms().colorMode == 2) {
+			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		}
+
+		FILE* file = fopen(colorTablePath, "rb");
+		fread(colorTable, 1, 0x20000, file);
+		fclose(file);
+	}
 
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D);
@@ -680,10 +697,9 @@ void graphicsInit()
 	swiWaitForVBlank();
 
 	u16* newPalette = (u16*)cursorPals+(getFavoriteColor()*16);
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 3; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 
@@ -702,10 +718,9 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)iconboxPal;
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 12; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 
@@ -724,10 +739,9 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)wirelessiconsPal;
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 
@@ -746,10 +760,9 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)pictodlpPal;
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 12; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 
@@ -768,10 +781,9 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)icon_dscardPal;
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 
@@ -789,11 +801,10 @@ void graphicsInit()
 							(u8*) icon_dscardBitmap // image data generated by GRIT
 							);
 
-	newPalette = (u16*)(sys().isDSPhat() ? iconPhat_gbaPal : icon_gbaPal);
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	newPalette = (u16*)((sys().isDSPhat() || ms().colorMode == 2) ? iconPhat_gbaPal : icon_gbaPal);
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 
@@ -808,14 +819,13 @@ void graphicsInit()
 							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 							16, // Length of the palette to use (16 colors)
 							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) (sys().isDSPhat() ? iconPhat_gbaBitmap : icon_gbaBitmap) // image data generated by GRIT
+							(u8*) ((sys().isDSPhat() || ms().colorMode == 2) ? iconPhat_gbaBitmap : icon_gbaBitmap) // image data generated by GRIT
 							);
 
 	newPalette = (u16*)cornericonsPal;
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 
@@ -834,10 +844,9 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)icon_settingsPal;
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 

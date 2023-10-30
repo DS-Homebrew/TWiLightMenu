@@ -27,7 +27,7 @@
 #include "common/gl2d.h"
 #include "common/tonccpy.h"
 #include "graphics.h"
-#include "common/ColorLut.h"
+// #include "common/ColorLut.h"
 #include "common/lodepng.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
@@ -49,7 +49,7 @@ bool secondBuffer = false;
 
 u16 frameBuffer[2][256*192];
 u16 frameBufferBot[2][256*192];
-u16* dsiSplashLocation = (u16*)0x02600000;
+u16* colorTable = NULL;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
@@ -63,7 +63,7 @@ void SetBrightness(u8 screen, s8 bright) {
 	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
-u16 convertVramColorToGrayscale(u16 val) {
+/* u16 convertVramColorToGrayscale(u16 val) {
 	u8 b,g,r,max,min;
 	b = ((val)>>10)&31;
 	g = ((val)>>5)&31;
@@ -78,7 +78,7 @@ u16 convertVramColorToGrayscale(u16 val) {
 	max = (max + min) / 2;
 
 	return 32768|(max<<10)|(max<<5)|(max);
-}
+} */
 
 void vBlankHandler() {
 	if (fadeType == true) {
@@ -162,94 +162,17 @@ void LoadBMP(void) {
 	}
 	image.clear();
 	if (ms().colorMode > 0) {
-		#define colorsToCache (256*32)
-
-		u16* prevColor = new u16[colorsToCache];
-		u16* colorConv = new u16[colorsToCache];
-		u16* prevColor2 = new u16[colorsToCache];
-		u16* colorConv2 = new u16[colorsToCache];
-
-		int colorsCached = 0;
-		int colorsCached2 = 0;
-		int accessCounter = 0;
-		int accessCounter2 = 0;
-
-		for (int i=0; i<256*192; i++) {
-			u16 color = frameBufferBot[0][i];
-			u16 color2 = frameBufferBot[1][i];
-			if (ms().macroMode) {
-				color = frameBuffer[0][i];
-				color2 = frameBuffer[1][i];
+		if (ms().macroMode) {
+			for (int i=0; i<256*192; i++) {
+				frameBuffer[0][i] = colorTable[frameBuffer[0][i]];
+				frameBuffer[1][i] = colorTable[frameBuffer[1][i]];
 			}
-
-			int c = 0;
-			int c2 = 0;
-			bool cachedColorFound = false;
-			bool cachedColorFound2 = false;
-			if (i > 0) {
-				for (c = 0; c < colorsCached; c++) {
-					if (prevColor[c] == color) {
-						cachedColorFound = true;
-						break;
-					}
-				}
-				for (c2 = 0; c2 < colorsCached2; c2++) {
-					if (prevColor2[c2] == color2) {
-						cachedColorFound2 = true;
-						break;
-					}
-				}
-			}
-			if (!cachedColorFound) {
-				c = accessCounter;
-
-				if (ms().colorMode == 2) {
-					colorConv[c] = convertDSColorToPhat(color);
-				} else if (ms().colorMode == 1) {
-					colorConv[c] = convertVramColorToGrayscale(color);
-				}
-				colorsCached++;
-				if (colorsCached > colorsToCache) colorsCached = colorsToCache;
-				accessCounter++;
-				if (accessCounter >= colorsToCache) accessCounter = 0;
-
-				prevColor[c] = color;
-			}
-			if (!cachedColorFound2) {
-				c2 = accessCounter2;
-
-				if (color2 == color) {
-					colorConv2[c2] = colorConv[c];
-				} else {
-					if (ms().colorMode == 2) {
-						colorConv2[c2] = convertDSColorToPhat(color2);
-					} else if (ms().colorMode == 1) {
-						colorConv2[c2] = convertVramColorToGrayscale(color2);
-					}
-				}
-				colorsCached2++;
-				if (colorsCached2 > colorsToCache) colorsCached2 = colorsToCache;
-				accessCounter2++;
-				if (accessCounter2 >= colorsToCache) accessCounter2 = 0;
-
-				prevColor2[c2] = color2;
-			}
-			color = colorConv[c];
-			color2 = colorConv2[c2];
-
-			if (ms().macroMode) {
-				frameBuffer[0][i] = color;
-				frameBuffer[1][i] = color2;
-			} else {
-				frameBufferBot[0][i] = color;
-				frameBufferBot[1][i] = color2;
+		} else {
+			for (int i=0; i<256*192; i++) {
+				frameBufferBot[0][i] = colorTable[frameBufferBot[0][i]];
+				frameBufferBot[1][i] = colorTable[frameBufferBot[1][i]];
 			}
 		}
-
-		delete[] prevColor;
-		delete[] colorConv;
-		delete[] prevColor2;
-		delete[] colorConv2;
 	}
 	doubleBuffer = true;
 	if (ms().macroMode) {

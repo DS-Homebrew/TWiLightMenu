@@ -182,9 +182,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_ndslPal;
 		icon_PalLen = icon_ndslPalLen;
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -204,9 +204,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)(sys().isDSPhat() ? iconPhat_gbaPal : icon_gbaPal);
 		icon_PalLen = (sys().isDSPhat() ? iconPhat_gbaPalLen : icon_gbaPalLen);
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -226,9 +226,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_gbPal;
 		icon_PalLen = icon_gbPalLen;
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -248,9 +248,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_a26Pal;
 		icon_PalLen = icon_a26PalLen;
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -270,9 +270,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_intPal;
 		icon_PalLen = icon_intPalLen;
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -292,9 +292,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_nesPal;
 		icon_PalLen = icon_nesPalLen;
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -314,9 +314,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_smsPal;
 		icon_PalLen = icon_smsPalLen;
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -336,9 +336,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_ggPal;
 		icon_PalLen = icon_ggPalLen;
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -358,9 +358,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_pcePal;
 		icon_PalLen = icon_pcePalLen;
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -380,9 +380,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_mdPal;
 		icon_PalLen = icon_mdPalLen;
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -402,9 +402,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_snesPal;
 		icon_PalLen = icon_snesPalLen;
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -424,9 +424,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_msxPal;
 		icon_PalLen = icon_msxPalLen;
 	}
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = convertVramColorToGrayscale(*(icon_Pal+i2));
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
 	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
@@ -743,85 +743,10 @@ void twlMenuVideo(void) {
 	}
 
 	if (ms().colorMode > 0) {
-		#define colorsToCache (256*32)
-
-		u16* prevColor = new u16[colorsToCache];
-		u16* colorConv = new u16[colorsToCache];
-		u16* prevColor2 = new u16[colorsToCache];
-		u16* colorConv2 = new u16[colorsToCache];
-
-		int colorsCached = 0;
-		int colorsCached2 = 0;
-		int accessCounter = 0;
-		int accessCounter2 = 0;
-
 		for (int i=0; i<256*192; i++) {
-			u16 color = frameBuffer[0][i];
-			u16 color2 = frameBuffer[1][i];
-
-			int c = 0;
-			int c2 = 0;
-			bool cachedColorFound = false;
-			bool cachedColorFound2 = false;
-			if (i > 0) {
-				for (c = 0; c < colorsCached; c++) {
-					if (prevColor[c] == color) {
-						cachedColorFound = true;
-						break;
-					}
-				}
-				for (c2 = 0; c2 < colorsCached2; c2++) {
-					if (prevColor2[c2] == color2) {
-						cachedColorFound2 = true;
-						break;
-					}
-				}
-			}
-			if (!cachedColorFound) {
-				c = accessCounter;
-
-				if (ms().colorMode == 2) {
-					colorConv[c] = convertDSColorToPhat(color);
-				} else if (ms().colorMode == 1) {
-					colorConv[c] = convertVramColorToGrayscale(color);
-				}
-				colorsCached++;
-				if (colorsCached > colorsToCache) colorsCached = colorsToCache;
-				accessCounter++;
-				if (accessCounter >= colorsToCache) accessCounter = 0;
-
-				prevColor[c] = color;
-			}
-			if (!cachedColorFound2) {
-				c2 = accessCounter2;
-
-				if (color2 == color) {
-					colorConv2[c2] = colorConv[c];
-				} else {
-					if (ms().colorMode == 2) {
-						colorConv2[c2] = convertDSColorToPhat(color2);
-					} else if (ms().colorMode == 1) {
-						colorConv2[c2] = convertVramColorToGrayscale(color2);
-					}
-				}
-				colorsCached2++;
-				if (colorsCached2 > colorsToCache) colorsCached2 = colorsToCache;
-				accessCounter2++;
-				if (accessCounter2 >= colorsToCache) accessCounter2 = 0;
-
-				prevColor2[c2] = color2;
-			}
-			color = colorConv[c];
-			color2 = colorConv2[c2];
-
-			frameBuffer[0][i] = color;
-			frameBuffer[1][i] = color2;
+			frameBuffer[0][i] = colorTable[frameBuffer[0][i]];
+			frameBuffer[1][i] = colorTable[frameBuffer[1][i]];
 		}
-
-		delete[] prevColor;
-		delete[] colorConv;
-		delete[] prevColor2;
-		delete[] colorConv2;
 	}
 
 	highFPS = ((sys().isRegularDS() && !sys().isDSPhat()) || ((dsiFeatures() || sdFound()) && ms().consoleModel < 2));

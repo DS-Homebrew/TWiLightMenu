@@ -86,6 +86,7 @@ int bottomBg;
 u16 bmpImageBuffer[256*192];
 static u16 topImage[2][2][256*192];
 static u16 bottomImage[2][2][256*192];
+u16* colorTable = NULL;
 
 static u16 startBorderColor = 0;
 static u16 windowColorTop = 0;
@@ -197,35 +198,14 @@ void initSubSprites(void)
 }
 
 u16 convertToDsBmp(u16 val) {
-	if (ms().colorMode == 1) {
-		u16 newVal = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
-
-		u8 b,g,r,max,min;
-		b = ((newVal)>>10)&31;
-		g = ((newVal)>>5)&31;
-		r = (newVal)&31;
-		// Value decomposition of hsv
-		max = (b > g) ? b : g;
-		max = (max > r) ? max : r;
-
-		// Desaturate
-		min = (b < g) ? b : g;
-		min = (min < r) ? min : r;
-		max = (max + min) / 2;
-		
-		newVal = 32768|(max<<10)|(max<<5)|(max);
-
-		b = ((newVal)>>10)&31;
-		g = ((newVal)>>5)&31;
-		r = (newVal)&31;
-
-		return 32768|(b<<10)|(g<<5)|(r);
-	} else {
-		return ((val>>10)&31) | (val&(31<<5)) | ((val&31)<<10) | BIT(15);
+	val = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
+	if (ms().colorMode > 0) {
+		return colorTable[val];
 	}
+	return val;
 }
 
-u16 convertVramColorToGrayscale(u16 val) {
+/* u16 convertVramColorToGrayscale(u16 val) {
 	u8 b,g,r,max,min;
 	b = ((val)>>10)&31;
 	g = ((val)>>5)&31;
@@ -240,7 +220,7 @@ u16 convertVramColorToGrayscale(u16 val) {
 	max = (max + min) / 2;
 
 	return 32768|(max<<10)|(max<<5)|(max);
-}
+} */
 
 // No longer used.
 // void drawBG(glImage *images)
@@ -348,6 +328,19 @@ void graphicsInit()
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
+	if (ms().colorMode > 0) {
+		colorTable = new u16[0x20000/sizeof(u16)];
+
+		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
+		if (ms().colorMode == 2) {
+			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		}
+
+		FILE* file = fopen(colorTablePath, "rb");
+		fread(colorTable, 1, 0x20000, file);
+		fclose(file);
+	}
+
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG3_ACTIVE);
@@ -435,8 +428,8 @@ void graphicsLoad()
 
 		for (uint i=0; i<image.size()/4; i++) {
 			topImage[0][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				topImage[0][0][i] = convertVramColorToGrayscale(topImage[0][0][i]);
+			if (ms().colorMode > 0) {
+				topImage[0][0][i] = colorTable[topImage[0][0][i]];
 			}
 			topImage[0][1][i] = topImage[0][0][i];
 			topImage[1][0][i] = topImage[0][0][i];
@@ -525,8 +518,8 @@ void graphicsLoad()
 				}
 			}
 			topImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				topImage[startMenu][0][i] = convertVramColorToGrayscale(topImage[startMenu][0][i]);
+			if (ms().colorMode > 0) {
+				topImage[startMenu][0][i] = colorTable[topImage[startMenu][0][i]];
 			}
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
@@ -550,8 +543,8 @@ void graphicsLoad()
 				}
 			}
 			topImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				topImage[startMenu][1][i] = convertVramColorToGrayscale(topImage[startMenu][1][i]);
+			if (ms().colorMode > 0) {
+				topImage[startMenu][1][i] = colorTable[topImage[startMenu][1][i]];
 			}
 			if ((i % 256) == 255) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
@@ -577,8 +570,8 @@ void graphicsLoad()
 				}
 			}
 			bottomImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				bottomImage[startMenu][0][i] = convertVramColorToGrayscale(bottomImage[startMenu][0][i]);
+			if (ms().colorMode > 0) {
+				bottomImage[startMenu][0][i] = colorTable[bottomImage[startMenu][0][i]];
 			}
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
@@ -602,8 +595,8 @@ void graphicsLoad()
 				}
 			}
 			bottomImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				bottomImage[startMenu][1][i] = convertVramColorToGrayscale(bottomImage[startMenu][1][i]);
+			if (ms().colorMode > 0) {
+				bottomImage[startMenu][1][i] = colorTable[bottomImage[startMenu][1][i]];
 			}
 			if ((i % 256) == 255) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
@@ -616,10 +609,10 @@ void graphicsLoad()
 	startBorderColor = RGB15(colorRvalue/8, colorGvalue/8, colorBvalue/8);
 	windowColorTop = RGB15(0, 0, 31);
 	windowColorBottom = RGB15(0, 0, 15);
-	if (ms().colorMode == 1) {
-		startBorderColor = convertVramColorToGrayscale(startBorderColor);
-		windowColorTop = convertVramColorToGrayscale(windowColorTop);
-		windowColorBottom = convertVramColorToGrayscale(windowColorBottom);
+	if (ms().colorMode > 0) {
+		startBorderColor = colorTable[startBorderColor];
+		windowColorTop = colorTable[windowColorTop];
+		windowColorBottom = colorTable[windowColorBottom];
 	}
 
 	/*if (subtheme >= 0 && subtheme < 12) {
@@ -665,10 +658,9 @@ void graphicsLoad()
 	}*/
 
 	u16* newPalette = (u16*)icon_manualPal;
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 
@@ -687,10 +679,9 @@ void graphicsLoad()
 							);
 
 	newPalette = (u16*)iconboxPal;
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 
@@ -709,10 +700,9 @@ void graphicsLoad()
 							);
 
 	newPalette = (u16*)wirelessiconsPal;
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 

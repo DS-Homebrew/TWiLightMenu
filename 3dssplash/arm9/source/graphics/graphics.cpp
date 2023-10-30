@@ -12,6 +12,7 @@ int fadeDelay = 0;
 
 int screenBrightness = 31;
 bool bottomBgLoaded = false;
+u16* colorTable = NULL;
 
 int bg3Sub;
 int bg3Main;
@@ -28,7 +29,7 @@ void SetBrightness(u8 screen, s8 bright) {
 	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
-u16 convertVramColorToGrayscale(u16 val) {
+/* u16 convertVramColorToGrayscale(u16 val) {
 	u8 b,g,r,max,min;
 	b = ((val)>>10)&31;
 	g = ((val)>>5)&31;
@@ -43,7 +44,7 @@ u16 convertVramColorToGrayscale(u16 val) {
 	max = (max + min) / 2;
 
 	return BIT(15)|(max<<10)|(max<<5)|(max);
-}
+} */
 
 void vBlankHandler() {
 	if (fadeType == true) {
@@ -72,6 +73,19 @@ void graphicsInit() {
 	*(u16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
+
+	if (ms().colorMode > 0) {
+		colorTable = new u16[0x20000/sizeof(u16)];
+
+		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
+		if (ms().colorMode == 2) {
+			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		}
+
+		FILE* file = fopen(colorTablePath, "rb");
+		fread(colorTable, 1, 0x20000, file);
+		fclose(file);
+	}
 
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_2D);

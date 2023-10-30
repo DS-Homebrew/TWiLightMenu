@@ -3,12 +3,14 @@
 #include <maxmod9.h>
 
 // #include "autoboot.h"
-// #include "common/twlmenusettings.h"
+#include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
 #include "common/flashcard.h"
 #include "graphics/fontHandler.h"
 #include "common/tonccpy.h"
 #include "language.h"
+
+extern u16* colorTable;
 
 extern bool sdRemoveDetect;
 extern const char *unlaunchAutoLoadID;
@@ -51,6 +53,11 @@ void checkSdEject(void) {
 		0xD6B5,
 		0xFFFF,
 	};
+	if (ms().colorMode > 0) {
+		for (int i = 0; i < 4; i++) {
+			palette[i] = colorTable[palette[i]];
+		}
+	}
 	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
 

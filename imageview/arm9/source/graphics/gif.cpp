@@ -1,9 +1,12 @@
 #include "gif.hpp"
 #include "myDSiMode.h"
+#include "common/twlmenusettings.h"
 #include "common/tonccpy.h"
 #include "lzw.hpp"
 
 #include <stdio.h>
+
+extern u16* colorTable;
 
 std::vector<Gif *> Gif::_animating;
 
@@ -44,10 +47,17 @@ void Gif::displayFrame(void) {
 		}
 	}
 
-	std::vector<u16> &colorTable = frame.descriptor.lctFlag ? frame.lct : _gct;
+	std::vector<u16> &gifColorTable = frame.descriptor.lctFlag ? frame.lct : _gct;
+	u16* bgPalette = _top ? BG_PALETTE : BG_PALETTE_SUB;
 
-	tonccpy(_top ? BG_PALETTE : BG_PALETTE_SUB, colorTable.data(), colorTable.size() * 2);
-	tonccpy(_top ? BG_PALETTE : BG_PALETTE_SUB, colorTable.data(), colorTable.size() * 2);
+	tonccpy(bgPalette, gifColorTable.data(), gifColorTable.size() * 2);
+	tonccpy(bgPalette, gifColorTable.data(), gifColorTable.size() * 2);
+	if (ms().colorMode > 0) {
+		for (unsigned int i = 0; i < gifColorTable.size(); i++) {
+			bgPalette[i] = colorTable[bgPalette[i]];
+		}
+		header.bgColor = colorTable[header.bgColor];
+	}
 
 	// Disposal method 2 = fill with bg color
 	if (frame.gce.disposalMethod == 2)

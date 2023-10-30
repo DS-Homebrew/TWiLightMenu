@@ -1,12 +1,13 @@
 #include "paletteEffects.h"
 #include "string.h"
-#include "common/ColorLut.h"
+// #include "common/ColorLut.h"
 #include "tool/colortool.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
 
 extern bool useTwlCfg;
+extern u16* colorTable;
 
 int getFavoriteColor(void) {
 	int favoriteColor = (int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme);
@@ -35,31 +36,15 @@ void effectDSiStartTextPalettes(u16* palette, u8 paletteLength)
 	effectColorModePalette(palette, paletteLength);
 }
 
-void effectGrayscalePalette(u16* palette, u16 paletteLength)
-{
-	for (int i = 0; i < paletteLength; i++) {
-  		*(palette+i) = convertVramColorToGrayscale(*(palette+i));
-  	}
-}
-
-void effectPhatPalette(u16* palette, u16 paletteLength)
-{
-	for (int i = 0; i < paletteLength; i++) {
-  		*(palette+i) = convertDSColorToPhat(*(palette+i));
-  	}
-}
-
 void effectColorModePalette(u16* palette, u16 paletteLength)
 {
 	if (ms().colorMode == 0) {
 		return;
 	}
 
-	if (ms().colorMode == 2) {
-		effectPhatPalette(palette, paletteLength);
-	} else if (ms().colorMode == 1) {
-		effectGrayscalePalette(palette, paletteLength);
-	}
+	for (int i = 0; i < paletteLength; i++) {
+  		*(palette+i) = colorTable[*(palette+i)];
+  	}
 }
 
 

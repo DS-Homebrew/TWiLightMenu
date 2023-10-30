@@ -12,6 +12,8 @@
 #include "language.h"
 #include "sound.h"
 
+extern u16* colorTable;
+
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
@@ -60,6 +62,11 @@ void checkSdEject(void) {
 		0xD6B5,
 		0xFFFF,
 	};
+	if (ms().colorMode > 0) {
+		for (int i = 0; i < 4; i++) {
+			palette[i] = colorTable[palette[i]];
+		}
+	}
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
 

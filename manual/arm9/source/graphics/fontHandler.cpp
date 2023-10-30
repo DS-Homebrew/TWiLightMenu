@@ -10,6 +10,8 @@
 #include "myDSiMode.h"
 #include "TextEntry.h"
 
+extern u16* colorTable;
+
 FontGraphic *smallFont;
 FontGraphic *largeFont;
 
@@ -54,6 +56,11 @@ void fontInit() {
 		0xC631,
 		0xA108,
 	};
+	if (ms().colorMode > 0) {
+		for (int i = 0; i < 4; i++) {
+			palette[i] = colorTable[palette[i]];
+		}
+	}
 	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
 }

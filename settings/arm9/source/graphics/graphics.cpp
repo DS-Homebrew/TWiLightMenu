@@ -21,6 +21,7 @@ int frameOf60fps = 60;
 int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
 bool renderFrame = true;
+u16* colorTable = NULL;
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
 
@@ -85,7 +86,7 @@ void frameRateHandler(void) {
 	}
 }
 
-u16 convertVramColorToGrayscale(u16 val) {
+/* u16 convertVramColorToGrayscale(u16 val) {
 	u8 b,g,r,max,min;
 	b = ((val)>>10)&31;
 	g = ((val)>>5)&31;
@@ -100,13 +101,13 @@ u16 convertVramColorToGrayscale(u16 val) {
 	max = (max + min) / 2;
 
 	return 32768|(max<<10)|(max<<5)|(max);
-}
+} */
 
 // Copys a palette and applies filtering if enabled
 void copyPalette(u16 *dst, const u16 *src, int size) {
-	if (ms().colorMode == 1) { // Grayscale
+	if (ms().colorMode > 0) {
 		for (int i = 0; i < size; i++) {
-			dst[i] = convertVramColorToGrayscale(src[i]);
+			dst[i] = colorTable[src[i]];
 		}
 	} else {
 		tonccpy(dst, src, size);
@@ -167,6 +168,19 @@ void graphicsInit() {
 	SetBrightness(1, currentTheme == 4 && !ms().macroMode ? -31 : 31);
 	if (ms().macroMode) {
 		powerOff(PM_BACKLIGHT_TOP);
+	}
+
+	if (ms().colorMode > 0) {
+		colorTable = new u16[0x20000/sizeof(u16)];
+
+		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
+		if (ms().colorMode == 2) {
+			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		}
+
+		FILE* file = fopen(colorTablePath, "rb");
+		fread(colorTable, 1, 0x20000, file);
+		fclose(file);
 	}
 
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);

@@ -51,6 +51,7 @@ bool controlBottomBright = true;
 
 extern int bgColor1;
 extern int bgColor2;
+extern u16* colorTable;
 
 extern void ClearBrightness();
 
@@ -118,6 +119,10 @@ void loadPageInfo(std::string pagePath) {
 	manPageTitle = pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual");
 	toncset16(BG_PALETTE_SUB + 0xF6, pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B), 1);
 	toncset16(BG_PALETTE_SUB + 0xF7, pageIni.GetInt("INFO","BG_COLOR_2",0x77BD), 1);
+	if (ms().colorMode > 0) {
+		BG_PALETTE_SUB[0xF6] = colorTable[BG_PALETTE_SUB[0xF6]];
+		BG_PALETTE_SUB[0xF7] = colorTable[BG_PALETTE_SUB[0xF7]];
+	}
 
 	for (int i=1;true;i++) {
 		std::string link = "LINK" + std::to_string(i);

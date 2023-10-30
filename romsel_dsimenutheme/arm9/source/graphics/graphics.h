@@ -32,6 +32,7 @@ void drawCurrentTime();
 void loadPhotoList();
 void clearBoxArt();
 void graphicsInit();
+extern u16* colorTable;
 
 template<typename T> inline const T abs(T const & x)
 {

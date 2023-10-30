@@ -7,17 +7,22 @@
 #include "common/lodepng.h"
 //#include "autoboot.h"
 
+extern u16* colorTable;
+
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
 
-u16* sdRemovedExtendedImage = (u16*)0x026C8000;
-u16* sdRemovedImage = (u16*)0x026E0000;
+u16* sdRemovedExtendedImage = NULL;
+u16* sdRemovedImage = NULL;
 
 static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
 
 void loadSdRemovedImage(void) {
+	sdRemovedExtendedImage = new u16[0x18000/sizeof(u16)];
+	sdRemovedImage = new u16[0x18000/sizeof(u16)];
+
 	uint imageWidth, imageHeight;
 	std::vector<unsigned char> image;
 	char sdRemovedError[40];
@@ -33,6 +38,9 @@ void loadSdRemovedImage(void) {
 
 	for (uint i=0;i<image.size()/4;i++) {
 		sdRemovedExtendedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode > 0) {
+			sdRemovedExtendedImage[i] = colorTable[sdRemovedExtendedImage[i]];
+		}
 	}
 
 	image.clear();
@@ -40,6 +48,9 @@ void loadSdRemovedImage(void) {
 
 	for (uint i=0;i<image.size()/4;i++) {
 		sdRemovedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode > 0) {
+			sdRemovedImage[i] = colorTable[sdRemovedImage[i]];
+		}
 	}
 }
 

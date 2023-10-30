@@ -39,6 +39,7 @@ u8 bgColor2 = 0xF7;
 int screenBrightness = 31;
 
 u16 bmpImageBuffer[256*192] = {0};
+u16* colorTable = NULL;
 std::vector<u8> pageImage;
 
 extern int pageYpos;
@@ -68,7 +69,7 @@ void SetBrightness(u8 screen, s8 bright) {
 	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
-u16 convertVramColorToGrayscale(u16 val) {
+/* u16 convertVramColorToGrayscale(u16 val) {
 	u8 b,g,r,max,min;
 	b = ((val)>>10)&31;
 	g = ((val)>>5)&31;
@@ -83,7 +84,7 @@ u16 convertVramColorToGrayscale(u16 val) {
 	max = (max + min) / 2;
 
 	return BIT(15)|(max<<10)|(max<<5)|(max);
-}
+} */
 
 void vBlankHandler() {
 	if (fadeType == true) {
@@ -122,7 +123,19 @@ void pageLoad(const std::string &filename) {
 	pageYsize = gif.frame(0).descriptor.h;
 
 	tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
-	if (!ms().macroMode) tonccpy(BG_PALETTE_SUB, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
+	if (ms().colorMode > 0) {
+		for (int i = 0; i < (int)std::min(0xF6u, gif.gct().size()); i++) {
+			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
+		}
+	}
+	if (!ms().macroMode) {
+		tonccpy(BG_PALETTE_SUB, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
+		if (ms().colorMode > 0) {
+			for (int i = 0; i < (int)std::min(0xF6u, gif.gct().size()); i++) {
+				BG_PALETTE_SUB[i] = colorTable[BG_PALETTE_SUB[i]];
+			}
+		}
+	}
 
 	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
 	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+(176*256), bgGetGfxPtr(bg3Sub), 192*256);
@@ -141,6 +154,11 @@ void topBarLoad(void) {
 	u16 *dst = bgGetGfxPtr(bg3Main);
 
 	tonccpy(BG_PALETTE + 0xFC, gif.gct().data(), gif.gct().size() * 2);
+	if (ms().colorMode > 0) {
+		for (int i = 0xFC; i < (int)0xFC + gif.gct().size(); i++) {
+			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
+		}
+	}
 
 	for (uint i = 0; i < frame.image.imageData.size() - 2; i += 2) {
 		toncset16(dst++, (frame.image.imageData[i] + 0xFC) | (frame.image.imageData[i + 1] + 0xFC) << 8, 1);
@@ -152,6 +170,19 @@ void graphicsInit() {
 	*(u16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
+
+	if (ms().colorMode > 0) {
+		colorTable = new u16[0x20000/sizeof(u16)];
+
+		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
+		if (ms().colorMode == 2) {
+			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		}
+
+		FILE* file = fopen(colorTablePath, "rb");
+		fread(colorTable, 1, 0x20000, file);
+		fclose(file);
+	}
 
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_2D);

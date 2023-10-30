@@ -187,6 +187,7 @@ bool frameDelayEven = true; // For 24FPS
 bool rocketVideo_frameDelayEven = true;
 bool rocketVideo_loadFrame = true;
 bool renderFrame = true;
+u16* colorTable = NULL;
 
 int bubbleYpos = 80;
 int bubbleXpos = 122;
@@ -1050,7 +1051,7 @@ void vBlankHandler() {
 			}
 			extern int getFavoriteColor(void);
 			int fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
-			if (ms().colorMode == 1) fillColor = convertVramColorToGrayscale(fillColor);
+			if (ms().colorMode > 0) fillColor = colorTable[fillColor];
 			if (ms().rtl()) {
 				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
 				if (progressBarLength > 0) {
@@ -1260,16 +1261,6 @@ void loadPhoto(const std::string &path) {
 		lodepng::decode(image, photoWidth, photoHeight, "nitro:/graphics/photo_default.png");
 	}
 
-	u16* prevColor = (ms().colorMode > 0) ? new u16[colorsToCache] : NULL;
-	u16* colorConv = (ms().colorMode > 0) ? new u16[colorsToCache] : NULL;
-	u16* prevColor2 = (ms().colorMode > 0 && boxArtColorDeband) ? new u16[colorsToCache] : NULL;
-	u16* colorConv2 = (ms().colorMode > 0 && boxArtColorDeband) ? new u16[colorsToCache] : NULL;
-
-	int colorsCached = 0;
-	int colorsCached2 = 0;
-	int accessCounter = 0;
-	int accessCounter2 = 0;
-
 	for (uint i=0;i<image.size()/4;i++) {
 		if (boxArtColorDeband) {
 			image[(i*4)+3] = 0;
@@ -1290,34 +1281,10 @@ void loadPhoto(const std::string &path) {
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (ms().colorMode > 0) {
-			int c = 0;
-			bool cachedColorFound = false;
-			if (i > 0) {
-				for (c = 0; c < colorsCached; c++) {
-					if (prevColor[c] == color) {
-						cachedColorFound = true;
-						break;
-					}
-				}
-			}
-			if (!cachedColorFound) {
-				c = accessCounter;
-
-				if (ms().colorMode == 2) {
-					colorConv[c] = convertDSColorToPhat(color);
-				} else if (ms().colorMode == 1) {
-					colorConv[c] = convertVramColorToGrayscale(color);
-				}
-				colorsCached++;
-				if (colorsCached > colorsToCache) colorsCached = colorsToCache;
-				accessCounter++;
-				if (accessCounter >= colorsToCache) accessCounter = 0;
-
-				prevColor[c] = color;
-			}
-			color = colorConv[c];
+			tex().photoBuffer()[i] = colorTable[color];
+		} else {
+			tex().photoBuffer()[i] = color;
 		}
-		tex().photoBuffer()[i] = color;
 		if (boxArtColorDeband) {
 			if (alternatePixel) {
 				if (image[(i*4)+3] & BIT(0)) {
@@ -1342,59 +1309,12 @@ void loadPhoto(const std::string &path) {
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (ms().colorMode > 0) {
-				int c = 0;
-				bool cachedColorFound = false;
-				bool reuseColorConv = false;
-				u16 reusedColorConv = 0;
-
-				for (c = 0; c < colorsCached; c++) {
-					if (prevColor[c] == color) {
-						reuseColorConv = true;
-						reusedColorConv = colorConv[c];
-						break;
-					}
-				}
-
-				c = 0;
-				if (i > 0) {
-					for (c = 0; c < colorsCached2; c++) {
-						if (prevColor2[c] == color) {
-							cachedColorFound = true;
-							break;
-						}
-					}
-				}
-				if (!cachedColorFound) {
-					c = accessCounter2;
-
-					if (reuseColorConv) {
-						colorConv2[c] = reusedColorConv;
-					} else if (ms().colorMode == 2) {
-						colorConv2[c] = convertDSColorToPhat(color);
-					} else if (ms().colorMode == 1) {
-						colorConv2[c] = convertVramColorToGrayscale(color);
-					}
-					colorsCached2++;
-					if (colorsCached2 > colorsToCache) colorsCached2 = colorsToCache;
-					accessCounter2++;
-					if (accessCounter2 >= colorsToCache) accessCounter2 = 0;
-
-					prevColor2[c] = color;
-				}
-				color = colorConv2[c];
+				tex().photoBuffer2()[i] = colorTable[color];
+			} else {
+				tex().photoBuffer2()[i] = color;
 			}
-			tex().photoBuffer2()[i] = color;
 			if ((i % photoWidth) == photoWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
-		}
-	}
-
-	if (ms().colorMode > 0) {
-		delete[] prevColor;
-		delete[] colorConv;
-		if (boxArtColorDeband) {
-			delete[] prevColor2;
-			delete[] colorConv2;
 		}
 	}
 
@@ -1452,12 +1372,6 @@ void loadBootstrapScreenshot(FILE *file) {
 		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
 	}
 
-	u16* prevColor = (ms().colorMode > 0) ? new u16[colorsToCache] : NULL;
-	u16* colorConv = (ms().colorMode > 0) ? new u16[colorsToCache] : NULL;
-
-	int colorsCached = 0;
-	int accessCounter = 0;
-
 	// Start loading
 	for (uint row = 0; row < photoHeight; row++) {
 		for (uint col = 0; col < photoWidth; col++) {
@@ -1465,34 +1379,6 @@ void loadBootstrapScreenshot(FILE *file) {
 
 			// RGB 565 -> BGR 5551
 			val = ((val >> 11) & 0x1F) | ((val & (0x1F << 6)) >> 1) | ((val & 0x1F) << 10) | BIT(15);
-			if (ms().colorMode > 0) {
-				int c = 0;
-				bool cachedColorFound = false;
-				if (row > 0 || col > 0) {
-					for (c = 0; c < colorsCached; c++) {
-						if (prevColor[c] == val) {
-							cachedColorFound = true;
-							break;
-						}
-					}
-				}
-				if (!cachedColorFound) {
-					c = accessCounter;
-
-					if (ms().colorMode == 2) {
-						colorConv[c] = convertDSColorToPhat(val);
-					} else if (ms().colorMode == 1) {
-						colorConv[c] = convertVramColorToGrayscale(val);
-					}
-					colorsCached++;
-					if (colorsCached > colorsToCache) colorsCached = colorsToCache;
-					accessCounter++;
-					if (accessCounter >= colorsToCache) accessCounter = 0;
-
-					prevColor[c] = val;
-				}
-				val = colorConv[c];
-			}
 
 			u8 y = photoHeight - row - 1;
 			bgSubBuffer[(24 + y) * 256 + 24 + col] = val;
@@ -1506,10 +1392,6 @@ void loadBootstrapScreenshot(FILE *file) {
 	tex().commitBgSubModify();
 
 	delete[] buffer;
-	if (ms().colorMode > 0) {
-		delete[] prevColor;
-		delete[] colorConv;
-	}
 }
 
 // Load photo without overwriting shoulder button images
@@ -1666,10 +1548,9 @@ void graphicsInit() {
 
 	if (ms().theme == TWLSettings::EThemeHBL) {
 		u16* newPalette = (u16*)bubblesPal;
-		if (ms().colorMode == 1) {
-			// Convert palette to grayscale
+		if (ms().colorMode > 0) {
 			for (int i2 = 0; i2 < 6; i2++) {
-				*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+				*(newPalette+i2) = colorTable[*(newPalette+i2)];
 			}
 		}
 

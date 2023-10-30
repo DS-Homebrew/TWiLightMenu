@@ -12,6 +12,8 @@
 
 #include "sound.h"
 
+extern u16* colorTable;
+
 extern bool sdRemoveDetect;
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
@@ -67,6 +69,11 @@ void checkSdEject(void) {
 		0xD6B5,
 		0xFFFF,
 	};
+	if (ms().colorMode > 0) {
+		for (int i = 0; i < 4; i++) {
+			palette[i] = colorTable[palette[i]];
+		}
+	}
 	//tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
 	toncset16(BG_PALETTE, 0, 256);
 	toncset16(BG_PALETTE_SUB, 0, 256);

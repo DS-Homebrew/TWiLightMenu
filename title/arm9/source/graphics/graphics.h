@@ -21,6 +21,7 @@
 
 extern u16 frameBuffer[2][256*192];
 extern u16 frameBufferBot[2][256*192];
+extern u16* colorTable;
 u16 convertVramColorToGrayscale(u16 val);
 void runGraphicIrq(void);
 bool screenFadedIn(void);

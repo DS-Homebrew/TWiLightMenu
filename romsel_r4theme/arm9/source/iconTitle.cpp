@@ -72,7 +72,7 @@
 #include "icon_msx.h"
 #include "icon_mini.h"
 
-extern u16 convertVramColorToGrayscale(u16 val);
+extern u16* colorTable;
 
 static int iconTexID[8];
 static int folderTexID;
@@ -172,9 +172,9 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2
 		glDeleteTextures(1, &iconTexID[i]);
 	}
 	for (int i = 0; i < loadIcon_loopTimes; i++) {
-		if (ms().colorMode == 1) {
+		if (ms().colorMode > 0) {
 			for (int i2 = 0; i2 < 16; i2++) {
-				*(palSrc+i2+(i*16)) = convertVramColorToGrayscale(*(palSrc+i2+(i*16)));
+				*(palSrc+i2+(i*16)) = colorTable[*(palSrc+i2+(i*16))];
 			}
 		}
 		iconTexID[i] =
@@ -679,9 +679,9 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &folderTexID);
 
 	newPalette = (u16*)icon_folderPal;
-	if (ms().colorMode == 1) {
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
 	}
 	folderTexID =
@@ -711,127 +711,127 @@ void loadConsoleIcons()
 		newPalette = (u16*)icon_gbamodePal;
 	}
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// GB/GBC
 	newPalette = (u16*)icon_gbPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// NES
 	newPalette = (u16*)icon_nesPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// SG
 	newPalette = (u16*)icon_sgPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// SMS
 	newPalette = (u16*)icon_smsPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// GG
 	newPalette = (u16*)icon_ggPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// MD
 	newPalette = (u16*)icon_ggPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// SNES
 	newPalette = (u16*)icon_snesPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// DSTWO Plugin
 	newPalette = (u16*)icon_plgPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// A26
 	newPalette = (u16*)icon_a26Pal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// COL
 	newPalette = (u16*)icon_colPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// M5
 	newPalette = (u16*)icon_m5Pal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// INT
 	newPalette = (u16*)icon_intPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// PCE
 	newPalette = (u16*)icon_pcePal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// WS
 	newPalette = (u16*)icon_wsPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// NGP
 	newPalette = (u16*)icon_ngpPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// CPC
 	newPalette = (u16*)icon_cpcPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// Video
 	newPalette = (u16*)icon_vidPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// Image
 	newPalette = (u16*)icon_imgPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// MSX
 	newPalette = (u16*)icon_msxPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// MINI
 	newPalette = (u16*)icon_miniPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 }
 

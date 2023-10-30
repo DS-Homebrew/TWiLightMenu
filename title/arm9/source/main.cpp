@@ -2319,6 +2319,27 @@ int titleMode(void)
 		}
 	}
 
+	if (ms().colorMode > 0) {
+		colorTable = new u16[0x20000/sizeof(u16)];
+
+		/* for (s32 i = 0; i <= 0xFFFF; i++) {
+			if (ms().colorMode == 2) {
+				colorTable[i] = convertDSColorToPhat(i);
+			} else if (ms().colorMode == 1) {
+				colorTable[i] = convertVramColorToGrayscale(i);
+			}
+		} */
+
+		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
+		if (ms().colorMode == 2) {
+			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		}
+
+		FILE* file = fopen(colorTablePath, "rb");
+		fread(colorTable, 1, 0x20000, file);
+		fclose(file);
+	}
+
 	if (!ms().languageSet) {
 		runGraphicIrq();
 		languageSelect();

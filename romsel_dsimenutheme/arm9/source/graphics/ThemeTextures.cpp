@@ -15,7 +15,7 @@
 // Graphic files
 #include "../include/startborderpal.h"
 
-#include "common/ColorLut.h"
+// #include "common/ColorLut.h"
 #include "color.h"
 #include "errorScreen.h"
 #include "fileBrowse.h"
@@ -25,14 +25,12 @@
 #include "ndsheaderbanner.h"
 #include "ndma.h"
 
-#define colorsToCache (128*48)
-#define rvidColorsToCache (256*32)
-
 
 extern bool useTwlCfg;
 
 //extern bool widescreenEffects;
 
+extern u16* colorTable;
 extern u32 rotatingCubesLoaded;
 extern bool rocketVideo_playVideo;
 extern u8 *rotatingCubesLocation;
@@ -825,16 +823,6 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 	int photoX = photoXstart;
 	int photoY = imageYpos;
 
-	u16* prevColor = (ms().colorMode > 0) ? new u16[colorsToCache] : NULL;
-	u16* colorConv = (ms().colorMode > 0) ? new u16[colorsToCache] : NULL;
-	u16* prevColor2 = (ms().colorMode > 0 && boxArtColorDeband) ? new u16[colorsToCache] : NULL;
-	u16* colorConv2 = (ms().colorMode > 0 && boxArtColorDeband) ? new u16[colorsToCache] : NULL;
-
-	int colorsCached = 0;
-	int colorsCached2 = 0;
-	int accessCounter = 0;
-	int accessCounter2 = 0;
-
 	for (uint i=0;i<image.size()/4;i++) {
 		const u8 alpha = image[(i*4)+3];
 		if (boxArtColorDeband) {
@@ -856,32 +844,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (ms().colorMode > 0) {
-			int c = 0;
-			bool cachedColorFound = false;
-			if (i > 0) {
-				for (c = 0; c < colorsCached; c++) {
-					if (prevColor[c] == color) {
-						cachedColorFound = true;
-						break;
-					}
-				}
-			}
-			if (!cachedColorFound) {
-				c = accessCounter;
-
-				if (ms().colorMode == 2) {
-					colorConv[c] = convertDSColorToPhat(color);
-				} else if (ms().colorMode == 1) {
-					colorConv[c] = convertVramColorToGrayscale(color);
-				}
-				colorsCached++;
-				if (colorsCached > colorsToCache) colorsCached = colorsToCache;
-				accessCounter++;
-				if (accessCounter >= colorsToCache) accessCounter = 0;
-
-				prevColor[c] = color;
-			}
-			color = colorConv[c];
+			color = colorTable[color];
 		}
 		if (alpha == 0) {
 			_bmpImageBuffer[i] = color;
@@ -914,46 +877,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (ms().colorMode > 0) {
-				int c = 0;
-				bool cachedColorFound = false;
-				bool reuseColorConv = false;
-				u16 reusedColorConv = 0;
-
-				for (c = 0; c < colorsCached; c++) {
-					if (prevColor[c] == color) {
-						reuseColorConv = true;
-						reusedColorConv = colorConv[c];
-						break;
-					}
-				}
-
-				c = 0;
-				if (i > 0) {
-					for (c = 0; c < colorsCached2; c++) {
-						if (prevColor2[c] == color) {
-							cachedColorFound = true;
-							break;
-						}
-					}
-				}
-				if (!cachedColorFound) {
-					c = accessCounter2;
-
-					if (reuseColorConv) {
-						colorConv2[c] = reusedColorConv;
-					} else if (ms().colorMode == 2) {
-						colorConv2[c] = convertDSColorToPhat(color);
-					} else if (ms().colorMode == 1) {
-						colorConv2[c] = convertVramColorToGrayscale(color);
-					}
-					colorsCached2++;
-					if (colorsCached2 > colorsToCache) colorsCached2 = colorsToCache;
-					accessCounter2++;
-					if (accessCounter2 >= colorsToCache) accessCounter2 = 0;
-
-					prevColor2[c] = color;
-				}
-				color = colorConv2[c];
+				color = colorTable[color];
 			}
 			if (alpha == 0) {
 				_bmpImageBuffer2[i] = color;
@@ -967,15 +891,6 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		if (photoX == photoXend) {
 			photoX = photoXstart;
 			photoY++;
-		}
-	}
-
-	if (ms().colorMode > 0) {
-		delete[] prevColor;
-		delete[] colorConv;
-		if (boxArtColorDeband) {
-			delete[] prevColor2;
-			delete[] colorConv2;
 		}
 	}
 
@@ -1446,45 +1361,10 @@ void loadRotatingCubes() {
 			fread(rotatingCubesLocation, 1, framesSize, videoFrameFile);
 
 			if (ms().colorMode > 0) {
-				u16* prevColor = new u16[rvidColorsToCache];
-				u16* colorConv = new u16[rvidColorsToCache];
-
-				int colorsCached = 0;
-				int accessCounter = 0;
-
 				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
 				for (u32 i = 0; i < framesSize/2; i++) {
-					u16 color = rotatingCubesLocation16[i];
-					int c = 0;
-					bool cachedColorFound = false;
-					if (i > 0) {
-						for (c = 0; c < colorsCached; c++) {
-							if (prevColor[c] == color) {
-								cachedColorFound = true;
-								break;
-							}
-						}
-					}
-					if (!cachedColorFound) {
-						c = accessCounter;
-
-						if (ms().colorMode == 2) {
-							colorConv[c] = convertDSColorToPhat(color);
-						} else if (ms().colorMode == 1) {
-							colorConv[c] = convertVramColorToGrayscale(color);
-						}
-						colorsCached++;
-						if (colorsCached > rvidColorsToCache) colorsCached = rvidColorsToCache;
-						accessCounter++;
-						if (accessCounter >= rvidColorsToCache) accessCounter = 0;
-
-						prevColor[c] = color;
-					}
-					rotatingCubesLocation16[i] = colorConv[c];
+					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i]];
 				}
-
-				delete[] prevColor;
-				delete[] colorConv;
 			}
 
 			rotatingCubesLoaded = true;
@@ -1544,6 +1424,19 @@ void ThemeTextures::videoSetup() {
 	}*/
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
+
+	if (ms().colorMode > 0) {
+		colorTable = new u16[0x20000/sizeof(u16)];
+
+		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
+		if (ms().colorMode == 2) {
+			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		}
+
+		FILE* file = fopen(colorTablePath, "rb");
+		fread(colorTable, 1, 0x20000, file);
+		fclose(file);
+	}
 
 	if (dsiFeatures() && !ms().macroMode && ms().theme != TWLSettings::EThemeHBL) {
 		if (ms().consoleModel > 0) {

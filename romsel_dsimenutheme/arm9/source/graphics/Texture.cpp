@@ -3,10 +3,11 @@
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
 #include "common/lodepng.h"
-#include "common/ColorLut.h"
+// #include "common/ColorLut.h"
 #include <math.h>
 
 extern bool useTwlCfg;
+extern u16* colorTable;
 
 Texture::Texture(const std::string &filePath, const std::string &fallback)
 	: _paletteLength(0), _texLength(0), _texCmpLength(0), _texHeight(0), _texWidth(0), _type(TextureType::Unknown) {
@@ -281,27 +282,11 @@ u16 Texture::bmpToDS(u16 val) {
 	if ((val & 0x7FFF) == 0x7C1F)
 		return 0;
 
-	// int blfLevel = ms().blfLevel;
-	if (ms().colorMode == 2) {
-		return convertDSColorToPhat(((val >> 10) & 31) | (val & (31 << 5)) | ((val & 31) << 10) | BIT(15));
-	} else if (ms().colorMode == 1) {
-		u8 b = val & 31;
-		u8 g = (val >> 5) & 31;
-		u8 r = (val >> 10) & 31;
-
-		// Value decomposition of hsv
-		u8 max = std::max(std::max(b, g), r);
-		u8 min = std::min(std::min(b, g), r);
-
-		// Desaturate
-		max = (max + min) / 2;
-
-		return max | max << 5 | max << 10 | BIT(15);
-		// return max | (max & (31 - 3 * blfLevel)) << 5 | (max & (31 - 6 * blfLevel)) << 10 | BIT(15);
-	} else {
-		return ((val >> 10) & 31) | (val & (31 << 5)) | ((val & 31) << 10) | BIT(15);
-		// return ((val >> 10) & 31) | ((val >> 5) & (31 - 3 * blfLevel)) << 5 | (val & (31 - 6 * blfLevel)) << 10 | BIT(15);
+	val = ((val >> 10) & 31) | (val & (31 << 5)) | ((val & 31) << 10) | BIT(15);
+	if (ms().colorMode > 0) {
+		return colorTable[val];
 	}
+	return val;
 }
 
 bool Texture::exists(const std::string &filePath) {
