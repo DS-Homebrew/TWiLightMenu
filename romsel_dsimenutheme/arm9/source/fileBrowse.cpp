@@ -3801,20 +3801,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			gameTapped = false;
 
 			if (ms().theme == TWLSettings::ETheme3DS) {
-				// Launch TWLMenu++ Settings by touching corner button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44) {
-					if (ms().kioskMode) {
-						snd().playWrong();
-					} else {
-						launchSettings();
-					}
-				}
-
-				// Exit to system menu by touching corner button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !sys().isRegularDS()) {
-					exitToSystemMenu();
-				}
-
 				int topIconXpos = 116;
 				for (int i = 0; i < 3; i++) {
 					topIconXpos -= 16;
@@ -3862,6 +3848,20 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					topIconOp[2] = 4;
 					topIconOp[3] = 5;
 				}
+
+				// Launch TWLMenu++ Settings by touching corner button
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44) {
+					if (ms().kioskMode) {
+						snd().playWrong();
+					} else {
+						launchSettings();
+					}
+				} else
+
+				// Exit to system menu by touching corner button
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !sys().isRegularDS()) {
+					exitToSystemMenu();
+				} else
 
 				for (int i = 0; i < topIconCount; i++) {
 					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[i] && touch.px < savedTopIconXpos[i] + 24) {
