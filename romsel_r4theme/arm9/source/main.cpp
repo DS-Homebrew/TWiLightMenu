@@ -996,7 +996,31 @@ void bgOperations(bool waitFrame) {
 //---------------------------------------------------------------------------------
 int r4Theme(void) {
 //---------------------------------------------------------------------------------
+	// Read user name
+	/*char *username = (char*)PersonalData->name;
+
+	// text
+	for (int i = 0; i < 10; i++) {
+		if (username[i*2] == 0x00)
+			username[i*2/2] = 0;
+		else
+			username[i*2/2] = username[i*2];
+	}*/
+
+	LoadColor();
+
+	std::string filename;
+
+	ms().loadSettings();
+	bs().loadSettings();
+
 	graphicsInit();
+	langInit();
+
+	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
+		CIniFile lumaConfig("sd:/luma/config.ini");
+		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
+	}
 
 	if (sdFound()) {
 		statvfs("sd:/", &st[0]);
@@ -1012,31 +1036,6 @@ int r4Theme(void) {
 		if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/gba/bios.bin", F_OK) == 0);
 		if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/bios.bin", F_OK) == 0);
 	}
-
-	// Read user name
-	/*char *username = (char*)PersonalData->name;
-
-	// text
-	for (int i = 0; i < 10; i++) {
-		if (username[i*2] == 0x00)
-			username[i*2/2] = 0;
-		else
-			username[i*2/2] = username[i*2];
-	}*/
-	
-	LoadColor();
-
-	std::string filename;
-
-	ms().loadSettings();
-	bs().loadSettings();
-
-	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
-		CIniFile lumaConfig("sd:/luma/config.ini");
-		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
-	}
-
-	langInit();
 
 	if (ms().theme == TWLSettings::EThemeGBC) {
 		extern int screenBrightness;
