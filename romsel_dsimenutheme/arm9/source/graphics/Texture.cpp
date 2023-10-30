@@ -152,6 +152,9 @@ void Texture::loadBitmap(FILE *file) noexcept {
 			u8 b = lroundf((color & 0xFF) * 31 / 255.0f) & 0x1F;
 
 			_palette[i] = BIT(15) | b << 10 | g << 5 | r;
+			if (ms().colorMode > 0) {
+				_palette[i] = colorTable[_palette[i]];
+			}
 		}
 	}
 
