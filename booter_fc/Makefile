@@ -160,12 +160,16 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/GBAMP + PassMe, FlashMe or WifiMe/"
 	mv _BOOT_MP.NDS "../7zfile/Flashcard users/Autoboot/GBAMP + PassMe, FlashMe or WifiMe/_BOOT_MP.nds"
 
-	#### iSmart Premium
-	##### research done entirely by devkitPro
+	#### EZ-Flash Vi, iSmart Premium, r4i.cn
 	cp booter_fc.nds ismat.dat
 	dlditool flashcart_specifics/DLDI/mati.dldi ismat.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/iSmart Premium/system/"
-	mv ismat.dat "../7zfile/Flashcard users/Autoboot/iSmart Premium/system/ismat.dat"
+	cp ismat.dat "../7zfile/Flashcard users/Autoboot/iSmart Premium/system/ismat.dat"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/EZ Flash Vi/"
+	cp ismat.dat "../7zfile/Flashcard users/Autoboot/EZ Flash Vi/ez5isys.bin"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/r4i.cn/"
+	# Since this is the last one, move it instead of copy
+	mv ismat.dat "../7zfile/Flashcard users/Autoboot/r4i.cn/_ds_menu.nds"
 
 	#### Galaxy Eagle
 	cp booter_fc.nds ge.nds
