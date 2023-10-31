@@ -1379,6 +1379,9 @@ void loadBootstrapScreenshot(FILE *file) {
 
 			// RGB 565 -> BGR 5551
 			val = ((val >> 11) & 0x1F) | ((val & (0x1F << 6)) >> 1) | ((val & 0x1F) << 10) | BIT(15);
+			if (ms().colorMode > 0) {
+				val = colorTable[val]; // TODO: Remove this when nds-bootstrap supports color modes
+			}
 
 			u8 y = photoHeight - row - 1;
 			bgSubBuffer[(24 + y) * 256 + 24 + col] = val;
