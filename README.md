@@ -56,6 +56,34 @@ Please note that Docker compilation is not compatible with native compilation on
 
 The manual pages are stored in a separate repository and downloaded from a release when building TWiLight Menu++. For more information, see the [twilight-manual](https://github.com/DS-Homebrew/twilight-manual) repository.
 
+## Subfolders
+
+TWiLight Menu++ is composed of multiple "sub-projects" which all work together to create the DSi Menu replacement. Most subfolders in the repository contain their own code which will compile a `xxx.nds` file, which is generally copied to `/_nds/TWiLightMenu/xxx.srldr` inside the `7z` file (or `7zfile` folder).
+
+- 3dssplash
+- **booter**: main entrypoint, the first file which will be loaded by the console if using SD-card or CFW.
+  - Project file: `booter/booter.nds`
+  - Target file: `/BOOT.nds`, `/title/00030004/53524c41/content/00000000.app` (same file).
+  - Executes `/_nds/TWiLightMenu/main.srldr`
+- booter_fc
+- gbapatcher
+- imageview
+- manual
+- quickmenu
+- resources
+- romsel_aktheme
+- romsel_dsimenutheme
+- romsel_r4theme
+- rungame
+- settings
+- slot1launch
+- **title**: boot splash screen, typically the Nintendo logo.
+  - Project file: `title/title.nds`
+  - Target file: `/_nds/TWiLightMenu/main.srldr`
+  - Executes `3dssplash.srldr`, `akmenu.srldr`, `dsimenu.srldr`, `gbapatcher.srldr`, `imageview.srldr`, `mainmenu.srldr`, `main.srldr`, `r4menu.srldr`, `settings.srldr` or `slot1launch.srldr` (ALL from the `/_nds/TWiLightMenu/` folder), depending on various things such as current theme, slot-1 cart inserted, etc.
+
+This list is a work in progress.
+
 # Translating
 
 You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.com/project/TwilightMenu). If you'd like to request a new language be added then please ask on the [Discord server](https://ds-homebrew.com/discord).
