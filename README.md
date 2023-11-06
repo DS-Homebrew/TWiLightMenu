@@ -27,6 +27,17 @@ sudo dkp-pacman -S nds-dev
 ```
 (Note: Command will vary by OS, sudo may not be needed and it may be just `pacman` instead.)
 
+## Cloning
+The repository contains submodules, so you need to clone recursively:
+```
+git clone --recursive https://github.com/DS-Homebrew/TWiLightMenu.git
+```
+
+If you cloned without pulling the submodules, you may update them afterwards:
+```
+git submodule update --init --recursive
+```
+
 ## Building
 
 Once you have devkitPro's toolchains installed you can build the entirety of TWiLight Menu++ by simply running `make package` in the root of the repository. If you only want to build a specific part of TWiLight Menu++ you can `cd` to that folder and run `make dist`.
