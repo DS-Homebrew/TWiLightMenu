@@ -856,8 +856,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)pictodlp_selectedPal;
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
+	if (ms().colorMode > 0) {
 		for (int i2 = 0; i2 < 12; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
