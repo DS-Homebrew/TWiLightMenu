@@ -33,6 +33,7 @@
 #include "iconbox.h"
 #include "wirelessicons.h"
 #include "pictodlp.h"
+#include "pictodlp_selected.h"
 #include "icon_dscard.h"
 #include "icon_gba.h"
 #include "iconPhat_gba.h"
@@ -82,7 +83,10 @@ extern int spawnedtitleboxes;
 
 extern bool showCursor;
 extern bool startMenu;
-extern int cursorPosition;
+extern MenuEntry cursorPosition;
+
+extern MenuEntry initialTouchedPosition;
+extern MenuEntry currentTouchedPosition;
 
 extern bool pictochatFound;
 extern bool dlplayFound;
@@ -240,7 +244,7 @@ int getFavoriteColor(void) {
 	return 32768|(max<<10)|(max<<5)|(max);
 } */
 
-void bottomBgLoad(void) {
+void bottomBgLoad() {
 	std::string bottomBGFile = "nitro:/graphics/bottombg.png";
 
 	char temp[256];
@@ -308,6 +312,45 @@ void bottomBgLoad(void) {
 // 	}
 // }
 
+auto getMenuEntryTexture(MenuEntry entry) {
+	switch(entry) {
+		case MenuEntry::CART:
+			if(isDSiMode() && cardEjected)
+				return &iconboxImage[1];
+			return &iconboxImage[0];
+		case MenuEntry::PICTOCHAT:
+			if(!pictochatFound)
+				return &pictodlpImage[1];
+			if(initialTouchedPosition == MenuEntry::PICTOCHAT) {
+				return &pictodlpImage[1];
+			}
+			return &pictodlpImage[0];
+		case MenuEntry::DOWNLOADPLAY:
+			if(!dlplayFound)
+				return &pictodlpImage[3];
+			if(initialTouchedPosition == MenuEntry::DOWNLOADPLAY) {
+				return &pictodlpImage[3];
+			}
+			return &pictodlpImage[2];
+		case MenuEntry::GBA:
+			if(sdFound())
+				return &iconboxImage[0];
+			{
+				auto idx = sys().isRegularDS() ? (((u8*)GBAROM)[0xB2] != 0x96) : 1;
+				return &iconboxImage[idx];
+			}
+		case MenuEntry::BRIGHTNESS:
+			return &cornerIcons[0];
+		case MenuEntry::SETTINGS:
+			return settingsIconImage;
+		case MenuEntry::MANUAL:
+			return &cornerIcons[3];
+		case MenuEntry::INVALID:
+			break;
+	}
+	__builtin_unreachable();
+}
+
 void vBlankHandler()
 {
 	if (fadeType == true) {
@@ -353,13 +396,12 @@ void vBlankHandler()
 				}
 			}
 		} else if (startMenu) {
+			glSprite(33, iconYpos[0], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::CART));
 			if (isDSiMode() && cardEjected) {
 				//glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
 				//glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
-				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[1]);
 				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[1]);
 			} else {
-				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[0]);
 				if ((isDSiMode() && !flashcardFound() && sys().arm7SCFGLocked()) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[0]);
 				} else drawIcon(1, 40, iconYpos[0]+6);
@@ -369,13 +411,13 @@ void vBlankHandler()
 			if (bnriconisDSi[0]==true) {
 				playBannerSequence(0);
 			}
-			glSprite(33, iconYpos[1], GL_FLIP_NONE, &pictodlpImage[1-pictochatFound]);
-			glSprite(129, iconYpos[2], GL_FLIP_NONE, &pictodlpImage[3-dlplayFound]);
-			glSprite(33, iconYpos[3], GL_FLIP_NONE, sdFound() ? &iconboxImage[0] : &iconboxImage[sys().isRegularDS() ? (((u8*)GBAROM)[0xB2] != 0x96) : 1]);
+			glSprite(33, iconYpos[1], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::PICTOCHAT));
+			glSprite(129, iconYpos[2], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::DOWNLOADPLAY));
+			glSprite(33, iconYpos[3], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::GBA));
 			int num = (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? 1 : 0;
 			drawIcon(num, 40, iconYpos[3]+6);
 			if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
-				glSprite(10, iconYpos[4], GL_FLIP_NONE, &cornerIcons[0]);
+				glSprite(10, iconYpos[4], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::BRIGHTNESS));
 			}
 			if (bnrWirelessIcon[num] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[1]-1) & 31]);
 			// Playback animated icon
@@ -383,55 +425,42 @@ void vBlankHandler()
 				playBannerSequence(1);
 			}
 			if (!ms().kioskMode) {
-				glSprite(117, iconYpos[5], GL_FLIP_NONE, settingsIconImage);
+				glSprite(117, iconYpos[5], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::SETTINGS));
 			}
-			glSprite(235, iconYpos[6], GL_FLIP_NONE, &cornerIcons[3]);
+			glSprite(235, iconYpos[6], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::MANUAL));
 
 			// Draw cursor
 			if (showCursor) {
+				auto drawCursorRect = [](int x1, int y1, int x2, int y2) {
+						glSprite(x1, y1, GL_FLIP_NONE, &cursorImage[0]);
+						glSprite(x2, y1, GL_FLIP_NONE, &cursorImage[1]);
+						glSprite(x1, y2, GL_FLIP_NONE, &cursorImage[2]);
+						glSprite(x2, y2, GL_FLIP_NONE, &cursorImage[3]);
+				};
+				
 				switch (cursorPosition) {
-					case 0:
-					default:
-						glSprite(31, 23, GL_FLIP_NONE, &cursorImage[0]);
-						glSprite(213, 23, GL_FLIP_NONE, &cursorImage[1]);
-						glSprite(31, 61, GL_FLIP_NONE, &cursorImage[2]);
-						glSprite(213, 61, GL_FLIP_NONE, &cursorImage[3]);
+					case MenuEntry::INVALID:
 						break;
-					case 1:
-						glSprite(31, 71, GL_FLIP_NONE, &cursorImage[0]);
-						glSprite(117, 71, GL_FLIP_NONE, &cursorImage[1]);
-						glSprite(31, 109, GL_FLIP_NONE, &cursorImage[2]);
-						glSprite(117, 109, GL_FLIP_NONE, &cursorImage[3]);
+					case MenuEntry::CART:
+						drawCursorRect(31, 23, 213, 61);
 						break;
-					case 2:
-						glSprite(127, 71, GL_FLIP_NONE, &cursorImage[0]);
-						glSprite(213, 71, GL_FLIP_NONE, &cursorImage[1]);
-						glSprite(127, 109, GL_FLIP_NONE, &cursorImage[2]);
-						glSprite(213, 109, GL_FLIP_NONE, &cursorImage[3]);
+					case MenuEntry::PICTOCHAT:
+						drawCursorRect(31, 71, 117, 109);
 						break;
-					case 3:
-						glSprite(31, 119, GL_FLIP_NONE, &cursorImage[0]);
-						glSprite(213, 119, GL_FLIP_NONE, &cursorImage[1]);
-						glSprite(31, 157, GL_FLIP_NONE, &cursorImage[2]);
-						glSprite(213, 157, GL_FLIP_NONE, &cursorImage[3]);
+					case MenuEntry::DOWNLOADPLAY:
+						drawCursorRect(127, 71, 213, 109);
 						break;
-					case 4:
-						glSprite(0, 167, GL_FLIP_NONE, &cursorImage[0]);
-						glSprite(20, 167, GL_FLIP_NONE, &cursorImage[1]);
-						glSprite(0, 182, GL_FLIP_NONE, &cursorImage[2]);
-						glSprite(20, 182, GL_FLIP_NONE, &cursorImage[3]);
+					case MenuEntry::GBA:
+						drawCursorRect(31, 119, 213, 157);
 						break;
-					case 5:
-						glSprite(112, 167, GL_FLIP_NONE, &cursorImage[0]);
-						glSprite(132, 167, GL_FLIP_NONE, &cursorImage[1]);
-						glSprite(112, 182, GL_FLIP_NONE, &cursorImage[2]);
-						glSprite(132, 182, GL_FLIP_NONE, &cursorImage[3]);
+					case MenuEntry::BRIGHTNESS:
+						drawCursorRect(0, 167, 20, 182);
 						break;
-					case 6:
-						glSprite(225, 167, GL_FLIP_NONE, &cursorImage[0]);
-						glSprite(245, 167, GL_FLIP_NONE, &cursorImage[1]);
-						glSprite(225, 182, GL_FLIP_NONE, &cursorImage[2]);
-						glSprite(245, 182, GL_FLIP_NONE, &cursorImage[3]);
+					case MenuEntry::SETTINGS:
+						drawCursorRect(112, 167, 132, 182);
+						break;
+					case MenuEntry::MANUAL:
+						drawCursorRect(225, 167, 245, 182);
 						break;
 				}
 			}
