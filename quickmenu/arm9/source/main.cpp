@@ -2193,7 +2193,7 @@ int dsClassicMenu(void) {
 						showCursor = false;
 						fadeType = false;	// Fade to white
 						mmEffectEx(&snd_launch);
-						moveIconUp[5] = true;
+						moveIconUp[(selectedPosition == MenuEntry::SETTINGS) ? 5 : 6] = true;
 						for (int i = 0; i < 50; i++) {
 							swiWaitForVBlank();
 						}
