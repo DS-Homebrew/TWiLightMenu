@@ -965,7 +965,8 @@ int settingsMode(void)
 				 "中文 (繁體)",
 				 "日本語",
 				 "琉球諸語",
-				 "한국어"},
+				 "한국어",
+				 "қазақша"},
 				{TLanguage::ELangDefault,
 				 TLanguage::ELangIndonesian,
 				 TLanguage::ELangCatalan,
@@ -998,7 +999,8 @@ int settingsMode(void)
 				 TLanguage::ELangChineseT,
 				 TLanguage::ELangJapanese,
 				 TLanguage::ELangRyukyuan,
-				 TLanguage::ELangKorean})
+				 TLanguage::ELangKorean,
+				 TLanguage::ELangKazakh})
 		// Theme
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,

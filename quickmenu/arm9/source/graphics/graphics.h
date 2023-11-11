@@ -38,3 +38,14 @@ template<typename T> inline const T abs(T const & x)
 {
 	return (x < 0) ? -x : x;
 }
+
+enum class MenuEntry {
+	CART,
+	PICTOCHAT,
+	DOWNLOADPLAY,
+	GBA,
+	BRIGHTNESS,
+	SETTINGS,
+	MANUAL,
+	INVALID,
+};

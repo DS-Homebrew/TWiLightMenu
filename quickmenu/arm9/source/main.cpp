@@ -134,7 +134,7 @@ bool applaunch = false;
 bool dsModeForced = false;
 bool showCursor = true;
 bool startMenu = false;
-int cursorPosition = 0;
+MenuEntry cursorPosition = MenuEntry::CART;
 
 bool pictochatFound = false;
 bool dlplayFound = false;
@@ -155,6 +155,13 @@ bool applaunchprep = false;
 bool updateMenuText = true;
 
 int spawnedtitleboxes = 0;
+
+extern MenuEntry initialTouchedPosition;
+extern MenuEntry currentTouchedPosition;
+
+MenuEntry initialTouchedPosition = MenuEntry::INVALID;
+MenuEntry currentTouchedPosition = MenuEntry::INVALID;
+bool touching = false;
 
 //char usernameRendered[10];
 //bool usernameRenderedDone = false;
@@ -1691,8 +1698,10 @@ int dsClassicMenu(void) {
 				}
 
 				scanKeys();
-				pressed = keysDownRepeat();
 				touchRead(&touch);
+				pressed = keysDownRepeat();
+				if(touching && (keysHeld() & KEY_TOUCH) == 0)
+					break;
 				checkSdEject();
 				if (preloadNds(NULL)) {
 					if (sys().isRegularDS()) {
@@ -1707,91 +1716,164 @@ int dsClassicMenu(void) {
 			}
 
 			if (pressed & KEY_UP) {
-				if (cursorPosition == 2 || cursorPosition == 3 || cursorPosition == 5) {
-					cursorPosition -= 2;
-					mmEffectEx(&snd_select);
-				} else if (cursorPosition == 6) {
-					cursorPosition -= 3;
-					mmEffectEx(&snd_select);
-				} else {
-					cursorPosition--;
-					mmEffectEx(&snd_select);
+				switch(cursorPosition) {
+					case MenuEntry::INVALID:
+					case MenuEntry::CART:
+						break;
+					case MenuEntry::PICTOCHAT:
+					case MenuEntry::DOWNLOADPLAY:
+						cursorPosition = MenuEntry::CART;
+						goto soundUp;
+					case MenuEntry::GBA:
+						cursorPosition = MenuEntry::PICTOCHAT;
+						goto soundUp;
+					case MenuEntry::MANUAL:
+					case MenuEntry::BRIGHTNESS:
+					case MenuEntry::SETTINGS:
+						cursorPosition = MenuEntry::GBA;
+						/*fallthrough*/
+					soundUp:
+						mmEffectEx(&snd_select);
 				}
 			}
 
 			if (pressed & KEY_DOWN) {
-				if (cursorPosition == 1 || cursorPosition == 3) {
-					cursorPosition += 2;
-					if (cursorPosition == 5 && ms().kioskMode) {
-						cursorPosition++;
-					}
-					mmEffectEx(&snd_select);
-				} else if (cursorPosition >= 0 && cursorPosition <= 3) {
-					cursorPosition++;
-					mmEffectEx(&snd_select);
+				switch(cursorPosition) {
+					case MenuEntry::INVALID:
+					case MenuEntry::BRIGHTNESS:
+					case MenuEntry::MANUAL:
+					case MenuEntry::SETTINGS:
+						break;
+					case MenuEntry::CART:
+						cursorPosition = MenuEntry::PICTOCHAT;
+						goto soundDown;
+					case MenuEntry::PICTOCHAT:
+					case MenuEntry::DOWNLOADPLAY:
+						cursorPosition = MenuEntry::GBA;
+						goto soundDown;
+					case MenuEntry::GBA:
+						if(ms().kioskMode)
+							cursorPosition = MenuEntry::MANUAL;
+						else
+							cursorPosition = MenuEntry::SETTINGS;
+						/*fallthrough*/
+					soundDown:
+						mmEffectEx(&snd_select);
 				}
 			}
 
 			if (pressed & KEY_LEFT) {
-				if (cursorPosition == 2 || (cursorPosition == 5 && (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)))
-				|| cursorPosition == 6) {
-					cursorPosition--;
-					if (cursorPosition == 5 && ms().kioskMode) {
-						cursorPosition--;
-					}
-					mmEffectEx(&snd_select);
+				switch(cursorPosition) {
+					case MenuEntry::INVALID:
+					case MenuEntry::CART:
+					case MenuEntry::PICTOCHAT:
+					case MenuEntry::GBA:
+					case MenuEntry::BRIGHTNESS:
+						break;
+					case MenuEntry::DOWNLOADPLAY:
+						cursorPosition = MenuEntry::PICTOCHAT;
+						goto soundLeft;
+					case MenuEntry::MANUAL:
+						if(!ms().kioskMode) {
+							cursorPosition = MenuEntry::SETTINGS;
+							goto soundLeft;
+						}
+						/*fallthrough*/
+					case MenuEntry::SETTINGS:
+						if(!(sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)))
+								break;
+						cursorPosition = MenuEntry::BRIGHTNESS;
+						/*fallthrough*/
+					soundLeft:
+						mmEffectEx(&snd_select);
 				}
 			}
 
 			if (pressed & KEY_RIGHT) {
-				if (cursorPosition == 1 || cursorPosition == 4 || cursorPosition == 5) {
-					cursorPosition++;
-					if (cursorPosition == 5 && ms().kioskMode) {
-						cursorPosition++;
-					}
-					mmEffectEx(&snd_select);
+				switch(cursorPosition) {
+					case MenuEntry::INVALID:
+					case MenuEntry::CART:
+					case MenuEntry::DOWNLOADPLAY:
+					case MenuEntry::GBA:
+					case MenuEntry::MANUAL:
+						break;
+					case MenuEntry::PICTOCHAT:
+						cursorPosition = MenuEntry::DOWNLOADPLAY;
+						goto soundRight;
+					case MenuEntry::BRIGHTNESS:
+						if(ms().kioskMode)
+							cursorPosition = MenuEntry::MANUAL;
+						else
+							cursorPosition = MenuEntry::SETTINGS;
+						goto soundRight;
+					case MenuEntry::SETTINGS:
+						cursorPosition = MenuEntry::MANUAL;
+						/*fallthrough*/
+					soundRight:
+						mmEffectEx(&snd_select);
 				}
 			}
-
-			if (pressed & KEY_TOUCH) {
-				if (touch.px >= 33 && touch.px <= 221 && touch.py >= 25 && touch.py <= 69) {
-					cursorPosition = 0;
-					menuButtonPressed = true;
-				} else if (touch.px >= 33 && touch.px <= 125 && touch.py >= 73 && touch.py <= 117) {
-					cursorPosition = 1;
-					menuButtonPressed = true;
-				} else if (touch.px >= 129 && touch.px <= 221 && touch.py >= 73 && touch.py <= 117) {
-					cursorPosition = 2;
-					menuButtonPressed = true;
-				} else if (touch.px >= 33 && touch.px <= 221 && touch.py >= 121 && touch.py <= 165) {
-					cursorPosition = 3;
-					menuButtonPressed = true;
-				} else if (touch.px >= 10 && touch.px <= 20 && touch.py >= 175 && touch.py <= 185
+			
+			auto selectedPosition = cursorPosition;
+			
+			auto getTouchedElement = [](const auto& touchPoint){
+				if (touchPoint.px >= 33 && touchPoint.px <= 221 && touchPoint.py >= 25 && touchPoint.py <= 69) {
+					return MenuEntry::CART;
+				}
+				if (touchPoint.px >= 33 && touchPoint.px <= 125 && touchPoint.py >= 73 && touchPoint.py <= 117) {
+					return MenuEntry::PICTOCHAT;
+				}
+				if (touchPoint.px >= 129 && touchPoint.px <= 221 && touchPoint.py >= 73 && touchPoint.py <= 117) {
+					return MenuEntry::DOWNLOADPLAY;
+				}
+				if (touchPoint.px >= 33 && touchPoint.px <= 221 && touchPoint.py >= 121 && touchPoint.py <= 165) {
+					return MenuEntry::GBA;
+				}
+				if (touchPoint.px >= 10 && touchPoint.px <= 20 && touchPoint.py >= 175 && touchPoint.py <= 185
 							&& (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2))) {
-					cursorPosition = 4;
-					menuButtonPressed = true;
-				} else if (touch.px >= 117 && touch.px <= 137 && touch.py >= 170 && touch.py <= 190 && !ms().kioskMode) {
-					cursorPosition = 5;
-					menuButtonPressed = true;
-				} else if (touch.px >= 235 && touch.px <= 244 && touch.py >= 175 && touch.py <= 185) {
-					cursorPosition = 6;
-					menuButtonPressed = true;
+					return MenuEntry::BRIGHTNESS;
 				}
-			}
+				if (touchPoint.px >= 117 && touchPoint.px <= 137 && touchPoint.py >= 170 && touchPoint.py <= 190 && !ms().kioskMode) {
+					return MenuEntry::SETTINGS;
+				}
+				if (touchPoint.px >= 235 && touchPoint.px <= 244 && touchPoint.py >= 175 && touchPoint.py <= 185) {
+					return MenuEntry::MANUAL;
+				}
+				return MenuEntry::INVALID;
+			};
 
 			if (pressed & KEY_A) {
 				menuButtonPressed = true;
 			}
 
-			if (cursorPosition < 0) cursorPosition = 0;
-			if (cursorPosition > 6) cursorPosition = 6;
+			if (pressed & KEY_TOUCH) {
+				currentTouchedPosition = getTouchedElement(touch);
+				if(!touching) {
+					touching = true;
+					if(currentTouchedPosition == MenuEntry::BRIGHTNESS){
+						menuButtonPressed = true;
+						selectedPosition = currentTouchedPosition;
+						initialTouchedPosition = MenuEntry::INVALID;
+					} else {
+						initialTouchedPosition = currentTouchedPosition;
+					}
+				}
+			} else if(touching) {
+				touching = false;
+				if(currentTouchedPosition == initialTouchedPosition && !menuButtonPressed && initialTouchedPosition != MenuEntry::INVALID) {
+					menuButtonPressed = true;
+					selectedPosition = initialTouchedPosition;
+				}
+				initialTouchedPosition = currentTouchedPosition = MenuEntry::INVALID;
+			}
 
 			if (menuButtonPressed) {
-				switch (cursorPosition) {
-					case -1:
-					default:
+				menuButtonPressed = false;
+				
+				switch (selectedPosition) {
+					case MenuEntry::INVALID:
 						break;
-					case 0:
+					case MenuEntry::CART:
 						if (flashcardFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
 							// Launch last-run ROM (Secondary)
 						  if (ms().launchType[1] == 0) {
@@ -1843,7 +1925,7 @@ int dsClassicMenu(void) {
 							mmEffectEx(&snd_wrong);
 						}
 						break;
-					case 1:
+					case MenuEntry::PICTOCHAT:
 						if (pictochatFound) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
@@ -1937,7 +2019,7 @@ int dsClassicMenu(void) {
 							mmEffectEx(&snd_wrong);
 						}
 						break;
-					case 2:
+					case MenuEntry::DOWNLOADPLAY:
 						if (dlplayFound) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
@@ -2031,7 +2113,7 @@ int dsClassicMenu(void) {
 							mmEffectEx(&snd_wrong);
 						}
 						break;
-					case 3:
+					case MenuEntry::GBA:
 						if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
 							// Launch last-run ROM (Secondary)
 						  if (ms().launchType[1] == 0) {
@@ -2098,46 +2180,41 @@ int dsClassicMenu(void) {
 							mmEffectEx(&snd_wrong);
 						} 
 						break;
-					case 4:
+					case MenuEntry::BRIGHTNESS:
 						// Adjust backlight level
 						if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
 							fifoSendValue32(FIFO_USER_04, 1);
 							mmEffectEx(&snd_backlight);
 						}
 						break;
-					case 5:
+					case MenuEntry::SETTINGS:
+					case MenuEntry::MANUAL:
 						// Launch settings
 						showCursor = false;
 						fadeType = false;	// Fade to white
 						mmEffectEx(&snd_launch);
-						moveIconUp[5] = true;
+						moveIconUp[(selectedPosition == MenuEntry::SETTINGS) ? 5 : 6] = true;
 						for (int i = 0; i < 50; i++) {
 							swiWaitForVBlank();
 						}
-
-						//ms().saveSettings();
-						vector<char *> argarray;
-						argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr"));
-						int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
-						iprintf (STR_START_FAILED_ERROR.c_str(), err);
+						{
+							vector<const char *> argarray;
+							auto getLaunchArgument = [selectedPosition]() -> const char* {
+								if(selectedPosition == MenuEntry::SETTINGS) {
+									if(sys().isRunFromSD())
+										return "sd:/_nds/TWiLightMenu/settings.srldr";
+									return "fat:/_nds/TWiLightMenu/settings.srldr";
+								}
+								if(sys().isRunFromSD())
+									return "sd:/_nds/TWiLightMenu/manual.srldr";
+								return "fat:/_nds/TWiLightMenu/manual.srldr";
+							};
+							argarray.push_back(getLaunchArgument());
+							int err = runNdsFile(argarray[0], argarray.size(), &argarray[0], true, false, false, true, true, false, -1);
+							iprintf (STR_START_FAILED_ERROR.c_str(), err);
+						}
 						break;
 				}
-				if (cursorPosition == 6) {
-					// Open manual
-					showCursor = false;
-					fadeType = false;	// Fade to white
-					mmEffectEx(&snd_launch);
-					moveIconUp[6] = true;
-					for (int i = 0; i < 50; i++) {
-						swiWaitForVBlank();
-					}
-					vector<char *> argarray;
-					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/manual.srldr" : "fat:/_nds/TWiLightMenu/manual.srldr"));
-					int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
-					iprintf (STR_START_FAILED_ERROR.c_str(), err);
-				}
-
-				menuButtonPressed = false;
 			}
 
 			if (pressed & KEY_B) {
