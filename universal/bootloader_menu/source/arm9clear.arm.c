@@ -43,6 +43,7 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 	VRAM_CR = (VRAM_CR & 0xffff0000) | 0x00008080 ;
 	
 	REG_DISPSTAT = 0;
+	GFX_STATUS = 0;
 
 	VRAM_A_CR = 0;
 	VRAM_B_CR = 0;
