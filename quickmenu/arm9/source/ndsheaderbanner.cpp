@@ -104,19 +104,19 @@ u32 getSDKVersion(FILE *ndsFile)
 static u16 bnriconframeseq[2][64] = {0x0000};
 
 // bnriconframenum[]
-int bnriconPalLine[2] = {0};
-int bnriconframenumY[2] = {0};
-int bannerFlip[2] = {GL_FLIP_NONE};
+int bnriconPalLine[2]{};
+int bnriconframenumY[2]{};
+int bannerFlip[2]{GL_FLIP_NONE, GL_FLIP_NONE};
 
 // bnriconisDSi[]
-bool isDirectory[2] = {false};
-int bnrRomType[2] = {0};
-bool bnriconisDSi[2] = {false};
-int bnrWirelessIcon[2] = {0}; 			// 0 = None, 1 = Local, 2 = WiFi
-bool isDSiWare[2] = {false};
-bool isHomebrew[2] = {false};
-bool isModernHomebrew[2] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header
-int customIcon[2] = {0};				// 0 = None, 1 = png, 2 = banner.bin, -1 = error
+bool isDirectory[2]{false, false};
+eROMType bnrRomType[2]{};
+bool bnriconisDSi[2]{false, false};
+int bnrWirelessIcon[2]{}; 			// 0 = None, 1 = Local, 2 = WiFi
+bool isDSiWare[2]{false, false};
+bool isHomebrew[2]{false, false};
+bool isModernHomebrew[2]{false, false};		// false == No DSi-Extended header, true == Has DSi-Extended header
+int customIcon[2]{};				// 0 = None, 1 = png, 2 = banner.bin, -1 = error
 char customIconPath[256];
 
 /**
