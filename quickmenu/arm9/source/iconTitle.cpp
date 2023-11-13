@@ -88,7 +88,7 @@ static u32 arm9StartSig[4];
 
 static glImage ndsIcon[2][8][(32 / 32) * (256 / 32)];
 
-#define CONSOLE_ICON(name) GRIT_TILESET(name, 32, 32, 32, 32, 1)
+#define CONSOLE_ICON(name) StaticTileset<32, 32, 32, 32, name##PalLen/sizeof(*name##Pal), 1> name{name##Bitmap, name##Pal}
 
 CONSOLE_ICON(icon_gba);
 CONSOLE_ICON(icon_gb);
@@ -189,9 +189,7 @@ void loadIconTileset(T& icon, int num) {
 		glDeleteTextures(1, &iconTexID[num][i]);
 	}
 	
-	LoadTileset(icon);
-	
-	iconTexID[num][0] = icon.id;
+	iconTexID[num][0] = LoadTilesetTexture(icon, ndsIcon[num][0]);
 }
 
 template<size_t sprite_width, size_t sprite_height, size_t bitmap_width, size_t bitmap_height, size_t pallette_length, size_t count>

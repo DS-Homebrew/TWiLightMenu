@@ -15,7 +15,13 @@ struct StaticTileset {
 	//grit data
 	const unsigned int* bitmap;
 	const unsigned short* pallette;
+};
 
+template<size_t sprite_width, size_t sprite_height, size_t bitmap_width, size_t bitmap_height, size_t pallette_length, size_t count>
+struct GritTexture : public StaticTileset<sprite_width, sprite_height, bitmap_width, bitmap_height, pallette_length, count> {
+	template<size_t BitmapArrayLen, size_t PaletteArrayLen>
+	GritTexture(const unsigned int(&bitmap_)[BitmapArrayLen], const unsigned short(&pallette_)[PaletteArrayLen]) : StaticTileset<sprite_width, sprite_height, bitmap_width, bitmap_height, pallette_length, count>{bitmap_, pallette_} {
+	}
 	//gpu data
 	int id;
 	std::array<glImage, count> images;
@@ -42,19 +48,20 @@ static constexpr auto mapTextureSize() {
 }
 
 template<size_t sprite_width, size_t sprite_height, size_t bitmap_width, size_t bitmap_height, size_t pallette_length, size_t count>
-auto LoadTileset(StaticTileset<sprite_width, sprite_height, bitmap_width, bitmap_height, pallette_length, count>& texture,
+auto LoadTilesetTexture(StaticTileset<sprite_width, sprite_height, bitmap_width, bitmap_height, pallette_length, count>& tileset,
+				glImage* images_array,
 				u16* pallette_transform = nullptr,
 				u16* custom_pallette = nullptr) {
 	
 	constexpr auto textureSize = std::make_pair(mapTextureSize<bitmap_width>(), mapTextureSize<bitmap_height>());
 	
-	auto pallette = custom_pallette ? custom_pallette : (u16*)texture.pallette;
+	auto pallette = custom_pallette ? custom_pallette : (u16*)tileset.pallette;
 	
 	if (pallette_transform) {
 		std::for_each(pallette, pallette + pallette_length, [pallette_transform](auto& color){ color = pallette_transform[color]; });
 	}
-
-	texture.id = glLoadTileSet(texture.images.data(),
+	
+	return glLoadTileSet(images_array,
 							sprite_width,
 							sprite_height,
 							bitmap_width,
@@ -65,10 +72,19 @@ auto LoadTileset(StaticTileset<sprite_width, sprite_height, bitmap_width, bitmap
 							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 							pallette_length,
 							pallette,
-							(const u8*) texture.bitmap
+							(const u8*) tileset.bitmap
 							);
 }
 
-#define GRIT_TILESET(name, sprite_width, sprite_height, bitmap_width, bitmap_height, count) StaticTileset<sprite_width, sprite_height, bitmap_width, bitmap_height, name##PalLen/sizeof(*name##Pal), count> name{name##Bitmap, name##Pal}
+
+template<size_t sprite_width, size_t sprite_height, size_t bitmap_width, size_t bitmap_height, size_t pallette_length, size_t count>
+auto LoadTileset(GritTexture<sprite_width, sprite_height, bitmap_width, bitmap_height, pallette_length, count>& texture,
+				u16* pallette_transform = nullptr,
+				u16* custom_pallette = nullptr) {
+
+	texture.id = LoadTilesetTexture(texture, texture.images.data(), pallette_transform, custom_pallette);
+}
+
+#define GRIT_TILESET(name, sprite_width, sprite_height, bitmap_width, bitmap_height, count) GritTexture<sprite_width, sprite_height, bitmap_width, bitmap_height, name##PalLen/sizeof(*name##Pal), count> name{name##Bitmap, name##Pal}
 
 #endif //GRIT_TILESET_H
