@@ -27,6 +27,7 @@ u8 borderData[0x30000] = {0};
 std::string gbaBorder = "default.png";
 
 u32 romSize = 0;
+bool savingAllowed = true;
 
 u32 greenSwapPatch[8] = {
 	0xE59F000C,	// LDR  R0, =0x4000002
@@ -461,6 +462,13 @@ void gptc_patchRom()
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0xBB9F8) == 0x8008)
 			*(u16*)(0x08000000 + 0xBB9F8) = 0x46C0;
+	} else if (gameCode == 0x45593241) {
+		//Top Gun - Combat Zones (USA)
+		//Fix softlock when attempting to save (original cartridge does not have a save chip)
+		if (*(u16*)(0x08000000 + 0x88816) == 0x3501)
+			*(u16*)(0x08000000 + 0x88816) = 0x3401;
+
+		savingAllowed = false;
 	} else if (gameCode == 0x45415741 || gameCode == 0x4A415741) {
 		//Wario Land 4/Advance (USA/Europe/Japan)
 		//Fix white screen crash
@@ -630,7 +638,7 @@ int main(int argc, char **argv) {
 			//iprintf("ROM patched\n");
 		}
 
-		const save_type_t* saveType = save_findTag();
+		const save_type_t* saveType = savingAllowed ? save_findTag() : NULL;
 		//iprintf("Save tag found\n");
 		if (saveType != NULL && saveType->patchFunc != NULL) {
 			if (saveType->patchFunc(saveType) && *(u16*)(0x020000C0) == 0x5A45) {
