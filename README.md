@@ -135,6 +135,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI
 - [Arisotura](https://github.com/Arisotura): ROM list from melonDS, and BIOS dumper code from [dsibiosdumper](https://github.com/Arisotura/dsibiosdumper)
+- [Dartz150](https://github.com/Dartz150): Provided fix for *Top Gun: Combat Zones* GBA game
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat
 - [edo9300](https://github.com/edo9300): DS Phat check code
 - [Gericom](https://github.com/Gericom), TrolleyDave, and FAST6191: GBA SRAM-patching code, used in gbapatcher ([SRAM patching thread at GBAtemp](https://gbatemp.net/threads/reverse-engineering-gba-patching.60168/))

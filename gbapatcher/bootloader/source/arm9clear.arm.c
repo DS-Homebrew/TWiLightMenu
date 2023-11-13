@@ -50,6 +50,7 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 	}
 	
 	REG_DISPSTAT = 0;
+	GFX_STATUS = 0;
 
 	VRAM_A_CR = 0;
 	VRAM_B_CR = 0;
