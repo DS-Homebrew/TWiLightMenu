@@ -31,19 +31,8 @@
 #include <cmath>
 
 // Graphic files
-#include "cursor.h"
-#include "iconbox.h"
-#include "iconbox_pressed.h"
-#include "wirelessicons.h"
-#include "pictodlp.h"
-#include "pictodlp_selected.h"
-#include "icon_dscard.h"
-#include "icon_gba.h"
-#include "iconPhat_gba.h"
-#include "icon_gbamode.h"
-#include "cornericons.h"
-#include "icon_settings.h"
-#include "icon_settings_away.h"
+#include "menu_icons.h"
+#include "grit_tileset.h"
 
 #include "cursorpal.h"
 #include "usercolors.h"
@@ -110,22 +99,21 @@ int iconYpos[7] = {25, 73, 73, 121, 175, 170, 175};
 bool showdialogbox = false;
 int dialogboxHeight = 0;
 
-int cursorTexID, iconboxTexID, iconboxPressedTexID, wirelessiconTexID, pictodlpTexID, pictodlpSelectedTexID, dscardiconTexID, gbaiconTexID, cornericonTexID, settingsiconTexID, settingsiconAwayTexID;
-
-glImage cursorImage[(32 / 32) * (128 / 32)];
-glImage iconboxImage[(256 / 16) * (128 / 64)];
-glImage iconboxPressedImage[(256 / 16) * (64 / 64)];
-glImage wirelessIcons[(32 / 32) * (64 / 32)];
-glImage pictodlpImage[(128 / 16) * (256 / 64)];
-glImage pictodlpSelectedImage[(128 / 16) * (128 / 64)];
-glImage dscardIconImage[(32 / 32) * (64 / 32)];
-glImage gbaIconImage[(32 / 32) * (64 / 32)];
-glImage cornerIcons[(32 / 32) * (128 / 32)];
-glImage settingsIconImage[(32 / 32) * (64 / 32)];
-glImage settingsIconAwayImage[(32 / 32) * (32 / 32)];
+GRIT_TILESET(cornericons, 32, 32, 32, 128, 4);
+GRIT_TILESET(cursor, 32, 32, 32, 128, 4);
+GRIT_TILESET(icon_dscard, 32, 32, 32, 64, 2);
+GRIT_TILESET(icon_gbamode, 32, 32, 32, 64, 2);
+GRIT_TILESET(icon_settings, 32, 32, 32, 64, 2);
+GRIT_TILESET(icon_settings_away, 32, 32, 32, 32, 1);
+GRIT_TILESET(iconbox, 256, 64, 256, 128, 2);
+GRIT_TILESET(iconbox_pressed, 256, 64, 256, 64, 1);
+GRIT_TILESET(wirelessicons, 32, 32, 32, 64, 2);
+GRIT_TILESET(pictodlp, 128, 64, 128, 256, 4);
+GRIT_TILESET(pictodlp_selected, 128, 64, 128, 128, 2);
 
 u16 bmpImageBuffer[256*192] = {0};
 u16 topImageBuffer[256*192] = {0};
+u16* colorTable = nullptr;
 
 u16 calendarImageBuffer[113*113] = {0};
 u16 calendarBigImageBuffer[113*129] = {0};
@@ -134,8 +122,6 @@ u16 markerImageBuffer[13*13] = {0};
 u16 clockImageBuffer[97*97] = {0};
 u16 clockNeedleColor;
 u16 clockPinColor;
-
-u16* colorTable = NULL;
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -397,55 +383,55 @@ auto getMenuEntryTexture(MenuEntry entry) {
 	switch(entry) {
 		case MenuEntry::CART:
 			if(isDSiMode() && cardEjected)
-				return &iconboxImage[1];
+				return &iconbox.images[1];
 			if(initialTouchedPosition == MenuEntry::CART) {
 				if(currentTouchedPosition != MenuEntry::CART)
-					return &iconboxImage[1];
-				return iconboxPressedImage;
+					return &iconbox.images[1];
+				return &iconbox_pressed.images[0];
 			}
-			return &iconboxImage[0];
+			return &iconbox.images[0];
 		case MenuEntry::PICTOCHAT:
 			if(!pictochatFound)
-				return &pictodlpImage[1];
+				return &pictodlp.images[1];
 			if(initialTouchedPosition == MenuEntry::PICTOCHAT) {
 				if(currentTouchedPosition != MenuEntry::PICTOCHAT)
-					return &pictodlpImage[1];
-				return &pictodlpSelectedImage[0];
+					return &pictodlp.images[1];
+				return &pictodlp_selected.images[0];
 			}
-			return &pictodlpImage[0];
+			return &pictodlp.images[0];
 		case MenuEntry::DOWNLOADPLAY:
 			if(!dlplayFound)
-				return &pictodlpImage[3];
+				return &pictodlp.images[3];
 			if(initialTouchedPosition == MenuEntry::DOWNLOADPLAY) {
 				if(currentTouchedPosition != MenuEntry::DOWNLOADPLAY)
-					return &pictodlpImage[3];
-				return &pictodlpSelectedImage[1];
+					return &pictodlp.images[3];
+				return &pictodlp_selected.images[1];
 			}
-			return &pictodlpImage[2];
+			return &pictodlp.images[2];
 		case MenuEntry::GBA:
 		{
 			bool hasGbaCart = sys().isRegularDS() && (((u8*)GBAROM)[0xB2] == 0x96);
 			if(hasGbaCart || sdFound()) {
 				if(initialTouchedPosition == MenuEntry::GBA) {
 					if(currentTouchedPosition != MenuEntry::GBA)
-						return &iconboxImage[1];
-					return iconboxPressedImage;
+						return &iconbox.images[1];
+					return &iconbox_pressed.images[0];
 				}
-				return &iconboxImage[0];
+				return &iconbox.images[0];
 			}
-			return &iconboxImage[1];
+			return &iconbox.images[1];
 		}
 		case MenuEntry::BRIGHTNESS:
-			return &cornerIcons[0];
+			return &cornericons.images[0];
 		case MenuEntry::SETTINGS:
 			if(initialTouchedPosition == MenuEntry::SETTINGS) {
 				if(currentTouchedPosition != MenuEntry::SETTINGS)
-					return &settingsIconAwayImage[0];
-				return &settingsIconImage[1];
+					return &icon_settings_away.images[0];
+				return &icon_settings.images[1];
 			}
-			return &settingsIconImage[0];
+			return &icon_settings.images[0];
 		case MenuEntry::MANUAL:
-			return &cornerIcons[3];
+			return &cornericons.images[3];
 		case MenuEntry::INVALID:
 			break;
 	}
@@ -506,13 +492,13 @@ void vBlankHandler()
 			glSprite(33, iconYpos[0], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::CART));
 			if (isDSiMode() && cardEjected) {
 				//glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
-				//glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
-				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[1]);
+				//glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &icon_dscard.images[(REG_SCFG_MC == 0x11) ? 1 : 0]);
+				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &icon_dscard.images[1]);
 			} else {
 				if ((isDSiMode() && !flashcardFound() && sys().arm7SCFGLocked()) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
-					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[0]);
+					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &icon_dscard.images[0]);
 				} else drawIcon(1, 40, iconYpos[0]+6);
-				if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[0]-1) & 31]);
+				if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessicons.images[(bnrWirelessIcon[0]-1) & 31]);
 			}
 			// Playback animated icon
 			if (bnriconisDSi[0]==true) {
@@ -523,13 +509,13 @@ void vBlankHandler()
 			glSprite(33, iconYpos[3], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::GBA));
 			int num = (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? 1 : 0;
 			if (num == 0 && ms().gbaBooter == TWLSettings::EGbaNativeGbar2) {
-				glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, &gbaIconImage[(((u8*)GBAROM)[0xB2] == 0x96) ? 0 : 1]);
+				glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, &icon_gbamode.images[(((u8*)GBAROM)[0xB2] == 0x96) ? 0 : 1]);
 			}
 			else drawIcon(num, 40, iconYpos[3]+6);
 			if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::BRIGHTNESS));
 			}
-			if (bnrWirelessIcon[num] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[1]-1) & 31]);
+			if (bnrWirelessIcon[num] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessicons.images[(bnrWirelessIcon[1]-1) & 31]);
 			// Playback animated icon
 			if (bnriconisDSi[1]==true) {
 				playBannerSequence(1);
@@ -542,10 +528,10 @@ void vBlankHandler()
 			// Draw cursor
 			if (showCursor) {
 				auto drawCursorRect = [](int x1, int y1, int x2, int y2) {
-						glSprite(x1, y1, GL_FLIP_NONE, &cursorImage[0]);
-						glSprite(x2, y1, GL_FLIP_NONE, &cursorImage[1]);
-						glSprite(x1, y2, GL_FLIP_NONE, &cursorImage[2]);
-						glSprite(x2, y2, GL_FLIP_NONE, &cursorImage[3]);
+						glSprite(x1, y1, GL_FLIP_NONE, &cursor.images[0]);
+						glSprite(x2, y1, GL_FLIP_NONE, &cursor.images[1]);
+						glSprite(x1, y2, GL_FLIP_NONE, &cursor.images[2]);
+						glSprite(x2, y2, GL_FLIP_NONE, &cursor.images[3]);
 				};
 				
 				updateCursorTargetPos();
@@ -1059,244 +1045,18 @@ void graphicsInit()
 	}*/
 
 	swiWaitForVBlank();
-
-	u16* newPalette = (u16*)cursorPals+(getFavoriteColor()*16);
-	if (colorTable) {
-		for (int i2 = 0; i2 < 3; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	cursorTexID = glLoadTileSet(cursorImage, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							128, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							3, // Length of the palette to use (3 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) cursorBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)iconboxPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 12; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	iconboxTexID = glLoadTileSet(iconboxImage, // pointer to glImage array
-							256, // sprite width
-							64, // sprite height
-							256, // bitmap width
-							128, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							12, // Length of the palette to use (12 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) iconboxBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)iconbox_pressedPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 12; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	iconboxPressedTexID = glLoadTileSet(iconboxPressedImage, // pointer to glImage array
-							256, // sprite width
-							64, // sprite height
-							256, // bitmap width
-							64, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							12, // Length of the palette to use (12 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) iconbox_pressedBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)wirelessiconsPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	wirelessiconTexID = glLoadTileSet(wirelessIcons, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							64, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) wirelessiconsBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)pictodlpPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 12; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	pictodlpTexID = glLoadTileSet(pictodlpImage, // pointer to glImage array
-							128, // sprite width
-							64, // sprite height
-							128, // bitmap width
-							256, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							12, // Length of the palette to use (12 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) pictodlpBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)pictodlp_selectedPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 12; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	pictodlpSelectedTexID = glLoadTileSet(pictodlpSelectedImage, // pointer to glImage array
-							128, // sprite width
-							64, // sprite height
-							128, // bitmap width
-							128, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							12, // Length of the palette to use (12 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) pictodlp_selectedBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)icon_dscardPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	dscardiconTexID = glLoadTileSet(dscardIconImage, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							64, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) icon_dscardBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)icon_gbamodePal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	gbaiconTexID = glLoadTileSet(gbaIconImage, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							64, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) (icon_gbamodeBitmap) // image data generated by GRIT
-							);
-
-	newPalette = (u16*)cornericonsPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	cornericonTexID = glLoadTileSet(cornerIcons, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							128, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) cornericonsBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)icon_settingsPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	settingsiconTexID = glLoadTileSet(settingsIconImage, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							64, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) icon_settingsBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)icon_settings_awayPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	newPalette = (u16*)userColors;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	settingsiconAwayTexID = glLoadTileSet(settingsIconAwayImage, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							32, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) icon_settings_awayBitmap // image data generated by GRIT
-							);
+	
+	LoadTileset(cornericons, colorTable);
+	LoadTileset(cursor, colorTable, (u16*)cursorPals+(getFavoriteColor()*16));
+	LoadTileset(icon_dscard, colorTable);
+	LoadTileset(icon_gbamode, colorTable);
+	LoadTileset(icon_settings, colorTable);
+	LoadTileset(icon_settings_away, colorTable);
+	LoadTileset(iconbox, colorTable);
+	LoadTileset(iconbox_pressed, colorTable);
+	LoadTileset(wirelessicons, colorTable);
+	LoadTileset(pictodlp, colorTable);
+	LoadTileset(pictodlp_selected, colorTable);
 
 	loadConsoleIcons();
 
