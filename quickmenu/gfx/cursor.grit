@@ -10,7 +10,8 @@
 #The Transparent color of 0xFF00FF
 -gT FF00FF
 
--pe 3
+# Use only the needed color pallette
+-pn 3
 
 ##################
 # Old Parameters
