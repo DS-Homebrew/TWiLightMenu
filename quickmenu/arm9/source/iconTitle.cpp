@@ -88,7 +88,7 @@ static u32 arm9StartSig[4];
 
 static glImage ndsIcon[2][8][(32 / 32) * (256 / 32)];
 
-#define CONSOLE_ICON(name) StaticTileset<32, 32, 32, 32, name##PalLen/sizeof(*name##Pal), 1> name{name##Bitmap, name##Pal}
+#define CONSOLE_ICON(name) GRIT_BITMAP(name, 32, 32, 32, 32, 1)
 
 CONSOLE_ICON(icon_gba);
 CONSOLE_ICON(icon_gb);
@@ -192,61 +192,35 @@ void loadIconTileset(T& icon, int num) {
 	iconTexID[num][0] = LoadTilesetTexture(icon, ndsIcon[num][0]);
 }
 
-template<size_t sprite_width, size_t sprite_height, size_t bitmap_width, size_t bitmap_height, size_t pallette_length, size_t count>
-static auto transformPallette(StaticTileset<sprite_width, sprite_height, bitmap_width, bitmap_height, pallette_length, count>& tileset) {
-	std::for_each((u16*)tileset.pallette, (u16*)tileset.pallette + pallette_length, [](auto& color){ color = colorTable[color]; });
-}
-
-void loadHBIcon(int num)
-{
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[num][i]);
-	}
-	iconTexID[num][0] =
-	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
-				32, // sprite width
-				32, // sprite height
-				32, // bitmap image width
-				32, // bitmap image height
-				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-				16, // Length of the palette to use (16 colors)
-				(u16*) icon_hbPal, // Image palette
-				(u8*) icon_hbBitmap // Raw image data
-				);
-}
-
 void loadConsoleIcons()
 {
 	if (!colorTable) {
 		return;
 	}
 
-	transformPallette(icon_gba);
-	transformPallette(icon_gb);
-	transformPallette(icon_gbc);
-	transformPallette(icon_nes);
-	transformPallette(icon_sg);
-	transformPallette(icon_sms);
-	transformPallette(icon_gg);
-	transformPallette(icon_snes);
-	transformPallette(icon_plg);
-	transformPallette(icon_a26);
-	transformPallette(icon_col);
-	transformPallette(icon_m5);
-	transformPallette(icon_pce);
-	transformPallette(icon_ws);
-	transformPallette(icon_ngp);
-	transformPallette(icon_cpc);
-	transformPallette(icon_vid);
-	transformPallette(icon_img);
-	transformPallette(icon_msx);
-	transformPallette(icon_mini);
-	transformPallette(icon_hb);
-	transformPallette(icon_md);
-	transformPallette(icon_unk);
+	RemapPalette(icon_gba, colorTable);
+	RemapPalette(icon_gb, colorTable);
+	RemapPalette(icon_gbc, colorTable);
+	RemapPalette(icon_nes, colorTable);
+	RemapPalette(icon_sg, colorTable);
+	RemapPalette(icon_sms, colorTable);
+	RemapPalette(icon_gg, colorTable);
+	RemapPalette(icon_snes, colorTable);
+	RemapPalette(icon_plg, colorTable);
+	RemapPalette(icon_a26, colorTable);
+	RemapPalette(icon_col, colorTable);
+	RemapPalette(icon_m5, colorTable);
+	RemapPalette(icon_pce, colorTable);
+	RemapPalette(icon_ws, colorTable);
+	RemapPalette(icon_ngp, colorTable);
+	RemapPalette(icon_cpc, colorTable);
+	RemapPalette(icon_vid, colorTable);
+	RemapPalette(icon_img, colorTable);
+	RemapPalette(icon_msx, colorTable);
+	RemapPalette(icon_mini, colorTable);
+	RemapPalette(icon_hb, colorTable);
+	RemapPalette(icon_md, colorTable);
+	RemapPalette(icon_unk, colorTable);
 }
 
 static void clearIcon(int num)

@@ -99,17 +99,17 @@ int iconYpos[7] = {25, 73, 73, 121, 175, 170, 175};
 bool showdialogbox = false;
 int dialogboxHeight = 0;
 
-GRIT_TILESET(cornericons, 32, 32, 32, 128, 4);
-GRIT_TILESET(cursor, 32, 32, 32, 128, 4);
-GRIT_TILESET(icon_dscard, 32, 32, 32, 64, 2);
-GRIT_TILESET(icon_gbamode, 32, 32, 32, 64, 2);
-GRIT_TILESET(icon_settings, 32, 32, 32, 64, 2);
-GRIT_TILESET(icon_settings_away, 32, 32, 32, 32, 1);
-GRIT_TILESET(iconbox, 256, 64, 256, 128, 2);
-GRIT_TILESET(iconbox_pressed, 256, 64, 256, 64, 1);
-GRIT_TILESET(wirelessicons, 32, 32, 32, 64, 2);
-GRIT_TILESET(pictodlp, 128, 64, 128, 256, 4);
-GRIT_TILESET(pictodlp_selected, 128, 64, 128, 128, 2);
+GRIT_TEXTURE(cornericons, 32, 32, 32, 128, 4);
+GRIT_TEXTURE(cursor, 32, 32, 32, 128, 4);
+GRIT_TEXTURE(icon_dscard, 32, 32, 32, 64, 2);
+GRIT_TEXTURE(icon_gbamode, 32, 32, 32, 64, 2);
+GRIT_TEXTURE(icon_settings, 32, 32, 32, 64, 2);
+GRIT_TEXTURE(icon_settings_away, 32, 32, 32, 32, 1);
+GRIT_TEXTURE(iconbox, 256, 64, 256, 128, 2);
+GRIT_TEXTURE(iconbox_pressed, 256, 64, 256, 64, 1);
+GRIT_TEXTURE(wirelessicons, 32, 32, 32, 64, 2);
+GRIT_TEXTURE(pictodlp, 128, 64, 128, 256, 4);
+GRIT_TEXTURE(pictodlp_selected, 128, 64, 128, 128, 2);
 
 u16 bmpImageBuffer[256*192] = {0};
 u16 topImageBuffer[256*192] = {0};
@@ -1045,18 +1045,34 @@ void graphicsInit()
 	}*/
 
 	swiWaitForVBlank();
-	
-	LoadTileset(cornericons, colorTable);
-	LoadTileset(cursor, colorTable, (u16*)cursorPals+(getFavoriteColor()*16));
-	LoadTileset(icon_dscard, colorTable);
-	LoadTileset(icon_gbamode, colorTable);
-	LoadTileset(icon_settings, colorTable);
-	LoadTileset(icon_settings_away, colorTable);
-	LoadTileset(iconbox, colorTable);
-	LoadTileset(iconbox_pressed, colorTable);
-	LoadTileset(wirelessicons, colorTable);
-	LoadTileset(pictodlp, colorTable);
-	LoadTileset(pictodlp_selected, colorTable);
+
+	cursor.palette = (u16*)cursorPals+(getFavoriteColor()*16);
+
+	if (colorTable) {
+		RemapPalette(cornericons, colorTable);
+		RemapPalette(cursor, colorTable);
+		RemapPalette(icon_dscard, colorTable);
+		RemapPalette(icon_gbamode, colorTable);
+		RemapPalette(icon_settings, colorTable);
+		RemapPalette(icon_settings_away, colorTable);
+		RemapPalette(iconbox, colorTable);
+		RemapPalette(iconbox_pressed, colorTable);
+		RemapPalette(wirelessicons, colorTable);
+		RemapPalette(pictodlp, colorTable);
+		RemapPalette(pictodlp_selected, colorTable);
+	}
+
+	LoadTileset(cornericons);
+	LoadTileset(cursor);
+	LoadTileset(icon_dscard);
+	LoadTileset(icon_gbamode);
+	LoadTileset(icon_settings);
+	LoadTileset(icon_settings_away);
+	LoadTileset(iconbox);
+	LoadTileset(iconbox_pressed);
+	LoadTileset(wirelessicons);
+	LoadTileset(pictodlp);
+	LoadTileset(pictodlp_selected);
 
 	loadConsoleIcons();
 
