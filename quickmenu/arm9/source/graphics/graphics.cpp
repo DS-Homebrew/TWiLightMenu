@@ -108,8 +108,11 @@ GRIT_TEXTURE(icon_settings_away, 32, 32, 32, 32, 1);
 GRIT_TEXTURE(iconbox, 256, 64, 256, 128, 2);
 GRIT_TEXTURE(iconbox_pressed, 256, 64, 256, 64, 1);
 GRIT_TEXTURE(wirelessicons, 32, 32, 32, 64, 2);
-GRIT_TEXTURE(pictodlp, 128, 64, 128, 256, 4);
-GRIT_TEXTURE(pictodlp_selected, 128, 64, 128, 128, 2);
+GRIT_TEXTURE(pictochat, 128, 64, 128, 256, 4);
+GRIT_TEXTURE(pictochat_jp, 128, 64, 128, 256, 4);
+GritTexture<128, 64, 512, 64, dlp_iconsPalLen/sizeof(*dlp_iconsPal), 4> dlp_icons{dlp_iconsPal};
+
+std::array<glImage, 4>* pictochat_images = nullptr;
 
 u16 bmpImageBuffer[256*192] = {0};
 u16 topImageBuffer[256*192] = {0};
@@ -392,22 +395,22 @@ auto getMenuEntryTexture(MenuEntry entry) {
 			return &iconbox.images[0];
 		case MenuEntry::PICTOCHAT:
 			if(!pictochatFound)
-				return &pictodlp.images[1];
+				return &(*pictochat_images)[2];
 			if(initialTouchedPosition == MenuEntry::PICTOCHAT) {
 				if(currentTouchedPosition != MenuEntry::PICTOCHAT)
-					return &pictodlp.images[1];
-				return &pictodlp_selected.images[0];
+					return &(*pictochat_images)[2];
+				return &(*pictochat_images)[1];
 			}
-			return &pictodlp.images[0];
+			return &(*pictochat_images)[0];
 		case MenuEntry::DOWNLOADPLAY:
 			if(!dlplayFound)
-				return &pictodlp.images[3];
+				return &dlp_icons.images[2];
 			if(initialTouchedPosition == MenuEntry::DOWNLOADPLAY) {
 				if(currentTouchedPosition != MenuEntry::DOWNLOADPLAY)
-					return &pictodlp.images[3];
-				return &pictodlp_selected.images[1];
+					return &dlp_icons.images[2];
+				return &dlp_icons.images[1];
 			}
-			return &pictodlp.images[2];
+			return &dlp_icons.images[0];
 		case MenuEntry::GBA:
 		{
 			bool hasGbaCart = sys().isRegularDS() && (((u8*)GBAROM)[0xB2] == 0x96);
@@ -1045,6 +1048,31 @@ void graphicsInit()
 	}*/
 
 	swiWaitForVBlank();
+	
+	auto getDlpBitmapOffset = []{
+		using Lang = TWLSettings::TLanguage;
+		switch(ms().getGuiLanguage()) {
+		case Lang::ELangEnglish:
+		default:
+			return 0;
+		case Lang::ELangFrench:
+			return 2;
+		case Lang::ELangGerman:
+			return 1;
+		case Lang::ELangItalian:
+			return 4;
+		case Lang::ELangSpanish:
+			return 3;
+		case Lang::ELangJapanese:
+			return 5;
+		case Lang::ELangKorean:
+			return 6;
+		case Lang::ELangChineseS:
+			return 7;
+		}
+	};
+	
+	dlp_icons.bitmap = dlp_iconsBitmap + 0x1000 * getDlpBitmapOffset();
 
 	cursor.palette = (u16*)cursorPals+(getFavoriteColor()*16);
 
@@ -1058,8 +1086,9 @@ void graphicsInit()
 		RemapPalette(iconbox, colorTable);
 		RemapPalette(iconbox_pressed, colorTable);
 		RemapPalette(wirelessicons, colorTable);
-		RemapPalette(pictodlp, colorTable);
-		RemapPalette(pictodlp_selected, colorTable);
+		RemapPalette(dlp_icons, colorTable);
+		RemapPalette(pictochat, colorTable);
+		RemapPalette(pictochat_jp, colorTable);
 	}
 
 	LoadTileset(cornericons);
@@ -1071,8 +1100,14 @@ void graphicsInit()
 	LoadTileset(iconbox);
 	LoadTileset(iconbox_pressed);
 	LoadTileset(wirelessicons);
-	LoadTileset(pictodlp);
-	LoadTileset(pictodlp_selected);
+	LoadTileset(dlp_icons);
+	if (ms().getGuiLanguage() == TWLSettings::TLanguage::ELangJapanese) {
+		LoadTileset(pictochat_jp);
+		pictochat_images = &pictochat_jp.images;
+	} else {
+		LoadTileset(pictochat);
+		pictochat_images = &pictochat.images;
+	}
 
 	loadConsoleIcons();
 

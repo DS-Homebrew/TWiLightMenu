@@ -12,6 +12,10 @@ struct GritBitmap {
 		static_assert((sprite_width * sprite_height) * count == bitmap_width * bitmap_height);
 		static_assert(BitmapArrayLen * 8 == bitmap_width * bitmap_height);
 	}
+	template<size_t PaletteArrayLen>
+	GritBitmap(const unsigned short(&palette_)[PaletteArrayLen]) : palette(palette_) {
+		static_assert((sprite_width * sprite_height) * count == bitmap_width * bitmap_height);
+	}
 	//grit data
 	const unsigned int* bitmap;
 	const unsigned short* palette;
@@ -21,6 +25,9 @@ template<size_t sprite_width, size_t sprite_height, size_t bitmap_width, size_t 
 struct GritTexture final : public GritBitmap<sprite_width, sprite_height, bitmap_width, bitmap_height, palette_length, count> {
 	template<size_t BitmapArrayLen, size_t PaletteArrayLen>
 	GritTexture(const unsigned int(&bitmap_)[BitmapArrayLen], const unsigned short(&palette_)[PaletteArrayLen]) : GritBitmap<sprite_width, sprite_height, bitmap_width, bitmap_height, palette_length, count>{bitmap_, palette_} {
+	}
+	template<size_t PaletteArrayLen>
+	GritTexture(const unsigned short(&palette_)[PaletteArrayLen]) : GritBitmap<sprite_width, sprite_height, bitmap_width, bitmap_height, palette_length, count>{palette_} {
 	}
 	//gpu data
 	int id;
