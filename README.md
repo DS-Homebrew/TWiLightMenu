@@ -27,6 +27,17 @@ sudo dkp-pacman -S nds-dev
 ```
 (Note: Command will vary by OS, sudo may not be needed and it may be just `pacman` instead.)
 
+## Cloning
+The repository contains submodules, so you need to clone recursively:
+```
+git clone --recursive https://github.com/DS-Homebrew/TWiLightMenu.git
+```
+
+If you cloned without pulling the submodules, you may update them afterwards:
+```
+git submodule update --init --recursive
+```
+
 ## Building
 
 Once you have devkitPro's toolchains installed you can build the entirety of TWiLight Menu++ by simply running `make package` in the root of the repository. If you only want to build a specific part of TWiLight Menu++ you can `cd` to that folder and run `make dist`.
@@ -44,6 +55,38 @@ Please note that Docker compilation is not compatible with native compilation on
 ## Manual Pages
 
 The manual pages are stored in a separate repository and downloaded from a release when building TWiLight Menu++. For more information, see the [twilight-manual](https://github.com/DS-Homebrew/twilight-manual) repository.
+
+## Subfolders
+
+TWiLight Menu++ is composed of multiple "sub-projects" which all work together to create the DSi Menu replacement. Most subfolders in the repository contain their own code which will compile a `xxx.nds` file, which is generally copied to `/_nds/TWiLightMenu/xxx.srldr` inside the `7z` file (or `7zfile` folder).
+
+- **3dssplash**: opens 3ds and cia files (?)
+  - Compiled to `/_nds/TWiLightMenu/3dssplash.srldr`
+- **booter**: main entrypoint, the first file loaded by the console if using SD-card or CFW
+  - Creates `/BOOT.nds` and `/title/00030004/53524c41/content/00000000.app` (same file).
+- **booter_fc**: main entrypoint for flashcards
+  - Creates `_DS_MENU.dat`, `dsedgei.dat`, `akmenu4.nds`, `_DSMENU.nds`, `SCFW.SC` and others.
+- gbapatcher
+- **imageview**: image viewer similar to DSi camera (gif, png, bmp)
+  - `/_nds/TWiLightMenu/imageview.srldr`
+- **manual**: instruction manual for TWiLight Menu++
+  - Creates `/_nds/TWiLightMenu/manual.srldr`
+- **quickmenu**: DS Lite menu, the old classic ui
+  - Creates `/_nds/TWiLightMenu/mainmenu.srldr`
+- **resources**: merges the antipiracy and widescreen patches into a package file
+  - `/_nds/TWiLightMenu/extras/apfix.pck` and `/_nds/TWiLightMenu/extras/widescreen.pck`
+- **romsel_aktheme**: unused, not included in package
+- **romsel_dsimenutheme**: menu for the DSi theme used by "Nintendo DSi", "Nintendo 3DS", "SEGA Saturn", and "Homebrew Launcher"
+  - Creates `/_nds/TWiLightMenu/dsimenu.srldr`
+- **romsel_r4theme**: menu for the R4 theme used by "R4 Original" and "Gameboy Color"
+  - Creates `/_nds/TWiLightMenu/r4menu.srldr`
+- **rungame**: unused, not included in package
+- **settings**: settings menu
+  - Creates `/_nds/TWiLightMenu/settings.srldr`
+- **slot1launch**:
+  - Creates `/_nds/TWiLightMenu/slot1launch.srldr`
+- **title**: boot splash screen (Nintendo logo by default)
+  - Creates `/_nds/TWiLightMenu/main.srldr`
 
 # Translating
 
