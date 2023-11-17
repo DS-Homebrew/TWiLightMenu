@@ -2307,7 +2307,10 @@ int r4Theme(void) {
 				} else if (extension(filename, {".a52"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EA5200DSLaunch;
 					
-					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A5200DSi.nds";
+					if (isDSiMode() && access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A5200DSi.nds";
+					}
 					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 						boostVram = true;
@@ -2348,7 +2351,7 @@ int r4Theme(void) {
 				} else if (extension(filename, {".nes", ".fds"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::ENESDSLaunch;
 
-					ndsToBoot = (ms().secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/nesds.nds";
 					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 						boostVram = true;

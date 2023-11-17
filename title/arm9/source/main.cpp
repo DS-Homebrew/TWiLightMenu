@@ -1001,7 +1001,7 @@ void lastRunROM()
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ENESDSLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nesds.nds";
 		if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 		}
@@ -1144,7 +1144,10 @@ void lastRunROM()
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EA5200DSLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/A5200DSi.nds";
+		if (isDSiMode() && access(argarray[0], F_OK) != 0) {
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A5200DSi.nds";
+		}
 		if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 		}
