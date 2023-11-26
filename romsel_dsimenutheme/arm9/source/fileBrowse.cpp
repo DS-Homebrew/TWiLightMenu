@@ -2889,7 +2889,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		if (!musicplaying && ms().theme != TWLSettings::EThemeSaturn) {
 			if (ms().dsiMusic != 0) {
-				if ((ms().theme == TWLSettings::ETheme3DS && ms().dsiMusic == 1) || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
+				if ((ms().theme == TWLSettings::ETheme3DS && (ms().dsiMusic == 1 || ms().dsiMusic == 4)) || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
 					//logPrint("snd().playStartup()\n");
 					snd().playStartup();
 					//logPrint("snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust())\n");
