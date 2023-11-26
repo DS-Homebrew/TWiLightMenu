@@ -111,7 +111,7 @@ jobs:
           7z x nesDS.7z nesDS/nesDS.nds
           mv nesDS/nesDS.nds nesDS.nds
           rm nesDS.7z
-          rm nesDS
+          rm -rf nesDS
           curl -LO https://github.com/FluBBaOfWard/S8DS/releases/latest/download/S8DS.zip
           7z x S8DS.zip S8DS.nds
           rm S8DS.zip
