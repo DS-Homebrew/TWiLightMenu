@@ -243,6 +243,10 @@ int main() {
 		*(vu32*)0x037C0000 = wordBak;
 	}
 
+	if (isDSiMode()) {
+		getConsoleID();
+	}
+
 	u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 	
 	hasRegulableBacklight = !!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7));
@@ -274,10 +278,6 @@ int main() {
 		
 		if((readPowerManagement(PM_CONTROL_REG) & 0xC) == 0) // DS Phat backlight off
 			backlightLevel = 4;
-	}
-
-	if (isDSiMode()) {
-		getConsoleID();
 	}
 
 

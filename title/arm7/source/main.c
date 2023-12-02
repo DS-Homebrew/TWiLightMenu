@@ -233,6 +233,8 @@ int main() {
 	}
 
 	if (isDSiMode()) {
+		getConsoleID();
+
 		memset((void*)0x0CF80000, 0, 0x20);
 		biosDump((void*)0x02F80020, (const void*)0x00000020, 0x7FE0);
 	}
@@ -288,8 +290,6 @@ int main() {
 			*(u8*)(0x02FFFD01) = i2cReadRegister(0x4A, 0x30);
 		}
 		*(u8*)(0x02FFFD02) = 0x77;
-
-		getConsoleID();
 	}
 
 
