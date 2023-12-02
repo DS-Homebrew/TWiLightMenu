@@ -37,6 +37,7 @@
 
 void my_touchInit();
 void my_installSystemFIFO(void);
+void my_sdmmc_get_cid(int devicenumber, u32 *cid);
 
 u8 my_i2cReadRegister(u8 device, u8 reg);
 u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data);
@@ -348,7 +349,7 @@ int main() {
 		}
 
 		if (*(u32*)(0x2FFFD0C) == 0x454D4D43) {
-			sdmmc_nand_cid((u32*)0x2FFD7BC);	// Get eMMC CID
+			my_sdmmc_get_cid(true, (u32*)0x2FFD7BC);	// Get eMMC CID
 			*(u32*)(0x2FFFD0C) = 0;
 		}
 		swiWaitForVBlank();
