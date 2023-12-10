@@ -537,7 +537,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 44
+// Total: 45
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -556,6 +556,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"K2E", // Easter Eggztravaganza
 	"KFD", // Fieldrunners
 	"KFO", // Frenzic
+	"KGK", // Glory Days: Tactical Defense
 	"KZH", // Halloween Trick or Treat
 	"KPT", // Link 'n' Launch
 	"KYL", // Make Up & Style
@@ -604,6 +605,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	0, // Easter Eggztravaganza (Part of the game only)
 	1, // Fieldrunners (No audio)
 	4, // Frenzic (Crashes at certain point)
+	2, // Glory Days: Tactical Defense (No music)
 	2, // Halloween Trick or Treat (No music)
 	2, // Link 'n' Launch (No music)
 	5, // Make Up & Style (No FMV)
