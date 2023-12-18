@@ -1053,21 +1053,21 @@ void printLastPlayedText(int num) {
 	printSmall(false, BOX_PX, iconYpos[num] + BOX_PY - (calcSmallFontHeight(STR_LAST_PLAYED_HERE) / 2), STR_LAST_PLAYED_HERE, Alignment::center);
 }
 
-void refreshNdsCard() {
+void refreshNdsCard(bool refreshBoxArt) {
 	if (cardRefreshed) return;
 
-	if (sys().arm7SCFGLocked() && ms().showBoxArt) {
+	if (sys().arm7SCFGLocked() && refreshBoxArt) {
 		loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 	} else {
 		my_cardReset(true);
-		if ((cardInit() == 0) && ms().showBoxArt) {
+		if ((cardInit() == 0) && refreshBoxArt) {
 			char game_TID[5] = {0};
 			tonccpy(&game_TID, ndsCardHeader.gameCode, 4);
 
 			char boxArtPath[256];
 			sprintf (boxArtPath, (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
 			loadBoxArt(boxArtPath, true);	// Load box art
-		} else if (ms().showBoxArt) {
+		} else if (refreshBoxArt) {
 			loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 		}
 	}
@@ -1616,12 +1616,12 @@ int dsClassicMenu(void) {
 		loadBoxArt(boxArtPath[ms().previousUsedDevice], ms().previousUsedDevice);	// Load box art
 	}
 
-	if (isDSiMode() && !flashcardFound() && ms().slot1Launched) {
+	if (isDSiMode() && !flashcardFound()) {
 		if (REG_SCFG_MC == 0x11) {
 			cardEjected = true;
-			if (ms().showBoxArt) loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
+			if (ms().showBoxArt && ms().slot1Launched) loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 		} else {
-			refreshNdsCard();
+			refreshNdsCard(ms().showBoxArt && ms().slot1Launched);
 		}
 	}
 
@@ -1659,7 +1659,7 @@ int dsClassicMenu(void) {
 						cardEjected = true;
 						updateMenuText = true;
 					} else if (cardEjected) {
-						refreshNdsCard();
+						refreshNdsCard(ms().showBoxArt);
 						updateMenuText = true;
 					}
 				}
