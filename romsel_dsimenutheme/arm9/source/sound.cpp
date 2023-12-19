@@ -270,9 +270,15 @@ SoundControl::SoundControl()
 			case 4:
 			case 1:
 			default: {
-				stream.sampling_rate = ms().dsiMusic == 4 ? 32000 : 16000;	 		// 32000Hz or 16000Hz
+				bool use3DSMusic = ms().dsiMusic == 4 || (ms().dsiMusic == 3 && ms().theme == TWLSettings::ETheme3DS);
+				bool useHBLMusic = ms().dsiMusic == 3 && ms().theme == TWLSettings::EThemeHBL;
+				stream.sampling_rate = useHBLMusic ? 44100 : (use3DSMusic ? 32000 : 16000);	 		// 44100Hz, 32000Hz, or 16000Hz
 				stream.format = MM_STREAM_16BIT_MONO;
-				stream_source = fopen(std::string(ms().dsiMusic == 4 ? TFN_DEFAULT_SOUND_BG_3D : TFN_DEFAULT_SOUND_BG).c_str(), "rb");
+				if (useHBLMusic) {
+					stream_start_source = fopen(std::string(TFN_HBL_START_SOUND_BG).c_str(), "rb");
+					loopableMusic = true;
+				}
+				stream_source = fopen(std::string(useHBLMusic ? TFN_HBL_LOOP_SOUND_BG : (use3DSMusic ? TFN_DEFAULT_SOUND_BG_3D : TFN_DEFAULT_SOUND_BG)).c_str(), "rb");
 				seekPos = 0x2C;
 				break; }
 		}
