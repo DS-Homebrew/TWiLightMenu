@@ -56,7 +56,7 @@ bool boxArtColorDeband = false;
 
 static u8* boxArtCache = (u8*)NULL;	// Size: 0x1B8000
 static bool boxArtFound[40] = {false};
-int boxArtType[40] = {0};	// 0: NDS, 1: FDS/GBA/GBC/GB, 2: NES/GEN/MD/SFC, 3: SNES
+uint boxArtWidth = 0, boxArtHeight = 0;
 
 ThemeTextures::ThemeTextures()
     : bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
@@ -779,47 +779,25 @@ void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 }
 
 void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
-	bool found = true;
-
-	if (inMem ? !boxArtFound[CURPOS] : access(filename, F_OK) != 0) {
-		switch (boxArtType[CURPOS]) {
-			case -1:
-				return;
-			case 0:
-			default:
-				filename = "nitro:/graphics/boxart_unknown.png";
-				break;
-			case 1:
-				filename = "nitro:/graphics/boxart_unknown1.png";
-				break;
-			case 2:
-				filename = "nitro:/graphics/boxart_unknown2.png";
-				break;
-			case 3:
-				filename = "nitro:/graphics/boxart_unknown3.png";
-				break;
-		}
-		found = false;
-		inMem = false;
-	}
+	if (inMem ? !boxArtFound[CURPOS] : access(filename, F_OK) != 0) return;
 
 	beginBgSubModify();
 
 	std::vector<unsigned char> image;
-	uint imageXpos, imageYpos, imageWidth, imageHeight;
+	uint imageXpos, imageYpos;
 	if (inMem) {
-		lodepng::decode(image, imageWidth, imageHeight, (unsigned char*)boxArtCache+(CURPOS*0xB000), 0xB000);
+		lodepng::decode(image, boxArtWidth, boxArtHeight, (unsigned char*)boxArtCache+(CURPOS*0xB000), 0xB000);
 	} else {
-		lodepng::decode(image, imageWidth, imageHeight, filename);
+		lodepng::decode(image, boxArtWidth, boxArtHeight, filename);
 	}
 	bool alternatePixel = false;
-	if (imageWidth > 256 || imageHeight > 192) return;
+	if (boxArtWidth > 256 || boxArtHeight > 192) return;
 
-	imageXpos = (256-imageWidth)/2;
-	imageYpos = (192-imageHeight)/2;
+	imageXpos = (256-boxArtWidth)/2;
+	imageYpos = (192-boxArtHeight)/2;
 
 	int photoXstart = imageXpos;
-	int photoXend = imageXpos+imageWidth;
+	int photoXend = imageXpos+boxArtWidth;
 	int photoX = photoXstart;
 	int photoY = imageYpos;
 
@@ -827,7 +805,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		const u8 alpha = image[(i*4)+3];
 		if (boxArtColorDeband) {
 			image[(i*4)+3] = 0;
-			if (alternatePixel && found) {
+			if (alternatePixel) {
 				if (image[(i*4)] >= 0x4) {
 					image[(i*4)] -= 0x4;
 					image[(i*4)+3] |= BIT(0);
@@ -852,27 +830,25 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 			_bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], alpha);
 		}
 		if (boxArtColorDeband) {
-			if (found) {
-				if (alternatePixel) {
-					if (image[(i*4)+3] & BIT(0)) {
-						image[(i*4)] += 0x4;
-					}
-					if (image[(i*4)+3] & BIT(1)) {
-						image[(i*4)+1] += 0x4;
-					}
-					if (image[(i*4)+3] & BIT(2)) {
-						image[(i*4)+2] += 0x4;
-					}
-				} else {
-					if (image[(i*4)] >= 0x4) {
-						image[(i*4)] -= 0x4;
-					}
-					if (image[(i*4)+1] >= 0x4) {
-						image[(i*4)+1] -= 0x4;
-					}
-					if (image[(i*4)+2] >= 0x4) {
-						image[(i*4)+2] -= 0x4;
-					}
+			if (alternatePixel) {
+				if (image[(i*4)+3] & BIT(0)) {
+					image[(i*4)] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(1)) {
+					image[(i*4)+1] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(2)) {
+					image[(i*4)+2] += 0x4;
+				}
+			} else {
+				if (image[(i*4)] >= 0x4) {
+					image[(i*4)] -= 0x4;
+				}
+				if (image[(i*4)+1] >= 0x4) {
+					image[(i*4)+1] -= 0x4;
+				}
+				if (image[(i*4)+2] >= 0x4) {
+					image[(i*4)+2] -= 0x4;
 				}
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
@@ -884,7 +860,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 			} else {
 				_bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], alpha);
 			}
-			if ((i % imageWidth) == imageWidth-1) alternatePixel = !alternatePixel;
+			if ((i % boxArtWidth) == boxArtWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
 		}
 		photoX++;
@@ -896,8 +872,8 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 
 	u16 *src = _bmpImageBuffer;
 	u16 *src2 = _bmpImageBuffer2;
-	for (uint y = 0; y < imageHeight; y++) {
-		for (uint x = 0; x < imageWidth; x++) {
+	for (uint y = 0; y < boxArtHeight; y++) {
+		for (uint x = 0; x < boxArtWidth; x++) {
 			_bgSubBuffer[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
 			if (boxArtColorDeband) {
 				_bgSubBuffer2[(y+imageYpos) * 256 + imageXpos + x] = *(src2++);
@@ -905,6 +881,62 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		}
 	}
 	commitBgSubModify();
+}
+
+#define MAX_PHOTO_WIDTH 208
+#define MAX_PHOTO_HEIGHT 156
+#define PHOTO_OFFSET 24
+// Redraw background and photo over the boxart bounds
+void ThemeTextures::drawOverBoxArt(uint photoWidth, uint photoHeight) {
+	if (boxArtWidth == 0 || boxArtHeight == 0) return;
+	uint boxArtX = (SCREEN_WIDTH - boxArtWidth) / 2;
+	uint boxArtY = (SCREEN_HEIGHT - boxArtHeight) / 2;
+
+	beginBgSubModify();
+	if (!tc().renderPhoto() || boxArtWidth > MAX_PHOTO_WIDTH || boxArtHeight > MAX_PHOTO_HEIGHT) {
+		if (!topBorderBufferLoaded) {
+			_backgroundTextures[0].copy(_topBorderBuffer, false);
+			topBorderBufferLoaded = true;
+		}
+		for (uint y = 0; y < boxArtHeight; y++) {
+			uint offset = boxArtX + (boxArtY + y) * SCREEN_WIDTH;
+			tonccpy(_bgSubBuffer + offset, _topBorderBuffer + offset, sizeof(u16) * boxArtWidth);
+			if (boxArtColorDeband) {
+				tonccpy(_bgSubBuffer2 + offset, _topBorderBuffer + offset, sizeof(u16) * boxArtWidth);
+			}
+		}
+	}
+	
+	if (tc().renderPhoto()) {
+		// fill black within boxart and photo bounds
+		uint blackX = boxArtX > PHOTO_OFFSET ? boxArtX : PHOTO_OFFSET;
+		uint blackY = boxArtY > PHOTO_OFFSET ? boxArtY : PHOTO_OFFSET;
+		uint blackWidth = boxArtWidth < MAX_PHOTO_WIDTH ? boxArtWidth : MAX_PHOTO_WIDTH;
+		uint blackHeight = boxArtHeight < MAX_PHOTO_HEIGHT ? boxArtHeight : MAX_PHOTO_HEIGHT;
+		for (uint y = 0; y < blackHeight; y++) {
+			uint offset = blackX + (blackY + y) * SCREEN_WIDTH;
+			dmaFillHalfWords(0x8000, _bgSubBuffer + offset, sizeof(u16) * blackWidth);
+			if (boxArtColorDeband) {
+				dmaFillHalfWords(0x8000, _bgSubBuffer2 + offset, sizeof(u16) * blackWidth);
+			}
+		}
+		// draw photo within boxart bounds
+		uint photoX = PHOTO_OFFSET + (MAX_PHOTO_WIDTH - photoWidth) / 2;
+		uint photoY = PHOTO_OFFSET + (MAX_PHOTO_HEIGHT - photoHeight) / 2;
+		uint xOffset = boxArtX > photoX ? boxArtX - photoX : 0;
+		uint yOffset = boxArtY > photoY ? boxArtY - photoY : 0;
+		uint copyWidth = boxArtWidth < photoWidth ? boxArtWidth : photoWidth;
+		uint copyHeight = boxArtHeight < photoHeight ? boxArtHeight : photoHeight;
+		for (uint y = 0; y < copyHeight; y++) {
+			uint offset = photoX + xOffset + (photoY + yOffset + y) * SCREEN_WIDTH;
+			tonccpy(_bgSubBuffer + offset, _photoBuffer + xOffset + (yOffset + y) * photoWidth, sizeof(u16) * copyWidth);
+			if (boxArtColorDeband) {
+				tonccpy(_bgSubBuffer2 + offset, _photoBuffer2 + xOffset + (yOffset + y) * photoWidth, sizeof(u16) * copyWidth);
+			}
+		}
+	}
+	commitBgSubModify();
+	boxArtWidth = boxArtHeight = 0;
 }
 
 ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
@@ -1064,42 +1096,6 @@ ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
 
 ITCM_CODE void ThemeTextures::resetCachedBatteryLevel() {
 	_cachedBatteryLevel = -1;
-}
-
-#define TOPLINES 32 * 256
-#define BOTTOMOFFSET ((tc().shoulderLRenderY() - 5) * 256)
-#define BOTTOMLINES ((192 - (tc().shoulderLRenderY() - 5)) * 256)
-// Load .bmp file without overwriting shoulder button images or username
-void ThemeTextures::drawTopBgAvoidingShoulders() {
-
-	// Copy current to _bmpImageBuffer
-	if (boxArtColorDeband) {
-		dmaCopyWords(0, _frameBufferBot[0], _bmpImageBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-		dmaCopyWords(0, _frameBufferBot[1], _bmpImageBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	} else {
-		dmaCopyWords(0, BG_GFX_SUB, _bmpImageBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	}
-
-	// Throw the entire top background into the sub buffer.
-	_backgroundTextures[0].copy(_bgSubBuffer, false);
-	if (boxArtColorDeband) {
-		tonccpy((u8*)_bgSubBuffer2, (u8*)_bgSubBuffer, 0x18000);
-	}
-
-	// Copy top 32 lines from the buffer into the sub.
-	tonccpy(_bgSubBuffer, _bmpImageBuffer, sizeof(u16) * TOPLINES);
-	if (boxArtColorDeband) {
-		tonccpy(_bgSubBuffer2, _bmpImageBuffer2, sizeof(u16) * TOPLINES);
-	}
-	
-	// Copy bottom tc().shoulderLRenderY() + 5 lines into the sub
-	// ((192 - 32) * 256)
-	tonccpy(_bgSubBuffer + BOTTOMOFFSET, _bmpImageBuffer + BOTTOMOFFSET, sizeof(u16) * BOTTOMLINES);
-	if (boxArtColorDeband) {
-		tonccpy(_bgSubBuffer2 + BOTTOMOFFSET, _bmpImageBuffer2 + BOTTOMOFFSET, sizeof(u16) * BOTTOMLINES);
-	}
-
-	commitBgSubModify();
 }
 
 void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
