@@ -1324,6 +1324,9 @@ void loadPhoto(const std::string &path) {
 	// Fill area with black
 	for (int y = 24; y < 180; y++) {
 		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
+		if (boxArtColorDeband) {
+			dmaFillHalfWords(0x8000, bgSubBuffer2 + (y * 256) + 24, 208 * 2);
+		}
 	}
 
 	// Start loading
@@ -1397,37 +1400,6 @@ void loadBootstrapScreenshot(FILE *file) {
 	delete[] buffer;
 }
 
-// Load photo without overwriting shoulder button images
-void loadPhotoPart() {
-	u16 *bgSubBuffer = tex().beginBgSubModify();
-	u16* bgSubBuffer2 = tex().bgSubBuffer2();
-
-	// Fill area with black
-	for (int y = 24; y < 172; y++) {
-		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
-	}
-
-	// Start loading
-	u16 *src = tex().photoBuffer();
-	u16 *src2 = tex().photoBuffer2();
-	uint startX = 24 + (208 - photoWidth) / 2;
-	uint y = 24 + ((156 - photoHeight) / 2);
-	uint x = startX;
-	for (uint i = 0; i < photoWidth * photoHeight; i++) {
-		if (x >= startX + photoWidth) {
-			x = startX;
-			y++;
-			if (y >= 172)	break;
-		}
-		bgSubBuffer[y * 256 + x] = *(src++);
-		if (boxArtColorDeband) {
-			bgSubBuffer2[y * 256 + x] = *(src2++);
-		}
-		x++;
-	}
-	tex().commitBgSubModify();
-}
-
 static std::string loadedDate;
 
 ITCM_CODE void drawCurrentDate() {
@@ -1464,19 +1436,7 @@ ITCM_CODE void drawCurrentTime() {
 
 void clearBoxArt() {
 	if (ms().macroMode) return;
-
-	if (!tc().renderPhoto()) {
-		// tex().drawTopBg();
-		// tex().drawProfileName();
-		// tex().drawBatteryImageCached();
-		// tex().drawVolumeImageCached();
-		// tex().drawShoulders(showLshoulder, showR);
-		// drawCurrentDate();
-		// drawCurrentTime();
-		tex().drawTopBgAvoidingShoulders();
-	} else {
-		loadPhotoPart();
-	}
+	tex().drawOverBoxArt(photoWidth, photoHeight);
 }
 
 // static char videoFrameFilename[256];

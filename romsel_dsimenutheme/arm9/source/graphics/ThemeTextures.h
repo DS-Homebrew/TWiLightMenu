@@ -51,7 +51,6 @@ public:
 	static void commitBgMainModifyAsync();
 
 	void drawTopBg();
-	void drawTopBgAvoidingShoulders();
 
 	void drawProfileName();
 	void resetProfileName();
@@ -59,6 +58,7 @@ public:
 
 	void loadBoxArtToMem(const char *filename, int num);
 	void drawBoxArt(const char* filename, bool inMem);
+	void drawOverBoxArt(uint photoWidth, uint photoHeight);
 
 	void drawVolumeImage(int volumeLevel);
 	void drawVolumeImageMacro(int volumeLevel);
