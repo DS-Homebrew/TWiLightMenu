@@ -14,8 +14,6 @@
 
 extern bool boxArtColorDeband;
 
-extern int boxArtType[40];
-
 using std::unique_ptr;
 using std::min;
 using std::vector;

@@ -56,7 +56,6 @@ bool boxArtColorDeband = false;
 
 static u8* boxArtCache = (u8*)NULL;	// Size: 0x1B8000
 static bool boxArtFound[40] = {false};
-int boxArtType[40] = {0};	// 0: NDS, 1: FDS/GBA/GBC/GB, 2: NES/GEN/MD/SFC, 3: SNES
 uint boxArtWidth = 0, boxArtHeight = 0;
 
 ThemeTextures::ThemeTextures()
@@ -780,29 +779,7 @@ void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 }
 
 void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
-	bool found = true;
-
-	if (inMem ? !boxArtFound[CURPOS] : access(filename, F_OK) != 0) {
-		switch (boxArtType[CURPOS]) {
-			case -1:
-				return;
-			case 0:
-			default:
-				filename = "nitro:/graphics/boxart_unknown.png";
-				break;
-			case 1:
-				filename = "nitro:/graphics/boxart_unknown1.png";
-				break;
-			case 2:
-				filename = "nitro:/graphics/boxart_unknown2.png";
-				break;
-			case 3:
-				filename = "nitro:/graphics/boxart_unknown3.png";
-				break;
-		}
-		found = false;
-		inMem = false;
-	}
+	if (inMem ? !boxArtFound[CURPOS] : access(filename, F_OK) != 0) return;
 
 	beginBgSubModify();
 
@@ -828,7 +805,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		const u8 alpha = image[(i*4)+3];
 		if (boxArtColorDeband) {
 			image[(i*4)+3] = 0;
-			if (alternatePixel && found) {
+			if (alternatePixel) {
 				if (image[(i*4)] >= 0x4) {
 					image[(i*4)] -= 0x4;
 					image[(i*4)+3] |= BIT(0);
@@ -853,27 +830,25 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 			_bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], alpha);
 		}
 		if (boxArtColorDeband) {
-			if (found) {
-				if (alternatePixel) {
-					if (image[(i*4)+3] & BIT(0)) {
-						image[(i*4)] += 0x4;
-					}
-					if (image[(i*4)+3] & BIT(1)) {
-						image[(i*4)+1] += 0x4;
-					}
-					if (image[(i*4)+3] & BIT(2)) {
-						image[(i*4)+2] += 0x4;
-					}
-				} else {
-					if (image[(i*4)] >= 0x4) {
-						image[(i*4)] -= 0x4;
-					}
-					if (image[(i*4)+1] >= 0x4) {
-						image[(i*4)+1] -= 0x4;
-					}
-					if (image[(i*4)+2] >= 0x4) {
-						image[(i*4)+2] -= 0x4;
-					}
+			if (alternatePixel) {
+				if (image[(i*4)+3] & BIT(0)) {
+					image[(i*4)] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(1)) {
+					image[(i*4)+1] += 0x4;
+				}
+				if (image[(i*4)+3] & BIT(2)) {
+					image[(i*4)+2] += 0x4;
+				}
+			} else {
+				if (image[(i*4)] >= 0x4) {
+					image[(i*4)] -= 0x4;
+				}
+				if (image[(i*4)+1] >= 0x4) {
+					image[(i*4)+1] -= 0x4;
+				}
+				if (image[(i*4)+2] >= 0x4) {
+					image[(i*4)+2] -= 0x4;
 				}
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);

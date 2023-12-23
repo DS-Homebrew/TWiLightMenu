@@ -2565,82 +2565,56 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 			} else {
 				if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 					bnrRomType[i] = 0;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 					bnrRomType[i] = 10;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".msx"})) {
 					bnrRomType[i] = 21;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".col"})) {
 					bnrRomType[i] = 13;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".m5"})) {
 					bnrRomType[i] = 14;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".int"})) {
 					bnrRomType[i] = 12;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".plg"})) {
 					bnrRomType[i] = 9;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
 					bnrRomType[i] = 19;
-					boxArtType[i] = 2;
 				} else if (extension(std_romsel_filename, {".gif", ".bmp", ".png"})) {
 					bnrRomType[i] = 20;
-					boxArtType[i] = -1;
 				} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
 					bnrRomType[i] = 1;
-					boxArtType[i] = 1;
 				} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
 					bnrRomType[i] = 2;
-					boxArtType[i] = 1;
 				} else if (extension(std_romsel_filename, {".gbc"})) {
 					bnrRomType[i] = 3;
-					boxArtType[i] = 1;
 				} else if (extension(std_romsel_filename, {".nes"})) {
 					bnrRomType[i] = 4;
-					boxArtType[i] = 2;
 				} else if (extension(std_romsel_filename, {".fds"})) {
 					bnrRomType[i] = 4;
-					boxArtType[i] = 1;
 				} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
 					bnrRomType[i] = 15;
-					boxArtType[i] = 2;
 				} else if (extension(std_romsel_filename, {".sms"})) {
 					bnrRomType[i] = 5;
-					boxArtType[i] = 2;
 				} else if (extension(std_romsel_filename, {".gg"})) {
 					bnrRomType[i] = 6;
-					boxArtType[i] = 2;
 				} else if (extension(std_romsel_filename, {".gen"})) {
 					bnrRomType[i] = 7;
-					boxArtType[i] = 2;
 				} else if (extension(std_romsel_filename, {".smc"})) {
 					bnrRomType[i] = 8;
-					boxArtType[i] = 3;
 				} else if (extension(std_romsel_filename, {".sfc"})) {
 					bnrRomType[i] = 8;
-					boxArtType[i] = 2;
 				} else if (extension(std_romsel_filename, {".pce"})) {
 					bnrRomType[i] = 11;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
 					bnrRomType[i] = 16;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
 					bnrRomType[i] = 17;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".dsk"})) {
 					bnrRomType[i] = 18;
-					boxArtType[i] = 0;
 				} else if (extension(std_romsel_filename, {".min"})) {
 					bnrRomType[i] = 22;
-					boxArtType[i] = 0;
 				} else {
 					bnrRomType[i] = 9;
-					boxArtType[i] = -1;
 				}
 
 				if (bnrRomType[i] != 0) {
