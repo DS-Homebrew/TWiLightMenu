@@ -37,6 +37,7 @@
 #include "graphics/fontHandler.h"
 
 bool fadeType = false;		// false = out, true = in
+bool waitBeforeFade = false;
 
 using namespace std;
 
@@ -187,12 +188,22 @@ int main(int argc, char **argv) {
 		unlaunchRomBoot(srldrPath); // Start via Unlaunch
 	}
 
+	graphicsInit();
+	fontInit();
+	clearText();
+
+	waitBeforeFade = true;
+
+	printSmall(false, 4, 4, "Please wait...");
+	printSmall(false, 4, 12, "This may take a while.");
+
+	fadeType = true;
+
 	extern const DISC_INTERFACE __my_io_dsisd;
 
 	if (!fatMountSimple("sd", &__my_io_dsisd)) {
-		graphicsInit();
-		fontInit();
-		fadeType = true;
+		waitBeforeFade = false;
+		// fadeType = true;
 
 		clearText();
 		printSmall(false, 4, 4, "FAT init failed!");
@@ -204,15 +215,21 @@ int main(int argc, char **argv) {
 		fwrite((void*)0x02800000, 1, 0x400, deviceList);
 		fclose(deviceList);*/
 
+		if (!waitBeforeFade) {
+			fadeType = false;
+			for (int i = 0; i < 24; i++) {
+				swiWaitForVBlank();
+			}
+		}
+
 		vector<char *> argarray;
 		argarray.push_back((char*)srldrPath);
 
 		int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 		bool twlmFound = (access("sd:/_nds/TWiLightMenu", F_OK) == 0);
 
-		graphicsInit();
-		fontInit();
-		fadeType = true;
+		waitBeforeFade = false;
+		// fadeType = true;
 
 		int returnTextPos = 28;
 		clearText();

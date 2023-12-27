@@ -33,7 +33,9 @@
 #define CONSOLE_SCREEN_HEIGHT 24
 
 extern bool fadeType;
+extern bool waitBeforeFade;
 int screenBrightness = 31;
+int fadeWaitTimer = 0;
 
 int subBgTexID;
 glImage subBgImage[(256 / 16) * (256 / 16)];
@@ -99,12 +101,19 @@ void vBlankHandler()
 {
 	glBegin2D();
 	{
-		if (fadeType == true) {
-			screenBrightness--;
-			if (screenBrightness < 0) screenBrightness = 0;
+		if (waitBeforeFade) {
+			fadeWaitTimer++;
+			if (fadeWaitTimer > 60*4) {
+				waitBeforeFade = false;
+			}
 		} else {
-			screenBrightness++;
-			if (screenBrightness > 31) screenBrightness = 31;
+			if (fadeType == true) {
+				screenBrightness--;
+				if (screenBrightness < 0) screenBrightness = 0;
+			} else {
+				screenBrightness++;
+				if (screenBrightness > 31) screenBrightness = 31;
+			}
 		}
 		SetBrightness(0, screenBrightness);
 		SetBrightness(1, screenBrightness);
