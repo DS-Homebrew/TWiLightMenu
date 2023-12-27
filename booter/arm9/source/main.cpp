@@ -229,7 +229,7 @@ int main(int argc, char **argv) {
 		bool twlmFound = (access("sd:/_nds/TWiLightMenu", F_OK) == 0);
 
 		waitBeforeFade = false;
-		// fadeType = true;
+		fadeType = true;
 
 		int returnTextPos = 28;
 		clearText();
