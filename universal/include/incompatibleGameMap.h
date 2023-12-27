@@ -35,6 +35,7 @@ static const char incompatibleGameListMemoryPit[][4] = {
 static const char gbaGameListBiosReqiure[][4] = {
 	"AMT", // Metroid Fusion
 	"BMX", // Metroid: Zero Mission
+	"AWA", // Wario Land 4
 };
 
 #endif // INCOMPATIBLEMAP_H
