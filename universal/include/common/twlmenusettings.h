@@ -294,6 +294,7 @@ public:
 	TSortMethod sortMethod;
 	bool showDirectories;
 	bool showHidden;
+	bool showPhoto;
 	int showBoxArt;
 	bool animateDsiIcons;
 	bool showCustomIcons;

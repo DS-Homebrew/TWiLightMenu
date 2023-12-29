@@ -53,7 +53,8 @@ class Texture
 		TextureType _type;
 	
 	public:
-		Texture(const std::string& filePath, const std::string& fallback) noexcept;
+		Texture(const std::string& filePath, const std::string& fallback1, const std::string& fallback2) noexcept;
+		Texture(const std::string& filePath, const std::string& fallback) noexcept : Texture(filePath, fallback, "") {};
 		Texture(const Texture &) = delete;
 		Texture(Texture&&) = default;
 
@@ -77,8 +78,6 @@ class Texture
 		u32 texCmpLength() const { return _texCmpLength; };
 
 		TextureType type() const { return _type; }
-
-		static bool exists(const std::string &filePath);
 
 		void copy(u16 *dst, bool vram) const;
 

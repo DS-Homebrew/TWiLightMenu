@@ -9,39 +9,26 @@
 extern bool useTwlCfg;
 extern u16* colorTable;
 
-Texture::Texture(const std::string &filePath, const std::string &fallback)
+Texture::Texture(const std::string &filePath, const std::string &fallback1, const std::string &fallback2)
 	: _paletteLength(0), _texLength(0), _texCmpLength(0), _texHeight(0), _texWidth(0), _type(TextureType::Unknown) {
 	std::string pngPath;
-	FILE *file;
-	for (const char *extension : extensions) {
-		file = fopen((filePath + extension).c_str(), "rb");
-		if (file) {
-			_type = findType(file);
-			if (_type == TextureType::Unknown) {
-				fclose(file);
-
-			} else {
-				pngPath = filePath + extension;
-				break;
-			}
-		}
-	}
-
-	if (!file) {
+	FILE *file = NULL;
+	const std::string *paths[] = {&filePath, &fallback1, &fallback2};
+	int i = 0;
+	do {
 		for (const char *extension : extensions) {
-			file = fopen((fallback + extension).c_str(), "rb");
+			file = fopen((*paths[i] + extension).c_str(), "rb");
 			if (file) {
 				_type = findType(file);
 				if (_type == TextureType::Unknown) {
 					fclose(file);
-
 				} else {
-					pngPath = fallback + extension;
+					pngPath = *paths[i] + extension;
 					break;
 				}
 			}
 		}
-	}
+	} while (!file && ++i < 3);
 
 	switch (_type) {
 	case TextureType::PalettedGrf:
@@ -290,13 +277,6 @@ u16 Texture::bmpToDS(u16 val) {
 		return colorTable[val];
 	}
 	return val;
-}
-
-bool Texture::exists(const std::string &filePath) {
-	for (const char *extension : extensions) {
-		if (access((filePath + extension).c_str(), F_OK) == 0) return true;
-	}
-	return false;
 }
 
 void Texture::copy(u16 *dst, bool vram) const {

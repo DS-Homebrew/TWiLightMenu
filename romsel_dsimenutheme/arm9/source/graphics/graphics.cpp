@@ -1504,7 +1504,7 @@ void graphicsInit() {
 
 	// printf("drawn bgload");
 	// while (1) {}
-	if (!ms().macroMode && tc().renderPhoto()) {
+	if (!ms().macroMode && ms().showPhoto && tc().renderPhoto()) {
 		srand(time(NULL));
 		loadPhotoList();
 	}

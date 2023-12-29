@@ -218,8 +218,11 @@ void ThemeTextures::reloadPalDialogBox() {
 void ThemeTextures::loadBackgrounds() {
 	// 0: Top, 1: Bottom, 2: Bottom Bubble, 3: Moving, 4: MovingLeft, 5: MovingRight
 
-	// We reuse the _topBackgroundTexture as a buffer.
-	_backgroundTextures.emplace_back(TFN_BG_TOPBG, TFN_FALLBACK_BG_TOPBG);
+	if (ms().showPhoto && tc().renderPhoto()) {
+		_backgroundTextures.emplace_back(TFN_BG_TOPPHOTOBG, TFN_BG_TOPBG, ms().theme == TWLSettings::EThemeDSi ? TFN_FALLBACK_BG_TOPPHOTOBG : TFN_FALLBACK_BG_TOPBG);
+	} else {
+		_backgroundTextures.emplace_back(TFN_BG_TOPBG, TFN_FALLBACK_BG_TOPBG);
+	}
 		
 	
 	if (ms().theme == TWLSettings::ETheme3DS && !sys().isRegularDS()) {
@@ -235,23 +238,9 @@ void ThemeTextures::loadBackgrounds() {
 	}
 	// DSi Theme
 	if (ms().macroMode) {
-		if (Texture::exists(TFN_BG_BOTTOMBG_MACRO)) {
-			_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG_MACRO, TFN_FALLBACK_BG_BOTTOMBG);
-		} else {
-			_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
-		}
-
-		if (Texture::exists(TFN_BG_BOTTOMBUBBLEBG_MACRO)) {
-			_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG_MACRO, TFN_FALLBACK_BG_BOTTOMBUBBLEBG_MACRO);
-		} else {
-			_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
-		}
-
-		if (ms().theme == TWLSettings::EThemeDSi && Texture::exists(TFN_BG_BOTTOMMOVINGBG_MACRO)) {
-			_backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG_MACRO, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
-		} else {
-			_backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
-		}
+		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG_MACRO, TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
+		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG_MACRO, TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG_MACRO);
+		if (ms().theme == TWLSettings::EThemeDSi) _backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG_MACRO, TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
 	} else {
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
@@ -523,10 +512,17 @@ void ThemeTextures::loadUITextures() {
 	}
 
 	if (ms().theme != TWLSettings::EThemeHBL) {
-		_leftShoulderTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
-		_rightShoulderTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
-		_leftShoulderGreyedTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER_GREYED, TFN_FALLBACK_UI_LSHOULDER_GREYED);
-		_rightShoulderGreyedTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER_GREYED, TFN_FALLBACK_UI_RSHOULDER_GREYED);
+		if (ms().showPhoto && tc().renderPhoto()) {
+			_leftShoulderTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER_PHOTO, TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
+			_rightShoulderTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER_PHOTO, TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
+			_leftShoulderGreyedTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER_PHOTO_GREYED, TFN_UI_LSHOULDER_GREYED, TFN_FALLBACK_UI_LSHOULDER_GREYED);
+			_rightShoulderGreyedTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER_PHOTO_GREYED, TFN_UI_RSHOULDER_GREYED, TFN_FALLBACK_UI_RSHOULDER_GREYED);
+		} else {
+			_leftShoulderTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
+			_rightShoulderTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
+			_leftShoulderGreyedTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER_GREYED, TFN_FALLBACK_UI_LSHOULDER_GREYED);
+			_rightShoulderGreyedTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER_GREYED, TFN_FALLBACK_UI_RSHOULDER_GREYED);
+		}
 	}
 }
 
@@ -893,7 +889,7 @@ void ThemeTextures::drawOverBoxArt(uint photoWidth, uint photoHeight) {
 	uint boxArtY = (SCREEN_HEIGHT - boxArtHeight) / 2;
 
 	beginBgSubModify();
-	if (!tc().renderPhoto() || boxArtWidth > MAX_PHOTO_WIDTH || boxArtHeight > MAX_PHOTO_HEIGHT) {
+	if (!ms().showPhoto || !tc().renderPhoto() || boxArtWidth > MAX_PHOTO_WIDTH || boxArtHeight > MAX_PHOTO_HEIGHT) {
 		if (!topBorderBufferLoaded) {
 			_backgroundTextures[0].copy(_topBorderBuffer, false);
 			topBorderBufferLoaded = true;
@@ -907,7 +903,7 @@ void ThemeTextures::drawOverBoxArt(uint photoWidth, uint photoHeight) {
 		}
 	}
 	
-	if (tc().renderPhoto()) {
+	if (ms().showPhoto && tc().renderPhoto()) {
 		// fill black within boxart and photo bounds
 		uint blackX = boxArtX > PHOTO_OFFSET ? boxArtX : PHOTO_OFFSET;
 		uint blackY = boxArtY > PHOTO_OFFSET ? boxArtY : PHOTO_OFFSET;

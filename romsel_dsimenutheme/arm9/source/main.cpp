@@ -970,7 +970,7 @@ void customSleep() {
 		powerOn(PM_BACKLIGHT_TOP);
 	}
 	powerOn(PM_BACKLIGHT_BOTTOM);
-	if (!ms().macroMode && tc().renderPhoto()) {
+	if (!ms().macroMode && ms().showPhoto && tc().renderPhoto()) {
 		srand(time(NULL));
 		loadPhotoList();
 

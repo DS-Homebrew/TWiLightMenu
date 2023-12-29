@@ -44,6 +44,7 @@
 #define TFN_THEME_SETTINGS          TFN_UI_DIRECTORY"/theme.ini"
 
 #define TFN_BG_TOPBG                TFN_UI_DIRECTORY"/background/top"
+#define TFN_BG_TOPPHOTOBG           TFN_UI_DIRECTORY"/background/top_photo"
 #define TFN_BG_BOTTOMBG             TFN_UI_DIRECTORY"/background/bottom"
 #define TFN_BG_BOTTOMBG_MACRO       TFN_UI_DIRECTORY"/background/bottom_macro"
 #define TFN_BG_BOTTOMBUBBLEBG       TFN_UI_DIRECTORY"/background/bottom_bubble"
@@ -59,6 +60,10 @@
 #define TFN_UI_LSHOULDER_GREYED     TFN_UI_DIRECTORY"/ui/Lshoulder_greyed"
 #define TFN_UI_RSHOULDER            TFN_UI_DIRECTORY"/ui/Rshoulder"
 #define TFN_UI_RSHOULDER_GREYED     TFN_UI_DIRECTORY"/ui/Rshoulder_greyed"
+#define TFN_UI_LSHOULDER_PHOTO            TFN_UI_DIRECTORY"/ui/Lshoulder_photo"
+#define TFN_UI_LSHOULDER_PHOTO_GREYED     TFN_UI_DIRECTORY"/ui/Lshoulder_photo_greyed"
+#define TFN_UI_RSHOULDER_PHOTO            TFN_UI_DIRECTORY"/ui/Rshoulder_photo"
+#define TFN_UI_RSHOULDER_PHOTO_GREYED     TFN_UI_DIRECTORY"/ui/Rshoulder_photo_greyed"
 
 #define TFN_BATTERY0                TFN_UI_DIRECTORY"/battery/battery0"
 #define TFN_BATTERY1                TFN_UI_DIRECTORY"/battery/battery1"
@@ -217,6 +222,7 @@
 #define TFN_FALLBACK_THEME_SETTINGS          TFN_FALLBACK_UI_DIRECTORY"/theme.ini"
 
 #define TFN_FALLBACK_BG_TOPBG                TFN_FALLBACK_UI_DIRECTORY"/background/top"
+#define TFN_FALLBACK_BG_TOPPHOTOBG           TFN_FALLBACK_UI_DIRECTORY"/background/top_photo"
 #define TFN_FALLBACK_BG_BOTTOMBG             TFN_FALLBACK_UI_DIRECTORY"/background/bottom"
 #define TFN_FALLBACK_BG_BOTTOMBUBBLEBG       TFN_FALLBACK_UI_DIRECTORY"/background/bottom_bubble"
 #define TFN_FALLBACK_BG_BOTTOMBUBBLEBG_MACRO TFN_FALLBACK_UI_DIRECTORY"/background/bottom_bubble_macro"
