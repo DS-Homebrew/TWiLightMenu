@@ -73,6 +73,7 @@ public:
 	void drawDateTimeMacro(const char* date, int posX, int posY, bool isDate);
 
 	void clearTopScreen();
+	void unloadRotatingCubes();
 	static void videoSetup();
 private:
 	void applyUserPaletteToAllGrfTextures();

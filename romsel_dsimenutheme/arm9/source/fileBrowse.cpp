@@ -3710,6 +3710,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 							// Clear screen with white
 							rocketVideo_playVideo = false;
+							tex().unloadRotatingCubes();
 						}
 
 						if (ms().updateRecentlyPlayedList) {

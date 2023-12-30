@@ -1365,6 +1365,11 @@ void loadRotatingCubes() {
 		fclose(videoFrameFile);
 	}
 }
+void ThemeTextures::unloadRotatingCubes() {
+	if (dsiFeatures() && !ms().macroMode && ms().theme == TWLSettings::ETheme3DS && ms().consoleModel == 0) {
+		delete[] rotatingCubesLocation;
+	}
+}
 void ThemeTextures::videoSetup() {
 	logPrint("tex().videoSetup()\n");
 	//////////////////////////////////////////////////////////
