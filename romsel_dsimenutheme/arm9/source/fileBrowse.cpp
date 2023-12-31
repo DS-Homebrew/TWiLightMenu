@@ -628,7 +628,7 @@ void launchSettings(void) {
 	stop();
 }
 
-void launchPictochat(std::string filename) {
+void launchPictochat(std::string filename, bool isDir) {
 	const char* pictochatPath = sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds";
 
 	if (access(pictochatPath, F_OK) != 0) {
@@ -683,7 +683,7 @@ void launchPictochat(std::string filename) {
 				}
 			}
 		}
-		titleUpdate(false, filename.c_str(), CURPOS);
+		titleUpdate(isDir, filename.c_str(), CURPOS);
 		updateText(false);
 		return;
 	}
@@ -773,7 +773,7 @@ void launchPictochat(std::string filename) {
 	stop();
 }
 
-void launchDownloadPlay(std::string filename) {
+void launchDownloadPlay(std::string filename, bool isDir) {
 	const char* dlplayPath = sys().isRunFromSD() ? "sd:/_nds/dlplay.nds" : "fat:/_nds/dlplay.nds";
 
 	if ((!isDSiMode() || ms().consoleModel < 2) && access(dlplayPath, F_OK) != 0) {
@@ -828,7 +828,7 @@ void launchDownloadPlay(std::string filename) {
 				}
 			}
 		}
-		titleUpdate(false, filename.c_str(), CURPOS);
+		titleUpdate(isDir, filename.c_str(), CURPOS);
 		updateText(false);
 		return;
 	}
@@ -951,7 +951,7 @@ void launchDownloadPlay(std::string filename) {
 	stop();
 }
 
-void launchInternetBrowser(std::string filename) {
+void launchInternetBrowser(std::string filename, bool isDir) {
 	if (ms().internetBrowserPath == "" || access(ms().internetBrowserPath.c_str(), F_OK) != 0) {
 		if (ms().theme == TWLSettings::EThemeSaturn) {
 			snd().playStartup();
@@ -1004,7 +1004,7 @@ void launchInternetBrowser(std::string filename) {
 				}
 			}
 		}
-		titleUpdate(false, filename.c_str(), CURPOS);
+		titleUpdate(isDir, filename.c_str(), CURPOS);
 		updateText(false);
 		return;
 	}
@@ -3853,13 +3853,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								launchGba();
 								break;
 							case 2: // Launch Pictochat
-								launchPictochat(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+								launchPictochat(dirContents[scrn].at(CURPOS + PAGENUM * 40).name, dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory);
 								break;
 							case 3: // Launch DS Download Play
-								launchDownloadPlay(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+								launchDownloadPlay(dirContents[scrn].at(CURPOS + PAGENUM * 40).name, dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory);
 								break;
 							case 4: // Launch Internet Browser
-								launchInternetBrowser(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+								launchInternetBrowser(dirContents[scrn].at(CURPOS + PAGENUM * 40).name, dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory);
 								break;
 							case 5: // Open the manual
 								launchManual();
