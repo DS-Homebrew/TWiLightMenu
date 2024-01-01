@@ -704,7 +704,7 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // Decathlon 2012 (No audio)
 	2, // EJ Puzzles: Hooked (No music)
-	4, // Flipnote Studio (Crashes at certain point: Creating a flipnote)
+	4, // Flipnote Studio (Crashes when getting past the main menu)
 	1, // Goooooal America / Goooooal Europa 2012 (No audio)
 	7, // Ideyou Sukeno: Kenkou Maja DSi (Limited state due to no save support)
 	1, // Puzzle Rocks (No audio)
