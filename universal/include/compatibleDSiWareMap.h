@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 460
+// Total: 459
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -167,7 +167,6 @@ static const char compatibleGameListB4DS[][5] = {
 	"KZZ", // Fizz
 	"KFS", // Flashlight
 	"KKR", // Flip the Core
-	"KGUE", // Flipnote Studio (USA)
 	"KFP", // Flipper
 	"KFU", // Flips: The Bubonic Builders
 	"KFF", // Flips: The Enchanted Wood
@@ -637,7 +636,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 32
+// Total: 33
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -651,6 +650,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KDQ", // Dragon Quest Wars
 	"KEG", // Electroplankton: Lumiloop
 	"KER", // G.G Series: Exciting River
+	"KGUE", // Flipnote Studio (USA)
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
@@ -674,24 +674,25 @@ static const char compatibleGameListB4DSDebug[][5] = {
 };
 
 // Show RAM limitation message
-// Total: 2
+// Total: 3
 static const char compatibleGameListB4DSDebugRAMLimited[][4] = {
 	"KUV", // Bloons TD 4
+	"KGU", // Flipnote Studio
 	"KS3", // Shantae: Risky's Revenge
 };
 
 // RAM limitation message ID
 static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	1, // Bloons TD 4 (No audio)
+	4, // Flipnote Studio (Crashes when getting past the main menu)
 	2, // Shantae: Risky's Revenge (No music)
 };
 
 // Show RAM limitation message for both DS Retail & Debug consoles
-// Total: 9
+// Total: 8
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 	"KUI", // Decathlon 2012
 	"KHW", // EJ Puzzles: Hooked
-	"KGU", // Flipnote Studio
 	"K9A", // Goooooal America / Goooooal Europa 2012
 	"KNK", // Ideyou Sukeno: Kenkou Maja DSi
 	"KPL", // Puzzle Rocks
@@ -704,7 +705,6 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
 	1, // Decathlon 2012 (No audio)
 	2, // EJ Puzzles: Hooked (No music)
-	4, // Flipnote Studio (Crashes when getting past the main menu)
 	1, // Goooooal America / Goooooal Europa 2012 (No audio)
 	7, // Ideyou Sukeno: Kenkou Maja DSi (Limited state due to no save support)
 	1, // Puzzle Rocks (No audio)
