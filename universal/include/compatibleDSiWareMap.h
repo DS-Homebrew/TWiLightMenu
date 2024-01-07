@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 459
+// Total: 460
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -157,6 +157,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KED", // Electroplankton: Sun-Animalcule
 	"KEA", // Electroplankton: Trapy
 	"KEJ", // Electroplankton: Varvoice
+	"K42", // Elite Forces: Unit 77
 	"KD7", // G.G Series: Energy Chain
 	"K4E", // Fall in the Dark
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
