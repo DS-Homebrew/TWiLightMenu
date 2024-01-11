@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 460
+// Total: 463
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -33,6 +33,9 @@ static const char compatibleGameListB4DS[][5] = {
 	"K2K", // Aa! Nikaku Dori
 	"KXG", // Abyss
 	"KQK", // Ace Mathician
+	"KE5", // ACT Series: Tangocho: Ni Chi Hen
+	"KCS", // ACT Series: Tangocho: Ni Chu Hen
+	"KRE", // ACT Series: Tangocho: Ni Kan Hen
 	"KAC", // Advanced Circuits
 	"K5H", // Ah! Heaven
 	"K25", // G.G Series: Air Pinball Hockey
