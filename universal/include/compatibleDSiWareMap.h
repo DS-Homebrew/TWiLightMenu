@@ -637,12 +637,13 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 34
+// Total: 35
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
 	"K3Y", // 3 Heroes: Crystal Soul
 	"KXT", // 99Seconds
+	"KT3", // Academy Tic-Tac-Toe
 	"KAX", // Animal Boxing
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KUV", // Bloons TD 4
