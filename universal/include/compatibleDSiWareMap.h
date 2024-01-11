@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 463
+// Total: 464
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -55,6 +55,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KV2", // Anonymous Notes 2: From The Abyss
 	"KV3", // Anonymous Notes 3: From The Abyss
 	"KV4", // Anonymous Notes 4: From The Abyss
+	"KJH", // Antipole
 	"KL8", // Anyohaseyo!: Kankokugo Wado Pazuru
 	"KAA", // Art Style: Aquia
 	"KAZ", // ARC Style: Soccer!
