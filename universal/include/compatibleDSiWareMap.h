@@ -696,8 +696,9 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 };
 
 // Show RAM limitation message for both DS Retail & Debug consoles
-// Total: 8
+// Total: 9
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
+	"KJH", // Antipole
 	"KUI", // Decathlon 2012
 	"KHW", // EJ Puzzles: Hooked
 	"K9A", // Goooooal America / Goooooal Europa 2012
@@ -710,6 +711,7 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 
 // RAM limitation message ID
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
+	1, // Antipole (No audio)
 	1, // Decathlon 2012 (No audio)
 	2, // EJ Puzzles: Hooked (No music)
 	1, // Goooooal America / Goooooal Europa 2012 (No audio)
