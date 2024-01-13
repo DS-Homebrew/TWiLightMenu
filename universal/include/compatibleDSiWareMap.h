@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 467
+// Total: 469
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -229,6 +229,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
 	"KJF", // Just SING! 80's
+	"KJP", // Jump Trials
+	"KZC", // Jump Trials Extreme
 	"K3H", // Kazu De Asobu: Mahoujin To Imeji Kei-san
 	"KUX", // Keibadou Uma no Suke 2012
 	"K3D", // Keisan 100 Renda
