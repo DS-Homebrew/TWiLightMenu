@@ -167,7 +167,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K4E", // Fall in the Dark
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KFK", // Farm Frenzy
-	"KU7E", // Fashion Tycoon (USA)
+	"KU7", // Fashion Tycoon
 	"KFD", // Fieldrunners
 	"KF8", // Fire Panic
 	"KZZ", // Fizz
