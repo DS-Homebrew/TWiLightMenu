@@ -184,9 +184,9 @@ int main(int argc, char **argv) {
 
 	const char* srldrPath = (/*runGame ? "sd:/_nds/TWiLightMenu/resetgame.srldr" :*/ "sd:/_nds/TWiLightMenu/main.srldr");
 
-	if (*(u32*)0x02800000 == 0x00000041 || *(u32*)0x02800000 == 0x00060041) { // If using hiyaCFW...
+	/* if (*(u32*)0x02800000 == 0x00000041 || *(u32*)0x02800000 == 0x00060041) { // If using hiyaCFW...
 		unlaunchRomBoot(srldrPath); // Start via Unlaunch
-	}
+	} */
 
 	graphicsInit();
 	fontInit();
