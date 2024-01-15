@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 470
+// Total: 471
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -106,6 +106,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K2W", // Christmas Wonderland 2
 	"KVW", // Chronicles of Vampires: Origins
 	"KVV", // Chronicles of Vampires: Awakening
+	"K9T", // Chronos Twins: One Hero in Two Times
 	"KUQ", // Chuck E. Cheese's Alien Defense Force
 	"KUC", // Chuck E. Cheese's Arcade Room
 	"KJC", // Chuugaku Eijukugo: Kiho 150 Go Master
