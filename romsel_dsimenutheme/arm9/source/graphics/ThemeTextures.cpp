@@ -1367,6 +1367,7 @@ void loadRotatingCubes() {
 }
 void ThemeTextures::unloadRotatingCubes() {
 	if (dsiFeatures() && !ms().macroMode && ms().theme == TWLSettings::ETheme3DS && ms().consoleModel == 0) {
+		toncset32(rotatingCubesLocation, 0, 0x700000/sizeof(u32)); // Clear video before freeing
 		delete[] rotatingCubesLocation;
 	}
 }
