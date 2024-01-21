@@ -21,7 +21,6 @@ static const char incompatibleGameListFC[][4] = {
 // DSiWare
 static const char incompatibleGameListMemoryPit[][4] = {
 	"KFZ", // Faceez
-	"KGU", // Flipnote Studio
 	"KHJ", // Hidden Photo (DSiWare)
 	"HNG", // Nintendo DSi Browser
 	"KPB", // Photo Dojo
