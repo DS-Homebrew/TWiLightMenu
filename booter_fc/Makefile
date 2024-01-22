@@ -77,7 +77,14 @@ autoboot:
 	dlditool flashcart_specifics/DLDI/ak2_sd.dldi _DS_MENU.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/"
 	cp _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/_DS_MENU.dat"
-	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/akmenu4.nds"
+	cp _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/akmenu4.nds"
+
+	#### r4dspro.com
+	##### Cart doesn't support CMD25, thus needs a modified AK2 DLDI
+	dlditool flashcart_specifics/DLDI/ak2_sd_singlewrite.dldi _DS_MENU.dat
+	mkdir -p "../7zfile/Flashcard users/Autoboot/r4dspro.com"
+	cp _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/r4dspro.com/_DS_MENU.dat"
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/r4dspro.com/akmenu4.nds"
 
 	#### EDGEi (not EDGE or iEDGE)
 	cp booter_r4ig.nds dsedgei.dat
