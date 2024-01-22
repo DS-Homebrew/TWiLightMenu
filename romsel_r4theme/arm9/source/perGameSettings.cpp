@@ -559,10 +559,10 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 13;	// DSiWare booter
 		}
 		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
-			/* if (dsiFeatures() && ms().secondaryDevice && (!ms().dsiWareToSD || sys().arm7SCFGLocked()) && !bs().b4dsMode && !blacklisted_cardReadDma) {
+			if (dsiFeatures() && ms().secondaryDevice && (!ms().dsiWareToSD || sys().arm7SCFGLocked()) && !bs().b4dsMode && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
-			} */
+			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
@@ -608,7 +608,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}
 		if (bootstrapEnabled) {
-			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && romUnitCode < 3 && !blacklisted_cardReadDma) {
+			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
 			}
@@ -796,9 +796,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 5:
 				printSmall(false, 32, perGameOpYpos, "Card Read DMA:");
-				if (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && romUnitCode > 0) : perGameSettings_dsiMode > 0) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
-				} else if (perGameSettings_cardReadDMA == -1) {
+				if (perGameSettings_cardReadDMA == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_cardReadDMA == 1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
