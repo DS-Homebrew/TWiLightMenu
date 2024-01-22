@@ -796,7 +796,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 5:
 				printSmall(false, 32, perGameOpYpos, "Card Read DMA:");
-				if (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && romUnitCode > 0) : perGameSettings_dsiMode > 0) {
+				if (romUnitCode > 0 && (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode > 0)) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
 				} else if (perGameSettings_cardReadDMA == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
@@ -981,8 +981,10 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 5:
-						perGameSettings_cardReadDMA--;
-						if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = 1;
+						if (romUnitCode == 0 || (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode) : perGameSettings_dsiMode < 1)) {
+							perGameSettings_cardReadDMA--;
+							if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = 1;
+						}
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
@@ -1056,8 +1058,10 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 5:
-						perGameSettings_cardReadDMA++;
-						if (perGameSettings_cardReadDMA > 1) perGameSettings_cardReadDMA = -1;
+						if (romUnitCode == 0 || (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode) : perGameSettings_dsiMode < 1)) {
+							perGameSettings_cardReadDMA++;
+							if (perGameSettings_cardReadDMA > 1) perGameSettings_cardReadDMA = -1;
+						}
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
