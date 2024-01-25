@@ -2307,10 +2307,7 @@ int r4Theme(void) {
 				} else if (extension(filename, {".a52"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EA5200DSLaunch;
 					
-					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A5200DSi.nds";
-					if (isDSiMode() && access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A5200DSi.nds";
-					}
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 						boostVram = true;
