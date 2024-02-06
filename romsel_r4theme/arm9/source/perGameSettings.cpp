@@ -423,7 +423,7 @@ void perGameSettings (std::string filename) {
 		sprintf(sdkSubVerChar, "%d", sdkSubVer);
 		showSDKVersion = true;
 	}
-	u32 arm9off = 0;
+	// u32 arm9off = 0;
 	u32 arm9size = 0;
 	u32 arm7off = 0;
 	u32 arm7size = 0;
@@ -435,8 +435,8 @@ void perGameSettings (std::string filename) {
 	bool usesCloneboot = false;
 	bool dsiBinariesFound = false;
 	if (bnrRomType == 0) {
-		fseek(f_nds_file, 0x20, SEEK_SET);
-		fread(&arm9off, sizeof(u32), 1, f_nds_file);
+		// fseek(f_nds_file, 0x20, SEEK_SET);
+		// fread(&arm9off, sizeof(u32), 1, f_nds_file);
 		fseek(f_nds_file, 0x2C, SEEK_SET);
 		fread(&arm9size, sizeof(u32), 1, f_nds_file);
 		fseek(f_nds_file, 0x30, SEEK_SET);
@@ -459,7 +459,7 @@ void perGameSettings (std::string filename) {
 	}
 	fclose(f_nds_file);
 
-	bool largeArm9 = (arm9size >= 0x380000 && isModernHomebrew);
+	const bool largeArm9 = (arm9size >= 0x380000 && isModernHomebrew);
 
 	if (romSize > 0) {
 		if (usesCloneboot) {
@@ -469,8 +469,7 @@ void perGameSettings (std::string filename) {
 			romSize -= arm7off;
 			romSize -= arm7size;
 		} else {
-			romSize -= arm9off;
-			romSize -= arm9size;
+			romSize -= ovlOff;
 		}
 	}
 
