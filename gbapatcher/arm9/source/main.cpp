@@ -131,19 +131,17 @@ ITCM_CODE void gptc_patchWait()
 	// General fix for white screen crash
 	// Patch out wait states
 	for (u32 addr = 0x080000C0; addr < searchRange; addr+=4) {
-		if (*(u32*)addr == 0x04000204
-		 && (*(u8*)(addr-1) == 0x00 || *(u8*)(addr-1) == 0x03 || *(u8*)(addr-1) == 0x04 || *(u8*)(addr+7) == 0x04
-		  || *(u8*)(addr-1) == 0x08 || *(u8*)(addr-1) == 0x09
-		  || *(u8*)(addr-1) == 0x47 || *(u8*)(addr-1) == 0x81 || *(u8*)(addr-1) == 0x85
-		  || *(u8*)(addr-1) == 0xE0 || *(u8*)(addr-1) == 0xE7 || *(u16*)(addr-2) == 0xFFFE))
+		if (*(u32*)addr != 0x04000204) {
+			continue;
+		}
+		const u8 data8_last = *(u8*)(addr-1);
+		 if (data8_last == 0x00 || data8_last == 0x03 || data8_last == 0x04 || *(u8*)(addr+7) == 0x04 || *(u8*)(addr+0xB) == 0x04
+		  || data8_last == 0x08 || data8_last == 0x09
+		  || data8_last == 0x47 || data8_last == 0x81 || data8_last == 0x85
+		  || data8_last == 0xE0 || data8_last == 0xE7 || *(u16*)(addr-2) == 0xFFFE)
 		{
 			toncset((u16*)addr, 0, sizeof(u32));
 		}
-	}
-
-	// Also check at 0x410
-	if (*(u32*)0x08000410 == 0x04000204) {
-		toncset((u16*)0x08000410, 0, sizeof(u32));
 	}
 
 	scanKeys();
