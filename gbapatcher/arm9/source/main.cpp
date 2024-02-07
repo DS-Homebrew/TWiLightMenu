@@ -26,28 +26,24 @@ static u8 blankBuf[0x10000] = {0};
 u8 borderData[0x30000] = {0};
 std::string gbaBorder = "default.png";
 
-u32 romSize = 0;
+u32 romFileSize = 0;
 bool savingAllowed = true;
 
-u32 greenSwapPatch[8] = {
-	0xE59F000C,	// LDR  R0, =0x4000002
-	0xE59F100C, // LDR  R1, =1
+static const u32 greenSwapPatch[6] = {
+	0xE59F0008,	// LDR  R0, =0x4000002
+	0xE3A01001, // MOV  R1, #1
 	0xE5C01000, // STRB R1, [R0]
-	0xE59F0008, // LDR  R0, =0x9FFFFDC
-	0xE1A0F000, // MOV  PC, R0
+	0xE59FF000, // LDR  PC, =0x9FFFFE4
 	0x04000002,
-	0x00000001,
-	0x09FFFFDC
+	0x09FFFFE4
 };
 
-u32 prefetchPatch[8] = {
-	0xE59F000C,	// LDR  R0, =0x4000204
-	0xE59F100C, // LDR  R1, =0x4000
+static u32 prefetchPatch[6] = {
+	0xE59F0008,	// LDR  R0, =0x4000204
+	0xE3A01901, // MOV  R1, #0x4000
 	0xE4A01000, // STRT R1, [R0]
-	0xE59F0008, // LDR  R0, =0x80000C0 (this changes, depending on the ROM)
-	0xE1A0F000, // MOV  PC, R0
+	0xE59FF000, // LDR  PC, =0x80000C0 (this changes, depending on the ROM)
 	0x04000204,
-	0x00004000,
 	0x080000C0
 };
 
@@ -117,16 +113,16 @@ ITCM_CODE void gptc_patchWait()
 	u32 entryPoint = *(u32*)0x08000000;
 	entryPoint -= 0xEA000000;
 	entryPoint += 2;
-	prefetchPatch[7] = 0x08000000+(entryPoint*4);
+	prefetchPatch[5] = 0x08000000+(entryPoint*4);
 
-	u32 patchOffset = 0x01FFFFDC;
-	tonccpy((u8*)0x08000000+patchOffset, prefetchPatch, 8*sizeof(u32));
+	u32 patchOffset = 0x01FFFFE4;
+	tonccpy((u8*)0x08000000+patchOffset, prefetchPatch, 6*sizeof(u32));
 
 	u32 branchCode = 0xEA000000+(patchOffset/sizeof(u32))-2;
 	tonccpy((u16*)0x08000000, &branchCode, sizeof(u32));
 
-	u32 searchRange = 0x08000000+romSize;
-	if (romSize > 0x01FFFFDC) searchRange = 0x09FFFFDC;
+	u32 searchRange = 0x08000000+romFileSize;
+	if (romFileSize > 0x01FFFFE4) searchRange = 0x09FFFFE4;
 
 	// General fix for white screen crash
 	// Patch out wait states
@@ -149,8 +145,8 @@ ITCM_CODE void gptc_patchWait()
 
 	if ((keys & KEY_LEFT) && (keys & KEY_R)) {
 		// Activate green swap
-		u32 gsPatchOffset = 0x01FFFFB0;
-		tonccpy((u8*)0x08000000+gsPatchOffset, greenSwapPatch, 8*sizeof(u32));
+		u32 gsPatchOffset = 0x01FFFFCC;
+		tonccpy((u8*)0x08000000+gsPatchOffset, greenSwapPatch, 6*sizeof(u32));
 
 		branchCode = 0xEA000000+(gsPatchOffset/sizeof(u32))-2;
 		tonccpy((u16*)0x08000000, &branchCode, sizeof(u32));
@@ -601,7 +597,7 @@ int main(int argc, char **argv) {
 	}
 	//iprintf("Loaded GBA switcher\n");
 
-	romSize = getFileSize(argv[1]);
+	romFileSize = getFileSize(argv[1]);
 
 	nitroFSInit("/_nds/TWiLightMenu/gbapatcher.srldr");
 

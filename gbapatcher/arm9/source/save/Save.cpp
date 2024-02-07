@@ -4,7 +4,7 @@
 #include "FlashSave.h"
 #include "Save.h"
 
-extern u32 romSize;
+extern u32 romFileSize;
 
 #define SAVE_TYPE_COUNT		25
 
@@ -45,7 +45,7 @@ ITCM_CODE const save_type_t* save_findTag()
 {
 	u32  curAddr = 0x080000C0;
 	char saveTag[16];
-	while (curAddr < 0x08000000+romSize) {
+	while (curAddr < 0x08000000+romFileSize) {
 		u32 fst = *(u32*)curAddr;
 		tonccpy(&saveTag, (u8*)curAddr, 16);
 		SaveType type = SAVE_TYPE_NONE;
