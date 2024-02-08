@@ -967,7 +967,9 @@ int main(int argc, char **argv) {
 			}
 		}
 
-		fixRomPadding();
+		if (*(u16*)(0x020000C0) != 0x5A45) {
+			fixRomPadding();
+		}
 
 		s2RamAccess(false);
 		//iprintf("s2RamAccess(false)\n");
