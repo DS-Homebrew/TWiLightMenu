@@ -826,8 +826,6 @@ static void gptc_patchRom()
 		if (*(u16*)(0x08000000 + 0x1A16) == 0x0D81)
 			*(u16*)(0x08000000 + 0x1A16) = 0x087B;
 	}
-
-	fixRomPadding();
 }
 
 
@@ -968,6 +966,8 @@ int main(int argc, char **argv) {
 				consoleClear();
 			}
 		}
+
+		fixRomPadding();
 
 		s2RamAccess(false);
 		//iprintf("s2RamAccess(false)\n");
