@@ -2927,8 +2927,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				updateBoxArt();
 				if (ms().theme < 4) {
 					while (dboxInFrame) {
-						snd().updateStream();
-						swiWaitForVBlank();
+						bgOperations(true);
 					}
 				}
 				dbox_showIcon = false;
