@@ -2646,7 +2646,6 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 		}
 	}
 	if (nowLoadingDisplaying) {
-		snd().updateStream();
 		showProgressIcon = false;
 		showProgressBar = false;
 		progressBarLength = 0;
@@ -2824,9 +2823,7 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 }
 
 std::string browseForFile(const std::vector<std::string_view> extensionList) {
-	snd().updateStream();
 	displayNowLoading();
-	snd().updateStream();
 	gameOrderIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
 	recentlyPlayedIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/recentlyplayed.ini";
 	timesPlayedIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/timesplayed.ini";
@@ -2841,7 +2838,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	getDirectoryContents(dirContents[scrn], extensionList);
 
 	while (1) {
-		snd().updateStream();
 		updateDirectoryContents(dirContents[scrn]);
 		getFileInfo(scrn, dirContents, true);
 		reloadIconPalettes();
@@ -2887,7 +2883,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		bool gameTapped = false;
 
 		while (1) {
-			snd().updateStream();
 			if (!stopSoundPlayed) {
 				if (ms().theme == TWLSettings::EThemeDSi &&
 					 CURPOS + PAGENUM * 40 <= ((int)dirContents[scrn].size() - 1)) {
@@ -2914,7 +2909,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				pressed = keysDown();
 				held = keysDownRepeat();
 				touchRead(&touch);
-				snd().updateStream();
 
 				boxArtFound = ((CURPOS + PAGENUM * 40) < ((int)dirContents[scrn].size()));
 				if (boxArtFound) {
@@ -3003,8 +2997,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				int movingAppYmax = ms().theme == TWLSettings::ETheme3DS ? 64 : 82;
 				while (movingAppYpos < movingAppYmax) {
 					movingAppYpos += std::max((movingAppYmax - movingAppYpos) / 3, 1);
-					snd().updateStream();
-					swiWaitForVBlank();
+					bgOperations(true);
 				}
 
 				int orgCursorPosition = CURPOS;
@@ -3079,8 +3072,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							snd().playSwitch();
 							fadeType = false; // Fade to white
 							for (int i = 0; i < 6; i++) {
-								snd().updateStream();
-								swiWaitForVBlank();
+								bgOperations(true);
 							}
 							PAGENUM += 1;
 							CURPOS = 0;
@@ -3553,7 +3545,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							dbox_showIcon = true;
 							snd().playWrong();
 						} else {
-							for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+							for (int i = 0; i < 30; i++) { bgOperations(true); }
 						}
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
