@@ -521,20 +521,24 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 		}
 
 		// Bit of delay the first time to give time to release the button
+		// To allow rapid presses, the delay is not applied for 3DS theme
 		if (firstMove) {
 			firstMove = false;
 			if (boxArtLoaded) {
 				if (!rocketVideo_playVideo)
 					clearBoxArt();
-				rocketVideo_playVideo = (ms().theme == TWLSettings::ETheme3DS ? true : false);
+				rocketVideo_playVideo = (ms().theme == TWLSettings::ETheme3DS) ? true : false;
 				boxArtLoaded = false;
 				if (ms().theme == TWLSettings::EThemeSaturn) {
 					for (int i = 0; i < 10; i++)
 						swiWaitForVBlank();
 				}
-			} else
-			for (int i = 0; i < (ms().theme == TWLSettings::EThemeSaturn ? 15 : 4); i++)
+			} else if (ms().theme == TWLSettings::ETheme3DS) {
 				swiWaitForVBlank();
+			} else {
+				for (int i = 0; i < (ms().theme == TWLSettings::EThemeSaturn ? 15 : 4); i++)
+					swiWaitForVBlank();
+			}
 		} else {
 			if (ms().theme != TWLSettings::ETheme3DS)
 				showSTARTborder = false;
@@ -546,7 +550,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 	} while ((keysHeld() & (right ? KEY_RIGHT : KEY_LEFT)) || ((keysHeld() & KEY_TOUCH) && touch.py > 171 && (right ? touch.px > 236 : touch.px < 19) && ms().theme == TWLSettings::EThemeDSi));
 
 	// Wait for movement to finish before showing START boarder and such
-	while (titleboxXdest[ms().secondaryDevice] != titleboxXpos[ms().secondaryDevice] && !(keysHeld() & KEY_TOUCH))
+	while ((ms().theme != TWLSettings::ETheme3DS) && (titleboxXdest[ms().secondaryDevice] != titleboxXpos[ms().secondaryDevice]) && !(keysHeld() & KEY_TOUCH))
 		swiWaitForVBlank();
 
 	if (movingApp == -1 && CURPOS + PAGENUM * 40 < (int)dirContents.size())
