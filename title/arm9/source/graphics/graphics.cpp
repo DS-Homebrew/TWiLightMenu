@@ -106,7 +106,7 @@ void LoadBMP(void) {
 	std::vector<unsigned char> image;
 	unsigned width, height;
 
-	lodepng::decode(image, width, height, (sys().isDSPhat() || ms().colorMode == 2) ? "nitro:/graphics/logoPhat_rocketrobz.png" : "nitro:/graphics/logo_rocketrobz.png");
+	lodepng::decode(image, width, height, ms().rocketRobzLogo ? ((sys().isDSPhat() || ms().colorMode == 2) ? "nitro:/graphics/logoPhat_rocketrobz.png" : "nitro:/graphics/logo_rocketrobz.png") : "nitro:/graphics/logo_rocketrobzHide.png");
 	bool alternatePixel = false;
 	for (unsigned i=0;i<image.size()/4;i++) {
 		image[(i*4)+3] = 0;

@@ -278,6 +278,7 @@ public:
 	bool gbar2DldiAccess;
 	bool showMainMenu;
 	bool showSelectMenu;
+	bool rocketRobzLogo;
 	TTheme theme;
 	TSettingsMusic settingsMusic;
 	TDSiMusic dsiMusic;
