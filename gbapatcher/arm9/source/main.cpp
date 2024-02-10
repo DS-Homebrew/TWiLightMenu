@@ -738,6 +738,22 @@ static void gptc_patchRom()
 		//Fix white screen crash
 		if (*(u16*)(0x08000000 + 0x10B078) == 0x8008)
 			*(u16*)(0x08000000 + 0x10B078) = nopT;
+	} else if (gameCode == 0x45324941) {
+		//Iridion II (USA)
+		//Fix where the game freezes during the first boss battle (but the music continues)
+		if (*(u16*)(0x08000000 + 0x1FA90) == 0xD3F4)
+			*(u16*)(0x08000000 + 0x1FA90) = 0x1C00;
+
+		if (*(u8*)(0x08000000 + 0x1FA95) == 0xD1)
+			*(u8*)(0x08000000 + 0x1FA95) = 0xE0;
+	} else if (gameCode == 0x50324941) {
+		//Iridion II (Europe)
+		//Fix where the game freezes during the first boss battle (but the music continues)
+		if (*(u16*)(0x08000000 + 0x1FB50) == 0xD3F4)
+			*(u16*)(0x08000000 + 0x1FB50) = 0x1C00;
+
+		if (*(u8*)(0x08000000 + 0x1FB55) == 0xD1)
+			*(u8*)(0x08000000 + 0x1FB55) = 0xE0;
 	} else if (gameCode == 0x454B3842) {
 		//Kirby and the Amazing Mirror (USA)
 		//Fix white screen crash
