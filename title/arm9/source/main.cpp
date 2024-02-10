@@ -1789,7 +1789,7 @@ int titleMode(void)
 				*(u16*)(0x020000C0) = 0x334D;
 			} else if (memcmp(io_dldi_data->friendlyName, "G6", 2) == 0) {
 				*(u16*)(0x020000C0) = 0x3647;
-			} else if (memcmp(io_dldi_data->friendlyName, "SuperCard", 9) == 0) {
+			} else if (memcmp(io_dldi_data->friendlyName, "SuperCard", 9) == 0 || memcmp(io_dldi_data->friendlyName, "SCSD", 4) == 0) {
 				*(u16*)(0x020000C0) = 0x4353;
 			}
 		  }
