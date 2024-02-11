@@ -13,7 +13,7 @@ from array import array
 from os import stat
 from sys import argv, exit
 
-
+TARGET_SIZE = 0x69C70
 HEADER_SIZE = 0x450
 
 
@@ -43,6 +43,10 @@ def main():
     except Exception:
         print("cannot open input")
         exit(2)
+
+    remaining = TARGET_SIZE - HEADER_SIZE - input_size
+    if remaining > 0:
+        buf.extend([0] * remaining)
 
     try:
         with open(argv[2], "wb") as o:
