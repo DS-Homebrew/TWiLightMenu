@@ -461,7 +461,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
 	settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
 	settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg[0]);
-	settingsini.SetString("SRLOADER", "SECONDARY_HOMEBREW_ARG", homebrewArg[0]);
+	settingsini.SetString("SRLOADER", "SECONDARY_HOMEBREW_ARG", homebrewArg[1]);
 	settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	settingsini.SetInt("SRLOADER", "HOMEBREW_HAS_WIDE", 0);
 
