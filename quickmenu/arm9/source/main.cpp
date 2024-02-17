@@ -1086,7 +1086,7 @@ void refreshNdsCard(bool refreshBoxArt) {
 
 void printNdsCartBannerText() {
 	if (cardEjected) {
-		printSmall(false, BOX_PX, iconYpos[0] + BOX_PY - (calcSmallFontHeight(STR_NO_GAME_CARD) / 2), STR_NO_GAME_CARD, Alignment::center);
+		printSmall(false, BOX_PX, iconYpos[0] + BOX_PY - (calcSmallFontHeight(STR_NO_GAME_CARD) / 2), STR_NO_GAME_CARD, Alignment::center, FontPalette::disabled);
 	} else if (sys().arm7SCFGLocked()) {
 		printSmall(false, BOX_PX, iconYpos[0] + BOX_PY - (calcSmallFontHeight(STR_START_GAME_CARD) / 2), STR_START_GAME_CARD, Alignment::center);
 	} else {
@@ -1096,7 +1096,7 @@ void printNdsCartBannerText() {
 
 void printGbaBannerText() {
 	const std::string &str = (/* sys().isRegularDS() && */ ms().gbaBooter == TWLSettings::EGbaNativeGbar2) ? (((u8*)GBAROM)[0xB2] == 0x96 ? STR_START_GBA_GAME : (*(vu16*)(0x08240000) == 1 ? STR_DS_OPTION_PAK : STR_NO_GAME_PAK)) : STR_FEATURE_UNAVAILABLE;
-	printSmall(false, BOX_PY, iconYpos[3] + BOX_PY - (calcSmallFontHeight(str) / 2), str, Alignment::center);
+	printSmall(false, BOX_PY, iconYpos[3] + BOX_PY - (calcSmallFontHeight(str) / 2), str, Alignment::center, str == STR_START_GBA_GAME ? FontPalette::regular : FontPalette::disabled);
 }
 
 void customSleep() {

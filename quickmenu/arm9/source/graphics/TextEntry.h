@@ -8,7 +8,8 @@ public:
 	int x, y;
 	std::u16string message;
 	Alignment align;
+	FontPalette palette;
 
-	TextEntry(bool large, int x, int y, std::string_view message, Alignment align);
-	TextEntry(bool large, int x, int y, std::u16string_view message, Alignment align);
+	TextEntry(bool large, int x, int y, std::string_view message, Alignment align, FontPalette palette);
+	TextEntry(bool large, int x, int y, std::u16string_view message, Alignment align, FontPalette palette);
 };
