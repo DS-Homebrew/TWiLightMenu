@@ -31,6 +31,10 @@ void fontInit() {
 		0xDEF7,
 		0xC631,
 		0xA108,
+		0x0000,
+		0xEB5A,
+		0xDEF7,
+		0xD294,
 	};
 
 	// Load font graphics
@@ -41,7 +45,7 @@ void fontInit() {
 		smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", defaultPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), "nitro:/graphics/font/small.nftr"}, useExpansionPak);
 	} else {
 		smallFont = new FontGraphic({"nitro:/graphics/font/small.nftr"}, false);
-		palette[3] = 0x8000;
+		palette[3] = 0x94A5;
 	}
 
 	// Load palettes
@@ -73,7 +77,7 @@ void updateText(bool top) {
 	for (auto it = text.begin(); it != text.end(); ++it) {
 		FontGraphic *font = getFont(it->large);
 		if (font)
-			font->print(it->x, it->y, top, it->message, it->align);
+			font->print(it->x, it->y, top, it->message, it->align, it->palette);
 	}
 	text.clear();
 
@@ -90,18 +94,18 @@ void clearText() {
 	clearText(false);
 }
 
-void printSmall(bool top, int x, int y, std::string_view message, Alignment align) {
-	getTextQueue(top).emplace_back(false, x, y, message, align);
+void printSmall(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(false, x, y, message, align, palette);
 }
-void printSmall(bool top, int x, int y, std::u16string_view message, Alignment align) {
-	getTextQueue(top).emplace_back(false, x, y, message, align);
+void printSmall(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(false, x, y, message, align, palette);
 }
 
-void printLarge(bool top, int x, int y, std::string_view message, Alignment align) {
-	getTextQueue(top).emplace_back(true, x, y, message, align);
+void printLarge(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(true, x, y, message, align, palette);
 }
-void printLarge(bool top, int x, int y, std::u16string_view message, Alignment align) {
-	getTextQueue(top).emplace_back(true, x, y, message, align);
+void printLarge(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(true, x, y, message, align, palette);
 }
 
 int calcSmallFontWidth(std::string_view text) {
