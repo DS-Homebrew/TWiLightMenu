@@ -47,6 +47,7 @@ Helpful information:
 #undef ARM9
 #define ARM7
 #include <nds/arm7/audio.h>
+#include "dmaTwl.h"
 #include "common/tonccpy.h"
 #include "sdmmc.h"
 #include "i2c.h"
@@ -54,8 +55,6 @@ Helpful information:
 #include "dldi_patcher.h"
 #include "card.h"
 #include "boot.h"
-
-void arm7clearRAM();
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Important things
@@ -163,6 +162,15 @@ void passArgs_ARM7 (void) {
 
 
 
+void memset_addrs_arm7(u32 start, u32 end)
+{
+	if (!dsiMode && !(REG_SCFG_EXT & BIT(16))) {
+		toncset((u32*)start, 0, ((int)end - (int)start));
+		return;
+	}
+	dma_twlFill32(0, 0, (u32*)start, ((int)end - (int)start));
+}
+
 /*-------------------------------------------------------------------------
 resetMemory_ARM7
 Clears all of the NDS's RAM that is visible to the ARM7
@@ -209,19 +217,21 @@ void resetMemory_ARM7 (void)
 	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
 	REG_IPC_FIFO_CR = 0;
 
-	arm7clearRAM();
+	memset_addrs_arm7(0x03800000 - 0x8000, 0x03800000 + (dsiMode ? 0xC000 : 0x10000)); // clear exclusive IWRAM
 	// clear most of EWRAM - except after RAM end - 0xc000, which has the bootstub
 	if (dsiMode && loadFromRam) {
-		toncset((void*)0x02004000, 0, 0x7FC000);
-		toncset((void*)0x02D00000, 0, 0x2F4000);
+		memset_addrs_arm7(0x02004000, 0x02800000);
+		memset_addrs_arm7(0x02D00000, 0x02FF4000);
 	} else {
-		toncset((void*)0x02004000, 0, dsiMode ? 0xFF0000 : 0x3F0000);
+		memset_addrs_arm7(0x02004000, dsiMode ? 0x02FF4000 : 0x023F4000);
 	}
 
 	REG_IE = 0;
 	REG_IF = ~0;
-	(*(vu32*)(0x04000000-4)) = 0;  //IRQ_HANDLER ARM7 version
-	(*(vu32*)(0x04000000-8)) = ~0; //VBLANK_INTR_WAIT_FLAGS, ARM7 version
+	REG_AUXIE = 0;
+	REG_AUXIF = ~0;
+	*(vu32*)0x0380FFFC = 0;  // IRQ_HANDLER ARM7 version
+	*(vu32*)0x0380FFF8 = 0; // VBLANK_INTR_WAIT_FLAGS, ARM7 version
 	REG_POWERCNT = 1;  //turn off power to stuff
 
 	// Get settings location

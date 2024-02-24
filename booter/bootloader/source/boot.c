@@ -210,13 +210,15 @@ void resetMemory_ARM7 (void)
 	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
 	REG_IPC_FIFO_CR = 0;
 
-	memset_addrs_arm7(0x03800000 - 0x8000, 0x03800000 + 0x10000); // clear exclusive IWRAM
+	memset_addrs_arm7(0x03800000 - 0x8000, 0x03800000 + 0xC000); // clear exclusive IWRAM
 	memset_addrs_arm7(0x02004000, 0x03000000 - 0xC000);	// clear part of EWRAM - except before bootstub
 
 	REG_IE = 0;
 	REG_IF = ~0;
 	REG_AUXIE = 0;
 	REG_AUXIF = ~0;
+	*(vu32*)0x0380FFFC = 0;  // IRQ_HANDLER ARM7 version
+	*(vu32*)0x0380FFF8 = 0; // VBLANK_INTR_WAIT_FLAGS, ARM7 version
 	REG_POWERCNT = 1;  //turn off power to stuff
 
 	// Get settings location
