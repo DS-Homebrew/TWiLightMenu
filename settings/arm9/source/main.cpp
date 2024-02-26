@@ -735,14 +735,15 @@ void defaultExitHandler()
 		// For homebrew to use the current LUT
 		char colorTablePath[256];
 		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+		char currentSettingPath[40];
+		sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
 		if (getFileSize(colorTablePath) == 0x20000) {
-			char currentSettingPath[40];
-			sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
-
 			FILE* file = fopen(currentSettingPath, "wb");
 			fwrite(ms().colorMode.c_str(), 1, ms().colorMode.size(), file);
 			fclose(file);
+		} else if (access(currentSettingPath, F_OK) == 0) {
+			remove(currentSettingPath);
 		}
 	}
 
