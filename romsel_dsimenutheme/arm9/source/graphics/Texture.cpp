@@ -139,7 +139,7 @@ void Texture::loadBitmap(FILE *file) noexcept {
 			u8 b = lroundf((color & 0xFF) * 31 / 255.0f) & 0x1F;
 
 			_palette[i] = BIT(15) | b << 10 | g << 5 | r;
-			if (ms().colorMode > 0) {
+			if (colorTable) {
 				_palette[i] = colorTable[_palette[i]];
 			}
 		}
@@ -273,7 +273,7 @@ u16 Texture::bmpToDS(u16 val) {
 		return 0;
 
 	val = ((val >> 10) & 31) | (val & (31 << 5)) | ((val & 31) << 10) | BIT(15);
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		return colorTable[val];
 	}
 	return val;

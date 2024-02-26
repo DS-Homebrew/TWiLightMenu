@@ -21,6 +21,7 @@
 #include <nds.h>
 #include <maxmod9.h>
 #include <gl2d.h>
+#include "fileCopy.h"
 #include "common/lodepng.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
@@ -199,7 +200,7 @@ void initSubSprites(void)
 
 u16 convertToDsBmp(u16 val) {
 	val = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		return colorTable[val];
 	}
 	return val;
@@ -328,17 +329,17 @@ void graphicsInit()
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
-	if (ms().colorMode > 0) {
-		colorTable = new u16[0x20000/sizeof(u16)];
+	if (ms().colorMode != "Default") {
+		char colorTablePath[256];
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
-		if (ms().colorMode == 2) {
-			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		if (getFileSize(colorTablePath) == 0x20000) {
+			colorTable = new u16[0x20000/sizeof(u16)];
+
+			FILE* file = fopen(colorTablePath, "rb");
+			fread(colorTable, 1, 0x20000, file);
+			fclose(file);
 		}
-
-		FILE* file = fopen(colorTablePath, "rb");
-		fread(colorTable, 1, 0x20000, file);
-		fclose(file);
 	}
 
 	////////////////////////////////////////////////////////////
@@ -428,7 +429,7 @@ void graphicsLoad()
 
 		for (uint i=0; i<image.size()/4; i++) {
 			topImage[0][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode > 0) {
+			if (colorTable) {
 				topImage[0][0][i] = colorTable[topImage[0][0][i]];
 			}
 			topImage[0][1][i] = topImage[0][0][i];
@@ -518,7 +519,7 @@ void graphicsLoad()
 				}
 			}
 			topImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode > 0) {
+			if (colorTable) {
 				topImage[startMenu][0][i] = colorTable[topImage[startMenu][0][i]];
 			}
 			if (alternatePixel) {
@@ -543,7 +544,7 @@ void graphicsLoad()
 				}
 			}
 			topImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode > 0) {
+			if (colorTable) {
 				topImage[startMenu][1][i] = colorTable[topImage[startMenu][1][i]];
 			}
 			if ((i % 256) == 255) alternatePixel = !alternatePixel;
@@ -570,7 +571,7 @@ void graphicsLoad()
 				}
 			}
 			bottomImage[startMenu][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode > 0) {
+			if (colorTable) {
 				bottomImage[startMenu][0][i] = colorTable[bottomImage[startMenu][0][i]];
 			}
 			if (alternatePixel) {
@@ -595,7 +596,7 @@ void graphicsLoad()
 				}
 			}
 			bottomImage[startMenu][1][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode > 0) {
+			if (colorTable) {
 				bottomImage[startMenu][1][i] = colorTable[bottomImage[startMenu][1][i]];
 			}
 			if ((i % 256) == 255) alternatePixel = !alternatePixel;
@@ -609,7 +610,7 @@ void graphicsLoad()
 	startBorderColor = RGB15(colorRvalue/8, colorGvalue/8, colorBvalue/8);
 	windowColorTop = RGB15(0, 0, 31);
 	windowColorBottom = RGB15(0, 0, 15);
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		startBorderColor = colorTable[startBorderColor];
 		windowColorTop = colorTable[windowColorTop];
 		windowColorBottom = colorTable[windowColorBottom];
@@ -658,7 +659,7 @@ void graphicsLoad()
 	}*/
 
 	u16* newPalette = (u16*)icon_manualPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -679,7 +680,7 @@ void graphicsLoad()
 							);
 
 	newPalette = (u16*)iconboxPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -700,7 +701,7 @@ void graphicsLoad()
 							);
 
 	newPalette = (u16*)wirelessiconsPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}

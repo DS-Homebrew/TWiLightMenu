@@ -21,8 +21,10 @@
 #include "graphics.h"
 #include "../errorScreen.h"
 #include "fontHandler.h"
+#include "fileCopy.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
+#include "common/systemdetails.h"
 #include "graphics/gif.hpp"
 
 #include <nds.h>
@@ -123,14 +125,14 @@ void pageLoad(const std::string &filename) {
 	pageYsize = gif.frame(0).descriptor.h;
 
 	tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i = 0; i < (int)std::min(0xF6u, gif.gct().size()); i++) {
 			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
 		}
 	}
 	if (!ms().macroMode) {
 		tonccpy(BG_PALETTE_SUB, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
-		if (ms().colorMode > 0) {
+		if (colorTable) {
 			for (int i = 0; i < (int)std::min(0xF6u, gif.gct().size()); i++) {
 				BG_PALETTE_SUB[i] = colorTable[BG_PALETTE_SUB[i]];
 			}
@@ -154,7 +156,7 @@ void topBarLoad(void) {
 	u16 *dst = bgGetGfxPtr(bg3Main);
 
 	tonccpy(BG_PALETTE + 0xFC, gif.gct().data(), gif.gct().size() * 2);
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i = 0xFC; i < (int)0xFC + gif.gct().size(); i++) {
 			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
 		}
@@ -171,17 +173,17 @@ void graphicsInit() {
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
-	if (ms().colorMode > 0) {
-		colorTable = new u16[0x20000/sizeof(u16)];
+	if (ms().colorMode != "Default") {
+		char colorTablePath[256];
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
-		if (ms().colorMode == 2) {
-			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		if (getFileSize(colorTablePath) == 0x20000) {
+			colorTable = new u16[0x20000/sizeof(u16)];
+
+			FILE* file = fopen(colorTablePath, "rb");
+			fread(colorTable, 1, 0x20000, file);
+			fclose(file);
 		}
-
-		FILE* file = fopen(colorTablePath, "rb");
-		fread(colorTable, 1, 0x20000, file);
-		fclose(file);
 	}
 
 	////////////////////////////////////////////////////////////

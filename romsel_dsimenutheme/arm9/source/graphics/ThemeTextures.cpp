@@ -19,6 +19,7 @@
 #include "color.h"
 #include "errorScreen.h"
 #include "fileBrowse.h"
+#include "fileCopy.h"
 #include "common/lzss.h"
 #include "common/tonccpy.h"
 #include "common/lodepng.h"
@@ -817,7 +818,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 			}
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode > 0) {
+		if (colorTable) {
 			color = colorTable[color];
 		}
 		if (alpha == 0) {
@@ -848,7 +849,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 				}
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode > 0) {
+			if (colorTable) {
 				color = colorTable[color];
 			}
 			if (alpha == 0) {
@@ -1078,12 +1079,6 @@ ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
 		_cachedBatteryLevel = batteryLevel;
 		if (!topBorderBufferLoaded) {
 			_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
-			if (ms().colorMode == 1) {
-				for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-					_topBorderBuffer[i] =
-						convertVramColorToGrayscale(_topBorderBuffer[i]);
-				}
-			}
 			topBorderBufferLoaded = true;
 		}
 		ms().macroMode ? drawBatteryImageMacro(batteryLevel, dsiFeatures(), sys().isRegularDS()) : drawBatteryImage(batteryLevel, dsiFeatures(), sys().isRegularDS());
@@ -1352,7 +1347,7 @@ void loadRotatingCubes() {
 
 			fread(rotatingCubesLocation, 1, framesSize, videoFrameFile);
 
-			if (ms().colorMode > 0) {
+			if (colorTable) {
 				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
 				for (u32 i = 0; i < framesSize/2; i++) {
 					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i]];
@@ -1423,17 +1418,17 @@ void ThemeTextures::videoSetup() {
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 
-	if (ms().colorMode > 0) {
-		colorTable = new u16[0x20000/sizeof(u16)];
+	if (ms().colorMode != "Default") {
+		char colorTablePath[256];
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
-		if (ms().colorMode == 2) {
-			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		if (getFileSize(colorTablePath) == 0x20000) {
+			colorTable = new u16[0x20000/sizeof(u16)];
+
+			FILE* file = fopen(colorTablePath, "rb");
+			fread(colorTable, 1, 0x20000, file);
+			fclose(file);
 		}
-
-		FILE* file = fopen(colorTablePath, "rb");
-		fread(colorTable, 1, 0x20000, file);
-		fclose(file);
 	}
 
 	if (dsiFeatures() && !ms().macroMode && ms().theme != TWLSettings::EThemeHBL) {

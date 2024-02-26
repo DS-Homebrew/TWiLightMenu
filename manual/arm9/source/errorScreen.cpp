@@ -53,7 +53,7 @@ void checkSdEject(void) {
 		0xD6B5,
 		0xFFFF,
 	};
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i = 0; i < 4; i++) {
 			palette[i] = colorTable[palette[i]];
 		}

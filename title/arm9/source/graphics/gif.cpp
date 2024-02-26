@@ -52,7 +52,7 @@ void Gif::displayFrame(void) {
 
 	tonccpy(bgPalette, gifColorTable.data(), gifColorTable.size() * 2);
 	tonccpy(bgPalette, gifColorTable.data(), gifColorTable.size() * 2);
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (unsigned int i = 0; i < gifColorTable.size(); i++) {
 			bgPalette[i] = colorTable[bgPalette[i]];
 		}

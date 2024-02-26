@@ -19,10 +19,12 @@
 ------------------------------------------------------------------*/
 
 #include "graphics.h"
+#include "fileCopy.h"
 #include "../errorScreen.h"
 #include "fontHandler.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
+#include "common/systemdetails.h"
 #include "graphics/gif.hpp"
 #include "common/lodepng.h"
 #include "graphics/color.h"
@@ -65,23 +67,6 @@ void SetBrightness(u8 screen, s8 bright) {
 	}
 	if (bright > 31) bright = 31;
 	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
-}
-
-u16 convertVramColorToGrayscale(u16 val) {
-	u8 b,g,r,max,min;
-	b = ((val)>>10)&31;
-	g = ((val)>>5)&31;
-	r = (val)&31;
-	// Value decomposition of hsv
-	max = (b > g) ? b : g;
-	max = (max > r) ? max : r;
-
-	// Desaturate
-	min = (b < g) ? b : g;
-	min = (min < r) ? min : r;
-	max = (max + min) / 2;
-
-	return BIT(15)|(max<<10)|(max<<5)|(max);
 }
 
 void vBlankHandler() {
@@ -171,7 +156,7 @@ void imageLoad(const char* filename) {
 			}
 			if (image[(i*4)+3] > 0) {
 				u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-				if (ms().colorMode > 0) {
+				if (colorTable) {
 					color = colorTable[color];
 				}
 				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = alphablend(color, 0, image[(i*4)+3]);
@@ -201,7 +186,7 @@ void imageLoad(const char* filename) {
 			}
 			if (image[(i*4)+3] > 0) {
 				u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-				if (ms().colorMode > 0) {
+				if (colorTable) {
 					color = colorTable[color];
 				}
 				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = alphablend(color, 0, image[(i*4)+3]);
@@ -295,7 +280,7 @@ void imageLoad(const char* filename) {
 					}
 				}
 				u16 color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
-				if (ms().colorMode > 0) {
+				if (colorTable) {
 					color = colorTable[color];
 				}
 				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = color;
@@ -321,7 +306,7 @@ void imageLoad(const char* filename) {
 					}
 				}
 				color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
-				if (ms().colorMode > 0) {
+				if (colorTable) {
 					color = colorTable[color];
 				}
 				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = color;
@@ -344,7 +329,7 @@ void imageLoad(const char* filename) {
 				for (uint x = 0; x < width; x++) {
 					u16 val = *(src++);
 					u16 color = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
-					if (ms().colorMode > 0) {
+					if (colorTable) {
 						color = colorTable[color];
 					}
 					*(dst + x) = color;
@@ -364,7 +349,7 @@ void imageLoad(const char* filename) {
 				fread(&pixelR, 1, 1, file);
 				fread(&unk, 1, 1, file);
 				pixelBuffer[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
-				if (ms().colorMode > 0) {
+				if (colorTable) {
 					pixelBuffer[i] = colorTable[pixelBuffer[i]];
 				}
 			}
@@ -395,7 +380,7 @@ void imageLoad(const char* filename) {
 				fread(&pixelR, 1, 1, file);
 				fread(&unk, 1, 1, file);
 				monoPixel[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
-				if (ms().colorMode > 0) {
+				if (colorTable) {
 					monoPixel[i] = colorTable[monoPixel[i]];
 				}
 			}
@@ -443,7 +428,7 @@ void imageLoad(const char* filename) {
 	}
 
 	tonccpy(BG_PALETTE, gif.gct().data(), gif.gct().size() * 2);
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i = 0; i < (int)gif.gct().size(); i++) {
 			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
 		}
@@ -472,7 +457,7 @@ void bgLoad(void) {
 	u16 *dst = bgGetGfxPtr(bg3Sub);
 
 	tonccpy(BG_PALETTE_SUB, gif.gct().data(), gif.gct().size() * 2);
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i = 0; i < (int)gif.gct().size(); i++) {
 			BG_PALETTE_SUB[i] = colorTable[BG_PALETTE_SUB[i]];
 		}
@@ -489,17 +474,17 @@ void graphicsInit() {
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
-	if (ms().colorMode > 0) {
-		colorTable = new u16[0x20000/sizeof(u16)];
+	if (ms().colorMode != "Default") {
+		char colorTablePath[256];
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
-		if (ms().colorMode == 2) {
-			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		if (getFileSize(colorTablePath) == 0x20000) {
+			colorTable = new u16[0x20000/sizeof(u16)];
+
+			FILE* file = fopen(colorTablePath, "rb");
+			fread(colorTable, 1, 0x20000, file);
+			fclose(file);
 		}
-
-		FILE* file = fopen(colorTablePath, "rb");
-		fread(colorTable, 1, 0x20000, file);
-		fclose(file);
 	}
 
 	////////////////////////////////////////////////////////////

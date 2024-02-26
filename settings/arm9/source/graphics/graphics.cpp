@@ -1,7 +1,9 @@
 #include "graphics.h"
 #include <nds.h>
 
+#include "common/fileCopy.h"
 #include "common/twlmenusettings.h"
+#include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "fontHandler.h"
 
@@ -105,7 +107,7 @@ void frameRateHandler(void) {
 
 // Copys a palette and applies filtering if enabled
 void copyPalette(u16 *dst, const u16 *src, int size) {
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i = 0; i < size; i++) {
 			dst[i] = colorTable[src[i]];
 		}
@@ -170,17 +172,17 @@ void graphicsInit() {
 		powerOff(PM_BACKLIGHT_TOP);
 	}
 
-	if (ms().colorMode > 0) {
-		colorTable = new u16[0x20000/sizeof(u16)];
+	if (ms().colorMode != "Default") {
+		char colorTablePath[256];
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
-		if (ms().colorMode == 2) {
-			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		if (getFileSize(colorTablePath) == 0x20000) {
+			colorTable = new u16[0x20000/sizeof(u16)];
+
+			FILE* file = fopen(colorTablePath, "rb");
+			fread(colorTable, 1, 0x20000, file);
+			fclose(file);
 		}
-
-		FILE* file = fopen(colorTablePath, "rb");
-		fread(colorTable, 1, 0x20000, file);
-		fclose(file);
 	}
 
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);

@@ -41,6 +41,7 @@
 #define AK_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/akmenu/themes/"
 #define R4_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/r4menu/themes/"
 
+#define COLOR_LUT_DIRECTORY "/_nds/colorLut/"
 #define GBA_BORDER_DIRECTORY "/_nds/TWiLightMenu/gbaborders/"
 #define UNLAUNCH_BG_DIRECTORY "/_nds/TWiLightMenu/unlaunch/backgrounds/"
 #define FONT_DIRECTORY "/_nds/TWiLightMenu/extras/fonts/"
@@ -57,6 +58,7 @@ std::vector<std::string> akThemeList;
 std::vector<std::string> r4ThemeList;
 std::vector<std::string> dsiThemeList;
 std::vector<std::string> _3dsThemeList;
+std::vector<std::string> colorLutList;
 std::vector<std::string> gbaBorderList;
 std::vector<std::string> unlaunchBgList;
 std::vector<std::string> fontList;
@@ -329,6 +331,28 @@ void loadGbaBorderList()
 	}
 }
 
+void loadColorLutList()
+{
+	DIR *dir;
+	struct dirent *ent;
+	std::string themeDir;
+	if ((dir = opendir(COLOR_LUT_DIRECTORY)) != NULL) {
+		// print all the files and directories within directory 
+		while ((ent = readdir(dir)) != NULL) {
+			// Reallocation here, but prevents our vector from being filled with
+
+			themeDir = ent->d_name;
+			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
+
+			if (extention(themeDir, ".lut")) {
+				themeDir[themeDir.size() - strlen(".lut")] = 0; // Hide extension
+				colorLutList.emplace_back(themeDir);
+			}
+		}
+		closedir(dir);
+	}
+}
+
 void loadMenuSrldrList (const char* dirPath) {
 	DIR *dir;
 	struct dirent *ent;
@@ -363,6 +387,11 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	default:
 		return nullopt;
 	}
+}
+
+std::optional<Option> opt_lut_select(void)
+{
+	return Option(STR_COLORMODESEL, STR_AB_SETCOLORMODE, Option::Str(&ms().colorMode), colorLutList);
 }
 
 std::optional<Option> opt_gba_border_select(void)
@@ -868,6 +897,7 @@ int settingsMode(void)
 	loadR4ThemeList();
 	load3DSThemeList();
 	loadDSiThemeList();
+	loadColorLutList();
 	if (sys().isRegularDS()) {
 		loadGbaBorderList();
 	}
@@ -1065,13 +1095,8 @@ int settingsMode(void)
 		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {STR_MICRO_SD_CARD, STR_SD_CARD}, {true, false});
 	}
 
-	guiPage.option(STR_CLOCK_SYSTEM, STR_DESCRIPTION_CLOCK_SYSTEM, Option::Bool(&ms().show12hrClock), {STR_12_HOUR, STR_24_HOUR}, {true, false});
-	if (sys().isDSPhat()) {
-		guiPage.option(STR_COLORMODE, STR_DESCRIPTION_COLORMODE, Option::Int(&ms().colorMode), {STR_REGULAR, STR_BW_GREYSCALE}, {0, 1});
-	} else {
-		guiPage.option(STR_COLORMODE, STR_DESCRIPTION_COLORMODE, Option::Int(&ms().colorMode), {STR_REGULAR, STR_BW_GREYSCALE, STR_GBA_DS_PHAT}, {0, 1, 2});
-	}
-	guiPage
+	guiPage.option(STR_CLOCK_SYSTEM, STR_DESCRIPTION_CLOCK_SYSTEM, Option::Bool(&ms().show12hrClock), {STR_12_HOUR, STR_24_HOUR}, {true, false})
+		.option(STR_COLORMODE, STR_DESCRIPTION_COLORMODE, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0})
 		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
 		.option(STR_CUSTOMICONS, STR_DESCRIPTION_CUSTOMICONS, Option::Bool(&ms().showCustomIcons), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_FRAMERATE, STR_DESCRIPTION_FRAMERATE, Option::Int(&ms().fps), {STR_15FPS, STR_20FPS, STR_24FPS, STR_30FPS, STR_50FPS, STR_60FPS}, {15, 20, 24, 30, 50, 60})

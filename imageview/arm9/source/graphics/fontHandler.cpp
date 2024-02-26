@@ -10,7 +10,7 @@
 #include "myDSiMode.h"
 #include "TextEntry.h"
 
-extern u16 convertVramColorToGrayscale(u16 val);
+extern u16* colorTable;
 
 FontGraphic *smallFont;
 FontGraphic *largeFont;
@@ -56,9 +56,9 @@ void fontInit() {
 		0x2D0A,
 		0x1044,
 	};
-	if (ms().colorMode == 1) {
+	if (colorTable) {
 		for (int i = 1; i < 4; i++) {
-			palette[i] = convertVramColorToGrayscale(palette[i]);
+			palette[i] = colorTable[palette[i]];
 		}
 	}
 	//tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));

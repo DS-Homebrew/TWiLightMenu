@@ -56,8 +56,8 @@ void fontInit() {
 		0xC631,
 		0xA108,
 	};
-	if (ms().colorMode > 0) {
-		for (int i = 0; i < 4; i++) {
+	if (colorTable) {
+		for (int i = 1; i < 4; i++) {
 			palette[i] = colorTable[palette[i]];
 		}
 	}

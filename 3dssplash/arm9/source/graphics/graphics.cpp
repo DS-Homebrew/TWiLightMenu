@@ -1,6 +1,8 @@
 #include "graphics.h"
+#include "fileCopy.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
+#include "common/systemdetails.h"
 #include "graphics/gif.hpp"
 
 #include <nds.h>
@@ -74,17 +76,17 @@ void graphicsInit() {
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
-	if (ms().colorMode > 0) {
-		colorTable = new u16[0x20000/sizeof(u16)];
+	if (ms().colorMode != "Default") {
+		char colorTablePath[256];
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
-		if (ms().colorMode == 2) {
-			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		if (getFileSize(colorTablePath) == 0x20000) {
+			colorTable = new u16[0x20000/sizeof(u16)];
+
+			FILE* file = fopen(colorTablePath, "rb");
+			fread(colorTable, 1, 0x20000, file);
+			fclose(file);
 		}
-
-		FILE* file = fopen(colorTablePath, "rb");
-		fread(colorTable, 1, 0x20000, file);
-		fclose(file);
 	}
 
 	////////////////////////////////////////////////////////////

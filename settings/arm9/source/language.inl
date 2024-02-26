@@ -366,6 +366,8 @@ STRING(FULL, "Full")
 // STRING(FLASHCARD_SELECT, "Select Flashcard")
 // STRING(LEFTRIGHT_FLASHCARD, "Left/Right: Select flashcard(s)")
 
+STRING(COLORMODESEL, "Color Mode select")
+
 // Skin select
 STRING(SKINSEL_DSI, "Skin select: Nintendo DSi Menu")
 STRING(SKINSEL_3DS, "Skin select: Nintendo 3DS HOME Menu")
@@ -378,6 +380,7 @@ STRING(BGSEL_UNLAUNCH, "Background select: Unlaunch")
 
 STRING(FONTSEL, "Font select")
 
+STRING(AB_SETCOLORMODE, "\\A / \\B: Set color mode")
 STRING(AB_SETSKIN, "\\A / \\B: Set skin")
 STRING(AB_SETBORDER, "\\A / \\B: Set border")
 STRING(AB_SETBG, "\\A / \\B: Set background")

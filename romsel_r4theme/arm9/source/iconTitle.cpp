@@ -172,7 +172,7 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2
 		glDeleteTextures(1, &iconTexID[i]);
 	}
 	for (int i = 0; i < loadIcon_loopTimes; i++) {
-		if (ms().colorMode > 0) {
+		if (colorTable) {
 			for (int i2 = 0; i2 < 16; i2++) {
 				*(palSrc+i2+(i*16)) = colorTable[*(palSrc+i2+(i*16))];
 			}
@@ -679,7 +679,7 @@ void loadConsoleIcons()
 	glDeleteTextures(1, &folderTexID);
 
 	newPalette = (u16*)icon_folderPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -700,7 +700,7 @@ void loadConsoleIcons()
 				);
 
 
-	if (ms().colorMode == 0) {
+	if (!colorTable) {
 		return;
 	}
 

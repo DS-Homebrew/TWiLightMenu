@@ -265,7 +265,7 @@ public:
 	TLanguage titleLanguage;
 	int fps;
 	bool macroMode;
-	int colorMode;
+	std::string colorMode;
 	// int blfLevel;
 	bool sleepMode;
 	bool kioskMode;

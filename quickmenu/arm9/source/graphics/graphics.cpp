@@ -24,6 +24,7 @@
 #include <gl2d.h>
 #include "bios_decompress_callback.h"
 #include "myDSiMode.h"
+#include "fileCopy.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/twlmenusettings.h"
@@ -285,7 +286,7 @@ void bottomBgLoad() {
 
 	for (uint i=0;i<image.size()/4;i++) {
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode > 0) {
+		if (colorTable) {
 			bmpImageBuffer[i] = colorTable[bmpImageBuffer[i]];
 		}
 	}
@@ -554,7 +555,7 @@ void loadBoxArt(const char* filename, bool secondaryDevice) {
 
 	for (uint i=0;i<image.size()/4;i++) {
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode > 0) {
+		if (colorTable) {
 			color = colorTable[color];
 		}
 		if (image[(i*4)+3] == 0) {
@@ -600,19 +601,19 @@ void topBgLoad(void) {
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "%s:/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str(), (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbg" : "topbg");
+			sprintf(temp, "%s:/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str(), "topbg");
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "%s:/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str(), (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbg" : "topbg");
+			sprintf(temp, "%s:/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str(), "topbg");
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "%s:/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str(), (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbg" : "topbg");
+			sprintf(temp, "%s:/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str(), "topbg");
 			break;
 		case TWLSettings::EThemeWood:
-			// sprintf(temp, "%s:/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str(), (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbg" : "topbg");
+			// sprintf(temp, "%s:/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str(), "topbg");
 			break;
 		case TWLSettings::EThemeSaturn:
-			sprintf(temp, "nitro:/graphics/%s.png", (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbg_saturn" : "topbg_saturn");
+			sprintf(temp, "nitro:/graphics/%s.png", "topbg_saturn");
 			break;
 		case TWLSettings::EThemeHBL:
 		case TWLSettings::EThemeGBC:
@@ -629,7 +630,7 @@ void topBgLoad(void) {
 
 	for (uint i=0;i<image.size()/4;i++) {
 		topImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode > 0) {
+		if (colorTable) {
 			topImageBuffer[i] = colorTable[topImageBuffer[i]];
 		}
 	}
@@ -652,7 +653,7 @@ void topBarLoad(void) {
 	if (ms().macroMode) return;
 
 	char filePath[256];
-	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", (sys().isDSPhat() || ms().colorMode == 2) ? "phat_topbar" : "topbar", getFavoriteColor());
+	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", "topbar", getFavoriteColor());
 	FILE* file = fopen(filePath, "rb");
 
 	if (file) {
@@ -662,7 +663,7 @@ void topBarLoad(void) {
 		lodepng::decode(image, width, height, filePath);
 		for (unsigned i=0;i<image.size()/4;i++) {
 			bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode > 0) {
+			if (colorTable) {
 				bmpImageBuffer[i] = colorTable[bmpImageBuffer[i]];
 			}
 		}
@@ -689,17 +690,17 @@ void graphicsInit()
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
-	if (ms().colorMode > 0) {
-		colorTable = new u16[0x20000/sizeof(u16)];
+	if (ms().colorMode != "Default") {
+		char colorTablePath[256];
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		const char* colorTablePath = "nitro:/graphics/colorTables/grayscale.bin";
-		if (ms().colorMode == 2) {
-			colorTablePath = "nitro:/graphics/colorTables/agb001.bin";
+		if (getFileSize(colorTablePath) == 0x20000) {
+			colorTable = new u16[0x20000/sizeof(u16)];
+
+			FILE* file = fopen(colorTablePath, "rb");
+			fread(colorTable, 1, 0x20000, file);
+			fclose(file);
 		}
-
-		FILE* file = fopen(colorTablePath, "rb");
-		fread(colorTable, 1, 0x20000, file);
-		fclose(file);
 	}
 
 	////////////////////////////////////////////////////////////
@@ -754,7 +755,7 @@ void graphicsInit()
 	swiWaitForVBlank();
 
 	u16* newPalette = (u16*)cursorPals+(getFavoriteColor()*16);
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 3; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -775,7 +776,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)iconboxPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 12; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -796,7 +797,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)iconbox_pressedPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 12; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -817,7 +818,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)wirelessiconsPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -838,7 +839,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)pictodlpPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 12; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -859,7 +860,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)pictodlp_selectedPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 12; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -880,7 +881,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)icon_dscardPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -901,7 +902,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)icon_gbamodePal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -922,7 +923,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)cornericonsPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -943,7 +944,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)icon_settingsPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}
@@ -964,7 +965,7 @@ void graphicsInit()
 							);
 
 	newPalette = (u16*)icon_settings_awayPal;
-	if (ms().colorMode > 0) {
+	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = colorTable[*(newPalette+i2)];
 		}

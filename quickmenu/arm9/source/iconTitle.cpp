@@ -130,7 +130,7 @@ void loadIcon(int num, u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 
 		glDeleteTextures(1, &iconTexID[num][i]);
 	}
 	for (int i = 0; i < loadIcon_loopTimes; i++) {
-		if (ms().colorMode > 0) {
+		if (colorTable) {
 			for (int i2 = 0; i2 < 16; i2++) {
 				*(palSrc+i2+(i*16)) = colorTable[*(palSrc+i2+(i*16))];
 			}
@@ -637,7 +637,7 @@ void loadMINIcon(int num)
 
 void loadConsoleIcons()
 {
-	if (ms().colorMode == 0) {
+	if (!colorTable) {
 		return;
 	}
 

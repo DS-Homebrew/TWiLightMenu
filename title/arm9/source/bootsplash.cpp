@@ -118,7 +118,7 @@ void bootSplashDSi(void) {
 				}
 			}
 			u16 color = image[i * 4] >> 3 | (image[(i * 4) + 1] >> 3) << 5 | (image[(i * 4) + 2] >> 3) << 10 | (image[(i * 4) + 3] > 0) << 15;
-			if (ms().colorMode > 0) {
+			if (colorTable) {
 				color = (color & 0x8000) | (colorTable[color] & 0x7FFF);
 			}
 
