@@ -731,6 +731,21 @@ void defaultExitHandler()
 		rebootTWLMenuPP();
 	}*/
 
+	if (ms().colorMode != "Default") {
+		// For homebrew to use the current LUT
+		char colorTablePath[256];
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+
+		if (getFileSize(colorTablePath) == 0x20000) {
+			char currentSettingPath[40];
+			sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
+
+			FILE* file = fopen(currentSettingPath, "wb");
+			fwrite(ms().colorMode.c_str(), 1, ms().colorMode.size(), file);
+			fclose(file);
+		}
+	}
+
 	if (isDSiMode() && sdFound() && !flashcardFound() && !sys().arm7SCFGLocked() && ms().limitedMode > 0) {
 		*(u32*)0x02FFFD0C = ms().limitedMode == 2 ? 0x4E44544C : ms().limitedMode == 3 ? 0x6D44544C : 0x4D44544C;
 		*(u32*)0x020007F0 = 0x4D44544C;
