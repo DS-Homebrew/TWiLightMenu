@@ -977,7 +977,11 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	return proceedToLaunch;
 }
 
-bool dsiWareCompatibleB4DS(const char* filename) {
+bool dsiWareCompatibleB4DS(void) {
+	if (memcmp(gameTid, "NTRJ", 4) == 0) {
+		return true; // No check necessary for NTRJ titles (They are uncommon, and "NTRJ" is not seen in retail titles)
+	}
+
 	bool res = false;
 
 	// TODO: If the list gets large enough, switch to bsearch().
@@ -1201,7 +1205,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bool proceedToLaunch = true;
 
 				if (isTwlm || (!isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType == 0 && gameTid[0] == 'D' && romUnitCode == 3 && requiresDonorRom != 51)
-				|| (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS(dirContents.at(fileOffset).name.c_str()))
+				|| (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str()))))
 				|| (bnrRomType == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement(dirContents.at(fileOffset).name.c_str()))) {
 					proceedToLaunch = cannotLaunchMsg(gameTid[0]);

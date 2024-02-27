@@ -2259,6 +2259,10 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 }
 
 bool dsiWareCompatibleB4DS(void) {
+	if (memcmp(gameTid[CURPOS], "NTRJ", 4) == 0) {
+		return true; // No check necessary for NTRJ titles (They are uncommon, and "NTRJ" is not seen in retail titles)
+	}
+
 	bool res = false;
 
 	// TODO: If the list gets large enough, switch to bsearch().

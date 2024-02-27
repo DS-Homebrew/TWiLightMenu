@@ -476,9 +476,9 @@ void perGameSettings (std::string filename) {
 	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BC0000 : 0xBC0000);
 	u32 romSizeLimitTwl = (ms().consoleModel > 0 ? 0x1000000 : 0);
 
-	extern bool dsiWareCompatibleB4DS(const char* filename);
+	extern bool dsiWareCompatibleB4DS(void);
 	bool showPerGameSettings = (bnrRomType == 0 && !isDSiWare);
-	if (bnrRomType == 0 && (dsiFeatures() || dsiWareCompatibleB4DS(filenameForInfo.c_str()) || !ms().secondaryDevice) && !isHomebrew && isDSiWare) {
+	if (bnrRomType == 0 && (dsiFeatures() || dsiWareCompatibleB4DS() || !ms().secondaryDevice) && !isHomebrew && isDSiWare) {
 		showPerGameSettings = true;
 	}
 	/*if (!(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !isHomebrew && REG_SCFG_EXT == 0) {
