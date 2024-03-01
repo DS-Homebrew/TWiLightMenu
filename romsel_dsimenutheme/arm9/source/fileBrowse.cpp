@@ -1910,6 +1910,10 @@ bool checkForGbaBiosRequirement(void) {
 		return false;
 	}
 
+	if (ms().gbaR3Test) {
+		return true;
+	}
+
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(gbaGameListBiosReqiure)/sizeof(gbaGameListBiosReqiure[0]); i++) {
 		if (memcmp(gameTid[CURPOS], gbaGameListBiosReqiure[i], 3) == 0) {
