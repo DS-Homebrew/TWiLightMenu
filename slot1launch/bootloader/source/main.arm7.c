@@ -51,6 +51,7 @@
 #define REG_GPIO_WIFI *(vu16*)0x4004C04
 
 #include "common.h"
+#include "dmaTwl.h"
 #include "common/tonccpy.h"
 #include "read_card.h"
 #include "module_params.h"
@@ -258,7 +259,11 @@ static void initMBK_dsiMode(void) {
 
 void memset_addrs_arm7(u32 start, u32 end)
 {
-	toncset((u32*)start, 0, ((int)end - (int)start));
+	if (!my_isDSiMode()) {
+		toncset((u32*)start, 0, ((int)end - (int)start));
+		return;
+	}
+	dma_twlFill32(0, 0, (u32*)start, ((int)end - (int)start));
 }
 
 /*-------------------------------------------------------------------------
@@ -280,7 +285,15 @@ void arm7_resetMemory (void)
 		SCHANNEL_SOURCE(i) = 0;
 		SCHANNEL_LENGTH(i) = 0;
 	}
+
 	REG_SOUNDCNT = 0;
+	REG_SNDCAP0CNT = 0;
+	REG_SNDCAP1CNT = 0;
+
+	REG_SNDCAP0DAD = 0;
+	REG_SNDCAP0LEN = 0;
+	REG_SNDCAP1DAD = 0;
+	REG_SNDCAP1LEN = 0;
 
 	// Clear out ARM7 DMA channels and timers
 	for (i=0; i<4; i++) {
