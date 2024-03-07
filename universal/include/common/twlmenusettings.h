@@ -70,6 +70,7 @@ public:
 		ELangCzech = 30,
 		ELangFinnish = 31,
 		ELangKazakh = 32,
+		ELangGalician = 33,
 	};
 
 	enum TRegion : int

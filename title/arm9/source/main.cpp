@@ -1426,6 +1426,7 @@ const char *languages[] = {
 	"Čeština",
 	"Suomi",
 	"қазақша",
+	"Galego",
 };
 
 const TWLSettings::TLanguage guiLanguages[] = {
@@ -1462,6 +1463,7 @@ const TWLSettings::TLanguage guiLanguages[] = {
 	TWLSettings::TLanguage::ELangRyukyuan,
 	TWLSettings::TLanguage::ELangKorean,
 	TWLSettings::TLanguage::ELangKazakh,
+	TWLSettings::TLanguage::ELangGalician,
 };
 
 const TWLSettings::TLanguage gameLanguages[] = {

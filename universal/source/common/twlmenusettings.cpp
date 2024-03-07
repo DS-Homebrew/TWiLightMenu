@@ -574,6 +574,8 @@ std::string TWLSettings::getGuiLanguageString()
 			return "fi";
 		case TWLSettings::ELangKazakh:
 			return "kk";
+		case TWLSettings::ELangGalician:
+			return "gl";
 	}
 }
 

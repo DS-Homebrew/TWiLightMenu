@@ -1015,7 +1015,8 @@ int settingsMode(void)
 				 "日本語",
 				 "琉球諸語",
 				 "한국어",
-				 "қазақша"},
+				 "қазақша",
+				 "Galego"},
 				{TLanguage::ELangDefault,
 				 TLanguage::ELangIndonesian,
 				 TLanguage::ELangCatalan,
@@ -1049,7 +1050,8 @@ int settingsMode(void)
 				 TLanguage::ELangJapanese,
 				 TLanguage::ELangRyukyuan,
 				 TLanguage::ELangKorean,
-				 TLanguage::ELangKazakh})
+				 TLanguage::ELangKazakh,
+				 TLanguage::ELangGalician})
 		// Theme
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
