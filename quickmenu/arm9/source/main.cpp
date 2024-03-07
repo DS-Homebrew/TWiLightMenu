@@ -1401,7 +1401,7 @@ int dsClassicMenu(void) {
 		} else if (extension(filename[0], ".gg")) {
 			bnrRomType[0] = 6;
 			boxArtType[0] = 2;
-		} else if (extension(filename[0], ".gen")) {
+		} else if (extension(filename[0], ".gen") || extension(filename[0], ".md")) {
 			bnrRomType[0] = 7;
 			boxArtType[0] = 2;
 		} else if (extension(filename[0], ".smc")) {
@@ -1547,7 +1547,7 @@ int dsClassicMenu(void) {
 		} else if (extension(filename[1], ".gg")) {
 			bnrRomType[1] = 6;
 			boxArtType[1] = 2;
-		} else if (extension(filename[1], ".gen")) {
+		} else if (extension(filename[1], ".gen") || extension(filename[1], ".md")) {
 			bnrRomType[1] = 7;
 			boxArtType[1] = 2;
 		} else if (extension(filename[1], ".smc")) {
@@ -3265,7 +3265,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".gen")) {
+				} else if (extension(filename[ms().secondaryDevice], ".gen") || extension(filename[ms().secondaryDevice], ".md")) {
 					bool usePicoDrive = ((isDSiMode() && sdFound() && sys().arm7SCFGLocked())
 						|| ms().mdEmulator==2 || (ms().mdEmulator==3 && getFileSize(filename[ms().secondaryDevice].c_str()) > 0x300000));
 					ms().launchType[ms().secondaryDevice] = (usePicoDrive ? TWLSettings::EPicoDriveTWLLaunch : TWLSettings::ESDFlashcardLaunch);
@@ -3501,7 +3501,7 @@ int dsClassicMenu(void) {
 					if (access(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", F_OK) == 0) {
 						bool romIsCompressed = false;
 						if (romToRamDisk == 0) {
-							romIsCompressed = (extension(ROMpath, ".lz77.gen"));
+							romIsCompressed = (extension(ROMpath, ".lz77.gen") || extension(ROMpath, ".lz77.md"));
 						} else if (romToRamDisk == 1) {
 							romIsCompressed = (extension(ROMpath, ".lz77.smc") || extension(ROMpath, ".lz77.sfc"));
 						} else if (romToRamDisk == 4) {

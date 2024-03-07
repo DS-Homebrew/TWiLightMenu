@@ -1212,7 +1212,8 @@ int dsiMenuTheme(void) {
 		}
 
 		if (!ms().secondaryDevice) {
-			extensionList.emplace_back(".gen"); // Sega Mega Drive/Genesis
+			extensionList.emplace_back(".gen"); // Sega Genesis
+			extensionList.emplace_back(".md"); // Sega Mega Drive
 		}
 
 		if (!ms().secondaryDevice || ms().newSnesEmuVer) {
@@ -2364,7 +2365,7 @@ int dsiMenuTheme(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename, {".gen"})) {
+				} else if (extension(filename, {".gen", ".md"})) {
 					bool usePicoDrive = ((isDSiMode() && sdFound() && sys().arm7SCFGLocked())
 						|| ms().mdEmulator==2 || (ms().mdEmulator==3 && getFileSize(filename.c_str()) > 0x300000));
 					ms().launchType[ms().secondaryDevice] = (usePicoDrive ? Launch::EPicoDriveTWLLaunch : Launch::ESDFlashcardLaunch);
@@ -2606,7 +2607,7 @@ int dsiMenuTheme(void) {
 					if (access(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", F_OK) == 0) {
 						bool romIsCompressed = false;
 						if (romToRamDisk == 0) {
-							romIsCompressed = (extension(ROMpath, {".lz77.gen"}));
+							romIsCompressed = (extension(ROMpath, {".lz77.gen", ".lz77.md"}));
 						} else if (romToRamDisk == 1) {
 							romIsCompressed = (extension(ROMpath, {".lz77.smc", ".lz77.sfc"}));
 						} else if (romToRamDisk == 4) {

@@ -38,10 +38,11 @@
 #include "date.h"
 
 #include "ndsheaderbanner.h"
+#include "common/twlmenusettings.h"
 #include "common/bootstrapsettings.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
-#include "common/twlmenusettings.h"
+#include "common/tonccpy.h"
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
@@ -196,18 +197,42 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			if (!ms().showHidden && (attrs & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0)))
 				continue;
 
+			bool emplaceBackDirContent = false;
 			if (ms().showDirectories) {
-				if ((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
+				emplaceBackDirContent =
+				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
 					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
-					|| nameEndsWith(pent->d_name, extensionList)) {
-					dirContents.emplace_back(pent->d_name, pent->d_type == DT_DIR, file_count, false);
-					file_count++;
-				}
+					|| nameEndsWith(pent->d_name, extensionList));
 			} else {
-				if (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList)) {
-					dirContents.emplace_back(pent->d_name, false, file_count, false);
-					file_count++;
+				emplaceBackDirContent = (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList));
+			}
+			if (emplaceBackDirContent) {
+				if ((pent->d_type != DT_DIR) && extension(pent->d_name, {".md"})) {
+					FILE* mdFile = fopen(pent->d_name, "rb");
+					if (mdFile) {
+						u8 segaEntryPointReversed[4] = {0};
+						u8 segaEntryPointU8[4] = {0};
+						u32 segaEntryPoint = 0;
+						fseek(mdFile, 4, SEEK_SET);
+						fread(&segaEntryPointReversed, 1, 4, mdFile);
+						for (int i = 0; i < 4; i++) {
+							segaEntryPointU8[3-i] = segaEntryPointReversed[i];
+						}
+						tonccpy(&segaEntryPoint, segaEntryPointU8, 4);
+
+						char segaString[5] = {0};
+						fseek(mdFile, 0x100, SEEK_SET);
+						fread(segaString, 1, 4, mdFile);
+						fclose(mdFile);
+
+						if ((strcmp(segaString, "SEGA") != 0) && ((segaEntryPoint < 8) || (segaEntryPoint >= 0x3FFFFF))) {
+							// Invalid string or entry point found
+							continue;
+						}
+					}
 				}
+				dirContents.emplace_back(pent->d_name, ms().showDirectories ? (pent->d_type == DT_DIR) : false, file_count, false);
+				file_count++;
 			}
 		}
 
@@ -1104,7 +1129,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bnrRomType = 5;
 			} else if (extension(std_romsel_filename, {".gg"})) {
 				bnrRomType = 6;
-			} else if (extension(std_romsel_filename, {".gen"})) {
+			} else if (extension(std_romsel_filename, {".gen", ".md"})) {
 				bnrRomType = 7;
 			} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
 				bnrRomType = 8;
