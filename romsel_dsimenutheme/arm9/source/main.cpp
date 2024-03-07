@@ -1120,65 +1120,6 @@ int dsiMenuTheme(void) {
 
 	keysSetRepeat(10, 2);
 
-	std::vector<std::string_view> extensionList = {
-		".nds", ".dsi", ".ids", ".srl", ".app", ".argv", // NDS
-		".agb", ".gba", ".mb", // GBA
-		".a26", // Atari 2600
-		".a52", // Atari 5200
-		".a78", // Atari 7800
-		".xex", ".atr", // Atari XEGS
-		".msx", // MSX
-		".col", // ColecoVision
-		".int", // Intellivision
-		".m5", // Sord M5
-		".gb", ".sgb", ".gbc", // Game Boy
-		".nes", ".fds", // NES
-		".sg", // Sega SG-1000
-		".sc", // Sega SC-3000
-		".sms", // Sega Master System
-		".gg", // Sega Game Gear
-		".gen", // Sega Mega Drive/Genesis
-		".smc", ".sfc", // SNES
-		".ws", ".wsc", // WonderSwan
-		".ngp", ".ngc", // Neo Geo Pocket
-		".pce", // PC Engine/TurboGrafx-16
-		".dsk", // Amstrad CPC
-		".min", // Pokémon mini
-		".avi", // Xvid (AVI)
-		".rvid", // Rocket Video
-		".fv", // FastVideo
-		".gif", // GIF
-		".bmp", // BMP
-		".png" // Portable Network Graphics
-	};
-
-	if (dsiFeatures() && ms().consoleModel < 2) {
-		char currentDate[16];
-		time_t Raw;
-		time(&Raw);
-		const struct tm *Time = localtime(&Raw);
-
-		strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
-
-		if (strcmp(currentDate, "04/01") == 0) {
-			// 3DS (for April Fools)
-			extensionList.emplace_back(".3ds");
-			extensionList.emplace_back(".cia");
-			extensionList.emplace_back(".cxi");
-		}
-	}
-
-	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		extensionList.emplace_back(".plg"); // DSTWO Plugin
-	}
-
-	if(ms().blockedExtensions.size() > 0) {
-		auto toErase = std::remove_if(extensionList.begin(), extensionList.end(), [](std::string_view str) {
-			return std::find(ms().blockedExtensions.begin(), ms().blockedExtensions.end(), str) != ms().blockedExtensions.end();
-		});
-		extensionList.erase(toErase, extensionList.end());
-	}
-
 	srand(time(NULL));
 
 	char path[256] = {0};
@@ -1225,6 +1166,70 @@ int dsiMenuTheme(void) {
 	}
 
 	while (1) {
+		std::vector<std::string_view> extensionList = {
+			".nds", ".dsi", ".ids", ".srl", ".app", ".argv", // NDS
+			".agb", ".gba", ".mb", // GBA
+			".a26", // Atari 2600
+			".a52", // Atari 5200
+			".a78", // Atari 7800
+			".xex", ".atr", // Atari XEGS
+			".msx", // MSX
+			".col", // ColecoVision
+			".int", // Intellivision
+			".m5", // Sord M5
+			".gb", ".sgb", ".gbc", // Game Boy
+			".nes", ".fds", // NES/Famicom
+			".sg", // Sega SG-1000
+			".sc", // Sega SC-3000
+			".sms", // Sega Master System
+			".gg", // Sega Game Gear
+			".ws", ".wsc", // WonderSwan
+			".ngp", ".ngc", // Neo Geo Pocket
+			".pce", // PC Engine/TurboGrafx-16
+			".dsk", // Amstrad CPC
+			".min", // Pokémon mini
+			".avi", // Xvid (AVI)
+			".fv", // FastVideo
+			".gif", // GIF
+			".bmp", // BMP
+			".png" // Portable Network Graphics
+		};
+
+		if (dsiFeatures() && ms().consoleModel < 2) {
+			char currentDate[16];
+			time_t Raw;
+			time(&Raw);
+			const struct tm *Time = localtime(&Raw);
+
+			strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
+
+			if (strcmp(currentDate, "04/01") == 0) {
+				// 3DS (for April Fools)
+				extensionList.emplace_back(".3ds");
+				extensionList.emplace_back(".cia");
+				extensionList.emplace_back(".cxi");
+			}
+		}
+
+		if (!ms().secondaryDevice) {
+			extensionList.emplace_back(".gen"); // Sega Mega Drive/Genesis
+		}
+
+		if (!ms().secondaryDevice || ms().newSnesEmuVer) {
+			extensionList.emplace_back(".smc"); // SNES
+			extensionList.emplace_back(".sfc"); // Super Famicom
+		}
+
+		if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
+			extensionList.emplace_back(".plg"); // DSTWO Plugin
+		}
+
+		if(ms().blockedExtensions.size() > 0) {
+			auto toErase = std::remove_if(extensionList.begin(), extensionList.end(), [](std::string_view str) {
+				return std::find(ms().blockedExtensions.begin(), ms().blockedExtensions.end(), str) != ms().blockedExtensions.end();
+			});
+			extensionList.erase(toErase, extensionList.end());
+		}
 
 		snprintf(path, sizeof(path), "%s", ms().romfolder[ms().secondaryDevice].c_str());
 		// Set directory
