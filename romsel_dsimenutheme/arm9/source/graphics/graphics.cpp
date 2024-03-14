@@ -734,7 +734,7 @@ void vBlankHandler() {
 				int i = pos;
 
 				// Stop drawing if the rest of the boxes are empty (with hide empty boxes enabled)
-				if (ms().hideEmptyBoxes && (i != 0 && i >= spawnedtitleboxes))
+				if (ms().hideEmptyBoxes && (i != 0 && i >= spawnedtitleboxes - (movingApp != -1)))
 					break;
 
 				if (movingApp == -1) {
