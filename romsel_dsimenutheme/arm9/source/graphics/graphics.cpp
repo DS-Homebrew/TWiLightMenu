@@ -84,10 +84,12 @@ extern int colorBvalue;
 extern bool dropDown;
 int dropTime[5];
 int dropSeq[5];
-#define dropSpeedDefine 7
-int dropSpeed[5] = {dropSpeedDefine};
-int dropSpeedChange[5];
+#define dropSpeedDefine 7.0f
+float dropSpeed[5] = {dropSpeedDefine};
+//int dropSpeedChange[5];
+float dropDownY[5] = {-85.0f - 80.0f};
 int titleboxYposDropDown[5] = {-85 - 80};
+
 int allowedTitleboxForDropDown = 0;
 int delayForTitleboxToDropDown = 0;
 extern int currentBg;
@@ -568,44 +570,36 @@ void vBlankHandler() {
 		}
 	}
 
-	if (!whiteScreen && dropDown && ms().theme == TWLSettings::EThemeDSi) {
+	if (!whiteScreen && dropDown && ms().theme == TWLSettings::EThemeDSi) { // perform dropdown anim in the DSi theme
 		int i2 = CURPOS - 2;
 		if (i2 < 0)
 			i2 += 5;
 		for (int i = i2; i <= allowedTitleboxForDropDown + i2; i++) {
-			if (dropSeq[i % 5] == 0) {
-				titleboxYposDropDown[i % 5] += dropSpeed[i % 5];
-				if (titleboxYposDropDown[i % 5] > 0)
-					dropSeq[i % 5] = 1;
-			} else if (dropSeq[i % 5] == 1) {
-				titleboxYposDropDown[i % 5] -= dropSpeed[i % 5];
-				dropTime[i % 5]++;
-				dropSpeedChange[i % 5]++;
-				if (dropTime[i % 5] >= 15) {
-					dropSpeedChange[i % 5] = -1;
-					dropSeq[i % 5] = 2;
+			int b = (i % 5);
+			if (dropSeq[b] < 3)
+			{
+				constexpr float gravity = 0.375f;
+				constexpr float restitution = 0.37f;
+
+				dropSpeed[b] += gravity;
+
+				if (dropDownY[b] + dropSpeed[b] >= 0.0f)
+				{
+					dropDownY[b] = 0.0f;
+					dropSpeed[b] *= -restitution;
+					dropSeq[b]++;
 				}
-				if (dropSpeedChange[i % 5] == 2) {
-					dropSpeed[i % 5]--;
-					if (dropSpeed[i % 5] < 0)
-						dropSpeed[i % 5] = 0;
-					dropSpeedChange[i % 5] = -1;
+				else
+				{
+					dropDownY[b] += dropSpeed[b];
 				}
-			} else if (dropSeq[i % 5] == 2) {
-				titleboxYposDropDown[i % 5] += dropSpeed[i % 5];
-				if (titleboxYposDropDown[i % 5] >= 0) {
-					dropSeq[i % 5] = 3;
-					titleboxYposDropDown[i % 5] = 0;
-				}
-				dropSpeedChange[i % 5]++;
-				if (dropSpeedChange[i % 5] == 1) {
-					dropSpeed[i % 5]++;
-					if (dropSpeed[i % 5] > 6)
-						dropSpeed[i % 5] = 6;
-					dropSpeedChange[i % 5] = -1;
-				}
-			} else if (dropSeq[i % 5] == 3) {
-				titleboxYposDropDown[i % 5] = 0;
+				titleboxYposDropDown[b] = (int)(dropDownY[b]);
+			}
+			else if (dropSeq[b] < 4)
+			{
+				dropDownY[b] = 0.0f;
+				titleboxYposDropDown[b] = 0;
+				dropSeq[b]++;
 			}
 		}
 
@@ -1457,11 +1451,17 @@ void graphicsInit() {
 		dropTime[i] = 0;
 		dropSeq[i] = 0;
 		dropSpeed[i] = dropSpeedDefine;
-		dropSpeedChange[i] = 0;
+		//dropSpeedChange[i] = 0;
 		if (ms().theme == TWLSettings::ETheme3DS || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL)
+		{
+			dropDownY[i] = 0.0f;
 			titleboxYposDropDown[i] = 0;
+		}
 		else
-			titleboxYposDropDown[i] = -85 - 80;
+		{
+			dropDownY[i] = -85.0f - 80.0f;
+			titleboxYposDropDown[i] = dropDownY[i];
+		}
 	}
 
 	allowedTitleboxForDropDown = 0;
