@@ -685,8 +685,9 @@ void vBlankHandler() {
 					} else {
 						glSprite(bipXpos, 178, GL_FLIP_NONE, tex().bipsImage());
 					}
-				} else
+				} else {
 					glSprite(bipXpos, 178, GL_FLIP_NONE, &tex().bipsImage()[1]);
+				}
 				bipXpos += 5;
 			}
 			glSprite(16 + titlewindowXpos[ms().secondaryDevice], 171, GL_FLIP_NONE,
@@ -731,6 +732,10 @@ void vBlankHandler() {
 			int maxIconNumber = (ms().theme == TWLSettings::EThemeSaturn ? 0 : 3);
 			for (int pos = std::max(CURPOS - maxIconNumber, 0); pos <= std::min(CURPOS + maxIconNumber, 39); pos++) {
 				int i = pos;
+
+				// Stop drawing if the rest of the boxes are empty (with hide empty boxes enabled)
+				if (ms().hideEmptyBoxes && (i != 0 && i >= spawnedtitleboxes - (movingApp != -1)))
+					break;
 
 				if (movingApp == -1) {
 					spawnedboxXpos = 96 + pos * titleboxXspacing;
@@ -1463,7 +1468,7 @@ void graphicsInit() {
 	delayForTitleboxToDropDown = 0;
 	dropDown = false;
 
-
+	
 	titleboxXpos[0] = ms().cursorPosition[0] * titleboxXspacing;
 	titleboxXdest[0] = ms().cursorPosition[0] * titleboxXspacing;
 	titlewindowXpos[0] = ms().cursorPosition[0] * 5;

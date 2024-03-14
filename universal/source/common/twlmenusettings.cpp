@@ -60,6 +60,7 @@ TWLSettings::TWLSettings()
 	//snesEmulator = true;
 	updateRecentlyPlayedList = true;
 	sortMethod = ESortAlphabetical;
+	hideEmptyBoxes = false;
 	showDirectories = true;
 	showHidden = false;
 	showPhoto = true;
@@ -233,6 +234,7 @@ void TWLSettings::loadSettings()
 	//snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 	updateRecentlyPlayedList = settingsini.GetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
 	sortMethod = (TSortMethod)settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
+	hideEmptyBoxes = settingsini.GetInt("SRLOADER", "HIDE_EMPTY_BOXES", hideEmptyBoxes);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
 	showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
 	showPhoto = settingsini.GetInt("SRLOADER", "SHOW_PHOTO", showPhoto);
@@ -385,6 +387,7 @@ void TWLSettings::saveSettings()
 	// settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 	settingsini.SetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
 	settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
+	settingsini.SetInt("SRLOADER", "HIDE_EMPTY_BOXES", hideEmptyBoxes);
 	settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
 	settingsini.SetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
 	settingsini.SetInt("SRLOADER", "SHOW_PHOTO", showPhoto);

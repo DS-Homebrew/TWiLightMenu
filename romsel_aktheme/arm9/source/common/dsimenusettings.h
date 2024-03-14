@@ -156,6 +156,7 @@ class TWLSettings
     int showMd;
     bool showSnes;
     bool showPce;
+    bool hideEmptyBoxes;
     bool showDirectories;
     bool showHidden;
     bool preventDeletion;
