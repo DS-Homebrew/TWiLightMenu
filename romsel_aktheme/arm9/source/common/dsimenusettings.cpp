@@ -37,6 +37,7 @@ TWLSettings::TWLSettings()
     showMd = 3;
     showSnes = true;
     showPce = true;
+    hideEmptyBoxes = false;
     showDirectories = true;
     showHidden = false;
     showBoxArt = 1 + isDSiMode();
@@ -134,6 +135,7 @@ void TWLSettings::loadSettings()
     fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
+    hideEmptyBoxes = settingsini.GetInt("SRLOADER", "HIDE_EMPTY_BOXES", hideEmptyBoxes);
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
@@ -209,6 +211,7 @@ void TWLSettings::saveSettings()
         settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
     }
     settingsini.SetInt("SRLOADER", "THEME", theme);
+    settingsini.SetInt("SRLOADER", "HIDE_EMPTY_BOXES", hideEmptyBoxes);
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);

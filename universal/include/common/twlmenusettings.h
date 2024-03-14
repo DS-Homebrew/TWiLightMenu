@@ -294,6 +294,7 @@ public:
 	//int snesEmulator;
 	bool updateRecentlyPlayedList;
 	TSortMethod sortMethod;
+	bool hideEmptyBoxes;
 	bool showDirectories;
 	bool showHidden;
 	bool showPhoto;

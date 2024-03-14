@@ -1085,6 +1085,7 @@ int settingsMode(void)
 				Option::Bool(&ms().dsClassicCustomFont),
 				{STR_DEFAULT, STR_CUSTOM_SPLASH},
 				{false, true})
+		.option(STR_SHOW_EMPTY_BOXES, STR_DESCRIPTION_SHOW_EMPTY_BOXES, Option::Bool(&ms().hideEmptyBoxes), {STR_SHOW, STR_HIDE}, {false, true})
 		.option(STR_SORT_METHOD, STR_DESCRIPTION_SORT_METHOD, Option::Int((int *)&ms().sortMethod), {STR_ALPHABETICAL, STR_RECENT, STR_MOST_PLAYED, STR_FILE_TYPE, STR_CUSTOM}, {TSortMethod::ESortAlphabetical, TSortMethod::ESortRecent, TSortMethod::ESortMostPlayed, TSortMethod::ESortFileType, TSortMethod::ESortCustom})
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_SPLASH_JINGLE_LENGTH, STR_DESCRIPTION_SPLASH_JINGLE_LENGTH, Option::Bool(&ms().longSplashJingle), {STR_LONG, STR_SHORT}, {true, false})
