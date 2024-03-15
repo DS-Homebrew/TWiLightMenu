@@ -181,6 +181,13 @@ autoboot:
 	# Since this is the last one, move it instead of copy
 	mv ismat.dat "../7zfile/Flashcard users/Autoboot/r4i.cn/_ds_menu.nds"
 
+	#### EZ-Flash Parallel
+	cp booter_fc.nds ezds.dat
+	dlditool flashcart_specifics/DLDI/ez5n.dldi ezds.dat
+	$(PYTHON) flashcart_specifics/dldinoap/dldinoap.py ezds.dat
+	mkdir -p "../7zfile/Flashcard users/Autoboot/EZ Flash Parallel/"
+	mv ezds.dat "../7zfile/Flashcard users/Autoboot/EZ Flash Parallel/ezds.dat"
+
 	#### Galaxy Eagle
 	cp booter_fc.nds ge.nds
 	dlditool flashcart_specifics/DLDI/ak2_sd.dldi ge.nds
