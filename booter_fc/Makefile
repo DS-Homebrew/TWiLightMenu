@@ -312,8 +312,6 @@ clean:
 	@$(MAKE) -C flashcart_specifics/r4ig/arm9 clean
 	@$(MAKE) -C flashcart_specifics/r4ils/arm7 clean
 	@$(MAKE) -C arm7 clean
-	# echo Cleaning Flashcart Autobooters
-	# rm -fr "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
 
 data:
 	@mkdir -p data
