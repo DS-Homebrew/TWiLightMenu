@@ -135,19 +135,22 @@ autoboot:
 	mv SCFW.SC "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/SCFW.SC"
 	
 	### The following use booter_fc.nds for everything
-	#### Original R4 / M3 Simply
+	#### Original R4 / M3 Simply (and related)
 	cp booter_fc.nds _DS_MENU.nds
 	dlditool flashcart_specifics/DLDI/r4tfv3.dldi _DS_MENU.nds
+
+	#### R4 / M3 Simply
 	r4denc _DS_MENU.nds
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.dat"
-	# delete _DS_MENU.nds for the next cart
-	rm -f _DS_MENU.nds
 
-	# N5
-	cp booter_fc.nds _DS_MENU.dat
-	dlditool flashcart_specifics/DLDI/r4tfv3.dldi _DS_MENU.dat
-	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/N5/_DS_MENU.dat"
+	#### N5
+	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/N5/_DS_MENU.dat"
+
+	#### Original R4SDHC
+	$(PYTHON) flashcart_specifics/dldinoap/dldinoap.py _DS_MENU.nds
+	# Since this is the last one, move it instead of copy
+	mv _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/Original R4SDHC/default.nds"
 
 	#### EDGE (TODO: Find out how to encrypt the .dat file)
 	# cp booter_fc.nds EDGE.dat
