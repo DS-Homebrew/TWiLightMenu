@@ -16,6 +16,9 @@ TWLSettings::TWLSettings()
 	romfolder[0] = "sd:/";
 	romfolder[1] = "fat:/";
 
+	defaultRomfolder[0] = "-1";
+	defaultRomfolder[1] = "-1";
+
 	pagenum[0] = 0;
 	pagenum[1] = 0;
 
@@ -150,7 +153,20 @@ void TWLSettings::loadSettings()
 
 	// UI settings.
 	romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
+	defaultRomfolder[0] = settingsini.GetString("SRLOADER", "INITIAL_ROM_FOLDER", "null");
+
 	romfolder[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
+	defaultRomfolder[1] = settingsini.GetString("SRLOADER", "INITIAL_SECONDARY_ROM_FOLDER", "null");
+
+	// Overwrite rom folder with the default one, if available.
+	bool usingdefaultdir[2] = { false, false };
+	for (int i = 0; i < 2; ++i) { 
+		if (!defaultRomfolder[i].empty() && defaultRomfolder[i] != "null") {
+			romfolder[i] = defaultRomfolder[i];
+			usingdefaultdir[i] = true;
+		}
+	}
+
 	if (sdFound() && (strncmp(romfolder[0].c_str(), "sd:", 3) != 0 || access(romfolder[0].c_str(), F_OK) != 0)) {
 		romfolder[0] = "sd:/";
 	}
@@ -167,11 +183,15 @@ void TWLSettings::loadSettings()
 		romPath[1] = "";
 	}
 
-	pagenum[0] = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", pagenum[0]);
-	pagenum[1] = settingsini.GetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
-
-	cursorPosition[0] = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
-	cursorPosition[1] = settingsini.GetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
+	// Only remember cursor pos if we don't have default dirs
+	if (!usingdefaultdir[0]) {
+		pagenum[0] = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", pagenum[0]);
+		cursorPosition[0] = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
+	}
+	if (!usingdefaultdir[1]) {
+		pagenum[1] = settingsini.GetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
+		cursorPosition[1] = settingsini.GetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
+	}
 
 	consoleModel = (TConsoleModel)settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
 	languageSet = settingsini.GetInt("SRLOADER", "LANGUAGE_SET", languageSet);
@@ -338,7 +358,9 @@ void TWLSettings::saveSettings()
 
 	// UI settings.
 	settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
+	settingsini.SetString("SRLOADER", "INITIAL_ROM_FOLDER", defaultRomfolder[0]);
 	settingsini.SetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
+	settingsini.SetString("SRLOADER", "INITIAL_SECONDARY_ROM_FOLDER", defaultRomfolder[1]);
 
 	settingsini.SetString("SRLOADER", "ROM_PATH", romPath[0]);
 	settingsini.SetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);

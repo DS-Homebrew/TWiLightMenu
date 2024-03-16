@@ -253,7 +253,9 @@ public:
 	const char* getAppName();
 public:
 	std::string romfolder[2];
+	std::string defaultRomfolder[2];
 	std::string romPath[2];
+
 	int pagenum[2];
 	int cursorPosition[2];
 
