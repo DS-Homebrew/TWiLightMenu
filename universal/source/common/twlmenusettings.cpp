@@ -16,8 +16,8 @@ TWLSettings::TWLSettings()
 	romfolder[0] = "sd:/";
 	romfolder[1] = "fat:/";
 
-	defaultRomfolder[0] = "-1";
-	defaultRomfolder[1] = "-1";
+	defaultRomfolder[0] = "null";
+	defaultRomfolder[1] = "null";
 
 	pagenum[0] = 0;
 	pagenum[1] = 0;
