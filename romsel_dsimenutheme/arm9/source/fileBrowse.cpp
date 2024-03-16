@@ -342,7 +342,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 						fread(segaString, 1, 4, mdFile);
 						fclose(mdFile);
 
-						if (!((segaEntryPointU8[0] == 0) && ((strcmp(segaString, "SEGA") == 0) || ((segaEntryPoint >= 8) && (segaEntryPoint < 0x3FFFFF))))) {
+						if (!((segaEntryPointReversed[0] == 0) && ((strcmp(segaString, "SEGA") == 0) || ((segaEntryPoint >= 8) && (segaEntryPoint < 0x3FFFFF))))) {
 							// Invalid string or entry point found
 							continue;
 						}
