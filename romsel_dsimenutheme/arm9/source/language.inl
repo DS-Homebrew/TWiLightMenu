@@ -124,6 +124,12 @@ STRING(AP_PATCH_RGF, "This game has AP (Anti-Piracy)\nand MUST be patched using 
 STRING(AP_USE_LATEST, "This game has AP (Anti-Piracy).\nPlease make sure you're\nusing the latest version of\nTWiLight Menu++.")
 STRING(B_A_OK_X_DONT_SHOW, "\\B/\\A OK, \\X Don't show again")
 
+// Default Directory Selector
+STRING(DEFAULT_DIR_SET, "Do you want to set this\nas the default directory\nfor this device?")
+STRING(DEFAULT_DIR_ALREADY, "This is already the\ndefault directory\nfor this device!")
+STRING(X_SET_DEFAULT_DIR, "\\X Set Default Directory")
+STRING(Y_DISABLE, "\\Y Disable")
+
 // Misc buttons
 STRING(A_OK, "\\A OK")
 STRING(B_NO, "\\B No")

@@ -2871,6 +2871,138 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 	return showRshoulder;
 }
 
+// Opens a message box prompt to set/clear the default directory.
+bool setDefaultDirectory(std::string_view directory_path)
+{
+	if (ms().kioskMode)
+		return false;
+	
+	if (!ms().showDirectories)
+		return false;
+
+	if (ms().theme == TWLSettings::EThemeSaturn) {
+		snd().playStartup();
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			bgOperations(true);
+		}
+		currentBg = 1;
+		displayGameIcons = false;
+		fadeType = true;
+
+		clearText();
+		updateText(false);
+
+		while (!screenFadedIn()) { bgOperations(true); }
+		dbox_showIcon = false;
+
+		printLarge(false, 0, 104, directory_path, Alignment::center);
+	} else {
+		dbox_showIcon = false;
+		showdialogbox = true;
+
+		clearText();
+		updateText(false);
+
+		while (!dboxStopped) { bgOperations(true); }
+
+		dbox_showIcon = false;
+		showdialogbox = true;
+
+		printLarge(false, 0, 32, directory_path, Alignment::center);
+	}
+		
+	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : 98);
+
+	std::string *str;
+	bool alreadyDefault, noDefaultDir;
+	noDefaultDir = ms().defaultRomfolder[ms().secondaryDevice] == "null";
+
+	if (ms().defaultRomfolder[ms().secondaryDevice] != directory_path)
+	{
+		str = &STR_DEFAULT_DIR_SET;
+		alreadyDefault = false;
+	}
+	else
+	{
+		str = &STR_DEFAULT_DIR_ALREADY;
+		alreadyDefault = true;
+	}
+
+	printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center, FontPalette::dialog);
+	yPos = (ms().theme == TWLSettings::EThemeSaturn ? 96 : 64)-8;
+	if (ms().secondaryDevice)
+		printSmall(false, 0, yPos, STR_LOCATION_SLOT_1, Alignment::center);
+	else
+		printSmall(false, 0, yPos, ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
+
+	updateText(false);
+	for (int i = 0; i < 90; i++) { // Small delay to avoid activating this accidentally
+		bgOperations(true);
+	}
+
+	if (!alreadyDefault)
+		printSmall(false, 0, 160-16, STR_X_SET_DEFAULT_DIR, Alignment::center, FontPalette::dialog);
+	
+	std::string btn = (noDefaultDir ? "" : STR_Y_DISABLE + "    ") + STR_B_BACK;
+	printSmall(false, 0, 160, btn, Alignment::center, FontPalette::dialog);
+
+	updateText(false);
+	int pressed = 0;
+	while (1) {
+		scanKeys();
+		pressed = keysDown();
+		updateBoxArt();
+		bgOperations(true);
+
+		// Back
+		if (pressed & KEY_B) {
+			snd().playBack();
+			break;
+		}
+		// Clear default dir and save settings
+		else if (!noDefaultDir && pressed & KEY_Y) {
+			snd().playLaunch();
+
+			ms().defaultRomfolder[ms().secondaryDevice] = "null";
+			ms().saveSettings();
+			break;
+		}
+		// Set default dir and save settings
+		else if (!alreadyDefault && (pressed & KEY_X)) {
+			snd().playLaunch();
+
+			ms().defaultRomfolder[ms().secondaryDevice] = directory_path;
+			ms().saveSettings();
+			break;
+		}
+	}
+
+	if (ms().theme == TWLSettings::EThemeSaturn) {
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			bgOperations(true);
+		}
+		clearText();
+		updateText(false);
+		currentBg = 0;
+		displayGameIcons = true;
+		fadeType = true;
+		if (ms().theme == TWLSettings::EThemeSaturn) snd().playStartup();
+	} else {
+		clearText();
+		updateText(false);
+		for (int i = 0; i < 15; i++) { bgOperations(true); }
+
+		if (ms().theme == TWLSettings::EThemeHBL) {
+			dbox_showIcon = false;
+		}
+		showdialogbox = false;
+	}
+	
+	return true;
+}
+
 std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	displayNowLoading();
 	gameOrderIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
@@ -3967,6 +4099,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				return "null";
 			}
 
+			// (un)Hide file/folder
 			if ((pressed & KEY_X) && !ms().kioskMode && !ms().preventDeletion && bannerTextShown && showSTARTborder
 			&& dirContents[scrn].at(CURPOS + PAGENUM * 40).name != "..") {
 				DirEntry *entry = &dirContents[scrn].at((PAGENUM * 40) + (CURPOS));
@@ -4164,9 +4297,17 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 					}
 
+					// set/clear default directory
+					if ((pressed & KEY_X)) {
+						runSelectMenu = false;
+						if (setDefaultDirectory(ms().romfolder[ms().secondaryDevice]))
+							break;
+					}
+
 					if (ms().theme == TWLSettings::EThemeDSi || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
 						if (bothSDandFlashcard() && ((pressed & KEY_UP) || (pressed & KEY_DOWN))) {
 							switchDevice();
+							
 							return "null";
 						}
 					}
