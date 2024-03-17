@@ -96,6 +96,22 @@ void SettingsGUI::processInputs(int pressed, touchPosition &touch)
 	}
 }
 
+static bool wasOptionModified(Option& option) {
+	if (auto action = std::get_if<Option::Bool>(&option.action())) {
+		return action->was_modified();
+	}
+	if (auto action = std::get_if<Option::Int>(&option.action())) {
+		return action->was_modified();
+	}
+	if (auto action = std::get_if<Option::Str>(&option.action())) {
+		return action->was_modified();
+	}
+	if (auto action = std::get_if<Option::Nul>(&option.action())) {
+		return action->was_modified();
+	}
+	return false;
+}
+
 void SettingsGUI::draw()
 {
 	if (_selectedPage < 0 || (int)_pages.size() < 1 || _selectedPage >= (int)_pages.size())
@@ -123,32 +139,51 @@ void SettingsGUI::draw()
 	if (ms().rtl()) {
 		printLarge(false, SCREEN_WIDTH - 6, 1, titleDisplayLength>=60*4 ? STR_SELECT_SEE_DESC_VER : _pages[_selectedPage].title().c_str(), Alignment::right);
 
+		std::string str;
 		for (int i = _topCursor; i < _bottomCursor; i++) {
-			int selected = _pages[_selectedPage].options()[i].selected();
+			auto option = _pages[_selectedPage].options()[i];
+			int selected = option.selected();
+
 			if (i == _selectedOption) {
 				printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _topCursor) * 14, "<", Alignment::right);
 				// print scroller on the other side
 				drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1), true);
 			}
 
+			bool modified = wasOptionModified(option);
+
 			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str(), Alignment::right);
 			if (selected < 0) continue;
-			printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
+
+			str = _pages[_selectedPage].options()[i].labels()[selected];
+			if (modified)
+				str += "*";
+			printSmall(false, 12, 30 + (i - _topCursor) * 14, str.c_str());
 		}
 	} else {
 		printLarge(false, 6, 1, titleDisplayLength>=60*4 ? STR_SELECT_SEE_DESC_VER : _pages[_selectedPage].title().c_str());
 
+		std::string str;
 		for (int i = _topCursor; i < _bottomCursor; i++) {
-			int selected = _pages[_selectedPage].options()[i].selected();
+			auto option = _pages[_selectedPage].options()[i];
+			int selected = option.selected();
+
 			if (i == _selectedOption) {
 				printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
 				// print scroller on the other side
 				drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1), false);
 			}
 
+			bool modified = wasOptionModified(option);
+
 			printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str());
 			if (selected < 0) continue;
-			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str(), Alignment::right);
+
+			str = _pages[_selectedPage].options()[i].labels()[selected];
+			if (modified)
+				str += "*";
+
+			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, str.c_str(), Alignment::right);
 		}
 	}
 
