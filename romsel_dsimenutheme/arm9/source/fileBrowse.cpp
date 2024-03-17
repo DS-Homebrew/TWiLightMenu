@@ -472,7 +472,7 @@ void displayNowLoading(void) {
 
 void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntry = 0xFFFF) {
 	if ((right && CURPOS >= last_used_box) || (!right && CURPOS <= 0)) {
-		if (!edgeBumpSoundPlayed)
+		if (ms().theme != TWLSettings::EThemeSaturn && !edgeBumpSoundPlayed)
 			snd().playWrong();
 		edgeBumpSoundPlayed = true;
 		return;
@@ -489,8 +489,8 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 			CURPOS++;
 		} else if (!right && CURPOS > 0) {
 			CURPOS--;
-		} else {
-			if (!edgeBumpSoundPlayed)
+		} else  {
+			if (ms().theme != TWLSettings::EThemeSaturn && !edgeBumpSoundPlayed)
 				snd().playWrong();
 			edgeBumpSoundPlayed = true;
 			return;
@@ -546,6 +546,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 			swiWaitForVBlank();
 		} else {
 			snd().playSelect();
+
 			if (right) {
 				titleboxXdest[ms().secondaryDevice] += titleboxXspacing;
 				titlewindowXdest[ms().secondaryDevice] += 5;
@@ -553,6 +554,9 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 				titleboxXdest[ms().secondaryDevice] -= titleboxXspacing;
 				titlewindowXdest[ms().secondaryDevice] -= 5;
 			}
+
+			for (int i = 0; i < 4; i++)
+				swiWaitForVBlank();
 		}
 
 		// Bit of delay the first time to give time to release the button
@@ -3213,7 +3217,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					} else if (held & KEY_RIGHT) {
 						if (CURPOS + (PAGENUM * 40) < (int)dirContents[scrn].size() - 1) {
 							moveCursor(true, dirContents[scrn], dirContents[scrn].size() - 1 - PAGENUM * 40);
-						} else if (!edgeBumpSoundPlayed) {
+						} else if (ms().theme != TWLSettings::EThemeSaturn && !edgeBumpSoundPlayed) {
 							snd().playWrong();
 							edgeBumpSoundPlayed = true;
 						}
