@@ -335,6 +335,7 @@ void CheatCodelist::selectCheats(std::string filename)
       cheatWnd_scrollPosition = 0, cheatWnd_scrollTimer = 120,
       cheatWnd_scrollDirection = 1;
 
+  bool unsavedChanges = false;
   while (cheatsFound) {
     clearText();
     titleUpdate(isDirectory, filename.c_str());
@@ -428,6 +429,7 @@ void CheatCodelist::selectCheats(std::string filename)
           deselectFolder(std::distance(&_data[0], currentList[cheatWnd_cursorPosition]));
         if (select || !(cheat._flags & cParsedItem::EOne))
           cheat._flags ^= cParsedItem::ESelected;
+        unsavedChanges = true;
       }
     } else if (pressed & KEY_B) {
       if (mainListCurPos != -1) {
@@ -443,9 +445,44 @@ void CheatCodelist::selectCheats(std::string filename)
         cheatWnd_scrollTimer = 60;
         cheatWnd_scrollPosition = 0;
       } else {
-        break;
+        clearText();
+
+        if (unsavedChanges)
+        {
+          bool break2 = false;
+          titleUpdate(isDirectory, filename.c_str());
+          printLargeCentered(false, 74, "Cheats");
+          printSmallCentered(false, 128, "Discard unsaved changes?");
+          printSmallCentered(false, 167, "A: Discard B: Cancel");
+          //updateText(false);
+          
+          while (1)
+          {
+            scanKeys();
+            pressed = keysDown();
+            held = keysDownRepeat();
+            bgOperations(true);
+
+            if (pressed & KEY_B) // No
+            {
+              break;
+            }
+
+            if (pressed & KEY_A) // Yes
+            {
+              break2 = true;
+              break;
+            }
+          }
+
+          if (break2)
+              break;
+        }
+        else
+          break;
       }
     } else if (pressed & KEY_X) {
+      unsavedChanges = false;
       clearText();
       titleUpdate(isDirectory, filename.c_str());
       printLargeCentered(false, 74, "Cheats");
@@ -522,6 +559,7 @@ void CheatCodelist::selectCheats(std::string filename)
       for (auto itr = currentList.begin(); itr != currentList.end(); itr++) {
         (*itr)->_flags &= ~cParsedItem::ESelected;
       }
+      unsavedChanges = true;
     }
   }
   dialogboxHeight = oldDialogboxHeight;
