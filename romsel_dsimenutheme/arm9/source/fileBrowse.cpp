@@ -447,17 +447,9 @@ void displayNowLoading(void) {
 	printLarge(false, 0, 88, STR_NOW_LOADING, Alignment::center);
 	if (!sys().isRegularDS()) {
 		if (ms().theme == TWLSettings::EThemeSaturn) {
-			if (ms().secondaryDevice) {
-				printSmall(false, 0, 20 + smallFontHeight(), STR_LOCATION_SLOT_1, Alignment::center);
-			} else {
-				printSmall(false, 0, 20 + smallFontHeight(), ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
-			}
+			printSmall(false, 0, 20 + smallFontHeight(), ms().secondaryDevice ? STR_LOCATION_SLOT_1 : (ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD), Alignment::center);
 		} else {
-			if (ms().secondaryDevice) {
-				printSmall(false, 0, 168, STR_LOCATION_SLOT_1, Alignment::center);
-			} else {
-				printSmall(false, 0, 168, ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
-			}
+			printSmall(false, 0, 168, ms().secondaryDevice ? STR_LOCATION_SLOT_1 : (ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD), Alignment::center);
 		}
 	}
 	updateText(false);
@@ -2878,12 +2870,9 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 // Opens a message box prompt to set/clear the default directory.
 bool setDefaultDirectory(std::string_view directory_path)
 {
-	if (ms().kioskMode)
+	if (ms().kioskMode || !ms().showDirectories)
 		return false;
 	
-	if (!ms().showDirectories)
-		return false;
-
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
@@ -2934,11 +2923,10 @@ bool setDefaultDirectory(std::string_view directory_path)
 	}
 
 	printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center, FontPalette::dialog);
-	yPos = (ms().theme == TWLSettings::EThemeSaturn ? 96 : 64)-8;
-	if (ms().secondaryDevice)
-		printSmall(false, 0, yPos, STR_LOCATION_SLOT_1, Alignment::center);
-	else
-		printSmall(false, 0, yPos, ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
+	if (!sys().isRegularDS()) {
+		yPos = (ms().theme == TWLSettings::EThemeSaturn ? 96 : 64)-8;
+		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 96 : 64)-8, ms().secondaryDevice ? STR_LOCATION_SLOT_1 : (ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD), Alignment::center);
+	}
 
 	updateText(false);
 	for (int i = 0; i < 90; i++) { // Small delay to avoid activating this accidentally
