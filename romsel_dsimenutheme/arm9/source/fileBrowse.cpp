@@ -3040,12 +3040,17 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		}
 		nowLoadingDisplaying = false;
 		whiteScreen = false;
-		fadeType = true; // Fade in from white
-		for (int i = 0; i < 5; i++) {
-			bgOperations(true);
-		}
 		if (!musicplaying && ms().theme == TWLSettings::EThemeDSi) {
 			fadeSpeed = false; // Slow fade speed
+			fadeType = true; // Fade in from white
+			for (int i = 0; i < 15; i++) {
+				bgOperations(true);
+			}
+		} else {
+			fadeType = true; // Fade in from white
+			for (int i = 0; i < 5; i++) {
+				bgOperations(true);
+			}
 		}
 		displayGameIcons = true;
 		clearText(false);
