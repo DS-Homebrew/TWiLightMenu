@@ -28,14 +28,15 @@ INCLUDES	:=	include build $(UNIVERSAL)/include $(UNIVERSAL)/arm7/include $(UNIVE
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv4t -mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2\
+CFLAGS	:=	-g -Wall -O2 \
  		-mcpu=arm7tdmi -mtune=arm7tdmi -fomit-frame-pointer\
 		-ffast-math \
+		-flto \
 		$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM7
 
-ASFLAGS	:=	-g $(ARCH)
+ASFLAGS	:=	-g $(ARCH) -flto
 LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,--nmagic -Wl,-Map,$(notdir $*).map
 
 

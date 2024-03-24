@@ -1212,9 +1212,7 @@ void launchInternetBrowser(std::string filename, bool isDir) {
 			fadeType = false;		  // Fade to black
 		}
 
-		while (!screenFadedOut()) {
-			swiWaitForVBlank();
-		}
+		while (!screenFadedOut()) { swiWaitForVBlank(); }
 
 		int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
 		char text[32];
@@ -3024,7 +3022,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		getFileInfo(scrn, dirContents, true);
 		reloadIconPalettes();
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
-			while (!screenFadedOut());
+			while (!screenFadedOut()) { swiWaitForVBlank(); }
 		}
 		nowLoadingDisplaying = false;
 		whiteScreen = false;
@@ -3058,7 +3056,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 			controlTopBright = true;
 			if (ms().theme != TWLSettings::EThemeDSi) {
-				while (!screenFadedIn());
+				while (!screenFadedIn()) { swiWaitForVBlank(); }
 			}
 			musicplaying = true;
 		}

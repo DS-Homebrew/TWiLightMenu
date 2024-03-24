@@ -24,14 +24,15 @@ SPECS		:=  specs
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2\
+CFLAGS	:=	-g -Wall -O2 \
 			-mcpu=arm7tdmi -mtune=arm7tdmi -fomit-frame-pointer\
 			-ffast-math \
+			-flto \
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) $(EXTRA_CFLAGS) -DARM7
 
-ASFLAGS	:=	-g $(ARCH) $(EXTRA_CFLAGS) $(INCLUDE)
+ASFLAGS	:=	-g $(ARCH) -flto $(EXTRA_CFLAGS) $(INCLUDE)
 LDFLAGS	=	-nostartfiles -T $(TOPDIR)/load.ld -g $(ARCH) -Wl,-Map,$(TARGET).map
 
 LIBS	:= 
