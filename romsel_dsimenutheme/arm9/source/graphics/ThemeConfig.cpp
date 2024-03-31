@@ -22,13 +22,12 @@ ThemeConfig::ThemeConfig()
 	_movingArrowUserPalette(true), _progressUserPalette(true), _scrollWindowUserPalette(false), _smallCartUserPalette(false),
 	_startBorderUserPalette(true), _startTextUserPalette(true), _wirelessIconsUserPalette(false),
 	_iconA26UserPalette(false), _iconCOLUserPalette(false), _iconGBUserPalette(false), _iconGBAUserPalette(false),
-	_iconGBAModeUserPalette(false),	_iconGGUserPalette(false), _iconIMGUserPalette(false), _iconINTUserPalette(false),
-	_iconM5UserPalette(false), _iconManualUserPalette(false), _iconMDUserPalette(false), _iconMINIUserPalette(false),
-	_iconMSXUserPalette(false), _iconNESUserPalette(false),
-	_iconNGPUserPalette(false), _iconPCEUserPalette(false), _iconPLGUserPalette(false), _iconSettingsUserPalette(false),
-	_iconSGUserPalette(false), _iconSMSUserPalette(false), _iconSNESUserPalette(false), _iconUnknownUserPalette(false),
-	_iconVIDUserPalette(false), _iconWSUserPalette(false),
-	_usernameUserPalette(true), _progressBarUserPalette(true),
+	_iconGBAModeUserPalette(false),	_iconGGUserPalette(false), _iconHBUserPalette(false), _iconIMGUserPalette(false),
+	_iconINTUserPalette(false), _iconM5UserPalette(false), _iconManualUserPalette(false), _iconMDUserPalette(false),
+	_iconMINIUserPalette(false), _iconMSXUserPalette(false), _iconNESUserPalette(false), _iconNGPUserPalette(false),
+	_iconPCEUserPalette(false), _iconPLGUserPalette(false), _iconSettingsUserPalette(false), _iconSGUserPalette(false),
+	_iconSMSUserPalette(false), _iconSNESUserPalette(false), _iconUnknownUserPalette(false), _iconVIDUserPalette(false),
+	_iconWSUserPalette(false), _usernameUserPalette(true), _progressBarUserPalette(true),
 	_purpleBatteryAvailable(false), _renderPhoto(true), _darkLoading(false), _useAlphaBlend(true),
 	_playStartupJingle(false), _startupJingleDelayAdjust(0), _progressBarColor(0x7C00),
 	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108),
@@ -128,6 +127,7 @@ void ThemeConfig::loadConfig() {
 	_iconGBAUserPalette = getInt(themeConfig, "IconGBAUserPalette", _iconGBAUserPalette);
 	_iconGBAModeUserPalette = getInt(themeConfig, "IconGBAModeUserPalette", _iconGBAModeUserPalette);
 	_iconGGUserPalette = getInt(themeConfig, "IconGGUserPalette", _iconGGUserPalette);
+	_iconHBUserPalette = getInt(themeConfig, "IconHBUserPalette", _iconHBUserPalette);
 	_iconIMGUserPalette = getInt(themeConfig, "IconIMGUserPalette", _iconIMGUserPalette);
 	_iconINTUserPalette = getInt(themeConfig, "IconINTUserPalette", _iconINTUserPalette);
 	_iconM5UserPalette = getInt(themeConfig, "IconM5UserPalette", _iconM5UserPalette);

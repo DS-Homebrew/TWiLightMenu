@@ -1383,7 +1383,8 @@ int r4Theme(void) {
 				".fv", // FastVideo
 				".gif", // GIF
 				".bmp", // BMP
-				".png" // Portable Network Graphics
+				".png", // Portable Network Graphics
+				".ntrb" // Homebrew(?)
 			};
 
 			if (dsiFeatures() && ms().consoleModel < 2) {
@@ -1438,6 +1439,8 @@ int r4Theme(void) {
 
 			//Navigates to the file to launch
 			filename = browseForFile(extensionList);
+
+			extensionList.clear();
 		}
 
 		////////////////////////////////////
@@ -2168,7 +2171,7 @@ int r4Theme(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename, {".fv"})) {
+				} else if (extension(filename, {".fv", ".ntrb"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EFastVideoLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";

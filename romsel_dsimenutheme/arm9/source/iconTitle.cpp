@@ -143,6 +143,7 @@ static inline void loadVIDIcon(int num) { glLoadIcon(num, tex().iconVIDTexture()
 static inline void loadIMGIcon(int num) { glLoadIcon(num, tex().iconIMGTexture()->palette(), tex().iconIMGTexture()->bytes()); }
 static inline void loadMSXIcon(int num) { glLoadIcon(num, tex().iconMSXTexture()->palette(), tex().iconMSXTexture()->bytes()); }
 static inline void loadMINIcon(int num) { glLoadIcon(num, tex().iconMINITexture()->palette(), tex().iconMINITexture()->bytes()); }
+static inline void loadHBIcon(int num) { glLoadIcon(num, tex().iconHBTexture()->palette(), tex().iconHBTexture()->bytes()); }
 
 static inline void clearIcon(int num) { glClearIcon(num); }
 
@@ -733,6 +734,8 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		loadCPCIcon(spriteIdx);
 	} else if (bnrRomType[num] == 22) {
 		loadMINIcon(spriteIdx);
+	} else if (bnrRomType[num] == 23) {
+		loadHBIcon(spriteIdx);
 	} else {
 		loadUnkIcon(spriteIdx);
 	}

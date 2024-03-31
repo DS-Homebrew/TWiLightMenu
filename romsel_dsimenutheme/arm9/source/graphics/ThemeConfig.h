@@ -78,6 +78,7 @@ private:
 	bool _iconGBAUserPalette;
 	bool _iconGBAModeUserPalette;
 	bool _iconGGUserPalette;
+	bool _iconHBUserPalette;
 	bool _iconIMGUserPalette;
 	bool _iconINTUserPalette;
 	bool _iconM5UserPalette;
@@ -205,6 +206,7 @@ public:
 	bool iconGBAUserPalette() const { return _iconGBAUserPalette; }
 	bool iconGBAModeUserPalette() const { return _iconGBAModeUserPalette; }
 	bool iconGGUserPalette() const { return _iconGGUserPalette; }
+	bool iconHBUserPalette() const { return _iconHBUserPalette; }
 	bool iconIMGUserPalette() const { return _iconIMGUserPalette; }
 	bool iconINTUserPalette() const { return _iconINTUserPalette; }
 	bool iconM5UserPalette() const { return _iconM5UserPalette; }

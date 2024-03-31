@@ -1425,6 +1425,9 @@ int dsClassicMenu(void) {
 		} else if (extension(filename[0], ".min")) {
 			bnrRomType[0] = 22;
 			boxArtType[0] = 0;
+		} else if (extension(filename[0], ".ntrb")) {
+			bnrRomType[0] = 23;
+			boxArtType[0] = 2;
 		} else {
 			bnrRomType[0] = 9;
 			boxArtType[0] = -1;
@@ -1571,6 +1574,9 @@ int dsClassicMenu(void) {
 		} else if (extension(filename[1], ".min")) {
 			bnrRomType[1] = 22;
 			boxArtType[1] = 0;
+		} else if (extension(filename[1], ".ntrb")) {
+			bnrRomType[1] = 23;
+			boxArtType[1] = 2;
 		} else {
 			bnrRomType[1] = 9;
 			boxArtType[1] = -1;
@@ -3027,7 +3033,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".fv")) {
+				} else if (extension(filename[ms().secondaryDevice], ".fv") || extension(filename[ms().secondaryDevice], ".ntrb")) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EFastVideoLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";

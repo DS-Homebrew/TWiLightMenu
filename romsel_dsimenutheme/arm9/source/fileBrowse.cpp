@@ -2654,6 +2654,8 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					bnrRomType[i] = 18;
 				} else if (extension(std_romsel_filename, {".min"})) {
 					bnrRomType[i] = 22;
+				} else if (extension(std_romsel_filename, {".ntrb"})) {
+					bnrRomType[i] = 23;
 				} else {
 					bnrRomType[i] = 9;
 				}

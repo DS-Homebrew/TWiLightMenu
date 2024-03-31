@@ -571,6 +571,8 @@ void ThemeTextures::loadIconTextures() {
 	logPrint("Loaded iconMSXTexture\n");
 	_iconMINITexture = std::make_unique<Texture>(TFN_GRF_ICON_MINI, TFN_FALLBACK_GRF_ICON_MINI);
 	logPrint("Loaded iconMINITexture\n");
+	_iconHBTexture = std::make_unique<Texture>(TFN_GRF_ICON_HB, TFN_FALLBACK_GRF_ICON_HB);
+	logPrint("Loaded iconHBTexture\n");
 	_iconUnknownTexture = std::make_unique<Texture>(TFN_GRF_ICON_UNK, TFN_FALLBACK_GRF_ICON_UNK);
 	logPrint("Loaded iconUnknownTexture\n");
 }
@@ -1244,6 +1246,8 @@ void ThemeTextures::applyUserPaletteToAllGrfTextures() {
 		_iconGBAModeTexture->applyUserPaletteFile(TFN_PALETTE_ICON_GBAMODE, effectDSiArrowButtonPalettes);
 	if (_iconGGTexture && tc().iconGGUserPalette())
 		_iconGGTexture->applyUserPaletteFile(TFN_PALETTE_ICON_GG, effectDSiArrowButtonPalettes);
+	if (_iconWSTexture && tc().iconHBUserPalette())
+		_iconWSTexture->applyUserPaletteFile(TFN_PALETTE_ICON_HB, effectDSiArrowButtonPalettes);
 	if (_iconIMGTexture && tc().iconIMGUserPalette())
 		_iconIMGTexture->applyUserPaletteFile(TFN_PALETTE_ICON_IMG, effectDSiArrowButtonPalettes);
 	if (_iconINTTexture && tc().iconINTUserPalette())

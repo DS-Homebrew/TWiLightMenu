@@ -1192,7 +1192,8 @@ int dsiMenuTheme(void) {
 			".fv", // FastVideo
 			".gif", // GIF
 			".bmp", // BMP
-			".png" // Portable Network Graphics
+			".png", // Portable Network Graphics
+			".ntrb" // Homebrew(?)
 		};
 
 		if (dsiFeatures() && ms().consoleModel < 2) {
@@ -1238,6 +1239,8 @@ int dsiMenuTheme(void) {
 
 		// Navigates to the file to launch
 		filename = browseForFile(extensionList);
+
+		extensionList.clear();
 
 		////////////////////////////////////
 		// Launch the item
@@ -2126,7 +2129,7 @@ int dsiMenuTheme(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename, {".fv"})) {
+				} else if (extension(filename, {".fv", ".ntrb"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EFastVideoLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";

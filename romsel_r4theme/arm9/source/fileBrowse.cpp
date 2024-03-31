@@ -1143,6 +1143,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bnrRomType = 18;
 			} else if (extension(std_romsel_filename, {".min"})) {
 				bnrRomType = 22;
+			} else if (extension(std_romsel_filename, {".ntrb"})) {
+				bnrRomType = 23;
 			} else {
 				bnrRomType = 9;
 			}
