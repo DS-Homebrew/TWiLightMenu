@@ -144,7 +144,7 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.dat"
 
-	#### N5 & R4-PLUS
+	#### N5 / R4-PLUS
 	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/N5 & R4-PLUS/_DS_MENU.dat"
 
 	#### Original R4SDHC
