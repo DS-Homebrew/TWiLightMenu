@@ -1,6 +1,7 @@
 #include "common/systemdetails.h"
 #include "common/flashcard.h"
 #include "common/arm7status.h"
+#include "common/twlmenusettings.h"
 #include "myDSiMode.h"
 
 #include <nds/arm9/dldi.h>
@@ -97,6 +98,18 @@ int SystemDetails::volumeStatus() {
 
 SystemDetails::ESDStatus SystemDetails::sdStatus() {
 	return (SystemDetails::ESDStatus)_sdStatus;
+}
+
+const char *SystemDetails::boxArtPath() {
+	if (!_isRunFromSD) {
+		return "fat:/_nds/TWiLightMenu/boxart/%s.png";
+	}
+
+	if (!ms().fcBoxArtOnSd) {
+		return "fat:/_nds/TWiLightMenu/boxart/%s.png";
+	}
+
+	return "sd:/_nds/TWiLightMenu/boxart/%s.png";
 }
 
 void SystemDetails::initFilesystem(const char *runningPath)

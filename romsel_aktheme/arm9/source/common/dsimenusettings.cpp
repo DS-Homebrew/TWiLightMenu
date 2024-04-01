@@ -47,6 +47,7 @@ TWLSettings::TWLSettings()
     previousUsedDevice = false;
     secondaryDevice = false;
     fcSaveOnSd = false;
+	fcBoxArtOnSd = false;
 
     slot1LaunchMethod = EReboot;
 
@@ -133,6 +134,7 @@ void TWLSettings::loadSettings()
     previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	secondaryDevice = bothSDandFlashcard() ? settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice) : flashcardFound();
     fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
+	fcBoxArtOnSd = settingsini.GetInt("SRLOADER", "FC_BOX_ART_ON_SD", fcBoxArtOnSd);
 
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     hideEmptyBoxes = settingsini.GetInt("SRLOADER", "HIDE_EMPTY_BOXES", hideEmptyBoxes);
@@ -210,6 +212,8 @@ void TWLSettings::saveSettings()
     if (bothSDandFlashcard()) {
         settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
     }
+
+    settingsini.SetInt("SRLOADER", "FC_BOX_ART_ON_SD", fcBoxArtOnSd);
     settingsini.SetInt("SRLOADER", "THEME", theme);
     settingsini.SetInt("SRLOADER", "HIDE_EMPTY_BOXES", hideEmptyBoxes);
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);

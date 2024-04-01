@@ -607,9 +607,9 @@ void updateBoxArt(void) {
 			rocketVideo_playVideo = false; // Clear top screen cubes
 		}
 		clearBoxArt();
-		sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", boxArtFilename);
+		sprintf(boxArtPath, sys().boxArtPath(), boxArtFilename);
 		if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
-			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
+			sprintf(boxArtPath, sys().boxArtPath(), gameTid[CURPOS]);
 		}
 		tex().drawBoxArt(boxArtPath, (dsiFeatures() && ms().showBoxArt == 2)); // Load box art
 	}
@@ -2669,12 +2669,10 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				}
 
 				if (dsiFeatures() && !ms().macroMode && ms().showBoxArt == 2 && ms().theme != TWLSettings::EThemeHBL && !isDirectory[i]) {
-					snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
-							 sys().isRunFromSD() ? "sd" : "fat",
+					snprintf(boxArtPath, sizeof(boxArtPath), sys().boxArtPath(),
 							 dirContents[scrn][i + PAGENUM * 40].name.c_str());
 					if ((bnrRomType[i] == 0) && (access(boxArtPath, F_OK) != 0)) {
-						snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
-								 (sys().isRunFromSD() ? "sd" : "fat"),
+						snprintf(boxArtPath, sizeof(boxArtPath), sys().boxArtPath(),
 								 gameTid[i]);
 					}
 					tex().loadBoxArtToMem(boxArtPath, i);

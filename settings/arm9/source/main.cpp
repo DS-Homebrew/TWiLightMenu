@@ -1217,6 +1217,7 @@ int settingsMode(void)
 			if (dsiFeatures()) {
 				bootstrapPage
 					.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false})
+					.option(STR_FCBOXARTLOCATION, STR_DESCRIPTION_FCBOXARTLOCATION, Option::Bool(&ms().fcBoxArtOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false})
 					.option(STR_S1SD_B4DSMODE, STR_DESCRIPTION_B4DSMODE, Option::Int(&bs().b4dsMode), {STR_OFF, STR_4MB_RAM, STR_8MB_RAM}, {0, 1, 2});
 			}
 		} else if (isDSiMode()) {

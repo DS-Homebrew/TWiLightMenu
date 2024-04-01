@@ -35,6 +35,8 @@ public:
 	int volumeStatus();
 	ESDStatus sdStatus();
 
+	const char *boxArtPath();
+
 private:
 	bool _dsiWramAccess;
 	bool _arm7SCFGLocked;

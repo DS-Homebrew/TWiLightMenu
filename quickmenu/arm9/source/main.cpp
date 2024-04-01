@@ -1065,7 +1065,7 @@ void refreshNdsCard(bool refreshBoxArt) {
 			tonccpy(&game_TID, ndsCardHeader.gameCode, 4);
 
 			char boxArtPath[256];
-			sprintf (boxArtPath, (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
+			sprintf (boxArtPath, sys().boxArtPath(), game_TID);
 			loadBoxArt(boxArtPath, true);	// Load box art
 		} else if (refreshBoxArt) {
 			loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
@@ -1438,7 +1438,7 @@ int dsClassicMenu(void) {
 		if (ms().showBoxArt) {
 			// Store box art path
 			std::string temp_filename = filename[0];
-			sprintf (boxArtPath[0], (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename[0].c_str());
+			sprintf (boxArtPath[0], sys().boxArtPath(), filename[0].c_str());
 			if ((access(boxArtPath[0], F_OK) != 0) && (bnrRomType[0] == 0)) {
 				if (extension(filename[0], ".argv")) {
 					vector<char*> argarray;
@@ -1463,7 +1463,7 @@ int dsClassicMenu(void) {
 					fclose(argfile);
 					temp_filename = argarray.at(0);
 				}
-				sprintf (boxArtPath[0], (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), gameTid[0]);
+				sprintf (boxArtPath[0], sys().boxArtPath(), gameTid[0]);
 			}
 		}
 	}
@@ -1587,7 +1587,7 @@ int dsClassicMenu(void) {
 		if (ms().showBoxArt) {
 			// Store box art path
 			std::string temp_filename = filename[1];
-			sprintf (boxArtPath[1], (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename[1].c_str());
+			sprintf (boxArtPath[1], sys().boxArtPath(), filename[1].c_str());
 			if ((access(boxArtPath[1], F_OK) != 0) && (bnrRomType[1] == 0)) {
 				if (extension(filename[1], ".argv")) {
 					vector<char*> argarray;
@@ -1612,7 +1612,7 @@ int dsClassicMenu(void) {
 					fclose(argfile);
 					temp_filename = argarray.at(0);
 				}
-				sprintf (boxArtPath[1], (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), gameTid[1]);
+				sprintf (boxArtPath[1], sys().boxArtPath(), gameTid[1]);
 			}
 		}
 	  }

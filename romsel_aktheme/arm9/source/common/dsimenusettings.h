@@ -168,6 +168,7 @@ class TWLSettings
     bool previousUsedDevice;
     bool secondaryDevice;
     bool fcSaveOnSd;
+    bool fcBoxArtOnSd;
 
     int slot1LaunchMethod;
     bool useBootstrap;
