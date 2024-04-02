@@ -1383,11 +1383,10 @@ int r4Theme(void) {
 				".fv", // FastVideo
 				".gif", // GIF
 				".bmp", // BMP
-				".png", // Portable Network Graphics
-				".ntrb" // Homebrew(?)
+				".png" // Portable Network Graphics
 			};
 
-			if (dsiFeatures() && ms().consoleModel < 2) {
+			{
 				char currentDate[16];
 				time_t Raw;
 				time(&Raw);
@@ -1396,10 +1395,14 @@ int r4Theme(void) {
 				strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
 
 				if (strcmp(currentDate, "04/01") == 0) {
-					// 3DS (for April Fools)
-					extensionList.emplace_back(".3ds");
-					extensionList.emplace_back(".cia");
-					extensionList.emplace_back(".cxi");
+					// April Fools extensions
+					if (dsiFeatures() && ms().consoleModel < 2) {
+						// 3DS
+						extensionList.emplace_back(".3ds");
+						extensionList.emplace_back(".cia");
+						extensionList.emplace_back(".cxi");
+					}
+					extensionList.emplace_back(".ntrb"); // ShaberuSoft
 				}
 			}
 
