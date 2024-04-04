@@ -126,8 +126,15 @@ std::string ReplaceAll(std::string str, const std::string &from, const std::stri
 	return str;
 }
 
-bool extention(const std::string& filename, const char* ext) {
-	return (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext) == 0);
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
+	for (std::string_view extension : extensions) {
+		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
+		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void launchSystemSettings()
@@ -283,7 +290,7 @@ void loadUnlaunchBgList()
 			themeDir = ent->d_name;
 			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
-			if (extention(themeDir, ".gif")) {
+			if (extension(themeDir, {".gif"})) {
 				unlaunchBgList.emplace_back(themeDir);
 			}
 		}
@@ -323,7 +330,7 @@ void loadGbaBorderList()
 			themeDir = ent->d_name;
 			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
-			if (extention(themeDir, ".png")) {
+			if (extension(themeDir, {".png"})) {
 				gbaBorderList.emplace_back(themeDir);
 			}
 		}
@@ -344,7 +351,7 @@ void loadColorLutList()
 			themeDir = ent->d_name;
 			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
-			if (extention(themeDir, ".lut")) {
+			if (extension(themeDir, {".lut"})) {
 				themeDir[themeDir.size() - strlen(".lut")] = 0; // Hide extension
 				colorLutList.emplace_back(themeDir);
 			}
@@ -365,7 +372,7 @@ void loadMenuSrldrList (const char* dirPath) {
 			srldrDir = ent->d_name;
 			if (srldrDir == ".." || srldrDir == "..." || srldrDir == "." || srldrDir.substr(0, 2) == "._") continue;
 
-			if (extention(srldrDir, "menu.srldr")) {
+			if (extension(srldrDir, {"menu.srldr"})) {
 				menuSrldrList.emplace_back(srldrDir);
 			}
 		}

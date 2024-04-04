@@ -68,7 +68,7 @@
 #include "icon_mini.h"
 #include "icon_hb.h"
 
-extern bool extension(const std::string& filename, const char* ext);
+extern bool extension(const std::string_view filename, const std::vector<std::string_view> extensions);
 
 extern u16* colorTable;
 
@@ -932,7 +932,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			customIcon[num] = -1; // display as unknown
 	}
 
-	if (extension(name, ".argv")) {
+	if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -971,11 +971,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extension(p, ".nds")
-			 || extension(p, ".dsi")
-			 || extension(p, ".ids")
-			 || extension(p, ".srl")
-			 || extension(p, ".app")) {
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
 				if (rc != 0) {
@@ -996,12 +992,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 		}
 		// clean up the allocated line
 		free(line);
-	} else if (strcmp(name, "slot1")==0
-			 || extension(name, ".nds")
-			 || extension(name, ".dsi")
-			 || extension(name, ".ids")
-			 || extension(name, ".srl")
-			 || extension(name, ".app")) {
+	} else if ((strcmp(name, "slot1") == 0) || extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp = NULL;
 		int ret;
@@ -1216,7 +1207,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 		} else {
 			loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);
 		}
-	} else if (extension(name, ".argv")) {
+	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -1255,11 +1246,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (extension(p, ".nds")
-			 || extension(p, ".dsi")
-			 || extension(p, ".ids")
-			 || extension(p, ".srl")
-			 || extension(p, ".app")) {
+			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
 				if (rc != 0) {
@@ -1342,13 +1329,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 
 void titleUpdate(int num, bool top, bool isDir, const char* name)
 {
-	if (strcmp(name, "slot1")==0
-	 || extension(name, ".nds")
-	 || extension(name, ".dsi")
-	 || extension(name, ".ids")
-	 || extension(name, ".srl")
-	 || extension(name, ".app")
-	 || infoFound[num]) {
+	if ((strcmp(name, "slot1") == 0) || extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound[num]) {
 		// this is an nds/app file!
 		// or a file with custom banner text
 		if (infoFound[num]) {

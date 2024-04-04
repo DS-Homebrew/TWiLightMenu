@@ -88,12 +88,15 @@ static char dlplayPath[256];
 
 extern bool showdialogbox;
 
-bool extension(const std::string& filename, const char* ext) {
-	if (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
-		return false;
-	} else {
-		return true;
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
+	for (std::string_view extension : extensions) {
+		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
+		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
+			return true;
+		}
 	}
+
+	return false;
 }
 
 /**
@@ -1349,83 +1352,82 @@ int dsClassicMenu(void) {
 			filename[0].erase(0, last_slash_idx + 1);
 		}
 
-		if (extension(filename[0], ".nds") || extension(filename[0], ".dsi") || extension(filename[0], ".ids") || extension(filename[0], ".app") || extension(filename[0], ".srl") || extension(filename[0], ".argv")) {
+		if (extension(filename[0], {".nds", ".dsi", ".ids", ".app", ".srl", ".argv"})) {
 			bnrRomType[0] = 0;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".xex") || extension(filename[0], ".atr")
-				 || extension(filename[0], ".a26") || extension(filename[0], ".a52") || extension(filename[0], ".a78")) {
+		} else if (extension(filename[0], {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 			bnrRomType[0] = 10;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".msx")) {
+		} else if (extension(filename[0], {".msx"})) {
 			bnrRomType[0] = 21;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".col")) {
+		} else if (extension(filename[0], {".col"})) {
 			bnrRomType[0] = 13;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".m5")) {
+		} else if (extension(filename[0], {".m5"})) {
 			bnrRomType[0] = 14;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".int")) {
+		} else if (extension(filename[0], {".int"})) {
 			bnrRomType[0] = 12;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".plg")) {
+		} else if (extension(filename[0], {".plg"})) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".avi") || extension(filename[0], ".rvid") || extension(filename[0], ".fv")) {
+		} else if (extension(filename[0], {".avi", ".rvid", ".fv"})) {
 			bnrRomType[0] = 19;
 			boxArtType[0] = 2;
-		} else if (extension(filename[0], ".gif") || extension(filename[0], ".bmp") || extension(filename[0], ".png")) {
+		} else if (extension(filename[0], {".gif", ".bmp", ".png"})) {
 			bnrRomType[0] = 20;
 			boxArtType[0] = -1;
-		} else if (extension(filename[0], ".agb") || extension(filename[0], ".gba") || extension(filename[0], ".mb")) {
+		} else if (extension(filename[0], {".agb", ".gba", ".mb"})) {
 			bnrRomType[0] = 1;
 			boxArtType[0] = 1;
-		} else if (extension(filename[0], ".gb") || extension(filename[0], ".sgb")) {
+		} else if (extension(filename[0], {".gb", ".sgb"})) {
 			bnrRomType[0] = 2;
 			boxArtType[0] = 1;
-		} else if (extension(filename[0], ".gbc")) {
+		} else if (extension(filename[0], {".gbc"})) {
 			bnrRomType[0] = 3;
 			boxArtType[0] = 1;
-		} else if (extension(filename[0], ".nes")) {
+		} else if (extension(filename[0], {".nes"})) {
 			bnrRomType[0] = 4;
 			boxArtType[0] = 2;
-		} else if (extension(filename[0], ".fds")) {
+		} else if (extension(filename[0], {".fds"})) {
 			bnrRomType[0] = 4;
 			boxArtType[0] = 1;
-		} else if (extension(filename[0], ".sg") || extension(filename[0], ".sc")) {
+		} else if (extension(filename[0], {".sg", ".sc"})) {
 			bnrRomType[0] = 15;
 			boxArtType[0] = 2;
-		} else if (extension(filename[0], ".sms")) {
+		} else if (extension(filename[0], {".sms"})) {
 			bnrRomType[0] = 5;
 			boxArtType[0] = 2;
-		} else if (extension(filename[0], ".gg")) {
+		} else if (extension(filename[0], {".gg"})) {
 			bnrRomType[0] = 6;
 			boxArtType[0] = 2;
-		} else if (extension(filename[0], ".gen") || extension(filename[0], ".md")) {
+		} else if (extension(filename[0], {".gen", ".md"})) {
 			bnrRomType[0] = 7;
 			boxArtType[0] = 2;
-		} else if (extension(filename[0], ".smc")) {
+		} else if (extension(filename[0], {".smc"})) {
 			bnrRomType[0] = 8;
 			boxArtType[0] = 3;
-		} else if (extension(filename[0], ".sfc")) {
+		} else if (extension(filename[0], {".sfc"})) {
 			bnrRomType[0] = 8;
 			boxArtType[0] = 2;
-		} else if (extension(filename[0], ".pce")) {
+		} else if (extension(filename[0], {".pce"})) {
 			bnrRomType[0] = 11;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".ws") || extension(filename[0], ".wsc")) {
+		} else if (extension(filename[0], {".ws", ".wsc"})) {
 			bnrRomType[0] = 16;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".ngp") || extension(filename[0], ".ngc")) {
+		} else if (extension(filename[0], {".ngp", ".ngc"})) {
 			bnrRomType[0] = 17;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".dsk")) {
+		} else if (extension(filename[0], {".dsk"})) {
 			bnrRomType[0] = 18;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".min")) {
+		} else if (extension(filename[0], {".min"})) {
 			bnrRomType[0] = 22;
 			boxArtType[0] = 0;
-		} else if (extension(filename[0], ".ntrb")) {
+		} else if (extension(filename[0], {".ntrb"})) {
 			bnrRomType[0] = 23;
 			boxArtType[0] = 2;
 		} else {
@@ -1440,7 +1442,7 @@ int dsClassicMenu(void) {
 			std::string temp_filename = filename[0];
 			sprintf (boxArtPath[0], (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename[0].c_str());
 			if ((access(boxArtPath[0], F_OK) != 0) && (bnrRomType[0] == 0)) {
-				if (extension(filename[0], ".argv")) {
+				if (extension(filename[0], {".argv"})) {
 					vector<char*> argarray;
 
 					FILE *argfile = fopen(filename[0].c_str(),"rb");
@@ -1498,83 +1500,82 @@ int dsClassicMenu(void) {
 			filename[1].erase(0, last_slash_idx + 1);
 		}
 
-		if (extension(filename[1], ".nds") || extension(filename[1], ".dsi") || extension(filename[1], ".ids") || extension(filename[1], ".app") || extension(filename[1], ".srl") || extension(filename[1], ".argv")) {
+		if (extension(filename[1], {".nds", ".dsi", ".ids", ".app", ".srl", ".argv"})) {
 			bnrRomType[1] = 0;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".xex") || extension(filename[1], ".atr")
-				 || extension(filename[1], ".a26") || extension(filename[1], ".a52") || extension(filename[1], ".a78")) {
+		} else if (extension(filename[1], {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 			bnrRomType[1] = 10;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".msx")) {
+		} else if (extension(filename[1], {".msx"})) {
 			bnrRomType[1] = 21;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".col")) {
+		} else if (extension(filename[1], {".col"})) {
 			bnrRomType[1] = 13;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".m5")) {
+		} else if (extension(filename[1], {".m5"})) {
 			bnrRomType[1] = 14;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".int")) {
+		} else if (extension(filename[1], {".int"})) {
 			bnrRomType[1] = 12;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".plg")) {
+		} else if (extension(filename[1], {".plg"})) {
 			bnrRomType[1] = 9;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".avi") || extension(filename[1], ".rvid") || extension(filename[1], ".fv")) {
+		} else if (extension(filename[1], {".avi", ".rvid", ".fv"})) {
 			bnrRomType[1] = 19;
 			boxArtType[1] = 2;
-		} else if (extension(filename[1], ".gif") || extension(filename[1], ".bmp") || extension(filename[1], ".png")) {
+		} else if (extension(filename[1], {".gif", ".bmp", ".png"})) {
 			bnrRomType[1] = 20;
 			boxArtType[1] = -1;
-		} else if (extension(filename[1], ".agb") || extension(filename[1], ".gba") || extension(filename[1], ".mb")) {
+		} else if (extension(filename[1], {".agb", ".gba", ".mb"})) {
 			bnrRomType[1] = 1;
 			boxArtType[1] = 1;
-		} else if (extension(filename[1], ".gb") || extension(filename[1], ".sgb")) {
+		} else if (extension(filename[1], {".gb", ".sgb"})) {
 			bnrRomType[1] = 2;
 			boxArtType[1] = 1;
-		} else if (extension(filename[1], ".gbc")) {
+		} else if (extension(filename[1], {".gbc"})) {
 			bnrRomType[1] = 3;
 			boxArtType[1] = 1;
-		} else if (extension(filename[1], ".nes")) {
+		} else if (extension(filename[1], {".nes"})) {
 			bnrRomType[1] = 4;
 			boxArtType[1] = 2;
-		} else if (extension(filename[1], ".fds")) {
+		} else if (extension(filename[1], {".fds"})) {
 			bnrRomType[1] = 4;
 			boxArtType[1] = 1;
-		} else if (extension(filename[1], ".sg") || extension(filename[0], ".sc")) {
+		} else if (extension(filename[1], {".sg", ".sc"})) {
 			bnrRomType[1] = 15;
 			boxArtType[1] = 2;
-		} else if (extension(filename[1], ".sms")) {
+		} else if (extension(filename[1], {".sms"})) {
 			bnrRomType[1] = 5;
 			boxArtType[1] = 2;
-		} else if (extension(filename[1], ".gg")) {
+		} else if (extension(filename[1], {".gg"})) {
 			bnrRomType[1] = 6;
 			boxArtType[1] = 2;
-		} else if (extension(filename[1], ".gen") || extension(filename[1], ".md")) {
+		} else if (extension(filename[1], {".gen", ".md"})) {
 			bnrRomType[1] = 7;
 			boxArtType[1] = 2;
-		} else if (extension(filename[1], ".smc")) {
+		} else if (extension(filename[1], {".smc"})) {
 			bnrRomType[1] = 8;
 			boxArtType[1] = 3;
-		} else if (extension(filename[1], ".sfc")) {
+		} else if (extension(filename[1], {".sfc"})) {
 			bnrRomType[1] = 8;
 			boxArtType[1] = 2;
-		} else if (extension(filename[1], ".pce")) {
+		} else if (extension(filename[1], {".pce"})) {
 			bnrRomType[1] = 11;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".ws") || extension(filename[1], ".wsc")) {
+		} else if (extension(filename[1], {".ws", ".wsc"})) {
 			bnrRomType[1] = 16;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".ngp") || extension(filename[1], ".ngc")) {
+		} else if (extension(filename[1], {".ngp", ".ngc"})) {
 			bnrRomType[1] = 17;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".dsk")) {
+		} else if (extension(filename[1], {".dsk"})) {
 			bnrRomType[1] = 18;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".min")) {
+		} else if (extension(filename[1], {".min"})) {
 			bnrRomType[1] = 22;
 			boxArtType[1] = 0;
-		} else if (extension(filename[1], ".ntrb")) {
+		} else if (extension(filename[1], {".ntrb"})) {
 			bnrRomType[1] = 23;
 			boxArtType[1] = 2;
 		} else {
@@ -1589,7 +1590,7 @@ int dsClassicMenu(void) {
 			std::string temp_filename = filename[1];
 			sprintf (boxArtPath[1], (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename[1].c_str());
 			if ((access(boxArtPath[1], F_OK) != 0) && (bnrRomType[1] == 0)) {
-				if (extension(filename[1], ".argv")) {
+				if (extension(filename[1], {".argv"})) {
 					vector<char*> argarray;
 
 					FILE *argfile = fopen(filename[1].c_str(),"rb");
@@ -2277,7 +2278,7 @@ int dsClassicMenu(void) {
 			}
 			vector<char*> argarray;
 
-			if (extension(filename[ms().secondaryDevice], ".argv")) {
+			if (extension(filename[ms().secondaryDevice], {".argv"})) {
 				FILE *argfile = fopen(filename[ms().secondaryDevice].c_str(),"rb");
 					char str[PATH_MAX], *pstr;
 				const char seps[]= "\n\r\t ";
@@ -2602,9 +2603,7 @@ int dsClassicMenu(void) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if (extension(filename[ms().secondaryDevice], ".nds") || extension(filename[ms().secondaryDevice], ".dsi")
-			 || extension(filename[ms().secondaryDevice], ".ids") || extension(filename[ms().secondaryDevice], ".srl")
-			 || extension(filename[ms().secondaryDevice], ".app")) {
+			if (extension(filename[ms().secondaryDevice], {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 				std::string typeToReplace = filename[ms().secondaryDevice].substr(filename[ms().secondaryDevice].rfind('.'));
 
 				bool dsModeSwitch = false;
@@ -2998,7 +2997,7 @@ int dsClassicMenu(void) {
 				const char *ndsToBoot = "";
 				std::string ndsToBootFat;
 				const char *tgdsNdsPath = "sd:/_nds/TWiLightMenu/apps/ToolchainGenericDS-multiboot.srl";
-				if (extension(filename[ms().secondaryDevice], ".plg")) {
+				if (extension(filename[ms().secondaryDevice], {".plg"})) {
 					ndsToBoot = "fat:/_nds/TWiLightMenu/bootplg.srldr";
 					dsModeSwitch = true;
 
@@ -3017,7 +3016,7 @@ int dsClassicMenu(void) {
 					CIniFile dstwobootini("fat:/_dstwo/twlm.ini");
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 					dstwobootini.SaveIniFile("fat:/_dstwo/twlm.ini");
-				} else if (extension(filename[ms().secondaryDevice], ".avi")) {
+				} else if (extension(filename[ms().secondaryDevice], {".avi"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::ETunaViDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/tuna-vids.nds";
@@ -3025,7 +3024,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/tuna-vids.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".rvid")) {
+				} else if (extension(filename[ms().secondaryDevice], {".rvid"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::ERVideoLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
@@ -3033,7 +3032,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".fv") || extension(filename[ms().secondaryDevice], ".ntrb")) {
+				} else if (extension(filename[ms().secondaryDevice], {".fv", ".ntrb"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EFastVideoLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
@@ -3041,9 +3040,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".agb")
-						|| extension(filename[ms().secondaryDevice], ".gba")
-						|| extension(filename[ms().secondaryDevice], ".mb")) {
+				} else if (extension(filename[ms().secondaryDevice], {".agb", ".gba", ".mb"})) {
 					ms().launchType[ms().secondaryDevice] = (ms().gbaBooter == TWLSettings::EGbaNativeGbar2 && *(u16*)(0x020000C0) != 0) ? TWLSettings::EGBANativeLaunch : TWLSettings::ESDFlashcardLaunch;
 
 					if (ms().launchType[ms().secondaryDevice] == TWLSettings::EGBANativeLaunch) {
@@ -3191,8 +3188,7 @@ int dsClassicMenu(void) {
 
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".xex")
-						 || extension(filename[ms().secondaryDevice], ".atr")) {
+				} else if (extension(filename[ms().secondaryDevice], {".xex", ".atr"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EXEGSDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A8DS.nds";
@@ -3200,7 +3196,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A8DS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".a26")) {
+				} else if (extension(filename[ms().secondaryDevice], {".a26"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EStellaDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
@@ -3208,7 +3204,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".a52")) {
+				} else if (extension(filename[ms().secondaryDevice], {".a52"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EA5200DSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A5200DS.nds";
@@ -3216,7 +3212,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A5200DS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".a78")) {
+				} else if (extension(filename[ms().secondaryDevice], {".a78"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EA7800DSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/A7800DS.nds";
@@ -3224,8 +3220,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/A7800DS.nds";
 						boostVram = true;
 					}
-				} else if (((extension(filename[ms().secondaryDevice], ".sg") || extension(filename[ms().secondaryDevice], ".sc")) && ms().sgEmulator == TWLSettings::EColSegaColecoDS) || (extension(filename[ms().secondaryDevice], ".col") && ms().colEmulator == TWLSettings::EColSegaColecoDS)
-				|| extension(filename[ms().secondaryDevice], ".m5") || extension(filename[ms().secondaryDevice], ".msx")) {
+				} else if ((extension(filename[ms().secondaryDevice], {".sg", ".sc"}) && ms().sgEmulator == TWLSettings::EColSegaColecoDS) || (extension(filename[ms().secondaryDevice], {".col"}) && ms().colEmulator == TWLSettings::EColSegaColecoDS) || extension(filename[ms().secondaryDevice], {".m5", ".msx"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EColecoDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
@@ -3233,7 +3228,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".int")) {
+				} else if (extension(filename[ms().secondaryDevice], {".int"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::ENINTVDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
@@ -3241,7 +3236,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NINTV-DS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".gb") || extension(filename[ms().secondaryDevice], ".sgb") || extension(filename[ms().secondaryDevice], ".gbc")) {
+				} else if (extension(filename[ms().secondaryDevice], {".gb", ".sgb", ".gbc"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EGameYobLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
@@ -3250,7 +3245,7 @@ int dsClassicMenu(void) {
 						dsModeSwitch = !isDSiMode();
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".nes") || extension(filename[ms().secondaryDevice], ".fds")) {
+				} else if (extension(filename[ms().secondaryDevice], {".nes", ".fds"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::ENESDSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/nesds.nds";
@@ -3258,9 +3253,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/nesds.nds";
 						boostVram = true;
 					}
-				} else if (((extension(filename[ms().secondaryDevice], ".sg") || extension(filename[ms().secondaryDevice], ".sc")) && ms().sgEmulator == TWLSettings::EColSegaS8DS)
-				|| extension(filename[ms().secondaryDevice], ".sms") || extension(filename[ms().secondaryDevice], ".gg")
-				|| (extension(filename[ms().secondaryDevice], ".col") && ms().colEmulator == TWLSettings::EColSegaS8DS)) {
+				} else if ((extension(filename[ms().secondaryDevice], {".sg", ".sc"}) && ms().sgEmulator == TWLSettings::EColSegaS8DS) || (extension(filename[ms().secondaryDevice], {".sms", ".gg"})) || (extension(filename[ms().secondaryDevice], {".col"}) && ms().colEmulator == TWLSettings::EColSegaS8DS)) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
@@ -3271,7 +3264,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".gen") || extension(filename[ms().secondaryDevice], ".md")) {
+				} else if (extension(filename[ms().secondaryDevice], {".gen", ".md"})) {
 					bool usePicoDrive = ((isDSiMode() && sdFound() && sys().arm7SCFGLocked())
 						|| ms().mdEmulator==2 || (ms().mdEmulator==3 && getFileSize(filename[ms().secondaryDevice].c_str()) > 0x300000));
 					ms().launchType[ms().secondaryDevice] = (usePicoDrive ? TWLSettings::EPicoDriveTWLLaunch : TWLSettings::ESDFlashcardLaunch);
@@ -3302,7 +3295,7 @@ int dsClassicMenu(void) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".smc") || extension(filename[ms().secondaryDevice], ".sfc")) {
+				} else if (extension(filename[ms().secondaryDevice], {".smc", ".sfc"})) {
 					ms().launchType[ms().secondaryDevice] = (ms().newSnesEmuVer ? TWLSettings::ESNEmulDSLaunch : TWLSettings::ESDFlashcardLaunch);
 					if (ms().newSnesEmuVer) {
 						tgdsMode = true;
@@ -3344,7 +3337,7 @@ int dsClassicMenu(void) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".pce")) {
+				} else if (extension(filename[ms().secondaryDevice], {".pce"})) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/NitroGrafx" : "sd:/data/NitroGrafx", 0777);
 
@@ -3377,7 +3370,7 @@ int dsClassicMenu(void) {
 							boostVram = true;
 						}
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".ws") || extension(filename[ms().secondaryDevice], ".wsc")) {
+				} else if (extension(filename[ms().secondaryDevice], {".ws", ".wsc"})) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/nitroswan" : "sd:/data/nitroswan", 0777);
 
@@ -3388,7 +3381,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NitroSwan.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".ngp") || extension(filename[ms().secondaryDevice], ".ngc")) {
+				} else if (extension(filename[ms().secondaryDevice], {".ngp", ".ngc"})) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/ngpds" : "sd:/data/ngpds", 0777);
 
@@ -3399,7 +3392,7 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".dsk") && ms().cpcEmulator == TWLSettings::ECpcAmEDS) {
+				} else if (extension(filename[ms().secondaryDevice], {".dsk"}) && ms().cpcEmulator == TWLSettings::ECpcAmEDS) {
 					ms().launchType[ms().secondaryDevice] = (ms().secondaryDevice ? Launch::EAmEDSLaunch : Launch::ESDFlashcardLaunch);
 
 					if (ms().secondaryDevice) {
@@ -3426,7 +3419,7 @@ int dsClassicMenu(void) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".dsk") && ms().cpcEmulator == TWLSettings::ECpcCrocoDS) {
+				} else if (extension(filename[ms().secondaryDevice], {".dsk"}) && ms().cpcEmulator == TWLSettings::ECpcCrocoDS) {
 					ms().launchType[ms().secondaryDevice] = (ms().secondaryDevice ? Launch::ECrocoDSLaunch : Launch::ESDFlashcardLaunch);
 
 					if (ms().secondaryDevice) {
@@ -3453,7 +3446,7 @@ int dsClassicMenu(void) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".min")) {
+				} else if (extension(filename[ms().secondaryDevice], {".min"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EPokeMiniLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/PokeMini.nds";
@@ -3461,14 +3454,14 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/PokeMini.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".3ds") || extension(filename[ms().secondaryDevice], ".cia") || extension(filename[ms().secondaryDevice], ".cxi")) {
+				} else if (extension(filename[ms().secondaryDevice], {".3ds", ".cia", ".cxi"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::E3DSLaunch;
 
 					ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/3dssplash.srldr" : "fat:/_nds/TWiLightMenu/3dssplash.srldr";
 					if (!isDSiMode()) {
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], ".gif") || extension(filename[ms().secondaryDevice], ".bmp") || extension(filename[ms().secondaryDevice], ".png")) {
+				} else if (extension(filename[ms().secondaryDevice], {".gif", ".bmp", ".png"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EImageLaunch;
 
 					ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/imageview.srldr" : "fat:/_nds/TWiLightMenu/imageview.srldr";
@@ -3488,7 +3481,7 @@ int dsClassicMenu(void) {
 					swiWaitForVBlank();
 				}
 
-				if (!isDSiMode() && !ms().secondaryDevice && !extension(filename[ms().secondaryDevice], ".plg") && !extension(filename[ms().secondaryDevice], ".gif") && !extension(filename[ms().secondaryDevice], ".bmp") && !extension(filename[ms().secondaryDevice], ".png")) {
+				if (!isDSiMode() && !ms().secondaryDevice && !extension(filename[ms().secondaryDevice], {".plg", ".gif", ".bmp", ".png"})) {
 					ntrStartSdGame();
 				}
 
@@ -3507,11 +3500,11 @@ int dsClassicMenu(void) {
 					if (access(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", F_OK) == 0) {
 						bool romIsCompressed = false;
 						if (romToRamDisk == 0) {
-							romIsCompressed = (extension(ROMpath, ".lz77.gen") || extension(ROMpath, ".lz77.md"));
+							romIsCompressed = (extension(ROMpath, {".lz77.gen", ".lz77.md"}));
 						} else if (romToRamDisk == 1) {
-							romIsCompressed = (extension(ROMpath, ".lz77.smc") || extension(ROMpath, ".lz77.sfc"));
+							romIsCompressed = (extension(ROMpath, {".lz77.smc", ".lz77.sfc"}));
 						} else if (romToRamDisk == 4) {
-							romIsCompressed = (extension(ROMpath, ".lz77.pce"));
+							romIsCompressed = (extension(ROMpath, {".lz77.pce"}));
 						}
 
 						FILE* ndsFile = fopen(ndsToBoot, "rb");

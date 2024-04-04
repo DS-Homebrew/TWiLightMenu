@@ -179,12 +179,15 @@ void loadROMselect(void)
 	}
 }*/
 
-bool extension(const std::string& filename, const char* ext) {
-	if (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
-		return false;
-	} else {
-		return true;
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
+	for (std::string_view extension : extensions) {
+		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
+		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
+			return true;
+		}
 	}
+
+	return false;
 }
 
 // Unlaunch needs the path in 16 bit unicode so this function is
@@ -1015,8 +1018,8 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to GameYob as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ES8DSLaunch) {
-		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().colEmulator != 1)
-		 || ((extension(ms().romPath[ms().previousUsedDevice], ".sg") || extension(ms().romPath[ms().previousUsedDevice], ".sc")) && ms().sgEmulator != 1)
+		if ((extension(ms().romPath[ms().previousUsedDevice], {".col"}) && ms().colEmulator != 1)
+		 || ((extension(ms().romPath[ms().previousUsedDevice], {".sg"}) || extension(ms().romPath[ms().previousUsedDevice], {".sc"})) && ms().sgEmulator != 1)
 		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		mkdir(ms().previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
@@ -1213,8 +1216,8 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to GBARunner2 as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EColecoDSLaunch) {
-		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().colEmulator != 2)
-		 || ((extension(ms().romPath[ms().previousUsedDevice], ".sg") || extension(ms().romPath[ms().previousUsedDevice], ".sc")) && ms().sgEmulator != 2)
+		if ((extension(ms().romPath[ms().previousUsedDevice], {".col"}) && ms().colEmulator != 2)
+		 || ((extension(ms().romPath[ms().previousUsedDevice], {".sg"}) || extension(ms().romPath[ms().previousUsedDevice], {".sc"})) && ms().sgEmulator != 2)
 		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
@@ -2415,12 +2418,8 @@ int titleMode(void)
 		RemoveTrailingSlashes(romFolderNoSlash);
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
 		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
-		if (access(savepathFc.c_str(), F_OK) == 0
-		&& (extension(filename, ".nds")
-		 || extension(filename, ".dsi")
-		 || extension(filename, ".ids")
-		 || extension(filename, ".srl")
-		 || extension(filename, ".app"))) {
+		if ((access(savepathFc.c_str(), F_OK) == 0)
+		&& extension(filename, {".nds", ".dsi", ".ids", ".srl", "app"})) {
 			rename(savepathFc.c_str(), savepath.c_str());
 			logPrint("Moved back to saves folder:\n%s\n%s\n\n", savepathFc.c_str(), savepath.c_str());
 		}
