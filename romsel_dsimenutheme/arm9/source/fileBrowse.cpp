@@ -603,7 +603,7 @@ void updateBoxArt(void) {
 		}
 	} else {
 		if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
-			while (dmaBusy(1)); // Wait for frame to finish rendering
+			while (dmaBusy(1)) { swiDelay(100); } // Wait for frame to finish rendering
 			rocketVideo_playVideo = false; // Clear top screen cubes
 		}
 		clearBoxArt();
