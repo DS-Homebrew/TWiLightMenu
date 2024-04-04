@@ -192,7 +192,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 
 			dirent *pent = readdir(pdir);
 			if (pent == nullptr || file_count > ((dsiFeatures() || sys().dsDebugRam()) ? 1024 : 512)) {
-				logPrint("End of listing\n\n");
+				logPrint("End of listing, Sorting: ");
 				break;
 			}
 
@@ -242,6 +242,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 
 		if (ms().sortMethod == TWLSettings::ESortAlphabetical) { // Alphabetical
 			std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Alphabetical");
 		} else if (ms().sortMethod == TWLSettings::ESortRecent) { // Recent
 			CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 			std::vector<std::string> recentlyPlayed;
@@ -259,6 +260,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Recent");
 		} else if (ms().sortMethod == TWLSettings::ESortMostPlayed) { // Most Played
 			CIniFile timesPlayedIni(timesPlayedIniPath);
 
@@ -280,6 +282,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					else
 						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 				});
+			logPrint("Most Played");
 		} else if (ms().sortMethod == TWLSettings::ESortFileType) { // File type
 			sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
 					if (!lhs.isDirectory && rhs.isDirectory)
@@ -293,6 +296,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					else
 						return extCmp < 0;
 				});
+			logPrint("File type");
 		} else if (ms().sortMethod == TWLSettings::ESortCustom) { // Custom
 			CIniFile gameOrderIni(gameOrderIniPath);
 			std::vector<std::string> gameOrder;
@@ -309,7 +313,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Custom");
 		}
+		logPrint("\n\n");
 		closedir(pdir);
 	}
 }
