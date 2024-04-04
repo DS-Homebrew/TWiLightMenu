@@ -154,15 +154,15 @@ void imageLoad(const char* filename) {
 					pixelAdjustInfo |= BIT(2);
 				}
 			}
+			u16 res = 0;
 			if (image[(i*4)+3] > 0) {
 				u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 				if (colorTable) {
 					color = colorTable[color];
 				}
-				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = alphablend(color, 0, image[(i*4)+3]);
-			} else {
-				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = 0;
+				res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 			}
+			dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = res;
 			if (alternatePixel) {
 				if (pixelAdjustInfo & BIT(0)) {
 					image[(i*4)] += 0x4;
@@ -184,15 +184,15 @@ void imageLoad(const char* filename) {
 					image[(i*4)+2] -= 0x4;
 				}
 			}
+			res = 0;
 			if (image[(i*4)+3] > 0) {
 				u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 				if (colorTable) {
 					color = colorTable[color];
 				}
-				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = alphablend(color, 0, image[(i*4)+3]);
-			} else {
-				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = 0;
+				res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 			}
+			dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = res;
 			x++;
 			if ((unsigned)x == width) {
 				alternatePixel = !alternatePixel;
