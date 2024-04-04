@@ -349,9 +349,10 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					}
 				}
 				dirContents.emplace_back(pent->d_name, ms().showDirectories ? (pent->d_type == DT_DIR) : false, file_count, false);
+				logPrint("%s listed: %s\n", (pent->d_type == DT_DIR) ? "Directory" : "File", pent->d_name);
 				file_count++;
-				
 			}
+			logPrint("End of listing\n\n");
 		}
 		recalculateBoxesCount();
 

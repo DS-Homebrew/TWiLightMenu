@@ -36,6 +36,7 @@
 #include "graphics/fontHandler.h"
 
 #include "common/inifile.h"
+#include "common/logging.h"
 #include "common/bootstrapsettings.h"
 #include "common/stringtool.h"
 #include "common/systemdetails.h"
@@ -1013,6 +1014,7 @@ int r4Theme(void) {
 
 	ms().loadSettings();
 	bs().loadSettings();
+	logInit();
 
 	graphicsInit();
 	langInit();
@@ -1020,7 +1022,10 @@ int r4Theme(void) {
 	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
 		CIniFile lumaConfig("sd:/luma/config.ini");
 		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
+		logPrint(widescreenFound ? "Widescreen found\n" : "Widescreen not found\n");
 	}
+
+	logPrint("\n");
 
 	if (sdFound()) {
 		statvfs("sd:/", &st[0]);
@@ -1030,6 +1035,7 @@ int r4Theme(void) {
 			if (!gbaBiosFound[0]) gbaBiosFound[0] = (access("sd:/gba/bios.bin", F_OK) == 0);
 			if (!gbaBiosFound[0]) gbaBiosFound[0] = (access("sd:/bios.bin", F_OK) == 0);
 		}
+		logPrint(gbaBiosFound[0] ? "GBA BIOS found on sd\n" : "GBA BIOS not found on sd\n");
 	}
 	if (flashcardFound()) {
 		statvfs("fat:/", &st[1]);
@@ -1039,6 +1045,7 @@ int r4Theme(void) {
 			if (!gbaBiosFound[1]) gbaBiosFound[1] = (access("fat:/gba/bios.bin", F_OK) == 0);
 			if (!gbaBiosFound[1]) gbaBiosFound[1] = (access("fat:/bios.bin", F_OK) == 0);
 		}
+		logPrint(gbaBiosFound[1] ? "GBA BIOS found on fat\n" : "GBA BIOS not found on fat\n");
 	}
 
 	if (ms().theme == TWLSettings::EThemeGBC) {
@@ -1123,8 +1130,8 @@ int r4Theme(void) {
 	char path[256];
 
 	if (copyDSiWareSavBack) {
-		printLargeCentered(false, 16, "If this takes a while, close");
-		printLargeCentered(false, 24, "and open the console's lid.");
+		// printLargeCentered(false, 16, "If this takes a while, close");
+		// printLargeCentered(false, 24, "and open the console's lid.");
 		printLargeCentered(false, 88, "Now copying data...");
 		printLargeCentered(false, 96, "Do not turn off the power.");
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
@@ -1135,6 +1142,7 @@ int r4Theme(void) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", ms().dsiWarePrvPath.c_str());
 			rename("sd:/_nds/TWiLightMenu/tempDSiWare.prv", "sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak");
 		}
+		logPrint("Copied DSiWare save back to flashcard\n");
 		clearText(false);
 		blackScreen = false;
 	}
