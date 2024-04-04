@@ -1036,8 +1036,8 @@ int r4Theme(void) {
 
 		gbaBiosFound[1] = (access("fat:/_gba/bios.bin", F_OK) == 0);
 		if (!ms().gbaR3Test) {
-			if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/gba/bios.bin", F_OK) == 0);
-			if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/bios.bin", F_OK) == 0);
+			if (!gbaBiosFound[1]) gbaBiosFound[1] = (access("fat:/gba/bios.bin", F_OK) == 0);
+			if (!gbaBiosFound[1]) gbaBiosFound[1] = (access("fat:/bios.bin", F_OK) == 0);
 		}
 	}
 

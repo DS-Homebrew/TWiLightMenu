@@ -1056,10 +1056,10 @@ int dsiMenuTheme(void) {
 
 		gbaBiosFound[1] = (access("fat:/_gba/bios.bin", F_OK) == 0);
 		if (!ms().gbaR3Test) {
-			if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/gba/bios.bin", F_OK) == 0);
-			if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/bios.bin", F_OK) == 0);
+			if (!gbaBiosFound[1]) gbaBiosFound[1] = (access("fat:/gba/bios.bin", F_OK) == 0);
+			if (!gbaBiosFound[1]) gbaBiosFound[1] = (access("fat:/bios.bin", F_OK) == 0);
 		}
-		logPrint(gbaBiosFound[0] ? "GBA BIOS found on fat\n" : "GBA BIOS not found on fat\n");
+		logPrint(gbaBiosFound[1] ? "GBA BIOS found on fat\n" : "GBA BIOS not found on fat\n");
 	}
 
 	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
