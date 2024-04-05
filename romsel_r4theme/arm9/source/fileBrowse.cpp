@@ -58,6 +58,7 @@
 #include "myDSiMode.h"
 
 #include "common/inifile.h"
+#include "common/logging.h"
 
 #include "sound.h"
 #include "fileCopy.h"
@@ -119,7 +120,8 @@ struct DirEntry {
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
 	for (std::string_view extension : extensions) {
-		if (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
+		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
+		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
 			return true;
 		}
 	}
@@ -190,8 +192,10 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			}
 
 			dirent *pent = readdir(pdir);
-			if (pent == nullptr || file_count > ((dsiFeatures() || sys().dsDebugRam()) ? 1024 : 512))
+			if (pent == nullptr || file_count > ((dsiFeatures() || sys().dsDebugRam()) ? 1024 : 512)) {
+				logPrint("End of listing, Sorting: ");
 				break;
+			}
 
 			// Now that we've got the attrs and the name, skip if we should be hiding this
 			if (!ms().showHidden && (attrs & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0)))
@@ -232,12 +236,14 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					}
 				}
 				dirContents.emplace_back(pent->d_name, ms().showDirectories ? (pent->d_type == DT_DIR) : false, file_count, false);
+				logPrint("%s listed: %s\n", (pent->d_type == DT_DIR) ? "Directory" : "File", pent->d_name);
 				file_count++;
 			}
 		}
 
 		if (ms().sortMethod == TWLSettings::ESortAlphabetical) { // Alphabetical
 			std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Alphabetical");
 		} else if (ms().sortMethod == TWLSettings::ESortRecent) { // Recent
 			CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 			std::vector<std::string> recentlyPlayed;
@@ -255,6 +261,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Recent");
 		} else if (ms().sortMethod == TWLSettings::ESortMostPlayed) { // Most Played
 			CIniFile timesPlayedIni(timesPlayedIniPath);
 
@@ -276,6 +283,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					else
 						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 				});
+			logPrint("Most Played");
 		} else if (ms().sortMethod == TWLSettings::ESortFileType) { // File type
 			sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
 					if (!lhs.isDirectory && rhs.isDirectory)
@@ -289,6 +297,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					else
 						return extCmp < 0;
 				});
+			logPrint("File type");
 		} else if (ms().sortMethod == TWLSettings::ESortCustom) { // Custom
 			CIniFile gameOrderIni(gameOrderIniPath);
 			std::vector<std::string> gameOrder;
@@ -305,7 +314,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Custom");
 		}
+		logPrint("\n\n");
 		closedir(pdir);
 	}
 }

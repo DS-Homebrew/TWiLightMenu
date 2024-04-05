@@ -126,8 +126,15 @@ std::string ReplaceAll(std::string str, const std::string &from, const std::stri
 	return str;
 }
 
-bool extention(const std::string& filename, const char* ext) {
-	return (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext) == 0);
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
+	for (std::string_view extension : extensions) {
+		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
+		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void launchSystemSettings()
@@ -283,7 +290,7 @@ void loadUnlaunchBgList()
 			themeDir = ent->d_name;
 			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
-			if (extention(themeDir, ".gif")) {
+			if (extension(themeDir, {".gif"})) {
 				unlaunchBgList.emplace_back(themeDir);
 			}
 		}
@@ -323,7 +330,7 @@ void loadGbaBorderList()
 			themeDir = ent->d_name;
 			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
-			if (extention(themeDir, ".png")) {
+			if (extension(themeDir, {".png"})) {
 				gbaBorderList.emplace_back(themeDir);
 			}
 		}
@@ -344,7 +351,7 @@ void loadColorLutList()
 			themeDir = ent->d_name;
 			if (themeDir == ".." || themeDir == "..." || themeDir == "." || themeDir.substr(0, 2) == "._") continue;
 
-			if (extention(themeDir, ".lut")) {
+			if (extension(themeDir, {".lut"})) {
 				themeDir[themeDir.size() - strlen(".lut")] = 0; // Hide extension
 				colorLutList.emplace_back(themeDir);
 			}
@@ -365,7 +372,7 @@ void loadMenuSrldrList (const char* dirPath) {
 			srldrDir = ent->d_name;
 			if (srldrDir == ".." || srldrDir == "..." || srldrDir == "." || srldrDir.substr(0, 2) == "._") continue;
 
-			if (extention(srldrDir, "menu.srldr")) {
+			if (extension(srldrDir, {"menu.srldr"})) {
 				menuSrldrList.emplace_back(srldrDir);
 			}
 		}
@@ -1213,7 +1220,6 @@ int settingsMode(void)
 
 	if (flashcardFound() && (dsiFeatures() || sdFound())) {
 		if (sdFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
-			bootstrapPage.option("S1SD: "+STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
 			if (dsiFeatures()) {
 				bootstrapPage
 					.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false})
@@ -1222,11 +1228,7 @@ int settingsMode(void)
 			}
 		} else if (isDSiMode()) {
 			bootstrapPage.option(STR_B4DSMODE, STR_DESCRIPTION_B4DSMODE, Option::Int(&bs().b4dsMode), {STR_OFF, STR_4MB_RAM, STR_8MB_RAM}, {0, 1, 2});
-		} else {
-			bootstrapPage.option(STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
 		}
-	} else if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS && !(dsiFeatures() || sdFound())) {
-		bootstrapPage.option(STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
 	}
 
 	if (widescreenFound) {
@@ -1340,6 +1342,16 @@ int settingsMode(void)
 	using TCpcEmulator = TWLSettings::TCpcEmulator;
 	using TMegaDriveEmulator = TWLSettings::TMegaDriveEmulator;
 	using TSlot1LaunchMethod = TWLSettings::TSlot1LaunchMethod;
+
+	if (flashcardFound() && (dsiFeatures() || sdFound())) {
+		if (sdFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
+			gamesPage.option("S1SD: "+STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
+		} else if (!isDSiMode()) {
+			gamesPage.option(STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
+		}
+	} else if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) && !(dsiFeatures() || sdFound())) {
+		gamesPage.option(STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
+	}
 
 	gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
 	if (ms().consoleModel == 0 && sdFound() && !sys().arm7SCFGLocked())

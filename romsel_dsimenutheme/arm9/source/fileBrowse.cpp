@@ -180,7 +180,8 @@ void chdirFake(const char *dir) {
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
 	for (std::string_view extension : extensions) {
-		if (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
+		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
+		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
 			return true;
 		}
 	}
@@ -307,8 +308,10 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			}
 
 			dirent *pent = readdir(pdir);
-			if (pent == nullptr || file_count > ((dsiFeatures() || sys().dsDebugRam()) ? 1024 : 512))
+			if (pent == nullptr || file_count > ((dsiFeatures() || sys().dsDebugRam()) ? 1024 : 512)) {
+				logPrint("End of listing, Sorting: ");
 				break;
+			}
 
 			// Now that we've got the attrs and the name, skip if we should be hiding this
 			if (!ms().showHidden && (attrs & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0)))
@@ -349,14 +352,15 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					}
 				}
 				dirContents.emplace_back(pent->d_name, ms().showDirectories ? (pent->d_type == DT_DIR) : false, file_count, false);
+				logPrint("%s listed: %s\n", (pent->d_type == DT_DIR) ? "Directory" : "File", pent->d_name);
 				file_count++;
-				
 			}
 		}
 		recalculateBoxesCount();
 
 		if (ms().sortMethod == TWLSettings::ESortAlphabetical) { // Alphabetical
 			std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Alphabetical");
 		} else if (ms().sortMethod == TWLSettings::ESortRecent) { // Recent
 			CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 			std::vector<std::string> recentlyPlayed;
@@ -374,6 +378,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Recent");
 		} else if (ms().sortMethod == TWLSettings::ESortMostPlayed) { // Most Played
 			CIniFile timesPlayedIni(timesPlayedIniPath);
 
@@ -395,6 +400,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					else
 						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 				});
+			logPrint("Most Played");
 		} else if (ms().sortMethod == TWLSettings::ESortFileType) { // File type
 			sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
 					if (!lhs.isDirectory && rhs.isDirectory)
@@ -408,6 +414,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					else
 						return extCmp < 0;
 				});
+			logPrint("File type");
 		} else if (ms().sortMethod == TWLSettings::ESortCustom) { // Custom
 			CIniFile gameOrderIni(gameOrderIniPath);
 			std::vector<std::string> gameOrder;
@@ -424,7 +431,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Custom");
 		}
+		logPrint("\n\n");
 		closedir(pdir);
 	}
 }
@@ -603,7 +612,7 @@ void updateBoxArt(void) {
 		}
 	} else {
 		if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
-			while (dmaBusy(1)); // Wait for frame to finish rendering
+			while (dmaBusy(1)) { swiDelay(100); } // Wait for frame to finish rendering
 			rocketVideo_playVideo = false; // Clear top screen cubes
 		}
 		clearBoxArt();
@@ -4001,7 +4010,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 
 				// Launch TWLMenu++ Settings by touching corner button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44) {
+				if ((pressed & KEY_TOUCH) && touch.py >= 0 && touch.py <= 26 && touch.px >= 0 && touch.px <= 44) {
 					if (ms().kioskMode) {
 						snd().playWrong();
 					} else {
@@ -4010,12 +4019,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				} else
 
 				// Exit to system menu by touching corner button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !sys().isRegularDS()) {
+				if ((pressed & KEY_TOUCH) && touch.py >= 0 && touch.py <= 26 && touch.px >= 212 && touch.px <= 255 && !sys().isRegularDS()) {
 					exitToSystemMenu();
 				} else
 
 				for (int i = 0; i < topIconCount; i++) {
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[i] && touch.px < savedTopIconXpos[i] + 24) {
+					if ((pressed & KEY_TOUCH) && touch.py >= 0 && touch.py <= 26 && touch.px >= savedTopIconXpos[i] && touch.px < savedTopIconXpos[i] + 24) {
 						switch (topIconOp[i]) {
 							case 0: { // Switch devices or launch Slot-1 by touching button
 								if (ms().secondaryDevice || REG_SCFG_MC != 0x11) {
