@@ -4012,7 +4012,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 
 				// Launch TWLMenu++ Settings by touching corner button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44) {
+				if ((pressed & KEY_TOUCH) && touch.py >= 0 && touch.py <= 26 && touch.px >= 0 && touch.px <= 44) {
 					if (ms().kioskMode) {
 						snd().playWrong();
 					} else {
@@ -4021,12 +4021,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				} else
 
 				// Exit to system menu by touching corner button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !sys().isRegularDS()) {
+				if ((pressed & KEY_TOUCH) && touch.py >= 0 && touch.py <= 26 && touch.px >= 212 && touch.px <= 255 && !sys().isRegularDS()) {
 					exitToSystemMenu();
 				} else
 
 				for (int i = 0; i < topIconCount; i++) {
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[i] && touch.px < savedTopIconXpos[i] + 24) {
+					if ((pressed & KEY_TOUCH) && touch.py >= 0 && touch.py <= 26 && touch.px >= savedTopIconXpos[i] && touch.px < savedTopIconXpos[i] + 24) {
 						switch (topIconOp[i]) {
 							case 0: { // Switch devices or launch Slot-1 by touching button
 								if (ms().secondaryDevice || REG_SCFG_MC != 0x11) {
