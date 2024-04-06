@@ -37,9 +37,32 @@ private:
 	void loadVolumeTextures();
 	void loadBatteryTextures();
 	void loadUITextures();
-	void loadIconTextures();
 
 public:
+	void loadIconGBTexture();
+	void loadIconGBATexture();
+	void loadIconGGTexture();
+	void loadIconMDTexture();
+	void loadIconNESTexture();
+	void loadIconSGTexture();
+	void loadIconSMSTexture();
+	void loadIconSNESTexture();
+	void loadIconPLGTexture();
+	void loadIconA26Texture();
+	void loadIconCOLTexture();
+	void loadIconM5Texture();
+	void loadIconINTTexture();
+	void loadIconPCETexture();
+	void loadIconWSTexture();
+	void loadIconNGPTexture();
+	void loadIconCPCTexture();
+	void loadIconVIDTexture();
+	void loadIconIMGTexture();
+	void loadIconMSXTexture();
+	void loadIconMINITexture();
+	void loadIconHBTexture();
+	void loadIconUnknownTexture();
+
 	static unsigned short *beginBgSubModify();
 	static void commitBgSubModify();
 	static void commitBgSubModifyAsync();

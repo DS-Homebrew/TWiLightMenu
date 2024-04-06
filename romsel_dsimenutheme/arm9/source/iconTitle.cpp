@@ -610,6 +610,8 @@ void iconUpdate(bool isDir, const char *name, int num) {
 
 	const bool isNds = (bnrRomType[num] == 0);
 
+	tex().loadIconUnknownTexture();
+
 	if (customIcon[num] > 0 || (customIcon[num] && isNds)) {
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
 		if (customIcon[num] == -1) {
@@ -691,50 +693,73 @@ void iconUpdate(bool isDir, const char *name, int num) {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, spriteIdx, false);
 		}
 	} else if (bnrRomType[num] == 10) {
+		tex().loadIconA26Texture();
 		loadA26Icon(spriteIdx);
 	} else if (bnrRomType[num] == 21) {
+		tex().loadIconMSXTexture();
 		loadMSXIcon(spriteIdx);
 	} else if (bnrRomType[num] == 13) {
+		tex().loadIconCOLTexture();
 		loadCOLIcon(spriteIdx);
 	} else if (bnrRomType[num] == 14) {
+		tex().loadIconM5Texture();
 		loadM5Icon(spriteIdx);
 	} else if (bnrRomType[num] == 12) {
+		tex().loadIconINTTexture();
 		loadINTIcon(spriteIdx);
 	} else if (bnrRomType[num] == 9) {
+		tex().loadIconPLGTexture();
 		loadPLGIcon(spriteIdx);
 	} else if (bnrRomType[num] == 19) {
+		tex().loadIconVIDTexture();
 		loadVIDIcon(spriteIdx);
 	} else if (bnrRomType[num] == 20) {
+		tex().loadIconIMGTexture();
 		loadIMGIcon(spriteIdx);
 	} else if (bnrRomType[num] == 1) {
+		tex().loadIconGBATexture();
 		loadGBAIcon(spriteIdx);
 	} else if (bnrRomType[num] == 2) {
+		tex().loadIconGBTexture();
 		loadGBIcon(spriteIdx);
 	} else if (bnrRomType[num] == 3) {
+		tex().loadIconGBTexture();
 		loadGBCIcon(spriteIdx);
 	} else if (bnrRomType[num] == 4) {
+		tex().loadIconNESTexture();
 		loadNESIcon(spriteIdx);
 	} else if (bnrRomType[num] == 15) {
+		tex().loadIconSGTexture();
 		loadSGIcon(spriteIdx);
 	} else if (bnrRomType[num] == 5) {
+		tex().loadIconSMSTexture();
 		loadSMSIcon(spriteIdx);
 	} else if (bnrRomType[num] == 6) {
+		tex().loadIconGGTexture();
 		loadGGIcon(spriteIdx);
 	} else if (bnrRomType[num] == 7) {
+		tex().loadIconMDTexture();
 		loadMDIcon(spriteIdx);
 	} else if (bnrRomType[num] == 8) {
+		tex().loadIconSNESTexture();
 		loadSNESIcon(spriteIdx);
 	} else if (bnrRomType[num] == 11) {
+		tex().loadIconPCETexture();
 		loadPCEIcon(spriteIdx);
 	} else if (bnrRomType[num] == 16) {
+		tex().loadIconWSTexture();
 		loadWSIcon(spriteIdx);
 	} else if (bnrRomType[num] == 17) {
+		tex().loadIconNGPTexture();
 		loadNGPIcon(spriteIdx);
 	} else if (bnrRomType[num] == 18) {
+		tex().loadIconCPCTexture();
 		loadCPCIcon(spriteIdx);
 	} else if (bnrRomType[num] == 22) {
+		tex().loadIconMINITexture();
 		loadMINIcon(spriteIdx);
 	} else if (bnrRomType[num] == 23) {
+		tex().loadIconHBTexture();
 		loadHBIcon(spriteIdx);
 	} else {
 		loadUnkIcon(spriteIdx);

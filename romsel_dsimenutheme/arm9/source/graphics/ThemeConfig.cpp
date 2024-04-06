@@ -21,8 +21,9 @@ ThemeConfig::ThemeConfig()
 	_cursorUserPalette(false), _dialogBoxUserPalette(true), _folderUserPalette(false), _launchDotsUserPalette(true),
 	_movingArrowUserPalette(true), _progressUserPalette(true), _scrollWindowUserPalette(false), _smallCartUserPalette(false),
 	_startBorderUserPalette(true), _startTextUserPalette(true), _wirelessIconsUserPalette(false),
-	_iconA26UserPalette(false), _iconCOLUserPalette(false), _iconGBUserPalette(false), _iconGBAUserPalette(false),
-	_iconGBAModeUserPalette(false),	_iconGGUserPalette(false), _iconHBUserPalette(false), _iconIMGUserPalette(false),
+	_iconA26UserPalette(false), _iconCPCUserPalette(false), _iconCOLUserPalette(false), _iconGBUserPalette(false),
+	_iconGBAUserPalette(false), _iconGBAModeUserPalette(false), _iconGGUserPalette(false),
+	_iconHBUserPalette(false), _iconIMGUserPalette(false),
 	_iconINTUserPalette(false), _iconM5UserPalette(false), _iconManualUserPalette(false), _iconMDUserPalette(false),
 	_iconMINIUserPalette(false), _iconMSXUserPalette(false), _iconNESUserPalette(false), _iconNGPUserPalette(false),
 	_iconPCEUserPalette(false), _iconPLGUserPalette(false), _iconSettingsUserPalette(false), _iconSGUserPalette(false),
@@ -122,6 +123,7 @@ void ThemeConfig::loadConfig() {
 	_wirelessIconsUserPalette = getInt(themeConfig, "WirelessIconsUserPalette", _wirelessIconsUserPalette);
 
 	_iconA26UserPalette = getInt(themeConfig, "IconA26UserPalette", _iconA26UserPalette);
+	_iconCPCUserPalette = getInt(themeConfig, "IconCPCUserPalette", _iconCPCUserPalette);
 	_iconCOLUserPalette = getInt(themeConfig, "IconCOLUserPalette", _iconCOLUserPalette);
 	_iconGBUserPalette = getInt(themeConfig, "IconGBUserPalette", _iconGBUserPalette);
 	_iconGBAUserPalette = getInt(themeConfig, "IconGBAUserPalette", _iconGBAUserPalette);
