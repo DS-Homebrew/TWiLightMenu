@@ -73,6 +73,7 @@ private:
 	bool _startTextUserPalette;
 	bool _wirelessIconsUserPalette;
 	bool _iconA26UserPalette;
+	bool _iconCPCUserPalette;
 	bool _iconCOLUserPalette;
 	bool _iconGBUserPalette;
 	bool _iconGBAUserPalette;
@@ -201,6 +202,7 @@ public:
 	bool startTextUserPalette() const { return _startTextUserPalette; }
 	bool wirelessIconsUserPalette() const { return _wirelessIconsUserPalette; }
 	bool iconA26UserPalette() const { return _iconA26UserPalette; }
+	bool iconCPCUserPalette() const { return _iconCPCUserPalette; }
 	bool iconCOLUserPalette() const { return _iconCOLUserPalette; }
 	bool iconGBUserPalette() const { return _iconGBUserPalette; }
 	bool iconGBAUserPalette() const { return _iconGBAUserPalette; }

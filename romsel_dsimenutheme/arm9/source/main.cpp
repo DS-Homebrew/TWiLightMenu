@@ -1075,13 +1075,11 @@ int dsiMenuTheme(void) {
 
 		if (ms().sysRegion == -1) {
 			// Determine SysNAND region by searching region of System Settings on SDNAND
-			char tmdpath[256] = {0};
-			for (u8 i = 0x41; i <= 0x5A; i++) {
-				snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
-				if (access(tmdpath, F_OK) == 0) {
-					setRegion = i;
-					break;
-				}
+			FILE* f_hwinfoS = fopen("sd:/sys/HWINFO_S.dat", "rb");
+			if (f_hwinfoS) {
+				fseek(f_hwinfoS, 0xA0, SEEK_SET);
+				fread(&setRegion, 1, 1, f_hwinfoS);
+				fclose(f_hwinfoS);
 			}
 		} else {
 			switch (ms().sysRegion) {
