@@ -16,7 +16,7 @@ enum{
 
 void my_inputGetAndSend(void){
 
-	static int sleepCounter = 0;
+	// static int sleepCounter = 0;
 
 	touchPosition tempPos = {0};
 	FifoMessage msg = {0};
@@ -43,7 +43,7 @@ void my_inputGetAndSend(void){
 		}
 	}	
 
-	if (keys & KEY_LID) 
+	/* if (keys & KEY_LID) 
 		sleepCounter++;
 	else
 		sleepCounter = 0;
@@ -53,7 +53,7 @@ void my_inputGetAndSend(void){
 	{
 		systemSleep();
 		sleepCounter = 0;
-	}
+	} */
 
 	msg.type = SYS_INPUT_MESSAGE; //set message type
 

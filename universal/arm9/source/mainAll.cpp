@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 	*fake_heap_end = 0;*/
 
 	defaultExceptionHandler();
-	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable sleep mode to prevent unexpected crashes from exiting sleep mode
+	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable libnds sleep mode to prevent unexpected crashes from exiting sleep mode
 
 	sys().initFilesystem(argc==0 ? "sd:/_nds/TWiLightMenu/main.srldr" : argv[0]);
 	sys().initArm7RegStatuses();
