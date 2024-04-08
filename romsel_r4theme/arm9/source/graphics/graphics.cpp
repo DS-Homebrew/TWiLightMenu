@@ -547,13 +547,6 @@ static void loadPng(const bool top, const int startMenu, const std::string filen
 
 void vBlankHandler()
 {
-	if (doubleBuffer) {
-		extern bool startMenu;
-		dmaCopyHalfWordsAsynch(0, topImage[startMenu][secondBuffer], (u16*)BG_GFX_SUB+(256*32), 0x18000);
-		dmaCopyHalfWordsAsynch(1, bottomImage[startMenu][secondBuffer], BG_GFX, 0x18000);
-		secondBuffer = !secondBuffer;
-	}
-
 	glBegin2D();
 	{
 		if (fadeType == true) {
@@ -623,6 +616,13 @@ void vBlankHandler()
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
+
+	if (doubleBuffer) {
+		extern bool startMenu;
+		dmaCopyHalfWordsAsynch(0, topImage[startMenu][secondBuffer], (u16*)BG_GFX_SUB+(256*32), 0x18000);
+		dmaCopyHalfWordsAsynch(1, bottomImage[startMenu][secondBuffer], BG_GFX, 0x18000);
+		secondBuffer = !secondBuffer;
+	}
 
 	frameDelay = 0;
 	frameDelayEven = !frameDelayEven;
