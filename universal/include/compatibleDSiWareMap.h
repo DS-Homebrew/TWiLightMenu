@@ -549,13 +549,12 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 45
+// Total: 44
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
 	"KXP", // 90's Pool
 	"KAT", // AiRace: Tunnel
-	"KAA", // Art Style: Aquia
 	"KYA", // Arrow of Laputa
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"K9G", // Big Bass Arcade
@@ -604,7 +603,6 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // 1001 Crystal Mazes Collection (No music)
 	1, // 90's Pool (No audio)
 	4, // AiRace: Tunnel (No audio + Crashes when selecting another tunnel after first selecting one, worked around by selecting either Credits or Controls)
-	1, // Art Style: Aquia (No audio)
 	1, // Arrow of Laputa (No audio)
 	5, // Aru Seishun no Monogatari: Kouenji Joshi Sakka (No FMVs)
 	4, // Big Bass Arcade (Crashes at certain points)
