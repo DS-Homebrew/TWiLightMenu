@@ -478,7 +478,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 29
+// Total: 28
 static const char compatibleGameListB4DSMEP[][5] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
@@ -498,7 +498,6 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KWK", // Mega Words
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"KNP", // Need for Speed: Nitro-X
-	"KAU", // Nintendo Countdown Calendar
 	"K9K", // Nintendoji
 	"KPS", // Phantasy Star 0 Mini
 	"KQR", // Remote Racers
@@ -535,7 +534,6 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Mega Words
 	2, // Meikyou Kokugo: Rakubiki Jiten
 	3, // Need for Speed: Nitro-X
-	0, // Nintendo Countdown Calendar
 	0, // Nintendoji
 	3, // Phantasy Star 0 Mini
 	0, // Remote Racers
