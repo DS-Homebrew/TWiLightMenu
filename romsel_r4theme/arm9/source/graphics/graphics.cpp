@@ -772,7 +772,7 @@ void graphicsLoad()
 		fclose(fileTop);
 	} else
 	for (int startMenu = 0; startMenu < 2; startMenu++) {
-		std::string themePath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TwilightMenu/r4menu/themes/" + ms().r4_theme;
+		std::string themePath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/r4menu/themes/" + ms().r4_theme;
 		std::string pathTop;
 		if (startMenu) {
 			if (access((themePath + "/logo.bmp").c_str(), F_OK) == 0) {
