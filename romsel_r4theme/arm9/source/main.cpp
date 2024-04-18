@@ -809,7 +809,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 	} else {
 		printSmall(false, 0, 90, text, Alignment::center);
 	}
-	printSmall(false, 0, (err==0 ? 132 : 108), "\u2428 Back", Alignment::center);
+	printSmall(false, 0, (err==0 ? 132 : 108), " Back", Alignment::center);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -1174,14 +1174,12 @@ int r4Theme(void) {
 						printSmall(false, 0, 166, "Game", Alignment::center, FontPalette::white);
 						break;
 					case 1:
-						if (flashcardFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
-							printSmall(false, 0, 166, "Not used", Alignment::center, FontPalette::white);
-						} else {
-							printSmall(false, 0, 166, "Launch Slot-1 card", Alignment::center, FontPalette::white);
-						}
+						printSmall(false, 0, 166, "Launch Moonshell", Alignment::center, FontPalette::white);
 						break;
 					case 2:
-						if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || ms().gbaBooter == TWLSettings::EGbaGbar2) {
+						if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || !flashcardFound()) {
+							printSmall(false, 0, 166, "Launch Slot-1 card", Alignment::center, FontPalette::white);
+						} else if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
 							printSmall(false, 0, 166, "Not used", Alignment::center, FontPalette::white);
 						} else {
 							printSmall(false, 0, 166, "Start GBA Mode", Alignment::center, FontPalette::white);
@@ -1231,7 +1229,23 @@ int r4Theme(void) {
 				vector<char *> argarray;
 				argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/manual.srldr" : "fat:/_nds/TWiLightMenu/manual.srldr"));
 				int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
-				iprintf ("Start failed. Error %i\n", err);
+				char text[32];
+				snprintf (text, sizeof(text), "Start failed. Error %i", err);
+				dialogboxHeight = 0;
+				showdialogbox = true;
+				clearText(false);
+				printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+				printSmall(false, 0, 90, text, Alignment::center);
+				printSmall(false, 0, 108, " Back", Alignment::center);
+				updateText(false);
+				int pressed = 0;
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					checkSdEject();
+					swiWaitForVBlank();
+				} while (!(pressed & KEY_B));
+				showdialogbox = false;
 			}
 
 			if (pressed & KEY_A) {
@@ -1251,8 +1265,74 @@ int r4Theme(void) {
 						updateText(false);
 						startMenu = false;
 						break;
-					case 1:
-						if ((!flashcardFound() && REG_SCFG_MC != 0x11) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
+					case 1: {
+						const char* moonshlPath = sys().isRunFromSD() ? "sd:/_moonshl.nds" : "fat:/_moonshl.nds";
+						if (access(moonshlPath, F_OK) != 0) {
+							dialogboxHeight = 0;
+							showdialogbox = true;
+							clearText(false);
+							printSmall(false, 0, 74, "Information", Alignment::center, FontPalette::white);
+							printSmall(false, 0, 90, "_moonshl.nds not found.", Alignment::center);
+							printSmall(false, 0, 108, " Back", Alignment::center);
+						} else {
+							bool useNDSB = true;
+							int err;
+							chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
+							if (!sys().isRunFromSD()) {
+								err = runNdsFile (moonshlPath, 0, NULL, true, true, false, true, false, false, -1);
+								useNDSB = false;
+							} else {
+								std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+
+								std::vector<char*> argarray;
+								argarray.push_back(strdup(bootstrapPath.c_str()));
+								argarray.at(0) = (char*)bootstrapPath.c_str();
+
+								CIniFile bootstrapini( BOOTSTRAP_INI );
+								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", moonshlPath);
+								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().getGameLanguage());
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+								bootstrapini.SaveIniFile( BOOTSTRAP_INI );
+								err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true, false, -1);
+							}
+							char text[32];
+							snprintf (text, sizeof(text), "Start failed. Error %i", err);
+							dialogboxHeight = ((err == 1 && useNDSB) ? 2 : 0);
+							showdialogbox = true;
+							clearText(false);
+							printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+							printSmall(false, 0, 90, text, Alignment::center);
+							if (err == 1 && useNDSB) {
+								printSmall(false, 0, 102, ms().bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center);
+								printSmall(false, 0, 114, "not found.", Alignment::center);
+							}
+							printSmall(false, 0, ((err == 1 && useNDSB) ? 132 : 108), " Back", Alignment::center);
+						}
+						updateText(false);
+						int pressed = 0;
+						do {
+							scanKeys();
+							pressed = keysDownRepeat();
+							checkSdEject();
+							swiWaitForVBlank();
+						} while (!(pressed & KEY_B));
+						showdialogbox = false;
+					}	break;
+					case 2:
+						bool messageShown = false;
+						if (!flashcardFound() && REG_SCFG_MC == 0x11) {
+							dialogboxHeight = 0;
+							showdialogbox = true;
+							clearText(false);
+							printSmall(false, 0, 74, "Information", Alignment::center, FontPalette::white);
+							printSmall(false, 0, 90, "Slot-1 cartridge is not inserted.", Alignment::center);
+							messageShown = true;
+						} else if ((!flashcardFound() && REG_SCFG_MC != 0x11) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 25; i++) {
 								swiWaitForVBlank();
@@ -1276,12 +1356,16 @@ int r4Theme(void) {
 								SetWidescreen(NULL);
 								chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
 								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, false, -1);
-								iprintf ("Start failed. Error %i\n", err);
+								char text[32];
+								snprintf (text, sizeof(text), "Start failed. Error %i", err);
+								dialogboxHeight = 0;
+								showdialogbox = true;
+								clearText(false);
+								printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+								printSmall(false, 0, 90, text, Alignment::center);
+								messageShown = true;
 							}
-						}
-						break;
-					case 2:
-						if (/* sys().isRegularDS() && */ (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) && ms().gbaBooter == TWLSettings::EGbaNativeGbar2) {
+						} else if (sys().isRegularDS() && (ms().gbaBooter == TWLSettings::EGbaNativeGbar2)) {
 							// Switch to GBA mode
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 25; i++) {
@@ -1289,51 +1373,22 @@ int r4Theme(void) {
 							}
 							ms().slot1Launched = false;
 							/* if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
-								if (ms().secondaryDevice) {
-									const char* gbaRunner2Path = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
-									if (isDSiMode()) {
-										gbaRunner2Path = ms().consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
-									}
-									loadPerGameSettings(filename);
-									if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)) {
-										int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false, false, -1);
-										iprintf ("Start failed. Error %i\n", err);
-									} else {
-										loadGameOnFlashcard(gbaRunner2Path, false);
-									}
-								} else {
-									std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-
-									std::vector<char*> argarray;
-									argarray.push_back(strdup(bootstrapPath.c_str()));
-									argarray.at(0) = (char*)bootstrapPath.c_str();
-
-									const char* gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-									if (sys().arm7SCFGLocked() && !sys().dsiWramAccess()) {
-										gbar2Path = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds";
-									}
-
-									CIniFile bootstrapini( BOOTSTRAP_INI );
-									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2Path);
-									bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
-									bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-									bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
-									bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().getGameLanguage());
-									bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-									bootstrapini.SaveIniFile( BOOTSTRAP_INI );
-									int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true, false, -1);
-									iprintf ("Start failed. Error %i\n", err);
-									if (err == 1) {
-										iprintf(ms().bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)");
-										iprintf("\nnot found.");
-									}
-								}
 							} else { */
 							if (((u8*)GBAROM)[0xB2] == 0x96) {
 								gbaSwitch();
 							}
+						}
+						if (messageShown) {
+							printSmall(false, 0, 108, " Back", Alignment::center);
+							updateText(false);
+							int pressed = 0;
+							do {
+								scanKeys();
+								pressed = keysDownRepeat();
+								checkSdEject();
+								swiWaitForVBlank();
+							} while (!(pressed & KEY_B));
+							showdialogbox = false;
 						}
 						break;
 				}
@@ -1772,7 +1827,7 @@ int r4Theme(void) {
 						printSmall(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)", Alignment::center);
 						printSmall(false, 4, 114, "not found.", Alignment::center);
 					}
-					printSmall(false, 0, (err==1 ? 132 : 108), "\u2428 Back", Alignment::center);
+					printSmall(false, 0, (err==1 ? 132 : 108), " Back", Alignment::center);
 					updateText(false);
 					int pressed = 0;
 					do {
@@ -2014,15 +2069,15 @@ int r4Theme(void) {
 						printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
 						printSmall(false, 0, 90, text, Alignment::center);
 						if (err == 1) {
-							if (ms().homebrewBootstrap == true) {
-								printSmall(false, 4, 102, useNightly ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center);
-								printSmall(false, 4, 114, "not found.", Alignment::center);
+							if (ms().homebrewBootstrap) {
+								printSmall(false, 0, 102, useNightly ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center);
+								printSmall(false, 0, 114, "not found.", Alignment::center);
 							} else {
-								printSmall(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)", Alignment::center);
-								printSmall(false, 4, 114, "not found.", Alignment::center);
+								printSmall(false, 0, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)", Alignment::center);
+								printSmall(false, 0, 114, "not found.", Alignment::center);
 							}
 						}
-						printSmall(false, 0, (err==1 ? 132 : 108), "\u2428 Back", Alignment::center);
+						printSmall(false, 0, (err==1 ? 132 : 108), " Back", Alignment::center);
 						updateText(false);
 						int pressed = 0;
 						do {
@@ -2137,7 +2192,7 @@ int r4Theme(void) {
 					showdialogbox = true;
 					printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
 					printSmall(false, 0, 90, text, Alignment::center);
-					printSmall(false, 0, 108, "\u2428 Back", Alignment::center);
+					printSmall(false, 0, 108, " Back", Alignment::center);
 					updateText(false);
 					int pressed = 0;
 					do {
@@ -2626,15 +2681,15 @@ int r4Theme(void) {
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				clearText(false);
-				dialogboxHeight = (err==1 ? 2 : 0);
+				dialogboxHeight = ((err == 1 && useNDSB) ? 2 : 0);
 				showdialogbox = true;
 				printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
 				printSmall(false, 0, 90, text, Alignment::center);
 				if (err == 1 && useNDSB) {
-					printSmall(false, 4, 102, ms().bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center);
-					printSmall(false, 4, 114, "not found.", Alignment::center);
+					printSmall(false, 0, 102, ms().bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center);
+					printSmall(false, 0, 114, "not found.", Alignment::center);
 				}
-				printSmall(false, 0, (err==1 ? 132 : 108), "\u2428 Back", Alignment::center);
+				printSmall(false, 0, ((err == 1 && useNDSB) ? 132 : 108), " Back", Alignment::center);
 				updateText(false);
 				int pressed = 0;
 				do {
