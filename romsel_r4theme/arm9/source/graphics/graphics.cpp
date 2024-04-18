@@ -87,11 +87,12 @@ glImage wirelessIcons[(32 / 32) * (64 / 32)];
 int bottomBg;
 
 u16 bmpImageBuffer[256*192];
-static u16 topImage[2][2][256*192];
-static u16 bottomImage[2][2][256*192];
+u16 topImage[2][2][256*192];
+u16 bottomImage[2][2][256*192];
+u16 topImageWithText[2][2][256*192];
 u16* colorTable = NULL;
 
-static u16 startBorderColor = 0;
+u16 startBorderColor = 0;
 static u16 windowColorTop = 0;
 static u16 windowColorBottom = 0;
 
@@ -612,14 +613,13 @@ void vBlankHandler()
 		} else if (blackScreen) {
 			glBoxFilled(0, 0, 256, 192, RGB15(0, 0, 0));
 		}
-		updateText(false);
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
 
 	if (doubleBuffer) {
 		extern bool startMenu;
-		dmaCopyHalfWordsAsynch(0, topImage[startMenu][secondBuffer], (u16*)BG_GFX_SUB+(256*32), 0x18000);
+		dmaCopyHalfWordsAsynch(0, topImageWithText[startMenu][secondBuffer], BG_GFX_SUB, 0x18000);
 		dmaCopyHalfWordsAsynch(1, bottomImage[startMenu][secondBuffer], BG_GFX, 0x18000);
 		secondBuffer = !secondBuffer;
 	}
@@ -652,8 +652,8 @@ void graphicsInit()
 	}
 
 	////////////////////////////////////////////////////////////
-	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG3_ACTIVE);
+	videoSetMode(MODE_5_3D);
+	videoSetModeSub(MODE_3_2D);
 
 	// Initialize gl2d
 	glScreen2D();
@@ -667,25 +667,31 @@ void graphicsInit()
 	// Set up enough texture memory for our textures
 	// Bank A is just 128kb and we are using 194 kb of
 	// sprites
-	vramSetBankA(VRAM_A_TEXTURE);
-	vramSetBankB(VRAM_B_TEXTURE);
-	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2) | BG_PRIORITY(2);
-	REG_BG1CNT_SUB = BG_MAP_BASE(2) | BG_COLOR_256 | BG_TILE_BASE(4) | BG_PRIORITY(1);
-	u16* bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(0);
-	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
-		bgMapSub[i] = (u16)i;
-	}
-	bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(2);
-	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
-		bgMapSub[i] = (u16)i;
-	}
-	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
+	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankB(VRAM_B_MAIN_BG);
+	vramSetBankC(VRAM_C_SUB_BG);
+	vramSetBankD(VRAM_D_TEXTURE);
 	vramSetBankE(VRAM_E_TEX_PALETTE);
 	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
 	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT5); // 16Kb of palette ram, and font textures take up 8*16 bytes.
 	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 	vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
+
+	lcdMainOnBottom();
+
+	int bg3Main = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+	bgSetPriority(bg3Main, 3);
+
+	int bg2Main = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 7, 0);
+	bgSetPriority(bg2Main, 0);
+
+	int bg3Sub = bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+	bgSetPriority(bg3Sub, 3);
+
+	// int bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	// bgSetPriority(bg2Sub, 0);
+
+	bgSetPriority(0, 1); // Set 3D to below text
 
 	if (ms().macroMode && ms().theme == TWLSettings::EThemeGBC) {
 		lcdMainOnTop();
@@ -695,29 +701,11 @@ void graphicsInit()
 		lcdSwapped = true;
 	}
 
-	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 0, 15, false, true);
-	
-	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
-	REG_BG3X = 0;
-	REG_BG3Y = 0;
-	REG_BG3PA = 1<<8;
-	REG_BG3PB = 0;
-	REG_BG3PC = 0;
-	REG_BG3PD = 1<<8;
-
-	REG_BG3CNT_SUB = BG_MAP_BASE(1) | BG_BMP16_256x256 | BG_PRIORITY(0);
-	REG_BG3X_SUB = 0;
-	REG_BG3Y_SUB = 0;
-	REG_BG3PA_SUB = 1<<8;
-	REG_BG3PB_SUB = 0;
-	REG_BG3PC_SUB = 0;
-	REG_BG3PD_SUB = 1<<8;
-
 	// Make screens black
-	dmaFillWords(0, BG_GFX, 0x18000);
-	dmaFillWords(0, (u16*)BG_GFX_SUB+(256*32), 0x18000);
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);
+	dmaFillWords(0, BG_GFX, 0x18000);
+	dmaFillWords(0, BG_GFX_SUB, 0x18000);
 }
 
 void graphicsLoad()
@@ -823,10 +811,15 @@ void graphicsLoad()
 		}
 	}
 
+	dmaCopyHalfWordsAsynch(0, topImage[0][0], topImageWithText[0][0], 0x18000);
+	dmaCopyHalfWordsAsynch(1, topImage[0][1], topImageWithText[0][1], 0x18000);
+	dmaCopyHalfWordsAsynch(2, topImage[1][0], topImageWithText[1][0], 0x18000);
+	dmaCopyHalfWordsAsynch(3, topImage[1][1], topImageWithText[1][1], 0x18000);
+
 	// Initialize the bottom background
 	// bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
 
-	startBorderColor = RGB15(colorRvalue/8, colorGvalue/8, colorBvalue/8);
+	startBorderColor = RGB15(colorRvalue/8, colorGvalue/8, colorBvalue/8) | BIT(15); // Bit 15 is needed for the color to display on the top screen
 	windowColorTop = RGB15(0, 0, 31);
 	windowColorBottom = RGB15(0, 0, 15);
 	if (colorTable) {
@@ -941,6 +934,8 @@ void graphicsLoad()
 							);
 
 	loadConsoleIcons();
+
+	while (dmaBusy(0) || dmaBusy(1) || dmaBusy(2) || dmaBusy(3)) swiDelay(100);
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);

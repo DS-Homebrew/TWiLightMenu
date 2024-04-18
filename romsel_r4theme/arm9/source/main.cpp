@@ -601,12 +601,13 @@ void SetWidescreen(const char *filename) {
 			const char* resultText1 = "Failed to copy widescreen";
 			const char* resultText2 = "code for the game.";
 			remove(wideCheatDataPath);
-			int textXpos[2] = {0};
-			textXpos[0] = 72;
-			textXpos[1] = 84;
-			clearText();
-			printSmallCentered(false, textXpos[0], resultText1);
-			printSmallCentered(false, textXpos[1], resultText2);
+			int textYpos[2] = {0};
+			textYpos[0] = 72;
+			textYpos[1] = 84;
+			clearText(false);
+			printSmall(false, 0, textYpos[0], resultText1, Alignment::center);
+			printSmall(false, 0, textYpos[1], resultText2, Alignment::center);
+			updateText(false);
 			fadeType = true; // Fade in from white
 			for (int i = 0; i < 60 * 3; i++) {
 				swiWaitForVBlank(); // Wait 3 seconds
@@ -797,18 +798,19 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 
 	char text[32];
 	snprintf (text, sizeof(text), "Start failed. Error %i", err);
-	clearText();
+	clearText(false);
 	dialogboxHeight = (err==0 ? 2 : 0);
 	showdialogbox = true;
-	printLargeCentered(false, 74, "Error!");
+	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
 	if (err == 0) {
-		printSmallCentered(false, 90, "Flashcard may be unsupported.");
-		printSmallCentered(false, 102, "Flashcard name:");
-		printSmallCentered(false, 114, io_dldi_data->friendlyName);
+		printSmall(false, 0, 90, "Flashcard may be unsupported.", Alignment::center);
+		printSmall(false, 0, 102, "Flashcard name:", Alignment::center);
+		printSmall(false, 0, 114, io_dldi_data->friendlyName, Alignment::center);
 	} else {
-		printSmallCentered(false, 90, text);
+		printSmall(false, 0, 90, text, Alignment::center);
 	}
-	printSmallCentered(false, (err==0 ? 132 : 108), "\u2428 Back");
+	printSmall(false, 0, (err==0 ? 132 : 108), "\u2428 Back", Alignment::center);
+	updateText(false);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1128,10 +1130,11 @@ int r4Theme(void) {
 	char path[256];
 
 	if (copyDSiWareSavBack) {
-		// printLargeCentered(false, 16, "If this takes a while, close");
-		// printLargeCentered(false, 24, "and open the console's lid.");
-		printLargeCentered(false, 88, "Now copying data...");
-		printLargeCentered(false, 96, "Do not turn off the power.");
+		// printSmall(false, 0, 16, "If this takes a while, close", Alignment::center, FontPalette::white);
+		// printSmall(false, 0, 24, "and open the console's lid.", Alignment::center, FontPalette::white);
+		printSmall(false, 0, 88, "Now copying data...", Alignment::center, FontPalette::white);
+		printSmall(false, 0, 96, "Do not turn off the power.", Alignment::center, FontPalette::white);
+		updateText(false);
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", ms().dsiWarePubPath.c_str());
 			rename("sd:/_nds/TWiLightMenu/tempDSiWare.pub", "sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak");
@@ -1161,31 +1164,32 @@ int r4Theme(void) {
 			lcdSwapped = true;
 			do {
 				clearText();
-				printLargeCentered(false, -112, 166, DrawDate());
+				printSmall(false, -112, 166, DrawDate(), Alignment::center, FontPalette::white);
 				if (!ms().kioskMode) {
-					printLargeCentered(false, 180, "SELECT: Settings menu");
+					printSmall(false, 0, 180, "SELECT: Settings menu", Alignment::center, FontPalette::white);
 				}
 				switch (startMenu_cursorPosition) {
 					case 0:
 					default:
-						printLargeCentered(false, 166, "Game");
+						printSmall(false, 0, 166, "Game", Alignment::center, FontPalette::white);
 						break;
 					case 1:
 						if (flashcardFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
-							printLargeCentered(false, 166, "Not used");
+							printSmall(false, 0, 166, "Not used", Alignment::center, FontPalette::white);
 						} else {
-							printLargeCentered(false, 166, "Launch Slot-1 card");
+							printSmall(false, 0, 166, "Launch Slot-1 card", Alignment::center, FontPalette::white);
 						}
 						break;
 					case 2:
 						if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || ms().gbaBooter == TWLSettings::EGbaGbar2) {
-							printLargeCentered(false, 166, "Not used");
+							printSmall(false, 0, 166, "Not used", Alignment::center, FontPalette::white);
 						} else {
-							printLargeCentered(false, 166, "Start GBA Mode");
+							printSmall(false, 0, 166, "Start GBA Mode", Alignment::center, FontPalette::white);
 						}
 						break;
 				}
-				printLargeCentered(false, 112, 166, RetTime().c_str());
+				printSmall(false, 111, 166, RetTime().c_str(), Alignment::center, FontPalette::white);
+				updateText(false);
 
 				scanKeys();
 				pressed = keysDownRepeat();
@@ -1243,6 +1247,8 @@ int r4Theme(void) {
 					case 0:
 					default:
 						clearText();
+						// updateText(true);
+						updateText(false);
 						startMenu = false;
 						break;
 					case 1:
@@ -1441,9 +1447,13 @@ int r4Theme(void) {
 				clearText(false);
 
 				// Print the path
-				printLarge(false, 0, 0, path);
+				printSmall(false, 0, 0, path, Alignment::left, FontPalette::white);
 
-				printLargeCentered(false, 96, "SELECT: Settings menu");
+				if (!ms().kioskMode) {
+					printSmall(false, 0, 96, "SELECT: Settings menu", Alignment::center, FontPalette::white);
+				}
+
+				updateText(false);
 			}
 
 			//Navigates to the file to launch
@@ -1551,11 +1561,12 @@ int r4Theme(void) {
 
 				if (savFormat) {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {
-						clearText();
+						clearText(false);
 						dialogboxHeight = 0;
 						showdialogbox = true;
-						printLargeCentered(false, 74, "Save creation");
-						printSmallCentered(false, 98, "Creating save file...");
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
+						printSmall(false, 0, 98, "Creating save file...", Alignment::center);
+						updateText(false);
 
 						FILE *pFile = fopen(ms().dsiWarePubPath.c_str(), "wb");
 						if (pFile) {
@@ -1565,39 +1576,44 @@ int r4Theme(void) {
 							fclose(pFile);
 						}
 
-						clearText();
-						printLargeCentered(false, 74, "Save creation");
-						printSmallCentered(false, 98, "Save file created!");
+						clearText(false);
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
+						printSmall(false, 0, 98, "Save file created!", Alignment::center);
+						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
 				} else {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
-						clearText();
+						clearText(false);
 						dialogboxHeight = 0;
 						showdialogbox = true;
-						printLargeCentered(false, 74, "Save creation");
-						printSmallCentered(false, 98, "Creating public save file...");
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
+						printSmall(false, 0, 98, "Creating public save file...", Alignment::center);
+						updateText(false);
 
 						createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
 
-						clearText();
-						printLargeCentered(false, 74, "Save creation");
-						printSmallCentered(false, 98, "Public save file created!");
+						clearText(false);
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
+						printSmall(false, 0, 98, "Public save file created!", Alignment::center);
+						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
 
 					if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
-						clearText();
+						clearText(false);
 						dialogboxHeight = 0;
 						showdialogbox = true;
-						printLargeCentered(false, 74, "Save creation");
-						printSmallCentered(false, 98, "Creating private save file...");
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
+						printSmall(false, 0, 98, "Creating private save file...", Alignment::center);
+						updateText(false);
 
 						createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
 
-						clearText();
-						printLargeCentered(false, 74, "Save creation");
-						printSmallCentered(false, 98, "Private save file created!");
+						clearText(false);
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
+						printSmall(false, 0, 98, "Private save file created!", Alignment::center);
+						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
 				}
@@ -1605,12 +1621,13 @@ int r4Theme(void) {
 				loadPerGameSettings(filename);
 
 				if (ms().secondaryDevice && !bs().b4dsMode && (ms().dsiWareToSD || (!(perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) && ms().consoleModel == 0)) && sdFound()) {
-					clearText();
+					clearText(false);
 					dialogboxHeight = 0;
 					showdialogbox = true;
-					printLargeCentered(false, 74, "Please wait");
-					printSmallCentered(false, 98, "Now copying data...");
-					printSmallCentered(false, 110, "Do not turn off the power.");
+					printSmall(false, 0, 74, "Please wait", Alignment::center, FontPalette::white);
+					printSmall(false, 0, 98, "Now copying data...", Alignment::center);
+					printSmall(false, 0, 110, "Do not turn off the power.", Alignment::center);
+					updateText(false);
 					fcopy(ms().dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0) && (NDSHeader.pubSavSize > 0)) {
 						fcopy(ms().dsiWarePubPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
@@ -1619,14 +1636,15 @@ int r4Theme(void) {
 						fcopy(ms().dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
 
-					clearText();
 					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
 					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
 						dialogboxHeight = 1;
-						printLargeCentered(false, 74, "Important!");
-						printSmall(false, 2, 90, "After saving, please re-start");
-						printSmall(false, 2, 102, "TWiLight Menu++ to transfer your");
-						printSmall(false, 2, 114, "save data back.");
+						clearText(false);
+						printSmall(false, 0, 74, "Important!", Alignment::center, FontPalette::white);
+						printSmall(false, 0, 90, "After saving, please re-start", Alignment::center);
+						printSmall(false, 0, 102, "TWiLight Menu++ to transfer your", Alignment::center);
+						printSmall(false, 0, 114, "save data back.", Alignment::center);
+						updateText(false);
 						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds
 					}
 				}
@@ -1745,16 +1763,17 @@ int r4Theme(void) {
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
-					clearText();
+					clearText(false);
 					dialogboxHeight = (err==1 ? 2 : 0);
 					showdialogbox = true;
-					printLargeCentered(false, 74, "Error!");
-					printSmallCentered(false, 90, text);
+					printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+					printSmall(false, 0, 90, text, Alignment::center);
 					if (err == 1) {
-						printSmallCentered(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
-						printSmallCentered(false, 4, 114, "not found.");
+						printSmall(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)", Alignment::center);
+						printSmall(false, 4, 114, "not found.", Alignment::center);
 					}
-					printSmallCentered(false, (err==1 ? 132 : 108), "\u2428 Back");
+					printSmall(false, 0, (err==1 ? 132 : 108), "\u2428 Back", Alignment::center);
+					updateText(false);
 					int pressed = 0;
 					do {
 						scanKeys();
@@ -1858,11 +1877,12 @@ int r4Theme(void) {
 							}
 
 							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
-								clearText();
+								clearText(false);
 								dialogboxHeight = 0;
 								showdialogbox = true;
-								printLargeCentered(false, 74, "Save management");
-								printSmallCentered(false, 90, (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...");
+								printSmall(false, 0, 74, "Save management", Alignment::center, FontPalette::white);
+								printSmall(false, 0, 90, (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...", Alignment::center);
+								updateText(false);
 
 								FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
 								if (pFile) {
@@ -1870,9 +1890,10 @@ int r4Theme(void) {
 									fputc('\0', pFile);
 									fclose(pFile);
 								}
-								clearText();
-								printLargeCentered(false, 74, "Save management");
-								printSmallCentered(false, 90, (orgsavesize == 0) ? "Save file created!" : "Save file expanded!");
+								clearText(false);
+								printSmall(false, 0, 74, "Save management", Alignment::center, FontPalette::white);
+								printSmall(false, 0, 90, (orgsavesize == 0) ? "Save file created!" : "Save file expanded!", Alignment::center);
+								updateText(false);
 								for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							}
 						}
@@ -1987,21 +2008,22 @@ int r4Theme(void) {
 						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
-						clearText();
+						clearText(false);
 						dialogboxHeight = (err==1 ? 2 : 0);
 						showdialogbox = true;
-						printLargeCentered(false, 74, "Error!");
-						printSmallCentered(false, 90, text);
+						printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+						printSmall(false, 0, 90, text, Alignment::center);
 						if (err == 1) {
 							if (ms().homebrewBootstrap == true) {
-								printSmallCentered(false, 4, 102, useNightly ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)");
-								printSmallCentered(false, 4, 114, "not found.");
+								printSmall(false, 4, 102, useNightly ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center);
+								printSmall(false, 4, 114, "not found.", Alignment::center);
 							} else {
-								printSmallCentered(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
-								printSmallCentered(false, 4, 114, "not found.");
+								printSmall(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)", Alignment::center);
+								printSmall(false, 4, 114, "not found.", Alignment::center);
 							}
 						}
-						printSmallCentered(false, (err==1 ? 132 : 108), "\u2428 Back");
+						printSmall(false, 0, (err==1 ? 132 : 108), "\u2428 Back", Alignment::center);
+						updateText(false);
 						int pressed = 0;
 						do {
 							scanKeys();
@@ -2110,12 +2132,13 @@ int r4Theme(void) {
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, false, runNds_language);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
-					clearText();
+					clearText(false);
 					dialogboxHeight = 0;
 					showdialogbox = true;
-					printLargeCentered(false, 74, "Error!");
-					printSmallCentered(false, 90, text);
-					printSmallCentered(false, 108, "\u2428 Back");
+					printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+					printSmall(false, 0, 90, text, Alignment::center);
+					printSmall(false, 0, 108, "\u2428 Back", Alignment::center);
+					updateText(false);
 					int pressed = 0;
 					do {
 						scanKeys();
@@ -2192,11 +2215,12 @@ int r4Theme(void) {
 					ms().launchType[ms().secondaryDevice] = (ms().gbaBooter == TWLSettings::EGbaNativeGbar2 && *(u16*)(0x020000C0) != 0) ? TWLSettings::EGBANativeLaunch : TWLSettings::ESDFlashcardLaunch;
 
 					if (ms().launchType[ms().secondaryDevice] == TWLSettings::EGBANativeLaunch) {
-						clearText();
+						clearText(false);
 						dialogboxHeight = 0;
 						showdialogbox = true;
-						printLargeCentered(false, 74, "Game loading");
-						printSmallCentered(false, 90, "Please wait...");
+						printSmall(false, 0, 74, "Game loading", Alignment::center, FontPalette::white);
+						printSmall(false, 0, 90, "Please wait...", Alignment::center);
+						updateText(false);
 
 						u32 ptr = 0x08000000;
 						u32 romSize = getFileSize(filename.c_str());
@@ -2601,16 +2625,17 @@ int r4Theme(void) {
 				int err = runNdsFile (ndsToBoot, argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram, tscTgds, -1);	// Pass ROM to emulator as argument
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				clearText();
+				clearText(false);
 				dialogboxHeight = (err==1 ? 2 : 0);
 				showdialogbox = true;
-				printLargeCentered(false, 74, "Error!");
-				printSmallCentered(false, 90, text);
+				printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+				printSmall(false, 0, 90, text, Alignment::center);
 				if (err == 1 && useNDSB) {
-					printSmallCentered(false, 4, 102, ms().bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)");
-					printSmallCentered(false, 4, 114, "not found.");
+					printSmall(false, 4, 102, ms().bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center);
+					printSmall(false, 4, 114, "not found.", Alignment::center);
 				}
-				printSmallCentered(false, (err==1 ? 132 : 108), "\u2428 Back");
+				printSmall(false, 0, (err==1 ? 132 : 108), "\u2428 Back", Alignment::center);
+				updateText(false);
 				int pressed = 0;
 				do {
 					scanKeys();

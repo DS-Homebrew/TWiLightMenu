@@ -867,7 +867,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 					}
 
 					tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
-					
+
 					infoFound[num] = true;
 				}
 			}

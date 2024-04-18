@@ -80,7 +80,8 @@ static int folderTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
-static char titleToDisplay[3][384]; 
+static bool infoFound = false;
+static char16_t cachedTitle[TITLE_CACHE_SIZE];
 
 static u32 arm9StartSig[4];
 
@@ -98,44 +99,22 @@ void iconTitleInit()
 	tilesModified = new u8[(32 * 256) / 2];
 }
 
-static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
+static inline void writeBannerText(std::string_view text)
 {
-	if (ms().theme == TWLSettings::EThemeGBC) {
-		char textAdjusted[26];
-		snprintf(textAdjusted, 25, text1);
-		for (int i = 15; i <= 17; i++) {
-			iprintf ("\x1b[%d;8H", i);
-			iprintf ("                  ");
-		}
-		iprintf ("\x1b[15;8H");
-		iprintf (textAdjusted);
-		if (textlines >= 1) {
-			snprintf(textAdjusted, 25, text2);
-			iprintf ("\x1b[16;8H");
-			iprintf (textAdjusted);
-		}
-		if (textlines >= 2) {
-			snprintf(textAdjusted, 25, text3);
-			iprintf ("\x1b[17;8H");
-			iprintf (textAdjusted);
-		}
-		return;
-	}
-	switch(textlines) {
-		case 0:
-		default:
-			printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing1, text1);
-			break;
-		case 1:
-			printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing2, text1);
-			printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing3, text2);
-			break;
-		case 2:
-			printSmallCentered(false, BOX_PX, BOX_PY, text1);
-			printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing1, text2);
-			printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing1*2, text3);
-			break;
-	}
+	const int xPos = (ms().theme == TWLSettings::EThemeGBC) ? 0 : BOX_PX;
+	const int yPos = (ms().theme == TWLSettings::EThemeGBC) ? BOX_PY_GBNP : BOX_PY;
+	const FontPalette bannerFontPalette = (ms().theme == TWLSettings::EThemeGBC) ? FontPalette::white : FontPalette::black;
+
+	printSmall((ms().theme == TWLSettings::EThemeGBC), xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::center, bannerFontPalette);
+}
+
+static inline void writeBannerText(std::u16string_view text)
+{
+	const int xPos = (ms().theme == TWLSettings::EThemeGBC) ? 0 : BOX_PX;
+	const int yPos = (ms().theme == TWLSettings::EThemeGBC) ? BOX_PY_GBNP : BOX_PY;
+	const FontPalette bannerFontPalette = (ms().theme == TWLSettings::EThemeGBC) ? FontPalette::white : FontPalette::black;
+
+	printSmall((ms().theme == TWLSettings::EThemeGBC), xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::center, bannerFontPalette);
 }
 
 static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
@@ -885,6 +864,7 @@ void getGameInfo(bool isDir, const char* name)
 	isModernHomebrew = false;
 	requiresRamDisk = false;
 	requiresDonorRom = false;
+	infoFound = false;
 
 	if (ms().showCustomIcons) {
 		toncset(&ndsBanner, 0, sizeof(sNDSBannerExt));
@@ -910,6 +890,10 @@ void getGameInfo(bool isDir, const char* name)
 							grabBannerSequence();
 						}
 					}
+
+					tonccpy(cachedTitle, ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
+
+					infoFound = true;
 				}
 			}
 		} else {
@@ -1190,6 +1174,19 @@ void getGameInfo(bool isDir, const char* name)
 
 		if (ndsHeader.bannerOffset == 0) {
 			fclose(fp);
+
+			FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
+			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
+			fclose(bannerFile);
+
+			tonccpy(cachedTitle, ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
+
+			// restore png icon
+			if (customIcon == 1) {
+				memcpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
+				memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
+			}
+
 			return;
 		}
 		ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
@@ -1200,11 +1197,37 @@ void getGameInfo(bool isDir, const char* name)
 
 		if (ret != 1) {
 			fclose(fp);
+
+			FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
+			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
+			fclose(bannerFile);
+
+			tonccpy(cachedTitle, ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
+
+			// restore png icon
+			if (customIcon == 1) {
+				memcpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
+				memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
+			}
+
 			return;
 		}
 
 		// close file!
 		fclose(fp);
+
+		int currentLang = 0;
+		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
+			currentLang = ms().getGameLanguage();
+		} else {
+			currentLang = ms().getTitleLanguage();
+		}
+		while (ndsBanner.titles[currentLang][0] == 0 || (ndsBanner.titles[currentLang][0] == 0x20 && ndsBanner.titles[currentLang][1] == 0)) {
+			if (currentLang == 0) break;
+			currentLang--;
+		}
+		tonccpy(cachedTitle, ndsBanner.titles[currentLang], TITLE_CACHE_SIZE*sizeof(u16));
+		infoFound = true;
 
 		// restore png icon
 		if (customIcon == 1) {
@@ -1430,16 +1453,24 @@ void titleUpdate(bool isDir, const char* name)
 	if (isDir) {
 		// text
 		if (strcmp(name, "..") == 0) {
-			writeBannerText(0, "Back", "", "");
+			writeBannerText("Back");
 		} else {
-			writeBannerText(0, name, "", "");
+			writeBannerText(name);
 		}
-	} else if (!extension(name, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"}) && customIcon != 2) {
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound) {
+		// this is an nds/app file!
+		// or a file with custom banner text
+		if (infoFound) {
+			writeBannerText(cachedTitle);
+		} else {
+			writeBannerText(name);
+		}
+	} else {
 		std::vector<std::string> lines;
 		lines.push_back(name);
 
 		for (uint i = 0; i < lines.size(); i++) {
-			int width = calcSmallFontWidth(lines[i].c_str());
+			int width = calcSmallFontWidth(lines[i]);
 			if (width > 140) {
 				int mid = lines[i].length() / 2;
 				bool foundSpace = false;
@@ -1466,175 +1497,11 @@ void titleUpdate(bool isDir, const char* name)
 			}
 		}
 
-		int lineCount = lines.size();
-		if (lineCount > 3) lineCount = 3;
-		strcpy(titleToDisplay[0], lines[0].c_str());
-		strcpy(titleToDisplay[1], lineCount > 1 ? lines[1].c_str() : "");
-		strcpy(titleToDisplay[2], lineCount > 2 ? lines[2].c_str() : "");
-
-		writeBannerText(lineCount-1, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
-	} else if (extension(name, {".argv"})) {
-		// look through the argv file for the corresponding nds/app file
-		FILE *fp;
-		char *line = NULL, *p = NULL;
-		size_t size = 0;
-		ssize_t rc;
-
-		// open the argv file
-		fp = fopen(name, "rb");
-		if (fp == NULL) {
-			writeBannerText(0, "(can't open file!)", "", "");
-			fclose(fp);
-			return;
+		std::string out;
+		for (auto line : lines) {
+			out += line + '\n';
 		}
-
-		// read each line
-		while ((rc = __getline(&line, &size, fp)) > 0) {
-			// remove comments
-			if ((p = strchr(line, '#')) != NULL)
-				*p = 0;
-
-			// skip leading whitespace
-			for (p = line; *p && isspace((int) *p); ++p)
-				;
-
-			if (*p)
-				break;
-		}
-
-		// done with the file at this point
-		fclose(fp);
-
-		if (p && *p) {
-			// we found an argument
-			struct stat st;
-
-			// truncate everything after first argument
-			strtok(p, "\n\r\t ");
-
-			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
-				// let's see if this is a file or directory
-				rc = stat(p, &st);
-				if (rc != 0) {
-					// stat failed
-					writeBannerText(0, "(can't find argument!)", "", "");
-				} else if (S_ISDIR(st.st_mode)) {
-					// this is a directory!
-					writeBannerText(1, "(invalid argv file!)", "This is a directory.", "");
-				} else {
-					titleUpdate(false, p);
-				}
-			} else {
-				// this is not an nds/app file!
-				writeBannerText(1, "(invalid argv file!)", "No .nds/.app file.", "");
-			}
-		} else {
-			writeBannerText(0, "(no argument!)", "", "");
-		}
-		// clean up the allocated line
-		free(line);
-	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || customIcon == 2) {
-		// this is an nds/app file!
-		// or a file with custom banner text
-		if (customIcon != 2) {
-			FILE *fp;
-			unsigned int iconTitleOffset;
-			int ret;
-
-			// open file for reading info
-			fp = fopen(name, "rb");
-			if (fp == NULL) {
-				// text
-				writeBannerText(0, "(can't open file!)", "", "");
-				fclose(fp);
-				return;
-			}
-
-			ret = fseek(fp, offsetof(tNDSHeader, bannerOffset), SEEK_SET);
-			if (ret == 0)
-				ret = fread(&iconTitleOffset, sizeof (int), 1, fp); // read if seek succeed
-			else
-				ret = 0; // if seek fails set to !=1
-
-			if (ret != 1) {
-				// text
-				writeBannerText(0, "(can't read file!)", "", "");
-				fclose(fp);
-				return;
-			}
-
-			if (iconTitleOffset == 0) {
-				// text
-				writeBannerText(1, name, "(no title/icon)", "");
-				fclose(fp);
-				return;
-			}
-			ret = fseek(fp, iconTitleOffset, SEEK_SET);
-			if (ret == 0)
-				ret = fread(&ndsBanner, sizeof (ndsBanner), 1, fp); // read if seek succeed
-			else
-				ret = 0; // if seek fails set to !=1
-
-			if (ret != 1) {
-				// try again, but using regular banner size
-				ret = fseek(fp, iconTitleOffset, SEEK_SET);
-				if (ret == 0)
-					ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp); // read if seek succeed
-				else
-					ret = 0; // if seek fails set to !=1
-
-				if (ret != 1) {
-					// text
-					writeBannerText(1, name, "(can't read icon/title!)", "");
-					fclose(fp);
-					return;
-				}
-			}
-
-			// close file!
-			fclose(fp);
-		}
-
-		int currentLang = 0;
-		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
-			currentLang = ms().getGameLanguage();
-		} else {
-			currentLang = ms().getTitleLanguage();
-		}
-		while (ndsBanner.titles[currentLang][0] == 0 || (ndsBanner.titles[currentLang][0] == 0x20 && ndsBanner.titles[currentLang][1] == 0)) {
-			if (currentLang == 0) break;
-			currentLang--;
-		}
-
-		// turn unicode into ascii (kind of)
-		// and convert 0x0A into 0x00
-		int bannerlines = 0;
-		// The index of the character array
-		int charIndex = 0;
-		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
-			// todo: fix crash on titles that are too long (homebrew)
-			if ((ndsBanner.titles[currentLang][i] == 0x000A) || (ndsBanner.titles[currentLang][i] == 0xFFFF)) {
-				titleToDisplay[bannerlines][charIndex] = 0;
-				bannerlines++;
-				charIndex = 0;
-			} else if (ndsBanner.titles[currentLang][i] <= 0x007F) { // ASCII are one UTF-8 character
-				titleToDisplay[bannerlines][charIndex++] = ndsBanner.titles[currentLang][i];
-			} else if (ndsBanner.titles[currentLang][i] <= 0x07FF) { // 0x0080 - 0x07FF are two UTF-8 characters
-				titleToDisplay[bannerlines][charIndex++] = (0xC0 | ((ndsBanner.titles[currentLang][i] & 0x7C0) >> 6));
-				titleToDisplay[bannerlines][charIndex++] = (0x80 | (ndsBanner.titles[currentLang][i] & 0x03F));
-			} else { // 0x0800 - 0xFFFF take three UTF-8 characters, we don't need to handle higher as we're coming from single UTF-16 chars
-				titleToDisplay[bannerlines][charIndex++] = (0xE0 | ((ndsBanner.titles[currentLang][i] & 0xF000) >> 12));
-				titleToDisplay[bannerlines][charIndex++] = (0x80 | ((ndsBanner.titles[currentLang][i] & 0x0FC0) >> 6));
-				titleToDisplay[bannerlines][charIndex++] = (0x80 | (ndsBanner.titles[currentLang][i] & 0x003F));
-			}
-		}
-
-		// text
-		//if (infoFound[num]) {
-			writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
-		//} else {
-		//	printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing2, name);
-		//	printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
-		//}
+		out.pop_back();
+		writeBannerText(out);
 	}
 }
