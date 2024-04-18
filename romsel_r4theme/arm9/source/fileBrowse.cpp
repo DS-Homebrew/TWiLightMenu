@@ -68,7 +68,8 @@
 #define ENTRIES_PER_SCREEN_GBNP 5
 #define ENTRIES_START_ROW 2
 #define ENTRIES_START_ROW_GBNP 6
-#define ENTRY_PAGE_LENGTH 10
+#define ENTRY_PAGE_LENGTH ENTRIES_PER_SCREEN/2
+#define ENTRY_PAGE_LENGTH_GBNP ENTRIES_PER_SCREEN_GBNP
 
 extern bool whiteScreen;
 extern bool fadeType;
@@ -1177,14 +1178,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			refreshDirectoryContents = true;
 		}
 		if (pressed & KEY_LEFT) {
-			fileOffset -= ENTRY_PAGE_LENGTH;
+			fileOffset -= (ms().theme == TWLSettings::EThemeGBC) ? ENTRY_PAGE_LENGTH_GBNP : ENTRY_PAGE_LENGTH;
 			if (ms().theme == TWLSettings::EThemeGBC) {
 				snd().playSelect();
 			}
 			refreshDirectoryContents = true;
 		}
 		if (pressed & KEY_RIGHT) {
-			fileOffset += ENTRY_PAGE_LENGTH;
+			fileOffset += (ms().theme == TWLSettings::EThemeGBC) ? ENTRY_PAGE_LENGTH_GBNP : ENTRY_PAGE_LENGTH;
 			if (ms().theme == TWLSettings::EThemeGBC) {
 				snd().playSelect();
 			}
@@ -1207,13 +1208,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (entry->isDirectory) {
 				if (ms().theme == TWLSettings::EThemeGBC) {
 					snd().playSelect();
-
-					// Clear the screen
-					iprintf ("\x1b[2J");
-
-					iprintf ("\x1b[6;8H");
 				}
-				iprintf("Entering directory\n");
 				// Enter selected directory
 				chdir (entry->name.c_str());
 				char buf[256];
