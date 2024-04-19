@@ -1179,7 +1179,7 @@ int r4Theme(void) {
 					case 2:
 						if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || !flashcardFound()) {
 							printSmall(false, 0, 166, "Launch Slot-1 card", Alignment::center, FontPalette::white);
-						} else if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
+						} else if (!sys().isRegularDS() || (ms().gbaBooter == TWLSettings::EGbaGbar2)) {
 							printSmall(false, 0, 166, "Not used", Alignment::center, FontPalette::white);
 						} else {
 							printSmall(false, 0, 166, "Start GBA Mode", Alignment::center, FontPalette::white);
