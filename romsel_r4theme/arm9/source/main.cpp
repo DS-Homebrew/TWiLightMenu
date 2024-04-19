@@ -1279,7 +1279,7 @@ int r4Theme(void) {
 							int err;
 							chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
 							if (!sys().isRunFromSD()) {
-								err = runNdsFile (moonshlPath, 0, NULL, true, true, false, true, false, false, -1);
+								err = runNdsFile (moonshlPath, 0, NULL, true, true, true, true, false, false, -1);
 								useNDSB = false;
 							} else {
 								std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
