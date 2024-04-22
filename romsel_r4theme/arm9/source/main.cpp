@@ -31,6 +31,7 @@
 #include "fileBrowse.h"
 #include "perGameSettings.h"
 #include "errorScreen.h"
+#include "esrbSplash.h"
 
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
@@ -1863,8 +1864,6 @@ int r4Theme(void) {
 
 			// Launch .nds directly or via nds-bootstrap
 			if (extension(filename, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
-				remove(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
-
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				bool dsModeSwitch = false;
@@ -2047,6 +2046,8 @@ int r4Theme(void) {
 						ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
+
+						createEsrbSplash();
 
 						if (sdFound() && ms().homebrewBootstrap && (access("sd:/moonshl2/logbuf.txt", F_OK) == 0)) {
 							remove("sd:/moonshl2/logbuf.txt"); // Delete file for Moonshell 2 to boot properly

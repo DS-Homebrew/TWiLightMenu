@@ -19,6 +19,9 @@ extern u16 topImageWithText[2][2][256*192];
 
 FontGraphic *smallFont;
 FontGraphic *largeFont;
+FontGraphic *esrbDescFont;
+
+static bool esrbDescFontIsDs = false;
 
 std::list<TextEntry> topText, bottomText;
 
@@ -47,7 +50,7 @@ void fontInit() {
 	};
 
 	// Load font graphics
-	smallFont = new FontGraphic({"nitro:/graphics/font/small.nftr"});
+	smallFont = new FontGraphic({"nitro:/graphics/font/ds.nftr"});
 
 	if (colorTable) {
 		palette[3] = colorTable[palette[3]];
@@ -56,6 +59,26 @@ void fontInit() {
 	// Load palettes
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
+}
+
+void esrbDescFontInit(bool dsFont) {
+	if (dsFont) {
+		esrbDescFont = smallFont;
+		esrbDescFontIsDs = true;
+		return;
+	}
+	esrbDescFont = new FontGraphic({"nitro:/graphics/font/small.nftr"});
+}
+
+void esrbDescFontDeinit() {
+	if (!esrbDescFont) return;
+
+	if (esrbDescFontIsDs) {
+		esrbDescFont = NULL;
+		esrbDescFontIsDs = false;
+		return;
+	}
+	delete esrbDescFont;
 }
 
 static std::list<TextEntry> &getTextQueue(bool top) {
@@ -104,6 +127,39 @@ void updateText(bool top) {
 
 	// Copy buffer to the bottom screen
 	tonccpy(bgGetGfxPtr(2), FontGraphic::textBuf[0], 256 * 192);
+}
+
+void updateTextImg(u16* img, bool top) {
+	if (top)	return;
+
+	// Clear before redrawing
+	if (shouldClear[top]) {
+		dmaFillWords(0, FontGraphic::textBuf[top], 256 * 192);
+		shouldClear[top] = false;
+	}
+
+	// Draw text
+	auto &text = getTextQueue(top);
+	for (auto it = text.begin(); it != text.end(); ++it) {
+		if (esrbDescFont)
+			esrbDescFont->print(it->x, it->y, top, it->message, it->align, it->palette);
+	}
+	text.clear();
+
+	u16 palette[] = {
+		0x0000,
+		0x6718,
+		0x4A32,
+		0x1064,
+	};
+
+	// Copy buffer to the image
+	for (int i = 0; i < 256 * 192; i++) {
+		if (FontGraphic::textBuf[top][i] != 0) {
+			//img[i] = top ? BG_PALETTE[FontGraphic::textBuf[true][i]] : BG_PALETTE_SUB[FontGraphic::textBuf[false][i]];
+			img[i] = palette[FontGraphic::textBuf[top][i]];
+		}
+	}
 }
 
 void clearText(bool top) {
