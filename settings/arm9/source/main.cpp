@@ -638,14 +638,18 @@ void opt_update()
 			clearText();
 			if (ms().rtl()) {
 				printLarge(false, 256 - 4, 0, STR_HOW_WANT_UPDATE, Alignment::right);
-				printSmall(false, 256 - 12, 29, ms().showMicroSd ? STR_CONSOLE_MICRO_SLOT1_MICRO : STR_CONSOLE_SD_SLOT1_MICRO, Alignment::right);
-				printSmall(false, 256 - 12, 43, ms().showMicroSd ? STR_SLOT1_MICRO_CONSOLE_MICRO : STR_SLOT1_MICRO_CONSOLE_SD, Alignment::right);
-				printSmall(false, 256 - 4, 29+(14*cursorPosition), "<", Alignment::right);
+				printSmall(false, 256 - 12, 29, ms().showMicroSd ? STR_CONSOLE_MICRO_SLOT1_MICRO : STR_CONSOLE_SD_SLOT1_MICRO, Alignment::right, (cursorPosition == 0 && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
+				printSmall(false, 256 - 12, 43, ms().showMicroSd ? STR_SLOT1_MICRO_CONSOLE_MICRO : STR_SLOT1_MICRO_CONSOLE_SD, Alignment::right, (cursorPosition == 1 && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
+				if (currentTheme == 4) {
+					printSmall(false, 256 - 4, 29+(14*cursorPosition), "<", Alignment::right);
+				}
 			} else {
 				printLarge(false, 4, 0, STR_HOW_WANT_UPDATE);
-				printSmall(false, 12, 29, ms().showMicroSd ? STR_CONSOLE_MICRO_SLOT1_MICRO : STR_CONSOLE_SD_SLOT1_MICRO);
-				printSmall(false, 12, 43, ms().showMicroSd ? STR_SLOT1_MICRO_CONSOLE_MICRO : STR_SLOT1_MICRO_CONSOLE_SD);
-				printSmall(false, 4, 29+(14*cursorPosition), ">");
+				printSmall(false, 12, 29, ms().showMicroSd ? STR_CONSOLE_MICRO_SLOT1_MICRO : STR_CONSOLE_SD_SLOT1_MICRO, Alignment::left, (cursorPosition == 0 && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
+				printSmall(false, 12, 43, ms().showMicroSd ? STR_SLOT1_MICRO_CONSOLE_MICRO : STR_SLOT1_MICRO_CONSOLE_SD, Alignment::left, (cursorPosition == 1 && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
+				if (currentTheme == 4) {
+					printSmall(false, 4, 29+(14*cursorPosition), ">", Alignment::left);
+				}
 			}
 			updateText = false;
 		}

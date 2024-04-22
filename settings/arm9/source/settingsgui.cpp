@@ -145,20 +145,22 @@ void SettingsGUI::draw()
 			int selected = option.selected();
 
 			if (i == _selectedOption) {
-				printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _topCursor) * 14, "<", Alignment::right);
+				if (currentTheme == 4) {
+					printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _topCursor) * 14, "<", Alignment::right);
+				}
 				// print scroller on the other side
 				drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1), true);
 			}
 
 			bool modified = wasOptionModified(option);
 
-			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str(), Alignment::right);
+			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str(), Alignment::right, (i == _selectedOption && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 			if (selected < 0) continue;
 
 			str = _pages[_selectedPage].options()[i].labels()[selected];
 			if (modified)
 				str += "*";
-			printSmall(false, 12, 30 + (i - _topCursor) * 14, str.c_str());
+			printSmall(false, 12, 30 + (i - _topCursor) * 14, str.c_str(), Alignment::left, (i == _selectedOption && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 		}
 	} else {
 		printLarge(false, 6, 1, titleDisplayLength>=60*4 ? STR_SELECT_SEE_DESC_VER : _pages[_selectedPage].title().c_str());
@@ -169,21 +171,23 @@ void SettingsGUI::draw()
 			int selected = option.selected();
 
 			if (i == _selectedOption) {
-				printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
+				if (currentTheme == 4) {
+					printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
+				}
 				// print scroller on the other side
 				drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1), false);
 			}
 
 			bool modified = wasOptionModified(option);
 
-			printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str());
+			printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str(), Alignment::left, (i == _selectedOption && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 			if (selected < 0) continue;
 
 			str = _pages[_selectedPage].options()[i].labels()[selected];
 			if (modified)
 				str += "*";
 
-			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, str.c_str(), Alignment::right);
+			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, str.c_str(), Alignment::right, (i == _selectedOption && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 		}
 	}
 
@@ -263,25 +267,29 @@ void SettingsGUI::drawSub()
 		printLarge(false, SCREEN_WIDTH - 6, 1, titleDisplayLength>=60*4 ? STR_SELECT_SEE_DESC_VER : _subOption->displayName().c_str(), Alignment::right);
 		for (int i = _subTopCursor; i < _subBottomCursor; i++) {
 			if (i == selected) {
-				printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _subTopCursor) * 14, "<", Alignment::right);
+				if (currentTheme == 4) {
+					printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _subTopCursor) * 14, "<", Alignment::right);
+				}
 
 				// print scroller on the other side
 				drawScroller(30 + i * CURSOR_HEIGHT / _subOption->labels().size() + 1, (CURSOR_HEIGHT / _subOption->labels().size() + 1), true);
 			}
 
-			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str(), Alignment::right);
+			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str(), Alignment::right, (i == selected && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 		}
 	} else {
 		printLarge(false, 6, 1, titleDisplayLength>=60*4 ? STR_SELECT_SEE_DESC_VER : _subOption->displayName().c_str());
 		for (int i = _subTopCursor; i < _subBottomCursor; i++) {
 			if (i == selected) {
-				printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
+				if (currentTheme == 4) {
+					printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
+				}
 
 				// print scroller on the other side
 				drawScroller(30 + i * CURSOR_HEIGHT / _subOption->labels().size() + 1, (CURSOR_HEIGHT / _subOption->labels().size() + 1), false);
 			}
 
-			printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
+			printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str(), Alignment::left, (i == selected && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 		}
 	}
 
