@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 471
+// Total: 472
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -113,6 +113,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KET", // Chuugaku Eitango: Kiho 400 Go Master
 	"KWP", // Chuuga Kukihon' Eitango: Wado Pazuru
 	"KQL", // Chuukara! Dairoujou
+	"KVL", // Clash of Elementalists
 	"KTR", // Clubhouse Games Express: Card Classics
 	"KTCT", "KTP", // Clubhouse Games Express: Family Favorites
 	"KTDT", "KTB", // Clubhouse Games Express: Strategy Pack
@@ -478,7 +479,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 28
+// Total: 29
 static const char compatibleGameListB4DSMEP[][5] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
@@ -486,6 +487,7 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"KBEV", // Bejeweled Twist (Europe, Australia)
 	"KCT", // Chess Challenge!
+	"KVL", // Clash of Elementalists
 	"KUG", // G.G Series: Drift Circuit 2
 	"KEI", // Electroplankton: Beatnes
 	"KEA", // Electroplankton: Trapy
@@ -522,6 +524,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	3, // Bejeweled Twist (Europe, Australia)
 	0, // Chess Challenge!
+	1, // Clash of Elementalists
 	3, // G.G Series: Drift Circuit 2
 	3, // Electroplankton: Beatnes
 	3, // Electroplankton: Trapy
