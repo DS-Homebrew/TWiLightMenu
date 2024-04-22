@@ -1835,6 +1835,10 @@ int dsiMenuTheme(void) {
 							fadeType = false;		  // Fade to black
 						}
 
+						if (sdFound() && ms().homebrewBootstrap && (access("sd:/moonshl2/logbuf.txt", F_OK) == 0)) {
+							remove("sd:/moonshl2/logbuf.txt"); // Delete file for Moonshell 2 to boot properly
+						}
+
 						bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
 						char ndsToBoot[256];
@@ -1898,13 +1902,13 @@ int dsiMenuTheme(void) {
 						clearText();
 						printLarge(false, 4, 4, text);
 						if (err == 1) {
-							if (ms().homebrewBootstrap == true) {
+							if (ms().homebrewBootstrap) {
 								printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
 							} else {
 								printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 							}
 						}
-						if (ms().homebrewBootstrap == true) {
+						if (ms().homebrewBootstrap) {
 							printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 						} else {
 							printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);

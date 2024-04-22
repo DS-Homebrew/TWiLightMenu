@@ -1282,6 +1282,10 @@ int r4Theme(void) {
 								err = runNdsFile (moonshlPath, 0, NULL, true, true, true, true, false, false, -1);
 								useNDSB = false;
 							} else {
+								if (access("sd:/moonshl2/logbuf.txt", F_OK) == 0) {
+									remove("sd:/moonshl2/logbuf.txt"); // Delete file for Moonshell 2 to boot properly
+								}
+
 								std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 
 								std::vector<char*> argarray;
@@ -2043,6 +2047,10 @@ int r4Theme(void) {
 						ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
+
+						if (sdFound() && ms().homebrewBootstrap && (access("sd:/moonshl2/logbuf.txt", F_OK) == 0)) {
+							remove("sd:/moonshl2/logbuf.txt"); // Delete file for Moonshell 2 to boot properly
+						}
 
 						if (dsiFeatures() || !ms().secondaryDevice) {
 							SetWidescreen(filename.c_str());
