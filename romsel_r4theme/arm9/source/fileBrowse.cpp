@@ -1532,6 +1532,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			char buf[256];
 			ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
 			ms().cursorPosition[ms().secondaryDevice] = 0;
+			ms().pagenum[ms().secondaryDevice] = 0;
 			ms().saveSettings();
 			return "null";
 		}
