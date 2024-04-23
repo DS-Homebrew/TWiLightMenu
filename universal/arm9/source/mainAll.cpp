@@ -14,6 +14,8 @@
 #include "common/systemdetails.h"
 #include "myDSiMode.h"
 
+#include "my_gurumeditation.h"
+
 bool useTwlCfg = false;
 
 // Ported from PAlib (obsolete)
@@ -44,7 +46,7 @@ int main(int argc, char **argv) {
 	/*extern char *fake_heap_end;
 	*fake_heap_end = 0;*/
 
-	defaultExceptionHandler();
+	myExceptionHandler();
 	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable libnds sleep mode to prevent unexpected crashes from exiting sleep mode
 
 	sys().initFilesystem(argc==0 ? "sd:/_nds/TWiLightMenu/main.srldr" : argv[0]);
