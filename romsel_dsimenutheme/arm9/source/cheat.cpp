@@ -142,7 +142,7 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
 
   // dbg_printf("record found: %d\n",dataSize);
 
-  char* buffer=(char*)malloc(dataSize);
+  char* buffer=new char[dataSize];
   if (!buffer) return false;
   fread(buffer,dataSize,1,aDat);
   char* gameTitle=buffer;
@@ -190,7 +190,7 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
       ccode=(u32*)((u32)ccode+(((*ccode&0x00ffffff)+1)*4));
     }
   }
-  free(buffer);
+  delete[] buffer;
   generateList();
   return true;
 }
