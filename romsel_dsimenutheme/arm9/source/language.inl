@@ -61,6 +61,8 @@ STRING(RAM_LIMIT_NO_SAVE_STATE, "Due to no save support, the\ngame will run in a
 STRING(INSERT_MEMORY_EXPANSION_PAK, "To launch this title, please\ninsert the Memory Expansion Pak.")
 STRING(INSERT_SLOT2_RAM_CART, "To launch this title, please\nturn off the POWER, and\ninsert a Slot-2 memory\nexpansion cart which isn't the\nMemory Expansion Pak.")
 STRING(INSERT_LARGER_THAN_MEP, "This title requires a larger\namount of memory than the\nExpansion Pak. Please turn off\nthe POWER, and insert a\nSlot-2 cart with more memory.")
+STRING(MEMORY_EXPANSION_PAK_UNAVAILABLE, "This title requires the Memory\nExpansion Pak, but the slot\nto insert it does not exist.\nAs a result, this title cannot\nbe launched.")
+STRING(SLOT2_RAM_CART_UNAVAILABLE, "This title requires a Slot-2\nexpansion cart, but the slot\nto insert it does not exist.\nAs a result, this title cannot\nbe launched.")
 STRING(TWLMENU_ALREADY_RUNNING, "TWiLight Menu++ is\nalready running.")
 STRING(CANNOT_LAUNCH_WITHOUT_SD, "This game cannot be launched\nwithout an SD card.")
 STRING(CANNOT_LAUNCH_IN_DS_MODE, "This game cannot be launched\nin DS mode.")

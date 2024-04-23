@@ -2214,7 +2214,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			if (sys().isRegularDS()) {
 				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_MEMORY_EXPANSION_PAK) - smallFontHeight()) / 2), STR_INSERT_MEMORY_EXPANSION_PAK, Alignment::center, FontPalette::dialog);
 			} else {
-				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_CANNOT_LAUNCH_IN_DS_MODE) - smallFontHeight()) / 2), STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center, FontPalette::dialog);
+				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_MEMORY_EXPANSION_PAK_UNAVAILABLE) - smallFontHeight()) / 2), STR_MEMORY_EXPANSION_PAK_UNAVAILABLE, Alignment::center, FontPalette::dialog);
 			}
 			break;
 		case 11:
@@ -2225,7 +2225,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_SLOT2_RAM_CART) - smallFontHeight()) / 2), STR_INSERT_SLOT2_RAM_CART, Alignment::center, FontPalette::dialog);
 				}
 			} else {
-				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_CANNOT_LAUNCH_IN_DS_MODE) - smallFontHeight()) / 2), STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center, FontPalette::dialog);
+				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_SLOT2_RAM_CART_UNAVAILABLE) - smallFontHeight()) / 2), STR_SLOT2_RAM_CART_UNAVAILABLE, Alignment::center, FontPalette::dialog);
 			}
 			break;
 		case 12:

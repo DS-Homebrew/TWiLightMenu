@@ -886,18 +886,13 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 
 	bool proceedToLaunch = true;
 
-	if (msgId >= 10 && !sys().isRegularDS()) {
-		cannotLaunchMsg(0);
-		return false;
-	}
-
 	if (ms().macroMode) {
 		lcdMainOnBottom();
 		lcdSwapped = true;
 	}
 	dialogboxHeight = 3;
 	showdialogbox = true;
-	printSmall(false, 0, 74, "Compatibility Warning", Alignment::center, FontPalette::white);
+	printSmall(false, 0, 74, ((msgId == 10 || msgId == 11) && !sys().isRegularDS()) ? "Error!" : "Compatibility Warning", Alignment::center, FontPalette::white);
 	switch (msgId) {
 		case 0:
 			printSmall(false, 0, 90, "Due to memory limitations, only part", Alignment::center);
@@ -933,19 +928,31 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
 			break;
 		case 10:
-			printSmall(false, 0, 102, "To launch this title, please", Alignment::center);
-			printSmall(false, 0, 114, "insert the Memory Expansion Pak.", Alignment::center);
+			if (sys().isRegularDS()) {
+				printSmall(false, 0, 102, "To launch this title, please", Alignment::center);
+				printSmall(false, 0, 114, "insert the Memory Expansion Pak.", Alignment::center);
+			} else {
+				printSmall(false, 0, 90, "This title requires the Memory Expansion Pak,", Alignment::center);
+				printSmall(false, 0, 102, "but the slot to insert it does not exist.", Alignment::center);
+				printSmall(false, 0, 114, "As a result, this title cannot be launched.", Alignment::center);
+			}
 			break;
 		case 11:
-			if (mepFound) {
-				printSmall(false, 0, 90, "This title requires a larger amount", Alignment::center);
-				printSmall(false, 0, 102, "amount of memory than the Expansion Pak.", Alignment::center);
-				printSmall(false, 0, 114, "Please turn off the POWER, and insert", Alignment::center);
-				printSmall(false, 0, 126, "a Slot-2 cart with more memory.", Alignment::center);
+			if (sys().isRegularDS()) {
+				if (mepFound) {
+					printSmall(false, 0, 90, "This title requires a larger amount", Alignment::center);
+					printSmall(false, 0, 102, "amount of memory than the Expansion Pak.", Alignment::center);
+					printSmall(false, 0, 114, "Please turn off the POWER, and insert", Alignment::center);
+					printSmall(false, 0, 126, "a Slot-2 cart with more memory.", Alignment::center);
+				} else {
+					printSmall(false, 0, 90, "To launch this title, please turn off the", Alignment::center);
+					printSmall(false, 0, 102, "POWER, and insert a Slot-2 memory expansion", Alignment::center);
+					printSmall(false, 0, 114, "cart which isn't the Memory Expansion Pak.", Alignment::center);
+				}
 			} else {
-				printSmall(false, 0, 90, "To launch this title, please turn off the", Alignment::center);
-				printSmall(false, 0, 102, "POWER, and insert a Slot-2 memory expansion", Alignment::center);
-				printSmall(false, 0, 114, "cart which isn't the Memory Expansion Pak.", Alignment::center);
+				printSmall(false, 0, 90, "This title requires a Slot-2 expansion cart,", Alignment::center);
+				printSmall(false, 0, 102, "but the slot to insert it does not exist.", Alignment::center);
+				printSmall(false, 0, 114, "As a result, this title cannot be launched.", Alignment::center);
 			}
 			break;
 		case 12:
