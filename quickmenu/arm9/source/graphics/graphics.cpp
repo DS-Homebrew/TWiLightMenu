@@ -28,6 +28,7 @@
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/twlmenusettings.h"
+#include <cmath>
 
 // Graphic files
 #include "cursor.h"
@@ -81,6 +82,9 @@ bool renderFrame = true;
 
 bool showProgressBar = false;
 int progressBarLength = 0;
+
+float cursorTargetTL = 0.0f, cursorTargetTR = 0.0f, cursorTargetBL = 0.0f, cursorTargetBR = 0.0f;
+float cursorTL = 0.0f, cursorTR = 0.0f, cursorBL = 0.0f, cursorBR = 0.0f;
 
 extern int spawnedtitleboxes;
 
@@ -142,6 +146,66 @@ void ClearBrightness(void) {
 bool screenFadedIn(void) { return (screenBrightness == 0); }
 
 bool screenFadedOut(void) { return (screenBrightness > 24); }
+
+void updateCursorTargetPos(void) { 
+	switch (cursorPosition) {
+		case MenuEntry::INVALID:
+			cursorTargetTL = 0.0f;
+			cursorTargetBL = 0.0f;
+			cursorTargetTR = 0.0f;
+			cursorTargetBR = 0.0f;
+			break;
+		case MenuEntry::CART:
+			cursorTargetTL = 31.0f;
+			cursorTargetBL = 23.0f;
+			cursorTargetTR = 213.0f;
+			cursorTargetBR = 61.0f;
+			//drawCursorRect(31, 23, 213, 61);
+			break;
+		case MenuEntry::PICTOCHAT:
+			cursorTargetTL = 31.0f;
+			cursorTargetBL = 71.0f;
+			cursorTargetTR = 117.0f;
+			cursorTargetBR = 109.0f;
+			//drawCursorRect(31, 71, 117, 109);
+			break;
+		case MenuEntry::DOWNLOADPLAY:
+			cursorTargetTL = 127.0f;
+			cursorTargetBL = 71.0f;
+			cursorTargetTR = 213.0f;
+			cursorTargetBR = 109.0f;
+			//drawCursorRect(127, 71, 213, 109);
+			break;
+		case MenuEntry::GBA:
+			cursorTargetTL = 31.0f;
+			cursorTargetBL = 119.0f;
+			cursorTargetTR = 213.0f;
+			cursorTargetBR = 157.0f;
+			//drawCursorRect(31, 119, 213, 157);
+			break;
+		case MenuEntry::BRIGHTNESS:
+			cursorTargetTL = 0.0f;
+			cursorTargetBL = 167.0f;
+			cursorTargetTR = 20.0f;
+			cursorTargetBR = 182.0f;
+			//drawCursorRect(0, 167, 20, 182);
+			break;
+		case MenuEntry::SETTINGS:
+			cursorTargetTL = 112.0f;
+			cursorTargetBL = 167.0f;
+			cursorTargetTR = 132.0f;
+			cursorTargetBR = 182.0f;
+			//drawCursorRect(112, 167, 132, 182);
+			break;
+		case MenuEntry::MANUAL:
+			cursorTargetTL = 225.0f;
+			cursorTargetBL = 167.0f;
+			cursorTargetTR = 245.0f;
+			cursorTargetBR = 182.0f;
+			//drawCursorRect(225, 167, 245, 182);
+			break;
+	}
+}
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
@@ -403,6 +467,12 @@ void vBlankHandler()
 		}
 	}
 
+	constexpr float swiftness = 0.25f;
+	cursorTL += (cursorTargetTL - cursorTL) * swiftness;
+	cursorBL += (cursorTargetBL - cursorBL) * swiftness;
+	cursorTR += (cursorTargetTR - cursorTR) * swiftness;
+	cursorBR += (cursorTargetBR - cursorBR) * swiftness;
+
 	if (renderFrame) {
 	  glBegin2D();
 	  {
@@ -467,31 +537,9 @@ void vBlankHandler()
 						glSprite(x2, y2, GL_FLIP_NONE, &cursorImage[3]);
 				};
 				
-				switch (cursorPosition) {
-					case MenuEntry::INVALID:
-						break;
-					case MenuEntry::CART:
-						drawCursorRect(31, 23, 213, 61);
-						break;
-					case MenuEntry::PICTOCHAT:
-						drawCursorRect(31, 71, 117, 109);
-						break;
-					case MenuEntry::DOWNLOADPLAY:
-						drawCursorRect(127, 71, 213, 109);
-						break;
-					case MenuEntry::GBA:
-						drawCursorRect(31, 119, 213, 157);
-						break;
-					case MenuEntry::BRIGHTNESS:
-						drawCursorRect(0, 167, 20, 182);
-						break;
-					case MenuEntry::SETTINGS:
-						drawCursorRect(112, 167, 132, 182);
-						break;
-					case MenuEntry::MANUAL:
-						drawCursorRect(225, 167, 245, 182);
-						break;
-				}
+				updateCursorTargetPos();
+				
+				drawCursorRect(std::roundf(cursorTL), std::roundf(cursorBL), std::roundf(cursorTR), std::roundf(cursorBR));
 			}
 		}
 		/*if (showdialogbox) {
@@ -986,6 +1034,12 @@ void graphicsInit()
 							);
 
 	loadConsoleIcons();
+
+	updateCursorTargetPos();
+	cursorTL = cursorTargetTL;
+	cursorBL = cursorTargetBL;
+	cursorTR = cursorTargetTR;
+	cursorBR = cursorTargetBR;
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
