@@ -580,11 +580,10 @@ bool donorRomMsg(void) {
 void showLocation(void) {
 	if (sys().isRegularDS() || (ms().theme == TWLSettings::EThemeGBC)) return;
 
-	printSmall(false, 8, 162, "Location:");
 	if (ms().secondaryDevice) {
-		printSmall(false, 8, 174, "Slot-1 microSD Card");
+		printSmall(false, 0, 174, "Location: Slot-1 microSD Card", Alignment::center);
 	} else {
-		printSmall(false, 8, 174, ms().showMicroSd ? "microSD Card" : "SD Card");
+		printSmall(false, 0, 174, ms().showMicroSd ? "Location: microSD Card" : "Location: SD Card", Alignment::center);
 	}
 }
 
