@@ -24,6 +24,7 @@
 
 #include <nds/ndstypes.h>
 #include <nds/memory.h>
+#include <nds/bios.h>
 
 #include <nds/arm9/video.h>
 #include <nds/arm9/console.h>
@@ -274,7 +275,7 @@ void myGuruMeditationDump() {
 static void myHandler() {
 //---------------------------------------------------------------------------------
 	myGuruMeditationDump();
-	while(1);
+	while(1) swiDelay(100);
 }
 
 //---------------------------------------------------------------------------------
