@@ -20,7 +20,8 @@ std::list<TextEntry> topText, bottomText;
 bool shouldClear[] = {false, false};
 
 void fontInit() {
-	bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
+	// const bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
+	const bool useTileCache = (!dsiFeatures() && !sys().dsDebugRam());
 
 	// Unload fonts if already loaded
 	if (smallFont)
@@ -43,8 +44,7 @@ void fontInit() {
 	if (ms().dsClassicCustomFont) {
 		std::string fontPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 		std::string defaultPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
-		bool dsiFont = dsiFeatures() || sys().dsDebugRam() || useExpansionPak;
-		smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", defaultPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), "nitro:/graphics/font/small.nftr"}, useExpansionPak);
+		smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", defaultPath + "/small-dsi.nftr", "nitro:/graphics/font/small.nftr"}, useTileCache);
 	} else {
 		smallFont = new FontGraphic({"nitro:/graphics/font/small.nftr"}, false);
 		palette[3] = 0x94A5;

@@ -35,7 +35,8 @@ bool fileExists(std::vector<std::string_view> paths) {
 void fontInit() {
 	logPrint("fontInit() ");
 
-	// bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
+	// const bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
+	const bool useTileCache = (!dsiFeatures() && !sys().dsDebugRam());
 
 	// Unload fonts if already loaded
 	if (smallFont)
@@ -46,13 +47,12 @@ void fontInit() {
 	// Load font graphics
 	std::string fontPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 	std::string defaultPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
-	bool dsiFont = dsiFeatures() || sys().dsDebugRam();
-	smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", defaultPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), "nitro:/graphics/font/small.nftr"});
+	smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", defaultPath + "/small-dsi.nftr", "nitro:/graphics/font/small.nftr"}, useTileCache);
 	// If custom small font but no custom large font, use small font as large font
-	if (fileExists({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr"}) && !fileExists({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr"}))
+	if (fileExists({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr"}) && !fileExists({fontPath + "/large-dsi.nftr", fontPath + "/large.nftr"}))
 		largeFont = smallFont;
 	else
-		largeFont = new FontGraphic({fontPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), fontPath + "/large.nftr", defaultPath + (dsiFont ? "/large-dsi.nftr" : "/large-ds.nftr"), "nitro:/graphics/font/large.nftr"});
+		largeFont = new FontGraphic({fontPath + "/large-dsi.nftr", fontPath + "/large.nftr", defaultPath + "/large-dsi.nftr", "nitro:/graphics/font/large.nftr"}, useTileCache);
 
 	extern bool useTwlCfg;
 	int favoriteColor = (int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme);

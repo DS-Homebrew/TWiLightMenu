@@ -7,6 +7,8 @@
 #include <string_view>
 #include <vector>
 
+#define tileCacheCount 128
+
 enum class Alignment {
 	left,
 	center,
@@ -32,13 +34,15 @@ private:
 
 	static char16_t arabicForm(char16_t current, char16_t prev, char16_t next);
 
-	static u8 *lastUsedLoc;
-
-	bool useExpansionPak = false;
+	FILE* file = nullptr;
+	bool useTileCache = false;
 	u8 tileWidth = 0, tileHeight = 0;
 	u16 tileSize = 0;
 	int tileAmount = 0;
 	u16 questionMark = 0;
+	u16 indexCache[tileCacheCount] = {0xFFFF};
+	bool cacheAllocated[tileCacheCount] = {false};
+	u8 nextCachePos = 0xFF;
 	u8 *fontTiles = nullptr;
 	u8 *fontWidths = nullptr;
 	u16 *fontMap = nullptr;
@@ -50,7 +54,7 @@ public:
 
 	static std::u16string utf8to16(std::string_view text);
 
-	FontGraphic(const char* path, const bool useExpansionPak);
+	FontGraphic(const char* path, const bool set_useTileCache);
 
 	~FontGraphic(void);
 

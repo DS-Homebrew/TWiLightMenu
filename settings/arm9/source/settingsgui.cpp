@@ -201,6 +201,9 @@ void SettingsGUI::draw()
 	printSmall(false, 0, 173, "TWiLight Menu++", Alignment::center);
 	printSmall(false, 2, 173, "<  / "); // L / Y
 	printSmall(false, 256 - 2, 173, " /  >", Alignment::right); // R / X
+
+	updateText(false);
+	updateText(true);
 }
 
 void SettingsGUI::setTopText(const std::string &text)
@@ -294,6 +297,9 @@ void SettingsGUI::drawSub()
 	}
 
 	printSmall(false, 0, 173, "TWiLight Menu++", Alignment::center);
+
+	updateText(false);
+	updateText(true);
 }
 
 void SettingsGUI::drawTopText()

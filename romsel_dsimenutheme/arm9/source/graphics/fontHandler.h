@@ -3,7 +3,6 @@
 #include "FontGraphic.h"
 
 void fontInit();
-void fontReinit();
 void esrbDescFontInit(bool dsFont);
 void esrbDescFontDeinit();
 

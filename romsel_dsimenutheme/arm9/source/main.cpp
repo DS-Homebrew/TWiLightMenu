@@ -2146,8 +2146,6 @@ int dsiMenuTheme(void) {
 					ms().launchType[ms().secondaryDevice] = (ms().gbaBooter == TWLSettings::EGbaNativeGbar2 && *(u16*)(0x020000C0) != 0) ? Launch::EGBANativeLaunch : Launch::ESDFlashcardLaunch;
 
 					if (ms().launchType[ms().secondaryDevice] == Launch::EGBANativeLaunch) {
-						fontReinit();	// Re-load font into main memory
-
 						if (ms().theme == TWLSettings::EThemeHBL) {
 							displayGameIcons = false;
 						} else {

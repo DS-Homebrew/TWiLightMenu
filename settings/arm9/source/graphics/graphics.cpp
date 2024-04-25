@@ -153,9 +153,6 @@ void vBlankHandler()
 		}
 	}
 
-	updateText(false);
-	updateText(true);
-
 	if (renderFrame) {
 		frameDelay = 0;
 		frameDelayEven = !frameDelayEven;

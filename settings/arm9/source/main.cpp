@@ -533,6 +533,8 @@ void begin_update(int opt)
 	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
 	printLarge(false, textLargeXpos2, 0, "(1/3)", ms().rtl() ? Alignment::left : Alignment::right);
 	printSmall(false, textSmallXpos, 29, STR_UPDATING_MISC_SRLDR, ms().rtl() ? Alignment::right : Alignment::left);
+	updateText(false);
+	updateText(true);
 
 	logPrint("\n");
 	if (opt == 1) {
@@ -565,19 +567,19 @@ void begin_update(int opt)
 		fcopy("sd:/_nds/TWiLightMenu/settings.srldr", "fat:/_nds/TWiLightMenu/settings.srldr");
 	}
 
-	clearText();
-	printSmall(true, 0, 128, STR_PLEASE_WAIT_TAKE_WHILE, Alignment::center);
+	clearText(false);
 	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
 	printLarge(false, textLargeXpos2, 0, "(2/3)", ms().rtl() ? Alignment::left : Alignment::right);
 	printSmall(false, textSmallXpos, 29, STR_GETTING_MENU_SRLDR, ms().rtl() ? Alignment::right : Alignment::left);
+	updateText(false);
 
 	loadMenuSrldrList(opt==1 ? "fat:/_nds/TWiLightMenu/" : "sd:/_nds/TWiLightMenu/");
 
-	clearText();
-	printSmall(true, 0, 128, STR_PLEASE_WAIT_TAKE_WHILE, Alignment::center);
+	clearText(false);
 	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
 	printLarge(false, textLargeXpos2, 0, "(2/3)", ms().rtl() ? Alignment::left : Alignment::right);
 	printSmall(false, textSmallXpos, 29, STR_UPDATING_MENU_SRLDR, ms().rtl() ? Alignment::right : Alignment::left);
+	updateText(false);
 
 	// Copy theme srldr files
 	logPrint(opt==1 ? "Copying *menu.srldr from fat to sd\n" : "Copying *menu.srldr from sd to fat\n");
@@ -591,11 +593,11 @@ void begin_update(int opt)
 		fcopy(srldrPath[0], srldrPath[1]);
 	}
 
-	clearText();
-	printSmall(true, 0, 128, STR_PLEASE_WAIT_TAKE_WHILE, Alignment::center);
+	clearText(false);
 	printLarge(false, textLargeXpos, 0, STR_NOW_UPDATING, ms().rtl() ? Alignment::right : Alignment::left);
 	printLarge(false, textLargeXpos2, 0, "(3/3)", ms().rtl() ? Alignment::left : Alignment::right);
 	printSmall(false, textSmallXpos, 29, STR_UPDATING_NDS_BOOTSTRAP, ms().rtl() ? Alignment::right : Alignment::left);
+	updateText(false);
 
 	if (opt == 1) {
 		// Slot-1 microSD > Console SD
@@ -617,6 +619,8 @@ void begin_update(int opt)
 
 	clearText();
 	printLarge(false, textLargeXpos, 0, STR_DONE, ms().rtl() ? Alignment::right : Alignment::left);
+	updateText(false);
+	updateText(true);
 
 	for (int i = 0; i < 60*2; i++)
 		swiWaitForVBlank();
@@ -632,9 +636,9 @@ void begin_update(int opt)
 void opt_update()
 {
 	int cursorPosition = 0;
-	bool updateText = true;
+	bool refreshText = true;
 	while (1) {
-		if (updateText) {
+		if (refreshText) {
 			clearText();
 			if (ms().rtl()) {
 				printLarge(false, 256 - 4, 0, STR_HOW_WANT_UPDATE, Alignment::right);
@@ -651,7 +655,9 @@ void opt_update()
 					printSmall(false, 4, 29+(14*cursorPosition), ">", Alignment::left);
 				}
 			}
-			updateText = false;
+			updateText(false);
+			updateText(true);
+			refreshText = false;
 		}
 
 		if (!gui().isExited()) {
@@ -670,12 +676,12 @@ void opt_update()
 			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
 			cursorPosition--;
 			if (cursorPosition < 0) cursorPosition = 1;
-			updateText = true;
+			refreshText = true;
 		} else if (pressed & KEY_DOWN) {
 			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
 			cursorPosition++;
 			if (cursorPosition > 1) cursorPosition = 0;
-			updateText = true;
+			refreshText = true;
 		} else if (pressed & KEY_A) {
 			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_launch : &snd().snd_launch);
 			begin_update(cursorPosition);
@@ -708,6 +714,7 @@ void opt_set_luma_autoboot()
 	}
 
 	printSmall(false, 0, 173, STR_OK, Alignment::center);
+	updateText(false);
 
 	while (1) {
 		if (!gui().isExited()) {
