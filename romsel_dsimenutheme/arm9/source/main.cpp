@@ -902,6 +902,49 @@ void createSaveFile(const char* savePath, const bool isHomebrew, const char* gam
 	}
 }
 
+void prepareCheats(std::string path, const bool dsiWare) {
+	if (isHomebrew[CURPOS]) {
+		return;
+	}
+
+	CheatCodelist codelist;
+	u32 gameCode, crc32;
+
+	bool cheatsEnabled = true;
+	const char* cheatDataBin = dsiWare ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "/_nds/nds-bootstrap/cheatData.bin";
+	mkdir(dsiWare ? "sd:/_nds" : "/_nds", 0777);
+	mkdir(dsiWare ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
+	if (codelist.romData(path,gameCode,crc32)) {
+		long cheatOffset; size_t cheatSize;
+		FILE* dat=fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
+		if (dat) {
+			if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
+				codelist.parse(path);
+				codelist.writeCheatsToFile(cheatDataBin);
+				FILE* cheatData=fopen(cheatDataBin,"rb");
+				if (cheatData) {
+					u32 check[2];
+					fread(check, 1, 8, cheatData);
+					fclose(cheatData);
+					if (check[1] == 0xCF000000 || getFileSize(cheatDataBin) > 0x8000) {
+						cheatsEnabled = false;
+					}
+				}
+			} else {
+				cheatsEnabled = false;
+			}
+			fclose(dat);
+		} else {
+			cheatsEnabled = false;
+		}
+	} else {
+		cheatsEnabled = false;
+	}
+	if (!cheatsEnabled) {
+		remove(cheatDataBin);
+	}
+}
+
 void s2RamAccess(bool open) {
 	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) return;
 
@@ -1500,47 +1543,8 @@ int dsiMenuTheme(void) {
 					}
 				}
 
-				if (ms().theme == TWLSettings::EThemeHBL) {
-					fadeType = false;		  // Fade to black
-				}
-
-				if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
-					CheatCodelist codelist;
-					u32 gameCode, crc32;
-
-					bool cheatsEnabled = true;
-					const char* cheatDataBin = (ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "/_nds/nds-bootstrap/cheatData.bin";
-					mkdir((ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds" : "/_nds", 0777);
-					mkdir((ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
-					if (codelist.romData(ms().dsiWareSrlPath,gameCode,crc32)) {
-						long cheatOffset; size_t cheatSize;
-						FILE* dat=fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
-						if (dat) {
-							if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
-								codelist.parse(ms().dsiWareSrlPath);
-								codelist.writeCheatsToFile(cheatDataBin);
-								FILE* cheatData=fopen(cheatDataBin,"rb");
-								if (cheatData) {
-									u32 check[2];
-									fread(check, 1, 8, cheatData);
-									fclose(cheatData);
-									if (check[1] == 0xCF000000 || getFileSize(cheatDataBin) > 0x1C00) {
-										cheatsEnabled = false;
-									}
-								}
-							} else {
-								cheatsEnabled = false;
-							}
-							fclose(dat);
-						} else {
-							cheatsEnabled = false;
-						}
-					} else {
-						cheatsEnabled = false;
-					}
-					if (!cheatsEnabled) {
-						remove(cheatDataBin);
-					}
+				if (dsiFeatures() && ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0)) {
+					prepareCheats(ms().dsiWareSrlPath, (ms().secondaryDevice && ms().dsiWareToSD && sdFound()));
 				}
 
 				if (((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
@@ -1599,6 +1603,13 @@ int dsiMenuTheme(void) {
 						swiWaitForVBlank();
 					}
 
+					snd().stopStream();
+
+					if (!dsiFeatures()) {
+						snd().unloadSfxData();
+						prepareCheats(ms().dsiWareSrlPath, (ms().secondaryDevice && ms().dsiWareToSD && sdFound()));
+					}
+
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 					bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
@@ -1625,7 +1636,6 @@ int dsiMenuTheme(void) {
 					}
 
 					argarray.at(0) = (char *)ndsToBoot;
-					snd().stopStream();
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
 					char text[64];
 					snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
@@ -1782,45 +1792,6 @@ int dsiMenuTheme(void) {
 						}
 						bootstrapini.SaveIniFile(bootstrapinipath);
 
-						CheatCodelist codelist;
-						u32 gameCode, crc32;
-
-						if (!isHomebrew[CURPOS]) {
-							bool cheatsEnabled = true;
-							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
-							mkdir("/_nds", 0777);
-							mkdir("/_nds/nds-bootstrap", 0777);
-							if (codelist.romData(path,gameCode,crc32)) {
-								long cheatOffset; size_t cheatSize;
-								FILE* dat=fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
-								if (dat) {
-									if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
-										codelist.parse(path);
-										codelist.writeCheatsToFile(cheatDataBin);
-										FILE* cheatData=fopen(cheatDataBin,"rb");
-										if (cheatData) {
-											u32 check[2];
-											fread(check, 1, 8, cheatData);
-											fclose(cheatData);
-											if (check[1] == 0xCF000000 || getFileSize(cheatDataBin) > 0x8000) {
-												cheatsEnabled = false;
-											}
-										}
-									} else {
-										cheatsEnabled = false;
-									}
-									fclose(dat);
-								} else {
-									cheatsEnabled = false;
-								}
-							} else {
-								cheatsEnabled = false;
-							}
-							if (!cheatsEnabled) {
-								remove(cheatDataBin);
-							}
-						}
-
 						if (!isArgv) {
 							ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 						}
@@ -1828,6 +1799,10 @@ int dsiMenuTheme(void) {
 						ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch; // 1
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
+
+						if (dsiFeatures()) {
+							prepareCheats(path, false);
+						}
 
 						createEsrbSplash();
 
@@ -1856,6 +1831,13 @@ int dsiMenuTheme(void) {
 							swiWaitForVBlank();
 						}
 
+						snd().stopStream();
+
+						if (!dsiFeatures()) {
+							snd().unloadSfxData();
+							prepareCheats(path, false);
+						}
+
 						if (dsiFeatures() || !ms().secondaryDevice) {
 							SetWidescreen(filename.c_str());
 						}
@@ -1863,7 +1845,6 @@ int dsiMenuTheme(void) {
 							ntrStartSdGame();
 						}
 
-						snd().stopStream();
 						int err = 0;
 						if (ms().btsrpBootloaderDirect && isHomebrew[CURPOS]) {
 							if (access(ndsToBoot, F_OK) == 0) {

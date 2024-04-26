@@ -160,6 +160,8 @@ SoundControl::SoundControl()
 	    128,		     // panning
 	};
 
+	sfxDataLoaded = true;
+
 
 	if (ms().dsiMusic == 0 || ms().theme == TWLSettings::EThemeSaturn) {
 		return;
@@ -338,13 +340,119 @@ SoundControl::SoundControl()
 	}
 }
 
-mm_sfxhand SoundControl::playLaunch(u8 panning)  { snd_launch.panning = panning;  return mmEffectEx(&snd_launch); }
-mm_sfxhand SoundControl::playSelect(u8 panning)  { snd_select.panning = panning;  return mmEffectEx(&snd_select); }
-mm_sfxhand SoundControl::playBack(u8 panning)    { snd_back.panning = panning;    return mmEffectEx(&snd_back); }
-mm_sfxhand SoundControl::playSwitch(u8 panning)  { snd_switch.panning = panning;  return mmEffectEx(&snd_switch); }
-mm_sfxhand SoundControl::playStartup(u8 panning) { mus_startup.panning = panning; return mmEffectEx(&mus_startup); }
-mm_sfxhand SoundControl::playStop(u8 panning)    { snd_stop.panning = panning;    return mmEffectEx(&snd_stop); }
-mm_sfxhand SoundControl::playWrong(u8 panning)   { snd_wrong.panning = panning;   return mmEffectEx(&snd_wrong); }
+void SoundControl::reloadSfxData() {
+	FILE* soundbank_file;
+
+	if (ms().theme == TWLSettings::EThemeSaturn) {
+		soundbank_file = fopen(std::string(TFN_SATURN_SOUND_EFFECTBANK).c_str(), "rb");
+	} else {
+		switch(ms().dsiMusic) {
+			case 3:
+				soundbank_file = fopen(std::string(TFN_SOUND_EFFECTBANK).c_str(), "rb");
+				if (soundbank_file) break; // fallthrough if soundbank_file fails.
+			case 1:
+			case 2:
+			default:
+				soundbank_file = fopen(std::string(TFN_DEFAULT_SOUND_EFFECTBANK).c_str(), "rb");
+				break;
+		}
+	}
+
+	fseek(soundbank_file, 0, SEEK_END);
+	size_t sfxDataSize = ftell(soundbank_file);
+	fseek(soundbank_file, 0, SEEK_SET);
+
+	SFX_DATA = new char[sfxDataSize > 0x7D000 ? 0x7D000 : sfxDataSize];
+	fread((void*)SFX_DATA, 1, sfxDataSize, soundbank_file);
+
+	fclose(soundbank_file);
+
+	mmSoundBankInMemory((mm_addr)SFX_DATA);
+
+	mmLoadEffect(SFX_LAUNCH);
+	mmLoadEffect(SFX_SELECT);
+	mmLoadEffect(SFX_STOP);
+	mmLoadEffect(SFX_WRONG);
+	mmLoadEffect(SFX_BACK);
+	mmLoadEffect(SFX_SWITCH);
+	mmLoadEffect(SFX_STARTUP);
+	// mmLoadEffect(SFX_MENU);
+
+	snd_launch = {
+	    {SFX_LAUNCH},	    // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	snd_select = {
+	    {SFX_SELECT},	    // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	snd_stop = {
+	    {SFX_STOP},		     // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	snd_wrong = {
+	    {SFX_WRONG},	     // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	snd_back = {
+	    {SFX_BACK},		     // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	snd_switch = {
+	    {SFX_SWITCH},	    // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	mus_startup = {
+	    {SFX_STARTUP},	   // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+
+	sfxDataLoaded = true;
+}
+
+void SoundControl::unloadSfxData() {
+	sfxDataLoaded = false;
+
+	mmUnloadEffect(SFX_LAUNCH);
+	mmUnloadEffect(SFX_SELECT);
+	mmUnloadEffect(SFX_STOP);
+	mmUnloadEffect(SFX_WRONG);
+	mmUnloadEffect(SFX_BACK);
+	mmUnloadEffect(SFX_SWITCH);
+	mmUnloadEffect(SFX_STARTUP);
+	// mmUnloadEffect(SFX_MENU);
+
+	delete[] SFX_DATA;
+}
+
+mm_sfxhand SoundControl::playLaunch(u8 panning)  { if (!sfxDataLoaded) return (mm_sfxhand)NULL; snd_launch.panning = panning;  return mmEffectEx(&snd_launch); }
+mm_sfxhand SoundControl::playSelect(u8 panning)  { if (!sfxDataLoaded) return (mm_sfxhand)NULL; snd_select.panning = panning;  return mmEffectEx(&snd_select); }
+mm_sfxhand SoundControl::playBack(u8 panning)    { if (!sfxDataLoaded) return (mm_sfxhand)NULL; snd_back.panning = panning;    return mmEffectEx(&snd_back); }
+mm_sfxhand SoundControl::playSwitch(u8 panning)  { if (!sfxDataLoaded) return (mm_sfxhand)NULL; snd_switch.panning = panning;  return mmEffectEx(&snd_switch); }
+mm_sfxhand SoundControl::playStartup(u8 panning) { if (!sfxDataLoaded) return (mm_sfxhand)NULL; mus_startup.panning = panning; return mmEffectEx(&mus_startup); }
+mm_sfxhand SoundControl::playStop(u8 panning)    { if (!sfxDataLoaded) return (mm_sfxhand)NULL; snd_stop.panning = panning;    return mmEffectEx(&snd_stop); }
+mm_sfxhand SoundControl::playWrong(u8 panning)   { if (!sfxDataLoaded) return (mm_sfxhand)NULL; snd_wrong.panning = panning;   return mmEffectEx(&snd_wrong); }
 
 void SoundControl::beginStream() {
 	if (!stream_source) return;

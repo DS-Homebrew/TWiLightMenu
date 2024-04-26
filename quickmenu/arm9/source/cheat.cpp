@@ -81,10 +81,6 @@ bool CheatCodelist::parse(const std::string& aFileName)
 
 bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize)
 {
-	if (!dsiFeatures() && memcmp(gameTid[ms().secondaryDevice], "ADM", 3) == 0) {
-		return false; // Not enough RAM space to load cheat data
-	}
-
   aPos=0;
   aSize=0;
   const char* KHeader="R4 CheatCode";

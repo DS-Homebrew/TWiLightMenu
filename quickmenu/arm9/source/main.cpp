@@ -2449,7 +2449,7 @@ int dsClassicMenu(void) {
 					}
 				}
 
-				if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+				if (dsiFeatures() && ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0)) {
 					CheatCodelist codelist;
 					u32 gameCode, crc32;
 
@@ -2743,10 +2743,10 @@ int dsClassicMenu(void) {
 						);
 						bootstrapini.SaveIniFile(bootstrapinipath);
 
-						CheatCodelist codelist;
-						u32 gameCode,crc32;
+						if (dsiFeatures() && !isHomebrew[ms().secondaryDevice]) {
+							CheatCodelist codelist;
+							u32 gameCode,crc32;
 
-						if (!isHomebrew[ms().secondaryDevice]) {
 							bool cheatsEnabled = true;
 							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
 							mkdir("/_nds", 0777);
