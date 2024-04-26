@@ -68,13 +68,19 @@ void SettingsGUI::processInputs(int pressed, touchPosition &touch)
 		}
 
 		if ((pressed & KEY_X || pressed & KEY_R) && !inSub()) {
-			mmEffectEx(currentTheme == 4 ? &snd().snd_saturn_launch : &snd().snd_switch);
+			mm_sound_effect pannedSound = currentTheme == 4 ? snd().snd_saturn_launch : snd().snd_switch;
+			pannedSound.panning = 178;
+
+			mmEffectEx(&pannedSound);
 			titleDisplayLength = 0;
 			rotatePage(1);
 		}
 
 		if ((pressed & KEY_Y || pressed & KEY_L) && !inSub()) {
-			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_launch : &snd().snd_switch);
+			mm_sound_effect pannedSound = currentTheme == 4 ? snd().snd_saturn_launch : snd().snd_switch;
+			pannedSound.panning = 76;
+
+			mmEffectEx(&pannedSound);
 			titleDisplayLength = 0;
 			rotatePage(-1);
 		}

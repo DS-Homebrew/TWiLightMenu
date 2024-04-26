@@ -2738,7 +2738,7 @@ static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents)
 		return false;
 	}
 
-	snd().playSwitch();
+	snd().playSwitch(55);
 	if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 		fadeType = false; // Fade to white
 		for (int i = 0; i < 6; i++) {
@@ -2807,7 +2807,7 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 		return false;
 	}
 
-	snd().playSwitch();
+	snd().playSwitch(200);
 	if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 		fadeType = false; // Fade to white
 		for (int i = 0; i < 6; i++) {
@@ -3232,7 +3232,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						break;
 					} else if (pressed & KEY_L) {
 						if (PAGENUM > 0) {
-							snd().playSwitch();
+							snd().playSwitch(55);
 							fadeType = false; // Fade to white
 							for (int i = 0; i < 6; i++) {
 								bgOperations(true);
@@ -3265,7 +3265,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 					} else if (pressed & KEY_R) {
 						if (file_count > 40 + PAGENUM * 40) {
-							snd().playSwitch();
+							snd().playSwitch(200);
 							fadeType = false; // Fade to white
 							for (int i = 0; i < 6; i++) {
 								bgOperations(true);
