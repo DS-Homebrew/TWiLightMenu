@@ -1260,9 +1260,11 @@ void perGameSettings (std::string filename) {
 			if (!dsiFeatures()) {
 				snd().unloadSfxData(); // Unload SFX data in DS mode to load more of the cheat list
 			}
-			(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
-			CheatCodelist codelist;
-			codelist.selectCheats(filename);
+			{
+				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
+				CheatCodelist codelist;
+				codelist.selectCheats(filename);
+			}
 			if (!dsiFeatures()) {
 				snd().reloadSfxData();
 			}
