@@ -338,13 +338,13 @@ SoundControl::SoundControl()
 	}
 }
 
-mm_sfxhand SoundControl::playLaunch() { return mmEffectEx(&snd_launch); }
-mm_sfxhand SoundControl::playSelect() { return mmEffectEx(&snd_select); }
-mm_sfxhand SoundControl::playBack() { return mmEffectEx(&snd_back); }
-mm_sfxhand SoundControl::playSwitch() { return mmEffectEx(&snd_switch); }
-mm_sfxhand SoundControl::playStartup() { return mmEffectEx(&mus_startup); }
-mm_sfxhand SoundControl::playStop() { return mmEffectEx(&snd_stop); }
-mm_sfxhand SoundControl::playWrong() { return mmEffectEx(&snd_wrong); }
+mm_sfxhand SoundControl::playLaunch(u8 panning)  { snd_launch.panning = panning;  return mmEffectEx(&snd_launch); }
+mm_sfxhand SoundControl::playSelect(u8 panning)  { snd_select.panning = panning;  return mmEffectEx(&snd_select); }
+mm_sfxhand SoundControl::playBack(u8 panning)    { snd_back.panning = panning;    return mmEffectEx(&snd_back); }
+mm_sfxhand SoundControl::playSwitch(u8 panning)  { snd_switch.panning = panning;  return mmEffectEx(&snd_switch); }
+mm_sfxhand SoundControl::playStartup(u8 panning) { mus_startup.panning = panning; return mmEffectEx(&mus_startup); }
+mm_sfxhand SoundControl::playStop(u8 panning)    { snd_stop.panning = panning;    return mmEffectEx(&snd_stop); }
+mm_sfxhand SoundControl::playWrong(u8 panning)   { snd_wrong.panning = panning;   return mmEffectEx(&snd_wrong); }
 
 void SoundControl::beginStream() {
 	if (!stream_source) return;
