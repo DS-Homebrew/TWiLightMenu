@@ -584,7 +584,7 @@ void vBlankHandler()
 		glColor(RGB15(31, 31, 31));
 
 		for (int i = 0; i < 4; i++) {
-			const int num = i+CURPOSSCRN;
+			const int num = ((i+CURPOS) % 4);
 			if (isDirectory[num]) drawIconFolder(4, 24+(i*36));
 			else drawIcon(num, 4, 24+(i*36));
 			// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);

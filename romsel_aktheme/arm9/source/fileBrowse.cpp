@@ -62,7 +62,7 @@
 #include "fileCopy.h"
 
 #define SCREEN_COLS 32
-#define ENTRIES_PER_SCREEN 15
+#define ENTRIES_PER_SCREEN 4
 #define ENTRIES_START_ROW 2
 #define ENTRY_PAGE_LENGTH ENTRIES_PER_SCREEN/2
 
@@ -1035,81 +1035,84 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		screenOffset = fileOffset - entriesPerScreen + 1;
 	}
 
-	for (int i = 0; i < 4; i++) {
-		if (fileOffset+i > file_count) {
+	for (int i = screenOffset; i < screenOffset+4; i++) {
+		const int num = ((screenOffset+i) % 4);
+		if (i > file_count) {
 			break;
 		}
-		if (dirContents.at(fileOffset+i).isDirectory) {
-			isDirectory[CURPOSSCRN] = true;
-			bnrWirelessIcon[CURPOSSCRN] = 0;
+		if (dirContents.at(i).isDirectory) {
+			isDirectory[num] = true;
+			bnrWirelessIcon[num] = 0;
 		} else {
-			isDirectory[CURPOSSCRN] = false;
-			std::string std_romsel_filename = dirContents.at(fileOffset+i).name.c_str();
-			getGameInfo(i, isDirectory[CURPOSSCRN], dirContents.at(fileOffset+i).name.c_str());
+			isDirectory[num] = false;
+			std::string std_romsel_filename = dirContents.at(i).name.c_str();
+			getGameInfo(num, isDirectory[num], dirContents.at(i).name.c_str());
 
 			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
-				bnrRomType[CURPOSSCRN] = 0;
+				bnrRomType[num] = 0;
 			} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
-				bnrRomType[CURPOSSCRN] = 10;
+				bnrRomType[num] = 10;
 			} else if (extension(std_romsel_filename, {".msx"})) {
-				bnrRomType[CURPOSSCRN] = 21;
+				bnrRomType[num] = 21;
 			} else if (extension(std_romsel_filename, {".col"})) {
-				bnrRomType[CURPOSSCRN] = 13;
+				bnrRomType[num] = 13;
 			} else if (extension(std_romsel_filename, {".m5"})) {
-				bnrRomType[CURPOSSCRN] = 14;
+				bnrRomType[num] = 14;
 			} else if (extension(std_romsel_filename, {".int"})) {
-				bnrRomType[CURPOSSCRN] = 12;
+				bnrRomType[num] = 12;
 			} else if (extension(std_romsel_filename, {".plg"})) {
-				bnrRomType[CURPOSSCRN] = 9;
+				bnrRomType[num] = 9;
 			} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
-				bnrRomType[CURPOSSCRN] = 19;
+				bnrRomType[num] = 19;
 			} else if (extension(std_romsel_filename, {".gif", ".bmp", ".png"})) {
-				bnrRomType[CURPOSSCRN] = 20;
+				bnrRomType[num] = 20;
 			} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
-				bnrRomType[CURPOSSCRN] = 1;
+				bnrRomType[num] = 1;
 			} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
-				bnrRomType[CURPOSSCRN] = 2;
+				bnrRomType[num] = 2;
 			} else if (extension(std_romsel_filename,{ ".gbc"})) {
-				bnrRomType[CURPOSSCRN] = 3;
+				bnrRomType[num] = 3;
 			} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
-				bnrRomType[CURPOSSCRN] = 4;
+				bnrRomType[num] = 4;
 			} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
-				bnrRomType[CURPOSSCRN] = 15;
+				bnrRomType[num] = 15;
 			} else if (extension(std_romsel_filename, {".sms"})) {
-				bnrRomType[CURPOSSCRN] = 5;
+				bnrRomType[num] = 5;
 			} else if (extension(std_romsel_filename, {".gg"})) {
-				bnrRomType[CURPOSSCRN] = 6;
+				bnrRomType[num] = 6;
 			} else if (extension(std_romsel_filename, {".gen", ".md"})) {
-				bnrRomType[CURPOSSCRN] = 7;
+				bnrRomType[num] = 7;
 			} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
-				bnrRomType[CURPOSSCRN] = 8;
+				bnrRomType[num] = 8;
 			} else if (extension(std_romsel_filename, {".pce"})) {
-				bnrRomType[CURPOSSCRN] = 11;
+				bnrRomType[num] = 11;
 			} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
-				bnrRomType[CURPOSSCRN] = 16;
+				bnrRomType[num] = 16;
 			} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
-				bnrRomType[CURPOSSCRN] = 17;
+				bnrRomType[num] = 17;
 			} else if (extension(std_romsel_filename, {".dsk"})) {
-				bnrRomType[CURPOSSCRN] = 18;
+				bnrRomType[num] = 18;
 			} else if (extension(std_romsel_filename, {".min"})) {
-				bnrRomType[CURPOSSCRN] = 22;
+				bnrRomType[num] = 22;
 			} else if (extension(std_romsel_filename, {".ntrb"})) {
-				bnrRomType[CURPOSSCRN] = 23;
+				bnrRomType[num] = 23;
 			} else {
-				bnrRomType[CURPOSSCRN] = 9;
+				bnrRomType[num] = 9;
 			}
 		}
 
-		if (bnrRomType[CURPOSSCRN] != 0) {
-			bnrWirelessIcon[CURPOSSCRN] = 0;
-			isTwlm[CURPOSSCRN] = false;
-			isDSiWare[CURPOSSCRN] = false;
-			isHomebrew[CURPOSSCRN] = 0;
+		if (bnrRomType[num] != 0) {
+			bnrWirelessIcon[num] = 0;
+			isTwlm[num] = false;
+			isDSiWare[num] = false;
+			isHomebrew[num] = 0;
 		}
 
-		iconUpdate(i, isDirectory[CURPOSSCRN], dirContents.at(fileOffset+i).name.c_str());
-		titleUpdate(i, isDirectory[CURPOSSCRN], dirContents.at(fileOffset+i).name.c_str());
+		iconUpdate(num, isDirectory[num], dirContents.at(i).name.c_str());
+		titleUpdate(num, isDirectory[num], dirContents.at(i).name.c_str());
 	}
+
+	updateText(false);
 
 	// showDirectoryContents (dirContents, screenOffset, fileOffset);
 
@@ -1131,23 +1134,19 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			bgOperations(true);
 		} while (!pressed);
 
-		// bool refreshDirectoryContents = false;
+		bool loadNewIcon = false;
 
 		if (pressed & KEY_UP) {
 			fileOffset -= 1;
-			// refreshDirectoryContents = true;
 		}
 		if (pressed & KEY_DOWN) {
 			fileOffset += 1;
-			// refreshDirectoryContents = true;
 		}
 		if (pressed & KEY_LEFT) {
 			fileOffset -= ENTRY_PAGE_LENGTH;
-			// refreshDirectoryContents = true;
 		}
 		if (pressed & KEY_RIGHT) {
 			fileOffset += ENTRY_PAGE_LENGTH;
-			// refreshDirectoryContents = true;
 		}
 
 		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
@@ -1156,9 +1155,91 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		// Scroll screen if needed
 		if (fileOffset < screenOffset) {
 			screenOffset = fileOffset;
+			loadNewIcon = true;
 		}
 		if (fileOffset > screenOffset + entriesPerScreen - 1) {
 			screenOffset = fileOffset - entriesPerScreen + 1;
+			loadNewIcon = true;
+		}
+
+		if (loadNewIcon) {
+			const int num = (fileOffset % 4);
+			if (dirContents.at(fileOffset).isDirectory) {
+				isDirectory[num] = true;
+				bnrWirelessIcon[num] = 0;
+			} else {
+				isDirectory[num] = false;
+				std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
+				getGameInfo(num, isDirectory[num], dirContents.at(fileOffset).name.c_str());
+
+				if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
+					bnrRomType[num] = 0;
+				} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
+					bnrRomType[num] = 10;
+				} else if (extension(std_romsel_filename, {".msx"})) {
+					bnrRomType[num] = 21;
+				} else if (extension(std_romsel_filename, {".col"})) {
+					bnrRomType[num] = 13;
+				} else if (extension(std_romsel_filename, {".m5"})) {
+					bnrRomType[num] = 14;
+				} else if (extension(std_romsel_filename, {".int"})) {
+					bnrRomType[num] = 12;
+				} else if (extension(std_romsel_filename, {".plg"})) {
+					bnrRomType[num] = 9;
+				} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
+					bnrRomType[num] = 19;
+				} else if (extension(std_romsel_filename, {".gif", ".bmp", ".png"})) {
+					bnrRomType[num] = 20;
+				} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
+					bnrRomType[num] = 1;
+				} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
+					bnrRomType[num] = 2;
+				} else if (extension(std_romsel_filename,{ ".gbc"})) {
+					bnrRomType[num] = 3;
+				} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
+					bnrRomType[num] = 4;
+				} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
+					bnrRomType[num] = 15;
+				} else if (extension(std_romsel_filename, {".sms"})) {
+					bnrRomType[num] = 5;
+				} else if (extension(std_romsel_filename, {".gg"})) {
+					bnrRomType[num] = 6;
+				} else if (extension(std_romsel_filename, {".gen", ".md"})) {
+					bnrRomType[num] = 7;
+				} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
+					bnrRomType[num] = 8;
+				} else if (extension(std_romsel_filename, {".pce"})) {
+					bnrRomType[num] = 11;
+				} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
+					bnrRomType[num] = 16;
+				} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
+					bnrRomType[num] = 17;
+				} else if (extension(std_romsel_filename, {".dsk"})) {
+					bnrRomType[num] = 18;
+				} else if (extension(std_romsel_filename, {".min"})) {
+					bnrRomType[num] = 22;
+				} else if (extension(std_romsel_filename, {".ntrb"})) {
+					bnrRomType[num] = 23;
+				} else {
+					bnrRomType[num] = 9;
+				}
+			}
+
+			if (bnrRomType[num] != 0) {
+				bnrWirelessIcon[num] = 0;
+				isTwlm[num] = false;
+				isDSiWare[num] = false;
+				isHomebrew[num] = 0;
+			}
+
+			iconUpdate(num, isDirectory[num], dirContents.at(fileOffset).name.c_str());
+			clearText(false);
+			for (int i = 0; i < 4; i++) {
+				const int num = ((screenOffset+i) % 4);
+				titleUpdate(num, isDirectory[num], dirContents.at(screenOffset+i).name.c_str());
+			}
+			updateText(false);
+			CURPOS = fileOffset;
 		}
 
 		if (pressed & KEY_A) {
@@ -1575,7 +1656,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			for (int i = 0; i < 25; i++) bgOperations(true);
 		}
 
-		/* if (refreshDirectoryContents) {
+		/* if (loadNewIcon) {
 			showDirectoryContents (dirContents, screenOffset, fileOffset);
 		} */
 	}
