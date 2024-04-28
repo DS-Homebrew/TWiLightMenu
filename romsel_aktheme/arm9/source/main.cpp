@@ -99,9 +99,7 @@ int mpusize = 0;
 bool applaunch = false;
 bool dsModeForced = false;
 
-bool startMenu = true;
-
-int startMenu_cursorPosition = 0;
+bool startMenu = false;
 
 int colorRvalue;
 int colorGvalue;
@@ -1103,8 +1101,6 @@ int akTheme(void) {
 
 	iconTitleInit();
 
-	bool menuButtonPressed = false;
-	
 	char path[256];
 
 	if (copyDSiWareSavBack) {
@@ -1128,276 +1124,17 @@ int akTheme(void) {
 
 	while (1) {
 		if (startMenu) {
-			fadeType = true;	// Fade in from white
-
-			int pressed = 0;
-
-			lcdMainOnBottom();
-			lcdSwapped = true;
-			do {
-				clearText();
-				printSmall(false, -112, 166, DrawDate(), Alignment::center, FontPalette::white);
-				if (!ms().kioskMode) {
-					printSmall(false, 0, 180, "SELECT: Settings menu", Alignment::center, FontPalette::white);
-				}
-				switch (startMenu_cursorPosition) {
-					case 0:
-					default:
-						printSmall(false, 0, 166, "Game", Alignment::center, FontPalette::white);
-						break;
-					case 1:
-						printSmall(false, 0, 166, "Launch Moonshell", Alignment::center, FontPalette::white);
-						break;
-					case 2:
-						if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || !flashcardFound()) {
-							printSmall(false, 0, 166, "Launch Slot-1 card", Alignment::center, FontPalette::white);
-						} else if (!sys().isRegularDS() || (ms().gbaBooter == TWLSettings::EGbaGbar2)) {
-							printSmall(false, 0, 166, "Not used", Alignment::center, FontPalette::white);
-						} else {
-							printSmall(false, 0, 166, "Start GBA Mode", Alignment::center, FontPalette::white);
-						}
-						break;
-				}
-				printSmall(false, 111, 166, RetTime().c_str(), Alignment::center, FontPalette::white);
-				updateText(false);
-
-				scanKeys();
-				pressed = keysDownRepeat();
-				touchRead(&touch);
-				bgOperations(true);
-			} while (!pressed);
-
-			if (pressed & KEY_LEFT) startMenu_cursorPosition--;
-			if (pressed & KEY_RIGHT) startMenu_cursorPosition++;
-
-			if ((pressed & KEY_TOUCH) && touch.py >= 62 && touch.py <= 133) {
-				if (touch.px >= 10 && touch.px <= 82) {
-					if (startMenu_cursorPosition != 0) {
-						startMenu_cursorPosition = 0;
-					} else {
-						menuButtonPressed = true;
-					}
-				} else if (touch.px >= 92 && touch.px <= 164) {
-					if (startMenu_cursorPosition != 1) {
-						startMenu_cursorPosition = 1;
-					} else {
-						menuButtonPressed = true;
-					}
-				} else if (touch.px >= 174 && touch.px <= 246) {
-					if (startMenu_cursorPosition != 2) {
-						startMenu_cursorPosition = 2;
-					} else {
-						menuButtonPressed = true;
-					}
-				}
+			// Launch settings
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 25; i++) {
+				swiWaitForVBlank();
 			}
 
-			if ((pressed & KEY_TOUCH) && touch.px >= 236 && touch.px <= 251 && touch.py >= 3 && touch.py <= 23) {
-				// Open the manual
-				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) {
-					swiWaitForVBlank();
-				}
-				vector<char *> argarray;
-				argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/manual.srldr" : "fat:/_nds/TWiLightMenu/manual.srldr"));
-				int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
-				char text[32];
-				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				dialogboxHeight = 0;
-				showdialogbox = true;
-				clearText(false);
-				printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
-				printSmall(false, 0, 90, text, Alignment::center);
-				printSmall(false, 0, 108, " Back", Alignment::center);
-				updateText(false);
-				int pressed = 0;
-				do {
-					scanKeys();
-					pressed = keysDownRepeat();
-					checkSdEject();
-					swiWaitForVBlank();
-				} while (!(pressed & KEY_B));
-				showdialogbox = false;
-			}
-
-			if (pressed & KEY_A) {
-				menuButtonPressed = true;
-			}
-
-			if (startMenu_cursorPosition < 0) startMenu_cursorPosition = 0;
-			if (startMenu_cursorPosition > 2) startMenu_cursorPosition = 2;
-
-			if (menuButtonPressed) {
-				switch (startMenu_cursorPosition) {
-					case 0:
-					default:
-						clearText();
-						// updateText(true);
-						updateText(false);
-						startMenu = false;
-						break;
-					case 1: {
-						const char* moonshlPath = sys().isRunFromSD() ? "sd:/_moonshl.nds" : "fat:/_moonshl.nds";
-						if (access(moonshlPath, F_OK) != 0) {
-							dialogboxHeight = 0;
-							showdialogbox = true;
-							clearText(false);
-							printSmall(false, 0, 74, "Information", Alignment::center, FontPalette::white);
-							printSmall(false, 0, 90, "_moonshl.nds not found.", Alignment::center);
-							printSmall(false, 0, 108, " Back", Alignment::center);
-						} else {
-							bool useNDSB = true;
-							int err;
-							chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
-							if (!sys().isRunFromSD()) {
-								err = runNdsFile (moonshlPath, 0, NULL, true, true, true, true, false, false, -1);
-								useNDSB = false;
-							} else {
-								if (access("sd:/moonshl2/logbuf.txt", F_OK) == 0) {
-									remove("sd:/moonshl2/logbuf.txt"); // Delete file for Moonshell 2 to boot properly
-								}
-
-								std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-
-								std::vector<char*> argarray;
-								argarray.push_back(strdup(bootstrapPath.c_str()));
-								argarray.at(0) = (char*)bootstrapPath.c_str();
-
-								CIniFile bootstrapini( BOOTSTRAP_INI );
-								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", moonshlPath);
-								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
-								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-								bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().getGameLanguage());
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-								bootstrapini.SaveIniFile( BOOTSTRAP_INI );
-								err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true, false, -1);
-							}
-							char text[32];
-							snprintf (text, sizeof(text), "Start failed. Error %i", err);
-							dialogboxHeight = ((err == 1 && useNDSB) ? 2 : 0);
-							showdialogbox = true;
-							clearText(false);
-							printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
-							printSmall(false, 0, 90, text, Alignment::center);
-							if (err == 1 && useNDSB) {
-								printSmall(false, 0, 102, ms().bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center);
-								printSmall(false, 0, 114, "not found.", Alignment::center);
-							}
-							printSmall(false, 0, ((err == 1 && useNDSB) ? 132 : 108), " Back", Alignment::center);
-						}
-						updateText(false);
-						int pressed = 0;
-						do {
-							scanKeys();
-							pressed = keysDownRepeat();
-							checkSdEject();
-							swiWaitForVBlank();
-						} while (!(pressed & KEY_B));
-						showdialogbox = false;
-					}	break;
-					case 2:
-						bool messageShown = false;
-						if (!flashcardFound() && REG_SCFG_MC == 0x11) {
-							dialogboxHeight = 0;
-							showdialogbox = true;
-							clearText(false);
-							printSmall(false, 0, 74, "Information", Alignment::center, FontPalette::white);
-							printSmall(false, 0, 90, "Slot-1 cartridge is not inserted.", Alignment::center);
-							messageShown = true;
-						} else if ((!flashcardFound() && REG_SCFG_MC != 0x11) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
-							fadeType = false;	// Fade to white
-							for (int i = 0; i < 25; i++) {
-								swiWaitForVBlank();
-							}
-
-							ms().slot1Launched = true;
-							ms().saveSettings();
-
-							bool directMethod = false;
-							if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
-								directMethod = true;
-							} else if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
-								dsCardLaunch();
-							} else if (ms().slot1LaunchMethod==2) {
-								unlaunchRomBoot("cart:");
-							} else {
-								directMethod = true;
-							}
-
-							if (directMethod) {
-								SetWidescreen(NULL);
-								chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
-								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, false, -1);
-								char text[32];
-								snprintf (text, sizeof(text), "Start failed. Error %i", err);
-								dialogboxHeight = 0;
-								showdialogbox = true;
-								clearText(false);
-								printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
-								printSmall(false, 0, 90, text, Alignment::center);
-								messageShown = true;
-							}
-						} else if (sys().isRegularDS() && (ms().gbaBooter == TWLSettings::EGbaNativeGbar2)) {
-							// Switch to GBA mode
-							fadeType = false;	// Fade to white
-							for (int i = 0; i < 25; i++) {
-								swiWaitForVBlank();
-							}
-							ms().slot1Launched = false;
-							/* if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
-							} else { */
-							if (((u8*)GBAROM)[0xB2] == 0x96) {
-								gbaSwitch();
-							}
-						}
-						if (messageShown) {
-							printSmall(false, 0, 108, " Back", Alignment::center);
-							updateText(false);
-							int pressed = 0;
-							do {
-								scanKeys();
-								pressed = keysDownRepeat();
-								checkSdEject();
-								swiWaitForVBlank();
-							} while (!(pressed & KEY_B));
-							showdialogbox = false;
-						}
-						break;
-				}
-
-				menuButtonPressed = false;
-			}
-
-			if ((pressed & KEY_B) && !sys().isRegularDS()) {
-				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) swiWaitForVBlank();
-				if (!sdFound() || ms().launcherApp == -1) {
-					*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-					*(u16*)(0x02000304) = 0x1801;
-					*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
-					unlaunchSetHiyaBoot();
-				} else {
-					unlaunchRomBoot(launcherPath);
-				}
-				fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
-			}
-
-			if (((pressed & KEY_START) || (pressed & KEY_SELECT)) && !ms().kioskMode) {
-				// Launch settings
-				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) {
-					swiWaitForVBlank();
-				}
-
-				ms().saveSettings();
-				vector<char *> argarray;
-				argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr"));
-				int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
-				iprintf ("Start failed. Error %i\n", err);
-			}
+			ms().saveSettings();
+			vector<char *> argarray;
+			argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr"));
+			runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
+			stop();
 		} else {
 			std::vector<std::string_view> extensionList = {
 				".nds", ".dsi", ".ids", ".srl", ".app", ".argv", // NDS
