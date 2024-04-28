@@ -75,18 +75,18 @@
 
 extern u16* colorTable;
 
-static int iconTexID[8];
+static int iconTexID[4];
 static int folderTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
-static bool infoFound = false;
-static char16_t cachedTitle[TITLE_CACHE_SIZE];
+static bool infoFound[4] = {false};
+static char16_t cachedTitle[4][TITLE_CACHE_SIZE];
 
 static u32 arm9StartSig[4];
 
 static glImage folderIcon[1];
-static glImage ndsIcon[8][(32 / 32) * (256 / 32)];
+static glImage ndsIcon[4][(32 / 32) * (256 / 32)];
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -99,22 +99,22 @@ void iconTitleInit()
 	tilesModified = new u8[(32 * 256) / 2];
 }
 
-static inline void writeBannerText(std::string_view text)
+static inline void writeBannerText(const int num, std::string_view text)
 {
 	const int xPos = BOX_PX;
-	const int yPos = BOX_PY;
+	const int yPos = BOX_PY + (num * 36);
 	const FontPalette bannerFontPalette = FontPalette::black;
 
-	printSmall(false, xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::center, bannerFontPalette);
+	printSmall(false, xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::left, bannerFontPalette);
 }
 
-static inline void writeBannerText(std::u16string_view text)
+static inline void writeBannerText(const int num, std::u16string_view text)
 {
 	const int xPos = BOX_PX;
-	const int yPos = BOX_PY;
+	const int yPos = BOX_PY + (num * 36);
 	const FontPalette bannerFontPalette = FontPalette::black;
 
-	printSmall(false, xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::center, bannerFontPalette);
+	printSmall(false, xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::left, bannerFontPalette);
 }
 
 static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
@@ -133,54 +133,44 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 	}
 }
 
-int loadIcon_loopTimes = 1;
-
-void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
+void loadIcon(int num, u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 {
 	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
 
 	int Ysize = 32;
 	int textureSizeY = TEXTURE_SIZE_32;
-	loadIcon_loopTimes = 1;
 	if (twl) {
 		Ysize = 256;
 		textureSizeY = TEXTURE_SIZE_256;
-		loadIcon_loopTimes = 8;
 	}
 
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	for (int i = 0; i < loadIcon_loopTimes; i++) {
-		if (colorTable) {
-			for (int i2 = 0; i2 < 16; i2++) {
-				*(palSrc+i2+(i*16)) = colorTable[*(palSrc+i2+(i*16))];
-			}
+	glDeleteTextures(1, &iconTexID[num]);
+	if (colorTable) {
+		for (int i = 0; i < 16; i++) {
+			palSrc[i] = colorTable[palSrc[i]];
 		}
-		iconTexID[i] =
-		glLoadTileSet(ndsIcon[i], // pointer to glImage array
-					32, // sprite width
-					32, // sprite height
-					32, // bitmap image width
-					Ysize, // bitmap image height
-					GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-					textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-					GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-					16, // Length of the palette to use (16 colors)
-					(u16*) palSrc+(i*16), // Image palette
-					(u8*) tilesModified // Raw image data
-					);
 	}
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				Ysize, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				textureSizeY, // sizeY for glTexImage2D() in videoGL.h
+				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) palSrc, // Image palette
+				(u8*) tilesModified // Raw image data
+				);
 }
 
-void loadUnkIcon()
+void loadUnkIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] =
-	glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -188,55 +178,37 @@ void loadUnkIcon()
 				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
 				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16, // Length of the palette to use (16 colors)
 				(u16*) icon_unkPal, // Image palette
 				(u8*) icon_unkBitmap // Raw image data
 				);
 }
 
-void loadGBAIcon()
+void loadGBAIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
-		iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
-					32, // sprite width
-					32, // sprite height
-					32, // bitmap image width
-					32, // bitmap image height
-					GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-					TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-					16, // Length of the palette to use (16 colors)
-					(u16*) icon_gbaPal, // Image palette
-					(u8*) icon_gbaBitmap // Raw image data
-					);
-	} else {
-		iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
-					32, // sprite width
-					32, // sprite height
-					32, // bitmap width
-					32, // bitmap height
-					GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-					TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-					16, // Length of the palette to use (16 colors)
-					(u16*) icon_gbamodePal, // Load our 16 color tiles palette
-					(u8*) icon_gbamodeBitmap // image data generated by GRIT
-					);
-	}
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) icon_gbaPal, // Image palette
+				(u8*) icon_gbaBitmap // Raw image data
+				);
 }
 
-void loadGBIcon()
+void loadGBIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -251,12 +223,11 @@ void loadGBIcon()
 				);
 }
 
-void loadGBCIcon()
+void loadGBCIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -271,12 +242,11 @@ void loadGBCIcon()
 				);
 }
 
-void loadNESIcon()
+void loadNESIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -291,12 +261,11 @@ void loadNESIcon()
 				);
 }
 
-void loadSGIcon()
+void loadSGIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -311,12 +280,11 @@ void loadSGIcon()
 				);
 }
 
-void loadSMSIcon()
+void loadSMSIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -331,12 +299,11 @@ void loadSMSIcon()
 				);
 }
 
-void loadGGIcon()
+void loadGGIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -351,12 +318,11 @@ void loadGGIcon()
 				);
 }
 
-void loadMDIcon()
+void loadMDIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -371,12 +337,11 @@ void loadMDIcon()
 				);
 }
 
-void loadSNESIcon()
+void loadSNESIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -391,12 +356,11 @@ void loadSNESIcon()
 				);
 }
 
-void loadPLGIcon()
+void loadPLGIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -411,12 +375,11 @@ void loadPLGIcon()
 				);
 }
 
-void loadA26Icon()
+void loadA26Icon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -431,12 +394,11 @@ void loadA26Icon()
 				);
 }
 
-void loadCOLIcon()
+void loadCOLIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -451,12 +413,11 @@ void loadCOLIcon()
 				);
 }
 
-void loadM5Icon()
+void loadM5Icon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -471,12 +432,11 @@ void loadM5Icon()
 				);
 }
 
-void loadINTIcon()
+void loadINTIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -491,12 +451,11 @@ void loadINTIcon()
 				);
 }
 
-void loadPCEIcon()
+void loadPCEIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -511,12 +470,11 @@ void loadPCEIcon()
 				);
 }
 
-void loadWSIcon()
+void loadWSIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -531,12 +489,11 @@ void loadWSIcon()
 				);
 }
 
-void loadNGPIcon()
+void loadNGPIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -551,12 +508,11 @@ void loadNGPIcon()
 				);
 }
 
-void loadCPCIcon()
+void loadCPCIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -571,12 +527,11 @@ void loadCPCIcon()
 				);
 }
 
-void loadVIDIcon()
+void loadVIDIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -591,12 +546,11 @@ void loadVIDIcon()
 				);
 }
 
-void loadIMGIcon()
+void loadIMGIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -611,12 +565,11 @@ void loadIMGIcon()
 				);
 }
 
-void loadMSXIcon()
+void loadMSXIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -631,12 +584,11 @@ void loadMSXIcon()
 				);
 }
 
-void loadMINIcon()
+void loadMINIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -651,12 +603,11 @@ void loadMINIcon()
 				);
 }
 
-void loadHBIcon()
+void loadHBIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
-	}
-	iconTexID[0] = glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	glDeleteTextures(1, &iconTexID[num]);
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -841,30 +792,30 @@ void loadConsoleIcons()
 	}
 }
 
-static void clearIcon()
+static void clearIcon(int num)
 {
-	loadIcon(clearTiles, blackPalette, true);
+	loadIcon(num, clearTiles, blackPalette, true);
 }
 
 void drawIconFolder(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, folderIcon); }
-void drawIcon(int Xpos, int Ypos) { glSprite(Xpos, Ypos, bannerFlip, &ndsIcon[bnriconPalLine][bnriconframenumY & 31]); }
+void drawIcon(int num, int Xpos, int Ypos) { glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]); }
 
-void getGameInfo(bool isDir, const char* name)
+void getGameInfo(int num, bool isDir, const char* name)
 {
-	bnriconPalLine = 0;
-	bnriconframenumY = 0;
-	bannerFlip = GL_FLIP_NONE;
-	bnriconisDSi = false;
-	bnrWirelessIcon = 0;
-	customIcon = 0;
-	toncset(gameTid, 0, 4);
-	isTwlm = false;
-	isDSiWare = false;
-	isHomebrew = false;
-	isModernHomebrew = false;
-	requiresRamDisk = false;
-	requiresDonorRom = false;
-	infoFound = false;
+	bnriconPalLine[num] = 0;
+	bnriconframenumY[num] = 0;
+	bannerFlip[num] = GL_FLIP_NONE;
+	bnriconisDSi[num] = false;
+	bnrWirelessIcon[num] = 0;
+	customIcon[num] = 0;
+	toncset(gameTid[num], 0, 4);
+	isTwlm[num] = false;
+	isDSiWare[num] = false;
+	isHomebrew[num] = false;
+	isModernHomebrew[num] = false;
+	requiresRamDisk[num] = false;
+	requiresDonorRom[num] = false;
+	infoFound[num] = false;
 
 	if (ms().showCustomIcons) {
 		toncset(&ndsBanner, 0, sizeof(sNDSBannerExt));
@@ -872,9 +823,9 @@ void getGameInfo(bool isDir, const char* name)
 
 		// First try banner bin
 		snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.bin", sdFound() ? "sd" : "fat", name);
-		customIcon = (access(customIconPath, F_OK) == 0);
-		if (customIcon) {
-			customIcon = 2; // custom icon is a banner bin
+		customIcon[num] = (access(customIconPath, F_OK) == 0);
+		if (customIcon[num]) {
+			customIcon[num] = 2; // custom icon is a banner bin
 			FILE *file = fopen(customIconPath, "rb");
 			if (file) {
 				size_t read = fread(&ndsBanner, 1, sizeof(sNDSBannerExt), file);
@@ -886,21 +837,21 @@ void getGameInfo(bool isDir, const char* name)
 					if (ms().animateDsiIcons && read == NDS_BANNER_SIZE_DSi) {
 						u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
 						if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
-							bnriconisDSi = true;
-							grabBannerSequence();
+							bnriconisDSi[num] = true;
+							grabBannerSequence(num);
 						}
 					}
 
-					tonccpy(cachedTitle, ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
+					tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
 
-					infoFound = true;
+					infoFound[num] = true;
 				}
 			}
 		} else {
 			// If no banner bin, try png
 			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
-			customIcon = (access(customIconPath, F_OK) == 0);
-			if (customIcon) {
+			customIcon[num] = (access(customIconPath, F_OK) == 0);
+			if (customIcon[num]) {
 				std::vector<unsigned char> image;
 				uint imageWidth, imageHeight;
 				lodepng::decode(image, imageWidth, imageHeight, customIconPath);
@@ -953,13 +904,13 @@ void getGameInfo(bool isDir, const char* name)
 			}
 		}
 
-		if (customIcon && !customIconGood)
-			customIcon = -1; // display as unknown
+		if (customIcon[num] && !customIconGood)
+			customIcon[num] = -1; // display as unknown
 	}
 
 	if (isDir) {
 		// banner sequence
-		clearBannerSequence();
+		clearBannerSequence(num);
 	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
@@ -970,7 +921,7 @@ void getGameInfo(bool isDir, const char* name)
 		// open the argv file
 		fp = fopen(name, "rb");
 		if (fp == NULL) {
-			clearBannerSequence();
+			clearBannerSequence(num);
 			fclose(fp);
 			return;
 		}
@@ -1004,19 +955,19 @@ void getGameInfo(bool isDir, const char* name)
 				rc = stat(p, &st);
 				if (rc != 0) {
 					// stat failed
-					clearBannerSequence();
+					clearBannerSequence(num);
 				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
-					clearBannerSequence();
+					clearBannerSequence(num);
 				} else {
-					getGameInfo(false, p);
+					getGameInfo(num, false, p);
 				}
 			} else {
 				// this is not an nds/app file!
-				clearBannerSequence();
+				clearBannerSequence(num);
 			}
 		} else {
-			clearBannerSequence();
+			clearBannerSequence(num);
 		}
 		// clean up the allocated line
 		free(line);
@@ -1032,7 +983,7 @@ void getGameInfo(bool isDir, const char* name)
 		}
 
 		fseek(fp, 0x13F, SEEK_SET);
-		fread(gameTid, 1, 4, fp);
+		fread(gameTid[num], 1, 4, fp);
 
 		fclose(fp);
 	} else if (extension(name, {".gba", ".agb", ".mb"})) {
@@ -1047,7 +998,7 @@ void getGameInfo(bool isDir, const char* name)
 		}
 
 		fseek(fp, 0xAC, SEEK_SET);
-		fread(gameTid, 1, 4, fp);
+		fread(gameTid[num], 1, 4, fp);
 
 		fclose(fp);
 	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
@@ -1059,12 +1010,12 @@ void getGameInfo(bool isDir, const char* name)
 		fp = fopen(name, "rb");
 		if (fp == NULL) {
 			// banner sequence
-			clearBannerSequence();
+			clearBannerSequence(num);
 			fclose(fp);
 			return;
 		}
 
-		
+
 		ret = fseek(fp, 0, SEEK_SET);
 		if (ret == 0)
 			ret = fread(&ndsHeader, sizeof(ndsHeader), 1, fp); // read if seek succeed
@@ -1080,7 +1031,7 @@ void getGameInfo(bool isDir, const char* name)
 				ret = 0; // if seek fails set to !=1
 
 			if (ret != 1) {
-				clearBannerSequence();
+				clearBannerSequence(num);
 				fclose(fp);
 				return;
 			}
@@ -1088,11 +1039,11 @@ void getGameInfo(bool isDir, const char* name)
 
 		bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 
-		tonccpy(gameTid, ndsHeader.gameCode, 4);
-		isTwlm = (strcmp(gameTid, "SRLA") == 0);
-		romVersion = ndsHeader.romversion;
-		romUnitCode = ndsHeader.unitCode;
-		a7mbk6 = ndsHeader.a7mbk6;
+		tonccpy(gameTid[num], ndsHeader.gameCode, 4);
+		isTwlm[num] = (strcmp(gameTid[num], "SRLA") == 0);
+		romVersion[num] = ndsHeader.romversion;
+		romUnitCode[num] = ndsHeader.unitCode;
+		a7mbk6[num] = ndsHeader.a7mbk6;
 
 		fseek(fp, ndsHeader.arm9romOffset + ndsHeader.arm9executeAddress - ndsHeader.arm9destination, SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, fp);
@@ -1100,8 +1051,8 @@ void getGameInfo(bool isDir, const char* name)
 		 && arm9StartSig[1] == 0xE5800208
 		 && arm9StartSig[2] == 0xE3A00013
 		 && arm9StartSig[3] == 0xE129F000) {
-			isHomebrew = true;
-			isModernHomebrew = true; // Homebrew is recent (supports reading from SD without a DLDI driver)
+			isHomebrew[num] = true;
+			isModernHomebrew[num] = true; // Homebrew is recent (supports reading from SD without a DLDI driver)
 			if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
 				if ((ndsHeader.arm9binarySize == 0xC9F68 && ndsHeader.arm7binarySize == 0x12814)	// Colors! v1.1
 				|| (ndsHeader.arm9binarySize == 0x1B0864 && ndsHeader.arm7binarySize == 0xDB50)	// Mario Paint Composer DS v2 (Bullet Bill)
@@ -1111,54 +1062,54 @@ void getGameInfo(bool isDir, const char* name)
 				|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)		// XRoar 0.24fp3
 				|| (ndsHeader.arm9binarySize == 0x2C9A8 && ndsHeader.arm7binarySize == 0xFB98)		// NitroGrafx v0.7
 				|| (ndsHeader.arm9binarySize == 0x22AE4 && ndsHeader.arm7binarySize == 0xA764)) {	// It's 1975 and this man is about to show you the future
-					isModernHomebrew = false; // Have nds-bootstrap load it (in case if it doesn't)
+					isModernHomebrew[num] = false; // Have nds-bootstrap load it (in case if it doesn't)
 				}
 			}
 		} else if ((memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0)
 				 || (memcmp(ndsHeader.gameTitle, "MAGIC FLOOR", 11) == 0)
 				 || (memcmp(ndsHeader.gameTitle, "UNLAUNCH.DSI", 12) == 0)) {
-			isHomebrew = true;
-			isModernHomebrew = true; // No need to use nds-bootstrap
+			isHomebrew[num] = true;
+			isModernHomebrew[num] = true; // No need to use nds-bootstrap
 		} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
 		 || (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)) {
-			isHomebrew = true; // Homebrew is old (requires a DLDI driver to read from SD)
+			isHomebrew[num] = true; // Homebrew is old (requires a DLDI driver to read from SD)
 		} else if (ndsHeader.unitCode != 0 && (ndsHeader.accessControl & BIT(4))) {
-			isDSiWare = true; // Is a DSiWare game
+			isDSiWare[num] = true; // Is a DSiWare game
 		}
 
-		if (isHomebrew && !ms().secondaryDevice) {
+		if (isHomebrew[num] && !ms().secondaryDevice) {
 			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
 			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
 			|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058
 			|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)) {		// XRoar 0.24fp3
-				requiresRamDisk = true;
+				requiresRamDisk[num] = true;
 			}
 		}
 
-		if (!isHomebrew) {
+		if (!isHomebrew[num]) {
 			// Check if ROM needs a donor ROM
-			if (isDSiMode() && (a7mbk6 == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) || (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000 && (REG_MBK9 & 0x00FFFFFF) != 0x00FFFF0F)) && sys().arm7SCFGLocked()) {
-				requiresDonorRom = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
+			if (isDSiMode() && (a7mbk6[num] == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) || (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000 && (REG_MBK9 & 0x00FFFFFF) != 0x00FFFF0F)) && sys().arm7SCFGLocked()) {
+				requiresDonorRom[num] = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
 				if (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000) {
-					requiresDonorRom += 100;
+					requiresDonorRom[num] += 100;
 				} else if (memcmp(ndsHeader.gameCode, "KCX", 3) == 0 && dsiEnhancedMbk) {
-					requiresDonorRom = 0;
+					requiresDonorRom[num] = 0;
 				}
-			} else if (a7mbk6 == 0x080037C0 && ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode)
+			} else if (a7mbk6[num] == 0x080037C0 && ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode)
 			&& (((sys().dsDebugRam() || (dsiFeatures() && bs().b4dsMode == 2)) ? (memcmp(ndsHeader.gameCode, "DME", 3) == 0 || memcmp(ndsHeader.gameCode, "DMD", 3) == 0 || memcmp(ndsHeader.gameCode, "DMP", 3) == 0 || memcmp(ndsHeader.gameCode, "DHS", 3) == 0) : (memcmp(ndsHeader.gameCode, "DMP", 3) == 0 || memcmp(ndsHeader.gameCode, "DHS", 3) == 0))
 			|| (ndsHeader.gameCode[0] != 'D' && memcmp(ndsHeader.gameCode, "KCX", 3) != 0 && memcmp(ndsHeader.gameCode, "KAV", 3) != 0 && memcmp(ndsHeader.gameCode, "KNK", 3) != 0 && memcmp(ndsHeader.gameCode, "KE3", 3) != 0))) {
-				requiresDonorRom = 51; // SDK5 ROM required
+				requiresDonorRom[num] = 51; // SDK5 ROM required
 			} else if (memcmp(ndsHeader.gameCode, "AYI", 3) == 0 && ndsHeader.arm7binarySize == 0x25F70) {
-				requiresDonorRom = 20; // SDK2.0 ROM required for Yoshi Touch & Go (Europe)
+				requiresDonorRom[num] = 20; // SDK2.0 ROM required for Yoshi Touch & Go (Europe)
 			}
 		}
 
 		if (ndsHeader.dsi_flags & BIT(4))
-			bnrWirelessIcon = 1;
+			bnrWirelessIcon[num] = 1;
 		else if (ndsHeader.dsi_flags & BIT(3))
-			bnrWirelessIcon = 2;
+			bnrWirelessIcon[num] = 2;
 
-		if (customIcon == 2) { // custom banner bin
+		if (customIcon[num] == 2) { // custom banner bin
 			// we're done early, close the file
 			fclose(fp);
 			return;
@@ -1166,7 +1117,7 @@ void getGameInfo(bool isDir, const char* name)
 
 		u8 iconCopy[512];
 		u16 paletteCopy[16];
-		if (customIcon == 1) { // custom png icon
+		if (customIcon[num] == 1) { // custom png icon
 			// copy the icon and palette before they get overwritten
 			memcpy(iconCopy, ndsBanner.icon, sizeof(iconCopy));
 			memcpy(paletteCopy, ndsBanner.palette, sizeof(paletteCopy));
@@ -1179,10 +1130,10 @@ void getGameInfo(bool isDir, const char* name)
 			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 			fclose(bannerFile);
 
-			tonccpy(cachedTitle, ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
+			tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
 
 			// restore png icon
-			if (customIcon == 1) {
+			if (customIcon[num] == 1) {
 				memcpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
 				memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
 			}
@@ -1202,10 +1153,10 @@ void getGameInfo(bool isDir, const char* name)
 			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 			fclose(bannerFile);
 
-			tonccpy(cachedTitle, ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
+			tonccpy(cachedTitle[num], ndsBanner.titles[ms().getGameLanguage()], TITLE_CACHE_SIZE*sizeof(u16));
 
 			// restore png icon
-			if (customIcon == 1) {
+			if (customIcon[num] == 1) {
 				memcpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
 				memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
 			}
@@ -1226,11 +1177,11 @@ void getGameInfo(bool isDir, const char* name)
 			if (currentLang == 0) break;
 			currentLang--;
 		}
-		tonccpy(cachedTitle, ndsBanner.titles[currentLang], TITLE_CACHE_SIZE*sizeof(u16));
-		infoFound = true;
+		tonccpy(cachedTitle[num], ndsBanner.titles[currentLang], TITLE_CACHE_SIZE*sizeof(u16));
+		infoFound[num] = true;
 
 		// restore png icon
-		if (customIcon == 1) {
+		if (customIcon[num] == 1) {
 			memcpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
 			memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
 			return;
@@ -1239,29 +1190,27 @@ void getGameInfo(bool isDir, const char* name)
 		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
 			if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
-				grabBannerSequence();
-				bnriconisDSi = true;
+				grabBannerSequence(num);
+				bnriconisDSi[num] = true;
 			}
 		}
 	}
 }
 
-void iconUpdate(bool isDir, const char* name)
+void iconUpdate(int num, bool isDir, const char* name)
 {
-	clearText(false);
-
-	const bool isNds = (bnrRomType == 0);
+	const bool isNds = (bnrRomType[num] == 0);
 
 	if (isDir) {
 		// icon
-		clearIcon();
-	} else if (customIcon > 0 || (customIcon && isNds)) {
-		if (customIcon == -1) {
-			loadUnkIcon();
-		} else if (bnriconisDSi) {
-			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
+		clearIcon(num);
+	} else if (customIcon[num] > 0 || (customIcon[num] && isNds)) {
+		if (customIcon[num] == -1) {
+			loadUnkIcon(num);
+		} else if (bnriconisDSi[num]) {
+			loadIcon(num, ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
-			loadIcon(ndsBanner.icon, ndsBanner.palette, false);
+			loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);
 		}
 	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds/app file
@@ -1273,7 +1222,7 @@ void iconUpdate(bool isDir, const char* name)
 		// open the argv file
 		fp = fopen(name, "rb");
 		if (fp == NULL) {
-			clearIcon();
+			clearIcon(num);
 			fclose(fp);
 			return;
 		}
@@ -1307,19 +1256,19 @@ void iconUpdate(bool isDir, const char* name)
 				rc = stat(p, &st);
 				if (rc != 0) {
 					// stat failed
-					clearIcon();
+					clearIcon(num);
 				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
-					clearIcon();
+					clearIcon(num);
 				} else {
-					iconUpdate(false, p);
+					iconUpdate(num, false, p);
 				}
 			} else {
 				// this is not an nds/app file!
-				clearIcon();
+				clearIcon(num);
 			}
 		} else {
-			clearIcon();
+			clearIcon(num);
 		}
 		// clean up the allocated line
 		free(line);
@@ -1333,7 +1282,7 @@ void iconUpdate(bool isDir, const char* name)
 		fp = fopen(name, "rb");
 		if (fp == NULL) {
 			// icon
-			clearIcon();
+			clearIcon(num);
 			fclose(fp);
 			return;
 		}
@@ -1347,14 +1296,14 @@ void iconUpdate(bool isDir, const char* name)
 
 		if (ret != 1) {
 			// icon
-			loadUnkIcon();
+			loadUnkIcon(num);
 			fclose(fp);
 			return;
 		}
 
 		if (iconTitleOffset == 0) {
 			// icon
-			loadUnkIcon();
+			loadUnkIcon(num);
 			fclose(fp);
 			return;
 		}
@@ -1374,7 +1323,7 @@ void iconUpdate(bool isDir, const char* name)
 
 			if (ret != 1) {
 				// icon
-				loadUnkIcon();
+				loadUnkIcon(num);
 				fclose(fp);
 				return;
 			}
@@ -1384,80 +1333,78 @@ void iconUpdate(bool isDir, const char* name)
 		fclose(fp);
 
 		// icon
-		if (bnriconisDSi) {
-			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
+		if (bnriconisDSi[num]) {
+			loadIcon(num, ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
-			loadIcon(ndsBanner.icon, ndsBanner.palette, false);
+			loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);
 		}
-	} else if (bnrRomType == 10) {
-		loadA26Icon();
-	} else if (bnrRomType == 21) {
-		loadMSXIcon();
-	} else if (bnrRomType == 13) {
-		loadCOLIcon();
-	} else if (bnrRomType == 14) {
-		loadM5Icon();
-	} else if (bnrRomType == 12) {
-		loadINTIcon();
-	} else if (bnrRomType == 9) {
-		loadPLGIcon();
-	} else if (bnrRomType == 19) {
-		loadVIDIcon();
-	} else if (bnrRomType == 20) {
-		loadIMGIcon();
-	} else if (bnrRomType == 1) {
-		loadGBAIcon();
-	} else if (bnrRomType == 2) {
-		loadGBIcon();
-	} else if (bnrRomType == 3) {
-		loadGBCIcon();
-	} else if (bnrRomType == 4) {
-		loadNESIcon();
-	} else if (bnrRomType == 15) {
-		loadSGIcon();
-	} else if (bnrRomType == 5) {
-		loadSMSIcon();
-	} else if (bnrRomType == 6) {
-		loadGGIcon();
-	} else if (bnrRomType == 7) {
-		loadMDIcon();
-	} else if (bnrRomType == 8) {
-		loadSNESIcon();
-	} else if (bnrRomType == 11) {
-		loadPCEIcon();
-	} else if (bnrRomType == 16) {
-		loadWSIcon();
-	} else if (bnrRomType == 17) {
-		loadNGPIcon();
-	} else if (bnrRomType == 18) {
-		loadCPCIcon();
-	} else if (bnrRomType == 22) {
-		loadMINIcon();
-	} else if (bnrRomType == 23) {
-		loadHBIcon();
+	} else if (bnrRomType[num] == 10) {
+		loadA26Icon(num);
+	} else if (bnrRomType[num] == 21) {
+		loadMSXIcon(num);
+	} else if (bnrRomType[num] == 13) {
+		loadCOLIcon(num);
+	} else if (bnrRomType[num] == 14) {
+		loadM5Icon(num);
+	} else if (bnrRomType[num] == 12) {
+		loadINTIcon(num);
+	} else if (bnrRomType[num] == 9) {
+		loadPLGIcon(num);
+	} else if (bnrRomType[num] == 19) {
+		loadVIDIcon(num);
+	} else if (bnrRomType[num] == 20) {
+		loadIMGIcon(num);
+	} else if (bnrRomType[num] == 1) {
+		loadGBAIcon(num);
+	} else if (bnrRomType[num] == 2) {
+		loadGBIcon(num);
+	} else if (bnrRomType[num] == 3) {
+		loadGBCIcon(num);
+	} else if (bnrRomType[num] == 4) {
+		loadNESIcon(num);
+	} else if (bnrRomType[num] == 15) {
+		loadSGIcon(num);
+	} else if (bnrRomType[num] == 5) {
+		loadSMSIcon(num);
+	} else if (bnrRomType[num] == 6) {
+		loadGGIcon(num);
+	} else if (bnrRomType[num] == 7) {
+		loadMDIcon(num);
+	} else if (bnrRomType[num] == 8) {
+		loadSNESIcon(num);
+	} else if (bnrRomType[num] == 11) {
+		loadPCEIcon(num);
+	} else if (bnrRomType[num] == 16) {
+		loadWSIcon(num);
+	} else if (bnrRomType[num] == 17) {
+		loadNGPIcon(num);
+	} else if (bnrRomType[num] == 18) {
+		loadCPCIcon(num);
+	} else if (bnrRomType[num] == 22) {
+		loadMINIcon(num);
+	} else if (bnrRomType[num] == 23) {
+		loadHBIcon(num);
 	} else {
-		loadUnkIcon();
+		loadUnkIcon(num);
 	}
 }
 
-void titleUpdate(bool isDir, const char* name)
+void titleUpdate(int num, bool isDir, const char* name)
 {
-	clearText(false);
-
 	if (isDir) {
 		// text
 		if (strcmp(name, "..") == 0) {
-			writeBannerText("Back");
+			writeBannerText(num, "Back");
 		} else {
-			writeBannerText(name);
+			writeBannerText(num, name);
 		}
-	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound) {
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound[num]) {
 		// this is an nds/app file!
 		// or a file with custom banner text
-		if (infoFound) {
-			writeBannerText(cachedTitle);
+		if (infoFound[num]) {
+			writeBannerText(num, cachedTitle[num]);
 		} else {
-			writeBannerText(name);
+			writeBannerText(num, name);
 		}
 	} else {
 		std::vector<std::string> lines;
@@ -1496,6 +1443,6 @@ void titleUpdate(bool isDir, const char* name)
 			out += line + '\n';
 		}
 		out.pop_back();
-		writeBannerText(out);
+		writeBannerText(num, out);
 	}
 }

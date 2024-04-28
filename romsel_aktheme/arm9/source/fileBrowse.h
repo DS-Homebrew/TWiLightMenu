@@ -25,12 +25,14 @@
 #include <string>
 #include <vector>
 
+#define CURPOS (ms().cursorPosition[ms().secondaryDevice])
+#define CURPOSSCRN (ms().cursorPosition[ms().secondaryDevice] % 4)
+#define PAGENUM (ms().pagenum[ms().secondaryDevice])
+
 //#define EMULATE_FILES
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions);
 
 std::string browseForFile(const std::vector<std::string_view> extensionList);
-
-
 
 #endif //FILE_BROWSE_H

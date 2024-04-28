@@ -25,7 +25,6 @@
 #include <algorithm>
 
 #include "ndsheaderbanner.h"
-#include "iconTitle.h"
 #include "graphics/fontHandler.h"
 #include "errorScreen.h"
 #include "common/tonccpy.h"
@@ -291,7 +290,6 @@ void CheatCodelist::selectCheats(std::string filename)
   int oldDialogboxHeight = dialogboxHeight;
   dialogboxHeight = 5;
 
-  titleUpdate(isDirectory, filename.c_str());
   printLarge(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
   printSmall(false, 0, 100, "Loading...", Alignment::center);
 
@@ -304,7 +302,6 @@ void CheatCodelist::selectCheats(std::string filename)
   if (_data.size() == 0) {
     cheatsFound = false;
     clearText(false);
-    titleUpdate(isDirectory, filename.c_str());
     printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
     printSmall(false, 0, 100, "No cheats found", Alignment::center);
     printSmall(false, 0, 160, " Back", Alignment::center);
@@ -336,7 +333,6 @@ void CheatCodelist::selectCheats(std::string filename)
   bool unsavedChanges = false;
   while (cheatsFound) {
     clearText(false);
-    titleUpdate(isDirectory, filename.c_str());
     printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
 
     // Print bottom text
@@ -450,7 +446,6 @@ void CheatCodelist::selectCheats(std::string filename)
         if (unsavedChanges)
         {
           bool break2 = false;
-          titleUpdate(isDirectory, filename.c_str());
           printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
           printSmall(false, 0, 128, "Discard unsaved changes?", Alignment::center);
           printSmall(false, 0, 167, " Discard   Cancel", Alignment::center);
@@ -486,7 +481,6 @@ void CheatCodelist::selectCheats(std::string filename)
     } else if (pressed & KEY_X) {
       unsavedChanges = false;
       clearText(false);
-      titleUpdate(isDirectory, filename.c_str());
       printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
       printSmall(false, 0, 100, "Saving...", Alignment::center);
 	  updateText(false);
@@ -496,7 +490,6 @@ void CheatCodelist::selectCheats(std::string filename)
     if (pressed & KEY_Y) {
       if (currentList[cheatWnd_cursorPosition]->_comment != "") {
         clearText(false);
-        titleUpdate(isDirectory, filename.c_str());
         printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
 
         std::vector<std::string> _topText;

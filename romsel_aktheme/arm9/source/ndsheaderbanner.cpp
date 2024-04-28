@@ -540,88 +540,89 @@ int checkRomAP(FILE *ndsFile)
 }
 
 // bnriconframeseq[]
-static u16 bnriconframeseq[64] = {0x0000};
+static u16 bnriconframeseq[4][64] = {0x0000};
 
 // bnriconframenum[]
-int bnriconPalLine = 0;
-int bnriconframenumY = 0;
-int bannerFlip = GL_FLIP_NONE;
+int bnriconPalLine[4] = {0};
+int bnriconframenumY[4] = {0};
+int bannerFlip[4] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
-bool isTwlm = false;
-bool isDirectory = false;
-int bnrRomType = 0;
-bool bnriconisDSi = false;
-int bnrWirelessIcon = 0; // 0 = None, 1 = Local, 2 = WiFi
-char gameTid[5] = {0};
-u8 romVersion = 0;
-u8 romUnitCode = 0;
-u32 a7mbk6 = 0;
-bool isDSiWare = false;
-bool isHomebrew = false;
-bool isModernHomebrew = false;		// false == No DSi-Extended header, true == Has DSi-Extended header
-bool requiresRamDisk = false;
-int requiresDonorRom = 0;
-int customIcon = 0;					// 0 = None, 1 = png, 2 = banner.bin, -1 = error
+bool isTwlm[4] = {false};
+bool isDirectory[4] = {false};
+int bnrRomType[4] = {0};
+bool bnriconisDSi[4] = {false};
+int bnrWirelessIcon[4] = {0}; // 0 = None, 1 = Local, 2 = WiFi
+char gameTid[4][5] = {0};
+u8 romVersion[4] = {0};
+u8 romUnitCode[4] = {0};
+u32 a7mbk6[4] = {0};
+bool isDSiWare[4] = {false};
+bool isHomebrew[4] = {false};
+bool isModernHomebrew[4] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header
+bool requiresRamDisk[4] = {false};
+int requiresDonorRom[4] = {0};
+int customIcon[4] = {0};					// 0 = None, 1 = png, 2 = banner.bin, -1 = error
 char customIconPath[256];
 
-static u16 bannerDelayNum = 0x0000;
-int currentbnriconframeseq = 0;
+static u16 bannerDelayNum[4] = {0x0000};
+int currentbnriconframeseq[4] = {0};
 
 /**
  * Get banner sequence from banner file.
  * @param binFile Banner file.
  */
-void grabBannerSequence()
+void grabBannerSequence(int num)
 {
-	memcpy(bnriconframeseq, ndsBanner.dsi_seq, 64 * sizeof(u16));
-
-	currentbnriconframeseq = 0;
+	for (int i = 0; i < 64; i++) {
+		bnriconframeseq[num][i] = ndsBanner.dsi_seq[i];
+	}
 }
 
 /**
  * Clear loaded banner sequence.
  */
-void clearBannerSequence()
+void clearBannerSequence(int num)
 {
-	memset(bnriconframeseq, 0, 64 * sizeof(u16));
-	currentbnriconframeseq = 0;
+	for (int i = 0; i < 64; i++) {
+		bnriconframeseq[num][i] = 0x0000;
+	}
 }
 
 /**
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence()
+void playBannerSequence(int num)
 {
-	if (bnriconframeseq[currentbnriconframeseq + 1] == 0x0100) {
+	if (bnriconframeseq[num][currentbnriconframeseq[num] + 1] == 0x0100) {
 		// Do nothing if icon isn't animated
-		bnriconPalLine = 0;
-		bnriconframenumY = 0;
-		bannerFlip = GL_FLIP_NONE;
+		bnriconPalLine[num] = 0;
+		bnriconframenumY[num] = 0;
+		bannerFlip[num] = GL_FLIP_NONE;
 	} else {
-		u16 setframeseq = bnriconframeseq[currentbnriconframeseq];
-		bnriconPalLine = SEQ_PAL(setframeseq);
-		bnriconframenumY =  SEQ_BMP(setframeseq);
+		u16 setframeseq = bnriconframeseq[num][currentbnriconframeseq[num]];
+		bnriconPalLine[num] = SEQ_PAL(setframeseq);
+		bnriconframenumY[num] =  SEQ_BMP(setframeseq);
 		bool flipH = SEQ_FLIPH(setframeseq);
 		bool flipV = SEQ_FLIPV(setframeseq);
 
 		if (flipH && flipV) {
-			bannerFlip = GL_FLIP_H | GL_FLIP_V;
+			bannerFlip[num] = GL_FLIP_H | GL_FLIP_V;
 		} else if (!flipH && !flipV) {
-			bannerFlip = GL_FLIP_NONE;
+			bannerFlip[num] = GL_FLIP_NONE;
 		} else if (flipH && !flipV) {
-			bannerFlip = GL_FLIP_H;
+			bannerFlip[num] = GL_FLIP_H;
 		} else if (!flipH && flipV) {
-			bannerFlip = GL_FLIP_V;
+			bannerFlip[num] = GL_FLIP_V;
 		}
 
-		bannerDelayNum++;
-		if (bannerDelayNum >= (setframeseq & 0x00FF)) {
-			bannerDelayNum = 0x0000;
-			currentbnriconframeseq++;
-			if (bnriconframeseq[currentbnriconframeseq] == 0x0000) {
-				currentbnriconframeseq = 0; // Reset sequence
+		bannerDelayNum[num]++;
+		if (bannerDelayNum[num] >= (setframeseq & 0x00FF)) {
+			bannerDelayNum[num] = 0x0000;
+			currentbnriconframeseq[num]++;
+			if (bnriconframeseq[num][currentbnriconframeseq[num]] == 0x0000) {
+				currentbnriconframeseq[num] = 0; // Reset sequence
 			}
 		}
 	}

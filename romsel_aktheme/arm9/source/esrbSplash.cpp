@@ -18,14 +18,14 @@
 extern u16 bmpImageBuffer[256*192];
 
 void createEsrbSplash(void) {
-	if (!ms().esrbRatingScreen || isHomebrew || (gameTid[3] != 'E' && gameTid[3] != 'O' && gameTid[3] != 'T' && gameTid[3] != 'W')) {
+	if (!ms().esrbRatingScreen || isHomebrew[CURPOSSCRN] || (gameTid[CURPOSSCRN][3] != 'E' && gameTid[CURPOSSCRN][3] != 'O' && gameTid[CURPOSSCRN][3] != 'T' && gameTid[CURPOSSCRN][3] != 'W')) {
 		remove(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 		return;
 	}
 
 	char gameTid3[4] = {0};
 	for (int i = 0; i < 3; i++) {
-		gameTid3[i] = gameTid[i];
+		gameTid3[i] = gameTid[CURPOSSCRN][i];
 	}
 
 	CIniFile esrbInfo("nitro:/ESRB.ini");
@@ -42,7 +42,7 @@ void createEsrbSplash(void) {
 		// Search for games starting sideways
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(sidewaysGameList)/sizeof(sidewaysGameList[0]); i++) {
-			if (memcmp(gameTid, sidewaysGameList[i], 3) == 0) {
+			if (memcmp(gameTid[CURPOSSCRN], sidewaysGameList[i], 3) == 0) {
 				// Found match
 				sideways = true;
 				break;

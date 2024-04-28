@@ -34,6 +34,7 @@
 
 #include "../iconTitle.h"
 #include "graphics.h"
+#include "fileBrowse.h"
 #include "fontHandler.h"
 #include "../ndsheaderbanner.h"
 #include "../errorScreen.h"
@@ -583,13 +584,14 @@ void vBlankHandler()
 		glColor(RGB15(31, 31, 31));
 
 		for (int i = 0; i < 4; i++) {
-			if (isDirectory) drawIconFolder(4, 24+(i*36));
-			else drawIcon(4, 24+(i*36));
-		}
-		// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
-		// Playback animated icons
-		if (bnriconisDSi==true) {
-			playBannerSequence();
+			const int num = i+CURPOSSCRN;
+			if (isDirectory[num]) drawIconFolder(4, 24+(i*36));
+			else drawIcon(num, 4, 24+(i*36));
+			// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
+			// Playback animated icons
+			if (bnriconisDSi[num]) {
+				playBannerSequence(num);
+			}
 		}
 		if (showdialogbox) {
 			glBoxFilled(15, 71, 241, 121+(dialogboxHeight*12), RGB15(0, 0, 0));
