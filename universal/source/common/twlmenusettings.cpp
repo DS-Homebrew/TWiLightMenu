@@ -118,7 +118,7 @@ TWLSettings::TWLSettings()
 
 	// ak_viewMode = EViewInternal;
 	// ak_scrollSpeed = EScrollFast;
-	// ak_theme = "zelda";
+	ak_theme = "zelda";
 	// ak_zoomIcons = true;
 
 	useBootstrap = true;
@@ -316,7 +316,7 @@ void TWLSettings::loadSettings()
 
 	// ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
 	// ak_scrollSpeed = settingsini.GetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
-	// ak_theme = settingsini.GetString("SRLOADER", "AK_THEME", ak_theme);
+	ak_theme = settingsini.GetString("SRLOADER", "AK_THEME", ak_theme);
 	// ak_zoomIcons = settingsini.GetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
 	if (!(io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
@@ -467,7 +467,7 @@ void TWLSettings::saveSettings()
 
 	// settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
 	// settingsini.SetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
-	// settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
+	settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
 	// settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
 	if (!(io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {

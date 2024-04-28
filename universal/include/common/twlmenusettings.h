@@ -352,7 +352,7 @@ public:
 	// int ak_viewMode;
 	// int ak_scrollSpeed;
 	// bool ak_zoomIcons;
-	// std::string ak_theme;
+	std::string ak_theme;
 
 	bool useBootstrap;
 	bool btsrpBootloaderDirect;

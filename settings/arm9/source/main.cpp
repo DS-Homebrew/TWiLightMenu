@@ -187,9 +187,9 @@ void loadROMselect()
 {
 	vector<char *> argarray;
 
-	/*if (ms().theme == TWLSettings::EThemeWood) {
+	if (ms().theme == TWLSettings::EThemeWood) {
 		argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr"));
-	} else */if (ms().theme == TWLSettings::EThemeR4 || ms().theme == TWLSettings::EThemeGBC) {
+	} else if (ms().theme == TWLSettings::EThemeR4 || ms().theme == TWLSettings::EThemeGBC) {
 		argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
 	} else {
 		argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
@@ -387,8 +387,8 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 		return Option(STR_SKINSEL_DSI, STR_AB_SETSKIN, Option::Str(&ms().dsi_theme), dsiThemeList);
 	case TWLSettings::EThemeR4:
 		return Option(STR_SKINSEL_R4, STR_AB_SETSKIN, Option::Str(&ms().r4_theme), r4ThemeList);
-	// case TWLSettings::EThemeWood:
-	// 	return Option(STR_SKINSEL_WOOD, STR_AB_SETSKIN, Option::Str(&ms().ak_theme), akThemeList);
+	case TWLSettings::EThemeWood:
+		return Option(STR_SKINSEL_WOOD, STR_AB_SETSKIN, Option::Str(&ms().ak_theme), akThemeList);
 	case TWLSettings::ETheme3DS:
 		return Option(STR_SKINSEL_3DS, STR_AB_SETSKIN, Option::Str(&ms()._3ds_theme), _3dsThemeList);
 	default:
@@ -930,7 +930,7 @@ int settingsMode(void)
 	gs().loadSettings();
 	bs().loadSettings();
 	logInit();
-	//loadAkThemeList();
+	loadAkThemeList();
 	loadR4ThemeList();
 	load3DSThemeList();
 	loadDSiThemeList();
@@ -1074,8 +1074,8 @@ int settingsMode(void)
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
 				Option::Int((int *)&ms().theme, opt_subtheme_select),
-				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, STR_GAMEBOY_COLOR},
-				{TTheme::EThemeDSi, TTheme::ETheme3DS, TTheme::EThemeSaturn, TTheme::EThemeHBL, TTheme::EThemeR4, TTheme::EThemeGBC})
+				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, STR_WOOD_UI, STR_GAMEBOY_COLOR},
+				{TTheme::EThemeDSi, TTheme::ETheme3DS, TTheme::EThemeSaturn, TTheme::EThemeHBL, TTheme::EThemeR4, TTheme::EThemeWood, TTheme::EThemeGBC})
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})
 		.option("DSi/Saturn: SELECT", STR_DESCRIPTION_SELECTBUTTONOPTION, Option::Bool(&ms().showSelectMenu), {STR_SELECT_MENU, STR_DS_CLASSIC_MENU}, {true, false})
 		.option(STR_DSIMUSIC,

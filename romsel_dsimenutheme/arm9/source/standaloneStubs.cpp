@@ -9,5 +9,6 @@ int dsClassicMenu(void);
 int r4Theme(void);
 int manualScreen(void);
 int imageViewer(void);
+int akTheme(void);
 
 #endif
