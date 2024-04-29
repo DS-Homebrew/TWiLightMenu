@@ -7,7 +7,6 @@
 #include "common/tonccpy.h"
 #include "common/inifile.h"
 #include "common/logging.h"
-#include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "common/lodepng.h"
 #include "ndsheaderbanner.h"
@@ -15,17 +14,19 @@
 
 #include "dsGameInfoMap.h"
 
+extern int cursorPosOnScreen;
+
 extern u16 bmpImageBuffer[256*192];
 
 void createEsrbSplash(void) {
-	if (!ms().esrbRatingScreen || isHomebrew[CURPOSSCRN] || (gameTid[CURPOSSCRN][3] != 'E' && gameTid[CURPOSSCRN][3] != 'O' && gameTid[CURPOSSCRN][3] != 'T' && gameTid[CURPOSSCRN][3] != 'W')) {
+	if (!ms().esrbRatingScreen || isHomebrew[cursorPosOnScreen] || (gameTid[cursorPosOnScreen][3] != 'E' && gameTid[cursorPosOnScreen][3] != 'O' && gameTid[cursorPosOnScreen][3] != 'T' && gameTid[cursorPosOnScreen][3] != 'W')) {
 		remove(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 		return;
 	}
 
 	char gameTid3[4] = {0};
 	for (int i = 0; i < 3; i++) {
-		gameTid3[i] = gameTid[CURPOSSCRN][i];
+		gameTid3[i] = gameTid[cursorPosOnScreen][i];
 	}
 
 	CIniFile esrbInfo("nitro:/ESRB.ini");
@@ -42,7 +43,7 @@ void createEsrbSplash(void) {
 		// Search for games starting sideways
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(sidewaysGameList)/sizeof(sidewaysGameList[0]); i++) {
-			if (memcmp(gameTid[CURPOSSCRN], sidewaysGameList[i], 3) == 0) {
+			if (memcmp(gameTid[cursorPosOnScreen], sidewaysGameList[i], 3) == 0) {
 				// Found match
 				sideways = true;
 				break;

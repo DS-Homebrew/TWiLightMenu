@@ -75,6 +75,8 @@
 
 extern u16* colorTable;
 
+extern int cursorPosOnScreen;
+
 static int iconTexID[4];
 static int folderTexID;
 sNDSHeaderExt ndsHeader;

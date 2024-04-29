@@ -34,7 +34,6 @@
 
 #include "../iconTitle.h"
 #include "graphics.h"
-#include "fileBrowse.h"
 #include "fontHandler.h"
 #include "../ndsheaderbanner.h"
 #include "../errorScreen.h"
@@ -71,6 +70,8 @@ extern int spawnedtitleboxes;
 extern bool startMenu;
 
 extern int startMenu_cursorPosition;
+
+extern int cursorPosOnScreen;
 
 bool showdialogbox = false;
 int dialogboxHeight = 0;
@@ -584,13 +585,15 @@ void vBlankHandler()
 		glColor(RGB15(31, 31, 31));
 
 		for (int i = 0; i < 4; i++) {
-			const int num = ((i+CURPOS) % 4);
-			if (isDirectory[num]) drawIconFolder(4, 24+(i*36));
-			else drawIcon(num, 4, 24+(i*36));
+			if (cursorPosOnScreen == i) {
+				glBoxFilled(0, 22+(i*36), 255, 22+35+(i*36), startBorderColor);
+			}
+			if (isDirectory[i]) drawIconFolder(4, 24+(i*36));
+			else drawIcon(i, 4, 24+(i*36));
 			// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 			// Playback animated icons
-			if (bnriconisDSi[num]) {
-				playBannerSequence(num);
+			if (bnriconisDSi[i]) {
+				playBannerSequence(i);
 			}
 		}
 		if (showdialogbox) {

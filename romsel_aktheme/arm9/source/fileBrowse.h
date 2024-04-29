@@ -26,7 +26,6 @@
 #include <vector>
 
 #define CURPOS (ms().cursorPosition[ms().secondaryDevice])
-#define CURPOSSCRN (ms().cursorPosition[ms().secondaryDevice] % 4)
 #define PAGENUM (ms().pagenum[ms().secondaryDevice])
 
 //#define EMULATE_FILES
