@@ -589,8 +589,8 @@ void vBlankHandler()
 			if (cursorPosOnScreen == i) {
 				glBoxFilled(2, 19+(i*38), 253, 19+37+(i*38), selectionBarColor1); // Draw selection bar
 			}
-			if (isDirectory[i]) drawIconFolder(4, 22+(i*38));
-			else drawIcon(i, 4, 22+(i*38));
+			if (isDirectory[i]) drawIconFolder(5, 22+(i*38));
+			else drawIcon(i, 5, 22+(i*38));
 			// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 			// Playback animated icons
 			if (bnriconisDSi[i]) {
