@@ -93,6 +93,8 @@ static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
+std::string iniPath;
+
 int mpuregion = 0;
 int mpusize = 0;
 

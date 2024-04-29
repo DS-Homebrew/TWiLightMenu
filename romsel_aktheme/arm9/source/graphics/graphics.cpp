@@ -93,6 +93,7 @@ u16* colorTable = NULL;
 u16 startBorderColor = 0;
 static u16 windowColorTop = 0;
 static u16 windowColorBottom = 0;
+static u16 selectionBarColor1 = 0x5c00;
 
 void ClearBrightness(void) {
 	fadeType = true;
@@ -586,7 +587,7 @@ void vBlankHandler()
 
 		for (int i = 0; i < 4; i++) {
 			if (cursorPosOnScreen == i) {
-				glBoxFilled(0, 22+(i*36), 255, 22+35+(i*36), startBorderColor);
+				glBoxFilled(0, 22+(i*36), 255, 22+35+(i*36), selectionBarColor1);
 			}
 			if (isDirectory[i]) drawIconFolder(4, 24+(i*36));
 			else drawIcon(i, 4, 24+(i*36));
@@ -734,6 +735,15 @@ void graphicsLoad()
 
 	dmaCopyHalfWordsAsynch(0, topImage[0], topImageWithText[0], 0x18000);
 	dmaCopyHalfWordsAsynch(1, topImage[1], topImageWithText[1], 0x18000);
+
+	extern std::string iniPath;
+	iniPath = themePath + "/uisettings.ini";
+	if (access(themePath.c_str(), F_OK) != 0) {
+		iniPath = "nitro:/themes/zelda/uisettings.ini";
+	}
+
+	CIniFile ini( iniPath.c_str() );
+	selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24));
 
 	// Initialize the bottom background
 	// bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
