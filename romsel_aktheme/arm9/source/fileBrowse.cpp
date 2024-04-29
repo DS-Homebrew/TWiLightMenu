@@ -433,10 +433,6 @@ void refreshBanners(const int screenOffset, std::vector<DirEntry> dirContents) {
 }
 
 void mdRomTooBig(void) {
-	if (ms().macroMode) {
-		lcdMainOnBottom();
-		lcdSwapped = true;
-	}
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
@@ -456,18 +452,9 @@ void mdRomTooBig(void) {
 	showdialogbox = false;
 	dialogboxHeight = 0;
 	updateText(false);
-
-	if (ms().macroMode) {
-		lcdMainOnTop();
-		lcdSwapped = false;
-	}
 }
 
 void ramDiskMsg(void) {
-	if (ms().macroMode) {
-		lcdMainOnBottom();
-		lcdSwapped = true;
-	}
 	dialogboxHeight = 1;
 	showdialogbox = true;
 	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
@@ -485,20 +472,11 @@ void ramDiskMsg(void) {
 	showdialogbox = false;
 	dialogboxHeight = 0;
 	updateText(false);
-
-	if (ms().macroMode) {
-		lcdMainOnTop();
-		lcdSwapped = false;
-	}
 }
 
 bool dsiBinariesMissingMsg(void) {
 	bool proceedToLaunch = false;
 
-	if (ms().macroMode) {
-		lcdMainOnBottom();
-		lcdSwapped = true;
-	}
 	dialogboxHeight = 2;
 	showdialogbox = true;
 	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
@@ -529,11 +507,6 @@ bool dsiBinariesMissingMsg(void) {
 	dialogboxHeight = 0;
 	updateText(false);
 
-	if (ms().macroMode) {
-		lcdMainOnTop();
-		lcdSwapped = false;
-	}
-
 	return proceedToLaunch;
 }
 
@@ -553,10 +526,6 @@ bool donorRomMsg(void) {
 		}
 	}
 
-	if (ms().macroMode) {
-		lcdMainOnBottom();
-		lcdSwapped = true;
-	}
 	bool ubongo = (memcmp(gameTid[cursorPosOnScreen], "KUB", 3) == 0);
 	int msgPage = 0;
 	bool pageLoaded = false;
@@ -654,11 +623,6 @@ bool donorRomMsg(void) {
 	showdialogbox = false;
 	dialogboxHeight = 0;
 
-	if (ms().macroMode) {
-		lcdMainOnTop();
-		lcdSwapped = false;
-	}
-
 	return proceedToLaunch;
 }
 
@@ -700,10 +664,6 @@ bool checkForCompatibleGame(const char *filename) {
 
 	if (proceedToLaunch) return true;	// Game is compatible
 
-	if (ms().macroMode) {
-		lcdMainOnBottom();
-		lcdSwapped = true;
-	}
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printSmall(false, 0, 74, "Compatibility Warning", Alignment::center, FontPalette::white);
@@ -734,11 +694,6 @@ bool checkForCompatibleGame(const char *filename) {
 	showdialogbox = false;
 	dialogboxHeight = 0;
 	updateText(false);
-
-	if (!proceedToLaunch && ms().macroMode) {
-		lcdMainOnTop();
-		lcdSwapped = false;
-	}
 
 	return proceedToLaunch;
 }
@@ -779,10 +734,6 @@ bool checkForGbaBiosRequirement(const char* filename) {
 bool cannotLaunchMsg(char tid1) {
 	bool res = false;
 
-	if (ms().macroMode) {
-		lcdMainOnBottom();
-		lcdSwapped = true;
-	}
 	showdialogbox = true;
 	printSmall(false, 0, 74, isTwlm[cursorPosOnScreen] ? "Information" : "Error!", Alignment::center, FontPalette::white);
 	if (!isTwlm[cursorPosOnScreen] && bnrRomType[cursorPosOnScreen] == 0 && sys().isRegularDS()) {
@@ -810,10 +761,6 @@ bool cannotLaunchMsg(char tid1) {
 		}
 	}
 	showdialogbox = false;
-	if (ms().macroMode) {
-		lcdMainOnTop();
-		lcdSwapped = false;
-	}
 	for (int i = 0; i < 25; i++) swiWaitForVBlank();
 
 	return res;
@@ -826,10 +773,6 @@ bool dsiWareInDSModeMsg(void) {
 
 	bool proceedToLaunch = true;
 
-	if (ms().macroMode) {
-		lcdMainOnBottom();
-		lcdSwapped = true;
-	}
 	dialogboxHeight = 4;
 	showdialogbox = true;
 	printSmall(false, 0, 74, "Compatibility Warning", Alignment::center, FontPalette::white);
@@ -866,11 +809,6 @@ bool dsiWareInDSModeMsg(void) {
 	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
-
-	if (ms().macroMode) {
-		lcdMainOnTop();
-		lcdSwapped = false;
-	}
 
 	return proceedToLaunch;
 }
@@ -957,10 +895,6 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 
 	bool proceedToLaunch = true;
 
-	if (ms().macroMode) {
-		lcdMainOnBottom();
-		lcdSwapped = true;
-	}
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printSmall(false, 0, 74, ((msgId == 10 || msgId == 11) && !sys().isRegularDS()) ? "Error!" : "Compatibility Warning", Alignment::center, FontPalette::white);
@@ -1079,11 +1013,6 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	dialogboxHeight = 0;
 	updateText(false);
 
-	if (!proceedToLaunch && ms().macroMode) {
-		lcdMainOnTop();
-		lcdSwapped = false;
-	}
-
 	return proceedToLaunch;
 }
 
@@ -1115,11 +1044,6 @@ bool dsiWareCompatibleB4DS(void) {
 }
 
 std::string browseForFile(const std::vector<std::string_view> extensionList) {
-	if (ms().macroMode) {
-		lcdMainOnTop();
-		lcdSwapped = false;
-	}
-
 	gameOrderIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
 	recentlyPlayedIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/recentlyplayed.ini";
 	timesPlayedIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/timesplayed.ini";
@@ -1323,11 +1247,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 
 				if (hasAP > 0) {
-					if (ms().macroMode) {
-						lcdMainOnBottom();
-						lcdSwapped = true;
-					}
-
 					dialogboxHeight = 3;
 					showdialogbox = true;
 					printSmall(false, 0, 74, "Anti-Piracy Warning", Alignment::center, FontPalette::white);
@@ -1363,15 +1282,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							break;
 						}
 					}
-					clearText(false);
 					showdialogbox = false;
 					dialogboxHeight = 0;
 
-					if (!proceedToLaunch && ms().macroMode) {
-						updateText(false);
-						lcdMainOnTop();
-						lcdSwapped = false;
-					}
 					refreshBanners(screenOffset, dirContents);
 				}
 
@@ -1379,11 +1292,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				extern struct statvfs st[2];
 				if ((useBootstrapAnyway || isDSiWare[cursorPosOnScreen]) && bnrRomType[cursorPosOnScreen] == 0 && (!isDSiWare[cursorPosOnScreen] || (ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode))) && isHomebrew[cursorPosOnScreen] == 0
 				 && proceedToLaunch && st[ms().secondaryDevice].f_bsize < (32 << 10) && !ms().dontShowClusterWarning) {
-					if (ms().macroMode) {
-						lcdMainOnBottom();
-						lcdSwapped = true;
-					}
-
 					dialogboxHeight = 5;
 					showdialogbox = true;
 					// Clear location text
@@ -1418,18 +1326,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							break;
 						}
 					}
-					clearText(false);
 					showdialogbox = false;
 					dialogboxHeight = 0;
-
-					if (!proceedToLaunch && ms().macroMode) {
-						updateText(false);
-						lcdMainOnTop();
-						lcdSwapped = false;
-					}
+					refreshBanners(screenOffset, dirContents);
 				}
 
-				refreshBanners(screenOffset, dirContents);
 				if (proceedToLaunch) {
 					applaunch = true;
 
@@ -1513,11 +1414,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		}
 
 		if ((pressed & KEY_X) && !ms().kioskMode && !ms().preventDeletion && dirContents.at(fileOffset).name != "..") {
-			if (ms().macroMode) {
-				lcdMainOnBottom();
-				lcdSwapped = true;
-			}
-
 			DirEntry *entry = &dirContents.at(fileOffset);
 			bool unHide = (FAT_getAttr(entry->name.c_str()) & ATTR_HIDDEN || (strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != ".."));
 
@@ -1587,14 +1483,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					break;
 				}
 			}
-			clearText(false);
 			showdialogbox = false;
-			updateText(false);
 
-			if (ms().macroMode) {
-				lcdMainOnTop();
-				lcdSwapped = false;
-			}
 			refreshBanners(screenOffset, dirContents);
 			for (int i = 0; i < 25; i++) swiWaitForVBlank();
 		}
