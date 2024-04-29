@@ -1208,6 +1208,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				CURPOS = 0;
 				PAGENUM = 0;
 				ms().saveSettings();
+				cursorPosOnScreen = 0;
 
 				return "null";
 			} else {
@@ -1580,6 +1581,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 					}
 					ms().saveSettings();
+					cursorPosOnScreen = 0;
 					return "null";
 				}
 
