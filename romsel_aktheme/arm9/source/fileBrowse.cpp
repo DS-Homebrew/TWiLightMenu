@@ -1150,13 +1150,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	fadeType = true;	// Fade in from white
 
 	while (true) {
-		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
-		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
-
-
-		// iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
-		// titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str()); // clearText(false) is run
-
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
 			scanKeys();
@@ -1183,8 +1176,15 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			cursorPosOnScreen = 3;
 		}
 
-		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
-		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
+		if (fileOffset < 0) {
+			fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
+			cursorPosOnScreen = file_count-1;
+			if (cursorPosOnScreen > 3) cursorPosOnScreen = 3;
+		}
+		if (fileOffset > ((int)dirContents.size() - 1)) {
+			fileOffset = 0;		// Wrap around to top of list
+			cursorPosOnScreen = 0;
+		}
 
 		// Scroll screen if needed
 		if (fileOffset < screenOffset) {
@@ -1496,6 +1496,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			}
 			ms().secondaryDevice = !ms().secondaryDevice;
 			ms().saveSettings();
+			cursorPosOnScreen = 0;
 			return "null";
 		}
 
@@ -1507,6 +1508,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			CURPOS = 0;
 			PAGENUM = 0;
 			ms().saveSettings();
+			cursorPosOnScreen = 0;
 			return "null";
 		}
 
