@@ -1065,7 +1065,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	// Scroll screen if needed
 	if (fileOffset > screenOffset + entriesPerScreen - 1) {
 		screenOffset = fileOffset - entriesPerScreen + 1;
-		cursorPosOnScreen = 0;
+		cursorPosOnScreen = 3;
 	}
 
 	loadIcons(screenOffset, dirContents);
