@@ -738,7 +738,7 @@ void graphicsLoad()
 
 	extern std::string iniPath;
 	iniPath = themePath + "/uisettings.ini";
-	if (access(themePath.c_str(), F_OK) != 0) {
+	if (access(iniPath.c_str(), F_OK) != 0) {
 		iniPath = "nitro:/themes/zelda/uisettings.ini";
 	}
 

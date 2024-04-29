@@ -13,9 +13,22 @@ enum class Alignment {
 	right,
 };
 enum class FontPalette {
-	black = 0,
-	white = 1,
-	user = 2
+	black,
+	white,
+	user,
+	formText,
+	formTitleText,
+	buttonText,
+	spinBoxText,
+	spinBoxTextHiLight,
+	listText,
+	listTextHighLight,
+	popMenuText,
+	popMenuTextHighLight,
+	startText,
+	mainText,
+	mainTextHilight,
+	folderText
 };
 
 class FontGraphic {

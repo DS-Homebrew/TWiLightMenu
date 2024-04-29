@@ -315,7 +315,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	const int yPos = 12;
 
 	// Print the path
-	printSmall(true, xPos, 0, path, Alignment::left, FontPalette::black);
+	printSmall(true, xPos, 0, path, Alignment::left, FontPalette::folderText);
 
 	// Print directory listing
 	for (int i = 0; i < ((int)dirContents.size() - startRow) && i < ENTRIES_PER_SCREEN; i++) {
@@ -331,7 +331,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
 
 	getcwd(path, PATH_MAX);
-	printSmall(false, 2, 2, path, Alignment::left, FontPalette::black);
+	printSmall(false, 2, 2, path, Alignment::left, FontPalette::folderText);
 
 	int n = 0;
 	for (int i = screenOffset; i < screenOffset+4; i++) {
@@ -407,7 +407,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 		}
 
 		iconUpdate(n, isDirectory[n], dirContents.at(i).name.c_str());
-		titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str());
+		titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
 		n++;
 	}
 
@@ -418,14 +418,14 @@ void refreshBanners(const int screenOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
 
 	getcwd(path, PATH_MAX);
-	printSmall(false, 2, 2, path, Alignment::left, FontPalette::black);
+	printSmall(false, 2, 2, path, Alignment::left, FontPalette::folderText);
 
 	int n = 0;
 	for (int i = screenOffset; i < screenOffset+4; i++) {
 		if (i > file_count) {
 			break;
 		}
-		titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str());
+		titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
 		n++;
 	}
 
@@ -1115,13 +1115,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		// Scroll screen if needed
 		if (fileOffset < screenOffset) {
 			screenOffset = fileOffset;
-			loadIcons(screenOffset, dirContents);
 			cursorPosOnScreen = 0;
-		}
-		if (fileOffset > screenOffset + entriesPerScreen - 1) {
-			screenOffset = fileOffset - entriesPerScreen + 1;
 			loadIcons(screenOffset, dirContents);
+		} else if (fileOffset > screenOffset + entriesPerScreen - 1) {
+			screenOffset = fileOffset - entriesPerScreen + 1;
 			cursorPosOnScreen = 3;
+			loadIcons(screenOffset, dirContents);
+		} else {
+			refreshBanners(screenOffset, dirContents);
 		}
 
 		if (pressed & KEY_A) {

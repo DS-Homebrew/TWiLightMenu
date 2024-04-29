@@ -101,20 +101,20 @@ void iconTitleInit()
 	tilesModified = new u8[(32 * 256) / 2];
 }
 
-static inline void writeBannerText(const int num, std::string_view text)
+static inline void writeBannerText(const int num, std::string_view text, const bool highlighted)
 {
 	const int xPos = BOX_PX;
 	const int yPos = BOX_PY + (num * 38);
-	const FontPalette bannerFontPalette = FontPalette::black;
+	const FontPalette bannerFontPalette = highlighted ? FontPalette::mainTextHilight : FontPalette::mainText;
 
 	printSmall(false, xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::left, bannerFontPalette);
 }
 
-static inline void writeBannerText(const int num, std::u16string_view text)
+static inline void writeBannerText(const int num, std::u16string_view text, const bool highlighted)
 {
 	const int xPos = BOX_PX;
 	const int yPos = BOX_PY + (num * 38);
-	const FontPalette bannerFontPalette = FontPalette::black;
+	const FontPalette bannerFontPalette = highlighted ? FontPalette::mainTextHilight : FontPalette::mainText;
 
 	printSmall(false, xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::left, bannerFontPalette);
 }
@@ -1391,22 +1391,22 @@ void iconUpdate(int num, bool isDir, const char* name)
 	}
 }
 
-void titleUpdate(int num, bool isDir, const char* name)
+void titleUpdate(int num, bool isDir, const char* name, const bool highlighted)
 {
 	if (isDir) {
 		// text
 		if (strcmp(name, "..") == 0) {
-			writeBannerText(num, "Back");
+			writeBannerText(num, "Back", highlighted);
 		} else {
-			writeBannerText(num, name);
+			writeBannerText(num, name, highlighted);
 		}
 	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound[num]) {
 		// this is an nds/app file!
 		// or a file with custom banner text
 		if (infoFound[num]) {
-			writeBannerText(num, cachedTitle[num]);
+			writeBannerText(num, cachedTitle[num], highlighted);
 		} else {
-			writeBannerText(num, name);
+			writeBannerText(num, name, highlighted);
 		}
 	} else {
 		std::vector<std::string> lines;
@@ -1445,6 +1445,6 @@ void titleUpdate(int num, bool isDir, const char* name)
 			out += line + '\n';
 		}
 		out.pop_back();
-		writeBannerText(num, out);
+		writeBannerText(num, out, highlighted);
 	}
 }

@@ -5,6 +5,7 @@
 
 #include "common/twlmenusettings.h"
 #include "common/flashcard.h"
+#include "common/inifile.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "myDSiMode.h"
@@ -34,6 +35,9 @@ void fontInit() {
 	if (largeFont)
 		delete largeFont;
 
+	extern std::string iniPath;
+	CIniFile ini( iniPath.c_str() );
+
 	u16 palette[] = {
 		0x0000,
 		0x0000,
@@ -46,7 +50,59 @@ void fontInit() {
 		0x0000,
 		0x0000,
 		0x0000,
-		startBorderColor
+		startBorderColor,
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("global settings", "formTextColor", RGB15(17,12,0)),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("global settings", "formTitleTextColor", RGB15(11,11,11)),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("global settings", "buttonTextColor", RGB15(17,12,0)),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("global settings", "spinBoxTextColor", RGB15(31,31,31)),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("global settings", "spinBoxTextHiLightColor", RGB15(31,31,31)),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("global settings", "listTextColor", 0),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("global settings", "listTextHighLightColor", 0),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("global settings", "popMenuTextColor", RGB15(0,0,0)),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("global settings", "popMenuTextHighLightColor", RGB15(31,31,31)),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("start button", "textColor", 0x7fff),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("main list", "textColor", RGB15(7, 7, 7)),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("main list", "textColorHilight", RGB15(31, 0, 31)),
+		0x0000,
+		0x0000,
+		0x0000,
+		ini.GetInt("folder text", "color", 0)
 	};
 
 	// Load font graphics
@@ -55,6 +111,19 @@ void fontInit() {
 	if (colorTable) {
 		palette[3] = colorTable[palette[3]];
 		palette[7] = colorTable[palette[7]];
+		palette[15] = colorTable[palette[15]]; // formTextColor
+		palette[19] = colorTable[palette[19]]; // formTitleTextColor
+		palette[23] = colorTable[palette[23]]; // buttonTextColor
+		palette[27] = colorTable[palette[27]]; // spinBoxTextColor
+		palette[31] = colorTable[palette[31]]; // spinBoxTextHiLightColor
+		palette[35] = colorTable[palette[35]]; // listTextColor
+		palette[39] = colorTable[palette[39]]; // listTextHighLightColor
+		palette[43] = colorTable[palette[43]]; // popMenuTextColor
+		palette[47] = colorTable[palette[47]]; // popMenuTextHighLightColor
+		palette[51] = colorTable[palette[51]]; // start button: textColor
+		palette[55] = colorTable[palette[55]]; // main list: textColor
+		palette[59] = colorTable[palette[59]]; // main list: textColorHilight
+		palette[63] = colorTable[palette[63]]; // folder text: color
 	}
 	// Load palettes
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
