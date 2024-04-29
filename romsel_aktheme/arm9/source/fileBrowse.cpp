@@ -330,6 +330,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
 
+	getcwd(path, PATH_MAX);
+	printSmall(false, 2, 2, path, Alignment::left, FontPalette::black);
+
 	int n = 0;
 	for (int i = screenOffset; i < screenOffset+4; i++) {
 		if (i > file_count) {
@@ -413,6 +416,9 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 void refreshBanners(const int screenOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
+
+	getcwd(path, PATH_MAX);
+	printSmall(false, 2, 2, path, Alignment::left, FontPalette::black);
 
 	int n = 0;
 	for (int i = screenOffset; i < screenOffset+4; i++) {
