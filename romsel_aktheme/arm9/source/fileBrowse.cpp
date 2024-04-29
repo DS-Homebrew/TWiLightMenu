@@ -1133,6 +1133,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	const int entriesPerScreen = ENTRIES_PER_SCREEN;
 
 	fileOffset = CURPOS;
+	cursorPosOnScreen = fileOffset;
 	if (PAGENUM > 0) {
 		fileOffset += PAGENUM*40;
 	}
@@ -1140,6 +1141,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	// Scroll screen if needed
 	if (fileOffset > screenOffset + entriesPerScreen - 1) {
 		screenOffset = fileOffset - entriesPerScreen + 1;
+		cursorPosOnScreen = 0;
 	}
 
 	loadIcons(screenOffset, dirContents);
@@ -1208,7 +1210,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				CURPOS = 0;
 				PAGENUM = 0;
 				ms().saveSettings();
-				cursorPosOnScreen = 0;
 
 				return "null";
 			} else {
@@ -1497,7 +1498,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			}
 			ms().secondaryDevice = !ms().secondaryDevice;
 			ms().saveSettings();
-			cursorPosOnScreen = 0;
 			return "null";
 		}
 
@@ -1509,7 +1509,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			CURPOS = 0;
 			PAGENUM = 0;
 			ms().saveSettings();
-			cursorPosOnScreen = 0;
 			return "null";
 		}
 
@@ -1581,7 +1580,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 					}
 					ms().saveSettings();
-					cursorPosOnScreen = 0;
 					return "null";
 				}
 
