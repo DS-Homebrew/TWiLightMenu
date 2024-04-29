@@ -587,10 +587,10 @@ void vBlankHandler()
 
 		for (int i = 0; i < 4; i++) {
 			if (cursorPosOnScreen == i) {
-				glBoxFilled(0, 22+(i*36), 255, 22+35+(i*36), selectionBarColor1);
+				glBoxFilled(0, 19+(i*38), 255, 19+37+(i*38), selectionBarColor1);
 			}
-			if (isDirectory[i]) drawIconFolder(4, 24+(i*36));
-			else drawIcon(i, 4, 24+(i*36));
+			if (isDirectory[i]) drawIconFolder(4, 22+(i*38));
+			else drawIcon(i, 4, 22+(i*38));
 			// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 			// Playback animated icons
 			if (bnriconisDSi[i]) {
@@ -744,6 +744,9 @@ void graphicsLoad()
 
 	CIniFile ini( iniPath.c_str() );
 	selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24));
+	if (colorTable) {
+		selectionBarColor1 = colorTable[selectionBarColor1];
+	}
 
 	// Initialize the bottom background
 	// bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);

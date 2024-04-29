@@ -2,7 +2,7 @@
 #define ICONTITLE_H
 
 #define BOX_PX				40
-#define BOX_PY				40
+#define BOX_PY				37
 
 void iconTitleInit();
 void loadConsoleIcons();

@@ -104,7 +104,7 @@ void iconTitleInit()
 static inline void writeBannerText(const int num, std::string_view text)
 {
 	const int xPos = BOX_PX;
-	const int yPos = BOX_PY + (num * 36);
+	const int yPos = BOX_PY + (num * 38);
 	const FontPalette bannerFontPalette = FontPalette::black;
 
 	printSmall(false, xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::left, bannerFontPalette);
@@ -113,7 +113,7 @@ static inline void writeBannerText(const int num, std::string_view text)
 static inline void writeBannerText(const int num, std::u16string_view text)
 {
 	const int xPos = BOX_PX;
-	const int yPos = BOX_PY + (num * 36);
+	const int yPos = BOX_PY + (num * 38);
 	const FontPalette bannerFontPalette = FontPalette::black;
 
 	printSmall(false, xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::left, bannerFontPalette);
