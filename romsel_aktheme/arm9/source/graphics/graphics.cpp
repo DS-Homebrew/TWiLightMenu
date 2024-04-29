@@ -742,10 +742,12 @@ void graphicsLoad()
 		iniPath = "nitro:/themes/zelda/uisettings.ini";
 	}
 
-	CIniFile ini( iniPath.c_str() );
-	selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24));
-	if (colorTable) {
-		selectionBarColor1 = colorTable[selectionBarColor1];
+	{
+		CIniFile ini( iniPath.c_str() );
+		selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24));
+		if (colorTable) {
+			selectionBarColor1 = colorTable[selectionBarColor1];
+		}
 	}
 
 	// Initialize the bottom background
