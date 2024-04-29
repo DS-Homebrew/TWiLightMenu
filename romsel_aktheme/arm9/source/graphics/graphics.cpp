@@ -587,7 +587,7 @@ void vBlankHandler()
 
 		for (int i = 0; i < 4; i++) {
 			if (cursorPosOnScreen == i) {
-				glBoxFilled(0, 19+(i*38), 255, 19+37+(i*38), selectionBarColor1);
+				glBoxFilled(2, 19+(i*38), 253, 19+37+(i*38), selectionBarColor1); // Draw selection bar
 			}
 			if (isDirectory[i]) drawIconFolder(4, 22+(i*38));
 			else drawIcon(i, 4, 22+(i*38));
