@@ -1613,9 +1613,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 			}
 			ms().saveSettings();
-			clearText();
-			updateText(true);
-			updateText(false);
 			startMenu = true;
 			return "null";		
 		}
