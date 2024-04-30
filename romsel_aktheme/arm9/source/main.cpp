@@ -819,7 +819,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_B));
 	vector<char *> argarray;
-	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
+	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr"));
 	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 	stop();
 }
@@ -1549,7 +1549,7 @@ int akTheme(void) {
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_B));
 					vector<char *> argarray;
-					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
+					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr"));
 					runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 					stop();
 				}
@@ -1803,7 +1803,7 @@ int akTheme(void) {
 							swiWaitForVBlank();
 						} while (!(pressed & KEY_B));
 						vector<char *> argarray;
-						argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
+						argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr"));
 						runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 					} else {
 						ms().romPath[ms().secondaryDevice] = argarray[0];
@@ -1918,7 +1918,7 @@ int akTheme(void) {
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_B));
 					vector<char *> argarray;
-					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
+					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr"));
 					runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 				}
 			} else {
@@ -2415,7 +2415,7 @@ int akTheme(void) {
 					swiWaitForVBlank();
 				} while (!(pressed & KEY_B));
 				vector<char *> argarray;
-				argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
+				argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr"));
 				runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 			}
 
