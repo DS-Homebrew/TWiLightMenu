@@ -201,9 +201,8 @@ bool useBackend = false;
 using namespace std;
 
 int cursorPosOnScreen = 0;
-
-bool titleboxXmoveleft = false;
-bool titleboxXmoveright = false;
+int startTextX = 4;
+int startTextY = 172;
 
 bool applaunchprep = false;
 
@@ -1098,15 +1097,26 @@ int akTheme(void) {
 	graphicsLoad();
 	fontInit();
 
+	{
+		CIniFile ini( iniPath.c_str() );
+		startTextX = ini.GetInt("start button", "x", startTextX);
+		startTextY = ini.GetInt("start button", "y", startTextY);
+		int w = ini.GetInt("start button", "w", 48);
+		int h = ini.GetInt("start button", "h", 18);
+
+		startTextX += w/4;
+		startTextY += h/4;
+	}
+
 	iconTitleInit();
 
 	char path[256];
 
 	if (copyDSiWareSavBack) {
-		// printSmall(false, 0, 16, "If this takes a while, close", Alignment::center, FontPalette::white);
-		// printSmall(false, 0, 24, "and open the console's lid.", Alignment::center, FontPalette::white);
-		printSmall(false, 0, 88, "Now copying data...", Alignment::center, FontPalette::white);
-		printSmall(false, 0, 96, "Do not turn off the power.", Alignment::center, FontPalette::white);
+		// printSmall(false, 0, 16, "If this takes a while, close", Alignment::center, FontPalette::mainText);
+		// printSmall(false, 0, 24, "and open the console's lid.", Alignment::center, FontPalette::mainText);
+		printSmall(false, 0, 88, "Now copying data...", Alignment::center, FontPalette::mainText);
+		printSmall(false, 0, 96, "Do not turn off the power.", Alignment::center, FontPalette::mainText);
 		updateText(false);
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", ms().dsiWarePubPath.c_str());
