@@ -1463,7 +1463,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";
 		}
 
-		if ((pressed & KEY_B) && ms().showDirectories) {
+		if (((pressed & KEY_L) || (pressed & KEY_B)) && ms().showDirectories) {
 			// Go up a directory
 			chdir ("..");
 			char buf[256];
