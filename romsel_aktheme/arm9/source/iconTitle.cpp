@@ -1393,14 +1393,10 @@ void iconUpdate(int num, bool isDir, const char* name)
 
 void titleUpdate(int num, bool isDir, const char* name, const bool highlighted)
 {
-	if (isDir) {
+	if (isDir && (strcmp(name, "..") == 0)) {
 		// text
-		if (strcmp(name, "..") == 0) {
-			writeBannerText(num, "Back", highlighted);
-		} else {
-			writeBannerText(num, name, highlighted);
-		}
-	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound[num]) {
+		writeBannerText(num, "Back", highlighted);
+	} else if (!isDir && (ms().ak_viewMode == TWLSettings::EViewInternal) && (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound[num])) {
 		// this is an nds/app file!
 		// or a file with custom banner text
 		if (infoFound[num]) {
@@ -1414,7 +1410,7 @@ void titleUpdate(int num, bool isDir, const char* name, const bool highlighted)
 
 		for (uint i = 0; i < lines.size(); i++) {
 			int width = calcSmallFontWidth(lines[i]);
-			if (width > 256-40) {
+			if (width > 214) {
 				int mid = lines[i].length() / 2;
 				bool foundSpace = false;
 				for (uint j = 0; j < lines[i].length() / 2; j++) {

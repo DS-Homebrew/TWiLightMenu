@@ -26,12 +26,12 @@ public:
 	// 	EScrollSlow = 16
 	// };
 
-	// enum TViewMode : int
-	// {
-	// 	EViewList = 0,
-	// 	EViewIcon = 1,
-	// 	EViewInternal = 2
-	// };
+	enum TViewMode : int
+	{
+		EViewList = 0,
+		EViewIcon = 1,
+		EViewInternal = 2
+	};
 
 	// Do not reorder these, just add to the end
 	enum TLanguage : int
@@ -349,7 +349,7 @@ public:
 	bool smsGgInRam;
 	bool esrbRatingScreen;
 
-	// int ak_viewMode;
+	int ak_viewMode;
 	// int ak_scrollSpeed;
 	// bool ak_zoomIcons;
 	std::string ak_theme;

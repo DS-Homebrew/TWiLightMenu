@@ -91,6 +91,7 @@ u16 topImageWithText[2][256*192];
 u16 bottomImageWithBar[2][256*192];
 u16* colorTable = NULL;
 
+bool displayIcons = false;
 u16 startBorderColor = 0;
 static u16 windowColorTop = 0;
 static u16 windowColorBottom = 0;
@@ -232,12 +233,15 @@ u16 convertToDsBmp(u16 val) {
 // }
 
 void updateSelectionBar(void) {
-	static int prevCurPos = 4;
-	if (prevCurPos == cursorPosOnScreen) {
+	static int prevCurPos = 20;
+	static int prevViewMode = 3;
+	if (prevCurPos == cursorPosOnScreen && prevViewMode == ms().ak_viewMode) {
 		return;
 	}
-	if (prevCurPos != 4) {
-		for (int y = 19+(prevCurPos*38); y <= 19+37+(prevCurPos*38); y++) {
+	if (prevCurPos != 20) {
+		const int h = (prevViewMode != TWLSettings::EViewList) ? 38 : 11;
+		const int hl = h-1;
+		for (int y = 19+(prevCurPos*h); y <= 19+hl+(prevCurPos*h); y++) {
 			for (int x = 2; x <= 253; x++) {
 				bottomImageWithBar[0][(y*256)+x] = bottomImage[0][(y*256)+x];
 				bottomImageWithBar[1][(y*256)+x] = bottomImage[1][(y*256)+x];
@@ -245,9 +249,11 @@ void updateSelectionBar(void) {
 		}
 	}
 
+	const int h = (ms().ak_viewMode != TWLSettings::EViewList) ? 38 : 11;
+	const int hl = h-1;
 	bool color2 = false;
 	if (selectionBarOpacity == 100) {
-		for (int y = 19+(cursorPosOnScreen*38); y <= 19+37+(cursorPosOnScreen*38); y++) {
+		for (int y = 19+(cursorPosOnScreen*h); y <= 19+hl+(cursorPosOnScreen*h); y++) {
 			for (int x = 2; x <= 253; x++) {
 				const u16 color = color2 ? selectionBarColor2 : selectionBarColor1;
 				bottomImageWithBar[0][(y*256)+x] = color;
@@ -258,7 +264,7 @@ void updateSelectionBar(void) {
 		}
 	} else {
 		const u8 alpha = ((selectionBarOpacity * 32) / 25) * 2;
-		for (int y = 19+(cursorPosOnScreen*38); y <= 19+37+(cursorPosOnScreen*38); y++) {
+		for (int y = 19+(cursorPosOnScreen*h); y <= 19+hl+(cursorPosOnScreen*h); y++) {
 			for (int x = 2; x <= 253; x++) {
 				const u16 color = color2 ? selectionBarColor2 : selectionBarColor1;
 				bottomImageWithBar[0][(y*256)+x] = alphablend(color, bottomImage[0][(y*256)+x], alpha);
@@ -274,6 +280,7 @@ void updateSelectionBar(void) {
 	}
 
 	prevCurPos = cursorPosOnScreen;
+	prevViewMode = ms().ak_viewMode;
 }
 
 static void loadBmp(const bool top, const char* filename) {
@@ -633,16 +640,18 @@ void vBlankHandler()
 		// glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 		glColor(RGB15(31, 31, 31));
 
-		for (int i = 0; i < 4; i++) {
-			/* if (cursorPosOnScreen == i) {
-				glBoxFilled(2, 19+(i*38), 253, 19+37+(i*38), selectionBarColor1); // Draw selection bar
-			} */
-			if (isDirectory[i]) drawIconFolder(5, 22+(i*38));
-			else drawIcon(i, 5, 22+(i*38));
-			// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
-			// Playback animated icons
-			if (bnriconisDSi[i]) {
-				playBannerSequence(i);
+		if (displayIcons) {
+			for (int i = 0; i < 4; i++) {
+				/* if (cursorPosOnScreen == i) {
+					glBoxFilled(2, 19+(i*38), 253, 19+37+(i*38), selectionBarColor1); // Draw selection bar
+				} */
+				if (isDirectory[i]) drawIconFolder(5, 22+(i*38));
+				else drawIcon(i, 5, 22+(i*38));
+				// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
+				// Playback animated icons
+				if (bnriconisDSi[i]) {
+					playBannerSequence(i);
+				}
 			}
 		}
 		if (showdialogbox) {
