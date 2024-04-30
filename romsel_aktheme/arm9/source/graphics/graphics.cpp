@@ -238,6 +238,7 @@ void updateSelectionBar(void) {
 	if (prevCurPos == cursorPosOnScreen && prevViewMode == ms().ak_viewMode) {
 		return;
 	}
+	swiWaitForVBlank();
 	if (prevCurPos != 20) {
 		const int h = (prevViewMode != TWLSettings::EViewList) ? 38 : 11;
 		const int hl = h-1;

@@ -1106,11 +1106,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		}
 		if (pressed & KEY_LEFT) {
 			fileOffset -= entryPageLength;
-			cursorPosOnScreen = 0;
+			cursorPosOnScreen -= entryPageLength;
+			if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
 		}
 		if (pressed & KEY_RIGHT) {
 			fileOffset += entryPageLength;
-			cursorPosOnScreen = entryPageLength;
+			cursorPosOnScreen += entryPageLength;
+			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
 		}
 		if (pressed & KEY_TOUCH) {
 			if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+37) {
