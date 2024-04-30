@@ -94,6 +94,7 @@ static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
 std::string iniPath;
+std::string customIniPath;
 
 int mpuregion = 0;
 int mpusize = 0;
@@ -1112,7 +1113,31 @@ int akTheme(void) {
 		startTextY = startY + startH/5;
 	}
 
+	{
+		CIniFile ini( customIniPath.c_str() );
+		if (ini.GetInt("user name", "show", 0)) {
+			const int x = ini.GetInt("user name", "x", 0);
+			const int y = ini.GetInt("user name", "y", 0);
+
+			char16_t username[11] = {0};
+			tonccpy(username, useTwlCfg ? (s16 *)0x02000448 : PersonalData->name, 10 * sizeof(char16_t));
+
+			printSmall(true, x, y, username, Alignment::left, FontPalette::usernameText);
+			updateText(true);
+		}
+
+		if (ini.GetInt("custom text", "show", 0)) {
+			const int x = ini.GetInt("custom text", "x", 0);
+			const int y = ini.GetInt("custom text", "y", 0);
+
+			printSmall(true, x, y, ini.GetString("custom text", "text", ""), Alignment::left, FontPalette::customText);
+			updateText(true);
+		}
+	}
+
 	iconTitleInit();
+
+	blackScreen = false;
 
 	char path[256];
 
@@ -1132,7 +1157,6 @@ int akTheme(void) {
 		}
 		logPrint("Copied DSiWare save back to flashcard\n");
 		clearText(false);
-		blackScreen = false;
 	}
 
 	while (1) {

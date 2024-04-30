@@ -36,7 +36,9 @@ void fontInit() {
 		delete largeFont;
 
 	extern std::string iniPath;
+	extern std::string customIniPath;
 	CIniFile ini( iniPath.c_str() );
+	CIniFile customIni( customIniPath.c_str() );
 
 	u16 palette[] = {
 		0x0000,
@@ -102,7 +104,15 @@ void fontInit() {
 		0x0000,
 		0x0000,
 		0x0000,
-		ini.GetInt("folder text", "color", 0)
+		ini.GetInt("folder text", "color", 0),
+		0x0000,
+		0x0000,
+		0x0000,
+		customIni.GetInt("user name", "color", 0),
+		0x0000,
+		0x0000,
+		0x0000,
+		customIni.GetInt("custom text", "color", 0)
 	};
 
 	// Load font graphics
@@ -124,6 +134,8 @@ void fontInit() {
 		palette[55] = colorTable[palette[55]]; // main list: textColor
 		palette[59] = colorTable[palette[59]]; // main list: textColorHilight
 		palette[63] = colorTable[palette[63]]; // folder text: color
+		palette[67] = colorTable[palette[67]]; // user name: color
+		palette[71] = colorTable[palette[71]]; // custom text: color
 	}
 	// Load palettes
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
@@ -177,8 +189,8 @@ void updateText(bool top) {
 	if (top) {
 		// Copy buffer to the top screen
 		for (int i = 0; i < 256*192; i++) {
-			topImageWithText[0][i] = (FontGraphic::textBuf[1][i]) ? BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] : topImage[0][i];
-			topImageWithText[1][i] = (FontGraphic::textBuf[1][i]) ? BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] : topImage[1][i];
+			topImageWithText[0][i] = (FontGraphic::textBuf[1][i]) ? (BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] | BIT(15)) : topImage[0][i];
+			topImageWithText[1][i] = (FontGraphic::textBuf[1][i]) ? (BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] | BIT(15)) : topImage[1][i];
 		}
 		return;
 	}

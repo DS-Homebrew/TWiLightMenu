@@ -1520,9 +1520,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				} while (!pressed);
 				
 				if (((pressed & KEY_A) && !isTwlm[cursorPosOnScreen] && !isDirectory[cursorPosOnScreen]) || (pressed & KEY_Y)) {
-					clearText();
+					clearText(false);
 					showdialogbox = false;
-					updateText(true);
 					updateText(false);
 
 					if (pressed & KEY_A && !isDirectory[cursorPosOnScreen]) {

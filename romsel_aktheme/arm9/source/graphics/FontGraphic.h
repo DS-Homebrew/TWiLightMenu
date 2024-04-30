@@ -28,7 +28,9 @@ enum class FontPalette {
 	startText,
 	mainText,
 	mainTextHilight,
-	folderText
+	folderText,
+	usernameText,
+	customText
 };
 
 class FontGraphic {

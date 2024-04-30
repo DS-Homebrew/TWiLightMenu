@@ -798,9 +798,12 @@ void graphicsLoad()
 	dmaCopyHalfWordsAsynch(3, bottomImage[1], bottomImageWithBar[1], 0x18000);
 
 	extern std::string iniPath;
+	extern std::string customIniPath;
 	iniPath = themePath + "/uisettings.ini";
+	customIniPath = themePath + "/custom.ini";
 	if (access(iniPath.c_str(), F_OK) != 0) {
 		iniPath = "nitro:/themes/zelda/uisettings.ini";
+		customIniPath = "nitro:/themes/zelda/custom.ini";
 	}
 
 	{
