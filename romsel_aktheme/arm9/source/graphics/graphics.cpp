@@ -95,6 +95,7 @@ u16 startBorderColor = 0;
 static u16 windowColorTop = 0;
 static u16 windowColorBottom = 0;
 static u16 selectionBarColor1 = 0x5c00;
+static u16 selectionBarColor2 = 0x2d60;
 static u8 selectionBarOpacity = 100;
 
 void ClearBrightness(void) {
@@ -244,24 +245,31 @@ void updateSelectionBar(void) {
 		}
 	}
 
+	bool color2 = false;
 	if (selectionBarOpacity == 100) {
 		for (int y = 19+(cursorPosOnScreen*38); y <= 19+37+(cursorPosOnScreen*38); y++) {
 			for (int x = 2; x <= 253; x++) {
-				bottomImageWithBar[0][(y*256)+x] = selectionBarColor1;
-				bottomImageWithBar[1][(y*256)+x] = selectionBarColor1;
+				const u16 color = color2 ? selectionBarColor2 : selectionBarColor1;
+				bottomImageWithBar[0][(y*256)+x] = color;
+				bottomImageWithBar[1][(y*256)+x] = color;
+				color2 = !color2;
 			}
+			color2 = !color2;
 		}
 	} else {
 		const u8 alpha = ((selectionBarOpacity * 32) / 25) * 2;
 		for (int y = 19+(cursorPosOnScreen*38); y <= 19+37+(cursorPosOnScreen*38); y++) {
 			for (int x = 2; x <= 253; x++) {
-				bottomImageWithBar[0][(y*256)+x] = alphablend(selectionBarColor1, bottomImage[0][(y*256)+x], alpha);
+				const u16 color = color2 ? selectionBarColor2 : selectionBarColor1;
+				bottomImageWithBar[0][(y*256)+x] = alphablend(color, bottomImage[0][(y*256)+x], alpha);
 				if (bottomImage[1][(y*256)+x] == bottomImage[0][(y*256)+x]) {
 					bottomImageWithBar[1][(y*256)+x] = bottomImageWithBar[0][(y*256)+x];
 				} else {
-					bottomImageWithBar[1][(y*256)+x] = alphablend(selectionBarColor1, bottomImage[1][(y*256)+x], alpha);
+					bottomImageWithBar[1][(y*256)+x] = alphablend(color, bottomImage[1][(y*256)+x], alpha);
 				}
+				color2 = !color2;
 			}
+			color2 = !color2;
 		}
 	}
 
@@ -787,6 +795,7 @@ void graphicsLoad()
 	{
 		CIniFile ini( iniPath.c_str() );
 		selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24)) | BIT(15);
+		selectionBarColor2 = ini.GetInt("main list", "selectionBarColor2", RGB15(20, 25, 0)) | BIT(15);
 		selectionBarOpacity = ini.GetInt("main list", "selectionBarOpacity", 100);
 		if (colorTable) {
 			selectionBarColor1 = colorTable[selectionBarColor1];
