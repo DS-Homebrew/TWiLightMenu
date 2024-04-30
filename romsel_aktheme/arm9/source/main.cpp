@@ -1104,8 +1104,8 @@ int akTheme(void) {
 		int w = ini.GetInt("start button", "w", 48);
 		int h = ini.GetInt("start button", "h", 18);
 
-		startTextX += w/4;
-		startTextY += h/4;
+		startTextX += w/5;
+		startTextY += h/5;
 	}
 
 	iconTitleInit();
