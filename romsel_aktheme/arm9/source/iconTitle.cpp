@@ -1414,7 +1414,7 @@ void titleUpdate(int num, bool isDir, const char* name, const bool highlighted)
 
 		for (uint i = 0; i < lines.size(); i++) {
 			int width = calcSmallFontWidth(lines[i]);
-			if (width > 140) {
+			if (width > 256-40) {
 				int mid = lines[i].length() / 2;
 				bool foundSpace = false;
 				for (uint j = 0; j < lines[i].length() / 2; j++) {
