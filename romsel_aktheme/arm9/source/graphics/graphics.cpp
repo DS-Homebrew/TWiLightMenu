@@ -88,12 +88,14 @@ u16 bmpImageBuffer[256*192];
 u16 topImage[2][256*192];
 u16 bottomImage[2][256*192];
 u16 topImageWithText[2][256*192];
+u16 bottomImageWithBar[2][256*192];
 u16* colorTable = NULL;
 
 u16 startBorderColor = 0;
 static u16 windowColorTop = 0;
 static u16 windowColorBottom = 0;
 static u16 selectionBarColor1 = 0x5c00;
+static u8 selectionBarOpacity = 100;
 
 void ClearBrightness(void) {
 	fadeType = true;
@@ -227,6 +229,44 @@ u16 convertToDsBmp(u16 val) {
 // 		}
 // 	}
 // }
+
+void updateSelectionBar(void) {
+	static int prevCurPos = 4;
+	if (prevCurPos == cursorPosOnScreen) {
+		return;
+	}
+	if (prevCurPos != 4) {
+		for (int y = 19+(prevCurPos*38); y <= 19+37+(prevCurPos*38); y++) {
+			for (int x = 2; x <= 253; x++) {
+				bottomImageWithBar[0][(y*256)+x] = bottomImage[0][(y*256)+x];
+				bottomImageWithBar[1][(y*256)+x] = bottomImage[1][(y*256)+x];
+			}
+		}
+	}
+
+	if (selectionBarOpacity == 100) {
+		for (int y = 19+(cursorPosOnScreen*38); y <= 19+37+(cursorPosOnScreen*38); y++) {
+			for (int x = 2; x <= 253; x++) {
+				bottomImageWithBar[0][(y*256)+x] = selectionBarColor1;
+				bottomImageWithBar[1][(y*256)+x] = selectionBarColor1;
+			}
+		}
+	} else {
+		const u8 alpha = ((selectionBarOpacity * 32) / 25) * 2;
+		for (int y = 19+(cursorPosOnScreen*38); y <= 19+37+(cursorPosOnScreen*38); y++) {
+			for (int x = 2; x <= 253; x++) {
+				bottomImageWithBar[0][(y*256)+x] = alphablend(selectionBarColor1, bottomImage[0][(y*256)+x], alpha);
+				if (bottomImage[1][(y*256)+x] == bottomImage[0][(y*256)+x]) {
+					bottomImageWithBar[1][(y*256)+x] = bottomImageWithBar[0][(y*256)+x];
+				} else {
+					bottomImageWithBar[1][(y*256)+x] = alphablend(selectionBarColor1, bottomImage[1][(y*256)+x], alpha);
+				}
+			}
+		}
+	}
+
+	prevCurPos = cursorPosOnScreen;
+}
 
 static void loadBmp(const bool top, const char* filename) {
 	FILE* file = fopen(filename, "rb");
@@ -586,9 +626,9 @@ void vBlankHandler()
 		glColor(RGB15(31, 31, 31));
 
 		for (int i = 0; i < 4; i++) {
-			if (cursorPosOnScreen == i) {
+			/* if (cursorPosOnScreen == i) {
 				glBoxFilled(2, 19+(i*38), 253, 19+37+(i*38), selectionBarColor1); // Draw selection bar
-			}
+			} */
 			if (isDirectory[i]) drawIconFolder(5, 22+(i*38));
 			else drawIcon(i, 5, 22+(i*38));
 			// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
@@ -613,7 +653,7 @@ void vBlankHandler()
 
 	if (doubleBuffer) {
 		dmaCopyHalfWordsAsynch(0, topImageWithText[secondBuffer], BG_GFX_SUB, 0x18000);
-		dmaCopyHalfWordsAsynch(1, bottomImage[secondBuffer], BG_GFX, 0x18000);
+		dmaCopyHalfWordsAsynch(1, bottomImageWithBar[secondBuffer], BG_GFX, 0x18000);
 		secondBuffer = !secondBuffer;
 	}
 
@@ -735,6 +775,8 @@ void graphicsLoad()
 
 	dmaCopyHalfWordsAsynch(0, topImage[0], topImageWithText[0], 0x18000);
 	dmaCopyHalfWordsAsynch(1, topImage[1], topImageWithText[1], 0x18000);
+	dmaCopyHalfWordsAsynch(2, bottomImage[0], bottomImageWithBar[0], 0x18000);
+	dmaCopyHalfWordsAsynch(3, bottomImage[1], bottomImageWithBar[1], 0x18000);
 
 	extern std::string iniPath;
 	iniPath = themePath + "/uisettings.ini";
@@ -744,7 +786,8 @@ void graphicsLoad()
 
 	{
 		CIniFile ini( iniPath.c_str() );
-		selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24));
+		selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24)) | BIT(15);
+		selectionBarOpacity = ini.GetInt("main list", "selectionBarOpacity", 100);
 		if (colorTable) {
 			selectionBarColor1 = colorTable[selectionBarColor1];
 		}
@@ -785,7 +828,7 @@ void graphicsLoad()
 
 	loadConsoleIcons();
 
-	while (dmaBusy(0) || dmaBusy(1)) swiDelay(100);
+	while (dmaBusy(0) || dmaBusy(1) || dmaBusy(2) || dmaBusy(3)) swiDelay(100);
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);

@@ -1076,6 +1076,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	}
 
 	loadIcons(screenOffset, dirContents);
+	updateSelectionBar();
 
 	// showDirectoryContents (dirContents, screenOffset, fileOffset);
 
@@ -1131,6 +1132,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		} else {
 			refreshBanners(screenOffset, dirContents);
 		}
+		updateSelectionBar();
 
 		if (pressed & KEY_A) {
 			DirEntry* entry = &dirContents.at(fileOffset);
