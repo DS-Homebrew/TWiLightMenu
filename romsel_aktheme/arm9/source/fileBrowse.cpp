@@ -83,6 +83,12 @@ extern int cursorPosOnScreen;
 
 extern int startTextX;
 extern int startTextY;
+extern int startX;
+extern int startY;
+extern int startH;
+extern int startW;
+
+extern touchPosition touch;
 
 extern void bgOperations(bool waitFrame);
 
@@ -1088,8 +1094,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		do {
 			scanKeys();
 			pressed = keysDownRepeat();
+			touchRead(&touch);
 			bgOperations(true);
 		} while (!pressed);
+
+		bool selectionTouched = false;
 
 		if (pressed & KEY_UP) {
 			fileOffset--;
@@ -1108,6 +1117,37 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		if (pressed & KEY_RIGHT) {
 			fileOffset += ENTRY_PAGE_LENGTH;
 			cursorPosOnScreen = 3;
+		}
+		if (pressed & KEY_TOUCH) {
+			if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+37) {
+				if (cursorPosOnScreen != 0) {
+					cursorPosOnScreen = 0;
+					fileOffset = screenOffset;
+				} else {
+					selectionTouched = true;
+				}
+			} else if (file_count >= 2 && touch.py >= 19+38 && touch.py <= 19+37+38) {
+				if (cursorPosOnScreen != 1) {
+					cursorPosOnScreen = 1;
+					fileOffset = screenOffset+1;
+				} else {
+					selectionTouched = true;
+				}
+			} else if (file_count >= 3 && touch.py >= 19+(38*2) && touch.py <= 19+37+(38*2)) {
+				if (cursorPosOnScreen != 2) {
+					cursorPosOnScreen = 2;
+					fileOffset = screenOffset+2;
+				} else {
+					selectionTouched = true;
+				}
+			} else if (file_count >= 4 && touch.py >= 19+(38*3) && touch.py <= 19+37+(38*3)) {
+				if (cursorPosOnScreen != 3) {
+					cursorPosOnScreen = 3;
+					fileOffset = screenOffset+3;
+				} else {
+					selectionTouched = true;
+				}
+			}
 		}
 
 		if (fileOffset < 0) {
@@ -1134,7 +1174,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		}
 		updateSelectionBar();
 
-		if (pressed & KEY_A) {
+		if ((pressed & KEY_A) || selectionTouched) {
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
 				// Enter selected directory
@@ -1499,7 +1539,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			for (int i = 0; i < 25; i++) swiWaitForVBlank();
 		}
 
-		if (pressed & KEY_START) {
+		if ((pressed & KEY_START) || ((pressed & KEY_TOUCH) && touch.px >= startX && touch.px < startX+startW && touch.py >= startY && touch.py < startY+startH)) {
 			CURPOS = fileOffset;
 			PAGENUM = 0;
 			for (int i = 0; i < 100; i++) {

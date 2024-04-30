@@ -201,8 +201,12 @@ bool useBackend = false;
 using namespace std;
 
 int cursorPosOnScreen = 0;
-int startTextX = 4;
-int startTextY = 172;
+int startTextX = 0;
+int startTextY = 0;
+int startX = 4;
+int startY = 172;
+int startW = 48;
+int startH = 18;
 
 bool applaunchprep = false;
 
@@ -1099,13 +1103,13 @@ int akTheme(void) {
 
 	{
 		CIniFile ini( iniPath.c_str() );
-		startTextX = ini.GetInt("start button", "x", startTextX);
-		startTextY = ini.GetInt("start button", "y", startTextY);
-		int w = ini.GetInt("start button", "w", 48);
-		int h = ini.GetInt("start button", "h", 18);
+		startX = ini.GetInt("start button", "x", startX);
+		startY = ini.GetInt("start button", "y", startY);
+		startW = ini.GetInt("start button", "w", startW);
+		startH = ini.GetInt("start button", "h", startH);
 
-		startTextX += w/5;
-		startTextY += h/5;
+		startTextX = startX + startW/5;
+		startTextY = startY + startH/5;
 	}
 
 	iconTitleInit();
