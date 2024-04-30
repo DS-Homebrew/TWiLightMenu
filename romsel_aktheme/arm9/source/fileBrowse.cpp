@@ -81,6 +81,7 @@ extern bool startMenu;
 
 extern int cursorPosOnScreen;
 extern bool displayIcons;
+extern int iconsToDisplay;
 
 extern int startTextX;
 extern int startTextY;
@@ -232,6 +233,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				dirContents.emplace_back(pent->d_name, ms().showDirectories ? (pent->d_type == DT_DIR) : false, file_count, false);
 				logPrint("%s listed: %s\n", (pent->d_type == DT_DIR) ? "Directory" : "File", pent->d_name);
 				file_count++;
+
+				iconsToDisplay++;
+				if (iconsToDisplay > 4) iconsToDisplay = 4;
 			}
 		}
 
@@ -325,7 +329,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 	int n = 0;
 	for (int i = screenOffset; i < screenOffset+4; i++) {
-		if (i > file_count) {
+		if (i == file_count) {
 			break;
 		}
 		if (dirContents.at(i).isDirectory) {
@@ -412,6 +416,7 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 	getcwd(path, PATH_MAX);
 	printSmall(false, 2, 2, path, Alignment::left, FontPalette::folderText);
 
+	if (file_count == 0) {} else
 	if (ms().ak_viewMode == TWLSettings::EViewList) {
 		const int xPos = 5;
 		const int yPos = 19;
@@ -424,7 +429,7 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 	} else {
 		int n = 0;
 		for (int i = startRow; i < startRow+4; i++) {
-			if (i > file_count) {
+			if (i == file_count) {
 				break;
 			}
 			titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
@@ -1050,6 +1055,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	gameOrderIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
 	recentlyPlayedIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/recentlyplayed.ini";
 	timesPlayedIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/timesplayed.ini";
+
+	displayIcons = false;
+	iconsToDisplay = 0;
 
 	int pressed = 0;
 	int screenOffset = 0;

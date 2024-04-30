@@ -92,6 +92,7 @@ u16 bottomImageWithBar[2][256*192];
 u16* colorTable = NULL;
 
 bool displayIcons = false;
+int iconsToDisplay = 0;
 u16 startBorderColor = 0;
 static u16 windowColorTop = 0;
 static u16 windowColorBottom = 0;
@@ -641,8 +642,8 @@ void vBlankHandler()
 		// glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 		glColor(RGB15(31, 31, 31));
 
-		if (displayIcons) {
-			for (int i = 0; i < 4; i++) {
+		if (displayIcons && iconsToDisplay > 0) {
+			for (int i = 0; i < iconsToDisplay; i++) {
 				/* if (cursorPosOnScreen == i) {
 					glBoxFilled(2, 19+(i*38), 253, 19+37+(i*38), selectionBarColor1); // Draw selection bar
 				} */

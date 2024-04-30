@@ -94,13 +94,6 @@ u8 *clearTiles;
 u16 *blackPalette;
 u8 *tilesModified;
 
-void iconTitleInit()
-{
-	clearTiles = new u8[(32 * 256) / 2]();
-	blackPalette = new u16[16*8]();
-	tilesModified = new u8[(32 * 256) / 2];
-}
-
 static inline void writeBannerText(const int num, std::string_view text, const bool highlighted)
 {
 	const int xPos = BOX_PX;
@@ -797,6 +790,17 @@ void loadConsoleIcons()
 static void clearIcon(int num)
 {
 	loadIcon(num, clearTiles, blackPalette, true);
+}
+
+void iconTitleInit()
+{
+	clearTiles = new u8[(32 * 256) / 2]();
+	blackPalette = new u16[16*8]();
+	tilesModified = new u8[(32 * 256) / 2];
+
+	for (int i = 0; i < 4; i++) {
+		clearIcon(i);
+	}
 }
 
 void drawIconFolder(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, folderIcon); }
