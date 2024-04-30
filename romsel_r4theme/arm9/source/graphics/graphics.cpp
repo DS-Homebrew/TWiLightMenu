@@ -354,7 +354,7 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 		u16 *dst = (top ? topImage[startMenu][0] : bottomImage[startMenu][0]) + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
 		u16 *dst2 = (top ? topImage[startMenu][1] : bottomImage[startMenu][1]) + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
 		u16 *src = bmpImageBuffer;
-		for (uint y = 0; y < height; y++, dst -= 256) {
+		for (uint y = 0; y < height; y++, dst -= 256, dst2 -= 256) {
 			for (uint x = 0; x < width; x++) {
 				u16 val = *(src++);
 				u16 color = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);

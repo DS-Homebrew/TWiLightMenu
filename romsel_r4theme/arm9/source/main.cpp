@@ -201,19 +201,6 @@ bool useBackend = false;
 
 using namespace std;
 
-bool showbubble = false;
-bool showSTARTborder = false;
-
-bool titleboxXmoveleft = false;
-bool titleboxXmoveright = false;
-
-bool applaunchprep = false;
-
-int spawnedtitleboxes = 0;
-
-//char usernameRendered[10];
-//bool usernameRenderedDone = false;
-
 struct statvfs st[2];
 bool gbaBiosFound[2] = {false};
 
