@@ -679,21 +679,21 @@ void vBlankHandler()
 			if (iconScaleEnabled) {
 				if (!iconScaleDelay) {
 					if (iconScaleLarge) {
-						iconScale += 100;
-						if (iconScale == 100) {
+						iconScale += 110;
+						if (iconScale == 110) {
 							iconShift = 1;
-						} else if (iconScale == 300) {
+						} else if (iconScale == 330) {
 							iconShift = 2;
-						} else if (iconScale == 500) {
+						} else if (iconScale == 550) {
 							iconShift = 3;
-						} else if (iconScale == 600) {
+						} else if (iconScale == 660) {
 							iconScaleLarge = false;
 						}
 					} else {
-						iconScale -= 100;
-						if (iconScale == 300) {
+						iconScale -= 110;
+						if (iconScale == 330) {
 							iconShift = 2;
-						} else if (iconScale == 100) {
+						} else if (iconScale == 110) {
 							iconShift = 1;
 						} else if (iconScale == 0) {
 							iconShift = 0;
