@@ -1106,21 +1106,25 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			fileOffset--;
 			cursorPosOnScreen--;
 			if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
+			resetIconScale();
 		}
 		if (pressed & KEY_DOWN) {
 			fileOffset++;
 			cursorPosOnScreen++;
 			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
+			resetIconScale();
 		}
 		if (pressed & KEY_LEFT) {
 			fileOffset -= entryPageLength;
 			cursorPosOnScreen -= entryPageLength;
 			if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
+			resetIconScale();
 		}
 		if (pressed & KEY_RIGHT) {
 			fileOffset += entryPageLength;
 			cursorPosOnScreen += entryPageLength;
 			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
+			resetIconScale();
 		}
 		if (pressed & KEY_TOUCH) {
 			if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+37) {
@@ -1130,6 +1134,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				} else {
 					selectionTouched = true;
 				}
+				resetIconScale();
 			} else if (file_count >= 2 && touch.py >= 19+38 && touch.py <= 19+37+38) {
 				if (cursorPosOnScreen != 1) {
 					cursorPosOnScreen = 1;
@@ -1137,6 +1142,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				} else {
 					selectionTouched = true;
 				}
+				resetIconScale();
 			} else if (file_count >= 3 && touch.py >= 19+(38*2) && touch.py <= 19+37+(38*2)) {
 				if (cursorPosOnScreen != 2) {
 					cursorPosOnScreen = 2;
@@ -1144,6 +1150,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				} else {
 					selectionTouched = true;
 				}
+				resetIconScale();
 			} else if (file_count >= 4 && touch.py >= 19+(38*3) && touch.py <= 19+37+(38*3)) {
 				if (cursorPosOnScreen != 3) {
 					cursorPosOnScreen = 3;
@@ -1151,6 +1158,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				} else {
 					selectionTouched = true;
 				}
+				resetIconScale();
 			}
 		}
 

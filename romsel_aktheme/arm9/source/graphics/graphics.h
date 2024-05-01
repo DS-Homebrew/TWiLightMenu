@@ -23,6 +23,7 @@ bool screenFadedIn(void);
 bool screenFadedOut(void);
 void SetBrightness(u8 screen, s8 bright);
 void initSubSprites(void);
+void resetIconScale(void);
 void updateSelectionBar(void);
 void bottomBgLoad(bool startMenu);
 void graphicsInit();

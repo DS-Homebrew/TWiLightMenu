@@ -351,7 +351,7 @@ public:
 
 	int ak_viewMode;
 	// int ak_scrollSpeed;
-	// bool ak_zoomIcons;
+	bool ak_zoomIcons;
 	std::string ak_theme;
 
 	bool useBootstrap;

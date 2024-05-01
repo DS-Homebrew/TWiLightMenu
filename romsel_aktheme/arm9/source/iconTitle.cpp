@@ -803,8 +803,8 @@ void iconTitleInit()
 	}
 }
 
-void drawIconFolder(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, folderIcon); }
-void drawIcon(int num, int Xpos, int Ypos) { glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]); }
+void drawIconFolder(int Xpos, int Ypos, s32 scale) { (scale == 0) ? glSprite(Xpos, Ypos, GL_FLIP_NONE, folderIcon) : glSpriteScale(Xpos, Ypos, scale, GL_FLIP_NONE, folderIcon); }
+void drawIcon(int num, int Xpos, int Ypos, s32 scale) { (scale == 0) ? glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]) : glSpriteScale(Xpos, Ypos, scale, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]); }
 
 void getGameInfo(int num, bool isDir, const char* name)
 {
