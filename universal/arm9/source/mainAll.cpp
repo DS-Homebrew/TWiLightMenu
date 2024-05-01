@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 	myExceptionHandler();
 	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP_DISABLE);		// Disable libnds sleep mode to prevent unexpected crashes from exiting sleep mode
 
-	sys().initFilesystem(argc==0 ? "sd:/_nds/TWiLightMenu/main.srldr" : argv[0]);
+	sys().initFilesystem(argc==0 ? (isDSiMode() ? "sd:/_nds/TWiLightMenu/main.srldr" : "fat:/_nds/TWiLightMenu/main.srldr") : argv[0]);
 	sys().initArm7RegStatuses();
 
 	if (!sys().fatInitOk()) {
