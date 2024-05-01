@@ -310,6 +310,7 @@ public:
 	bool previousUsedDevice;
 	bool secondaryDevice;
 	bool fcSaveOnSd;
+    bool fcBoxArtOnSd;
 	std::vector<std::string> blockedExtensions;
 
 	TSlot1LaunchMethod slot1LaunchMethod;

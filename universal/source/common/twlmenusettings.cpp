@@ -77,6 +77,7 @@ TWLSettings::TWLSettings()
 	previousUsedDevice = !sys().isRunFromSD();
 	secondaryDevice = !sys().isRunFromSD();
 	fcSaveOnSd = false;
+	fcBoxArtOnSd = false;
 
 	slot1LaunchMethod = EDirect;
 
@@ -272,6 +273,7 @@ void TWLSettings::loadSettings()
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	secondaryDevice = bothSDandFlashcard() ? settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice) : flashcardFound();
 	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
+	fcBoxArtOnSd = settingsini.GetInt("SRLOADER", "FC_BOX_ART_ON_SD", fcBoxArtOnSd);
 	settingsini.GetStringVector("SRLOADER", "BLOCKED_EXTENSIONS", blockedExtensions, ':');
 
 	slot1LaunchMethod = (TSlot1LaunchMethod)settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
@@ -428,6 +430,7 @@ void TWLSettings::saveSettings()
 		settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
 	}
 	settingsini.SetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
+	settingsini.SetInt("SRLOADER", "FC_BOX_ART_ON_SD", fcBoxArtOnSd);
 
 	settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
 
