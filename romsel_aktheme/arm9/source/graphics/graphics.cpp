@@ -43,10 +43,7 @@
 
 extern bool extension(const std::string_view filename, const std::vector<std::string_view> extensions);
 
-extern bool whiteScreen;
-extern bool blackScreen;
 extern bool fadeType;
-extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 int fadeDelay = 0;
@@ -76,10 +73,9 @@ extern int cursorPosOnScreen;
 bool showdialogbox = false;
 int dialogboxHeight = 0;
 
-int manualTexID, iconboxTexID, wirelessiconTexID;
+int manualTexID, wirelessiconTexID;
 
 glImage manualIcon[(32 / 32) * (64 / 32)];
-glImage iconboxImage[(64 / 16) * (64 / 16)];
 glImage wirelessIcons[(32 / 32) * (64 / 32)];
 
 int bottomBg;
@@ -89,6 +85,11 @@ u16 topImage[2][256*192];
 u16 bottomImage[2][256*192];
 u16 topImageWithText[2][256*192];
 u16 bottomImageWithBar[2][256*192];
+
+static u16* folderUpIcon[2] = {NULL};
+static int folderUpIconW = 0;
+static int folderUpIconH = 0;
+
 u16* colorTable = NULL;
 
 bool displayIcons = false;
@@ -301,7 +302,35 @@ void updateSelectionBar(void) {
 	prevViewMode = ms().ak_viewMode;
 }
 
-static void loadBmp(const bool top, const char* filename) {
+void displayFolderUp(const int x, const int y) {
+	if (!folderUpIcon[0]) return;
+
+	int xSrc = 0;
+	int ySrc = 0;
+
+	for (int y2 = y; y2 < y+folderUpIconH; y2++) {
+		for (int x2 = x; x2 < x+folderUpIconW; x2++) {
+			if (folderUpIcon[0][(ySrc*folderUpIconW)+xSrc] != (0 | BIT(15))) {
+				bottomImageWithBar[0][(y2*256)+x2] = folderUpIcon[0][(ySrc*folderUpIconW)+xSrc];
+				bottomImageWithBar[1][(y2*256)+x2] = folderUpIcon[1][(ySrc*folderUpIconW)+xSrc];
+			}
+			xSrc++;
+		}
+		xSrc = 0;
+		ySrc++;
+	}
+
+	delete[] folderUpIcon[0];
+	delete[] folderUpIcon[1];
+}
+
+enum class ImageType {
+	bottom,
+	top,
+	folderUp
+};
+
+static void loadBmp(const ImageType type, const char* filename) {
 	FILE* file = fopen(filename, "rb");
 	if (!file)
 		return;
@@ -318,7 +347,7 @@ static void loadBmp(const bool top, const char* filename) {
 	}
 
 	int xPos = 0;
-	if (width <= 254) {
+	if (type < ImageType::folderUp && width <= 254) {
 		// Adjust X position
 		for (int i = width; i < 256; i += 2) {
 			xPos++;
@@ -326,11 +355,19 @@ static void loadBmp(const bool top, const char* filename) {
 	}
 
 	int yPos = 0;
-	if (height <= 190) {
+	if (type < ImageType::folderUp && height <= 190) {
 		// Adjust Y position
 		for (int i = height; i < 192; i += 2) {
 			yPos++;
 		}
+	}
+
+	if (type == ImageType::folderUp) {
+		folderUpIconW = (int)width;
+		folderUpIconH = (int)height;
+
+		folderUpIcon[0] = new u16[width*height];
+		folderUpIcon[1] = new u16[width*height];
 	}
 
 	fseek(file, 0x1C, SEEK_SET);
@@ -373,10 +410,12 @@ static void loadBmp(const bool top, const char* filename) {
 				}
 			}
 			u16 color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
-			if (colorTable) {
+			if (colorTable && ((type < ImageType::folderUp) || (color != (0 | BIT(15))))) {
 				color = colorTable[color];
 			}
-			if (top) {
+			if (type == ImageType::folderUp) {
+				folderUpIcon[0][(y*width)+x] = color;
+			} else if (type == ImageType::top) {
 				topImage[0][(xPos+x+(y*256))+(yPos*256)] = color;
 			} else {
 				bottomImage[0][(xPos+x+(y*256))+(yPos*256)] = color;
@@ -403,10 +442,12 @@ static void loadBmp(const bool top, const char* filename) {
 				}
 			}
 			color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
-			if (colorTable) {
+			if (colorTable && ((type < ImageType::folderUp) || (color != (0 | BIT(15))))) {
 				color = colorTable[color];
 			}
-			if (top) {
+			if (type == ImageType::folderUp) {
+				folderUpIcon[1][(y*width)+x] = color;
+			} else if (type == ImageType::top) {
 				topImage[1][(xPos+x+(y*256))+(yPos*256)] = color;
 			} else {
 				bottomImage[1][(xPos+x+(y*256))+(yPos*256)] = color;
@@ -421,24 +462,36 @@ static void loadBmp(const bool top, const char* filename) {
 		}
 		delete[] bmpImageBuffer;
 	} else if (bitsPerPixel == 16) { // 16-bit
-		u16 *bmpImageBuffer = new u16[width * height];
+		// u16 *bmpImageBuffer = new u16[width * height];
 		fread(bmpImageBuffer, 2, width * height, file);
-		u16 *dst = (top ? topImage[0] : bottomImage[0]) + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
-		u16 *dst2 = (top ? topImage[1] : bottomImage[1]) + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
+		int renderWidth = 256;
+		u16 *dst = ((type == ImageType::top) ? topImage[0] : bottomImage[0]) + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
+		u16 *dst2 = ((type == ImageType::top) ? topImage[1] : bottomImage[1]) + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
+		if (type == ImageType::folderUp) {
+			renderWidth = (int)width;
+			dst = (folderUpIcon[0] + (height-1) * width);
+			dst2 = (folderUpIcon[1] + (height-1) * width);
+		}
 		u16 *src = bmpImageBuffer;
-		for (uint y = 0; y < height; y++, dst -= 256, dst2 -= 256) {
+		for (uint y = 0; y < height; y++, dst -= renderWidth, dst2 -= renderWidth) {
 			for (uint x = 0; x < width; x++) {
 				u16 val = *(src++);
-				u16 color = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
-				if (colorTable) {
-					color = colorTable[color];
+				if (type >= ImageType::folderUp && val == 0) {
+					u16 color = 0 | BIT(15);
+					*(dst + x) = color;
+					*(dst2 + x) = color;
+				} else {
+					u16 color = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
+					if (colorTable) {
+						color = colorTable[color];
+					}
+					*(dst + x) = color;
+					*(dst2 + x) = color;
 				}
-				*(dst + x) = color;
-				*(dst2 + x) = color;
 			}
 		}
 
-		delete[] bmpImageBuffer;
+		// delete[] bmpImageBuffer;
 	} else if (bitsPerPixel == 8) { // 8-bit
 		u16* pixelBuffer = new u16[256];
 		for (int i = 0; i < 256; i++) {
@@ -451,7 +504,7 @@ static void loadBmp(const bool top, const char* filename) {
 			fread(&pixelR, 1, 1, file);
 			fread(&unk, 1, 1, file);
 			pixelBuffer[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
-			if (colorTable) {
+			if (colorTable && ((type < ImageType::folderUp) || (pixelBuffer[i] != (0 | BIT(15))))) {
 				pixelBuffer[i] = colorTable[pixelBuffer[i]];
 			}
 		}
@@ -461,7 +514,10 @@ static void loadBmp(const bool top, const char* filename) {
 		int x = 0;
 		int y = height-1;
 		for (u32 i = 0; i < width*height; i++) {
-			if (top) {
+			if (type == ImageType::folderUp) {
+				folderUpIcon[0][(y*width)+x] = pixelBuffer[bmpImageBuffer[i]];
+				folderUpIcon[1][(y*width)+x] = pixelBuffer[bmpImageBuffer[i]];
+			} else if (type == ImageType::top) {
 				topImage[0][(xPos+x+(y*256))+(yPos*256)] = pixelBuffer[bmpImageBuffer[i]];
 				topImage[1][(xPos+x+(y*256))+(yPos*256)] = pixelBuffer[bmpImageBuffer[i]];
 			} else {
@@ -488,7 +544,7 @@ static void loadBmp(const bool top, const char* filename) {
 			fread(&pixelR, 1, 1, file);
 			fread(&unk, 1, 1, file);
 			monoPixel[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
-			if (colorTable) {
+			if (colorTable && ((type < ImageType::folderUp) || (monoPixel[i] != (0 | BIT(15))))) {
 				monoPixel[i] = colorTable[monoPixel[i]];
 			}
 		}
@@ -500,7 +556,10 @@ static void loadBmp(const bool top, const char* filename) {
 		for (u32 i = 0; i < (width*height)/8; i++) {
 			for (int b = 7; b >= 0; b--) {
 				const u16 color = monoPixel[(bmpImageBuffer[i] & (BIT(b))) ? 1 : 0];
-				if (top) {
+				if (type == ImageType::folderUp) {
+					folderUpIcon[0][(y*width)+x] = color;
+					folderUpIcon[1][(y*width)+x] = color;
+				} else if (type == ImageType::top) {
 					topImage[0][(xPos+x+(y*256))+(yPos*256)] = color;
 					topImage[1][(xPos+x+(y*256))+(yPos*256)] = color;
 				} else {
@@ -622,28 +681,12 @@ void vBlankHandler()
 {
 	glBegin2D();
 	{
-		if (fadeType == true) {
-			if (!fadeDelay) {
-				screenBrightness--;
-				if (screenBrightness < 0) screenBrightness = 0;
-			}
-			if (!fadeSpeed) {
-				fadeDelay++;
-				if (fadeDelay == 3) fadeDelay = 0;
-			} else {
-				fadeDelay = 0;
-			}
+		if (fadeType) {
+			screenBrightness--;
+			if (screenBrightness < 0) screenBrightness = 0;
 		} else {
-			if (!fadeDelay) {
-				screenBrightness++;
-				if (screenBrightness > 31) screenBrightness = 31;
-			}
-			if (!fadeSpeed) {
-				fadeDelay++;
-				if (fadeDelay == 3) fadeDelay = 0;
-			} else {
-				fadeDelay = 0;
-			}
+			screenBrightness++;
+			if (screenBrightness > 31) screenBrightness = 31;
 		}
 		if (renderFrame) {
 			if (ms().macroMode) {
@@ -714,11 +757,6 @@ void vBlankHandler()
 			glBoxFilled(15, 71, 241, 121+(dialogboxHeight*12), RGB15(0, 0, 0));
 			glBoxFilledGradient(16, 72, 240, 86, windowColorTop, windowColorBottom, windowColorBottom, windowColorTop);
 			glBoxFilled(16, 88, 240, 120+(dialogboxHeight*12), RGB15(31, 31, 31));
-		}
-		if (whiteScreen) {
-			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-		} else if (blackScreen) {
-			glBoxFilled(0, 0, 256, 192, RGB15(0, 0, 0));
 		}
 	}
 	glEnd2D();
@@ -800,11 +838,10 @@ void graphicsInit()
 	lcdMainOnBottom();
 	lcdSwapped = true;
 
-	// Make screens black
+	dmaFillWords(0xFFFFFFFF, BG_GFX, 0x18000);
+	dmaFillWords(0xFFFFFFFF, BG_GFX_SUB, 0x18000);
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);
-	dmaFillWords(0, BG_GFX, 0x18000);
-	dmaFillWords(0, BG_GFX_SUB, 0x18000);
 }
 
 void graphicsLoad()
@@ -813,43 +850,53 @@ void graphicsLoad()
 		loadSdRemovedImage();
 	}
 
-	// BG_PALETTE_SUB[255] = RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel));
-	BG_PALETTE_SUB[255] = RGB15(31, 31, 31);
-
 	std::string themePath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/akmenu/themes/" + ms().ak_theme;
-	std::string pathTop;
-	if (access((themePath + "/upper_screen.bmp").c_str(), F_OK) == 0) {
-		pathTop = themePath + "/upper_screen.bmp";
-	} else if (access((themePath + "/upper_screen.png").c_str(), F_OK) == 0) {
-		pathTop = themePath + "/upper_screen.png";
-	} else {
-		pathTop = "nitro:/themes/zelda/upper_screen.bmp";
-	}
+	{
+		std::string pathTop;
+		if (access((themePath + "/upper_screen.bmp").c_str(), F_OK) == 0) {
+			pathTop = themePath + "/upper_screen.bmp";
+		} else if (access((themePath + "/upper_screen.png").c_str(), F_OK) == 0) {
+			pathTop = themePath + "/upper_screen.png";
+		} else {
+			pathTop = "nitro:/themes/zelda/upper_screen.bmp";
+		}
 
-	std::string pathBottom;
-	if (access((themePath + "/lower_screen.bmp").c_str(), F_OK) == 0) {
-		pathBottom = themePath + "/lower_screen.bmp";
-	} else if (access((themePath + "/lower_screen.png").c_str(), F_OK) == 0) {
-		pathBottom = themePath + "/lower_screen.png";
-	} else {
-		pathBottom = "nitro:/themes/zelda/lower_screen.bmp";
-	}
+		std::string pathBottom;
+		if (access((themePath + "/lower_screen.bmp").c_str(), F_OK) == 0) {
+			pathBottom = themePath + "/lower_screen.bmp";
+		} else if (access((themePath + "/lower_screen.png").c_str(), F_OK) == 0) {
+			pathBottom = themePath + "/lower_screen.png";
+		} else {
+			pathBottom = "nitro:/themes/zelda/lower_screen.bmp";
+		}
 
-	if (extension(pathTop.c_str(), {".png"})) {
-		loadPng(true, pathTop);
-	} else {
-		loadBmp(true, pathTop.c_str());
-	}
-	if (extension(pathBottom.c_str(), {".png"})) {
-		loadPng(false, pathBottom);
-	} else {
-		loadBmp(false, pathBottom.c_str());
+		if (extension(pathTop.c_str(), {".png"})) {
+			loadPng(true, pathTop);
+		} else {
+			loadBmp(ImageType::top, pathTop.c_str());
+		}
+		if (extension(pathBottom.c_str(), {".png"})) {
+			loadPng(false, pathBottom);
+		} else {
+			loadBmp(ImageType::bottom, pathBottom.c_str());
+		}
 	}
 
 	dmaCopyHalfWordsAsynch(0, topImage[0], topImageWithText[0], 0x18000);
 	dmaCopyHalfWordsAsynch(1, topImage[1], topImageWithText[1], 0x18000);
 	dmaCopyHalfWordsAsynch(2, bottomImage[0], bottomImageWithBar[0], 0x18000);
 	dmaCopyHalfWordsAsynch(3, bottomImage[1], bottomImageWithBar[1], 0x18000);
+
+	if (ms().showDirectories) {
+		std::string pathFolderUp;
+		if (access((themePath + "/folder_up.bmp").c_str(), F_OK) == 0) {
+			pathFolderUp = themePath + "/folder_up.bmp";
+		} else {
+			pathFolderUp = "nitro:/themes/zelda/folder_up.bmp";
+		}
+
+		loadBmp(ImageType::folderUp, pathFolderUp.c_str());
+	}
 
 	extern std::string iniPath;
 	extern std::string customIniPath;

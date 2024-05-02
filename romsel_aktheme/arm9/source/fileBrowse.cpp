@@ -66,9 +66,6 @@
 #define ENTRY_PAGE_LENGTH ENTRIES_PER_SCREEN
 #define ENTRY_PAGE_LENGTH_LIST ENTRIES_PER_SCREEN_LIST/2
 
-extern bool whiteScreen;
-extern bool fadeType;
-extern bool fadeSpeed;
 extern bool lcdSwapped;
 
 extern bool showdialogbox;
@@ -89,6 +86,14 @@ extern int startX;
 extern int startY;
 extern int startH;
 extern int startW;
+
+extern int folderUpX;
+extern int folderUpY;
+extern int folderUpW;
+extern int folderUpH;
+
+extern int folderTextX;
+extern int folderTextY;
 
 extern touchPosition touch;
 
@@ -325,7 +330,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	printSmall(false, startTextX, startTextY, "START", Alignment::left, FontPalette::startText);
 
 	getcwd(path, PATH_MAX);
-	printSmall(false, 2, 2, path, Alignment::left, FontPalette::folderText);
+	printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
 
 	int n = 0;
 	for (int i = screenOffset; i < screenOffset+4; i++) {
@@ -414,7 +419,7 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 	printSmall(false, startTextX, startTextY, "START", Alignment::left, FontPalette::startText);
 
 	getcwd(path, PATH_MAX);
-	printSmall(false, 2, 2, path, Alignment::left, FontPalette::folderText);
+	printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
 
 	if (file_count == 0) {} else
 	if (ms().ak_viewMode == TWLSettings::EViewList) {
@@ -1088,9 +1093,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	}
 	updateSelectionBar();
 
-	whiteScreen = false;
-	fadeType = true;	// Fade in from white
-
 	while (true) {
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
@@ -1481,7 +1483,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";
 		}
 
-		if (((pressed & KEY_L) || (pressed & KEY_B)) && ms().showDirectories) {
+		if (((pressed & KEY_L) || (pressed & KEY_B)
+		|| ((pressed & KEY_TOUCH) && touch.px >= folderUpX && touch.px < folderUpX+folderUpW && touch.py >= folderUpY && touch.py < folderUpY+folderUpH)) && ms().showDirectories) {
 			// Go up a directory
 			chdir ("..");
 			char buf[256];

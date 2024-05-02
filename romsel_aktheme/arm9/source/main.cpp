@@ -59,10 +59,7 @@
 
 extern bool useTwlCfg;
 
-bool whiteScreen = false;
-bool blackScreen = false;
 bool fadeType = true;		// false = out, true = in
-bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
 bool widescreenFound = false;
@@ -202,12 +199,21 @@ bool useBackend = false;
 using namespace std;
 
 int cursorPosOnScreen = 0;
+
 int startTextX = 0;
 int startTextY = 0;
 int startX = 4;
 int startY = 172;
 int startW = 48;
 int startH = 18;
+
+int folderUpX = 0;
+int folderUpY = 2;
+int folderUpW = 32;
+int folderUpH = 16;
+
+int folderTextX = 20;
+int folderTextY = 2;
 
 bool applaunchprep = false;
 
@@ -1090,15 +1096,6 @@ int akTheme(void) {
 
 	srand(time(NULL));
 	
-	bool copyDSiWareSavBack =
-	   (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == 3
-	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
-	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0)));
-	
-	if (copyDSiWareSavBack) {
-		blackScreen = true;
-	}
-
 	graphicsLoad();
 	fontInit();
 
@@ -1111,6 +1108,18 @@ int akTheme(void) {
 
 		startTextX = startX + startW/5;
 		startTextY = startY + startH/5;
+
+		if (ms().showDirectories) {
+			folderUpX = ini.GetInt("folderup btn", "x", folderUpX);
+			folderUpY = ini.GetInt("folderup btn", "y", folderUpY);
+			folderUpW = ini.GetInt("folderup btn", "w", folderUpW);
+			folderUpH = ini.GetInt("folderup btn", "h", folderUpH);
+
+			displayFolderUp(folderUpX, folderUpY);
+		}
+
+		folderTextX = ini.GetInt("folder text", "x", folderTextX);
+		folderTextY = ini.GetInt("folder text", "y", folderTextY);
 	}
 
 	{
@@ -1137,9 +1146,12 @@ int akTheme(void) {
 
 	iconTitleInit();
 
-	blackScreen = false;
-
 	char path[256];
+
+	const bool copyDSiWareSavBack =
+	   (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == 3
+	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
+	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0)));
 
 	if (copyDSiWareSavBack) {
 		// printSmall(false, 0, 16, "If this takes a while, close", Alignment::center, FontPalette::mainText);
