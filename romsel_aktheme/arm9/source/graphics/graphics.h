@@ -31,6 +31,7 @@ void drawTime(void);
 void drawYear(void);
 void drawMonth(void);
 void drawDayX(void);
+void drawDay(void);
 
 void bottomBgLoad(bool startMenu);
 void graphicsInit();

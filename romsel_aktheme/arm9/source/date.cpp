@@ -3,8 +3,64 @@
 #include <ctime>
 
 #include "common/twlmenusettings.h"
+#include "common/tonccpy.h"
 
 tm iTimeParts;
+
+static void FillTimeParts(void)
+{
+  time_t epochTime;
+  if (time(&epochTime)==(time_t)-1)
+  {
+    toncset(&iTimeParts,0,sizeof(iTimeParts));
+  }
+  else
+  {
+    localtime_r(&epochTime,&iTimeParts);
+  }
+}
+
+u16 dateYear()
+{
+  FillTimeParts();
+  return iTimeParts.tm_year+1900;
+}
+
+u8 dateMonth()
+{
+  FillTimeParts();
+  return iTimeParts.tm_mon+1;
+}
+
+u8 dateDay()
+{
+  FillTimeParts();
+  return iTimeParts.tm_mday;
+}
+
+u8 dateWeekday()
+{
+  FillTimeParts();
+  return iTimeParts.tm_wday;
+}
+
+u8 dateHours()
+{
+  FillTimeParts();
+  return iTimeParts.tm_hour;
+}
+
+u8 dateMinutes()
+{
+  FillTimeParts();
+  return iTimeParts.tm_min;
+}
+
+u8 dateSeconds()
+{
+  FillTimeParts();
+  return iTimeParts.tm_sec;
+}
 
 /**
  * Get the current time.

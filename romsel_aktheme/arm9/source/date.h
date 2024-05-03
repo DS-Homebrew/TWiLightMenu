@@ -1,9 +1,17 @@
 #ifndef DATE_H
 #define DATE_H
 
-// #include <nds.h>
+#include <nds/ndstypes.h>
 #include <string>
 // #include <stddef.h>
+
+u16 dateYear();
+u8 dateMonth();
+u8 dateDay();
+u8 dateWeekday();
+u8 dateHours();
+u8 dateMinutes();
+u8 dateSeconds();
 
 /**
  * Get the current time.

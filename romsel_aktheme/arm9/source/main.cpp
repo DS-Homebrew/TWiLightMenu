@@ -995,6 +995,7 @@ void bgOperations(bool waitFrame) {
 	drawYear();
 	drawMonth();
 	drawDayX();
+	drawDay();
 	if (waitFrame) {
 		swiWaitForVBlank();
 	}
