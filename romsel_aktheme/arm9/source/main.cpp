@@ -991,6 +991,10 @@ void bgOperations(bool waitFrame) {
 		customSleep();
 	}
 	checkSdEject();
+	drawTime();
+	drawYear();
+	drawMonth();
+	drawDayX();
 	if (waitFrame) {
 		swiWaitForVBlank();
 	}
@@ -1122,7 +1126,7 @@ int akTheme(void) {
 		folderTextY = ini.GetInt("folder text", "y", folderTextY);
 	}
 
-	{
+	if (!ms().macroMode) {
 		CIniFile ini( customIniPath.c_str() );
 		if (ini.GetInt("user name", "show", 0)) {
 			const int x = ini.GetInt("user name", "x", 0);

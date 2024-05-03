@@ -27,6 +27,10 @@ void initSubSprites(void);
 void resetIconScale(void);
 void updateSelectionBar(void);
 void displayFolderUp(const int x, const int y);
+void drawTime(void);
+void drawYear(void);
+void drawMonth(void);
+void drawDayX(void);
 
 void bottomBgLoad(bool startMenu);
 void graphicsInit();
