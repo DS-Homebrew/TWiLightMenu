@@ -792,7 +792,7 @@ void graphicsLoad()
 		} else {
 			if (access((themePath + "/bckgrd_2.bmp").c_str(), F_OK) == 0) {
 				pathBottom = themePath + "/bckgrd_2.bmp";
-			} else if (access((themePath + "/bckgrd_1.png").c_str(), F_OK) == 0) {
+			} else if (access((themePath + "/bckgrd_2.png").c_str(), F_OK) == 0) {
 				pathBottom = themePath + "/bckgrd_2.png";
 			} else {
 				pathBottom = "nitro:/themes/theme1/bckgrd_2.png";
