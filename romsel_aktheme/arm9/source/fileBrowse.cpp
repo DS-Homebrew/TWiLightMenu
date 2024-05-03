@@ -448,6 +448,7 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 void mdRomTooBig(void) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
+	clearText(false);
 	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
 	printSmall(false, 0, 90, "This SEGA Genesis/Mega Drive", Alignment::center);
 	printSmall(false, 0, 102, "ROM cannot be launched,", Alignment::center);
@@ -470,6 +471,7 @@ void mdRomTooBig(void) {
 void ramDiskMsg(void) {
 	dialogboxHeight = 1;
 	showdialogbox = true;
+	clearText(false);
 	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
 	printSmall(false, 0, 90, "This app requires a", Alignment::center);
 	printSmall(false, 0, 102, "RAM disk to work.", Alignment::center);
@@ -492,6 +494,7 @@ bool dsiBinariesMissingMsg(void) {
 
 	dialogboxHeight = 2;
 	showdialogbox = true;
+	clearText(false);
 	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
 	printSmall(false, 0, 90, "The DSi binaries are missing.", Alignment::center);
 	printSmall(false, 0, 102, "Please get a clean dump of", Alignment::center);
@@ -679,6 +682,7 @@ bool checkForCompatibleGame(const char *filename) {
 
 	dialogboxHeight = 3;
 	showdialogbox = true;
+	clearText(false);
 	printSmall(false, 0, 74, "Compatibility Warning", Alignment::center, FontPalette::white);
 	printSmall(false, 0, 90, "This game is known to not run.", Alignment::center);
 	printSmall(false, 0, 102, "If there's an nds-bootstrap", Alignment::center);
@@ -748,6 +752,7 @@ bool cannotLaunchMsg(char tid1) {
 	bool res = false;
 
 	showdialogbox = true;
+	clearText(false);
 	printSmall(false, 0, 74, isTwlm[cursorPosOnScreen] ? "Information" : "Error!", Alignment::center, FontPalette::white);
 	if (!isTwlm[cursorPosOnScreen] && bnrRomType[cursorPosOnScreen] == 0 && sys().isRegularDS()) {
 		printSmall(false, 0, 90, "For use with Nintendo DSi systems only.", Alignment::center);
@@ -788,6 +793,7 @@ bool dsiWareInDSModeMsg(void) {
 
 	dialogboxHeight = 4;
 	showdialogbox = true;
+	clearText(false);
 	printSmall(false, 0, 74, "Compatibility Warning", Alignment::center, FontPalette::white);
 	printSmall(false, 0, 90, "You are attempting to launch a DSiWare", Alignment::center);
 	printSmall(false, 0, 102, "title in DS mode on a DSi or 3DS system.", Alignment::center);
@@ -910,6 +916,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 
 	dialogboxHeight = 3;
 	showdialogbox = true;
+	clearText(false);
 	printSmall(false, 0, 74, ((msgId == 10 || msgId == 11) && !sys().isRegularDS()) ? "Error!" : "Compatibility Warning", Alignment::center, FontPalette::white);
 	switch (msgId) {
 		case 0:
@@ -1499,6 +1506,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			DirEntry *entry = &dirContents.at(fileOffset);
 			bool unHide = (FAT_getAttr(entry->name.c_str()) & ATTR_HIDDEN || (strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != ".."));
 
+			clearText(false);
 			showdialogbox = true;
 			dialogboxHeight = 3;
 
