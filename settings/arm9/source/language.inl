@@ -60,7 +60,7 @@ STRING(ANIMATEDSIICONS, "Animate DSi icons")
 STRING(CUSTOMICONS, "Custom icons")
 STRING(CLOCK_SYSTEM, "Clock system")
 STRING(AK_SCROLLSPEED, "Scroll speed")
-STRING(AK_ZOOMING_ICON, "Zooming icons")
+STRING(ANIM_ON_HIGHLIGHT, "Animation on highlight")
 
 STRING(15FPS, "15FPS")
 STRING(20FPS, "20FPS")
@@ -98,6 +98,7 @@ STRING(24_HOUR, "24 hours")
 STRING(FAST, "Fast")
 STRING(MEDIUM, "Medium")
 STRING(SLOW, "Slow")
+STRING(ZOOM, "Zoom")
 
 STRING(DESCRIPTION_UPDATETWLMENU, "Updates TWiLight Menu++ to a new version.")
 STRING(DESCRIPTION_FRAMERATE, "Changes how many frames per second are displayed.")
@@ -124,7 +125,7 @@ STRING(DESCRIPTION_ANIMATEDSIICONS_1, "Animate the icons of Nintendo DSi-enhance
 STRING(DESCRIPTION_CUSTOMICONS, "Show custom game icons for all ROM types.")
 STRING(DESCRIPTION_CLOCK_SYSTEM, "Use either a 12-hour clock or a 24-hour clock.")
 STRING(DESCRIPTION_AK_SCROLLSPEED, "Sets the scroll speed in the Wood UI theme.")
-STRING(DESCRIPTION_ZOOMING_ICON, "Display a zoom effect for the selected icon in the Wood UI theme.")
+STRING(DESCRIPTION_AK_ANIM_ON_HIGHLIGHT, "Display an effect for the selected icon in the Wood UI theme.")
 STRING(DESCRIPTION_LOGGING_TWLMENU, "Logs the TWiLight Menu++ process to sd:/_nds/TWiLightMenu/log.txt")
 
 // Emulation / HB settings
