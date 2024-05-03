@@ -80,6 +80,7 @@ extern int cursorPosOnScreen;
 extern bool displayIcons;
 extern int iconsToDisplay;
 
+extern std::string startText;
 extern int startTextX;
 extern int startTextY;
 extern int startX;
@@ -327,7 +328,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
 
-	printSmall(false, startTextX, startTextY, "START", Alignment::left, FontPalette::startText);
+	printSmall(false, startTextX, startTextY, startText, Alignment::left, FontPalette::startText);
 
 	getcwd(path, PATH_MAX);
 	printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
@@ -416,7 +417,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
 
-	printSmall(false, startTextX, startTextY, "START", Alignment::left, FontPalette::startText);
+	printSmall(false, startTextX, startTextY, startText, Alignment::left, FontPalette::startText);
 
 	getcwd(path, PATH_MAX);
 	printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
