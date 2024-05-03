@@ -486,6 +486,10 @@ ITCM_CODE void drawDayX(void) {
 	drawYearNumberString(currentDayX, 2, dayxX, dayxY);
 }
 
+static u8 oldMonth = 0;
+static u8 oldDaysOfMonth = 0;
+static u16 oldYear = 0;
+
 #define IS_LEAP(n) ((!(((n) + 1900) % 400) || (!(((n) + 1900) % 4) && (((n) + 1900) % 100))) != 0)
 static u8 daysOfMonth()
 {
@@ -495,6 +499,26 @@ static u8 daysOfMonth()
 static u8 weekDayOfFirstDay()
 {
     return (dateWeekday() + 7 - ((dateDay() - 1) % 7)) % 7;
+}
+
+static u8 oldDaysX[32] = {0};
+static u8 oldDaysY[32] = {0};
+static bool oldDaysSaved = false;
+
+static void clearDayNumber(u8 day)
+{
+	if (day > 31)
+		return;
+
+	const u8 x = oldDaysX[day];
+	const u8 y = oldDaysY[day];
+
+	for (int y2 = y; y2 < y+daySizeY-1; y2++) {
+		for (int x2 = x; x2 < x+daySizeX-1; x2++) {
+			topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
+			topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
+		}
+	}
 }
 
 static void drawDayNumber(u8 day)
@@ -540,6 +564,9 @@ static void drawDayNumber(u8 day)
 			}
 		}
 	}
+
+	oldDaysX[day] = x;
+	oldDaysY[day] = y;
 }
 
 static std::string loadedDay;
@@ -555,14 +582,22 @@ void drawDay(void) {
 
 	loadedDay = currentDay;
 
+	if (oldDaysSaved && (dateMonth() != oldMonth || dateYear() != oldYear)) {
+		for (u8 i = 1; i <= oldDaysOfMonth; ++i)
+		{
+			clearDayNumber(i);
+		}
+	}
+
 	for (u8 i = 1; i <= daysOfMonth(); ++i)
 	{
 		drawDayNumber(i);
 	}
 
-	FILE* file = fopen("sd:/dayNumbers.bin", "wb");
-	fwrite(dayNumbers[0], 2, dayNumbersW*(dayNumbersH*10), file);
-	fclose(file);
+	oldMonth = dateMonth();
+	oldYear = dateYear();
+	oldDaysOfMonth = daysOfMonth();
+	oldDaysSaved = true;
 }
 
 enum class ImageType {
