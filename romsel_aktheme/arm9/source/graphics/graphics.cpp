@@ -1285,29 +1285,29 @@ void graphicsLoad()
 			selectionBarColor1 = colorTable[selectionBarColor1];
 		}
 
-		if (!ms().macroMode && ini.GetInt("big clock", "show", 0)) {
-			bigClockX = ini.GetInt("big clock", "x", bigClockX);
-			bigClockY = ini.GetInt("big clock", "y", bigClockY);
+		if (!ms().macroMode && ini.GetInt("global settings", "showCalendar", true)) {
+			if (ini.GetInt("big clock", "show", 0)) {
+				bigClockX = ini.GetInt("big clock", "x", bigClockX);
+				bigClockY = ini.GetInt("big clock", "y", bigClockY);
 
-			std::string pathClockNumbers;
-			if (access((themePath + "/calendar/clock_numbers.bmp").c_str(), F_OK) == 0) {
-				pathClockNumbers = themePath + "/calendar/clock_numbers.bmp";
-			} else {
-				pathClockNumbers = "nitro:/themes/zelda/calendar/clock_numbers.bmp";
+				std::string pathClockNumbers;
+				if (access((themePath + "/calendar/clock_numbers.bmp").c_str(), F_OK) == 0) {
+					pathClockNumbers = themePath + "/calendar/clock_numbers.bmp";
+				} else {
+					pathClockNumbers = "nitro:/themes/zelda/calendar/clock_numbers.bmp";
+				}
+
+				loadBmp(ImageType::clockNumbers, pathClockNumbers.c_str());
+
+				if (access((themePath + "/calendar/clock_colon.bmp").c_str(), F_OK) == 0) {
+					pathClockNumbers = themePath + "/calendar/clock_colon.bmp";
+				} else {
+					pathClockNumbers = "nitro:/themes/zelda/calendar/clock_colon.bmp";
+				}
+
+				loadBmp(ImageType::clockColon, pathClockNumbers.c_str());
 			}
 
-			loadBmp(ImageType::clockNumbers, pathClockNumbers.c_str());
-
-			if (access((themePath + "/calendar/clock_colon.bmp").c_str(), F_OK) == 0) {
-				pathClockNumbers = themePath + "/calendar/clock_colon.bmp";
-			} else {
-				pathClockNumbers = "nitro:/themes/zelda/calendar/clock_colon.bmp";
-			}
-
-			loadBmp(ImageType::clockColon, pathClockNumbers.c_str());
-		}
-
-		if (!ms().macroMode) {
 			showYear = ini.GetInt("calendar year", "show", showYear);
 			showMonth = ini.GetInt("calendar month", "show", showMonth);
 			showDayX = ini.GetInt("calendar dayx", "show", showDayX);
