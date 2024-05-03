@@ -612,17 +612,18 @@ void SetWidescreen(const char *filename) {
 			textYpos[0] = 72;
 			textYpos[1] = 84;
 			clearText(false);
-			printSmall(false, 0, textYpos[0], resultText1, Alignment::center);
-			printSmall(false, 0, textYpos[1], resultText2, Alignment::center);
+			dialogboxHeight = 2;
+			showdialogbox = true;
+			printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
+			printSmall(false, 0, textYpos[0], resultText1, Alignment::center, FontPalette::formText);
+			printSmall(false, 0, textYpos[1], resultText2, Alignment::center, FontPalette::formText);
 			updateText(false);
-			fadeType = true; // Fade in from white
 			for (int i = 0; i < 60 * 3; i++) {
 				swiWaitForVBlank(); // Wait 3 seconds
 			}
-			fadeType = false;	   // Fade to white
-			for (int i = 0; i < 25; i++) {
-				swiWaitForVBlank();
-			}
+			showdialogbox = false;
+			clearText(false);
+			updateText(false);
 			return;
 		}
 	} else {
@@ -808,15 +809,15 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 	clearText(false);
 	dialogboxHeight = (err==0 ? 2 : 0);
 	showdialogbox = true;
-	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
 	if (err == 0) {
-		printSmall(false, 0, 90, "Flashcard may be unsupported.", Alignment::center);
-		printSmall(false, 0, 102, "Flashcard name:", Alignment::center);
-		printSmall(false, 0, 114, io_dldi_data->friendlyName, Alignment::center);
+		printSmall(false, 0, 90, "Flashcard may be unsupported.", Alignment::center, FontPalette::formText);
+		printSmall(false, 0, 102, "Flashcard name:", Alignment::center, FontPalette::formText);
+		printSmall(false, 0, 114, io_dldi_data->friendlyName, Alignment::center, FontPalette::formText);
 	} else {
-		printSmall(false, 0, 90, text, Alignment::center);
+		printSmall(false, 0, 90, text, Alignment::center, FontPalette::formText);
 	}
-	printSmall(false, 0, (err==0 ? 132 : 108), " Back", Alignment::center);
+	printSmall(false, 0, (err==0 ? 132 : 108), " Back", Alignment::center, FontPalette::formText);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -1372,8 +1373,8 @@ int akTheme(void) {
 						clearText(false);
 						dialogboxHeight = 0;
 						showdialogbox = true;
-						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
-						printSmall(false, 0, 98, "Creating save file...", Alignment::center);
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::formTitleText);
+						printSmall(false, 0, 98, "Creating save file...", Alignment::center, FontPalette::formText);
 						updateText(false);
 
 						FILE *pFile = fopen(ms().dsiWarePubPath.c_str(), "wb");
@@ -1385,8 +1386,8 @@ int akTheme(void) {
 						}
 
 						clearText(false);
-						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
-						printSmall(false, 0, 98, "Save file created!", Alignment::center);
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::formTitleText);
+						printSmall(false, 0, 98, "Save file created!", Alignment::center, FontPalette::formText);
 						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
@@ -1395,15 +1396,15 @@ int akTheme(void) {
 						clearText(false);
 						dialogboxHeight = 0;
 						showdialogbox = true;
-						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
-						printSmall(false, 0, 98, "Creating public save file...", Alignment::center);
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::formTitleText);
+						printSmall(false, 0, 98, "Creating public save file...", Alignment::center, FontPalette::formText);
 						updateText(false);
 
 						createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
 
 						clearText(false);
-						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
-						printSmall(false, 0, 98, "Public save file created!", Alignment::center);
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::formTitleText);
+						printSmall(false, 0, 98, "Public save file created!", Alignment::center, FontPalette::formText);
 						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
@@ -1412,15 +1413,15 @@ int akTheme(void) {
 						clearText(false);
 						dialogboxHeight = 0;
 						showdialogbox = true;
-						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
-						printSmall(false, 0, 98, "Creating private save file...", Alignment::center);
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::formTitleText);
+						printSmall(false, 0, 98, "Creating private save file...", Alignment::center, FontPalette::formText);
 						updateText(false);
 
 						createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
 
 						clearText(false);
-						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::white);
-						printSmall(false, 0, 98, "Private save file created!", Alignment::center);
+						printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::formTitleText);
+						printSmall(false, 0, 98, "Private save file created!", Alignment::center, FontPalette::formText);
 						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
@@ -1432,9 +1433,9 @@ int akTheme(void) {
 					clearText(false);
 					dialogboxHeight = 0;
 					showdialogbox = true;
-					printSmall(false, 0, 74, "Please wait", Alignment::center, FontPalette::white);
-					printSmall(false, 0, 98, "Now copying data...", Alignment::center);
-					printSmall(false, 0, 110, "Do not turn off the power.", Alignment::center);
+					printSmall(false, 0, 74, "Please wait", Alignment::center, FontPalette::formTitleText);
+					printSmall(false, 0, 98, "Now copying data...", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 110, "Do not turn off the power.", Alignment::center, FontPalette::formText);
 					updateText(false);
 					fcopy(ms().dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0) && (NDSHeader.pubSavSize > 0)) {
@@ -1448,10 +1449,10 @@ int akTheme(void) {
 					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
 						dialogboxHeight = 1;
 						clearText(false);
-						printSmall(false, 0, 74, "Important!", Alignment::center, FontPalette::white);
-						printSmall(false, 0, 90, "After saving, please re-start", Alignment::center);
-						printSmall(false, 0, 102, "TWiLight Menu++ to transfer your", Alignment::center);
-						printSmall(false, 0, 114, "save data back.", Alignment::center);
+						printSmall(false, 0, 74, "Important!", Alignment::center, FontPalette::formTitleText);
+						printSmall(false, 0, 90, "After saving, please re-start", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 102, "TWiLight Menu++ to transfer your", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 114, "save data back.", Alignment::center, FontPalette::formText);
 						updateText(false);
 						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds
 					}
@@ -1574,13 +1575,13 @@ int akTheme(void) {
 					clearText(false);
 					dialogboxHeight = (err==1 ? 2 : 0);
 					showdialogbox = true;
-					printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
-					printSmall(false, 0, 90, text, Alignment::center);
+					printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
+					printSmall(false, 0, 90, text, Alignment::center, FontPalette::formText);
 					if (err == 1) {
-						printSmall(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)", Alignment::center);
-						printSmall(false, 4, 114, "not found.", Alignment::center);
+						printSmall(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)", Alignment::center, FontPalette::formText);
+						printSmall(false, 4, 114, "not found.", Alignment::center, FontPalette::formText);
 					}
-					printSmall(false, 0, (err==1 ? 132 : 108), " Back", Alignment::center);
+					printSmall(false, 0, (err==1 ? 132 : 108), " Back", Alignment::center, FontPalette::formText);
 					updateText(false);
 					int pressed = 0;
 					do {
@@ -1686,8 +1687,8 @@ int akTheme(void) {
 								clearText(false);
 								dialogboxHeight = 0;
 								showdialogbox = true;
-								printSmall(false, 0, 74, "Save management", Alignment::center, FontPalette::white);
-								printSmall(false, 0, 90, (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...", Alignment::center);
+								printSmall(false, 0, 74, "Save management", Alignment::center, FontPalette::formTitleText);
+								printSmall(false, 0, 90, (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...", Alignment::center, FontPalette::formText);
 								updateText(false);
 
 								FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
@@ -1697,8 +1698,8 @@ int akTheme(void) {
 									fclose(pFile);
 								}
 								clearText(false);
-								printSmall(false, 0, 74, "Save management", Alignment::center, FontPalette::white);
-								printSmall(false, 0, 90, (orgsavesize == 0) ? "Save file created!" : "Save file expanded!", Alignment::center);
+								printSmall(false, 0, 74, "Save management", Alignment::center, FontPalette::formTitleText);
+								printSmall(false, 0, 90, (orgsavesize == 0) ? "Save file created!" : "Save file expanded!", Alignment::center, FontPalette::formText);
 								updateText(false);
 								for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							}
@@ -1823,18 +1824,17 @@ int akTheme(void) {
 						clearText(false);
 						dialogboxHeight = (err==1 ? 2 : 0);
 						showdialogbox = true;
-						printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
-						printSmall(false, 0, 90, text, Alignment::center);
+						printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
+						printSmall(false, 0, 90, text, Alignment::center, FontPalette::formText);
 						if (err == 1) {
 							if (ms().homebrewBootstrap) {
-								printSmall(false, 0, 102, useNightly ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center);
-								printSmall(false, 0, 114, "not found.", Alignment::center);
+								printSmall(false, 0, 102, useNightly ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center, FontPalette::formText);
 							} else {
-								printSmall(false, 0, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)", Alignment::center);
-								printSmall(false, 0, 114, "not found.", Alignment::center);
+								printSmall(false, 0, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)", Alignment::center, FontPalette::formText);
 							}
+							printSmall(false, 0, 114, "not found.", Alignment::center, FontPalette::formText);
 						}
-						printSmall(false, 0, (err==1 ? 132 : 108), " Back", Alignment::center);
+						printSmall(false, 0, (err==1 ? 132 : 108), " Back", Alignment::center, FontPalette::formText);
 						updateText(false);
 						int pressed = 0;
 						do {
@@ -1947,9 +1947,9 @@ int akTheme(void) {
 					clearText(false);
 					dialogboxHeight = 0;
 					showdialogbox = true;
-					printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
-					printSmall(false, 0, 90, text, Alignment::center);
-					printSmall(false, 0, 108, " Back", Alignment::center);
+					printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
+					printSmall(false, 0, 90, text, Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 108, " Back", Alignment::center, FontPalette::formText);
 					updateText(false);
 					int pressed = 0;
 					do {
@@ -2030,8 +2030,8 @@ int akTheme(void) {
 						clearText(false);
 						dialogboxHeight = 0;
 						showdialogbox = true;
-						printSmall(false, 0, 74, "Game loading", Alignment::center, FontPalette::white);
-						printSmall(false, 0, 90, "Please wait...", Alignment::center);
+						printSmall(false, 0, 74, "Game loading", Alignment::center, FontPalette::formTitleText);
+						printSmall(false, 0, 90, "Please wait...", Alignment::center, FontPalette::formText);
 						updateText(false);
 
 						u32 ptr = 0x08000000;
@@ -2440,13 +2440,13 @@ int akTheme(void) {
 				clearText(false);
 				dialogboxHeight = ((err == 1 && useNDSB) ? 2 : 0);
 				showdialogbox = true;
-				printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
-				printSmall(false, 0, 90, text, Alignment::center);
+				printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
+				printSmall(false, 0, 90, text, Alignment::center, FontPalette::formText);
 				if (err == 1 && useNDSB) {
-					printSmall(false, 0, 102, ms().bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center);
-					printSmall(false, 0, 114, "not found.", Alignment::center);
+					printSmall(false, 0, 102, ms().bootstrapFile ? "nds-bootstrap for homebrew (Nightly)" : "nds-bootstrap for homebrew (Release)", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 114, "not found.", Alignment::center, FontPalette::formText);
 				}
-				printSmall(false, 0, ((err == 1 && useNDSB) ? 132 : 108), " Back", Alignment::center);
+				printSmall(false, 0, ((err == 1 && useNDSB) ? 132 : 108), " Back", Alignment::center, FontPalette::formText);
 				updateText(false);
 				int pressed = 0;
 				do {

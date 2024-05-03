@@ -694,9 +694,9 @@ void perGameSettings (std::string filename) {
 	while (1) {
 		clearText(false);
 
-		printSmall(false, 0, 74, showPerGameSettings ? "Game settings" : "Info", Alignment::center, FontPalette::white);
-		if (showSDKVersion) printSmall(false, 24, 90, SDKnumbertext);
-		printSmall(false, 232, 90, gameTIDText, Alignment::right);
+		printSmall(false, 0, 74, showPerGameSettings ? "Game settings" : "Info", Alignment::center, FontPalette::formTitleText);
+		if (showSDKVersion) printSmall(false, 24, 90, SDKnumbertext, Alignment::left, FontPalette::formText);
+		printSmall(false, 232, 90, gameTIDText, Alignment::right, FontPalette::formText);
 
 		int perGameOpXpos = 24;
 		int perGameOpYpos = 104;
@@ -704,7 +704,7 @@ void perGameSettings (std::string filename) {
 
 		for (int i = firstPerGameOpShown; i < firstPerGameOpShown+4; i++) {
 		if (!showPerGameSettings || perGameOp[i] == -1) break;
-		const FontPalette highlighted = (i == perGameSettings_cursorPosition) ? FontPalette::user : FontPalette::black;
+		const FontPalette highlighted = (i == perGameSettings_cursorPosition) ? FontPalette::user : FontPalette::formText;
 		switch (perGameOp[i]) {
 			case 0:
 				printSmall(false, perGameOpXpos, perGameOpYpos, "Language:", Alignment::left, highlighted);
@@ -891,9 +891,9 @@ void perGameSettings (std::string filename) {
 		perGameOpYpos += 12;
 		}
 		if (!showPerGameSettings && !showCheats) {
-			printSmall(false, 0, perGameOpYpos+5, " OK", Alignment::center);
+			printSmall(false, 0, perGameOpYpos+5, " OK", Alignment::center, FontPalette::formText);
 		} else {
-			printSmall(false, 0, perGameOpYpos+5, showCheats ? " Cheats   Back" : " Back", Alignment::center);
+			printSmall(false, 0, perGameOpYpos+5, showCheats ? " Cheats   Back" : " Back", Alignment::center, FontPalette::formText);
 		}
 		updateText(false);
 		do {

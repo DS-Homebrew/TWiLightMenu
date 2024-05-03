@@ -262,19 +262,19 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem *>& lis
         printSmall(false, 22, 90+(i*10), ">", Alignment::left, FontPalette::user);
         printSmall(false, 30, 90+(i*10), list[screenPos+i]->_title.c_str() + scrollPos, Alignment::left, FontPalette::user);
       } else {
-        printSmall(false, 22, 90+(i*10), ">", Alignment::left, FontPalette::black);
-        printSmall(false, 30, 90+(i*10), list[screenPos+i]->_title.c_str(), Alignment::left, FontPalette::black);
+        printSmall(false, 22, 90+(i*10), ">", Alignment::left, FontPalette::formText);
+        printSmall(false, 30, 90+(i*10), list[screenPos+i]->_title.c_str(), Alignment::left, FontPalette::formText);
       }
     } else {
       if (list[screenPos+i]->_flags&cParsedItem::ESelected) {
-        printSmall(false, 16, 89+(i*10), "x");
+        printSmall(false, 16, 89+(i*10), "x", Alignment::left, FontPalette::formText);
       }
       if (screenPos+i == curPos) {
         printSmall(false, 21, 90+(i*10), "-", Alignment::left, FontPalette::user);
         printSmall(false, 28, 90+(i*10), list[screenPos+i]->_title.c_str() + scrollPos, Alignment::left, FontPalette::user);
       } else {
-        printSmall(false, 21, 90+(i*10), "-", Alignment::left, FontPalette::black);
-        printSmall(false, 28, 90+(i*10), list[screenPos+i]->_title.c_str(), Alignment::left, FontPalette::black);
+        printSmall(false, 21, 90+(i*10), "-", Alignment::left, FontPalette::formText);
+        printSmall(false, 28, 90+(i*10), list[screenPos+i]->_title.c_str(), Alignment::left, FontPalette::formText);
       }
     }
   }
@@ -290,8 +290,8 @@ void CheatCodelist::selectCheats(std::string filename)
   int oldDialogboxHeight = dialogboxHeight;
   dialogboxHeight = 5;
 
-  printLarge(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
-  printSmall(false, 0, 100, "Loading...", Alignment::center);
+  printLarge(false, 0, 74, "Cheats", Alignment::center, FontPalette::formTitleText);
+  printSmall(false, 0, 100, "Loading...", Alignment::center, FontPalette::formText);
 
   updateText(false);
 
@@ -302,9 +302,9 @@ void CheatCodelist::selectCheats(std::string filename)
   if (_data.size() == 0) {
     cheatsFound = false;
     clearText(false);
-    printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
-    printSmall(false, 0, 100, "No cheats found", Alignment::center);
-    printSmall(false, 0, 160, " Back", Alignment::center);
+    printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::formTitleText);
+    printSmall(false, 0, 100, "No cheats found", Alignment::center, FontPalette::formText);
+    printSmall(false, 0, 160, " Back", Alignment::center, FontPalette::formText);
     updateText(false);
 
     while (1) {
@@ -333,24 +333,24 @@ void CheatCodelist::selectCheats(std::string filename)
   bool unsavedChanges = false;
   while (cheatsFound) {
     clearText(false);
-    printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
+    printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::formTitleText);
 
     // Print bottom text
     if (currentList[cheatWnd_cursorPosition]->_comment != "") {
       if (currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
-        printSmall(false, 0, 167, " Open   Info   Save   Cancel", Alignment::center);
+        printSmall(false, 0, 167, " Open   Info   Save   Cancel", Alignment::center, FontPalette::formText);
       } else if (currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::ESelected) {
-        printSmall(false, 0, 167, " Deselect   Info   Save   Cancel", Alignment::center);
+        printSmall(false, 0, 167, " Deselect   Info   Save   Cancel", Alignment::center, FontPalette::formText);
       } else {
-        printSmall(false, 0, 167, " Select   Info   Save   Cancel", Alignment::center);
+        printSmall(false, 0, 167, " Select   Info   Save   Cancel", Alignment::center, FontPalette::formText);
       }
     } else {
       if (currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::EFolder) {
-        printSmall(false, 0, 167, " Open   Save   Cancel", Alignment::center);
+        printSmall(false, 0, 167, " Open   Save   Cancel", Alignment::center, FontPalette::formText);
       } else if (currentList[cheatWnd_cursorPosition]->_flags&cParsedItem::ESelected) {
-        printSmall(false, 0, 167, " Deselect   Save   Cancel", Alignment::center);
+        printSmall(false, 0, 167, " Deselect   Save   Cancel", Alignment::center, FontPalette::formText);
       } else {
-        printSmall(false, 0, 167, " Select   Save   Cancel", Alignment::center);
+        printSmall(false, 0, 167, " Select   Save   Cancel", Alignment::center, FontPalette::formText);
       }
     }
 
@@ -446,9 +446,9 @@ void CheatCodelist::selectCheats(std::string filename)
         if (unsavedChanges)
         {
           bool break2 = false;
-          printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
-          printSmall(false, 0, 128, "Discard unsaved changes?", Alignment::center);
-          printSmall(false, 0, 167, " Discard   Cancel", Alignment::center);
+          printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::formTitleText);
+          printSmall(false, 0, 128, "Discard unsaved changes?", Alignment::center, FontPalette::formText);
+          printSmall(false, 0, 167, " Discard   Cancel", Alignment::center, FontPalette::formText);
           updateText(false);
           
           while (1)
@@ -481,8 +481,8 @@ void CheatCodelist::selectCheats(std::string filename)
     } else if (pressed & KEY_X) {
       unsavedChanges = false;
       clearText(false);
-      printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
-      printSmall(false, 0, 100, "Saving...", Alignment::center);
+      printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::formTitleText);
+      printSmall(false, 0, 100, "Saving...", Alignment::center, FontPalette::formText);
 	  updateText(false);
       onGenerate();
       break;
@@ -490,7 +490,7 @@ void CheatCodelist::selectCheats(std::string filename)
     if (pressed & KEY_Y) {
       if (currentList[cheatWnd_cursorPosition]->_comment != "") {
         clearText(false);
-        printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::white);
+        printSmall(false, 0, 74, "Cheats", Alignment::center, FontPalette::formTitleText);
 
         std::vector<std::string> _topText;
         std::string _topTextStr(currentList[cheatWnd_cursorPosition]->_comment);
@@ -531,11 +531,11 @@ void CheatCodelist::selectCheats(std::string filename)
         
         // Print comment
         for (int i = 0; i < (int)_topText.size(); i++) {
-          printSmall(false, 0, 90 + (i*10), _topText[i].c_str(), Alignment::center);
+          printSmall(false, 0, 90 + (i*10), _topText[i].c_str(), Alignment::center, FontPalette::formText);
         }
 
         // Print 'Back' text
-        printSmall(false, 0, 167, " Back", Alignment::center);
+        printSmall(false, 0, 167, " Back", Alignment::center, FontPalette::formText);
 		updateText(false);
         while (1) {
           scanKeys();

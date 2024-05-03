@@ -139,9 +139,12 @@ static bool iconScaleLarge = true;
 static bool iconScaleDelay = false;
 static int iconShift = 0;
 
+static u16 formFrameColor = RGB15(23,25,4);
+static u16 formBodyColor = RGB15(30,29,22);
+
 u16 startBorderColor = 0;
-static u16 windowColorTop = 0;
-static u16 windowColorBottom = 0;
+// static u16 windowColorTop = 0;
+// static u16 windowColorBottom = 0;
 static u16 selectionBarColor1 = 0x5c00;
 static u16 selectionBarColor2 = 0x2d60;
 static u8 selectionBarOpacity = 100;
@@ -1115,9 +1118,9 @@ void vBlankHandler()
 			}
 		}
 		if (showdialogbox) {
-			glBoxFilled(15, 71, 241, 121+(dialogboxHeight*12), RGB15(0, 0, 0));
-			glBoxFilledGradient(16, 72, 240, 86, windowColorTop, windowColorBottom, windowColorBottom, windowColorTop);
-			glBoxFilled(16, 88, 240, 120+(dialogboxHeight*12), RGB15(31, 31, 31));
+			glBoxFilled(15, 71, 241, 121+(dialogboxHeight*12), formFrameColor);
+			// glBoxFilledGradient(16, 72, 240, 86, windowColorTop, windowColorBottom, windowColorBottom, windowColorTop);
+			glBoxFilled(16, 88, 240, 120+(dialogboxHeight*12), formBodyColor);
 		}
 	}
 	glEnd2D();
@@ -1278,6 +1281,9 @@ void graphicsLoad()
 
 	{
 		CIniFile ini( iniPath.c_str() );
+		formFrameColor = ini.GetInt("global settings", "formFrameColor", formFrameColor);
+		formBodyColor = ini.GetInt("global settings", "formBodyColor", formBodyColor);
+
 		selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24)) | BIT(15);
 		selectionBarColor2 = ini.GetInt("main list", "selectionBarColor2", RGB15(20, 25, 0)) | BIT(15);
 		selectionBarOpacity = ini.GetInt("main list", "selectionBarOpacity", 100);
@@ -1359,12 +1365,12 @@ void graphicsLoad()
 	// bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
 
 	startBorderColor = RGB15(colorRvalue/8, colorGvalue/8, colorBvalue/8) | BIT(15); // Bit 15 is needed for the color to display on the top screen
-	windowColorTop = RGB15(0, 0, 31);
-	windowColorBottom = RGB15(0, 0, 15);
+	// windowColorTop = RGB15(0, 0, 31);
+	// windowColorBottom = RGB15(0, 0, 15);
 	if (colorTable) {
 		startBorderColor = colorTable[startBorderColor];
-		windowColorTop = colorTable[windowColorTop];
-		windowColorBottom = colorTable[windowColorBottom];
+		// windowColorTop = colorTable[windowColorTop];
+		// windowColorBottom = colorTable[windowColorBottom];
 	}
 
 	u16* newPalette = (u16*)wirelessiconsPal;

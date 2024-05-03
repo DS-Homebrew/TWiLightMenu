@@ -593,17 +593,18 @@ void SetWidescreen(const char *filename) {
 			textYpos[0] = 72;
 			textYpos[1] = 84;
 			clearText(false);
+			dialogboxHeight = 2;
+			showdialogbox = true;
+			printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
 			printSmall(false, 0, textYpos[0], resultText1, Alignment::center);
 			printSmall(false, 0, textYpos[1], resultText2, Alignment::center);
 			updateText(false);
-			fadeType = true; // Fade in from white
 			for (int i = 0; i < 60 * 3; i++) {
 				swiWaitForVBlank(); // Wait 3 seconds
 			}
-			fadeType = false;	   // Fade to white
-			for (int i = 0; i < 25; i++) {
-				swiWaitForVBlank();
-			}
+			showdialogbox = false;
+			clearText(false);
+			updateText(false);
 			return;
 		}
 	} else {

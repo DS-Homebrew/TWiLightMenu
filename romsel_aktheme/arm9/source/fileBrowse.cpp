@@ -449,12 +449,12 @@ void mdRomTooBig(void) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	clearText(false);
-	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
-	printSmall(false, 0, 90, "This SEGA Genesis/Mega Drive", Alignment::center);
-	printSmall(false, 0, 102, "ROM cannot be launched,", Alignment::center);
-	printSmall(false, 0, 114, "due to its surpassing the", Alignment::center);
-	printSmall(false, 0, 126, "size limit of 3MB.", Alignment::center);
-	printSmall(false, 0, 144, " OK", Alignment::center);
+	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
+	printSmall(false, 0, 90, "This SEGA Genesis/Mega Drive", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 102, "ROM cannot be launched,", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 114, "due to its surpassing the", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 126, "size limit of 3MB.", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 144, " OK", Alignment::center, FontPalette::formText);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -472,10 +472,10 @@ void ramDiskMsg(void) {
 	dialogboxHeight = 1;
 	showdialogbox = true;
 	clearText(false);
-	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
-	printSmall(false, 0, 90, "This app requires a", Alignment::center);
-	printSmall(false, 0, 102, "RAM disk to work.", Alignment::center);
-	printSmall(false, 0, 120, " OK", Alignment::center);
+	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
+	printSmall(false, 0, 90, "This app requires a", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 102, "RAM disk to work.", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 120, " OK", Alignment::center, FontPalette::formText);
 	updateText(false);
 	int pressed = 0;
 	do {
@@ -495,11 +495,11 @@ bool dsiBinariesMissingMsg(void) {
 	dialogboxHeight = 2;
 	showdialogbox = true;
 	clearText(false);
-	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
-	printSmall(false, 0, 90, "The DSi binaries are missing.", Alignment::center);
-	printSmall(false, 0, 102, "Please get a clean dump of", Alignment::center);
-	printSmall(false, 0, 114, "this ROM, or start in DS mode.", Alignment::center);
-	printSmall(false, 0, 132, " Launch in DS mode   Back", Alignment::center);
+	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
+	printSmall(false, 0, 90, "The DSi binaries are missing.", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 102, "Please get a clean dump of", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 114, "this ROM, or start in DS mode.", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 132, " Launch in DS mode   Back", Alignment::center, FontPalette::formText);
 	updateText(false);
 	int pressed = 0;
 	while (1) {
@@ -552,64 +552,64 @@ bool donorRomMsg(void) {
 	while (1) {
 		if (!pageLoaded) {
 			clearText(false);
-			printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+			printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
 			if (msgPage == 1) {
 				switch (requiresDonorRom[cursorPosOnScreen]) {
 					default:
 						break;
 					case 20:
-						printSmall(false, 0, 90, "Find the SDK2.0 title,", Alignment::center);
+						printSmall(false, 0, 90, "Find the SDK2.0 title,", Alignment::center, FontPalette::formText);
 						break;
 					case 51:
-						printSmall(false, 0, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? (vramWifi ? "Find the VRAM-WiFi SDK5 DS title," : "Find the SDK5 DS title,") : "Find the DSi-Enhanced title,", Alignment::center);
+						printSmall(false, 0, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? (vramWifi ? "Find the VRAM-WiFi SDK5 DS title," : "Find the SDK5 DS title,") : "Find the DSi-Enhanced title,", Alignment::center, FontPalette::formText);
 						break;
 					case 52:
-						printSmall(false, 0, 90, "Find the DSi(Ware) title,", Alignment::center);
+						printSmall(false, 0, 90, "Find the DSi(Ware) title,", Alignment::center, FontPalette::formText);
 						break;
 					case 151:
-						printSmall(false, 0, 90, "Find the SDK5.0 DSi-Enhanced title,", Alignment::center);
+						printSmall(false, 0, 90, "Find the SDK5.0 DSi-Enhanced title,", Alignment::center, FontPalette::formText);
 						break;
 					case 152:
-						printSmall(false, 0, 90, "Find the SDK5.0 DSi(Ware) title,", Alignment::center);
+						printSmall(false, 0, 90, "Find the SDK5.0 DSi(Ware) title,", Alignment::center, FontPalette::formText);
 						break;
 				}
-				printSmall(false, 0, 102, "press (Y), and select", Alignment::center);
-				printSmall(false, 0, 114, "\"Set as Donor ROM\".", Alignment::center);
-				printSmall(false, 18, 132, "<");
+				printSmall(false, 0, 102, "press (Y), and select", Alignment::center, FontPalette::formText);
+				printSmall(false, 0, 114, "\"Set as Donor ROM\".", Alignment::center, FontPalette::formText);
+				printSmall(false, 18, 132, "<", Alignment::left, FontPalette::formText);
 			} else {
 				switch (requiresDonorRom[cursorPosOnScreen]) {
 					default:
 						break;
 					case 20:
-						printSmall(false, 0, 90, "Please set a different SDK2.0", Alignment::center);
-						printSmall(false, 0, 102, "title as a donor ROM, in order", Alignment::center);
-						printSmall(false, 0, 114, "to launch this title.", Alignment::center);
+						printSmall(false, 0, 90, "Please set a different SDK2.0", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 102, "title as a donor ROM, in order", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 114, "to launch this title.", Alignment::center, FontPalette::formText);
 						break;
 					case 51:
-						printSmall(false, 0, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? "Please set an SDK5 Nintendo DS title" : "Please set a DSi-Enhanced title", Alignment::center);
-						printSmall(false, 0, 102, "as a donor ROM, in order", Alignment::center);
-						printSmall(false, 0, 114, "to launch this title.", Alignment::center);
+						printSmall(false, 0, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? "Please set an SDK5 Nintendo DS title" : "Please set a DSi-Enhanced title", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 102, "as a donor ROM, in order", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 114, "to launch this title.", Alignment::center, FontPalette::formText);
 						break;
 					case 52:
-						printSmall(false, 0, 90, dsModeAllowed ? "Please set a DSi(Ware) title" : "Please set a different DSi(Ware)", Alignment::center);
-						printSmall(false, 0, 102, dsModeAllowed ? "as a donor ROM, in order" : "title as a donor ROM, in order", Alignment::center);
-						printSmall(false, 0, 114, dsModeAllowed ? "to launch this title in DSi mode." : "to launch this title.", Alignment::center);
+						printSmall(false, 0, 90, dsModeAllowed ? "Please set a DSi(Ware) title" : "Please set a different DSi(Ware)", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 102, dsModeAllowed ? "as a donor ROM, in order" : "title as a donor ROM, in order", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 114, dsModeAllowed ? "to launch this title in DSi mode." : "to launch this title.", Alignment::center, FontPalette::formText);
 						break;
 					case 151:
-						printSmall(false, 0, 90, "Please set an SDK5.0 DSi-Enhanced", Alignment::center);
-						printSmall(false, 0, 102, "title as a donor ROM, in order", Alignment::center);
-						printSmall(false, 0, 114, "to launch this title.", Alignment::center);
+						printSmall(false, 0, 90, "Please set an SDK5.0 DSi-Enhanced", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 102, "title as a donor ROM, in order", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 114, "to launch this title.", Alignment::center, FontPalette::formText);
 						break;
 					case 152:
-						printSmall(false, 0, 90, "Please set a different SDK5.0", Alignment::center);
-						printSmall(false, 0, 102, "DSi(Ware) title as a donor ROM,", Alignment::center);
-						printSmall(false, 0, 114, "in order to launch this title.", Alignment::center);
+						printSmall(false, 0, 90, "Please set a different SDK5.0", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 102, "DSi(Ware) title as a donor ROM,", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 114, "in order to launch this title.", Alignment::center, FontPalette::formText);
 						break;
 				}
-				printSmall(false, 256 - 16, 132, ">", Alignment::right);
+				printSmall(false, 256 - 16, 132, ">", Alignment::right, FontPalette::formText);
 			}
 			if (secondPageViewed) {
-				printSmall(false, 0, 132, dsModeAllowed ? "(Y) Launch in DS mode   Back" : " Back", Alignment::center);
+				printSmall(false, 0, 132, dsModeAllowed ? "(Y) Launch in DS mode   Back" : " Back", Alignment::center, FontPalette::formText);
 			}
 			pageLoaded = true;
 			updateText(false);
@@ -683,12 +683,12 @@ bool checkForCompatibleGame(const char *filename) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	clearText(false);
-	printSmall(false, 0, 74, "Compatibility Warning", Alignment::center, FontPalette::white);
-	printSmall(false, 0, 90, "This game is known to not run.", Alignment::center);
-	printSmall(false, 0, 102, "If there's an nds-bootstrap", Alignment::center);
-	printSmall(false, 0, 114, "version that fixes this,", Alignment::center);
-	printSmall(false, 0, 126, "please ignore this message.", Alignment::center);
-	printSmall(false, 0, 144, " Ignore    Don't launch", Alignment::center);
+	printSmall(false, 0, 74, "Compatibility Warning", Alignment::center, FontPalette::formTitleText);
+	printSmall(false, 0, 90, "This game is known to not run.", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 102, "If there's an nds-bootstrap", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 114, "version that fixes this,", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 126, "please ignore this message.", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 144, " Ignore    Don't launch", Alignment::center, FontPalette::formText);
 	updateText(false);
 
 	int pressed = 0;
@@ -753,15 +753,15 @@ bool cannotLaunchMsg(char tid1) {
 
 	showdialogbox = true;
 	clearText(false);
-	printSmall(false, 0, 74, isTwlm[cursorPosOnScreen] ? "Information" : "Error!", Alignment::center, FontPalette::white);
+	printSmall(false, 0, 74, isTwlm[cursorPosOnScreen] ? "Information" : "Error!", Alignment::center, FontPalette::formTitleText);
 	if (!isTwlm[cursorPosOnScreen] && bnrRomType[cursorPosOnScreen] == 0 && sys().isRegularDS()) {
-		printSmall(false, 0, 90, "For use with Nintendo DSi systems only.", Alignment::center);
+		printSmall(false, 0, 90, "For use with Nintendo DSi systems only.", Alignment::center, FontPalette::formText);
 	} else if (bnrRomType[cursorPosOnScreen] == 1) {
-		printSmall(false, 0, 90, "GBA BIOS is missing!", Alignment::center);
+		printSmall(false, 0, 90, "GBA BIOS is missing!", Alignment::center, FontPalette::formText);
 	} else {
-		printSmall(false, 0, 90, isTwlm[cursorPosOnScreen] ? "TWiLight Menu++ is already running." : "This game cannot be launched.", Alignment::center);
+		printSmall(false, 0, 90, isTwlm[cursorPosOnScreen] ? "TWiLight Menu++ is already running." : "This game cannot be launched.", Alignment::center, FontPalette::formText);
 	}
-	printSmall(false, 0, 108, " OK", Alignment::center);
+	printSmall(false, 0, 108, " OK", Alignment::center, FontPalette::formText);
 	updateText(false);
 	int pressed = 0;
 	while (1) {
@@ -794,13 +794,13 @@ bool dsiWareInDSModeMsg(void) {
 	dialogboxHeight = 4;
 	showdialogbox = true;
 	clearText(false);
-	printSmall(false, 0, 74, "Compatibility Warning", Alignment::center, FontPalette::white);
-	printSmall(false, 0, 90, "You are attempting to launch a DSiWare", Alignment::center);
-	printSmall(false, 0, 102, "title in DS mode on a DSi or 3DS system.", Alignment::center);
-	printSmall(false, 0, 114, "For increased compatibility, and saving", Alignment::center);
-	printSmall(false, 0, 126, "data in more titles, please relaunch", Alignment::center);
-	printSmall(false, 0, 138, "TWLMenu++ from the console's SD Card slot.", Alignment::center);
-	printSmall(false, 0, 154, " Return    Launch", Alignment::center);
+	printSmall(false, 0, 74, "Compatibility Warning", Alignment::center, FontPalette::formTitleText);
+	printSmall(false, 0, 90, "You are attempting to launch a DSiWare", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 102, "title in DS mode on a DSi or 3DS system.", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 114, "For increased compatibility, and saving", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 126, "data in more titles, please relaunch", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 138, "TWLMenu++ from the console's SD Card slot.", Alignment::center, FontPalette::formText);
+	printSmall(false, 0, 154, " Return    Launch", Alignment::center, FontPalette::formText);
 	updateText(false);
 
 	int pressed = 0;
@@ -917,80 +917,76 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	clearText(false);
-	printSmall(false, 0, 74, ((msgId == 10 || msgId == 11) && !sys().isRegularDS()) ? "Error!" : "Compatibility Warning", Alignment::center, FontPalette::white);
+	printSmall(false, 0, 74, ((msgId == 10 || msgId == 11) && !sys().isRegularDS()) ? "Error!" : "Compatibility Warning", Alignment::center, FontPalette::formTitleText);
 	switch (msgId) {
 		case 0:
-			printSmall(false, 0, 90, "Due to memory limitations, only part", Alignment::center);
-			printSmall(false, 0, 102, "of this game can be played. To play", Alignment::center);
-			printSmall(false, 0, 114, "the full game, launch this on", Alignment::center);
-			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
+			printSmall(false, 0, 90, "Due to memory limitations, only part", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 102, "of this game can be played. To play", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 114, "the full game, launch this on", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center, FontPalette::formText);
 			break;
 		case 1:
 		case 2:
-			printSmall(false, 0, 90, msgId == 2 ? "Due to memory limitations, music" : "Due to memory limitations, audio", Alignment::center);
-			printSmall(false, 0, 102, "will not be played. To play this", Alignment::center);
-			printSmall(false, 0, 114, msgId == 2 ? "game with music, launch this on" : "game with audio, launch this on", Alignment::center);
-			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
+			printSmall(false, 0, 90, msgId == 2 ? "Due to memory limitations, music" : "Due to memory limitations, audio", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 102, "will not be played. To play this", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 114, msgId == 2 ? "game with music, launch this on" : "game with audio, launch this on", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center, FontPalette::formText);
 			break;
 		case 3:
 		case 4:
-			printSmall(false, 0, 90, "Due to memory limitations, the game", Alignment::center);
-			printSmall(false, 0, 102, msgId == 4 ? "will crash at certain point(s). To work" : "will crash at a specific area. To work", Alignment::center);
-			printSmall(false, 0, 114, "around the crash, launch this on", Alignment::center);
-			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
+			printSmall(false, 0, 90, "Due to memory limitations, the game", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 102, msgId == 4 ? "will crash at certain point(s). To work" : "will crash at a specific area. To work", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 114, "around the crash, launch this on", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center, FontPalette::formText);
 			break;
 		case 5:
-			printSmall(false, 0, 90, "Due to memory limitations, FMVs", Alignment::center);
-			printSmall(false, 0, 102, "will not be played. For playback", Alignment::center);
-			printSmall(false, 0, 114, "of FMVs, launch this on", Alignment::center);
-			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
+			printSmall(false, 0, 90, "Due to memory limitations, FMVs", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 102, "will not be played. For playback", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 114, "of FMVs, launch this on", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center, FontPalette::formText);
 			break;
 		case 6:
 		case 7:
-			printSmall(false, 0, 90, msgId == 7 ? "Due to no save support, the game" : "Due to memory limitations, the game", Alignment::center);
-			printSmall(false, 0, 102, "will run in a limited state. To play", Alignment::center);
-			printSmall(false, 0, 114, "the full version, launch this on", Alignment::center);
-			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
+			printSmall(false, 0, 90, msgId == 7 ? "Due to no save support, the game" : "Due to memory limitations, the game", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 102, "will run in a limited state. To play", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 114, "the full version, launch this on", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center, FontPalette::formText);
 			break;
 		case 10:
 			if (sys().isRegularDS()) {
-				printSmall(false, 0, 102, "To launch this title, please", Alignment::center);
-				printSmall(false, 0, 114, "insert the Memory Expansion Pak.", Alignment::center);
+				printSmall(false, 0, 102, "To launch this title, please", Alignment::center, FontPalette::formText);
+				printSmall(false, 0, 114, "insert the Memory Expansion Pak.", Alignment::center, FontPalette::formText);
 			} else {
-				printSmall(false, 0, 90, "This title requires the Memory Expansion Pak,", Alignment::center);
-				printSmall(false, 0, 102, "but the slot to insert it does not exist.", Alignment::center);
-				printSmall(false, 0, 114, "As a result, this title cannot be launched.", Alignment::center);
+				printSmall(false, 0, 90, "This title requires the Memory Expansion Pak,", Alignment::center, FontPalette::formText);
+				printSmall(false, 0, 102, "but the slot to insert it does not exist.", Alignment::center, FontPalette::formText);
+				printSmall(false, 0, 114, "As a result, this title cannot be launched.", Alignment::center, FontPalette::formText);
 			}
 			break;
 		case 11:
 			if (sys().isRegularDS()) {
 				if (mepFound) {
-					printSmall(false, 0, 90, "This title requires a larger amount", Alignment::center);
-					printSmall(false, 0, 102, "amount of memory than the Expansion Pak.", Alignment::center);
-					printSmall(false, 0, 114, "Please turn off the POWER, and insert", Alignment::center);
-					printSmall(false, 0, 126, "a Slot-2 cart with more memory.", Alignment::center);
+					printSmall(false, 0, 90, "This title requires a larger amount", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 102, "amount of memory than the Expansion Pak.", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 114, "Please turn off the POWER, and insert", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 126, "a Slot-2 cart with more memory.", Alignment::center, FontPalette::formText);
 				} else {
-					printSmall(false, 0, 90, "To launch this title, please turn off the", Alignment::center);
-					printSmall(false, 0, 102, "POWER, and insert a Slot-2 memory expansion", Alignment::center);
-					printSmall(false, 0, 114, "cart which isn't the Memory Expansion Pak.", Alignment::center);
+					printSmall(false, 0, 90, "To launch this title, please turn off the", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 102, "POWER, and insert a Slot-2 memory expansion", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 114, "cart which isn't the Memory Expansion Pak.", Alignment::center, FontPalette::formText);
 				}
 			} else {
-				printSmall(false, 0, 90, "This title requires a Slot-2 expansion cart,", Alignment::center);
-				printSmall(false, 0, 102, "but the slot to insert it does not exist.", Alignment::center);
-				printSmall(false, 0, 114, "As a result, this title cannot be launched.", Alignment::center);
+				printSmall(false, 0, 90, "This title requires a Slot-2 expansion cart,", Alignment::center, FontPalette::formText);
+				printSmall(false, 0, 102, "but the slot to insert it does not exist.", Alignment::center, FontPalette::formText);
+				printSmall(false, 0, 114, "As a result, this title cannot be launched.", Alignment::center, FontPalette::formText);
 			}
 			break;
 		case 12:
-			printSmall(false, 0, 90, "The currently set donor ROM is incompatible", Alignment::center);
-			printSmall(false, 0, 102, "with this title. Please find a VRAM-WiFi", Alignment::center);
-			printSmall(false, 0, 114, "SDK5 DS title to set as a donor ROM.", Alignment::center);
+			printSmall(false, 0, 90, "The currently set donor ROM is incompatible", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 102, "with this title. Please find a VRAM-WiFi", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 114, "SDK5 DS title to set as a donor ROM.", Alignment::center, FontPalette::formText);
 			break;
 	}
-	if (msgId >= 10) {
-		printSmall(false, 0, 142, " OK", Alignment::center);
-	} else {
-		printSmall(false, 0, 142, " Return    Launch", Alignment::center);
-	}
+	printSmall(false, 0, 142, (msgId >= 10) ? " OK" : " Return    Launch", Alignment::center, FontPalette::formText);
 	updateText(false);
 
 	int pressed = 0;
@@ -1337,17 +1333,17 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				if (hasAP > 0) {
 					dialogboxHeight = 3;
 					showdialogbox = true;
-					printSmall(false, 0, 74, "Anti-Piracy Warning", Alignment::center, FontPalette::white);
+					printSmall(false, 0, 74, "Anti-Piracy Warning", Alignment::center, FontPalette::formTitleText);
 					if (hasAP == 2) {
-						printSmall(false, 0, 98, "This game has AP, and MUST", Alignment::center);
-						printSmall(false, 0, 110, "be patched using the RGF", Alignment::center);
-						printSmall(false, 0, 122, "TWiLight Menu AP patcher.", Alignment::center);
+						printSmall(false, 0, 98, "This game has AP, and MUST", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 110, "be patched using the RGF", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 122, "TWiLight Menu AP patcher.", Alignment::center, FontPalette::formText);
 					} else {
-						printSmall(false, 0, 98, "This game has AP. Please", Alignment::center);
-						printSmall(false, 0, 110, "make sure you're using the", Alignment::center);
-						printSmall(false, 0, 122, "latest TWiLight Menu++.", Alignment::center);
+						printSmall(false, 0, 98, "This game has AP. Please", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 110, "make sure you're using the", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 122, "latest TWiLight Menu++.", Alignment::center, FontPalette::formText);
 					}
-					printSmall(false, 0, 142, " Return    Launch", Alignment::center);
+					printSmall(false, 0, 142, " Return    Launch", Alignment::center, FontPalette::formText);
 					updateText(false);
 
 					pressed = 0;
@@ -1385,13 +1381,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					// Clear location text
 					clearText(false);
 
-					printSmall(false, 0, 74, "Cluster Size Warning", Alignment::center, FontPalette::white);
-					printSmall(false, 0, 98, "Your SD card is not formatted", Alignment::center);
-					printSmall(false, 0, 110, "using 32KB clusters, this causes", Alignment::center);
-					printSmall(false, 0, 122, "some games to load very slowly.", Alignment::center);
-					printSmall(false, 0, 134, "It's recommended to reformat your", Alignment::center);
-					printSmall(false, 0, 146, "SD card using 32KB clusters.", Alignment::center);
-					printSmall(false, 0, 166, " Return    Launch", Alignment::center);
+					printSmall(false, 0, 74, "Cluster Size Warning", Alignment::center, FontPalette::formTitleText);
+					printSmall(false, 0, 98, "Your SD card is not formatted", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 110, "using 32KB clusters, this causes", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 122, "some games to load very slowly.", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 134, "It's recommended to reformat your", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 146, "SD card using 32KB clusters.", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 166, " Return    Launch", Alignment::center, FontPalette::formText);
 					updateText(false);
 
 					pressed = 0;
@@ -1437,10 +1433,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						dialogboxHeight = 2;
 						showdialogbox = true;
 
-						printSmall(false, 0, 74, "Now saving...", Alignment::center, FontPalette::white);
+						printSmall(false, 0, 74, "Now saving...", Alignment::center, FontPalette::formTitleText);
 
-						printSmall(false, 0, 98, "If this crashes with an error, please", Alignment::center);
-						printSmall(false, 0, 110, "disable \"Update recently played list\".", Alignment::center);
+						printSmall(false, 0, 98, "If this crashes with an error, please", Alignment::center, FontPalette::formText);
+						printSmall(false, 0, 110, "disable \"Update recently played list\".", Alignment::center, FontPalette::formText);
 						updateText(false);
 
 						mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
@@ -1511,23 +1507,23 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			dialogboxHeight = 3;
 
 			if (isDirectory[cursorPosOnScreen]) {
-				printSmall(false, 0, 74, "Folder Management options", Alignment::center, FontPalette::white);
-				printSmall(false, 0, 110, "to do with this folder?", Alignment::center);
+				printSmall(false, 0, 74, "Folder Management options", Alignment::center, FontPalette::formTitleText);
+				printSmall(false, 0, 110, "to do with this folder?", Alignment::center, FontPalette::formText);
 			} else {
-				printSmall(false, 0, 74, "Title Management options", Alignment::center, FontPalette::white);
-				printSmall(false, 0, 110, "to do with this title?", Alignment::center);
+				printSmall(false, 0, 74, "Title Management options", Alignment::center, FontPalette::formTitleText);
+				printSmall(false, 0, 110, "to do with this title?", Alignment::center, FontPalette::formText);
 			}
-			printSmall(false, 0, 98, "What would you like", Alignment::center);
+			printSmall(false, 0, 98, "What would you like", Alignment::center, FontPalette::formText);
 			updateText(false);
 
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 
 			if (isTwlm[cursorPosOnScreen] || isDirectory[cursorPosOnScreen]) {
-				if (unHide)	printSmall(false, 0, 128, " Unhide   Nothing", Alignment::center);
-				else		printSmall(false, 0, 128, " Hide     Nothing", Alignment::center);
+				if (unHide)	printSmall(false, 0, 128, " Unhide   Nothing", Alignment::center, FontPalette::formText);
+				else		printSmall(false, 0, 128, " Hide     Nothing", Alignment::center, FontPalette::formText);
 			} else {
-				if (unHide)	printSmall(false, 0, 128, " Unhide   Delete   Nothing", Alignment::center);
-				else		printSmall(false, 0, 128, " Hide    Delete    Nothing", Alignment::center);
+				if (unHide)	printSmall(false, 0, 128, " Unhide   Delete   Nothing", Alignment::center, FontPalette::formText);
+				else		printSmall(false, 0, 128, " Hide    Delete    Nothing", Alignment::center, FontPalette::formText);
 			}
 			updateText(false);
 
