@@ -147,10 +147,11 @@ void loadROMselect(void)
 	vector<char *> argarray;
 
 	switch (ms().theme) {
-		/*case 3:
+		case 3:
 			logPrint("Opening Wood theme...\n");
-			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
-			break;*/
+			argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr"));
+			runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
+			break;
 		case 2:
 		case 6:
 			logPrint("Opening R4 Original or GameBoy Color theme...\n");
@@ -2569,11 +2570,9 @@ int titleMode(void)
 
 	if ((access(settingsinipath, F_OK) != 0)
 	|| languageNowSet || regionNowSet
-	|| (ms().theme < TWLSettings::EThemeDSi) || (ms().theme == TWLSettings::EThemeWood) || (ms().theme > TWLSettings::EThemeGBC)) {
+	|| (ms().theme < TWLSettings::EThemeDSi) || (ms().theme > TWLSettings::EThemeGBC)) {
 		// Create or modify "settings.ini"
-		if (ms().theme == TWLSettings::EThemeWood) {
-			ms().theme = TWLSettings::EThemeR4;
-		} else if (ms().theme < TWLSettings::EThemeDSi || ms().theme > TWLSettings::EThemeGBC) {
+		if (ms().theme < TWLSettings::EThemeDSi || ms().theme > TWLSettings::EThemeGBC) {
 			ms().theme = TWLSettings::EThemeDSi;
 		}
 		ms().saveSettings();

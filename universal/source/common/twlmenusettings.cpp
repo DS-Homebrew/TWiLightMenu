@@ -116,10 +116,10 @@ TWLSettings::TWLSettings()
 	smsGgInRam = false;
 	esrbRatingScreen = false;
 
-	// ak_viewMode = EViewInternal;
+	ak_viewMode = EViewInternal;
 	// ak_scrollSpeed = EScrollFast;
-	// ak_theme = "zelda";
-	// ak_zoomIcons = true;
+	ak_theme = "zelda";
+	ak_zoomIcons = true;
 
 	useBootstrap = true;
 	btsrpBootloaderDirect = false;
@@ -314,10 +314,10 @@ void TWLSettings::loadSettings()
 	smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 	esrbRatingScreen = settingsini.GetInt("SRLOADER", "ESRB_RATING_SCREEN", esrbRatingScreen);
 
-	// ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
+	ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
 	// ak_scrollSpeed = settingsini.GetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
-	// ak_theme = settingsini.GetString("SRLOADER", "AK_THEME", ak_theme);
-	// ak_zoomIcons = settingsini.GetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
+	ak_theme = settingsini.GetString("SRLOADER", "AK_THEME", ak_theme);
+	ak_zoomIcons = settingsini.GetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
 	if (!(io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 		useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
@@ -465,10 +465,10 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 	settingsini.SetInt("SRLOADER", "ESRB_RATING_SCREEN", esrbRatingScreen);
 
-	// settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
+	settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
 	// settingsini.SetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
-	// settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
-	// settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
+	settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
+	settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
 	if (!(io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 		settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);

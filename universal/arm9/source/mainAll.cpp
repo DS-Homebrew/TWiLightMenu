@@ -96,6 +96,10 @@ int main(int argc, char **argv) {
 				extern int imageViewer(void);
 				imageViewer();
 				break;
+			case 7:
+				extern int akTheme(void);
+				akTheme();
+				break;
 		}
 	}
 
