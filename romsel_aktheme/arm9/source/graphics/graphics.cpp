@@ -408,12 +408,11 @@ ITCM_CODE void drawTime(void) {
 
 	if (clockNumbers[0] && clockColon[0]) {
 		// Draw big clock
-		int x = bigClockX;
-
 		for (int i = 0; i < 5; i++) {
 			const int number = (int)currentTime[i]-0x30;
 			const bool colon = (number == 10 || number == -0x10);
 
+			const int x = bigClockX + (clockNumbersW * i);
 			const int y = bigClockY;
 
 			int src = colon ? 0 : ((clockNumbersW * clockNumbersH) * number);
@@ -445,18 +444,16 @@ ITCM_CODE void drawTime(void) {
 					}
 				}
 			}
-			x += colon ? clockColonW : clockNumbersW;
 		}
 	}
 
 	if (clockNumbers2[0] && clockColon2[0]) {
 		// Draw small clock
-		int x = smallClockX;
-
 		for (int i = 0; i < 5; i++) {
 			const int number = (int)currentTime[i]-0x30;
 			const bool colon = (number == 10 || number == -0x10);
 
+			const int x = smallClockX + (clockNumbers2W * i);
 			const int y = smallClockY;
 
 			int src = colon ? 0 : ((clockNumbers2W * clockNumbers2H) * number);
@@ -488,7 +485,6 @@ ITCM_CODE void drawTime(void) {
 					}
 				}
 			}
-			x += colon ? clockColon2W : clockNumbers2W;
 		}
 	}
 }
