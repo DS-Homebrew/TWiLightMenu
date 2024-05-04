@@ -1064,7 +1064,8 @@ void refreshNdsCard(bool refreshBoxArt) {
 		//loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 	} else {
 		my_cardReset(true);
-		if ((cardInit() == 0) && refreshBoxArt) {
+		cardInit();
+		/* if ((cardInit() == 0) && refreshBoxArt) {
 			char game_TID[5] = {0};
 			tonccpy(&game_TID, ndsCardHeader.gameCode, 4);
 
@@ -1073,7 +1074,7 @@ void refreshNdsCard(bool refreshBoxArt) {
 			//loadBoxArt(boxArtPath, true);	// Load box art
 		} else if (refreshBoxArt) {
 			//loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
-		}
+		} */
 	}
 
 	getGameInfo(1, false, "slot1");
@@ -1240,14 +1241,14 @@ void parseRomInformationForDevice(int device, std::string& filename, char* boxAr
 	getGameInfo(device, false, filename.data());
 	iconUpdate(device, false, filename.data());
 
-	if (ms().showBoxArt) {
+	/* if (ms().showBoxArt) {
 		// Store box art path
 		const auto* boxArtFormat = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png";
 		sprintf(boxArtPath, boxArtFormat, filename.data());
 		if ((access(boxArtPath, F_OK) != 0) && (bnrRomType[device] == ROM_TYPE_NDS)) {
 			sprintf(boxArtPath, boxArtFormat, gameTid[device]);
 		}
-	}
+	} */
 }
 
 void findPictochatAndDownladPlay() {

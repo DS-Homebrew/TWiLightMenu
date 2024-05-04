@@ -328,16 +328,16 @@ void bottomBgLoad() {
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "%s:/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str());
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "%s:/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str());
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "%s:/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str());
 			break;
 		case TWLSettings::EThemeWood:
-			// sprintf(temp, "%s:/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str());
 			break;
 		case TWLSettings::EThemeSaturn:
 			sprintf(temp, "nitro:/graphics/bottombg_saturn.png");
@@ -881,22 +881,22 @@ void topBgLoad(void) {
 	if (ms().macroMode) return;
 
 	char filePath[256];
-	sprintf(filePath, "nitro:/graphics/%s.png", sys().isDSPhat() ? "phat_topbg" : "topbg");
+	sprintf(filePath, "nitro:/graphics/%s.png", "topbg");
 
 	char temp[256];
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "%s:/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str(), "topbg");
+			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str(), "topbg");
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "%s:/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str(), "topbg");
+			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str(), "topbg");
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "%s:/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str(), "topbg");
+			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str(), "topbg");
 			break;
 		case TWLSettings::EThemeWood:
-			// sprintf(temp, "%s:/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str(), "topbg");
+			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str(), "topbg");
 			break;
 		case TWLSettings::EThemeSaturn:
 			sprintf(temp, "nitro:/graphics/%s.png", "topbg_saturn");
