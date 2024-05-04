@@ -451,12 +451,12 @@ std::string keyString(u16 pressed) {
 
 void opt_set_hotkey(void) {
 	clearScroller();
-	bool updateText = true;
+	bool refreshText = true;
 	u16 held = 0, set = 0, timer = 0;
 	int buttonsHeld = 0;
 	std::string keys = "";
 	while (timer < 60 || !(buttonsHeld >= 2 || set == KEY_B)) {
-		if (updateText) {
+		if (refreshText) {
 			clearText(false);
 			if (ms().rtl())
 				printLarge(false, 256 - 4, 0, STR_HOLD_1S_SET, Alignment::right);
@@ -466,7 +466,8 @@ void opt_set_hotkey(void) {
 			keys = keyString(set);
 			printSmall(false, 0, 48, keys, Alignment::center);
 			printSmall(false, 0, 170 - calcSmallFontHeight(STR_HOLD_1S_DETAILS), STR_HOLD_1S_DETAILS, Alignment::center);
-			updateText = false;
+			updateText(false);
+			refreshText = false;
 		}
 
 		if (!gui().isExited())
@@ -483,7 +484,7 @@ void opt_set_hotkey(void) {
 		if (held != set) {
 			timer = 0;
 			set = held;
-			updateText = true;
+			refreshText = true;
 			buttonsHeld = 0;
 			for(int i = 0; i < 16; i++) {
 				if(set & BIT(i))
@@ -507,6 +508,7 @@ void opt_set_hotkey(void) {
 	else
 		printLarge(false, 4, 0, set == KEY_B ? STR_HOTKEY_SETTING_CANCELLED : STR_HOTKEY_SET);
 	printSmall(false, 0, 48, keys, Alignment::center);
+	updateText(false);
 	do {
 		scanKeys();
 		held = keysHeld();

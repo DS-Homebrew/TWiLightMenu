@@ -325,6 +325,80 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	}
 }
 
+void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
+	if (ms().ak_viewMode != TWLSettings::EViewList) {
+		return;
+	}
+
+	if (dirContents.at(fileOffset).isDirectory) {
+		isDirectory[0] = true;
+		bnrWirelessIcon[0] = 0;
+	} else {
+		isDirectory[0] = false;
+		std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
+		getGameInfo(0, isDirectory[0], dirContents.at(fileOffset).name.c_str());
+
+		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
+			bnrRomType[0] = 0;
+		} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
+			bnrRomType[0] = 10;
+		} else if (extension(std_romsel_filename, {".msx"})) {
+			bnrRomType[0] = 21;
+		} else if (extension(std_romsel_filename, {".col"})) {
+			bnrRomType[0] = 13;
+		} else if (extension(std_romsel_filename, {".m5"})) {
+			bnrRomType[0] = 14;
+		} else if (extension(std_romsel_filename, {".int"})) {
+			bnrRomType[0] = 12;
+		} else if (extension(std_romsel_filename, {".plg"})) {
+			bnrRomType[0] = 9;
+		} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
+			bnrRomType[0] = 19;
+		} else if (extension(std_romsel_filename, {".gif", ".bmp", ".png"})) {
+			bnrRomType[0] = 20;
+		} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
+			bnrRomType[0] = 1;
+		} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
+			bnrRomType[0] = 2;
+		} else if (extension(std_romsel_filename,{ ".gbc"})) {
+			bnrRomType[0] = 3;
+		} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
+			bnrRomType[0] = 4;
+		} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
+			bnrRomType[0] = 15;
+		} else if (extension(std_romsel_filename, {".sms"})) {
+			bnrRomType[0] = 5;
+		} else if (extension(std_romsel_filename, {".gg"})) {
+			bnrRomType[0] = 6;
+		} else if (extension(std_romsel_filename, {".gen", ".md"})) {
+			bnrRomType[0] = 7;
+		} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
+			bnrRomType[0] = 8;
+		} else if (extension(std_romsel_filename, {".pce"})) {
+			bnrRomType[0] = 11;
+		} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
+			bnrRomType[0] = 16;
+		} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
+			bnrRomType[0] = 17;
+		} else if (extension(std_romsel_filename, {".dsk"})) {
+			bnrRomType[0] = 18;
+		} else if (extension(std_romsel_filename, {".min"})) {
+			bnrRomType[0] = 22;
+		} else if (extension(std_romsel_filename, {".ntrb"})) {
+			bnrRomType[0] = 23;
+		} else {
+			bnrRomType[0] = 9;
+		}
+	}
+
+	if (bnrRomType[0] != 0) {
+		bnrWirelessIcon[0] = 0;
+		isTwlm[0] = false;
+		isDSiWare[0] = false;
+		isHomebrew[0] = 0;
+	}
+}
+
 void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
 
@@ -1222,6 +1296,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				return "null";
 			} else {
+				getGameInfo0(fileOffset, dirContents);
+				const int cursorPosOnScreenBak = cursorPosOnScreen;
+				if (ms().ak_viewMode == TWLSettings::EViewList) {
+					cursorPosOnScreen = 0;
+				}
 				if (!isTwlm[cursorPosOnScreen]) {
 					loadPerGameSettings(dirContents.at(fileOffset).name);
 				}
@@ -1434,8 +1513,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						dialogboxHeight = 2;
 						showdialogbox = true;
 
+						clearText(false);
 						printSmall(false, 0, 74, "Now saving...", Alignment::center, FontPalette::formTitleText);
-
 						printSmall(false, 0, 98, "If this crashes with an error, please", Alignment::center, FontPalette::formText);
 						printSmall(false, 0, 110, "disable \"Update recently played list\".", Alignment::center, FontPalette::formText);
 						updateText(false);
@@ -1466,6 +1545,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					// Return the chosen file
 					return entry->name;
 				} else {
+					cursorPosOnScreen = cursorPosOnScreenBak;
 					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				}
 			}
@@ -1591,11 +1671,20 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";		
 		}
 
-		if ((pressed & KEY_Y) && !ms().kioskMode && !isTwlm[cursorPosOnScreen] && !isDirectory[cursorPosOnScreen] && (bnrRomType[cursorPosOnScreen] == 0 || bnrRomType[cursorPosOnScreen] == 1 || bnrRomType[cursorPosOnScreen] == 3)) {
-			CURPOS = fileOffset;
-			perGameSettings(dirContents.at(fileOffset).name);
-			refreshBanners(screenOffset, fileOffset, dirContents);
-			for (int i = 0; i < 25; i++) bgOperations(true);
+		if (pressed & KEY_Y) {
+			getGameInfo0(fileOffset, dirContents);
+			const int cursorPosOnScreenBak = cursorPosOnScreen;
+			if (ms().ak_viewMode == TWLSettings::EViewList) {
+				cursorPosOnScreen = 0;
+			}
+			if (!isTwlm[cursorPosOnScreen] && !isDirectory[cursorPosOnScreen] && (bnrRomType[cursorPosOnScreen] == 0 || bnrRomType[cursorPosOnScreen] == 1 || bnrRomType[cursorPosOnScreen] == 3)) {
+				perGameSettings(dirContents.at(fileOffset).name);
+				cursorPosOnScreen = cursorPosOnScreenBak;
+				refreshBanners(screenOffset, fileOffset, dirContents);
+				for (int i = 0; i < 25; i++) bgOperations(true);
+			} else {
+				cursorPosOnScreen = cursorPosOnScreenBak;
+			}
 		}
 
 		/* if (loadNewIcon) {
