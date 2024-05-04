@@ -37,6 +37,8 @@
 #include "language.h"
 #include "read_card.h"
 
+#include "extension.h"
+
 #include "iconTitle.h"
 
 #define ICON_POS_X	112
@@ -70,8 +72,6 @@
 #include "icon_msx.h"
 #include "icon_mini.h"
 #include "icon_hb.h"
-
-extern bool extension(const std::string_view filename, const std::vector<std::string_view> extensions);
 
 extern u16* colorTable;
 

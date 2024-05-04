@@ -18,6 +18,7 @@
 
 #include <string_view>
 
+#include "extension.h"
 #include "date.h"
 #include "fileCopy.h"
 #include "nand/nandio.h"
@@ -89,17 +90,6 @@ static char pictochatPath[256];
 static char dlplayPath[256];
 
 extern bool showdialogbox;
-
-bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
-	for (std::string_view extension : extensions) {
-		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
-		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
-			return true;
-		}
-	}
-
-	return false;
-}
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -1141,90 +1131,89 @@ void customSleep() {
 }
 
 static void getFiletypeFromFilename(std::string_view filename, eROMType& rom_type, int& box_art_type) {
-	rom_type = ROM_TYPE_PLG;
+	rom_type = ROM_TYPE_UNK;
 	box_art_type = -1;
 	
 	auto pos = filename.find_last_of('.');
 	if(pos == filename.npos)
-		return ;
-	auto ext = filename.substr(pos);
+		return;
 	
-	if (ext == ".nds" || ext == ".dsi" || ext == ".ids" || ext == ".app" || ext == ".srl" || ext == ".argv") {
+	if (extension(filename, {".nds", ".dsi", ".ids", ".app", ".srl", ".argv"})) {
 		rom_type = ROM_TYPE_NDS;
 		box_art_type = 0;
-	} else if (ext == ".xex" || ext == ".atr" || ext == ".a26" || ext == ".a52" || ext == ".a78") {
+	} else if (extension(filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
 		rom_type = ROM_TYPE_A26;
 		box_art_type = 0;
-	} else if (ext == ".msx") {
+	} else if (extension(filename, {".msx"})) {
 		rom_type = ROM_TYPE_MSX;
 		box_art_type = 0;
-	} else if (ext == ".col") {
+	} else if (extension(filename, {".col"})) {
 		rom_type = ROM_TYPE_COL;
 		box_art_type = 0;
-	} else if (ext == ".m5") {
+	} else if (extension(filename, {".m5"})) {
 		rom_type = ROM_TYPE_M5;
 		box_art_type = 0;
-	} else if (ext == ".int") {
+	} else if (extension(filename, {".int"})) {
 		rom_type = ROM_TYPE_INT;
 		box_art_type = 0;
-	} else if (ext == ".plg") {
+	} else if (extension(filename, {".plg"})) {
 		rom_type = ROM_TYPE_PLG;
 		box_art_type = 0;
-	} else if (ext == ".avi" || ext == ".rvid" || ext == ".fv") {
+	} else if (extension(filename, {".avi", ".rvid", ".fv"})) {
 		rom_type = ROM_TYPE_VID;
 		box_art_type = 2;
-	} else if (ext == ".gif" || ext == ".bmp" || ext == ".png") {
+	} else if (extension(filename, {".gif", ".bmp", ".png"})) {
 		rom_type = ROM_TYPE_IMG;
 		box_art_type = -1;
-	} else if (ext == ".agb" || ext == ".gba" || ext == ".mb") {
+	} else if (extension(filename, {".agb", ".gba", ".mb"})) {
 		rom_type = ROM_TYPE_GBA;
 		box_art_type = 1;
-	} else if (ext == ".gb" || ext == ".sgb") {
+	} else if (extension(filename, {".gb", ".sgb"})) {
 		rom_type = ROM_TYPE_GB;
 		box_art_type = 1;
-	} else if (ext == ".gbc") {
+	} else if (extension(filename, {".gbc"})) {
 		rom_type = ROM_TYPE_GBC;
 		box_art_type = 1;
-	} else if (ext == ".nes") {
+	} else if (extension(filename, {".nes"})) {
 		rom_type = ROM_TYPE_NES;
 		box_art_type = 2;
-	} else if (ext == ".fds") {
+	} else if (extension(filename, {".fds"})) {
 		rom_type = ROM_TYPE_NES;
 		box_art_type = 1;
-	} else if (ext == ".sg" || ext == ".sc") {
+	} else if (extension(filename, {".sg", ".sc"})) {
 		rom_type = ROM_TYPE_SG;
 		box_art_type = 2;
-	} else if (ext == ".sms") {
+	} else if (extension(filename, {".sms"})) {
 		rom_type = ROM_TYPE_SMS;
 		box_art_type = 2;
-	} else if (ext == ".gg") {
+	} else if (extension(filename, {".gg"})) {
 		rom_type = ROM_TYPE_GG;
 		box_art_type = 2;
-	} else if (ext == ".gen") {
+	} else if (extension(filename, {".gen"})) {
 		rom_type = ROM_TYPE_MD;
 		box_art_type = 2;
-	} else if (ext == ".smc") {
+	} else if (extension(filename, {".smc"})) {
 		rom_type = ROM_TYPE_SNES;
 		box_art_type = 3;
-	} else if (ext == ".sfc") {
+	} else if (extension(filename, {".sfc"})) {
 		rom_type = ROM_TYPE_SNES;
 		box_art_type = 2;
-	} else if (ext == ".pce") {
+	} else if (extension(filename, {".pce"})) {
 		rom_type = ROM_TYPE_PCE;
 		box_art_type = 0;
-	} else if (ext == ".ws" || ext == ".wsc") {
+	} else if (extension(filename, {".ws", ".wsc"})) {
 		rom_type = ROM_TYPE_WS;
 		box_art_type = 0;
-	} else if (ext == ".ngp" || ext == ".ngc") {
+	} else if (extension(filename, {".ngp", ".ngc"})) {
 		rom_type = ROM_TYPE_NGP;
 		box_art_type = 0;
-	} else if (ext == ".dsk") {
+	} else if (extension(filename, {".dsk"})) {
 		rom_type = ROM_TYPE_CPC;
 		box_art_type = 0;
-	} else if (ext == ".min") {
+	} else if (extension(filename, {".min"})) {
 		rom_type = ROM_TYPE_MINI;
 		box_art_type = 0;
-	} else if (ext == ".ntrb") {
+	} else if (extension(filename, {".ntrb"})) {
 		rom_type = ROM_TYPE_HB;
 		box_art_type = 0;
 	} else {
