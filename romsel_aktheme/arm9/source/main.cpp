@@ -1118,6 +1118,8 @@ int akTheme(void) {
 		startW = ini.GetInt("start button", "w", startW);
 		startH = ini.GetInt("start button", "h", startH);
 
+		displayStartButton(startX, startY);
+
 		startTextX = startX + startW/5;
 		startTextY = startY + startH/5;
 

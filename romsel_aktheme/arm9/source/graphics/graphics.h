@@ -26,6 +26,7 @@ void initSubSprites(void);
 
 void resetIconScale(void);
 void updateSelectionBar(void);
+void displayStartButton(const int x, const int y);
 void displayFolderUp(const int x, const int y);
 void drawTime(void);
 void drawYear(void);

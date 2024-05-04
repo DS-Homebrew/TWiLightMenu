@@ -90,6 +90,10 @@ u16 bottomImage[2][256*192];
 u16 topImageWithText[2][256*192];
 u16 bottomImageWithBar[2][256*192];
 
+static u16* startButton[2] = {NULL};
+static int startButtonW = 0;
+static int startButtonH = 0;
+
 static u16* folderUpIcon[2] = {NULL};
 static int folderUpIconW = 0;
 static int folderUpIconH = 0;
@@ -400,6 +404,25 @@ ITCM_CODE void updateSelectionBar(void) {
 	prevViewMode = ms().ak_viewMode;
 }
 
+ITCM_CODE void displayStartButton(const int x, const int y) {
+	if (!startButton[0]) return;
+
+	int src = 0;
+
+	for (int y2 = y; y2 < y+startButtonH; y2++) {
+		for (int x2 = x; x2 < x+startButtonW; x2++) {
+			if ((startButton[0][src] != (0 | BIT(15))) && x2 >= 0 && x2 < 256 && y2 >= 0 && y2 < 192) {
+				bottomImageWithBar[0][(y2*256)+x2] = startButton[0][src];
+				bottomImageWithBar[1][(y2*256)+x2] = startButton[1][src];
+			}
+			src++;
+		}
+	}
+
+	delete[] startButton[0];
+	delete[] startButton[1];
+}
+
 ITCM_CODE void displayFolderUp(const int x, const int y) {
 	if (!folderUpIcon[0]) return;
 
@@ -407,7 +430,7 @@ ITCM_CODE void displayFolderUp(const int x, const int y) {
 
 	for (int y2 = y; y2 < y+folderUpIconH; y2++) {
 		for (int x2 = x; x2 < x+folderUpIconW; x2++) {
-			if (folderUpIcon[0][src] != (0 | BIT(15))) {
+			if ((folderUpIcon[0][src] != (0 | BIT(15))) && x2 >= 0 && x2 < 256 && y2 >= 0 && y2 < 192) {
 				bottomImageWithBar[0][(y2*256)+x2] = folderUpIcon[0][src];
 				bottomImageWithBar[1][(y2*256)+x2] = folderUpIcon[1][src];
 			}
@@ -869,6 +892,7 @@ ITCM_CODE void drawWeekday(void) {
 enum class ImageType {
 	bottom,
 	top,
+	startButton,
 	folderUp,
 	clockNumbers,
 	clockNumbers2,
@@ -915,7 +939,13 @@ static void loadBmp(const ImageType type, const char* filename) {
 		}
 	}
 
-	if (type == ImageType::folderUp) {
+	if (type == ImageType::startButton) {
+		startButtonW = (int)width;
+		startButtonH = (int)height;
+
+		startButton[0] = new u16[width*height];
+		startButton[1] = new u16[width*height];
+	} else if (type == ImageType::folderUp) {
 		folderUpIconW = (int)width;
 		folderUpIconH = (int)height;
 
@@ -1029,7 +1059,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 				}
 			}
 			u16 color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
-			if (colorTable && ((type < ImageType::folderUp) || (color != (0 | BIT(15))))) {
+			if (colorTable && ((type < ImageType::startButton) || (color != (0 | BIT(15))))) {
 				color = colorTable[color];
 			}
 			if (type == ImageType::selectionBarBg) {
@@ -1056,6 +1086,8 @@ static void loadBmp(const ImageType type, const char* filename) {
 				clockNumbers[0][(y*width)+x] = color;
 			} else if (type == ImageType::folderUp) {
 				folderUpIcon[0][(y*width)+x] = color;
+			} else if (type == ImageType::startButton) {
+				startButton[0][(y*width)+x] = color;
 			} else if (type == ImageType::top) {
 				topImage[0][(xPos+x+(y*256))+(yPos*256)] = color;
 			} else {
@@ -1083,7 +1115,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 				}
 			}
 			color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
-			if (colorTable && ((type < ImageType::folderUp) || (color != (0 | BIT(15))))) {
+			if (colorTable && ((type < ImageType::startButton) || (color != (0 | BIT(15))))) {
 				color = colorTable[color];
 			}
 			if (type == ImageType::selectionBarBg) {
@@ -1110,6 +1142,8 @@ static void loadBmp(const ImageType type, const char* filename) {
 				clockNumbers[1][(y*width)+x] = color;
 			} else if (type == ImageType::folderUp) {
 				folderUpIcon[1][(y*width)+x] = color;
+			} else if (type == ImageType::startButton) {
+				startButton[1][(y*width)+x] = color;
 			} else if (type == ImageType::top) {
 				topImage[1][(xPos+x+(y*256))+(yPos*256)] = color;
 			} else {
@@ -1130,7 +1164,11 @@ static void loadBmp(const ImageType type, const char* filename) {
 		int renderWidth = 256;
 		u16 *dst = ((type == ImageType::top) ? topImage[0] : bottomImage[0]) + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
 		u16 *dst2 = ((type == ImageType::top) ? topImage[1] : bottomImage[1]) + ((191 - ((192 - height) / 2)) * 256) + (256 - width) / 2;
-		if (type == ImageType::folderUp) {
+		if (type == ImageType::startButton) {
+			renderWidth = (int)width;
+			dst = (startButton[0] + (height-1) * width);
+			dst2 = (startButton[1] + (height-1) * width);
+		} else if (type == ImageType::folderUp) {
 			renderWidth = (int)width;
 			dst = (folderUpIcon[0] + (height-1) * width);
 			dst2 = (folderUpIcon[1] + (height-1) * width);
@@ -1183,7 +1221,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 		for (uint y = 0; y < height; y++, dst -= renderWidth, dst2 -= renderWidth) {
 			for (uint x = 0; x < width; x++) {
 				u16 val = *(src++);
-				if (type >= ImageType::folderUp && val == 0) {
+				if (type >= ImageType::startButton && val == 0) {
 					u16 color = 0 | BIT(15);
 					*(dst + x) = color;
 					*(dst2 + x) = color;
@@ -1211,7 +1249,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 			fread(&pixelR, 1, 1, file);
 			fread(&unk, 1, 1, file);
 			pixelBuffer[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
-			if (colorTable && ((type < ImageType::folderUp) || (pixelBuffer[i] != (0 | BIT(15))))) {
+			if (colorTable && ((type < ImageType::startButton) || (pixelBuffer[i] != (0 | BIT(15))))) {
 				pixelBuffer[i] = colorTable[pixelBuffer[i]];
 			}
 		}
@@ -1258,6 +1296,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 			} else if (type == ImageType::folderUp) {
 				folderUpIcon[0][(y*width)+x] = color;
 				folderUpIcon[1][(y*width)+x] = color;
+			} else if (type == ImageType::startButton) {
+				startButton[0][(y*width)+x] = color;
+				startButton[1][(y*width)+x] = color;
 			} else if (type == ImageType::top) {
 				topImage[0][(xPos+x+(y*256))+(yPos*256)] = color;
 				topImage[1][(xPos+x+(y*256))+(yPos*256)] = color;
@@ -1285,7 +1326,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 			fread(&pixelR, 1, 1, file);
 			fread(&unk, 1, 1, file);
 			monoPixel[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
-			if (colorTable && ((type < ImageType::folderUp) || (monoPixel[i] != (0 | BIT(15))))) {
+			if (colorTable && ((type < ImageType::startButton) || (monoPixel[i] != (0 | BIT(15))))) {
 				monoPixel[i] = colorTable[monoPixel[i]];
 			}
 		}
@@ -1333,6 +1374,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 				} else if (type == ImageType::folderUp) {
 					folderUpIcon[0][(y*width)+x] = color;
 					folderUpIcon[1][(y*width)+x] = color;
+				} else if (type == ImageType::startButton) {
+					startButton[0][(y*width)+x] = color;
+					startButton[1][(y*width)+x] = color;
 				} else if (type == ImageType::top) {
 					topImage[0][(xPos+x+(y*256))+(yPos*256)] = color;
 					topImage[1][(xPos+x+(y*256))+(yPos*256)] = color;
@@ -1691,6 +1735,21 @@ void graphicsLoad()
 
 	{
 		CIniFile ini( iniPath.c_str() );
+		std::string fileStartButton = ini.GetString("start button", "file", "none");
+
+		if (fileStartButton != "none") {
+			std::string pathStartButton;
+			if (access((themePath + "/" + fileStartButton).c_str(), F_OK) == 0) {
+				pathStartButton = themePath + "/" + fileStartButton;
+			} else {
+				pathStartButton = "nitro:/themes/zelda/" + fileStartButton;
+			}
+
+			if (extension(pathStartButton.c_str(), {".bmp"})) {
+				loadBmp(ImageType::startButton, pathStartButton.c_str());
+			}
+		}
+
 		formFrameColor = ini.GetInt("global settings", "formFrameColor", formFrameColor);
 		formBodyColor = ini.GetInt("global settings", "formBodyColor", formBodyColor);
 
