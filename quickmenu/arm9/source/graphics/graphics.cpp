@@ -404,7 +404,7 @@ auto getMenuEntryTexture(MenuEntry entry) {
 			return &(*pictochat_images)[0];
 		case MenuEntry::DOWNLOADPLAY:
 			if(!dlplayFound)
-				return &dlp_icons.images[2];
+				return &dlp_icons.images[3];
 			if(initialTouchedPosition == MenuEntry::DOWNLOADPLAY) {
 				if(currentTouchedPosition != MenuEntry::DOWNLOADPLAY)
 					return &dlp_icons.images[2];
