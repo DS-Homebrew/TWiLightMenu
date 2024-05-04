@@ -11,7 +11,7 @@
 -gT 00FF00
 
 # Use only the needed color pallette
--pe 9
+-pe 11
 
 ##################
 # Old Parameters
