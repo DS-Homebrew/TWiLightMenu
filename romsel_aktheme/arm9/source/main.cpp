@@ -998,6 +998,7 @@ void bgOperations(bool waitFrame) {
 	drawMonth();
 	drawDayX();
 	drawDay();
+	drawWeekday();
 	if (waitFrame) {
 		swiWaitForVBlank();
 	}
