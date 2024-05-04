@@ -16,6 +16,9 @@
 #include <gl2d.h>
 #include <maxmod9.h>
 
+#include <string_view>
+
+#include "extension.h"
 #include "date.h"
 #include "fileCopy.h"
 #include "nand/nandio.h"
@@ -87,17 +90,6 @@ static char pictochatPath[256];
 static char dlplayPath[256];
 
 extern bool showdialogbox;
-
-bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
-	for (std::string_view extension : extensions) {
-		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
-		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
-			return true;
-		}
-	}
-
-	return false;
-}
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -864,7 +856,7 @@ bool preloadNds(const char* filename) {
 		currentDevice = ms().secondaryDevice;
 	}
 
-	if (currentDevice || !isHomebrew[currentDevice] || bnrRomType[currentDevice] != 0) {
+	if (currentDevice || !isHomebrew[currentDevice] || bnrRomType[currentDevice] != ROM_TYPE_NDS) {
 		ndsLoaded = true;
 		return true;
 	}
@@ -1086,7 +1078,7 @@ void refreshNdsCard(bool refreshBoxArt) {
 
 	getGameInfo(1, false, "slot1");
 	iconUpdate (1, false, "slot1");
-	bnrRomType[1] = 0;
+	bnrRomType[1] = ROM_TYPE_NDS;
 	boxArtType[1] = 0;
 
 	// Power off after done retrieving info
@@ -1138,6 +1130,230 @@ void customSleep() {
 	fadeSpeed = false;
 }
 
+static void getFiletypeFromFilename(std::string_view filename, eROMType& rom_type, int& box_art_type) {
+	rom_type = ROM_TYPE_UNK;
+	box_art_type = -1;
+	
+	auto pos = filename.find_last_of('.');
+	if(pos == filename.npos)
+		return;
+	
+	if (extension(filename, {".nds", ".dsi", ".ids", ".app", ".srl", ".argv"})) {
+		rom_type = ROM_TYPE_NDS;
+		box_art_type = 0;
+	} else if (extension(filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
+		rom_type = ROM_TYPE_A26;
+		box_art_type = 0;
+	} else if (extension(filename, {".msx"})) {
+		rom_type = ROM_TYPE_MSX;
+		box_art_type = 0;
+	} else if (extension(filename, {".col"})) {
+		rom_type = ROM_TYPE_COL;
+		box_art_type = 0;
+	} else if (extension(filename, {".m5"})) {
+		rom_type = ROM_TYPE_M5;
+		box_art_type = 0;
+	} else if (extension(filename, {".int"})) {
+		rom_type = ROM_TYPE_INT;
+		box_art_type = 0;
+	} else if (extension(filename, {".plg"})) {
+		rom_type = ROM_TYPE_PLG;
+		box_art_type = 0;
+	} else if (extension(filename, {".avi", ".rvid", ".fv"})) {
+		rom_type = ROM_TYPE_VID;
+		box_art_type = 2;
+	} else if (extension(filename, {".gif", ".bmp", ".png"})) {
+		rom_type = ROM_TYPE_IMG;
+		box_art_type = -1;
+	} else if (extension(filename, {".agb", ".gba", ".mb"})) {
+		rom_type = ROM_TYPE_GBA;
+		box_art_type = 1;
+	} else if (extension(filename, {".gb", ".sgb"})) {
+		rom_type = ROM_TYPE_GB;
+		box_art_type = 1;
+	} else if (extension(filename, {".gbc"})) {
+		rom_type = ROM_TYPE_GBC;
+		box_art_type = 1;
+	} else if (extension(filename, {".nes"})) {
+		rom_type = ROM_TYPE_NES;
+		box_art_type = 2;
+	} else if (extension(filename, {".fds"})) {
+		rom_type = ROM_TYPE_NES;
+		box_art_type = 1;
+	} else if (extension(filename, {".sg", ".sc"})) {
+		rom_type = ROM_TYPE_SG;
+		box_art_type = 2;
+	} else if (extension(filename, {".sms"})) {
+		rom_type = ROM_TYPE_SMS;
+		box_art_type = 2;
+	} else if (extension(filename, {".gg"})) {
+		rom_type = ROM_TYPE_GG;
+		box_art_type = 2;
+	} else if (extension(filename, {".gen"})) {
+		rom_type = ROM_TYPE_MD;
+		box_art_type = 2;
+	} else if (extension(filename, {".smc"})) {
+		rom_type = ROM_TYPE_SNES;
+		box_art_type = 3;
+	} else if (extension(filename, {".sfc"})) {
+		rom_type = ROM_TYPE_SNES;
+		box_art_type = 2;
+	} else if (extension(filename, {".pce"})) {
+		rom_type = ROM_TYPE_PCE;
+		box_art_type = 0;
+	} else if (extension(filename, {".ws", ".wsc"})) {
+		rom_type = ROM_TYPE_WS;
+		box_art_type = 0;
+	} else if (extension(filename, {".ngp", ".ngc"})) {
+		rom_type = ROM_TYPE_NGP;
+		box_art_type = 0;
+	} else if (extension(filename, {".dsk"})) {
+		rom_type = ROM_TYPE_CPC;
+		box_art_type = 0;
+	} else if (extension(filename, {".min"})) {
+		rom_type = ROM_TYPE_MINI;
+		box_art_type = 0;
+	} else if (extension(filename, {".ntrb"})) {
+		rom_type = ROM_TYPE_HB;
+		box_art_type = 0;
+	} else {
+		rom_type = ROM_TYPE_UNK;
+		box_art_type = -1;
+	}
+}
+
+void parseRomInformationForDevice(int device, std::string& filename, char* boxArtPath) {
+	romfolder[device] = ms().romPath[device];
+	while (!romfolder[device].empty() && romfolder[device][romfolder[device].size()-1] != '/') {
+		romfolder[device].resize(romfolder[device].size()-1);
+	}
+	chdir(romfolder[device].data());
+	
+	filename = ms().romPath[device];
+	const size_t last_slash_idx = filename.find_last_of("/");
+	if (std::string::npos != last_slash_idx) {
+		filename.erase(0, last_slash_idx + 1);
+	}
+	
+	getFiletypeFromFilename(filename, bnrRomType[device], boxArtType[device]);
+	
+	getGameInfo(device, false, filename.data());
+	iconUpdate(device, false, filename.data());
+
+	if (ms().showBoxArt) {
+		// Store box art path
+		const auto* boxArtFormat = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png";
+		sprintf(boxArtPath, boxArtFormat, filename.data());
+		if ((access(boxArtPath, F_OK) != 0) && (bnrRomType[device] == ROM_TYPE_NDS)) {
+			sprintf(boxArtPath, boxArtFormat, gameTid[device]);
+		}
+	}
+}
+
+void findPictochatAndDownladPlay() {
+
+	if (access("/_nds/pictochat.nds", F_OK) == 0) {
+		pictochatFound = true;
+		strncpy(pictochatPath, "/_nds/pictochat.nds", sizeof(pictochatPath));
+	}
+
+	if (isDSiMode() && sys().arm7SCFGLocked()) {
+		if (ms().consoleModel < 2 && !pictochatFound) {
+			pictochatFound = true;
+			pictochatReboot = true;
+		}
+		dlplayFound = true;
+		dlplayReboot = true;
+		return;
+	}
+	
+	auto mountNand = [nandInited = false]() mutable {
+		if (!nandInited) {
+			fatMountSimple("nand", &io_dsi_nand);
+			nandInited = true;
+		}
+	};
+	
+	char srcPath[256];
+	u8 regions[3] = {0x41, 0x43, 0x4B};
+
+	if (!pictochatFound && ms().consoleModel == 0) {
+		for (int i = 0; i < 3; i++) {
+			snprintf(pictochatPath, sizeof(pictochatPath), "/title/00030005/484e45%x/content/00000000.app", regions[i]);
+			if (access(pictochatPath, F_OK) == 0) {
+				pictochatFound = true;
+				break;
+			}
+		}
+	}
+
+	if (!pictochatFound && isDSiMode() && sdFound() && ms().consoleModel == 0) {
+		mountNand();
+		if (access("nand:/", F_OK) == 0) {
+			for (int i = 0; i < 3; i++) {
+				snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e45%x/content/00000000.app", regions[i]);
+				if (access(srcPath, F_OK) == 0) {
+					snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
+					remove(pictochatPath);
+					fcopy(srcPath, pictochatPath);	// Copy from NAND
+					pictochatFound = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if (access("/_nds/dlplay.nds", F_OK) == 0) {
+		dlplayFound = true;
+		strncpy(dlplayPath, "/_nds/dlplay.nds", sizeof(dlplayPath));
+		return;
+	}
+	
+	if (ms().consoleModel == 0) {
+		for (int i = 0; i < 3; i++) {
+			snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000000.app", regions[i]);
+			if (access(dlplayPath, F_OK) == 0) {
+				dlplayFound = true;
+				return;
+			} else if (regions[i] != 0x43 && regions[i] != 0x4B) {
+				snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
+				if (access(dlplayPath, F_OK) == 0) {
+					dlplayFound = true;
+					return;
+				}
+			}
+		}
+	}
+	if (isDSiMode() && sdFound() && ms().consoleModel == 0) {
+		mountNand();
+		if (access("nand:/", F_OK) == 0) {
+			for (int i = 0; i < 3; i++) {
+				snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e44%x/content/00000000.app", regions[i]);
+				if (access(srcPath, F_OK) == 0) {
+					snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
+					remove(dlplayPath);
+					fcopy(srcPath, dlplayPath);	// Copy from NAND
+					dlplayFound = true;
+					return;
+				} else if (regions[i] != 0x43 && regions[i] != 0x4B) {
+					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e4441/content/00000001.app");
+					if (access(srcPath, F_OK) == 0) {
+						snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
+						remove(dlplayPath);
+						fcopy(srcPath, dlplayPath);	// Copy from NAND
+						dlplayFound = true;
+						return;
+					}
+				}
+			}
+		}
+	}
+	if (ms().consoleModel >= 2) {
+		dlplayFound = true;
+		dlplayReboot = true;
+	}
+}
+
 //---------------------------------------------------------------------------------
 int dsClassicMenu(void) {
 //---------------------------------------------------------------------------------
@@ -1161,99 +1377,8 @@ int dsClassicMenu(void) {
 		CIniFile lumaConfig("sd:/luma/config.ini");
 		externalFirmsModules = (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true);
 	}
-
-	snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
-	pictochatFound = (access(pictochatPath, F_OK) == 0);
-
-	if (isDSiMode() && sys().arm7SCFGLocked()) {
-		if (ms().consoleModel < 2 && !pictochatFound) {
-			pictochatFound = true;
-			pictochatReboot = true;
-		}
-		dlplayFound = true;
-		dlplayReboot = true;
-	} else {
-		bool nandInited = false;
-		char srcPath[256];
-		u8 regions[3] = {0x41, 0x43, 0x4B};
-
-		if (!pictochatFound && ms().consoleModel == 0) {
-			for (int i = 0; i < 3; i++) {
-				snprintf(pictochatPath, sizeof(pictochatPath), "/title/00030005/484e45%x/content/00000000.app", regions[i]);
-				if (access(pictochatPath, F_OK) == 0) {
-					pictochatFound = true;
-					break;
-				}
-			}
-		}
-		if (!pictochatFound && isDSiMode() && sdFound() && ms().consoleModel == 0) {
-			if (!nandInited) {
-				fatMountSimple("nand", &io_dsi_nand);
-				nandInited = true;
-			}
-			if (access("nand:/", F_OK) == 0) {
-				for (int i = 0; i < 3; i++) {
-					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e45%x/content/00000000.app", regions[i]);
-					if (access(srcPath, F_OK) == 0) {
-						snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
-						remove(pictochatPath);
-						fcopy(srcPath, pictochatPath);	// Copy from NAND
-						pictochatFound = true;
-						break;
-					}
-				}
-			}
-		}
-
-		snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
-		dlplayFound = (access(dlplayPath, F_OK) == 0);
-		if (!dlplayFound && ms().consoleModel == 0) {
-			for (int i = 0; i < 3; i++) {
-				snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000000.app", regions[i]);
-				if (access(dlplayPath, F_OK) == 0) {
-					dlplayFound = true;
-					break;
-				} else if (regions[i] != 0x43 && regions[i] != 0x4B) {
-					snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
-					if (access(dlplayPath, F_OK) == 0) {
-						dlplayFound = true;
-						break;
-					}
-				}
-			}
-		}
-		if (!dlplayFound && isDSiMode() && sdFound() && ms().consoleModel == 0) {
-			if (!nandInited) {
-				fatMountSimple("nand", &io_dsi_nand);
-				nandInited = true;
-			}
-			if (access("nand:/", F_OK) == 0) {
-				for (int i = 0; i < 3; i++) {
-					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e44%x/content/00000000.app", regions[i]);
-					if (access(srcPath, F_OK) == 0) {
-						snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
-						remove(dlplayPath);
-						fcopy(srcPath, dlplayPath);	// Copy from NAND
-						dlplayFound = true;
-						break;
-					} else if (regions[i] != 0x43 && regions[i] != 0x4B) {
-						snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e4441/content/00000001.app");
-						if (access(srcPath, F_OK) == 0) {
-							snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
-							remove(dlplayPath);
-							fcopy(srcPath, dlplayPath);	// Copy from NAND
-							dlplayFound = true;
-							break;
-						}
-					}
-				}
-			}
-		}
-		if (!dlplayFound && ms().consoleModel >= 2) {
-			dlplayFound = true;
-			dlplayReboot = true;
-		}
-	}
+	
+	findPictochatAndDownladPlay();
 
 	if (sdFound() && ms().consoleModel < 2 && ms().launcherApp != -1) {
 		u8 setRegion = 0;
@@ -1348,284 +1473,30 @@ int dsClassicMenu(void) {
 	// SD card
 	if (sdFound() && ms().romPath[0] != "" && access(ms().romPath[0].c_str(), F_OK) == 0) {
 		romFound[0] = true;
-
-		romfolder[0] = ms().romPath[0];
-		while (!romfolder[0].empty() && romfolder[0][romfolder[0].size()-1] != '/') {
-			romfolder[0].resize(romfolder[0].size()-1);
-		}
-		chdir(romfolder[0].c_str());
-
-		filename[0] = ms().romPath[0];
-		const size_t last_slash_idx = filename[0].find_last_of("/");
-		if (std::string::npos != last_slash_idx) {
-			filename[0].erase(0, last_slash_idx + 1);
-		}
-
-		if (extension(filename[0], {".nds", ".dsi", ".ids", ".app", ".srl", ".argv"})) {
-			bnrRomType[0] = 0;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".xex", ".atr", ".a26", ".a52", ".a78"})) {
-			bnrRomType[0] = 10;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".msx"})) {
-			bnrRomType[0] = 21;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".col"})) {
-			bnrRomType[0] = 13;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".m5"})) {
-			bnrRomType[0] = 14;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".int"})) {
-			bnrRomType[0] = 12;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".plg"})) {
-			bnrRomType[0] = 9;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".avi", ".rvid", ".fv"})) {
-			bnrRomType[0] = 19;
-			boxArtType[0] = 2;
-		} else if (extension(filename[0], {".gif", ".bmp", ".png"})) {
-			bnrRomType[0] = 20;
-			boxArtType[0] = -1;
-		} else if (extension(filename[0], {".agb", ".gba", ".mb"})) {
-			bnrRomType[0] = 1;
-			boxArtType[0] = 1;
-		} else if (extension(filename[0], {".gb", ".sgb"})) {
-			bnrRomType[0] = 2;
-			boxArtType[0] = 1;
-		} else if (extension(filename[0], {".gbc"})) {
-			bnrRomType[0] = 3;
-			boxArtType[0] = 1;
-		} else if (extension(filename[0], {".nes"})) {
-			bnrRomType[0] = 4;
-			boxArtType[0] = 2;
-		} else if (extension(filename[0], {".fds"})) {
-			bnrRomType[0] = 4;
-			boxArtType[0] = 1;
-		} else if (extension(filename[0], {".sg", ".sc"})) {
-			bnrRomType[0] = 15;
-			boxArtType[0] = 2;
-		} else if (extension(filename[0], {".sms"})) {
-			bnrRomType[0] = 5;
-			boxArtType[0] = 2;
-		} else if (extension(filename[0], {".gg"})) {
-			bnrRomType[0] = 6;
-			boxArtType[0] = 2;
-		} else if (extension(filename[0], {".gen", ".md"})) {
-			bnrRomType[0] = 7;
-			boxArtType[0] = 2;
-		} else if (extension(filename[0], {".smc"})) {
-			bnrRomType[0] = 8;
-			boxArtType[0] = 3;
-		} else if (extension(filename[0], {".sfc"})) {
-			bnrRomType[0] = 8;
-			boxArtType[0] = 2;
-		} else if (extension(filename[0], {".pce"})) {
-			bnrRomType[0] = 11;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".ws", ".wsc"})) {
-			bnrRomType[0] = 16;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".ngp", ".ngc"})) {
-			bnrRomType[0] = 17;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".dsk"})) {
-			bnrRomType[0] = 18;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".min"})) {
-			bnrRomType[0] = 22;
-			boxArtType[0] = 0;
-		} else if (extension(filename[0], {".ntrb"})) {
-			bnrRomType[0] = 23;
-			boxArtType[0] = 2;
-		} else {
-			bnrRomType[0] = 9;
-			boxArtType[0] = -1;
-		}
-		getGameInfo(0, false, filename[0].c_str());
-		iconUpdate (0, false, filename[0].c_str());
-
-		if (ms().showBoxArt) {
-			// Store box art path
-			std::string temp_filename = filename[0];
-			sprintf (boxArtPath[0], (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename[0].c_str());
-			if ((access(boxArtPath[0], F_OK) != 0) && (bnrRomType[0] == 0)) {
-				if (extension(filename[0], {".argv"})) {
-					vector<char*> argarray;
-
-					FILE *argfile = fopen(filename[0].c_str(),"rb");
-					char str[PATH_MAX], *pstr;
-					const char seps[]= "\n\r\t ";
-
-					while (fgets(str, PATH_MAX, argfile)) {
-						// Find comment and end string there
-						if ((pstr = strchr(str, '#')) != NULL)
-							*pstr = '\0';
-
-						// Tokenize arguments
-						pstr = strtok(str, seps);
-
-						while (pstr != NULL) {
-							argarray.push_back(strdup(pstr));
-							pstr = strtok(NULL, seps);
-						}
-					}
-					fclose(argfile);
-					temp_filename = argarray.at(0);
-				}
-				sprintf (boxArtPath[0], (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), gameTid[0]);
-			}
-		}
+		
+		parseRomInformationForDevice(0, filename[0], boxArtPath[0]);
 	}
 
 	// Flashcard (Secondary device)
 	if (flashcardFound()) {
 		if (!sdFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
-			bnrRomType[0] = 1;
+			bnrRomType[0] = ROM_TYPE_GBA;
 			iconUpdate (0, false, "null");
 		}
 
 		CIniFile autoruninf("fat:/autorun.inf");
 		std::string autorunOpen = autoruninf.GetString("autorun.twl", "open", "");
 
-	  if (dsiFeatures() && autorunOpen != "" && access(autorunOpen.c_str(), F_OK) == 0) {
-		ms().romPath[1] = autorunOpen;
-		romFound[1] = true;
-	  } else if (ms().romPath[1] != "" && access(ms().romPath[1].c_str(), F_OK) == 0) {
-		romFound[1] = true;
-	  }
-
-	  if (romFound[1]) {
-		romfolder[1] = ms().romPath[1];
-		while (!romfolder[1].empty() && romfolder[1][romfolder[1].size()-1] != '/') {
-			romfolder[1].resize(romfolder[1].size()-1);
-		}
-		chdir(romfolder[1].c_str());
-
-		filename[1] = ms().romPath[1];
-		const size_t last_slash_idx = filename[1].find_last_of("/");
-		if (std::string::npos != last_slash_idx) {
-			filename[1].erase(0, last_slash_idx + 1);
+		if (dsiFeatures() && autorunOpen != "" && access(autorunOpen.c_str(), F_OK) == 0) {
+			ms().romPath[1] = autorunOpen;
+			romFound[1] = true;
+		} else if (ms().romPath[1] != "" && access(ms().romPath[1].c_str(), F_OK) == 0) {
+			romFound[1] = true;
 		}
 
-		if (extension(filename[1], {".nds", ".dsi", ".ids", ".app", ".srl", ".argv"})) {
-			bnrRomType[1] = 0;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".xex", ".atr", ".a26", ".a52", ".a78"})) {
-			bnrRomType[1] = 10;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".msx"})) {
-			bnrRomType[1] = 21;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".col"})) {
-			bnrRomType[1] = 13;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".m5"})) {
-			bnrRomType[1] = 14;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".int"})) {
-			bnrRomType[1] = 12;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".plg"})) {
-			bnrRomType[1] = 9;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".avi", ".rvid", ".fv"})) {
-			bnrRomType[1] = 19;
-			boxArtType[1] = 2;
-		} else if (extension(filename[1], {".gif", ".bmp", ".png"})) {
-			bnrRomType[1] = 20;
-			boxArtType[1] = -1;
-		} else if (extension(filename[1], {".agb", ".gba", ".mb"})) {
-			bnrRomType[1] = 1;
-			boxArtType[1] = 1;
-		} else if (extension(filename[1], {".gb", ".sgb"})) {
-			bnrRomType[1] = 2;
-			boxArtType[1] = 1;
-		} else if (extension(filename[1], {".gbc"})) {
-			bnrRomType[1] = 3;
-			boxArtType[1] = 1;
-		} else if (extension(filename[1], {".nes"})) {
-			bnrRomType[1] = 4;
-			boxArtType[1] = 2;
-		} else if (extension(filename[1], {".fds"})) {
-			bnrRomType[1] = 4;
-			boxArtType[1] = 1;
-		} else if (extension(filename[1], {".sg", ".sc"})) {
-			bnrRomType[1] = 15;
-			boxArtType[1] = 2;
-		} else if (extension(filename[1], {".sms"})) {
-			bnrRomType[1] = 5;
-			boxArtType[1] = 2;
-		} else if (extension(filename[1], {".gg"})) {
-			bnrRomType[1] = 6;
-			boxArtType[1] = 2;
-		} else if (extension(filename[1], {".gen", ".md"})) {
-			bnrRomType[1] = 7;
-			boxArtType[1] = 2;
-		} else if (extension(filename[1], {".smc"})) {
-			bnrRomType[1] = 8;
-			boxArtType[1] = 3;
-		} else if (extension(filename[1], {".sfc"})) {
-			bnrRomType[1] = 8;
-			boxArtType[1] = 2;
-		} else if (extension(filename[1], {".pce"})) {
-			bnrRomType[1] = 11;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".ws", ".wsc"})) {
-			bnrRomType[1] = 16;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".ngp", ".ngc"})) {
-			bnrRomType[1] = 17;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".dsk"})) {
-			bnrRomType[1] = 18;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".min"})) {
-			bnrRomType[1] = 22;
-			boxArtType[1] = 0;
-		} else if (extension(filename[1], {".ntrb"})) {
-			bnrRomType[1] = 23;
-			boxArtType[1] = 2;
-		} else {
-			bnrRomType[1] = 9;
-			boxArtType[1] = -1;
+		if (romFound[1]) {
+			parseRomInformationForDevice(1, filename[1], boxArtPath[1]);
 		}
-		getGameInfo(1, false, filename[1].c_str());
-		iconUpdate (1, false, filename[1].c_str());
-
-		if (ms().showBoxArt) {
-			// Store box art path
-			std::string temp_filename = filename[1];
-			sprintf (boxArtPath[1], (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename[1].c_str());
-			if ((access(boxArtPath[1], F_OK) != 0) && (bnrRomType[1] == 0)) {
-				if (extension(filename[1], {".argv"})) {
-					vector<char*> argarray;
-
-					FILE *argfile = fopen(filename[1].c_str(),"rb");
-					char str[PATH_MAX], *pstr;
-					const char seps[]= "\n\r\t ";
-
-					while (fgets(str, PATH_MAX, argfile)) {
-						// Find comment and end string there
-						if ((pstr = strchr(str, '#')))
-							*pstr = '\0';
-
-						// Tokenize arguments
-						pstr = strtok(str, seps);
-
-						while (pstr != NULL) {
-							argarray.push_back(strdup(pstr));
-							pstr = strtok(NULL, seps);
-						}
-					}
-					fclose(argfile);
-					temp_filename = argarray.at(0);
-				}
-				sprintf (boxArtPath[1], (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), gameTid[1]);
-			}
-		}
-	  }
 	}
 
 	//if (ms().showBoxArt && (sdFound() ? !ms().slot1Launched : flashcardFound())) {
@@ -1657,7 +1528,7 @@ int dsClassicMenu(void) {
 
 	std::string curTime;
 
-	while (1) {
+	while (true) {
 
 		if (startMenu) {
 			int pressed = 0;
