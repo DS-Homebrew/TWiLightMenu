@@ -95,38 +95,66 @@ static int folderUpIconW = 0;
 static int folderUpIconH = 0;
 
 static u16* clockNumbers[2] = {NULL};
+static u16* clockNumbers2[2] = {NULL};
 static u16* clockColon[2] = {NULL};
+static u16* clockColon2[2] = {NULL};
 static u16* yearNumbers[2] = {NULL};
+static u16* yearNumbers2[2] = {NULL};
 static u16* dayNumbers[2] = {NULL};
+static u16* dayNumbers2[2] = {NULL};
 
 static int bigClockX = 8;
 static int bigClockY = 80;
+static int smallClockX = 8;
+static int smallClockY = 80;
 static int clockNumbersW = 0;
 static int clockNumbersH = 0;
+static int clockNumbers2W = 0;
+static int clockNumbers2H = 0;
 static int clockColonW = 0;
 static int clockColonH = 0;
+static int clockColon2W = 0;
+static int clockColon2H = 0;
 static int yearNumbersW = 0;
 static int yearNumbersH = 0;
+static int yearNumbers2W = 0;
+static int yearNumbers2H = 0;
 static int dayNumbersW = 0;
 static int dayNumbersH = 0;
+static int dayNumbers2W = 0;
+static int dayNumbers2H = 0;
 
 static int yearX = 52;
 static int yearY = 28;
+static int year2X = 52;
+static int year2Y = 28;
 static bool showYear = false;
+static bool showYear2 = false;
 
 static int monthX = 12;
 static int monthY = 28;
+static int month2X = 12;
+static int month2Y = 28;
 static bool showMonth = false;
+static bool showMonth2 = false;
 
 static int dayxX = 02;
 static int dayxY = 28;
+static int dayx2X = 02;
+static int dayx2Y = 28;
 static bool showDayX = false;
+static bool showDayX2 = false;
 
 static int dayPositionX = 134;
 static int dayPositionY = 34;
+static int dayPosition2X = 134;
+static int dayPosition2Y = 34;
 static int daySizeX = 16;
 static int daySizeY = 14;
+static int daySize2X = 16;
+static int daySize2Y = 14;
 static u16 dayHighlightColor = 0xfc00;
+static u16 dayHighlightColor2 = 0xfc00;
 
 u16* colorTable = NULL;
 
@@ -365,7 +393,7 @@ ITCM_CODE void displayFolderUp(const int x, const int y) {
 static std::string loadedTime;
 
 ITCM_CODE void drawTime(void) {
-	if (!clockNumbers[0] || !clockColon[0]) return;
+	if (!clockNumbers[0] && !clockColon[0] && !clockNumbers2[0] && !clockColon2[0]) return;
 
 	// Load time
 	std::string currentTime = retTime();
@@ -378,44 +406,90 @@ ITCM_CODE void drawTime(void) {
 
 	loadedTime = currentTime;
 
-	int x = bigClockX;
+	if (clockNumbers[0] && clockColon[0]) {
+		// Draw big clock
+		int x = bigClockX;
 
-	for (int i = 0; i < 5; i++) {
-		const int number = (int)currentTime[i]-0x30;
-		const bool colon = (number == 10 || number == -0x10);
+		for (int i = 0; i < 5; i++) {
+			const int number = (int)currentTime[i]-0x30;
+			const bool colon = (number == 10 || number == -0x10);
 
-		const int y = bigClockY;
+			const int y = bigClockY;
 
-		int src = colon ? 0 : ((clockNumbersW * clockNumbersH) * number);
+			int src = colon ? 0 : ((clockNumbersW * clockNumbersH) * number);
 
-		if (colon) {
-			for (int y2 = y; y2 < y+clockColonH; y2++) {
-				for (int x2 = x; x2 < x+clockColonW; x2++) {
-					if ((clockColon[0][src] == (0 | BIT(15))) || (number == -0x10)) {
-						topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
-						topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
-					} else {
-						topImageWithText[0][(y2*256)+x2] = clockColon[0][src];
-						topImageWithText[1][(y2*256)+x2] = clockColon[1][src];
+			if (colon) {
+				for (int y2 = y; y2 < y+clockColonH; y2++) {
+					for (int x2 = x; x2 < x+clockColonW; x2++) {
+						if ((clockColon[0][src] == (0 | BIT(15))) || (number == -0x10)) {
+							topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
+							topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
+						} else {
+							topImageWithText[0][(y2*256)+x2] = clockColon[0][src];
+							topImageWithText[1][(y2*256)+x2] = clockColon[1][src];
+						}
+						src++;
 					}
-					src++;
+				}
+			} else {
+				for (int y2 = y; y2 < y+clockNumbersH; y2++) {
+					for (int x2 = x; x2 < x+clockNumbersW; x2++) {
+						if (clockNumbers[0][src] == (0 | BIT(15))) {
+							topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
+							topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
+						} else {
+							topImageWithText[0][(y2*256)+x2] = clockNumbers[0][src];
+							topImageWithText[1][(y2*256)+x2] = clockNumbers[1][src];
+						}
+						src++;
+					}
 				}
 			}
-		} else {
-			for (int y2 = y; y2 < y+clockNumbersH; y2++) {
-				for (int x2 = x; x2 < x+clockNumbersW; x2++) {
-					if (clockNumbers[0][src] == (0 | BIT(15))) {
-						topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
-						topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
-					} else {
-						topImageWithText[0][(y2*256)+x2] = clockNumbers[0][src];
-						topImageWithText[1][(y2*256)+x2] = clockNumbers[1][src];
-					}
-					src++;
-				}
-			}
+			x += colon ? clockColonW : clockNumbersW;
 		}
-		x += colon ? clockColonW : clockNumbersW;
+	}
+
+	if (clockNumbers2[0] && clockColon2[0]) {
+		// Draw small clock
+		int x = smallClockX;
+
+		for (int i = 0; i < 5; i++) {
+			const int number = (int)currentTime[i]-0x30;
+			const bool colon = (number == 10 || number == -0x10);
+
+			const int y = smallClockY;
+
+			int src = colon ? 0 : ((clockNumbers2W * clockNumbers2H) * number);
+
+			if (colon) {
+				for (int y2 = y; y2 < y+clockColon2H; y2++) {
+					for (int x2 = x; x2 < x+clockColon2W; x2++) {
+						if ((clockColon2[0][src] == (0 | BIT(15))) || (number == -0x10)) {
+							topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
+							topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
+						} else {
+							topImageWithText[0][(y2*256)+x2] = clockColon2[0][src];
+							topImageWithText[1][(y2*256)+x2] = clockColon2[1][src];
+						}
+						src++;
+					}
+				}
+			} else {
+				for (int y2 = y; y2 < y+clockNumbers2H; y2++) {
+					for (int x2 = x; x2 < x+clockNumbers2W; x2++) {
+						if (clockNumbers2[0][src] == (0 | BIT(15))) {
+							topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
+							topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
+						} else {
+							topImageWithText[0][(y2*256)+x2] = clockNumbers2[0][src];
+							topImageWithText[1][(y2*256)+x2] = clockNumbers2[1][src];
+						}
+						src++;
+					}
+				}
+			}
+			x += colon ? clockColon2W : clockNumbers2W;
+		}
 	}
 }
 
@@ -441,10 +515,32 @@ ITCM_CODE static void drawYearNumberString(const std::string string, const int l
 	}
 }
 
+ITCM_CODE static void drawYearNumber2String(const std::string string, const int len, int x, const int y) {
+	for (int i = 0; i < len; i++) {
+		const int number = (int)string[i]-0x30;
+
+		int src = (yearNumbers2W * yearNumbers2H) * number;
+
+		for (int y2 = y; y2 < y+yearNumbers2H; y2++) {
+			for (int x2 = x; x2 < x+yearNumbers2W; x2++) {
+				if (yearNumbers2[0][src] == (0 | BIT(15))) {
+					topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
+					topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
+				} else {
+					topImageWithText[0][(y2*256)+x2] = yearNumbers2[0][src];
+					topImageWithText[1][(y2*256)+x2] = yearNumbers2[1][src];
+				}
+				src++;
+			}
+		}
+		x += yearNumbers2W;
+	}
+}
+
 static std::string loadedYear;
 
 ITCM_CODE void drawYear(void) {
-	if (!yearNumbers[0] || !showYear) return;
+	if ((!yearNumbers[0] && !yearNumbers2[0]) || (!showYear && !showYear2)) return;
 
 	// Load year
 	std::string currentYear = retYear();
@@ -454,13 +550,18 @@ ITCM_CODE void drawYear(void) {
 
 	loadedYear = currentYear;
 
-	drawYearNumberString(currentYear, 4, yearX, yearY);
+	if (yearNumbers[0] && showYear) {
+		drawYearNumberString(currentYear, 4, yearX, yearY);
+	}
+	if (yearNumbers2[0] && showYear2) {
+		drawYearNumber2String(currentYear, 4, year2X, year2Y);
+	}
 }
 
 static std::string loadedMonth;
 
 ITCM_CODE void drawMonth(void) {
-	if (!yearNumbers[0] || !showMonth) return;
+	if ((!yearNumbers[0] && !yearNumbers2[0]) || (!showMonth && !showMonth2)) return;
 
 	// Load month
 	std::string currentMonth = retMonth();
@@ -470,13 +571,18 @@ ITCM_CODE void drawMonth(void) {
 
 	loadedMonth = currentMonth;
 
-	drawYearNumberString(currentMonth, 2, monthX, monthY);
+	if (yearNumbers[0] && showMonth) {
+		drawYearNumberString(currentMonth, 2, monthX, monthY);
+	}
+	if (yearNumbers2[0] && showMonth2) {
+		drawYearNumber2String(currentMonth, 2, month2X, month2Y);
+	}
 }
 
 static std::string loadedDayX;
 
 ITCM_CODE void drawDayX(void) {
-	if (!yearNumbers[0] || !showDayX) return;
+	if ((!yearNumbers[0] && !yearNumbers2[0]) || (!showDayX && !showDayX2)) return;
 
 	// Load day
 	std::string currentDayX = retDay();
@@ -486,7 +592,12 @@ ITCM_CODE void drawDayX(void) {
 
 	loadedDayX = currentDayX;
 
-	drawYearNumberString(currentDayX, 2, dayxX, dayxY);
+	if (yearNumbers[0] && showDayX) {
+		drawYearNumberString(currentDayX, 2, dayxX, dayxY);
+	}
+	if (yearNumbers2[0] && showDayX2) {
+		drawYearNumber2String(currentDayX, 2, dayx2X, dayx2Y);
+	}
 }
 
 static u8 oldMonth = 0;
@@ -506,6 +617,8 @@ static u8 weekDayOfFirstDay()
 
 static u8 oldDaysX[32] = {0};
 static u8 oldDaysY[32] = {0};
+static u8 oldDays2X[32] = {0};
+static u8 oldDays2Y[32] = {0};
 static bool oldDaysSaved = false;
 
 static void clearDayNumber(u8 day)
@@ -518,6 +631,22 @@ static void clearDayNumber(u8 day)
 
 	for (int y2 = y; y2 < y+daySizeY-1; y2++) {
 		for (int x2 = x; x2 < x+daySizeX-1; x2++) {
+			topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
+			topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
+		}
+	}
+}
+
+static void clearDayNumber2(u8 day)
+{
+	if (day > 31)
+		return;
+
+	const u8 x = oldDays2X[day];
+	const u8 y = oldDays2Y[day];
+
+	for (int y2 = y; y2 < y+daySize2Y-1; y2++) {
+		for (int x2 = x; x2 < x+daySize2X-1; x2++) {
 			topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
 			topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
 		}
@@ -572,10 +701,58 @@ static void drawDayNumber(u8 day)
 	oldDaysY[day] = y;
 }
 
+static void drawDayNumber2(u8 day)
+{
+	if (day > 31)
+		return;
+
+	const u8 weekDayOfDay = (((day - 1) % 7) + weekDayOfFirstDay()) % 7;
+	const u8 x = weekDayOfDay *daySize2X + dayPosition2X;
+	const u8 y = ((day - 1 + weekDayOfFirstDay()) / 7 * daySize2Y) + dayPosition2Y;
+	const u8 firstNumber = day / 10;
+	const u8 secondNumber = day % 10;
+
+	const int x3 = x - (daySize2X / 2 - dayNumbers2W);
+	const int y3 = y - (daySize2Y - dayNumbers2H) / 2;
+	if (day == dateDay()) {
+		for (int y2 = y3; y2 < y3+daySize2Y-1; y2++) {
+			for (int x2 = x3; x2 < x3+daySize2X-1; x2++) {
+				topImageWithText[0][(y2*256)+x2] = dayHighlightColor2;
+				topImageWithText[1][(y2*256)+x2] = dayHighlightColor2;
+			}
+		}
+	} else {
+		for (int y2 = y; y2 < y+daySize2Y-1; y2++) {
+			for (int x2 = x; x2 < x+daySize2X-1; x2++) {
+				topImageWithText[0][(y2*256)+x2] = topImage[0][(y2*256)+x2];
+				topImageWithText[1][(y2*256)+x2] = topImage[1][(y2*256)+x2];
+			}
+		}
+	}
+
+	for (int i = 0; i < 2; i++) {
+		int src = (dayNumbers2W * dayNumbers2H) * ((i == 1) ? secondNumber : firstNumber);
+
+		const int x3 = (i == 1) ? (x+dayNumbers2W) : x;
+		for (int y2 = y; y2 < y+dayNumbers2H; y2++) {
+			for (int x2 = x3; x2 < x3+dayNumbers2W; x2++) {
+				if (dayNumbers2[0][src] != (0 | BIT(15))) {
+					topImageWithText[0][(y2*256)+x2] = dayNumbers2[0][src];
+					topImageWithText[1][(y2*256)+x2] = dayNumbers2[1][src];
+				}
+				src++;
+			}
+		}
+	}
+
+	oldDays2X[day] = x;
+	oldDays2Y[day] = y;
+}
+
 static std::string loadedDay;
 
 void drawDay(void) {
-	if (!dayNumbers[0]) return;
+	if (!dayNumbers[0] && !dayNumbers2[0]) return;
 
 	// Load day
 	std::string currentDay = retDay();
@@ -585,16 +762,31 @@ void drawDay(void) {
 
 	loadedDay = currentDay;
 
-	if (oldDaysSaved && (dateMonth() != oldMonth || dateYear() != oldYear)) {
-		for (u8 i = 1; i <= oldDaysOfMonth; ++i)
+	if (dayNumbers[0]) {
+		if (oldDaysSaved && (dateMonth() != oldMonth || dateYear() != oldYear)) {
+			for (u8 i = 1; i <= oldDaysOfMonth; ++i)
+			{
+				clearDayNumber(i);
+			}
+		}
+
+		for (u8 i = 1; i <= daysOfMonth(); ++i)
 		{
-			clearDayNumber(i);
+			drawDayNumber(i);
 		}
 	}
+	if (dayNumbers2[0]) {
+		if (oldDaysSaved && (dateMonth() != oldMonth || dateYear() != oldYear)) {
+			for (u8 i = 1; i <= oldDaysOfMonth; ++i)
+			{
+				clearDayNumber2(i);
+			}
+		}
 
-	for (u8 i = 1; i <= daysOfMonth(); ++i)
-	{
-		drawDayNumber(i);
+		for (u8 i = 1; i <= daysOfMonth(); ++i)
+		{
+			drawDayNumber2(i);
+		}
 	}
 
 	oldMonth = dateMonth();
@@ -608,9 +800,13 @@ enum class ImageType {
 	top,
 	folderUp,
 	clockNumbers,
+	clockNumbers2,
 	clockColon,
+	clockColon2,
 	yearNumbers,
-	dayNumbers
+	yearNumbers2,
+	dayNumbers,
+	dayNumbers2
 };
 
 static void loadBmp(const ImageType type, const char* filename) {
@@ -657,24 +853,48 @@ static void loadBmp(const ImageType type, const char* filename) {
 
 		clockNumbers[0] = new u16[width*height];
 		clockNumbers[1] = new u16[width*height];
+	} else if (type == ImageType::clockNumbers2) {
+		clockNumbers2W = (int)width;
+		clockNumbers2H = (int)height/10;
+
+		clockNumbers2[0] = new u16[width*height];
+		clockNumbers2[1] = new u16[width*height];
 	} else if (type == ImageType::clockColon) {
 		clockColonW = (int)width;
 		clockColonH = (int)height;
 
 		clockColon[0] = new u16[width*height];
 		clockColon[1] = new u16[width*height];
+	} else if (type == ImageType::clockColon2) {
+		clockColon2W = (int)width;
+		clockColon2H = (int)height;
+
+		clockColon2[0] = new u16[width*height];
+		clockColon2[1] = new u16[width*height];
 	} else if (type == ImageType::yearNumbers) {
 		yearNumbersW = (int)width;
 		yearNumbersH = (int)height/10;
 
 		yearNumbers[0] = new u16[width*height];
 		yearNumbers[1] = new u16[width*height];
+	} else if (type == ImageType::yearNumbers2) {
+		yearNumbers2W = (int)width;
+		yearNumbers2H = (int)height/10;
+
+		yearNumbers2[0] = new u16[width*height];
+		yearNumbers2[1] = new u16[width*height];
 	} else if (type == ImageType::dayNumbers) {
 		dayNumbersW = (int)width;
 		dayNumbersH = (int)height/10;
 
 		dayNumbers[0] = new u16[width*height];
 		dayNumbers[1] = new u16[width*height];
+	} else if (type == ImageType::dayNumbers2) {
+		dayNumbers2W = (int)width;
+		dayNumbers2H = (int)height/10;
+
+		dayNumbers2[0] = new u16[width*height];
+		dayNumbers2[1] = new u16[width*height];
 	}
 
 	fseek(file, 0x1C, SEEK_SET);
@@ -720,12 +940,20 @@ static void loadBmp(const ImageType type, const char* filename) {
 			if (colorTable && ((type < ImageType::folderUp) || (color != (0 | BIT(15))))) {
 				color = colorTable[color];
 			}
-			if (type == ImageType::dayNumbers) {
+			if (type == ImageType::dayNumbers2) {
+				dayNumbers2[0][(y*width)+x] = color;
+			} else if (type == ImageType::dayNumbers) {
 				dayNumbers[0][(y*width)+x] = color;
+			} else if (type == ImageType::yearNumbers2) {
+				yearNumbers2[0][(y*width)+x] = color;
 			} else if (type == ImageType::yearNumbers) {
 				yearNumbers[0][(y*width)+x] = color;
+			} else if (type == ImageType::clockColon2) {
+				clockColon2[0][(y*width)+x] = color;
 			} else if (type == ImageType::clockColon) {
 				clockColon[0][(y*width)+x] = color;
+			} else if (type == ImageType::clockNumbers2) {
+				clockNumbers2[0][(y*width)+x] = color;
 			} else if (type == ImageType::clockNumbers) {
 				clockNumbers[0][(y*width)+x] = color;
 			} else if (type == ImageType::folderUp) {
@@ -760,12 +988,20 @@ static void loadBmp(const ImageType type, const char* filename) {
 			if (colorTable && ((type < ImageType::folderUp) || (color != (0 | BIT(15))))) {
 				color = colorTable[color];
 			}
-			if (type == ImageType::dayNumbers) {
+			if (type == ImageType::dayNumbers2) {
+				dayNumbers2[1][(y*width)+x] = color;
+			} else if (type == ImageType::dayNumbers) {
 				dayNumbers[1][(y*width)+x] = color;
+			} else if (type == ImageType::yearNumbers2) {
+				yearNumbers2[1][(y*width)+x] = color;
 			} else if (type == ImageType::yearNumbers) {
 				yearNumbers[1][(y*width)+x] = color;
+			} else if (type == ImageType::clockColon2) {
+				clockColon2[1][(y*width)+x] = color;
 			} else if (type == ImageType::clockColon) {
 				clockColon[1][(y*width)+x] = color;
+			} else if (type == ImageType::clockNumbers2) {
+				clockNumbers2[1][(y*width)+x] = color;
 			} else if (type == ImageType::clockNumbers) {
 				clockNumbers[1][(y*width)+x] = color;
 			} else if (type == ImageType::folderUp) {
@@ -798,18 +1034,34 @@ static void loadBmp(const ImageType type, const char* filename) {
 			renderWidth = (int)width;
 			dst = (clockNumbers[0] + (height-1) * width);
 			dst2 = (clockNumbers[1] + (height-1) * width);
+		} else if (type == ImageType::clockNumbers2) {
+			renderWidth = (int)width;
+			dst = (clockNumbers2[0] + (height-1) * width);
+			dst2 = (clockNumbers2[1] + (height-1) * width);
 		} else if (type == ImageType::clockColon) {
 			renderWidth = (int)width;
 			dst = (clockColon[0] + (height-1) * width);
 			dst2 = (clockColon[1] + (height-1) * width);
+		} else if (type == ImageType::clockColon2) {
+			renderWidth = (int)width;
+			dst = (clockColon2[0] + (height-1) * width);
+			dst2 = (clockColon2[1] + (height-1) * width);
 		} else if (type == ImageType::yearNumbers) {
 			renderWidth = (int)width;
 			dst = (yearNumbers[0] + (height-1) * width);
 			dst2 = (yearNumbers[1] + (height-1) * width);
+		} else if (type == ImageType::yearNumbers2) {
+			renderWidth = (int)width;
+			dst = (yearNumbers2[0] + (height-1) * width);
+			dst2 = (yearNumbers2[1] + (height-1) * width);
 		} else if (type == ImageType::dayNumbers) {
 			renderWidth = (int)width;
 			dst = (dayNumbers[0] + (height-1) * width);
 			dst2 = (dayNumbers[1] + (height-1) * width);
+		} else if (type == ImageType::dayNumbers2) {
+			renderWidth = (int)width;
+			dst = (dayNumbers2[0] + (height-1) * width);
+			dst2 = (dayNumbers2[1] + (height-1) * width);
 		}
 		u16 *src = bmpImageBuffer;
 		for (uint y = 0; y < height; y++, dst -= renderWidth, dst2 -= renderWidth) {
@@ -854,15 +1106,27 @@ static void loadBmp(const ImageType type, const char* filename) {
 		int y = height-1;
 		for (u32 i = 0; i < width*height; i++) {
 			const u16 color = pixelBuffer[bmpImageBuffer[i]];
-			if (type == ImageType::dayNumbers) {
+			if (type == ImageType::dayNumbers2) {
+				dayNumbers2[0][(y*width)+x] = color;
+				dayNumbers2[1][(y*width)+x] = color;
+			} else if (type == ImageType::dayNumbers) {
 				dayNumbers[0][(y*width)+x] = color;
 				dayNumbers[1][(y*width)+x] = color;
+			} else if (type == ImageType::yearNumbers2) {
+				yearNumbers2[0][(y*width)+x] = color;
+				yearNumbers2[1][(y*width)+x] = color;
 			} else if (type == ImageType::yearNumbers) {
 				yearNumbers[0][(y*width)+x] = color;
 				yearNumbers[1][(y*width)+x] = color;
+			} else if (type == ImageType::clockColon2) {
+				clockColon2[0][(y*width)+x] = color;
+				clockColon2[1][(y*width)+x] = color;
 			} else if (type == ImageType::clockColon) {
 				clockColon[0][(y*width)+x] = color;
 				clockColon[1][(y*width)+x] = color;
+			} else if (type == ImageType::clockNumbers2) {
+				clockNumbers2[0][(y*width)+x] = color;
+				clockNumbers2[1][(y*width)+x] = color;
 			} else if (type == ImageType::clockNumbers) {
 				clockNumbers[0][(y*width)+x] = color;
 				clockNumbers[1][(y*width)+x] = color;
@@ -908,15 +1172,27 @@ static void loadBmp(const ImageType type, const char* filename) {
 		for (u32 i = 0; i < (width*height)/8; i++) {
 			for (int b = 7; b >= 0; b--) {
 				const u16 color = monoPixel[(bmpImageBuffer[i] & (BIT(b))) ? 1 : 0];
-				if (type == ImageType::dayNumbers) {
+				if (type == ImageType::dayNumbers2) {
+					dayNumbers2[0][(y*width)+x] = color;
+					dayNumbers2[1][(y*width)+x] = color;
+				} else if (type == ImageType::dayNumbers) {
 					dayNumbers[0][(y*width)+x] = color;
 					dayNumbers[1][(y*width)+x] = color;
+				} else if (type == ImageType::yearNumbers2) {
+					yearNumbers2[0][(y*width)+x] = color;
+					yearNumbers2[1][(y*width)+x] = color;
 				} else if (type == ImageType::yearNumbers) {
 					yearNumbers[0][(y*width)+x] = color;
 					yearNumbers[1][(y*width)+x] = color;
+				} else if (type == ImageType::clockColon2) {
+					clockColon2[0][(y*width)+x] = color;
+					clockColon2[1][(y*width)+x] = color;
 				} else if (type == ImageType::clockColon) {
 					clockColon[0][(y*width)+x] = color;
 					clockColon[1][(y*width)+x] = color;
+				} else if (type == ImageType::clockNumbers2) {
+					clockNumbers2[0][(y*width)+x] = color;
+					clockNumbers2[1][(y*width)+x] = color;
 				} else if (type == ImageType::clockNumbers) {
 					clockNumbers[0][(y*width)+x] = color;
 					clockNumbers[1][(y*width)+x] = color;
@@ -1314,21 +1590,58 @@ void graphicsLoad()
 				loadBmp(ImageType::clockColon, pathClockNumbers.c_str());
 			}
 
+			if (ini.GetInt("small clock", "show", 0)) {
+				smallClockX = ini.GetInt("small clock", "x", smallClockX);
+				smallClockY = ini.GetInt("small clock", "y", smallClockY);
+
+				std::string pathClockNumbers;
+				if (access((themePath + "/calendar/clock_numbers_2.bmp").c_str(), F_OK) == 0) {
+					pathClockNumbers = themePath + "/calendar/clock_numbers_2.bmp";
+				} else {
+					pathClockNumbers = "nitro:/themes/zelda/calendar/clock_numbers_2.bmp";
+				}
+
+				loadBmp(ImageType::clockNumbers2, pathClockNumbers.c_str());
+
+				if (access((themePath + "/calendar/clock_colon_2.bmp").c_str(), F_OK) == 0) {
+					pathClockNumbers = themePath + "/calendar/clock_colon_2.bmp";
+				} else {
+					pathClockNumbers = "nitro:/themes/zelda/calendar/clock_colon_2.bmp";
+				}
+
+				loadBmp(ImageType::clockColon2, pathClockNumbers.c_str());
+			}
+
 			showYear = ini.GetInt("calendar year", "show", showYear);
+			showYear2 = ini.GetInt("calendar year 2", "show", showYear2);
 			showMonth = ini.GetInt("calendar month", "show", showMonth);
+			showMonth2 = ini.GetInt("calendar month 2", "show", showMonth2);
 			showDayX = ini.GetInt("calendar dayx", "show", showDayX);
+			showDayX2 = ini.GetInt("calendar dayx 2", "show", showDayX2);
 
 			if (showYear) {
 				yearX = ini.GetInt("calendar year", "x", yearX);
 				yearY = ini.GetInt("calendar year", "y", yearY);
 			}
+			if (showYear2) {
+				year2X = ini.GetInt("calendar year 2", "x", year2X);
+				year2Y = ini.GetInt("calendar year 2", "y", year2Y);
+			}
 			if (showMonth) {
 				monthX = ini.GetInt("calendar month", "x", monthX);
 				monthY = ini.GetInt("calendar month", "y", monthY);
 			}
+			if (showMonth2) {
+				month2X = ini.GetInt("calendar month 2", "x", month2X);
+				month2Y = ini.GetInt("calendar month 2", "y", month2Y);
+			}
 			if (showDayX) {
 				dayxX = ini.GetInt("calendar dayx", "x", dayxX);
 				dayxY = ini.GetInt("calendar dayx", "y", dayxY);
+			}
+			if (showDayX2) {
+				dayx2X = ini.GetInt("calendar dayx 2", "x", dayx2X);
+				dayx2Y = ini.GetInt("calendar dayx 2", "y", dayx2Y);
 			}
 
 			if (showYear || showMonth || showDayX) {
@@ -1340,6 +1653,16 @@ void graphicsLoad()
 				}
 
 				loadBmp(ImageType::yearNumbers, pathYearNumbers.c_str());
+			}
+			if (showYear2 || showMonth2 || showDayX2) {
+				std::string pathYearNumbers;
+				if (access((themePath + "/calendar/year_numbers_2.bmp").c_str(), F_OK) == 0) {
+					pathYearNumbers = themePath + "/calendar/year_numbers_2.bmp";
+				} else {
+					pathYearNumbers = "nitro:/themes/zelda/calendar/year_numbers_2.bmp";
+				}
+
+				loadBmp(ImageType::yearNumbers2, pathYearNumbers.c_str());
 			}
 
 			if (ini.GetInt("calendar day", "show", 0)) {
@@ -1357,6 +1680,22 @@ void graphicsLoad()
 				}
 
 				loadBmp(ImageType::dayNumbers, pathDayNumbers.c_str());
+			}
+			if (ini.GetInt("calendar day 2", "show", 0)) {
+				dayPosition2X = ini.GetInt("calendar day 2", "x", dayPosition2X);
+				dayPosition2Y = ini.GetInt("calendar day 2", "y", dayPosition2Y);
+				daySize2X = ini.GetInt("calendar day 2", "dw", daySize2X);
+				daySize2Y = ini.GetInt("calendar day 2", "dh", daySize2Y);
+				dayHighlightColor2 = ini.GetInt("calendar day 2", "highlightColor", dayHighlightColor2) | BIT(15);
+
+				std::string pathDayNumbers;
+				if (access((themePath + "/calendar/day_numbers_2.bmp").c_str(), F_OK) == 0) {
+					pathDayNumbers = themePath + "/calendar/day_numbers_2.bmp";
+				} else {
+					pathDayNumbers = "nitro:/themes/zelda/calendar/day_numbers_2.bmp";
+				}
+
+				loadBmp(ImageType::dayNumbers2, pathDayNumbers.c_str());
 			}
 		}
 	}
