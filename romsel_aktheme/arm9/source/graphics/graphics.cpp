@@ -102,6 +102,8 @@ static u16* yearNumbers[2] = {NULL};
 static u16* yearNumbers2[2] = {NULL};
 static u16* dayNumbers[2] = {NULL};
 static u16* dayNumbers2[2] = {NULL};
+static u16* weekdayText[2] = {NULL};
+static u16* weekdayText2[2] = {NULL};
 
 static int bigClockX = 8;
 static int bigClockY = 80;
@@ -123,6 +125,10 @@ static int dayNumbersW = 0;
 static int dayNumbersH = 0;
 static int dayNumbers2W = 0;
 static int dayNumbers2H = 0;
+static int weekdayTextW = 0;
+static int weekdayTextH = 0;
+static int weekdayText2W = 0;
+static int weekdayText2H = 0;
 
 static int yearX = 52;
 static int yearY = 28;
@@ -155,6 +161,11 @@ static int daySize2X = 16;
 static int daySize2Y = 14;
 static u16 dayHighlightColor = 0xfc00;
 static u16 dayHighlightColor2 = 0xfc00;
+
+static int weekdayX = 52;
+static int weekdayY = 28;
+static int weekday2X = 52;
+static int weekday2Y = 28;
 
 u16* colorTable = NULL;
 
@@ -791,6 +802,52 @@ void drawDay(void) {
 	oldDaysSaved = true;
 }
 
+static u8 loadedWeekday = 0xFF;
+
+ITCM_CODE void drawWeekday(void) {
+	if (!weekdayText[0] && !weekdayText2[0]) return;
+
+	u8 currentWeekday = dateWeekday();
+
+	if (currentWeekday == loadedWeekday)
+		return;
+
+	loadedWeekday = currentWeekday;
+
+	if (weekdayText[0]) {
+		int src = (weekdayTextW * weekdayTextH) * currentWeekday;
+
+		for (int y2 = weekdayY; y2 < weekdayY+weekdayTextH; y2++) {
+			for (int x2 = weekdayX; x2 < weekdayX+weekdayTextW; x2++) {
+				if (weekdayText[0][src] == (0 | BIT(15))) {
+					bottomImageWithBar[0][(y2*256)+x2] = bottomImage[0][(y2*256)+x2];
+					bottomImageWithBar[1][(y2*256)+x2] = bottomImage[1][(y2*256)+x2];
+				} else {
+					bottomImageWithBar[0][(y2*256)+x2] = weekdayText[0][src];
+					bottomImageWithBar[1][(y2*256)+x2] = weekdayText[1][src];
+				}
+				src++;
+			}
+		}
+	}
+	if (weekdayText2[0]) {
+		int src = (weekdayText2W * weekdayText2H) * currentWeekday;
+
+		for (int y2 = weekday2Y; y2 < weekday2Y+weekdayText2H; y2++) {
+			for (int x2 = weekday2X; x2 < weekday2X+weekdayText2W; x2++) {
+				if (weekdayText2[0][src] == (0 | BIT(15))) {
+					bottomImageWithBar[0][(y2*256)+x2] = bottomImage[0][(y2*256)+x2];
+					bottomImageWithBar[1][(y2*256)+x2] = bottomImage[1][(y2*256)+x2];
+				} else {
+					bottomImageWithBar[0][(y2*256)+x2] = weekdayText2[0][src];
+					bottomImageWithBar[1][(y2*256)+x2] = weekdayText2[1][src];
+				}
+				src++;
+			}
+		}
+	}
+}
+
 enum class ImageType {
 	bottom,
 	top,
@@ -802,7 +859,9 @@ enum class ImageType {
 	yearNumbers,
 	yearNumbers2,
 	dayNumbers,
-	dayNumbers2
+	dayNumbers2,
+	weekdayText,
+	weekdayText2
 };
 
 static void loadBmp(const ImageType type, const char* filename) {
@@ -891,6 +950,18 @@ static void loadBmp(const ImageType type, const char* filename) {
 
 		dayNumbers2[0] = new u16[width*height];
 		dayNumbers2[1] = new u16[width*height];
+	} else if (type == ImageType::weekdayText) {
+		weekdayTextW = (int)width;
+		weekdayTextH = (int)height/7;
+
+		weekdayText[0] = new u16[width*height];
+		weekdayText[1] = new u16[width*height];
+	} else if (type == ImageType::weekdayText2) {
+		weekdayText2W = (int)width;
+		weekdayText2H = (int)height/7;
+
+		weekdayText2[0] = new u16[width*height];
+		weekdayText2[1] = new u16[width*height];
 	}
 
 	fseek(file, 0x1C, SEEK_SET);
@@ -936,7 +1007,11 @@ static void loadBmp(const ImageType type, const char* filename) {
 			if (colorTable && ((type < ImageType::folderUp) || (color != (0 | BIT(15))))) {
 				color = colorTable[color];
 			}
-			if (type == ImageType::dayNumbers2) {
+			if (type == ImageType::weekdayText2) {
+				weekdayText2[0][(y*width)+x] = color;
+			} else if (type == ImageType::weekdayText) {
+				weekdayText[0][(y*width)+x] = color;
+			} else if (type == ImageType::dayNumbers2) {
 				dayNumbers2[0][(y*width)+x] = color;
 			} else if (type == ImageType::dayNumbers) {
 				dayNumbers[0][(y*width)+x] = color;
@@ -984,7 +1059,11 @@ static void loadBmp(const ImageType type, const char* filename) {
 			if (colorTable && ((type < ImageType::folderUp) || (color != (0 | BIT(15))))) {
 				color = colorTable[color];
 			}
-			if (type == ImageType::dayNumbers2) {
+			if (type == ImageType::weekdayText2) {
+				weekdayText2[1][(y*width)+x] = color;
+			} else if (type == ImageType::weekdayText) {
+				weekdayText[1][(y*width)+x] = color;
+			} else if (type == ImageType::dayNumbers2) {
 				dayNumbers2[1][(y*width)+x] = color;
 			} else if (type == ImageType::dayNumbers) {
 				dayNumbers[1][(y*width)+x] = color;
@@ -1058,6 +1137,14 @@ static void loadBmp(const ImageType type, const char* filename) {
 			renderWidth = (int)width;
 			dst = (dayNumbers2[0] + (height-1) * width);
 			dst2 = (dayNumbers2[1] + (height-1) * width);
+		} else if (type == ImageType::weekdayText) {
+			renderWidth = (int)width;
+			dst = (weekdayText[0] + (height-1) * width);
+			dst2 = (weekdayText[1] + (height-1) * width);
+		} else if (type == ImageType::weekdayText2) {
+			renderWidth = (int)width;
+			dst = (weekdayText2[0] + (height-1) * width);
+			dst2 = (weekdayText2[1] + (height-1) * width);
 		}
 		u16 *src = bmpImageBuffer;
 		for (uint y = 0; y < height; y++, dst -= renderWidth, dst2 -= renderWidth) {
@@ -1102,7 +1189,13 @@ static void loadBmp(const ImageType type, const char* filename) {
 		int y = height-1;
 		for (u32 i = 0; i < width*height; i++) {
 			const u16 color = pixelBuffer[bmpImageBuffer[i]];
-			if (type == ImageType::dayNumbers2) {
+			if (type == ImageType::weekdayText2) {
+				weekdayText2[0][(y*width)+x] = color;
+				weekdayText2[1][(y*width)+x] = color;
+			} else if (type == ImageType::weekdayText) {
+				weekdayText[0][(y*width)+x] = color;
+				weekdayText[1][(y*width)+x] = color;
+			} else if (type == ImageType::dayNumbers2) {
 				dayNumbers2[0][(y*width)+x] = color;
 				dayNumbers2[1][(y*width)+x] = color;
 			} else if (type == ImageType::dayNumbers) {
@@ -1168,7 +1261,13 @@ static void loadBmp(const ImageType type, const char* filename) {
 		for (u32 i = 0; i < (width*height)/8; i++) {
 			for (int b = 7; b >= 0; b--) {
 				const u16 color = monoPixel[(bmpImageBuffer[i] & (BIT(b))) ? 1 : 0];
-				if (type == ImageType::dayNumbers2) {
+				if (type == ImageType::weekdayText2) {
+					weekdayText2[0][(y*width)+x] = color;
+					weekdayText2[1][(y*width)+x] = color;
+				} else if (type == ImageType::weekdayText) {
+					weekdayText[0][(y*width)+x] = color;
+					weekdayText[1][(y*width)+x] = color;
+				} else if (type == ImageType::dayNumbers2) {
 					dayNumbers2[0][(y*width)+x] = color;
 					dayNumbers2[1][(y*width)+x] = color;
 				} else if (type == ImageType::dayNumbers) {
@@ -1692,6 +1791,33 @@ void graphicsLoad()
 				}
 
 				loadBmp(ImageType::dayNumbers2, pathDayNumbers.c_str());
+			}
+
+			if (ini.GetInt("calendar weekday", "show", 0)) {
+				weekdayX = ini.GetInt("calendar weekday", "x", weekdayX);
+				weekdayY = ini.GetInt("calendar weekday", "y", weekdayY);
+
+				std::string pathWeekdayText;
+				if (access((themePath + "/calendar/weekday_text.bmp").c_str(), F_OK) == 0) {
+					pathWeekdayText = themePath + "/calendar/weekday_text.bmp";
+				} else {
+					pathWeekdayText = "nitro:/themes/zelda/calendar/weekday_text.bmp";
+				}
+
+				loadBmp(ImageType::weekdayText, pathWeekdayText.c_str());
+			}
+			if (ini.GetInt("calendar weekday 2", "show", 0)) {
+				weekday2X = ini.GetInt("calendar weekday 2", "x", weekday2X);
+				weekday2Y = ini.GetInt("calendar weekday 2", "y", weekday2Y);
+
+				std::string pathWeekdayText;
+				if (access((themePath + "/calendar/weekday_text_2.bmp").c_str(), F_OK) == 0) {
+					pathWeekdayText = themePath + "/calendar/weekday_text_2.bmp";
+				} else {
+					pathWeekdayText = "nitro:/themes/zelda/calendar/weekday_text_2.bmp";
+				}
+
+				loadBmp(ImageType::weekdayText2, pathWeekdayText.c_str());
 			}
 		}
 	}
