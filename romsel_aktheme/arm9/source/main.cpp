@@ -1150,8 +1150,48 @@ int akTheme(void) {
 		if (ini.GetInt("custom text", "show", 0)) {
 			const int x = ini.GetInt("custom text", "x", 0);
 			const int y = ini.GetInt("custom text", "y", 0);
+			const int w = ini.GetInt("custom text", "w", 0);
 
-			printSmall(true, x, y, ini.GetString("custom text", "text", ""), Alignment::left, FontPalette::customText);
+			const std::string userText = ini.GetString("custom text", "text", "");
+
+			std::vector<std::string> lines;
+			lines.push_back(userText);
+
+			for (uint i = 0; i < lines.size(); i++) {
+				int width = calcSmallFontWidth(lines[i]);
+				if (width > w) {
+					int mid = lines[i].length() / 2;
+					bool foundSpace = false;
+					for (uint j = 0; j < lines[i].length() / 2; j++) {
+						if (lines[i][mid + j] == ' ') {
+							lines.insert(lines.begin() + i, lines[i].substr(0, mid + j));
+							lines[i + 1] = lines[i + 1].substr(mid + j + 1);
+							i--;
+							foundSpace = true;
+							break;
+						} else if (lines[i][mid - j] == ' ') {
+							lines.insert(lines.begin() + i, lines[i].substr(0, mid - j));
+							lines[i + 1] = lines[i + 1].substr(mid - j + 1);
+							i--;
+							foundSpace = true;
+							break;
+						}
+					}
+					if (!foundSpace) {
+						lines.insert(lines.begin() + i, lines[i].substr(0, mid));
+						lines[i + 1] = lines[i + 1].substr(mid);
+						i--;
+					}
+				}
+			}
+
+			std::string out;
+			for (auto line : lines) {
+				out += line + '\n';
+			}
+			out.pop_back();
+
+			printSmall(true, x, y, out, Alignment::left, FontPalette::customText);
 			updateText(true);
 		}
 	}
