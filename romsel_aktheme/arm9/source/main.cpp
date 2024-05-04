@@ -1225,15 +1225,14 @@ int akTheme(void) {
 
 	while (1) {
 		if (startMenu) {
-			// Launch settings
+			// Launch DS Classic Menu
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
 			}
 
-			ms().saveSettings();
 			vector<char *> argarray;
-			argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr"));
+			argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/mainmenu.srldr" : "fat:/_nds/TWiLightMenu/mainmenu.srldr"));
 			runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 			stop();
 		} else {
