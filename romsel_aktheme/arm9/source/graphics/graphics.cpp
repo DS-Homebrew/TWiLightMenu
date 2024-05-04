@@ -187,6 +187,9 @@ u16 startBorderColor = 0;
 static u16 selectionBarColor1 = 0x5c00;
 static u16 selectionBarColor2 = 0x2d60;
 static u8 selectionBarOpacity = 100;
+static u16* selectionBarBg[2] = {NULL};
+static int selectionBarBgW = 0;
+static int selectionBarBgH = 0;
 
 void ClearBrightness(void) {
 	fadeType = true;
@@ -339,9 +342,10 @@ ITCM_CODE void updateSelectionBar(void) {
 	swiWaitForVBlank();
 	if (prevCurPos != 20) {
 		const int h = (prevViewMode != TWLSettings::EViewList) ? 38 : 11;
-		const int hl = h-1;
+		// const int hl = h-1;
+		const int hl = h;
 		for (int y = 19+(prevCurPos*h); y <= 19+hl+(prevCurPos*h); y++) {
-			for (int x = 2; x <= 253; x++) {
+			for (int x = 2; x < 256; x++) {
 				bottomImageWithBar[0][(y*256)+x] = bottomImage[0][(y*256)+x];
 				bottomImageWithBar[1][(y*256)+x] = bottomImage[1][(y*256)+x];
 			}
@@ -375,6 +379,20 @@ ITCM_CODE void updateSelectionBar(void) {
 				color2 = !color2;
 			}
 			color2 = !color2;
+		}
+	}
+
+	if (selectionBarBg[0] && (ms().ak_viewMode != TWLSettings::EViewList)) {
+		int src = 0;
+
+		for (int y = 19+(cursorPosOnScreen*h); y < 19+(cursorPosOnScreen*h)+selectionBarBgH; y++) {
+			for (int x = 2; x < 2+selectionBarBgW; x++) {
+				if ((selectionBarBg[0][src] != (0 | BIT(15))) && (x < 256)) {
+					bottomImageWithBar[0][(y*256)+x] = selectionBarBg[0][src];
+					bottomImageWithBar[1][(y*256)+x] = selectionBarBg[1][src];
+				}
+				src++;
+			}
 		}
 	}
 
@@ -861,7 +879,8 @@ enum class ImageType {
 	dayNumbers,
 	dayNumbers2,
 	weekdayText,
-	weekdayText2
+	weekdayText2,
+	selectionBarBg
 };
 
 static void loadBmp(const ImageType type, const char* filename) {
@@ -962,6 +981,12 @@ static void loadBmp(const ImageType type, const char* filename) {
 
 		weekdayText2[0] = new u16[width*height];
 		weekdayText2[1] = new u16[width*height];
+	} else if (type == ImageType::selectionBarBg) {
+		selectionBarBgW = (int)width;
+		selectionBarBgH = (int)height;
+
+		selectionBarBg[0] = new u16[width*height];
+		selectionBarBg[1] = new u16[width*height];
 	}
 
 	fseek(file, 0x1C, SEEK_SET);
@@ -1007,7 +1032,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 			if (colorTable && ((type < ImageType::folderUp) || (color != (0 | BIT(15))))) {
 				color = colorTable[color];
 			}
-			if (type == ImageType::weekdayText2) {
+			if (type == ImageType::selectionBarBg) {
+				selectionBarBg[0][(y*width)+x] = color;
+			} else if (type == ImageType::weekdayText2) {
 				weekdayText2[0][(y*width)+x] = color;
 			} else if (type == ImageType::weekdayText) {
 				weekdayText[0][(y*width)+x] = color;
@@ -1059,7 +1086,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 			if (colorTable && ((type < ImageType::folderUp) || (color != (0 | BIT(15))))) {
 				color = colorTable[color];
 			}
-			if (type == ImageType::weekdayText2) {
+			if (type == ImageType::selectionBarBg) {
+				selectionBarBg[1][(y*width)+x] = color;
+			} else if (type == ImageType::weekdayText2) {
 				weekdayText2[1][(y*width)+x] = color;
 			} else if (type == ImageType::weekdayText) {
 				weekdayText[1][(y*width)+x] = color;
@@ -1145,6 +1174,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 			renderWidth = (int)width;
 			dst = (weekdayText2[0] + (height-1) * width);
 			dst2 = (weekdayText2[1] + (height-1) * width);
+		} else if (type == ImageType::selectionBarBg) {
+			renderWidth = (int)width;
+			dst = (selectionBarBg[0] + (height-1) * width);
+			dst2 = (selectionBarBg[1] + (height-1) * width);
 		}
 		u16 *src = bmpImageBuffer;
 		for (uint y = 0; y < height; y++, dst -= renderWidth, dst2 -= renderWidth) {
@@ -1189,7 +1222,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 		int y = height-1;
 		for (u32 i = 0; i < width*height; i++) {
 			const u16 color = pixelBuffer[bmpImageBuffer[i]];
-			if (type == ImageType::weekdayText2) {
+			if (type == ImageType::selectionBarBg) {
+				selectionBarBg[0][(y*width)+x] = color;
+				selectionBarBg[1][(y*width)+x] = color;
+			} else if (type == ImageType::weekdayText2) {
 				weekdayText2[0][(y*width)+x] = color;
 				weekdayText2[1][(y*width)+x] = color;
 			} else if (type == ImageType::weekdayText) {
@@ -1261,7 +1297,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 		for (u32 i = 0; i < (width*height)/8; i++) {
 			for (int b = 7; b >= 0; b--) {
 				const u16 color = monoPixel[(bmpImageBuffer[i] & (BIT(b))) ? 1 : 0];
-				if (type == ImageType::weekdayText2) {
+				if (type == ImageType::selectionBarBg) {
+					selectionBarBg[0][(y*width)+x] = color;
+					selectionBarBg[1][(y*width)+x] = color;
+				} else if (type == ImageType::weekdayText2) {
 					weekdayText2[0][(y*width)+x] = color;
 					weekdayText2[1][(y*width)+x] = color;
 				} else if (type == ImageType::weekdayText) {
@@ -1660,6 +1699,18 @@ void graphicsLoad()
 		selectionBarOpacity = ini.GetInt("main list", "selectionBarOpacity", 100);
 		if (colorTable) {
 			selectionBarColor1 = colorTable[selectionBarColor1];
+			selectionBarColor2 = colorTable[selectionBarColor2];
+		}
+
+		if (ini.GetInt("main list", "showSelectionBarBg", false)) {
+			std::string pathSelectionBarBg;
+			if (access((themePath + "/selection_bar_bg.bmp").c_str(), F_OK) == 0) {
+				pathSelectionBarBg = themePath + "/selection_bar_bg.bmp";
+			} else {
+				pathSelectionBarBg = "nitro:/themes/zelda/selection_bar_bg.bmp";
+			}
+
+			loadBmp(ImageType::selectionBarBg, pathSelectionBarBg.c_str());
 		}
 
 		if (!ms().macroMode && ini.GetInt("global settings", "showCalendar", true)) {
