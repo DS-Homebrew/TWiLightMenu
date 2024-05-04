@@ -106,8 +106,7 @@ void printTopSmall(int xPos, int yPos, std::string_view str) {
 	toncset16(FontGraphic::textBuf[1], 0, 256 * smallFont->height());
 	smallFont->print(0, 0, true, str, Alignment::left, FontPalette::regular);
 	int width = smallFont->calcWidth(str);
-
-	xPos -= width*0.5f;
+	xPos -= width/2;
 
 	for (int y = 0; y < smallFont->height() && yPos + y < SCREEN_HEIGHT; y++) {
 		if (yPos + y < 0) continue;
