@@ -20,6 +20,7 @@ STRING(RESTART_AFTER_SAVE, "After saving, please re-start\nTWiLight Menu++ to tr
 STRING(NOW_LOADING, "Now Loading...")
 STRING(PLEASE_WAIT, "Please wait...")
 STRING(DATE_FORMAT, "%m/%d")
+STRING(DATE_YEAR_FORMAT, "%m/%Y")
 STRING(TIME_FORMAT_12, "%I:%M")
 STRING(TIME_FORMAT_24, "%H:%M")
 

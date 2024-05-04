@@ -9,6 +9,7 @@
 #include "common/tonccpy.h"
 #include "myDSiMode.h"
 #include "TextEntry.h"
+#include "color.h"
 
 extern u16* colorTable;
 
@@ -99,6 +100,26 @@ void clearText(bool top) {
 void clearText() {
 	clearText(true);
 	clearText(false);
+}
+
+void printTopSmall(int xPos, int yPos, std::string_view str) {
+	toncset16(FontGraphic::textBuf[1], 0, 256 * smallFont->height());
+	smallFont->print(0, 0, true, str, Alignment::left, FontPalette::regular);
+	int width = smallFont->calcWidth(str);
+
+	xPos -= width*0.5f;
+
+	for (int y = 0; y < smallFont->height() && yPos + y < SCREEN_HEIGHT; y++) {
+		if (yPos + y < 0) continue;
+		for (int x = 0; x < width && xPos + x < SCREEN_WIDTH; x++) {
+			if (xPos + x < 0) continue;
+			int px = FontGraphic::textBuf[1][y * 256 + x];
+			u16 bg = BG_GFX_SUB[(yPos + y) * 256 + (xPos + x)];
+			u16 val = px ? alphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
+
+			BG_GFX_SUB[(yPos + y) * 256 + (xPos + x)] = val;
+		}
+	}
 }
 
 void printSmall(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {

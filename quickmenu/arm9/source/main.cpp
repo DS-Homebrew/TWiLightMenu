@@ -674,6 +674,7 @@ mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
 mm_sound_effect snd_backlight;
+mm_sound_effect snd_hour;
 
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
@@ -685,6 +686,7 @@ void InitSound() {
 	mmLoadEffect(SFX_BACK);
 	mmLoadEffect(SFX_SWITCH);
 	mmLoadEffect(SFX_BACKLIGHT);
+	mmLoadEffect(SFX_HOUR);
 
 	snd_launch = {
 		{ SFX_LAUNCH } ,			// id
@@ -730,6 +732,13 @@ void InitSound() {
 	};
 	snd_backlight = {
 		{ SFX_BACKLIGHT } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_hour = {
+		{ SFX_HOUR } ,			// id
 		(int)(1.0f * (1<<10)),	// rate
 		0,		// handle
 		255,	// volume
@@ -1060,7 +1069,7 @@ void refreshNdsCard(bool refreshBoxArt) {
 	if (cardRefreshed) return;
 
 	if (sys().arm7SCFGLocked() && refreshBoxArt) {
-		loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
+		//loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 	} else {
 		my_cardReset(true);
 		if ((cardInit() == 0) && refreshBoxArt) {
@@ -1069,9 +1078,9 @@ void refreshNdsCard(bool refreshBoxArt) {
 
 			char boxArtPath[256];
 			sprintf (boxArtPath, (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
-			loadBoxArt(boxArtPath, true);	// Load box art
+			//loadBoxArt(boxArtPath, true);	// Load box art
 		} else if (refreshBoxArt) {
-			loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
+			//loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 		}
 	}
 
@@ -1330,6 +1339,8 @@ int dsClassicMenu(void) {
 
 	topBgLoad();
 	bottomBgLoad();
+	calendarLoad();
+	clockLoad();
 	
 	bool romFound[2] = {false};
 	char boxArtPath[2][256];
@@ -1617,14 +1628,14 @@ int dsClassicMenu(void) {
 	  }
 	}
 
-	if (ms().showBoxArt && (sdFound() ? !ms().slot1Launched : flashcardFound())) {
-		loadBoxArt(boxArtPath[ms().previousUsedDevice], ms().previousUsedDevice);	// Load box art
-	}
+	//if (ms().showBoxArt && (sdFound() ? !ms().slot1Launched : flashcardFound())) {
+	//	loadBoxArt(boxArtPath[ms().previousUsedDevice], ms().previousUsedDevice);	// Load box art
+	//}
 
 	if (isDSiMode() && !flashcardFound()) {
 		if (REG_SCFG_MC == 0x11) {
 			cardEjected = true;
-			if (ms().showBoxArt && ms().slot1Launched) loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
+			//if (ms().showBoxArt && ms().slot1Launched) loadBoxArt("nitro:/graphics/boxart_unknown.png", true);
 		} else {
 			refreshNdsCard(ms().showBoxArt && ms().slot1Launched);
 		}
@@ -1641,6 +1652,9 @@ int dsClassicMenu(void) {
 	startMenu = true;	// Show bottom screen graphics
 	fadeSpeed = false;
 
+	bool updateClock = true, updateCalendar = false;
+	Datetime previousTime;
+
 	std::string curTime;
 
 	while (1) {
@@ -1649,17 +1663,32 @@ int dsClassicMenu(void) {
 			int pressed = 0;
 
 			do {
-				std::string newTime = retTime();
-				if (curTime != newTime) {
-					curTime = newTime;
-					updateMenuText = true;
+				Datetime time = Datetime::now();
+
+				if (time != previousTime) {
+					updateClock = true;
+
+					if (!ms().macroMode && previousTime != 0) {
+						mm_sound_effect soundTick = snd_select;
+						soundTick.volume = (time % 60 == 0) ? 255 : 96; // sound is louder when the minute changes
+						mmEffectEx(&soundTick);
+						if (time.getHour() != previousTime.getHour())
+							mmEffectEx(&snd_hour);
+
+						if (time.getDay() != previousTime.getDay())
+							updateCalendar = true;
+					}
+					
+					previousTime = time;
+					curTime = retTime();
+					updateMenuText = true;	
 				}
 
 				if (isDSiMode() && !flashcardFound()) {
 					if (REG_SCFG_MC == 0x11) {
-						if (cardRefreshed && ms().showBoxArt) {
-							loadBoxArt(ms().slot1Launched ? "nitro:/graphics/boxart_unknown.png" : boxArtPath[ms().previousUsedDevice], ms().slot1Launched ? true : ms().previousUsedDevice);
-						}
+						//if (cardRefreshed && ms().showBoxArt) {
+						//	loadBoxArt(ms().slot1Launched ? "nitro:/graphics/boxart_unknown.png" : boxArtPath[ms().previousUsedDevice], ms().slot1Launched ? true : ms().previousUsedDevice);
+						//}
 						cardRefreshed = false;
 						cardEjected = true;
 						updateMenuText = true;
@@ -1667,6 +1696,16 @@ int dsClassicMenu(void) {
 						refreshNdsCard(ms().showBoxArt);
 						updateMenuText = true;
 					}
+				}
+
+				if (updateClock && !ms().macroMode) {
+					clockDraw();
+					updateClock = false;
+				}
+
+				if (updateCalendar && !ms().macroMode) {
+					calendarDraw();
+					updateCalendar = false;
 				}
 
 				if (updateMenuText) {

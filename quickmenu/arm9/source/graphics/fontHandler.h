@@ -8,6 +8,8 @@ void updateText(bool top);
 void clearText(bool top);
 void clearText();
 
+void printTopSmall(int x, int y, std::string_view message);
+
 void printSmall(bool top, int x, int y, std::string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
 void printSmall(bool top, int x, int y, std::u16string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
 void printLarge(bool top, int x, int y, std::string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);

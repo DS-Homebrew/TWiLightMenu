@@ -2,7 +2,7 @@
 
 #include "common/tonccpy.h"
 
-u8 FontGraphic::textBuf[1][256 * 192]; // Increase to two if adding top screen support
+u8 FontGraphic::textBuf[2][256 * 192];
 
 std::map<char16_t, std::array<char16_t, 3>> FontGraphic::arabicPresentationForms = {
 	// Initial, Medial, Final

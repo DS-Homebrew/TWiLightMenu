@@ -46,7 +46,7 @@ private:
 	u16 getCharIndex(char16_t c);
 
 public:
-	static u8 textBuf[1][256 * 192]; // Increase to two if adding top screen support
+	static u8 textBuf[2][256 * 192];
 
 	static std::u16string utf8to16(std::string_view text);
 
