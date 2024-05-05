@@ -1834,6 +1834,7 @@ int dsiMenuTheme(void) {
 						snd().stopStream();
 
 						if (!dsiFeatures()) {
+							mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
 							snd().unloadSfxData();
 							prepareCheats(path, false);
 						}
