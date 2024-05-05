@@ -1208,10 +1208,11 @@ int akTheme(void) {
 	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0)));
 
 	if (copyDSiWareSavBack) {
-		// printSmall(false, 0, 16, "If this takes a while, close", Alignment::center, FontPalette::mainText);
-		// printSmall(false, 0, 24, "and open the console's lid.", Alignment::center, FontPalette::mainText);
-		printSmall(false, 0, 88, "Now copying data...", Alignment::center, FontPalette::mainText);
-		printSmall(false, 0, 96, "Do not turn off the power.", Alignment::center, FontPalette::mainText);
+		dialogboxHeight = 2;
+		showdialogbox = true;
+		printSmall(false, 0, 74, "Please wait", Alignment::center, FontPalette::formTitleText);
+		printSmall(false, 0, 90, "Now copying data...", Alignment::center, FontPalette::formText);
+		printSmall(false, 0, 102, "Do not turn off the power.", Alignment::center, FontPalette::formText);
 		updateText(false);
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", ms().dsiWarePubPath.c_str());
@@ -1223,6 +1224,9 @@ int akTheme(void) {
 		}
 		logPrint("Copied DSiWare save back to flashcard\n");
 		clearText(false);
+		showdialogbox = true;
+		dialogboxHeight = 0;
+		updateText(false);
 	}
 
 	while (1) {
