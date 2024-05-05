@@ -5,25 +5,24 @@
 void fontInit();
 
 void updateText(bool top);
+void updateTopTextArea(int x, int y, int width, int height, u16 *restoreBuf = NULL);
 void clearText(bool top);
 void clearText();
 
-void printTopSmall(int x, int y, std::string_view message);
-
 void printSmall(bool top, int x, int y, std::string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
 void printSmall(bool top, int x, int y, std::u16string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
-void printLarge(bool top, int x, int y, std::string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
-void printLarge(bool top, int x, int y, std::u16string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
+void printTiny(bool top, int x, int y, std::string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
+void printTiny(bool top, int x, int y, std::u16string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
 
 int calcSmallFontWidth(std::string_view text);
 int calcSmallFontWidth(std::u16string_view text);
-int calcLargeFontWidth(std::string_view text);
-int calcLargeFontWidth(std::u16string_view text);
+int calcTinyFontWidth(std::string_view text);
+int calcTinyFontWidth(std::u16string_view text);
 
 int calcSmallFontHeight(std::string_view text);
 int calcSmallFontHeight(std::u16string_view text);
-int calcLargeFontHeight(std::string_view text);
-int calcLargeFontHeight(std::u16string_view text);
+int calcTinyFontHeight(std::string_view text);
+int calcTinyFontHeight(std::u16string_view text);
 
 u8 smallFontHeight(void);
-u8 largeFontHeight(void);
+u8 tinyFontHeight(void);
