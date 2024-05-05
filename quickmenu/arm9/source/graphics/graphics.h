@@ -36,6 +36,7 @@ void clockLoad(void);
 void clockDraw(void);
 void calendarLoad(void);
 void calendarDraw(void);
+void drawDateTime(bool date, bool showTimeColon = false);
 void startRendering(bool top);
 bool isRenderingTop();
 

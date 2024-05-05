@@ -1524,8 +1524,8 @@ int dsClassicMenu(void) {
 	startMenu = true;	// Show bottom screen graphics
 	fadeSpeed = false;
 
-	bool updateClock = true, updateCalendar = false;
 	Datetime previousTime;
+	int colonTimer = 0;
 
 	std::string curTime;
 
@@ -1538,23 +1538,30 @@ int dsClassicMenu(void) {
 				Datetime time = Datetime::now();
 
 				if (time != previousTime) {
-					updateClock = true;
+					if (ms().macroMode) {
+						updateMenuText = true;
+					} else {
+						if (previousTime != 0) {
+							mm_sound_effect soundTick = snd_select;
+							soundTick.volume = (time % 60 == 0) ? 255 : 96; // sound is louder when the minute changes
+							mmEffectEx(&soundTick);
+							if (time.getHour() != previousTime.getHour())
+								mmEffectEx(&snd_hour);
 
-					if (!ms().macroMode && previousTime != 0) {
-						mm_sound_effect soundTick = snd_select;
-						soundTick.volume = (time % 60 == 0) ? 255 : 96; // sound is louder when the minute changes
-						mmEffectEx(&soundTick);
-						if (time.getHour() != previousTime.getHour())
-							mmEffectEx(&snd_hour);
-
-						if (time.getDay() != previousTime.getDay())
-							updateCalendar = true;
+							if (time.getDay() != previousTime.getDay()) {
+								calendarDraw();
+								drawDateTime(true);
+							}
+						}
+						clockDraw();
+						colonTimer = 0;
+						drawDateTime(false, false);
 					}
-					
 					previousTime = time;
 					curTime = retTime();
-					updateMenuText = true;	
 				}
+				if (colonTimer++ == 30)
+					drawDateTime(false, true);
 
 				if (isDSiMode() && !flashcardFound()) {
 					if (REG_SCFG_MC == 0x11) {
@@ -1570,20 +1577,10 @@ int dsClassicMenu(void) {
 					}
 				}
 
-				if (updateClock && !ms().macroMode) {
-					clockDraw();
-					updateClock = false;
-				}
-
-				if (updateCalendar && !ms().macroMode) {
-					calendarDraw();
-					updateCalendar = false;
-				}
-
 				if (updateMenuText) {
 					clearText();
 					printSmall(false, ms().rtl() ? 72 : -72, 6, STR_B_BACK, Alignment::center);
-					printSmall(false, ms().rtl() ? -72 : 72, 6, curTime, Alignment::center);
+					if (ms().macroMode) printSmall(false, ms().rtl() ? -72 : 72, 6, curTime, Alignment::center);
 					if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
 						printNdsCartBannerText();
 						if (romFound[1]) {

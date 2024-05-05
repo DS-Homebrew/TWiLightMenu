@@ -298,12 +298,6 @@ void initSubSprites(void)
 	oamUpdate(&oamSub);
 }
 
-int getFavoriteColor(void) {
-	int favoriteColor = (int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme);
-	if (favoriteColor < 0 || favoriteColor >= 16) favoriteColor = 0; // Invalid color found, so default to gray
-	return favoriteColor;
-}
-
 /* u16 convertVramColorToGrayscale(u16 val) {
 	u8 b,g,r,max,min;
 	b = ((val)>>10)&31;
@@ -640,7 +634,7 @@ static void markerDraw(int x, int y) {
 }
 
 static void calendarTextDraw(const Datetime& now) {
-	printTopSmall(calendarXPos+56, calendarYPos+3, getDateYear());
+	printSmall(true, 56, calendarYPos+3, getDateYear(), Alignment::center);
 
 	Datetime firstDay(now.getYear(), now.getMonth(), 1);
 	int startWeekday = firstDay.getWeekDay();
@@ -659,11 +653,15 @@ static void calendarTextDraw(const Datetime& now) {
 			int cxPos = i % 7;
 			int cyPos = i / 7;
 
-			printTopSmall(calendarXPos+cxPos*16+9, calendarYPos+cyPos*16+35, std::to_string(date));
+			FontPalette fontColor = cxPos == 0 ? FontPalette::sunday : cxPos == 6 ? FontPalette::saturday : FontPalette::regular;
+			printTiny(true, cxPos*16+8, calendarYPos+cyPos*16+36, std::to_string(date), Alignment::center, fontColor);
 
 			date++;
 		}
 	}
+
+	// Copy to background
+	updateTopTextArea(calendarXPos, calendarYPos, 113, 129);
 }
 
 void calendarDraw() {
@@ -967,6 +965,23 @@ void topBarLoad(void) {
 	}
 
 	fclose(file);
+
+	char16_t username[11] = {0};
+	memcpy(username, useTwlCfg ? (s16 *)0x02000448 : PersonalData->name, 10 * sizeof(char16_t));
+	printTiny(true, 3, 3, username, Alignment::left, FontPalette::topBar);
+	updateTopTextArea(3, 3, calcTinyFontWidth(username), tinyFontHeight(), bmpImageBuffer);
+
+	drawDateTime(true);
+	drawDateTime(false);
+}
+
+void drawDateTime(bool date, bool showTimeColon) {
+	std::string text = date ? getDate() : retTime();
+	if (!date && !showTimeColon) text[2] = ' ';
+
+	const int posX = date ? 203 : 171;
+	printTiny(true, posX, 3, text, Alignment::right, FontPalette::topBar);
+	updateTopTextArea(posX - 27, 3, 27, tinyFontHeight(), bmpImageBuffer);
 }
 
 void graphicsInit()
