@@ -1529,6 +1529,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 						mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
 
+						displayDiskIcon(!sys().isRunFromSD());
 						CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 						std::vector<std::string> recentlyPlayed;
 
@@ -1548,6 +1549,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						CIniFile timesPlayedIni(timesPlayedIniPath);
 						timesPlayedIni.SetInt(path, entry->name, (timesPlayedIni.GetInt(path, entry->name, 0) + 1));
 						timesPlayedIni.SaveIniFile(timesPlayedIniPath);
+						displayDiskIcon(false);
 					}
 
 					// Return the chosen file
