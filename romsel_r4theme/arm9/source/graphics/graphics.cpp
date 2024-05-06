@@ -596,8 +596,7 @@ void vBlankHandler()
 			glBoxFilled(35, 23, 217, 64, RGB15(0, 0, 0));
 			glBoxFilled(77, 24, 216, 63, RGB15(31, 31, 31));
 			glSprite(36, 24, GL_FLIP_NONE, iconboxImage);
-			if (isDirectory && !customIcon) drawIconFolder(40, 28);
-			else drawIcon(40, 28);
+			drawIcon(40, 28);
 			if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 			// Playback animated icons
 			if (bnriconisDSi) {

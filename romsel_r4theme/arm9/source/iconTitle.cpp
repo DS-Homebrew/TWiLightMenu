@@ -76,7 +76,6 @@
 extern u16* colorTable;
 
 static int iconTexID;
-static int folderTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
@@ -85,7 +84,6 @@ static char16_t cachedTitle[TITLE_CACHE_SIZE];
 
 static u32 arm9StartSig[4];
 
-static glImage folderIcon[1];
 static glImage ndsIcon[(32 / 32) * (256 / 32)];
 static u16 dsi_palette[8][16];
 static u16 _paletteCache[16];
@@ -173,6 +171,26 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2
 				16, // Length of the palette to use (16 colors)
 				(u16*) palSrc, // Image palette
 				(u8*) tilesModified // Raw image data
+				);
+}
+
+void loadFolderIcon()
+{
+	glDeleteTextures(1, &iconTexID);
+	swiCopy(icon_folderPal, _paletteCache, 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
+	iconTexID =
+	glLoadTileSet(ndsIcon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) icon_folderPal, // Image palette
+				(u8*) icon_folderBitmap // Raw image data
 				);
 }
 
@@ -685,39 +703,12 @@ void reloadIconPalettes() {
 
 void loadConsoleIcons()
 {
-	u16* newPalette;
-
-	// Folder
-	glDeleteTextures(1, &folderTexID);
-
-	newPalette = (u16*)icon_folderPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-	folderTexID =
-	glLoadTileSet(folderIcon, // pointer to glImage array
-				32, // sprite width
-				32, // sprite height
-				32, // bitmap image width
-				32, // bitmap image height
-				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-				16, // Length of the palette to use (16 colors)
-				(u16*) newPalette, // Image palette
-				(u8*) icon_folderBitmap // Raw image data
-				);
-
-
 	if (!colorTable) {
 		return;
 	}
 
 	// Unknown
-	newPalette = (u16*)icon_unkPal;
+	u16* newPalette = (u16*)icon_unkPal;
 	for (int i2 = 0; i2 < 16; i2++) {
 		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
@@ -864,7 +855,6 @@ static void clearIcon()
 	loadIcon(clearTiles, blackPalette, true);
 }
 
-void drawIconFolder(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, folderIcon); }
 void drawIcon(int Xpos, int Ypos) {
 	glSprite(Xpos, Ypos, bannerFlip, &ndsIcon[bnriconframenumY & 31]);
 	if (bnriconPalLine != bnriconPalLoaded) {
@@ -1281,10 +1271,7 @@ void iconUpdate(bool isDir, const char* name)
 
 	const bool isNds = (bnrRomType == 0);
 
-	if (isDir) {
-		// icon
-		clearIcon();
-	} else if (customIcon > 0 || (customIcon && isNds)) {
+	if (customIcon > 0 || (customIcon && isNds)) {
 		if (customIcon == -1) {
 			loadUnkIcon();
 		} else if (bnriconisDSi) {
@@ -1292,6 +1279,8 @@ void iconUpdate(bool isDir, const char* name)
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, false);
 		}
+	} else if (isDir) {
+		loadFolderIcon();
 	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;

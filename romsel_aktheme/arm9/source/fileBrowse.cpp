@@ -331,6 +331,11 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 
 	if (dirContents.at(fileOffset).isDirectory) {
 		isDirectory[0] = true;
+		bnriconPalLine[0] = 0;
+		bnriconPalLoaded[0] = 0;
+		bnriconframenumY[0] = 0;
+		bannerFlip[0] = 0;
+		bnriconisDSi[0] = false;
 		bnrWirelessIcon[0] = 0;
 	} else {
 		isDirectory[0] = false;
@@ -400,6 +405,8 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 	}
 }
 
+static bool iconsLoaded = false;
+
 void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
 
@@ -416,6 +423,11 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 		}
 		if (dirContents.at(i).isDirectory) {
 			isDirectory[n] = true;
+			bnriconPalLine[n] = 0;
+			bnriconPalLoaded[n] = 0;
+			bnriconframenumY[n] = 0;
+			bannerFlip[n] = 0;
+			bnriconisDSi[n] = false;
 			bnrWirelessIcon[n] = 0;
 		} else {
 			isDirectory[n] = false;
@@ -489,6 +501,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	displayDiskIcon(false);
 
 	updateText(false);
+	iconsLoaded = true;
 }
 
 void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEntry> dirContents) {
@@ -1282,7 +1295,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				refreshBanners(screenOffset, fileOffset, dirContents);
 			}
 		} else {
-			refreshBanners(screenOffset, fileOffset, dirContents);
+			if (displayIcons && !iconsLoaded) {
+				loadIcons(screenOffset, dirContents);
+			} else {
+				refreshBanners(screenOffset, fileOffset, dirContents);
+			}
 		}
 		updateSelectionBar();
 
@@ -1570,7 +1587,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 			}
 			ms().secondaryDevice = !ms().secondaryDevice;
+			displayDiskIcon(!sys().isRunFromSD());
 			ms().saveSettings();
+			displayDiskIcon(false);
+			iconsLoaded = false;
 			return "null";
 		}
 
@@ -1582,7 +1602,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
 			CURPOS = 0;
 			PAGENUM = 0;
+			displayDiskIcon(!sys().isRunFromSD());
 			ms().saveSettings();
+			displayDiskIcon(false);
+			iconsLoaded = false;
 			return "null";
 		}
 

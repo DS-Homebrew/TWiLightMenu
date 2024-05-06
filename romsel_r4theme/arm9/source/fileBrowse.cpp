@@ -1084,6 +1084,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		if (dirContents.at(fileOffset).isDirectory) {
 			isDirectory = true;
+			bnriconPalLine = 0;
+			bnriconPalLoaded = 0;
+			bnriconframenumY = 0;
+			bannerFlip = 0;
+			bnriconisDSi = false;
 			bnrWirelessIcon = 0;
 		} else {
 			isDirectory = false;
