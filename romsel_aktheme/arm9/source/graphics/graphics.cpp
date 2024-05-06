@@ -1964,6 +1964,9 @@ void graphicsLoad()
 				daySizeX = ini.GetInt("calendar day", "dw", daySizeX);
 				daySizeY = ini.GetInt("calendar day", "dh", daySizeY);
 				dayHighlightColor = ini.GetInt("calendar day", "highlightColor", dayHighlightColor) | BIT(15);
+				if (colorTable) {
+					dayHighlightColor = colorTable[dayHighlightColor];
+				}
 
 				std::string pathDayNumbers;
 				if (access((themePath + "/calendar/day_numbers.bmp").c_str(), F_OK) == 0) {
@@ -1980,6 +1983,9 @@ void graphicsLoad()
 				daySize2X = ini.GetInt("calendar day 2", "dw", daySize2X);
 				daySize2Y = ini.GetInt("calendar day 2", "dh", daySize2Y);
 				dayHighlightColor2 = ini.GetInt("calendar day 2", "highlightColor", dayHighlightColor2) | BIT(15);
+				if (colorTable) {
+					dayHighlightColor2 = colorTable[dayHighlightColor2];
+				}
 
 				std::string pathDayNumbers;
 				if (access((themePath + "/calendar/day_numbers_2.bmp").c_str(), F_OK) == 0) {

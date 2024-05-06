@@ -63,8 +63,7 @@
 
 #define ENTRIES_PER_SCREEN 4
 #define ENTRIES_PER_SCREEN_LIST 13
-#define ENTRY_PAGE_LENGTH ENTRIES_PER_SCREEN
-#define ENTRY_PAGE_LENGTH_LIST ENTRIES_PER_SCREEN_LIST/2
+#define ENTRY_PAGE_LENGTH 10
 
 extern bool lcdSwapped;
 
@@ -1155,7 +1154,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	displayDiskIcon(false);
 
 	int entriesPerScreen = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRIES_PER_SCREEN_LIST : ENTRIES_PER_SCREEN;
-	int entryPageLength = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRY_PAGE_LENGTH_LIST : ENTRY_PAGE_LENGTH;
 
 	fileOffset = CURPOS;
 	cursorPosOnScreen = fileOffset;
@@ -1201,14 +1199,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			resetIconScale();
 		}
 		if (pressed & KEY_LEFT) {
-			fileOffset -= entryPageLength;
-			cursorPosOnScreen -= entryPageLength;
+			fileOffset -= ENTRY_PAGE_LENGTH;
+			cursorPosOnScreen -= ENTRY_PAGE_LENGTH;
 			if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
 			resetIconScale();
 		}
 		if (pressed & KEY_RIGHT) {
-			fileOffset += entryPageLength;
-			cursorPosOnScreen += entryPageLength;
+			fileOffset += ENTRY_PAGE_LENGTH;
+			cursorPosOnScreen += ENTRY_PAGE_LENGTH;
 			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
 			resetIconScale();
 		}
@@ -1253,7 +1251,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (ms().ak_viewMode > 2) ms().ak_viewMode = 0;
 
 			entriesPerScreen = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRIES_PER_SCREEN_LIST : ENTRIES_PER_SCREEN;
-			entryPageLength = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRY_PAGE_LENGTH_LIST : ENTRY_PAGE_LENGTH;
 			displayIcons = (ms().ak_viewMode != TWLSettings::EViewList);
 		}
 
