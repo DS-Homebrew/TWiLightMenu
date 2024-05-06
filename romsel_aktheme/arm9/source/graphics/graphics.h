@@ -18,6 +18,7 @@
 
 ------------------------------------------------------------------*/
 #pragma once
+#define REFRESH_EVERY_VBLANKS 60
 
 bool screenFadedIn(void);
 bool screenFadedOut(void);

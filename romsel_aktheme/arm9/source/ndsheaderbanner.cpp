@@ -554,6 +554,7 @@ int checkRomAP(FILE *ndsFile)
 static u16 bnriconframeseq[4][64] = {0x0000};
 
 // bnriconframenum[]
+int bnriconPalLoaded[4] = {0};
 int bnriconPalLine[4] = {0};
 int bnriconframenumY[4] = {0};
 int bannerFlip[4] = {GL_FLIP_NONE};

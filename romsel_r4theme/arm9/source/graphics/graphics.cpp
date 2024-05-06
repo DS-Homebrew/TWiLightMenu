@@ -62,6 +62,8 @@ bool lcdSwapped = false;
 static bool secondBuffer = false;
 bool doubleBuffer = true;
 
+int vblankRefreshCounter = 0;
+
 int frameOf60fps = 60;
 int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
@@ -598,7 +600,7 @@ void vBlankHandler()
 			else drawIcon(40, 28);
 			if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 			// Playback animated icons
-			if (bnriconisDSi==true) {
+			if (bnriconisDSi) {
 				playBannerSequence();
 			}
 		}
@@ -612,6 +614,15 @@ void vBlankHandler()
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 		} else if (blackScreen) {
 			glBoxFilled(0, 0, 256, 192, RGB15(0, 0, 0));
+		}
+
+		if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
+			if (!startMenu && !showdialogbox) {
+				reloadIconPalettes();
+			}
+			vblankRefreshCounter = 0;
+		} else {
+			vblankRefreshCounter++;
 		}
 	}
 	glEnd2D();

@@ -61,6 +61,8 @@ bool doubleBuffer = true;
 static int colonTimer = 0;
 static bool showColon = true;
 
+int vblankRefreshCounter = 0;
+
 int frameOf60fps = 60;
 int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
@@ -1640,6 +1642,15 @@ void vBlankHandler()
 			glBoxFilled(15, 71, 241, 121+(dialogboxHeight*12), formFrameColor);
 			// glBoxFilledGradient(16, 72, 240, 86, windowColorTop, windowColorBottom, windowColorBottom, windowColorTop);
 			glBoxFilled(16, 88, 240, 120+(dialogboxHeight*12), formBodyColor);
+		}
+
+		if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
+			if (!showdialogbox) {
+				reloadIconPalettes();
+			}
+			vblankRefreshCounter = 0;
+		} else {
+			vblankRefreshCounter++;
 		}
 	}
 	glEnd2D();

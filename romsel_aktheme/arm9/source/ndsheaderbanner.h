@@ -278,6 +278,7 @@ u32 getSDKVersion(FILE* ndsFile);
 int checkRomAP(FILE *ndsFile);
 
 // bnriconframenum[]
+extern int bnriconPalLoaded[4];
 extern int bnriconPalLine[4];
 extern int bnriconframenumY[4];
 extern int bannerFlip[4];

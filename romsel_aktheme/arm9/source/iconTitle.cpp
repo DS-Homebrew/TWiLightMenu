@@ -89,6 +89,8 @@ static u32 arm9StartSig[4];
 
 static glImage folderIcon[1];
 static glImage ndsIcon[4][(32 / 32) * (256 / 32)];
+static u16 dsi_palette[4][8][16];
+static u16 _paletteCache[4][16];
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -141,10 +143,18 @@ void loadIcon(int num, u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 
 
 	glDeleteTextures(1, &iconTexID[num]);
 	if (colorTable) {
-		for (int i = 0; i < 16; i++) {
+		for (int i = 0; i < (twl ? 16*8 : 16); i++) {
 			palSrc[i] = colorTable[palSrc[i]];
 		}
 	}
+	if (twl) {
+		for (int i = 0; i < 8; i++) {
+			tonccpy(dsi_palette[num][i], palSrc+(16*i), 16*sizeof(u16));
+		}
+	}
+
+	swiCopy(palSrc, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
+
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -164,6 +174,7 @@ void loadIcon(int num, u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 
 void loadUnkIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_unkPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -183,6 +194,7 @@ void loadUnkIcon(int num)
 void loadGBAIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_gbaPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -202,6 +214,7 @@ void loadGBAIcon(int num)
 void loadGBIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_gbPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -221,6 +234,7 @@ void loadGBIcon(int num)
 void loadGBCIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_gbPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -240,6 +254,7 @@ void loadGBCIcon(int num)
 void loadNESIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_nesPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -259,6 +274,7 @@ void loadNESIcon(int num)
 void loadSGIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_sgPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -278,6 +294,7 @@ void loadSGIcon(int num)
 void loadSMSIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_smsPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -297,6 +314,7 @@ void loadSMSIcon(int num)
 void loadGGIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_ggPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -316,6 +334,7 @@ void loadGGIcon(int num)
 void loadMDIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_mdPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -335,6 +354,7 @@ void loadMDIcon(int num)
 void loadSNESIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_snesPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -354,6 +374,7 @@ void loadSNESIcon(int num)
 void loadPLGIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_plgPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -373,6 +394,7 @@ void loadPLGIcon(int num)
 void loadA26Icon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_a26Pal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -392,6 +414,7 @@ void loadA26Icon(int num)
 void loadCOLIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_colPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -411,6 +434,7 @@ void loadCOLIcon(int num)
 void loadM5Icon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_m5Pal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -430,6 +454,7 @@ void loadM5Icon(int num)
 void loadINTIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_intPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -449,6 +474,7 @@ void loadINTIcon(int num)
 void loadPCEIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_pcePal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -468,6 +494,7 @@ void loadPCEIcon(int num)
 void loadWSIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_wsPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -487,6 +514,7 @@ void loadWSIcon(int num)
 void loadNGPIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_ngpPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -506,6 +534,7 @@ void loadNGPIcon(int num)
 void loadCPCIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_cpcPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -525,6 +554,7 @@ void loadCPCIcon(int num)
 void loadVIDIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_vidPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -544,6 +574,7 @@ void loadVIDIcon(int num)
 void loadIMGIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_imgPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -563,6 +594,7 @@ void loadIMGIcon(int num)
 void loadMSXIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_msxPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -582,6 +614,7 @@ void loadMSXIcon(int num)
 void loadMINIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_miniPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -601,6 +634,7 @@ void loadMINIcon(int num)
 void loadHBIcon(int num)
 {
 	glDeleteTextures(1, &iconTexID[num]);
+	swiCopy(icon_hbPal, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 	iconTexID[num] =
 	glLoadTileSet(ndsIcon[num], // pointer to glImage array
 				32, // sprite width
@@ -615,6 +649,44 @@ void loadHBIcon(int num)
 				(u16*) icon_hbPal, // Image palette
 				(u8*) icon_hbBitmap // Raw image data
 				);
+}
+
+/**
+ * Reloads the palette in the given slot from
+ * the palette cache.
+ */
+void glReloadIconPalette(int num) {
+
+	int textureID;
+	const u16 *cachedPalette;
+	switch (num) {
+	default:
+		if (BAD_ICON_IDX(num))
+			return;
+		textureID = iconTexID[num];
+		cachedPalette = _paletteCache[num];
+		break;
+	}
+	
+	glBindTexture(0, textureID);
+	glColorTableEXT(0, 0, 16, 0, 0, cachedPalette);
+}
+
+void glLoadPalette(int num, const u16 *_palette) {
+	if (!BAD_ICON_IDX(num))
+		swiCopy(_palette, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
+
+	glReloadIconPalette(num);
+}
+
+/**
+ * Reloads all the palettes in the palette cache if
+ * they have been corrupted.
+ */
+void reloadIconPalettes() {
+	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
+		glReloadIconPalette(i);
+	}
 }
 
 void loadConsoleIcons()
@@ -648,6 +720,12 @@ void loadConsoleIcons()
 
 	if (!colorTable) {
 		return;
+	}
+
+	// Unknown
+	newPalette = (u16*)icon_unkPal;
+	for (int i2 = 0; i2 < 16; i2++) {
+		*(newPalette+i2) = colorTable[*(newPalette+i2)];
 	}
 
 	// GBA
@@ -804,11 +882,18 @@ void iconTitleInit()
 }
 
 void drawIconFolder(int Xpos, int Ypos, s32 scale) { (scale == 0) ? glSprite(Xpos, Ypos, GL_FLIP_NONE, folderIcon) : glSpriteScale(Xpos, Ypos, scale, GL_FLIP_NONE, folderIcon); }
-void drawIcon(int num, int Xpos, int Ypos, s32 scale) { (scale == 0) ? glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]) : glSpriteScale(Xpos, Ypos, scale, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]); }
+void drawIcon(int num, int Xpos, int Ypos, s32 scale) {
+	(scale == 0) ? glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]) : glSpriteScale(Xpos, Ypos, scale, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]);
+	if (bnriconPalLine[num] != bnriconPalLoaded[num]) {
+		glLoadPalette(num, dsi_palette[num][bnriconPalLine[num]]);
+		bnriconPalLoaded[num] = bnriconPalLine[num];
+	}
+}
 
 void getGameInfo(int num, bool isDir, const char* name)
 {
 	bnriconPalLine[num] = 0;
+	bnriconPalLoaded[num] = 0;
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnriconisDSi[num] = false;

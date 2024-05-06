@@ -6,6 +6,13 @@
 #define BOX_PY_GBNP			135
 
 void iconTitleInit();
+
+/**
+ * Reloads the palette of all the icons in a slot, if
+ * they have been corrupted.
+ */
+void reloadIconPalettes();
+
 void loadConsoleIcons();
 void getGameInfo(bool isDir, const char* name);
 void iconUpdate(bool isDir, const char* name);
