@@ -68,6 +68,8 @@ extern int colorBvalue;
 
 int screenBrightness = 31;
 
+int vblankRefreshCounter = 0;
+
 int frameOf60fps = 60;
 int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
@@ -728,6 +730,14 @@ void vBlankHandler()
 				updateCursorTargetPos();
 				
 				drawCursorRect(std::roundf(cursorTL), std::roundf(cursorBL), std::roundf(cursorTR), std::roundf(cursorBR));
+			}
+
+
+			if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
+				reloadIconPalettes();
+				vblankRefreshCounter = 0;
+			} else {
+				vblankRefreshCounter++;
 			}
 		}
 		/*if (showdialogbox) {

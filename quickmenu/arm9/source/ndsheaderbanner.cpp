@@ -104,6 +104,7 @@ u32 getSDKVersion(FILE *ndsFile)
 static u16 bnriconframeseq[2][64] = {0x0000};
 
 // bnriconframenum[]
+int bnriconPalLoaded[2]{};
 int bnriconPalLine[2]{};
 int bnriconframenumY[2]{};
 int bannerFlip[2]{GL_FLIP_NONE, GL_FLIP_NONE};

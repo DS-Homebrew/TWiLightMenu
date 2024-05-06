@@ -305,6 +305,7 @@ extern u8 unitCode[2];
 extern u16 headerCRC[2];
 
 // bnriconframenum[]
+extern int bnriconPalLoaded[2];
 extern int bnriconPalLine[2];
 extern int bnriconframenumY[2];
 extern int bannerFlip[2];

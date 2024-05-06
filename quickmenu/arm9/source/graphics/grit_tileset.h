@@ -75,6 +75,29 @@ inline auto LoadTilesetTexture(GritBitmap<sprite_width, sprite_height, bitmap_wi
 							);
 }
 
+template<size_t sprite_width, size_t sprite_height, size_t bitmap_width, size_t bitmap_height, size_t palette_length, size_t count>
+inline auto LoadTilesetTextureCachePalette(GritBitmap<sprite_width, sprite_height, bitmap_width, bitmap_height, palette_length, count>& tileset,
+				glImage* images_array, u16* paletteCache) {
+	
+	swiCopy(tileset.palette, paletteCache, 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
+
+	constexpr auto textureSize = std::make_pair(mapTextureSize<bitmap_width>(), mapTextureSize<bitmap_height>());
+	
+	return glLoadTileSet(images_array,
+							sprite_width,
+							sprite_height,
+							bitmap_width,
+							bitmap_height,
+							GL_RGB16,
+							textureSize.first,
+							textureSize.second,
+							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+							palette_length,
+							(u16*)tileset.palette,
+							(const u8*) tileset.bitmap
+							);
+}
+
 
 template<size_t sprite_width, size_t sprite_height, size_t bitmap_width, size_t bitmap_height, size_t palette_length, size_t count>
 inline auto LoadTileset(GritTexture<sprite_width, sprite_height, bitmap_width, bitmap_height, palette_length, count>& texture) {

@@ -18,6 +18,7 @@
 
 ------------------------------------------------------------------*/
 #pragma once
+#define REFRESH_EVERY_VBLANKS 60
 #include "date.h"
 
 extern bool moveIconUp[7];

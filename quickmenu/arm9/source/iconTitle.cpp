@@ -75,7 +75,7 @@
 
 extern u16* colorTable;
 
-static int iconTexID[2][8];
+static int iconTexID[2];
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
@@ -86,7 +86,9 @@ static char16_t cachedTitle[2][TITLE_CACHE_SIZE];
 
 static u32 arm9StartSig[4];
 
-static glImage ndsIcon[2][8][(32 / 32) * (256 / 32)];
+static glImage ndsIcon[2][(32 / 32) * (256 / 32)];
+static u16 dsi_palette[2][8][16];
+static u16 _paletteCache[2][16];
 
 #define CONSOLE_ICON(name) GRIT_BITMAP(name, 32, 32, 32, 32, 1)
 
@@ -142,54 +144,90 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 	}
 }
 
-int loadIcon_loopTimes = 1;
-
 void loadIcon(int num, u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 {
 	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
 
 	int Ysize = 32;
 	int textureSizeY = TEXTURE_SIZE_32;
-	loadIcon_loopTimes = 1;
 	if (twl) {
 		Ysize = 256;
 		textureSizeY = TEXTURE_SIZE_256;
-		loadIcon_loopTimes = 8;
 	}
 
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[num][i]);
-	}
-	for (int i = 0; i < loadIcon_loopTimes; i++) {
-		if (colorTable) {
-			for (int i2 = 0; i2 < 16; i2++) {
-				*(palSrc+i2+(i*16)) = colorTable[*(palSrc+i2+(i*16))];
-			}
+	glDeleteTextures(1, &iconTexID[num]);
+	if (colorTable) {
+		for (int i = 0; i < (twl ? 16*8 : 16); i++) {
+			palSrc[i] = colorTable[palSrc[i]];
 		}
-		iconTexID[num][i] =
-		glLoadTileSet(ndsIcon[num][i], // pointer to glImage array
-					32, // sprite width
-					32, // sprite height
-					32, // bitmap image width
-					Ysize, // bitmap image height
-					GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-					textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-					GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-					16, // Length of the palette to use (16 colors)
-					(u16*) palSrc+(i*16), // Image palette
-					(u8*) tilesModified // Raw image data
-					);
 	}
+	if (twl) {
+		for (int i = 0; i < 8; i++) {
+			tonccpy(dsi_palette[num][i], palSrc+(16*i), 16*sizeof(u16));
+		}
+	}
+
+	swiCopy(palSrc, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
+
+	iconTexID[num] =
+	glLoadTileSet(ndsIcon[num], // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				Ysize, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				textureSizeY, // sizeY for glTexImage2D() in videoGL.h
+				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) palSrc, // Image palette
+				(u8*) tilesModified // Raw image data
+				);
 }
 
 template<typename T>
 void loadIconTileset(T& icon, int num) {
-	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[num][i]);
+	glDeleteTextures(1, &iconTexID[num]);
+	
+	iconTexID[num] = LoadTilesetTextureCachePalette(icon, ndsIcon[num], _paletteCache[num]);
+}
+
+/**
+ * Reloads the palette in the given slot from
+ * the palette cache.
+ */
+void glReloadIconPalette(int num) {
+
+	int textureID;
+	const u16 *cachedPalette;
+	switch (num) {
+	default:
+		if (BAD_ICON_IDX(num))
+			return;
+		textureID = iconTexID[num];
+		cachedPalette = _paletteCache[num];
+		break;
 	}
 	
-	iconTexID[num][0] = LoadTilesetTexture(icon, ndsIcon[num][0]);
+	glBindTexture(0, textureID);
+	glColorTableEXT(0, 0, 16, 0, 0, cachedPalette);
+}
+
+void glLoadPalette(int num, const u16 *_palette) {
+	if (!BAD_ICON_IDX(num))
+		swiCopy(_palette, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
+
+	glReloadIconPalette(num);
+}
+
+/**
+ * Reloads all the palettes in the palette cache if
+ * they have been corrupted.
+ */
+void reloadIconPalettes() {
+	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
+		glReloadIconPalette(i);
+	}
 }
 
 void loadConsoleIcons()
@@ -228,7 +266,13 @@ static void clearIcon(int num)
 	loadIcon(num, clearTiles, blackPalette, true);
 }
 
-void drawIcon(int num, int Xpos, int Ypos) { glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconPalLine[num]][bnriconframenumY[num] & 31]); }
+void drawIcon(int num, int Xpos, int Ypos) {
+	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]);
+	if (bnriconPalLine[num] != bnriconPalLoaded[num]) {
+		glLoadPalette(num, dsi_palette[num][bnriconPalLine[num]]);
+		bnriconPalLoaded[num] = bnriconPalLine[num];
+	}
+}
 
 void loadFixedBanner(bool isSlot1) {
 	if (isSlot1 && memcmp(ndsHeader.gameCode, "ALXX", 4) == 0) {
@@ -252,6 +296,7 @@ void loadFixedBanner(bool isSlot1) {
 void getGameInfo(int num, bool isDir, const char* name)
 {
 	bnriconPalLine[num] = 0;
+	bnriconPalLoaded[num] = 0;
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnriconisDSi[num] = false;
