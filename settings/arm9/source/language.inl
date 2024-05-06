@@ -243,7 +243,7 @@ STRING(DESCRIPTION_GAMELOADER, "Select whether to use nds-bootstrap or the flash
 STRING(DESCRIPTION_B4DSMODE, "Only use for testing. Activates the mode used when running nds-bootstrap on DS/DS Lite, with some additional DSi features.")
 STRING(DESCRIPTION_ESRBRATINGSCREEN, "Displays a screen with USA DS title's ESRB rating and content descriptor(s), when launched via nds-bootstrap. Does not work with all DS titles.")
 STRING(DESCRIPTION_HOTKEY, "Set the hotkey to open the nds-bootstrap in-game menu.")
-STRING(DESCRIPTION_SAVE_LOCATION, "Pick the location of where game saves are placed.")
+STRING(DESCRIPTION_SAVE_LOCATION, "Pick the location of where game saves are placed. Selecting ROM folder will disable save slots.")
 STRING(DESCRIPTION_FORCESLEEPMODE, "If a certain Slot-1 card is preventing sleep mode from working, please turn this on. Remember to turn this off if you have a retail game card inserted.")
 STRING(DESCRIPTION_SLOT1SDACCESS, "Have access to the console's SD card while running a Slot-1 flashcard.")
 STRING(DESCRIPTION_SLOT1SCFGUNLOCK, "Have access to SCFG while running a Slot-1 flashcard. Allows setting extended memory mode and/or clock speed in flashcard homebrew.")
