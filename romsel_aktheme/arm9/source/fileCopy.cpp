@@ -1,6 +1,7 @@
 #include <nds.h>
 #include <stdio.h>
 
+#include "graphics/graphics.h"
 #include "common/tonccpy.h"
 
 off_t getFileSize(const char *fileName)
@@ -21,6 +22,8 @@ char copyBuf[0x8000];
 
 int fcopy(const char *sourcePath, const char *destinationPath)
 {
+	displayDiskIcon(strncmp("fat:", sourcePath, 4) == 0 || strncmp("fat:", destinationPath, 4) == 0);
+
 	FILE* sourceFile = fopen(sourcePath, "rb");
 	off_t fsize = 0;
 	if (sourceFile) {
@@ -29,6 +32,7 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 		fseek(sourceFile, 0, SEEK_SET);
 	} else {
 		fclose(sourceFile);
+		displayDiskIcon(false);
 		return 1;
 	}
 
@@ -36,6 +40,7 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 	if (!destinationFile) {
 		fclose(sourceFile);
 		fclose(destinationFile);
+		displayDiskIcon(false);
 		return 1;
 	}
 
@@ -59,10 +64,11 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 		if (offset > fsize) {
 			fclose(sourceFile);
 			fclose(destinationFile);
+			displayDiskIcon(false);
 			return 0;
-			break;
 		}
 	}
 
+	displayDiskIcon(false);
 	return 1;
 }

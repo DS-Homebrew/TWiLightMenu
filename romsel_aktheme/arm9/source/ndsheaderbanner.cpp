@@ -3,6 +3,9 @@
 #include <malloc.h>
 #include <unistd.h>
 #include "common/flashcard.h"
+#include "common/twlmenusettings.h"
+#include "common/systemdetails.h"
+#include "graphics/graphics.h"
 #include <gl2d.h>
 
 #include "ndsheaderbanner.h"
@@ -16,14 +19,17 @@ bool checkDsiBinaries(FILE* ndsFile) {
 	sNDSHeaderExt ndsHeader;
 
 	fseek(ndsFile, 0, SEEK_SET);
+	displayDiskIcon(ms().secondaryDevice);
 	fread(&ndsHeader, 1, sizeof(ndsHeader), ndsFile);
 
 	if (ndsHeader.unitCode == 0) {
+		displayDiskIcon(false);
 		return true;
 	}
 
 	if (ndsHeader.arm9iromOffset < 0x8000 || ndsHeader.arm9iromOffset >= 0x20000000
 	 || ndsHeader.arm7iromOffset < 0x8000 || ndsHeader.arm7iromOffset >= 0x20000000) {
+		displayDiskIcon(false);
 		return false;
 	}
 
@@ -40,6 +46,7 @@ bool checkDsiBinaries(FILE* ndsFile) {
 	fread(arm9Sig[1], sizeof(u32), 4, ndsFile);
 	fseek(ndsFile, ndsHeader.arm7iromOffset, SEEK_SET);
 	fread(arm9Sig[2], sizeof(u32), 4, ndsFile);
+	displayDiskIcon(false);
 	for (int i = 1; i < 3; i++) {
 		if (arm9Sig[i][0] == arm9Sig[0][0]
 		 && arm9Sig[i][1] == arm9Sig[0][1]
@@ -101,6 +108,8 @@ u32 getSDKVersion(FILE *ndsFile)
  */
 int checkRomAP(FILE *ndsFile)
 {
+	displayDiskIcon(!sys().isRunFromSD());
+
 	char game_TID[5];
 	u16 headerCRC16 = 0;
 	fseek(ndsFile, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
@@ -110,13 +119,14 @@ int checkRomAP(FILE *ndsFile)
 	game_TID[4] = 0;
 
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", game_TID, headerCRC16);
 
 	if (access(ipsPath, F_OK) == 0) {
+		displayDiskIcon(false);
 		return 0;
 	}
 
-	FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
+	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
 	if (file) {
 		char buf[5] = {0};
 		fread(buf, 1, 4, file);
@@ -155,6 +165,7 @@ int checkRomAP(FILE *ndsFile)
 
 		fclose(file);
 	}
+	displayDiskIcon(false);
 
 	// Check for SDK4-5 ROMs that don't have AP measures.
 	if ((memcmp(game_TID, "AZLJ", 4) == 0)   	// Girls Mode (JAP version of Style Savvy)

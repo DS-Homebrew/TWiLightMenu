@@ -416,12 +416,16 @@ std::string setApFix(const char *filename) {
 		remove("fat:/_nds/nds-bootstrap/apFixCheat.bin");
 	}
 
+	displayDiskIcon(ms().secondaryDevice);
+
 	FILE *f_nds_file = fopen(filename, "rb");
 
 	u16 headerCRC16 = 0;
 	fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
 	fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
 	fclose(f_nds_file);
+
+	displayDiskIcon(false);
 
 	bool ipsFound = false;
 	bool cheatVer = true;
@@ -462,6 +466,7 @@ std::string setApFix(const char *filename) {
 		}
 		return ipsPath;
 	} else {
+		displayDiskIcon(!sys().isRunFromSD());
 		FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
 		if (file) {
 			char buf[5] = {0};
@@ -530,6 +535,7 @@ std::string setApFix(const char *filename) {
 
 			fclose(file);
 		}
+		displayDiskIcon(false);
 	}
 
 	return "";
@@ -631,6 +637,7 @@ void SetWidescreen(const char *filename) {
 		char *tid = ms().slot1Launched ? s1GameTid : gameTid[cursorPosOnScreen];
 		u16 crc16 = ms().slot1Launched ? ndsCart.headerCRC16 : headerCRC16;
 
+		displayDiskIcon(!sys().isRunFromSD());
 		FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/widescreen.pck" : "fat:/_nds/TWiLightMenu/extras/widescreen.pck", "rb");
 		if (file) {
 			char buf[5] = {0};
@@ -689,6 +696,7 @@ void SetWidescreen(const char *filename) {
 
 			fclose(file);
 		}
+		displayDiskIcon(false);
 	}
 	if (wideCheatFound && widescreenFound) {
 		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
@@ -912,10 +920,12 @@ bool createDSiWareSave(const char *path, int size) {
 
 	FILE *file = fopen(path, "wb");
 	if (file) {
+		displayDiskIcon(ms().secondaryDevice);
 		fwrite(&h, sizeof(FATHeader), 1, file); // Write header
 		fseek(file, size - 1, SEEK_SET); // Pad rest of the file
 		fputc('\0', file);
 		fclose(file);
+		displayDiskIcon(false);
 		return true;
 	}
 
@@ -1402,10 +1412,12 @@ int akTheme(void) {
 
 				sNDSHeaderExt NDSHeader;
 
+				displayDiskIcon(ms().secondaryDevice);
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");
 
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
+				displayDiskIcon(false);
 
 				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
@@ -1433,7 +1445,9 @@ int akTheme(void) {
 				ms().homebrewBootstrap = isHomebrew[cursorPosOnScreen];
 				ms().launchType[ms().secondaryDevice] = TWLSettings::EDSiWareLaunch;
 				ms().previousUsedDevice = ms().secondaryDevice;
+				displayDiskIcon(!sys().isRunFromSD());
 				ms().saveSettings();
+				displayDiskIcon(false);
 
 				if (savFormat) {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {
@@ -1608,7 +1622,9 @@ int akTheme(void) {
 					|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
 					|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 					);
+					displayDiskIcon(!sdFound());
 					bootstrapini.SaveIniFile(bootstrapinipath);
+					displayDiskIcon(false);
 
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 					bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
@@ -1717,7 +1733,9 @@ int akTheme(void) {
 					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 					ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
+					displayDiskIcon(!sys().isRunFromSD());
 					ms().saveSettings();
+					displayDiskIcon(false);
 
 					unlaunchRomBoot(argarray[0]);
 				} else if (useBackend) {
@@ -1769,8 +1787,10 @@ int akTheme(void) {
 
 								FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
 								if (pFile) {
+									displayDiskIcon(ms().secondaryDevice);
 									fseek(pFile, savesize - 1, SEEK_SET);
 									fputc('\0', pFile);
+									displayDiskIcon(false);
 									fclose(pFile);
 								}
 								clearText(false);
@@ -1822,7 +1842,9 @@ int akTheme(void) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bootstrapiniSD.GetInt("NDS-BOOTSTRAP", "DEBUG", 0));
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", bootstrapiniSD.GetInt("NDS-BOOTSTRAP", "LOGGING", 0)); 
 						}
+						displayDiskIcon(!sys().isRunFromSD());
 						bootstrapini.SaveIniFile( bootstrapinipath );
+						displayDiskIcon(false);
 
 						CheatCodelist codelist;
 						u32 gameCode,crc32;
@@ -1870,7 +1892,9 @@ int akTheme(void) {
 						ms().homebrewHasWide = (isHomebrew[cursorPosOnScreen] && (gameTid[cursorPosOnScreen][0] == 'W' || romVersion[cursorPosOnScreen] == 0x57));
 						ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
+						displayDiskIcon(!sys().isRunFromSD());
 						ms().saveSettings();
+						displayDiskIcon(false);
 
 						createEsrbSplash();
 
@@ -1926,7 +1950,9 @@ int akTheme(void) {
 						ms().romPath[ms().secondaryDevice] = argarray[0];
 						ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
+						displayDiskIcon(!sys().isRunFromSD());
 						ms().saveSettings();
+						displayDiskIcon(false);
 						loadGameOnFlashcard(argarray[0], true);
 					}
 				} else {
@@ -1939,7 +1965,9 @@ int akTheme(void) {
 					if (isDSiMode() || !ms().secondaryDevice) {
 						SetWidescreen(filename.c_str());
 					}
+					displayDiskIcon(!sys().isRunFromSD());
 					ms().saveSettings();
+					displayDiskIcon(false);
 
 					if (!isDSiMode() && !ms().secondaryDevice && strncmp(filename.c_str(), "GodMode9i", 9) != 0 && strcmp(gameTid[cursorPosOnScreen], "HGMA") != 0) {
 						ntrStartSdGame();
@@ -2110,6 +2138,8 @@ int akTheme(void) {
 						printSmall(false, 0, 90, "Please wait...", Alignment::center, FontPalette::formText);
 						updateText(false);
 
+						displayDiskIcon(true);
+
 						u32 ptr = 0x08000000;
 						u32 romSize = getFileSize(filename.c_str());
 						FILE* gbaFile = fopen(filename.c_str(), "rb");
@@ -2170,6 +2200,8 @@ int akTheme(void) {
 							}
 							fclose(savFile);
 						}
+
+						displayDiskIcon(false);
 
 						ndsToBoot = "fat:/_nds/TWiLightMenu/gbapatcher.srldr";
 					} else if (ms().gbaR3Test) {
@@ -2497,7 +2529,9 @@ int akTheme(void) {
 				}
 
 				ms().homebrewArg[ms().secondaryDevice] = useNDSB ? "" : ms().romPath[ms().secondaryDevice];
+				displayDiskIcon(!sys().isRunFromSD());
 				ms().saveSettings();
+				displayDiskIcon(false);
 
 				if (!isDSiMode() && !ms().secondaryDevice && !extension(filename, {".plg", ".gif", ".bmp", ".png"})) {
 					ntrStartSdGame();

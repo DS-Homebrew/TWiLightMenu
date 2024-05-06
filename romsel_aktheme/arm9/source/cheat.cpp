@@ -26,6 +26,7 @@
 
 #include "ndsheaderbanner.h"
 #include "graphics/fontHandler.h"
+#include "graphics/graphics.h"
 #include "errorScreen.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
@@ -78,8 +79,10 @@ bool CheatCodelist::parse(const std::string& aFileName)
     FILE* dat=fopen(usrcheatPath,"rb");
     if (dat)
     {
+	  displayDiskIcon(!sys().isRunFromSD());
       res=parseInternal(dat,gamecode,romcrc32);
       fclose(dat);
+	  displayDiskIcon(false);
     }
   }
   return res;
@@ -592,6 +595,7 @@ void CheatCodelist::onGenerate(void)
   FILE* db=fopen(usrcheatPath,"r+b");
   if (db)
   {
+	displayDiskIcon(!sys().isRunFromSD());
     std::vector<cParsedItem>::iterator itr=_data.begin();
     while (itr!=_data.end())
     {
@@ -599,15 +603,18 @@ void CheatCodelist::onGenerate(void)
       ++itr;
     }
     fclose(db);
+	displayDiskIcon(false);
   }
 }
 
 void CheatCodelist::writeCheatsToFile(const char *path) {
   FILE *file = fopen(path, "wb");
   if (file) {
+	  displayDiskIcon(strncmp(path, "fat:", 4) == 0);
     std::vector<u32> cheats(getCheats());
     fwrite(cheats.data(),4,cheats.size(),file);
     fwrite("\0\0\0\xCF",4,1,file);
     fclose(file);
+	  displayDiskIcon(false);
   }
 }

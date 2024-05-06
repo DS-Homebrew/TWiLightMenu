@@ -336,7 +336,9 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 	} else {
 		isDirectory[0] = false;
 		std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
+		displayDiskIcon(ms().secondaryDevice);
 		getGameInfo(0, isDirectory[0], dirContents.at(fileOffset).name.c_str());
+		displayDiskIcon(false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[0] = 0;
@@ -407,6 +409,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	getcwd(path, PATH_MAX);
 	printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
 
+	displayDiskIcon(ms().secondaryDevice);
 	int n = 0;
 	for (int i = screenOffset; i < screenOffset+4; i++) {
 		if (i == file_count) {
@@ -484,6 +487,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 		titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
 		n++;
 	}
+	displayDiskIcon(false);
 
 	updateText(false);
 }
@@ -1146,7 +1150,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	int screenOffset = 0;
 	int fileOffset = 0;
 	std::vector<DirEntry> dirContents;
+	displayDiskIcon(ms().secondaryDevice);
 	getDirectoryContents (dirContents, extensionList);
+	displayDiskIcon(false);
 
 	int entriesPerScreen = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRIES_PER_SCREEN_LIST : ENTRIES_PER_SCREEN;
 	int entryPageLength = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRY_PAGE_LENGTH_LIST : ENTRY_PAGE_LENGTH;
@@ -1292,7 +1298,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
 				CURPOS = 0;
 				PAGENUM = 0;
+				displayDiskIcon(!sys().isRunFromSD());
 				ms().saveSettings();
+				displayDiskIcon(false);
 
 				return "null";
 			} else {
@@ -1621,14 +1629,18 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					updateText(false);
 
 					if (pressed & KEY_A && !isDirectory[cursorPosOnScreen]) {
+						displayDiskIcon(ms().secondaryDevice);
 						remove(dirContents.at(fileOffset).name.c_str());
+						displayDiskIcon(false);
 					} else if (pressed & KEY_Y) {
+						displayDiskIcon(ms().secondaryDevice);
 						// Remove leading . if it exists
 						if ((strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != "..")) {
 							rename(entry->name.c_str(), entry->name.substr(1).c_str());
 						} else { // Otherwise toggle the hidden attribute bit
 							FAT_setAttr(entry->name.c_str(), FAT_getAttr(entry->name.c_str()) ^ ATTR_HIDDEN);
 						}
+						displayDiskIcon(false);
 					}
 					
 					CURPOS = fileOffset;
@@ -1641,7 +1653,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							break;
 						}
 					}
+					displayDiskIcon(!sys().isRunFromSD());
 					ms().saveSettings();
+					displayDiskIcon(false);
 					return "null";
 				}
 
@@ -1666,7 +1680,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					break;
 				}
 			}
+			displayDiskIcon(!sys().isRunFromSD());
 			ms().saveSettings();
+			displayDiskIcon(false);
 			startMenu = true;
 			return "null";		
 		}

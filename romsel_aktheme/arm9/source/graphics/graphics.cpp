@@ -98,6 +98,12 @@ static u16* folderUpIcon[2] = {NULL};
 static int folderUpIconW = 0;
 static int folderUpIconH = 0;
 
+static u16* cardIconBlue[2] = {NULL};
+static int cardIconBlueX = 238;
+static int cardIconBlueY = 172;
+static int cardIconBlueW = 0;
+static int cardIconBlueH = 0;
+
 static u16* clockNumbers[2] = {NULL};
 static u16* clockNumbers2[2] = {NULL};
 static u16* clockColon[2] = {NULL};
@@ -453,6 +459,31 @@ ITCM_CODE void displayFolderUp(const int x, const int y) {
 
 	delete[] folderUpIcon[0];
 	delete[] folderUpIcon[1];
+}
+
+ITCM_CODE void displayDiskIcon(const bool show) {
+	if (!cardIconBlue[0]) return;
+
+	static bool prev = false;
+	if (prev == show) return;
+	prev = show;
+
+	int src = 0;
+
+	for (int y2 = cardIconBlueY; y2 < cardIconBlueY+cardIconBlueH; y2++) {
+		for (int x2 = cardIconBlueX; x2 < cardIconBlueX+cardIconBlueW; x2++) {
+			if ((cardIconBlue[0][src] != (0 | BIT(15))) && x2 >= 0 && x2 < 256 && y2 >= 0 && y2 < 192) {
+				if (show) {
+					bottomImageWithBar[0][(y2*256)+x2] = cardIconBlue[0][src];
+					bottomImageWithBar[1][(y2*256)+x2] = cardIconBlue[1][src];
+				} else {
+					bottomImageWithBar[0][(y2*256)+x2] = bottomImage[0][(y2*256)+x2];
+					bottomImageWithBar[1][(y2*256)+x2] = bottomImage[1][(y2*256)+x2];
+				}
+			}
+			src++;
+		}
+	}
 }
 
 static std::string loadedTime;
@@ -907,6 +938,7 @@ enum class ImageType {
 	top,
 	startButton,
 	folderUp,
+	cardIconBlue,
 	clockNumbers,
 	clockNumbers2,
 	clockColon,
@@ -964,6 +996,12 @@ static void loadBmp(const ImageType type, const char* filename) {
 
 		folderUpIcon[0] = new u16[width*height];
 		folderUpIcon[1] = new u16[width*height];
+	} else if (type == ImageType::cardIconBlue) {
+		cardIconBlueW = (int)width;
+		cardIconBlueH = (int)height;
+
+		cardIconBlue[0] = new u16[width*height];
+		cardIconBlue[1] = new u16[width*height];
 	} else if (type == ImageType::clockNumbers) {
 		clockNumbersW = (int)width;
 		clockNumbersH = (int)height/10;
@@ -1097,6 +1135,8 @@ static void loadBmp(const ImageType type, const char* filename) {
 				clockNumbers2[0][(y*width)+x] = color;
 			} else if (type == ImageType::clockNumbers) {
 				clockNumbers[0][(y*width)+x] = color;
+			} else if (type == ImageType::cardIconBlue) {
+				cardIconBlue[0][(y*width)+x] = color;
 			} else if (type == ImageType::folderUp) {
 				folderUpIcon[0][(y*width)+x] = color;
 			} else if (type == ImageType::startButton) {
@@ -1153,6 +1193,8 @@ static void loadBmp(const ImageType type, const char* filename) {
 				clockNumbers2[1][(y*width)+x] = color;
 			} else if (type == ImageType::clockNumbers) {
 				clockNumbers[1][(y*width)+x] = color;
+			} else if (type == ImageType::cardIconBlue) {
+				cardIconBlue[1][(y*width)+x] = color;
 			} else if (type == ImageType::folderUp) {
 				folderUpIcon[1][(y*width)+x] = color;
 			} else if (type == ImageType::startButton) {
@@ -1185,6 +1227,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 			renderWidth = (int)width;
 			dst = (folderUpIcon[0] + (height-1) * width);
 			dst2 = (folderUpIcon[1] + (height-1) * width);
+		} else if (type == ImageType::cardIconBlue) {
+			renderWidth = (int)width;
+			dst = (cardIconBlue[0] + (height-1) * width);
+			dst2 = (cardIconBlue[1] + (height-1) * width);
 		} else if (type == ImageType::clockNumbers) {
 			renderWidth = (int)width;
 			dst = (clockNumbers[0] + (height-1) * width);
@@ -1306,6 +1352,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 			} else if (type == ImageType::clockNumbers) {
 				clockNumbers[0][(y*width)+x] = color;
 				clockNumbers[1][(y*width)+x] = color;
+			} else if (type == ImageType::cardIconBlue) {
+				cardIconBlue[0][(y*width)+x] = color;
+				cardIconBlue[1][(y*width)+x] = color;
 			} else if (type == ImageType::folderUp) {
 				folderUpIcon[0][(y*width)+x] = color;
 				folderUpIcon[1][(y*width)+x] = color;
@@ -1384,6 +1433,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 				} else if (type == ImageType::clockNumbers) {
 					clockNumbers[0][(y*width)+x] = color;
 					clockNumbers[1][(y*width)+x] = color;
+				} else if (type == ImageType::cardIconBlue) {
+					cardIconBlue[0][(y*width)+x] = color;
+					cardIconBlue[1][(y*width)+x] = color;
 				} else if (type == ImageType::folderUp) {
 					folderUpIcon[0][(y*width)+x] = color;
 					folderUpIcon[1][(y*width)+x] = color;
@@ -1762,6 +1814,18 @@ void graphicsLoad()
 				loadBmp(ImageType::startButton, pathStartButton.c_str());
 			}
 		}
+
+		std::string pathCardIcon;
+		if (access((themePath + "/card_icon_blue.bmp").c_str(), F_OK) == 0) {
+			pathCardIcon = themePath + "/card_icon_blue.bmp";
+		} else {
+			pathCardIcon = "nitro:/themes/zelda/card_icon_blue.bmp";
+		}
+
+		loadBmp(ImageType::cardIconBlue, pathCardIcon.c_str());
+
+		cardIconBlueX = ini.GetInt("disk icon", "x", cardIconBlueX);
+		cardIconBlueY = ini.GetInt("disk icon", "y", cardIconBlueY);
 
 		formFrameColor = ini.GetInt("global settings", "formFrameColor", formFrameColor);
 		formBodyColor = ini.GetInt("global settings", "formBodyColor", formBodyColor);

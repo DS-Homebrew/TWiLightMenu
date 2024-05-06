@@ -28,6 +28,7 @@ void resetIconScale(void);
 void updateSelectionBar(void);
 void displayStartButton(const int x, const int y);
 void displayFolderUp(const int x, const int y);
+void displayDiskIcon(const bool show);
 void drawTime(void);
 void drawYear(void);
 void drawMonth(void);
@@ -35,10 +36,8 @@ void drawDayX(void);
 void drawDay(void);
 void drawWeekday(void);
 
-void bottomBgLoad(bool startMenu);
 void graphicsInit();
 void graphicsLoad();
-void topBgLoad(bool startMenu);
 void startRendering(bool top);
 bool isRenderingTop();
 

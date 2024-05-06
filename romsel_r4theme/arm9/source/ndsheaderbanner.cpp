@@ -3,6 +3,7 @@
 #include <malloc.h>
 #include <unistd.h>
 #include "common/flashcard.h"
+#include "common/systemdetails.h"
 #include <gl2d.h>
 
 #include "ndsheaderbanner.h"
@@ -110,13 +111,13 @@ int checkRomAP(FILE *ndsFile)
 	game_TID[4] = 0;
 
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", game_TID, headerCRC16);
 
 	if (access(ipsPath, F_OK) == 0) {
 		return 0;
 	}
 
-	FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
+	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
 	if (file) {
 		char buf[5] = {0};
 		fread(buf, 1, 4, file);

@@ -349,6 +349,7 @@ void perGameSettings (std::string filename) {
 	keysSetRepeat(25, 5); // Slow down key repeat
 
 	clearText();
+	displayDiskIcon(ms().secondaryDevice);
 
 	perGameSettings_cursorPosition = 0;
 	loadPerGameSettings(filename);
@@ -665,6 +666,7 @@ void perGameSettings (std::string filename) {
 			perGameSettings_saveNo = saveNoBak;
 		}
 	}
+	displayDiskIcon(false);
 
 	char saveNoDisplay[16];
 
@@ -1100,10 +1102,12 @@ void perGameSettings (std::string filename) {
 						}
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
+						const char *bootstrapinipath = sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, romFolderNoSlash+"/"+filename);
+						displayDiskIcon(!sys().isRunFromSD());
 						bootstrapini.SaveIniFile(bootstrapinipath);
+						displayDiskIcon(false);
 						sprintf(SET_AS_DONOR_ROM, "Done!");
 					  }
 						break;
@@ -1132,7 +1136,9 @@ void perGameSettings (std::string filename) {
 
 			if (pressed & KEY_B) {
 				if (perGameSettingsChanged) {
+					displayDiskIcon(ms().secondaryDevice);
 					savePerGameSettings(filename);
+					displayDiskIcon(false);
 					perGameSettingsChanged = false;
 				}
 				break;

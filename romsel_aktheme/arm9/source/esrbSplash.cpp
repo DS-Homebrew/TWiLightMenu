@@ -8,6 +8,7 @@
 #include "common/inifile.h"
 #include "common/logging.h"
 #include "graphics/fontHandler.h"
+#include "graphics/graphics.h"
 #include "common/lodepng.h"
 #include "ndsheaderbanner.h"
 #include "language.h"
@@ -23,6 +24,8 @@ void createEsrbSplash(void) {
 		remove(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 		return;
 	}
+
+	displayDiskIcon(!sys().isRunFromSD());
 
 	char gameTid3[4] = {0};
 	for (int i = 0; i < 3; i++) {
@@ -123,4 +126,6 @@ void createEsrbSplash(void) {
 	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin", "wb");
 	fwrite(bmpImageBuffer, sizeof(u16), 256*192, file);
 	fclose(file);
+
+	displayDiskIcon(false);
 }
