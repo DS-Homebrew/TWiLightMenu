@@ -75,12 +75,12 @@ TWiLight Menu++ is composed of multiple "sub-projects" which all work together t
   - Creates `/_nds/TWiLightMenu/mainmenu.srldr`
 - **resources**: merges the antipiracy and widescreen patches into a package file
   - `/_nds/TWiLightMenu/extras/apfix.pck` and `/_nds/TWiLightMenu/extras/widescreen.pck`
-- **romsel_aktheme**: unused, not included in package
+- **romsel_aktheme**: menu for the Wood UI theme
+  - Creates `/_nds/TWiLightMenu/akmenu.srldr`
 - **romsel_dsimenutheme**: menu for the DSi theme used by "Nintendo DSi", "Nintendo 3DS", "SEGA Saturn", and "Homebrew Launcher"
   - Creates `/_nds/TWiLightMenu/dsimenu.srldr`
 - **romsel_r4theme**: menu for the R4 theme used by "R4 Original" and "Gameboy Color"
   - Creates `/_nds/TWiLightMenu/r4menu.srldr`
-- **rungame**: unused, not included in package
 - **settings**: settings menu
   - Creates `/_nds/TWiLightMenu/settings.srldr`
 - **slot1launch**:
