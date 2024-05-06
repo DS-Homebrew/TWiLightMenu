@@ -139,6 +139,7 @@ u16 batteryLowImageBuffer[12*7] = {0};
 u16 clockImageBuffer[97*97] = {0};
 u16 clockNeedleColor;
 u16 clockPinColor;
+u16 clockUserColor;
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -987,7 +988,7 @@ void clockDraw() {
 
 	clockNeedleDraw(90-(h * 30), 24, clockNeedleColor); // hour
 	clockNeedleDraw(90-(time.getMinute() * 6), 32, clockNeedleColor); // minute
-	clockNeedleDraw(90-(time.getSecond() * 6), 36, userColors[getFavoriteColor()]); // second
+	clockNeedleDraw(90-(time.getSecond() * 6), 36, clockUserColor); // second
 
 	// draw clock pin
 	for (int yy = clockYPos+46; yy < clockYPos+46+5; yy++) {
@@ -1323,13 +1324,12 @@ void graphicsInit()
 	cursorBR = cursorTargetBR;
 
 	clockNeedleColor = CONVERT_COLOR(121,121,121);
+	clockPinColor = CONVERT_COLOR(73, 73, 73);
+	clockUserColor = userColors[getFavoriteColor()];
 	if (colorTable) {
 		clockNeedleColor = colorTable[clockNeedleColor];
-	}
-
-	clockPinColor = CONVERT_COLOR(73, 73, 73);
-	if (colorTable) {
 		clockPinColor = colorTable[clockPinColor];
+		clockUserColor = colorTable[clockUserColor];
 	}
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
