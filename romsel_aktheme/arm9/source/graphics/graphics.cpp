@@ -419,6 +419,8 @@ ITCM_CODE void displayStartButton(const int x, const int y) {
 		}
 	}
 
+	src = 0;
+
 	// Save to base bottom screen image
 	for (int y2 = y; y2 < y+startButtonH; y2++) {
 		for (int x2 = x; x2 < x+startButtonW; x2++) {
