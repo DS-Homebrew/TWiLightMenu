@@ -1450,13 +1450,9 @@ void titleUpdate(bool isDir, const char* name)
 		clearText(false);
 	}
 
-	if (isDir) {
+	if (isDir && (strcmp(name, "..") == 0)) {
 		// text
-		if (strcmp(name, "..") == 0) {
-			writeBannerText("Back");
-		} else {
-			writeBannerText(name);
-		}
+		writeBannerText("Back");
 	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound) {
 		// this is an nds/app file!
 		// or a file with custom banner text
