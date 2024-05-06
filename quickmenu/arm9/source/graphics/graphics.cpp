@@ -323,7 +323,7 @@ void initSubSprites(void)
 static void bootModeIconLoad() {
 	if (ms().macroMode) return;
 
-	const char* filePath = "nitro:/graphics/icons/bootmanual.png";
+	const char* filePath = (ms().autorun || (isDSiMode() && !flashcardFound() && ms().autostartSlot1)) ? "nitro:/graphics/icons/bootauto.png" : "nitro:/graphics/icons/bootmanual.png";
 
 	constexpr int posX = 226;
 	constexpr int posY = 2;
