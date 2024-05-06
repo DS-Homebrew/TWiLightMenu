@@ -589,7 +589,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
-		if (pubSize > 0 || prvSize > 0) {
+		if ((ms().saveLocation != TWLSettings::EGamesFolder) && (pubSize > 0 || prvSize > 0)) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
@@ -634,8 +634,10 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
-		perGameOps++;
-		perGameOp[perGameOps] = 1;	// Save number
+		if (ms().saveLocation != TWLSettings::EGamesFolder) {
+			perGameOps++;
+			perGameOp[perGameOps] = 1;	// Save number
+		}
 		if (((dsiFeatures() && (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && isDSiMode()) || unitCode[CURPOS] > 0) && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_boostCpu) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
@@ -1293,7 +1295,7 @@ void perGameSettings (std::string filename) {
 }
 
 std::string getSavExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".sav";
 	} else {
 		return ".sav" + std::to_string(perGameSettings_saveNo);
@@ -1301,7 +1303,7 @@ std::string getSavExtension(void) {
 }
 
 std::string getPubExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".pub";
 	} else {
 		return ".pu" + std::to_string(perGameSettings_saveNo);
@@ -1309,7 +1311,7 @@ std::string getPubExtension(void) {
 }
 
 std::string getPrvExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".prv";
 	} else {
 		return ".pr" + std::to_string(perGameSettings_saveNo);

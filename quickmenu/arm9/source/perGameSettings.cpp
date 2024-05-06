@@ -59,7 +59,7 @@ void loadPerGameSettings (std::string filename) {
 }
 
 std::string getSavExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".sav";
 	} else {
 		return ".sav" + std::to_string(perGameSettings_saveNo);
@@ -67,7 +67,7 @@ std::string getSavExtension(void) {
 }
 
 std::string getPubExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".pub";
 	} else {
 		return ".pu" + std::to_string(perGameSettings_saveNo);
@@ -75,7 +75,7 @@ std::string getPubExtension(void) {
 }
 
 std::string getPrvExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".prv";
 	} else {
 		return ".pr" + std::to_string(perGameSettings_saveNo);

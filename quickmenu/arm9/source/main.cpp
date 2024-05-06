@@ -2239,10 +2239,18 @@ int dsClassicMenu(void) {
 
 				std::string romFolderNoSlash = romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romFolderNoSlash);
-				mkdir ("saves", 0777);
 
 				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename[ms().secondaryDevice];
+				if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+					std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+					mkdir(twlmSavesFolder.c_str(), 0777);
+					ms().dsiWarePubPath = twlmSavesFolder + "/" + filename[ms().secondaryDevice];
+				} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+					ms().dsiWarePubPath = romFolderNoSlash + "/" + filename[ms().secondaryDevice];
+				} else {
+					mkdir("saves", 0777);
+				}
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
 				bool savFormat = (ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode));
 				if (savFormat) {
@@ -2507,16 +2515,18 @@ int dsClassicMenu(void) {
 					stop();
 				}
 
-				// Move .pub and/or .prv out of "saves" folder
-				std::string pubnameUl = replaceAll(filename[ms().secondaryDevice], typeToReplace, ".pub");
-				std::string prvnameUl = replaceAll(filename[ms().secondaryDevice], typeToReplace, ".prv");
-				std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
-				std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
-				if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
-					rename(ms().dsiWarePubPath.c_str(), pubpathUl.c_str());
-				}
-				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
-					rename(ms().dsiWarePrvPath.c_str(), prvpathUl.c_str());
+				if (ms().saveLocation != TWLSettings::EGamesFolder) {
+					// Move .pub and/or .prv out of "saves" folder
+					std::string pubnameUl = replaceAll(filename[ms().secondaryDevice], typeToReplace, ".pub");
+					std::string prvnameUl = replaceAll(filename[ms().secondaryDevice], typeToReplace, ".prv");
+					std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
+					std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
+					if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
+						rename(ms().dsiWarePubPath.c_str(), pubpathUl.c_str());
+					}
+					if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
+						rename(ms().dsiWarePrvPath.c_str(), prvpathUl.c_str());
+					}
 				}
 
 				while (!screenFadedOut()) {
@@ -2575,12 +2585,19 @@ int dsClassicMenu(void) {
 						std::string ramdiskname = replaceAll(filename[ms().secondaryDevice], typeToReplace, getImgExtension());
 						std::string romFolderNoSlash = romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						mkdir (isHomebrew[ms().secondaryDevice] ? "ramdisks" : "saves", 0777);
 						std::string savepath = romFolderNoSlash + "/saves/" + savename;
-						if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
-							savepath = replaceAll(savepath, "fat:/", "sd:/");
+						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
+						if (isHomebrew[ms().secondaryDevice]) {
+							mkdir("ramdisks", 0777);
+						} else if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+							std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+							mkdir(twlmSavesFolder.c_str(), 0777);
+							savepath = twlmSavesFolder + "/" + savename;
+						} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+							savepath = romFolderNoSlash + "/" + savename;
+						} else {
+							mkdir("saves", 0777);
 						}
-						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
 						if (!isHomebrew[ms().secondaryDevice]) {
 							// Create or expand save if game isn't homebrew

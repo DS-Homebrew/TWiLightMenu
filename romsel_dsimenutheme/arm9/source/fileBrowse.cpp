@@ -1101,13 +1101,25 @@ void launchInternetBrowser(std::string filename, bool isDir) {
 		char browserTid[5] = {0};
 		tonccpy(browserTid, NDSHeader.gameCode, 4);
 
-		mkdir("saves", 0777);
 		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 		std::string savenamePub = replaceAll(filename, typeToReplace, getPubExtension());
 		std::string savenamePrv = replaceAll(filename, typeToReplace, getPrvExtension());
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
 		std::string savepathPub = romFolderNoSlash + "/saves/" + savenamePub;
 		std::string savepathPrv = romFolderNoSlash + "/saves/" + savenamePrv;
+		if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+			std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+			mkdir(twlmSavesFolder.c_str(), 0777);
+			savepath = twlmSavesFolder + "/" + savename;
+			savepathPub = twlmSavesFolder + "/" + savenamePub;
+			savepathPrv = twlmSavesFolder + "/" + savenamePrv;
+		} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+			savepath = romFolderNoSlash + "/" + savename;
+			savepathPub = romFolderNoSlash + "/" + savenamePub;
+			savepathPrv = romFolderNoSlash + "/" + savenamePrv;
+		} else {
+			mkdir("saves", 0777);
+		}
 
 		char sfnSrl[62];
 		char sfnPub[62];

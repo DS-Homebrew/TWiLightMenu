@@ -76,7 +76,7 @@ TWLSettings::TWLSettings()
 	secondaryAccess = false;
 	previousUsedDevice = !sys().isRunFromSD();
 	secondaryDevice = !sys().isRunFromSD();
-	fcSaveOnSd = false;
+	saveLocation = ESavesFolder;
 
 	slot1LaunchMethod = EDirect;
 
@@ -271,7 +271,7 @@ void TWLSettings::loadSettings()
 	secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	secondaryDevice = bothSDandFlashcard() ? settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice) : flashcardFound();
-	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
+	saveLocation = (TSaveLoc)settingsini.GetInt("SRLOADER", "SAVE_LOCATION", saveLocation);
 	settingsini.GetStringVector("SRLOADER", "BLOCKED_EXTENSIONS", blockedExtensions, ':');
 
 	slot1LaunchMethod = (TSlot1LaunchMethod)settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
@@ -427,7 +427,7 @@ void TWLSettings::saveSettings()
 	if (bothSDandFlashcard()) {
 		settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
 	}
-	settingsini.SetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
+	settingsini.SetInt("SRLOADER", "SAVE_LOCATION", saveLocation);
 
 	settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
 

@@ -194,19 +194,19 @@ public:
 	enum TGbaBooter : int
 	{
 		EGbaNativeGbar2 = 1,
-		EGbaGbar2 = 2,
+		EGbaGbar2 = 2
 	};
 
 	enum TColSegaEmulator : int
 	{
 		EColSegaS8DS = 1,
-		EColSegaColecoDS = 2,
+		EColSegaColecoDS = 2
 	};
 
 	enum TCpcEmulator : int
 	{
 		ECpcAmEDS = 1,
-		ECpcCrocoDS = 2,
+		ECpcCrocoDS = 2
 	};
 
 	enum TMegaDriveEmulator : int
@@ -229,6 +229,13 @@ public:
 	{
 		EFreq32KHz = false,
 		EFreq47KHz = true
+	};
+
+	enum TSaveLoc : int
+	{
+		ESavesFolder = 0,
+		EGamesFolder = 1,
+		ETWLMFolder = 2
 	};
 
 public:
@@ -309,7 +316,7 @@ public:
 	bool secondaryAccess;
 	bool previousUsedDevice;
 	bool secondaryDevice;
-	bool fcSaveOnSd;
+	TSaveLoc saveLocation;
 	std::vector<std::string> blockedExtensions;
 
 	TSlot1LaunchMethod slot1LaunchMethod;
