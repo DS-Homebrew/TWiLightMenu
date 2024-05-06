@@ -1467,7 +1467,7 @@ int dsClassicMenu(void) {
 	bottomBgLoad();
 	calendarLoad();
 	clockLoad();
-	
+
 	bool romFound[2] = {false};
 	char boxArtPath[2][256];
 
@@ -1513,6 +1513,20 @@ int dsClassicMenu(void) {
 		}
 	}
 
+	topBarLoad();
+	batteryIconLoad();
+
+	bool gbaUseBottomScreen = false;
+	if (sys().isRegularDS() && ms().gbaBooter == TWLSettings::EGbaNativeGbar2) {
+		gbaUseBottomScreen = (PersonalData->gbaScreen == 1); // Use firmware settings in regular DS if native mode is prefered.
+	}
+	else {
+		// Otherwise, use GBARunner2's settings!
+		CIniFile gbarunner2ini("/_gba/gbarunner2.ini");
+		gbaUseBottomScreen = (gbarunner2ini.GetString("emulation", "useBottomScreen", "false")=="false" ? false : true);
+	}
+	gbaModeIconLoad(gbaUseBottomScreen);
+	
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
 	while (!screenFadedIn()) {
@@ -1520,7 +1534,7 @@ int dsClassicMenu(void) {
 			swiWaitForVBlank();
 		}
 	}
-	topBarLoad();
+
 	startMenu = true;	// Show bottom screen graphics
 	fadeSpeed = false;
 
@@ -1556,12 +1570,16 @@ int dsClassicMenu(void) {
 						clockDraw();
 						colonTimer = 0;
 						drawDateTime(false, false);
+
+						batteryIconDraw(false);
 					}
 					previousTime = time;
 					curTime = retTime();
 				}
-				if (colonTimer++ == 30)
+				if (colonTimer++ == 30) {
 					drawDateTime(false, true);
+					batteryIconDraw(true);
+				}
 
 				if (isDSiMode() && !flashcardFound()) {
 					if (REG_SCFG_MC == 0x11) {

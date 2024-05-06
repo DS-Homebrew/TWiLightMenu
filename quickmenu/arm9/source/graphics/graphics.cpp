@@ -105,6 +105,8 @@ constexpr int calendarXPos = 127;
 constexpr int calendarYPos = 31;
 constexpr int clockXPos = 15;
 constexpr int clockYPos = 47;
+constexpr int batteryXPos = 242;
+constexpr int batteryYPos = 4;
 
 GRIT_TEXTURE(cornericons, 32, 32, 32, 128, 4);
 GRIT_TEXTURE(cursor, 32, 32, 32, 128, 4);
@@ -128,6 +130,9 @@ u16* colorTable = nullptr;
 u16 calendarImageBuffer[113*113] = {0};
 u16 calendarBigImageBuffer[113*129] = {0};
 u16 markerImageBuffer[13*13] = {0};
+
+u16 batteryFullImageBuffer[12*7] = {0};
+u16 batteryLowImageBuffer[12*7] = {0};
 
 u16 clockImageBuffer[97*97] = {0};
 u16 clockNeedleColor;
@@ -314,6 +319,188 @@ void initSubSprites(void)
 
 	return 32768|(max<<10)|(max<<5)|(max);
 } */
+
+static void bootModeIconLoad() {
+	if (ms().macroMode) return;
+
+	const char* filePath = "nitro:/graphics/icons/bootmanual.png";
+
+	constexpr int posX = 226;
+	constexpr int posY = 2;
+
+	u16 imageBuffer[11*11] = { 0 };
+
+	FILE* file = fopen(filePath, "rb");
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+		for (unsigned i=0;i<image.size()/4;i++) {
+			imageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				imageBuffer[i] = colorTable[imageBuffer[i]];
+			}
+		}
+
+		u16* src = imageBuffer;
+		for (int y = 0; y < 11; y++) {
+			for (int x = 0; x < 11; x++) {
+				BG_GFX_SUB[(posY+y)*256+(posX+x)] = *src;
+				src++;
+			}
+		}
+	}
+
+	fclose(file);
+}
+
+void batteryIconLoad() {
+	if (ms().macroMode) return;
+
+	// Load full battery icon
+
+	const char* filePath = "nitro:/graphics/battery/batteryfull.png";
+
+	FILE* file = fopen(filePath, "rb");
+
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+
+		int x = batteryXPos, y = batteryYPos;
+		int xEnd = x + 12;
+		for (unsigned i=0;i<image.size()/4;i++) {
+			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				color = colorTable[color];
+			}
+			
+			if (image[(i*4)+3] == 0) {
+				batteryFullImageBuffer[i] = bmpImageBuffer[(y*256)+x];
+			} else {
+				batteryFullImageBuffer[i] = color;
+			}
+
+			x++;
+			if (x == xEnd) {
+				x = batteryXPos;
+				y++;
+			}
+		}
+	}
+
+	fclose(file);
+
+	// Load low battery icon
+
+	filePath = "nitro:/graphics/battery/batterylow.png";
+
+	file = fopen(filePath, "rb");
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+
+		int x = batteryXPos, y = batteryYPos;
+		int xEnd = x + 12;
+		for (unsigned i=0;i<image.size()/4;i++) {
+			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				color = colorTable[color];
+			}
+			
+			if (image[(i*4)+3] == 0) {
+				batteryLowImageBuffer[i] = bmpImageBuffer[(y*256)+x];
+			} else {
+				batteryLowImageBuffer[i] = color;
+			}
+
+			x++;
+			if (x == xEnd) {
+				x = batteryXPos;
+				y++;
+			}
+		}
+	}
+
+	fclose(file);
+}
+
+static bool isBatteryLow(void) {
+	u8 batteryLevel = sys().batteryStatus();
+	if (batteryLevel & BIT(7)) // charging
+		return false;
+
+	if (batteryLevel <= 0x3)
+		return true;
+	else
+		return false;
+}
+
+void batteryIconDraw(bool blink) {
+	if (ms().macroMode) return;
+
+	bool low = isBatteryLow();
+	if (low && blink) {
+		for (int y = 0; y < 7; y++) {
+			for (int x = 0; x < 12; x++) {
+				BG_GFX_SUB[(batteryYPos+y)*256+(batteryXPos+x)] = bmpImageBuffer[(batteryYPos+y)*256+(batteryXPos+x)];
+			}
+		}
+		return;
+	}
+
+	u16* src = batteryFullImageBuffer;
+	if (low)
+		src = batteryLowImageBuffer;
+
+	for (int y = 0; y < 7; y++) {
+		for (int x = 0; x < 12; x++) {
+			BG_GFX_SUB[(batteryYPos+y)*256+(batteryXPos+x)] = *src;
+			src++;
+		}
+	}
+}
+
+void gbaModeIconLoad(bool bottomScreen) {
+	if (ms().macroMode) return;
+
+	char filePath[256];
+	snprintf(filePath, sizeof(filePath), "nitro:/graphics/icons/gba%s.png", bottomScreen ? "bottom" : "top");
+
+	constexpr int posX = 210;
+	constexpr int posY = 2;
+
+	u16 imageBuffer[11*11] = {0};
+
+	FILE* file = fopen(filePath, "rb");
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+		for (unsigned i=0;i<image.size()/4;i++) {
+			imageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				imageBuffer[i] = colorTable[imageBuffer[i]];
+			}
+		}
+
+		u16* src = imageBuffer;
+		for (int y = 0; y < 11; y++) {
+			for (int x = 0; x < 11; x++) {
+				BG_GFX_SUB[(posY+y)*256+(posX+x)] = *src;
+				src++;
+			}
+		}
+	}
+
+	fclose(file);
+}
 
 void bottomBgLoad() {
 	std::string bottomBGFile = "nitro:/graphics/bottombg.png";
@@ -973,13 +1160,15 @@ void topBarLoad(void) {
 
 	drawDateTime(true);
 	drawDateTime(false);
+
+	bootModeIconLoad();
 }
 
 void drawDateTime(bool date, bool showTimeColon) {
 	std::string text = date ? getDate() : retTime();
 	if (!date && !showTimeColon) text[2] = ' ';
 
-	const int posX = date ? 203 : 171;
+	const int posX = date ? 205 : 171;
 	printTiny(true, posX, 3, text, Alignment::right, FontPalette::topBar);
 	updateTopTextArea(posX - 27, 3, 27, tinyFontHeight(), bmpImageBuffer);
 }

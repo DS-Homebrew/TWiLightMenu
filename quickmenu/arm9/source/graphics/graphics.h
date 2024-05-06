@@ -36,9 +36,13 @@ void clockLoad(void);
 void clockDraw(void);
 void calendarLoad(void);
 void calendarDraw(void);
+void gbaModeIconLoad(bool screen);
 void drawDateTime(bool date, bool showTimeColon = false);
 void startRendering(bool top);
 bool isRenderingTop();
+
+void batteryIconLoad(void);
+void batteryIconDraw(bool blink);
 
 template<typename T> inline const T abs(T const & x)
 {
