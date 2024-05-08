@@ -1228,38 +1228,122 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			resetIconScale();
 		}
 		if (pressed & KEY_TOUCH) {
-			if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+37) {
-				if (cursorPosOnScreen != 0) {
-					cursorPosOnScreen = 0;
-					fileOffset = screenOffset;
-				} else {
-					selectionTouched = true;
+			if (ms().ak_viewMode != TWLSettings::EViewList) {
+				if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+37) {
+					if (cursorPosOnScreen != 0) {
+						cursorPosOnScreen = 0;
+						fileOffset = screenOffset;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 2 && touch.py >= 19+38 && touch.py <= 19+37+38) {
+					if (cursorPosOnScreen != 1) {
+						cursorPosOnScreen = 1;
+						fileOffset = screenOffset+1;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 3 && touch.py >= 19+(38*2) && touch.py <= 19+37+(38*2)) {
+					if (cursorPosOnScreen != 2) {
+						cursorPosOnScreen = 2;
+						fileOffset = screenOffset+2;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 4 && touch.py >= 19+(38*3) && touch.py <= 19+37+(38*3)) {
+					if (cursorPosOnScreen != 3) {
+						cursorPosOnScreen = 3;
+						fileOffset = screenOffset+3;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
 				}
-				resetIconScale();
-			} else if (file_count >= 2 && touch.py >= 19+38 && touch.py <= 19+37+38) {
-				if (cursorPosOnScreen != 1) {
-					cursorPosOnScreen = 1;
-					fileOffset = screenOffset+1;
-				} else {
-					selectionTouched = true;
+			} else {
+				if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+14) {
+					if (cursorPosOnScreen != 0) {
+						cursorPosOnScreen = 0;
+						fileOffset = screenOffset;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 2 && touch.py >= 19+15 && touch.py <= 19+14+15) {
+					if (cursorPosOnScreen != 1) {
+						cursorPosOnScreen = 1;
+						fileOffset = screenOffset+1;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 3 && touch.py >= 19+(15*2) && touch.py <= 19+14+(15*2)) {
+					if (cursorPosOnScreen != 2) {
+						cursorPosOnScreen = 2;
+						fileOffset = screenOffset+2;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 4 && touch.py >= 19+(15*3) && touch.py <= 19+14+(15*3)) {
+					if (cursorPosOnScreen != 3) {
+						cursorPosOnScreen = 3;
+						fileOffset = screenOffset+3;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 5 && touch.py >= 19+(15*4) && touch.py <= 19+14+(15*4)) {
+					if (cursorPosOnScreen != 4) {
+						cursorPosOnScreen = 4;
+						fileOffset = screenOffset+4;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 6 && touch.py >= 19+(15*5) && touch.py <= 19+14+(15*5)) {
+					if (cursorPosOnScreen != 5) {
+						cursorPosOnScreen = 5;
+						fileOffset = screenOffset+5;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 7 && touch.py >= 19+(15*6) && touch.py <= 19+14+(15*6)) {
+					if (cursorPosOnScreen != 6) {
+						cursorPosOnScreen = 6;
+						fileOffset = screenOffset+6;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 8 && touch.py >= 19+(15*7) && touch.py <= 19+14+(15*7)) {
+					if (cursorPosOnScreen != 7) {
+						cursorPosOnScreen = 7;
+						fileOffset = screenOffset+7;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 9 && touch.py >= 19+(15*8) && touch.py <= 19+14+(15*8)) {
+					if (cursorPosOnScreen != 8) {
+						cursorPosOnScreen = 8;
+						fileOffset = screenOffset+8;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 10 && touch.py >= 19+(15*9) && touch.py <= 19+14+(15*9)) {
+					if (cursorPosOnScreen != 9) {
+						cursorPosOnScreen = 9;
+						fileOffset = screenOffset+9;
+					} else {
+						selectionTouched = true;
+					}
+					resetIconScale();
 				}
-				resetIconScale();
-			} else if (file_count >= 3 && touch.py >= 19+(38*2) && touch.py <= 19+37+(38*2)) {
-				if (cursorPosOnScreen != 2) {
-					cursorPosOnScreen = 2;
-					fileOffset = screenOffset+2;
-				} else {
-					selectionTouched = true;
-				}
-				resetIconScale();
-			} else if (file_count >= 4 && touch.py >= 19+(38*3) && touch.py <= 19+37+(38*3)) {
-				if (cursorPosOnScreen != 3) {
-					cursorPosOnScreen = 3;
-					fileOffset = screenOffset+3;
-				} else {
-					selectionTouched = true;
-				}
-				resetIconScale();
 			}
 		}
 
