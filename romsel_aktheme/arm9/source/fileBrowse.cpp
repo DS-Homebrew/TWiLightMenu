@@ -524,7 +524,7 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 		// Print directory listing
 		for (int i = 0; i < ((int)dirContents.size() - startRow) && i < ENTRIES_PER_SCREEN_LIST; i++) {
 			const DirEntry* entry = &dirContents.at(i + startRow);
-			printSmall(false, xPos, yPos+(i*11), entry->isDirectory ? ("["+entry->name+"]") : entry->name, Alignment::left, ((i + startRow) == fileOffset) ? FontPalette::mainTextHilight : FontPalette::mainText);
+			printSmall(false, xPos, yPos+(i*15), entry->isDirectory ? ("["+entry->name+"]") : entry->name, Alignment::left, ((i + startRow) == fileOffset) ? FontPalette::mainTextHilight : FontPalette::mainText);
 		}
 	} else {
 		int n = 0;
