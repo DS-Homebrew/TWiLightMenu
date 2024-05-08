@@ -412,8 +412,10 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 	printSmall(false, startTextX, startTextY, startText, Alignment::left, FontPalette::startText);
 
-	getcwd(path, PATH_MAX);
-	printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
+	getcwd(path, PATH_MAX);		// Only print path if directories are shown
+	if (ms().showDirectories) {
+		printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
+	}
 
 	displayDiskIcon(ms().secondaryDevice);
 	int n = 0;
@@ -509,8 +511,10 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 
 	printSmall(false, startTextX, startTextY, startText, Alignment::left, FontPalette::startText);
 
-	getcwd(path, PATH_MAX);
-	printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
+	getcwd(path, PATH_MAX);		// Only print path if directories are shown
+	if (ms().showDirectories) {
+		printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
+	}
 
 	if (file_count == 0) {} else
 	if (ms().ak_viewMode == TWLSettings::EViewList) {
