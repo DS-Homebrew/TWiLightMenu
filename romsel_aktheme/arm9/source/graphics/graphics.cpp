@@ -353,7 +353,7 @@ ITCM_CODE void updateSelectionBar(void) {
 	}
 	swiWaitForVBlank();
 	if (prevCurPos != 20) {
-		const int h = (prevViewMode != TWLSettings::EViewList) ? 38 : 11;
+		const int h = (prevViewMode != TWLSettings::EViewList) ? 38 : 15;
 		// const int hl = h-1;
 		const int hl = h;
 		for (int y = 19+(prevCurPos*h); y <= 19+hl+(prevCurPos*h); y++) {
@@ -364,7 +364,7 @@ ITCM_CODE void updateSelectionBar(void) {
 		}
 	}
 
-	const int h = (ms().ak_viewMode != TWLSettings::EViewList) ? 38 : 11;
+	const int h = (ms().ak_viewMode != TWLSettings::EViewList) ? 38 : 15;
 	const int hl = h-1;
 	bool color2 = false;
 	if (selectionBarOpacity == 100) {
