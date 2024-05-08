@@ -62,7 +62,7 @@
 #include "fileCopy.h"
 
 #define ENTRIES_PER_SCREEN 4
-#define ENTRIES_PER_SCREEN_LIST 13
+#define ENTRIES_PER_SCREEN_LIST 10
 #define ENTRY_PAGE_LENGTH 10
 
 extern bool lcdSwapped;
@@ -412,8 +412,10 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 	printSmall(false, startTextX, startTextY, startText, Alignment::left, FontPalette::startText);
 
-	getcwd(path, PATH_MAX);
-	printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
+	if (ms().showDirectories) {
+		getcwd(path, PATH_MAX);
+		printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
+	}
 
 	displayDiskIcon(ms().secondaryDevice);
 	int n = 0;
@@ -509,8 +511,10 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 
 	printSmall(false, startTextX, startTextY, startText, Alignment::left, FontPalette::startText);
 
-	getcwd(path, PATH_MAX);
-	printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
+	if (ms().showDirectories) {
+		getcwd(path, PATH_MAX);
+		printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
+	}
 
 	if (file_count == 0) {} else
 	if (ms().ak_viewMode == TWLSettings::EViewList) {
@@ -520,7 +524,7 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 		// Print directory listing
 		for (int i = 0; i < ((int)dirContents.size() - startRow) && i < ENTRIES_PER_SCREEN_LIST; i++) {
 			const DirEntry* entry = &dirContents.at(i + startRow);
-			printSmall(false, xPos, yPos+(i*11), entry->isDirectory ? ("["+entry->name+"]") : entry->name, Alignment::left, ((i + startRow) == fileOffset) ? FontPalette::mainTextHilight : FontPalette::mainText);
+			printSmall(false, xPos, yPos+(i*15), entry->isDirectory ? ("["+entry->name+"]") : entry->name, Alignment::left, ((i + startRow) == fileOffset) ? FontPalette::mainTextHilight : FontPalette::mainText);
 		}
 	} else {
 		int n = 0;
