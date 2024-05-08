@@ -2457,7 +2457,16 @@ int titleMode(void)
 			*(vu8*)(0x0A000000) = 'T';	// SRAM write test
 		  if (*(vu8*)(0x0A000000) == 'T') {	// Check if SRAM is writeable
 			*(vu8*)(0x0A000000) = byteBak;
-			std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
+
+			std::string filename = ms().romPath[true];
+			const size_t last_slash_idx = filename.find_last_of("/");
+			if (std::string::npos != last_slash_idx) {
+				filename.erase(0, last_slash_idx + 1);
+			}
+
+			std::string typeToReplace = filename.substr(filename.rfind('.'));
+
+			std::string savepath = replaceAll(ms().romPath[true], typeToReplace, ".sav");
 			u32 savesize = getFileSize(savepath.c_str());
 			if (savesize > 0x20000) savesize = 0x20000;
 			if (savesize > 0) {
