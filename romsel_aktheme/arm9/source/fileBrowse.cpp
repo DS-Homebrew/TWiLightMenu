@@ -62,7 +62,7 @@
 #include "fileCopy.h"
 
 #define ENTRIES_PER_SCREEN 4
-#define ENTRIES_PER_SCREEN_LIST 13
+#define ENTRIES_PER_SCREEN_LIST 10
 #define ENTRY_PAGE_LENGTH 10
 
 extern bool lcdSwapped;
