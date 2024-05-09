@@ -1169,6 +1169,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 	int pressed = 0;
 	int screenOffset = 0;
+	int screenOffsetPrev = 0;
 	int fileOffset = 0;
 	std::vector<DirEntry> dirContents;
 	displayDiskIcon(ms().secondaryDevice);
@@ -1188,6 +1189,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		screenOffset = fileOffset - entriesPerScreen + 1;
 		cursorPosOnScreen = entriesPerScreen - 1;
 	}
+
+	screenOffsetPrev = screenOffset;
 
 	displayIcons = (ms().ak_viewMode != TWLSettings::EViewList);
 	if (displayIcons) {
@@ -1380,22 +1383,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
 			fileOffset = 0;		// Stop at top for testing
 			cursorPosOnScreen = fileOffset - screenOffset;
-			if (displayIcons) {
-				loadIcons(screenOffset, dirContents);
-			} else {
-				refreshBanners(screenOffset, fileOffset, dirContents);
-			}
 		}
 		if (fileOffset > ((int)dirContents.size() - 1)) {
 			fileOffset = 0;		// Wrap around to top of list
 			cursorPosOnScreen = 0;
 			fileOffset = ((int)dirContents.size() - 1);		// Stop at bottom for testing
 			cursorPosOnScreen = fileOffset - screenOffset;
-			if (displayIcons) {
-				loadIcons(screenOffset, dirContents);
-			} else {
-				refreshBanners(screenOffset, fileOffset, dirContents);
-			}
 		}
 
 		// Scroll screen if needed
@@ -1404,29 +1397,19 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				screenOffset = screenOffset - 1;
 				cursorPosOnScreen = fileOffset - screenOffset;
 			}
-			if (displayIcons) {
-				loadIcons(screenOffset, dirContents);
-			} else {
-				refreshBanners(screenOffset, fileOffset, dirContents);
-			}
 		} else if (fileOffset - screenOffset > (0.5 * entriesPerScreen)) {
 			if (screenOffset + entriesPerScreen < file_count) {
 				screenOffset = screenOffset + 1;
 				cursorPosOnScreen = fileOffset - screenOffset;
 			}
-			if (displayIcons) {
-				loadIcons(screenOffset, dirContents);
-			} else {
-				refreshBanners(screenOffset, fileOffset, dirContents);
-			}
+		}
+		if (displayIcons && (!iconsLoaded || screenOffsetPrev != screenOffset)) {
+			loadIcons(screenOffset, dirContents);
 		} else {
-			if (displayIcons && !iconsLoaded) {
-				loadIcons(screenOffset, dirContents);
-			} else {
-				refreshBanners(screenOffset, fileOffset, dirContents);
-			}
+			refreshBanners(screenOffset, fileOffset, dirContents);
 		}
 		updateSelectionBar();
+		screenOffsetPrev = screenOffset;
 
 		if ((pressed & KEY_A) || selectionTouched) {
 			DirEntry* entry = &dirContents.at(fileOffset);
