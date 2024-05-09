@@ -753,7 +753,11 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 			mkdir("saves", 0777);
 		}
 		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
-		rename(savepath.c_str(), savepathFc.c_str());
+		if (savepath[0] == savepathFc[0] && savepath[1] == savepathFc[1] && savepath[2] == savepathFc[2]) {
+			rename(savepath.c_str(), savepathFc.c_str());
+		} else {
+			fcopy(savepath.c_str(), savepathFc.c_str());
+		}
 	}
 
 	std::string fcPath;

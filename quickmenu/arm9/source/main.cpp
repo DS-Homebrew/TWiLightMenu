@@ -765,11 +765,23 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		}
 		std::string romFolderNoSlash = romfolder;
 		RemoveTrailingSlashes(romFolderNoSlash);
-		std::string saveFolder = romFolderNoSlash + "/saves";
-		mkdir(saveFolder.c_str(), 0777);
+		chdir(romFolderNoSlash.c_str());
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
+		if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+			std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+			mkdir(twlmSavesFolder.c_str(), 0777);
+			savepath = twlmSavesFolder + "/" + savename;
+		} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+			savepath = romFolderNoSlash + "/" + savename;
+		} else {
+			mkdir("saves", 0777);
+		}
 		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
-		rename(savepath.c_str(), savepathFc.c_str());
+		if (savepath[0] == savepathFc[0] && savepath[1] == savepathFc[1] && savepath[2] == savepathFc[2]) {
+			rename(savepath.c_str(), savepathFc.c_str());
+		} else {
+			fcopy(savepath.c_str(), savepathFc.c_str());
+		}
 	}
 
 	std::string fcPath;

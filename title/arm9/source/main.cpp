@@ -79,6 +79,7 @@ void RemoveTrailingSlashes(std::string& path)
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
+static std::string saveToDelete = "";
 
 typedef TWLSettings::TLaunchType Launch;
 
@@ -2449,7 +2450,12 @@ int titleMode(void)
 		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
 		if ((access(savepathFc.c_str(), F_OK) == 0)
 		&& extension(filename, {".nds", ".dsi", ".ids", ".srl", "app"})) {
-			rename(savepathFc.c_str(), savepath.c_str());
+			if (savepathFc[0] == savepath[0] && savepathFc[1] == savepath[1] && savepathFc[2] == savepath[2]) {
+				rename(savepathFc.c_str(), savepath.c_str());
+			} else {
+				fcopy(savepathFc.c_str(), savepath.c_str());
+				saveToDelete = savepathFc;
+			}
 			logPrint("Moved back to saves folder:\n%s\n%s\n\n", savepathFc.c_str(), savepath.c_str());
 		}
 	  }} else if (sys().isRegularDS() && (*(u16*)(0x020000C0) != 0) && (ms().launchType[true] == Launch::EGBANativeLaunch)) {
@@ -2652,6 +2658,10 @@ int titleMode(void)
 			*(u32*)0x020007F0 = 0x4D44544C;
 		}
 		lastRunROM();
+	}
+
+	if (saveToDelete != "") {
+		remove(saveToDelete.c_str());
 	}
 
 	// If in DSi mode with no flashcard & with SCFG access, attempt to cut slot1 power to save battery
