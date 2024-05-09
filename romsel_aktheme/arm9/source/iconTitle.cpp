@@ -1399,7 +1399,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 					clearIcon(num);
 				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
-					clearIcon(num);
+					loadFolderIcon(num);
 				} else {
 					iconUpdate(num, false, p);
 				}
