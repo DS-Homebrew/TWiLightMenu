@@ -87,6 +87,11 @@ extern int startY;
 extern int startH;
 extern int startW;
 
+extern int brightnessX;
+extern int brightnessY;
+extern int brightnessW;
+extern int brightnessH;
+
 extern int folderUpX;
 extern int folderUpY;
 extern int folderUpW;
@@ -1680,6 +1685,15 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			displayDiskIcon(false);
 			iconsLoaded = false;
 			return "null";
+		}
+
+		if ((sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) && (pressed & KEY_TOUCH) && touch.px >= brightnessX && touch.px < brightnessX+brightnessW && touch.py >= brightnessY && touch.py < brightnessY+brightnessH) {
+			fifoSendValue32(FIFO_USER_04, 1);
+			while (1) {
+				scanKeys();
+				if (!(keysHeld() & KEY_TOUCH)) break;
+				bgOperations(true);
+			}
 		}
 
 		if (((pressed & KEY_L) || (pressed & KEY_B)

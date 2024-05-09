@@ -208,6 +208,11 @@ int startY = 172;
 int startW = 48;
 int startH = 18;
 
+int brightnessX = 238;
+int brightnessY = 172;
+int brightnessW = 16;
+int brightnessH = 16;
+
 int folderUpX = 0;
 int folderUpY = 2;
 int folderUpW = 32;
@@ -1140,6 +1145,15 @@ int akTheme(void) {
 
 		startTextX = startX + startW/5;
 		startTextY = startY + startH/5;
+
+		if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
+			brightnessX = ini.GetInt("brightness btn", "x", brightnessX);
+			brightnessY = ini.GetInt("brightness btn", "y", brightnessY);
+			brightnessW = ini.GetInt("brightness btn", "w", brightnessW);
+			brightnessH = ini.GetInt("brightness btn", "h", brightnessH);
+
+			displayBrightnessBtn(brightnessX, brightnessY);
+		}
 
 		if (ms().showDirectories) {
 			folderUpX = ini.GetInt("folderup btn", "x", folderUpX);

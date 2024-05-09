@@ -28,6 +28,7 @@ void initSubSprites(void);
 void resetIconScale(void);
 void updateSelectionBar(void);
 void displayStartButton(const int x, const int y);
+void displayBrightnessBtn(const int x, const int y);
 void displayFolderUp(const int x, const int y);
 void displayDiskIcon(const bool show);
 void drawTime(void);

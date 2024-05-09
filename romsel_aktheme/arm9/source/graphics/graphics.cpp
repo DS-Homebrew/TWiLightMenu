@@ -22,6 +22,7 @@
 #include <gl2d.h>
 #include "date.h"
 #include "fileCopy.h"
+#include "myDSiMode.h"
 #include "common/lodepng.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
@@ -95,6 +96,10 @@ u16 bottomImageWithBar[2][256*192];
 static u16* startButton[2] = {NULL};
 static int startButtonW = 0;
 static int startButtonH = 0;
+
+static u16* brightnessBtn[2] = {NULL};
+static int brightnessBtnW = 0;
+static int brightnessBtnH = 0;
 
 static u16* folderUpIcon[2] = {NULL};
 static int folderUpIconW = 0;
@@ -442,6 +447,25 @@ ITCM_CODE void displayStartButton(const int x, const int y) {
 
 	delete[] startButton[0];
 	delete[] startButton[1];
+}
+
+ITCM_CODE void displayBrightnessBtn(const int x, const int y) {
+	if (!brightnessBtn[0]) return;
+
+	int src = 0;
+
+	for (int y2 = y; y2 < y+brightnessBtnH; y2++) {
+		for (int x2 = x; x2 < x+brightnessBtnW; x2++) {
+			if ((brightnessBtn[0][src] != (0 | BIT(15))) && x2 >= 0 && x2 < 256 && y2 >= 0 && y2 < 192) {
+				bottomImageWithBar[0][(y2*256)+x2] = brightnessBtn[0][src];
+				bottomImageWithBar[1][(y2*256)+x2] = brightnessBtn[1][src];
+			}
+			src++;
+		}
+	}
+
+	delete[] brightnessBtn[0];
+	delete[] brightnessBtn[1];
 }
 
 ITCM_CODE void displayFolderUp(const int x, const int y) {
@@ -939,6 +963,7 @@ enum class ImageType {
 	bottom,
 	top,
 	startButton,
+	brightness,
 	folderUp,
 	cardIconBlue,
 	clockNumbers,
@@ -971,7 +996,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 	}
 
 	int xPos = 0;
-	if (type < ImageType::folderUp && width <= 254) {
+	if (type < ImageType::startButton && width <= 254) {
 		// Adjust X position
 		for (int i = width; i < 256; i += 2) {
 			xPos++;
@@ -979,7 +1004,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 	}
 
 	int yPos = 0;
-	if (type < ImageType::folderUp && height <= 190) {
+	if (type < ImageType::startButton && height <= 190) {
 		// Adjust Y position
 		for (int i = height; i < 192; i += 2) {
 			yPos++;
@@ -992,6 +1017,12 @@ static void loadBmp(const ImageType type, const char* filename) {
 
 		startButton[0] = new u16[width*height];
 		startButton[1] = new u16[width*height];
+	} else if (type == ImageType::brightness) {
+		brightnessBtnW = (int)width;
+		brightnessBtnH = (int)height;
+
+		brightnessBtn[0] = new u16[width*height];
+		brightnessBtn[1] = new u16[width*height];
 	} else if (type == ImageType::folderUp) {
 		folderUpIconW = (int)width;
 		folderUpIconH = (int)height;
@@ -1141,6 +1172,8 @@ static void loadBmp(const ImageType type, const char* filename) {
 				cardIconBlue[0][(y*width)+x] = color;
 			} else if (type == ImageType::folderUp) {
 				folderUpIcon[0][(y*width)+x] = color;
+			} else if (type == ImageType::brightness) {
+				brightnessBtn[0][(y*width)+x] = color;
 			} else if (type == ImageType::startButton) {
 				startButton[0][(y*width)+x] = color;
 			} else if (type == ImageType::top) {
@@ -1199,6 +1232,8 @@ static void loadBmp(const ImageType type, const char* filename) {
 				cardIconBlue[1][(y*width)+x] = color;
 			} else if (type == ImageType::folderUp) {
 				folderUpIcon[1][(y*width)+x] = color;
+			} else if (type == ImageType::brightness) {
+				brightnessBtn[1][(y*width)+x] = color;
 			} else if (type == ImageType::startButton) {
 				startButton[1][(y*width)+x] = color;
 			} else if (type == ImageType::top) {
@@ -1225,6 +1260,10 @@ static void loadBmp(const ImageType type, const char* filename) {
 			renderWidth = (int)width;
 			dst = (startButton[0] + (height-1) * width);
 			dst2 = (startButton[1] + (height-1) * width);
+		} else if (type == ImageType::brightness) {
+			renderWidth = (int)width;
+			dst = (brightnessBtn[0] + (height-1) * width);
+			dst2 = (brightnessBtn[1] + (height-1) * width);
 		} else if (type == ImageType::folderUp) {
 			renderWidth = (int)width;
 			dst = (folderUpIcon[0] + (height-1) * width);
@@ -1360,6 +1399,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 			} else if (type == ImageType::folderUp) {
 				folderUpIcon[0][(y*width)+x] = color;
 				folderUpIcon[1][(y*width)+x] = color;
+			} else if (type == ImageType::brightness) {
+				brightnessBtn[0][(y*width)+x] = color;
+				brightnessBtn[1][(y*width)+x] = color;
 			} else if (type == ImageType::startButton) {
 				startButton[0][(y*width)+x] = color;
 				startButton[1][(y*width)+x] = color;
@@ -1441,6 +1483,9 @@ static void loadBmp(const ImageType type, const char* filename) {
 				} else if (type == ImageType::folderUp) {
 					folderUpIcon[0][(y*width)+x] = color;
 					folderUpIcon[1][(y*width)+x] = color;
+				} else if (type == ImageType::brightness) {
+					brightnessBtn[0][(y*width)+x] = color;
+					brightnessBtn[1][(y*width)+x] = color;
 				} else if (type == ImageType::startButton) {
 					startButton[0][(y*width)+x] = color;
 					startButton[1][(y*width)+x] = color;
@@ -1786,6 +1831,17 @@ void graphicsLoad()
 	dmaCopyHalfWordsAsynch(1, topImage[1], topImageWithText[1], 0x18000);
 	dmaCopyHalfWordsAsynch(2, bottomImage[0], bottomImageWithBar[0], 0x18000);
 	dmaCopyHalfWordsAsynch(3, bottomImage[1], bottomImageWithBar[1], 0x18000);
+
+	if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
+		std::string pathBrightness;
+		if (access((themePath + "/brightness.bmp").c_str(), F_OK) == 0) {
+			pathBrightness = themePath + "/brightness.bmp";
+		} else {
+			pathBrightness = "nitro:/themes/zelda/brightness.bmp";
+		}
+
+		loadBmp(ImageType::brightness, pathBrightness.c_str());
+	}
 
 	if (ms().showDirectories) {
 		std::string pathFolderUp;
