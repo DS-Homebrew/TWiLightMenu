@@ -1379,27 +1379,27 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		if (fileOffset < 0) {
 			fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
+			if (file_count > entriesPerScreen) {
+				screenOffset = (file_count-1) - entriesPerScreen;
+			}
 			cursorPosOnScreen = file_count-1;
 			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
-			fileOffset = 0;		// Stop at top for testing
-			cursorPosOnScreen = fileOffset - screenOffset;
 		}
 		if (fileOffset > ((int)dirContents.size() - 1)) {
 			fileOffset = 0;		// Wrap around to top of list
+			screenOffset = 0;
 			cursorPosOnScreen = 0;
-			fileOffset = ((int)dirContents.size() - 1);		// Stop at bottom for testing
-			cursorPosOnScreen = fileOffset - screenOffset;
 		}
 
 		// Scroll screen if needed
 		if (fileOffset - screenOffset < (0.5 * entriesPerScreen) - 1){
 			if (screenOffset > 0) {
-				screenOffset = screenOffset - 1;
+				screenOffset--;
 				cursorPosOnScreen = fileOffset - screenOffset;
 			}
 		} else if (fileOffset - screenOffset > (0.5 * entriesPerScreen)) {
 			if (screenOffset + entriesPerScreen < file_count) {
-				screenOffset = screenOffset + 1;
+				screenOffset++;
 				cursorPosOnScreen = fileOffset - screenOffset;
 			}
 		}
