@@ -559,7 +559,6 @@ int currentbnriconframeseq[41] = {0};
 void grabBannerSequence(int iconnum)
 {
 	memcpy(bnriconframeseq[iconnum], bnriconTile[iconnum].dsi_seq, 64 * sizeof(u16));
-
 	currentbnriconframeseq[iconnum] = 0;
 }
 

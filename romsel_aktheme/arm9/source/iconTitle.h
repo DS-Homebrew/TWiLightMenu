@@ -16,6 +16,7 @@ void iconTitleInit();
 void reloadIconPalettes();
 
 void loadConsoleIcons();
+void copyGameInfo(int numDst, int numSrc);
 void getGameInfo(int num, bool isDir, const char* name);
 void iconUpdate(int num, bool isDir, const char* name);
 void titleUpdate(int num, bool isDir, const char* name, const bool highlighted);

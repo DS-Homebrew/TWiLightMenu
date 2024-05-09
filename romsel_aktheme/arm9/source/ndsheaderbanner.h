@@ -277,6 +277,8 @@ u32 getSDKVersion(FILE* ndsFile);
  */
 int checkRomAP(FILE *ndsFile);
 
+extern sNDSBannerExt bnriconTile[4];
+
 // bnriconframenum[]
 extern int bnriconPalLoaded[4];
 extern int bnriconPalLine[4];
@@ -305,17 +307,23 @@ extern char customIconPath[256];
  * Get banner sequence from banner file.
  * @param binFile Banner file.
  */
-void grabBannerSequence(int num);
+void grabBannerSequence(int iconnum);
+
+/**
+ * Copy banner sequence to a different icon slot.
+ * @param binFile Banner file.
+ */
+void copyBannerSequence(int iconnumDst, int iconnumSrc);
 
 /**
  * Clear loaded banner sequence.
  */
-void clearBannerSequence(int num);
+void clearBannerSequence(int iconnum);
 
 /**
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence(int num);
+void playBannerSequence(int iconnum);
 
 #endif // NDS_HEADER2

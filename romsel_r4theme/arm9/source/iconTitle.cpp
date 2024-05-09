@@ -1101,8 +1101,6 @@ void getGameInfo(bool isDir, const char* name)
 			}
 		}
 
-		bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
-
 		tonccpy(gameTid, ndsHeader.gameCode, 4);
 		isTwlm = (strcmp(gameTid, "SRLA") == 0);
 		romVersion = ndsHeader.romversion;
@@ -1152,6 +1150,7 @@ void getGameInfo(bool isDir, const char* name)
 
 		if (!isHomebrew) {
 			// Check if ROM needs a donor ROM
+			bool dsiEnhancedMbk = (isDSiMode() && *(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked());
 			if (isDSiMode() && (a7mbk6 == (dsiEnhancedMbk ? 0x080037C0 : 0x00403000) || (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000 && (REG_MBK9 & 0x00FFFFFF) != 0x00FFFF0F)) && sys().arm7SCFGLocked()) {
 				requiresDonorRom = dsiEnhancedMbk ? 51 : 52; // DSi-Enhanced ROM required on CycloDSi, or DSi-Exclusive/DSiWare ROM required on DSiWarehax
 				if (ndsHeader.gameCode[0] == 'H' && ndsHeader.arm7binarySize < 0xC000 && ndsHeader.arm7idestination == 0x02E80000) {

@@ -577,7 +577,6 @@ int currentbnriconframeseq = 0;
 void grabBannerSequence()
 {
 	memcpy(bnriconframeseq, ndsBanner.dsi_seq, 64 * sizeof(u16));
-
 	currentbnriconframeseq = 0;
 }
 

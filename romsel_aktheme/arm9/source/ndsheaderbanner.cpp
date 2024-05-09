@@ -550,6 +550,8 @@ int checkRomAP(FILE *ndsFile)
 	return 0;
 }
 
+sNDSBannerExt bnriconTile[4];
+
 // bnriconframeseq[]
 static u16 bnriconframeseq[4][64] = {0x0000};
 
@@ -584,57 +586,68 @@ int currentbnriconframeseq[4] = {0};
  * Get banner sequence from banner file.
  * @param binFile Banner file.
  */
-void grabBannerSequence(int num)
+void grabBannerSequence(int iconnum)
 {
-	for (int i = 0; i < 64; i++) {
-		bnriconframeseq[num][i] = ndsBanner.dsi_seq[i];
-	}
+	memcpy(bnriconframeseq[iconnum], bnriconTile[iconnum].dsi_seq, 64 * sizeof(u16));
+	bannerDelayNum[iconnum] = 0;
+	currentbnriconframeseq[iconnum] = 0;
+}
+
+/**
+ * Copy banner sequence to a different icon slot.
+ * @param binFile Banner file.
+ */
+void copyBannerSequence(int iconnumDst, int iconnumSrc)
+{
+	memcpy(bnriconframeseq[iconnumDst], bnriconframeseq[iconnumSrc], 64 * sizeof(u16));
+	bannerDelayNum[iconnumDst] = bannerDelayNum[iconnumSrc];
+	currentbnriconframeseq[iconnumDst] = currentbnriconframeseq[iconnumSrc];
 }
 
 /**
  * Clear loaded banner sequence.
  */
-void clearBannerSequence(int num)
+void clearBannerSequence(int iconnum)
 {
-	for (int i = 0; i < 64; i++) {
-		bnriconframeseq[num][i] = 0x0000;
-	}
+	memset(bnriconframeseq[iconnum], 0, 64 * sizeof(u16));
+	bannerDelayNum[iconnum] = 0;
+	currentbnriconframeseq[iconnum] = 0;
 }
 
 /**
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence(int num)
+void playBannerSequence(int iconnum)
 {
-	if (bnriconframeseq[num][currentbnriconframeseq[num] + 1] == 0x0100) {
+	if (bnriconframeseq[iconnum][currentbnriconframeseq[iconnum] + 1] == 0x0100) {
 		// Do nothing if icon isn't animated
-		bnriconPalLine[num] = 0;
-		bnriconframenumY[num] = 0;
-		bannerFlip[num] = GL_FLIP_NONE;
+		bnriconPalLine[iconnum] = 0;
+		bnriconframenumY[iconnum] = 0;
+		bannerFlip[iconnum] = GL_FLIP_NONE;
 	} else {
-		u16 setframeseq = bnriconframeseq[num][currentbnriconframeseq[num]];
-		bnriconPalLine[num] = SEQ_PAL(setframeseq);
-		bnriconframenumY[num] =  SEQ_BMP(setframeseq);
+		u16 setframeseq = bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]];
+		bnriconPalLine[iconnum] = SEQ_PAL(setframeseq);
+		bnriconframenumY[iconnum] = SEQ_BMP(setframeseq);
 		bool flipH = SEQ_FLIPH(setframeseq);
 		bool flipV = SEQ_FLIPV(setframeseq);
 
 		if (flipH && flipV) {
-			bannerFlip[num] = GL_FLIP_H | GL_FLIP_V;
+			bannerFlip[iconnum] = GL_FLIP_H | GL_FLIP_V;
 		} else if (!flipH && !flipV) {
-			bannerFlip[num] = GL_FLIP_NONE;
+			bannerFlip[iconnum] = GL_FLIP_NONE;
 		} else if (flipH && !flipV) {
-			bannerFlip[num] = GL_FLIP_H;
+			bannerFlip[iconnum] = GL_FLIP_H;
 		} else if (!flipH && flipV) {
-			bannerFlip[num] = GL_FLIP_V;
+			bannerFlip[iconnum] = GL_FLIP_V;
 		}
 
-		bannerDelayNum[num]++;
-		if (bannerDelayNum[num] >= (setframeseq & 0x00FF)) {
-			bannerDelayNum[num] = 0x0000;
-			currentbnriconframeseq[num]++;
-			if (bnriconframeseq[num][currentbnriconframeseq[num]] == 0x0000) {
-				currentbnriconframeseq[num] = 0; // Reset sequence
+		bannerDelayNum[iconnum]++;
+		if (bannerDelayNum[iconnum] >= (setframeseq & 0x00FF)) {
+			bannerDelayNum[iconnum] = 0x0000;
+			currentbnriconframeseq[iconnum]++;
+			if (bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]] == 0x0000) {
+				currentbnriconframeseq[iconnum] = 0; // Reset sequence
 			}
 		}
 	}

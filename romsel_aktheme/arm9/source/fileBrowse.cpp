@@ -410,6 +410,9 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 	}
 }
 
+static bool scrollUpByOne = false;
+static bool scrollDownByOne = false;
+
 void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
 
@@ -506,6 +509,231 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	displayDiskIcon(false);
 
 	updateText(false);
+}
+
+extern bool stopDSiAnim;
+extern bool stopDSiAnimNotif;
+
+void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
+	clearText(false);
+
+	printSmall(false, startTextX, startTextY, startText, Alignment::left, FontPalette::startText);
+
+	if (ms().showDirectories) {
+		getcwd(path, PATH_MAX);
+		printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
+	}
+
+	stopDSiAnim = true;
+	while (!stopDSiAnimNotif);
+
+	for (int i = 3; i > 0; i--) {
+		copyGameInfo(i, i-1);
+		isDirectory[i] = isDirectory[i-1];
+		bnrRomType[i] = bnrRomType[i-1];
+	}
+
+	stopDSiAnim = false;
+	while (stopDSiAnimNotif);
+
+	int n = 0;
+	int i = screenOffset;
+	if (i < file_count) {
+	displayDiskIcon(ms().secondaryDevice);
+	if (dirContents.at(i).isDirectory) {
+		isDirectory[n] = true;
+		bnriconPalLine[n] = 0;
+		bnriconPalLoaded[n] = 0;
+		bnriconframenumY[n] = 0;
+		bannerFlip[n] = 0;
+		bnriconisDSi[n] = false;
+		bnrWirelessIcon[n] = 0;
+	} else {
+		isDirectory[n] = false;
+		std::string std_romsel_filename = dirContents.at(i).name.c_str();
+		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str());
+
+		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
+			bnrRomType[n] = 0;
+		} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
+			bnrRomType[n] = 10;
+		} else if (extension(std_romsel_filename, {".msx"})) {
+			bnrRomType[n] = 21;
+		} else if (extension(std_romsel_filename, {".col"})) {
+			bnrRomType[n] = 13;
+		} else if (extension(std_romsel_filename, {".m5"})) {
+			bnrRomType[n] = 14;
+		} else if (extension(std_romsel_filename, {".int"})) {
+			bnrRomType[n] = 12;
+		} else if (extension(std_romsel_filename, {".plg"})) {
+			bnrRomType[n] = 9;
+		} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
+			bnrRomType[n] = 19;
+		} else if (extension(std_romsel_filename, {".gif", ".bmp", ".png"})) {
+			bnrRomType[n] = 20;
+		} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
+			bnrRomType[n] = 1;
+		} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
+			bnrRomType[n] = 2;
+		} else if (extension(std_romsel_filename,{ ".gbc"})) {
+			bnrRomType[n] = 3;
+		} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
+			bnrRomType[n] = 4;
+		} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
+			bnrRomType[n] = 15;
+		} else if (extension(std_romsel_filename, {".sms"})) {
+			bnrRomType[n] = 5;
+		} else if (extension(std_romsel_filename, {".gg"})) {
+			bnrRomType[n] = 6;
+		} else if (extension(std_romsel_filename, {".gen", ".md"})) {
+			bnrRomType[n] = 7;
+		} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
+			bnrRomType[n] = 8;
+		} else if (extension(std_romsel_filename, {".pce"})) {
+			bnrRomType[n] = 11;
+		} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
+			bnrRomType[n] = 16;
+		} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
+			bnrRomType[n] = 17;
+		} else if (extension(std_romsel_filename, {".dsk"})) {
+			bnrRomType[n] = 18;
+		} else if (extension(std_romsel_filename, {".min"})) {
+			bnrRomType[n] = 22;
+		} else if (extension(std_romsel_filename, {".ntrb"})) {
+			bnrRomType[n] = 23;
+		} else {
+			bnrRomType[n] = 9;
+		}
+
+		if (bnrRomType[n] != 0) {
+			bnrWirelessIcon[n] = 0;
+			isTwlm[n] = false;
+			isDSiWare[n] = false;
+			isHomebrew[n] = 0;
+		}
+	}
+	displayDiskIcon(false);
+	}
+
+	for (int i = screenOffset; i < screenOffset+4; i++) {
+		iconUpdate(n, isDirectory[n], dirContents.at(i).name.c_str());
+		titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
+		n++;
+	}
+
+	updateText(false);
+	scrollUpByOne = false;
+}
+
+void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
+	clearText(false);
+
+	printSmall(false, startTextX, startTextY, startText, Alignment::left, FontPalette::startText);
+
+	if (ms().showDirectories) {
+		getcwd(path, PATH_MAX);
+		printSmall(false, folderTextX, folderTextY, path, Alignment::left, FontPalette::folderText);
+	}
+
+	stopDSiAnim = true;
+	while (!stopDSiAnimNotif);
+
+	for (int i = 0; i < 3; i++) {
+		copyGameInfo(i, i+1);
+		isDirectory[i] = isDirectory[i+1];
+		bnrRomType[i] = bnrRomType[i+1];
+	}
+
+	stopDSiAnim = false;
+	while (stopDSiAnimNotif);
+
+	int n = 3;
+	int i = screenOffset+3;
+	if (i < file_count) {
+	displayDiskIcon(ms().secondaryDevice);
+	if (dirContents.at(i).isDirectory) {
+		isDirectory[n] = true;
+		bnriconPalLine[n] = 0;
+		bnriconPalLoaded[n] = 0;
+		bnriconframenumY[n] = 0;
+		bannerFlip[n] = 0;
+		bnriconisDSi[n] = false;
+		bnrWirelessIcon[n] = 0;
+	} else {
+		isDirectory[n] = false;
+		std::string std_romsel_filename = dirContents.at(i).name.c_str();
+		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str());
+
+		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
+			bnrRomType[n] = 0;
+		} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
+			bnrRomType[n] = 10;
+		} else if (extension(std_romsel_filename, {".msx"})) {
+			bnrRomType[n] = 21;
+		} else if (extension(std_romsel_filename, {".col"})) {
+			bnrRomType[n] = 13;
+		} else if (extension(std_romsel_filename, {".m5"})) {
+			bnrRomType[n] = 14;
+		} else if (extension(std_romsel_filename, {".int"})) {
+			bnrRomType[n] = 12;
+		} else if (extension(std_romsel_filename, {".plg"})) {
+			bnrRomType[n] = 9;
+		} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
+			bnrRomType[n] = 19;
+		} else if (extension(std_romsel_filename, {".gif", ".bmp", ".png"})) {
+			bnrRomType[n] = 20;
+		} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
+			bnrRomType[n] = 1;
+		} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
+			bnrRomType[n] = 2;
+		} else if (extension(std_romsel_filename,{ ".gbc"})) {
+			bnrRomType[n] = 3;
+		} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
+			bnrRomType[n] = 4;
+		} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
+			bnrRomType[n] = 15;
+		} else if (extension(std_romsel_filename, {".sms"})) {
+			bnrRomType[n] = 5;
+		} else if (extension(std_romsel_filename, {".gg"})) {
+			bnrRomType[n] = 6;
+		} else if (extension(std_romsel_filename, {".gen", ".md"})) {
+			bnrRomType[n] = 7;
+		} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
+			bnrRomType[n] = 8;
+		} else if (extension(std_romsel_filename, {".pce"})) {
+			bnrRomType[n] = 11;
+		} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
+			bnrRomType[n] = 16;
+		} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
+			bnrRomType[n] = 17;
+		} else if (extension(std_romsel_filename, {".dsk"})) {
+			bnrRomType[n] = 18;
+		} else if (extension(std_romsel_filename, {".min"})) {
+			bnrRomType[n] = 22;
+		} else if (extension(std_romsel_filename, {".ntrb"})) {
+			bnrRomType[n] = 23;
+		} else {
+			bnrRomType[n] = 9;
+		}
+
+		if (bnrRomType[n] != 0) {
+			bnrWirelessIcon[n] = 0;
+			isTwlm[n] = false;
+			isDSiWare[n] = false;
+			isHomebrew[n] = 0;
+		}
+	}
+	displayDiskIcon(false);
+	}
+
+	for (int i = screenOffset+3; i >= screenOffset; i--) {
+		iconUpdate(n, isDirectory[n], dirContents.at(i).name.c_str());
+		titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
+		n--;
+	}
+
+	updateText(false);
+	scrollDownByOne = false;
 }
 
 void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEntry> dirContents) {
@@ -1397,15 +1625,23 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (screenOffset > 0) {
 				screenOffset--;
 				cursorPosOnScreen = fileOffset - screenOffset;
+				scrollUpByOne = true;
 			}
 		} else if (fileOffset - screenOffset > (0.5 * entriesPerScreen)) {
 			if (screenOffset + entriesPerScreen < file_count) {
 				screenOffset++;
 				cursorPosOnScreen = fileOffset - screenOffset;
+				scrollDownByOne = true;
 			}
 		}
 		if (displayIcons && (screenOffsetPrev != screenOffset || listModeSwitched)) {
-			loadIcons(screenOffset, dirContents);
+			if (scrollUpByOne) {
+				loadIconUp(screenOffset, dirContents);
+			} else if (scrollDownByOne) {
+				loadIconDown(screenOffset, dirContents);
+			} else {
+				loadIcons(screenOffset, dirContents);
+			}
 		} else {
 			refreshBanners(screenOffset, fileOffset, dirContents);
 		}
