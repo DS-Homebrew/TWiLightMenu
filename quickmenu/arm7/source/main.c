@@ -248,7 +248,7 @@ int main() {
 	}
 
 	u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
-	
+
 	hasRegulableBacklight = !!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7));
 	isDSPhat = isPhat();
 
