@@ -1171,9 +1171,7 @@ int dsiMenuTheme(void) {
 
 	srand(time(NULL));
 
-	char path[256] = {0};
-
-	//logPrint("snd()\n");
+	logPrint("snd()\n");
 	snd();
 
 	if (ms().theme == TWLSettings::EThemeSaturn) {
@@ -1285,6 +1283,7 @@ int dsiMenuTheme(void) {
 			extensionList.erase(toErase, extensionList.end());
 		}
 
+		char path[256] = {0};
 		snprintf(path, sizeof(path), "%s", ms().romfolder[ms().secondaryDevice].c_str());
 		// Set directory
 		chdir(path);

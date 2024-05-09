@@ -1441,7 +1441,7 @@ void clearBoxArt() {
 // static char videoFrameFilename[256];
 
 void graphicsInit() {
-	//logPrint("graphicsInit()\n");
+	logPrint("graphicsInit()\n");
 
 	// for (int i = 0; i < 12; i++) {
 	// 	launchDotFrame[i] = 5;

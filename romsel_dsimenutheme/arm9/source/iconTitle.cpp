@@ -610,8 +610,6 @@ void iconUpdate(bool isDir, const char *name, int num) {
 
 	const bool isNds = (bnrRomType[num] == 0);
 
-	tex().loadIconUnknownTexture();
-
 	if (customIcon[num] > 0 || (customIcon[num] && isNds)) {
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
 		if (customIcon[num] == -1) {

@@ -1,6 +1,7 @@
 #include "iconHandler.h"
 #include "ThemeTextures.h"
 #include "common/twlmenusettings.h"
+#include "common/logging.h"
 #include <gl2d.h>
 #include <ctype.h>
 #include <nds.h>
@@ -191,6 +192,9 @@ void glClearIcon(int num) { glLoadIcon(num, blackPalette, clearTiles, 256, true)
  * icons. Must be called before the icon manager is used.
  */
 void iconManagerInit() {
+	logPrint("iconManagerInit()\n");
+
+	tex().loadIconUnknownTexture();
 
 	// Allocate texture memory for 6 textures.
 	glGenTextures(NDS_ICON_BANK_COUNT, _iconTexID);
