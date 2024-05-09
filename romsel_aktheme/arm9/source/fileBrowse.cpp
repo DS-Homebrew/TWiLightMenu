@@ -410,8 +410,6 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 	}
 }
 
-static bool iconsLoaded = false;
-
 void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
 
@@ -508,7 +506,6 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	displayDiskIcon(false);
 
 	updateText(false);
-	iconsLoaded = true;
 }
 
 void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEntry> dirContents) {
@@ -1200,6 +1197,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	}
 	updateSelectionBar();
 
+	bool listModeSwitched = false;
+
 	while (true) {
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
@@ -1362,6 +1361,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		}
 
 		if (pressed & KEY_SELECT) {
+			listModeSwitched = (ms().ak_viewMode == TWLSettings::EViewList);
+
 			ms().ak_viewMode++;
 			if (ms().ak_viewMode > 2) ms().ak_viewMode = 0;
 
@@ -1403,13 +1404,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				cursorPosOnScreen = fileOffset - screenOffset;
 			}
 		}
-		if (displayIcons && (!iconsLoaded || screenOffsetPrev != screenOffset)) {
+		if (displayIcons && (screenOffsetPrev != screenOffset || listModeSwitched)) {
 			loadIcons(screenOffset, dirContents);
 		} else {
 			refreshBanners(screenOffset, fileOffset, dirContents);
 		}
 		updateSelectionBar();
 		screenOffsetPrev = screenOffset;
+		listModeSwitched = false;
 
 		if ((pressed & KEY_A) || selectionTouched) {
 			DirEntry* entry = &dirContents.at(fileOffset);
@@ -1698,7 +1700,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			displayDiskIcon(!sys().isRunFromSD());
 			ms().saveSettings();
 			displayDiskIcon(false);
-			iconsLoaded = false;
 			return "null";
 		}
 
@@ -1722,7 +1723,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			displayDiskIcon(!sys().isRunFromSD());
 			ms().saveSettings();
 			displayDiskIcon(false);
-			iconsLoaded = false;
 			return "null";
 		}
 
