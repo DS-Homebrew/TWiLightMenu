@@ -198,7 +198,7 @@ int main() {
 
 	u8 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT)
 									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT)
-									| BIT_SET(!!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7)), BACKLIGHT_BIT)
+									| BIT_SET(hasRegulableBacklight, BACKLIGHT_BIT)
 									| BIT_SET(isDSPhat, DSPHAT_BIT));
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
