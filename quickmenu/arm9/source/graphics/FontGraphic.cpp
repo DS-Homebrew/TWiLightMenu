@@ -103,7 +103,9 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool set_u
 
 		// Skip font info
 		fseek(file, 0x14, SEEK_SET);
-		fseek(file, fgetc(file)-1, SEEK_CUR);
+		tileOffset = fgetc(file);
+		fseek(file, tileOffset-1, SEEK_CUR);
+		tileOffset += 0x20;
 
 		// Load glyph info
 		u32 chunkSize;
@@ -430,7 +432,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			}
 
 			if (!found && file) {
-				fseek(file, 0x40+(index * tileSize), SEEK_SET);
+				fseek(file, tileOffset+(index * tileSize), SEEK_SET);
 				fread(fontTiles+(cachePos * tileSize), tileSize, 1, file);
 			}
 

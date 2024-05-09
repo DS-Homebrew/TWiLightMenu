@@ -32,6 +32,7 @@ private:
 
 	FILE* file = nullptr;
 	bool useTileCache = false;
+	u8 tileOffset = 0;
 	u8 tileWidth = 0, tileHeight = 0;
 	u16 tileSize = 0;
 	int tileAmount = 0;
