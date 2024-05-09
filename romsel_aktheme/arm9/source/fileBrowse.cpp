@@ -1210,25 +1210,31 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		if (pressed & KEY_UP) {
 			fileOffset--;
-			cursorPosOnScreen--;
+			cursorPosOnScreen = fileOffset - screenOffset;
 			if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
 			resetIconScale();
 		}
 		if (pressed & KEY_DOWN) {
 			fileOffset++;
-			cursorPosOnScreen++;
+			cursorPosOnScreen = fileOffset - screenOffset;
 			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
 			resetIconScale();
 		}
 		if (pressed & KEY_LEFT) {
 			fileOffset -= ENTRY_PAGE_LENGTH;
-			cursorPosOnScreen -= ENTRY_PAGE_LENGTH;
+			screenOffset -= ENTRY_PAGE_LENGTH;
+			if (fileOffset < 0) fileOffset = 0;
+			if (screenOffset < 0) screenOffset = 0;
+			cursorPosOnScreen = fileOffset - screenOffset;
 			if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
 			resetIconScale();
 		}
 		if (pressed & KEY_RIGHT) {
 			fileOffset += ENTRY_PAGE_LENGTH;
-			cursorPosOnScreen += ENTRY_PAGE_LENGTH;
+			screenOffset += ENTRY_PAGE_LENGTH;
+			if (fileOffset > (int)dirContents.size() - 1) fileOffset = (int)dirContents.size() - 1;
+			if (screenOffset > (int)dirContents.size() - entriesPerScreen) screenOffset = (int)dirContents.size() - entriesPerScreen;
+			cursorPosOnScreen = fileOffset - screenOffset;
 			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
 			resetIconScale();
 		}
@@ -1358,30 +1364,56 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 			entriesPerScreen = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRIES_PER_SCREEN_LIST : ENTRIES_PER_SCREEN;
 			displayIcons = (ms().ak_viewMode != TWLSettings::EViewList);
+			
+			if (screenOffset > fileOffset - entriesPerScreen) screenOffset = fileOffset - entriesPerScreen;
+			if (screenOffset < fileOffset) screenOffset = fileOffset;
+			if (screenOffset > (int)dirContents.size() - entriesPerScreen) screenOffset = (int)dirContents.size() - entriesPerScreen;
+			if (screenOffset < 0) screenOffset = 0;
+			cursorPosOnScreen = fileOffset - screenOffset;
+			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
+			if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
 		}
 
 		if (fileOffset < 0) {
 			fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
 			cursorPosOnScreen = file_count-1;
 			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
-		}
-		if (fileOffset > ((int)dirContents.size() - 1)) {
-			fileOffset = 0;		// Wrap around to top of list
-			cursorPosOnScreen = 0;
-		}
-
-		// Scroll screen if needed
-		if (fileOffset < screenOffset) {
-			screenOffset = fileOffset;
-			cursorPosOnScreen = 0;
+			fileOffset = 0;		// Stop at top for testing
+			cursorPosOnScreen = fileOffset - screenOffset;
 			if (displayIcons) {
 				loadIcons(screenOffset, dirContents);
 			} else {
 				refreshBanners(screenOffset, fileOffset, dirContents);
 			}
-		} else if (fileOffset > screenOffset + entriesPerScreen - 1) {
-			screenOffset = fileOffset - entriesPerScreen + 1;
-			cursorPosOnScreen = entriesPerScreen - 1;
+		}
+		if (fileOffset > ((int)dirContents.size() - 1)) {
+			fileOffset = 0;		// Wrap around to top of list
+			cursorPosOnScreen = 0;
+			fileOffset = ((int)dirContents.size() - 1);		// Stop at bottom for testing
+			cursorPosOnScreen = fileOffset - screenOffset;
+			if (displayIcons) {
+				loadIcons(screenOffset, dirContents);
+			} else {
+				refreshBanners(screenOffset, fileOffset, dirContents);
+			}
+		}
+
+		// Scroll screen if needed
+		if (fileOffset - screenOffset < (0.5 * entriesPerScreen) - 1){
+			if (screenOffset > 0) {
+				screenOffset = screenOffset - 1;
+				cursorPosOnScreen = fileOffset - screenOffset;
+			}
+			if (displayIcons) {
+				loadIcons(screenOffset, dirContents);
+			} else {
+				refreshBanners(screenOffset, fileOffset, dirContents);
+			}
+		} else if (fileOffset - screenOffset > (0.5 * entriesPerScreen)) {
+			if (screenOffset + entriesPerScreen < file_count) {
+				screenOffset = screenOffset + 1;
+				cursorPosOnScreen = fileOffset - screenOffset;
+			}
 			if (displayIcons) {
 				loadIcons(screenOffset, dirContents);
 			} else {
