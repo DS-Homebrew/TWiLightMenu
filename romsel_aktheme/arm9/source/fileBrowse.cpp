@@ -1474,7 +1474,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if (cursorPosOnScreen != 0) {
 						cursorPosOnScreen = 0;
 						fileOffset = screenOffset;
-					} else {
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
 						selectionTouched = true;
 					}
 					resetIconScale();
@@ -1482,7 +1482,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if (cursorPosOnScreen != 1) {
 						cursorPosOnScreen = 1;
 						fileOffset = screenOffset+1;
-					} else {
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
 						selectionTouched = true;
 					}
 					resetIconScale();
@@ -1490,7 +1490,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if (cursorPosOnScreen != 2) {
 						cursorPosOnScreen = 2;
 						fileOffset = screenOffset+2;
-					} else {
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
 						selectionTouched = true;
 					}
 					resetIconScale();
@@ -1498,7 +1498,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if (cursorPosOnScreen != 3) {
 						cursorPosOnScreen = 3;
 						fileOffset = screenOffset+3;
-					} else {
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
 						selectionTouched = true;
 					}
 					resetIconScale();
@@ -1509,7 +1509,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						cursorPosOnScreen = 0;
 						fileOffset = screenOffset;
 					} else {
-						selectionTouched = true;
+						// selectionTouched = true;
 					}
 					resetIconScale();
 				} else if (file_count >= 2 && touch.py >= 19+15 && touch.py <= 19+14+15) {
@@ -1517,7 +1517,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						cursorPosOnScreen = 1;
 						fileOffset = screenOffset+1;
 					} else {
-						selectionTouched = true;
+						// selectionTouched = true;
 					}
 					resetIconScale();
 				} else if (file_count >= 3 && touch.py >= 19+(15*2) && touch.py <= 19+14+(15*2)) {
@@ -1525,7 +1525,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						cursorPosOnScreen = 2;
 						fileOffset = screenOffset+2;
 					} else {
-						selectionTouched = true;
+						// selectionTouched = true;
 					}
 					resetIconScale();
 				} else if (file_count >= 4 && touch.py >= 19+(15*3) && touch.py <= 19+14+(15*3)) {
@@ -1533,7 +1533,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						cursorPosOnScreen = 3;
 						fileOffset = screenOffset+3;
 					} else {
-						selectionTouched = true;
+						// selectionTouched = true;
 					}
 					resetIconScale();
 				} else if (file_count >= 5 && touch.py >= 19+(15*4) && touch.py <= 19+14+(15*4)) {
@@ -1541,7 +1541,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						cursorPosOnScreen = 4;
 						fileOffset = screenOffset+4;
 					} else {
-						selectionTouched = true;
+						// selectionTouched = true;
 					}
 					resetIconScale();
 				} else if (file_count >= 6 && touch.py >= 19+(15*5) && touch.py <= 19+14+(15*5)) {
@@ -1549,7 +1549,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						cursorPosOnScreen = 5;
 						fileOffset = screenOffset+5;
 					} else {
-						selectionTouched = true;
+						// selectionTouched = true;
 					}
 					resetIconScale();
 				} else if (file_count >= 7 && touch.py >= 19+(15*6) && touch.py <= 19+14+(15*6)) {
@@ -1557,7 +1557,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						cursorPosOnScreen = 6;
 						fileOffset = screenOffset+6;
 					} else {
-						selectionTouched = true;
+						// selectionTouched = true;
 					}
 					resetIconScale();
 				} else if (file_count >= 8 && touch.py >= 19+(15*7) && touch.py <= 19+14+(15*7)) {
@@ -1565,7 +1565,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						cursorPosOnScreen = 7;
 						fileOffset = screenOffset+7;
 					} else {
-						selectionTouched = true;
+						// selectionTouched = true;
 					}
 					resetIconScale();
 				} else if (file_count >= 9 && touch.py >= 19+(15*8) && touch.py <= 19+14+(15*8)) {
@@ -1573,7 +1573,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						cursorPosOnScreen = 8;
 						fileOffset = screenOffset+8;
 					} else {
-						selectionTouched = true;
+						// selectionTouched = true;
 					}
 					resetIconScale();
 				} else if (file_count >= 10 && touch.py >= 19+(15*9) && touch.py <= 19+14+(15*9)) {
@@ -1581,7 +1581,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						cursorPosOnScreen = 9;
 						fileOffset = screenOffset+9;
 					} else {
-						selectionTouched = true;
+						// selectionTouched = true;
 					}
 					resetIconScale();
 				}
@@ -1650,6 +1650,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		listModeSwitched = false;
 
 		if ((pressed & KEY_A) || selectionTouched) {
+			resetIconScale();
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
 				// Enter selected directory
@@ -1922,6 +1923,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		}
 
 		if ((pressed & KEY_R) && bothSDandFlashcard()) {
+			resetIconScale();
 			CURPOS = fileOffset;
 			PAGENUM = 0;
 			for (int i = 0; i < 100; i++) {
@@ -1950,6 +1952,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		if (((pressed & KEY_L) || (pressed & KEY_B)
 		|| ((pressed & KEY_TOUCH) && touch.px >= folderUpX && touch.px < folderUpX+folderUpW && touch.py >= folderUpY && touch.py < folderUpY+folderUpH)) && ms().showDirectories) {
+			resetIconScale();
 			// Go up a directory
 			chdir ("..");
 			char buf[256];
@@ -2018,6 +2021,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						displayDiskIcon(false);
 					}
 					
+					resetIconScale();
 					CURPOS = fileOffset;
 					PAGENUM = 0;
 					for (int i = 0; i < 100; i++) {
