@@ -432,6 +432,7 @@ void SoundControl::reloadSfxData() {
 }
 
 void SoundControl::unloadSfxData() {
+	if (!sfxDataLoaded) return;
 	sfxDataLoaded = false;
 
 	mmUnloadEffect(SFX_LAUNCH);
@@ -455,7 +456,7 @@ mm_sfxhand SoundControl::playStop(u8 panning)    { if (!sfxDataLoaded) return (m
 mm_sfxhand SoundControl::playWrong(u8 panning)   { if (!sfxDataLoaded) return (mm_sfxhand)NULL; snd_wrong.panning = panning;   return mmEffectEx(&snd_wrong); }
 
 void SoundControl::beginStream() {
-	if (!stream_source) return;
+	if (!stream_source || stream_is_playing) return;
 
 	// open the stream
 	stream_is_playing = true;
@@ -464,7 +465,7 @@ void SoundControl::beginStream() {
 }
 
 void SoundControl::stopStream() {
-	if (!stream_source) return;
+	if (!stream_source || !stream_is_playing) return;
 
 	stream_is_playing = false;
 	mmStreamClose();

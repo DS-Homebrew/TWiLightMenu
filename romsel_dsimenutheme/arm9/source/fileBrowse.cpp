@@ -3936,6 +3936,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							printSmall(false, 0, 20, STR_IF_CRASH_DISABLE_RECENT, Alignment::center);
 							updateText(false);
 
+							if (!dsiFeatures()) {
+								// Free some RAM space to avoid possible memory leaks
+								snd().stopStream();
+								mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
+								snd().unloadSfxData();
+							}
+
 							mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 						  0777);
 
