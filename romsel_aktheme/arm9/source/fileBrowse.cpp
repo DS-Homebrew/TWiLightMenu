@@ -410,8 +410,8 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 	}
 }
 
-static bool scrollUpByOne = false;
-static bool scrollDownByOne = false;
+// static bool scrollUpByOne = false;
+// static bool scrollDownByOne = false;
 
 void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
@@ -511,7 +511,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	updateText(false);
 }
 
-extern bool stopDSiAnim;
+/* extern bool stopDSiAnim;
 extern bool stopDSiAnimNotif;
 
 void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
@@ -734,7 +734,7 @@ void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 	updateText(false);
 	scrollDownByOne = false;
-}
+} */
 
 void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEntry> dirContents) {
 	clearText(false);
@@ -1625,23 +1625,23 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (screenOffset > 0) {
 				screenOffset--;
 				cursorPosOnScreen = fileOffset - screenOffset;
-				scrollUpByOne = true;
+				// scrollUpByOne = true;
 			}
 		} else if (fileOffset - screenOffset > (0.5 * entriesPerScreen)) {
 			if (screenOffset + entriesPerScreen < file_count) {
 				screenOffset++;
 				cursorPosOnScreen = fileOffset - screenOffset;
-				scrollDownByOne = true;
+				// scrollDownByOne = true;
 			}
 		}
 		if (displayIcons && (screenOffsetPrev != screenOffset || listModeSwitched)) {
-			if (scrollUpByOne) {
+			/* if (scrollUpByOne) {
 				loadIconUp(screenOffset, dirContents);
 			} else if (scrollDownByOne) {
 				loadIconDown(screenOffset, dirContents);
-			} else {
+			} else { */
 				loadIcons(screenOffset, dirContents);
-			}
+			// }
 		} else {
 			refreshBanners(screenOffset, fileOffset, dirContents);
 		}

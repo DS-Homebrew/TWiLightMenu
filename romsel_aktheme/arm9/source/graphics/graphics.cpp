@@ -68,8 +68,8 @@ int frameOf60fps = 60;
 int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
 bool renderFrame = true;
-bool stopDSiAnim = false;
-bool stopDSiAnimNotif = false;
+// bool stopDSiAnim = false;
+// bool stopDSiAnimNotif = false;
 
 extern int spawnedtitleboxes;
 
@@ -1645,10 +1645,11 @@ void vBlankHandler()
 				}
 				// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 				// Playback animated icons
-				if (!stopDSiAnim && bnriconisDSi[i]) {
+				// if (!stopDSiAnim && bnriconisDSi[i]) {
+				if (bnriconisDSi[i]) {
 					playBannerSequence(i);
 				}
-				stopDSiAnimNotif = stopDSiAnim;
+				// stopDSiAnimNotif = stopDSiAnim;
 			}
 			if (iconScaleEnabled) {
 				if (!iconScaleDelay) {
