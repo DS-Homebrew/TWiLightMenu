@@ -536,6 +536,7 @@ int bannerFlip[41] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
 bool isTwlm[40] = {false};
+bool isUnlaunch[40] = {false};
 bool isDirectory[40] = {false};
 bool bnrSysSettings[41] = {false};
 int bnrRomType[41] = {0};

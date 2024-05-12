@@ -286,6 +286,7 @@ extern int bannerFlip[41];
 
 // bnriconisDSi[]
 extern bool isTwlm[40];
+extern bool isUnlaunch[40];
 extern bool isDirectory[40];
 extern bool bnrSysSettings[41];
 extern int bnrRomType[41];

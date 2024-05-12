@@ -2348,14 +2348,14 @@ bool cannotLaunchMsg(const char *filename) {
 	if (ms().theme != TWLSettings::EThemeSaturn) {
 		dbox_showIcon = true;
 		showdialogbox = true;
-		for (int i = 0; i < 30; i++) {
-			bgOperations(true);
-		}
+		while (!dboxStopped) { bgOperations(true); }
 		titleUpdate(false, filename, CURPOS);
 	}
 	const std::string *str = nullptr;
 	if (isTwlm[CURPOS]) {
 		str = &STR_TWLMENU_ALREADY_RUNNING;
+	} else if (isUnlaunch[CURPOS]) {
+		str = &STR_CANNOT_LAUNCH_WITH_THEME;
 	} else if (bnrRomType[CURPOS] == 1) {
 		str = &STR_GBA_BIOS_ERROR_DESC;
 	} else if (bnrRomType[CURPOS] != 0) {
@@ -3633,7 +3633,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 					int hasAP = 0;
 					bool proceedToLaunch = true;
-					if (isTwlm[CURPOS] || (!isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[CURPOS] == 0 && gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3 && requiresDonorRom[CURPOS] != 51)
+					if (isTwlm[CURPOS] || (isUnlaunch[CURPOS] && ms().theme == TWLSettings::ETheme3DS) || (!isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[CURPOS] == 0 && gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3 && requiresDonorRom[CURPOS] != 51)
 					|| (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 					|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
 					|| (bnrRomType[CURPOS] == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {

@@ -188,6 +188,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 	bnrWirelessIcon[num] = 0;
 	toncset(gameTid[num], 0, 4);
 	isTwlm[num] = false;
+	isUnlaunch[num] = false;
 	isDSiWare[num] = false;
 	isHomebrew[num] = false;
 	isModernHomebrew[num] = false;
@@ -451,6 +452,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 		if (num < 40) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
 			isTwlm[num] = (strcmp(gameTid[num], "SRLA") == 0);
+			isUnlaunch[num] = (memcmp(ndsHeader.gameTitle, "UNLAUNCH.DSI", 12) == 0);
 			romVersion[num] = ndsHeader.romversion;
 			unitCode[num] = ndsHeader.unitCode;
 			headerCRC[num] = ndsHeader.headerCRC16;
@@ -479,7 +481,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 			}
 		} else if ((memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0)
 				 || (memcmp(ndsHeader.gameTitle, "MAGIC FLOOR", 11) == 0)
-				 || (memcmp(ndsHeader.gameTitle, "UNLAUNCH.DSI", 12) == 0)) {
+				 || isUnlaunch[num]) {
 			isHomebrew[num] = true;
 			isModernHomebrew[num] = true; // No need to use nds-bootstrap
 		} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
