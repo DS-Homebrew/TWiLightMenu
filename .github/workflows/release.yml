@@ -57,9 +57,6 @@ jobs:
           # Make artifacts directory
           mkdir -p ~/artifacts
 
-          # Theme is currently unused
-          rm -rf 7zfile/_nds/TWiLightMenu/akmenu
-
           # Debug 7z
           mv 7zfile/debug debug
           7z a TWiLightMenu-debug-release.7z debug
@@ -67,6 +64,7 @@ jobs:
 
           mkdir -p 7zfile/_nds/nds-bootstrap/
           mkdir -p 7zfile/_nds/TWiLightMenu/3dsmenu/themes/
+          mkdir -p 7zfile/_nds/TWiLightMenu/akmenu/themes/
           mkdir -p 7zfile/_nds/TWiLightMenu/boxart/
           mkdir -p 7zfile/_nds/TWiLightMenu/dsimenu/themes/
           mkdir -p 7zfile/_nds/TWiLightMenu/icons/
