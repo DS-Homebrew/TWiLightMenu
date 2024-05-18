@@ -697,9 +697,6 @@ void vBlankHandler()
 	  }
 	  glEnd2D();
 	  GFX_FLUSH = 0;
-
-		frameDelay = 0;
-		frameDelayEven = !frameDelayEven;
 	}
 
 	if (!whiteScreen) {
