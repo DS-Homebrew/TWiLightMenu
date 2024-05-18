@@ -64,11 +64,6 @@ bool doubleBuffer = true;
 
 int vblankRefreshCounter = 0;
 
-int frameOf60fps = 60;
-int frameDelay = 0;
-bool frameDelayEven = true; // For 24FPS
-bool renderFrame = true;
-
 extern int spawnedtitleboxes;
 
 extern bool startMenu;
@@ -119,53 +114,6 @@ void SetBrightness(u8 screen, s8 bright) {
 	}
 	if (bright > 31) bright = 31;
 	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
-}
-
-void frameRateHandler(void) {
-	frameOf60fps++;
-	if (frameOf60fps > 60) frameOf60fps = 1;
-
-	if (!renderFrame) {
-		frameDelay++;
-		switch (ms().fps) {
-			case 11:
-				renderFrame = (frameDelay == 5+frameDelayEven);
-				break;
-			case 24:
-			//case 25:
-				renderFrame = (frameDelay == 2+frameDelayEven);
-				break;
-			case 48:
-				renderFrame = (frameOf60fps != 3
-							&& frameOf60fps != 8
-							&& frameOf60fps != 13
-							&& frameOf60fps != 18
-							&& frameOf60fps != 23
-							&& frameOf60fps != 28
-							&& frameOf60fps != 33
-							&& frameOf60fps != 38
-							&& frameOf60fps != 43
-							&& frameOf60fps != 48
-							&& frameOf60fps != 53
-							&& frameOf60fps != 58);
-				break;
-			case 50:
-				renderFrame = (frameOf60fps != 3
-							&& frameOf60fps != 9
-							&& frameOf60fps != 16
-							&& frameOf60fps != 22
-							&& frameOf60fps != 28
-							&& frameOf60fps != 34
-							&& frameOf60fps != 40
-							&& frameOf60fps != 46
-							&& frameOf60fps != 51
-							&& frameOf60fps != 58);
-				break;
-			default:
-				renderFrame = (frameDelay == 60/ms().fps);
-				break;
-		}
-	}
 }
 
 //-------------------------------------------------------
@@ -575,14 +523,12 @@ void vBlankHandler()
 				fadeDelay = 0;
 			}
 		}
-		if (renderFrame) {
-			if (ms().macroMode) {
-				SetBrightness(0, lcdSwapped ? (ms().theme==6 ? -screenBrightness : screenBrightness) : (ms().theme==6 ? -31 : 31));
-				SetBrightness(1, !lcdSwapped ? (ms().theme==6 ? -screenBrightness : screenBrightness) : (ms().theme==6 ? -31 : 31));
-			} else {
-				if (controlBottomBright) SetBrightness(0, ms().theme==6 ? -screenBrightness : screenBrightness);
-				if (controlTopBright) SetBrightness(1, ms().theme==6 ? -screenBrightness : screenBrightness);
-			}
+		if (ms().macroMode) {
+			SetBrightness(0, lcdSwapped ? (ms().theme==6 ? -screenBrightness : screenBrightness) : (ms().theme==6 ? -31 : 31));
+			SetBrightness(1, !lcdSwapped ? (ms().theme==6 ? -screenBrightness : screenBrightness) : (ms().theme==6 ? -31 : 31));
+		} else {
+			if (controlBottomBright) SetBrightness(0, ms().theme==6 ? -screenBrightness : screenBrightness);
+			if (controlTopBright) SetBrightness(1, ms().theme==6 ? -screenBrightness : screenBrightness);
 		}
 
 		// glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
@@ -633,10 +579,6 @@ void vBlankHandler()
 		dmaCopyHalfWordsAsynch(1, bottomImage[startMenu][secondBuffer], BG_GFX, 0x18000);
 		secondBuffer = !secondBuffer;
 	}
-
-	frameDelay = 0;
-	frameDelayEven = !frameDelayEven;
-	renderFrame = false;
 
 	manualIconNextImg = !manualIconNextImg;
 }
@@ -949,6 +891,4 @@ void graphicsLoad()
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
-	irqSet(IRQ_VCOUNT, frameRateHandler);
-	irqEnable(IRQ_VCOUNT);
 }

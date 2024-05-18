@@ -19,10 +19,8 @@ bool lcdSwapped = false;
 extern int currentTheme;
 extern bool currentMacroMode;
 
-int frameOf60fps = 60;
 int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
-bool renderFrame = true;
 u16* colorTable = NULL;
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
@@ -39,53 +37,6 @@ void SetBrightness(u8 screen, s8 bright) {
 	}
 	if (bright > 31) bright = 31;
 	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
-}
-
-void frameRateHandler(void) {
-	frameOf60fps++;
-	if (frameOf60fps > 60) frameOf60fps = 1;
-
-	if (!renderFrame) {
-		frameDelay++;
-		switch (ms().fps) {
-			case 11:
-				renderFrame = (frameDelay == 5+frameDelayEven);
-				break;
-			case 24:
-			//case 25:
-				renderFrame = (frameDelay == 2+frameDelayEven);
-				break;
-			case 48:
-				renderFrame = (frameOf60fps != 3
-							&& frameOf60fps != 8
-							&& frameOf60fps != 13
-							&& frameOf60fps != 18
-							&& frameOf60fps != 23
-							&& frameOf60fps != 28
-							&& frameOf60fps != 33
-							&& frameOf60fps != 38
-							&& frameOf60fps != 43
-							&& frameOf60fps != 48
-							&& frameOf60fps != 53
-							&& frameOf60fps != 58);
-				break;
-			case 50:
-				renderFrame = (frameOf60fps != 3
-							&& frameOf60fps != 9
-							&& frameOf60fps != 16
-							&& frameOf60fps != 22
-							&& frameOf60fps != 28
-							&& frameOf60fps != 34
-							&& frameOf60fps != 40
-							&& frameOf60fps != 46
-							&& frameOf60fps != 51
-							&& frameOf60fps != 58);
-				break;
-			default:
-				renderFrame = (frameDelay == 60/ms().fps);
-				break;
-		}
-	}
 }
 
 /* u16 convertVramColorToGrayscale(u16 val) {
@@ -136,27 +87,19 @@ void drawScroller(int y, int h, bool onLeft) {
 
 void vBlankHandler()
 {
-	if (fadeType == true) {
+	if (fadeType) {
 		screenBrightness--;
 		if (screenBrightness < 0) screenBrightness = 0;
 	} else {
 		screenBrightness++;
 		if (screenBrightness > 31) screenBrightness = 31;
 	}
-	if (renderFrame) {
-		if (currentMacroMode) {
-			SetBrightness(0, lcdSwapped ? (currentTheme == 4 ? -screenBrightness : screenBrightness) : (currentTheme == 4 ? -31 : 31));
-			SetBrightness(1, !lcdSwapped ? (currentTheme == 4 ? -screenBrightness : screenBrightness) : (currentTheme == 4 ? -31 : 31));
-		} else {
-			SetBrightness(0, currentTheme == 4 ? -screenBrightness : screenBrightness);
-			SetBrightness(1, currentTheme == 4 ? -screenBrightness : screenBrightness);
-		}
-	}
-
-	if (renderFrame) {
-		frameDelay = 0;
-		frameDelayEven = !frameDelayEven;
-		renderFrame = false;
+	if (currentMacroMode) {
+		SetBrightness(0, lcdSwapped ? (currentTheme == 4 ? -screenBrightness : screenBrightness) : (currentTheme == 4 ? -31 : 31));
+		SetBrightness(1, !lcdSwapped ? (currentTheme == 4 ? -screenBrightness : screenBrightness) : (currentTheme == 4 ? -31 : 31));
+	} else {
+		SetBrightness(0, currentTheme == 4 ? -screenBrightness : screenBrightness);
+		SetBrightness(1, currentTheme == 4 ? -screenBrightness : screenBrightness);
 	}
 }
 
@@ -214,6 +157,4 @@ void graphicsInit() {
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
-	irqSet(IRQ_VCOUNT, frameRateHandler);
-	irqEnable(IRQ_VCOUNT);
 }

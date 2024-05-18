@@ -188,7 +188,6 @@ int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
 bool rocketVideo_frameDelayEven = true;
 bool rocketVideo_loadFrame = true;
-bool renderFrame = true;
 u16* colorTable = NULL;
 
 int bubbleYpos = 80;
@@ -306,48 +305,6 @@ u8 *rotatingCubesLocation = (u8*)NULL;
 void frameRateHandler(void) {
 	frameOf60fps++;
 	if (frameOf60fps > 60) frameOf60fps = 1;
-
-	if (!renderFrame) {
-		frameDelay++;
-		switch (ms().fps) {
-			case 11:
-				renderFrame = (frameDelay == 5+frameDelayEven);
-				break;
-			case 24:
-			//case 25:
-				renderFrame = (frameDelay == 2+frameDelayEven);
-				break;
-			case 48:
-				renderFrame = (frameOf60fps != 3
-							&& frameOf60fps != 8
-							&& frameOf60fps != 13
-							&& frameOf60fps != 18
-							&& frameOf60fps != 23
-							&& frameOf60fps != 28
-							&& frameOf60fps != 33
-							&& frameOf60fps != 38
-							&& frameOf60fps != 43
-							&& frameOf60fps != 48
-							&& frameOf60fps != 53
-							&& frameOf60fps != 58);
-				break;
-			case 50:
-				renderFrame = (frameOf60fps != 3
-							&& frameOf60fps != 9
-							&& frameOf60fps != 16
-							&& frameOf60fps != 22
-							&& frameOf60fps != 28
-							&& frameOf60fps != 34
-							&& frameOf60fps != 40
-							&& frameOf60fps != 46
-							&& frameOf60fps != 51
-							&& frameOf60fps != 58);
-				break;
-			default:
-				renderFrame = (frameDelay == 60/ms().fps);
-				break;
-		}
-	}
 
 	if (!rocketVideo_playVideo)
 		return;
@@ -497,9 +454,9 @@ void vBlankHandler() {
 		}
 	}
 
-	if (controlBottomBright && renderFrame)
+	if (controlBottomBright)
 		SetBrightness(0, tc().darkLoading() ? -screenBrightness : screenBrightness);
-	if (controlTopBright && !ms().macroMode && renderFrame)
+	if (controlTopBright && !ms().macroMode)
 		SetBrightness(1, tc().darkLoading() ? -screenBrightness : screenBrightness);
 
 	if (showdialogbox) {
@@ -641,7 +598,7 @@ void vBlankHandler() {
 		}
 	}
 
-	if (renderFrame) {
+	{
 		glBegin2D();
 
 		int bg_R = bottomScreenBrightness / 8;
@@ -1087,7 +1044,6 @@ void vBlankHandler() {
 
 		frameDelay = 0;
 		frameDelayEven = !frameDelayEven;
-		renderFrame = (ms().fps == 60);
 	}
 
 	colonTimer++;

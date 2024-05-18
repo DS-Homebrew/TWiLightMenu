@@ -33,7 +33,6 @@ TWLSettings::TWLSettings()
 	guiLanguage = ELangDefault;
 	currentLanguage = ELangDefault;
 	titleLanguage = ELangDefault;
-	fps = 60;
 	macroMode = false;
 	colorMode = "Default";
 	// blfLevel = 0;
@@ -202,7 +201,6 @@ void TWLSettings::loadSettings()
 	guiLanguage = (TLanguage)settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
 	currentLanguage = guiLanguage;
 	titleLanguage = (TLanguage)settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
-	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
 	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
 	colorMode = settingsini.GetString("SRLOADER", "COLOR_MODE", colorMode);
 	// blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
@@ -379,7 +377,6 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "LOGGING", logging);
 	settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
 	settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
-	settingsini.SetInt("SRLOADER", "FRAME_RATE", fps);
 	settingsini.SetInt("SRLOADER", "MACRO_MODE", macroMode);
 	settingsini.SetString("SRLOADER", "COLOR_MODE", colorMode);
 	// settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);

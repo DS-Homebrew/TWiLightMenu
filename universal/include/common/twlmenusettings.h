@@ -273,7 +273,6 @@ public:
 	bool logging;
 	TLanguage guiLanguage, currentLanguage;
 	TLanguage titleLanguage;
-	int fps;
 	bool macroMode;
 	std::string colorMode;
 	// int blfLevel;
