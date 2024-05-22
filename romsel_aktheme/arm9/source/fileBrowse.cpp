@@ -1414,6 +1414,19 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		screenOffset = fileOffset - entriesPerScreen + 1;
 		cursorPosOnScreen = entriesPerScreen - 1;
 	}
+	if (fileOffset - screenOffset < (0.5 * entriesPerScreen) - 1){
+		if (screenOffset > 0) {
+			screenOffset--;
+			cursorPosOnScreen = fileOffset - screenOffset;
+			// scrollUpByOne = true;
+		}
+	} else if (fileOffset - screenOffset > (0.5 * entriesPerScreen)) {
+		if (screenOffset + entriesPerScreen < file_count) {
+			screenOffset++;
+			cursorPosOnScreen = fileOffset - screenOffset;
+			// scrollDownByOne = true;
+		}
+	}
 
 	screenOffsetPrev = screenOffset;
 
