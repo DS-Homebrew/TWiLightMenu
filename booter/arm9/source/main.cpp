@@ -202,10 +202,10 @@ int main(int argc, char **argv) {
 	extern const DISC_INTERFACE __my_io_dsisd;
 	const bool fatInited = fatMountSimple("sd", &__my_io_dsisd);
 
-	*(u32*)0x0CFFFD0C = 0x47444943; // 'CIDG'
-	while (*(u32*)0x0CFFFD0C != 0) { swiDelay(100); }
+	if (*(u8*)0x0280FFFF != 0x01) {
+		*(u32*)0x0CFFFD0C = 0x47444943; // 'CIDG'
+		while (*(u32*)0x0CFFFD0C != 0) { swiDelay(100); }
 
-	{
 		DC_FlushRange((void*)0x02810000, 16);
 
 		const u16 manufID = *(u16*)0x0281000E;
