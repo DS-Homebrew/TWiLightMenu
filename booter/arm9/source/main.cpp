@@ -241,7 +241,7 @@ int main(int argc, char **argv) {
 			printSmall(false, 4, yPos, oemIdText);
 			yPos += 8*2;
 			if (
-			||	(manufID == 0x0000 && strcmp(oemID, "  ") == 0) // Brandless
+				(manufID == 0x0000 && strcmp(oemID, "  ") == 0) // Brandless
 			){
 				printSmall(false, 4, yPos, "The inserted SD card is not");
 				yPos += 8;
