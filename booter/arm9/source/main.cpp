@@ -200,8 +200,84 @@ int main(int argc, char **argv) {
 	fadeType = true;
 
 	extern const DISC_INTERFACE __my_io_dsisd;
+	const bool fatInited = fatMountSimple("sd", &__my_io_dsisd);
 
-	if (!fatMountSimple("sd", &__my_io_dsisd)) {
+	*(u32*)0x0CFFFD0C = 0x47444943; // 'CIDG'
+	while (*(u32*)0x0CFFFD0C != 0) { swiDelay(100); }
+
+	{
+		DC_FlushRange((void*)0x02810000, 16);
+
+		const u16 manufID = *(u16*)0x0281000E;
+		const char oemID[3] = {*(char*)0x0281000D, *(char*)0x0281000C, 0};
+
+		// Source: https://web.archive.org/web/20130728131543/https://wiki.linaro.org/WorkingGroups/KernelArchived/Projects/FlashCardSurvey?action=show&redirect=WorkingGroups%2FKernel%2FProjects%2FFlashCardSurvey
+		if (
+			(manufID == 0x0001 && strcmp(oemID, "PA") == 0) // Panasonic
+		||	(manufID == 0x0002 && strcmp(oemID, "TM") == 0) // Kingston/PNY
+		||	(manufID == 0x0003 && strcmp(oemID, "SD") == 0) // SanDisk
+		||	(manufID == 0x0009 && strcmp(oemID, "AP") == 0) // Lexar
+		||	(manufID == 0x001B && strcmp(oemID, "SM") == 0) // PNY
+		||	(manufID == 0x0027 && strcmp(oemID, "PH") == 0) // Sony
+		||	(manufID == 0x0028 && strcmp(oemID, "BE") == 0) // Lexar/Polaroid
+		||	(manufID == 0x0041 && strcmp(oemID, "42") == 0) // Kingston
+		){
+			// SD card is compatible!
+		} else {
+			char manufIdText[40];
+			sprintf(manufIdText, "Manufacturer ID: %04X", manufID);
+			char oemIdText[16];
+			sprintf(oemIdText, "OEM ID: %s", oemID);
+
+			waitBeforeFade = false;
+
+			clearText();
+			int yPos = 4;
+			printSmall(false, 4, yPos, manufIdText);
+			yPos += 8;
+			printSmall(false, 4, yPos, oemIdText);
+			yPos += 8*2;
+			if (
+				(manufID == 0x001D && strcmp(oemID, "AD") == 0) // A-Data/extrememory/Microcenter
+			||	(manufID == 0x0000 && strcmp(oemID, "  ") == 0) // Brandless
+			){
+				printSmall(false, 4, yPos, "The inserted SD card is not");
+				yPos += 8;
+				printSmall(false, 4, yPos, "compatible. Please switch to an");
+				yPos += 8;
+				printSmall(false, 4, yPos, "SD card of a well-known brand.");
+				yPos += 8*2;
+				printSmall(false, 4, yPos, "Press B to return to menu.");
+
+				goto pressB;
+			} else {
+				printSmall(false, 4, yPos, "The inserted SD card has not");
+				yPos += 8;
+				printSmall(false, 4, yPos, "been tested, and is possible that");
+				yPos += 8;
+				printSmall(false, 4, yPos, "it will not work correctly.");
+				yPos += 8*2;
+				printSmall(false, 4, yPos, "If you encounter any issues,");
+				yPos += 8;
+				printSmall(false, 4, yPos, "please switch to an SD card");
+				yPos += 8;
+				printSmall(false, 4, yPos, "of a well-known brand.");
+				yPos += 8*2;
+				printSmall(false, 4, yPos, "A: Continue");
+				yPos += 8;
+				printSmall(false, 4, yPos, "B: Return to menu");
+
+				while (1) {
+					scanKeys();
+					if (keysHeld() & KEY_A) break;
+					else if (keysHeld() & KEY_B) goto pressedB;
+					swiWaitForVBlank();
+				}
+			}
+		}
+	}
+
+	if (!fatInited) {
 		waitBeforeFade = false;
 		// fadeType = true;
 
@@ -268,12 +344,14 @@ int main(int argc, char **argv) {
 		printSmall(false, 4, returnTextPos, "Press B to return to menu.");
 	}
 
+pressB:
 	while (1) {
 		scanKeys();
 		if (keysHeld() & KEY_B) break;
 		swiWaitForVBlank();
 	}
 
+pressedB:
 	fadeType = false;
 	for (int i = 0; i < 24; i++) {
 		swiWaitForVBlank();
