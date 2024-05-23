@@ -212,6 +212,7 @@ int main(int argc, char **argv) {
 		const char oemID[3] = {*(char*)0x0281000D, *(char*)0x0281000C, 0};
 
 		// Source: https://web.archive.org/web/20130728131543/https://wiki.linaro.org/WorkingGroups/KernelArchived/Projects/FlashCardSurvey?action=show&redirect=WorkingGroups%2FKernel%2FProjects%2FFlashCardSurvey
+		// and user findings
 		if (
 			(manufID == 0x0001 && strcmp(oemID, "PA") == 0) // Panasonic
 		||	(manufID == 0x0002 && strcmp(oemID, "TM") == 0) // Kingston/PNY
@@ -221,6 +222,7 @@ int main(int argc, char **argv) {
 		||	(manufID == 0x0027 && strcmp(oemID, "PH") == 0) // Sony
 		||	(manufID == 0x0028 && strcmp(oemID, "BE") == 0) // Lexar/Polaroid
 		||	(manufID == 0x0041 && strcmp(oemID, "42") == 0) // Kingston
+		||	(manufID == 0x00AD && strcmp(oemID, "LS") == 0) // Lexar
 		){
 			// SD card is compatible!
 		} else {
