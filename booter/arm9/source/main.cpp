@@ -207,7 +207,7 @@ int main(int argc, char **argv) {
 
 	DC_FlushRange((void*)0x02810000, 16);
 
-	if (*(u16*)0x0281000E == 0 && *(u8*)0x0281000C == 0) {
+	if (!fatInited && *(u16*)0x0281000E == 0 && *(u8*)0x0281000C == 0) {
 		waitBeforeFade = false;
 
 		clearText();
