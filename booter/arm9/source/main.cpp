@@ -234,7 +234,7 @@ int main(int argc, char **argv) {
 		||	(manufID == 0x0002 && strcmp(oemID, "TM") == 0) // Kingston/PNY
 		||	(manufID == 0x0003 && strcmp(oemID, "SD") == 0) // SanDisk
 		||	(manufID == 0x0009 && strcmp(oemID, "AP") == 0) // Lexar
-		||	(manufID == 0x001B && strcmp(oemID, "SM") == 0) // PNY
+		||	(manufID == 0x001B && strcmp(oemID, "SM") == 0) // PNY/Samsung
 		||	(manufID == 0x001D && strcmp(oemID, "AD") == 0) // (Some?) A-Data/extrememory/Microcenter
 		||	(manufID == 0x0027 && strcmp(oemID, "PH") == 0) // Sony
 		||	(manufID == 0x0028 && strcmp(oemID, "BE") == 0) // Lexar/Polaroid
