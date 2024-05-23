@@ -321,6 +321,7 @@ public:
 	TSlot1LaunchMethod slot1LaunchMethod;
 
 	int dsiSplash;
+	bool oppositeSplash;
 	bool dsiSplashAutoSkip;
 	int nintendoLogoColor;
 	bool showlogo;

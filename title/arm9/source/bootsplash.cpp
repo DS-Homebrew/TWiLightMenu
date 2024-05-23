@@ -41,10 +41,11 @@ void bootSplashDSi(void) {
 	const struct tm *Time = localtime(&Raw);
 
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
-	bool virtualPain = (strcmp(currentDate, "04/01") == 0 || (ms().getGameRegion() == 0 ? (strcmp(currentDate, "07/21") == 0) : (strcmp(currentDate, "08/14") == 0))); // If April Fools, or the release date of the Virtual Boy
-	bool super = (*(u16*)(0x020000C0) == 0x334D || *(u16*)(0x020000C0) == 0x3647 || *(u16*)(0x020000C0) == 0x4353); // Slot-2 flashcard
+	const bool virtualPain = (strcmp(currentDate, "04/01") == 0 || (ms().getGameRegion() == 0 ? (strcmp(currentDate, "07/21") == 0) : (strcmp(currentDate, "08/14") == 0))); // If April Fools, or the release date of the Virtual Boy
+	const bool super = (*(u16*)(0x020000C0) == 0x334D || *(u16*)(0x020000C0) == 0x3647 || *(u16*)(0x020000C0) == 0x4353); // Slot-2 flashcard
+	const bool regularDS = (sys().isRegularDS() && !ms().oppositeSplash) || (!sys().isRegularDS() && ms().oppositeSplash);
 
-	bool custom = ms().dsiSplash == 3;
+	const bool custom = ms().dsiSplash == 3;
 
 	char path[256];
 	if (virtualPain) {
@@ -56,14 +57,14 @@ void bootSplashDSi(void) {
 	} else if (super) {
 		sprintf(path, "nitro:/video/splash/superDS.gif");
 	} else {
-		sprintf(path, "nitro:/video/splash/%s.gif", language == TWLSettings::ELangChineseS ? "iquedsi" : (sys().isRegularDS() ? "ds" : "dsi"));
+		sprintf(path, "nitro:/video/splash/%s.gif", language == TWLSettings::ELangChineseS ? "iquedsi" : (regularDS ? "ds" : "dsi"));
 	}
 	Gif splash(path, true, true);
 
 	path[0] = '\0';
 	if (virtualPain) { // Load Virtual Pain image
 		strcpy(path, "nitro:/video/hsmsg/virtualPain.gif");
-	} else if (ms().dsiSplash == 1) { // Load Touch the Touch Screen to continue image
+	} else if (ms().dsiSplash == 1) { // Load "Touch the Touch Screen to continue" image
 		sprintf(path, "nitro:/video/tttstc/%i.gif", language);
 	} else if (ms().dsiSplash == 2) { // Load H&S image
 		sprintf(path, "nitro:/video/hsmsg/%i.gif", language);

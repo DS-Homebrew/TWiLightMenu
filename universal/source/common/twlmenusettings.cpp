@@ -80,6 +80,7 @@ TWLSettings::TWLSettings()
 	slot1LaunchMethod = EDirect;
 
 	dsiSplash = isDSiMode();
+	oppositeSplash = false;
 	dsiSplashAutoSkip = false;
 	nintendoLogoColor = 1;
 	showlogo = true;
@@ -275,6 +276,7 @@ void TWLSettings::loadSettings()
 	slot1LaunchMethod = (TSlot1LaunchMethod)settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
 
 	dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
+	oppositeSplash = settingsini.GetInt("SRLOADER", "OPPOSITE_SPLASH", oppositeSplash);
 	dsiSplashAutoSkip = settingsini.GetInt("SRLOADER", "DSI_SPLASH_AUTO_SKIP", dsiSplashAutoSkip);
 	nintendoLogoColor = settingsini.GetInt("SRLOADER", "NINTENDO_LOGO_COLOR", nintendoLogoColor);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
