@@ -202,12 +202,28 @@ int main(int argc, char **argv) {
 	extern const DISC_INTERFACE __my_io_dsisd;
 	const bool fatInited = fatMountSimple("sd", &__my_io_dsisd);
 
-	if (*(u8*)0x0280FFFF != 0x01) {
-		*(u32*)0x0CFFFD0C = 0x47444943; // 'CIDG'
-		while (*(u32*)0x0CFFFD0C != 0) { swiDelay(100); }
+	*(u32*)0x0CFFFD0C = 0x47444943; // 'CIDG'
+	while (*(u32*)0x0CFFFD0C != 0) { swiDelay(100); }
 
-		DC_FlushRange((void*)0x02810000, 16);
+	DC_FlushRange((void*)0x02810000, 16);
 
+	if (*(u16*)0x0281000E == 0 && *(u16*)0x0281000C == 0) {
+		waitBeforeFade = false;
+
+		clearText();
+		int yPos = 4;
+		printSmall(false, 4, yPos, "There is no SD card inserted.");
+		yPos += 8;
+		printSmall(false, 4, yPos, "Please insert the SD card");
+		yPos += 8;
+		printSmall(false, 4, yPos, "containing TWiLight Menu++,");
+		yPos += 8;
+		printSmall(false, 4, yPos, "then try again.");
+		yPos += 8*2;
+		printSmall(false, 4, yPos, "Press B to return to menu.");
+
+		goto pressB;
+	} else if (*(u8*)0x0280FFFF != 0x01) {
 		const u16 manufID = *(u16*)0x0281000E;
 		const char oemID[3] = {*(char*)0x0281000D, *(char*)0x0281000C, 0};
 
