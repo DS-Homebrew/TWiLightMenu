@@ -219,6 +219,7 @@ int main(int argc, char **argv) {
 		||	(manufID == 0x0003 && strcmp(oemID, "SD") == 0) // SanDisk
 		||	(manufID == 0x0009 && strcmp(oemID, "AP") == 0) // Lexar
 		||	(manufID == 0x001B && strcmp(oemID, "SM") == 0) // PNY
+		||	(manufID == 0x001D && strcmp(oemID, "AD") == 0) // (Some?) A-Data/extrememory/Microcenter
 		||	(manufID == 0x0027 && strcmp(oemID, "PH") == 0) // Sony
 		||	(manufID == 0x0028 && strcmp(oemID, "BE") == 0) // Lexar/Polaroid
 		||	(manufID == 0x0041 && strcmp(oemID, "42") == 0) // Kingston
@@ -240,7 +241,6 @@ int main(int argc, char **argv) {
 			printSmall(false, 4, yPos, oemIdText);
 			yPos += 8*2;
 			if (
-				(manufID == 0x001D && strcmp(oemID, "AD") == 0) // A-Data/extrememory/Microcenter
 			||	(manufID == 0x0000 && strcmp(oemID, "  ") == 0) // Brandless
 			){
 				printSmall(false, 4, yPos, "The inserted SD card is not");
