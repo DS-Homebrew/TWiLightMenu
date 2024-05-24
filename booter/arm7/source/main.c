@@ -109,7 +109,7 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
-	*(u8*)0x0280FFFF = i2cReadRegister(0x4A, 0x71);
+	// *(u8*)0x0280FFFF = i2cReadRegister(0x4A, 0x71);
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {

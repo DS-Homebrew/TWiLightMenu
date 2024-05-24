@@ -205,9 +205,9 @@ int main(int argc, char **argv) {
 	*(u32*)0x0CFFFD0C = 0x47444943; // 'CIDG'
 	while (*(u32*)0x0CFFFD0C != 0) { swiDelay(100); }
 
-	DC_FlushRange((void*)0x02810000, 16);
+	// DC_FlushRange((void*)0x02810000, 16);
 
-	if (!fatInited && *(u16*)0x0281000E == 0 && *(u8*)0x0281000C == 0) {
+	if (!fatInited && *(u16*)0x0C81000E == 0 && *(u8*)0x0C81000C == 0) {
 		waitBeforeFade = false;
 
 		clearText();
@@ -223,9 +223,9 @@ int main(int argc, char **argv) {
 		printSmall(false, 4, yPos, "Press B to return to menu.");
 
 		goto pressB;
-	} else if (*(u8*)0x0280FFFF != 0x01) {
-		const u16 manufID = *(u16*)0x0281000E;
-		const char oemID[3] = {*(char*)0x0281000D, *(char*)0x0281000C, 0};
+	} /* else if (*(u8*)0x0C80FFFF != 0x01) {
+		const u16 manufID = *(u16*)0x0C81000E;
+		const char oemID[3] = {*(char*)0x0C81000D, *(char*)0x0C81000C, 0};
 
 		// Source: https://web.archive.org/web/20130728131543/https://wiki.linaro.org/WorkingGroups/KernelArchived/Projects/FlashCardSurvey?action=show&redirect=WorkingGroups%2FKernel%2FProjects%2FFlashCardSurvey
 		// and user findings
@@ -294,7 +294,7 @@ int main(int argc, char **argv) {
 				}
 			}
 		}
-	}
+	} */
 
 	if (!fatInited) {
 		waitBeforeFade = false;
@@ -370,7 +370,7 @@ pressB:
 		swiWaitForVBlank();
 	}
 
-pressedB:
+//pressedB:
 	fadeType = false;
 	for (int i = 0; i < 24; i++) {
 		swiWaitForVBlank();
