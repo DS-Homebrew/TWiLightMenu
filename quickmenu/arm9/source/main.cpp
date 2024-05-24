@@ -30,6 +30,7 @@
 #include "common/fatHeader.h"
 #include "common/flashcard.h"
 #include "common/inifile.h"
+#include "common/logging.h"
 #include "common/nds_loader_arm9.h"
 #include "common/nds_bootstrap_loader.h"
 #include "common/stringtool.h"
@@ -1267,6 +1268,7 @@ void findPictochatAndDownladPlay() {
 
 	if (access("/_nds/pictochat.nds", F_OK) == 0) {
 		pictochatFound = true;
+		logPrint("Pictochat found\n");
 		strncpy(pictochatPath, "/_nds/pictochat.nds", sizeof(pictochatPath));
 	}
 
@@ -1274,9 +1276,11 @@ void findPictochatAndDownladPlay() {
 		if (ms().consoleModel < 2 && !pictochatFound) {
 			pictochatFound = true;
 			pictochatReboot = true;
+			logPrint("Pictochat found\n");
 		}
 		dlplayFound = true;
 		dlplayReboot = true;
+		logPrint("DS Download Play found\n");
 		return;
 	}
 	
@@ -1295,6 +1299,7 @@ void findPictochatAndDownladPlay() {
 			snprintf(pictochatPath, sizeof(pictochatPath), "/title/00030005/484e45%x/content/00000000.app", regions[i]);
 			if (access(pictochatPath, F_OK) == 0) {
 				pictochatFound = true;
+				logPrint("Pictochat found\n");
 				break;
 			}
 		}
@@ -1310,6 +1315,7 @@ void findPictochatAndDownladPlay() {
 					remove(pictochatPath);
 					fcopy(srcPath, pictochatPath);	// Copy from NAND
 					pictochatFound = true;
+					logPrint("Pictochat found\n");
 					break;
 				}
 			}
@@ -1318,6 +1324,7 @@ void findPictochatAndDownladPlay() {
 
 	if (access("/_nds/dlplay.nds", F_OK) == 0) {
 		dlplayFound = true;
+		logPrint("DS Download Play found\n");
 		strncpy(dlplayPath, "/_nds/dlplay.nds", sizeof(dlplayPath));
 		return;
 	}
@@ -1327,11 +1334,13 @@ void findPictochatAndDownladPlay() {
 			snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000000.app", regions[i]);
 			if (access(dlplayPath, F_OK) == 0) {
 				dlplayFound = true;
+				logPrint("DS Download Play found\n");
 				return;
 			} else if (regions[i] != 0x43 && regions[i] != 0x4B) {
 				snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
 				if (access(dlplayPath, F_OK) == 0) {
 					dlplayFound = true;
+					logPrint("DS Download Play found\n");
 					return;
 				}
 			}
@@ -1347,6 +1356,7 @@ void findPictochatAndDownladPlay() {
 					remove(dlplayPath);
 					fcopy(srcPath, dlplayPath);	// Copy from NAND
 					dlplayFound = true;
+					logPrint("DS Download Play found\n");
 					return;
 				} else if (regions[i] != 0x43 && regions[i] != 0x4B) {
 					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e4441/content/00000001.app");
@@ -1355,6 +1365,7 @@ void findPictochatAndDownladPlay() {
 						remove(dlplayPath);
 						fcopy(srcPath, dlplayPath);	// Copy from NAND
 						dlplayFound = true;
+						logPrint("DS Download Play found\n");
 						return;
 					}
 				}
@@ -1364,6 +1375,7 @@ void findPictochatAndDownladPlay() {
 	if (ms().consoleModel >= 2) {
 		dlplayFound = true;
 		dlplayReboot = true;
+		logPrint("DS Download Play found\n");
 	}
 }
 
@@ -1385,12 +1397,16 @@ int dsClassicMenu(void) {
 
 	ms().loadSettings();
 	bs().loadSettings();
+	logInit();
 	//widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
 	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
 		CIniFile lumaConfig("sd:/luma/config.ini");
 		externalFirmsModules = (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true);
+		logPrint((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && externalFirmsModules ? "Widescreen found\n" : "Widescreen not found\n");
 	}
 	
+	logPrint("\n");
+
 	findPictochatAndDownladPlay();
 
 	if (sdFound() && ms().consoleModel < 2 && ms().launcherApp != -1) {
