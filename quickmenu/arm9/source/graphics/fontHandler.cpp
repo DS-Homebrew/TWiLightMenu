@@ -5,6 +5,7 @@
 
 #include "common/twlmenusettings.h"
 #include "common/flashcard.h"
+#include "common/logging.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "myDSiMode.h"
@@ -22,6 +23,8 @@ std::list<TextEntry> topText, bottomText;
 bool shouldClear[] = {false, false};
 
 void fontInit() {
+	logPrint("fontInit() ");
+
 	// const bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
 	const bool useTileCache = (!dsiFeatures() && !sys().dsDebugRam());
 
@@ -73,6 +76,7 @@ void fontInit() {
 	// Load palettes
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
+	logPrint("Font inited\n");
 }
 
 static std::list<TextEntry> &getTextQueue(bool top) {

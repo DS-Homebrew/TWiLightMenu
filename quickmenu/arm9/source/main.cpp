@@ -852,7 +852,7 @@ void loadROMselect()
 	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
 }
 
-bool ndsPreloaded = false;
+/* bool ndsPreloaded = false;
 
 bool preloadNds(const char* filename) {
 	static bool currentDevice = false;
@@ -899,7 +899,7 @@ bool preloadNds(const char* filename) {
 	}
 	arm9dst += 0x4000;
 	return false;
-}
+} */
 
 // From NTM
 // https://github.com/Epicpkmn11/NTM/blob/db69aca1b49733da51f64ee857ac9b861b1c468c/arm9/src/sav.c#L7-L93
@@ -1558,9 +1558,9 @@ int dsClassicMenu(void) {
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
 	while (!screenFadedIn()) {
-		if (preloadNds(filename[ms().secondaryDevice].c_str())) {
+		// if (preloadNds(filename[ms().secondaryDevice].c_str())) {
 			swiWaitForVBlank();
-		}
+		// }
 	}
 
 	startMenu = true;	// Show bottom screen graphics
@@ -1662,12 +1662,12 @@ int dsClassicMenu(void) {
 				if(touching && (keysHeld() & KEY_TOUCH) == 0)
 					break;
 				checkSdEject();
-				if (preloadNds(NULL)) {
+				// if (preloadNds(NULL)) {
 					if (sys().isRegularDS()) {
 						updateMenuText = true; // Keep refreshing text for GBA cart text to update
 					}
 					swiWaitForVBlank();
-				}
+				// }
 			} while (!pressed);
 
 			if ((pressed & KEY_LID) && ms().sleepMode) {
@@ -2771,9 +2771,9 @@ int dsClassicMenu(void) {
 						if (ms().btsrpBootloaderDirect && isHomebrew[ms().secondaryDevice]) {
 							bootFSInit(ndsToBoot);
 							bootstrapHbRunPrep(-1);
-							while (!preloadNds(NULL)) {
+							/* while (!preloadNds(NULL)) {
 								swiDelay(100);
-							}
+							} */
 						}
 
 						while (!screenFadedOut()) {
@@ -2812,7 +2812,7 @@ int dsClassicMenu(void) {
 								perGameSettings_dsiMode == -1 ? isModernHomebrew[ms().secondaryDevice] : perGameSettings_dsiMode,
 								perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu,
 								perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram,
-								ms().consoleModel, ndsPreloaded);
+								ms().consoleModel, /* ndsPreloaded */ false);
 							} else {
 								err = 1;
 							}

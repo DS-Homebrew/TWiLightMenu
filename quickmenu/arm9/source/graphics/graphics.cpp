@@ -28,6 +28,7 @@
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/twlmenusettings.h"
+#include "common/logging.h"
 #include <cmath>
 
 // Graphic files
@@ -1130,6 +1131,8 @@ void drawDateTime(bool date, bool showTimeColon) {
 
 void graphicsInit()
 {
+	logPrint("graphicsInit()\n");
+
 	*(u16*)(0x0400006C) |= BIT(14);
 	*(u16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
