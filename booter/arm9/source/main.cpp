@@ -239,6 +239,7 @@ int main(int argc, char **argv) {
 		||	(manufID == 0x0027 && strcmp(oemID, "PH") == 0) // Sony
 		||	(manufID == 0x0028 && strcmp(oemID, "BE") == 0) // Lexar/Polaroid
 		||	(manufID == 0x0041 && strcmp(oemID, "42") == 0) // Kingston
+		||	(manufID == 0x009F && strcmp(oemID, "TI") == 0) // Kingston
 		||	(manufID == 0x00AD && strcmp(oemID, "LS") == 0) // Lexar
 		){
 			// SD card is compatible!
