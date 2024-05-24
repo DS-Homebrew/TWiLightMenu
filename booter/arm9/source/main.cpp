@@ -232,7 +232,7 @@ int main(int argc, char **argv) {
 		if (
 			(manufID == 0x0001 && strcmp(oemID, "PA") == 0) // Panasonic
 		||	(manufID == 0x0002 && strcmp(oemID, "TM") == 0) // Kingston/PNY
-		||	(manufID == 0x0003 && strcmp(oemID, "SD") == 0) // SanDisk
+		||	(manufID == 0x0003 && (strcmp(oemID, "SD") == 0 || strcmp(oemID, "PT") == 0)) // SanDisk
 		||	(manufID == 0x0009 && strcmp(oemID, "AP") == 0) // Lexar
 		||	(manufID == 0x001B && strcmp(oemID, "SM") == 0) // PNY/Samsung
 		||	(manufID == 0x001D && strcmp(oemID, "AD") == 0) // (Some?) A-Data/extrememory/Microcenter
