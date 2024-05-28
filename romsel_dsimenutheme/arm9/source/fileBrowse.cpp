@@ -605,17 +605,17 @@ void updateBoxArt(void) {
 	showSTARTborder = true;
 	if (ms().theme == TWLSettings::EThemeHBL || ms().macroMode || !ms().showBoxArt || boxArtLoaded) return;
 
+	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
+		rocketVideo_playVideo = false;
+		while (dmaBusy(1)) swiDelay(100); // Wait for frame to finish rendering
+	}
+	clearBoxArt(); // and clear top screen cubes for 3DS theme
+
 	if (isDirectory[CURPOS]) {
-		clearBoxArt(); // Clear box art, if it's a directory
 		if (ms().theme == TWLSettings::ETheme3DS && !rocketVideo_playVideo) {
 			rocketVideo_playVideo = true;
 		}
 	} else {
-		if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
-			while (dmaBusy(1)); // Wait for frame to finish rendering
-			rocketVideo_playVideo = false; // Clear top screen cubes
-		}
-		clearBoxArt();
 		sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", boxArtFilename);
 		if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
 			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
