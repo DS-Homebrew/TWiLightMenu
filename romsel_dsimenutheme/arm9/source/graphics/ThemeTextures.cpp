@@ -1139,6 +1139,21 @@ void ThemeTextures::drawOverBoxArt(uint photoWidth, uint photoHeight) {
 	boxArtWidth = boxArtHeight = 0;
 }
 
+// Redraw background over the rotating cubes bounds
+void ThemeTextures::drawOverRotatingCubes() {
+	// if (!rotatingCubesLoaded) return;
+
+	extern u8 rocketVideo_height;
+	extern int rocketVideo_videoYpos;
+
+	beginBgSubModify();
+	for (uint y = 0; y < rocketVideo_height; y++) {
+		uint offset = (rocketVideo_videoYpos + y) * SCREEN_WIDTH;
+		tonccpy(_bgSubBuffer + offset, _topBorderBuffer + offset, sizeof(u16) * SCREEN_WIDTH);
+	}
+	commitBgSubModify();
+}
+
 ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
 	if (!dsiFeatures())
 		return;

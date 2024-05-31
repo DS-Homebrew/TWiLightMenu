@@ -607,9 +607,10 @@ void updateBoxArt(void) {
 
 	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
 		rocketVideo_playVideo = false;
-		while (dmaBusy(1)) swiDelay(100); // Wait for frame to finish rendering
+		while (dmaBusy(1)); // Wait for frame to finish rendering
+		tex().drawOverRotatingCubes(); // Clear top screen cubes for 3DS theme
 	}
-	clearBoxArt(); // and clear top screen cubes for 3DS theme
+	clearBoxArt();
 
 	if (isDirectory[CURPOS]) {
 		if (ms().theme == TWLSettings::ETheme3DS && !rocketVideo_playVideo) {

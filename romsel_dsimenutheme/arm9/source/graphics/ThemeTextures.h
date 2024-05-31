@@ -80,6 +80,7 @@ public:
 	void loadBoxArtToMem(const char *filename, int num);
 	void drawBoxArt(const char* filename, bool inMem);
 	void drawOverBoxArt(uint photoWidth, uint photoHeight);
+	void drawOverRotatingCubes();
 
 	void drawVolumeImage(int volumeLevel);
 	void drawVolumeImageMacro(int volumeLevel);
