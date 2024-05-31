@@ -2893,7 +2893,7 @@ bool setDefaultDirectory(std::string_view directory_path)
 {
 	if (ms().kioskMode || !ms().showDirectories)
 		return false;
-	
+
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
@@ -2925,7 +2925,7 @@ bool setDefaultDirectory(std::string_view directory_path)
 
 		printLarge(false, 0, 32, directory_path, Alignment::center);
 	}
-		
+
 	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : 98);
 
 	std::string *str;
@@ -2956,7 +2956,7 @@ bool setDefaultDirectory(std::string_view directory_path)
 
 	if (!alreadyDefault)
 		printSmall(false, 0, 160-16, STR_X_SET_DEFAULT_DIR, Alignment::center, FontPalette::dialog);
-	
+
 	std::string btn = (noDefaultDir ? "" : STR_Y_DISABLE + "    ") + STR_B_BACK;
 	printSmall(false, 0, 160, btn, Alignment::center, FontPalette::dialog);
 
@@ -3012,7 +3012,7 @@ bool setDefaultDirectory(std::string_view directory_path)
 		}
 		showdialogbox = false;
 	}
-	
+
 	return true;
 }
 
