@@ -3487,7 +3487,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								swiWaitForVBlank();
 
 								prevPos = CURPOS;
-								CURPOS = std::clamp(titleboxXpos[ms().secondaryDevice] / titleboxXspacing, 0, last_used_box);
+								CURPOS = std::clamp((titleboxXpos[ms().secondaryDevice] + 28) / titleboxXspacing, 0, last_used_box);
 
 								if (CURPOS != prevPos) {
 									// Load icons
@@ -3539,7 +3539,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 						titleboxXdest[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice] - (touch.px - prevTouch1.px);
 						titlewindowXdest[ms().secondaryDevice] = std::clamp(titleboxXdest[ms().secondaryDevice] * 5 / titleboxXspacing, 0, 192);
-						CURPOS = std::clamp((titleboxXdest[ms().secondaryDevice] + 32) / titleboxXspacing, 0, last_used_box);
+						CURPOS = std::clamp((titleboxXpos[ms().secondaryDevice] + 28) / titleboxXspacing, 0, last_used_box);
 
 						if (prevPos != CURPOS) {
 							// Load icons
