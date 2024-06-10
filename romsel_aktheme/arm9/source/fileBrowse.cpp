@@ -105,6 +105,7 @@ extern touchPosition touch;
 extern void bgOperations(bool waitFrame);
 
 int file_count = 0;
+static int fileStartPos = 0; // The position of the first thing that is not a directory.
 
 std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
 
@@ -171,6 +172,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	dirContents.clear();
 
 	file_count = 0;
+	fileStartPos = 0;
 
 	DIR *pdir = opendir(".");
 
@@ -246,6 +248,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 
 				iconsToDisplay++;
 				if (iconsToDisplay > 4) iconsToDisplay = 4;
+
+				if (pent->d_type == DT_DIR)
+					fileStartPos++;
 			}
 		}
 
@@ -1923,6 +1928,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						CIniFile timesPlayedIni(timesPlayedIniPath);
 						timesPlayedIni.SetInt(path, entry->name, (timesPlayedIni.GetInt(path, entry->name, 0) + 1));
 						timesPlayedIni.SaveIniFile(timesPlayedIniPath);
+
+						if (ms().sortMethod == TWLSettings::ESortRecent) {
+							// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
+							PAGENUM = fileStartPos / 40;
+							CURPOS = fileStartPos - PAGENUM * 40;
+						}
+
 						displayDiskIcon(false);
 					}
 
