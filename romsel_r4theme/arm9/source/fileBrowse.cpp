@@ -88,6 +88,8 @@ extern void bgOperations(bool waitFrame);
 
 std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
 
+static int fileStartPos = 0; // The position of the first thing that is not a directory.
+
 char path[PATH_MAX] = {0};
 
 static void gbnpBottomInfo(void) {
@@ -174,6 +176,8 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 		iprintf("Unable to open the directory.\n");
 	} else {
 		int file_count = 0;
+		fileStartPos = 0;
+
 		while (1) {
 			bgOperations(false);
 
@@ -240,6 +244,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				dirContents.emplace_back(pent->d_name, ms().showDirectories ? (pent->d_type == DT_DIR) : false, file_count, false);
 				logPrint("%s listed: %s\n", (pent->d_type == DT_DIR) ? "Directory" : "File", pent->d_name);
 				file_count++;
+
+				if (pent->d_type == DT_DIR)
+					fileStartPos++;
 			}
 		}
 
@@ -1497,6 +1504,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						CIniFile timesPlayedIni(timesPlayedIniPath);
 						timesPlayedIni.SetInt(path, entry->name, (timesPlayedIni.GetInt(path, entry->name, 0) + 1));
 						timesPlayedIni.SaveIniFile(timesPlayedIniPath);
+
+						if (ms().sortMethod == TWLSettings::ESortRecent) {
+							// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
+							ms().pagenum[ms().secondaryDevice] = fileStartPos / 40;
+							ms().cursorPosition[ms().secondaryDevice] = fileStartPos - ms().pagenum[ms().secondaryDevice] * 40;
+						}
 					}
 
 					// Return the chosen file
