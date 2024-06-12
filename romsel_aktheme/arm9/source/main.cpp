@@ -1064,6 +1064,8 @@ int akTheme(void) {
 
 	logPrint("\n");
 
+	ms().gbaR3Test = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds" : "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds", F_OK) == 0);
+
 	if (sdFound()) {
 		statvfs("sd:/", &st[0]);
 
@@ -2217,9 +2219,8 @@ int akTheme(void) {
 					} else if (ms().gbaR3Test) {
 						ms().launchType[ms().secondaryDevice] = TWLSettings::EGBARunner2Launch;
 
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
-						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
+						ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds" : "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
+						if (!isDSiMode()) {
 							boostVram = true;
 						}
 					} else if (ms().secondaryDevice) {

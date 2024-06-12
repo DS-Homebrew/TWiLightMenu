@@ -233,7 +233,7 @@ void TWLSettings::loadSettings()
 	} else {
 		gbaBooter = EGbaGbar2;
 	}
-	gbaR3Test = settingsini.GetInt("SRLOADER", "GBARUNNER3_TEST", gbaR3Test);
+	// gbaR3Test = settingsini.GetInt("SRLOADER", "GBARUNNER3_TEST", gbaR3Test);
 	colEmulator = (TColSegaEmulator)settingsini.GetInt("SRLOADER", "SHOW_COL", colEmulator);
 	if (colEmulator == 0) // 0 (don't show) is deprecated
 		colEmulator = EColSegaColecoDS;

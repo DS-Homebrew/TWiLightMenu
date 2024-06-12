@@ -1207,11 +1207,10 @@ void lastRunROM()
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EGBARunner2Launch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (ms().gbaR3Test) {
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
-			if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
-				argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
-			}
+		const char* gbaR3Path = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds" : "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
+
+		if (access(gbaR3Path, F_OK) == 0) {
+			argarray.at(0) = (char*)gbaR3Path;
 		} else {
 			char game_TID[5];
 

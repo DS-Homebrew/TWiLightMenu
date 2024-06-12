@@ -141,7 +141,9 @@ STRING(SYSSD_RUNFLUBBAEMUSIN, "Sys SD: FluBBa emus. in")
 
 STRING(HYBRID, "Hybrid")
 STRING(NATIVE_GBARUNNER2, "Native > GBARunner2")
+STRING(NATIVE_GBARUNNER3, "Native > GBARunner3")
 STRING(GBARUNNER2_ONLY, "GBARunner2 only")
+STRING(GBARUNNER3_ONLY, "GBARunner3 only")
 
 STRING(DESCRIPTION_COL_EMULATOR, "Select which emulator to use for ColecoVision ROMs.")
 STRING(DESCRIPTION_DSIWAREBOOTER, "Select which app boots launched DSiWare apps or games.")

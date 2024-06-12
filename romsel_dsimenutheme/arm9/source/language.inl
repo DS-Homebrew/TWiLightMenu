@@ -28,7 +28,7 @@ STRING(LOCATION_SD, "Location: SD Card")
 // Errors
 STRING(START_FAILED_ERROR, "Start failed. Error %i")
 STRING(GBA_BIOS_ERROR, "Error code: BINF")
-STRING(GBA_BIOS_ERROR_DESC, "The GBA BIOS is required to\nrun this game. Please place\n\"bios.bin\" in \"root:/_gba/\".")
+STRING(GBA_BIOS_ERROR_DESC, "The GBA BIOS is required.\nPlease place \"bios.bin\"\nin \"root:/_gba/\".")
 STRING(BOOTSTRAP_NIGHTLY_NOT_FOUND, "nds-bootstrap (Nightly) not found.")
 STRING(BOOTSTRAP_RELEASE_NOT_FOUND, "nds-bootstrap (Release) not found.")
 STRING(BOOTSTRAP_HB_NIGHTLY_NOT_FOUND, "nds-bootstrap for homebrew\n(Nightly) not found.")
