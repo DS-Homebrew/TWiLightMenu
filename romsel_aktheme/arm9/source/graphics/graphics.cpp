@@ -190,7 +190,7 @@ static bool iconScaleEnabled = false;
 static int iconScaleWait = 0;
 static int iconScale = 0;
 static bool iconScaleLarge = true;
-static bool iconScaleDelay = false;
+static int iconScaleDelay = 0;
 static int iconShift = 0;
 
 static u16 formFrameColor = RGB15(23,25,4);
@@ -297,7 +297,7 @@ void resetIconScale(void) {
 	iconScaleWait = 0;
 	iconScale = 0;
 	iconScaleLarge = true;
-	iconScaleDelay = false;
+	iconScaleDelay = 0;
 	iconShift = 0;
 }
 
@@ -1623,10 +1623,11 @@ void vBlankHandler()
 						}
 					}
 				}
-				iconScaleDelay = !iconScaleDelay;
+				if (iconScaleDelay++ == 2) {
+					iconScaleDelay = 0;
+				}
 			} else if (ms().ak_zoomIcons) {
-				iconScaleWait++;
-				if (iconScaleWait == 60) {
+				if (iconScaleWait++ == 60) {
 					iconScaleWait = 0;
 					iconScaleEnabled = true;
 				}
