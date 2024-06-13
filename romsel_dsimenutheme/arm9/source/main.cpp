@@ -1236,7 +1236,7 @@ int dsiMenuTheme(void) {
 			".sc", // Sega SC-3000
 			".sms", // Sega Master System
 			".gg", // Sega Game Gear
-			".gen", ".md", // Sega Mega Drive/Genesis
+			".gen", // Genesis
 			".smc", ".sfc", // SNES
 			".ws", ".wsc", // WonderSwan
 			".ngp", ".ngc", // Neo Geo Pocket
@@ -1268,6 +1268,10 @@ int dsiMenuTheme(void) {
 				}
 				extensionList.emplace_back(".ntrb"); // ShaberuSoft
 			}
+		}
+
+		if (!ms().secondaryDevice) {
+			extensionList.emplace_back(".md"); // Sega Mega Drive
 		}
 
 		if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
