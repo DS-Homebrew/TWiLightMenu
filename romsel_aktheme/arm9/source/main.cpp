@@ -1331,7 +1331,7 @@ int akTheme(void) {
 				}
 			}
 
-			if (!ms().secondaryDevice) {
+			if (!ms().secondaryDevice || ms().mdEmulator == 2) {
 				extensionList.emplace_back(".md"); // Sega Mega Drive
 			}
 
