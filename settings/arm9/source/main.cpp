@@ -698,13 +698,53 @@ void opt_update()
 
 void opt_set_luma_autoboot()
 {
-	std::string currentString = "";
+	// Commented code is disabled due to saving Luma's .ini file clearing comments, causing the settings to reset
+	/* std::string currentString = "";
 
 	CIniFile lumaConfig("sd:/luma/config.ini");
 	currentString = lumaConfig.GetString("boot", "autoboot_mode", "0"); // Work around a bug
 	lumaConfig.SetString("boot", "autoboot_mode", "2");
 	lumaConfig.SetString("autoboot", "autoboot_dsi_titleid", "0003000453524c41");
-	lumaConfig.SaveIniFile("sd:/luma/config.ini");
+	lumaConfig.SaveIniFile("sd:/luma/config.ini"); */
+
+	FILE* file = fopen("sd:/luma/config.ini", "r+");
+
+	u8* lumaConfig = new u8[0x2000];
+	fread(lumaConfig, 1, 0x2000, file);
+
+	int pos = 0;
+	while (1) {
+		if (memcmp(lumaConfig+pos, "autoboot_mode = ", 16) == 0) {
+			const char *dsiString = "dsi";
+			tonccpy(lumaConfig+pos+16, dsiString, 3);
+			fseek(file, pos+16, SEEK_SET);
+			fwrite(lumaConfig+pos+16, 1, 3, file);
+			break;
+		}
+		pos++;
+		if (pos == 0x2000) {
+			delete[] lumaConfig;
+			return;
+		}
+	}
+
+	while (1) {
+		if (memcmp(lumaConfig+pos, "autoboot_dsi_titleid = ", 23) == 0) {
+			const char *tidString = "0003000453524c41";
+			tonccpy(lumaConfig+pos+23, tidString, 16);
+			fseek(file, pos+23, SEEK_SET);
+			fwrite(lumaConfig+pos+23, 1, 16, file);
+			break;
+		}
+		pos++;
+		if (pos == 0x2000) {
+			delete[] lumaConfig;
+			return;
+		}
+	}
+
+	delete[] lumaConfig;
+	fclose(file);
 
 	clearText(false);
 	if (ms().rtl()) {
@@ -952,9 +992,9 @@ int settingsMode(void)
 	wasBacklightOff = sys().isRegularDS() && (REG_POWERCNT & 0xC) == 0;
 
 	bool widescreenFound = false;
-	// bool lumaFound = false;
+	bool lumaFound = false;
 	if (sdFound() && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
-		// lumaFound = (access("sd:/luma/config.ini", F_OK) == 0);
+		lumaFound = (access("sd:/luma/config.ini", F_OK) == 0);
 
 		CIniFile lumaConfig("sd:/luma/config.ini");
 		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
@@ -1538,11 +1578,10 @@ int settingsMode(void)
 			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
 	}
 
-	// Disabled due to saving Luma's .ini file clearing comments, causing the settings to reset
-	/* if (lumaFound) {
+	if (lumaFound) {
 		miscPage
 			.option(STR_SET_LUMA_AUTOBOOT, STR_DESCRIPTION_SET_LUMA_AUTOBOOT, Option::Nul(opt_set_luma_autoboot), {}, {});
-	} */
+	}
 
 	/*SettingsPage twlfirmPage(STR_TWLFIRM_SETTINGS);
 	if (isDSiMode() && ms().consoleModel >= 2) {
