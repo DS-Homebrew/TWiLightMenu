@@ -1171,12 +1171,12 @@ int dsiMenuTheme(void) {
 		}
 	}
 
+	srand(time(NULL));
+	
 	graphicsInit();
 	iconManagerInit();
 
 	keysSetRepeat(10, 2);
-
-	srand(time(NULL));
 
 	logPrint("snd()\n");
 	snd();
