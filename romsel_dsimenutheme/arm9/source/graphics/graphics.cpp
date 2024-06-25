@@ -20,6 +20,7 @@
 
 #include "graphics.h"
 #include <ctime>
+#include <cmath>
 #include <dirent.h>
 #include <maxmod9.h>
 #include <nds/arm9/dldi.h>
@@ -68,6 +69,8 @@ static int frontBubblesYpos_def[3] = {256, 256+64, 256+32};
 static int backBubblesYpos[4] = {256, 256+56, 256+32, 256+16};
 static int frontBubblesYpos[3] = {256, 256+64, 256+32};
 
+static float initialDropSpeed = 7.0f;
+
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
@@ -82,16 +85,12 @@ extern int colorGvalue;
 extern int colorBvalue;
 
 extern bool dropDown;
-int dropTime[5];
-int dropSeq[5];
-#define dropSpeedDefine 7.0f
-float dropSpeed[5] = {dropSpeedDefine};
-//int dropSpeedChange[5];
-float dropDownY[5] = {-85.0f - 80.0f};
-int titleboxYposDropDown[5] = {-85 - 80};
+int dropDelay[5];
+int dropBounce[5];
+float dropDownY[5] = { 0.0f };
+float dropSpeed[5] = { 0.0f };
+int titleboxYposDropDown[5];
 
-int allowedTitleboxForDropDown = 0;
-int delayForTitleboxToDropDown = 0;
 extern int currentBg;
 extern bool showSTARTborder;
 extern bool needToPlayStopSound;
@@ -528,44 +527,41 @@ void vBlankHandler() {
 	}
 
 	if (!whiteScreen && dropDown && ms().theme == TWLSettings::EThemeDSi) { // perform dropdown anim in the DSi theme
+		static constexpr float gravity = 0.375f;
+		static constexpr float restitution = 0.37f;
+		
 		int i2 = CURPOS - 2;
 		if (i2 < 0)
 			i2 += 5;
-		for (int i = i2; i <= allowedTitleboxForDropDown + i2; i++) {
-			int b = (i % 5);
-			if (dropSeq[b] < 3)
-			{
-				constexpr float gravity = 0.375f;
-				constexpr float restitution = 0.37f;
 
+		for (int i = i2, d = 0; i < i2 + 5; i++, d++) {
+			if (dropDelay[d] > 0) continue; // Skip if not ready
+
+			int b = i % 5;
+			if (dropBounce[b] < 3) {
 				dropSpeed[b] += gravity;
 
-				if (dropDownY[b] + dropSpeed[b] >= 0.0f)
-				{
+				if (dropDownY[b] + dropSpeed[b] >= 0.0f) { // We collided, now bounce
 					dropDownY[b] = 0.0f;
 					dropSpeed[b] *= -restitution;
-					dropSeq[b]++;
-				}
-				else
-				{
-					dropDownY[b] += dropSpeed[b];
-				}
-				titleboxYposDropDown[b] = (int)(dropDownY[b]);
+					dropBounce[b]++;
+				} else
+					dropDownY[b] += dropSpeed[b]; // Otherwise, move Y
+
+				// Update drawing position
+				titleboxYposDropDown[b] = (int)(floorf(dropDownY[b]));
 			}
-			else if (dropSeq[b] < 4)
-			{
+			else if (dropBounce[b] < 4) { // Stop dropdown
 				dropDownY[b] = 0.0f;
 				titleboxYposDropDown[b] = 0;
-				dropSeq[b]++;
+				dropBounce[b]++;
 			}
 		}
 
-		delayForTitleboxToDropDown++;
-		if (delayForTitleboxToDropDown >= 5) {
-			allowedTitleboxForDropDown++;
-			if (allowedTitleboxForDropDown > 4)
-				allowedTitleboxForDropDown = 4;
-			delayForTitleboxToDropDown = 0;
+		// Update delays
+		for (int i = 0; i < 5; i++) {
+			if (dropDelay[i] > 0)
+				dropDelay[i]--;
 		}
 	}
 
@@ -1404,27 +1400,50 @@ void graphicsInit() {
 	// }
 
 	for (int i = 0; i < 5; i++) {
-		dropTime[i] = 0;
-		dropSeq[i] = 0;
-		dropSpeed[i] = dropSpeedDefine;
-		//dropSpeedChange[i] = 0;
-		if (ms().theme == TWLSettings::ETheme3DS || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL)
-		{
+		dropBounce[i] = 0;
+		dropSpeed[i] = initialDropSpeed;
+
+		if (ms().theme == TWLSettings::ETheme3DS || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
 			dropDownY[i] = 0.0f;
 			titleboxYposDropDown[i] = 0;
-		}
-		else
-		{
+		} else {
 			dropDownY[i] = -85.0f - 80.0f;
 			titleboxYposDropDown[i] = dropDownY[i];
 		}
 	}
+	int dropDownType = rand() % 4;
+	switch (dropDownType) {
+		// Left to Right
+		case 0:
+			for (int i = 0; i < 5; i++) dropDelay[i] = 6 + i * 4;
+			break;
 
-	allowedTitleboxForDropDown = 0;
-	delayForTitleboxToDropDown = 0;
+		// Right to Left
+		case 1:
+			for (int i = 0; i < 5; i++) dropDelay[i] = 6 + (4-i) * 4;
+			break;
+
+		// V-Shape (\/)
+		case 2:
+			dropDelay[2] = 8;
+			for (int i = 1; i <= 2; i++) {
+				dropDelay[2+i] = 8+(i*3);
+				dropDelay[2-i] = 8+(i*3);
+			}
+			break;
+
+		// Inverted V-Shape (/\)
+		case 3:
+		default:
+			dropDelay[2] = 14;
+			for (int i = 1; i <= 2; i++) {
+				dropDelay[2+i] = 14-(i*3);
+				dropDelay[2-i] = 14-(i*3);
+			}
+			break;
+	}
 	dropDown = false;
 
-	
 	titleboxXpos[0] = ms().cursorPosition[0] * titleboxXspacing;
 	titleboxXdest[0] = ms().cursorPosition[0] * titleboxXspacing;
 	titlewindowXpos[0] = ms().cursorPosition[0] * 5;
