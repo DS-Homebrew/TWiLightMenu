@@ -1524,11 +1524,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		}
 
 		if ((pressed & KEY_R) && bothSDandFlashcard()) {
-			consoleClear();
-			if (ms().theme == TWLSettings::EThemeGBC) {
-				iprintf ("\x1b[6;8H");
-			}
-			printf("Please wait...\n");
 			ms().cursorPosition[ms().secondaryDevice] = fileOffset;
 			ms().pagenum[ms().secondaryDevice] = 0;
 			for (int i = 0; i < 100; i++) {
