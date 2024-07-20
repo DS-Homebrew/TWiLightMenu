@@ -1505,13 +1505,14 @@ void loadRotatingCubes() {
 				return;
 			}
 
-			if (rocketVideo_height >= 58) {
+			// Configured by tc().rotatingCubesRenderY()
+			/* if (rocketVideo_height >= 58) {
 				// Adjust video positioning
 				extern int rocketVideo_videoYpos;
 				for (int i = 58; i < rocketVideo_height; i += 2) {
 					rocketVideo_videoYpos--;
 				}
-			}
+			} */
 
 			u32 framesOffset = 0x200;
 			fseek(videoFrameFile, 0x14, SEEK_SET);
