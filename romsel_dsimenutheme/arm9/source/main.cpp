@@ -156,7 +156,7 @@ void stop(void) {
 int SetDonorSDK() {
 	char gameTid3[5];
 	for (int i = 0; i < 3; i++) {
-		gameTid3[i] = gameTid[CURPOS][i];
+		gameTid3[i] = gameTid[cursorPosOnScreen][i];
 	}
 
 	for (auto i : donorMap) {
@@ -178,7 +178,7 @@ bool setClockSpeed() {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
-			if (memcmp(gameTid[CURPOS], twlClockExcludeList[i], 3) == 0) {
+			if (memcmp(gameTid[cursorPosOnScreen], twlClockExcludeList[i], 3) == 0) {
 				// Found match
 				dsModeForced = true;
 				return false;
@@ -196,7 +196,7 @@ bool setCardReadDMA() {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
-			if (memcmp(gameTid[CURPOS], cardReadDMAExcludeList[i], 3) == 0) {
+			if (memcmp(gameTid[cursorPosOnScreen], cardReadDMAExcludeList[i], 3) == 0) {
 				// Found match
 				return false;
 			}
@@ -213,7 +213,7 @@ bool setAsyncCardRead() {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
-			if (memcmp(gameTid[CURPOS], asyncReadExcludeList[i], 3) == 0) {
+			if (memcmp(gameTid[cursorPosOnScreen], asyncReadExcludeList[i], 3) == 0) {
 				// Found match
 				return false;
 			}
@@ -345,7 +345,7 @@ std::string setApFix(const char *filename) {
 	}
 
 	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/cht/%s-%X.bin", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS], headerCRC[CURPOS]);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/cht/%s-%X.bin", sys().isRunFromSD() ? "sd" : "fat", gameTid[cursorPosOnScreen], headerCRC[cursorPosOnScreen]);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 	}
 
@@ -358,7 +358,7 @@ std::string setApFix(const char *filename) {
 	}
 
 	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS], headerCRC[CURPOS]);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[cursorPosOnScreen], headerCRC[cursorPosOnScreen]);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 		if (ipsFound) {
 			cheatVer = false;
@@ -394,17 +394,17 @@ std::string setApFix(const char *filename) {
 				int mid = left + ((right - left) / 2);
 				fseek(file, 16 + mid * 16, SEEK_SET);
 				fread(buf, 1, 4, file);
-				int cmp = strcmp(buf, gameTid[CURPOS]);
+				int cmp = strcmp(buf, gameTid[cursorPosOnScreen]);
 				if (cmp == 0) { // TID matches, check CRC
 					u16 crc;
 					fread(&crc, 1, sizeof(crc), file);
 
-					if (crc == headerCRC[CURPOS]) { // CRC matches
+					if (crc == headerCRC[cursorPosOnScreen]) { // CRC matches
 						fread(&offset, 1, sizeof(offset), file);
 						fread(&size, 1, sizeof(size), file);
 						cheatVer = fgetc(file) & 1;
 						break;
-					} else if (crc < headerCRC[CURPOS]) {
+					} else if (crc < headerCRC[cursorPosOnScreen]) {
 						left = mid + 1;
 					} else {
 						right = mid - 1;
@@ -453,7 +453,7 @@ sNDSHeader ndsCart;
  * Enable widescreen for some games.
  */
 void SetWidescreen(const char *filename) {
-	const char* wideCheatDataPath = ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin";
+	const char* wideCheatDataPath = ms().secondaryDevice && (!isDSiWare[cursorPosOnScreen] || (isDSiWare[cursorPosOnScreen] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin";
 	remove(wideCheatDataPath);
 
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
@@ -463,7 +463,7 @@ void SetWidescreen(const char *filename) {
 		return;
 	}
 	
-	if (isHomebrew[CURPOS] && ms().homebrewHasWide && widescreenFound) {
+	if (isHomebrew[cursorPosOnScreen] && ms().homebrewHasWide && widescreenFound) {
 		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
 			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
 		}
@@ -498,16 +498,16 @@ void SetWidescreen(const char *filename) {
 		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", s1GameTid, ndsCart.headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	} else if (!wideCheatFound) {
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", gameTid[CURPOS], headerCRC[CURPOS]);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", gameTid[cursorPosOnScreen], headerCRC[cursorPosOnScreen]);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
-	if (isHomebrew[CURPOS]) {
+	if (isHomebrew[cursorPosOnScreen]) {
 		return;
 	}
 
-	mkdir(ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat:/_nds" : "sd:/_nds", 0777);
-	mkdir(ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
+	mkdir(ms().secondaryDevice && (!isDSiWare[cursorPosOnScreen] || (isDSiWare[cursorPosOnScreen] && !ms().dsiWareToSD)) ? "fat:/_nds" : "sd:/_nds", 0777);
+	mkdir(ms().secondaryDevice && (!isDSiWare[cursorPosOnScreen] || (isDSiWare[cursorPosOnScreen] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
 
 	if (wideCheatFound) {
 		if (fcopy(wideBinPath, wideCheatDataPath) != 0) {
@@ -530,8 +530,8 @@ void SetWidescreen(const char *filename) {
 			return;
 		}
 	} else {
-		char *tid = ms().slot1Launched ? s1GameTid : gameTid[CURPOS];
-		u16 crc16 = ms().slot1Launched ? ndsCart.headerCRC16 : headerCRC[CURPOS];
+		char *tid = ms().slot1Launched ? s1GameTid : gameTid[cursorPosOnScreen];
+		u16 crc16 = ms().slot1Launched ? ndsCart.headerCRC16 : headerCRC[cursorPosOnScreen];
 
 		FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/widescreen.pck" : "fat:/_nds/TWiLightMenu/extras/widescreen.pck", "rb");
 		if (file) {
@@ -580,7 +580,7 @@ void SetWidescreen(const char *filename) {
 				u8 *buffer = new u8[size];
 				fread(buffer, 1, size, file);
 
-				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat" : "sd");
+				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice && (!isDSiWare[cursorPosOnScreen] || (isDSiWare[cursorPosOnScreen] && !ms().dsiWareToSD)) ? "fat" : "sd");
 				FILE *out = fopen(wideBinPath, "wb");
 				if (out) {
 					fwrite(buffer, 1, size, out);
@@ -611,11 +611,11 @@ std::string getGameManual(const char *filename) {
 	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
-	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
+	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", sys().isRunFromSD() ? "sd" : "fat", gameTid[cursorPosOnScreen]);
 	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
-	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%.3s.txt", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
+	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%.3s.txt", sys().isRunFromSD() ? "sd" : "fat", gameTid[cursorPosOnScreen]);
 	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
@@ -916,7 +916,7 @@ void createSaveFile(const char* savePath, const bool isHomebrew, const char* gam
 }
 
 void prepareCheats(std::string path, const bool dsiWare) {
-	if (isHomebrew[CURPOS]) {
+	if (isHomebrew[cursorPosOnScreen]) {
 		return;
 	}
 
