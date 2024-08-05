@@ -714,29 +714,45 @@ static void clockNeedleDraw(int angle, u32 length, u16 color) {
 	
 	constexpr float PI = 3.1415926535897f;
 	
-	float radians = (float)(angle%360) * (PI / 180.0f);
-
-	// used for the calculations
-	float x = clockXPos + 48.0f; 
-	float y = clockYPos + 48.0f; 
+	// Find coords from angle & length
+	int x0 = clockXPos + 48;
+	int y0 = clockYPos + 48; 
 	
-	// used for drawing
-	int xx, yy;
+	float radians = (float)(angle%360) * (PI / 180.0f);
+	int x1 = x0 + std::cos(radians) * length;
+	int y1 = y0 - std::sin(radians) * length;
 
-	float cos = std::cos(radians);
-	float sin = std::sin(radians);
+	// Draw line using Bresenham's line algorithm
+	int dx = abs(x1 - x0);
+	int dy = -abs(y1 - y0);
 
-	for (u32 i = 0; i < length; i++) {
-		x += cos;
-		y -= sin;
+	int stepX = x0 < x1 ? 1 : -1;
+	int stepY = y0 < y1 ? 1 : -1;
 
-		xx = x;
-		yy = y;
+	int error = (dx + dy);
+	int error2;
 
-		BG_GFX_SUB[yy*256+xx] = color;
-		BG_GFX_SUB[(yy+1)*256+xx] = color;
-		BG_GFX_SUB[yy*256+(xx-1)] = color;
-		BG_GFX_SUB[(yy+1)*256+(xx-1)] = color;
+	while (true) {
+		BG_GFX_SUB[y0*256+x0] = color;
+		BG_GFX_SUB[(y0+1)*256+x0] = color;
+		BG_GFX_SUB[y0*256+(x0-1)] = color;
+		BG_GFX_SUB[(y0+1)*256+(x0-1)] = color;
+
+		if (x0 == x1 && y0 == y1) break;
+
+		error2 = error * 2;
+
+		if (error2 >= dy) {
+			if (x0 == x1) break;
+			error += dy;
+			x0 += stepX;
+		}
+		
+		if (error2 <= dx) {
+			if (y0 == y1) break;
+			error += dx;
+			y0 += stepY;
+		}
 	}
 }
 
@@ -932,7 +948,7 @@ void clockDraw() {
 	float h = (float)time.getHour() + (float)time.getMinute() / 60.0f;
 
 	clockNeedleDraw(90-(h * 30), 24, clockNeedleColor); // hour
-	clockNeedleDraw(90-(time.getMinute() * 6), 32, clockNeedleColor); // minute
+	clockNeedleDraw(90-(time.getMinute() * 6), 30, clockNeedleColor); // minute
 	clockNeedleDraw(90-(time.getSecond() * 6), 36, clockUserColor); // second
 
 	// draw clock pin
