@@ -328,9 +328,12 @@ void arm7_resetMemory (void)
 	// clear more of EXRAM, skipping the cheat data section
 	toncset ((void*)0x023F8000, 0, 0x8000);
 
+	if(my_isDSiMode() || swiIsDebugger())
+		memset_addrs_arm7(0x02400000, 0x02800000); // Clear the rest of EXRAM
+
 	if (my_isDSiMode()) {
 		// clear last part of EXRAM
-		memset_addrs_arm7(0x02400000, 0x02FFD7BC); // Leave eMMC CID intact
+		memset_addrs_arm7(0x02800000, 0x02FFD7BC); // Leave eMMC CID intact
 		memset_addrs_arm7(0x02FFD7CC, 0x03000000);
 	}
 
