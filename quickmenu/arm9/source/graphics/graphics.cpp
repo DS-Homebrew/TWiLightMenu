@@ -99,10 +99,10 @@ int iconYpos[7] = {25, 73, 73, 121, 175, 170, 175};
 bool showdialogbox = false;
 int dialogboxHeight = 0;
 
-constexpr int calendarXPos = 127;
+constexpr int calendarXPos = 125;
 constexpr int calendarYPos = 31;
-constexpr int clockXPos = 15;
-constexpr int clockYPos = 47;
+constexpr int clockXPos = 13;
+constexpr int clockYPos = 45;
 constexpr int batteryXPos = 242;
 constexpr int batteryYPos = 4;
 
@@ -125,14 +125,14 @@ u16 bmpImageBuffer[256*192] = {0};
 u16 topImageBuffer[256*192] = {0};
 u16* colorTable = nullptr;
 
-u16 calendarImageBuffer[113*113] = {0};
-u16 calendarBigImageBuffer[113*129] = {0};
+u16 calendarImageBuffer[117*115] = {0};
+u16 calendarBigImageBuffer[117*131] = {0};
 u16 markerImageBuffer[13*13] = {0};
 
 u16 batteryFullImageBuffer[12*7] = {0};
 u16 batteryLowImageBuffer[12*7] = {0};
 
-u16 clockImageBuffer[97*97] = {0};
+u16 clockImageBuffer[101*101] = {0};
 u16 clockNeedleColor;
 u16 clockPinColor;
 u16 clockUserColor;
@@ -715,8 +715,8 @@ static void clockNeedleDraw(int angle, u32 length, u16 color) {
 	constexpr float PI = 3.1415926535897f;
 	
 	// Find coords from angle & length
-	int x0 = clockXPos + 48;
-	int y0 = clockYPos + 48; 
+	int x0 = clockXPos + 50;
+	int y0 = clockYPos + 50; 
 	
 	float radians = (float)(angle%360) * (PI / 180.0f);
 	int x1 = x0 + std::cos(radians) * length;
@@ -801,7 +801,7 @@ static void calendarTextDraw(const Datetime& now) {
 	// Draw marker
 	{
 		int myPos = (startWeekday + now.getDay() - 1) / 7;
-		markerDraw(calendarXPos+now.getWeekDay()*16+2, calendarYPos+myPos*16+34);
+		markerDraw(calendarXPos+now.getWeekDay()*16+4, calendarYPos+myPos*14+36);
 	}
 
 	// Draw dates
@@ -820,13 +820,13 @@ static void calendarTextDraw(const Datetime& now) {
 	}
 
 	// Copy to background
-	updateTopTextArea(calendarXPos, calendarYPos, 113, 129);
+	updateTopTextArea(calendarXPos, calendarYPos, 113, 131);
 }
 
 void calendarDraw() {
 	if (ms().macroMode) return;
 
-	int calendarHeight = 113;
+	int calendarHeight = 115;
 	u16* src = calendarImageBuffer;
 
 	Datetime datetime = Datetime::now();
@@ -834,15 +834,15 @@ void calendarDraw() {
 
 	// If the dates exceed the small calendar then use the big calendar
 	if (firstDay.getWeekDay() + firstDay.getMonthDays() > 7*5) {
-		calendarHeight = 129;
+		calendarHeight = 131;
 		src = calendarBigImageBuffer;
 	}
 
 	int xDst = calendarXPos;
 	int yDst = calendarYPos;
-	for (int yy = 0; yy < 129; yy++) {
+	for (int yy = 0; yy < 131; yy++) {
 		xDst = calendarXPos;
-		for (int xx = 0; xx < 113; xx++) {
+		for (int xx = 0; xx < 117; xx++) {
 			if (yy < calendarHeight)
 				BG_GFX_SUB[yDst*256+xDst] = *(src++);
 			else
@@ -862,6 +862,8 @@ void calendarLoad(void) {
 	markerLoad();
 
 	// Small calendar
+	int calendarX = calendarXPos;
+	int calendarY = calendarYPos;
 
 	const char* filePath = "nitro:/graphics/calendar/calendar.png";
 	FILE* file = fopen(filePath, "rb");
@@ -876,12 +878,22 @@ void calendarLoad(void) {
 			if (colorTable) {
 				calendarImageBuffer[i] = colorTable[calendarImageBuffer[i]];
 			}
+
+			calendarImageBuffer[i] = alphablend(calendarImageBuffer[i], topImageBuffer[(calendarY*256)+calendarX], image[(i*4)+3]);
+
+			calendarX++;
+			if (calendarX >= calendarXPos + 117) {
+				calendarX = calendarXPos;
+				calendarY++;
+			}
 		}
 	}
 
 	fclose(file);
 	
 	// Big calendar
+	calendarX = calendarXPos;
+	calendarY = calendarYPos;
 
 	filePath = "nitro:/graphics/calendar/calendarbig.png";
 	file = fopen(filePath, "rb");
@@ -895,6 +907,14 @@ void calendarLoad(void) {
 			calendarBigImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
 				calendarBigImageBuffer[i] = colorTable[calendarBigImageBuffer[i]];
+			}
+
+			calendarBigImageBuffer[i] = alphablend(calendarBigImageBuffer[i], topImageBuffer[(calendarY*256)+calendarX], image[(i*4)+3]);
+
+			calendarX++;
+			if (calendarX >= calendarXPos + 117) {
+				calendarX = calendarXPos;
+				calendarY++;
 			}
 		}
 	}
@@ -910,6 +930,9 @@ void clockLoad(void) {
 	const char* filePath = "nitro:/graphics/clock.png";
 	FILE* file = fopen(filePath, "rb");
 
+	int clockX = clockXPos;
+	int clockY = clockYPos;
+
 	if (file) {
 		// Start loading
 		std::vector<unsigned char> image;
@@ -919,6 +942,14 @@ void clockLoad(void) {
 			clockImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
 				clockImageBuffer[i] = colorTable[clockImageBuffer[i]];
+			}
+
+			clockImageBuffer[i] = alphablend(clockImageBuffer[i], topImageBuffer[(clockY*256)+clockX], image[(i*4)+3]);
+
+			clockX++;
+			if (clockX >= clockXPos + 101) {
+				clockX = clockXPos;
+				clockY++;
 			}
 		}
 
@@ -936,9 +967,9 @@ void clockDraw() {
 		
 	int dstX = clockXPos;
 	int dstY = clockYPos;
-	for (int yy = 0; yy < 97; yy++) {
+	for (int yy = 0; yy < 101; yy++) {
 		dstX = clockXPos;
-		for (int xx = 0; xx < 97; xx++) {
+		for (int xx = 0; xx < 101; xx++) {
 			BG_GFX_SUB[dstY*256+dstX] = *(src++);
 			dstX++;
 		}
@@ -952,8 +983,8 @@ void clockDraw() {
 	clockNeedleDraw(90-(time.getSecond() * 6), 36, clockUserColor); // second
 
 	// draw clock pin
-	for (int yy = clockYPos+46; yy < clockYPos+46+5; yy++) {
-		for (int xx = clockXPos+46; xx < clockXPos+46+5; xx++) {
+	for (int yy = clockYPos+48; yy < clockYPos+48+5; yy++) {
+		for (int xx = clockXPos+48; xx < clockXPos+48+5; xx++) {
 			BG_GFX_SUB[yy*256+xx] = clockPinColor;
 		}
 	}
