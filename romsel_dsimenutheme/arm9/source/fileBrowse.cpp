@@ -90,7 +90,6 @@ int last_used_box = 0;
 static int fileStartPos = 0; // The position of the first thing that is not a directory.
 
 extern int spawnedtitleboxes;
-extern int cursorPosOnScreen;
 
 extern int titleboxXpos[2];
 extern int titleboxXdest[2];
@@ -3897,7 +3896,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						snd().playLaunch();
 						controlTopBright = true;
 						applaunch = true;
-						cursorPosOnScreen = CURPOS;
 
 						if (ms().theme == TWLSettings::EThemeDSi) {
 							applaunchprep = true;
@@ -3976,8 +3974,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 							if (ms().sortMethod == TWLSettings::ESortRecent) {
 								// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
-								CURPOS = fileStartPos % 40;
 								PAGENUM = fileStartPos / 40;
+								CURPOS = fileStartPos - PAGENUM * 40;
 							}
 
 							if (ms().theme == TWLSettings::EThemeHBL) {
