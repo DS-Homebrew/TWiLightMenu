@@ -1381,7 +1381,6 @@ void switchDevice(void) {
 		}
 
 		if (directMethod) {
-			cursorPosOnScreen = CURPOS;
 			SetWidescreen(NULL);
 			chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
 			int err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, false, -1);
