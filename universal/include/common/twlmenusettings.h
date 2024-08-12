@@ -265,6 +265,7 @@ public:
 
 	int pagenum[2];
 	int cursorPosition[2];
+	int saveCursorPosition[2];
 
 	TConsoleModel consoleModel;
 	bool languageSet;

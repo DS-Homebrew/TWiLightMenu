@@ -25,6 +25,10 @@ TWLSettings::TWLSettings()
 	cursorPosition[0] = 0;
 	cursorPosition[1] = 0;
 
+	// -1 means it won't overwrite cursorPosition / pagenum for saving
+	saveCursorPosition[0] = -1;
+	saveCursorPosition[1] = -1;
+
 	consoleModel = EDSiRetail;
 	languageSet = false;
 	regionSet = false;
@@ -365,11 +369,24 @@ void TWLSettings::saveSettings()
 	settingsini.SetString("SRLOADER", "ROM_PATH", romPath[0]);
 	settingsini.SetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
 
-	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum[0]);
-	settingsini.SetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
+	// Cursor position.
+	if (saveCursorPosition[0] == -1) {
+		settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum[0]);
+		settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
+	} else {
+		// Overwrite cursor pos
+		settingsini.SetInt("SRLOADER", "PAGE_NUMBER", saveCursorPosition[0]/40);
+		settingsini.SetInt("SRLOADER", "CURSOR_POSITION", saveCursorPosition[0]%40);
+	}
 
-	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
-	settingsini.SetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
+	if (saveCursorPosition[1] == -1) {
+		settingsini.SetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
+		settingsini.SetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
+	} else {
+		// Overwrite cursor pos
+		settingsini.SetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", saveCursorPosition[1]/40);
+		settingsini.SetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", saveCursorPosition[1]%40);
+	}
 
 	settingsini.SetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
 	settingsini.SetInt("SRLOADER", "LANGUAGE_SET", languageSet);

@@ -3974,8 +3974,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 							if (ms().sortMethod == TWLSettings::ESortRecent) {
 								// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
-								PAGENUM = fileStartPos / 40;
-								CURPOS = fileStartPos - PAGENUM * 40;
+								ms().saveCursorPosition[ms().secondaryDevice] = fileStartPos;
 							}
 
 							if (ms().theme == TWLSettings::EThemeHBL) {
