@@ -531,8 +531,11 @@ static u16 bnriconframeseq[41][64] = {0x0000};
 // bnriconframenum[]
 int bnriconPalLoaded[41] = {0};
 int bnriconPalLine[41] = {0};
+int bnriconPalLinePrev[41] = {0};
 int bnriconframenumY[41] = {0};
+int bnriconframenumYPrev[41] = {0};
 int bannerFlip[41] = {GL_FLIP_NONE};
+int bannerFlipPrev[41] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
 bool isTwlm[40] = {false};
@@ -600,6 +603,23 @@ bool playBannerSequence(int iconnum)
 			bannerFlip[iconnum] = GL_FLIP_V;
 		}
 
+		bool updateIcon = false;
+
+		if (bnriconPalLinePrev[iconnum] != bnriconPalLine[iconnum]) {
+			bnriconPalLinePrev[iconnum] = bnriconPalLine[iconnum];
+			updateIcon = true;
+		}
+
+		if (bnriconframenumYPrev[iconnum] != bnriconframenumY[iconnum]) {
+			bnriconframenumYPrev[iconnum] = bnriconframenumY[iconnum];
+			updateIcon = true;
+		}
+
+		if (bannerFlipPrev[iconnum] != bannerFlip[iconnum]) {
+			bannerFlipPrev[iconnum] = bannerFlip[iconnum];
+			updateIcon = true;
+		}
+
 		bannerDelayNum[iconnum]++;
 		if (bannerDelayNum[iconnum] >= (setframeseq & 0x00FF)) {
 			bannerDelayNum[iconnum] = 0x0000;
@@ -607,8 +627,9 @@ bool playBannerSequence(int iconnum)
 			if (bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]] == 0x0000) {
 				currentbnriconframeseq[iconnum] = 0; // Reset sequence
 			}
-			return true;
 		}
+
+		return updateIcon;
 	}
 
 	return false;

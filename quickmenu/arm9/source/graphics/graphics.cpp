@@ -641,11 +641,13 @@ void vBlankHandler()
 	}
 
 	if (!whiteScreen && startMenu) {
+		// Playback animated icons
 		for (int i = 0; i < 2; i++) {
 			if (bnriconisDSi[i] && playBannerSequence(i)) {
 				updateFrame = true;
 			}
 		}
+
 		for (int i = 0; i < 7; i++) {
 			if (moveIconUp[i]) {
 				iconYpos[i] -= 6;

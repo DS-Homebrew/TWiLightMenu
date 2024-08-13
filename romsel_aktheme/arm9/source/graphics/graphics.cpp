@@ -1590,11 +1590,13 @@ void vBlankHandler()
 	}
 
 	if (displayIcons && iconsToDisplay > 0) {
+		// Playback animated icons
 		for (int i = 0; i < iconsToDisplay; i++) {
 			if (bnriconisDSi[i] && playBannerSequence(i)) {
 				updateFrame = true;
 			}
 		}
+
 		if (iconScaleEnabled) {
 			if (!iconScaleDelay) {
 				if (iconScaleLarge) {

@@ -688,9 +688,10 @@ void vBlankHandler() {
 			updateFrame = true;
 		}
 	}
+
 	if (displayGameIcons || dbox_showIcon) {
 		// Playback animated icons
-		for (int i = 0; i < 41; i++) {
+		for (int i = 0; i < ((movingApp != -1) ? 41 : 40); i++) {
 			if (bnriconisDSi[i] && playBannerSequence(i) && !updateFrame) {
 				updateFrame = (displayGameIcons && (ms().theme != TWLSettings::EThemeSaturn)) ? (i >= CURPOS-2 && i <= CURPOS+2) : (i == CURPOS);
 			}
