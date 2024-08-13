@@ -852,7 +852,7 @@ static void calendarTextDraw(const Datetime& now) {
 	// Draw marker
 	{
 		int myPos = (startWeekday + now.getDay() - 1) / 7;
-		markerDraw(calendarXPos+now.getWeekDay()*16+4, calendarYPos+myPos*14+36);
+		markerDraw(calendarXPos+now.getWeekDay()*16+4, calendarYPos+myPos*16+34);
 	}
 
 	// Draw dates
