@@ -300,6 +300,10 @@ void resetIconScale(void) {
 	iconScaleLarge = true;
 	iconScaleDelay = 0;
 	iconShift = 0;
+	while (updateFrame) {
+		swiWaitForVBlank();
+	}
+	updateFrame = true;
 }
 
 ITCM_CODE void updateSelectionBar(void) {
