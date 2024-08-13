@@ -336,6 +336,6 @@ void clearBannerSequence(int num);
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence(int num);
+bool playBannerSequence(int num);
 
 #endif // NDS_HEADER2

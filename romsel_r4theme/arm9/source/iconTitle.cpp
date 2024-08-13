@@ -92,6 +92,14 @@ u8 *clearTiles;
 u16 *blackPalette;
 u8 *tilesModified;
 
+static inline void doFrameUpdate(void) {
+	extern bool updateFrame;
+	while (updateFrame) {
+		swiWaitForVBlank();
+	}
+	updateFrame = true;
+}
+
 void iconTitleInit()
 {
 	clearTiles = new u8[(32 * 256) / 2]();
@@ -172,6 +180,7 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2
 				(u16*) palSrc, // Image palette
 				(u8*) tilesModified // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadFolderIcon()
@@ -192,6 +201,7 @@ void loadFolderIcon()
 				(u16*) icon_folderPal, // Image palette
 				(u8*) icon_folderBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadUnkIcon()
@@ -212,6 +222,7 @@ void loadUnkIcon()
 				(u16*) icon_unkPal, // Image palette
 				(u8*) icon_unkBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadGBAIcon()
@@ -232,6 +243,7 @@ void loadGBAIcon()
 				(u16*) icon_gbaPal, // Image palette
 				(u8*) icon_gbaBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadGBIcon()
@@ -252,6 +264,7 @@ void loadGBIcon()
 				(u16*) icon_gbPal, // Image palette
 				(u8*) icon_gbBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadGBCIcon()
@@ -272,6 +285,7 @@ void loadGBCIcon()
 				(u16*) icon_gbPal, // Image palette
 				(u8*) icon_gbBitmap+(32*16) // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadNESIcon()
@@ -292,6 +306,7 @@ void loadNESIcon()
 				(u16*) icon_nesPal, // Image palette
 				(u8*) icon_nesBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadSGIcon()
@@ -312,6 +327,7 @@ void loadSGIcon()
 				(u16*) icon_sgPal, // Image palette
 				(u8*) icon_sgBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadSMSIcon()
@@ -332,6 +348,7 @@ void loadSMSIcon()
 				(u16*) icon_smsPal, // Image palette
 				(u8*) icon_smsBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadGGIcon()
@@ -352,6 +369,7 @@ void loadGGIcon()
 				(u16*) icon_ggPal, // Image palette
 				(u8*) icon_ggBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadMDIcon()
@@ -372,6 +390,7 @@ void loadMDIcon()
 				(u16*) icon_mdPal, // Image palette
 				(u8*) icon_mdBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadSNESIcon()
@@ -392,6 +411,7 @@ void loadSNESIcon()
 				(u16*) icon_snesPal, // Image palette
 				(u8*) icon_snesBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadPLGIcon()
@@ -412,6 +432,7 @@ void loadPLGIcon()
 				(u16*) icon_plgPal, // Image palette
 				(u8*) icon_plgBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadA26Icon()
@@ -432,6 +453,7 @@ void loadA26Icon()
 				(u16*) icon_a26Pal, // Image palette
 				(u8*) icon_a26Bitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadCOLIcon()
@@ -452,6 +474,7 @@ void loadCOLIcon()
 				(u16*) icon_colPal, // Image palette
 				(u8*) icon_colBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadM5Icon()
@@ -472,6 +495,7 @@ void loadM5Icon()
 				(u16*) icon_m5Pal, // Image palette
 				(u8*) icon_m5Bitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadINTIcon()
@@ -492,6 +516,7 @@ void loadINTIcon()
 				(u16*) icon_intPal, // Image palette
 				(u8*) icon_intBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadPCEIcon()
@@ -512,6 +537,7 @@ void loadPCEIcon()
 				(u16*) icon_pcePal, // Image palette
 				(u8*) icon_pceBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadWSIcon()
@@ -532,6 +558,7 @@ void loadWSIcon()
 				(u16*) icon_wsPal, // Image palette
 				(u8*) icon_wsBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadNGPIcon()
@@ -552,6 +579,7 @@ void loadNGPIcon()
 				(u16*) icon_ngpPal, // Image palette
 				(u8*) icon_ngpBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadCPCIcon()
@@ -572,6 +600,7 @@ void loadCPCIcon()
 				(u16*) icon_cpcPal, // Image palette
 				(u8*) icon_cpcBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadVIDIcon()
@@ -592,6 +621,7 @@ void loadVIDIcon()
 				(u16*) icon_vidPal, // Image palette
 				(u8*) icon_vidBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadIMGIcon()
@@ -612,6 +642,7 @@ void loadIMGIcon()
 				(u16*) icon_imgPal, // Image palette
 				(u8*) icon_imgBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadMSXIcon()
@@ -632,6 +663,7 @@ void loadMSXIcon()
 				(u16*) icon_msxPal, // Image palette
 				(u8*) icon_msxBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadMINIcon()
@@ -652,6 +684,7 @@ void loadMINIcon()
 				(u16*) icon_miniPal, // Image palette
 				(u8*) icon_miniBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 void loadHBIcon()
@@ -672,6 +705,7 @@ void loadHBIcon()
 				(u16*) icon_hbPal, // Image palette
 				(u8*) icon_hbBitmap // Raw image data
 				);
+	doFrameUpdate();
 }
 
 /**

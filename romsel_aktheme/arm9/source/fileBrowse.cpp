@@ -104,6 +104,14 @@ extern touchPosition touch;
 
 extern void bgOperations(bool waitFrame);
 
+static inline void doFrameUpdate(void) {
+	extern bool updateFrame;
+	while (updateFrame) {
+		swiWaitForVBlank();
+	}
+	updateFrame = true;
+}
+
 int file_count = 0;
 static int fileStartPos = 0; // The position of the first thing that is not a directory.
 
@@ -513,6 +521,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	}
 	displayDiskIcon(false);
 
+	doFrameUpdate();
 	updateText(false);
 }
 

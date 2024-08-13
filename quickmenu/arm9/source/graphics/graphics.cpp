@@ -76,6 +76,7 @@ int progressBarLength = 0;
 
 float cursorTargetTL = 0.0f, cursorTargetTR = 0.0f, cursorTargetBL = 0.0f, cursorTargetBR = 0.0f;
 float cursorTL = 0.0f, cursorTR = 0.0f, cursorBL = 0.0f, cursorBR = 0.0f;
+float cursorTLPrev = 0.0f, cursorTRPrev = 0.0f, cursorBLPrev = 0.0f, cursorBRPrev = 0.0f;
 
 extern int spawnedtitleboxes;
 
@@ -583,7 +584,7 @@ auto getMenuEntryTexture(MenuEntry entry) {
 
 void vBlankHandler()
 {
-	if (fadeType == true) {
+	if (fadeType) {
 		if (!fadeDelay) {
 			screenBrightness--;
 			if (screenBrightness < 0) screenBrightness = 0;
@@ -607,13 +608,79 @@ void vBlankHandler()
 		}
 	}
 
+	static bool updateFrame = true;
+	static bool whiteScreenPrev = whiteScreen;
+	static bool showProgressBarPrev = showProgressBar;
+	static int progressBarLengthPrev = progressBarLength;
+	static bool showCursorPrev = showCursor;
+	static bool startMenuPrev = startMenu;
+
+	if (whiteScreenPrev != whiteScreen) {
+		whiteScreenPrev = whiteScreen;
+		updateFrame = true;
+	}
+
+	if (showProgressBarPrev != showProgressBar) {
+		showProgressBarPrev = showProgressBar;
+		updateFrame = true;
+	}
+
+	if (progressBarLengthPrev != progressBarLength) {
+		progressBarLengthPrev = progressBarLength;
+		updateFrame = true;
+	}
+
+	if (showCursorPrev != showCursor) {
+		showCursorPrev = showCursor;
+		updateFrame = true;
+	}
+
+	if (startMenuPrev != startMenu) {
+		startMenuPrev = startMenu;
+		updateFrame = true;
+	}
+
+	if (!whiteScreen && startMenu) {
+		for (int i = 0; i < 2; i++) {
+			if (bnriconisDSi[i] && playBannerSequence(i)) {
+				updateFrame = true;
+			}
+		}
+		for (int i = 0; i < 7; i++) {
+			if (moveIconUp[i]) {
+				iconYpos[i] -= 6;
+				updateFrame = true;
+			}
+		}
+	}
+
 	constexpr float swiftness = 0.25f;
 	cursorTL += (cursorTargetTL - cursorTL) * swiftness;
 	cursorBL += (cursorTargetBL - cursorBL) * swiftness;
 	cursorTR += (cursorTargetTR - cursorTR) * swiftness;
 	cursorBR += (cursorTargetBR - cursorBR) * swiftness;
 
-	{
+	if (cursorTLPrev != cursorTL) {
+		cursorTLPrev = cursorTL;
+		updateFrame = true;
+	}
+
+	if (cursorBLPrev != cursorBL) {
+		cursorBLPrev = cursorBL;
+		updateFrame = true;
+	}
+
+	if (cursorTRPrev != cursorTR) {
+		cursorTRPrev = cursorTR;
+		updateFrame = true;
+	}
+
+	if (cursorBRPrev != cursorBR) {
+		cursorBRPrev = cursorBR;
+		updateFrame = true;
+	}
+
+	if (updateFrame) {
 	  glBegin2D();
 	  {
 		if (controlBottomBright) SetBrightness(0, screenBrightness);
@@ -643,10 +710,6 @@ void vBlankHandler()
 				} else drawIcon(1, 40, iconYpos[0]+6);
 				if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessicons.images[(bnrWirelessIcon[0]-1) & 31]);
 			}
-			// Playback animated icon
-			if (bnriconisDSi[0]==true) {
-				playBannerSequence(0);
-			}
 			glSprite(33, iconYpos[1], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::PICTOCHAT));
 			glSprite(129, iconYpos[2], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::DOWNLOADPLAY));
 			glSprite(33, iconYpos[3], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::GBA));
@@ -659,10 +722,6 @@ void vBlankHandler()
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::BRIGHTNESS));
 			}
 			if (bnrWirelessIcon[num] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessicons.images[(bnrWirelessIcon[1]-1) & 31]);
-			// Playback animated icon
-			if (bnriconisDSi[1]==true) {
-				playBannerSequence(1);
-			}
 			if (!ms().kioskMode) {
 				glSprite(117, iconYpos[5], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::SETTINGS));
 			}
@@ -698,14 +757,6 @@ void vBlankHandler()
 	  }
 	  glEnd2D();
 	  GFX_FLUSH = 0;
-	}
-
-	if (!whiteScreen) {
-		for (int i = 0; i < 7; i++) {
-			if (moveIconUp[i]) {
-				iconYpos[i] -= 6;
-			}
-		}
 	}
 }
 

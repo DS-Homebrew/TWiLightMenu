@@ -593,7 +593,7 @@ void clearBannerSequence()
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence()
+bool playBannerSequence()
 {
 	if (bnriconframeseq[currentbnriconframeseq + 1] == 0x0100) {
 		// Do nothing if icon isn't animated
@@ -624,6 +624,9 @@ void playBannerSequence()
 			if (bnriconframeseq[currentbnriconframeseq] == 0x0000) {
 				currentbnriconframeseq = 0; // Reset sequence
 			}
+			return true;
 		}
 	}
+
+	return false;
 }
