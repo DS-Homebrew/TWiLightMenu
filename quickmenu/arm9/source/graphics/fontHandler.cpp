@@ -5,74 +5,89 @@
 
 #include "common/twlmenusettings.h"
 #include "common/flashcard.h"
+#include "common/logging.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "myDSiMode.h"
 #include "TextEntry.h"
+#include "color.h"
+#include "usercolors.h"
 
 extern u16* colorTable;
 
 FontGraphic *smallFont;
-FontGraphic *largeFont;
+FontGraphic *tinyFont;
 
 std::list<TextEntry> topText, bottomText;
 
 bool shouldClear[] = {false, false};
 
 void fontInit() {
-	bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
+	logPrint("fontInit() ");
+
+	// const bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
+	const bool useTileCache = (!dsiFeatures() && !sys().dsDebugRam());
 
 	// Unload fonts if already loaded
 	if (smallFont)
 		delete smallFont;
-	if (largeFont)
-		delete largeFont;
+	if (tinyFont)
+		delete tinyFont;
 
 	u16 palette[] = {
-		0x0000,
+		0x0000, // Regular (dark gray)
 		0xDEF7,
 		0xC631,
 		0xA108,
-		0x0000,
+		0x0000, // Disabled (light gray)
 		0xEB5A,
 		0xDEF7,
 		0xD294,
+		0x0000, // Top Bar (lightened user color)
+		0x0000,
+		0x0000,
+		userColorsTopBar[getFavoriteColor()],
+		0x0000, // Sunday (red)
+		0x0000,
+		0x0000,
+		0x800F,
+		0x0000, // Saturday (blue)
+		0x0000,
+		0x0000,
+		0xC000,
 	};
 
 	// Load font graphics
 	if (ms().dsClassicCustomFont) {
 		std::string fontPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 		std::string defaultPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
-		bool dsiFont = dsiFeatures() || sys().dsDebugRam() || useExpansionPak;
-		smallFont = new FontGraphic({fontPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), fontPath + "/small.nftr", defaultPath + (dsiFont ? "/small-dsi.nftr" : "/small-ds.nftr"), "nitro:/graphics/font/small.nftr"}, useExpansionPak);
+		smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", defaultPath + "/small-dsi.nftr", "nitro:/graphics/font/small.nftr"}, useTileCache);
 	} else {
 		smallFont = new FontGraphic({"nitro:/graphics/font/small.nftr"}, false);
 		palette[3] = 0x94A5;
 	}
+	tinyFont = new FontGraphic({"nitro:/graphics/font/tiny.nftr"}, false);
 
 	if (colorTable) {
-		for (int i = 1; i < 8; i++) {
+		for (uint i = 1; i < sizeof(palette)/sizeof(u16); i++) {
 			palette[i] = colorTable[palette[i]];
 		}
 	}
 	// Load palettes
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
+	logPrint("Font inited\n");
 }
 
 static std::list<TextEntry> &getTextQueue(bool top) {
 	return top ? topText : bottomText;
 }
 
-FontGraphic *getFont(bool large) {
-	return large ? largeFont : smallFont;
+FontGraphic *getFont(bool tiny) {
+	return tiny ? tinyFont : smallFont;
 }
 
 void updateText(bool top) {
-	// Remove if adding top support
-	if (top)
-		return;
-
 	// Clear before redrawing
 	if (shouldClear[top]) {
 		dmaFillWords(0, FontGraphic::textBuf[top], 256 * 192);
@@ -88,8 +103,23 @@ void updateText(bool top) {
 	}
 	text.clear();
 
-	// Copy buffer to the screen
-	tonccpy(bgGetGfxPtr(top ? 6 : 2), FontGraphic::textBuf[top], 256 * 192);
+	// Copy buffer to the screen (top screen must be copied manually to background)
+	if (!top) tonccpy(bgGetGfxPtr(top ? 6 : 2), FontGraphic::textBuf[top], 256 * 192);
+}
+
+void updateTopTextArea(int x, int y, int width, int height, u16 *restoreBuf) {
+	// Clear only the affected rows
+	dmaFillWords(0, FontGraphic::textBuf[1] + y * 256, height * 256);
+	shouldClear[1] = false;
+	updateText(true);
+	// Manual copy to background layer only within box bounds
+	for (int yy = y; yy < y + height; yy++) {
+		for (int xx = x; xx < x + width; xx++) {
+			int idx = yy * 256 + xx;
+			int px = FontGraphic::textBuf[1][idx];
+			if (px || restoreBuf) BG_GFX_SUB[idx] = px ? BG_PALETTE_SUB[px] : restoreBuf[idx];
+		}
+	}
 }
 
 void clearText(bool top) {
@@ -108,10 +138,10 @@ void printSmall(bool top, int x, int y, std::u16string_view message, Alignment a
 	getTextQueue(top).emplace_back(false, x, y, message, align, palette);
 }
 
-void printLarge(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
+void printTiny(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
 	getTextQueue(top).emplace_back(true, x, y, message, align, palette);
 }
-void printLarge(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
+void printTiny(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
 	getTextQueue(top).emplace_back(true, x, y, message, align, palette);
 }
 
@@ -126,14 +156,14 @@ int calcSmallFontWidth(std::u16string_view text) {
 	return 0;
 }
 
-int calcLargeFontWidth(std::string_view text) {
-	if (largeFont)
-		return largeFont->calcWidth(text);
+int calcTinyFontWidth(std::string_view text) {
+	if (tinyFont)
+		return tinyFont->calcWidth(text);
 	return 0;
 }
-int calcLargeFontWidth(std::u16string_view text) {
-	if (largeFont)
-		return largeFont->calcWidth(text);
+int calcTinyFontWidth(std::u16string_view text) {
+	if (tinyFont)
+		return tinyFont->calcWidth(text);
 	return 0;
 }
 
@@ -151,15 +181,15 @@ int calcSmallFontHeight(std::u16string_view text) {
 	return 0;
 }
 
-int calcLargeFontHeight(std::string_view text) { return calcLargeFontHeight(FontGraphic::utf8to16(text)); }
-int calcLargeFontHeight(std::u16string_view text) {
-	if (largeFont) {
+int calcTinyFontHeight(std::string_view text) { return calcTinyFontHeight(FontGraphic::utf8to16(text)); }
+int calcTinyFontHeight(std::u16string_view text) {
+	if (tinyFont) {
 		int lines = 1;
 		for (auto c : text) {
 			if (c == '\n')
 				lines++;
 		}
-		return lines * largeFont->height();
+		return lines * tinyFont->height();
 	}
 
 	return 0;
@@ -171,8 +201,8 @@ u8 smallFontHeight(void) {
 	return 0;
 }
 
-u8 largeFontHeight(void) {
-	if (largeFont)
-		return largeFont->height();
+u8 tinyFontHeight(void) {
+	if (tinyFont)
+		return tinyFont->height();
 	return 0;
 }

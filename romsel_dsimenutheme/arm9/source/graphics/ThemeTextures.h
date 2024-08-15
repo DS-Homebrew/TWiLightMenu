@@ -37,9 +37,32 @@ private:
 	void loadVolumeTextures();
 	void loadBatteryTextures();
 	void loadUITextures();
-	void loadIconTextures();
 
 public:
+	void loadIconGBTexture();
+	void loadIconGBATexture();
+	void loadIconGGTexture();
+	void loadIconMDTexture();
+	void loadIconNESTexture();
+	void loadIconSGTexture();
+	void loadIconSMSTexture();
+	void loadIconSNESTexture();
+	void loadIconPLGTexture();
+	void loadIconA26Texture();
+	void loadIconCOLTexture();
+	void loadIconM5Texture();
+	void loadIconINTTexture();
+	void loadIconPCETexture();
+	void loadIconWSTexture();
+	void loadIconNGPTexture();
+	void loadIconCPCTexture();
+	void loadIconVIDTexture();
+	void loadIconIMGTexture();
+	void loadIconMSXTexture();
+	void loadIconMINITexture();
+	void loadIconHBTexture();
+	void loadIconUnknownTexture();
+
 	static unsigned short *beginBgSubModify();
 	static void commitBgSubModify();
 	static void commitBgSubModifyAsync();
@@ -57,6 +80,7 @@ public:
 	void loadBoxArtToMem(const char *filename, int num);
 	void drawBoxArt(const char* filename, bool inMem);
 	void drawOverBoxArt(uint photoWidth, uint photoHeight);
+	void drawOverRotatingCubes();
 
 	void drawVolumeImage(int volumeLevel);
 	void drawVolumeImageMacro(int volumeLevel);
@@ -162,6 +186,7 @@ public:
 	const Texture *iconIMGTexture() { return _iconIMGTexture.get(); }
 	const Texture *iconMSXTexture() { return _iconMSXTexture.get(); }
 	const Texture *iconMINITexture() { return _iconMINITexture.get(); }
+	const Texture *iconHBTexture() { return _iconHBTexture.get(); }
 	const Texture *iconUnknownTexture() { return _iconUnknownTexture.get(); }
 
 	const Texture *leftShoulderTexture() { return _leftShoulderTexture.get(); }
@@ -298,6 +323,7 @@ private:
 	unique_ptr<Texture> _iconIMGTexture;
 	unique_ptr<Texture> _iconMSXTexture;
 	unique_ptr<Texture> _iconMINITexture;
+	unique_ptr<Texture> _iconHBTexture;
 	unique_ptr<Texture> _iconUnknownTexture;
 
 	unique_ptr<Texture> _volume0Texture;

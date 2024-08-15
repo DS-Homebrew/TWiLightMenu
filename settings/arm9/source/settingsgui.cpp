@@ -68,13 +68,19 @@ void SettingsGUI::processInputs(int pressed, touchPosition &touch)
 		}
 
 		if ((pressed & KEY_X || pressed & KEY_R) && !inSub()) {
-			mmEffectEx(currentTheme == 4 ? &snd().snd_saturn_launch : &snd().snd_switch);
+			mm_sound_effect pannedSound = currentTheme == 4 ? snd().snd_saturn_launch : snd().snd_switch;
+			pannedSound.panning = 178;
+
+			mmEffectEx(&pannedSound);
 			titleDisplayLength = 0;
 			rotatePage(1);
 		}
 
 		if ((pressed & KEY_Y || pressed & KEY_L) && !inSub()) {
-			mmEffectEx(currentTheme==4 ? &snd().snd_saturn_launch : &snd().snd_switch);
+			mm_sound_effect pannedSound = currentTheme == 4 ? snd().snd_saturn_launch : snd().snd_switch;
+			pannedSound.panning = 76;
+
+			mmEffectEx(&pannedSound);
 			titleDisplayLength = 0;
 			rotatePage(-1);
 		}
@@ -94,6 +100,22 @@ void SettingsGUI::processInputs(int pressed, touchPosition &touch)
 			}
 		}
 	}
+}
+
+static bool wasOptionModified(Option& option) {
+	if (auto action = std::get_if<Option::Bool>(&option.action())) {
+		return action->was_modified();
+	}
+	if (auto action = std::get_if<Option::Int>(&option.action())) {
+		return action->was_modified();
+	}
+	if (auto action = std::get_if<Option::Str>(&option.action())) {
+		return action->was_modified();
+	}
+	if (auto action = std::get_if<Option::Nul>(&option.action())) {
+		return action->was_modified();
+	}
+	return false;
 }
 
 void SettingsGUI::draw()
@@ -123,32 +145,55 @@ void SettingsGUI::draw()
 	if (ms().rtl()) {
 		printLarge(false, SCREEN_WIDTH - 6, 1, titleDisplayLength>=60*4 ? STR_SELECT_SEE_DESC_VER : _pages[_selectedPage].title().c_str(), Alignment::right);
 
+		std::string str;
 		for (int i = _topCursor; i < _bottomCursor; i++) {
-			int selected = _pages[_selectedPage].options()[i].selected();
+			auto option = _pages[_selectedPage].options()[i];
+			int selected = option.selected();
+
 			if (i == _selectedOption) {
-				printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _topCursor) * 14, "<", Alignment::right);
+				if (currentTheme == 4) {
+					printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _topCursor) * 14, "<", Alignment::right);
+				}
 				// print scroller on the other side
 				drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1), true);
 			}
 
-			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str(), Alignment::right);
+			bool modified = wasOptionModified(option);
+
+			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str(), Alignment::right, (i == _selectedOption && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 			if (selected < 0) continue;
-			printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
+
+			str = _pages[_selectedPage].options()[i].labels()[selected];
+			if (modified)
+				str += "*";
+			printSmall(false, 12, 30 + (i - _topCursor) * 14, str.c_str(), Alignment::left, (i == _selectedOption && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 		}
 	} else {
 		printLarge(false, 6, 1, titleDisplayLength>=60*4 ? STR_SELECT_SEE_DESC_VER : _pages[_selectedPage].title().c_str());
 
+		std::string str;
 		for (int i = _topCursor; i < _bottomCursor; i++) {
-			int selected = _pages[_selectedPage].options()[i].selected();
+			auto option = _pages[_selectedPage].options()[i];
+			int selected = option.selected();
+
 			if (i == _selectedOption) {
-				printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
+				if (currentTheme == 4) {
+					printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
+				}
 				// print scroller on the other side
 				drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1), false);
 			}
 
-			printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str());
+			bool modified = wasOptionModified(option);
+
+			printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str(), Alignment::left, (i == _selectedOption && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 			if (selected < 0) continue;
-			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str(), Alignment::right);
+
+			str = _pages[_selectedPage].options()[i].labels()[selected];
+			if (modified)
+				str += "*";
+
+			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _topCursor) * 14, str.c_str(), Alignment::right, (i == _selectedOption && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 		}
 	}
 
@@ -162,6 +207,9 @@ void SettingsGUI::draw()
 	printSmall(false, 0, 173, "TWiLight Menu++", Alignment::center);
 	printSmall(false, 2, 173, "<  / "); // L / Y
 	printSmall(false, 256 - 2, 173, " /  >", Alignment::right); // R / X
+
+	updateText(false);
+	updateText(true);
 }
 
 void SettingsGUI::setTopText(const std::string &text)
@@ -228,29 +276,36 @@ void SettingsGUI::drawSub()
 		printLarge(false, SCREEN_WIDTH - 6, 1, titleDisplayLength>=60*4 ? STR_SELECT_SEE_DESC_VER : _subOption->displayName().c_str(), Alignment::right);
 		for (int i = _subTopCursor; i < _subBottomCursor; i++) {
 			if (i == selected) {
-				printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _subTopCursor) * 14, "<", Alignment::right);
+				if (currentTheme == 4) {
+					printSmall(false, SCREEN_WIDTH - 4, 29 + (i - _subTopCursor) * 14, "<", Alignment::right);
+				}
 
 				// print scroller on the other side
 				drawScroller(30 + i * CURSOR_HEIGHT / _subOption->labels().size() + 1, (CURSOR_HEIGHT / _subOption->labels().size() + 1), true);
 			}
 
-			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str(), Alignment::right);
+			printSmall(false, SCREEN_WIDTH - 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str(), Alignment::right, (i == selected && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 		}
 	} else {
 		printLarge(false, 6, 1, titleDisplayLength>=60*4 ? STR_SELECT_SEE_DESC_VER : _subOption->displayName().c_str());
 		for (int i = _subTopCursor; i < _subBottomCursor; i++) {
 			if (i == selected) {
-				printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
+				if (currentTheme == 4) {
+					printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
+				}
 
 				// print scroller on the other side
 				drawScroller(30 + i * CURSOR_HEIGHT / _subOption->labels().size() + 1, (CURSOR_HEIGHT / _subOption->labels().size() + 1), false);
 			}
 
-			printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
+			printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str(), Alignment::left, (i == selected && currentTheme != 4) ? FontPalette::user : FontPalette::regular);
 		}
 	}
 
 	printSmall(false, 0, 173, "TWiLight Menu++", Alignment::center);
+
+	updateText(false);
+	updateText(true);
 }
 
 void SettingsGUI::drawTopText()

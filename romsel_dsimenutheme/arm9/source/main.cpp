@@ -133,6 +133,7 @@ bool useRumble = false;
 bool applaunchprep = false;
 
 int spawnedtitleboxes = 0;
+int cursorPosOnScreen = 0;
 
 bool showColon = true;
 
@@ -155,7 +156,7 @@ void stop(void) {
 int SetDonorSDK() {
 	char gameTid3[5];
 	for (int i = 0; i < 3; i++) {
-		gameTid3[i] = gameTid[CURPOS][i];
+		gameTid3[i] = gameTid[cursorPosOnScreen][i];
 	}
 
 	for (auto i : donorMap) {
@@ -177,7 +178,7 @@ bool setClockSpeed() {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
-			if (memcmp(gameTid[CURPOS], twlClockExcludeList[i], 3) == 0) {
+			if (memcmp(gameTid[cursorPosOnScreen], twlClockExcludeList[i], 3) == 0) {
 				// Found match
 				dsModeForced = true;
 				return false;
@@ -195,7 +196,7 @@ bool setCardReadDMA() {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
-			if (memcmp(gameTid[CURPOS], cardReadDMAExcludeList[i], 3) == 0) {
+			if (memcmp(gameTid[cursorPosOnScreen], cardReadDMAExcludeList[i], 3) == 0) {
 				// Found match
 				return false;
 			}
@@ -212,7 +213,7 @@ bool setAsyncCardRead() {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
-			if (memcmp(gameTid[CURPOS], asyncReadExcludeList[i], 3) == 0) {
+			if (memcmp(gameTid[cursorPosOnScreen], asyncReadExcludeList[i], 3) == 0) {
 				// Found match
 				return false;
 			}
@@ -344,7 +345,7 @@ std::string setApFix(const char *filename) {
 	}
 
 	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/cht/%s-%X.bin", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS], headerCRC[CURPOS]);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/cht/%s-%X.bin", sys().isRunFromSD() ? "sd" : "fat", gameTid[cursorPosOnScreen], headerCRC[cursorPosOnScreen]);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 	}
 
@@ -357,7 +358,7 @@ std::string setApFix(const char *filename) {
 	}
 
 	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS], headerCRC[CURPOS]);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[cursorPosOnScreen], headerCRC[cursorPosOnScreen]);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 		if (ipsFound) {
 			cheatVer = false;
@@ -393,17 +394,17 @@ std::string setApFix(const char *filename) {
 				int mid = left + ((right - left) / 2);
 				fseek(file, 16 + mid * 16, SEEK_SET);
 				fread(buf, 1, 4, file);
-				int cmp = strcmp(buf, gameTid[CURPOS]);
+				int cmp = strcmp(buf, gameTid[cursorPosOnScreen]);
 				if (cmp == 0) { // TID matches, check CRC
 					u16 crc;
 					fread(&crc, 1, sizeof(crc), file);
 
-					if (crc == headerCRC[CURPOS]) { // CRC matches
+					if (crc == headerCRC[cursorPosOnScreen]) { // CRC matches
 						fread(&offset, 1, sizeof(offset), file);
 						fread(&size, 1, sizeof(size), file);
 						cheatVer = fgetc(file) & 1;
 						break;
-					} else if (crc < headerCRC[CURPOS]) {
+					} else if (crc < headerCRC[cursorPosOnScreen]) {
 						left = mid + 1;
 					} else {
 						right = mid - 1;
@@ -452,7 +453,7 @@ sNDSHeader ndsCart;
  * Enable widescreen for some games.
  */
 void SetWidescreen(const char *filename) {
-	const char* wideCheatDataPath = ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin";
+	const char* wideCheatDataPath = ms().secondaryDevice && (!isDSiWare[cursorPosOnScreen] || (isDSiWare[cursorPosOnScreen] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin";
 	remove(wideCheatDataPath);
 
 	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
@@ -462,7 +463,7 @@ void SetWidescreen(const char *filename) {
 		return;
 	}
 	
-	if (isHomebrew[CURPOS] && ms().homebrewHasWide && widescreenFound) {
+	if (isHomebrew[cursorPosOnScreen] && ms().homebrewHasWide && widescreenFound) {
 		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
 			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
 		}
@@ -497,16 +498,16 @@ void SetWidescreen(const char *filename) {
 		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", s1GameTid, ndsCart.headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	} else if (!wideCheatFound) {
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", gameTid[CURPOS], headerCRC[CURPOS]);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/extras/widescreen/%s-%X.bin", gameTid[cursorPosOnScreen], headerCRC[cursorPosOnScreen]);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
-	if (isHomebrew[CURPOS]) {
+	if (isHomebrew[cursorPosOnScreen]) {
 		return;
 	}
 
-	mkdir(ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat:/_nds" : "sd:/_nds", 0777);
-	mkdir(ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
+	mkdir(ms().secondaryDevice && (!isDSiWare[cursorPosOnScreen] || (isDSiWare[cursorPosOnScreen] && !ms().dsiWareToSD)) ? "fat:/_nds" : "sd:/_nds", 0777);
+	mkdir(ms().secondaryDevice && (!isDSiWare[cursorPosOnScreen] || (isDSiWare[cursorPosOnScreen] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
 
 	if (wideCheatFound) {
 		if (fcopy(wideBinPath, wideCheatDataPath) != 0) {
@@ -529,8 +530,8 @@ void SetWidescreen(const char *filename) {
 			return;
 		}
 	} else {
-		char *tid = ms().slot1Launched ? s1GameTid : gameTid[CURPOS];
-		u16 crc16 = ms().slot1Launched ? ndsCart.headerCRC16 : headerCRC[CURPOS];
+		char *tid = ms().slot1Launched ? s1GameTid : gameTid[cursorPosOnScreen];
+		u16 crc16 = ms().slot1Launched ? ndsCart.headerCRC16 : headerCRC[cursorPosOnScreen];
 
 		FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/widescreen.pck" : "fat:/_nds/TWiLightMenu/extras/widescreen.pck", "rb");
 		if (file) {
@@ -579,7 +580,7 @@ void SetWidescreen(const char *filename) {
 				u8 *buffer = new u8[size];
 				fread(buffer, 1, size, file);
 
-				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice && (!isDSiWare[CURPOS] || (isDSiWare[CURPOS] && !ms().dsiWareToSD)) ? "fat" : "sd");
+				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice && (!isDSiWare[cursorPosOnScreen] || (isDSiWare[cursorPosOnScreen] && !ms().dsiWareToSD)) ? "fat" : "sd");
 				FILE *out = fopen(wideBinPath, "wb");
 				if (out) {
 					fwrite(buffer, 1, size, out);
@@ -610,11 +611,11 @@ std::string getGameManual(const char *filename) {
 	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
-	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
+	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%s.txt", sys().isRunFromSD() ? "sd" : "fat", gameTid[cursorPosOnScreen]);
 	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
-	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%.3s.txt", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
+	snprintf(manualPath, sizeof(manualPath), "%s:/_nds/TWiLightMenu/extras/manuals/%.3s.txt", sys().isRunFromSD() ? "sd" : "fat", gameTid[cursorPosOnScreen]);
 	if (access(manualPath, F_OK) == 0)
 		return manualPath;
 
@@ -662,10 +663,22 @@ void loadGameOnFlashcard(const char *ndsPath, bool dsGame) {
 		std::string romFolderNoSlash = romfolder;
 		RemoveTrailingSlashes(romFolderNoSlash);
 		chdir(romFolderNoSlash.c_str());
-		mkdir("saves", 0777);
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
+		if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+			std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+			mkdir(twlmSavesFolder.c_str(), 0777);
+			savepath = twlmSavesFolder + "/" + savename;
+		} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+			savepath = romFolderNoSlash + "/" + savename;
+		} else {
+			mkdir("saves", 0777);
+		}
 		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
-		rename(savepath.c_str(), savepathFc.c_str());
+		if (savepath[0] == savepathFc[0] && savepath[1] == savepathFc[1] && savepath[2] == savepathFc[2]) {
+			rename(savepath.c_str(), savepathFc.c_str());
+		} else {
+			fcopy(savepath.c_str(), savepathFc.c_str());
+		}
 	}
 
 	std::string fcPath;
@@ -902,6 +915,49 @@ void createSaveFile(const char* savePath, const bool isHomebrew, const char* gam
 	}
 }
 
+void prepareCheats(std::string path, const bool dsiWare) {
+	if (isHomebrew[cursorPosOnScreen]) {
+		return;
+	}
+
+	CheatCodelist codelist;
+	u32 gameCode, crc32;
+
+	bool cheatsEnabled = true;
+	const char* cheatDataBin = dsiWare ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "/_nds/nds-bootstrap/cheatData.bin";
+	mkdir(dsiWare ? "sd:/_nds" : "/_nds", 0777);
+	mkdir(dsiWare ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
+	if (codelist.romData(path,gameCode,crc32)) {
+		long cheatOffset; size_t cheatSize;
+		FILE* dat=fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
+		if (dat) {
+			if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
+				codelist.parse(path);
+				codelist.writeCheatsToFile(cheatDataBin);
+				FILE* cheatData=fopen(cheatDataBin,"rb");
+				if (cheatData) {
+					u32 check[2];
+					fread(check, 1, 8, cheatData);
+					fclose(cheatData);
+					if (check[1] == 0xCF000000 || getFileSize(cheatDataBin) > 0x8000) {
+						cheatsEnabled = false;
+					}
+				}
+			} else {
+				cheatsEnabled = false;
+			}
+			fclose(dat);
+		} else {
+			cheatsEnabled = false;
+		}
+	} else {
+		cheatsEnabled = false;
+	}
+	if (!cheatsEnabled) {
+		remove(cheatDataBin);
+	}
+}
+
 void s2RamAccess(bool open) {
 	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) return;
 
@@ -1041,6 +1097,8 @@ int dsiMenuTheme(void) {
 		tex().loadDSiTheme();
 	}
 
+	ms().gbaR3Test = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds" : "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds", F_OK) == 0);
+
 	if (sdFound()) {
 		statvfs("sd:/", &st[0]);
 
@@ -1056,10 +1114,10 @@ int dsiMenuTheme(void) {
 
 		gbaBiosFound[1] = (access("fat:/_gba/bios.bin", F_OK) == 0);
 		if (!ms().gbaR3Test) {
-			if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/gba/bios.bin", F_OK) == 0);
-			if (!gbaBiosFound[1]) gbaBiosFound[0] = (access("fat:/bios.bin", F_OK) == 0);
+			if (!gbaBiosFound[1]) gbaBiosFound[1] = (access("fat:/gba/bios.bin", F_OK) == 0);
+			if (!gbaBiosFound[1]) gbaBiosFound[1] = (access("fat:/bios.bin", F_OK) == 0);
 		}
-		logPrint(gbaBiosFound[0] ? "GBA BIOS found on fat\n" : "GBA BIOS not found on fat\n");
+		logPrint(gbaBiosFound[1] ? "GBA BIOS found on fat\n" : "GBA BIOS not found on fat\n");
 	}
 
 	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
@@ -1075,13 +1133,11 @@ int dsiMenuTheme(void) {
 
 		if (ms().sysRegion == -1) {
 			// Determine SysNAND region by searching region of System Settings on SDNAND
-			char tmdpath[256] = {0};
-			for (u8 i = 0x41; i <= 0x5A; i++) {
-				snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
-				if (access(tmdpath, F_OK) == 0) {
-					setRegion = i;
-					break;
-				}
+			FILE* f_hwinfoS = fopen("sd:/sys/HWINFO_S.dat", "rb");
+			if (f_hwinfoS) {
+				fseek(f_hwinfoS, 0xA0, SEEK_SET);
+				fread(&setRegion, 1, 1, f_hwinfoS);
+				fclose(f_hwinfoS);
 			}
 		} else {
 			switch (ms().sysRegion) {
@@ -1115,75 +1171,14 @@ int dsiMenuTheme(void) {
 		}
 	}
 
+	srand(time(NULL));
+	
 	graphicsInit();
 	iconManagerInit();
 
 	keysSetRepeat(10, 2);
 
-	std::vector<std::string_view> extensionList = {
-		".nds", ".dsi", ".ids", ".srl", ".app", ".argv", // NDS
-		".agb", ".gba", ".mb", // GBA
-		".a26", // Atari 2600
-		".a52", // Atari 5200
-		".a78", // Atari 7800
-		".xex", ".atr", // Atari XEGS
-		".msx", // MSX
-		".col", // ColecoVision
-		".int", // Intellivision
-		".m5", // Sord M5
-		".gb", ".sgb", ".gbc", // Game Boy
-		".nes", ".fds", // NES
-		".sg", // Sega SG-1000
-		".sc", // Sega SC-3000
-		".sms", // Sega Master System
-		".gg", // Sega Game Gear
-		".gen", // Sega Mega Drive/Genesis
-		".smc", ".sfc", // SNES
-		".ws", ".wsc", // WonderSwan
-		".ngp", ".ngc", // Neo Geo Pocket
-		".pce", // PC Engine/TurboGrafx-16
-		".dsk", // Amstrad CPC
-		".min", // Pokémon mini
-		".avi", // Xvid (AVI)
-		".rvid", // Rocket Video
-		".fv", // FastVideo
-		".gif", // GIF
-		".bmp", // BMP
-		".png" // Portable Network Graphics
-	};
-
-	if (dsiFeatures() && ms().consoleModel < 2) {
-		char currentDate[16];
-		time_t Raw;
-		time(&Raw);
-		const struct tm *Time = localtime(&Raw);
-
-		strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
-
-		if (strcmp(currentDate, "04/01") == 0) {
-			// 3DS (for April Fools)
-			extensionList.emplace_back(".3ds");
-			extensionList.emplace_back(".cia");
-			extensionList.emplace_back(".cxi");
-		}
-	}
-
-	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		extensionList.emplace_back(".plg"); // DSTWO Plugin
-	}
-
-	if(ms().blockedExtensions.size() > 0) {
-		auto toErase = std::remove_if(extensionList.begin(), extensionList.end(), [](std::string_view str) {
-			return std::find(ms().blockedExtensions.begin(), ms().blockedExtensions.end(), str) != ms().blockedExtensions.end();
-		});
-		extensionList.erase(toErase, extensionList.end());
-	}
-
-	srand(time(NULL));
-
-	char path[256] = {0};
-
-	//logPrint("snd()\n");
+	logPrint("snd()\n");
 	snd();
 
 	if (ms().theme == TWLSettings::EThemeSaturn) {
@@ -1225,13 +1220,81 @@ int dsiMenuTheme(void) {
 	}
 
 	while (1) {
+		std::vector<std::string_view> extensionList = {
+			".nds", ".dsi", ".ids", ".srl", ".app", ".argv", // NDS
+			".agb", ".gba", ".mb", // GBA
+			".a26", // Atari 2600
+			".a52", // Atari 5200
+			".a78", // Atari 7800
+			".xex", ".atr", // Atari XEGS
+			".msx", // MSX
+			".col", // ColecoVision
+			".int", // Intellivision
+			".m5", // Sord M5
+			".gb", ".sgb", ".gbc", // Game Boy
+			".nes", ".fds", // NES/Famicom
+			".sg", // Sega SG-1000
+			".sc", // Sega SC-3000
+			".sms", // Sega Master System
+			".gg", // Sega Game Gear
+			".gen", // Genesis
+			".smc", ".sfc", // SNES
+			".ws", ".wsc", // WonderSwan
+			".ngp", ".ngc", // Neo Geo Pocket
+			".pce", // PC Engine/TurboGrafx-16
+			".dsk", // Amstrad CPC
+			".min", // Pokémon mini
+			".avi", // Xvid (AVI)
+			".fv", // FastVideo
+			".gif", // GIF
+			".bmp", // BMP
+			".png" // Portable Network Graphics
+		};
 
+		{
+			char currentDate[16];
+			time_t Raw;
+			time(&Raw);
+			const struct tm *Time = localtime(&Raw);
+
+			strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
+
+			if (strcmp(currentDate, "04/01") == 0) {
+				// April Fools extensions
+				if (dsiFeatures() && ms().consoleModel < 2) {
+					// 3DS
+					extensionList.emplace_back(".3ds");
+					extensionList.emplace_back(".cia");
+					extensionList.emplace_back(".cxi");
+				}
+				extensionList.emplace_back(".ntrb"); // ShaberuSoft
+			}
+		}
+
+		if (!ms().secondaryDevice || ms().mdEmulator == 2) {
+			extensionList.emplace_back(".md"); // Sega Mega Drive
+		}
+
+		if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
+			extensionList.emplace_back(".plg"); // DSTWO Plugin
+		}
+
+		if(ms().blockedExtensions.size() > 0) {
+			auto toErase = std::remove_if(extensionList.begin(), extensionList.end(), [](std::string_view str) {
+				return std::find(ms().blockedExtensions.begin(), ms().blockedExtensions.end(), str) != ms().blockedExtensions.end();
+			});
+			extensionList.erase(toErase, extensionList.end());
+		}
+
+		char path[256] = {0};
 		snprintf(path, sizeof(path), "%s", ms().romfolder[ms().secondaryDevice].c_str());
 		// Set directory
 		chdir(path);
 
 		// Navigates to the file to launch
 		filename = browseForFile(extensionList);
+
+		extensionList.clear();
 
 		////////////////////////////////////
 		// Launch the item
@@ -1292,7 +1355,7 @@ int dsiMenuTheme(void) {
 			ms().slot1Launched = false;
 
 			// Launch DSiWare .nds via Unlaunch
-			if (isDSiWare[CURPOS]) {
+			if (isDSiWare[cursorPosOnScreen]) {
 				remove(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
@@ -1304,10 +1367,18 @@ int dsiMenuTheme(void) {
 
 				std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romFolderNoSlash);
-				mkdir("saves", 0777);
 
 				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
+				if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+					std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+					mkdir(twlmSavesFolder.c_str(), 0777);
+					ms().dsiWarePubPath = twlmSavesFolder + "/" + filename;
+				} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+					ms().dsiWarePubPath = romFolderNoSlash + "/" + filename;
+				} else {
+					mkdir("saves", 0777);
+				}
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
 				bool savFormat = (ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode));
 				if (savFormat) {
@@ -1320,7 +1391,7 @@ int dsiMenuTheme(void) {
 				if (!isArgv) {
 					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 				}
-				ms().homebrewBootstrap = isHomebrew[CURPOS];
+				ms().homebrewBootstrap = isHomebrew[cursorPosOnScreen];
 				ms().launchType[ms().secondaryDevice] = Launch::EDSiWareLaunch;
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
@@ -1490,47 +1561,8 @@ int dsiMenuTheme(void) {
 					}
 				}
 
-				if (ms().theme == TWLSettings::EThemeHBL) {
-					fadeType = false;		  // Fade to black
-				}
-
-				if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
-					CheatCodelist codelist;
-					u32 gameCode, crc32;
-
-					bool cheatsEnabled = true;
-					const char* cheatDataBin = (ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "/_nds/nds-bootstrap/cheatData.bin";
-					mkdir((ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds" : "/_nds", 0777);
-					mkdir((ms().secondaryDevice && ms().dsiWareToSD && sdFound()) ? "sd:/_nds/nds-bootstrap" : "/_nds/nds-bootstrap", 0777);
-					if (codelist.romData(ms().dsiWareSrlPath,gameCode,crc32)) {
-						long cheatOffset; size_t cheatSize;
-						FILE* dat=fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
-						if (dat) {
-							if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
-								codelist.parse(ms().dsiWareSrlPath);
-								codelist.writeCheatsToFile(cheatDataBin);
-								FILE* cheatData=fopen(cheatDataBin,"rb");
-								if (cheatData) {
-									u32 check[2];
-									fread(check, 1, 8, cheatData);
-									fclose(cheatData);
-									if (check[1] == 0xCF000000 || getFileSize(cheatDataBin) > 0x1C00) {
-										cheatsEnabled = false;
-									}
-								}
-							} else {
-								cheatsEnabled = false;
-							}
-							fclose(dat);
-						} else {
-							cheatsEnabled = false;
-						}
-					} else {
-						cheatsEnabled = false;
-					}
-					if (!cheatsEnabled) {
-						remove(cheatDataBin);
-					}
+				if (dsiFeatures() && ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0)) {
+					prepareCheats(ms().dsiWareSrlPath, (ms().secondaryDevice && ms().dsiWareToSD && sdFound()));
 				}
 
 				if (((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
@@ -1589,6 +1621,13 @@ int dsiMenuTheme(void) {
 						swiWaitForVBlank();
 					}
 
+					snd().stopStream();
+
+					if (!dsiFeatures()) {
+						snd().unloadSfxData();
+						prepareCheats(ms().dsiWareSrlPath, (ms().secondaryDevice && ms().dsiWareToSD && sdFound()));
+					}
+
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 					bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
@@ -1615,7 +1654,6 @@ int dsiMenuTheme(void) {
 					}
 
 					argarray.at(0) = (char *)ndsToBoot;
-					snd().stopStream();
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
 					char text[64];
 					snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
@@ -1644,16 +1682,18 @@ int dsiMenuTheme(void) {
 					stop();
 				}
 
-				// Move .pub and/or .prv out of "saves" folder
-				std::string pubnameUl = replaceAll(filename, typeToReplace, ".pub");
-				std::string prvnameUl = replaceAll(filename, typeToReplace, ".prv");
-				std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
-				std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
-				if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
-					rename(ms().dsiWarePubPath.c_str(), pubpathUl.c_str());
-				}
-				if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
-					rename(ms().dsiWarePrvPath.c_str(), prvpathUl.c_str());
+				if (ms().saveLocation != TWLSettings::EGamesFolder) {
+					// Move .pub and/or .prv out of "saves" folder
+					std::string pubnameUl = replaceAll(filename, typeToReplace, ".pub");
+					std::string prvnameUl = replaceAll(filename, typeToReplace, ".prv");
+					std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
+					std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
+					if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
+						rename(ms().dsiWarePubPath.c_str(), pubpathUl.c_str());
+					}
+					if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
+						rename(ms().dsiWarePrvPath.c_str(), prvpathUl.c_str());
+					}
 				}
 
 				while (!screenFadedOut()) {
@@ -1676,9 +1716,9 @@ int dsiMenuTheme(void) {
 					dsModeDSiWare = true;
 					useBackend = false; // Bypass nds-bootstrap
 					ms().homebrewBootstrap = true;
-				} else */ if (isHomebrew[CURPOS]) {
-					int pgsDSiMode = (perGameSettings_dsiMode == -1 ? isModernHomebrew[CURPOS] : perGameSettings_dsiMode);
-					if ((perGameSettings_directBoot && ms().secondaryDevice) || (isModernHomebrew[CURPOS] && pgsDSiMode && (ms().secondaryDevice || perGameSettings_ramDiskNo == -1))) {
+				} else */ if (isHomebrew[cursorPosOnScreen]) {
+					int pgsDSiMode = (perGameSettings_dsiMode == -1 ? isModernHomebrew[cursorPosOnScreen] : perGameSettings_dsiMode);
+					if ((perGameSettings_directBoot && ms().secondaryDevice) || (isModernHomebrew[cursorPosOnScreen] && pgsDSiMode && (ms().secondaryDevice || perGameSettings_ramDiskNo == -1))) {
 						useBackend = false; // Bypass nds-bootstrap
 					} else {
 						useBackend = true;
@@ -1696,7 +1736,7 @@ int dsiMenuTheme(void) {
 				strcpy(filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
-				if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && isHomebrew[CURPOS] && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
+				if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && isHomebrew[cursorPosOnScreen] && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
 					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
@@ -1712,22 +1752,29 @@ int dsiMenuTheme(void) {
 
 					unlaunchRomBoot(argarray[0]);
 				} else if (useBackend) {
-					if ((((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
+					if ((((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[cursorPosOnScreen] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| (ms().secondaryDevice && (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA))
-					|| (unitCode[CURPOS] == 3 && !ms().homebrewBootstrap)) {
+					|| (unitCode[cursorPosOnScreen] == 3 && !ms().homebrewBootstrap)) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 						std::string ramdiskname = replaceAll(filename, typeToReplace, getImgExtension(perGameSettings_ramDiskNo));
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						mkdir(isHomebrew[CURPOS] ? "ramdisks" : "saves", 0777);
 						std::string savepath = romFolderNoSlash + "/saves/" + savename;
-						if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
-							savepath = replaceAll(savepath, "fat:/", "sd:/");
-						}
 						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
+						if (isHomebrew[cursorPosOnScreen]) {
+							mkdir("ramdisks", 0777);
+						} else if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+							std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+							mkdir(twlmSavesFolder.c_str(), 0777);
+							savepath = twlmSavesFolder + "/" + savename;
+						} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+							savepath = romFolderNoSlash + "/" + savename;
+						} else {
+							mkdir("saves", 0777);
+						}
 
-						createSaveFile(savepath.c_str(), isHomebrew[CURPOS], gameTid[CURPOS]);
+						createSaveFile(savepath.c_str(), isHomebrew[cursorPosOnScreen], gameTid[cursorPosOnScreen]);
 
 						SetMPUSettings();
 
@@ -1738,8 +1785,8 @@ int dsiMenuTheme(void) {
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && (gameTid[CURPOS][0] == 'W' || romVersion[CURPOS] == 0x57)) ? "wide" : "");
-						if (!isHomebrew[CURPOS]) {
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && (gameTid[cursorPosOnScreen][0] == 'W' || romVersion[cursorPosOnScreen] == 0x57)) ? "wide" : "");
+						if (!isHomebrew[cursorPosOnScreen]) {
 							bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", setApFix(argarray[0]));
 							bootstrapini.SetString("NDS-BOOTSTRAP", "MANUAL_PATH", getGameManual(filename.c_str()));
 						}
@@ -1748,7 +1795,7 @@ int dsiMenuTheme(void) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", perGameSettings_region < -1 ? ms().useRomRegion : 0);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", (dsModeForced || (unitCode[CURPOS] == 0 && !isDSiMode())) ? 0 : (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode));
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", (dsModeForced || (unitCode[cursorPosOnScreen] == 0 && !isDSiMode())) ? 0 : (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode));
 						if (dsiFeatures() || !ms().secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram);
@@ -1772,57 +1819,26 @@ int dsiMenuTheme(void) {
 						}
 						bootstrapini.SaveIniFile(bootstrapinipath);
 
-						CheatCodelist codelist;
-						u32 gameCode, crc32;
-
-						if (!isHomebrew[CURPOS]) {
-							bool cheatsEnabled = true;
-							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
-							mkdir("/_nds", 0777);
-							mkdir("/_nds/nds-bootstrap", 0777);
-							if (codelist.romData(path,gameCode,crc32)) {
-								long cheatOffset; size_t cheatSize;
-								FILE* dat=fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
-								if (dat) {
-									if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
-										codelist.parse(path);
-										codelist.writeCheatsToFile(cheatDataBin);
-										FILE* cheatData=fopen(cheatDataBin,"rb");
-										if (cheatData) {
-											u32 check[2];
-											fread(check, 1, 8, cheatData);
-											fclose(cheatData);
-											if (check[1] == 0xCF000000 || getFileSize(cheatDataBin) > 0x8000) {
-												cheatsEnabled = false;
-											}
-										}
-									} else {
-										cheatsEnabled = false;
-									}
-									fclose(dat);
-								} else {
-									cheatsEnabled = false;
-								}
-							} else {
-								cheatsEnabled = false;
-							}
-							if (!cheatsEnabled) {
-								remove(cheatDataBin);
-							}
-						}
-
 						if (!isArgv) {
 							ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 						}
-						ms().homebrewHasWide = (isHomebrew[CURPOS] && gameTid[CURPOS][0] == 'W');
+						ms().homebrewHasWide = (isHomebrew[cursorPosOnScreen] && gameTid[cursorPosOnScreen][0] == 'W');
 						ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch; // 1
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
+
+						if (dsiFeatures()) {
+							prepareCheats(path, false);
+						}
 
 						createEsrbSplash();
 
 						if (ms().theme == TWLSettings::EThemeHBL) {
 							fadeType = false;		  // Fade to black
+						}
+
+						if (sdFound() && ms().homebrewBootstrap && (access("sd:/moonshl2/logbuf.txt", F_OK) == 0)) {
+							remove("sd:/moonshl2/logbuf.txt"); // Delete file for Moonshell 2 to boot properly
 						}
 
 						bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
@@ -1833,13 +1849,21 @@ int dsiMenuTheme(void) {
 							sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s%s.nds", sys().isRunFromSD() ? "fat" : "sd", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						}
 
-						if (ms().btsrpBootloaderDirect && isHomebrew[CURPOS]) {
+						if (ms().btsrpBootloaderDirect && isHomebrew[cursorPosOnScreen]) {
 							bootFSInit(ndsToBoot);
 							bootstrapHbRunPrep(-1);
 						}
 
 						while (ms().theme != TWLSettings::EThemeSaturn && !screenFadedOut()) {
 							swiWaitForVBlank();
+						}
+
+						snd().stopStream();
+
+						if (!dsiFeatures()) {
+							mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
+							snd().unloadSfxData();
+							prepareCheats(path, false);
 						}
 
 						if (dsiFeatures() || !ms().secondaryDevice) {
@@ -1849,15 +1873,14 @@ int dsiMenuTheme(void) {
 							ntrStartSdGame();
 						}
 
-						snd().stopStream();
 						int err = 0;
-						if (ms().btsrpBootloaderDirect && isHomebrew[CURPOS]) {
+						if (ms().btsrpBootloaderDirect && isHomebrew[cursorPosOnScreen]) {
 							if (access(ndsToBoot, F_OK) == 0) {
-								if (gameTid[CURPOS][0] == 0) {
-									toncset(gameTid[CURPOS], '#', 4); // Fix blank TID
+								if (gameTid[cursorPosOnScreen][0] == 0) {
+									toncset(gameTid[cursorPosOnScreen], '#', 4); // Fix blank TID
 								}
 								char patchOffsetCacheFilePath[64];
-								sprintf(patchOffsetCacheFilePath, "sd:/_nds/nds-bootstrap/patchOffsetCache/%s-%04X.bin", gameTid[CURPOS], headerCRC[CURPOS]);
+								sprintf(patchOffsetCacheFilePath, "sd:/_nds/nds-bootstrap/patchOffsetCache/%s-%04X.bin", gameTid[cursorPosOnScreen], headerCRC[cursorPosOnScreen]);
 								std::string fatPath = replaceAll(path, "sd:/", "fat:/");
 
 								err = bootstrapHbRunNdsFile (path.c_str(), fatPath.c_str(),
@@ -1872,7 +1895,7 @@ int dsiMenuTheme(void) {
 								argarray.size(),
 								(const char **)&argarray[0],
 								perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language,
-								perGameSettings_dsiMode == -1 ? isModernHomebrew[CURPOS] : perGameSettings_dsiMode,
+								perGameSettings_dsiMode == -1 ? isModernHomebrew[cursorPosOnScreen] : perGameSettings_dsiMode,
 								perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu,
 								perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram,
 								ms().consoleModel, false);
@@ -1888,13 +1911,13 @@ int dsiMenuTheme(void) {
 						clearText();
 						printLarge(false, 4, 4, text);
 						if (err == 1) {
-							if (ms().homebrewBootstrap == true) {
+							if (ms().homebrewBootstrap) {
 								printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
 							} else {
 								printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 							}
 						}
-						if (ms().homebrewBootstrap == true) {
+						if (ms().homebrewBootstrap) {
 							printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 						} else {
 							printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
@@ -1941,7 +1964,7 @@ int dsiMenuTheme(void) {
 					if (!isArgv) {
 						ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 					}
-					ms().homebrewHasWide = (isHomebrew[CURPOS] && (gameTid[CURPOS][0] == 'W' || romVersion[CURPOS] == 0x57));
+					ms().homebrewHasWide = (isHomebrew[cursorPosOnScreen] && (gameTid[cursorPosOnScreen][0] == 'W' || romVersion[cursorPosOnScreen] == 0x57));
 					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardDirectLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
 					if (isDSiMode() || !ms().secondaryDevice) {
@@ -1957,7 +1980,7 @@ int dsiMenuTheme(void) {
 						swiWaitForVBlank();
 					}
 
-					if (!isDSiMode() && !ms().secondaryDevice && strncmp(filename.c_str(), "GodMode9i", 9) != 0 && strcmp(gameTid[CURPOS], "HGMA") != 0) {
+					if (!isDSiMode() && !ms().secondaryDevice && strncmp(filename.c_str(), "GodMode9i", 9) != 0 && strcmp(gameTid[cursorPosOnScreen], "HGMA") != 0) {
 						ntrStartSdGame();
 					}
 
@@ -1965,18 +1988,18 @@ int dsiMenuTheme(void) {
 					int gameRegion = perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region;
 
 					// Set region flag
-					if (ms().useRomRegion && perGameSettings_region < -1 && gameTid[CURPOS][3] != 'A' && gameTid[CURPOS][3] != 'O' && gameTid[CURPOS][3] != '#') {
-						if (gameTid[CURPOS][3] == 'J') {
+					if (ms().useRomRegion && perGameSettings_region < -1 && gameTid[cursorPosOnScreen][3] != 'A' && gameTid[cursorPosOnScreen][3] != 'O' && gameTid[cursorPosOnScreen][3] != '#') {
+						if (gameTid[cursorPosOnScreen][3] == 'J') {
 							*(u8*)(0x02FFFD70) = 0;
-						} else if (gameTid[CURPOS][3] == 'E' || gameTid[CURPOS][3] == 'T') {
+						} else if (gameTid[cursorPosOnScreen][3] == 'E' || gameTid[cursorPosOnScreen][3] == 'T') {
 							*(u8*)(0x02FFFD70) = 1;
-						} else if (gameTid[CURPOS][3] == 'P' || gameTid[CURPOS][3] == 'V') {
+						} else if (gameTid[cursorPosOnScreen][3] == 'P' || gameTid[cursorPosOnScreen][3] == 'V') {
 							*(u8*)(0x02FFFD70) = 2;
-						} else if (gameTid[CURPOS][3] == 'U') {
+						} else if (gameTid[cursorPosOnScreen][3] == 'U') {
 							*(u8*)(0x02FFFD70) = 3;
-						} else if (gameTid[CURPOS][3] == 'C') {
+						} else if (gameTid[cursorPosOnScreen][3] == 'C') {
 							*(u8*)(0x02FFFD70) = 4;
-						} else if (gameTid[CURPOS][3] == 'K') {
+						} else if (gameTid[cursorPosOnScreen][3] == 'K') {
 							*(u8*)(0x02FFFD70) = 5;
 						}
 					} else if (gameRegion == -1) {
@@ -2120,7 +2143,7 @@ int dsiMenuTheme(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename, {".fv"})) {
+				} else if (extension(filename, {".fv", ".ntrb"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EFastVideoLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
@@ -2132,8 +2155,6 @@ int dsiMenuTheme(void) {
 					ms().launchType[ms().secondaryDevice] = (ms().gbaBooter == TWLSettings::EGbaNativeGbar2 && *(u16*)(0x020000C0) != 0) ? Launch::EGBANativeLaunch : Launch::ESDFlashcardLaunch;
 
 					if (ms().launchType[ms().secondaryDevice] == Launch::EGBANativeLaunch) {
-						fontReinit();	// Re-load font into main memory
-
 						if (ms().theme == TWLSettings::EThemeHBL) {
 							displayGameIcons = false;
 						} else {
@@ -2159,7 +2180,7 @@ int dsiMenuTheme(void) {
 						u32 ptr = 0x08000000;
 						u32 romSize = getFileSize(filename.c_str());
 						FILE* gbaFile = fopen(filename.c_str(), "rb");
-						if (strncmp(gameTid[CURPOS], "AGBJ", 4) == 0 && romSize <= 0x40000) {
+						if (strncmp(gameTid[cursorPosOnScreen], "AGBJ", 4) == 0 && romSize <= 0x40000) {
 							ptr += 0x400;
 						}
 						u32 curPtr = ptr;
@@ -2168,7 +2189,7 @@ int dsiMenuTheme(void) {
 						if (romSize > 0x2000000) romSize = 0x2000000;
 
 						bool nor = false;
-						if (*(u16*)(0x020000C0) == 0x5A45 && strncmp(gameTid[CURPOS], "AGBJ", 4) != 0) {
+						if (*(u16*)(0x020000C0) == 0x5A45 && strncmp(gameTid[cursorPosOnScreen], "AGBJ", 4) != 0) {
 							cExpansion::SetRompage(0);
 							expansion().SetRampage(cExpansion::ENorPage);
 							cExpansion::OpenNorWrite();
@@ -2236,9 +2257,8 @@ int dsiMenuTheme(void) {
 					} else if (ms().gbaR3Test) {
 						ms().launchType[ms().secondaryDevice] = Launch::EGBARunner2Launch;
 
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
-						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
+						ndsToBoot = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds" : "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
+						if (!isDSiMode()) {
 							boostVram = true;
 						}
 					} else if (ms().secondaryDevice) {
@@ -2246,7 +2266,7 @@ int dsiMenuTheme(void) {
 
 						if (dsiFeatures()) {
 							ndsToBoot = ms().consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
-						} else if (memcmp(gameTid[CURPOS], "BPE", 3) == 0) { // If game is Pokemon Emerald...
+						} else if (memcmp(gameTid[cursorPosOnScreen], "BPE", 3) == 0) { // If game is Pokemon Emerald...
 							ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_rom3m_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_rom3m_ds.nds";
 						} else {
 							ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
@@ -2254,7 +2274,7 @@ int dsiMenuTheme(void) {
 						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
 							if (dsiFeatures()) {
 								ndsToBoot = ms().consoleModel > 0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
-							} else if (memcmp(gameTid[CURPOS], "BPE", 3) == 0) { // If game is Pokemon Emerald...
+							} else if (memcmp(gameTid[cursorPosOnScreen], "BPE", 3) == 0) { // If game is Pokemon Emerald...
 								ndsToBoot = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_rom3m_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_rom3m_ds.nds";
 							} else {
 								ndsToBoot = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
@@ -2359,7 +2379,7 @@ int dsiMenuTheme(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/S8DS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename, {".gen"})) {
+				} else if (extension(filename, {".gen", ".md"})) {
 					bool usePicoDrive = ((isDSiMode() && sdFound() && sys().arm7SCFGLocked())
 						|| ms().mdEmulator==2 || (ms().mdEmulator==3 && getFileSize(filename.c_str()) > 0x300000));
 					ms().launchType[ms().secondaryDevice] = (usePicoDrive ? Launch::EPicoDriveTWLLaunch : Launch::ESDFlashcardLaunch);
@@ -2601,7 +2621,7 @@ int dsiMenuTheme(void) {
 					if (access(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", F_OK) == 0) {
 						bool romIsCompressed = false;
 						if (romToRamDisk == 0) {
-							romIsCompressed = (extension(ROMpath, {".lz77.gen"}));
+							romIsCompressed = (extension(ROMpath, {".lz77.gen", ".lz77.md"}));
 						} else if (romToRamDisk == 1) {
 							romIsCompressed = (extension(ROMpath, {".lz77.smc", ".lz77.sfc"}));
 						} else if (romToRamDisk == 4) {

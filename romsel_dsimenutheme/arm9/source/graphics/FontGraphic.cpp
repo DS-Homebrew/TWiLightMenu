@@ -3,8 +3,6 @@
 #include "common/logging.h"
 #include "common/tonccpy.h"
 
-u8 *FontGraphic::lastUsedLoc = (u8*)0x08000000;
-
 u8 FontGraphic::textBuf[2][256 * 192]; // Increase to two if adding top screen support
 
 std::map<char16_t, std::array<char16_t, 3>> FontGraphic::arabicPresentationForms = {
@@ -91,22 +89,21 @@ char16_t FontGraphic::arabicForm(char16_t current, char16_t prev, char16_t next)
 	return current;
 }
 
-FontGraphic::FontGraphic(const char* path, bool useExpansionPak) : useExpansionPak(useExpansionPak) {
+FontGraphic::FontGraphic(const char* path, const bool set_useTileCache) {
 	// logPrint("FontGraphic::FontGraphic(%s, false)\n\n", path);
 
-	FILE *file = fopen(path, "rb");
+	useTileCache = set_useTileCache;
+	file = fopen(path, "rb");
 	if (file) {
-		if (useExpansionPak && *(u16*)(0x020000C0) == 0 && lastUsedLoc == (u8*)0x08000000) {
-			lastUsedLoc += 0x01000000;
-		}
-
 		// Get file size
 		fseek(file, 0, SEEK_END);
 		u32 fileSize = ftell(file);
 
 		// Skip font info
 		fseek(file, 0x14, SEEK_SET);
-		fseek(file, fgetc(file)-1, SEEK_CUR);
+		tileOffset = fgetc(file);
+		fseek(file, tileOffset-1, SEEK_CUR);
+		tileOffset += 0x20;
 
 		// Load glyph info
 		u32 chunkSize;
@@ -118,14 +115,8 @@ FontGraphic::FontGraphic(const char* path, bool useExpansionPak) : useExpansionP
 		// Load character glyphs
 		tileAmount = (chunkSize - 0x10) / tileSize;
 		fseek(file, 4, SEEK_CUR);
-		if (useExpansionPak) {
-			fontTiles = lastUsedLoc;
-			lastUsedLoc += tileSize * tileAmount;
-
-			u8 *buf = new u8[tileSize * tileAmount];
-			fread(buf, tileSize, tileAmount, file);
-			tonccpy(fontTiles, buf, tileSize * tileAmount);
-			delete[] buf;
+		if (useTileCache) {
+			fontTiles = new u8[tileSize * (tileAmount>tileCacheCount ? tileCacheCount : tileAmount)];
 		} else {
 			fontTiles = new u8[tileSize * tileAmount];
 			fread(fontTiles, tileSize, tileAmount, file);
@@ -138,26 +129,11 @@ FontGraphic::FontGraphic(const char* path, bool useExpansionPak) : useExpansionP
 		fseek(file, locHDWC-4, SEEK_SET);
 		fread(&chunkSize, 4, 1, file);
 		fseek(file, 8, SEEK_CUR);
-		if (useExpansionPak) {
-			fontWidths = lastUsedLoc;
-			lastUsedLoc += 3 * tileAmount;
-
-			u8 *buf = new u8[3 * tileAmount];
-			fread(buf, 3, tileAmount, file);
-			tonccpy(fontWidths, buf, 3 * tileAmount);
-			delete[] buf;
-		} else {
-			fontWidths = new u8[3 * tileAmount];
-			fread(fontWidths, 3, tileAmount, file);
-		}
+		fontWidths = new u8[3 * tileAmount];
+		fread(fontWidths, 3, tileAmount, file);
 
 		// Load character maps
-		if (useExpansionPak) {
-			fontMap = (u16*)lastUsedLoc;
-			lastUsedLoc += tileAmount * sizeof(u16);
-		} else {
-			fontMap = new u16[tileAmount];
-		}
+		fontMap = new u16[tileAmount];
 
 		fseek(file, 0x28, SEEK_SET);
 		u32 locPAMC, mapType;
@@ -199,7 +175,6 @@ FontGraphic::FontGraphic(const char* path, bool useExpansionPak) : useExpansionP
 				}
 			}
 		}
-		fclose(file);
 		questionMark = getCharIndex(0xFFFD);
 		if (questionMark == 0)
 			questionMark = getCharIndex('?');
@@ -207,14 +182,13 @@ FontGraphic::FontGraphic(const char* path, bool useExpansionPak) : useExpansionP
 }
 
 FontGraphic::~FontGraphic(void) {
-	if (!useExpansionPak) {
-		if (fontTiles)
-			delete[] fontTiles;
-		if (fontWidths)
-			delete[] fontWidths;
-		if (fontMap)
-			delete[] fontMap;
-	}
+	fclose(file);
+	if (fontTiles)
+		delete[] fontTiles;
+	if (fontWidths)
+		delete[] fontWidths;
+	if (fontMap)
+		delete[] fontMap;
 }
 
 u16 FontGraphic::getCharIndex(char16_t c) {
@@ -427,14 +401,60 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			index = getCharIndex(*it);
 		}
 
-		// Don't draw off screen chars
-		if (x >= 0 && x + fontWidths[(index * 3) + 2] < 256 && y >= 0 && y + tileHeight < 192) {
-			u8 *dst = textBuf[top] + x + fontWidths[(index * 3)];
-			for (int i = 0; i < tileHeight; i++) {
-				for (int j = 0; j < tileWidth; j++) {
-					u8 px = fontTiles[(index * tileSize) + (i * tileWidth + j) / 4] >> ((3 - ((i * tileWidth + j) % 4)) * 2) & 3;
-					if (px)
-						dst[(y + i) * 256 + j] = 4 * ((int)palette) + px;
+		if (useTileCache) {
+			bool found = false;
+			bool overwrite = true;
+			u8 cachePos = 0;
+			for (u8 i = 0; i < tileCacheCount; i++) {
+				if (!cacheAllocated[i]) {
+					indexCache[i] = index;
+					cachePos = i;
+					cacheAllocated[i] = true;
+					overwrite = false;
+					break;
+				} else if (indexCache[i] == index) {
+					cachePos = i;
+					found = true;
+					overwrite = false;
+					break;
+				}
+			}
+
+			if (overwrite) {
+				nextCachePos++;
+				if (nextCachePos == tileCacheCount) {
+					nextCachePos = 0;
+				}
+				cachePos = nextCachePos;
+				indexCache[cachePos] = index;
+			}
+
+			if (!found && file) {
+				fseek(file, tileOffset+(index * tileSize), SEEK_SET);
+				fread(fontTiles+(cachePos * tileSize), tileSize, 1, file);
+			}
+
+			// Don't draw off screen chars
+			if (x >= 0 && x + fontWidths[(index * 3) + 2] < 256 && y >= 0 && y + tileHeight < 192) {
+				u8 *dst = textBuf[top] + x + fontWidths[(index * 3)];
+				for (int i = 0; i < tileHeight; i++) {
+					for (int j = 0; j < tileWidth; j++) {
+						u8 px = fontTiles[(cachePos * tileSize) + (i * tileWidth + j) / 4] >> ((3 - ((i * tileWidth + j) % 4)) * 2) & 3;
+						if (px)
+							dst[(y + i) * 256 + j] = 4 * ((int)palette) + px;
+					}
+				}
+			}
+		} else {
+			// Don't draw off screen chars
+			if (x >= 0 && x + fontWidths[(index * 3) + 2] < 256 && y >= 0 && y + tileHeight < 192) {
+				u8 *dst = textBuf[top] + x + fontWidths[(index * 3)];
+				for (int i = 0; i < tileHeight; i++) {
+					for (int j = 0; j < tileWidth; j++) {
+						u8 px = fontTiles[(index * tileSize) + (i * tileWidth + j) / 4] >> ((3 - ((i * tileWidth + j) % 4)) * 2) & 3;
+						if (px)
+							dst[(y + i) * 256 + j] = 4 * ((int)palette) + px;
+					}
 				}
 			}
 		}

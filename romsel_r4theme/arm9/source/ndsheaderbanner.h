@@ -278,6 +278,7 @@ u32 getSDKVersion(FILE* ndsFile);
 int checkRomAP(FILE *ndsFile);
 
 // bnriconframenum[]
+extern int bnriconPalLoaded;
 extern int bnriconPalLine;
 extern int bnriconframenumY;
 extern int bannerFlip;
@@ -315,6 +316,6 @@ void clearBannerSequence();
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence();
+bool playBannerSequence();
 
 #endif // NDS_HEADER2

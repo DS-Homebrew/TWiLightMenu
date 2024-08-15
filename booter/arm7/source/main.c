@@ -32,6 +32,7 @@
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
 void my_installSystemFIFO(void);
+void my_sdmmc_get_cid(int devicenumber, u32 *cid);
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -108,6 +109,8 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
+	// *(u8*)0x0280FFFF = i2cReadRegister(0x4A, 0x71);
+
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ((REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R)) == 0) {
@@ -115,6 +118,10 @@ int main() {
 		}
 		if (*(u32*)0x02FFFD0C == 0x54534453) { // 'SDST'
 			fifoSendValue32(FIFO_USER_04, SD_IRQ_STATUS);
+			*(u32*)0x02FFFD0C = 0;
+		}
+		if (*(u32*)0x02FFFD0C == 0x47444943) { // 'CIDG'
+			my_sdmmc_get_cid(0, (u32*)0x02810000);
 			*(u32*)0x02FFFD0C = 0;
 		}
 		// fifocheck();

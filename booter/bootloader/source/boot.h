@@ -3,7 +3,7 @@
 
 #define resetMemory2_ARM9_size 0x400
 void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)) resetMemory2_ARM9();
-#define startBinary_ARM9_size 0x100
+#define startBinary_ARM9_size 0x200
 void __attribute__ ((long_call)) __attribute__((noreturn)) __attribute__((naked)) startBinary_ARM9 ();
 #define ARM9_START_FLAG (*(vu8*)0x02FFFDFB)
 

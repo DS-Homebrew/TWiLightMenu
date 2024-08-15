@@ -124,6 +124,7 @@ public:
         _changed();
     };
 
+    bool was_modified() { return false; }
   private:
     OptionGenerator_Nul _generator;
     OptionChangedHandler_Nul _changed;
@@ -143,12 +144,13 @@ public:
 
     //typedef std::function<Option(Bool&)> OptionGenerator_Bool;
     Bool(bool *pointer)
-        : _generator(nullptr), _changed(nullptr) { _pointer = pointer; };
+        : _generator(nullptr), _changed(nullptr) { _pointer = pointer; _startValue = *pointer; };
 
     Bool(bool *pointer, const OptionGenerator_Bool generator)
         : _generator(generator), _changed(nullptr)
     {
       _pointer = pointer;
+      _startValue = *pointer;
       _generator = generator;
     };
 
@@ -156,6 +158,7 @@ public:
         : _generator(generator), _changed(changed)
     {
       _pointer = pointer;
+      _startValue = *pointer;
       _generator = generator;
       _changed = changed;
     };
@@ -164,6 +167,7 @@ public:
         : _generator(nullptr), _changed(changed)
     {
       _pointer = pointer;
+      _startValue = *pointer;
       _changed = changed;
     };
 
@@ -176,6 +180,8 @@ public:
     };
 
     bool get() { return *_pointer; };
+    bool was_modified() { return _startValue != *_pointer; };
+
     std::unique_ptr<Option> sub()
     {
       if (!_generator)
@@ -189,6 +195,7 @@ public:
 
   private:
     bool *_pointer;
+    bool _startValue;
     OptionGenerator_Bool _generator;
     OptionChangedHandler_Bool _changed;
   };
@@ -205,11 +212,12 @@ public:
     typedef void (*OptionChangedHandler_Int)(int, int);
 
     //typedef std::function<Option(Int&)> OptionGenerator_Int;
-    Int(int *pointer) : _generator(nullptr), _changed(nullptr) { _pointer = pointer; };
+    Int(int *pointer) : _generator(nullptr), _changed(nullptr) { _pointer = pointer; _startValue = *pointer;};
     Int(int *pointer, const OptionGenerator_Int generator)
         : _generator(generator)
     {
       _pointer = pointer;
+      _startValue = *pointer;
       _generator = generator;
     };
 
@@ -217,6 +225,7 @@ public:
         : _generator(generator), _changed(changed)
     {
       _pointer = pointer;
+      _startValue = *pointer;
       _generator = generator;
       _changed = changed;
     };
@@ -225,6 +234,7 @@ public:
         : _generator(nullptr), _changed(changed)
     {
       _pointer = pointer;
+      _startValue = *pointer;
       _changed = changed;
     };
 
@@ -247,8 +257,10 @@ public:
     }
     bool has_sub() { return _generator != nullptr; }
 
+    bool was_modified() { return _startValue != *_pointer; };
   private:
     int *_pointer;
+    int _startValue;
     OptionGenerator_Int _generator;
     OptionChangedHandler_Int _changed;
   };
@@ -266,12 +278,13 @@ public:
 
     //typedef std::function<Option(Str&)> OptionGenerator_Str;
     Str(std::string *pointer)
-        : _generator(nullptr), _changed(nullptr) { _pointer = pointer; };
+        : _generator(nullptr), _changed(nullptr) { _pointer = pointer; _startString = *pointer; };
 
     Str(std::string *pointer, const OptionGenerator_Str generator)
         : _generator(generator), _changed(nullptr)
     {
       _pointer = pointer;
+      _startString = *pointer;
       _generator = generator;
     };
 
@@ -279,6 +292,7 @@ public:
         : _generator(generator), _changed(changed)
     {
       _pointer = pointer;
+      _startString = *pointer;
       _generator = generator;
       _changed = changed;
     };
@@ -287,6 +301,7 @@ public:
         : _generator(nullptr), _changed(changed)
     {
       _pointer = pointer;
+      _startString = *pointer;
       _changed = changed;
     };
 
@@ -295,6 +310,8 @@ public:
     {
       if (_changed)
         _changed(std::string(*_pointer), value);
+
+      _was_modified = _startString != value;
       (*_pointer) = value;
     };
 
@@ -309,9 +326,11 @@ public:
       return std::make_unique<Option>(*option);
     }
     bool has_sub() { return _generator != nullptr; }
-
+    bool was_modified() { return _was_modified; }
   private:
     std::string *_pointer;
+    std::string _startString;
+    bool _was_modified = false;
     OptionGenerator_Str _generator;
     OptionChangedHandler_Str _changed;
   };

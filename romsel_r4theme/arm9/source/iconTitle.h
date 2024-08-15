@@ -2,12 +2,17 @@
 #define ICONTITLE_H
 
 #define BOX_PX				20
-#define BOX_PY				25
-#define BOX_PY_spacing1		13
-#define BOX_PY_spacing2		6
-#define BOX_PY_spacing3		19
+#define BOX_PY				44
+#define BOX_PY_GBNP			135
 
 void iconTitleInit();
+
+/**
+ * Reloads the palette of all the icons in a slot, if
+ * they have been corrupted.
+ */
+void reloadIconPalettes();
+
 void loadConsoleIcons();
 void getGameInfo(bool isDir, const char* name);
 void iconUpdate(bool isDir, const char* name);

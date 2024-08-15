@@ -26,12 +26,12 @@ public:
 	// 	EScrollSlow = 16
 	// };
 
-	// enum TViewMode : int
-	// {
-	// 	EViewList = 0,
-	// 	EViewIcon = 1,
-	// 	EViewInternal = 2
-	// };
+	enum TViewMode : int
+	{
+		EViewList = 0,
+		EViewIcon = 1,
+		EViewInternal = 2
+	};
 
 	// Do not reorder these, just add to the end
 	enum TLanguage : int
@@ -70,6 +70,7 @@ public:
 		ELangCzech = 30,
 		ELangFinnish = 31,
 		ELangKazakh = 32,
+		ELangGalician = 33,
 	};
 
 	enum TRegion : int
@@ -193,19 +194,19 @@ public:
 	enum TGbaBooter : int
 	{
 		EGbaNativeGbar2 = 1,
-		EGbaGbar2 = 2,
+		EGbaGbar2 = 2
 	};
 
 	enum TColSegaEmulator : int
 	{
 		EColSegaS8DS = 1,
-		EColSegaColecoDS = 2,
+		EColSegaColecoDS = 2
 	};
 
 	enum TCpcEmulator : int
 	{
 		ECpcAmEDS = 1,
-		ECpcCrocoDS = 2,
+		ECpcCrocoDS = 2
 	};
 
 	enum TMegaDriveEmulator : int
@@ -230,6 +231,13 @@ public:
 		EFreq47KHz = true
 	};
 
+	enum TSaveLoc : int
+	{
+		ESavesFolder = 0,
+		EGamesFolder = 1,
+		ETWLMFolder = 2
+	};
+
 public:
 	TWLSettings();
 	~TWLSettings() {};
@@ -252,7 +260,9 @@ public:
 	const char* getAppName();
 public:
 	std::string romfolder[2];
+	std::string defaultRomfolder[2];
 	std::string romPath[2];
+
 	int pagenum[2];
 	int cursorPosition[2];
 
@@ -263,7 +273,6 @@ public:
 	bool logging;
 	TLanguage guiLanguage, currentLanguage;
 	TLanguage titleLanguage;
-	int fps;
 	bool macroMode;
 	std::string colorMode;
 	// int blfLevel;
@@ -293,6 +302,7 @@ public:
 	//int snesEmulator;
 	bool updateRecentlyPlayedList;
 	TSortMethod sortMethod;
+	bool hideEmptyBoxes;
 	bool showDirectories;
 	bool showHidden;
 	bool showPhoto;
@@ -305,12 +315,13 @@ public:
 	bool secondaryAccess;
 	bool previousUsedDevice;
 	bool secondaryDevice;
-	bool fcSaveOnSd;
+	TSaveLoc saveLocation;
 	std::vector<std::string> blockedExtensions;
 
 	TSlot1LaunchMethod slot1LaunchMethod;
 
 	int dsiSplash;
+	bool oppositeSplash;
 	bool dsiSplashAutoSkip;
 	int nintendoLogoColor;
 	bool showlogo;
@@ -345,10 +356,10 @@ public:
 	bool smsGgInRam;
 	bool esrbRatingScreen;
 
-	// int ak_viewMode;
+	int ak_viewMode;
 	// int ak_scrollSpeed;
-	// bool ak_zoomIcons;
-	// std::string ak_theme;
+	bool ak_zoomIcons;
+	std::string ak_theme;
 
 	bool useBootstrap;
 	bool btsrpBootloaderDirect;

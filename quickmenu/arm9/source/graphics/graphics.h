@@ -18,6 +18,8 @@
 
 ------------------------------------------------------------------*/
 #pragma once
+#define REFRESH_EVERY_VBLANKS 60
+#include "date.h"
 
 extern bool moveIconUp[7];
 extern int iconYpos[7];
@@ -27,12 +29,21 @@ bool screenFadedOut(void);
 void SetBrightness(u8 screen, s8 bright);
 void initSubSprites(void);
 void bottomBgLoad(void);
-void loadBoxArt(const char* filename, bool secondaryDevice);
+//void loadBoxArt(const char* filename, bool secondaryDevice);
 void graphicsInit();
 void topBgLoad(void);
 void topBarLoad(void);
+void clockLoad(void);
+void clockDraw(void);
+void calendarLoad(void);
+void calendarDraw(void);
+void gbaModeIconLoad(bool screen);
+void drawDateTime(bool date, bool showTimeColon = false);
 void startRendering(bool top);
 bool isRenderingTop();
+
+void batteryIconLoad(void);
+void batteryIconDraw(bool blink);
 
 template<typename T> inline const T abs(T const & x)
 {

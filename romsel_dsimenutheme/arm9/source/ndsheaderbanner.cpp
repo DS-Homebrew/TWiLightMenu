@@ -3,6 +3,7 @@
 #include <malloc.h>
 #include <unistd.h>
 #include "common/flashcard.h"
+#include "common/systemdetails.h"
 #include <gl2d.h>
 
 #include "ndsheaderbanner.h"
@@ -93,13 +94,13 @@ u32 getSDKVersion(FILE *ndsFile)
 int checkRomAP(FILE *ndsFile, int num)
 {
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid[num], headerCRC[num]);
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[num], headerCRC[num]);
 
 	if (access(ipsPath, F_OK) == 0) {
 		return 0;
 	}
 
-	FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
+	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
 	if (file) {
 		char buf[5] = {0};
 		fread(buf, 1, 4, file);
@@ -530,11 +531,15 @@ static u16 bnriconframeseq[41][64] = {0x0000};
 // bnriconframenum[]
 int bnriconPalLoaded[41] = {0};
 int bnriconPalLine[41] = {0};
+int bnriconPalLinePrev[41] = {0};
 int bnriconframenumY[41] = {0};
+int bnriconframenumYPrev[41] = {0};
 int bannerFlip[41] = {GL_FLIP_NONE};
+int bannerFlipPrev[41] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
 bool isTwlm[40] = {false};
+bool isUnlaunch[40] = {false};
 bool isDirectory[40] = {false};
 bool bnrSysSettings[41] = {false};
 int bnrRomType[41] = {0};
@@ -558,7 +563,6 @@ int currentbnriconframeseq[41] = {0};
 void grabBannerSequence(int iconnum)
 {
 	memcpy(bnriconframeseq[iconnum], bnriconTile[iconnum].dsi_seq, 64 * sizeof(u16));
-
 	currentbnriconframeseq[iconnum] = 0;
 }
 
@@ -575,7 +579,7 @@ void clearBannerSequence(int iconnum)
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence(int iconnum)
+bool playBannerSequence(int iconnum)
 {
 	if (bnriconframeseq[iconnum][currentbnriconframeseq[iconnum] + 1] == 0x0100) {
 		// Do nothing if icon isn't animated
@@ -599,6 +603,23 @@ void playBannerSequence(int iconnum)
 			bannerFlip[iconnum] = GL_FLIP_V;
 		}
 
+		bool updateIcon = false;
+
+		if (bnriconPalLinePrev[iconnum] != bnriconPalLine[iconnum]) {
+			bnriconPalLinePrev[iconnum] = bnriconPalLine[iconnum];
+			updateIcon = true;
+		}
+
+		if (bnriconframenumYPrev[iconnum] != bnriconframenumY[iconnum]) {
+			bnriconframenumYPrev[iconnum] = bnriconframenumY[iconnum];
+			updateIcon = true;
+		}
+
+		if (bannerFlipPrev[iconnum] != bannerFlip[iconnum]) {
+			bannerFlipPrev[iconnum] = bannerFlip[iconnum];
+			updateIcon = true;
+		}
+
 		bannerDelayNum[iconnum]++;
 		if (bannerDelayNum[iconnum] >= (setframeseq & 0x00FF)) {
 			bannerDelayNum[iconnum] = 0x0000;
@@ -607,5 +628,9 @@ void playBannerSequence(int iconnum)
 				currentbnriconframeseq[iconnum] = 0; // Reset sequence
 			}
 		}
+
+		return updateIcon;
 	}
+
+	return false;
 }

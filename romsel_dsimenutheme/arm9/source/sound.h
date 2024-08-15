@@ -14,13 +14,15 @@
 class SoundControl {
     public:
         SoundControl();
-        mm_sfxhand playLaunch();
-        mm_sfxhand playSelect();
-        mm_sfxhand playBack();
-        mm_sfxhand playSwitch();
-        mm_sfxhand playStartup();
-        mm_sfxhand playStop();
-        mm_sfxhand playWrong();
+		void reloadSfxData();
+		void unloadSfxData();
+        mm_sfxhand playLaunch(u8 panning = 128);
+        mm_sfxhand playSelect(u8 panning = 128);
+        mm_sfxhand playBack(u8 panning = 128);
+        mm_sfxhand playSwitch(u8 panning = 128);
+        mm_sfxhand playStartup(u8 panning = 128);
+        mm_sfxhand playStop(u8 panning = 128);
+        mm_sfxhand playWrong(u8 panning = 128);
         
         // Refill the stream buffers
         volatile void updateStream();
@@ -45,6 +47,7 @@ class SoundControl {
         mm_sound_effect snd_switch;
         mm_stream stream;
 		mm_ds_system sndSys;
+        bool sfxDataLoaded;
         bool stream_is_playing;
         bool loopingPoint;
         //mm_sound_effect snd_loading;

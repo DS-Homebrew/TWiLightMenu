@@ -9,5 +9,6 @@ int dsiMenuTheme(void);
 int r4Theme(void);
 // Used: int manualScreen(void);
 int imageViewer(void);
+int akTheme(void);
 
 #endif

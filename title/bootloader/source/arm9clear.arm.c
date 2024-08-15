@@ -24,7 +24,7 @@ Modified by Chishm:
 void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)) resetMemory2_ARM9 (void) 
 {
  	register int i, reg;
-  
+
 	//clear out ARM9 DMA channels
 	for (i=0; i<4; i++) {
 		DMA_CR(i) = 0;
@@ -41,15 +41,15 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 	REG_IPC_FIFO_CR = 0;
 
 	VRAM_CR = (VRAM_CR & 0xffff0000) | 0x00008080 ;
-	
+
 	vu16 *mainregs = (vu16*)0x04000000;
 	vu16 *subregs = (vu16*)0x04001000;
-	
+
 	for (i=0; i<43; i++) {
 		mainregs[i] = 0;
 		subregs[i] = 0;
 	}
-	
+
 	REG_DISPSTAT = 0;
 	GFX_STATUS = 0;
 
@@ -135,13 +135,26 @@ Modified by Chishm:
 --------------------------------------------------------------------------*/
 void __attribute__ ((long_call)) __attribute__((noreturn)) __attribute__((naked)) startBinary_ARM9 (void)
 {
+	if ((*(u8*)0x2FFE012 == *(u8*)0x2FFFE12) && (*(u8*)0x2FFE012 > 0)) {
+		*(vu32*)REG_MBK1 = *(u32*)0x02FFE180;
+		*(vu32*)REG_MBK2 = *(u32*)0x02FFE184;
+		*(vu32*)REG_MBK3 = *(u32*)0x02FFE188;
+		*(vu32*)REG_MBK4 = *(u32*)0x02FFE18C;
+		*(vu32*)REG_MBK5 = *(u32*)0x02FFE190;
+		REG_MBK6 = *(u32*)0x02FFE194;
+		REG_MBK7 = *(u32*)0x02FFE198;
+		REG_MBK8 = *(u32*)0x02FFE19C;
+		REG_MBK9 = *(u32*)0x02FFE1AC;
+		WRAM_CR = *(u8*)0x02FFE1AF;
+	}
+
 	REG_IME=0;
 	REG_EXMEMCNT = 0xE880;
 	// set ARM9 load address to 0 and wait for it to change again
 	ARM9_START_FLAG = 0;
 	while (REG_VCOUNT!=191);
 	while (REG_VCOUNT==191);
-	while ( ARM9_START_FLAG != 1 );
+	while (ARM9_START_FLAG != 1);
 	VoidFn arm9code = *(VoidFn*)(0x2FFFE24);
 	arm9code();
 	while (1);

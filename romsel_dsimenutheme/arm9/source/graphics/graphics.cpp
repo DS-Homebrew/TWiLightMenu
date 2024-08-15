@@ -20,6 +20,7 @@
 
 #include "graphics.h"
 #include <ctime>
+#include <cmath>
 #include <dirent.h>
 #include <maxmod9.h>
 #include <nds/arm9/dldi.h>
@@ -68,6 +69,8 @@ static int frontBubblesYpos_def[3] = {256, 256+64, 256+32};
 static int backBubblesYpos[4] = {256, 256+56, 256+32, 256+16};
 static int frontBubblesYpos[3] = {256, 256+64, 256+32};
 
+static float initialDropSpeed = 7.0f;
+
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
@@ -82,14 +85,12 @@ extern int colorGvalue;
 extern int colorBvalue;
 
 extern bool dropDown;
-int dropTime[5];
-int dropSeq[5];
-#define dropSpeedDefine 7
-int dropSpeed[5] = {dropSpeedDefine};
-int dropSpeedChange[5];
-int titleboxYposDropDown[5] = {-85 - 80};
-int allowedTitleboxForDropDown = 0;
-int delayForTitleboxToDropDown = 0;
+int dropDelay[5];
+int dropBounce[5];
+float dropDownY[5] = { 0.0f };
+float dropSpeed[5] = { 0.0f };
+int titleboxYposDropDown[5];
+
 extern int currentBg;
 extern bool showSTARTborder;
 extern bool needToPlayStopSound;
@@ -182,11 +183,8 @@ int rocketVideo_currentFrame = -1;
 u8 rocketVideo_fps = 25;
 u8 rocketVideo_height = 56;
 int rocketVideo_frameDelay = 0;
-int frameDelay = 0;
-bool frameDelayEven = true; // For 24FPS
-bool rocketVideo_frameDelayEven = true;
+bool rocketVideo_frameDelayEven = true; // For 24FPS
 bool rocketVideo_loadFrame = true;
-bool renderFrame = true;
 u16* colorTable = NULL;
 
 int bubbleYpos = 80;
@@ -305,48 +303,6 @@ void frameRateHandler(void) {
 	frameOf60fps++;
 	if (frameOf60fps > 60) frameOf60fps = 1;
 
-	if (!renderFrame) {
-		frameDelay++;
-		switch (ms().fps) {
-			case 11:
-				renderFrame = (frameDelay == 5+frameDelayEven);
-				break;
-			case 24:
-			//case 25:
-				renderFrame = (frameDelay == 2+frameDelayEven);
-				break;
-			case 48:
-				renderFrame = (frameOf60fps != 3
-							&& frameOf60fps != 8
-							&& frameOf60fps != 13
-							&& frameOf60fps != 18
-							&& frameOf60fps != 23
-							&& frameOf60fps != 28
-							&& frameOf60fps != 33
-							&& frameOf60fps != 38
-							&& frameOf60fps != 43
-							&& frameOf60fps != 48
-							&& frameOf60fps != 53
-							&& frameOf60fps != 58);
-				break;
-			case 50:
-				renderFrame = (frameOf60fps != 3
-							&& frameOf60fps != 9
-							&& frameOf60fps != 16
-							&& frameOf60fps != 22
-							&& frameOf60fps != 28
-							&& frameOf60fps != 34
-							&& frameOf60fps != 40
-							&& frameOf60fps != 46
-							&& frameOf60fps != 51
-							&& frameOf60fps != 58);
-				break;
-			default:
-				renderFrame = (frameDelay == 60/ms().fps);
-				break;
-		}
-	}
-
 	if (!rocketVideo_playVideo)
 		return;
 	if (!rocketVideo_loadFrame) {
@@ -445,29 +401,78 @@ void vBlankHandler() {
 		needToPlayStopSound = false;
 	}
 
+	static bool updateFrame = true;
+	static bool whiteScreenPrev = whiteScreen;
+	static bool showSTARTborderPrev = showSTARTborder;
+	static bool displayGameIconsPrev = displayGameIcons;
+	static bool showProgressIconPrev = showProgressIcon;
+	static bool showProgressBarPrev = showProgressBar;
+	static int progressBarLengthPrev = progressBarLength;
+	static bool dbox_showIconPrev = dbox_showIcon;
+
+	if (whiteScreenPrev != whiteScreen) {
+		whiteScreenPrev = whiteScreen;
+		updateFrame = true;
+	}
+
+	if (showSTARTborderPrev != showSTARTborder) {
+		showSTARTborderPrev = showSTARTborder;
+		updateFrame = true;
+	}
+
+	if (displayGameIconsPrev != displayGameIcons) {
+		displayGameIconsPrev = displayGameIcons;
+		updateFrame = true;
+	}
+
+	if (showProgressIconPrev != showProgressIcon) {
+		showProgressIconPrev = showProgressIcon;
+		updateFrame = true;
+	}
+
+	if (showProgressBarPrev != showProgressBar) {
+		showProgressBarPrev = showProgressBar;
+		updateFrame = true;
+	}
+
+	if (progressBarLengthPrev != progressBarLength) {
+		progressBarLengthPrev = progressBarLength;
+		updateFrame = true;
+	}
+
+	if (dbox_showIconPrev != dbox_showIcon) {
+		dbox_showIconPrev = dbox_showIcon;
+		updateFrame = true;
+	}
+
 	// Move title box/window closer to destination if moved
 	if (ms().theme != TWLSettings::EThemeSaturn) {
 		if (titleboxXpos[ms().secondaryDevice] > titleboxXdest[ms().secondaryDevice]) {
 			titleboxXpos[ms().secondaryDevice] -= std::max((titleboxXpos[ms().secondaryDevice] - titleboxXdest[ms().secondaryDevice]) / titleboxXspeed, 1);
+			updateFrame = true;
 		} else if (titleboxXpos[ms().secondaryDevice] < titleboxXdest[ms().secondaryDevice]) {
 			titleboxXpos[ms().secondaryDevice] += std::max((titleboxXdest[ms().secondaryDevice] - titleboxXpos[ms().secondaryDevice]) / titleboxXspeed, 1);
+			updateFrame = true;
 		}
 
 		if (titlewindowXpos[ms().secondaryDevice] > titlewindowXdest[ms().secondaryDevice]) {
 			titlewindowXpos[ms().secondaryDevice] -= std::max((titlewindowXpos[ms().secondaryDevice] - titlewindowXdest[ms().secondaryDevice]) / titleboxXspeed, 1);
+			updateFrame = true;
 		} else if (titlewindowXpos[ms().secondaryDevice] < titlewindowXdest[ms().secondaryDevice]) {
 			titlewindowXpos[ms().secondaryDevice] += std::max((titlewindowXdest[ms().secondaryDevice] - titlewindowXpos[ms().secondaryDevice]) / titleboxXspeed, 1);
+			updateFrame = true;
 		}
-	} else { // In saturn theme just move instantly
+	} else if (titleboxXpos[ms().secondaryDevice] != titleboxXdest[ms().secondaryDevice]) { // In saturn theme just move instantly
 		titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
 		titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice];
+		updateFrame = true;
 	}
 
 	if (ms().theme == TWLSettings::ETheme3DS && rotatingCubesLoaded) {
 		playRotatingCubesVideo();
 	}
 
-	if (fadeType == true) {
+	if (fadeType) {
 		if (!fadeDelay) {
 			screenBrightness -= fadeSleep ? 1 : 1+(ms().theme<4 && fadeSpeed);
 			if (screenBrightness < 0)
@@ -495,9 +500,9 @@ void vBlankHandler() {
 		}
 	}
 
-	if (controlBottomBright && renderFrame)
+	if (controlBottomBright)
 		SetBrightness(0, tc().darkLoading() ? -screenBrightness : screenBrightness);
-	if (controlTopBright && !ms().macroMode && renderFrame)
+	if (controlTopBright && !ms().macroMode)
 		SetBrightness(1, tc().darkLoading() ? -screenBrightness : screenBrightness);
 
 	if (showdialogbox) {
@@ -505,16 +510,22 @@ void vBlankHandler() {
 		dboxInFrame = true;
 		if (ms().theme == TWLSettings::ETheme3DS) {
 			dbox_movespeed = 0;
-			dbox_Ypos = 0;
+			if (dbox_Ypos != 0) {
+				dbox_Ypos = 0;
+				updateFrame = true;
+			}
 		}
 		if (dbox_movespeed <= 1) {
 			if (dbox_Ypos >= 0) {
 				// dbox stopped
-				dboxStopped = true;
-				dbox_movespeed = 0;
-				dbox_Ypos = 0;
-				bottomScreenBrightness = 127;
-				REG_BLDY = (0b0100 << 1);
+				if (!dboxStopped || dbox_Ypos != 0) {
+					dboxStopped = true;
+					dbox_movespeed = 0;
+					dbox_Ypos = 0;
+					bottomScreenBrightness = 127;
+					REG_BLDY = (0b0100 << 1);
+					updateFrame = true;
+				}
 			} else {
 				// dbox moving into view
 				dbox_movespeed = 1;
@@ -538,16 +549,22 @@ void vBlankHandler() {
 			if (bottomScreenBrightness > 103 && bottomScreenBrightness <= 135)
 				REG_BLDY = (0b0100 << 1);
 		}
-		dbox_Ypos += dbox_movespeed;
+		if (dbox_movespeed) {
+			dbox_Ypos += dbox_movespeed;
+			updateFrame = true;
+		}
 	} else {
 		// Dialogbox moving down...
 		if (ms().theme == TWLSettings::ETheme3DS || dbox_Ypos <= -192 || dbox_Ypos >= 192) {
-			dboxInFrame = false;
-			dboxStopped = false;
-			dbox_movespeed = 22;
-			dbox_Ypos = -192;
-			bottomScreenBrightness = 255;
-			REG_BLDY = 0;
+			if (dboxStopped || dbox_Ypos != -192) {
+				dboxInFrame = false;
+				dboxStopped = false;
+				dbox_movespeed = 22;
+				dbox_Ypos = -192;
+				bottomScreenBrightness = 255;
+				REG_BLDY = 0;
+				updateFrame = true;
+			}
 		} else {
 			dbox_movespeed += 1;
 			dbox_Ypos += dbox_movespeed;
@@ -565,56 +582,48 @@ void vBlankHandler() {
 				REG_BLDY = (0b0011 << 1);
 			if (bottomScreenBrightness > 103 && bottomScreenBrightness <= 135)
 				REG_BLDY = (0b0100 << 1);
+
+			updateFrame = true;
 		}
 	}
 
-	if (!whiteScreen && dropDown && ms().theme == TWLSettings::EThemeDSi) {
+	if (!whiteScreen && dropDown && ms().theme == TWLSettings::EThemeDSi) { // perform dropdown anim in the DSi theme
+		static constexpr float gravity = 0.375f;
+		static constexpr float restitution = 0.37f;
+		
 		int i2 = CURPOS - 2;
 		if (i2 < 0)
 			i2 += 5;
-		for (int i = i2; i <= allowedTitleboxForDropDown + i2; i++) {
-			if (dropSeq[i % 5] == 0) {
-				titleboxYposDropDown[i % 5] += dropSpeed[i % 5];
-				if (titleboxYposDropDown[i % 5] > 0)
-					dropSeq[i % 5] = 1;
-			} else if (dropSeq[i % 5] == 1) {
-				titleboxYposDropDown[i % 5] -= dropSpeed[i % 5];
-				dropTime[i % 5]++;
-				dropSpeedChange[i % 5]++;
-				if (dropTime[i % 5] >= 15) {
-					dropSpeedChange[i % 5] = -1;
-					dropSeq[i % 5] = 2;
-				}
-				if (dropSpeedChange[i % 5] == 2) {
-					dropSpeed[i % 5]--;
-					if (dropSpeed[i % 5] < 0)
-						dropSpeed[i % 5] = 0;
-					dropSpeedChange[i % 5] = -1;
-				}
-			} else if (dropSeq[i % 5] == 2) {
-				titleboxYposDropDown[i % 5] += dropSpeed[i % 5];
-				if (titleboxYposDropDown[i % 5] >= 0) {
-					dropSeq[i % 5] = 3;
-					titleboxYposDropDown[i % 5] = 0;
-				}
-				dropSpeedChange[i % 5]++;
-				if (dropSpeedChange[i % 5] == 1) {
-					dropSpeed[i % 5]++;
-					if (dropSpeed[i % 5] > 6)
-						dropSpeed[i % 5] = 6;
-					dropSpeedChange[i % 5] = -1;
-				}
-			} else if (dropSeq[i % 5] == 3) {
-				titleboxYposDropDown[i % 5] = 0;
+
+		for (int i = i2, d = 0; i < i2 + 5; i++, d++) {
+			if (dropDelay[d] > 0) continue; // Skip if not ready
+
+			int b = i % 5;
+			if (dropBounce[b] < 3) {
+				dropSpeed[b] += gravity;
+
+				if (dropDownY[b] + dropSpeed[b] >= 0.0f) { // We collided, now bounce
+					dropDownY[b] = 0.0f;
+					dropSpeed[b] *= -restitution;
+					dropBounce[b]++;
+				} else
+					dropDownY[b] += dropSpeed[b]; // Otherwise, move Y
+
+				// Update drawing position
+				titleboxYposDropDown[b] = (int)(floorf(dropDownY[b]));
+				updateFrame = true;
+			}
+			else if (dropBounce[b] < 4) { // Stop dropdown
+				dropDownY[b] = 0.0f;
+				titleboxYposDropDown[b] = 0;
+				dropBounce[b]++;
 			}
 		}
 
-		delayForTitleboxToDropDown++;
-		if (delayForTitleboxToDropDown >= 5) {
-			allowedTitleboxForDropDown++;
-			if (allowedTitleboxForDropDown > 4)
-				allowedTitleboxForDropDown = 4;
-			delayForTitleboxToDropDown = 0;
+		// Update delays
+		for (int i = 0; i < 5; i++) {
+			if (dropDelay[i] > 0)
+				dropDelay[i]--;
 		}
 	}
 
@@ -628,6 +637,12 @@ void vBlankHandler() {
 			if (movingArrowYpos < 59)
 				movingArrowYdirection = true;
 		}
+		updateFrame = true;
+	}
+
+	if (applaunchprep && titleboxYmovepos < 192) {
+		titleboxYmovepos += 5;
+		updateFrame = true;
 	}
 
 	if (ms().theme == TWLSettings::EThemeHBL) {
@@ -645,9 +660,109 @@ void vBlankHandler() {
 				frontBubblesYpos[i] = frontBubblesYpos_def[i];
 			}
 		}
+		updateFrame = true;
 	}
 
-	if (renderFrame) {
+	// Blink colon once per second
+	if (colonTimer >= 60) {
+		colonTimer = 0;
+		showColon = !showColon;
+	}
+
+	colonTimer++;
+
+	if (showProgressIcon) {
+		/*loadingSoundTimer++;
+
+		if (loadingSoundTimer >= 60) {
+			loadingSoundTimer = 0;
+			mmEffectEx(&snd_loading);
+		}*/
+
+		progressAnimDelay++;
+		if (progressAnimDelay == 3) {
+			progressAnimNum++;
+			if (progressAnimNum > 7)
+				progressAnimNum = 0;
+			progressAnimDelay = 0;
+			updateFrame = true;
+		}
+	}
+
+	if (displayGameIcons || dbox_showIcon) {
+		// Playback animated icons
+		for (int i = 0; i < ((movingApp != -1) ? 41 : 40); i++) {
+			if (bnriconisDSi[i] && playBannerSequence(i) && !updateFrame) {
+				updateFrame = (displayGameIcons && (ms().theme != TWLSettings::EThemeSaturn)) ? (i >= CURPOS-2 && i <= CURPOS+2) : (i == CURPOS);
+			}
+		}
+	}
+
+	if (ms().theme == TWLSettings::ETheme3DS) {
+		startBorderZoomAnimDelay++;
+		if (startBorderZoomAnimDelay == 8) {
+			startBorderZoomAnimNum++;
+			if (startBorderZoomAnimSeq[startBorderZoomAnimNum] == 0) {
+				startBorderZoomAnimNum = 0;
+			}
+			startBorderZoomAnimDelay = 0;
+			updateFrame = true;
+		}
+	} else if (startBorderZoomOut) {
+		if (useRumble) {
+			rumblePos = !rumblePos;
+			my_setRumble(rumblePos);
+		}
+		startBorderZoomAnimNum++;
+		if (startBorderZoomAnimSeq[startBorderZoomAnimNum] == 0) {
+			if (useRumble) {
+				rumblePos = false;
+				my_setRumble(rumblePos);
+			}
+			startBorderZoomAnimNum = 0;
+			startBorderZoomOut = false;
+		}
+		updateFrame = true;
+	} else {
+		startBorderZoomAnimNum = 0;
+	}
+
+	// if (applaunchprep && ms().theme == TWLSettings::EThemeDSi && launchDotDoFrameChange) {
+	// 	launchDotFrame[0]--;
+	// 	if (launchDotCurrentChangingFrame >= 1)
+	// 		launchDotFrame[1]--;
+	// 	if (launchDotCurrentChangingFrame >= 2)
+	// 		launchDotFrame[2]--;
+	// 	if (launchDotCurrentChangingFrame >= 3)
+	// 		launchDotFrame[3]--;
+	// 	if (launchDotCurrentChangingFrame >= 4)
+	// 		launchDotFrame[4]--;
+	// 	if (launchDotCurrentChangingFrame >= 5)
+	// 		launchDotFrame[5]--;
+	// 	if (launchDotCurrentChangingFrame >= 6)
+	// 		launchDotFrame[6]--;
+	// 	if (launchDotCurrentChangingFrame >= 7)
+	// 		launchDotFrame[7]--;
+	// 	if (launchDotCurrentChangingFrame >= 8)
+	// 		launchDotFrame[8]--;
+	// 	if (launchDotCurrentChangingFrame >= 9)
+	// 		launchDotFrame[9]--;
+	// 	if (launchDotCurrentChangingFrame >= 10)
+	// 		launchDotFrame[10]--;
+	// 	if (launchDotCurrentChangingFrame >= 11)
+	// 		launchDotFrame[11]--;
+	// 	for (int i = 0; i < 12; i++) {
+	// 		if (launchDotFrame[i] < 0)
+	// 			launchDotFrame[i] = 0;
+	// 	}
+	// 	launchDotCurrentChangingFrame++;
+	// 	if (launchDotCurrentChangingFrame > 11)
+	// 		launchDotCurrentChangingFrame = 11;
+	// }
+	// if (applaunchprep && ms().theme == TWLSettings::EThemeDSi)
+	// 	launchDotDoFrameChange = !launchDotDoFrameChange;
+
+	if (updateFrame) {
 		glBegin2D();
 
 		int bg_R = bottomScreenBrightness / 8;
@@ -685,8 +800,9 @@ void vBlankHandler() {
 					} else {
 						glSprite(bipXpos, 178, GL_FLIP_NONE, tex().bipsImage());
 					}
-				} else
+				} else {
 					glSprite(bipXpos, 178, GL_FLIP_NONE, &tex().bipsImage()[1]);
+				}
 				bipXpos += 5;
 			}
 			glSprite(16 + titlewindowXpos[ms().secondaryDevice], 171, GL_FLIP_NONE,
@@ -731,6 +847,10 @@ void vBlankHandler() {
 			int maxIconNumber = (ms().theme == TWLSettings::EThemeSaturn ? 0 : 3);
 			for (int pos = std::max(CURPOS - maxIconNumber, 0); pos <= std::min(CURPOS + maxIconNumber, 39); pos++) {
 				int i = pos;
+
+				// Stop drawing if the rest of the boxes are empty (with hide empty boxes enabled)
+				if (ms().hideEmptyBoxes && (i != 0 && i >= spawnedtitleboxes - (movingApp != -1)))
+					break;
 
 				if (movingApp == -1) {
 					spawnedboxXpos = 96 + pos * titleboxXspacing;
@@ -901,7 +1021,6 @@ void vBlankHandler() {
 		}
 
 		if (applaunchprep) {
-
 			if (isDirectory[CURPOS]) {
 				glSprite(96, 87 - titleboxYmovepos, GL_FLIP_NONE, tex().folderImage());
 				if (customIcon[CURPOS])
@@ -916,10 +1035,7 @@ void vBlankHandler() {
 					drawIcon(112, 96 - titleboxYmovepos, CURPOS);
 			}
 			// Draw dots after selecting a game/app
-
 			dots().drawAuto();
-
-			titleboxYmovepos += 5;
 		}
 		if (showSTARTborder && displayGameIcons && (ms().theme < 4)) {
 			glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
@@ -1079,106 +1195,8 @@ void vBlankHandler() {
 		//}
 		glEnd2D();
 		GFX_FLUSH = 0;
-
-		// Blink colon once per second
-		if (colonTimer >= 60) {
-			colonTimer = 0;
-			showColon = !showColon;
-		}
-
-		frameDelay = 0;
-		frameDelayEven = !frameDelayEven;
-		renderFrame = (ms().fps == 60);
+		updateFrame = false;
 	}
-
-	colonTimer++;
-
-	if (showProgressIcon) {
-		/*loadingSoundTimer++;
-
-		if (loadingSoundTimer >= 60) {
-			loadingSoundTimer = 0;
-			mmEffectEx(&snd_loading);
-		}*/
-
-		progressAnimDelay++;
-		if (progressAnimDelay == 3) {
-			progressAnimNum++;
-			if (progressAnimNum > 7)
-				progressAnimNum = 0;
-			progressAnimDelay = 0;
-		}
-	}
-	if (displayGameIcons || dbox_showIcon) {
-		// Playback animated icons
-		for (int i = 0; i < 41; i++) {
-			if (bnriconisDSi[i] == true) {
-				playBannerSequence(i);
-			}
-		}
-	}
-
-	if (ms().theme == TWLSettings::ETheme3DS) {
-		startBorderZoomAnimDelay++;
-		if (startBorderZoomAnimDelay == 8) {
-			startBorderZoomAnimNum++;
-			if (startBorderZoomAnimSeq[startBorderZoomAnimNum] == 0) {
-				startBorderZoomAnimNum = 0;
-			}
-			startBorderZoomAnimDelay = 0;
-		}
-	} else if (startBorderZoomOut) {
-		if (useRumble) {
-			rumblePos = !rumblePos;
-			my_setRumble(rumblePos);
-		}
-		startBorderZoomAnimNum++;
-		if (startBorderZoomAnimSeq[startBorderZoomAnimNum] == 0) {
-			if (useRumble) {
-				rumblePos = false;
-				my_setRumble(rumblePos);
-			}
-			startBorderZoomAnimNum = 0;
-			startBorderZoomOut = false;
-		}
-	} else {
-		startBorderZoomAnimNum = 0;
-	}
-
-	// if (applaunchprep && ms().theme == TWLSettings::EThemeDSi && launchDotDoFrameChange) {
-	// 	launchDotFrame[0]--;
-	// 	if (launchDotCurrentChangingFrame >= 1)
-	// 		launchDotFrame[1]--;
-	// 	if (launchDotCurrentChangingFrame >= 2)
-	// 		launchDotFrame[2]--;
-	// 	if (launchDotCurrentChangingFrame >= 3)
-	// 		launchDotFrame[3]--;
-	// 	if (launchDotCurrentChangingFrame >= 4)
-	// 		launchDotFrame[4]--;
-	// 	if (launchDotCurrentChangingFrame >= 5)
-	// 		launchDotFrame[5]--;
-	// 	if (launchDotCurrentChangingFrame >= 6)
-	// 		launchDotFrame[6]--;
-	// 	if (launchDotCurrentChangingFrame >= 7)
-	// 		launchDotFrame[7]--;
-	// 	if (launchDotCurrentChangingFrame >= 8)
-	// 		launchDotFrame[8]--;
-	// 	if (launchDotCurrentChangingFrame >= 9)
-	// 		launchDotFrame[9]--;
-	// 	if (launchDotCurrentChangingFrame >= 10)
-	// 		launchDotFrame[10]--;
-	// 	if (launchDotCurrentChangingFrame >= 11)
-	// 		launchDotFrame[11]--;
-	// 	for (int i = 0; i < 12; i++) {
-	// 		if (launchDotFrame[i] < 0)
-	// 			launchDotFrame[i] = 0;
-	// 	}
-	// 	launchDotCurrentChangingFrame++;
-	// 	if (launchDotCurrentChangingFrame > 11)
-	// 		launchDotCurrentChangingFrame = 11;
-	// }
-	// if (applaunchprep && ms().theme == TWLSettings::EThemeDSi)
-	// 	launchDotDoFrameChange = !launchDotDoFrameChange;
 
 	if (boxArtColorDeband) {
 		//ndmaCopyWordsAsynch(0, tex().frameBuffer(secondBuffer), BG_GFX, 0x18000);
@@ -1442,27 +1460,56 @@ void clearBoxArt() {
 // static char videoFrameFilename[256];
 
 void graphicsInit() {
-	//logPrint("graphicsInit()\n");
+	logPrint("graphicsInit()\n");
 
 	// for (int i = 0; i < 12; i++) {
 	// 	launchDotFrame[i] = 5;
 	// }
 
 	for (int i = 0; i < 5; i++) {
-		dropTime[i] = 0;
-		dropSeq[i] = 0;
-		dropSpeed[i] = dropSpeedDefine;
-		dropSpeedChange[i] = 0;
-		if (ms().theme == TWLSettings::ETheme3DS || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL)
+		dropBounce[i] = 0;
+		dropSpeed[i] = initialDropSpeed;
+
+		if (ms().theme == TWLSettings::ETheme3DS || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
+			dropDownY[i] = 0.0f;
 			titleboxYposDropDown[i] = 0;
-		else
-			titleboxYposDropDown[i] = -85 - 80;
+		} else {
+			dropDownY[i] = -85.0f - 80.0f;
+			titleboxYposDropDown[i] = dropDownY[i];
+		}
 	}
+	int dropDownType = rand() % 4;
+	switch (dropDownType) {
+		// Left to Right
+		case 0:
+			for (int i = 0; i < 5; i++) dropDelay[i] = 6 + i * 4;
+			break;
 
-	allowedTitleboxForDropDown = 0;
-	delayForTitleboxToDropDown = 0;
+		// Right to Left
+		case 1:
+			for (int i = 0; i < 5; i++) dropDelay[i] = 6 + (4-i) * 4;
+			break;
+
+		// V-Shape (\/)
+		case 2:
+			dropDelay[2] = 8;
+			for (int i = 1; i <= 2; i++) {
+				dropDelay[2+i] = 8+(i*3);
+				dropDelay[2-i] = 8+(i*3);
+			}
+			break;
+
+		// Inverted V-Shape (/\)
+		case 3:
+		default:
+			dropDelay[2] = 14;
+			for (int i = 1; i <= 2; i++) {
+				dropDelay[2+i] = 14-(i*3);
+				dropDelay[2-i] = 14-(i*3);
+			}
+			break;
+	}
 	dropDown = false;
-
 
 	titleboxXpos[0] = ms().cursorPosition[0] * titleboxXspacing;
 	titleboxXdest[0] = ms().cursorPosition[0] * titleboxXspacing;

@@ -29,23 +29,29 @@
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 #include <string.h>
-#include <maxmod7.h>
 #include "common/isPhatCheck.h"
 #include "common/arm7status.h"
-
-#define BIT_SET(c, n) ((c) << (n))
 
 void my_touchInit();
 void my_installSystemFIFO(void);
 
+u8 my_i2cReadRegister(u8 device, u8 reg);
+u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data);
+
+#define BIT_SET(c, n) ((c) << (n))
+
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
-volatile int soundVolume = 127;
 volatile int timeTilVolumeLevelRefresh = 0;
-volatile int status = 0;
-
+static int soundVolume = 127;
 volatile int rebootTimer = 0;
+volatile int status = 0;
+static int backlightLevel = 0;
+static bool isDSPhat = false;
+static bool hasRegulableBacklight = false;
+
 //static bool gotCartHeader = false;
+
 
 //---------------------------------------------------------------------------------
 void soundFadeOut() {
@@ -59,6 +65,7 @@ void soundFadeOut() {
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
+	nocashMessage("ARM7 ReturnToDSiMenu");
 	if (isDSiMode()) {
 		i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
 		i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi Menu
@@ -70,15 +77,48 @@ void ReturntoDSiMenu() {
 }
 
 //---------------------------------------------------------------------------------
-//void UpdateCardInfo(void) {
+void changeBacklightLevel(void) {
 //---------------------------------------------------------------------------------
-	//cardReadHeader((u8*)0x02000000);
-//}
+	if (REG_SNDEXTCNT == 0) {
+		// if the backlight is regulable the range will be 0 - 3
+		// if the backlight is regulable and the console is a phat the range will be 0 - 4 (with 4 being backlight off)
+		// if the backlight is not regulable the only possible values will be 0 and 4 (with 4 being backlight off)
+		backlightLevel += 1 + (3 * !hasRegulableBacklight);
+		
+		if (backlightLevel > (3 + isDSPhat)) {
+			backlightLevel = 0;
+		}
+		if (hasRegulableBacklight) {
+			u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+			writePowerManagement(PM_BACKLIGHT_LEVEL, (pmBacklight & ~3) | (backlightLevel & 0x3));
+		}
+
+		if(backlightLevel == 4)
+			writePowerManagement(PM_CONTROL_REG, readPowerManagement(PM_CONTROL_REG) & ~0xC);
+		else
+			writePowerManagement(PM_CONTROL_REG, readPowerManagement(PM_CONTROL_REG) | 0xC);
+		return;
+	}
+
+	// DSi
+	u8 backlightLevel = my_i2cReadRegister(0x4A, 0x41);
+	backlightLevel++;
+	if (backlightLevel > 4) {
+		backlightLevel = 0;
+	}
+	my_i2cWriteRegister(0x4A, 0x41, backlightLevel);
+}
 
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	resyncClock();
+	if (fifoCheckValue32(FIFO_USER_01)) {
+		soundFadeOut();
+	} else {
+		soundVolume = 127;
+	}
+	REG_MASTER_VOLUME = soundVolume;
 }
 
 //---------------------------------------------------------------------------------
@@ -104,9 +144,6 @@ int main() {
 	// Grab from DS header in GBA slot
 	*(u16*)0x02FFFC36 = *(u16*)0x0800015E;	// Header CRC16
 	*(u32*)0x02FFFC38 = *(u32*)0x0800000C;	// Game Code
-	
-	// clear sound registers
-	dmaFillWords(0, (void*)0x04000400, 0x100);
 
 	REG_SOUNDCNT |= SOUND_ENABLE;
 	writePowerManagement(PM_CONTROL_REG, ( readPowerManagement(PM_CONTROL_REG) & ~PM_SOUND_MUTE ) | PM_SOUND_AMP );
@@ -119,12 +156,11 @@ int main() {
 	// Start the RTC tracking IRQ
 	initClockIRQ();
 
-	fifoInit();
 	my_touchInit();
+	fifoInit();
 
 	SetYtrigger(80);
 	
-	installSoundFIFO();
 	my_installSystemFIFO();
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
@@ -134,7 +170,19 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 
+	if (isDSiMode() && REG_SCFG_EXT == 0) {
+		u32 wordBak = *(vu32*)0x037C0000;
+		*(vu32*)0x037C0000 = 0x414C5253;
+		if (*(vu32*)0x037C0000 == 0x414C5253 && *(vu32*)0x037C8000 != 0x414C5253) {
+			*(u32*)0x02FFE1A0 = 0x080037C0;
+		}
+		*(vu32*)0x037C0000 = wordBak;
+	}
+
 	u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+
+	hasRegulableBacklight = !!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7));
+	isDSPhat = isPhat();
 
 	// 01: Fade Out
 	// 02: Return
@@ -150,17 +198,27 @@ int main() {
 
 	u8 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT)
 									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT)
-									| BIT_SET(!!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7)), BACKLIGHT_BIT)
-									| BIT_SET(isPhat(), DSPHAT_BIT));
+									| BIT_SET(hasRegulableBacklight, BACKLIGHT_BIT)
+									| BIT_SET(isDSPhat, DSPHAT_BIT));
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
 
+	if (REG_SNDEXTCNT == 0) {
+		if (hasRegulableBacklight)
+			backlightLevel = pmBacklight & 3; // Brightness
+		
+		if((readPowerManagement(PM_CONTROL_REG) & 0xC) == 0) // DS Phat backlight off
+			backlightLevel = 4;
+	}
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
+		}
+		if (REG_SNDEXTCNT == 0) {
+			*(int*)0x02003000 = backlightLevel;
 		}
 		/*if (!gotCartHeader && fifoCheckValue32(FIFO_USER_04)) {
 			UpdateCardInfo();
@@ -168,14 +226,18 @@ int main() {
 			gotCartHeader = true;
 		}*/
 
+		
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
 			if (isDSiMode() || REG_SCFG_EXT != 0) { //vol
-				status = (status & ~VOL_MASK) | ((i2cReadRegister(I2C_PM, I2CREGPM_VOL) << VOL_OFF) & VOL_MASK);
-				status = (status & ~BAT_MASK) | ((i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) << BAT_OFF) & BAT_MASK);				
+				status = (status & ~VOL_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_VOL) << VOL_OFF) & VOL_MASK);
+				status = (status & ~BAT_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) << BAT_OFF) & BAT_MASK);				
 			} else {
-				status = (status & ~BAT_MASK) | ((readPowerManagement(PM_BATTERY_REG) << BAT_OFF) & BAT_MASK);
-				// batteryLevel = readPowerManagement(PM_BATTERY_REG);
+				int battery = (readPowerManagement(PM_BATTERY_REG) & 1)?3:15;
+				int backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+				if (backlight & (1<<6)) battery += (backlight & (1<<3))<<4;
+
+				status = (status & ~BAT_MASK) | ((battery << BAT_OFF) & BAT_MASK);
 			}
 			timeTilVolumeLevelRefresh = 0;
 			fifoSendValue32(FIFO_USER_03, status);
@@ -191,15 +253,15 @@ int main() {
 			}
 		}
 
-		if (fifoCheckValue32(FIFO_USER_01)) {
-			soundFadeOut();
-		} else {
-			soundVolume = 127;
-		}
-		REG_MASTER_VOLUME = soundVolume;
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
+
+		if (fifoGetValue32(FIFO_USER_04) == 1) {
+			changeBacklightLevel();
+			fifoSendValue32(FIFO_USER_04, 0);
+		}
+
 		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
 			if (rebootTimer == 60*2) {
 				ReturntoDSiMenu();	// Reboot, if fat init code is stuck in a loop

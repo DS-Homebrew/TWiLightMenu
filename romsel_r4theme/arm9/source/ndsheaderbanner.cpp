@@ -3,6 +3,7 @@
 #include <malloc.h>
 #include <unistd.h>
 #include "common/flashcard.h"
+#include "common/systemdetails.h"
 #include <gl2d.h>
 
 #include "ndsheaderbanner.h"
@@ -110,13 +111,13 @@ int checkRomAP(FILE *ndsFile)
 	game_TID[4] = 0;
 
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", game_TID, headerCRC16);
 
 	if (access(ipsPath, F_OK) == 0) {
 		return 0;
 	}
 
-	FILE *file = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
+	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
 	if (file) {
 		char buf[5] = {0};
 		fread(buf, 1, 4, file);
@@ -543,9 +544,13 @@ int checkRomAP(FILE *ndsFile)
 static u16 bnriconframeseq[64] = {0x0000};
 
 // bnriconframenum[]
+int bnriconPalLoaded = 0;
 int bnriconPalLine = 0;
+int bnriconPalLinePrev = 0;
 int bnriconframenumY = 0;
+int bnriconframenumYPrev = 0;
 int bannerFlip = GL_FLIP_NONE;
+int bannerFlipPrev = GL_FLIP_NONE;
 
 // bnriconisDSi[]
 bool isTwlm = false;
@@ -575,7 +580,6 @@ int currentbnriconframeseq = 0;
 void grabBannerSequence()
 {
 	memcpy(bnriconframeseq, ndsBanner.dsi_seq, 64 * sizeof(u16));
-
 	currentbnriconframeseq = 0;
 }
 
@@ -592,7 +596,7 @@ void clearBannerSequence()
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence()
+bool playBannerSequence()
 {
 	if (bnriconframeseq[currentbnriconframeseq + 1] == 0x0100) {
 		// Do nothing if icon isn't animated
@@ -616,6 +620,23 @@ void playBannerSequence()
 			bannerFlip = GL_FLIP_V;
 		}
 
+		bool updateIcon = false;
+
+		if (bnriconPalLinePrev != bnriconPalLine) {
+			bnriconPalLinePrev = bnriconPalLine;
+			updateIcon = true;
+		}
+
+		if (bnriconframenumYPrev != bnriconframenumY) {
+			bnriconframenumYPrev = bnriconframenumY;
+			updateIcon = true;
+		}
+
+		if (bannerFlipPrev != bannerFlip) {
+			bannerFlipPrev = bannerFlip;
+			updateIcon = true;
+		}
+
 		bannerDelayNum++;
 		if (bannerDelayNum >= (setframeseq & 0x00FF)) {
 			bannerDelayNum = 0x0000;
@@ -624,5 +645,9 @@ void playBannerSequence()
 				currentbnriconframeseq = 0; // Reset sequence
 			}
 		}
+
+		return updateIcon;
 	}
+
+	return false;
 }

@@ -94,10 +94,6 @@ bool CheatCodelist::parse(const std::string& aFileName)
 
 bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize)
 {
-	if (!dsiFeatures() && memcmp(gameTid[CURPOS], "ADM", 3) == 0) {
-		return false; // Not enough RAM space to load cheat data
-	}
-
   aPos=0;
   aSize=0;
   const char* KHeader="R4 CheatCode";
@@ -329,7 +325,7 @@ void CheatCodelist::selectCheats(std::string filename)
     cheatsFound = false;
     clearText();
     printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
-    printSmall(false, 0, 100, (!dsiFeatures() && memcmp(gameTid[CURPOS], "ADM", 3) == 0) ? STR_CHEATS_CANNOT_BE_USED : STR_NO_CHEATS_FOUND, Alignment::center, FontPalette::dialog);
+    printSmall(false, 0, 100, STR_NO_CHEATS_FOUND, Alignment::center, FontPalette::dialog);
     printSmall(false, 0, 160, STR_B_BACK, Alignment::center, FontPalette::dialog);
 	updateText(false);
 
@@ -358,6 +354,7 @@ void CheatCodelist::selectCheats(std::string filename)
       cheatWnd_scrollPosition = 0, cheatWnd_scrollTimer = 0,
       cheatWnd_scrollDirection = 1;
 
+  bool unsavedChanges = false;
   while (cheatsFound) {
     // Scroll screen if needed
     if (cheatWnd_cursorPosition < cheatWnd_screenPosition) {
@@ -392,7 +389,7 @@ void CheatCodelist::selectCheats(std::string filename)
           updateText(false);
         }
       }
-	  updateBoxArt();
+	    updateBoxArt();
       bgOperations(true);
     } while (!pressed && !held);
 
@@ -444,6 +441,8 @@ void CheatCodelist::selectCheats(std::string filename)
           deselectFolder(std::distance(&_data[0], currentList[cheatWnd_cursorPosition]));
         if (select || !(cheat._flags & cParsedItem::EOne))
           cheat._flags ^= cParsedItem::ESelected;
+        
+        unsavedChanges = true;
       }
     } else if (pressed & KEY_B) {
       snd().playBack();
@@ -460,14 +459,54 @@ void CheatCodelist::selectCheats(std::string filename)
         cheatWnd_scrollTimer = 60;
         cheatWnd_scrollPosition = 0;
       } else {
-        break;
+        clearText();
+        
+        if (unsavedChanges)
+        {
+          bool break2 = false;
+          printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
+
+          std::string str = STR_CHEATS_DISCARD_CHANGES;
+          printSmall(false, 0, (SCREEN_HEIGHT>>1) - ((calcSmallFontHeight(str) - smallFontHeight()) / 2), str, Alignment::center);
+          printSmall(false, 0, 160, STR_CHEATS_DISCARD_BUTTONS, Alignment::center);
+          updateText(false);
+          
+          while (1)
+          {
+            scanKeys();
+            pressed = keysDown();
+            held = keysDownRepeat();
+
+            if (pressed & KEY_B) // No
+            {
+              snd().playWrong();
+              break;
+            }
+
+            if (pressed & KEY_A) // Yes
+            {
+              snd().playBack();
+              break2 = true;
+              break;
+            }
+
+            updateBoxArt();
+            bgOperations(true);
+          }
+
+          if (break2)
+            break;
+        }
+        else
+          break;
       }
     } else if (pressed & KEY_X) {
       snd().playLaunch();
+      unsavedChanges = false;
       clearText();
       printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
       printSmall(false, 0, 100, STR_SAVING, Alignment::center, FontPalette::dialog);
-	  updateText(false);
+	    updateText(false);
       onGenerate();
       break;
     } else if (pressed & KEY_Y) {
@@ -523,7 +562,7 @@ void CheatCodelist::selectCheats(std::string filename)
         while (1) {
           scanKeys();
           pressed = keysDown();
-		  updateBoxArt();
+		      updateBoxArt();
           bgOperations(true);
           if (pressed & KEY_B) {
             snd().playBack();
@@ -540,6 +579,7 @@ void CheatCodelist::selectCheats(std::string filename)
       for (auto itr = currentList.begin(); itr != currentList.end(); itr++) {
         (*itr)->_flags &= ~cParsedItem::ESelected;
       }
+      unsavedChanges = true;
     }
   }
 }

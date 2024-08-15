@@ -19,7 +19,6 @@
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
 #include "graphics/FontGraphic.h"
-#include "graphics/TextPane.h"
 #include "common/tonccpy.h"
 #include "SwitchState.h"
 #include "cheat.h"
@@ -47,7 +46,7 @@ extern bool useTwlCfg;
 
 extern bool lcdSwapped;
 
-const char* SDKnumbertext;
+std::string SDKnumbertext;
 
 extern bool widescreenFound;
 extern bool showdialogbox;
@@ -423,7 +422,7 @@ void perGameSettings (std::string filename) {
 		sprintf(sdkSubVerChar, "%d", sdkSubVer);
 		showSDKVersion = true;
 	}
-	// u32 arm9off = 0;
+	u32 arm9off = 0;
 	u32 arm9size = 0;
 	u32 arm7off = 0;
 	u32 arm7size = 0;
@@ -435,8 +434,8 @@ void perGameSettings (std::string filename) {
 	bool usesCloneboot = false;
 	bool dsiBinariesFound = false;
 	if (bnrRomType == 0) {
-		// fseek(f_nds_file, 0x20, SEEK_SET);
-		// fread(&arm9off, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, 0x20, SEEK_SET);
+		fread(&arm9off, sizeof(u32), 1, f_nds_file);
 		fseek(f_nds_file, 0x2C, SEEK_SET);
 		fread(&arm9size, sizeof(u32), 1, f_nds_file);
 		fseek(f_nds_file, 0x30, SEEK_SET);
@@ -466,8 +465,9 @@ void perGameSettings (std::string filename) {
 			romSize -= 0x4000;	// First 16KB
 			romSize += 0x88;	// RSA key
 		} else if (ovlOff == 0 || ovlSize == 0) {
-			romSize -= arm7off;
-			romSize -= arm7size;
+			romSize -= (arm7off + arm7size);
+		} else if (ovlOff > arm7off) {
+			romSize -= (arm9off + arm9size);
 		} else {
 			romSize -= ovlOff;
 		}
@@ -549,7 +549,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
-		if (pubSize > 0 || prvSize > 0) {
+		if ((ms().saveLocation != TWLSettings::EGamesFolder) && (pubSize > 0 || prvSize > 0)) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
@@ -587,8 +587,10 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
-		perGameOps++;
-		perGameOp[perGameOps] = 1;	// Save number
+		if (ms().saveLocation != TWLSettings::EGamesFolder) {
+			perGameOps++;
+			perGameOp[perGameOps] = 1;	// Save number
+		}
 		if (((dsiFeatures() && (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && isDSiMode()) || romUnitCode > 0) && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_boostCpu) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
@@ -672,15 +674,15 @@ void perGameSettings (std::string filename) {
 
 	if (bnrRomType == 0) {
 		if ((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
-			SDKnumbertext = ("SDK ver: 1."+(std::string)sdkSubVerChar).c_str();
+			SDKnumbertext = ("SDK ver: 1."+(std::string)sdkSubVerChar);
 		} else if ((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
-			SDKnumbertext = ("SDK ver: 2."+(std::string)sdkSubVerChar).c_str();
+			SDKnumbertext = ("SDK ver: 2."+(std::string)sdkSubVerChar);
 		} else if ((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
-			SDKnumbertext = ("SDK ver: 3."+(std::string)sdkSubVerChar).c_str();
+			SDKnumbertext = ("SDK ver: 3."+(std::string)sdkSubVerChar);
 		} else if ((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
-			SDKnumbertext = ("SDK ver: 4."+(std::string)sdkSubVerChar).c_str();
+			SDKnumbertext = ("SDK ver: 4."+(std::string)sdkSubVerChar);
 		} else if ((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
-			SDKnumbertext = ("SDK ver: 5."+(std::string)sdkSubVerChar).c_str();
+			SDKnumbertext = ("SDK ver: 5."+(std::string)sdkSubVerChar);
 		} else {
 			SDKnumbertext = "SDK ver: ???";
 		}
@@ -696,205 +698,203 @@ void perGameSettings (std::string filename) {
 	showdialogbox = true;
 
 	while (1) {
-		clearText();
+		clearText(false);
 		if (ms().theme == TWLSettings::EThemeGBC) {
 			printLarge(false, 0, 56, filename.c_str());
 		} else {
 			titleUpdate(isDirectory, filename.c_str());
 		}
 
-		printLargeCentered(false, 74, showPerGameSettings ? "Game settings" : "Info");
+		printSmall(false, 0, 74, showPerGameSettings ? "Game settings" : "Info", Alignment::center, FontPalette::white);
 		if (showSDKVersion) printSmall(false, 24, 90, SDKnumbertext);
-		printSmallRightAlign(false, 232, 90, gameTIDText);
+		printSmall(false, 232, 90, gameTIDText, Alignment::right);
 
-		int perGameOpYpos = 102;
+		int perGameOpXpos = 24;
+		int perGameOpYpos = 104;
 		bool flashcardKernelOnly = (!(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && ms().secondaryDevice && !isHomebrew && romUnitCode == 2 && (perGameSettings_dsiMode==-1 ? !DEFAULT_DSI_MODE : perGameSettings_dsiMode==0));
-
-		if (showPerGameSettings) {
-			printSmall(false, 24, 102+(perGameSettings_cursorPosition*12)-(firstPerGameOpShown*12), ">");
-		}
 
 		for (int i = firstPerGameOpShown; i < firstPerGameOpShown+4; i++) {
 		if (!showPerGameSettings || perGameOp[i] == -1) break;
+		const FontPalette highlighted = (i == perGameSettings_cursorPosition) ? FontPalette::user : FontPalette::black;
 		switch (perGameOp[i]) {
 			case 0:
-				printSmall(false, 32, perGameOpYpos, "Language:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "Language:", Alignment::left, highlighted);
 				if (perGameSettings_language == -1 || flashcardKernelOnly) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "System");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "System", Alignment::right, highlighted);
 				} else if (perGameSettings_language == -2) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 				} else if (perGameSettings_language == 0) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Japanese");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Japanese", Alignment::right, highlighted);
 				} else if (perGameSettings_language == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "English");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "English", Alignment::right, highlighted);
 				} else if (perGameSettings_language == 2) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "French");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "French", Alignment::right, highlighted);
 				} else if (perGameSettings_language == 3) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "German");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "German", Alignment::right, highlighted);
 				} else if (perGameSettings_language == 4) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Italian");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Italian", Alignment::right, highlighted);
 				} else if (perGameSettings_language == 5) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Spanish");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Spanish", Alignment::right, highlighted);
 				} else if (perGameSettings_language == 6) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Chinese");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Chinese", Alignment::right, highlighted);
 				} else if (perGameSettings_language == 7) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Korean");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Korean", Alignment::right, highlighted);
 				}
 				break;
 			case 1:
 				if (isHomebrew) {
-					printSmall(false, 32, perGameOpYpos, "RAM disk:");
+					printSmall(false, perGameOpXpos, perGameOpYpos, "RAM disk:", Alignment::left, highlighted);
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i%s", perGameSettings_ramDiskNo, savExists[perGameSettings_ramDiskNo] ? "*" : "");
 				} else {
-					printSmall(false, 32, perGameOpYpos, "Save Number:");
+					printSmall(false, perGameOpXpos, perGameOpYpos, "Save Number:", Alignment::left, highlighted);
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i%s", perGameSettings_saveNo, savExists[perGameSettings_saveNo] ? "*" : "");
 				}
 				if (isHomebrew && perGameSettings_ramDiskNo == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "None");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "None", Alignment::right, highlighted);
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, saveNoDisplay);
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, saveNoDisplay, Alignment::right, highlighted);
 				}
 				break;
 			case 2:
-				printSmall(false, 32, perGameOpYpos, "Run in:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "Run in:", Alignment::left, highlighted);
 				if (perGameSettings_dsiMode == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 				} else if (perGameSettings_dsiMode > 0) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "DSi mode");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "DSi mode", Alignment::right, highlighted);
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "DS mode");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "DS mode", Alignment::right, highlighted);
 				}
 				break;
 			case 3:
-				printSmall(false, 32, perGameOpYpos, "ARM9 CPU Speed:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "ARM9 CPU Speed:", Alignment::left, highlighted);
 				if ((perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE && romUnitCode > 0) : perGameSettings_dsiMode > 0) && runInShown) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "133mhz (TWL)");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "133mhz (TWL)", Alignment::right, highlighted);
 				} else {
 					if (perGameSettings_boostCpu == -1) {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 					} else if (perGameSettings_boostCpu == 1) {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "133mhz (TWL)");
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "133mhz (TWL)", Alignment::right, highlighted);
 					} else {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "67mhz (NTR)");
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "67mhz (NTR)", Alignment::right, highlighted);
 					}
 				}
 				break;
 			case 4:
-				printSmall(false, 32, perGameOpYpos, "VRAM Mode:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "VRAM Mode:", Alignment::left, highlighted);
 				if (((isHomebrew && isModernHomebrew) || romUnitCode > 0) && (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode > 0) && runInShown) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, (isHomebrew && isModernHomebrew) ? "DSi mode" : "Auto");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, (isHomebrew && isModernHomebrew) ? "DSi mode" : "Auto", Alignment::right, highlighted);
 				} else {
 					if (perGameSettings_boostVram == -1) {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 					} else if (perGameSettings_boostVram == 1) {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "DSi mode");
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "DSi mode", Alignment::right, highlighted);
 					} else {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "DS mode");
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "DS mode", Alignment::right, highlighted);
 					}
 				}
 				break;
 			case 5:
-				printSmall(false, 32, perGameOpYpos, "Card Read DMA:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "Card Read DMA:", Alignment::left, highlighted);
 				if (romUnitCode > 0 && (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode > 0)) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Off", Alignment::right, highlighted);
 				} else if (perGameSettings_cardReadDMA == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 				} else if (perGameSettings_cardReadDMA == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "On", Alignment::right, highlighted);
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Off", Alignment::right, highlighted);
 				}
 				break;
 			case 6:
-				printSmall(false, 32, perGameOpYpos, "Direct Boot:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "Direct Boot:", Alignment::left, highlighted);
 				if (perGameSettings_directBoot) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Yes");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Yes", Alignment::right, highlighted);
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "No");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "No", Alignment::right, highlighted);
 				}
 				break;
 			case 7:
-				printSmall(false, 32, perGameOpYpos, "Bootstrap:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "Bootstrap:", Alignment::left, highlighted);
 				if (flashcardKernelOnly) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Not Used");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Not Used", Alignment::right, highlighted);
 				} else if (perGameSettings_bootstrapFile == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 				} else if (perGameSettings_bootstrapFile == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Nightly");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Nightly", Alignment::right, highlighted);
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Release");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Release", Alignment::right, highlighted);
 				}
 				break;
 			case 8:
-				printSmall(false, 32, perGameOpYpos, "Screen Aspect Ratio:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "Screen Aspect Ratio:", Alignment::left, highlighted);
 				if (flashcardKernelOnly) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Not Used");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Not Used", Alignment::right, highlighted);
 				} else if (perGameSettings_wideScreen == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 				} else if (perGameSettings_wideScreen == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "16:10");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "16:10", Alignment::right, highlighted);
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "4:3");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "4:3", Alignment::right, highlighted);
 				}
 				break;
 			case 9:
-				printSmallCentered(false, perGameOpYpos, SET_AS_DONOR_ROM);
+				printSmall(false, 0, perGameOpYpos, SET_AS_DONOR_ROM, Alignment::center, highlighted);
 				break;
 			case 11:
-				printSmall(false, 32, perGameOpYpos, "Region:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "Region:", Alignment::left, highlighted);
 				if (perGameSettings_region == -2) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 				} else if (perGameSettings_region == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "System");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "System", Alignment::right, highlighted);
 				} else if (perGameSettings_region == 0) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Japan");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Japan", Alignment::right, highlighted);
 				} else if (perGameSettings_region == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "USA");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "USA", Alignment::right, highlighted);
 				} else if (perGameSettings_region == 2) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Europe");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Europe", Alignment::right, highlighted);
 				} else if (perGameSettings_region == 3) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Australia");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Australia", Alignment::right, highlighted);
 				} else if (perGameSettings_region == 4) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "China");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "China", Alignment::right, highlighted);
 				} else if (perGameSettings_region == 5) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Korea");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Korea", Alignment::right, highlighted);
 				}
 				break;
 			case 12:
-				printSmall(false, 32, perGameOpYpos, "Asynch Card Read:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "Asynch Card Read:", Alignment::left, highlighted);
 				if (perGameSettings_asyncCardRead == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 				} else if (perGameSettings_asyncCardRead == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "On", Alignment::right, highlighted);
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Off", Alignment::right, highlighted);
 				}
 				break;
 			case 13:
-				printSmall(false, 32, perGameOpYpos, "DSiWare Booter:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "DSiWare Booter:", Alignment::left, highlighted);
 				if (perGameSettings_dsiwareBooter == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 				} else if (perGameSettings_dsiwareBooter == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "nds-bootstrap");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "nds-bootstrap", Alignment::right, highlighted);
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Unlaunch");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Unlaunch", Alignment::right, highlighted);
 				}
 				break;
 			case 14:
-				printSmall(false, 32, perGameOpYpos, "Game Loader:");
+				printSmall(false, perGameOpXpos, perGameOpYpos, "Game Loader:", Alignment::left, highlighted);
 				if (perGameSettings_useBootstrap == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 				} else if (isHomebrew) {
 					if (perGameSettings_useBootstrap == 1) {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, isModernHomebrew ? "Direct" : "nds-bootstrap");
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, isModernHomebrew ? "Direct" : "nds-bootstrap", Alignment::right, highlighted);
 					} else {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "Unlaunch");
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Unlaunch", Alignment::right, highlighted);
 					}
 				} else {
 					if (perGameSettings_useBootstrap == 1) {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "nds-bootstrap");
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "nds-bootstrap", Alignment::right, highlighted);
 					} else {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "Kernel");
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Kernel", Alignment::right, highlighted);
 					}
 				}
 				break;
@@ -902,10 +902,11 @@ void perGameSettings (std::string filename) {
 		perGameOpYpos += 12;
 		}
 		if (!showPerGameSettings && !showCheats) {
-			printSmallCentered(false, perGameOpYpos+6, "\u2427 OK");
+			printSmall(false, 0, perGameOpYpos+5, " OK", Alignment::center);
 		} else {
-			printSmallCentered(false, perGameOpYpos+6, showCheats ? "\u2429 Cheats  \u2428 Back" : "\u2428 Back");
+			printSmall(false, 0, perGameOpYpos+5, showCheats ? " Cheats   Back" : " Back", Alignment::center);
 		}
+		updateText(false);
 		do {
 			scanKeys();
 			pressed = keysDown();
@@ -1108,7 +1109,7 @@ void perGameSettings (std::string filename) {
 						}
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
+						const char *bootstrapinipath = sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, romFolderNoSlash+"/"+filename);
 						bootstrapini.SaveIniFile(bootstrapinipath);
@@ -1151,9 +1152,10 @@ void perGameSettings (std::string filename) {
 			codelist.selectCheats(filename);
 		}
 	}
-	clearText();
+	clearText(false);
 	showdialogbox = false;
 	dialogboxHeight = 0;
+	updateText(false);
 	keysSetRepeat(10, 2); // Reset key repeat
 
 	if (ms().macroMode) {
@@ -1163,7 +1165,7 @@ void perGameSettings (std::string filename) {
 }
 
 std::string getSavExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".sav";
 	} else {
 		return ".sav" + std::to_string(perGameSettings_saveNo);
@@ -1171,7 +1173,7 @@ std::string getSavExtension(void) {
 }
 
 std::string getPubExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".pub";
 	} else {
 		return ".pu" + std::to_string(perGameSettings_saveNo);
@@ -1179,7 +1181,7 @@ std::string getPubExtension(void) {
 }
 
 std::string getPrvExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".prv";
 	} else {
 		return ".pr" + std::to_string(perGameSettings_saveNo);

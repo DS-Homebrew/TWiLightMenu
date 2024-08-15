@@ -8,9 +8,9 @@ export PROJECT	:=	$(CURDIR)
 #---------------------------------------------------------------------------------
 # Goals for Build
 #---------------------------------------------------------------------------------
-.PHONY: all package booter booter_fc 3dssplash gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme settings slot1launch title
+.PHONY: all package booter booter_fc 3dssplash gbapatcher quickmenu manual resources romsel_aktheme romsel_dsimenutheme romsel_r4theme settings slot1launch title
 
-all:	booter booter_fc 3dssplash gbapatcher quickmenu manual resources romsel_dsimenutheme romsel_r4theme settings slot1launch title
+all:	booter booter_fc 3dssplash gbapatcher quickmenu manual resources romsel_aktheme romsel_dsimenutheme romsel_r4theme settings slot1launch title
 
 package:
 	@$(MAKE) -C booter dist
@@ -21,7 +21,7 @@ package:
 	@$(MAKE) -C manual dist
 	@$(MAKE) -C imageview dist
 	@$(MAKE) -C resources
-	#@$(MAKE) -C romsel_aktheme dist
+	@$(MAKE) -C romsel_aktheme dist
 	@$(MAKE) -C romsel_dsimenutheme dist
 	@$(MAKE) -C romsel_r4theme dist
 	#@$(MAKE) -C rungame dist
@@ -86,7 +86,7 @@ clean:
 	@$(MAKE) -C quickmenu clean
 	@$(MAKE) -C manual clean
 	@$(MAKE) -C imageview clean
-	#@$(MAKE) -C romsel_aktheme clean
+	@$(MAKE) -C romsel_aktheme clean
 	@$(MAKE) -C romsel_dsimenutheme clean
 	@$(MAKE) -C romsel_r4theme clean
 	#@$(MAKE) -C rungame clean
@@ -102,7 +102,7 @@ clean:
 	@rm -rf "${PACKAGE}/Flashcard users/Autoboot/Original R4/akMenu-Wood UI root/_DS_MENU.DAT"
 	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/53524c41/content/00000000.app"
 	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
-	#@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
+	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/3dssplash.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/gbapatcher.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"

@@ -51,6 +51,7 @@
 #define REG_GPIO_WIFI *(vu16*)0x4004C04
 
 #include "common.h"
+#include "dmaTwl.h"
 #include "common/tonccpy.h"
 #include "read_card.h"
 #include "module_params.h"
@@ -258,7 +259,11 @@ static void initMBK_dsiMode(void) {
 
 void memset_addrs_arm7(u32 start, u32 end)
 {
-	toncset((u32*)start, 0, ((int)end - (int)start));
+	if (!my_isDSiMode()) {
+		toncset((u32*)start, 0, ((int)end - (int)start));
+		return;
+	}
+	dma_twlFill32(0, 0, (u32*)start, ((int)end - (int)start));
 }
 
 /*-------------------------------------------------------------------------
@@ -280,7 +285,15 @@ void arm7_resetMemory (void)
 		SCHANNEL_SOURCE(i) = 0;
 		SCHANNEL_LENGTH(i) = 0;
 	}
+
 	REG_SOUNDCNT = 0;
+	REG_SNDCAP0CNT = 0;
+	REG_SNDCAP1CNT = 0;
+
+	REG_SNDCAP0DAD = 0;
+	REG_SNDCAP0LEN = 0;
+	REG_SNDCAP1DAD = 0;
+	REG_SNDCAP1LEN = 0;
 
 	// Clear out ARM7 DMA channels and timers
 	for (i=0; i<4; i++) {
@@ -293,6 +306,8 @@ void arm7_resetMemory (void)
 			for (reg=0; reg<0x1c; reg+=4)*((u32*)(0x04004104 + ((i*0x1c)+reg))) = 0;//Reset NDMA.
 		}
 	}
+
+	REG_RCNT = 0;
 
 	// Clear out FIFO
 	REG_IPC_SYNC = 0;
@@ -313,9 +328,12 @@ void arm7_resetMemory (void)
 	// clear more of EXRAM, skipping the cheat data section
 	toncset ((void*)0x023F8000, 0, 0x8000);
 
+	if(my_isDSiMode() || swiIsDebugger())
+		memset_addrs_arm7(0x02400000, 0x02800000); // Clear the rest of EXRAM
+
 	if (my_isDSiMode()) {
 		// clear last part of EXRAM
-		memset_addrs_arm7(0x02400000, 0x02FFD7BC); // Leave eMMC CID intact
+		memset_addrs_arm7(0x02800000, 0x02FFD7BC); // Leave eMMC CID intact
 		memset_addrs_arm7(0x02FFD7CC, 0x03000000);
 	}
 

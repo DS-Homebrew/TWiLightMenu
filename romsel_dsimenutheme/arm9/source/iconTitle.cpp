@@ -143,6 +143,7 @@ static inline void loadVIDIcon(int num) { glLoadIcon(num, tex().iconVIDTexture()
 static inline void loadIMGIcon(int num) { glLoadIcon(num, tex().iconIMGTexture()->palette(), tex().iconIMGTexture()->bytes()); }
 static inline void loadMSXIcon(int num) { glLoadIcon(num, tex().iconMSXTexture()->palette(), tex().iconMSXTexture()->bytes()); }
 static inline void loadMINIcon(int num) { glLoadIcon(num, tex().iconMINITexture()->palette(), tex().iconMINITexture()->bytes()); }
+static inline void loadHBIcon(int num) { glLoadIcon(num, tex().iconHBTexture()->palette(), tex().iconHBTexture()->bytes()); }
 
 static inline void clearIcon(int num) { glClearIcon(num); }
 
@@ -187,6 +188,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 	bnrWirelessIcon[num] = 0;
 	toncset(gameTid[num], 0, 4);
 	isTwlm[num] = false;
+	isUnlaunch[num] = false;
 	isDSiWare[num] = false;
 	isHomebrew[num] = false;
 	isModernHomebrew[num] = false;
@@ -450,6 +452,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 		if (num < 40) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
 			isTwlm[num] = (strcmp(gameTid[num], "SRLA") == 0);
+			isUnlaunch[num] = (memcmp(ndsHeader.gameTitle, "UNLAUNCH.DSI", 12) == 0);
 			romVersion[num] = ndsHeader.romversion;
 			unitCode[num] = ndsHeader.unitCode;
 			headerCRC[num] = ndsHeader.headerCRC16;
@@ -478,7 +481,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 			}
 		} else if ((memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0)
 				 || (memcmp(ndsHeader.gameTitle, "MAGIC FLOOR", 11) == 0)
-				 || (memcmp(ndsHeader.gameTitle, "UNLAUNCH.DSI", 12) == 0)) {
+				 || isUnlaunch[num]) {
 			isHomebrew[num] = true;
 			isModernHomebrew[num] = true; // No need to use nds-bootstrap
 		} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
@@ -488,7 +491,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 			isDSiWare[num] = true; // Is a DSiWare game
 		}
 
-		if (isHomebrew[num] == true && !ms().secondaryDevice && num < 40) {
+		if (isHomebrew[num] && !ms().secondaryDevice && num < 40) {
 			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
 			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
 			|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058
@@ -690,49 +693,74 @@ void iconUpdate(bool isDir, const char *name, int num) {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, spriteIdx, false);
 		}
 	} else if (bnrRomType[num] == 10) {
+		tex().loadIconA26Texture();
 		loadA26Icon(spriteIdx);
 	} else if (bnrRomType[num] == 21) {
+		tex().loadIconMSXTexture();
 		loadMSXIcon(spriteIdx);
 	} else if (bnrRomType[num] == 13) {
+		tex().loadIconCOLTexture();
 		loadCOLIcon(spriteIdx);
 	} else if (bnrRomType[num] == 14) {
+		tex().loadIconM5Texture();
 		loadM5Icon(spriteIdx);
 	} else if (bnrRomType[num] == 12) {
+		tex().loadIconINTTexture();
 		loadINTIcon(spriteIdx);
 	} else if (bnrRomType[num] == 9) {
+		tex().loadIconPLGTexture();
 		loadPLGIcon(spriteIdx);
 	} else if (bnrRomType[num] == 19) {
+		tex().loadIconVIDTexture();
 		loadVIDIcon(spriteIdx);
 	} else if (bnrRomType[num] == 20) {
+		tex().loadIconIMGTexture();
 		loadIMGIcon(spriteIdx);
 	} else if (bnrRomType[num] == 1) {
+		tex().loadIconGBATexture();
 		loadGBAIcon(spriteIdx);
 	} else if (bnrRomType[num] == 2) {
+		tex().loadIconGBTexture();
 		loadGBIcon(spriteIdx);
 	} else if (bnrRomType[num] == 3) {
+		tex().loadIconGBTexture();
 		loadGBCIcon(spriteIdx);
 	} else if (bnrRomType[num] == 4) {
+		tex().loadIconNESTexture();
 		loadNESIcon(spriteIdx);
 	} else if (bnrRomType[num] == 15) {
+		tex().loadIconSGTexture();
 		loadSGIcon(spriteIdx);
 	} else if (bnrRomType[num] == 5) {
+		tex().loadIconSMSTexture();
 		loadSMSIcon(spriteIdx);
 	} else if (bnrRomType[num] == 6) {
+		tex().loadIconGGTexture();
 		loadGGIcon(spriteIdx);
 	} else if (bnrRomType[num] == 7) {
+		tex().loadIconMDTexture();
 		loadMDIcon(spriteIdx);
 	} else if (bnrRomType[num] == 8) {
+		tex().loadIconSNESTexture();
 		loadSNESIcon(spriteIdx);
 	} else if (bnrRomType[num] == 11) {
+		tex().loadIconPCETexture();
 		loadPCEIcon(spriteIdx);
 	} else if (bnrRomType[num] == 16) {
+		tex().loadIconWSTexture();
 		loadWSIcon(spriteIdx);
 	} else if (bnrRomType[num] == 17) {
+		tex().loadIconNGPTexture();
 		loadNGPIcon(spriteIdx);
 	} else if (bnrRomType[num] == 18) {
+		tex().loadIconCPCTexture();
 		loadCPCIcon(spriteIdx);
 	} else if (bnrRomType[num] == 22) {
+		tex().loadIconMINITexture();
 		loadMINIcon(spriteIdx);
+	} else if (bnrRomType[num] == 23) {
+		tex().loadIconHBTexture();
+		loadHBIcon(spriteIdx);
 	} else {
 		loadUnkIcon(spriteIdx);
 	}

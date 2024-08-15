@@ -135,19 +135,22 @@ autoboot:
 	mv SCFW.SC "../7zfile/Flashcard users/Autoboot/SuperCard DSONE/SCFW.SC"
 	
 	### The following use booter_fc.nds for everything
-	#### Original R4 / M3 Simply
+	#### Original R4 / M3 Simply (and related)
 	cp booter_fc.nds _DS_MENU.nds
 	dlditool flashcart_specifics/DLDI/r4tfv3.dldi _DS_MENU.nds
+
+	#### R4 / M3 Simply
 	r4denc _DS_MENU.nds
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.dat"
-	# delete _DS_MENU.nds for the next cart
-	rm -f _DS_MENU.nds
 
-	# N5
-	cp booter_fc.nds _DS_MENU.dat
-	dlditool flashcart_specifics/DLDI/r4tfv3.dldi _DS_MENU.dat
-	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/N5/_DS_MENU.dat"
+	#### N5 / R4-PLUS
+	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/N5 & R4-PLUS/_DS_MENU.dat"
+
+	#### Original R4SDHC
+	$(PYTHON) flashcart_specifics/dldinoap/dldinoap.py _DS_MENU.nds
+	# Since this is the last one, move it instead of copy
+	mv _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/Original R4SDHC/default.nds"
 
 	#### EDGE (TODO: Find out how to encrypt the .dat file)
 	# cp booter_fc.nds EDGE.dat
@@ -177,6 +180,13 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/r4i.cn/"
 	# Since this is the last one, move it instead of copy
 	mv ismat.dat "../7zfile/Flashcard users/Autoboot/r4i.cn/_ds_menu.nds"
+
+	#### EZ-Flash Parallel
+	#cp booter_fc.nds ezds.dat
+	#dlditool flashcart_specifics/DLDI/ez5n.dldi ezds.dat
+	#$(PYTHON) flashcart_specifics/dldinoap/dldinoap.py ezds.dat
+	#mkdir -p "../7zfile/Flashcard users/Autoboot/EZ Flash Parallel/"
+	#mv ezds.dat "../7zfile/Flashcard users/Autoboot/EZ Flash Parallel/ezds.dat"
 
 	#### Galaxy Eagle
 	cp booter_fc.nds ge.nds
@@ -302,8 +312,6 @@ clean:
 	@$(MAKE) -C flashcart_specifics/r4ig/arm9 clean
 	@$(MAKE) -C flashcart_specifics/r4ils/arm7 clean
 	@$(MAKE) -C arm7 clean
-	# echo Cleaning Flashcart Autobooters
-	# rm -fr "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/"
 
 data:
 	@mkdir -p data

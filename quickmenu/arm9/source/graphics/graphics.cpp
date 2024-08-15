@@ -28,23 +28,15 @@
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/twlmenusettings.h"
+#include "common/logging.h"
+#include <cmath>
 
 // Graphic files
-#include "cursor.h"
-#include "iconbox.h"
-#include "iconbox_pressed.h"
-#include "wirelessicons.h"
-#include "pictodlp.h"
-#include "pictodlp_selected.h"
-#include "icon_dscard.h"
-#include "icon_gba.h"
-#include "iconPhat_gba.h"
-#include "icon_gbamode.h"
-#include "cornericons.h"
-#include "icon_settings.h"
-#include "icon_settings_away.h"
+#include "menu_icons.h"
+#include "grit_tileset.h"
 
 #include "cursorpal.h"
+#include "usercolors.h"
 
 #include "../iconTitle.h"
 #include "graphics.h"
@@ -53,9 +45,12 @@
 #include "fontHandler.h"
 #include "../ndsheaderbanner.h"
 #include "../errorScreen.h"
+#include "../date.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
+
+#define CONVERT_COLOR(r,g,b) r>>3 | (g>>3)<<5 | (b>>3)<<10 | BIT(15)
 
 extern bool useTwlCfg;
 
@@ -74,13 +69,14 @@ extern int colorBvalue;
 
 int screenBrightness = 31;
 
-int frameOf60fps = 60;
-int frameDelay = 0;
-bool frameDelayEven = true; // For 24FPS
-bool renderFrame = true;
+int vblankRefreshCounter = 0;
 
 bool showProgressBar = false;
 int progressBarLength = 0;
+
+float cursorTargetTL = 0.0f, cursorTargetTR = 0.0f, cursorTargetBL = 0.0f, cursorTargetBR = 0.0f;
+float cursorTL = 0.0f, cursorTR = 0.0f, cursorBL = 0.0f, cursorBR = 0.0f;
+float cursorTLPrev = 0.0f, cursorTRPrev = 0.0f, cursorBLPrev = 0.0f, cursorBRPrev = 0.0f;
 
 extern int spawnedtitleboxes;
 
@@ -104,23 +100,43 @@ int iconYpos[7] = {25, 73, 73, 121, 175, 170, 175};
 bool showdialogbox = false;
 int dialogboxHeight = 0;
 
-int cursorTexID, iconboxTexID, iconboxPressedTexID, wirelessiconTexID, pictodlpTexID, pictodlpSelectedTexID, dscardiconTexID, gbaiconTexID, cornericonTexID, settingsiconTexID, settingsiconAwayTexID;
+constexpr int calendarXPos = 125;
+constexpr int calendarYPos = 31;
+constexpr int clockXPos = 13;
+constexpr int clockYPos = 45;
+constexpr int batteryXPos = 242;
+constexpr int batteryYPos = 4;
 
-glImage cursorImage[(32 / 32) * (128 / 32)];
-glImage iconboxImage[(256 / 16) * (128 / 64)];
-glImage iconboxPressedImage[(256 / 16) * (64 / 64)];
-glImage wirelessIcons[(32 / 32) * (64 / 32)];
-glImage pictodlpImage[(128 / 16) * (256 / 64)];
-glImage pictodlpSelectedImage[(128 / 16) * (128 / 64)];
-glImage dscardIconImage[(32 / 32) * (64 / 32)];
-glImage gbaIconImage[(32 / 32) * (64 / 32)];
-glImage cornerIcons[(32 / 32) * (128 / 32)];
-glImage settingsIconImage[(32 / 32) * (64 / 32)];
-glImage settingsIconAwayImage[(32 / 32) * (32 / 32)];
+GRIT_TEXTURE(cornericons, 32, 32, 32, 128, 4);
+GRIT_TEXTURE(cursor, 32, 32, 32, 128, 4);
+GRIT_TEXTURE(icon_dscard, 32, 32, 32, 64, 2);
+GRIT_TEXTURE(icon_gbamode, 32, 32, 32, 64, 2);
+GRIT_TEXTURE(icon_settings, 32, 32, 32, 64, 2);
+GRIT_TEXTURE(icon_settings_away, 32, 32, 32, 32, 1);
+GRIT_TEXTURE(iconbox, 256, 64, 256, 128, 2);
+GRIT_TEXTURE(iconbox_pressed, 256, 64, 256, 64, 1);
+GRIT_TEXTURE(wirelessicons, 32, 32, 32, 64, 2);
+GRIT_TEXTURE(pictochat, 128, 64, 128, 256, 4);
+GRIT_TEXTURE(pictochat_jp, 128, 64, 128, 256, 4);
+GritTexture<128, 64, 512, 64, dlp_iconsPalLen/sizeof(*dlp_iconsPal), 4> dlp_icons{dlp_iconsPal};
+
+std::array<glImage, 4>* pictochat_images = nullptr;
 
 u16 bmpImageBuffer[256*192] = {0};
 u16 topImageBuffer[256*192] = {0};
-u16* colorTable = NULL;
+u16* colorTable = nullptr;
+
+u16 calendarImageBuffer[117*115] = {0};
+u16 calendarBigImageBuffer[117*131] = {0};
+u16 markerImageBuffer[13*13] = {0};
+
+u16 batteryFullImageBuffer[12*7] = {0};
+u16 batteryLowImageBuffer[12*7] = {0};
+
+u16 clockImageBuffer[101*101] = {0};
+u16 clockNeedleColor;
+u16 clockPinColor;
+u16 clockUserColor;
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -143,6 +159,66 @@ bool screenFadedIn(void) { return (screenBrightness == 0); }
 
 bool screenFadedOut(void) { return (screenBrightness > 24); }
 
+void updateCursorTargetPos(void) { 
+	switch (cursorPosition) {
+		case MenuEntry::INVALID:
+			cursorTargetTL = 0.0f;
+			cursorTargetBL = 0.0f;
+			cursorTargetTR = 0.0f;
+			cursorTargetBR = 0.0f;
+			break;
+		case MenuEntry::CART:
+			cursorTargetTL = 31.0f;
+			cursorTargetBL = 23.0f;
+			cursorTargetTR = 213.0f;
+			cursorTargetBR = 61.0f;
+			//drawCursorRect(31, 23, 213, 61);
+			break;
+		case MenuEntry::PICTOCHAT:
+			cursorTargetTL = 31.0f;
+			cursorTargetBL = 71.0f;
+			cursorTargetTR = 117.0f;
+			cursorTargetBR = 109.0f;
+			//drawCursorRect(31, 71, 117, 109);
+			break;
+		case MenuEntry::DOWNLOADPLAY:
+			cursorTargetTL = 127.0f;
+			cursorTargetBL = 71.0f;
+			cursorTargetTR = 213.0f;
+			cursorTargetBR = 109.0f;
+			//drawCursorRect(127, 71, 213, 109);
+			break;
+		case MenuEntry::GBA:
+			cursorTargetTL = 31.0f;
+			cursorTargetBL = 119.0f;
+			cursorTargetTR = 213.0f;
+			cursorTargetBR = 157.0f;
+			//drawCursorRect(31, 119, 213, 157);
+			break;
+		case MenuEntry::BRIGHTNESS:
+			cursorTargetTL = 0.0f;
+			cursorTargetBL = 167.0f;
+			cursorTargetTR = 20.0f;
+			cursorTargetBR = 182.0f;
+			//drawCursorRect(0, 167, 20, 182);
+			break;
+		case MenuEntry::SETTINGS:
+			cursorTargetTL = 112.0f;
+			cursorTargetBL = 167.0f;
+			cursorTargetTR = 132.0f;
+			cursorTargetBR = 182.0f;
+			//drawCursorRect(112, 167, 132, 182);
+			break;
+		case MenuEntry::MANUAL:
+			cursorTargetTL = 225.0f;
+			cursorTargetBL = 167.0f;
+			cursorTargetTR = 245.0f;
+			cursorTargetBR = 182.0f;
+			//drawCursorRect(225, 167, 245, 182);
+			break;
+	}
+}
+
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
 	u16 mode = 1 << 14;
@@ -153,53 +229,6 @@ void SetBrightness(u8 screen, s8 bright) {
 	}
 	if (bright > 31) bright = 31;
 	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
-}
-
-void frameRateHandler(void) {
-	frameOf60fps++;
-	if (frameOf60fps > 60) frameOf60fps = 1;
-
-	if (!renderFrame) {
-		frameDelay++;
-		switch (ms().fps) {
-			case 11:
-				renderFrame = (frameDelay == 5+frameDelayEven);
-				break;
-			case 24:
-			//case 25:
-				renderFrame = (frameDelay == 2+frameDelayEven);
-				break;
-			case 48:
-				renderFrame = (frameOf60fps != 3
-							&& frameOf60fps != 8
-							&& frameOf60fps != 13
-							&& frameOf60fps != 18
-							&& frameOf60fps != 23
-							&& frameOf60fps != 28
-							&& frameOf60fps != 33
-							&& frameOf60fps != 38
-							&& frameOf60fps != 43
-							&& frameOf60fps != 48
-							&& frameOf60fps != 53
-							&& frameOf60fps != 58);
-				break;
-			case 50:
-				renderFrame = (frameOf60fps != 3
-							&& frameOf60fps != 9
-							&& frameOf60fps != 16
-							&& frameOf60fps != 22
-							&& frameOf60fps != 28
-							&& frameOf60fps != 34
-							&& frameOf60fps != 40
-							&& frameOf60fps != 46
-							&& frameOf60fps != 51
-							&& frameOf60fps != 58);
-				break;
-			default:
-				renderFrame = (frameDelay == 60/ms().fps);
-				break;
-		}
-	}
 }
 
 //-------------------------------------------------------
@@ -227,12 +256,6 @@ void initSubSprites(void)
 	oamUpdate(&oamSub);
 }
 
-int getFavoriteColor(void) {
-	int favoriteColor = (int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme);
-	if (favoriteColor < 0 || favoriteColor >= 16) favoriteColor = 0; // Invalid color found, so default to gray
-	return favoriteColor;
-}
-
 /* u16 convertVramColorToGrayscale(u16 val) {
 	u8 b,g,r,max,min;
 	b = ((val)>>10)&31;
@@ -250,6 +273,188 @@ int getFavoriteColor(void) {
 	return 32768|(max<<10)|(max<<5)|(max);
 } */
 
+static void bootModeIconLoad() {
+	if (ms().macroMode) return;
+
+	const char* filePath = (ms().autorun || (isDSiMode() && !flashcardFound() && ms().autostartSlot1)) ? "nitro:/graphics/icons/bootauto.png" : "nitro:/graphics/icons/bootmanual.png";
+
+	constexpr int posX = 226;
+	constexpr int posY = 2;
+
+	u16 imageBuffer[11*11] = { 0 };
+
+	FILE* file = fopen(filePath, "rb");
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+		for (unsigned i=0;i<image.size()/4;i++) {
+			imageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				imageBuffer[i] = colorTable[imageBuffer[i]];
+			}
+		}
+
+		u16* src = imageBuffer;
+		for (int y = 0; y < 11; y++) {
+			for (int x = 0; x < 11; x++) {
+				BG_GFX_SUB[(posY+y)*256+(posX+x)] = *src;
+				src++;
+			}
+		}
+	}
+
+	fclose(file);
+}
+
+void batteryIconLoad() {
+	if (ms().macroMode) return;
+
+	// Load full battery icon
+
+	const char* filePath = "nitro:/graphics/battery/batteryfull.png";
+
+	FILE* file = fopen(filePath, "rb");
+
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+
+		int x = batteryXPos, y = batteryYPos;
+		int xEnd = x + 12;
+		for (unsigned i=0;i<image.size()/4;i++) {
+			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				color = colorTable[color];
+			}
+			
+			if (image[(i*4)+3] == 0) {
+				batteryFullImageBuffer[i] = bmpImageBuffer[(y*256)+x];
+			} else {
+				batteryFullImageBuffer[i] = color;
+			}
+
+			x++;
+			if (x == xEnd) {
+				x = batteryXPos;
+				y++;
+			}
+		}
+	}
+
+	fclose(file);
+
+	// Load low battery icon
+
+	filePath = "nitro:/graphics/battery/batterylow.png";
+
+	file = fopen(filePath, "rb");
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+
+		int x = batteryXPos, y = batteryYPos;
+		int xEnd = x + 12;
+		for (unsigned i=0;i<image.size()/4;i++) {
+			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				color = colorTable[color];
+			}
+			
+			if (image[(i*4)+3] == 0) {
+				batteryLowImageBuffer[i] = bmpImageBuffer[(y*256)+x];
+			} else {
+				batteryLowImageBuffer[i] = color;
+			}
+
+			x++;
+			if (x == xEnd) {
+				x = batteryXPos;
+				y++;
+			}
+		}
+	}
+
+	fclose(file);
+}
+
+static bool isBatteryLow(void) {
+	u8 batteryLevel = sys().batteryStatus();
+	if (batteryLevel & BIT(7)) // charging
+		return false;
+
+	if (batteryLevel <= 0x3)
+		return true;
+	else
+		return false;
+}
+
+void batteryIconDraw(bool blink) {
+	if (ms().macroMode) return;
+
+	bool low = isBatteryLow();
+	if (low && blink) {
+		for (int y = 0; y < 7; y++) {
+			for (int x = 0; x < 12; x++) {
+				BG_GFX_SUB[(batteryYPos+y)*256+(batteryXPos+x)] = bmpImageBuffer[(batteryYPos+y)*256+(batteryXPos+x)];
+			}
+		}
+		return;
+	}
+
+	u16* src = batteryFullImageBuffer;
+	if (low)
+		src = batteryLowImageBuffer;
+
+	for (int y = 0; y < 7; y++) {
+		for (int x = 0; x < 12; x++) {
+			BG_GFX_SUB[(batteryYPos+y)*256+(batteryXPos+x)] = *src;
+			src++;
+		}
+	}
+}
+
+void gbaModeIconLoad(bool bottomScreen) {
+	if (ms().macroMode) return;
+
+	char filePath[256];
+	snprintf(filePath, sizeof(filePath), "nitro:/graphics/icons/gba%s.png", bottomScreen ? "bottom" : "top");
+
+	constexpr int posX = 210;
+	constexpr int posY = 2;
+
+	u16 imageBuffer[11*11] = {0};
+
+	FILE* file = fopen(filePath, "rb");
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+		for (unsigned i=0;i<image.size()/4;i++) {
+			imageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				imageBuffer[i] = colorTable[imageBuffer[i]];
+			}
+		}
+
+		u16* src = imageBuffer;
+		for (int y = 0; y < 11; y++) {
+			for (int x = 0; x < 11; x++) {
+				BG_GFX_SUB[(posY+y)*256+(posX+x)] = *src;
+				src++;
+			}
+		}
+	}
+
+	fclose(file);
+}
+
 void bottomBgLoad() {
 	std::string bottomBGFile = "nitro:/graphics/bottombg.png";
 
@@ -257,20 +462,20 @@ void bottomBgLoad() {
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "%s:/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str());
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "%s:/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str());
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "%s:/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str());
 			break;
 		case TWLSettings::EThemeWood:
-			// sprintf(temp, "%s:/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str());
 			break;
 		case TWLSettings::EThemeSaturn:
-			sprintf(temp, "nitro:/graphics/bottombg_saturn.png");
-			break;
+			// sprintf(temp, "nitro:/graphics/bottombg_saturn.png");
+			// break;
 		case TWLSettings::EThemeHBL:
 		case TWLSettings::EThemeGBC:
 			break;
@@ -322,55 +527,55 @@ auto getMenuEntryTexture(MenuEntry entry) {
 	switch(entry) {
 		case MenuEntry::CART:
 			if(isDSiMode() && cardEjected)
-				return &iconboxImage[1];
+				return &iconbox.images[1];
 			if(initialTouchedPosition == MenuEntry::CART) {
 				if(currentTouchedPosition != MenuEntry::CART)
-					return &iconboxImage[1];
-				return iconboxPressedImage;
+					return &iconbox.images[1];
+				return &iconbox_pressed.images[0];
 			}
-			return &iconboxImage[0];
+			return &iconbox.images[0];
 		case MenuEntry::PICTOCHAT:
 			if(!pictochatFound)
-				return &pictodlpImage[1];
+				return &(*pictochat_images)[2];
 			if(initialTouchedPosition == MenuEntry::PICTOCHAT) {
 				if(currentTouchedPosition != MenuEntry::PICTOCHAT)
-					return &pictodlpImage[1];
-				return &pictodlpSelectedImage[0];
+					return &(*pictochat_images)[2];
+				return &(*pictochat_images)[1];
 			}
-			return &pictodlpImage[0];
+			return &(*pictochat_images)[0];
 		case MenuEntry::DOWNLOADPLAY:
 			if(!dlplayFound)
-				return &pictodlpImage[3];
+				return &dlp_icons.images[3];
 			if(initialTouchedPosition == MenuEntry::DOWNLOADPLAY) {
 				if(currentTouchedPosition != MenuEntry::DOWNLOADPLAY)
-					return &pictodlpImage[3];
-				return &pictodlpSelectedImage[1];
+					return &dlp_icons.images[2];
+				return &dlp_icons.images[1];
 			}
-			return &pictodlpImage[2];
+			return &dlp_icons.images[0];
 		case MenuEntry::GBA:
 		{
 			bool hasGbaCart = sys().isRegularDS() && (((u8*)GBAROM)[0xB2] == 0x96);
 			if(hasGbaCart || sdFound()) {
 				if(initialTouchedPosition == MenuEntry::GBA) {
 					if(currentTouchedPosition != MenuEntry::GBA)
-						return &iconboxImage[1];
-					return iconboxPressedImage;
+						return &iconbox.images[1];
+					return &iconbox_pressed.images[0];
 				}
-				return &iconboxImage[0];
+				return &iconbox.images[0];
 			}
-			return &iconboxImage[1];
+			return &iconbox.images[1];
 		}
 		case MenuEntry::BRIGHTNESS:
-			return &cornerIcons[0];
+			return &cornericons.images[0];
 		case MenuEntry::SETTINGS:
 			if(initialTouchedPosition == MenuEntry::SETTINGS) {
 				if(currentTouchedPosition != MenuEntry::SETTINGS)
-					return &settingsIconAwayImage[0];
-				return &settingsIconImage[1];
+					return &icon_settings_away.images[0];
+				return &icon_settings.images[1];
 			}
-			return &settingsIconImage[0];
+			return &icon_settings.images[0];
 		case MenuEntry::MANUAL:
-			return &cornerIcons[3];
+			return &cornericons.images[3];
 		case MenuEntry::INVALID:
 			break;
 	}
@@ -379,7 +584,7 @@ auto getMenuEntryTexture(MenuEntry entry) {
 
 void vBlankHandler()
 {
-	if (fadeType == true) {
+	if (fadeType) {
 		if (!fadeDelay) {
 			screenBrightness--;
 			if (screenBrightness < 0) screenBrightness = 0;
@@ -403,7 +608,81 @@ void vBlankHandler()
 		}
 	}
 
-	if (renderFrame) {
+	static bool updateFrame = true;
+	static bool whiteScreenPrev = whiteScreen;
+	static bool showProgressBarPrev = showProgressBar;
+	static int progressBarLengthPrev = progressBarLength;
+	static bool showCursorPrev = showCursor;
+	static bool startMenuPrev = startMenu;
+
+	if (whiteScreenPrev != whiteScreen) {
+		whiteScreenPrev = whiteScreen;
+		updateFrame = true;
+	}
+
+	if (showProgressBarPrev != showProgressBar) {
+		showProgressBarPrev = showProgressBar;
+		updateFrame = true;
+	}
+
+	if (progressBarLengthPrev != progressBarLength) {
+		progressBarLengthPrev = progressBarLength;
+		updateFrame = true;
+	}
+
+	if (showCursorPrev != showCursor) {
+		showCursorPrev = showCursor;
+		updateFrame = true;
+	}
+
+	if (startMenuPrev != startMenu) {
+		startMenuPrev = startMenu;
+		updateFrame = true;
+	}
+
+	if (!whiteScreen && startMenu) {
+		// Playback animated icons
+		for (int i = 0; i < 2; i++) {
+			if (bnriconisDSi[i] && playBannerSequence(i)) {
+				updateFrame = true;
+			}
+		}
+
+		for (int i = 0; i < 7; i++) {
+			if (moveIconUp[i]) {
+				iconYpos[i] -= 6;
+				updateFrame = true;
+			}
+		}
+	}
+
+	constexpr float swiftness = 0.25f;
+	cursorTL += (cursorTargetTL - cursorTL) * swiftness;
+	cursorBL += (cursorTargetBL - cursorBL) * swiftness;
+	cursorTR += (cursorTargetTR - cursorTR) * swiftness;
+	cursorBR += (cursorTargetBR - cursorBR) * swiftness;
+
+	if (cursorTLPrev != cursorTL) {
+		cursorTLPrev = cursorTL;
+		updateFrame = true;
+	}
+
+	if (cursorBLPrev != cursorBL) {
+		cursorBLPrev = cursorBL;
+		updateFrame = true;
+	}
+
+	if (cursorTRPrev != cursorTR) {
+		cursorTRPrev = cursorTR;
+		updateFrame = true;
+	}
+
+	if (cursorBRPrev != cursorBR) {
+		cursorBRPrev = cursorBR;
+		updateFrame = true;
+	}
+
+	if (updateFrame) {
 	  glBegin2D();
 	  {
 		if (controlBottomBright) SetBrightness(0, screenBrightness);
@@ -425,34 +704,26 @@ void vBlankHandler()
 			glSprite(33, iconYpos[0], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::CART));
 			if (isDSiMode() && cardEjected) {
 				//glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
-				//glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
-				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[1]);
+				//glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &icon_dscard.images[(REG_SCFG_MC == 0x11) ? 1 : 0]);
+				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &icon_dscard.images[1]);
 			} else {
 				if ((isDSiMode() && !flashcardFound() && sys().arm7SCFGLocked()) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
-					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[0]);
+					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &icon_dscard.images[0]);
 				} else drawIcon(1, 40, iconYpos[0]+6);
-				if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[0]-1) & 31]);
-			}
-			// Playback animated icon
-			if (bnriconisDSi[0]==true) {
-				playBannerSequence(0);
+				if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessicons.images[(bnrWirelessIcon[0]-1) & 31]);
 			}
 			glSprite(33, iconYpos[1], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::PICTOCHAT));
 			glSprite(129, iconYpos[2], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::DOWNLOADPLAY));
 			glSprite(33, iconYpos[3], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::GBA));
 			int num = (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? 1 : 0;
 			if (num == 0 && ms().gbaBooter == TWLSettings::EGbaNativeGbar2) {
-				glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, &gbaIconImage[(((u8*)GBAROM)[0xB2] == 0x96) ? 0 : 1]);
+				glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, &icon_gbamode.images[(((u8*)GBAROM)[0xB2] == 0x96) ? 0 : 1]);
 			}
 			else drawIcon(num, 40, iconYpos[3]+6);
 			if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::BRIGHTNESS));
 			}
-			if (bnrWirelessIcon[num] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[1]-1) & 31]);
-			// Playback animated icon
-			if (bnriconisDSi[1]==true) {
-				playBannerSequence(1);
-			}
+			if (bnrWirelessIcon[num] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessicons.images[(bnrWirelessIcon[1]-1) & 31]);
 			if (!ms().kioskMode) {
 				glSprite(117, iconYpos[5], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::SETTINGS));
 			}
@@ -461,37 +732,23 @@ void vBlankHandler()
 			// Draw cursor
 			if (showCursor) {
 				auto drawCursorRect = [](int x1, int y1, int x2, int y2) {
-						glSprite(x1, y1, GL_FLIP_NONE, &cursorImage[0]);
-						glSprite(x2, y1, GL_FLIP_NONE, &cursorImage[1]);
-						glSprite(x1, y2, GL_FLIP_NONE, &cursorImage[2]);
-						glSprite(x2, y2, GL_FLIP_NONE, &cursorImage[3]);
+						glSprite(x1, y1, GL_FLIP_NONE, &cursor.images[0]);
+						glSprite(x2, y1, GL_FLIP_NONE, &cursor.images[1]);
+						glSprite(x1, y2, GL_FLIP_NONE, &cursor.images[2]);
+						glSprite(x2, y2, GL_FLIP_NONE, &cursor.images[3]);
 				};
 				
-				switch (cursorPosition) {
-					case MenuEntry::INVALID:
-						break;
-					case MenuEntry::CART:
-						drawCursorRect(31, 23, 213, 61);
-						break;
-					case MenuEntry::PICTOCHAT:
-						drawCursorRect(31, 71, 117, 109);
-						break;
-					case MenuEntry::DOWNLOADPLAY:
-						drawCursorRect(127, 71, 213, 109);
-						break;
-					case MenuEntry::GBA:
-						drawCursorRect(31, 119, 213, 157);
-						break;
-					case MenuEntry::BRIGHTNESS:
-						drawCursorRect(0, 167, 20, 182);
-						break;
-					case MenuEntry::SETTINGS:
-						drawCursorRect(112, 167, 132, 182);
-						break;
-					case MenuEntry::MANUAL:
-						drawCursorRect(225, 167, 245, 182);
-						break;
-				}
+				updateCursorTargetPos();
+				
+				drawCursorRect(std::roundf(cursorTL), std::roundf(cursorBL), std::roundf(cursorTR), std::roundf(cursorBR));
+			}
+
+
+			if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
+				reloadIconPalettes();
+				vblankRefreshCounter = 0;
+			} else {
+				vblankRefreshCounter++;
 			}
 		}
 		/*if (showdialogbox) {
@@ -502,22 +759,292 @@ void vBlankHandler()
 	  }
 	  glEnd2D();
 	  GFX_FLUSH = 0;
-
-		frameDelay = 0;
-		frameDelayEven = !frameDelayEven;
-		renderFrame = false;
 	}
+}
 
-	if (!whiteScreen) {
-		for (int i = 0; i < 7; i++) {
-			if (moveIconUp[i]) {
-				iconYpos[i] -= 6;
-			}
+static void clockNeedleDraw(int angle, u32 length, u16 color) {
+	if (ms().macroMode) return;
+	
+	constexpr float PI = 3.1415926535897f;
+	
+	// Find coords from angle & length
+	int x0 = clockXPos + 50;
+	int y0 = clockYPos + 50; 
+	
+	float radians = (float)(angle%360) * (PI / 180.0f);
+	int x1 = x0 + std::cos(radians) * length;
+	int y1 = y0 - std::sin(radians) * length;
+
+	// Draw line using Bresenham's line algorithm
+	int dx = abs(x1 - x0);
+	int dy = -abs(y1 - y0);
+
+	int stepX = x0 < x1 ? 1 : -1;
+	int stepY = y0 < y1 ? 1 : -1;
+
+	int error = (dx + dy);
+	int error2;
+
+	while (true) {
+		BG_GFX_SUB[y0*256+x0] = color;
+		BG_GFX_SUB[(y0+1)*256+x0] = color;
+		BG_GFX_SUB[y0*256+(x0-1)] = color;
+		BG_GFX_SUB[(y0+1)*256+(x0-1)] = color;
+
+		if (x0 == x1 && y0 == y1) break;
+
+		error2 = error * 2;
+
+		if (error2 >= dy) {
+			if (x0 == x1) break;
+			error += dy;
+			x0 += stepX;
+		}
+		
+		if (error2 <= dx) {
+			if (y0 == y1) break;
+			error += dx;
+			y0 += stepY;
 		}
 	}
 }
 
-void loadBoxArt(const char* filename, bool secondaryDevice) {
+static void markerLoad(void) {
+	char filePath[256];
+	snprintf(filePath, sizeof(filePath), "nitro:/graphics/calendar/marker/%i.png", getFavoriteColor());
+	FILE* file = fopen(filePath, "rb");
+
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+		for (unsigned i=0;i<image.size()/4;i++) {
+			markerImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				markerImageBuffer[i] = colorTable[markerImageBuffer[i]];
+			}
+		}
+	}
+
+	fclose(file);
+}
+
+static void markerDraw(int x, int y) {
+	u16* src = markerImageBuffer;
+
+	int dstX;
+	for (int yy = 0; yy < 13; yy++) {
+		dstX = x;
+		for (int xx = 0; xx < 13; xx++) {
+			BG_GFX_SUB[y*256+dstX] = *src;
+			dstX++;
+			src++;
+		}
+		y++;
+	}
+}
+
+static void calendarTextDraw(const Datetime& now) {
+	printSmall(true, 56, calendarYPos+3, getDateYear(), Alignment::center);
+
+	Datetime firstDay(now.getYear(), now.getMonth(), 1);
+	int startWeekday = firstDay.getWeekDay();
+	
+	// Draw marker
+	{
+		int myPos = (startWeekday + now.getDay() - 1) / 7;
+		markerDraw(calendarXPos+now.getWeekDay()*16+4, calendarYPos+myPos*16+34);
+	}
+
+	// Draw dates
+	{
+		int date = 1;
+		int end = startWeekday+firstDay.getMonthDays();
+		for (int i = startWeekday; i < end; ++i) {
+			int cxPos = i % 7;
+			int cyPos = i / 7;
+
+			FontPalette fontColor = cxPos == 0 ? FontPalette::sunday : cxPos == 6 ? FontPalette::saturday : FontPalette::regular;
+			printTiny(true, cxPos*16+8, calendarYPos+cyPos*16+36, std::to_string(date), Alignment::center, fontColor);
+
+			date++;
+		}
+	}
+
+	// Copy to background
+	updateTopTextArea(calendarXPos, calendarYPos, 113, 131);
+}
+
+void calendarDraw() {
+	if (ms().macroMode) return;
+
+	int calendarHeight = 115;
+	u16* src = calendarImageBuffer;
+
+	Datetime datetime = Datetime::now();
+	Datetime firstDay(datetime.getYear(), datetime.getMonth(), 1);
+
+	// If the dates exceed the small calendar then use the big calendar
+	if (firstDay.getWeekDay() + firstDay.getMonthDays() > 7*5) {
+		calendarHeight = 131;
+		src = calendarBigImageBuffer;
+	}
+
+	int xDst = calendarXPos;
+	int yDst = calendarYPos;
+	for (int yy = 0; yy < 131; yy++) {
+		xDst = calendarXPos;
+		for (int xx = 0; xx < 117; xx++) {
+			if (yy < calendarHeight)
+				BG_GFX_SUB[yDst*256+xDst] = *(src++);
+			else
+				BG_GFX_SUB[yDst*256+xDst] = topImageBuffer[yDst*256+xDst]; // clear bottom for the small calendar
+
+			xDst++;
+		}
+		yDst++;
+	}
+
+	calendarTextDraw(datetime);
+}
+
+void calendarLoad(void) {
+	if (ms().macroMode) return;
+
+	markerLoad();
+
+	// Small calendar
+	int calendarX = calendarXPos;
+	int calendarY = calendarYPos;
+
+	const char* filePath = "nitro:/graphics/calendar/calendar.png";
+	FILE* file = fopen(filePath, "rb");
+
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+		for (unsigned i=0;i<image.size()/4;i++) {
+			calendarImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				calendarImageBuffer[i] = colorTable[calendarImageBuffer[i]];
+			}
+
+			calendarImageBuffer[i] = alphablend(calendarImageBuffer[i], topImageBuffer[(calendarY*256)+calendarX], image[(i*4)+3]);
+
+			calendarX++;
+			if (calendarX >= calendarXPos + 117) {
+				calendarX = calendarXPos;
+				calendarY++;
+			}
+		}
+	}
+
+	fclose(file);
+	
+	// Big calendar
+	calendarX = calendarXPos;
+	calendarY = calendarYPos;
+
+	filePath = "nitro:/graphics/calendar/calendarbig.png";
+	file = fopen(filePath, "rb");
+
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+		for (unsigned i=0;i<image.size()/4;i++) {
+			calendarBigImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				calendarBigImageBuffer[i] = colorTable[calendarBigImageBuffer[i]];
+			}
+
+			calendarBigImageBuffer[i] = alphablend(calendarBigImageBuffer[i], topImageBuffer[(calendarY*256)+calendarX], image[(i*4)+3]);
+
+			calendarX++;
+			if (calendarX >= calendarXPos + 117) {
+				calendarX = calendarXPos;
+				calendarY++;
+			}
+		}
+	}
+
+	fclose(file);
+
+	calendarDraw();
+}
+
+void clockLoad(void) {
+	if (ms().macroMode) return;
+
+	const char* filePath = "nitro:/graphics/clock.png";
+	FILE* file = fopen(filePath, "rb");
+
+	int clockX = clockXPos;
+	int clockY = clockYPos;
+
+	if (file) {
+		// Start loading
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+		for (unsigned i=0;i<image.size()/4;i++) {
+			clockImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorTable) {
+				clockImageBuffer[i] = colorTable[clockImageBuffer[i]];
+			}
+
+			clockImageBuffer[i] = alphablend(clockImageBuffer[i], topImageBuffer[(clockY*256)+clockX], image[(i*4)+3]);
+
+			clockX++;
+			if (clockX >= clockXPos + 101) {
+				clockX = clockXPos;
+				clockY++;
+			}
+		}
+
+		clockDraw();
+	}
+	fclose(file);
+}
+
+void clockDraw() {
+	if (ms().macroMode) return;
+
+	Datetime time = Datetime::now();
+
+	u16* src = clockImageBuffer;
+		
+	int dstX = clockXPos;
+	int dstY = clockYPos;
+	for (int yy = 0; yy < 101; yy++) {
+		dstX = clockXPos;
+		for (int xx = 0; xx < 101; xx++) {
+			BG_GFX_SUB[dstY*256+dstX] = *(src++);
+			dstX++;
+		}
+		dstY++;
+	}
+	
+	float h = (float)time.getHour() + (float)time.getMinute() / 60.0f;
+
+	clockNeedleDraw(90-(h * 30), 24, clockNeedleColor); // hour
+	clockNeedleDraw(90-(time.getMinute() * 6), 30, clockNeedleColor); // minute
+	clockNeedleDraw(90-(time.getSecond() * 6), 36, clockUserColor); // second
+
+	// draw clock pin
+	for (int yy = clockYPos+48; yy < clockYPos+48+5; yy++) {
+		for (int xx = clockXPos+48; xx < clockXPos+48+5; xx++) {
+			BG_GFX_SUB[yy*256+xx] = clockPinColor;
+		}
+	}
+}
+
+// No longer used.
+/*void loadBoxArt(const char* filename, bool secondaryDevice) {
 	if (ms().macroMode) return;
 
 	if (access(filename, F_OK) != 0) {
@@ -589,32 +1116,32 @@ void loadBoxArt(const char* filename, bool secondaryDevice) {
 			BG_GFX_SUB[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
 		}
 	}
-}
+}*/
 
 void topBgLoad(void) {
 	if (ms().macroMode) return;
 
 	char filePath[256];
-	sprintf(filePath, "nitro:/graphics/%s.png", sys().isDSPhat() ? "phat_topbg" : "topbg");
+	sprintf(filePath, "nitro:/graphics/topbg.png");
 
 	char temp[256];
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "%s:/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str(), "topbg");
+			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str());
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "%s:/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str(), "topbg");
+			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str());
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "%s:/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str(), "topbg");
+			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str());
 			break;
 		case TWLSettings::EThemeWood:
-			// sprintf(temp, "%s:/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/%s.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str(), "topbg");
+			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str());
 			break;
 		case TWLSettings::EThemeSaturn:
-			sprintf(temp, "nitro:/graphics/%s.png", "topbg_saturn");
-			break;
+			// sprintf(temp, "nitro:/graphics/topbg_saturn.png");
+			// break;
 		case TWLSettings::EThemeHBL:
 		case TWLSettings::EThemeGBC:
 			break;
@@ -681,10 +1208,31 @@ void topBarLoad(void) {
 	}
 
 	fclose(file);
+
+	char16_t username[11] = {0};
+	memcpy(username, useTwlCfg ? (s16 *)0x02000448 : PersonalData->name, 10 * sizeof(char16_t));
+	printTiny(true, 3, 3, username, Alignment::left, FontPalette::topBar);
+	updateTopTextArea(3, 3, calcTinyFontWidth(username), tinyFontHeight(), bmpImageBuffer);
+
+	drawDateTime(true);
+	drawDateTime(false);
+
+	bootModeIconLoad();
+}
+
+void drawDateTime(bool date, bool showTimeColon) {
+	std::string text = date ? getDate() : retTime();
+	if (!date && !showTimeColon) text[2] = ' ';
+
+	const int posX = date ? 205 : 171;
+	printTiny(true, posX, 3, text, Alignment::right, FontPalette::topBar);
+	updateTopTextArea(posX - 27, 3, 27, tinyFontHeight(), bmpImageBuffer);
 }
 
 void graphicsInit()
 {
+	logPrint("graphicsInit()\n");
+
 	*(u16*)(0x0400006C) |= BIT(14);
 	*(u16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
@@ -753,242 +1301,84 @@ void graphicsInit()
 	}*/
 
 	swiWaitForVBlank();
-
-	u16* newPalette = (u16*)cursorPals+(getFavoriteColor()*16);
-	if (colorTable) {
-		for (int i2 = 0; i2 < 3; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
+	
+	auto getDlpBitmapOffset = []{
+		using Lang = TWLSettings::TLanguage;
+		switch(ms().getGuiLanguage()) {
+		case Lang::ELangEnglish:
+		default:
+			return 0;
+		case Lang::ELangFrench:
+			return 2;
+		case Lang::ELangGerman:
+			return 1;
+		case Lang::ELangItalian:
+			return 4;
+		case Lang::ELangSpanish:
+			return 3;
+		case Lang::ELangJapanese:
+			return 5;
+		case Lang::ELangKorean:
+			return 6;
+		case Lang::ELangChineseS:
+			return 7;
 		}
+	};
+	
+	dlp_icons.bitmap = dlp_iconsBitmap + 0x1000 * getDlpBitmapOffset();
+
+	cursor.palette = (u16*)cursorPals+(getFavoriteColor()*16);
+
+	if (colorTable) {
+		RemapPalette(cornericons, colorTable);
+		RemapPalette(cursor, colorTable);
+		RemapPalette(icon_dscard, colorTable);
+		RemapPalette(icon_gbamode, colorTable);
+		RemapPalette(icon_settings, colorTable);
+		RemapPalette(icon_settings_away, colorTable);
+		RemapPalette(iconbox, colorTable);
+		RemapPalette(iconbox_pressed, colorTable);
+		RemapPalette(wirelessicons, colorTable);
+		RemapPalette(dlp_icons, colorTable);
+		RemapPalette(pictochat, colorTable);
+		RemapPalette(pictochat_jp, colorTable);
 	}
 
-	cursorTexID = glLoadTileSet(cursorImage, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							128, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							3, // Length of the palette to use (3 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) cursorBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)iconboxPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 12; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
+	LoadTileset(cornericons);
+	LoadTileset(cursor);
+	LoadTileset(icon_dscard);
+	LoadTileset(icon_gbamode);
+	LoadTileset(icon_settings);
+	LoadTileset(icon_settings_away);
+	LoadTileset(iconbox);
+	LoadTileset(iconbox_pressed);
+	LoadTileset(wirelessicons);
+	LoadTileset(dlp_icons);
+	if (ms().getGuiLanguage() == TWLSettings::TLanguage::ELangJapanese) {
+		LoadTileset(pictochat_jp);
+		pictochat_images = &pictochat_jp.images;
+	} else {
+		LoadTileset(pictochat);
+		pictochat_images = &pictochat.images;
 	}
-
-	iconboxTexID = glLoadTileSet(iconboxImage, // pointer to glImage array
-							256, // sprite width
-							64, // sprite height
-							256, // bitmap width
-							128, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							12, // Length of the palette to use (12 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) iconboxBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)iconbox_pressedPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 12; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	iconboxPressedTexID = glLoadTileSet(iconboxPressedImage, // pointer to glImage array
-							256, // sprite width
-							64, // sprite height
-							256, // bitmap width
-							64, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							12, // Length of the palette to use (12 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) iconbox_pressedBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)wirelessiconsPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	wirelessiconTexID = glLoadTileSet(wirelessIcons, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							64, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) wirelessiconsBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)pictodlpPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 12; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	pictodlpTexID = glLoadTileSet(pictodlpImage, // pointer to glImage array
-							128, // sprite width
-							64, // sprite height
-							128, // bitmap width
-							256, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							12, // Length of the palette to use (12 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) pictodlpBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)pictodlp_selectedPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 12; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	pictodlpSelectedTexID = glLoadTileSet(pictodlpSelectedImage, // pointer to glImage array
-							128, // sprite width
-							64, // sprite height
-							128, // bitmap width
-							128, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							12, // Length of the palette to use (12 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) pictodlp_selectedBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)icon_dscardPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	dscardiconTexID = glLoadTileSet(dscardIconImage, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							64, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) icon_dscardBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)icon_gbamodePal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	gbaiconTexID = glLoadTileSet(gbaIconImage, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							64, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) (icon_gbamodeBitmap) // image data generated by GRIT
-							);
-
-	newPalette = (u16*)cornericonsPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	cornericonTexID = glLoadTileSet(cornerIcons, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							128, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) cornericonsBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)icon_settingsPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	settingsiconTexID = glLoadTileSet(settingsIconImage, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							64, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) icon_settingsBitmap // image data generated by GRIT
-							);
-
-	newPalette = (u16*)icon_settings_awayPal;
-	if (colorTable) {
-		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
-		}
-	}
-
-	settingsiconAwayTexID = glLoadTileSet(settingsIconAwayImage, // pointer to glImage array
-							32, // sprite width
-							32, // sprite height
-							32, // bitmap width
-							32, // bitmap height
-							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
-							(u16*) newPalette, // Load our 16 color tiles palette
-							(u8*) icon_settings_awayBitmap // image data generated by GRIT
-							);
 
 	loadConsoleIcons();
 
+	updateCursorTargetPos();
+	cursorTL = cursorTargetTL;
+	cursorBL = cursorTargetBL;
+	cursorTR = cursorTargetTR;
+	cursorBR = cursorTargetBR;
+
+	clockNeedleColor = CONVERT_COLOR(121,121,121);
+	clockPinColor = CONVERT_COLOR(73, 73, 73);
+	clockUserColor = userColors[getFavoriteColor()];
+	if (colorTable) {
+		clockNeedleColor = colorTable[clockNeedleColor];
+		clockPinColor = colorTable[clockPinColor];
+		clockUserColor = colorTable[clockUserColor];
+	}
+
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
-	irqSet(IRQ_VCOUNT, frameRateHandler);
-	irqEnable(IRQ_VCOUNT);
 }

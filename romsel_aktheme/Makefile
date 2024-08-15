@@ -34,7 +34,7 @@ dist:	all
 
 $(TARGET).nds:	makearm7 makearm9
 	ndstool	-u 00030004 -g SRLA 01 "TWLMENUPP" -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -d $(NITRODATA) \
-  -b icon.bmp "Wood UI;TWiLight Menu++;Rocket Robz & chyyran"
+  -b icon.bmp "Wood UI;TWiLight Menu++;Rocket Robz"
 
 clean:
 	@echo clean ...
@@ -42,8 +42,8 @@ clean:
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds
 	@rm -fr $(TARGET).arm7.elf
 	@rm -fr $(TARGET).arm9.elf
-	@$(MAKE) -C bootloader clean
-	@$(MAKE) -C bootstub clean
+	@$(MAKE) -C $(PROJECT)/universal/bootloader_menu clean
+	@$(MAKE) -C $(PROJECT)/universal/bootstub clean
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C arm7 clean
 
@@ -51,7 +51,7 @@ data:
 	@mkdir -p data
 
 bootloader: data
-	@$(MAKE) -C bootloader
+	@$(MAKE) -C $(PROJECT)/universal/bootloader_menu LOADBIN=$(CURDIR)/data/load.bin
 
 bootstub: data
 	@$(MAKE) -C $(PROJECT)/universal/bootstub BOOTSTUB=$(CURDIR)/data/bootstub.bin

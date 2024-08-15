@@ -20,6 +20,7 @@
 
 #include <nds/arm9/dldi.h>
 #include "cheat.h"
+#include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
 #include "common/stringtool.h"
@@ -80,10 +81,6 @@ bool CheatCodelist::parse(const std::string& aFileName)
 
 bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize)
 {
-	if (!dsiFeatures() && memcmp(gameTid[ms().secondaryDevice], "ADM", 3) == 0) {
-		return false; // Not enough RAM space to load cheat data
-	}
-
   aPos=0;
   aSize=0;
   const char* KHeader="R4 CheatCode";
@@ -103,7 +100,7 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
 
   while (!done)
   {
-    memcpy(&idx,&nidx,sizeof(idx));
+    tonccpy(&idx,&nidx,sizeof(idx));
     fread(&nidx,sizeof(nidx),1,aDat);
     if (gamecode==idx._gameCode&&crc32==idx._crc32)
     {
@@ -170,7 +167,7 @@ bool CheatCodelist::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
         _data.push_back(cParsedItem(cheatName,cheatNote,flagItem|((*ccode&0xff000000)?selectValue:0),dataPos+(((char*)ccode+3)-buffer)));
         if ((*ccode&0xff000000)&&(flagItem&cParsedItem::EOne)) selectValue=0;
         _data.back()._cheat.resize(cheatDataLen);
-        memcpy(_data.back()._cheat.data(),cheatData,cheatDataLen*4);
+        tonccpy(_data.back()._cheat.data(),cheatData,cheatDataLen*4);
       }
       cc++;
       ccode=(u32*)((u32)ccode+(((*ccode&0x00ffffff)+1)*4));

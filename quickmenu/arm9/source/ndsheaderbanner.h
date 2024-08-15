@@ -252,6 +252,35 @@ typedef enum {
 	N3DS_LANG_CHINESE_TRADITIONAL	= 11,
 } sNDSLanguage;
 
+typedef enum {
+	ROM_TYPE_NDS,
+	ROM_TYPE_GBA,
+	ROM_TYPE_GB,
+	ROM_TYPE_GBC,
+	ROM_TYPE_NES,
+	ROM_TYPE_SMS,
+	ROM_TYPE_GG,
+	ROM_TYPE_MD,
+	ROM_TYPE_SNES,
+	ROM_TYPE_PLG,
+	ROM_TYPE_A26,
+	ROM_TYPE_PCE,
+	ROM_TYPE_INT,
+	ROM_TYPE_COL,
+	ROM_TYPE_M5,
+	ROM_TYPE_SG,
+	ROM_TYPE_WS,
+	ROM_TYPE_NGP,
+	ROM_TYPE_CPC,
+	ROM_TYPE_VID,
+	ROM_TYPE_IMG,
+	ROM_TYPE_MSX,
+	ROM_TYPE_MINI,
+	ROM_TYPE_HB,
+	ROM_TYPE_UNK,
+	ROM_TYPE_TOTAL,
+} eROMType;
+
 bool checkDsiBinaries(FILE* ndsFile);
 
 /**
@@ -276,13 +305,14 @@ extern u8 unitCode[2];
 extern u16 headerCRC[2];
 
 // bnriconframenum[]
+extern int bnriconPalLoaded[2];
 extern int bnriconPalLine[2];
 extern int bnriconframenumY[2];
 extern int bannerFlip[2];
 
 // bnriconisDSi[]
 extern bool isDirectory[2];
-extern int bnrRomType[2];
+extern eROMType bnrRomType[2];
 extern bool bnriconisDSi[2];
 extern int bnrWirelessIcon[2];		// 0 = None, 1 = Local, 2 = WiFi
 extern bool isDSiWare[2];
@@ -306,6 +336,6 @@ void clearBannerSequence(int num);
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence(int num);
+bool playBannerSequence(int num);
 
 #endif // NDS_HEADER2

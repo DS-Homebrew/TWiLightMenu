@@ -7,8 +7,11 @@
 # Set the bit depth to 4 (16 colors)
 -gB4
 
-#The Transperant colour of 0x00FF00
+#The Transparent color of 0x00FF00
 -gT 00FF00
+
+# Use only the needed color pallette
+-pn 16
 
 ##################
 # Old Parameters

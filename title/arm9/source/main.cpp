@@ -79,6 +79,7 @@ void RemoveTrailingSlashes(std::string& path)
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
+static std::string saveToDelete = "";
 
 typedef TWLSettings::TLaunchType Launch;
 
@@ -147,10 +148,11 @@ void loadROMselect(void)
 	vector<char *> argarray;
 
 	switch (ms().theme) {
-		/*case 3:
+		case 3:
 			logPrint("Opening Wood theme...\n");
-			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
-			break;*/
+			argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr"));
+			runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
+			break;
 		case 2:
 		case 6:
 			logPrint("Opening R4 Original or GameBoy Color theme...\n");
@@ -179,12 +181,15 @@ void loadROMselect(void)
 	}
 }*/
 
-bool extension(const std::string& filename, const char* ext) {
-	if (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
-		return false;
-	} else {
-		return true;
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
+	for (std::string_view extension : extensions) {
+		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
+		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
+			return true;
+		}
 	}
+
+	return false;
 }
 
 // Unlaunch needs the path in 16 bit unicode so this function is
@@ -527,10 +532,15 @@ void lastRunROM()
 				std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 				std::string romFolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romFolderNoSlash);
-				mkdir ("saves", 0777);
-				savepath = romFolderNoSlash+"/saves/"+savename;
-				if (ms().previousUsedDevice && ms().fcSaveOnSd) {
-					savepath = replaceAll(savepath, "fat:/", "sd:/");
+				if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+					std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+					mkdir(twlmSavesFolder.c_str(), 0777);
+					savepath = twlmSavesFolder + "/" + savename;
+				} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+					savepath = romFolderNoSlash + "/" + savename;
+				} else {
+					mkdir("saves", 0777);
+					savepath = romFolderNoSlash+"/saves/"+savename;
 				}
 
 				u32 orgsavesize = getFileSize(savepath.c_str());
@@ -643,8 +653,16 @@ void lastRunROM()
 			std::string savenameFc = replaceAll(filename, typeToReplace, ".sav");
 			std::string romFolderNoSlash = romfolder;
 			RemoveTrailingSlashes(romFolderNoSlash);
-			mkdir("saves", 0777);
 			std::string savepath = romFolderNoSlash + "/saves/" + savename;
+			if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+				std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+				mkdir(twlmSavesFolder.c_str(), 0777);
+				savepath = twlmSavesFolder + "/" + savename;
+			} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+				savepath = romFolderNoSlash + "/" + savename;
+			} else {
+				mkdir("saves", 0777);
+			}
 			std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
 			rename(savepath.c_str(), savepathFc.c_str());
 
@@ -794,7 +812,6 @@ void lastRunROM()
 
 				std::string romFolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romFolderNoSlash);
-				mkdir ("saves", 0777);
 
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");
 
@@ -806,6 +823,15 @@ void lastRunROM()
 				if (!runTempDSiWare) {
 					ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
 					ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
+					if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+						std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+						mkdir(twlmSavesFolder.c_str(), 0777);
+						ms().dsiWarePubPath = twlmSavesFolder + "/" + filename;
+					} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+						ms().dsiWarePubPath = romFolderNoSlash + "/" + filename;
+					} else {
+						mkdir("saves", 0777);
+					}
 					ms().dsiWarePrvPath = ms().dsiWarePubPath;
 					if (savFormat) {
 						ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
@@ -964,36 +990,38 @@ void lastRunROM()
 				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
 			}
 		} else {
-			// Move .pub and/or .prv out of "saves" folder
-			std::string filename = ms().romPath[ms().previousUsedDevice];
-			const size_t last_slash_idx = filename.find_last_of("/");
-			if (std::string::npos != last_slash_idx) {
-				filename.erase(0, last_slash_idx + 1);
-			}
+			if (ms().saveLocation != TWLSettings::EGamesFolder) {
+				// Move .pub and/or .prv out of "saves" folder
+				std::string filename = ms().romPath[ms().previousUsedDevice];
+				const size_t last_slash_idx = filename.find_last_of("/");
+				if (std::string::npos != last_slash_idx) {
+					filename.erase(0, last_slash_idx + 1);
+				}
 
-			loadPerGameSettings(filename);
+				loadPerGameSettings(filename);
 
-			std::string typeToReplace = filename.substr(filename.rfind('.'));
+				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
-			std::string pubname = replaceAll(filename, typeToReplace, getPubExtension());
-			std::string prvname = replaceAll(filename, typeToReplace, getPrvExtension());
-			std::string pubnameUl = replaceAll(filename, typeToReplace, ".pub");
-			std::string prvnameUl = replaceAll(filename, typeToReplace, ".prv");
-			std::string romfolder = ms().romPath[ms().previousUsedDevice];
-			while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
-				romfolder.resize(romfolder.size()-1);
-			}
-			std::string romFolderNoSlash = romfolder;
-			RemoveTrailingSlashes(romFolderNoSlash);
-			std::string pubpath = romFolderNoSlash + "/saves/" + pubname;
-			std::string prvpath = romFolderNoSlash + "/saves/" + prvname;
-			std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
-			std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
-			if (access(pubpath.c_str(), F_OK) == 0) {
-				rename(pubpath.c_str(), pubpathUl.c_str());
-			}
-			if (access(prvpath.c_str(), F_OK) == 0) {
-				rename(prvpath.c_str(), prvpathUl.c_str());
+				std::string pubname = replaceAll(filename, typeToReplace, getPubExtension());
+				std::string prvname = replaceAll(filename, typeToReplace, getPrvExtension());
+				std::string pubnameUl = replaceAll(filename, typeToReplace, ".pub");
+				std::string prvnameUl = replaceAll(filename, typeToReplace, ".prv");
+				std::string romfolder = ms().romPath[ms().previousUsedDevice];
+				while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+					romfolder.resize(romfolder.size()-1);
+				}
+				std::string romFolderNoSlash = romfolder;
+				RemoveTrailingSlashes(romFolderNoSlash);
+				std::string pubpath = romFolderNoSlash + "/saves/" + pubname;
+				std::string prvpath = romFolderNoSlash + "/saves/" + prvname;
+				std::string pubpathUl = romFolderNoSlash + "/" + pubnameUl;
+				std::string prvpathUl = romFolderNoSlash + "/" + prvnameUl;
+				if (access(pubpath.c_str(), F_OK) == 0) {
+					rename(pubpath.c_str(), pubpathUl.c_str());
+				}
+				if (access(prvpath.c_str(), F_OK) == 0) {
+					rename(prvpath.c_str(), prvpathUl.c_str());
+				}
 			}
 
 			unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
@@ -1015,8 +1043,8 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to GameYob as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ES8DSLaunch) {
-		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().colEmulator != 1)
-		 || ((extension(ms().romPath[ms().previousUsedDevice], ".sg") || extension(ms().romPath[ms().previousUsedDevice], ".sc")) && ms().sgEmulator != 1)
+		if ((extension(ms().romPath[ms().previousUsedDevice], {".col"}) && ms().colEmulator != 1)
+		 || ((extension(ms().romPath[ms().previousUsedDevice], {".sg"}) || extension(ms().romPath[ms().previousUsedDevice], {".sc"})) && ms().sgEmulator != 1)
 		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		mkdir(ms().previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
@@ -1179,11 +1207,10 @@ void lastRunROM()
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EGBARunner2Launch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		if (ms().gbaR3Test) {
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
-			if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
-				argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
-			}
+		const char* gbaR3Path = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds" : "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds";
+
+		if (access(gbaR3Path, F_OK) == 0) {
+			argarray.at(0) = (char*)gbaR3Path;
 		} else {
 			char game_TID[5];
 
@@ -1213,8 +1240,8 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1); // Pass ROM to GBARunner2 as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EColecoDSLaunch) {
-		if ((extension(ms().romPath[ms().previousUsedDevice], ".col") && ms().colEmulator != 2)
-		 || ((extension(ms().romPath[ms().previousUsedDevice], ".sg") || extension(ms().romPath[ms().previousUsedDevice], ".sc")) && ms().sgEmulator != 2)
+		if ((extension(ms().romPath[ms().previousUsedDevice], {".col"}) && ms().colEmulator != 2)
+		 || ((extension(ms().romPath[ms().previousUsedDevice], {".sg"}) || extension(ms().romPath[ms().previousUsedDevice], {".sc"})) && ms().sgEmulator != 2)
 		 || access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/ColecoDS.nds";
@@ -1426,6 +1453,7 @@ const char *languages[] = {
 	"Čeština",
 	"Suomi",
 	"қазақша",
+	"Galego",
 };
 
 const TWLSettings::TLanguage guiLanguages[] = {
@@ -1462,6 +1490,7 @@ const TWLSettings::TLanguage guiLanguages[] = {
 	TWLSettings::TLanguage::ELangRyukyuan,
 	TWLSettings::TLanguage::ELangKorean,
 	TWLSettings::TLanguage::ELangKazakh,
+	TWLSettings::TLanguage::ELangGalician,
 };
 
 const TWLSettings::TLanguage gameLanguages[] = {
@@ -2353,7 +2382,7 @@ int titleMode(void)
 
 	bool fcFound = flashcardFound();
 
-	if (dsiFeatures() && ms().consoleModel == 0 && !ms().previousUsedDevice && ms().launchType[false] == Launch::EDSiWareLaunch && ms().dsiWareBooter == TWLSettings::EDSiWareUnlaunch) {
+	if (dsiFeatures() && ms().consoleModel == 0 && !ms().previousUsedDevice && ms().launchType[false] == Launch::EDSiWareLaunch && ms().dsiWareBooter == TWLSettings::EDSiWareUnlaunch && ms().saveLocation != TWLSettings::EGamesFolder) {
 		// Move .pub and/or .prv back to "saves" folder
 		std::string filename = ms().romPath[ms().previousUsedDevice];
 		const size_t last_slash_idx = filename.find_last_of("/");
@@ -2390,7 +2419,7 @@ int titleMode(void)
 	}
 
 	if (fcFound) {
-	  if (ms().internetBrowserLaunched || ms().launchType[true] == Launch::ESDFlashcardLaunch) {
+	  if (ms().internetBrowserLaunched || ms().launchType[true] == Launch::ESDFlashcardLaunch) { if (ms().saveLocation != TWLSettings::EGamesFolder) {
 		// Move .sav back to "saves" folder
 		std::string romPath = ms().internetBrowserLaunched ? ms().internetBrowserPath : ms().romPath[true];
 		std::string filename = romPath;
@@ -2412,22 +2441,37 @@ int titleMode(void)
 		std::string romFolderNoSlash = romfolder;
 		RemoveTrailingSlashes(romFolderNoSlash);
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
+		if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+			savepath = (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves/" : "fat:/_nds/TWiLightMenu/saves/") + savename;
+		} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+			savepath = romFolderNoSlash + "/" + savename;
+		}
 		std::string savepathFc = romFolderNoSlash + "/" + savenameFc;
-		if (access(savepathFc.c_str(), F_OK) == 0
-		&& (extension(filename, ".nds")
-		 || extension(filename, ".dsi")
-		 || extension(filename, ".ids")
-		 || extension(filename, ".srl")
-		 || extension(filename, ".app"))) {
-			rename(savepathFc.c_str(), savepath.c_str());
+		if ((access(savepathFc.c_str(), F_OK) == 0)
+		&& extension(filename, {".nds", ".dsi", ".ids", ".srl", "app"})) {
+			if (savepathFc[0] == savepath[0] && savepathFc[1] == savepath[1] && savepathFc[2] == savepath[2]) {
+				rename(savepathFc.c_str(), savepath.c_str());
+			} else {
+				fcopy(savepathFc.c_str(), savepath.c_str());
+				saveToDelete = savepathFc;
+			}
 			logPrint("Moved back to saves folder:\n%s\n%s\n\n", savepathFc.c_str(), savepath.c_str());
 		}
-	  } else if (sys().isRegularDS() && (*(u16*)(0x020000C0) != 0) && (ms().launchType[true] == Launch::EGBANativeLaunch)) {
+	  }} else if (sys().isRegularDS() && (*(u16*)(0x020000C0) != 0) && (ms().launchType[true] == Launch::EGBANativeLaunch)) {
 			u8 byteBak = *(vu8*)(0x0A000000);
 			*(vu8*)(0x0A000000) = 'T';	// SRAM write test
 		  if (*(vu8*)(0x0A000000) == 'T') {	// Check if SRAM is writeable
 			*(vu8*)(0x0A000000) = byteBak;
-			std::string savepath = replaceAll(ms().romPath[true], ".gba", ".sav");
+
+			std::string filename = ms().romPath[true];
+			const size_t last_slash_idx = filename.find_last_of("/");
+			if (std::string::npos != last_slash_idx) {
+				filename.erase(0, last_slash_idx + 1);
+			}
+
+			std::string typeToReplace = filename.substr(filename.rfind('.'));
+
+			std::string savepath = replaceAll(ms().romPath[true], typeToReplace, ".sav");
 			u32 savesize = getFileSize(savepath.c_str());
 			if (savesize > 0x20000) savesize = 0x20000;
 			if (savesize > 0) {
@@ -2568,11 +2612,9 @@ int titleMode(void)
 
 	if ((access(settingsinipath, F_OK) != 0)
 	|| languageNowSet || regionNowSet
-	|| (ms().theme < TWLSettings::EThemeDSi) || (ms().theme == TWLSettings::EThemeWood) || (ms().theme > TWLSettings::EThemeGBC)) {
+	|| (ms().theme < TWLSettings::EThemeDSi) || (ms().theme > TWLSettings::EThemeGBC)) {
 		// Create or modify "settings.ini"
-		if (ms().theme == TWLSettings::EThemeWood) {
-			ms().theme = TWLSettings::EThemeR4;
-		} else if (ms().theme < TWLSettings::EThemeDSi || ms().theme > TWLSettings::EThemeGBC) {
+		if (ms().theme < TWLSettings::EThemeDSi || ms().theme > TWLSettings::EThemeGBC) {
 			ms().theme = TWLSettings::EThemeDSi;
 		}
 		ms().saveSettings();
@@ -2615,6 +2657,10 @@ int titleMode(void)
 			*(u32*)0x020007F0 = 0x4D44544C;
 		}
 		lastRunROM();
+	}
+
+	if (saveToDelete != "") {
+		remove(saveToDelete.c_str());
 	}
 
 	// If in DSi mode with no flashcard & with SCFG access, attempt to cut slot1 power to save battery

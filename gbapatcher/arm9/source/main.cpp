@@ -991,7 +991,9 @@ int main(int argc, char **argv) {
 		//iprintf("s2RamAccess(false)\n");
 
 		if (saveType != NULL) {
-			std::string savepath = replaceAll(argv[1], ".gba", ".sav");
+			std::string filename = argv[1];
+			std::string typeToReplace = filename.substr(filename.rfind('.'));
+			std::string savepath = replaceAll(argv[1], typeToReplace, ".sav");
 			if (getFileSize(savepath.c_str()) == 0) {
 				u32 size = (saveType->size > 0x10000 ? 0x10000 : saveType->size);
 				for (u32 i = 0; i < size; i++) {

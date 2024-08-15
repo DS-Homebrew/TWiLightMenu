@@ -86,8 +86,11 @@ extern bool dsModeForced;
 extern int vblankRefreshCounter;
 
 int file_count = 0;
+int last_used_box = 0;
+static int fileStartPos = 0; // The position of the first thing that is not a directory.
 
 extern int spawnedtitleboxes;
+extern int cursorPosOnScreen;
 
 extern int titleboxXpos[2];
 extern int titleboxXdest[2];
@@ -179,7 +182,8 @@ void chdirFake(const char *dir) {
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
 	for (std::string_view extension : extensions) {
-		if (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
+		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
+		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
 			return true;
 		}
 	}
@@ -202,6 +206,13 @@ bool nameEndsWith(const std::string_view name, const std::vector<std::string_vie
 			return true;
 	}
 	return false;
+}
+
+void recalculateBoxesCount() {
+	if (ms().hideEmptyBoxes)
+		last_used_box = std::clamp(file_count-1-PAGENUM*40, 0, 39);
+	else
+		last_used_box = 39;
 }
 
 bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
@@ -258,6 +269,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	dirContents.clear();
 
 	file_count = 0;
+	fileStartPos = 0;
 
 	if (access("dirInfo.twlm.ini", F_OK) == 0) {
 		dirInfoIniFound = true;
@@ -268,6 +280,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 
 		CIniFile twlmDirInfo("dirInfo.twlm.ini");
 		file_count = twlmDirInfo.GetInt("INFO", "GAMES", 0);
+		recalculateBoxesCount();
 		return;
 	} else {
 		dirInfoIniFound = false;
@@ -298,30 +311,62 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			}
 
 			dirent *pent = readdir(pdir);
-			if (pent == nullptr || file_count > ((dsiFeatures() || sys().dsDebugRam()) ? 1024 : 512))
+			if (pent == nullptr || file_count > ((dsiFeatures() || sys().dsDebugRam()) ? 1024 : 512)) {
+				logPrint("End of listing, Sorting: ");
 				break;
+			}
 
 			// Now that we've got the attrs and the name, skip if we should be hiding this
 			if (!ms().showHidden && (attrs & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0)))
 				continue;
 
+			bool emplaceBackDirContent = false;
 			if (ms().showDirectories) {
-				if ((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
+				emplaceBackDirContent =
+				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
 					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
-					|| nameEndsWith(pent->d_name, extensionList)) {
-					dirContents.emplace_back(pent->d_name, pent->d_type == DT_DIR, file_count, false);
-					file_count++;
-				}
+					|| nameEndsWith(pent->d_name, extensionList));
 			} else {
-				if (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList)) {
-					dirContents.emplace_back(pent->d_name, false, file_count, false);
-					file_count++;
+				emplaceBackDirContent = (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList));
+			}
+			if (emplaceBackDirContent) {
+				if ((pent->d_type != DT_DIR) && extension(pent->d_name, {".md"})) {
+					FILE* mdFile = fopen(pent->d_name, "rb");
+					if (mdFile) {
+						u8 segaEntryPointReversed[4] = {0};
+						u8 segaEntryPointU8[4] = {0};
+						u32 segaEntryPoint = 0;
+						fseek(mdFile, 4, SEEK_SET);
+						fread(&segaEntryPointReversed, 1, 4, mdFile);
+						for (int i = 0; i < 4; i++) {
+							segaEntryPointU8[3-i] = segaEntryPointReversed[i];
+						}
+						tonccpy(&segaEntryPoint, segaEntryPointU8, 4);
+
+						char segaString[5] = {0};
+						fseek(mdFile, 0x100, SEEK_SET);
+						fread(segaString, 1, 4, mdFile);
+						fclose(mdFile);
+
+						if (!((segaEntryPointReversed[0] == 0) && ((strcmp(segaString, "SEGA") == 0) || ((segaEntryPoint >= 8) && (segaEntryPoint < 0x3FFFFF))))) {
+							// Invalid string or entry point found
+							continue;
+						}
+					}
 				}
+				dirContents.emplace_back(pent->d_name, ms().showDirectories ? (pent->d_type == DT_DIR) : false, file_count, false);
+				logPrint("%s listed: %s\n", (pent->d_type == DT_DIR) ? "Directory" : "File", pent->d_name);
+				file_count++;
+
+				if (pent->d_type == DT_DIR)
+					fileStartPos++;
 			}
 		}
+		recalculateBoxesCount();
 
 		if (ms().sortMethod == TWLSettings::ESortAlphabetical) { // Alphabetical
 			std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Alphabetical");
 		} else if (ms().sortMethod == TWLSettings::ESortRecent) { // Recent
 			CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 			std::vector<std::string> recentlyPlayed;
@@ -339,6 +384,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Recent");
 		} else if (ms().sortMethod == TWLSettings::ESortMostPlayed) { // Most Played
 			CIniFile timesPlayedIni(timesPlayedIniPath);
 
@@ -360,6 +406,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					else
 						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 				});
+			logPrint("Most Played");
 		} else if (ms().sortMethod == TWLSettings::ESortFileType) { // File type
 			sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
 					if (!lhs.isDirectory && rhs.isDirectory)
@@ -373,6 +420,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					else
 						return extCmp < 0;
 				});
+			logPrint("File type");
 		} else if (ms().sortMethod == TWLSettings::ESortCustom) { // Custom
 			CIniFile gameOrderIni(gameOrderIniPath);
 			std::vector<std::string> gameOrder;
@@ -389,7 +437,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Custom");
 		}
+		logPrint("\n\n");
 		closedir(pdir);
 	}
 }
@@ -412,17 +462,9 @@ void displayNowLoading(void) {
 	printLarge(false, 0, 88, STR_NOW_LOADING, Alignment::center);
 	if (!sys().isRegularDS()) {
 		if (ms().theme == TWLSettings::EThemeSaturn) {
-			if (ms().secondaryDevice) {
-				printSmall(false, 0, 20 + smallFontHeight(), STR_LOCATION_SLOT_1, Alignment::center);
-			} else {
-				printSmall(false, 0, 20 + smallFontHeight(), ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
-			}
+			printSmall(false, 0, 20 + smallFontHeight(), ms().secondaryDevice ? STR_LOCATION_SLOT_1 : (ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD), Alignment::center);
 		} else {
-			if (ms().secondaryDevice) {
-				printSmall(false, 0, 168, STR_LOCATION_SLOT_1, Alignment::center);
-			} else {
-				printSmall(false, 0, 168, ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
-			}
+			printSmall(false, 0, 168, ms().secondaryDevice ? STR_LOCATION_SLOT_1 : (ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD), Alignment::center);
 		}
 	}
 	updateText(false);
@@ -436,8 +478,8 @@ void displayNowLoading(void) {
 }
 
 void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntry = 0xFFFF) {
-	if ((right && CURPOS >= 39) || (!right && CURPOS <= 0)) {
-		if (!edgeBumpSoundPlayed)
+	if ((right && CURPOS >= last_used_box) || (!right && CURPOS <= 0)) {
+		if (ms().theme != TWLSettings::EThemeSaturn && !edgeBumpSoundPlayed)
 			snd().playWrong();
 		edgeBumpSoundPlayed = true;
 		return;
@@ -450,12 +492,12 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 	bool firstMove = true;
 	touchPosition touch;
 	do {
-		if (right && CURPOS < 39 && CURPOS < maxEntry) {
+		if (right && CURPOS < last_used_box && CURPOS < maxEntry) {
 			CURPOS++;
 		} else if (!right && CURPOS > 0) {
 			CURPOS--;
-		} else {
-			if (!edgeBumpSoundPlayed)
+		} else  {
+			if (ms().theme != TWLSettings::EThemeSaturn && !edgeBumpSoundPlayed)
 				snd().playWrong();
 			edgeBumpSoundPlayed = true;
 			return;
@@ -511,6 +553,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 			swiWaitForVBlank();
 		} else {
 			snd().playSelect();
+
 			if (right) {
 				titleboxXdest[ms().secondaryDevice] += titleboxXspacing;
 				titlewindowXdest[ms().secondaryDevice] += 5;
@@ -518,6 +561,9 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 				titleboxXdest[ms().secondaryDevice] -= titleboxXspacing;
 				titlewindowXdest[ms().secondaryDevice] -= 5;
 			}
+
+			for (int i = 0; i < 4; i++)
+				swiWaitForVBlank();
 		}
 
 		// Bit of delay the first time to give time to release the button
@@ -565,17 +611,18 @@ void updateBoxArt(void) {
 	showSTARTborder = true;
 	if (ms().theme == TWLSettings::EThemeHBL || ms().macroMode || !ms().showBoxArt || boxArtLoaded) return;
 
+	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
+		rocketVideo_playVideo = false;
+		while (dmaBusy(1)); // Wait for frame to finish rendering
+		tex().drawOverRotatingCubes(); // Clear top screen cubes for 3DS theme
+	}
+	clearBoxArt();
+
 	if (isDirectory[CURPOS]) {
-		clearBoxArt(); // Clear box art, if it's a directory
 		if (ms().theme == TWLSettings::ETheme3DS && !rocketVideo_playVideo) {
 			rocketVideo_playVideo = true;
 		}
 	} else {
-		if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
-			while (dmaBusy(1)); // Wait for frame to finish rendering
-			rocketVideo_playVideo = false; // Clear top screen cubes
-		}
-		clearBoxArt();
 		sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", boxArtFilename);
 		if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
 			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
@@ -1061,13 +1108,25 @@ void launchInternetBrowser(std::string filename, bool isDir) {
 		char browserTid[5] = {0};
 		tonccpy(browserTid, NDSHeader.gameCode, 4);
 
-		mkdir("saves", 0777);
 		std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 		std::string savenamePub = replaceAll(filename, typeToReplace, getPubExtension());
 		std::string savenamePrv = replaceAll(filename, typeToReplace, getPrvExtension());
 		std::string savepath = romFolderNoSlash + "/saves/" + savename;
 		std::string savepathPub = romFolderNoSlash + "/saves/" + savenamePub;
 		std::string savepathPrv = romFolderNoSlash + "/saves/" + savenamePrv;
+		if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+			std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+			mkdir(twlmSavesFolder.c_str(), 0777);
+			savepath = twlmSavesFolder + "/" + savename;
+			savepathPub = twlmSavesFolder + "/" + savenamePub;
+			savepathPrv = twlmSavesFolder + "/" + savenamePrv;
+		} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+			savepath = romFolderNoSlash + "/" + savename;
+			savepathPub = romFolderNoSlash + "/" + savenamePub;
+			savepathPrv = romFolderNoSlash + "/" + savenamePrv;
+		} else {
+			mkdir("saves", 0777);
+		}
 
 		char sfnSrl[62];
 		char sfnPub[62];
@@ -1181,9 +1240,7 @@ void launchInternetBrowser(std::string filename, bool isDir) {
 			fadeType = false;		  // Fade to black
 		}
 
-		while (!screenFadedOut()) {
-			swiWaitForVBlank();
-		}
+		while (!screenFadedOut()) { swiWaitForVBlank(); }
 
 		int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
 		char text[32];
@@ -1324,6 +1381,7 @@ void switchDevice(void) {
 		}
 
 		if (directMethod) {
+			cursorPosOnScreen = CURPOS;
 			SetWidescreen(NULL);
 			chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
 			int err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, false, -1);
@@ -2176,7 +2234,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			if (sys().isRegularDS()) {
 				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_MEMORY_EXPANSION_PAK) - smallFontHeight()) / 2), STR_INSERT_MEMORY_EXPANSION_PAK, Alignment::center, FontPalette::dialog);
 			} else {
-				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_CANNOT_LAUNCH_IN_DS_MODE) - smallFontHeight()) / 2), STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center, FontPalette::dialog);
+				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_MEMORY_EXPANSION_PAK_UNAVAILABLE) - smallFontHeight()) / 2), STR_MEMORY_EXPANSION_PAK_UNAVAILABLE, Alignment::center, FontPalette::dialog);
 			}
 			break;
 		case 11:
@@ -2187,7 +2245,7 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 					printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_SLOT2_RAM_CART) - smallFontHeight()) / 2), STR_INSERT_SLOT2_RAM_CART, Alignment::center, FontPalette::dialog);
 				}
 			} else {
-				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_CANNOT_LAUNCH_IN_DS_MODE) - smallFontHeight()) / 2), STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center, FontPalette::dialog);
+				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_SLOT2_RAM_CART_UNAVAILABLE) - smallFontHeight()) / 2), STR_SLOT2_RAM_CART_UNAVAILABLE, Alignment::center, FontPalette::dialog);
 			}
 			break;
 		case 12:
@@ -2298,14 +2356,14 @@ bool cannotLaunchMsg(const char *filename) {
 	if (ms().theme != TWLSettings::EThemeSaturn) {
 		dbox_showIcon = true;
 		showdialogbox = true;
-		for (int i = 0; i < 30; i++) {
-			bgOperations(true);
-		}
+		while (!dboxStopped) { bgOperations(true); }
 		titleUpdate(false, filename, CURPOS);
 	}
 	const std::string *str = nullptr;
 	if (isTwlm[CURPOS]) {
 		str = &STR_TWLMENU_ALREADY_RUNNING;
+	} else if (isUnlaunch[CURPOS]) {
+		str = &STR_CANNOT_LAUNCH_WITH_THEME;
 	} else if (bnrRomType[CURPOS] == 1) {
 		str = &STR_GBA_BIOS_ERROR_DESC;
 	} else if (bnrRomType[CURPOS] != 0) {
@@ -2609,7 +2667,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					bnrRomType[i] = 5;
 				} else if (extension(std_romsel_filename, {".gg"})) {
 					bnrRomType[i] = 6;
-				} else if (extension(std_romsel_filename, {".gen"})) {
+				} else if (extension(std_romsel_filename, {".gen", ".md"})) {
 					bnrRomType[i] = 7;
 				} else if (extension(std_romsel_filename, {".smc"})) {
 					bnrRomType[i] = 8;
@@ -2625,6 +2683,8 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					bnrRomType[i] = 18;
 				} else if (extension(std_romsel_filename, {".min"})) {
 					bnrRomType[i] = 22;
+				} else if (extension(std_romsel_filename, {".ntrb"})) {
+					bnrRomType[i] = 23;
 				} else {
 					bnrRomType[i] = 9;
 				}
@@ -2698,7 +2758,7 @@ static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents)
 		return false;
 	}
 
-	snd().playSwitch();
+	snd().playSwitch(55);
 	if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 		fadeType = false; // Fade to white
 		for (int i = 0; i < 6; i++) {
@@ -2757,6 +2817,7 @@ static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents)
 		whiteScreen = false;
 		fadeType = true; // Fade in from white
 	}
+	recalculateBoxesCount();
 	return showLshoulder;
 }
 
@@ -2766,7 +2827,7 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 		return false;
 	}
 
-	snd().playSwitch();
+	snd().playSwitch(200);
 	if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 		fadeType = false; // Fade to white
 		for (int i = 0; i < 6; i++) {
@@ -2831,7 +2892,136 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 		whiteScreen = false;
 		fadeType = true; // Fade in from white
 	}
+	recalculateBoxesCount();
 	return showRshoulder;
+}
+
+// Opens a message box prompt to set/clear the default directory.
+bool setDefaultDirectory(std::string_view directory_path)
+{
+	if (ms().kioskMode || !ms().showDirectories)
+		return false;
+
+	if (ms().theme == TWLSettings::EThemeSaturn) {
+		snd().playStartup();
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			bgOperations(true);
+		}
+		currentBg = 1;
+		displayGameIcons = false;
+		fadeType = true;
+
+		clearText();
+		updateText(false);
+
+		while (!screenFadedIn()) { bgOperations(true); }
+		dbox_showIcon = false;
+
+		printLarge(false, 0, 104, directory_path, Alignment::center);
+	} else {
+		dbox_showIcon = false;
+		showdialogbox = true;
+
+		clearText();
+		updateText(false);
+
+		while (!dboxStopped) { bgOperations(true); }
+
+		dbox_showIcon = false;
+		showdialogbox = true;
+
+		printLarge(false, 0, 32, directory_path, Alignment::center);
+	}
+
+	int yPos = (ms().theme == TWLSettings::EThemeSaturn ? 30 : 98);
+
+	std::string *str;
+	bool alreadyDefault, noDefaultDir;
+	noDefaultDir = ms().defaultRomfolder[ms().secondaryDevice] == "null";
+
+	if (ms().defaultRomfolder[ms().secondaryDevice] != directory_path)
+	{
+		str = &STR_DEFAULT_DIR_SET;
+		alreadyDefault = false;
+	}
+	else
+	{
+		str = &STR_DEFAULT_DIR_ALREADY;
+		alreadyDefault = true;
+	}
+
+	printSmall(false, 0, yPos - ((calcSmallFontHeight(*str) - smallFontHeight()) / 2), *str, Alignment::center, FontPalette::dialog);
+	if (!sys().isRegularDS()) {
+		yPos = (ms().theme == TWLSettings::EThemeSaturn ? 96 : 64)-8;
+		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 96 : 64)-8, ms().secondaryDevice ? STR_LOCATION_SLOT_1 : (ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD), Alignment::center);
+	}
+
+	updateText(false);
+	for (int i = 0; i < 90; i++) { // Small delay to avoid activating this accidentally
+		bgOperations(true);
+	}
+
+	if (!alreadyDefault)
+		printSmall(false, 0, 160-16, STR_X_SET_DEFAULT_DIR, Alignment::center, FontPalette::dialog);
+
+	std::string btn = (noDefaultDir ? "" : STR_Y_DISABLE + "    ") + STR_B_BACK;
+	printSmall(false, 0, 160, btn, Alignment::center, FontPalette::dialog);
+
+	updateText(false);
+	int pressed = 0;
+	while (1) {
+		scanKeys();
+		pressed = keysDown();
+		updateBoxArt();
+		bgOperations(true);
+
+		// Back
+		if (pressed & KEY_B) {
+			snd().playBack();
+			break;
+		}
+		// Clear default dir and save settings
+		else if (!noDefaultDir && pressed & KEY_Y) {
+			snd().playLaunch();
+
+			ms().defaultRomfolder[ms().secondaryDevice] = "null";
+			ms().saveSettings();
+			break;
+		}
+		// Set default dir and save settings
+		else if (!alreadyDefault && (pressed & KEY_X)) {
+			snd().playLaunch();
+
+			ms().defaultRomfolder[ms().secondaryDevice] = directory_path;
+			ms().saveSettings();
+			break;
+		}
+	}
+
+	if (ms().theme == TWLSettings::EThemeSaturn) {
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			bgOperations(true);
+		}
+		clearText();
+		updateText(false);
+		currentBg = 0;
+		displayGameIcons = true;
+		fadeType = true;
+		if (ms().theme == TWLSettings::EThemeSaturn) snd().playStartup();
+	} else {
+		clearText();
+		updateText(false);
+		for (int i = 0; i < 15; i++) { bgOperations(true); }
+
+		if (ms().theme == TWLSettings::EThemeHBL) {
+			dbox_showIcon = false;
+		}
+		showdialogbox = false;
+	}
+
+	return true;
 }
 
 std::string browseForFile(const std::vector<std::string_view> extensionList) {
@@ -2848,22 +3038,36 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	vector<vector<DirEntry>> dirContents(scrn.SIZE);
 
 	getDirectoryContents(dirContents[scrn], extensionList);
+	
+	if (CURPOS > last_used_box)
+	{
+		CURPOS = last_used_box;
+		titleboxXpos[ms().secondaryDevice]     = CURPOS * titleboxXspacing;
+		titleboxXdest[ms().secondaryDevice]    = CURPOS * titleboxXspacing;
+		titlewindowXpos[ms().secondaryDevice]  = CURPOS * 5;
+		titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
+	}
 
 	while (1) {
 		updateDirectoryContents(dirContents[scrn]);
 		getFileInfo(scrn, dirContents, true);
 		reloadIconPalettes();
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
-			while (!screenFadedOut());
+			while (!screenFadedOut()) { swiWaitForVBlank(); }
 		}
 		nowLoadingDisplaying = false;
 		whiteScreen = false;
-		fadeType = true; // Fade in from white
-		for (int i = 0; i < 5; i++) {
-			bgOperations(true);
-		}
 		if (!musicplaying && ms().theme == TWLSettings::EThemeDSi) {
 			fadeSpeed = false; // Slow fade speed
+			fadeType = true; // Fade in from white
+			for (int i = 0; i < 15; i++) {
+				bgOperations(true);
+			}
+		} else {
+			fadeType = true; // Fade in from white
+			for (int i = 0; i < 5; i++) {
+				bgOperations(true);
+			}
 		}
 		displayGameIcons = true;
 		clearText(false);
@@ -2883,7 +3087,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 			controlTopBright = true;
 			if (ms().theme != TWLSettings::EThemeDSi) {
-				while (!screenFadedIn());
+				while (!screenFadedIn()) { swiWaitForVBlank(); }
 			}
 			musicplaying = true;
 		}
@@ -3035,7 +3239,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					} else if (held & KEY_RIGHT) {
 						if (CURPOS + (PAGENUM * 40) < (int)dirContents[scrn].size() - 1) {
 							moveCursor(true, dirContents[scrn], dirContents[scrn].size() - 1 - PAGENUM * 40);
-						} else if (!edgeBumpSoundPlayed) {
+						} else if (ms().theme != TWLSettings::EThemeSaturn && !edgeBumpSoundPlayed) {
 							snd().playWrong();
 							edgeBumpSoundPlayed = true;
 						}
@@ -3048,7 +3252,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						break;
 					} else if (pressed & KEY_L) {
 						if (PAGENUM > 0) {
-							snd().playSwitch();
+							snd().playSwitch(55);
 							fadeType = false; // Fade to white
 							for (int i = 0; i < 6; i++) {
 								bgOperations(true);
@@ -3081,7 +3285,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 					} else if (pressed & KEY_R) {
 						if (file_count > 40 + PAGENUM * 40) {
-							snd().playSwitch();
+							snd().playSwitch(200);
 							fadeType = false; // Fade to white
 							for (int i = 0; i < 6; i++) {
 								bgOperations(true);
@@ -3159,7 +3363,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 					if (keysHeld() & KEY_TOUCH) {
 						titlewindowXdest[ms().secondaryDevice] = std::clamp(touch.px - 30, 0, 192);
-						titleboxXdest[ms().secondaryDevice] = std::clamp((touch.px - 30) * titleboxXspacing / 5 - 28, 0, titleboxXspacing * 39);
+						titleboxXdest[ms().secondaryDevice] = std::clamp((touch.px - 30) * titleboxXspacing / 5 - 28, 0, titleboxXspacing * last_used_box);
 					} else {
 						int dest = (titleboxXdest[ms().secondaryDevice] + 28) / titleboxXspacing;
 						titlewindowXdest[ms().secondaryDevice] = dest * 5;
@@ -3170,7 +3374,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 
 					prevPos = CURPOS;
-					CURPOS = std::clamp((titleboxXpos[ms().secondaryDevice] + 28) / titleboxXspacing, 0, 39);
+					CURPOS = std::clamp((titleboxXpos[ms().secondaryDevice] + 28) / titleboxXspacing, 0, last_used_box);
 
 					// Load icons
 					if (prevPos != CURPOS) {
@@ -3247,7 +3451,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if (moveBy == 0) {
 						gameTapped = bannerTextShown && showSTARTborder;
 					} else if (ms().theme != TWLSettings::EThemeSaturn) {
-						CURPOS = std::clamp(CURPOS + moveBy, 0, 39);
+						CURPOS = std::clamp(CURPOS + moveBy, 0, last_used_box);
 
 						// Load icons
 						for (int i = 0; i < 6; i++) {
@@ -3270,12 +3474,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 						if (!(keysHeld() & KEY_TOUCH)) {
 							titleboxXspeed = 6;
-							int dx = std::clamp(-(prevTouch1.px - prevTouch2.px) * 39 / 192, -39, 39);
+							int dx = std::clamp(-(prevTouch1.px - prevTouch2.px) * last_used_box / 192, -last_used_box, last_used_box);
 
-							int dest = std::clamp(CURPOS + dx, 0, 39);
+							int dest = std::clamp(CURPOS + dx, 0, last_used_box);
 							titlewindowXdest[ms().secondaryDevice] = dest * 5;
 
-							int boxDest = std::clamp(titleboxXdest[ms().secondaryDevice] + dx * titleboxXspacing, -160, titleboxXspacing * 39 + 160);
+							int boxDest = std::clamp(titleboxXdest[ms().secondaryDevice] + dx * titleboxXspacing, -160, titleboxXspacing * last_used_box + 160);
 							if (boxDest < 0 || boxDest > titleboxXspacing * 39) {
 								titleboxXdest[ms().secondaryDevice] = boxDest;
 							} else {
@@ -3290,7 +3494,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								swiWaitForVBlank();
 
 								prevPos = CURPOS;
-								CURPOS = std::clamp(titleboxXpos[ms().secondaryDevice] / titleboxXspacing, 0, 39);
+								CURPOS = std::clamp((titleboxXpos[ms().secondaryDevice] + 28) / titleboxXspacing, 0, last_used_box);
 
 								if (CURPOS != prevPos) {
 									// Load icons
@@ -3342,7 +3546,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 						titleboxXdest[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice] - (touch.px - prevTouch1.px);
 						titlewindowXdest[ms().secondaryDevice] = std::clamp(titleboxXdest[ms().secondaryDevice] * 5 / titleboxXspacing, 0, 192);
-						CURPOS = std::clamp((titleboxXdest[ms().secondaryDevice] + 32) / titleboxXspacing, 0, 39);
+						CURPOS = std::clamp((titleboxXpos[ms().secondaryDevice] + 28) / titleboxXspacing, 0, last_used_box);
 
 						if (prevPos != CURPOS) {
 							// Load icons
@@ -3396,7 +3600,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (CURPOS < 0)
 				ms().cursorPosition[ms().secondaryDevice] = 0;
 			else if (CURPOS > 39)
-				ms().cursorPosition[ms().secondaryDevice] = 39;
+				ms().cursorPosition[ms().secondaryDevice] = last_used_box;
 
 			// Startup...
 			if ((((pressed & KEY_A) || (pressed & KEY_START)) && bannerTextShown && showSTARTborder) || (gameTapped)) {
@@ -3437,7 +3641,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 					int hasAP = 0;
 					bool proceedToLaunch = true;
-					if (isTwlm[CURPOS] || (!isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[CURPOS] == 0 && gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3 && requiresDonorRom[CURPOS] != 51)
+					if (isTwlm[CURPOS] || (isUnlaunch[CURPOS] && ms().theme == TWLSettings::ETheme3DS) || (!isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[CURPOS] == 0 && gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3 && requiresDonorRom[CURPOS] != 51)
 					|| (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 					|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
 					|| (bnrRomType[CURPOS] == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
@@ -3694,6 +3898,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						snd().playLaunch();
 						controlTopBright = true;
 						applaunch = true;
+						cursorPosOnScreen = CURPOS;
 
 						if (ms().theme == TWLSettings::EThemeDSi) {
 							applaunchprep = true;
@@ -3740,6 +3945,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							printSmall(false, 0, 20, STR_IF_CRASH_DISABLE_RECENT, Alignment::center);
 							updateText(false);
 
+							if (!dsiFeatures()) {
+								// Free some RAM space to avoid possible memory leaks
+								snd().stopStream();
+								mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
+								snd().unloadSfxData();
+							}
+
 							mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 						  0777);
 
@@ -3762,6 +3974,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							CIniFile timesPlayedIni(timesPlayedIniPath);
 							timesPlayedIni.SetInt(path, entry->name, (timesPlayedIni.GetInt(path, entry->name, 0) + 1));
 							timesPlayedIni.SaveIniFile(timesPlayedIniPath);
+
+							if (ms().sortMethod == TWLSettings::ESortRecent) {
+								// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
+								CURPOS = fileStartPos % 40;
+								PAGENUM = fileStartPos / 40;
+							}
 
 							if (ms().theme == TWLSettings::EThemeHBL) {
 								displayGameIcons = true;
@@ -3828,7 +4046,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 
 				// Launch TWLMenu++ Settings by touching corner button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44) {
+				if ((pressed & KEY_TOUCH) && touch.py >= 0 && touch.py <= 26 && touch.px >= 0 && touch.px <= 44) {
 					if (ms().kioskMode) {
 						snd().playWrong();
 					} else {
@@ -3837,12 +4055,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				} else
 
 				// Exit to system menu by touching corner button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !sys().isRegularDS()) {
+				if ((pressed & KEY_TOUCH) && touch.py >= 0 && touch.py <= 26 && touch.px >= 212 && touch.px <= 255 && !sys().isRegularDS()) {
 					exitToSystemMenu();
 				} else
 
 				for (int i = 0; i < topIconCount; i++) {
-					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[i] && touch.px < savedTopIconXpos[i] + 24) {
+					if ((pressed & KEY_TOUCH) && touch.py >= 0 && touch.py <= 26 && touch.px >= savedTopIconXpos[i] && touch.px < savedTopIconXpos[i] + 24) {
 						switch (topIconOp[i]) {
 							case 0: { // Switch devices or launch Slot-1 by touching button
 								if (ms().secondaryDevice || REG_SCFG_MC != 0x11) {
@@ -3921,6 +4139,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				return "null";
 			}
 
+			// (un)Hide file/folder
 			if ((pressed & KEY_X) && !ms().kioskMode && !ms().preventDeletion && bannerTextShown && showSTARTborder
 			&& dirContents[scrn].at(CURPOS + PAGENUM * 40).name != "..") {
 				DirEntry *entry = &dirContents[scrn].at((PAGENUM * 40) + (CURPOS));
@@ -4118,9 +4337,17 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 					}
 
+					// set/clear default directory
+					if ((pressed & KEY_X)) {
+						runSelectMenu = false;
+						if (setDefaultDirectory(ms().romfolder[ms().secondaryDevice]))
+							break;
+					}
+
 					if (ms().theme == TWLSettings::EThemeDSi || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
 						if (bothSDandFlashcard() && ((pressed & KEY_UP) || (pressed & KEY_DOWN))) {
 							switchDevice();
+							
 							return "null";
 						}
 					}

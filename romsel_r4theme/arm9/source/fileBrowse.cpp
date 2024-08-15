@@ -38,15 +38,15 @@
 #include "date.h"
 
 #include "ndsheaderbanner.h"
+#include "common/twlmenusettings.h"
 #include "common/bootstrapsettings.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
-#include "common/twlmenusettings.h"
+#include "common/tonccpy.h"
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
 #include "graphics/FontGraphic.h"
-#include "graphics/TextPane.h"
 #include "SwitchState.h"
 #include "perGameSettings.h"
 #include "errorScreen.h"
@@ -57,17 +57,19 @@
 #include "myDSiMode.h"
 
 #include "common/inifile.h"
+#include "common/logging.h"
 
 #include "sound.h"
 #include "fileCopy.h"
 
 #define SCREEN_COLS 32
 #define SCREEN_COLS_GBNP 17
-#define ENTRIES_PER_SCREEN 22
-#define ENTRIES_PER_SCREEN_GBNP 7
+#define ENTRIES_PER_SCREEN 15
+#define ENTRIES_PER_SCREEN_GBNP 5
 #define ENTRIES_START_ROW 2
 #define ENTRIES_START_ROW_GBNP 6
-#define ENTRY_PAGE_LENGTH 10
+#define ENTRY_PAGE_LENGTH ENTRIES_PER_SCREEN/2
+#define ENTRY_PAGE_LENGTH_GBNP ENTRIES_PER_SCREEN_GBNP
 
 extern bool whiteScreen;
 extern bool fadeType;
@@ -86,6 +88,8 @@ extern void bgOperations(bool waitFrame);
 
 std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
 
+static int fileStartPos = 0; // The position of the first thing that is not a directory.
+
 char path[PATH_MAX] = {0};
 
 static void gbnpBottomInfo(void) {
@@ -97,11 +101,13 @@ static void gbnpBottomInfo(void) {
 	clearText(false);
 
 	// Print the path
-	printLarge(false, 0, 0, path);
+	printSmall(false, 0, 0, path, Alignment::left, FontPalette::white);
 
 	if (!ms().kioskMode) {
-		printLargeCentered(false, 96, "SELECT: Settings menu");
+		printSmall(false, 0, 96, "SELECT: Settings menu", Alignment::center, FontPalette::white);
 	}
+
+	updateText(false);
 }
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
@@ -118,7 +124,8 @@ struct DirEntry {
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
 	for (std::string_view extension : extensions) {
-		if (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0) {
+		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
+		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
 			return true;
 		}
 	}
@@ -169,6 +176,8 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 		iprintf("Unable to open the directory.\n");
 	} else {
 		int file_count = 0;
+		fileStartPos = 0;
+
 		while (1) {
 			bgOperations(false);
 
@@ -189,30 +198,61 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			}
 
 			dirent *pent = readdir(pdir);
-			if (pent == nullptr || file_count > ((dsiFeatures() || sys().dsDebugRam()) ? 1024 : 512))
+			if (pent == nullptr || file_count > ((dsiFeatures() || sys().dsDebugRam()) ? 1024 : 512)) {
+				logPrint("End of listing, Sorting: ");
 				break;
+			}
 
 			// Now that we've got the attrs and the name, skip if we should be hiding this
 			if (!ms().showHidden && (attrs & ATTR_HIDDEN || (pent->d_name[0] == '.' && strcmp(pent->d_name, "..") != 0)))
 				continue;
 
+			bool emplaceBackDirContent = false;
 			if (ms().showDirectories) {
-				if ((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
+				emplaceBackDirContent =
+				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
 					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
-					|| nameEndsWith(pent->d_name, extensionList)) {
-					dirContents.emplace_back(pent->d_name, pent->d_type == DT_DIR, file_count, false);
-					file_count++;
-				}
+					|| nameEndsWith(pent->d_name, extensionList));
 			} else {
-				if (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList)) {
-					dirContents.emplace_back(pent->d_name, false, file_count, false);
-					file_count++;
+				emplaceBackDirContent = (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList));
+			}
+			if (emplaceBackDirContent) {
+				if ((pent->d_type != DT_DIR) && extension(pent->d_name, {".md"})) {
+					FILE* mdFile = fopen(pent->d_name, "rb");
+					if (mdFile) {
+						u8 segaEntryPointReversed[4] = {0};
+						u8 segaEntryPointU8[4] = {0};
+						u32 segaEntryPoint = 0;
+						fseek(mdFile, 4, SEEK_SET);
+						fread(&segaEntryPointReversed, 1, 4, mdFile);
+						for (int i = 0; i < 4; i++) {
+							segaEntryPointU8[3-i] = segaEntryPointReversed[i];
+						}
+						tonccpy(&segaEntryPoint, segaEntryPointU8, 4);
+
+						char segaString[5] = {0};
+						fseek(mdFile, 0x100, SEEK_SET);
+						fread(segaString, 1, 4, mdFile);
+						fclose(mdFile);
+
+						if (!((segaEntryPointReversed[0] == 0) && ((strcmp(segaString, "SEGA") == 0) || ((segaEntryPoint >= 8) && (segaEntryPoint < 0x3FFFFF))))) {
+							// Invalid string or entry point found
+							continue;
+						}
+					}
 				}
+				dirContents.emplace_back(pent->d_name, ms().showDirectories ? (pent->d_type == DT_DIR) : false, file_count, false);
+				logPrint("%s listed: %s\n", (pent->d_type == DT_DIR) ? "Directory" : "File", pent->d_name);
+				file_count++;
+
+				if (pent->d_type == DT_DIR)
+					fileStartPos++;
 			}
 		}
 
 		if (ms().sortMethod == TWLSettings::ESortAlphabetical) { // Alphabetical
 			std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Alphabetical");
 		} else if (ms().sortMethod == TWLSettings::ESortRecent) { // Recent
 			CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 			std::vector<std::string> recentlyPlayed;
@@ -230,6 +270,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Recent");
 		} else if (ms().sortMethod == TWLSettings::ESortMostPlayed) { // Most Played
 			CIniFile timesPlayedIni(timesPlayedIniPath);
 
@@ -251,6 +292,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					else
 						return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 				});
+			logPrint("Most Played");
 		} else if (ms().sortMethod == TWLSettings::ESortFileType) { // File type
 			sort(dirContents.begin(), dirContents.end(), [](const DirEntry &lhs, const DirEntry &rhs) {
 					if (!lhs.isDirectory && rhs.isDirectory)
@@ -264,6 +306,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					else
 						return extCmp < 0;
 				});
+			logPrint("File type");
 		} else if (ms().sortMethod == TWLSettings::ESortCustom) { // Custom
 			CIniFile gameOrderIni(gameOrderIniPath);
 			std::vector<std::string> gameOrder;
@@ -280,53 +323,35 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			logPrint("Custom");
 		}
+		logPrint("\n\n");
 		closedir(pdir);
 	}
 }
 
-void showDirectoryContents (const std::vector<DirEntry>& dirContents, int startRow) {
+void showDirectoryContents (const std::vector<DirEntry>& dirContents, const int startRow, const int fileOffset) {
 	getcwd(path, PATH_MAX);
 
 	// Clear the screen
-	iprintf ("\x1b[2J");
+	clearText(true);
+
+	const int xPos = (ms().theme == TWLSettings::EThemeGBC) ? 64 : 1;
+	const int yPos = (ms().theme == TWLSettings::EThemeGBC) ? 47 : 12;
 
 	// Print the path
 	if (ms().theme != TWLSettings::EThemeGBC) {
-	if (strlen(path) < SCREEN_COLS) {
-		iprintf ("%s", path);
-	} else {
-		iprintf ("%s", path + strlen(path) - SCREEN_COLS);
+		printSmall(true, xPos, 0, path, Alignment::left, FontPalette::black);
 	}
-	}
-
-	if (ms().theme != TWLSettings::EThemeGBC) {
-		// Move to 2nd row
-		iprintf ("\x1b[1;0H");
-		// Print line of dashes
-		iprintf ("--------------------------------");
-	}
-
-	int screenCols = (ms().theme==6 ? SCREEN_COLS_GBNP : SCREEN_COLS);
 
 	// Print directory listing
-	for (int i = 0; i < ((int)dirContents.size() - startRow) && i < (ms().theme==6 ? ENTRIES_PER_SCREEN_GBNP : ENTRIES_PER_SCREEN); i++) {
+	for (int i = 0; i < ((int)dirContents.size() - startRow) && i < (ms().theme==TWLSettings::EThemeGBC ? ENTRIES_PER_SCREEN_GBNP : ENTRIES_PER_SCREEN); i++) {
 		const DirEntry* entry = &dirContents.at(i + startRow);
-		char entryName[screenCols + 1];
 		
-		// Set row
-		iprintf ("\x1b[%d;%dH", i + (ms().theme==6 ? ENTRIES_START_ROW_GBNP : ENTRIES_START_ROW), (ms().theme==6 ? 7 : 0));
-		
-		if (entry->isDirectory) {
-			strncpy (entryName, entry->name.c_str(), screenCols);
-			entryName[screenCols - 3] = '\0';
-			iprintf (" [%s]", entryName);
-		} else {
-			strncpy (entryName, entry->name.c_str(), screenCols);
-			entryName[screenCols - 1] = '\0';
-			iprintf (" %s", entryName);
-		}
+		printSmall(true, xPos, yPos+(i*12), entry->isDirectory ? ("["+entry->name+"]") : entry->name, Alignment::left, ((i + startRow) == fileOffset) ? FontPalette::user : FontPalette::white);
 	}
+
+	updateText(true);
 }
 
 void mdRomTooBig(void) {
@@ -336,21 +361,23 @@ void mdRomTooBig(void) {
 	}
 	dialogboxHeight = 3;
 	showdialogbox = true;
-	printLargeCentered(false, 74, "Error!");
-	printSmallCentered(false, 90, "This SEGA Genesis/Mega Drive");
-	printSmallCentered(false, 102, "ROM cannot be launched,");
-	printSmallCentered(false, 114, "due to its surpassing the");
-	printSmallCentered(false, 126, "size limit of 3MB.");
-	printSmallCentered(false, 144, "\u2427 OK");
+	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+	printSmall(false, 0, 90, "This SEGA Genesis/Mega Drive", Alignment::center);
+	printSmall(false, 0, 102, "ROM cannot be launched,", Alignment::center);
+	printSmall(false, 0, 114, "due to its surpassing the", Alignment::center);
+	printSmall(false, 0, 126, "size limit of 3MB.", Alignment::center);
+	printSmall(false, 0, 144, " OK", Alignment::center);
+	updateText(false);
 	int pressed = 0;
 	do {
 		scanKeys();
 		pressed = keysDown();
 		bgOperations(true);
 	} while (!(pressed & KEY_A));
-	clearText();
+	clearText(false);
 	showdialogbox = false;
 	dialogboxHeight = 0;
+	updateText(false);
 
 	if (ms().macroMode) {
 		lcdMainOnTop();
@@ -365,19 +392,21 @@ void ramDiskMsg(void) {
 	}
 	dialogboxHeight = 1;
 	showdialogbox = true;
-	printLargeCentered(false, 74, "Error!");
-	printSmallCentered(false, 90, "This app requires a");
-	printSmallCentered(false, 102, "RAM disk to work.");
-	printSmallCentered(false, 120, "\u2427 OK");
+	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+	printSmall(false, 0, 90, "This app requires a", Alignment::center);
+	printSmall(false, 0, 102, "RAM disk to work.", Alignment::center);
+	printSmall(false, 0, 120, " OK", Alignment::center);
+	updateText(false);
 	int pressed = 0;
 	do {
 		scanKeys();
 		pressed = keysDown();
 		bgOperations(true);
 	} while (!(pressed & KEY_A));
-	clearText();
+	clearText(false);
 	showdialogbox = false;
 	dialogboxHeight = 0;
+	updateText(false);
 
 	if (ms().macroMode) {
 		lcdMainOnTop();
@@ -394,11 +423,12 @@ bool dsiBinariesMissingMsg(void) {
 	}
 	dialogboxHeight = 2;
 	showdialogbox = true;
-	printLargeCentered(false, 74, "Error!");
-	printSmallCentered(false, 90, "The DSi binaries are missing.");
-	printSmallCentered(false, 102, "Please get a clean dump of");
-	printSmallCentered(false, 114, "this ROM, or start in DS mode.");
-	printSmallCentered(false, 132, "\u2430 Launch in DS mode  \u2428 Back");
+	printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
+	printSmall(false, 0, 90, "The DSi binaries are missing.", Alignment::center);
+	printSmall(false, 0, 102, "Please get a clean dump of", Alignment::center);
+	printSmall(false, 0, 114, "this ROM, or start in DS mode.", Alignment::center);
+	printSmall(false, 0, 132, " Launch in DS mode   Back", Alignment::center);
+	updateText(false);
 	int pressed = 0;
 	while (1) {
 		scanKeys();
@@ -416,9 +446,10 @@ bool dsiBinariesMissingMsg(void) {
 			break;
 		}
 	}
-	clearText();
+	clearText(false);
 	showdialogbox = false;
 	dialogboxHeight = 0;
+	updateText(false);
 
 	if (ms().macroMode) {
 		lcdMainOnTop();
@@ -457,67 +488,68 @@ bool donorRomMsg(void) {
 	int pressed = 0;
 	while (1) {
 		if (!pageLoaded) {
-			clearText();
-			printLargeCentered(false, 74, "Error!");
+			clearText(false);
+			printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::white);
 			if (msgPage == 1) {
 				switch (requiresDonorRom) {
 					default:
 						break;
 					case 20:
-						printSmallCentered(false, 90, "Find the SDK2.0 title,");
+						printSmall(false, 0, 90, "Find the SDK2.0 title,", Alignment::center);
 						break;
 					case 51:
-						printSmallCentered(false, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? (vramWifi ? "Find the VRAM-WiFi SDK5 DS title," : "Find the SDK5 DS title,") : "Find the DSi-Enhanced title,");
+						printSmall(false, 0, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? (vramWifi ? "Find the VRAM-WiFi SDK5 DS title," : "Find the SDK5 DS title,") : "Find the DSi-Enhanced title,", Alignment::center);
 						break;
 					case 52:
-						printSmallCentered(false, 90, "Find the DSi(Ware) title,");
+						printSmall(false, 0, 90, "Find the DSi(Ware) title,", Alignment::center);
 						break;
 					case 151:
-						printSmallCentered(false, 90, "Find the SDK5.0 DSi-Enhanced title,");
+						printSmall(false, 0, 90, "Find the SDK5.0 DSi-Enhanced title,", Alignment::center);
 						break;
 					case 152:
-						printSmallCentered(false, 90, "Find the SDK5.0 DSi(Ware) title,");
+						printSmall(false, 0, 90, "Find the SDK5.0 DSi(Ware) title,", Alignment::center);
 						break;
 				}
-				printSmallCentered(false, 102, "press (Y), and select");
-				printSmallCentered(false, 114, "\"Set as Donor ROM\".");
+				printSmall(false, 0, 102, "press (Y), and select", Alignment::center);
+				printSmall(false, 0, 114, "\"Set as Donor ROM\".", Alignment::center);
 				printSmall(false, 18, 132, "<");
 			} else {
 				switch (requiresDonorRom) {
 					default:
 						break;
 					case 20:
-						printSmallCentered(false, 90, "Please set a different SDK2.0");
-						printSmallCentered(false, 102, "title as a donor ROM, in order");
-						printSmallCentered(false, 114, "to launch this title.");
+						printSmall(false, 0, 90, "Please set a different SDK2.0", Alignment::center);
+						printSmall(false, 0, 102, "title as a donor ROM, in order", Alignment::center);
+						printSmall(false, 0, 114, "to launch this title.", Alignment::center);
 						break;
 					case 51:
-						printSmallCentered(false, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? "Please set an SDK5 Nintendo DS title" : "Please set a DSi-Enhanced title");
-						printSmallCentered(false, 102, "as a donor ROM, in order");
-						printSmallCentered(false, 114, "to launch this title.");
+						printSmall(false, 0, 90, ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && !ubongo) ? "Please set an SDK5 Nintendo DS title" : "Please set a DSi-Enhanced title", Alignment::center);
+						printSmall(false, 0, 102, "as a donor ROM, in order", Alignment::center);
+						printSmall(false, 0, 114, "to launch this title.", Alignment::center);
 						break;
 					case 52:
-						printSmallCentered(false, 90, dsModeAllowed ? "Please set a DSi(Ware) title" : "Please set a different DSi(Ware)");
-						printSmallCentered(false, 102, dsModeAllowed ? "as a donor ROM, in order" : "title as a donor ROM, in order");
-						printSmallCentered(false, 114, dsModeAllowed ? "to launch this title in DSi mode." : "to launch this title.");
+						printSmall(false, 0, 90, dsModeAllowed ? "Please set a DSi(Ware) title" : "Please set a different DSi(Ware)", Alignment::center);
+						printSmall(false, 0, 102, dsModeAllowed ? "as a donor ROM, in order" : "title as a donor ROM, in order", Alignment::center);
+						printSmall(false, 0, 114, dsModeAllowed ? "to launch this title in DSi mode." : "to launch this title.", Alignment::center);
 						break;
 					case 151:
-						printSmallCentered(false, 90, "Please set an SDK5.0 DSi-Enhanced");
-						printSmallCentered(false, 102, "title as a donor ROM, in order");
-						printSmallCentered(false, 114, "to launch this title.");
+						printSmall(false, 0, 90, "Please set an SDK5.0 DSi-Enhanced", Alignment::center);
+						printSmall(false, 0, 102, "title as a donor ROM, in order", Alignment::center);
+						printSmall(false, 0, 114, "to launch this title.", Alignment::center);
 						break;
 					case 152:
-						printSmallCentered(false, 90, "Please set a different SDK5.0");
-						printSmallCentered(false, 102, "DSi(Ware) title as a donor ROM,");
-						printSmallCentered(false, 114, "in order to launch this title.");
+						printSmall(false, 0, 90, "Please set a different SDK5.0", Alignment::center);
+						printSmall(false, 0, 102, "DSi(Ware) title as a donor ROM,", Alignment::center);
+						printSmall(false, 0, 114, "in order to launch this title.", Alignment::center);
 						break;
 				}
-				printSmallRightAlign(false, 256 - 16, 132, ">");
+				printSmall(false, 256 - 16, 132, ">", Alignment::right);
 			}
 			if (secondPageViewed) {
-				printSmallCentered(false, 132, dsModeAllowed ? "(Y) Launch in DS mode  \u2428 Back" : "\u2428 Back");
+				printSmall(false, 0, 132, dsModeAllowed ? "(Y) Launch in DS mode   Back" : " Back", Alignment::center);
 			}
 			pageLoaded = true;
+			updateText(false);
 		}
 		scanKeys();
 		pressed = keysDown();
@@ -553,13 +585,12 @@ bool donorRomMsg(void) {
 }
 
 void showLocation(void) {
-	if (sys().isRegularDS()) return;
+	if (sys().isRegularDS() || (ms().theme == TWLSettings::EThemeGBC)) return;
 
-	printSmall(false, 8, 162, "Location:");
 	if (ms().secondaryDevice) {
-		printSmall(false, 8, 174, "Slot-1 microSD Card");
+		printSmall(false, 0, 174, "Location: Slot-1 microSD Card", Alignment::center);
 	} else {
-		printSmall(false, 8, 174, ms().showMicroSd ? "microSD Card" : "SD Card");
+		printSmall(false, 0, 174, ms().showMicroSd ? "Location: microSD Card" : "Location: SD Card", Alignment::center);
 	}
 }
 
@@ -607,12 +638,13 @@ bool checkForCompatibleGame(const char *filename) {
 	}
 	dialogboxHeight = 3;
 	showdialogbox = true;
-	printLargeCentered(false, 74, "Compatibility Warning");
-	printSmallCentered(false, 90, "This game is known to not run.");
-	printSmallCentered(false, 102, "If there's an nds-bootstrap");
-	printSmallCentered(false, 114, "version that fixes this,");
-	printSmallCentered(false, 126, "please ignore this message.");
-	printSmallCentered(false, 144, "\u2427 Ignore   \u2428 Don't launch");
+	printSmall(false, 0, 74, "Compatibility Warning", Alignment::center, FontPalette::white);
+	printSmall(false, 0, 90, "This game is known to not run.", Alignment::center);
+	printSmall(false, 0, 102, "If there's an nds-bootstrap", Alignment::center);
+	printSmall(false, 0, 114, "version that fixes this,", Alignment::center);
+	printSmall(false, 0, 126, "please ignore this message.", Alignment::center);
+	printSmall(false, 0, 144, " Ignore    Don't launch", Alignment::center);
+	updateText(false);
 
 	int pressed = 0;
 	while (1) {
@@ -630,9 +662,10 @@ bool checkForCompatibleGame(const char *filename) {
 			break;
 		}
 	}
-	clearText();
+	clearText(false);
 	showdialogbox = false;
 	dialogboxHeight = 0;
+	updateText(false);
 
 	if (proceedToLaunch) {
 		titleUpdate(false, filename);
@@ -686,15 +719,16 @@ bool cannotLaunchMsg(char tid1) {
 		lcdSwapped = true;
 	}
 	showdialogbox = true;
-	printLargeCentered(false, 74, isTwlm ? "Information" : "Error!");
+	printSmall(false, 0, 74, isTwlm ? "Information" : "Error!", Alignment::center, FontPalette::white);
 	if (!isTwlm && bnrRomType == 0 && sys().isRegularDS()) {
-		printSmallCentered(false, 90, "For use with Nintendo DSi systems only.");
+		printSmall(false, 0, 90, "For use with Nintendo DSi systems only.", Alignment::center);
 	} else if (bnrRomType == 1) {
-		printSmallCentered(false, 90, "GBA BIOS is missing!");
+		printSmall(false, 0, 90, "GBA BIOS is missing!", Alignment::center);
 	} else {
-		printSmallCentered(false, 90, isTwlm ? "TWiLight Menu++ is already running." : "This game cannot be launched.");
+		printSmall(false, 0, 90, isTwlm ? "TWiLight Menu++ is already running." : "This game cannot be launched.", Alignment::center);
 	}
-	printSmallCentered(false, 108, "\u2427 OK");
+	printSmall(false, 0, 108, " OK", Alignment::center);
+	updateText(false);
 	int pressed = 0;
 	while (1) {
 		scanKeys();
@@ -733,13 +767,14 @@ bool dsiWareInDSModeMsg(void) {
 	}
 	dialogboxHeight = 4;
 	showdialogbox = true;
-	printLargeCentered(false, 74, "Compatibility Warning");
-	printSmallCentered(false, 90, "You are attempting to launch a DSiWare");
-	printSmallCentered(false, 102, "title in DS mode on a DSi or 3DS system.");
-	printSmallCentered(false, 114, "For increased compatibility, and saving");
-	printSmallCentered(false, 126, "data in more titles, please relaunch");
-	printSmallCentered(false, 138, "TWLMenu++ from the console's SD Card slot.");
-	printSmallCentered(false, 154, "\u2428 Return   \u2427 Launch");
+	printSmall(false, 0, 74, "Compatibility Warning", Alignment::center, FontPalette::white);
+	printSmall(false, 0, 90, "You are attempting to launch a DSiWare", Alignment::center);
+	printSmall(false, 0, 102, "title in DS mode on a DSi or 3DS system.", Alignment::center);
+	printSmall(false, 0, 114, "For increased compatibility, and saving", Alignment::center);
+	printSmall(false, 0, 126, "data in more titles, please relaunch", Alignment::center);
+	printSmall(false, 0, 138, "TWLMenu++ from the console's SD Card slot.", Alignment::center);
+	printSmall(false, 0, 154, " Return    Launch", Alignment::center);
+	updateText(false);
 
 	int pressed = 0;
 	while (1) {
@@ -857,79 +892,87 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 
 	bool proceedToLaunch = true;
 
-	if (msgId >= 10 && !sys().isRegularDS()) {
-		cannotLaunchMsg(0);
-		return false;
-	}
-
 	if (ms().macroMode) {
 		lcdMainOnBottom();
 		lcdSwapped = true;
 	}
 	dialogboxHeight = 3;
 	showdialogbox = true;
-	printLargeCentered(false, 74, "Compatibility Warning");
+	printSmall(false, 0, 74, ((msgId == 10 || msgId == 11) && !sys().isRegularDS()) ? "Error!" : "Compatibility Warning", Alignment::center, FontPalette::white);
 	switch (msgId) {
 		case 0:
-			printSmallCentered(false, 90, "Due to memory limitations, only part");
-			printSmallCentered(false, 102, "of this game can be played. To play");
-			printSmallCentered(false, 114, "the full game, launch this on");
-			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
+			printSmall(false, 0, 90, "Due to memory limitations, only part", Alignment::center);
+			printSmall(false, 0, 102, "of this game can be played. To play", Alignment::center);
+			printSmall(false, 0, 114, "the full game, launch this on", Alignment::center);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
 			break;
 		case 1:
 		case 2:
-			printSmallCentered(false, 90, msgId == 2 ? "Due to memory limitations, music" : "Due to memory limitations, audio");
-			printSmallCentered(false, 102, "will not be played. To play this");
-			printSmallCentered(false, 114, msgId == 2 ? "game with music, launch this on" : "game with audio, launch this on");
-			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
+			printSmall(false, 0, 90, msgId == 2 ? "Due to memory limitations, music" : "Due to memory limitations, audio", Alignment::center);
+			printSmall(false, 0, 102, "will not be played. To play this", Alignment::center);
+			printSmall(false, 0, 114, msgId == 2 ? "game with music, launch this on" : "game with audio, launch this on", Alignment::center);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
 			break;
 		case 3:
 		case 4:
-			printSmallCentered(false, 90, "Due to memory limitations, the game");
-			printSmallCentered(false, 102, msgId == 4 ? "will crash at certain point(s). To work" : "will crash at a specific area. To work");
-			printSmallCentered(false, 114, "around the crash, launch this on");
-			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
+			printSmall(false, 0, 90, "Due to memory limitations, the game", Alignment::center);
+			printSmall(false, 0, 102, msgId == 4 ? "will crash at certain point(s). To work" : "will crash at a specific area. To work", Alignment::center);
+			printSmall(false, 0, 114, "around the crash, launch this on", Alignment::center);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
 			break;
 		case 5:
-			printSmallCentered(false, 90, "Due to memory limitations, FMVs");
-			printSmallCentered(false, 102, "will not be played. For playback");
-			printSmallCentered(false, 114, "of FMVs, launch this on");
-			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
+			printSmall(false, 0, 90, "Due to memory limitations, FMVs", Alignment::center);
+			printSmall(false, 0, 102, "will not be played. For playback", Alignment::center);
+			printSmall(false, 0, 114, "of FMVs, launch this on", Alignment::center);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
 			break;
 		case 6:
 		case 7:
-			printSmallCentered(false, 90, msgId == 7 ? "Due to no save support, the game" : "Due to memory limitations, the game");
-			printSmallCentered(false, 102, "will run in a limited state. To play");
-			printSmallCentered(false, 114, "the full version, launch this on");
-			printSmallCentered(false, 126, "Nintendo DSi or 3DS systems.");
+			printSmall(false, 0, 90, msgId == 7 ? "Due to no save support, the game" : "Due to memory limitations, the game", Alignment::center);
+			printSmall(false, 0, 102, "will run in a limited state. To play", Alignment::center);
+			printSmall(false, 0, 114, "the full version, launch this on", Alignment::center);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
 			break;
 		case 10:
-			printSmallCentered(false, 102, "To launch this title, please");
-			printSmallCentered(false, 114, "insert the Memory Expansion Pak.");
+			if (sys().isRegularDS()) {
+				printSmall(false, 0, 102, "To launch this title, please", Alignment::center);
+				printSmall(false, 0, 114, "insert the Memory Expansion Pak.", Alignment::center);
+			} else {
+				printSmall(false, 0, 90, "This title requires the Memory Expansion Pak,", Alignment::center);
+				printSmall(false, 0, 102, "but the slot to insert it does not exist.", Alignment::center);
+				printSmall(false, 0, 114, "As a result, this title cannot be launched.", Alignment::center);
+			}
 			break;
 		case 11:
-			if (mepFound) {
-				printSmallCentered(false, 90, "This title requires a larger amount");
-				printSmallCentered(false, 102, "amount of memory than the Expansion Pak.");
-				printSmallCentered(false, 114, "Please turn off the POWER, and insert");
-				printSmallCentered(false, 126, "a Slot-2 cart with more memory.");
+			if (sys().isRegularDS()) {
+				if (mepFound) {
+					printSmall(false, 0, 90, "This title requires a larger amount", Alignment::center);
+					printSmall(false, 0, 102, "amount of memory than the Expansion Pak.", Alignment::center);
+					printSmall(false, 0, 114, "Please turn off the POWER, and insert", Alignment::center);
+					printSmall(false, 0, 126, "a Slot-2 cart with more memory.", Alignment::center);
+				} else {
+					printSmall(false, 0, 90, "To launch this title, please turn off the", Alignment::center);
+					printSmall(false, 0, 102, "POWER, and insert a Slot-2 memory expansion", Alignment::center);
+					printSmall(false, 0, 114, "cart which isn't the Memory Expansion Pak.", Alignment::center);
+				}
 			} else {
-				printSmallCentered(false, 90, "To launch this title, please turn off the");
-				printSmallCentered(false, 102, "POWER, and insert a Slot-2 memory expansion");
-				printSmallCentered(false, 114, "cart which isn't the Memory Expansion Pak.");
+				printSmall(false, 0, 90, "This title requires a Slot-2 expansion cart,", Alignment::center);
+				printSmall(false, 0, 102, "but the slot to insert it does not exist.", Alignment::center);
+				printSmall(false, 0, 114, "As a result, this title cannot be launched.", Alignment::center);
 			}
 			break;
 		case 12:
-			printSmallCentered(false, 90, "The currently set donor ROM is incompatible");
-			printSmallCentered(false, 102, "with this title. Please find a VRAM-WiFi");
-			printSmallCentered(false, 114, "SDK5 DS title to set as a donor ROM.");
+			printSmall(false, 0, 90, "The currently set donor ROM is incompatible", Alignment::center);
+			printSmall(false, 0, 102, "with this title. Please find a VRAM-WiFi", Alignment::center);
+			printSmall(false, 0, 114, "SDK5 DS title to set as a donor ROM.", Alignment::center);
 			break;
 	}
 	if (msgId >= 10) {
-		printSmallCentered(false, 142, "\u2427 OK");
+		printSmall(false, 0, 142, " OK", Alignment::center);
 	} else {
-		printSmallCentered(false, 142, "\u2428 Return   \u2427 Launch");
+		printSmall(false, 0, 142, " Return    Launch", Alignment::center);
 	}
+	updateText(false);
 
 	int pressed = 0;
 	if (msgId >= 10) {
@@ -966,9 +1009,10 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			}
 		}
 	}
-	clearText();
+	clearText(false);
 	showdialogbox = false;
 	dialogboxHeight = 0;
+	updateText(false);
 
 	if (proceedToLaunch) {
 		titleUpdate(false, filename.c_str());
@@ -1024,7 +1068,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	std::vector<DirEntry> dirContents;
 	getDirectoryContents (dirContents, extensionList);
 
-	const int entriesStartRow = (ms().theme==6 ? ENTRIES_START_ROW_GBNP : ENTRIES_START_ROW);
 	const int entriesPerScreen = (ms().theme==6 ? ENTRIES_PER_SCREEN_GBNP : ENTRIES_PER_SCREEN);
 
 	fileOffset = ms().cursorPosition[ms().secondaryDevice];
@@ -1037,8 +1080,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		screenOffset = fileOffset - entriesPerScreen + 1;
 	}
 
-	showDirectoryContents (dirContents, screenOffset);
-	
+	showDirectoryContents (dirContents, screenOffset, fileOffset);
+
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
 
@@ -1046,26 +1089,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
 		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
 
-		// Clear old cursors
-		for (int i = entriesStartRow; i < entriesPerScreen + entriesStartRow; i++) {
-			iprintf ("\x1b[%d;%dH ", i, (ms().theme==6 ? 7 : 0));
-			if (ms().theme==6) {
-				iprintf ("\x1b[%d;24H ", i);
-			}
-		}
-		// Show cursor
-		if (ms().theme==6) {
-			iprintf ("\x1B[43m");		// Print foreground yellow color
-		}
-		iprintf ("\x1b[%d;%dH", fileOffset - screenOffset + entriesStartRow, (ms().theme==6 ? 7 : 0));
-		iprintf ("%s", (ms().theme==6 ? "<" : "*"));
-		if (ms().theme==6) {
-			iprintf ("\x1b[%d;24H>", fileOffset - screenOffset + entriesStartRow);
-			iprintf ("\x1B[47m");		// Print foreground white color
-		}
-
 		if (dirContents.at(fileOffset).isDirectory) {
 			isDirectory = true;
+			bnriconPalLine = 0;
+			bnriconPalLoaded = 0;
+			bnriconframenumY = 0;
+			bannerFlip = 0;
+			bnriconisDSi = false;
 			bnrWirelessIcon = 0;
 		} else {
 			isDirectory = false;
@@ -1104,7 +1134,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bnrRomType = 5;
 			} else if (extension(std_romsel_filename, {".gg"})) {
 				bnrRomType = 6;
-			} else if (extension(std_romsel_filename, {".gen"})) {
+			} else if (extension(std_romsel_filename, {".gen", ".md"})) {
 				bnrRomType = 7;
 			} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
 				bnrRomType = 8;
@@ -1118,6 +1148,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bnrRomType = 18;
 			} else if (extension(std_romsel_filename, {".min"})) {
 				bnrRomType = 22;
+			} else if (extension(std_romsel_filename, {".ntrb"})) {
+				bnrRomType = 23;
 			} else {
 				bnrRomType = 9;
 			}
@@ -1131,9 +1163,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		}
 
 		iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
-		titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+		titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str()); // clearText(false) is run
 
 		showLocation();
+
+		updateText(false);
+		if (ms().theme == TWLSettings::EThemeGBC) {
+			updateText(true); // Update banner text
+		}
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
@@ -1142,42 +1179,46 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			bgOperations(true);
 		} while (!pressed);
 
+		bool refreshDirectoryContents = false;
+
 		if (pressed & KEY_UP) {
 			fileOffset -= 1;
 			if (ms().theme == TWLSettings::EThemeGBC) {
 				snd().playSelect();
 			}
+			refreshDirectoryContents = true;
 		}
 		if (pressed & KEY_DOWN) {
 			fileOffset += 1;
 			if (ms().theme == TWLSettings::EThemeGBC) {
 				snd().playSelect();
 			}
+			refreshDirectoryContents = true;
 		}
 		if (pressed & KEY_LEFT) {
-			fileOffset -= ENTRY_PAGE_LENGTH;
+			fileOffset -= (ms().theme == TWLSettings::EThemeGBC) ? ENTRY_PAGE_LENGTH_GBNP : ENTRY_PAGE_LENGTH;
 			if (ms().theme == TWLSettings::EThemeGBC) {
 				snd().playSelect();
 			}
+			refreshDirectoryContents = true;
 		}
 		if (pressed & KEY_RIGHT) {
-			fileOffset += ENTRY_PAGE_LENGTH;
+			fileOffset += (ms().theme == TWLSettings::EThemeGBC) ? ENTRY_PAGE_LENGTH_GBNP : ENTRY_PAGE_LENGTH;
 			if (ms().theme == TWLSettings::EThemeGBC) {
 				snd().playSelect();
 			}
+			refreshDirectoryContents = true;
 		}
 
 		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
 		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
 
 		// Scroll screen if needed
-		if (fileOffset < screenOffset) 	{
+		if (fileOffset < screenOffset) {
 			screenOffset = fileOffset;
-			showDirectoryContents (dirContents, screenOffset);
 		}
 		if (fileOffset > screenOffset + entriesPerScreen - 1) {
 			screenOffset = fileOffset - entriesPerScreen + 1;
-			showDirectoryContents (dirContents, screenOffset);
 		}
 
 		if (pressed & KEY_A) {
@@ -1185,13 +1226,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (entry->isDirectory) {
 				if (ms().theme == TWLSettings::EThemeGBC) {
 					snd().playSelect();
-
-					// Clear the screen
-					iprintf ("\x1b[2J");
-
-					iprintf ("\x1b[6;8H");
 				}
-				iprintf("Entering directory\n");
 				// Enter selected directory
 				chdir (entry->name.c_str());
 				char buf[256];
@@ -1312,17 +1347,18 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 					dialogboxHeight = 3;
 					showdialogbox = true;
-					printLargeCentered(false, 74, "Anti-Piracy Warning");
+					printSmall(false, 0, 74, "Anti-Piracy Warning", Alignment::center, FontPalette::white);
 					if (hasAP == 2) {
-						printSmallCentered(false, 98, "This game has AP, and MUST");
-						printSmallCentered(false, 110, "be patched using the RGF");
-						printSmallCentered(false, 122, "TWiLight Menu AP patcher.");
+						printSmall(false, 0, 98, "This game has AP, and MUST", Alignment::center);
+						printSmall(false, 0, 110, "be patched using the RGF", Alignment::center);
+						printSmall(false, 0, 122, "TWiLight Menu AP patcher.", Alignment::center);
 					} else {
-						printSmallCentered(false, 98, "This game has AP. Please");
-						printSmallCentered(false, 110, "make sure you're using the");
-						printSmallCentered(false, 122, "latest TWiLight Menu++.");
+						printSmall(false, 0, 98, "This game has AP. Please", Alignment::center);
+						printSmall(false, 0, 110, "make sure you're using the", Alignment::center);
+						printSmall(false, 0, 122, "latest TWiLight Menu++.", Alignment::center);
 					}
-					printSmallCentered(false, 142, "\u2428 Return   \u2427 Launch");
+					printSmall(false, 0, 142, " Return    Launch", Alignment::center);
+					updateText(false);
 
 					pressed = 0;
 					while (1) {
@@ -1344,14 +1380,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							break;
 						}
 					}
-					clearText();
+					clearText(false);
 					showdialogbox = false;
 					dialogboxHeight = 0;
 
 					if (proceedToLaunch) {
 						titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 						showLocation();
+						updateText(false);
 					} else if (ms().macroMode) {
+						updateText(false);
 						lcdMainOnTop();
 						lcdSwapped = false;
 					}
@@ -1369,16 +1407,17 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					dialogboxHeight = 5;
 					showdialogbox = true;
 					// Clear location text
-					clearText();
+					clearText(false);
 					titleUpdate(dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 
-					printLargeCentered(false, 74, "Cluster Size Warning");
-					printSmallCentered(false, 98, "Your SD card is not formatted");
-					printSmallCentered(false, 110, "using 32KB clusters, this causes");
-					printSmallCentered(false, 122, "some games to load very slowly.");
-					printSmallCentered(false, 134, "It's recommended to reformat your");
-					printSmallCentered(false, 146, "SD card using 32KB clusters.");
-					printSmallCentered(false, 166, "\u2428 Return   \u2427 Launch");
+					printSmall(false, 0, 74, "Cluster Size Warning", Alignment::center, FontPalette::white);
+					printSmall(false, 0, 98, "Your SD card is not formatted", Alignment::center);
+					printSmall(false, 0, 110, "using 32KB clusters, this causes", Alignment::center);
+					printSmall(false, 0, 122, "some games to load very slowly.", Alignment::center);
+					printSmall(false, 0, 134, "It's recommended to reformat your", Alignment::center);
+					printSmall(false, 0, 146, "SD card using 32KB clusters.", Alignment::center);
+					printSmall(false, 0, 166, " Return    Launch", Alignment::center);
+					updateText(false);
 
 					pressed = 0;
 					while (1) {
@@ -1400,14 +1439,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							break;
 						}
 					}
-					clearText();
+					clearText(false);
 					showdialogbox = false;
 					dialogboxHeight = 0;
 
 					if (proceedToLaunch) {
 						titleUpdate(dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 						showLocation();
+						updateText(false);
 					} else if (ms().macroMode) {
+						updateText(false);
 						lcdMainOnTop();
 						lcdSwapped = false;
 					}
@@ -1436,10 +1477,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						dialogboxHeight = 2;
 						showdialogbox = true;
 
-						printLargeCentered(false, 74, "Now saving...");
+						printSmall(false, 0, 74, "Now saving...", Alignment::center, FontPalette::white);
 
-						printSmallCentered(false, 0, 98, "If this crashes with an error, please");
-						printSmallCentered(false, 0, 110, "disable \"Update recently played list\".");
+						printSmall(false, 0, 98, "If this crashes with an error, please", Alignment::center);
+						printSmall(false, 0, 110, "disable \"Update recently played list\".", Alignment::center);
+						updateText(false);
 
 						mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
 
@@ -1462,6 +1504,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						CIniFile timesPlayedIni(timesPlayedIniPath);
 						timesPlayedIni.SetInt(path, entry->name, (timesPlayedIni.GetInt(path, entry->name, 0) + 1));
 						timesPlayedIni.SaveIniFile(timesPlayedIniPath);
+
+						if (ms().sortMethod == TWLSettings::ESortRecent) {
+							// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
+							ms().cursorPosition[ms().secondaryDevice] = fileStartPos % 40;
+							ms().pagenum[ms().secondaryDevice] = fileStartPos / 40;
+						}
 					}
 
 					// Return the chosen file
@@ -1476,11 +1524,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		}
 
 		if ((pressed & KEY_R) && bothSDandFlashcard()) {
-			consoleClear();
-			if (ms().theme == TWLSettings::EThemeGBC) {
-				iprintf ("\x1b[6;8H");
-			}
-			printf("Please wait...\n");
 			ms().cursorPosition[ms().secondaryDevice] = fileOffset;
 			ms().pagenum[ms().secondaryDevice] = 0;
 			for (int i = 0; i < 100; i++) {
@@ -1502,6 +1545,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			char buf[256];
 			ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
 			ms().cursorPosition[ms().secondaryDevice] = 0;
+			ms().pagenum[ms().secondaryDevice] = 0;
 			ms().saveSettings();
 			return "null";
 		}
@@ -1519,24 +1563,25 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			dialogboxHeight = 3;
 
 			if (isDirectory) {
-				printLargeCentered(false, 74, "Folder Management options");
-				printSmallCentered(false, 98, "What would you like");
-				printSmallCentered(false, 110, "to do with this folder?");
+				printSmall(false, 0, 74, "Folder Management options", Alignment::center, FontPalette::white);
+				printSmall(false, 0, 110, "to do with this folder?", Alignment::center);
 			} else {
-				printLargeCentered(false, 74, "Title Management options");
-				printSmallCentered(false, 98, "What would you like");
-				printSmallCentered(false, 110, "to do with this title?");
+				printSmall(false, 0, 74, "Title Management options", Alignment::center, FontPalette::white);
+				printSmall(false, 0, 110, "to do with this title?", Alignment::center);
 			}
+			printSmall(false, 0, 98, "What would you like", Alignment::center);
+			updateText(false);
 
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 
 			if (isTwlm || isDirectory) {
-				if (unHide)	printSmallCentered(false, 128, "Y: Unhide  \u2428 Nothing");
-				else		printSmallCentered(false, 128, "Y: Hide    \u2428 Nothing");
+				if (unHide)	printSmall(false, 0, 128, " Unhide   Nothing", Alignment::center);
+				else		printSmall(false, 0, 128, " Hide     Nothing", Alignment::center);
 			} else {
-				if (unHide)	printSmallCentered(false, 128, "Y: Unhide  \u2427 Delete  \u2428 Nothing");
-				else		printSmallCentered(false, 128, "Y: Hide   \u2427 Delete   \u2428 Nothing");
+				if (unHide)	printSmall(false, 0, 128, " Unhide   Delete   Nothing", Alignment::center);
+				else		printSmall(false, 0, 128, " Hide    Delete    Nothing", Alignment::center);
 			}
+			updateText(false);
 
 			while (1) {
 				do {
@@ -1548,11 +1593,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				if (((pressed & KEY_A) && !isTwlm && !isDirectory) || (pressed & KEY_Y)) {
 					clearText();
 					showdialogbox = false;
-					consoleClear();
-					if (ms().theme == TWLSettings::EThemeGBC) {
-						iprintf ("\x1b[6;8H");
-					}
-					printf("Please wait...\n");
+					updateText(true);
+					updateText(false);
 
 					if (pressed & KEY_A && !isDirectory) {
 						remove(dirContents.at(fileOffset).name.c_str());
@@ -1580,19 +1622,21 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 
 				if (pressed & KEY_B) {
-					if (ms().theme == TWLSettings::EThemeGBC) {
-						gbnpBottomInfo();
-					}
 					break;
 				}
 			}
-			clearText();
+			clearText(false);
 			showdialogbox = false;
+			if (ms().theme == TWLSettings::EThemeGBC) {
+				gbnpBottomInfo();
+			}
+			updateText(false);
 
 			if (ms().macroMode) {
 				lcdMainOnTop();
 				lcdSwapped = false;
 			}
+			for (int i = 0; i < 25; i++) swiWaitForVBlank();
 		}
 
 		if ((ms().theme != TWLSettings::EThemeGBC && (pressed & KEY_START)) || (ms().theme == TWLSettings::EThemeGBC && (pressed & KEY_SELECT) && !ms().kioskMode)) {
@@ -1612,8 +1656,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 			}
 			ms().saveSettings();
-			consoleClear();
 			clearText();
+			updateText(true);
+			updateText(false);
 			startMenu = true;
 			return "null";		
 		}
@@ -1623,9 +1668,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			perGameSettings(dirContents.at(fileOffset).name);
 			if (ms().theme == TWLSettings::EThemeGBC) {
 				gbnpBottomInfo();
+				refreshDirectoryContents = true;
 			}
 			for (int i = 0; i < 25; i++) bgOperations(true);
 		}
 
+		if (refreshDirectoryContents) {
+			showDirectoryContents (dirContents, screenOffset, fileOffset);
+		}
 	}
 }

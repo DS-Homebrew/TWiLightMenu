@@ -462,7 +462,7 @@ void perGameSettings (std::string filename) {
 		sprintf(sdkSubVerChar, "%d", sdkSubVer);
 		showSDKVersion = true;
 	}
-	// u32 arm9off = 0;
+	u32 arm9off = 0;
 	u32 arm9size = 0;
 	u32 arm7off = 0;
 	u32 arm7size = 0;
@@ -474,8 +474,8 @@ void perGameSettings (std::string filename) {
 	bool usesCloneboot = false;
 	bool dsiBinariesFound = false;
 	if (bnrRomType[CURPOS] == 0) {
-		// fseek(f_nds_file, 0x20, SEEK_SET);
-		// fread(&arm9off, sizeof(u32), 1, f_nds_file);
+		fseek(f_nds_file, 0x20, SEEK_SET);
+		fread(&arm9off, sizeof(u32), 1, f_nds_file);
 		fseek(f_nds_file, 0x2C, SEEK_SET);
 		fread(&arm9size, sizeof(u32), 1, f_nds_file);
 		fseek(f_nds_file, 0x30, SEEK_SET);
@@ -505,8 +505,9 @@ void perGameSettings (std::string filename) {
 			romSize -= 0x4000;	// First 16KB
 			romSize += 0x88;	// RSA key
 		} else if (ovlOff == 0 || ovlSize == 0) {
-			romSize -= arm7off;
-			romSize -= arm7size;
+			romSize -= (arm7off + arm7size);
+		} else if (ovlOff > arm7off) {
+			romSize -= (arm9off + arm9size);
 		} else {
 			romSize -= ovlOff;
 		}
@@ -588,7 +589,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
-		if (pubSize > 0 || prvSize > 0) {
+		if ((ms().saveLocation != TWLSettings::EGamesFolder) && (pubSize > 0 || prvSize > 0)) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
@@ -633,8 +634,10 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 11;	// Region
 		}
-		perGameOps++;
-		perGameOp[perGameOps] = 1;	// Save number
+		if (ms().saveLocation != TWLSettings::EGamesFolder) {
+			perGameOps++;
+			perGameOp[perGameOps] = 1;	// Save number
+		}
 		if (((dsiFeatures() && (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && isDSiMode()) || unitCode[CURPOS] > 0) && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_boostCpu) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
@@ -1256,9 +1259,17 @@ void perGameSettings (std::string filename) {
 			}
 		}
 		if ((pressed & KEY_X) && !isHomebrew[CURPOS] && showCheats) {
-			(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
-			CheatCodelist codelist;
-			codelist.selectCheats(filename);
+			if (!dsiFeatures()) {
+				snd().unloadSfxData(); // Unload SFX data in DS mode to load more of the cheat list
+			}
+			{
+				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
+				CheatCodelist codelist;
+				codelist.selectCheats(filename);
+			}
+			if (!dsiFeatures()) {
+				snd().reloadSfxData();
+			}
 		}
 	}
 	showdialogbox = false;
@@ -1284,7 +1295,7 @@ void perGameSettings (std::string filename) {
 }
 
 std::string getSavExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".sav";
 	} else {
 		return ".sav" + std::to_string(perGameSettings_saveNo);
@@ -1292,7 +1303,7 @@ std::string getSavExtension(void) {
 }
 
 std::string getPubExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".pub";
 	} else {
 		return ".pu" + std::to_string(perGameSettings_saveNo);
@@ -1300,7 +1311,7 @@ std::string getPubExtension(void) {
 }
 
 std::string getPrvExtension(void) {
-	if (perGameSettings_saveNo == 0) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".prv";
 	} else {
 		return ".pr" + std::to_string(perGameSettings_saveNo);
