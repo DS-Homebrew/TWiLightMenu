@@ -175,6 +175,9 @@ int main() {
 		}
 	}
 
+	bool reportBacklightLevelChange = false;
+	u8 currentBacklightLevel;
+
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
@@ -215,6 +218,17 @@ int main() {
 
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
+		}
+
+		if (fifoCheckValue32(FIFO_USER_04)) {
+			reportBacklightLevelChange = fifoGetValue32(FIFO_USER_04) == 1;
+			if (reportBacklightLevelChange) currentBacklightLevel = my_i2cReadRegister(I2C_PM, 0x41);
+		}
+		if (reportBacklightLevelChange) {
+			if (my_i2cReadRegister(I2C_PM, 0x41) != currentBacklightLevel) {
+				fifoSendValue32(FIFO_USER_04, 1);
+				reportBacklightLevelChange = false;
+			}
 		}
 
 		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
