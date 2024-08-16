@@ -1030,7 +1030,7 @@ void vBlankHandler() {
 					glSprite(96, 84 - titleboxYmovepos, GL_FLIP_NONE, tex().boxfullImage());
 				}
 				if (bnrSysSettings[CURPOS])
-					glSprite(84, 83 - titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
+					glSprite(96, 83 - titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
 				else
 					drawIcon(112, 96 - titleboxYmovepos, CURPOS);
 			}
