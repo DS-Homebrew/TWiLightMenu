@@ -88,6 +88,7 @@ extern int vblankRefreshCounter;
 int file_count = 0;
 int last_used_box = 0;
 static int fileStartPos = 0; // The position of the first thing that is not a directory.
+static bool backFound = false;
 
 extern int spawnedtitleboxes;
 
@@ -290,6 +291,8 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	if (pdir == nullptr) {
 		printSmall(false, 4, 4, STR_UNABLE_TO_OPEN_DIRECTORY);
 	} else {
+		backFound = false;
+		int backPos = 0;
 		while (1) {
 			bgOperations(false);
 
@@ -321,8 +324,14 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 
 			bool emplaceBackDirContent = false;
 			if (ms().showDirectories) {
+				if (!backFound && (pent->d_type == DT_DIR) && (strcmp(pent->d_name, "..") == 0)) {
+					backFound = true;
+					backPos = file_count;
+					file_count++;
+					fileStartPos++;
+				}
 				emplaceBackDirContent =
-				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
+				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "..") != 0 && pent->d_name[0] != '_'
 					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
 					|| nameEndsWith(pent->d_name, extensionList));
 			} else {
@@ -439,6 +448,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			logPrint("Custom");
 		}
 		logPrint("\n\n");
+		if (backFound) {
+			dirContents.insert(dirContents.begin(), {"..", true, backPos, false});
+		}
 		closedir(pdir);
 	}
 }
@@ -3187,7 +3199,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				moveCursor(false, dirContents[scrn]);
 			} else if ((held & KEY_RIGHT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == TWLSettings::EThemeDSi)) { // Right or button arrow (DSi theme)
 				moveCursor(true, dirContents[scrn]);
-			} else if ((pressed & KEY_UP) && (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) && !dirInfoIniFound && (ms().sortMethod == 4) && CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) { // Move apps (DSi & 3DS themes)
+			} else if ((pressed & KEY_UP) && (PAGENUM > 0 || CURPOS > 0 || !backFound) && (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) && !dirInfoIniFound && (ms().sortMethod == 4) && (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()))) { // Move apps (DSi & 3DS themes)
 				bannerTextShown = false; // Redraw the title when done
 				showSTARTborder = false;
 				currentBg = 2;
@@ -3233,7 +3245,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}*/
 
 					if (held & KEY_LEFT) {
-						moveCursor(false, dirContents[scrn]);
+						if (PAGENUM > 0 || CURPOS > 1 || !backFound) {
+							moveCursor(false, dirContents[scrn]);
+						}
 					} else if (held & KEY_RIGHT) {
 						if (CURPOS + (PAGENUM * 40) < (int)dirContents[scrn].size() - 1) {
 							moveCursor(true, dirContents[scrn], dirContents[scrn].size() - 1 - PAGENUM * 40);
