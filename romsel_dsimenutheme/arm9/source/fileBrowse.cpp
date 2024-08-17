@@ -90,7 +90,6 @@ int last_used_box = 0;
 static int fileStartPos = 0; // The position of the first thing that is not a directory.
 
 extern int spawnedtitleboxes;
-extern int cursorPosOnScreen;
 
 extern int titleboxXpos[2];
 extern int titleboxXdest[2];
@@ -1381,7 +1380,6 @@ void switchDevice(void) {
 		}
 
 		if (directMethod) {
-			cursorPosOnScreen = CURPOS;
 			SetWidescreen(NULL);
 			chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
 			int err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, false, -1);
@@ -3898,7 +3896,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						snd().playLaunch();
 						controlTopBright = true;
 						applaunch = true;
-						cursorPosOnScreen = CURPOS;
 
 						if (ms().theme == TWLSettings::EThemeDSi) {
 							applaunchprep = true;
@@ -3977,8 +3974,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 							if (ms().sortMethod == TWLSettings::ESortRecent) {
 								// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
-								CURPOS = fileStartPos % 40;
-								PAGENUM = fileStartPos / 40;
+								ms().saveCursorPosition[ms().secondaryDevice] = fileStartPos;
 							}
 
 							if (ms().theme == TWLSettings::EThemeHBL) {

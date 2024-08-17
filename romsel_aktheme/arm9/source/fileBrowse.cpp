@@ -1940,8 +1940,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 						if (ms().sortMethod == TWLSettings::ESortRecent) {
 							// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
-							CURPOS = fileStartPos % 40;
-							PAGENUM = fileStartPos / 40;
+							ms().saveCursorPosition[ms().secondaryDevice] = fileStartPos;
 						}
 
 						displayDiskIcon(false);
