@@ -128,7 +128,7 @@ int mpusize = 0;
 
 bool applaunch = false;
 bool dsModeForced = false;
-bool showCursor = true;
+// bool showCursor = true;
 bool startMenu = false;
 MenuEntry cursorPosition = MenuEntry::CART;
 
@@ -1838,7 +1838,7 @@ int dsClassicMenu(void) {
 						if (flashcardFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
 							// Launch last-run ROM (Secondary)
 						  if (ms().launchType[1] == 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[0] = true;
@@ -1847,7 +1847,7 @@ int dsClassicMenu(void) {
 							}
 							loadROMselect();
 						  } else if (ms().launchType[1] > 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[0] = true;
@@ -1863,7 +1863,7 @@ int dsClassicMenu(void) {
 						  ms().secondaryDevice = true;
 						} else if ((!flashcardFound() && REG_SCFG_MC != 0x11) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 							// Launch Slot-1
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[0] = true;
@@ -1888,7 +1888,7 @@ int dsClassicMenu(void) {
 						break;
 					case MenuEntry::PICTOCHAT:
 						if (pictochatFound) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[1] = true;
@@ -1982,7 +1982,7 @@ int dsClassicMenu(void) {
 						break;
 					case MenuEntry::DOWNLOADPLAY:
 						if (dlplayFound) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[2] = true;
@@ -2078,7 +2078,7 @@ int dsClassicMenu(void) {
 						if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
 							// Launch last-run ROM (Secondary)
 						  if (ms().launchType[1] == 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[3] = true;
@@ -2087,7 +2087,7 @@ int dsClassicMenu(void) {
 							}
 							loadROMselect();
 						  } else if (ms().launchType[1] > 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[3] = true;
@@ -2104,7 +2104,7 @@ int dsClassicMenu(void) {
 						} else if (sdFound()) {
 							// Launch last-run ROM (SD)
 						  if (ms().launchType[0] == 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[3] = true;
@@ -2113,7 +2113,7 @@ int dsClassicMenu(void) {
 							}
 							loadROMselect();
 						  } else if (ms().launchType[0] > 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[3] = true;
@@ -2129,7 +2129,7 @@ int dsClassicMenu(void) {
 						  ms().secondaryDevice = false;
 						} else if (/* sys().isRegularDS() && */ ms().gbaBooter == TWLSettings::EGbaNativeGbar2 && ((u8*)GBAROM)[0xB2] == 0x96) {
 							// Switch to GBA mode
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[3] = true;
@@ -2151,7 +2151,7 @@ int dsClassicMenu(void) {
 					case MenuEntry::SETTINGS:
 					case MenuEntry::MANUAL:
 						// Launch settings
-						showCursor = false;
+						// showCursor = false;
 						fadeType = false;	// Fade to white
 						mmEffectEx(&snd_launch);
 						moveIconUp[(selectedPosition == MenuEntry::SETTINGS) ? 5 : 6] = true;

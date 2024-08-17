@@ -80,7 +80,7 @@ float cursorTLPrev = 0.0f, cursorTRPrev = 0.0f, cursorBLPrev = 0.0f, cursorBRPre
 
 extern int spawnedtitleboxes;
 
-extern bool showCursor;
+// extern bool showCursor;
 extern bool startMenu;
 extern MenuEntry cursorPosition;
 
@@ -612,7 +612,7 @@ void vBlankHandler()
 	static bool whiteScreenPrev = whiteScreen;
 	static bool showProgressBarPrev = showProgressBar;
 	static int progressBarLengthPrev = progressBarLength;
-	static bool showCursorPrev = showCursor;
+	// static bool showCursorPrev = showCursor;
 	static bool startMenuPrev = startMenu;
 
 	if (whiteScreenPrev != whiteScreen) {
@@ -630,10 +630,10 @@ void vBlankHandler()
 		updateFrame = true;
 	}
 
-	if (showCursorPrev != showCursor) {
+	/* if (showCursorPrev != showCursor) {
 		showCursorPrev = showCursor;
 		updateFrame = true;
-	}
+	} */
 
 	if (startMenuPrev != startMenu) {
 		startMenuPrev = startMenu;
@@ -730,7 +730,7 @@ void vBlankHandler()
 			glSprite(235, iconYpos[6], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::MANUAL));
 
 			// Draw cursor
-			if (showCursor) {
+			// if (showCursor) {
 				auto drawCursorRect = [](int x1, int y1, int x2, int y2) {
 						glSprite(x1, y1, GL_FLIP_NONE, &cursor.images[0]);
 						glSprite(x2, y1, GL_FLIP_NONE, &cursor.images[1]);
@@ -741,7 +741,7 @@ void vBlankHandler()
 				updateCursorTargetPos();
 				
 				drawCursorRect(std::roundf(cursorTL), std::roundf(cursorBL), std::roundf(cursorTR), std::roundf(cursorBR));
-			}
+			// }
 
 
 			if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
