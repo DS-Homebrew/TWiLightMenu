@@ -356,7 +356,7 @@ void batteryIconLoad() {
 	// Load low battery icon
 
 	filePath = "nitro:/graphics/battery/batterylow.png";
-	if (ms().consoleModel < 2 && ms().powerLedColor) {
+	if (dsiFeatures() && ms().consoleModel < 2 && ms().powerLedColor) {
 		filePath = "nitro:/graphics/battery/batteryfullPurple.png";
 	}
 
