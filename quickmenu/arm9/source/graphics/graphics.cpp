@@ -62,6 +62,7 @@ extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 int fadeDelay = 0;
+int waitUntilFadeOut = 0;
 
 extern int colorRvalue;
 extern int colorGvalue;
@@ -596,15 +597,19 @@ void vBlankHandler()
 			fadeDelay = 0;
 		}
 	} else {
-		if (!fadeDelay) {
-			screenBrightness++;
-			if (screenBrightness > 31) screenBrightness = 31;
-		}
-		if (!fadeSpeed) {
-			fadeDelay++;
-			if (fadeDelay == 3) fadeDelay = 0;
+		if (fadeSpeed || waitUntilFadeOut == 15) {
+			if (!fadeDelay) {
+				screenBrightness++;
+				if (screenBrightness > 31) screenBrightness = 31;
+			}
+			if (!fadeSpeed) {
+				fadeDelay++;
+				if (fadeDelay == 3) fadeDelay = 0;
+			} else {
+				fadeDelay = 0;
+			}
 		} else {
-			fadeDelay = 0;
+			waitUntilFadeOut++;
 		}
 	}
 
