@@ -315,6 +315,11 @@ void batteryIconLoad() {
 	// Load full battery icon
 
 	const char* filePath = "nitro:/graphics/battery/batteryfull.png";
+	if (dsiFeatures() && ms().consoleModel < 2 && ms().powerLedColor) {
+		filePath = "nitro:/graphics/battery/batteryfullPurple.png";
+	} else if (sys().isRegularDS()) {
+		filePath = "nitro:/graphics/battery/batteryfullDS.png";
+	}
 
 	FILE* file = fopen(filePath, "rb");
 
@@ -351,6 +356,9 @@ void batteryIconLoad() {
 	// Load low battery icon
 
 	filePath = "nitro:/graphics/battery/batterylow.png";
+	if (ms().consoleModel < 2 && ms().powerLedColor) {
+		filePath = "nitro:/graphics/battery/batteryfullPurple.png";
+	}
 
 	file = fopen(filePath, "rb");
 	if (file) {
