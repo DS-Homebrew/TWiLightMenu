@@ -4312,6 +4312,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bannerTextShown = false;
 				bool runSelectMenu = pressed & KEY_SELECT;
 				bool break2 = false;
+				if (pressed & KEY_SELECT && dsiFeatures() && ms().consoleModel < 2) {
+					fifoSendValue32(FIFO_USER_04, 1); // enable backlight level change reports
+				}
 				while (held & KEY_SELECT) {
 					scanKeys();
 					pressed = keysDown();
@@ -4347,7 +4350,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							return "null";
 						}
 					}
+
+					// detect backlight level change on DSi consoles
+					if (runSelectMenu && dsiFeatures() && ms().consoleModel < 2 && fifoGetValue32(FIFO_USER_04)) {
+						runSelectMenu = false;
+						fifoSendValue32(FIFO_USER_04, 2); // disable backlight level change report
+					}
 				}
+				if (dsiFeatures() && ms().consoleModel < 2) fifoSendValue32(FIFO_USER_04, 2); // disable backlight level change report
 				if (break2) break;
 				if (runSelectMenu && (ms().theme == TWLSettings::EThemeDSi || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL)) {
 					if (ms().showSelectMenu) {

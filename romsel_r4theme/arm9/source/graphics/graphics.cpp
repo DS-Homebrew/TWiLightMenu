@@ -61,6 +61,7 @@ int screenBrightness = 0;
 bool lcdSwapped = false;
 static bool secondBuffer = false;
 bool doubleBuffer = true;
+bool updateFrame = true;
 
 int vblankRefreshCounter = 0;
 
@@ -498,38 +499,77 @@ static void loadPng(const bool top, const int startMenu, const std::string filen
 
 void vBlankHandler()
 {
-	glBegin2D();
-	{
-		if (fadeType == true) {
-			if (!fadeDelay) {
-				screenBrightness--;
-				if (screenBrightness < 0) screenBrightness = 0;
-			}
-			if (!fadeSpeed) {
-				fadeDelay++;
-				if (fadeDelay == 3) fadeDelay = 0;
-			} else {
-				fadeDelay = 0;
-			}
-		} else {
-			if (!fadeDelay) {
-				screenBrightness++;
-				if (screenBrightness > 31) screenBrightness = 31;
-			}
-			if (!fadeSpeed) {
-				fadeDelay++;
-				if (fadeDelay == 3) fadeDelay = 0;
-			} else {
-				fadeDelay = 0;
-			}
+	if (fadeType) {
+		if (!fadeDelay) {
+			screenBrightness--;
+			if (screenBrightness < 0) screenBrightness = 0;
 		}
-		if (ms().macroMode) {
-			SetBrightness(0, lcdSwapped ? (ms().theme==6 ? -screenBrightness : screenBrightness) : (ms().theme==6 ? -31 : 31));
-			SetBrightness(1, !lcdSwapped ? (ms().theme==6 ? -screenBrightness : screenBrightness) : (ms().theme==6 ? -31 : 31));
+		if (!fadeSpeed) {
+			fadeDelay++;
+			if (fadeDelay == 3) fadeDelay = 0;
 		} else {
-			if (controlBottomBright) SetBrightness(0, ms().theme==6 ? -screenBrightness : screenBrightness);
-			if (controlTopBright) SetBrightness(1, ms().theme==6 ? -screenBrightness : screenBrightness);
+			fadeDelay = 0;
 		}
+	} else {
+		if (!fadeDelay) {
+			screenBrightness++;
+			if (screenBrightness > 31) screenBrightness = 31;
+		}
+		if (!fadeSpeed) {
+			fadeDelay++;
+			if (fadeDelay == 3) fadeDelay = 0;
+		} else {
+			fadeDelay = 0;
+		}
+	}
+	if (ms().macroMode) {
+		SetBrightness(0, lcdSwapped ? (ms().theme==6 ? -screenBrightness : screenBrightness) : (ms().theme==6 ? -31 : 31));
+		SetBrightness(1, !lcdSwapped ? (ms().theme==6 ? -screenBrightness : screenBrightness) : (ms().theme==6 ? -31 : 31));
+	} else {
+		if (controlBottomBright) SetBrightness(0, ms().theme==6 ? -screenBrightness : screenBrightness);
+		if (controlTopBright) SetBrightness(1, ms().theme==6 ? -screenBrightness : screenBrightness);
+	}
+
+	static bool whiteScreenPrev = whiteScreen;
+	static bool blackScreenPrev = blackScreen;
+	static bool startMenuPrev = startMenu;
+	static bool showdialogboxPrev = showdialogbox;
+	static int dialogboxHeightPrev = dialogboxHeight;
+
+	if (whiteScreenPrev != whiteScreen) {
+		whiteScreenPrev = whiteScreen;
+		updateFrame = true;
+	}
+
+	if (blackScreenPrev != blackScreen) {
+		blackScreenPrev = blackScreen;
+		updateFrame = true;
+	}
+
+	if (startMenuPrev != startMenu) {
+		startMenuPrev = startMenu;
+		updateFrame = true;
+	}
+
+	if (showdialogboxPrev != showdialogbox) {
+		showdialogboxPrev = showdialogbox;
+		updateFrame = true;
+	}
+
+	if (showdialogbox && (dialogboxHeightPrev != dialogboxHeight)) {
+		dialogboxHeightPrev = dialogboxHeight;
+		updateFrame = true;
+	}
+
+	if (startMenu) {
+		manualIconNextImg = !manualIconNextImg;
+		updateFrame = true;
+	} else if (bnriconisDSi && playBannerSequence()) {
+		updateFrame = true;
+	}
+
+	if (updateFrame) {
+		glBegin2D();
 
 		// glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 		glColor(RGB15(31, 31, 31));
@@ -544,10 +584,6 @@ void vBlankHandler()
 			glSprite(36, 24, GL_FLIP_NONE, iconboxImage);
 			drawIcon(40, 28);
 			if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
-			// Playback animated icons
-			if (bnriconisDSi) {
-				playBannerSequence();
-			}
 		}
 	  }
 		if (showdialogbox) {
@@ -569,9 +605,11 @@ void vBlankHandler()
 		} else {
 			vblankRefreshCounter++;
 		}
+
+		glEnd2D();
+		GFX_FLUSH = 0;
+		updateFrame = false;
 	}
-	glEnd2D();
-	GFX_FLUSH = 0;
 
 	if (doubleBuffer) {
 		extern bool startMenu;
@@ -579,8 +617,6 @@ void vBlankHandler()
 		dmaCopyHalfWordsAsynch(1, bottomImage[startMenu][secondBuffer], BG_GFX, 0x18000);
 		secondBuffer = !secondBuffer;
 	}
-
-	manualIconNextImg = !manualIconNextImg;
 }
 
 void graphicsInit()

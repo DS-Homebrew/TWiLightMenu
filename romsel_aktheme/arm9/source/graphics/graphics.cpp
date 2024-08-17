@@ -58,6 +58,7 @@ int screenBrightness = 0;
 bool lcdSwapped = false;
 static bool secondBuffer = false;
 bool doubleBuffer = true;
+bool updateFrame = true;
 
 static int colonTimer = 0;
 static bool showColon = true;
@@ -299,6 +300,10 @@ void resetIconScale(void) {
 	iconScaleLarge = true;
 	iconScaleDelay = 0;
 	iconShift = 0;
+	while (updateFrame) {
+		swiWaitForVBlank();
+	}
+	updateFrame = true;
 }
 
 ITCM_CODE void updateSelectionBar(void) {
@@ -1560,22 +1565,89 @@ static void loadPng(const bool top, const std::string filename) {
 
 void vBlankHandler()
 {
-	glBegin2D();
-	{
-		if (fadeType) {
-			screenBrightness--;
-			if (screenBrightness < 0) screenBrightness = 0;
-		} else {
-			screenBrightness++;
-			if (screenBrightness > 31) screenBrightness = 31;
+	if (fadeType) {
+		screenBrightness--;
+		if (screenBrightness < 0) screenBrightness = 0;
+	} else {
+		screenBrightness++;
+		if (screenBrightness > 31) screenBrightness = 31;
+	}
+	if (ms().macroMode) {
+		SetBrightness(0, lcdSwapped ? screenBrightness : 31);
+		SetBrightness(1, !lcdSwapped ? screenBrightness : 31);
+	} else {
+		if (controlBottomBright) SetBrightness(0, screenBrightness);
+		if (controlTopBright) SetBrightness(1, screenBrightness);
+	}
+
+	static bool showdialogboxPrev = showdialogbox;
+	static int dialogboxHeightPrev = dialogboxHeight;
+
+	if (showdialogboxPrev != showdialogbox) {
+		showdialogboxPrev = showdialogbox;
+		updateFrame = true;
+	}
+
+	if (showdialogbox && (dialogboxHeightPrev != dialogboxHeight)) {
+		dialogboxHeightPrev = dialogboxHeight;
+		updateFrame = true;
+	}
+
+	if (displayIcons && iconsToDisplay > 0) {
+		// Playback animated icons
+		for (int i = 0; i < iconsToDisplay; i++) {
+			if (bnriconisDSi[i] && playBannerSequence(i)) {
+				updateFrame = true;
+			}
 		}
-		if (ms().macroMode) {
-			SetBrightness(0, lcdSwapped ? screenBrightness : 31);
-			SetBrightness(1, !lcdSwapped ? screenBrightness : 31);
-		} else {
-			if (controlBottomBright) SetBrightness(0, screenBrightness);
-			if (controlTopBright) SetBrightness(1, screenBrightness);
+
+		if (iconScaleEnabled) {
+			if (!iconScaleDelay) {
+				if (iconScaleLarge) {
+					iconScale += 110;
+					if (iconScale == 110) {
+						iconShift = 1;
+					} else if (iconScale == 330) {
+						iconShift = 2;
+					} else if (iconScale == 550) {
+						iconShift = 3;
+					} else if (iconScale == 660) {
+						iconScaleLarge = false;
+					}
+				} else {
+					iconScale -= 110;
+					if (iconScale == 330) {
+						iconShift = 2;
+					} else if (iconScale == 110) {
+						iconShift = 1;
+					} else if (iconScale == 0) {
+						iconShift = 0;
+						iconScaleLarge = true;
+					}
+				}
+				updateFrame = true;
+			}
+			if (iconScaleDelay++ == 2) {
+				iconScaleDelay = 0;
+			}
+		} else if (ms().ak_zoomIcons) {
+			if (iconScaleWait++ == 60) {
+				iconScaleWait = 0;
+				iconScaleEnabled = true;
+			}
 		}
+	}
+
+	// Blink colon once per second
+	if (colonTimer >= 60) {
+		colonTimer = 0;
+		showColon = !showColon;
+	}
+
+	colonTimer++;
+
+	if (updateFrame) {
+		glBegin2D();
 
 		// glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 		glColor(RGB15(31, 31, 31));
@@ -1591,46 +1663,6 @@ void vBlankHandler()
 					drawIcon(i, 5, 22+(i*38), 0);
 				}
 				// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
-				// Playback animated icons
-				// if (!stopDSiAnim && bnriconisDSi[i]) {
-				if (bnriconisDSi[i]) {
-					playBannerSequence(i);
-				}
-				// stopDSiAnimNotif = stopDSiAnim;
-			}
-			if (iconScaleEnabled) {
-				if (!iconScaleDelay) {
-					if (iconScaleLarge) {
-						iconScale += 110;
-						if (iconScale == 110) {
-							iconShift = 1;
-						} else if (iconScale == 330) {
-							iconShift = 2;
-						} else if (iconScale == 550) {
-							iconShift = 3;
-						} else if (iconScale == 660) {
-							iconScaleLarge = false;
-						}
-					} else {
-						iconScale -= 110;
-						if (iconScale == 330) {
-							iconShift = 2;
-						} else if (iconScale == 110) {
-							iconShift = 1;
-						} else if (iconScale == 0) {
-							iconShift = 0;
-							iconScaleLarge = true;
-						}
-					}
-				}
-				if (iconScaleDelay++ == 2) {
-					iconScaleDelay = 0;
-				}
-			} else if (ms().ak_zoomIcons) {
-				if (iconScaleWait++ == 60) {
-					iconScaleWait = 0;
-					iconScaleEnabled = true;
-				}
 			}
 		}
 		if (showdialogbox) {
@@ -1647,17 +1679,11 @@ void vBlankHandler()
 		} else {
 			vblankRefreshCounter++;
 		}
-	}
-	glEnd2D();
-	GFX_FLUSH = 0;
 
-	// Blink colon once per second
-	if (colonTimer >= 60) {
-		colonTimer = 0;
-		showColon = !showColon;
+		glEnd2D();
+		GFX_FLUSH = 0;
+		updateFrame = false;
 	}
-
-	colonTimer++;
 
 	if (doubleBuffer) {
 		dmaCopyHalfWordsAsynch(0, topImageWithText[secondBuffer], BG_GFX_SUB, 0x18000);

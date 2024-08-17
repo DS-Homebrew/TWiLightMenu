@@ -558,8 +558,11 @@ static u16 bnriconframeseq[4][64] = {0x0000};
 // bnriconframenum[]
 int bnriconPalLoaded[4] = {0};
 int bnriconPalLine[4] = {0};
+int bnriconPalLinePrev[4] = {0};
 int bnriconframenumY[4] = {0};
+int bnriconframenumYPrev[4] = {0};
 int bannerFlip[4] = {GL_FLIP_NONE};
+int bannerFlipPrev[4] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
 bool isTwlm[4] = {false};
@@ -618,7 +621,7 @@ void clearBannerSequence(int iconnum)
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence(int iconnum)
+bool playBannerSequence(int iconnum)
 {
 	if (bnriconframeseq[iconnum][currentbnriconframeseq[iconnum] + 1] == 0x0100) {
 		// Do nothing if icon isn't animated
@@ -642,6 +645,23 @@ void playBannerSequence(int iconnum)
 			bannerFlip[iconnum] = GL_FLIP_V;
 		}
 
+		bool updateIcon = false;
+
+		if (bnriconPalLinePrev[iconnum] != bnriconPalLine[iconnum]) {
+			bnriconPalLinePrev[iconnum] = bnriconPalLine[iconnum];
+			updateIcon = true;
+		}
+
+		if (bnriconframenumYPrev[iconnum] != bnriconframenumY[iconnum]) {
+			bnriconframenumYPrev[iconnum] = bnriconframenumY[iconnum];
+			updateIcon = true;
+		}
+
+		if (bannerFlipPrev[iconnum] != bannerFlip[iconnum]) {
+			bannerFlipPrev[iconnum] = bannerFlip[iconnum];
+			updateIcon = true;
+		}
+
 		bannerDelayNum[iconnum]++;
 		if (bannerDelayNum[iconnum] >= (setframeseq & 0x00FF)) {
 			bannerDelayNum[iconnum] = 0x0000;
@@ -650,5 +670,9 @@ void playBannerSequence(int iconnum)
 				currentbnriconframeseq[iconnum] = 0; // Reset sequence
 			}
 		}
+
+		return updateIcon;
 	}
+
+	return false;
 }

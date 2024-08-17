@@ -128,7 +128,7 @@ int mpusize = 0;
 
 bool applaunch = false;
 bool dsModeForced = false;
-bool showCursor = true;
+// bool showCursor = true;
 bool startMenu = false;
 MenuEntry cursorPosition = MenuEntry::CART;
 
@@ -802,12 +802,18 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		fcPath = replaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+		while (!screenFadedOut()) {
+			swiWaitForVBlank();
+		}
 		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 		fcPath = replaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", fcPath);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+		while (!screenFadedOut()) {
+			swiWaitForVBlank();
+		}
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
@@ -819,9 +825,18 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		fcPath = replaceAll(ndsPath, "fat:/", slashchar);
 		fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
 		fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
+		while (!screenFadedOut()) {
+			swiWaitForVBlank();
+		}
 		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
+	} else {
+		while (!screenFadedOut()) {
+			swiWaitForVBlank();
+		}
 	}
 
+	whiteScreen = true;
+	fadeSpeed = true;
 	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	clearText();
@@ -831,10 +846,9 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		printSmall(false, 4, 52, STR_FLASHCARD_NAME);
 		printSmall(false, 4, 68, io_dldi_data->friendlyName);
 	}
-	whiteScreen = true;
-	fadeSpeed = true;
 	controlTopBright = false;
 	fadeType = true; // Fade in
+	updateText(false);
 	stop();
 }
 
@@ -1060,9 +1074,10 @@ void directCardLaunch() {
 	int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, false, -1);
 	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-	ClearBrightness();
 	clearText();
 	printSmall(false, 4, 4, text);
+	updateText(false);
+	fadeType = true; // Fade in
 	stop();
 }
 
@@ -1838,23 +1853,23 @@ int dsClassicMenu(void) {
 						if (flashcardFound() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
 							// Launch last-run ROM (Secondary)
 						  if (ms().launchType[1] == 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[0] = true;
-							for (int i = 0; i < 50; i++) {
+							while (!screenFadedOut()) {
 								swiWaitForVBlank();
 							}
 							loadROMselect();
 						  } else if (ms().launchType[1] > 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[0] = true;
 							if (romFound[1]) {
 								applaunch = true;
 							} else {
-								for (int i = 0; i < 50; i++) {
+								while (!screenFadedOut()) {
 									swiWaitForVBlank();
 								}
 								loadROMselect();
@@ -1863,11 +1878,11 @@ int dsClassicMenu(void) {
 						  ms().secondaryDevice = true;
 						} else if ((!flashcardFound() && REG_SCFG_MC != 0x11) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 							// Launch Slot-1
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[0] = true;
-							for (int i = 0; i < 50; i++) {
+							while (!screenFadedOut()) {
 								swiWaitForVBlank();
 							}
 							ms().slot1Launched = true;
@@ -1888,16 +1903,17 @@ int dsClassicMenu(void) {
 						break;
 					case MenuEntry::PICTOCHAT:
 						if (pictochatFound) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[1] = true;
-							for (int i = 0; i < 50; i++) {
+							while (!screenFadedOut()) {
 								swiWaitForVBlank();
 							}
 
 							// Clear screen with white
 							whiteScreen = true;
+							fadeSpeed = true;
 							controlTopBright = false;
 							clearText();
 
@@ -1907,8 +1923,9 @@ int dsClassicMenu(void) {
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText();
-								ClearBrightness();
 								printSmall(false, 4, 4, text);
+								fadeType = true; // Fade in
+								updateText(false);
 								stop();
 							} else if (pictochatReboot) {
 								*(u32*)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
@@ -1969,11 +1986,12 @@ int dsClassicMenu(void) {
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText();
-								ClearBrightness();
 								printSmall(false, 4, 4, text);
 								if (err == 1) {
 									printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 								}
+								fadeType = true; // Fade in
+								updateText(false);
 								stop();
 							}
 						} else {
@@ -1982,16 +2000,17 @@ int dsClassicMenu(void) {
 						break;
 					case MenuEntry::DOWNLOADPLAY:
 						if (dlplayFound) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[2] = true;
-							for (int i = 0; i < 50; i++) {
+							while (!screenFadedOut()) {
 								swiWaitForVBlank();
 							}
 
 							// Clear screen with white
 							whiteScreen = true;
+							fadeSpeed = true;
 							controlTopBright = false;
 							clearText();
 
@@ -2034,8 +2053,9 @@ int dsClassicMenu(void) {
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText();
-								ClearBrightness();
 								printSmall(false, 4, 4, text);
+								fadeType = true; // Fade in
+								updateText(false);
 								stop();
 							} else {
 								char ndsToBoot[256];
@@ -2063,11 +2083,12 @@ int dsClassicMenu(void) {
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText();
-								ClearBrightness();
 								printSmall(false, 4, 4, text);
 								if (err == 1) {
 									printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 								}
+								fadeType = true; // Fade in
+								updateText(false);
 								stop();
 							}
 						} else {
@@ -2078,23 +2099,23 @@ int dsClassicMenu(void) {
 						if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
 							// Launch last-run ROM (Secondary)
 						  if (ms().launchType[1] == 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[3] = true;
-							for (int i = 0; i < 50; i++) {
+							while (!screenFadedOut()) {
 								swiWaitForVBlank();
 							}
 							loadROMselect();
 						  } else if (ms().launchType[1] > 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[3] = true;
 							if (romFound[1]) {
 								applaunch = true;
 							} else {
-								for (int i = 0; i < 50; i++) {
+								while (!screenFadedOut()) {
 									swiWaitForVBlank();
 								}
 								loadROMselect();
@@ -2104,36 +2125,36 @@ int dsClassicMenu(void) {
 						} else if (sdFound()) {
 							// Launch last-run ROM (SD)
 						  if (ms().launchType[0] == 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[3] = true;
-							for (int i = 0; i < 50; i++) {
+							while (!screenFadedOut()) {
 								swiWaitForVBlank();
 							}
 							loadROMselect();
 						  } else if (ms().launchType[0] > 0) {
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[3] = true;
-							for (int i = 0; i < 50; i++) {
-								swiWaitForVBlank();
-							}
 							if (romFound[0]) {
 								applaunch = true;
 							} else {
+								while (!screenFadedOut()) {
+									swiWaitForVBlank();
+								}
 								loadROMselect();
 							}
 						  }
 						  ms().secondaryDevice = false;
 						} else if (/* sys().isRegularDS() && */ ms().gbaBooter == TWLSettings::EGbaNativeGbar2 && ((u8*)GBAROM)[0xB2] == 0x96) {
 							// Switch to GBA mode
-							showCursor = false;
+							// showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							moveIconUp[3] = true;
-							for (int i = 0; i < 50; i++) {
+							while (!screenFadedOut()) {
 								swiWaitForVBlank();
 							}
 							gbaSwitch();
@@ -2151,11 +2172,11 @@ int dsClassicMenu(void) {
 					case MenuEntry::SETTINGS:
 					case MenuEntry::MANUAL:
 						// Launch settings
-						showCursor = false;
+						// showCursor = false;
 						fadeType = false;	// Fade to white
 						mmEffectEx(&snd_launch);
 						moveIconUp[(selectedPosition == MenuEntry::SETTINGS) ? 5 : 6] = true;
-						for (int i = 0; i < 50; i++) {
+						while (!screenFadedOut()) {
 							swiWaitForVBlank();
 						}
 						{
@@ -2180,15 +2201,21 @@ int dsClassicMenu(void) {
 
 			if (pressed & KEY_B) {
 				mmEffectEx(&snd_back);
+				fadeSpeed = true;
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 50; i++) swiWaitForVBlank();
+				while (!screenFadedOut()) {
+					swiWaitForVBlank();
+				}
 				loadROMselect();
 			}
 
 			if ((pressed & KEY_X) && !sys().isRegularDS()) {
 				mmEffectEx(&snd_back);
+				fadeSpeed = true;
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 50; i++) swiWaitForVBlank();
+				while (!screenFadedOut()) {
+					swiWaitForVBlank();
+				}
 				if (!sdFound() || ms().launcherApp == -1) {
 					*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 					*(u16*)(0x02000304) = 0x1801;
@@ -2310,11 +2337,9 @@ int dsClassicMenu(void) {
 						fadeSpeed = true;
 						controlTopBright = false;
 						clearText();
-						printSmall(false, 2, 80, STR_CREATING_SAVE);
-						if (!fadeType) {
-							fadeType = true;	// Fade in from white
-							for (int i = 0; i < 35; i++) swiWaitForVBlank();
-						}
+						printSmall(false, 0, 88, STR_CREATING_SAVE, Alignment::center);
+						fadeType = true;	// Fade in from white
+						updateText(false);
 
 						FILE *pFile = fopen(ms().dsiWarePubPath.c_str(), "wb");
 						if (pFile) {
@@ -2333,7 +2358,9 @@ int dsClassicMenu(void) {
 							showProgressBar = false;
 						}
 
-						printSmall(false, 2, 88, STR_SAVE_CREATED);
+						clearText();
+						printSmall(false, 0, 88, STR_SAVE_CREATED, Alignment::center);
+						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
 				} else {
@@ -2345,15 +2372,15 @@ int dsClassicMenu(void) {
 						fadeSpeed = true;
 						controlTopBright = false;
 						clearText();
-						printSmall(false, 2, 80, STR_CREATING_PUBLIC_SAVE);
-						if (!fadeType) {
-							fadeType = true;	// Fade in from white
-							for (int i = 0; i < 35; i++) swiWaitForVBlank();
-						}
+						printSmall(false, 0, 88, STR_CREATING_PUBLIC_SAVE, Alignment::center);
+						fadeType = true;	// Fade in from white
+						updateText(false);
 
 						createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
 
-						printSmall(false, 2, 88, STR_PUBLIC_SAVE_CREATED);
+						clearText();
+						printSmall(false, 0, 88, STR_PUBLIC_SAVE_CREATED, Alignment::center);
+						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
 
@@ -2365,15 +2392,15 @@ int dsClassicMenu(void) {
 						fadeSpeed = true;
 						controlTopBright = false;
 						clearText();
-						printSmall(false, 2, 80, STR_CREATING_PRIVATE_SAVE);
-						if (!fadeType) {
-							fadeType = true;	// Fade in from white
-							for (int i = 0; i < 35; i++) swiWaitForVBlank();
-						}
+						printSmall(false, 0, 88, STR_CREATING_PRIVATE_SAVE, Alignment::center);
+						fadeType = true;	// Fade in from white
+						updateText(false);
 
 						createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
 
-						printSmall(false, 2, 88, STR_PRIVATE_SAVE_CREATED);
+						clearText();
+						printSmall(false, 0, 88, STR_PRIVATE_SAVE_CREATED, Alignment::center);
+						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					}
 				}
@@ -2406,6 +2433,7 @@ int dsClassicMenu(void) {
 						for (int i = 0; i < 25; i++) swiWaitForVBlank();
 						clearText();
 						printSmall(false, 0, 8, STR_RESTART_AFTER_SAVE, Alignment::center);
+						updateText(false);
 						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds
 						fadeType = false;	// Fade to white
@@ -2541,6 +2569,7 @@ int dsClassicMenu(void) {
 					whiteScreen = true;
 					fadeSpeed = true;
 					controlTopBright = false;
+					updateText(false);
 					fadeType = true; // Fade in
 					stop();
 				}
@@ -2653,6 +2682,7 @@ int dsClassicMenu(void) {
 								fadeSpeed = true; // Fast fading
 								clearText();
 								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
+								updateText(false);
 
 								fadeType = true; // Fade in from white
 
@@ -2673,6 +2703,7 @@ int dsClassicMenu(void) {
 								}
 								clearText();
 								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_SAVE_CREATED : STR_SAVE_EXPANDED, Alignment::center);
+								updateText(false);
 								for (int i = 0; i < 30; i++) swiWaitForVBlank();
 								fadeType = false; // Fade out
 							}
@@ -2824,6 +2855,8 @@ int dsClassicMenu(void) {
 						}
 						char text[64];
 						snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+						whiteScreen = true;
+						fadeSpeed = true; // Fast fading
 						clearText();
 						printSmall(false, 4, 4, text);
 						if (err == 1) {
@@ -2839,10 +2872,6 @@ int dsClassicMenu(void) {
 						ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
-
-						while (!screenFadedOut()) {
-							swiWaitForVBlank();
-						}
 
 						loadGameOnFlashcard(argarray[0], true);
 					}
@@ -2942,6 +2971,7 @@ int dsClassicMenu(void) {
 					controlTopBright = false;
 					fadeType = true; // Fade in
 					printSmall(false, 4, 4, text);
+					updateText(false);
 					stop();
 				}
 			} else {
@@ -3060,6 +3090,7 @@ int dsClassicMenu(void) {
 
 						clearText();
 						printSmall(false, 0, 88, STR_NOW_LOADING, Alignment::center);
+						updateText(false);
 
 						for (u32 len = romSize; len > 0; len -= 0x8000) {
 							if (fread(&copyBuf, 1, (len>0x8000 ? 0x8000 : len), gbaFile) > 0) {
@@ -3513,6 +3544,8 @@ int dsClassicMenu(void) {
 					err = runNdsFile (ndsToBoot, argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, boostCpu, boostVram, tscTgds, -1);	// Pass ROM to emulator as argument
 				}
 
+				whiteScreen = true;
+				fadeSpeed = true;
 				char text[64];
 				snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 				clearText();
@@ -3520,10 +3553,9 @@ int dsClassicMenu(void) {
 				if (err == 1 && useNDSB) {
 					printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
 				}
-				whiteScreen = true;
-				fadeSpeed = true;
 				controlTopBright = false;
 				fadeType = true; // Fade in
+				updateText(false);
 				stop();
 
 				while (argarray.size() !=0) {
