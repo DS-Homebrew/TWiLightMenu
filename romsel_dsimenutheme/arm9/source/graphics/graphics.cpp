@@ -409,6 +409,7 @@ void vBlankHandler() {
 	static bool showProgressBarPrev = showProgressBar;
 	static int progressBarLengthPrev = progressBarLength;
 	static bool dbox_showIconPrev = dbox_showIcon;
+	static int movingAppYposPrev = movingAppYpos;
 
 	if (whiteScreenPrev != whiteScreen) {
 		whiteScreenPrev = whiteScreen;
@@ -640,6 +641,11 @@ void vBlankHandler() {
 		updateFrame = true;
 	}
 
+	if (movingAppYposPrev != movingAppYpos) {
+		movingAppYposPrev = movingAppYpos;
+		updateFrame = true;
+	}
+
 	if (applaunchprep && titleboxYmovepos < 192) {
 		titleboxYmovepos += 5;
 		updateFrame = true;
@@ -693,7 +699,7 @@ void vBlankHandler() {
 		// Playback animated icons
 		for (int i = 0; i < ((movingApp != -1) ? 41 : 40); i++) {
 			if (bnriconisDSi[i] && playBannerSequence(i) && !updateFrame) {
-				updateFrame = (displayGameIcons && (ms().theme != TWLSettings::EThemeSaturn)) ? (i >= CURPOS-2 && i <= CURPOS+2) : (i == CURPOS);
+				updateFrame = (displayGameIcons && (ms().theme != TWLSettings::EThemeSaturn)) ? ((i >= CURPOS-2 && i <= CURPOS+2) || i == 40) : (i == CURPOS);
 			}
 		}
 	}
