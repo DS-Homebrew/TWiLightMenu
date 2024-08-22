@@ -27,7 +27,7 @@ static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
 
 void checkSdEject(void) {
-	/*if (!ms().sdRemoveDetect)*/ return;
+	if (!ms().sdRemoveDetect) return;
 
 	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode() || !sdFound()) {
 		if (!showNonExtendedImage) {
