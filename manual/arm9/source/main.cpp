@@ -265,6 +265,7 @@ int manualScreen(void) {
 	int held = 0;
 	int repeat = 0;
 	int currentPage = 0, returnPage = -1;
+	bool isScrolling = false;
 	touchPosition touch;
 
 	while (1) {
@@ -295,11 +296,23 @@ int manualScreen(void) {
 			}
 		} else if (held & KEY_UP) {
 			pageYpos -= 4;
-			if (pageYpos < 0) pageYpos = 0;
+			if (pageYpos < 0) {
+				if ((pressed & KEY_UP) || isScrolling) mmEffectEx(&snd_wrong);
+				pageYpos = 0;
+				isScrolling = false;
+			} else {
+				isScrolling = true;
+			}
 			pageScroll();
 		} else if (held & KEY_DOWN) {
 			pageYpos += 4;
-			if (pageYpos > pageYsize-ySizeSub) pageYpos = pageYsize-ySizeSub;
+			if (pageYpos > pageYsize-ySizeSub) {
+				if ((pressed & KEY_DOWN) || isScrolling) mmEffectEx(&snd_wrong);
+				pageYpos = pageYsize-ySizeSub;
+				isScrolling = false;
+			} else {
+				isScrolling = true;
+			}
 			pageScroll();
 		} else if (repeat & KEY_LEFT) {
 			if (currentPage > 0) {
@@ -314,6 +327,8 @@ int manualScreen(void) {
 				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 				updateText(true);
 				leaveTopBarIntact = false;
+			} else {
+				mmEffectEx(&snd_wrong);
 			}
 		} else if (repeat & KEY_RIGHT) {
 			if (currentPage < (int)manPagesList.size()-1) {
@@ -328,6 +343,8 @@ int manualScreen(void) {
 				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 				updateText(true);
 				leaveTopBarIntact = false;
+			} else {
+				mmEffectEx(&snd_wrong);
 			}
 		} else if (pressed & KEY_TOUCH) {
 			touchPosition touchStart = touch;
