@@ -35,12 +35,15 @@ extern bool controlTopBright;
 extern bool controlBottomBright;
 int fadeDelay = 0;
 
-u8 bgColor1 = 0xF6;
-u8 bgColor2 = 0xF7;
+// u8 bgColor1 = 0xF6;
+// u8 bgColor2 = 0xF7;
 
 int screenBrightness = 31;
+bool updatePalMidFrame = true;
 
 u16 bmpImageBuffer[256*192] = {0};
+u16 topBarPal[8] = {0}; // For both font and top bar palettes
+static u16 pagePal[256] = {0};
 u16* colorTable = NULL;
 std::vector<u8> pageImage;
 
@@ -68,7 +71,7 @@ void SetBrightness(u8 screen, s8 bright) {
 		bright = -bright;
 	}
 	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 /* u16 convertVramColorToGrayscale(u16 val) {
@@ -89,7 +92,7 @@ void SetBrightness(u8 screen, s8 bright) {
 } */
 
 void vBlankHandler() {
-	if (fadeType == true) {
+	if (fadeType) {
 		if (!fadeDelay) {
 			screenBrightness--;
 			if (screenBrightness < 0) screenBrightness = 0;
@@ -115,8 +118,11 @@ void vBlankHandler() {
 	if (controlTopBright) SetBrightness(0, screenBrightness);
 	if (controlBottomBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
-	updateText(true);
-	updateText(false);
+	if (updatePalMidFrame) {
+		tonccpy(BG_PALETTE + 0xF8, topBarPal, 8 * 2);
+		while (REG_VCOUNT != 16);
+		tonccpy(BG_PALETTE, pagePal, 256 * 2);
+	}
 }
 
 void pageLoad(const std::string &filename) {
@@ -124,19 +130,20 @@ void pageLoad(const std::string &filename) {
 	pageImage = gif.frame(0).image.imageData;
 	pageYsize = gif.frame(0).descriptor.h;
 
-	tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
+	/* tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
 	if (colorTable) {
 		for (int i = 0; i < (int)std::min(0xF6u, gif.gct().size()); i++) {
 			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
 		}
+	} */
+	tonccpy(pagePal, gif.gct().data(), gif.gct().size() * 2);
+	if (colorTable) {
+		for (int i = 0; i < (int)gif.gct().size(); i++) {
+			pagePal[i] = colorTable[pagePal[i]];
+		}
 	}
 	if (!ms().macroMode) {
-		tonccpy(BG_PALETTE_SUB, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
-		if (colorTable) {
-			for (int i = 0; i < (int)std::min(0xF6u, gif.gct().size()); i++) {
-				BG_PALETTE_SUB[i] = colorTable[BG_PALETTE_SUB[i]];
-			}
-		}
+		tonccpy(BG_PALETTE_SUB, pagePal, gif.gct().size() * 2);
 	}
 
 	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
@@ -155,10 +162,16 @@ void topBarLoad(void) {
 	const auto &frame = gif.frame(0);
 	u16 *dst = bgGetGfxPtr(bg3Main);
 
-	tonccpy(BG_PALETTE + 0xFC, gif.gct().data(), gif.gct().size() * 2);
+	/* tonccpy(BG_PALETTE + 0xFC, gif.gct().data(), gif.gct().size() * 2);
 	if (colorTable) {
 		for (int i = 0xFC; i < (int)0xFC + gif.gct().size(); i++) {
 			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
+		}
+	} */
+	tonccpy(topBarPal+4, gif.gct().data(), gif.gct().size() * 2);
+	if (colorTable) {
+		for (int i = 0; i < (int)gif.gct().size(); i++) {
+			topBarPal[i+4] = colorTable[topBarPal[i+4]];
 		}
 	}
 
@@ -168,8 +181,8 @@ void topBarLoad(void) {
 }
 
 void graphicsInit() {
-	*(u16*)(0x0400006C) |= BIT(14);
-	*(u16*)(0x0400006C) &= BIT(15);
+	*(vu16*)(0x0400006C) |= BIT(14);
+	*(vu16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
