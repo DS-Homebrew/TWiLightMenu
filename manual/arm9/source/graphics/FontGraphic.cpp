@@ -443,7 +443,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 					for (int j = 0; j < tileWidth; j++) {
 						u8 px = fontTiles[(cachePos * tileSize) + (i * tileWidth + j) / 4] >> ((3 - ((i * tileWidth + j) % 4)) * 2) & 3;
 						if (px)
-							dst[(y + i) * 256 + j] = px + 0xF8;
+							dst[(y + i) * 256 + j] = px + 0xF6;
 					}
 				}
 			}
@@ -455,7 +455,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 					for (int j = 0; j < tileWidth; j++) {
 						u8 px = fontTiles[(index * tileSize) + (i * tileWidth + j) / 4] >> ((3 - ((i * tileWidth + j) % 4)) * 2) & 3;
 						if (px)
-							dst[(y + i) * 256 + j] = px + 0xF8;
+							dst[(y + i) * 256 + j] = px + 0xF6;
 					}
 				}
 			}

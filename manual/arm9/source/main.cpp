@@ -273,7 +273,7 @@ int manualScreen(void) {
 		manPageTitleX = 256 - manPageTitleX;
 		manPageTitleAlign = Alignment::right;
 	}
-	int ySizeSub = ms().macroMode ? 176 : 368;
+	int ySizeSub = ms().macroMode ? 174 : 366;
 
 	langInit();
 
@@ -408,7 +408,7 @@ int manualScreen(void) {
 			} else {
 				for (uint i=0;i<manPageLinks.size();i++) {
 					if (((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
-						(((touchStart.py + pageYpos) >= manPageLinks[i].y - (ms().macroMode ? 0 : 176)) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - (ms().macroMode ? 0 : 176) + manPageLinks[i].h)))) {
+						(((touchStart.py + pageYpos) >= manPageLinks[i].y - (ms().macroMode ? 0 : 174)) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - (ms().macroMode ? 0 : 174) + manPageLinks[i].h)))) {
 						pageYpos = 0;
 						returnPage = currentPage;
 						for (uint j=0;j<manPagesList.size();j++) {

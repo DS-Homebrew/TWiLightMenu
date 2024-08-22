@@ -67,7 +67,7 @@ void fontInit() {
 	// tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
 	// tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
 
-	extern u16 topBarPal[8];
+	extern u16 topBarPal[];
 	tonccpy(topBarPal, palette, sizeof(palette));
 
 	logPrint("Font inited\n");

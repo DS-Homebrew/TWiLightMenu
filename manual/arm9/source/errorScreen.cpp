@@ -62,8 +62,8 @@ void checkSdEject(void) {
 			palette[i] = colorTable[palette[i]];
 		}
 	}
-	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
-	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
+	tonccpy(BG_PALETTE + 0xF6, palette, sizeof(palette));
+	tonccpy(BG_PALETTE_SUB + 0xF6, palette, sizeof(palette));
 
 	clearText();
 

@@ -19,6 +19,7 @@
 ------------------------------------------------------------------*/
 
 #include "graphics.h"
+#include "userpal.h"
 #include "../errorScreen.h"
 #include "fontHandler.h"
 #include "fileCopy.h"
@@ -42,7 +43,7 @@ int screenBrightness = 31;
 bool updatePalMidFrame = true;
 
 u16 bmpImageBuffer[256*192] = {0};
-u16 topBarPal[8] = {0}; // For both font and top bar palettes
+u16 topBarPal[10] = {0}; // For both font and top bar palettes
 static u16 pagePal[256] = {0};
 u16* colorTable = NULL;
 std::vector<u8> pageImage;
@@ -119,8 +120,8 @@ void vBlankHandler() {
 	if (controlBottomBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
 	if (updatePalMidFrame) {
-		tonccpy(BG_PALETTE + 0xF8, topBarPal, 8 * 2);
-		while (REG_VCOUNT != 16);
+		tonccpy(BG_PALETTE + 0xF6, topBarPal, 10 * 2);
+		while (REG_VCOUNT != 18);
 		tonccpy(BG_PALETTE, pagePal, 256 * 2);
 	}
 }
@@ -146,14 +147,14 @@ void pageLoad(const std::string &filename) {
 		tonccpy(BG_PALETTE_SUB, pagePal, gif.gct().size() * 2);
 	}
 
-	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
-	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+(176*256), bgGetGfxPtr(bg3Sub), 192*256);
+	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(9*256), 174*256);
+	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+(174*256), bgGetGfxPtr(bg3Sub), 192*256);
 	while (dmaBusy(0) || dmaBusy(1));
 }
 
 void pageScroll(void) {
-	dmaCopyWordsAsynch(0, pageImage.data()+(pageYpos*256), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
-	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+((176+pageYpos)*256), bgGetGfxPtr(bg3Sub), 192*256);
+	dmaCopyWordsAsynch(0, pageImage.data()+(pageYpos*256), bgGetGfxPtr(bg3Main)+(9*256), 174*256);
+	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+((174+pageYpos)*256), bgGetGfxPtr(bg3Sub), 192*256);
 	while (dmaBusy(0) || dmaBusy(1));
 }
 
@@ -162,6 +163,10 @@ void topBarLoad(void) {
 	const auto &frame = gif.frame(0);
 	u16 *dst = bgGetGfxPtr(bg3Main);
 
+	extern bool useTwlCfg;
+	int favoriteColor = (int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme);
+	if (favoriteColor < 0 || favoriteColor >= 16) favoriteColor = 0; // Invalid color found, so default to gray
+
 	/* tonccpy(BG_PALETTE + 0xFC, gif.gct().data(), gif.gct().size() * 2);
 	if (colorTable) {
 		for (int i = 0xFC; i < (int)0xFC + gif.gct().size(); i++) {
@@ -169,14 +174,22 @@ void topBarLoad(void) {
 		}
 	} */
 	tonccpy(topBarPal+4, gif.gct().data(), gif.gct().size() * 2);
+	topBarPal[4+4] = palUserFont[favoriteColor][1];
+	topBarPal[4+5] = palUserFont[favoriteColor][0];
 	if (colorTable) {
-		for (int i = 0; i < (int)gif.gct().size(); i++) {
-			topBarPal[i+4] = colorTable[topBarPal[i+4]];
+		for (int i = 0; i < 6; i++) {
+			topBarPal[4+i] = colorTable[topBarPal[i+4]];
 		}
 	}
 
 	for (uint i = 0; i < frame.image.imageData.size(); i += 2) {
-		toncset16(dst++, (frame.image.imageData[i] + 0xFC) | (frame.image.imageData[i + 1] + 0xFC) << 8, 1);
+		toncset16(dst++, (frame.image.imageData[i] + 0xFA) | (frame.image.imageData[i + 1] + 0xFA) << 8, 1);
+	}
+	for (int i = 0; i < 256/2; i++) {
+		toncset16(dst++, 0xFEFE, 1);
+	}
+	for (int i = 0; i < 256/2; i++) {
+		toncset16(dst++, 0xFFFF, 1);
 	}
 }
 
