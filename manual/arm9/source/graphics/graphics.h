@@ -22,6 +22,8 @@
 #include <nds/ndstypes.h>
 #include <string>
 
+bool screenFadedIn(void);
+bool screenFadedOut(void);
 void SetBrightness(u8 screen, s8 bright);
 void pageLoad(const std::string &filename);
 void pageScroll();

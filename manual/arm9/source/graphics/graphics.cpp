@@ -31,16 +31,15 @@
 #include <nds.h>
 
 extern bool fadeType;
-extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
-int fadeDelay = 0;
 
 // u8 bgColor1 = 0xF6;
 // u8 bgColor2 = 0xF7;
 
 int screenBrightness = 31;
 bool updatePalMidFrame = true;
+bool leaveTopBarIntact = false;
 
 u16 bmpImageBuffer[256*192] = {0};
 u16 topBarPal[10] = {0}; // For both font and top bar palettes
@@ -56,12 +55,9 @@ int bg2Main;
 int bg3Main;
 int bg2Sub;
 
-void ClearBrightness(void) {
-	fadeType = true;
-	screenBrightness = 0;
-	swiWaitForVBlank();
-	swiWaitForVBlank();
-}
+bool screenFadedIn(void) { return (screenBrightness == 0); }
+
+bool screenFadedOut(void) { return (screenBrightness > 24); }
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
@@ -94,28 +90,23 @@ void SetBrightness(u8 screen, s8 bright) {
 
 void vBlankHandler() {
 	if (fadeType) {
-		if (!fadeDelay) {
-			screenBrightness--;
-			if (screenBrightness < 0) screenBrightness = 0;
-		}
-		if (!fadeSpeed) {
-			fadeDelay++;
-			if (fadeDelay == 3) fadeDelay = 0;
-		} else {
-			fadeDelay = 0;
-		}
+		screenBrightness--;
+		if (screenBrightness < 0) screenBrightness = 0;
 	} else {
-		if (!fadeDelay) {
-			screenBrightness++;
-			if (screenBrightness > 31) screenBrightness = 31;
-		}
-		if (!fadeSpeed) {
-			fadeDelay++;
-			if (fadeDelay == 3) fadeDelay = 0;
-		} else {
-			fadeDelay = 0;
-		}
+		screenBrightness++;
+		if (screenBrightness > 31) screenBrightness = 31;
 	}
+
+	if (leaveTopBarIntact) {
+		if (controlTopBright) SetBrightness(0, 0);
+		if (controlBottomBright && !ms().macroMode) SetBrightness(1, ms().macroMode ? 0 : screenBrightness);
+		tonccpy(BG_PALETTE + 0xF6, topBarPal, 10 * 2);
+		while (REG_VCOUNT != 18);
+		if (controlTopBright) SetBrightness(0, screenBrightness);
+		tonccpy(BG_PALETTE, pagePal, 256 * 2);
+		return;
+	}
+
 	if (controlTopBright) SetBrightness(0, screenBrightness);
 	if (controlBottomBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
@@ -130,6 +121,8 @@ void pageLoad(const std::string &filename) {
 	Gif gif (filename.c_str(), false, false, true);
 	pageImage = gif.frame(0).image.imageData;
 	pageYsize = gif.frame(0).descriptor.h;
+
+	while (!screenFadedOut()) { swiWaitForVBlank(); }
 
 	/* tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
 	if (colorTable) {
@@ -149,6 +142,10 @@ void pageLoad(const std::string &filename) {
 
 	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(9*256), 174*256);
 	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+(174*256), bgGetGfxPtr(bg3Sub), 192*256);
+
+	fadeType = true; // Fade in from white
+	while (!screenFadedIn()) { swiWaitForVBlank(); }
+
 	while (dmaBusy(0) || dmaBusy(1));
 }
 

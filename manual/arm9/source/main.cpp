@@ -45,7 +45,6 @@ struct PageLink {
 };
 
 bool fadeType = false;		// false = out, true = in
-bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
 
@@ -53,7 +52,7 @@ bool controlBottomBright = true;
 // extern int bgColor2;
 extern u16* colorTable;
 
-extern void ClearBrightness();
+extern bool leaveTopBarIntact;
 
 std::vector<DirEntry> manPagesList;
 std::vector<PageLink> manPageLinks;
@@ -67,9 +66,6 @@ int pageYsize = 0;
 
 char filePath[PATH_MAX];
 
-mm_sound_effect snd_launch;
-mm_sound_effect snd_select;
-mm_sound_effect snd_stop;
 mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
@@ -149,34 +145,10 @@ void stop (void) {
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
 
-	mmLoadEffect(SFX_LAUNCH);
-	mmLoadEffect(SFX_SELECT);
-	mmLoadEffect(SFX_STOP);
 	mmLoadEffect(SFX_WRONG);
 	mmLoadEffect(SFX_BACK);
 	mmLoadEffect(SFX_SWITCH);
 
-	snd_launch = {
-		{ SFX_LAUNCH } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-	snd_select = {
-		{ SFX_SELECT } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-	snd_stop = {
-		{ SFX_STOP } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
 	snd_wrong = {
 		{ SFX_WRONG } ,			// id
 		(int)(1.0f * (1<<10)),	// rate
@@ -284,18 +256,16 @@ int manualScreen(void) {
 	std::sort(manPagesList.begin(), manPagesList.end(), [](DirEntry a, DirEntry b) { return a.name == "index.gif"; });
 
 	loadPageInfo(manPagesList[0].name.substr(0,manPagesList[0].name.length()-3) + "ini");
-	pageLoad(manPagesList[0].name);
 	topBarLoad();
 	printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 	updateText(true);
+	pageLoad(manPagesList[0].name);
 
 	int pressed = 0;
 	int held = 0;
 	int repeat = 0;
 	int currentPage = 0, returnPage = -1;
 	touchPosition touch;
-
-	fadeType = true;	// Fade in from white
 
 	while (1) {
 		do {
@@ -333,6 +303,9 @@ int manualScreen(void) {
 			pageScroll();
 		} else if (repeat & KEY_LEFT) {
 			if (currentPage > 0) {
+				leaveTopBarIntact = true;
+				fadeType = false;
+				mmEffectEx(&snd_switch);
 				pageYpos = 0;
 				currentPage--;
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
@@ -340,9 +313,13 @@ int manualScreen(void) {
 				clearText(true);
 				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 				updateText(true);
+				leaveTopBarIntact = false;
 			}
 		} else if (repeat & KEY_RIGHT) {
 			if (currentPage < (int)manPagesList.size()-1) {
+				leaveTopBarIntact = true;
+				fadeType = false;
+				mmEffectEx(&snd_switch);
 				pageYpos = 0;
 				currentPage++;
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
@@ -350,6 +327,7 @@ int manualScreen(void) {
 				clearText(true);
 				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 				updateText(true);
+				leaveTopBarIntact = false;
 			}
 		} else if (pressed & KEY_TOUCH) {
 			touchPosition touchStart = touch;
@@ -409,6 +387,9 @@ int manualScreen(void) {
 				for (uint i=0;i<manPageLinks.size();i++) {
 					if (((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
 						(((touchStart.py + pageYpos) >= manPageLinks[i].y - (ms().macroMode ? 0 : 174)) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - (ms().macroMode ? 0 : 174) + manPageLinks[i].h)))) {
+						leaveTopBarIntact = true;
+						fadeType = false;
+						mmEffectEx(&snd_switch);
 						pageYpos = 0;
 						returnPage = currentPage;
 						for (uint j=0;j<manPagesList.size();j++) {
@@ -422,6 +403,7 @@ int manualScreen(void) {
 						clearText(true);
 						printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 						updateText(true);
+						leaveTopBarIntact = false;
 					}
 				}
 			}
