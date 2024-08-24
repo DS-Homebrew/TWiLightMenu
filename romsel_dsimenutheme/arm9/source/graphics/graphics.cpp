@@ -403,6 +403,7 @@ void vBlankHandler() {
 
 	static bool updateFrame = true;
 	static bool whiteScreenPrev = whiteScreen;
+	static int currentBgPrev = currentBg;
 	static bool showSTARTborderPrev = showSTARTborder;
 	static bool displayGameIconsPrev = displayGameIcons;
 	static bool showProgressIconPrev = showProgressIcon;
@@ -413,6 +414,11 @@ void vBlankHandler() {
 
 	if (whiteScreenPrev != whiteScreen) {
 		whiteScreenPrev = whiteScreen;
+		updateFrame = true;
+	}
+
+	if (currentBgPrev != currentBg) {
+		currentBgPrev = currentBg;
 		updateFrame = true;
 	}
 
