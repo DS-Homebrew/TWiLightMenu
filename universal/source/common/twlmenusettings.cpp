@@ -398,6 +398,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
 	settingsini.SetInt("SRLOADER", "MACRO_MODE", macroMode);
 	settingsini.SetString("SRLOADER", "COLOR_MODE", colorMode);
+	settingsini.SetInt("SRLOADER", "SLEEP_MODE", sleepMode);
 	// settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	settingsini.SetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
 	settingsini.SetInt("SRLOADER", "WIFI_LED", wifiLed);
