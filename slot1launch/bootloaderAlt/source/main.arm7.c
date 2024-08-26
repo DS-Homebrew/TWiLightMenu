@@ -68,6 +68,7 @@ extern u32 twlMode;
 extern u32 twlClock;
 extern u32 twlTouch;
 extern u32 soundFreq;
+extern u32 sleepMode;
 extern u32 runCardEngine;
 
 extern bool arm9_runCardEngine;
@@ -91,6 +92,14 @@ static const u32 cheatDataEndSignature[2] = {0xCF000000, 0x00000000};
 // Module params
 static const u32 moduleParamsSignature[2] = {0xDEC00621, 0x2106C0DE};
 
+// Sleep input write
+static const u32 sleepInputWriteEndSignature1[2]     = {0x04000136, 0x027FFFA8};
+static const u32 sleepInputWriteEndSignature5[2]     = {0x04000136, 0x02FFFFA8};
+static const u32 sleepInputWriteSignature[1]         = {0x13A04902};
+static const u16 sleepInputWriteBeqSignatureThumb[1] = {0xD000};
+
+static module_params_t* moduleParams;
+
 u32* findModuleParamsOffset(const tNDSHeader* ndsHeader) {
 	//dbg_printf("findModuleParamsOffset:\n");
 
@@ -99,6 +108,62 @@ u32* findModuleParamsOffset(const tNDSHeader* ndsHeader) {
 			moduleParamsSignature, 2
 		);
 	return moduleParamsOffset;
+}
+
+u32* findSleepInputWriteOffset(const tNDSHeader* ndsHeader, const module_params_t* moduleParams) {
+	// dbg_printf("findSleepInputWriteOffset:\n");
+
+	u32* offset = NULL;
+	u32* endOffset = findOffset(
+		(u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize,
+		(moduleParams->sdk_version > 0x5000000) ? sleepInputWriteEndSignature5 : sleepInputWriteEndSignature1, 2
+	);
+	if (endOffset) {
+		offset = findOffsetBackwards(
+			endOffset, 0x38,
+			sleepInputWriteSignature, 1
+		);
+		if (!offset) {
+			u32 thumbOffset = (u32)findOffsetBackwardsThumb(
+				(u16*)endOffset, 0x30,
+				sleepInputWriteBeqSignatureThumb, 1
+			);
+			if (thumbOffset) {
+				thumbOffset += 2;
+				offset = (u32*)thumbOffset;
+			}
+		}
+	}
+	/* if (offset) {
+		dbg_printf("Sleep input write found\n");
+	} else {
+		dbg_printf("Sleep input write not found\n");
+	}
+
+	dbg_printf("\n"); */
+	return offset;
+}
+
+static void patchSleepInputWrite(const tNDSHeader* ndsHeader, const module_params_t* moduleParams) {
+	if (sleepMode) {
+		return;
+	}
+
+	u32* offset = findSleepInputWriteOffset(ndsHeader, moduleParams);
+	if (!offset) {
+		return;
+	}
+
+	if (*offset == 0x13A04902) {
+		*offset = 0xE1A00000; // nop
+	} else {
+		u16* offsetThumb = (u16*)offset;
+		*offsetThumb = 0x46C0; // nop
+	}
+
+	/* dbg_printf("Sleep input write location : ");
+	dbg_hexa((u32)offset);
+	dbg_printf("\n\n"); */
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -513,6 +578,9 @@ int arm7_loadBinary (void) {
 	cardRead(ndsHeader->arm9romOffset, (u32*)ndsHeader->arm9destination, ndsHeader->arm9binarySize);
 	//ensureBinaryDecompressed(ndsHeader, (module_params_t*) findModuleParamsOffset(ndsHeader));
 	cardRead(ndsHeader->arm7romOffset, (u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize);
+
+	moduleParams = (module_params_t*)findModuleParamsOffset(ndsHeader);
+
 	return ERR_NONE;
 }
 
@@ -669,6 +737,8 @@ void arm7_main (void) {
 	if (my_isDSiMode() && *(u32*)(NDS_HEAD+0xC) == 0x50524255) {
 		fixDSBrowser();
 	}
+
+	patchSleepInputWrite(ndsHeader, moduleParams);
 
 	if (memcmp((char*)NDS_HEAD+0xC, "NTR", 3) == 0		// Download Play ROMs
 	 || memcmp((char*)NDS_HEAD+0xC, "ASM", 3) == 0		// Super Mario 64 DS

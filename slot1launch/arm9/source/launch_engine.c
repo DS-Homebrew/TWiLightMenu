@@ -35,7 +35,8 @@
 #define BOOSTVRAM_OFFSET 28
 #define TWLTOUCH_OFFSET 32
 #define SOUNDFREQ_OFFSET 36
-#define RUNCARDENGINE_OFFSET 40
+#define SLEEPMODE_OFFSET 40
+#define RUNCARDENGINE_OFFSET 44
 
 extern bool scfgUnlock;
 extern int TWLMODE;
@@ -43,6 +44,7 @@ extern bool TWLCLK;
 extern int TWLVRAM;
 extern bool TWLTOUCH;
 extern bool soundFreq;
+extern bool sleepMode;
 extern bool runCardEngine;
 extern bool EnableSD;
 extern int language;
@@ -75,6 +77,7 @@ void runLaunchEngine (bool altBootloader, bool isDSBrowser)
 	toncset32 ((u8*)LCDC_BANK_D+BOOSTVRAM_OFFSET, TWLVRAM, 1);
 	toncset32 ((u8*)LCDC_BANK_D+TWLTOUCH_OFFSET, TWLTOUCH, 1);
 	toncset32 ((u8*)LCDC_BANK_D+SOUNDFREQ_OFFSET, soundFreq, 1);
+	toncset32 ((u8*)LCDC_BANK_D+SLEEPMODE_OFFSET, sleepMode, 1);
 	toncset32 ((u8*)LCDC_BANK_D+RUNCARDENGINE_OFFSET, runCardEngine, 1);
 
 	nocashMessage("irqDisable(IRQ_ALL);");
