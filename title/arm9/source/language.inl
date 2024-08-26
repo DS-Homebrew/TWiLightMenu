@@ -1,5 +1,5 @@
 // Console lid
-STRING(CONSOLE_LID_CLOSED, "Has the console lid been closed?")
+STRING(CONSOLE_LID_CLOSED, "Was the console lid closed?")
 STRING(CONSOLE_LID_OPEN, "Is the console lid open?")
 
 // Settings reset
