@@ -1448,7 +1448,7 @@ void consoleLidPrompt(void) {
 	} while (!(pressed & (KEY_A | KEY_B)));
 
 	const bool prevSetting = ms().sleepMode;
-	ms().sleepMode = ms().sleepMode ? (pressed & KEY_B) : (pressed & KEY_A);
+	ms().sleepMode = (pressed & KEY_A);
 	if (ms().sleepMode != prevSetting) {
 		ms().saveSettings();
 		bs().saveSettings();
