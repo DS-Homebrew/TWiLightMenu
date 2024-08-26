@@ -187,6 +187,7 @@ u16* colorTable = NULL;
 
 bool displayIcons = false;
 int iconsToDisplay = 0;
+int smallIconsToDisplay = 0;
 static bool iconScaleEnabled = false;
 static int iconScaleWait = 0;
 static int iconScale = 0;
@@ -308,13 +309,16 @@ void resetIconScale(void) {
 
 ITCM_CODE void updateSelectionBar(void) {
 	static int prevCurPos = 20;
-	static int prevViewMode = 3;
+	static int prevViewMode = 4;
 	if (prevCurPos == cursorPosOnScreen && prevViewMode == ms().ak_viewMode) {
 		return;
 	}
 	swiWaitForVBlank();
 	if (prevCurPos != 20) {
-		const int h = (prevViewMode != TWLSettings::EViewList) ? 38 : 15;
+		int h = (prevViewMode != TWLSettings::EViewList) ? 38 : 15;
+		if (prevViewMode == TWLSettings::EViewSmallIcon) {
+			h = 18;
+		}
 		// const int hl = h-1;
 		const int hl = h;
 		for (int y = 19+(prevCurPos*h); y <= 19+hl+(prevCurPos*h); y++) {
@@ -325,7 +329,10 @@ ITCM_CODE void updateSelectionBar(void) {
 		}
 	}
 
-	const int h = (ms().ak_viewMode != TWLSettings::EViewList) ? 38 : 15;
+	int h = (ms().ak_viewMode != TWLSettings::EViewList) ? 38 : 15;
+	if (ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
+		h = 18;
+	}
 	const int hl = h-1;
 	bool color2 = false;
 	if (selectionBarOpacity == 100) {
@@ -355,7 +362,7 @@ ITCM_CODE void updateSelectionBar(void) {
 		}
 	}
 
-	if (selectionBarBg[0] && (ms().ak_viewMode != TWLSettings::EViewList)) {
+	if (selectionBarBg[0] && (ms().ak_viewMode != TWLSettings::EViewList && ms().ak_viewMode != TWLSettings::EViewSmallIcon)) {
 		int src = 0;
 
 		for (int y = 19+(cursorPosOnScreen*h); y < 19+(cursorPosOnScreen*h)+selectionBarBgH; y++) {
@@ -1582,6 +1589,7 @@ void vBlankHandler()
 
 	static bool showdialogboxPrev = showdialogbox;
 	static int dialogboxHeightPrev = dialogboxHeight;
+	static bool displayIconsPrev = displayIcons;
 
 	if (showdialogboxPrev != showdialogbox) {
 		showdialogboxPrev = showdialogbox;
@@ -1593,47 +1601,61 @@ void vBlankHandler()
 		updateFrame = true;
 	}
 
-	if (displayIcons && iconsToDisplay > 0) {
-		// Playback animated icons
-		for (int i = 0; i < iconsToDisplay; i++) {
-			if (bnriconisDSi[i] && playBannerSequence(i)) {
-				updateFrame = true;
-			}
-		}
+	if (displayIconsPrev != displayIcons) {
+		displayIconsPrev = displayIcons;
+		updateFrame = true;
+	}
 
-		if (iconScaleEnabled) {
-			if (!iconScaleDelay) {
-				if (iconScaleLarge) {
-					iconScale += 110;
-					if (iconScale == 110) {
-						iconShift = 1;
-					} else if (iconScale == 330) {
-						iconShift = 2;
-					} else if (iconScale == 550) {
-						iconShift = 3;
-					} else if (iconScale == 660) {
-						iconScaleLarge = false;
-					}
-				} else {
-					iconScale -= 110;
-					if (iconScale == 330) {
-						iconShift = 2;
-					} else if (iconScale == 110) {
-						iconShift = 1;
-					} else if (iconScale == 0) {
-						iconShift = 0;
-						iconScaleLarge = true;
-					}
+	if (displayIcons) {
+		if (ms().ak_viewMode == TWLSettings::EViewSmallIcon && smallIconsToDisplay > 0) {
+			// Playback animated icons
+			for (int i = 0; i < smallIconsToDisplay; i++) {
+				if (bnriconisDSi[i] && playBannerSequence(i)) {
+					updateFrame = true;
 				}
-				updateFrame = true;
 			}
-			if (iconScaleDelay++ == 2) {
-				iconScaleDelay = 0;
+		} else if (ms().ak_viewMode != TWLSettings::EViewList && iconsToDisplay > 0) {
+			// Playback animated icons
+			for (int i = 0; i < iconsToDisplay; i++) {
+				if (bnriconisDSi[i] && playBannerSequence(i)) {
+					updateFrame = true;
+				}
 			}
-		} else if (ms().ak_zoomIcons) {
-			if (iconScaleWait++ == 60) {
-				iconScaleWait = 0;
-				iconScaleEnabled = true;
+
+			if (iconScaleEnabled) {
+				if (!iconScaleDelay) {
+					if (iconScaleLarge) {
+						iconScale += 110;
+						if (iconScale == 110) {
+							iconShift = 1;
+						} else if (iconScale == 330) {
+							iconShift = 2;
+						} else if (iconScale == 550) {
+							iconShift = 3;
+						} else if (iconScale == 660) {
+							iconScaleLarge = false;
+						}
+					} else {
+						iconScale -= 110;
+						if (iconScale == 330) {
+							iconShift = 2;
+						} else if (iconScale == 110) {
+							iconShift = 1;
+						} else if (iconScale == 0) {
+							iconShift = 0;
+							iconScaleLarge = true;
+						}
+					}
+					updateFrame = true;
+				}
+				if (iconScaleDelay++ == 2) {
+					iconScaleDelay = 0;
+				}
+			} else if (ms().ak_zoomIcons) {
+				if (iconScaleWait++ == 60) {
+					iconScaleWait = 0;
+					iconScaleEnabled = true;
+				}
 			}
 		}
 	}
@@ -1652,17 +1674,23 @@ void vBlankHandler()
 		// glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 		glColor(RGB15(31, 31, 31));
 
-		if (displayIcons && iconsToDisplay > 0) {
-			for (int i = 0; i < iconsToDisplay; i++) {
-				/* if (cursorPosOnScreen == i) {
-					glBoxFilled(2, 19+(i*38), 253, 19+37+(i*38), selectionBarColor1); // Draw selection bar
-				} */
-				if ((i == cursorPosOnScreen) && (iconScale > 0)) {
-					drawIcon(i, 5-iconShift, 22+(i*38)-iconShift, (1 << 12)+iconScale);
-				} else {
-					drawIcon(i, 5, 22+(i*38), 0);
+		if (displayIcons) {
+			if (ms().ak_viewMode == TWLSettings::EViewSmallIcon && smallIconsToDisplay > 0) {
+				for (int i = 0; i < smallIconsToDisplay; i++) {
+					drawIcon(i, 5+16, (20+(i*18))+16, -0x800);
 				}
-				// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
+			} else if (ms().ak_viewMode != TWLSettings::EViewList && iconsToDisplay > 0) {
+				for (int i = 0; i < iconsToDisplay; i++) {
+					/* if (cursorPosOnScreen == i) {
+						glBoxFilled(2, 19+(i*38), 253, 19+37+(i*38), selectionBarColor1); // Draw selection bar
+					} */
+					if ((i == cursorPosOnScreen) && (iconScale > 0)) {
+						drawIcon(i, 5-iconShift, 22+(i*38)-iconShift, (1 << 12)+iconScale);
+					} else {
+						drawIcon(i, 5, 22+(i*38), 0);
+					}
+					// if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
+				}
 			}
 		}
 		if (showdialogbox) {

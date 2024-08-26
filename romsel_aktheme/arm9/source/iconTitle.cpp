@@ -77,18 +77,18 @@ extern u16* colorTable;
 
 extern int cursorPosOnScreen;
 
-static int iconTexID[4];
+static int iconTexID[8];
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
-static bool infoFound[4] = {false};
-static const char16_t *cachedTitle[4];
+static bool infoFound[8] = {false};
+static const char16_t *cachedTitle[8];
 static const char16_t *blankTitle = u"";
 
-static u32 arm9StartSig[4];
+static u32 arm9StartSig[8];
 
-static glImage ndsIcon[4][(32 / 32) * (256 / 32)];
-static u16 _paletteCache[4][16];
+static glImage ndsIcon[8][(32 / 32) * (256 / 32)];
+static u16 _paletteCache[8][16];
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -96,8 +96,9 @@ u8 *tilesModified;
 
 static inline void writeBannerText(const int num, std::string_view text, const bool highlighted)
 {
-	const int xPos = BOX_PX;
-	const int yPos = BOX_PY + (num * 38);
+	const int ySpacing = (ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? 18 : 38;
+	const int xPos = (ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? BOX_PX_SMALL : BOX_PX;
+	const int yPos = ((ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? BOX_PY_SMALL : BOX_PY) + (num * ySpacing);
 	const FontPalette bannerFontPalette = highlighted ? FontPalette::mainTextHilight : FontPalette::mainText;
 
 	printSmall(false, xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::left, bannerFontPalette);
@@ -105,8 +106,9 @@ static inline void writeBannerText(const int num, std::string_view text, const b
 
 static inline void writeBannerText(const int num, std::u16string_view text, const bool highlighted)
 {
-	const int xPos = BOX_PX;
-	const int yPos = BOX_PY + (num * 38);
+	const int ySpacing = (ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? 18 : 38;
+	const int xPos = (ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? BOX_PX_SMALL : BOX_PX;
+	const int yPos = ((ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? BOX_PY_SMALL : BOX_PY) + (num * ySpacing);
 	const FontPalette bannerFontPalette = highlighted ? FontPalette::mainTextHilight : FontPalette::mainText;
 
 	printSmall(false, xPos, yPos - (calcSmallFontHeight(text) / 2), text, Alignment::left, bannerFontPalette);
@@ -114,8 +116,7 @@ static inline void writeBannerText(const int num, std::u16string_view text, cons
 
 static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 {
-	int PY = 32;
-	if (twl) PY = 32*8;
+	const int PY = twl ? 32*8 : 32;
 	const int PX = 16;
 	const int TILE_SIZE_Y = 8;
 	const int TILE_SIZE_X = 4;
@@ -877,7 +878,15 @@ void iconTitleInit()
 }
 
 void drawIcon(int num, int Xpos, int Ypos, s32 scale) {
-	(scale == 0) ? glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]) : glSpriteScale(Xpos, Ypos, scale, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]);
+	if (Xpos == 5+16) {
+		int bannerFlipFix = bannerFlip[num];
+		bannerFlipFix ^= GL_FLIP_H;
+		bannerFlipFix ^= GL_FLIP_V;
+
+		glSpriteScale(Xpos, Ypos, scale, bannerFlipFix, &ndsIcon[num][bnriconframenumY[num] & 31]);
+	} else {
+		(scale == 0) ? glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]) : glSpriteScale(Xpos, Ypos, scale, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]);
+	}
 	if (bnriconPalLine[num] != bnriconPalLoaded[num]) {
 		glLoadPalette(num, bnriconTile[num].dsi_palette[bnriconPalLine[num]]);
 		bnriconPalLoaded[num] = bnriconPalLine[num];
@@ -1312,6 +1321,15 @@ void getGameInfo(int num, bool isDir, const char* name)
 			currentLang--;
 		}
 
+		if (ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
+			for (int i = 0; i < 128; i++) {
+				if (ndsBanner.titles[currentLang][i] == 0x0A) {
+					// ndsBanner.titles[currentLang][i] = 0x2022; // TODO: Add spaces around the centered dot
+					ndsBanner.titles[currentLang][i] = '-';
+				}
+			}
+		}
+
 		cachedTitle[num] = (char16_t*)&ndsBanner.titles[currentLang];
 
 		infoFound[num] = true;
@@ -1477,7 +1495,7 @@ void titleUpdate(int num, bool isDir, const char* name, const bool highlighted)
 	if (isDir && (strcmp(name, "..") == 0)) {
 		// text
 		writeBannerText(num, "Back", highlighted);
-	} else if (!isDir && (ms().ak_viewMode == TWLSettings::EViewInternal) && (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound[num])) {
+	} else if (!isDir && (ms().ak_viewMode == TWLSettings::EViewInternal || ms().ak_viewMode == TWLSettings::EViewSmallIcon) && (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound[num])) {
 		// this is an nds/app file!
 		// or a file with custom banner text
 		if (infoFound[num]) {

@@ -550,40 +550,40 @@ int checkRomAP(FILE *ndsFile)
 	return 0;
 }
 
-sNDSBannerExt bnriconTile[4];
+sNDSBannerExt bnriconTile[8];
 
 // bnriconframeseq[]
-static u16 bnriconframeseq[4][64] = {0x0000};
+static u16 bnriconframeseq[8][64] = {0x0000};
 
 // bnriconframenum[]
-int bnriconPalLoaded[4] = {0};
-int bnriconPalLine[4] = {0};
-int bnriconPalLinePrev[4] = {0};
-int bnriconframenumY[4] = {0};
-int bnriconframenumYPrev[4] = {0};
-int bannerFlip[4] = {GL_FLIP_NONE};
-int bannerFlipPrev[4] = {GL_FLIP_NONE};
+int bnriconPalLoaded[8] = {0};
+int bnriconPalLine[8] = {0};
+int bnriconPalLinePrev[8] = {0};
+int bnriconframenumY[8] = {0};
+int bnriconframenumYPrev[8] = {0};
+int bannerFlip[8] = {GL_FLIP_NONE};
+int bannerFlipPrev[8] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
-bool isTwlm[4] = {false};
-bool isDirectory[4] = {false};
-int bnrRomType[4] = {0};
-bool bnriconisDSi[4] = {false};
-int bnrWirelessIcon[4] = {0}; // 0 = None, 1 = Local, 2 = WiFi
-char gameTid[4][5] = {0};
-u8 romVersion[4] = {0};
-u8 romUnitCode[4] = {0};
-u32 a7mbk6[4] = {0};
-bool isDSiWare[4] = {false};
-bool isHomebrew[4] = {false};
-bool isModernHomebrew[4] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header
-bool requiresRamDisk[4] = {false};
-int requiresDonorRom[4] = {0};
-int customIcon[4] = {0};					// 0 = None, 1 = png, 2 = banner.bin, -1 = error
+bool isTwlm[8] = {false};
+bool isDirectory[8] = {false};
+int bnrRomType[8] = {0};
+bool bnriconisDSi[8] = {false};
+int bnrWirelessIcon[8] = {0}; // 0 = None, 1 = Local, 2 = WiFi
+char gameTid[8][5] = {0};
+u8 romVersion[8] = {0};
+u8 romUnitCode[8] = {0};
+u32 a7mbk6[8] = {0};
+bool isDSiWare[8] = {false};
+bool isHomebrew[8] = {false};
+bool isModernHomebrew[8] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header
+bool requiresRamDisk[8] = {false};
+int requiresDonorRom[8] = {0};
+int customIcon[8] = {0};					// 0 = None, 1 = png, 2 = banner.bin, -1 = error
 char customIconPath[256];
 
-static u16 bannerDelayNum[4] = {0x0000};
-int currentbnriconframeseq[4] = {0};
+static u16 bannerDelayNum[8] = {0x0000};
+int currentbnriconframeseq[8] = {0};
 
 /**
  * Get banner sequence from banner file.

@@ -30,7 +30,8 @@ public:
 	{
 		EViewList = 0,
 		EViewIcon = 1,
-		EViewInternal = 2
+		EViewInternal = 2,
+		EViewSmallIcon = 3
 	};
 
 	// Do not reorder these, just add to the end

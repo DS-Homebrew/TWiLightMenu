@@ -1,11 +1,13 @@
 #ifndef ICONTITLE_H
 #define ICONTITLE_H
 
-#define NDS_ICON_BANK_COUNT 4
+#define NDS_ICON_BANK_COUNT 8
 #define BAD_ICON_IDX(i) (i < 0 || i > (NDS_ICON_BANK_COUNT - 1))
 
 #define BOX_PX				40
 #define BOX_PY				37
+#define BOX_PX_SMALL		24
+#define BOX_PY_SMALL		27
 
 void iconTitleInit();
 
