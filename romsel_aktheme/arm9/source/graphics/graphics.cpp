@@ -1677,7 +1677,7 @@ void vBlankHandler()
 		if (displayIcons) {
 			if (ms().ak_viewMode == TWLSettings::EViewSmallIcon && smallIconsToDisplay > 0) {
 				for (int i = 0; i < smallIconsToDisplay; i++) {
-					drawIcon(i, 5+16, (20+(i*18))+16, -0x800);
+					drawIcon(i, 5, (20+(i*18)), (1 << 11));
 				}
 			} else if (ms().ak_viewMode != TWLSettings::EViewList && iconsToDisplay > 0) {
 				for (int i = 0; i < iconsToDisplay; i++) {

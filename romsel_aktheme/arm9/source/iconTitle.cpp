@@ -878,15 +878,7 @@ void iconTitleInit()
 }
 
 void drawIcon(int num, int Xpos, int Ypos, s32 scale) {
-	if (Xpos == 5+16) {
-		int bannerFlipFix = bannerFlip[num];
-		bannerFlipFix ^= GL_FLIP_H;
-		bannerFlipFix ^= GL_FLIP_V;
-
-		glSpriteScale(Xpos, Ypos, scale, bannerFlipFix, &ndsIcon[num][bnriconframenumY[num] & 31]);
-	} else {
-		(scale == 0) ? glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]) : glSpriteScale(Xpos, Ypos, scale, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]);
-	}
+	(scale == 0) ? glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]) : glSpriteScale(Xpos, Ypos, scale, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]);
 	if (bnriconPalLine[num] != bnriconPalLoaded[num]) {
 		glLoadPalette(num, bnriconTile[num].dsi_palette[bnriconPalLine[num]]);
 		bnriconPalLoaded[num] = bnriconPalLine[num];
