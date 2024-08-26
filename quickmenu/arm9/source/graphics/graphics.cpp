@@ -755,14 +755,6 @@ void vBlankHandler()
 				
 				drawCursorRect(std::roundf(cursorTL), std::roundf(cursorBL), std::roundf(cursorTR), std::roundf(cursorBR));
 			// }
-
-
-			if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
-				reloadIconPalettes();
-				vblankRefreshCounter = 0;
-			} else {
-				vblankRefreshCounter++;
-			}
 		}
 		/*if (showdialogbox) {
 			glBoxFilled(15, 79, 241, 129+(dialogboxHeight*8), RGB15(0, 0, 0));
@@ -772,6 +764,15 @@ void vBlankHandler()
 	  }
 	  glEnd2D();
 	  GFX_FLUSH = 0;
+	}
+
+	if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
+		if (!whiteScreen && startMenu) {
+			reloadIconPalettes();
+		}
+		vblankRefreshCounter = 0;
+	} else {
+		vblankRefreshCounter++;
 	}
 }
 

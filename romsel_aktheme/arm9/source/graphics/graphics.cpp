@@ -1699,18 +1699,18 @@ void vBlankHandler()
 			glBoxFilled(16, 88, 240, 120+(dialogboxHeight*12), formBodyColor);
 		}
 
-		if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
-			if (!showdialogbox) {
-				reloadIconPalettes();
-			}
-			vblankRefreshCounter = 0;
-		} else {
-			vblankRefreshCounter++;
-		}
-
 		glEnd2D();
 		GFX_FLUSH = 0;
 		updateFrame = false;
+	}
+
+	if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
+		if (!showdialogbox) {
+			reloadIconPalettes();
+		}
+		vblankRefreshCounter = 0;
+	} else {
+		vblankRefreshCounter++;
 	}
 
 	if (doubleBuffer) {

@@ -1193,21 +1193,22 @@ void vBlankHandler() {
 			}
 		}
 
-		if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
-			if (showdialogbox && dbox_Ypos == -192) {
-				// Reload the dialog box palettes here...
-				reloadDboxPalette();
-			} else if (!showdialogbox) {
-				reloadIconPalettes();
-			}
-			vblankRefreshCounter = 0;
-		} else {
-			vblankRefreshCounter++;
-		}
 		//}
 		glEnd2D();
 		GFX_FLUSH = 0;
 		updateFrame = false;
+	}
+
+	if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
+		if (showdialogbox && dbox_Ypos == -192) {
+			// Reload the dialog box palettes here...
+			reloadDboxPalette();
+		} else if (!showdialogbox) {
+			reloadIconPalettes();
+		}
+		vblankRefreshCounter = 0;
+	} else {
+		vblankRefreshCounter++;
 	}
 
 	if (boxArtColorDeband) {
