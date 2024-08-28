@@ -226,6 +226,12 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					backFound = true;
 					backPos = file_count;
 					file_count++;
+
+					iconsToDisplay++;
+					if (iconsToDisplay > 4) iconsToDisplay = 4;
+					smallIconsToDisplay++;
+					if (smallIconsToDisplay > 8) smallIconsToDisplay = 8;
+
 					fileStartPos++;
 				}
 				emplaceBackDirContent =
