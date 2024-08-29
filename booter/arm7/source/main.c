@@ -80,8 +80,9 @@ int main() {
 		}
 	}
 
-	*(vu16*)0x04004700 &= ~BIT(15); // Runs before sound frequency change
+	*(vu16*)0x04004700 &= ~BIT(15); // Disable sound output: Runs before sound frequency change
 	*(vu16*)0x04004700 |= BIT(13);	// Set 48khz sound/mic frequency
+	*(vu16*)0x04004700 |= BIT(15); // Enable sound output
 
 	// clear sound registers
 	dmaFillWords(0, (void*)0x04000400, 0x100);
