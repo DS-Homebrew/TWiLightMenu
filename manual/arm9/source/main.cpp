@@ -121,7 +121,7 @@ void loadPageInfo(std::string pagePath) {
 		BG_PALETTE_SUB[0xF7] = colorTable[BG_PALETTE_SUB[0xF7]];
 	} */
 
-	for (int i=1;true;i++) {
+	for (int i=0;true;i++) {
 		std::string link = "LINK" + std::to_string(i);
 		if (pageIni.GetString(link,"DEST","NONE") == "NONE")
 			break;
