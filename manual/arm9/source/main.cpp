@@ -285,6 +285,9 @@ int manualScreen(void) {
 
 		if (pressed & KEY_B) {
 			if (returnPage != -1) {
+				leaveTopBarIntact = true;
+				fadeType = false;
+				mmEffectEx(&snd_back);
 				currentPage = returnPage;
 				returnPage = -1;
 				pageYpos = 0;
@@ -293,6 +296,9 @@ int manualScreen(void) {
 				clearText(true);
 				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
 				updateText(true);
+				leaveTopBarIntact = false;
+			} else {
+				mmEffectEx(&snd_wrong);
 			}
 		} else if (held & KEY_UP) {
 			pageYpos -= 4;
