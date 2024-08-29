@@ -1016,8 +1016,9 @@ void arm7_main (void) {
 	my_readUserSettings(ndsHeader); // Header has to be loaded first
 
 	if (my_isDSiMode()) {
-		*(vu16*)0x4004700 &= ~BIT(15); // Runs before sound frequency change
+		*(vu16*)0x4004700 &= ~BIT(15); // Disable sound output: Runs before sound frequency change
 		*(vu16*)0x4004700 = (soundFreq ? 0xC00F : 0x800F);
+		*(vu16*)0x4004700 |= BIT(15); // Enable sound output
 
 		if (dsiModeConfirmed) {
 			*(u32*)0x3FFFFC8 = 0x7884;	// Fix sound pitch table for DSi mode (works with SDK5 binaries)

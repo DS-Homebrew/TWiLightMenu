@@ -723,8 +723,9 @@ void arm7_main (void) {
 	}
 	
 	if (my_isDSiMode()) {
-		*(vu16*)0x4004700 &= ~BIT(15); // Runs before sound frequency change
+		*(vu16*)0x4004700 &= ~BIT(15); // Disable sound output: Runs before sound frequency change
 		*(vu16*)0x4004700 = (soundFreq ? 0xC00F : 0x800F);
+		*(vu16*)0x4004700 |= BIT(15); // Enable sound output
 
 		twlTouch ? DSiTouchscreenMode() : NDSTouchscreenMode();
 		*(vu16*)0x4000500 = 0x807F;
