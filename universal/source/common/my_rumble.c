@@ -34,7 +34,7 @@ bool my_isRumbleInserted(void) {
 //---------------------------------------------------------------------------------
 	//sysSetCartOwner(BUS_OWNER_ARM9);
 	// First, make sure DLDI is Slot-1
-	if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || *(u16*)0x020000C0 != 0 || *(vu16*)0x08240000 == 1) {
+	if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || *(u16*)0x020000C0 != 0 || *(vu16*)0x08240000 == 1 || GBA_BUS[0] == 0xFFFE || GBA_BUS[1] == 0xFFFF) {
 		return false;
 	}
 	// Then, check for 0x96 to see if it's a GBA game or flashcart
@@ -45,15 +45,9 @@ bool my_isRumbleInserted(void) {
 	} else {
 		rumbleType = MY_RUMBLE;
 
-		// Check for DS Phat Rumble Pak
+		// Check for DS Phat or Lite Rumble Pak
 		for (int i = 0; i < 0xFFF; i++) {
-			if (GBA_BUS[i] != 0xFFFD) {
-				return true;
-			}
-		}
-		// Check for DS Lite Rumble Pak
-		for (int i = 0; i < 0xFFF; i++) {
-			if (GBA_BUS[i] != 0xFDFF) {
+			if (GBA_BUS[i] != 0xFFFD && GBA_BUS[i] != 0xFDFF) {
 				return true;
 			}
 		}
