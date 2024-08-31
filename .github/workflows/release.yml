@@ -65,14 +65,10 @@ jobs:
           curl -LO https://github.com/DS-Homebrew/nds-bootstrap/releases/latest/download/nds-bootstrap.7z
           7z x nds-bootstrap.7z
           mv nds-bootstrap.* ..
-          curl -LO https://github.com/DS-Homebrew/nds-bootstrap-extras/raw/main/preLoadSettings/preLoadSettingsDSi.pck
-          curl -LO https://github.com/DS-Homebrew/nds-bootstrap-extras/raw/main/preLoadSettings/preLoadSettings3DS.pck
           cd ..
           mv nds-bootstrap/release-bootstrap.ver 7zfile/_nds/
           mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
-          mv nds-bootstrap/preLoadSettingsDSi.pck 7zfile/_nds/nds-bootstrap/
-          mv nds-bootstrap/preLoadSettings3DS.pck 7zfile/_nds/nds-bootstrap/
 
           # Emulators
           mkdir -p 7zfile/_nds/TWiLightMenu/emulators
