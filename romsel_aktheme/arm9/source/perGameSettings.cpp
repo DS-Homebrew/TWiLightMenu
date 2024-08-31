@@ -470,8 +470,8 @@ void perGameSettings (std::string filename) {
 		}
 	}
 
-	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BC0000 : 0xBC0000);
-	u32 romSizeLimitTwl = (ms().consoleModel > 0 ? 0x1000000 : 0);
+	const u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BC0000 : 0xBC0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? 0x78000 : 0);
+	const u32 romSizeLimitTwl = (ms().consoleModel > 0 ? 0x1000000 : 0);
 
 	extern bool dsiWareCompatibleB4DS(void);
 	bool showPerGameSettings = (bnrRomType[cursorPosOnScreen] == 0 && !isDSiWare[cursorPosOnScreen]);

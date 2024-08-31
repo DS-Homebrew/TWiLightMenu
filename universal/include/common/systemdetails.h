@@ -20,6 +20,7 @@ public:
 	};
 
 	bool dsiWramAccess() { return _dsiWramAccess; }
+	bool dsiWramMirrored() { return _dsiWramMirrored; }
 	bool arm7SCFGLocked() { return _arm7SCFGLocked; }
 	bool isRunFromSD() { return _isRunFromSD; }
 	bool isRegularDS() { return _isRegularDS; }
@@ -37,6 +38,7 @@ public:
 
 private:
 	bool _dsiWramAccess;
+	bool _dsiWramMirrored;
 	bool _arm7SCFGLocked;
 	bool _isRunFromSD;
 	bool _isRegularDS;
