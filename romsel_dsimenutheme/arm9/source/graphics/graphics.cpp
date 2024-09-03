@@ -403,15 +403,22 @@ void vBlankHandler() {
 
 	static bool updateFrame = true;
 	static bool whiteScreenPrev = whiteScreen;
+	static int currentBgPrev = currentBg;
 	static bool showSTARTborderPrev = showSTARTborder;
 	static bool displayGameIconsPrev = displayGameIcons;
 	static bool showProgressIconPrev = showProgressIcon;
 	static bool showProgressBarPrev = showProgressBar;
 	static int progressBarLengthPrev = progressBarLength;
 	static bool dbox_showIconPrev = dbox_showIcon;
+	static int movingAppYposPrev = movingAppYpos;
 
 	if (whiteScreenPrev != whiteScreen) {
 		whiteScreenPrev = whiteScreen;
+		updateFrame = true;
+	}
+
+	if (currentBgPrev != currentBg) {
+		currentBgPrev = currentBg;
 		updateFrame = true;
 	}
 
@@ -640,6 +647,11 @@ void vBlankHandler() {
 		updateFrame = true;
 	}
 
+	if (movingAppYposPrev != movingAppYpos) {
+		movingAppYposPrev = movingAppYpos;
+		updateFrame = true;
+	}
+
 	if (applaunchprep && titleboxYmovepos < 192) {
 		titleboxYmovepos += 5;
 		updateFrame = true;
@@ -693,7 +705,7 @@ void vBlankHandler() {
 		// Playback animated icons
 		for (int i = 0; i < ((movingApp != -1) ? 41 : 40); i++) {
 			if (bnriconisDSi[i] && playBannerSequence(i) && !updateFrame) {
-				updateFrame = (displayGameIcons && (ms().theme != TWLSettings::EThemeSaturn)) ? (i >= CURPOS-2 && i <= CURPOS+2) : (i == CURPOS);
+				updateFrame = (displayGameIcons && (ms().theme != TWLSettings::EThemeSaturn)) ? ((i >= CURPOS-2 && i <= CURPOS+2) || i == 40) : (i == CURPOS);
 			}
 		}
 	}
@@ -1030,7 +1042,7 @@ void vBlankHandler() {
 					glSprite(96, 84 - titleboxYmovepos, GL_FLIP_NONE, tex().boxfullImage());
 				}
 				if (bnrSysSettings[CURPOS])
-					glSprite(84, 83 - titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
+					glSprite(96, 83 - titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
 				else
 					drawIcon(112, 96 - titleboxYmovepos, CURPOS);
 			}
@@ -1181,21 +1193,22 @@ void vBlankHandler() {
 			}
 		}
 
-		if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
-			if (showdialogbox && dbox_Ypos == -192) {
-				// Reload the dialog box palettes here...
-				reloadDboxPalette();
-			} else if (!showdialogbox) {
-				reloadIconPalettes();
-			}
-			vblankRefreshCounter = 0;
-		} else {
-			vblankRefreshCounter++;
-		}
 		//}
 		glEnd2D();
 		GFX_FLUSH = 0;
 		updateFrame = false;
+	}
+
+	if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
+		if (showdialogbox && dbox_Ypos == -192) {
+			// Reload the dialog box palettes here...
+			reloadDboxPalette();
+		} else if (!showdialogbox) {
+			reloadIconPalettes();
+		}
+		vblankRefreshCounter = 0;
+	} else {
+		vblankRefreshCounter++;
 	}
 
 	if (boxArtColorDeband) {

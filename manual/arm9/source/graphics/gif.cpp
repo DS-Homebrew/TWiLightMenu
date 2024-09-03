@@ -197,6 +197,7 @@ bool Gif::load(const char *path, bool top, bool animate, bool forceDecompress) {
 					frame.lct = std::vector<u16>(numColors);
 					for (int i = 0; i < numColors; i++) {
 						frame.lct[i] = fgetc(file) >> 3 | (fgetc(file) >> 3) << 5 | (fgetc(file) >> 3) << 10 | BIT(15);
+						_gct[i] = frame.lct[i];
 					}
 				}
 

@@ -62,6 +62,7 @@ extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 int fadeDelay = 0;
+int waitUntilFadeOut = 0;
 
 extern int colorRvalue;
 extern int colorGvalue;
@@ -80,7 +81,7 @@ float cursorTLPrev = 0.0f, cursorTRPrev = 0.0f, cursorBLPrev = 0.0f, cursorBRPre
 
 extern int spawnedtitleboxes;
 
-extern bool showCursor;
+// extern bool showCursor;
 extern bool startMenu;
 extern MenuEntry cursorPosition;
 
@@ -314,6 +315,11 @@ void batteryIconLoad() {
 	// Load full battery icon
 
 	const char* filePath = "nitro:/graphics/battery/batteryfull.png";
+	if (dsiFeatures() && ms().consoleModel < 2 && ms().powerLedColor) {
+		filePath = "nitro:/graphics/battery/batteryfullPurple.png";
+	} else if (sys().isRegularDS()) {
+		filePath = "nitro:/graphics/battery/batteryfullDS.png";
+	}
 
 	FILE* file = fopen(filePath, "rb");
 
@@ -350,6 +356,9 @@ void batteryIconLoad() {
 	// Load low battery icon
 
 	filePath = "nitro:/graphics/battery/batterylow.png";
+	if (dsiFeatures() && ms().consoleModel < 2 && ms().powerLedColor) {
+		filePath = "nitro:/graphics/battery/batteryfullPurple.png";
+	}
 
 	file = fopen(filePath, "rb");
 	if (file) {
@@ -596,15 +605,19 @@ void vBlankHandler()
 			fadeDelay = 0;
 		}
 	} else {
-		if (!fadeDelay) {
-			screenBrightness++;
-			if (screenBrightness > 31) screenBrightness = 31;
-		}
-		if (!fadeSpeed) {
-			fadeDelay++;
-			if (fadeDelay == 3) fadeDelay = 0;
+		if (fadeSpeed || waitUntilFadeOut == 15) {
+			if (!fadeDelay) {
+				screenBrightness++;
+				if (screenBrightness > 31) screenBrightness = 31;
+			}
+			if (!fadeSpeed) {
+				fadeDelay++;
+				if (fadeDelay == 3) fadeDelay = 0;
+			} else {
+				fadeDelay = 0;
+			}
 		} else {
-			fadeDelay = 0;
+			waitUntilFadeOut++;
 		}
 	}
 
@@ -612,7 +625,7 @@ void vBlankHandler()
 	static bool whiteScreenPrev = whiteScreen;
 	static bool showProgressBarPrev = showProgressBar;
 	static int progressBarLengthPrev = progressBarLength;
-	static bool showCursorPrev = showCursor;
+	// static bool showCursorPrev = showCursor;
 	static bool startMenuPrev = startMenu;
 
 	if (whiteScreenPrev != whiteScreen) {
@@ -630,10 +643,10 @@ void vBlankHandler()
 		updateFrame = true;
 	}
 
-	if (showCursorPrev != showCursor) {
+	/* if (showCursorPrev != showCursor) {
 		showCursorPrev = showCursor;
 		updateFrame = true;
-	}
+	} */
 
 	if (startMenuPrev != startMenu) {
 		startMenuPrev = startMenu;
@@ -730,7 +743,7 @@ void vBlankHandler()
 			glSprite(235, iconYpos[6], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::MANUAL));
 
 			// Draw cursor
-			if (showCursor) {
+			// if (showCursor) {
 				auto drawCursorRect = [](int x1, int y1, int x2, int y2) {
 						glSprite(x1, y1, GL_FLIP_NONE, &cursor.images[0]);
 						glSprite(x2, y1, GL_FLIP_NONE, &cursor.images[1]);
@@ -741,15 +754,7 @@ void vBlankHandler()
 				updateCursorTargetPos();
 				
 				drawCursorRect(std::roundf(cursorTL), std::roundf(cursorBL), std::roundf(cursorTR), std::roundf(cursorBR));
-			}
-
-
-			if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
-				reloadIconPalettes();
-				vblankRefreshCounter = 0;
-			} else {
-				vblankRefreshCounter++;
-			}
+			// }
 		}
 		/*if (showdialogbox) {
 			glBoxFilled(15, 79, 241, 129+(dialogboxHeight*8), RGB15(0, 0, 0));
@@ -759,6 +764,15 @@ void vBlankHandler()
 	  }
 	  glEnd2D();
 	  GFX_FLUSH = 0;
+	}
+
+	if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
+		if (!whiteScreen && startMenu) {
+			reloadIconPalettes();
+		}
+		vblankRefreshCounter = 0;
+	} else {
+		vblankRefreshCounter++;
 	}
 }
 

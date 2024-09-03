@@ -45,15 +45,14 @@ struct PageLink {
 };
 
 bool fadeType = false;		// false = out, true = in
-bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
 
-extern int bgColor1;
-extern int bgColor2;
+// extern int bgColor1;
+// extern int bgColor2;
 extern u16* colorTable;
 
-extern void ClearBrightness();
+extern bool leaveTopBarIntact;
 
 std::vector<DirEntry> manPagesList;
 std::vector<PageLink> manPageLinks;
@@ -67,9 +66,6 @@ int pageYsize = 0;
 
 char filePath[PATH_MAX];
 
-mm_sound_effect snd_launch;
-mm_sound_effect snd_select;
-mm_sound_effect snd_stop;
 mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
@@ -84,7 +80,8 @@ void loadPageList() {
 	DIR *pdir = opendir(".");
 
 	if (pdir == NULL) {
-		printSmall(false, 0, 64, "Unable to open the directory.\n", Alignment::center);
+		printSmall(true, manPageTitleX, 0, "Unable to open the directory.", Alignment::center);
+		updateText(true);
 	} else {
 
 		while (true) {
@@ -117,14 +114,14 @@ void loadPageInfo(std::string pagePath) {
 	CIniFile pageIni(pagePath);
 
 	manPageTitle = pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual");
-	toncset16(BG_PALETTE_SUB + 0xF6, pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B), 1);
+	/* toncset16(BG_PALETTE_SUB + 0xF6, pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B), 1);
 	toncset16(BG_PALETTE_SUB + 0xF7, pageIni.GetInt("INFO","BG_COLOR_2",0x77BD), 1);
 	if (colorTable) {
 		BG_PALETTE_SUB[0xF6] = colorTable[BG_PALETTE_SUB[0xF6]];
 		BG_PALETTE_SUB[0xF7] = colorTable[BG_PALETTE_SUB[0xF7]];
-	}
+	} */
 
-	for (int i=1;true;i++) {
+	for (int i=0;true;i++) {
 		std::string link = "LINK" + std::to_string(i);
 		if (pageIni.GetString(link,"DEST","NONE") == "NONE")
 			break;
@@ -148,34 +145,10 @@ void stop (void) {
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
 
-	mmLoadEffect(SFX_LAUNCH);
-	mmLoadEffect(SFX_SELECT);
-	mmLoadEffect(SFX_STOP);
 	mmLoadEffect(SFX_WRONG);
 	mmLoadEffect(SFX_BACK);
 	mmLoadEffect(SFX_SWITCH);
 
-	snd_launch = {
-		{ SFX_LAUNCH } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-	snd_select = {
-		{ SFX_SELECT } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-	snd_stop = {
-		{ SFX_STOP } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
 	snd_wrong = {
 		{ SFX_WRONG } ,			// id
 		(int)(1.0f * (1<<10)),	// rate
@@ -272,7 +245,7 @@ int manualScreen(void) {
 		manPageTitleX = 256 - manPageTitleX;
 		manPageTitleAlign = Alignment::right;
 	}
-	int ySizeSub = ms().macroMode ? 176 : 368;
+	int ySizeSub = ms().macroMode ? 174 : 366;
 
 	langInit();
 
@@ -283,17 +256,17 @@ int manualScreen(void) {
 	std::sort(manPagesList.begin(), manPagesList.end(), [](DirEntry a, DirEntry b) { return a.name == "index.gif"; });
 
 	loadPageInfo(manPagesList[0].name.substr(0,manPagesList[0].name.length()-3) + "ini");
-	pageLoad(manPagesList[0].name);
 	topBarLoad();
 	printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
+	updateText(true);
+	pageLoad(manPagesList[0].name);
 
 	int pressed = 0;
 	int held = 0;
 	int repeat = 0;
 	int currentPage = 0, returnPage = -1;
+	bool isScrolling = false;
 	touchPosition touch;
-
-	fadeType = true;	// Fade in from white
 
 	while (1) {
 		do {
@@ -312,6 +285,9 @@ int manualScreen(void) {
 
 		if (pressed & KEY_B) {
 			if (returnPage != -1) {
+				leaveTopBarIntact = true;
+				fadeType = false;
+				mmEffectEx(&snd_back);
 				currentPage = returnPage;
 				returnPage = -1;
 				pageYpos = 0;
@@ -319,32 +295,62 @@ int manualScreen(void) {
 				pageLoad(manPagesList[currentPage].name);
 				clearText(true);
 				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
+				updateText(true);
+				leaveTopBarIntact = false;
+			} else {
+				mmEffectEx(&snd_wrong);
 			}
 		} else if (held & KEY_UP) {
 			pageYpos -= 4;
-			if (pageYpos < 0) pageYpos = 0;
+			if (pageYpos < 0) {
+				if ((pressed & KEY_UP) || isScrolling) mmEffectEx(&snd_wrong);
+				pageYpos = 0;
+				isScrolling = false;
+			} else {
+				isScrolling = true;
+			}
 			pageScroll();
 		} else if (held & KEY_DOWN) {
 			pageYpos += 4;
-			if (pageYpos > pageYsize-ySizeSub) pageYpos = pageYsize-ySizeSub;
+			if (pageYpos > pageYsize-ySizeSub) {
+				if ((pressed & KEY_DOWN) || isScrolling) mmEffectEx(&snd_wrong);
+				pageYpos = pageYsize-ySizeSub;
+				isScrolling = false;
+			} else {
+				isScrolling = true;
+			}
 			pageScroll();
 		} else if (repeat & KEY_LEFT) {
 			if (currentPage > 0) {
+				leaveTopBarIntact = true;
+				fadeType = false;
+				mmEffectEx(&snd_switch);
 				pageYpos = 0;
 				currentPage--;
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
 				pageLoad(manPagesList[currentPage].name);
 				clearText(true);
 				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
+				updateText(true);
+				leaveTopBarIntact = false;
+			} else {
+				mmEffectEx(&snd_wrong);
 			}
 		} else if (repeat & KEY_RIGHT) {
 			if (currentPage < (int)manPagesList.size()-1) {
+				leaveTopBarIntact = true;
+				fadeType = false;
+				mmEffectEx(&snd_switch);
 				pageYpos = 0;
 				currentPage++;
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
 				pageLoad(manPagesList[currentPage].name);
 				clearText(true);
 				printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
+				updateText(true);
+				leaveTopBarIntact = false;
+			} else {
+				mmEffectEx(&snd_wrong);
 			}
 		} else if (pressed & KEY_TOUCH) {
 			touchPosition touchStart = touch;
@@ -403,7 +409,10 @@ int manualScreen(void) {
 			} else {
 				for (uint i=0;i<manPageLinks.size();i++) {
 					if (((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
-						(((touchStart.py + pageYpos) >= manPageLinks[i].y - (ms().macroMode ? 0 : 176)) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - (ms().macroMode ? 0 : 176) + manPageLinks[i].h)))) {
+						(((touchStart.py + pageYpos) >= manPageLinks[i].y - (ms().macroMode ? 0 : 174)) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - (ms().macroMode ? 0 : 174) + manPageLinks[i].h)))) {
+						leaveTopBarIntact = true;
+						fadeType = false;
+						mmEffectEx(&snd_switch);
 						pageYpos = 0;
 						returnPage = currentPage;
 						for (uint j=0;j<manPagesList.size();j++) {
@@ -416,6 +425,8 @@ int manualScreen(void) {
 						pageLoad(manPagesList[currentPage].name);
 						clearText(true);
 						printSmall(true, manPageTitleX, 0, manPageTitle, manPageTitleAlign);
+						updateText(true);
+						leaveTopBarIntact = false;
 					}
 				}
 			}

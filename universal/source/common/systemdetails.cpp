@@ -32,6 +32,7 @@ SystemDetails::SystemDetails()
 
 	_isRunFromSD = false;
 	_dsiWramAccess = false;
+	_dsiWramMirrored = false;
 	_arm7SCFGLocked = false;
 	_isRegularDS = true;
 	_isDSPhat = false;
@@ -49,6 +50,7 @@ SystemDetails::SystemDetails()
 		u32 wordBak = *(vu32*)0x03700000;
 		*(vu32*)0x03700000 = 0x414C5253;
 		_dsiWramAccess = *(vu32*)0x03700000 == 0x414C5253;
+		_dsiWramMirrored = (*(vu32*)0x03700000 == 0x414C5253 && *(vu32*)0x03708000 == 0x414C5253);
 		*(vu32*)0x03700000 = wordBak;
 	}
 

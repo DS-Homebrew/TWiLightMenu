@@ -178,6 +178,8 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 		int file_count = 0;
 		fileStartPos = 0;
 
+		bool backFound = false;
+		int backPos = 0;
 		while (1) {
 			bgOperations(false);
 
@@ -209,8 +211,14 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 
 			bool emplaceBackDirContent = false;
 			if (ms().showDirectories) {
+				if (!backFound && (pent->d_type == DT_DIR) && (strcmp(pent->d_name, "..") == 0)) {
+					backFound = true;
+					backPos = file_count;
+					file_count++;
+					fileStartPos++;
+				}
 				emplaceBackDirContent =
-				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
+				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "..") != 0 && pent->d_name[0] != '_'
 					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
 					|| nameEndsWith(pent->d_name, extensionList));
 			} else {
@@ -326,6 +334,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			logPrint("Custom");
 		}
 		logPrint("\n\n");
+		if (backFound) {
+			dirContents.insert(dirContents.begin(), {"..", true, backPos, false});
+		}
 		closedir(pdir);
 	}
 }
@@ -1507,8 +1518,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 						if (ms().sortMethod == TWLSettings::ESortRecent) {
 							// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
-							ms().cursorPosition[ms().secondaryDevice] = fileStartPos % 40;
-							ms().pagenum[ms().secondaryDevice] = fileStartPos / 40;
+							ms().saveCursorPosition[ms().secondaryDevice] = fileStartPos;
 						}
 					}
 

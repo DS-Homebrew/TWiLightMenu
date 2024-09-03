@@ -1416,6 +1416,52 @@ void resetSettingsPrompt(void) {
 	updateText(false);
 }
 
+void consoleLidPrompt(void) {
+	graphicsInit();
+	langInit();
+
+	fadeType = true;
+
+	Alignment align = ms().rtl() ? Alignment::right : Alignment::left;
+	int x = ms().rtl() ? 256 - 2 : 2;
+	int y = 0;
+
+	clearText();
+	if (ms().sleepMode) {
+		printLarge(false, x, 0, STR_CONSOLE_LID_CLOSED, align);
+		y = calcLargeFontHeight(STR_CONSOLE_LID_CLOSED);
+	} else {
+		printLarge(false, x, 0, STR_CONSOLE_LID_OPEN, align);
+		y = calcLargeFontHeight(STR_CONSOLE_LID_OPEN);
+	}
+
+	printSmall(false, x, y + 20, STR_A_YES, align);
+	printSmall(false, x, y + 20 + 14, STR_B_NO, align);
+
+	updateText(false);
+
+	u16 pressed = 0;
+	do {
+		swiWaitForVBlank();
+		scanKeys();
+		pressed = keysDown();
+	} while (!(pressed & (KEY_A | KEY_B)));
+
+	const bool prevSetting = ms().sleepMode;
+	ms().sleepMode = (pressed & KEY_A);
+	if (ms().sleepMode != prevSetting) {
+		ms().saveSettings();
+		bs().saveSettings();
+	}
+
+	fadeType = false;
+	for (int i = 0; i < 30; i++)
+		swiWaitForVBlank();
+
+	clearText();
+	updateText(false);
+}
+
 static bool languageNowSet = false;
 static bool regionNowSet = false;
 
@@ -2373,6 +2419,12 @@ int titleMode(void)
 		else if (dsiFeatures() && ms().gameRegion < TWLSettings::ERegionDefault) ms().gameRegion = TWLSettings::ERegionDefault;
 		runGraphicIrq();
 		regionSelect();
+	}
+
+	scanKeys();
+	if (((keysHeld() & KEY_LID) && ms().sleepMode) || (!(keysHeld() & KEY_LID) && !ms().sleepMode)) {
+		runGraphicIrq();
+		consoleLidPrompt();
 	}
 
 	if (graphicsInited) {

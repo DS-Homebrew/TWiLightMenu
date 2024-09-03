@@ -62,6 +62,7 @@
 #include "fileCopy.h"
 
 #define ENTRIES_PER_SCREEN 4
+#define ENTRIES_PER_SCREEN_SMALL 8
 #define ENTRIES_PER_SCREEN_LIST 10
 #define ENTRY_PAGE_LENGTH 10
 
@@ -78,6 +79,7 @@ extern bool startMenu;
 extern int cursorPosOnScreen;
 extern bool displayIcons;
 extern int iconsToDisplay;
+extern int smallIconsToDisplay;
 
 extern std::string startText;
 extern int startTextX;
@@ -187,6 +189,8 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	if (pdir == nullptr) {
 		iprintf("Unable to open the directory.\n");
 	} else {
+		bool backFound = false;
+		int backPos = 0;
 		while (1) {
 			bgOperations(false);
 
@@ -218,8 +222,20 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 
 			bool emplaceBackDirContent = false;
 			if (ms().showDirectories) {
+				if (!backFound && (pent->d_type == DT_DIR) && (strcmp(pent->d_name, "..") == 0)) {
+					backFound = true;
+					backPos = file_count;
+					file_count++;
+
+					iconsToDisplay++;
+					if (iconsToDisplay > 4) iconsToDisplay = 4;
+					smallIconsToDisplay++;
+					if (smallIconsToDisplay > 8) smallIconsToDisplay = 8;
+
+					fileStartPos++;
+				}
 				emplaceBackDirContent =
-				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
+				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "..") != 0 && pent->d_name[0] != '_'
 					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
 					|| nameEndsWith(pent->d_name, extensionList));
 			} else {
@@ -256,6 +272,8 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 
 				iconsToDisplay++;
 				if (iconsToDisplay > 4) iconsToDisplay = 4;
+				smallIconsToDisplay++;
+				if (smallIconsToDisplay > 8) smallIconsToDisplay = 8;
 
 				if (pent->d_type == DT_DIR)
 					fileStartPos++;
@@ -338,6 +356,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			logPrint("Custom");
 		}
 		logPrint("\n\n");
+		if (backFound) {
+			dirContents.insert(dirContents.begin(), {"..", true, backPos, false});
+		}
 		closedir(pdir);
 	}
 }
@@ -438,7 +459,8 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 	displayDiskIcon(ms().secondaryDevice);
 	int n = 0;
-	for (int i = screenOffset; i < screenOffset+4; i++) {
+	const int iconLimit = (ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? 8 : 4;
+	for (int i = screenOffset; i < screenOffset+iconLimit; i++) {
 		if (i == file_count) {
 			break;
 		}
@@ -772,7 +794,8 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 		}
 	} else {
 		int n = 0;
-		for (int i = startRow; i < startRow+4; i++) {
+		const int iconLimit = (ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? 8 : 4;
+		for (int i = startRow; i < startRow+iconLimit; i++) {
 			if (i == file_count) {
 				break;
 			}
@@ -1405,6 +1428,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 	displayIcons = false;
 	iconsToDisplay = 0;
+	smallIconsToDisplay = 0;
 
 	int pressed = 0;
 	int screenOffset = 0;
@@ -1416,6 +1440,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	displayDiskIcon(false);
 
 	int entriesPerScreen = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRIES_PER_SCREEN_LIST : ENTRIES_PER_SCREEN;
+	if (ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
+		entriesPerScreen = ENTRIES_PER_SCREEN_SMALL;
+	}
 
 	fileOffset = CURPOS;
 	cursorPosOnScreen = fileOffset;
@@ -1453,6 +1480,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	updateSelectionBar();
 
 	bool listModeSwitched = false;
+	bool refreshIcons = false;
 
 	while (true) {
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
@@ -1496,7 +1524,73 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			resetIconScale();
 		}
 		if (pressed & KEY_TOUCH) {
-			if (ms().ak_viewMode != TWLSettings::EViewList) {
+			if (ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
+				if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+19) {
+					if (cursorPosOnScreen != 0) {
+						cursorPosOnScreen = 0;
+						fileOffset = screenOffset;
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 2 && touch.py >= 19+20 && touch.py <= 19+19+20) {
+					if (cursorPosOnScreen != 1) {
+						cursorPosOnScreen = 1;
+						fileOffset = screenOffset+1;
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 3 && touch.py >= 19+(20*2) && touch.py <= 19+19+(20*2)) {
+					if (cursorPosOnScreen != 2) {
+						cursorPosOnScreen = 2;
+						fileOffset = screenOffset+2;
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 4 && touch.py >= 19+(20*3) && touch.py <= 19+19+(20*3)) {
+					if (cursorPosOnScreen != 3) {
+						cursorPosOnScreen = 3;
+						fileOffset = screenOffset+3;
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 5 && touch.py >= 19+(20*4) && touch.py <= 19+19+(20*4)) {
+					if (cursorPosOnScreen != 4) {
+						cursorPosOnScreen = 4;
+						fileOffset = screenOffset+4;
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 6 && touch.py >= 19+(20*5) && touch.py <= 19+19+(20*5)) {
+					if (cursorPosOnScreen != 5) {
+						cursorPosOnScreen = 5;
+						fileOffset = screenOffset+5;
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 7 && touch.py >= 19+(20*6) && touch.py <= 19+19+(20*6)) {
+					if (cursorPosOnScreen != 6) {
+						cursorPosOnScreen = 6;
+						fileOffset = screenOffset+6;
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				} else if (file_count >= 8 && touch.py >= 19+(20*7) && touch.py <= 19+19+(20*7)) {
+					if (cursorPosOnScreen != 7) {
+						cursorPosOnScreen = 7;
+						fileOffset = screenOffset+7;
+					} else if (touch.px >= 2 && touch.px < 2+5+32) {
+						selectionTouched = true;
+					}
+					resetIconScale();
+				}
+			} else if (ms().ak_viewMode != TWLSettings::EViewList) {
 				if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+37) {
 					if (cursorPosOnScreen != 0) {
 						cursorPosOnScreen = 0;
@@ -1614,67 +1708,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 			}
 		}
-
-		if (pressed & KEY_SELECT) {
-			listModeSwitched = (ms().ak_viewMode == TWLSettings::EViewList);
-
-			ms().ak_viewMode++;
-			if (ms().ak_viewMode > 2) ms().ak_viewMode = 0;
-
-			entriesPerScreen = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRIES_PER_SCREEN_LIST : ENTRIES_PER_SCREEN;
-			displayIcons = (ms().ak_viewMode != TWLSettings::EViewList);
-			
-			if (screenOffset > fileOffset - entriesPerScreen) screenOffset = fileOffset - entriesPerScreen;
-			if (screenOffset < fileOffset) screenOffset = fileOffset;
-			if (screenOffset > (int)dirContents.size() - entriesPerScreen) screenOffset = (int)dirContents.size() - entriesPerScreen;
-			if (screenOffset < 0) screenOffset = 0;
-			cursorPosOnScreen = fileOffset - screenOffset;
-			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
-			if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
-		}
-
-		if (fileOffset < 0) {
-			fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
-			if (file_count > entriesPerScreen) {
-				screenOffset = (file_count-1) - entriesPerScreen;
-			}
-			cursorPosOnScreen = file_count-1;
-			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
-		}
-		if (fileOffset > ((int)dirContents.size() - 1)) {
-			fileOffset = 0;		// Wrap around to top of list
-			screenOffset = 0;
-			cursorPosOnScreen = 0;
-		}
-
-		// Scroll screen if needed
-		if (fileOffset - screenOffset < (0.5 * entriesPerScreen) - 1){
-			if (screenOffset > 0) {
-				screenOffset--;
-				cursorPosOnScreen = fileOffset - screenOffset;
-				// scrollUpByOne = true;
-			}
-		} else if (fileOffset - screenOffset > (0.5 * entriesPerScreen)) {
-			if (screenOffset + entriesPerScreen < file_count) {
-				screenOffset++;
-				cursorPosOnScreen = fileOffset - screenOffset;
-				// scrollDownByOne = true;
-			}
-		}
-		if (displayIcons && (screenOffsetPrev != screenOffset || listModeSwitched)) {
-			/* if (scrollUpByOne) {
-				loadIconUp(screenOffset, dirContents);
-			} else if (scrollDownByOne) {
-				loadIconDown(screenOffset, dirContents);
-			} else { */
-				loadIcons(screenOffset, dirContents);
-			// }
-		} else {
-			refreshBanners(screenOffset, fileOffset, dirContents);
-		}
-		updateSelectionBar();
-		screenOffsetPrev = screenOffset;
-		listModeSwitched = false;
 
 		if ((pressed & KEY_A) || selectionTouched) {
 			resetIconScale();
@@ -1940,8 +1973,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 						if (ms().sortMethod == TWLSettings::ESortRecent) {
 							// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
-							CURPOS = fileStartPos % 40;
-							PAGENUM = fileStartPos / 40;
+							ms().saveCursorPosition[ms().secondaryDevice] = fileStartPos;
 						}
 
 						displayDiskIcon(false);
@@ -1955,6 +1987,72 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 			}
 		}
+
+		if (pressed & KEY_SELECT) {
+			listModeSwitched = (ms().ak_viewMode == TWLSettings::EViewList);
+
+			ms().ak_viewMode++;
+			if (ms().ak_viewMode > 3) ms().ak_viewMode = 0;
+
+			entriesPerScreen = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRIES_PER_SCREEN_LIST : ENTRIES_PER_SCREEN;
+			if (ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
+				entriesPerScreen = ENTRIES_PER_SCREEN_SMALL;
+			}
+			displayIcons = (ms().ak_viewMode != TWLSettings::EViewList);
+			refreshIcons = (ms().ak_viewMode == TWLSettings::EViewSmallIcon);
+			
+			if (screenOffset > fileOffset - entriesPerScreen) screenOffset = fileOffset - entriesPerScreen;
+			if (screenOffset < fileOffset) screenOffset = fileOffset;
+			if (screenOffset > (int)dirContents.size() - entriesPerScreen) screenOffset = (int)dirContents.size() - entriesPerScreen;
+			if (screenOffset < 0) screenOffset = 0;
+			cursorPosOnScreen = fileOffset - screenOffset;
+			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
+			if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
+		}
+
+		if (fileOffset < 0) {
+			fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
+			if (file_count > entriesPerScreen) {
+				screenOffset = (file_count-1) - entriesPerScreen;
+			}
+			cursorPosOnScreen = file_count-1;
+			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
+		}
+		if (fileOffset > ((int)dirContents.size() - 1)) {
+			fileOffset = 0;		// Wrap around to top of list
+			screenOffset = 0;
+			cursorPosOnScreen = 0;
+		}
+
+		// Scroll screen if needed
+		if (fileOffset - screenOffset < (0.5 * entriesPerScreen) - 1){
+			if (screenOffset > 0) {
+				screenOffset--;
+				cursorPosOnScreen = fileOffset - screenOffset;
+				// scrollUpByOne = true;
+			}
+		} else if (fileOffset - screenOffset > (0.5 * entriesPerScreen)) {
+			if (screenOffset + entriesPerScreen < file_count) {
+				screenOffset++;
+				cursorPosOnScreen = fileOffset - screenOffset;
+				// scrollDownByOne = true;
+			}
+		}
+		if (displayIcons && (screenOffsetPrev != screenOffset || listModeSwitched || refreshIcons)) {
+			/* if (scrollUpByOne) {
+				loadIconUp(screenOffset, dirContents);
+			} else if (scrollDownByOne) {
+				loadIconDown(screenOffset, dirContents);
+			} else { */
+				loadIcons(screenOffset, dirContents);
+			// }
+		} else {
+			refreshBanners(screenOffset, fileOffset, dirContents);
+		}
+		updateSelectionBar();
+		screenOffsetPrev = screenOffset;
+		listModeSwitched = false;
+		refreshIcons = false;
 
 		if ((pressed & KEY_R) && bothSDandFlashcard()) {
 			resetIconScale();

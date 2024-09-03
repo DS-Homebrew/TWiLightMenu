@@ -10,6 +10,7 @@
 	.global boostVram
 	.global twlTouch
 	.global soundFreq
+	.global sleepMode
 	.global runCardEngine
 @---------------------------------------------------------------------------------
 	.align	4
@@ -36,6 +37,8 @@ boostVram:
 twlTouch:
 	.word	0x00000000
 soundFreq:
+	.word	0x00000000
+sleepMode:
 	.word	0x00000000
 runCardEngine:
 	.word	0x00000000

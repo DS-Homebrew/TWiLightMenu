@@ -10,6 +10,7 @@
 #include "common/tonccpy.h"
 #include "language.h"
 
+extern bool updatePalMidFrame;
 extern u16* colorTable;
 
 extern bool sdRemoveDetect;
@@ -26,7 +27,7 @@ static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
 
 void checkSdEject(void) {
-	/*if (!ms().sdRemoveDetect)*/ return;
+	if (!ms().sdRemoveDetect) return;
 
 	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode() || !sdFound()) {
 		if (!showNonExtendedImage) {
@@ -46,6 +47,9 @@ void checkSdEject(void) {
 
 	REG_BLDY = 0;
 
+	updatePalMidFrame = false;
+	swiWaitForVBlank();
+
 	// Change to white text palette
 	u16 palette[] = {
 		0x0000,
@@ -58,10 +62,9 @@ void checkSdEject(void) {
 			palette[i] = colorTable[palette[i]];
 		}
 	}
-	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
-	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
+	tonccpy(BG_PALETTE + 0xF6, palette, sizeof(palette));
+	tonccpy(BG_PALETTE_SUB + 0xF6, palette, sizeof(palette));
 
-	swiWaitForVBlank();
 	clearText();
 
 	if (showNonExtendedImage) {
@@ -71,6 +74,9 @@ void checkSdEject(void) {
 		printLarge(false, 0, 37, STR_ERROR_HAS_OCCURRED, Alignment::center);
 		printSmall(false, 0, 67, STR_DISABLE_SD_REMOVAL_CHECK, Alignment::center);
 	}
+
+	updateText(true);
+	updateText(false);
 
 	while (1) {
 		// Currently not working

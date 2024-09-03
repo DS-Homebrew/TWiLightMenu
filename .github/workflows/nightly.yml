@@ -17,15 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     container: devkitpro/devkitarm
     name: Build with Docker using devkitARM
-    outputs:
-      commit_tag: ${{ steps.make-cias.outputs.commit_tag }}
-      commit_hash: ${{ steps.make-cias.outputs.commit_hash }}
-      author_name: ${{ steps.make-cias.outputs.author_name }}
-      committer_name: ${{ steps.make-cias.outputs.committer_name }}
-      commit_subject: ${{ steps.make-cias.outputs.commit_subject }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
@@ -36,14 +30,6 @@ jobs:
       - name: Setup environment
         run: |
           git config --global safe.directory '*'
-
-          echo "commit_tag=$(git describe --abbrev=0 --tags)" >> $GITHUB_OUTPUT
-          echo "commit_hash=$(git log --format=%h -1)" >> $GITHUB_OUTPUT
-
-          # Webhook info
-          echo "author_name=$(git log -1 $GITHUB_SHA --pretty=%aN)" >> $GITHUB_OUTPUT
-          echo "committer_name=$(git log -1 $GITHUB_SHA --pretty=%cN)" >> $GITHUB_OUTPUT
-          echo "commit_subject=$(git log -1 $GITHUB_SHA --pretty=%s)" >> $GITHUB_OUTPUT
       - name: Get manual pages
         run: |
           cd manual/nitrofiles
@@ -125,64 +111,13 @@ jobs:
           cp 7zfile/_nds/TWiLightMenu/extras/widescreen.pck ~/artifacts
       - name: Publish build to GH Actions
         if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: ~/artifacts/*
           name: build
       - name: Publish build to GH Actions (PR)
         if: ${{ success() && startsWith(github.ref, 'refs/pull') }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: ~/artifacts/TWiLightMenu.7z
           name: build
-
-  # Only run this for non-PR jobs.
-  publish_build:
-    runs-on: ubuntu-latest
-    name: Publish build to ???
-    if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
-    needs: build
-    env:
-      COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
-      COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
-      AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
-      COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
-      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
-    outputs:
-      current_date: ${{ steps.commit.outputs.current_date }}
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: build
-
-  send_success_webhook:
-    runs-on: ubuntu-latest
-    needs: [publish_build, build]
-    name: Send success webhook
-    if: ${{ !startsWith(github.ref, 'refs/pull') && success() }}
-    env:
-      CURRENT_DATE: ${{ needs.publish_build.outputs.current_date }}
-      AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
-      COMMITTER_NAME: ${{ needs.build.outputs.committer_name }}
-      COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
-      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
-    steps:
-      - name: Send success webhook
-        run: |
-          curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-ghactions.sh
-          chmod +x send.sh
-          ./send.sh success ${{ secrets.WEBHOOK_URL }}
-
-  send_failure_webhook:
-    runs-on: ubuntu-latest
-    needs: [publish_build, build]
-    name: Send failure webhook
-    if: ${{ !startsWith(github.ref, 'refs/pull') && failure() }}
-    steps:
-      - name: Send failure webhook
-        run: |
-          curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-ghactions.sh
-          chmod +x send.sh
-          ./send.sh failure ${{ secrets.WEBHOOK_URL }}

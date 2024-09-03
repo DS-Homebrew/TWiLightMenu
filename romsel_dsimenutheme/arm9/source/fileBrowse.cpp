@@ -88,9 +88,9 @@ extern int vblankRefreshCounter;
 int file_count = 0;
 int last_used_box = 0;
 static int fileStartPos = 0; // The position of the first thing that is not a directory.
+static bool backFound = false;
 
 extern int spawnedtitleboxes;
-extern int cursorPosOnScreen;
 
 extern int titleboxXpos[2];
 extern int titleboxXdest[2];
@@ -291,6 +291,8 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	if (pdir == nullptr) {
 		printSmall(false, 4, 4, STR_UNABLE_TO_OPEN_DIRECTORY);
 	} else {
+		backFound = false;
+		int backPos = 0;
 		while (1) {
 			bgOperations(false);
 
@@ -322,8 +324,14 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 
 			bool emplaceBackDirContent = false;
 			if (ms().showDirectories) {
+				if (!backFound && (pent->d_type == DT_DIR) && (strcmp(pent->d_name, "..") == 0)) {
+					backFound = true;
+					backPos = file_count;
+					file_count++;
+					fileStartPos++;
+				}
 				emplaceBackDirContent =
-				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "_nds") != 0
+				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "..") != 0 && pent->d_name[0] != '_'
 					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
 					|| nameEndsWith(pent->d_name, extensionList));
 			} else {
@@ -440,6 +448,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			logPrint("Custom");
 		}
 		logPrint("\n\n");
+		if (backFound) {
+			dirContents.insert(dirContents.begin(), {"..", true, backPos, false});
+		}
 		closedir(pdir);
 	}
 }
@@ -1381,7 +1392,6 @@ void switchDevice(void) {
 		}
 
 		if (directMethod) {
-			cursorPosOnScreen = CURPOS;
 			SetWidescreen(NULL);
 			chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
 			int err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true, false, -1);
@@ -3189,7 +3199,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				moveCursor(false, dirContents[scrn]);
 			} else if ((held & KEY_RIGHT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == TWLSettings::EThemeDSi)) { // Right or button arrow (DSi theme)
 				moveCursor(true, dirContents[scrn]);
-			} else if ((pressed & KEY_UP) && (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) && !dirInfoIniFound && (ms().sortMethod == 4) && CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) { // Move apps (DSi & 3DS themes)
+			} else if ((pressed & KEY_UP) && (PAGENUM > 0 || CURPOS > 0 || !backFound) && (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) && !dirInfoIniFound && (ms().sortMethod == 4) && (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()))) { // Move apps (DSi & 3DS themes)
 				bannerTextShown = false; // Redraw the title when done
 				showSTARTborder = false;
 				currentBg = 2;
@@ -3235,7 +3245,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}*/
 
 					if (held & KEY_LEFT) {
-						moveCursor(false, dirContents[scrn]);
+						if (PAGENUM > 0 || CURPOS > 1 || !backFound) {
+							moveCursor(false, dirContents[scrn]);
+						}
 					} else if (held & KEY_RIGHT) {
 						if (CURPOS + (PAGENUM * 40) < (int)dirContents[scrn].size() - 1) {
 							moveCursor(true, dirContents[scrn], dirContents[scrn].size() - 1 - PAGENUM * 40);
@@ -3898,7 +3910,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						snd().playLaunch();
 						controlTopBright = true;
 						applaunch = true;
-						cursorPosOnScreen = CURPOS;
 
 						if (ms().theme == TWLSettings::EThemeDSi) {
 							applaunchprep = true;
@@ -3977,8 +3988,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 							if (ms().sortMethod == TWLSettings::ESortRecent) {
 								// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
-								CURPOS = fileStartPos % 40;
-								PAGENUM = fileStartPos / 40;
+								ms().saveCursorPosition[ms().secondaryDevice] = fileStartPos;
 							}
 
 							if (ms().theme == TWLSettings::EThemeHBL) {
@@ -4316,6 +4326,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bannerTextShown = false;
 				bool runSelectMenu = pressed & KEY_SELECT;
 				bool break2 = false;
+				if (pressed & KEY_SELECT && dsiFeatures() && ms().consoleModel < 2) {
+					fifoSendValue32(FIFO_USER_04, 1); // enable backlight level change reports
+				}
 				while (held & KEY_SELECT) {
 					scanKeys();
 					pressed = keysDown();
@@ -4351,7 +4364,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							return "null";
 						}
 					}
+
+					// detect backlight level change on DSi consoles
+					if (runSelectMenu && dsiFeatures() && ms().consoleModel < 2 && fifoGetValue32(FIFO_USER_04)) {
+						runSelectMenu = false;
+						fifoSendValue32(FIFO_USER_04, 2); // disable backlight level change report
+					}
 				}
+				if (dsiFeatures() && ms().consoleModel < 2) fifoSendValue32(FIFO_USER_04, 2); // disable backlight level change report
 				if (break2) break;
 				if (runSelectMenu && (ms().theme == TWLSettings::EThemeDSi || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL)) {
 					if (ms().showSelectMenu) {

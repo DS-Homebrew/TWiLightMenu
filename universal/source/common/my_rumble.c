@@ -44,11 +44,11 @@ bool my_isRumbleInserted(void) {
 		return true;
 	} else {
 		rumbleType = MY_RUMBLE;
-		for (int i = 0; i < 10000; i++) { // Run 10000 times to make sure it works
-			for (int p = 0; p < 0x1000/2; p++) {
-				if (GBA_BUS[1+(p*2)] == 0xFFFD) {
-					return true;
-				}
+
+		// Check for DS Phat or Lite Rumble Pak
+		for (int i = 0; i < 0xFFF; i++) {
+			if (GBA_BUS[i] != 0xFFFD && GBA_BUS[i] != 0xFDFF) {
+				return true;
 			}
 		}
 	}
@@ -57,11 +57,9 @@ bool my_isRumbleInserted(void) {
 //---------------------------------------------------------------------------------
 void my_setRumble(bool position) {
 //---------------------------------------------------------------------------------
-
-	if ( rumbleType == MY_WARIOWARE) {
+	if (rumbleType == MY_WARIOWARE) {
 		WARIOWARE_PAK = (position ? 8 : 0); 
 	} else {
 		RUMBLE_PAK = (position ? 2 : 0);
 	}
-
 }

@@ -19,6 +19,7 @@
 ------------------------------------------------------------------*/
 
 #include "graphics.h"
+#include "userpal.h"
 #include "../errorScreen.h"
 #include "fontHandler.h"
 #include "fileCopy.h"
@@ -30,17 +31,19 @@
 #include <nds.h>
 
 extern bool fadeType;
-extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
-int fadeDelay = 0;
 
-u8 bgColor1 = 0xF6;
-u8 bgColor2 = 0xF7;
+// u8 bgColor1 = 0xF6;
+// u8 bgColor2 = 0xF7;
 
 int screenBrightness = 31;
+bool updatePalMidFrame = true;
+bool leaveTopBarIntact = false;
 
 u16 bmpImageBuffer[256*192] = {0};
+u16 topBarPal[10] = {0}; // For both font and top bar palettes
+static u16 pagePal[256] = {0};
 u16* colorTable = NULL;
 std::vector<u8> pageImage;
 
@@ -52,12 +55,9 @@ int bg2Main;
 int bg3Main;
 int bg2Sub;
 
-void ClearBrightness(void) {
-	fadeType = true;
-	screenBrightness = 0;
-	swiWaitForVBlank();
-	swiWaitForVBlank();
-}
+bool screenFadedIn(void) { return (screenBrightness == 0); }
+
+bool screenFadedOut(void) { return (screenBrightness > 24); }
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
@@ -68,7 +68,7 @@ void SetBrightness(u8 screen, s8 bright) {
 		bright = -bright;
 	}
 	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 /* u16 convertVramColorToGrayscale(u16 val) {
@@ -89,34 +89,32 @@ void SetBrightness(u8 screen, s8 bright) {
 } */
 
 void vBlankHandler() {
-	if (fadeType == true) {
-		if (!fadeDelay) {
-			screenBrightness--;
-			if (screenBrightness < 0) screenBrightness = 0;
-		}
-		if (!fadeSpeed) {
-			fadeDelay++;
-			if (fadeDelay == 3) fadeDelay = 0;
-		} else {
-			fadeDelay = 0;
-		}
+	if (fadeType) {
+		screenBrightness--;
+		if (screenBrightness < 0) screenBrightness = 0;
 	} else {
-		if (!fadeDelay) {
-			screenBrightness++;
-			if (screenBrightness > 31) screenBrightness = 31;
-		}
-		if (!fadeSpeed) {
-			fadeDelay++;
-			if (fadeDelay == 3) fadeDelay = 0;
-		} else {
-			fadeDelay = 0;
-		}
+		screenBrightness++;
+		if (screenBrightness > 31) screenBrightness = 31;
 	}
+
+	if (leaveTopBarIntact) {
+		if (controlTopBright) SetBrightness(0, 0);
+		if (controlBottomBright && !ms().macroMode) SetBrightness(1, ms().macroMode ? 0 : screenBrightness);
+		tonccpy(BG_PALETTE + 0xF6, topBarPal, 10 * 2);
+		while (REG_VCOUNT != 18);
+		if (controlTopBright) SetBrightness(0, screenBrightness);
+		tonccpy(BG_PALETTE, pagePal, 256 * 2);
+		return;
+	}
+
 	if (controlTopBright) SetBrightness(0, screenBrightness);
 	if (controlBottomBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
-	updateText(true);
-	updateText(false);
+	if (updatePalMidFrame) {
+		tonccpy(BG_PALETTE + 0xF6, topBarPal, 10 * 2);
+		while (REG_VCOUNT != 18);
+		tonccpy(BG_PALETTE, pagePal, 256 * 2);
+	}
 }
 
 void pageLoad(const std::string &filename) {
@@ -124,29 +122,36 @@ void pageLoad(const std::string &filename) {
 	pageImage = gif.frame(0).image.imageData;
 	pageYsize = gif.frame(0).descriptor.h;
 
-	tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
+	while (!screenFadedOut()) { swiWaitForVBlank(); }
+
+	/* tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
 	if (colorTable) {
 		for (int i = 0; i < (int)std::min(0xF6u, gif.gct().size()); i++) {
 			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
 		}
-	}
-	if (!ms().macroMode) {
-		tonccpy(BG_PALETTE_SUB, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
-		if (colorTable) {
-			for (int i = 0; i < (int)std::min(0xF6u, gif.gct().size()); i++) {
-				BG_PALETTE_SUB[i] = colorTable[BG_PALETTE_SUB[i]];
-			}
+	} */
+	tonccpy(pagePal, gif.gct().data(), gif.gct().size() * 2);
+	if (colorTable) {
+		for (int i = 0; i < (int)gif.gct().size(); i++) {
+			pagePal[i] = colorTable[pagePal[i]];
 		}
 	}
+	if (!ms().macroMode) {
+		tonccpy(BG_PALETTE_SUB, pagePal, gif.gct().size() * 2);
+	}
 
-	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
-	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+(176*256), bgGetGfxPtr(bg3Sub), 192*256);
+	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(9*256), 174*256);
+	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+(174*256), bgGetGfxPtr(bg3Sub), 192*256);
+
+	fadeType = true; // Fade in from white
+	while (!screenFadedIn()) { swiWaitForVBlank(); }
+
 	while (dmaBusy(0) || dmaBusy(1));
 }
 
 void pageScroll(void) {
-	dmaCopyWordsAsynch(0, pageImage.data()+(pageYpos*256), bgGetGfxPtr(bg3Main)+(8*256), 176*256);
-	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+((176+pageYpos)*256), bgGetGfxPtr(bg3Sub), 192*256);
+	dmaCopyWordsAsynch(0, pageImage.data()+(pageYpos*256), bgGetGfxPtr(bg3Main)+(9*256), 174*256);
+	if (!ms().macroMode) dmaCopyWordsAsynch(1, pageImage.data()+((174+pageYpos)*256), bgGetGfxPtr(bg3Sub), 192*256);
 	while (dmaBusy(0) || dmaBusy(1));
 }
 
@@ -155,21 +160,39 @@ void topBarLoad(void) {
 	const auto &frame = gif.frame(0);
 	u16 *dst = bgGetGfxPtr(bg3Main);
 
-	tonccpy(BG_PALETTE + 0xFC, gif.gct().data(), gif.gct().size() * 2);
+	extern bool useTwlCfg;
+	int favoriteColor = (int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme);
+	if (favoriteColor < 0 || favoriteColor >= 16) favoriteColor = 0; // Invalid color found, so default to gray
+
+	/* tonccpy(BG_PALETTE + 0xFC, gif.gct().data(), gif.gct().size() * 2);
 	if (colorTable) {
 		for (int i = 0xFC; i < (int)0xFC + gif.gct().size(); i++) {
 			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
 		}
+	} */
+	tonccpy(topBarPal+4, gif.gct().data(), gif.gct().size() * 2);
+	topBarPal[4+4] = palUserFont[favoriteColor][1];
+	topBarPal[4+5] = palUserFont[favoriteColor][0];
+	if (colorTable) {
+		for (int i = 0; i < 6; i++) {
+			topBarPal[4+i] = colorTable[topBarPal[i+4]];
+		}
 	}
 
-	for (uint i = 0; i < frame.image.imageData.size() - 2; i += 2) {
-		toncset16(dst++, (frame.image.imageData[i] + 0xFC) | (frame.image.imageData[i + 1] + 0xFC) << 8, 1);
+	for (uint i = 0; i < frame.image.imageData.size(); i += 2) {
+		toncset16(dst++, (frame.image.imageData[i] + 0xFA) | (frame.image.imageData[i + 1] + 0xFA) << 8, 1);
+	}
+	for (int i = 0; i < 256/2; i++) {
+		toncset16(dst++, 0xFEFE, 1);
+	}
+	for (int i = 0; i < 256/2; i++) {
+		toncset16(dst++, 0xFFFF, 1);
 	}
 }
 
 void graphicsInit() {
-	*(u16*)(0x0400006C) |= BIT(14);
-	*(u16*)(0x0400006C) &= BIT(15);
+	*(vu16*)(0x0400006C) |= BIT(14);
+	*(vu16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
@@ -183,6 +206,11 @@ void graphicsInit() {
 			FILE* file = fopen(colorTablePath, "rb");
 			fread(colorTable, 1, 0x20000, file);
 			fclose(file);
+
+			vramSetBankD(VRAM_D_LCD);
+			tonccpy(VRAM_D, colorTable, 0x20000); // Copy LUT to VRAM
+			delete[] colorTable; // Free up RAM space
+			colorTable = VRAM_D;
 		}
 	}
 

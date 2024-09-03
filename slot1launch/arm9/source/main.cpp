@@ -45,6 +45,7 @@ bool TWLCLK = false;	// false == NTR, true == TWL
 int TWLVRAM = 0;
 bool TWLTOUCH = false;
 bool soundFreq = false;
+bool sleepMode = true;
 bool runCardEngine = false;
 bool EnableSD = false;
 bool ignoreBlacklists = false;
@@ -100,6 +101,7 @@ int main() {
 			ignoreBlacklists = settingsini.GetInt("SRLOADER","IGNORE_BLACKLISTS",false);
 			TWLTOUCH = settingsini.GetInt("SRLOADER","SLOT1_TOUCH_MODE",0);
 			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);
+			sleepMode = settingsini.GetInt("SRLOADER","SLEEP_MODE",1);
 			runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
 			EnableSD = settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0);
 
