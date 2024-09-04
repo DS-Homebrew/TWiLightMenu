@@ -651,7 +651,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
-		if (bootstrapEnabled && unitCode[CURPOS] < 3 && !blacklisted_cardReadDma) {
+		if (bootstrapEnabled && !blacklisted_cardReadDma) {
 			perGameOps++;
 			perGameOp[perGameOps] = 5;	// Card Read DMA
 		}
@@ -884,9 +884,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 5:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_CARD_READ_DMA + ":", startAlign, FontPalette::dialog);
-				if (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode > 0)) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign, FontPalette::dialog);
-				} else if (perGameSettings_cardReadDMA == -1) {
+				if (perGameSettings_cardReadDMA == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_cardReadDMA == 1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign, FontPalette::dialog);
@@ -1080,10 +1078,8 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 5:
-						if (!dsiFeatures() || unitCode[CURPOS] == 0 || (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode) : perGameSettings_dsiMode < 1)) {
-							perGameSettings_cardReadDMA--;
-							if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = 1;
-						}
+						perGameSettings_cardReadDMA--;
+						if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = 1;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
@@ -1158,10 +1154,8 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 5:
-						if (!dsiFeatures() || unitCode[CURPOS] == 0 || (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode) : perGameSettings_dsiMode < 1)) {
-							perGameSettings_cardReadDMA++;
-							if (perGameSettings_cardReadDMA > 1) perGameSettings_cardReadDMA = -1;
-						}
+						perGameSettings_cardReadDMA++;
+						if (perGameSettings_cardReadDMA > 1) perGameSettings_cardReadDMA = -1;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
