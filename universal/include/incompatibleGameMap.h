@@ -4,16 +4,12 @@
 static const char incompatibleGameListB4DS[][4] = {
 	"AWD", // Diddy Kong Racing
 	"BO5", // Golden Sun: Dark Dawn
-	"B7F", // The Magic School Bus: Oceans
 	"AMM", // Minna no Mahjong DS
-	"AH9", // Tony Hawk's American Sk8land
 	"CTX", // Tropix
 };
 
-static const char incompatibleGameListFC[][4] = {
-	"CAY", // Army Men: Soldiers of Misfortune
-	"YUT", // Ultimate Mortal Kombat
-};
+// static const char incompatibleGameListFC[][4] = {
+// };
 
 // static const char incompatibleGameList[][4] = {
 // };
