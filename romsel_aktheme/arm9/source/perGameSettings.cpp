@@ -788,7 +788,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 5:
 				printSmall(false, perGameOpXpos, perGameOpYpos, "Card Read DMA:", Alignment::left, highlighted);
-				if (romUnitCode[cursorPosOnScreen] > 0 && (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode > 0)) {
+				if (dsiFeatures() && romUnitCode[cursorPosOnScreen] > 0 && (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode > 0)) {
 					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Off", Alignment::right, highlighted);
 				} else if (perGameSettings_cardReadDMA == -1) {
 					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
@@ -974,7 +974,7 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 5:
-						if (romUnitCode[cursorPosOnScreen] == 0 || (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode) : perGameSettings_dsiMode < 1)) {
+						if (!dsiFeatures() || romUnitCode[cursorPosOnScreen] == 0 || (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode) : perGameSettings_dsiMode < 1)) {
 							perGameSettings_cardReadDMA--;
 							if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = 1;
 						}
@@ -1051,7 +1051,7 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 5:
-						if (romUnitCode[cursorPosOnScreen] == 0 || (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode) : perGameSettings_dsiMode < 1)) {
+						if (!dsiFeatures() || romUnitCode[cursorPosOnScreen] == 0 || (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode) : perGameSettings_dsiMode < 1)) {
 							perGameSettings_cardReadDMA++;
 							if (perGameSettings_cardReadDMA > 1) perGameSettings_cardReadDMA = -1;
 						}
