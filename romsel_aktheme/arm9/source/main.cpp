@@ -242,7 +242,7 @@ void stop (void) {
 /**
  * Disable TWL clock speed for a specific game.
  */
-bool setClockSpeed(const char* filename) {
+bool setClockSpeed() {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
@@ -260,7 +260,7 @@ bool setClockSpeed(const char* filename) {
 /**
  * Disable card read DMA for a specific game.
  */
-bool setCardReadDMA(const char* filename) {
+bool setCardReadDMA() {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
@@ -277,7 +277,7 @@ bool setCardReadDMA(const char* filename) {
 /**
  * Disable asynch card read for a specific game.
  */
-bool setAsyncCardRead(const char* filename) {
+bool setAsyncCardRead() {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
@@ -294,7 +294,7 @@ bool setAsyncCardRead(const char* filename) {
 /**
  * Set donor SDK version for a specific game.
  */
-int SetDonorSDK(const char* filename) {
+int SetDonorSDK() {
 	char gameTid3[5];
 	for (int i = 0; i < 3; i++) {
 		gameTid3[i] = gameTid[cursorPosOnScreen][i];
@@ -1624,8 +1624,8 @@ int akTheme(void) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
-					if (dsiFeatures() && ms().secondaryDevice && (!ms().dsiWareToSD || sys().arm7SCFGLocked())) {
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA(ms().dsiWareSrlPath.c_str()));
+					if (ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode || !ms().dsiWareToSD || sys().arm7SCFGLocked())) {
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA());
 					}
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", 5);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", 1);
@@ -1819,7 +1819,7 @@ int akTheme(void) {
 
 						SetMPUSettings();
 
-						bool boostCpu = setClockSpeed(argarray[0]);
+						bool boostCpu = setClockSpeed();
 						bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 						const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
@@ -1837,13 +1837,13 @@ int akTheme(void) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", perGameSettings_region < -1 ? ms().useRomRegion : 0);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", (dsModeForced || (romUnitCode[cursorPosOnScreen] == 0 && !isDSiMode())) ? 0 : (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode));
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA());
 						if (dsiFeatures() || !ms().secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_DSI_MODE : perGameSettings_boostVram);
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA(argarray[0]));
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", setAsyncCardRead(argarray[0]));
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", setAsyncCardRead());
 						}
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", SetDonorSDK(argarray[0]));
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", SetDonorSDK());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
