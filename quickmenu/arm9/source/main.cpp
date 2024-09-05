@@ -1756,7 +1756,7 @@ int dsClassicMenu(void) {
 						}
 						/*fallthrough*/
 					case MenuEntry::SETTINGS:
-						if(!(sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)))
+						if(!(sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)))
 								break;
 						cursorPosition = MenuEntry::BRIGHTNESS;
 						/*fallthrough*/
@@ -1806,7 +1806,7 @@ int dsClassicMenu(void) {
 					return MenuEntry::GBA;
 				}
 				if (touchPoint.px >= 10 && touchPoint.px <= 20 && touchPoint.py >= 175 && touchPoint.py <= 185
-							&& (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2))) {
+							&& (sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2))) {
 					return MenuEntry::BRIGHTNESS;
 				}
 				if (touchPoint.px >= 117 && touchPoint.px <= 137 && touchPoint.py >= 170 && touchPoint.py <= 190 && !ms().kioskMode) {
@@ -2164,7 +2164,7 @@ int dsClassicMenu(void) {
 						break;
 					case MenuEntry::BRIGHTNESS:
 						// Adjust backlight level
-						if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
+						if (sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) {
 							fifoSendValue32(FIFO_USER_04, 1);
 							mmEffectEx(&snd_backlight);
 						}

@@ -1834,7 +1834,7 @@ void graphicsLoad()
 	dmaCopyHalfWordsAsynch(2, bottomImage[0], bottomImageWithBar[0], 0x18000);
 	dmaCopyHalfWordsAsynch(3, bottomImage[1], bottomImageWithBar[1], 0x18000);
 
-	if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
+	if (sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) {
 		std::string pathBrightness;
 		if (access((themePath + "/brightness.bmp").c_str(), F_OK) == 0) {
 			pathBrightness = themePath + "/brightness.bmp";

@@ -1152,7 +1152,7 @@ int akTheme(void) {
 		startTextX = startX + startW/5;
 		startTextY = startY + startH/5;
 
-		if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
+		if (sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) {
 			brightnessX = ini.GetInt("brightness btn", "x", brightnessX);
 			brightnessY = ini.GetInt("brightness btn", "y", brightnessY);
 			brightnessW = ini.GetInt("brightness btn", "w", brightnessW);

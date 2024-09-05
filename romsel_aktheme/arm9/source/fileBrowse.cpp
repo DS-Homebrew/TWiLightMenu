@@ -2073,7 +2073,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";
 		}
 
-		if ((sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) && (pressed & KEY_TOUCH) && touch.px >= brightnessX && touch.px < brightnessX+brightnessW && touch.py >= brightnessY && touch.py < brightnessY+brightnessH) {
+		if ((sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) && (pressed & KEY_TOUCH) && touch.px >= brightnessX && touch.px < brightnessX+brightnessW && touch.py >= brightnessY && touch.py < brightnessY+brightnessH) {
 			fifoSendValue32(FIFO_USER_04, 1);
 			while (1) {
 				scanKeys();

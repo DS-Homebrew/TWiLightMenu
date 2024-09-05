@@ -1302,7 +1302,7 @@ int settingsMode(void)
 
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 
-	if ((isDSiMode() || sdFound()) && ms().consoleModel == 0) {
+	if ((isDSiMode() || sdFound()) && !sys().i2cBricked() && ms().consoleModel < 2) {
 		if (sdFound()) {
 			bootstrapPage
 				.option((flashcardFound() ? STR_SYSSD_ROMREADLED : STR_ROMREADLED),
@@ -1464,7 +1464,7 @@ int settingsMode(void)
 		.option(STR_PREVENT_ROM_DELETION, STR_DESCRIPTION_PREVENT_ROM_DELETION_1, Option::Bool(&ms().preventDeletion), {STR_YES, STR_NO}, {true, false})
 		.option(STR_UPDATE_RECENTLY_PLAYED_LIST, STR_DESCRIPTION_UPDATE_RECENTLY_PLAYED_LIST, Option::Bool(&ms().updateRecentlyPlayedList), {STR_YES, STR_NO}, {true, false});
 
-	if (isDSiMode()) {
+	if (isDSiMode() && !sys().i2cBricked()) {
 		miscPage
 			.option(STR_WIFI,
 					STR_DESCRIPTION_WIFI,
@@ -1474,12 +1474,14 @@ int settingsMode(void)
 	}
 
 	if (isDSiMode() && ms().consoleModel < 2) {
-		miscPage
-			.option(STR_POWERLEDCOLOR,
-					STR_DESCRIPTION_POWERLEDCOLOR,
-					Option::Bool(&ms().powerLedColor, opt_powerLed_toggle),
-					{STR_PURPLE, STR_BLUE+"/"+STR_RED},
-					{true, false});
+		if (!sys().i2cBricked()) {
+			miscPage
+				.option(STR_POWERLEDCOLOR,
+						STR_DESCRIPTION_POWERLEDCOLOR,
+						Option::Bool(&ms().powerLedColor, opt_powerLed_toggle),
+						{STR_PURPLE, STR_BLUE+"/"+STR_RED},
+						{true, false});
+		}
 
 		if (ms().consoleModel == 0 && sdFound()) {
 			miscPage

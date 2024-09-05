@@ -29,7 +29,8 @@ public:
 	bool isDSPhat() { return (_isRegularDS && _isDSPhat); }
 	bool isDSLite() { return (_isRegularDS && !_isDSPhat); }
 	bool hasRegulableBacklight() { return _hasRegulableBacklight; }
-	bool dsDebugRam() { return (_dsDebugRam); }
+	bool i2cBricked() { return _i2cBricked; }
+	bool dsDebugRam() { return _dsDebugRam; }
 	void initFilesystem(const char *runningPath);
 	void initArm7RegStatuses();
 	int batteryStatus();
@@ -44,6 +45,7 @@ private:
 	bool _isRegularDS;
 	bool _isDSPhat;
 	bool _hasRegulableBacklight;
+	bool _i2cBricked;
 	bool _dsDebugRam;
 	bool _fatInitOk;
 	bool _fifoOk;

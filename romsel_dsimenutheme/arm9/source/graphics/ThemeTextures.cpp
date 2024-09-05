@@ -463,7 +463,7 @@ void ThemeTextures::loadDSiTheme() {
 }
 
 void ThemeTextures::loadVolumeTextures() {
-	if (dsiFeatures()) {
+	if (dsiFeatures() && !sys().i2cBricked()) {
 		_volume0Texture = std::make_unique<Texture>(TFN_VOLUME0, TFN_FALLBACK_VOLUME0);
 		_volume1Texture = std::make_unique<Texture>(TFN_VOLUME1, TFN_FALLBACK_VOLUME1);
 		_volume2Texture = std::make_unique<Texture>(TFN_VOLUME2, TFN_FALLBACK_VOLUME2);
@@ -473,7 +473,7 @@ void ThemeTextures::loadVolumeTextures() {
 }
 
 void ThemeTextures::loadBatteryTextures() {
-	if (dsiFeatures()) {
+	if (dsiFeatures() && !sys().i2cBricked()) {
 		_batterychargeTexture = std::make_unique<Texture>(TFN_BATTERY_CHARGE, TFN_FALLBACK_BATTERY_CHARGE);
 		_batterychargeblinkTexture = std::make_unique<Texture>(TFN_BATTERY_CHARGE_BLINK, TFN_FALLBACK_BATTERY_CHARGE_BLINK);
 		_battery0Texture = std::make_unique<Texture>(TFN_BATTERY0, TFN_FALLBACK_BATTERY0);
@@ -918,7 +918,7 @@ void ThemeTextures::drawProfileName() {
 	}
 
 	// Load username
-	int xPos = (dsiFeatures() ? tc().usernameRenderX() : tc().usernameRenderXDS());
+	int xPos = ((dsiFeatures() && !sys().i2cBricked()) ? tc().usernameRenderX() : tc().usernameRenderXDS());
 	int yPos = tc().usernameRenderY();
 	char16_t username[11] = {0};
 	tonccpy(username, useTwlCfg ? (s16 *)0x02000448 : PersonalData->name, 10 * sizeof(char16_t));
@@ -1155,7 +1155,7 @@ void ThemeTextures::drawOverRotatingCubes() {
 }
 
 ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
-	if (!dsiFeatures())
+	if (!dsiFeatures() || sys().i2cBricked())
 		return;
 	beginBgSubModify();
 
@@ -1179,7 +1179,7 @@ ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
 }
 
 ITCM_CODE void ThemeTextures::drawVolumeImageMacro(int volumeLevel) {
-	if (!dsiFeatures())
+	if (!dsiFeatures() || sys().i2cBricked())
 		return;
 	beginBgMainModify();
 
@@ -1218,7 +1218,7 @@ ITCM_CODE void ThemeTextures::resetCachedVolumeLevel() {
 }
 
 ITCM_CODE int ThemeTextures::getVolumeLevel(void) {
-	if (!dsiFeatures())
+	if (!dsiFeatures() || sys().i2cBricked())
 		return -1;
 	
 	u8 volumeLevel = sys().volumeStatus();
@@ -1236,7 +1236,7 @@ ITCM_CODE int ThemeTextures::getVolumeLevel(void) {
 }
 
 ITCM_CODE int ThemeTextures::getBatteryLevel(void) {
-	u8 batteryLevel = sys().batteryStatus();
+	const u8 batteryLevel = sys().batteryStatus();
 	if (batteryLevel & BIT(7))
 		return 7;
 	if (batteryLevel == 0xF)
@@ -1299,7 +1299,7 @@ ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
 			_backgroundTextures[ms().macroMode].copy(_topBorderBuffer, false);
 			topBorderBufferLoaded = true;
 		}
-		ms().macroMode ? drawBatteryImageMacro(batteryLevel, dsiFeatures(), sys().isRegularDS()) : drawBatteryImage(batteryLevel, dsiFeatures(), sys().isRegularDS());
+		ms().macroMode ? drawBatteryImageMacro(batteryLevel, dsiFeatures() && !sys().i2cBricked(), sys().isRegularDS()) : drawBatteryImage(batteryLevel, dsiFeatures() && !sys().i2cBricked(), sys().isRegularDS());
 	}
 }
 

@@ -49,10 +49,11 @@ u8 my_i2cWriteRegister(u8 device, u8 reg, u8 data);
 volatile int timeTilVolumeLevelRefresh = 0;
 static int soundVolume = 127;
 volatile int rebootTimer = 0;
-volatile int status = 0;
+volatile u32 status = 0;
 static int backlightLevel = 0;
 static bool isDSPhat = false;
 static bool hasRegulableBacklight = false;
+static bool i2cBricked = false;
 
 //static bool gotCartHeader = false;
 
@@ -70,7 +71,7 @@ void soundFadeOut(void) {
 void ReturntoDSiMenu(void) {
 //---------------------------------------------------------------------------------
 	nocashMessage("ARM7 ReturnToDSiMenu");
-	if (isDSiMode()) {
+	if (isDSiMode() && !i2cBricked) {
 		i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
 		i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi Menu
 	} else {
@@ -247,6 +248,11 @@ int main() {
 		getConsoleID();
 	}
 
+	if (isDSiMode() || REG_SCFG_EXT != 0) {
+		const u8 i2cVer = my_i2cReadRegister(0x4A, 0);
+		i2cBricked = (i2cVer == 0 || i2cVer == 0xFF);
+	}
+
 	u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 
 	hasRegulableBacklight = !!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7));
@@ -254,7 +260,7 @@ int main() {
 
 	// 01: Fade Out
 	// 02: Return
-	// 03: status (Bit 0: hasRegulableBacklight, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT, Bit 3: isDSPhat)
+	// 03: status (Bit 0: hasRegulableBacklight, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT, Bit 3: isDSPhat, Bit 4: i2cBricked)
 
 
 	// 03: Status: Init/Volume/Battery/SD
@@ -262,12 +268,13 @@ int main() {
 	// Battery is 7 bits -- bits 0-7
 	// Volume is 00h to 1Fh = 5 bits -- bits 8-12
 	// SD status -- bits 13-14
-	// Init status -- bits 15-18 (Bit 0 (15): hasRegulableBacklight, Bit 1 (16): scfgEnabled, Bit 2 (17): REG_SNDEXTCNT, Bit 3 (18): isDSPhat)
+	// Init status -- bits 15-18 (Bit 0 (15): hasRegulableBacklight, Bit 1 (16): scfgEnabled, Bit 2 (17): REG_SNDEXTCNT, Bit 3 (18): isDSPhat, Bit 4 (19): i2cBricked)
 
 	u8 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT)
 									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT)
 									| BIT_SET(hasRegulableBacklight, BACKLIGHT_BIT)
-									| BIT_SET(isDSPhat, DSPHAT_BIT));
+									| BIT_SET(isDSPhat, DSPHAT_BIT)
+									| BIT_SET(i2cBricked, I2CBRICKED_BIT));
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
@@ -307,7 +314,7 @@ int main() {
 
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
-			if (isDSiMode() || REG_SCFG_EXT != 0) { //vol
+			if ((isDSiMode() || REG_SCFG_EXT != 0) && !i2cBricked) { //vol
 				status = (status & ~VOL_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_VOL) << VOL_OFF) & VOL_MASK);
 				status = (status & ~BAT_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) << BAT_OFF) & BAT_MASK);
 			} else {
