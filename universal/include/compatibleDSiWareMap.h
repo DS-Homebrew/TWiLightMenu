@@ -647,7 +647,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 36
+// Total: 37
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -683,6 +683,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KOZ", // G.G Series: Super Hero Ogre 2
 	"K4W", // Super Swap
 	"K4P", // Super Yum Yum: Puzzle Adventures
+	"KSY", // System Flaw: Recruit
 	"K3O", // G.G Series: Throw Out
 	"KDZ", // Trajectile / Reflect Missile
 };
