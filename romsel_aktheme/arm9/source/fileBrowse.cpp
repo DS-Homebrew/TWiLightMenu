@@ -64,7 +64,6 @@
 #define ENTRIES_PER_SCREEN 4
 #define ENTRIES_PER_SCREEN_SMALL 8
 #define ENTRIES_PER_SCREEN_LIST 10
-#define ENTRY_PAGE_LENGTH 10
 
 extern bool lcdSwapped;
 
@@ -1506,8 +1505,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			resetIconScale();
 		}
 		if (pressed & KEY_LEFT) {
-			fileOffset -= ENTRY_PAGE_LENGTH;
-			screenOffset -= ENTRY_PAGE_LENGTH;
+			fileOffset -= entriesPerScreen;
+			screenOffset -= entriesPerScreen;
 			if (fileOffset < 0) fileOffset = 0;
 			if (screenOffset < 0) screenOffset = 0;
 			cursorPosOnScreen = fileOffset - screenOffset;
@@ -1515,8 +1514,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			resetIconScale();
 		}
 		if (pressed & KEY_RIGHT) {
-			fileOffset += ENTRY_PAGE_LENGTH;
-			screenOffset += ENTRY_PAGE_LENGTH;
+			fileOffset += entriesPerScreen;
+			screenOffset += entriesPerScreen;
 			if (fileOffset > (int)dirContents.size() - 1) fileOffset = (int)dirContents.size() - 1;
 			if (screenOffset > (int)dirContents.size() - entriesPerScreen) screenOffset = (int)dirContents.size() - entriesPerScreen;
 			cursorPosOnScreen = fileOffset - screenOffset;
