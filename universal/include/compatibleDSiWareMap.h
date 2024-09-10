@@ -647,7 +647,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 37
+// Total: 36
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -667,7 +667,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KGUE", // Flipnote Studio (USA)
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KZB", // Little Red Riding Hood's Zombie BBQ
-	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
 	"KMM", // Mixed Messages
 	"KLT", // My Little Restaurant
 	"KNV", // Neko Reversi
