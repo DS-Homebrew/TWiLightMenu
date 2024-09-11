@@ -6,6 +6,7 @@ static const char incompatibleGameListB4DS[][4] = {
 	"BO5", // Golden Sun: Dark Dawn
 	"AMM", // Minna no Mahjong DS
 	"CTX", // Tropix
+	"CP3", // Viva Pinata: Pocket Paradise
 };
 
 // static const char incompatibleGameListFC[][4] = {
@@ -17,7 +18,6 @@ static const char incompatibleGameListB4DS[][4] = {
 // DSiWare
 static const char incompatibleGameListMemoryPit[][4] = {
 	"KFZ", // Faceez
-	"KHJ", // Hidden Photo (DSiWare)
 	"HNG", // Nintendo DSi Browser
 	"KPB", // Photo Dojo
 	"KRM", // Rayman
