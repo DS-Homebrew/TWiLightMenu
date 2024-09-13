@@ -3,7 +3,6 @@
 
 static const char incompatibleGameListB4DS[][4] = {
 	"AWD", // Diddy Kong Racing
-	"AMM", // Minna no Mahjong DS
 	"CP3", // Viva Pinata: Pocket Paradise
 };
 
