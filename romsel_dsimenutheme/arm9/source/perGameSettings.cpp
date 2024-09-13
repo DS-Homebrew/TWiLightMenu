@@ -597,14 +597,14 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 13;	// DSiWare booter
 		}
-		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || !dsiFeatures() || (ms().secondaryDevice && bs().b4dsMode) || !ms().dsiWareToSD || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 			if (ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode || !ms().dsiWareToSD || sys().arm7SCFGLocked()) && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
-			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
+			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked()) && widescreenFound) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
