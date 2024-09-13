@@ -606,9 +606,11 @@ void showLocation(void) {
 }
 
 bool checkForCompatibleGame(const char *filename) {
+	return true;
+
 	bool proceedToLaunch = true;
 
-	if (!dsiFeatures() && ms().secondaryDevice) {
+	/* if (!dsiFeatures() && ms().secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
 			if (memcmp(gameTid, incompatibleGameListB4DS[i], 3) == 0) {
@@ -617,7 +619,7 @@ bool checkForCompatibleGame(const char *filename) {
 				break;
 			}
 		}
-	}
+	} */
 
 	/* if (proceedToLaunch && ms().secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
@@ -689,7 +691,7 @@ bool checkForCompatibleGame(const char *filename) {
 	return proceedToLaunch;
 }
 
-bool gameCompatibleMemoryPit(const char* filename) {
+bool gameCompatibleMemoryPit(void) {
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(incompatibleGameListMemoryPit)/sizeof(incompatibleGameListMemoryPit[0]); i++) {
 		if (memcmp(gameTid, incompatibleGameListMemoryPit[i], 3) == 0) {
@@ -700,7 +702,7 @@ bool gameCompatibleMemoryPit(const char* filename) {
 	return true;
 }
 
-bool checkForGbaBiosRequirement(const char* filename) {
+bool checkForGbaBiosRequirement(void) {
 	extern bool gbaBiosFound[2];
 
 	if (gbaBiosFound[ms().secondaryDevice]) {
@@ -1256,8 +1258,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				if (isTwlm || (!isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType == 0 && gameTid[0] == 'D' && romUnitCode == 3 && requiresDonorRom != 51)
 				|| (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
-				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str()))))
-				|| (bnrRomType == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement(dirContents.at(fileOffset).name.c_str()))) {
+				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
+				|| (bnrRomType == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
 					proceedToLaunch = cannotLaunchMsg(gameTid[0]);
 				}
 				bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);

@@ -1,10 +1,8 @@
 #ifndef INCOMPATIBLEMAP_H
 #define INCOMPATIBLEMAP_H
 
-static const char incompatibleGameListB4DS[][4] = {
-	"AWD", // Diddy Kong Racing
-	"CP3", // Viva Pinata: Pocket Paradise
-};
+// static const char incompatibleGameListB4DS[][4] = {
+// };
 
 // static const char incompatibleGameListFC[][4] = {
 // };
