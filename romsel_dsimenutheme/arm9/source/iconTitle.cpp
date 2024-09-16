@@ -474,6 +474,10 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 				isHomebrew[num] = false;
 				isModernHomebrew[num] = false;
 			}
+		} else if (strncmp(gameTid[num], "HNA", 3) == 0) {
+			// Modcrypted
+			isHomebrew[num] = false;
+			isModernHomebrew[num] = false;
 		}
 
 		if (isHomebrew[num]) {
