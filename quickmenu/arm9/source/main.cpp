@@ -3536,7 +3536,7 @@ int dsClassicMenu(void) {
 						0,
 						boostCpu,
 						boostVram,
-						ms().consoleModel, false);
+						ms().consoleModel, ms().soundFreq, false);
 					} else {
 						err = 1;
 					}
