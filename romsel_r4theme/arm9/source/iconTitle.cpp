@@ -35,6 +35,7 @@
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "common/lodepng.h"
+#include "common/logging.h"
 #include "language.h"
 #include "ndsheaderbanner.h"
 #include "myDSiMode.h"
@@ -1316,17 +1317,23 @@ void iconUpdate(bool isDir, const char* name)
 		clearText(false);
 	}
 
+	logPrint("iconUpdate: ");
+
 	const bool isNds = (bnrRomType == 0);
 
-	if (customIcon > 0 || (customIcon && isNds)) {
+	if (customIcon > 0 || (customIcon && !isDir && isNds)) {
 		if (customIcon == -1) {
+			logPrint(isDir ? "Custom icon invalid!" : "Banner not found or custom icon invalid!");
 			loadUnkIcon();
 		} else if (bnriconisDSi) {
+			logPrint("Custom icon found!");
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
+			logPrint("Custom icon found!");
 			loadIcon(ndsBanner.icon, ndsBanner.palette, false);
 		}
 	} else if (isDir) {
+		logPrint("Folder found!");
 		loadFolderIcon();
 	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds/app file
@@ -1338,6 +1345,7 @@ void iconUpdate(bool isDir, const char* name)
 		// open the argv file
 		fp = fopen(name, "rb");
 		if (fp == NULL) {
+			logPrint("Icon not found!\n");
 			clearIcon();
 			fclose(fp);
 			return;
@@ -1372,9 +1380,11 @@ void iconUpdate(bool isDir, const char* name)
 				rc = stat(p, &st);
 				if (rc != 0) {
 					// stat failed
+					logPrint("Icon not found!");
 					clearIcon();
 				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
+					logPrint("Folder found!");
 					clearIcon();
 				} else {
 					iconUpdate(false, p);
@@ -1398,12 +1408,12 @@ void iconUpdate(bool isDir, const char* name)
 		fp = fopen(name, "rb");
 		if (fp == NULL) {
 			// icon
+			logPrint("Icon not found!\n");
 			clearIcon();
 			fclose(fp);
 			return;
 		}
 
-		
 		ret = fseek(fp, offsetof(tNDSHeader, bannerOffset), SEEK_SET);
 		if (ret == 0)
 			ret = fread(&iconTitleOffset, sizeof (int), 1, fp); // read if seek succeed
@@ -1412,6 +1422,7 @@ void iconUpdate(bool isDir, const char* name)
 
 		if (ret != 1) {
 			// icon
+			logPrint("Icon not found!\n");
 			loadUnkIcon();
 			fclose(fp);
 			return;
@@ -1419,6 +1430,7 @@ void iconUpdate(bool isDir, const char* name)
 
 		if (iconTitleOffset == 0) {
 			// icon
+			logPrint("Icon not found!\n");
 			loadUnkIcon();
 			fclose(fp);
 			return;
@@ -1439,6 +1451,7 @@ void iconUpdate(bool isDir, const char* name)
 
 			if (ret != 1) {
 				// icon
+				logPrint("Icon not found!\n");
 				loadUnkIcon();
 				fclose(fp);
 				return;
@@ -1449,6 +1462,7 @@ void iconUpdate(bool isDir, const char* name)
 		fclose(fp);
 
 		// icon
+		logPrint("NDS icon found!");
 		if (bnriconisDSi) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
@@ -1503,6 +1517,7 @@ void iconUpdate(bool isDir, const char* name)
 	} else {
 		loadUnkIcon();
 	}
+	logPrint("\n");
 }
 
 void titleUpdate(bool isDir, const char* name)

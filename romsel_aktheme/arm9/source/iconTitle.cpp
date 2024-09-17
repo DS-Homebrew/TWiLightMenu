@@ -35,6 +35,7 @@
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "common/lodepng.h"
+#include "common/logging.h"
 #include "language.h"
 #include "ndsheaderbanner.h"
 #include "myDSiMode.h"
@@ -872,7 +873,7 @@ void iconTitleInit()
 	blackPalette = new u16[16*8]();
 	tilesModified = new u8[(32 * 256) / 2];
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 8; i++) {
 		clearIcon(i);
 	}
 }
@@ -1363,19 +1364,25 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 void iconUpdate(int num, bool isDir, const char* name)
 {
+	logPrint("iconUpdate: ");
+
 	const bool isNds = (bnrRomType[num] == 0);
 
-	if (customIcon[num] > 0 || (customIcon[num] && isNds)) {
+	if (customIcon[num] > 0 || (customIcon[num] && !isDir && isNds)) {
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
 		if (customIcon[num] == -1) {
+			logPrint(isDir ? "Custom icon invalid!" : "Banner not found or custom icon invalid!");
 			loadUnkIcon(num);
 		} else if (bnriconisDSi[num]) {
+			logPrint("Custom icon found!");
 			loadIcon(num, ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[bnriconPalLine[num]], true);
 			bnriconPalLoaded[num] = bnriconPalLine[num];
 		} else {
+			logPrint("Custom icon found!");
 			loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);
 		}
 	} else if (isDir) {
+		logPrint("Folder found!");
 		loadFolderIcon(num);
 	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds/app file
@@ -1387,6 +1394,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 		// open the argv file
 		fp = fopen(name, "rb");
 		if (fp == NULL) {
+			logPrint("Icon not found!\n");
 			clearIcon(num);
 			fclose(fp);
 			return;
@@ -1420,9 +1428,11 @@ void iconUpdate(int num, bool isDir, const char* name)
 				rc = stat(p, &st);
 				if (rc != 0) {
 					// stat failed
+					logPrint("Icon not found!");
 					clearIcon(num);
 				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
+					logPrint("Folder found!");
 					loadFolderIcon(num);
 				} else {
 					iconUpdate(num, false, p);
@@ -1438,6 +1448,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 		free(line);
 	} else if (isNds) {
 		// this is an nds/app file!
+		logPrint("NDS icon found!");
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
 		if (bnriconisDSi[num]) {
 			loadIcon(num, ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[bnriconPalLine[num]], true);
@@ -1494,6 +1505,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 	} else {
 		loadUnkIcon(num);
 	}
+	logPrint("\n");
 }
 
 void titleUpdate(int num, bool isDir, const char* name, const bool highlighted)

@@ -32,6 +32,7 @@
 #include "graphics/graphics.h"
 #include "graphics/fontHandler.h"
 #include "common/lodepng.h"
+#include "common/logging.h"
 #include "ndsheaderbanner.h"
 #include "myDSiMode.h"
 #include "language.h"
@@ -678,14 +679,19 @@ void iconUpdate(int num, bool isDir, const char* name)
 {
 	clearText(false);
 
+	logPrint("iconUpdate: ");
+
 	const auto isNds = (bnrRomType[num] == ROM_TYPE_NDS);
 
 	if (customIcon[num] > 0 || (customIcon[num] && isNds)) {
 		if (customIcon[num] == -1) {
+			logPrint(isDir ? "Custom icon invalid!" : "Banner not found or custom icon invalid!");
 			loadIconTileset(icon_unk, num);
 		} else if (bnriconisDSi[num]) {
+			logPrint("Custom icon found!");
 			loadIcon(num, ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
+			logPrint("Custom icon found!");
 			loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);
 		}
 	} else if (extension(name, {".argv"})) {
@@ -698,6 +704,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 		// open the argv file
 		fp = fopen(name, "rb");
 		if (fp == NULL) {
+			logPrint("Icon not found!\n");
 			clearIcon(num);
 			fclose(fp);
 			return;
@@ -732,9 +739,11 @@ void iconUpdate(int num, bool isDir, const char* name)
 				rc = stat(p, &st);
 				if (rc != 0) {
 					// stat failed
+					logPrint("Icon not found!");
 					clearIcon(num);
 				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
+					logPrint("Folder found!");
 					clearIcon(num);
 				} else {
 					iconUpdate(num, false, p);
@@ -750,8 +759,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 		free(line);
 	} else if (isNds) {
 		// this is an nds/app file!
-
-		// icon
+		logPrint("NDS icon found!");
 		if (bnriconisDSi[num]) {
 			loadIcon(num, ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
@@ -806,6 +814,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 	} else {
 		loadIconTileset(icon_unk, num);
 	}
+	logPrint("\n");
 }
 
 void titleUpdate(int num, bool top, bool isDir, const char* name)
