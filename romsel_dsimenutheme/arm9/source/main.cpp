@@ -1897,7 +1897,7 @@ int dsiMenuTheme(void) {
 								perGameSettings_dsiMode == -1 ? isModernHomebrew[CURPOS] : perGameSettings_dsiMode,
 								perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu,
 								perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram,
-								ms().consoleModel, false);
+								ms().consoleModel, ms().soundFreq, false);
 							} else {
 								err = 1;
 							}
@@ -2655,7 +2655,7 @@ int dsiMenuTheme(void) {
 						0,
 						boostCpu,
 						boostVram,
-						ms().consoleModel, false);
+						ms().consoleModel, ms().soundFreq, false);
 					} else {
 						err = 1;
 					}

@@ -27,9 +27,9 @@
 extern "C" {
 #endif
 
-int bootstrapHbRunNds (const void* loader, u32 loaderSize, u32 cluster, u32 ramDiskCluster, u32 ramDiskSize, u32 srParamsCluster, u32 patchOffsetCacheCluster, u32 cfgCluster, u32 cfgSize, int romToRamDisk, bool romIsCompressed, bool initDisc, bool dldiPatchNds, int argc, const char** argv, int language, int dsiMode, bool boostCpu, bool boostVram, int consoleModel, u32 srTid1, u32 srTid2, bool ndsPreloaded);
+int bootstrapHbRunNds (const void* loader, u32 loaderSize, u32 cluster, u32 ramDiskCluster, u32 ramDiskSize, u32 srParamsCluster, u32 patchOffsetCacheCluster, u32 cfgCluster, u32 cfgSize, int romToRamDisk, bool romIsCompressed, bool initDisc, bool dldiPatchNds, int argc, const char** argv, int language, int dsiMode, bool boostCpu, bool boostVram, int consoleModel, bool soundFreq, u32 srTid1, u32 srTid2, bool ndsPreloaded);
 
-int bootstrapHbRunNdsFile (const char* filename, const char* fatFilename, const char* ramDiskFilename, const char* cfgFilename, u32 ramDiskSize, const char* srParamsFilename, const char* patchOffsetCacheFilename, u32 cfgSize, int romToRamDisk, bool romIsCompressed, int argc, const char** argv, int language, int dsiMode, bool boostCpu, bool boostVram, int consoleModel, bool ndsPreloaded);
+int bootstrapHbRunNdsFile (const char* filename, const char* fatFilename, const char* ramDiskFilename, const char* cfgFilename, u32 ramDiskSize, const char* srParamsFilename, const char* patchOffsetCacheFilename, u32 cfgSize, int romToRamDisk, bool romIsCompressed, int argc, const char** argv, int language, int dsiMode, bool boostCpu, bool boostVram, int consoleModel, bool soundFreq, bool ndsPreloaded);
 
 void bootstrapHbRunPrep (int romToRamDisk);
 

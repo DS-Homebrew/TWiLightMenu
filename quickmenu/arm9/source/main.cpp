@@ -2845,7 +2845,7 @@ int dsClassicMenu(void) {
 								perGameSettings_dsiMode == -1 ? isModernHomebrew[ms().secondaryDevice] : perGameSettings_dsiMode,
 								perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu,
 								perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram,
-								ms().consoleModel, /* ndsPreloaded */ false);
+								ms().consoleModel, ms().soundFreq, /* ndsPreloaded */ false);
 							} else {
 								err = 1;
 							}
