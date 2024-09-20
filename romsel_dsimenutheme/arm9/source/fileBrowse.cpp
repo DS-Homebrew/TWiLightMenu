@@ -458,9 +458,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 void waitForFadeOut(void) {
 	if (!dropDown && ms().theme == TWLSettings::EThemeDSi) {
 		dropDown = true;
-		for (int i = 0; i < 60; i++) {
-			bgOperations(true);
-		}
+		while (!screenFadedIn()) { bgOperations(true); }
 	}
 }
 
@@ -3104,7 +3102,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			musicplaying = true;
 		}
 
-		snd().updateStream();
 		waitForFadeOut();
 		controlTopBright = false;
 		fadeSpeed = true; // Fast fade speed
