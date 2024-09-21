@@ -379,7 +379,7 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 		isDirectory[0] = false;
 		std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 		displayDiskIcon(ms().secondaryDevice);
-		getGameInfo(0, isDirectory[0], dirContents.at(fileOffset).name.c_str());
+		getGameInfo(0, isDirectory[0], dirContents.at(fileOffset).name.c_str(), false);
 		displayDiskIcon(false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
@@ -474,7 +474,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 		} else {
 			isDirectory[n] = false;
 			std::string std_romsel_filename = dirContents.at(i).name.c_str();
-			getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str());
+			getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 				bnrRomType[n] = 0;
@@ -586,7 +586,7 @@ void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
 	} else {
 		isDirectory[n] = false;
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
-		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str());
+		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[n] = 0;
@@ -697,7 +697,7 @@ void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
 	} else {
 		isDirectory[n] = false;
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
-		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str());
+		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[n] = 0;

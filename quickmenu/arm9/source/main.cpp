@@ -1105,7 +1105,7 @@ void refreshNdsCard(bool refreshBoxArt) {
 		} */
 	}
 
-	getGameInfo(1, false, "slot1");
+	getGameInfo(1, false, "slot1", false);
 	iconUpdate (1, false, "slot1");
 	bnrRomType[1] = ROM_TYPE_NDS;
 	boxArtType[1] = 0;
@@ -1257,16 +1257,16 @@ void parseRomInformationForDevice(int device, std::string& filename, char* boxAr
 		romfolder[device].resize(romfolder[device].size()-1);
 	}
 	chdir(romfolder[device].data());
-	
+
 	filename = ms().romPath[device];
 	const size_t last_slash_idx = filename.find_last_of("/");
 	if (std::string::npos != last_slash_idx) {
 		filename.erase(0, last_slash_idx + 1);
 	}
-	
+
 	getFiletypeFromFilename(filename, bnrRomType[device], boxArtType[device]);
-	
-	getGameInfo(device, false, filename.data());
+
+	getGameInfo(device, false, filename.data(), false);
 	iconUpdate(device, false, filename.data());
 
 	/* if (ms().showBoxArt) {

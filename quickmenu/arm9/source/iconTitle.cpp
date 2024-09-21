@@ -294,21 +294,23 @@ void loadFixedBanner(bool isSlot1) {
 	}
 }
 
-void getGameInfo(int num, bool isDir, const char* name)
+void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 {
 	bnriconPalLine[num] = 0;
 	bnriconPalLoaded[num] = 0;
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
-	bnriconisDSi[num] = false;
 	bnrWirelessIcon[num] = 0;
-	customIcon[num] = 0;
 	isDSiWare[num] = false;
 	isHomebrew[num] = true;
 	isModernHomebrew[num] = true;
-	infoFound[num] = false;
+	if (!fromArgv) {
+		bnriconisDSi[num] = false;
+		customIcon[num] = 0;
+		infoFound[num] = false;
+	}
 
-	if (ms().showCustomIcons) {
+	if (ms().showCustomIcons && customIcon[num] < 2 && (!fromArgv || customIcon[num] <= 0)) {
 		toncset(&ndsBanner, 0, sizeof(sNDSBannerExt));
 		bool customIconGood = false;
 
@@ -448,7 +450,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 					// this is a directory!
 					clearBannerSequence(num);
 				} else {
-					getGameInfo(num, false, p);
+					getGameInfo(num, false, p, true);
 				}
 			} else {
 				// this is not an nds/app file!

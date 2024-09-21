@@ -1113,7 +1113,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		} else {
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
-			getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
+			getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str(), false);
 
 			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 				bnrRomType = 0;

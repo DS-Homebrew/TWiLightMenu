@@ -922,15 +922,13 @@ void copyGameInfo(int numDst, int numSrc)
 	bnriconisDSi[numDst] = bnriconisDSi[numSrc];
 }
 
-void getGameInfo(int num, bool isDir, const char* name)
+void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 {
-	bnriconisDSi[num] = false;
 	bnriconPalLine[num] = 0;
 	bnriconPalLoaded[num] = 0;
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnrWirelessIcon[num] = 0;
-	customIcon[num] = 0;
 	toncset(gameTid[num], 0, 4);
 	isTwlm[num] = false;
 	isDSiWare[num] = false;
@@ -938,9 +936,13 @@ void getGameInfo(int num, bool isDir, const char* name)
 	isModernHomebrew[num] = true;
 	requiresRamDisk[num] = false;
 	requiresDonorRom[num] = false;
-	infoFound[num] = false;
+	if (!fromArgv) {
+		bnriconisDSi[num] = false;
+		customIcon[num] = 0;
+		infoFound[num] = false;
+	}
 
-	if (ms().showCustomIcons && customIcon[num] < 2) {
+	if (ms().showCustomIcons && customIcon[num] < 2 && (!fromArgv || customIcon[num] <= 0)) {
 		sNDSBannerExt &banner = bnriconTile[num];
 		bool argvHadPng = customIcon[num] == 1;
 		u8 iconCopy[512];
@@ -1116,7 +1118,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 					if (customIcon[num] != 2)
 						clearBannerSequence(num);
 				} else {
-					getGameInfo(num, true, p);
+					getGameInfo(num, true, p, true);
 				}
 			} else {
 				// this is not an nds/app file!

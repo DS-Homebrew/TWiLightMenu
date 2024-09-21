@@ -898,15 +898,13 @@ void drawIcon(int Xpos, int Ypos) {
 	}
 }
 
-void getGameInfo(bool isDir, const char* name)
+void getGameInfo(bool isDir, const char* name, bool fromArgv)
 {
 	bnriconPalLine = 0;
 	bnriconPalLoaded = 0;
 	bnriconframenumY = 0;
 	bannerFlip = GL_FLIP_NONE;
-	bnriconisDSi = false;
 	bnrWirelessIcon = 0;
-	customIcon = 0;
 	toncset(gameTid, 0, 4);
 	isTwlm = false;
 	isDSiWare = false;
@@ -914,9 +912,13 @@ void getGameInfo(bool isDir, const char* name)
 	isModernHomebrew = true;
 	requiresRamDisk = false;
 	requiresDonorRom = false;
-	infoFound = false;
+	if (!fromArgv) {
+		bnriconisDSi = false;
+		customIcon = 0;
+		infoFound = false;
+	}
 
-	if (ms().showCustomIcons) {
+	if (ms().showCustomIcons && customIcon < 2 && (!fromArgv || customIcon <= 0)) {
 		toncset(&ndsBanner, 0, sizeof(sNDSBannerExt));
 		bool customIconGood = false;
 
@@ -1059,7 +1061,7 @@ void getGameInfo(bool isDir, const char* name)
 					// this is a directory!
 					clearBannerSequence();
 				} else {
-					getGameInfo(false, p);
+					getGameInfo(false, p, true);
 				}
 			} else {
 				// this is not an nds/app file!

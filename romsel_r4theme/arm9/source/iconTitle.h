@@ -14,7 +14,7 @@ void iconTitleInit();
 void reloadIconPalettes();
 
 void loadConsoleIcons();
-void getGameInfo(bool isDir, const char* name);
+void getGameInfo(bool isDir, const char* name, bool fromArgv);
 void iconUpdate(bool isDir, const char* name);
 void titleUpdate(bool isDir, const char* name);
 void drawIconFolder(int Xpos, int Ypos);
