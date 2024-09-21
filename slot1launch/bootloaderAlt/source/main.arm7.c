@@ -734,15 +734,16 @@ void arm7_main (void) {
 			// - We disable ADC NADC/MADC dividers, to share the DAC clock.
 			// This also prevents us from having to reconfigure the PLL multipliers
 			// for 32kHz/47kHz.
-			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_PLL_PR, 0);
+			// This produces low quality output
+			/* cdcWriteReg(CDC_CONTROL, CDC_CONTROL_PLL_PR, 0);
 			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_DAC_MDAC, CDC_CONTROL_CLOCK_ENABLE(2));
 			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_DAC_NDAC, CDC_CONTROL_CLOCK_ENABLE(1));
 			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_MADC, CDC_CONTROL_CLOCK_DISABLE);
 			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_NADC, CDC_CONTROL_CLOCK_DISABLE);
 			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_CLOCK_MUX, CDC_CONTROL_CLOCK_PLL_IN_MCLK | CDC_CONTROL_CLOCK_CODEC_IN_MCLK);
 
-			/* cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_MADC, CDC_CONTROL_CLOCK_DISABLE);
-			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_NADC, CDC_CONTROL_CLOCK_DISABLE);
+			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_MADC, CDC_CONTROL_CLOCK_DISABLE);
+			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_NADC, CDC_CONTROL_CLOCK_DISABLE); */
 
 			if (soundFreq)
 			{
@@ -755,7 +756,7 @@ void arm7_main (void) {
 				// Configure a PLL multiplier/divider of 21/2, and a NDAC/NADC divider of 7.
 				cdcWriteReg(CDC_CONTROL, CDC_CONTROL_DAC_NDAC, CDC_CONTROL_CLOCK_ENABLE(7));
 				cdcWriteReg(CDC_CONTROL, CDC_CONTROL_PLL_J, 21);
-			} */
+			}
 
 			REG_SNDEXTCNT = (REG_SNDEXTCNT & ~SNDEXTCNT_FREQ_47KHZ) | (soundFreq ? SNDEXTCNT_FREQ_47KHZ : SNDEXTCNT_FREQ_32KHZ) | SNDEXTCNT_ENABLE;
 			// REG_SNDEXTCNT |= SNDEXTCNT_ENABLE; // Enable sound output
