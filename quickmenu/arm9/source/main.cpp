@@ -1756,7 +1756,7 @@ int dsClassicMenu(void) {
 						}
 						/*fallthrough*/
 					case MenuEntry::SETTINGS:
-						if(!(sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)))
+						if(!(sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)))
 								break;
 						cursorPosition = MenuEntry::BRIGHTNESS;
 						/*fallthrough*/
@@ -1806,7 +1806,7 @@ int dsClassicMenu(void) {
 					return MenuEntry::GBA;
 				}
 				if (touchPoint.px >= 10 && touchPoint.px <= 20 && touchPoint.py >= 175 && touchPoint.py <= 185
-							&& (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2))) {
+							&& (sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2))) {
 					return MenuEntry::BRIGHTNESS;
 				}
 				if (touchPoint.px >= 117 && touchPoint.px <= 137 && touchPoint.py >= 170 && touchPoint.py <= 190 && !ms().kioskMode) {
@@ -2164,7 +2164,7 @@ int dsClassicMenu(void) {
 						break;
 					case MenuEntry::BRIGHTNESS:
 						// Adjust backlight level
-						if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
+						if (sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) {
 							fifoSendValue32(FIFO_USER_04, 1);
 							mmEffectEx(&snd_backlight);
 						}
@@ -2512,7 +2512,7 @@ int dsClassicMenu(void) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
-					if (dsiFeatures() && ms().secondaryDevice && (!ms().dsiWareToSD || sys().arm7SCFGLocked())) {
+					if (ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode || !ms().dsiWareToSD || sys().arm7SCFGLocked())) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA());
 					}
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", 5);
@@ -2729,10 +2729,10 @@ int dsClassicMenu(void) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", perGameSettings_region < -1 ? ms().useRomRegion : 0);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", (dsModeForced || !dsiBinariesFound || (unitCode[ms().secondaryDevice] == 0 && !isDSiMode())) ? 0 : (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode));
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA());
 						if (dsiFeatures() || !ms().secondaryDevice) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram);
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", setCardReadDMA());
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", setAsyncCardRead());
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", SetDonorSDK());
@@ -2845,7 +2845,7 @@ int dsClassicMenu(void) {
 								perGameSettings_dsiMode == -1 ? isModernHomebrew[ms().secondaryDevice] : perGameSettings_dsiMode,
 								perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu,
 								perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram,
-								ms().consoleModel, /* ndsPreloaded */ false);
+								ms().consoleModel, ms().soundFreq, /* ndsPreloaded */ false);
 							} else {
 								err = 1;
 							}
@@ -3536,7 +3536,7 @@ int dsClassicMenu(void) {
 						0,
 						boostCpu,
 						boostVram,
-						ms().consoleModel, false);
+						ms().consoleModel, ms().soundFreq, false);
 					} else {
 						err = 1;
 					}

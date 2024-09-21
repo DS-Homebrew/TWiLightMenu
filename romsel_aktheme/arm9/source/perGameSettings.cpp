@@ -146,10 +146,10 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
 		}
 		pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
+		if (!blacklisted_cardReadDma) pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
 		if (dsiFeatures()) {
 			if (!blacklisted_boostCpu) pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
-			if (!blacklisted_cardReadDma) pergameini.SetInt("GAMESETTINGS", "CARD_READ_DMA", perGameSettings_cardReadDMA);
 		}
 		if (!ms().secondaryDevice) {
 			if (!blacklisted_asyncCardRead) pergameini.SetInt("GAMESETTINGS", "ASYNC_CARD_READ", perGameSettings_asyncCardRead);
@@ -554,14 +554,14 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 13;	// DSiWare booter
 		}
-		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
-			/* if (dsiFeatures() && ms().secondaryDevice && (!ms().dsiWareToSD || sys().arm7SCFGLocked()) && !bs().b4dsMode && !blacklisted_cardReadDma) {
+		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || !dsiFeatures() || (ms().secondaryDevice && bs().b4dsMode) || !ms().dsiWareToSD || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+			if (ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode || !ms().dsiWareToSD || sys().arm7SCFGLocked()) && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
-			} */
+			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
-			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
+			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked()) && widescreenFound) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
@@ -601,15 +601,15 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
+		if (bootstrapEnabled && !blacklisted_cardReadDma) {
+			perGameOps++;
+			perGameOp[perGameOps] = 5;	// Card Read DMA
+		}
 		if (ms().secondaryDevice && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) && romUnitCode[cursorPosOnScreen] < 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}
 		if (bootstrapEnabled) {
-			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && romUnitCode[cursorPosOnScreen] < 3 && !blacklisted_cardReadDma) {
-				perGameOps++;
-				perGameOp[perGameOps] = 5;	// Card Read DMA
-			}
 			if (!ms().secondaryDevice && (romSize > (romUnitCode[cursorPosOnScreen] > 0 ? romSizeLimitTwl : romSizeLimit)) && !blacklisted_asyncCardRead) {
 				perGameOps++;
 				perGameOp[perGameOps] = 12;	// Async Card Read
@@ -788,9 +788,7 @@ void perGameSettings (std::string filename) {
 				break;
 			case 5:
 				printSmall(false, perGameOpXpos, perGameOpYpos, "Card Read DMA:", Alignment::left, highlighted);
-				if (romUnitCode[cursorPosOnScreen] > 0 && (perGameSettings_dsiMode==-1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode > 0)) {
-					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Off", Alignment::right, highlighted);
-				} else if (perGameSettings_cardReadDMA == -1) {
+				if (perGameSettings_cardReadDMA == -1) {
 					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 				} else if (perGameSettings_cardReadDMA == 1) {
 					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "On", Alignment::right, highlighted);
@@ -974,10 +972,8 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 5:
-						if (romUnitCode[cursorPosOnScreen] == 0 || (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode) : perGameSettings_dsiMode < 1)) {
-							perGameSettings_cardReadDMA--;
-							if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = 1;
-						}
+						perGameSettings_cardReadDMA--;
+						if (perGameSettings_cardReadDMA < -1) perGameSettings_cardReadDMA = 1;
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;
@@ -1051,10 +1047,8 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 5:
-						if (romUnitCode[cursorPosOnScreen] == 0 || (perGameSettings_dsiMode==-1 ? (DEFAULT_DSI_MODE == TWLSettings::EDSMode) : perGameSettings_dsiMode < 1)) {
 							perGameSettings_cardReadDMA++;
 							if (perGameSettings_cardReadDMA > 1) perGameSettings_cardReadDMA = -1;
-						}
 						break;
 					case 6:
 						perGameSettings_directBoot = !perGameSettings_directBoot;

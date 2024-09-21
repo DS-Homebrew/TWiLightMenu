@@ -667,7 +667,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KGUE", // Flipnote Studio (USA)
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KZB", // Little Red Riding Hood's Zombie BBQ
-	"KDME", // Mario vs. Donkey Kong: Minis March Again! (USA)
 	"KMM", // Mixed Messages
 	"KLT", // My Little Restaurant
 	"KNV", // Neko Reversi
@@ -683,6 +682,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KOZ", // G.G Series: Super Hero Ogre 2
 	"K4W", // Super Swap
 	"K4P", // Super Yum Yum: Puzzle Adventures
+	"KSY", // System Flaw: Recruit
 	"K3O", // G.G Series: Throw Out
 	"KDZ", // Trajectile / Reflect Missile
 };

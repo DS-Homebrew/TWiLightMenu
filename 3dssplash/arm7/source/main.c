@@ -35,16 +35,19 @@
 void my_touchInit();
 void my_installSystemFIFO(void);
 
+u8 my_i2cReadRegister(u8 device, u8 reg);
+
 #define BIT_SET(c, n) ((c) << (n))
 
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
-volatile int status = 0;
+volatile u32 status = 0;
+static bool i2cBricked = false;
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
-	if (isDSiMode()) {
+	if (isDSiMode() && !i2cBricked) {
 		i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
 		i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi Menu
 	} else {
@@ -112,11 +115,16 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 
+	if (isDSiMode() || REG_SCFG_EXT != 0) {
+		const u8 i2cVer = my_i2cReadRegister(0x4A, 0);
+		i2cBricked = (i2cVer == 0 || i2cVer == 0xFF);
+	}
+
 	u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 
 	// 01: Fade Out
 	// 02: Return
-	// 03: status (Bit 0: hasRegulableBacklight, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT, Bit 3: isDSPhat)
+	// 03: status (Bit 0: hasRegulableBacklight, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT, Bit 3: isDSPhat, Bit 4: i2cBricked)
 
 
 	// 03: Status: Init/Volume/Battery/SD
@@ -124,12 +132,13 @@ int main() {
 	// Battery is 7 bits -- bits 0-7
 	// Volume is 00h to 1Fh = 5 bits -- bits 8-12
 	// SD status -- bits 13-14
-	// Init status -- bits 15-18 (Bit 0 (15): hasRegulableBacklight, Bit 1 (16): scfgEnabled, Bit 2 (17): REG_SNDEXTCNT, Bit 3 (18): isDSPhat)
+	// Init status -- bits 15-18 (Bit 0 (15): hasRegulableBacklight, Bit 1 (16): scfgEnabled, Bit 2 (17): REG_SNDEXTCNT, Bit 3 (18): isDSPhat, Bit 4 (19): i2cBricked)
 
 	u8 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT)
 									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT)
 									| BIT_SET(!!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7)), BACKLIGHT_BIT)
-									| BIT_SET(isPhat(), DSPHAT_BIT));
+									| BIT_SET(isPhat(), DSPHAT_BIT)
+									| BIT_SET(i2cBricked, I2CBRICKED_BIT));
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);

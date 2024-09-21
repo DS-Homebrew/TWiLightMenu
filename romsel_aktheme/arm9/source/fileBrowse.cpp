@@ -64,7 +64,6 @@
 #define ENTRIES_PER_SCREEN 4
 #define ENTRIES_PER_SCREEN_SMALL 8
 #define ENTRIES_PER_SCREEN_LIST 10
-#define ENTRY_PAGE_LENGTH 10
 
 extern bool lcdSwapped;
 
@@ -1004,10 +1003,12 @@ bool donorRomMsg(void) {
 	return proceedToLaunch;
 }
 
-bool checkForCompatibleGame(const char *filename) {
+bool checkForCompatibleGame() {
+	return true;
+
 	bool proceedToLaunch = true;
 
-	if (!dsiFeatures() && ms().secondaryDevice) {
+	/* if (!dsiFeatures() && ms().secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
 			if (memcmp(gameTid[cursorPosOnScreen], incompatibleGameListB4DS[i], 3) == 0) {
@@ -1016,9 +1017,9 @@ bool checkForCompatibleGame(const char *filename) {
 				break;
 			}
 		}
-	}
+	} */
 
-	if (proceedToLaunch && ms().secondaryDevice) {
+	/* if (proceedToLaunch && ms().secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameListFC)/sizeof(incompatibleGameListFC[0]); i++) {
 			if (memcmp(gameTid[cursorPosOnScreen], incompatibleGameListFC[i], 3) == 0) {
@@ -1027,7 +1028,7 @@ bool checkForCompatibleGame(const char *filename) {
 				break;
 			}
 		}
-	}
+	} */
 
 	/* if (proceedToLaunch) {
 		// TODO: If the list gets large enough, switch to bsearch().
@@ -1077,7 +1078,7 @@ bool checkForCompatibleGame(const char *filename) {
 	return proceedToLaunch;
 }
 
-bool gameCompatibleMemoryPit(const char* filename) {
+bool gameCompatibleMemoryPit(void) {
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(incompatibleGameListMemoryPit)/sizeof(incompatibleGameListMemoryPit[0]); i++) {
 		if (memcmp(gameTid[cursorPosOnScreen], incompatibleGameListMemoryPit[i], 3) == 0) {
@@ -1088,7 +1089,7 @@ bool gameCompatibleMemoryPit(const char* filename) {
 	return true;
 }
 
-bool checkForGbaBiosRequirement(const char* filename) {
+bool checkForGbaBiosRequirement(void) {
 	extern bool gbaBiosFound[2];
 
 	if (gbaBiosFound[ms().secondaryDevice]) {
@@ -1506,8 +1507,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			resetIconScale();
 		}
 		if (pressed & KEY_LEFT) {
-			fileOffset -= ENTRY_PAGE_LENGTH;
-			screenOffset -= ENTRY_PAGE_LENGTH;
+			fileOffset -= entriesPerScreen;
+			screenOffset -= entriesPerScreen;
 			if (fileOffset < 0) fileOffset = 0;
 			if (screenOffset < 0) screenOffset = 0;
 			cursorPosOnScreen = fileOffset - screenOffset;
@@ -1515,8 +1516,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			resetIconScale();
 		}
 		if (pressed & KEY_RIGHT) {
-			fileOffset += ENTRY_PAGE_LENGTH;
-			screenOffset += ENTRY_PAGE_LENGTH;
+			fileOffset += entriesPerScreen;
+			screenOffset += entriesPerScreen;
 			if (fileOffset > (int)dirContents.size() - 1) fileOffset = (int)dirContents.size() - 1;
 			if (screenOffset > (int)dirContents.size() - entriesPerScreen) screenOffset = (int)dirContents.size() - entriesPerScreen;
 			cursorPosOnScreen = fileOffset - screenOffset;
@@ -1738,8 +1739,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				if (isTwlm[cursorPosOnScreen] || (!isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[cursorPosOnScreen] == 0 && gameTid[cursorPosOnScreen][0] == 'D' && romUnitCode[cursorPosOnScreen] == 3 && requiresDonorRom[cursorPosOnScreen] != 51)
 				|| (isDSiWare[cursorPosOnScreen] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
-				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit(dirContents.at(fileOffset).name.c_str()))))
-				|| (bnrRomType[cursorPosOnScreen] == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement(dirContents.at(fileOffset).name.c_str()))) {
+				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
+				|| (bnrRomType[cursorPosOnScreen] == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
 					proceedToLaunch = cannotLaunchMsg(gameTid[cursorPosOnScreen][0]);
 					refreshBanners(screenOffset, fileOffset, dirContents);
 				}
@@ -1760,7 +1761,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 				}
 				if (proceedToLaunch && (useBootstrapAnyway || ((!dsiFeatures() || bs().b4dsMode) && isDSiWare[cursorPosOnScreen])) && bnrRomType[cursorPosOnScreen] == 0 && !dsModeForced && isHomebrew[cursorPosOnScreen] == 0) {
-					proceedToLaunch = checkForCompatibleGame(dirContents.at(fileOffset).name.c_str());
+					proceedToLaunch = checkForCompatibleGame();
 					if (proceedToLaunch && requiresDonorRom[cursorPosOnScreen]) {
 						const char* pathDefine = "DONORTWL_NDS_PATH"; // SDK5.x (TWL)
 						if (requiresDonorRom[cursorPosOnScreen] == 52) {
@@ -2073,7 +2074,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";
 		}
 
-		if ((sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) && (pressed & KEY_TOUCH) && touch.px >= brightnessX && touch.px < brightnessX+brightnessW && touch.py >= brightnessY && touch.py < brightnessY+brightnessH) {
+		if ((sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) && (pressed & KEY_TOUCH) && touch.px >= brightnessX && touch.px < brightnessX+brightnessW && touch.py >= brightnessY && touch.py < brightnessY+brightnessH) {
 			fifoSendValue32(FIFO_USER_04, 1);
 			while (1) {
 				scanKeys();

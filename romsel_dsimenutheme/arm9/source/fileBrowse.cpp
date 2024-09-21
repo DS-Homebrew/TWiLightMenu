@@ -458,9 +458,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 void waitForFadeOut(void) {
 	if (!dropDown && ms().theme == TWLSettings::EThemeDSi) {
 		dropDown = true;
-		for (int i = 0; i < 60; i++) {
-			bgOperations(true);
-		}
+		while (!screenFadedIn()) { bgOperations(true); }
 	}
 }
 
@@ -1851,9 +1849,11 @@ bool donorRomMsg(const char *filename) {
 }
 
 bool checkForCompatibleGame(const char *filename) {
+	return true;
+
 	bool proceedToLaunch = true;
 
-	if (!dsiFeatures() && ms().secondaryDevice) {
+	/* if (!dsiFeatures() && ms().secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
 			if (memcmp(gameTid[CURPOS], incompatibleGameListB4DS[i], 3) == 0) {
@@ -1862,9 +1862,9 @@ bool checkForCompatibleGame(const char *filename) {
 				break;
 			}
 		}
-	}
+	} */
 
-	if (proceedToLaunch && ms().secondaryDevice) {
+	/* if (proceedToLaunch && ms().secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameListFC)/sizeof(incompatibleGameListFC[0]); i++) {
 			if (memcmp(gameTid[CURPOS], incompatibleGameListFC[i], 3) == 0) {
@@ -1873,7 +1873,7 @@ bool checkForCompatibleGame(const char *filename) {
 				break;
 			}
 		}
-	}
+	} */
 
 	/* if (proceedToLaunch) {
 		// TODO: If the list gets large enough, switch to bsearch().
@@ -3102,7 +3102,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			musicplaying = true;
 		}
 
-		snd().updateStream();
 		waitForFadeOut();
 		controlTopBright = false;
 		fadeSpeed = true; // Fast fade speed

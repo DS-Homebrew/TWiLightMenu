@@ -315,7 +315,7 @@ void batteryIconLoad() {
 	// Load full battery icon
 
 	const char* filePath = "nitro:/graphics/battery/batteryfull.png";
-	if (dsiFeatures() && ms().consoleModel < 2 && ms().powerLedColor) {
+	if (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2 && ms().powerLedColor) {
 		filePath = "nitro:/graphics/battery/batteryfullPurple.png";
 	} else if (sys().isRegularDS()) {
 		filePath = "nitro:/graphics/battery/batteryfullDS.png";
@@ -356,7 +356,7 @@ void batteryIconLoad() {
 	// Load low battery icon
 
 	filePath = "nitro:/graphics/battery/batterylow.png";
-	if (dsiFeatures() && ms().consoleModel < 2 && ms().powerLedColor) {
+	if (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2 && ms().powerLedColor) {
 		filePath = "nitro:/graphics/battery/batteryfullPurple.png";
 	}
 
@@ -393,7 +393,7 @@ void batteryIconLoad() {
 }
 
 static bool isBatteryLow(void) {
-	u8 batteryLevel = sys().batteryStatus();
+	const u8 batteryLevel = sys().batteryStatus();
 	if (batteryLevel & BIT(7)) // charging
 		return false;
 
@@ -733,7 +733,7 @@ void vBlankHandler()
 				glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, &icon_gbamode.images[(((u8*)GBAROM)[0xB2] == 0x96) ? 0 : 1]);
 			}
 			else drawIcon(num, 40, iconYpos[3]+6);
-			if (sys().isRegularDS() || (dsiFeatures() && ms().consoleModel < 2)) {
+			if (sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::BRIGHTNESS));
 			}
 			if (bnrWirelessIcon[num] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessicons.images[(bnrWirelessIcon[1]-1) & 31]);

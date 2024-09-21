@@ -1302,7 +1302,7 @@ int settingsMode(void)
 
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 
-	if ((isDSiMode() || sdFound()) && ms().consoleModel == 0) {
+	if ((isDSiMode() || sdFound()) && !sys().i2cBricked() && ms().consoleModel < 2) {
 		if (sdFound()) {
 			bootstrapPage
 				.option((flashcardFound() ? STR_SYSSD_ROMREADLED : STR_ROMREADLED),
@@ -1464,7 +1464,7 @@ int settingsMode(void)
 		.option(STR_PREVENT_ROM_DELETION, STR_DESCRIPTION_PREVENT_ROM_DELETION_1, Option::Bool(&ms().preventDeletion), {STR_YES, STR_NO}, {true, false})
 		.option(STR_UPDATE_RECENTLY_PLAYED_LIST, STR_DESCRIPTION_UPDATE_RECENTLY_PLAYED_LIST, Option::Bool(&ms().updateRecentlyPlayedList), {STR_YES, STR_NO}, {true, false});
 
-	if (isDSiMode()) {
+	if (isDSiMode() && !sys().i2cBricked()) {
 		miscPage
 			.option(STR_WIFI,
 					STR_DESCRIPTION_WIFI,
@@ -1474,12 +1474,14 @@ int settingsMode(void)
 	}
 
 	if (isDSiMode() && ms().consoleModel < 2) {
-		miscPage
-			.option(STR_POWERLEDCOLOR,
-					STR_DESCRIPTION_POWERLEDCOLOR,
-					Option::Bool(&ms().powerLedColor, opt_powerLed_toggle),
-					{STR_PURPLE, STR_BLUE+"/"+STR_RED},
-					{true, false});
+		if (!sys().i2cBricked()) {
+			miscPage
+				.option(STR_POWERLEDCOLOR,
+						STR_DESCRIPTION_POWERLEDCOLOR,
+						Option::Bool(&ms().powerLedColor, opt_powerLed_toggle),
+						{STR_PURPLE, STR_BLUE+"/"+STR_RED},
+						{true, false});
+		}
 
 		if (ms().consoleModel == 0 && sdFound()) {
 			miscPage
@@ -1575,12 +1577,12 @@ int settingsMode(void)
 		// or delete the hiya autoboot file.
 		miscPage
 			.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {"TWiLight Menu++", STR_SYSTEM_MENU}, {true, false})
-			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
+			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {STR_PRESS_A}, {0});
 	}
 
 	if (lumaFound) {
 		miscPage
-			.option(STR_SET_LUMA_AUTOBOOT, STR_DESCRIPTION_SET_LUMA_AUTOBOOT, Option::Nul(opt_set_luma_autoboot), {}, {});
+			.option(STR_SET_LUMA_AUTOBOOT, STR_DESCRIPTION_SET_LUMA_AUTOBOOT, Option::Nul(opt_set_luma_autoboot), {STR_PRESS_A}, {0});
 	}
 
 	/*SettingsPage twlfirmPage(STR_TWLFIRM_SETTINGS);

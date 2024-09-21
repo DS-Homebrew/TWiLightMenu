@@ -35,6 +35,7 @@
 #include "fileBrowse.h"
 #include "graphics/fontHandler.h"
 #include "common/lodepng.h"
+#include "common/logging.h"
 #include "language.h"
 #include "ndsheaderbanner.h"
 #include "myDSiMode.h"
@@ -909,8 +910,8 @@ void getGameInfo(bool isDir, const char* name)
 	toncset(gameTid, 0, 4);
 	isTwlm = false;
 	isDSiWare = false;
-	isHomebrew = false;
-	isModernHomebrew = false;
+	isHomebrew = true;
+	isModernHomebrew = true;
 	requiresRamDisk = false;
 	requiresDonorRom = false;
 	infoFound = false;
@@ -1143,43 +1144,57 @@ void getGameInfo(bool isDir, const char* name)
 
 		fseek(fp, ndsHeader.arm9romOffset + ndsHeader.arm9executeAddress - ndsHeader.arm9destination, SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, fp);
-		if (arm9StartSig[0] == 0xE3A00301
-		 && arm9StartSig[1] == 0xE5800208
-		 && arm9StartSig[2] == 0xE3A00013
-		 && arm9StartSig[3] == 0xE129F000) {
-			isHomebrew = true;
-			isModernHomebrew = true; // Homebrew is recent (supports reading from SD without a DLDI driver)
-			if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
-				if ((ndsHeader.arm9binarySize == 0xC9F68 && ndsHeader.arm7binarySize == 0x12814)	// Colors! v1.1
-				|| (ndsHeader.arm9binarySize == 0x1B0864 && ndsHeader.arm7binarySize == 0xDB50)	// Mario Paint Composer DS v2 (Bullet Bill)
-				|| (ndsHeader.arm9binarySize == 0xE78FC && ndsHeader.arm7binarySize == 0xF068)		// SnowBros v2.2
-				|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)		// ikuReader v0.058
-				|| (ndsHeader.arm9binarySize == 0x7A124 && ndsHeader.arm7binarySize == 0xEED0)		// PPSEDS r11
-				|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)		// XRoar 0.24fp3
-				|| (ndsHeader.arm9binarySize == 0x2C9A8 && ndsHeader.arm7binarySize == 0xFB98)		// NitroGrafx v0.7
-				|| (ndsHeader.arm9binarySize == 0x22AE4 && ndsHeader.arm7binarySize == 0xA764)) {	// It's 1975 and this man is about to show you the future
-					isModernHomebrew = false; // Have nds-bootstrap load it (in case if it doesn't)
-				}
+		if (arm9StartSig[0] == 0xE3A0C301
+		 && arm9StartSig[1] == 0xE58CC208) {
+			// Title seems to be developed with Nintendo SDK, verify
+			if ((arm9StartSig[2] >= 0xEB000000 && arm9StartSig[2] < 0xEC000000) // SDK 2 & TWL SDK 5
+			 && (arm9StartSig[3] >= 0xE3A00000 && arm9StartSig[3] < 0xE3A01000)) {
+				isHomebrew = false;
+				isModernHomebrew = false;
+			} else
+			if (arm9StartSig[2] == 0xE1DC00B6 // SDK 3-5
+			 && arm9StartSig[3] == 0xE3500000) {
+				isHomebrew = false;
+				isModernHomebrew = false;
 			}
-		} else if ((memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0)
-				 || (memcmp(ndsHeader.gameTitle, "MAGIC FLOOR", 11) == 0)
-				 || (memcmp(ndsHeader.gameTitle, "UNLAUNCH.DSI", 12) == 0)) {
-			isHomebrew = true;
-			isModernHomebrew = true; // No need to use nds-bootstrap
-		} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
-		 || (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)) {
-			isHomebrew = true; // Homebrew is old (requires a DLDI driver to read from SD)
-		} else if (ndsHeader.unitCode != 0 && (ndsHeader.accessControl & BIT(4))) {
-			isDSiWare = true; // Is a DSiWare game
+		} else if (strncmp(gameTid, "HNA", 3) == 0) {
+			// Modcrypted
+			isHomebrew = false;
+			isModernHomebrew = false;
 		}
 
-		if (isHomebrew && !ms().secondaryDevice) {
-			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
-			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
-			|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058
-			|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)) {		// XRoar 0.24fp3
-				requiresRamDisk = true;
+		if (isHomebrew) {
+			if (arm9StartSig[0] == 0xE3A00301
+			 && arm9StartSig[1] == 0xE5800208
+			 && arm9StartSig[2] == 0xE3A00013
+			 && arm9StartSig[3] == 0xE129F000) {
+				// isModernHomebrew = true; // Homebrew is recent (supports reading from SD without a DLDI driver)
+				if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
+					if ((ndsHeader.arm9binarySize == 0xC9F68 && ndsHeader.arm7binarySize == 0x12814)	// Colors! v1.1
+					|| (ndsHeader.arm9binarySize == 0x1B0864 && ndsHeader.arm7binarySize == 0xDB50)	// Mario Paint Composer DS v2 (Bullet Bill)
+					|| (ndsHeader.arm9binarySize == 0xE78FC && ndsHeader.arm7binarySize == 0xF068)		// SnowBros v2.2
+					|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)		// ikuReader v0.058
+					|| (ndsHeader.arm9binarySize == 0x7A124 && ndsHeader.arm7binarySize == 0xEED0)		// PPSEDS r11
+					|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)		// XRoar 0.24fp3
+					|| (ndsHeader.arm9binarySize == 0x2C9A8 && ndsHeader.arm7binarySize == 0xFB98)		// NitroGrafx v0.7
+					|| (ndsHeader.arm9binarySize == 0x22AE4 && ndsHeader.arm7binarySize == 0xA764)) {	// It's 1975 and this man is about to show you the future
+						isModernHomebrew = false; // Have nds-bootstrap load it (in case if it doesn't)
+					}
+				}
+			} else if ((ndsHeader.unitCode == 0) && ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
+			 || (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000))) {
+				isModernHomebrew = false; // Homebrew is old (requires a DLDI driver to read from SD)
 			}
+			if (!ms().secondaryDevice) {
+				if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
+				|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
+				|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058
+				|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)) {		// XRoar 0.24fp3
+					requiresRamDisk = true;
+				}
+			}
+		} else if (ndsHeader.unitCode != 0 && (ndsHeader.accessControl & BIT(4))) {
+			isDSiWare = true; // Is a DSiWare game
 		}
 
 		if (!isHomebrew) {
@@ -1193,7 +1208,7 @@ void getGameInfo(bool isDir, const char* name)
 					requiresDonorRom = 0;
 				}
 			} else if (a7mbk6 == 0x080037C0 && ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode)
-			&& (((sys().dsDebugRam() || (dsiFeatures() && bs().b4dsMode == 2)) ? (memcmp(ndsHeader.gameCode, "DME", 3) == 0 || memcmp(ndsHeader.gameCode, "DMD", 3) == 0 || memcmp(ndsHeader.gameCode, "DMP", 3) == 0 || memcmp(ndsHeader.gameCode, "DHS", 3) == 0) : (memcmp(ndsHeader.gameCode, "DMP", 3) == 0 || memcmp(ndsHeader.gameCode, "DHS", 3) == 0))
+			&& (((sys().dsDebugRam() || (dsiFeatures() && bs().b4dsMode == 2)) ? (memcmp(ndsHeader.gameCode, "DME", 3) == 0 || memcmp(ndsHeader.gameCode, "DMF", 3) == 0 || memcmp(ndsHeader.gameCode, "DMD", 3) == 0 || memcmp(ndsHeader.gameCode, "DMP", 3) == 0 || memcmp(ndsHeader.gameCode, "DHS", 3) == 0 || memcmp(ndsHeader.gameCode, "DSY", 3) == 0) : (memcmp(ndsHeader.gameCode, "DMF", 3) == 0 || memcmp(ndsHeader.gameCode, "DMP", 3) == 0 || memcmp(ndsHeader.gameCode, "DHS", 3) == 0))
 			|| (ndsHeader.gameCode[0] != 'D' && memcmp(ndsHeader.gameCode, "KCX", 3) != 0 && memcmp(ndsHeader.gameCode, "KAV", 3) != 0 && memcmp(ndsHeader.gameCode, "KNK", 3) != 0 && memcmp(ndsHeader.gameCode, "KE3", 3) != 0))) {
 				requiresDonorRom = 51; // SDK5 ROM required
 			} else if (memcmp(ndsHeader.gameCode, "AYI", 3) == 0 && ndsHeader.arm7binarySize == 0x25F70) {
@@ -1302,17 +1317,23 @@ void iconUpdate(bool isDir, const char* name)
 		clearText(false);
 	}
 
+	logPrint("iconUpdate: ");
+
 	const bool isNds = (bnrRomType == 0);
 
-	if (customIcon > 0 || (customIcon && isNds)) {
+	if (customIcon > 0 || (customIcon && !isDir && isNds)) {
 		if (customIcon == -1) {
+			logPrint(isDir ? "Custom icon invalid!" : "Banner not found or custom icon invalid!");
 			loadUnkIcon();
 		} else if (bnriconisDSi) {
+			logPrint("Custom icon found!");
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
+			logPrint("Custom icon found!");
 			loadIcon(ndsBanner.icon, ndsBanner.palette, false);
 		}
 	} else if (isDir) {
+		logPrint("Folder found!");
 		loadFolderIcon();
 	} else if (extension(name, {".argv"})) {
 		// look through the argv file for the corresponding nds/app file
@@ -1324,6 +1345,7 @@ void iconUpdate(bool isDir, const char* name)
 		// open the argv file
 		fp = fopen(name, "rb");
 		if (fp == NULL) {
+			logPrint("Icon not found!\n");
 			clearIcon();
 			fclose(fp);
 			return;
@@ -1358,9 +1380,11 @@ void iconUpdate(bool isDir, const char* name)
 				rc = stat(p, &st);
 				if (rc != 0) {
 					// stat failed
+					logPrint("Icon not found!");
 					clearIcon();
 				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
+					logPrint("Folder found!");
 					clearIcon();
 				} else {
 					iconUpdate(false, p);
@@ -1384,12 +1408,12 @@ void iconUpdate(bool isDir, const char* name)
 		fp = fopen(name, "rb");
 		if (fp == NULL) {
 			// icon
+			logPrint("Icon not found!\n");
 			clearIcon();
 			fclose(fp);
 			return;
 		}
 
-		
 		ret = fseek(fp, offsetof(tNDSHeader, bannerOffset), SEEK_SET);
 		if (ret == 0)
 			ret = fread(&iconTitleOffset, sizeof (int), 1, fp); // read if seek succeed
@@ -1398,6 +1422,7 @@ void iconUpdate(bool isDir, const char* name)
 
 		if (ret != 1) {
 			// icon
+			logPrint("Icon not found!\n");
 			loadUnkIcon();
 			fclose(fp);
 			return;
@@ -1405,6 +1430,7 @@ void iconUpdate(bool isDir, const char* name)
 
 		if (iconTitleOffset == 0) {
 			// icon
+			logPrint("Icon not found!\n");
 			loadUnkIcon();
 			fclose(fp);
 			return;
@@ -1425,6 +1451,7 @@ void iconUpdate(bool isDir, const char* name)
 
 			if (ret != 1) {
 				// icon
+				logPrint("Icon not found!\n");
 				loadUnkIcon();
 				fclose(fp);
 				return;
@@ -1435,6 +1462,7 @@ void iconUpdate(bool isDir, const char* name)
 		fclose(fp);
 
 		// icon
+		logPrint("NDS icon found!");
 		if (bnriconisDSi) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
@@ -1489,6 +1517,7 @@ void iconUpdate(bool isDir, const char* name)
 	} else {
 		loadUnkIcon();
 	}
+	logPrint("\n");
 }
 
 void titleUpdate(bool isDir, const char* name)

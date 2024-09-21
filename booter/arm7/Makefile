@@ -21,7 +21,7 @@ UNIVERSAL	:=	../../universal
 TARGET		:=	booter
 BUILD		:=	build
 SOURCES		:=	source $(UNIVERSAL)/sdmmc/arm7/source
-INCLUDES	:=	include build $(UNIVERSAL)/sdmmc/arm7/include
+INCLUDES	:=	include build $(UNIVERSAL)/arm7/include $(UNIVERSAL)/sdmmc/arm7/include
 
 #---------------------------------------------------------------------------------
 # options for code generation
