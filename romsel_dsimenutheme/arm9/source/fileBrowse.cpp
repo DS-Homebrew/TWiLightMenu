@@ -3614,7 +3614,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				ms().cursorPosition[ms().secondaryDevice] = last_used_box;
 
 			// Startup...
-			if ((((pressed & KEY_A) || (pressed & KEY_START)) && bannerTextShown && showSTARTborder) || (gameTapped)) {
+			if ((((pressed & KEY_A) || (pressed & KEY_START) || (ms().theme == TWLSettings::ETheme3DS && (pressed & KEY_TOUCH) && touch.py > 171)) && bannerTextShown && showSTARTborder) || gameTapped) {
 				bannerTextShown = false; // Redraw title when done
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
