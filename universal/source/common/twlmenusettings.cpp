@@ -125,7 +125,7 @@ TWLSettings::TWLSettings()
 	ak_zoomIcons = true;
 
 	useBootstrap = true;
-	btsrpBootloaderDirect = false;
+	btsrpBootloaderDirect = true;
 	bootstrapFile = EReleaseBootstrap;
 
 	internetBrowserLaunched = false;
