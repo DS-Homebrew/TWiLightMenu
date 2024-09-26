@@ -98,6 +98,7 @@ extern int waitForNeedToPlayStopSound;
 extern int movingApp;
 extern int movingAppYpos;
 extern bool movingAppIsDir;
+extern bool draggingIcons;
 float movingArrowYpos = 59;
 bool movingArrowYdirection = true;
 bool showMovingArrow = false;
@@ -453,7 +454,29 @@ void vBlankHandler() {
 	}
 
 	// Move title box/window closer to destination if moved
-	if (ms().theme != TWLSettings::EThemeSaturn) {
+	if (ms().theme == TWLSettings::EThemeDSi && !draggingIcons && !scrollWindowTouched) {
+		if (titleboxXpos[ms().secondaryDevice] > titleboxXdest[ms().secondaryDevice]) {
+			titleboxXpos[ms().secondaryDevice] -= titleboxXspeed;
+			if (titleboxXpos[ms().secondaryDevice] < titleboxXdest[ms().secondaryDevice]) {
+				titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+			}
+			updateFrame = true;
+		} else if (titleboxXpos[ms().secondaryDevice] < titleboxXdest[ms().secondaryDevice]) {
+			titleboxXpos[ms().secondaryDevice] += titleboxXspeed;
+			if (titleboxXpos[ms().secondaryDevice] > titleboxXdest[ms().secondaryDevice]) {
+				titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+			}
+			updateFrame = true;
+		}
+
+		if (titlewindowXpos[ms().secondaryDevice] > titlewindowXdest[ms().secondaryDevice]) {
+			titlewindowXpos[ms().secondaryDevice] -= std::max((titlewindowXpos[ms().secondaryDevice] - titlewindowXdest[ms().secondaryDevice]) / titleboxXspeed, 1);
+			updateFrame = true;
+		} else if (titlewindowXpos[ms().secondaryDevice] < titlewindowXdest[ms().secondaryDevice]) {
+			titlewindowXpos[ms().secondaryDevice] += std::max((titlewindowXdest[ms().secondaryDevice] - titlewindowXpos[ms().secondaryDevice]) / titleboxXspeed, 1);
+			updateFrame = true;
+		}
+	} else if (ms().theme != TWLSettings::EThemeSaturn) {
 		if (titleboxXpos[ms().secondaryDevice] > titleboxXdest[ms().secondaryDevice]) {
 			titleboxXpos[ms().secondaryDevice] -= std::max((titleboxXpos[ms().secondaryDevice] - titleboxXdest[ms().secondaryDevice]) / titleboxXspeed, 1);
 			updateFrame = true;
@@ -1478,6 +1501,10 @@ void graphicsInit() {
 	// for (int i = 0; i < 12; i++) {
 	// 	launchDotFrame[i] = 5;
 	// }
+
+	if (ms().theme == TWLSettings::EThemeDSi) {
+		titleboxXspeed = 8;
+	}
 
 	for (int i = 0; i < 5; i++) {
 		dropBounce[i] = 0;

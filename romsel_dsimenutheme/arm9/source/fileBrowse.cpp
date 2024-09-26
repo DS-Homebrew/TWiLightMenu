@@ -101,6 +101,7 @@ extern int titleboxXspacing;
 int movingApp = -1;
 int movingAppYpos = 0;
 bool movingAppIsDir = false;
+bool draggingIcons = false;
 extern bool showMovingArrow;
 extern double movingArrowYpos;
 extern bool displayGameIcons;
@@ -3393,7 +3394,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					// Load icons
 					if (prevPos != CURPOS) {
 						for (int i = 0; i < 6; i++) {
-							int pos = (CURPOS - 2 + i);
+							const int pos = (CURPOS - 2 + i);
 							if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
 										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
@@ -3432,6 +3433,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				touchPosition prevTouch2 = touch;
 
 				bool tapped = false;
+				bool dsiCursorMove = false;
 				while (1) {
 					scanKeys();
 					touchRead(&touch);
@@ -3464,12 +3466,68 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 					if (moveBy == 0) {
 						gameTapped = bannerTextShown && showSTARTborder;
+					} else if (ms().theme == TWLSettings::EThemeDSi) {
+						if (moveBy != -2 && moveBy != 2) {
+							moveCursor(moveBy == 1, dirContents[scrn]);
+						} else {
+							const int CURPOS1 = std::clamp(moveBy > 0 ? (CURPOS + 1) : (CURPOS - 1), 0, last_used_box);
+							CURPOS = std::clamp(CURPOS + moveBy, 0, last_used_box);
+
+							titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
+							titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+							boxArtLoaded = false;
+							settingsChanged = true;
+							bannerTextShown = false;
+							titleboxXspeed = 10;
+							touch = startTouch;
+							if (CURPOS + PAGENUM * 40 >= ((int)dirContents[scrn].size())) {
+								showSTARTborder = (ms().theme == TWLSettings::ETheme3DS ? true : false);
+							} else {
+								showSTARTborder = true;
+							}
+
+							for (int i = 0; i < 2; i++) {
+								swiWaitForVBlank();
+							}
+
+							// Load icons
+							for (int i = 0; i < 6; i++) {
+								const int pos = (CURPOS1 - 2 + i);
+								if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
+									iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
+											dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
+											pos);
+								}
+							}
+
+							for (int i = 0; i < 5; i++) {
+								swiWaitForVBlank();
+							}
+
+							// Load icons again
+							for (int i = 0; i < 6; i++) {
+								const int pos = (CURPOS - 2 + i);
+								if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
+									iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
+											dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
+											pos);
+								}
+							}
+
+							while (titleboxXpos[ms().secondaryDevice] != titleboxXdest[ms().secondaryDevice]) {
+								swiWaitForVBlank();
+							}
+							titleboxXspeed = 8;
+							snd().playStop();
+							startBorderZoomOut = true;
+						}
+						dsiCursorMove = true;
 					} else if (ms().theme != TWLSettings::EThemeSaturn) {
 						CURPOS = std::clamp(CURPOS + moveBy, 0, last_used_box);
 
 						// Load icons
 						for (int i = 0; i < 6; i++) {
-							int pos = (CURPOS - 2 + i);
+							const int pos = (CURPOS - 2 + i);
 							if (pos >= 0 && pos + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn][pos + PAGENUM * 40].isDirectory,
 										dirContents[scrn][pos + PAGENUM * 40].name.c_str(),
@@ -3478,6 +3536,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 					}
 				} else if (ms().theme != TWLSettings::EThemeSaturn) {
+					draggingIcons = true;
 					int prevPos = CURPOS;
 					showSTARTborder = false;
 
@@ -3597,17 +3656,20 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						prevTouch1 = touch;
 						prevPos = CURPOS;
 					}
+					draggingIcons = false;
 				}
 
-				titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
-				titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
-				boxArtLoaded = false;
-				settingsChanged = true;
-				bannerTextShown = false;
-				titleboxXspeed = 3;
-				touch = startTouch;
-				if (!gameTapped && CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
-					showSTARTborder = (ms().theme == TWLSettings::ETheme3DS ? true : false);
+				if (!dsiCursorMove) {
+					titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
+					titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
+					boxArtLoaded = false;
+					settingsChanged = true;
+					bannerTextShown = false;
+					titleboxXspeed = (ms().theme == TWLSettings::EThemeDSi) ? 8 : 3;
+					touch = startTouch;
+					if (!gameTapped && CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
+						showSTARTborder = (ms().theme == TWLSettings::ETheme3DS ? true : false);
+					}
 				}
 			}
 
