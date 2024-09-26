@@ -456,13 +456,6 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	}
 }
 
-void waitForFadeOut(void) {
-	if (!dropDown && ms().theme == TWLSettings::EThemeDSi) {
-		dropDown = true;
-		while (!screenFadedIn()) { bgOperations(true); }
-	}
-}
-
 bool nowLoadingDisplaying = false;
 
 void displayNowLoading(void) {
@@ -3074,8 +3067,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		if (!musicplaying && ms().theme == TWLSettings::EThemeDSi) {
 			fadeSpeed = false; // Slow fade speed
 			fadeType = true; // Fade in from white
-			for (int i = 0; i < 15; i++) {
+			for (int i = 0; i < 20; i++) {
 				bgOperations(true);
+			}
+			if (!dropDown) {
+				dropDown = true;
 			}
 		} else {
 			fadeType = true; // Fade in from white
@@ -3100,13 +3096,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			}
 
 			controlTopBright = true;
-			if (ms().theme != TWLSettings::EThemeDSi) {
-				while (!screenFadedIn()) { swiWaitForVBlank(); }
-			}
+			while (!screenFadedIn()) { swiWaitForVBlank(); }
 			musicplaying = true;
 		}
 
-		waitForFadeOut();
 		controlTopBright = false;
 		fadeSpeed = true; // Fast fade speed
 		bool gameTapped = false;
