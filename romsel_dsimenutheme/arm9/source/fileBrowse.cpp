@@ -2777,6 +2777,8 @@ static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents)
 	CURPOS = 0;
 	titleboxXdest[ms().secondaryDevice] = 0;
 	titlewindowXdest[ms().secondaryDevice] = 0;
+	titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+	titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice];
 	if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) whiteScreen = true;
 	if (ms().showBoxArt)
 		clearBoxArt(); // Clear box art
@@ -2852,6 +2854,8 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 		titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 		titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
 	}
+	titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+	titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice];
 	if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) whiteScreen = true;
 	if (ms().showBoxArt)
 		clearBoxArt(); // Clear box art
@@ -3269,6 +3273,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							CURPOS = 0;
 							titleboxXdest[ms().secondaryDevice] = 0;
 							titlewindowXdest[ms().secondaryDevice] = 0;
+							titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+							titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice];
 							whiteScreen = true;
 							shouldersRendered = false;
 							displayNowLoading();
@@ -3302,6 +3308,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							CURPOS = 0;
 							titleboxXdest[ms().secondaryDevice] = 0;
 							titlewindowXdest[ms().secondaryDevice] = 0;
+							titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+							titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice];
 							whiteScreen = true;
 							shouldersRendered = false;
 							displayNowLoading();
@@ -3362,6 +3370,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			} else if ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 19 && touch.px <= 236 && ms().theme == TWLSettings::EThemeDSi) { // Scroll bar (DSi theme)
 				touchPosition startTouch = touch;
 				showSTARTborder = false;
+				titleboxXspeed = 3;
 				scrollWindowTouched = true;
 				int prevPos = CURPOS;
 				while (1) {
@@ -3411,6 +3420,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 				}
 				scrollWindowTouched = false;
+				titleboxXspeed = 8;
 
 				waitForNeedToPlayStopSound = 1;
 				snd().playSelect();
@@ -3688,6 +3698,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					ms().cursorPosition[ms().secondaryDevice] = 0;
 					titleboxXdest[ms().secondaryDevice] = 0;
 					titlewindowXdest[ms().secondaryDevice] = 0;
+					titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+					titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice];
 					if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) whiteScreen = true;
 					if (ms().showBoxArt)
 						clearBoxArt(); // Clear box art
@@ -4185,6 +4197,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				CURPOS = 0;
 				titleboxXdest[ms().secondaryDevice] = 0;
 				titlewindowXdest[ms().secondaryDevice] = 0;
+				titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+				titlewindowXpos[ms().secondaryDevice] = titlewindowXdest[ms().secondaryDevice];
 				if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) whiteScreen = true;
 				if (ms().showBoxArt)
 					clearBoxArt(); // Clear box art
