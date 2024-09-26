@@ -1214,6 +1214,11 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 			 && arm9StartSig[3] == 0xE3500000) {
 				isHomebrew[num] = false;
 				isModernHomebrew[num] = false;
+			} else
+			if (arm9StartSig[2] == 0xEAFFFFFF // SDK 4 (HM DS Cute)
+			 && arm9StartSig[3] == 0xE1DC00B6) {
+				isHomebrew[num] = false;
+				isModernHomebrew[num] = false;
 			}
 		} else if (strncmp(gameTid[num], "HNA", 3) == 0) {
 			// Modcrypted
