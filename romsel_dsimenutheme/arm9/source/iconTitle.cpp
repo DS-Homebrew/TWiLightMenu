@@ -188,6 +188,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnrWirelessIcon[num] = 0;
 	toncset(gameTid[num], 0, 4);
+	isValid[num] = false;
 	isTwlm[num] = false;
 	isUnlaunch[num] = false;
 	isDSiWare[num] = false;
@@ -452,6 +453,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 
 		if (num < 40) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
+			isValid[num] = (ndsHeader.arm9destination >= 0x02000000 && ndsHeader.arm9destination < 0x03000000 && ndsHeader.arm9executeAddress >= 0x02000000 && ndsHeader.arm9executeAddress < 0x03000000);
 			isTwlm[num] = (strcmp(gameTid[num], "SRLA") == 0);
 			isUnlaunch[num] = (memcmp(ndsHeader.gameTitle, "UNLAUNCH.DSI", 12) == 0);
 			romVersion[num] = ndsHeader.romversion;

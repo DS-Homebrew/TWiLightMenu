@@ -437,6 +437,7 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 
 	if (bnrRomType[0] != 0) {
 		bnrWirelessIcon[0] = 0;
+		isValid[0] = true;
 		isTwlm[0] = false;
 		isDSiWare[0] = false;
 		isHomebrew[0] = 0;
@@ -531,6 +532,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 		if (bnrRomType[n] != 0) {
 			bnrWirelessIcon[n] = 0;
+			isValid[n] = true;
 			isTwlm[n] = false;
 			isDSiWare[n] = false;
 			isHomebrew[n] = 0;
@@ -642,6 +644,7 @@ void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 		if (bnrRomType[n] != 0) {
 			bnrWirelessIcon[n] = 0;
+			isValid[n] = true;
 			isTwlm[n] = false;
 			isDSiWare[n] = false;
 			isHomebrew[n] = 0;
@@ -753,6 +756,7 @@ void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 		if (bnrRomType[n] != 0) {
 			bnrWirelessIcon[n] = 0;
+			isValid[n] = true;
 			isTwlm[n] = false;
 			isDSiWare[n] = false;
 			isHomebrew[n] = 0;
@@ -1731,13 +1735,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				if (ms().ak_viewMode == TWLSettings::EViewList) {
 					cursorPosOnScreen = 0;
 				}
-				if (!isTwlm[cursorPosOnScreen]) {
+				if (isValid[cursorPosOnScreen] && !isTwlm[cursorPosOnScreen]) {
 					loadPerGameSettings(dirContents.at(fileOffset).name);
 				}
 				int hasAP = 0;
 				bool proceedToLaunch = true;
 
-				if (isTwlm[cursorPosOnScreen] || (!isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[cursorPosOnScreen] == 0 && gameTid[cursorPosOnScreen][0] == 'D' && romUnitCode[cursorPosOnScreen] == 3 && requiresDonorRom[cursorPosOnScreen] != 51)
+				if (!isValid[cursorPosOnScreen] || isTwlm[cursorPosOnScreen] || (!isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[cursorPosOnScreen] == 0 && gameTid[cursorPosOnScreen][0] == 'D' && romUnitCode[cursorPosOnScreen] == 3 && requiresDonorRom[cursorPosOnScreen] != 51)
 				|| (isDSiWare[cursorPosOnScreen] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
 				|| (bnrRomType[cursorPosOnScreen] == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
@@ -2205,7 +2209,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (ms().ak_viewMode == TWLSettings::EViewList) {
 				cursorPosOnScreen = 0;
 			}
-			if (!isTwlm[cursorPosOnScreen] && !isDirectory[cursorPosOnScreen] && (bnrRomType[cursorPosOnScreen] == 0 || bnrRomType[cursorPosOnScreen] == 1 || bnrRomType[cursorPosOnScreen] == 3)) {
+			if (isValid[cursorPosOnScreen] && !isTwlm[cursorPosOnScreen] && !isDirectory[cursorPosOnScreen] && (bnrRomType[cursorPosOnScreen] == 0 || bnrRomType[cursorPosOnScreen] == 1 || bnrRomType[cursorPosOnScreen] == 3)) {
 				perGameSettings(dirContents.at(fileOffset).name);
 				cursorPosOnScreen = cursorPosOnScreenBak;
 				refreshBanners(screenOffset, fileOffset, dirContents);

@@ -565,6 +565,7 @@ int bannerFlip[8] = {GL_FLIP_NONE};
 int bannerFlipPrev[8] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
+bool isValid[8] = {false};
 bool isTwlm[8] = {false};
 bool isDirectory[8] = {false};
 int bnrRomType[8] = {0};

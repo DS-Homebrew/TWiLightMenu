@@ -2370,7 +2370,9 @@ bool cannotLaunchMsg(const char *filename) {
 		titleUpdate(false, filename, CURPOS);
 	}
 	const std::string *str = nullptr;
-	if (isTwlm[CURPOS]) {
+	if (!isValid[CURPOS]) {
+		str = (ms().secondaryDevice || ms().showMicroSd) ? &STR_CANNOT_LAUNCH_CORRUPT_TITLE_MICRO_SD : &STR_CANNOT_LAUNCH_CORRUPT_TITLE_SD;
+	} else if (isTwlm[CURPOS]) {
 		str = &STR_TWLMENU_ALREADY_RUNNING;
 	} else if (isUnlaunch[CURPOS]) {
 		str = &STR_CANNOT_LAUNCH_WITH_THEME;
@@ -2702,6 +2704,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				if (bnrRomType[i] != 0) {
 					bnrWirelessIcon[i] = 0;
 					bnrSysSettings[i] = false;
+					isValid[i] = true;
 					isTwlm[i] = false;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
@@ -3647,12 +3650,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					settingsChanged = false;
 					return "null";
 				} else {
-					if (!isTwlm[CURPOS]) {
+					if (isValid[CURPOS] && !isTwlm[CURPOS]) {
 						loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 					}
 					int hasAP = 0;
 					bool proceedToLaunch = true;
-					if (isTwlm[CURPOS] || (isUnlaunch[CURPOS] && ms().theme == TWLSettings::ETheme3DS) || (!isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[CURPOS] == 0 && gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3 && requiresDonorRom[CURPOS] != 51)
+					if (!isValid[CURPOS] || isTwlm[CURPOS] || (isUnlaunch[CURPOS] && ms().theme == TWLSettings::ETheme3DS) || (!isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[CURPOS] == 0 && gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3 && requiresDonorRom[CURPOS] != 51)
 					|| (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 					|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
 					|| (bnrRomType[CURPOS] == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
@@ -4316,7 +4319,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				bannerTextShown = false;
 			}
 
-			if ((pressed & KEY_Y) && !ms().kioskMode && !isTwlm[CURPOS] && !isDirectory[CURPOS] && bannerTextShown && showSTARTborder) {
+			if ((pressed & KEY_Y) && !ms().kioskMode && isValid[CURPOS] && !isTwlm[CURPOS] && !isDirectory[CURPOS] && bannerTextShown && showSTARTborder) {
 				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 				bannerTextShown = false;
 			}

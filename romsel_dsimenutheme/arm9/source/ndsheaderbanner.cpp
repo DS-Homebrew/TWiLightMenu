@@ -538,6 +538,7 @@ int bannerFlip[41] = {GL_FLIP_NONE};
 int bannerFlipPrev[41] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
+bool isValid[40] = {false};
 bool isTwlm[40] = {false};
 bool isUnlaunch[40] = {false};
 bool isDirectory[40] = {false};

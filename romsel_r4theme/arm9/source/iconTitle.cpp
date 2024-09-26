@@ -906,6 +906,7 @@ void getGameInfo(bool isDir, const char* name, bool fromArgv)
 	bannerFlip = GL_FLIP_NONE;
 	bnrWirelessIcon = 0;
 	toncset(gameTid, 0, 4);
+	isValid = false;
 	isTwlm = false;
 	isDSiWare = false;
 	isHomebrew = true;
@@ -1139,6 +1140,7 @@ void getGameInfo(bool isDir, const char* name, bool fromArgv)
 		}
 
 		tonccpy(gameTid, ndsHeader.gameCode, 4);
+		isValid = (ndsHeader.arm9destination >= 0x02000000 && ndsHeader.arm9destination < 0x03000000 && ndsHeader.arm9executeAddress >= 0x02000000 && ndsHeader.arm9executeAddress < 0x03000000);
 		isTwlm = (strcmp(gameTid, "SRLA") == 0);
 		romVersion = ndsHeader.romversion;
 		romUnitCode = ndsHeader.unitCode;

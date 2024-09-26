@@ -553,6 +553,7 @@ int bannerFlip = GL_FLIP_NONE;
 int bannerFlipPrev = GL_FLIP_NONE;
 
 // bnriconisDSi[]
+bool isValid = false;
 bool isTwlm = false;
 bool isDirectory = false;
 int bnrRomType = 0;

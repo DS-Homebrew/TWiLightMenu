@@ -890,7 +890,7 @@ void clearTitle(int num) {
 	cachedTitle[num] = blankTitle;
 }
 
-void copyGameInfo(int numDst, int numSrc)
+/* void copyGameInfo(int numDst, int numSrc)
 {
 	bnriconPalLine[numDst] = bnriconPalLine[numSrc];
 	bnriconPalLoaded[numDst] = bnriconPalLoaded[numSrc];
@@ -899,6 +899,7 @@ void copyGameInfo(int numDst, int numSrc)
 	bnrWirelessIcon[numDst] = bnrWirelessIcon[numSrc];
 	customIcon[numDst] = customIcon[numSrc];
 	tonccpy(gameTid[numDst], gameTid[numSrc], 4);
+	isValid[numDst] = isValid[numSrc];
 	isTwlm[numDst] = isTwlm[numSrc];
 	isDSiWare[numDst] = isDSiWare[numSrc];
 	isHomebrew[numDst] = isHomebrew[numSrc];
@@ -920,7 +921,7 @@ void copyGameInfo(int numDst, int numSrc)
 	}
 
 	bnriconisDSi[numDst] = bnriconisDSi[numSrc];
-}
+} */
 
 void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 {
@@ -930,6 +931,7 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnrWirelessIcon[num] = 0;
 	toncset(gameTid[num], 0, 4);
+	isValid[num] = false;
 	isTwlm[num] = false;
 	isDSiWare[num] = false;
 	isHomebrew[num] = true;
@@ -1192,6 +1194,7 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 		}
 
 		tonccpy(gameTid[num], ndsHeader.gameCode, 4);
+		isValid[num] = (ndsHeader.arm9destination >= 0x02000000 && ndsHeader.arm9destination < 0x03000000 && ndsHeader.arm9executeAddress >= 0x02000000 && ndsHeader.arm9executeAddress < 0x03000000);
 		isTwlm[num] = (strcmp(gameTid[num], "SRLA") == 0);
 		romVersion[num] = ndsHeader.romversion;
 		romUnitCode[num] = ndsHeader.unitCode;

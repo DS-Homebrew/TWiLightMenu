@@ -286,6 +286,7 @@ extern int bnriconframenumY[8];
 extern int bannerFlip[8];
 
 // bnriconisDSi[]
+extern bool isValid[8];
 extern bool isTwlm[8];
 extern bool isDirectory[8];
 extern int bnrRomType[8];

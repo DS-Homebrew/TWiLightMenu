@@ -1170,6 +1170,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		if (bnrRomType != 0) {
 			bnrWirelessIcon = 0;
+			isValid = true;
 			isTwlm = false;
 			isDSiWare = false;
 			isHomebrew = 0;
@@ -1250,13 +1251,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				return "null";
 			} else {
-				if (!isTwlm) {
+				if (isValid && !isTwlm) {
 					loadPerGameSettings(dirContents.at(fileOffset).name);
 				}
 				int hasAP = 0;
 				bool proceedToLaunch = true;
 
-				if (isTwlm || (!isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType == 0 && gameTid[0] == 'D' && romUnitCode == 3 && requiresDonorRom != 51)
+				if (!isValid || isTwlm || (!isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType == 0 && gameTid[0] == 'D' && romUnitCode == 3 && requiresDonorRom != 51)
 				|| (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
 				|| (bnrRomType == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
@@ -1675,7 +1676,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";		
 		}
 
-		if ((pressed & KEY_Y) && !ms().kioskMode && !isTwlm && !isDirectory && (bnrRomType == 0 || bnrRomType == 1 || bnrRomType == 3)) {
+		if ((pressed & KEY_Y) && !ms().kioskMode && isValid && !isTwlm && !isDirectory && (bnrRomType == 0 || bnrRomType == 1 || bnrRomType == 3)) {
 			ms().cursorPosition[ms().secondaryDevice] = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);
 			if (ms().theme == TWLSettings::EThemeGBC) {
