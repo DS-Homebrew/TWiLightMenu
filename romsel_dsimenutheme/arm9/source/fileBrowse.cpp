@@ -3476,12 +3476,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							const int CURPOS1 = std::clamp(moveBy > 0 ? (CURPOS + 1) : (CURPOS - 1), 0, last_used_box);
 							CURPOS = std::clamp(CURPOS + moveBy, 0, last_used_box);
 
+							snd().playSelect();
+
 							titlewindowXdest[ms().secondaryDevice] = CURPOS * 5;
 							titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 							boxArtLoaded = false;
 							settingsChanged = true;
 							bannerTextShown = false;
-							titleboxXspeed = 10;
 							touch = startTouch;
 							if (CURPOS + PAGENUM * 40 >= ((int)dirContents[scrn].size())) {
 								showSTARTborder = (ms().theme == TWLSettings::ETheme3DS ? true : false);
@@ -3503,7 +3504,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								}
 							}
 
-							for (int i = 0; i < 5; i++) {
+							for (int i = 0; i < 6; i++) {
+								swiWaitForVBlank();
+							}
+
+							snd().playSelect();
+
+							for (int i = 0; i < 2; i++) {
 								swiWaitForVBlank();
 							}
 
@@ -3520,7 +3527,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							while (titleboxXpos[ms().secondaryDevice] != titleboxXdest[ms().secondaryDevice]) {
 								swiWaitForVBlank();
 							}
-							titleboxXspeed = 8;
 							snd().playStop();
 							startBorderZoomOut = true;
 						}
