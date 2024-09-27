@@ -542,8 +542,6 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 
 		if (ms().theme != TWLSettings::EThemeSaturn) {
 			for (int i = 0; i < 8; i++) {
-				swiWaitForVBlank();
-
 				if (right) {
 					titleboxXdest[ms().secondaryDevice] += titleboxXspacing / 8;
 					if (i % 3)
@@ -553,6 +551,7 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 					if (i % 3)
 						titlewindowXdest[ms().secondaryDevice]--;
 				}
+				swiWaitForVBlank();
 			}
 			titleboxXdest[ms().secondaryDevice] = CURPOS * titleboxXspacing;
 			swiWaitForVBlank();
