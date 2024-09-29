@@ -359,7 +359,7 @@ int lastRunROM() {
 						 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
 						 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
 						 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)
-						 || (memcmp(io_dldi_data->friendlyName, "M3DS DLDI", 9) == 0)
+						 || (memcmp(io_dldi_data->friendlyName, "M3DS", 4) == 0)
 						 || (memcmp(io_dldi_data->friendlyName, "M3-DS", 5) == 0)) {
 					CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 					path = ReplaceAll(ms().romPath[1], "fat:/", slashchar);
