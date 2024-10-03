@@ -28,7 +28,6 @@
 
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
-#include "blocks_codec.h"
 
 void my_installSystemFIFO(void);
 u8 my_cdcReadReg(u8 bank, u8 reg);
@@ -84,31 +83,7 @@ int main() {
 	*(vu16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
 
 	if ((REG_SNDEXTCNT & SNDEXTCNT_ENABLE) && !(REG_SNDEXTCNT & BIT(13))) {
-		REG_SNDEXTCNT &= ~SNDEXTCNT_ENABLE; // Disable sound output: Runs before sound frequency change
-
-		// Reconfigure clock dividers, based on the TSC2117 datasheet.
-		// - We disable PLL, as MCLK is always equal to the sample frequency
-		//   times 256, which is an integer multiple.
-		// - We disable ADC NADC/MADC dividers, to share the DAC clock.
-		// This also prevents us from having to reconfigure the PLL multipliers
-		// for 32kHz/47kHz.
-		// This produces low quality output
-		/* my_cdcWriteReg(CDC_CONTROL, CDC_CONTROL_PLL_PR, 0);
-		my_cdcWriteReg(CDC_CONTROL, CDC_CONTROL_DAC_MDAC, CDC_CONTROL_CLOCK_ENABLE(2));
-		my_cdcWriteReg(CDC_CONTROL, CDC_CONTROL_DAC_NDAC, CDC_CONTROL_CLOCK_ENABLE(1));
-		my_cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_MADC, CDC_CONTROL_CLOCK_DISABLE);
-		my_cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_NADC, CDC_CONTROL_CLOCK_DISABLE);
-		my_cdcWriteReg(CDC_CONTROL, CDC_CONTROL_CLOCK_MUX, CDC_CONTROL_CLOCK_PLL_IN_MCLK | CDC_CONTROL_CLOCK_CODEC_IN_MCLK); */
-
-		my_cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_MADC, CDC_CONTROL_CLOCK_DISABLE);
-		my_cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_NADC, CDC_CONTROL_CLOCK_DISABLE);
-
-		// Configure a PLL multiplier/divider of 15/2, and a NDAC/NADC divider of 5.
-		my_cdcWriteReg(CDC_CONTROL, CDC_CONTROL_PLL_J, 15);
-		my_cdcWriteReg(CDC_CONTROL, CDC_CONTROL_DAC_NDAC, CDC_CONTROL_CLOCK_ENABLE(5));
-
-		REG_SNDEXTCNT = (REG_SNDEXTCNT & ~SNDEXTCNT_FREQ_47KHZ) | SNDEXTCNT_FREQ_47KHZ | SNDEXTCNT_ENABLE;
-		// REG_SNDEXTCNT |= SNDEXTCNT_ENABLE; // Enable sound output
+		*(vu16*)0x04004700 |= BIT(13);	// Set 48khz sound/mic frequency
 	}
 
 	// clear sound registers
