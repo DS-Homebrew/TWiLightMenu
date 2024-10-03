@@ -1452,7 +1452,6 @@ int settingsMode(void)
 			miscPage
 				.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false})
 				.option(STR_SLOT1SDACCESS, STR_DESCRIPTION_SLOT1SDACCESS, Option::Bool(&ms().slot1AccessSD), {STR_ON, STR_OFF}, {true, false})
-				.option(STR_SLOT1TOUCHMODE, STR_DESCRIPTION_SLOT1TOUCHMODE, Option::Bool(&ms().slot1TouchMode), {STR_DSI_MODE, STR_DS_MODE}, {true, false})
 				.option(STR_S1SDACCESS, STR_DESCRIPTION_S1SDACCESS_1, Option::Bool(&ms().secondaryAccess), {STR_ON, STR_OFF}, {true, false});
 		}
 

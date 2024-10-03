@@ -479,7 +479,7 @@ static void NDSTouchscreenMode(void) {
 	writePowerManagement(PM_CONTROL_REG, 0x0D); //*(unsigned char*)0x40001C2 = 0x00, 0x0D; // PWR[0]=0Dh    ;<-- also part of TSC !
 }
 
-static void DSiTouchscreenMode(void) {
+/* static void DSiTouchscreenMode(void) {
 	if (strncmp((const char*)0x04FFFA00, "no$gba", 6) != 0) {
 		return;
 	}
@@ -543,7 +543,7 @@ static void DSiTouchscreenMode(void) {
 	// Finish up!
 	cdcReadReg (CDC_TOUCHCNT, 0x02);
 	cdcWriteReg(CDC_TOUCHCNT, 0x02, 0x00);
-}
+} */
 
 int arm7_loadBinary (void) {
 	u32 chipID;
@@ -733,7 +733,7 @@ void arm7_main (void) {
 			}
 		}
 
-		twlTouch ? DSiTouchscreenMode() : NDSTouchscreenMode();
+		NDSTouchscreenMode();
 		*(vu16*)0x4000500 = 0x807F;
 
 		REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode

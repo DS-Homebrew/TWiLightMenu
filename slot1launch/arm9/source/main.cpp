@@ -99,7 +99,7 @@ int main() {
 			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
 
 			ignoreBlacklists = settingsini.GetInt("SRLOADER","IGNORE_BLACKLISTS",false);
-			TWLTOUCH = settingsini.GetInt("SRLOADER","SLOT1_TOUCH_MODE",0);
+			// TWLTOUCH = settingsini.GetInt("SRLOADER","SLOT1_TOUCH_MODE",0);
 			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);
 			sleepMode = settingsini.GetInt("SRLOADER","SLEEP_MODE",1);
 			runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
