@@ -66,6 +66,70 @@ void powerButtonCB() {
 	exitflag = true;
 }
 
+static void DSiTouchscreenMode(void) {
+	if (my_cdcReadReg(CDC_SOUND, 0x22) != 0xF0) return;
+
+	// Touchscreen
+	my_cdcWriteReg(0, 0x01, 0x01);
+	my_cdcWriteReg(0, 0x39, 0x66);
+	my_cdcWriteReg(1, 0x20, 0x16);
+	my_cdcWriteReg(0, 0x04, 0x00);
+	my_cdcWriteReg(0, 0x12, 0x81);
+	my_cdcWriteReg(0, 0x13, 0x82);
+	my_cdcWriteReg(0, 0x51, 0x82);
+	my_cdcWriteReg(0, 0x51, 0x00);
+	my_cdcWriteReg(0, 0x04, 0x03);
+	my_cdcWriteReg(0, 0x05, 0xA1);
+	my_cdcWriteReg(0, 0x06, 0x15);
+	my_cdcWriteReg(0, 0x0B, 0x87);
+	my_cdcWriteReg(0, 0x0C, 0x83);
+	my_cdcWriteReg(0, 0x12, 0x87);
+	my_cdcWriteReg(0, 0x13, 0x83);
+	my_cdcWriteReg(3, 0x10, 0x88);
+	my_cdcWriteReg(4, 0x08, 0x7F);
+	my_cdcWriteReg(4, 0x09, 0xE1);
+	my_cdcWriteReg(4, 0x0A, 0x80);
+	my_cdcWriteReg(4, 0x0B, 0x1F);
+	my_cdcWriteReg(4, 0x0C, 0x7F);
+	my_cdcWriteReg(4, 0x0D, 0xC1);
+	my_cdcWriteReg(0, 0x41, 0x08);
+	my_cdcWriteReg(0, 0x42, 0x08);
+	my_cdcWriteReg(0, 0x3A, 0x00);
+	my_cdcWriteReg(4, 0x08, 0x7F);
+	my_cdcWriteReg(4, 0x09, 0xE1);
+	my_cdcWriteReg(4, 0x0A, 0x80);
+	my_cdcWriteReg(4, 0x0B, 0x1F);
+	my_cdcWriteReg(4, 0x0C, 0x7F);
+	my_cdcWriteReg(4, 0x0D, 0xC1);
+	my_cdcWriteReg(1, 0x2F, 0x2B);
+	my_cdcWriteReg(1, 0x30, 0x40);
+	my_cdcWriteReg(1, 0x31, 0x40);
+	my_cdcWriteReg(1, 0x32, 0x60);
+	my_cdcWriteReg(0, 0x74, 0x82);
+	my_cdcWriteReg(0, 0x74, 0x92);
+	my_cdcWriteReg(0, 0x74, 0xD2);
+	my_cdcWriteReg(1, 0x21, 0x20);
+	my_cdcWriteReg(1, 0x22, 0xF0);
+	my_cdcWriteReg(0, 0x3F, 0xD4);
+	my_cdcWriteReg(1, 0x23, 0x44);
+	my_cdcWriteReg(1, 0x1F, 0xD4);
+	my_cdcWriteReg(1, 0x28, 0x4E);
+	my_cdcWriteReg(1, 0x29, 0x4E);
+	my_cdcWriteReg(1, 0x24, 0x9E);
+	my_cdcWriteReg(1, 0x25, 0x9E);
+	my_cdcWriteReg(1, 0x20, 0xD4);
+	my_cdcWriteReg(1, 0x2A, 0x14);
+	my_cdcWriteReg(1, 0x2B, 0x14);
+	my_cdcWriteReg(1, 0x26, 0xA7);
+	my_cdcWriteReg(1, 0x27, 0xA7);
+	my_cdcWriteReg(0, 0x40, 0x00);
+	my_cdcWriteReg(0, 0x3A, 0x60);
+
+	// Finish up!
+	my_cdcReadReg (CDC_TOUCHCNT, 0x02);
+	my_cdcWriteReg(CDC_TOUCHCNT, 0x02, 0x00);
+}
+
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
@@ -81,6 +145,8 @@ int main() {
 	*(vu16*)(0x04004012) = 0x1988;
 	*(vu16*)(0x04004014) = 0x264C;
 	*(vu16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
+
+	DSiTouchscreenMode(); // Fix disabled audio, if DSi touch mode is set
 
 	if ((REG_SNDEXTCNT & SNDEXTCNT_ENABLE) && !(REG_SNDEXTCNT & BIT(13))) {
 		*(vu16*)0x04004700 |= BIT(13);	// Set 48khz sound/mic frequency
