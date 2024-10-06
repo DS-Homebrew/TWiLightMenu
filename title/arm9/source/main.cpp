@@ -1274,12 +1274,25 @@ void lastRunROM()
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ESNEmulDSLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		const char* ndsToBoot = (char*)"sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
-		if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-			ndsToBoot = (char*)"fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
+		const char* ndsToBoot;
+		if (ms().newSnesEmuVer) {
+			const char* ndsToBoot = (char*)"sd:/_nds/TWiLightMenu/emulators/SNEmulDS.srl";
+			if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+				ndsToBoot = (char*)"fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
+			}
+			argarray.at(0) = (char*)"fat:/SNEmulDS.srl";
+		} else {
+			std::string romFolderNoSlash = romfolder;
+			RemoveTrailingSlashes(romFolderNoSlash);
+
+			const bool twlmPath = (romFolderNoSlash == "fat:/roms/snes");
+			ndsToBoot = twlmPath ? "sd:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy-twlm-path.nds" : "sd:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds";
+			if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+				ndsToBoot = twlmPath ? "fat:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy-twlm-path.nds" : "fat:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds";
+			}
+			argarray.at(0) = (char*)ndsToBoot;
 		}
-		argarray.at(0) = (char*)"fat:/SNEmulDS.srl";
-		err = runNdsFile(ndsToBoot, argarray.size(), (const char **)&argarray[0], true, true, false, true, true, true, -1); // Pass ROM to SNEmulDS as argument
+		err = runNdsFile(ndsToBoot, argarray.size(), (const char **)&argarray[0], true, true, !isDSiMode(), ms().newSnesEmuVer, true, ms().newSnesEmuVer, -1); // Pass ROM to SNEmulDS as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EAmEDSLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 

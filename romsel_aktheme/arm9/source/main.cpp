@@ -2375,7 +2375,7 @@ int akTheme(void) {
 						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 					}
 				} else if (extension(filename, {".smc", ".sfc"})) {
-					ms().launchType[ms().secondaryDevice] = (ms().newSnesEmuVer ? TWLSettings::ESNEmulDSLaunch : TWLSettings::ESDFlashcardLaunch);
+					ms().launchType[ms().secondaryDevice] = ((ms().newSnesEmuVer || ms().secondaryDevice) ? TWLSettings::ESNEmulDSLaunch : TWLSettings::ESDFlashcardLaunch);
 					if (ms().newSnesEmuVer) {
 						tgdsMode = true;
 						tscTgds = true;
@@ -2390,9 +2390,10 @@ int akTheme(void) {
 							}
 						}
 					} else if (ms().secondaryDevice) {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds";
+						const bool twlmPath = (romfolderNoSlash == "fat:/roms/snes");
+						ndsToBoot = twlmPath ? "sd:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy-twlm-path.nds" : "sd:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds";
 						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds";
+							ndsToBoot = twlmPath ? "fat:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy-twlm-path.nds" : "fat:/_nds/TWiLightMenu/emulators/SNEmulDS-legacy.nds";
 						}
 						boostCpu = false;
 						dsModeSwitch = true;
