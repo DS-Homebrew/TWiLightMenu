@@ -172,9 +172,11 @@ void TWLSettings::loadSettings()
 
 	if (sdFound() && (strncmp(romfolder[0].c_str(), "sd:", 3) != 0 || access(romfolder[0].c_str(), F_OK) != 0)) {
 		romfolder[0] = "sd:/";
+		usingdefaultdir[0] = true;
 	}
 	if (flashcardFound() && (strncmp(romfolder[1].c_str(), "fat:", 4) != 0 || access(romfolder[1].c_str(), F_OK) != 0)) {
 		romfolder[1] = "fat:/";
+		usingdefaultdir[1] = true;
 	}
 
 	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
