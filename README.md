@@ -3,7 +3,7 @@
   <a href="https://gbatemp.net/threads/ds-i-3ds-twilight-menu-gui-for-ds-i-games-and-ds-i-menu-replacement.472200/">
    <img src="https://img.shields.io/badge/GBAtemp-Thread-blue.svg" alt="GBAtemp Thread">
   </a>
-  <a href="https://discord.gg/yD3spjv">
+  <a href="https://discord.gg/fCzqcWteC4">
    <img src="https://img.shields.io/badge/Discord%20Server-%23twilight--menu--dev-green.svg" alt="Discord Server">
   </a>
   <a href="https://github.com/DS-Homebrew/TWiLightMenu/actions?query=workflow%3A%22Build+TWiLight+Menu%2B%2B%22">
