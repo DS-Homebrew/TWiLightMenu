@@ -2,3 +2,7 @@
 	path = booter_fc/flashcart_specifics/DLDI
 	url = https://github.com/DS-Homebrew/DLDI
 	branch = builds
+[submodule "libnds32"]
+	path = universal/libnds32
+	url = https://github.com/lifehackerhansol/libnds32
+	branch = master
