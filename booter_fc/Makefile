@@ -205,9 +205,9 @@ autoboot:
 
 	#### N-Card
 	cp booter_fc.nds autoboot1.nds
-	dlditool "flashcart_specifics/DLDI/nrio.dldi" autoboot1.nds
+	dlditool "flashcart_specifics/DLDI/nrio.dldi" autorun1.nds
 	mkdir -p "../7zfile/Flashcard users/Autoboot/N-Card"
-	mv autoboot1.nds "../7zfile/Flashcard users/Autoboot/N-Card/autoboot1.nds"
+	mv autorun1.nds "../7zfile/Flashcard users/Autoboot/N-Card/autorun1.nds"
 
 	#### SuperCard DSONE SDHC / DSONEi
 	cp booter_fc.nds TTMenu.dat
