@@ -203,6 +203,12 @@ autoboot:
 	cp r4i.sys "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/_system_/_sys_data/r4i.sys"
 	mv r4i.sys "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/SRESET.dat"
 
+	#### N-Card
+	cp booter_fc.nds autoboot1.nds
+	dlditool "flashcart_specifics/DLDI/nrio.dldi" autoboot1.nds
+	mkdir -p "../7zfile/Flashcard users/Autoboot/N-Card"
+	mv autoboot1.nds "../7zfile/Flashcard users/Autoboot/N-Card/autoboot1.nds"
+
 	#### SuperCard DSONE SDHC / DSONEi
 	cp booter_fc.nds TTMenu.dat
 	dlditool flashcart_specifics/DLDI/scdssdhc2.dldi TTMenu.dat
