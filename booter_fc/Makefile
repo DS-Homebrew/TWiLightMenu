@@ -204,7 +204,7 @@ autoboot:
 	mv r4i.sys "../7zfile/Flashcard users/Autoboot/M3 DS Real, M3i Zero (non-GMP-Z003), iTouchDS, R4(i) SDHC (r4rts.com)/SRESET.dat"
 
 	#### N-Card
-	cp booter_fc.nds autoboot1.nds
+	cp booter_fc.nds autorun1.nds
 	dlditool "flashcart_specifics/DLDI/nrio.dldi" autorun1.nds
 	mkdir -p "../7zfile/Flashcard users/Autoboot/N-Card"
 	mv autorun1.nds "../7zfile/Flashcard users/Autoboot/N-Card/autorun1.nds"
