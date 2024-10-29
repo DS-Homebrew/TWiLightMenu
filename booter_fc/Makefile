@@ -290,9 +290,13 @@ autoboot:
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i-REDANT/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/Redant.dat"
-	# Since this is the last one, move it instead of copy
-	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/TTMenu.dat"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/TTMenu.dat"
 
+	##### For DSTT clones which do not support the ttio_sdhc driver
+	dlditool flashcart_specifics/DLDI/DSTTDLDIboyakkeyver.dldi TTMenu.dat
+	mkdir -p "../7zfile/Flashcard users/Autoboot/r4i-gold.com R4 3DS Gold RTS, PK3DS/"
+	# Since this is the last one, move it instead of copy
+	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/r4i-gold.com R4 3DS Gold RTS, PK3DS/TTMenu.dat"
 
 $(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4ig makearm9_acekard2 makearm9_r4idsn
 	# simple nds srl without dsi extended header
