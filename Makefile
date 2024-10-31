@@ -13,7 +13,7 @@ export PROJECT	:=	$(CURDIR)
 all:	booter booter_fc 3dssplash gbapatcher quickmenu manual resources romsel_aktheme romsel_dsimenutheme romsel_r4theme settings slot1launch title
 
 package:
-	@$(MAKE) -C universal/libnds32
+	@$(MAKE) -C universal/libnds32 release
 	@$(MAKE) -C booter dist
 	@$(MAKE) -C booter_fc dist
 	@$(MAKE) -C 3dssplash dist
