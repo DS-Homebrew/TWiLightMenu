@@ -237,7 +237,7 @@ autoboot:
 
 	#### DSTT and its (many) clones
 	cp booter_acekard2.nds TTMenu.dat
-	dlditool flashcart_specifics/DLDI/ttio_sdhc.dldi TTMenu.dat
+	dlditool flashcart_specifics/DLDI/ttio.dldi TTMenu.dat
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, & R4i-SDHC v1.41 + v1.42/TTMenu.dat"
