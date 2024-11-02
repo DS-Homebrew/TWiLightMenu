@@ -324,6 +324,8 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	irqDisable(IRQ_ALL);
 
 	if (REG_SCFG_EXT != 0 && dsModeSwitch) {
+		tonccpy((u32*)0x023F4000, (u32*)0x02FF4000, 0x8000); // Relocate data to 4MB RAM area
+
 		if (!boostCpu) {
 			REG_SCFG_CLK = 0x80;
 		}
@@ -469,7 +471,7 @@ int runUnlaunchDsi (const char* filename, u32 sector) {
 	return runNds (load_bin, load_bin_size, sector, true, false, true, filename, 0, NULL, true, false, false, true, true, false, -1);
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, bool tscTgds, int language) {
+int runNdsFile (const char* filename, int argc, const char** argv, bool isRunFromSD, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, bool tscTgds, int language) {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
@@ -515,7 +517,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 	bool loadFromRam = runNds9(filename, dsModeSwitch);
 
 	#ifndef _NO_BOOTSTUB_
-	installBootStub(havedsiSD);
+	installBootStub(havedsiSD, isRunFromSD, dsModeSwitch);
 	#endif
 
 	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, filename, argc, argv, clearMasterBright, dsModeSwitch, lockScfg, boostCpu, boostVram, tscTgds, language);
@@ -542,10 +544,7 @@ dsiSD:
 */
 
 #ifndef _NO_BOOTSTUB_
-void installBootStub(bool havedsiSD) {
-	static bool installed = false;
-	if (installed) return;
-
+void installBootStub(const bool havedsiSD, const bool isRunFromSD, const bool dsModeSwitch) {
 	extern char *fake_heap_end;
 	struct __bootstub *bootstub = (struct __bootstub *)fake_heap_end;
 	u32 *bootloader = (u32*)(fake_heap_end+bootstub_bin_size);
@@ -553,12 +552,17 @@ void installBootStub(bool havedsiSD) {
 	tonccpy(bootstub,bootstub_bin,bootstub_bin_size);
 	tonccpy(bootloader,load_bin,load_bin_size);
 
-	bootloader[8] = isDSiMode();
-	if (havedsiSD) {
-		bootloader[3] = 0; // don't dldi patch
-		bootloader[7] = 1; // use internal dsi SD code
-	}
-	if (memcmp(io_dldi_data->friendlyName, "Default", 7) != 0) {
+	bootloader[8] = dsModeSwitch ? 0 : isDSiMode();
+	if (havedsiSD && !dsModeSwitch) {
+		if (memcmp(io_dldi_data->friendlyName, "Default", 7) != 0) {
+			dldiPatchLoader ();
+		} else {
+			bootloader[3] = 0; // don't dldi patch
+		}
+		if (isRunFromSD) {
+			bootloader[7] = 1; // use internal dsi SD code
+		}
+	} else {
 		dldiPatchLoader ();
 	}
 	bootstub->arm9reboot = (VoidFn)(((u32)bootstub->arm9reboot)+fake_heap_end);
@@ -566,7 +570,6 @@ void installBootStub(bool havedsiSD) {
 	bootstub->bootsize = load_bin_size;
 
 	DC_FlushAll();
-	installed = true;
 }
 #endif
 

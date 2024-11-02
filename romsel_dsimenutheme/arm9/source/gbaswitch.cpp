@@ -93,5 +93,5 @@ void gbaSwitch(void) {
 	loadGbaBorder((access(borderPath, F_OK)==0) ? borderPath : "nitro:/graphics/gbaborder.png");
 
 	// Switch to GBA mode
-	runNdsFile ("/_nds/TWiLightMenu/gbaswitch.srldr", 0, NULL, true, false, true, false, false, false, -1);	
+	runNdsFile ("/_nds/TWiLightMenu/gbaswitch.srldr", 0, NULL, false, true, false, true, false, false, false, -1);	
 }
