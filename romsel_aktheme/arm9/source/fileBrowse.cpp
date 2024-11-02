@@ -1523,7 +1523,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			fileOffset += entriesPerScreen;
 			screenOffset += entriesPerScreen;
 			if (fileOffset > (int)dirContents.size() - 1) fileOffset = (int)dirContents.size() - 1;
-			if (screenOffset > (int)dirContents.size() - entriesPerScreen) screenOffset = (int)dirContents.size() - entriesPerScreen;
+			if (screenOffset > (int)dirContents.size() - entriesPerScreen) {
+				screenOffset = (int)dirContents.size() - entriesPerScreen;
+				if (screenOffset < 0) screenOffset = 0;
+			}
 			cursorPosOnScreen = fileOffset - screenOffset;
 			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
 			resetIconScale();
