@@ -557,7 +557,8 @@ void installBootStub(bool havedsiSD) {
 	if (havedsiSD) {
 		bootloader[3] = 0; // don't dldi patch
 		bootloader[7] = 1; // use internal dsi SD code
-	} else {
+	}
+	if (memcmp(io_dldi_data->friendlyName, "Default", 7) != 0) {
 		dldiPatchLoader ();
 	}
 	bootstub->arm9reboot = (VoidFn)(((u32)bootstub->arm9reboot)+fake_heap_end);

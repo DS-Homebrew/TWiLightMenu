@@ -1828,10 +1828,6 @@ int titleMode(void)
 		*(u32*)0x02FF8000 = 0x53535A4C;
 	}
 
-	#ifndef _NO_BOOTSTUB_
-	installBootStub(sdFound());
-	#endif
-
 	if (isDSiMode() && sdFound()) {
 		if ((access("sd:/_nds/bios9i.bin", F_OK) != 0) && (access("sd:/_nds/bios9i_part1.bin", F_OK) != 0)) {
 			extern char copyBuf[0x8000];
@@ -2115,6 +2111,10 @@ int titleMode(void)
 			flashcardInit();
 		}
 	}
+
+	#ifndef _NO_BOOTSTUB_
+	installBootStub(sdFound());
+	#endif
 
 	ms().loadSettings();
 	bs().loadSettings();
