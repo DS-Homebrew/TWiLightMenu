@@ -1820,6 +1820,18 @@ int titleMode(void)
 		4: Run temporary DSiWare
 	*/
 
+	if ((strcmp(io_dldi_data->friendlyName, "NAND FLASH CARD LIBFATNRIO") == 0) && (*(u32*)0x02FF8000 != 0x53535A4C)) {
+		FILE* file = fopen("nitro:/dldi/nrio.lz77", "rb");
+		fread((void*)0x02FF8004, 1, 0x3FFC, file);
+		fclose(file);
+
+		*(u32*)0x02FF8000 = 0x53535A4C;
+	}
+
+	#ifndef _NO_BOOTSTUB_
+	installBootStub(sdFound());
+	#endif
+
 	if (isDSiMode() && sdFound()) {
 		if ((access("sd:/_nds/bios9i.bin", F_OK) != 0) && (access("sd:/_nds/bios9i_part1.bin", F_OK) != 0)) {
 			extern char copyBuf[0x8000];
@@ -1884,7 +1896,7 @@ int titleMode(void)
 		}
 	}
 
-	bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
+	const bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
 
 	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
 	bool nandMounted = false;

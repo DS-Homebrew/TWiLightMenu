@@ -36,7 +36,7 @@
 #endif
 
 #include "common/nds_loader_arm9.h"
-#define LCDC_BANK_C (u16*)0x06840000
+#define LCDC_BANK_C (u16*)0x06848000
 #define STORED_FILE_CLUSTER (*(((u32*)LCDC_BANK_C) + 1))
 #define INIT_DISC (*(((u32*)LCDC_BANK_C) + 2))
 #define WANT_TO_PATCH_DLDI (*(((u32*)LCDC_BANK_C) + 3))
@@ -126,7 +126,7 @@ static void writeAddr (data_t *mem, addr_t offset, addr_t value) {
 	((addr_t*)mem)[offset/sizeof(addr_t)] = value;
 }
 
-static addr_t quickFind (const data_t* data, const data_t* search, size_t dataLen, size_t searchLen) {
+/* static addr_t quickFind (const data_t* data, const data_t* search, size_t dataLen, size_t searchLen) {
 	const int* dataChunk = (const int*) data;
 	int searchChunk = ((const int*)search)[0];
 	addr_t i;
@@ -144,18 +144,17 @@ static addr_t quickFind (const data_t* data, const data_t* search, size_t dataLe
 	}
 
 	return -1;
-}
+} */
 
 // Normal DLDI uses "\xED\xA5\x8D\xBF Chishm"
 // Bootloader string is different to avoid being patched
-static const data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Different to a normal DLDI file
+// static const data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Different to a normal DLDI file
 
 #define DEVICE_TYPE_DLDI 0x49444C44
 
-static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
+static bool dldiPatchLoader (void)
 {
 	addr_t memOffset;			// Offset of DLDI after the file is loaded into memory
-	addr_t patchOffset;			// Position of patch destination in the file
 	addr_t relocationOffset;	// Value added to all offsets within the patch to fix it properly
 	addr_t ddmemOffset;			// Original offset used in the DLDI file
 	addr_t ddmemStart;			// Start of range that offsets can be in the DLDI file
@@ -164,39 +163,28 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 
 	addr_t addrIter;
 
-	data_t *pDH;
-	data_t *pAH;
-
 	size_t dldiFileSize = 0;
 
-	// Find the DLDI reserved space in the file
-	patchOffset = quickFind (binData, dldiMagicLoaderString, binSize, sizeof(dldiMagicLoaderString));
+	data_t *pDH = (data_t*)(io_dldi_data);
 
-	if (patchOffset < 0) {
-		// does not have a DLDI section
-		return false;
-	}
-
-	pDH = (data_t*)(io_dldi_data);
-
-	pAH = &(binData[patchOffset]);
+	data_t *pAH = (data_t*)0x02FF8000;
 
 	if (*((u32*)(pDH + DO_ioType)) == DEVICE_TYPE_DLDI) {
 		// No DLDI patch
 		return false;
 	}
 
-	if (pDH[DO_driverSize] > pAH[DO_allocatedSpace]) {
-		// Not enough space for patch
-		return false;
+	if (*(u32*)0x02FF8004 == 0x69684320 || *(u32*)0x02FF8000 == 0x53535A4C) {
+		return true; // Skip patching for existing or compressed DLDI file
 	}
 
 	dldiFileSize = 1 << pDH[DO_driverSize];
 
-	memOffset = readAddr (pAH, DO_text_start);
+	/* memOffset = readAddr (pAH, DO_text_start);
 	if (memOffset == 0) {
 			memOffset = readAddr (pAH, DO_startup) - DO_code;
-	}
+	} */
+	memOffset = 0x06000000;
 	ddmemOffset = readAddr (pDH, DO_text_start);
 	relocationOffset = memOffset - ddmemOffset;
 
@@ -207,7 +195,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	// Remember how much space is actually reserved
 	pDH[DO_allocatedSpace] = pAH[DO_allocatedSpace];
 	// Copy the DLDI patch into the application
-	tonccpy (pAH, pDH, dldiFileSize);
+	tonccpy (pAH, pDH, (dldiFileSize > 0x4000) ? 0x4000 : dldiFileSize);
 
 	// Fix the section pointers in the header
 	writeAddr (pAH, DO_text_start, readAddr (pAH, DO_text_start) + relocationOffset);
@@ -253,7 +241,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 		}
 	}
 
-	if (clearBSS && (pDH[DO_fixSections] & FIX_BSS)) {
+	if (/* clearBSS && */ (pDH[DO_fixSections] & FIX_BSS) && dldiFileSize <= 0x4000) {
 		// Initialise the BSS to 0, only if the disc is being re-inited
 		toncset (&pAH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
 	}
@@ -328,7 +316,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 
 	if (dldiPatchNds) {
 		// Patch the loader with a DLDI for the card
-		if (!dldiPatchLoader ((data_t*)LCDC_BANK_C, loaderSize, initDisc)) {
+		if (!dldiPatchLoader ()) {
 			return 3;
 		}
 	}
@@ -354,7 +342,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	*((vu32*)0x02FFFE04) = (u32)0xE59FF018;
 	*((vu32*)0x02FFFE24) = (u32)0x02FFFE04;
 
-	resetARM7(0x06000000);
+	resetARM7(0x06008000);
 
 	swiSoftReset();
 	return true;
@@ -507,7 +495,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		filename = argv[0];
 	}
 
-	bool havedsiSD = (access("sd:/", F_OK) == 0);
+	const bool havedsiSD = (access("sd:/", F_OK) == 0);
 
 	if (REG_SCFG_EXT != 0 && havedsiSD) {
 		// Check for Unlaunch
@@ -526,7 +514,9 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 
 	bool loadFromRam = runNds9(filename, dsModeSwitch);
 
+	#ifndef _NO_BOOTSTUB_
 	installBootStub(havedsiSD);
+	#endif
 
 	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, filename, argc, argv, clearMasterBright, dsModeSwitch, lockScfg, boostCpu, boostVram, tscTgds, language);
 }
@@ -551,34 +541,31 @@ dsiSD:
 	.word	0
 */
 
-bool installBootStub(bool havedsiSD) {
 #ifndef _NO_BOOTSTUB_
+void installBootStub(bool havedsiSD) {
+	static bool installed = false;
+	if (installed) return;
+
 	extern char *fake_heap_end;
 	struct __bootstub *bootstub = (struct __bootstub *)fake_heap_end;
 	u32 *bootloader = (u32*)(fake_heap_end+bootstub_bin_size);
 
-	memcpy(bootstub,bootstub_bin,bootstub_bin_size);
-	memcpy(bootloader,load_bin,load_bin_size);
-	bool ret = false;
+	tonccpy(bootstub,bootstub_bin,bootstub_bin_size);
+	tonccpy(bootloader,load_bin,load_bin_size);
 
 	bootloader[8] = isDSiMode();
 	if (havedsiSD) {
-		ret = true;
 		bootloader[3] = 0; // don't dldi patch
 		bootloader[7] = 1; // use internal dsi SD code
 	} else {
-		ret = dldiPatchLoader((data_t*)bootloader, load_bin_size,false);
+		dldiPatchLoader ();
 	}
 	bootstub->arm9reboot = (VoidFn)(((u32)bootstub->arm9reboot)+fake_heap_end);
 	bootstub->arm7reboot = (VoidFn)(((u32)bootstub->arm7reboot)+fake_heap_end);
 	bootstub->bootsize = load_bin_size;
 
 	DC_FlushAll();
-
-	return ret;
-#else
-	return true;
-#endif
-
+	installed = true;
 }
+#endif
 

@@ -122,7 +122,7 @@ hook7from9:
 	adr	r0, _loader
 	ldr	r2, _loader_size
 	mov	r1, #0x06800000
-	add	r1, r1, #0x40000
+	add	r1, r1, #0x48000
 	add	r2, r0, r2
 _copyloader:
 	ldr	r4, [r0], #4
@@ -140,6 +140,7 @@ _copyloader:
 
 	ldr	r0, arm7bootaddr
 	mov	r1, #0x06000000
+	add	r1, r1, #0x8000
 	str	r1, [r0]
 	
 	ldr	r0, resetcode

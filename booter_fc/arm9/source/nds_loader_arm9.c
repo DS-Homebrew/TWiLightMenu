@@ -390,42 +390,7 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 		runNds9i(filename);
 	}
 
-	bool loadFromRam = (runNds9(filename) || (isDSiMode() && access("sd:/", F_OK) != 0));
+	const bool loadFromRam = (runNds9(filename) || (isDSiMode() && access("sd:/", F_OK) != 0));
 	
-	bool havedsiSD = (argv[0][0]=='s' && argv[0][1]=='d');
-	installBootStub(havedsiSD);
-
 	return runNds (load_bin, load_bin_size, st.st_ino, true, (memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, argc, argv);
-}
-
-
-bool installBootStub(bool havedsiSD) {
-#ifndef _NO_BOOTSTUB_
-	extern char *fake_heap_end;
-	struct __bootstub *bootstub = (struct __bootstub *)fake_heap_end;
-	u32 *bootloader = (u32*)(fake_heap_end+bootstub_bin_size);
-
-	memcpy(bootstub,bootstub_bin,bootstub_bin_size);
-	memcpy(bootloader,load_bin,load_bin_size);
-	bool ret = false;
-
-	bootloader[8] = isDSiMode();
-	if ( havedsiSD) {
-		ret = true;
-		bootloader[3] = 0; // don't dldi patch
-		bootloader[7] = 1; // use internal dsi SD code
-	} else {
-		ret = dldiPatchLoader((data_t*)bootloader, load_bin_size,false);
-	}
-	bootstub->arm9reboot = (VoidFn)(((u32)bootstub->arm9reboot)+fake_heap_end);
-	bootstub->arm7reboot = (VoidFn)(((u32)bootstub->arm7reboot)+fake_heap_end);
-	bootstub->bootsize = load_bin_size;
-
-	DC_FlushAll();
-
-	return ret;
-#else
-	return true;
-#endif
-
 }
