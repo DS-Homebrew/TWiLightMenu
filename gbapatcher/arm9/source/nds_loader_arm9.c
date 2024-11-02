@@ -30,50 +30,8 @@
 #include "common/tonccpy.h"
 #include "load_bin.h"
 
-#ifndef _NO_BOOTSTUB_
-#include "bootstub_bin.h"
-#endif
-
 #include "nds_loader_arm9.h"
 #define LCDC_BANK_C (u16*)0x06840000
-#define STORED_FILE_CLUSTER (*(((u32*)LCDC_BANK_C) + 1))
-#define INIT_DISC (*(((u32*)LCDC_BANK_C) + 2))
-#define WANT_TO_PATCH_DLDI (*(((u32*)LCDC_BANK_C) + 3))
-
-
-/*
-	b	startUp
-	
-storedFileCluster:
-	.word	0x0FFFFFFF		@ default BOOT.NDS
-initDisc:
-	.word	0x00000001		@ init the disc by default
-wantToPatchDLDI:
-	.word	0x00000001		@ by default patch the DLDI section of the loaded NDS
-@ Used for passing arguments to the loaded app
-argStart:
-	.word	_end - _start
-argSize:
-	.word	0x00000000
-dldiOffset:
-	.word	_dldi_start - _start
-dsiSD:
-	.word	0
-dsiMode:
-	.word	0
-*/
-
-#define STORED_FILE_CLUSTER_OFFSET 4 
-#define INIT_DISC_OFFSET 8
-#define WANT_TO_PATCH_DLDI_OFFSET 12
-#define ARG_START_OFFSET 16
-#define ARG_SIZE_OFFSET 20
-#define HAVE_DSISD_OFFSET 28
-#define DSIMODE_OFFSET 32
-#define CLEAR_MASTER_BRIGHT_OFFSET 36
-#define DSMODE_SWITCH_OFFSET 40
-#define LOADFROMRAM_OFFSET 44
-
 
 int runNds (const void* loader, u32 loaderSize)
 {
