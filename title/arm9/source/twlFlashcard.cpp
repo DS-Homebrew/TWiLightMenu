@@ -67,7 +67,7 @@ TWL_CODE void twl_flashcardInit(void) {
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else*/ if (!memcmp(ndsCardHeader.gameTitle, "QMATETRIAL", 9) || !memcmp(ndsCardHeader.gameTitle, "R4DSULTRA", 9) // R4iDSN/R4 Ultra
 				|| !memcmp(ndsCardHeader.gameCode, "ACEK", 4) || !memcmp(ndsCardHeader.gameCode, "YCEP", 4) || !memcmp(ndsCardHeader.gameCode, "AHZH", 4) || !memcmp(ndsCardHeader.gameCode, "CHPJ", 4) || !memcmp(ndsCardHeader.gameCode, "ADLP", 4)) { // Acekard 2(i)
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ak2_sd.dldi");
+			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ak2.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} /*else if (!memcmp(ndsCardHeader.gameCode, "ALXX", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dstwo.dldi");
