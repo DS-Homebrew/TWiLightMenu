@@ -45,20 +45,26 @@ _io_dldi:
 	.word	_DLDI_shutdown			@
 
 _DLDI_startup:
-	mov	r12, #0x06000000
-	ldr pc, [r12, #0x68]
+	mov r12, #0x06000000
+	ldr r12, [r12, #0x68]
+	bx r12
 _DLDI_isInserted:
-	mov	r12, #0x06000000
-	ldr pc, [r12, #0x6C]
+	mov r12, #0x06000000
+	ldr r12, [r12, #0x6C]
+	bx r12
 _DLDI_readSectors:
-	mov	r12, #0x06000000
-	ldr pc, [r12, #0x70]
+	mov r12, #0x06000000
+	ldr r12, [r12, #0x70]
+	bx r12
 _DLDI_writeSectors:
-	mov	r12, #0x06000000
-	ldr pc, [r12, #0x74]
+	mov r12, #0x06000000
+	ldr r12, [r12, #0x74]
+	bx r12
 _DLDI_clearStatus:
-	mov	r12, #0x06000000
-	ldr pc, [r12, #0x78]
+	mov r12, #0x06000000
+	ldr r12, [r12, #0x78]
+	bx r12
 _DLDI_shutdown:
-	mov	r12, #0x06000000
-	ldr pc, [r12, #0x7C]
+	mov r12, #0x06000000
+	ldr r12, [r12, #0x7C]
+	bx r12
