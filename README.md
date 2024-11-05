@@ -108,7 +108,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - archiede: [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS) (used for launching SNES ROMs)
      - [Coto](https://coto88.bitbucket.io/): [SNEmulDS Revival](https://bitbucket.org/Coto88/snemulds)
 - [chishm](https://github.com/chishm): [tuna-viDS](https://github.com/chishm/tuna-vids) (used for playing Xvid videos)
-- [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob) (used for launching Gameboy ROMs)
+- [Stewmath](https://github.com/Stewmath): [GameYob](https://github.com/Stewmath/GameYob) (used for launching Gameboy ROMs)
 - [FluBBaOfWard](https://github.com/FluBBaOfWard): [S8DS](https://github.com/FluBBaOfWard/S8DS) (used for launching Sega Master System, Game Gear, SG-1000/SG-3000, and ColecoVision ROMs), [NitroGrafx](https://github.com/FluBBaOfWard/NitroGrafx) (used for launching PC Engine/TurboGrafx-16 ROMs), [NitroSwan](https://github.com/FluBBaOfWard/NitroSwan) (used for launching WonderSwan ROMs), and [NGPDS](https://github.com/FluBBaOfWard/NGPDS) (used for launching Neo Geo Pocket ROMs)
 - [FluBBaOfWard](https://github.com/FluBBaOfWard), [Coto](https://coto88.bitbucket.io/), and Loopy: [nesDS](https://github.com/DS-Homebrew/NesDS) (used for launching NES ROMs)
      - [Apache Thunder](https://github.com/ApacheThunder): [TWL Edition](https://github.com/ApacheThunder/NesDS) of nesDS
