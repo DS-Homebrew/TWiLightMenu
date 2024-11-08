@@ -244,15 +244,6 @@ void dldiDecompressBinary (void) {
 	ddmemSize = (1 << pDH[DO_driverSize]);
 	ddmemEnd = ddmemStart + ddmemSize;
 
-	// Fix the section pointers in the header
-	writeAddr (pDH, DO_text_start, readAddr (pDH, DO_text_start) + relocationOffset);
-	writeAddr (pDH, DO_data_end, readAddr (pDH, DO_data_end) + relocationOffset);
-	writeAddr (pDH, DO_glue_start, readAddr (pDH, DO_glue_start) + relocationOffset);
-	writeAddr (pDH, DO_glue_end, readAddr (pDH, DO_glue_end) + relocationOffset);
-	writeAddr (pDH, DO_got_start, readAddr (pDH, DO_got_start) + relocationOffset);
-	writeAddr (pDH, DO_got_end, readAddr (pDH, DO_got_end) + relocationOffset);
-	writeAddr (pDH, DO_bss_start, readAddr (pDH, DO_bss_start) + relocationOffset);
-	writeAddr (pDH, DO_bss_end, readAddr (pDH, DO_bss_end) + relocationOffset);
 	// Fix the function pointers in the header
 	writeAddr (pDH, DO_startup, readAddr (pDH, DO_startup) + relocationOffset);
 	writeAddr (pDH, DO_isInserted, readAddr (pDH, DO_isInserted) + relocationOffset);
@@ -292,6 +283,16 @@ void dldiDecompressBinary (void) {
 		// Initialise the BSS to 0
 		toncset (&pDH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
 	}
+
+	// Fix the section pointers in the header
+	writeAddr (pDH, DO_text_start, readAddr (pDH, DO_text_start) + relocationOffset);
+	writeAddr (pDH, DO_data_end, readAddr (pDH, DO_data_end) + relocationOffset);
+	writeAddr (pDH, DO_glue_start, readAddr (pDH, DO_glue_start) + relocationOffset);
+	writeAddr (pDH, DO_glue_end, readAddr (pDH, DO_glue_end) + relocationOffset);
+	writeAddr (pDH, DO_got_start, readAddr (pDH, DO_got_start) + relocationOffset);
+	writeAddr (pDH, DO_got_end, readAddr (pDH, DO_got_end) + relocationOffset);
+	writeAddr (pDH, DO_bss_start, readAddr (pDH, DO_bss_start) + relocationOffset);
+	writeAddr (pDH, DO_bss_end, readAddr (pDH, DO_bss_end) + relocationOffset);
 }
 
 void dldiClearBss (void) {
@@ -301,11 +302,9 @@ void dldiClearBss (void) {
 
 	if (ddmemSize <= 0x4000) return; // For <= 16KB DLDI file, BSS has already been cleared
 
-	addr_t ddmemStart = readAddr (pDH, DO_text_start);		// Start of range that offsets can be in the DLDI file
-
 	if (pDH[DO_fixSections] & FIX_BSS) { 
 		// Initialise the BSS to 0
-		toncset (&pDH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
+		toncset (&pDH[readAddr(pDH, DO_bss_start)] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
 	}
 }
 #endif
