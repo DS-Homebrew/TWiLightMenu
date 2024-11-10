@@ -13,7 +13,6 @@ endif
 #---------------------------------------------------------------------------------
 OUTPUT_DIR		:=	../7zfile/_nds/TWiLightMenu/extras
 
-APFILES		:= apfix apfix/cht
 WIDEFILES	:= widescreen
 
 #---------------------------------------------------------------------------------
@@ -21,10 +20,7 @@ WIDEFILES	:= widescreen
 #---------------------------------------------------------------------------------
 .PHONY:
 
-all:	$(OUTPUT_DIR)/apfix.pck $(OUTPUT_DIR)/widescreen.pck
-
-$(OUTPUT_DIR)/apfix.pck: $(APFILES)
-	$(PYTHON) pack.py $^ -o $@
+all:	$(OUTPUT_DIR)/widescreen.pck
 
 $(OUTPUT_DIR)/widescreen.pck: $(WIDEFILES)
 	$(PYTHON) pack.py $^ -o $@
