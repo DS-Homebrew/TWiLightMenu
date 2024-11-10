@@ -3852,11 +3852,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
 								CURPOS);
-						if (hasAP == 2) {
-							printSmall(false, 0, 80, STR_AP_PATCH_RGF, Alignment::center, FontPalette::dialog);
-						} else {
-							printSmall(false, 0, 72, STR_AP_USE_LATEST, Alignment::center, FontPalette::dialog);
-						}
+						printSmall(false, 0, 72, STR_AP_USE_LATEST, Alignment::center, FontPalette::dialog);
 						printSmall(false, 0, 160, STR_B_A_OK_X_DONT_SHOW, Alignment::center, FontPalette::dialog);
 						updateText(false);
 						pressed = 0;

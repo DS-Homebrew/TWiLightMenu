@@ -1362,15 +1362,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					dialogboxHeight = 3;
 					showdialogbox = true;
 					printSmall(false, 0, 74, "Anti-Piracy Warning", Alignment::center, FontPalette::white);
-					if (hasAP == 2) {
-						printSmall(false, 0, 98, "This game has AP, and MUST", Alignment::center);
-						printSmall(false, 0, 110, "be patched using the RGF", Alignment::center);
-						printSmall(false, 0, 122, "TWiLight Menu AP patcher.", Alignment::center);
-					} else {
-						printSmall(false, 0, 98, "This game has AP. Please", Alignment::center);
-						printSmall(false, 0, 110, "make sure you're using the", Alignment::center);
-						printSmall(false, 0, 122, "latest TWiLight Menu++.", Alignment::center);
-					}
+					printSmall(false, 0, 98, "This game has AP. Please make", Alignment::center);
+					printSmall(false, 0, 110, "sure you're using the latest", Alignment::center);
+					printSmall(false, 0, 122, "version of nds-bootstrap.", Alignment::center);
 					printSmall(false, 0, 142, " Return    Launch", Alignment::center);
 					updateText(false);
 

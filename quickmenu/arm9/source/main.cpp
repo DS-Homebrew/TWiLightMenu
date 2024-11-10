@@ -347,127 +347,6 @@ void dsCardLaunch() {
 }
 
 /**
- * Fix AP for some games.
- */
-std::string setApFix(const char *filename) {
-	if (flashcardFound()) {
-		remove("fat:/_nds/nds-bootstrap/apFix.ips");
-		remove("fat:/_nds/nds-bootstrap/apFixCheat.bin");
-	}
-
-	bool ipsFound = false;
-	bool cheatVer = true;
-	char ipsPath[256];
-	char ipsPath2[256];
-	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/cht/%s.bin", sys().isRunFromSD() ? "sd" : "fat", filename);
-		ipsFound = (access(ipsPath, F_OK) == 0);
-	}
-
-	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/cht/%s-%X.bin", sys().isRunFromSD() ? "sd" : "fat", gameTid[ms().secondaryDevice], headerCRC[ms().secondaryDevice]);
-		ipsFound = (access(ipsPath, F_OK) == 0);
-	}
-
-	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s.ips", sys().isRunFromSD() ? "sd" : "fat", filename);
-		ipsFound = (access(ipsPath, F_OK) == 0);
-		if (ipsFound) {
-			cheatVer = false;
-		}
-	}
-
-	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[ms().secondaryDevice], headerCRC[ms().secondaryDevice]);
-		ipsFound = (access(ipsPath, F_OK) == 0);
-		if (ipsFound) {
-			cheatVer = false;
-		}
-	}
-
-	if (ipsFound) {
-		if (ms().secondaryDevice && sys().isRunFromSD()) {
-			mkdir("fat:/_nds", 0777);
-			mkdir("fat:/_nds/nds-bootstrap", 0777);
-			fcopy(ipsPath, cheatVer ? "fat:/_nds/nds-bootstrap/apFixCheat.bin" : "fat:/_nds/nds-bootstrap/apFix.ips");
-			return cheatVer ? "fat:/_nds/nds-bootstrap/apFixCheat.bin" : "fat:/_nds/nds-bootstrap/apFix.ips";
-		}
-		return ipsPath;
-	} else {
-		FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
-		if (file) {
-			char buf[5] = {0};
-			fread(buf, 1, 4, file);
-			if (strcmp(buf, ".PCK") != 0) // Invalid file
-				return "";
-
-			u32 fileCount;
-			fread(&fileCount, 1, sizeof(fileCount), file);
-
-			u32 offset = 0, size = 0;
-
-			// Try binary search for the game
-			int left = 0;
-			int right = fileCount;
-
-			while (left <= right) {
-				int mid = left + ((right - left) / 2);
-				fseek(file, 16 + mid * 16, SEEK_SET);
-				fread(buf, 1, 4, file);
-				int cmp = strcmp(buf, gameTid[ms().secondaryDevice]);
-				if (cmp == 0) { // TID matches, check CRC
-					u16 crc;
-					fread(&crc, 1, sizeof(crc), file);
-
-					if (crc == headerCRC[ms().secondaryDevice]) { // CRC matches
-						fread(&offset, 1, sizeof(offset), file);
-						fread(&size, 1, sizeof(size), file);
-						cheatVer = fgetc(file) & 1;
-						break;
-					} else if (crc < headerCRC[ms().secondaryDevice]) {
-						left = mid + 1;
-					} else {
-						right = mid - 1;
-					}
-				} else if (cmp < 0) {
-					left = mid + 1;
-				} else {
-					right = mid - 1;
-				}
-			}
-
-			if (offset > 0 && size > 0) {
-				fseek(file, offset, SEEK_SET);
-				u8 *buffer = new u8[size];
-				fread(buffer, 1, size, file);
-
-				if (flashcardFound()) {
-					mkdir("fat:/_nds", 0777);
-					mkdir("fat:/_nds/nds-bootstrap", 0777);
-				}
-				snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apFix%s", ms().secondaryDevice ? "fat" : "sd", cheatVer ? "Cheat.bin" : ".ips");
-				snprintf(ipsPath2, sizeof(ipsPath2), "%s:/_nds/nds-bootstrap/apFix%s", ms().secondaryDevice ? "fat" : "sd", cheatVer ? ".ips" : "Cheat.bin");
-				if (access(ipsPath2, F_OK) == 0) {
-					remove(ipsPath2); // Delete leftover AP-fix file of opposite format
-				}
-				FILE *out = fopen(ipsPath, "wb");
-				if (out) {
-					fwrite(buffer, 1, size, out);
-					fclose(out);
-				}
-				delete[] buffer;
-				fclose(file);
-				return ipsPath;
-			}
-
-			fclose(file);
-		}
-	}
-
-	return "";
-}
-
-/**
  * Enable widescreen for some games.
  */
 void SetWidescreen(const char *filename) {
@@ -2503,7 +2382,6 @@ int dsClassicMenu(void) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
 					bootstrapini.SetString("NDS-BOOTSTRAP", "MANUAL_PATH", getGameManual(filename[ms().secondaryDevice].c_str()));
 					bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
@@ -2719,7 +2597,6 @@ int dsClassicMenu(void) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 						if (!isHomebrew[ms().secondaryDevice]) {
-							bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", setApFix(argarray[0]));
 							bootstrapini.SetString("NDS-BOOTSTRAP", "MANUAL_PATH", getGameManual(filename[ms().secondaryDevice].c_str()));
 						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && (gameTid[ms().secondaryDevice][0] == 'W' || romVersion[ms().secondaryDevice] == 0x57)) ? "wide" : "");
@@ -2793,7 +2670,7 @@ int dsClassicMenu(void) {
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
 
-						bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+						const bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
 						char ndsToBoot[256];
 						sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s%s.nds", sys().isRunFromSD() ? "sd" : "fat", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");

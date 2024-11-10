@@ -2,8 +2,11 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <unistd.h>
+#include "common/twlmenusettings.h"
 #include "common/flashcard.h"
+#include "common/nitrofs.h"
 #include "common/systemdetails.h"
+#include "perGameSettings.h"
 #include <gl2d.h>
 
 #include "ndsheaderbanner.h"
@@ -93,14 +96,22 @@ u32 getSDKVersion(FILE *ndsFile)
  */
 int checkRomAP(FILE *ndsFile, int num)
 {
-	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[num], headerCRC[num]);
+	/* char ipsPath[256];
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[num], headerCRC[num]);
 
 	if (access(ipsPath, F_OK) == 0) {
 		return 0;
+	} */
+
+	const bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+	char bootstrapPath[256];
+	sprintf(bootstrapPath, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "sd" : "fat", useNightly ? "nightly" : "release");
+	if (access(bootstrapPath, F_OK) != 0) {
+		sprintf(bootstrapPath, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", useNightly ? "nightly" : "release");
 	}
 
-	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
+	bootFSInit(bootstrapPath);
+	FILE *file = fopen("boot:/apfix.pck", "rb");
 	if (file) {
 		char buf[5] = {0};
 		fread(buf, 1, 4, file);
@@ -501,7 +512,6 @@ int checkRomAP(FILE *ndsFile, int num)
 			if (memcmp(gameTid[num], ap_list[i], 3) == 0) {
 				// Found a match.
 				return 1;
-				break;
 			}
 		}
 
@@ -514,10 +524,8 @@ int checkRomAP(FILE *ndsFile, int num)
 			if (memcmp(gameTid[num], ap_list2[i], 3) == 0) {
 				// Found a match.
 				return 2;
-				break;
 			}
 		}
-
 	}
 	
 	return 0;

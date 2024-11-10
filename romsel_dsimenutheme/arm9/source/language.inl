@@ -125,8 +125,7 @@ STRING(OPEN_MANUAL, "Open Manual")
 STRING(SELECT_B_BACK_A_SELECT, "SELECT/\\B Back, \\A Select")
 
 // AP
-STRING(AP_PATCH_RGF, "This game has AP (Anti-Piracy)\nand MUST be patched using the\nRGF TWiLight Menu AP patcher.")
-STRING(AP_USE_LATEST, "This game has AP (Anti-Piracy).\nPlease make sure you're\nusing the latest version of\nTWiLight Menu++.")
+STRING(AP_USE_LATEST, "This game has AP (Anti-Piracy).\nPlease make sure you're\nusing the latest version of\nnds-bootstrap.")
 STRING(B_A_OK_X_DONT_SHOW, "\\B/\\A OK, \\X Don't show again")
 
 // Default Directory Selector
