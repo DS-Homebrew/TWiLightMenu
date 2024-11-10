@@ -105,8 +105,6 @@ jobs:
           7z a TWiLightMenu-Flashcard.7z TWiLightMenu
           mv TWiLightMenu-Flashcard.7z ~/artifacts
 
-          # apfix.pck
-          cp 7zfile/_nds/TWiLightMenu/extras/apfix.pck ~/artifacts
           # widescreen.pck
           cp 7zfile/_nds/TWiLightMenu/extras/widescreen.pck ~/artifacts
       - name: Publish build to GH Actions
