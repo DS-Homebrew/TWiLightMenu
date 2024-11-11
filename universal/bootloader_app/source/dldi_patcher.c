@@ -108,6 +108,8 @@ static void demangleMagicString(data_t *dest, const data_t *src) {
 
 #define DEVICE_TYPE_DLDI 0x49444C44
 
+extern unsigned long dsiMode;
+extern unsigned long dsMode;
 static data_t* _dldi_start = (data_t*)0x06000000;
 
 bool dldiPatchBinary (data_t *binData, u32 binSize) {
@@ -144,16 +146,33 @@ bool dldiPatchBinary (data_t *binData, u32 binSize) {
 		return false;
 	}
 
-	if (pDH[DO_driverSize] > pAH[DO_allocatedSpace]) {
-		// Not enough space for patch
-		return false;
-	}
-	
 	dldiFileSize = 1 << pDH[DO_driverSize];
 
 	memOffset = readAddr (pAH, DO_text_start);
 	if (memOffset == 0) {
 			memOffset = readAddr (pAH, DO_startup) - DO_code;
+	}
+
+	const bool largeDldi = (pDH[DO_driverSize] > pAH[DO_allocatedSpace]);
+
+	if (largeDldi) {
+		if (memOffset < 0x02000000 || memOffset >= 0x03000000) {
+			// Not enough space for patch in arm7 WRAM
+			return false;
+		}
+
+		// u32** bootloader = (u32**)0x02FF4010;
+		const u32* bootloader = (u32*)0x02FF4168;
+		const u32 bootsize = *(u32*)0x02FF4014;
+
+		tonccpy (pAH+DO_code, bootloader, bootsize);
+		*(u32*)0x02FF4010 = (u32)pAH+DO_code;
+
+		// Relocate DLDI file to bootstub RAM space
+		pAH = (data_t*)(dsiMode&&!dsMode ? 0x02FF4180 : 0x023F4180);
+		toncset (pAH, 0, 0x8000);
+
+		memOffset = (addr_t)pAH;
 	}
 	ddmemOffset = readAddr (pDH, DO_text_start);
 	relocationOffset = memOffset - ddmemOffset;
@@ -219,6 +238,11 @@ bool dldiPatchBinary (data_t *binData, u32 binSize) {
 		toncset (&pAH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
 	}
 
+	if (largeDldi) {
+		data_t* pAH2 = &(binData[patchOffset]);
+		tonccpy (pAH2, pAH, DO_code);
+	}
+
 	return true;
 }
 
@@ -226,6 +250,10 @@ void dldiDecompressBinary (void) {
 	extern void LZ77_Decompress(u8* source, u8* destination);
 	LZ77_Decompress((u8*)0x02FF8004, (u8*)_dldi_start);
 
+	dldiRelocateBinary();
+}
+
+void dldiRelocateBinary (void) {
 	addr_t memOffset;			// Offset of DLDI after the file is loaded into memory
 	addr_t relocationOffset;	// Value added to all offsets within the patch to fix it properly
 	addr_t ddmemOffset;			// Original offset used in the DLDI file

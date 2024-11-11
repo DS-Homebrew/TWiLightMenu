@@ -32,6 +32,14 @@
 #include "load_bin.h"
 
 #ifndef _NO_BOOTSTUB_
+struct __my_bootstub {
+	u64	bootsig;
+	VoidFn arm9reboot;
+	VoidFn arm7reboot;
+	u32 bootaddr;
+	u32 bootsize;
+};
+
 #include "bootstub_bin.h"
 #endif
 
@@ -546,7 +554,7 @@ dsiSD:
 #ifndef _NO_BOOTSTUB_
 void installBootStub(const bool havedsiSD, const bool isRunFromSD, const bool dsModeSwitch) {
 	extern char *fake_heap_end;
-	struct __bootstub *bootstub = (struct __bootstub *)fake_heap_end;
+	struct __my_bootstub *bootstub = (struct __my_bootstub *)fake_heap_end;
 	u32 *bootloader = (u32*)(fake_heap_end+bootstub_bin_size);
 
 	tonccpy(bootstub,bootstub_bin,bootstub_bin_size);
@@ -567,6 +575,7 @@ void installBootStub(const bool havedsiSD, const bool isRunFromSD, const bool ds
 	}
 	bootstub->arm9reboot = (VoidFn)(((u32)bootstub->arm9reboot)+fake_heap_end);
 	bootstub->arm7reboot = (VoidFn)(((u32)bootstub->arm7reboot)+fake_heap_end);
+	bootstub->bootaddr += (u32)fake_heap_end;
 	bootstub->bootsize = load_bin_size;
 
 	DC_FlushAll();
