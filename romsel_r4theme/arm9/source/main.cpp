@@ -2155,9 +2155,9 @@ int r4Theme(void) {
 				} else if (extension(filename, {".fv", ".ntrb"})) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::EFastVideoLaunch;
 
-					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
+					ndsToBoot = (flashcardFound() && io_dldi_data->driverSize >= 0xF) ? "sd:/_nds/TWiLightMenu/apps/FastVideoDS32.nds" : "sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
+						ndsToBoot = (io_dldi_data->driverSize >= 0xF) ? "fat:/_nds/TWiLightMenu/apps/FastVideoDS32.nds" : "fat:/_nds/TWiLightMenu/apps/FastVideoDS.nds";
 						boostVram = true;
 					}
 				} else if (extension(filename, {".agb", ".gba", ".mb"})) {
