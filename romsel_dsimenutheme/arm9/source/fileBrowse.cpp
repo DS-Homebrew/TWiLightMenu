@@ -3811,6 +3811,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 						if (proceedToLaunch && !apChecked && !isDSiWare[CURPOS] && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
 							hasAP = checkRomAP(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+							apChecked = true;
 						}
 						if (proceedToLaunch && isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
 							if (!dsiFeatures() && !sys().isRegularDS()) {
