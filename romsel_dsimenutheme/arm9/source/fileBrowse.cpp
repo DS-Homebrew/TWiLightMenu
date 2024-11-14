@@ -3107,6 +3107,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		fadeSpeed = true; // Fast fade speed
 		bool gameTapped = false;
 		bool apChecked = false;
+		int apCheckTimer = 0;
 		bool hasAP = false;
 
 		while (1) {
@@ -3147,15 +3148,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 				updateBoxArt();
 				if (!apChecked && (bnrRomType[CURPOS] == 0) && !isDSiWare[CURPOS]) {
-					static int timer = 0;
-					if (timer == 30) {
+					if (apCheckTimer == 30) {
 						if (checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
 							hasAP = checkRomAP(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
 						}
 						apChecked = true;
-						timer = 0;
 					}
-					timer++;
+					apCheckTimer++;
 				}
 				if (ms().theme < 4) {
 					while (dboxInFrame) {
@@ -3210,9 +3209,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if ((held & KEY_LEFT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == TWLSettings::EThemeDSi)) { // Left or button arrow (DSi theme)
 				moveCursor(false, dirContents[scrn]);
 				apChecked = false;
+				apCheckTimer = 0;
 			} else if ((held & KEY_RIGHT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == TWLSettings::EThemeDSi)) { // Right or button arrow (DSi theme)
 				moveCursor(true, dirContents[scrn]);
 				apChecked = false;
+				apCheckTimer = 0;
 			} else if ((pressed & KEY_UP) && (PAGENUM > 0 || CURPOS > 0 || !backFound) && (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) && !dirInfoIniFound && (ms().sortMethod == 4) && (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()))) { // Move apps (DSi & 3DS themes)
 				bannerTextShown = false; // Redraw the title when done
 				showSTARTborder = false;
