@@ -29,7 +29,7 @@ void dontShowAPMsgAgain (std::string filename);
 bool checkIfShowRAMLimitMsg (std::string filename);
 void dontShowRAMLimitMsgAgain (std::string filename);
 bool checkIfDSiMode (std::string filename);
-void perGameSettings(std::string filename);
+void perGameSettings(std::string filename, bool dsiBinariesFound, bool* dsiBinariesChecked);
 std::string getSavExtension(void);
 std::string getPubExtension(void);
 std::string getPrvExtension(void);

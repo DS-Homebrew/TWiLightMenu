@@ -397,7 +397,7 @@ const char* getRegionString(char region) {
 	return "N/A";
 }
 
-void perGameSettings (std::string filename) {
+void perGameSettings (std::string filename, bool dsiBinariesFound, bool* dsiBinariesChecked) {
 	int pressed = 0, held = 0;
 
 	keysSetRepeat(25, 5); // Slow down key repeat
@@ -472,7 +472,6 @@ void perGameSettings (std::string filename) {
 	u32 pubSize = 0;
 	u32 prvSize = 0;
 	bool usesCloneboot = false;
-	bool dsiBinariesFound = false;
 	if (bnrRomType[CURPOS] == 0) {
 		fseek(f_nds_file, 0x20, SEEK_SET);
 		fread(&arm9off, sizeof(u32), 1, f_nds_file);
@@ -494,7 +493,10 @@ void perGameSettings (std::string filename) {
 		u32 clonebootFlag = 0;
 		fread(&clonebootFlag, sizeof(u32), 1, f_nds_file);
 		usesCloneboot = (clonebootFlag == 0x16361);
-		dsiBinariesFound = checkDsiBinaries(f_nds_file);
+		if (!(*dsiBinariesChecked)) {
+			dsiBinariesFound = checkDsiBinaries(filenameForInfo.c_str());
+			*dsiBinariesChecked = true;
+		}
 	}
 	fclose(f_nds_file);
 

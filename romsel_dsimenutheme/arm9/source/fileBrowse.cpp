@@ -3106,8 +3106,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		controlTopBright = false;
 		fadeSpeed = true; // Fast fade speed
 		bool gameTapped = false;
+		bool dsiBinariesChecked = false;
+		bool hasDsiBinaries = true;
 		bool apChecked = false;
-		int apCheckTimer = 0;
+		int infoCheckTimer = 0;
 		bool hasAP = false;
 
 		while (1) {
@@ -3147,14 +3149,18 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					logPrint("\n");
 				}
 				updateBoxArt();
-				if (!apChecked && (bnrRomType[CURPOS] == 0) && !isDSiWare[CURPOS]) {
-					if (apCheckTimer == 30) {
-						if (checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
+				if ((infoCheckTimer < 30) && (bnrRomType[CURPOS] == 0) && (isHomebrew[CURPOS] == 0) && !isDSiWare[CURPOS]) {
+					infoCheckTimer++;
+					if (infoCheckTimer == 30) {
+						if (!dsiBinariesChecked) {
+							hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+						}
+						dsiBinariesChecked = true;
+						if (!apChecked && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
 							hasAP = checkRomAP(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
 						}
 						apChecked = true;
 					}
-					apCheckTimer++;
 				}
 				if (ms().theme < 4) {
 					while (dboxInFrame) {
@@ -3208,12 +3214,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 			if ((held & KEY_LEFT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == TWLSettings::EThemeDSi)) { // Left or button arrow (DSi theme)
 				moveCursor(false, dirContents[scrn]);
+				dsiBinariesChecked = false;
 				apChecked = false;
-				apCheckTimer = 0;
+				infoCheckTimer = 0;
 			} else if ((held & KEY_RIGHT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == TWLSettings::EThemeDSi)) { // Right or button arrow (DSi theme)
 				moveCursor(true, dirContents[scrn]);
+				dsiBinariesChecked = false;
 				apChecked = false;
-				apCheckTimer = 0;
+				infoCheckTimer = 0;
 			} else if ((pressed & KEY_UP) && (PAGENUM > 0 || CURPOS > 0 || !backFound) && (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) && !dirInfoIniFound && (ms().sortMethod == 4) && (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()))) { // Move apps (DSi & 3DS themes)
 				bannerTextShown = false; // Redraw the title when done
 				showSTARTborder = false;
@@ -3752,12 +3760,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					if (proceedToLaunch && useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
 					 && isHomebrew[CURPOS] == 0
 					 && checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
-						bool hasDsiBinaries = true;
-						if (dsiFeatures() && (!ms().secondaryDevice || !bs().b4dsMode)) {
-							FILE *f_nds_file = fopen(
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
-							hasDsiBinaries = checkDsiBinaries(f_nds_file);
-							fclose(f_nds_file);
+						if (!dsiBinariesChecked && dsiFeatures() && (!ms().secondaryDevice || !bs().b4dsMode)) {
+							hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+							dsiBinariesChecked = true;
 						}
 
 						if (!hasDsiBinaries) {
@@ -4403,7 +4408,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			}
 
 			if ((pressed & KEY_Y) && !ms().kioskMode && isValid[CURPOS] && !isTwlm[CURPOS] && !isDirectory[CURPOS] && bannerTextShown && showSTARTborder) {
-				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name, hasDsiBinaries, &dsiBinariesChecked);
 				bannerTextShown = false;
 			}
 
