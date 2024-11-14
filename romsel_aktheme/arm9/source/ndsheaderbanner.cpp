@@ -108,7 +108,7 @@ u32 getSDKVersion(FILE *ndsFile)
  * @param filename NDS ROM filename.
  * @return 1 or 2 on success; 0 if no AP.
  */
-int checkRomAP(FILE *ndsFile)
+int checkRomAP(FILE *ndsFile, const char* filename)
 {
 	displayDiskIcon(!sys().isRunFromSD());
 
@@ -120,22 +120,44 @@ int checkRomAP(FILE *ndsFile)
 	fread(&headerCRC16, sizeof(u16), 1, ndsFile);
 	game_TID[4] = 0;
 
-	/* char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/nds-bootstrap/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", game_TID, headerCRC16);
+	{
+		char apFixPath[256];
+		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s.ips", sys().isRunFromSD() ? "sd" : "fat", filename);
+		if (access(apFixPath, F_OK) == 0) {
+			displayDiskIcon(false);
+			return 0;
+		}
 
-	if (access(ipsPath, F_OK) == 0) {
-		displayDiskIcon(false);
-		return 0;
-	} */
+		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s.bin", sys().isRunFromSD() ? "sd" : "fat", filename);
+		if (access(apFixPath, F_OK) == 0) {
+			displayDiskIcon(false);
+			return 0;
+		}
 
-	const bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
-	char bootstrapPath[256];
-	sprintf(bootstrapPath, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "sd" : "fat", useNightly ? "nightly" : "release");
-	if (access(bootstrapPath, F_OK) != 0) {
-		sprintf(bootstrapPath, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", useNightly ? "nightly" : "release");
+		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s-%04X.ips", sys().isRunFromSD() ? "sd" : "fat", game_TID, headerCRC16);
+		if (access(apFixPath, F_OK) == 0) {
+			displayDiskIcon(false);
+			return 0;
+		}
+
+		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s-%04X.bin", sys().isRunFromSD() ? "sd" : "fat", game_TID, headerCRC16);
+		if (access(apFixPath, F_OK) == 0) {
+			displayDiskIcon(false);
+			return 0;
+		}
 	}
 
-	bootFSInit(bootstrapPath);
+	{
+		const bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+		char bootstrapPath[256];
+		sprintf(bootstrapPath, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "sd" : "fat", useNightly ? "nightly" : "release");
+		if (access(bootstrapPath, F_OK) != 0) {
+			sprintf(bootstrapPath, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", useNightly ? "nightly" : "release");
+		}
+
+		bootFSInit(bootstrapPath);
+	}
+
 	FILE *file = fopen("boot:/apfix.pck", "rb");
 	if (file) {
 		char buf[5] = {0};
@@ -159,6 +181,7 @@ int checkRomAP(FILE *ndsFile)
 
 					if (crc == headerCRC16) { // CRC matches
 						fclose(file);
+						displayDiskIcon(false);
 						return 0;
 					} else if (crc < headerCRC16) {
 						left = mid + 1;

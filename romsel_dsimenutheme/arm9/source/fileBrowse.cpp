@@ -3796,10 +3796,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 						}
 						if (proceedToLaunch && !isDSiWare[CURPOS] && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
-							FILE *f_nds_file = fopen(
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
-							hasAP = checkRomAP(f_nds_file, CURPOS);
-							fclose(f_nds_file);
+							hasAP = checkRomAP(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
 						}
 						if (proceedToLaunch && isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
 							if (!dsiFeatures() && !sys().isRegularDS()) {

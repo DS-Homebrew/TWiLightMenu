@@ -1816,7 +1816,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 					if (proceedToLaunch && !isDSiWare[cursorPosOnScreen] && checkIfShowAPMsg(dirContents.at(fileOffset).name)) {
 						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-						hasAP = checkRomAP(f_nds_file);
+						hasAP = checkRomAP(f_nds_file, dirContents.at(fileOffset).name.c_str());
 						fclose(f_nds_file);
 					}
 					if (proceedToLaunch && isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
