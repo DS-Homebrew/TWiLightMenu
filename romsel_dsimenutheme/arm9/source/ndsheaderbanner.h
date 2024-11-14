@@ -252,7 +252,7 @@ typedef enum {
 	N3DS_LANG_CHINESE_TRADITIONAL	= 11,
 } sNDSLanguage;
 
-bool checkDsiBinaries(const char* filename);
+bool checkDsiBinaries(const char* filename, const int num);
 
 /**
  * Get SDK version from an NDS file.
@@ -267,7 +267,7 @@ u32 getSDKVersion(FILE* ndsFile);
  * @param filename NDS ROM filename.
  * @return true on success; false if no AP.
  */
-bool checkRomAP(const char* filename, int num);
+bool checkRomAP(const char* filename, const int num);
 
 extern char gameTid[40][5];
 extern u8 romVersion[40];

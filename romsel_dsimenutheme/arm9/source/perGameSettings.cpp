@@ -494,7 +494,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 		fread(&clonebootFlag, sizeof(u32), 1, f_nds_file);
 		usesCloneboot = (clonebootFlag == 0x16361);
 		if (!(*dsiBinariesChecked)) {
-			*dsiBinariesFound = checkDsiBinaries(filenameForInfo.c_str());
+			*dsiBinariesFound = checkDsiBinaries(filenameForInfo.c_str(), CURPOS);
 			*dsiBinariesChecked = true;
 		}
 	}

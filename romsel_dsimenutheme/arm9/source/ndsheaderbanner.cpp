@@ -20,17 +20,16 @@ u8 unitCode[40] = {0};
 u16 headerCRC[40] = {0};
 u32 a7mbk6[40] = {0};
 
-bool checkDsiBinaries(const char* filename) {
+bool checkDsiBinaries(const char* filename, const int num) {
+	if (unitCode[num] == 0) {
+		return true;
+	}
+
 	FILE *ndsFile = fopen(filename, "rb");
 
 	sNDSHeaderExt ndsHeader;
 
 	fread(&ndsHeader, 1, sizeof(ndsHeader), ndsFile);
-
-	if (ndsHeader.unitCode == 0) {
-		fclose(ndsFile);
-		return true;
-	}
 
 	if (ndsHeader.arm9iromOffset < 0x8000 || ndsHeader.arm9iromOffset >= 0x20000000
 	 || ndsHeader.arm7iromOffset < 0x8000 || ndsHeader.arm7iromOffset >= 0x20000000) {
@@ -97,7 +96,7 @@ u32 getSDKVersion(FILE *ndsFile)
  * @param filename NDS ROM filename.
  * @return true on success; false if no AP.
  */
-bool checkRomAP(const char* filename, int num)
+bool checkRomAP(const char* filename, const int num)
 {
 	{
 		char apFixPath[256];

@@ -3153,7 +3153,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					infoCheckTimer++;
 					if (infoCheckTimer == 30) {
 						if (!dsiBinariesChecked) {
-							hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+							hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
 						}
 						dsiBinariesChecked = true;
 						if (!apChecked && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
@@ -3761,7 +3761,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					 && isHomebrew[CURPOS] == 0
 					 && checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
 						if (!dsiBinariesChecked && dsiFeatures() && (!ms().secondaryDevice || !bs().b4dsMode)) {
-							hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+							hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
 							dsiBinariesChecked = true;
 						}
 
