@@ -196,7 +196,7 @@ void dontShowRAMLimitMsgAgain (std::string filename) {
 }
 
 bool checkIfDSiMode (std::string filename) {
-	if (ms().secondaryDevice && (!dsiFeatures() || !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap))) {
+	if (ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode || !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap))) {
 		return false;
 	}
 

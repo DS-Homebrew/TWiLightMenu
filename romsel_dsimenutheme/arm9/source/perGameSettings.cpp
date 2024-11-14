@@ -248,7 +248,7 @@ void dontShowRAMLimitMsgAgain (std::string filename) {
 }
 
 bool checkIfDSiMode (std::string filename) {
-	if (ms().secondaryDevice && (!dsiFeatures() || !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap))) {
+	if (ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode || !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap))) {
 		return false;
 	}
 
@@ -397,7 +397,7 @@ const char* getRegionString(char region) {
 	return "N/A";
 }
 
-void perGameSettings (std::string filename, bool dsiBinariesFound, bool* dsiBinariesChecked) {
+void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBinariesChecked) {
 	int pressed = 0, held = 0;
 
 	keysSetRepeat(25, 5); // Slow down key repeat
@@ -494,7 +494,7 @@ void perGameSettings (std::string filename, bool dsiBinariesFound, bool* dsiBina
 		fread(&clonebootFlag, sizeof(u32), 1, f_nds_file);
 		usesCloneboot = (clonebootFlag == 0x16361);
 		if (!(*dsiBinariesChecked)) {
-			dsiBinariesFound = checkDsiBinaries(filenameForInfo.c_str());
+			*dsiBinariesFound = checkDsiBinaries(filenameForInfo.c_str());
 			*dsiBinariesChecked = true;
 		}
 	}

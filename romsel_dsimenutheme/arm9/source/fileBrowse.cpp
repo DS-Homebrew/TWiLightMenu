@@ -4408,7 +4408,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			}
 
 			if ((pressed & KEY_Y) && !ms().kioskMode && isValid[CURPOS] && !isTwlm[CURPOS] && !isDirectory[CURPOS] && bannerTextShown && showSTARTborder) {
-				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name, hasDsiBinaries, &dsiBinariesChecked);
+				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name, &hasDsiBinaries, &dsiBinariesChecked);
 				bannerTextShown = false;
 			}
 
