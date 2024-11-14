@@ -168,8 +168,12 @@ bool dldiPatchBinary (data_t *binData, u32 binSize) {
 		tonccpy (pAH+DO_code, bootloader, bootsize);
 		*(u32*)0x02FF4010 = (u32)pAH+DO_code;
 
+		const u32 a9exeAddress = *(u32*)0x02FFFE24;
+		u32* a9exe = (u32*)a9exeAddress;
+		const bool libnds2 = (a9exe[0] == 0xEA000007 && a9exe[1] == 0x39444F4D);
+
 		// Relocate DLDI file to bootstub RAM space
-		pAH = (data_t*)(dsiMode&&!dsMode ? 0x02FF4180 : 0x023F4180);
+		pAH = (data_t*)(dsiMode&&!dsMode ? (libnds2 ? 0x02FE8000 : 0x02FF4180) : 0x023F4180);
 		toncset (pAH, 0, 0x8000);
 
 		memOffset = (addr_t)pAH;
