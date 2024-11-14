@@ -91,30 +91,30 @@ u32 getSDKVersion(FILE *ndsFile)
 /**
  * Check if NDS game has AP.
  * @param filename NDS ROM filename.
- * @return 1 or 2 on success; 0 if no AP.
+ * @return true on success; false if no AP.
  */
-int checkRomAP(const char* filename, int num)
+bool checkRomAP(const char* filename, int num)
 {
 	{
 		char apFixPath[256];
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s.ips", sys().isRunFromSD() ? "sd" : "fat", filename);
 		if (access(apFixPath, F_OK) == 0) {
-			return 0;
+			return false;
 		}
 
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s.bin", sys().isRunFromSD() ? "sd" : "fat", filename);
 		if (access(apFixPath, F_OK) == 0) {
-			return 0;
+			return false;
 		}
 
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s-%04X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[num], headerCRC[num]);
 		if (access(apFixPath, F_OK) == 0) {
-			return 0;
+			return false;
 		}
 
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s-%04X.bin", sys().isRunFromSD() ? "sd" : "fat", gameTid[num], headerCRC[num]);
 		if (access(apFixPath, F_OK) == 0) {
-			return 0;
+			return false;
 		}
 	}
 
@@ -152,7 +152,7 @@ int checkRomAP(const char* filename, int num)
 
 					if (crc == headerCRC[num]) { // CRC matches
 						fclose(file);
-						return 0;
+						return false;
 					} else if (crc < headerCRC[num]) {
 						left = mid + 1;
 					} else {
@@ -174,7 +174,7 @@ int checkRomAP(const char* filename, int num)
 	 || (memcmp(gameTid[num], "YEEJ", 4) == 0)   	// Inazuma Eleven (Japan)
 	 || (memcmp(gameTid[num], "CNSX", 4) == 0)   	// Naruto Shippuden: Naruto vs Sasuke (Europe)
 	 || (memcmp(gameTid[num], "BH2J", 4) == 0)) {	// Super Scribblenauts (Japan)
-		return 0;
+		return false;
 	} else
 	// Check for ROMs that have AP measures.
 	if ((memcmp(gameTid[num], "VETP", 4) == 0)   	// 1000 Cooking Recipes from Elle a Table (Europe)
@@ -411,7 +411,7 @@ int checkRomAP(const char* filename, int num)
 	 || (memcmp(gameTid[num], "BYMJ", 4) == 0)   	// Yumeiro Patissiere: My Sweets Cooking (Japan)
 	 || (memcmp(gameTid[num], "BZQJ", 4) == 0)   	// Zac to Ombra: Maboroshi no Yuuenchi (Japan)
 	 || (memcmp(gameTid[num], "BZBJ", 4) == 0)) {	// Zombie Daisuki (Japan)
-		return 1;
+		return true;
 	} else {
 		static const char ap_list[][4] = {
 			"YBN",	// 100 Classic Books
@@ -529,7 +529,7 @@ int checkRomAP(const char* filename, int num)
 		for (unsigned int i = 0; i < sizeof(ap_list)/sizeof(ap_list[0]); i++) {
 			if (memcmp(gameTid[num], ap_list[i], 3) == 0) {
 				// Found a match.
-				return 1;
+				return true;
 			}
 		}
 
@@ -541,12 +541,12 @@ int checkRomAP(const char* filename, int num)
 		for (unsigned int i = 0; i < sizeof(ap_list2)/sizeof(ap_list2[0]); i++) {
 			if (memcmp(gameTid[num], ap_list2[i], 3) == 0) {
 				// Found a match.
-				return 2;
+				return true;
 			}
 		}
 	}
-	
-	return 0;
+
+	return false;
 }
 
 sNDSBannerExt bnriconTile[41];
