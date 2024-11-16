@@ -3149,19 +3149,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					logPrint("\n");
 				}
 				updateBoxArt();
-				if ((infoCheckTimer < 30) && (bnrRomType[CURPOS] == 0) && (isHomebrew[CURPOS] == 0) && !isDSiWare[CURPOS]) {
-					infoCheckTimer++;
-					if (infoCheckTimer == 30) {
-						if (!dsiBinariesChecked) {
-							hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
-						}
-						dsiBinariesChecked = true;
-						if (!apChecked && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
-							hasAP = checkRomAP(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
-						}
-						apChecked = true;
-					}
-				}
 				if (ms().theme < 4) {
 					while (dboxInFrame) {
 						bgOperations(true);
@@ -3181,6 +3168,19 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 						bannerTextShown = true;
+					}
+					if ((infoCheckTimer < 30) && (bnrRomType[CURPOS] == 0) && (isHomebrew[CURPOS] == 0) && !isDSiWare[CURPOS]) {
+						infoCheckTimer++;
+						if (infoCheckTimer == 30) {
+							if (!dsiBinariesChecked) {
+								hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+							}
+							dsiBinariesChecked = true;
+							if (!apChecked && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
+								hasAP = checkRomAP(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+							}
+							apChecked = true;
+						}
 					}
 				} else {
 					if (displayBoxArt && !rocketVideo_playVideo) {
