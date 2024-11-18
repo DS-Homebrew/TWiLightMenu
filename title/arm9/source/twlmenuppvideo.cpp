@@ -159,7 +159,10 @@ void twlMenuVideo_loadTopGraphics(void) {
 
 	oamInit(&oamMain, SpriteMapping_1D_32, false);
 
-	u16* gfx;
+	u16* gfx[12];
+	for (int i = 0; i < 12; i++) {
+		gfx[i] = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
+	}
 
 	// NDS
 	u8* icon_Tiles = (u8*)icon_ndsTiles;
@@ -187,10 +190,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[7], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*7), icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 7, zoomingIconXpos[7], zoomingIconYpos[7], 0, 7, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 7, zoomingIconXpos[7], zoomingIconYpos[7], 0, 7, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[7], 0, false, false, false, false, false);
 
 	// GBA
 	if (december) {
@@ -209,10 +211,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[3], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*3), icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 3, zoomingIconXpos[3], zoomingIconYpos[3], 0, 3, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 3, zoomingIconXpos[3], zoomingIconYpos[3], 0, 3, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[3], 0, false, false, false, false, false);
 
 	// GBC
 	if (december) {
@@ -231,10 +232,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[1], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*1), icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 1, zoomingIconXpos[1], zoomingIconYpos[1], 0, 1, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 1, zoomingIconXpos[1], zoomingIconYpos[1], 0, 1, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[1], 0, false, false, false, false, false);
 
 	// A26
 	if (december) {
@@ -253,10 +253,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[8], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*8), icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 8, zoomingIconXpos[8], zoomingIconYpos[8], 0, 8, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 8, zoomingIconXpos[8], zoomingIconYpos[8], 0, 8, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[8], 0, false, false, false, false, false);
 
 	// INT
 	if (december) {
@@ -275,10 +274,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[10], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*10), icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 10, zoomingIconXpos[10], zoomingIconYpos[10], 0, 10, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 10, zoomingIconXpos[10], zoomingIconYpos[10], 0, 10, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[10], 0, false, false, false, false, false);
 
 	// NES
 	if (december) {
@@ -297,10 +295,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[0], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE, icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 0, zoomingIconXpos[0], zoomingIconYpos[0], 0, 0, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 0, zoomingIconXpos[0], zoomingIconYpos[0], 0, 0, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[0], 0, false, false, false, false, false);
 
 	// SMS
 	if (december) {
@@ -319,10 +316,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[4], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*4), icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 4, zoomingIconXpos[4], zoomingIconYpos[4], 0, 4, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 4, zoomingIconXpos[4], zoomingIconYpos[4], 0, 4, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[4], 0, false, false, false, false, false);
 
 	// GG
 	if (december) {
@@ -341,10 +337,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[6], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*6), icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 6, zoomingIconXpos[6], zoomingIconYpos[6], 0, 6, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 6, zoomingIconXpos[6], zoomingIconYpos[6], 0, 6, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[6], 0, false, false, false, false, false);
 
 	// PCE
 	if (december) {
@@ -363,10 +358,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[9], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*9), icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 9, zoomingIconXpos[9], zoomingIconYpos[9], 0, 9, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 9, zoomingIconXpos[9], zoomingIconYpos[9], 0, 9, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[9], 0, false, false, false, false, false);
 
 	// MD
 	if (december) {
@@ -385,10 +379,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[5], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*5), icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 5, zoomingIconXpos[5], zoomingIconYpos[5], 0, 5, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 5, zoomingIconXpos[5], zoomingIconYpos[5], 0, 5, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[5], 0, false, false, false, false, false);
 
 	// SNES
 	if (december) {
@@ -407,10 +400,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[2], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*2), icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 2, zoomingIconXpos[2], zoomingIconYpos[2], 0, 2, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 2, zoomingIconXpos[2], zoomingIconYpos[2], 0, 2, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[2], 0, false, false, false, false, false);
 
 	// MSX
 	if (december) {
@@ -429,10 +421,9 @@ void twlMenuVideo_loadTopGraphics(void) {
 			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
 		}
 	}
-	gfx = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_16Color);
-	tonccpy(gfx, icon_Tiles, icon_TilesLen);
+	tonccpy(gfx[11], icon_Tiles, icon_TilesLen);
 	tonccpy(SPRITE_PALETTE+(16*11), icon_Pal, icon_PalLen);
-	oamSet(&oamMain, 11, zoomingIconXpos[11], zoomingIconYpos[11], 0, 11, SpriteSize_32x32, SpriteColorFormat_16Color, gfx, 0, false, false, false, false, false);
+	oamSet(&oamMain, 11, zoomingIconXpos[11], zoomingIconYpos[11], 0, 11, SpriteSize_32x32, SpriteColorFormat_16Color, gfx[11], 0, false, false, false, false, false);
 }
 
 extern char soundBank[];
