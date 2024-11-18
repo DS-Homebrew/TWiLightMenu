@@ -21,7 +21,6 @@
 #include "icon_ndsl.h"
 #include "icon_ndsi.h"
 #include "icon_gba.h"
-#include "iconPhat_gba.h"
 #include "icon_gb.h"
 #include "icon_a26.h"
 #include "icon_int.h"
@@ -119,7 +118,7 @@ static int gbaIconYpos = 44;
 void twlMenuVideo_loadTopGraphics(void) {
 	// Anniversary
 	/*glDeleteTextures(1, &anniversaryTexID);
-	
+
 	icon_Pal = (u16*)(sys().isDSPhat() ? logoPhat_anniversaryPal : logo_anniversaryPal);
 	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
@@ -201,10 +200,10 @@ void twlMenuVideo_loadTopGraphics(void) {
 		icon_Pal = (u16*)icon_presentPal;
 		icon_PalLen = icon_presentPalLen;
 	} else {
-		icon_Tiles = (u8*)(sys().isDSPhat() ? iconPhat_gbaTiles : icon_gbaTiles);
-		icon_TilesLen = (sys().isDSPhat() ? iconPhat_gbaTilesLen : icon_gbaTilesLen);
-		icon_Pal = (u16*)(sys().isDSPhat() ? iconPhat_gbaPal : icon_gbaPal);
-		icon_PalLen = (sys().isDSPhat() ? iconPhat_gbaPalLen : icon_gbaPalLen);
+		icon_Tiles = (u8*)icon_gbaTiles;
+		icon_TilesLen = icon_gbaTilesLen;
+		icon_Pal = (u16*)icon_gbaPal;
+		icon_PalLen = icon_gbaPalLen;
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
@@ -561,7 +560,7 @@ void twlMenuVideo_topGraphicRender(void) {
 		frameDelaySpriteEven = !frameDelaySpriteEven;
 		loadFrameSprite = false;
 	}
-	
+
 	/*if (rocketVideo_playVideo && rocketVideo_currentFrame >= 13) {
 		if (!anniversaryTextYposMove) {
 			anniversaryTextYposMoveDelay++;
