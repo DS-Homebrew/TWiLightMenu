@@ -2456,7 +2456,7 @@ int titleMode(void)
 		graphicsInited = false;
 	}
 
-	bool fcFound = flashcardFound();
+	const bool fcFound = flashcardFound();
 
 	if (dsiFeatures() && ms().consoleModel == 0 && !ms().previousUsedDevice && ms().launchType[false] == Launch::EDSiWareLaunch && ms().dsiWareBooter == TWLSettings::EDSiWareUnlaunch && ms().saveLocation != TWLSettings::EGamesFolder) {
 		// Move .pub and/or .prv back to "saves" folder
