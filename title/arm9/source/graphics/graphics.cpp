@@ -81,7 +81,7 @@ void SetBrightness(u8 screen, s8 bright) {
 } */
 
 void vBlankHandler() {
-	if (fadeType == true) {
+	if (fadeType) {
 		screenBrightness--;
 		if (screenBrightness < 0) screenBrightness = 0;
 	} else {
@@ -255,8 +255,8 @@ void loadTitleGraphics() {
 	toncset16(BG_PALETTE, 0, 256);
 	toncset16(BG_PALETTE_SUB, 0, 256);
 
-	twlMenuVideo_loadTopGraphics();
-
 	// Display TWiLightMenu++ logo
 	LoadBMP();
+
+	twlMenuVideo_loadTopGraphics();
 }
