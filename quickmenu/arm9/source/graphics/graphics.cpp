@@ -563,7 +563,7 @@ auto getMenuEntryTexture(MenuEntry entry) {
 			return &dlp_icons.images[0];
 		case MenuEntry::GBA:
 		{
-			bool hasGbaCart = sys().isRegularDS() && (((u8*)GBAROM)[0xB2] == 0x96);
+			bool hasGbaCart = sys().isRegularDS() && ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || (((u8*)GBAROM)[0xB2] == 0x96));
 			if(hasGbaCart || sdFound()) {
 				if(initialTouchedPosition == MenuEntry::GBA) {
 					if(currentTouchedPosition != MenuEntry::GBA)
