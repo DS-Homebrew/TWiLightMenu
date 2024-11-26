@@ -1819,7 +1819,7 @@ int titleMode(void)
 		4: Run temporary DSiWare
 	*/
 
-	if ((strcmp(io_dldi_data->friendlyName, "NAND FLASH CARD LIBFATNRIO") == 0) && (*(u32*)0x02FF8000 != 0x53535A4C)) {
+	if (((strcmp(io_dldi_data->friendlyName, "NAND FLASH CARD LIBFATNRIO") == 0) || (io_dldi_data->ioInterface.ioType == 0x4F49524E)) && (*(u32*)0x02FF8000 != 0x53535A4C)) {
 		FILE* file = fopen("nitro:/dldi/nrio.lz77", "rb");
 		fread((void*)0x02FF8004, 1, 0x3FFC, file);
 		fclose(file);
