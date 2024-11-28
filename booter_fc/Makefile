@@ -175,8 +175,8 @@ autoboot:
 	dlditool flashcart_specifics/DLDI/mati.dldi ismat.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/iSmart Premium/system/"
 	cp ismat.dat "../7zfile/Flashcard users/Autoboot/iSmart Premium/system/ismat.dat"
-	mkdir -p "../7zfile/Flashcard users/Autoboot/EZ Flash Vi/"
-	cp ismat.dat "../7zfile/Flashcard users/Autoboot/EZ Flash Vi/ez5isys.bin"
+	#mkdir -p "../7zfile/Flashcard users/Autoboot/EZ Flash Vi/"
+	#cp ismat.dat "../7zfile/Flashcard users/Autoboot/EZ Flash Vi/ez5isys.bin"
 	mkdir -p "../7zfile/Flashcard users/Autoboot/r4i.cn/"
 	# Since this is the last one, move it instead of copy
 	mv ismat.dat "../7zfile/Flashcard users/Autoboot/r4i.cn/_ds_menu.nds"
