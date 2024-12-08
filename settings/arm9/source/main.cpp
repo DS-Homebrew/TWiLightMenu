@@ -1327,7 +1327,7 @@ int settingsMode(void)
 		if (flashcardFound()) {
 			bootstrapPage
 				.option(STR_DSIWARETOSD,
-					STR_DESCRIPTION_DSIWARETOSD,
+					isDSiMode() ? STR_DESCRIPTION_DSIWARETOSD : STR_DESCRIPTION_DSIWARETOSD_DSBIOS,
 					Option::Bool(&ms().dsiWareToSD),
 					{STR_YES, STR_NO},
 					{true, false});

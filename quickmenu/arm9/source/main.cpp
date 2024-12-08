@@ -250,7 +250,7 @@ int SetDonorSDK() {
 void SetMPUSettings() {
 	scanKeys();
 	int pressed = keysHeld();
-	
+
 	if (pressed & KEY_B) {
 		mpuregion = 1;
 	} else if (pressed & KEY_X) {
@@ -338,7 +338,7 @@ void dsCardLaunch() {
 	*(u32*)(0x02000318) = 0x00000013;
 	*(u32*)(0x0200031C) = 0x00000000;
 	*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
-	
+
 	unlaunchSetHiyaBoot();
 
 	DC_FlushAll();						// Make reboot not fail
@@ -359,7 +359,7 @@ void SetWidescreen(const char *filename) {
 	|| !useWidescreen || !externalFirmsModules || ms().macroMode) {
 		return;
 	}
-	
+
 	if (isHomebrew[ms().secondaryDevice] && ms().homebrewHasWide && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
 		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
 			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
@@ -550,7 +550,7 @@ mm_sound_effect snd_hour;
 
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
-	
+
 	mmLoadEffect(SFX_LAUNCH);
 	mmLoadEffect(SFX_SELECT);
 	mmLoadEffect(SFX_STOP);
@@ -1041,11 +1041,11 @@ void customSleep() {
 static void getFiletypeFromFilename(std::string_view filename, eROMType& rom_type, int& box_art_type) {
 	rom_type = ROM_TYPE_UNK;
 	box_art_type = -1;
-	
+
 	auto pos = filename.find_last_of('.');
 	if(pos == filename.npos)
 		return;
-	
+
 	if (extension(filename, {".nds", ".dsi", ".ids", ".app", ".srl", ".argv"})) {
 		rom_type = ROM_TYPE_NDS;
 		box_art_type = 0;
@@ -1177,14 +1177,14 @@ void findPictochatAndDownladPlay() {
 		logPrint("DS Download Play found\n");
 		return;
 	}
-	
+
 	auto mountNand = [nandInited = false]() mutable {
 		if (!nandInited) {
 			fatMountSimple("nand", &io_dsi_nand);
 			nandInited = true;
 		}
 	};
-	
+
 	char srcPath[256];
 	u8 regions[3] = {0x41, 0x43, 0x4B};
 
@@ -1222,7 +1222,7 @@ void findPictochatAndDownladPlay() {
 		strncpy(dlplayPath, "/_nds/dlplay.nds", sizeof(dlplayPath));
 		return;
 	}
-	
+
 	if (ms().consoleModel == 0) {
 		for (int i = 0; i < 3; i++) {
 			snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000000.app", regions[i]);
@@ -1278,7 +1278,7 @@ int dsClassicMenu(void) {
 //---------------------------------------------------------------------------------
 	// Read user name
 	/*char *username = (char*)PersonalData->name;
-		
+
 	// text
 	for (int i = 0; i < 10; i++) {
 		if (username[i*2] == 0x00)
@@ -1298,7 +1298,7 @@ int dsClassicMenu(void) {
 		externalFirmsModules = (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true);
 		logPrint((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && externalFirmsModules ? "Widescreen found\n" : "Widescreen not found\n");
 	}
-	
+
 	logPrint("\n");
 
 	ms().gbaR3Test = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds" : "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds", F_OK) == 0);
@@ -1358,9 +1358,9 @@ int dsClassicMenu(void) {
 	keysSetRepeat(25,5);
 
 	srand(time(NULL));
-	
+
 	bool menuButtonPressed = false;
-	
+
 	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
 	if (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == 3
@@ -1398,7 +1398,7 @@ int dsClassicMenu(void) {
 	// SD card
 	if (sdFound() && ms().romPath[0] != "" && access(ms().romPath[0].c_str(), F_OK) == 0) {
 		romFound[0] = true;
-		
+
 		parseRomInformationForDevice(0, filename[0], boxArtPath[0]);
 	}
 
@@ -1450,7 +1450,7 @@ int dsClassicMenu(void) {
 		gbaUseBottomScreen = (gbarunner2ini.GetString("emulation", "useBottomScreen", "false")=="false" ? false : true);
 	}
 	gbaModeIconLoad(gbaUseBottomScreen);
-	
+
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
 	while (!screenFadedIn()) {
@@ -1668,9 +1668,9 @@ int dsClassicMenu(void) {
 						mmEffectEx(&snd_select);
 				}
 			}
-			
+
 			auto selectedPosition = cursorPosition;
-			
+
 			auto getTouchedElement = [](const auto& touchPoint){
 				if (touchPoint.px >= 33 && touchPoint.px <= 221 && touchPoint.py >= 25 && touchPoint.py <= 69) {
 					return MenuEntry::CART;
@@ -1724,7 +1724,7 @@ int dsClassicMenu(void) {
 
 			if (menuButtonPressed) {
 				menuButtonPressed = false;
-				
+
 				switch (selectedPosition) {
 					case MenuEntry::INVALID:
 						break;
@@ -2039,7 +2039,7 @@ int dsClassicMenu(void) {
 							gbaSwitch();
 						} else {
 							mmEffectEx(&snd_wrong);
-						} 
+						}
 						break;
 					case MenuEntry::BRIGHTNESS:
 						// Adjust backlight level
@@ -2188,7 +2188,7 @@ int dsClassicMenu(void) {
 					mkdir("saves", 0777);
 				}
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
-				bool savFormat = (ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode));
+				const bool savFormat = (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
 				if (savFormat) {
 					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
 					ms().dsiWarePrvPath = ms().dsiWarePubPath;
@@ -2397,7 +2397,7 @@ int dsClassicMenu(void) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", 1);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", 0);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", 0);
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH",
 						(ms().forceSleepPatch
 					|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !sys().isRegularDS())
 					|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !sys().isRegularDS())
@@ -2615,7 +2615,7 @@ int dsClassicMenu(void) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", SetDonorSDK());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH",
 							(ms().forceSleepPatch
 						|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !sys().isRegularDS())
 						|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !sys().isRegularDS())

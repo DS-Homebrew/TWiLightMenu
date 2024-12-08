@@ -22,6 +22,7 @@ public:
 	bool dsiWramAccess() { return _dsiWramAccess; }
 	bool dsiWramMirrored() { return _dsiWramMirrored; }
 	bool arm7SCFGLocked() { return _arm7SCFGLocked; }
+	bool scfgSdmmcEnabled() { return _scfgSdmmcEnabled; }
 	bool isRunFromSD() { return _isRunFromSD; }
 	bool isRegularDS() { return _isRegularDS; }
 	bool fatInitOk() { return _fatInitOk; }
@@ -41,6 +42,7 @@ private:
 	bool _dsiWramAccess;
 	bool _dsiWramMirrored;
 	bool _arm7SCFGLocked;
+	bool _scfgSdmmcEnabled;
 	bool _isRunFromSD;
 	bool _isRegularDS;
 	bool _isDSPhat;

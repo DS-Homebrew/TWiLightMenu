@@ -111,6 +111,8 @@ int main() {
 	*(u16*)0x02FFFC36 = *(u16*)0x0800015E;	// Header CRC16
 	*(u32*)0x02FFFC38 = *(u32*)0x0800000C;	// Game Code
 
+	*(u32*)0x02FFFDF0 = REG_SCFG_EXT;
+
 	REG_SOUNDCNT |= SOUND_ENABLE;
 	writePowerManagement(PM_CONTROL_REG, ( readPowerManagement(PM_CONTROL_REG) & ~PM_SOUND_MUTE ) | PM_SOUND_AMP );
 	powerOn(POWER_SOUND);
@@ -127,7 +129,7 @@ int main() {
 
 	mmInstall(FIFO_MAXMOD);
 	SetYtrigger(80);
-	
+
 	installSoundFIFO();
 	my_installSystemFIFO();
 
@@ -156,7 +158,7 @@ int main() {
 
 	// 01: Fade Out
 	// 02: Return
-	// 03: status (Bit 0: hasRegulableBacklight, Bit 1: scfgEnabled, Bit 2: REG_SNDEXTCNT, Bit 3: isDSPhat, Bit 4: i2cBricked)
+	// 03: status (Bit 0: hasRegulableBacklight, Bit 1: scfgSdmmcEnabled, Bit 2: REG_SNDEXTCNT, Bit 3: isDSPhat, Bit 4: i2cBricked)
 
 
 	// 03: Status: Init/Volume/Battery/SD
@@ -164,13 +166,17 @@ int main() {
 	// Battery is 7 bits -- bits 0-7
 	// Volume is 00h to 1Fh = 5 bits -- bits 8-12
 	// SD status -- bits 13-14
-	// Init status -- bits 15-18 (Bit 0 (15): hasRegulableBacklight, Bit 1 (16): scfgEnabled, Bit 2 (17): REG_SNDEXTCNT, Bit 3 (18): isDSPhat, Bit 4 (19): i2cBricked)
+	// Init status -- bits 15-18 (Bit 0 (15): hasRegulableBacklight, Bit 1 (16): scfgSdmmcEnabled, Bit 2 (17): REG_SNDEXTCNT, Bit 3 (18): isDSPhat, Bit 4 (19): i2cBricked)
+
+	*(vu32*)0x4004820 = 0x8B7F0305;
 
 	u8 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT)
-									| BIT_SET(!!(REG_SCFG_EXT), REGSCFG_BIT)
+									| BIT_SET(*(vu32*)0x4004820, SCFGSDMMC_BIT)
 									| BIT_SET(!!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7)), BACKLIGHT_BIT)
 									| BIT_SET(isPhat(), DSPHAT_BIT)
 									| BIT_SET(i2cBricked, I2CBRICKED_BIT));
+
+	*(vu32*)0x4004820 = 0;
 
 	status = (status & ~INIT_MASK) | ((initStatus << INIT_OFF) & INIT_MASK);
 	fifoSendValue32(FIFO_USER_03, status);
@@ -196,12 +202,12 @@ int main() {
 			gotCartHeader = true;
 		}*/
 
-		
+
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
 			if ((isDSiMode() || REG_SCFG_EXT != 0) && !i2cBricked) { //vol
 				status = (status & ~VOL_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_VOL) << VOL_OFF) & VOL_MASK);
-				status = (status & ~BAT_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) << BAT_OFF) & BAT_MASK);				
+				status = (status & ~BAT_MASK) | ((my_i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) << BAT_OFF) & BAT_MASK);
 			} else {
 				int battery = (readPowerManagement(PM_BATTERY_REG) & 1)?3:15;
 				int backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);

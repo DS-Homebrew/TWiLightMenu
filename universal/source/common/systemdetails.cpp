@@ -34,6 +34,7 @@ SystemDetails::SystemDetails()
 	_dsiWramAccess = false;
 	_dsiWramMirrored = false;
 	_arm7SCFGLocked = false;
+	_scfgSdmmcEnabled = false;
 	_isRegularDS = true;
 	_isDSPhat = false;
 	_hasRegulableBacklight = true;
@@ -54,9 +55,9 @@ SystemDetails::SystemDetails()
 		*(vu32*)0x03700000 = wordBak;
 	}
 
-	if (CHECK_BIT(status, REGSCFG_BIT) == 0) {
-		_arm7SCFGLocked = true; // If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
-	}
+	_arm7SCFGLocked = (*(u32*)0x02FFFDF0 == 0); // If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
+
+	_scfgSdmmcEnabled = (CHECK_BIT(status, SCFGSDMMC_BIT) != 0);
 
 	if (CHECK_BIT(status, SNDEXTCNT_BIT) != 0) {
 		_isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
