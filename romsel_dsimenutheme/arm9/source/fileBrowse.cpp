@@ -681,7 +681,7 @@ void launchSettings(void) {
 	stop();
 }
 
-void launchPictochat(std::string filename, bool isDir) {
+void launchPictochat(const vector<DirEntry>& dirContents) {
 	const char* pictochatPath = sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds";
 
 	if (access(pictochatPath, F_OK) != 0) {
@@ -736,7 +736,13 @@ void launchPictochat(std::string filename, bool isDir) {
 				}
 			}
 		}
-		titleUpdate(isDir, filename.c_str(), CURPOS);
+		if (CURPOS + PAGENUM * 40 < (int)dirContents.size()) {
+			titleUpdate(
+				dirContents[CURPOS + PAGENUM * 40].isDirectory,
+				dirContents[CURPOS + PAGENUM * 40].name,
+				CURPOS
+			);
+		}
 		updateText(false);
 		return;
 	}
@@ -826,7 +832,7 @@ void launchPictochat(std::string filename, bool isDir) {
 	stop();
 }
 
-void launchDownloadPlay(std::string filename, bool isDir) {
+void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 	const char* dlplayPath = sys().isRunFromSD() ? "sd:/_nds/dlplay.nds" : "fat:/_nds/dlplay.nds";
 
 	if ((!isDSiMode() || ms().consoleModel < 2) && access(dlplayPath, F_OK) != 0) {
@@ -881,7 +887,13 @@ void launchDownloadPlay(std::string filename, bool isDir) {
 				}
 			}
 		}
-		titleUpdate(isDir, filename.c_str(), CURPOS);
+		if (CURPOS + PAGENUM * 40 < (int)dirContents.size()) {
+			titleUpdate(
+				dirContents[CURPOS + PAGENUM * 40].isDirectory,
+				dirContents[CURPOS + PAGENUM * 40].name,
+				CURPOS
+			);
+		}
 		updateText(false);
 		return;
 	}
@@ -1004,7 +1016,7 @@ void launchDownloadPlay(std::string filename, bool isDir) {
 	stop();
 }
 
-void launchInternetBrowser(std::string filename, bool isDir) {
+void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 	if (ms().internetBrowserPath == "" || access(ms().internetBrowserPath.c_str(), F_OK) != 0) {
 		if (ms().theme == TWLSettings::EThemeSaturn) {
 			snd().playStartup();
@@ -1057,7 +1069,13 @@ void launchInternetBrowser(std::string filename, bool isDir) {
 				}
 			}
 		}
-		titleUpdate(isDir, filename.c_str(), CURPOS);
+		if (CURPOS + PAGENUM * 40 < (int)dirContents.size()) {
+			titleUpdate(
+				dirContents[CURPOS + PAGENUM * 40].isDirectory,
+				dirContents[CURPOS + PAGENUM * 40].name,
+				CURPOS
+			);
+		}
 		updateText(false);
 		return;
 	}
@@ -4172,13 +4190,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								launchGba();
 								break;
 							case 2: // Launch Pictochat
-								launchPictochat(dirContents[scrn].at(CURPOS + PAGENUM * 40).name, dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory);
+								launchPictochat(dirContents[scrn]);
 								break;
 							case 3: // Launch DS Download Play
-								launchDownloadPlay(dirContents[scrn].at(CURPOS + PAGENUM * 40).name, dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory);
+								launchDownloadPlay(dirContents[scrn]);
 								break;
 							case 4: // Launch Internet Browser
-								launchInternetBrowser(dirContents[scrn].at(CURPOS + PAGENUM * 40).name, dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory);
+								launchInternetBrowser(dirContents[scrn]);
 								break;
 							case 5: // Open the manual
 								launchManual();
