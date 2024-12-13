@@ -6,7 +6,6 @@ on:
     paths:
       - 'manual/nitrofiles/languages/en/**'
       - 'quickmenu/nitrofiles/languages/en/**'
-      - 'romsel_aktheme/nitrofiles/language/lang_en/language.ini'
       - 'romsel_dsimenutheme/nitrofiles/languages/en/*'
       - 'settings/nitrofiles/languages/en/*'
       - 'title/nitrofiles/languages/en/*'
