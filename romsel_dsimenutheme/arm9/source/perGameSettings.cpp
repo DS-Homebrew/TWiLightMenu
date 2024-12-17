@@ -663,7 +663,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}
 		if (bootstrapEnabled) {
-			if (!ms().secondaryDevice && (romSize > (unitCode[CURPOS] == 3 ? romSizeLimitTwl : romSizeLimit)) && !blacklisted_asyncCardRead) {
+			if (!ms().secondaryDevice && (romSize > (unitCode[CURPOS] > 0 ? romSizeLimitTwl : romSizeLimit)) && !blacklisted_asyncCardRead) {
 				perGameOps++;
 				perGameOp[perGameOps] = 12;	// Async Card Read
 			}
