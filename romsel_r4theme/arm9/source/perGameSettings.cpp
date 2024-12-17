@@ -473,7 +473,8 @@ void perGameSettings (std::string filename) {
 		}
 	}
 
-	const u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BC0000 : 0xBC0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? 0x78000 : 0);
+	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BC0000 : 0xBC0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? ((!sys().arm7SCFGLocked() || *(u32*)0x02FFE1A0 != 0x00403000) ? 0x88000 : 0x80000) : 0);
+	romSizeLimit -= 0x400000; // Account for DSi mode setting
 	const u32 romSizeLimitTwl = (ms().consoleModel > 0 ? 0x1000000 : 0);
 
 	extern bool dsiWareCompatibleB4DS(void);

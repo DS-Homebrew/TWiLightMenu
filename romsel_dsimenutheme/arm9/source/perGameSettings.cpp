@@ -515,7 +515,8 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 		}
 	}
 
-	const u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BC0000 : 0xBC0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? 0x78000 : 0);
+	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BC0000 : 0xBC0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? ((!sys().arm7SCFGLocked() || *(u32*)0x02FFE1A0 != 0x00403000) ? 0x88000 : 0x80000) : 0);
+	romSizeLimit -= 0x400000; // Account for DSi mode setting
 	const u32 romSizeLimitTwl = (ms().consoleModel > 0 ? 0x1000000 : 0);
 
 	extern bool dsiWareCompatibleB4DS(void);
@@ -627,7 +628,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || unitCode[CURPOS] == 3)) || !ms().secondaryDevice);
+		const bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || unitCode[CURPOS] == 3)) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
@@ -662,7 +663,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}
 		if (bootstrapEnabled) {
-			if (!ms().secondaryDevice && (romSize > (unitCode[CURPOS] > 0 ? romSizeLimitTwl : romSizeLimit)) && !blacklisted_asyncCardRead) {
+			if (!ms().secondaryDevice && (romSize > (unitCode[CURPOS] == 3 ? romSizeLimitTwl : romSizeLimit)) && !blacklisted_asyncCardRead) {
 				perGameOps++;
 				perGameOp[perGameOps] = 12;	// Async Card Read
 			}
