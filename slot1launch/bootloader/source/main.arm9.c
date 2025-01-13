@@ -322,6 +322,8 @@ void __attribute__((target("arm"))) arm9_main (void) {
 	
 	// arm9_errorOutput (*(u32*)(first), true);
 
+	REG_IE = 0;
+	REG_IF = ~0;
 	VoidFn arm9code = (VoidFn)ndsHeader->arm9executeAddress;
 	arm9code();
 }
