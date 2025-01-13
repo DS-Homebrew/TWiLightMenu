@@ -52,6 +52,8 @@
 
 #define REG_GPIO_WIFI *(vu16*)0x4004C04
 
+//#define FULL_DSI_MODE_ENABLED
+
 #include "common.h"
 #include "dmaTwl.h"
 #include "common/tonccpy.h"
@@ -61,13 +63,15 @@
 #include "hook.h"
 #include "find.h"
 
-/*#include "gm9i/crypto.h"
+#ifdef FULL_DSI_MODE_ENABLED
+#include "gm9i/crypto.h"
 #include "gm9i/f_xy.h"
 #include "twltool/dsi.h"
-#include "u128_math.h"*/
+#include "u128_math.h"
+#endif
 
-
-//extern u32 dsiMode;	// Not working?
+extern bool __dsimode;
+extern u32 dsiMode;
 extern u32 language;
 extern u32 sdAccess;
 extern u32 scfgUnlock;
@@ -728,7 +732,8 @@ static bool ROMsupportsDsiMode(const tNDSHeader* ndsHeader) {
 	return (ndsHeader->unitCode > 0);
 }
 
-/*void decrypt_modcrypt_area(dsi_context* ctx, u8 *buffer, unsigned int size)
+#ifdef FULL_DSI_MODE_ENABLED
+void decrypt_modcrypt_area(dsi_context* ctx, u8 *buffer, unsigned int size)
 {
 	uint32_t len = size / 0x10;
 	u8 block[0x10];
@@ -740,7 +745,8 @@ static bool ROMsupportsDsiMode(const tNDSHeader* ndsHeader) {
 		buffer+=0x10;
 		len--;
 	}
-}*/
+}
+#endif
 
 int arm7_loadBinary (const tDSiHeader* dsiHeaderTemp) {
 	u32 errorCode;
@@ -799,6 +805,10 @@ void arm7_startBinary (void) {
 	while (REG_VCOUNT!=191);
 	while (REG_VCOUNT==191);
 
+	REG_IE = 0;
+	REG_IF = ~0;
+	REG_AUXIE = 0;
+	REG_AUXIF = ~0;
 	// Start ARM7
 	VoidFn arm7code = (VoidFn)ndsHeader->arm7executeAddress;
 	arm7code();
@@ -915,6 +925,7 @@ void arm7_main (void) {
 
 	initMBK();
 
+	__dsimode = dsiMode;
 	int errorCode;
 
 	// Wait for ARM9 to at least start
@@ -944,9 +955,13 @@ void arm7_main (void) {
 	if (my_isDSiMode()) {
 		if (twlMode == 2) {
 			dsiModeConfirmed = twlMode;
-		} /*else {
+		} else {
+			#ifdef FULL_DSI_MODE_ENABLED
 			dsiModeConfirmed = twlMode && ROMsupportsDsiMode(&dsiHeaderTemp->ndshdr);
-		}*/
+			#else
+			dsiModeConfirmed = 0;
+			#endif
+		}
 	}
 
 	if (dsiModeConfirmed) {
@@ -957,7 +972,8 @@ void arm7_main (void) {
 			cardRead((u32)dsiHeaderTemp->arm7iromOffset, (u32*)dsiHeaderTemp->arm7idestination, dsiHeaderTemp->arm7ibinarySize);
 		}
 
-		/*uint8_t *target = (uint8_t *)0x02FFC000 ;
+		#ifdef FULL_DSI_MODE_ENABLED
+		uint8_t *target = (uint8_t *)0x02FFC000 ;
 
 		if (target[0x01C] & 2) {
 			u8 key[16] = {0} ;
@@ -1003,7 +1019,8 @@ void arm7_main (void) {
 			for (int i=0;i<4;i++) {
 				((uint32_t *)(target+0x220))[i] = 0;
 			}
-		}*/
+		}
+		#endif
 	}
 
 	ndsHeader = loadHeader(dsiHeaderTemp);
@@ -1049,6 +1066,8 @@ void arm7_main (void) {
 			if (!sdAccess) {
 				REG_SCFG_EXT = 0x93FBFB06;
 			}
+			// Used by ARM7 binaries to determine DSi mode...
+			toncset((u8*)0x0380FFC0, 0, 0x10);
 		}
 	}
 
