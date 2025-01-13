@@ -42,13 +42,13 @@ CFLAGS	:=	-g -Wall -O2 \
 CFLAGS	+=	$(INCLUDE) -DARM9 -DSTANDALONE -DCURRENT_SCREEN_MODE=$(CURRENT_SCREEN_MODE)
 CXXFLAGS	:= $(CFLAGS) -fno-exceptions -std=gnu++17
 
-ASFLAGS	:=	-g $(ARCH) -flto
+ASFLAGS	:=	-g $(ARCH) $(INCLUDE) -flto
 LDFLAGS	=	-specs=../$(UNIVERSAL)/arm9/ds_arm9_twlm.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
 #---------------------------------------------------------------------------------
-LIBS	:= 	-lfat -lmm9 -lnds329
+LIBS	:= 	-lfat -lmm9 -lnds9
 
 
 #---------------------------------------------------------------------------------
@@ -56,7 +56,6 @@ LIBS	:= 	-lfat -lmm9 -lnds329
 # include and lib
 #---------------------------------------------------------------------------------
 LIBDIRS	:=	$(CURDIR) ../ $(LIBNDS)
-LIBDIRS32	:=	$(CURDIR)/$(UNIVERSAL)/libnds32
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -105,8 +104,7 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-iquote $(CURDIR)/$(dir)) \
 					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
 					-I$(CURDIR)/$(BUILD)
 
-export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib) \
-					$(foreach dir,$(LIBDIRS32),-L$(dir)/lib)
+export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
