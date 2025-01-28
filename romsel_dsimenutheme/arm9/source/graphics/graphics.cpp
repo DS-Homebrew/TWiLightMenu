@@ -1203,7 +1203,7 @@ void vBlankHandler() {
 				barYpos += 12;
 			}
 			extern int getFavoriteColor(void);
-			const int fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
+			int fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
 			if (colorTable) fillColor = colorTable[fillColor];
 			if (ms().rtl()) {
 				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
