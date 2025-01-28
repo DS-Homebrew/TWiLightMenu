@@ -706,6 +706,7 @@ void vBlankHandler()
 		if (whiteScreen) {
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			if (showProgressBar) {
+				if (progressBarLength > 192) progressBarLength = 192;
 				int barXpos = 31;
 				int barYpos = 169;
 				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, RGB15(23, 23, 23));

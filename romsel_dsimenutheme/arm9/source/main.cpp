@@ -2073,7 +2073,6 @@ int dsiMenuTheme(void) {
 							for (u32 address=0;address<romSize&&address<0x2000000;address+=0x40000) {
 								expansion().Block_Erase(address);
 								progressBarLength = (address+0x40000)/(romSize/192);
-								if (progressBarLength > 192) progressBarLength = 192;
 							}
 							nor = true;
 						} else if (*(u16*)(0x020000C0) == 0x4353 && romSize > 0x1FFFFFE) {
@@ -2095,7 +2094,6 @@ int dsiMenuTheme(void) {
 								s2RamAccess(false);
 								curPtr += 0x8000;
 								progressBarLength = ((curPtr-ptr)+0x8000)/(romSize/192);
-								if (progressBarLength > 192) progressBarLength = 192;
 							} else {
 								break;
 							}

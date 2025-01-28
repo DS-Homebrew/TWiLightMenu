@@ -1195,6 +1195,7 @@ void vBlankHandler() {
 			glSprite(ms().rtl() ? 16 : 224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
 		}
 		if (showProgressBar) {
+			if (progressBarLength > 192) progressBarLength = 192;
 			int barXpos = ms().rtl() ? 256 - 19 : 19;
 			int barYpos = 157;
 			if (ms().theme == TWLSettings::EThemeSaturn) {
@@ -1202,7 +1203,7 @@ void vBlankHandler() {
 				barYpos += 12;
 			}
 			extern int getFavoriteColor(void);
-			int fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
+			const int fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
 			if (colorTable) fillColor = colorTable[fillColor];
 			if (ms().rtl()) {
 				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
