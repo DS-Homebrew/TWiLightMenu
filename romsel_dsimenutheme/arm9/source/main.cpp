@@ -810,6 +810,7 @@ void prepareCheats(std::string path, const bool dsiWare) {
 		FILE* dat=fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
 		if (dat) {
 			if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
+				loadPerGameSettings(path.substr(path.find_last_of('/') + 1));
 				codelist.parse(path);
 				codelist.writeCheatsToFile(cheatDataBin);
 				FILE* cheatData=fopen(cheatDataBin,"rb");

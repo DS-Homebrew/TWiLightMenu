@@ -19,6 +19,7 @@ extern int perGameSettings_wideScreen;
 extern int perGameSettings_expandRomSpace;
 extern int perGameSettings_dsiwareBooter;
 extern int perGameSettings_useBootstrap;
+extern int perGameSettings_useBootstrapCheat;
 
 extern char fileCounter[8];
 
