@@ -474,7 +474,8 @@ void perGameSettings (std::string filename) {
 		}
 	}
 
-	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BE0000 : 0xBE0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? ((!sys().arm7SCFGLocked() || *(u32*)0x02FFE1A0 != 0x00403000) ? 0x88000 : 0x80000) : 0);
+	#define sharedWramEnabled (!sys().arm7SCFGLocked() || *(u32*)0x02FFE1A0 != 0x00403000)
+	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BE0000 : 0xBE0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? (sharedWramEnabled ? 0x88000 : 0x80000) : (sharedWramEnabled ? 0x8000 : 0));
 	romSizeLimit -= 0x400000; // Account for DSi mode setting
 	const u32 romSizeLimitTwl = (ms().consoleModel > 0 ? 0x1000000 : 0);
 
