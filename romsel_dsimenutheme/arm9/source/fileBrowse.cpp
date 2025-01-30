@@ -1860,8 +1860,6 @@ bool donorRomMsg(const char *filename) {
 }
 
 bool checkForCompatibleGame(const char *filename) {
-	return true;
-
 	bool proceedToLaunch = true;
 
 	/* if (!dsiFeatures() && ms().secondaryDevice) {
@@ -1875,7 +1873,7 @@ bool checkForCompatibleGame(const char *filename) {
 		}
 	} */
 
-	/* if (proceedToLaunch && ms().secondaryDevice) {
+	if (ms().secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameListFC)/sizeof(incompatibleGameListFC[0]); i++) {
 			if (memcmp(gameTid[CURPOS], incompatibleGameListFC[i], 3) == 0) {
@@ -1884,7 +1882,7 @@ bool checkForCompatibleGame(const char *filename) {
 				break;
 			}
 		}
-	} */
+	}
 
 	/* if (proceedToLaunch) {
 		// TODO: If the list gets large enough, switch to bsearch().
