@@ -271,7 +271,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	VRAM_C_CR = VRAM_ENABLE | VRAM_C_LCD;
 	// Load the loader/patcher into the correct address
 	tonccpy (LCDC_BANK_C, loader, loaderSize);
-	toncset (LCDC_BANK_C+loaderSize, 0, 0x20000-loaderSize);
+	toncset (LCDC_BANK_C+loaderSize, 0, 0x18000-loaderSize);
 
 	// Set the parameters for the loader
 	// STORED_FILE_CLUSTER = cluster;

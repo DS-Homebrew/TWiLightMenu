@@ -635,8 +635,8 @@ int main (void) {
 #ifndef NO_SDMMC
 	sdRead = (dsiSD && dsiMode);
 #endif
+	toncset((u32*)0x06000000, 0, 0x8000);
 	if (wantToPatchDLDI) {
-		toncset((u32*)0x06000000, 0, 0x8000);
 		if (*(u32*)0x02FF4184 == 0x69684320) { // DLDI ' Chi' string in bootstub space + bootloader in DLDI driver space
 			const u16 dldiFileSize = 1 << *(u8*)0x02FF418D;
 			tonccpy((u32*)0x06000000, (u32*)0x02FF4180, dldiFileSize);
@@ -749,6 +749,7 @@ int main (void) {
 	// Patch with DLDI if desired
 	if (wantToPatchDLDI) {
 		dldiPatchBinary ((u8*)((u32*)NDS_HEAD)[0x0A], ((u32*)NDS_HEAD)[0x0B]);
+		toncset((u32*)0x06000000, 0, 0x8000);
 	}
 #endif
 
