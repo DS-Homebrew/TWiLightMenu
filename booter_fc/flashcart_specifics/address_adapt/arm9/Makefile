@@ -38,7 +38,7 @@ CFLAGS	:=	-g -Wall -O2 \
 CFLAGS	+=	$(INCLUDE) -DARM9
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
-ASFLAGS	:=	-g $(ARCH) -flto
+ASFLAGS	:=	-g $(ARCH) $(INCLUDE) -flto
 LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
