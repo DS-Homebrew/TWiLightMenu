@@ -82,11 +82,7 @@ jobs:
           curl -LO https://github.com/wavemotion-dave/ColecoDS/releases/latest/download/ColecoDS.nds
           curl -LO https://bitbucket.org/Coto88/snemulds/raw/33f5f469b6e6c19cb3e1be9259b407832fce42b9/release/arm7dldi-ntr/SNEmulDS.nds
           curl -LO https://bitbucket.org/Coto88/snemulds/raw/33f5f469b6e6c19cb3e1be9259b407832fce42b9/release/arm7dldi-twl/SNEmulDS.srl
-          curl -LO https://github.com/DS-Homebrew/NesDS/releases/latest/download/nesDS.7z
-          7z x nesDS.7z nesDS/nesDS.nds
-          mv nesDS/nesDS.nds nesDS.nds
-          rm nesDS.7z
-          rm -rf nesDS
+          curl -LO https://github.com/DS-Homebrew/NesDS/releases/latest/download/nesDS.nds
           curl -LO https://github.com/FluBBaOfWard/S8DS/releases/latest/download/S8DS.zip
           7z x S8DS.zip S8DS.nds
           rm S8DS.zip
