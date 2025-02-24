@@ -2723,6 +2723,22 @@ int titleMode(void)
 	}
 
 	scanKeys();
+	if (keysHeld() & KEY_B) {
+		// Indicate that the B button was held
+		if (!ms().macroMode) {
+			powerOff(PM_BACKLIGHT_TOP);
+		}
+		powerOff(PM_BACKLIGHT_BOTTOM);
+
+		for (int i = 0; i < 5; i++) {
+			swiWaitForVBlank();
+		}
+
+		if (!ms().macroMode) {
+			powerOn(PM_BACKLIGHT_TOP);
+		}
+		powerOn(PM_BACKLIGHT_BOTTOM);
+	}
 
 	autoRunBit = (*(u32*)0x02000000 & BIT(3));
 	runTempDSiWare = (*(u32*)0x02000000 & BIT(4));
