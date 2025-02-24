@@ -478,6 +478,7 @@ void perGameSettings (std::string filename) {
 	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BE0000 : 0xBE0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? (sharedWramEnabled ? 0x88000 : 0x80000) : (sharedWramEnabled ? 0x8000 : 0));
 	romSizeLimit -= 0x400000; // Account for DSi mode setting
 	const u32 romSizeLimitTwl = (ms().consoleModel > 0 ? 0x1000000 : 0);
+	const bool romLoadableInRam = (romSize <= (romUnitCode[cursorPosOnScreen] > 0 ? romSizeLimitTwl : romSizeLimit));
 
 	extern bool dsiWareCompatibleB4DS(void);
 	bool showPerGameSettings = (bnrRomType[cursorPosOnScreen] == 0 && !isDSiWare[cursorPosOnScreen]);
@@ -561,7 +562,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 13;	// DSiWare booter
 		}
 		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || !dsiFeatures() || (ms().secondaryDevice && bs().b4dsMode) || !ms().dsiWareToSD || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
-			if (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode) && !blacklisted_cardReadDma) {
+			if (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode) && dsiFeatures() && romLoadableInRam && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
 			}
@@ -607,7 +608,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
-		if (bootstrapEnabled && !blacklisted_cardReadDma) {
+		if (bootstrapEnabled && (!ms().secondaryDevice || (dsiFeatures() && romLoadableInRam)) && !blacklisted_cardReadDma) {
 			perGameOps++;
 			perGameOp[perGameOps] = 5;	// Card Read DMA
 		}
