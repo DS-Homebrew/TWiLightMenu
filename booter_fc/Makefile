@@ -148,9 +148,8 @@ autoboot:
 	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/N5 & R4-PLUS/_DS_MENU.dat"
 
 	#### Original R4SDHC
-	$(PYTHON) flashcart_specifics/dldinoap/dldinoap.py _DS_MENU.nds
 	# Since this is the last one, move it instead of copy
-	mv _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/Original R4SDHC/default.nds"
+	mv _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/Original R4SDHC/TTMenu.dat"
 
 	#### EDGE (TODO: Find out how to encrypt the .dat file)
 	# cp booter_fc.nds EDGE.dat

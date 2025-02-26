@@ -100,6 +100,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## Secondary Developers
 - [DieGo](https://github.com/DieGo367): Adding support for custom ROM/folder icons and improvements for custom skins
 - [lifehackerhansol](https://github.com/lifehackerhansol): Improving support for flashcard autobooting and kernel loading
+    - [Deletecat](https://github.com/Deletecat): Original R4SDHC autoboot file containing a [flashcard-bootstrap](https://github.com/lifehackerhansol/flashcard-bootstrap) binary
 - [NightScript](https://github.com/NightScript370): Code cleanup, defining code standards, added flashcard functionality for Wood UI theme, manual pages
 ## App Launchers
 - [ahezard](https://github.com/ahezard), [shutterbug2000](https://github.com/shutterbug2000) and [Rocket Robz](https://github.com/RocketRobz): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used for launching Nintendo DS(i) ROMs off the SD card)
