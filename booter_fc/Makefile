@@ -145,11 +145,8 @@ autoboot:
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.dat"
 
 	#### N5 / R4-PLUS
-	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/N5 & R4-PLUS/_DS_MENU.dat"
-
-	#### Original R4SDHC
 	# Since this is the last one, move it instead of copy
-	mv _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/Original R4SDHC/TTMenu.dat"
+	mv _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/N5 & R4-PLUS/_DS_MENU.dat"
 
 	#### EDGE (TODO: Find out how to encrypt the .dat file)
 	# cp booter_fc.nds EDGE.dat
