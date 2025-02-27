@@ -127,6 +127,7 @@ TWLSettings::TWLSettings()
 	useBootstrap = true;
 	btsrpBootloaderDirect = false;
 	bootstrapFile = EReleaseBootstrap;
+	kernelUseable = true;
 
 	internetBrowserLaunched = false;
 	slot1Launched = false;
@@ -323,7 +324,23 @@ void TWLSettings::loadSettings()
 	ak_theme = settingsini.GetString("SRLOADER", "AK_THEME", ak_theme);
 	ak_zoomIcons = settingsini.GetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
-	if (!(io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
+	kernelUseable = !(io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA);
+	if (kernelUseable) {
+		const bool woodKernel = (
+		(memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)
+	);
+
+		if (woodKernel) {
+			kernelUseable = !dsiFeatures();
+		}
+	}
+
+	if (kernelUseable) {
 		useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	} else {
 		useBootstrap = true;
@@ -486,7 +503,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
 	settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
-	if (!(io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
+	if (kernelUseable) {
 		settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	}
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_BOOTLOADER_DIRECT", btsrpBootloaderDirect);

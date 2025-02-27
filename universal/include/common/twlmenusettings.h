@@ -365,6 +365,7 @@ public:
 	bool useBootstrap;
 	bool btsrpBootloaderDirect;
 	TBootstrapFile bootstrapFile;
+	bool kernelUseable;
 
 	std::string internetBrowserPath;
 	bool internetBrowserLaunched;

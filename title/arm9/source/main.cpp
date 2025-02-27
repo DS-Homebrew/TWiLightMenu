@@ -511,7 +511,7 @@ void lastRunROM()
 		if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && ms().homebrewBootstrap && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
 			unlaunchRomBoot(ms().romPath[ms().previousUsedDevice]);
 		} else if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().previousUsedDevice || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
-		|| (ms().previousUsedDevice && (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA))
+		|| (ms().previousUsedDevice && !ms().kernelUseable)
 		|| (unitCode == 3 && !ms().homebrewBootstrap)) {
 			std::string savepath;
 
