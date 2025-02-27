@@ -52,6 +52,8 @@
 
 #define REG_GPIO_WIFI *(vu16*)0x4004C04
 
+//#define FULL_DSI_MODE_ENABLED
+
 #include "common.h"
 #include "dmaTwl.h"
 #include "common/tonccpy.h"
@@ -61,13 +63,15 @@
 #include "hook.h"
 #include "find.h"
 
-/*#include "gm9i/crypto.h"
+#ifdef FULL_DSI_MODE_ENABLED
+#include "gm9i/crypto.h"
 #include "gm9i/f_xy.h"
 #include "twltool/dsi.h"
-#include "u128_math.h"*/
+#include "u128_math.h"
+#endif
 
-
-//extern u32 dsiMode;	// Not working?
+extern bool __dsimode;
+extern u32 dsiMode;
 extern u32 language;
 extern u32 sdAccess;
 extern u32 scfgUnlock;
@@ -657,7 +661,7 @@ static void NDSTouchscreenMode(void) {
 	writePowerManagement(PM_CONTROL_REG, 0x0D); //*(unsigned char*)0x40001C2 = 0x00, 0x0D; // PWR[0]=0Dh    ;<-- also part of TSC !
 }
 
-static void DSiTouchscreenMode(void) {
+/* static void DSiTouchscreenMode(void) {
 	if (strncmp((const char*)0x04FFFA00, "no$gba", 6) != 0) {
 		return;
 	}
@@ -721,14 +725,15 @@ static void DSiTouchscreenMode(void) {
 	// Finish up!
 	cdcReadReg (CDC_TOUCHCNT, 0x02);
 	cdcWriteReg(CDC_TOUCHCNT, 0x02, 0x00);
-}
+} */
 
 // SDK 5
 static bool ROMsupportsDsiMode(const tNDSHeader* ndsHeader) {
 	return (ndsHeader->unitCode > 0);
 }
 
-/*void decrypt_modcrypt_area(dsi_context* ctx, u8 *buffer, unsigned int size)
+#ifdef FULL_DSI_MODE_ENABLED
+void decrypt_modcrypt_area(dsi_context* ctx, u8 *buffer, unsigned int size)
 {
 	uint32_t len = size / 0x10;
 	u8 block[0x10];
@@ -740,7 +745,8 @@ static bool ROMsupportsDsiMode(const tNDSHeader* ndsHeader) {
 		buffer+=0x10;
 		len--;
 	}
-}*/
+}
+#endif
 
 int arm7_loadBinary (const tDSiHeader* dsiHeaderTemp) {
 	u32 errorCode;
@@ -799,6 +805,10 @@ void arm7_startBinary (void) {
 	while (REG_VCOUNT!=191);
 	while (REG_VCOUNT==191);
 
+	REG_IE = 0;
+	REG_IF = ~0;
+	REG_AUXIE = 0;
+	REG_AUXIF = ~0;
 	// Start ARM7
 	VoidFn arm7code = (VoidFn)ndsHeader->arm7executeAddress;
 	arm7code();
@@ -915,6 +925,7 @@ void arm7_main (void) {
 
 	initMBK();
 
+	__dsimode = dsiMode;
 	int errorCode;
 
 	// Wait for ARM9 to at least start
@@ -944,9 +955,13 @@ void arm7_main (void) {
 	if (my_isDSiMode()) {
 		if (twlMode == 2) {
 			dsiModeConfirmed = twlMode;
-		} /*else {
+		} else {
+			#ifdef FULL_DSI_MODE_ENABLED
 			dsiModeConfirmed = twlMode && ROMsupportsDsiMode(&dsiHeaderTemp->ndshdr);
-		}*/
+			#else
+			dsiModeConfirmed = 0;
+			#endif
+		}
 	}
 
 	if (dsiModeConfirmed) {
@@ -957,7 +972,8 @@ void arm7_main (void) {
 			cardRead((u32)dsiHeaderTemp->arm7iromOffset, (u32*)dsiHeaderTemp->arm7idestination, dsiHeaderTemp->arm7ibinarySize);
 		}
 
-		/*uint8_t *target = (uint8_t *)0x02FFC000 ;
+		#ifdef FULL_DSI_MODE_ENABLED
+		uint8_t *target = (uint8_t *)0x02FFC000 ;
 
 		if (target[0x01C] & 2) {
 			u8 key[16] = {0} ;
@@ -1003,7 +1019,8 @@ void arm7_main (void) {
 			for (int i=0;i<4;i++) {
 				((uint32_t *)(target+0x220))[i] = 0;
 			}
-		}*/
+		}
+		#endif
 	}
 
 	ndsHeader = loadHeader(dsiHeaderTemp);
@@ -1018,53 +1035,25 @@ void arm7_main (void) {
 	my_readUserSettings(ndsHeader); // Header has to be loaded first
 
 	if (my_isDSiMode()) {
-		if ((!soundFreq && (REG_SNDEXTCNT & BIT(13))) || (soundFreq && !(REG_SNDEXTCNT & BIT(13)))) {
-			REG_SNDEXTCNT &= ~SNDEXTCNT_ENABLE; // Disable sound output: Runs before sound frequency change
-
-			// Reconfigure clock dividers, based on the TSC2117 datasheet.
-			// - We disable PLL, as MCLK is always equal to the sample frequency
-			//   times 256, which is an integer multiple.
-			// - We disable ADC NADC/MADC dividers, to share the DAC clock.
-			// This also prevents us from having to reconfigure the PLL multipliers
-			// for 32kHz/47kHz.
-			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_PLL_PR, 0);
-			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_DAC_MDAC, CDC_CONTROL_CLOCK_ENABLE(2));
-			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_DAC_NDAC, CDC_CONTROL_CLOCK_ENABLE(1));
-			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_MADC, CDC_CONTROL_CLOCK_DISABLE);
-			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_NADC, CDC_CONTROL_CLOCK_DISABLE);
-			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_CLOCK_MUX, CDC_CONTROL_CLOCK_PLL_IN_MCLK | CDC_CONTROL_CLOCK_CODEC_IN_MCLK);
-
-			/* cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_MADC, CDC_CONTROL_CLOCK_DISABLE);
-			cdcWriteReg(CDC_CONTROL, CDC_CONTROL_ADC_NADC, CDC_CONTROL_CLOCK_DISABLE);
-
-			if (soundFreq)
-			{
-				// Configure a PLL multiplier/divider of 15/2, and a NDAC/NADC divider of 5.
-				cdcWriteReg(CDC_CONTROL, CDC_CONTROL_PLL_J, 15);
-				cdcWriteReg(CDC_CONTROL, CDC_CONTROL_DAC_NDAC, CDC_CONTROL_CLOCK_ENABLE(5));
+		if ((REG_SNDEXTCNT & SNDEXTCNT_ENABLE) && ((!soundFreq && (REG_SNDEXTCNT & BIT(13))) || (soundFreq && !(REG_SNDEXTCNT & BIT(13))))) {
+			if (soundFreq) {
+				*(vu16*)0x04004700 |= BIT(13);	// Set 48khz sound/mic frequency
+			} else {
+				*(vu16*)0x04004700 &= ~BIT(13);	// Set 32khz sound/mic frequency
 			}
-			else
-			{
-				// Configure a PLL multiplier/divider of 21/2, and a NDAC/NADC divider of 7.
-				cdcWriteReg(CDC_CONTROL, CDC_CONTROL_DAC_NDAC, CDC_CONTROL_CLOCK_ENABLE(7));
-				cdcWriteReg(CDC_CONTROL, CDC_CONTROL_PLL_J, 21);
-			} */
-
-			REG_SNDEXTCNT = (REG_SNDEXTCNT & ~SNDEXTCNT_FREQ_47KHZ) | (soundFreq ? SNDEXTCNT_FREQ_47KHZ : SNDEXTCNT_FREQ_32KHZ) | SNDEXTCNT_ENABLE;
-			// REG_SNDEXTCNT |= SNDEXTCNT_ENABLE; // Enable sound output
 		}
 
 		if (dsiModeConfirmed) {
 			*(u32*)0x3FFFFC8 = 0x7884;	// Fix sound pitch table for DSi mode (works with SDK5 binaries)
 
 			if (ndsHeader->unitCode == 0 || (ndsHeader->unitCode > 0 && !(*(u8*)0x02FFE1BF & BIT(0)))) {
-				twlTouch ? DSiTouchscreenMode() : NDSTouchscreenMode();
+				NDSTouchscreenMode();
 				*(vu16*)0x4000500 = 0x807F;
 			}
 		} else {
 			REG_SCFG_ROM = 0x703;
 
-			twlTouch ? DSiTouchscreenMode() : NDSTouchscreenMode();
+			NDSTouchscreenMode();
 			*(vu16*)0x4000500 = 0x807F;
 
 			REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
@@ -1077,6 +1066,8 @@ void arm7_main (void) {
 			if (!sdAccess) {
 				REG_SCFG_EXT = 0x93FBFB06;
 			}
+			// Used by ARM7 binaries to determine DSi mode...
+			toncset((u8*)0x0380FFC0, 0, 0x10);
 		}
 	}
 

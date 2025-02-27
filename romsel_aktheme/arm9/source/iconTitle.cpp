@@ -890,7 +890,7 @@ void clearTitle(int num) {
 	cachedTitle[num] = blankTitle;
 }
 
-void copyGameInfo(int numDst, int numSrc)
+/* void copyGameInfo(int numDst, int numSrc)
 {
 	bnriconPalLine[numDst] = bnriconPalLine[numSrc];
 	bnriconPalLoaded[numDst] = bnriconPalLoaded[numSrc];
@@ -899,6 +899,7 @@ void copyGameInfo(int numDst, int numSrc)
 	bnrWirelessIcon[numDst] = bnrWirelessIcon[numSrc];
 	customIcon[numDst] = customIcon[numSrc];
 	tonccpy(gameTid[numDst], gameTid[numSrc], 4);
+	isValid[numDst] = isValid[numSrc];
 	isTwlm[numDst] = isTwlm[numSrc];
 	isDSiWare[numDst] = isDSiWare[numSrc];
 	isHomebrew[numDst] = isHomebrew[numSrc];
@@ -920,27 +921,30 @@ void copyGameInfo(int numDst, int numSrc)
 	}
 
 	bnriconisDSi[numDst] = bnriconisDSi[numSrc];
-}
+} */
 
-void getGameInfo(int num, bool isDir, const char* name)
+void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 {
-	bnriconisDSi[num] = false;
 	bnriconPalLine[num] = 0;
 	bnriconPalLoaded[num] = 0;
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnrWirelessIcon[num] = 0;
-	customIcon[num] = 0;
 	toncset(gameTid[num], 0, 4);
+	isValid[num] = false;
 	isTwlm[num] = false;
 	isDSiWare[num] = false;
 	isHomebrew[num] = true;
 	isModernHomebrew[num] = true;
 	requiresRamDisk[num] = false;
 	requiresDonorRom[num] = false;
-	infoFound[num] = false;
+	if (!fromArgv) {
+		bnriconisDSi[num] = false;
+		customIcon[num] = 0;
+		infoFound[num] = false;
+	}
 
-	if (ms().showCustomIcons && customIcon[num] < 2) {
+	if (ms().showCustomIcons && customIcon[num] < 2 && (!fromArgv || customIcon[num] <= 0)) {
 		sNDSBannerExt &banner = bnriconTile[num];
 		bool argvHadPng = customIcon[num] == 1;
 		u8 iconCopy[512];
@@ -1116,7 +1120,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 					if (customIcon[num] != 2)
 						clearBannerSequence(num);
 				} else {
-					getGameInfo(num, true, p);
+					getGameInfo(num, true, p, true);
 				}
 			} else {
 				// this is not an nds/app file!
@@ -1190,6 +1194,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 		}
 
 		tonccpy(gameTid[num], ndsHeader.gameCode, 4);
+		isValid[num] = (ndsHeader.arm9destination >= 0x02000000 && ndsHeader.arm9destination < 0x03000000 && ndsHeader.arm9executeAddress >= 0x02000000 && ndsHeader.arm9executeAddress < 0x03000000);
 		isTwlm[num] = (strcmp(gameTid[num], "SRLA") == 0);
 		romVersion[num] = ndsHeader.romversion;
 		romUnitCode[num] = ndsHeader.unitCode;
@@ -1207,6 +1212,11 @@ void getGameInfo(int num, bool isDir, const char* name)
 			} else
 			if (arm9StartSig[2] == 0xE1DC00B6 // SDK 3-5
 			 && arm9StartSig[3] == 0xE3500000) {
+				isHomebrew[num] = false;
+				isModernHomebrew[num] = false;
+			} else
+			if (arm9StartSig[2] == 0xEAFFFFFF // SDK 4 (HM DS Cute)
+			 && arm9StartSig[3] == 0xE1DC00B6) {
 				isHomebrew[num] = false;
 				isModernHomebrew[num] = false;
 			}

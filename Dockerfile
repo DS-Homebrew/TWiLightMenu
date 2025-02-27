@@ -1,4 +1,4 @@
-FROM devkitpro/devkitarm
+FROM devkitpro/devkitarm:20241104
 # ENV TWLNOPATCHSRLHEADER=1
 RUN \
   apt-get update && \

@@ -179,7 +179,7 @@ void loadMainMenu()
 	vector<char *> argarray;
 	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/mainmenu.srldr" : "fat:/_nds/TWiLightMenu/mainmenu.srldr"));
 
-	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
+	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 	fadeType = true;	// Fade in from white
 }
 
@@ -194,7 +194,7 @@ void loadROMselect()
 	} else {
 		argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
 	}
-	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, false, false, true, true, false, -1);
+	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 	fadeType = true;	// Fade in from white
 }
 
@@ -631,7 +631,7 @@ void begin_update(int opt)
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	
-	runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true, false, -1);
+	runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, sys().isRunFromSD(), true, false, false, true, true, false, -1);
 	stop();
 }
 
@@ -1327,7 +1327,7 @@ int settingsMode(void)
 		if (flashcardFound()) {
 			bootstrapPage
 				.option(STR_DSIWARETOSD,
-					STR_DESCRIPTION_DSIWARETOSD,
+					isDSiMode() ? STR_DESCRIPTION_DSIWARETOSD : STR_DESCRIPTION_DSIWARETOSD_DSBIOS,
 					Option::Bool(&ms().dsiWareToSD),
 					{STR_YES, STR_NO},
 					{true, false});
@@ -1452,7 +1452,6 @@ int settingsMode(void)
 			miscPage
 				.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false})
 				.option(STR_SLOT1SDACCESS, STR_DESCRIPTION_SLOT1SDACCESS, Option::Bool(&ms().slot1AccessSD), {STR_ON, STR_OFF}, {true, false})
-				.option(STR_SLOT1TOUCHMODE, STR_DESCRIPTION_SLOT1TOUCHMODE, Option::Bool(&ms().slot1TouchMode), {STR_DSI_MODE, STR_DS_MODE}, {true, false})
 				.option(STR_S1SDACCESS, STR_DESCRIPTION_S1SDACCESS_1, Option::Bool(&ms().secondaryAccess), {STR_ON, STR_OFF}, {true, false});
 		}
 

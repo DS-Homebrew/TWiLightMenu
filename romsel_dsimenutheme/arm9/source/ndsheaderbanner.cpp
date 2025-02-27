@@ -2,8 +2,11 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <unistd.h>
+#include "common/twlmenusettings.h"
 #include "common/flashcard.h"
+#include "common/nitrofs.h"
 #include "common/systemdetails.h"
+#include "perGameSettings.h"
 #include <gl2d.h>
 
 #include "ndsheaderbanner.h"
@@ -17,18 +20,20 @@ u8 unitCode[40] = {0};
 u16 headerCRC[40] = {0};
 u32 a7mbk6[40] = {0};
 
-bool checkDsiBinaries(FILE* ndsFile) {
-	sNDSHeaderExt ndsHeader;
-
-	fseek(ndsFile, 0, SEEK_SET);
-	fread(&ndsHeader, 1, sizeof(ndsHeader), ndsFile);
-
-	if (ndsHeader.unitCode == 0) {
+bool checkDsiBinaries(const char* filename, const int num) {
+	if (unitCode[num] == 0) {
 		return true;
 	}
 
+	FILE *ndsFile = fopen(filename, "rb");
+
+	sNDSHeaderExt ndsHeader;
+
+	fread(&ndsHeader, 1, sizeof(ndsHeader), ndsFile);
+
 	if (ndsHeader.arm9iromOffset < 0x8000 || ndsHeader.arm9iromOffset >= 0x20000000
 	 || ndsHeader.arm7iromOffset < 0x8000 || ndsHeader.arm7iromOffset >= 0x20000000) {
+		fclose(ndsFile);
 		return false;
 	}
 
@@ -45,6 +50,7 @@ bool checkDsiBinaries(FILE* ndsFile) {
 	fread(arm9Sig[1], sizeof(u32), 4, ndsFile);
 	fseek(ndsFile, ndsHeader.arm7iromOffset, SEEK_SET);
 	fread(arm9Sig[2], sizeof(u32), 4, ndsFile);
+	fclose(ndsFile);
 	for (int i = 1; i < 3; i++) {
 		if (arm9Sig[i][0] == arm9Sig[0][0]
 		 && arm9Sig[i][1] == arm9Sig[0][1]
@@ -87,20 +93,46 @@ u32 getSDKVersion(FILE *ndsFile)
 
 /**
  * Check if NDS game has AP.
- * @param ndsFile NDS file.
  * @param filename NDS ROM filename.
- * @return 1 or 2 on success; 0 if no AP.
+ * @return true on success; false if no AP.
  */
-int checkRomAP(FILE *ndsFile, int num)
+bool checkRomAP(const char* filename, const int num)
 {
-	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/extras/apfix/%s-%X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[num], headerCRC[num]);
+	{
+		char apFixPath[256];
+		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s.ips", sys().isRunFromSD() ? "sd" : "fat", filename);
+		if (access(apFixPath, F_OK) == 0) {
+			return false;
+		}
 
-	if (access(ipsPath, F_OK) == 0) {
-		return 0;
+		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s.bin", sys().isRunFromSD() ? "sd" : "fat", filename);
+		if (access(apFixPath, F_OK) == 0) {
+			return false;
+		}
+
+		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s-%04X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[num], headerCRC[num]);
+		if (access(apFixPath, F_OK) == 0) {
+			return false;
+		}
+
+		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s-%04X.bin", sys().isRunFromSD() ? "sd" : "fat", gameTid[num], headerCRC[num]);
+		if (access(apFixPath, F_OK) == 0) {
+			return false;
+		}
 	}
 
-	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/apfix.pck" : "fat:/_nds/TWiLightMenu/extras/apfix.pck", "rb");
+	{
+		const bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+		char bootstrapPath[256];
+		sprintf(bootstrapPath, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "sd" : "fat", useNightly ? "nightly" : "release");
+		if (access(bootstrapPath, F_OK) != 0) {
+			sprintf(bootstrapPath, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", useNightly ? "nightly" : "release");
+		}
+
+		bootFSInit(bootstrapPath);
+	}
+
+	FILE *file = fopen("boot:/apfix.pck", "rb");
 	if (file) {
 		char buf[5] = {0};
 		fread(buf, 1, 4, file);
@@ -123,7 +155,7 @@ int checkRomAP(FILE *ndsFile, int num)
 
 					if (crc == headerCRC[num]) { // CRC matches
 						fclose(file);
-						return 0;
+						return false;
 					} else if (crc < headerCRC[num]) {
 						left = mid + 1;
 					} else {
@@ -145,7 +177,7 @@ int checkRomAP(FILE *ndsFile, int num)
 	 || (memcmp(gameTid[num], "YEEJ", 4) == 0)   	// Inazuma Eleven (Japan)
 	 || (memcmp(gameTid[num], "CNSX", 4) == 0)   	// Naruto Shippuden: Naruto vs Sasuke (Europe)
 	 || (memcmp(gameTid[num], "BH2J", 4) == 0)) {	// Super Scribblenauts (Japan)
-		return 0;
+		return false;
 	} else
 	// Check for ROMs that have AP measures.
 	if ((memcmp(gameTid[num], "VETP", 4) == 0)   	// 1000 Cooking Recipes from Elle a Table (Europe)
@@ -382,7 +414,7 @@ int checkRomAP(FILE *ndsFile, int num)
 	 || (memcmp(gameTid[num], "BYMJ", 4) == 0)   	// Yumeiro Patissiere: My Sweets Cooking (Japan)
 	 || (memcmp(gameTid[num], "BZQJ", 4) == 0)   	// Zac to Ombra: Maboroshi no Yuuenchi (Japan)
 	 || (memcmp(gameTid[num], "BZBJ", 4) == 0)) {	// Zombie Daisuki (Japan)
-		return 1;
+		return true;
 	} else {
 		static const char ap_list[][4] = {
 			"YBN",	// 100 Classic Books
@@ -500,8 +532,7 @@ int checkRomAP(FILE *ndsFile, int num)
 		for (unsigned int i = 0; i < sizeof(ap_list)/sizeof(ap_list[0]); i++) {
 			if (memcmp(gameTid[num], ap_list[i], 3) == 0) {
 				// Found a match.
-				return 1;
-				break;
+				return true;
 			}
 		}
 
@@ -513,14 +544,12 @@ int checkRomAP(FILE *ndsFile, int num)
 		for (unsigned int i = 0; i < sizeof(ap_list2)/sizeof(ap_list2[0]); i++) {
 			if (memcmp(gameTid[num], ap_list2[i], 3) == 0) {
 				// Found a match.
-				return 2;
-				break;
+				return true;
 			}
 		}
-
 	}
-	
-	return 0;
+
+	return false;
 }
 
 sNDSBannerExt bnriconTile[41];
@@ -538,6 +567,7 @@ int bannerFlip[41] = {GL_FLIP_NONE};
 int bannerFlipPrev[41] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
+bool isValid[40] = {false};
 bool isTwlm[40] = {false};
 bool isUnlaunch[40] = {false};
 bool isDirectory[40] = {false};

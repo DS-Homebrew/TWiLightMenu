@@ -25,6 +25,8 @@ _start:
 	.ascii	"bootstub"
 	.word	hook7from9 - _start
 	.word	hook9from7 - _start
+_loader_addr:
+	.word	_loader - _start
 _loader_size:
 	.word	0
 
@@ -119,10 +121,10 @@ hook7from9:
 	mov	r0,#0x80
 	strb	r0,[r3,#0x242-0x180]
 
-	adr	r0, _loader
+	ldr	r0, _loader_addr
 	ldr	r2, _loader_size
 	mov	r1, #0x06800000
-	add	r1, r1, #0x40000
+	add	r1, r1, #0x48000
 	add	r2, r0, r2
 _copyloader:
 	ldr	r4, [r0], #4
@@ -140,6 +142,7 @@ _copyloader:
 
 	ldr	r0, arm7bootaddr
 	mov	r1, #0x06000000
+	add	r1, r1, #0x8000
 	str	r1, [r0]
 	
 	ldr	r0, resetcode

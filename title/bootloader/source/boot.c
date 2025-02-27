@@ -148,7 +148,7 @@ void passArgs_ARM7 (void) {
 	argDst = (u32*)((ARM9_DST + ARM9_LEN + 3) & ~3);		// Word aligned
 
 	if (ARM9_LEN > 0x380000) {
-		argDst = (u32*)0x02FFA000;
+		argDst = (u32*)(TEMP_MEM - ((argSize/4)*4));
 	} else if (dsiMode && (*(u8*)(NDS_HEAD + 0x012) & BIT(1))) {
 		u32 ARM9i_DST = *((u32*)(TWL_HEAD + 0x1C8));
 		u32 ARM9i_LEN = *((u32*)(TWL_HEAD + 0x1CC));
@@ -288,8 +288,6 @@ u8 dsiFlags;
 void loadBinary_ARM7 (u32 fileCluster)
 {
 	if (loadFromRam) {
-		bool isDSi = (*(vu32*)(0x08240000) != 1);
-
 		ARM9_SRC = *(u32*)(TWL_HEAD+0x20);
 		char* ARM9_DST = (char*)*(u32*)(TWL_HEAD+0x28);
 		u32 ARM9_LEN = *(u32*)(TWL_HEAD+0x2C);
@@ -299,8 +297,8 @@ void loadBinary_ARM7 (u32 fileCluster)
 
 		ROM_TID = *(u32*)(TWL_HEAD+0xC);
 
-		tonccpy(ARM9_DST, (char*)(isDSi ? 0x02800000 : 0x09000000), ARM9_LEN);
-		tonccpy(ARM7_DST, (char*)(isDSi ? 0x02B80000 : 0x09380000), ARM7_LEN);
+		tonccpy(ARM9_DST, (char*)0x02800000, ARM9_LEN);
+		tonccpy(ARM7_DST, (char*)0x02B80000, ARM7_LEN);
 
 		// first copy the header to its proper location, excluding
 		// the ARM9 start address, so as not to start it
@@ -326,8 +324,7 @@ void loadBinary_ARM7 (u32 fileCluster)
 			initMBK_dsiMode();
 		}
 
-		if (isDSi)
-			toncset((void*)0x02800000, 0, 0x500000);
+		toncset((void*)0x02800000, 0, 0x500000);
 
 		return;
 	}
@@ -638,6 +635,25 @@ int main (void) {
 #ifndef NO_SDMMC
 	sdRead = (dsiSD && dsiMode);
 #endif
+	toncset((u32*)0x06000000, 0, 0x8000);
+	if (wantToPatchDLDI) {
+		if (*(u32*)0x02FF4184 == 0x69684320) { // DLDI ' Chi' string in bootstub space + bootloader in DLDI driver space
+			const u16 dldiFileSize = 1 << *(u8*)0x02FF418D;
+			tonccpy((u32*)0x06000000, (u32*)0x02FF4180, dldiFileSize);
+			dldiRelocateBinary();
+
+			toncset((u32*)0x02FF4000, 0, 0x8180); // Clear bootstub + DLDI driver
+		} else if (*(u32*)0x02FF8004 == 0x69684320) { // DLDI ' Chi' string
+			const u16 dldiFileSize = 1 << *(u8*)0x02FF800D;
+			tonccpy((u32*)0x06000000, (u32*)0x02FF8000, (dldiFileSize > 0x4000) ? 0x4000 : dldiFileSize);
+			dldiClearBss();
+		} else if (*(u32*)0x02FF8000 == 0x53535A4C) { // LZ77 flag
+			dldiDecompressBinary();
+		} else {
+			return -1;
+		}
+	}
+
 	if (*(u32*)(0x2FFFD0C) == 0x4E44544C) {
 		limitedModeMemoryPit();
 		*(u32*)(0x2FFFD0C) = 0;
@@ -733,6 +749,7 @@ int main (void) {
 	// Patch with DLDI if desired
 	if (wantToPatchDLDI) {
 		dldiPatchBinary ((u8*)((u32*)NDS_HEAD)[0x0A], ((u32*)NDS_HEAD)[0x0B]);
+		toncset((u32*)0x06000000, 0, 0x8000);
 	}
 #endif
 

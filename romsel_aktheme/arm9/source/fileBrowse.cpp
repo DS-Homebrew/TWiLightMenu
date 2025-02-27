@@ -379,7 +379,7 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 		isDirectory[0] = false;
 		std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 		displayDiskIcon(ms().secondaryDevice);
-		getGameInfo(0, isDirectory[0], dirContents.at(fileOffset).name.c_str());
+		getGameInfo(0, isDirectory[0], dirContents.at(fileOffset).name.c_str(), false);
 		displayDiskIcon(false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
@@ -437,6 +437,7 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 
 	if (bnrRomType[0] != 0) {
 		bnrWirelessIcon[0] = 0;
+		isValid[0] = true;
 		isTwlm[0] = false;
 		isDSiWare[0] = false;
 		isHomebrew[0] = 0;
@@ -474,7 +475,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 		} else {
 			isDirectory[n] = false;
 			std::string std_romsel_filename = dirContents.at(i).name.c_str();
-			getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str());
+			getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 				bnrRomType[n] = 0;
@@ -531,6 +532,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 		if (bnrRomType[n] != 0) {
 			bnrWirelessIcon[n] = 0;
+			isValid[n] = true;
 			isTwlm[n] = false;
 			isDSiWare[n] = false;
 			isHomebrew[n] = 0;
@@ -586,7 +588,7 @@ void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
 	} else {
 		isDirectory[n] = false;
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
-		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str());
+		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[n] = 0;
@@ -642,6 +644,7 @@ void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 		if (bnrRomType[n] != 0) {
 			bnrWirelessIcon[n] = 0;
+			isValid[n] = true;
 			isTwlm[n] = false;
 			isDSiWare[n] = false;
 			isHomebrew[n] = 0;
@@ -697,7 +700,7 @@ void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
 	} else {
 		isDirectory[n] = false;
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
-		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str());
+		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[n] = 0;
@@ -753,6 +756,7 @@ void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 		if (bnrRomType[n] != 0) {
 			bnrWirelessIcon[n] = 0;
+			isValid[n] = true;
 			isTwlm[n] = false;
 			isDSiWare[n] = false;
 			isHomebrew[n] = 0;
@@ -1004,8 +1008,6 @@ bool donorRomMsg(void) {
 }
 
 bool checkForCompatibleGame() {
-	return true;
-
 	bool proceedToLaunch = true;
 
 	/* if (!dsiFeatures() && ms().secondaryDevice) {
@@ -1019,7 +1021,7 @@ bool checkForCompatibleGame() {
 		}
 	} */
 
-	/* if (proceedToLaunch && ms().secondaryDevice) {
+	if (ms().secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameListFC)/sizeof(incompatibleGameListFC[0]); i++) {
 			if (memcmp(gameTid[cursorPosOnScreen], incompatibleGameListFC[i], 3) == 0) {
@@ -1028,7 +1030,7 @@ bool checkForCompatibleGame() {
 				break;
 			}
 		}
-	} */
+	}
 
 	/* if (proceedToLaunch) {
 		// TODO: If the list gets large enough, switch to bsearch().
@@ -1519,7 +1521,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			fileOffset += entriesPerScreen;
 			screenOffset += entriesPerScreen;
 			if (fileOffset > (int)dirContents.size() - 1) fileOffset = (int)dirContents.size() - 1;
-			if (screenOffset > (int)dirContents.size() - entriesPerScreen) screenOffset = (int)dirContents.size() - entriesPerScreen;
+			if (screenOffset > (int)dirContents.size() - entriesPerScreen) {
+				screenOffset = (int)dirContents.size() - entriesPerScreen;
+				if (screenOffset < 0) screenOffset = 0;
+			}
 			cursorPosOnScreen = fileOffset - screenOffset;
 			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
 			resetIconScale();
@@ -1731,13 +1736,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				if (ms().ak_viewMode == TWLSettings::EViewList) {
 					cursorPosOnScreen = 0;
 				}
-				if (!isTwlm[cursorPosOnScreen]) {
+				if (isValid[cursorPosOnScreen] && !isTwlm[cursorPosOnScreen]) {
 					loadPerGameSettings(dirContents.at(fileOffset).name);
 				}
 				int hasAP = 0;
 				bool proceedToLaunch = true;
 
-				if (isTwlm[cursorPosOnScreen] || (!isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[cursorPosOnScreen] == 0 && gameTid[cursorPosOnScreen][0] == 'D' && romUnitCode[cursorPosOnScreen] == 3 && requiresDonorRom[cursorPosOnScreen] != 51)
+				if (!isValid[cursorPosOnScreen] || isTwlm[cursorPosOnScreen] || (!isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[cursorPosOnScreen] == 0 && gameTid[cursorPosOnScreen][0] == 'D' && romUnitCode[cursorPosOnScreen] == 3 && requiresDonorRom[cursorPosOnScreen] != 51)
 				|| (isDSiWare[cursorPosOnScreen] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
 				|| (bnrRomType[cursorPosOnScreen] == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
@@ -1809,7 +1814,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 					if (proceedToLaunch && !isDSiWare[cursorPosOnScreen] && checkIfShowAPMsg(dirContents.at(fileOffset).name)) {
 						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-						hasAP = checkRomAP(f_nds_file);
+						hasAP = checkRomAP(f_nds_file, dirContents.at(fileOffset).name.c_str());
 						fclose(f_nds_file);
 					}
 					if (proceedToLaunch && isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
@@ -1844,15 +1849,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					dialogboxHeight = 3;
 					showdialogbox = true;
 					printSmall(false, 0, 74, "Anti-Piracy Warning", Alignment::center, FontPalette::formTitleText);
-					if (hasAP == 2) {
-						printSmall(false, 0, 98, "This game has AP, and MUST", Alignment::center, FontPalette::formText);
-						printSmall(false, 0, 110, "be patched using the RGF", Alignment::center, FontPalette::formText);
-						printSmall(false, 0, 122, "TWiLight Menu AP patcher.", Alignment::center, FontPalette::formText);
-					} else {
-						printSmall(false, 0, 98, "This game has AP. Please", Alignment::center, FontPalette::formText);
-						printSmall(false, 0, 110, "make sure you're using the", Alignment::center, FontPalette::formText);
-						printSmall(false, 0, 122, "latest TWiLight Menu++.", Alignment::center, FontPalette::formText);
-					}
+					printSmall(false, 0, 98, "This game has AP. Please make", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 110, "sure you're using the latest", Alignment::center, FontPalette::formText);
+					printSmall(false, 0, 122, "version of nds-bootstrap.", Alignment::center, FontPalette::formText);
 					printSmall(false, 0, 142, " Return    Launch", Alignment::center, FontPalette::formText);
 					updateText(false);
 
@@ -2205,7 +2204,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (ms().ak_viewMode == TWLSettings::EViewList) {
 				cursorPosOnScreen = 0;
 			}
-			if (!isTwlm[cursorPosOnScreen] && !isDirectory[cursorPosOnScreen] && (bnrRomType[cursorPosOnScreen] == 0 || bnrRomType[cursorPosOnScreen] == 1 || bnrRomType[cursorPosOnScreen] == 3)) {
+			if (isValid[cursorPosOnScreen] && !isTwlm[cursorPosOnScreen] && !isDirectory[cursorPosOnScreen] && (bnrRomType[cursorPosOnScreen] == 0 || bnrRomType[cursorPosOnScreen] == 1 || bnrRomType[cursorPosOnScreen] == 3)) {
 				perGameSettings(dirContents.at(fileOffset).name);
 				cursorPosOnScreen = cursorPosOnScreenBak;
 				refreshBanners(screenOffset, fileOffset, dirContents);

@@ -77,6 +77,7 @@ int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 int perGameSettings_dsiwareBooter = -1;
 int perGameSettings_useBootstrap = -1;
+int perGameSettings_useBootstrapCheat = -1;
 
 std::string setAsInternetBrowser = "";
 std::string setAsDonorRom = "";
@@ -135,6 +136,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
 	perGameSettings_dsiwareBooter = pergameini.GetInt("GAMESETTINGS", "DSIWARE_BOOTER", -1);
 	perGameSettings_useBootstrap = pergameini.GetInt("GAMESETTINGS", "USE_BOOTSTRAP", -1);
+	perGameSettings_useBootstrapCheat = perGameSettings_useBootstrap;
 
 	// Check if blacklisted
 	blacklisted_boostCpu = false;
@@ -185,6 +187,7 @@ void savePerGameSettings (std::string filename) {
 		if (!ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 			pergameini.SetInt("GAMESETTINGS", "USE_BOOTSTRAP", perGameSettings_useBootstrap);
+			perGameSettings_useBootstrapCheat = perGameSettings_useBootstrap;
 		}
 		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound()) {
 			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
@@ -207,6 +210,7 @@ void savePerGameSettings (std::string filename) {
 			if (!blacklisted_asyncCardRead) pergameini.SetInt("GAMESETTINGS", "ASYNC_CARD_READ", perGameSettings_asyncCardRead);
 		} else {
 			pergameini.SetInt("GAMESETTINGS", "USE_BOOTSTRAP", perGameSettings_useBootstrap);
+			perGameSettings_useBootstrapCheat = perGameSettings_useBootstrap;
 		}
 		if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || isDSiWare[CURPOS] || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
@@ -248,7 +252,7 @@ void dontShowRAMLimitMsgAgain (std::string filename) {
 }
 
 bool checkIfDSiMode (std::string filename) {
-	if (ms().secondaryDevice && (!dsiFeatures() || !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap))) {
+	if (ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode || !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap))) {
 		return false;
 	}
 
@@ -397,7 +401,7 @@ const char* getRegionString(char region) {
 	return "N/A";
 }
 
-void perGameSettings (std::string filename) {
+void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBinariesChecked) {
 	int pressed = 0, held = 0;
 
 	keysSetRepeat(25, 5); // Slow down key repeat
@@ -472,7 +476,6 @@ void perGameSettings (std::string filename) {
 	u32 pubSize = 0;
 	u32 prvSize = 0;
 	bool usesCloneboot = false;
-	bool dsiBinariesFound = false;
 	if (bnrRomType[CURPOS] == 0) {
 		fseek(f_nds_file, 0x20, SEEK_SET);
 		fread(&arm9off, sizeof(u32), 1, f_nds_file);
@@ -494,7 +497,10 @@ void perGameSettings (std::string filename) {
 		u32 clonebootFlag = 0;
 		fread(&clonebootFlag, sizeof(u32), 1, f_nds_file);
 		usesCloneboot = (clonebootFlag == 0x16361);
-		dsiBinariesFound = checkDsiBinaries(f_nds_file);
+		if (!(*dsiBinariesChecked)) {
+			*dsiBinariesFound = checkDsiBinaries(filenameForInfo.c_str(), CURPOS);
+			*dsiBinariesChecked = true;
+		}
 	}
 	fclose(f_nds_file);
 
@@ -513,8 +519,11 @@ void perGameSettings (std::string filename) {
 		}
 	}
 
-	const u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BC0000 : 0xBC0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? 0x78000 : 0);
+	#define sharedWramEnabled (!sys().arm7SCFGLocked() || *(u32*)0x02FFE1A0 != 0x00403000)
+	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BE0000 : 0xBE0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? (sharedWramEnabled ? 0x88000 : 0x80000) : (sharedWramEnabled ? 0x8000 : 0));
+	romSizeLimit -= 0x400000; // Account for DSi mode setting
 	const u32 romSizeLimitTwl = (ms().consoleModel > 0 ? 0x1000000 : 0);
+	const bool romLoadableInRam = (romSize <= (unitCode[CURPOS] > 0 ? romSizeLimitTwl : romSizeLimit));
 
 	extern bool dsiWareCompatibleB4DS(void);
 	bool showPerGameSettings = (bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]);
@@ -598,7 +607,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 13;	// DSiWare booter
 		}
 		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || !dsiFeatures() || (ms().secondaryDevice && bs().b4dsMode) || !ms().dsiWareToSD || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
-			if (ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode || !ms().dsiWareToSD || sys().arm7SCFGLocked()) && !blacklisted_cardReadDma) {
+			if (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode) && dsiFeatures() && romLoadableInRam && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
 			}
@@ -625,7 +634,7 @@ void perGameSettings (std::string filename) {
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || unitCode[CURPOS] == 3)) || !ms().secondaryDevice);
+		const bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || unitCode[CURPOS] == 3)) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
@@ -651,7 +660,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
-		if (bootstrapEnabled && !blacklisted_cardReadDma) {
+		if (bootstrapEnabled && (!ms().secondaryDevice || (dsiFeatures() && romLoadableInRam)) && !blacklisted_cardReadDma) {
 			perGameOps++;
 			perGameOp[perGameOps] = 5;	// Card Read DMA
 		}
@@ -660,7 +669,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}
 		if (bootstrapEnabled) {
-			if (!ms().secondaryDevice && (romSize > (unitCode[CURPOS] > 0 ? romSizeLimitTwl : romSizeLimit)) && !blacklisted_asyncCardRead) {
+			if (!ms().secondaryDevice && !romLoadableInRam && !blacklisted_asyncCardRead) {
 				perGameOps++;
 				perGameOp[perGameOps] = 12;	// Async Card Read
 			}

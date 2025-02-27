@@ -898,25 +898,28 @@ void drawIcon(int Xpos, int Ypos) {
 	}
 }
 
-void getGameInfo(bool isDir, const char* name)
+void getGameInfo(bool isDir, const char* name, bool fromArgv)
 {
 	bnriconPalLine = 0;
 	bnriconPalLoaded = 0;
 	bnriconframenumY = 0;
 	bannerFlip = GL_FLIP_NONE;
-	bnriconisDSi = false;
 	bnrWirelessIcon = 0;
-	customIcon = 0;
 	toncset(gameTid, 0, 4);
+	isValid = false;
 	isTwlm = false;
 	isDSiWare = false;
 	isHomebrew = true;
 	isModernHomebrew = true;
 	requiresRamDisk = false;
 	requiresDonorRom = false;
-	infoFound = false;
+	if (!fromArgv) {
+		bnriconisDSi = false;
+		customIcon = 0;
+		infoFound = false;
+	}
 
-	if (ms().showCustomIcons) {
+	if (ms().showCustomIcons && customIcon < 2 && (!fromArgv || customIcon <= 0)) {
 		toncset(&ndsBanner, 0, sizeof(sNDSBannerExt));
 		bool customIconGood = false;
 
@@ -1059,7 +1062,7 @@ void getGameInfo(bool isDir, const char* name)
 					// this is a directory!
 					clearBannerSequence();
 				} else {
-					getGameInfo(false, p);
+					getGameInfo(false, p, true);
 				}
 			} else {
 				// this is not an nds/app file!
@@ -1137,6 +1140,7 @@ void getGameInfo(bool isDir, const char* name)
 		}
 
 		tonccpy(gameTid, ndsHeader.gameCode, 4);
+		isValid = (ndsHeader.arm9destination >= 0x02000000 && ndsHeader.arm9destination < 0x03000000 && ndsHeader.arm9executeAddress >= 0x02000000 && ndsHeader.arm9executeAddress < 0x03000000);
 		isTwlm = (strcmp(gameTid, "SRLA") == 0);
 		romVersion = ndsHeader.romversion;
 		romUnitCode = ndsHeader.unitCode;
@@ -1154,6 +1158,11 @@ void getGameInfo(bool isDir, const char* name)
 			} else
 			if (arm9StartSig[2] == 0xE1DC00B6 // SDK 3-5
 			 && arm9StartSig[3] == 0xE3500000) {
+				isHomebrew = false;
+				isModernHomebrew = false;
+			} else
+			if (arm9StartSig[2] == 0xEAFFFFFF // SDK 4 (HM DS Cute)
+			 && arm9StartSig[3] == 0xE1DC00B6) {
 				isHomebrew = false;
 				isModernHomebrew = false;
 			}

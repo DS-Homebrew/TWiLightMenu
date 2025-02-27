@@ -182,8 +182,8 @@ int bootstrapHbRunNds (const void* loader, u32 loaderSize, u32 cluster, u32 ramD
 	writeAddr ((data_t*) LCDC_BANK_D, ROM_IS_COMPRESSED_OFFSET, romIsCompressed);
 	writeAddr ((data_t*) LCDC_BANK_D, PATCHCACHE_FILE_OFFSET, patchOffsetCacheCluster);
 	writeAddr ((data_t*) LCDC_BANK_D, SOFTRESET_FILE_OFFSET, srParamsCluster);
-	writeAddr ((data_t*) LCDC_BANK_D, PRELOADED_OFFSET, ndsPreloaded);
 	writeAddr ((data_t*) LCDC_BANK_D, SOUND_FREQ_OFFSET, soundFreq);
+	writeAddr ((data_t*) LCDC_BANK_D, PRELOADED_OFFSET, ndsPreloaded);
 
 
 	//nocashMessage("irqDisable(IRQ_ALL);");

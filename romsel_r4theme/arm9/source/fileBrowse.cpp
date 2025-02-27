@@ -606,8 +606,6 @@ void showLocation(void) {
 }
 
 bool checkForCompatibleGame(const char *filename) {
-	return true;
-
 	bool proceedToLaunch = true;
 
 	/* if (!dsiFeatures() && ms().secondaryDevice) {
@@ -621,7 +619,7 @@ bool checkForCompatibleGame(const char *filename) {
 		}
 	} */
 
-	/* if (proceedToLaunch && ms().secondaryDevice) {
+	if (ms().secondaryDevice) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(incompatibleGameListFC)/sizeof(incompatibleGameListFC[0]); i++) {
 			if (memcmp(gameTid, incompatibleGameListFC[i], 3) == 0) {
@@ -630,7 +628,7 @@ bool checkForCompatibleGame(const char *filename) {
 				break;
 			}
 		}
-	} */
+	}
 
 	/* if (proceedToLaunch) {
 		// TODO: If the list gets large enough, switch to bsearch().
@@ -1113,7 +1111,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		} else {
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
-			getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
+			getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str(), false);
 
 			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 				bnrRomType = 0;
@@ -1170,6 +1168,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		if (bnrRomType != 0) {
 			bnrWirelessIcon = 0;
+			isValid = true;
 			isTwlm = false;
 			isDSiWare = false;
 			isHomebrew = 0;
@@ -1250,13 +1249,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				return "null";
 			} else {
-				if (!isTwlm) {
+				if (isValid && !isTwlm) {
 					loadPerGameSettings(dirContents.at(fileOffset).name);
 				}
 				int hasAP = 0;
 				bool proceedToLaunch = true;
 
-				if (isTwlm || (!isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType == 0 && gameTid[0] == 'D' && romUnitCode == 3 && requiresDonorRom != 51)
+				if (!isValid || isTwlm || (!isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType == 0 && gameTid[0] == 'D' && romUnitCode == 3 && requiresDonorRom != 51)
 				|| (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
 				|| (bnrRomType == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
@@ -1325,7 +1324,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 					if (proceedToLaunch && !isDSiWare && checkIfShowAPMsg(dirContents.at(fileOffset).name)) {
 						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-						hasAP = checkRomAP(f_nds_file);
+						hasAP = checkRomAP(f_nds_file, dirContents.at(fileOffset).name.c_str());
 						fclose(f_nds_file);
 					}
 					if (proceedToLaunch && isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
@@ -1361,15 +1360,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					dialogboxHeight = 3;
 					showdialogbox = true;
 					printSmall(false, 0, 74, "Anti-Piracy Warning", Alignment::center, FontPalette::white);
-					if (hasAP == 2) {
-						printSmall(false, 0, 98, "This game has AP, and MUST", Alignment::center);
-						printSmall(false, 0, 110, "be patched using the RGF", Alignment::center);
-						printSmall(false, 0, 122, "TWiLight Menu AP patcher.", Alignment::center);
-					} else {
-						printSmall(false, 0, 98, "This game has AP. Please", Alignment::center);
-						printSmall(false, 0, 110, "make sure you're using the", Alignment::center);
-						printSmall(false, 0, 122, "latest TWiLight Menu++.", Alignment::center);
-					}
+					printSmall(false, 0, 98, "This game has AP. Please make", Alignment::center);
+					printSmall(false, 0, 110, "sure you're using the latest", Alignment::center);
+					printSmall(false, 0, 122, "version of nds-bootstrap.", Alignment::center);
 					printSmall(false, 0, 142, " Return    Launch", Alignment::center);
 					updateText(false);
 
@@ -1675,7 +1668,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";		
 		}
 
-		if ((pressed & KEY_Y) && !ms().kioskMode && !isTwlm && !isDirectory && (bnrRomType == 0 || bnrRomType == 1 || bnrRomType == 3)) {
+		if ((pressed & KEY_Y) && !ms().kioskMode && isValid && !isTwlm && !isDirectory && (bnrRomType == 0 || bnrRomType == 1 || bnrRomType == 3)) {
 			ms().cursorPosition[ms().secondaryDevice] = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);
 			if (ms().theme == TWLSettings::EThemeGBC) {

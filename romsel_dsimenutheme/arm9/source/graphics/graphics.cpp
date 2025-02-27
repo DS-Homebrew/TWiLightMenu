@@ -98,6 +98,7 @@ extern int waitForNeedToPlayStopSound;
 extern int movingApp;
 extern int movingAppYpos;
 extern bool movingAppIsDir;
+extern bool draggingIcons;
 float movingArrowYpos = 59;
 bool movingArrowYdirection = true;
 bool showMovingArrow = false;
@@ -131,6 +132,7 @@ int titleboxXmovespeed[8] = {12, 10, 8, 8, 8, 8, 6, 4};
 int titleboxXpos[2] = {0};
 int titleboxXdest[2] = {0};
 int titleboxYpos = 85; // 85, when dropped down
+int iconYposOnTitleBox = 12;
 int titlewindowXpos[2] = {0};
 int titlewindowXdest[2] = {0};
 int titleboxXspeed = 3; // higher is SLOWER
@@ -453,7 +455,29 @@ void vBlankHandler() {
 	}
 
 	// Move title box/window closer to destination if moved
-	if (ms().theme != TWLSettings::EThemeSaturn) {
+	if (ms().theme == TWLSettings::EThemeDSi && !draggingIcons && !scrollWindowTouched) {
+		if (titleboxXpos[ms().secondaryDevice] > titleboxXdest[ms().secondaryDevice]) {
+			titleboxXpos[ms().secondaryDevice] -= titleboxXspeed;
+			if (titleboxXpos[ms().secondaryDevice] < titleboxXdest[ms().secondaryDevice]) {
+				titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+			}
+			updateFrame = true;
+		} else if (titleboxXpos[ms().secondaryDevice] < titleboxXdest[ms().secondaryDevice]) {
+			titleboxXpos[ms().secondaryDevice] += titleboxXspeed;
+			if (titleboxXpos[ms().secondaryDevice] > titleboxXdest[ms().secondaryDevice]) {
+				titleboxXpos[ms().secondaryDevice] = titleboxXdest[ms().secondaryDevice];
+			}
+			updateFrame = true;
+		}
+
+		if (titlewindowXpos[ms().secondaryDevice] > titlewindowXdest[ms().secondaryDevice]) {
+			titlewindowXpos[ms().secondaryDevice] -= std::max((titlewindowXpos[ms().secondaryDevice] - titlewindowXdest[ms().secondaryDevice]) / titleboxXspeed, 1);
+			updateFrame = true;
+		} else if (titlewindowXpos[ms().secondaryDevice] < titlewindowXdest[ms().secondaryDevice]) {
+			titlewindowXpos[ms().secondaryDevice] += std::max((titlewindowXdest[ms().secondaryDevice] - titlewindowXpos[ms().secondaryDevice]) / titleboxXspeed, 1);
+			updateFrame = true;
+		}
+	} else if (ms().theme != TWLSettings::EThemeSaturn) {
 		if (titleboxXpos[ms().secondaryDevice] > titleboxXdest[ms().secondaryDevice]) {
 			titleboxXpos[ms().secondaryDevice] -= std::max((titleboxXpos[ms().secondaryDevice] - titleboxXdest[ms().secondaryDevice]) / titleboxXspeed, 1);
 			updateFrame = true;
@@ -821,7 +845,7 @@ void vBlankHandler() {
 				 &tex().buttonarrowImage()[2 + scrollWindowTouched]);
 			glSprite(0, 171, GL_FLIP_NONE, &tex().buttonarrowImage()[0 + buttonArrowTouched[0]]);
 			glSprite(224, 171, GL_FLIP_H, &tex().buttonarrowImage()[0 + buttonArrowTouched[1]]);
-			glSprite(72 - titleboxXpos[ms().secondaryDevice], 81, GL_FLIP_NONE, tex().braceImage());
+			glSprite(66 - titleboxXpos[ms().secondaryDevice], 81, GL_FLIP_NONE, tex().braceImage());
 		}
 
 		if (displayGameIcons) {
@@ -906,7 +930,7 @@ void vBlankHandler() {
 									 GL_FLIP_NONE, tex().folderImage());
 						if (customIcon[i])
 							drawIcon(iconXpos - titleboxXpos[ms().secondaryDevice],
-									 (titleboxYpos + 12) + titleboxYposDropDown[i % 5],
+									 (titleboxYpos + iconYposOnTitleBox) + titleboxYposDropDown[i % 5],
 									 i);
 					} else if (!applaunchprep || CURPOS != i) { // Only draw the icon if we're not launching the selcted app
 						if (!bnrSysSettings[i]) {
@@ -926,7 +950,7 @@ void vBlankHandler() {
 									 GL_FLIP_NONE, &tex().settingsImage()[1]);
 						else
 							drawIcon(iconXpos - titleboxXpos[ms().secondaryDevice],
-										(titleboxYpos + 12) + titleboxYposDropDown[i % 5],
+										(titleboxYpos + iconYposOnTitleBox) + titleboxYposDropDown[i % 5],
 										i);
 					}
 				} else {
@@ -952,7 +976,7 @@ void vBlankHandler() {
 								 GL_FLIP_NONE, tex().folderImage());
 					if (customIcon[movingApp])
 						drawIcon(112,
-								 (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
+								 (titleboxYpos + iconYposOnTitleBox) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
 								 -1);
 				} else {
 					if (!bnrSysSettings[movingApp]) {
@@ -970,12 +994,12 @@ void vBlankHandler() {
 								 (titleboxYpos - 1) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
 								 GL_FLIP_NONE, &tex().settingsImage()[1]);
 					else
-						drawIcon(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5], -1);
+						drawIcon(112, (titleboxYpos + iconYposOnTitleBox) - movingAppYpos + titleboxYposDropDown[movingApp % 5], -1);
 				}
 			}
 
 			if (ms().theme == TWLSettings::EThemeDSi) {
-				glSprite(spawnedboxXpos + titleboxXspacing + 10 - titleboxXpos[ms().secondaryDevice], 81, GL_FLIP_H, tex().braceImage());
+				glSprite(spawnedboxXpos + titleboxXspacing + 20 - titleboxXpos[ms().secondaryDevice], 81, GL_FLIP_H, tex().braceImage());
 			}
 
 			if (movingApp != -1 && ms().theme == TWLSettings::EThemeDSi && showMovingArrow) {
@@ -1171,6 +1195,7 @@ void vBlankHandler() {
 			glSprite(ms().rtl() ? 16 : 224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
 		}
 		if (showProgressBar) {
+			if (progressBarLength > 192) progressBarLength = 192;
 			int barXpos = ms().rtl() ? 256 - 19 : 19;
 			int barYpos = 157;
 			if (ms().theme == TWLSettings::EThemeSaturn) {
@@ -1478,6 +1503,11 @@ void graphicsInit() {
 	// for (int i = 0; i < 12; i++) {
 	// 	launchDotFrame[i] = 5;
 	// }
+
+	if (ms().theme == TWLSettings::EThemeDSi) {
+		titleboxXspeed = 8;
+		iconYposOnTitleBox = 13;
+	}
 
 	for (int i = 0; i < 5; i++) {
 		dropBounce[i] = 0;

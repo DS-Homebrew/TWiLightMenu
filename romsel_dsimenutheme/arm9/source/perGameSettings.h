@@ -19,6 +19,7 @@ extern int perGameSettings_wideScreen;
 extern int perGameSettings_expandRomSpace;
 extern int perGameSettings_dsiwareBooter;
 extern int perGameSettings_useBootstrap;
+extern int perGameSettings_useBootstrapCheat;
 
 extern char fileCounter[8];
 
@@ -29,7 +30,7 @@ void dontShowAPMsgAgain (std::string filename);
 bool checkIfShowRAMLimitMsg (std::string filename);
 void dontShowRAMLimitMsgAgain (std::string filename);
 bool checkIfDSiMode (std::string filename);
-void perGameSettings(std::string filename);
+void perGameSettings(std::string filename, bool* dsiBinariesFound, bool* dsiBinariesChecked);
 std::string getSavExtension(void);
 std::string getPubExtension(void);
 std::string getPrvExtension(void);

@@ -4,8 +4,9 @@
 // static const char incompatibleGameListB4DS[][4] = {
 // };
 
-// static const char incompatibleGameListFC[][4] = {
-// };
+static const char incompatibleGameListFC[][4] = {
+	"AWK", // Tony Hawk's Downhill Jam
+};
 
 // static const char incompatibleGameList[][4] = {
 // };

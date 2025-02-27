@@ -49,10 +49,6 @@ Helpful information:
 #include <nds/arm7/audio.h>
 #include <nds/arm7/codec.h>
 #include "common/tonccpy.h"
-#include "i2c.h"
-#include "fat.h"
-#include "dldi_patcher.h"
-#include "card.h"
 #include "boot.h"
 
 void arm7clearRAM();
@@ -62,51 +58,6 @@ void arm7clearRAM();
 #define TEMP_MEM 0x02FFD000
 #define NDS_HEAD 0x02FFFE00
 #define TEMP_ARM9_START_ADDRESS (*(vu32*)0x02FFFFF4)
-
-
-const char* bootName = "BOOT.NDS";
-
-extern unsigned long _start;
-extern unsigned long storedFileCluster;
-extern unsigned long initDisc;
-extern unsigned long wantToPatchDLDI;
-extern unsigned long argStart;
-extern unsigned long argSize;
-extern unsigned long dsiSD;
-extern unsigned long dsiMode;
-extern unsigned long clearMasterBright;
-extern unsigned long dsMode;
-extern unsigned long loadFromRam;
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Firmware stuff
-
-#define FW_READ        0x03
-
-void boot_readFirmware (uint32 address, uint8 * buffer, uint32 size) {
-	uint32 index;
-
-	// Read command
-	while (REG_SPICNT & SPI_BUSY);
-	REG_SPICNT = SPI_ENABLE | SPI_CONTINUOUS | SPI_DEVICE_NVRAM;
-	REG_SPIDATA = FW_READ;
-	while (REG_SPICNT & SPI_BUSY);
-
-	// Set the address
-	REG_SPIDATA = (address>>16) & 0xFF;
-	while (REG_SPICNT & SPI_BUSY);
-	REG_SPIDATA = (address>>8) & 0xFF;
-	while (REG_SPICNT & SPI_BUSY);
-	REG_SPIDATA = (address) & 0xFF;
-	while (REG_SPICNT & SPI_BUSY);
-
-	for (index = 0; index < size; index++) {
-		REG_SPIDATA = 0;
-		while (REG_SPICNT & SPI_BUSY);
-		buffer[index] = REG_SPIDATA & 0xFF;
-	}
-	REG_SPICNT = 0;
-}
 
 
 static inline void copyLoop (u32* dest, const u32* src, u32 size) {
@@ -130,8 +81,6 @@ Modified by Chishm:
 void resetMemory_ARM7 (void)
 {
 	int i;
-	u8 settings1, settings2;
-	u32 settingsOffset = 0;
 
 	REG_IME = 0;
 
@@ -160,7 +109,7 @@ void resetMemory_ARM7 (void)
 
 	arm7clearRAM();
 	// clear most of EWRAM - except after RAM end - 0xc000, which has the bootstub
-	toncset((void*)0x02004000, 0, dsiMode&&!dsMode ? 0xFF0000 : 0x3F0000);
+	toncset((void*)0x02004000, 0, 0x3F0000);
 	*(u32*)(0x2FFFD9C) = 0;	// Clear exception handler
 
 	REG_IE = 0;
@@ -168,25 +117,6 @@ void resetMemory_ARM7 (void)
 	(*(vu32*)(0x04000000-4)) = 0;  //IRQ_HANDLER ARM7 version
 	(*(vu32*)(0x04000000-8)) = ~0; //VBLANK_INTR_WAIT_FLAGS, ARM7 version
 	REG_POWERCNT = 1;  //turn off power to stuff
-
-	// Get settings location
-	boot_readFirmware((u32)0x00020, (u8*)&settingsOffset, 0x2);
-	settingsOffset *= 8;
-
-	// Reload DS Firmware settings
-	boot_readFirmware(settingsOffset + 0x070, &settings1, 0x1);
-	boot_readFirmware(settingsOffset + 0x170, &settings2, 0x1);
-
-	if ((settings1 & 0x7F) == ((settings2+1) & 0x7F)) {
-		boot_readFirmware(settingsOffset + 0x000, (u8*)0x02FFFC80, 0x70);
-	} else {
-		boot_readFirmware(settingsOffset + 0x100, (u8*)0x02FFFC80, 0x70);
-	}
-
-	((vu32*)0x040044f0)[2] = 0x202DDD1D;
-	((vu32*)0x040044f0)[3] = 0xE1A00005;
-	while ((*(vu32*)0x04004400) & 0x2000000);
-
 }
 
 
@@ -239,10 +169,6 @@ void mpu_reset();
 void mpu_reset_end();
 
 int main (void) {
-#ifdef NO_DLDI
-	dsiSD = true;
-	dsiMode = true;
-#endif
 	// ARM9 clears its memory part 2
 	// copy ARM9 function to RAM, and make the ARM9 jump to it
 	copyLoop((void*)TEMP_MEM, (void*)resetMemory2_ARM9, resetMemory2_ARM9_size);

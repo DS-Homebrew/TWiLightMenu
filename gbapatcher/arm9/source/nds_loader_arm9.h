@@ -29,11 +29,7 @@ extern "C" {
 
 #define LOAD_DEFAULT_NDS 0
 
-int runNds (const void* loader, u32 loaderSize);
-
 int runNdsFile (void);
-
-bool installBootStub(bool havedsiSD);
 
 #ifdef __cplusplus
 }

@@ -22,6 +22,7 @@
 #ifndef NO_DLDI
 #include <string.h>
 #include <nds.h>
+#include "common/tonccpy.h"
 #include "dldi_patcher.h"
 
 #define FIX_ALL	0x01
@@ -107,7 +108,9 @@ static void demangleMagicString(data_t *dest, const data_t *src) {
 
 #define DEVICE_TYPE_DLDI 0x49444C44
 
-extern data_t _dldi_start[];
+extern unsigned long dsiMode;
+extern unsigned long dsMode;
+static data_t* _dldi_start = (data_t*)0x06000000;
 
 bool dldiPatchBinary (data_t *binData, u32 binSize) {
 
@@ -143,16 +146,37 @@ bool dldiPatchBinary (data_t *binData, u32 binSize) {
 		return false;
 	}
 
-	if (pDH[DO_driverSize] > pAH[DO_allocatedSpace]) {
-		// Not enough space for patch
-		return false;
-	}
-	
 	dldiFileSize = 1 << pDH[DO_driverSize];
 
 	memOffset = readAddr (pAH, DO_text_start);
 	if (memOffset == 0) {
 			memOffset = readAddr (pAH, DO_startup) - DO_code;
+	}
+
+	const bool largeDldi = (pDH[DO_driverSize] > pAH[DO_allocatedSpace]);
+
+	if (largeDldi) {
+		const u32 a9exeAddress = *(u32*)0x02FFFE24;
+		u32* a9exe = (u32*)a9exeAddress;
+		const bool libnds2 = (a9exe[0] == 0xEA000007 && a9exe[1] == 0x39444F4D);
+
+		if (!libnds2 && (memOffset < 0x02000000 || memOffset >= 0x03000000)) {
+			// Not enough space for patch in arm7 WRAM
+			return false;
+		}
+
+		// u32** bootloader = (u32**)0x02FF4010;
+		const u32* bootloader = (u32*)0x02FF4168;
+		const u32 bootsize = *(u32*)0x02FF4014;
+
+		tonccpy (pAH+DO_code, bootloader, bootsize);
+		*(u32*)0x02FF4010 = (u32)pAH+DO_code;
+
+		// Relocate DLDI file to bootstub RAM space
+		pAH = (data_t*)(dsiMode&&!dsMode ? 0x02FF4180 : 0x023F4180);
+		toncset (pAH, 0, 0x8000);
+
+		memOffset = (addr_t)pAH;
 	}
 	ddmemOffset = readAddr (pDH, DO_text_start);
 	relocationOffset = memOffset - ddmemOffset;
@@ -164,7 +188,7 @@ bool dldiPatchBinary (data_t *binData, u32 binSize) {
 	// Remember how much space is actually reserved
 	pDH[DO_allocatedSpace] = pAH[DO_allocatedSpace];
 	// Copy the DLDI patch into the application
-	memcpy (pAH, pDH, dldiFileSize);
+	tonccpy (pAH, pDH, dldiFileSize);
 
 	// Fix the section pointers in the header
 	writeAddr (pAH, DO_text_start, readAddr (pAH, DO_text_start) + relocationOffset);
@@ -184,7 +208,7 @@ bool dldiPatchBinary (data_t *binData, u32 binSize) {
 	writeAddr (pAH, DO_shutdown, readAddr (pAH, DO_shutdown) + relocationOffset);
 
 	// Put the correct DLDI magic string back into the DLDI header
-	memcpy (pAH, dldiMagicString, sizeof (dldiMagicString));
+	tonccpy (pAH, dldiMagicString, sizeof (dldiMagicString));
 
 	if (pDH[DO_fixSections] & FIX_ALL) { 
 		// Search through and fix pointers within the data section of the file
@@ -215,9 +239,104 @@ bool dldiPatchBinary (data_t *binData, u32 binSize) {
 
 	if (pDH[DO_fixSections] & FIX_BSS) { 
 		// Initialise the BSS to 0
-		memset (&pAH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
+		toncset (&pAH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
+	}
+
+	if (largeDldi) {
+		data_t* pAH2 = &(binData[patchOffset]);
+		tonccpy (pAH2, pAH, DO_code);
 	}
 
 	return true;
+}
+
+void dldiDecompressBinary (void) {
+	extern void LZ77_Decompress(u8* source, u8* destination);
+	LZ77_Decompress((u8*)0x02FF8004, (u8*)_dldi_start);
+
+	dldiRelocateBinary();
+}
+
+void dldiRelocateBinary (void) {
+	addr_t memOffset;			// Offset of DLDI after the file is loaded into memory
+	addr_t relocationOffset;	// Value added to all offsets within the patch to fix it properly
+	addr_t ddmemOffset;			// Original offset used in the DLDI file
+	addr_t ddmemStart;			// Start of range that offsets can be in the DLDI file
+	addr_t ddmemEnd;			// End of range that offsets can be in the DLDI file
+	addr_t ddmemSize;			// Size of range that offsets can be in the DLDI file
+	addr_t addrIter;
+
+	data_t *pDH = _dldi_start;
+
+	memOffset = 0x06000000;
+	ddmemOffset = readAddr (pDH, DO_text_start);
+	relocationOffset = memOffset - ddmemOffset;
+
+	ddmemStart = readAddr (pDH, DO_text_start);
+	ddmemSize = (1 << pDH[DO_driverSize]);
+	ddmemEnd = ddmemStart + ddmemSize;
+
+	// Fix the function pointers in the header
+	writeAddr (pDH, DO_startup, readAddr (pDH, DO_startup) + relocationOffset);
+	writeAddr (pDH, DO_isInserted, readAddr (pDH, DO_isInserted) + relocationOffset);
+	writeAddr (pDH, DO_readSectors, readAddr (pDH, DO_readSectors) + relocationOffset);
+	writeAddr (pDH, DO_writeSectors, readAddr (pDH, DO_writeSectors) + relocationOffset);
+	writeAddr (pDH, DO_clearStatus, readAddr (pDH, DO_clearStatus) + relocationOffset);
+	writeAddr (pDH, DO_shutdown, readAddr (pDH, DO_shutdown) + relocationOffset);
+
+	if (pDH[DO_fixSections] & FIX_ALL) { 
+		// Search through and fix pointers within the data section of the file
+		for (addrIter = (readAddr(pDH, DO_text_start) - ddmemStart); addrIter < (readAddr(pDH, DO_data_end) - ddmemStart); addrIter++) {
+			if ((ddmemStart <= readAddr(pDH, addrIter)) && (readAddr(pDH, addrIter) < ddmemEnd)) {
+				writeAddr (pDH, addrIter, readAddr(pDH, addrIter) + relocationOffset);
+			}
+		}
+	}
+
+	if (pDH[DO_fixSections] & FIX_GLUE) { 
+		// Search through and fix pointers within the glue section of the file
+		for (addrIter = (readAddr(pDH, DO_glue_start) - ddmemStart); addrIter < (readAddr(pDH, DO_glue_end) - ddmemStart); addrIter++) {
+			if ((ddmemStart <= readAddr(pDH, addrIter)) && (readAddr(pDH, addrIter) < ddmemEnd)) {
+				writeAddr (pDH, addrIter, readAddr(pDH, addrIter) + relocationOffset);
+			}
+		}
+	}
+
+	if (pDH[DO_fixSections] & FIX_GOT) { 
+		// Search through and fix pointers within the Global Offset Table section of the file
+		for (addrIter = (readAddr(pDH, DO_got_start) - ddmemStart); addrIter < (readAddr(pDH, DO_got_end) - ddmemStart); addrIter++) {
+			if ((ddmemStart <= readAddr(pDH, addrIter)) && (readAddr(pDH, addrIter) < ddmemEnd)) {
+				writeAddr (pDH, addrIter, readAddr(pDH, addrIter) + relocationOffset);
+			}
+		}
+	}
+
+	if (pDH[DO_fixSections] & FIX_BSS) { 
+		// Initialise the BSS to 0
+		toncset (&pDH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
+	}
+
+	// Fix the section pointers in the header
+	writeAddr (pDH, DO_text_start, readAddr (pDH, DO_text_start) + relocationOffset);
+	writeAddr (pDH, DO_data_end, readAddr (pDH, DO_data_end) + relocationOffset);
+	writeAddr (pDH, DO_glue_start, readAddr (pDH, DO_glue_start) + relocationOffset);
+	writeAddr (pDH, DO_glue_end, readAddr (pDH, DO_glue_end) + relocationOffset);
+	writeAddr (pDH, DO_got_start, readAddr (pDH, DO_got_start) + relocationOffset);
+	writeAddr (pDH, DO_got_end, readAddr (pDH, DO_got_end) + relocationOffset);
+	writeAddr (pDH, DO_bss_start, readAddr (pDH, DO_bss_start) + relocationOffset);
+	writeAddr (pDH, DO_bss_end, readAddr (pDH, DO_bss_end) + relocationOffset);
+}
+
+void dldiClearBss (void) {
+	data_t *pDH = _dldi_start;
+
+	addr_t ddmemSize = (1 << pDH[DO_driverSize]);			// Size of range that offsets can be in the DLDI file
+
+	if (ddmemSize <= 0x4000) return; // For <= 16KB DLDI file, BSS has already been cleared
+
+	if (pDH[DO_fixSections] & FIX_BSS) { 
+		// Initialise the BSS to 0
+		toncset (&pDH[readAddr(pDH, DO_bss_start)] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
+	}
 }
 #endif

@@ -468,19 +468,24 @@ void bottomBgLoad() {
 	std::string bottomBGFile = "nitro:/graphics/bottombg.png";
 
 	char temp[256];
+	char tempNested[256];
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().dsi_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().dsi_theme.c_str()), (ms().dsi_theme.c_str()));
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms()._3ds_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms()._3ds_theme.c_str()), (ms()._3ds_theme.c_str()));
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().r4_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().r4_theme.c_str()), (ms().r4_theme.c_str()));
 			break;
 		case TWLSettings::EThemeWood:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().ak_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().ak_theme.c_str()), (ms().ak_theme.c_str()));
 			break;
 		case TWLSettings::EThemeSaturn:
 			// sprintf(temp, "nitro:/graphics/bottombg_saturn.png");
@@ -492,6 +497,8 @@ void bottomBgLoad() {
 
 	if (access(temp, F_OK) == 0)
 		bottomBGFile = std::string(temp);
+	else if (access(tempNested, F_OK) == 0)
+		bottomBGFile = std::string(tempNested);
 
 	std::vector<unsigned char> image;
 	uint imageWidth, imageHeight;
@@ -563,7 +570,7 @@ auto getMenuEntryTexture(MenuEntry entry) {
 			return &dlp_icons.images[0];
 		case MenuEntry::GBA:
 		{
-			bool hasGbaCart = sys().isRegularDS() && (((u8*)GBAROM)[0xB2] == 0x96);
+			bool hasGbaCart = sys().isRegularDS() && ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || (((u8*)GBAROM)[0xB2] == 0x96));
 			if(hasGbaCart || sdFound()) {
 				if(initialTouchedPosition == MenuEntry::GBA) {
 					if(currentTouchedPosition != MenuEntry::GBA)
@@ -706,6 +713,7 @@ void vBlankHandler()
 		if (whiteScreen) {
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			if (showProgressBar) {
+				if (progressBarLength > 192) progressBarLength = 192;
 				int barXpos = 31;
 				int barYpos = 169;
 				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, RGB15(23, 23, 23));
@@ -1139,19 +1147,24 @@ void topBgLoad(void) {
 	sprintf(filePath, "nitro:/graphics/topbg.png");
 
 	char temp[256];
+	char tempNested[256];
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", ms().dsi_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().dsi_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().dsi_theme.c_str()), (ms().dsi_theme.c_str()));
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", ms()._3ds_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms()._3ds_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms()._3ds_theme.c_str()), (ms()._3ds_theme.c_str()));
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", ms().r4_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().r4_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().r4_theme.c_str()), (ms().r4_theme.c_str()));
 			break;
 		case TWLSettings::EThemeWood:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", ms().ak_theme.c_str());
+			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().ak_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().ak_theme.c_str()), (ms().ak_theme.c_str()));
 			break;
 		case TWLSettings::EThemeSaturn:
 			// sprintf(temp, "nitro:/graphics/topbg_saturn.png");
@@ -1163,6 +1176,8 @@ void topBgLoad(void) {
 
 	if (access(temp, F_OK) == 0)
 		sprintf(filePath, "%s", temp);
+	else if (access(tempNested, F_OK) == 0)
+		sprintf(filePath, "%s", tempNested);
 
 	std::vector<unsigned char> image;
 	uint imageWidth, imageHeight;

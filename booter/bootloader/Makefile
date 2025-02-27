@@ -31,7 +31,7 @@ CFLAGS	:=	-g -Wall -O2 \
 
 CFLAGS	+=	$(INCLUDE) $(EXTRA_CFLAGS) -DARM7 -DNO_DLDI
 
-ASFLAGS	:=	-g $(ARCH) -flto $(EXTRA_CFLAGS) $(INCLUDE)
+ASFLAGS	:=	-g $(ARCH) -flto $(EXTRA_CFLAGS) $(INCLUDE) -DNO_DLDI
 LDFLAGS	=	-nostartfiles -T $(TOPDIR)/load.ld -g $(ARCH) -Wl,-Map,$(TARGET).map
 
 LIBS	:= 

@@ -1,0 +1,42 @@
+name: Upload source files to Crowdin
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'manual/nitrofiles/languages/en/**'
+      - 'quickmenu/nitrofiles/languages/en/**'
+      - 'romsel_dsimenutheme/nitrofiles/languages/en/*'
+      - 'settings/nitrofiles/languages/en/*'
+      - 'title/nitrofiles/languages/en/*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm:20241104
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Setup environment
+        run: git config --global safe.directory '*'
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install python -y
+
+      - name: Build test
+        run: |
+          make package
+
+      - name: Push to Crowdin
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+        env:
+          CROWDIN_TOKEN: ${{ secrets.CROWDIN_TOKEN }}

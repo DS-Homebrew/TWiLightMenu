@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: devkitpro/devkitarm
+    container: devkitpro/devkitarm:20241104
     name: Build with Docker using devkitARM
     steps:
       - name: Checkout repo
@@ -56,7 +56,6 @@ jobs:
           rm -rf 7zfile/debug
           rm -rf 7zfile/roms
           rm "7zfile/3DS - CFW users/Games supported with widescreen.txt"
-          rm "7zfile/AP-patched games.txt"
           rm 7zfile/snemul.cfg
 
           cp -r 7zfile/ TWiLightMenu/
@@ -105,8 +104,6 @@ jobs:
           7z a TWiLightMenu-Flashcard.7z TWiLightMenu
           mv TWiLightMenu-Flashcard.7z ~/artifacts
 
-          # apfix.pck
-          cp 7zfile/_nds/TWiLightMenu/extras/apfix.pck ~/artifacts
           # widescreen.pck
           cp 7zfile/_nds/TWiLightMenu/extras/widescreen.pck ~/artifacts
       - name: Publish build to GH Actions

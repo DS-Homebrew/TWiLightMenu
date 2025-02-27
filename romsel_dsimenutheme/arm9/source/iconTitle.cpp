@@ -188,6 +188,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnrWirelessIcon[num] = 0;
 	toncset(gameTid[num], 0, 4);
+	isValid[num] = false;
 	isTwlm[num] = false;
 	isUnlaunch[num] = false;
 	isDSiWare[num] = false;
@@ -201,7 +202,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 		infoFound[num] = false;
 	}
 
-	if (ms().showCustomIcons && customIcon[num] < 2) {
+	if (ms().showCustomIcons && customIcon[num] < 2 && (!fromArgv || customIcon[num] <= 0)) {
 		sNDSBannerExt &banner = bnriconTile[num];
 		bool argvHadPng = customIcon[num] == 1;
 		u8 iconCopy[512];
@@ -452,6 +453,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 
 		if (num < 40) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
+			isValid[num] = (ndsHeader.arm9destination >= 0x02000000 && ndsHeader.arm9destination < 0x03000000 && ndsHeader.arm9executeAddress >= 0x02000000 && ndsHeader.arm9executeAddress < 0x03000000);
 			isTwlm[num] = (strcmp(gameTid[num], "SRLA") == 0);
 			isUnlaunch[num] = (memcmp(ndsHeader.gameTitle, "UNLAUNCH.DSI", 12) == 0);
 			romVersion[num] = ndsHeader.romversion;
@@ -472,6 +474,11 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 			} else
 			if (arm9StartSig[2] == 0xE1DC00B6 // SDK 3-5
 			 && arm9StartSig[3] == 0xE3500000) {
+				isHomebrew[num] = false;
+				isModernHomebrew[num] = false;
+			} else
+			if (arm9StartSig[2] == 0xEAFFFFFF // SDK 4 (HM DS Cute)
+			 && arm9StartSig[3] == 0xE1DC00B6) {
 				isHomebrew[num] = false;
 				isModernHomebrew[num] = false;
 			}

@@ -294,21 +294,23 @@ void loadFixedBanner(bool isSlot1) {
 	}
 }
 
-void getGameInfo(int num, bool isDir, const char* name)
+void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 {
 	bnriconPalLine[num] = 0;
 	bnriconPalLoaded[num] = 0;
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
-	bnriconisDSi[num] = false;
 	bnrWirelessIcon[num] = 0;
-	customIcon[num] = 0;
 	isDSiWare[num] = false;
 	isHomebrew[num] = true;
 	isModernHomebrew[num] = true;
-	infoFound[num] = false;
+	if (!fromArgv) {
+		bnriconisDSi[num] = false;
+		customIcon[num] = 0;
+		infoFound[num] = false;
+	}
 
-	if (ms().showCustomIcons) {
+	if (ms().showCustomIcons && customIcon[num] < 2 && (!fromArgv || customIcon[num] <= 0)) {
 		toncset(&ndsBanner, 0, sizeof(sNDSBannerExt));
 		bool customIconGood = false;
 
@@ -448,7 +450,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 					// this is a directory!
 					clearBannerSequence(num);
 				} else {
-					getGameInfo(num, false, p);
+					getGameInfo(num, false, p, true);
 				}
 			} else {
 				// this is not an nds/app file!
@@ -513,6 +515,11 @@ void getGameInfo(int num, bool isDir, const char* name)
 				} else
 				if (arm9StartSig[2] == 0xE1DC00B6 // SDK 3-5
 				 && arm9StartSig[3] == 0xE3500000) {
+					isHomebrew[num] = false;
+					isModernHomebrew[num] = false;
+				} else
+				if (arm9StartSig[2] == 0xEAFFFFFF // SDK 4 (HM DS Cute)
+				 && arm9StartSig[3] == 0xE1DC00B6) {
 					isHomebrew[num] = false;
 					isModernHomebrew[num] = false;
 				}

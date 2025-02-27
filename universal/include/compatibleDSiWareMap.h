@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 472
+// Total: 474
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -45,6 +45,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAO", // All-Star Air Hockey
 	"K2Z", // G.G Series: Altered Weapon
 	"KF2", // Amakuchi! Dairoujou
+	"KWGE", "KWGJ", "KWGC", // Animal Crossing Calculator
 	"KPC", // Animal Puzzle Adventure
 	"KY8", // Anne's Doll Studio: Antique Collection
 	"K54", // Anne's Doll Studio: Gothic Collection
@@ -255,6 +256,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KWM", // Magical Whip
 	"KJO", // Magnetic Joe
 	"KYL", // Make Up & Style
+	"KWF", // Mario Calculator
 	"KM9", // Master of Illusion Express: Deep Psyche / A Little Bit of... Magic Made Fun: Deep Psyche
 	"KMFT", "KMFP", "KMFJ", // Master of Illusion Express: Funny Face / A Little Bit of... Magic Made Fun: Funny Face
 	"KMD", // Master of Illusion Express: Matchmaker / A Little Bit of... Magic Made Fun: Matchmaker
@@ -479,11 +481,12 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 29
+// Total: 31
 static const char compatibleGameListB4DSMEP[][5] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
 	"K2Z", // G.G Series: Altered Weapon
+	"KWG", // Animal Crossing Calculator
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"KBEV", // Bejeweled Twist (Europe, Australia)
 	"KCT", // Chess Challenge!
@@ -496,6 +499,7 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"K5M", // G.G Series: The Last Knight
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KYL", // Make Up & Style
+	"KWF", // Mario Calculator
 	"KUP", // Match Up!
 	"KWK", // Mega Words
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
@@ -521,6 +525,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // 21 Blackjack
 	0, // 5 in 1 Solitaire
 	3, // G.G Series: Altered Weapon
+	0, // Animal Crossing Calculator
 	0, // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	3, // Bejeweled Twist (Europe, Australia)
 	0, // Chess Challenge!
@@ -533,6 +538,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	3, // G.G Series: The Last Knight
 	0, // The Legend of Zelda: Four Swords: Anniversary Edition
 	0, // Make Up & Style
+	0, // Mario Calculator
 	0, // Match Up!
 	0, // Mega Words
 	2, // Meikyou Kokugo: Rakubiki Jiten
@@ -655,6 +661,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KXT", // 99Seconds
 	"KT3", // Academy Tic-Tac-Toe
 	"KAX", // Animal Boxing
+	"KWGV", // Animal Crossing Calculator (Europe, Australia) (Not counted)
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KUV", // Bloons TD 4
 	"KYN", // Cake Ninja: XMAS

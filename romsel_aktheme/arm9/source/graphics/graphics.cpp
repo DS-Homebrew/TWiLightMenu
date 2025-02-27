@@ -1799,6 +1799,12 @@ void graphicsLoad()
 
 	std::string themePath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/akmenu/themes/" + ms().ak_theme;
 	{
+		std::string themePathNested = themePath + "/" + ms().ak_theme;
+		if (access(themePathNested.c_str(), F_OK) == 0) {
+			themePath = themePathNested;
+		}
+	}
+	{
 		std::string pathTop;
 		if (access((themePath + "/upper_screen.bmp").c_str(), F_OK) == 0) {
 			pathTop = themePath + "/upper_screen.bmp";

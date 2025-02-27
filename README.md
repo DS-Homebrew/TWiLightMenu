@@ -3,7 +3,7 @@
   <a href="https://gbatemp.net/threads/ds-i-3ds-twilight-menu-gui-for-ds-i-games-and-ds-i-menu-replacement.472200/">
    <img src="https://img.shields.io/badge/GBAtemp-Thread-blue.svg" alt="GBAtemp Thread">
   </a>
-  <a href="https://discord.gg/yD3spjv">
+  <a href="https://discord.gg/fCzqcWteC4">
    <img src="https://img.shields.io/badge/Discord%20Server-%23twilight--menu--dev-green.svg" alt="Discord Server">
   </a>
   <a href="https://github.com/DS-Homebrew/TWiLightMenu/actions?query=workflow%3A%22Build+TWiLight+Menu%2B%2B%22">
@@ -100,6 +100,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## Secondary Developers
 - [DieGo](https://github.com/DieGo367): Adding support for custom ROM/folder icons and improvements for custom skins
 - [lifehackerhansol](https://github.com/lifehackerhansol): Improving support for flashcard autobooting and kernel loading
+    - [Deletecat](https://github.com/Deletecat): Original R4SDHC autoboot file containing a [flashcard-bootstrap](https://github.com/lifehackerhansol/flashcard-bootstrap) binary
 - [NightScript](https://github.com/NightScript370): Code cleanup, defining code standards, added flashcard functionality for Wood UI theme, manual pages
 ## App Launchers
 - [ahezard](https://github.com/ahezard), [shutterbug2000](https://github.com/shutterbug2000) and [Rocket Robz](https://github.com/RocketRobz): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used for launching Nintendo DS(i) ROMs off the SD card)
@@ -108,7 +109,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - archiede: [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS) (used for launching SNES ROMs)
      - [Coto](https://coto88.bitbucket.io/): [SNEmulDS Revival](https://bitbucket.org/Coto88/snemulds)
 - [chishm](https://github.com/chishm): [tuna-viDS](https://github.com/chishm/tuna-vids) (used for playing Xvid videos)
-- [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob) (used for launching Gameboy ROMs)
+- [Stewmath](https://github.com/Stewmath): [GameYob](https://github.com/Stewmath/GameYob) (used for launching Gameboy ROMs)
 - [FluBBaOfWard](https://github.com/FluBBaOfWard): [S8DS](https://github.com/FluBBaOfWard/S8DS) (used for launching Sega Master System, Game Gear, SG-1000/SG-3000, and ColecoVision ROMs), [NitroGrafx](https://github.com/FluBBaOfWard/NitroGrafx) (used for launching PC Engine/TurboGrafx-16 ROMs), [NitroSwan](https://github.com/FluBBaOfWard/NitroSwan) (used for launching WonderSwan ROMs), and [NGPDS](https://github.com/FluBBaOfWard/NGPDS) (used for launching Neo Geo Pocket ROMs)
 - [FluBBaOfWard](https://github.com/FluBBaOfWard), [Coto](https://coto88.bitbucket.io/), and Loopy: [nesDS](https://github.com/DS-Homebrew/NesDS) (used for launching NES ROMs)
      - [Apache Thunder](https://github.com/ApacheThunder): [TWL Edition](https://github.com/ApacheThunder/NesDS) of nesDS

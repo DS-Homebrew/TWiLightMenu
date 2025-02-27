@@ -110,7 +110,6 @@ TWLSettings::TWLSettings()
 
 	slot1AccessSD = false;
 	slot1SCFGUnlock = false;
-	slot1TouchMode = false;
 	ezFlashRam = false;
 	limitedMode = 0;
 	dontShowDSiWareInDSModeWarning = false;
@@ -173,9 +172,11 @@ void TWLSettings::loadSettings()
 
 	if (sdFound() && (strncmp(romfolder[0].c_str(), "sd:", 3) != 0 || access(romfolder[0].c_str(), F_OK) != 0)) {
 		romfolder[0] = "sd:/";
+		usingdefaultdir[0] = true;
 	}
 	if (flashcardFound() && (strncmp(romfolder[1].c_str(), "fat:", 4) != 0 || access(romfolder[1].c_str(), F_OK) != 0)) {
 		romfolder[1] = "fat:/";
+		usingdefaultdir[1] = true;
 	}
 
 	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
@@ -308,7 +309,6 @@ void TWLSettings::loadSettings()
 
 	slot1AccessSD = settingsini.GetInt("SRLOADER", "SLOT1_ENABLESD", slot1AccessSD);
 	slot1SCFGUnlock = settingsini.GetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
-	slot1TouchMode = settingsini.GetInt("SRLOADER", "SLOT1_TOUCH_MODE", slot1TouchMode);
 	ezFlashRam = settingsini.GetInt("SRLOADER", "EZ_FLASH_RAM", ezFlashRam);
 	limitedMode = settingsini.GetInt("SRLOADER", "LIMITED_MODE", limitedMode);
 	dontShowDSiWareInDSModeWarning = settingsini.GetInt("SRLOADER", "DONT_SHOW_DSIWARE_IN_DS_MODE_WARNING", dontShowDSiWareInDSModeWarning);
@@ -474,7 +474,6 @@ void TWLSettings::saveSettings()
 
 	settingsini.SetInt("SRLOADER", "SLOT1_ENABLESD", slot1AccessSD);
 	settingsini.SetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
-	settingsini.SetInt("SRLOADER", "SLOT1_TOUCH_MODE", slot1TouchMode);
 	settingsini.SetInt("SRLOADER", "LIMITED_MODE", limitedMode);
 	settingsini.SetInt("SRLOADER", "DONT_SHOW_DSIWARE_IN_DS_MODE_WARNING", dontShowDSiWareInDSModeWarning);
 	settingsini.SetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
