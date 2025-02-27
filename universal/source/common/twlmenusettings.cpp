@@ -324,7 +324,7 @@ void TWLSettings::loadSettings()
 	ak_theme = settingsini.GetString("SRLOADER", "AK_THEME", ak_theme);
 	ak_zoomIcons = settingsini.GetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
-	kernelUseable = !(io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA);
+	kernelUseable = (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS);
 	if (kernelUseable) {
 		const bool woodKernel = (
 		(memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
