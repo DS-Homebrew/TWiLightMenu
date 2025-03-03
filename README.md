@@ -14,7 +14,7 @@
   </a>
 </p>
 
-TWiLight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
+**TW**i**L**ight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
 It can launch games for the Nintendo DS(i), GameBoy Advance, and plenty of retro consoles, as well as DSTWO plugins (if you use a DSTWO).
 
 # Compiling
@@ -93,7 +93,8 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 # Credits
 ## Main Developers
 - [Rocket Robz](https://github.com/RocketRobz): Lead Developer
-- [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ & adding the ability to load sub-themes off the SD card for DSi/3DS themes
+- [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ & adding the ability to load themes off the SD card for DSi/3DS UIs
+    - Me: Re-developed the Wood UI with pieces of the original code ported over
 - [Pk11](https://github.com/Epicpkmn11): Adding the ability to load custom themes off the SD card for the original R4 UI, implemented sorting & made manuals use PNG, improved font rendering, providing a custom background for Unlaunch, managing translations, and various bug fixes
 ## Secondary Developers
 - [DieGo](https://github.com/DieGo367): Adding support for custom ROM/folder icons and improvements for custom themes
