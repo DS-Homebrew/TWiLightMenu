@@ -15,7 +15,7 @@
 </p>
 
 TWiLight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
-It can launch Nintendo DS(i), SNES, NES, GameBoy (Color), GameBoy Advance, Sega GameGear/Master System, SG-1000/SC-3000 & Mega Drive/Genesis, Atari 2600/5200/7800/XEGS, MSX, Intellivision, Neo Geo Pocket, Sord M5, PC Engine/TurboGrafx-16, WonderSwan, and ColecoVision ROMs, as well as DSTWO plugins (if you use a DSTWO).
+It can launch games for the Nintendo DS(i), GameBoy Advance, and plenty of retro consoles, as well as DSTWO plugins (if you use a DSTWO).
 
 # Compiling
 
@@ -71,15 +71,13 @@ TWiLight Menu++ is composed of multiple "sub-projects" which all work together t
   - `/_nds/TWiLightMenu/imageview.srldr`
 - **manual**: instruction manual for TWiLight Menu++
   - Creates `/_nds/TWiLightMenu/manual.srldr`
-- **quickmenu**: DS Lite menu, the old classic ui
+- **quickmenu**: DS Lite menu, the old classic UI
   - Creates `/_nds/TWiLightMenu/mainmenu.srldr`
-- **resources**: merges the antipiracy and widescreen patches into a package file
-  - `/_nds/TWiLightMenu/extras/apfix.pck` and `/_nds/TWiLightMenu/extras/widescreen.pck`
-- **romsel_aktheme**: menu for the Wood UI theme
+- **romsel_aktheme**: menu for the Wood UI
   - Creates `/_nds/TWiLightMenu/akmenu.srldr`
-- **romsel_dsimenutheme**: menu for the DSi theme used by "Nintendo DSi", "Nintendo 3DS", "SEGA Saturn", and "Homebrew Launcher"
+- **romsel_dsimenutheme**: menu for the "Nintendo DSi", "Nintendo 3DS", "SEGA Saturn", and "Homebrew Launcher" UIs
   - Creates `/_nds/TWiLightMenu/dsimenu.srldr`
-- **romsel_r4theme**: menu for the R4 theme used by "R4 Original" and "Gameboy Color"
+- **romsel_r4theme**: menu for the "R4 Original" and "Gameboy Color" UIs
   - Creates `/_nds/TWiLightMenu/r4menu.srldr`
 - **settings**: settings menu
   - Creates `/_nds/TWiLightMenu/settings.srldr`
