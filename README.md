@@ -93,8 +93,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 # Credits
 ## Main Developers
 - [Rocket Robz](https://github.com/RocketRobz): Lead Developer
-- [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ & adding the ability to load themes off the SD card for DSi/3DS UIs
-    - Me: Re-developed the Wood UI with pieces of the original code ported over
+- [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ (before re-development) & adding the ability to load themes off the SD card for DSi/3DS UIs
 - [Pk11](https://github.com/Epicpkmn11): Adding the ability to load custom themes off the SD card for the original R4 UI, implemented sorting & made manuals use PNG, improved font rendering, providing a custom background for Unlaunch, managing translations, and various bug fixes
 ## Secondary Developers
 - [DieGo](https://github.com/DieGo367): Adding support for custom ROM/folder icons and improvements for custom themes
@@ -134,10 +133,11 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - IkaMusumeYiyaRoxie: General N64 MIDI Soundfont, used for the title splash fanfare on old versions
 ## Sound
 - [dbry](https://github.com/dbry): Xtreme Quality IMA-ADPCM decoder code from [adpcm-xq](https://github.com/dbry/adpcm-xq).
-- [Firexploit](https://github.com/Firexploit): 3DS UI sounds for the 3DS theme, which some are also used in the DSi theme.
+- [Firexploit](https://github.com/Firexploit): 3DS UI sounds, which some are also used in the DSi UI.
 ## Others
 - [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI
+    - Me: Re-developed the Wood UI with pieces of the original code ported over
 - [Arisotura](https://github.com/Arisotura): ROM list from melonDS, and BIOS dumper code from [dsibiosdumper](https://github.com/Arisotura/dsibiosdumper)
 - [Dartz150](https://github.com/Dartz150): Provided fix for *Iridion II* & *Top Gun: Combat Zones* GBA games
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat
