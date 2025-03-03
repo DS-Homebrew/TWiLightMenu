@@ -137,7 +137,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## Others
 - [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI
-    - Me: Re-developed the Wood UI with pieces of the original code ported over
+    - [Rocket Robz](https://github.com/RocketRobz): Re-developed the Wood UI with pieces of the original code ported over
 - [Arisotura](https://github.com/Arisotura): ROM list from melonDS, and BIOS dumper code from [dsibiosdumper](https://github.com/Arisotura/dsibiosdumper)
 - [Dartz150](https://github.com/Dartz150): Provided fix for *Iridion II* & *Top Gun: Combat Zones* GBA games
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat
