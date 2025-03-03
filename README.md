@@ -96,9 +96,9 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## Main Developers
 - [Rocket Robz](https://github.com/RocketRobz): Lead Developer
 - [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ & adding the ability to load sub-themes off the SD card for DSi/3DS themes
-- [Pk11](https://github.com/Epicpkmn11): Adding the ability to load skins off the SD card for the R4 theme, implemented sorting & made manuals use PNG, improved font rendering, providing a custom background for Unlaunch, managing translations, and various bug fixes
+- [Pk11](https://github.com/Epicpkmn11): Adding the ability to load custom themes off the SD card for the original R4 UI, implemented sorting & made manuals use PNG, improved font rendering, providing a custom background for Unlaunch, managing translations, and various bug fixes
 ## Secondary Developers
-- [DieGo](https://github.com/DieGo367): Adding support for custom ROM/folder icons and improvements for custom skins
+- [DieGo](https://github.com/DieGo367): Adding support for custom ROM/folder icons and improvements for custom themes
 - [lifehackerhansol](https://github.com/lifehackerhansol): Improving support for flashcard autobooting and kernel loading
     - [Deletecat](https://github.com/Deletecat): Original R4SDHC autoboot file containing a [flashcard-bootstrap](https://github.com/lifehackerhansol/flashcard-bootstrap) binary
 - [NightScript](https://github.com/NightScript370): Code cleanup, defining code standards, added flashcard functionality for Wood UI theme, manual pages

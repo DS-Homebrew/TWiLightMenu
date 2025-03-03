@@ -380,9 +380,9 @@ void loadMenuSrldrList (const char* dirPath) {
 	}
 }
 
-std::optional<Option> opt_subtheme_select(Option::Int &optVal)
+std::optional<Option> opt_theme_select(void)
 {
-	switch ((TWLSettings::TTheme)optVal.get()) {
+	switch (ms().theme) {
 	case TWLSettings::EThemeDSi:
 		return Option(STR_SKINSEL_DSI, STR_AB_SETSKIN, Option::Str(&ms().dsi_theme), dsiThemeList);
 	case TWLSettings::EThemeR4:
@@ -1115,22 +1115,27 @@ int settingsMode(void)
 				 TLanguage::ELangKazakh,
 				 TLanguage::ELangGalician})
 		// Theme
-		.option(STR_THEME,
-				STR_DESCRIPTION_THEME_1,
-				Option::Int((int *)&ms().theme, opt_subtheme_select),
-				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, STR_WOOD_UI, STR_GAMEBOY_COLOR},
+		.option(STR_USER_INTERFACE,
+				STR_DESCRIPTION_USER_INTERFACE,
+				Option::Int((int *)&ms().theme),
+				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, STR_WOOD, STR_GAMEBOY_COLOR},
 				{TTheme::EThemeDSi, TTheme::ETheme3DS, TTheme::EThemeSaturn, TTheme::EThemeHBL, TTheme::EThemeR4, TTheme::EThemeWood, TTheme::EThemeGBC})
+		.option(STR_CUSTOM_THEME,
+				STR_DESCRIPTION_CUSTOM_THEME,
+				Option::Nul(opt_theme_select),
+				{STR_PRESS_A},
+				{0})
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})
 		.option("DSi/Saturn: SELECT", STR_DESCRIPTION_SELECTBUTTONOPTION, Option::Bool(&ms().showSelectMenu), {STR_SELECT_MENU, STR_DS_CLASSIC_MENU}, {true, false})
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int((int *)&ms().dsiMusic),
-				{STR_OFF, STR_REGULAR+" (DSi)", STR_REGULAR+" (3DS)", STR_DSI_SHOP, "HBL", STR_THEME},
+				{STR_OFF, STR_REGULAR+" (DSi)", STR_REGULAR+" (3DS)", STR_DSI_SHOP, "HBL", STR_CUSTOM_THEME},
 				{TDSiMusic::EMusicOff, TDSiMusic::EMusicRegular, TDSiMusic::EMusicRegular3D, TDSiMusic::EMusicShop, TDSiMusic::EMusicHBL, TDSiMusic::EMusicTheme})
 		.option(STR_SETTINGSMUSIC,
 				STR_DESCRIPTION_SETTINGSMUSIC,
 				Option::Int((int *)&ms().settingsMusic),
-				{STR_THEME, STR_OFF, STR_NINTENDO_DSI, STR_NINTENDO_3DS},
+				{STR_CURRENT_UI, STR_OFF, STR_NINTENDO_DSI, STR_NINTENDO_3DS},
 				{TSettingsMusic::ESMusicTheme, TSettingsMusic::ESMusicOff, TSettingsMusic::ESMusicDSi, TSettingsMusic::ESMusic3DS})
 		.option(STR_FONT,
 				STR_DESCRIPTION_FONT,
