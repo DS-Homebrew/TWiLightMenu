@@ -1114,12 +1114,13 @@ int settingsMode(void)
 				 TLanguage::ELangKorean,
 				 TLanguage::ELangKazakh,
 				 TLanguage::ELangGalician})
-		// Theme
+		// User Interface
 		.option(STR_USER_INTERFACE,
 				STR_DESCRIPTION_USER_INTERFACE,
 				Option::Int((int *)&ms().theme),
 				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, STR_WOOD, STR_GAMEBOY_COLOR},
 				{TTheme::EThemeDSi, TTheme::ETheme3DS, TTheme::EThemeSaturn, TTheme::EThemeHBL, TTheme::EThemeR4, TTheme::EThemeWood, TTheme::EThemeGBC})
+		// Custom Theme
 		.option(STR_CUSTOM_THEME,
 				STR_DESCRIPTION_CUSTOM_THEME,
 				Option::Nul(opt_theme_select),
