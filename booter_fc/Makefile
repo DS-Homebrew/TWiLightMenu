@@ -75,9 +75,9 @@ autoboot:
 	#### R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+
 	cp booter_r4ig.nds _DS_MENU.dat
 	dlditool flashcart_specifics/DLDI/ak2.dldi _DS_MENU.dat
-	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/"
-	cp _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/_DS_MENU.dat"
-	cp _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra, r4ids.cn cards, R4iTT 3DS, R4i3D 2012+, r4isdhc.com NEW, r4isdhc.com 2013, r4isdhc.hk -2019, r4igold.cc 3DS translucent, r4i-gold.me 2013+/akmenu4.nds"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Ultra/"
+	cp _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra/_DS_MENU.dat"
+	cp _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra/akmenu4.nds"
 
 	#### r4dspro.com
 	##### Cart doesn't support CMD25, thus needs a modified AK2 DLDI
@@ -108,14 +108,14 @@ autoboot:
 	#### Ace3DS+, Ace3DS X, R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version
 	dlditool flashcart_specifics/DLDI/acep.dldi booter_r4ils.nds
 	r4denc -k 0x4002 booter_r4ils.nds _DS_MENU.dat
-	mkdir -p "../7zfile/Flashcard users/Autoboot/Ace3DS+, Ace3DS X, R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version/"
-	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Ace3DS+, Ace3DS X, R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version/_DS_MENU.dat"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/Ace3DS+/"
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Ace3DS+/_DS_MENU.dat"
 	
 	##### Some carts require gamecode to be R4XX, but are still considered as Ace3DS+ clones
 	ndstool -c _DSMENU.nds -7 $(TARGET)_r4ils.arm7.elf -9 $(TARGET)_fc.arm9.elf -h 0x200 -g "####" "##" "R4XX" -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	dlditool flashcart_specifics/DLDI/acep.dldi _DSMENU.nds
 	r4denc -k 0x4002 _DSMENU.nds _DSMENU.dat
-	mv _DSMENU.dat "../7zfile/Flashcard users/Autoboot/Ace3DS+, Ace3DS X, R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version/_DSMENU.dat"
+	mv _DSMENU.dat "../7zfile/Flashcard users/Autoboot/Ace3DS+/_DSMENU.dat"
 	# no longer need _DSMENU.nds
 	rm -f _DSMENU.nds
 	
@@ -145,11 +145,8 @@ autoboot:
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Original R4 & M3 Simply/_DS_MENU.dat"
 
 	#### N5 / R4-PLUS
-	cp _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/N5 & R4-PLUS/_DS_MENU.dat"
-
-	#### Original R4SDHC
 	# Since this is the last one, move it instead of copy
-	mv _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/Original R4SDHC/TTMenu.dat"
+	mv _DS_MENU.nds "../7zfile/Flashcard users/Autoboot/N5 & R4-PLUS/_DS_MENU.dat"
 
 	#### EDGE (TODO: Find out how to encrypt the .dat file)
 	# cp booter_fc.nds EDGE.dat
@@ -238,16 +235,16 @@ autoboot:
 	cp booter_acekard2.nds TTMenu.dat
 	dlditool flashcart_specifics/DLDI/ttio.dldi TTMenu.dat
 
-	mkdir -p "../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, r4i-gold.com R4 3DS Gold RTS, PK3DS, & R4i-SDHC v1.41 + v1.42/"
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/DSTT, DSTTi, DSTTi Gold, DSTT-Advance, R4Top Revolution, r4i-gold.com R4 3DS Gold RTS, PK3DS, & R4i-SDHC v1.41 + v1.42/TTMenu.dat"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/DSTT/"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/DSTT/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Ace3DS/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/Ace3DS/3DSCARD.dat"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/Ace3DS/TTMenu.dat"
 
-	mkdir -p "../7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, R4i 3D (www.r4i-gold.hk), GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)/"
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, R4i 3D (www.r4i-gold.hk), GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)/iLL.iL"
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/Blue R4i Revolution v1.4.1, R4i Gold Upgrade Revolution v1.4.1, R4i 3D (www.r4i-gold.hk), GoldR4 3DS (v4.301 kernel) & R4i SDHC Upgrade Revolution (www.r4i-sdhc.com.tw)/TTMenu.dat"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/Blue R4i Revolution/"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/Blue R4i Revolution/iLL.iL"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/Blue R4i Revolution/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i Gold Upgrade Revolution (v1.14b kernel)/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i Gold Upgrade Revolution (v1.14b kernel)/R4i.dat"
@@ -279,10 +276,10 @@ autoboot:
 	$(PYTHON) flashcart_specifics/r4isdhc/r4isdhc.py arm9.bin new9.bin
 	ndstool -c R4.dat -9 new9.bin -7 $(TARGET)_fc.arm7.elf -r9 0x02000000 -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	rm -rf new9.bin arm9.bin arm7.bin banner.bin header.bin
-	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/"
-	mv R4.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/R4.dat"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i-SDHC/"
+	mv R4.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC/R4.dat"
 	## For YSMenu softreset, use the original TTMenu.dat
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC, r4isdhc.com cards 2014+, R4i SDHC Upgrade Revolution, R4DSiXL3D, R4i Advance, R4-IIIi, R4 SDHC Revolution, R4(i) Pocket, R4i Gold (v1.4.1) (3DS) & R4xDS/TTMenu.dat"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/_DS_MENU.dat"

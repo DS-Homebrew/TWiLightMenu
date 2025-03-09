@@ -264,6 +264,7 @@ public:
 	std::string defaultRomfolder[2];
 	std::string romPath[2];
 
+	bool cursorAlwaysAtStart;
 	int pagenum[2];
 	int cursorPosition[2];
 	int saveCursorPosition[2];
@@ -365,6 +366,7 @@ public:
 	bool useBootstrap;
 	bool btsrpBootloaderDirect;
 	TBootstrapFile bootstrapFile;
+	bool kernelUseable;
 
 	std::string internetBrowserPath;
 	bool internetBrowserLaunched;

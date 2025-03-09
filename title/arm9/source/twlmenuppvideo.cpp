@@ -606,6 +606,9 @@ void twlMenuVideo(void) {
 		// Load heart-shaped BG for Valentine's Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppHeart.png");
 		longVersion = ms().longSplashJingle;
+	} else if (strcmp(currentDate, "02/27") == 0) {
+		// Load Pokémon Day BG
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppPokemon.png");
 	} else if (strcmp(currentDate, "03/10") == 0 || strcmp(currentDate, sm64dsReleaseDate()) == 0) {
 		// Load Mario-themed BG & logo for MAR10 Day
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppMario.png");

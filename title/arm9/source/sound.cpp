@@ -125,6 +125,9 @@ SoundControl::SoundControl()
 	} else if (strcmp(currentDate, sonic1ReleaseDate()) == 0) {
 		// Load Sonic 1 extra life sound
 		sprintf(wavPath, "nitro:/sound/sonic.wav");
+	} else if (strcmp(currentDate, "02/27") == 0) {
+		// Load Pokémon Day sound
+		sprintf(wavPath, "nitro:/sound/pokemon.wav");
 	} else if (strcmp(currentDate, "03/10") == 0) {
 		// Load Mario coin sound for MAR10 Day
 		sprintf(wavPath, "nitro:/sound/coin.wav");

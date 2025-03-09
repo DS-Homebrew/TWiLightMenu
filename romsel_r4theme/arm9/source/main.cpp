@@ -1784,7 +1784,7 @@ int r4Theme(void) {
 					unlaunchRomBoot(argarray[0]);
 				} else if (useBackend) {
 					if ((((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && romUnitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
-					|| (ms().secondaryDevice && (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA))
+					|| (ms().secondaryDevice && !ms().kernelUseable)
 					|| (romUnitCode == 3 && !ms().homebrewBootstrap)) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());

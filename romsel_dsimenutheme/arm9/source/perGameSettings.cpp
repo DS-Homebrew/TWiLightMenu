@@ -536,13 +536,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 	bool runInShown = false;
 
 	bool showCheats = (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)
-	/*|| (ms().secondaryDevice && !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)
-		&& ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
-	 	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
-     	 || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)))*/
+	|| !ms().kernelUseable
 	|| !ms().secondaryDevice) && bnrRomType[CURPOS] == 0 && !isHomebrew[CURPOS] && !isDSiWare[CURPOS]
 	&& memcmp(gameTid[CURPOS], "HND", 3) != 0
 	&& memcmp(gameTid[CURPOS], "HNE", 3) != 0);
@@ -634,7 +628,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		const bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || unitCode[CURPOS] == 3)) || !ms().secondaryDevice);
+		const bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && (!ms().kernelUseable || unitCode[CURPOS] == 3)) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
@@ -664,7 +658,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			perGameOps++;
 			perGameOp[perGameOps] = 5;	// Card Read DMA
 		}
-		if (ms().secondaryDevice && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) && unitCode[CURPOS] < 3) {
+		if (ms().secondaryDevice && ms().kernelUseable && unitCode[CURPOS] < 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}

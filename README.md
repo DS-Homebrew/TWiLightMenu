@@ -14,8 +14,8 @@
   </a>
 </p>
 
-TWiLight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
-It can launch Nintendo DS(i), SNES, NES, GameBoy (Color), GameBoy Advance, Sega GameGear/Master System, SG-1000/SC-3000 & Mega Drive/Genesis, Atari 2600/5200/7800/XEGS, MSX, Intellivision, Neo Geo Pocket, Sord M5, PC Engine/TurboGrafx-16, WonderSwan, and ColecoVision ROMs, as well as DSTWO plugins (if you use a DSTWO).
+**TW**i**L**ight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
+It can launch games for the Nintendo DS(i), GameBoy Advance, and plenty of retro consoles, as well as DSTWO plugins (if you use a DSTWO).
 
 # Compiling
 
@@ -71,15 +71,13 @@ TWiLight Menu++ is composed of multiple "sub-projects" which all work together t
   - `/_nds/TWiLightMenu/imageview.srldr`
 - **manual**: instruction manual for TWiLight Menu++
   - Creates `/_nds/TWiLightMenu/manual.srldr`
-- **quickmenu**: DS Lite menu, the old classic ui
+- **quickmenu**: DS Lite menu, the old classic UI
   - Creates `/_nds/TWiLightMenu/mainmenu.srldr`
-- **resources**: merges the antipiracy and widescreen patches into a package file
-  - `/_nds/TWiLightMenu/extras/apfix.pck` and `/_nds/TWiLightMenu/extras/widescreen.pck`
-- **romsel_aktheme**: menu for the Wood UI theme
+- **romsel_aktheme**: menu for the Wood UI
   - Creates `/_nds/TWiLightMenu/akmenu.srldr`
-- **romsel_dsimenutheme**: menu for the DSi theme used by "Nintendo DSi", "Nintendo 3DS", "SEGA Saturn", and "Homebrew Launcher"
+- **romsel_dsimenutheme**: menu for the "Nintendo DSi", "Nintendo 3DS", "SEGA Saturn", and "Homebrew Launcher" UIs
   - Creates `/_nds/TWiLightMenu/dsimenu.srldr`
-- **romsel_r4theme**: menu for the R4 theme used by "R4 Original" and "Gameboy Color"
+- **romsel_r4theme**: menu for the "R4 Original" and "Gameboy Color" UIs
   - Creates `/_nds/TWiLightMenu/r4menu.srldr`
 - **settings**: settings menu
   - Creates `/_nds/TWiLightMenu/settings.srldr`
@@ -95,13 +93,13 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 # Credits
 ## Main Developers
 - [Rocket Robz](https://github.com/RocketRobz): Lead Developer
-- [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ & adding the ability to load sub-themes off the SD card for DSi/3DS themes
-- [Pk11](https://github.com/Epicpkmn11): Adding the ability to load skins off the SD card for the R4 theme, implemented sorting & made manuals use PNG, improved font rendering, providing a custom background for Unlaunch, managing translations, and various bug fixes
+- [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ (before re-development) & adding the ability to load themes off the SD card for DSi/3DS UIs
+- [Pk11](https://github.com/Epicpkmn11): Adding the ability to load custom themes off the SD card for the original R4 UI, implemented sorting & made manuals use PNG, improved font rendering, providing a custom background for Unlaunch, managing translations, and various bug fixes
 ## Secondary Developers
-- [DieGo](https://github.com/DieGo367): Adding support for custom ROM/folder icons and improvements for custom skins
+- [DieGo](https://github.com/DieGo367): Adding support for custom ROM/folder icons and improvements for custom themes
 - [lifehackerhansol](https://github.com/lifehackerhansol): Improving support for flashcard autobooting and kernel loading
     - [Deletecat](https://github.com/Deletecat): Original R4SDHC autoboot file containing a [flashcard-bootstrap](https://github.com/lifehackerhansol/flashcard-bootstrap) binary
-- [NightScript](https://github.com/NightScript370): Code cleanup, defining code standards, added flashcard functionality for Wood UI theme, manual pages
+- [NightScript](https://github.com/NightScript370): Code cleanup, defining code standards, added flashcard functionality for Wood UI (before re-development), manual pages
 ## App Launchers
 - [ahezard](https://github.com/ahezard), [shutterbug2000](https://github.com/shutterbug2000) and [Rocket Robz](https://github.com/RocketRobz): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used for launching Nintendo DS(i) ROMs off the SD card)
 - [Alekmaul](https://github.com/alekmaul): [AmeDS](https://www.gamebrew.org/wiki/AmeDS) (used for launching Amstrad CPC ROMs)
@@ -123,11 +121,11 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [wavemotion](https://github.com/wavemotion-dave): [Nintellivision/NINTV-DS](https://github.com/wavemotion-dave/NINTV-DS) (used for launching Intellivision ROMs)
 ## Graphics & Themes
 - [Absent-Reality](http://pixeljoint.com/p/19283.htm): Intellivision icon
-- davi: Border for GBC theme (originally for GameYob)
+- davi: Border for GBC UI (originally for GameYob)
 - [fail0verflow](https://github.com/fail0verflow/), Fluto, and Arkhandar: Homebrew Channel/Launcher graphics
-- [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi theme's `SELECT` menu
+- [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi UI's `SELECT` menu
 - [Mr. Start](https://github.com/Arthur-Start): Super Nintendo DS splash screen
-- [PW5190](https://github.com/PW5190): Kirby-themed TWLMenu++ splash screen
+- [PW5190](https://github.com/PW5190): Kirby-themed and Pokémon Day TWLMenu++ splash screens
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons
 ## Music
@@ -135,10 +133,11 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - IkaMusumeYiyaRoxie: General N64 MIDI Soundfont, used for the title splash fanfare on old versions
 ## Sound
 - [dbry](https://github.com/dbry): Xtreme Quality IMA-ADPCM decoder code from [adpcm-xq](https://github.com/dbry/adpcm-xq).
-- [Firexploit](https://github.com/Firexploit): 3DS UI sounds for the 3DS theme, which some are also used in the DSi theme.
+- [Firexploit](https://github.com/Firexploit): 3DS UI sounds, which some are also used in the DSi UI.
 ## Others
 - [ahezard](https://github.com/ahezard): NDMA code from nds-bootstrap
 - Another World & Yellow Wood Goblin: The original akMenu/Wood UI
+    - [Rocket Robz](https://github.com/RocketRobz): Re-developed the Wood UI with pieces of the original code ported over
 - [Arisotura](https://github.com/Arisotura): ROM list from melonDS, and BIOS dumper code from [dsibiosdumper](https://github.com/Arisotura/dsibiosdumper)
 - [Dartz150](https://github.com/Dartz150): Provided fix for *Iridion II* & *Top Gun: Combat Zones* GBA games
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat
@@ -148,9 +147,6 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - Nikokaro: Found no-tilt patches for *WarioWare: Twisted!*, and *Yoshi Topsy-Turvy*. ([GBAtemp thread](https://gbatemp.net/threads/gba-no-tilt-patches-for-ds-users.584128/))
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS
 - RadDude McCoolguy, fintogive, KazoWAR, Vague Rant, [gamemasterplc](https://github.com/gamemasterplc), [Rocket Robz](https://github.com/RocketRobz), [ChampionLeake](https://github.com/ChampionLeake), [DeadSkullzJr](https://github.com/DeadSkullzJr), [spellboundtriangle](https://github.com/spellboundtriangle), [LedyBacer](https://github.com/LedyBacer): Widescreen cheats
-- retrogamefan & Rudolph: Included AP-patches for nds-bootstrap
-   - [enler](https://github.com/enler): Fixing AP-patch for Pokemon Black 2 (Japan) for DS⁽ⁱ⁾ mode compatibility
-   - [Rocket Robz](https://github.com/RocketRobz): Fixing some DS⁽ⁱ⁾-Enhanced game AP-patches for DS⁽ⁱ⁾ mode compatibility
 - [SNBeast](https://github.com/SNBeast): Unlaunch patches
 - Taiju Yamada: Code used to bypass R4i-SDHC boot file protection
 ## Translators

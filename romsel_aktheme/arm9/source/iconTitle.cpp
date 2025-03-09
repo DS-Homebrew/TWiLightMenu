@@ -28,7 +28,6 @@
 #include <sys/stat.h>
 #include <gl2d.h>
 #include "common/bootstrapsettings.h"
-#include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
@@ -958,7 +957,7 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 		bool customIconGood = false;
 
 		// First try banner bin
-		snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.bin", sdFound() ? "sd" : "fat", name);
+		snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.bin", sys().isRunFromSD() ? "sd" : "fat", name);
 		if (access(customIconPath, F_OK) == 0) {
 			customIcon[num] = 2; // custom icon is a banner bin
 			FILE *file = fopen(customIconPath, "rb");
@@ -1000,7 +999,7 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 			}
 		} else if (customIcon[num] == 0) {
 			// If no banner bin, try png
-			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sdFound() ? "sd" : "fat", name);
+			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sys().isRunFromSD() ? "sd" : "fat", name);
 			customIcon[num] = (access(customIconPath, F_OK) == 0);
 			if (customIcon[num]) {
 				std::vector<unsigned char> image;

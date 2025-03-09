@@ -494,13 +494,7 @@ void perGameSettings (std::string filename) {
 	bool runInShown = false;
 
 	bool showCheats = (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)
-	/*|| (ms().secondaryDevice && !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)
-		&& ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
-	 	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
-		 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
-    	 || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)))*/
+	|| !ms().kernelUseable
 	|| !ms().secondaryDevice) && bnrRomType == 0 && !isHomebrew && !isDSiWare
 	&& memcmp(gameTid, "HND", 3) != 0
 	&& memcmp(gameTid, "HNE", 3) != 0);
@@ -585,7 +579,7 @@ void perGameSettings (std::string filename) {
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && romUnitCode > 0) || (ms().secondaryDevice && ((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) || romUnitCode == 3)) || !ms().secondaryDevice);
+		const bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && romUnitCode > 0) || (ms().secondaryDevice && (!ms().kernelUseable || romUnitCode == 3)) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
@@ -615,7 +609,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 5;	// Card Read DMA
 		}
-		if (ms().secondaryDevice && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) && romUnitCode < 3) {
+		if (ms().secondaryDevice && ms().kernelUseable && romUnitCode < 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}

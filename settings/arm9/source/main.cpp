@@ -380,9 +380,9 @@ void loadMenuSrldrList (const char* dirPath) {
 	}
 }
 
-std::optional<Option> opt_subtheme_select(Option::Int &optVal)
+std::optional<Option> opt_theme_select(void)
 {
-	switch ((TWLSettings::TTheme)optVal.get()) {
+	switch (ms().theme) {
 	case TWLSettings::EThemeDSi:
 		return Option(STR_SKINSEL_DSI, STR_AB_SETSKIN, Option::Str(&ms().dsi_theme), dsiThemeList);
 	case TWLSettings::EThemeR4:
@@ -1114,23 +1114,29 @@ int settingsMode(void)
 				 TLanguage::ELangKorean,
 				 TLanguage::ELangKazakh,
 				 TLanguage::ELangGalician})
-		// Theme
-		.option(STR_THEME,
-				STR_DESCRIPTION_THEME_1,
-				Option::Int((int *)&ms().theme, opt_subtheme_select),
-				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, STR_WOOD_UI, STR_GAMEBOY_COLOR},
+		// User Interface
+		.option(STR_USER_INTERFACE,
+				STR_DESCRIPTION_USER_INTERFACE,
+				Option::Int((int *)&ms().theme),
+				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_R4_ORIGINAL, STR_WOOD, STR_GAMEBOY_COLOR},
 				{TTheme::EThemeDSi, TTheme::ETheme3DS, TTheme::EThemeSaturn, TTheme::EThemeHBL, TTheme::EThemeR4, TTheme::EThemeWood, TTheme::EThemeGBC})
+		// Custom Theme
+		.option(STR_CUSTOM_THEME,
+				STR_DESCRIPTION_CUSTOM_THEME,
+				Option::Nul(opt_theme_select),
+				{STR_PRESS_A},
+				{0})
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})
 		.option("DSi/Saturn: SELECT", STR_DESCRIPTION_SELECTBUTTONOPTION, Option::Bool(&ms().showSelectMenu), {STR_SELECT_MENU, STR_DS_CLASSIC_MENU}, {true, false})
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int((int *)&ms().dsiMusic),
-				{STR_OFF, STR_REGULAR+" (DSi)", STR_REGULAR+" (3DS)", STR_DSI_SHOP, "HBL", STR_THEME},
+				{STR_OFF, STR_REGULAR+" (DSi)", STR_REGULAR+" (3DS)", STR_DSI_SHOP, "HBL", STR_CUSTOM_THEME},
 				{TDSiMusic::EMusicOff, TDSiMusic::EMusicRegular, TDSiMusic::EMusicRegular3D, TDSiMusic::EMusicShop, TDSiMusic::EMusicHBL, TDSiMusic::EMusicTheme})
 		.option(STR_SETTINGSMUSIC,
 				STR_DESCRIPTION_SETTINGSMUSIC,
 				Option::Int((int *)&ms().settingsMusic),
-				{STR_THEME, STR_OFF, STR_NINTENDO_DSI, STR_NINTENDO_3DS},
+				{STR_CURRENT_UI, STR_OFF, STR_NINTENDO_DSI, STR_NINTENDO_3DS},
 				{TSettingsMusic::ESMusicTheme, TSettingsMusic::ESMusicOff, TSettingsMusic::ESMusicDSi, TSettingsMusic::ESMusic3DS})
 		.option(STR_FONT,
 				STR_DESCRIPTION_FONT,
@@ -1147,6 +1153,7 @@ int settingsMode(void)
 				Option::Bool(&ms().dsClassicCustomFont),
 				{STR_DEFAULT, STR_CUSTOM_SPLASH},
 				{false, true})
+		.option(STR_CURSOR_ALWAYS_AT_START, STR_DESCRIPTION_CURSOR_ALWAYS_AT_START, Option::Bool(&ms().cursorAlwaysAtStart), {STR_YES, STR_NO}, {true, false})
 		.option(STR_SHOW_EMPTY_BOXES, STR_DESCRIPTION_SHOW_EMPTY_BOXES, Option::Bool(&ms().hideEmptyBoxes), {STR_SHOW, STR_HIDE}, {false, true})
 		.option(STR_SORT_METHOD, STR_DESCRIPTION_SORT_METHOD, Option::Int((int *)&ms().sortMethod), {STR_ALPHABETICAL, STR_RECENT, STR_MOST_PLAYED, STR_FILE_TYPE, STR_CUSTOM}, {TSortMethod::ESortAlphabetical, TSortMethod::ESortRecent, TSortMethod::ESortMostPlayed, TSortMethod::ESortFileType, TSortMethod::ESortCustom})
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false})
@@ -1397,14 +1404,8 @@ int settingsMode(void)
 	using TMegaDriveEmulator = TWLSettings::TMegaDriveEmulator;
 	using TSlot1LaunchMethod = TWLSettings::TSlot1LaunchMethod;
 
-	if (flashcardFound() && (dsiFeatures() || sdFound())) {
-		if (sdFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
-			gamesPage.option("S1SD: "+STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
-		} else if (!isDSiMode()) {
-			gamesPage.option(STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
-		}
-	} else if ((io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) && !(dsiFeatures() || sdFound())) {
-		gamesPage.option(STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
+	if (flashcardFound() && ms().kernelUseable) {
+		gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
 	}
 
 	gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
