@@ -1186,8 +1186,11 @@ int settingsMode(void)
 		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {STR_MICRO_SD_CARD, STR_SD_CARD}, {true, false});
 	}
 
-	guiPage.option(STR_CLOCK_SYSTEM, STR_DESCRIPTION_CLOCK_SYSTEM, Option::Bool(&ms().show12hrClock), {STR_12_HOUR, STR_24_HOUR}, {true, false})
-		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
+	guiPage.option(STR_CLOCK_SYSTEM, STR_DESCRIPTION_CLOCK_SYSTEM, Option::Bool(&ms().show12hrClock), {STR_12_HOUR, STR_24_HOUR}, {true, false});
+	if (!ms().macroMode) {
+		guiPage.option(STR_FILENAME_DISPLAY, STR_DESCRIPTION_FILENAME_DISPLAY, Option::Int(&ms().filenameDisplay), {STR_OFF, STR_ABOVE_BANNER, STR_ALWAYS}, {0, 1, 2});
+	}
+	guiPage.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
 		.option(STR_CUSTOMICONS, STR_DESCRIPTION_CUSTOMICONS, Option::Bool(&ms().showCustomIcons), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_ANIM_ON_HIGHLIGHT, STR_DESCRIPTION_AK_ANIM_ON_HIGHLIGHT, Option::Bool(&ms().ak_zoomIcons), {STR_ZOOM, STR_NONE}, {true, false})
 		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_TWLMENU, Option::Bool(&ms().logging), {STR_ON, STR_OFF}, {true, false})

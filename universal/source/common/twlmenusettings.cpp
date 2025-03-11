@@ -73,6 +73,7 @@ TWLSettings::TWLSettings()
 	showHidden = false;
 	showPhoto = true;
 	showBoxArt = 1;
+	filenameDisplay = 0;
 	animateDsiIcons = true;
 	showCustomIcons = true;
 	preventDeletion = false;
@@ -271,6 +272,7 @@ void TWLSettings::loadSettings()
 	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
 	if (!dsiFeatures() && showBoxArt == 2) // Reset to 1 if not in DSi mode
 		showBoxArt = 1;
+	filenameDisplay = settingsini.GetInt("SRLOADER", "FILENAME_DISPLAY", filenameDisplay);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 	showCustomIcons = settingsini.GetInt("SRLOADER", "SHOW_CUSTOM_ICONS", showCustomIcons);
 	preventDeletion = settingsini.GetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
@@ -434,6 +436,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 	settingsini.SetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
 	settingsini.SetInt("SRLOADER", "SHOW_SELECT_MENU", showSelectMenu);
+	settingsini.SetInt("SRLOADER", "ROCKET_ROBZ_LOGO", rocketRobzLogo);
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SetInt("SRLOADER", "SETTINGS_MUSIC", settingsMusic);
 	settingsini.SetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
@@ -456,7 +459,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
 	settingsini.SetInt("SRLOADER", "SHOW_PHOTO", showPhoto);
 	settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
-	settingsini.SetInt("SRLOADER", "ROCKET_ROBZ_LOGO", rocketRobzLogo);
+	settingsini.SetInt("SRLOADER", "FILENAME_DISPLAY", filenameDisplay);
 	settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 	settingsini.SetInt("SRLOADER", "SHOW_CUSTOM_ICONS", showCustomIcons);
 	settingsini.SetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);

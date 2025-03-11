@@ -310,6 +310,7 @@ public:
 	bool showHidden;
 	bool showPhoto;
 	int showBoxArt;
+	int filenameDisplay;
 	bool animateDsiIcons;
 	bool showCustomIcons;
 	bool preventDeletion;

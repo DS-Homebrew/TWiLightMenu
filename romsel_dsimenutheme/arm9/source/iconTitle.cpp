@@ -798,8 +798,14 @@ void iconUpdate(bool isDir, const char *name, int num) {
 	logPrint("\n");
 }
 
-void writeBannerText(std::string_view text) { writeBannerText(FontGraphic::utf8to16(text)); }
-void writeBannerText(std::u16string text) {
+void writeBannerText(std::string_view name, std::string_view text) { writeBannerText(FontGraphic::utf8to16(name), FontGraphic::utf8to16(text)); }
+void writeBannerText(std::string_view name, std::u16string text) { writeBannerText(FontGraphic::utf8to16(name), text); }
+void writeBannerText(std::u16string name, std::u16string text) {
+	if (ms().filenameDisplay == 2) {
+		text = name;
+	}
+	const bool nameAndTextMatch = (name == text);
+
 	// Split to lines since DS game titles have manual line breaks
 	std::vector<std::u16string> lines;
 	size_t newline = text.find('\n');
@@ -848,8 +854,11 @@ void writeBannerText(std::u16string text) {
 	for (auto line : lines) {
 		out += line + u'\n';
 	}
-	if (tc().titleboxTextLarge() && !ms().macroMode) {
+	if (tc().titleboxTextLarge() && !ms().macroMode && ((ms().filenameDisplay == 0) || nameAndTextMatch)) {
 		printLarge(false, 0, tc().titleboxTextY() - (((lines.size() - 1) * largeFontHeight()) / 2), out, Alignment::center, FontPalette::titlebox);
+	} else if (tc().titleboxTextLarge() && (ms().filenameDisplay == 1) && !ms().macroMode && !nameAndTextMatch) {
+		printSmall(false, 8, tc().titleboxTextY() - (smallFontHeight() * 1.5), name, Alignment::left, FontPalette::titlebox);
+		printSmall(false, 0, (tc().titleboxTextY() + (smallFontHeight() / 1.5)) - (((lines.size() - 1) * smallFontHeight()) / 2), out, Alignment::center, FontPalette::titlebox);
 	} else {
 		printSmall(false, 0, tc().titleboxTextY() - (((lines.size() - 1) * smallFontHeight()) / 2), out, Alignment::center, FontPalette::titlebox);
 	}
@@ -922,7 +931,7 @@ void titleUpdate(bool isDir, std::string_view name, int num) {
 		if (theme_showdialogbox) {
 			writeDialogTitleFolder(splitLongDialogTitle(name == ".." ? STR_BACK : name));
 		} else {
-			writeBannerText(name == ".." ? STR_BACK : name);
+			writeBannerText(name, name == ".." ? STR_BACK : name);
 		}
 	} else if (infoFound[num] || extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
@@ -930,13 +939,14 @@ void titleUpdate(bool isDir, std::string_view name, int num) {
 		if (theme_showdialogbox) {
 			infoFound[num] ? writeDialogTitle(cachedTitle[num]) : writeDialogTitle(u"???");
 		} else {
-			infoFound[num] ? writeBannerText(cachedTitle[num]) : writeBannerText(name);
+			infoFound[num] ? writeBannerText(name, cachedTitle[num]) : writeBannerText(name, name);
 		}
 	} else {
 		if (theme_showdialogbox) {
 			writeDialogTitle(splitLongDialogTitle(name.substr(0, name.rfind('.'))));
 		} else {
-			writeBannerText(name.substr(0, name.rfind('.')));
+			std::string_view nameSubstr = name.substr(0, name.rfind('.'));
+			writeBannerText(nameSubstr, nameSubstr);
 		}
 	}
 }
