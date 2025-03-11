@@ -28,7 +28,7 @@ DSTT folder:
 
 r4dspro.com folder:
 - r4dspro.com cards
-- Almost all r4isdhc.hk 2020+ cards (Black shell)
+- r4isdhc.hk 2020+ (Black shell, year in ribbon)
 
 R4 Ultra folder:
 - R4 Ultra
