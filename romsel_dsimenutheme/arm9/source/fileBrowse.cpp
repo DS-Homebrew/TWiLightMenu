@@ -3376,7 +3376,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				if ((PAGENUM != orgPage) || (CURPOS != orgCursorPosition)) {
 					currentBg = 1;
-					writeBannerText(STR_PLEASE_WAIT);
+					writeBannerText(STR_PLEASE_WAIT, STR_PLEASE_WAIT);
 					updateText(false);
 
 					int dest = CURPOS + (PAGENUM * 40);

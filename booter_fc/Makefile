@@ -79,12 +79,12 @@ autoboot:
 	cp _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra/_DS_MENU.dat"
 	cp _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4 Ultra/akmenu4.nds"
 
-	#### r4dspro.com
+	#### r4dspro.com, r4isdhc.hk 2020+ (Black shell, year in ribbon)
 	##### Cart doesn't support CMD25, thus needs a modified AK2 DLDI
 	dlditool flashcart_specifics/DLDI/ak2_cmd24.dldi _DS_MENU.dat
-	mkdir -p "../7zfile/Flashcard users/Autoboot/r4dspro.com"
-	cp _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/r4dspro.com/_DS_MENU.dat"
-	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/r4dspro.com/akmenu4.nds"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/R4DS Pro"
+	cp _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4DS Pro/_DS_MENU.dat"
+	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/R4DS Pro/akmenu4.nds"
 
 	#### EDGEi (not EDGE or iEDGE)
 	cp booter_r4ig.nds dsedgei.dat

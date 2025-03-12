@@ -26,6 +26,10 @@ DSTT folder:
 - PK3DS
 - R4i-SDHC v1.41 + v1.42
 
+R4DS Pro folder:
+- r4dspro.com cards
+- r4isdhc.hk 2020+ (Black shell, year in ribbon)
+
 R4 Ultra folder:
 - R4 Ultra
 - r4ids.cn cards
