@@ -926,27 +926,18 @@ static inline std::u16string splitLongDialogTitle(std::string_view text) {
 }
 
 void titleUpdate(bool isDir, std::string_view name, int num) {
-	bool theme_showdialogbox = (showdialogbox || (ms().theme == TWLSettings::EThemeSaturn && currentBg == 1) || (ms().theme == TWLSettings::EThemeHBL && dbox_showIcon));
+	const bool theme_showdialogbox = (showdialogbox || (ms().theme == TWLSettings::EThemeSaturn && currentBg == 1) || (ms().theme == TWLSettings::EThemeHBL && dbox_showIcon));
 	if (isDir) {
 		if (theme_showdialogbox) {
 			writeDialogTitleFolder(splitLongDialogTitle(name == ".." ? STR_BACK : name));
 		} else {
 			writeBannerText(name, name == ".." ? STR_BACK : name);
 		}
-	} else if (infoFound[num] || extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
-		// this is an nds/app file!
-		// or a file with custom banner text
+	} else {
 		if (theme_showdialogbox) {
 			infoFound[num] ? writeDialogTitle(cachedTitle[num]) : writeDialogTitle(u"???");
 		} else {
 			infoFound[num] ? writeBannerText(name, cachedTitle[num]) : writeBannerText(name, name);
-		}
-	} else {
-		if (theme_showdialogbox) {
-			writeDialogTitle(splitLongDialogTitle(name.substr(0, name.rfind('.'))));
-		} else {
-			std::string_view nameSubstr = name.substr(0, name.rfind('.'));
-			writeBannerText(nameSubstr, nameSubstr);
 		}
 	}
 }
