@@ -1522,14 +1522,12 @@ void titleUpdate(int num, bool isDir, const char* name, const bool highlighted)
 	if (isDir && (strcmp(name, "..") == 0)) {
 		// text
 		writeBannerText(num, "Back", highlighted);
-	} else if (!isDir && (ms().ak_viewMode == TWLSettings::EViewInternal || ms().ak_viewMode == TWLSettings::EViewSmallIcon) && (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound[num])) {
+	} else if ((ms().ak_viewMode >= TWLSettings::EViewInternal) && infoFound[num]) {
 		// this is an nds/app file!
 		// or a file with custom banner text
-		if (infoFound[num]) {
-			writeBannerText(num, cachedTitle[num], highlighted);
-		} else {
-			writeBannerText(num, name, highlighted);
-		}
+		writeBannerText(num, cachedTitle[num], highlighted);
+	} else if (ms().ak_viewMode == TWLSettings::EViewList || ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
+		writeBannerText(num, name, highlighted);
 	} else {
 		std::vector<std::string> lines;
 		lines.push_back(name);

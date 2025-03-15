@@ -1537,14 +1537,10 @@ void titleUpdate(bool isDir, const char* name)
 	if (isDir && (strcmp(name, "..") == 0)) {
 		// text
 		writeBannerText("Back");
-	} else if (!isDir && (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound)) {
+	} else if (infoFound) {
 		// this is an nds/app file!
 		// or a file with custom banner text
-		if (infoFound) {
-			writeBannerText(cachedTitle);
-		} else {
-			writeBannerText(name);
-		}
+		writeBannerText(cachedTitle);
 	} else {
 		std::vector<std::string> lines;
 		lines.push_back(name);

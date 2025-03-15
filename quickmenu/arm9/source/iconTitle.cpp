@@ -826,7 +826,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 
 void titleUpdate(int num, bool top, bool isDir, const char* name)
 {
-	if ((strcmp(name, "slot1") == 0) || extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound[num]) {
+	if ((strcmp(name, "slot1") == 0) || infoFound[num]) {
 		// this is an nds/app file!
 		// or a file with custom banner text
 		if (infoFound[num]) {
