@@ -1024,7 +1024,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		if (colorTable) {
 			color = colorTable[color];
 		}
-		if (alpha == 0) {
+		if (alpha == 255) {
 			_bmpImageBuffer[i] = color;
 		} else {
 			_bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], alpha);
@@ -1055,7 +1055,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 			if (colorTable) {
 				color = colorTable[color];
 			}
-			if (alpha == 0) {
+			if (alpha == 255) {
 				_bmpImageBuffer2[i] = color;
 			} else {
 				_bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], alpha);
