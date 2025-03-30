@@ -85,6 +85,8 @@ extern bool dsModeForced;
 
 extern int vblankRefreshCounter;
 
+extern vector<char *> argarray;
+
 int file_count = 0;
 int last_used_box = 0;
 static int fileStartPos = 0; // The position of the first thing that is not a directory.
@@ -648,7 +650,6 @@ void launchDsClassicMenu(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch DS Classic Menu
-	vector<char *> argarray;
 	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/mainmenu.srldr" : "fat:/_nds/TWiLightMenu/mainmenu.srldr"));
 	int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 	char text[32];
@@ -671,7 +672,6 @@ void launchSettings(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch TWLMenu++ Settings
-	vector<char *> argarray;
 	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr"));
 	int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 	char text[32];
@@ -1306,7 +1306,6 @@ void launchManual(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch manual
-	vector<char *> argarray;
 	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/manual.srldr" : "fat:/_nds/TWiLightMenu/manual.srldr"));
 	int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 	char text[32];

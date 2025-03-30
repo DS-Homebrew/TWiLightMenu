@@ -501,6 +501,7 @@ std::string getGameManual(const char *filename) {
 }
 
 char filePath[PATH_MAX];
+vector<char *> argarray;
 
 void doPause() {
 	while (1) {
@@ -626,7 +627,6 @@ void loadGameOnFlashcard(const char *ndsPath, bool dsGame) {
 	for (int i = 0; i < 25; i++) {
 		swiWaitForVBlank();
 	}
-	vector<char *> argarray;
 	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
 	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 	stop();
@@ -1201,7 +1201,6 @@ int dsiMenuTheme(void) {
 				filePath[pathLen + 1] = '\0';
 				pathLen++;
 			}
-			vector<char *> argarray;
 
 			bool isArgv = false;
 			if (extension(filename, {".argv"})) {
@@ -1554,7 +1553,6 @@ int dsiMenuTheme(void) {
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
 					}
-					vector<char *> argarray;
 					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
 					runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 					stop();
@@ -1817,7 +1815,6 @@ int dsiMenuTheme(void) {
 						for (int i = 0; i < 25; i++) {
 							swiWaitForVBlank();
 						}
-						vector<char *> argarray;
 						argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
 						runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 						stop();
@@ -1956,7 +1953,6 @@ int dsiMenuTheme(void) {
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
 					}
-					vector<char *> argarray;
 					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
 					runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 					stop();
@@ -2566,7 +2562,6 @@ int dsiMenuTheme(void) {
 				for (int i = 0; i < 25; i++) {
 					swiWaitForVBlank();
 				}
-				vector<char *> argarray;
 				argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
 				runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 				stop();
