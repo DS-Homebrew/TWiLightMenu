@@ -1541,15 +1541,6 @@ void ThemeTextures::unloadRotatingCubes() {
 		delete[] rotatingCubesLocation;
 	}
 }
-void ThemeTextures::unloadBoxArt() {
-	if (dsiFeatures() && !ms().macroMode && ms().theme != TWLSettings::EThemeHBL && ms().consoleModel == 0 && ms().showBoxArt == 2) {
-		toncset32(boxArtCache, 0, 0x1B8000/sizeof(u32)); // Clear box art cache before freeing
-		for (int i = 0; i < 40; i++) {
-			boxArtFound[i] = false;
-		}
-		delete[] boxArtCache;
-	}
-}
 void ThemeTextures::videoSetup() {
 	logPrint("tex().videoSetup()\n");
 	//////////////////////////////////////////////////////////

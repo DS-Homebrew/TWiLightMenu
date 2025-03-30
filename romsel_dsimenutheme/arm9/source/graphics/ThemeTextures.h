@@ -98,7 +98,6 @@ public:
 
 	void clearTopScreen();
 	void unloadRotatingCubes();
-	void unloadBoxArt();
 	static void videoSetup();
 private:
 	void applyUserPaletteToAllGrfTextures();
