@@ -4027,13 +4027,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						if (ms().theme == TWLSettings::EThemeHBL) {
 							currentBg = 0;
 							snd().fadeOutStream();
-						} else if (ms().theme != TWLSettings::EThemeSaturn) {
-							fadeType = false;		  // Fade to white
-							snd().fadeOutStream();
+						} else {
+							if (ms().theme != TWLSettings::EThemeSaturn) {
+								fadeType = false;		  // Fade to white
+								snd().fadeOutStream();
 
-							// Clear screen with white
-							rocketVideo_playVideo = false;
-							tex().unloadRotatingCubes();
+								// Clear screen with white
+								rocketVideo_playVideo = false;
+								tex().unloadRotatingCubes();
+							}
+							tex().unloadBoxArt();
 						}
 
 						if (ms().updateRecentlyPlayedList) {
