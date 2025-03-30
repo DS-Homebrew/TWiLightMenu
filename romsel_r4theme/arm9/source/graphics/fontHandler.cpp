@@ -53,8 +53,8 @@ void fontInit() {
 	smallFont = new FontGraphic({"nitro:/graphics/font/ds.nftr"});
 
 	if (colorTable) {
-		palette[3] = colorTable[palette[3]];
-		palette[7] = colorTable[palette[7]];
+		palette[3] = colorTable[palette[3] % 0x8000];
+		palette[7] = colorTable[palette[7] % 0x8000];
 	}
 	// Load palettes
 	tonccpy(BG_PALETTE, palette, sizeof(palette));

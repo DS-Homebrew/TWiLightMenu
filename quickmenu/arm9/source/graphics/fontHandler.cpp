@@ -70,7 +70,7 @@ void fontInit() {
 
 	if (colorTable) {
 		for (uint i = 1; i < sizeof(palette)/sizeof(u16); i++) {
-			palette[i] = colorTable[palette[i]];
+			palette[i] = colorTable[palette[i] % 0x8000];
 		}
 	}
 	// Load palettes

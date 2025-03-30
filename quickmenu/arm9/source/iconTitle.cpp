@@ -159,7 +159,7 @@ void loadIcon(int num, u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 
 	glDeleteTextures(1, &iconTexID[num]);
 	if (colorTable) {
 		for (int i = 0; i < (twl ? 16*8 : 16); i++) {
-			palSrc[i] = colorTable[palSrc[i]];
+			palSrc[i] = colorTable[palSrc[i] % 0x8000];
 		}
 	}
 	if (twl) {

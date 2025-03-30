@@ -54,9 +54,9 @@ void Gif::displayFrame(void) {
 	tonccpy(bgPalette, gifColorTable.data(), gifColorTable.size() * 2);
 	if (colorTable) {
 		for (unsigned int i = 0; i < gifColorTable.size(); i++) {
-			bgPalette[i] = colorTable[bgPalette[i]];
+			bgPalette[i] = colorTable[bgPalette[i] % 0x8000];
 		}
-		header.bgColor = colorTable[header.bgColor];
+		header.bgColor = colorTable[header.bgColor % 0x8000];
 	}
 
 	// Disposal method 2 = fill with bg color

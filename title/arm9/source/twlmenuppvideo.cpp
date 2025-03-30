@@ -190,7 +190,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[7], icon_Tiles, icon_TilesLen);
@@ -210,7 +210,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[3], icon_Tiles, icon_TilesLen);
@@ -230,7 +230,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[1], icon_Tiles, icon_TilesLen);
@@ -250,7 +250,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[8], icon_Tiles, icon_TilesLen);
@@ -270,7 +270,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[10], icon_Tiles, icon_TilesLen);
@@ -290,7 +290,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[0], icon_Tiles, icon_TilesLen);
@@ -310,7 +310,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[4], icon_Tiles, icon_TilesLen);
@@ -330,7 +330,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[6], icon_Tiles, icon_TilesLen);
@@ -350,7 +350,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[9], icon_Tiles, icon_TilesLen);
@@ -370,7 +370,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[5], icon_Tiles, icon_TilesLen);
@@ -390,7 +390,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[2], icon_Tiles, icon_TilesLen);
@@ -410,7 +410,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 	if (colorTable) {
 		for (int i2 = 0; i2 < icon_PalLen/2; i2++) {
-			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2)];
+			*(icon_Pal+i2) = colorTable[*(icon_Pal+i2) % 0x8000];
 		}
 	}
 	tonccpy(gfx[11], icon_Tiles, icon_TilesLen);
@@ -727,8 +727,8 @@ void twlMenuVideo(void) {
 
 	if (colorTable) {
 		for (int i=0; i<256*192; i++) {
-			frameBuffer[0][i] = colorTable[frameBuffer[0][i]];
-			frameBuffer[1][i] = colorTable[frameBuffer[1][i]];
+			frameBuffer[0][i] = colorTable[frameBuffer[0][i] % 0x8000];
+			frameBuffer[1][i] = colorTable[frameBuffer[1][i] % 0x8000];
 		}
 	}
 

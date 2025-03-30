@@ -1204,7 +1204,7 @@ void vBlankHandler() {
 			}
 			extern int getFavoriteColor(void);
 			int fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
-			if (colorTable) fillColor = colorTable[fillColor];
+			if (colorTable) fillColor = colorTable[fillColor % 0x8000];
 			if (ms().rtl()) {
 				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
 				if (progressBarLength > 0) {
@@ -1337,7 +1337,7 @@ void loadPhoto(const std::string &path) {
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			tex().photoBuffer()[i] = colorTable[color];
+			tex().photoBuffer()[i] = colorTable[color % 0x8000];
 		} else {
 			tex().photoBuffer()[i] = color;
 		}
@@ -1365,7 +1365,7 @@ void loadPhoto(const std::string &path) {
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				tex().photoBuffer2()[i] = colorTable[color];
+				tex().photoBuffer2()[i] = colorTable[color % 0x8000];
 			} else {
 				tex().photoBuffer2()[i] = color;
 			}
@@ -1439,7 +1439,7 @@ void loadBootstrapScreenshot(FILE *file) {
 			// RGB 565 -> BGR 5551
 			val = ((val >> 11) & 0x1F) | ((val & (0x1F << 6)) >> 1) | ((val & 0x1F) << 10) | BIT(15);
 			if (colorTable) {
-				val = colorTable[val]; // TODO: Remove this when nds-bootstrap supports color modes
+				val = colorTable[val % 0x8000]; // TODO: Remove this when nds-bootstrap supports color modes
 			}
 
 			u8 y = photoHeight - row - 1;
@@ -1603,7 +1603,7 @@ void graphicsInit() {
 		u16* newPalette = (u16*)bubblesPal;
 		if (colorTable) {
 			for (int i2 = 0; i2 < 6; i2++) {
-				*(newPalette+i2) = colorTable[*(newPalette+i2)];
+				*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 			}
 		}
 

@@ -158,7 +158,7 @@ void imageLoad(const char* filename) {
 			if (image[(i*4)+3] > 0) {
 				u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 				if (colorTable) {
-					color = colorTable[color];
+					color = colorTable[color % 0x8000];
 				}
 				res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 			}
@@ -188,7 +188,7 @@ void imageLoad(const char* filename) {
 			if (image[(i*4)+3] > 0) {
 				u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 				if (colorTable) {
-					color = colorTable[color];
+					color = colorTable[color % 0x8000];
 				}
 				res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 			}
@@ -281,7 +281,7 @@ void imageLoad(const char* filename) {
 				}
 				u16 color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
 				if (colorTable) {
-					color = colorTable[color];
+					color = colorTable[color % 0x8000];
 				}
 				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = color;
 				if (alternatePixel) {
@@ -307,7 +307,7 @@ void imageLoad(const char* filename) {
 				}
 				color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
 				if (colorTable) {
-					color = colorTable[color];
+					color = colorTable[color % 0x8000];
 				}
 				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = color;
 				x++;
@@ -330,7 +330,7 @@ void imageLoad(const char* filename) {
 					u16 val = *(src++);
 					u16 color = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
 					if (colorTable) {
-						color = colorTable[color];
+						color = colorTable[color % 0x8000];
 					}
 					*(dst + x) = color;
 				}
@@ -350,7 +350,7 @@ void imageLoad(const char* filename) {
 				fread(&unk, 1, 1, file);
 				pixelBuffer[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
 				if (colorTable) {
-					pixelBuffer[i] = colorTable[pixelBuffer[i]];
+					pixelBuffer[i] = colorTable[pixelBuffer[i] % 0x8000];
 				}
 			}
 			u8 *bmpImageBuffer = new u8[width * height];
@@ -381,7 +381,7 @@ void imageLoad(const char* filename) {
 				fread(&unk, 1, 1, file);
 				monoPixel[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
 				if (colorTable) {
-					monoPixel[i] = colorTable[monoPixel[i]];
+					monoPixel[i] = colorTable[monoPixel[i] % 0x8000];
 				}
 			}
 			u8 *bmpImageBuffer = new u8[(width * height)/8];
@@ -430,7 +430,7 @@ void imageLoad(const char* filename) {
 	tonccpy(BG_PALETTE, gif.gct().data(), gif.gct().size() * 2);
 	if (colorTable) {
 		for (int i = 0; i < (int)gif.gct().size(); i++) {
-			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
+			BG_PALETTE[i] = colorTable[BG_PALETTE[i] % 0x8000];
 		}
 	}
 
@@ -459,7 +459,7 @@ void bgLoad(void) {
 	tonccpy(BG_PALETTE_SUB, gif.gct().data(), gif.gct().size() * 2);
 	if (colorTable) {
 		for (int i = 0; i < (int)gif.gct().size(); i++) {
-			BG_PALETTE_SUB[i] = colorTable[BG_PALETTE_SUB[i]];
+			BG_PALETTE_SUB[i] = colorTable[BG_PALETTE_SUB[i] % 0x8000];
 		}
 	}
 
@@ -478,11 +478,11 @@ void graphicsInit() {
 		char colorTablePath[256];
 		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		if (getFileSize(colorTablePath) == 0x20000) {
-			colorTable = new u16[0x20000/sizeof(u16)];
+		if (getFileSize(colorTablePath) == 0x10000) {
+			colorTable = new u16[0x10000/sizeof(u16)];
 
 			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x20000, file);
+			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
 		}
 	}

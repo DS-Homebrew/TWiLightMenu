@@ -2428,11 +2428,11 @@ int titleMode(void)
 		char colorTablePath[256];
 		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		if (getFileSize(colorTablePath) == 0x20000) {
-			colorTable = new u16[0x20000/sizeof(u16)];
+		if (getFileSize(colorTablePath) == 0x10000) {
+			colorTable = new u16[0x10000/sizeof(u16)];
 
 			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x20000, file);
+			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
 		}
 	}

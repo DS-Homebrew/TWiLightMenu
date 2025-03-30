@@ -127,13 +127,13 @@ void pageLoad(const std::string &filename) {
 	/* tonccpy(BG_PALETTE, gif.gct().data(), std::min(0xF6u, gif.gct().size()) * 2);
 	if (colorTable) {
 		for (int i = 0; i < (int)std::min(0xF6u, gif.gct().size()); i++) {
-			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
+			BG_PALETTE[i] = colorTable[BG_PALETTE[i] % 0x8000];
 		}
 	} */
 	tonccpy(pagePal, gif.gct().data(), gif.gct().size() * 2);
 	if (colorTable) {
 		for (int i = 0; i < (int)gif.gct().size(); i++) {
-			pagePal[i] = colorTable[pagePal[i]];
+			pagePal[i] = colorTable[pagePal[i] % 0x8000];
 		}
 	}
 	if (!ms().macroMode) {
@@ -167,7 +167,7 @@ void topBarLoad(void) {
 	/* tonccpy(BG_PALETTE + 0xFC, gif.gct().data(), gif.gct().size() * 2);
 	if (colorTable) {
 		for (int i = 0xFC; i < (int)0xFC + gif.gct().size(); i++) {
-			BG_PALETTE[i] = colorTable[BG_PALETTE[i]];
+			BG_PALETTE[i] = colorTable[BG_PALETTE[i] % 0x8000];
 		}
 	} */
 	tonccpy(topBarPal+4, gif.gct().data(), gif.gct().size() * 2);
@@ -175,7 +175,7 @@ void topBarLoad(void) {
 	topBarPal[4+5] = palUserFont[favoriteColor][0];
 	if (colorTable) {
 		for (int i = 0; i < 6; i++) {
-			topBarPal[4+i] = colorTable[topBarPal[i+4]];
+			topBarPal[4+i] = colorTable[topBarPal[i+4] % 0x8000];
 		}
 	}
 
@@ -200,15 +200,15 @@ void graphicsInit() {
 		char colorTablePath[256];
 		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		if (getFileSize(colorTablePath) == 0x20000) {
-			colorTable = new u16[0x20000/sizeof(u16)];
+		if (getFileSize(colorTablePath) == 0x10000) {
+			colorTable = new u16[0x10000/sizeof(u16)];
 
 			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x20000, file);
+			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
 
 			vramSetBankD(VRAM_D_LCD);
-			tonccpy(VRAM_D, colorTable, 0x20000); // Copy LUT to VRAM
+			tonccpy(VRAM_D, colorTable, 0x10000); // Copy LUT to VRAM
 			delete[] colorTable; // Free up RAM space
 			colorTable = VRAM_D;
 		}

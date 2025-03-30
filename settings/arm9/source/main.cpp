@@ -799,7 +799,7 @@ void defaultExitHandler()
 		char colorTablePath[256];
 		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		if (getFileSize(colorTablePath) == 0x20000) {
+		if (getFileSize(colorTablePath) == 0x10000) {
 			FILE* file = fopen(currentSettingPath, "wb");
 			fwrite(ms().colorMode.c_str(), 1, ms().colorMode.size(), file);
 			fclose(file);

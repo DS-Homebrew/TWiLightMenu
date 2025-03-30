@@ -155,7 +155,7 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2
 	glDeleteTextures(1, &iconTexID);
 	if (colorTable) {
 		for (int i = 0; i < (twl ? 16*8 : 16); i++) {
-			palSrc[i] = colorTable[palSrc[i]];
+			palSrc[i] = colorTable[palSrc[i] % 0x8000];
 		}
 	}
 	if (twl) {
@@ -744,7 +744,7 @@ void loadConsoleIcons()
 	// Unknown
 	u16* newPalette = (u16*)icon_unkPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// GBA
@@ -754,133 +754,133 @@ void loadConsoleIcons()
 		newPalette = (u16*)icon_gbamodePal;
 	}
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// GB/GBC
 	newPalette = (u16*)icon_gbPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// NES
 	newPalette = (u16*)icon_nesPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// SG
 	newPalette = (u16*)icon_sgPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// SMS
 	newPalette = (u16*)icon_smsPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// GG
 	newPalette = (u16*)icon_ggPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// MD
 	newPalette = (u16*)icon_ggPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// SNES
 	newPalette = (u16*)icon_snesPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// DSTWO Plugin
 	newPalette = (u16*)icon_plgPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// A26
 	newPalette = (u16*)icon_a26Pal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// COL
 	newPalette = (u16*)icon_colPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// M5
 	newPalette = (u16*)icon_m5Pal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// INT
 	newPalette = (u16*)icon_intPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// PCE
 	newPalette = (u16*)icon_pcePal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// WS
 	newPalette = (u16*)icon_wsPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// NGP
 	newPalette = (u16*)icon_ngpPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// CPC
 	newPalette = (u16*)icon_cpcPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// Video
 	newPalette = (u16*)icon_vidPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// Image
 	newPalette = (u16*)icon_imgPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// MSX
 	newPalette = (u16*)icon_msxPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// MINI
 	newPalette = (u16*)icon_miniPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 
 	// Homebrew
 	newPalette = (u16*)icon_hbPal;
 	for (int i2 = 0; i2 < 16; i2++) {
-		*(newPalette+i2) = colorTable[*(newPalette+i2)];
+		*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 	}
 }
 

@@ -164,13 +164,13 @@ void LoadBMP(void) {
 	if (colorTable) {
 		if (ms().macroMode) {
 			for (int i=0; i<256*192; i++) {
-				frameBuffer[0][i] = colorTable[frameBuffer[0][i]];
-				frameBuffer[1][i] = colorTable[frameBuffer[1][i]];
+				frameBuffer[0][i] = colorTable[frameBuffer[0][i] % 0x8000];
+				frameBuffer[1][i] = colorTable[frameBuffer[1][i] % 0x8000];
 			}
 		} else {
 			for (int i=0; i<256*192; i++) {
-				frameBufferBot[0][i] = colorTable[frameBufferBot[0][i]];
-				frameBufferBot[1][i] = colorTable[frameBufferBot[1][i]];
+				frameBufferBot[0][i] = colorTable[frameBufferBot[0][i] % 0x8000];
+				frameBufferBot[1][i] = colorTable[frameBufferBot[1][i] % 0x8000];
 			}
 		}
 	}

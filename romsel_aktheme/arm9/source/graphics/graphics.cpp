@@ -259,7 +259,7 @@ void initSubSprites(void)
 u16 convertToDsBmp(u16 val) {
 	val = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
 	if (colorTable) {
-		return colorTable[val];
+		return colorTable[val % 0x8000];
 	}
 	return val;
 }
@@ -1107,7 +1107,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 			}
 			u16 color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
 			if (colorTable && ((type < ImageType::startButton) || (color != (0 | BIT(15))))) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000];
 			}
 			if (type == ImageType::selectionBarBg) {
 				selectionBarBg[0][(y*width)+x] = color;
@@ -1167,7 +1167,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 			}
 			color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
 			if (colorTable && ((type < ImageType::startButton) || (color != (0 | BIT(15))))) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000];
 			}
 			if (type == ImageType::selectionBarBg) {
 				selectionBarBg[1][(y*width)+x] = color;
@@ -1291,7 +1291,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 				} else {
 					u16 color = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
 					if (colorTable) {
-						color = colorTable[color];
+						color = colorTable[color % 0x8000];
 					}
 					*(dst + x) = color;
 					*(dst2 + x) = color;
@@ -1313,7 +1313,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 			fread(&unk, 1, 1, file);
 			pixelBuffer[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
 			if (colorTable && ((type < ImageType::startButton) || (pixelBuffer[i] != (0 | BIT(15))))) {
-				pixelBuffer[i] = colorTable[pixelBuffer[i]];
+				pixelBuffer[i] = colorTable[pixelBuffer[i] % 0x8000];
 			}
 		}
 		u8 *bmpImageBuffer = new u8[width * height];
@@ -1396,7 +1396,7 @@ static void loadBmp(const ImageType type, const char* filename) {
 			fread(&unk, 1, 1, file);
 			monoPixel[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
 			if (colorTable && ((type < ImageType::startButton) || (monoPixel[i] != (0 | BIT(15))))) {
-				monoPixel[i] = colorTable[monoPixel[i]];
+				monoPixel[i] = colorTable[monoPixel[i] % 0x8000];
 			}
 		}
 		u8 *bmpImageBuffer = new u8[(width * height)/8];
@@ -1517,7 +1517,7 @@ static void loadPng(const bool top, const std::string filename) {
 		if (image[(i*4)+3] > 0) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000];
 			}
 			res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 		}
@@ -1551,7 +1551,7 @@ static void loadPng(const bool top, const std::string filename) {
 		if (image[(i*4)+3] > 0) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000];
 			}
 			res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 		}
@@ -1731,11 +1731,11 @@ void graphicsInit()
 		char colorTablePath[256];
 		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		if (getFileSize(colorTablePath) == 0x20000) {
-			colorTable = new u16[0x20000/sizeof(u16)];
+		if (getFileSize(colorTablePath) == 0x10000) {
+			colorTable = new u16[0x10000/sizeof(u16)];
 
 			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x20000, file);
+			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
 		}
 	}
@@ -1907,8 +1907,8 @@ void graphicsLoad()
 		selectionBarColor2 = ini.GetInt("main list", "selectionBarColor2", RGB15(20, 25, 0)) | BIT(15);
 		selectionBarOpacity = ini.GetInt("main list", "selectionBarOpacity", 100);
 		if (colorTable) {
-			selectionBarColor1 = colorTable[selectionBarColor1];
-			selectionBarColor2 = colorTable[selectionBarColor2];
+			selectionBarColor1 = colorTable[selectionBarColor1 % 0x8000];
+			selectionBarColor2 = colorTable[selectionBarColor2 % 0x8000];
 		}
 
 		if (ini.GetInt("main list", "showSelectionBarBg", false)) {
@@ -2027,7 +2027,7 @@ void graphicsLoad()
 				daySizeY = ini.GetInt("calendar day", "dh", daySizeY);
 				dayHighlightColor = ini.GetInt("calendar day", "highlightColor", dayHighlightColor) | BIT(15);
 				if (colorTable) {
-					dayHighlightColor = colorTable[dayHighlightColor];
+					dayHighlightColor = colorTable[dayHighlightColor % 0x8000];
 				}
 
 				std::string pathDayNumbers;
@@ -2046,7 +2046,7 @@ void graphicsLoad()
 				daySize2Y = ini.GetInt("calendar day 2", "dh", daySize2Y);
 				dayHighlightColor2 = ini.GetInt("calendar day 2", "highlightColor", dayHighlightColor2) | BIT(15);
 				if (colorTable) {
-					dayHighlightColor2 = colorTable[dayHighlightColor2];
+					dayHighlightColor2 = colorTable[dayHighlightColor2 % 0x8000];
 				}
 
 				std::string pathDayNumbers;
@@ -2095,15 +2095,15 @@ void graphicsLoad()
 	// windowColorTop = RGB15(0, 0, 31);
 	// windowColorBottom = RGB15(0, 0, 15);
 	if (colorTable) {
-		startBorderColor = colorTable[startBorderColor];
-		// windowColorTop = colorTable[windowColorTop];
-		// windowColorBottom = colorTable[windowColorBottom];
+		startBorderColor = colorTable[startBorderColor % 0x8000];
+		// windowColorTop = colorTable[windowColorTop % 0x8000];
+		// windowColorBottom = colorTable[windowColorBottom % 0x8000];
 	}
 
 	u16* newPalette = (u16*)wirelessiconsPal;
 	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
+			*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 		}
 	}
 

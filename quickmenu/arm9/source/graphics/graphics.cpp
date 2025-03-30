@@ -293,7 +293,7 @@ static void bootModeIconLoad() {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			imageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				imageBuffer[i] = colorTable[imageBuffer[i]];
+				imageBuffer[i] = colorTable[imageBuffer[i] % 0x8000];
 			}
 		}
 
@@ -334,7 +334,7 @@ void batteryIconLoad() {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000];
 			}
 			
 			if (image[(i*4)+3] == 0) {
@@ -372,7 +372,7 @@ void batteryIconLoad() {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000];
 			}
 			
 			if (image[(i*4)+3] == 0) {
@@ -448,7 +448,7 @@ void gbaModeIconLoad(bool bottomScreen) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			imageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				imageBuffer[i] = colorTable[imageBuffer[i]];
+				imageBuffer[i] = colorTable[imageBuffer[i] % 0x8000];
 			}
 		}
 
@@ -508,7 +508,7 @@ void bottomBgLoad() {
 	for (uint i=0;i<image.size()/4;i++) {
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			bmpImageBuffer[i] = colorTable[bmpImageBuffer[i]];
+			bmpImageBuffer[i] = colorTable[bmpImageBuffer[i] % 0x8000];
 		}
 	}
 
@@ -844,7 +844,7 @@ static void markerLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			markerImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				markerImageBuffer[i] = colorTable[markerImageBuffer[i]];
+				markerImageBuffer[i] = colorTable[markerImageBuffer[i] % 0x8000];
 			}
 		}
 	}
@@ -951,7 +951,7 @@ void calendarLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			calendarImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				calendarImageBuffer[i] = colorTable[calendarImageBuffer[i]];
+				calendarImageBuffer[i] = colorTable[calendarImageBuffer[i] % 0x8000];
 			}
 
 			calendarImageBuffer[i] = alphablend(calendarImageBuffer[i], topImageBuffer[(calendarY*256)+calendarX], image[(i*4)+3]);
@@ -981,7 +981,7 @@ void calendarLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			calendarBigImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				calendarBigImageBuffer[i] = colorTable[calendarBigImageBuffer[i]];
+				calendarBigImageBuffer[i] = colorTable[calendarBigImageBuffer[i] % 0x8000];
 			}
 
 			calendarBigImageBuffer[i] = alphablend(calendarBigImageBuffer[i], topImageBuffer[(calendarY*256)+calendarX], image[(i*4)+3]);
@@ -1016,7 +1016,7 @@ void clockLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			clockImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				clockImageBuffer[i] = colorTable[clockImageBuffer[i]];
+				clockImageBuffer[i] = colorTable[clockImageBuffer[i] % 0x8000];
 			}
 
 			clockImageBuffer[i] = alphablend(clockImageBuffer[i], topImageBuffer[(clockY*256)+clockX], image[(i*4)+3]);
@@ -1105,7 +1105,7 @@ void clockDraw() {
 	for (uint i=0;i<image.size()/4;i++) {
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			color = colorTable[color];
+			color = colorTable[color % 0x8000];
 		}
 		if (image[(i*4)+3] == 0) {
 			bmpImageBuffer[i] = color;
@@ -1187,7 +1187,7 @@ void topBgLoad(void) {
 	for (uint i=0;i<image.size()/4;i++) {
 		topImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			topImageBuffer[i] = colorTable[topImageBuffer[i]];
+			topImageBuffer[i] = colorTable[topImageBuffer[i] % 0x8000];
 		}
 	}
 
@@ -1220,7 +1220,7 @@ void topBarLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				bmpImageBuffer[i] = colorTable[bmpImageBuffer[i]];
+				bmpImageBuffer[i] = colorTable[bmpImageBuffer[i] % 0x8000];
 			}
 		}
 		u16* src = bmpImageBuffer;
@@ -1271,11 +1271,11 @@ void graphicsInit()
 		char colorTablePath[256];
 		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		if (getFileSize(colorTablePath) == 0x20000) {
-			colorTable = new u16[0x20000/sizeof(u16)];
+		if (getFileSize(colorTablePath) == 0x10000) {
+			colorTable = new u16[0x10000/sizeof(u16)];
 
 			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x20000, file);
+			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
 		}
 	}

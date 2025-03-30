@@ -39,7 +39,7 @@ void loadSdRemovedImage(void) {
 	for (uint i=0;i<image.size()/4;i++) {
 		sdRemovedExtendedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			sdRemovedExtendedImage[i] = colorTable[sdRemovedExtendedImage[i]];
+			sdRemovedExtendedImage[i] = colorTable[sdRemovedExtendedImage[i] % 0x8000];
 		}
 	}
 
@@ -49,7 +49,7 @@ void loadSdRemovedImage(void) {
 	for (uint i=0;i<image.size()/4;i++) {
 		sdRemovedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			sdRemovedImage[i] = colorTable[sdRemovedImage[i]];
+			sdRemovedImage[i] = colorTable[sdRemovedImage[i] % 0x8000];
 		}
 	}
 }

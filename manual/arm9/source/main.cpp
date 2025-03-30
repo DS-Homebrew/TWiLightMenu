@@ -50,7 +50,7 @@ bool controlBottomBright = true;
 
 // extern int bgColor1;
 // extern int bgColor2;
-extern u16* colorTable;
+// extern u16* colorTable;
 
 extern bool leaveTopBarIntact;
 
@@ -117,8 +117,8 @@ void loadPageInfo(std::string pagePath) {
 	/* toncset16(BG_PALETTE_SUB + 0xF6, pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B), 1);
 	toncset16(BG_PALETTE_SUB + 0xF7, pageIni.GetInt("INFO","BG_COLOR_2",0x77BD), 1);
 	if (colorTable) {
-		BG_PALETTE_SUB[0xF6] = colorTable[BG_PALETTE_SUB[0xF6]];
-		BG_PALETTE_SUB[0xF7] = colorTable[BG_PALETTE_SUB[0xF7]];
+		BG_PALETTE_SUB[0xF6] = colorTable[BG_PALETTE_SUB[0xF6] % 0x8000];
+		BG_PALETTE_SUB[0xF7] = colorTable[BG_PALETTE_SUB[0xF7] % 0x8000];
 	} */
 
 	for (int i=0;true;i++) {

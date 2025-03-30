@@ -42,7 +42,7 @@ void effectColorModePalette(u16* palette, u16 paletteLength)
 	}
 
 	for (int i = 0; i < paletteLength; i++) {
-  		*(palette+i) = colorTable[*(palette+i)];
+  		*(palette+i) = colorTable[*(palette+i) % 0x8000];
   	}
 }
 

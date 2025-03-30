@@ -49,7 +49,7 @@ void checkSdEject(void) {
 	};
 	if (colorTable) {
 		for (int i = 0; i < 4; i++) {
-			palette[i] = colorTable[palette[i]];
+			palette[i] = colorTable[palette[i] % 0x8000];
 		}
 	}
 	tonccpy(BG_PALETTE, palette, sizeof(palette));

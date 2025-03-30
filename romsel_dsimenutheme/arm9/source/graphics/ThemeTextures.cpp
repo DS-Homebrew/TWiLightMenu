@@ -1022,7 +1022,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			color = colorTable[color];
+			color = colorTable[color % 0x8000];
 		}
 		if (alpha == 255) {
 			_bmpImageBuffer[i] = color;
@@ -1053,7 +1053,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000];
 			}
 			if (alpha == 255) {
 				_bmpImageBuffer2[i] = color;
@@ -1525,7 +1525,7 @@ void loadRotatingCubes() {
 			if (colorTable) {
 				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
 				for (u32 i = 0; i < framesSize/2; i++) {
-					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i]];
+					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i] % 0x8000];
 				}
 			}
 
@@ -1597,11 +1597,11 @@ void ThemeTextures::videoSetup() {
 		char colorTablePath[256];
 		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
 
-		if (getFileSize(colorTablePath) == 0x20000) {
-			colorTable = new u16[0x20000/sizeof(u16)];
+		if (getFileSize(colorTablePath) == 0x10000) {
+			colorTable = new u16[0x10000/sizeof(u16)];
 
 			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x20000, file);
+			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
 		}
 	}
