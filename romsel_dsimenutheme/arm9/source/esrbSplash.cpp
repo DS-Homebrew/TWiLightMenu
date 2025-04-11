@@ -67,8 +67,10 @@ void createEsrbSplash(void) {
 	lodepng::decode(image, imageWidth, imageHeight, esrbImagePath);
 	if (imageWidth > 256 || imageHeight > 192) return;
 
+	u16* bmpImageBuffer = new u16[256 * 192];
+
 	for (uint i=0;i<image.size()/4;i++) {
-		tex().bmpImageBuffer()[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 
 	if (descriptors != "") {
@@ -110,7 +112,7 @@ void createEsrbSplash(void) {
 			printSmall(false, 100, descriptorYpos, descriptorList[i]);
 			descriptorYpos += (descriptorLines > 4) ? 12 : 16;
 		}
-		updateTextImg(tex().bmpImageBuffer(), false);
+		updateTextImg(bmpImageBuffer, false);
 		clearText();
 
 		esrbDescFontDeinit();
@@ -119,6 +121,8 @@ void createEsrbSplash(void) {
 	mkdir(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap" : "fat:/_nds/nds-bootstrap", 0777);
 
 	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin", "wb");
-	fwrite(tex().bmpImageBuffer(), sizeof(u16), 256*192, file);
+	fwrite(bmpImageBuffer, sizeof(u16), 256*192, file);
 	fclose(file);
+
+	delete[] bmpImageBuffer;
 }

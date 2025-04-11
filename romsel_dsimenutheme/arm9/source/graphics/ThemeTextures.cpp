@@ -37,11 +37,8 @@ extern bool rocketVideo_playVideo;
 extern u8 *rotatingCubesLocation;
 
 // #include <nds/arm9/decompress.h>
-// extern u16 bmpImageBuffer[256*192];
 extern bool showColon;
 
-static u16 _bmpImageBuffer[256 * 192] = {0};
-static u16* _bmpImageBuffer2 = (u16*)_bmpImageBuffer;
 static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
 static u16 _photoBuffer[208 * 156] = {0};
@@ -50,12 +47,12 @@ static u16* _bgSubBuffer2 = (u16*)_bgSubBuffer;
 static u16* _photoBuffer2 = (u16*)_photoBuffer;
 // DSi mode double-frame buffers
 //static u16* _frameBuffer[2] = {(u16*)0x02F80000, (u16*)0x02F98000};
-static u16* _frameBufferBot[2] = {(u16*)_bmpImageBuffer, (u16*)_bmpImageBuffer};
+static u16* _frameBufferBot[2] = {NULL};
 
 static bool topBorderBufferLoaded = false;
 bool boxArtColorDeband = false;
 
-static u8* boxArtCache = (u8*)NULL;	// Size: 0x1B8000
+static u8* boxArtCache = NULL;	// Size: 0x1B8000
 static bool boxArtFound[40] = {false};
 uint boxArtWidth = 0, boxArtHeight = 0;
 
@@ -993,6 +990,9 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 	bool alternatePixel = false;
 	if (boxArtWidth > 256 || boxArtHeight > 192) return;
 
+	u16* bmpImageBuffer = new u16[256 * 192];
+	u16* bmpImageBuffer2 = boxArtColorDeband ? new u16[256 * 192] : NULL;
+
 	imageXpos = (256-boxArtWidth)/2;
 	imageYpos = (192-boxArtHeight)/2;
 
@@ -1025,9 +1025,9 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 			color = colorTable[color % 0x8000];
 		}
 		if (alpha == 255) {
-			_bmpImageBuffer[i] = color;
+			bmpImageBuffer[i] = color;
 		} else {
-			_bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], alpha);
+			bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], alpha);
 		}
 		if (boxArtColorDeband) {
 			if (alternatePixel) {
@@ -1056,9 +1056,9 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 				color = colorTable[color % 0x8000];
 			}
 			if (alpha == 255) {
-				_bmpImageBuffer2[i] = color;
+				bmpImageBuffer2[i] = color;
 			} else {
-				_bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], alpha);
+				bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], alpha);
 			}
 			if ((i % boxArtWidth) == boxArtWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
@@ -1070,8 +1070,8 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		}
 	}
 
-	u16 *src = _bmpImageBuffer;
-	u16 *src2 = _bmpImageBuffer2;
+	u16 *src = bmpImageBuffer;
+	u16 *src2 = bmpImageBuffer2;
 	for (uint y = 0; y < boxArtHeight; y++) {
 		for (uint x = 0; x < boxArtWidth; x++) {
 			_bgSubBuffer[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
@@ -1081,6 +1081,11 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		}
 	}
 	commitBgSubModify();
+
+	delete[] bmpImageBuffer;
+	if (boxArtColorDeband) {
+		delete[] bmpImageBuffer2;
+	}
 }
 
 #define MAX_PHOTO_WIDTH 208
@@ -1456,7 +1461,6 @@ void ThemeTextures::applyUserPaletteToAllGrfTextures() {
 		_settingsIconTexture->applyUserPaletteFile(TFN_PALETTE_ICON_SETTINGS, effectDSiArrowButtonPalettes);
 }
 
-u16 *ThemeTextures::bmpImageBuffer() { return _bmpImageBuffer; }
 u16 *ThemeTextures::bgSubBuffer2() { return _bgSubBuffer2; }
 u16 *ThemeTextures::photoBuffer() { return _photoBuffer; }
 u16 *ThemeTextures::photoBuffer2() { return _photoBuffer2; }
@@ -1627,7 +1631,6 @@ void ThemeTextures::videoSetup() {
 	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && (sys().isRegularDS() ? sys().dsDebugRam() : ndmaEnabled()) && !rotatingCubesLoaded && ms().theme != TWLSettings::EThemeHBL);
 
 	if (boxArtColorDeband) {
-		_bmpImageBuffer2 = new u16[256 * 192];
 		_bgSubBuffer2 = new u16[256 * 192];
 		_photoBuffer2 = new u16[208 * 156];
 		_frameBufferBot[0] = new u16[256 * 192];
