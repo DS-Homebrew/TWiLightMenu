@@ -164,7 +164,7 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 					u16 crc;
 					fread(&crc, 1, sizeof(crc), file);
 
-					if (crc == headerCRC16) { // CRC matches
+					if (crc == 0xFFFF || crc == headerCRC16) { // CRC matches
 						fclose(file);
 						return 0;
 					} else if (crc < headerCRC16) {

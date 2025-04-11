@@ -153,7 +153,7 @@ bool checkRomAP(const char* filename, const int num)
 					u16 crc;
 					fread(&crc, 1, sizeof(crc), file);
 
-					if (crc == headerCRC[num]) { // CRC matches
+					if (crc == 0xFFFF || crc == headerCRC[num]) { // CRC matches
 						fclose(file);
 						return false;
 					} else if (crc < headerCRC[num]) {
