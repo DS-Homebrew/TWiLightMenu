@@ -1245,10 +1245,18 @@ void vBlankHandler() {
 	bottomBgRefresh(); // Refresh the background image on vblank
 }
 
-void loadPhoto(const std::string &path);
-void loadBootstrapScreenshot(FILE *file);
+static bool currentPhotoIsBootstrap = false;
+static std::string currentPhotoPath;
+static int currentBootstrapPhoto = 0;
+
+void loadPhoto(const std::string &path, const bool bufferOnly);
+void loadBootstrapScreenshot(FILE *file, const bool bufferOnly);
 
 void loadPhotoList() {
+	if (!tex().photoBuffer()) {
+		return;
+	}
+
 	DIR *dir;
 	struct dirent *ent;
 	std::string photoDir;
@@ -1273,7 +1281,9 @@ void loadPhotoList() {
 		}
 		closedir(dir);
 		if (photoList.size() > 0) {
-			loadPhoto(photoList[rand() / ((RAND_MAX + 1u) / photoList.size())]);
+			currentPhotoPath = photoList[rand() / ((RAND_MAX + 1u) / photoList.size())];
+			loadPhoto(currentPhotoPath, false);
+			currentPhotoIsBootstrap = false;
 			return;
 		}
 	}
@@ -1293,8 +1303,10 @@ void loadPhotoList() {
 		}
 
 		if (screenshots.size() > 0) {
-			fseek(file, 0x200 + 0x18400 * (screenshots[rand() % screenshots.size()]), SEEK_SET);
-			loadBootstrapScreenshot(file);
+			currentBootstrapPhoto = screenshots[rand() % screenshots.size()];
+			fseek(file, 0x200 + 0x18400 * currentBootstrapPhoto, SEEK_SET);
+			loadBootstrapScreenshot(file, false);
+			currentPhotoIsBootstrap = true;
 			return;
 		}
 	}
@@ -1302,10 +1314,41 @@ void loadPhotoList() {
 	// If no photos or screenshots found, then draw the default
 	char path[64];
 	snprintf(path, sizeof(path), "nitro:/languages/%s/photo_default.png", ms().getGuiLanguageString().c_str());
-	loadPhoto(path);
+	currentPhotoPath = path;
+	loadPhoto(path, false);
+	currentPhotoIsBootstrap = false;
 }
 
-void loadPhoto(const std::string &path) {
+void reloadPhoto() {
+	if (!currentPhotoIsBootstrap) {
+		loadPhoto(currentPhotoPath, true);
+		return;
+	}
+
+	// If no photos found, try find a bootstrap screenshot
+	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/screenshots.tar" : "fat:/_nds/nds-bootstrap/screenshots.tar", "rb");
+	if (!file)
+		file = fopen(sys().isRunFromSD() ? "fat:/_nds/nds-bootstrap/screenshots.tar" : "sd:/_nds/nds-bootstrap/screenshots.tar", "rb");
+	
+	if (!file) {
+		return;
+	}
+
+	std::vector<int> screenshots;
+	fseek(file, 0x200, SEEK_SET);
+	for (int i = 0; i < 50; i++) {
+		if (fgetc(file) == 'B')
+			screenshots.push_back(i);
+		fseek(file, 0x18400 - 1, SEEK_CUR);
+	}
+
+	if (screenshots.size() > 0) {
+		fseek(file, 0x200 + 0x18400 * currentBootstrapPhoto, SEEK_SET);
+		loadBootstrapScreenshot(file, true);
+	}
+}
+
+void loadPhoto(const std::string &path, const bool bufferOnly) {
 	std::vector<unsigned char> image;
 	bool alternatePixel = false;
 
@@ -1374,6 +1417,10 @@ void loadPhoto(const std::string &path) {
 		}
 	}
 
+	if (bufferOnly) {
+		return;
+	}
+
 	u16 *bgSubBuffer = tex().beginBgSubModify();
 	u16* bgSubBuffer2 = tex().bgSubBuffer2();
 
@@ -1405,7 +1452,7 @@ void loadPhoto(const std::string &path) {
 	tex().commitBgSubModify();
 }
 
-void loadBootstrapScreenshot(FILE *file) {
+void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
 	// Simple check to ensure we're seeked to a BMP
 	if (fgetc(file) != 'B' || fgetc(file) != 'M')
 		return;
@@ -1426,9 +1473,11 @@ void loadBootstrapScreenshot(FILE *file) {
 	u16 *bgSubBuffer = tex().beginBgSubModify();
 	u16* bgSubBuffer2 = tex().bgSubBuffer2();
 
-	// Fill area with black
-	for (int y = 24; y < 180; y++) {
-		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
+	if (!bufferOnly) {
+		// Fill area with black
+		for (int y = 24; y < 180; y++) {
+			dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
+		}
 	}
 
 	// Start loading
@@ -1443,15 +1492,21 @@ void loadBootstrapScreenshot(FILE *file) {
 			}
 
 			u8 y = photoHeight - row - 1;
-			bgSubBuffer[(24 + y) * 256 + 24 + col] = val;
+			if (!bufferOnly) {
+				bgSubBuffer[(24 + y) * 256 + 24 + col] = val;
+			}
 			tex().photoBuffer()[y * photoWidth + col] = val;
 			if (boxArtColorDeband) {
-				bgSubBuffer2[(24 + y) * 256 + 24 + col] = val;
+				if (!bufferOnly) {
+					bgSubBuffer2[(24 + y) * 256 + 24 + col] = val;
+				}
 				tex().photoBuffer2()[y * photoWidth + col] = val;
 			}
 		}
 	}
-	tex().commitBgSubModify();
+	if (!bufferOnly) {
+		tex().commitBgSubModify();
+	}
 
 	delete[] buffer;
 }

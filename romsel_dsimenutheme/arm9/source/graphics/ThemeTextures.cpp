@@ -41,7 +41,7 @@ extern bool showColon;
 
 static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
-static u16 _photoBuffer[208 * 156] = {0};
+static u16* _photoBuffer = NULL;
 static u16 _topBorderBuffer[256 * 192] = {0};
 static u16* _bgSubBuffer2 = (u16*)_bgSubBuffer;
 static u16* _photoBuffer2 = (u16*)_photoBuffer;
@@ -1545,6 +1545,24 @@ void ThemeTextures::unloadRotatingCubes() {
 		delete[] rotatingCubesLocation;
 	}
 }
+void ThemeTextures::unloadPhotoBuffer() {
+	delete[] _photoBuffer;
+	if (boxArtColorDeband) {
+		delete[] _photoBuffer2;
+	}
+
+	_photoBuffer = NULL;
+	_photoBuffer2 = NULL;
+}
+void ThemeTextures::reloadPhotoBuffer() {
+	_photoBuffer = new u16[208 * 156];
+	if (boxArtColorDeband) {
+		_photoBuffer2 = new u16[208 * 156];
+	}
+
+	extern void reloadPhoto();
+	reloadPhoto();
+}
 void ThemeTextures::videoSetup() {
 	logPrint("tex().videoSetup()\n");
 	//////////////////////////////////////////////////////////
@@ -1627,6 +1645,8 @@ void ThemeTextures::videoSetup() {
 	if (ms().theme == TWLSettings::ETheme3DS && !ms().macroMode) {
 		loadRotatingCubes();
 	}
+
+	_photoBuffer = new u16[208 * 156];
 
 	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && (sys().isRegularDS() ? sys().dsDebugRam() : ndmaEnabled()) && !rotatingCubesLoaded && ms().theme != TWLSettings::EThemeHBL);
 

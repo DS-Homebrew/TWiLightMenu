@@ -30,6 +30,7 @@ void drawCurrentDate();
 void drawCurrentTime();
 
 void loadPhotoList();
+void reloadPhoto();
 void clearBoxArt();
 void graphicsInit();
 extern u16* colorTable;

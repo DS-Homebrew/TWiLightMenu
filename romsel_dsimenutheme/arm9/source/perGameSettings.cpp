@@ -1257,7 +1257,9 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 		}
 		if ((pressed & KEY_X) && !isHomebrew[CURPOS] && showCheats) {
 			if (!dsiFeatures()) {
-				snd().unloadSfxData(); // Unload SFX data in DS mode to load more of the cheat list
+				// Unload SFX data and photo buffer in DS mode to load more of the cheat list
+				snd().unloadSfxData();
+				tex().unloadPhotoBuffer();
 			}
 			{
 				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
@@ -1266,6 +1268,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			}
 			if (!dsiFeatures()) {
 				snd().reloadSfxData();
+				tex().reloadPhotoBuffer();
 			}
 		}
 	}

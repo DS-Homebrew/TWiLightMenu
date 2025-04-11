@@ -1738,6 +1738,7 @@ int dsiMenuTheme(void) {
 						if (!dsiFeatures()) {
 							mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
 							snd().unloadSfxData();
+							tex().unloadPhotoBuffer();
 							prepareCheats(path, false);
 						}
 
