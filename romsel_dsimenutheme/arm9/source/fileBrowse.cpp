@@ -2383,7 +2383,7 @@ bool cannotLaunchMsg(const char *filename) {
 	} else if (isTwlm[CURPOS]) {
 		str = &STR_TWLMENU_ALREADY_RUNNING;
 	} else if (isUnlaunch[CURPOS]) {
-		str = &STR_CANNOT_LAUNCH_WITH_THEME;
+		str = &STR_CANNOT_LAUNCH_WITH_UI;
 	} else if (bnrRomType[CURPOS] == 1) {
 		str = &STR_GBA_BIOS_ERROR_DESC;
 	} else if (bnrRomType[CURPOS] != 0) {
