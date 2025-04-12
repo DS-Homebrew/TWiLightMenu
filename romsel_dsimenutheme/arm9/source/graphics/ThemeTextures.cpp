@@ -1546,6 +1546,10 @@ void ThemeTextures::unloadRotatingCubes() {
 	}
 }
 void ThemeTextures::unloadPhotoBuffer() {
+	if (!_photoBuffer) {
+		return;
+	}
+
 	delete[] _photoBuffer;
 	if (boxArtColorDeband) {
 		delete[] _photoBuffer2;

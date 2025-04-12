@@ -4061,9 +4061,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 							if (!dsiFeatures()) {
 								// Free some RAM space to avoid possible memory leaks
-								snd().stopStream();
+								snd().unloadStream();
 								mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
 								snd().unloadSfxData();
+								tex().unloadPhotoBuffer();
 							}
 
 							mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
