@@ -1059,6 +1059,7 @@ int dsiMenuTheme(void) {
 
 	logPrint("snd()\n");
 	snd();
+	snd().loadStream(true);
 
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		//logPrint("snd().playStartup()\n");
@@ -1498,7 +1499,7 @@ int dsiMenuTheme(void) {
 						swiWaitForVBlank();
 					}
 
-					snd().stopStream();
+					snd().unloadStream();
 
 					if (!dsiFeatures()) {
 						snd().unloadSfxData();
@@ -1733,7 +1734,7 @@ int dsiMenuTheme(void) {
 							swiWaitForVBlank();
 						}
 
-						snd().stopStream();
+						snd().unloadStream();
 
 						if (!dsiFeatures()) {
 							mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches

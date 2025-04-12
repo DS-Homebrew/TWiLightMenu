@@ -161,11 +161,15 @@ SoundControl::SoundControl()
 	};
 
 	sfxDataLoaded = true;
+}
 
-
+void SoundControl::loadStream(const bool prepMsg) {
 	if (ms().dsiMusic == 0 || ms().theme == TWLSettings::EThemeSaturn) {
 		return;
 	}
+
+	alloc_streaming_buf();
+	resetStreamSettings();
 
 	bool loopableMusic = false;
 	loopingPoint = false;
@@ -177,11 +181,13 @@ SoundControl::SoundControl()
 	stream.sampling_rate = 16000;	 		// 16000Hz
 	stream.format = MM_STREAM_16BIT_MONO;  // select format
 
-	// Leave top scren white
-	controlTopBright = false;
+	if (prepMsg) {
+		// Leave top scren white
+		controlTopBright = false;
 
-	printLarge(false, 0, 88 - (calcLargeFontHeight(STR_PREPARING_MUSIC) - largeFontHeight()) / 2, STR_PREPARING_MUSIC, Alignment::center);
-	updateText(false);
+		printLarge(false, 0, 88 - (calcLargeFontHeight(STR_PREPARING_MUSIC) - largeFontHeight()) / 2, STR_PREPARING_MUSIC, Alignment::center);
+		updateText(false);
+	}
 
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
@@ -286,8 +292,10 @@ SoundControl::SoundControl()
 		}
 	}
 
-	clearText();
-	controlTopBright = true;
+	if (prepMsg) {
+		clearText();
+		controlTopBright = true;
+	}
 
 	fseek(stream_source, seekPos, SEEK_SET);
 
@@ -469,6 +477,15 @@ void SoundControl::stopStream() {
 
 	stream_is_playing = false;
 	mmStreamClose();
+}
+
+void SoundControl::unloadStream() {
+	if (!stream_source || !stream_is_playing) return;
+
+	stream_is_playing = false;
+	mmStreamClose();
+	stream_source = NULL;
+	free_streaming_buf();
 }
 
 void SoundControl::fadeOutStream() {

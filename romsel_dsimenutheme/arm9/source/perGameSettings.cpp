@@ -1257,7 +1257,8 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 		}
 		if ((pressed & KEY_X) && !isHomebrew[CURPOS] && showCheats) {
 			if (!dsiFeatures()) {
-				// Unload SFX data and photo buffer in DS mode to load more of the cheat list
+				// Unload music, SFX data, and photo buffer in DS mode to fit the cheat list
+				snd().unloadStream();
 				snd().unloadSfxData();
 				tex().unloadPhotoBuffer();
 			}
@@ -1267,6 +1268,8 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 				codelist.selectCheats(filename);
 			}
 			if (!dsiFeatures()) {
+				snd().loadStream(false);
+				snd().beginStream();
 				snd().reloadSfxData();
 				tex().reloadPhotoBuffer();
 			}

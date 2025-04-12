@@ -27,8 +27,10 @@ class SoundControl {
         // Refill the stream buffers
         volatile void updateStream();
 
+        void loadStream(const bool prepMsg);
         void beginStream();
         void stopStream();
+        void unloadStream();
         void fadeOutStream();
         void cancelFadeOutStream();
 
