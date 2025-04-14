@@ -5,6 +5,7 @@ Ace3DS+ folder:
 - Ace3DS X
 - R4 i.L.S
 - r4isdhc.com.cn cards
+- r4isdhc.hk 2020+ (Year in star shape)
 - r4isdhc.hk 2021
 - R4infinity 2
 - R4i-XDS 2014 white version
@@ -28,7 +29,6 @@ DSTT folder:
 
 R4DS Pro folder:
 - r4dspro.com cards
-- r4isdhc.hk 2020+ (Black shell, year in ribbon)
 
 R4 Ultra folder:
 - R4 Ultra
