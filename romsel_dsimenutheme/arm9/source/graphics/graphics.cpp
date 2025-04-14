@@ -1252,9 +1252,9 @@ static int currentBootstrapPhoto = 0;
 void loadPhoto(const std::string &path, const bool bufferOnly);
 void loadBootstrapScreenshot(FILE *file, const bool bufferOnly);
 
-void loadPhotoList() {
+bool loadPhotoList() {
 	if (!tex().photoBuffer()) {
-		return;
+		return false;
 	}
 
 	DIR *dir;
@@ -1284,7 +1284,7 @@ void loadPhotoList() {
 			currentPhotoPath = photoList[rand() / ((RAND_MAX + 1u) / photoList.size())];
 			loadPhoto(currentPhotoPath, false);
 			currentPhotoIsBootstrap = false;
-			return;
+			return true;
 		}
 	}
 
@@ -1307,7 +1307,7 @@ void loadPhotoList() {
 			fseek(file, 0x200 + 0x18400 * currentBootstrapPhoto, SEEK_SET);
 			loadBootstrapScreenshot(file, false);
 			currentPhotoIsBootstrap = true;
-			return;
+			return true;
 		}
 	}
 
@@ -1317,6 +1317,7 @@ void loadPhotoList() {
 	currentPhotoPath = path;
 	loadPhoto(path, false);
 	currentPhotoIsBootstrap = false;
+	return true;
 }
 
 void reloadPhoto() {
