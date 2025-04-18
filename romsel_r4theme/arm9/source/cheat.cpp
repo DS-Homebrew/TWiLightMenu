@@ -455,7 +455,7 @@ void CheatCodelist::selectCheats(std::string filename)
           printSmall(false, 0, 128, "Discard unsaved changes?", Alignment::center);
           printSmall(false, 0, 167, " Discard   Cancel", Alignment::center);
           updateText(false);
-          
+
           while (1)
           {
             scanKeys();
@@ -503,6 +503,7 @@ void CheatCodelist::selectCheats(std::string filename)
         std::string _topTextStr(currentList[cheatWnd_cursorPosition]->_comment);
         std::vector<std::string> words;
         std::size_t pos;
+		int lines = 1;
 
         // Process comment to stay within the box
         while ((pos = _topTextStr.find(' ')) != std::string::npos) {
@@ -522,6 +523,7 @@ void CheatCodelist::selectCheats(std::string filename)
               word.insert((float)((i + 1) * word.length()) / ((width/220) + 1), "\n");
             }
             _topText.push_back(word);
+			lines++;
             continue;
           }
 
@@ -529,20 +531,23 @@ void CheatCodelist::selectCheats(std::string filename)
           if (width > 220) {
             _topText.push_back(temp);
             temp = word;
+			lines++;
           } else {
             temp += " " + word;
           }
         }
         if (temp.size())
           _topText.push_back(temp);
-        
+
         // Print comment
         for (int i = 0; i < (int)_topText.size(); i++) {
           printSmall(false, 0, 90 + (i*10), _topText[i].c_str(), Alignment::center);
         }
 
-        // Print 'Back' text
-        printSmall(false, 0, 167, " Back", Alignment::center);
+		if (lines < 8) {
+			// Print 'Back' text
+			printSmall(false, 0, 167, " Back", Alignment::center);
+		}
 		updateText(false);
         while (1) {
           scanKeys();
