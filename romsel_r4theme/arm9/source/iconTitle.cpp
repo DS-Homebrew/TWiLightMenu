@@ -1147,7 +1147,7 @@ void getGameInfo(bool isDir, const char* name, bool fromArgv)
 
 		fseek(fp, ndsHeader.arm9romOffset + ndsHeader.arm9executeAddress - ndsHeader.arm9destination, SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, fp);
-		if ((arm9StartSig[0] == 0xE3A0C301 || (arm9StartSig[0] >= 0xEA000000 && arm9StartSig[0] < 0xEB000000 /* If title contains cracktro or extra splash */))
+		if ((arm9StartSig[0] == 0xE3A0C301 || (arm9StartSig[0] >= 0xEA000000 && arm9StartSig[0] < 0xEC000000 /* If title contains cracktro or extra splash */))
 		  && arm9StartSig[1] == 0xE58CC208) {
 			// Title seems to be developed with Nintendo SDK, verify
 			if ((arm9StartSig[2] >= 0xEB000000 && arm9StartSig[2] < 0xEC000000) // SDK 2 & TWL SDK 5
