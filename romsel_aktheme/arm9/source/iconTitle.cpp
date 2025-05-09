@@ -1527,10 +1527,16 @@ void titleUpdate(int num, bool isDir, const char* name, const bool highlighted)
 		// or a file with custom banner text
 		writeBannerText(num, cachedTitle[num], highlighted);
 	} else if (ms().ak_viewMode == TWLSettings::EViewList || ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
-		writeBannerText(num, name, highlighted);
+		if ((ms().filenameDisplay == 0) && (ms().ak_viewMode == TWLSettings::EViewSmallIcon) && !infoFound[num]) {
+			std::string nameString = name;
+			std::string nameSubstr = nameString.substr(0, nameString.rfind('.'));
+			writeBannerText(num, nameSubstr, highlighted);
+		} else {
+			writeBannerText(num, name, highlighted);
+		}
 	} else {
 		std::vector<std::string> lines;
-		if ((ms().filenameDisplay == 0) && (ms().ak_viewMode >= TWLSettings::EViewInternal) && !infoFound[num]) {
+		if ((ms().filenameDisplay == 0) && (ms().ak_viewMode >= TWLSettings::EViewInternal || ms().ak_viewMode == TWLSettings::EViewSmallIcon) && !infoFound[num]) {
 			std::string nameString = name;
 			std::string nameSubstr = nameString.substr(0, nameString.rfind('.'));
 			lines.push_back(nameSubstr);
