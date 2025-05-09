@@ -836,7 +836,13 @@ void titleUpdate(int num, bool top, bool isDir, const char* name)
 		}
 	} else {
 		std::vector<std::string> lines;
-		lines.push_back(name);
+		if (ms().filenameDisplay == 0) {
+			std::string nameString = name;
+			std::string nameSubstr = nameString.substr(0, nameString.rfind('.'));
+			lines.push_back(nameSubstr);
+		} else {
+			lines.push_back(name);
+		}
 
 		for (uint i = 0; i < lines.size(); i++) {
 			int width = calcSmallFontWidth(lines[i]);

@@ -937,7 +937,12 @@ void titleUpdate(bool isDir, std::string_view name, int num) {
 		if (theme_showdialogbox) {
 			infoFound[num] ? writeDialogTitle(cachedTitle[num]) : writeDialogTitle(u"???");
 		} else {
-			infoFound[num] ? writeBannerText(name, cachedTitle[num]) : writeBannerText(name, name);
+			if ((ms().filenameDisplay == 0) && !infoFound[num]) {
+				std::string_view nameSubstr = name.substr(0, name.rfind('.'));
+				writeBannerText(nameSubstr, nameSubstr);
+			} else {
+				infoFound[num] ? writeBannerText(name, cachedTitle[num]) : writeBannerText(name, name);
+			}
 		}
 	}
 }
