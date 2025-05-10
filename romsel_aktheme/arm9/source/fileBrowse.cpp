@@ -1848,6 +1848,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				if (hasAP > 0) {
 					dialogboxHeight = 3;
 					showdialogbox = true;
+					clearText(false);
 					printSmall(false, 0, 74, "Anti-Piracy Warning", Alignment::center, FontPalette::formTitleText);
 					printSmall(false, 0, 98, "This game has AP. Please make", Alignment::center, FontPalette::formText);
 					printSmall(false, 0, 110, "sure you're using the latest", Alignment::center, FontPalette::formText);
@@ -1887,9 +1888,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				 && proceedToLaunch && st[ms().secondaryDevice].f_bsize < (32 << 10) && !ms().dontShowClusterWarning) {
 					dialogboxHeight = 5;
 					showdialogbox = true;
-					// Clear location text
 					clearText(false);
-
 					printSmall(false, 0, 74, "Cluster Size Warning", Alignment::center, FontPalette::formTitleText);
 					printSmall(false, 0, 98, "Your SD card is not formatted", Alignment::center, FontPalette::formText);
 					printSmall(false, 0, 110, "using 32KB clusters, this causes", Alignment::center, FontPalette::formText);
