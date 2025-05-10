@@ -367,20 +367,15 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 		return;
 	}
 
+	displayDiskIcon(ms().secondaryDevice);
+	getGameInfo(0, dirContents.at(fileOffset).isDirectory, dirContents.at(fileOffset).name.c_str(), false);
+	displayDiskIcon(false);
+
 	if (dirContents.at(fileOffset).isDirectory) {
 		isDirectory[0] = true;
-		bnriconPalLine[0] = 0;
-		bnriconPalLoaded[0] = 0;
-		bnriconframenumY[0] = 0;
-		bannerFlip[0] = 0;
-		bnriconisDSi[0] = false;
-		bnrWirelessIcon[0] = 0;
 	} else {
 		isDirectory[0] = false;
 		std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
-		displayDiskIcon(ms().secondaryDevice);
-		getGameInfo(0, isDirectory[0], dirContents.at(fileOffset).name.c_str(), false);
-		displayDiskIcon(false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[0] = 0;
@@ -464,18 +459,12 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 		if (i == file_count) {
 			break;
 		}
+		getGameInfo(n, dirContents.at(i).isDirectory, dirContents.at(i).name.c_str(), false);
 		if (dirContents.at(i).isDirectory) {
 			isDirectory[n] = true;
-			bnriconPalLine[n] = 0;
-			bnriconPalLoaded[n] = 0;
-			bnriconframenumY[n] = 0;
-			bannerFlip[n] = 0;
-			bnriconisDSi[n] = false;
-			bnrWirelessIcon[n] = 0;
 		} else {
 			isDirectory[n] = false;
 			std::string std_romsel_filename = dirContents.at(i).name.c_str();
-			getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 				bnrRomType[n] = 0;
