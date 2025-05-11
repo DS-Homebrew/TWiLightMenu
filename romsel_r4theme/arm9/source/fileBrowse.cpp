@@ -169,6 +169,7 @@ bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 
 void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string_view> extensionList = {}) {
 	dirContents.clear();
+	resetPreloadedBannerIcons();
 
 	DIR *pdir = opendir(".");
 
@@ -1100,18 +1101,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
 		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
 
+		getGameInfo(fileOffset, dirContents.at(fileOffset).isDirectory, dirContents.at(fileOffset).name.c_str(), false);
+
 		if (dirContents.at(fileOffset).isDirectory) {
 			isDirectory = true;
-			bnriconPalLine = 0;
-			bnriconPalLoaded = 0;
-			bnriconframenumY = 0;
-			bannerFlip = 0;
-			bnriconisDSi = false;
-			bnrWirelessIcon = 0;
 		} else {
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
-			getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str(), false);
 
 			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 				bnrRomType = 0;

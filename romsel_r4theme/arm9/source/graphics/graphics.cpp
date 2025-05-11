@@ -928,6 +928,7 @@ void graphicsLoad()
 							);
 
 	loadConsoleIcons();
+	allocateBannerIconsToPreload();
 
 	while (dmaBusy(0) || dmaBusy(1) || dmaBusy(2) || dmaBusy(3)) swiDelay(100);
 

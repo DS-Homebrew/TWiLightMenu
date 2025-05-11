@@ -278,6 +278,16 @@ u32 getSDKVersion(FILE* ndsFile);
 int checkRomAP(FILE *ndsFile, const char* filename);
 
 extern sNDSBannerExt bnriconTile[8];
+extern sNDSHeaderExt* preloadedHeaders;
+extern sNDSBannerExt* preloadedBannerIcons;
+extern bool* bannerIconPreloaded;
+
+extern void allocateBannerIconsToPreload(void);
+extern void resetPreloadedBannerIcons(void);
+extern bool preloadedHeaderFound(const int fileOffset);
+extern bool preloadedBannerIconFound(const int fileOffset);
+extern sNDSHeaderExt* getPreloadedHeader(const int fileOffset);
+extern sNDSBannerExt* getPreloadedBannerIcon(const int fileOffset);
 
 // bnriconframenum[]
 extern int bnriconPalLoaded[8];

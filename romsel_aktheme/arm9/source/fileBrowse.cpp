@@ -179,6 +179,7 @@ bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 
 void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string_view> extensionList = {}) {
 	dirContents.clear();
+	resetPreloadedBannerIcons();
 
 	file_count = 0;
 	fileStartPos = 0;
@@ -368,7 +369,7 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 	}
 
 	displayDiskIcon(ms().secondaryDevice);
-	getGameInfo(0, dirContents.at(fileOffset).isDirectory, dirContents.at(fileOffset).name.c_str(), false);
+	getGameInfo(0, fileOffset, dirContents.at(fileOffset).isDirectory, dirContents.at(fileOffset).name.c_str(), false);
 	displayDiskIcon(false);
 
 	if (dirContents.at(fileOffset).isDirectory) {
@@ -459,7 +460,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 		if (i == file_count) {
 			break;
 		}
-		getGameInfo(n, dirContents.at(i).isDirectory, dirContents.at(i).name.c_str(), false);
+		getGameInfo(n, i, dirContents.at(i).isDirectory, dirContents.at(i).name.c_str(), false);
 		if (dirContents.at(i).isDirectory) {
 			isDirectory[n] = true;
 		} else {
@@ -577,7 +578,7 @@ void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
 	} else {
 		isDirectory[n] = false;
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
-		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
+		getGameInfo(n, i, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[n] = 0;
@@ -689,7 +690,7 @@ void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
 	} else {
 		isDirectory[n] = false;
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
-		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
+		getGameInfo(n, i, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[n] = 0;
