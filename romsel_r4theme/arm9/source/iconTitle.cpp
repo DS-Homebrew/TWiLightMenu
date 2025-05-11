@@ -918,7 +918,7 @@ void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv)
 		infoFound = false;
 	}
 
-	if (ms().showCustomIcons && !preloadedBannerIconFound(fileOffset) && customIcon < 2 && (!fromArgv || customIcon <= 0)) {
+	if (ms().theme != TWLSettings::EThemeGBC && ms().showCustomIcons && !preloadedBannerIconFound(fileOffset) && customIcon < 2 && (!fromArgv || customIcon <= 0)) {
 		toncset(&ndsBanner, 0, sizeof(sNDSBannerExt));
 		const bool argvHadPng = customIcon == 1;
 		u8 iconCopy[512];
@@ -1138,6 +1138,9 @@ void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv)
 
 		if (!preloadedHeaderFound(fileOffset)) {
 			tonccpy(getPreloadedHeader(fileOffset), &ndsHeader, sizeof(sNDSHeaderExt));
+			if (dsiFeatures() && ms().theme == TWLSettings::EThemeGBC) {
+				bannerIconPreloaded[fileOffset] = true;
+			}
 		}
 
 		tonccpy(gameTid, ndsHeader.gameCode, 4);
@@ -1230,6 +1233,10 @@ void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv)
 			bnrWirelessIcon = 1;
 		else if (ndsHeader.dsi_flags & BIT(3))
 			bnrWirelessIcon = 2;
+
+		if (ms().theme == TWLSettings::EThemeGBC) {
+			return;
+		}
 
 		u8 iconCopy[512];
 		u16 paletteCopy[16];
