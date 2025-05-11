@@ -578,9 +578,7 @@ static int lastUsedBannerIcon = 0;
 void allocateBannerIconsToPreload(void) {
 	const int count = dsiFeatures() ? 1024 : 16;
 	preloadedHeaders = new sNDSHeaderExt[count];
-	if (ms().theme != TWLSettings::EThemeGBC) {
-		preloadedBannerIcons = new sNDSBannerExt[count];
-	}
+	preloadedBannerIcons = new sNDSBannerExt[count];
 	if (dsiFeatures()) {
 		bannerIconPreloaded = new bool[count];
 	}
