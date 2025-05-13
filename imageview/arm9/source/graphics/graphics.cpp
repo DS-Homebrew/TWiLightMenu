@@ -107,6 +107,15 @@ void vBlankHandler() {
 }
 
 void imageLoad(const char* filename) {
+	// Color LUT display test
+	/* toncset16(BG_GFX, 0, 256*192);
+	int i2 = 0;
+	for (int i = 0x8000; i <= 0xFFFF; i++) {
+		BG_GFX[i2] = (colorTable) ? colorTable[i % 0x8000] : i;
+		i2++;
+	}
+	return; */
+
 	if (imageType == 2) { // PNG
 		dsImageBuffer[0] = new u16[256*192];
 		dsImageBuffer[1] = new u16[256*192];
