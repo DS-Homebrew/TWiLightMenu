@@ -493,6 +493,11 @@ void graphicsInit() {
 			FILE* file = fopen(colorTablePath, "rb");
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
+
+			vramSetBankE(VRAM_E_LCD);
+			tonccpy(VRAM_E, colorTable, 0x10000); // Copy LUT to VRAM
+			delete[] colorTable; // Free up RAM space
+			colorTable = VRAM_E;
 		}
 	}
 
