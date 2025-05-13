@@ -896,7 +896,7 @@ void ThemeTextures::drawBottomBg(int index) {
 
 void ThemeTextures::clearTopScreen() {
 	beginBgSubModify();
-	u16 val = 0xFFFF;
+	const u16 val = colorTable ? colorTable[0x7FFF] : 0xFFFF;
 	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 		_bgSubBuffer[i] = val;
 		if (boxArtColorDeband) {

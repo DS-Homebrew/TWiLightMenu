@@ -1189,7 +1189,9 @@ void vBlankHandler() {
 				}
 			}*/
 		if (whiteScreen) {
-			glBoxFilled(0, 0, 256, 192, tc().darkLoading() ? RGB15(0, 0, 0) : RGB15(31, 31, 31));
+			u16 fillColor = tc().darkLoading() ? RGB15(0, 0, 0) : RGB15(31, 31, 31);
+			if (colorTable) fillColor = colorTable[fillColor % 0x8000];
+			glBoxFilled(0, 0, 256, 192, fillColor);
 		}
 		if (showProgressIcon && ms().theme != TWLSettings::EThemeSaturn) {
 			glSprite(ms().rtl() ? 16 : 224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
@@ -1203,15 +1205,19 @@ void vBlankHandler() {
 				barYpos += 12;
 			}
 			extern int getFavoriteColor(void);
-			int fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
-			if (colorTable) fillColor = colorTable[fillColor % 0x8000];
+			u16 fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
+			u16 fillColorBack = tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23);
+			if (colorTable) {
+				fillColor = colorTable[fillColor % 0x8000];
+				fillColorBack = colorTable[fillColorBack % 0x8000];
+			}
 			if (ms().rtl()) {
-				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
+				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, fillColorBack);
 				if (progressBarLength > 0) {
 					glBoxFilled(barXpos, barYpos, barXpos-progressBarLength, barYpos+5, fillColor);
 				}
 			} else {
-				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
+				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, fillColorBack);
 				if (progressBarLength > 0) {
 					glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, fillColor);
 				}

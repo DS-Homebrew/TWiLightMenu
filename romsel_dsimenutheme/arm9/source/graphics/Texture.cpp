@@ -295,6 +295,7 @@ void Texture::copy(u16 *dst, bool vram) const {
 			break;
 		case TextureType::CompressedGrf:
 			decompress((u8 *)_texture.get(), (u8 *)dst, vram ? LZ77Vram : LZ77);
+			effectColorModePalette(dst, _texLength);
 			break;
 		case TextureType::Unknown:
 		case TextureType::Bitmap: // ingore the bitfields
