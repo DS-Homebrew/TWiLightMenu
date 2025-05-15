@@ -24,11 +24,16 @@ bool frameDelayEven = true; // For 24FPS
 u16* colorTable = NULL;
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
+
+bool invertedColors = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if (invertedColors && bright != 0) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -106,12 +111,6 @@ void vBlankHandler()
 void graphicsInit() {
 	currentTheme = ms().theme;
 
-	SetBrightness(0, currentTheme == 4 ? -31 : 31);
-	SetBrightness(1, currentTheme == 4 && !ms().macroMode ? -31 : 31);
-	if (ms().macroMode) {
-		powerOff(PM_BACKLIGHT_TOP);
-	}
-
 	if (ms().colorMode != "Default") {
 		char colorTablePath[256];
 		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
@@ -122,7 +121,15 @@ void graphicsInit() {
 			FILE* file = fopen(colorTablePath, "rb");
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
+
+			invertedColors = (colorTable[0] == 0xFFFF && colorTable[0x7FFF] == 0x8000);
 		}
+	}
+
+	SetBrightness(0, currentTheme == 4 ? -31 : 31);
+	SetBrightness(1, currentTheme == 4 && !ms().macroMode ? -31 : 31);
+	if (ms().macroMode) {
+		powerOff(PM_BACKLIGHT_TOP);
 	}
 
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);

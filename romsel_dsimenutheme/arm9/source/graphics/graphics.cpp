@@ -212,11 +212,16 @@ void ClearBrightness(void) {
 }
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
+
+bool invertedColors = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if (invertedColors && bright != 0) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -805,7 +810,9 @@ void vBlankHandler() {
 		int bg_G = (bottomScreenBrightness / 8);
 		int bg_B = (bottomScreenBrightness / 8);
 
-		glColor(RGB15(bg_R, bg_G, bg_B));
+		if (!invertedColors) {
+			glColor(RGB15(bg_R, bg_G, bg_B));
+		}
 
 		if (ms().theme == TWLSettings::EThemeHBL) {
 			// Back bubbles

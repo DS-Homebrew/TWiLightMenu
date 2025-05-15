@@ -1379,6 +1379,10 @@ void graphicsInit(void) {
 
 	BG_PALETTE[0x10] = 0xFFFF;
 	BG_PALETTE_SUB[0x10] = 0xFFFF;
+	if (colorTable) {
+		BG_PALETTE[0x10] = colorTable[BG_PALETTE[0x10] % 0x8000];
+		BG_PALETTE_SUB[0x10] = colorTable[BG_PALETTE_SUB[0x10] % 0x8000];
+	}
 	toncset16(bgGetGfxPtr(3), 0x1010, 256 * 192);
 	toncset16(bgGetGfxPtr(7), 0x1010, 256 * 192);
 
@@ -2106,6 +2110,9 @@ int titleMode(void)
 	 && (keysHeld() & KEY_Y)) {
 		runGraphicIrq();
 		resetSettingsPrompt();
+
+		unloadFont();
+		graphicsInited = false;
 	}
 
 	if (isDSiMode()) {
@@ -2434,6 +2441,8 @@ int titleMode(void)
 			FILE* file = fopen(colorTablePath, "rb");
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
+
+			invertedColors = (colorTable[0] == 0xFFFF && colorTable[0x7FFF] == 0x8000);
 		}
 	}
 

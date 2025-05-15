@@ -32,6 +32,7 @@ extern bool useTwlCfg;
 //extern bool widescreenEffects;
 
 extern u16* colorTable;
+extern bool invertedColors;
 extern u32 rotatingCubesLoaded;
 extern bool rocketVideo_playVideo;
 extern u8 *rotatingCubesLocation;
@@ -1617,8 +1618,6 @@ void ThemeTextures::videoSetup() {
 		REG_BG3X_SUB = -29 << 8;
 	}*/
 
-	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
-
 	if (ms().colorMode != "Default") {
 		char colorTablePath[256];
 		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
@@ -1629,8 +1628,12 @@ void ThemeTextures::videoSetup() {
 			FILE* file = fopen(colorTablePath, "rb");
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
+
+			invertedColors = (colorTable[0] == 0xFFFF && colorTable[0x7FFF] == 0x8000);
 		}
 	}
+
+	REG_BLDCNT = BLEND_SRC_BG3 | (invertedColors ? BLEND_FADE_WHITE : BLEND_FADE_BLACK);
 
 	if (dsiFeatures() && !ms().macroMode && ms().theme != TWLSettings::EThemeHBL) {
 		if (ms().consoleModel > 0) {

@@ -50,9 +50,14 @@ bool secondBuffer = false;
 u16 frameBuffer[2][256*192];
 u16 frameBufferBot[2][256*192];
 u16* colorTable = NULL;
+bool invertedColors = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if (invertedColors && bright != 0) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -215,7 +220,6 @@ void runGraphicIrq(void) {
 }
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
 
 void loadTitleGraphics() {
