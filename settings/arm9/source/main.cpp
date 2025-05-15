@@ -1451,7 +1451,7 @@ int settingsMode(void)
 						{0});
 	}
 
-	miscPage.option(STR_COLORMODE, STR_DESCRIPTION_COLORMODE, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
+	miscPage.option(STR_COLOR_LUT, STR_DESCRIPTION_COLOR_LUT, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
 
 	if (sdFound() && isDSiMode()) {
 		if (!sys().arm7SCFGLocked()) {
