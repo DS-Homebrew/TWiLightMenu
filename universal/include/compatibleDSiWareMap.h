@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 475
+// Total: 476
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -94,6 +94,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K2J", // Cake Ninja
 	"K2N", // Cake Ninja 2
 	"KCY", // Calculator
+	"K22", // California Super Sports
 	"K3N", // GO Series: Captain Sub
 	"KCNE", // Castle Conqueror (USA)
 	"KQO", // Castle Conqueror: Against
@@ -557,7 +558,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 44
+// Total: 45
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -567,6 +568,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"K9G", // Big Bass Arcade
 	"KLN", // Bloons TD
+	"K22", // California Super Sports
 	"KQN", // Castle Conqueror: Revolution
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
@@ -615,6 +617,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	5, // Aru Seishun no Monogatari: Kouenji Joshi Sakka (No FMVs)
 	4, // Big Bass Arcade (Crashes at certain points)
 	1, // Bloons TD (No audio)
+	4, // California Super Sports (Crashes when selecting either Dodgeball or Rollerblade)
 	4, // Castle Conqueror: Revolution (Crashes at certain point(s))
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
