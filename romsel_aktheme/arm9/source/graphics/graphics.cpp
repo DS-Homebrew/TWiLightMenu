@@ -1738,7 +1738,9 @@ void graphicsInit()
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
 
-			invertedColors = (colorTable[0] == 0xFFFF && colorTable[0x7FFF] == 0x8000);
+			invertedColors =
+			  (colorTable[0] >= 0xF000 && colorTable[0] <= 0xFFFF
+			&& colorTable[0x7FFF] >= 0x8000 && colorTable[0x7FFF] <= 0x8FFF);
 		}
 	}
 
