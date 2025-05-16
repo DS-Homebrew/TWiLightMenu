@@ -19,8 +19,15 @@ u16* colorTable = NULL;
 int bg3Sub;
 int bg3Main;
 
+bool invertedColors = false;
+bool noWhiteFade = false;
+
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -28,7 +35,7 @@ void SetBrightness(u8 screen, s8 bright) {
 		bright = -bright;
 	}
 	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 /* u16 convertVramColorToGrayscale(u16 val) {
@@ -71,8 +78,8 @@ void bgLoad(void) {
 }
 
 void graphicsInit() {
-	*(u16*)(0x0400006C) |= BIT(14);
-	*(u16*)(0x0400006C) &= BIT(15);
+	*(vu16*)(0x0400006C) |= BIT(14);
+	*(vu16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
@@ -86,6 +93,11 @@ void graphicsInit() {
 			FILE* file = fopen(colorTablePath, "rb");
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
+
+			invertedColors =
+			  (colorTable[0] >= 0xF000 && colorTable[0] <= 0xFFFF
+			&& colorTable[0x7FFF] >= 0x8000 && colorTable[0x7FFF] <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (colorTable[0x7FFF] < 0xF000);
 		}
 	}
 

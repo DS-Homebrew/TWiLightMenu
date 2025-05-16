@@ -59,10 +59,11 @@ bool screenFadedIn(void) { return (screenBrightness == 0); }
 bool screenFadedOut(void) { return (screenBrightness > 24); }
 
 bool invertedColors = false;
+bool noWhiteFade = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
-	if (invertedColors && bright != 0) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
 		bright -= bright*2; // Invert brightness to match the inverted colors
 	}
 
@@ -210,6 +211,7 @@ void graphicsInit() {
 			invertedColors =
 			  (colorTable[0] >= 0xF000 && colorTable[0] <= 0xFFFF
 			&& colorTable[0x7FFF] >= 0x8000 && colorTable[0x7FFF] <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (colorTable[0x7FFF] < 0xF000);
 
 			vramSetBankD(VRAM_D_LCD);
 			tonccpy(VRAM_D, colorTable, 0x10000); // Copy LUT to VRAM

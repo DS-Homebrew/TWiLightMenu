@@ -2445,6 +2445,7 @@ int titleMode(void)
 			invertedColors =
 			  (colorTable[0] >= 0xF000 && colorTable[0] <= 0xFFFF
 			&& colorTable[0x7FFF] >= 0x8000 && colorTable[0x7FFF] <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (colorTable[0x7FFF] < 0xF000);
 		}
 	}
 

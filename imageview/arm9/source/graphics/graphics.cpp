@@ -58,10 +58,11 @@ void ClearBrightness(void) {
 }
 
 bool invertedColors = false;
+bool noWhiteFade = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
-	if (invertedColors && bright != 0) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
 		bright -= bright*2; // Invert brightness to match the inverted colors
 	}
 
@@ -72,7 +73,7 @@ void SetBrightness(u8 screen, s8 bright) {
 		bright = -bright;
 	}
 	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 void vBlankHandler() {
@@ -498,6 +499,7 @@ void graphicsInit() {
 			invertedColors =
 			  (colorTable[0] >= 0xF000 && colorTable[0] <= 0xFFFF
 			&& colorTable[0x7FFF] >= 0x8000 && colorTable[0x7FFF] <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (colorTable[0x7FFF] < 0xF000);
 
 			vramSetBankE(VRAM_E_LCD);
 			tonccpy(VRAM_E, colorTable, 0x10000); // Copy LUT to VRAM
@@ -506,8 +508,8 @@ void graphicsInit() {
 		}
 	}
 
-	*(u16*)(0x0400006C) |= BIT(14);
-	*(u16*)(0x0400006C) &= BIT(15);
+	*(vu16*)(0x0400006C) |= BIT(14);
+	*(vu16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 

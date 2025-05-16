@@ -34,7 +34,6 @@ void reloadPhoto();
 void clearBoxArt();
 void graphicsInit();
 extern u16* colorTable;
-extern bool invertedColors;
 
 template<typename T> inline const T abs(T const & x)
 {

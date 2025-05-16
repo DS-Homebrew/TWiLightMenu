@@ -51,10 +51,11 @@ u16 frameBuffer[2][256*192];
 u16 frameBufferBot[2][256*192];
 u16* colorTable = NULL;
 bool invertedColors = false;
+bool noWhiteFade = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
-	if (invertedColors && bright != 0) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
 		bright -= bright*2; // Invert brightness to match the inverted colors
 	}
 
@@ -65,7 +66,7 @@ void SetBrightness(u8 screen, s8 bright) {
 		bright = -bright;
 	}
 	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 /* u16 convertVramColorToGrayscale(u16 val) {
