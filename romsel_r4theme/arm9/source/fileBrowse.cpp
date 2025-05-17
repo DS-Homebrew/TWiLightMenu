@@ -945,6 +945,12 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			printSmall(false, 0, 114, "the full version, launch this on", Alignment::center);
 			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
 			break;
+		case 8:
+			printSmall(false, 0, 90, "Due to memory limitations, sound effects", Alignment::center);
+			printSmall(false, 0, 102, "will not be played. To play this", Alignment::center);
+			printSmall(false, 0, 114, "game with sound effects, launch this on", Alignment::center);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
+			break;
 		case 10:
 			if (sys().isRegularDS()) {
 				printSmall(false, 0, 102, "To launch this title, please", Alignment::center);

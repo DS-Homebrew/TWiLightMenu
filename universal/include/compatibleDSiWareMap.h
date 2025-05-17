@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 476
+// Total: 477
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -222,6 +222,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KTX", // High Stakes Texas Hold'em
 	"KHI", // Hints Hunter
 	"KT2", // G.G Series: Horizontal Bar / GO Series: Let's Swing!
+	"KIS", // Ice Hockey Slovakia 2011
 	"KNK", // Ideyou Sukeno: Kenkou Maja DSi
 	"KBT", // Invasion of the Alien Blobs!
 	"K3J", // iSpot Japan
@@ -558,7 +559,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 45
+// Total: 46
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -579,6 +580,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KFO", // Frenzic
 	"KGK", // Glory Days: Tactical Defense
 	"KZH", // Halloween Trick or Treat
+	"KIS", // Ice Hockey Slovakia 2011
 	"KPT", // Link 'n' Launch
 	"KYL", // Make Up & Style
 	"K59", // Metal Torrent
@@ -628,6 +630,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Frenzic (Crashes at certain point)
 	2, // Glory Days: Tactical Defense (No music)
 	2, // Halloween Trick or Treat (No music)
+	8, // Ice Hockey Slovakia 2011 (No sound effects)
 	2, // Link 'n' Launch (No music)
 	5, // Make Up & Style (No FMV)
 	2, // Metal Torrent (No music)
