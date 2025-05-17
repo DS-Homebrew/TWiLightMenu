@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 478
+// Total: 479
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -93,6 +93,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KKQ", // Bugs'N'Balls
 	"K2J", // Cake Ninja
 	"K2N", // Cake Ninja 2
+	"KYN", // Cake Ninja: XMAS
 	"KCY", // Calculator
 	"K22", // California Super Sports
 	"K3N", // GO Series: Captain Sub
@@ -560,7 +561,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 46
+// Total: 47
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -570,6 +571,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"K9G", // Big Bass Arcade
 	"KLN", // Bloons TD
+	"KYN", // Cake Ninja: XMAS
 	"K22", // California Super Sports
 	"KQN", // Castle Conqueror: Revolution
 	"KXW", // Christmas Wonderland
@@ -620,6 +622,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	5, // Aru Seishun no Monogatari: Kouenji Joshi Sakka (No FMVs)
 	4, // Big Bass Arcade (Crashes at certain points)
 	1, // Bloons TD (No audio)
+	1, // Cake Ninja: XMAS (No audio)
 	4, // California Super Sports (Crashes when selecting either Dodgeball or Rollerblade)
 	4, // Castle Conqueror: Revolution (Crashes at certain point(s))
 	1, // Christmas Wonderland (No audio)
@@ -661,7 +664,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 36
+// Total: 35
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -672,7 +675,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KWGV", // Animal Crossing Calculator (Europe, Australia) (Not counted)
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KUV", // Bloons TD 4
-	"KYN", // Cake Ninja: XMAS
 	"KVX", // Cat Frenzy
 	"K35", // Defense of the Middle Kingdom
 	"KN2", // Devil Band: Rock the Underworld
