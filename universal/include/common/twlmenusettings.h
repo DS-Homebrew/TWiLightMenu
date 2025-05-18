@@ -239,6 +239,12 @@ public:
 		ETWLMFolder = 2
 	};
 
+	enum TSaveRelocation : bool
+	{
+		ERelocOnSDCard = true,
+		ELocaOnNDSCart = false
+	};
+
 public:
 	TWLSettings();
 	~TWLSettings() {};
@@ -389,6 +395,7 @@ public:
 	int extendedMemory;
 	bool forceSleepPatch;
 	TSoundFreq soundFreq;
+	TSaveRelocation saveRelocation;
 };
 
 typedef singleton<TWLSettings> menuSettings_s;

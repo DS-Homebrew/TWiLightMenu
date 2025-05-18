@@ -66,6 +66,7 @@ int perGameSettings_wideScreen = -1;
 int perGameSettings_dsiwareBooter = -1;
 int perGameSettings_useBootstrap = -1;
 int perGameSettings_useBootstrapCheat = -1;
+int perGameSettings_saveRelocation = -1;
 
 static char SET_AS_DONOR_ROM[32];
 
@@ -113,6 +114,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_dsiwareBooter = pergameini.GetInt("GAMESETTINGS", "DSIWARE_BOOTER", -1);
 	perGameSettings_useBootstrap = pergameini.GetInt("GAMESETTINGS", "USE_BOOTSTRAP", -1);
 	perGameSettings_useBootstrapCheat = perGameSettings_useBootstrap;
+	perGameSettings_saveRelocation = pergameini.GetInt("GAMESETTINGS", "SAVE_RELOCATION", -1);
 }
 
 void savePerGameSettings (std::string filename) {
@@ -169,6 +171,7 @@ void savePerGameSettings (std::string filename) {
 		if (isDSiWare[cursorPosOnScreen] && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
 			pergameini.SetInt("GAMESETTINGS", "DSIWARE_BOOTER", perGameSettings_dsiwareBooter);
 		}
+		pergameini.SetInt("GAMESETTINGS", "SAVE_RELOCATION", perGameSettings_saveRelocation);
 	}
 	pergameini.SaveIniFile( pergamefilepath );
 }
@@ -628,6 +631,8 @@ void perGameSettings (std::string filename) {
 			} else {
 				donorRomTextShown = false;
 			}
+			perGameOps++;
+			perGameOp[perGameOps] = 16;	// Save_Relocation
 		} else if (!dsiFeatures()) {
 			if (a7mbk6[cursorPosOnScreen] != 0x080037C0 && showSetDonorRom(arm7size, SDKVersion, dsiBinariesFound)) {
 				perGameOps++;
@@ -890,6 +895,16 @@ void perGameSettings (std::string filename) {
 					}
 				}
 				break;
+			case 16:
+				printSmall(false, perGameOpXpos, perGameOpYpos, "Save Relocation:", Alignment::left, highlighted);
+				if (perGameSettings_saveRelocation == -1) {
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
+				} else if (perGameSettings_saveRelocation == 1) {
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "SD/microSD Card", Alignment::right, highlighted);
+				} else {
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "NDS Cart", Alignment::right, highlighted);
+				}
+				break;
 		}
 		perGameOpYpos += 12;
 		}
@@ -1008,6 +1023,10 @@ void perGameSettings (std::string filename) {
 						perGameSettings_useBootstrap--;
 						if (perGameSettings_useBootstrap < -1) perGameSettings_useBootstrap = 1;
 						break;
+					case 16:
+						perGameSettings_saveRelocation++;
+						if (perGameSettings_saveRelocation > 1) perGameSettings_saveRelocation = -1;
+						break;
 				}
 				perGameSettingsChanged = true;
 			} else if ((pressed & KEY_A) || (held & KEY_RIGHT)) {
@@ -1124,6 +1143,10 @@ void perGameSettings (std::string filename) {
 					case 14:
 						perGameSettings_useBootstrap++;
 						if (perGameSettings_useBootstrap > 1) perGameSettings_useBootstrap = -1;
+						break;
+					case 16:
+						perGameSettings_saveRelocation--;
+						if (perGameSettings_saveRelocation < -1) perGameSettings_saveRelocation = 1;
 						break;
 				}
 				perGameSettingsChanged = true;

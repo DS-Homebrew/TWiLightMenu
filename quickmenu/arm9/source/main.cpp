@@ -2622,6 +2622,7 @@ int dsClassicMenu(void) {
 						|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
 						|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 						);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "SAVE_RELOCATION", perGameSettings_saveRelocation == -1 ? ms().saveRelocation : perGameSettings_saveRelocation);
 						bootstrapini.SaveIniFile(bootstrapinipath);
 
 						if (dsiFeatures() && !isHomebrew[ms().secondaryDevice]) {

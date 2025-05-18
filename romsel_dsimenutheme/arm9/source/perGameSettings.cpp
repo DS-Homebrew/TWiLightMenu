@@ -78,6 +78,7 @@ int perGameSettings_wideScreen = -1;
 int perGameSettings_dsiwareBooter = -1;
 int perGameSettings_useBootstrap = -1;
 int perGameSettings_useBootstrapCheat = -1;
+int perGameSettings_saveRelocation = -1;
 
 std::string setAsInternetBrowser = "";
 std::string setAsDonorRom = "";
@@ -137,6 +138,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_dsiwareBooter = pergameini.GetInt("GAMESETTINGS", "DSIWARE_BOOTER", -1);
 	perGameSettings_useBootstrap = pergameini.GetInt("GAMESETTINGS", "USE_BOOTSTRAP", -1);
 	perGameSettings_useBootstrapCheat = perGameSettings_useBootstrap;
+	perGameSettings_saveRelocation = pergameini.GetInt("GAMESETTINGS", "SAVE_RELOCATION", -1);
 
 	// Check if blacklisted
 	blacklisted_boostCpu = false;
@@ -221,6 +223,7 @@ void savePerGameSettings (std::string filename) {
 		if (isDSiWare[CURPOS] && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
 			pergameini.SetInt("GAMESETTINGS", "DSIWARE_BOOTER", perGameSettings_dsiwareBooter);
 		}
+		pergameini.SetInt("GAMESETTINGS", "SAVE_RELOCATION", perGameSettings_saveRelocation);
 	}
 	pergameini.SaveIniFile( pergamefilepath );
 }
@@ -687,6 +690,8 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			} else {
 				donorRomTextShown = false;
 			}
+			perGameOps++;
+			perGameOp[perGameOps] = 16;	// Save_Relocation
 		} else if (!dsiFeatures()) {
 			if (memcmp(gameTid[CURPOS], "UBR", 3) == 0) {
 				perGameOps++;
@@ -991,6 +996,16 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			case 15:
 				printSmall(false, 0, perGameOpYpos, setAsInternetBrowser, Alignment::center, FontPalette::dialog);
 				break;
+			case 16:
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SAVE_RELOCATION + ":", startAlign, FontPalette::dialog);
+				if (perGameSettings_saveRelocation == -1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
+				} else if (perGameSettings_saveRelocation == 1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SAVE_SDCARD, endAlign, FontPalette::dialog);
+				} else {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SAVE_NDSCART, endAlign, FontPalette::dialog);
+				}
+				break;
 		}
 		perGameOpYpos += 14;
 		}
@@ -1116,6 +1131,10 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 						perGameSettings_useBootstrap--;
 						if (perGameSettings_useBootstrap < -1) perGameSettings_useBootstrap = 1;
 						break;
+					case 16:
+						perGameSettings_saveRelocation++;
+						if (perGameSettings_saveRelocation > 1) perGameSettings_saveRelocation = -1;
+						break;
 				}
 				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
@@ -1240,6 +1259,10 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 						ms().saveSettings();
 						setAsInternetBrowser = STR_DONE;
 					  }
+						break;
+					case 16:
+						perGameSettings_saveRelocation--;
+						if (perGameSettings_saveRelocation < -1) perGameSettings_saveRelocation = 1;
 						break;
 				}
 				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();

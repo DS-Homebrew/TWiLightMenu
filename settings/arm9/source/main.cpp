@@ -1283,7 +1283,8 @@ int settingsMode(void)
 				Option::Bool(&ms().useRomRegion),
 				{STR_YES, STR_NO},
 				{true, false})
-		.option(STR_SAVE_LOCATION, STR_DESCRIPTION_SAVE_LOCATION, Option::Int((int *)&ms().saveLocation), {STR_SAVES_FOLDER, STR_ROM_FOLDER, STR_TWLMENU_FOLDER}, {TWLSettings::ESavesFolder, TWLSettings::EGamesFolder, TWLSettings::ETWLMFolder});
+		.option(STR_SAVE_LOCATION, STR_DESCRIPTION_SAVE_LOCATION, Option::Int((int *)&ms().saveLocation), {STR_SAVES_FOLDER, STR_ROM_FOLDER, STR_TWLMENU_FOLDER}, {TWLSettings::ESavesFolder, TWLSettings::EGamesFolder, TWLSettings::ETWLMFolder})
+		.option(STR_SAVE_RELOCATION, STR_DESCRIPTION_SAVE_RELOCATION, Option::Bool((bool *)&ms().saveRelocation), {STR_SAVE_SDCARD, STR_SAVE_NDSCART}, {true, false});
 
 	if (flashcardFound() && (dsiFeatures() || sdFound())) {
 		if (sdFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {

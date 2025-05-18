@@ -19,6 +19,7 @@ extern int perGameSettings_wideScreen;
 extern int perGameSettings_expandRomSpace;
 extern int perGameSettings_dsiwareBooter;
 extern int perGameSettings_useBootstrap;
+extern int perGameSettings_saveRelocation;
 
 void loadPerGameSettings(std::string filename);
 std::string getSavExtension(void);
