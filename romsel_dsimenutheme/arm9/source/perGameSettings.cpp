@@ -656,10 +656,6 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
 		const bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && (!ms().kernelUseable || unitCode[CURPOS] == 3)) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
-			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
-				perGameOps++;
-				perGameOp[perGameOps] = 16;	// DS Phat Colors
-			}
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 		}
@@ -696,6 +692,10 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			if (!ms().secondaryDevice && !romLoadableInRam && !blacklisted_asyncCardRead) {
 				perGameOps++;
 				perGameOp[perGameOps] = 12;	// Async Card Read
+			}
+			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
+				perGameOps++;
+				perGameOp[perGameOps] = 16;	// DS Phat Colors
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
