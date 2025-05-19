@@ -691,7 +691,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 				donorRomTextShown = false;
 			}
 			perGameOps++;
-			perGameOp[perGameOps] = 16;	// Save_Relocation
+			perGameOp[perGameOps] = 17;	// Save_Relocation
 		} else if (!dsiFeatures()) {
 			if (memcmp(gameTid[CURPOS], "UBR", 3) == 0) {
 				perGameOps++;
@@ -996,7 +996,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			case 15:
 				printSmall(false, 0, perGameOpYpos, setAsInternetBrowser, Alignment::center, FontPalette::dialog);
 				break;
-			case 16:
+			case 17:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SAVE_RELOCATION + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_saveRelocation == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
@@ -1131,7 +1131,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 						perGameSettings_useBootstrap--;
 						if (perGameSettings_useBootstrap < -1) perGameSettings_useBootstrap = 1;
 						break;
-					case 16:
+					case 17:
 						perGameSettings_saveRelocation++;
 						if (perGameSettings_saveRelocation > 1) perGameSettings_saveRelocation = -1;
 						break;
@@ -1260,7 +1260,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 						setAsInternetBrowser = STR_DONE;
 					  }
 						break;
-					case 16:
+					case 17:
 						perGameSettings_saveRelocation--;
 						if (perGameSettings_saveRelocation < -1) perGameSettings_saveRelocation = 1;
 						break;

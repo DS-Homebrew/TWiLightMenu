@@ -635,7 +635,7 @@ void perGameSettings (std::string filename) {
 				donorRomTextShown = false;
 			}
 			perGameOps++;
-			perGameOp[perGameOps] = 16;	// Save_Relocation
+			perGameOp[perGameOps] = 17;	// Save_Relocation
 		} else if (!dsiFeatures()) {
 			if (a7mbk6 != 0x080037C0 && showSetDonorRom(arm7size, SDKVersion, dsiBinariesFound)) {
 				perGameOps++;
@@ -902,7 +902,7 @@ void perGameSettings (std::string filename) {
 					}
 				}
 				break;
-			case 16:
+			case 17:
 				printSmall(false, perGameOpXpos, perGameOpYpos, "Save Relocation:", Alignment::left, highlighted);
 				if (perGameSettings_saveRelocation == -1) {
 					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
@@ -1030,7 +1030,7 @@ void perGameSettings (std::string filename) {
 						perGameSettings_useBootstrap--;
 						if (perGameSettings_useBootstrap < -1) perGameSettings_useBootstrap = 1;
 						break;
-					case 16:
+					case 17:
 						perGameSettings_saveRelocation++;
 						if (perGameSettings_saveRelocation > 1) perGameSettings_saveRelocation = -1;
 						break;
@@ -1149,7 +1149,7 @@ void perGameSettings (std::string filename) {
 						perGameSettings_useBootstrap++;
 						if (perGameSettings_useBootstrap > 1) perGameSettings_useBootstrap = -1;
 						break;
-					case 16:
+					case 17:
 						perGameSettings_saveRelocation--;
 						if (perGameSettings_saveRelocation < -1) perGameSettings_saveRelocation = 1;
 						break;
