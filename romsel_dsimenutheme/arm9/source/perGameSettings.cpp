@@ -37,6 +37,7 @@
 #include "defaultSettings.h"
 #include "myDSiMode.h"
 
+#include "colorLutBlacklist.h"
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
@@ -65,6 +66,7 @@ bool perGameSettingsChanged = false;
 int perGameSettings_cursorPosition = 0;
 bool perGameSettings_directBoot = false;	// Homebrew only
 int perGameSettings_dsiMode = -1;
+int perGameSettings_dsPhatColors = -1;
 int perGameSettings_language = -2;
 int perGameSettings_region = -2;
 int perGameSettings_saveNo = 0;
@@ -105,10 +107,11 @@ char fileCounter[8];
 char gameTIDText[16];
 char saveNoDisplay[8];
 
-int firstPerGameOpShown = 0;
-int perGameOps = -1;
-int perGameOp[10] = {-1};
+static int firstPerGameOpShown = 0;
+static int perGameOps = -1;
+static int perGameOp[17] = {-1};
 
+bool blacklisted_colorLut = false;
 bool blacklisted_boostCpu = false;
 bool blacklisted_cardReadDma = false;
 bool blacklisted_asyncCardRead = false;
@@ -124,6 +127,7 @@ void loadPerGameSettings (std::string filename) {
 	} else {
 		perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
 	}
+	perGameSettings_dsPhatColors = pergameini.GetInt("GAMESETTINGS", "PHAT_COLORS", -1);
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_region = pergameini.GetInt("GAMESETTINGS", "REGION", -2);
 	if (perGameSettings_region < -2 || (!dsiFeatures() && perGameSettings_region == -1)) perGameSettings_region = -2;
@@ -141,6 +145,16 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_saveRelocation = pergameini.GetInt("GAMESETTINGS", "SAVE_RELOCATION", -1);
 
 	// Check if blacklisted
+	blacklisted_colorLut = false;
+	if (sys().dsiWramAccess() && !sys().dsiWramMirrored()) {
+		for (unsigned int i = 0; i < sizeof(colorLutBlacklist)/sizeof(colorLutBlacklist[0]); i++) {
+			if (memcmp(gameTid[CURPOS], colorLutBlacklist[i], 3) == 0) {
+				// Found match
+				blacklisted_colorLut = true;
+			}
+		}
+	}
+
 	blacklisted_boostCpu = false;
 	blacklisted_cardReadDma = false;
 	blacklisted_asyncCardRead = false;
@@ -195,7 +209,10 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
 		}
 	} else {
-		if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || isDSiWare[CURPOS] || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || isDSiWare[CURPOS] || !ms().secondaryDevice) {
+			if (sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) pergameini.SetInt("GAMESETTINGS", "PHAT_COLORS", perGameSettings_dsPhatColors);
+			pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		}
 		if (!isDSiWare[CURPOS] && ((perGameSettings_useBootstrap == -1 ? (perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || !ms().secondaryDevice)) {
 			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
@@ -523,7 +540,12 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 	}
 
 	#define sharedWramEnabled (!sys().arm7SCFGLocked() || *(u32*)0x02FFE1A0 != 0x00403000)
-	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BE0000 : 0xBE0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? (sharedWramEnabled ? 0x88000 : 0x80000) : (sharedWramEnabled ? 0x8000 : 0));
+	u32 dsiWramAmount = (sharedWramEnabled ? 0x88000 : 0x80000);
+	if (colorTable && sys().dsiWramAccess() && !sys().dsiWramMirrored()) {
+		dsiWramAmount -= 0x80000;
+		dsiWramAmount += 0x4AC00;
+	}
+	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BE0000 : 0xBE0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? dsiWramAmount : (sharedWramEnabled ? 0x8000 : 0));
 	romSizeLimit -= 0x400000; // Account for DSi mode setting
 	const u32 romSizeLimitTwl = (ms().consoleModel > 0 ? 0x1000000 : 0);
 	const bool romLoadableInRam = (romSize <= (unitCode[CURPOS] > 0 ? romSizeLimitTwl : romSizeLimit));
@@ -546,7 +568,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 
 	firstPerGameOpShown = 0;
 	perGameOps = -1;
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 17; i++) {
 		perGameOp[i] = -1;
 	}
 	if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
@@ -590,6 +612,10 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 		}
 	} else if (showPerGameSettings && isDSiWare[CURPOS]) {	// Per-game settings for DSiWare
 		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
+				perGameOps++;
+				perGameOp[perGameOps] = 16;	// DS Phat Colors
+			}
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 			perGameOps++;
@@ -633,6 +659,10 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
 		const bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && (!ms().kernelUseable || unitCode[CURPOS] == 3)) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
+			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
+				perGameOps++;
+				perGameOp[perGameOps] = 16;	// DS Phat Colors
+			}
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 		}
@@ -996,6 +1026,16 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			case 15:
 				printSmall(false, 0, perGameOpYpos, setAsInternetBrowser, Alignment::center, FontPalette::dialog);
 				break;
+			case 16:
+				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_DS_PHAT_COLORS + ":", startAlign, FontPalette::dialog);
+				if (perGameSettings_dsPhatColors == -1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
+				} else if (perGameSettings_dsPhatColors == 1) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_ON, endAlign, FontPalette::dialog);
+				} else {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_OFF, endAlign, FontPalette::dialog);
+				}
+				break;
 			case 17:
 				printSmall(false, perGameOpStartXpos, perGameOpYpos, STR_SAVE_RELOCATION + ":", startAlign, FontPalette::dialog);
 				if (perGameSettings_saveRelocation == -1) {
@@ -1131,6 +1171,10 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 						perGameSettings_useBootstrap--;
 						if (perGameSettings_useBootstrap < -1) perGameSettings_useBootstrap = 1;
 						break;
+					case 16:
+						perGameSettings_dsPhatColors--;
+						if (perGameSettings_dsPhatColors < -1) perGameSettings_dsPhatColors = 1;
+						break;
 					case 17:
 						perGameSettings_saveRelocation++;
 						if (perGameSettings_saveRelocation > 1) perGameSettings_saveRelocation = -1;
@@ -1259,6 +1303,10 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 						ms().saveSettings();
 						setAsInternetBrowser = STR_DONE;
 					  }
+						break;
+					case 16:
+						perGameSettings_dsPhatColors++;
+						if (perGameSettings_dsPhatColors > 1) perGameSettings_dsPhatColors = -1;
 						break;
 					case 17:
 						perGameSettings_saveRelocation--;

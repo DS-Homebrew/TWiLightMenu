@@ -112,14 +112,14 @@ void updateText(bool top) {
 			for (int y = 24; y < 192-24; y++) {
 				for (int x = 48; x < 256-48; x++) {
 					const int i = (y*256)+x;
-					topImageWithText[startMenu][0][i] = (FontGraphic::textBuf[1][i]) ? BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] : topImage[startMenu][0][i];
-					topImageWithText[startMenu][1][i] = (FontGraphic::textBuf[1][i]) ? BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] : topImage[startMenu][1][i];
+					topImageWithText[startMenu][0][i] = (FontGraphic::textBuf[1][i]) ? (BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] | BIT(15)) : topImage[startMenu][0][i];
+					topImageWithText[startMenu][1][i] = (FontGraphic::textBuf[1][i]) ? (BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] | BIT(15)) : topImage[startMenu][1][i];
 				}
 			}
 		} else {
 			for (int i = 0; i < 256*192; i++) {
-				topImageWithText[startMenu][0][i] = (FontGraphic::textBuf[1][i]) ? BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] : topImage[startMenu][0][i];
-				topImageWithText[startMenu][1][i] = (FontGraphic::textBuf[1][i]) ? BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] : topImage[startMenu][1][i];
+				topImageWithText[startMenu][0][i] = (FontGraphic::textBuf[1][i]) ? (BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] | BIT(15)) : topImage[startMenu][0][i];
+				topImageWithText[startMenu][1][i] = (FontGraphic::textBuf[1][i]) ? (BG_PALETTE_SUB[FontGraphic::textBuf[1][i]] | BIT(15)) : topImage[startMenu][1][i];
 			}
 		}
 		return;

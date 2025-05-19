@@ -56,11 +56,17 @@ int bg3Main;
 int bg2Sub;
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
+
+bool invertedColors = false;
+bool noWhiteFade = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -191,14 +197,18 @@ void topBarLoad(void) {
 }
 
 void graphicsInit() {
-	*(vu16*)(0x0400006C) |= BIT(14);
-	*(vu16*)(0x0400006C) &= BIT(15);
-	SetBrightness(0, 31);
-	SetBrightness(1, 31);
+	char currentSettingPath[40];
+	sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
-	if (ms().colorMode != "Default") {
+	if (access(currentSettingPath, F_OK) == 0) {
+		// Load color LUT
+		char lutName[128] = {0};
+		FILE* file = fopen(currentSettingPath, "rb");
+		fread(lutName, 1, 128, file);
+		fclose(file);
+
 		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), lutName);
 
 		if (getFileSize(colorTablePath) == 0x10000) {
 			colorTable = new u16[0x10000/sizeof(u16)];
@@ -207,12 +217,25 @@ void graphicsInit() {
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
 
+			const u16 color0 = colorTable[0] | BIT(15);
+			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
+			invertedColors =
+			  (color0 >= 0xF000 && color0 <= 0xFFFF
+			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
+
 			vramSetBankD(VRAM_D_LCD);
 			tonccpy(VRAM_D, colorTable, 0x10000); // Copy LUT to VRAM
 			delete[] colorTable; // Free up RAM space
 			colorTable = VRAM_D;
 		}
 	}
+
+	*(vu16*)(0x0400006C) |= BIT(14);
+	*(vu16*)(0x0400006C) &= BIT(15);
+	SetBrightness(0, 31);
+	SetBrightness(1, 31);
 
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_2D);

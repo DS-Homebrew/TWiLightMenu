@@ -34,6 +34,7 @@
 
 #include "autoboot.h"		 // For rebooting into the game
 
+#include "colorLutBlacklist.h"
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
@@ -517,6 +518,7 @@ void lastRunROM()
 
 			bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 			bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+			bool dsPhatColors = (perGameSettings_dsPhatColors == -1 ? DEFAULT_PHAT_COLORS : perGameSettings_dsPhatColors);
 			bool boostCpu = (perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu);
 			bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
 			bool asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
@@ -580,6 +582,15 @@ void lastRunROM()
 					}
 				}
 
+				// TODO: If the list gets large enough, switch to bsearch().
+				for (unsigned int i = 0; i < sizeof(colorLutBlacklist)/sizeof(colorLutBlacklist[0]); i++) {
+					if (memcmp(game_TID, colorLutBlacklist[i], 3) == 0) {
+						// Found match
+						dsPhatColors = false;
+						break;
+					}
+				}
+
 				if (!ms().ignoreBlacklists) {
 					// TODO: If the list gets large enough, switch to bsearch().
 					for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
@@ -619,6 +630,7 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().previousUsedDevice]);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", dsPhatColors);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", (perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", (perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", (perGameSettings_region < -1 ? ms().useRomRegion : 0));
@@ -802,6 +814,7 @@ void lastRunROM()
 			} else {
 				bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+				bool dsPhatColors = (perGameSettings_dsPhatColors == -1 ? DEFAULT_PHAT_COLORS : perGameSettings_dsPhatColors);
 				bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
 				if (runTempDSiWare) {
 					useWidescreen = *(bool*)(0x02000014);
@@ -909,6 +922,15 @@ void lastRunROM()
 					}
 				}
 
+				// TODO: If the list gets large enough, switch to bsearch().
+				for (unsigned int i = 0; i < sizeof(colorLutBlacklist)/sizeof(colorLutBlacklist[0]); i++) {
+					if (memcmp(NDSHeader.gameCode, colorLutBlacklist[i], 3) == 0) {
+						// Found match
+						dsPhatColors = false;
+						break;
+					}
+				}
+
 				if (!ms().ignoreBlacklists) {
 					// TODO: If the list gets large enough, switch to bsearch().
 					for (unsigned int i = 0; i < sizeof(cardReadDMAExcludeList)/sizeof(cardReadDMAExcludeList[0]); i++) {
@@ -959,6 +981,7 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", dsPhatColors);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
 					(perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", (perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region));
@@ -1380,6 +1403,10 @@ void graphicsInit(void) {
 
 	BG_PALETTE[0x10] = 0xFFFF;
 	BG_PALETTE_SUB[0x10] = 0xFFFF;
+	if (colorTable) {
+		BG_PALETTE[0x10] = colorTable[BG_PALETTE[0x10] % 0x8000];
+		BG_PALETTE_SUB[0x10] = colorTable[BG_PALETTE_SUB[0x10] % 0x8000];
+	}
 	toncset16(bgGetGfxPtr(3), 0x1010, 256 * 192);
 	toncset16(bgGetGfxPtr(7), 0x1010, 256 * 192);
 
@@ -2107,6 +2134,9 @@ int titleMode(void)
 	 && (keysHeld() & KEY_Y)) {
 		runGraphicIrq();
 		resetSettingsPrompt();
+
+		unloadFont();
+		graphicsInited = false;
 	}
 
 	if (isDSiMode()) {
@@ -2425,16 +2455,35 @@ int titleMode(void)
 		}
 	}
 
-	if (ms().colorMode != "Default") {
-		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+	{
+		char currentSettingPath[40];
+		sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
-		if (getFileSize(colorTablePath) == 0x10000) {
-			colorTable = new u16[0x10000/sizeof(u16)];
-
-			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x10000, file);
+		if (access(currentSettingPath, F_OK) == 0) {
+			// Load color LUT
+			char lutName[128] = {0};
+			FILE* file = fopen(currentSettingPath, "rb");
+			fread(lutName, 1, 128, file);
 			fclose(file);
+
+			char colorTablePath[256];
+			sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), lutName);
+
+			if (getFileSize(colorTablePath) == 0x10000) {
+				colorTable = new u16[0x10000/sizeof(u16)];
+
+				FILE* file = fopen(colorTablePath, "rb");
+				fread(colorTable, 1, 0x10000, file);
+				fclose(file);
+
+				const u16 color0 = colorTable[0] | BIT(15);
+				const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
+				invertedColors =
+				  (color0 >= 0xF000 && color0 <= 0xFFFF
+				&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+				if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
+			}
 		}
 	}
 

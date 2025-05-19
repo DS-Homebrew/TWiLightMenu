@@ -57,8 +57,15 @@ void ClearBrightness(void) {
 	swiWaitForVBlank();
 }
 
+bool invertedColors = false;
+bool noWhiteFade = false;
+
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -66,7 +73,7 @@ void SetBrightness(u8 screen, s8 bright) {
 		bright = -bright;
 	}
 	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 void vBlankHandler() {
@@ -107,6 +114,15 @@ void vBlankHandler() {
 }
 
 void imageLoad(const char* filename) {
+	// Color LUT display test
+	/* toncset16(BG_GFX, 0, 256*192);
+	int i2 = 0;
+	for (int i = 0x8000; i <= 0xFFFF; i++) {
+		BG_GFX[i2] = (colorTable) ? colorTable[i % 0x8000] : i;
+		i2++;
+	}
+	return; */
+
 	if (imageType == 2) { // PNG
 		dsImageBuffer[0] = new u16[256*192];
 		dsImageBuffer[1] = new u16[256*192];
@@ -158,7 +174,7 @@ void imageLoad(const char* filename) {
 			if (image[(i*4)+3] > 0) {
 				u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 				if (colorTable) {
-					color = colorTable[color % 0x8000];
+					color = colorTable[color % 0x8000] | BIT(15);
 				}
 				res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 			}
@@ -188,7 +204,7 @@ void imageLoad(const char* filename) {
 			if (image[(i*4)+3] > 0) {
 				u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 				if (colorTable) {
-					color = colorTable[color % 0x8000];
+					color = colorTable[color % 0x8000] | BIT(15);
 				}
 				res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 			}
@@ -281,7 +297,7 @@ void imageLoad(const char* filename) {
 				}
 				u16 color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
 				if (colorTable) {
-					color = colorTable[color % 0x8000];
+					color = colorTable[color % 0x8000] | BIT(15);
 				}
 				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = color;
 				if (alternatePixel) {
@@ -307,7 +323,7 @@ void imageLoad(const char* filename) {
 				}
 				color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
 				if (colorTable) {
-					color = colorTable[color % 0x8000];
+					color = colorTable[color % 0x8000] | BIT(15);
 				}
 				dsImageBuffer[1][(xPos+x+(y*256))+(yPos*256)] = color;
 				x++;
@@ -330,7 +346,7 @@ void imageLoad(const char* filename) {
 					u16 val = *(src++);
 					u16 color = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
 					if (colorTable) {
-						color = colorTable[color % 0x8000];
+						color = colorTable[color % 0x8000] | BIT(15);
 					}
 					*(dst + x) = color;
 				}
@@ -350,7 +366,7 @@ void imageLoad(const char* filename) {
 				fread(&unk, 1, 1, file);
 				pixelBuffer[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
 				if (colorTable) {
-					pixelBuffer[i] = colorTable[pixelBuffer[i] % 0x8000];
+					pixelBuffer[i] = colorTable[pixelBuffer[i] % 0x8000] | BIT(15);
 				}
 			}
 			u8 *bmpImageBuffer = new u8[width * height];
@@ -381,7 +397,7 @@ void imageLoad(const char* filename) {
 				fread(&unk, 1, 1, file);
 				monoPixel[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
 				if (colorTable) {
-					monoPixel[i] = colorTable[monoPixel[i] % 0x8000];
+					monoPixel[i] = colorTable[monoPixel[i] % 0x8000] | BIT(15);
 				}
 			}
 			u8 *bmpImageBuffer = new u8[(width * height)/8];
@@ -469,14 +485,18 @@ void bgLoad(void) {
 }
 
 void graphicsInit() {
-	*(u16*)(0x0400006C) |= BIT(14);
-	*(u16*)(0x0400006C) &= BIT(15);
-	SetBrightness(0, 31);
-	SetBrightness(1, 31);
+	char currentSettingPath[40];
+	sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
-	if (ms().colorMode != "Default") {
+	if (access(currentSettingPath, F_OK) == 0) {
+		// Load color LUT
+		char lutName[128] = {0};
+		FILE* file = fopen(currentSettingPath, "rb");
+		fread(lutName, 1, 128, file);
+		fclose(file);
+
 		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), lutName);
 
 		if (getFileSize(colorTablePath) == 0x10000) {
 			colorTable = new u16[0x10000/sizeof(u16)];
@@ -484,8 +504,26 @@ void graphicsInit() {
 			FILE* file = fopen(colorTablePath, "rb");
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
+
+			const u16 color0 = colorTable[0] | BIT(15);
+			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
+			invertedColors =
+			  (color0 >= 0xF000 && color0 <= 0xFFFF
+			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
+
+			vramSetBankE(VRAM_E_LCD);
+			tonccpy(VRAM_E, colorTable, 0x10000); // Copy LUT to VRAM
+			delete[] colorTable; // Free up RAM space
+			colorTable = VRAM_E;
 		}
 	}
+
+	*(vu16*)(0x0400006C) |= BIT(14);
+	*(vu16*)(0x0400006C) &= BIT(15);
+	SetBrightness(0, 31);
+	SetBrightness(1, 31);
 
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_2D);

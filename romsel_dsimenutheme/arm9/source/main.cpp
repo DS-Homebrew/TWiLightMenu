@@ -58,6 +58,7 @@
 
 #include "autoboot.h"		 // For rebooting into the game
 
+#include "colorLutBlacklist.h"
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
@@ -169,6 +170,21 @@ int SetDonorSDK() {
 	return 0;
 }
 
+
+/**
+ * Disables DS Phat colors for a specific game.
+ */
+bool setDSPhatColors() {
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(colorLutBlacklist)/sizeof(colorLutBlacklist[0]); i++) {
+		if (memcmp(gameTid[CURPOS], colorLutBlacklist[i], 3) == 0) {
+			// Found match
+			return false;
+		}
+	}
+
+	return perGameSettings_dsPhatColors == -1 ? DEFAULT_PHAT_COLORS : perGameSettings_dsPhatColors;
+}
 
 /**
  * Disable TWL clock speed for a specific game.
@@ -1468,6 +1484,7 @@ int dsiMenuTheme(void) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "MANUAL_PATH", getGameManual(filename.c_str()));
 					bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", setDSPhatColors());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", perGameSettings_region < -1 ? ms().useRomRegion : 0);
@@ -1668,6 +1685,7 @@ int dsiMenuTheme(void) {
 						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", setDSPhatColors());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", perGameSettings_region < -1 ? ms().useRomRegion : 0);

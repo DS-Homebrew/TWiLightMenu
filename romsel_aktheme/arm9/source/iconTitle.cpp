@@ -922,7 +922,7 @@ void clearTitle(int num) {
 	bnriconisDSi[numDst] = bnriconisDSi[numSrc];
 } */
 
-void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
+void getGameInfo(int num, int fileOffset, bool isDir, const char* name, bool fromArgv)
 {
 	bnriconPalLine[num] = 0;
 	bnriconPalLoaded[num] = 0;
@@ -943,9 +943,9 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 		infoFound[num] = false;
 	}
 
-	if (ms().showCustomIcons && customIcon[num] < 2 && (!fromArgv || customIcon[num] <= 0)) {
+	if (ms().showCustomIcons && !preloadedBannerIconFound(fileOffset) && customIcon[num] < 2 && (!fromArgv || customIcon[num] <= 0)) {
 		sNDSBannerExt &banner = bnriconTile[num];
-		bool argvHadPng = customIcon[num] == 1;
+		const bool argvHadPng = customIcon[num] == 1;
 		u8 iconCopy[512];
 		u16 paletteCopy[16];
 		if (argvHadPng) { // custom png icon from argv
@@ -969,32 +969,17 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 				if (argvHadPng) {
 					memcpy(banner.icon, iconCopy, sizeof(iconCopy));
 					memcpy(banner.palette, paletteCopy, sizeof(paletteCopy));
+					if (ndsBanner.version == NDS_BANNER_VER_DSi) {
+						ndsBanner.version = NDS_BANNER_VER_ZH_KO;
+					}
 				}
 
 				if (read >= NDS_BANNER_SIZE_ORIGINAL) {
 					customIconGood = true;
-
-					if (!argvHadPng && ms().animateDsiIcons && read == NDS_BANNER_SIZE_DSi) {
-						u16 crc16 = swiCRC16(0xFFFF, banner.dsi_icon, 0x1180);
-						if (banner.crc[3] == crc16) { // Check if CRC16 is valid
-							bnriconisDSi[num] = true;
-							grabBannerSequence(num);
-						}
+					tonccpy(getPreloadedBannerIcon(fileOffset), &banner, sizeof(sNDSBannerExt));
+					if (dsiFeatures()) {
+						bannerIconPreloaded[fileOffset] = true;
 					}
-
-					int currentLang = 0;
-					if (banner.version == NDS_BANNER_VER_ZH || banner.version == NDS_BANNER_VER_ZH_KO || banner.version == NDS_BANNER_VER_DSi) {
-						currentLang = ms().getGameLanguage();
-					} else {
-						currentLang = ms().getTitleLanguage();
-					}
-					while (banner.titles[currentLang][0] == 0 || (banner.titles[currentLang][0] == 0x20 && banner.titles[currentLang][1] == 0)) {
-						if (currentLang == 0) break;
-						currentLang--;
-					}
-					cachedTitle[num] = (char16_t*)&banner.titles[currentLang];
-					infoFound[num] = true;
-					convertIconPalette(&banner);
 				}
 			}
 		} else if (customIcon[num] == 0) {
@@ -1119,7 +1104,7 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 					if (customIcon[num] != 2)
 						clearBannerSequence(num);
 				} else {
-					getGameInfo(num, true, p, true);
+					getGameInfo(num, fileOffset, true, p, true);
 				}
 			} else {
 				// this is not an nds/app file!
@@ -1166,10 +1151,8 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 		fclose(fp);
 	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
-		FILE *fp;
-
 		// open file for reading info
-		fp = fopen(name, "rb");
+		FILE *fp = fopen(name, "rb");
 		if (!fp) {
 			clearTitle(num);
 			if (customIcon[num] != 2)
@@ -1180,7 +1163,9 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 
 		sNDSHeaderExt ndsHeader;
 
-		if (!fread(&ndsHeader, sizeof(ndsHeader), 1, fp)) {
+		if (preloadedHeaderFound(fileOffset)) {
+			tonccpy(&ndsHeader, getPreloadedHeader(fileOffset), sizeof(sNDSHeaderExt));
+		} else if (!fread(&ndsHeader, sizeof(sNDSHeaderExt), 1, fp)) {
 			// try again, but using regular header size
 			fseek(fp, 0, SEEK_SET);
 			if (!fread(&ndsHeader, 0x160, 1, fp)) {
@@ -1190,6 +1175,10 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 				fclose(fp);
 				return;
 			}
+		}
+
+		if (!preloadedHeaderFound(fileOffset)) {
+			tonccpy(getPreloadedHeader(fileOffset), &ndsHeader, sizeof(sNDSHeaderExt));
 		}
 
 		tonccpy(gameTid[num], ndsHeader.gameCode, 4);
@@ -1283,36 +1272,20 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 		else if (ndsHeader.dsi_flags & BIT(3))
 			bnrWirelessIcon[num] = 2;
 
-		if (customIcon[num] == 2) { // custom banner bin
-			// we're done early, close the file
-			fclose(fp);
-			return;
-		}
-
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
 
 		u8 iconCopy[512];
 		u16 paletteCopy[16];
-		if (customIcon[num] == 1) { // custom png icon
-			// copy the icon and palette before they get overwritten
-			memcpy(iconCopy, ndsBanner.icon, sizeof(iconCopy));
-			memcpy(paletteCopy, ndsBanner.palette, sizeof(paletteCopy));
-		}
+		if (preloadedBannerIconFound(fileOffset)) {
+			tonccpy(&ndsBanner, getPreloadedBannerIcon(fileOffset), sizeof(sNDSBannerExt));
+		} else {
+			if (customIcon[num] == 1) { // custom png icon
+				// copy the icon and palette before they get overwritten
+				memcpy(iconCopy, ndsBanner.icon, sizeof(iconCopy));
+				memcpy(paletteCopy, ndsBanner.palette, sizeof(paletteCopy));
+			}
 
-		if (ndsHeader.bannerOffset == 0) {
-			fclose(fp);
-
-			// If no custom icon, display as unknown
-			if (customIcon[num] == 0)
-				customIcon[num] = -1;
-
-			return;
-		}
-		fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
-		if (!fread(&ndsBanner, sizeof(ndsBanner), 1, fp)) {
-			// try again, but using regular banner size
-			fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
-			if (!fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp)) {
+			if (customIcon[num] != 2 && ndsHeader.bannerOffset == 0) {
 				fclose(fp);
 
 				// If no custom icon, display as unknown
@@ -1320,6 +1293,21 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 					customIcon[num] = -1;
 
 				return;
+			}
+
+			fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
+			if (!fread(&ndsBanner, sizeof(ndsBanner), 1, fp)) {
+				// try again, but using regular banner size
+				fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
+				if (!fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp)) {
+					fclose(fp);
+
+					// If no custom icon, display as unknown
+					if (customIcon[num] == 0)
+						customIcon[num] = -1;
+
+					return;
+				}
 			}
 		}
 
@@ -1337,6 +1325,22 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 			currentLang--;
 		}
 
+		if (!preloadedBannerIconFound(fileOffset)) {
+			// restore png icon
+			if (customIcon[num] == 1) {
+				tonccpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
+				tonccpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
+				if (ndsBanner.version == NDS_BANNER_VER_DSi) {
+					ndsBanner.version = NDS_BANNER_VER_ZH_KO;
+				}
+			}
+
+			tonccpy(getPreloadedBannerIcon(fileOffset), &ndsBanner, sizeof(sNDSBannerExt));
+			if (dsiFeatures()) {
+				bannerIconPreloaded[fileOffset] = true;
+			}
+		}
+
 		if (ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
 			for (int i = 0; i < 128; i++) {
 				if (ndsBanner.titles[currentLang][i] == 0x0A) {
@@ -1347,13 +1351,9 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 		}
 
 		cachedTitle[num] = (char16_t*)&ndsBanner.titles[currentLang];
-
 		infoFound[num] = true;
 
-		// restore png icon
 		if (customIcon[num] == 1) {
-			memcpy(ndsBanner.icon, iconCopy, sizeof(iconCopy));
-			memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
 			return;
 		}
 

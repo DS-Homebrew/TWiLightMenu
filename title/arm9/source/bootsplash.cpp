@@ -135,8 +135,9 @@ void bootSplashDSi(void) {
 	}
 
 	if (!custom && !virtualPain) {
-		BG_PALETTE[0] = 0xFFFF;
-		BG_PALETTE_SUB[0] = 0xFFFF;
+		const u16 white = colorTable ? colorTable[0x7FFF] : 0xFFFF;
+		BG_PALETTE[0] = white;
+		BG_PALETTE_SUB[0] = white;
 
 		controlBottomBright = false;
 		fadeType = false;

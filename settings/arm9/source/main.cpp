@@ -64,6 +64,8 @@ std::vector<std::string> unlaunchBgList;
 std::vector<std::string> fontList;
 std::vector<std::string> menuSrldrList;
 
+std::string colorLutName;
+
 bool fadeType = false; // false = out, true = in
 
 //bool soundfreqsettingChanged = false;
@@ -398,7 +400,7 @@ std::optional<Option> opt_theme_select(void)
 
 std::optional<Option> opt_lut_select(void)
 {
-	return Option(STR_COLORMODESEL, STR_AB_SETCOLORMODE, Option::Str(&ms().colorMode), colorLutList);
+	return Option(STR_SCREENFILTERSEL, STR_AB_SETSCREENFILTER, Option::Str(&colorLutName), colorLutList);
 }
 
 std::optional<Option> opt_gba_border_select(void)
@@ -794,14 +796,14 @@ void defaultExitHandler()
 	char currentSettingPath[40];
 	sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
-	if (ms().colorMode != "Default") {
+	if (colorLutName != "Default") {
 		// For homebrew to use the current LUT
 		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), colorLutName.c_str());
 
 		if (getFileSize(colorTablePath) == 0x10000) {
 			FILE* file = fopen(currentSettingPath, "wb");
-			fwrite(ms().colorMode.c_str(), 1, ms().colorMode.size(), file);
+			fwrite(colorLutName.c_str(), 1, colorLutName.size(), file);
 			fclose(file);
 		} else if (access(currentSettingPath, F_OK) == 0) {
 			remove(currentSettingPath);
@@ -1452,7 +1454,7 @@ int settingsMode(void)
 						{0});
 	}
 
-	miscPage.option(STR_COLORMODE, STR_DESCRIPTION_COLORMODE, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
+	miscPage.option(STR_SCREEN_FILTER, STR_DESCRIPTION_SCREEN_FILTER, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
 
 	if (sdFound() && isDSiMode()) {
 		if (!sys().arm7SCFGLocked()) {

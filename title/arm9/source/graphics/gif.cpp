@@ -51,13 +51,6 @@ void Gif::displayFrame(void) {
 	u16* bgPalette = _top ? BG_PALETTE : BG_PALETTE_SUB;
 
 	tonccpy(bgPalette, gifColorTable.data(), gifColorTable.size() * 2);
-	tonccpy(bgPalette, gifColorTable.data(), gifColorTable.size() * 2);
-	if (colorTable) {
-		for (unsigned int i = 0; i < gifColorTable.size(); i++) {
-			bgPalette[i] = colorTable[bgPalette[i] % 0x8000];
-		}
-		header.bgColor = colorTable[header.bgColor % 0x8000];
-	}
 
 	// Disposal method 2 = fill with bg color
 	if (frame.gce.disposalMethod == 2)
@@ -131,6 +124,9 @@ bool Gif::load(const char *path, bool top, bool animate) {
 		_gct = std::vector<u16>(numColors);
 		for (int i = 0; i < numColors; i++) {
 			_gct[i] = fgetc(file) >> 3 | (fgetc(file) >> 3) << 5 | (fgetc(file) >> 3) << 10 | BIT(15);
+			if (colorTable) {
+				_gct[i] = colorTable[_gct[i] % 0x8000];
+			}
 		}
 	}
 
@@ -193,6 +189,9 @@ bool Gif::load(const char *path, bool top, bool animate) {
 					frame.lct = std::vector<u16>(numColors);
 					for (int i = 0; i < numColors; i++) {
 						frame.lct[i] = fgetc(file) >> 3 | (fgetc(file) >> 3) << 5 | (fgetc(file) >> 3) << 10 | BIT(15);
+						if (colorTable) {
+							frame.lct[i] = colorTable[frame.lct[i] % 0x8000];
+						}
 					}
 				}
 

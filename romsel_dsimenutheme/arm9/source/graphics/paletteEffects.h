@@ -194,4 +194,5 @@ void effectDSiStartTextPalettes(u16* palette, u8 paletteLength);
 void effectGrayscalePalette(u16* palette, u16 paletteLength);
 void effectPhatPalette(u16* palette, u16 paletteLength);
 void effectColorModePalette(u16* palette, u16 paletteLength);
+void effectColorModeBmpPalette(u16* palette, u16 paletteLength);
 #endif

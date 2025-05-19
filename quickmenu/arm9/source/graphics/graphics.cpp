@@ -157,7 +157,6 @@ void ClearBrightness(void) {
 }
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
 
 void updateCursorTargetPos(void) { 
@@ -220,8 +219,15 @@ void updateCursorTargetPos(void) {
 	}
 }
 
+bool invertedColors = false;
+bool noWhiteFade = false;
+
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -293,7 +299,7 @@ static void bootModeIconLoad() {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			imageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				imageBuffer[i] = colorTable[imageBuffer[i] % 0x8000];
+				imageBuffer[i] = colorTable[imageBuffer[i] % 0x8000] | BIT(15);
 			}
 		}
 
@@ -334,7 +340,7 @@ void batteryIconLoad() {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color % 0x8000];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			
 			if (image[(i*4)+3] == 0) {
@@ -372,7 +378,7 @@ void batteryIconLoad() {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color % 0x8000];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			
 			if (image[(i*4)+3] == 0) {
@@ -448,7 +454,7 @@ void gbaModeIconLoad(bool bottomScreen) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			imageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				imageBuffer[i] = colorTable[imageBuffer[i] % 0x8000];
+				imageBuffer[i] = colorTable[imageBuffer[i] % 0x8000] | BIT(15);
 			}
 		}
 
@@ -508,7 +514,7 @@ void bottomBgLoad() {
 	for (uint i=0;i<image.size()/4;i++) {
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			bmpImageBuffer[i] = colorTable[bmpImageBuffer[i] % 0x8000];
+			bmpImageBuffer[i] = colorTable[bmpImageBuffer[i] % 0x8000] | BIT(15);
 		}
 	}
 
@@ -844,7 +850,7 @@ static void markerLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			markerImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				markerImageBuffer[i] = colorTable[markerImageBuffer[i] % 0x8000];
+				markerImageBuffer[i] = colorTable[markerImageBuffer[i] % 0x8000] | BIT(15);
 			}
 		}
 	}
@@ -951,7 +957,7 @@ void calendarLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			calendarImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				calendarImageBuffer[i] = colorTable[calendarImageBuffer[i] % 0x8000];
+				calendarImageBuffer[i] = colorTable[calendarImageBuffer[i] % 0x8000] | BIT(15);
 			}
 
 			calendarImageBuffer[i] = alphablend(calendarImageBuffer[i], topImageBuffer[(calendarY*256)+calendarX], image[(i*4)+3]);
@@ -981,7 +987,7 @@ void calendarLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			calendarBigImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				calendarBigImageBuffer[i] = colorTable[calendarBigImageBuffer[i] % 0x8000];
+				calendarBigImageBuffer[i] = colorTable[calendarBigImageBuffer[i] % 0x8000] | BIT(15);
 			}
 
 			calendarBigImageBuffer[i] = alphablend(calendarBigImageBuffer[i], topImageBuffer[(calendarY*256)+calendarX], image[(i*4)+3]);
@@ -1016,7 +1022,7 @@ void clockLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			clockImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				clockImageBuffer[i] = colorTable[clockImageBuffer[i] % 0x8000];
+				clockImageBuffer[i] = colorTable[clockImageBuffer[i] % 0x8000] | BIT(15);
 			}
 
 			clockImageBuffer[i] = alphablend(clockImageBuffer[i], topImageBuffer[(clockY*256)+clockX], image[(i*4)+3]);
@@ -1105,7 +1111,7 @@ void clockDraw() {
 	for (uint i=0;i<image.size()/4;i++) {
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			color = colorTable[color % 0x8000];
+			color = colorTable[color % 0x8000] | BIT(15);
 		}
 		if (image[(i*4)+3] == 0) {
 			bmpImageBuffer[i] = color;
@@ -1187,7 +1193,7 @@ void topBgLoad(void) {
 	for (uint i=0;i<image.size()/4;i++) {
 		topImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			topImageBuffer[i] = colorTable[topImageBuffer[i] % 0x8000];
+			topImageBuffer[i] = colorTable[topImageBuffer[i] % 0x8000] | BIT(15);
 		}
 	}
 
@@ -1220,7 +1226,7 @@ void topBarLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				bmpImageBuffer[i] = colorTable[bmpImageBuffer[i] % 0x8000];
+				bmpImageBuffer[i] = colorTable[bmpImageBuffer[i] % 0x8000] | BIT(15);
 			}
 		}
 		u16* src = bmpImageBuffer;
@@ -1262,14 +1268,18 @@ void graphicsInit()
 {
 	logPrint("graphicsInit()\n");
 
-	*(u16*)(0x0400006C) |= BIT(14);
-	*(u16*)(0x0400006C) &= BIT(15);
-	SetBrightness(0, 31);
-	SetBrightness(1, 31);
+	char currentSettingPath[40];
+	sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
-	if (ms().colorMode != "Default") {
+	if (access(currentSettingPath, F_OK) == 0) {
+		// Load color LUT
+		char lutName[128] = {0};
+		FILE* file = fopen(currentSettingPath, "rb");
+		fread(lutName, 1, 128, file);
+		fclose(file);
+
 		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), lutName);
 
 		if (getFileSize(colorTablePath) == 0x10000) {
 			colorTable = new u16[0x10000/sizeof(u16)];
@@ -1277,8 +1287,21 @@ void graphicsInit()
 			FILE* file = fopen(colorTablePath, "rb");
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
+
+			const u16 color0 = colorTable[0] | BIT(15);
+			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
+			invertedColors =
+			  (color0 >= 0xF000 && color0 <= 0xFFFF
+			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
 		}
 	}
+
+	*(vu16*)(0x0400006C) |= BIT(14);
+	*(vu16*)(0x0400006C) &= BIT(15);
+	SetBrightness(0, 31);
+	SetBrightness(1, 31);
 
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D);
@@ -1403,9 +1426,9 @@ void graphicsInit()
 	clockPinColor = CONVERT_COLOR(73, 73, 73);
 	clockUserColor = userColors[getFavoriteColor()];
 	if (colorTable) {
-		clockNeedleColor = colorTable[clockNeedleColor];
-		clockPinColor = colorTable[clockPinColor];
-		clockUserColor = colorTable[clockUserColor];
+		clockNeedleColor = colorTable[clockNeedleColor % 0x8000] | BIT(15);
+		clockPinColor = colorTable[clockPinColor % 0x8000] | BIT(15);
+		clockUserColor = colorTable[clockUserColor % 0x8000] | BIT(15);
 	}
 
 	irqSet(IRQ_VBLANK, vBlankHandler);

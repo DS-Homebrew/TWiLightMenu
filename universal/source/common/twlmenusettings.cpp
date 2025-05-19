@@ -40,7 +40,6 @@ TWLSettings::TWLSettings()
 	currentLanguage = ELangDefault;
 	titleLanguage = ELangDefault;
 	macroMode = false;
-	colorMode = "Default";
 	// blfLevel = 0;
 	sleepMode = true;
 	kioskMode = false;
@@ -216,8 +215,6 @@ void TWLSettings::loadSettings()
 	currentLanguage = guiLanguage;
 	titleLanguage = (TLanguage)settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
 	macroMode = settingsini.GetInt("SRLOADER", "MACRO_MODE", macroMode);
-	colorMode = settingsini.GetString("SRLOADER", "COLOR_MODE", colorMode);
-	// blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	sleepMode = settingsini.GetInt("SRLOADER", "SLEEP_MODE", sleepMode);
 	kioskMode = settingsini.GetInt("SRLOADER", "KIOSK_MODE", kioskMode);
 	dsiWareExploit = (TExploit)settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
@@ -426,9 +423,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
 	settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
 	settingsini.SetInt("SRLOADER", "MACRO_MODE", macroMode);
-	settingsini.SetString("SRLOADER", "COLOR_MODE", colorMode);
 	settingsini.SetInt("SRLOADER", "SLEEP_MODE", sleepMode);
-	// settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	settingsini.SetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
 	settingsini.SetInt("SRLOADER", "WIFI_LED", wifiLed);
 	settingsini.SetInt("SRLOADER", "WIFI_LED_VER", wifiLedVer);

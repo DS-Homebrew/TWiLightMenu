@@ -50,9 +50,15 @@ bool secondBuffer = false;
 u16 frameBuffer[2][256*192];
 u16 frameBufferBot[2][256*192];
 u16* colorTable = NULL;
+bool invertedColors = false;
+bool noWhiteFade = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -60,7 +66,7 @@ void SetBrightness(u8 screen, s8 bright) {
 		bright = -bright;
 	}
 	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 /* u16 convertVramColorToGrayscale(u16 val) {
@@ -164,13 +170,13 @@ void LoadBMP(void) {
 	if (colorTable) {
 		if (ms().macroMode) {
 			for (int i=0; i<256*192; i++) {
-				frameBuffer[0][i] = colorTable[frameBuffer[0][i] % 0x8000];
-				frameBuffer[1][i] = colorTable[frameBuffer[1][i] % 0x8000];
+				frameBuffer[0][i] = colorTable[frameBuffer[0][i] % 0x8000] | BIT(15);
+				frameBuffer[1][i] = colorTable[frameBuffer[1][i] % 0x8000] | BIT(15);
 			}
 		} else {
 			for (int i=0; i<256*192; i++) {
-				frameBufferBot[0][i] = colorTable[frameBufferBot[0][i] % 0x8000];
-				frameBufferBot[1][i] = colorTable[frameBufferBot[1][i] % 0x8000];
+				frameBufferBot[0][i] = colorTable[frameBufferBot[0][i] % 0x8000] | BIT(15);
+				frameBufferBot[1][i] = colorTable[frameBufferBot[1][i] % 0x8000] | BIT(15);
 			}
 		}
 	}
@@ -215,7 +221,6 @@ void runGraphicIrq(void) {
 }
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
 
 void loadTitleGraphics() {

@@ -212,11 +212,17 @@ void ClearBrightness(void) {
 }
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
+
+bool invertedColors = false;
+bool noWhiteFade = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -225,7 +231,7 @@ void SetBrightness(u8 screen, s8 bright) {
 	}
 	if (bright > 31)
 		bright = 31;
-	*(vu16 *)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 //-------------------------------------------------------
@@ -805,7 +811,9 @@ void vBlankHandler() {
 		int bg_G = (bottomScreenBrightness / 8);
 		int bg_B = (bottomScreenBrightness / 8);
 
-		glColor(RGB15(bg_R, bg_G, bg_B));
+		if (!invertedColors) {
+			glColor(RGB15(bg_R, bg_G, bg_B));
+		}
 
 		if (ms().theme == TWLSettings::EThemeHBL) {
 			// Back bubbles
@@ -1189,7 +1197,9 @@ void vBlankHandler() {
 				}
 			}*/
 		if (whiteScreen) {
-			glBoxFilled(0, 0, 256, 192, tc().darkLoading() ? RGB15(0, 0, 0) : RGB15(31, 31, 31));
+			u16 fillColor = tc().darkLoading() ? RGB15(0, 0, 0) : RGB15(31, 31, 31);
+			if (colorTable) fillColor = colorTable[fillColor % 0x8000];
+			glBoxFilled(0, 0, 256, 192, fillColor);
 		}
 		if (showProgressIcon && ms().theme != TWLSettings::EThemeSaturn) {
 			glSprite(ms().rtl() ? 16 : 224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
@@ -1203,15 +1213,19 @@ void vBlankHandler() {
 				barYpos += 12;
 			}
 			extern int getFavoriteColor(void);
-			int fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
-			if (colorTable) fillColor = colorTable[fillColor % 0x8000];
+			u16 fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
+			u16 fillColorBack = tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23);
+			if (colorTable) {
+				fillColor = colorTable[fillColor % 0x8000];
+				fillColorBack = colorTable[fillColorBack % 0x8000];
+			}
 			if (ms().rtl()) {
-				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
+				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, fillColorBack);
 				if (progressBarLength > 0) {
 					glBoxFilled(barXpos, barYpos, barXpos-progressBarLength, barYpos+5, fillColor);
 				}
 			} else {
-				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
+				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, fillColorBack);
 				if (progressBarLength > 0) {
 					glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, fillColor);
 				}
@@ -1381,7 +1395,7 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			tex().photoBuffer()[i] = colorTable[color % 0x8000];
+			tex().photoBuffer()[i] = colorTable[color % 0x8000] | BIT(15);
 		} else {
 			tex().photoBuffer()[i] = color;
 		}
@@ -1409,7 +1423,7 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				tex().photoBuffer2()[i] = colorTable[color % 0x8000];
+				tex().photoBuffer2()[i] = colorTable[color % 0x8000] | BIT(15);
 			} else {
 				tex().photoBuffer2()[i] = color;
 			}
@@ -1488,9 +1502,9 @@ void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
 
 			// RGB 565 -> BGR 5551
 			val = ((val >> 11) & 0x1F) | ((val & (0x1F << 6)) >> 1) | ((val & 0x1F) << 10) | BIT(15);
-			if (colorTable) {
-				val = colorTable[val % 0x8000]; // TODO: Remove this when nds-bootstrap supports color modes
-			}
+			/* if (colorTable) {
+				val = colorTable[val % 0x8000] | BIT(15); // TODO: Remove this when nds-bootstrap supports color modes
+			} */
 
 			u8 y = photoHeight - row - 1;
 			if (!bufferOnly) {

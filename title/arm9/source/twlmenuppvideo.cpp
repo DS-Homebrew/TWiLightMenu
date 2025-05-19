@@ -727,8 +727,8 @@ void twlMenuVideo(void) {
 
 	if (colorTable) {
 		for (int i=0; i<256*192; i++) {
-			frameBuffer[0][i] = colorTable[frameBuffer[0][i] % 0x8000];
-			frameBuffer[1][i] = colorTable[frameBuffer[1][i] % 0x8000];
+			frameBuffer[0][i] = colorTable[frameBuffer[0][i] % 0x8000] | BIT(15);
+			frameBuffer[1][i] = colorTable[frameBuffer[1][i] % 0x8000] | BIT(15);
 		}
 	}
 

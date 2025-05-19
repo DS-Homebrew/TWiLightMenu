@@ -32,6 +32,8 @@ extern bool useTwlCfg;
 //extern bool widescreenEffects;
 
 extern u16* colorTable;
+extern bool invertedColors;
+extern bool noWhiteFade;
 extern u32 rotatingCubesLoaded;
 extern bool rocketVideo_playVideo;
 extern u8 *rotatingCubesLocation;
@@ -896,7 +898,7 @@ void ThemeTextures::drawBottomBg(int index) {
 
 void ThemeTextures::clearTopScreen() {
 	beginBgSubModify();
-	u16 val = 0xFFFF;
+	const u16 val = colorTable ? (colorTable[0x7FFF] | BIT(15)) : 0xFFFF;
 	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 		_bgSubBuffer[i] = val;
 		if (boxArtColorDeband) {
@@ -1022,7 +1024,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			color = colorTable[color % 0x8000];
+			color = colorTable[color % 0x8000] | BIT(15);
 		}
 		if (alpha == 255) {
 			bmpImageBuffer[i] = color;
@@ -1053,7 +1055,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color % 0x8000];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			if (alpha == 255) {
 				bmpImageBuffer2[i] = color;
@@ -1529,7 +1531,7 @@ void loadRotatingCubes() {
 			if (colorTable) {
 				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
 				for (u32 i = 0; i < framesSize/2; i++) {
-					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i] % 0x8000];
+					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i] % 0x8000] | BIT(15);
 				}
 			}
 
@@ -1617,11 +1619,18 @@ void ThemeTextures::videoSetup() {
 		REG_BG3X_SUB = -29 << 8;
 	}*/
 
-	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
+	char currentSettingPath[40];
+	sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
-	if (ms().colorMode != "Default") {
+	if (access(currentSettingPath, F_OK) == 0) {
+		// Load color LUT
+		char lutName[128] = {0};
+		FILE* file = fopen(currentSettingPath, "rb");
+		fread(lutName, 1, 128, file);
+		fclose(file);
+
 		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), lutName);
 
 		if (getFileSize(colorTablePath) == 0x10000) {
 			colorTable = new u16[0x10000/sizeof(u16)];
@@ -1629,8 +1638,18 @@ void ThemeTextures::videoSetup() {
 			FILE* file = fopen(colorTablePath, "rb");
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
+
+			const u16 color0 = colorTable[0] | BIT(15);
+			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
+			invertedColors =
+			  (color0 >= 0xF000 && color0 <= 0xFFFF
+			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
 		}
 	}
+
+	REG_BLDCNT = BLEND_SRC_BG3 | (invertedColors ? BLEND_FADE_WHITE : BLEND_FADE_BLACK);
 
 	if (dsiFeatures() && !ms().macroMode && ms().theme != TWLSettings::EThemeHBL) {
 		if (ms().consoleModel > 0) {

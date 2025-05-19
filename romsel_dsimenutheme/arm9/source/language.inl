@@ -58,6 +58,7 @@ STRING(RAM_LIMIT_SPECIFIC_AREA, "Due to memory limitations, the\ngame will crash
 STRING(RAM_LIMIT_CERTAIN_POINT, "Due to memory limitations,\nthe game will crash at certain\npoint(s). To work around the crash,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_STATE, "Due to memory limitations, the\ngame will run in a limited\nstate. To play the full version,\nlaunch this on Nintendo DSi\nor 3DS systems.")
 STRING(RAM_LIMIT_NO_SAVE_STATE, "Due to no save support, the\ngame will run in a limited\nstate. To play the full version,\nlaunch this on Nintendo DSi\nor 3DS systems.")
+STRING(RAM_LIMIT_NO_SOUND_FX, "Due to memory limitations,\nsound effects will not be played.\nTo play this game with sound\neffects, launch this on Nintendo\nDSi or 3DS systems.")
 STRING(INSERT_MEMORY_EXPANSION_PAK, "To launch this title, please\ninsert the Memory Expansion Pak.")
 STRING(INSERT_SLOT2_RAM_CART, "To launch this title, please\nturn off the POWER, and\ninsert a Slot-2 memory\nexpansion cart which isn't the\nMemory Expansion Pak.")
 STRING(INSERT_LARGER_THAN_MEP, "This title requires a larger\namount of memory than the\nExpansion Pak. Please turn off\nthe POWER, and insert a\nSlot-2 cart with more memory.")
@@ -146,6 +147,7 @@ STRING(NEXT_R, "Next Page \\R")
 
 // Per-game settings
 STRING(SDK_VER, "SDK ver: %s")
+STRING(DS_PHAT_COLORS, "DS Phat Colors")
 STRING(LANGUAGE, "Language")
 STRING(REGION, "Region")
 STRING(RAM_DISK, "RAM disk")
