@@ -109,7 +109,7 @@ char saveNoDisplay[8];
 
 static int firstPerGameOpShown = 0;
 static int perGameOps = -1;
-static int perGameOp[17] = {-1};
+static int perGameOp[18] = {-1};
 
 bool blacklisted_colorLut = false;
 bool blacklisted_boostCpu = false;
