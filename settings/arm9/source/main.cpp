@@ -398,7 +398,7 @@ std::optional<Option> opt_theme_select(void)
 
 std::optional<Option> opt_lut_select(void)
 {
-	return Option(STR_COLORMODESEL, STR_AB_SETCOLORMODE, Option::Str(&ms().colorMode), colorLutList);
+	return Option(STR_SCREENFILTERSEL, STR_AB_SETSCREENFILTER, Option::Str(&ms().colorMode), colorLutList);
 }
 
 std::optional<Option> opt_gba_border_select(void)
@@ -1451,7 +1451,7 @@ int settingsMode(void)
 						{0});
 	}
 
-	miscPage.option(STR_COLOR_LUT, STR_DESCRIPTION_COLOR_LUT, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
+	miscPage.option(STR_SCREEN_FILTER, STR_DESCRIPTION_SCREEN_FILTER, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
 
 	if (sdFound() && isDSiMode()) {
 		if (!sys().arm7SCFGLocked()) {
