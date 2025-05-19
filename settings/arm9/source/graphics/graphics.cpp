@@ -144,6 +144,8 @@ void graphicsInit() {
 
 			colorLutName = lutName;
 		}
+	} else {
+		colorLutName = "Default";
 	}
 
 	SetBrightness(0, currentTheme == 4 ? -31 : 31);
