@@ -664,7 +664,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 35
+// Total: 36
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -681,6 +681,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KDQ", // Dragon Quest Wars
 	"KEG", // Electroplankton: Lumiloop
 	"KER", // G.G Series: Exciting River
+	"K5L", // Forgotten Legions
 	"KGUE", // Flipnote Studio (USA)
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KZB", // Little Red Riding Hood's Zombie BBQ
