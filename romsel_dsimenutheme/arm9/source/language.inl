@@ -147,6 +147,7 @@ STRING(NEXT_R, "Next Page \\R")
 
 // Per-game settings
 STRING(SDK_VER, "SDK ver: %s")
+STRING(DS_PHAT_COLORS, "DS Phat Colors")
 STRING(LANGUAGE, "Language")
 STRING(REGION, "Region")
 STRING(RAM_DISK, "RAM disk")

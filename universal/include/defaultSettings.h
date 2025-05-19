@@ -1,6 +1,7 @@
 #ifndef DEFAULT_SETTINGS_H
 #define DEFAULT_SETTINGS_H
 
+#define DEFAULT_PHAT_COLORS false
 #define DEFAULT_BOOST_CPU false
 #define DEFAULT_BOOST_VRAM false
 #define DEFAULT_DSI_MODE 1
