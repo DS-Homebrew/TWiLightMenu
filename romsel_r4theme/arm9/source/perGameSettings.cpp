@@ -568,10 +568,6 @@ void perGameSettings (std::string filename) {
 		}
 	} else if (showPerGameSettings && isDSiWare) {	// Per-game settings for DSiWare
 		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
-			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
-				perGameOps++;
-				perGameOp[perGameOps] = 16;	// DS Phat Colors
-			}
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 			perGameOps++;
@@ -589,6 +585,10 @@ void perGameSettings (std::string filename) {
 			if (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode) && dsiFeatures() && romLoadableInRam && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
+			}
+			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
+				perGameOps++;
+				perGameOp[perGameOps] = 16;	// DS Phat Colors
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
