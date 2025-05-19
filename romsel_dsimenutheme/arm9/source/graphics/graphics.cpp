@@ -1395,7 +1395,7 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			tex().photoBuffer()[i] = colorTable[color % 0x8000];
+			tex().photoBuffer()[i] = colorTable[color % 0x8000] | BIT(15);
 		} else {
 			tex().photoBuffer()[i] = color;
 		}
@@ -1423,7 +1423,7 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				tex().photoBuffer2()[i] = colorTable[color % 0x8000];
+				tex().photoBuffer2()[i] = colorTable[color % 0x8000] | BIT(15);
 			} else {
 				tex().photoBuffer2()[i] = color;
 			}
@@ -1502,9 +1502,9 @@ void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
 
 			// RGB 565 -> BGR 5551
 			val = ((val >> 11) & 0x1F) | ((val & (0x1F << 6)) >> 1) | ((val & 0x1F) << 10) | BIT(15);
-			if (colorTable) {
-				val = colorTable[val % 0x8000]; // TODO: Remove this when nds-bootstrap supports color modes
-			}
+			/* if (colorTable) {
+				val = colorTable[val % 0x8000] | BIT(15); // TODO: Remove this when nds-bootstrap supports color modes
+			} */
 
 			u8 y = photoHeight - row - 1;
 			if (!bufferOnly) {

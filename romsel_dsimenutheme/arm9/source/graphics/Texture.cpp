@@ -140,7 +140,7 @@ void Texture::loadBitmap(FILE *file) noexcept {
 
 			_palette[i] = BIT(15) | b << 10 | g << 5 | r;
 			if (colorTable) {
-				_palette[i] = colorTable[_palette[i] % 0x8000];
+				_palette[i] = colorTable[_palette[i] % 0x8000] | BIT(15);
 			}
 		}
 	}
@@ -274,7 +274,7 @@ u16 Texture::bmpToDS(u16 val) {
 
 	val = ((val >> 10) & 31) | (val & (31 << 5)) | ((val & 31) << 10) | BIT(15);
 	if (colorTable) {
-		return colorTable[val % 0x8000];
+		return colorTable[val % 0x8000] | BIT(15);
 	}
 	return val;
 }
@@ -295,7 +295,7 @@ void Texture::copy(u16 *dst, bool vram) const {
 			break;
 		case TextureType::CompressedGrf:
 			decompress((u8 *)_texture.get(), (u8 *)dst, vram ? LZ77Vram : LZ77);
-			effectColorModePalette(dst, _texLength);
+			effectColorModeBmpPalette(dst, _texLength);
 			break;
 		case TextureType::Unknown:
 		case TextureType::Bitmap: // ingore the bitfields

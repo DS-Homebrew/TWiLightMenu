@@ -123,10 +123,13 @@ void graphicsInit() {
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
 
+			const u16 color0 = colorTable[0] | BIT(15);
+			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
 			invertedColors =
-			  (colorTable[0] >= 0xF000 && colorTable[0] <= 0xFFFF
-			&& colorTable[0x7FFF] >= 0x8000 && colorTable[0x7FFF] <= 0x8FFF);
-			if (!invertedColors) noWhiteFade = (colorTable[0x7FFF] < 0xF000);
+			  (color0 >= 0xF000 && color0 <= 0xFFFF
+			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
 		}
 	}
 

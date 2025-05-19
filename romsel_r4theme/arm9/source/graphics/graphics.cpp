@@ -151,7 +151,7 @@ void initSubSprites(void)
 u16 convertToDsBmp(u16 val) {
 	val = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
 	if (colorTable) {
-		return colorTable[val % 0x8000];
+		return colorTable[val % 0x8000] | BIT(15);
 	}
 	return val;
 }
@@ -259,7 +259,7 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 			}
 			u16 color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color % 0x8000];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			if (top) {
 				topImage[startMenu][0][(xPos+x+(y*256))+(yPos*256)] = color;
@@ -289,7 +289,7 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 			}
 			color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color % 0x8000];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			if (top) {
 				topImage[startMenu][1][(xPos+x+(y*256))+(yPos*256)] = color;
@@ -316,7 +316,7 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 				u16 val = *(src++);
 				u16 color = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
 				if (colorTable) {
-					color = colorTable[color % 0x8000];
+					color = colorTable[color % 0x8000] | BIT(15);
 				}
 				*(dst + x) = color;
 				*(dst2 + x) = color;
@@ -337,7 +337,7 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 			fread(&unk, 1, 1, file);
 			pixelBuffer[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
 			if (colorTable) {
-				pixelBuffer[i] = colorTable[pixelBuffer[i] % 0x8000];
+				pixelBuffer[i] = colorTable[pixelBuffer[i] % 0x8000] | BIT(15);
 			}
 		}
 		u8 *bmpImageBuffer = new u8[width * height];
@@ -374,7 +374,7 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 			fread(&unk, 1, 1, file);
 			monoPixel[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
 			if (colorTable) {
-				monoPixel[i] = colorTable[monoPixel[i] % 0x8000];
+				monoPixel[i] = colorTable[monoPixel[i] % 0x8000] | BIT(15);
 			}
 		}
 		u8 *bmpImageBuffer = new u8[(width * height)/8];
@@ -450,7 +450,7 @@ static void loadPng(const bool top, const int startMenu, const std::string filen
 		if (image[(i*4)+3] > 0) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color % 0x8000];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 		}
@@ -484,7 +484,7 @@ static void loadPng(const bool top, const int startMenu, const std::string filen
 		if (image[(i*4)+3] > 0) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color % 0x8000];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 		}
@@ -638,10 +638,13 @@ void graphicsInit()
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
 
+			const u16 color0 = colorTable[0] | BIT(15);
+			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
 			invertedColors =
-			  (colorTable[0] >= 0xF000 && colorTable[0] <= 0xFFFF
-			&& colorTable[0x7FFF] >= 0x8000 && colorTable[0x7FFF] <= 0x8FFF);
-			if (!invertedColors) noWhiteFade = (colorTable[0x7FFF] < 0xF000);
+			  (color0 >= 0xF000 && color0 <= 0xFFFF
+			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
 		}
 	}
 
@@ -701,14 +704,15 @@ void graphicsInit()
 	}
 
 	// Make screens black
-	u16 black[2] = {0};
+	u16 black = 0x8000;
 	if (colorTable) {
-		black[0] = colorTable[0];
-		black[1] = colorTable[0];
+		black = colorTable[0] | BIT(15);
 	}
 
-	dmaFillWords((u32)black, BG_GFX, 0x18000);
-	dmaFillWords((u32)black, BG_GFX_SUB, 0x18000);
+	dmaFillHalfWords(black, BG_GFX, 0x18000);
+	dmaFillHalfWords(black, BG_GFX_SUB, 0x18000);
+	SetBrightness(0, 0);
+	SetBrightness(1, 0);
 }
 
 void graphicsLoad()
@@ -832,7 +836,7 @@ void graphicsLoad()
 	windowColorTop = RGB15(0, 0, 31);
 	windowColorBottom = RGB15(0, 0, 15);
 	if (colorTable) {
-		startBorderColor = colorTable[startBorderColor % 0x8000];
+		startBorderColor = colorTable[startBorderColor % 0x8000] | BIT(15);
 		windowColorTop = colorTable[windowColorTop % 0x8000];
 		windowColorBottom = colorTable[windowColorBottom % 0x8000];
 	}

@@ -898,7 +898,7 @@ void ThemeTextures::drawBottomBg(int index) {
 
 void ThemeTextures::clearTopScreen() {
 	beginBgSubModify();
-	const u16 val = colorTable ? colorTable[0x7FFF] : 0xFFFF;
+	const u16 val = colorTable ? (colorTable[0x7FFF] | BIT(15)) : 0xFFFF;
 	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 		_bgSubBuffer[i] = val;
 		if (boxArtColorDeband) {
@@ -1024,7 +1024,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			color = colorTable[color % 0x8000];
+			color = colorTable[color % 0x8000] | BIT(15);
 		}
 		if (alpha == 255) {
 			bmpImageBuffer[i] = color;
@@ -1055,7 +1055,7 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color % 0x8000];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			if (alpha == 255) {
 				bmpImageBuffer2[i] = color;
@@ -1531,7 +1531,7 @@ void loadRotatingCubes() {
 			if (colorTable) {
 				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
 				for (u32 i = 0; i < framesSize/2; i++) {
-					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i] % 0x8000];
+					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i] % 0x8000] | BIT(15);
 				}
 			}
 
@@ -1630,10 +1630,13 @@ void ThemeTextures::videoSetup() {
 			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
 
+			const u16 color0 = colorTable[0] | BIT(15);
+			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
 			invertedColors =
-			  (colorTable[0] >= 0xF000 && colorTable[0] <= 0xFFFF
-			&& colorTable[0x7FFF] >= 0x8000 && colorTable[0x7FFF] <= 0x8FFF);
-			if (!invertedColors) noWhiteFade = (colorTable[0x7FFF] < 0xF000);
+			  (color0 >= 0xF000 && color0 <= 0xFFFF
+			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
 		}
 	}
 
