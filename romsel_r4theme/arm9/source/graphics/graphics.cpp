@@ -579,28 +579,30 @@ void vBlankHandler()
 
 		// glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 		glColor(RGB15(31, 31, 31));
+		const u16 black = colorTable ? colorTable[RGB15(0, 0, 0) % 0x8000] : RGB15(0, 0, 0);
+		const u16 white = colorTable ? colorTable[RGB15(31, 31, 31) % 0x8000] : RGB15(31, 31, 31);
 
 	  if (ms().theme != TWLSettings::EThemeGBC) {
 		if (startMenu) {
 			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, startBorderColor);
 			glSprite(232, 2, GL_FLIP_NONE, &manualIcon[manualIconNextImg]);
 		} else {
-			glBoxFilled(35, 23, 217, 64, RGB15(0, 0, 0));
-			glBoxFilled(77, 24, 216, 63, RGB15(31, 31, 31));
+			glBoxFilled(35, 23, 217, 64, black);
+			glBoxFilled(77, 24, 216, 63, white);
 			glSprite(36, 24, GL_FLIP_NONE, iconboxImage);
 			drawIcon(40, 28);
 			if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 		}
 	  }
 		if (showdialogbox) {
-			glBoxFilled(15, 71, 241, 121+(dialogboxHeight*12), RGB15(0, 0, 0));
+			glBoxFilled(15, 71, 241, 121+(dialogboxHeight*12), black);
 			glBoxFilledGradient(16, 72, 240, 86, windowColorTop, windowColorBottom, windowColorBottom, windowColorTop);
-			glBoxFilled(16, 88, 240, 120+(dialogboxHeight*12), RGB15(31, 31, 31));
+			glBoxFilled(16, 88, 240, 120+(dialogboxHeight*12), white);
 		}
 		if (whiteScreen) {
-			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+			glBoxFilled(0, 0, 256, 192, white);
 		} else if (blackScreen) {
-			glBoxFilled(0, 0, 256, 192, RGB15(0, 0, 0));
+			glBoxFilled(0, 0, 256, 192, black);
 		}
 
 		glEnd2D();
