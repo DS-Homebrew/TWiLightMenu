@@ -277,8 +277,6 @@ public:
 	TLanguage guiLanguage, currentLanguage;
 	TLanguage titleLanguage;
 	bool macroMode;
-	std::string colorMode;
-	// int blfLevel;
 	bool sleepMode;
 	bool kioskMode;
 	TExploit dsiWareExploit;

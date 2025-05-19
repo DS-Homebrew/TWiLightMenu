@@ -2431,24 +2431,35 @@ int titleMode(void)
 		}
 	}
 
-	if (ms().colorMode != "Default") {
-		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+	{
+		char currentSettingPath[40];
+		sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
-		if (getFileSize(colorTablePath) == 0x10000) {
-			colorTable = new u16[0x10000/sizeof(u16)];
-
-			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x10000, file);
+		if (access(currentSettingPath, F_OK) == 0) {
+			// Load color LUT
+			char lutName[128] = {0};
+			FILE* file = fopen(currentSettingPath, "rb");
+			fread(lutName, 1, 128, file);
 			fclose(file);
 
-			const u16 color0 = colorTable[0] | BIT(15);
-			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+			char colorTablePath[256];
+			sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), lutName);
 
-			invertedColors =
-			  (color0 >= 0xF000 && color0 <= 0xFFFF
-			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
-			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
+			if (getFileSize(colorTablePath) == 0x10000) {
+				colorTable = new u16[0x10000/sizeof(u16)];
+
+				FILE* file = fopen(colorTablePath, "rb");
+				fread(colorTable, 1, 0x10000, file);
+				fclose(file);
+
+				const u16 color0 = colorTable[0] | BIT(15);
+				const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
+				invertedColors =
+				  (color0 >= 0xF000 && color0 <= 0xFFFF
+				&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+				if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
+			}
 		}
 	}
 

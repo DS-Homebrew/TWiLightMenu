@@ -12,6 +12,8 @@
 #include "sub_bg.h"
 #include "saturn_bg.h"
 
+extern std::string colorLutName;
+
 extern bool fadeType;
 //extern bool widescreenEffects;
 int screenBrightness = 31;
@@ -112,9 +114,18 @@ void vBlankHandler()
 void graphicsInit() {
 	currentTheme = ms().theme;
 
-	if (ms().colorMode != "Default") {
+	char currentSettingPath[40];
+	sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
+
+	if (access(currentSettingPath, F_OK) == 0) {
+		// Load color LUT
+		char lutName[128] = {0};
+		FILE* file = fopen(currentSettingPath, "rb");
+		fread(lutName, 1, 128, file);
+		fclose(file);
+
 		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), lutName);
 
 		if (getFileSize(colorTablePath) == 0x10000) {
 			colorTable = new u16[0x10000/sizeof(u16)];
@@ -130,6 +141,8 @@ void graphicsInit() {
 			  (color0 >= 0xF000 && color0 <= 0xFFFF
 			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
 			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
+
+			colorLutName = lutName;
 		}
 	}
 
