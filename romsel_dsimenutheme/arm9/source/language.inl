@@ -225,5 +225,6 @@ STRING(REINSERT_SD_CARD, "Please press POWER to turn off\nthe power, reinsert th
 
 // Save Relcation
 STRING(SAVE_RELOCATION, "Save Relocation")
-STRING(SAVE_SDCARD, "SD/microSD Card")
-STRING(SAVE_NDSCART, "NDS Cart")
+STRING(SAVE_MICRO_SD, "microSD Card")
+STRING(SAVE_SD, "SD Card")
+STRING(SAVE_GAME_CARD, "Game Card")

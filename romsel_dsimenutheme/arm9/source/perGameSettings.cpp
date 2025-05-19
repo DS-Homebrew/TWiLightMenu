@@ -1001,9 +1001,9 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 				if (perGameSettings_saveRelocation == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_saveRelocation == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SAVE_SDCARD, endAlign, FontPalette::dialog);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, ms().showMicroSd ? STR_SAVE_MICRO_SD : STR_SAVE_SD, endAlign, FontPalette::dialog);
 				} else {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SAVE_NDSCART, endAlign, FontPalette::dialog);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SAVE_GAME_CARD, endAlign, FontPalette::dialog);
 				}
 				break;
 		}

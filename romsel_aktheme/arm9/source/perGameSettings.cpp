@@ -900,9 +900,9 @@ void perGameSettings (std::string filename) {
 				if (perGameSettings_saveRelocation == -1) {
 					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
 				} else if (perGameSettings_saveRelocation == 1) {
-					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "SD/microSD Card", Alignment::right, highlighted);
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, ms().showMicroSd ? "microSD Card" : "SD Card", Alignment::right, highlighted);
 				} else {
-					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "NDS Cart", Alignment::right, highlighted);
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Game Card", Alignment::right, highlighted);
 				}
 				break;
 		}
