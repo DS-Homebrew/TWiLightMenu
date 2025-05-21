@@ -13,6 +13,16 @@ static const char colorLutBlacklist[][4] = {
 	"BVI", // Dokonjou Shougakusei Bon Biita: Hadaka no Choujou Ketsusen!!: Biita vs Dokuro Dei!
 	"YD8", // Doraemon: Nobita to Midori no Kyojinden DS
 	"ATI", // Electroplankton
+	"KEI", // Electroplankton: Beatnes
+	"KEB", // Electroplankton: Hanenbow
+	"KEG", // Electroplankton: Lumiloop
+	"KEC", // Electroplankton: Luminarrow
+	"KEH", // Electroplankton: Marine-Crystals
+	"KEF", // Electroplankton: Nanocarp
+	"KEE", // Electroplankton: Rec-Rec
+	"KED", // Electroplankton: Sun-Animalcule
+	"KEA", // Electroplankton: Trapy
+	"KEJ", // Electroplankton: Varvoice
 	"KGU", // Flipnote Studio
 	"BO5", // Golden Sun: Dark Dawn
 	"Y8L", // Golden Sun: Dark Dawn (Demo Version)
