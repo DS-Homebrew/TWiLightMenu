@@ -3,6 +3,11 @@
 
 static const char colorLutBlacklist[][4] = {
 	"TAM", // The Amazing Spider-Man
+	"YCO", // Call of Duty 4: Modern Warfare
+	"CAL", // Call of Duty: World at War
+	"C62", // Call of Duty: Modern Warfare: Mobilized
+	"BDY", // Call of Duty: Black Ops
+	"B5B", // Call of Duty: Modern Warfare 3: Defiance
 	"C66", // Chou Gekijouban Keroro Gunsou: Gekishin Dragon Warriors de Arimasu!
 	"AQC", // Crayon Shin-chan DS: Arashi o Yobu Nutte Crayoon Daisakusen!
 	"YRC", // Crayon Shin-chan: Arashi o Yobu Cinemaland Kachinko Gachinko Daikatsugeki!
@@ -24,19 +29,28 @@ static const char colorLutBlacklist[][4] = {
 	"KEA", // Electroplankton: Trapy
 	"KEJ", // Electroplankton: Varvoice
 	"KGU", // Flipnote Studio
+	"AGE", // GoldenEye: Rogue Agent
+	"BJC", // GoldenEye 007
 	"BO5", // Golden Sun: Dark Dawn
 	"Y8L", // Golden Sun: Dark Dawn (Demo Version)
+	"CI7", // Hannah Montana: The Movie
+	"BJB", // James Bond 007: Blood Stone
 	"AK4", // Kabu Trader Shun
 	"BKS", // Keshikasu-kun: Battle Kasu-tival
 	"ARM", // Mario & Luigi: Partners in Time
 	"CLJ", // Mario & Luigi: Bowser's Inside Story
+	"C4M", // Marvel Ultimate Alliance 2
 	"B6Z", // MegaMan Zero Collection
 	"ARZ", // MegaMan ZX
 	"YZX", // MegaMan ZX Advent
 	"AMH", // Metroid Prime Hunters
 	"B3N", // Power Rangers: Samurai
 	"B8I", // Spider-Man: Edge of Time
+	"CSW", // Star Wars: Battlefont: Elite Squadron
+	"YST", // Star Wars: The Force Unleashed
 	"AZL", // Style Savvy
+	"VT3", // Toy Story 3
+	"VTE", // Tron: Evolution
 	"CP3", // Viva Pinata: Pocket Paradise
 	"CY8", // Yu-Gi-Oh! 5D's: Stardust Accelerator: World Championship 2009
 	"BYX", // Yu-Gi-Oh! 5D's: World Championship 2010: Reverse of Arcadia
