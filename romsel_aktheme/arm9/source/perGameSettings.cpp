@@ -650,6 +650,8 @@ void perGameSettings (std::string filename) {
 				perGameOp[perGameOps] = 16;	// DS Phat Colors
 			}
 			perGameOps++;
+			perGameOp[perGameOps] = 17;	// Save_Relocation
+			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && widescreenFound) {
 				perGameOps++;
@@ -662,8 +664,6 @@ void perGameSettings (std::string filename) {
 			} else {
 				donorRomTextShown = false;
 			}
-			perGameOps++;
-			perGameOp[perGameOps] = 17;	// Save_Relocation
 		} else if (!dsiFeatures()) {
 			if (a7mbk6[cursorPosOnScreen] != 0x080037C0 && showSetDonorRom(arm7size, SDKVersion, dsiBinariesFound)) {
 				perGameOps++;

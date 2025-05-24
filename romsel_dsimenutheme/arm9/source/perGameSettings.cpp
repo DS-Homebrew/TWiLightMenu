@@ -701,6 +701,8 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 				perGameOp[perGameOps] = 16;	// DS Phat Colors
 			}
 			perGameOps++;
+			perGameOp[perGameOps] = 17;	// Save_Relocation
+			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && widescreenFound) {
 				perGameOps++;
@@ -720,8 +722,6 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			} else {
 				donorRomTextShown = false;
 			}
-			perGameOps++;
-			perGameOp[perGameOps] = 17;	// Save_Relocation
 		} else if (!dsiFeatures()) {
 			if (memcmp(gameTid[CURPOS], "UBR", 3) == 0) {
 				perGameOps++;
