@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 479
+// Total: 480
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -162,6 +162,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KHW", // EJ Puzzles: Hooked
 	"KEI", // Electroplankton: Beatnes
 	"KEB", // Electroplankton: Hanenbow
+	"KEG", // Electroplankton: Lumiloop
 	"KEC", // Electroplankton: Luminarrow
 	"KEH", // Electroplankton: Marine-Crystals
 	"KEF", // Electroplankton: Nanocarp
@@ -486,7 +487,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 31
+// Total: 32
 static const char compatibleGameListB4DSMEP[][5] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
@@ -498,6 +499,7 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KVL", // Clash of Elementalists
 	"KUG", // G.G Series: Drift Circuit 2
 	"KEI", // Electroplankton: Beatnes
+	"KEG", // Electroplankton: Lumiloop
 	"KEA", // Electroplankton: Trapy
 	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
@@ -537,6 +539,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	1, // Clash of Elementalists
 	3, // G.G Series: Drift Circuit 2
 	3, // Electroplankton: Beatnes
+	3, // Electroplankton: Lumiloop
 	3, // Electroplankton: Trapy
 	2, // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	1, // Jinia Supasonaru: Waei Rakubiki Jiten
@@ -679,8 +682,8 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"K35", // Defense of the Middle Kingdom
 	"KN2", // Devil Band: Rock the Underworld
 	"KDQ", // Dragon Quest Wars
-	"KEG", // Electroplankton: Lumiloop
 	"KER", // G.G Series: Exciting River
+	"K5L", // Forgotten Legions
 	"KGUE", // Flipnote Studio (USA)
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KZB", // Little Red Riding Hood's Zombie BBQ

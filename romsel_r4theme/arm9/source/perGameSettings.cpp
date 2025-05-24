@@ -571,10 +571,6 @@ void perGameSettings (std::string filename) {
 		}
 	} else if (showPerGameSettings && isDSiWare) {	// Per-game settings for DSiWare
 		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
-			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
-				perGameOps++;
-				perGameOp[perGameOps] = 16;	// DS Phat Colors
-			}
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 			perGameOps++;
@@ -592,6 +588,10 @@ void perGameSettings (std::string filename) {
 			if (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode) && dsiFeatures() && romLoadableInRam && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
+			}
+			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
+				perGameOps++;
+				perGameOp[perGameOps] = 16;	// DS Phat Colors
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
@@ -611,10 +611,6 @@ void perGameSettings (std::string filename) {
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
 		const bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && romUnitCode > 0) || (ms().secondaryDevice && (!ms().kernelUseable || romUnitCode == 3)) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
-			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
-				perGameOps++;
-				perGameOp[perGameOps] = 16;	// DS Phat Colors
-			}
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 		}
@@ -651,6 +647,10 @@ void perGameSettings (std::string filename) {
 			if (!ms().secondaryDevice && (romSize > (romUnitCode > 0 ? romSizeLimitTwl : romSizeLimit)) && !blacklisted_asyncCardRead) {
 				perGameOps++;
 				perGameOp[perGameOps] = 12;	// Async Card Read
+			}
+			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
+				perGameOps++;
+				perGameOp[perGameOps] = 16;	// DS Phat Colors
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
