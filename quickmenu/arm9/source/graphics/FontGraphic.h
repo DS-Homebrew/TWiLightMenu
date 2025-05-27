@@ -17,7 +17,7 @@ enum class Alignment {
 enum class FontPalette {
 	regular = 0,
 	disabled = 1,
-	topBar = 2,
+	white = 2,
 	sunday = 3,
 	saturday = 4,
 };
