@@ -11,8 +11,12 @@ void clearText();
 
 void printSmall(bool top, int x, int y, std::string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
 void printSmall(bool top, int x, int y, std::u16string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
+void printSmallMonospaced(bool top, int x, int y, std::string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
+void printSmallMonospaced(bool top, int x, int y, std::u16string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
 void printTiny(bool top, int x, int y, std::string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
 void printTiny(bool top, int x, int y, std::u16string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
+void printTinyMonospaced(bool top, int x, int y, std::string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
+void printTinyMonospaced(bool top, int x, int y, std::u16string_view message, Alignment align = Alignment::left, FontPalette palette = FontPalette::regular);
 
 int calcSmallFontWidth(std::string_view text);
 int calcSmallFontWidth(std::u16string_view text);

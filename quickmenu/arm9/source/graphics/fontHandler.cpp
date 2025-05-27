@@ -67,6 +67,7 @@ void fontInit() {
 		palette[3] = 0x94A5;
 	}
 	tinyFont = new FontGraphic({"nitro:/graphics/font/tiny.nftr"}, false);
+	tinyFont->setFixedWidthChar('A'); // tiny font has tiny fixed-width
 
 	if (colorTable) {
 		for (uint i = 1; i < sizeof(palette)/sizeof(u16); i++) {
@@ -99,7 +100,7 @@ void updateText(bool top) {
 	for (auto it = text.begin(); it != text.end(); ++it) {
 		FontGraphic *font = getFont(it->large);
 		if (font)
-			font->print(it->x, it->y, top, it->message, it->align, it->palette);
+			font->print(it->x, it->y, top, it->message, it->align, it->palette, false, it->monospaced);
 	}
 	text.clear();
 
@@ -132,17 +133,31 @@ void clearText() {
 }
 
 void printSmall(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
-	getTextQueue(top).emplace_back(false, x, y, message, align, palette);
+	getTextQueue(top).emplace_back(false, false, x, y, message, align, palette);
 }
 void printSmall(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
-	getTextQueue(top).emplace_back(false, x, y, message, align, palette);
+	getTextQueue(top).emplace_back(false, false, x, y, message, align, palette);
+}
+
+void printSmallMonospaced(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(false, true, x, y, message, align, palette);
+}
+void printSmallMonospaced(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(false, true, x, y, message, align, palette);
 }
 
 void printTiny(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
-	getTextQueue(top).emplace_back(true, x, y, message, align, palette);
+	getTextQueue(top).emplace_back(true, false, x, y, message, align, palette);
 }
 void printTiny(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
-	getTextQueue(top).emplace_back(true, x, y, message, align, palette);
+	getTextQueue(top).emplace_back(true, false, x, y, message, align, palette);
+}
+
+void printTinyMonospaced(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(true, true, x, y, message, align, palette);
+}
+void printTinyMonospaced(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(true, true, x, y, message, align, palette);
 }
 
 int calcSmallFontWidth(std::string_view text) {
