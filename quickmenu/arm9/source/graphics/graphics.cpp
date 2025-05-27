@@ -874,7 +874,7 @@ static void markerDraw(int x, int y) {
 }
 
 static void calendarTextDraw(const Datetime& now) {
-	printSmall(true, 56, calendarYPos+3, getDateYear(), Alignment::center);
+	printSmallMonospaced(true, 56, calendarYPos+3, getDateYear(), Alignment::center);
 
 	Datetime firstDay(now.getYear(), now.getMonth(), 1);
 	int startWeekday = firstDay.getWeekDay();
@@ -1259,8 +1259,8 @@ void drawDateTime(bool date, bool showTimeColon) {
 	std::string text = date ? getDate() : retTime();
 	if (!date && !showTimeColon) text[2] = ' ';
 
-	const int posX = date ? 205 : 171;
-	printTiny(true, posX, 3, text, Alignment::right, FontPalette::topBar);
+	const int posX = date ? 204 : 172;
+	printTinyMonospaced(true, posX, 3, text, Alignment::right, FontPalette::topBar);
 	updateTopTextArea(posX - 27, 3, 27, tinyFontHeight(), bmpImageBuffer);
 }
 
