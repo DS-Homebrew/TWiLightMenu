@@ -1201,8 +1201,6 @@ void topBgLoad(void) {
 	else if (tempNested[0] != '\0' && access(tempNested, F_OK) == 0)
 		sprintf(filePath, "%s", tempNested);
 
-	logPrint("%s\n", filePath);
-
 	std::vector<unsigned char> image;
 	uint imageWidth, imageHeight;
 	lodepng::decode(image, imageWidth, imageHeight, std::string(filePath));
