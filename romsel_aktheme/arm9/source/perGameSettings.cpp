@@ -496,7 +496,7 @@ void perGameSettings (std::string filename) {
 	u32 dsiWramAmount = (sharedWramEnabled ? 0x88000 : 0x80000);
 	if (colorTable && sys().dsiWramAccess() && !sys().dsiWramMirrored()) {
 		dsiWramAmount -= 0x80000;
-		dsiWramAmount += 0x4AC00;
+		dsiWramAmount += 0x32C00;
 	}
 	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BE0000 : 0xBE0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? dsiWramAmount : (sharedWramEnabled ? 0x8000 : 0));
 	romSizeLimit -= 0x400000; // Account for DSi mode setting
