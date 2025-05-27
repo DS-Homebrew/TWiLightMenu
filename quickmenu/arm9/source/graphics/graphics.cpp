@@ -29,6 +29,7 @@
 #include "common/systemdetails.h"
 #include "common/twlmenusettings.h"
 #include "common/logging.h"
+#include "language.h"
 #include <cmath>
 
 // Graphic files
@@ -878,7 +879,18 @@ static void calendarTextDraw(const Datetime& now) {
 
 	Datetime firstDay(now.getYear(), now.getMonth(), 1);
 	int startWeekday = firstDay.getWeekDay();
-	
+
+	// Draw weekdays
+	{
+		printTiny(true, 0*16+8, calendarYPos+20, STR_TWO_LETTER_SUNDAY,    Alignment::center, FontPalette::white);
+		printTiny(true, 1*16+8, calendarYPos+20, STR_TWO_LETTER_MONDAY,    Alignment::center, FontPalette::white);
+		printTiny(true, 2*16+8, calendarYPos+20, STR_TWO_LETTER_TUESDAY,   Alignment::center, FontPalette::white);
+		printTiny(true, 3*16+8, calendarYPos+20, STR_TWO_LETTER_WEDNESDAY, Alignment::center, FontPalette::white);
+		printTiny(true, 4*16+8, calendarYPos+20, STR_TWO_LETTER_THURSDAY,  Alignment::center, FontPalette::white);
+		printTiny(true, 5*16+8, calendarYPos+20, STR_TWO_LETTER_FRIDAY,    Alignment::center, FontPalette::white);
+		printTiny(true, 6*16+8, calendarYPos+20, STR_TWO_LETTER_SATURDAY,  Alignment::center, FontPalette::white);
+	}
+
 	// Draw marker
 	{
 		int myPos = (startWeekday + now.getDay() - 1) / 7;
@@ -1246,7 +1258,7 @@ void topBarLoad(void) {
 
 	char16_t username[11] = {0};
 	memcpy(username, useTwlCfg ? (s16 *)0x02000448 : PersonalData->name, 10 * sizeof(char16_t));
-	printTiny(true, 3, 3, username, Alignment::left, FontPalette::topBar);
+	printTiny(true, 3, 3, username, Alignment::left, FontPalette::white);
 	updateTopTextArea(3, 3, calcTinyFontWidth(username), tinyFontHeight(), bmpImageBuffer);
 
 	drawDateTime(true);
@@ -1260,7 +1272,7 @@ void drawDateTime(bool date, bool showTimeColon) {
 	if (!date && !showTimeColon) text[2] = ' ';
 
 	const int posX = date ? 204 : 172;
-	printTinyMonospaced(true, posX, 3, text, Alignment::right, FontPalette::topBar);
+	printTinyMonospaced(true, posX, 3, text, Alignment::right, FontPalette::white);
 	updateTopTextArea(posX - 27, 3, 27, tinyFontHeight(), bmpImageBuffer);
 }
 
