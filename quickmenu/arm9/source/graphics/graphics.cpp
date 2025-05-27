@@ -499,12 +499,14 @@ void bottomBgLoad() {
 			// break;
 		case TWLSettings::EThemeHBL:
 		case TWLSettings::EThemeGBC:
+			temp[0] = '\0';
+			tempNested[0] = '\0';
 			break;
 	}
 
-	if (access(temp, F_OK) == 0)
+	if (temp[0] != '\0' && access(temp, F_OK) == 0)
 		bottomBGFile = std::string(temp);
-	else if (access(tempNested, F_OK) == 0)
+	else if (tempNested[0] != '\0' && access(tempNested, F_OK) == 0)
 		bottomBGFile = std::string(tempNested);
 
 	std::vector<unsigned char> image;
@@ -1189,12 +1191,14 @@ void topBgLoad(void) {
 			// break;
 		case TWLSettings::EThemeHBL:
 		case TWLSettings::EThemeGBC:
+			temp[0] = '\0';
+			tempNested[0] = '\0';
 			break;
 	}
 
-	if (access(temp, F_OK) == 0)
+	if (temp[0] != '\0' && access(temp, F_OK) == 0)
 		sprintf(filePath, "%s", temp);
-	else if (access(tempNested, F_OK) == 0)
+	else if (tempNested[0] != '\0' && access(tempNested, F_OK) == 0)
 		sprintf(filePath, "%s", tempNested);
 
 	std::vector<unsigned char> image;
