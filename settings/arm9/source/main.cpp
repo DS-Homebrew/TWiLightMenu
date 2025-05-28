@@ -1298,6 +1298,10 @@ int settingsMode(void)
 		}
 	}
 
+	if ((dsiFeatures() || sdFound()) && sys().dsiWramAccess() && !sys().dsiWramMirrored()) {
+		bootstrapPage.option(STR_TWL_SPEED_FOR_SCREEN_FILTERS, STR_DESCRIPTION_TWL_SPEED_FOR_SCREEN_FILTERS, Option::Bool(&ms().boostCpuForClut), {STR_ON, STR_OFF}, {true, false});
+	}
+
 	if (widescreenFound) {
 		bootstrapPage.option((dsiFeatures() ? STR_ASPECTRATIO : STR_SD_ASPECTRATIO),
 			STR_DESCRIPTION_ASPECTRATIO,

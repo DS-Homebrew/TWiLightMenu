@@ -99,6 +99,7 @@ int mpuregion = 0;
 int mpusize = 0;
 
 bool applaunch = false;
+bool colorLutBlacklisted = false;
 bool dsModeForced = false;
 
 bool startMenu = true;
@@ -223,6 +224,7 @@ bool setDSPhatColors() {
 	for (unsigned int i = 0; i < sizeof(colorLutBlacklist)/sizeof(colorLutBlacklist[0]); i++) {
 		if (memcmp(gameTid, colorLutBlacklist[i], 3) == 0) {
 			// Found match
+			colorLutBlacklisted = true;
 			return false;
 		}
 	}
@@ -233,7 +235,7 @@ bool setDSPhatColors() {
 /**
  * Disable TWL clock speed for a specific game.
  */
-bool setClockSpeed() {
+bool setClockSpeed(const bool phatColors) {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
@@ -245,7 +247,12 @@ bool setClockSpeed() {
 		}
 	}
 
-	return perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
+	bool defaultSetting = DEFAULT_BOOST_CPU;
+	if (perGameSettings_boostCpu == -1 && !colorLutBlacklisted && ((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && (colorTable || phatColors)) {
+		defaultSetting = ms().boostCpuForClut;
+	}
+
+	return perGameSettings_boostCpu == -1 ? defaultSetting : perGameSettings_boostCpu;
 }
 
 /**
@@ -1862,8 +1869,9 @@ int r4Theme(void) {
 
 						SetMPUSettings();
 
-						bool boostCpu = setClockSpeed();
-						bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
+						const bool phatColors = setDSPhatColors();
+						const bool boostCpu = setClockSpeed(phatColors);
+						const bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 						const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 						CIniFile bootstrapini( bootstrapinipath );
@@ -1875,7 +1883,7 @@ int r4Theme(void) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && (gameTid[0] == 'W' || romVersion == 0x57)) ? "wide" : "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", setDSPhatColors());
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", phatColors);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().getGameLanguage() : perGameSettings_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", perGameSettings_region < -1 ? ms().useRomRegion : 0);

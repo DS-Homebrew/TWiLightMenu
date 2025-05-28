@@ -518,8 +518,25 @@ void lastRunROM()
 
 			bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 			bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+
+			bool colorLutBlacklisted = false;
 			bool dsPhatColors = (perGameSettings_dsPhatColors == -1 ? DEFAULT_PHAT_COLORS : perGameSettings_dsPhatColors);
-			bool boostCpu = (perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu);
+			// TODO: If the list gets large enough, switch to bsearch().
+			for (unsigned int i = 0; i < sizeof(colorLutBlacklist)/sizeof(colorLutBlacklist[0]); i++) {
+				if (memcmp(game_TID, colorLutBlacklist[i], 3) == 0) {
+					// Found match
+					colorLutBlacklisted = true;
+					dsPhatColors = false;
+					break;
+				}
+			}
+
+			bool boostCpuDefault = DEFAULT_BOOST_CPU;
+			if (perGameSettings_boostCpu == -1 && !colorLutBlacklisted && ((dsiFeatures() && !bs().b4dsMode) || !ms().previousUsedDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && (colorTable || dsPhatColors)) {
+				boostCpuDefault = ms().boostCpuForClut;
+			}
+			bool boostCpu = (perGameSettings_boostCpu == -1 ? boostCpuDefault : perGameSettings_boostCpu);
+
 			bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
 			bool asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
 			bool dsModeForced = false;
@@ -579,15 +596,6 @@ void lastRunROM()
 					fadeType = false;
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
-					}
-				}
-
-				// TODO: If the list gets large enough, switch to bsearch().
-				for (unsigned int i = 0; i < sizeof(colorLutBlacklist)/sizeof(colorLutBlacklist[0]); i++) {
-					if (memcmp(game_TID, colorLutBlacklist[i], 3) == 0) {
-						// Found match
-						dsPhatColors = false;
-						break;
 					}
 				}
 

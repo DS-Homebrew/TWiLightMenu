@@ -384,7 +384,7 @@ public:
 	TLanguage gameLanguage;
 	TRegion gameRegion;
 	bool useRomRegion;
-	int extendedMemory;
+	bool boostCpuForClut;
 	bool forceSleepPatch;
 	TSoundFreq soundFreq;
 };

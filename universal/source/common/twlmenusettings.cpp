@@ -144,7 +144,7 @@ TWLSettings::TWLSettings()
 	gameLanguage = ELangDefault;
 	gameRegion = ERegionDefault;
 	useRomRegion = true;
-	extendedMemory = 0;
+	boostCpuForClut = true;
 	forceSleepPatch = false;
 	soundFreq = EFreq32KHz;
 }
@@ -372,7 +372,7 @@ void TWLSettings::loadSettings()
 	gameLanguage = (TLanguage)settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 	gameRegion = (TRegion)settingsini.GetInt("NDS-BOOTSTRAP", "REGION", gameRegion);
 	useRomRegion = settingsini.GetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", useRomRegion);
-	extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
+	boostCpuForClut = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU_FOR_CLUT", boostCpuForClut);
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
 	soundFreq = (TSoundFreq)settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
 }
@@ -535,7 +535,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 	settingsini.SetInt("NDS-BOOTSTRAP", "REGION", gameRegion);
 	settingsini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", useRomRegion);
-	settingsini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
+	settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU_FOR_CLUT", boostCpuForClut);
 	settingsini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
 	settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
 
