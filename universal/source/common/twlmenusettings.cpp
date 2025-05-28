@@ -147,6 +147,7 @@ TWLSettings::TWLSettings()
 	extendedMemory = 0;
 	forceSleepPatch = false;
 	soundFreq = EFreq32KHz;
+	saveRelocation = ERelocOnSDCard;
 }
 
 void TWLSettings::loadSettings()
@@ -375,6 +376,7 @@ void TWLSettings::loadSettings()
 	extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
 	soundFreq = (TSoundFreq)settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
+	saveRelocation = (TSaveRelocation)settingsini.GetInt("NDS-BOOTSTRAP", "SAVE_RELOCATION", saveRelocation);
 }
 
 void TWLSettings::saveSettings()
@@ -538,6 +540,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
 	settingsini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
 	settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
+	settingsini.SetInt("NDS-BOOTSTRAP", "SAVE_RELOCATION", saveRelocation);
 
 	settingsini.SaveIniFileModified(settingsinipath);
 }
