@@ -2199,12 +2199,28 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (ms().ak_viewMode == TWLSettings::EViewList) {
 				cursorPosOnScreen = 0;
 			}
+			logPrint("isValid: ");
+			logPrint(isValid[cursorPosOnScreen] ? "true" : "false");
+			logPrint("\n");
+			logPrint("isTwlm: ");
+			logPrint(isTwlm[cursorPosOnScreen] ? "true" : "false");
+			logPrint("\n");
+			logPrint("isDirectory: ");
+			logPrint(isDirectory[cursorPosOnScreen] ? "true" : "false");
+			logPrint("\n");
+			logPrint("bnrRomType: ");
+			char numberText[8];
+			sprintf(numberText, "%i", bnrRomType[cursorPosOnScreen]);
+			logPrint(numberText);
+			logPrint("\n");
 			if (isValid[cursorPosOnScreen] && !isTwlm[cursorPosOnScreen] && !isDirectory[cursorPosOnScreen] && (bnrRomType[cursorPosOnScreen] == 0 || bnrRomType[cursorPosOnScreen] == 1 || bnrRomType[cursorPosOnScreen] == 3)) {
+				logPrint("perGameSettings opened!\n");
 				perGameSettings(dirContents.at(fileOffset).name);
 				cursorPosOnScreen = cursorPosOnScreenBak;
 				refreshBanners(screenOffset, fileOffset, dirContents);
 				for (int i = 0; i < 25; i++) bgOperations(true);
 			} else {
+				logPrint("perGameSettings not opened!\n");
 				cursorPosOnScreen = cursorPosOnScreenBak;
 			}
 		}

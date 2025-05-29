@@ -1179,6 +1179,9 @@ void getGameInfo(int num, int fileOffset, bool isDir, const char* name, bool fro
 
 		if (!preloadedHeaderFound(fileOffset)) {
 			tonccpy(getPreloadedHeader(fileOffset), &ndsHeader, sizeof(sNDSHeaderExt));
+			if (dsiFeatures()) {
+				headerPreloaded[fileOffset] = true;
+			}
 		}
 
 		tonccpy(gameTid[num], ndsHeader.gameCode, 4);

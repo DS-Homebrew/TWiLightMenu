@@ -280,6 +280,7 @@ int checkRomAP(FILE *ndsFile, const char* filename);
 extern sNDSBannerExt bnriconTile[8];
 extern sNDSHeaderExt* preloadedHeaders;
 extern sNDSBannerExt* preloadedBannerIcons;
+extern bool* headerPreloaded;
 extern bool* bannerIconPreloaded;
 
 extern void allocateBannerIconsToPreload(void);

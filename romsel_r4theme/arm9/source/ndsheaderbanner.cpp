@@ -569,6 +569,7 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 
 sNDSHeaderExt* preloadedHeaders = {NULL};
 sNDSBannerExt* preloadedBannerIcons = {NULL};
+bool* headerPreloaded = {NULL};
 bool* bannerIconPreloaded = {NULL};
 static int headerFileOffset[16] = {0};
 static int bannerIconFileOffset[16] = {0};
@@ -582,6 +583,7 @@ void allocateBannerIconsToPreload(void) {
 		preloadedBannerIcons = new sNDSBannerExt[count];
 	}
 	if (dsiFeatures()) {
+		headerPreloaded = new bool[count];
 		bannerIconPreloaded = new bool[count];
 	}
 }
@@ -590,6 +592,7 @@ void resetPreloadedBannerIcons(void) {
 	const int count = dsiFeatures() ? 1024 : 16;
 	for (int i = 0; i < count; i++) {
 		if (dsiFeatures()) {
+			headerPreloaded[i] = false;
 			bannerIconPreloaded[i] = false;
 		} else {
 			headerFileOffset[i] = -1;
@@ -600,7 +603,7 @@ void resetPreloadedBannerIcons(void) {
 
 bool preloadedHeaderFound(const int fileOffset) {
 	if (dsiFeatures()) {
-		return bannerIconPreloaded[fileOffset];
+		return headerPreloaded[fileOffset];
 	}
 
 	for (int i = 0; i < 16; i++) {

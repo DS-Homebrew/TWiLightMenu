@@ -1138,6 +1138,9 @@ void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv)
 
 		if (!preloadedHeaderFound(fileOffset)) {
 			tonccpy(getPreloadedHeader(fileOffset), &ndsHeader, sizeof(sNDSHeaderExt));
+			if (dsiFeatures()) {
+				headerPreloaded[fileOffset] = true;
+			}
 			if (dsiFeatures() && ms().theme == TWLSettings::EThemeGBC && ms().filenameDisplay == 2) {
 				bannerIconPreloaded[fileOffset] = true;
 			}
