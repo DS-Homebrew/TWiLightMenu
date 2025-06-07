@@ -112,13 +112,13 @@ jobs:
 
           # Emulators 7z
           rm -rf TWiLightMenu
-          cp -r TWiLightMenu/Emulators/* TWiLightMenu
+          cp -r 7zfile/TWiLightMenu/Emulators/* TWiLightMenu
           7z a TWiLightMenu-Emulators.7z TWiLightMenu
           mv TWiLightMenu-Emulators.7z ~/artifacts
 
           # Multimedia 7z
           rm -rf TWiLightMenu
-          cp -r TWiLightMenu/Multimedia/* TWiLightMenu
+          cp -r 7zfile/TWiLightMenu/Multimedia/* TWiLightMenu
           7z a TWiLightMenu-Multimedia.7z TWiLightMenu
           mv TWiLightMenu-Multimedia.7z ~/artifacts
 
