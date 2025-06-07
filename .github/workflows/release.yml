@@ -158,10 +158,12 @@ jobs:
           # PicoDriveTWL is a prerelease, so get the latest URL from the GH api
           curl -LO $(curl https://api.github.com/repos/DS-Homebrew/PicoDriveTWL/releases | jq --raw-output '.[0].assets[0].browser_download_url' -)
           curl -LO https://github.com/DS-Homebrew/PokeMini/releases/latest/download/PokeMini.nds
-          cd ../../../..
-          7z a TWiLightMenu-Emulators.7z TWiLightMenu
+          cd ../../..
+          7z a TWiLightMenu-Emulators.7z
+          mv TWiLightMenu-Emulators.7z ~/artifacts
 
           # Multimedia 7z
+          cd ..
           rm -rf TWiLightMenu
           cp -r 7zfile/Multimedia/ TWiLightMenu
           cd TWiLightMenu/_nds/TWiLightMenu/apps
@@ -169,8 +171,9 @@ jobs:
           7z x tuna-vids_v1.2.zip tuna-vids.nds
           rm tuna-vids_v1.2.zip
           # curl -LO https://github.com/Gericom/FastVideoDSPlayer/releases/latest/download/FastVideoDS.nds
-          cd ../../../..
-          7z a TWiLightMenu-Multimedia.7z TWiLightMenu
+          cd ../../..
+          7z a TWiLightMenu-Multimedia.7z
+          mv TWiLightMenu-Multimedia.7z ~/artifacts
 
       - name: Publish build to GH Actions
         uses: actions/upload-artifact@v4
