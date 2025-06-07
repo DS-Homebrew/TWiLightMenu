@@ -134,7 +134,7 @@ jobs:
           # Emulators 7z
           cd ..
           rm -rf TWiLightMenu
-          cp -r 7zfile/TWiLightMenu/Emulators/* TWiLightMenu
+          cp -r 7zfile/TWiLightMenu/Emulators/ TWiLightMenu
           cd TWiLightMenu/_nds/TWiLightMenu/emulators
           curl -LO https://github.com/wavemotion-dave/A8DS/releases/latest/download/A8DS.nds
           curl -LO https://github.com/wavemotion-dave/StellaDS/releases/latest/download/StellaDS.nds
@@ -163,7 +163,7 @@ jobs:
 
           # Multimedia 7z
           rm -rf TWiLightMenu
-          cp -r 7zfile/TWiLightMenu/Multimedia/* TWiLightMenu
+          cp -r 7zfile/TWiLightMenu/Multimedia/ TWiLightMenu
           cd TWiLightMenu/_nds/TWiLightMenu/apps
           curl -LO https://github.com/chishm/tuna-vids/releases/latest/download/tuna-vids_v1.2.zip
           7z x tuna-vids_v1.2.zip tuna-vids.nds
