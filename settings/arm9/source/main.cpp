@@ -546,7 +546,7 @@ void begin_update(int opt)
 		if (access("fat:/_nds/TWiLightMenu/addons/", F_OK) == 0) {
 			logPrint("Copying addons from fat to sd\n");
 			mkdir("sd:/_nds/TWiLightMenu/addons/", 0777);
-			fcopy("fat:/_nds/TWiLightMenu/addons/Emulators", "sd:/_nds/TWiLightMenu/addons/Emulators");
+			fcopy("fat:/_nds/TWiLightMenu/addons/Virtual Console", "sd:/_nds/TWiLightMenu/addons/Virtual Console");
 			fcopy("fat:/_nds/TWiLightMenu/addons/Multimedia", "sd:/_nds/TWiLightMenu/addons/Multimedia");
 		}
 
@@ -567,7 +567,7 @@ void begin_update(int opt)
 		if (access("sd:/_nds/TWiLightMenu/addons/", F_OK) == 0) {
 			logPrint("Copying addons from sd to fat\n");
 			mkdir("fat:/_nds/TWiLightMenu/addons/", 0777);
-			fcopy("sd:/_nds/TWiLightMenu/addons/Emulators", "fat:/_nds/TWiLightMenu/addons/Emulators");
+			fcopy("sd:/_nds/TWiLightMenu/addons/Virtual Console", "fat:/_nds/TWiLightMenu/addons/Virtual Console");
 			fcopy("sd:/_nds/TWiLightMenu/addons/Multimedia", "fat:/_nds/TWiLightMenu/addons/Multimedia");
 		}
 
