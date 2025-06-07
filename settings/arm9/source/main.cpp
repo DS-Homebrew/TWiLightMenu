@@ -1018,7 +1018,8 @@ int settingsMode(void)
 	}
 
 	const bool gbaR3Found = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds" : "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds", F_OK) == 0);
-	const bool emulatorsInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Emulators" : "fat:/_nds/TWiLightMenu/addons/Emulators", F_OK) == 0);
+
+	const bool emulatorsInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Virtual Console" : "fat:/_nds/TWiLightMenu/addons/Virtual Console", F_OK) == 0);
 
 	const bool sharedFound = (access("sd:/shared1", F_OK) == 0);
 

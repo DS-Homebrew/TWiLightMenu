@@ -19,11 +19,11 @@ thumbs.db
 !GBARunner2_arm7dldi_nodsp_dsi.nds
 !GBARunner2_arm7dldi_nodsp_3ds.nds
 !/7zfile/_nds/TWiLightMenu/*/*.NDS
-!/7zfile/Emulators/_nds/TWiLightMenu/*/*.NDS
 !/7zfile/Flashcard users/Autoboot/*/*.NDS
 !/7zfile/Flashcard users/Autoboot/*/*/*.NDS
 !/7zfile/Flashcard users/Flashcart Loader/*/*/*.NDS
 !/7zfile/Multimedia/_nds/TWiLightMenu/*/*.NDS
+!/7zfile/Virtual Console/_nds/TWiLightMenu/*/*.NDS
 manual/nitrofiles/pages
 settings/arm9/include/version.h
 

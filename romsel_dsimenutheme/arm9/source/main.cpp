@@ -1022,7 +1022,7 @@ int dsiMenuTheme(void) {
 		logPrint(gbaBiosFound[1] ? "GBA BIOS found on fat\n" : "GBA BIOS not found on fat\n");
 	}
 
-	const bool emulatorsInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Emulators" : "fat:/_nds/TWiLightMenu/addons/Emulators", F_OK) == 0);
+	const bool emulatorsInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Virtual Console" : "fat:/_nds/TWiLightMenu/addons/Virtual Console", F_OK) == 0);
 	const bool multimediaInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Multimedia" : "fat:/_nds/TWiLightMenu/addons/Multimedia", F_OK) == 0);
 
 	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
