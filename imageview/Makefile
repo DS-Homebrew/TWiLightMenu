@@ -28,7 +28,7 @@ makearm9:
 
 dist:	all
 	@mkdir -p ../7zfile/debug
-	@cp $(TARGET).nds ../7zfile/_nds/TWiLightMenu/imageview.srldr
+	@cp $(TARGET).nds ../7zfile/Multimedia/_nds/TWiLightMenu/imageview.srldr
 	@cp $(TARGET).arm7.elf ../7zfile/debug/$(TARGET).arm7.elf
 	@cp $(TARGET).arm9.elf ../7zfile/debug/$(TARGET).arm9.elf
 

@@ -70,9 +70,72 @@ jobs:
           mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
 
-          # Emulators
-          mkdir -p 7zfile/_nds/TWiLightMenu/emulators
-          cd 7zfile/_nds/TWiLightMenu/emulators
+          # version.txt
+          printf "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(cat 7zfile/_nds/release-bootstrap.ver)\n\nRocketRobz, ahezard\n" > 7zfile/version.txt
+
+          # Main 7z
+          cp -r 7zfile TWiLightMenu
+          cd TWiLightMenu
+          7z a TWiLightMenu.7z .
+          mv TWiLightMenu.7z ~/artifacts
+
+          # DSi 7z
+          cp -r DSi\ -\ CFW\ users/SDNAND\ root/* .
+          rm -rf DSi\ -\ CFW\ users
+          cp -r DSi\&3DS\ -\ SD\ card\ users/* .
+          rm -rf DSi\&3DS\ -\ SD\ card\ users
+          rm -rf 3DS\ -\ CFW\ users
+          rm -rf Emulators
+          rm -rf Flashcard\ users
+          rm -rf Multimedia
+          rm -rf _nds/GBARunner2_arm7dldi_3ds.nds
+          rm -rf _nds/GBARunner2_arm7dldi_nodsp_3ds.nds
+          rm -rf _nds/TWiLightMenu/bootplg.srldr
+          rm -rf _nds/TWiLightMenu/gbaswitch.srldr
+          7z a TWiLightMenu-DSi.7z
+          mv TWiLightMenu-DSi.7z ~/artifacts
+
+          # 3DS 7z
+          cd ..
+          rm -rf TWiLightMenu
+          cp -r 7zfile/ TWiLightMenu/
+          cd TWiLightMenu
+          cp -r 3DS\ -\ CFW\ users/* .
+          rm -rf 3DS\ -\ CFW\ users
+          cp -r DSi\&3DS\ -\ SD\ card\ users/* .
+          rm -rf DSi\&3DS\ -\ SD\ card\ users
+          rm -rf DSi\ -\ CFW\ users
+          rm -rf Emulators
+          rm -rf Flashcard\ users
+          rm -rf Multimedia
+          rm -rf _nds/GBARunner2_arm7dldi_dsi.nds
+          rm -rf _nds/GBARunner2_arm7dldi_nodsp_dsi.nds
+          rm -rf _nds/TWiLightMenu/unlaunch
+          rm -rf _nds/TWiLightMenu/bootplg.srldr
+          rm -rf _nds/TWiLightMenu/gbaswitch.srldr
+          7z a TWiLightMenu-3DS.7z
+          mv TWiLightMenu-3DS.7z ~/artifacts
+
+          # Flashcard 7z
+          cd ..
+          rm -rf TWiLightMenu
+          cp -r 7zfile/ TWiLightMenu/
+          cd TWiLightMenu
+          cp -r Flashcard\ users/* .
+          rm -rf Flashcard\ users
+          rm -rf 3DS\ -\ CFW\ users
+          rm -rf DSi\&3DS\ -\ SD\ card\ users
+          rm -rf DSi\ -\ CFW\ users
+          rm -rf Emulators
+          rm -rf Multimedia
+          7z a TWiLightMenu-Flashcard.7z
+          mv TWiLightMenu-Flashcard.7z ~/artifacts
+
+          # Emulators 7z
+          cd ..
+          rm -rf TWiLightMenu
+          cp -r 7zfile/TWiLightMenu/Emulators/* TWiLightMenu
+          cd TWiLightMenu/_nds/TWiLightMenu/emulators
           curl -LO https://github.com/wavemotion-dave/A8DS/releases/latest/download/A8DS.nds
           curl -LO https://github.com/wavemotion-dave/StellaDS/releases/latest/download/StellaDS.nds
           curl -LO https://github.com/wavemotion-dave/A5200DS/releases/latest/download/A5200DS.nds
@@ -96,70 +159,19 @@ jobs:
           curl -LO $(curl https://api.github.com/repos/DS-Homebrew/PicoDriveTWL/releases | jq --raw-output '.[0].assets[0].browser_download_url' -)
           curl -LO https://github.com/DS-Homebrew/PokeMini/releases/latest/download/PokeMini.nds
           cd ../../../..
+          7z a TWiLightMenu-Emulators.7z TWiLightMenu
 
-          # Players
-          mkdir -p 7zfile/_nds/TWiLightMenu/apps
-          cd 7zfile/_nds/TWiLightMenu/apps
+          # Multimedia 7z
+          rm -rf TWiLightMenu
+          cp -r 7zfile/TWiLightMenu/Multimedia/* TWiLightMenu
+          cd TWiLightMenu/_nds/TWiLightMenu/apps
           curl -LO https://github.com/chishm/tuna-vids/releases/latest/download/tuna-vids_v1.2.zip
           7z x tuna-vids_v1.2.zip tuna-vids.nds
           rm tuna-vids_v1.2.zip
           # curl -LO https://github.com/Gericom/FastVideoDSPlayer/releases/latest/download/FastVideoDS.nds
           cd ../../../..
+          7z a TWiLightMenu-Multimedia.7z TWiLightMenu
 
-          # version.txt
-          printf "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(cat 7zfile/_nds/release-bootstrap.ver)\n\nRocketRobz, ahezard\n" > 7zfile/version.txt
-
-          # Main 7z
-          cp -r 7zfile TWiLightMenu
-          cd TWiLightMenu
-          7z a TWiLightMenu.7z .
-          mv TWiLightMenu.7z ~/artifacts
-
-          # DSi 7z
-          cp -r DSi\ -\ CFW\ users/SDNAND\ root/* .
-          rm -rf DSi\ -\ CFW\ users
-          cp -r DSi\&3DS\ -\ SD\ card\ users/* .
-          rm -rf DSi\&3DS\ -\ SD\ card\ users
-          rm -rf 3DS\ -\ CFW\ users
-          rm -rf Flashcard\ users
-          rm -rf _nds/GBARunner2_arm7dldi_3ds.nds
-          rm -rf _nds/GBARunner2_arm7dldi_nodsp_3ds.nds
-          rm -rf _nds/TWiLightMenu/bootplg.srldr
-          rm -rf _nds/TWiLightMenu/gbaswitch.srldr
-          7z a TWiLightMenu-DSi.7z
-          mv TWiLightMenu-DSi.7z ~/artifacts
-
-          # 3DS 7z
-          cd ..
-          rm -rf TWiLightMenu
-          cp -r 7zfile/ TWiLightMenu/
-          cd TWiLightMenu
-          cp -r 3DS\ -\ CFW\ users/* .
-          rm -rf 3DS\ -\ CFW\ users
-          cp -r DSi\&3DS\ -\ SD\ card\ users/* .
-          rm -rf DSi\&3DS\ -\ SD\ card\ users
-          rm -rf DSi\ -\ CFW\ users
-          rm -rf Flashcard\ users
-          rm -rf _nds/GBARunner2_arm7dldi_dsi.nds
-          rm -rf _nds/GBARunner2_arm7dldi_nodsp_dsi.nds
-          rm -rf _nds/TWiLightMenu/unlaunch
-          rm -rf _nds/TWiLightMenu/bootplg.srldr
-          rm -rf _nds/TWiLightMenu/gbaswitch.srldr
-          7z a TWiLightMenu-3DS.7z
-          mv TWiLightMenu-3DS.7z ~/artifacts
-
-          # Flashcard 7z
-          cd ..
-          rm -rf TWiLightMenu
-          cp -r 7zfile/ TWiLightMenu/
-          cd TWiLightMenu
-          cp -r Flashcard\ users/* .
-          rm -rf Flashcard\ users
-          rm -rf 3DS\ -\ CFW\ users
-          rm -rf DSi\&3DS\ -\ SD\ card\ users
-          rm -rf DSi\ -\ CFW\ users
-          7z a TWiLightMenu-Flashcard.7z
-          mv TWiLightMenu-Flashcard.7z ~/artifacts
       - name: Publish build to GH Actions
         uses: actions/upload-artifact@v4
         with:
