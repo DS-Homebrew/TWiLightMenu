@@ -948,6 +948,9 @@ int r4Theme(void) {
 		logPrint(gbaBiosFound[1] ? "GBA BIOS found on fat\n" : "GBA BIOS not found on fat\n");
 	}
 
+	const bool emulatorsInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Emulators" : "fat:/_nds/TWiLightMenu/addons/Emulators", F_OK) == 0);
+	const bool multimediaInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Multimedia" : "fat:/_nds/TWiLightMenu/addons/Multimedia", F_OK) == 0);
+
 	if (ms().theme == TWLSettings::EThemeGBC) {
 		extern int screenBrightness;
 		screenBrightness = 31;
@@ -1328,33 +1331,7 @@ int r4Theme(void) {
 		} else {
 			std::vector<std::string_view> extensionList = {
 				".nds", ".dsi", ".ids", ".srl", ".app", ".argv", // NDS
-				".agb", ".gba", ".mb", // GBA
-				".a26", // Atari 2600
-				".a52", // Atari 5200
-				".a78", // Atari 7800
-				".xex", ".atr", // Atari XEGS
-				".msx", // MSX
-				".col", // ColecoVision
-				".int", // Intellivision
-				".m5", // Sord M5
-				".gb", ".sgb", ".gbc", // Game Boy
-				".nes", ".fds", // NES/Famicom
-				".sg", // Sega SG-1000
-				".sc", // Sega SC-3000
-				".sms", // Sega Master System
-				".gg", // Sega Game Gear
-				".gen", // Genesis
-				".smc", ".sfc", // SNES
-				".ws", ".wsc", // WonderSwan
-				".ngp", ".ngc", // Neo Geo Pocket
-				".pce", // PC Engine/TurboGrafx-16
-				".dsk", // Amstrad CPC
-				".min", // Pokémon mini
-				".avi", // Xvid (AVI)
-				".fv", // FastVideo
-				".gif", // GIF
-				".bmp", // BMP
-				".png" // Portable Network Graphics
+				".agb", ".gba", ".mb" // GBA
 			};
 
 			{
@@ -1377,12 +1354,56 @@ int r4Theme(void) {
 				}
 			}
 
-			if (!ms().secondaryDevice || ms().mdEmulator == 2) {
-				extensionList.emplace_back(".md"); // Sega Mega Drive
-			}
-
 			if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 				extensionList.emplace_back(".plg"); // DSTWO Plugin
+			}
+
+			if (emulatorsInstalled) {
+				std::vector<std::string_view> extensionListEmus = {
+					".a26", // Atari 2600
+					".a52", // Atari 5200
+					".a78", // Atari 7800
+					".xex", ".atr", // Atari XEGS
+					".msx", // MSX
+					".col", // ColecoVision
+					".int", // Intellivision
+					".m5", // Sord M5
+					".gb", ".sgb", ".gbc", // Game Boy
+					".nes", ".fds", // NES/Famicom
+					".sg", // Sega SG-1000
+					".sc", // Sega SC-3000
+					".sms", // Sega Master System
+					".gg", // Sega Game Gear
+					".gen", // Genesis
+					".smc", ".sfc", // SNES
+					".ws", ".wsc", // WonderSwan
+					".ngp", ".ngc", // Neo Geo Pocket
+					".pce", // PC Engine/TurboGrafx-16
+					".dsk", // Amstrad CPC
+					".min" // Pokémon mini
+				};
+
+				for (int i = 0; i < 28; i++) {
+					extensionList.emplace_back(extensionListEmus[i]);
+				}
+
+				if (!ms().secondaryDevice || ms().mdEmulator == 2) {
+					extensionList.emplace_back(".md"); // Sega Mega Drive
+				}
+			}
+
+			if (multimediaInstalled) {
+				std::vector<std::string_view> extensionListMedia = {
+					".avi", // Xvid (AVI)
+					".fv", // FastVideo
+					".gif", // GIF
+					".bmp", // BMP
+					".png" // Portable Network Graphics
+				};
+
+				for (int i = 0; i < 5; i++) {
+					extensionList.emplace_back(extensionListMedia[i]);
+				}
 			}
 
 			if(ms().blockedExtensions.size() > 0) {

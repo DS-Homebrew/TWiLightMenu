@@ -110,17 +110,17 @@ jobs:
           7z a TWiLightMenu-Flashcard.7z TWiLightMenu
           mv TWiLightMenu-Flashcard.7z ~/artifacts
 
-          # Emulators 7z
+          # Emulators Add-on 7z
           rm -rf TWiLightMenu
           cp -r 7zfile/Emulators/ TWiLightMenu
-          7z a TWiLightMenu-Emulators.7z TWiLightMenu
-          mv TWiLightMenu-Emulators.7z ~/artifacts
+          7z a AddOn-Emulators.7z TWiLightMenu
+          mv AddOn-Emulators.7z ~/artifacts
 
-          # Multimedia 7z
+          # Multimedia Add-on 7z
           rm -rf TWiLightMenu
           cp -r 7zfile/Multimedia/ TWiLightMenu
-          7z a TWiLightMenu-Multimedia.7z TWiLightMenu
-          mv TWiLightMenu-Multimedia.7z ~/artifacts
+          7z a AddOn-Multimedia.7z TWiLightMenu
+          mv AddOn-Multimedia.7z ~/artifacts
 
           # widescreen.pck
           cp 7zfile/_nds/TWiLightMenu/extras/widescreen.pck ~/artifacts
