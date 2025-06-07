@@ -111,11 +111,17 @@ jobs:
           mv TWiLightMenu-Flashcard.7z ~/artifacts
 
           # Emulators 7z
-          7z a TWiLightMenu-Emulators.7z 7zfile/TWiLightMenu/Emulators/
+          rm -rf TWiLightMenu
+          cp -r 7zfile/ TWiLightMenu/
+          cp -r TWiLightMenu/Emulators/* TWiLightMenu
+          7z a TWiLightMenu-Emulators.7z TWiLightMenu
           mv TWiLightMenu-Emulators.7z ~/artifacts
 
           # Multimedia 7z
-          7z a TWiLightMenu-Multimedia.7z 7zfile/TWiLightMenu/Multimedia/
+          rm -rf TWiLightMenu
+          cp -r 7zfile/ TWiLightMenu/
+          cp -r TWiLightMenu/Multimedia/* TWiLightMenu
+          7z a TWiLightMenu-Multimedia.7z TWiLightMenu
           mv TWiLightMenu-Multimedia.7z ~/artifacts
 
           # widescreen.pck
