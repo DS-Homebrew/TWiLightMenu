@@ -35,6 +35,7 @@
 
 #define TFN_SYSTEM_UI_DIRECTORY             TFN_SYSTEM_DIR"themes/"
 #define TFN_SYSTEM_SOUND_DIRECTORY          "nitro:/sound"
+#define TFN_SYSTEM_SOUND_ADDON_DIRECTORY    "/_nds/TWiLightMenu/addons/Extra UI Music/dsimenu"
 #define TFN_SYSTEM_SOUND_CACHE_DIRECTORY    "/_nds/TWiLightMenu/cache/music"
 
 #define TFN_UI_DIRECTORY              tfn().uiDirectory() + 
@@ -154,13 +155,13 @@
 
 #define TFN_DEFAULT_SOUND_EFFECTBANK      TFN_SYSTEM_SOUND_DIRECTORY"/defaultfx.bin"
 #define TFN_DEFAULT_SOUND_BG              TFN_SYSTEM_SOUND_DIRECTORY"/defaultbg.wav"
-#define TFN_DEFAULT_SOUND_BG_3D           TFN_SYSTEM_SOUND_DIRECTORY"/defaultbg3d.wav"
+#define TFN_DEFAULT_SOUND_BG_3D           TFN_SYSTEM_SOUND_ADDON_DIRECTORY"/defaultbg3d.wav"
 
-#define TFN_SHOP_START_SOUND_BG           TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.start.wav"
-#define TFN_SHOP_LOOP_SOUND_BG            TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.loop.wav"
+#define TFN_SHOP_START_SOUND_BG           TFN_SYSTEM_SOUND_ADDON_DIRECTORY"/shopbg.start.wav"
+#define TFN_SHOP_LOOP_SOUND_BG            TFN_SYSTEM_SOUND_ADDON_DIRECTORY"/shopbg.loop.wav"
 
-#define TFN_HBL_START_SOUND_BG           TFN_SYSTEM_SOUND_DIRECTORY"/hbl.start.wav"
-#define TFN_HBL_LOOP_SOUND_BG            TFN_SYSTEM_SOUND_DIRECTORY"/hbl.loop.wav"
+#define TFN_HBL_START_SOUND_BG           TFN_SYSTEM_SOUND_ADDON_DIRECTORY"/hbl.start.wav"
+#define TFN_HBL_LOOP_SOUND_BG            TFN_SYSTEM_SOUND_ADDON_DIRECTORY"/hbl.loop.wav"
 
 #define TFN_SATURN_SOUND_EFFECTBANK       TFN_SYSTEM_SOUND_DIRECTORY"/saturnfx.bin"
 

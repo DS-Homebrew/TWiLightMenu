@@ -69,6 +69,7 @@ jobs:
           rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
           rm -rf TWiLightMenu/3DS\ -\ CFW\ users
           rm -rf TWiLightMenu/Flashcard\ users
+          rm -rf TWiLightMenu/Extra\ UI\ Music
           rm -rf TWiLightMenu/Multimedia
           rm -rf TWiLightMenu/Virtual\ Console
           rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_3ds.nds
@@ -87,6 +88,7 @@ jobs:
           rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
           rm -rf TWiLightMenu/DSi\ -\ CFW\ users
           rm -rf TWiLightMenu/Flashcard\ users
+          rm -rf TWiLightMenu/Extra\ UI\ Music
           rm -rf TWiLightMenu/Multimedia
           rm -rf TWiLightMenu/Virtual\ Console
           rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_dsi.nds
@@ -105,6 +107,7 @@ jobs:
           rm -rf TWiLightMenu/3DS\ -\ CFW\ users
           rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
           rm -rf TWiLightMenu/DSi\ -\ CFW\ users
+          rm -rf TWiLightMenu/Extra\ UI\ Music
           rm -rf TWiLightMenu/Multimedia
           rm -rf TWiLightMenu/Virtual\ Console
           7z a TWiLightMenu-Flashcard.7z TWiLightMenu
@@ -121,6 +124,12 @@ jobs:
           cp -r 7zfile/Multimedia/ TWiLightMenu
           7z a AddOn-Multimedia.7z TWiLightMenu
           mv AddOn-Multimedia.7z ~/artifacts
+
+          # Extra UI Music Add-on 7z
+          rm -rf TWiLightMenu
+          cp -r 7zfile/Extra\ UI\ Music/ TWiLightMenu
+          7z a AddOn-ExtraUIMusic.7z TWiLightMenu
+          mv AddOn-ExtraUIMusic.7z ~/artifacts
 
           # widescreen.pck
           cp 7zfile/_nds/TWiLightMenu/extras/widescreen.pck ~/artifacts
