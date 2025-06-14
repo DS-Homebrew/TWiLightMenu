@@ -103,7 +103,6 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [asiekierka](https://github.com/asiekierka): Stargate 3DS autoboot file from [nds-miniboot](https://github.com/asiekierka/nds-miniboot)
 ## App Launchers
 - [ahezard](https://github.com/ahezard), [shutterbug2000](https://github.com/shutterbug2000) and [Rocket Robz](https://github.com/RocketRobz): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used for launching Nintendo DS(i) ROMs off the SD card)
-- [Alekmaul](https://github.com/alekmaul): [AmeDS](https://www.gamebrew.org/wiki/AmeDS) (used for launching Amstrad CPC ROMs)
 - [Alekmaul](https://github.com/alekmaul) & [wavemotion](https://github.com/wavemotion-dave): [StellaDS](https://github.com/wavemotion-dave/StellaDS), [A5200DS](https://github.com/wavemotion-dave/A5200DS), [A7800DS](https://github.com/wavemotion-dave/A7800DS), [A8DS](https://github.com/wavemotion-dave/A8DS) (used for launching Atari 2600/5200/7800/XEGS ROMs), and [ColecoDS](https://github.com/wavemotion-dave/ColecoDS) (used for launching ColecoVision, MSX, Sord M5, and Sega SG-1000/SC-3000 ROMs)
 - archiede: [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS) (used for launching SNES ROMs)
      - [Coto](https://coto88.bitbucket.io/): [SNEmulDS Revival](https://bitbucket.org/Coto88/snemulds)
@@ -117,9 +116,8 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
      - [unresolvedsymbol](https://github.com/unresolvedsymbol): [rom3M+master "DSL-Enhanced"](https://github.com/unresolvedsymbol/GBARunner2-DSL-Enhanced) builds of GBARunner2 included for playing *Pokémon: Emerald Version* on flashcards
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS) (used for launching Sega Mega Drive/Genesis ROMs)
      - [xonn83](https://github.com/xonn83): GBMacro version of [jEnesisDS](https://github.com/xonn83/jEnesisDS_macro)
-- [redbug26](https://github.com/redbug26): [CrocoDS](https://github.com/redbug26/crocods-nds) (used for launching Amstrad CPC ROMs)
 - Ryan FB, [Rocket Robz](https://github.com/RocketRobz), and [xonn83](https://github.com/xonn83): [PicoDriveTWL](https://github.com/DS-Homebrew/PicoDriveTWL) (used for launching large Sega Mega Drive/Genesis ROMs)
-- [wavemotion](https://github.com/wavemotion-dave): [Nintellivision/NINTV-DS](https://github.com/wavemotion-dave/NINTV-DS) (used for launching Intellivision ROMs)
+- [wavemotion](https://github.com/wavemotion-dave): [Nintellivision/NINTV-DS](https://github.com/wavemotion-dave/NINTV-DS) (used for launching Intellivision ROMs) and [SugarDS](https://github.com/wavemotion-dave/SugarDS) (used for launching Amstrad CPC ROMs)
 ## Graphics & Themes
 - [Absent-Reality](http://pixeljoint.com/p/19283.htm): Intellivision icon
 - davi: Border for GBC UI (originally for GameYob)

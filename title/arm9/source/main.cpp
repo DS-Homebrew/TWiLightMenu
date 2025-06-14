@@ -1323,22 +1323,14 @@ void lastRunROM()
 			argarray.at(0) = (char*)ndsToBoot;
 		}
 		err = runNdsFile(ndsToBoot, argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, !isDSiMode(), ms().newSnesEmuVer, true, ms().newSnesEmuVer, -1); // Pass ROM to SNEmulDS as argument
-	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EAmEDSLaunch) {
+	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ESugarDSLaunch || ms().launchType[ms().previousUsedDevice] == Launch::ESugarDSLaunch2) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/SugarDS.nds";
 		if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
-			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/SugarDS.nds";
 		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1); // Pass ROM to AmEDS as argument
-	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ECrocoDSLaunch) {
-		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
-
-		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-		if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
-			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1); // Pass ROM to CrocoDS as argument
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1); // Pass ROM to SugarDS as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ETunaViDSLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 

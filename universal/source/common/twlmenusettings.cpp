@@ -62,7 +62,6 @@ TWLSettings::TWLSettings()
 	gbaR3Test = false;
 	colEmulator = EColSegaColecoDS;
 	sgEmulator = EColSegaColecoDS;
-	cpcEmulator = ECpcAmEDS;
 	mdEmulator = EMegaDriveHybrid;
 	//snesEmulator = true;
 	updateRecentlyPlayedList = true;
@@ -249,9 +248,6 @@ void TWLSettings::loadSettings()
 	sgEmulator = (TColSegaEmulator)settingsini.GetInt("SRLOADER", "SHOW_SG", sgEmulator);
 	if (sgEmulator == 0) // 0 (don't show) is deprecated
 		sgEmulator = EColSegaColecoDS;
-	cpcEmulator = (TCpcEmulator)settingsini.GetInt("SRLOADER", "SHOW_CPC", cpcEmulator);
-	if (cpcEmulator == 0) // 0 (don't show) is deprecated
-		cpcEmulator = ECpcAmEDS;
 	if (!(isDSiMode() && (access("sd:/", F_OK) == 0) && sys().arm7SCFGLocked())) {
 		mdEmulator = (TMegaDriveEmulator)settingsini.GetInt("SRLOADER", "SHOW_MDGEN", mdEmulator);
 		if (mdEmulator == 0) // 0 (don't show) is deprecated
@@ -442,7 +438,6 @@ void TWLSettings::saveSettings()
 	}
 	settingsini.SetInt("SRLOADER", "SHOW_COL", colEmulator);
 	settingsini.SetInt("SRLOADER", "SHOW_SG", sgEmulator);
-	settingsini.SetInt("SRLOADER", "SHOW_CPC", cpcEmulator);
 	if (!(isDSiMode() && (access("sd:/", F_OK) == 0) && sys().arm7SCFGLocked())) {
 		settingsini.SetInt("SRLOADER", "SHOW_MDGEN", mdEmulator);
 	}
