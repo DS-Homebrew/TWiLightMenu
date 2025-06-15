@@ -15,7 +15,16 @@
 </p>
 
 **TW**i**L**ight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
-It can launch games for the Nintendo DS(i), GameBoy Advance, and plenty of retro consoles, as well as DSTWO plugins (if you use a DSTWO).
+It can launch games for the Nintendo DS, Nintendo DSi, and GameBoy Advance, as well as DSTWO plugins (if you use a DSTWO).
+
+# Add-ons
+
+Additional features can be added on to **TW**i**L**ight Menu++. The following can be installed.
+
+- Extra UI Music: Adds more music to the DSi, 3DS, and HBL UIs (3DS HOME Menu music, DSi Shop music, and HBL music).
+- Multimedia: View image/photo files and play videos (the latter which uses tuna-viDS and/or FastVideoDSPlayer).
+- Virtual Console: Play games from some well-known retro consoles prior to the GBA.
+  - [View list of supported consoles/systems](https://wiki.ds-homebrew.com/ds-index/emulators)
 
 # Compiling
 
