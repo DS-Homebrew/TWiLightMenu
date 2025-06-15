@@ -76,7 +76,7 @@ TWiLight Menu++ is composed of multiple "sub-projects" which all work together t
 - **booter_fc**: main entrypoint for flashcards
   - Creates `_DS_MENU.dat`, `dsedgei.dat`, `akmenu4.nds`, `_DSMENU.nds`, `SCFW.SC` and others.
 - gbapatcher
-- **imageview**: image viewer similar to DSi camera (gif, png, bmp)
+- **imageview**: image viewer similar to DSi camera (gif, png, bmp) (Part of the Multimedia add-on)
   - `/_nds/TWiLightMenu/imageview.srldr`
 - **manual**: instruction manual for TWiLight Menu++
   - Creates `/_nds/TWiLightMenu/manual.srldr`
