@@ -35,6 +35,7 @@ void createEsrbSplash(void) {
 	}
 
 	std::string descriptors = esrbInfo.GetString(gameTid3, "Descriptors en", "");
+	const bool onlineNotice = esrbInfo.GetInt(gameTid3, "Online", 0);
 
 	bool sideways = false;
 	if ((rating == "E" || rating == "EC" || rating == "RP") && descriptors == "") {
@@ -121,6 +122,9 @@ void createEsrbSplash(void) {
 	mkdir(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap" : "fat:/_nds/nds-bootstrap", 0777);
 
 	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin", "wb");
+	if (onlineNotice) {
+		toncset32(bmpImageBuffer, 0x494C4E4F, 1); // 'ONLI'
+	}
 	fwrite(bmpImageBuffer, sizeof(u16), 256*192, file);
 	fclose(file);
 
