@@ -42,6 +42,7 @@
 #include "gbaswitch.h"
 #include "perGameSettings.h"
 #include "errorScreen.h"
+#include "esrbSplash.h"
 
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
@@ -2189,6 +2190,8 @@ int dsClassicMenu(void) {
 
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiWare[ms().secondaryDevice]) {
+				remove(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
+
 				std::string typeToReplace = filename[ms().secondaryDevice].substr(filename[ms().secondaryDevice].rfind('.'));
 
 				char *name = argarray.at(0);
@@ -2695,6 +2698,12 @@ int dsClassicMenu(void) {
 						ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
+
+						createEsrbSplash();
+
+						if (sdFound() && ms().homebrewBootstrap && (access("sd:/moonshl2/logbuf.txt", F_OK) == 0)) {
+							remove("sd:/moonshl2/logbuf.txt"); // Delete file for Moonshell 2 to boot properly
+						}
 
 						const bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 

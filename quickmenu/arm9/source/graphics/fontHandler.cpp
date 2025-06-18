@@ -17,6 +17,7 @@ extern u16* colorTable;
 
 FontGraphic *smallFont;
 FontGraphic *tinyFont;
+FontGraphic *esrbDescFont;
 
 std::list<TextEntry> topText, bottomText;
 
@@ -61,9 +62,9 @@ void fontInit() {
 	if (ms().dsClassicCustomFont) {
 		std::string fontPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 		std::string defaultPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
-		smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", defaultPath + "/small-dsi.nftr", "nitro:/graphics/font/small.nftr"}, useTileCache);
+		smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", defaultPath + "/small-dsi.nftr", "nitro:/graphics/font/ds.nftr"}, useTileCache);
 	} else {
-		smallFont = new FontGraphic({"nitro:/graphics/font/small.nftr"}, false);
+		smallFont = new FontGraphic({"nitro:/graphics/font/ds.nftr"}, false);
 		palette[3] = 0x94A5;
 	}
 	tinyFont = new FontGraphic({"nitro:/graphics/font/tiny.nftr"}, false);
@@ -78,6 +79,15 @@ void fontInit() {
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
 	logPrint("Font inited\n");
+}
+
+void esrbDescFontInit(bool dsFont) {
+	esrbDescFont = new FontGraphic({dsFont ? "nitro:/graphics/font/ds.nftr" : "nitro:/graphics/font/small.nftr"}, false);
+}
+
+void esrbDescFontDeinit() {
+	if (esrbDescFont)
+		delete esrbDescFont;
 }
 
 static std::list<TextEntry> &getTextQueue(bool top) {
@@ -119,6 +129,39 @@ void updateTopTextArea(int x, int y, int width, int height, u16 *restoreBuf) {
 			int idx = yy * 256 + xx;
 			int px = FontGraphic::textBuf[1][idx];
 			if (px || restoreBuf) BG_GFX_SUB[idx] = px ? BG_PALETTE_SUB[px] : restoreBuf[idx];
+		}
+	}
+}
+
+void updateTextImg(u16* img, bool top) {
+	if (top)	return;
+
+	// Clear before redrawing
+	if (shouldClear[top]) {
+		dmaFillWords(0, FontGraphic::textBuf[top], 256 * 192);
+		shouldClear[top] = false;
+	}
+
+	// Draw text
+	auto &text = getTextQueue(top);
+	for (auto it = text.begin(); it != text.end(); ++it) {
+		if (esrbDescFont)
+			esrbDescFont->print(it->x, it->y, top, it->message, it->align, it->palette);
+	}
+	text.clear();
+
+	u16 palette[] = {
+		0x0000,
+		0x6718,
+		0x4A32,
+		0x1064,
+	};
+
+	// Copy buffer to the image
+	for (int i = 0; i < 256 * 192; i++) {
+		if (FontGraphic::textBuf[top][i] != 0) {
+			//img[i] = top ? BG_PALETTE[FontGraphic::textBuf[true][i]] : BG_PALETTE_SUB[FontGraphic::textBuf[false][i]];
+			img[i] = palette[FontGraphic::textBuf[top][i]];
 		}
 	}
 }
