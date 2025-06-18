@@ -156,7 +156,7 @@ jobs:
           curl -LO https://github.com/FluBBaOfWard/NGPDS/releases/latest/download/NGPDS.zip
           7z x NGPDS.zip NGPDS.nds
           rm NGPDS.zip
-          curl -LO https://github.com/FluBBaOfWard/NitroSwan/releases/latest/download/NitroSwan.zip
+          curl -LO https://github.com/FluBBaOfWard/NitroSwan/releases/latest/download/NitroSwan0_7_2.zip
           7z x NitroSwan.zip NitroSwan.nds
           rm NitroSwan.zip
           # PicoDriveTWL is a prerelease, so get the latest URL from the GH api
