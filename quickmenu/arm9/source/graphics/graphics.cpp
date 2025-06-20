@@ -1276,7 +1276,12 @@ void drawDateTime(bool date, bool showTimeColon) {
 	if (!date && !showTimeColon) text[2] = ' ';
 
 	const int posX = date ? 204 : 172;
-	printTinyMonospaced(true, posX, 3, text, Alignment::right, FontPalette::white);
+	if (text.length <= 5)
+		printTinyMonospaced(true, posX, 3, text, Alignment::right, FontPalette::white);
+	else
+		// If datetime exceeds 5 characters, don't print it as monospaced to avoid overflow.
+		printTiny(true, posX+2, 3, text, Alignment::right, FontPalette::white); 
+		
 	updateTopTextArea(posX - 27, 3, 27, tinyFontHeight(), bmpImageBuffer);
 }
 
