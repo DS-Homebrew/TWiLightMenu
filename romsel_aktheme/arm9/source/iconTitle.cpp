@@ -1008,17 +1008,18 @@ void getGameInfo(int num, int fileOffset, bool isDir, const char* name, bool fro
 						// clear pixel (using transparent palette slot)
 						banner.icon[pos] &= nibble? 0x0f : 0xf0;
 						// read color
-						u8 r, g, b, a;
-						r = image[i*4];
-						g = image[i*4+1];
-						b = image[i*4+2];
-						a = image[i*4+3];
-						if (a == 255) {
-							// convert to 5-bit bgr
-							b /= 8;
-							g /= 8;
-							r /= 8;
-							u16 color = 0x8000 | b<<10 | g<<5 | r;
+						if (image[i*4+3] == 255) {
+							// convert to bgr565
+							const u16 green = (image[i*4+1]>>2)<<5;
+							u16 color = image[i*4]>>3 | (image[i*4+2]>>3)<<10;
+							if (green & BIT(5)) {
+								color |= BIT(15);
+							}
+							for (int g = 6; g <= 10; g++) {
+								if (green & BIT(g)) {
+									color |= BIT(g-1);
+								}
+							}
 							// find color in palette
 							bool found = false;
 							for (uint palIdx = 1; palIdx < colorCount; palIdx++) {

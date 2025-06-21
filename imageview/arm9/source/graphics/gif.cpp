@@ -127,7 +127,20 @@ bool Gif::load(const char *path, bool top, bool animate, bool forceDecompress) {
 
 		_gct = std::vector<u16>(numColors);
 		for (int i = 0; i < numColors; i++) {
-			_gct[i] = fgetc(file) >> 3 | (fgetc(file) >> 3) << 5 | (fgetc(file) >> 3) << 10 | BIT(15);
+			const u8 r = fgetc(file);
+			const u8 g = fgetc(file);
+			const u8 b = fgetc(file);
+
+			const u16 green = (g >> 2) << 5;
+			_gct[i] = r >> 3 | (b >> 3) << 10;
+			if (green & BIT(5)) {
+				_gct[i] |= BIT(15);
+			}
+			for (int gBit = 6; gBit <= 10; gBit++) {
+				if (green & BIT(gBit)) {
+					_gct[i] |= BIT(gBit-1);
+				}
+			}
 			if (colorTable) {
 				_gct[i] = colorTable[_gct[i] % 0x8000];
 			}
@@ -192,7 +205,20 @@ bool Gif::load(const char *path, bool top, bool animate, bool forceDecompress) {
 					int numColors = 2 << frame.descriptor.lctSize;
 					frame.lct = std::vector<u16>(numColors);
 					for (int i = 0; i < numColors; i++) {
-						frame.lct[i] = fgetc(file) >> 3 | (fgetc(file) >> 3) << 5 | (fgetc(file) >> 3) << 10 | BIT(15);
+						const u8 r = fgetc(file);
+						const u8 g = fgetc(file);
+						const u8 b = fgetc(file);
+
+						const u16 green = (g >> 2) << 5;
+						frame.lct[i] = r >> 3 | (b >> 3) << 10;
+						if (green & BIT(5)) {
+							frame.lct[i] |= BIT(15);
+						}
+						for (int gBit = 6; gBit <= 10; gBit++) {
+							if (green & BIT(gBit)) {
+								frame.lct[i] |= BIT(gBit-1);
+							}
+						}
 						if (colorTable) {
 							frame.lct[i] = colorTable[frame.lct[i] % 0x8000];
 						}
