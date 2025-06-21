@@ -84,11 +84,12 @@ bool extension(const std::string_view filename, const std::vector<std::string_vi
 }
 
 void customSleep() {
-	snd().stopStream();
+	*(int*)0x02003004 = 1; // Fade out sound
 	fadeType = false;
 	for (int i = 0; i < 25; i++) {
 		swiWaitForVBlank();
 	}
+	mmPause();
 	if (!ms().macroMode) {
 		powerOff(PM_BACKLIGHT_TOP);
 	}
@@ -103,8 +104,9 @@ void customSleep() {
 		powerOn(PM_BACKLIGHT_TOP);
 	}
 	powerOn(PM_BACKLIGHT_BOTTOM);
+	mmResume();
 	fadeType = true;
-	snd().beginStream();
+	*(int*)0x02003004 = 2; // Fade in sound
 }
 
 //---------------------------------------------------------------------------------
@@ -158,7 +160,7 @@ int imageViewer(void) {
 			held = keysHeld();
 			//repeat = keysDownRepeat();
 			checkSdEject();
-			snd().updateStream();
+			// snd().updateStream();
 			swiWaitForVBlank();
 		} while (!held);
 
