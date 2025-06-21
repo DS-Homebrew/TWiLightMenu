@@ -183,16 +183,16 @@ void imageLoad(const char* filename) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			pixelAdjustInfo = 0;
 			if (alternatePixel) {
-				if (image[(i*4)] >= 0x4) {
-					image[(i*4)] -= 0x4;
+				if (image[(i*4)] < 0xFC) {
+					image[(i*4)] += 0x4;
 					pixelAdjustInfo |= BIT(0);
 				}
-				if (image[(i*4)+1] >= 0x3) {
-					image[(i*4)+1] -= 0x3;
+				if (image[(i*4)+1] < 0xFD) {
+					image[(i*4)+1] += 0x3;
 					pixelAdjustInfo |= BIT(1);
 				}
-				if (image[(i*4)+2] >= 0x4) {
-					image[(i*4)+2] -= 0x4;
+				if (image[(i*4)+2] < 0xFC) {
+					image[(i*4)+2] += 0x4;
 					pixelAdjustInfo |= BIT(2);
 				}
 			}
@@ -220,23 +220,23 @@ void imageLoad(const char* filename) {
 			dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = res;
 			if (alternatePixel) {
 				if (pixelAdjustInfo & BIT(0)) {
-					image[(i*4)] += 0x4;
-				}
-				if (pixelAdjustInfo & BIT(1)) {
-					image[(i*4)+1] += 0x3;
-				}
-				if (pixelAdjustInfo & BIT(2)) {
-					image[(i*4)+2] += 0x4;
-				}
-			} else {
-				if (image[(i*4)] >= 0x4) {
 					image[(i*4)] -= 0x4;
 				}
-				if (image[(i*4)+1] >= 0x3) {
+				if (pixelAdjustInfo & BIT(1)) {
 					image[(i*4)+1] -= 0x3;
 				}
-				if (image[(i*4)+2] >= 0x4) {
+				if (pixelAdjustInfo & BIT(2)) {
 					image[(i*4)+2] -= 0x4;
+				}
+			} else {
+				if (image[(i*4)] < 0xFC) {
+					image[(i*4)] += 0x4;
+				}
+				if (image[(i*4)+1] < 0xFD) {
+					image[(i*4)+1] += 0x3;
+				}
+				if (image[(i*4)+2] < 0xFC) {
+					image[(i*4)+2] += 0x4;
 				}
 			}
 			res = 0;
@@ -336,16 +336,16 @@ void imageLoad(const char* filename) {
 			for (u32 i = 0; i < width*height; i++) {
 				pixelAdjustInfo = 0;
 				if (alternatePixel) {
-					if (bmpImageBuffer[(i*bits)] >= 0x4) {
-						bmpImageBuffer[(i*bits)] -= 0x4;
+					if (bmpImageBuffer[(i*bits)] < 0xFC) {
+						bmpImageBuffer[(i*bits)] += 0x4;
 						pixelAdjustInfo |= BIT(0);
 					}
-					if (bmpImageBuffer[(i*bits)+1] >= 0x3) {
-						bmpImageBuffer[(i*bits)+1] -= 0x3;
+					if (bmpImageBuffer[(i*bits)+1] < 0xFD) {
+						bmpImageBuffer[(i*bits)+1] += 0x3;
 						pixelAdjustInfo |= BIT(1);
 					}
-					if (bmpImageBuffer[(i*bits)+2] >= 0x4) {
-						bmpImageBuffer[(i*bits)+2] -= 0x4;
+					if (bmpImageBuffer[(i*bits)+2] < 0xFC) {
+						bmpImageBuffer[(i*bits)+2] += 0x4;
 						pixelAdjustInfo |= BIT(2);
 					}
 				}
@@ -365,23 +365,23 @@ void imageLoad(const char* filename) {
 				dsImageBuffer[0][(xPos+x+(y*256))+(yPos*256)] = color;
 				if (alternatePixel) {
 					if (pixelAdjustInfo & BIT(0)) {
-						bmpImageBuffer[(i*bits)] += 0x4;
-					}
-					if (pixelAdjustInfo & BIT(1)) {
-						bmpImageBuffer[(i*bits)+1] += 0x3;
-					}
-					if (pixelAdjustInfo & BIT(2)) {
-						bmpImageBuffer[(i*bits)+2] += 0x4;
-					}
-				} else {
-					if (bmpImageBuffer[(i*bits)] >= 0x4) {
 						bmpImageBuffer[(i*bits)] -= 0x4;
 					}
-					if (bmpImageBuffer[(i*bits)+1] >= 0x3) {
+					if (pixelAdjustInfo & BIT(1)) {
 						bmpImageBuffer[(i*bits)+1] -= 0x3;
 					}
-					if (bmpImageBuffer[(i*bits)+2] >= 0x4) {
+					if (pixelAdjustInfo & BIT(2)) {
 						bmpImageBuffer[(i*bits)+2] -= 0x4;
+					}
+				} else {
+					if (bmpImageBuffer[(i*bits)] < 0xFC) {
+						bmpImageBuffer[(i*bits)] += 0x4;
+					}
+					if (bmpImageBuffer[(i*bits)+1] < 0xFD) {
+						bmpImageBuffer[(i*bits)+1] += 0x3;
+					}
+					if (bmpImageBuffer[(i*bits)+2] < 0xFC) {
+						bmpImageBuffer[(i*bits)+2] += 0x4;
 					}
 				}
 				green = (bmpImageBuffer[(i*bits)+1]>>2)<<5;
