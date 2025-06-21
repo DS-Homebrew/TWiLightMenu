@@ -94,12 +94,12 @@ void customSleep() {
 		powerOff(PM_BACKLIGHT_TOP);
 	}
 	powerOff(PM_BACKLIGHT_BOTTOM);
-	irqDisable(IRQ_VBLANK);
+	irqDisable(IRQ_VBLANK & IRQ_VCOUNT);
 	while (keysHeld() & KEY_LID) {
 		scanKeys();
 		swiWaitForVBlank();
 	}
-	irqEnable(IRQ_VBLANK);
+	irqEnable(IRQ_VBLANK & IRQ_VCOUNT);
 	if (!ms().macroMode) {
 		powerOn(PM_BACKLIGHT_TOP);
 	}
