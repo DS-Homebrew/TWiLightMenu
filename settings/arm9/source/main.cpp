@@ -963,12 +963,12 @@ void customSleep() {
 		powerOff(PM_BACKLIGHT_TOP);
 	}
 	powerOff(PM_BACKLIGHT_BOTTOM);
-	irqDisable(IRQ_VBLANK & IRQ_VCOUNT);
+	irqDisable(IRQ_VBLANK);
 	while (keysHeld() & KEY_LID) {
 		scanKeys();
 		swiWaitForVBlank();
 	}
-	irqEnable(IRQ_VBLANK & IRQ_VCOUNT);
+	irqEnable(IRQ_VBLANK);
 	if(!wasBacklightOff) {
 		if (!currentMacroMode) {
 			powerOn(PM_BACKLIGHT_TOP);
