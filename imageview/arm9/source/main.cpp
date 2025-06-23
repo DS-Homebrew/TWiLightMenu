@@ -152,6 +152,8 @@ int imageViewer(void) {
 
 	fadeType = true;	// Fade in from white
 
+	bool exitflag = false;
+
 	while (1) {
 		do {
 			scanKeys();
@@ -162,7 +164,8 @@ int imageViewer(void) {
 			checkSdEject();
 			// snd().updateStream();
 			swiWaitForVBlank();
-		} while (!held);
+			exitflag = fifoCheckValue32(FIFO_USER_01);
+		} while (!held && !exitflag);
 
 		if ((pressed & KEY_LID) && ms().sleepMode) {
 			customSleep();
@@ -171,7 +174,21 @@ int imageViewer(void) {
 		if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.px >= 0 && touch.px < 80 && touch.py >= 169 && touch.py < 192)) {
 			loadROMselect();
 		}
+
+		if (exitflag) {
+			break;
+		}
 	}
+
+	*(int*)0x02003004 = 1; // Fade out sound
+	fadeType = false;
+	for (int i = 0; i < 25; i++) {
+		swiWaitForVBlank();
+	}
+	mmStop();
+	*(int*)0x02003004 = 0;
+
+	runNdsFile(sys().isRunFromSD() ? "sd:/boot.nds" : "fat:/boot.nds", 0, NULL, sys().isRunFromSD(), true, true, false, true, true, false, -1);
 
 	return 0;
 }

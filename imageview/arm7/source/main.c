@@ -101,6 +101,8 @@ volatile bool exitflag = false;
 //---------------------------------------------------------------------------------
 void powerButtonCB() {
 //---------------------------------------------------------------------------------
+	if (exitflag) return;
+	fifoSendValue32(FIFO_USER_01, 1);
 	exitflag = true;
 }
 
@@ -180,9 +182,9 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, status);
 
 	// Keep the ARM7 mostly idle
-	while (!exitflag) {
+	while (1) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
-			exitflag = true;
+			powerButtonCB();
 		}
 		if (isDSiMode()) {
 			if (SD_IRQ_STATUS & BIT(4)) {
