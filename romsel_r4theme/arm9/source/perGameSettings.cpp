@@ -268,7 +268,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 }
 
 bool showSetDonorRomDSiWare(u32 arm7size) {
-	if (requiresDonorRom || !isDSiMode() || *(u32*)0x02FFE1A0 == 0x00403000 || !sys().arm7SCFGLocked()) return false;
+	if (requiresDonorRom || !isDSiMode() || (*(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked())) return false;
 
 	return (arm7size==0x1D43C
 	 || arm7size==0x1D5A8
