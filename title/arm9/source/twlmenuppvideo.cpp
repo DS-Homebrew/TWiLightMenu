@@ -67,6 +67,18 @@ static inline const char* styleSavvyReleaseDate(void) {
 	return "10/23"; // Japan
 }
 
+static inline const char* sonic1ReleaseDate(void) {
+	using TRegion = TWLSettings::TRegion;
+	int gameRegion = ms().getGameRegion();
+
+	if (gameRegion == TRegion::ERegionEurope || gameRegion == TRegion::ERegionAustralia) {
+		return "06/21";
+	} else if (gameRegion == TRegion::ERegionUSA) {
+		return "06/23";
+	}
+	return "07/26"; // Japan
+}
+
 extern bool useTwlCfg;
 
 //extern void loadROMselectAsynch(void);
@@ -664,6 +676,9 @@ void twlMenuVideo(void) {
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppCitradvancesrldsisionmenuoadmenu.png");
 		longVersion = ms().longSplashJingle;
 		showTwl = false;
+	} else if (strcmp(currentDate, sonic1ReleaseDate()) == 0) {
+		// Load Sonic-themed BG for Sonic's anniversary
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppSonic.png");
 	} else {
 		// Load normal BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenupp.png");
