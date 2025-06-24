@@ -1,3 +1,5 @@
+STRING(A_REGULAR_DITHERING, "\\A Switch to regular dithering")
+STRING(A_TEMPORAL_DITHERING, "\\A Switch to temporal dithering")
 STRING(BACK, "Back")
 
 // SD removal errors

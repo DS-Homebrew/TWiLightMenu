@@ -32,6 +32,7 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
+bool supportsDoubleBuffer = false;
 
 extern void ClearBrightness();
 extern int imageType;
@@ -109,6 +110,17 @@ void customSleep() {
 	*(int*)0x02003004 = 2; // Fade in sound
 }
 
+void printText(void) {
+	if (ms().macroMode) return;
+
+	clearText(false);
+	if (supportsDoubleBuffer) {
+		printSmall(false, 0, 88, doubleBuffer ? STR_A_REGULAR_DITHERING : STR_A_TEMPORAL_DITHERING, Alignment::center);
+	}
+	printSmall(false, -88, 174, STR_BACK, Alignment::center);
+	updateText(false);
+}
+
 //---------------------------------------------------------------------------------
 int imageViewer(void) {
 //---------------------------------------------------------------------------------
@@ -137,10 +149,8 @@ int imageViewer(void) {
 
 	imageLoad((strlen(imagePathChar) >= 2) ? imagePathChar : "nitro:/graphics/test.png");
 	bgLoad();
-	if (!ms().macroMode) {
-		printSmall(false, -88, 174, STR_BACK, Alignment::center);
-		updateText(false);
-	}
+	supportsDoubleBuffer = doubleBuffer;
+	printText();
 
 	snd();
 	snd().beginStream();
@@ -169,6 +179,12 @@ int imageViewer(void) {
 
 		if ((pressed & KEY_LID) && ms().sleepMode) {
 			customSleep();
+		}
+
+		if ((pressed & KEY_A) && supportsDoubleBuffer) {
+			doubleBuffer = !doubleBuffer;
+			printText();
+			snd().playSwitch();
 		}
 
 		if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.px >= 0 && touch.px < 80 && touch.py >= 169 && touch.py < 192)) {
