@@ -48,6 +48,7 @@
 #include "sound.h"
 #include "startborderpal.h"
 //#include "ndma.h"
+#include "color.h"
 #include "ThemeConfig.h"
 #include "themefilenames.h"
 #include "common/ColorLut.h"
@@ -1376,56 +1377,72 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 	}
 
 	for (uint i=0;i<image.size()/4;i++) {
+		u8 pixelAdjustInfo = 0;
 		if (boxArtColorDeband) {
-			image[(i*4)+3] = 0;
 			if (alternatePixel) {
-				if (image[(i*4)] < 0xFC) {
+				if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
 					image[(i*4)] += 0x4;
-					image[(i*4)+3] |= BIT(0);
+					pixelAdjustInfo |= BIT(0);
 				}
-				if (image[(i*4)+1] < 0xFC) {
+				if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
 					image[(i*4)+1] += 0x4;
-					image[(i*4)+3] |= BIT(1);
+					pixelAdjustInfo |= BIT(1);
 				}
-				if (image[(i*4)+2] < 0xFC) {
+				if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
 					image[(i*4)+2] += 0x4;
-					image[(i*4)+3] |= BIT(2);
+					pixelAdjustInfo |= BIT(2);
+				}
+				if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+					image[(i*4)+3] += 0x4;
+					pixelAdjustInfo |= BIT(3);
 				}
 			}
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (colorTable) {
-			tex().photoBuffer()[i] = colorTable[color % 0x8000] | BIT(15);
-		} else {
+		if (image[(i*4)+3] == 255) {
 			tex().photoBuffer()[i] = color;
+		} else {
+			tex().photoBuffer()[i] = alphablend(color, 0, image[(i*4)+3]);
+		}
+		if (colorTable) {
+			tex().photoBuffer()[i] = colorTable[tex().photoBuffer()[i] % 0x8000] | BIT(15);
 		}
 		if (boxArtColorDeband) {
 			if (alternatePixel) {
-				if (image[(i*4)+3] & BIT(0)) {
+				if (pixelAdjustInfo & BIT(0)) {
 					image[(i*4)] -= 0x4;
 				}
-				if (image[(i*4)+3] & BIT(1)) {
+				if (pixelAdjustInfo & BIT(1)) {
 					image[(i*4)+1] -= 0x4;
 				}
-				if (image[(i*4)+3] & BIT(2)) {
+				if (pixelAdjustInfo & BIT(2)) {
 					image[(i*4)+2] -= 0x4;
 				}
+				if (pixelAdjustInfo & BIT(3)) {
+					image[(i*4)+3] -= 0x4;
+				}
 			} else {
-				if (image[(i*4)] < 0xFC) {
+				if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
 					image[(i*4)] += 0x4;
 				}
-				if (image[(i*4)+1] < 0xFC) {
+				if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
 					image[(i*4)+1] += 0x4;
 				}
-				if (image[(i*4)+2] < 0xFC) {
+				if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
 					image[(i*4)+2] += 0x4;
+				}
+				if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+					image[(i*4)+3] += 0x4;
 				}
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorTable) {
-				tex().photoBuffer2()[i] = colorTable[color % 0x8000] | BIT(15);
-			} else {
+			if (image[(i*4)+3] == 255) {
 				tex().photoBuffer2()[i] = color;
+			} else {
+				tex().photoBuffer2()[i] = alphablend(color, 0, image[(i*4)+3]);
+			}
+			if (colorTable) {
+				tex().photoBuffer2()[i] = colorTable[tex().photoBuffer2()[i] % 0x8000] | BIT(15);
 			}
 			if ((i % photoWidth) == photoWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;

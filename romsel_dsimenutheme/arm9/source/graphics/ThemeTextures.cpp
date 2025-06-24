@@ -1004,21 +1004,24 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 	int photoY = imageYpos;
 
 	for (uint i=0;i<image.size()/4;i++) {
-		const u8 alpha = image[(i*4)+3];
+		u8 pixelAdjustInfo = 0;
 		if (boxArtColorDeband) {
-			image[(i*4)+3] = 0;
 			if (alternatePixel) {
-				if (image[(i*4)] < 0xFC) {
+				if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
 					image[(i*4)] += 0x4;
-					image[(i*4)+3] |= BIT(0);
+					pixelAdjustInfo |= BIT(0);
 				}
-				if (image[(i*4)+1] < 0xFC) {
+				if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
 					image[(i*4)+1] += 0x4;
-					image[(i*4)+3] |= BIT(1);
+					pixelAdjustInfo |= BIT(1);
 				}
-				if (image[(i*4)+2] < 0xFC) {
+				if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
 					image[(i*4)+2] += 0x4;
-					image[(i*4)+3] |= BIT(2);
+					pixelAdjustInfo |= BIT(2);
+				}
+				if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+					image[(i*4)+3] += 0x4;
+					pixelAdjustInfo |= BIT(3);
 				}
 			}
 		}
@@ -1026,41 +1029,47 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		if (colorTable) {
 			color = colorTable[color % 0x8000] | BIT(15);
 		}
-		if (alpha == 255) {
+		if (image[(i*4)+3] == 255) {
 			bmpImageBuffer[i] = color;
 		} else {
-			bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], alpha);
+			bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], image[(i*4)+3]);
 		}
 		if (boxArtColorDeband) {
 			if (alternatePixel) {
-				if (image[(i*4)+3] & BIT(0)) {
+				if (pixelAdjustInfo & BIT(0)) {
 					image[(i*4)] -= 0x4;
 				}
-				if (image[(i*4)+3] & BIT(1)) {
+				if (pixelAdjustInfo & BIT(1)) {
 					image[(i*4)+1] -= 0x4;
 				}
-				if (image[(i*4)+3] & BIT(2)) {
+				if (pixelAdjustInfo & BIT(2)) {
 					image[(i*4)+2] -= 0x4;
 				}
+				if (pixelAdjustInfo & BIT(3)) {
+					image[(i*4)+3] -= 0x4;
+				}
 			} else {
-				if (image[(i*4)] < 0xFC) {
+				if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
 					image[(i*4)] += 0x4;
 				}
-				if (image[(i*4)+1] < 0xFC) {
+				if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
 					image[(i*4)+1] += 0x4;
 				}
-				if (image[(i*4)+2] < 0xFC) {
+				if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
 					image[(i*4)+2] += 0x4;
+				}
+				if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+					image[(i*4)+3] += 0x4;
 				}
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
 				color = colorTable[color % 0x8000] | BIT(15);
 			}
-			if (alpha == 255) {
+			if (image[(i*4)+3] == 255) {
 				bmpImageBuffer2[i] = color;
 			} else {
-				bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], alpha);
+				bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], image[(i*4)+3]);
 			}
 			if ((i % boxArtWidth) == boxArtWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
@@ -1360,7 +1369,7 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 
 	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
-	int width = max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
+	int width = std::max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
 
 	// Copy to background
 	for (int y = 0; y < dateTimeFont()->height() && posY + y < SCREEN_HEIGHT; y++) {
@@ -1396,7 +1405,7 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 
 	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
-	int width = max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
+	int width = std::max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
 
 	// Copy to background
 	for (int y = 0; y < dateTimeFont()->height() && posY + y < SCREEN_HEIGHT; y++) {

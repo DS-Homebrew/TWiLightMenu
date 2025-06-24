@@ -1098,15 +1098,15 @@ static void loadBmp(const ImageType type, const char* filename) {
 		for (u32 i = 0; i < width*height; i++) {
 			pixelAdjustInfo = 0;
 			if (alternatePixel) {
-				if (bmpImageBuffer[(i*bits)] < 0xFC) {
+				if (bmpImageBuffer[(i*bits)] >= 0x4 && bmpImageBuffer[(i*bits)] < 0xFC) {
 					bmpImageBuffer[(i*bits)] += 0x4;
 					pixelAdjustInfo |= BIT(0);
 				}
-				if (bmpImageBuffer[(i*bits)+1] < 0xFC) {
+				if (bmpImageBuffer[(i*bits)+1] >= 0x4 && bmpImageBuffer[(i*bits)+1] < 0xFC) {
 					bmpImageBuffer[(i*bits)+1] += 0x4;
 					pixelAdjustInfo |= BIT(1);
 				}
-				if (bmpImageBuffer[(i*bits)+2] < 0xFC) {
+				if (bmpImageBuffer[(i*bits)+2] >= 0x4 && bmpImageBuffer[(i*bits)+2] < 0xFC) {
 					bmpImageBuffer[(i*bits)+2] += 0x4;
 					pixelAdjustInfo |= BIT(2);
 				}
@@ -1161,13 +1161,13 @@ static void loadBmp(const ImageType type, const char* filename) {
 					bmpImageBuffer[(i*bits)+2] -= 0x4;
 				}
 			} else {
-				if (bmpImageBuffer[(i*bits)] < 0xFC) {
+				if (bmpImageBuffer[(i*bits)] >= 0x4 && bmpImageBuffer[(i*bits)] < 0xFC) {
 					bmpImageBuffer[(i*bits)] += 0x4;
 				}
-				if (bmpImageBuffer[(i*bits)+1] < 0xFC) {
+				if (bmpImageBuffer[(i*bits)+1] >= 0x4 && bmpImageBuffer[(i*bits)+1] < 0xFC) {
 					bmpImageBuffer[(i*bits)+1] += 0x4;
 				}
-				if (bmpImageBuffer[(i*bits)+2] < 0xFC) {
+				if (bmpImageBuffer[(i*bits)+2] >= 0x4 && bmpImageBuffer[(i*bits)+2] < 0xFC) {
 					bmpImageBuffer[(i*bits)+2] += 0x4;
 				}
 			}
@@ -1506,17 +1506,21 @@ static void loadPng(const bool top, const std::string filename) {
 	for (unsigned i=0;i<image.size()/4;i++) {
 		pixelAdjustInfo = 0;
 		if (alternatePixel) {
-			if (image[(i*4)] < 0xFC) {
+			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
 				image[(i*4)] += 0x4;
 				pixelAdjustInfo |= BIT(0);
 			}
-			if (image[(i*4)+1] < 0xFC) {
+			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
 				image[(i*4)+1] += 0x4;
 				pixelAdjustInfo |= BIT(1);
 			}
-			if (image[(i*4)+2] < 0xFC) {
+			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
 				image[(i*4)+2] += 0x4;
 				pixelAdjustInfo |= BIT(2);
+			}
+			if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+				image[(i*4)+3] += 0x4;
+				pixelAdjustInfo |= BIT(3);
 			}
 		}
 		u16 res = 0;
@@ -1542,15 +1546,21 @@ static void loadPng(const bool top, const std::string filename) {
 			if (pixelAdjustInfo & BIT(2)) {
 				image[(i*4)+2] -= 0x4;
 			}
+			if (pixelAdjustInfo & BIT(3)) {
+				image[(i*4)+3] -= 0x4;
+			}
 		} else {
-			if (image[(i*4)] < 0xFC) {
+			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
 				image[(i*4)] += 0x4;
 			}
-			if (image[(i*4)+1] < 0xFC) {
+			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
 				image[(i*4)+1] += 0x4;
 			}
-			if (image[(i*4)+2] < 0xFC) {
+			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
 				image[(i*4)+2] += 0x4;
+			}
+			if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+				image[(i*4)+3] += 0x4;
 			}
 		}
 		res = 0;

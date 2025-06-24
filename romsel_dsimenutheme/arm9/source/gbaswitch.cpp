@@ -16,15 +16,15 @@ void loadGbaBorder(const char* filename) {
 	for (uint i = 0; i < image.size()/4; i++) {
 		image[(i*4)+3] = 0;
 		if (alternatePixel) {
-			if (image[(i*4)] < 0xFC) {
+			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
 				image[(i*4)] += 0x4;
 				image[(i*4)+3] |= BIT(0);
 			}
-			if (image[(i*4)+1] < 0xFC) {
+			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
 				image[(i*4)+1] += 0x4;
 				image[(i*4)+3] |= BIT(1);
 			}
-			if (image[(i*4)+2] < 0xFC) {
+			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
 				image[(i*4)+2] += 0x4;
 				image[(i*4)+3] |= BIT(2);
 			}
@@ -49,13 +49,13 @@ void loadGbaBorder(const char* filename) {
 				image[(i*4)+2] -= 0x4;
 			}
 		} else {
-			if (image[(i*4)] < 0xFC) {
+			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
 				image[(i*4)] += 0x4;
 			}
-			if (image[(i*4)+1] < 0xFC) {
+			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
 				image[(i*4)+1] += 0x4;
 			}
-			if (image[(i*4)+2] < 0xFC) {
+			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
 				image[(i*4)+2] += 0x4;
 			}
 		}
