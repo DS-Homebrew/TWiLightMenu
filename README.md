@@ -19,12 +19,7 @@ It can launch games for the Nintendo DS, Nintendo DSi, and GameBoy Advance, as w
 
 # Add-ons
 
-Additional features can be added on to **TW**i**L**ight Menu++. The following can be installed.
-
-- Extra UI Music: Adds more music to the DSi, 3DS, and HBL UIs (3DS HOME Menu music, DSi Shop music, and HBL music).
-- Multimedia: View image/photo files and play videos (the latter which uses tuna-viDS and/or FastVideoDSPlayer).
-- Virtual Console: Play games from some well-known retro consoles prior to the GBA.
-  - [View list of supported consoles/systems](https://wiki.ds-homebrew.com/ds-index/emulators)
+Additional features can be added on to **TW**i**L**ight Menu++. See [this page](https://wiki.ds-homebrew.com/twilightmenu/installing-addons) for more information.
 
 # Compiling
 
