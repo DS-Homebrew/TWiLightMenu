@@ -2686,7 +2686,7 @@ int titleMode(void)
 		mkdir("sd:/_nds/TWiLightMenu", 0777);
 		mkdir("sd:/_nds/TWiLightMenu/gamesettings", 0777);
 		const char* addonFolder = "sd:/_nds/TWiLightMenu/addons";
-		if (access("sd:/_nds/TWiLightMenu/apps/FastVideoDS.nds", F_OK) == 0) {
+		if (access("sd:/_nds/TWiLightMenu/imageview.srldr", F_OK) == 0) {
 			const char* addonPath = "sd:/_nds/TWiLightMenu/addons/Multimedia";
 			if (access(addonPath, F_OK) != 0) {
 				mkdir(addonFolder, 0777);
@@ -2711,7 +2711,7 @@ int titleMode(void)
 		mkdir("fat:/_nds/TWiLightMenu", 0777);
 		mkdir("fat:/_nds/TWiLightMenu/gamesettings", 0777);
 		const char* addonFolder = "fat:/_nds/TWiLightMenu/addons";
-		if (access("fat:/_nds/TWiLightMenu/apps/FastVideoDS.nds", F_OK) == 0) {
+		if (access("fat:/_nds/TWiLightMenu/imageview.srldr", F_OK) == 0) {
 			const char* addonPath = "fat:/_nds/TWiLightMenu/addons/Multimedia";
 			if (access(addonPath, F_OK) != 0) {
 				mkdir(addonFolder, 0777);
