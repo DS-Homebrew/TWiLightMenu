@@ -120,6 +120,7 @@ int mpuregion = 0;
 int mpusize = 0;
 
 bool applaunch = false;
+bool colorLutBlacklisted = false;
 bool dsModeForced = false;
 
 bool useBackend = false;
@@ -179,6 +180,7 @@ bool setDSPhatColors() {
 	for (unsigned int i = 0; i < sizeof(colorLutBlacklist)/sizeof(colorLutBlacklist[0]); i++) {
 		if (memcmp(gameTid[CURPOS], colorLutBlacklist[i], 3) == 0) {
 			// Found match
+			colorLutBlacklisted = true;
 			return false;
 		}
 	}
@@ -189,7 +191,7 @@ bool setDSPhatColors() {
 /**
  * Disable TWL clock speed for a specific game.
  */
-bool setClockSpeed() {
+bool setClockSpeed(const bool phatColors) {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
@@ -201,7 +203,12 @@ bool setClockSpeed() {
 		}
 	}
 
-	return perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
+	bool defaultSetting = DEFAULT_BOOST_CPU;
+	if (perGameSettings_boostCpu == -1 && !colorLutBlacklisted && ((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && (colorTable || phatColors)) {
+		defaultSetting = ms().boostCpuForClut;
+	}
+
+	return perGameSettings_boostCpu == -1 ? defaultSetting : perGameSettings_boostCpu;
 }
 
 /**
@@ -1015,6 +1022,9 @@ int dsiMenuTheme(void) {
 		logPrint(gbaBiosFound[1] ? "GBA BIOS found on fat\n" : "GBA BIOS not found on fat\n");
 	}
 
+	const bool emulatorsInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Virtual Console" : "fat:/_nds/TWiLightMenu/addons/Virtual Console", F_OK) == 0);
+	const bool multimediaInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Multimedia" : "fat:/_nds/TWiLightMenu/addons/Multimedia", F_OK) == 0);
+
 	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
 		whiteScreen = false;
 	}
@@ -1118,33 +1128,7 @@ int dsiMenuTheme(void) {
 	while (1) {
 		std::vector<std::string_view> extensionList = {
 			".nds", ".dsi", ".ids", ".srl", ".app", ".argv", // NDS
-			".agb", ".gba", ".mb", // GBA
-			".a26", // Atari 2600
-			".a52", // Atari 5200
-			".a78", // Atari 7800
-			".xex", ".atr", // Atari XEGS
-			".msx", // MSX
-			".col", // ColecoVision
-			".int", // Intellivision
-			".m5", // Sord M5
-			".gb", ".sgb", ".gbc", // Game Boy
-			".nes", ".fds", // NES/Famicom
-			".sg", // Sega SG-1000
-			".sc", // Sega SC-3000
-			".sms", // Sega Master System
-			".gg", // Sega Game Gear
-			".gen", // Genesis
-			".smc", ".sfc", // SNES
-			".ws", ".wsc", // WonderSwan
-			".ngp", ".ngc", // Neo Geo Pocket
-			".pce", // PC Engine/TurboGrafx-16
-			".dsk", // Amstrad CPC
-			".min", // Pokémon mini
-			".avi", // Xvid (AVI)
-			".fv", // FastVideo
-			".gif", // GIF
-			".bmp", // BMP
-			".png" // Portable Network Graphics
+			".agb", ".gba", ".mb" // GBA
 		};
 
 		{
@@ -1167,12 +1151,56 @@ int dsiMenuTheme(void) {
 			}
 		}
 
-		if (!ms().secondaryDevice || ms().mdEmulator == 2) {
-			extensionList.emplace_back(".md"); // Sega Mega Drive
-		}
-
 		if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 			extensionList.emplace_back(".plg"); // DSTWO Plugin
+		}
+
+		if (emulatorsInstalled) {
+			std::vector<std::string_view> extensionListEmus = {
+				".a26", // Atari 2600
+				".a52", // Atari 5200
+				".a78", // Atari 7800
+				".xex", ".atr", // Atari XEGS
+				".msx", // MSX
+				".col", // ColecoVision
+				".int", // Intellivision
+				".m5", // Sord M5
+				".gb", ".sgb", ".gbc", // Game Boy
+				".nes", ".fds", // NES/Famicom
+				".sg", // Sega SG-1000
+				".sc", // Sega SC-3000
+				".sms", // Sega Master System
+				".gg", // Sega Game Gear
+				".gen", // Genesis
+				".smc", ".sfc", // SNES
+				".ws", ".wsc", // WonderSwan
+				".ngp", ".ngc", // Neo Geo Pocket
+				".pce", // PC Engine/TurboGrafx-16
+				".dsk", // Amstrad CPC
+				".min" // Pokémon mini
+			};
+
+			for (int i = 0; i < 28; i++) {
+				extensionList.emplace_back(extensionListEmus[i]);
+			}
+
+			if (!ms().secondaryDevice || ms().mdEmulator == 2) {
+				extensionList.emplace_back(".md"); // Sega Mega Drive
+			}
+		}
+
+		if (multimediaInstalled) {
+			std::vector<std::string_view> extensionListMedia = {
+				".avi", // Xvid (AVI)
+				".fv", // FastVideo
+				".gif", // GIF
+				".bmp", // BMP
+				".png" // Portable Network Graphics
+			};
+
+			for (int i = 0; i < 5; i++) {
+				extensionList.emplace_back(extensionListMedia[i]);
+			}
 		}
 
 		if(ms().blockedExtensions.size() > 0) {
@@ -1672,8 +1700,9 @@ int dsiMenuTheme(void) {
 
 						SetMPUSettings();
 
-						bool boostCpu = setClockSpeed();
-						bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
+						const bool phatColors = setDSPhatColors();
+						const bool boostCpu = setClockSpeed(phatColors);
+						const bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 						const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 						CIniFile bootstrapini(bootstrapinipath);
@@ -1685,7 +1714,7 @@ int dsiMenuTheme(void) {
 						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", setDSPhatColors());
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", phatColors);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", perGameSettings_region < -1 ? ms().useRomRegion : 0);
@@ -2400,59 +2429,13 @@ int dsiMenuTheme(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename, {".dsk"}) && ms().cpcEmulator == TWLSettings::ECpcAmEDS) {
-					ms().launchType[ms().secondaryDevice] = (ms().secondaryDevice ? Launch::EAmEDSLaunch : Launch::ESDFlashcardLaunch);
+				} else if (extension(filename, {".dsk"})) {
+					ms().launchType[ms().secondaryDevice] = Launch::ESugarDSLaunch;
 
-					if (ms().secondaryDevice) {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
-						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/AmEDS.nds";
-							boostVram = true;
-						}
-					} else {
-						useNDSB = true;
-
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
-						ndsToBootFat = replaceAll(ndsToBoot, "sd:/", "fat:/");
-						CIniFile bootstrapini(BOOTSTRAP_INI);
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ndsToBoot);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
-					}
-				} else if (extension(filename, {".dsk"}) && ms().cpcEmulator == TWLSettings::ECpcCrocoDS) {
-					ms().launchType[ms().secondaryDevice] = (ms().secondaryDevice ? Launch::ECrocoDSLaunch : Launch::ESDFlashcardLaunch);
-
-					if (ms().secondaryDevice) {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-							boostVram = true;
-						}
-					} else {
-						useNDSB = true;
-
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-						ndsToBootFat = replaceAll(ndsToBoot, "sd:/", "fat:/");
-						CIniFile bootstrapini(BOOTSTRAP_INI);
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ndsToBoot);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SugarDS.nds";
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SugarDS.nds";
+						boostVram = true;
 					}
 				} else if (extension(filename, {".min"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EPokeMiniLaunch;

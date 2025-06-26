@@ -42,7 +42,8 @@ void checkSdEject(void) {
 
 	// Show "SD removed" screen
 	mmEffectCancelAll();
-	snd().stopStream();
+	// snd().stopStream();
+	mmStop();
 
 	clearText();
 
@@ -56,11 +57,14 @@ void checkSdEject(void) {
 	updateText(false);
 
 	irqDisable(IRQ_VBLANK);
+	irqDisable(IRQ_HBLANK);
 
 	videoSetMode(MODE_5_2D | DISPLAY_BG2_ACTIVE);
 	//videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
 
 	REG_BLDY = 0;
+
+	while (dmaBusy(0)) { swiDelay(100); }
 
 	// Change to white text palette
 	u16 palette[] = {

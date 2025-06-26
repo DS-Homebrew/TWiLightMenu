@@ -518,8 +518,25 @@ void lastRunROM()
 
 			bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 			bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+
+			bool colorLutBlacklisted = false;
 			bool dsPhatColors = (perGameSettings_dsPhatColors == -1 ? DEFAULT_PHAT_COLORS : perGameSettings_dsPhatColors);
-			bool boostCpu = (perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu);
+			// TODO: If the list gets large enough, switch to bsearch().
+			for (unsigned int i = 0; i < sizeof(colorLutBlacklist)/sizeof(colorLutBlacklist[0]); i++) {
+				if (memcmp(game_TID, colorLutBlacklist[i], 3) == 0) {
+					// Found match
+					colorLutBlacklisted = true;
+					dsPhatColors = false;
+					break;
+				}
+			}
+
+			bool boostCpuDefault = DEFAULT_BOOST_CPU;
+			if (perGameSettings_boostCpu == -1 && !colorLutBlacklisted && ((dsiFeatures() && !bs().b4dsMode) || !ms().previousUsedDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && (colorTable || dsPhatColors)) {
+				boostCpuDefault = ms().boostCpuForClut;
+			}
+			bool boostCpu = (perGameSettings_boostCpu == -1 ? boostCpuDefault : perGameSettings_boostCpu);
+
 			bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
 			bool asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
 			bool dsModeForced = false;
@@ -579,15 +596,6 @@ void lastRunROM()
 					fadeType = false;
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
-					}
-				}
-
-				// TODO: If the list gets large enough, switch to bsearch().
-				for (unsigned int i = 0; i < sizeof(colorLutBlacklist)/sizeof(colorLutBlacklist[0]); i++) {
-					if (memcmp(game_TID, colorLutBlacklist[i], 3) == 0) {
-						// Found match
-						dsPhatColors = false;
-						break;
 					}
 				}
 
@@ -1316,22 +1324,14 @@ void lastRunROM()
 			argarray.at(0) = (char*)ndsToBoot;
 		}
 		err = runNdsFile(ndsToBoot, argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, !isDSiMode(), ms().newSnesEmuVer, true, ms().newSnesEmuVer, -1); // Pass ROM to SNEmulDS as argument
-	} else if (ms().launchType[ms().previousUsedDevice] == Launch::EAmEDSLaunch) {
+	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ESugarDSLaunch || ms().launchType[ms().previousUsedDevice] == Launch::ESugarDSLaunch2) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/SugarDS.nds";
 		if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
-			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/AmEDS.nds";
+			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/SugarDS.nds";
 		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1); // Pass ROM to AmEDS as argument
-	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ECrocoDSLaunch) {
-		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
-
-		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-		if (!isDSiMode() || access(argarray[0], F_OK) != 0) {
-			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1); // Pass ROM to CrocoDS as argument
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1); // Pass ROM to SugarDS as argument
 	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ETunaViDSLaunch) {
 		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
@@ -1918,6 +1918,7 @@ int titleMode(void)
 				if(*(vu16*)(0x08000000) == 0x4D54) {
 					*(u16*)(0x020000C0) = 0x4353;
 				}
+				_SC_changeMode(SC_MODE_MEDIA);
 			}
 		  }
 		}

@@ -33,7 +33,7 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 	}
 
 	FILE* destinationFile = fopen(destinationPath, "wb");
-	if (!destinationFile) {
+	if (fsize == 0 || !destinationFile) {
 		fclose(sourceFile);
 		fclose(destinationFile);
 		return 1;
@@ -60,7 +60,6 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 			fclose(sourceFile);
 			fclose(destinationFile);
 			return 0;
-			break;
 		}
 	}
 

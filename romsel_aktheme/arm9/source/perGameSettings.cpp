@@ -267,7 +267,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, bool dsiBinariesFound) {
 }
 
 bool showSetDonorRomDSiWare(u32 arm7size) {
-	if (requiresDonorRom[cursorPosOnScreen] || !isDSiMode() || *(u32*)0x02FFE1A0 == 0x00403000 || !sys().arm7SCFGLocked()) return false;
+	if (requiresDonorRom[cursorPosOnScreen] || !isDSiMode() || (*(u32*)0x02FFE1A0 == 0x00403000 && sys().arm7SCFGLocked())) return false;
 
 	return (arm7size==0x1D43C
 	 || arm7size==0x1D5A8
@@ -499,7 +499,7 @@ void perGameSettings (std::string filename) {
 	u32 dsiWramAmount = (sharedWramEnabled ? 0x88000 : 0x80000);
 	if (colorTable && sys().dsiWramAccess() && !sys().dsiWramMirrored()) {
 		dsiWramAmount -= 0x80000;
-		dsiWramAmount += 0x4AC00;
+		dsiWramAmount += 0x32800;
 	}
 	u32 romSizeLimit = (ms().consoleModel > 0 ? 0x1BE0000 : 0xBE0000) + ((sys().dsiWramAccess() && !sys().dsiWramMirrored()) ? dsiWramAmount : (sharedWramEnabled ? 0x8000 : 0));
 	romSizeLimit -= 0x400000; // Account for DSi mode setting

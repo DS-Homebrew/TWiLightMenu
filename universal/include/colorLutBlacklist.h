@@ -66,7 +66,6 @@ static const char colorLutBlacklist[][4] = {
 	"B8I", // Spider-Man: Edge of Time
 	"CSW", // Star Wars: Battlefont: Elite Squadron
 	"YST", // Star Wars: The Force Unleashed
-	"AZL", // Style Savvy
 	"VT3", // Toy Story 3
 	"VTE", // Tron: Evolution
 	"CP3", // Viva Pinata: Pocket Paradise

@@ -41,8 +41,27 @@ u8 my_i2cReadRegister(u8 device, u8 reg);
 
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
+static int soundVolume = 127;
 volatile u32 status = 0;
 static bool i2cBricked = false;
+
+//---------------------------------------------------------------------------------
+void soundFadeOut() {
+//---------------------------------------------------------------------------------
+	soundVolume -= 3;
+	if (soundVolume < 0) {
+		soundVolume = 0;
+	}
+}
+
+//---------------------------------------------------------------------------------
+void soundFadeIn() {
+//---------------------------------------------------------------------------------
+	soundVolume += 3;
+	if (soundVolume > 127) {
+		soundVolume = 127;
+	}
+}
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -60,6 +79,14 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
+	if (*(int*)0x02003004 == 2) {
+		soundFadeIn();
+	} else if (*(int*)0x02003004 == 1) {
+		soundFadeOut();
+	} else {
+		soundVolume = 127;
+	}
+	REG_MASTER_VOLUME = soundVolume;
 }
 
 //---------------------------------------------------------------------------------
@@ -74,6 +101,8 @@ volatile bool exitflag = false;
 //---------------------------------------------------------------------------------
 void powerButtonCB() {
 //---------------------------------------------------------------------------------
+	if (exitflag) return;
+	fifoSendValue32(FIFO_USER_01, 1);
 	exitflag = true;
 }
 
@@ -153,9 +182,9 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, status);
 
 	// Keep the ARM7 mostly idle
-	while (!exitflag) {
+	while (1) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
-			exitflag = true;
+			powerButtonCB();
 		}
 		if (isDSiMode()) {
 			if (SD_IRQ_STATUS & BIT(4)) {

@@ -17,6 +17,7 @@ extern u16* colorTable;
 
 FontGraphic *smallFont;
 FontGraphic *tinyFont;
+FontGraphic *esrbDescFont;
 
 std::list<TextEntry> topText, bottomText;
 
@@ -61,12 +62,13 @@ void fontInit() {
 	if (ms().dsClassicCustomFont) {
 		std::string fontPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 		std::string defaultPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
-		smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", defaultPath + "/small-dsi.nftr", "nitro:/graphics/font/small.nftr"}, useTileCache);
+		smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", defaultPath + "/small-dsi.nftr", "nitro:/graphics/font/ds.nftr"}, useTileCache);
 	} else {
-		smallFont = new FontGraphic({"nitro:/graphics/font/small.nftr"}, false);
+		smallFont = new FontGraphic({"nitro:/graphics/font/ds.nftr"}, false);
 		palette[3] = 0x94A5;
 	}
 	tinyFont = new FontGraphic({"nitro:/graphics/font/tiny.nftr"}, false);
+	tinyFont->setFixedWidthChar('A'); // tiny font has tiny fixed-width
 
 	if (colorTable) {
 		for (uint i = 1; i < sizeof(palette)/sizeof(u16); i++) {
@@ -77,6 +79,15 @@ void fontInit() {
 	tonccpy(BG_PALETTE, palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
 	logPrint("Font inited\n");
+}
+
+void esrbDescFontInit(bool dsFont) {
+	esrbDescFont = new FontGraphic({dsFont ? "nitro:/graphics/font/ds.nftr" : "nitro:/graphics/font/small.nftr"}, false);
+}
+
+void esrbDescFontDeinit() {
+	if (esrbDescFont)
+		delete esrbDescFont;
 }
 
 static std::list<TextEntry> &getTextQueue(bool top) {
@@ -99,7 +110,7 @@ void updateText(bool top) {
 	for (auto it = text.begin(); it != text.end(); ++it) {
 		FontGraphic *font = getFont(it->large);
 		if (font)
-			font->print(it->x, it->y, top, it->message, it->align, it->palette);
+			font->print(it->x, it->y, top, it->message, it->align, it->palette, false, it->monospaced);
 	}
 	text.clear();
 
@@ -122,6 +133,39 @@ void updateTopTextArea(int x, int y, int width, int height, u16 *restoreBuf) {
 	}
 }
 
+void updateTextImg(u16* img, bool top) {
+	if (top)	return;
+
+	// Clear before redrawing
+	if (shouldClear[top]) {
+		dmaFillWords(0, FontGraphic::textBuf[top], 256 * 192);
+		shouldClear[top] = false;
+	}
+
+	// Draw text
+	auto &text = getTextQueue(top);
+	for (auto it = text.begin(); it != text.end(); ++it) {
+		if (esrbDescFont)
+			esrbDescFont->print(it->x, it->y, top, it->message, it->align, it->palette);
+	}
+	text.clear();
+
+	u16 palette[] = {
+		0x0000,
+		0x6718,
+		0x4A32,
+		0x1064,
+	};
+
+	// Copy buffer to the image
+	for (int i = 0; i < 256 * 192; i++) {
+		if (FontGraphic::textBuf[top][i] != 0) {
+			//img[i] = top ? BG_PALETTE[FontGraphic::textBuf[true][i]] : BG_PALETTE_SUB[FontGraphic::textBuf[false][i]];
+			img[i] = palette[FontGraphic::textBuf[top][i]];
+		}
+	}
+}
+
 void clearText(bool top) {
 	shouldClear[top] = true;
 }
@@ -132,17 +176,31 @@ void clearText() {
 }
 
 void printSmall(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
-	getTextQueue(top).emplace_back(false, x, y, message, align, palette);
+	getTextQueue(top).emplace_back(false, false, x, y, message, align, palette);
 }
 void printSmall(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
-	getTextQueue(top).emplace_back(false, x, y, message, align, palette);
+	getTextQueue(top).emplace_back(false, false, x, y, message, align, palette);
+}
+
+void printSmallMonospaced(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(false, true, x, y, message, align, palette);
+}
+void printSmallMonospaced(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(false, true, x, y, message, align, palette);
 }
 
 void printTiny(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
-	getTextQueue(top).emplace_back(true, x, y, message, align, palette);
+	getTextQueue(top).emplace_back(true, false, x, y, message, align, palette);
 }
 void printTiny(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
-	getTextQueue(top).emplace_back(true, x, y, message, align, palette);
+	getTextQueue(top).emplace_back(true, false, x, y, message, align, palette);
+}
+
+void printTinyMonospaced(bool top, int x, int y, std::string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(true, true, x, y, message, align, palette);
+}
+void printTinyMonospaced(bool top, int x, int y, std::u16string_view message, Alignment align, FontPalette palette) {
+	getTextQueue(top).emplace_back(true, true, x, y, message, align, palette);
 }
 
 int calcSmallFontWidth(std::string_view text) {

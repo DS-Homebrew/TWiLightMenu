@@ -1242,12 +1242,12 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
 		} else {
-			extern bool setClockSpeed(void);
+			extern bool setClockSpeed(const bool phatColors);
 
 			bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath.c_str());
 			bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", "");
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed());
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed(false));
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram);
 		}
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
@@ -3413,6 +3413,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				showSTARTborder = false;
 				titleboxXspeed = 3;
 				scrollWindowTouched = true;
+
+				dsiBinariesChecked = false;
+				apChecked = false;
+				infoCheckTimer = 0;
+
 				int prevPos = CURPOS;
 				while (1) {
 					scanKeys();
@@ -3475,6 +3480,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				touchPosition startTouch = touch;
 				touchPosition prevTouch1 = touch;
 				touchPosition prevTouch2 = touch;
+
+				dsiBinariesChecked = false;
+				apChecked = false;
+				infoCheckTimer = 0;
 
 				bool tapped = false;
 				bool dsiCursorMove = false;

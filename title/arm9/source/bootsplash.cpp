@@ -158,7 +158,7 @@ void bootSplashDSi(void) {
 			//loadROMselectAsynch();
 			scanKeys();
 
-			if (!custom && splash.currentFrame() == 14)
+			if (!custom && splash.currentFrame() == 16)
 				snd().playDSiBoot();
 		}
 	} else {
@@ -186,7 +186,7 @@ void bootSplashDSi(void) {
 				}
 			}
 
-			if (!custom && splash.currentFrame() == (super ? 1 : 24))
+			if (!custom && splash.currentFrame() == (super ? 1 : 26))
 				snd().playDSiBoot();
 		}
 	}

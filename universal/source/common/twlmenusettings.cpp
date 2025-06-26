@@ -62,7 +62,6 @@ TWLSettings::TWLSettings()
 	gbaR3Test = false;
 	colEmulator = EColSegaColecoDS;
 	sgEmulator = EColSegaColecoDS;
-	cpcEmulator = ECpcAmEDS;
 	mdEmulator = EMegaDriveHybrid;
 	//snesEmulator = true;
 	updateRecentlyPlayedList = true;
@@ -144,7 +143,7 @@ TWLSettings::TWLSettings()
 	gameLanguage = ELangDefault;
 	gameRegion = ERegionDefault;
 	useRomRegion = true;
-	extendedMemory = 0;
+	boostCpuForClut = true;
 	forceSleepPatch = false;
 	soundFreq = EFreq32KHz;
 	saveRelocation = ERelocOnSDCard;
@@ -250,9 +249,6 @@ void TWLSettings::loadSettings()
 	sgEmulator = (TColSegaEmulator)settingsini.GetInt("SRLOADER", "SHOW_SG", sgEmulator);
 	if (sgEmulator == 0) // 0 (don't show) is deprecated
 		sgEmulator = EColSegaColecoDS;
-	cpcEmulator = (TCpcEmulator)settingsini.GetInt("SRLOADER", "SHOW_CPC", cpcEmulator);
-	if (cpcEmulator == 0) // 0 (don't show) is deprecated
-		cpcEmulator = ECpcAmEDS;
 	if (!(isDSiMode() && (access("sd:/", F_OK) == 0) && sys().arm7SCFGLocked())) {
 		mdEmulator = (TMegaDriveEmulator)settingsini.GetInt("SRLOADER", "SHOW_MDGEN", mdEmulator);
 		if (mdEmulator == 0) // 0 (don't show) is deprecated
@@ -373,7 +369,7 @@ void TWLSettings::loadSettings()
 	gameLanguage = (TLanguage)settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 	gameRegion = (TRegion)settingsini.GetInt("NDS-BOOTSTRAP", "REGION", gameRegion);
 	useRomRegion = settingsini.GetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", useRomRegion);
-	extendedMemory = settingsini.GetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
+	boostCpuForClut = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU_FOR_CLUT", boostCpuForClut);
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
 	soundFreq = (TSoundFreq)settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
 	saveRelocation = (TSaveRelocation)settingsini.GetInt("NDS-BOOTSTRAP", "SAVE_RELOCATION", saveRelocation);
@@ -444,7 +440,6 @@ void TWLSettings::saveSettings()
 	}
 	settingsini.SetInt("SRLOADER", "SHOW_COL", colEmulator);
 	settingsini.SetInt("SRLOADER", "SHOW_SG", sgEmulator);
-	settingsini.SetInt("SRLOADER", "SHOW_CPC", cpcEmulator);
 	if (!(isDSiMode() && (access("sd:/", F_OK) == 0) && sys().arm7SCFGLocked())) {
 		settingsini.SetInt("SRLOADER", "SHOW_MDGEN", mdEmulator);
 	}
@@ -537,7 +532,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 	settingsini.SetInt("NDS-BOOTSTRAP", "REGION", gameRegion);
 	settingsini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", useRomRegion);
-	settingsini.SetInt("NDS-BOOTSTRAP", "EXTENDED_MEMORY", extendedMemory);
+	settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU_FOR_CLUT", boostCpuForClut);
 	settingsini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
 	settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
 	settingsini.SetInt("NDS-BOOTSTRAP", "SAVE_RELOCATION", saveRelocation);

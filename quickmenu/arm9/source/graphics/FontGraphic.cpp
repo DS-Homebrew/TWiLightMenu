@@ -180,6 +180,9 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool set_u
 		questionMark = getCharIndex(0xFFFD);
 		if (questionMark == 0)
 			questionMark = getCharIndex('?');
+
+		// I feel like using hashtag's width for monospace is generally fine for most fonts.
+		setFixedWidthChar('#');
 	}
 }
 
@@ -235,18 +238,26 @@ std::u16string FontGraphic::utf8to16(std::string_view text) {
 	return out;
 }
 
-int FontGraphic::calcWidth(std::u16string_view text) {
-	uint x = 0;
-
-	for (auto it = text.begin(); it != text.end(); ++it) {
-		u16 index = getCharIndex(arabicForm(*it, it > text.begin() ? *(it - 1) : 0, it < text.end() - 1 ? *(it + 1) : 0));
-		x += fontWidths[(index * 3) + 2];
-	}
-
-	return x;
+void FontGraphic::setFixedWidthChar(char character) {
+	// Use this character's total width as the base for fixed-width calculations
+	fontFixedWidth = fontWidths[(getCharIndex(character) * 3) + 2];
 }
 
-ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view text, Alignment align, FontPalette palette, bool rtl) {
+int FontGraphic::calcWidth(std::u16string_view text, bool monospaced) {
+	if (!monospaced) {
+		uint x = 0;
+		for (auto it = text.begin(); it != text.end(); ++it) {
+			u16 index = getCharIndex(arabicForm(*it, it > text.begin() ? *(it - 1) : 0, it < text.end() - 1 ? *(it + 1) : 0));
+			x += fontWidths[(index * 3) + 2];
+		}
+		
+		return x;
+	} else {
+		return text.length() * fontFixedWidth;
+	}
+}
+
+ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view text, Alignment align, FontPalette palette, bool rtl, bool monospaced) {
 	// If RTL isn't forced, check for RTL text
 	if (!rtl) {
 		for (const auto c : text) {
@@ -265,23 +276,23 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 		} case Alignment::center: {
 			size_t newline = text.find('\n');
 			while (newline != text.npos) {
-				print(x, y, top, text.substr(0, newline), align, palette, rtl);
+				print(x, y, top, text.substr(0, newline), align, palette, rtl, monospaced);
 				text = text.substr(newline + 1);
 				newline = text.find('\n');
 				y += tileHeight;
 			}
 
-			x = ((256 - calcWidth(text)) / 2) + x;
+			x = ((256 - calcWidth(text, monospaced)) / 2) + x;
 			break;
 		} case Alignment::right: {
 			size_t newline = text.find('\n');
 			while (newline != text.npos) {
-				print(x - calcWidth(text.substr(0, newline)), y, top, text.substr(0, newline), Alignment::left, palette, rtl);
+				print(x - calcWidth(text.substr(0, newline), monospaced), y, top, text.substr(0, newline), Alignment::left, palette, rtl, monospaced);
 				text = text.substr(newline + 1);
 				newline = text.find('\n');
 				y += tileHeight;
 			}
-			x = x - calcWidth(text);
+			x = x - calcWidth(text, monospaced);
 			break;
 		}
 	}
@@ -461,6 +472,6 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 			}
 		}
 
-		x += fontWidths[(index * 3) + 2];
+		x += (monospaced) ? fontFixedWidth : fontWidths[(index * 3) + 2];
 	}
 }

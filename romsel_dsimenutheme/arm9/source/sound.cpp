@@ -195,13 +195,17 @@ void SoundControl::loadStream(const bool prepMsg) {
 		switch(ms().dsiMusic) {
 			case 5: // HBL
 			case 2: // DSi Shop
-				stream.sampling_rate = 44100;	 		// 44100Hz
-				stream.format = MM_STREAM_16BIT_MONO;
-				stream_start_source = fopen(std::string(ms().dsiMusic == 5 ? TFN_HBL_START_SOUND_BG : TFN_SHOP_START_SOUND_BG).c_str(), "rb");
-				stream_source = fopen(std::string(ms().dsiMusic == 5 ? TFN_HBL_LOOP_SOUND_BG : TFN_SHOP_LOOP_SOUND_BG).c_str(), "rb");
-				seekPos = 0x2C;
-				loopableMusic = true;
-				break;
+			{	std::string loopPath = std::string(ms().dsiMusic == 5 ? TFN_HBL_LOOP_SOUND_BG : TFN_SHOP_LOOP_SOUND_BG);
+				if (access(loopPath.c_str(), F_OK) == 0) {
+					stream.sampling_rate = 44100;	 		// 44100Hz
+					stream.format = MM_STREAM_16BIT_MONO;
+					stream_start_source = fopen(std::string(ms().dsiMusic == 5 ? TFN_HBL_START_SOUND_BG : TFN_SHOP_START_SOUND_BG).c_str(), "rb");
+					stream_source = fopen(loopPath.c_str(), "rb");
+					seekPos = 0x2C;
+					loopableMusic = true;
+					break;
+				}
+			}
 			case 3: { // Theme
 				bool customSkin = false;
 				switch (ms().theme) {
@@ -278,8 +282,8 @@ void SoundControl::loadStream(const bool prepMsg) {
 			case 4:
 			case 1:
 			default: {
-				bool use3DSMusic = ms().dsiMusic == 4 || (ms().dsiMusic == 3 && ms().theme == TWLSettings::ETheme3DS);
-				bool useHBLMusic = ms().dsiMusic == 3 && ms().theme == TWLSettings::EThemeHBL;
+				const bool use3DSMusic = (ms().dsiMusic == 4 || (ms().dsiMusic == 3 && ms().theme == TWLSettings::ETheme3DS)) && (access(std::string(TFN_DEFAULT_SOUND_BG_3D).c_str(), F_OK) == 0);
+				const bool useHBLMusic = (ms().dsiMusic == 3) && (ms().theme == TWLSettings::EThemeHBL) && (access(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), F_OK) == 0);
 				stream.sampling_rate = useHBLMusic ? 44100 : (use3DSMusic ? 32000 : 16000);	 		// 44100Hz, 32000Hz, or 16000Hz
 				stream.format = MM_STREAM_16BIT_MONO;
 				if (useHBLMusic) {

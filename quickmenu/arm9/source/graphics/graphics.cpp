@@ -29,6 +29,7 @@
 #include "common/systemdetails.h"
 #include "common/twlmenusettings.h"
 #include "common/logging.h"
+#include "language.h"
 #include <cmath>
 
 // Graphic files
@@ -498,12 +499,14 @@ void bottomBgLoad() {
 			// break;
 		case TWLSettings::EThemeHBL:
 		case TWLSettings::EThemeGBC:
+			temp[0] = '\0';
+			tempNested[0] = '\0';
 			break;
 	}
 
-	if (access(temp, F_OK) == 0)
+	if (temp[0] != '\0' && access(temp, F_OK) == 0)
 		bottomBGFile = std::string(temp);
-	else if (access(tempNested, F_OK) == 0)
+	else if (tempNested[0] != '\0' && access(tempNested, F_OK) == 0)
 		bottomBGFile = std::string(tempNested);
 
 	std::vector<unsigned char> image;
@@ -874,11 +877,22 @@ static void markerDraw(int x, int y) {
 }
 
 static void calendarTextDraw(const Datetime& now) {
-	printSmall(true, 56, calendarYPos+3, getDateYear(), Alignment::center);
+	printSmallMonospaced(true, 56, calendarYPos+3, getDateYear(), Alignment::center);
 
 	Datetime firstDay(now.getYear(), now.getMonth(), 1);
 	int startWeekday = firstDay.getWeekDay();
-	
+
+	// Draw weekdays
+	{
+		printTiny(true, 0*16+8, calendarYPos+20, STR_TWO_LETTER_SUNDAY,    Alignment::center, FontPalette::white);
+		printTiny(true, 1*16+8, calendarYPos+20, STR_TWO_LETTER_MONDAY,    Alignment::center, FontPalette::white);
+		printTiny(true, 2*16+8, calendarYPos+20, STR_TWO_LETTER_TUESDAY,   Alignment::center, FontPalette::white);
+		printTiny(true, 3*16+8, calendarYPos+20, STR_TWO_LETTER_WEDNESDAY, Alignment::center, FontPalette::white);
+		printTiny(true, 4*16+8, calendarYPos+20, STR_TWO_LETTER_THURSDAY,  Alignment::center, FontPalette::white);
+		printTiny(true, 5*16+8, calendarYPos+20, STR_TWO_LETTER_FRIDAY,    Alignment::center, FontPalette::white);
+		printTiny(true, 6*16+8, calendarYPos+20, STR_TWO_LETTER_SATURDAY,  Alignment::center, FontPalette::white);
+	}
+
 	// Draw marker
 	{
 		int myPos = (startWeekday + now.getDay() - 1) / 7;
@@ -1177,12 +1191,14 @@ void topBgLoad(void) {
 			// break;
 		case TWLSettings::EThemeHBL:
 		case TWLSettings::EThemeGBC:
+			temp[0] = '\0';
+			tempNested[0] = '\0';
 			break;
 	}
 
-	if (access(temp, F_OK) == 0)
+	if (temp[0] != '\0' && access(temp, F_OK) == 0)
 		sprintf(filePath, "%s", temp);
-	else if (access(tempNested, F_OK) == 0)
+	else if (tempNested[0] != '\0' && access(tempNested, F_OK) == 0)
 		sprintf(filePath, "%s", tempNested);
 
 	std::vector<unsigned char> image;
@@ -1246,7 +1262,7 @@ void topBarLoad(void) {
 
 	char16_t username[11] = {0};
 	memcpy(username, useTwlCfg ? (s16 *)0x02000448 : PersonalData->name, 10 * sizeof(char16_t));
-	printTiny(true, 3, 3, username, Alignment::left, FontPalette::topBar);
+	printTiny(true, 3, 3, username, Alignment::left, FontPalette::white);
 	updateTopTextArea(3, 3, calcTinyFontWidth(username), tinyFontHeight(), bmpImageBuffer);
 
 	drawDateTime(true);
@@ -1259,8 +1275,13 @@ void drawDateTime(bool date, bool showTimeColon) {
 	std::string text = date ? getDate() : retTime();
 	if (!date && !showTimeColon) text[2] = ' ';
 
-	const int posX = date ? 205 : 171;
-	printTiny(true, posX, 3, text, Alignment::right, FontPalette::topBar);
+	const int posX = date ? 204 : 172;
+	if (text.length() <= 5)
+		printTinyMonospaced(true, posX, 3, text, Alignment::right, FontPalette::white);
+	else
+		// If datetime exceeds 5 characters, don't print it as monospaced to avoid overflow.
+		printTiny(true, posX+2, 3, text, Alignment::right, FontPalette::white); 
+		
 	updateTopTextArea(posX - 27, 3, 27, tinyFontHeight(), bmpImageBuffer);
 }
 

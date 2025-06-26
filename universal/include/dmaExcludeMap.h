@@ -9,7 +9,6 @@ static const char cardReadDMAExcludeList[][4] = {
 	"Y8L", // Golden Sun: Dark Dawn (Demo)
 	"VIJ", // iCarly 2: iJoin the Click!
 	"VAV", // James Cameron's Avatar
-	"VCK", // My Healthy Cooking Coach: Easy Way to Cook Healthy
 	"B8I", // Spider-Man: Edge of Time
 	"AFZ", // Transformets: Autobots
 	"AFY", // Transformets: Decepticons

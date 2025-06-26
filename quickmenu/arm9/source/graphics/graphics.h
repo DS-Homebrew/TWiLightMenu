@@ -24,6 +24,8 @@
 extern bool moveIconUp[7];
 extern int iconYpos[7];
 
+extern u16* colorTable;
+
 bool screenFadedIn(void);
 bool screenFadedOut(void);
 void SetBrightness(u8 screen, s8 bright);
