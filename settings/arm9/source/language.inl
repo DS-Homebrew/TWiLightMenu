@@ -245,6 +245,10 @@ STRING(THRU_NDS_BS, "Thru nds-bs")
 STRING(RELEASE, "Release")
 STRING(NIGHTLY, "Nightly")
 
+// Save Relcation
+STRING(SAVE_RELOCATION, "Save Relocation")
+STRING(SAVE_GAME_CARD, "Game Card")
+
 STRING(DESCRIPTION_TWL_SPEED_FOR_SCREEN_FILTERS, "Speeds up screen filter and/or DS Phat color proccessing by setting the ARM9 CPU speed to 133mhz (TWL). Does not affect titles which blacklist TWL speed.")
 STRING(DESCRIPTION_ASPECTRATIO, "Adjusts the top screen to be the original size or wider for DS games. Some games may not use this. Requires TWPatch to be used as well as external sysmodules enabled in Luma.")
 STRING(DESCRIPTION_GBABORDER, "Changes the border in GBA mode. Does not affect GBARunner2.")
@@ -272,6 +276,7 @@ STRING(DESCRIPTION_BOOTSTRAP_1, "The release build is the latest version usually
 STRING(DESCRIPTION_DEBUG_1, "Displays some text before launched game.")
 STRING(DESCRIPTION_LOGGING_1, "Logs the process of patching to sd:/NDSBTSRP.LOG")
 // STRING(DESCRIPTION_FLASHCARD_1, "Pick a flashcard to use to run ROMs from it.")
+STRING(DESCRIPTION_SAVE_RELOCATION, "'SD/microSD Card' is default save relocation of nds-bootstrap. 'Game Card' disable relocation to save on reatil game card when gameTID matches between ROM and game card.")
 
 // Misc settings
 STRING(LANGUAGE, "Language")
