@@ -44,6 +44,7 @@ private:
 	int _usernameRenderY;
 	int _usernameRenderX;
 	int _usernameRenderXDS;
+	bool _usernameEdgeAlpha;
 
 	int _dateRenderY;
 	int _dateRenderX;
@@ -173,6 +174,7 @@ public:
 	int usernameRenderY() const { return _usernameRenderY; }
 	int usernameRenderX() const { return _usernameRenderX; }
 	int usernameRenderXDS() const { return _usernameRenderXDS; }
+	bool usernameEdgeAlpha() const { return _usernameEdgeAlpha; }
 
 	int dateRenderY() const { return _dateRenderY; }
 	int dateRenderX() const { return _dateRenderX; }

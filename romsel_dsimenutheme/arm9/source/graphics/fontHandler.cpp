@@ -113,6 +113,32 @@ void fontInit() {
 		tc().fontPaletteDateTime3(),
 		tc().fontPaletteDateTime4(),
 	};
+	u16 paletteSub[] = {
+		tc().fontPalette1(),
+		tc().fontPalette2(),
+		tc().fontPalette3(),
+		tc().fontPalette4(),
+		tc().fontPaletteTitlebox1(),
+		tc().fontPaletteTitlebox2(),
+		tc().fontPaletteTitlebox3(),
+		tc().fontPaletteTitlebox4(),
+		tc().fontPaletteDialog1(),
+		tc().fontPaletteDialog2(),
+		tc().fontPaletteDialog3(),
+		tc().fontPaletteDialog4(),
+		tc().fontPaletteOverlay1(),
+		tc().fontPaletteOverlay2(),
+		tc().fontPaletteOverlay3(),
+		tc().fontPaletteOverlay4(),
+		tc().fontPaletteUsername1(),
+		tc().fontPaletteUsername2(),
+		tc().fontPaletteUsername3(),
+		tc().fontPaletteUsername4(),
+		tc().fontPaletteDateTime1(),
+		tc().fontPaletteDateTime2(),
+		tc().fontPaletteDateTime3(),
+		tc().fontPaletteDateTime4(),
+	};
 	if (tc().usernameUserPalette()) {
 		FILE *file = fopen((TFN_PALETTE_USERNAME).c_str(), "rb");
 		if (file) {
@@ -122,15 +148,18 @@ void fontInit() {
 			// swap palette bytes
 			for (int i = 0; i < 4; i++) {
 				palette[16 + i] = (palette[16 + i] << 8 & 0xFF00) | palette[16 + i] >> 8;
+				paletteSub[16 + i] = palette[16 + i];
 			}
 		}
 		else {
-			tonccpy(palette + 16, bmpPal_topSmallFont + themeColor, 4 * sizeof(u16));
+			tonccpy(palette + 16, (tc().usernameEdgeAlpha() ? bmpPal_topSmallFontForAlpha : bmpPal_topSmallFont) + themeColor, 4 * sizeof(u16));
+			tonccpy(paletteSub + 16, bmpPal_topSmallFont + themeColor, 4 * sizeof(u16));
 		}
 	}
 	effectColorModePalette(palette, sizeof(palette) / sizeof(palette[0]));
-	tonccpy(BG_PALETTE, palette, sizeof(palette));
-	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
+	effectColorModePalette(paletteSub, sizeof(paletteSub) / sizeof(paletteSub[0]));
+	tonccpy(BG_PALETTE, paletteSub, sizeof(palette)); // For bottom screen
+	tonccpy(BG_PALETTE_SUB, palette, sizeof(paletteSub)); // For top screen
 	logPrint("Font inited\n");
 }
 

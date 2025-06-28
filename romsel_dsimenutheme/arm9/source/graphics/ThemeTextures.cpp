@@ -933,7 +933,12 @@ void ThemeTextures::drawProfileName() {
 			if (xPos + x < 0) continue;
 			int px = FontGraphic::textBuf[1][y * 256 + x];
 			u16 bg = _topBorderBuffer[(yPos + y) * 256 + (xPos + x)];
-			u16 val = px ? themealphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
+			u16 val = 0;
+			if (tc().usernameEdgeAlpha()) {
+				val = px ? themealphablend(BG_PALETTE_SUB[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
+			} else {
+				val = px ? (BG_PALETTE_SUB[px] | BIT(15)) : bg;
+			}
 
 			if (ms().macroMode) {
 				_bgMainBuffer[(yPos + y) * 256 + (xPos + x)] = val;
