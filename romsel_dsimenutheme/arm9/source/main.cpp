@@ -989,6 +989,12 @@ int dsiMenuTheme(void) {
 	fontInit();
 	logPrint("\n");
 
+	langInit();
+
+	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
+		whiteScreen = false;
+	}
+
 	if (ms().theme == TWLSettings::EThemeHBL) {
 		tex().loadHBTheme();
 	} else if (ms().theme == TWLSettings::EThemeSaturn) {
@@ -998,6 +1004,13 @@ int dsiMenuTheme(void) {
 	} else {
 		tex().loadDSiTheme();
 	}
+
+	srand(time(NULL));
+	
+	graphicsInit();
+	iconManagerInit();
+
+	keysSetRepeat(10, 2);
 
 	ms().gbaR3Test = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds" : "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds", F_OK) == 0);
 
@@ -1024,12 +1037,6 @@ int dsiMenuTheme(void) {
 
 	const bool emulatorsInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Virtual Console" : "fat:/_nds/TWiLightMenu/addons/Virtual Console", F_OK) == 0);
 	const bool multimediaInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Multimedia" : "fat:/_nds/TWiLightMenu/addons/Multimedia", F_OK) == 0);
-
-	if (ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) {
-		whiteScreen = false;
-	}
-
-	langInit();
 
 	std::string filename;
 
@@ -1076,19 +1083,10 @@ int dsiMenuTheme(void) {
 		}
 	}
 
-	srand(time(NULL));
-	
-	graphicsInit();
-	iconManagerInit();
-
-	keysSetRepeat(10, 2);
-
-	logPrint("snd()\n");
-	snd();
-	snd().loadStream(true);
-
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		//logPrint("snd().playStartup()\n");
+		logPrint("snd()\n");
+		snd();
 		snd().playStartup();
 	} else if (ms().theme != TWLSettings::EThemeHBL) {
 		controlTopBright = false;
@@ -1123,6 +1121,15 @@ int dsiMenuTheme(void) {
 		}
 		clearText();
 		updateText(false);
+	}
+
+	if (ms().theme != TWLSettings::EThemeSaturn) {
+		extern void displayNowLoading(void);
+		displayNowLoading();
+
+		logPrint("snd()\n");
+		snd();
+		snd().loadStream(true);
 	}
 
 	while (1) {

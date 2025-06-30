@@ -181,14 +181,6 @@ void SoundControl::loadStream(const bool prepMsg) {
 	stream.sampling_rate = 16000;	 		// 16000Hz
 	stream.format = MM_STREAM_16BIT_MONO;  // select format
 
-	if (prepMsg) {
-		// Leave top scren white
-		controlTopBright = false;
-
-		printLarge(false, 0, 88 - (calcLargeFontHeight(STR_PREPARING_MUSIC) - largeFontHeight()) / 2, STR_PREPARING_MUSIC, Alignment::center);
-		updateText(false);
-	}
-
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 	} else {
@@ -249,15 +241,33 @@ void SoundControl::loadStream(const bool prepMsg) {
 
 						if (wavFormat == 0x11) {
 							// If music is ADPCM and hasn't been successfully converted yet, do so now
+							bool doClearText = false;
 							if (loopableMusic && (access(cacheStartPath.c_str(), F_OK) != 0 || getFileSize(cacheStartPath.c_str()) == 0)) { // Start point
+								if (prepMsg) {
+									clearText(false);
+									printLarge(false, 0, 88 - (calcLargeFontHeight(STR_PREPARING_MUSIC) - largeFontHeight()) / 2, STR_PREPARING_MUSIC, Alignment::center);
+									updateText(false);
+									doClearText = true;
+								}
 								if (adpcm_main(musicStartPath.c_str(), cacheStartPath.c_str(), numChannels == 2) == -1) {
 									remove(cacheStartPath.c_str());
 								}
 							}
 							if (access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) { // Loop point
+								if (prepMsg && !doClearText) {
+									clearText(false);
+									printLarge(false, 0, 88 - (calcLargeFontHeight(STR_PREPARING_MUSIC) - largeFontHeight()) / 2, STR_PREPARING_MUSIC, Alignment::center);
+									updateText(false);
+									doClearText = true;
+								}
 								if (adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2) == -1) {
 									remove(cachePath.c_str());
 								}
+							}
+							if (prepMsg && doClearText) {
+								clearText(false);
+								extern void displayNowLoading(void);
+								displayNowLoading();
 							}
 							if (loopableMusic) {
 								fclose(stream_start_source);
@@ -294,11 +304,6 @@ void SoundControl::loadStream(const bool prepMsg) {
 				seekPos = 0x2C;
 				break; }
 		}
-	}
-
-	if (prepMsg) {
-		clearText();
-		controlTopBright = true;
 	}
 
 	fseek(stream_source, seekPos, SEEK_SET);
