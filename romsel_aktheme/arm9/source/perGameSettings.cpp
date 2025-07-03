@@ -649,7 +649,7 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 16;	// DS Phat Colors
 			}
-			if (!ms().secondaryDevice || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
+			if ((!ms().secondaryDevice && !sys().arm7SCFGLocked()) || (sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA))) {
 				perGameOps++;
 				perGameOp[perGameOps] = 17;	// Save Relocation
 			}
