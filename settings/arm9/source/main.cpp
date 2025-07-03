@@ -1313,8 +1313,11 @@ int settingsMode(void)
 				Option::Bool(&ms().useRomRegion),
 				{STR_YES, STR_NO},
 				{true, false})
-		.option(STR_SAVE_LOCATION, STR_DESCRIPTION_SAVE_LOCATION, Option::Int((int *)&ms().saveLocation), {STR_SAVES_FOLDER, STR_ROM_FOLDER, STR_TWLMENU_FOLDER}, {TWLSettings::ESavesFolder, TWLSettings::EGamesFolder, TWLSettings::ETWLMFolder})
-		.option(STR_SAVE_RELOCATION, STR_DESCRIPTION_SAVE_RELOCATION, Option::Bool((bool *)&ms().saveRelocation), {ms().showMicroSd ? STR_MICRO_SD_CARD : STR_SD_CARD, STR_SAVE_GAME_CARD}, {true, false});
+		.option(STR_SAVE_LOCATION, STR_DESCRIPTION_SAVE_LOCATION, Option::Int((int *)&ms().saveLocation), {STR_SAVES_FOLDER, STR_ROM_FOLDER, STR_TWLMENU_FOLDER}, {TWLSettings::ESavesFolder, TWLSettings::EGamesFolder, TWLSettings::ETWLMFolder});
+	if (sdFound() || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
+		bootstrapPage
+			.option(STR_SAVE_RELOCATION, STR_DESCRIPTION_SAVE_RELOCATION, Option::Bool((bool *)&ms().saveRelocation), {ms().showMicroSd ? STR_MICRO_SD_CARD : STR_SD_CARD, STR_SAVE_GAME_CARD}, {true, false});
+	}
 
 	if (flashcardFound() && (dsiFeatures() || sdFound())) {
 		if (sdFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {

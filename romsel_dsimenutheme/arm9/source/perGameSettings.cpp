@@ -700,8 +700,10 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 				perGameOps++;
 				perGameOp[perGameOps] = 16;	// DS Phat Colors
 			}
-			perGameOps++;
-			perGameOp[perGameOps] = 17;	// Save_Relocation
+			if (!ms().secondaryDevice || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
+				perGameOps++;
+				perGameOp[perGameOps] = 17;	// Save Relocation
+			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && widescreenFound) {
@@ -1041,7 +1043,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 				if (perGameSettings_saveRelocation == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_saveRelocation == 1) {
-					printSmall(false, perGameOpEndXpos, perGameOpYpos, ms().showMicroSd ? STR_SAVE_MICRO_SD : STR_SAVE_SD, endAlign, FontPalette::dialog);
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, (ms().showMicroSd || ms().secondaryDevice) ? STR_SAVE_MICRO_SD : STR_SAVE_SD, endAlign, FontPalette::dialog);
 				} else {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SAVE_GAME_CARD, endAlign, FontPalette::dialog);
 				}
