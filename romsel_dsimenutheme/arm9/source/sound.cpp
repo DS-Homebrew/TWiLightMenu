@@ -193,10 +193,7 @@ void SoundControl::loadStream(const bool prepMsg) {
 					stream_source = fopen(loopPath.c_str(), "rb");
 
 					// Read properties from WAV header
-					u8 wavFormat = 0;
 					u8 numChannels = 1;
-					fseek(stream_source, 0x14, SEEK_SET);
-					fread(&wavFormat, sizeof(u8), 1, stream_source);
 					fseek(stream_source, 0x16, SEEK_SET);
 					fread(&numChannels, sizeof(u8), 1, stream_source);
 					stream.format = numChannels == 2 ? MM_STREAM_8BIT_STEREO : MM_STREAM_16BIT_MONO;
@@ -315,10 +312,7 @@ void SoundControl::loadStream(const bool prepMsg) {
 				stream_source = fopen(std::string(useHBLMusic ? TFN_HBL_LOOP_SOUND_BG : (use3DSMusic ? TFN_DEFAULT_SOUND_BG_3D : (useBetterDSiMusic ? TFN_BETTER_DEFAULT_SOUND_BG : TFN_DEFAULT_SOUND_BG))).c_str(), "rb");
 
 				// Read properties from WAV header
-				u8 wavFormat = 0;
 				u8 numChannels = 1;
-				fseek(stream_source, 0x14, SEEK_SET);
-				fread(&wavFormat, sizeof(u8), 1, stream_source);
 				fseek(stream_source, 0x16, SEEK_SET);
 				fread(&numChannels, sizeof(u8), 1, stream_source);
 				stream.format = numChannels == 2 ? MM_STREAM_8BIT_STEREO : MM_STREAM_16BIT_MONO;
