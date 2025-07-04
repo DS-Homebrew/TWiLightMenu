@@ -134,6 +134,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 ## Music
 - [BlastoiseVeteran](https://soundcloud.com/blastyveteran): Remastered version of Nintendo DSi Shop music
 - IkaMusumeYiyaRoxie: General N64 MIDI Soundfont, used for the title splash fanfare on old versions
+- [TeciorFILM](https://www.youtube.com/channel/UCEyPYQavt2g_tdmkd-pQgYw): The video ([10 Minutes of Nintendo DSi Menu Music (Authentic)](https://www.youtube.com/watch?v=LLc3-z8VZwc)) used for the better DSi Menu music add-on
 ## Sound
 - [dbry](https://github.com/dbry): Xtreme Quality IMA-ADPCM decoder code from [adpcm-xq](https://github.com/dbry/adpcm-xq).
 - [Firexploit](https://github.com/Firexploit): 3DS UI sounds, which some are also used in the DSi UI.
