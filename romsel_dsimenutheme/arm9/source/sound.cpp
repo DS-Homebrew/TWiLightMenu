@@ -189,10 +189,20 @@ void SoundControl::loadStream(const bool prepMsg) {
 			case 2: // DSi Shop
 			{	std::string loopPath = std::string(ms().dsiMusic == 5 ? TFN_HBL_LOOP_SOUND_BG : TFN_SHOP_LOOP_SOUND_BG);
 				if (access(loopPath.c_str(), F_OK) == 0) {
-					stream.sampling_rate = 44100;	 		// 44100Hz
-					stream.format = MM_STREAM_16BIT_MONO;
 					stream_start_source = fopen(std::string(ms().dsiMusic == 5 ? TFN_HBL_START_SOUND_BG : TFN_SHOP_START_SOUND_BG).c_str(), "rb");
 					stream_source = fopen(loopPath.c_str(), "rb");
+
+					// Read properties from WAV header
+					u8 wavFormat = 0;
+					u8 numChannels = 1;
+					fseek(stream_source, 0x14, SEEK_SET);
+					fread(&wavFormat, sizeof(u8), 1, stream_source);
+					fseek(stream_source, 0x16, SEEK_SET);
+					fread(&numChannels, sizeof(u8), 1, stream_source);
+					stream.format = numChannels == 2 ? MM_STREAM_8BIT_STEREO : MM_STREAM_16BIT_MONO;
+					fseek(stream_source, 0x18, SEEK_SET);
+					fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
+
 					seekPos = 0x2C;
 					loopableMusic = true;
 					break;
@@ -294,13 +304,27 @@ void SoundControl::loadStream(const bool prepMsg) {
 			default: {
 				const bool use3DSMusic = (ms().dsiMusic == 4 || (ms().dsiMusic == 3 && ms().theme == TWLSettings::ETheme3DS)) && (access(std::string(TFN_DEFAULT_SOUND_BG_3D).c_str(), F_OK) == 0);
 				const bool useHBLMusic = (ms().dsiMusic == 3) && (ms().theme == TWLSettings::EThemeHBL) && (access(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), F_OK) == 0);
-				stream.sampling_rate = useHBLMusic ? 44100 : (use3DSMusic ? 32000 : 16000);	 		// 44100Hz, 32000Hz, or 16000Hz
-				stream.format = MM_STREAM_16BIT_MONO;
+				bool useBetterDSiMusic = false;
 				if (useHBLMusic) {
 					stream_start_source = fopen(std::string(TFN_HBL_START_SOUND_BG).c_str(), "rb");
 					loopableMusic = true;
 				}
-				stream_source = fopen(std::string(useHBLMusic ? TFN_HBL_LOOP_SOUND_BG : (use3DSMusic ? TFN_DEFAULT_SOUND_BG_3D : TFN_DEFAULT_SOUND_BG)).c_str(), "rb");
+				if (!use3DSMusic) {
+					useBetterDSiMusic = (access(std::string(TFN_BETTER_DEFAULT_SOUND_BG).c_str(), F_OK) == 0);
+				}
+				stream_source = fopen(std::string(useHBLMusic ? TFN_HBL_LOOP_SOUND_BG : (use3DSMusic ? TFN_DEFAULT_SOUND_BG_3D : (useBetterDSiMusic ? TFN_BETTER_DEFAULT_SOUND_BG : TFN_DEFAULT_SOUND_BG))).c_str(), "rb");
+
+				// Read properties from WAV header
+				u8 wavFormat = 0;
+				u8 numChannels = 1;
+				fseek(stream_source, 0x14, SEEK_SET);
+				fread(&wavFormat, sizeof(u8), 1, stream_source);
+				fseek(stream_source, 0x16, SEEK_SET);
+				fread(&numChannels, sizeof(u8), 1, stream_source);
+				stream.format = numChannels == 2 ? MM_STREAM_8BIT_STEREO : MM_STREAM_16BIT_MONO;
+				fseek(stream_source, 0x18, SEEK_SET);
+				fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
+
 				seekPos = 0x2C;
 				break; }
 		}

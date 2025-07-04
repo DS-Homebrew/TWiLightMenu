@@ -35,6 +35,7 @@
 
 #define TFN_SYSTEM_UI_DIRECTORY             TFN_SYSTEM_DIR"themes/"
 #define TFN_SYSTEM_SOUND_DIRECTORY          "nitro:/sound"
+#define TFN_BETTER_DEFAULT_SOUND_BG         "/_nds/TWiLightMenu/addons/Better DSi Menu Music.wav"
 #define TFN_SYSTEM_SOUND_ADDON_DIRECTORY    "/_nds/TWiLightMenu/addons/Extra UI Music/dsimenu"
 #define TFN_SYSTEM_SOUND_CACHE_DIRECTORY    "/_nds/TWiLightMenu/cache/music"
 
