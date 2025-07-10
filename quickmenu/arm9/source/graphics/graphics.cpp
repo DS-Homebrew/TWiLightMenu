@@ -29,6 +29,7 @@
 #include "common/systemdetails.h"
 #include "common/twlmenusettings.h"
 #include "common/logging.h"
+#include "language.h"
 #include <cmath>
 
 // Graphic files
@@ -157,7 +158,6 @@ void ClearBrightness(void) {
 }
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
 
 void updateCursorTargetPos(void) { 
@@ -220,8 +220,15 @@ void updateCursorTargetPos(void) {
 	}
 }
 
+bool invertedColors = false;
+bool noWhiteFade = false;
+
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -293,7 +300,7 @@ static void bootModeIconLoad() {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			imageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				imageBuffer[i] = colorTable[imageBuffer[i]];
+				imageBuffer[i] = colorTable[imageBuffer[i] % 0x8000] | BIT(15);
 			}
 		}
 
@@ -334,7 +341,7 @@ void batteryIconLoad() {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			
 			if (image[(i*4)+3] == 0) {
@@ -372,7 +379,7 @@ void batteryIconLoad() {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			
 			if (image[(i*4)+3] == 0) {
@@ -448,7 +455,7 @@ void gbaModeIconLoad(bool bottomScreen) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			imageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				imageBuffer[i] = colorTable[imageBuffer[i]];
+				imageBuffer[i] = colorTable[imageBuffer[i] % 0x8000] | BIT(15);
 			}
 		}
 
@@ -492,12 +499,14 @@ void bottomBgLoad() {
 			// break;
 		case TWLSettings::EThemeHBL:
 		case TWLSettings::EThemeGBC:
+			temp[0] = '\0';
+			tempNested[0] = '\0';
 			break;
 	}
 
-	if (access(temp, F_OK) == 0)
+	if (temp[0] != '\0' && access(temp, F_OK) == 0)
 		bottomBGFile = std::string(temp);
-	else if (access(tempNested, F_OK) == 0)
+	else if (tempNested[0] != '\0' && access(tempNested, F_OK) == 0)
 		bottomBGFile = std::string(tempNested);
 
 	std::vector<unsigned char> image;
@@ -508,7 +517,7 @@ void bottomBgLoad() {
 	for (uint i=0;i<image.size()/4;i++) {
 		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			bmpImageBuffer[i] = colorTable[bmpImageBuffer[i]];
+			bmpImageBuffer[i] = colorTable[bmpImageBuffer[i] % 0x8000] | BIT(15);
 		}
 	}
 
@@ -844,7 +853,7 @@ static void markerLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			markerImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				markerImageBuffer[i] = colorTable[markerImageBuffer[i]];
+				markerImageBuffer[i] = colorTable[markerImageBuffer[i] % 0x8000] | BIT(15);
 			}
 		}
 	}
@@ -868,11 +877,22 @@ static void markerDraw(int x, int y) {
 }
 
 static void calendarTextDraw(const Datetime& now) {
-	printSmall(true, 56, calendarYPos+3, getDateYear(), Alignment::center);
+	printSmallMonospaced(true, 56, calendarYPos+3, getDateYear(), Alignment::center);
 
 	Datetime firstDay(now.getYear(), now.getMonth(), 1);
 	int startWeekday = firstDay.getWeekDay();
-	
+
+	// Draw weekdays
+	{
+		printTiny(true, 0*16+8, calendarYPos+20, STR_TWO_LETTER_SUNDAY,    Alignment::center, FontPalette::white);
+		printTiny(true, 1*16+8, calendarYPos+20, STR_TWO_LETTER_MONDAY,    Alignment::center, FontPalette::white);
+		printTiny(true, 2*16+8, calendarYPos+20, STR_TWO_LETTER_TUESDAY,   Alignment::center, FontPalette::white);
+		printTiny(true, 3*16+8, calendarYPos+20, STR_TWO_LETTER_WEDNESDAY, Alignment::center, FontPalette::white);
+		printTiny(true, 4*16+8, calendarYPos+20, STR_TWO_LETTER_THURSDAY,  Alignment::center, FontPalette::white);
+		printTiny(true, 5*16+8, calendarYPos+20, STR_TWO_LETTER_FRIDAY,    Alignment::center, FontPalette::white);
+		printTiny(true, 6*16+8, calendarYPos+20, STR_TWO_LETTER_SATURDAY,  Alignment::center, FontPalette::white);
+	}
+
 	// Draw marker
 	{
 		int myPos = (startWeekday + now.getDay() - 1) / 7;
@@ -951,7 +971,7 @@ void calendarLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			calendarImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				calendarImageBuffer[i] = colorTable[calendarImageBuffer[i]];
+				calendarImageBuffer[i] = colorTable[calendarImageBuffer[i] % 0x8000] | BIT(15);
 			}
 
 			calendarImageBuffer[i] = alphablend(calendarImageBuffer[i], topImageBuffer[(calendarY*256)+calendarX], image[(i*4)+3]);
@@ -981,7 +1001,7 @@ void calendarLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			calendarBigImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				calendarBigImageBuffer[i] = colorTable[calendarBigImageBuffer[i]];
+				calendarBigImageBuffer[i] = colorTable[calendarBigImageBuffer[i] % 0x8000] | BIT(15);
 			}
 
 			calendarBigImageBuffer[i] = alphablend(calendarBigImageBuffer[i], topImageBuffer[(calendarY*256)+calendarX], image[(i*4)+3]);
@@ -1016,7 +1036,7 @@ void clockLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			clockImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				clockImageBuffer[i] = colorTable[clockImageBuffer[i]];
+				clockImageBuffer[i] = colorTable[clockImageBuffer[i] % 0x8000] | BIT(15);
 			}
 
 			clockImageBuffer[i] = alphablend(clockImageBuffer[i], topImageBuffer[(clockY*256)+clockX], image[(i*4)+3]);
@@ -1105,7 +1125,7 @@ void clockDraw() {
 	for (uint i=0;i<image.size()/4;i++) {
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			color = colorTable[color];
+			color = colorTable[color % 0x8000] | BIT(15);
 		}
 		if (image[(i*4)+3] == 0) {
 			bmpImageBuffer[i] = color;
@@ -1171,12 +1191,14 @@ void topBgLoad(void) {
 			// break;
 		case TWLSettings::EThemeHBL:
 		case TWLSettings::EThemeGBC:
+			temp[0] = '\0';
+			tempNested[0] = '\0';
 			break;
 	}
 
-	if (access(temp, F_OK) == 0)
+	if (temp[0] != '\0' && access(temp, F_OK) == 0)
 		sprintf(filePath, "%s", temp);
-	else if (access(tempNested, F_OK) == 0)
+	else if (tempNested[0] != '\0' && access(tempNested, F_OK) == 0)
 		sprintf(filePath, "%s", tempNested);
 
 	std::vector<unsigned char> image;
@@ -1187,7 +1209,7 @@ void topBgLoad(void) {
 	for (uint i=0;i<image.size()/4;i++) {
 		topImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			topImageBuffer[i] = colorTable[topImageBuffer[i]];
+			topImageBuffer[i] = colorTable[topImageBuffer[i] % 0x8000] | BIT(15);
 		}
 	}
 
@@ -1220,7 +1242,7 @@ void topBarLoad(void) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				bmpImageBuffer[i] = colorTable[bmpImageBuffer[i]];
+				bmpImageBuffer[i] = colorTable[bmpImageBuffer[i] % 0x8000] | BIT(15);
 			}
 		}
 		u16* src = bmpImageBuffer;
@@ -1240,7 +1262,7 @@ void topBarLoad(void) {
 
 	char16_t username[11] = {0};
 	memcpy(username, useTwlCfg ? (s16 *)0x02000448 : PersonalData->name, 10 * sizeof(char16_t));
-	printTiny(true, 3, 3, username, Alignment::left, FontPalette::topBar);
+	printTiny(true, 3, 3, username, Alignment::left, FontPalette::white);
 	updateTopTextArea(3, 3, calcTinyFontWidth(username), tinyFontHeight(), bmpImageBuffer);
 
 	drawDateTime(true);
@@ -1253,8 +1275,13 @@ void drawDateTime(bool date, bool showTimeColon) {
 	std::string text = date ? getDate() : retTime();
 	if (!date && !showTimeColon) text[2] = ' ';
 
-	const int posX = date ? 205 : 171;
-	printTiny(true, posX, 3, text, Alignment::right, FontPalette::topBar);
+	const int posX = date ? 204 : 172;
+	if (text.length() <= 5)
+		printTinyMonospaced(true, posX, 3, text, Alignment::right, FontPalette::white);
+	else
+		// If datetime exceeds 5 characters, don't print it as monospaced to avoid overflow.
+		printTiny(true, posX+2, 3, text, Alignment::right, FontPalette::white); 
+		
 	updateTopTextArea(posX - 27, 3, 27, tinyFontHeight(), bmpImageBuffer);
 }
 
@@ -1262,23 +1289,40 @@ void graphicsInit()
 {
 	logPrint("graphicsInit()\n");
 
-	*(u16*)(0x0400006C) |= BIT(14);
-	*(u16*)(0x0400006C) &= BIT(15);
-	SetBrightness(0, 31);
-	SetBrightness(1, 31);
+	char currentSettingPath[40];
+	sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
-	if (ms().colorMode != "Default") {
+	if (access(currentSettingPath, F_OK) == 0) {
+		// Load color LUT
+		char lutName[128] = {0};
+		FILE* file = fopen(currentSettingPath, "rb");
+		fread(lutName, 1, 128, file);
+		fclose(file);
+
 		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), lutName);
 
-		if (getFileSize(colorTablePath) == 0x20000) {
-			colorTable = new u16[0x20000/sizeof(u16)];
+		if (getFileSize(colorTablePath) == 0x10000) {
+			colorTable = new u16[0x10000/sizeof(u16)];
 
 			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x20000, file);
+			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
+
+			const u16 color0 = colorTable[0] | BIT(15);
+			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
+			invertedColors =
+			  (color0 >= 0xF000 && color0 <= 0xFFFF
+			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
 		}
 	}
+
+	*(vu16*)(0x0400006C) |= BIT(14);
+	*(vu16*)(0x0400006C) &= BIT(15);
+	SetBrightness(0, 31);
+	SetBrightness(1, 31);
 
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D);
@@ -1403,9 +1447,9 @@ void graphicsInit()
 	clockPinColor = CONVERT_COLOR(73, 73, 73);
 	clockUserColor = userColors[getFavoriteColor()];
 	if (colorTable) {
-		clockNeedleColor = colorTable[clockNeedleColor];
-		clockPinColor = colorTable[clockPinColor];
-		clockUserColor = colorTable[clockUserColor];
+		clockNeedleColor = colorTable[clockNeedleColor % 0x8000] | BIT(15);
+		clockPinColor = colorTable[clockPinColor % 0x8000] | BIT(15);
+		clockUserColor = colorTable[clockUserColor % 0x8000] | BIT(15);
 	}
 
 	irqSet(IRQ_VBLANK, vBlankHandler);

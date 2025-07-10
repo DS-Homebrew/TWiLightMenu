@@ -129,8 +129,8 @@ public:
 		ENitroSwanLaunch = 19,
 		ENGPDSLaunch = 20,
 		ESNEmulDSLaunch = 21,
-		EAmEDSLaunch = 22,
-		ECrocoDSLaunch = 23,
+		ESugarDSLaunch = 22,
+		ESugarDSLaunch2 = 23, // Duplicated, as two CPC emulators we're bundled prior to including SugarDS
 		ETunaViDSLaunch = 24,
 		EImageLaunch = 25,
 		E3DSLaunch = 26,
@@ -204,12 +204,6 @@ public:
 		EColSegaColecoDS = 2
 	};
 
-	enum TCpcEmulator : int
-	{
-		ECpcAmEDS = 1,
-		ECpcCrocoDS = 2
-	};
-
 	enum TMegaDriveEmulator : int
 	{
 		EMegaDriveJenesis = 1,
@@ -237,6 +231,12 @@ public:
 		ESavesFolder = 0,
 		EGamesFolder = 1,
 		ETWLMFolder = 2
+	};
+
+	enum TSaveRelocation : bool
+	{
+		ERelocOnSDCard = true,
+		ELocaOnNDSCart = false
 	};
 
 public:
@@ -277,8 +277,6 @@ public:
 	TLanguage guiLanguage, currentLanguage;
 	TLanguage titleLanguage;
 	bool macroMode;
-	std::string colorMode;
-	// int blfLevel;
 	bool sleepMode;
 	bool kioskMode;
 	TExploit dsiWareExploit;
@@ -301,7 +299,6 @@ public:
 	TColSegaEmulator colEmulator;
 	TColSegaEmulator sgEmulator;
 	TMegaDriveEmulator mdEmulator;
-	TCpcEmulator cpcEmulator;
 	//int snesEmulator;
 	bool updateRecentlyPlayedList;
 	TSortMethod sortMethod;
@@ -386,9 +383,10 @@ public:
 	TLanguage gameLanguage;
 	TRegion gameRegion;
 	bool useRomRegion;
-	int extendedMemory;
+	bool boostCpuForClut;
 	bool forceSleepPatch;
 	TSoundFreq soundFreq;
+	TSaveRelocation saveRelocation;
 };
 
 typedef singleton<TWLSettings> menuSettings_s;

@@ -281,17 +281,18 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 						// clear pixel (using transparent palette slot)
 						banner.icon[pos] &= nibble? 0x0f : 0xf0;
 						// read color
-						u8 r, g, b, a;
-						r = image[i*4];
-						g = image[i*4+1];
-						b = image[i*4+2];
-						a = image[i*4+3];
-						if (a == 255) {
-							// convert to 5-bit bgr
-							b /= 8;
-							g /= 8;
-							r /= 8;
-							u16 color = 0x8000 | b<<10 | g<<5 | r;
+						if (image[i*4+3] == 255) {
+							// convert to bgr565
+							const u16 green = (image[i*4+1]>>2)<<5;
+							u16 color = image[i*4]>>3 | (image[i*4+2]>>3)<<10;
+							if (green & BIT(5)) {
+								color |= BIT(15);
+							}
+							for (int g = 6; g <= 10; g++) {
+								if (green & BIT(g)) {
+									color |= BIT(g-1);
+								}
+							}
 							// find color in palette
 							bool found = false;
 							for (uint palIdx = 1; palIdx < colorCount; palIdx++) {
@@ -463,8 +464,8 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 
 		fseek(fp, ndsHeader.arm9romOffset + ndsHeader.arm9executeAddress - ndsHeader.arm9destination, SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, fp);
-		if (arm9StartSig[0] == 0xE3A0C301
-		 && arm9StartSig[1] == 0xE58CC208) {
+		if ((arm9StartSig[0] == 0xE3A0C301 || (arm9StartSig[0] >= 0xEA000000 && arm9StartSig[0] < 0xEC000000 /* If title contains cracktro or extra splash */))
+		  && arm9StartSig[1] == 0xE58CC208) {
 			// Title seems to be developed with Nintendo SDK, verify
 			if ((arm9StartSig[2] >= 0xEB000000 && arm9StartSig[2] < 0xEC000000) // SDK 2 & TWL SDK 5
 			 && (arm9StartSig[3] >= 0xE3A00000 && arm9StartSig[3] < 0xE3A01000)) {
@@ -926,27 +927,23 @@ static inline std::u16string splitLongDialogTitle(std::string_view text) {
 }
 
 void titleUpdate(bool isDir, std::string_view name, int num) {
-	bool theme_showdialogbox = (showdialogbox || (ms().theme == TWLSettings::EThemeSaturn && currentBg == 1) || (ms().theme == TWLSettings::EThemeHBL && dbox_showIcon));
+	const bool theme_showdialogbox = (showdialogbox || (ms().theme == TWLSettings::EThemeSaturn && currentBg == 1) || (ms().theme == TWLSettings::EThemeHBL && dbox_showIcon));
 	if (isDir) {
 		if (theme_showdialogbox) {
 			writeDialogTitleFolder(splitLongDialogTitle(name == ".." ? STR_BACK : name));
 		} else {
 			writeBannerText(name, name == ".." ? STR_BACK : name);
 		}
-	} else if (infoFound[num] || extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
-		// this is an nds/app file!
-		// or a file with custom banner text
+	} else {
 		if (theme_showdialogbox) {
 			infoFound[num] ? writeDialogTitle(cachedTitle[num]) : writeDialogTitle(u"???");
 		} else {
-			infoFound[num] ? writeBannerText(name, cachedTitle[num]) : writeBannerText(name, name);
-		}
-	} else {
-		if (theme_showdialogbox) {
-			writeDialogTitle(splitLongDialogTitle(name.substr(0, name.rfind('.'))));
-		} else {
-			std::string_view nameSubstr = name.substr(0, name.rfind('.'));
-			writeBannerText(nameSubstr, nameSubstr);
+			if ((ms().filenameDisplay == 0) && !infoFound[num]) {
+				std::string_view nameSubstr = name.substr(0, name.rfind('.'));
+				writeBannerText(nameSubstr, nameSubstr);
+			} else {
+				infoFound[num] ? writeBannerText(name, cachedTitle[num]) : writeBannerText(name, name);
+			}
 		}
 	}
 }

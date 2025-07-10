@@ -22,6 +22,8 @@
 #include <nds/ndstypes.h>
 #include <string>
 
+extern bool doubleBuffer;
+
 void SetBrightness(u8 screen, s8 bright);
 void imageLoad(const char* filename);
 void bgLoad(void);

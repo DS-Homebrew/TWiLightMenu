@@ -159,7 +159,7 @@ void loadIcon(int num, u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 
 	glDeleteTextures(1, &iconTexID[num]);
 	if (colorTable) {
 		for (int i = 0; i < (twl ? 16*8 : 16); i++) {
-			palSrc[i] = colorTable[palSrc[i]];
+			palSrc[i] = colorTable[palSrc[i] % 0x8000];
 		}
 	}
 	if (twl) {
@@ -366,17 +366,18 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 						// clear pixel (using transparent palette slot)
 						ndsBanner.icon[pos] &= nibble? 0x0f : 0xf0;
 						// read color
-						u8 r, g, b, a;
-						r = image[i*4];
-						g = image[i*4+1];
-						b = image[i*4+2];
-						a = image[i*4+3];
-						if (a == 255) {
-							// convert to 5-bit bgr
-							b /= 8;
-							g /= 8;
-							r /= 8;
-							u16 color = 0x8000 | b<<10 | g<<5 | r;
+						if (image[i*4+3] == 255) {
+							// convert to bgr565
+							const u16 green = (image[i*4+1]>>2)<<5;
+							u16 color = image[i*4]>>3 | (image[i*4+2]>>3)<<10;
+							if (green & BIT(5)) {
+								color |= BIT(15);
+							}
+							for (int g = 6; g <= 10; g++) {
+								if (green & BIT(g)) {
+									color |= BIT(g-1);
+								}
+							}
 							// find color in palette
 							bool found = false;
 							for (uint palIdx = 1; palIdx < colorCount; palIdx++) {
@@ -505,8 +506,8 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 
 			fseek(fp, ndsHeader.arm9romOffset + ndsHeader.arm9executeAddress - ndsHeader.arm9destination, SEEK_SET);
 			fread(arm9StartSig, sizeof(u32), 4, fp);
-			if (arm9StartSig[0] == 0xE3A0C301
-			 && arm9StartSig[1] == 0xE58CC208) {
+			if ((arm9StartSig[0] == 0xE3A0C301 || (arm9StartSig[0] >= 0xEA000000 && arm9StartSig[0] < 0xEC000000 /* If title contains cracktro or extra splash */))
+			  && arm9StartSig[1] == 0xE58CC208) {
 				// Title seems to be developed with Nintendo SDK, verify
 				if ((arm9StartSig[2] >= 0xEB000000 && arm9StartSig[2] < 0xEC000000) // SDK 2 & TWL SDK 5
 				 && (arm9StartSig[3] >= 0xE3A00000 && arm9StartSig[3] < 0xE3A01000)) {
@@ -826,7 +827,7 @@ void iconUpdate(int num, bool isDir, const char* name)
 
 void titleUpdate(int num, bool top, bool isDir, const char* name)
 {
-	if ((strcmp(name, "slot1") == 0) || extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"}) || infoFound[num]) {
+	if ((strcmp(name, "slot1") == 0) || infoFound[num]) {
 		// this is an nds/app file!
 		// or a file with custom banner text
 		if (infoFound[num]) {
@@ -836,7 +837,13 @@ void titleUpdate(int num, bool top, bool isDir, const char* name)
 		}
 	} else {
 		std::vector<std::string> lines;
-		lines.push_back(name);
+		if (ms().filenameDisplay == 0) {
+			std::string nameString = name;
+			std::string nameSubstr = nameString.substr(0, nameString.rfind('.'));
+			lines.push_back(nameSubstr);
+		} else {
+			lines.push_back(name);
+		}
 
 		for (uint i = 0; i < lines.size(); i++) {
 			int width = calcSmallFontWidth(lines[i]);

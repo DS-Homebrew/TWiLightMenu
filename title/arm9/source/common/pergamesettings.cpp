@@ -15,6 +15,7 @@
 
 bool perGameSettings_directBoot = false;	// Homebrew only
 int perGameSettings_dsiMode = -1;
+int perGameSettings_dsPhatColors = -1;
 int perGameSettings_language = -2;
 int perGameSettings_region = -2;
 int perGameSettings_saveNo = 0;
@@ -27,6 +28,7 @@ int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 int perGameSettings_dsiwareBooter = -1;
 int perGameSettings_useBootstrap = -1;
+int perGameSettings_saveRelocation = -1;
 
 char pergamefilepath[256];
 
@@ -34,6 +36,7 @@ void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().previousUsedDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
+	perGameSettings_dsPhatColors = pergameini.GetInt("GAMESETTINGS", "PHAT_COLORS", -1);
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_region = pergameini.GetInt("GAMESETTINGS", "REGION", -3);
 	if (perGameSettings_region < -2 || (!dsiFeatures() && perGameSettings_region == -1)) perGameSettings_region = -2;
@@ -46,6 +49,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
 	perGameSettings_dsiwareBooter = pergameini.GetInt("GAMESETTINGS", "DSIWARE_BOOTER", -1);
 	perGameSettings_useBootstrap = pergameini.GetInt("GAMESETTINGS", "USE_BOOTSTRAP", -1);
+	perGameSettings_saveRelocation = pergameini.GetInt("GAMESETTINGS", "SAVE_RELOCATION", -1);
 }
 
 std::string getSavExtension(void) {

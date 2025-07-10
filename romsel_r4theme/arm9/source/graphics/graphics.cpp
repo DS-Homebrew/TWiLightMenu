@@ -102,11 +102,17 @@ void ClearBrightness(void) {
 }
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
+
+bool invertedColors = false;
+bool noWhiteFade = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -114,7 +120,7 @@ void SetBrightness(u8 screen, s8 bright) {
 		bright = -bright;
 	}
 	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 //-------------------------------------------------------
@@ -145,7 +151,7 @@ void initSubSprites(void)
 u16 convertToDsBmp(u16 val) {
 	val = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
 	if (colorTable) {
-		return colorTable[val];
+		return colorTable[val % 0x8000] | BIT(15);
 	}
 	return val;
 }
@@ -238,22 +244,22 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 		for (u32 i = 0; i < width*height; i++) {
 			pixelAdjustInfo = 0;
 			if (alternatePixel) {
-				if (bmpImageBuffer[(i*bits)] >= 0x4) {
-					bmpImageBuffer[(i*bits)] -= 0x4;
+				if (bmpImageBuffer[(i*bits)] >= 0x4 && bmpImageBuffer[(i*bits)] < 0xFC) {
+					bmpImageBuffer[(i*bits)] += 0x4;
 					pixelAdjustInfo |= BIT(0);
 				}
-				if (bmpImageBuffer[(i*bits)+1] >= 0x4) {
-					bmpImageBuffer[(i*bits)+1] -= 0x4;
+				if (bmpImageBuffer[(i*bits)+1] >= 0x4 && bmpImageBuffer[(i*bits)+1] < 0xFC) {
+					bmpImageBuffer[(i*bits)+1] += 0x4;
 					pixelAdjustInfo |= BIT(1);
 				}
-				if (bmpImageBuffer[(i*bits)+2] >= 0x4) {
-					bmpImageBuffer[(i*bits)+2] -= 0x4;
+				if (bmpImageBuffer[(i*bits)+2] >= 0x4 && bmpImageBuffer[(i*bits)+2] < 0xFC) {
+					bmpImageBuffer[(i*bits)+2] += 0x4;
 					pixelAdjustInfo |= BIT(2);
 				}
 			}
 			u16 color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			if (top) {
 				topImage[startMenu][0][(xPos+x+(y*256))+(yPos*256)] = color;
@@ -262,28 +268,28 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 			}
 			if (alternatePixel) {
 				if (pixelAdjustInfo & BIT(0)) {
-					bmpImageBuffer[(i*bits)] += 0x4;
-				}
-				if (pixelAdjustInfo & BIT(1)) {
-					bmpImageBuffer[(i*bits)+1] += 0x4;
-				}
-				if (pixelAdjustInfo & BIT(2)) {
-					bmpImageBuffer[(i*bits)+2] += 0x4;
-				}
-			} else {
-				if (bmpImageBuffer[(i*bits)] >= 0x4) {
 					bmpImageBuffer[(i*bits)] -= 0x4;
 				}
-				if (bmpImageBuffer[(i*bits)+1] >= 0x4) {
+				if (pixelAdjustInfo & BIT(1)) {
 					bmpImageBuffer[(i*bits)+1] -= 0x4;
 				}
-				if (bmpImageBuffer[(i*bits)+2] >= 0x4) {
+				if (pixelAdjustInfo & BIT(2)) {
 					bmpImageBuffer[(i*bits)+2] -= 0x4;
+				}
+			} else {
+				if (bmpImageBuffer[(i*bits)] >= 0x4 && bmpImageBuffer[(i*bits)] < 0xFC) {
+					bmpImageBuffer[(i*bits)] += 0x4;
+				}
+				if (bmpImageBuffer[(i*bits)+1] >= 0x4 && bmpImageBuffer[(i*bits)+1] < 0xFC) {
+					bmpImageBuffer[(i*bits)+1] += 0x4;
+				}
+				if (bmpImageBuffer[(i*bits)+2] >= 0x4 && bmpImageBuffer[(i*bits)+2] < 0xFC) {
+					bmpImageBuffer[(i*bits)+2] += 0x4;
 				}
 			}
 			color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			if (top) {
 				topImage[startMenu][1][(xPos+x+(y*256))+(yPos*256)] = color;
@@ -310,7 +316,7 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 				u16 val = *(src++);
 				u16 color = ((val >> (rgb565 ? 11 : 10)) & 0x1F) | ((val >> (rgb565 ? 1 : 0)) & (0x1F << 5)) | (val & 0x1F) << 10 | BIT(15);
 				if (colorTable) {
-					color = colorTable[color];
+					color = colorTable[color % 0x8000] | BIT(15);
 				}
 				*(dst + x) = color;
 				*(dst2 + x) = color;
@@ -331,7 +337,7 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 			fread(&unk, 1, 1, file);
 			pixelBuffer[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
 			if (colorTable) {
-				pixelBuffer[i] = colorTable[pixelBuffer[i]];
+				pixelBuffer[i] = colorTable[pixelBuffer[i] % 0x8000] | BIT(15);
 			}
 		}
 		u8 *bmpImageBuffer = new u8[width * height];
@@ -368,7 +374,7 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 			fread(&unk, 1, 1, file);
 			monoPixel[i] = pixelR>>3 | (pixelG>>3)<<5 | (pixelB>>3)<<10 | BIT(15);
 			if (colorTable) {
-				monoPixel[i] = colorTable[monoPixel[i]];
+				monoPixel[i] = colorTable[monoPixel[i] % 0x8000] | BIT(15);
 			}
 		}
 		u8 *bmpImageBuffer = new u8[(width * height)/8];
@@ -427,24 +433,28 @@ static void loadPng(const bool top, const int startMenu, const std::string filen
 	for (unsigned i=0;i<image.size()/4;i++) {
 		pixelAdjustInfo = 0;
 		if (alternatePixel) {
-			if (image[(i*4)] >= 0x4) {
-				image[(i*4)] -= 0x4;
+			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
+				image[(i*4)] += 0x4;
 				pixelAdjustInfo |= BIT(0);
 			}
-			if (image[(i*4)+1] >= 0x4) {
-				image[(i*4)+1] -= 0x4;
+			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
+				image[(i*4)+1] += 0x4;
 				pixelAdjustInfo |= BIT(1);
 			}
-			if (image[(i*4)+2] >= 0x4) {
-				image[(i*4)+2] -= 0x4;
+			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
+				image[(i*4)+2] += 0x4;
 				pixelAdjustInfo |= BIT(2);
+			}
+			if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+				image[(i*4)+3] += 0x4;
+				pixelAdjustInfo |= BIT(3);
 			}
 		}
 		u16 res = 0;
 		if (image[(i*4)+3] > 0) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 		}
@@ -455,30 +465,36 @@ static void loadPng(const bool top, const int startMenu, const std::string filen
 		}
 		if (alternatePixel) {
 			if (pixelAdjustInfo & BIT(0)) {
-				image[(i*4)] += 0x4;
-			}
-			if (pixelAdjustInfo & BIT(1)) {
-				image[(i*4)+1] += 0x4;
-			}
-			if (pixelAdjustInfo & BIT(2)) {
-				image[(i*4)+2] += 0x4;
-			}
-		} else {
-			if (image[(i*4)] >= 0x4) {
 				image[(i*4)] -= 0x4;
 			}
-			if (image[(i*4)+1] >= 0x4) {
+			if (pixelAdjustInfo & BIT(1)) {
 				image[(i*4)+1] -= 0x4;
 			}
-			if (image[(i*4)+2] >= 0x4) {
+			if (pixelAdjustInfo & BIT(2)) {
 				image[(i*4)+2] -= 0x4;
+			}
+			if (pixelAdjustInfo & BIT(3)) {
+				image[(i*4)+3] -= 0x4;
+			}
+		} else {
+			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
+				image[(i*4)] += 0x4;
+			}
+			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
+				image[(i*4)+1] += 0x4;
+			}
+			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
+				image[(i*4)+2] += 0x4;
+			}
+			if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+				image[(i*4)+3] += 0x4;
 			}
 		}
 		res = 0;
 		if (image[(i*4)+3] > 0) {
 			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
 			res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
 		}
@@ -573,28 +589,30 @@ void vBlankHandler()
 
 		// glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 		glColor(RGB15(31, 31, 31));
+		const u16 black = colorTable ? colorTable[RGB15(0, 0, 0) % 0x8000] : RGB15(0, 0, 0);
+		const u16 white = colorTable ? colorTable[RGB15(31, 31, 31) % 0x8000] : RGB15(31, 31, 31);
 
 	  if (ms().theme != TWLSettings::EThemeGBC) {
 		if (startMenu) {
 			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, startBorderColor);
 			glSprite(232, 2, GL_FLIP_NONE, &manualIcon[manualIconNextImg]);
 		} else {
-			glBoxFilled(35, 23, 217, 64, RGB15(0, 0, 0));
-			glBoxFilled(77, 24, 216, 63, RGB15(31, 31, 31));
+			glBoxFilled(35, 23, 217, 64, black);
+			glBoxFilled(77, 24, 216, 63, white);
 			glSprite(36, 24, GL_FLIP_NONE, iconboxImage);
 			drawIcon(40, 28);
 			if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 		}
 	  }
 		if (showdialogbox) {
-			glBoxFilled(15, 71, 241, 121+(dialogboxHeight*12), RGB15(0, 0, 0));
+			glBoxFilled(15, 71, 241, 121+(dialogboxHeight*12), black);
 			glBoxFilledGradient(16, 72, 240, 86, windowColorTop, windowColorBottom, windowColorBottom, windowColorTop);
-			glBoxFilled(16, 88, 240, 120+(dialogboxHeight*12), RGB15(31, 31, 31));
+			glBoxFilled(16, 88, 240, 120+(dialogboxHeight*12), white);
 		}
 		if (whiteScreen) {
-			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+			glBoxFilled(0, 0, 256, 192, white);
 		} else if (blackScreen) {
-			glBoxFilled(0, 0, 256, 192, RGB15(0, 0, 0));
+			glBoxFilled(0, 0, 256, 192, black);
 		}
 
 		glEnd2D();
@@ -621,23 +639,40 @@ void vBlankHandler()
 
 void graphicsInit()
 {	
-	*(u16*)(0x0400006C) |= BIT(14);
-	*(u16*)(0x0400006C) &= BIT(15);
-	SetBrightness(0, 31);
-	SetBrightness(1, 31);
+	char currentSettingPath[40];
+	sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
-	if (ms().colorMode != "Default") {
+	if (access(currentSettingPath, F_OK) == 0) {
+		// Load color LUT
+		char lutName[128] = {0};
+		FILE* file = fopen(currentSettingPath, "rb");
+		fread(lutName, 1, 128, file);
+		fclose(file);
+
 		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), lutName);
 
-		if (getFileSize(colorTablePath) == 0x20000) {
-			colorTable = new u16[0x20000/sizeof(u16)];
+		if (getFileSize(colorTablePath) == 0x10000) {
+			colorTable = new u16[0x10000/sizeof(u16)];
 
 			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x20000, file);
+			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
+
+			const u16 color0 = colorTable[0] | BIT(15);
+			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
+			invertedColors =
+			  (color0 >= 0xF000 && color0 <= 0xFFFF
+			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
 		}
 	}
+
+	*(vu16*)(0x0400006C) |= BIT(14);
+	*(vu16*)(0x0400006C) &= BIT(15);
+	SetBrightness(0, 31);
+	SetBrightness(1, 31);
 
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D);
@@ -690,10 +725,15 @@ void graphicsInit()
 	}
 
 	// Make screens black
+	u16 black = 0x8000;
+	if (colorTable) {
+		black = colorTable[0] | BIT(15);
+	}
+
+	dmaFillHalfWords(black, BG_GFX, 0x18000);
+	dmaFillHalfWords(black, BG_GFX_SUB, 0x18000);
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);
-	dmaFillWords(0, BG_GFX, 0x18000);
-	dmaFillWords(0, BG_GFX_SUB, 0x18000);
 }
 
 void graphicsLoad()
@@ -714,7 +754,7 @@ void graphicsLoad()
 		for (uint i=0; i<image.size()/4; i++) {
 			topImage[0][0][i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				topImage[0][0][i] = colorTable[topImage[0][0][i]];
+				topImage[0][0][i] = colorTable[topImage[0][0][i] % 0x8000];
 			}
 			topImage[0][1][i] = topImage[0][0][i];
 			topImage[1][0][i] = topImage[0][0][i];
@@ -817,9 +857,9 @@ void graphicsLoad()
 	windowColorTop = RGB15(0, 0, 31);
 	windowColorBottom = RGB15(0, 0, 15);
 	if (colorTable) {
-		startBorderColor = colorTable[startBorderColor];
-		windowColorTop = colorTable[windowColorTop];
-		windowColorBottom = colorTable[windowColorBottom];
+		startBorderColor = colorTable[startBorderColor % 0x8000] | BIT(15);
+		windowColorTop = colorTable[windowColorTop % 0x8000];
+		windowColorBottom = colorTable[windowColorBottom % 0x8000];
 	}
 
 	/*if (subtheme >= 0 && subtheme < 12) {
@@ -867,7 +907,7 @@ void graphicsLoad()
 	u16* newPalette = (u16*)icon_manualPal;
 	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
+			*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 		}
 	}
 
@@ -888,7 +928,7 @@ void graphicsLoad()
 	newPalette = (u16*)iconboxPal;
 	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
+			*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 		}
 	}
 
@@ -909,7 +949,7 @@ void graphicsLoad()
 	newPalette = (u16*)wirelessiconsPal;
 	if (colorTable) {
 		for (int i2 = 0; i2 < 16; i2++) {
-			*(newPalette+i2) = colorTable[*(newPalette+i2)];
+			*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 		}
 	}
 
@@ -928,6 +968,7 @@ void graphicsLoad()
 							);
 
 	loadConsoleIcons();
+	allocateBannerIconsToPreload();
 
 	while (dmaBusy(0) || dmaBusy(1) || dmaBusy(2) || dmaBusy(3)) swiDelay(100);
 

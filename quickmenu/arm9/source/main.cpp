@@ -42,6 +42,7 @@
 #include "gbaswitch.h"
 #include "perGameSettings.h"
 #include "errorScreen.h"
+#include "esrbSplash.h"
 
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
@@ -57,6 +58,7 @@
 #include "autoboot.h"	// For rebooting into the game
 
 #include "defaultSettings.h"
+#include "colorLutBlacklist.h"
 #include "twlClockExcludeMap.h"
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
@@ -127,6 +129,7 @@ int mpuregion = 0;
 int mpusize = 0;
 
 bool applaunch = false;
+bool colorLutBlacklisted = false;
 bool dsModeForced = false;
 // bool showCursor = true;
 bool startMenu = false;
@@ -173,9 +176,25 @@ void stop (void) {
 }
 
 /**
+ * Disables DS Phat colors for a specific game.
+ */
+bool setDSPhatColors() {
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(colorLutBlacklist)/sizeof(colorLutBlacklist[0]); i++) {
+		if (memcmp(gameTid[ms().secondaryDevice], colorLutBlacklist[i], 3) == 0) {
+			// Found match
+			colorLutBlacklisted = true;
+			return false;
+		}
+	}
+
+	return perGameSettings_dsPhatColors == -1 ? DEFAULT_PHAT_COLORS : perGameSettings_dsPhatColors;
+}
+
+/**
  * Disable TWL clock speed for a specific game.
  */
-bool setClockSpeed() {
+bool setClockSpeed(const bool phatColors) {
 	if (!ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(twlClockExcludeList)/sizeof(twlClockExcludeList[0]); i++) {
@@ -187,7 +206,12 @@ bool setClockSpeed() {
 		}
 	}
 
-	return perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
+	bool defaultSetting = DEFAULT_BOOST_CPU;
+	if (perGameSettings_boostCpu == -1 && !colorLutBlacklisted && ((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && (colorTable || phatColors)) {
+		defaultSetting = ms().boostCpuForClut;
+	}
+
+	return perGameSettings_boostCpu == -1 ? defaultSetting : perGameSettings_boostCpu;
 }
 
 /**
@@ -2166,6 +2190,8 @@ int dsClassicMenu(void) {
 
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiWare[ms().secondaryDevice]) {
+				remove(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
+
 				std::string typeToReplace = filename[ms().secondaryDevice].substr(filename[ms().secondaryDevice].rfind('.'));
 
 				char *name = argarray.at(0);
@@ -2384,6 +2410,7 @@ int dsClassicMenu(void) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "MANUAL_PATH", getGameManual(filename[ms().secondaryDevice].c_str()));
 					bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", setDSPhatColors());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", perGameSettings_region < -1 ? ms().useRomRegion : 0);
@@ -2589,8 +2616,9 @@ int dsClassicMenu(void) {
 
 						SetMPUSettings();
 
-						bool boostCpu = setClockSpeed();
-						bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
+						const bool phatColors = setDSPhatColors();
+						const bool boostCpu = setClockSpeed(phatColors);
+						const bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 						const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 						CIniFile bootstrapini(bootstrapinipath);
@@ -2602,6 +2630,7 @@ int dsClassicMenu(void) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && (gameTid[ms().secondaryDevice][0] == 'W' || romVersion[ms().secondaryDevice] == 0x57)) ? "wide" : "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", phatColors);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", perGameSettings_region < -1 ? ms().useRomRegion : 0);
@@ -2622,6 +2651,7 @@ int dsClassicMenu(void) {
 						|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
 						|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 						);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "SAVE_RELOCATION", perGameSettings_saveRelocation == -1 ? ms().saveRelocation : perGameSettings_saveRelocation);
 						bootstrapini.SaveIniFile(bootstrapinipath);
 
 						if (dsiFeatures() && !isHomebrew[ms().secondaryDevice]) {
@@ -2669,6 +2699,12 @@ int dsClassicMenu(void) {
 						ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
+
+						createEsrbSplash();
+
+						if (sdFound() && ms().homebrewBootstrap && (access("sd:/moonshl2/logbuf.txt", F_OK) == 0)) {
+							remove("sd:/moonshl2/logbuf.txt"); // Delete file for Moonshell 2 to boot properly
+						}
 
 						const bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
@@ -3269,59 +3305,13 @@ int dsClassicMenu(void) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/NGPDS.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename[ms().secondaryDevice], {".dsk"}) && ms().cpcEmulator == TWLSettings::ECpcAmEDS) {
-					ms().launchType[ms().secondaryDevice] = (ms().secondaryDevice ? Launch::EAmEDSLaunch : Launch::ESDFlashcardLaunch);
+				} else if (extension(filename[ms().secondaryDevice], {".dsk"})) {
+					ms().launchType[ms().secondaryDevice] = Launch::ESugarDSLaunch;
 
-					if (ms().secondaryDevice) {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
-						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/AmEDS.nds";
-							boostVram = true;
-						}
-					} else {
-						useNDSB = true;
-
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/AmEDS.nds";
-						ndsToBootFat = replaceAll(ndsToBoot, "sd:/", "fat:/");
-						CIniFile bootstrapini(BOOTSTRAP_INI);
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ndsToBoot);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
-					}
-				} else if (extension(filename[ms().secondaryDevice], {".dsk"}) && ms().cpcEmulator == TWLSettings::ECpcCrocoDS) {
-					ms().launchType[ms().secondaryDevice] = (ms().secondaryDevice ? Launch::ECrocoDSLaunch : Launch::ESDFlashcardLaunch);
-
-					if (ms().secondaryDevice) {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-						if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-							boostVram = true;
-						}
-					} else {
-						useNDSB = true;
-
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/CrocoDS.nds";
-						ndsToBootFat = replaceAll(ndsToBoot, "sd:/", "fat:/");
-						CIniFile bootstrapini(BOOTSTRAP_INI);
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ndsToBoot);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-						bootstrapini.SaveIniFile(BOOTSTRAP_INI);
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SugarDS.nds";
+					if (!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "fat:/_nds/TWiLightMenu/emulators/SugarDS.nds";
+						boostVram = true;
 					}
 				} else if (extension(filename[ms().secondaryDevice], {".min"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EPokeMiniLaunch;

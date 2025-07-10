@@ -64,6 +64,8 @@ std::vector<std::string> unlaunchBgList;
 std::vector<std::string> fontList;
 std::vector<std::string> menuSrldrList;
 
+std::string colorLutName;
+
 bool fadeType = false; // false = out, true = in
 
 //bool soundfreqsettingChanged = false;
@@ -398,7 +400,7 @@ std::optional<Option> opt_theme_select(void)
 
 std::optional<Option> opt_lut_select(void)
 {
-	return Option(STR_COLORMODESEL, STR_AB_SETCOLORMODE, Option::Str(&ms().colorMode), colorLutList);
+	return Option(STR_SCREENFILTERSEL, STR_AB_SETSCREENFILTER, Option::Str(&colorLutName), colorLutList);
 }
 
 std::optional<Option> opt_gba_border_select(void)
@@ -541,6 +543,13 @@ void begin_update(int opt)
 	logPrint("\n");
 	if (opt == 1) {
 		// Slot-1 microSD > Console SD
+		if (access("fat:/_nds/TWiLightMenu/addons/", F_OK) == 0) {
+			logPrint("Copying addons from fat to sd\n");
+			mkdir("sd:/_nds/TWiLightMenu/addons/", 0777);
+			fcopy("fat:/_nds/TWiLightMenu/addons/Virtual Console", "sd:/_nds/TWiLightMenu/addons/Virtual Console");
+			fcopy("fat:/_nds/TWiLightMenu/addons/Multimedia", "sd:/_nds/TWiLightMenu/addons/Multimedia");
+		}
+
 		logPrint("Copying 3dssplash.srldr from fat to sd\n");
 		fcopy("fat:/_nds/TWiLightMenu/3dssplash.srldr", "sd:/_nds/TWiLightMenu/3dssplash.srldr");
 		logPrint("Copying imageview.srldr from fat to sd\n");
@@ -555,6 +564,13 @@ void begin_update(int opt)
 		fcopy("fat:/_nds/TWiLightMenu/settings.srldr", "sd:/_nds/TWiLightMenu/settings.srldr");
 	} else {
 		// Console SD > Slot-1 microSD
+		if (access("sd:/_nds/TWiLightMenu/addons/", F_OK) == 0) {
+			logPrint("Copying addons from sd to fat\n");
+			mkdir("fat:/_nds/TWiLightMenu/addons/", 0777);
+			fcopy("sd:/_nds/TWiLightMenu/addons/Virtual Console", "fat:/_nds/TWiLightMenu/addons/Virtual Console");
+			fcopy("sd:/_nds/TWiLightMenu/addons/Multimedia", "fat:/_nds/TWiLightMenu/addons/Multimedia");
+		}
+
 		logPrint("Copying 3dssplash.srldr from sd to fat\n");
 		fcopy("sd:/_nds/TWiLightMenu/3dssplash.srldr", "fat:/_nds/TWiLightMenu/3dssplash.srldr");
 		logPrint("Copying imageview.srldr from sd to fat\n");
@@ -794,14 +810,14 @@ void defaultExitHandler()
 	char currentSettingPath[40];
 	sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
-	if (ms().colorMode != "Default") {
+	if (colorLutName != "Default") {
 		// For homebrew to use the current LUT
 		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), colorLutName.c_str());
 
-		if (getFileSize(colorTablePath) == 0x20000) {
+		if (getFileSize(colorTablePath) == 0x10000) {
 			FILE* file = fopen(currentSettingPath, "wb");
-			fwrite(ms().colorMode.c_str(), 1, ms().colorMode.size(), file);
+			fwrite(colorLutName.c_str(), 1, colorLutName.size(), file);
 			fclose(file);
 		} else if (access(currentSettingPath, F_OK) == 0) {
 			remove(currentSettingPath);
@@ -1003,6 +1019,9 @@ int settingsMode(void)
 
 	const bool gbaR3Found = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/GBARunner3.nds" : "fat:/_nds/TWiLightMenu/emulators/GBARunner3.nds", F_OK) == 0);
 
+	const bool extraUIMusicInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Extra UI Music" : "fat:/_nds/TWiLightMenu/addons/Extra UI Music", F_OK) == 0);
+	const bool emulatorsInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Virtual Console" : "fat:/_nds/TWiLightMenu/addons/Virtual Console", F_OK) == 0);
+
 	const bool sharedFound = (access("sd:/shared1", F_OK) == 0);
 
 	//widescreenEffects = (ms().wideScreen && widescreenFound);
@@ -1127,12 +1146,23 @@ int settingsMode(void)
 				{STR_PRESS_A},
 				{0})
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})
-		.option("DSi/Saturn: SELECT", STR_DESCRIPTION_SELECTBUTTONOPTION, Option::Bool(&ms().showSelectMenu), {STR_SELECT_MENU, STR_DS_CLASSIC_MENU}, {true, false})
-		.option(STR_DSIMUSIC,
-				STR_DESCRIPTION_DSIMUSIC,
-				Option::Int((int *)&ms().dsiMusic),
-				{STR_OFF, STR_REGULAR+" (DSi)", STR_REGULAR+" (3DS)", STR_DSI_SHOP, "HBL", STR_CUSTOM_THEME},
-				{TDSiMusic::EMusicOff, TDSiMusic::EMusicRegular, TDSiMusic::EMusicRegular3D, TDSiMusic::EMusicShop, TDSiMusic::EMusicHBL, TDSiMusic::EMusicTheme})
+		.option("DSi/Saturn: SELECT", STR_DESCRIPTION_SELECTBUTTONOPTION, Option::Bool(&ms().showSelectMenu), {STR_SELECT_MENU, STR_DS_CLASSIC_MENU}, {true, false});
+	if (extraUIMusicInstalled) {
+		guiPage
+			.option(STR_DSIMUSIC,
+					STR_DESCRIPTION_DSIMUSIC,
+					Option::Int((int *)&ms().dsiMusic),
+					{STR_OFF, STR_REGULAR+" (DSi)", STR_REGULAR+" (3DS)", STR_DSI_SHOP, "HBL", STR_CUSTOM_THEME},
+					{TDSiMusic::EMusicOff, TDSiMusic::EMusicRegular, TDSiMusic::EMusicRegular3D, TDSiMusic::EMusicShop, TDSiMusic::EMusicHBL, TDSiMusic::EMusicTheme});
+	} else {
+		guiPage
+			.option(STR_DSIMUSIC,
+					STR_DESCRIPTION_DSIMUSIC,
+					Option::Int((int *)&ms().dsiMusic),
+					{STR_OFF, STR_ON, STR_CUSTOM_THEME},
+					{TDSiMusic::EMusicOff, TDSiMusic::EMusicRegular, TDSiMusic::EMusicTheme});
+	}
+	guiPage
 		.option(STR_SETTINGSMUSIC,
 				STR_DESCRIPTION_SETTINGSMUSIC,
 				Option::Int((int *)&ms().settingsMusic),
@@ -1187,8 +1217,10 @@ int settingsMode(void)
 	}
 
 	guiPage.option(STR_CLOCK_SYSTEM, STR_DESCRIPTION_CLOCK_SYSTEM, Option::Bool(&ms().show12hrClock), {STR_12_HOUR, STR_24_HOUR}, {true, false});
-	if (!ms().macroMode) {
-		guiPage.option(STR_FILENAME_DISPLAY, STR_DESCRIPTION_FILENAME_DISPLAY, Option::Int(&ms().filenameDisplay), {STR_OFF, STR_ABOVE_BANNER, STR_REPLACE_BANNER}, {0, 1, 2});
+	if (ms().macroMode) {
+		guiPage.option(STR_FILENAME_AS_BANNER_TEXT, STR_DESCRIPTION_FILENAME_AS_BANNER_TEXT, Option::Int(&ms().filenameDisplay), {STR_NO, STR_YES}, {0, 2});
+	} else {
+		guiPage.option(STR_FILENAME_DISPLAY, STR_DESCRIPTION_FILENAME_DISPLAY, Option::Int(&ms().filenameDisplay), {STR_OFF+" ("+STR_NO_FILETYPES+")", STR_ABOVE_BANNER, STR_REPLACE_BANNER}, {0, 1, 2});
 	}
 	guiPage.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
 		.option(STR_CUSTOMICONS, STR_DESCRIPTION_CUSTOMICONS, Option::Bool(&ms().showCustomIcons), {STR_ON, STR_OFF}, {true, false})
@@ -1282,6 +1314,10 @@ int settingsMode(void)
 				{STR_YES, STR_NO},
 				{true, false})
 		.option(STR_SAVE_LOCATION, STR_DESCRIPTION_SAVE_LOCATION, Option::Int((int *)&ms().saveLocation), {STR_SAVES_FOLDER, STR_ROM_FOLDER, STR_TWLMENU_FOLDER}, {TWLSettings::ESavesFolder, TWLSettings::EGamesFolder, TWLSettings::ETWLMFolder});
+	if ((sdFound() && !sys().arm7SCFGLocked()) || (sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA))) {
+		bootstrapPage
+			.option(STR_SAVE_RELOCATION, STR_DESCRIPTION_SAVE_RELOCATION, Option::Bool((bool *)&ms().saveRelocation), {ms().showMicroSd ? STR_MICRO_SD_CARD : STR_SD_CARD, STR_SAVE_GAME_CARD}, {true, false});
+	}
 
 	if (flashcardFound() && (dsiFeatures() || sdFound())) {
 		if (sdFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
@@ -1292,6 +1328,10 @@ int settingsMode(void)
 		} else if (isDSiMode()) {
 			bootstrapPage.option(STR_B4DSMODE, STR_DESCRIPTION_B4DSMODE, Option::Int(&bs().b4dsMode), {STR_OFF, STR_4MB_RAM, STR_8MB_RAM}, {0, 1, 2});
 		}
+	}
+
+	if ((dsiFeatures() || sdFound()) && sys().dsiWramAccess() && !sys().dsiWramMirrored()) {
+		bootstrapPage.option(STR_TWL_SPEED_FOR_SCREEN_FILTERS, STR_DESCRIPTION_TWL_SPEED_FOR_SCREEN_FILTERS, Option::Bool(&ms().boostCpuForClut), {STR_ON, STR_OFF}, {true, false});
 	}
 
 	if (widescreenFound) {
@@ -1403,7 +1443,6 @@ int settingsMode(void)
 
 	using TGbaBooter = TWLSettings::TGbaBooter;
 	using TColSegaEmulator = TWLSettings::TColSegaEmulator;
-	using TCpcEmulator = TWLSettings::TCpcEmulator;
 	using TMegaDriveEmulator = TWLSettings::TMegaDriveEmulator;
 	using TSlot1LaunchMethod = TWLSettings::TSlot1LaunchMethod;
 
@@ -1411,7 +1450,8 @@ int settingsMode(void)
 		gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
 	}
 
-	gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
+	if (emulatorsInstalled)
+		gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
 	if (ms().consoleModel == 0 && sdFound() && !sys().arm7SCFGLocked())
 		gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool((bool *)&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"}, {true, false});
 	if (sys().isRegularDS()) {
@@ -1419,19 +1459,21 @@ int settingsMode(void)
 			.option(STR_GBA_BOOTER, STR_DESCRIPTION_GBA_BOOTER, Option::Int((int *)&ms().gbaBooter), {gbaR3Found ? STR_NATIVE_GBARUNNER3 : STR_NATIVE_GBARUNNER2, gbaR3Found ? STR_GBARUNNER3_ONLY : STR_GBARUNNER2_ONLY}, {TGbaBooter::EGbaNativeGbar2, TGbaBooter::EGbaGbar2})
 			.option(STR_GBABORDER, STR_DESCRIPTION_GBABORDER, Option::Nul(opt_gba_border_select), {STR_PRESS_A}, {0});
 	}
-	if (!(isDSiMode() && sdFound() && sys().arm7SCFGLocked()))
-		gamesPage.option(STR_MD_EMULATOR, STR_DESCRIPTION_MD_EMULATOR, Option::Int((int *)&ms().mdEmulator), {"jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {TMegaDriveEmulator::EMegaDriveJenesis, TMegaDriveEmulator::EMegaDrivePico, TMegaDriveEmulator::EMegaDriveHybrid});
-	gamesPage.option(STR_SG_EMULATOR, STR_DESCRIPTION_SG_EMULATOR, Option::Int((int *)&ms().sgEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
-	gamesPage.option(STR_CPC_EMULATOR, STR_DESCRIPTION_CPC_EMULATOR, Option::Int((int *)&ms().cpcEmulator), {"AmEDS", "CrocoDS"}, {TCpcEmulator::ECpcAmEDS, TCpcEmulator::ECpcCrocoDS});
+	if (emulatorsInstalled) {
+		if (!(isDSiMode() && sdFound() && sys().arm7SCFGLocked()))
+			gamesPage.option(STR_MD_EMULATOR, STR_DESCRIPTION_MD_EMULATOR, Option::Int((int *)&ms().mdEmulator), {"jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {TMegaDriveEmulator::EMegaDriveJenesis, TMegaDriveEmulator::EMegaDrivePico, TMegaDriveEmulator::EMegaDriveHybrid});
+		gamesPage.option(STR_SG_EMULATOR, STR_DESCRIPTION_SG_EMULATOR, Option::Int((int *)&ms().sgEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
+	}
 
 	if (isDSiMode() && sdFound() && !sys().arm7SCFGLocked()) {
-		gamesPage
-			.option((flashcardFound() ? STR_SYSSD_RUNFLUBBAEMUSIN : STR_RUNFLUBBAEMUSIN),
-					STR_DESCRIPTION_RUNFLUBBAEMUSIN,
-					Option::Bool(&ms().smsGgInRam),
-					{STR_DS_MODE, STR_DSI_MODE},
-					{true, false});
-
+		if (emulatorsInstalled) {
+			gamesPage
+				.option((flashcardFound() ? STR_SYSSD_RUNFLUBBAEMUSIN : STR_RUNFLUBBAEMUSIN),
+						STR_DESCRIPTION_RUNFLUBBAEMUSIN,
+						Option::Bool(&ms().smsGgInRam),
+						{STR_DS_MODE, STR_DSI_MODE},
+						{true, false});
+		}
 		if (ms().consoleModel == 0) {
 			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int((int *)&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT, "Unlaunch"}, {TSlot1LaunchMethod::EReboot, TSlot1LaunchMethod::EDirect, TSlot1LaunchMethod::EUnlaunch});
 		} else {
@@ -1449,7 +1491,7 @@ int settingsMode(void)
 						{0});
 	}
 
-	miscPage.option(STR_COLORMODE, STR_DESCRIPTION_COLORMODE, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
+	miscPage.option(STR_SCREEN_FILTER, STR_DESCRIPTION_SCREEN_FILTER, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
 
 	if (sdFound() && isDSiMode()) {
 		if (!sys().arm7SCFGLocked()) {

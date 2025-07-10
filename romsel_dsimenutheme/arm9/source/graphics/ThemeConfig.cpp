@@ -14,7 +14,7 @@ ThemeConfig::ThemeConfig()
 	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11),
 	_rotatingCubesRenderY(78), _shoulderLRenderY(172), _shoulderLRenderX(0), _shoulderRRenderY(172), _shoulderRRenderX(178),
 	_volumeRenderY(4), _volumeRenderX(16), _batteryRenderY(5), _batteryRenderX(235), _usernameRenderY(3), _usernameRenderX(28),
-	_usernameRenderXDS(4), _dateRenderY(5), _dateRenderX(162), _timeRenderY(5), _timeRenderX(200),
+	_usernameRenderXDS(4), _usernameEdgeAlpha(true), _dateRenderY(5), _dateRenderX(162), _timeRenderY(5), _timeRenderX(200),
 	// _photoRenderY(24), _photoRenderX(179),
 	_bipsUserPalette(false), _boxUserPalette(false), _boxEmptyUserPalette(false), _boxFullUserPalette(false),
 	_braceUserPalette(false), _bubbleUserPalette(false), _buttonArrowUserPalette(true), _cornerButtonUserPalette(false),
@@ -150,6 +150,7 @@ void ThemeConfig::loadConfig() {
 	_iconWSUserPalette = getInt(themeConfig, "IconWSUserPalette", _iconWSUserPalette);
 
 	_usernameUserPalette = getInt(themeConfig, "UsernameUserPalette", _usernameUserPalette);
+	_usernameEdgeAlpha = getInt(themeConfig, "UsernameEdgeAlpha", _usernameEdgeAlpha);
 	_progressBarUserPalette = getInt(themeConfig, "ProgressBarUserPalette", _progressBarUserPalette);
 
 	_purpleBatteryAvailable = getInt(themeConfig, "PurpleBatteryAvailable", _purpleBatteryAvailable);

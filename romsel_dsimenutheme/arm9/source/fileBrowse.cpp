@@ -85,6 +85,8 @@ extern bool dsModeForced;
 
 extern int vblankRefreshCounter;
 
+extern vector<char *> argarray;
+
 int file_count = 0;
 int last_used_box = 0;
 static int fileStartPos = 0; // The position of the first thing that is not a directory.
@@ -333,7 +335,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 				emplaceBackDirContent =
 				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "..") != 0 && pent->d_name[0] != '_'
-					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
+					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0 && strcmp(pent->d_name, "System Volume Information") != 0)
 					|| nameEndsWith(pent->d_name, extensionList));
 			} else {
 				emplaceBackDirContent = (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList));
@@ -648,7 +650,6 @@ void launchDsClassicMenu(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch DS Classic Menu
-	vector<char *> argarray;
 	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/mainmenu.srldr" : "fat:/_nds/TWiLightMenu/mainmenu.srldr"));
 	int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 	char text[32];
@@ -671,7 +672,6 @@ void launchSettings(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch TWLMenu++ Settings
-	vector<char *> argarray;
 	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr"));
 	int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 	char text[32];
@@ -1242,12 +1242,12 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
 		} else {
-			extern bool setClockSpeed(void);
+			extern bool setClockSpeed(const bool phatColors);
 
 			bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath.c_str());
 			bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", "");
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode);
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed());
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", setClockSpeed(false));
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram);
 		}
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
@@ -1306,7 +1306,6 @@ void launchManual(void) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch manual
-	vector<char *> argarray;
 	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/manual.srldr" : "fat:/_nds/TWiLightMenu/manual.srldr"));
 	int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
 	char text[32];
@@ -2249,6 +2248,9 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 		case 7:
 			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_NO_SAVE_STATE) - smallFontHeight()) / 2), STR_RAM_LIMIT_NO_SAVE_STATE, Alignment::center, FontPalette::dialog);
 			break;
+		case 8:
+			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_NO_SOUND_FX) - smallFontHeight()) / 2), STR_RAM_LIMIT_NO_SOUND_FX, Alignment::center, FontPalette::dialog);
+			break;
 		case 10:
 			if (sys().isRegularDS()) {
 				printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_INSERT_MEMORY_EXPANSION_PAK) - smallFontHeight()) / 2), STR_INSERT_MEMORY_EXPANSION_PAK, Alignment::center, FontPalette::dialog);
@@ -2384,7 +2386,7 @@ bool cannotLaunchMsg(const char *filename) {
 	} else if (isTwlm[CURPOS]) {
 		str = &STR_TWLMENU_ALREADY_RUNNING;
 	} else if (isUnlaunch[CURPOS]) {
-		str = &STR_CANNOT_LAUNCH_WITH_THEME;
+		str = &STR_CANNOT_LAUNCH_WITH_UI;
 	} else if (bnrRomType[CURPOS] == 1) {
 		str = &STR_GBA_BIOS_ERROR_DESC;
 	} else if (bnrRomType[CURPOS] != 0) {
@@ -3411,6 +3413,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				showSTARTborder = false;
 				titleboxXspeed = 3;
 				scrollWindowTouched = true;
+
+				dsiBinariesChecked = false;
+				apChecked = false;
+				infoCheckTimer = 0;
+
 				int prevPos = CURPOS;
 				while (1) {
 					scanKeys();
@@ -3473,6 +3480,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				touchPosition startTouch = touch;
 				touchPosition prevTouch1 = touch;
 				touchPosition prevTouch2 = touch;
+
+				dsiBinariesChecked = false;
+				apChecked = false;
+				infoCheckTimer = 0;
 
 				bool tapped = false;
 				bool dsiCursorMove = false;
@@ -4062,9 +4073,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 							if (!dsiFeatures()) {
 								// Free some RAM space to avoid possible memory leaks
-								snd().stopStream();
+								snd().unloadStream();
 								mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
 								snd().unloadSfxData();
+								tex().unloadPhotoBuffer();
 							}
 
 							mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",

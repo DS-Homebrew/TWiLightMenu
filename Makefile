@@ -109,7 +109,7 @@ clean:
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/manual.srldr"
-	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/imageview.srldr"
+	@rm -rf "$(PACKAGE)/Multimedia/_nds/TWiLightMenu/imageview.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/r4menu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/settings.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/slot1launch.srldr"

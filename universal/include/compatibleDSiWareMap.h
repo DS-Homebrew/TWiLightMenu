@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 474
+// Total: 480
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -93,7 +93,9 @@ static const char compatibleGameListB4DS[][5] = {
 	"KKQ", // Bugs'N'Balls
 	"K2J", // Cake Ninja
 	"K2N", // Cake Ninja 2
+	"KYN", // Cake Ninja: XMAS
 	"KCY", // Calculator
+	"K22", // California Super Sports
 	"K3N", // GO Series: Captain Sub
 	"KCNE", // Castle Conqueror (USA)
 	"KQO", // Castle Conqueror: Against
@@ -126,10 +128,12 @@ static const char compatibleGameListB4DS[][5] = {
 	"K5D", // G.G Series: Cosmo Rally!!
 	"KX2", // Cosmos X2
 	"KDC", // Crash-Course Domo
+	"KCQ", // Crazy Cheebo: Puzzle Party
 	"KZG", // Crazy Golf
 	"KCR", // Crazy Sudoku
 	"KXD", // Crystal Adventure
 	"KQQ", // Crystal Caverns of Amon-Ra
+	"KVC", // Curling Super Championship
 	"K32", // CuteWitch! runner
 	"KTA", // G.G Series: D-Tank
 	"KF3", // Dairojo! Samurai Defenders
@@ -158,6 +162,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KHW", // EJ Puzzles: Hooked
 	"KEI", // Electroplankton: Beatnes
 	"KEB", // Electroplankton: Hanenbow
+	"KEG", // Electroplankton: Lumiloop
 	"KEC", // Electroplankton: Luminarrow
 	"KEH", // Electroplankton: Marine-Crystals
 	"KEF", // Electroplankton: Nanocarp
@@ -220,6 +225,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KTX", // High Stakes Texas Hold'em
 	"KHI", // Hints Hunter
 	"KT2", // G.G Series: Horizontal Bar / GO Series: Let's Swing!
+	"KIS", // Ice Hockey Slovakia 2011
 	"KNK", // Ideyou Sukeno: Kenkou Maja DSi
 	"KBT", // Invasion of the Alien Blobs!
 	"K3J", // iSpot Japan
@@ -481,7 +487,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 31
+// Total: 32
 static const char compatibleGameListB4DSMEP[][5] = {
 	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
@@ -493,6 +499,7 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KVL", // Clash of Elementalists
 	"KUG", // G.G Series: Drift Circuit 2
 	"KEI", // Electroplankton: Beatnes
+	"KEG", // Electroplankton: Lumiloop
 	"KEA", // Electroplankton: Trapy
 	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
@@ -532,6 +539,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	1, // Clash of Elementalists
 	3, // G.G Series: Drift Circuit 2
 	3, // Electroplankton: Beatnes
+	3, // Electroplankton: Lumiloop
 	3, // Electroplankton: Trapy
 	2, // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	1, // Jinia Supasonaru: Waei Rakubiki Jiten
@@ -556,7 +564,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 44
+// Total: 47
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -566,6 +574,8 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
 	"K9G", // Big Bass Arcade
 	"KLN", // Bloons TD
+	"KYN", // Cake Ninja: XMAS
+	"K22", // California Super Sports
 	"KQN", // Castle Conqueror: Revolution
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
@@ -576,6 +586,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KFO", // Frenzic
 	"KGK", // Glory Days: Tactical Defense
 	"KZH", // Halloween Trick or Treat
+	"KIS", // Ice Hockey Slovakia 2011
 	"KPT", // Link 'n' Launch
 	"KYL", // Make Up & Style
 	"K59", // Metal Torrent
@@ -614,6 +625,8 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	5, // Aru Seishun no Monogatari: Kouenji Joshi Sakka (No FMVs)
 	4, // Big Bass Arcade (Crashes at certain points)
 	1, // Bloons TD (No audio)
+	1, // Cake Ninja: XMAS (No audio)
+	4, // California Super Sports (Crashes when selecting either Dodgeball or Rollerblade)
 	4, // Castle Conqueror: Revolution (Crashes at certain point(s))
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
@@ -624,6 +637,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Frenzic (Crashes at certain point)
 	2, // Glory Days: Tactical Defense (No music)
 	2, // Halloween Trick or Treat (No music)
+	8, // Ice Hockey Slovakia 2011 (No sound effects)
 	2, // Link 'n' Launch (No music)
 	5, // Make Up & Style (No FMV)
 	2, // Metal Torrent (No music)
@@ -653,7 +667,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 36
+// Total: 35
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -664,13 +678,12 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KWGV", // Animal Crossing Calculator (Europe, Australia) (Not counted)
 	"KBZ", // BlayzBloo: Super Melee Brawlers Battle Royale
 	"KUV", // Bloons TD 4
-	"KYN", // Cake Ninja: XMAS
 	"KVX", // Cat Frenzy
 	"K35", // Defense of the Middle Kingdom
 	"KN2", // Devil Band: Rock the Underworld
 	"KDQ", // Dragon Quest Wars
-	"KEG", // Electroplankton: Lumiloop
 	"KER", // G.G Series: Exciting River
+	"K5L", // Forgotten Legions
 	"KGUE", // Flipnote Studio (USA)
 	"KKN", // Flipper 2: Flush the Goldfish
 	"KZB", // Little Red Riding Hood's Zombie BBQ

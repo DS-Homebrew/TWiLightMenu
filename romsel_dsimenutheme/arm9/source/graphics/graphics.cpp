@@ -48,6 +48,7 @@
 #include "sound.h"
 #include "startborderpal.h"
 //#include "ndma.h"
+#include "color.h"
 #include "ThemeConfig.h"
 #include "themefilenames.h"
 #include "common/ColorLut.h"
@@ -212,11 +213,17 @@ void ClearBrightness(void) {
 }
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
+
+bool invertedColors = false;
+bool noWhiteFade = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -225,7 +232,7 @@ void SetBrightness(u8 screen, s8 bright) {
 	}
 	if (bright > 31)
 		bright = 31;
-	*(vu16 *)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 //-------------------------------------------------------
@@ -805,7 +812,9 @@ void vBlankHandler() {
 		int bg_G = (bottomScreenBrightness / 8);
 		int bg_B = (bottomScreenBrightness / 8);
 
-		glColor(RGB15(bg_R, bg_G, bg_B));
+		if (!invertedColors) {
+			glColor(RGB15(bg_R, bg_G, bg_B));
+		}
 
 		if (ms().theme == TWLSettings::EThemeHBL) {
 			// Back bubbles
@@ -1189,7 +1198,9 @@ void vBlankHandler() {
 				}
 			}*/
 		if (whiteScreen) {
-			glBoxFilled(0, 0, 256, 192, tc().darkLoading() ? RGB15(0, 0, 0) : RGB15(31, 31, 31));
+			u16 fillColor = tc().darkLoading() ? RGB15(0, 0, 0) : RGB15(31, 31, 31);
+			if (colorTable) fillColor = colorTable[fillColor % 0x8000];
+			glBoxFilled(0, 0, 256, 192, fillColor);
 		}
 		if (showProgressIcon && ms().theme != TWLSettings::EThemeSaturn) {
 			glSprite(ms().rtl() ? 16 : 224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
@@ -1203,15 +1214,19 @@ void vBlankHandler() {
 				barYpos += 12;
 			}
 			extern int getFavoriteColor(void);
-			int fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
-			if (colorTable) fillColor = colorTable[fillColor];
+			u16 fillColor = tc().progressBarUserPalette() ? progressBarColors[getFavoriteColor()] : tc().progressBarColor();
+			u16 fillColorBack = tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23);
+			if (colorTable) {
+				fillColor = colorTable[fillColor % 0x8000];
+				fillColorBack = colorTable[fillColorBack % 0x8000];
+			}
 			if (ms().rtl()) {
-				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
+				glBoxFilled(barXpos, barYpos, barXpos-192, barYpos+5, fillColorBack);
 				if (progressBarLength > 0) {
 					glBoxFilled(barXpos, barYpos, barXpos-progressBarLength, barYpos+5, fillColor);
 				}
 			} else {
-				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, tc().darkLoading() ? RGB15(6, 6, 6) : RGB15(23, 23, 23));
+				glBoxFilled(barXpos, barYpos, barXpos+192, barYpos+5, fillColorBack);
 				if (progressBarLength > 0) {
 					glBoxFilled(barXpos, barYpos, barXpos+progressBarLength, barYpos+5, fillColor);
 				}
@@ -1245,10 +1260,18 @@ void vBlankHandler() {
 	bottomBgRefresh(); // Refresh the background image on vblank
 }
 
-void loadPhoto(const std::string &path);
-void loadBootstrapScreenshot(FILE *file);
+static bool currentPhotoIsBootstrap = false;
+static std::string currentPhotoPath;
+static int currentBootstrapPhoto = 0;
 
-void loadPhotoList() {
+void loadPhoto(const std::string &path, const bool bufferOnly);
+void loadBootstrapScreenshot(FILE *file, const bool bufferOnly);
+
+bool loadPhotoList() {
+	if (!tex().photoBuffer()) {
+		return false;
+	}
+
 	DIR *dir;
 	struct dirent *ent;
 	std::string photoDir;
@@ -1273,8 +1296,10 @@ void loadPhotoList() {
 		}
 		closedir(dir);
 		if (photoList.size() > 0) {
-			loadPhoto(photoList[rand() / ((RAND_MAX + 1u) / photoList.size())]);
-			return;
+			currentPhotoPath = photoList[rand() / ((RAND_MAX + 1u) / photoList.size())];
+			loadPhoto(currentPhotoPath, false);
+			currentPhotoIsBootstrap = false;
+			return true;
 		}
 	}
 
@@ -1293,19 +1318,53 @@ void loadPhotoList() {
 		}
 
 		if (screenshots.size() > 0) {
-			fseek(file, 0x200 + 0x18400 * (screenshots[rand() % screenshots.size()]), SEEK_SET);
-			loadBootstrapScreenshot(file);
-			return;
+			currentBootstrapPhoto = screenshots[rand() % screenshots.size()];
+			fseek(file, 0x200 + 0x18400 * currentBootstrapPhoto, SEEK_SET);
+			loadBootstrapScreenshot(file, false);
+			currentPhotoIsBootstrap = true;
+			return true;
 		}
 	}
 
 	// If no photos or screenshots found, then draw the default
 	char path[64];
 	snprintf(path, sizeof(path), "nitro:/languages/%s/photo_default.png", ms().getGuiLanguageString().c_str());
-	loadPhoto(path);
+	currentPhotoPath = path;
+	loadPhoto(path, false);
+	currentPhotoIsBootstrap = false;
+	return true;
 }
 
-void loadPhoto(const std::string &path) {
+void reloadPhoto() {
+	if (!currentPhotoIsBootstrap) {
+		loadPhoto(currentPhotoPath, true);
+		return;
+	}
+
+	// If no photos found, try find a bootstrap screenshot
+	FILE *file = fopen(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/screenshots.tar" : "fat:/_nds/nds-bootstrap/screenshots.tar", "rb");
+	if (!file)
+		file = fopen(sys().isRunFromSD() ? "fat:/_nds/nds-bootstrap/screenshots.tar" : "sd:/_nds/nds-bootstrap/screenshots.tar", "rb");
+	
+	if (!file) {
+		return;
+	}
+
+	std::vector<int> screenshots;
+	fseek(file, 0x200, SEEK_SET);
+	for (int i = 0; i < 50; i++) {
+		if (fgetc(file) == 'B')
+			screenshots.push_back(i);
+		fseek(file, 0x18400 - 1, SEEK_CUR);
+	}
+
+	if (screenshots.size() > 0) {
+		fseek(file, 0x200 + 0x18400 * currentBootstrapPhoto, SEEK_SET);
+		loadBootstrapScreenshot(file, true);
+	}
+}
+
+void loadPhoto(const std::string &path, const bool bufferOnly) {
 	std::vector<unsigned char> image;
 	bool alternatePixel = false;
 
@@ -1318,60 +1377,80 @@ void loadPhoto(const std::string &path) {
 	}
 
 	for (uint i=0;i<image.size()/4;i++) {
+		u8 pixelAdjustInfo = 0;
 		if (boxArtColorDeband) {
-			image[(i*4)+3] = 0;
 			if (alternatePixel) {
-				if (image[(i*4)] >= 0x4) {
-					image[(i*4)] -= 0x4;
-					image[(i*4)+3] |= BIT(0);
+				if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
+					image[(i*4)] += 0x4;
+					pixelAdjustInfo |= BIT(0);
 				}
-				if (image[(i*4)+1] >= 0x4) {
-					image[(i*4)+1] -= 0x4;
-					image[(i*4)+3] |= BIT(1);
+				if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
+					image[(i*4)+1] += 0x4;
+					pixelAdjustInfo |= BIT(1);
 				}
-				if (image[(i*4)+2] >= 0x4) {
-					image[(i*4)+2] -= 0x4;
-					image[(i*4)+3] |= BIT(2);
+				if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
+					image[(i*4)+2] += 0x4;
+					pixelAdjustInfo |= BIT(2);
+				}
+				if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+					image[(i*4)+3] += 0x4;
+					pixelAdjustInfo |= BIT(3);
 				}
 			}
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (colorTable) {
-			tex().photoBuffer()[i] = colorTable[color];
-		} else {
+		if (image[(i*4)+3] == 255) {
 			tex().photoBuffer()[i] = color;
+		} else {
+			tex().photoBuffer()[i] = alphablend(color, 0, image[(i*4)+3]);
+		}
+		if (colorTable) {
+			tex().photoBuffer()[i] = colorTable[tex().photoBuffer()[i] % 0x8000] | BIT(15);
 		}
 		if (boxArtColorDeband) {
 			if (alternatePixel) {
-				if (image[(i*4)+3] & BIT(0)) {
-					image[(i*4)] += 0x4;
-				}
-				if (image[(i*4)+3] & BIT(1)) {
-					image[(i*4)+1] += 0x4;
-				}
-				if (image[(i*4)+3] & BIT(2)) {
-					image[(i*4)+2] += 0x4;
-				}
-			} else {
-				if (image[(i*4)] >= 0x4) {
+				if (pixelAdjustInfo & BIT(0)) {
 					image[(i*4)] -= 0x4;
 				}
-				if (image[(i*4)+1] >= 0x4) {
+				if (pixelAdjustInfo & BIT(1)) {
 					image[(i*4)+1] -= 0x4;
 				}
-				if (image[(i*4)+2] >= 0x4) {
+				if (pixelAdjustInfo & BIT(2)) {
 					image[(i*4)+2] -= 0x4;
+				}
+				if (pixelAdjustInfo & BIT(3)) {
+					image[(i*4)+3] -= 0x4;
+				}
+			} else {
+				if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
+					image[(i*4)] += 0x4;
+				}
+				if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
+					image[(i*4)+1] += 0x4;
+				}
+				if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
+					image[(i*4)+2] += 0x4;
+				}
+				if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+					image[(i*4)+3] += 0x4;
 				}
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorTable) {
-				tex().photoBuffer2()[i] = colorTable[color];
-			} else {
+			if (image[(i*4)+3] == 255) {
 				tex().photoBuffer2()[i] = color;
+			} else {
+				tex().photoBuffer2()[i] = alphablend(color, 0, image[(i*4)+3]);
+			}
+			if (colorTable) {
+				tex().photoBuffer2()[i] = colorTable[tex().photoBuffer2()[i] % 0x8000] | BIT(15);
 			}
 			if ((i % photoWidth) == photoWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
 		}
+	}
+
+	if (bufferOnly) {
+		return;
 	}
 
 	u16 *bgSubBuffer = tex().beginBgSubModify();
@@ -1405,7 +1484,7 @@ void loadPhoto(const std::string &path) {
 	tex().commitBgSubModify();
 }
 
-void loadBootstrapScreenshot(FILE *file) {
+void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
 	// Simple check to ensure we're seeked to a BMP
 	if (fgetc(file) != 'B' || fgetc(file) != 'M')
 		return;
@@ -1426,9 +1505,11 @@ void loadBootstrapScreenshot(FILE *file) {
 	u16 *bgSubBuffer = tex().beginBgSubModify();
 	u16* bgSubBuffer2 = tex().bgSubBuffer2();
 
-	// Fill area with black
-	for (int y = 24; y < 180; y++) {
-		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
+	if (!bufferOnly) {
+		// Fill area with black
+		for (int y = 24; y < 180; y++) {
+			dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
+		}
 	}
 
 	// Start loading
@@ -1438,20 +1519,26 @@ void loadBootstrapScreenshot(FILE *file) {
 
 			// RGB 565 -> BGR 5551
 			val = ((val >> 11) & 0x1F) | ((val & (0x1F << 6)) >> 1) | ((val & 0x1F) << 10) | BIT(15);
-			if (colorTable) {
-				val = colorTable[val]; // TODO: Remove this when nds-bootstrap supports color modes
-			}
+			/* if (colorTable) {
+				val = colorTable[val % 0x8000] | BIT(15); // TODO: Remove this when nds-bootstrap supports color modes
+			} */
 
 			u8 y = photoHeight - row - 1;
-			bgSubBuffer[(24 + y) * 256 + 24 + col] = val;
+			if (!bufferOnly) {
+				bgSubBuffer[(24 + y) * 256 + 24 + col] = val;
+			}
 			tex().photoBuffer()[y * photoWidth + col] = val;
 			if (boxArtColorDeband) {
-				bgSubBuffer2[(24 + y) * 256 + 24 + col] = val;
+				if (!bufferOnly) {
+					bgSubBuffer2[(24 + y) * 256 + 24 + col] = val;
+				}
 				tex().photoBuffer2()[y * photoWidth + col] = val;
 			}
 		}
 	}
-	tex().commitBgSubModify();
+	if (!bufferOnly) {
+		tex().commitBgSubModify();
+	}
 
 	delete[] buffer;
 }
@@ -1603,7 +1690,7 @@ void graphicsInit() {
 		u16* newPalette = (u16*)bubblesPal;
 		if (colorTable) {
 			for (int i2 = 0; i2 < 6; i2++) {
-				*(newPalette+i2) = colorTable[*(newPalette+i2)];
+				*(newPalette+i2) = colorTable[*(newPalette+i2) % 0x8000];
 			}
 		}
 

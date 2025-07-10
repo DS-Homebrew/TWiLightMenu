@@ -179,6 +179,7 @@ bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 
 void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string_view> extensionList = {}) {
 	dirContents.clear();
+	resetPreloadedBannerIcons();
 
 	file_count = 0;
 	fileStartPos = 0;
@@ -235,7 +236,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 				emplaceBackDirContent =
 				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "..") != 0 && pent->d_name[0] != '_'
-					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
+					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0 && strcmp(pent->d_name, "System Volume Information") != 0)
 					|| nameEndsWith(pent->d_name, extensionList));
 			} else {
 				emplaceBackDirContent = (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList));
@@ -367,20 +368,15 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 		return;
 	}
 
+	displayDiskIcon(ms().secondaryDevice);
+	getGameInfo(0, fileOffset, dirContents.at(fileOffset).isDirectory, dirContents.at(fileOffset).name.c_str(), false);
+	displayDiskIcon(false);
+
 	if (dirContents.at(fileOffset).isDirectory) {
 		isDirectory[0] = true;
-		bnriconPalLine[0] = 0;
-		bnriconPalLoaded[0] = 0;
-		bnriconframenumY[0] = 0;
-		bannerFlip[0] = 0;
-		bnriconisDSi[0] = false;
-		bnrWirelessIcon[0] = 0;
 	} else {
 		isDirectory[0] = false;
 		std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
-		displayDiskIcon(ms().secondaryDevice);
-		getGameInfo(0, isDirectory[0], dirContents.at(fileOffset).name.c_str(), false);
-		displayDiskIcon(false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[0] = 0;
@@ -464,18 +460,12 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 		if (i == file_count) {
 			break;
 		}
+		getGameInfo(n, i, dirContents.at(i).isDirectory, dirContents.at(i).name.c_str(), false);
 		if (dirContents.at(i).isDirectory) {
 			isDirectory[n] = true;
-			bnriconPalLine[n] = 0;
-			bnriconPalLoaded[n] = 0;
-			bnriconframenumY[n] = 0;
-			bannerFlip[n] = 0;
-			bnriconisDSi[n] = false;
-			bnrWirelessIcon[n] = 0;
 		} else {
 			isDirectory[n] = false;
 			std::string std_romsel_filename = dirContents.at(i).name.c_str();
-			getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 				bnrRomType[n] = 0;
@@ -588,7 +578,7 @@ void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
 	} else {
 		isDirectory[n] = false;
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
-		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
+		getGameInfo(n, i, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[n] = 0;
@@ -700,7 +690,7 @@ void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
 	} else {
 		isDirectory[n] = false;
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
-		getGameInfo(n, isDirectory[n], dirContents.at(i).name.c_str(), false);
+		getGameInfo(n, i, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[n] = 0;
@@ -1317,6 +1307,12 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			printSmall(false, 0, 114, "the full version, launch this on", Alignment::center, FontPalette::formText);
 			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center, FontPalette::formText);
 			break;
+		case 8:
+			printSmall(false, 0, 90, "Due to memory limitations, sound effects", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 102, "will not be played. To play this", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 114, "game with sound effects, launch this on", Alignment::center, FontPalette::formText);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center, FontPalette::formText);
+			break;
 		case 10:
 			if (sys().isRegularDS()) {
 				printSmall(false, 0, 102, "To launch this title, please", Alignment::center, FontPalette::formText);
@@ -1848,6 +1844,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				if (hasAP > 0) {
 					dialogboxHeight = 3;
 					showdialogbox = true;
+					clearText(false);
 					printSmall(false, 0, 74, "Anti-Piracy Warning", Alignment::center, FontPalette::formTitleText);
 					printSmall(false, 0, 98, "This game has AP. Please make", Alignment::center, FontPalette::formText);
 					printSmall(false, 0, 110, "sure you're using the latest", Alignment::center, FontPalette::formText);
@@ -1887,9 +1884,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				 && proceedToLaunch && st[ms().secondaryDevice].f_bsize < (32 << 10) && !ms().dontShowClusterWarning) {
 					dialogboxHeight = 5;
 					showdialogbox = true;
-					// Clear location text
 					clearText(false);
-
 					printSmall(false, 0, 74, "Cluster Size Warning", Alignment::center, FontPalette::formTitleText);
 					printSmall(false, 0, 98, "Your SD card is not formatted", Alignment::center, FontPalette::formText);
 					printSmall(false, 0, 110, "using 32KB clusters, this causes", Alignment::center, FontPalette::formText);
@@ -2204,12 +2199,28 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			if (ms().ak_viewMode == TWLSettings::EViewList) {
 				cursorPosOnScreen = 0;
 			}
+			logPrint("isValid: ");
+			logPrint(isValid[cursorPosOnScreen] ? "true" : "false");
+			logPrint("\n");
+			logPrint("isTwlm: ");
+			logPrint(isTwlm[cursorPosOnScreen] ? "true" : "false");
+			logPrint("\n");
+			logPrint("isDirectory: ");
+			logPrint(isDirectory[cursorPosOnScreen] ? "true" : "false");
+			logPrint("\n");
+			logPrint("bnrRomType: ");
+			char numberText[8];
+			sprintf(numberText, "%i", bnrRomType[cursorPosOnScreen]);
+			logPrint(numberText);
+			logPrint("\n");
 			if (isValid[cursorPosOnScreen] && !isTwlm[cursorPosOnScreen] && !isDirectory[cursorPosOnScreen] && (bnrRomType[cursorPosOnScreen] == 0 || bnrRomType[cursorPosOnScreen] == 1 || bnrRomType[cursorPosOnScreen] == 3)) {
+				logPrint("perGameSettings opened!\n");
 				perGameSettings(dirContents.at(fileOffset).name);
 				cursorPosOnScreen = cursorPosOnScreenBak;
 				refreshBanners(screenOffset, fileOffset, dirContents);
 				for (int i = 0; i < 25; i++) bgOperations(true);
 			} else {
+				logPrint("perGameSettings not opened!\n");
 				cursorPosOnScreen = cursorPosOnScreenBak;
 			}
 		}

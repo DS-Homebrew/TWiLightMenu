@@ -15,5 +15,5 @@ if (!$?) {
 docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args
 
 if ($args.Count -eq 0 -and $?) {
-    Copy-Item "imageview.nds" "../7zfile/_nds/TWiLightMenu/imageview.srldr"
+    Copy-Item "imageview.nds" "../7zfile/Multimedia/_nds/TWiLightMenu/imageview.srldr"
 }

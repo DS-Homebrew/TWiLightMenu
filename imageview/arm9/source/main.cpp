@@ -32,6 +32,7 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
+bool supportsDoubleBuffer = false;
 
 extern void ClearBrightness();
 extern int imageType;
@@ -84,11 +85,12 @@ bool extension(const std::string_view filename, const std::vector<std::string_vi
 }
 
 void customSleep() {
-	snd().stopStream();
+	*(int*)0x02003004 = 1; // Fade out sound
 	fadeType = false;
 	for (int i = 0; i < 25; i++) {
 		swiWaitForVBlank();
 	}
+	mmPause();
 	if (!ms().macroMode) {
 		powerOff(PM_BACKLIGHT_TOP);
 	}
@@ -103,8 +105,20 @@ void customSleep() {
 		powerOn(PM_BACKLIGHT_TOP);
 	}
 	powerOn(PM_BACKLIGHT_BOTTOM);
+	mmResume();
 	fadeType = true;
-	snd().beginStream();
+	*(int*)0x02003004 = 2; // Fade in sound
+}
+
+void printText(void) {
+	if (ms().macroMode) return;
+
+	clearText(false);
+	if (supportsDoubleBuffer) {
+		printSmall(false, 0, 88, doubleBuffer ? STR_A_REGULAR_DITHERING : STR_A_TEMPORAL_DITHERING, Alignment::center);
+	}
+	printSmall(false, -88, 174, STR_BACK, Alignment::center);
+	updateText(false);
 }
 
 //---------------------------------------------------------------------------------
@@ -135,10 +149,8 @@ int imageViewer(void) {
 
 	imageLoad((strlen(imagePathChar) >= 2) ? imagePathChar : "nitro:/graphics/test.png");
 	bgLoad();
-	if (!ms().macroMode) {
-		printSmall(false, -88, 174, STR_BACK, Alignment::center);
-		updateText(false);
-	}
+	supportsDoubleBuffer = doubleBuffer;
+	printText();
 
 	snd();
 	snd().beginStream();
@@ -150,6 +162,8 @@ int imageViewer(void) {
 
 	fadeType = true;	// Fade in from white
 
+	bool exitflag = false;
+
 	while (1) {
 		do {
 			scanKeys();
@@ -158,18 +172,39 @@ int imageViewer(void) {
 			held = keysHeld();
 			//repeat = keysDownRepeat();
 			checkSdEject();
-			snd().updateStream();
+			// snd().updateStream();
 			swiWaitForVBlank();
-		} while (!held);
+			exitflag = fifoCheckValue32(FIFO_USER_01);
+		} while (!held && !exitflag);
 
 		if ((pressed & KEY_LID) && ms().sleepMode) {
 			customSleep();
 		}
 
+		if ((pressed & KEY_A) && supportsDoubleBuffer) {
+			doubleBuffer = !doubleBuffer;
+			printText();
+			snd().playSwitch();
+		}
+
 		if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.px >= 0 && touch.px < 80 && touch.py >= 169 && touch.py < 192)) {
 			loadROMselect();
 		}
+
+		if (exitflag) {
+			break;
+		}
 	}
+
+	*(int*)0x02003004 = 1; // Fade out sound
+	fadeType = false;
+	for (int i = 0; i < 25; i++) {
+		swiWaitForVBlank();
+	}
+	mmStop();
+	*(int*)0x02003004 = 0;
+
+	runNdsFile(sys().isRunFromSD() ? "sd:/boot.nds" : "fat:/boot.nds", 0, NULL, sys().isRunFromSD(), true, true, false, true, true, false, -1);
 
 	return 0;
 }

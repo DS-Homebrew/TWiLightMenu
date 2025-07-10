@@ -9,6 +9,7 @@ extern bool perGameSettingsButtons;
 
 extern bool perGameSettings_directBoot;	// Homebrew only
 extern int perGameSettings_dsiMode;
+extern int perGameSettings_dsPhatColors;
 extern int perGameSettings_language;
 extern int perGameSettings_region;
 extern int perGameSettings_ramDiskNo;
@@ -22,6 +23,7 @@ extern int perGameSettings_expandRomSpace;
 extern int perGameSettings_dsiwareBooter;
 extern int perGameSettings_useBootstrap;
 extern int perGameSettings_useBootstrapCheat;
+extern int perGameSettings_saveRelocation;
 
 void loadPerGameSettings(std::string filename);
 void savePerGameSettings(std::string filename);

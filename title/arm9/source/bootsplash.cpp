@@ -120,7 +120,7 @@ void bootSplashDSi(void) {
 			}
 			u16 color = image[i * 4] >> 3 | (image[(i * 4) + 1] >> 3) << 5 | (image[(i * 4) + 2] >> 3) << 10 | (image[(i * 4) + 3] > 0) << 15;
 			if (colorTable) {
-				color = (color & 0x8000) | (colorTable[color] & 0x7FFF);
+				color = (color & 0x8000) | (colorTable[color % 0x8000] & 0x7FFF);
 			}
 
 			if (x >= width) {
@@ -135,8 +135,9 @@ void bootSplashDSi(void) {
 	}
 
 	if (!custom && !virtualPain) {
-		BG_PALETTE[0] = 0xFFFF;
-		BG_PALETTE_SUB[0] = 0xFFFF;
+		const u16 white = colorTable ? colorTable[0x7FFF] : 0xFFFF;
+		BG_PALETTE[0] = white;
+		BG_PALETTE_SUB[0] = white;
 
 		controlBottomBright = false;
 		fadeType = false;
@@ -157,7 +158,7 @@ void bootSplashDSi(void) {
 			//loadROMselectAsynch();
 			scanKeys();
 
-			if (!custom && splash.currentFrame() == 14)
+			if (!custom && splash.currentFrame() == 16)
 				snd().playDSiBoot();
 		}
 	} else {
@@ -185,7 +186,7 @@ void bootSplashDSi(void) {
 				}
 			}
 
-			if (!custom && splash.currentFrame() == (super ? 1 : 24))
+			if (!custom && splash.currentFrame() == (super ? 1 : 26))
 				snd().playDSiBoot();
 		}
 	}

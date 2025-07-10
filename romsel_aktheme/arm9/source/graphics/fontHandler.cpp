@@ -119,23 +119,23 @@ void fontInit() {
 	smallFont = new FontGraphic({"nitro:/graphics/font/ds.nftr"});
 
 	if (colorTable) {
-		palette[3] = colorTable[palette[3]];
-		palette[7] = colorTable[palette[7]];
-		palette[15] = colorTable[palette[15]]; // formTextColor
-		palette[19] = colorTable[palette[19]]; // formTitleTextColor
-		palette[23] = colorTable[palette[23]]; // buttonTextColor
-		palette[27] = colorTable[palette[27]]; // spinBoxTextColor
-		palette[31] = colorTable[palette[31]]; // spinBoxTextHiLightColor
-		palette[35] = colorTable[palette[35]]; // listTextColor
-		palette[39] = colorTable[palette[39]]; // listTextHighLightColor
-		palette[43] = colorTable[palette[43]]; // popMenuTextColor
-		palette[47] = colorTable[palette[47]]; // popMenuTextHighLightColor
-		palette[51] = colorTable[palette[51]]; // start button: textColor
-		palette[55] = colorTable[palette[55]]; // main list: textColor
-		palette[59] = colorTable[palette[59]]; // main list: textColorHilight
-		palette[63] = colorTable[palette[63]]; // folder text: color
-		palette[67] = colorTable[palette[67]]; // user name: color
-		palette[71] = colorTable[palette[71]]; // custom text: color
+		palette[3] = colorTable[palette[3] % 0x8000];
+		palette[7] = colorTable[palette[7] % 0x8000];
+		palette[15] = colorTable[palette[15] % 0x8000]; // formTextColor
+		palette[19] = colorTable[palette[19] % 0x8000]; // formTitleTextColor
+		palette[23] = colorTable[palette[23] % 0x8000]; // buttonTextColor
+		palette[27] = colorTable[palette[27] % 0x8000]; // spinBoxTextColor
+		palette[31] = colorTable[palette[31] % 0x8000]; // spinBoxTextHiLightColor
+		palette[35] = colorTable[palette[35] % 0x8000]; // listTextColor
+		palette[39] = colorTable[palette[39] % 0x8000]; // listTextHighLightColor
+		palette[43] = colorTable[palette[43] % 0x8000]; // popMenuTextColor
+		palette[47] = colorTable[palette[47] % 0x8000]; // popMenuTextHighLightColor
+		palette[51] = colorTable[palette[51] % 0x8000]; // start button: textColor
+		palette[55] = colorTable[palette[55] % 0x8000]; // main list: textColor
+		palette[59] = colorTable[palette[59] % 0x8000]; // main list: textColorHilight
+		palette[63] = colorTable[palette[63] % 0x8000]; // folder text: color
+		palette[67] = colorTable[palette[67] % 0x8000]; // user name: color
+		palette[71] = colorTable[palette[71] % 0x8000]; // custom text: color
 	}
 	// Load palettes
 	tonccpy(BG_PALETTE, palette, sizeof(palette));

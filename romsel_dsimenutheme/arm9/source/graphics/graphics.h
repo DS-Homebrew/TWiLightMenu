@@ -29,7 +29,8 @@ void SetBrightness(u8 screen, s8 bright);
 void drawCurrentDate();
 void drawCurrentTime();
 
-void loadPhotoList();
+bool loadPhotoList();
+void reloadPhoto();
 void clearBoxArt();
 void graphicsInit();
 extern u16* colorTable;

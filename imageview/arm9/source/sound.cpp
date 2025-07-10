@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <sys/stat.h>
 
-extern volatile s16 fade_counter;
+/* extern volatile s16 fade_counter;
 extern volatile bool fade_out;
 
 extern volatile s16* play_stream_buf;
@@ -34,7 +34,7 @@ extern volatile s32 streaming_buf_ptr;
 extern char debug_buf[256];
 #endif
 
-extern volatile u32 sample_delay_count;
+extern volatile u32 sample_delay_count; */
 
 SoundControl::SoundControl()
 	: stream_is_playing(false), stream_source(NULL)
@@ -92,7 +92,7 @@ SoundControl::SoundControl()
 	    128,		     // panning
 	};
 
-	play_stream_buf = new s16[STREAMING_BUF_LENGTH];
+	/* play_stream_buf = new s16[STREAMING_BUF_LENGTH];
 	fill_stream_buf = new s16[STREAMING_BUF_LENGTH];
 
 
@@ -121,7 +121,7 @@ SoundControl::SoundControl()
 	fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
 
 	// Fill the next section premptively
-	fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+	fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source); */
 }
 
 mm_sfxhand SoundControl::playLaunch() { return mmEffectEx(&snd_launch); }
@@ -132,19 +132,24 @@ mm_sfxhand SoundControl::playStop() { return mmEffectEx(&snd_stop); }
 mm_sfxhand SoundControl::playWrong() { return mmEffectEx(&snd_wrong); }
 
 void SoundControl::beginStream() {
-	if (!stream_source) return;
+	/* if (!stream_source) return;
 
 	// open the stream
 	stream_is_playing = true;
 	mmStreamOpen(&stream);
-	SetYtrigger(0);
+	SetYtrigger(0); */
+
+	mmLoad(MOD_MUSIC);
+	mmStart(MOD_MUSIC, MM_PLAY_LOOP);
 }
 
 void SoundControl::stopStream() {
-	if (!stream_source) return;
+	/* if (!stream_source) return;
 
 	stream_is_playing = false;
-	mmStreamClose();
+	mmStreamClose(); */
+
+	// mmStop();
 }
 
 void SoundControl::fadeOutStream() {
@@ -178,7 +183,7 @@ void SoundControl::cancelFadeOutStream() {
 // fill_requested == false
 volatile void SoundControl::updateStream() {
 	
-	if (!stream_is_playing) return;
+	/* if (!stream_is_playing) return;
 	if (fill_requested && filled_samples < STREAMING_BUF_LENGTH) {
 			
 		// Reset the fill request
@@ -210,6 +215,6 @@ volatile void SoundControl::updateStream() {
 		// but we'll keep it at gte to be safe.
 		filled_samples = 0;
 		// fill_count = 0;
-	}
+	} */
 
 }

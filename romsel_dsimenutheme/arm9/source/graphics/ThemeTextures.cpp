@@ -32,30 +32,29 @@ extern bool useTwlCfg;
 //extern bool widescreenEffects;
 
 extern u16* colorTable;
+extern bool invertedColors;
+extern bool noWhiteFade;
 extern u32 rotatingCubesLoaded;
 extern bool rocketVideo_playVideo;
 extern u8 *rotatingCubesLocation;
 
 // #include <nds/arm9/decompress.h>
-// extern u16 bmpImageBuffer[256*192];
 extern bool showColon;
 
-static u16 _bmpImageBuffer[256 * 192] = {0};
-static u16* _bmpImageBuffer2 = (u16*)_bmpImageBuffer;
 static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
-static u16 _photoBuffer[208 * 156] = {0};
+static u16* _photoBuffer = NULL;
 static u16 _topBorderBuffer[256 * 192] = {0};
 static u16* _bgSubBuffer2 = (u16*)_bgSubBuffer;
 static u16* _photoBuffer2 = (u16*)_photoBuffer;
 // DSi mode double-frame buffers
 //static u16* _frameBuffer[2] = {(u16*)0x02F80000, (u16*)0x02F98000};
-static u16* _frameBufferBot[2] = {(u16*)_bmpImageBuffer, (u16*)_bmpImageBuffer};
+static u16* _frameBufferBot[2] = {NULL};
 
 static bool topBorderBufferLoaded = false;
 bool boxArtColorDeband = false;
 
-static u8* boxArtCache = (u8*)NULL;	// Size: 0x1B8000
+static u8* boxArtCache = NULL;	// Size: 0x1B8000
 static bool boxArtFound[40] = {false};
 uint boxArtWidth = 0, boxArtHeight = 0;
 
@@ -899,7 +898,7 @@ void ThemeTextures::drawBottomBg(int index) {
 
 void ThemeTextures::clearTopScreen() {
 	beginBgSubModify();
-	u16 val = 0xFFFF;
+	const u16 val = colorTable ? (colorTable[0x7FFF] | BIT(15)) : 0xFFFF;
 	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 		_bgSubBuffer[i] = val;
 		if (boxArtColorDeband) {
@@ -934,7 +933,12 @@ void ThemeTextures::drawProfileName() {
 			if (xPos + x < 0) continue;
 			int px = FontGraphic::textBuf[1][y * 256 + x];
 			u16 bg = _topBorderBuffer[(yPos + y) * 256 + (xPos + x)];
-			u16 val = px ? themealphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
+			u16 val = 0;
+			if (tc().usernameEdgeAlpha()) {
+				val = px ? themealphablend(BG_PALETTE_SUB[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
+			} else {
+				val = px ? (BG_PALETTE_SUB[px] | BIT(15)) : bg;
+			}
 
 			if (ms().macroMode) {
 				_bgMainBuffer[(yPos + y) * 256 + (xPos + x)] = val;
@@ -993,6 +997,9 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 	bool alternatePixel = false;
 	if (boxArtWidth > 256 || boxArtHeight > 192) return;
 
+	u16* bmpImageBuffer = new u16[256 * 192];
+	u16* bmpImageBuffer2 = boxArtColorDeband ? new u16[256 * 192] : NULL;
+
 	imageXpos = (256-boxArtWidth)/2;
 	imageYpos = (192-boxArtHeight)/2;
 
@@ -1002,63 +1009,72 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 	int photoY = imageYpos;
 
 	for (uint i=0;i<image.size()/4;i++) {
-		const u8 alpha = image[(i*4)+3];
+		u8 pixelAdjustInfo = 0;
 		if (boxArtColorDeband) {
-			image[(i*4)+3] = 0;
 			if (alternatePixel) {
-				if (image[(i*4)] >= 0x4) {
-					image[(i*4)] -= 0x4;
-					image[(i*4)+3] |= BIT(0);
+				if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
+					image[(i*4)] += 0x4;
+					pixelAdjustInfo |= BIT(0);
 				}
-				if (image[(i*4)+1] >= 0x4) {
-					image[(i*4)+1] -= 0x4;
-					image[(i*4)+3] |= BIT(1);
+				if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
+					image[(i*4)+1] += 0x4;
+					pixelAdjustInfo |= BIT(1);
 				}
-				if (image[(i*4)+2] >= 0x4) {
-					image[(i*4)+2] -= 0x4;
-					image[(i*4)+3] |= BIT(2);
+				if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
+					image[(i*4)+2] += 0x4;
+					pixelAdjustInfo |= BIT(2);
+				}
+				if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+					image[(i*4)+3] += 0x4;
+					pixelAdjustInfo |= BIT(3);
 				}
 			}
 		}
 		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (colorTable) {
-			color = colorTable[color];
+			color = colorTable[color % 0x8000] | BIT(15);
 		}
-		if (alpha == 0) {
-			_bmpImageBuffer[i] = color;
+		if (image[(i*4)+3] == 255) {
+			bmpImageBuffer[i] = color;
 		} else {
-			_bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], alpha);
+			bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], image[(i*4)+3]);
 		}
 		if (boxArtColorDeband) {
 			if (alternatePixel) {
-				if (image[(i*4)+3] & BIT(0)) {
-					image[(i*4)] += 0x4;
-				}
-				if (image[(i*4)+3] & BIT(1)) {
-					image[(i*4)+1] += 0x4;
-				}
-				if (image[(i*4)+3] & BIT(2)) {
-					image[(i*4)+2] += 0x4;
-				}
-			} else {
-				if (image[(i*4)] >= 0x4) {
+				if (pixelAdjustInfo & BIT(0)) {
 					image[(i*4)] -= 0x4;
 				}
-				if (image[(i*4)+1] >= 0x4) {
+				if (pixelAdjustInfo & BIT(1)) {
 					image[(i*4)+1] -= 0x4;
 				}
-				if (image[(i*4)+2] >= 0x4) {
+				if (pixelAdjustInfo & BIT(2)) {
 					image[(i*4)+2] -= 0x4;
+				}
+				if (pixelAdjustInfo & BIT(3)) {
+					image[(i*4)+3] -= 0x4;
+				}
+			} else {
+				if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
+					image[(i*4)] += 0x4;
+				}
+				if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
+					image[(i*4)+1] += 0x4;
+				}
+				if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
+					image[(i*4)+2] += 0x4;
+				}
+				if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
+					image[(i*4)+3] += 0x4;
 				}
 			}
 			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
-				color = colorTable[color];
+				color = colorTable[color % 0x8000] | BIT(15);
 			}
-			if (alpha == 0) {
-				_bmpImageBuffer2[i] = color;
+			if (image[(i*4)+3] == 255) {
+				bmpImageBuffer2[i] = color;
 			} else {
-				_bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], alpha);
+				bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], image[(i*4)+3]);
 			}
 			if ((i % boxArtWidth) == boxArtWidth-1) alternatePixel = !alternatePixel;
 			alternatePixel = !alternatePixel;
@@ -1070,8 +1086,8 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		}
 	}
 
-	u16 *src = _bmpImageBuffer;
-	u16 *src2 = _bmpImageBuffer2;
+	u16 *src = bmpImageBuffer;
+	u16 *src2 = bmpImageBuffer2;
 	for (uint y = 0; y < boxArtHeight; y++) {
 		for (uint x = 0; x < boxArtWidth; x++) {
 			_bgSubBuffer[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
@@ -1081,6 +1097,11 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		}
 	}
 	commitBgSubModify();
+
+	delete[] bmpImageBuffer;
+	if (boxArtColorDeband) {
+		delete[] bmpImageBuffer2;
+	}
 }
 
 #define MAX_PHOTO_WIDTH 208
@@ -1353,7 +1374,7 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 
 	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
-	int width = max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
+	int width = std::max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
 
 	// Copy to background
 	for (int y = 0; y < dateTimeFont()->height() && posY + y < SCREEN_HEIGHT; y++) {
@@ -1389,7 +1410,7 @@ ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int p
 
 	toncset16(FontGraphic::textBuf[1], 0, 256 * dateTimeFont()->height());
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
-	int width = max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
+	int width = std::max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
 
 	// Copy to background
 	for (int y = 0; y < dateTimeFont()->height() && posY + y < SCREEN_HEIGHT; y++) {
@@ -1456,7 +1477,6 @@ void ThemeTextures::applyUserPaletteToAllGrfTextures() {
 		_settingsIconTexture->applyUserPaletteFile(TFN_PALETTE_ICON_SETTINGS, effectDSiArrowButtonPalettes);
 }
 
-u16 *ThemeTextures::bmpImageBuffer() { return _bmpImageBuffer; }
 u16 *ThemeTextures::bgSubBuffer2() { return _bgSubBuffer2; }
 u16 *ThemeTextures::photoBuffer() { return _photoBuffer; }
 u16 *ThemeTextures::photoBuffer2() { return _photoBuffer2; }
@@ -1525,7 +1545,7 @@ void loadRotatingCubes() {
 			if (colorTable) {
 				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
 				for (u32 i = 0; i < framesSize/2; i++) {
-					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i]];
+					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i] % 0x8000] | BIT(15);
 				}
 			}
 
@@ -1540,6 +1560,28 @@ void ThemeTextures::unloadRotatingCubes() {
 		toncset32(rotatingCubesLocation, 0, 0x700000/sizeof(u32)); // Clear video before freeing
 		delete[] rotatingCubesLocation;
 	}
+}
+void ThemeTextures::unloadPhotoBuffer() {
+	if (!_photoBuffer) {
+		return;
+	}
+
+	delete[] _photoBuffer;
+	if (boxArtColorDeband) {
+		delete[] _photoBuffer2;
+	}
+
+	_photoBuffer = NULL;
+	_photoBuffer2 = NULL;
+}
+void ThemeTextures::reloadPhotoBuffer() {
+	_photoBuffer = new u16[208 * 156];
+	if (boxArtColorDeband) {
+		_photoBuffer2 = new u16[208 * 156];
+	}
+
+	extern void reloadPhoto();
+	reloadPhoto();
 }
 void ThemeTextures::videoSetup() {
 	logPrint("tex().videoSetup()\n");
@@ -1591,20 +1633,37 @@ void ThemeTextures::videoSetup() {
 		REG_BG3X_SUB = -29 << 8;
 	}*/
 
-	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
+	char currentSettingPath[40];
+	sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
 
-	if (ms().colorMode != "Default") {
+	if (access(currentSettingPath, F_OK) == 0) {
+		// Load color LUT
+		char lutName[128] = {0};
+		FILE* file = fopen(currentSettingPath, "rb");
+		fread(lutName, 1, 128, file);
+		fclose(file);
+
 		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), lutName);
 
-		if (getFileSize(colorTablePath) == 0x20000) {
-			colorTable = new u16[0x20000/sizeof(u16)];
+		if (getFileSize(colorTablePath) == 0x10000) {
+			colorTable = new u16[0x10000/sizeof(u16)];
 
 			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x20000, file);
+			fread(colorTable, 1, 0x10000, file);
 			fclose(file);
+
+			const u16 color0 = colorTable[0] | BIT(15);
+			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
+			invertedColors =
+			  (color0 >= 0xF000 && color0 <= 0xFFFF
+			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
 		}
 	}
+
+	REG_BLDCNT = BLEND_SRC_BG3 | (invertedColors ? BLEND_FADE_WHITE : BLEND_FADE_BLACK);
 
 	if (dsiFeatures() && !ms().macroMode && ms().theme != TWLSettings::EThemeHBL) {
 		if (ms().consoleModel > 0) {
@@ -1624,10 +1683,11 @@ void ThemeTextures::videoSetup() {
 		loadRotatingCubes();
 	}
 
+	_photoBuffer = new u16[208 * 156];
+
 	boxArtColorDeband = (ms().boxArtColorDeband && !ms().macroMode && (sys().isRegularDS() ? sys().dsDebugRam() : ndmaEnabled()) && !rotatingCubesLoaded && ms().theme != TWLSettings::EThemeHBL);
 
 	if (boxArtColorDeband) {
-		_bmpImageBuffer2 = new u16[256 * 192];
 		_bgSubBuffer2 = new u16[256 * 192];
 		_photoBuffer2 = new u16[208 * 156];
 		_frameBufferBot[0] = new u16[256 * 192];

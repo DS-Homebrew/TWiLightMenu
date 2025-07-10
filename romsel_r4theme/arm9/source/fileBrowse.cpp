@@ -169,6 +169,7 @@ bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 
 void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string_view> extensionList = {}) {
 	dirContents.clear();
+	resetPreloadedBannerIcons();
 
 	DIR *pdir = opendir(".");
 
@@ -219,7 +220,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				}
 				emplaceBackDirContent =
 				((pent->d_type == DT_DIR && strcmp(pent->d_name, ".") != 0 && strcmp(pent->d_name, "..") != 0 && pent->d_name[0] != '_'
-					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0)
+					&& strcmp(pent->d_name, "saves") != 0 && strcmp(pent->d_name, "ramdisks") != 0 && strcmp(pent->d_name, "System Volume Information") != 0)
 					|| nameEndsWith(pent->d_name, extensionList));
 			} else {
 				emplaceBackDirContent = (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList));
@@ -944,6 +945,12 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			printSmall(false, 0, 114, "the full version, launch this on", Alignment::center);
 			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
 			break;
+		case 8:
+			printSmall(false, 0, 90, "Due to memory limitations, sound effects", Alignment::center);
+			printSmall(false, 0, 102, "will not be played. To play this", Alignment::center);
+			printSmall(false, 0, 114, "game with sound effects, launch this on", Alignment::center);
+			printSmall(false, 0, 126, "Nintendo DSi or 3DS systems.", Alignment::center);
+			break;
 		case 10:
 			if (sys().isRegularDS()) {
 				printSmall(false, 0, 102, "To launch this title, please", Alignment::center);
@@ -1100,18 +1107,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
 		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
 
+		getGameInfo(fileOffset, dirContents.at(fileOffset).isDirectory, dirContents.at(fileOffset).name.c_str(), false);
+
 		if (dirContents.at(fileOffset).isDirectory) {
 			isDirectory = true;
-			bnriconPalLine = 0;
-			bnriconPalLoaded = 0;
-			bnriconframenumY = 0;
-			bannerFlip = 0;
-			bnriconisDSi = false;
-			bnrWirelessIcon = 0;
 		} else {
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
-			getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str(), false);
 
 			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 				bnrRomType = 0;

@@ -50,9 +50,15 @@ bool secondBuffer = false;
 u16 frameBuffer[2][256*192];
 u16 frameBufferBot[2][256*192];
 u16* colorTable = NULL;
+bool invertedColors = false;
+bool noWhiteFade = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -60,7 +66,7 @@ void SetBrightness(u8 screen, s8 bright) {
 		bright = -bright;
 	}
 	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 /* u16 convertVramColorToGrayscale(u16 val) {
@@ -111,16 +117,16 @@ void LoadBMP(void) {
 	for (unsigned i=0;i<image.size()/4;i++) {
 		image[(i*4)+3] = 0;
 		if (alternatePixel) {
-			if (image[(i*4)] >= 0x4) {
-				image[(i*4)] -= 0x4;
+			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
+				image[(i*4)] += 0x4;
 				image[(i*4)+3] |= BIT(0);
 			}
-			if (image[(i*4)+1] >= 0x4) {
-				image[(i*4)+1] -= 0x4;
+			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
+				image[(i*4)+1] += 0x4;
 				image[(i*4)+3] |= BIT(1);
 			}
-			if (image[(i*4)+2] >= 0x4) {
-				image[(i*4)+2] -= 0x4;
+			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
+				image[(i*4)+2] += 0x4;
 				image[(i*4)+3] |= BIT(2);
 			}
 		}
@@ -132,23 +138,23 @@ void LoadBMP(void) {
 		}
 		if (alternatePixel) {
 			if (image[(i*4)+3] & BIT(0)) {
-				image[(i*4)] += 0x4;
-			}
-			if (image[(i*4)+3] & BIT(1)) {
-				image[(i*4)+1] += 0x4;
-			}
-			if (image[(i*4)+3] & BIT(2)) {
-				image[(i*4)+2] += 0x4;
-			}
-		} else {
-			if (image[(i*4)] >= 0x4) {
 				image[(i*4)] -= 0x4;
 			}
-				if (image[(i*4)+1] >= 0x4) {
+			if (image[(i*4)+3] & BIT(1)) {
 				image[(i*4)+1] -= 0x4;
 			}
-			if (image[(i*4)+2] >= 0x4) {
+			if (image[(i*4)+3] & BIT(2)) {
 				image[(i*4)+2] -= 0x4;
+			}
+		} else {
+			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
+				image[(i*4)] += 0x4;
+			}
+			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
+				image[(i*4)+1] += 0x4;
+			}
+			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
+				image[(i*4)+2] += 0x4;
 			}
 		}
 		color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
@@ -164,13 +170,13 @@ void LoadBMP(void) {
 	if (colorTable) {
 		if (ms().macroMode) {
 			for (int i=0; i<256*192; i++) {
-				frameBuffer[0][i] = colorTable[frameBuffer[0][i]];
-				frameBuffer[1][i] = colorTable[frameBuffer[1][i]];
+				frameBuffer[0][i] = colorTable[frameBuffer[0][i] % 0x8000] | BIT(15);
+				frameBuffer[1][i] = colorTable[frameBuffer[1][i] % 0x8000] | BIT(15);
 			}
 		} else {
 			for (int i=0; i<256*192; i++) {
-				frameBufferBot[0][i] = colorTable[frameBufferBot[0][i]];
-				frameBufferBot[1][i] = colorTable[frameBufferBot[1][i]];
+				frameBufferBot[0][i] = colorTable[frameBufferBot[0][i] % 0x8000] | BIT(15);
+				frameBufferBot[1][i] = colorTable[frameBufferBot[1][i] % 0x8000] | BIT(15);
 			}
 		}
 	}
@@ -215,7 +221,6 @@ void runGraphicIrq(void) {
 }
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
 
 void loadTitleGraphics() {

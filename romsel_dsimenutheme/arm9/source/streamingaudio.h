@@ -19,6 +19,9 @@
 extern "C" {
 #endif
 
+void alloc_streaming_buf(void);
+void free_streaming_buf(void);
+void resetStreamSettings();
 mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format);
 
 #ifdef __cplusplus

@@ -161,11 +161,15 @@ SoundControl::SoundControl()
 	};
 
 	sfxDataLoaded = true;
+}
 
-
+void SoundControl::loadStream(const bool prepMsg) {
 	if (ms().dsiMusic == 0 || ms().theme == TWLSettings::EThemeSaturn) {
 		return;
 	}
+
+	alloc_streaming_buf();
+	resetStreamSettings();
 
 	bool loopableMusic = false;
 	loopingPoint = false;
@@ -177,25 +181,30 @@ SoundControl::SoundControl()
 	stream.sampling_rate = 16000;	 		// 16000Hz
 	stream.format = MM_STREAM_16BIT_MONO;  // select format
 
-	// Leave top scren white
-	controlTopBright = false;
-
-	printLarge(false, 0, 88 - (calcLargeFontHeight(STR_PREPARING_MUSIC) - largeFontHeight()) / 2, STR_PREPARING_MUSIC, Alignment::center);
-	updateText(false);
-
 	if (ms().theme == TWLSettings::EThemeSaturn) {
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 	} else {
 		switch(ms().dsiMusic) {
 			case 5: // HBL
 			case 2: // DSi Shop
-				stream.sampling_rate = 44100;	 		// 44100Hz
-				stream.format = MM_STREAM_16BIT_MONO;
-				stream_start_source = fopen(std::string(ms().dsiMusic == 5 ? TFN_HBL_START_SOUND_BG : TFN_SHOP_START_SOUND_BG).c_str(), "rb");
-				stream_source = fopen(std::string(ms().dsiMusic == 5 ? TFN_HBL_LOOP_SOUND_BG : TFN_SHOP_LOOP_SOUND_BG).c_str(), "rb");
-				seekPos = 0x2C;
-				loopableMusic = true;
-				break;
+			{	std::string loopPath = std::string(ms().dsiMusic == 5 ? TFN_HBL_LOOP_SOUND_BG : TFN_SHOP_LOOP_SOUND_BG);
+				if (access(loopPath.c_str(), F_OK) == 0) {
+					stream_start_source = fopen(std::string(ms().dsiMusic == 5 ? TFN_HBL_START_SOUND_BG : TFN_SHOP_START_SOUND_BG).c_str(), "rb");
+					stream_source = fopen(loopPath.c_str(), "rb");
+
+					// Read properties from WAV header
+					u8 numChannels = 1;
+					fseek(stream_source, 0x16, SEEK_SET);
+					fread(&numChannels, sizeof(u8), 1, stream_source);
+					stream.format = numChannels == 2 ? MM_STREAM_8BIT_STEREO : MM_STREAM_16BIT_MONO;
+					fseek(stream_source, 0x18, SEEK_SET);
+					fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
+
+					seekPos = 0x2C;
+					loopableMusic = true;
+					break;
+				}
+			}
 			case 3: { // Theme
 				bool customSkin = false;
 				switch (ms().theme) {
@@ -239,15 +248,33 @@ SoundControl::SoundControl()
 
 						if (wavFormat == 0x11) {
 							// If music is ADPCM and hasn't been successfully converted yet, do so now
+							bool doClearText = false;
 							if (loopableMusic && (access(cacheStartPath.c_str(), F_OK) != 0 || getFileSize(cacheStartPath.c_str()) == 0)) { // Start point
+								if (prepMsg) {
+									clearText(false);
+									printLarge(false, 0, 88 - (calcLargeFontHeight(STR_PREPARING_MUSIC) - largeFontHeight()) / 2, STR_PREPARING_MUSIC, Alignment::center);
+									updateText(false);
+									doClearText = true;
+								}
 								if (adpcm_main(musicStartPath.c_str(), cacheStartPath.c_str(), numChannels == 2) == -1) {
 									remove(cacheStartPath.c_str());
 								}
 							}
 							if (access(cachePath.c_str(), F_OK) != 0 || getFileSize(cachePath.c_str()) == 0) { // Loop point
+								if (prepMsg && !doClearText) {
+									clearText(false);
+									printLarge(false, 0, 88 - (calcLargeFontHeight(STR_PREPARING_MUSIC) - largeFontHeight()) / 2, STR_PREPARING_MUSIC, Alignment::center);
+									updateText(false);
+									doClearText = true;
+								}
 								if (adpcm_main(musicPath.c_str(), cachePath.c_str(), numChannels == 2) == -1) {
 									remove(cachePath.c_str());
 								}
+							}
+							if (prepMsg && doClearText) {
+								clearText(false);
+								extern void displayNowLoading(void);
+								displayNowLoading();
 							}
 							if (loopableMusic) {
 								fclose(stream_start_source);
@@ -272,22 +299,30 @@ SoundControl::SoundControl()
 			case 4:
 			case 1:
 			default: {
-				bool use3DSMusic = ms().dsiMusic == 4 || (ms().dsiMusic == 3 && ms().theme == TWLSettings::ETheme3DS);
-				bool useHBLMusic = ms().dsiMusic == 3 && ms().theme == TWLSettings::EThemeHBL;
-				stream.sampling_rate = useHBLMusic ? 44100 : (use3DSMusic ? 32000 : 16000);	 		// 44100Hz, 32000Hz, or 16000Hz
-				stream.format = MM_STREAM_16BIT_MONO;
+				const bool use3DSMusic = (ms().dsiMusic == 4 || (ms().dsiMusic == 3 && ms().theme == TWLSettings::ETheme3DS)) && (access(std::string(TFN_DEFAULT_SOUND_BG_3D).c_str(), F_OK) == 0);
+				const bool useHBLMusic = (ms().dsiMusic == 3) && (ms().theme == TWLSettings::EThemeHBL) && (access(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), F_OK) == 0);
+				bool useBetterDSiMusic = false;
 				if (useHBLMusic) {
 					stream_start_source = fopen(std::string(TFN_HBL_START_SOUND_BG).c_str(), "rb");
 					loopableMusic = true;
 				}
-				stream_source = fopen(std::string(useHBLMusic ? TFN_HBL_LOOP_SOUND_BG : (use3DSMusic ? TFN_DEFAULT_SOUND_BG_3D : TFN_DEFAULT_SOUND_BG)).c_str(), "rb");
+				if (!use3DSMusic) {
+					useBetterDSiMusic = (access(std::string(TFN_BETTER_DEFAULT_SOUND_BG).c_str(), F_OK) == 0);
+				}
+				stream_source = fopen(std::string(useHBLMusic ? TFN_HBL_LOOP_SOUND_BG : (use3DSMusic ? TFN_DEFAULT_SOUND_BG_3D : (useBetterDSiMusic ? TFN_BETTER_DEFAULT_SOUND_BG : TFN_DEFAULT_SOUND_BG))).c_str(), "rb");
+
+				// Read properties from WAV header
+				u8 numChannels = 1;
+				fseek(stream_source, 0x16, SEEK_SET);
+				fread(&numChannels, sizeof(u8), 1, stream_source);
+				stream.format = numChannels == 2 ? MM_STREAM_8BIT_STEREO : MM_STREAM_16BIT_MONO;
+				fseek(stream_source, 0x18, SEEK_SET);
+				fread(&stream.sampling_rate, sizeof(u16), 1, stream_source);
+
 				seekPos = 0x2C;
 				break; }
 		}
 	}
-
-	clearText();
-	controlTopBright = true;
 
 	fseek(stream_source, seekPos, SEEK_SET);
 
@@ -469,6 +504,15 @@ void SoundControl::stopStream() {
 
 	stream_is_playing = false;
 	mmStreamClose();
+}
+
+void SoundControl::unloadStream() {
+	if (!stream_source || !stream_is_playing) return;
+
+	stream_is_playing = false;
+	mmStreamClose();
+	stream_source = NULL;
+	free_streaming_buf();
 }
 
 void SoundControl::fadeOutStream() {

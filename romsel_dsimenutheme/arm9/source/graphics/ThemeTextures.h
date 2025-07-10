@@ -98,6 +98,8 @@ public:
 
 	void clearTopScreen();
 	void unloadRotatingCubes();
+	void unloadPhotoBuffer();
+	void reloadPhotoBuffer();
 	static void videoSetup();
 private:
 	void applyUserPaletteToAllGrfTextures();
@@ -197,7 +199,6 @@ public:
 	FontGraphic *dateTimeFont() { return _dateTimeFont.get(); }
 	FontGraphic *usernameFont() { extern FontGraphic *smallFont; return _usernameFont ? _usernameFont.get() : smallFont; }
 
-	static u16* bmpImageBuffer();
 	static u16* bgSubBuffer2();
 	static u16* photoBuffer();
 	static u16* photoBuffer2();

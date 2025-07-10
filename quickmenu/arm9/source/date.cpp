@@ -6,8 +6,6 @@
 #include "common/tonccpy.h"
 #include "language.h"
 
-tm iTimeParts;
-
 Datetime::Datetime(time_t rawTime)
 	:_time(rawTime)
 {
@@ -46,8 +44,8 @@ int Datetime::getMonthDays() const {
 	
 	if (month <= 7)
 		return 30+(month%2);
-		
-	return 31-(month%2);
+	else
+		return 31-(month%2);
 }
 
 /**
@@ -55,25 +53,7 @@ int Datetime::getMonthDays() const {
  * @return 0 for Sunday ... 6 for Saturday
  */
 int Datetime::getWeekDay() const {
-	int year = _formattedTime.tm_year+1900;
-	int month = _formattedTime.tm_mon+1;
-	int day = _formattedTime.tm_mday;
-
-	if (month < 3)
-	{
-		month+=12;
-		year--;
-	}
-
-	int centuryYear = year % 100;
-	int zeroCentury = year / 100;
-
-	// Use Zeller's Congruence algorithm
-	int _p1 = 13*(month+1)/5;
-	int _p2 = centuryYear/4;
-	int _p3 = zeroCentury/4;
-	int _weekDay = (day + _p1 + centuryYear + _p2 + _p3 + 5 * zeroCentury) % 7;
-	return (_weekDay+6)%7; // convert "sat..fri" to "sun..sat"
+	return _formattedTime.tm_wday;
 }
 
 /**

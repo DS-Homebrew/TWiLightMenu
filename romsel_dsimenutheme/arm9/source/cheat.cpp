@@ -314,7 +314,7 @@ void CheatCodelist::selectCheats(std::string filename)
   printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
   printSmall(false, 0, 100, STR_LOADING, Alignment::center, FontPalette::dialog);
   updateText(false);
-  
+
   parse(filename);
 
   bool cheatsFound = true;
@@ -440,7 +440,7 @@ void CheatCodelist::selectCheats(std::string filename)
           deselectFolder(std::distance(&_data[0], currentList[cheatWnd_cursorPosition]));
         if (select || !(cheat._flags & cParsedItem::EOne))
           cheat._flags ^= cParsedItem::ESelected;
-        
+
         unsavedChanges = true;
       }
     } else if (pressed & KEY_B) {
@@ -459,7 +459,7 @@ void CheatCodelist::selectCheats(std::string filename)
         cheatWnd_scrollPosition = 0;
       } else {
         clearText();
-        
+
         if (unsavedChanges)
         {
           bool break2 = false;
@@ -469,7 +469,7 @@ void CheatCodelist::selectCheats(std::string filename)
           printSmall(false, 0, (SCREEN_HEIGHT>>1) - ((calcSmallFontHeight(str) - smallFontHeight()) / 2), str, Alignment::center);
           printSmall(false, 0, 160, STR_CHEATS_DISCARD_BUTTONS, Alignment::center);
           updateText(false);
-          
+
           while (1)
           {
             scanKeys();
@@ -512,12 +512,12 @@ void CheatCodelist::selectCheats(std::string filename)
       if (currentList[cheatWnd_cursorPosition]->_comment != "") {
         (ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();
         clearText();
-        printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
 
         std::string _topText = "";
         std::string _topTextStr(currentList[cheatWnd_cursorPosition]->_comment);
         std::vector<std::string> words;
         std::size_t pos;
+		int lines = 1;
 
         // Process comment to stay within the box
         while ((pos = _topTextStr.find(' ')) != std::string::npos) {
@@ -537,6 +537,7 @@ void CheatCodelist::selectCheats(std::string filename)
               word.insert((float)((i + 1) * word.length()) / ((width/240) + 1), "\n");
             }
             _topText += word + '\n';
+			lines++;
             continue;
           }
 
@@ -544,18 +545,29 @@ void CheatCodelist::selectCheats(std::string filename)
           if (width > 240) {
             _topText += temp + '\n';
             temp = word;
+			lines++;
           } else {
             temp += " " + word;
           }
         }
         if (temp.size())
           _topText += temp;
-        
-        // Print comment
-        printSmall(false, 0, 60, _topText, Alignment::center, FontPalette::dialog);
 
-        // Print 'Back' text
-        printSmall(false, 0, 160, STR_B_BACK, Alignment::center, FontPalette::dialog);
+		if (lines > 6) {
+			dbox_showIcon = false;
+
+			// Print comment
+			printSmall(false, 0, 16, _topText, Alignment::center, FontPalette::dialog);
+		} else {
+			printLarge(false, 0, 30, STR_CHEATS, Alignment::center, FontPalette::dialog);
+
+			// Print comment
+			printSmall(false, 0, 60, _topText, Alignment::center, FontPalette::dialog);
+		}
+		if (lines < 10) {
+			// Print 'Back' text
+			printSmall(false, 0, 160, STR_B_BACK, Alignment::center, FontPalette::dialog);
+		}
 
         updateText(false);
         while (1) {
@@ -564,6 +576,7 @@ void CheatCodelist::selectCheats(std::string filename)
 		      updateBoxArt();
           bgOperations(true);
           if (pressed & KEY_B) {
+			  dbox_showIcon = true;
             snd().playBack();
             break;
           }

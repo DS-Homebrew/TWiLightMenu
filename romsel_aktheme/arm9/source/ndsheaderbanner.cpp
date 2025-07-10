@@ -6,6 +6,7 @@
 #include "common/flashcard.h"
 #include "common/nitrofs.h"
 #include "common/systemdetails.h"
+#include "myDSiMode.h"
 #include "perGameSettings.h"
 #include "graphics/graphics.h"
 #include <gl2d.h>
@@ -179,7 +180,7 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 					u16 crc;
 					fread(&crc, 1, sizeof(crc), file);
 
-					if (crc == headerCRC16) { // CRC matches
+					if (crc == 0xFFFF || crc == headerCRC16) { // CRC matches
 						fclose(file);
 						displayDiskIcon(false);
 						return 0;
@@ -584,6 +585,105 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 }
 
 sNDSBannerExt bnriconTile[8];
+sNDSHeaderExt* preloadedHeaders = {NULL};
+sNDSBannerExt* preloadedBannerIcons = {NULL};
+bool* headerPreloaded = {NULL};
+bool* bannerIconPreloaded = {NULL};
+static int headerFileOffset[16] = {0};
+static int bannerIconFileOffset[16] = {0};
+static int lastUsedHeader = 0;
+static int lastUsedBannerIcon = 0;
+
+void allocateBannerIconsToPreload(void) {
+	const int count = dsiFeatures() ? 1024 : 16;
+	preloadedHeaders = new sNDSHeaderExt[count];
+	preloadedBannerIcons = new sNDSBannerExt[count];
+	if (dsiFeatures()) {
+		headerPreloaded = new bool[count];
+		bannerIconPreloaded = new bool[count];
+	}
+}
+
+void resetPreloadedBannerIcons(void) {
+	const int count = dsiFeatures() ? 1024 : 16;
+	for (int i = 0; i < count; i++) {
+		if (dsiFeatures()) {
+			headerPreloaded[i] = false;
+			bannerIconPreloaded[i] = false;
+		} else {
+			headerFileOffset[i] = -1;
+			bannerIconFileOffset[i] = -1;
+		}
+	}
+}
+
+bool preloadedHeaderFound(const int fileOffset) {
+	if (dsiFeatures()) {
+		return headerPreloaded[fileOffset];
+	}
+
+	for (int i = 0; i < 16; i++) {
+		if (headerFileOffset[i] == fileOffset) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool preloadedBannerIconFound(const int fileOffset) {
+	if (dsiFeatures()) {
+		return bannerIconPreloaded[fileOffset];
+	}
+
+	for (int i = 0; i < 16; i++) {
+		if (bannerIconFileOffset[i] == fileOffset) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+sNDSHeaderExt* getPreloadedHeader(const int fileOffset) {
+	if (dsiFeatures()) {
+		return &preloadedHeaders[fileOffset];
+	}
+
+	for (int i = 0; i < 16; i++) {
+		if (headerFileOffset[i] == fileOffset) {
+			return &preloadedHeaders[i];
+		}
+	}
+
+	const int currentUsedHeader = lastUsedHeader;
+	lastUsedHeader++;
+	if (lastUsedHeader == 16) lastUsedHeader = 0;
+
+	headerFileOffset[currentUsedHeader] = fileOffset;
+
+	return &preloadedHeaders[currentUsedHeader];
+}
+
+sNDSBannerExt* getPreloadedBannerIcon(const int fileOffset) {
+	if (dsiFeatures()) {
+		return &preloadedBannerIcons[fileOffset];
+	}
+
+	for (int i = 0; i < 16; i++) {
+		if (bannerIconFileOffset[i] == fileOffset) {
+			return &preloadedBannerIcons[i];
+		}
+	}
+
+	const int currentUsedBannerIcon = lastUsedBannerIcon;
+	lastUsedBannerIcon++;
+	if (lastUsedBannerIcon == 16) lastUsedBannerIcon = 0;
+
+	bannerIconFileOffset[currentUsedBannerIcon] = fileOffset;
+
+	return &preloadedBannerIcons[currentUsedBannerIcon];
+}
 
 // bnriconframeseq[]
 static u16 bnriconframeseq[8][64] = {0x0000};

@@ -12,6 +12,8 @@
 #include "sub_bg.h"
 #include "saturn_bg.h"
 
+extern std::string colorLutName;
+
 extern bool fadeType;
 //extern bool widescreenEffects;
 int screenBrightness = 31;
@@ -24,11 +26,17 @@ bool frameDelayEven = true; // For 24FPS
 u16* colorTable = NULL;
 
 bool screenFadedIn(void) { return (screenBrightness == 0); }
-
 bool screenFadedOut(void) { return (screenBrightness > 24); }
+
+bool invertedColors = false;
+bool noWhiteFade = false;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
+	if ((invertedColors && bright != 0) || (noWhiteFade && bright > 0)) {
+		bright -= bright*2; // Invert brightness to match the inverted colors
+	}
+
 	u16 mode = 1 << 14;
 
 	if (bright < 0) {
@@ -36,7 +44,7 @@ void SetBrightness(u8 screen, s8 bright) {
 		bright = -bright;
 	}
 	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 /* u16 convertVramColorToGrayscale(u16 val) {
@@ -60,7 +68,7 @@ void SetBrightness(u8 screen, s8 bright) {
 void copyPalette(u16 *dst, const u16 *src, int size) {
 	if (colorTable) {
 		for (int i = 0; i < size; i++) {
-			dst[i] = colorTable[src[i]];
+			dst[i] = colorTable[src[i] % 0x8000];
 		}
 	} else {
 		tonccpy(dst, src, size);
@@ -106,23 +114,44 @@ void vBlankHandler()
 void graphicsInit() {
 	currentTheme = ms().theme;
 
+	char currentSettingPath[40];
+	sprintf(currentSettingPath, "%s:/_nds/colorLut/currentSetting.txt", (sys().isRunFromSD() ? "sd" : "fat"));
+
+	if (access(currentSettingPath, F_OK) == 0) {
+		// Load color LUT
+		char lutName[128] = {0};
+		FILE* file = fopen(currentSettingPath, "rb");
+		fread(lutName, 1, 128, file);
+		fclose(file);
+
+		char colorTablePath[256];
+		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), lutName);
+
+		if (getFileSize(colorTablePath) == 0x10000) {
+			colorTable = new u16[0x10000/sizeof(u16)];
+
+			FILE* file = fopen(colorTablePath, "rb");
+			fread(colorTable, 1, 0x10000, file);
+			fclose(file);
+
+			const u16 color0 = colorTable[0] | BIT(15);
+			const u16 color7FFF = colorTable[0x7FFF] | BIT(15);
+
+			invertedColors =
+			  (color0 >= 0xF000 && color0 <= 0xFFFF
+			&& color7FFF >= 0x8000 && color7FFF <= 0x8FFF);
+			if (!invertedColors) noWhiteFade = (color7FFF < 0xF000);
+
+			colorLutName = lutName;
+		}
+	} else {
+		colorLutName = "Default";
+	}
+
 	SetBrightness(0, currentTheme == 4 ? -31 : 31);
 	SetBrightness(1, currentTheme == 4 && !ms().macroMode ? -31 : 31);
 	if (ms().macroMode) {
 		powerOff(PM_BACKLIGHT_TOP);
-	}
-
-	if (ms().colorMode != "Default") {
-		char colorTablePath[256];
-		sprintf(colorTablePath, "%s:/_nds/colorLut/%s.lut", (sys().isRunFromSD() ? "sd" : "fat"), ms().colorMode.c_str());
-
-		if (getFileSize(colorTablePath) == 0x20000) {
-			colorTable = new u16[0x20000/sizeof(u16)];
-
-			FILE* file = fopen(colorTablePath, "rb");
-			fread(colorTable, 1, 0x20000, file);
-			fclose(file);
-		}
 	}
 
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);

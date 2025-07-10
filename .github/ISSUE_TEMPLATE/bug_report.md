@@ -17,7 +17,7 @@ assignees: ''
 **Base Console:** <!-- No need to mention specific model revisions (Phat vs Lite, XL, New), but if the device has a firmware version, list it -->
 
 **TWiLight Menu++ Version:** <!-- Specify the release version / nightly commit. Note, though, that any issue opened with a release that isn't the latest may be closed -->
-**TWiLight Menu++ Theme:** <!-- [Nintendo DSi / Nintendo 3DS / Wood UI / Original R4 / SEGA Saturn / Gameboy Color / Homebrew Launcher] + Skin used -->
+**TWiLight Menu++ UI:** <!-- [Nintendo DSi / Nintendo 3DS / Wood / Original R4 / SEGA Saturn / Gameboy Color / Homebrew Launcher] + Theme used -->
 
 ### Expected behavior
 
