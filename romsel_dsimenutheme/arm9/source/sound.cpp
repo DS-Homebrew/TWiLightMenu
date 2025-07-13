@@ -4,6 +4,7 @@
 #include "graphics/themefilenames.h"
 #include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
+#include "common/logging.h"
 #include "graphics/fontHandler.h"
 #include "language.h"
 #include "fileCopy.h"
