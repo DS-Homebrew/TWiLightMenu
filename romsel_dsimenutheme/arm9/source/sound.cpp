@@ -191,6 +191,7 @@ void SoundControl::loadStream(const bool prepMsg) {
 				if (access(loopPath.c_str(), F_OK) == 0) {
 					stream_start_source = fopen(std::string(ms().dsiMusic == 5 ? TFN_HBL_START_SOUND_BG : TFN_SHOP_START_SOUND_BG).c_str(), "rb");
 					stream_source = fopen(loopPath.c_str(), "rb");
+					logPrint(ms().dsiMusic == 5 ? "Using HBL music\n" : "Using DSi Shop music\n");
 
 					// Read properties from WAV header
 					u8 numChannels = 1;
@@ -231,6 +232,7 @@ void SoundControl::loadStream(const bool prepMsg) {
 					if (access(musicPath.c_str(), F_OK) == 0) {
 						loopableMusic = (access(musicStartPath.c_str(), F_OK) == 0);
 						if (loopableMusic) {
+							logPrint("Using custom theme music\n");
 							stream_start_source = fopen(musicStartPath.c_str(), "rb");
 						}
 
@@ -303,10 +305,11 @@ void SoundControl::loadStream(const bool prepMsg) {
 				const bool useHBLMusic = (ms().dsiMusic == 3) && (ms().theme == TWLSettings::EThemeHBL) && (access(std::string(TFN_HBL_LOOP_SOUND_BG).c_str(), F_OK) == 0);
 				bool useBetterDSiMusic = false;
 				if (useHBLMusic) {
+					logPrint("Using HBL music\n");
 					stream_start_source = fopen(std::string(TFN_HBL_START_SOUND_BG).c_str(), "rb");
 					loopableMusic = true;
-				}
-				if (!use3DSMusic) {
+				} else if (!use3DSMusic) {
+					logPrint("Better DSi menu music detected\n");
 					useBetterDSiMusic = (access(std::string(TFN_BETTER_DEFAULT_SOUND_BG).c_str(), F_OK) == 0);
 				}
 				stream_source = fopen(std::string(useHBLMusic ? TFN_HBL_LOOP_SOUND_BG : (use3DSMusic ? TFN_DEFAULT_SOUND_BG_3D : (useBetterDSiMusic ? TFN_BETTER_DEFAULT_SOUND_BG : TFN_DEFAULT_SOUND_BG))).c_str(), "rb");
@@ -323,6 +326,8 @@ void SoundControl::loadStream(const bool prepMsg) {
 				break; }
 		}
 	}
+
+	logPrint("\n");
 
 	fseek(stream_source, seekPos, SEEK_SET);
 
