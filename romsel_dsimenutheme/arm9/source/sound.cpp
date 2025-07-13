@@ -315,7 +315,7 @@ void SoundControl::loadStream(const bool prepMsg) {
 					logPrint("Using DSi menu music\n");
 					useBetterDSiMusic = (access(std::string(TFN_BETTER_DEFAULT_SOUND_BG).c_str(), F_OK) == 0);
 					if (useBetterDSiMusic) {
-						logPrint("Better DSi menu music detected\n");
+						logPrint("Better version detected\n");
 					}
 				}
 				stream_source = fopen(std::string(useHBLMusic ? TFN_HBL_LOOP_SOUND_BG : (use3DSMusic ? TFN_DEFAULT_SOUND_BG_3D : (useBetterDSiMusic ? TFN_BETTER_DEFAULT_SOUND_BG : TFN_DEFAULT_SOUND_BG))).c_str(), "rb");
