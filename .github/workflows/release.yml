@@ -175,6 +175,7 @@ jobs:
           cp -r 7zfile/Multimedia/ TWiLightMenu
           cd TWiLightMenu/_nds/TWiLightMenu/apps
           curl -LO https://github.com/DS-Homebrew/tuna-vids/releases/latest/download/tuna-vids.nds
+          curl -LO https://github.com/RocketRobz/RocketVideoPlayer/releases/latest/download/RocketVideoPlayer.nds
           # curl -LO https://github.com/Gericom/FastVideoDSPlayer/releases/latest/download/FastVideoDS.nds
           cd ../../..
           7z a AddOn-Multimedia.7z
