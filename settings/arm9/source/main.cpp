@@ -1191,11 +1191,13 @@ int settingsMode(void)
 		.option(STR_ROCKET_ROBZ_LOGO, ms().macroMode ? STR_DESCRIPTION_ROCKET_ROBZ_LOGO_MACRO : STR_DESCRIPTION_ROCKET_ROBZ_LOGO, Option::Bool(&ms().rocketRobzLogo), {STR_SHOW, STR_HIDE}, {true, false});
 	if (ms().macroMode) {
 		guiPage
-			.option(STR_GBSPLASH, STR_DESCRIPTION_GBSPLASH, Option::Int(&ms().dsiSplash), {STR_SHOW, STR_CUSTOM_SPLASH, STR_HIDE}, {(ms().dsiSplash==2 ? 2 : 1), 3, 0});
+			.option(STR_GBSPLASH, STR_DESCRIPTION_GBSPLASH, Option::Int(&ms().dsiSplash), {STR_SHOW, STR_CUSTOM_SPLASH, STR_HIDE}, {(ms().dsiSplash==2 ? 2 : 1), 3, 0})
+			.option(STR_GB_SPLASH_EASTER_EGGS, STR_DESCRIPTION_GB_SPLASH_EASTER_EGGS, Option::Bool(&ms().dsiSplashEasterEggs), {STR_OFF, STR_ON}, {false, true});
 	} else {
 		guiPage
 			.option(sys().isRegularDS() ? STR_DSSPLASH : STR_DSISPLASH, sys().isRegularDS() ? STR_DESCRIPTION_DSSPLASH : STR_DESCRIPTION_DSISPLASH, Option::Int(&ms().dsiSplash), {STR_WITHOUT_HS, STR_WITH_HS, STR_CUSTOM_SPLASH, STR_HIDE}, {1, 2, 3, 0})
-			.option(sys().isRegularDS() ? STR_DSSPLASHAUTOSKIP : STR_DSISPLASHAUTOSKIP, sys().isRegularDS() ? STR_DESCRIPTION_DSSPLASHAUTOSKIP : STR_DESCRIPTION_DSISPLASHAUTOSKIP, Option::Bool(&ms().dsiSplashAutoSkip), {STR_OFF, STR_ON}, {false, true});
+			.option(sys().isRegularDS() ? STR_DSSPLASHAUTOSKIP : STR_DSISPLASHAUTOSKIP, sys().isRegularDS() ? STR_DESCRIPTION_DSSPLASHAUTOSKIP : STR_DESCRIPTION_DSISPLASHAUTOSKIP, Option::Bool(&ms().dsiSplashAutoSkip), {STR_OFF, STR_ON}, {false, true})
+			.option(sys().isRegularDS() ? STR_DS_SPLASH_EASTER_EGGS : STR_DSI_SPLASH_EASTER_EGGS, sys().isRegularDS() ? STR_DESCRIPTION_DS_SPLASH_EASTER_EGGS : STR_DESCRIPTION_DSI_SPLASH_EASTER_EGGS, Option::Bool(&ms().dsiSplashEasterEggs), {STR_OFF, STR_ON}, {false, true});
 	}
 	guiPage
 		.option(STR_NINTENDOLOGOCOLOR, STR_DESCRIPTION_NINTENDOLOGOCOLOR, Option::Int(&ms().nintendoLogoColor), {STR_RED, STR_BLUE, STR_MAGENTA, STR_GRAY}, {1, 2, 3, 0})
