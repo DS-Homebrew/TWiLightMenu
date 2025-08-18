@@ -1251,6 +1251,7 @@ int akTheme(void) {
 			if (multimediaInstalled) {
 				std::vector<std::string_view> extensionListMedia = {
 					".avi", // Xvid (AVI)
+					".rvid", // Rocket Video
 					".fv", // FastVideo
 					".gif", // GIF
 					".bmp", // BMP
