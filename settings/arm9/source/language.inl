@@ -276,7 +276,7 @@ STRING(DESCRIPTION_BOOTSTRAP_1, "The release build is the latest version usually
 STRING(DESCRIPTION_DEBUG_1, "Displays some text before launched game.")
 STRING(DESCRIPTION_LOGGING_1, "Logs the process of patching to sd:/NDSBTSRP.LOG")
 // STRING(DESCRIPTION_FLASHCARD_1, "Pick a flashcard to use to run ROMs from it.")
-STRING(DESCRIPTION_SAVE_RELOCATION, "'SD/microSD Card' is default save relocation of nds-bootstrap. 'Game Card' disable relocation to save on reatil game card when gameTID matches between ROM and game card.")
+STRING(DESCRIPTION_SAVE_RELOCATION, "\"SD/microSD Card\" is default save relocation of nds-bootstrap. \"Game Card\" disables relocation to save on retail game card when title ID matches between ROM and game card.")
 
 // Misc settings
 STRING(LANGUAGE, "Language")
