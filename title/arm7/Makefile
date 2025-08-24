@@ -34,7 +34,7 @@ CFLAGS	:=	-g -Wall -O2 \
 		-flto \
 		$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM7
+CFLAGS	+=	$(INCLUDE) -DARM7 -DSDMMC_USE_FIFO
 
 ASFLAGS	:=	-g $(ARCH) -flto
 LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,--nmagic -Wl,-Map,$(notdir $*).map

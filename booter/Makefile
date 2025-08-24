@@ -140,6 +140,7 @@ dist:	all
 	@mkdir -p ../7zfile/debug
 	@mkdir -p "../7zfile/DSi&3DS - SD card users"
 	@cp "$(TARGET).nds" "../7zfile/DSi&3DS - SD card users/BOOT.NDS"
+	@cp "$(TARGET).nds" "../7zfile/DSi&3DS - SD card users/ntrboot.nds"
 	@mkdir -p "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content"
 	#@mkdir -p "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content"
 	@cp $(TARGET).nds "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
