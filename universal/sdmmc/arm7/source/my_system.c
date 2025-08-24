@@ -34,7 +34,12 @@
 
 void powerValueHandler(u32 value, void* user_data);
 void firmwareMsgHandler(int bytes, void *user_data);
+#ifdef SDMMC_USE_FIFO
+void my_sdmmcMsgHandler(int bytes, void *user_data);
+void my_sdmmcValueHandler(u32 value, void* user_data);
+#else
 void my_sdmmcHandler();
+#endif
 
 //---------------------------------------------------------------------------------
 void my_installSystemFIFO(void) {
