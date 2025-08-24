@@ -38,7 +38,7 @@ void my_sdmmc_get_cid(int devicenumber, u32 *cid);
 static void DSiTouchscreenMode(void) {
 	const bool noSgba = (strncmp((const char*)0x04FFFA00, "no$gba", 6) == 0);
 
-	if (!noSgba && !i2cBricked) {
+	if (!noSgba) {
 		return;
 	}
 
