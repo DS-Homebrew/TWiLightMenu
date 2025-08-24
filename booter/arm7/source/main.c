@@ -32,15 +32,11 @@
 
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
-static bool i2cBricked = false;
-
 void my_installSystemFIFO(void);
 void my_sdmmc_get_cid(int devicenumber, u32 *cid);
 
 static void DSiTouchscreenMode(void) {
 	const bool noSgba = (strncmp((const char*)0x04FFFA00, "no$gba", 6) == 0);
-	const u8 i2cVer = i2cReadRegister(0x4A, 0);
-	i2cBricked = (i2cVer == 0 || i2cVer == 0xFF);
 
 	if (!noSgba && !i2cBricked) {
 		return;
@@ -156,13 +152,13 @@ int main() {
 		}
 	}
 
-	DSiTouchscreenMode();
-
 	if (REG_SNDEXTCNT & SNDEXTCNT_ENABLE) {
 		if (!(REG_SNDEXTCNT & BIT(13))) {
 			*(vu16*)0x04004700 |= BIT(13);	// Set 48khz sound/mic frequency
 		}
 	} else if (isDSiMode()) {
+		DSiTouchscreenMode();
+
 		REG_SNDEXTCNT = SNDEXTCNT_FREQ_47KHZ | SNDEXTCNT_RATIO(8);
 		cdcWriteReg(CDC_CONTROL, 6, 15);
 		cdcWriteReg(CDC_CONTROL, 11, 0x85);
