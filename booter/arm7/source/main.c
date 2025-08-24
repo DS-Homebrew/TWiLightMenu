@@ -36,12 +36,6 @@ void my_installSystemFIFO(void);
 void my_sdmmc_get_cid(int devicenumber, u32 *cid);
 
 static void DSiTouchscreenMode(void) {
-	const bool noSgba = (strncmp((const char*)0x04FFFA00, "no$gba", 6) == 0);
-
-	if (!noSgba) {
-		return;
-	}
-
 	// Touchscreen
 	cdcWriteReg(0, 0x01, 0x01);
 	cdcWriteReg(0, 0x39, 0x66);
@@ -101,7 +95,6 @@ static void DSiTouchscreenMode(void) {
 	// Finish up!
 	cdcReadReg (CDC_TOUCHCNT, 0x02);
 	cdcWriteReg(CDC_TOUCHCNT, 0x02, 0x00);
-	*(vu16*)0x4000500 = 0x807F;
 }
 
 //---------------------------------------------------------------------------------
@@ -158,6 +151,7 @@ int main() {
 		}
 	} else if (isDSiMode()) {
 		DSiTouchscreenMode();
+		*(vu16*)0x4000500 = 0x807F;
 
 		REG_SNDEXTCNT = SNDEXTCNT_FREQ_47KHZ | SNDEXTCNT_RATIO(8);
 		cdcWriteReg(CDC_CONTROL, 6, 15);
