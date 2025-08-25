@@ -40,6 +40,7 @@ static const char colorLutBlacklist[][4] = {
 	"KEJ", // Electroplankton: Varvoice
 	"CER", // Ener-G: Gym Rockets
 	"KGU", // Flipnote Studio
+	"YHN", // Flower, Sun and Rain: Murder and Mystery in Paradise
 	"CF3", // Freddi Fish: ABC's Under the Sea
 	"TFB", // Frozen: Olaf's Quest
 	"AGE", // GoldenEye: Rogue Agent
