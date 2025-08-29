@@ -105,7 +105,7 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Wood R4igold.cc Upgrade"
 	mv _DS_MENU.dat "../7zfile/Flashcard users/Autoboot/Wood R4igold.cc Upgrade/_DS_MENU.dat"
 
-	#### Ace3DS+, Ace3DS X, R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version
+	#### Ace3DS+, Ace3DS X, R4iLS, r4isdhc.com.cn cards, r4isdhc.hk 2021, R4infinity 2, R4i-XDS 2014 white version, R4xMP
 	dlditool flashcart_specifics/DLDI/acep.dldi booter_r4ils.nds
 	r4denc -k 0x4002 booter_r4ils.nds _DS_MENU.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/Ace3DS+/"

@@ -9,6 +9,7 @@ Ace3DS+ folder:
 - r4isdhc.hk 2021
 - R4infinity 2
 - R4i-XDS 2014 white version
+- R4xMP
 
 Blue R4i Revolution folder:
 - Blue R4i Revolution v1.4.1

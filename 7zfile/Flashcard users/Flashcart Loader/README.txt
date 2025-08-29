@@ -25,6 +25,7 @@ R4iLS folder:
 - r4isdhc.hk carts 2020 or later
 - R4infinity.com carts
 - white R4i-XDS 2014 carts
+- R4xMP
 
 Original R4 folder:
 - Original R4 (no SDHC)
