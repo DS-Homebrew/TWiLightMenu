@@ -400,7 +400,7 @@ std::optional<Option> opt_theme_select(void)
 
 std::optional<Option> opt_lut_select(void)
 {
-	return Option(STR_SCREENFILTERSEL, STR_AB_SETSCREENFILTER, Option::Str(&colorLutName), colorLutList);
+	return Option(STR_SCREEN_COLOR_FILTER_SELECT, STR_AB_SET_SCREEN_COLOR_FILTER, Option::Str(&colorLutName), colorLutList);
 }
 
 std::optional<Option> opt_gba_border_select(void)
@@ -1333,7 +1333,7 @@ int settingsMode(void)
 	}
 
 	if ((dsiFeatures() || sdFound()) && sys().dsiWramAccess() && !sys().dsiWramMirrored()) {
-		bootstrapPage.option(STR_TWL_SPEED_FOR_SCREEN_FILTERS, STR_DESCRIPTION_TWL_SPEED_FOR_SCREEN_FILTERS, Option::Bool(&ms().boostCpuForClut), {STR_ON, STR_OFF}, {true, false});
+		bootstrapPage.option(STR_TWL_SPEED_FOR_COLOR_FILTERS, STR_DESCRIPTION_TWL_SPEED_FOR_COLOR_FILTERS, Option::Bool(&ms().boostCpuForClut), {STR_ON, STR_OFF}, {true, false});
 	}
 
 	if (widescreenFound) {
@@ -1493,7 +1493,7 @@ int settingsMode(void)
 						{0});
 	}
 
-	miscPage.option(STR_SCREEN_FILTER, STR_DESCRIPTION_SCREEN_FILTER, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
+	miscPage.option(STR_SCREEN_COLOR_FILTER, STR_DESCRIPTION_SCREEN_COLOR_FILTER, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
 
 	if (sdFound() && isDSiMode()) {
 		if (!sys().arm7SCFGLocked()) {
