@@ -1704,7 +1704,7 @@ int akTheme(void) {
 							u32 gameTidHex = 0;
 							tonccpy(&gameTidHex, gameTid[cursorPosOnScreen], 4);
 
-							for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
+							for (int i = 0; i < (int)sizeof(ROMList)/8; i++) {
 								ROMListEntry* curentry = &ROMList[i];
 								if (gameTidHex == curentry->GameCode) {
 									if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
