@@ -6,6 +6,7 @@
 #include "common/flashcard.h"
 #include "common/nitrofs.h"
 #include "common/systemdetails.h"
+#include "common/logging.h"
 #include "myDSiMode.h"
 #include "perGameSettings.h"
 #include <gl2d.h>
@@ -114,21 +115,25 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 		char apFixPath[256];
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s.ips", sys().isRunFromSD() ? "sd" : "fat", filename);
 		if (access(apFixPath, F_OK) == 0) {
+			logPrint("AP-fix found!\n");
 			return 0;
 		}
 
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s.bin", sys().isRunFromSD() ? "sd" : "fat", filename);
 		if (access(apFixPath, F_OK) == 0) {
+			logPrint("AP-fix found!\n");
 			return 0;
 		}
 
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s-%04X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid, headerCRC16);
 		if (access(apFixPath, F_OK) == 0) {
+			logPrint("AP-fix found!\n");
 			return 0;
 		}
 
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s-%04X.bin", sys().isRunFromSD() ? "sd" : "fat", gameTid, headerCRC16);
 		if (access(apFixPath, F_OK) == 0) {
+			logPrint("AP-fix found!\n");
 			return 0;
 		}
 	}
@@ -151,38 +156,41 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 		if (strcmp(buf, ".PCK") == 0) { // Make sure correct file type
 			u32 fileCount;
 			fread(&fileCount, 1, sizeof(fileCount), file);
+			logPrint("Searching for AP-fix...\n");
 
 			// Try binary search for the game
 			int left = 0;
 			int right = fileCount;
+			bool tidFound = false;
 
 			while (left <= right) {
-				int mid = left + ((right - left) / 2);
-				fseek(file, 16 + mid * 16, SEEK_SET);
+				fseek(file, 16 + left * 16, SEEK_SET);
 				fread(buf, 1, 4, file);
 				int cmp = strcmp(buf, gameTid);
 				if (cmp == 0) { // TID matches, check CRC
+					tidFound = true;
 					u16 crc;
 					fread(&crc, 1, sizeof(crc), file);
+					logPrint("TID match: %s, CRC: %04X\n", gameTid, crc);
 
 					if (crc == 0xFFFF || crc == headerCRC16) { // CRC matches
 						fclose(file);
-						return 0;
-					} else if (crc < headerCRC16) {
-						left = mid + 1;
+						logPrint("AP-fix found!\n");
+						return false;
 					} else {
-						right = mid - 1;
+						left++;
 					}
-				} else if (cmp < 0) {
-					left = mid + 1;
+				} else if (tidFound) {
+					break;
 				} else {
-					right = mid - 1;
+					left++;
 				}
 			}
 		}
 
 		fclose(file);
 	}
+	logPrint("AP-fix not found!\n");
 
 	// Check for SDK4-5 ROMs that don't have AP measures.
 	if ((memcmp(gameTid, "AZLJ", 4) == 0)   	// Girls Mode (JAP version of Style Savvy)
