@@ -52,3 +52,7 @@ R4i-SDHC folder:
 - R4(i) Pocket
 - R4i Gold (v1.4.1) (3DS)
 - R4xDS
+
+R4i Upgrade Revolution folder:
+- R4i Upgrade Revolution
+- R4i3D Original
