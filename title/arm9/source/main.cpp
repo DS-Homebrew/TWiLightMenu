@@ -89,6 +89,15 @@ int subscreenmode = 0;
 
 touchPosition touch;
 
+// Used to switch MPU region 6 from 16 MB to 32 MB. This region is the one that
+// starts at address 0xC000000, and we need it to check if we have 16 or 32 MB
+// available.
+//
+// If the loader of TWiLightMenu doesn't set SCFG_EXT9 bits 14-15 to 3, the crt0
+// of libnds will get confused and only map 16 MB. To be sure that the code
+// never crashes, even with buggy loaders, we need to manually set it to 32 MB.
+extern "C" void CP15_ExtendRegion6(void);
+
 using namespace std;
 
 //---------------------------------------------------------------------------------
@@ -2716,6 +2725,12 @@ int titleMode(void)
 				fclose(addon);
 			}
 		}
+	}
+
+	if (isDSiMode()) {
+		// Extend the MPU region that is mapped at address 0xC000000 up to
+		// 0xE000000 instead of potentially ending at 0xD000000.
+		CP15_ExtendRegion6();
 	}
 
 	if (REG_SCFG_EXT != 0) {
