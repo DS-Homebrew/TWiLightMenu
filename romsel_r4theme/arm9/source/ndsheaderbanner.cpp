@@ -506,8 +506,8 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 			"C24",	// Phantasy Star 0
 			"BZF",	// Phineas and Ferb: Across the 2nd Dimension
 			"VPF",	// Phineas and Ferb: Ride Again
-			"IPK",	// Pokemon HeartGold Version
-			"IPG",	// Pokemon SoulSilver Version
+			// "IPK",	// Pokemon HeartGold Version (Patched by nds-bootstrap)
+			// "IPG",	// Pokemon SoulSilver Version (Patched by nds-bootstrap)
 			"IRA",	// Pokemon Black Version
 			"IRB",	// Pokemon White Version
 			"IRE",	// Pokemon Black Version 2
@@ -519,7 +519,7 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 			"C3J",	// Professor Layton and the Unwound Future
 			"BKQ",	// Pucca: Power Up
 			"VRG",	// Rabbids Go Home: A Comedy Adventure
-			"BRJ",	// Radiant Hostoria
+			// "BRJ",	// Radiant Hostoria (Patched by nds-bootstrap)
 			"B3X",	// River City: Soccer Hooligans
 			"BRM",	// Rooms: The Main Building
 			"TDV",	// Shin Megami Tensei: Devil Survivor 2
