@@ -4,7 +4,7 @@ Ace3DS+ folder:
 - Ace3DS+
 - Ace3DS X
 - R4 i.L.S
-- R4 SDHC Dual-Core Smart Update (r4isdhc.com.cn)
+- r4isdhc.com.cn cards
 - r4isdhc.hk 2020+ (Year in star shape)
 - r4isdhc.hk 2021
 - R4infinity 2
