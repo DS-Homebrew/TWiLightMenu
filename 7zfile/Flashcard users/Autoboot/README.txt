@@ -44,7 +44,7 @@ R4 Ultra folder:
 
 R4i-SDHC folder:
 - R4i-SDHC
-- r4isdhc.com cards 2014+
+- R4 SDHC RTS Lite (r4isdhc.com) 2014+
 - r4ixl-sdhc.com cards
 - R4i SDHC Upgrade Revolution
 - R4DSiXL3D, R4i Advance
