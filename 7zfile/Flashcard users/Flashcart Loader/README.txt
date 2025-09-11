@@ -21,7 +21,7 @@ Ace3DS+ folder:
 R4iLS folder:
 - Gateway Blue
 - R4 i.L.S
-- r4isdhc.com.cn carts
+- R4 SDHC Dual-Core Smart Update (r4isdhc.com.cn)
 - r4isdhc.hk carts 2020 or later
 - R4infinity.com carts
 - white R4i-XDS 2014 carts
