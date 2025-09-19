@@ -1442,6 +1442,7 @@ int settingsMode(void)
 	}
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
+	bool gamesPageVisible = false;
 
 	using TGbaBooter = TWLSettings::TGbaBooter;
 	using TColSegaEmulator = TWLSettings::TColSegaEmulator;
@@ -1450,21 +1451,28 @@ int settingsMode(void)
 
 	if (flashcardFound() && ms().kernelUseable) {
 		gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
+		gamesPageVisible = true;
 	}
 
-	if (emulatorsInstalled)
+	if (emulatorsInstalled) {
 		gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
-	if (ms().consoleModel == 0 && sdFound() && !sys().arm7SCFGLocked())
+		gamesPageVisible = true;
+	}
+	if (ms().consoleModel == 0 && sdFound() && !sys().arm7SCFGLocked()) {
 		gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool((bool *)&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"}, {true, false});
+		gamesPageVisible = true;
+	}
 	if (sys().isRegularDS()) {
 		gamesPage
 			.option(STR_GBA_BOOTER, STR_DESCRIPTION_GBA_BOOTER, Option::Int((int *)&ms().gbaBooter), {gbaR3Found ? STR_NATIVE_GBARUNNER3 : STR_NATIVE_GBARUNNER2, gbaR3Found ? STR_GBARUNNER3_ONLY : STR_GBARUNNER2_ONLY}, {TGbaBooter::EGbaNativeGbar2, TGbaBooter::EGbaGbar2})
 			.option(STR_GBABORDER, STR_DESCRIPTION_GBABORDER, Option::Nul(opt_gba_border_select), {STR_PRESS_A}, {0});
+		gamesPageVisible = true;
 	}
 	if (emulatorsInstalled) {
 		if (!(isDSiMode() && sdFound() && sys().arm7SCFGLocked()))
 			gamesPage.option(STR_MD_EMULATOR, STR_DESCRIPTION_MD_EMULATOR, Option::Int((int *)&ms().mdEmulator), {"jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {TMegaDriveEmulator::EMegaDriveJenesis, TMegaDriveEmulator::EMegaDrivePico, TMegaDriveEmulator::EMegaDriveHybrid});
 		gamesPage.option(STR_SG_EMULATOR, STR_DESCRIPTION_SG_EMULATOR, Option::Int((int *)&ms().sgEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
+		gamesPageVisible = true;
 	}
 
 	if (isDSiMode() && sdFound() && !sys().arm7SCFGLocked()) {
@@ -1481,6 +1489,7 @@ int settingsMode(void)
 		} else {
 			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int((int *)&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT}, {TSlot1LaunchMethod::EReboot, TSlot1LaunchMethod::EDirect});
 		}
+		gamesPageVisible = true;
 	}
 
 	SettingsPage miscPage(STR_MISC_SETTINGS);
@@ -1645,9 +1654,9 @@ int settingsMode(void)
 		gui().addPage(gbar2Page);
 	if (sdFound() && ms().consoleModel == 0)
 		gui().addPage(unlaunchPage);
-	gui()
-		.addPage(gamesPage)
-		.addPage(miscPage);
+	if (gamesPageVisible)
+		gui().addPage(gamesPage);
+	gui().addPage(miscPage);
 
 	/*if (isDSiMode() && ms().consoleModel >= 2) {
 		gui().addPage(twlfirmPage);
