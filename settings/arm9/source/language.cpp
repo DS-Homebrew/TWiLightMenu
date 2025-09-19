@@ -21,6 +21,11 @@ extern bool useTwlCfg;
  */
 std::string getString(CIniFile &ini, const std::string &item, const std::string &defaultValue) {
 	std::string out = ini.GetString("LANGUAGE", item, defaultValue);
+	// logPrint("%s: %s\n", item.c_str(), out.c_str());
+	if (out == "") {
+		// Fallback to default string if translated string is blank
+		out = defaultValue;
+	}
 
 	// Convert "\n" to actual newlines
 	for (uint i = 0; i < out.length() - 1; i++) {
