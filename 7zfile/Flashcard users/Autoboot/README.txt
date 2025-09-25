@@ -42,6 +42,12 @@ R4 Ultra folder:
 - r4igold.cc 3DS translucent
 - r4i-gold.me 2013+
 
+R4i Advance folder:
+- R4i Advance (www.r4i-advance.com)
+- R4i SDHC Upgrade Revolution (www.r4i-dshc.com)
+- R4i 3DS (v4.3 kernel)
+- R4i YES
+
 R4i-SDHC folder:
 - R4i-SDHC
 - r4isdhc.com cards 2014+

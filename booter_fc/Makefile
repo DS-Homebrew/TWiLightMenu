@@ -258,9 +258,9 @@ autoboot:
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i Upgrade Revolution/R4i.3ds"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i Upgrade Revolution/TTMenu.dat"
 
-	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i SDHC Upgrade Revolution (www.r4i-dshc.com), R4i 3DS (v4.3 kernel) & R4i YES/"
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i SDHC Upgrade Revolution (www.r4i-dshc.com), R4i 3DS (v4.3 kernel) & R4i YES/R4i.TP"
-	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i SDHC Upgrade Revolution (www.r4i-dshc.com), R4i 3DS (v4.3 kernel) & R4i YES/TTMenu.dat"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i Advance/"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i Advance/R4i.TP"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i Advance/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i King LL/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i King LL/R4KING"
