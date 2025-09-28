@@ -92,7 +92,6 @@ bool nandio_startup() {
 
 	my_nand_ReadSectors(0, 1, sector_buf);
 	is3DS = parse_ncsd(sector_buf, 0) == 0;
-	if (is3DS) return false;
 
 	if (*(u32*)(0x2FFD7BC) == 0) {
 		// Get eMMC CID

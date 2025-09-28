@@ -87,10 +87,10 @@ static void dsi_aes_set_key(uint32_t *rk, const uint32_t *console_id, key_mode_t
 		key[3] = console_id[1];
 		break;
 	case NAND_3DS:
-		key[0] = (console_id[0] ^ 0xb358a6af) | 0x80000000;
+		key[0] = console_id[0];
 		key[1] = 0x544e494e;
 		key[2] = 0x4f444e45;
-		key[3] = console_id[1] ^ 0x08c267b7;
+		key[3] = console_id[1];
 		break;
 	case ES:
 		key[0] = 0x4e00004a;
