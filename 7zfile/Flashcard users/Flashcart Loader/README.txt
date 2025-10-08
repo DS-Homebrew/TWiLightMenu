@@ -27,13 +27,6 @@ R4iLS folder:
 - white R4i-XDS 2014 carts
 - R4xMP
 
-Original R4 folder:
-- Original R4 (no SDHC)
-- M3 DS Simply
-
-Original R4SDHC folder:
-- Original R4SDHC (no URL)
-
 R4i Gold 1.54:
 - r4ids.cn carts without RTS or 3DS label
 - r4ids.com carts without 2.0 or Plus label
