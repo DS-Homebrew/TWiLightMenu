@@ -683,6 +683,7 @@ void lastRunROM()
 
 			std::string fcPath;
 			if ((memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+			 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 11) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)) {
 				if (sys().hasRegulableBacklight()) {
