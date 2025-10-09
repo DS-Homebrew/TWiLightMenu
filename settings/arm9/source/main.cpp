@@ -1321,15 +1321,8 @@ int settingsMode(void)
 			.option(STR_SAVE_RELOCATION, STR_DESCRIPTION_SAVE_RELOCATION, Option::Bool((bool *)&ms().saveRelocation), {ms().showMicroSd ? STR_MICRO_SD_CARD : STR_SD_CARD, STR_SAVE_GAME_CARD}, {true, false});
 	}
 
-	if (flashcardFound() && (dsiFeatures() || sdFound())) {
-		if (sdFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
-			if (dsiFeatures()) {
-				bootstrapPage
-					.option(STR_S1SD_B4DSMODE, STR_DESCRIPTION_B4DSMODE, Option::Int(&bs().b4dsMode), {STR_OFF, STR_4MB_RAM, STR_8MB_RAM}, {0, 1, 2});
-			}
-		} else if (isDSiMode()) {
-			bootstrapPage.option(STR_B4DSMODE, STR_DESCRIPTION_B4DSMODE, Option::Int(&bs().b4dsMode), {STR_OFF, STR_4MB_RAM, STR_8MB_RAM}, {0, 1, 2});
-		}
+	if (dsiFeatures()) {
+		bootstrapPage.option(sdFound() ? STR_S1SD_B4DSMODE : STR_B4DSMODE, STR_DESCRIPTION_B4DSMODE, Option::Int(&bs().b4dsMode), {STR_OFF, STR_4MB_RAM, STR_8MB_RAM}, {0, 1, 2});
 	}
 
 	if ((dsiFeatures() || sdFound()) && sys().dsiWramAccess() && !sys().dsiWramMirrored()) {
