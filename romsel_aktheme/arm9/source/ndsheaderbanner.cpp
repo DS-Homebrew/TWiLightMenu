@@ -508,7 +508,7 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 			"CLJ",	// Mario & Luigi: Bowser's Inside Story
 			"COL",	// Mario & Sonic at the Olympic Winter Games
 			"V2G",	// Mario vs. Donkey Kong: Mini-Land Mayhem!
-			"B6Z",	// Mega Man Zero Collection
+			// "B6Z",	// Mega Man Zero Collection (Patched by nds-bootstrap)
 			"BVN",	// Michael Jackson: The Experience
 			"CHN",	// Might & Magic: Clash of Heroes
 			"BNQ",	// Murder in Venice
@@ -546,7 +546,7 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 			"VSN",	// Sonny with a Chance
 			"B2U",	// Sports Collection
 			"CLW",	// Star Wars: The Clone Wars: Jedi Alliance
-			"AZL",	// Style Savvy
+			// "AZL",	// Style Savvy (Patched by nds-bootstrap)
 			"BH2",	// Super Scribblenauts
 			"B6T",	// Tangled
 			"B4T",	// Tetris Party Deluxe
