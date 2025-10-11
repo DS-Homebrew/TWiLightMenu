@@ -1347,25 +1347,23 @@ int settingsMode(void)
 
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 
-	if ((isDSiMode() || sdFound()) && !sys().i2cBricked() && ms().consoleModel < 2) {
-		if (sdFound()) {
-			bootstrapPage
-				.option((flashcardFound() ? STR_SYSSD_ROMREADLED : STR_ROMREADLED),
-					STR_DESCRIPTION_ROMREADLED_1,
-					Option::Int(&bs().romreadled),
-					{STR_NONE, STR_WIFI, STR_POWER, STR_CAMERA},
-					{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
-				.option((flashcardFound() ? STR_SD_DMAROMREADLED : STR_DMAROMREADLED),
-					STR_DESCRIPTION_DMAROMREADLED,
-					Option::Int(&bs().dmaromreadled),
-					{STR_SAME_AS_REG, STR_NONE, STR_WIFI, STR_POWER, STR_CAMERA},
-					{TROMReadLED::ELEDSame, TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
-		}
-		bootstrapPage.option((dsiFeatures() ? STR_PRECISEVOLUMECTRL : STR_SYSSD_PRECISEVOLUMECTRL),
-			STR_DESCRIPTION_PRECISEVOLUMECTRL,
-			Option::Bool(&bs().preciseVolumeControl),
-			{STR_ON, STR_OFF},
-			{true, false});
+	if ((dsiFeatures() || sdFound()) && !sys().i2cBricked() && ms().consoleModel < 2) {
+		bootstrapPage
+			.option((dsiFeatures() ? STR_ROMREADLED : STR_SYSSD_ROMREADLED),
+				STR_DESCRIPTION_ROMREADLED_1,
+				Option::Int(&bs().romreadled),
+				{STR_NONE, STR_WIFI, STR_POWER, STR_CAMERA},
+				{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
+			.option((dsiFeatures() ? STR_DMAROMREADLED : STR_SD_DMAROMREADLED),
+				STR_DESCRIPTION_DMAROMREADLED,
+				Option::Int(&bs().dmaromreadled),
+				{STR_SAME_AS_REG, STR_NONE, STR_WIFI, STR_POWER, STR_CAMERA},
+				{TROMReadLED::ELEDSame, TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
+			.option((dsiFeatures() ? STR_PRECISEVOLUMECTRL : STR_SYSSD_PRECISEVOLUMECTRL),
+				STR_DESCRIPTION_PRECISEVOLUMECTRL,
+				Option::Bool(&bs().preciseVolumeControl),
+				{STR_ON, STR_OFF},
+				{true, false});
 	}
 
 	if (sdFound()) {
