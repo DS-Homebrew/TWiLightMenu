@@ -541,7 +541,7 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 			"BRM",	// Rooms: The Main Building
 			"TDV",	// Shin Megami Tensei: Devil Survivor 2
 			"BMT",	// Shin Megami Tensei: Strange Journey
-			"VCD",	// Solatorobo: Red the Hunter
+			// "VCD",	// Solatorobo: Red the Hunter (Patched by nds-bootstrap)
 			"BXS",	// Sonic Colors
 			"VSN",	// Sonny with a Chance
 			"B2U",	// Sports Collection
