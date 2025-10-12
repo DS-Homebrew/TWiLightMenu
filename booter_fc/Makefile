@@ -277,9 +277,12 @@ autoboot:
 	ndstool -c R4.dat -9 new9.bin -7 $(TARGET)_fc.arm7.elf -r9 0x02000000 -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	rm -rf new9.bin arm9.bin arm7.bin banner.bin header.bin
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4i-SDHC/"
-	mv R4.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC/R4.dat"
+	cp R4.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC/R4.dat"
 	## For YSMenu softreset, use the original TTMenu.dat
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-SDHC/TTMenu.dat"
+
+	mv R4.dat "../7zfile/Flashcard users/Autoboot/R4i SDHC Brand New V2.0/R4.dat"
+	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i SDHC Brand New V2.0/TTMenu.dat"
 
 	mkdir -p "../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/"
 	cp TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4 Deluxe v1.20/_DS_MENU.dat"
