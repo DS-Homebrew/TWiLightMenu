@@ -72,6 +72,9 @@ static const char colorLutBlacklist[][4] = {
 	"CP3", // Viva Pinata: Pocket Paradise
 	"TCW", // Winx Club: Magical Fairy Party
 	"BZO", // World of Zoo
+	"AYG", // Yu-Gi-Oh!: Nightmare Troubadour
+	"AY7", // Yu-Gi-Oh!: World Championship 2007
+	"YG8", // Yu-Gi-Oh!: World Championship 2008
 	"CY8", // Yu-Gi-Oh! 5D's: Stardust Accelerator: World Championship 2009
 	"BYX", // Yu-Gi-Oh! 5D's: World Championship 2010: Reverse of Arcadia
 	"BYY", // Yu-Gi-Oh! 5D's: World Championship 2011: Over The Nexus
