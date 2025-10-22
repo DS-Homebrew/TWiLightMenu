@@ -31,9 +31,15 @@ private:
 
 	int _shoulderLRenderY;
 	int _shoulderLRenderX;
+	int _shoulderLTextY;
+	int _shoulderLTextX;
+	int _shoulderLTextAlign;
 	
 	int _shoulderRRenderY;
 	int _shoulderRRenderX;
+	int _shoulderRTextY;
+	int _shoulderRTextX;
+	int _shoulderRTextAlign;
 
 	int _volumeRenderY;
 	int _volumeRenderX;
@@ -114,6 +120,10 @@ private:
 	u16 _fontPalette2;
 	u16 _fontPalette3;
 	u16 _fontPalette4;
+	u16 _fontPaletteDisabled1;
+	u16 _fontPaletteDisabled2;
+	u16 _fontPaletteDisabled3;
+	u16 _fontPaletteDisabled4;
 	u16 _fontPaletteTitlebox1;
 	u16 _fontPaletteTitlebox2;
 	u16 _fontPaletteTitlebox3;
@@ -161,9 +171,15 @@ public:
 
 	int shoulderLRenderY() const { return _shoulderLRenderY; }
 	int shoulderLRenderX() const { return _shoulderLRenderX; }
+	int shoulderLTextY() const { return _shoulderLTextY; }
+	int shoulderLTextX() const { return _shoulderLTextX; }
+	int shoulderLTextAlign() const { return _shoulderLTextAlign; }
 	
 	int shoulderRRenderY() const { return _shoulderRRenderY; }
 	int shoulderRRenderX() const { return _shoulderRRenderX; }
+	int shoulderRTextY() const { return _shoulderRTextY; }
+	int shoulderRTextX() const { return _shoulderRTextX; }
+	int shoulderRTextAlign() const { return _shoulderRTextAlign; }
 
 	int volumeRenderY() const { return _volumeRenderY; }
 	int volumeRenderX() const { return _volumeRenderX; }
@@ -245,6 +261,10 @@ public:
 	u16 fontPalette2() const { return _fontPalette2; }
 	u16 fontPalette3() const { return _fontPalette3; }
 	u16 fontPalette4() const { return _fontPalette4; }
+	u16 fontPaletteDisabled1() const { return _fontPaletteDisabled1; }
+	u16 fontPaletteDisabled2() const { return _fontPaletteDisabled2; }
+	u16 fontPaletteDisabled3() const { return _fontPaletteDisabled3; }
+	u16 fontPaletteDisabled4() const { return _fontPaletteDisabled4; }
 	u16 fontPaletteTitlebox1() const { return _fontPaletteTitlebox1; }
 	u16 fontPaletteTitlebox2() const { return _fontPaletteTitlebox2; }
 	u16 fontPaletteTitlebox3() const { return _fontPaletteTitlebox3; }

@@ -92,6 +92,10 @@ void fontInit() {
 		tc().fontPalette2(),
 		tc().fontPalette3(),
 		tc().fontPalette4(),
+		tc().fontPaletteDisabled1(),
+		tc().fontPaletteDisabled2(),
+		tc().fontPaletteDisabled3(),
+		tc().fontPaletteDisabled4(),
 		tc().fontPaletteTitlebox1(),
 		tc().fontPaletteTitlebox2(),
 		tc().fontPaletteTitlebox3(),
@@ -118,6 +122,10 @@ void fontInit() {
 		tc().fontPalette2(),
 		tc().fontPalette3(),
 		tc().fontPalette4(),
+		tc().fontPaletteDisabled1(),
+		tc().fontPaletteDisabled2(),
+		tc().fontPaletteDisabled3(),
+		tc().fontPaletteDisabled4(),
 		tc().fontPaletteTitlebox1(),
 		tc().fontPaletteTitlebox2(),
 		tc().fontPaletteTitlebox3(),
@@ -140,20 +148,21 @@ void fontInit() {
 		tc().fontPaletteDateTime4(),
 	};
 	if (tc().usernameUserPalette()) {
+		const int userPalOffset = 4 * (int)FontPalette::name;
 		FILE *file = fopen((TFN_PALETTE_USERNAME).c_str(), "rb");
 		if (file) {
 			fseek(file, themeColor * 4 * sizeof(u16), SEEK_SET);
-			fread(palette + 16, sizeof(u16), 4, file);
+			fread(palette + userPalOffset, sizeof(u16), 4, file);
 			fclose(file);
 			// swap palette bytes
 			for (int i = 0; i < 4; i++) {
-				palette[16 + i] = (palette[16 + i] << 8 & 0xFF00) | palette[16 + i] >> 8;
-				paletteSub[16 + i] = palette[16 + i];
+				palette[userPalOffset + i] = (palette[userPalOffset + i] << 8 & 0xFF00) | palette[userPalOffset + i] >> 8;
+				paletteSub[userPalOffset + i] = palette[userPalOffset + i];
 			}
 		}
 		else {
-			tonccpy(palette + 16, (tc().usernameEdgeAlpha() ? bmpPal_topSmallFontForAlpha : bmpPal_topSmallFont) + themeColor, 4 * sizeof(u16));
-			tonccpy(paletteSub + 16, bmpPal_topSmallFont + themeColor, 4 * sizeof(u16));
+			tonccpy(palette + userPalOffset, (tc().usernameEdgeAlpha() ? bmpPal_topSmallFontForAlpha : bmpPal_topSmallFont) + themeColor, 4 * sizeof(u16));
+			tonccpy(paletteSub + userPalOffset, bmpPal_topSmallFont + themeColor, 4 * sizeof(u16));
 		}
 	}
 	effectColorModePalette(palette, sizeof(palette) / sizeof(palette[0]));

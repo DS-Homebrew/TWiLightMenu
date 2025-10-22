@@ -11,8 +11,9 @@
 ThemeConfig::ThemeConfig()
 	: _startBorderRenderY(81), _startBorderSpriteW(32), _startBorderSpriteH(80), _startTextRenderY(143),
 	_titleboxRenderY(85), _titleboxMaxLines(4), _titleboxTextY(30), _titleboxTextW(240), _titleboxTextLarge(true),
-	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11),
-	_rotatingCubesRenderY(78), _shoulderLRenderY(172), _shoulderLRenderX(0), _shoulderRRenderY(172), _shoulderRRenderX(178),
+	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11), _rotatingCubesRenderY(78),
+	_shoulderLRenderY(172), _shoulderLRenderX(0), _shoulderLTextY(257), _shoulderLTextX(18), _shoulderLTextAlign(1),
+	_shoulderRRenderY(172), _shoulderRRenderX(178), _shoulderRTextY(257), _shoulderRTextX(238), _shoulderRTextAlign(-1),
 	_volumeRenderY(4), _volumeRenderX(16), _batteryRenderY(5), _batteryRenderX(235), _usernameRenderY(3), _usernameRenderX(28),
 	_usernameRenderXDS(4), _usernameEdgeAlpha(true), _dateRenderY(5), _dateRenderX(162), _timeRenderY(5), _timeRenderX(200),
 	// _photoRenderY(24), _photoRenderX(179),
@@ -32,6 +33,7 @@ ThemeConfig::ThemeConfig()
 	_purpleBatteryAvailable(false), _renderPhoto(true), _darkLoading(false), _useAlphaBlend(true),
 	_playStartupJingle(false), _startupJingleDelayAdjust(0), _progressBarColor(0x7C00),
 	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108),
+	_fontPaletteDisabled1(0x0000), _fontPaletteDisabled2(0xDEF7), _fontPaletteDisabled3(0xC631), _fontPaletteDisabled4(0xA108),
 	_fontPaletteTitlebox1(0x0000), _fontPaletteTitlebox2(0xDEF7), _fontPaletteTitlebox3(0xC631), _fontPaletteTitlebox4(0xA108),
 	_fontPaletteDialog1(0x0000), _fontPaletteDialog2(0xDEF7), _fontPaletteDialog3(0xC631), _fontPaletteDialog4(0xA108),
 	_fontPaletteOverlay1(0x0000), _fontPaletteOverlay2(0xDEF7), _fontPaletteOverlay3(0xC631), _fontPaletteOverlay4(0xA108),
@@ -90,8 +92,14 @@ void ThemeConfig::loadConfig() {
 	// _photoRenderY = getInt(themeConfig, "PhotoRenderY", _photoRenderY);
 	_shoulderLRenderY = getInt(themeConfig, "ShoulderLRenderY", _shoulderLRenderY);
 	_shoulderLRenderX = getInt(themeConfig, "ShoulderLRenderX", _shoulderLRenderX);
+	_shoulderLTextY = getInt(themeConfig, "ShoulderLTextY", _shoulderLTextY);
+	_shoulderLTextX = getInt(themeConfig, "ShoulderLTextX", _shoulderLTextX);
+	_shoulderLTextAlign = getInt(themeConfig, "ShoulderLTextAlign", _shoulderLTextAlign);
 	_shoulderRRenderY = getInt(themeConfig, "ShoulderRRenderY", _shoulderRRenderY);
 	_shoulderRRenderX = getInt(themeConfig, "ShoulderRRenderX", _shoulderRRenderX);
+	_shoulderRTextY = getInt(themeConfig, "ShoulderRTextY", _shoulderRTextY);
+	_shoulderRTextX = getInt(themeConfig, "ShoulderRTextX", _shoulderRTextX);
+	_shoulderRTextAlign = getInt(themeConfig, "ShoulderRTextAlign", _shoulderRTextAlign);
 	_batteryRenderY = getInt(themeConfig, "BatteryRenderY", _batteryRenderY);
 	_batteryRenderX = getInt(themeConfig, "BatteryRenderX", _batteryRenderX);
 	_usernameRenderY = getInt(themeConfig, "UsernameRenderY", _usernameRenderY);
@@ -167,6 +175,10 @@ void ThemeConfig::loadConfig() {
 	_fontPalette2 = getInt(themeConfig, "FontPalette2", _fontPalette2);
 	_fontPalette3 = getInt(themeConfig, "FontPalette3", _fontPalette3);
 	_fontPalette4 = getInt(themeConfig, "FontPalette4", _fontPalette4);
+	_fontPaletteDisabled1 = getInt(themeConfig, "FontPaletteDisabled1", _fontPalette1);
+	_fontPaletteDisabled2 = getInt(themeConfig, "FontPaletteDisabled2", _fontPalette2);
+	_fontPaletteDisabled3 = getInt(themeConfig, "FontPaletteDisabled3", _fontPalette3);
+	_fontPaletteDisabled4 = getInt(themeConfig, "FontPaletteDisabled4", _fontPalette4);
 	_fontPaletteTitlebox1 = getInt(themeConfig, "FontPaletteTitlebox1", _fontPalette1);
 	_fontPaletteTitlebox2 = getInt(themeConfig, "FontPaletteTitlebox2", _fontPalette2);
 	_fontPaletteTitlebox3 = getInt(themeConfig, "FontPaletteTitlebox3", _fontPalette3);
