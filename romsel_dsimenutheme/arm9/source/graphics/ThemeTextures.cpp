@@ -23,6 +23,7 @@
 #include "common/lzss.h"
 #include "common/tonccpy.h"
 #include "common/lodepng.h"
+#include "language.h"
 #include "ndsheaderbanner.h"
 #include "ndma.h"
 
@@ -1349,6 +1350,26 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 			}
 		}
 	}
+	toncset16(FontGraphic::textBuf[1], 0, SCREEN_WIDTH * smallFont()->height());
+	smallFont()->print(0, 0, true, STR_NEXT, Alignment::left, RShoulderActive ? FontPalette::overlay : FontPalette::disabled);
+	int width = smallFont()->calcWidth(STR_NEXT);
+	// Copy text to background
+	int align = tc().shoulderRTextAlign();
+	int posX = tc().shoulderRTextX() - (align < 0 ? width : align == 0 ? width/2 : 0), posY = tc().shoulderRTextY();
+	for (int y = 0; y < smallFont()->height() && posY + y < SCREEN_HEIGHT; y++) {
+		if (posY + y < 0) continue;
+		for (int x = 0; x < width && posX + x < SCREEN_WIDTH; x++) {
+			if (posX + x < 0) continue;
+			int px = FontGraphic::textBuf[1][y * SCREEN_WIDTH + x];
+			u16 bg = _bgSubBuffer[(posY + y) * SCREEN_WIDTH + (posX + x)];
+			u16 val = px ? themealphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
+
+			_bgSubBuffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = val;
+			if (boxArtColorDeband) {
+				_bgSubBuffer2[(posY + y) * SCREEN_WIDTH + (posX + x)] = val;
+			}
+		}
+	}
 
 	// Draw L Shoulder
 	for (uint y = tc().shoulderLRenderY(); y < tc().shoulderLRenderY() + leftTex->texHeight(); y++) {
@@ -1359,6 +1380,26 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 				if (boxArtColorDeband) {
 					_bgSubBuffer2[y * 256 + x] = val;
 				}
+			}
+		}
+	}
+	toncset16(FontGraphic::textBuf[1], 0, SCREEN_WIDTH * smallFont()->height());
+	smallFont()->print(0, 0, true, STR_PREV, Alignment::left, LShoulderActive ? FontPalette::overlay : FontPalette::disabled);
+	width = smallFont()->calcWidth(STR_PREV);
+	// Copy text to background
+	align = tc().shoulderLTextAlign();
+	posX = tc().shoulderLTextX() - (align < 0 ? width : align == 0 ? width/2 : 0), posY = tc().shoulderLTextY();
+	for (int y = 0; y < smallFont()->height() && posY + y < SCREEN_HEIGHT; y++) {
+		if (posY + y < 0) continue;
+		for (int x = 0; x < width && posX + x < SCREEN_WIDTH; x++) {
+			if (posX + x < 0) continue;
+			int px = FontGraphic::textBuf[1][y * SCREEN_WIDTH + x];
+			u16 bg = _bgSubBuffer[(posY + y) * SCREEN_WIDTH + (posX + x)];
+			u16 val = px ? themealphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
+
+			_bgSubBuffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = val;
+			if (boxArtColorDeband) {
+				_bgSubBuffer2[(posY + y) * SCREEN_WIDTH + (posX + x)] = val;
 			}
 		}
 	}
