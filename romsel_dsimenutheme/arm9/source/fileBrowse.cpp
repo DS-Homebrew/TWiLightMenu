@@ -3577,7 +3577,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							while (titleboxXpos[ms().secondaryDevice] != titleboxXdest[ms().secondaryDevice]) {
 								swiWaitForVBlank();
 							}
-							snd().playStop();
+							if (tc().playStopSound()) snd().playStop();
 							startBorderZoomOut = true;
 						}
 						dsiCursorMove = true;
@@ -3726,6 +3726,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					bannerTextShown = false;
 					titleboxXspeed = (ms().theme == TWLSettings::EThemeDSi) ? 8 : 3;
 					touch = startTouch;
+					needToPlayStopSound = true;
 					if (!gameTapped && CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 						showSTARTborder = (ms().theme == TWLSettings::ETheme3DS ? true : false);
 					}

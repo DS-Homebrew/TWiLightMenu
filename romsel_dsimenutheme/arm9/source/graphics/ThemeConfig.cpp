@@ -31,6 +31,7 @@ ThemeConfig::ThemeConfig()
 	_iconSMSUserPalette(false), _iconSNESUserPalette(false), _iconUnknownUserPalette(false), _iconVIDUserPalette(false),
 	_iconWSUserPalette(false), _usernameUserPalette(true), _progressBarUserPalette(true),
 	_purpleBatteryAvailable(false), _renderPhoto(true), _darkLoading(false), _useAlphaBlend(true),
+	_playStopSound(true),
 	_playStartupJingle(false), _startupJingleDelayAdjust(0), _progressBarColor(0x7C00),
 	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108),
 	_fontPaletteDisabled1(0x0000), _fontPaletteDisabled2(0xDEF7), _fontPaletteDisabled3(0xC631), _fontPaletteDisabled4(0xA108),
@@ -40,6 +41,10 @@ ThemeConfig::ThemeConfig()
 	_fontPaletteUsername1(0x0000), _fontPaletteUsername2(0xDEF7), _fontPaletteUsername3(0xC631), _fontPaletteUsername4(0xA108),
 	_fontPaletteDateTime1(0x0000), _fontPaletteDateTime2(0xDEF7), _fontPaletteDateTime3(0xC631), _fontPaletteDateTime4(0xA108)
 {
+	if (ms().theme != TWLSettings::EThemeDSi) {
+		_playStopSound = false;
+	}
+
 	if (ms().theme == TWLSettings::ETheme3DS) {
 		_startBorderUserPalette = false;
 		_dialogBoxUserPalette = false;
@@ -167,6 +172,7 @@ void ThemeConfig::loadConfig() {
 	_darkLoading = getInt(themeConfig, "DarkLoading", _darkLoading);
 	_useAlphaBlend = getInt(themeConfig, "UseAlphaBlend", _useAlphaBlend);
 
+	_playStopSound = getInt(themeConfig, "PlayStopSound", _playStopSound);
 	_playStartupJingle = getInt(themeConfig, "PlayStartupJingle", _playStartupJingle);
 	_startupJingleDelayAdjust = getInt(themeConfig, "StartupJingleDelayAdjust", _startupJingleDelayAdjust);
 	_progressBarColor = getInt(themeConfig, "ProgressBarColor", _progressBarColor);
