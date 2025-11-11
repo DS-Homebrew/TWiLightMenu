@@ -400,7 +400,7 @@ std::optional<Option> opt_theme_select(void)
 
 std::optional<Option> opt_lut_select(void)
 {
-	return Option(STR_SCREENFILTERSEL, STR_AB_SETSCREENFILTER, Option::Str(&colorLutName), colorLutList);
+	return Option(STR_SCREEN_COLOR_FILTER_SELECT, STR_AB_SET_SCREEN_COLOR_FILTER, Option::Str(&colorLutName), colorLutList);
 }
 
 std::optional<Option> opt_gba_border_select(void)
@@ -1191,11 +1191,13 @@ int settingsMode(void)
 		.option(STR_ROCKET_ROBZ_LOGO, ms().macroMode ? STR_DESCRIPTION_ROCKET_ROBZ_LOGO_MACRO : STR_DESCRIPTION_ROCKET_ROBZ_LOGO, Option::Bool(&ms().rocketRobzLogo), {STR_SHOW, STR_HIDE}, {true, false});
 	if (ms().macroMode) {
 		guiPage
-			.option(STR_GBSPLASH, STR_DESCRIPTION_GBSPLASH, Option::Int(&ms().dsiSplash), {STR_SHOW, STR_CUSTOM_SPLASH, STR_HIDE}, {(ms().dsiSplash==2 ? 2 : 1), 3, 0});
+			.option(STR_GBSPLASH, STR_DESCRIPTION_GBSPLASH, Option::Int(&ms().dsiSplash), {STR_SHOW, STR_CUSTOM_SPLASH, STR_HIDE}, {(ms().dsiSplash==2 ? 2 : 1), 3, 0})
+			.option(STR_GB_SPLASH_EASTER_EGGS, STR_DESCRIPTION_GB_SPLASH_EASTER_EGGS, Option::Bool(&ms().dsiSplashEasterEggs), {STR_OFF, STR_ON}, {false, true});
 	} else {
 		guiPage
 			.option(sys().isRegularDS() ? STR_DSSPLASH : STR_DSISPLASH, sys().isRegularDS() ? STR_DESCRIPTION_DSSPLASH : STR_DESCRIPTION_DSISPLASH, Option::Int(&ms().dsiSplash), {STR_WITHOUT_HS, STR_WITH_HS, STR_CUSTOM_SPLASH, STR_HIDE}, {1, 2, 3, 0})
-			.option(sys().isRegularDS() ? STR_DSSPLASHAUTOSKIP : STR_DSISPLASHAUTOSKIP, sys().isRegularDS() ? STR_DESCRIPTION_DSSPLASHAUTOSKIP : STR_DESCRIPTION_DSISPLASHAUTOSKIP, Option::Bool(&ms().dsiSplashAutoSkip), {STR_OFF, STR_ON}, {false, true});
+			.option(sys().isRegularDS() ? STR_DSSPLASHAUTOSKIP : STR_DSISPLASHAUTOSKIP, sys().isRegularDS() ? STR_DESCRIPTION_DSSPLASHAUTOSKIP : STR_DESCRIPTION_DSISPLASHAUTOSKIP, Option::Bool(&ms().dsiSplashAutoSkip), {STR_OFF, STR_ON}, {false, true})
+			.option(sys().isRegularDS() ? STR_DS_SPLASH_EASTER_EGGS : STR_DSI_SPLASH_EASTER_EGGS, sys().isRegularDS() ? STR_DESCRIPTION_DS_SPLASH_EASTER_EGGS : STR_DESCRIPTION_DSI_SPLASH_EASTER_EGGS, Option::Bool(&ms().dsiSplashEasterEggs), {STR_OFF, STR_ON}, {false, true});
 	}
 	guiPage
 		.option(STR_NINTENDOLOGOCOLOR, STR_DESCRIPTION_NINTENDOLOGOCOLOR, Option::Int(&ms().nintendoLogoColor), {STR_RED, STR_BLUE, STR_MAGENTA, STR_GRAY}, {1, 2, 3, 0})
@@ -1319,19 +1321,12 @@ int settingsMode(void)
 			.option(STR_SAVE_RELOCATION, STR_DESCRIPTION_SAVE_RELOCATION, Option::Bool((bool *)&ms().saveRelocation), {ms().showMicroSd ? STR_MICRO_SD_CARD : STR_SD_CARD, STR_SAVE_GAME_CARD}, {true, false});
 	}
 
-	if (flashcardFound() && (dsiFeatures() || sdFound())) {
-		if (sdFound() && (!isDSiMode() || (dsiFeatures() && !sys().arm7SCFGLocked()))) {
-			if (dsiFeatures()) {
-				bootstrapPage
-					.option(STR_S1SD_B4DSMODE, STR_DESCRIPTION_B4DSMODE, Option::Int(&bs().b4dsMode), {STR_OFF, STR_4MB_RAM, STR_8MB_RAM}, {0, 1, 2});
-			}
-		} else if (isDSiMode()) {
-			bootstrapPage.option(STR_B4DSMODE, STR_DESCRIPTION_B4DSMODE, Option::Int(&bs().b4dsMode), {STR_OFF, STR_4MB_RAM, STR_8MB_RAM}, {0, 1, 2});
-		}
+	if (dsiFeatures()) {
+		bootstrapPage.option(sdFound() ? STR_S1SD_B4DSMODE : STR_B4DSMODE, STR_DESCRIPTION_B4DSMODE, Option::Int(&bs().b4dsMode), {STR_OFF, STR_4MB_RAM, STR_8MB_RAM}, {0, 1, 2});
 	}
 
 	if ((dsiFeatures() || sdFound()) && sys().dsiWramAccess() && !sys().dsiWramMirrored()) {
-		bootstrapPage.option(STR_TWL_SPEED_FOR_SCREEN_FILTERS, STR_DESCRIPTION_TWL_SPEED_FOR_SCREEN_FILTERS, Option::Bool(&ms().boostCpuForClut), {STR_ON, STR_OFF}, {true, false});
+		bootstrapPage.option(STR_TWL_SPEED_FOR_COLOR_FILTERS, STR_DESCRIPTION_TWL_SPEED_FOR_COLOR_FILTERS, Option::Bool(&ms().boostCpuForClut), {STR_ON, STR_OFF}, {true, false});
 	}
 
 	if (widescreenFound) {
@@ -1352,25 +1347,23 @@ int settingsMode(void)
 
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 
-	if ((isDSiMode() || sdFound()) && !sys().i2cBricked() && ms().consoleModel < 2) {
-		if (sdFound()) {
-			bootstrapPage
-				.option((flashcardFound() ? STR_SYSSD_ROMREADLED : STR_ROMREADLED),
-					STR_DESCRIPTION_ROMREADLED_1,
-					Option::Int(&bs().romreadled),
-					{STR_NONE, STR_WIFI, STR_POWER, STR_CAMERA},
-					{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
-				.option((flashcardFound() ? STR_SD_DMAROMREADLED : STR_DMAROMREADLED),
-					STR_DESCRIPTION_DMAROMREADLED,
-					Option::Int(&bs().dmaromreadled),
-					{STR_SAME_AS_REG, STR_NONE, STR_WIFI, STR_POWER, STR_CAMERA},
-					{TROMReadLED::ELEDSame, TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
-		}
-		bootstrapPage.option((dsiFeatures() ? STR_PRECISEVOLUMECTRL : STR_SYSSD_PRECISEVOLUMECTRL),
-			STR_DESCRIPTION_PRECISEVOLUMECTRL,
-			Option::Bool(&bs().preciseVolumeControl),
-			{STR_ON, STR_OFF},
-			{true, false});
+	if ((dsiFeatures() || sdFound()) && !sys().i2cBricked() && ms().consoleModel < 2) {
+		bootstrapPage
+			.option((dsiFeatures() ? STR_ROMREADLED : STR_SYSSD_ROMREADLED),
+				STR_DESCRIPTION_ROMREADLED_1,
+				Option::Int(&bs().romreadled),
+				{STR_NONE, STR_WIFI, STR_POWER, STR_CAMERA},
+				{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
+			.option((dsiFeatures() ? STR_DMAROMREADLED : STR_SD_DMAROMREADLED),
+				STR_DESCRIPTION_DMAROMREADLED,
+				Option::Int(&bs().dmaromreadled),
+				{STR_SAME_AS_REG, STR_NONE, STR_WIFI, STR_POWER, STR_CAMERA},
+				{TROMReadLED::ELEDSame, TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
+			.option((dsiFeatures() ? STR_PRECISEVOLUMECTRL : STR_SYSSD_PRECISEVOLUMECTRL),
+				STR_DESCRIPTION_PRECISEVOLUMECTRL,
+				Option::Bool(&bs().preciseVolumeControl),
+				{STR_ON, STR_OFF},
+				{true, false});
 	}
 
 	if (sdFound()) {
@@ -1440,6 +1433,7 @@ int settingsMode(void)
 	}
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
+	bool gamesPageVisible = false;
 
 	using TGbaBooter = TWLSettings::TGbaBooter;
 	using TColSegaEmulator = TWLSettings::TColSegaEmulator;
@@ -1448,21 +1442,28 @@ int settingsMode(void)
 
 	if (flashcardFound() && ms().kernelUseable) {
 		gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
+		gamesPageVisible = true;
 	}
 
-	if (emulatorsInstalled)
+	if (emulatorsInstalled) {
 		gamesPage.option(STR_COL_EMULATOR, STR_DESCRIPTION_COL_EMULATOR, Option::Int((int *)&ms().colEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
-	if (ms().consoleModel == 0 && sdFound() && !sys().arm7SCFGLocked())
+		gamesPageVisible = true;
+	}
+	if (ms().consoleModel == 0 && sdFound() && !sys().arm7SCFGLocked()) {
 		gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool((bool *)&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"}, {true, false});
+		gamesPageVisible = true;
+	}
 	if (sys().isRegularDS()) {
 		gamesPage
 			.option(STR_GBA_BOOTER, STR_DESCRIPTION_GBA_BOOTER, Option::Int((int *)&ms().gbaBooter), {gbaR3Found ? STR_NATIVE_GBARUNNER3 : STR_NATIVE_GBARUNNER2, gbaR3Found ? STR_GBARUNNER3_ONLY : STR_GBARUNNER2_ONLY}, {TGbaBooter::EGbaNativeGbar2, TGbaBooter::EGbaGbar2})
 			.option(STR_GBABORDER, STR_DESCRIPTION_GBABORDER, Option::Nul(opt_gba_border_select), {STR_PRESS_A}, {0});
+		gamesPageVisible = true;
 	}
 	if (emulatorsInstalled) {
 		if (!(isDSiMode() && sdFound() && sys().arm7SCFGLocked()))
 			gamesPage.option(STR_MD_EMULATOR, STR_DESCRIPTION_MD_EMULATOR, Option::Int((int *)&ms().mdEmulator), {"jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {TMegaDriveEmulator::EMegaDriveJenesis, TMegaDriveEmulator::EMegaDrivePico, TMegaDriveEmulator::EMegaDriveHybrid});
 		gamesPage.option(STR_SG_EMULATOR, STR_DESCRIPTION_SG_EMULATOR, Option::Int((int *)&ms().sgEmulator), {"S8DS", "ColecoDS"}, {TColSegaEmulator::EColSegaS8DS, TColSegaEmulator::EColSegaColecoDS});
+		gamesPageVisible = true;
 	}
 
 	if (isDSiMode() && sdFound() && !sys().arm7SCFGLocked()) {
@@ -1479,6 +1480,7 @@ int settingsMode(void)
 		} else {
 			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Int((int *)&ms().slot1LaunchMethod), {STR_REBOOT, STR_DIRECT}, {TSlot1LaunchMethod::EReboot, TSlot1LaunchMethod::EDirect});
 		}
+		gamesPageVisible = true;
 	}
 
 	SettingsPage miscPage(STR_MISC_SETTINGS);
@@ -1491,7 +1493,7 @@ int settingsMode(void)
 						{0});
 	}
 
-	miscPage.option(STR_SCREEN_FILTER, STR_DESCRIPTION_SCREEN_FILTER, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
+	miscPage.option(STR_SCREEN_COLOR_FILTER, STR_DESCRIPTION_SCREEN_COLOR_FILTER, Option::Nul(opt_lut_select), {STR_PRESS_A}, {0});
 
 	if (sdFound() && isDSiMode()) {
 		if (!sys().arm7SCFGLocked()) {
@@ -1643,9 +1645,9 @@ int settingsMode(void)
 		gui().addPage(gbar2Page);
 	if (sdFound() && ms().consoleModel == 0)
 		gui().addPage(unlaunchPage);
-	gui()
-		.addPage(gamesPage)
-		.addPage(miscPage);
+	if (gamesPageVisible)
+		gui().addPage(gamesPage);
+	gui().addPage(miscPage);
 
 	/*if (isDSiMode() && ms().consoleModel >= 2) {
 		gui().addPage(twlfirmPage);

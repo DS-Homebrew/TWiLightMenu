@@ -200,7 +200,15 @@ int main(int argc, char **argv) {
 	fadeType = true;
 
 	extern const DISC_INTERFACE __my_io_dsisd;
-	const bool fatInited = fatMountSimple("sd", &__my_io_dsisd);
+	bool fatInited = false;
+	for (int i = 0; i < 30; i++) { // Run 30 times in case ntrboot is used
+		fatInited = fatMountSimple("sd", &__my_io_dsisd);
+		if (fatInited) {
+			break;
+		} else {
+			swiWaitForVBlank();
+		}
+	}
 
 	*(u32*)0x0CFFFD0C = 0x47444943; // 'CIDG'
 	while (*(u32*)0x0CFFFD0C != 0) { swiDelay(100); }

@@ -25,13 +25,7 @@ R4iLS folder:
 - r4isdhc.hk carts 2020 or later
 - R4infinity.com carts
 - white R4i-XDS 2014 carts
-
-Original R4 folder:
-- Original R4 (no SDHC)
-- M3 DS Simply
-
-Original R4SDHC folder:
-- Original R4SDHC (no URL)
+- R4xMP
 
 R4i Gold 1.54:
 - r4ids.cn carts without RTS or 3DS label

@@ -9,6 +9,7 @@ Ace3DS+ folder:
 - r4isdhc.hk 2021
 - R4infinity 2
 - R4i-XDS 2014 white version
+- R4xMP
 
 Blue R4i Revolution folder:
 - Blue R4i Revolution v1.4.1
@@ -41,6 +42,12 @@ R4 Ultra folder:
 - r4igold.cc 3DS translucent
 - r4i-gold.me 2013+
 
+R4i Advance folder:
+- R4i Advance (www.r4i-advance.com)
+- R4i SDHC Upgrade Revolution (www.r4i-dshc.com)
+- R4i 3DS (v4.3 kernel)
+- R4i YES
+
 R4i-SDHC folder:
 - R4i-SDHC
 - r4isdhc.com cards 2014+
@@ -51,3 +58,7 @@ R4i-SDHC folder:
 - R4(i) Pocket
 - R4i Gold (v1.4.1) (3DS)
 - R4xDS
+
+R4i Upgrade Revolution folder:
+- R4i Upgrade Revolution
+- R4i3D Original

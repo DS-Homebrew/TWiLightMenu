@@ -142,8 +142,10 @@ STRING(B_BACK, "\\B Back")
 STRING(Y_DS_MODE_B_BACK, "\\Y Launch in DS mode  \\B Back")
 STRING(L, "\\L")
 STRING(L_PREV, "\\L Prev Page")
+STRING(PREV, "Previous")
 STRING(R, "\\R")
 STRING(NEXT_R, "Next Page \\R")
+STRING(NEXT, "Next")
 
 // Per-game settings
 STRING(SDK_VER, "SDK ver: %s")

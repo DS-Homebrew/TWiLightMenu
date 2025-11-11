@@ -16,11 +16,12 @@ enum class Alignment {
 };
 enum class FontPalette {
 	regular = 0,
-	titlebox = 1,
-	dialog = 2,
-	overlay = 3,
-	name = 4,
-	dateTime = 5
+	disabled = 1,
+	titlebox = 2,
+	dialog = 3,
+	overlay = 4,
+	name = 5,
+	dateTime = 6,
 };
 
 class FontGraphic {

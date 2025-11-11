@@ -86,6 +86,7 @@ TWLSettings::TWLSettings()
 
 	dsiSplash = isDSiMode();
 	oppositeSplash = false;
+	dsiSplashEasterEggs = true;
 	dsiSplashAutoSkip = false;
 	nintendoLogoColor = 1;
 	showlogo = true;
@@ -284,6 +285,7 @@ void TWLSettings::loadSettings()
 
 	dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
 	oppositeSplash = settingsini.GetInt("SRLOADER", "OPPOSITE_SPLASH", oppositeSplash);
+	dsiSplashEasterEggs = settingsini.GetInt("SRLOADER", "DSI_SPLASH_EASTER_EGGS", dsiSplashEasterEggs);
 	dsiSplashAutoSkip = settingsini.GetInt("SRLOADER", "DSI_SPLASH_AUTO_SKIP", dsiSplashAutoSkip);
 	nintendoLogoColor = settingsini.GetInt("SRLOADER", "NINTENDO_LOGO_COLOR", nintendoLogoColor);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
@@ -328,11 +330,9 @@ void TWLSettings::loadSettings()
 	kernelUseable = (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS);
 	if (kernelUseable) {
 		const bool woodKernel = (
-		(memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+		(memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 11) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)
 	);
 
@@ -469,6 +469,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
 
 	settingsini.SetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
+	settingsini.SetInt("SRLOADER", "DSI_SPLASH_EASTER_EGGS", dsiSplashEasterEggs);
 	settingsini.SetInt("SRLOADER", "DSI_SPLASH_AUTO_SKIP", dsiSplashAutoSkip);
 	settingsini.SetInt("SRLOADER", "NINTENDO_LOGO_COLOR", nintendoLogoColor);
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);

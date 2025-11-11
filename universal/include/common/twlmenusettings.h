@@ -323,6 +323,7 @@ public:
 
 	int dsiSplash;
 	bool oppositeSplash;
+	bool dsiSplashEasterEggs;
 	bool dsiSplashAutoSkip;
 	int nintendoLogoColor;
 	bool showlogo;

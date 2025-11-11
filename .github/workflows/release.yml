@@ -159,9 +159,9 @@ jobs:
           curl -LO https://github.com/FluBBaOfWard/NGPDS/releases/latest/download/NGPDS.zip
           7z x NGPDS.zip NGPDS.nds
           rm NGPDS.zip
-          curl -LO https://github.com/FluBBaOfWard/NitroSwan/releases/latest/download/NitroSwan0_7_2.zip
-          7z x NitroSwan0_7_2.zip NitroSwan.nds
-          rm NitroSwan0_7_2.zip
+          curl -LO https://github.com/FluBBaOfWard/NitroSwan/releases/latest/download/NitroSwan0_7_5.zip
+          7z x NitroSwan0_7_5.zip NitroSwan.nds
+          rm NitroSwan0_7_5.zip
           # PicoDriveTWL is a prerelease, so get the latest URL from the GH api
           curl -LO $(curl https://api.github.com/repos/DS-Homebrew/PicoDriveTWL/releases | jq --raw-output '.[0].assets[0].browser_download_url' -)
           curl -LO https://github.com/DS-Homebrew/PokeMini/releases/latest/download/PokeMini.nds
@@ -175,6 +175,7 @@ jobs:
           cp -r 7zfile/Multimedia/ TWiLightMenu
           cd TWiLightMenu/_nds/TWiLightMenu/apps
           curl -LO https://github.com/DS-Homebrew/tuna-vids/releases/latest/download/tuna-vids.nds
+          curl -LO https://github.com/RocketRobz/RocketVideoPlayer/releases/latest/download/RocketVideoPlayer.nds
           # curl -LO https://github.com/Gericom/FastVideoDSPlayer/releases/latest/download/FastVideoDS.nds
           cd ../../..
           7z a AddOn-Multimedia.7z

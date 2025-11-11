@@ -42,6 +42,7 @@
 #include "ROMList.h"
 
 extern bool useTwlCfg;
+bool nandMounted = false;
 
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
@@ -51,16 +52,6 @@ extern bool controlBottomBright;
 
 //bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
-//static int flashcard;
-/* Flashcard value
-	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS/R4 Ultra
-	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
-	4: Acekard RPG
-	5: Ace 3DS+/Gateway Blue Card/R4iTT
-	6: SuperCard DSTWO
-*/
 
 const char *settingsinipath = DSIMENUPP_INI;
 
@@ -88,6 +79,15 @@ int screenmode = 0;
 int subscreenmode = 0;
 
 touchPosition touch;
+
+// Used to switch MPU region 6 from 16 MB to 32 MB. This region is the one that
+// starts at address 0xC000000, and we need it to check if we have 16 or 32 MB
+// available.
+//
+// If the loader of TWiLightMenu doesn't set SCFG_EXT9 bits 14-15 to 3, the crt0
+// of libnds will get confused and only map 16 MB. To be sure that the code
+// never crashes, even with buggy loaders, we need to manually set it to 32 MB.
+extern "C" void CP15_ExtendRegion6(void);
 
 using namespace std;
 
@@ -568,7 +568,7 @@ void lastRunROM()
 				u32 gameTidHex = 0;
 				tonccpy(&gameTidHex, game_TID, 4);
 
-				for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
+				for (int i = 0; i < (int)sizeof(ROMList)/8; i++) {
 					ROMListEntry* curentry = &ROMList[i];
 					if (gameTidHex == curentry->GameCode) {
 						if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
@@ -682,12 +682,10 @@ void lastRunROM()
 			rename(savepath.c_str(), savepathFc.c_str());
 
 			std::string fcPath;
-			if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+			if ((memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
 			 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
-    		 || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)) {
+			 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 11) == 0)
+			 || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)) {
 				if (sys().hasRegulableBacklight()) {
 					CIniFile backlightini("fat:/_wfwd/backlight.ini");
 					backlightini.SetInt("brightness", "brightness", *(int*)0x02003000);
@@ -698,18 +696,20 @@ void lastRunROM()
 				fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 				fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 				err = runNdsFile("fat:/Wfwd.dat", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
-			} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
+			} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 13) == 0) {
 				CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 				fcPath = replaceAll(ms().romPath[ms().previousUsedDevice], "fat:/", dstwofat);
 				fcrompathini.SetString("Dir Info", "fullName", fcPath);
 				fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 				err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 			} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
-					 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
-					 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
-					 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)
-					 || (memcmp(io_dldi_data->friendlyName, "M3DS", 4) == 0)
-					 || (memcmp(io_dldi_data->friendlyName, "M3-DS", 5) == 0)) {
+					|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
+					|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
+					|| (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+					|| (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
+					|| (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)
+					|| (memcmp(io_dldi_data->friendlyName, "M3DS", 4) == 0)
+					|| (memcmp(io_dldi_data->friendlyName, "M3-DS", 5) == 0)) {
 				CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 				fcPath = replaceAll(ms().romPath[ms().previousUsedDevice], "fat:/", slashchar);
 				fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
@@ -1367,6 +1367,372 @@ void lastRunROM()
 	}
 }
 
+void setDSiDonorRom(const bool is3DS) {
+	if (!nandMounted) {
+		nandMounted = fatMountSimple("nand", &io_dsi_nand);
+	}
+
+	// const char* pathDefine0 = "DONORTWL0_NDS_PATH"; // SDK5.0
+	// const char* pathDefine = "DONORTWL_NDS_PATH"; // SDK5.x
+	const char* pathDefineOnly0 = "DONORTWLONLY0_NDS_PATH"; // SDK5.0
+	const char* pathDefineOnly = "DONORTWLONLY_NDS_PATH"; // SDK5.x
+
+	const char *bootstrapinipath = sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
+	CIniFile bootstrapini(bootstrapinipath);
+	// std::string donorRomPath0 = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine0, "");
+	// std::string donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
+	std::string donorRomPathOnly0 = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefineOnly0, "");
+	std::string donorRomPathOnly = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefineOnly, "");
+
+	/* if (donorRomPath0 != "" && access(donorRomPath0.c_str(), F_OK) != 0) {
+		donorRomPath0 = "";
+	}
+	if (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) != 0) {
+		donorRomPath = "";
+	} */
+
+	if (donorRomPathOnly0 != "" && access(donorRomPathOnly0.c_str(), F_OK) != 0) {
+		donorRomPathOnly0 = "";
+	}
+	if (donorRomPathOnly != "" && access(donorRomPathOnly.c_str(), F_OK) != 0) {
+		donorRomPathOnly = "";
+	}
+
+	if (!is3DS && donorRomPathOnly0 == "") {
+		char validTmdPath[64];
+		u32 tid1 = 0x484E4B45; // Nintendo DSi Sound
+		u32 tid2 = 0x00030005;
+
+		TWLSettings::TRegion region = TWLSettings::ERegionJapan;
+		FILE *hwinfo_s = fopen("nand:/sys/HWINFO_S.dat", "rb");
+		fseek(hwinfo_s, 0x90, SEEK_SET);
+		region = (TWLSettings::TRegion)fgetc(hwinfo_s);
+		fclose(hwinfo_s);
+
+		switch ((int)region) {
+			case TWLSettings::ERegionJapan:
+				tid1 = 0x484E4B4A;
+				break;
+			case TWLSettings::ERegionEurope:
+				tid1 = 0x484E4B50;
+				break;
+			case TWLSettings::ERegionAustralia:
+				tid1 = 0x484E4B55;
+				break;
+			case TWLSettings::ERegionChina:
+				tid1 = 0x484E4B43;
+				break;
+			case TWLSettings::ERegionKorea:
+				tid1 = 0x484E4B4B;
+				break;
+		}
+
+		sprintf(validTmdPath, "nand:/title/%08lx/%08lx/content/title.tmd", tid2, tid1);
+		FILE* donorTmd = fopen(validTmdPath, "rb");
+		if (donorTmd) {
+			char validAppPath[64];
+			int validAppVer = 0;
+
+			fseek(donorTmd, 0x1E7, SEEK_SET);
+			validAppVer = fgetc(donorTmd);
+			fclose(donorTmd);
+
+			sprintf(validAppPath, "nand:/title/%08lx/%08lx/content/0000000%i.app", tid2, tid1, validAppVer);
+			bootstrapini.SetString("NDS-BOOTSTRAP", pathDefineOnly0, validAppPath);
+
+			logPrint("Donor ROM has been automatically set!\n");
+			bootstrapini.SaveIniFile(bootstrapinipath);
+		}
+	}
+
+	if (is3DS && donorRomPathOnly == "") {
+		char validTmdPath[64];
+		u32 tid1 = 0x42383841; // DS WiFi Settings
+		u32 tid2 = 0x00030005;
+
+		sprintf(validTmdPath, "nand:/title/%08lx/%08lx/content/00000000.tmd", tid2, tid1);
+		FILE* donorTmd = fopen(validTmdPath, "rb");
+		if (donorTmd) {
+			char validAppPath[64];
+
+			u8 appNameTemp[4] = {0};
+			u8 appName8[4] = {0};
+			fseek(donorTmd, 0xB04, SEEK_SET);
+			fread(appNameTemp, 1, 4, donorTmd);
+			fclose(donorTmd);
+			for (int i = 0; i < 4; i++) {
+				appName8[i] = appNameTemp[3-i];
+			}
+			u32 appName = 0;
+			tonccpy(&appName, appName8, 4);
+
+			sprintf(validAppPath, "nand:/title/%08lx/%08lx/content/%08lx.app", tid2, tid1, appName);
+			bootstrapini.SetString("NDS-BOOTSTRAP", pathDefineOnly, validAppPath);
+
+			logPrint("Donor ROM has been automatically set!\n");
+			bootstrapini.SaveIniFile(bootstrapinipath);
+		}
+	}
+}
+
+void setDSiDonorRomSCFGLocked(void) {
+	if (!nandMounted) {
+		nandMounted = fatMountSimple("nand", &io_dsi_nand);
+	}
+
+	const char* pathDefine0 = *(u32*)0x02FFE1A0 == 0x080037C0 ? "DONORTWLONLY0_NDS_PATH" : "DONORTWL0_NDS_PATH"; // SDK5.0
+	const char* pathDefine = *(u32*)0x02FFE1A0 == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH"; // SDK5.x
+
+	const char *bootstrapinipath = sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
+	CIniFile bootstrapini(bootstrapinipath);
+	std::string donorRomPath0 = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine0, "");
+	std::string donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
+
+	u32 srBackendId[2] = {*(u32*)0x02000428, *(u32*)0x0200042C};
+	u32 donorArm7Len = 0;
+	bool currentAppRead = false;
+	char tmdPath[64];
+	char appPath[64];
+	int appVer = 0;
+	TWLSettings::TRegion region = TWLSettings::ERegionJapan;
+	FILE *hwinfo_s = fopen("nand:/sys/HWINFO_S.dat", "rb");
+	fseek(hwinfo_s, 0x90, SEEK_SET);
+	region = (TWLSettings::TRegion)fgetc(hwinfo_s);
+	fclose(hwinfo_s);
+
+	if (donorRomPath0 != "" && access(donorRomPath0.c_str(), F_OK) != 0) {
+		donorRomPath0 = "";
+	}
+
+	if (donorRomPath0 == "") {
+		snprintf(tmdPath, sizeof(tmdPath), "nand:/title/%08lx/%08lx/content/title.tmd", srBackendId[1], srBackendId[0]);
+		FILE* donorTmd = fopen(tmdPath, "rb");
+		if (donorTmd) {
+			fseek(donorTmd, 0x1E7, SEEK_SET);
+			appVer = fgetc(donorTmd);
+			fclose(donorTmd);
+		}
+
+		snprintf(appPath, sizeof(appPath), "nand:/title/%08lx/%08lx/content/0000000%i.app", srBackendId[1], srBackendId[0], appVer);
+		FILE* donorRom = fopen(appPath, "rb");
+		if (donorRom) {
+			fseek(donorRom, 0x3C, SEEK_SET);
+			fread(&donorArm7Len, sizeof(u32), 1, donorRom);
+			fclose(donorRom);
+		}
+		currentAppRead = true;
+
+		bool validDonor = false;
+		if (*(u32*)0x02FFE1A0 == 0x080037C0) {
+			if (donorArm7Len == 0x26CC8
+			 || donorArm7Len == 0x28E54) {
+				bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine0, appPath);
+				validDonor = true;
+			}
+		} else {
+			if (donorArm7Len==0x29EE8) {
+				bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine0, appPath);
+				validDonor = true;
+			}
+		}
+
+		if (!validDonor) {
+			bool validAppFound = false;
+			char validTmdPath[64];
+			char validAppPath[64];
+			int validAppVer = 0;
+			u32 tid1 = 0;
+			u32 tid2 = 0;
+
+			if (*(u32*)0x02FFE1A0 == 0x080037C0) {
+				tid1 = 0x484E4B45; // Nintendo DSi Sound
+				tid2 = 0x00030005;
+
+				switch ((int)region) {
+					case TWLSettings::ERegionJapan:
+						tid1 = 0x484E4B4A;
+						break;
+					case TWLSettings::ERegionEurope:
+						tid1 = 0x484E4B50;
+						break;
+					case TWLSettings::ERegionAustralia:
+						tid1 = 0x484E4B55;
+						break;
+					case TWLSettings::ERegionChina:
+						tid1 = 0x484E4B43;
+						break;
+					case TWLSettings::ERegionKorea:
+						tid1 = 0x484E4B4B;
+						break;
+				}
+
+				snprintf(validTmdPath, sizeof(validTmdPath), "nand:/title/%08lx/%08lx/content/title.tmd", tid2, tid1);
+				FILE* donorTmd = fopen(validTmdPath, "rb");
+				if (donorTmd) {
+					fseek(donorTmd, 0x1E7, SEEK_SET);
+					validAppVer = fgetc(donorTmd);
+					fclose(donorTmd);
+					validAppFound = true;
+				}
+			} else for (int i = 0; i < 5; i++) {
+				tid2 = 0x00030004;
+				switch (i) {
+					case 0: { // Dr. Mario Express
+						tid1 = 0x4B443945;
+
+						switch ((int)region) {
+							case TWLSettings::ERegionJapan:
+								tid1 = 0x4B44394A;
+								break;
+							case TWLSettings::ERegionEurope:
+							case TWLSettings::ERegionAustralia:
+								tid1 = 0x4B443956;
+								break;
+							case TWLSettings::ERegionChina:
+								tid1 = 0x4B443943;
+								break;
+							case TWLSettings::ERegionKorea:
+								continue; // Unavailable
+						}
+					}	break;
+					case 1: { // Art Style Series: BASE 10
+						tid1 = 0x4B414445;
+
+						switch ((int)region) {
+							case TWLSettings::ERegionJapan:
+								tid1 = 0x4B41444A;
+								break;
+							case TWLSettings::ERegionEurope:
+							case TWLSettings::ERegionAustralia:
+								tid1 = 0x4B414456;
+								break;
+							case TWLSettings::ERegionChina:
+								continue; // Unavailable
+							case TWLSettings::ERegionKorea:
+								continue; // Unavailable
+						}
+					}	break;
+					case 2: { // Clubhouse Games Express: Card Classics
+						tid1 = 0x4B545254;
+
+						switch ((int)region) {
+							case TWLSettings::ERegionJapan:
+								tid1 = 0x4B54524A;
+								break;
+							case TWLSettings::ERegionEurope:
+								continue; // Not SDK5.0
+							case TWLSettings::ERegionChina:
+								continue; // Not SDK5.0
+							case TWLSettings::ERegionKorea:
+								continue; // Not SDK5.0
+						}
+					}	break;
+					case 3: { // Chotto Asobi Taizen: Otegaru Toranpu (Japan only)
+						if (region != TWLSettings::ERegionJapan) {
+							continue;
+						}
+						tid1 = 0x4B545054;
+					}	break;
+					case 4: { // Chotto Asobi Taizen: Onajimi Teburu (Japan only)
+						if (region != TWLSettings::ERegionJapan) {
+							continue;
+						}
+						tid1 = 0x4B544254;
+					}	break;
+				}
+
+				snprintf(validTmdPath, sizeof(validTmdPath), "nand:/title/%08lx/%08lx/content/title.tmd", tid2, tid1);
+				FILE* donorTmd = fopen(validTmdPath, "rb");
+				if (donorTmd) {
+					fseek(donorTmd, 0x1E7, SEEK_SET);
+					validAppVer = fgetc(donorTmd);
+					fclose(donorTmd);
+					validAppFound = true;
+					break;
+				}
+			}
+
+			if (validAppFound) {
+				snprintf(validAppPath, sizeof(validAppPath), "nand:/title/%08lx/%08lx/content/0000000%i.app", tid2, tid1, validAppVer);
+				bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine0, validAppPath);
+				validDonor = true;
+			}
+		}
+		if (validDonor) {
+			logPrint("Donor ROM has been automatically set!\n");
+			bootstrapini.SaveIniFile(bootstrapinipath);
+		}
+	}
+
+	if (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) != 0) {
+		donorRomPath = "";
+	}
+
+	if (donorRomPath == "") {
+		if (!currentAppRead) {
+			snprintf(tmdPath, sizeof(tmdPath), "nand:/title/%08lx/%08lx/content/title.tmd", srBackendId[1], srBackendId[0]);
+			FILE* donorTmd = fopen(tmdPath, "rb");
+			if (donorTmd) {
+				fseek(donorTmd, 0x1E7, SEEK_SET);
+				appVer = fgetc(donorTmd);
+				fclose(donorTmd);
+			}
+
+			snprintf(appPath, sizeof(appPath), "nand:/title/%08lx/%08lx/content/0000000%i.app", srBackendId[1], srBackendId[0], appVer);
+			FILE* donorRom = fopen(appPath, "rb");
+			if (donorRom) {
+				fseek(donorRom, 0x3C, SEEK_SET);
+				fread(&donorArm7Len, sizeof(u32), 1, donorRom);
+				fclose(donorRom);
+			}
+			currentAppRead = true;
+		}
+
+		bool validDonor = false;
+		if (*(u32*)0x02FFE1A0 == 0x080037C0) {
+			if (donorArm7Len==0x1D43C
+			 || donorArm7Len==0x1D5A8
+			 || donorArm7Len==0x1E1E8
+			 || donorArm7Len==0x1E22C
+			 || donorArm7Len==0x25664
+			 || donorArm7Len==0x257DC
+			 || donorArm7Len==0x25860
+			 || donorArm7Len==0x268DC
+			 || donorArm7Len==0x26BA8
+			 || donorArm7Len==0x26C5C
+			 || donorArm7Len==0x26D10
+			 || donorArm7Len==0x26D48
+			 || donorArm7Len==0x26D50
+			 || donorArm7Len==0x26DF4
+			 || donorArm7Len==0x27FB4) {
+				bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, appPath);
+				validDonor = true;
+			}
+		} else {
+			if (donorArm7Len==0x22B40
+			 || donorArm7Len==0x22BCC
+			 || donorArm7Len==0x28F84
+			 || donorArm7Len==0x2909C
+			 || donorArm7Len==0x2914C
+			 || donorArm7Len==0x29164
+			 || donorArm7Len==0x2A2EC
+			 || donorArm7Len==0x2A318
+			 || donorArm7Len==0x2AF18
+			 || donorArm7Len==0x2B184
+			 || donorArm7Len==0x2B24C
+			 || donorArm7Len==0x2C5B4) {
+				bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, appPath);
+				validDonor = true;
+			}
+		}
+
+		if (validDonor) {
+			logPrint("Donor ROM has been automatically set!\n");
+			bootstrapini.SaveIniFile(bootstrapinipath);
+		}
+	}
+}
+
 bool graphicsInited = false;
 void graphicsInit(void) {
 	if (graphicsInited)
@@ -1915,7 +2281,6 @@ int titleMode(void)
 	const bool is3DS = fifoGetValue32(FIFO_USER_05) != 0xD2;
 
 	useTwlCfg = (REG_SCFG_EXT!=0 && (*(u8*)0x02000400 != 0) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0) && (*(u8*)0x02000448 != 0));
-	bool nandMounted = false;
 	if (REG_SCFG_EXT != 0) {
 		const char* cachePath = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/16KBcache.bin" : "fat:/_nds/TWiLightMenu/16KBcache.bin";
 		if (!useTwlCfg && isDSiMode() && sdFound() && !is3DS) {
@@ -2186,261 +2551,13 @@ int titleMode(void)
 	}
 
 	// Set DSi donor ROM
-	if (useTwlCfg && isDSiMode() && sdFound() && !is3DS && sys().arm7SCFGLocked()) {
-		if (!nandMounted) {
-			nandMounted = fatMountSimple("nand", &io_dsi_nand);
-		}
-
-		const char* pathDefine0 = *(u32*)0x02FFE1A0 == 0x080037C0 ? "DONORTWLONLY0_NDS_PATH" : "DONORTWL0_NDS_PATH"; // SDK5.0
-		const char* pathDefine = *(u32*)0x02FFE1A0 == 0x080037C0 ? "DONORTWLONLY_NDS_PATH" : "DONORTWL_NDS_PATH"; // SDK5.x
-
-		const char *bootstrapinipath = sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
-		CIniFile bootstrapini(bootstrapinipath);
-		std::string donorRomPath0 = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine0, "");
-		std::string donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
-
-		u32 srBackendId[2] = {*(u32*)0x02000428, *(u32*)0x0200042C};
-		u32 donorArm7Len = 0;
-		bool currentAppRead = false;
-		char tmdPath[64];
-		char appPath[64];
-		int appVer = 0;
-		TWLSettings::TRegion region = TWLSettings::ERegionJapan;
-		FILE *hwinfo_s = fopen("nand:/sys/HWINFO_S.dat", "rb");
-		fseek(hwinfo_s, 0x90, SEEK_SET);
-		region = (TWLSettings::TRegion)fgetc(hwinfo_s);
-		fclose(hwinfo_s);
-
-		if (donorRomPath0 != "" && access(donorRomPath0.c_str(), F_OK) != 0) {
-			donorRomPath0 = "";
-		}
-
-		if (donorRomPath0 == "") {
-			snprintf(tmdPath, sizeof(tmdPath), "nand:/title/%08lx/%08lx/content/title.tmd", srBackendId[1], srBackendId[0]);
-			FILE* donorTmd = fopen(tmdPath, "rb");
-			if (donorTmd) {
-				fseek(donorTmd, 0x1E7, SEEK_SET);
-				appVer = fgetc(donorTmd);
-				fclose(donorTmd);
+	if (useTwlCfg && isDSiMode() && sdFound()) {
+		if (sys().arm7SCFGLocked()) {
+			if (!is3DS) {
+				setDSiDonorRomSCFGLocked();
 			}
-
-			snprintf(appPath, sizeof(appPath), "nand:/title/%08lx/%08lx/content/0000000%i.app", srBackendId[1], srBackendId[0], appVer);
-			FILE* donorRom = fopen(appPath, "rb");
-			if (donorRom) {
-				fseek(donorRom, 0x3C, SEEK_SET);
-				fread(&donorArm7Len, sizeof(u32), 1, donorRom);
-				fclose(donorRom);
-			}
-			currentAppRead = true;
-
-			bool validDonor = false;
-			if (*(u32*)0x02FFE1A0 == 0x080037C0) {
-				if (donorArm7Len == 0x26CC8
-				 || donorArm7Len == 0x28E54) {
-					bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine0, appPath);
-					validDonor = true;
-				}
-			} else {
-				if (donorArm7Len==0x29EE8) {
-					bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine0, appPath);
-					validDonor = true;
-				}
-			}
-
-			if (!validDonor) {
-				bool validAppFound = false;
-				char validTmdPath[64];
-				char validAppPath[64];
-				int validAppVer = 0;
-				u32 tid1 = 0;
-				u32 tid2 = 0;
-
-				if (*(u32*)0x02FFE1A0 == 0x080037C0) {
-					tid1 = 0x484E4B45; // Nintendo DSi Sound
-					tid2 = 0x00030005;
-
-					switch ((int)region) {
-						case TWLSettings::ERegionJapan:
-							tid1 = 0x484E4B4A;
-							break;
-						case TWLSettings::ERegionEurope:
-							tid1 = 0x484E4B50;
-							break;
-						case TWLSettings::ERegionAustralia:
-							tid1 = 0x484E4B55;
-							break;
-						case TWLSettings::ERegionChina:
-							tid1 = 0x484E4B43;
-							break;
-						case TWLSettings::ERegionKorea:
-							tid1 = 0x484E4B4B;
-							break;
-					}
-
-					snprintf(validTmdPath, sizeof(validTmdPath), "nand:/title/%08lx/%08lx/content/title.tmd", tid2, tid1);
-					FILE* donorTmd = fopen(validTmdPath, "rb");
-					if (donorTmd) {
-						fseek(donorTmd, 0x1E7, SEEK_SET);
-						validAppVer = fgetc(donorTmd);
-						fclose(donorTmd);
-						validAppFound = true;
-					}
-				} else for (int i = 0; i < 5; i++) {
-					tid2 = 0x00030004;
-					switch (i) {
-						case 0: { // Dr. Mario Express
-							tid1 = 0x4B443945;
-
-							switch ((int)region) {
-								case TWLSettings::ERegionJapan:
-									tid1 = 0x4B44394A;
-									break;
-								case TWLSettings::ERegionEurope:
-								case TWLSettings::ERegionAustralia:
-									tid1 = 0x4B443956;
-									break;
-								case TWLSettings::ERegionChina:
-									tid1 = 0x4B443943;
-									break;
-								case TWLSettings::ERegionKorea:
-									continue; // Unavailable
-							}
-						}	break;
-						case 1: { // Art Style Series: BASE 10
-							tid1 = 0x4B414445;
-
-							switch ((int)region) {
-								case TWLSettings::ERegionJapan:
-									tid1 = 0x4B41444A;
-									break;
-								case TWLSettings::ERegionEurope:
-								case TWLSettings::ERegionAustralia:
-									tid1 = 0x4B414456;
-									break;
-								case TWLSettings::ERegionChina:
-									continue; // Unavailable
-								case TWLSettings::ERegionKorea:
-									continue; // Unavailable
-							}
-						}	break;
-						case 2: { // Clubhouse Games Express: Card Classics
-							tid1 = 0x4B545254;
-
-							switch ((int)region) {
-								case TWLSettings::ERegionJapan:
-									tid1 = 0x4B54524A;
-									break;
-								case TWLSettings::ERegionEurope:
-									continue; // Not SDK5.0
-								case TWLSettings::ERegionChina:
-									continue; // Not SDK5.0
-								case TWLSettings::ERegionKorea:
-									continue; // Not SDK5.0
-							}
-						}	break;
-						case 3: { // Chotto Asobi Taizen: Otegaru Toranpu (Japan only)
-							if (region != TWLSettings::ERegionJapan) {
-								continue;
-							}
-							tid1 = 0x4B545054;
-						}	break;
-						case 4: { // Chotto Asobi Taizen: Onajimi Teburu (Japan only)
-							if (region != TWLSettings::ERegionJapan) {
-								continue;
-							}
-							tid1 = 0x4B544254;
-						}	break;
-					}
-
-					snprintf(validTmdPath, sizeof(validTmdPath), "nand:/title/%08lx/%08lx/content/title.tmd", tid2, tid1);
-					FILE* donorTmd = fopen(validTmdPath, "rb");
-					if (donorTmd) {
-						fseek(donorTmd, 0x1E7, SEEK_SET);
-						validAppVer = fgetc(donorTmd);
-						fclose(donorTmd);
-						validAppFound = true;
-						break;
-					}
-				}
-
-				if (validAppFound) {
-					snprintf(validAppPath, sizeof(validAppPath), "nand:/title/%08lx/%08lx/content/0000000%i.app", tid2, tid1, validAppVer);
-					bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine0, validAppPath);
-					validDonor = true;
-				}
-			}
-			if (validDonor) {
-				logPrint("Donor ROM has been automatically set!\n");
-				bootstrapini.SaveIniFile(bootstrapinipath);
-			}
-		}
-
-		if (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) != 0) {
-			donorRomPath = "";
-		}
-
-		if (donorRomPath == "") {
-			if (!currentAppRead) {
-				snprintf(tmdPath, sizeof(tmdPath), "nand:/title/%08lx/%08lx/content/title.tmd", srBackendId[1], srBackendId[0]);
-				FILE* donorTmd = fopen(tmdPath, "rb");
-				if (donorTmd) {
-					fseek(donorTmd, 0x1E7, SEEK_SET);
-					appVer = fgetc(donorTmd);
-					fclose(donorTmd);
-				}
-
-				snprintf(appPath, sizeof(appPath), "nand:/title/%08lx/%08lx/content/0000000%i.app", srBackendId[1], srBackendId[0], appVer);
-				FILE* donorRom = fopen(appPath, "rb");
-				if (donorRom) {
-					fseek(donorRom, 0x3C, SEEK_SET);
-					fread(&donorArm7Len, sizeof(u32), 1, donorRom);
-					fclose(donorRom);
-				}
-				currentAppRead = true;
-			}
-
-			bool validDonor = false;
-			if (*(u32*)0x02FFE1A0 == 0x080037C0) {
-				if (donorArm7Len==0x1D43C
-				 || donorArm7Len==0x1D5A8
-				 || donorArm7Len==0x1E1E8
-				 || donorArm7Len==0x1E22C
-				 || donorArm7Len==0x25664
-				 || donorArm7Len==0x257DC
-				 || donorArm7Len==0x25860
-				 || donorArm7Len==0x268DC
-				 || donorArm7Len==0x26BA8
-				 || donorArm7Len==0x26C5C
-				 || donorArm7Len==0x26D10
-				 || donorArm7Len==0x26D48
-				 || donorArm7Len==0x26D50
-				 || donorArm7Len==0x26DF4
-				 || donorArm7Len==0x27FB4) {
-					bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, appPath);
-					validDonor = true;
-				}
-			} else {
-				if (donorArm7Len==0x22B40
-				 || donorArm7Len==0x22BCC
-				 || donorArm7Len==0x28F84
-				 || donorArm7Len==0x2909C
-				 || donorArm7Len==0x2914C
-				 || donorArm7Len==0x29164
-				 || donorArm7Len==0x2A2EC
-				 || donorArm7Len==0x2A318
-				 || donorArm7Len==0x2AF18
-				 || donorArm7Len==0x2B184
-				 || donorArm7Len==0x2B24C
-				 || donorArm7Len==0x2C5B4) {
-					bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, appPath);
-					validDonor = true;
-				}
-			}
-
-			if (validDonor) {
-				logPrint("Donor ROM has been automatically set!\n");
-				bootstrapini.SaveIniFile(bootstrapinipath);
-			}
+		} else {
+			setDSiDonorRom(is3DS);
 		}
 	}
 
@@ -2716,6 +2833,12 @@ int titleMode(void)
 				fclose(addon);
 			}
 		}
+	}
+
+	if (isDSiMode()) {
+		// Extend the MPU region that is mapped at address 0xC000000 up to
+		// 0xE000000 instead of potentially ending at 0xD000000.
+		CP15_ExtendRegion6();
 	}
 
 	if (REG_SCFG_EXT != 0) {

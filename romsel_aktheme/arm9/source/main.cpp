@@ -697,11 +697,9 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 
 	std::string fcPath;
 	int err = 0;
-	if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+	if ((memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
 	 || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
-	 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
+	 || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 11) == 0)
      || (memcmp(io_dldi_data->friendlyName, "Ace3DS+", 7) == 0)) {
 		if (sys().hasRegulableBacklight()) {
 			CIniFile backlightini("fat:/_wfwd/backlight.ini");
@@ -713,18 +711,20 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
-	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
+	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 13) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 		fcPath = replaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", fcPath);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "M3DS", 4) == 0)
-			 || (memcmp(io_dldi_data->friendlyName, "M3-DS", 5) == 0)) {
+			|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
+			|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
+			|| (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+			|| (memcmp(io_dldi_data->friendlyName, "R4TF", 4) == 0)
+			|| (memcmp(io_dldi_data->friendlyName, "DSONE", 5) == 0)
+			|| (memcmp(io_dldi_data->friendlyName, "M3DS", 4) == 0)
+			|| (memcmp(io_dldi_data->friendlyName, "M3-DS", 5) == 0)) {
 		CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 		fcPath = replaceAll(ndsPath, "fat:/", slashchar);
 		fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
@@ -1251,6 +1251,7 @@ int akTheme(void) {
 			if (multimediaInstalled) {
 				std::vector<std::string_view> extensionListMedia = {
 					".avi", // Xvid (AVI)
+					".rvid", // Rocket Video
 					".fv", // FastVideo
 					".gif", // GIF
 					".bmp", // BMP
@@ -1703,7 +1704,7 @@ int akTheme(void) {
 							u32 gameTidHex = 0;
 							tonccpy(&gameTidHex, gameTid[cursorPosOnScreen], 4);
 
-							for (int i = 0; i < (int)sizeof(ROMList)/12; i++) {
+							for (int i = 0; i < (int)sizeof(ROMList)/8; i++) {
 								ROMListEntry* curentry = &ROMList[i];
 								if (gameTidHex == curentry->GameCode) {
 									if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];

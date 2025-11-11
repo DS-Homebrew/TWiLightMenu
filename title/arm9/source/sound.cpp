@@ -134,6 +134,9 @@ SoundControl::SoundControl()
 	} else if (strcmp(currentDate, "04/27") == 0) {
 		// Load Kirby dance jingle for Kirby's anniversary
 		sprintf(wavPath, ms().longSplashJingle ? "nitro:/sound/kirbyLong.wav" : "nitro:/sound/kirby.wav");
+	} else if (strcmp(currentDate, ms().getGameRegion() == 0 ? "07/21" : "08/14") == 0) {
+		// Load Virtual Boy rendition of jingle for Virtual Boy release date
+		sprintf(wavPath, ms().longSplashJingle ? "nitro:/sound/virtualBoyLong.wav" : "nitro:/sound/virtualBoy.wav");
 	} else {
 		sprintf(wavPath, ms().longSplashJingle ? "nitro:/sound/titleLong.wav" : "nitro:/sound/title.wav");
 	}

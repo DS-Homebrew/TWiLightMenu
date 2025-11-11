@@ -40,6 +40,7 @@ static const char colorLutBlacklist[][4] = {
 	"KEJ", // Electroplankton: Varvoice
 	"CER", // Ener-G: Gym Rockets
 	"KGU", // Flipnote Studio
+	"YHN", // Flower, Sun and Rain: Murder and Mystery in Paradise
 	"CF3", // Freddi Fish: ABC's Under the Sea
 	"TFB", // Frozen: Olaf's Quest
 	"AGE", // GoldenEye: Rogue Agent
@@ -71,6 +72,9 @@ static const char colorLutBlacklist[][4] = {
 	"CP3", // Viva Pinata: Pocket Paradise
 	"TCW", // Winx Club: Magical Fairy Party
 	"BZO", // World of Zoo
+	"AYG", // Yu-Gi-Oh!: Nightmare Troubadour
+	"AY7", // Yu-Gi-Oh!: World Championship 2007
+	"YG8", // Yu-Gi-Oh!: World Championship 2008
 	"CY8", // Yu-Gi-Oh! 5D's: Stardust Accelerator: World Championship 2009
 	"BYX", // Yu-Gi-Oh! 5D's: World Championship 2010: Reverse of Arcadia
 	"BYY", // Yu-Gi-Oh! 5D's: World Championship 2011: Over The Nexus

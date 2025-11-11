@@ -1093,14 +1093,13 @@ void vBlankHandler() {
 				glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
 					 &tex().wirelessIcons()[(bnrWirelessIcon[CURPOS] - 1) & 31]);
 
-			if (ms().theme == TWLSettings::EThemeDSi) {
-				if (currentBg == 1 && ms().theme == TWLSettings::EThemeDSi && needToPlayStopSound &&
-					waitForNeedToPlayStopSound == 0) {
-					// mmEffectEx(&snd_stop);
-					snd().playStop();
-					waitForNeedToPlayStopSound = 1;
-					needToPlayStopSound = false;
-				}
+			if (currentBg == 1 && tc().playStopSound() && needToPlayStopSound &&
+				waitForNeedToPlayStopSound == 0) {
+				snd().playStop();
+				waitForNeedToPlayStopSound = 1;
+				needToPlayStopSound = false;
+			}
+			// if (ms().theme == TWLSettings::EThemeDSi) {
 				// glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
 				// 	 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] &
 				// (tc().startBorderSpriteH() - 1)]); glSprite(96 + tc().startBorderSpriteW(),
@@ -1109,7 +1108,7 @@ void vBlankHandler() {
 				// (tc().startBorderSpriteH() - 1)]); if (bnrWirelessIcon[CURPOS] > 0) 	glSprite(96,
 				// tc().startBorderRenderY(), GL_FLIP_NONE,
 				// 		 &tex().wirelessIcons()[(bnrWirelessIcon[CURPOS] - 1) & 31]);
-			}
+			// }
 		}
 
 		// Refresh the background layer.

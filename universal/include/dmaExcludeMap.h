@@ -9,9 +9,14 @@ static const char cardReadDMAExcludeList[][4] = {
 	"Y8L", // Golden Sun: Dark Dawn (Demo)
 	"VIJ", // iCarly 2: iJoin the Click!
 	"VAV", // James Cameron's Avatar
+	"YWS", // Sonic Chronicles: The Dark Brotherhood
 	"B8I", // Spider-Man: Edge of Time
-	"AFZ", // Transformets: Autobots
-	"AFY", // Transformets: Decepticons
+	"AFZ", // Transformers: Autobots
+	"AFY", // Transformers: Decepticons
+	"CXR", // Transformers: Revenge of the Fallen: Autobots Version
+	"CXO", // Transformers: Revenge of the Fallen: Decepticons Version
+	"BAO", // Transformers: War for Cybertron: Autobots
+	"BDI", // Transformers: War for Cybertron: Decepticons
 	"CTX", // Tropix
 	"CP3", // Viva Pinata
 };

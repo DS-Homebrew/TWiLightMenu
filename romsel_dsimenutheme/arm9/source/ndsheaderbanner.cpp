@@ -6,6 +6,7 @@
 #include "common/flashcard.h"
 #include "common/nitrofs.h"
 #include "common/systemdetails.h"
+#include "common/logging.h"
 #include "perGameSettings.h"
 #include <gl2d.h>
 
@@ -102,21 +103,25 @@ bool checkRomAP(const char* filename, const int num)
 		char apFixPath[256];
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s.ips", sys().isRunFromSD() ? "sd" : "fat", filename);
 		if (access(apFixPath, F_OK) == 0) {
+			logPrint("AP-fix found!\n");
 			return false;
 		}
 
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s.bin", sys().isRunFromSD() ? "sd" : "fat", filename);
 		if (access(apFixPath, F_OK) == 0) {
+			logPrint("AP-fix found!\n");
 			return false;
 		}
 
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s-%04X.ips", sys().isRunFromSD() ? "sd" : "fat", gameTid[num], headerCRC[num]);
 		if (access(apFixPath, F_OK) == 0) {
+			logPrint("AP-fix found!\n");
 			return false;
 		}
 
 		sprintf(apFixPath, "%s:/_nds/nds-bootstrap/apFix/%s-%04X.bin", sys().isRunFromSD() ? "sd" : "fat", gameTid[num], headerCRC[num]);
 		if (access(apFixPath, F_OK) == 0) {
+			logPrint("AP-fix found!\n");
 			return false;
 		}
 	}
@@ -139,38 +144,41 @@ bool checkRomAP(const char* filename, const int num)
 		if (strcmp(buf, ".PCK") == 0) { // Make sure correct file type
 			u32 fileCount;
 			fread(&fileCount, 1, sizeof(fileCount), file);
+			logPrint("Searching for AP-fix...\n");
 
 			// Try binary search for the game
 			int left = 0;
 			int right = fileCount;
+			bool tidFound = false;
 
 			while (left <= right) {
-				int mid = left + ((right - left) / 2);
-				fseek(file, 16 + mid * 16, SEEK_SET);
+				fseek(file, 16 + left * 16, SEEK_SET);
 				fread(buf, 1, 4, file);
 				int cmp = strcmp(buf, gameTid[num]);
 				if (cmp == 0) { // TID matches, check CRC
+					tidFound = true;
 					u16 crc;
 					fread(&crc, 1, sizeof(crc), file);
+					logPrint("TID match: %s, CRC: %04X\n", gameTid[num], crc);
 
 					if (crc == 0xFFFF || crc == headerCRC[num]) { // CRC matches
 						fclose(file);
+						logPrint("AP-fix found!\n");
 						return false;
-					} else if (crc < headerCRC[num]) {
-						left = mid + 1;
 					} else {
-						right = mid - 1;
+						left++;
 					}
-				} else if (cmp < 0) {
-					left = mid + 1;
+				} else if (tidFound) {
+					break;
 				} else {
-					right = mid - 1;
+					left++;
 				}
 			}
 		}
 
 		fclose(file);
 	}
+	logPrint("AP-fix not found!\n");
 
 	// Check for SDK4-5 ROMs that don't have AP measures.
 	if ((memcmp(gameTid[num], "AZLJ", 4) == 0)   	// Girls Mode (JAP version of Style Savvy)
@@ -233,7 +241,7 @@ bool checkRomAP(const char* filename, const int num)
 	 || (memcmp(gameTid[num], "BZ2J", 4) == 0)   	// Imasugu Tsukaeru Mamechishiki: Quiz Zatsugaku-ou DS (Japan)
 	 || (memcmp(gameTid[num], "BEZJ", 4) == 0)   	// Inazuma Eleven 3: Sekai e no Chousen!!: Bomber (Japan)
 	 || (memcmp(gameTid[num], "BE8J", 4) == 0)   	// Inazuma Eleven 3: Sekai e no Chousen!!: Spark (Japan)
-	 || (memcmp(gameTid[num], "BOEJ", 4) == 0)   	// Inazuma Eleven 3: Sekai e no Chousen!!: The Ogre (Japan)
+	// || (memcmp(gameTid[num], "BOEJ", 4) == 0)   	// Inazuma Eleven 3: Sekai e no Chousen!!: The Ogre (Japan) (Patched by nds-bootstrap)
 	 || (memcmp(gameTid[num], "BJKJ", 4) == 0)   	// Ippan Zaidan Houjin Nihon Kanji Shuujukudo Kentei Kikou Kounin: Kanjukuken DS (Japan)
 	 || (memcmp(gameTid[num], "BIMJ", 4) == 0)   	// Iron Master: The Legendary Blacksmith (Japan)
 	 || (memcmp(gameTid[num], "CDOK", 4) == 0)   	// Iron Master: Wanggugui Yusangwa Segaeui Yeolsoe (Korea)
@@ -353,7 +361,7 @@ bool checkRomAP(const char* filename, const int num)
 	 || (memcmp(gameTid[num], "V29J", 4) == 0)   	// RPG Tkool DS (Japan)
 	 || (memcmp(gameTid[num], "VEBJ", 4) == 0)   	// RPG Tsukuru DS+: Create The New World (Japan)
 	 || (memcmp(gameTid[num], "ARFK", 4) == 0)   	// Rune Factory: Sinmokjjangiyagi (Korea)
-	 || (memcmp(gameTid[num], "CSGJ", 4) == 0)   	// SaGa 2: Hihou Densetsu: Goddess of Destiny (Japan)
+	// || (memcmp(gameTid[num], "CSGJ", 4) == 0)   	// SaGa 2: Hihou Densetsu: Goddess of Destiny (Japan) (Patched by nds-bootstrap)
 	 || (memcmp(gameTid[num], "BZ3J", 4) == 0)   	// SaGa 3: Jikuu no Hasha: Shadow or Light (Japan)
 	 || (memcmp(gameTid[num], "CBEJ", 4) == 0)   	// Saibanin Suiri Game: Yuuzai x Muzai (Japan)
 	 || (memcmp(gameTid[num], "B59J", 4) == 0)   	// Sakusaku Jinkou Kokyuu Care Training DS (Japan)
@@ -471,7 +479,7 @@ bool checkRomAP(const char* filename, const int num)
 			"CLJ",	// Mario & Luigi: Bowser's Inside Story
 			"COL",	// Mario & Sonic at the Olympic Winter Games
 			"V2G",	// Mario vs. Donkey Kong: Mini-Land Mayhem!
-			"B6Z",	// Mega Man Zero Collection
+			// "B6Z",	// Mega Man Zero Collection (Patched by nds-bootstrap)
 			"BVN",	// Michael Jackson: The Experience
 			"CHN",	// Might & Magic: Clash of Heroes
 			"BNQ",	// Murder in Venice
@@ -486,8 +494,8 @@ bool checkRomAP(const char* filename, const int num)
 			"C24",	// Phantasy Star 0
 			"BZF",	// Phineas and Ferb: Across the 2nd Dimension
 			"VPF",	// Phineas and Ferb: Ride Again
-			"IPK",	// Pokemon HeartGold Version
-			"IPG",	// Pokemon SoulSilver Version
+			// "IPK",	// Pokemon HeartGold Version (Patched by nds-bootstrap)
+			// "IPG",	// Pokemon SoulSilver Version (Patched by nds-bootstrap)
 			"IRA",	// Pokemon Black Version
 			"IRB",	// Pokemon White Version
 			"IRE",	// Pokemon Black Version 2
@@ -499,17 +507,17 @@ bool checkRomAP(const char* filename, const int num)
 			"C3J",	// Professor Layton and the Unwound Future
 			"BKQ",	// Pucca: Power Up
 			"VRG",	// Rabbids Go Home: A Comedy Adventure
-			"BRJ",	// Radiant Hostoria
+			// "BRJ",	// Radiant Historia (Patched by nds-bootstrap)
 			"B3X",	// River City: Soccer Hooligans
 			"BRM",	// Rooms: The Main Building
 			"TDV",	// Shin Megami Tensei: Devil Survivor 2
 			"BMT",	// Shin Megami Tensei: Strange Journey
-			"VCD",	// Solatorobo: Red the Hunter
+			// "VCD",	// Solatorobo: Red the Hunter (Patched by nds-bootstrap)
 			"BXS",	// Sonic Colors
 			"VSN",	// Sonny with a Chance
 			"B2U",	// Sports Collection
 			"CLW",	// Star Wars: The Clone Wars: Jedi Alliance
-			"AZL",	// Style Savvy
+			// "AZL",	// Style Savvy (Patched by nds-bootstrap)
 			"BH2",	// Super Scribblenauts
 			"B6T",	// Tangled
 			"B4T",	// Tetris Party Deluxe

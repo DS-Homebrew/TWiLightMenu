@@ -497,6 +497,38 @@ void my_sdmmc_get_cid(int devicenumber, u32 *cid) {
 	leaveCriticalSection(oldIME);
 }
 
+#ifdef SDMMC_USE_FIFO
+//---------------------------------------------------------------------------------
+void my_sdmmcMsgHandler(int bytes, void *user_data) {
+//---------------------------------------------------------------------------------
+    FifoMessage msg;
+    int retval = 0;
+
+    fifoGetDatamsg(FIFO_SDMMC, bytes, (u8*)&msg);
+
+    int oldIME = enterCriticalSection();
+    switch (msg.type) {
+
+    case SDMMC_SD_READ_SECTORS:
+        retval = my_sdmmc_readsectors(&deviceSD, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+        break;
+    case SDMMC_SD_WRITE_SECTORS:
+        retval = my_sdmmc_writesectors(&deviceSD, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+        break;
+    case SDMMC_NAND_READ_SECTORS:
+        retval = my_sdmmc_readsectors(&deviceNAND, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+        break;
+    case SDMMC_NAND_WRITE_SECTORS:
+        retval = my_sdmmc_writesectors(&deviceNAND, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+        break;
+    }
+
+    leaveCriticalSection(oldIME);
+
+    fifoSendValue32(FIFO_SDMMC, retval);
+}
+#endif
+
 //---------------------------------------------------------------------------------
 int my_sdmmc_nand_startup() {
 //---------------------------------------------------------------------------------
@@ -511,6 +543,49 @@ int my_sdmmc_sd_startup() {
 	return my_sdmmc_sdcard_init();
 }
 
+#ifdef SDMMC_USE_FIFO
+//---------------------------------------------------------------------------------
+void my_sdmmcValueHandler(u32 value, void* user_data) {
+//---------------------------------------------------------------------------------
+    int result = 0;
+    int sdflag = 0;
+    int oldIME = enterCriticalSection();
+
+    switch(value) {
+
+    case SDMMC_HAVE_SD:
+        result = sdmmc_read16(REG_SDSTATUS0);
+        break;
+
+    case SDMMC_SD_START:
+        sdflag = 1;
+        /* Falls through. */
+    case SDMMC_NAND_START:
+        if (sdmmc_read16(REG_SDSTATUS0) == 0) {
+            result = 1;
+        } else {
+            result = (sdflag == 1) ? my_sdmmc_sd_startup() : my_sdmmc_nand_startup();
+        }
+        break;
+
+    case SDMMC_SD_IS_INSERTED:
+        result = my_sdmmc_cardinserted();
+        break;
+
+    case SDMMC_SD_STOP:
+        my_sdmmc_controller_initialised = false;
+        break;
+
+    case SDMMC_NAND_SIZE:
+        result = deviceNAND.total_size;
+        break;
+    }
+
+    leaveCriticalSection(oldIME);
+
+    fifoSendValue32(FIFO_SDMMC, result);
+}
+#else
 //---------------------------------------------------------------------------------
 void my_sdmmcHandler() {
 //---------------------------------------------------------------------------------
@@ -585,6 +660,7 @@ void my_sdmmcHandler() {
 	//fifoSendValue32(FIFO_SDMMC, result);
 	*(u32*)0x02FFFA0C = result;
 }
+#endif
 
 //---------------------------------------------------------------------------------
 int my_sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out) {
