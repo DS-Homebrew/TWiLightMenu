@@ -564,7 +564,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 47
+// Total: 46
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -593,7 +593,6 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KWY", // Mighty Milky Way
 	"KN3", // Nazo no Mini Game
 	"KNP", // Need for Speed: Nitro-X
-	"K9N", // Neko Neko Bakery: Pan de Pazurunya!
 	"K9K", // Nintendoji
 	"K6T", // Orion's Odyssey
 	"KPS", // Phantasy Star 0 Mini
@@ -644,7 +643,6 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Mighty Milky Way (No music)
 	2, // Nazo no Mini Game (No music)
 	4, // Need for Speed: Nitro-X (No audio + Crashes after a race)
-	2, // Neko Neko Bakery: Pan de Pazurunya! (No music)
 	0, // Nintendoji (No audio + Part of the game only)
 	4, // Orion's Odyssey (Crashes at certain points)
 	4, // Phantasy Star 0 Mini (Crashes at certain points)
