@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 #include "crypto.h"
 #include "u128_math.h"
 #include "f_xy.h"
