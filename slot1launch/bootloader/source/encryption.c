@@ -20,6 +20,7 @@
 #include "encryption.h"
 #include "key1.h"
 #include "key2.h"
+#include "key2_dev.h"
 #include "common/tonccpy.h"
 
 #define KEYSIZE 0x1048
@@ -98,8 +99,22 @@ void apply_keycode (u32 modulo) {
 	}
 }
 
-void init_keycode (u32 idcode, u32 level, u32 modulo, int iCardDevice) {
-	tonccpy ((u8*)keybuf, (iCardDevice ? gEncrDataTwl : gEncrData), KEYSIZE);
+void init_keycode (u32 idcode, u32 level, u32 modulo, card_device_key_t iCardDevice) {
+	const u8* key_ptr = gEncrData;
+	if (iCardDevice == DSI_CARD_KEY)
+		key_ptr = gEncrDataTwl;
+	if (iCardDevice == DSI_DEV_CARD_KEY)
+		key_ptr = gEncrDataTwlDev;
+
+	tonccpy ((u8*)keybuf, key_ptr, KEYSIZE);
+
+	if (iCardDevice == DSI_DEV_CARD_KEY) {
+		keycode[0] = 0;
+		keycode[1] = 0;
+		keycode[2] = 0;
+		return;
+	}
+
 	keycode[0] = idcode;
 	keycode[1] = idcode/2;
 	keycode[2] = idcode*2;
