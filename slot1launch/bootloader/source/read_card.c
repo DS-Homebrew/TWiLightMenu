@@ -48,7 +48,7 @@ static u32 getRandomNumber(void) {
 				// guaranteed to be random.
 }
 
-static void decryptSecureArea (u32 gameCode, u32* secureArea, int iCardDevice)
+static void decryptSecureArea (u32 gameCode, u32* secureArea, card_device_key_t iCardDevice)
 {
 	init_keycode (gameCode, 2, 8, iCardDevice);
 	crypt_64bit_down (secureArea);
@@ -170,7 +170,10 @@ static void switchToTwlBlowfish(sNDSHeaderExt* ndsHeader) {
 
 	// Initialise blowfish encryption for KEY1 commands and decrypting the secure area
 	gameCode = (GameCode*)ndsHeader->gameCode;
-	init_keycode (gameCode->key, 1, 8, 1);
+	card_device_key_t card_device_key = DSI_CARD_KEY;
+	if(ndsHeader->dsi_flags & 0x80)
+		card_device_key = DSI_DEV_CARD_KEY;
+	init_keycode (gameCode->key, 1, 8, card_device_key);
 
 	// Port 40001A4h setting for normal reads (command B7)
 	portFlags = ndsHeader->cardControl13 & ~CARD_BLK_SIZE(7);
@@ -247,7 +250,7 @@ static void switchToTwlBlowfish(sNDSHeaderExt* ndsHeader) {
 	cardPolledTransfer(portFlagsKey1, NULL, 0, cmdData);
 
 	// The 0x800 bytes are modcrypted, so this function isn't ran
-	//decryptSecureArea (gameCode->key, secureArea, 1);
+	//decryptSecureArea (gameCode->key, secureArea, card_device_key);
 
 	twlBlowfish = true;
 }
@@ -306,7 +309,7 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 
 	// Initialise blowfish encryption for KEY1 commands and decrypting the secure area
 	gameCode = (GameCode*)ndsHeader->gameCode;
-	init_keycode (gameCode->key, 2, 8, 0);
+	init_keycode (gameCode->key, 2, 8, NTR_CARD_KEY);
 
 	// Port 40001A4h setting for normal reads (command B7)
 	portFlags = ndsHeader->cardControl13 & ~CARD_BLK_SIZE(7);
@@ -386,7 +389,7 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
     //CycloDS doesn't like the dsi secure area being decrypted
     if ((ndsHeader->arm9romOffset != 0x4000) || secureArea[0] || secureArea[1])
     {
-		decryptSecureArea (gameCode->key, secureArea, 0);
+		decryptSecureArea (gameCode->key, secureArea, NTR_CARD_KEY);
 	}
 
 	if (secureArea[0] == 0x72636e65 /*'encr'*/ && secureArea[1] == 0x6a624f79 /*'yObj'*/) {
