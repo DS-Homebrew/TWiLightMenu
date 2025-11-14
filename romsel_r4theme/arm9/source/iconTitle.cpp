@@ -1154,7 +1154,8 @@ void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv)
 		romUnitCode = ndsHeader.unitCode;
 		a7mbk6 = ndsHeader.a7mbk6;
 
-		fseek(fp, ndsHeader.arm9romOffset + ndsHeader.arm9executeAddress - ndsHeader.arm9destination, SEEK_SET);
+		fseek(fp, ndsHeader.arm9romOffset + ((strncmp(gameTid, "BIG", 3) == 0) ? 0x02000800 : ndsHeader.arm9executeAddress) - ndsHeader.arm9destination, SEEK_SET);
+		// "Battle/Combat of Giants: Mutant Insects" (TID: BIG) has code that is run before the actual SDK boot code
 		fread(arm9StartSig, sizeof(u32), 4, fp);
 		if ((arm9StartSig[0] == 0xE3A0C301 || (arm9StartSig[0] >= 0xEA000000 && arm9StartSig[0] < 0xEC000000 /* If title contains cracktro or extra splash */))
 		  && arm9StartSig[1] == 0xE58CC208) {
