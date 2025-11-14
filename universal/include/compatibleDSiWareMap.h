@@ -487,9 +487,8 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 29
+// Total: 27
 static const char compatibleGameListB4DSMEP[][5] = {
-	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
 	"K2Z", // G.G Series: Altered Weapon
 	"KWG", // Animal Crossing Calculator
@@ -507,7 +506,6 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KYL", // Make Up & Style
 	"KWF", // Mario Calculator
-	"KUP", // Match Up!
 	"KWK", // Mega Words
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"KNP", // Need for Speed: Nitro-X
@@ -526,7 +524,6 @@ static const char compatibleGameListB4DSMEP[][5] = {
 // 2: 16MB+ RAM expansion required
 // 3: VRAM-WiFi Donor ROM or Debug console required
 static int compatibleGameListB4DSMEPID[] = {
-	0, // 21 Blackjack
 	0, // 5 in 1 Solitaire
 	3, // G.G Series: Altered Weapon
 	0, // Animal Crossing Calculator
@@ -544,7 +541,6 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // The Legend of Zelda: Four Swords: Anniversary Edition
 	0, // Make Up & Style
 	0, // Mario Calculator
-	0, // Match Up!
 	0, // Mega Words
 	2, // Meikyou Kokugo: Rakubiki Jiten
 	3, // Need for Speed: Nitro-X
