@@ -487,7 +487,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 27
+// Total: 26
 static const char compatibleGameListB4DSMEP[][5] = {
 	"K5I", // 5 in 1 Solitaire
 	"K2Z", // G.G Series: Altered Weapon
@@ -506,7 +506,6 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KYL", // Make Up & Style
 	"KWF", // Mario Calculator
-	"KWK", // Mega Words
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"KNP", // Need for Speed: Nitro-X
 	"K9K", // Nintendoji
@@ -541,7 +540,6 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // The Legend of Zelda: Four Swords: Anniversary Edition
 	0, // Make Up & Style
 	0, // Mario Calculator
-	0, // Mega Words
 	2, // Meikyou Kokugo: Rakubiki Jiten
 	3, // Need for Speed: Nitro-X
 	0, // Nintendoji
