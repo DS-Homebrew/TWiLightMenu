@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 480
+// Total: 481
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -381,6 +381,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K5G", // G.G Series: Score Attacker
 	"KRW", // Sea Battle
 	"KLL", // The Seller
+	"K5T", // Sengoku Tactics
 	"KZJ", // G.G Series: Shadow Army
 	"KS3", // Shantae: Risky's Revenge
 	"KK5", // Kakitori Rekishi: Shouga Kusei (01)
