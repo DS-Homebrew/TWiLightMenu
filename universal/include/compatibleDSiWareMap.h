@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 482
+// Total: 483
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -372,6 +372,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KJ5", // Renjuku Kanji: Shougaku 5 Nensei
 	"KJ6", // Renjuku Kanji: Shougaku 6 Nensei
 	"KJ8", // Renjuku Kanji: Chuugakusei
+	"KXR", // Retro Pocket
 	"KRT", // Robot Rescue
 	"KD6", // Rock-n-Roll Domo
 	"KRL", // Roller Angels
