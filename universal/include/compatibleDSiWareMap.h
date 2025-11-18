@@ -150,7 +150,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KHE", // DotMan
 	"KD9", // Dr. Mario Express / A Little Bit of... Dr. Mario
 	"KDL", // Dragon's Lair
-	"KLYE", // Dragon's Lair II: Time Warp (USA)
+	"KLY", // Dragon's Lair II: Time Warp
 	"K9E", // Dreamwalker
 	"K2C", // G.G Series: Drift Circuit
 	"KUG", // G.G Series: Drift Circuit 2
