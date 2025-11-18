@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 484
+// Total: 485
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -350,6 +350,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KLF", // Puffins: Let's Fish!
 	"KLR", // Puffins: Let's Race!
 	"KL2", // Puffins: Let's Roll!
+	"KKE", "K5V", // Puzzle Fever
 	"KPN", // Puzzle League: Express / A Little Bit of... Puzzle League
 	"KPL", // Puzzle Rocks
 	"KYE", // Puzzler Brain Games
