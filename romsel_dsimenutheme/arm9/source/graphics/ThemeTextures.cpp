@@ -1564,6 +1564,17 @@ void loadRotatingCubes() {
 			// fseek(videoFrameFile, 0xD, SEEK_SET);
 			fread((void*)&rocketVideo_height, sizeof(u8), 1, videoFrameFile);
 
+			if (rvidVer == 3) {
+				u8 isDualScreen = 0;
+				fseek(videoFrameFile, 0xF, SEEK_SET);
+				fread((void*)&isDualScreen, sizeof(u8), 1, videoFrameFile);
+
+				if (isDualScreen) {
+					fclose(videoFrameFile);
+					return;
+				}
+			}
+
 			u8 rvidBmpMode = 1;
 			if (rvidVer == 3) {
 				fseek(videoFrameFile, 0x13, SEEK_SET);
