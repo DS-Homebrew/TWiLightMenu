@@ -1559,6 +1559,9 @@ void loadRotatingCubes() {
 			extern u8 rocketVideo_fps;
 			// fseek(videoFrameFile, 0xC, SEEK_SET);
 			fread((void*)&rocketVideo_fps, sizeof(u8), 1, videoFrameFile);
+			if (rocketVideo_fps >= 0x80) {
+				rocketVideo_fps -= 0x80;
+			}
 
 			extern u8 rocketVideo_height;
 			// fseek(videoFrameFile, 0xD, SEEK_SET);
