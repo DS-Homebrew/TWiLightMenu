@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 485
+// Total: 486
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -303,6 +303,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KQ2", // G.G Series: Ninja Karakuri Den 2
 	"KAUE", "KAUV", // Nintendo Countdown Calendar
 	"K2D", // Nintendo DSi + Internet
+	"KDO", // Nintendogs
 	"K9K", // Nintendoji
 	"KJI", // Noroi no Game: Chi
 	"KG9", // Noroi no Game: Oku
