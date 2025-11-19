@@ -1610,7 +1610,7 @@ void loadRotatingCubes() {
 					frameBuffer256 = new u8[0xC000];
 				}
 				u32 frameTableOffset = 0x200;
-				for (int i = 0; i < rocketVideo_videoFrames; i++) {
+				for (int i = 0; i <= rocketVideo_videoFrames; i++) {
 					fseek(videoFrameFile, frameTableOffset, SEEK_SET);
 					fread((void*)&framesOffset, sizeof(u32), 1, videoFrameFile);
 
