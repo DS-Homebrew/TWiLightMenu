@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 487
+// Total: 488
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -213,6 +213,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K9A", // Goooooal America / Goooooal Europa 2012
 	"KVQ", // G.G Series: Great Whip Adventure
 	"K83", // Hachiwandaiba DS: Naru Zouku Ha Samishougi
+	"KK6", // Hakokoro
 	"KZH", // Halloween Trick or Treat
 	"KHO", // Handy Hockey
 	"KHM", // Handy Mahjong
@@ -559,7 +560,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 46
+// Total: 47
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -580,6 +581,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KFD", // Fieldrunners
 	"KFO", // Frenzic
 	"KGK", // Glory Days: Tactical Defense
+	"KK6", // Hakokoro
 	"KZH", // Halloween Trick or Treat
 	"KIS", // Ice Hockey Slovakia 2011
 	"KPT", // Link 'n' Launch
@@ -630,6 +632,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Fieldrunners (No audio)
 	4, // Frenzic (Crashes at certain point)
 	2, // Glory Days: Tactical Defense (No music)
+	1, // Hakokoro (No audio)
 	2, // Halloween Trick or Treat (No music)
 	8, // Ice Hockey Slovakia 2011 (No sound effects)
 	2, // Link 'n' Launch (No music)
