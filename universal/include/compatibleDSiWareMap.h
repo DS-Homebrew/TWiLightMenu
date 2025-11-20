@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 488
+// Total: 489
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -257,6 +257,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KLD", // Legendary Wars: T-Rex Rumble
 	"K5C", // Letter Challenge
+	"KLI", "KLW", // Libera Wing
 	"KPT", // Link 'n' Launch
 	"KLP", // Littlest Pet Shop
 	"KLK", // Lola's Alphabet Train
