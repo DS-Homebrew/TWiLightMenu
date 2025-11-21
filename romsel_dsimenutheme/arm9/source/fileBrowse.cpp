@@ -2131,7 +2131,6 @@ void dsiWareRAMLimitMsgPrep(void) {
 	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
 		if (memcmp(gameTid[CURPOS], compatibleGameListB4DSMEP[i], (compatibleGameListB4DSMEP[i][3] != 0 ? 4 : 3)) == 0) {
 			// Found match
-			msgId = (compatibleGameListB4DSMEPID[i] == 2) ? 11 : 10;
 			const bool vramWifiDonorRequired = (compatibleGameListB4DSMEPID[i] == 3 || compatibleGameListB4DSMEPID[i] == 4);
 			if (vramWifiDonorRequired && !b4dsDebugConsole) {
 				msgId = 12;
@@ -2144,6 +2143,7 @@ void dsiWareRAMLimitMsgPrep(void) {
 				showMsg = !donorRomFound;
 			}
 			if (!showMsg) {
+				msgId = (compatibleGameListB4DSMEPID[i] == 2) ? 11 : 10;
 				if (sys().isRegularDS()) {
 					/*if (*(u16*)0x020000C0 == 0x5A45) {
 						showMsg = true;
