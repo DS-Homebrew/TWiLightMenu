@@ -3910,6 +3910,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 							if (proceedToLaunch) {
 								proceedToLaunch = dsiWareRAMLimitMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+								if (!proceedToLaunch) {
+									// Re-prep in case the Memory Expansion Pak has been inserted after being told to do so
+									dsiWareRAMLimitMsgPrepped = false;
+									infoCheckTimer = 0;
+								}
 							}
 						}
 					} else if (isHomebrew[CURPOS] == 1) {
