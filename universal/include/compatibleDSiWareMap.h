@@ -253,7 +253,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KJC", // Koukou Eijukugo: Kiho 200 Go Master
 	"KEK", // Koukou Eitango: Kiho 400 Go Master
 	"KT9", // Kung Fu Dragon
-	"KY3", // Kuniya Burete Sanga Ari: Hills and Rivers Remain
+	"KY3", // Kuniya Burete Sanga Ari: Hills and Rivers Remain (Requires TWLFontTable.dat)
 	"K5M", // G.G Series: The Last Knight
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KLD", // Legendary Wars: T-Rex Rumble
