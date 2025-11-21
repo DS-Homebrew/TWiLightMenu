@@ -1064,7 +1064,7 @@ bool dsiWareCompatibleB4DS(void) {
 			break;
 		}
 	}
-	if (!res && (sys().dsDebugRam() || bs().b4dsMode == 2)) {
+	if (!res && ((sys().isRegularDS() && sys().dsDebugRam()) || (dsiFeatures() && bs().b4dsMode == 2))) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebug)/sizeof(compatibleGameListB4DSDebug[0]); i++) {
 			if (memcmp(gameTid, compatibleGameListB4DSDebug[i], (compatibleGameListB4DSDebug[i][3] != 0 ? 4 : 3)) == 0) {
 				// Found match
