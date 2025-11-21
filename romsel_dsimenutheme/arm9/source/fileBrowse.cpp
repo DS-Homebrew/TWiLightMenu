@@ -2114,7 +2114,12 @@ bool dsiWareInDSModeMsg(std::string filename) {
 	return proceedToLaunch;
 }
 
-bool dsiWareRAMLimitMsg(std::string filename) {
+static bool dsiWareRAMLimitMsgPrepped = false;
+static bool dsiWareRAMLimitMsg_showMsg = false;
+static bool dsiWareRAMLimitMsg_mepFound = false;
+static int dsiWareRAMLimitMsg_msgId = 0;
+
+void dsiWareRAMLimitMsgPrep(void) {
 	bool showMsg = false;
 	bool mepFound = false;
 	int msgId = 0;
@@ -2195,6 +2200,22 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			}
 		}
 	}
+
+	dsiWareRAMLimitMsg_showMsg = showMsg;
+	dsiWareRAMLimitMsg_mepFound = mepFound;
+	dsiWareRAMLimitMsg_msgId = msgId;
+
+	dsiWareRAMLimitMsgPrepped = true;
+}
+
+bool dsiWareRAMLimitMsg(std::string filename) {
+	if (!dsiWareRAMLimitMsgPrepped) {
+		dsiWareRAMLimitMsgPrep();
+	}
+
+	const bool showMsg = dsiWareRAMLimitMsg_showMsg;
+	const bool mepFound = dsiWareRAMLimitMsg_mepFound;
+	const int msgId = dsiWareRAMLimitMsg_msgId;
 
 	if (!showMsg || (!checkIfShowRAMLimitMsg(filename) && msgId < 10)) {
 		return true;
@@ -3133,8 +3154,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		bool dsiBinariesChecked = false;
 		bool hasDsiBinaries = true;
 		bool apChecked = false;
+		bool checkedDSiWareCompatibleB4DS = false;
+		dsiWareRAMLimitMsgPrepped = false;
 		int infoCheckTimer = 0;
 		bool hasAP = false;
+		bool savedDSiWareCompatibleB4DS = false;
 
 		while (1) {
 			if (!stopSoundPlayed) {
@@ -3193,17 +3217,30 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 						bannerTextShown = true;
 					}
-					if ((infoCheckTimer < 30) && (bnrRomType[CURPOS] == 0) && (isHomebrew[CURPOS] == 0) && !isDSiWare[CURPOS]) {
-						infoCheckTimer++;
-						if (infoCheckTimer == 30) {
-							if (!dsiBinariesChecked) {
-								hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+					if ((infoCheckTimer < 30) && (bnrRomType[CURPOS] == 0) && (isHomebrew[CURPOS] == 0)) {
+						if (!isDSiWare[CURPOS]) {
+							infoCheckTimer++;
+							if (infoCheckTimer == 30) {
+								if (!dsiBinariesChecked) {
+									hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+								}
+								dsiBinariesChecked = true;
+								if (!apChecked && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
+									hasAP = checkRomAP(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+								}
+								apChecked = true;
 							}
-							dsiBinariesChecked = true;
-							if (!apChecked && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
-								hasAP = checkRomAP(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+						} else if (isDSiWare[CURPOS] && ((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice) {
+							infoCheckTimer++;
+							if (infoCheckTimer == 30) {
+								if (!checkedDSiWareCompatibleB4DS) {
+									savedDSiWareCompatibleB4DS = dsiWareCompatibleB4DS();
+								}
+								checkedDSiWareCompatibleB4DS = true;
+								if (!dsiWareRAMLimitMsgPrepped) {
+									dsiWareRAMLimitMsgPrep();
+								}
 							}
-							apChecked = true;
 						}
 					}
 				} else {
@@ -3240,11 +3277,15 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				moveCursor(false, dirContents[scrn]);
 				dsiBinariesChecked = false;
 				apChecked = false;
+				checkedDSiWareCompatibleB4DS = false;
+				dsiWareRAMLimitMsgPrepped = false;
 				infoCheckTimer = 0;
 			} else if ((held & KEY_RIGHT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == TWLSettings::EThemeDSi)) { // Right or button arrow (DSi theme)
 				moveCursor(true, dirContents[scrn]);
 				dsiBinariesChecked = false;
 				apChecked = false;
+				checkedDSiWareCompatibleB4DS = false;
+				dsiWareRAMLimitMsgPrepped = false;
 				infoCheckTimer = 0;
 			} else if ((pressed & KEY_UP) && (PAGENUM > 0 || CURPOS > 0 || !backFound) && (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) && !dirInfoIniFound && (ms().sortMethod == 4) && (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()))) { // Move apps (DSi & 3DS themes)
 				bannerTextShown = false; // Redraw the title when done
@@ -3422,6 +3463,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				dsiBinariesChecked = false;
 				apChecked = false;
+				checkedDSiWareCompatibleB4DS = false;
+				dsiWareRAMLimitMsgPrepped = false;
 				infoCheckTimer = 0;
 
 				int prevPos = CURPOS;
@@ -3489,6 +3532,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				dsiBinariesChecked = false;
 				apChecked = false;
+				checkedDSiWareCompatibleB4DS = false;
+				dsiWareRAMLimitMsgPrepped = false;
 				infoCheckTimer = 0;
 
 				bool tapped = false;
@@ -3785,9 +3830,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 					bool proceedToLaunch = true;
 					if (!isValid[CURPOS] || isTwlm[CURPOS] || (isUnlaunch[CURPOS] && ms().theme == TWLSettings::ETheme3DS) || (!isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[CURPOS] == 0 && gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3 && requiresDonorRom[CURPOS] != 51)
-					|| (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
+					|| (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && (checkedDSiWareCompatibleB4DS ? !savedDSiWareCompatibleB4DS : !dsiWareCompatibleB4DS()))
 					|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
 					|| (bnrRomType[CURPOS] == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
+						if (isDSiWare[CURPOS] && ((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice) {
+							checkedDSiWareCompatibleB4DS = true;
+						}
 						proceedToLaunch = cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 					}
 					bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);
