@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 489
+// Total: 490
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -253,6 +253,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KJC", // Koukou Eijukugo: Kiho 200 Go Master
 	"KEK", // Koukou Eitango: Kiho 400 Go Master
 	"KT9", // Kung Fu Dragon
+	"KY3", // Kuniya Burete Sanga Ari: Hills and Rivers Remain
 	"K5M", // G.G Series: The Last Knight
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KLD", // Legendary Wars: T-Rex Rumble
@@ -496,7 +497,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 26
+// Total: 27
 static const char compatibleGameListB4DSMEP[][5] = {
 	"K5I", // 5 in 1 Solitaire
 	"K2Z", // G.G Series: Altered Weapon
@@ -511,6 +512,7 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KEA", // Electroplankton: Trapy
 	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
+	"KY3", // Kuniya Burete Sanga Ari: Hills and Rivers Remain
 	"K5M", // G.G Series: The Last Knight
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KYL", // Make Up & Style
@@ -531,6 +533,7 @@ static const char compatibleGameListB4DSMEP[][5] = {
 // 1: Memory Expansion Pak always required
 // 2: 16MB+ RAM expansion required
 // 3: VRAM-WiFi Donor ROM or Debug console required
+// 4: VRAM-WiFi Donor ROM + Memory Expansion Pak, or Debug console required
 static int compatibleGameListB4DSMEPID[] = {
 	0, // 5 in 1 Solitaire
 	3, // G.G Series: Altered Weapon
@@ -545,6 +548,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	3, // Electroplankton: Trapy
 	2, // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	1, // Jinia Supasonaru: Waei Rakubiki Jiten
+	4, // Kuniya Burete Sanga Ari: Hills and Rivers Remain
 	3, // G.G Series: The Last Knight
 	0, // The Legend of Zelda: Four Swords: Anniversary Edition
 	0, // Make Up & Style
