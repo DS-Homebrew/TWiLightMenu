@@ -2368,8 +2368,11 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	return proceedToLaunch;
 }
 
+static bool savedDSiWareCompatibleB4DS = false;
+
 bool dsiWareCompatibleB4DS(void) {
 	if (memcmp(gameTid[CURPOS], "NTRJ", 4) == 0) {
+		savedDSiWareCompatibleB4DS = true;
 		return true; // No check necessary for NTRJ titles (They are uncommon, and "NTRJ" is not seen in retail titles)
 	}
 
@@ -2392,6 +2395,7 @@ bool dsiWareCompatibleB4DS(void) {
 			}
 		}
 	}
+	savedDSiWareCompatibleB4DS = res;
 	return res;
 }
 
@@ -3158,7 +3162,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		dsiWareRAMLimitMsgPrepped = false;
 		int infoCheckTimer = 0;
 		bool hasAP = false;
-		bool savedDSiWareCompatibleB4DS = false;
 
 		while (1) {
 			if (!stopSoundPlayed) {
@@ -3234,7 +3237,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							infoCheckTimer++;
 							if (infoCheckTimer == 30) {
 								if (!checkedDSiWareCompatibleB4DS) {
-									savedDSiWareCompatibleB4DS = dsiWareCompatibleB4DS();
+									dsiWareCompatibleB4DS();
 								}
 								checkedDSiWareCompatibleB4DS = true;
 								if (!dsiWareRAMLimitMsgPrepped) {
