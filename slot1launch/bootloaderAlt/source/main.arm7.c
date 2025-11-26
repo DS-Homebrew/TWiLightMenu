@@ -81,9 +81,6 @@ bool my_isDSiMode() {
 	return ((vu8)scfgRomBak == 1);
 }
 
-bool useTwlCfg = false;
-int twlCfgLang = 0;
-
 bool gameSoftReset = false;
 
 void arm7_clearmem (void* loc, size_t len);
