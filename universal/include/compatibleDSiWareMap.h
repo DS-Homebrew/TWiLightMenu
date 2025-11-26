@@ -424,6 +424,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KQ6", // Spin Six
 	"KIT", // Spot It! Challenge
 	"K2U", // Spot It! Challenge: Mean Machines
+	"K97", // Star Novels: Kono Haretasora no Shitade
+	"K98", // Star Novels: Shirogane no Torikago
 	"KEU", // Successfully Learning: English, Year 2
 	"KEZ", // Successfully Learning: English, Year 3
 	"KE6", // Successfully Learning: English, Year 4
@@ -441,8 +443,6 @@ static const char compatibleGameListB4DS[][5] = {
 	"KWU", // Sudoku & Kakuro: Welt Edition
 	"KSC", // Sudoku Challenge!
 	"KOW", // Surfacer+
-	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
-	"K98", // Sutanoberuzu: Shirogane no Torikago
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
 	"KZV", // Tales to Enjoy!: Puss in Boots
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
@@ -523,9 +523,9 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"K9K", // Nintendoji
 	"KPS", // Phantasy Star 0 Mini
 	"KQR", // Remote Racers
+	"K97", // Star Novels: Kono Haretasora no Shitade
+	"K98", // Star Novels: Shirogane no Torikago
 	"KSC", // Sudoku Challenge!
-	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
-	"K98", // Sutanoberuzu: Shirogane no Torikago
 	"KWSE", // Word Searcher (USA)
 };
 
@@ -559,9 +559,9 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Nintendoji
 	3, // Phantasy Star 0 Mini
 	0, // Remote Racers
+	0, // Star Novels: Kono Haretasora no Shitade
+	0, // Star Novels: Shirogane no Torikago
 	0, // Sudoku Challenge!
-	0, // Sutanoberuzu: Kono Hareta Sora no Shita de
-	0, // Sutanoberuzu: Shirogane no Torikago
 	0, // Word Searcher (USA)
 };
 
@@ -605,8 +605,8 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KG4", // Saikyou Ginsei Shougi
 	"KS3", // Shantae: Risky's Revenge
 	"KSV", // Sokomania 2: Cool Job
-	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
-	"K98", // Sutanoberuzu: Shirogane no Torikago
+	"K97", // Star Novels: Kono Haretasora no Shitade
+	"K98", // Star Novels: Shirogane no Torikago
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
 	"KZV", // Tales to Enjoy!: Puss in Boots
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
@@ -656,8 +656,8 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Saikyou Ginsei Shougi (Crashes at certain points)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
 	1, // Sokomania 2: Cool Job (No audio)
-	2, // Sutanoberuzu: Kono Hareta Sora no Shita de (No music + No FMV)
-	5, // Sutanoberuzu: Shirogane no Torikago (No FMV)
+	2, // Star Novels: Kono Haretasora no Shitade (No music + No FMV)
+	5, // Star Novels: Shirogane no Torikago (No FMV)
 	4, // Tales to Enjoy!: Little Red Riding Hood (Crashes at certain points)
 	4, // Tales to Enjoy!: Puss in Boots (Crashes at certain points)
 	4, // Tales to Enjoy!: The Three Little Pigs (Crashes at certain points)
