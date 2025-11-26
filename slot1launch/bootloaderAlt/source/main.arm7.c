@@ -276,6 +276,9 @@ void arm7_resetMemory (void)
 	// clear last part of EXRAM, skipping the ARM9's section
 	arm7_clearmem ((void*)0x023FE000, 0x2000);
 
+	if (my_isDSiMode())
+		tonccpy((void*)0x02400000, (void*)0x02000000, 0x4000); // Backup TWLCFG for use with TWLMenu++ on flashcards
+
 	REG_IE = 0;
 	REG_IF = ~0;
 	(*(vu32*)(0x04000000-4)) = 0;  //IRQ_HANDLER ARM7 version
