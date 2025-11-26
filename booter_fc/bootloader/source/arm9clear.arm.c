@@ -81,6 +81,19 @@ Modified by Chishm:
 --------------------------------------------------------------------------*/
 void __attribute__ ((long_call)) __attribute__((noreturn)) __attribute__((naked)) startBinary_ARM9 (void)
 {
+	if ((*(u8*)0x2FFE012 == *(u8*)0x2FFFE12) && (*(u8*)0x2FFE012 > 0)) {
+		*(vu32*)REG_MBK1 = *(u32*)0x02FFE180;
+		*(vu32*)REG_MBK2 = *(u32*)0x02FFE184;
+		*(vu32*)REG_MBK3 = *(u32*)0x02FFE188;
+		*(vu32*)REG_MBK4 = *(u32*)0x02FFE18C;
+		*(vu32*)REG_MBK5 = *(u32*)0x02FFE190;
+		REG_MBK6 = *(u32*)0x02FFE194;
+		REG_MBK7 = *(u32*)0x02FFE198;
+		REG_MBK8 = *(u32*)0x02FFE19C;
+		REG_MBK9 = *(u32*)0x02FFE1AC;
+		WRAM_CR = *(u8*)0x02FFE1AF;
+	}
+
 	REG_IME=0;
 	REG_EXMEMCNT = 0xE880;
 	// set ARM9 load address to 0 and wait for it to change again
