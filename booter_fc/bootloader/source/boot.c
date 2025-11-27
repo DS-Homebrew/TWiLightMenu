@@ -285,6 +285,8 @@ void loadBinary_ARM7 (u32 fileCluster)
 				tonccpy(ARM9i_DST, (char*)0x02C00000, ARM9i_LEN);
 			if (ARM7i_LEN)
 				tonccpy(ARM7i_DST, (char*)0x02C80000, ARM7i_LEN);
+
+			initMBK_dsiMode();
 		}
 
 		toncset((void*)0x02800000, 0, 0x500000);
