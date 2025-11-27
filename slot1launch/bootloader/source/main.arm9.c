@@ -49,6 +49,7 @@ bool arm9_runCardEngine = false;
 bool dsiModeConfirmed = false;
 bool arm9_boostVram = false;
 bool arm9_scfgUnlock = false;
+bool arm9_twlClock = false;
 bool arm9_extendedMemory = false;
 bool arm9_isSdk5 = false;
 
@@ -61,6 +62,7 @@ volatile u32 arm9_BLANK_RAM = 0;
 External functions
 --------------------------------------------------------------------------*/
 extern void arm9_clearCache (void);
+extern void arm9_write_to_scfg_clk(uint16_t);
 
 
 void initMBKARM9() {
@@ -300,13 +302,25 @@ void __attribute__((target("arm"))) arm9_main (void) {
 					initMBKARM9_dsiMode();
 				}
 				REG_SCFG_EXT = 0x8307F100;
-				REG_SCFG_CLK = 0x87;
+				// bit 7 is read only in reality...
+				if(arm9_twlClock)
+					arm9_write_to_scfg_clk(0x87);
+				else
+					arm9_write_to_scfg_clk(0x86);
 				REG_SCFG_RST = 1;
 			} else {
 				REG_SCFG_EXT = (arm9_extendedMemory ? 0x8300C000 : 0x83000000);
 				if (arm9_boostVram) {
 					REG_SCFG_EXT |= BIT(13);	// Extended VRAM Access
 				}
+				// TODO: For now, not enabled to avoid breaking
+				// certain DSi games...
+				#ifdef FULL_DSI_MODE_ENABLED
+				if(arm9_twlClock)
+					arm9_write_to_scfg_clk(0x01);
+				else
+					arm9_write_to_scfg_clk(0x00);
+				#endif
 				if (!arm9_scfgUnlock) {
 					// lock SCFG
 					REG_SCFG_EXT &= ~(1UL << 31);

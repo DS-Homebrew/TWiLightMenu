@@ -52,8 +52,6 @@
 
 #define REG_GPIO_WIFI *(vu16*)0x4004C04
 
-//#define FULL_DSI_MODE_ENABLED
-
 #include "common.h"
 #include "dmaTwl.h"
 #include "common/tonccpy.h"
@@ -1061,14 +1059,14 @@ void arm7_main (void) {
 
 			REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
 
-			if (twlClock) {
-				REG_SCFG_CLK = 0x0181;
-			} else {
-				REG_SCFG_CLK = 0x0180;
-			}
 			if (!sdAccess) {
+				REG_SCFG_CLK = 0x0180;
 				REG_SCFG_EXT = 0x93FBFB06;
 			}
+			else {
+				REG_SCFG_CLK = 0x0181;
+			}
+
 			// Used by ARM7 binaries to determine DSi mode...
 			toncset((u8*)0x0380FFC0, 0, 0x10);
 		}
@@ -1124,6 +1122,7 @@ void arm7_main (void) {
 
 	arm9_boostVram = boostVram;
 	arm9_scfgUnlock = scfgUnlock;
+	arm9_twlClock = twlClock;
 	arm9_isSdk5 = isSdk5(moduleParams);
 	arm9_runCardEngine = runCardEngine;
 
