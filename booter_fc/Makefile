@@ -55,7 +55,8 @@ makearm9_r4idsn:
 
 dist:	all autoboot
 	@mkdir -p ../7zfile/debug
-	@cp $(TARGET)_fc.nds "../7zfile/Flashcard users/BOOT.NDS"
+	@cp $(TARGET)_fc.dsi "../7zfile/Flashcard users/BOOT.NDS"
+	@cp $(TARGET)_fc.nds "../7zfile/Flashcard users/BOOT_ALT.NDS"
 	@cp $(TARGET)_fc.arm7.elf ../7zfile/debug/$(TARGET)_fc.arm7.elf
 	@cp $(TARGET)_fc.arm9.elf ../7zfile/debug/$(TARGET)_fc.arm9.elf
 	@cp $(TARGET)_r4ils.arm7.elf ../7zfile/debug/$(TARGET)_r4ils.arm7.elf
@@ -293,6 +294,7 @@ autoboot:
 	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/TTMenu.dat"
 
 $(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4ig makearm9_acekard2 makearm9_r4idsn
+	ndstool -c $(TARGET)_fc.dsi       -7 $(TARGET)_r4ils.arm7.elf -9 $(TARGET)_fc.arm9.elf       -g SRLA 01 "TWLMENUPP" -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	# simple nds srl without dsi extended header
 	ndstool -c $(TARGET)_fc.nds       -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_fc.arm9.elf       -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	ndstool -c $(TARGET)_r4ig.nds     -7 $(TARGET)_fc.arm7.elf    -9 $(TARGET)_r4ig.arm9.elf     -h 0x200 -b icon.bmp "TWiLight Menu++;Rocket Robz"
@@ -305,7 +307,7 @@ clean:
 	@echo clean ...
 	@rm -fr data $(BUILD)
 	@rm -fr ./flashcart_specifics/booter_fc.nds ./flashcart_specifics/_DS_MENU.nds
-	@rm -fr $(TARGET)_fc.nds $(TARGET)_fc.arm7.elf $(TARGET)_fc.arm9.elf
+	@rm -fr $(TARGET)_fc.dsi $(TARGET)_fc.nds $(TARGET)_fc.arm7.elf $(TARGET)_fc.arm9.elf
 	@rm -fr $(TARGET)_r4ig.nds $(TARGET)_r4ig.arm9.elf
 	@rm -fr $(TARGET)_r4idsn.nds $(TARGET)_r4idsn.arm9.elf
 	@rm -fr $(TARGET)_acekard2.nds $(TARGET)_acekard2.arm9.elf
