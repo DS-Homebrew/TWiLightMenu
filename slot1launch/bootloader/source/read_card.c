@@ -28,6 +28,9 @@
 #include "encryption.h"
 #include "common.h"
 
+#define TWL_BLOWFISH_TABLE_SIZE 0x3000
+#define SINGLE_ROM_REGION_SIZE 0x80000
+
 typedef union
 {
 	char title[4];
@@ -427,13 +430,18 @@ void cardRead (u32 src, u32* dest, size_t size)
 		src += readSize;
 		dest += readSize/sizeof(*dest);
 		size -= readSize;
-	} else if ((ndsHeader->unitCode != 0) && (src >= ndsHeader->arm9iromOffset) && (src < ndsHeader->arm9iromOffset+CARD_SECURE_AREA_SIZE)) {
-		// Read data from secure area
-		readSize = src + size < (ndsHeader->arm9iromOffset+CARD_SECURE_AREA_SIZE) ? size : (ndsHeader->arm9iromOffset+CARD_SECURE_AREA_SIZE) - src;
-		tonccpy (dest, (u8*)secureArea + src - ndsHeader->arm9iromOffset, readSize);
-		src += readSize;
-		dest += readSize/sizeof(*dest);
-		size -= readSize;
+	} else if (ndsHeader->unitCode != 0) {
+		size_t twl_rom_region_start = 0;
+		if(ndsHeader->twl_rom_region_start != 0)
+			twl_rom_region_start = (ndsHeader->twl_rom_region_start * SINGLE_ROM_REGION_SIZE) + TWL_BLOWFISH_TABLE_SIZE;
+		if((twl_rom_region_start != 0) && (src >= twl_rom_region_start) && (src < twl_rom_region_start + CARD_SECURE_AREA_SIZE)) {
+			// Read data from secure area
+			readSize = src + size < (twl_rom_region_start+CARD_SECURE_AREA_SIZE) ? size : (twl_rom_region_start+CARD_SECURE_AREA_SIZE) - src;
+			tonccpy (dest, (u8*)secureArea + src - twl_rom_region_start, readSize);
+			src += readSize;
+			dest += readSize/sizeof(*dest);
+			size -= readSize;
+		}
 	}
 
 	while (size > 0) {

@@ -57,15 +57,20 @@
 #include "common/tonccpy.h"
 #include "read_card.h"
 #include "module_params.h"
-#include "cardengine_arm7_bin.h"
 #include "hook.h"
 #include "find.h"
 
 #ifdef FULL_DSI_MODE_ENABLED
+// Needed due to size
+#define SKIP_CARDENGINE_ARM7
 #include "gm9i/crypto.h"
 #include "gm9i/f_xy.h"
 #include "twltool/dsi.h"
 #include "u128_math.h"
+#endif
+
+#ifndef SKIP_CARDENGINE_ARM7
+#include "cardengine_arm7_bin.h"
 #endif
 
 extern bool __dsimode;
@@ -1094,6 +1099,7 @@ void arm7_main (void) {
 		runCardEngine = false;
 	}
 
+	#ifndef SKIP_CARDENGINE_ARM7
 	if (runCardEngine) {
 		// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
 		REG_MBK6=0x080037C0;
@@ -1116,6 +1122,7 @@ void arm7_main (void) {
 			}
 		}
 	}
+	#endif
 	toncset ((void*)0x023F0000, 0, 0x8000);		// Clear cheat data from main memory
 
 	//debugOutput (ERR_STS_START);
