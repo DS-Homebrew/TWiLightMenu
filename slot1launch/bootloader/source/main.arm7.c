@@ -105,6 +105,8 @@ static const u32 cheatDataEndSignature[2] = {0xCF000000, 0x00000000};
 
 // Module params
 static const u32 moduleParamsSignature[2] = {0xDEC00621, 0x2106C0DE};
+static module_params_t emulatedModuleParams; 
+static module_params_t* moduleParams;
 
 // Sleep input write
 static const u32 sleepInputWriteEndSignature1[2]     = {0x04000136, 0x027FFFA8};
@@ -122,16 +124,33 @@ const char* getRomTid(const tNDSHeader* ndsHeader) {
 	return romTid;
 }
 
-static module_params_t* moduleParams;
-
 u32* findModuleParamsOffset(const tNDSHeader* ndsHeader) {
 	//dbg_printf("findModuleParamsOffset:\n");
 
 	u32* moduleParamsOffset = findOffset(
 			(u32*)ndsHeader->arm9destination, ndsHeader->arm9binarySize,
-			moduleParamsSignature, 2
+			moduleParamsSignature, 2 
 		);
-	return moduleParamsOffset;
+
+	// Return NULL if nothing is found
+	if(moduleParamsOffset == NULL) {
+		if (memcmp(ndsHeader->gameCode, "AS2E", 4) == 0) // Spider-Man 2 (USA) - Special case
+		{
+			emulatedModuleParams.sdk_version = LAST_NON_SDK5_VERSION;
+			return (u32*)&emulatedModuleParams;
+		}
+
+		return NULL;
+	}
+
+	uintptr_t subtract_value = sizeof(module_params_t) - (sizeof(u32) * 2);
+	uintptr_t base_ptr = (uintptr_t)moduleParamsOffset;
+
+	// This would be a really weird case. Return NULL
+	if(base_ptr < subtract_value)
+		return NULL;
+
+	return (u32*)(base_ptr - subtract_value);
 }
 
 u32* findSleepInputWriteOffset(const tNDSHeader* ndsHeader, const module_params_t* moduleParams) {
@@ -140,7 +159,7 @@ u32* findSleepInputWriteOffset(const tNDSHeader* ndsHeader, const module_params_
 	u32* offset = NULL;
 	u32* endOffset = findOffset(
 		(u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize,
-		(moduleParams->sdk_version > 0x5000000) ? sleepInputWriteEndSignature5 : sleepInputWriteEndSignature1, 2
+		isSdk5(moduleParams) ? sleepInputWriteEndSignature5 : sleepInputWriteEndSignature1, 2
 	);
 	if (endOffset) {
 		offset = findOffsetBackwards(
