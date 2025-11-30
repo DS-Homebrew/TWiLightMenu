@@ -22,6 +22,10 @@
 #include <nds/dma.h>
 #include <stdlib.h>
 
+// Enable compiling support for launching games in DSi mode.
+// For now, requires removing the cardengine...
+//#define FULL_DSI_MODE_ENABLED
+
 #define resetCpu() \
 		__asm volatile("swi 0x000000")
 
@@ -59,6 +63,7 @@ extern tNDSHeader* ndsHeader;
 extern bool dsiModeConfirmed;
 extern bool arm9_boostVram;
 extern bool arm9_scfgUnlock;
+extern bool arm9_twlClock;
 extern bool arm9_extendedMemory;
 extern bool arm9_isSdk5;
 extern volatile int arm9_stateFlag;

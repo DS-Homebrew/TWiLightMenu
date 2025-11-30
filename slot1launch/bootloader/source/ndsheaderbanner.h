@@ -85,7 +85,11 @@ typedef struct {
 	u32 romSize;				//!< total size of the ROM.
 
 	u32 headerSize;				//!< ROM header size.
-	u32 zeros88[14];
+	u32 arm9_param_table_offset;
+	u32 arm7_param_table_offset;
+	u16 ntr_rom_region_end;
+	u16 twl_rom_region_start;
+	u32 zeros94[11];
 	u8 gbaLogo[156];			//!< Nintendo logo needed for booting the game.
 	u16 logoCRC16;				//!< Nintendo Logo Checksum, CRC-16.
 	u16 headerCRC16;			//!< header checksum, CRC-16.

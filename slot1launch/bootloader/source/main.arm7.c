@@ -52,22 +52,25 @@
 
 #define REG_GPIO_WIFI *(vu16*)0x4004C04
 
-//#define FULL_DSI_MODE_ENABLED
-
 #include "common.h"
 #include "dmaTwl.h"
 #include "common/tonccpy.h"
 #include "read_card.h"
 #include "module_params.h"
-#include "cardengine_arm7_bin.h"
 #include "hook.h"
 #include "find.h"
 
 #ifdef FULL_DSI_MODE_ENABLED
+// Needed due to size
+#define SKIP_CARDENGINE_ARM7
 #include "gm9i/crypto.h"
 #include "gm9i/f_xy.h"
 #include "twltool/dsi.h"
 #include "u128_math.h"
+#endif
+
+#ifndef SKIP_CARDENGINE_ARM7
+#include "cardengine_arm7_bin.h"
 #endif
 
 extern bool __dsimode;
@@ -1061,14 +1064,14 @@ void arm7_main (void) {
 
 			REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
 
-			if (twlClock) {
-				REG_SCFG_CLK = 0x0181;
-			} else {
-				REG_SCFG_CLK = 0x0180;
-			}
 			if (!sdAccess) {
+				REG_SCFG_CLK = 0x0180;
 				REG_SCFG_EXT = 0x93FBFB06;
 			}
+			else {
+				REG_SCFG_CLK = 0x0181;
+			}
+
 			// Used by ARM7 binaries to determine DSi mode...
 			toncset((u8*)0x0380FFC0, 0, 0x10);
 		}
@@ -1096,6 +1099,7 @@ void arm7_main (void) {
 		runCardEngine = false;
 	}
 
+	#ifndef SKIP_CARDENGINE_ARM7
 	if (runCardEngine) {
 		// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
 		REG_MBK6=0x080037C0;
@@ -1118,12 +1122,14 @@ void arm7_main (void) {
 			}
 		}
 	}
+	#endif
 	toncset ((void*)0x023F0000, 0, 0x8000);		// Clear cheat data from main memory
 
 	//debugOutput (ERR_STS_START);
 
 	arm9_boostVram = boostVram;
 	arm9_scfgUnlock = scfgUnlock;
+	arm9_twlClock = twlClock;
 	arm9_isSdk5 = isSdk5(moduleParams);
 	arm9_runCardEngine = runCardEngine;
 
