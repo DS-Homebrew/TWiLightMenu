@@ -273,9 +273,9 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 		CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(1) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
 		NULL, 0);
 
-	*chipID=cardReadID(CARD_CLK_SLOW);	
+	*chipID=cardReadID(CARD_CLK_SLOW);
+	normalChip = ((*chipID) & 0x80000000) != 0;		// ROM chip ID MSB
 	while (REG_ROMCTRL & CARD_BUSY);
-	//u32 iCheapCard=iCardId&0x80000000;
 
 	// Read the header
 	cardParamCommand (CARD_CMD_HEADER_READ, 0,
@@ -284,12 +284,22 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 
 	tonccpy(ndsHeader, headerData, 0x200);
 
-	if ((ndsHeader->unitCode != 0) || (ndsHeader->dsi_flags != 0)) {
+	if((ndsHeader->unitCode != 0) || (ndsHeader->dsi_flags != 0)) {
 		// Extended header found
-		for (i = 1; i < 8; i++) {
-			cardParamCommand (CARD_CMD_HEADER_READ, i * 0x200,
-			CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(4) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
-			(void*)headerData + (i * 0x200), 0x200/sizeof(u32));
+		if(normalChip) {
+			// If 1T-ROM, read in blocks of 0x200 bytes, like the official DSi FW.
+			// Also covers NAND.
+			for (i = 1; i < 8; i++) {
+				cardParamCommand (CARD_CMD_HEADER_READ, i * 0x200,
+				CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(1) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
+				(void*)headerData + (i * 0x200), 0x200/sizeof(u32));
+			}
+		}
+		else {
+			// If MROM, read 0x1000 bytes, like the official DSi FW.
+			cardParamCommand (CARD_CMD_HEADER_READ, 0,
+				CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(4) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
+				(void*)headerData, 0x1000/sizeof(u32));
 		}
 		if (ndsHeader->dsi1[0]==0xFFFFFFFF && ndsHeader->dsi1[1]==0xFFFFFFFF
 		 && ndsHeader->dsi1[2]==0xFFFFFFFF && ndsHeader->dsi1[3]==0xFFFFFFFF) {
@@ -321,7 +331,6 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 		((ndsHeader->cardControlBF & (CARD_CLK_SLOW|CARD_DELAY1(0x1FFF))) + ((ndsHeader->cardControlBF & CARD_DELAY2(0x3F)) >> 16));
 
 	// Adjust card transfer method depending on the most significant bit of the chip ID
-	normalChip = ((*chipID) & 0x80000000) != 0;		// ROM chip ID MSB
 	if (!normalChip) {
 		portFlagsKey1 |= CARD_SEC_LARGE;
 	}
