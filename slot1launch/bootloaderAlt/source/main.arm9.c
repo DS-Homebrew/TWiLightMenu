@@ -53,7 +53,7 @@ volatile u32 arm9_BLANK_RAM = 0;
 External functions
 --------------------------------------------------------------------------*/
 extern void arm9_clearCache (void);
-
+extern __attribute__((noreturn)) void arm9_actual_jump(void* fn);
 
 void initMBKARM9() {
 	// default dsiware settings
@@ -285,7 +285,6 @@ void arm9_main (void) {
 	
 	// arm9_errorOutput (*(u32*)(first), true);
 
-	VoidFn arm9code = *(VoidFn*)(0x27FFE24);
-	arm9code();
+	arm9_actual_jump(*(void**)(0x27FFE24));
 }
 

@@ -63,7 +63,7 @@ External functions
 --------------------------------------------------------------------------*/
 extern void arm9_clearCache (void);
 extern void arm9_write_to_scfg_clk(uint16_t);
-
+extern __attribute__((noreturn)) void arm9_actual_jump(void* fn);
 
 void initMBKARM9() {
 	// default dsiware settings
@@ -338,7 +338,6 @@ void __attribute__((target("arm"))) arm9_main (void) {
 
 	REG_IE = 0;
 	REG_IF = ~0;
-	VoidFn arm9code = (VoidFn)ndsHeader->arm9executeAddress;
-	arm9code();
+	arm9_actual_jump((void*)ndsHeader->arm9executeAddress);
 }
 

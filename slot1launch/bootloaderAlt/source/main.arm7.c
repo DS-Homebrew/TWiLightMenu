@@ -83,7 +83,8 @@ bool my_isDSiMode() {
 
 bool gameSoftReset = false;
 
-void arm7_clearmem (void* loc, size_t len);
+extern void arm7_clearmem (void* loc, size_t len);
+extern __attribute__((noreturn)) void arm7_actual_jump(void* fn);
 extern void ensureBinaryDecompressed(const tNDSHeader* ndsHeader, module_params_t* moduleParams);
 
 static const u32 cheatDataEndSignature[2] = {0xCF000000, 0x00000000};
@@ -635,8 +636,7 @@ void arm7_startBinary (void)
 	while (REG_VCOUNT==191);
 
 	// Start ARM7
-	VoidFn arm7code = *(VoidFn*)(0x27FFE34);
-	arm7code();
+	arm7_actual_jump(*(void**)(0x27FFE34));
 }
 
 
@@ -820,7 +820,5 @@ void arm7_main (void) {
 	}
 
 	arm7_startBinary();
-
-	while (1);
 }
 
