@@ -494,8 +494,8 @@ bool checkRomAP(const char* filename, const int num)
 			"C24",	// Phantasy Star 0
 			"BZF",	// Phineas and Ferb: Across the 2nd Dimension
 			"VPF",	// Phineas and Ferb: Ride Again
-			// "IPK",	// Pokemon HeartGold Version (Patched by nds-bootstrap)
-			// "IPG",	// Pokemon SoulSilver Version (Patched by nds-bootstrap)
+			"IPK",	// Pokemon HeartGold Version
+			"IPG",	// Pokemon SoulSilver Version
 			"IRA",	// Pokemon Black Version
 			"IRB",	// Pokemon White Version
 			"IRE",	// Pokemon Black Version 2
@@ -507,7 +507,7 @@ bool checkRomAP(const char* filename, const int num)
 			"C3J",	// Professor Layton and the Unwound Future
 			"BKQ",	// Pucca: Power Up
 			"VRG",	// Rabbids Go Home: A Comedy Adventure
-			// "BRJ",	// Radiant Historia (Patched by nds-bootstrap)
+			"BRJ",	// Radiant Historia
 			"B3X",	// River City: Soccer Hooligans
 			"BRM",	// Rooms: The Main Building
 			"TDV",	// Shin Megami Tensei: Devil Survivor 2
