@@ -117,7 +117,7 @@ jobs:
           rm -rf _nds/TWiLightMenu/unlaunch
           rm -rf _nds/TWiLightMenu/bootplg.srldr
           rm -rf _nds/TWiLightMenu/gbaswitch.srldr
-          7z a TWiLightMenu-3DS.7z
+          7z a -md=16m TWiLightMenu-3DS.7z
           mv TWiLightMenu-3DS.7z ~/artifacts
 
           # Flashcard 7z
@@ -166,7 +166,7 @@ jobs:
           curl -LO $(curl https://api.github.com/repos/DS-Homebrew/PicoDriveTWL/releases | jq --raw-output '.[0].assets[0].browser_download_url' -)
           curl -LO https://github.com/DS-Homebrew/PokeMini/releases/latest/download/PokeMini.nds
           cd ../../..
-          7z a AddOn-VirtualConsole.7z
+          7z a -md=16m AddOn-VirtualConsole.7z
           mv AddOn-VirtualConsole.7z ~/artifacts
 
           # Multimedia Add-on 7z
@@ -178,7 +178,7 @@ jobs:
           curl -LO https://github.com/RocketRobz/RocketVideoPlayer/releases/latest/download/RocketVideoPlayer.nds
           # curl -LO https://github.com/Gericom/FastVideoDSPlayer/releases/latest/download/FastVideoDS.nds
           cd ../../..
-          7z a AddOn-Multimedia.7z
+          7z a -md=16m AddOn-Multimedia.7z
           mv AddOn-Multimedia.7z ~/artifacts
 
           # Better DSi Menu Music Add-on 7z
@@ -186,7 +186,7 @@ jobs:
           rm -rf TWiLightMenu
           cp -r 7zfile/Better\ DSi\ Menu\ Music/ TWiLightMenu
           cd TWiLightMenu
-          7z a AddOn-BetterDSiMenuMusic.7z
+          7z a -md=16m AddOn-BetterDSiMenuMusic.7z
           mv AddOn-BetterDSiMenuMusic.7z ~/artifacts
 
           # Extra UI Music Add-on 7z
@@ -194,7 +194,7 @@ jobs:
           rm -rf TWiLightMenu
           cp -r 7zfile/Extra\ UI\ Music/ TWiLightMenu
           cd TWiLightMenu
-          7z a AddOn-ExtraUIMusic.7z
+          7z a -md=16m AddOn-ExtraUIMusic.7z
           mv AddOn-ExtraUIMusic.7z ~/artifacts
 
       - name: Publish build to GH Actions
