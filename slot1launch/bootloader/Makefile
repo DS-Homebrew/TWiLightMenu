@@ -16,10 +16,8 @@ UNIVERSAL	:=	../../universal
 TARGET		:=	load
 BUILD		:=	build
 DSIMODE_FULL_SOURCES := source/twltool source/polarssl source/gm9i
-SOURCES		:=	source $(UNIVERSAL)/source/tonccpy
-#SOURCES		:=	source $(UNIVERSAL)/source/tonccpy $(DSIMODE_FULL_SOURCES)
-INCLUDES	:=	build source $(UNIVERSAL)/include
-#INCLUDES		:=	build source $(UNIVERSAL)/include $(DSIMODE_FULL_SOURCES)
+SOURCES		:=	source $(UNIVERSAL)/source/tonccpy $(DSIMODE_FULL_SOURCES)
+INCLUDES		:=	build source $(UNIVERSAL)/include $(DSIMODE_FULL_SOURCES)
 DATA		:=	../data
 SPECS		:=  specs
  

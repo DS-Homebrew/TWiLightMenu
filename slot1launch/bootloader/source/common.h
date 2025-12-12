@@ -23,8 +23,7 @@
 #include <stdlib.h>
 
 // Enable compiling support for launching games in DSi mode.
-// For now, requires removing the cardengine...
-//#define FULL_DSI_MODE_ENABLED
+#define FULL_DSI_MODE_ENABLED
 
 #define resetCpu() \
 		__asm volatile("swi 0x000000")
