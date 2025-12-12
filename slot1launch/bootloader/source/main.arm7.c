@@ -976,7 +976,7 @@ void arm7_main (void) {
 			dsiModeConfirmed = twlMode;
 		} else {
 			#ifdef FULL_DSI_MODE_ENABLED
-			dsiModeConfirmed = twlMode && ROMsupportsDsiMode(&dsiHeaderTemp->ndshdr);
+			dsiModeConfirmed = twlMode && ROMsupportsDsiMode(&dsiHeaderTemp->ndshdr) && (*(u32*)(0x023F0000) == 0xCF000000 || *(u32*)(0x023F0000) == 0);
 			#else
 			dsiModeConfirmed = 0;
 			#endif
