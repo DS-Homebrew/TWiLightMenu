@@ -642,10 +642,11 @@ void loadGameOnFlashcard(const char *ndsPath, bool dsGame) {
 	if (err == 0) {
 		printLarge(false, 4, 4, STR_ERROR_FLASHCARD_UNSUPPORTED);
 		printLarge(false, 4, 68, io_dldi_data->friendlyName);
+		printSmall(false, 4, 90, STR_PRESS_B_RETURN);
 	} else {
 		printLarge(false, 4, 4, text);
+		printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 	}
-	printSmall(false, 4, 90, STR_PRESS_B_RETURN);
 	updateText(false);
 	fadeSpeed = true; // Fast fading
 	if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
@@ -1922,14 +1923,13 @@ int dsiMenuTheme(void) {
 						if (err == 1) {
 							if (ms().homebrewBootstrap) {
 								printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
+								printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 							} else {
 								printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+								printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 							}
-						}
-						if (ms().homebrewBootstrap) {
-							printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 						} else {
-							printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+							printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 						}
 						updateText(false);
 						fadeSpeed = true; // Fast fading
@@ -2630,8 +2630,10 @@ int dsiMenuTheme(void) {
 				printLarge(false, 4, 4, text);
 				if (err == 1 && useNDSB) {
 					printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);
+					printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+				} else {
+					printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 				}
-				printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 				updateText(false);
 				fadeSpeed = true;
 				if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {

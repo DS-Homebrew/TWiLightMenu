@@ -807,8 +807,10 @@ void launchPictochat(const vector<DirEntry>& dirContents) {
 		printLarge(false, 4, 4, text);
 		if (err == 1) {
 			printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+			printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+		} else {
+			printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 		}
-		printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 		updateText(false);
 		fadeType = true;
 		int pressed = 0;
@@ -991,8 +993,10 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 		printLarge(false, 4, 4, text);
 		if (err == 1) {
 			printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+			printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+		} else {
+			printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 		}
-		printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 		updateText(false);
 		fadeType = true;
 		int pressed = 0;
@@ -1268,8 +1272,10 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 		printLarge(false, 4, 4, text);
 		if (err == 1) {
 			printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+			printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+		} else {
+			printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 		}
-		printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 		updateText(false);
 		fadeType = true;
 		int pressed = 0;
