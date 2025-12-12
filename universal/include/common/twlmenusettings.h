@@ -99,6 +99,13 @@ public:
 		EUnlaunch = 2
 	};
 
+	enum TFCGameLoader : int
+	{
+		ENdsBootstrap = 0,
+		EKernel = 1,
+		EPicoLoader = 2
+	};
+
 	enum TBootstrapFile : bool
 	{
 		EReleaseBootstrap = false,
@@ -362,7 +369,7 @@ public:
 	bool ak_zoomIcons;
 	std::string ak_theme;
 
-	bool useBootstrap;
+	int fcGameLoader;
 	bool btsrpBootloaderDirect;
 	TBootstrapFile bootstrapFile;
 	bool kernelUseable;

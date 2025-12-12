@@ -72,7 +72,8 @@ int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 int perGameSettings_dsiwareBooter = -1;
 int perGameSettings_useBootstrap = -1;
-int perGameSettings_useBootstrapCheat = -1;
+int perGameSettings_fcGameLoader = -1;
+int perGameSettings_fcGameLoaderCheat = -1;
 int perGameSettings_saveRelocation = -1;
 
 static char SET_AS_DONOR_ROM[32];
@@ -122,7 +123,8 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
 	perGameSettings_dsiwareBooter = pergameini.GetInt("GAMESETTINGS", "DSIWARE_BOOTER", -1);
 	perGameSettings_useBootstrap = pergameini.GetInt("GAMESETTINGS", "USE_BOOTSTRAP", -1);
-	perGameSettings_useBootstrapCheat = perGameSettings_useBootstrap;
+	perGameSettings_fcGameLoader = pergameini.GetInt("GAMESETTINGS", "FC_GAME_LOADER", -1);
+	perGameSettings_fcGameLoaderCheat = perGameSettings_fcGameLoader;
 	perGameSettings_saveRelocation = pergameini.GetInt("GAMESETTINGS", "SAVE_RELOCATION", -1);
 }
 
@@ -146,17 +148,17 @@ void savePerGameSettings (std::string filename) {
 		if (!ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 			pergameini.SetInt("GAMESETTINGS", "USE_BOOTSTRAP", perGameSettings_useBootstrap);
-			perGameSettings_useBootstrapCheat = perGameSettings_useBootstrap;
 		}
 		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound()) {
 			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
 		}
 	} else {
-		if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && romUnitCode > 0) || isDSiWare || !ms().secondaryDevice) {
+		const bool useBootstrap = (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap));
+		if (useBootstrap || (dsiFeatures() && romUnitCode > 0) || isDSiWare || !ms().secondaryDevice) {
 			if (sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) pergameini.SetInt("GAMESETTINGS", "PHAT_COLORS", perGameSettings_dsPhatColors);
 			pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		}
-		if (!isDSiWare && ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && romUnitCode > 0) || !ms().secondaryDevice)) {
+		if (!isDSiWare && (useBootstrap || (dsiFeatures() && romUnitCode > 0) || !ms().secondaryDevice)) {
 			pergameini.SetInt("GAMESETTINGS", "REGION", perGameSettings_region);
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		} else if (isDSiWare) {
@@ -170,10 +172,10 @@ void savePerGameSettings (std::string filename) {
 		}
 		if (!blacklisted_asyncCardRead) pergameini.SetInt("GAMESETTINGS", "ASYNC_CARD_READ", perGameSettings_asyncCardRead);
 		if (ms().secondaryDevice) {
-			pergameini.SetInt("GAMESETTINGS", "USE_BOOTSTRAP", perGameSettings_useBootstrap);
-			perGameSettings_useBootstrapCheat = perGameSettings_useBootstrap;
+			pergameini.SetInt("GAMESETTINGS", "FC_GAME_LOADER", perGameSettings_fcGameLoader);
+			perGameSettings_fcGameLoaderCheat = perGameSettings_fcGameLoader;
 		}
-		if ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && romUnitCode > 0) || isDSiWare || !ms().secondaryDevice) {
+		if (useBootstrap || (dsiFeatures() && romUnitCode > 0) || isDSiWare || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 		}
 		if (dsiFeatures() && ms().consoleModel >= 2 && sdFound()) {
@@ -214,7 +216,7 @@ void dontShowRAMLimitMsgAgain (std::string filename) {
 }
 
 bool checkIfDSiMode (std::string filename) {
-	if (ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode || !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap))) {
+	if (ms().secondaryDevice && (!dsiFeatures() || bs().b4dsMode || !(perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)))) {
 		return false;
 	}
 
@@ -513,12 +515,13 @@ void perGameSettings (std::string filename) {
 	if (bnrRomType == 0 && (dsiFeatures() || dsiWareCompatibleB4DS() || !ms().secondaryDevice) && !isHomebrew && isDSiWare) {
 		showPerGameSettings = true;
 	}
-	/*if (!(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !isHomebrew && REG_SCFG_EXT == 0) {
+	/*if (!(perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) && !isHomebrew && REG_SCFG_EXT == 0) {
 		showPerGameSettings = false;
 	}*/
 	bool runInShown = false;
 
-	bool showCheats = (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap)
+	const bool useBootstrap = (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap));
+	bool showCheats = ((useBootstrap
 	|| !ms().kernelUseable
 	|| !ms().secondaryDevice) && bnrRomType == 0 && !isHomebrew && !isDSiWare
 	&& memcmp(gameTid, "HND", 3) != 0
@@ -612,7 +615,7 @@ void perGameSettings (std::string filename) {
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		const bool bootstrapEnabled = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || (dsiFeatures() && romUnitCode > 0) || (ms().secondaryDevice && (!ms().kernelUseable || romUnitCode == 3)) || !ms().secondaryDevice);
+		const bool bootstrapEnabled = (useBootstrap || (dsiFeatures() && romUnitCode > 0) || (ms().secondaryDevice && (!ms().kernelUseable || romUnitCode == 3)) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
@@ -625,7 +628,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
-		if (((dsiFeatures() && (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && isDSiMode()) || romUnitCode > 0) && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_boostCpu) {
+		if (((dsiFeatures() && ((useBootstrap && isDSiMode()) || romUnitCode > 0) && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_boostCpu) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;
@@ -753,7 +756,7 @@ void perGameSettings (std::string filename) {
 
 		int perGameOpXpos = 24;
 		int perGameOpYpos = 104;
-		bool flashcardKernelOnly = (!(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && ms().secondaryDevice && !isHomebrew && romUnitCode == 2 && (perGameSettings_dsiMode==-1 ? !DEFAULT_DSI_MODE : perGameSettings_dsiMode==0));
+		bool flashcardKernelOnly = (!useBootstrap && ms().secondaryDevice && !isHomebrew && romUnitCode == 2 && (perGameSettings_dsiMode==-1 ? !DEFAULT_DSI_MODE : perGameSettings_dsiMode==0));
 
 		for (int i = firstPerGameOpShown; i < firstPerGameOpShown+4; i++) {
 		if (!showPerGameSettings || perGameOp[i] == -1) break;
@@ -922,19 +925,23 @@ void perGameSettings (std::string filename) {
 				break;
 			case 14:
 				printSmall(false, perGameOpXpos, perGameOpYpos, "Game Loader:", Alignment::left, highlighted);
-				if (perGameSettings_useBootstrap == -1) {
-					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
-				} else if (isHomebrew) {
-					if (perGameSettings_useBootstrap == 1) {
+				if (isHomebrew) {
+					if (perGameSettings_useBootstrap == -1) {
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
+					} else if (perGameSettings_useBootstrap == 1) {
 						printSmall(false, 256-perGameOpXpos, perGameOpYpos, isModernHomebrew ? "Direct" : "nds-bootstrap", Alignment::right, highlighted);
 					} else {
 						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Unlaunch", Alignment::right, highlighted);
 					}
 				} else {
-					if (perGameSettings_useBootstrap == 1) {
+					if (perGameSettings_useBootstrap == -1) {
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
+					} else if (perGameSettings_useBootstrap == TWLSettings::ENdsBootstrap) {
 						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "nds-bootstrap", Alignment::right, highlighted);
-					} else {
+					} else if (perGameSettings_useBootstrap == TWLSettings::EKernel) {
 						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Kernel", Alignment::right, highlighted);
+					} else if (perGameSettings_useBootstrap == TWLSettings::EPicoLoader) {
+						printSmall(false, 256-perGameOpXpos, perGameOpYpos, "pico", Alignment::right, highlighted);
 					}
 				}
 				break;
@@ -1073,8 +1080,14 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_dsiwareBooter < -1) perGameSettings_dsiwareBooter = 1;
 						break;
 					case 14:
-						perGameSettings_useBootstrap--;
-						if (perGameSettings_useBootstrap < -1) perGameSettings_useBootstrap = 1;
+						if (isHomebrew) {
+							perGameSettings_useBootstrap--;
+							if (perGameSettings_useBootstrap < -1) perGameSettings_useBootstrap = 1;
+						} else {
+							perGameSettings_fcGameLoader--;
+							if (!ms().kernelUseable && perGameSettings_fcGameLoader == 1) perGameSettings_fcGameLoader--;
+							if (perGameSettings_fcGameLoader < -1) perGameSettings_fcGameLoader = 2;
+						}
 						break;
 					case 16:
 						perGameSettings_dsPhatColors--;
@@ -1196,8 +1209,14 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_dsiwareBooter > 1) perGameSettings_dsiwareBooter = -1;
 						break;
 					case 14:
-						perGameSettings_useBootstrap++;
-						if (perGameSettings_useBootstrap > 1) perGameSettings_useBootstrap = -1;
+						if (isHomebrew) {
+							perGameSettings_useBootstrap++;
+							if (perGameSettings_useBootstrap > 1) perGameSettings_useBootstrap = -1;
+						} else {
+							perGameSettings_fcGameLoader++;
+							if (!ms().kernelUseable && perGameSettings_fcGameLoader == 1) perGameSettings_fcGameLoader++;
+							if (perGameSettings_fcGameLoader > 2) perGameSettings_fcGameLoader = -1;
+						}
 						break;
 					case 16:
 						perGameSettings_dsPhatColors++;

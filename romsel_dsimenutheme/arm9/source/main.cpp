@@ -27,6 +27,7 @@
 #include "common/flashcard.h"
 #include "common/nds_loader_arm9.h"
 #include "common/nds_bootstrap_loader.h"
+#include "DSpicoLauncher.h"
 #include "common/systemdetails.h"
 #include "common/my_rumble.h"
 #include "myDSiMode.h"
@@ -1689,7 +1690,81 @@ int dsiMenuTheme(void) {
 
 					unlaunchRomBoot(argarray[0]);
 				} else if (useBackend) {
-					if ((((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
+					if ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (dsiFeatures() || unitCode[CURPOS] < 3)) {
+						std::string path = argarray[0];
+						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
+						std::string ramdiskname = replaceAll(filename, typeToReplace, getImgExtension(perGameSettings_ramDiskNo));
+						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
+						RemoveTrailingSlashes(romFolderNoSlash);
+						std::string savepath = romFolderNoSlash + "/saves/" + savename;
+						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
+						if (isHomebrew[CURPOS]) {
+							// Do nothing
+						} else if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+							std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+							mkdir(twlmSavesFolder.c_str(), 0777);
+							savepath = twlmSavesFolder + "/" + savename;
+						} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+							savepath = romFolderNoSlash + "/" + savename;
+						} else {
+							mkdir("saves", 0777);
+						}
+
+						createSaveFile(savepath.c_str(), isHomebrew[CURPOS], gameTid[CURPOS]);
+
+						if (!isArgv) {
+							ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
+						}
+						ms().homebrewHasWide = (isHomebrew[CURPOS] && gameTid[CURPOS][0] == 'W');
+						ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch; // 1
+						ms().previousUsedDevice = ms().secondaryDevice;
+						ms().saveSettings();
+
+						if (ms().theme == TWLSettings::EThemeHBL) {
+							fadeType = false;		  // Fade to black
+						}
+
+						while (ms().theme != TWLSettings::EThemeSaturn && !screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+
+						snd().unloadStream();
+
+						int err = picoLaunchRom(path, savepath);
+
+						char text[64];
+						snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+						clearText();
+						printLarge(false, 4, 4, text);
+						if (err == 1) {
+							printLarge(false, 4, 20, STR_PICO_LOADER_NOT_FOUND);
+							printSmall(false, 4, 20 + calcLargeFontHeight(STR_PICO_LOADER_NOT_FOUND), STR_PRESS_B_RETURN);
+						} else {
+							printSmall(false, 4, 20, STR_PRESS_B_RETURN);
+						}
+						updateText(false);
+						fadeSpeed = true; // Fast fading
+						if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
+							whiteScreen = true;
+							tex().clearTopScreen();
+						}
+						fadeType = true;
+						int pressed = 0;
+						do {
+							scanKeys();
+							pressed = keysDownRepeat();
+							checkSdEject();
+							swiWaitForVBlank();
+						} while (!(pressed & KEY_B));
+						fadeType = false;	// Fade to white
+						for (int i = 0; i < 25; i++) {
+							swiWaitForVBlank();
+						}
+						argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
+						runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+						stop();
+					} else
+					if ((((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) && !ms().homebrewBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| (ms().secondaryDevice && !ms().kernelUseable)
 					|| (unitCode[CURPOS] == 3 && !ms().homebrewBootstrap)) {
 						std::string path = argarray[0];

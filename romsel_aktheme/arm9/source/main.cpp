@@ -28,6 +28,7 @@
 #include "ndsheaderbanner.h"
 #include "gbaswitch.h"
 #include "common/nds_loader_arm9.h"
+#include "DSpicoLauncher.h"
 #include "fileBrowse.h"
 #include "perGameSettings.h"
 #include "errorScreen.h"
@@ -1674,7 +1675,101 @@ int akTheme(void) {
 
 					unlaunchRomBoot(argarray[0]);
 				} else if (useBackend) {
-					if ((((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && romUnitCode[cursorPosOnScreen] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
+					if ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (dsiFeatures() || romUnitCode[cursorPosOnScreen] < 3)) {
+						std::string path = argarray[0];
+						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
+						std::string ramdiskname = replaceAll(filename, typeToReplace, getImgExtension(perGameSettings_ramDiskNo));
+						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
+						RemoveTrailingSlashes(romFolderNoSlash);
+						std::string savepath = romFolderNoSlash + "/saves/" + savename;
+						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
+						if (isHomebrew[cursorPosOnScreen]) {
+							// Do nothing
+						} else if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+							std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+							mkdir(twlmSavesFolder.c_str(), 0777);
+							savepath = twlmSavesFolder + "/" + savename;
+						} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+							savepath = romFolderNoSlash + "/" + savename;
+						} else {
+							mkdir("saves", 0777);
+						}
+
+						if (!isHomebrew[cursorPosOnScreen]) {
+							// Create or expand save if game isn't homebrew
+							u32 orgsavesize = getFileSize(savepath.c_str());
+							u32 savesize = 524288;	// 512KB (default size)
+
+							u32 gameTidHex = 0;
+							tonccpy(&gameTidHex, gameTid[cursorPosOnScreen], 4);
+
+							for (int i = 0; i < (int)sizeof(ROMList)/8; i++) {
+								ROMListEntry* curentry = &ROMList[i];
+								if (gameTidHex == curentry->GameCode) {
+									if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
+									break;
+								}
+							}
+
+							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
+								clearText(false);
+								dialogboxHeight = 0;
+								showdialogbox = true;
+								printSmall(false, 0, 74, "Save management", Alignment::center, FontPalette::formTitleText);
+								printSmall(false, 0, 90, (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...", Alignment::center, FontPalette::formText);
+								updateText(false);
+
+								FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
+								if (pFile) {
+									displayDiskIcon(ms().secondaryDevice);
+									fseek(pFile, savesize - 1, SEEK_SET);
+									fputc('\0', pFile);
+									displayDiskIcon(false);
+									fclose(pFile);
+								}
+								clearText(false);
+								printSmall(false, 0, 74, "Save management", Alignment::center, FontPalette::formTitleText);
+								printSmall(false, 0, 90, (orgsavesize == 0) ? "Save file created!" : "Save file expanded!", Alignment::center, FontPalette::formText);
+								updateText(false);
+								for (int i = 0; i < 30; i++) swiWaitForVBlank();
+							}
+						}
+
+						if (!isArgv) {
+							ms().romPath[ms().secondaryDevice] = argarray[0];
+						}
+						ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
+						ms().previousUsedDevice = ms().secondaryDevice;
+						displayDiskIcon(!sys().isRunFromSD());
+						ms().saveSettings();
+
+						int err = picoLaunchRom(path, savepath);
+						displayDiskIcon(false);
+
+						char text[32];
+						snprintf (text, sizeof(text), "Start failed. Error %i", err);
+						clearText(false);
+						dialogboxHeight = (err==1 ? 1 : 0);
+						showdialogbox = true;
+						printSmall(false, 0, 74, "Error!", Alignment::center, FontPalette::formTitleText);
+						printSmall(false, 0, 90, text, Alignment::center, FontPalette::formText);
+						if (err == 1) {
+							printSmall(false, 0, 102, "Pico Loader not found.", Alignment::center, FontPalette::formText);
+						}
+						printSmall(false, 0, (err==1 ? 124 : 108), " Back", Alignment::center, FontPalette::formText);
+						updateText(false);
+						int pressed = 0;
+						do {
+							scanKeys();
+							pressed = keysDownRepeat();
+							checkSdEject();
+							swiWaitForVBlank();
+						} while (!(pressed & KEY_B));
+						vector<char *> argarray;
+						argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr"));
+						runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+					} else
+					if ((((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) && !ms().homebrewBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && romUnitCode[cursorPosOnScreen] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| (ms().secondaryDevice && !ms().kernelUseable)
 					|| (romUnitCode[cursorPosOnScreen] == 3 && !ms().homebrewBootstrap)) {
 						std::string path = argarray[0];

@@ -19,6 +19,7 @@
 #include "common/inifile.h"
 #include "common/logging.h"
 #include "common/nds_loader_arm9.h"
+#include "DSpicoLauncher.h"
 #include "ndsheaderbanner.h"
 #include "common/pergamesettings.h"
 #include "common/stringtool.h"
@@ -511,7 +512,66 @@ void lastRunROM()
 
 		if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && ms().homebrewBootstrap && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
 			unlaunchRomBoot(ms().romPath[ms().previousUsedDevice]);
-		} else if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().previousUsedDevice || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
+		} else
+		if ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (dsiFeatures() || unitCode < 3)) {
+			std::string savepath;
+
+			std::string typeToReplace = filename.substr(filename.rfind('.'));
+
+			std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
+			std::string romFolderNoSlash = romfolder;
+			RemoveTrailingSlashes(romFolderNoSlash);
+			if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+				std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+				mkdir(twlmSavesFolder.c_str(), 0777);
+				savepath = twlmSavesFolder + "/" + savename;
+			} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+				savepath = romFolderNoSlash + "/" + savename;
+			} else {
+				mkdir("saves", 0777);
+				savepath = romFolderNoSlash+"/saves/"+savename;
+			}
+
+			u32 orgsavesize = getFileSize(savepath.c_str());
+			u32 savesize = 524288;	// 512KB (default size for most games)
+
+			u32 gameTidHex = 0;
+			tonccpy(&gameTidHex, game_TID, 4);
+
+			for (int i = 0; i < (int)sizeof(ROMList)/8; i++) {
+				ROMListEntry* curentry = &ROMList[i];
+				if (gameTidHex == curentry->GameCode) {
+					if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
+					break;
+				}
+			}
+
+			if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
+				consoleDemoInit();
+				iprintf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
+				iprintf ("\n");
+				fadeType = true;
+
+				FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
+				if (pFile) {
+					fseek(pFile, savesize - 1, SEEK_SET);
+					fputc('\0', pFile);
+					fclose(pFile);
+				}
+				iprintf((orgsavesize == 0) ? "Save file created!\n" : "Save file expanded!\n");
+
+				for (int i = 0; i < 30; i++) {
+					swiWaitForVBlank();
+				}
+				fadeType = false;
+				for (int i = 0; i < 25; i++) {
+					swiWaitForVBlank();
+				}
+			}
+
+			err = picoLaunchRom(ms().romPath[ms().previousUsedDevice], savepath);
+		} else
+		if (((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) && !ms().homebrewBootstrap) || !ms().previousUsedDevice || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 		|| (ms().previousUsedDevice && !ms().kernelUseable)
 		|| (unitCode == 3 && !ms().homebrewBootstrap)) {
 			std::string savepath;

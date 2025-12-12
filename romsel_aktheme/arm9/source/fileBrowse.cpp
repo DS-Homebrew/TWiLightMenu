@@ -1751,7 +1751,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					proceedToLaunch = cannotLaunchMsg(gameTid[cursorPosOnScreen][0]);
 					refreshBanners(screenOffset, fileOffset, dirContents);
 				}
-				bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);
+				const bool useBootstrapAnyway = ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) || !ms().secondaryDevice);
 				if (proceedToLaunch && useBootstrapAnyway && bnrRomType[cursorPosOnScreen] == 0 && !isDSiWare[cursorPosOnScreen]
 				 && isHomebrew[cursorPosOnScreen] == 0
 				 && checkIfDSiMode(dirContents.at(fileOffset).name)) {

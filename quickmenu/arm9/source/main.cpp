@@ -33,6 +33,7 @@
 #include "common/logging.h"
 #include "common/nds_loader_arm9.h"
 #include "common/nds_bootstrap_loader.h"
+#include "DSpicoLauncher.h"
 #include "common/stringtool.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
@@ -2548,7 +2549,96 @@ int dsClassicMenu(void) {
 
 					unlaunchRomBoot(ms().romPath[ms().secondaryDevice]);
 				} else if (useBackend) {
-					if ((((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[ms().secondaryDevice] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
+					if ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (dsiFeatures() || unitCode[ms().secondaryDevice] < 3)) {
+						std::string path = argarray[0];
+						std::string savename = replaceAll(filename[ms().secondaryDevice], typeToReplace, getSavExtension());
+						std::string ramdiskname = replaceAll(filename[ms().secondaryDevice], typeToReplace, getImgExtension());
+						std::string romFolderNoSlash = romfolder[ms().secondaryDevice];
+						RemoveTrailingSlashes(romFolderNoSlash);
+						std::string savepath = romFolderNoSlash + "/saves/" + savename;
+						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
+						if (isHomebrew[ms().secondaryDevice]) {
+							// Do nothing
+						} else if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+							std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+							mkdir(twlmSavesFolder.c_str(), 0777);
+							savepath = twlmSavesFolder + "/" + savename;
+						} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+							savepath = romFolderNoSlash + "/" + savename;
+						} else {
+							mkdir("saves", 0777);
+						}
+
+						if (!isHomebrew[ms().secondaryDevice]) {
+							// Create or expand save if game isn't homebrew
+							u32 orgsavesize = getFileSize(savepath.c_str());
+							u32 savesize = 524288;	// 512KB (default size)
+
+							u32 gameTidHex = 0;
+							tonccpy(&gameTidHex, gameTid[ms().secondaryDevice], 4);
+
+							for (int i = 0; i < (int)sizeof(ROMList)/8; i++) {
+								ROMListEntry* curentry = &ROMList[i];
+								if (gameTidHex == curentry->GameCode) {
+									if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
+									break;
+								}
+							}
+
+							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
+								while (!screenFadedOut()) {
+									swiWaitForVBlank();
+								}
+								whiteScreen = true;
+								fadeSpeed = true; // Fast fading
+								clearText();
+								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
+								updateText(false);
+
+								fadeType = true; // Fade in from white
+
+								FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
+								if (pFile) {
+									showProgressBar = true;
+									u32 i = (orgsavesize>0 ? orgsavesize : 0);
+									while (1) {
+										i += 0x8000;
+										if (i > savesize) i = savesize;
+										progressBarLength = i/(savesize/192);
+										fseek(pFile, i - 1, SEEK_SET);
+										fputc('\0', pFile);
+										if (i == savesize) break;
+									}
+									fclose(pFile);
+									showProgressBar = false;
+								}
+								clearText();
+								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_SAVE_CREATED : STR_SAVE_EXPANDED, Alignment::center);
+								updateText(false);
+								for (int i = 0; i < 30; i++) swiWaitForVBlank();
+								fadeType = false; // Fade out
+							}
+						}
+
+						ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
+						ms().previousUsedDevice = ms().secondaryDevice;
+						ms().saveSettings();
+
+						int err = picoLaunchRom(path, savepath);
+
+						char text[64];
+						snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
+						whiteScreen = true;
+						fadeSpeed = true; // Fast fading
+						clearText();
+						printSmall(false, 4, 4, text);
+						if (err == 1) {
+							printSmall(false, 4, 24, STR_PICO_LOADER_NOT_FOUND);
+						}
+						fadeType = true; // Fade in
+						stop();
+					} else
+					if ((((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) && !ms().homebrewBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[ms().secondaryDevice] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| (ms().secondaryDevice && !ms().kernelUseable)
 					|| (unitCode[ms().secondaryDevice] == 3 && !ms().homebrewBootstrap)) {
 						std::string path = argarray[0];

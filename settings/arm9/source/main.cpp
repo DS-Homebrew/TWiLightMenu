@@ -1452,13 +1452,18 @@ int settingsMode(void)
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 	bool gamesPageVisible = false;
 
+	using TFCGameLoader = TWLSettings::TFCGameLoader;
 	using TGbaBooter = TWLSettings::TGbaBooter;
 	using TColSegaEmulator = TWLSettings::TColSegaEmulator;
 	using TMegaDriveEmulator = TWLSettings::TMegaDriveEmulator;
 	using TSlot1LaunchMethod = TWLSettings::TSlot1LaunchMethod;
 
-	if (flashcardFound() && ms().kernelUseable) {
-		gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
+	if (flashcardFound()) {
+		if (ms().kernelUseable) {
+			gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Int(&ms().fcGameLoader), {"nds-bootstrap", STR_KERNEL, "pico"}, {TFCGameLoader::ENdsBootstrap, TFCGameLoader::EKernel, TFCGameLoader::EPicoLoader});
+		} else {
+			gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Int(&ms().fcGameLoader), {"nds-bootstrap", "pico"}, {TFCGameLoader::ENdsBootstrap, TFCGameLoader::EPicoLoader});
+		}
 		gamesPageVisible = true;
 	}
 

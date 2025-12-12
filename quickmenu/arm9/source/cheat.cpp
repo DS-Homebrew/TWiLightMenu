@@ -59,7 +59,7 @@ bool CheatCodelist::parse(const std::string& aFileName)
   {
     const char* usrcheatPath = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat";
     loadPerGameSettings(aFileName.substr(aFileName.find_last_of('/') + 1));
-	if (ms().secondaryDevice && !(perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && ms().kernelUseable) {
+	if (ms().secondaryDevice && !(perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) && ms().kernelUseable) {
 		if ((memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
 	   || (memcmp(io_dldi_data->friendlyName, "R4iTT", 5) == 0)
      || (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)

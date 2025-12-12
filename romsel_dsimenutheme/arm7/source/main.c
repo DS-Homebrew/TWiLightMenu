@@ -32,6 +32,7 @@
 #include <maxmod7.h>
 #include "common/isPhatCheck.h"
 #include "common/arm7status.h"
+#include "common/picoLoader7.h"
 
 void my_touchInit();
 void my_installSystemFIFO(void);
@@ -73,6 +74,20 @@ void ReturntoDSiMenu() {
 		readCommand |= BIT(0);
 		writePowerManagement(0x10, readCommand);
 	}
+}
+
+typedef void (*pico_loader_7_func_t)(void);
+
+static void resetDSPico() {
+    memset((void*)0x40000B0, 0, 0x30);
+
+    REG_IME = IME_DISABLE;
+    REG_IE = 0;
+    REG_IF = ~0;
+
+    auto header7 = (pload_header7_t*)0x06000000;
+    // header7->dldiDriver = (void*)0x037F8000;
+    ((pico_loader_7_func_t)header7->entryPoint)();
 }
 
 //---------------------------------------------------------------------------------
@@ -250,6 +265,8 @@ int main() {
 				*(u32*)(0x2FFFD0C) = 0;
 			}
 			rebootTimer++;
+		} else if (*(u32*)(0x2FFFD0C) == 0x4F434950) { // 'PICO'
+			resetDSPico();
 		}
 		swiWaitForVBlank();
 	}

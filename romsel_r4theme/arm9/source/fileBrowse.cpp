@@ -1269,7 +1269,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				|| (bnrRomType == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
 					proceedToLaunch = cannotLaunchMsg(gameTid[0]);
 				}
-				bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);
+				const bool useBootstrapAnyway = ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) || !ms().secondaryDevice);
 				if (proceedToLaunch && useBootstrapAnyway && bnrRomType == 0 && !isDSiWare
 				 && isHomebrew == 0
 				 && checkIfDSiMode(dirContents.at(fileOffset).name)) {
