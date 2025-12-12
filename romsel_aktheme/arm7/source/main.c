@@ -87,7 +87,7 @@ static void resetDSPico() {
     REG_IE = 0;
     REG_IF = ~0;
 
-    auto header7 = (pload_header7_t*)0x06000000;
+    pload_header7_t* header7 = (pload_header7_t*)0x06000000;
     // header7->dldiDriver = (void*)0x037F8000;
     ((pico_loader_7_func_t)header7->entryPoint)();
 }
