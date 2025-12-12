@@ -98,6 +98,7 @@ jobs:
           rm -rf TWiLightMenu/_nds/TWiLightMenu/unlaunch
           rm -rf TWiLightMenu/_nds/TWiLightMenu/bootplg.srldr
           rm -rf TWiLightMenu/_nds/TWiLightMenu/gbaswitch.srldr
+          rm -rf TWiLightMenu/ntrboot.nds
           7z a -md=16m TWiLightMenu-3DS.7z TWiLightMenu
           mv TWiLightMenu-3DS.7z ~/artifacts
 
