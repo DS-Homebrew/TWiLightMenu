@@ -25,7 +25,6 @@
 
 #include <string.h>
 #include "cardEngine.h"
-#include "i2c.h"
 
 #include "sr_data_error.h"	// For showing an error screen
 #include "sr_data_srloader.h"	// For rebooting into TWiLight Menu++
@@ -63,6 +62,12 @@ static void unlaunchSetFilename(bool boot) {
 	}
 }
 
+void rebootConsole(void) {
+	u8 readCommand = readPowerManagement(0x10);
+	readCommand |= BIT(0);
+	writePowerManagement(0x10, readCommand); // Reboot console
+}
+
 void myIrqHandlerVBlank(void) {
 	if (language >= 0 && language <= 7) {
 		// Change language
@@ -76,8 +81,7 @@ void myIrqHandlerVBlank(void) {
 			memset((u32*)0x02000000, 0, 0x400);
 			unlaunchSetFilename(true);
 			memcpy((u32*)0x02000300, sr_data_srloader, 0x20);
-			i2cWriteRegister(0x4a,0x70,0x01);
-			i2cWriteRegister(0x4a,0x11,0x01);	// Reboot into TWiLight Menu++
+			rebootConsole();	// Reboot into TWiLight Menu++
 			leaveCriticalSection(oldIME);
 		}
 		softResetTimer++;
@@ -92,8 +96,7 @@ void myIrqHandlerVBlank(void) {
 		memset((u32*)0x02000000, 0, 0x400);
 		*(u32*)(0x02000000) = BIT(3);
 		memcpy((u32*)0x02000300, sr_data_srloader, 0x20);
-		i2cWriteRegister(0x4a,0x70,0x01);
-		i2cWriteRegister(0x4a,0x11,0x01);	// Reboot game
+		rebootConsole();	// Reboot game
 		leaveCriticalSection(oldIME);
 	}
 
