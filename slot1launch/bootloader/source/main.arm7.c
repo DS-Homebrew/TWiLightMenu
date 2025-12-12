@@ -985,6 +985,8 @@ void arm7_main (void) {
 
 	if (dsiModeConfirmed) {
 		if (dsiHeaderTemp->arm9ibinarySize > 0) {
+			memset_addrs_arm7(0x02800000, 0x02810004);
+
 			cardRead((u32)dsiHeaderTemp->arm9iromOffset, (u32*)dsiHeaderTemp->arm9idestination, dsiHeaderTemp->arm9ibinarySize);
 		}
 		if (dsiHeaderTemp->arm7ibinarySize > 0) {
@@ -995,8 +997,6 @@ void arm7_main (void) {
 		uint8_t *target = (uint8_t *)0x02FFC000 ;
 
 		if (target[0x01C] & 2) {
-			memset_addrs_arm7(0x02800000, 0x02810004);
-
 			u8 key[16] = {0} ;
 			u8 keyp[16] = {0} ;
 			if (target[0x01C] & 4) {
