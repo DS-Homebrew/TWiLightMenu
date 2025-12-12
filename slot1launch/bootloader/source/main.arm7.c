@@ -61,16 +61,10 @@
 #include "find.h"
 
 #ifdef FULL_DSI_MODE_ENABLED
-// Needed due to size
-#define SKIP_CARDENGINE_ARM7
 #include "gm9i/crypto.h"
 #include "gm9i/f_xy.h"
 #include "twltool/dsi.h"
 #include "u128_math.h"
-#endif
-
-#ifndef SKIP_CARDENGINE_ARM7
-#include "cardengine_arm7_bin.h"
 #endif
 
 extern bool __dsimode;
@@ -428,7 +422,7 @@ void arm7_resetMemory (void)
 
 	if (my_isDSiMode()) {
 		// clear last part of EXRAM
-		memset_addrs_arm7(0x02800000, 0x02FFD7BC); // Leave eMMC CID intact
+		memset_addrs_arm7(0x02810004, 0x02FFD7BC); // Leave eMMC CID intact
 		memset_addrs_arm7(0x02FFD7CC, 0x03000000);
 	}
 
@@ -1001,6 +995,8 @@ void arm7_main (void) {
 		uint8_t *target = (uint8_t *)0x02FFC000 ;
 
 		if (target[0x01C] & 2) {
+			memset_addrs_arm7(0x02800000, 0x02810004);
+
 			u8 key[16] = {0} ;
 			u8 keyp[16] = {0} ;
 			if (target[0x01C] & 4) {
@@ -1118,12 +1114,12 @@ void arm7_main (void) {
 		runCardEngine = false;
 	}
 
-	#ifndef SKIP_CARDENGINE_ARM7
 	if (runCardEngine) {
 		// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
 		REG_MBK6=0x080037C0;
 
-		copyLoop ((u32*)ENGINE_LOCATION_ARM7, (u32*)cardengine_arm7_bin, cardengine_arm7_bin_size);
+		const u32 cardengine_arm7_bin_size = *(u32*)0x02800000;
+		copyLoop ((u32*)ENGINE_LOCATION_ARM7, (u32*)0x02800004, cardengine_arm7_bin_size);
 		errorCode = hookNdsRetail(ndsHeader, (u32*)ENGINE_LOCATION_ARM7);
 		if (errorCode == ERR_NONE) {
 			nocashMessage("card hook Sucessfull");
@@ -1141,7 +1137,6 @@ void arm7_main (void) {
 			}
 		}
 	}
-	#endif
 	toncset ((void*)0x023F0000, 0, 0x8000);		// Clear cheat data from main memory
 
 	//debugOutput (ERR_STS_START);

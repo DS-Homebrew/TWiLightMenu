@@ -22,8 +22,6 @@ INCLUDES	:=	build source $(UNIVERSAL)/include
 #INCLUDES		:=	build source $(UNIVERSAL)/include $(DSIMODE_FULL_SOURCES)
 DATA		:=	../data
 SPECS		:=  specs
-CARDENGINE_BIN := cardengine_arm7.bin
-#CARDENGINE_BIN := 
  
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -71,7 +69,7 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	$(CARDENGINE_BIN)
+BINFILES	:=	
 
 export OFILES	:=	$(addsuffix .o,$(BINFILES)) $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
  
