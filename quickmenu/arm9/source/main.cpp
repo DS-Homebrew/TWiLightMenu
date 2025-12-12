@@ -2624,6 +2624,10 @@ int dsClassicMenu(void) {
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
 
+						while (!screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+
 						int err = picoLaunchRom(path, savepath);
 
 						char text[64];
