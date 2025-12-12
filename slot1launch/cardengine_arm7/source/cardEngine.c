@@ -29,7 +29,6 @@
 
 #include "sr_data_error.h"	// For showing an error screen
 #include "sr_data_srloader.h"	// For rebooting into TWiLight Menu++
-#include "sr_data_srllastran.h"	// For rebooting the game
 
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static const char bootNdsPath[15] = "sdmc:/boot.nds";
@@ -92,7 +91,7 @@ void myIrqHandlerVBlank(void) {
 		unlaunchSetFilename(false);
 		memset((u32*)0x02000000, 0, 0x400);
 		*(u32*)(0x02000000) = BIT(3);
-		memcpy((u32*)0x02000300, sr_data_srllastran, 0x20);
+		memcpy((u32*)0x02000300, sr_data_srloader, 0x20);
 		i2cWriteRegister(0x4a,0x70,0x01);
 		i2cWriteRegister(0x4a,0x11,0x01);	// Reboot game
 		leaveCriticalSection(oldIME);
