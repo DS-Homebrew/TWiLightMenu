@@ -562,7 +562,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 	bool runInShown = false;
 
 	const bool useBootstrap = (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap));
-	bool showCheats = ((useBootstrap
+	bool showCheats = ((useBootstrap || unitCode[CURPOS] == 3
 	|| !ms().kernelUseable
 	|| !ms().secondaryDevice) && bnrRomType[CURPOS] == 0 && !isHomebrew[CURPOS] && !isDSiWare[CURPOS]
 	&& memcmp(gameTid[CURPOS], "HND", 3) != 0

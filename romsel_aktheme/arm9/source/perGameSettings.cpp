@@ -518,7 +518,7 @@ void perGameSettings (std::string filename) {
 	bool runInShown = false;
 
 	const bool useBootstrap = (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap));
-	bool showCheats = ((useBootstrap
+	bool showCheats = ((useBootstrap || romUnitCode[cursorPosOnScreen] == 3
 	|| !ms().kernelUseable
 	|| !ms().secondaryDevice) && bnrRomType[cursorPosOnScreen] == 0 && !isHomebrew[cursorPosOnScreen] && !isDSiWare[cursorPosOnScreen]
 	&& memcmp(gameTid[cursorPosOnScreen], "HND", 3) != 0
