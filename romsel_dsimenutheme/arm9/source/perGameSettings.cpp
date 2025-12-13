@@ -693,7 +693,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			perGameOps++;
 			perGameOp[perGameOps] = 5;	// Card Read DMA
 		}
-		if (ms().secondaryDevice && ms().kernelUseable && unitCode[CURPOS] < 3) {
+		if (ms().secondaryDevice && unitCode[CURPOS] < 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}

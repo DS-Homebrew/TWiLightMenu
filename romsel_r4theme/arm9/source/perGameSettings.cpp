@@ -645,7 +645,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 5;	// Card Read DMA
 		}
-		if (ms().secondaryDevice && ms().kernelUseable && romUnitCode < 3) {
+		if (ms().secondaryDevice && romUnitCode < 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}
