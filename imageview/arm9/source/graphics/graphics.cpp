@@ -507,46 +507,6 @@ void imageLoad(const char* filename) {
 		return;
 	}
 
-	Gif gif (filename, false, false, true);
-	std::vector<u8> pageImage = gif.frame(0).image.imageData;
-	int width = gif.frame(0).descriptor.w;
-	int height = gif.frame(0).descriptor.h;
-	if (width > 256 || height > 192) return;
-
-	int xPos = 0;
-	if (width <= 254) {
-		// Adjust X position
-		for (int i = width; i < 256; i += 2) {
-			xPos++;
-		}
-	}
-
-	int yPos = 0;
-	if (height <= 190) {
-		// Adjust Y position
-		for (int i = height; i < 192; i += 2) {
-			yPos++;
-		}
-	}
-
-	tonccpy(BG_PALETTE, gif.gct().data(), gif.gct().size() * 2);
-	if (colorTable) {
-		for (int i = 0; i < (int)gif.gct().size(); i++) {
-			BG_PALETTE[i] = colorTable[BG_PALETTE[i] % 0x8000];
-		}
-	}
-
-	int x = 0;
-	int y = 0;
-	for (int i = 0; i < width*height; i++) {
-		dsImageBuffer8[(xPos+x+(y*256))+(yPos*256)] = pageImage[i];
-		x++;
-		if (x == width) {
-			x=0;
-			y++;
-		}
-	}
-	dmaCopyWords(0, dsImageBuffer8, bgGetGfxPtr(bg3Main), 256*192);
 	delete[] dsImageBuffer8;
 }
 

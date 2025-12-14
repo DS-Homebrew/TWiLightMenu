@@ -20,6 +20,7 @@
 #include "errorScreen.h"
 
 #include "graphics/fontHandler.h"
+#include "graphics/gif.hpp"
 
 #include "myDSiMode.h"
 #include "common/inifile.h"
@@ -121,46 +122,11 @@ void printText(void) {
 	updateText(false);
 }
 
-//---------------------------------------------------------------------------------
-int imageViewer(void) {
-//---------------------------------------------------------------------------------
-	keysSetRepeat(25, 25);
-
-	ms().loadSettings();
-
-	const char* imagePathChar = ms().romPath[ms().previousUsedDevice].c_str();
-
-	if (strlen(imagePathChar) >= 2) {
-		if (extension(imagePathChar, {".gif"})) {
-			imageType = 0;
-		} else if (extension(imagePathChar, {".bmp"})) {
-			imageType = 1;
-		} else if (extension(imagePathChar, {".png"})) {
-			imageType = 2;
-		}
-	} else {
-		imageType = 2;
-	}
-
-	graphicsInit();
-	fontInit();
-
-	langInit();
-
-	imageLoad((strlen(imagePathChar) >= 2) ? imagePathChar : "nitro:/graphics/test.png");
-	bgLoad();
-	supportsDoubleBuffer = doubleBuffer;
-	printText();
-
-	snd();
-	snd().beginStream();
-
+static void mainLoop(void) {
 	int pressed = 0;
 	int held = 0;
 	//int repeat = 0;
 	touchPosition touch;
-
-	fadeType = true;	// Fade in from white
 
 	bool exitflag = false;
 
@@ -205,6 +171,64 @@ int imageViewer(void) {
 	*(int*)0x02003004 = 0;
 
 	runNdsFile(sys().isRunFromSD() ? "sd:/boot.nds" : "fat:/boot.nds", 0, NULL, sys().isRunFromSD(), true, true, false, true, true, false, -1);
+}
+
+//---------------------------------------------------------------------------------
+int imageViewer(void) {
+//---------------------------------------------------------------------------------
+	keysSetRepeat(25, 25);
+
+	ms().loadSettings();
+
+	const char* imagePathChar = ms().romPath[ms().previousUsedDevice].c_str();
+
+	if (strlen(imagePathChar) >= 2) {
+		if (extension(imagePathChar, {".gif"})) {
+			imageType = 0;
+		} else if (extension(imagePathChar, {".bmp"})) {
+			imageType = 1;
+		} else if (extension(imagePathChar, {".png"})) {
+			imageType = 2;
+		}
+	} else {
+		imageType = 2;
+	}
+
+	graphicsInit();
+	fontInit();
+
+	langInit();
+
+	imageLoad((strlen(imagePathChar) >= 2) ? imagePathChar : "nitro:/graphics/test.png");
+	if (imageType == 0) {
+		Gif gif (imagePathChar, true, true, true);
+
+		bgLoad();
+		printText();
+
+		snd();
+		snd().beginStream();
+
+		fadeType = true;	// Fade in from white
+		for (int i = 0; i < 18; i++) {
+			swiWaitForVBlank(); // Wait until GIF appears on-screen before animating
+		}
+
+		timerStart(0, ClockDivider_1024, TIMER_FREQ_1024(100), Gif::timerHandler);
+
+		mainLoop();
+
+		return 0;
+	}
+
+	bgLoad();
+	supportsDoubleBuffer = doubleBuffer;
+	printText();
+
+	snd();
+	snd().beginStream();
+
+	mainLoop();
 
 	return 0;
 }
