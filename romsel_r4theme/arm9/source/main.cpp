@@ -1416,7 +1416,7 @@ int r4Theme(void) {
 					".png" // Portable Network Graphics
 				};
 
-				for (int i = 0; i < 5; i++) {
+				for (int i = 0; i < 6; i++) {
 					extensionList.emplace_back(extensionListMedia[i]);
 				}
 			}
