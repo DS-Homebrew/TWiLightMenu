@@ -29,10 +29,6 @@
 #include "sr_data_error.h"	// For showing an error screen
 #include "sr_data_srloader.h"	// For rebooting into TWiLight Menu++
 
-static const char *unlaunchAutoLoadID = "AutoLoadInfo";
-static const char bootNdsPath[15] = "sdmc:/boot.nds";
-static const char resetGameSrldrPath[40] = "sdmc:/_nds/TWiLightMenu/main.srldr";
-
 extern void cheat_engine_start(void);
 
 extern u32 language;
@@ -40,6 +36,10 @@ extern u32 gameSoftReset;
 static int softResetTimer = 0;
 
 static void unlaunchSetFilename(bool boot) {
+	static const char *unlaunchAutoLoadID = "AutoLoadInfo";
+	static const char bootNdsPath[15] = "sdmc:/boot.nds";
+	static const char resetGameSrldrPath[34] = "sdmc:/_nds/TWiLightMenu/main.srldr";
+
 	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
@@ -49,17 +49,15 @@ static void unlaunchSetFilename(bool boot) {
 	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
 	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 	if (boot) {
-		for (unsigned int i = 0; i < sizeof(bootNdsPath)/sizeof(bootNdsPath[0]); i++) {
+		for (int i = 0; i < (int)sizeof(bootNdsPath); i++) {
 			((u16*)0x02000838)[i] = bootNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 		}
 	} else {
-		for (unsigned int i = 0; i < sizeof(resetGameSrldrPath)/sizeof(resetGameSrldrPath[0]); i++) {
+		for (int i = 0; i < (int)sizeof(resetGameSrldrPath); i++) {
 			((u16*)0x02000838)[i] = resetGameSrldrPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 		}
 	}
-	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
-		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-	}
+	*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 }
 
 void rebootConsole(void) {
@@ -83,6 +81,8 @@ void myIrqHandlerVBlank(void) {
 			memcpy((u32*)0x02000300, sr_data_srloader, 0x20);
 			rebootConsole();	// Reboot into TWiLight Menu++
 			leaveCriticalSection(oldIME);
+			// From blocksds code, 20 ms
+			swiDelay(20 * 0x20BA);
 		}
 		softResetTimer++;
 	} else {
@@ -98,6 +98,8 @@ void myIrqHandlerVBlank(void) {
 		memcpy((u32*)0x02000300, sr_data_srloader, 0x20);
 		rebootConsole();	// Reboot game
 		leaveCriticalSection(oldIME);
+		// From blocksds code, 20 ms
+		swiDelay(20 * 0x20BA);
 	}
 
 	if (REG_IE & IRQ_NETWORK) {
