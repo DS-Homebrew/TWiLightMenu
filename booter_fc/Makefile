@@ -55,8 +55,8 @@ makearm9_r4idsn:
 
 dist:	all autoboot
 	@mkdir -p ../7zfile/debug
-	@cp $(TARGET)_fc.dsi "../7zfile/Flashcard users/BOOT.NDS"
-	@cp $(TARGET)_fc.nds "../7zfile/Flashcard users/BOOT_ALT.NDS"
+	@cp $(TARGET)_fc.nds "../7zfile/Flashcard users/BOOT.NDS"
+	@cp $(TARGET)_fc.dsi "../7zfile/Flashcard users/BOOT_ALT.NDS"
 	@cp $(TARGET)_fc.arm7.elf ../7zfile/debug/$(TARGET)_fc.arm7.elf
 	@cp $(TARGET)_fc.arm9.elf ../7zfile/debug/$(TARGET)_fc.arm9.elf
 	@cp $(TARGET)_r4ils.arm7.elf ../7zfile/debug/$(TARGET)_r4ils.arm7.elf
