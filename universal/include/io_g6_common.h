@@ -91,7 +91,8 @@ extern "C" {
 
 // Values for changing mode
 #define G6_MODE_RAM 6
-#define G6_MODE_MEDIA 3 
+#define G6_MODE_MEDIA 3
+#define G6_MODE_MAIN 0 // Untested
 
 extern void _G6_SelectOperation(u16 op);
 

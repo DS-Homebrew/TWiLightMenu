@@ -371,6 +371,70 @@ void dsCardLaunch() {
 	stop();
 }
 
+void s2RamAccess(bool open) {
+	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) return;
+
+	if (open) {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_RAM);
+		}
+	} else {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_MEDIA);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_MEDIA);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_MEDIA);
+		}
+	}
+}
+
+void s2RamAccessAlt(bool open) {
+	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) return;
+
+	if (open) {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_RAM);
+		}
+	} else {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_MAIN);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_MAIN);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_MAIN);
+		}
+	}
+}
+
+void gbaSramAccess(bool open) {
+	if (open) {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_RAM_RO);
+		}
+	} else {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? M3_MODE_MEDIA : M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? G6_MODE_MEDIA : G6_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? SC_MODE_MEDIA : SC_MODE_RAM);
+		}
+	}
+}
+
 /**
  * Enable widescreen for some games.
  */
@@ -720,6 +784,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		while (!screenFadedOut()) {
 			swiWaitForVBlank();
 		}
+		s2RamAccessAlt(true);
 		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 13) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
@@ -729,6 +794,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		while (!screenFadedOut()) {
 			swiWaitForVBlank();
 		}
+		s2RamAccessAlt(true);
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
 	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 			|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
@@ -750,6 +816,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		while (!screenFadedOut()) {
 			swiWaitForVBlank();
 		}
+		s2RamAccessAlt(true);
 	}
 
 	whiteScreen = true;
@@ -920,48 +987,6 @@ bool createDSiWareSave(const char *path, int size) {
 	}
 
 	return false;
-}
-
-void s2RamAccess(bool open) {
-	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) return;
-
-	if (open) {
-		if (*(u16*)(0x020000C0) == 0x334D) {
-			_M3_changeMode(M3_MODE_RAM);
-		} else if (*(u16*)(0x020000C0) == 0x3647) {
-			_G6_SelectOperation(G6_MODE_RAM);
-		} else if (*(u16*)(0x020000C0) == 0x4353) {
-			_SC_changeMode(SC_MODE_RAM);
-		}
-	} else {
-		if (*(u16*)(0x020000C0) == 0x334D) {
-			_M3_changeMode(M3_MODE_MEDIA);
-		} else if (*(u16*)(0x020000C0) == 0x3647) {
-			_G6_SelectOperation(G6_MODE_MEDIA);
-		} else if (*(u16*)(0x020000C0) == 0x4353) {
-			_SC_changeMode(SC_MODE_MEDIA);
-		}
-	}
-}
-
-void gbaSramAccess(bool open) {
-	if (open) {
-		if (*(u16*)(0x020000C0) == 0x334D) {
-			_M3_changeMode(M3_MODE_RAM);
-		} else if (*(u16*)(0x020000C0) == 0x3647) {
-			_G6_SelectOperation(G6_MODE_RAM);
-		} else if (*(u16*)(0x020000C0) == 0x4353) {
-			_SC_changeMode(SC_MODE_RAM_RO);
-		}
-	} else {
-		if (*(u16*)(0x020000C0) == 0x334D) {
-			_M3_changeMode((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? M3_MODE_MEDIA : M3_MODE_RAM);
-		} else if (*(u16*)(0x020000C0) == 0x3647) {
-			_G6_SelectOperation((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? G6_MODE_MEDIA : G6_MODE_RAM);
-		} else if (*(u16*)(0x020000C0) == 0x4353) {
-			_SC_changeMode((io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) ? SC_MODE_MEDIA : SC_MODE_RAM);
-		}
-	}
 }
 
 void directCardLaunch() {
@@ -1325,6 +1350,9 @@ int dsClassicMenu(void) {
 			username[i*2/2] = username[i*2];
 	}*/
 
+	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
+	s2RamAccessAlt(false);
+
 	std::string filename[2];
 
 	ms().loadSettings();
@@ -1398,8 +1426,6 @@ int dsClassicMenu(void) {
 	srand(time(NULL));
 
 	bool menuButtonPressed = false;
-
-	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM
 
 	if (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == 3
 	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
@@ -1777,6 +1803,7 @@ int dsClassicMenu(void) {
 							while (!screenFadedOut()) {
 								swiWaitForVBlank();
 							}
+							s2RamAccessAlt(true);
 							loadROMselect();
 						  } else if (ms().launchType[1] > 0) {
 							// showCursor = false;
@@ -1789,6 +1816,7 @@ int dsClassicMenu(void) {
 								while (!screenFadedOut()) {
 									swiWaitForVBlank();
 								}
+								s2RamAccessAlt(true);
 								loadROMselect();
 							}
 						  }
@@ -1827,6 +1855,7 @@ int dsClassicMenu(void) {
 							while (!screenFadedOut()) {
 								swiWaitForVBlank();
 							}
+							s2RamAccessAlt(true);
 
 							// Clear screen with white
 							whiteScreen = true;
@@ -1924,6 +1953,7 @@ int dsClassicMenu(void) {
 							while (!screenFadedOut()) {
 								swiWaitForVBlank();
 							}
+							s2RamAccessAlt(true);
 
 							// Clear screen with white
 							whiteScreen = true;
@@ -2096,6 +2126,7 @@ int dsClassicMenu(void) {
 						while (!screenFadedOut()) {
 							swiWaitForVBlank();
 						}
+						s2RamAccessAlt(true);
 						{
 							vector<const char *> argarray;
 							auto getLaunchArgument = [selectedPosition]() -> const char* {
@@ -2252,6 +2283,7 @@ int dsClassicMenu(void) {
 						while (!screenFadedOut()) {
 							swiWaitForVBlank();
 						}
+						s2RamAccessAlt(true);
 						whiteScreen = true;
 						fadeSpeed = true;
 						controlTopBright = false;
@@ -2287,6 +2319,7 @@ int dsClassicMenu(void) {
 						while (!screenFadedOut()) {
 							swiWaitForVBlank();
 						}
+						s2RamAccessAlt(true);
 						whiteScreen = true;
 						fadeSpeed = true;
 						controlTopBright = false;
@@ -2307,6 +2340,7 @@ int dsClassicMenu(void) {
 						while (!fadeType && !screenFadedOut()) {
 							swiWaitForVBlank();
 						}
+						s2RamAccessAlt(true);
 						whiteScreen = true;
 						fadeSpeed = true;
 						controlTopBright = false;
@@ -2330,6 +2364,7 @@ int dsClassicMenu(void) {
 					while (!fadeType && !screenFadedOut()) {
 						swiWaitForVBlank();
 					}
+					s2RamAccessAlt(true);
 					whiteScreen = true;
 					fadeSpeed = true;
 					controlTopBright = false;
@@ -2444,6 +2479,7 @@ int dsClassicMenu(void) {
 					while (!screenFadedOut()) {
 						swiWaitForVBlank();
 					}
+					s2RamAccessAlt(true);
 
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 					bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
@@ -2504,6 +2540,7 @@ int dsClassicMenu(void) {
 				while (!screenFadedOut()) {
 					swiWaitForVBlank();
 				}
+				s2RamAccessAlt(true);
 
 				unlaunchRomBoot(ms().secondaryDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath.c_str());
 			}
@@ -2589,6 +2626,7 @@ int dsClassicMenu(void) {
 								while (!screenFadedOut()) {
 									swiWaitForVBlank();
 								}
+								s2RamAccessAlt(true);
 								whiteScreen = true;
 								fadeSpeed = true; // Fast fading
 								clearText();
@@ -2627,6 +2665,7 @@ int dsClassicMenu(void) {
 						while (!screenFadedOut()) {
 							swiWaitForVBlank();
 						}
+						s2RamAccessAlt(true);
 
 						int err = picoLaunchRom(path, savepath);
 
@@ -2684,6 +2723,7 @@ int dsClassicMenu(void) {
 								while (!screenFadedOut()) {
 									swiWaitForVBlank();
 								}
+								s2RamAccessAlt(true);
 								whiteScreen = true;
 								fadeSpeed = true; // Fast fading
 								clearText();
@@ -2820,6 +2860,7 @@ int dsClassicMenu(void) {
 						while (!screenFadedOut()) {
 							swiWaitForVBlank();
 						}
+						s2RamAccessAlt(true);
 
 						if (dsiFeatures() || !ms().secondaryDevice) {
 							SetWidescreen(filename[ms().secondaryDevice].c_str());
@@ -2892,6 +2933,7 @@ int dsClassicMenu(void) {
 					while (!screenFadedOut()) {
 						swiWaitForVBlank();
 					}
+					s2RamAccessAlt(true);
 
 					if (!isDSiMode() && !ms().secondaryDevice && strncmp(filename[ms().secondaryDevice].c_str(), "GodMode9i", 9) != 0 && strcmp(gameTid[ms().secondaryDevice], "HGMA") != 0) {
 						ntrStartSdGame();
@@ -3056,6 +3098,7 @@ int dsClassicMenu(void) {
 						while (!screenFadedOut()) {
 							swiWaitForVBlank();
 						}
+						s2RamAccessAlt(true);
 						clearText();
 						if (*(u16*)(0x020000C0) == 0x5A45) {
 							printSmall(false, 0, 88, STR_PLEASE_WAIT, Alignment::center);
@@ -3442,6 +3485,7 @@ int dsClassicMenu(void) {
 				while (!screenFadedOut()) {
 					swiWaitForVBlank();
 				}
+				s2RamAccessAlt(true);
 
 				if (!isDSiMode() && !ms().secondaryDevice && !extension(filename[ms().secondaryDevice], {".plg", ".gif", ".bmp", ".png"})) {
 					ntrStartSdGame();
