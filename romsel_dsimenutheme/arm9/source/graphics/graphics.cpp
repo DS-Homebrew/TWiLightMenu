@@ -401,6 +401,7 @@ void playRotatingCubesVideo(void) {
 void vBlankHandler() {
 	execQueue();		   // Execute any actions queued during last vblank.
 	execDeferredIconUpdates(); // Update any icons queued during last vblank.
+	loadDeferredIconPalettes();
 
 	if (waitForNeedToPlayStopSound > 0) {
 		waitForNeedToPlayStopSound++;

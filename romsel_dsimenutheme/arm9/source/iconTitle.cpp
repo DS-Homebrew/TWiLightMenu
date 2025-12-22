@@ -161,14 +161,21 @@ void drawIcon(int Xpos, int Ypos, int num) {
 	if (num == -1) { // Moving app icon
 		glSprite(Xpos, Ypos, bannerFlip[40], &getIcon(6)[bnriconframenumY[40]]);
 		if (bnriconPalLine[40] != bnriconPalLoaded[40]) {
-			glLoadPalette(6, bnriconTile[40].dsi_palette[bnriconPalLine[40]]);
-			bnriconPalLoaded[40] = bnriconPalLine[40];
+			bnriconPalLoaded[40] = -1; // defer loading the palette
 		}
 	} else {
 		glSprite(Xpos, Ypos, bannerFlip[num], &getIcon(num % 6)[bnriconframenumY[num]]);
 		if (bnriconPalLine[num] != bnriconPalLoaded[num]) {
-			glLoadPalette(num % 6, bnriconTile[num].dsi_palette[bnriconPalLine[num]]);
-			bnriconPalLoaded[num] = bnriconPalLine[num];
+			bnriconPalLoaded[num] = -1; // defer loading the palette
+		}
+	}
+}
+
+void loadDeferredIconPalettes() {
+	for (int i = 0; i < 41; i++) {
+		if (bnriconPalLoaded[i] == -1) {
+			glLoadPalette(i < 40 ? i % 6 : 6, bnriconTile[i].dsi_palette[bnriconPalLine[i]]);
+			bnriconPalLoaded[i] = bnriconPalLine[i];
 		}
 	}
 }

@@ -1603,6 +1603,8 @@ void vBlankHandler()
 		if (controlTopBright) SetBrightness(1, screenBrightness);
 	}
 
+	loadDeferredIconPalettes();
+
 	static bool showdialogboxPrev = showdialogbox;
 	static int dialogboxHeightPrev = dialogboxHeight;
 	static bool displayIconsPrev = displayIcons;

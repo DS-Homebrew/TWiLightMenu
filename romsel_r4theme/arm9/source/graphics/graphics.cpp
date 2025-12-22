@@ -546,6 +546,8 @@ void vBlankHandler()
 		if (controlTopBright) SetBrightness(1, ms().theme==6 ? -screenBrightness : screenBrightness);
 	}
 
+	loadDeferredIconPalettes();
+
 	static bool whiteScreenPrev = whiteScreen;
 	static bool blackScreenPrev = blackScreen;
 	static bool startMenuPrev = startMenu;
