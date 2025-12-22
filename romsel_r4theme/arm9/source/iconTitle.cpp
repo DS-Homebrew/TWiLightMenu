@@ -735,6 +735,13 @@ void reloadIconPalettes() {
 	glReloadIconPalette();
 }
 
+void loadDeferredIconPalettes() {
+	if (bnriconPalLoaded == -1) {
+		glLoadPalette(dsi_palette[bnriconPalLine]);
+		bnriconPalLoaded = bnriconPalLine;
+	}
+}
+
 void loadConsoleIcons()
 {
 	if (!colorTable) {
@@ -892,8 +899,7 @@ static void clearIcon()
 void drawIcon(int Xpos, int Ypos) {
 	glSprite(Xpos, Ypos, bannerFlip, &ndsIcon[bnriconframenumY & 31]);
 	if (bnriconPalLine != bnriconPalLoaded) {
-		glLoadPalette(dsi_palette[bnriconPalLine]);
-		bnriconPalLoaded = bnriconPalLine;
+		bnriconPalLoaded = -1; // defer loading the palette
 	}
 }
 

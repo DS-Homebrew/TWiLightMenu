@@ -231,6 +231,15 @@ void reloadIconPalettes() {
 	}
 }
 
+void loadDeferredIconPalettes() {
+	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
+		if (bnriconPalLoaded[i] == -1) {
+			glLoadPalette(i, dsi_palette[i][bnriconPalLine[i]]);
+			bnriconPalLoaded[i] = bnriconPalLine[i];
+		}
+	}
+}
+
 void loadConsoleIcons()
 {
 	if (!colorTable) {
@@ -270,8 +279,7 @@ static void clearIcon(int num)
 void drawIcon(int num, int Xpos, int Ypos) {
 	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]);
 	if (bnriconPalLine[num] != bnriconPalLoaded[num]) {
-		glLoadPalette(num, dsi_palette[num][bnriconPalLine[num]]);
-		bnriconPalLoaded[num] = bnriconPalLine[num];
+		bnriconPalLoaded[num] = -1; // defer loading the palette
 	}
 }
 
