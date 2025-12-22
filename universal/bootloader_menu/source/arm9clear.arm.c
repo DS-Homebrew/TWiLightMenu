@@ -73,12 +73,17 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 
 void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)) clearMasterBright_ARM9 (void) 
 {
-	vu16 *mainregs = (vu16*)0x04000000;
-	vu16 *subregs = (vu16*)0x04001000;
-	
-	for (register int i=0; i<43; i++) {
-		mainregs[i] = 0;
-		subregs[i] = 0;
+	for (vu16 *p = (vu16*)&REG_DISPCNT; p <= (vu16*)&REG_MASTER_BRIGHT; p++)
+	{
+		// Skip VCOUNT. Writing to it was setting it to 0 causing a frame to be
+		// misrendered. This can also have side effects on 3DS, even though the
+		// official TWL_FIRM can recover from it.
+		if (p != (vu16*)&REG_VCOUNT)
+			*p = 0;
+	}
+	for (vu16 *p = (vu16*)&REG_DISPCNT_SUB; p <= (vu16*)&REG_MASTER_BRIGHT_SUB; p++)
+	{
+		*p = 0;
 	}
 	
 	u16 mode = 1 << 14;
