@@ -174,7 +174,6 @@ static const char compatibleGameListB4DS[][5] = {
 	"KEJ", // Electroplankton: Varvoice
 	"K42", // Elite Forces: Unit 77
 	"KD7", // G.G Series: Energy Chain
-	"K4E", // Fall in the Dark
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KFK", // Farm Frenzy
 	"KU7", // Fashion Tycoon
@@ -462,6 +461,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KWW", // The Tower DS: Classic
 	"KWV", // The Tower DS: Hotel
 	"KW4", // The Tower DS: Shopping Santa
+	"K4E", // Treasure Hunter X
 	"KB7", // Trollboarder
 	"K72", // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf
 	"KTI", // Turn: The Lost Artifact
