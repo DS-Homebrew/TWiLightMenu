@@ -42,7 +42,7 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 
 	VRAM_CR = (VRAM_CR & 0xffff0000) | 0x00008080 ;
 
-	for (vu16 *p = (vu16*)&REG_DISPCNT; p <= (vu16*)&REG_MASTER_BRIGHT; p++)
+	for (vu16 *p = (vu16*)&REG_DISPCNT; p <= (vu16*)&REG_DISP_MMEM_FIFO; p++)
 	{
 		// Skip VCOUNT. Writing to it was setting it to 0 causing a frame to be
 		// misrendered. This can also have side effects on 3DS, even though the
@@ -50,7 +50,7 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 		if (p != (vu16*)&REG_VCOUNT)
 			*p = 0;
 	}
-	for (vu16 *p = (vu16*)&REG_DISPCNT_SUB; p <= (vu16*)&REG_MASTER_BRIGHT_SUB; p++)
+	for (vu16 *p = (vu16*)&REG_DISPCNT_SUB; p <= (vu16*)0x04001068; p++)
 	{
 		*p = 0;
 	}
