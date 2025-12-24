@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 493
+// Total: 494
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -150,6 +150,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
 	"KDK", // Discolight
 	"KRF", // Divergent Shift
+	"KML", // Don't Cross the Line
 	"KHE", // DotMan
 	"KD9", // Dr. Mario Express / A Little Bit of... Dr. Mario
 	"KDL", // Dragon's Lair
