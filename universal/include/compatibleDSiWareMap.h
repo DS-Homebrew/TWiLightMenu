@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 491
+// Total: 492
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -32,6 +32,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K9W", // 99Moves
 	"K2K", // Aa! Nikaku Dori
 	"K6Q", // Absolute BrickBuster
+	"KCZ", // Absolute Chess
 	"KXG", // Abyss
 	"KQK", // Ace Mathician
 	"KE5", // ACT Series: Tangocho: Ni Chi Hen
@@ -725,9 +726,10 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 };
 
 // Show RAM limitation message for both DS Retail & Debug consoles
-// Total: 10
+// Total: 11
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 	"K6Q", // Absolute BrickBuster
+	"KCZ", // Absolute Chess
 	"KJH", // Antipole
 	"KUI", // Decathlon 2012
 	"KHW", // EJ Puzzles: Hooked
@@ -741,7 +743,8 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 
 // RAM limitation message ID
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
-	6, // Absolute BrickBuster (Limited state due to RAM limitation: Cannot select or start Free Play mode)
+	4, // Absolute BrickBuster (Crashes after selecting or starting Free Play mode)
+	4, // Absolute Chess (Crashes when selecting a player after selecting Free Play mode)
 	1, // Antipole (No audio)
 	1, // Decathlon 2012 (No audio)
 	2, // EJ Puzzles: Hooked (No music)
