@@ -218,19 +218,10 @@ autoboot:
 	mv dstwo.nds "../7zfile/Flashcard users/Autoboot/SuperCard DSTWO/_dstwo/dstwo.nds"
 
 	#### Games N Music
-	mkdir -p "../7zfile/Flashcard users/Autoboot/Games N Music/"
-
-	##### SDHC but Faster
-	cp booter_fc.nds bootme.nds
-	dlditool flashcart_specifics/DLDI/gmtf2.dldi bootme.nds
-	mkdir -p "../7zfile/Flashcard users/Autoboot/Games N Music/SDHC/"
-	mv bootme.nds "../7zfile/Flashcard users/Autoboot/Games N Music/SDHC/bootme.nds"
-
-	##### Not-SDHC restricted but slower
 	cp booter_fc.nds bootme.nds
 	dlditool flashcart_specifics/DLDI/gmtf.dldi bootme.nds
-	mkdir -p "../7zfile/Flashcard users/Autoboot/Games N Music/Non-SDHC/"
-	mv bootme.nds "../7zfile/Flashcard users/Autoboot/Games N Music/Non-SDHC/bootme.nds"
+	mkdir -p "../7zfile/Flashcard users/Autoboot/Games N Music/"
+	mv bootme.nds "../7zfile/Flashcard users/Autoboot/Games N Music/bootme.nds"
 
 	#### DSTT and its (many) clones
 	cp booter_acekard2.nds TTMenu.dat
