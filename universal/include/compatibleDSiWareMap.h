@@ -673,7 +673,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 35
+// Total: 36
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -695,6 +695,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KMM", // Mixed Messages
 	"KLT", // My Little Restaurant
+	"KTG", // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle
 	"KNV", // Neko Reversi
 	"KO9", // Oscar's World Tour
 	"KFV", // Pro-Jumper! Chimaki's Hot Spring Tour! Guilty Gear Tangent!?
@@ -714,10 +715,11 @@ static const char compatibleGameListB4DSDebug[][5] = {
 };
 
 // Show RAM limitation message
-// Total: 3
+// Total: 4
 static const char compatibleGameListB4DSDebugRAMLimited[][4] = {
 	"KUV", // Bloons TD 4
 	"KGU", // Flipnote Studio
+	"KTG", // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle
 	"KS3", // Shantae: Risky's Revenge
 };
 
@@ -725,6 +727,7 @@ static const char compatibleGameListB4DSDebugRAMLimited[][4] = {
 static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	1, // Bloons TD 4 (No audio)
 	4, // Flipnote Studio (Crashes when getting past the main menu)
+	2, // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle (No music)
 	2, // Shantae: Risky's Revenge (No music)
 };
 
