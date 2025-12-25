@@ -228,6 +228,7 @@ int imageViewer(void) {
 	snd();
 	snd().beginStream();
 
+	fadeType = true;	// Fade in from white
 	mainLoop();
 
 	return 0;
