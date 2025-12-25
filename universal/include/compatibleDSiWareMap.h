@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 494
+// Total: 495
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -326,6 +326,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KL6", // Otona no Sekaishi Pazuru
 	"K3T", // Otona no Tame no: Kei-san Training DS
 	"KJ9", // Otona no Tame no: Renjuku Kanji
+	"KPW", // Panewa!
 	"KAMJ", // Paper Airplane Chase / Kami Hikouki (Japan)
 	"KP9", // Paul's Monster Adventure
 	"KPJ", // Paul's Shooting Adventure
