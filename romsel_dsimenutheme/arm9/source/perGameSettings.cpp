@@ -663,7 +663,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		const bool bootstrapEnabled = (useBootstrap || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && (!ms().kernelUseable || unitCode[CURPOS] == 3)) || !ms().secondaryDevice);
+		const bool bootstrapEnabled = (useBootstrap || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && unitCode[CURPOS] == 3) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
