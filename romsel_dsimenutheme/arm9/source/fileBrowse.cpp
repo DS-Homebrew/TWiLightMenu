@@ -1419,7 +1419,16 @@ void switchDevice(void) {
 }
 
 void launchGba(void) {
-	if (((u8*)GBAROM)[0xB2] != 0x96) {
+	extern void s2RamAccessAlt(bool open);
+
+	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
+		while (dmaBusy(1)); // Wait for frame to finish rendering
+	}
+	s2RamAccessAlt(false);
+	const bool validRom = (((u8*)GBAROM)[0xB2] == 0x96);
+	s2RamAccessAlt(true);
+
+	if (!validRom) {
 		snd().playWrong();
 		return;
 	}
@@ -1490,6 +1499,7 @@ void launchGba(void) {
 			stop();
 		}
 	} else {*/
+		s2RamAccessAlt(false);
 		gbaSwitch();
 	//}
 }

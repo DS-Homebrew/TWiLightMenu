@@ -837,6 +837,28 @@ void s2RamAccess(bool open) {
 	}
 }
 
+void s2RamAccessAlt(bool open) {
+	if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) return;
+
+	if (open) {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_RAM);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_RAM);
+		}
+	} else {
+		if (*(u16*)(0x020000C0) == 0x334D) {
+			_M3_changeMode(M3_MODE_MAIN);
+		} else if (*(u16*)(0x020000C0) == 0x3647) {
+			_G6_SelectOperation(G6_MODE_MAIN);
+		} else if (*(u16*)(0x020000C0) == 0x4353) {
+			_SC_changeMode(SC_MODE_MAIN);
+		}
+	}
+}
+
 void gbaSramAccess(bool open) {
 	if (open) {
 		if (*(u16*)(0x020000C0) == 0x334D) {
@@ -1293,9 +1315,11 @@ int r4Theme(void) {
 							ms().slot1Launched = false;
 							/* if (ms().gbaBooter == TWLSettings::EGbaGbar2) {
 							} else { */
+							s2RamAccessAlt(false);
 							if (((u8*)GBAROM)[0xB2] == 0x96) {
 								gbaSwitch();
 							}
+							s2RamAccessAlt(true);
 						}
 						if (messageShown) {
 							printSmall(false, 0, 108, " Back", Alignment::center);
