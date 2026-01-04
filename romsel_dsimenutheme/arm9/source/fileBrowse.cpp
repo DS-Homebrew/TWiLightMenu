@@ -2499,7 +2499,7 @@ bool selectMenu(void) {
 	int assignedOp[5] = {-1};
 	int selIconYpos = 96;
 	if (ms().kioskMode) {
-		if (dsiFeatures() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
+		if (dsiFeatures() && (bothSDandFlashcard() || !flashcardFound())) {
 			for (int i = 0; i < 3; i++) {
 				selIconYpos -= 14;
 			}
