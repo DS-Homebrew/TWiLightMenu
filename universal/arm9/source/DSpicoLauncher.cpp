@@ -60,12 +60,6 @@ int picoLaunchRom(std::string romPath, std::string savePath) {
     fread(picoLoader7, 1, picoLoader7Size, loader7);
     fclose(loader7);
 
-    if(((pload_header7_t*)picoLoader7)->apiVersion != PICO_LOADER_API_VERSION) {
-        delete[] picoLoader7;
-        fclose(loader9);
-        return 2;
-    }
-
     auto picoLoader9 = new(cache_align) u8[picoLoader9Size];
     fread(picoLoader9, 1, picoLoader9Size, loader9);
     fclose(loader9);
