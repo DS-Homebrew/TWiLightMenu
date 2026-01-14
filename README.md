@@ -120,6 +120,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
      - [unresolvedsymbol](https://github.com/unresolvedsymbol): [rom3M+master "DSL-Enhanced"](https://github.com/unresolvedsymbol/GBARunner2-DSL-Enhanced) builds of GBARunner2 included for playing *Pokémon: Emerald Version* on flashcards
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS) (used for launching Sega Mega Drive/Genesis ROMs)
      - [xonn83](https://github.com/xonn83): GBMacro version of [jEnesisDS](https://github.com/xonn83/jEnesisDS_macro)
+- [Rocket Robz](https://github.com/RocketRobz): [Rocket Video Player](https://github.com/RocketRobz/RocketVideoPlayer) (used for launching RocketVideoDS videos)
 - Ryan FB, [Rocket Robz](https://github.com/RocketRobz), and [xonn83](https://github.com/xonn83): [PicoDriveTWL](https://github.com/DS-Homebrew/PicoDriveTWL) (used for launching large Sega Mega Drive/Genesis ROMs)
 - [wavemotion](https://github.com/wavemotion-dave): [Nintellivision/NINTV-DS](https://github.com/wavemotion-dave/NINTV-DS) (used for launching Intellivision ROMs) and [SugarDS](https://github.com/wavemotion-dave/SugarDS) (used for launching Amstrad CPC ROMs)
 ## Graphics & Themes
