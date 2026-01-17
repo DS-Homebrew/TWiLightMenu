@@ -21,6 +21,7 @@
 #include <nds.h>
 #include <gl2d.h>
 #include "fileCopy.h"
+#include "myDSiMode.h"
 #include "common/lodepng.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
@@ -603,7 +604,7 @@ void vBlankHandler()
 		} else {
 			glBoxFilled(35, 23, 217, 64, black);
 			glBoxFilled(77, 24, 216, 63, white);
-			glSprite(4, 4, GL_FLIP_NONE, brightnessIcon);
+			if (sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) glSprite(4, 4, GL_FLIP_NONE, brightnessIcon);
 			glSprite(36, 24, GL_FLIP_NONE, iconboxImage);
 			drawIcon(40, 28);
 			if (bnrWirelessIcon > 0) glSprite(24, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
