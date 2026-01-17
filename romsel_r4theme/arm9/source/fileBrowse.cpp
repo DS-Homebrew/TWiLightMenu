@@ -84,6 +84,8 @@ extern bool dsModeForced;
 
 extern bool startMenu;
 
+extern touchPosition touch;
+
 extern void bgOperations(bool waitFrame);
 
 std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
@@ -1196,6 +1198,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		do {
 			scanKeys();
 			pressed = keysDownRepeat();
+			touchRead(&touch);
 			bgOperations(true);
 		} while (!pressed);
 
@@ -1550,6 +1553,15 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			ms().secondaryDevice = !ms().secondaryDevice;
 			ms().saveSettings();
 			return "null";
+		}
+
+		if ((sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) && (pressed & KEY_TOUCH) && touch.px >= 4 && touch.px < 4+16 && touch.py >= 4 && touch.py < 4+16) {
+			fifoSendValue32(FIFO_USER_04, 1);
+			while (1) {
+				scanKeys();
+				if (!(keysHeld() & KEY_TOUCH)) break;
+				bgOperations(true);
+			}
 		}
 
 		if ((pressed & KEY_B) && ms().showDirectories) {

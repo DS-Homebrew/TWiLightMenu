@@ -48,6 +48,9 @@ volatile int timeTilVolumeLevelRefresh = 0;
 static int soundVolume = 127;
 volatile int rebootTimer = 0;
 volatile u32 status = 0;
+static int backlightLevel = 0;
+static bool isDSPhat = false;
+static bool hasRegulableBacklight = false;
 static bool i2cBricked = false;
 
 //static bool gotCartHeader = false;
@@ -88,6 +91,39 @@ static void resetDSPico() {
     pload_header7_t* header7 = (pload_header7_t*)0x06000000;
     // header7->dldiDriver = (void*)0x037F8000;
     ((pico_loader_7_func_t)header7->entryPoint)();
+}
+
+//---------------------------------------------------------------------------------
+void changeBacklightLevel(void) {
+//---------------------------------------------------------------------------------
+	if (REG_SNDEXTCNT == 0) {
+		// if the backlight is regulable the range will be 0 - 3
+		// if the backlight is regulable and the console is a phat the range will be 0 - 4 (with 4 being backlight off)
+		// if the backlight is not regulable the only possible values will be 0 and 4 (with 4 being backlight off)
+		backlightLevel += 1 + (3 * !hasRegulableBacklight);
+
+		if (backlightLevel > (3 + isDSPhat)) {
+			backlightLevel = 0;
+		}
+		if (hasRegulableBacklight) {
+			u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+			writePowerManagement(PM_BACKLIGHT_LEVEL, (pmBacklight & ~3) | (backlightLevel & 0x3));
+		}
+
+		if(backlightLevel == 4)
+			writePowerManagement(PM_CONTROL_REG, readPowerManagement(PM_CONTROL_REG) & ~0xC);
+		else
+			writePowerManagement(PM_CONTROL_REG, readPowerManagement(PM_CONTROL_REG) | 0xC);
+		return;
+	}
+
+	// DSi
+	u8 backlightLevel = my_i2cReadRegister(0x4A, 0x41);
+	backlightLevel++;
+	if (backlightLevel > 4) {
+		backlightLevel = 0;
+	}
+	my_i2cWriteRegister(0x4A, 0x41, backlightLevel);
 }
 
 //---------------------------------------------------------------------------------
@@ -171,6 +207,9 @@ int main() {
 
 	u8 pmBacklight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 
+	hasRegulableBacklight = !!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7));
+	isDSPhat = isPhat();
+
 	// 01: Fade Out
 	// 02: Return
 	// 03: status (Bit 0: hasRegulableBacklight, Bit 1: scfgSdmmcEnabled, Bit 2: REG_SNDEXTCNT, Bit 3: isDSPhat, Bit 4: i2cBricked)
@@ -188,7 +227,7 @@ int main() {
 	u8 initStatus = (BIT_SET(!!(REG_SNDEXTCNT), SNDEXTCNT_BIT)
 									| BIT_SET(*(vu32*)0x4004820, SCFGSDMMC_BIT)
 									| BIT_SET(!!(pmBacklight & BIT(4) || pmBacklight & BIT(5) || pmBacklight & BIT(6) || pmBacklight & BIT(7)), BACKLIGHT_BIT)
-									| BIT_SET(isPhat(), DSPHAT_BIT)
+									| BIT_SET(isDSPhat, DSPHAT_BIT)
 									| BIT_SET(i2cBricked, I2CBRICKED_BIT));
 
 	*(vu32*)0x4004820 = 0;
@@ -197,16 +236,20 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, status);
 
 	if (REG_SNDEXTCNT == 0) {
-		if (pmBacklight & 0xF0) { // DS Lite
-			int backlightLevel = pmBacklight & 3; // Brightness
-			*(int*)0x02003000 = backlightLevel;
-		}
+		if (hasRegulableBacklight)
+			backlightLevel = pmBacklight & 3; // Brightness
+
+		if((readPowerManagement(PM_CONTROL_REG) & 0xC) == 0) // DS Phat backlight off
+			backlightLevel = 4;
 	}
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
+		}
+		if (REG_SNDEXTCNT == 0) {
+			*(int*)0x02003000 = backlightLevel;
 		}
 		/*if (!gotCartHeader && fifoCheckValue32(FIFO_USER_04)) {
 			UpdateCardInfo();
@@ -243,6 +286,11 @@ int main() {
 
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
+		}
+
+		if (fifoGetValue32(FIFO_USER_04) == 1) {
+			changeBacklightLevel();
+			fifoSendValue32(FIFO_USER_04, 0);
 		}
 
 		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
