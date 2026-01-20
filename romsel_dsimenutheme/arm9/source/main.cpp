@@ -1573,6 +1573,19 @@ int dsiMenuTheme(void) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", 0);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", ms().forceSleepPatch);
 
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", perGameSettings_remappedKeys[0]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", perGameSettings_remappedKeys[1]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", perGameSettings_remappedKeys[2]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", perGameSettings_remappedKeys[3]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", perGameSettings_remappedKeys[4]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", perGameSettings_remappedKeys[5]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", perGameSettings_remappedKeys[6]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", perGameSettings_remappedKeys[7]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", perGameSettings_remappedKeys[8]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", perGameSettings_remappedKeys[9]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", perGameSettings_remappedKeys[10]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", perGameSettings_remappedKeys[11]);
+
 					bootstrapini.SaveIniFile(bootstrapinipath);
 
 					if (ms().theme == TWLSettings::EThemeHBL) {
@@ -1848,6 +1861,20 @@ int dsiMenuTheme(void) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", bootstrapiniSD.GetInt("NDS-BOOTSTRAP", "LOGGING", 0)); 
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "SAVE_RELOCATION", perGameSettings_saveRelocation == -1 ? ms().saveRelocation : perGameSettings_saveRelocation);
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", perGameSettings_remappedKeys[0]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", perGameSettings_remappedKeys[1]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", perGameSettings_remappedKeys[2]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", perGameSettings_remappedKeys[3]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", perGameSettings_remappedKeys[4]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", perGameSettings_remappedKeys[5]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", perGameSettings_remappedKeys[6]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", perGameSettings_remappedKeys[7]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", perGameSettings_remappedKeys[8]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", perGameSettings_remappedKeys[9]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", perGameSettings_remappedKeys[10]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", perGameSettings_remappedKeys[11]);
+
 						bootstrapini.SaveIniFile(bootstrapinipath);
 
 						if (!isArgv) {

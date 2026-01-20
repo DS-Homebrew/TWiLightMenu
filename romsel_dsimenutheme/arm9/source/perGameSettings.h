@@ -23,6 +23,7 @@ extern int perGameSettings_useBootstrap;
 extern int perGameSettings_fcGameLoader;
 extern int perGameSettings_fcGameLoaderCheat;
 extern int perGameSettings_saveRelocation;
+extern int perGameSettings_remappedKeys[12];
 
 extern char fileCounter[8];
 

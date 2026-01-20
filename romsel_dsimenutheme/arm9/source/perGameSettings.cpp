@@ -82,6 +82,7 @@ int perGameSettings_useBootstrap = -1;
 int perGameSettings_fcGameLoader = -1;
 int perGameSettings_fcGameLoaderCheat = -1;
 int perGameSettings_saveRelocation = -1;
+int perGameSettings_remappedKeys[12] = {0};
 
 std::string setAsInternetBrowser = "";
 std::string setAsDonorRom = "";
@@ -110,7 +111,7 @@ char saveNoDisplay[8];
 
 static int firstPerGameOpShown = 0;
 static int perGameOps = -1;
-static int perGameOp[18] = {-1};
+static int perGameOp[19] = {-1};
 
 bool blacklisted_colorLut = false;
 bool blacklisted_boostCpu = false;
@@ -145,6 +146,19 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_fcGameLoader = pergameini.GetInt("GAMESETTINGS", "FC_GAME_LOADER", -1);
 	perGameSettings_fcGameLoaderCheat = perGameSettings_fcGameLoader;
 	perGameSettings_saveRelocation = pergameini.GetInt("GAMESETTINGS", "SAVE_RELOCATION", -1);
+
+	perGameSettings_remappedKeys[0] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_A", 0);
+	perGameSettings_remappedKeys[1] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_B", 1);
+	perGameSettings_remappedKeys[2] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_SELECT", 2);
+	perGameSettings_remappedKeys[3] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_START", 3);
+	perGameSettings_remappedKeys[4] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_RIGHT", 4);
+	perGameSettings_remappedKeys[5] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_LEFT", 5);
+	perGameSettings_remappedKeys[6] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_UP", 6);
+	perGameSettings_remappedKeys[7] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_DOWN", 7);
+	perGameSettings_remappedKeys[8] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_R", 8);
+	perGameSettings_remappedKeys[9] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_L", 9);
+	perGameSettings_remappedKeys[10] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_X", 10);
+	perGameSettings_remappedKeys[11] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_Y", 11);
 
 	// Check if blacklisted
 	blacklisted_colorLut = false;
@@ -242,6 +256,19 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "DSIWARE_BOOTER", perGameSettings_dsiwareBooter);
 		}
 		pergameini.SetInt("GAMESETTINGS", "SAVE_RELOCATION", perGameSettings_saveRelocation);
+
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_A", perGameSettings_remappedKeys[0]);
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_B", perGameSettings_remappedKeys[1]);
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_SELECT", perGameSettings_remappedKeys[2]);
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_START", perGameSettings_remappedKeys[3]);
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_RIGHT", perGameSettings_remappedKeys[4]);
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_LEFT", perGameSettings_remappedKeys[5]);
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_UP", perGameSettings_remappedKeys[6]);
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_DOWN", perGameSettings_remappedKeys[7]);
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_R", perGameSettings_remappedKeys[8]);
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_L", perGameSettings_remappedKeys[9]);
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_X", perGameSettings_remappedKeys[10]);
+		pergameini.SetInt("GAMESETTINGS", "REMAPPED_KEY_Y", perGameSettings_remappedKeys[11]);
 	}
 	pergameini.SaveIniFile( pergamefilepath );
 }
@@ -422,6 +449,77 @@ const char* getRegionString(char region) {
 	return "N/A";
 }
 
+std::string keyText[12] = {"", "", "SELECT", "START", "", "", "", "", "", "", "", ""};
+
+void remapButtons (void) {
+	int pressed = 0, held = 0;
+	int firstShown = 0;
+	int remapButtons_cursorPosition = 0;
+	Alignment startAlign = ms().rtl() ? Alignment::right : Alignment::left;
+	Alignment endAlign = ms().rtl() ? Alignment::left : Alignment::right;
+	int perGameOpStartXpos = ms().rtl() ? 256 - 24 : 24;
+	int perGameOpEndXpos = ms().rtl() ? 24 : 256 - 24;
+
+	while (1) {
+		int perGameOpYpos = (ms().theme==5 ? 80 : 68);
+
+		clearText();
+		printLarge(false, 20, 30, STR_REMAP_BUTTONS, Alignment::center, FontPalette::dialog);
+		printSmall(false, 0, 160, STR_B_BACK, Alignment::center, FontPalette::dialog);
+
+		printSmall(false, ms().rtl() ? 256 - 16 : 16, perGameOpYpos+(remapButtons_cursorPosition*14)-(firstShown*14), ms().rtl() ? "<" : ">", startAlign, FontPalette::dialog);
+		for (int i = firstShown; i < firstShown+6; i++) {
+			printSmall(false, perGameOpStartXpos, perGameOpYpos, ms().rtl() ? keyText[perGameSettings_remappedKeys[i]] : keyText[i], startAlign, FontPalette::dialog);
+			printSmall(false, 0, perGameOpYpos, ms().rtl() ? "<-" : "->", Alignment::center, FontPalette::dialog);
+			printSmall(false, perGameOpEndXpos, perGameOpYpos, ms().rtl() ? keyText[i] : keyText[perGameSettings_remappedKeys[i]], endAlign, FontPalette::dialog);
+			perGameOpYpos += 14;
+		}
+
+		updateText(false);
+
+		do {
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+			updateBoxArt();
+			bgOperations(true);
+		} while (!held);
+
+		if (held & KEY_UP) {
+			snd().playSelect();
+			remapButtons_cursorPosition--;
+			if (remapButtons_cursorPosition < 0) {
+				remapButtons_cursorPosition = 11;
+				firstShown = 11-5;
+			} else if (remapButtons_cursorPosition < firstShown) {
+				firstShown--;
+			}
+		}
+		if (held & KEY_DOWN) {
+			snd().playSelect();
+			remapButtons_cursorPosition++;
+			if (remapButtons_cursorPosition > 11) {
+				remapButtons_cursorPosition = 0;
+				firstShown = 0;
+			} else if (remapButtons_cursorPosition > firstShown+5) {
+				firstShown++;
+			}
+		}
+
+		if (held & KEY_LEFT) {
+			perGameSettings_remappedKeys[remapButtons_cursorPosition]--;
+			if (perGameSettings_remappedKeys[remapButtons_cursorPosition] < 0) perGameSettings_remappedKeys[remapButtons_cursorPosition] = 11;
+		} else if ((pressed & KEY_A) || (held & KEY_RIGHT)) {
+			perGameSettings_remappedKeys[remapButtons_cursorPosition]++;
+			if (perGameSettings_remappedKeys[remapButtons_cursorPosition] > 11) perGameSettings_remappedKeys[remapButtons_cursorPosition] = 0;
+		}
+		if (pressed & KEY_B) {
+			snd().playBack();
+			break;
+		}
+	}
+}
+
 void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBinariesChecked) {
 	int pressed = 0, held = 0;
 
@@ -570,7 +668,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 
 	firstPerGameOpShown = 0;
 	perGameOps = -1;
-	for (int i = 0; i < 17; i++) {
+	for (int i = 0; i < 19; i++) {
 		perGameOp[i] = -1;
 	}
 	if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
@@ -642,6 +740,8 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
+			perGameOps++;
+			perGameOp[perGameOps] = 18;	// Remap Buttons
 			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked()) && widescreenFound) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
@@ -712,6 +812,8 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
+			perGameOps++;
+			perGameOp[perGameOps] = 18;	// Remap Buttons
 			if (((dsiFeatures() && sdFound()) || !ms().secondaryDevice) && widescreenFound) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
@@ -1058,6 +1160,9 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_SAVE_GAME_CARD, endAlign, FontPalette::dialog);
 				}
 				break;
+			case 18:
+				printSmall(false, 0, perGameOpYpos, STR_REMAP_BUTTONS, Alignment::center, FontPalette::dialog);
+				break;
 		}
 		perGameOpYpos += 14;
 		}
@@ -1335,6 +1440,9 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 					case 17:
 						perGameSettings_saveRelocation--;
 						if (perGameSettings_saveRelocation < -1) perGameSettings_saveRelocation = 1;
+						break;
+					case 18:
+						if (pressed & KEY_A) remapButtons();
 						break;
 				}
 				(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSelect();

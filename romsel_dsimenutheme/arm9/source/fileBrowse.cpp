@@ -800,6 +800,18 @@ void launchPictochat(const vector<DirEntry>& dirContents) {
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", 1);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", 2);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", 3);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", 4);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", 5);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", 6);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", 7);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", 8);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", 9);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", 10);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", 11);
 		bootstrapini.SaveIniFile(bootstrapinipath);
 		int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
 		char text[32];
@@ -986,6 +998,18 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", 1);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", 2);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", 3);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", 4);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", 5);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", 6);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", 7);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", 8);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", 9);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", 10);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", 11);
 		bootstrapini.SaveIniFile(bootstrapinipath);
 		int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
 		char text[32];
@@ -1258,6 +1282,18 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", 1);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", 2);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", 3);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", 4);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", 5);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", 6);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", 7);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", 8);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", 9);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", 10);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", 11);
 		bootstrapini.SaveIniFile(bootstrapinipath);
 
 		if (ms().theme == TWLSettings::EThemeHBL) {

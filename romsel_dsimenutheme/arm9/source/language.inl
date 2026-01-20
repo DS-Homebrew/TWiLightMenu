@@ -168,6 +168,7 @@ STRING(DSIWAREBOOTER, "DSiWare Booter")
 STRING(GAME_LOADER, "Game Loader")
 STRING(SET_AS_INTERNET_BROWSER, "Set as Internet Browser")
 STRING(DONE, "Done!")
+STRING(REMAP_BUTTONS, "Remap Buttons")
 STRING(X_CHEATS_B_BACK, "\\X Cheats  \\B Back")
 
 // Per-game settings options

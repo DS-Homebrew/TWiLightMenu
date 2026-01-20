@@ -1927,6 +1927,18 @@ int dsClassicMenu(void) {
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", 0);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", 1);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", 2);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", 3);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", 4);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", 5);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", 6);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", 7);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", 8);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", 9);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", 10);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", 11);
 								bootstrapini.SaveIniFile(bootstrapinipath);
 								int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
 								char text[64];
@@ -2025,6 +2037,18 @@ int dsClassicMenu(void) {
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", 0);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", 1);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", 2);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", 3);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", 4);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", 5);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", 6);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", 7);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", 8);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", 9);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", 10);
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", 11);
 								bootstrapini.SaveIniFile(bootstrapinipath);
 								int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
 								char text[64];
@@ -2474,6 +2498,20 @@ int dsClassicMenu(void) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", 0);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", 0);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", ms().forceSleepPatch);
+
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", perGameSettings_remappedKeys[0]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", perGameSettings_remappedKeys[1]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", perGameSettings_remappedKeys[2]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", perGameSettings_remappedKeys[3]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", perGameSettings_remappedKeys[4]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", perGameSettings_remappedKeys[5]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", perGameSettings_remappedKeys[6]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", perGameSettings_remappedKeys[7]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", perGameSettings_remappedKeys[8]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", perGameSettings_remappedKeys[9]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", perGameSettings_remappedKeys[10]);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", perGameSettings_remappedKeys[11]);
+
 					bootstrapini.SaveIniFile(bootstrapinipath);
 
 					while (!screenFadedOut()) {
@@ -2787,6 +2825,20 @@ int dsClassicMenu(void) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", ms().forceSleepPatch);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "SAVE_RELOCATION", perGameSettings_saveRelocation == -1 ? ms().saveRelocation : perGameSettings_saveRelocation);
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", perGameSettings_remappedKeys[0]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", perGameSettings_remappedKeys[1]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", perGameSettings_remappedKeys[2]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", perGameSettings_remappedKeys[3]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", perGameSettings_remappedKeys[4]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", perGameSettings_remappedKeys[5]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", perGameSettings_remappedKeys[6]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", perGameSettings_remappedKeys[7]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", perGameSettings_remappedKeys[8]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", perGameSettings_remappedKeys[9]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", perGameSettings_remappedKeys[10]);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", perGameSettings_remappedKeys[11]);
+
 						bootstrapini.SaveIniFile(bootstrapinipath);
 
 						if (dsiFeatures() && !isHomebrew[ms().secondaryDevice]) {
