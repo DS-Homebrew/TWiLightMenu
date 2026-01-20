@@ -525,7 +525,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 	}
 	fclose(f_nds_file);
 
-	const bool largeArm9 = (arm9size >= 0x380000 && isModernHomebrew[CURPOS]);
+	const bool largeArm9 = (arm9size >= 0x3F4000 && isModernHomebrew[CURPOS]);
 
 	if (romSize > 0) {
 		if (usesCloneboot) {

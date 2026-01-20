@@ -481,7 +481,7 @@ void perGameSettings (std::string filename) {
 	}
 	fclose(f_nds_file);
 
-	const bool largeArm9 = (arm9size >= 0x380000 && isModernHomebrew[cursorPosOnScreen]);
+	const bool largeArm9 = (arm9size >= 0x3F4000 && isModernHomebrew[cursorPosOnScreen]);
 
 	if (romSize > 0) {
 		if (usesCloneboot) {
