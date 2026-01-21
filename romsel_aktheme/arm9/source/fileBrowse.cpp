@@ -1967,6 +1967,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 						recentlyPlayedIni.SetStringVector("RECENT", path, recentlyPlayed, ':');
 						recentlyPlayedIni.SaveIniFile(recentlyPlayedIniPath);
+						recentlyPlayed.clear();
 
 						CIniFile timesPlayedIni(timesPlayedIniPath);
 						timesPlayedIni.SetInt(path, entry->name, (timesPlayedIni.GetInt(path, entry->name, 0) + 1));
