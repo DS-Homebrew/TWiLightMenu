@@ -1555,7 +1555,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";
 		}
 
-		if ((sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) && (pressed & KEY_TOUCH) && touch.px >= 4 && touch.px < 4+16 && touch.py >= 4 && touch.py < 4+16) {
+		if (ms().theme != TWLSettings::EThemeGBC && ((sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) && (pressed & KEY_TOUCH) && touch.px >= 4 && touch.px < 4+16 && touch.py >= 4 && touch.py < 4+16)) {
 			fifoSendValue32(FIFO_USER_04, 1);
 			while (1) {
 				scanKeys();
