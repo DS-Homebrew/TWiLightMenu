@@ -2864,7 +2864,7 @@ int dsClassicMenu(void) {
 											fread(check, 1, 8, cheatData);
 											fclose(cheatData);
 											if (check[1] == 0xCF000000
-											|| getFileSize(cheatDataBin) > 0x8000) {
+											|| getFileSize(cheatDataBin) > 0x4000) {
 												cheatsEnabled = false;
 											}
 										}
