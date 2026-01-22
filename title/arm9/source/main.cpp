@@ -698,7 +698,7 @@ void lastRunROM()
 				CIniFile bootstrapini( sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC );
 				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().previousUsedDevice]);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-				bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && !bs().b4dsMode));
+				bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && (!ms().secondaryDevice || !bs().b4dsMode)));
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", dsPhatColors);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", (perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
@@ -1058,7 +1058,7 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
-				bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath((useTempDSiWare || sys().isRunFromSD()) && !bs().b4dsMode));
+				bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath((useTempDSiWare || sys().isRunFromSD()) && (!ms().secondaryDevice || !bs().b4dsMode)));
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", dsPhatColors);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
