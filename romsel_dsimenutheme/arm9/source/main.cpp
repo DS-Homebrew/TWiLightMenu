@@ -84,6 +84,7 @@ extern bool showProgressIcon;
 extern bool showProgressBar;
 extern int progressBarLength;
 
+extern const char* mainSrldrPath(const bool sdPath);
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char16_t hiyaNdsPath[] = u"sdmc:/hiya.dsi";
 char launcherPath[256];
@@ -1556,6 +1557,7 @@ int dsiMenuTheme(void) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "MANUAL_PATH", getGameManual(filename.c_str()));
+					bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && !bs().b4dsMode));
 					bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", setDSPhatColors());
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
@@ -1847,6 +1849,7 @@ int dsiMenuTheme(void) {
 							bootstrapini.SetString("NDS-BOOTSTRAP", "MANUAL_PATH", getGameManual(filename.c_str()));
 						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && !bs().b4dsMode));
 						bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", phatColors);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);

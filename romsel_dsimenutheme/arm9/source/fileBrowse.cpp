@@ -60,6 +60,7 @@ extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 
+extern const char* mainSrldrPath(const bool sdPath);
 extern const char *unlaunchAutoLoadID;
 extern void unlaunchRomBoot(std::string_view rom);
 
@@ -795,6 +796,7 @@ void launchPictochat(const vector<DirEntry>& dirContents) {
 		bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && !bs().b4dsMode));
 		bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
@@ -993,6 +995,7 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 		bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && !bs().b4dsMode));
 		bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
@@ -1280,6 +1283,7 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 		}
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && !bs().b4dsMode));
 		bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", 0);
