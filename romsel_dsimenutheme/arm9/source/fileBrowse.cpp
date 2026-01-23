@@ -647,7 +647,6 @@ void launchDsClassicMenu(void) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch DS Classic Menu
@@ -669,7 +668,6 @@ void launchSettings(void) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch TWLMenu++ Settings
@@ -756,7 +754,6 @@ void launchPictochat(const vector<DirEntry>& dirContents) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch Pictochat
@@ -922,7 +919,6 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch DS Download Play
@@ -1119,7 +1115,6 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().internetBrowserLaunched = true;
 	ms().saveSettings();
@@ -1348,7 +1343,6 @@ void launchManual(void) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch manual
@@ -1371,7 +1365,6 @@ void exitToSystemMenu(void) {
 		bgOperations(true);
 	}
 	
-	mmEffectCancelAll();
 	snd().stopStream();
 
 	if (settingsChanged) {
@@ -1426,8 +1419,6 @@ void switchDevice(void) {
 			for (int i = 0; i < 60; i++) {
 				bgOperations(true);
 			}
-			mmEffectCancelAll();
-
 			snd().stopStream();
 		}
 
@@ -1482,7 +1473,6 @@ void launchGba(void) {
 		bgOperations(true);
 	}
 	
-	mmEffectCancelAll();
 	snd().stopStream();
 
 	ms().slot1Launched = false;
@@ -4193,7 +4183,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							if (!dsiFeatures()) {
 								// Free some RAM space to avoid possible memory leaks
 								snd().unloadStream();
-								mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
 								snd().unloadSfxData();
 								tex().unloadPhotoBuffer();
 							}

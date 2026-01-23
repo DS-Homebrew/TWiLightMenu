@@ -1601,7 +1601,6 @@ int dsiMenuTheme(void) {
 					snd().unloadStream();
 
 					if (!dsiFeatures()) {
-						mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
 						snd().unloadSfxData();
 						tex().unloadPhotoBuffer();
 						prepareCheats(ms().dsiWareSrlPath, (ms().secondaryDevice && ms().dsiWareToSD && sdFound()));
@@ -1771,7 +1770,6 @@ int dsiMenuTheme(void) {
 						snd().unloadStream();
 
 						if (!dsiFeatures()) {
-							mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
 							snd().unloadSfxData();
 							tex().unloadPhotoBuffer();
 						}
@@ -1930,7 +1928,6 @@ int dsiMenuTheme(void) {
 						snd().unloadStream();
 
 						if (!dsiFeatures()) {
-							mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
 							snd().unloadSfxData();
 							tex().unloadPhotoBuffer();
 							prepareCheats(path, false);
