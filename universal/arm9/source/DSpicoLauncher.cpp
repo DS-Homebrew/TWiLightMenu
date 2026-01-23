@@ -96,7 +96,7 @@ int picoLaunchRom(std::string romPath, std::string savePath) {
     tonccpy(&((pload_header7_t*)0x06840000)->loadParams, &sLoadParams, sizeof(pload_params_t));
     vramSetBankC(VRAM_C_ARM7_0x06000000);
     vramSetBankD(VRAM_D_ARM7_0x06020000);
-    *(u32*)(0x2FFFD0C) = 0x4F434950; // 'PICO'
+    fifoSendValue32(FIFO_USER_02, 0x4F434950); // 'PICO'
     irqDisable(IRQ_ALL);
 
     ((pico_loader_9_func_t)0x06800000)();

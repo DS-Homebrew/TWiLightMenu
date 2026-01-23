@@ -84,16 +84,29 @@ void ReturntoDSiMenu() {
 
 typedef void (*pico_loader_7_func_t)(void);
 
+volatile bool reset_pico = false;
+
 static void resetDSPico() {
-    memset((void*)0x40000B0, 0, 0x30);
+	memset((void*)0x40000B0, 0, 0x30);
 
-    REG_IME = IME_DISABLE;
-    REG_IE = 0;
-    REG_IF = ~0;
+	REG_IME = IME_DISABLE;
+	REG_IE = 0;
+	REG_IF = ~0;
 
-    pload_header7_t* header7 = (pload_header7_t*)0x06000000;
-    // header7->dldiDriver = (void*)0x037F8000;
-    ((pico_loader_7_func_t)header7->entryPoint)();
+	pload_header7_t* header7 = (pload_header7_t*)0x06000000;
+	// header7->dldiDriver = (void*)0x037F8000;
+	((pico_loader_7_func_t)header7->entryPoint)();
+}
+
+static void menuValue32Handler(u32 value, void* data) {
+	switch (value) {
+		case 0x4F434950: // 'PICO'
+			reset_pico = true;
+			break;
+		default:
+			ReturntoDSiMenu();
+			break;
+	}
 }
 
 //---------------------------------------------------------------------------------
@@ -441,6 +454,7 @@ int main() {
 		*(u8*)(0x02FFFD02) = 0x77;
 	}
 
+	fifoSetValue32Handler(FIFO_USER_02, menuValue32Handler, 0);
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
@@ -490,10 +504,6 @@ int main() {
 			}
 		}
 
-		if (fifoCheckValue32(FIFO_USER_02)) {
-			ReturntoDSiMenu();
-		}
-
 		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
 			if (rebootTimer == 60*2) {
 				ReturntoDSiMenu();	// Reboot, if fat init code is stuck in a loop
@@ -521,7 +531,7 @@ int main() {
 			}
 
 			*(u32*)(0x2FFFD0C) = 0;
-		} else if (*(u32*)(0x2FFFD0C) == 0x4F434950) { // 'PICO'
+		} else if (reset_pico) {
 			resetDSPico();
 		}
 		swiWaitForVBlank();

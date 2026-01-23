@@ -78,16 +78,29 @@ void ReturntoDSiMenu() {
 
 typedef void (*pico_loader_7_func_t)(void);
 
+volatile bool reset_pico = false;
+
 static void resetDSPico() {
-    memset((void*)0x40000B0, 0, 0x30);
+	memset((void*)0x40000B0, 0, 0x30);
 
-    REG_IME = IME_DISABLE;
-    REG_IE = 0;
-    REG_IF = ~0;
+	REG_IME = IME_DISABLE;
+	REG_IE = 0;
+	REG_IF = ~0;
 
-    pload_header7_t* header7 = (pload_header7_t*)0x06000000;
-    // header7->dldiDriver = (void*)0x037F8000;
-    ((pico_loader_7_func_t)header7->entryPoint)();
+	pload_header7_t* header7 = (pload_header7_t*)0x06000000;
+	// header7->dldiDriver = (void*)0x037F8000;
+	((pico_loader_7_func_t)header7->entryPoint)();
+}
+
+static void menuValue32Handler(u32 value, void* data) {
+	switch (value) {
+		case 0x4F434950: // 'PICO'
+			reset_pico = true;
+			break;
+		default:
+			ReturntoDSiMenu();
+			break;
+	}
 }
 
 //---------------------------------------------------------------------------------
@@ -206,6 +219,8 @@ int main() {
 	bool reportBacklightLevelChange = false;
 	u8 currentBacklightLevel;
 
+	fifoSetValue32Handler(FIFO_USER_02, menuValue32Handler, 0);
+
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
@@ -244,10 +259,6 @@ int main() {
 			}
 		}
 
-		if (fifoCheckValue32(FIFO_USER_02)) {
-			ReturntoDSiMenu();
-		}
-
 		if (fifoCheckValue32(FIFO_USER_04)) {
 			reportBacklightLevelChange = fifoGetValue32(FIFO_USER_04) == 1;
 			if (reportBacklightLevelChange) currentBacklightLevel = my_i2cReadRegister(I2C_PM, 0x41);
@@ -265,7 +276,7 @@ int main() {
 				*(u32*)(0x2FFFD0C) = 0;
 			}
 			rebootTimer++;
-		} else if (*(u32*)(0x2FFFD0C) == 0x4F434950) { // 'PICO'
+		} else if (reset_pico) {
 			resetDSPico();
 		}
 		swiWaitForVBlank();
