@@ -32,10 +32,11 @@ R4DS Pro folder:
 - r4dspro.com cards
 
 R4 Ultra folder:
-- R4 Ultra
+- R4 Ultra, R4i Ultra
 - r4ids.cn cards
 - R4iTT 3DS
 - R4i3D 2012+
+- R4i Infinity NEW A. C. Kard Version
 - r4isdhc.com NEW
 - r4isdhc.com 2013
 - r4isdhc.hk -2019
