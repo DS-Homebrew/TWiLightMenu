@@ -490,6 +490,8 @@ void SoundControl::unloadSfxData() {
 	mmUnloadEffect(SFX_STARTUP);
 	// mmUnloadEffect(SFX_MENU);
 
+	fifoSendValue32(FIFO_USER_02, 0x4F444E53); // 'SNDO': Turn off all sound channels in case sound effects are still playing
+
 	delete[] SFX_DATA;
 }
 

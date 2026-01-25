@@ -97,6 +97,11 @@ static void menuValue32Handler(u32 value, void* data) {
 		case 0x4F434950: // 'PICO'
 			reset_pico = true;
 			break;
+		case 0x4F444E53: // 'SNDO'
+			for (int channel = 0; channel < 16; channel++) {
+				SCHANNEL_CR(channel) &= ~SCHANNEL_ENABLE;
+			}
+			break;
 		default:
 			ReturntoDSiMenu();
 			break;
