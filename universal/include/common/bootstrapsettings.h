@@ -45,6 +45,7 @@ public:
 	bool sdNand;
 	TWLSettings::TConsoleModel consoleModel;
 	int bootstrapHotkey;
+	int screenSwapHotkey;
 	TWLSettings::TSaveRelocation saveRelocation;
 
 };

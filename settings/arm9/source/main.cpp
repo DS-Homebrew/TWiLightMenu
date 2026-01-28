@@ -451,7 +451,7 @@ std::string keyString(u16 pressed) {
 	return keys.substr(0, keys.size() - 1); // Remove trailing space
 }
 
-void opt_set_hotkey(void) {
+void opt_set_hotkey_main(const bool screenSwap) {
 	clearScroller();
 	bool refreshText = true;
 	u16 held = 0, set = 0, timer = 0;
@@ -467,7 +467,11 @@ void opt_set_hotkey(void) {
 
 			keys = keyString(set);
 			printSmall(false, 0, 48, keys, Alignment::center);
-			printSmall(false, 0, 170 - calcSmallFontHeight(STR_HOLD_1S_DETAILS), STR_HOLD_1S_DETAILS, Alignment::center);
+			if (screenSwap) {
+				printSmall(false, 0, 170 - calcSmallFontHeight(STR_HOLD_1S_SCREEN_SWAP_DETAILS), STR_HOLD_1S_SCREEN_SWAP_DETAILS, Alignment::center);
+			} else {
+				printSmall(false, 0, 170 - calcSmallFontHeight(STR_HOLD_1S_DETAILS), STR_HOLD_1S_DETAILS, Alignment::center);
+			}
 			updateText(false);
 			refreshText = false;
 		}
@@ -497,9 +501,13 @@ void opt_set_hotkey(void) {
 
 	// Holding *only* B cancels
 	if(set == KEY_B) {
-		keys = keyString(bs().bootstrapHotkey);
+		keys = keyString(screenSwap ? bs().screenSwapHotkey : bs().bootstrapHotkey);
 	} else {
-		bs().bootstrapHotkey = set;
+		if (screenSwap) {
+			bs().screenSwapHotkey = set;
+		} else {
+			bs().bootstrapHotkey = set;
+		}
 	}
 
 	mmEffectEx(currentTheme == 4 ? &snd().snd_saturn_select : &snd().snd_select);
@@ -518,6 +526,14 @@ void opt_set_hotkey(void) {
 	} while (held & set);
 
 	clearText();
+}
+
+void opt_set_hotkey(void) {
+	opt_set_hotkey_main(false);
+}
+
+void opt_set_screenswap_hotkey(void) {
+	opt_set_hotkey_main(true);
 }
 
 void begin_update(int opt)
@@ -1339,7 +1355,8 @@ int settingsMode(void)
 
 	bootstrapPage
 		.option(STR_ESRBRATINGSCREEN, STR_DESCRIPTION_ESRBRATINGSCREEN, Option::Bool(&ms().esrbRatingScreen), {STR_ON, STR_OFF}, {true, false})
-		.option(STR_HOTKEY, STR_DESCRIPTION_HOTKEY, Option::Nul(opt_set_hotkey), {STR_PRESS_A}, {0});
+		.option(STR_HOTKEY, STR_DESCRIPTION_HOTKEY, Option::Nul(opt_set_hotkey), {STR_PRESS_A}, {0})
+		.option(STR_SCREEN_SWAP_HOTKEY, STR_DESCRIPTION_SCREEN_SWAP_HOTKEY, Option::Nul(opt_set_screenswap_hotkey), {STR_PRESS_A}, {0});
 
 	if (!sys().isRegularDS()) {
 		bootstrapPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool((bool *)&ms().soundFreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
@@ -1435,13 +1452,18 @@ int settingsMode(void)
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 	bool gamesPageVisible = false;
 
+	using TFCGameLoader = TWLSettings::TFCGameLoader;
 	using TGbaBooter = TWLSettings::TGbaBooter;
 	using TColSegaEmulator = TWLSettings::TColSegaEmulator;
 	using TMegaDriveEmulator = TWLSettings::TMegaDriveEmulator;
 	using TSlot1LaunchMethod = TWLSettings::TSlot1LaunchMethod;
 
-	if (flashcardFound() && ms().kernelUseable) {
-		gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Bool(&ms().useBootstrap), {"nds-bootstrap", STR_KERNEL}, {true, false});
+	if (flashcardFound()) {
+		if (ms().kernelUseable) {
+			gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Int(&ms().fcGameLoader), {"nds-bootstrap", STR_KERNEL, "pico"}, {TFCGameLoader::ENdsBootstrap, TFCGameLoader::EKernel, TFCGameLoader::EPicoLoader});
+		} else {
+			gamesPage.option(sdFound() ? ("S1SD: "+STR_GAMELOADER) : STR_GAMELOADER, STR_DESCRIPTION_GAMELOADER, Option::Int(&ms().fcGameLoader), {"nds-bootstrap", "pico"}, {TFCGameLoader::ENdsBootstrap, TFCGameLoader::EPicoLoader});
+		}
 		gamesPageVisible = true;
 	}
 

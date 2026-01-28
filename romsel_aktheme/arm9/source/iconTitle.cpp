@@ -698,6 +698,15 @@ void reloadIconPalettes() {
 	}
 }
 
+void loadDeferredIconPalettes() {
+	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
+		if (bnriconPalLoaded[i] == -1) {
+			glLoadPalette(i, bnriconTile[i].dsi_palette[bnriconPalLine[i]]);
+			bnriconPalLoaded[i] = bnriconPalLine[i];
+		}
+	}
+}
+
 void loadConsoleIcons()
 {
 	if (!colorTable) {
@@ -880,8 +889,7 @@ void iconTitleInit()
 void drawIcon(int num, int Xpos, int Ypos, s32 scale) {
 	(scale == 0) ? glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]) : glSpriteScale(Xpos, Ypos, scale, bannerFlip[num], &ndsIcon[num][bnriconframenumY[num] & 31]);
 	if (bnriconPalLine[num] != bnriconPalLoaded[num]) {
-		glLoadPalette(num, bnriconTile[num].dsi_palette[bnriconPalLine[num]]);
-		bnriconPalLoaded[num] = bnriconPalLine[num];
+		bnriconPalLoaded[num] = -1; // defer loading the palette
 	}
 }
 
@@ -1192,7 +1200,8 @@ void getGameInfo(int num, int fileOffset, bool isDir, const char* name, bool fro
 		romUnitCode[num] = ndsHeader.unitCode;
 		a7mbk6[num] = ndsHeader.a7mbk6;
 
-		fseek(fp, ndsHeader.arm9romOffset + ndsHeader.arm9executeAddress - ndsHeader.arm9destination, SEEK_SET);
+		fseek(fp, ndsHeader.arm9romOffset + ((strncmp(gameTid[num], "BIG", 3) == 0) ? 0x02000800 : ndsHeader.arm9executeAddress) - ndsHeader.arm9destination, SEEK_SET);
+		// "Battle/Combat of Giants: Mutant Insects" (TID: BIG) has code that is run before the actual SDK boot code
 		fread(arm9StartSig, sizeof(u32), 4, fp);
 		if ((arm9StartSig[0] == 0xE3A0C301 || (arm9StartSig[0] >= 0xEA000000 && arm9StartSig[0] < 0xEC000000 /* If title contains cracktro or extra splash */))
 		  && arm9StartSig[1] == 0xE58CC208) {

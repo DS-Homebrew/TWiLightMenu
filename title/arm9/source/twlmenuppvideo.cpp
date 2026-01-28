@@ -476,15 +476,30 @@ void twlMenuVideo_topGraphicRender(void) {
 	if (!loadFrameSprite) {
 		frameDelaySprite++;
 		if (highFPS) {
-			loadFrameSprite = (frameDelaySprite == (longVersion ? 3 : 2));
+			loadFrameSprite = (frameDelaySprite == (longVersion ? 2 : 1));
 		} else {
 			loadFrameSprite = (frameDelaySprite == (longVersion ? 2 : 1)+frameDelaySpriteEven);
 		}
 	}
 
 	if (loadFrameSprite) {
-		zoomingIconXpos[0] += 2;
-		zoomingIconYpos[0] += 3;
+		static int move2 = 2;
+		static int move3 = 3;
+		if (highFPS) {
+			move2 = 1;
+			switch (move3) {
+				case 1:
+				case 3:
+					move3 = 2;
+					break;
+				case 2:
+					move3 = 1;
+					break;
+			}
+		}
+
+		zoomingIconXpos[0] += move2;
+		zoomingIconYpos[0] += move3;
 		if (zoomingIconXpos[0] > 36) {
 			zoomingIconXpos[0] = 36;
 		}
@@ -492,8 +507,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[0] = 32;
 		}
 
-		zoomingIconXpos[1] += 3;
-		zoomingIconYpos[1] += 2;
+		zoomingIconXpos[1] += move3;
+		zoomingIconYpos[1] += move2;
 		if (zoomingIconXpos[1] > 80) {
 			zoomingIconXpos[1] = 80;
 		}
@@ -501,8 +516,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[1] = 12;
 		}
 
-		zoomingIconXpos[2] -= 3;
-		zoomingIconYpos[2] += 2;
+		zoomingIconXpos[2] -= move3;
+		zoomingIconYpos[2] += move2;
 		if (zoomingIconXpos[2] < 154) {
 			zoomingIconXpos[2] = 154;
 		}
@@ -510,8 +525,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[2] = 12;
 		}
 
-		zoomingIconXpos[3] -= 2;
-		zoomingIconYpos[3] += 2;
+		zoomingIconXpos[3] -= move2;
+		zoomingIconYpos[3] += move2;
 		if (zoomingIconXpos[3] < 202) {
 			zoomingIconXpos[3] = 202;
 		}
@@ -519,8 +534,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[3] = gbaIconYpos;
 		}
 
-		zoomingIconXpos[4] += 2;
-		zoomingIconYpos[4] -= 3;
+		zoomingIconXpos[4] += move2;
+		zoomingIconYpos[4] -= move3;
 		if (zoomingIconXpos[4] > 32) {
 			zoomingIconXpos[4] = 32;
 		}
@@ -528,8 +543,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[4] = 120;
 		}
 
-		zoomingIconXpos[5] += 3;
-		zoomingIconYpos[5] -= 2;
+		zoomingIconXpos[5] += move3;
+		zoomingIconYpos[5] -= move2;
 		if (zoomingIconXpos[5] > 80) {
 			zoomingIconXpos[5] = 80;
 		}
@@ -537,8 +552,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[5] = 152;
 		}
 
-		zoomingIconXpos[6] -= 3;
-		zoomingIconYpos[6] -= 3;
+		zoomingIconXpos[6] -= move3;
+		zoomingIconYpos[6] -= move3;
 		if (zoomingIconXpos[6] < 150) {
 			zoomingIconXpos[6] = 150;
 		}
@@ -546,8 +561,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[6] = 142;
 		}
 
-		zoomingIconXpos[7] -= 2;
-		zoomingIconYpos[7] -= 3;
+		zoomingIconXpos[7] -= move2;
+		zoomingIconYpos[7] -= move3;
 		if (zoomingIconXpos[7] < 202) {
 			zoomingIconXpos[7] = 202;
 		}
@@ -555,8 +570,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[7] = 120;
 		}
 
-		zoomingIconXpos[8] += 2;
-		zoomingIconYpos[8] += 2;
+		zoomingIconXpos[8] += move2;
+		zoomingIconYpos[8] += move2;
 		if (zoomingIconXpos[8] > 4) {
 			zoomingIconXpos[8] = 4;
 		}
@@ -564,8 +579,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[8] = 8;
 		}
 
-		zoomingIconXpos[9] += 2;
-		zoomingIconYpos[9] -= 2;
+		zoomingIconXpos[9] += move2;
+		zoomingIconYpos[9] -= move2;
 		if (zoomingIconXpos[9] > 8) {
 			zoomingIconXpos[9] = 8;
 		}
@@ -573,8 +588,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[9] = 192-40;
 		}
 
-		zoomingIconXpos[10] -= 2;
-		zoomingIconYpos[10] += 2;
+		zoomingIconXpos[10] -= move2;
+		zoomingIconYpos[10] += move2;
 		if (zoomingIconXpos[10] < 256-40) {
 			zoomingIconXpos[10] = 256-40;
 		}
@@ -582,8 +597,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			zoomingIconYpos[10] = 8;
 		}
 
-		zoomingIconXpos[11] -= 2;
-		zoomingIconYpos[11] -= 2;
+		zoomingIconXpos[11] -= move2;
+		zoomingIconYpos[11] -= move2;
 		if (zoomingIconXpos[11] < 256-36) {
 			zoomingIconXpos[11] = 256-36;
 		}
@@ -790,6 +805,7 @@ void twlMenuVideo(void) {
 
 	if (highFPS) {
 		*(u32*)(0x2FFFD0C) = 0x43535046;
+		swiWaitForVBlank();
 	}
 	fadeType = true;
 
@@ -803,7 +819,8 @@ void twlMenuVideo(void) {
 	extern bool twlMenuSplash;
 	twlMenuSplash = true;
 
-	for (int i = 0; i < (highFPS ? (longVersion ? ((75 * 6) + 30) : (75 * 3)) : (longVersion ? ((60 * 6) + 35) : (60 * 3))); i++) {
+	const int iEnd = (highFPS ? (longVersion ? ((72 * 6) + 30) : (72 * 3)) : (longVersion ? ((60 * 6) + 35) : (60 * 3)));
+	for (int i = 0; i < iEnd; i++) {
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 		//loadROMselectAsynch();

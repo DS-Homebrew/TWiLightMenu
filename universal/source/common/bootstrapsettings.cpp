@@ -42,6 +42,7 @@ void BootstrapSettings::loadSettings()
 	sdNand = bootstrapini.GetInt( "NDS-BOOTSTRAP", "SDNAND", sdNand);
 	consoleModel = (TWLSettings::TConsoleModel)bootstrapini.GetInt("NDS-BOOTSTRAP", "CONSOLE_MODEL", consoleModel);
 	bootstrapHotkey = strtol(bootstrapini.GetString("NDS-BOOTSTRAP", "HOTKEY", "284").c_str(), NULL, 16);
+	screenSwapHotkey = strtol(bootstrapini.GetString("NDS-BOOTSTRAP", "SCREEN_SWAP_HOTKEY", "740").c_str(), NULL, 16);
 	saveRelocation = (TWLSettings::TSaveRelocation)bootstrapini.GetInt( "NDS-BOOTSTRAP", "SAVE_RELOCATION", saveRelocation);
 }
 
@@ -68,6 +69,8 @@ void BootstrapSettings::saveSettings()
 	char hotkey[8] = {0};
 	itoa(bootstrapHotkey, hotkey, 16);
 	bootstrapini.SetString("NDS-BOOTSTRAP", "HOTKEY", hotkey);
+	itoa(screenSwapHotkey, hotkey, 16);
+	bootstrapini.SetString("NDS-BOOTSTRAP", "SCREEN_SWAP_HOTKEY", hotkey);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "SAVE_RELOCATION", saveRelocation);
 
 	bootstrapini.SaveIniFile(bootstrapinipath);

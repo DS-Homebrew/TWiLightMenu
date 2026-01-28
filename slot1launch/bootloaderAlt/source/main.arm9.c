@@ -53,7 +53,7 @@ volatile u32 arm9_BLANK_RAM = 0;
 External functions
 --------------------------------------------------------------------------*/
 extern void arm9_clearCache (void);
-
+extern __attribute__((noreturn)) void arm9_actual_jump(void* fn);
 
 void initMBKARM9() {
 	// default dsiware settings
@@ -242,8 +242,18 @@ void arm9_main (void) {
 	BG_PALETTE[0] = 0xFFFF;
 	dmaFill((u16*)&arm9_BLANK_RAM, BG_PALETTE+1, (2*1024)-2);
 	dmaFill((u16*)&arm9_BLANK_RAM, OAM, 2*1024);
-	dmaFill((u16*)&arm9_BLANK_RAM, (u16*)0x04000000, 0x56);  // Clear main display registers
-	dmaFill((u16*)&arm9_BLANK_RAM, (u16*)0x04001000, 0x56);  // Clear sub display registers
+	for (vu16 *p = (vu16*)&REG_DISPCNT; p <= (vu16*)&REG_MASTER_BRIGHT; p++)
+	{
+		// Skip VCOUNT. Writing to it was setting it to 0 causing a frame to be
+		// misrendered. This can also have side effects on 3DS, even though the
+		// official TWL_FIRM can recover from it.
+		if (p != (vu16*)&REG_VCOUNT)
+			*p = 0;
+	}
+	for (vu16 *p = (vu16*)&REG_DISPCNT_SUB; p <= (vu16*)&REG_MASTER_BRIGHT_SUB; p++)
+	{
+		*p = 0;
+	}
 	dmaFill((u16*)&arm9_BLANK_RAM, VRAM_A, 0x20000*3);		// Banks A, B, C
 	dmaFill((u16*)&arm9_BLANK_RAM, VRAM_D, 272*1024);		// Banks D (excluded), E, F, G, H, I
 
@@ -285,7 +295,6 @@ void arm9_main (void) {
 	
 	// arm9_errorOutput (*(u32*)(first), true);
 
-	VoidFn arm9code = *(VoidFn*)(0x27FFE24);
-	arm9code();
+	arm9_actual_jump(*(void**)(0x27FFE24));
 }
 

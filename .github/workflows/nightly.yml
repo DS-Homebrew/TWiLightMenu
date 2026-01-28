@@ -98,7 +98,8 @@ jobs:
           rm -rf TWiLightMenu/_nds/TWiLightMenu/unlaunch
           rm -rf TWiLightMenu/_nds/TWiLightMenu/bootplg.srldr
           rm -rf TWiLightMenu/_nds/TWiLightMenu/gbaswitch.srldr
-          7z a TWiLightMenu-3DS.7z TWiLightMenu
+          rm -rf TWiLightMenu/ntrboot.nds
+          7z a -md=16m TWiLightMenu-3DS.7z TWiLightMenu
           mv TWiLightMenu-3DS.7z ~/artifacts
 
           # Flashcard 7z
@@ -119,25 +120,25 @@ jobs:
           # Virtual Console Add-on 7z
           rm -rf TWiLightMenu
           cp -r 7zfile/Virtual\ Console/ TWiLightMenu
-          7z a AddOn-VirtualConsole.7z TWiLightMenu
+          7z a -md=16m AddOn-VirtualConsole.7z TWiLightMenu
           mv AddOn-VirtualConsole.7z ~/artifacts
 
           # Multimedia Add-on 7z
           rm -rf TWiLightMenu
           cp -r 7zfile/Multimedia/ TWiLightMenu
-          7z a AddOn-Multimedia.7z TWiLightMenu
+          7z a -md=16m AddOn-Multimedia.7z TWiLightMenu
           mv AddOn-Multimedia.7z ~/artifacts
 
           # Better DSi Menu Music Add-on 7z
           rm -rf TWiLightMenu
           cp -r 7zfile/Better\ DSi\ Menu\ Music/ TWiLightMenu
-          7z a AddOn-BetterDSiMenuMusic.7z TWiLightMenu
+          7z a -md=16m AddOn-BetterDSiMenuMusic.7z TWiLightMenu
           mv AddOn-BetterDSiMenuMusic.7z ~/artifacts
 
           # Extra UI Music Add-on 7z
           rm -rf TWiLightMenu
           cp -r 7zfile/Extra\ UI\ Music/ TWiLightMenu
-          7z a AddOn-ExtraUIMusic.7z TWiLightMenu
+          7z a -md=16m AddOn-ExtraUIMusic.7z TWiLightMenu
           mv AddOn-ExtraUIMusic.7z ~/artifacts
 
           # widescreen.pck

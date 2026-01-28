@@ -44,6 +44,7 @@
 #include "common/lodepng.h"
 #include "color.h"
 #include "fontHandler.h"
+#include "../iconTitle.h"
 #include "../ndsheaderbanner.h"
 #include "../errorScreen.h"
 #include "../date.h"
@@ -636,6 +637,8 @@ void vBlankHandler()
 			waitUntilFadeOut++;
 		}
 	}
+
+	loadDeferredIconPalettes();
 
 	static bool updateFrame = true;
 	static bool whiteScreenPrev = whiteScreen;

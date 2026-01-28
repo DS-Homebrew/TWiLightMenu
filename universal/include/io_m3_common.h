@@ -45,7 +45,8 @@ extern "C" {
 // Values for changing mode
 #define M3_MODE_RAM 0x00400006
 #define M3_MODE_ROM 0x00400004
-#define M3_MODE_MEDIA 0x00400003 
+#define M3_MODE_MEDIA 0x00400003
+#define M3_MODE_MAIN 0x00400000 // Untested
 
 extern void _M3_changeMode (u32 mode);
 

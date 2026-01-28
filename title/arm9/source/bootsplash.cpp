@@ -171,18 +171,18 @@ void bootSplashDSi(void) {
 			pressed &= ~KEY_LID;
 
 			if (splash.waitingForInput()) {
-				if (!custom && healthSafety.paused())
+				if (!custom && healthSafety.paused() && !ms().dsiSplashAutoSkip)
 					healthSafety.unpause();
 				if (pressed || ms().dsiSplashAutoSkip) {
 					splash.resume();
-					snd().playSelect();
+					if (!ms().dsiSplashAutoSkip) snd().playSelect();
 				}
 			}
 
 			if (healthSafety.waitingForInput()) {
 				if (pressed || ms().dsiSplashAutoSkip) {
 					healthSafety.resume();
-					snd().playSelect();
+					if (!ms().dsiSplashAutoSkip) snd().playSelect();
 				}
 			}
 

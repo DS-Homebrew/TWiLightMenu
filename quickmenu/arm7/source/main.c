@@ -32,6 +32,7 @@
 #include <maxmod7.h>
 #include "common/isPhatCheck.h"
 #include "common/arm7status.h"
+#include "common/picoLoader7.h"
 
 #define REG_SCFG_WL *(vu16*)0x4004020
 
@@ -78,6 +79,33 @@ void ReturntoDSiMenu(void) {
 		u8 readCommand = readPowerManagement(0x10);
 		readCommand |= BIT(0);
 		writePowerManagement(0x10, readCommand);
+	}
+}
+
+typedef void (*pico_loader_7_func_t)(void);
+
+volatile bool reset_pico = false;
+
+static void resetDSPico() {
+	memset((void*)0x40000B0, 0, 0x30);
+
+	REG_IME = IME_DISABLE;
+	REG_IE = 0;
+	REG_IF = ~0;
+
+	pload_header7_t* header7 = (pload_header7_t*)0x06000000;
+	// header7->dldiDriver = (void*)0x037F8000;
+	((pico_loader_7_func_t)header7->entryPoint)();
+}
+
+static void menuValue32Handler(u32 value, void* data) {
+	switch (value) {
+		case 0x4F434950: // 'PICO'
+			reset_pico = true;
+			break;
+		default:
+			ReturntoDSiMenu();
+			break;
 	}
 }
 
@@ -293,6 +321,7 @@ int main() {
 			backlightLevel = 4;
 	}
 
+	fifoSetValue32Handler(FIFO_USER_02, menuValue32Handler, 0);
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
@@ -344,10 +373,6 @@ int main() {
 			}
 		}
 
-		if (fifoCheckValue32(FIFO_USER_02)) {
-			ReturntoDSiMenu();
-		}
-
 		if (fifoGetValue32(FIFO_USER_04) == 1) {
 			changeBacklightLevel();
 			fifoSendValue32(FIFO_USER_04, 0);
@@ -359,11 +384,11 @@ int main() {
 				*(u32*)(0x2FFFD0C) = 0;
 			}
 			rebootTimer++;
-		}
-
-		if (*(u32*)(0x2FFFD0C) == 0x454D4D43) {
+		} else if (*(u32*)(0x2FFFD0C) == 0x454D4D43) {
 			my_sdmmc_get_cid(true, (u32*)0x2FFD7BC);	// Get eMMC CID
 			*(u32*)(0x2FFFD0C) = 0;
+		} else if (reset_pico) {
+			resetDSPico();
 		}
 		swiWaitForVBlank();
 	}

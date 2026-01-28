@@ -119,7 +119,7 @@ void SystemDetails::initFilesystem(const char *runningPath)
 		fatMountSimple("fat", &__my_io_dsisd);
 		_fatInitOk = flashcardFound();
 	} else {
-		fatMountSimple("sd", &__my_io_dsisd);
+		if (!sys().isRegularDS()) fatMountSimple("sd", &__my_io_dsisd);
 		fatMountSimple("fat", dldiGetInternal());
 		_fatInitOk = (sdFound() || flashcardFound());
 	}

@@ -61,6 +61,7 @@ static const char colorLutBlacklist[][4] = {
 	"ARZ", // MegaMan ZX
 	"YZX", // MegaMan ZX Advent
 	"AMH", // Metroid Prime Hunters
+	"YNP", // Need for Speed: ProStreet
 	"B3N", // Power Rangers: Samurai
 	"AQW", // Puzzle Quest: Challenge of the Warlords (DS version)
 	"BSY", // The Secret Saturdays: Beasts of the 5th Sun

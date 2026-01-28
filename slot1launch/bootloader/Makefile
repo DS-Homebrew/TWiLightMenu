@@ -16,10 +16,8 @@ UNIVERSAL	:=	../../universal
 TARGET		:=	load
 BUILD		:=	build
 DSIMODE_FULL_SOURCES := source/twltool source/polarssl source/gm9i
-SOURCES		:=	source $(UNIVERSAL)/source/tonccpy
-#SOURCES		:=	source $(UNIVERSAL)/source/tonccpy $(DSIMODE_FULL_SOURCES)
-INCLUDES	:=	build source $(UNIVERSAL)/include
-#INCLUDES		:=	build source $(UNIVERSAL)/include $(DSIMODE_FULL_SOURCES)
+SOURCES		:=	source $(UNIVERSAL)/source/tonccpy $(DSIMODE_FULL_SOURCES)
+INCLUDES		:=	build source $(UNIVERSAL)/include $(DSIMODE_FULL_SOURCES)
 DATA		:=	../data
 SPECS		:=  specs
  
@@ -69,7 +67,7 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	cardengine_arm7.bin
+BINFILES	:=	
 
 export OFILES	:=	$(addsuffix .o,$(BINFILES)) $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
  

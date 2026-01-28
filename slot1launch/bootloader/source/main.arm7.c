@@ -52,14 +52,11 @@
 
 #define REG_GPIO_WIFI *(vu16*)0x4004C04
 
-//#define FULL_DSI_MODE_ENABLED
-
 #include "common.h"
 #include "dmaTwl.h"
 #include "common/tonccpy.h"
 #include "read_card.h"
 #include "module_params.h"
-#include "cardengine_arm7_bin.h"
 #include "hook.h"
 #include "find.h"
 
@@ -96,12 +93,15 @@ int twlCfgLang = 0;
 
 bool gameSoftReset = false;
 
-void arm7_clearmem (void* loc, size_t len);
+extern void arm7_clearmem (void* loc, size_t len);
+extern __attribute__((noreturn)) void arm7_actual_jump(void* fn);
 
 static const u32 cheatDataEndSignature[2] = {0xCF000000, 0x00000000};
 
 // Module params
 static const u32 moduleParamsSignature[2] = {0xDEC00621, 0x2106C0DE};
+static module_params_t emulatedModuleParams; 
+static module_params_t* moduleParams;
 
 // Sleep input write
 static const u32 sleepInputWriteEndSignature1[2]     = {0x04000136, 0x027FFFA8};
@@ -119,16 +119,33 @@ const char* getRomTid(const tNDSHeader* ndsHeader) {
 	return romTid;
 }
 
-static module_params_t* moduleParams;
-
 u32* findModuleParamsOffset(const tNDSHeader* ndsHeader) {
 	//dbg_printf("findModuleParamsOffset:\n");
 
 	u32* moduleParamsOffset = findOffset(
 			(u32*)ndsHeader->arm9destination, ndsHeader->arm9binarySize,
-			moduleParamsSignature, 2
+			moduleParamsSignature, 2 
 		);
-	return moduleParamsOffset;
+
+	// Return NULL if nothing is found
+	if(moduleParamsOffset == NULL) {
+		if (memcmp(ndsHeader->gameCode, "AS2E", 4) == 0) // Spider-Man 2 (USA) - Special case
+		{
+			emulatedModuleParams.sdk_version = LAST_NON_SDK5_VERSION;
+			return (u32*)&emulatedModuleParams;
+		}
+
+		return NULL;
+	}
+
+	uintptr_t subtract_value = sizeof(module_params_t) - (sizeof(u32) * 2);
+	uintptr_t base_ptr = (uintptr_t)moduleParamsOffset;
+
+	// This would be a really weird case. Return NULL
+	if(base_ptr < subtract_value)
+		return NULL;
+
+	return (u32*)(base_ptr - subtract_value);
 }
 
 u32* findSleepInputWriteOffset(const tNDSHeader* ndsHeader, const module_params_t* moduleParams) {
@@ -137,7 +154,7 @@ u32* findSleepInputWriteOffset(const tNDSHeader* ndsHeader, const module_params_
 	u32* offset = NULL;
 	u32* endOffset = findOffset(
 		(u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize,
-		(moduleParams->sdk_version > 0x5000000) ? sleepInputWriteEndSignature5 : sleepInputWriteEndSignature1, 2
+		isSdk5(moduleParams) ? sleepInputWriteEndSignature5 : sleepInputWriteEndSignature1, 2
 	);
 	if (endOffset) {
 		offset = findOffsetBackwards(
@@ -270,9 +287,9 @@ static void my_readUserSettings(tNDSHeader* ndsHeader) {
 		}
 	}
 
-	PERSONAL_DATA* personalData = (PERSONAL_DATA*)((u32)__NDSHeader - (u32)ndsHeader + (u32)PersonalData); //(u8*)((u32)ndsHeader - 0x180)
+	PERSONAL_DATA* personalData = (PERSONAL_DATA*)((u32)ndsHeader - ((u32)__NDSHeader - (u32)PersonalData)); //(u8*)((u32)ndsHeader - 0x180)
 
-	tonccpy(PersonalData, currentSettings, sizeof(PERSONAL_DATA));
+	tonccpy(personalData, currentSettings, sizeof(PERSONAL_DATA));
 
 	if (useTwlCfg && (language == 0xFF || language == -1)) {
 		language = twlCfgLang;
@@ -397,12 +414,15 @@ void arm7_resetMemory (void)
 	// clear more of EXRAM, skipping the cheat data section
 	toncset ((void*)0x023F8000, 0, 0x8000);
 
-	if(my_isDSiMode() || swiIsDebugger())
-		memset_addrs_arm7(0x02400000, 0x02800000); // Clear the rest of EXRAM
+	if (my_isDSiMode())
+		tonccpy((void*)0x02400000, (void*)0x02000000, 0x4000); // Backup TWLCFG for use with TWLMenu++ on flashcards
+
+	if (my_isDSiMode() || swiIsDebugger())
+		memset_addrs_arm7(0x02404000, 0x02800000); // Clear the rest of EXRAM (excluding TWLCFG backup)
 
 	if (my_isDSiMode()) {
 		// clear last part of EXRAM
-		memset_addrs_arm7(0x02800000, 0x02FFD7BC); // Leave eMMC CID intact
+		memset_addrs_arm7(0x02810004, 0x02FFD7BC); // Leave eMMC CID intact
 		memset_addrs_arm7(0x02FFD7CC, 0x03000000);
 	}
 
@@ -810,8 +830,7 @@ void arm7_startBinary (void) {
 	REG_AUXIE = 0;
 	REG_AUXIF = ~0;
 	// Start ARM7
-	VoidFn arm7code = (VoidFn)ndsHeader->arm7executeAddress;
-	arm7code();
+	arm7_actual_jump((void*)ndsHeader->arm7executeAddress);
 }
 
 
@@ -957,7 +976,7 @@ void arm7_main (void) {
 			dsiModeConfirmed = twlMode;
 		} else {
 			#ifdef FULL_DSI_MODE_ENABLED
-			dsiModeConfirmed = twlMode && ROMsupportsDsiMode(&dsiHeaderTemp->ndshdr);
+			dsiModeConfirmed = twlMode && ROMsupportsDsiMode(&dsiHeaderTemp->ndshdr) && (*(u32*)(0x023F0000) == 0xCF000000 || !runCardEngine);
 			#else
 			dsiModeConfirmed = 0;
 			#endif
@@ -966,6 +985,8 @@ void arm7_main (void) {
 
 	if (dsiModeConfirmed) {
 		if (dsiHeaderTemp->arm9ibinarySize > 0) {
+			memset_addrs_arm7(0x02800000, 0x02810004);
+
 			cardRead((u32)dsiHeaderTemp->arm9iromOffset, (u32*)dsiHeaderTemp->arm9idestination, dsiHeaderTemp->arm9ibinarySize);
 		}
 		if (dsiHeaderTemp->arm7ibinarySize > 0) {
@@ -1025,14 +1046,14 @@ void arm7_main (void) {
 
 	ndsHeader = loadHeader(dsiHeaderTemp);
 
+	my_readUserSettings(ndsHeader); // Header has to be loaded first
+
 	bool isDSBrowser = (memcmp(ndsHeader->gameCode, "UBRP", 4) == 0);
 
 	arm9_extendedMemory = (dsiModeConfirmed || isDSBrowser);
 	if (!arm9_extendedMemory) {
 		tonccpy((u32*)0x023FF000, (u32*)(isSdk5(moduleParams) ? 0x02FFF000 : 0x027FF000), 0x1000);
 	}
-
-	my_readUserSettings(ndsHeader); // Header has to be loaded first
 
 	if (my_isDSiMode()) {
 		if ((REG_SNDEXTCNT & SNDEXTCNT_ENABLE) && ((!soundFreq && (REG_SNDEXTCNT & BIT(13))) || (soundFreq && !(REG_SNDEXTCNT & BIT(13))))) {
@@ -1058,14 +1079,14 @@ void arm7_main (void) {
 
 			REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
 
-			if (twlClock) {
-				REG_SCFG_CLK = 0x0181;
-			} else {
-				REG_SCFG_CLK = 0x0180;
-			}
 			if (!sdAccess) {
+				REG_SCFG_CLK = 0x0180;
 				REG_SCFG_EXT = 0x93FBFB06;
 			}
+			else {
+				REG_SCFG_CLK = 0x0181;
+			}
+
 			// Used by ARM7 binaries to determine DSi mode...
 			toncset((u8*)0x0380FFC0, 0, 0x10);
 		}
@@ -1097,7 +1118,8 @@ void arm7_main (void) {
 		// WRAM-A mapped to the 0x37C0000 - 0x37FFFFF area : 256k
 		REG_MBK6=0x080037C0;
 
-		copyLoop ((u32*)ENGINE_LOCATION_ARM7, (u32*)cardengine_arm7_bin, cardengine_arm7_bin_size);
+		const u32 cardengine_arm7_bin_size = *(u32*)0x02800000;
+		copyLoop ((u32*)ENGINE_LOCATION_ARM7, (u32*)0x02800004, cardengine_arm7_bin_size);
 		errorCode = hookNdsRetail(ndsHeader, (u32*)ENGINE_LOCATION_ARM7);
 		if (errorCode == ERR_NONE) {
 			nocashMessage("card hook Sucessfull");
@@ -1121,6 +1143,7 @@ void arm7_main (void) {
 
 	arm9_boostVram = boostVram;
 	arm9_scfgUnlock = scfgUnlock;
+	arm9_twlClock = twlClock;
 	arm9_isSdk5 = isSdk5(moduleParams);
 	arm9_runCardEngine = runCardEngine;
 
@@ -1141,7 +1164,5 @@ void arm7_main (void) {
 	setMemoryAddress(ndsHeader);
 
 	arm7_startBinary();
-
-	while (1);
 }
 

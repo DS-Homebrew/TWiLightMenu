@@ -21,7 +21,6 @@
 
 #include "hook.h"
 #include "common.h"
-#include "cardengine_arm7_bin.h"
 
 extern unsigned long language;
 extern bool gameSoftReset;

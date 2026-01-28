@@ -81,26 +81,24 @@ bool my_isDSiMode() {
 	return ((vu8)scfgRomBak == 1);
 }
 
-bool useTwlCfg = false;
-int twlCfgLang = 0;
-
 bool gameSoftReset = false;
 
-void arm7_clearmem (void* loc, size_t len);
+extern void arm7_clearmem (void* loc, size_t len);
+extern __attribute__((noreturn)) void arm7_actual_jump(void* fn);
 extern void ensureBinaryDecompressed(const tNDSHeader* ndsHeader, module_params_t* moduleParams);
 
 static const u32 cheatDataEndSignature[2] = {0xCF000000, 0x00000000};
 
 // Module params
 static const u32 moduleParamsSignature[2] = {0xDEC00621, 0x2106C0DE};
+static module_params_t emulatedModuleParams; 
+static module_params_t* moduleParams;
 
 // Sleep input write
 static const u32 sleepInputWriteEndSignature1[2]     = {0x04000136, 0x027FFFA8};
 static const u32 sleepInputWriteEndSignature5[2]     = {0x04000136, 0x02FFFFA8};
 static const u32 sleepInputWriteSignature[1]         = {0x13A04902};
 static const u16 sleepInputWriteBeqSignatureThumb[1] = {0xD000};
-
-static module_params_t* moduleParams;
 
 u32* findModuleParamsOffset(const tNDSHeader* ndsHeader) {
 	//dbg_printf("findModuleParamsOffset:\n");
@@ -109,7 +107,26 @@ u32* findModuleParamsOffset(const tNDSHeader* ndsHeader) {
 			(u32*)ndsHeader->arm9destination, ndsHeader->arm9binarySize,
 			moduleParamsSignature, 2
 		);
-	return moduleParamsOffset;
+
+	// Return NULL if nothing is found
+	if(moduleParamsOffset == NULL) {
+		if (memcmp(ndsHeader->gameCode, "AS2E", 4) == 0) // Spider-Man 2 (USA) - Special case
+		{
+			emulatedModuleParams.sdk_version = LAST_NON_SDK5_VERSION;
+			return (u32*)&emulatedModuleParams;
+		}
+
+		return NULL;
+	}
+
+	uintptr_t subtract_value = sizeof(module_params_t) - (sizeof(u32) * 2);
+	uintptr_t base_ptr = (uintptr_t)moduleParamsOffset;
+
+	// This would be a really weird case. Return NULL
+	if(base_ptr < subtract_value)
+		return NULL;
+
+	return (u32*)(base_ptr - subtract_value);
 }
 
 u32* findSleepInputWriteOffset(const tNDSHeader* ndsHeader, const module_params_t* moduleParams) {
@@ -118,7 +135,7 @@ u32* findSleepInputWriteOffset(const tNDSHeader* ndsHeader, const module_params_
 	u32* offset = NULL;
 	u32* endOffset = findOffset(
 		(u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize,
-		(moduleParams->sdk_version > 0x5000000) ? sleepInputWriteEndSignature5 : sleepInputWriteEndSignature1, 2
+		isSdk5(moduleParams) ? sleepInputWriteEndSignature5 : sleepInputWriteEndSignature1, 2
 	);
 	if (endOffset) {
 		offset = findOffsetBackwards(
@@ -278,6 +295,9 @@ void arm7_resetMemory (void)
 
 	// clear last part of EXRAM, skipping the ARM9's section
 	arm7_clearmem ((void*)0x023FE000, 0x2000);
+
+	if (my_isDSiMode())
+		tonccpy((void*)0x02400000, (void*)0x02000000, 0x4000); // Backup TWLCFG for use with TWLMenu++ on flashcards
 
 	REG_IE = 0;
 	REG_IF = ~0;
@@ -616,8 +636,7 @@ void arm7_startBinary (void)
 	while (REG_VCOUNT==191);
 
 	// Start ARM7
-	VoidFn arm7code = *(VoidFn*)(0x27FFE34);
-	arm7code();
+	arm7_actual_jump(*(void**)(0x27FFE34));
 }
 
 
@@ -743,13 +762,11 @@ void arm7_main (void) {
 	//	fixFlashcardForDSiMode();
 	//} else {
 	//	REG_SCFG_ROM = 0x703;
-		if (twlClock) {
-			REG_SCFG_CLK = 0x0181;
-		} else {
-			REG_SCFG_CLK = 0x0180;
-		}
 		if (!sdAccess) {
+			REG_SCFG_CLK = 0x0180;
 			REG_SCFG_EXT = 0x93FBFB06;
+		} else {
+			REG_SCFG_CLK = 0x0181;
 		}
 	//}
 
@@ -803,7 +820,5 @@ void arm7_main (void) {
 	}
 
 	arm7_startBinary();
-
-	while (1);
 }
 

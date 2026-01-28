@@ -891,7 +891,7 @@ bool donorRomMsg(void) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
 			if (memcmp(gameTid[cursorPosOnScreen], compatibleGameListB4DSMEP[i], (compatibleGameListB4DSMEP[i][3] != 0 ? 4 : 3)) == 0) {
 				// Found match
-				vramWifi = (compatibleGameListB4DSMEPID[i] == 3);
+				vramWifi = (compatibleGameListB4DSMEPID[i] == 3 || compatibleGameListB4DSMEPID[i] == 4);
 				break;
 			}
 		}
@@ -1192,17 +1192,15 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	bool mepFound = false;
 	int msgId = 0;
 
-	bool b4dsDebugConsole = ((sys().isRegularDS() && sys().dsDebugRam()) || (dsiFeatures() && bs().b4dsMode == 2));
+	const bool b4dsDebugConsole = ((sys().isRegularDS() && sys().dsDebugRam()) || (dsiFeatures() && bs().b4dsMode == 2));
 
 	// Find DSiWare title which requires Slot-2 RAM expansion such as the Memory Expansion Pak
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
 		if (memcmp(gameTid[cursorPosOnScreen], compatibleGameListB4DSMEP[i], (compatibleGameListB4DSMEP[i][3] != 0 ? 4 : 3)) == 0) {
 			// Found match
-			msgId = (compatibleGameListB4DSMEPID[i] == 2) ? 11 : 10;
-			if ((compatibleGameListB4DSMEPID[i] == 0 || compatibleGameListB4DSMEPID[i] == 3) && b4dsDebugConsole) {
-				// Do nothing
-			} else if (compatibleGameListB4DSMEPID[i] == 3) {
+			const bool vramWifiDonorRequired = (compatibleGameListB4DSMEPID[i] == 3 || compatibleGameListB4DSMEPID[i] == 4);
+			if (vramWifiDonorRequired && !b4dsDebugConsole) {
 				msgId = 12;
 
 				const char *bootstrapinipath = sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
@@ -1211,19 +1209,27 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 				const bool donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
 
 				showMsg = !donorRomFound;
-			} else if (sys().isRegularDS()) {
-				/*if (*(u16*)0x020000C0 == 0x5A45) {
+			}
+			if (!showMsg) {
+				msgId = (compatibleGameListB4DSMEPID[i] == 2) ? 11 : 10;
+				if (sys().isRegularDS()) {
+					/*if (*(u16*)0x020000C0 == 0x5A45) {
+						showMsg = true;
+					} else*/
+					const bool mepRequired = ((compatibleGameListB4DSMEPID[i] == 0 && !b4dsDebugConsole)
+											|| compatibleGameListB4DSMEPID[i] == 1
+											|| compatibleGameListB4DSMEPID[i] == 2
+											|| (compatibleGameListB4DSMEPID[i] == 4 && !b4dsDebugConsole));
+					if (mepRequired && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
+						const u16 hwordBak = *(vu16*)(0x08240000);
+						*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
+						mepFound = (*(vu16*)(0x08240000) == 1);
+						*(vu16*)(0x08240000) = hwordBak;
+						showMsg = (!mepFound || (compatibleGameListB4DSMEPID[i] == 2 && *(u16*)0x020000C0 == 0)); // Show message if not found
+					}
+				} else {
 					showMsg = true;
-				} else*/
-				if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
-					u16 hwordBak = *(vu16*)(0x08240000);
-					*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
-					mepFound = (*(vu16*)(0x08240000) == 1);
-					*(vu16*)(0x08240000) = hwordBak;
-					showMsg = (!mepFound || (compatibleGameListB4DSMEPID[i] == 2 && *(u16*)0x020000C0 == 0)); // Show message if not found
 				}
-			} else {
-				showMsg = true;
 			}
 			break;
 		}
@@ -1408,7 +1414,7 @@ bool dsiWareCompatibleB4DS(void) {
 			break;
 		}
 	}
-	if (!res && (sys().dsDebugRam() || bs().b4dsMode == 2)) {
+	if (!res && ((sys().isRegularDS() && sys().dsDebugRam()) || (dsiFeatures() && bs().b4dsMode == 2))) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebug)/sizeof(compatibleGameListB4DSDebug[0]); i++) {
 			if (memcmp(gameTid[cursorPosOnScreen], compatibleGameListB4DSDebug[i], (compatibleGameListB4DSDebug[i][3] != 0 ? 4 : 3)) == 0) {
 				// Found match
@@ -1745,7 +1751,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					proceedToLaunch = cannotLaunchMsg(gameTid[cursorPosOnScreen][0]);
 					refreshBanners(screenOffset, fileOffset, dirContents);
 				}
-				bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);
+				const bool useBootstrapAnyway = ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) || !ms().secondaryDevice);
 				if (proceedToLaunch && useBootstrapAnyway && bnrRomType[cursorPosOnScreen] == 0 && !isDSiWare[cursorPosOnScreen]
 				 && isHomebrew[cursorPosOnScreen] == 0
 				 && checkIfDSiMode(dirContents.at(fileOffset).name)) {
@@ -1961,6 +1967,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 						recentlyPlayedIni.SetStringVector("RECENT", path, recentlyPlayed, ':');
 						recentlyPlayedIni.SaveIniFile(recentlyPlayedIniPath);
+						recentlyPlayed.clear();
 
 						CIniFile timesPlayedIni(timesPlayedIniPath);
 						timesPlayedIni.SetInt(path, entry->name, (timesPlayedIni.GetInt(path, entry->name, 0) + 1));

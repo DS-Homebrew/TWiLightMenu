@@ -1546,19 +1546,43 @@ void loadRotatingCubes() {
 		}
 
 		if (doRead) {
-			// Compatible with RVID v2
+			// Compatible with RVID v2 & v3
+			int rvidVer = 0;
+			fseek(videoFrameFile, 0x4, SEEK_SET);
+			fread((void*)&rvidVer, sizeof(u32), 1, videoFrameFile);
+
 			extern int rocketVideo_videoFrames;
-			fseek(videoFrameFile, 0x8, SEEK_SET);
+			// fseek(videoFrameFile, 0x8, SEEK_SET);
 			fread((void*)&rocketVideo_videoFrames, sizeof(u32), 1, videoFrameFile);
 			rocketVideo_videoFrames--;
 
 			extern u8 rocketVideo_fps;
-			fseek(videoFrameFile, 0xC, SEEK_SET);
+			// fseek(videoFrameFile, 0xC, SEEK_SET);
 			fread((void*)&rocketVideo_fps, sizeof(u8), 1, videoFrameFile);
+			if (rocketVideo_fps >= 0x80) {
+				rocketVideo_fps -= 0x80;
+			}
 
 			extern u8 rocketVideo_height;
 			// fseek(videoFrameFile, 0xD, SEEK_SET);
 			fread((void*)&rocketVideo_height, sizeof(u8), 1, videoFrameFile);
+
+			if (rvidVer == 3) {
+				u8 isDualScreen = 0;
+				fseek(videoFrameFile, 0xF, SEEK_SET);
+				fread((void*)&isDualScreen, sizeof(u8), 1, videoFrameFile);
+
+				if (isDualScreen) {
+					fclose(videoFrameFile);
+					return;
+				}
+			}
+
+			u8 rvidBmpMode = 1;
+			if (rvidVer == 3) {
+				fseek(videoFrameFile, 0x13, SEEK_SET);
+				fread((void*)&rvidBmpMode, sizeof(u8), 1, videoFrameFile);
+			}
 
 			u32 framesSize = (0x200*rocketVideo_height)*(rocketVideo_videoFrames+1);
 			if (rocketVideo_height > 144 || framesSize > 0x700000) {
@@ -1576,17 +1600,66 @@ void loadRotatingCubes() {
 			} */
 
 			u32 framesOffset = 0x200;
-			fseek(videoFrameFile, 0x14, SEEK_SET);
-			fread((void*)&framesOffset, sizeof(u32), 1, videoFrameFile);
+			if (rvidVer == 3) {
+				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
 
-			fseek(videoFrameFile, framesOffset, SEEK_SET);
+				u16* colors256 = NULL;
+				u8* frameBuffer256 = NULL;
+				if (rvidBmpMode == 0) {
+					colors256 = new u16[256];
+					frameBuffer256 = new u8[0xC000];
+				}
+				u32 frameTableOffset = 0x200;
+				for (int i = 0; i <= rocketVideo_videoFrames; i++) {
+					fseek(videoFrameFile, frameTableOffset, SEEK_SET);
+					fread((void*)&framesOffset, sizeof(u32), 1, videoFrameFile);
 
-			fread(rotatingCubesLocation, 1, framesSize, videoFrameFile);
+					fseek(videoFrameFile, framesOffset, SEEK_SET);
+					if (rvidBmpMode == 0) {
+						fread(colors256, 2, 256, videoFrameFile);
+						fread(frameBuffer256, 1, 0x100*rocketVideo_height, videoFrameFile);
 
-			if (colorTable) {
+						if (colorTable) {
+							for (int c = 0; c < 256; c++) {
+								colors256[c] = colorTable[colors256[c] % 0x8000] | BIT(15);
+							}
+						} else {
+							for (int c = 0; c < 256; c++) {
+								colors256[c] |= BIT(15);
+							}
+						}
+
+						for (int p = 0; p < 0x100*rocketVideo_height; p++) {
+							rotatingCubesLocation16[((0x100*rocketVideo_height)*i)+p] = colors256[frameBuffer256[p]];
+						}
+					} else {
+						fread(rotatingCubesLocation+((0x200*rocketVideo_height)*i), 1, 0x200*rocketVideo_height, videoFrameFile);
+					}
+
+					frameTableOffset += 4;
+				}
+				if (rvidBmpMode == 0) {
+					delete[] colors256;
+					delete[] frameBuffer256;
+				}
+			} else {
+				fseek(videoFrameFile, 0x14, SEEK_SET);
+				fread((void*)&framesOffset, sizeof(u32), 1, videoFrameFile);
+
+				fseek(videoFrameFile, framesOffset, SEEK_SET);
+
+				fread(rotatingCubesLocation, 1, framesSize, videoFrameFile);
+			}
+
+			if (colorTable && rvidBmpMode > 0) {
 				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
 				for (u32 i = 0; i < framesSize/2; i++) {
 					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i] % 0x8000] | BIT(15);
+				}
+			} else if (rvidBmpMode == 2) {
+				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
+				for (u32 i = 0; i < framesSize/2; i++) {
+					rotatingCubesLocation16[i] |= BIT(15);
 				}
 			}
 

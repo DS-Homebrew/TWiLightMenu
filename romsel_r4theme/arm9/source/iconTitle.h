@@ -12,6 +12,7 @@ void iconTitleInit();
  * they have been corrupted.
  */
 void reloadIconPalettes();
+void loadDeferredIconPalettes();
 
 void loadConsoleIcons();
 void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv);

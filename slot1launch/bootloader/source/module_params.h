@@ -3,6 +3,10 @@
 
 #include <nds/ndstypes.h>
 
+// Not precise, since it doesn't really matter...
+#define FIRST_SDK5_VERSION 0x05000000
+#define LAST_NON_SDK5_VERSION (FIRST_SDK5_VERSION - 1)
+
 typedef struct {
 	u32 auto_load_list_offset;
 	u32 auto_load_list_end;
@@ -16,7 +20,7 @@ typedef struct {
 } module_params_t;
 
 inline bool isSdk5(const module_params_t* moduleParams) {
-	return (moduleParams->sdk_version > 0x5000000);
+	return (moduleParams == NULL) || (moduleParams->sdk_version >= FIRST_SDK5_VERSION);
 }
 
 #endif // MODULE_PARAMS_H

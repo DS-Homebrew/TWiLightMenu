@@ -147,10 +147,9 @@ void passArgs_ARM7 (void) {
 
 	argDst = (u32*)((ARM9_DST + ARM9_LEN + 3) & ~3);		// Word aligned
 
-	if (ARM9_LEN > 0x380000) {
+	if (ARM9_LEN > 0x3F4000) {
 		argDst = (u32*)(TEMP_MEM - ((argSize/4)*4));
-	} else
-	if (dsiMode && (*(u8*)(NDS_HEAD + 0x012) & BIT(1))) {
+	} else if (dsiMode && (*(u8*)(NDS_HEAD + 0x012) & BIT(1))) {
 		u32 ARM9i_DST = *((u32*)(TWL_HEAD + 0x1C8));
 		u32 ARM9i_LEN = *((u32*)(TWL_HEAD + 0x1CC));
 		if (ARM9i_LEN) {

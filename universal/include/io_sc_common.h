@@ -43,6 +43,7 @@ extern "C" {
 #define SC_MODE_RAM 0x5
 #define SC_MODE_MEDIA 0x3 
 #define SC_MODE_RAM_RO 0x1
+#define SC_MODE_MAIN 0
 
 extern void _SC_changeMode (u8 mode);
 

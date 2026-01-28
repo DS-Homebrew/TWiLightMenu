@@ -1,6 +1,8 @@
 # Binary File
 *.nds
 *.NDS
+*.dsi
+*.DSI
 *.cia
 *.app
 *.srldr

@@ -60,6 +60,7 @@ extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 
+extern const char* mainSrldrPath(const bool sdPath);
 extern const char *unlaunchAutoLoadID;
 extern void unlaunchRomBoot(std::string_view rom);
 
@@ -646,7 +647,6 @@ void launchDsClassicMenu(void) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch DS Classic Menu
@@ -668,7 +668,6 @@ void launchSettings(void) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch TWLMenu++ Settings
@@ -755,7 +754,6 @@ void launchPictochat(const vector<DirEntry>& dirContents) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch Pictochat
@@ -795,11 +793,24 @@ void launchPictochat(const vector<DirEntry>& dirContents) {
 		bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && (!ms().secondaryDevice || !bs().b4dsMode)));
 		bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", 1);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", 2);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", 3);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", 4);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", 5);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", 6);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", 7);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", 8);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", 9);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", 10);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", 11);
 		bootstrapini.SaveIniFile(bootstrapinipath);
 		int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
 		char text[32];
@@ -807,8 +818,10 @@ void launchPictochat(const vector<DirEntry>& dirContents) {
 		printLarge(false, 4, 4, text);
 		if (err == 1) {
 			printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+			printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+		} else {
+			printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 		}
-		printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 		updateText(false);
 		fadeType = true;
 		int pressed = 0;
@@ -906,7 +919,6 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch DS Download Play
@@ -979,11 +991,24 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 		bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && (!ms().secondaryDevice || !bs().b4dsMode)));
 		bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", 1);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", 2);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", 3);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", 4);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", 5);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", 6);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", 7);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", 8);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", 9);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", 10);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", 11);
 		bootstrapini.SaveIniFile(bootstrapinipath);
 		int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
 		char text[32];
@@ -991,8 +1016,10 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 		printLarge(false, 4, 4, text);
 		if (err == 1) {
 			printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+			printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+		} else {
+			printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 		}
-		printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 		updateText(false);
 		fadeType = true;
 		int pressed = 0;
@@ -1088,7 +1115,6 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().internetBrowserLaunched = true;
 	ms().saveSettings();
@@ -1252,8 +1278,21 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 		}
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && (!ms().secondaryDevice || !bs().b4dsMode)));
 		bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", 1);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", 2);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", 3);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", 4);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", 5);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", 6);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", 7);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", 8);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", 9);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", 10);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", 11);
 		bootstrapini.SaveIniFile(bootstrapinipath);
 
 		if (ms().theme == TWLSettings::EThemeHBL) {
@@ -1268,8 +1307,10 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 		printLarge(false, 4, 4, text);
 		if (err == 1) {
 			printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+			printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
+		} else {
+			printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 		}
-		printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 		updateText(false);
 		fadeType = true;
 		int pressed = 0;
@@ -1302,7 +1343,6 @@ void launchManual(void) {
 	for (int i = 0; i < 60; i++) {
 		bgOperations(true);
 	}
-	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch manual
@@ -1325,7 +1365,6 @@ void exitToSystemMenu(void) {
 		bgOperations(true);
 	}
 	
-	mmEffectCancelAll();
 	snd().stopStream();
 
 	if (settingsChanged) {
@@ -1380,8 +1419,6 @@ void switchDevice(void) {
 			for (int i = 0; i < 60; i++) {
 				bgOperations(true);
 			}
-			mmEffectCancelAll();
-
 			snd().stopStream();
 		}
 
@@ -1413,7 +1450,16 @@ void switchDevice(void) {
 }
 
 void launchGba(void) {
-	if (((u8*)GBAROM)[0xB2] != 0x96) {
+	extern void s2RamAccessAlt(bool open);
+
+	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
+		while (dmaBusy(1)); // Wait for frame to finish rendering
+	}
+	s2RamAccessAlt(false);
+	const bool validRom = (((u8*)GBAROM)[0xB2] == 0x96);
+	s2RamAccessAlt(true);
+
+	if (!validRom) {
 		snd().playWrong();
 		return;
 	}
@@ -1427,7 +1473,6 @@ void launchGba(void) {
 		bgOperations(true);
 	}
 	
-	mmEffectCancelAll();
 	snd().stopStream();
 
 	ms().slot1Launched = false;
@@ -1484,6 +1529,7 @@ void launchGba(void) {
 			stop();
 		}
 	} else {*/
+		s2RamAccessAlt(false);
 		gbaSwitch();
 	//}
 }
@@ -1745,7 +1791,7 @@ bool donorRomMsg(const char *filename) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
 			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSMEP[i], (compatibleGameListB4DSMEP[i][3] != 0 ? 4 : 3)) == 0) {
 				// Found match
-				vramWifi = (compatibleGameListB4DSMEPID[i] == 3);
+				vramWifi = (compatibleGameListB4DSMEPID[i] == 3 || compatibleGameListB4DSMEPID[i] == 4);
 				break;
 			}
 		}
@@ -2114,22 +2160,25 @@ bool dsiWareInDSModeMsg(std::string filename) {
 	return proceedToLaunch;
 }
 
-bool dsiWareRAMLimitMsg(std::string filename) {
+static bool dsiWareRAMLimitMsgPrepped = false;
+static bool dsiWareRAMLimitMsg_showMsg = false;
+static bool dsiWareRAMLimitMsg_mepFound = false;
+static int dsiWareRAMLimitMsg_msgId = 0;
+
+void dsiWareRAMLimitMsgPrep(void) {
 	bool showMsg = false;
 	bool mepFound = false;
 	int msgId = 0;
 
-	bool b4dsDebugConsole = ((sys().isRegularDS() && sys().dsDebugRam()) || (dsiFeatures() && bs().b4dsMode == 2));
+	const bool b4dsDebugConsole = ((sys().isRegularDS() && sys().dsDebugRam()) || (dsiFeatures() && bs().b4dsMode == 2));
 
 	// Find DSiWare title which requires Slot-2 RAM expansion such as the Memory Expansion Pak
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSMEP)/sizeof(compatibleGameListB4DSMEP[0]); i++) {
 		if (memcmp(gameTid[CURPOS], compatibleGameListB4DSMEP[i], (compatibleGameListB4DSMEP[i][3] != 0 ? 4 : 3)) == 0) {
 			// Found match
-			msgId = (compatibleGameListB4DSMEPID[i] == 2) ? 11 : 10;
-			if ((compatibleGameListB4DSMEPID[i] == 0 || compatibleGameListB4DSMEPID[i] == 3) && b4dsDebugConsole) {
-				// Do nothing
-			} else if (compatibleGameListB4DSMEPID[i] == 3) {
+			const bool vramWifiDonorRequired = (compatibleGameListB4DSMEPID[i] == 3 || compatibleGameListB4DSMEPID[i] == 4);
+			if (vramWifiDonorRequired && !b4dsDebugConsole) {
 				msgId = 12;
 
 				const char *bootstrapinipath = sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
@@ -2138,19 +2187,27 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 				const bool donorRomFound = (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) == 0);
 
 				showMsg = !donorRomFound;
-			} else if (sys().isRegularDS()) {
-				/*if (*(u16*)0x020000C0 == 0x5A45) {
+			}
+			if (!showMsg) {
+				msgId = (compatibleGameListB4DSMEPID[i] == 2) ? 11 : 10;
+				if (sys().isRegularDS()) {
+					/*if (*(u16*)0x020000C0 == 0x5A45) {
+						showMsg = true;
+					} else*/
+					const bool mepRequired = ((compatibleGameListB4DSMEPID[i] == 0 && !b4dsDebugConsole)
+											|| compatibleGameListB4DSMEPID[i] == 1
+											|| compatibleGameListB4DSMEPID[i] == 2
+											|| (compatibleGameListB4DSMEPID[i] == 4 && !b4dsDebugConsole));
+					if (mepRequired && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
+						const u16 hwordBak = *(vu16*)(0x08240000);
+						*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
+						mepFound = (*(vu16*)(0x08240000) == 1);
+						*(vu16*)(0x08240000) = hwordBak;
+						showMsg = (!mepFound || (compatibleGameListB4DSMEPID[i] == 2 && *(u16*)0x020000C0 == 0)); // Show message if not found
+					}
+				} else {
 					showMsg = true;
-				} else*/
-				if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
-					u16 hwordBak = *(vu16*)(0x08240000);
-					*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
-					mepFound = (*(vu16*)(0x08240000) == 1);
-					*(vu16*)(0x08240000) = hwordBak;
-					showMsg = (!mepFound || (compatibleGameListB4DSMEPID[i] == 2 && *(u16*)0x020000C0 == 0)); // Show message if not found
 				}
-			} else {
-				showMsg = true;
 			}
 			break;
 		}
@@ -2189,6 +2246,22 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			}
 		}
 	}
+
+	dsiWareRAMLimitMsg_showMsg = showMsg;
+	dsiWareRAMLimitMsg_mepFound = mepFound;
+	dsiWareRAMLimitMsg_msgId = msgId;
+
+	dsiWareRAMLimitMsgPrepped = true;
+}
+
+bool dsiWareRAMLimitMsg(std::string filename) {
+	if (!dsiWareRAMLimitMsgPrepped) {
+		dsiWareRAMLimitMsgPrep();
+	}
+
+	const bool showMsg = dsiWareRAMLimitMsg_showMsg;
+	const bool mepFound = dsiWareRAMLimitMsg_mepFound;
+	const int msgId = dsiWareRAMLimitMsg_msgId;
 
 	if (!showMsg || (!checkIfShowRAMLimitMsg(filename) && msgId < 10)) {
 		return true;
@@ -2341,8 +2414,11 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 	return proceedToLaunch;
 }
 
+static bool savedDSiWareCompatibleB4DS = false;
+
 bool dsiWareCompatibleB4DS(void) {
 	if (memcmp(gameTid[CURPOS], "NTRJ", 4) == 0) {
+		savedDSiWareCompatibleB4DS = true;
 		return true; // No check necessary for NTRJ titles (They are uncommon, and "NTRJ" is not seen in retail titles)
 	}
 
@@ -2356,7 +2432,7 @@ bool dsiWareCompatibleB4DS(void) {
 			break;
 		}
 	}
-	if (!res && (sys().dsDebugRam() || bs().b4dsMode == 2)) {
+	if (!res && ((sys().isRegularDS() && sys().dsDebugRam()) || (dsiFeatures() && bs().b4dsMode == 2))) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebug)/sizeof(compatibleGameListB4DSDebug[0]); i++) {
 			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSDebug[i], (compatibleGameListB4DSDebug[i][3] != 0 ? 4 : 3)) == 0) {
 				// Found match
@@ -2365,6 +2441,7 @@ bool dsiWareCompatibleB4DS(void) {
 			}
 		}
 	}
+	savedDSiWareCompatibleB4DS = res;
 	return res;
 }
 
@@ -2462,7 +2539,7 @@ bool selectMenu(void) {
 	int assignedOp[5] = {-1};
 	int selIconYpos = 96;
 	if (ms().kioskMode) {
-		if (dsiFeatures() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
+		if (dsiFeatures() && (bothSDandFlashcard() || !flashcardFound())) {
 			for (int i = 0; i < 3; i++) {
 				selIconYpos -= 14;
 			}
@@ -3127,6 +3204,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		bool dsiBinariesChecked = false;
 		bool hasDsiBinaries = true;
 		bool apChecked = false;
+		bool checkedDSiWareCompatibleB4DS = false;
+		dsiWareRAMLimitMsgPrepped = false;
 		int infoCheckTimer = 0;
 		bool hasAP = false;
 
@@ -3187,17 +3266,30 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 						bannerTextShown = true;
 					}
-					if ((infoCheckTimer < 30) && (bnrRomType[CURPOS] == 0) && (isHomebrew[CURPOS] == 0) && !isDSiWare[CURPOS]) {
-						infoCheckTimer++;
-						if (infoCheckTimer == 30) {
-							if (!dsiBinariesChecked) {
-								hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+					if ((infoCheckTimer < 30) && (bnrRomType[CURPOS] == 0) && (isHomebrew[CURPOS] == 0)) {
+						if (!isDSiWare[CURPOS]) {
+							infoCheckTimer++;
+							if (infoCheckTimer == 30) {
+								if (!dsiBinariesChecked) {
+									hasDsiBinaries = checkDsiBinaries(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+								}
+								dsiBinariesChecked = true;
+								if (!apChecked && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
+									hasAP = checkRomAP(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+								}
+								apChecked = true;
 							}
-							dsiBinariesChecked = true;
-							if (!apChecked && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
-								hasAP = checkRomAP(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+						} else if (isDSiWare[CURPOS] && ((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice) {
+							infoCheckTimer++;
+							if (infoCheckTimer == 30) {
+								if (!checkedDSiWareCompatibleB4DS) {
+									dsiWareCompatibleB4DS();
+								}
+								checkedDSiWareCompatibleB4DS = true;
+								if (!dsiWareRAMLimitMsgPrepped) {
+									dsiWareRAMLimitMsgPrep();
+								}
 							}
-							apChecked = true;
 						}
 					}
 				} else {
@@ -3234,11 +3326,15 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				moveCursor(false, dirContents[scrn]);
 				dsiBinariesChecked = false;
 				apChecked = false;
+				checkedDSiWareCompatibleB4DS = false;
+				dsiWareRAMLimitMsgPrepped = false;
 				infoCheckTimer = 0;
 			} else if ((held & KEY_RIGHT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == TWLSettings::EThemeDSi)) { // Right or button arrow (DSi theme)
 				moveCursor(true, dirContents[scrn]);
 				dsiBinariesChecked = false;
 				apChecked = false;
+				checkedDSiWareCompatibleB4DS = false;
+				dsiWareRAMLimitMsgPrepped = false;
 				infoCheckTimer = 0;
 			} else if ((pressed & KEY_UP) && (PAGENUM > 0 || CURPOS > 0 || !backFound) && (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) && !dirInfoIniFound && (ms().sortMethod == 4) && (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()))) { // Move apps (DSi & 3DS themes)
 				bannerTextShown = false; // Redraw the title when done
@@ -3416,6 +3512,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				dsiBinariesChecked = false;
 				apChecked = false;
+				checkedDSiWareCompatibleB4DS = false;
+				dsiWareRAMLimitMsgPrepped = false;
 				infoCheckTimer = 0;
 
 				int prevPos = CURPOS;
@@ -3483,6 +3581,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				dsiBinariesChecked = false;
 				apChecked = false;
+				checkedDSiWareCompatibleB4DS = false;
+				dsiWareRAMLimitMsgPrepped = false;
 				infoCheckTimer = 0;
 
 				bool tapped = false;
@@ -3779,12 +3879,15 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					}
 					bool proceedToLaunch = true;
 					if (!isValid[CURPOS] || isTwlm[CURPOS] || (isUnlaunch[CURPOS] && ms().theme == TWLSettings::ETheme3DS) || (!isDSiWare[CURPOS] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[CURPOS] == 0 && gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3 && requiresDonorRom[CURPOS] != 51)
-					|| (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
+					|| (isDSiWare[CURPOS] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && (checkedDSiWareCompatibleB4DS ? !savedDSiWareCompatibleB4DS : !dsiWareCompatibleB4DS()))
 					|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
 					|| (bnrRomType[CURPOS] == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
+						if (isDSiWare[CURPOS] && ((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice) {
+							checkedDSiWareCompatibleB4DS = true;
+						}
 						proceedToLaunch = cannotLaunchMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 					}
-					bool useBootstrapAnyway = ((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice);
+					const bool useBootstrapAnyway = ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) || !ms().secondaryDevice);
 					if (proceedToLaunch && useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
 					 && isHomebrew[CURPOS] == 0
 					 && checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
@@ -3853,6 +3956,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							}
 							if (proceedToLaunch) {
 								proceedToLaunch = dsiWareRAMLimitMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+								if (!proceedToLaunch) {
+									// Re-prep in case the Memory Expansion Pak has been inserted after being told to do so
+									dsiWareRAMLimitMsgPrepped = false;
+									infoCheckTimer = 0;
+								}
 							}
 						}
 					} else if (isHomebrew[CURPOS] == 1) {
@@ -4075,7 +4183,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							if (!dsiFeatures()) {
 								// Free some RAM space to avoid possible memory leaks
 								snd().unloadStream();
-								mmEffectCancelAll(); // Stop sound effects from playing to avoid sound glitches
 								snd().unloadSfxData();
 								tex().unloadPhotoBuffer();
 							}
@@ -4098,6 +4205,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 							recentlyPlayedIni.SetStringVector("RECENT", path, recentlyPlayed, ':');
 							recentlyPlayedIni.SaveIniFile(recentlyPlayedIniPath);
+							recentlyPlayed.clear();
 
 							CIniFile timesPlayedIni(timesPlayedIniPath);
 							timesPlayedIni.SetInt(path, entry->name, (timesPlayedIni.GetInt(path, entry->name, 0) + 1));

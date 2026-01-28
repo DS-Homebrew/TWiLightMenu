@@ -16,6 +16,7 @@ void iconTitleInit();
  * they have been corrupted.
  */
 void reloadIconPalettes();
+void loadDeferredIconPalettes();
 
 void loadConsoleIcons();
 void copyGameInfo(int numDst, int numSrc);

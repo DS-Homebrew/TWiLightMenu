@@ -22,8 +22,10 @@ extern int perGameSettings_wideScreen;
 extern int perGameSettings_expandRomSpace;
 extern int perGameSettings_dsiwareBooter;
 extern int perGameSettings_useBootstrap;
-extern int perGameSettings_useBootstrapCheat;
+extern int perGameSettings_fcGameLoader;
+extern int perGameSettings_fcGameLoaderCheat;
 extern int perGameSettings_saveRelocation;
+extern int perGameSettings_remappedKeys[12];
 
 void loadPerGameSettings(std::string filename);
 void savePerGameSettings(std::string filename);

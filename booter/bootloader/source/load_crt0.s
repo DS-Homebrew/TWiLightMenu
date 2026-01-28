@@ -30,6 +30,11 @@
 	.global argSize
 	.global dsiSD
 	.global dsiMode
+	.global clearMasterBright
+	.global dsMode
+	.global loadFromRam
+	.global language
+	.global tscTgds
 @---------------------------------------------------------------------------------
 	.align	4
 	.arm
@@ -50,10 +55,20 @@ argStart:
 argSize:
 	.word	0x00000000
 dldiOffset:
-	.word	_dldi_start - _start
+	.word	0
 dsiSD:
 	.word	0
 dsiMode:
+	.word	0
+clearMasterBright:
+	.word	0
+dsMode:
+	.word	0
+loadFromRam:
+	.word	0
+language:
+	.word	0
+tscTgds:
 	.word	0
 
 startUp:

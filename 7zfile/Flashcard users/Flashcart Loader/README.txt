@@ -6,6 +6,7 @@ Acekard 2(i) folder:
 - R4 Ultra, R4i Ultra
 - R4iTT 3DS NEW, RTS
 - R4i3D NEW, 2012 or later
+- R4i Infinity NEW A. C. Kard Version
 - r4isdhc.com NEW, 2013
 - r4isdhc.com Dual-Core (no year number)
 - r4isdhc.hk carts before 2019

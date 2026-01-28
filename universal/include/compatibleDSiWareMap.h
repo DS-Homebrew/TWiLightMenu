@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 480
+// Total: 495
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -31,6 +31,9 @@ static const char compatibleGameListB4DS[][5] = {
 	"K99", // 99Bullets
 	"K9W", // 99Moves
 	"K2K", // Aa! Nikaku Dori
+	"K6Q", // Absolute BrickBuster
+	"KCZ", // Absolute Chess
+	"KA8", // Absolute Reversi
 	"KXG", // Abyss
 	"KQK", // Ace Mathician
 	"KE5", // ACT Series: Tangocho: Ni Chi Hen
@@ -145,11 +148,13 @@ static const char compatibleGameListB4DS[][5] = {
 	"KWT", // GO Series: Defense Wars
 	"KCP", // Dekisugi Tingle Pack
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
+	"KDK", // Discolight
 	"KRF", // Divergent Shift
+	"KML", // Don't Cross the Line
 	"KHE", // DotMan
 	"KD9", // Dr. Mario Express / A Little Bit of... Dr. Mario
 	"KDL", // Dragon's Lair
-	"KLYE", // Dragon's Lair II: Time Warp (USA)
+	"KLY", // Dragon's Lair II: Time Warp
 	"K9E", // Dreamwalker
 	"K2C", // G.G Series: Drift Circuit
 	"KUG", // G.G Series: Drift Circuit 2
@@ -172,7 +177,6 @@ static const char compatibleGameListB4DS[][5] = {
 	"KEJ", // Electroplankton: Varvoice
 	"K42", // Elite Forces: Unit 77
 	"KD7", // G.G Series: Energy Chain
-	"K4E", // Fall in the Dark
 	"Z2E", // Famicom Wars DS: Ushinawareta Hikari
 	"KFK", // Farm Frenzy
 	"KU7", // Fashion Tycoon
@@ -212,6 +216,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K9A", // Goooooal America / Goooooal Europa 2012
 	"KVQ", // G.G Series: Great Whip Adventure
 	"K83", // Hachiwandaiba DS: Naru Zouku Ha Samishougi
+	"KK6", // Hakokoro
 	"KZH", // Halloween Trick or Treat
 	"KHO", // Handy Hockey
 	"KHM", // Handy Mahjong
@@ -230,6 +235,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KBT", // Invasion of the Alien Blobs!
 	"K3J", // iSpot Japan
 	"KIK", // Ivy the Kiwi? mini
+	"KJG", // Jagged Alliance
 	"K9B", // Jazzy Billiards
 	"KJY", // JellyCar 2
 	"KYJ", // Jewel Adventures
@@ -250,10 +256,12 @@ static const char compatibleGameListB4DS[][5] = {
 	"KJC", // Koukou Eijukugo: Kiho 200 Go Master
 	"KEK", // Koukou Eitango: Kiho 400 Go Master
 	"KT9", // Kung Fu Dragon
+	"KY3", // Kuniya Burete Sanga Ari: Hills and Rivers Remain (Requires TWLFontTable.dat)
 	"K5M", // G.G Series: The Last Knight
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KLD", // Legendary Wars: T-Rex Rumble
 	"K5C", // Letter Challenge
+	"KLI", "KLW", // Libera Wing
 	"KPT", // Link 'n' Launch
 	"KLP", // Littlest Pet Shop
 	"KLK", // Lola's Alphabet Train
@@ -302,6 +310,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KQ2", // G.G Series: Ninja Karakuri Den 2
 	"KAUE", "KAUV", // Nintendo Countdown Calendar
 	"K2D", // Nintendo DSi + Internet
+	"KDO", // Nintendogs
 	"K9K", // Nintendoji
 	"KJI", // Noroi no Game: Chi
 	"KG9", // Noroi no Game: Oku
@@ -317,6 +326,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KL6", // Otona no Sekaishi Pazuru
 	"K3T", // Otona no Tame no: Kei-san Training DS
 	"KJ9", // Otona no Tame no: Renjuku Kanji
+	"KPW", // Panewa!
 	"KAMJ", // Paper Airplane Chase / Kami Hikouki (Japan)
 	"KP9", // Paul's Monster Adventure
 	"KPJ", // Paul's Shooting Adventure
@@ -349,6 +359,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KLF", // Puffins: Let's Fish!
 	"KLR", // Puffins: Let's Race!
 	"KL2", // Puffins: Let's Roll!
+	"KKE", "K5V", // Puzzle Fever
 	"KPN", // Puzzle League: Express / A Little Bit of... Puzzle League
 	"KPL", // Puzzle Rocks
 	"KYE", // Puzzler Brain Games
@@ -371,16 +382,19 @@ static const char compatibleGameListB4DS[][5] = {
 	"KJ5", // Renjuku Kanji: Shougaku 5 Nensei
 	"KJ6", // Renjuku Kanji: Shougaku 6 Nensei
 	"KJ8", // Renjuku Kanji: Chuugakusei
+	"KXR", // Retro Pocket
 	"KRT", // Robot Rescue
 	"KD6", // Rock-n-Roll Domo
 	"KRL", // Roller Angels
 	"KRP", // RPG Dashutsu Game
 	"K5F", // G.G Series: Run & Strike
+	"K8X", // Sagittarius-A-Star
 	"KG4", // Saikyou Ginsei Shougi
 	"K3P", // Sakurai Miho No Kouno: Megami Serapi Uranai
 	"K5G", // G.G Series: Score Attacker
 	"KRW", // Sea Battle
 	"KLL", // The Seller
+	"K5T", // Sengoku Tactics
 	"KZJ", // G.G Series: Shadow Army
 	"KS3", // Shantae: Risky's Revenge
 	"KK5", // Kakitori Rekishi: Shouga Kusei (01)
@@ -413,6 +427,8 @@ static const char compatibleGameListB4DS[][5] = {
 	"KQ6", // Spin Six
 	"KIT", // Spot It! Challenge
 	"K2U", // Spot It! Challenge: Mean Machines
+	"K97", // Star Novels: Kono Haretasora no Shitade
+	"K98", // Star Novels: Shirogane no Torikago
 	"KEU", // Successfully Learning: English, Year 2
 	"KEZ", // Successfully Learning: English, Year 3
 	"KE6", // Successfully Learning: English, Year 4
@@ -430,8 +446,6 @@ static const char compatibleGameListB4DS[][5] = {
 	"KWU", // Sudoku & Kakuro: Welt Edition
 	"KSC", // Sudoku Challenge!
 	"KOW", // Surfacer+
-	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
-	"K98", // Sutanoberuzu: Shirogane no Torikago
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
 	"KZV", // Tales to Enjoy!: Puss in Boots
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
@@ -451,6 +465,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KWW", // The Tower DS: Classic
 	"KWV", // The Tower DS: Hotel
 	"KW4", // The Tower DS: Shopping Santa
+	"K4E", // Treasure Hunter X
 	"KB7", // Trollboarder
 	"K72", // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf
 	"KTI", // Turn: The Lost Artifact
@@ -477,7 +492,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KYU", // Yummy Yummy Cooking Jam
 	"KNZ", "KZN", // G.G Series: Z-One
 	"KZ2", // G.G Series: Z-One 2
-	"KZX", // Za Curosu
+	"KZX", // Zacross
 	"KAS", // Art Style: ZENGAGE
 	"KKH", // Zimo: Mahjong Fanatic
 	"K7K", // Zombie Blaster
@@ -487,9 +502,8 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 32
+// Total: 27
 static const char compatibleGameListB4DSMEP[][5] = {
-	"KBJ", // 21 Blackjack
 	"K5I", // 5 in 1 Solitaire
 	"K2Z", // G.G Series: Altered Weapon
 	"KWG", // Animal Crossing Calculator
@@ -503,24 +517,20 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KEA", // Electroplankton: Trapy
 	"KD3", // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
+	"KY3", // Kuniya Burete Sanga Ari: Hills and Rivers Remain
 	"K5M", // G.G Series: The Last Knight
 	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KYL", // Make Up & Style
 	"KWF", // Mario Calculator
-	"KUP", // Match Up!
-	"KWK", // Mega Words
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"KNP", // Need for Speed: Nitro-X
 	"K9K", // Nintendoji
 	"KPS", // Phantasy Star 0 Mini
 	"KQR", // Remote Racers
+	"K97", // Star Novels: Kono Haretasora no Shitade
+	"K98", // Star Novels: Shirogane no Torikago
 	"KSC", // Sudoku Challenge!
-	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
-	"K98", // Sutanoberuzu: Shirogane no Torikago
-	"KWS", // Word Searcher
-	"KWR", // Word Searcher II
-	"KW6", // Word Searcher III
-	"KW8", // Word Searcher IV
+	"KWSE", // Word Searcher (USA)
 };
 
 // Extra RAM ID
@@ -528,8 +538,8 @@ static const char compatibleGameListB4DSMEP[][5] = {
 // 1: Memory Expansion Pak always required
 // 2: 16MB+ RAM expansion required
 // 3: VRAM-WiFi Donor ROM or Debug console required
+// 4: VRAM-WiFi Donor ROM + Memory Expansion Pak, or Debug console required
 static int compatibleGameListB4DSMEPID[] = {
-	0, // 21 Blackjack
 	0, // 5 in 1 Solitaire
 	3, // G.G Series: Altered Weapon
 	0, // Animal Crossing Calculator
@@ -543,24 +553,20 @@ static int compatibleGameListB4DSMEPID[] = {
 	3, // Electroplankton: Trapy
 	2, // Jinia Supasonaru: Eiwa Rakubiki Jiten
 	1, // Jinia Supasonaru: Waei Rakubiki Jiten
+	4, // Kuniya Burete Sanga Ari: Hills and Rivers Remain
 	3, // G.G Series: The Last Knight
 	0, // The Legend of Zelda: Four Swords: Anniversary Edition
 	0, // Make Up & Style
 	0, // Mario Calculator
-	0, // Match Up!
-	0, // Mega Words
 	2, // Meikyou Kokugo: Rakubiki Jiten
 	3, // Need for Speed: Nitro-X
 	0, // Nintendoji
 	3, // Phantasy Star 0 Mini
 	0, // Remote Racers
+	0, // Star Novels: Kono Haretasora no Shitade
+	0, // Star Novels: Shirogane no Torikago
 	0, // Sudoku Challenge!
-	0, // Sutanoberuzu: Kono Hareta Sora no Shita de
-	0, // Sutanoberuzu: Shirogane no Torikago
-	0, // Word Searcher
-	0, // Word Searcher II
-	0, // Word Searcher III
-	0, // Word Searcher IV
+	0, // Word Searcher (USA)
 };
 
 // Show RAM limitation message
@@ -585,6 +591,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KFD", // Fieldrunners
 	"KFO", // Frenzic
 	"KGK", // Glory Days: Tactical Defense
+	"KK6", // Hakokoro
 	"KZH", // Halloween Trick or Treat
 	"KIS", // Ice Hockey Slovakia 2011
 	"KPT", // Link 'n' Launch
@@ -593,7 +600,6 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KWY", // Mighty Milky Way
 	"KN3", // Nazo no Mini Game
 	"KNP", // Need for Speed: Nitro-X
-	"K9N", // Neko Neko Bakery: Pan de Pazurunya!
 	"K9K", // Nintendoji
 	"K6T", // Orion's Odyssey
 	"KPS", // Phantasy Star 0 Mini
@@ -603,8 +609,8 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KG4", // Saikyou Ginsei Shougi
 	"KS3", // Shantae: Risky's Revenge
 	"KSV", // Sokomania 2: Cool Job
-	"K97", // Sutanoberuzu: Kono Hareta Sora no Shita de
-	"K98", // Sutanoberuzu: Shirogane no Torikago
+	"K97", // Star Novels: Kono Haretasora no Shitade
+	"K98", // Star Novels: Shirogane no Torikago
 	"KZU", // Tales to Enjoy!: Little Red Riding Hood
 	"KZV", // Tales to Enjoy!: Puss in Boots
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
@@ -636,6 +642,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Fieldrunners (No audio)
 	4, // Frenzic (Crashes at certain point)
 	2, // Glory Days: Tactical Defense (No music)
+	1, // Hakokoro (No audio)
 	2, // Halloween Trick or Treat (No music)
 	8, // Ice Hockey Slovakia 2011 (No sound effects)
 	2, // Link 'n' Launch (No music)
@@ -644,7 +651,6 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Mighty Milky Way (No music)
 	2, // Nazo no Mini Game (No music)
 	4, // Need for Speed: Nitro-X (No audio + Crashes after a race)
-	2, // Neko Neko Bakery: Pan de Pazurunya! (No music)
 	0, // Nintendoji (No audio + Part of the game only)
 	4, // Orion's Odyssey (Crashes at certain points)
 	4, // Phantasy Star 0 Mini (Crashes at certain points)
@@ -654,8 +660,8 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Saikyou Ginsei Shougi (Crashes at certain points)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
 	1, // Sokomania 2: Cool Job (No audio)
-	2, // Sutanoberuzu: Kono Hareta Sora no Shita de (No music + No FMV)
-	5, // Sutanoberuzu: Shirogane no Torikago (No FMV)
+	2, // Star Novels: Kono Haretasora no Shitade (No music + No FMV)
+	5, // Star Novels: Shirogane no Torikago (No FMV)
 	4, // Tales to Enjoy!: Little Red Riding Hood (Crashes at certain points)
 	4, // Tales to Enjoy!: Puss in Boots (Crashes at certain points)
 	4, // Tales to Enjoy!: The Three Little Pigs (Crashes at certain points)
@@ -667,7 +673,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 35
+// Total: 36
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -689,6 +695,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KZB", // Little Red Riding Hood's Zombie BBQ
 	"KMM", // Mixed Messages
 	"KLT", // My Little Restaurant
+	"KTG", // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle
 	"KNV", // Neko Reversi
 	"KO9", // Oscar's World Tour
 	"KFV", // Pro-Jumper! Chimaki's Hot Spring Tour! Guilty Gear Tangent!?
@@ -708,10 +715,11 @@ static const char compatibleGameListB4DSDebug[][5] = {
 };
 
 // Show RAM limitation message
-// Total: 3
+// Total: 4
 static const char compatibleGameListB4DSDebugRAMLimited[][4] = {
 	"KUV", // Bloons TD 4
 	"KGU", // Flipnote Studio
+	"KTG", // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle
 	"KS3", // Shantae: Risky's Revenge
 };
 
@@ -719,12 +727,16 @@ static const char compatibleGameListB4DSDebugRAMLimited[][4] = {
 static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	1, // Bloons TD 4 (No audio)
 	4, // Flipnote Studio (Crashes when getting past the main menu)
+	2, // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle (No music)
 	2, // Shantae: Risky's Revenge (No music)
 };
 
 // Show RAM limitation message for both DS Retail & Debug consoles
-// Total: 9
+// Total: 12
 static const char compatibleGameListB4DSAllRAMLimited[][4] = {
+	"K6Q", // Absolute BrickBuster
+	"KCZ", // Absolute Chess
+	"KA8", // Absolute Reversi
 	"KJH", // Antipole
 	"KUI", // Decathlon 2012
 	"KHW", // EJ Puzzles: Hooked
@@ -738,6 +750,9 @@ static const char compatibleGameListB4DSAllRAMLimited[][4] = {
 
 // RAM limitation message ID
 static int compatibleGameListB4DSAllRAMLimitedID[] = {
+	4, // Absolute BrickBuster (Crashes after selecting or starting Free Play mode)
+	4, // Absolute Chess (Crashes when selecting a player after selecting Free Play mode)
+	4, // Absolute Reversi (Crashes when selecting a player after selecting Free Play mode)
 	1, // Antipole (No audio)
 	1, // Decathlon 2012 (No audio)
 	2, // EJ Puzzles: Hooked (No music)

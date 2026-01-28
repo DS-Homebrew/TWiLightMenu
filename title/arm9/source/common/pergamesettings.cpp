@@ -28,7 +28,9 @@ int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 int perGameSettings_dsiwareBooter = -1;
 int perGameSettings_useBootstrap = -1;
+int perGameSettings_fcGameLoader = -1;
 int perGameSettings_saveRelocation = -1;
+int perGameSettings_remappedKeys[12] = {0};
 
 char pergamefilepath[256];
 
@@ -49,7 +51,21 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
 	perGameSettings_dsiwareBooter = pergameini.GetInt("GAMESETTINGS", "DSIWARE_BOOTER", -1);
 	perGameSettings_useBootstrap = pergameini.GetInt("GAMESETTINGS", "USE_BOOTSTRAP", -1);
+	perGameSettings_fcGameLoader = pergameini.GetInt("GAMESETTINGS", "FC_GAME_LOADER", -1);
 	perGameSettings_saveRelocation = pergameini.GetInt("GAMESETTINGS", "SAVE_RELOCATION", -1);
+
+	perGameSettings_remappedKeys[0] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_A", 0);
+	perGameSettings_remappedKeys[1] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_B", 1);
+	perGameSettings_remappedKeys[2] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_SELECT", 2);
+	perGameSettings_remappedKeys[3] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_START", 3);
+	perGameSettings_remappedKeys[4] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_RIGHT", 4);
+	perGameSettings_remappedKeys[5] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_LEFT", 5);
+	perGameSettings_remappedKeys[6] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_UP", 6);
+	perGameSettings_remappedKeys[7] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_DOWN", 7);
+	perGameSettings_remappedKeys[8] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_R", 8);
+	perGameSettings_remappedKeys[9] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_L", 9);
+	perGameSettings_remappedKeys[10] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_X", 10);
+	perGameSettings_remappedKeys[11] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_Y", 11);
 }
 
 std::string getSavExtension(void) {

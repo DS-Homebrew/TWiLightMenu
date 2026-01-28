@@ -126,7 +126,7 @@ TWLSettings::TWLSettings()
 	ak_theme = "zelda";
 	ak_zoomIcons = true;
 
-	useBootstrap = true;
+	fcGameLoader = ENdsBootstrap;
 	btsrpBootloaderDirect = false;
 	bootstrapFile = EReleaseBootstrap;
 	kernelUseable = true;
@@ -341,10 +341,9 @@ void TWLSettings::loadSettings()
 		}
 	}
 
-	if (kernelUseable) {
-		useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
-	} else {
-		useBootstrap = true;
+	fcGameLoader = settingsini.GetInt("SRLOADER", "FC_GAME_LOADER", fcGameLoader);
+	if (!kernelUseable && fcGameLoader == EKernel) {
+		fcGameLoader = ENdsBootstrap;
 	}
 	btsrpBootloaderDirect = settingsini.GetInt("SRLOADER", "BOOTSTRAP_BOOTLOADER_DIRECT", btsrpBootloaderDirect);
 	bootstrapFile = (TBootstrapFile)settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
@@ -507,9 +506,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
 	settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
-	if (kernelUseable) {
-		settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
-	}
+	settingsini.SetInt("SRLOADER", "FC_GAME_LOADER", fcGameLoader);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_BOOTLOADER_DIRECT", btsrpBootloaderDirect);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
 

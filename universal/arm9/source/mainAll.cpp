@@ -31,6 +31,10 @@ static void SetBrightness(u8 screen, s8 bright) {
 	*(vu16 *)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
+const char* mainSrldrPath(const bool sdPath) {
+	return sdPath ? "sd:/_nds/TWiLightMenu/main.srldr" : "fat:/_nds/TWiLightMenu/main.srldr";
+}
+
 //---------------------------------------------------------------------------------
 static void stop(void) {
 //---------------------------------------------------------------------------------

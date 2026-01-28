@@ -19,6 +19,7 @@
 #include "common/inifile.h"
 #include "common/logging.h"
 #include "common/nds_loader_arm9.h"
+#include "DSpicoLauncher.h"
 #include "ndsheaderbanner.h"
 #include "common/pergamesettings.h"
 #include "common/stringtool.h"
@@ -68,6 +69,7 @@ void RemoveTrailingSlashes(std::string& path)
 	}
 }
 
+extern const char* mainSrldrPath(const bool sdPath);
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
@@ -511,7 +513,66 @@ void lastRunROM()
 
 		if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && ms().homebrewBootstrap && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
 			unlaunchRomBoot(ms().romPath[ms().previousUsedDevice]);
-		} else if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) && !ms().homebrewBootstrap) || !ms().previousUsedDevice || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
+		} else
+		if ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (isDSiMode() || unitCode < 3)) {
+			std::string savepath;
+
+			std::string typeToReplace = filename.substr(filename.rfind('.'));
+
+			std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
+			std::string romFolderNoSlash = romfolder;
+			RemoveTrailingSlashes(romFolderNoSlash);
+			if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+				std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+				mkdir(twlmSavesFolder.c_str(), 0777);
+				savepath = twlmSavesFolder + "/" + savename;
+			} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+				savepath = romFolderNoSlash + "/" + savename;
+			} else {
+				mkdir("saves", 0777);
+				savepath = romFolderNoSlash+"/saves/"+savename;
+			}
+
+			u32 orgsavesize = getFileSize(savepath.c_str());
+			u32 savesize = 524288;	// 512KB (default size for most games)
+
+			u32 gameTidHex = 0;
+			tonccpy(&gameTidHex, game_TID, 4);
+
+			for (int i = 0; i < (int)sizeof(ROMList)/8; i++) {
+				ROMListEntry* curentry = &ROMList[i];
+				if (gameTidHex == curentry->GameCode) {
+					if (curentry->SaveMemType != 0xFFFFFFFF) savesize = sramlen[curentry->SaveMemType];
+					break;
+				}
+			}
+
+			if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize)) {
+				consoleDemoInit();
+				iprintf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
+				iprintf ("\n");
+				fadeType = true;
+
+				FILE *pFile = fopen(savepath.c_str(), orgsavesize > 0 ? "r+" : "wb");
+				if (pFile) {
+					fseek(pFile, savesize - 1, SEEK_SET);
+					fputc('\0', pFile);
+					fclose(pFile);
+				}
+				iprintf((orgsavesize == 0) ? "Save file created!\n" : "Save file expanded!\n");
+
+				for (int i = 0; i < 30; i++) {
+					swiWaitForVBlank();
+				}
+				fadeType = false;
+				for (int i = 0; i < 25; i++) {
+					swiWaitForVBlank();
+				}
+			}
+
+			err = picoLaunchRom(ms().romPath[ms().previousUsedDevice], savepath);
+		} else
+		if (((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) && !ms().homebrewBootstrap) || !ms().previousUsedDevice || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 		|| (ms().previousUsedDevice && !ms().kernelUseable)
 		|| (unitCode == 3 && !ms().homebrewBootstrap)) {
 			std::string savepath;
@@ -637,6 +698,7 @@ void lastRunROM()
 				CIniFile bootstrapini( sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC );
 				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().previousUsedDevice]);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && (!ms().secondaryDevice || !bs().b4dsMode)));
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", dsPhatColors);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", (perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
@@ -649,6 +711,20 @@ void lastRunROM()
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", asyncCardRead);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", ms().forceSleepPatch);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "SAVE_RELOCATION", perGameSettings_saveRelocation == -1 ? ms().saveRelocation : perGameSettings_saveRelocation);
+
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", perGameSettings_remappedKeys[0]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", perGameSettings_remappedKeys[1]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", perGameSettings_remappedKeys[2]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", perGameSettings_remappedKeys[3]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", perGameSettings_remappedKeys[4]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", perGameSettings_remappedKeys[5]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", perGameSettings_remappedKeys[6]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", perGameSettings_remappedKeys[7]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", perGameSettings_remappedKeys[8]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", perGameSettings_remappedKeys[9]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", perGameSettings_remappedKeys[10]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", perGameSettings_remappedKeys[11]);
+
 				bootstrapini.SaveIniFile( sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC );
 			}
 			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
@@ -982,6 +1058,7 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath((useTempDSiWare || sys().isRunFromSD()) && (!ms().secondaryDevice || !bs().b4dsMode)));
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", dsPhatColors);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
@@ -997,6 +1074,20 @@ void lastRunROM()
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", 0);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", 0);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", ms().forceSleepPatch);
+
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_A", perGameSettings_remappedKeys[0]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_B", perGameSettings_remappedKeys[1]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_SELECT", perGameSettings_remappedKeys[2]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_START", perGameSettings_remappedKeys[3]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_RIGHT", perGameSettings_remappedKeys[4]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_LEFT", perGameSettings_remappedKeys[5]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_UP", perGameSettings_remappedKeys[6]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_DOWN", perGameSettings_remappedKeys[7]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_R", perGameSettings_remappedKeys[8]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_L", perGameSettings_remappedKeys[9]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", perGameSettings_remappedKeys[10]);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", perGameSettings_remappedKeys[11]);
+
 				bootstrapini.SaveIniFile((useTempDSiWare || sys().isRunFromSD()) ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 
 				if (!isDSiMode() && (!ms().previousUsedDevice || (ms().previousUsedDevice && ms().dsiWareToSD && sdFound()))) {
@@ -2266,7 +2357,7 @@ int titleMode(void)
 				*(u16*)(0x020000C0) = 0x334D;
 			} else if (memcmp(io_dldi_data->friendlyName, "G6", 2) == 0) {
 				*(u16*)(0x020000C0) = 0x3647;
-			} else if (memcmp(io_dldi_data->friendlyName, "SuperCard", 9) == 0 || memcmp(io_dldi_data->friendlyName, "SCSD", 4) == 0) {
+			} else if (memcmp(io_dldi_data->friendlyName, "SuperCard", 9) == 0 || memcmp(io_dldi_data->friendlyName, "SuperFW Supercard", 17) == 0 || memcmp(io_dldi_data->friendlyName, "SCSD", 4) == 0) {
 				_SC_changeMode(SC_MODE_RAM);
 				*(vu16*)(0x08000000) = 0x4D54;
 				if(*(vu16*)(0x08000000) == 0x4D54) {

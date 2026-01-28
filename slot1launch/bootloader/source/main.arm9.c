@@ -49,6 +49,7 @@ bool arm9_runCardEngine = false;
 bool dsiModeConfirmed = false;
 bool arm9_boostVram = false;
 bool arm9_scfgUnlock = false;
+bool arm9_twlClock = false;
 bool arm9_extendedMemory = false;
 bool arm9_isSdk5 = false;
 
@@ -61,7 +62,8 @@ volatile u32 arm9_BLANK_RAM = 0;
 External functions
 --------------------------------------------------------------------------*/
 extern void arm9_clearCache (void);
-
+extern void arm9_write_to_scfg_clk(uint16_t);
+extern __attribute__((noreturn)) void arm9_actual_jump(void* fn);
 
 void initMBKARM9() {
 	// default dsiware settings
@@ -259,8 +261,18 @@ void __attribute__((target("arm"))) arm9_main (void) {
 	BG_PALETTE[0] = 0xFFFF;
 	dmaFill((u16*)&arm9_BLANK_RAM, BG_PALETTE+1, (2*1024)-2);
 	dmaFill((u16*)&arm9_BLANK_RAM, OAM, 2*1024);
-	dmaFill((u16*)&arm9_BLANK_RAM, (u16*)0x04000000, 0x56);  // Clear main display registers
-	dmaFill((u16*)&arm9_BLANK_RAM, (u16*)0x04001000, 0x56);  // Clear sub display registers
+	for (vu16 *p = (vu16*)&REG_DISPCNT; p <= (vu16*)&REG_MASTER_BRIGHT; p++)
+	{
+		// Skip VCOUNT. Writing to it was setting it to 0 causing a frame to be
+		// misrendered. This can also have side effects on 3DS, even though the
+		// official TWL_FIRM can recover from it.
+		if (p != (vu16*)&REG_VCOUNT)
+			*p = 0;
+	}
+	for (vu16 *p = (vu16*)&REG_DISPCNT_SUB; p <= (vu16*)&REG_MASTER_BRIGHT_SUB; p++)
+	{
+		*p = 0;
+	}
 	dmaFill((u16*)&arm9_BLANK_RAM, VRAM_A, 0x20000*3);		// Banks A, B, C
 	dmaFill((u16*)&arm9_BLANK_RAM, VRAM_D, 272*1024);		// Banks D (excluded), E, F, G, H, I
 
@@ -300,13 +312,25 @@ void __attribute__((target("arm"))) arm9_main (void) {
 					initMBKARM9_dsiMode();
 				}
 				REG_SCFG_EXT = 0x8307F100;
-				REG_SCFG_CLK = 0x87;
+				// bit 7 is read only in reality...
+				if(arm9_twlClock)
+					arm9_write_to_scfg_clk(0x87);
+				else
+					arm9_write_to_scfg_clk(0x86);
 				REG_SCFG_RST = 1;
 			} else {
 				REG_SCFG_EXT = (arm9_extendedMemory ? 0x8300C000 : 0x83000000);
 				if (arm9_boostVram) {
 					REG_SCFG_EXT |= BIT(13);	// Extended VRAM Access
 				}
+				// TODO: For now, not enabled to avoid breaking
+				// certain DSi games...
+				#ifdef FULL_DSI_MODE_ENABLED
+				if(arm9_twlClock)
+					arm9_write_to_scfg_clk(0x01);
+				else
+					arm9_write_to_scfg_clk(0x00);
+				#endif
 				if (!arm9_scfgUnlock) {
 					// lock SCFG
 					REG_SCFG_EXT &= ~(1UL << 31);
@@ -324,7 +348,6 @@ void __attribute__((target("arm"))) arm9_main (void) {
 
 	REG_IE = 0;
 	REG_IF = ~0;
-	VoidFn arm9code = (VoidFn)ndsHeader->arm9executeAddress;
-	arm9code();
+	arm9_actual_jump((void*)ndsHeader->arm9executeAddress);
 }
 

@@ -253,7 +253,7 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 	 || (memcmp(gameTid, "BZ2J", 4) == 0)   	// Imasugu Tsukaeru Mamechishiki: Quiz Zatsugaku-ou DS (Japan)
 	 || (memcmp(gameTid, "BEZJ", 4) == 0)   	// Inazuma Eleven 3: Sekai e no Chousen!!: Bomber (Japan)
 	 || (memcmp(gameTid, "BE8J", 4) == 0)   	// Inazuma Eleven 3: Sekai e no Chousen!!: Spark (Japan)
-	// || (memcmp(gameTid, "BOEJ", 4) == 0)   	// Inazuma Eleven 3: Sekai e no Chousen!!: The Ogre (Japan) (Patched by nds-bootstrap)
+	 || (memcmp(gameTid, "BOEJ", 4) == 0)   	// Inazuma Eleven 3: Sekai e no Chousen!!: The Ogre (Japan)
 	 || (memcmp(gameTid, "BJKJ", 4) == 0)   	// Ippan Zaidan Houjin Nihon Kanji Shuujukudo Kentei Kikou Kounin: Kanjukuken DS (Japan)
 	 || (memcmp(gameTid, "BIMJ", 4) == 0)   	// Iron Master: The Legendary Blacksmith (Japan)
 	 || (memcmp(gameTid, "CDOK", 4) == 0)   	// Iron Master: Wanggugui Yusangwa Segaeui Yeolsoe (Korea)
@@ -373,7 +373,7 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 	 || (memcmp(gameTid, "V29J", 4) == 0)   	// RPG Tkool DS (Japan)
 	 || (memcmp(gameTid, "VEBJ", 4) == 0)   	// RPG Tsukuru DS+: Create The New World (Japan)
 	 || (memcmp(gameTid, "ARFK", 4) == 0)   	// Rune Factory: Sinmokjjangiyagi (Korea)
-	// || (memcmp(gameTid, "CSGJ", 4) == 0)   	// SaGa 2: Hihou Densetsu: Goddess of Destiny (Japan) (Patched by nds-bootstrap)
+	 || (memcmp(gameTid, "CSGJ", 4) == 0)   	// SaGa 2: Hihou Densetsu: Goddess of Destiny (Japan)
 	 || (memcmp(gameTid, "BZ3J", 4) == 0)   	// SaGa 3: Jikuu no Hasha: Shadow or Light (Japan)
 	 || (memcmp(gameTid, "CBEJ", 4) == 0)   	// Saibanin Suiri Game: Yuuzai x Muzai (Japan)
 	 || (memcmp(gameTid, "B59J", 4) == 0)   	// Sakusaku Jinkou Kokyuu Care Training DS (Japan)
@@ -491,7 +491,7 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 			"CLJ",	// Mario & Luigi: Bowser's Inside Story
 			"COL",	// Mario & Sonic at the Olympic Winter Games
 			"V2G",	// Mario vs. Donkey Kong: Mini-Land Mayhem!
-			// "B6Z",	// Mega Man Zero Collection (Patched by nds-bootstrap)
+			"B6Z",	// Mega Man Zero Collection
 			"BVN",	// Michael Jackson: The Experience
 			"CHN",	// Might & Magic: Clash of Heroes
 			"BNQ",	// Murder in Venice
@@ -506,8 +506,8 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 			"C24",	// Phantasy Star 0
 			"BZF",	// Phineas and Ferb: Across the 2nd Dimension
 			"VPF",	// Phineas and Ferb: Ride Again
-			// "IPK",	// Pokemon HeartGold Version (Patched by nds-bootstrap)
-			// "IPG",	// Pokemon SoulSilver Version (Patched by nds-bootstrap)
+			"IPK",	// Pokemon HeartGold Version
+			"IPG",	// Pokemon SoulSilver Version
 			"IRA",	// Pokemon Black Version
 			"IRB",	// Pokemon White Version
 			"IRE",	// Pokemon Black Version 2
@@ -519,17 +519,17 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 			"C3J",	// Professor Layton and the Unwound Future
 			"BKQ",	// Pucca: Power Up
 			"VRG",	// Rabbids Go Home: A Comedy Adventure
-			// "BRJ",	// Radiant Historia (Patched by nds-bootstrap)
+			"BRJ",	// Radiant Historia
 			"B3X",	// River City: Soccer Hooligans
 			"BRM",	// Rooms: The Main Building
 			"TDV",	// Shin Megami Tensei: Devil Survivor 2
 			"BMT",	// Shin Megami Tensei: Strange Journey
-			// "VCD",	// Solatorobo: Red the Hunter (Patched by nds-bootstrap)
+			"VCD",	// Solatorobo: Red the Hunter
 			"BXS",	// Sonic Colors
 			"VSN",	// Sonny with a Chance
 			"B2U",	// Sports Collection
 			"CLW",	// Star Wars: The Clone Wars: Jedi Alliance
-			// "AZL",	// Style Savvy (Patched by nds-bootstrap)
+			"AZL",	// Style Savvy
 			"BH2",	// Super Scribblenauts
 			"B6T",	// Tangled
 			"B4T",	// Tetris Party Deluxe

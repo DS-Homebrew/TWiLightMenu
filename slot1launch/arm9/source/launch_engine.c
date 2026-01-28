@@ -21,6 +21,7 @@
 
 #include "load_bin.h"
 #include "loadAlt_bin.h"
+#include "cardengine_arm7_bin.h"
 #include "launch_engine.h"
 #include "common/tonccpy.h"
 
@@ -92,6 +93,9 @@ void runLaunchEngine (bool altBootloader, bool isDSBrowser)
 		if (!scfgUnlock) {
 			REG_SCFG_EXT &= ~(1UL << 31);
 		}
+	} else if (runCardEngine) {
+		*(u32*)0x02800000 = cardengine_arm7_bin_size;
+		tonccpy((u32*)0x02800004, (u32*)cardengine_arm7_bin, cardengine_arm7_bin_size);
 	}
 
 	// Give the VRAM to the ARM7

@@ -120,6 +120,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
      - [unresolvedsymbol](https://github.com/unresolvedsymbol): [rom3M+master "DSL-Enhanced"](https://github.com/unresolvedsymbol/GBARunner2-DSL-Enhanced) builds of GBARunner2 included for playing *Pokémon: Emerald Version* on flashcards
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS) (used for launching Sega Mega Drive/Genesis ROMs)
      - [xonn83](https://github.com/xonn83): GBMacro version of [jEnesisDS](https://github.com/xonn83/jEnesisDS_macro)
+- [Rocket Robz](https://github.com/RocketRobz): [Rocket Video Player](https://github.com/RocketRobz/RocketVideoPlayer) (used for launching RocketVideoDS videos)
 - Ryan FB, [Rocket Robz](https://github.com/RocketRobz), and [xonn83](https://github.com/xonn83): [PicoDriveTWL](https://github.com/DS-Homebrew/PicoDriveTWL) (used for launching large Sega Mega Drive/Genesis ROMs)
 - [wavemotion](https://github.com/wavemotion-dave): [Nintellivision/NINTV-DS](https://github.com/wavemotion-dave/NINTV-DS) (used for launching Intellivision ROMs) and [SugarDS](https://github.com/wavemotion-dave/SugarDS) (used for launching Amstrad CPC ROMs)
 ## Graphics & Themes
@@ -146,9 +147,11 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [Dartz150](https://github.com/Dartz150): Provided fix for *Iridion II* & *Top Gun: Combat Zones* GBA games
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat
 - [edo9300](https://github.com/edo9300): DS Phat check code
+- [Gericom](https://github.com/Gericom): Frame rate adjustment code from [FastVideoDSPlayer](https://github.com/Gericom/FastVideoDSPlayer) used in TWLMenu++ splash screen
 - [Gericom](https://github.com/Gericom), TrolleyDave, and FAST6191: GBA SRAM-patching code, used in gbapatcher ([SRAM patching thread at GBAtemp](https://gbatemp.net/threads/reverse-engineering-gba-patching.60168/))
 - [Gericom](https://github.com/Gericom) & [profi200](https://github.com/profi200): GBA color correction code, used in [GBARunner3](https://github.com/Gericom/GBARunner3)
 - Nikokaro: Found no-tilt patches for *WarioWare: Twisted!*, and *Yoshi Topsy-Turvy*. ([GBAtemp thread](https://gbatemp.net/threads/gba-no-tilt-patches-for-ds-users.584128/))
+- [Lorenzooone](https://github.com/Lorenzooone): Improvements to Slot-1 launcher, and added support for booting DSi-Enhanced/Exclusive game cards in DSi mode
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS
 - RadDude McCoolguy, fintogive, KazoWAR, Vague Rant, [gamemasterplc](https://github.com/gamemasterplc), [Rocket Robz](https://github.com/RocketRobz), [ChampionLeake](https://github.com/ChampionLeake), [DeadSkullzJr](https://github.com/DeadSkullzJr), [spellboundtriangle](https://github.com/spellboundtriangle), [LedyBacer](https://github.com/LedyBacer): Widescreen cheats
 - [SNBeast](https://github.com/SNBeast): Unlaunch patches
