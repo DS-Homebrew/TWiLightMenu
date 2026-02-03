@@ -54,8 +54,6 @@ extern bool controlBottomBright;
 //bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
 
-const char *settingsinipath = DSIMENUPP_INI;
-
 static sNDSHeaderExt NDSHeader;
 
 /**
@@ -1889,7 +1887,7 @@ void resetSettingsPrompt(void) {
 	} while (!(pressed & (KEY_A | KEY_B)));
 
 	if (pressed & KEY_A) {
-		remove(settingsinipath);	// Delete "settings.ini"
+		remove(settings.settingsinipath);	// Delete "settings.ini"
 	}
 
 
@@ -2977,7 +2975,7 @@ int titleMode(void)
 		}
 	}
 
-	if ((access(settingsinipath, F_OK) != 0)
+	if ((access(ms().settingsinipath, F_OK) != 0)
 	|| languageNowSet || regionNowSet
 	|| (ms().theme < TWLSettings::EThemeDSi) || (ms().theme > TWLSettings::EThemeGBC)) {
 		// Create or modify "settings.ini"
