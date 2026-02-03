@@ -284,6 +284,11 @@ autoboot:
 	# Since this is the last one, move it instead of copy
 	mv TTMenu.dat "../7zfile/Flashcard users/Autoboot/R4i-REDANT/TTMenu.dat"
 
+	#### DSpico
+	cp booter_fc.dsi _picoboot.nds
+	mkdir -p "../7zfile/Flashcard users/Autoboot/DSpico/"
+	mv bootme.nds "../7zfile/Flashcard users/Autoboot/DSpico/_picoboot.nds"
+
 $(TARGET).nds:	makearm7_fc makearm7_r4ils makearm9_fc makearm9_r4ig makearm9_acekard2 makearm9_r4idsn
 	ndstool -c $(TARGET)_fc.dsi       -7 $(TARGET)_r4ils.arm7.elf -9 $(TARGET)_fc.arm9.elf       -g SRLA 01 "TWLMENUPP" -b icon.bmp "TWiLight Menu++;Rocket Robz"
 	# simple nds srl without dsi extended header
