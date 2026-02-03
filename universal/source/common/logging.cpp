@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include "common/flashcard.h"
 #include "common/twlmenusettings.h"
+#include "common/systemdetails.h"
 
 static const char* path = "";
 static FILE* logFile;
@@ -15,7 +16,7 @@ void logInit(void) {
 		return;
 	}
 
-	path = sdFound() ? "sd:/_nds/TWiLightMenu/log.txt" : "fat:/_nds/TWiLightMenu/log.txt";
+	path = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/log.txt" : "fat:/_nds/TWiLightMenu/log.txt";
 	logFile = fopen(path, "wb");
 	if (!logFile) {
 		return;
