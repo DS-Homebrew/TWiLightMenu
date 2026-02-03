@@ -1458,7 +1458,14 @@ void lastRunROM()
 
 void setDSiDonorRom(const bool is3DS) {
 	if (!nandMounted) {
+		logPrint("Mounting NAND in order to auto-set a donor ROM...\n");
 		nandMounted = fatMountSimple("nand", &io_dsi_nand);
+		if (nandMounted) {
+			logPrint("NAND mounted!\n");
+		} else {
+			logPrint("NAND not mounted! Unable to auto-set a donor ROM.\n");
+			return;
+		}
 	}
 
 	// const char* pathDefine0 = "DONORTWL0_NDS_PATH"; // SDK5.0
@@ -1480,11 +1487,19 @@ void setDSiDonorRom(const bool is3DS) {
 		donorRomPath = "";
 	} */
 
-	if (donorRomPathOnly0 != "" && access(donorRomPathOnly0.c_str(), F_OK) != 0) {
-		donorRomPathOnly0 = "";
+	if (donorRomPathOnly0 != "") {
+		if (access(donorRomPathOnly0.c_str(), F_OK) == 0) {
+			logPrint("Donor ROM (DONORTWLONLY0_NDS_PATH) is already set!\n");
+		} else {
+			donorRomPathOnly0 = "";
+		}
 	}
-	if (donorRomPathOnly != "" && access(donorRomPathOnly.c_str(), F_OK) != 0) {
-		donorRomPathOnly = "";
+	if (donorRomPathOnly != "") {
+		if (access(donorRomPathOnly.c_str(), F_OK) == 0) {
+			logPrint("Donor ROM (DONORTWLONLY_NDS_PATH) is already set!\n");
+		} else {
+			donorRomPathOnly = "";
+		}
 	}
 
 	if (!is3DS && donorRomPathOnly0 == "") {
@@ -1529,7 +1544,7 @@ void setDSiDonorRom(const bool is3DS) {
 			sprintf(validAppPath, "nand:/title/%08lx/%08lx/content/0000000%i.app", tid2, tid1, validAppVer);
 			bootstrapini.SetString("NDS-BOOTSTRAP", pathDefineOnly0, validAppPath);
 
-			logPrint("Donor ROM has been automatically set!\n");
+			logPrint("Donor ROM (DONORTWLONLY0_NDS_PATH) has been automatically set!\n");
 			bootstrapini.SaveIniFile(bootstrapinipath);
 		}
 	}
@@ -1558,7 +1573,7 @@ void setDSiDonorRom(const bool is3DS) {
 			sprintf(validAppPath, "nand:/title/%08lx/%08lx/content/%08lx.app", tid2, tid1, appName);
 			bootstrapini.SetString("NDS-BOOTSTRAP", pathDefineOnly, validAppPath);
 
-			logPrint("Donor ROM has been automatically set!\n");
+			logPrint("Donor ROM (DONORTWLONLY_NDS_PATH) has been automatically set!\n");
 			bootstrapini.SaveIniFile(bootstrapinipath);
 		}
 	}
@@ -1566,7 +1581,14 @@ void setDSiDonorRom(const bool is3DS) {
 
 void setDSiDonorRomSCFGLocked(void) {
 	if (!nandMounted) {
+		logPrint("Mounting NAND in order to auto-set a donor ROM...\n");
 		nandMounted = fatMountSimple("nand", &io_dsi_nand);
+		if (nandMounted) {
+			logPrint("NAND mounted!\n");
+		} else {
+			logPrint("NAND not mounted! Unable to auto-set a donor ROM.\n");
+			return;
+		}
 	}
 
 	const char* pathDefine0 = *(u32*)0x02FFE1A0 == 0x080037C0 ? "DONORTWLONLY0_NDS_PATH" : "DONORTWL0_NDS_PATH"; // SDK5.0
@@ -1589,8 +1611,12 @@ void setDSiDonorRomSCFGLocked(void) {
 	region = (TWLSettings::TRegion)fgetc(hwinfo_s);
 	fclose(hwinfo_s);
 
-	if (donorRomPath0 != "" && access(donorRomPath0.c_str(), F_OK) != 0) {
-		donorRomPath0 = "";
+	if (donorRomPath0 != "") {
+		if (access(donorRomPath0.c_str(), F_OK) == 0) {
+			logPrint("Donor ROM (%s) is already set!\n", pathDefine0);
+		} else {
+			donorRomPath0 = "";
+		}
 	}
 
 	if (donorRomPath0 == "") {
@@ -1748,13 +1774,17 @@ void setDSiDonorRomSCFGLocked(void) {
 			}
 		}
 		if (validDonor) {
-			logPrint("Donor ROM has been automatically set!\n");
+			logPrint("Donor ROM (%s) has been automatically set!\n", pathDefine0);
 			bootstrapini.SaveIniFile(bootstrapinipath);
 		}
 	}
 
-	if (donorRomPath != "" && access(donorRomPath.c_str(), F_OK) != 0) {
-		donorRomPath = "";
+	if (donorRomPath != "") {
+		if (access(donorRomPath.c_str(), F_OK) == 0) {
+			logPrint("Donor ROM (%s) is already set!\n", pathDefine);
+		} else {
+			donorRomPath = "";
+		}
 	}
 
 	if (donorRomPath == "") {
@@ -1816,7 +1846,7 @@ void setDSiDonorRomSCFGLocked(void) {
 		}
 
 		if (validDonor) {
-			logPrint("Donor ROM has been automatically set!\n");
+			logPrint("Donor ROM (%s) has been automatically set!\n", pathDefine);
 			bootstrapini.SaveIniFile(bootstrapinipath);
 		}
 	}
@@ -2599,42 +2629,53 @@ int titleMode(void)
 
 	// Get SysNAND region and launcher app
 	if (isDSiMode() && sdFound() && !is3DS && (ms().sysRegion == TWLSettings::ERegionDefault || ms().launcherApp == -1)) {
-		bool hiyaFound = (access("sd:/hiya.dsi", F_OK) == 0 && !sys().arm7SCFGLocked()); // Check for hiyaCFW
-		if (!hiyaFound) {
+		const bool hiyaFound = (access("sd:/hiya.dsi", F_OK) == 0 && !sys().arm7SCFGLocked()); // Check for hiyaCFW
+		if (hiyaFound) {
+			logPrint("hiyaCFW found!\n");
+		} else {
+			logPrint("hiyaCFW not found!\n");
+
 			// hiyaCFW is not found
 			if (!nandMounted) {
+				logPrint("Mounting NAND...\n");
 				nandMounted = fatMountSimple("nand", &io_dsi_nand);
 			}
 
-			FILE *hwinfo_s = fopen("nand:/sys/HWINFO_S.dat", "rb");
-			if (hwinfo_s) {
-				if (ms().sysRegion == TWLSettings::ERegionDefault) {
-					fseek(hwinfo_s, 0x90, SEEK_SET);
-					ms().sysRegion = (TWLSettings::TRegion)fgetc(hwinfo_s);
-				}
+			if (nandMounted) {
+				logPrint("NAND mounted!\n");
 
-				if (ms().launcherApp == -1) {
-					if (access("nand:/launcher.dsi", F_OK) == 0) {
-						// DSi Language Patcher
-						ms().launcherApp = 9;
-					} else {
-						fseek(hwinfo_s, 0xA0, SEEK_SET);
-						u32 launcherTid;
-						fread(&launcherTid, sizeof(u32), 1, hwinfo_s);
+				FILE *hwinfo_s = fopen("nand:/sys/HWINFO_S.dat", "rb");
+				if (hwinfo_s) {
+					if (ms().sysRegion == TWLSettings::ERegionDefault) {
+						fseek(hwinfo_s, 0x90, SEEK_SET);
+						ms().sysRegion = (TWLSettings::TRegion)fgetc(hwinfo_s);
+					}
 
-						char tmdPath[64];
-						snprintf(tmdPath, sizeof(tmdPath), "nand:/title/00030017/%08lx/content/title.tmd", launcherTid);
-						FILE *launcherTmd = fopen(tmdPath, "rb");
-						if (launcherTmd) {
-							fseek(launcherTmd, 0x1E7, SEEK_SET);
-							ms().launcherApp = fgetc(launcherTmd);
-							fclose(launcherTmd);
+					if (ms().launcherApp == -1) {
+						if (access("nand:/launcher.dsi", F_OK) == 0) {
+							// DSi Language Patcher
+							ms().launcherApp = 9;
+						} else {
+							fseek(hwinfo_s, 0xA0, SEEK_SET);
+							u32 launcherTid;
+							fread(&launcherTid, sizeof(u32), 1, hwinfo_s);
+
+							char tmdPath[64];
+							snprintf(tmdPath, sizeof(tmdPath), "nand:/title/00030017/%08lx/content/title.tmd", launcherTid);
+							FILE *launcherTmd = fopen(tmdPath, "rb");
+							if (launcherTmd) {
+								fseek(launcherTmd, 0x1E7, SEEK_SET);
+								ms().launcherApp = fgetc(launcherTmd);
+								fclose(launcherTmd);
+							}
 						}
 					}
-				}
 
-				fclose(hwinfo_s);
-				ms().saveSettings();
+					fclose(hwinfo_s);
+					ms().saveSettings();
+				}
+			} else {
+				logPrint("NAND not mounted!\n");
 			}
 		}
 	}
