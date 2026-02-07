@@ -502,7 +502,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 27
+// Total: 26
 static const char compatibleGameListB4DSMEP[][5] = {
 	"K5I", // 5 in 1 Solitaire
 	"K2Z", // G.G Series: Altered Weapon
@@ -519,7 +519,6 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
 	"KY3", // Kuniya Burete Sanga Ari: Hills and Rivers Remain
 	"K5M", // G.G Series: The Last Knight
-	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KYL", // Make Up & Style
 	"KWF", // Mario Calculator
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
@@ -555,7 +554,6 @@ static int compatibleGameListB4DSMEPID[] = {
 	1, // Jinia Supasonaru: Waei Rakubiki Jiten
 	4, // Kuniya Burete Sanga Ari: Hills and Rivers Remain
 	3, // G.G Series: The Last Knight
-	0, // The Legend of Zelda: Four Swords: Anniversary Edition
 	0, // Make Up & Style
 	0, // Mario Calculator
 	2, // Meikyou Kokugo: Rakubiki Jiten
@@ -570,7 +568,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 47
+// Total: 48
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -594,6 +592,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KK6", // Hakokoro
 	"KZH", // Halloween Trick or Treat
 	"KIS", // Ice Hockey Slovakia 2011
+	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KPT", // Link 'n' Launch
 	"KYL", // Make Up & Style
 	"K59", // Metal Torrent
@@ -645,6 +644,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Hakokoro (No audio)
 	2, // Halloween Trick or Treat (No music)
 	8, // Ice Hockey Slovakia 2011 (No sound effects)
+	9, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio without Memory Expansion Pak)
 	2, // Link 'n' Launch (No music)
 	5, // Make Up & Style (No FMV)
 	2, // Metal Torrent (No music)
