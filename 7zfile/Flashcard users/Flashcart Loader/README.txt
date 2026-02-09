@@ -4,16 +4,17 @@ Acekard 2(i) folder:
 - Acekard 2, 2.1, 2i
 - EDGEi (not the original EDGE or the original iEDGE)
 - R4 Ultra, R4i Ultra
-- R4iTT 3DS NEW, RTS
 - R4i3D NEW, 2012 or later
+- r4ids.cn R4i Gold 3DS Plus with faulty DS mode
+- translucent r4igold.cc 3DS carts
+- r4i-gold.me carts 2013 or later
 - R4i Infinity NEW A. C. Kard Version
+- r4infinity.com Dual-Core
+- R4i Neo (www.r4ineo.com)
 - r4isdhc.com NEW, 2013
 - r4isdhc.com Dual-Core (no year number)
 - r4isdhc.hk carts before 2019
-- translucent r4igold.cc 3DS carts
-- r4i-gold.me carts 2013 or later
-- r4infinity.com Dual-Core
-- r4ids.cn R4i Gold 3DS Plus with faulty DS mode
+- R4iTT 3DS NEW, RTS
 
 Ace3DS+ folder:
 - Ace3DS+
