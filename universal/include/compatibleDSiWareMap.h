@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 495
+// Total: 496
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -363,6 +363,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KPN", // Puzzle League: Express / A Little Bit of... Puzzle League
 	"KPL", // Puzzle Rocks
 	"KYE", // Puzzler Brain Games
+	"KUO", // Puzzler World XL
 	"KBY", // Puzzle to Go: Baby Animals
 	"KPU", // Puzzle to Go: Diddl
 	"KBX", // Puzzle to Go: Planets and Universe
@@ -502,7 +503,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 26
+// Total: 27
 static const char compatibleGameListB4DSMEP[][5] = {
 	"K5I", // 5 in 1 Solitaire
 	"K2Z", // G.G Series: Altered Weapon
@@ -525,6 +526,7 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KNP", // Need for Speed: Nitro-X
 	"K9K", // Nintendoji
 	"KPS", // Phantasy Star 0 Mini
+	"KUO", // Puzzler World XL
 	"KQR", // Remote Racers
 	"K97", // Star Novels: Kono Haretasora no Shitade
 	"K98", // Star Novels: Shirogane no Torikago
@@ -560,6 +562,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	3, // Need for Speed: Nitro-X
 	0, // Nintendoji
 	3, // Phantasy Star 0 Mini
+	3, // Puzzler World XL
 	0, // Remote Racers
 	0, // Star Novels: Kono Haretasora no Shitade
 	0, // Star Novels: Shirogane no Torikago
@@ -673,7 +676,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 36
+// Total: 35
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -700,7 +703,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KO9", // Oscar's World Tour
 	"KFV", // Pro-Jumper! Chimaki's Hot Spring Tour! Guilty Gear Tangent!?
 	"KYG", // Puzzler World 2013
-	"KUO", // Puzzler World XL
 	"KRR", // Robot Rescue 2
 	"K7T", // Save the Turtles
 	"KSJ", // Shawn Johnson Gymnastics
