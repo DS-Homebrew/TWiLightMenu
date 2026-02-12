@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 496
+// Total: 497
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -153,6 +153,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KML", // Don't Cross the Line
 	"KHE", // DotMan
 	"KD9", // Dr. Mario Express / A Little Bit of... Dr. Mario
+	"KDQ", // Dragon Quest Wars
 	"KDL", // Dragon's Lair
 	"KLY", // Dragon's Lair II: Time Warp
 	"K9E", // Dreamwalker
@@ -503,7 +504,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 27
+// Total: 28
 static const char compatibleGameListB4DSMEP[][5] = {
 	"K5I", // 5 in 1 Solitaire
 	"K2Z", // G.G Series: Altered Weapon
@@ -512,6 +513,7 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KBEV", // Bejeweled Twist (Europe, Australia)
 	"KCT", // Chess Challenge!
 	"KVL", // Clash of Elementalists
+	"KDQ", // Dragon Quest Wars
 	"KUG", // G.G Series: Drift Circuit 2
 	"KEI", // Electroplankton: Beatnes
 	"KEG", // Electroplankton: Lumiloop
@@ -548,6 +550,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	3, // Bejeweled Twist (Europe, Australia)
 	0, // Chess Challenge!
 	1, // Clash of Elementalists
+	0, // Dragon Quest Wars
 	3, // G.G Series: Drift Circuit 2
 	3, // Electroplankton: Beatnes
 	3, // Electroplankton: Lumiloop
@@ -571,7 +574,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 48
+// Total: 49
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -587,6 +590,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
+	"KDQ", // Dragon Quest Wars
 	"KIF", // Drift Street International
 	"K2E", // Easter Eggztravaganza
 	"KFD", // Fieldrunners
@@ -639,6 +643,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
 	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state due to RAM limitation)
+	4, // Dragon Quest Wars (Known to crash at Training Lv. 4 and after a Survival battle)
 	2, // Drift Street International (No music)
 	0, // Easter Eggztravaganza (Part of the game only)
 	1, // Fieldrunners (No audio)
@@ -676,7 +681,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 35
+// Total: 34
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -690,7 +695,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KVX", // Cat Frenzy
 	"K35", // Defense of the Middle Kingdom
 	"KN2", // Devil Band: Rock the Underworld
-	"KDQ", // Dragon Quest Wars
 	"KER", // G.G Series: Exciting River
 	"K5L", // Forgotten Legions
 	"KGUE", // Flipnote Studio (USA)
