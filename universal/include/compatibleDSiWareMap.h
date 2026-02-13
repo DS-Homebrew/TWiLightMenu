@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 497
+// Total: 498
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -467,6 +467,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KWW", // The Tower DS: Classic
 	"KWV", // The Tower DS: Hotel
 	"KW4", // The Tower DS: Shopping Santa
+	"KDZ", // Trajectile / Reflect Missile
 	"K4E", // Treasure Hunter X
 	"KB7", // Trollboarder
 	"K72", // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf
@@ -574,7 +575,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 49
+// Total: 50
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -622,6 +623,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
 	"KZ8", // Tales to Enjoy!: The Ugly Duckling
 	"KTW", // Thorium Wars
+	"KDZ", // Trajectile / Reflect Missile
 	"KB7", // Trollboarder
 	"K72", // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf
 	"KBS", // Wonderful Sports: Bowling
@@ -675,13 +677,14 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Tales to Enjoy!: The Three Little Pigs (Crashes at certain points)
 	4, // Tales to Enjoy!: The Ugly Duckling (Crashes at certain points)
 	1, // Thorium Wars (No audio + No FMVs)
+	1, // Trajectile / Reflect Missile (No audio)
 	1, // Trollboarder (No audio)
 	1, // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf (No audio)
 	4, // Wonderful Sports: Bowling (No music + Crashes at certain point)
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 34
+// Total: 33
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -717,7 +720,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"K4P", // Super Yum Yum: Puzzle Adventures
 	"KSY", // System Flaw: Recruit
 	"K3O", // G.G Series: Throw Out
-	"KDZ", // Trajectile / Reflect Missile
 };
 
 // Show RAM limitation message
