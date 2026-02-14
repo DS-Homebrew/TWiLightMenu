@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 498
+// Total: 499
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -321,6 +321,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KO4", // Oscar in Movieland
 	"KOT", // Oscar in Toyland
 	"KOY", // Oscar in Toyland 2
+	"KO9", // Oscar's World Tour
 	"KTV", // Otegaru Pazuru Shirizu: Yurito Fushigina Meikyuu
 	"KOL", // Othello
 	"KL7", // Otona no Nihonshi Pazuru
@@ -684,7 +685,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 33
+// Total: 32
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -707,7 +708,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KLT", // My Little Restaurant
 	"KTG", // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle
 	"KNV", // Neko Reversi
-	"KO9", // Oscar's World Tour
 	"KFV", // Pro-Jumper! Chimaki's Hot Spring Tour! Guilty Gear Tangent!?
 	"KYG", // Puzzler World 2013
 	"KRR", // Robot Rescue 2
