@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 495
+// Total: 499
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -153,6 +153,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KML", // Don't Cross the Line
 	"KHE", // DotMan
 	"KD9", // Dr. Mario Express / A Little Bit of... Dr. Mario
+	"KDQ", // Dragon Quest Wars
 	"KDL", // Dragon's Lair
 	"KLY", // Dragon's Lair II: Time Warp
 	"K9E", // Dreamwalker
@@ -320,6 +321,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KO4", // Oscar in Movieland
 	"KOT", // Oscar in Toyland
 	"KOY", // Oscar in Toyland 2
+	"KO9", // Oscar's World Tour
 	"KTV", // Otegaru Pazuru Shirizu: Yurito Fushigina Meikyuu
 	"KOL", // Othello
 	"KL7", // Otona no Nihonshi Pazuru
@@ -363,6 +365,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KPN", // Puzzle League: Express / A Little Bit of... Puzzle League
 	"KPL", // Puzzle Rocks
 	"KYE", // Puzzler Brain Games
+	"KUO", // Puzzler World XL
 	"KBY", // Puzzle to Go: Baby Animals
 	"KPU", // Puzzle to Go: Diddl
 	"KBX", // Puzzle to Go: Planets and Universe
@@ -465,6 +468,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KWW", // The Tower DS: Classic
 	"KWV", // The Tower DS: Hotel
 	"KW4", // The Tower DS: Shopping Santa
+	"KDZ", // Trajectile / Reflect Missile
 	"K4E", // Treasure Hunter X
 	"KB7", // Trollboarder
 	"K72", // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf
@@ -502,7 +506,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 27
+// Total: 28
 static const char compatibleGameListB4DSMEP[][5] = {
 	"K5I", // 5 in 1 Solitaire
 	"K2Z", // G.G Series: Altered Weapon
@@ -511,6 +515,7 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KBEV", // Bejeweled Twist (Europe, Australia)
 	"KCT", // Chess Challenge!
 	"KVL", // Clash of Elementalists
+	"KDQ", // Dragon Quest Wars
 	"KUG", // G.G Series: Drift Circuit 2
 	"KEI", // Electroplankton: Beatnes
 	"KEG", // Electroplankton: Lumiloop
@@ -519,13 +524,13 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KD5", // Jinia Supasonaru: Waei Rakubiki Jiten
 	"KY3", // Kuniya Burete Sanga Ari: Hills and Rivers Remain
 	"K5M", // G.G Series: The Last Knight
-	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KYL", // Make Up & Style
 	"KWF", // Mario Calculator
 	"KD4", // Meikyou Kokugo: Rakubiki Jiten
 	"KNP", // Need for Speed: Nitro-X
 	"K9K", // Nintendoji
 	"KPS", // Phantasy Star 0 Mini
+	"KUO", // Puzzler World XL
 	"KQR", // Remote Racers
 	"K97", // Star Novels: Kono Haretasora no Shitade
 	"K98", // Star Novels: Shirogane no Torikago
@@ -547,6 +552,7 @@ static int compatibleGameListB4DSMEPID[] = {
 	3, // Bejeweled Twist (Europe, Australia)
 	0, // Chess Challenge!
 	1, // Clash of Elementalists
+	0, // Dragon Quest Wars
 	3, // G.G Series: Drift Circuit 2
 	3, // Electroplankton: Beatnes
 	3, // Electroplankton: Lumiloop
@@ -555,13 +561,13 @@ static int compatibleGameListB4DSMEPID[] = {
 	1, // Jinia Supasonaru: Waei Rakubiki Jiten
 	4, // Kuniya Burete Sanga Ari: Hills and Rivers Remain
 	3, // G.G Series: The Last Knight
-	0, // The Legend of Zelda: Four Swords: Anniversary Edition
 	0, // Make Up & Style
 	0, // Mario Calculator
 	2, // Meikyou Kokugo: Rakubiki Jiten
 	3, // Need for Speed: Nitro-X
 	0, // Nintendoji
 	3, // Phantasy Star 0 Mini
+	3, // Puzzler World XL
 	0, // Remote Racers
 	0, // Star Novels: Kono Haretasora no Shitade
 	0, // Star Novels: Shirogane no Torikago
@@ -570,7 +576,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 47
+// Total: 50
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -586,6 +592,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KXW", // Christmas Wonderland
 	"K2W", // Christmas Wonderland 2
 	"KAV", // Art Style: DIGIDRIVE / INTERSECT
+	"KDQ", // Dragon Quest Wars
 	"KIF", // Drift Street International
 	"K2E", // Easter Eggztravaganza
 	"KFD", // Fieldrunners
@@ -594,6 +601,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KK6", // Hakokoro
 	"KZH", // Halloween Trick or Treat
 	"KIS", // Ice Hockey Slovakia 2011
+	"KQ9", // The Legend of Zelda: Four Swords: Anniversary Edition
 	"KPT", // Link 'n' Launch
 	"KYL", // Make Up & Style
 	"K59", // Metal Torrent
@@ -616,6 +624,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KZ7", // Tales to Enjoy!: The Three Little Pigs
 	"KZ8", // Tales to Enjoy!: The Ugly Duckling
 	"KTW", // Thorium Wars
+	"KDZ", // Trajectile / Reflect Missile
 	"KB7", // Trollboarder
 	"K72", // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf
 	"KBS", // Wonderful Sports: Bowling
@@ -637,6 +646,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
 	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state due to RAM limitation)
+	4, // Dragon Quest Wars (Known to crash at Training Lv. 4 and after a Survival battle)
 	2, // Drift Street International (No music)
 	0, // Easter Eggztravaganza (Part of the game only)
 	1, // Fieldrunners (No audio)
@@ -645,6 +655,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Hakokoro (No audio)
 	2, // Halloween Trick or Treat (No music)
 	8, // Ice Hockey Slovakia 2011 (No sound effects)
+	9, // The Legend of Zelda: Four Swords: Anniversary Edition (No audio without Memory Expansion Pak)
 	2, // Link 'n' Launch (No music)
 	5, // Make Up & Style (No FMV)
 	2, // Metal Torrent (No music)
@@ -667,13 +678,14 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Tales to Enjoy!: The Three Little Pigs (Crashes at certain points)
 	4, // Tales to Enjoy!: The Ugly Duckling (Crashes at certain points)
 	1, // Thorium Wars (No audio + No FMVs)
+	1, // Trajectile / Reflect Missile (No audio)
 	1, // Trollboarder (No audio)
 	1, // True Swing Golf Express / A Little Bit of... Nintendo Touch Golf (No audio)
 	4, // Wonderful Sports: Bowling (No music + Crashes at certain point)
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 36
+// Total: 32
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -687,7 +699,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KVX", // Cat Frenzy
 	"K35", // Defense of the Middle Kingdom
 	"KN2", // Devil Band: Rock the Underworld
-	"KDQ", // Dragon Quest Wars
 	"KER", // G.G Series: Exciting River
 	"K5L", // Forgotten Legions
 	"KGUE", // Flipnote Studio (USA)
@@ -697,10 +708,8 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KLT", // My Little Restaurant
 	"KTG", // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle
 	"KNV", // Neko Reversi
-	"KO9", // Oscar's World Tour
 	"KFV", // Pro-Jumper! Chimaki's Hot Spring Tour! Guilty Gear Tangent!?
 	"KYG", // Puzzler World 2013
-	"KUO", // Puzzler World XL
 	"KRR", // Robot Rescue 2
 	"K7T", // Save the Turtles
 	"KSJ", // Shawn Johnson Gymnastics
@@ -711,15 +720,15 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"K4P", // Super Yum Yum: Puzzle Adventures
 	"KSY", // System Flaw: Recruit
 	"K3O", // G.G Series: Throw Out
-	"KDZ", // Trajectile / Reflect Missile
 };
 
 // Show RAM limitation message
-// Total: 4
+// Total: 5
 static const char compatibleGameListB4DSDebugRAMLimited[][4] = {
 	"KUV", // Bloons TD 4
 	"KGU", // Flipnote Studio
 	"KTG", // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle
+	"K7T", // Save the Turtles
 	"KS3", // Shantae: Risky's Revenge
 };
 
@@ -728,6 +737,7 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	1, // Bloons TD 4 (No audio)
 	4, // Flipnote Studio (Crashes when getting past the main menu)
 	2, // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle (No music)
+	1, // Save the Turtles (No audio)
 	2, // Shantae: Risky's Revenge (No music)
 };
 

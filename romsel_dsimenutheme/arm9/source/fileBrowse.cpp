@@ -2218,8 +2218,8 @@ void dsiWareRAMLimitMsgPrep(void) {
 			for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSDebugRAMLimited)/sizeof(compatibleGameListB4DSDebugRAMLimited[0]); i++) {
 				if (memcmp(gameTid[CURPOS], compatibleGameListB4DSDebugRAMLimited[i], 3) == 0) {
 					// Found match
-					showMsg = true;
 					msgId = compatibleGameListB4DSDebugRAMLimitedID[i];
+					showMsg = true;
 					break;
 				}
 			}
@@ -2228,8 +2228,18 @@ void dsiWareRAMLimitMsgPrep(void) {
 			for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSRAMLimited)/sizeof(compatibleGameListB4DSRAMLimited[0]); i++) {
 				if (memcmp(gameTid[CURPOS], compatibleGameListB4DSRAMLimited[i], 3) == 0) {
 					// Found match
-					showMsg = true;
 					msgId = compatibleGameListB4DSRAMLimitedID[i];
+					if (msgId == 9) {
+						if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
+							const u16 hwordBak = *(vu16*)(0x08240000);
+							*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
+							mepFound = (*(vu16*)(0x08240000) == 1);
+							*(vu16*)(0x08240000) = hwordBak;
+						}
+						showMsg = (!mepFound && *(u16*)0x020000C0 == 0); // Show message if not found
+					} else {
+						showMsg = true;
+					}
 					break;
 				}
 			}
@@ -2240,8 +2250,8 @@ void dsiWareRAMLimitMsgPrep(void) {
 		for (unsigned int i = 0; i < sizeof(compatibleGameListB4DSAllRAMLimited)/sizeof(compatibleGameListB4DSAllRAMLimited[0]); i++) {
 			if (memcmp(gameTid[CURPOS], compatibleGameListB4DSAllRAMLimited[i], 3) == 0) {
 				// Found match
-				showMsg = true;
 				msgId = compatibleGameListB4DSAllRAMLimitedID[i];
+				showMsg = true;
 				break;
 			}
 		}
@@ -2323,6 +2333,9 @@ bool dsiWareRAMLimitMsg(std::string filename) {
 			break;
 		case 8:
 			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_NO_SOUND_FX) - smallFontHeight()) / 2), STR_RAM_LIMIT_NO_SOUND_FX, Alignment::center, FontPalette::dialog);
+			break;
+		case 9:
+			printSmall(false, 0, yPos - ((calcSmallFontHeight(STR_RAM_LIMIT_NO_AUDIO_MEP) - smallFontHeight()) / 2), STR_RAM_LIMIT_NO_AUDIO_MEP, Alignment::center, FontPalette::dialog);
 			break;
 		case 10:
 			if (sys().isRegularDS()) {
