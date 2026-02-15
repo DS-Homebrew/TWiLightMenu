@@ -723,11 +723,12 @@ static const char compatibleGameListB4DSDebug[][5] = {
 };
 
 // Show RAM limitation message
-// Total: 4
+// Total: 5
 static const char compatibleGameListB4DSDebugRAMLimited[][4] = {
 	"KUV", // Bloons TD 4
 	"KGU", // Flipnote Studio
 	"KTG", // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle
+	"K7T", // Save the Turtles
 	"KS3", // Shantae: Risky's Revenge
 };
 
@@ -736,6 +737,7 @@ static int compatibleGameListB4DSDebugRAMLimitedID[] = {
 	1, // Bloons TD 4 (No audio)
 	4, // Flipnote Studio (Crashes when getting past the main menu)
 	2, // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle (No music)
+	1, // Save the Turtles (No audio)
 	2, // Shantae: Risky's Revenge (No music)
 };
 
