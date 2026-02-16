@@ -2229,7 +2229,7 @@ void dsiWareRAMLimitMsgPrep(void) {
 				if (memcmp(gameTid[CURPOS], compatibleGameListB4DSRAMLimited[i], 3) == 0) {
 					// Found match
 					msgId = compatibleGameListB4DSRAMLimitedID[i];
-					if (msgId == 9) {
+					if (msgId == 9 && sys().isRegularDS()) {
 						if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 							const u16 hwordBak = *(vu16*)(0x08240000);
 							*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak
