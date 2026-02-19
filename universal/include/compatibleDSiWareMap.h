@@ -645,7 +645,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	4, // Castle Conqueror: Revolution (Crashes at certain point(s))
 	1, // Christmas Wonderland (No audio)
 	2, // Christmas Wonderland 2 (No music)
-	6, // Art Style: DIGIDRIVE / INTERSECT (Limited state due to RAM limitation)
+	1, // Art Style: DIGIDRIVE / INTERSECT (No audio)
 	4, // Dragon Quest Wars (Known to crash at Training Lv. 4 and after a Survival battle)
 	2, // Drift Street International (No music)
 	0, // Easter Eggztravaganza (Part of the game only)
