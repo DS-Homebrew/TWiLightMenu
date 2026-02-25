@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 499
+// Total: 498
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -183,7 +183,6 @@ static const char compatibleGameListB4DS[][5] = {
 	"KU7", // Fashion Tycoon
 	"KFD", // Fieldrunners
 	"KF8", // Fire Panic
-	"KZZ", // Fizz
 	"KFS", // Flashlight
 	"KKR", // Flip the Core
 	"KFP", // Flipper
@@ -685,7 +684,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 32
+// Total: 33
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -700,6 +699,7 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"K35", // Defense of the Middle Kingdom
 	"KN2", // Devil Band: Rock the Underworld
 	"KER", // G.G Series: Exciting River
+	"KZZ", // Fizz
 	"K5L", // Forgotten Legions
 	"KGUE", // Flipnote Studio (USA)
 	"KKN", // Flipper 2: Flush the Goldfish
