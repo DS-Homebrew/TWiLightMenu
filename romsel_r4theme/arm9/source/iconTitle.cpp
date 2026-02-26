@@ -1355,12 +1355,14 @@ void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv)
 				logPrint("Banner save found!\n");
 
 				u16 ver = 0;
+				u16 crc16 = 0;
 				fread(&ver, sizeof(u16), 1, fp);
-				if (ver == NDS_BANNER_VER_DSi) {
+				fseek(fp, 8, SEEK_SET);
+				fread(&crc16, sizeof(u16), 1, fp);
+				if (ver == NDS_BANNER_VER_DSi && crc16 != 0) {
 					logPrint("Banner save is valid.\n");
 
-					fseek(fp, 8, SEEK_SET);
-					fread(ndsBanner.crc+3, sizeof(u16), 1, fp);
+					ndsBanner.crc[3] = crc16;
 
 					fseek(fp, 0x20, SEEK_SET);
 					fread(ndsBanner.dsi_icon, 1, 0x1180, fp);

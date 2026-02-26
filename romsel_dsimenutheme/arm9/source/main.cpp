@@ -1507,6 +1507,9 @@ int dsiMenuTheme(void) {
 					showProgressIcon = true;
 					FILE *pFile = fopen(ms().dsiWareBnrPath.c_str(), "wb");
 					if (pFile) {
+						const u16 ver = NDS_BANNER_VER_DSi;
+						fwrite(&ver, sizeof(u16), 1, pFile);
+
 						fseek(pFile, 0x4000 - 1, SEEK_SET);
 						fputc('\0', pFile);
 						fclose(pFile);
