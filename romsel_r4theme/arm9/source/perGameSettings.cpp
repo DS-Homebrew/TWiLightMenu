@@ -216,6 +216,13 @@ void savePerGameSettings (std::string filename) {
 	pergameini.SaveIniFile( pergamefilepath );
 }
 
+int getSaveNo (std::string filename) {
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	CIniFile pergameini( pergamefilepath );
+	perGameSettings_saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
+	return perGameSettings_saveNo;
+}
+
 bool checkIfShowAPMsg (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini(pergamefilepath);
@@ -1383,6 +1390,14 @@ std::string getPrvExtension(void) {
 		return ".prv";
 	} else {
 		return ".pr" + std::to_string(perGameSettings_saveNo);
+	}
+}
+
+std::string getBnrExtension(void) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
+		return ".bnr";
+	} else {
+		return ".bn" + std::to_string(perGameSettings_saveNo);
 	}
 }
 

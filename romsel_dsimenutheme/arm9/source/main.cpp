@@ -1132,7 +1132,8 @@ int dsiMenuTheme(void) {
 
 	if (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch
 	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
-	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0))) {
+	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0)
+	 || (access(ms().dsiWareBnrPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.bnr", F_OK) == 0))) {
 		fadeType = true; // Fade in from white
 		printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
 		printSmall(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 96 : 104), STR_DONOT_TURNOFF_POWER, Alignment::center);
@@ -1148,6 +1149,10 @@ int dsiMenuTheme(void) {
 		if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", ms().dsiWarePrvPath.c_str());
 			rename("sd:/_nds/TWiLightMenu/tempDSiWare.prv", "sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak");
+		}
+		if (access(ms().dsiWareBnrPath.c_str(), F_OK) == 0) {
+			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.bnr", ms().dsiWareBnrPath.c_str());
+			rename("sd:/_nds/TWiLightMenu/tempDSiWare.bnr", "sd:/_nds/TWiLightMenu/tempDSiWare.bnr.bak");
 		}
 		showProgressIcon = false;
 		logPrint("Copied DSiWare save back to flashcard\n");
@@ -1280,6 +1285,9 @@ int dsiMenuTheme(void) {
 			if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak", F_OK) == 0) {
 				remove("sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak");
 			}
+			if (access("sd:/_nds/TWiLightMenu/tempDSiWare.bnr.bak", F_OK) == 0) {
+				remove("sd:/_nds/TWiLightMenu/tempDSiWare.bnr.bak");
+			}
 			if (access("sd:/_nds/nds-bootstrap/patchOffsetCache/tempDSiWare.bin", F_OK) == 0) {
 				remove("sd:/_nds/nds-bootstrap/patchOffsetCache/tempDSiWare.bin");
 			}
@@ -1327,6 +1335,8 @@ int dsiMenuTheme(void) {
 			if (isDSiWare[CURPOS]) {
 				remove(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 
+				loadPerGameSettings(filename);
+
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				char *name = argarray.at(0);
@@ -1349,6 +1359,7 @@ int dsiMenuTheme(void) {
 					mkdir("saves", 0777);
 				}
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
+				ms().dsiWareBnrPath = ms().dsiWarePubPath;
 				const bool savFormat = (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
 				if (savFormat) {
 					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
@@ -1357,6 +1368,7 @@ int dsiMenuTheme(void) {
 					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
 					ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
 				}
+				ms().dsiWareBnrPath = replaceAll(ms().dsiWareBnrPath, typeToReplace, getBnrExtension());
 				if (!isArgv) {
 					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 				}
@@ -1475,11 +1487,43 @@ int dsiMenuTheme(void) {
 					}
 				}
 
+				if ((NDSHeader.dsi_flags & BIT(2)) && getFileSize(ms().dsiWareBnrPath.c_str()) == 0) {
+					if (ms().theme == TWLSettings::EThemeHBL) {
+						displayGameIcons = false;
+					} else if (ms().theme != TWLSettings::EThemeSaturn) {
+						while (!fadeType && !screenFadedOut()) {
+							swiWaitForVBlank();
+						}
+						fadeSpeed = true; // Fast fading
+						whiteScreen = true;
+						tex().clearTopScreen();
+					}
+					clearText();
+					printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 80 : 88), STR_CREATING_BANNER_SAVE, Alignment::center);
+					updateText(false);
+					if (ms().theme != TWLSettings::EThemeSaturn && !fadeType) {
+						fadeType = true; // Fade in from white
+					}
+					showProgressIcon = true;
+					FILE *pFile = fopen(ms().dsiWareBnrPath.c_str(), "wb");
+					if (pFile) {
+						fseek(pFile, 0x4000 - 1, SEEK_SET);
+						fputc('\0', pFile);
+						fclose(pFile);
+					}
+					showProgressIcon = false;
+					clearText();
+					printLarge(false, 0, (ms().theme == TWLSettings::EThemeSaturn ? 32 : 88), STR_BANNER_SAVE_CREATED, Alignment::center);
+					updateText(false);
+					for (int i = 0; i < 60; i++) {
+						swiWaitForVBlank();
+					}
+					if (ms().theme == TWLSettings::EThemeHBL) displayGameIcons = true;
+				}
+
 				if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL && fadeType) {
 					fadeType = false; // Fade to white
 				}
-
-				loadPerGameSettings(filename);
 
 				if (ms().secondaryDevice && !bs().b4dsMode && (ms().dsiWareToSD || (!(perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) && ms().consoleModel == 0)) && sdFound()) {
 					if (ms().theme != TWLSettings::EThemeHBL && ms().theme != TWLSettings::EThemeSaturn) {
@@ -1505,13 +1549,17 @@ int dsiMenuTheme(void) {
 					if ((access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) && (NDSHeader.prvSavSize > 0)) {
 						fcopy(ms().dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
+					if ((NDSHeader.dsi_flags & BIT(2)) && access(ms().dsiWareBnrPath.c_str(), F_OK) == 0) {
+						fcopy(ms().dsiWareBnrPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.bnr");
+					}
 					showProgressIcon = false;
 					if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 						fadeType = false; // Fade to white
 					}
 
 					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
-					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
+					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))
+					 || ((NDSHeader.dsi_flags & BIT(2)) && access(ms().dsiWareBnrPath.c_str(), F_OK) == 0)) {
 						for (int i = 0; i < 25; i++) {
 							swiWaitForVBlank();
 						}
@@ -1536,18 +1584,20 @@ int dsiMenuTheme(void) {
 
 				if (((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
 					// Use nds-bootstrap
-
 					char sfnSrl[62];
 					char sfnPub[62];
 					char sfnPrv[62];
+					char sfnBnr[62];
 					if (ms().secondaryDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound()) {
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
+						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.bnr", sfnBnr);
 					} else {
 						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWareSrlPath.c_str(), sfnSrl);
 						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWarePubPath.c_str(), sfnPub);
 						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWarePrvPath.c_str(), sfnPrv);
+						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWareBnrPath.c_str(), sfnBnr);
 					}
 
 					const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
@@ -1556,6 +1606,7 @@ int dsiMenuTheme(void) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "BNR_PATH", sfnBnr);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "MANUAL_PATH", getGameManual(filename.c_str()));
 					bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && (!ms().secondaryDevice || !bs().b4dsMode)));
 					bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());

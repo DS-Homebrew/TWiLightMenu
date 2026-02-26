@@ -29,6 +29,7 @@
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
+#include "common/stringtool.h"
 #include "graphics/graphics.h"
 #include "graphics/fontHandler.h"
 #include "common/lodepng.h"
@@ -681,9 +682,62 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 			memcpy(ndsBanner.palette, paletteCopy, sizeof(paletteCopy));
 			return;
 		}
+
+		if (ndsHeader.dsi_flags & BIT(2)) {
+			{
+				std::string filename = name;
+
+				extern int getSaveNo (std::string filename);
+				getSaveNo(filename);
+
+				extern void RemoveTrailingSlashes(std::string &path);
+				std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
+				RemoveTrailingSlashes(romFolderNoSlash);
+
+				std::string typeToReplace = filename.substr(filename.rfind('.'));
+
+				std::string bnrPath = romFolderNoSlash + "/saves/" + filename;
+				if (ms().saveLocation == TWLSettings::ETWLMFolder) {
+					std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
+					bnrPath = twlmSavesFolder + "/" + filename;
+				} else if (ms().saveLocation == TWLSettings::EGamesFolder) {
+					bnrPath = romFolderNoSlash + "/" + filename;
+				}
+				extern std::string getBnrExtension(void);
+				bnrPath = replaceAll(bnrPath, typeToReplace, getBnrExtension());
+
+				logPrint("Banner save path: %s\n", bnrPath.c_str());
+				fp = fopen(bnrPath.c_str(), "rb");
+			}
+
+			if (fp) {
+				logPrint("Banner save found!\n");
+
+				u16 ver = 0;
+				fread(&ver, sizeof(u16), 1, fp);
+				if (ver == NDS_BANNER_VER_DSi) {
+					logPrint("Banner save is valid.\n");
+
+					fseek(fp, 8, SEEK_SET);
+					fread(ndsBanner.crc+3, sizeof(u16), 1, fp);
+
+					fseek(fp, 0x20, SEEK_SET);
+					fread(ndsBanner.dsi_icon, 1, 0x1180, fp);
+
+					tonccpy(ndsBanner.icon, ndsBanner.dsi_icon, 512);
+					tonccpy(ndsBanner.palette, ndsBanner.dsi_palette, 16*sizeof(u16));
+				} else {
+					logPrint("Banner save is invalid.\n");
+				}
+				fclose(fp);
+			} else {
+				logPrint("Banner save not found!\n");
+			}
+		}
+
 		// banner sequence
 		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
-			u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
+			const u16 crc16 = swiCRC16(0xFFFF, ndsBanner.dsi_icon, 0x1180);
 			if (ndsBanner.crc[3] == crc16) { // Check if CRC16 is valid
 				grabBannerSequence(num);
 				bnriconisDSi[num] = true;

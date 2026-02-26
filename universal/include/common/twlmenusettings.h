@@ -379,6 +379,7 @@ public:
 	std::string dsiWareSrlPath;
 	std::string dsiWarePubPath;
 	std::string dsiWarePrvPath;
+	std::string dsiWareBnrPath;
 	bool slot1Launched;
 	TLaunchType launchType[2];
 	std::string homebrewArg[2];

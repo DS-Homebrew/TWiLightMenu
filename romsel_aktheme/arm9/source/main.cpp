@@ -1150,7 +1150,8 @@ int akTheme(void) {
 	const bool copyDSiWareSavBack =
 	   (ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == 3
 	&& ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0)
-	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0)));
+	 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0)
+	 || (access(ms().dsiWareBnrPath.c_str(), F_OK) == 0 && access("sd:/_nds/TWiLightMenu/tempDSiWare.bnr", F_OK) == 0)));
 
 	if (copyDSiWareSavBack) {
 		dialogboxHeight = 2;
@@ -1166,6 +1167,10 @@ int akTheme(void) {
 		if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", ms().dsiWarePrvPath.c_str());
 			rename("sd:/_nds/TWiLightMenu/tempDSiWare.prv", "sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak");
+		}
+		if (access(ms().dsiWareBnrPath.c_str(), F_OK) == 0) {
+			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.bnr", ms().dsiWareBnrPath.c_str());
+			rename("sd:/_nds/TWiLightMenu/tempDSiWare.bnr", "sd:/_nds/TWiLightMenu/tempDSiWare.bnr.bak");
 		}
 		logPrint("Copied DSiWare save back to flashcard\n");
 		clearText(false);
@@ -1296,6 +1301,9 @@ int akTheme(void) {
 			if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak", F_OK) == 0) {
 				remove("sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak");
 			}
+			if (access("sd:/_nds/TWiLightMenu/tempDSiWare.bnr.bak", F_OK) == 0) {
+				remove("sd:/_nds/TWiLightMenu/tempDSiWare.bnr.bak");
+			}
 			if (access("sd:/_nds/nds-bootstrap/patchOffsetCache/tempDSiWare.bin", F_OK) == 0) {
 				remove("sd:/_nds/nds-bootstrap/patchOffsetCache/tempDSiWare.bin");
 			}
@@ -1342,6 +1350,8 @@ int akTheme(void) {
 			if (isDSiWare[cursorPosOnScreen]) {
 				remove(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 
+				loadPerGameSettings(filename);
+
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				char *name = argarray.at(0);
@@ -1373,6 +1383,7 @@ int akTheme(void) {
 					mkdir("saves", 0777);
 				}
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
+				ms().dsiWareBnrPath = ms().dsiWarePubPath;
 				const bool savFormat = (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
 				if (savFormat) {
 					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
@@ -1381,6 +1392,7 @@ int akTheme(void) {
 					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
 					ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
 				}
+				ms().dsiWareBnrPath = replaceAll(ms().dsiWareBnrPath, typeToReplace, getBnrExtension());
 				if (!isArgv) {
 					ms().romPath[ms().secondaryDevice] = argarray[0];
 				}
@@ -1450,7 +1462,27 @@ int akTheme(void) {
 					}
 				}
 
-				loadPerGameSettings(filename);
+				if ((NDSHeader.dsi_flags & BIT(2)) && getFileSize(ms().dsiWareBnrPath.c_str()) == 0) {
+					clearText(false);
+					dialogboxHeight = 0;
+					showdialogbox = true;
+					printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::formTitleText);
+					printSmall(false, 0, 98, "Creating banner save file...", Alignment::center, FontPalette::formText);
+					updateText(false);
+
+					FILE *pFile = fopen(ms().dsiWareBnrPath.c_str(), "wb");
+					if (pFile) {
+						fseek(pFile, 0x4000 - 1, SEEK_SET);
+						fputc('\0', pFile);
+						fclose(pFile);
+					}
+
+					clearText(false);
+					printSmall(false, 0, 74, "Save creation", Alignment::center, FontPalette::formTitleText);
+					printSmall(false, 0, 98, "Banner save file created!", Alignment::center, FontPalette::formText);
+					updateText(false);
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
+				}
 
 				if (ms().secondaryDevice && !bs().b4dsMode && (ms().dsiWareToSD || (!(perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) && ms().consoleModel == 0)) && sdFound()) {
 					clearText(false);
@@ -1467,9 +1499,13 @@ int akTheme(void) {
 					if ((access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) && (NDSHeader.prvSavSize > 0)) {
 						fcopy(ms().dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
+					if ((NDSHeader.dsi_flags & BIT(2)) && access(ms().dsiWareBnrPath.c_str(), F_OK) == 0) {
+						fcopy(ms().dsiWareBnrPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.bnr");
+					}
 
 					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
-					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
+					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))
+					 || ((NDSHeader.dsi_flags & BIT(2)) && access(ms().dsiWareBnrPath.c_str(), F_OK) == 0)) {
 						dialogboxHeight = 1;
 						clearText(false);
 						printSmall(false, 0, 74, "Important!", Alignment::center, FontPalette::formTitleText);
@@ -1526,14 +1562,17 @@ int akTheme(void) {
 					char sfnSrl[62];
 					char sfnPub[62];
 					char sfnPrv[62];
+					char sfnBnr[62];
 					if (ms().secondaryDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound()) {
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
 						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
+						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.bnr", sfnBnr);
 					} else {
 						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWareSrlPath.c_str(), sfnSrl);
 						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWarePubPath.c_str(), sfnPub);
 						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWarePrvPath.c_str(), sfnPrv);
+						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWareBnrPath.c_str(), sfnBnr);
 					}
 
 					const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;
@@ -1542,6 +1581,7 @@ int akTheme(void) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "BNR_PATH", sfnBnr);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "MANUAL_PATH", getGameManual(filename.c_str()));
 					bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath(sys().isRunFromSD() && (!ms().secondaryDevice || !bs().b4dsMode)));
 					bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
