@@ -480,20 +480,20 @@ void bottomBgLoad() {
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().dsi_theme.c_str()));
-			sprintf(tempNested, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().dsi_theme.c_str()), (ms().dsi_theme.c_str()));
+			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().dsi_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/%s/quickmenu/bottombg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().dsi_theme.c_str()), (ms().dsi_theme.c_str()));
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms()._3ds_theme.c_str()));
-			sprintf(tempNested, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms()._3ds_theme.c_str()), (ms()._3ds_theme.c_str()));
+			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", sys().isRunFromSD() ? "sd" : "fat", (ms()._3ds_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/%s/quickmenu/bottombg.png", sys().isRunFromSD() ? "sd" : "fat", (ms()._3ds_theme.c_str()), (ms()._3ds_theme.c_str()));
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().r4_theme.c_str()));
-			sprintf(tempNested, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().r4_theme.c_str()), (ms().r4_theme.c_str()));
+			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/bottombg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().r4_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/%s/quickmenu/bottombg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().r4_theme.c_str()), (ms().r4_theme.c_str()));
 			break;
 		case TWLSettings::EThemeWood:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().ak_theme.c_str()));
-			sprintf(tempNested, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/%s/quickmenu/bottombg.png", sdFound() ? "sd" : "fat", (ms().ak_theme.c_str()), (ms().ak_theme.c_str()));
+			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/bottombg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().ak_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/%s/quickmenu/bottombg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().ak_theme.c_str()), (ms().ak_theme.c_str()));
 			break;
 		case TWLSettings::EThemeSaturn:
 			// sprintf(temp, "nitro:/graphics/bottombg_saturn.png");
@@ -1174,20 +1174,20 @@ void topBgLoad(void) {
 
 	switch (ms().theme) {
 		case TWLSettings::EThemeDSi: // DSi Theme
-			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().dsi_theme.c_str()));
-			sprintf(tempNested, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().dsi_theme.c_str()), (ms().dsi_theme.c_str()));
+			sprintf(temp, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/quickmenu/topbg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().dsi_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/dsimenu/themes/%s/%s/quickmenu/topbg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().dsi_theme.c_str()), (ms().dsi_theme.c_str()));
 			break;
 		case TWLSettings::ETheme3DS:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms()._3ds_theme.c_str()));
-			sprintf(tempNested, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms()._3ds_theme.c_str()), (ms()._3ds_theme.c_str()));
+			sprintf(temp, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/quickmenu/topbg.png", sys().isRunFromSD() ? "sd" : "fat", (ms()._3ds_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/3dsmenu/themes/%s/%s/quickmenu/topbg.png", sys().isRunFromSD() ? "sd" : "fat", (ms()._3ds_theme.c_str()), (ms()._3ds_theme.c_str()));
 			break;
 		case TWLSettings::EThemeR4:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().r4_theme.c_str()));
-			sprintf(tempNested, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().r4_theme.c_str()), (ms().r4_theme.c_str()));
+			sprintf(temp, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/quickmenu/topbg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().r4_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/r4menu/themes/%s/%s/quickmenu/topbg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().r4_theme.c_str()), (ms().r4_theme.c_str()));
 			break;
 		case TWLSettings::EThemeWood:
-			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().ak_theme.c_str()));
-			sprintf(tempNested, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/%s/quickmenu/topbg.png", sdFound() ? "sd" : "fat", (ms().ak_theme.c_str()), (ms().ak_theme.c_str()));
+			sprintf(temp, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/quickmenu/topbg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().ak_theme.c_str()));
+			sprintf(tempNested, "%s:/_nds/TWiLightMenu/akmenu/themes/%s/%s/quickmenu/topbg.png", sys().isRunFromSD() ? "sd" : "fat", (ms().ak_theme.c_str()), (ms().ak_theme.c_str()));
 			break;
 		case TWLSettings::EThemeSaturn:
 			// sprintf(temp, "nitro:/graphics/topbg_saturn.png");
