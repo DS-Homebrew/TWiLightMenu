@@ -56,7 +56,7 @@ jobs:
           rm -rf 7zfile/debug
           rm -rf 7zfile/roms
           rm "7zfile/3DS - CFW users/Games supported with widescreen.txt"
-          rm 7zfile/Virtual Console/snemul.cfg
+          rm 7zfile/Virtual\ Console/snemul.cfg
 
           cp -r 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
