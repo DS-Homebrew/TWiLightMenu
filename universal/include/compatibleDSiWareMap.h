@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 498
+// Total: 499
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -306,6 +306,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KN3", // Nazo no Mini Game
 	"KNP", // Need for Speed: Nitro-X
 	"K9N", // Neko Neko Bakery: Pan de Pazurunya!
+	"KNV", // Neko Reversi
 	"KAQ", // G.G Series: Ninja Karakuri Den
 	"KQ2", // G.G Series: Ninja Karakuri Den 2
 	"KAUE", "KAUV", // Nintendo Countdown Calendar
@@ -575,7 +576,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 50
+// Total: 51
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -607,6 +608,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KWY", // Mighty Milky Way
 	"KN3", // Nazo no Mini Game
 	"KNP", // Need for Speed: Nitro-X
+	"KNV", // Neko Reversi
 	"K9K", // Nintendoji
 	"K6T", // Orion's Odyssey
 	"KPS", // Phantasy Star 0 Mini
@@ -661,6 +663,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	2, // Mighty Milky Way (No music)
 	2, // Nazo no Mini Game (No music)
 	4, // Need for Speed: Nitro-X (No audio + Crashes after a race)
+	1, // Neko Reversi (No audio)
 	0, // Nintendoji (No audio + Part of the game only)
 	4, // Orion's Odyssey (Crashes at certain points)
 	4, // Phantasy Star 0 Mini (Crashes at certain points)
@@ -684,7 +687,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 33
+// Total: 32
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -707,7 +710,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KMM", // Mixed Messages
 	"KLT", // My Little Restaurant
 	"KTG", // Neko no Iru Tangram: Neko to Iyashi no Silhouette Puzzle
-	"KNV", // Neko Reversi
 	"KFV", // Pro-Jumper! Chimaki's Hot Spring Tour! Guilty Gear Tangent!?
 	"KYG", // Puzzler World 2013
 	"KRR", // Robot Rescue 2
