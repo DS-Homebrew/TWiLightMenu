@@ -506,7 +506,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 28
+// Total: 27
 static const char compatibleGameListB4DSMEP[][5] = {
 	"K5I", // 5 in 1 Solitaire
 	"K2Z", // G.G Series: Altered Weapon
@@ -535,7 +535,6 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"K97", // Star Novels: Kono Haretasora no Shitade
 	"K98", // Star Novels: Shirogane no Torikago
 	"KSC", // Sudoku Challenge!
-	"KWSE", // Word Searcher (USA)
 };
 
 // Extra RAM ID
@@ -572,7 +571,6 @@ static int compatibleGameListB4DSMEPID[] = {
 	0, // Star Novels: Kono Haretasora no Shitade
 	0, // Star Novels: Shirogane no Torikago
 	0, // Sudoku Challenge!
-	0, // Word Searcher (USA)
 };
 
 // Show RAM limitation message
