@@ -506,9 +506,8 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 27
+// Total: 26
 static const char compatibleGameListB4DSMEP[][5] = {
-	"K5I", // 5 in 1 Solitaire
 	"K2Z", // G.G Series: Altered Weapon
 	"KWG", // Animal Crossing Calculator
 	"KQJ", // Aru Seishun no Monogatari: Kouenji Joshi Sakka
@@ -544,7 +543,6 @@ static const char compatibleGameListB4DSMEP[][5] = {
 // 3: VRAM-WiFi Donor ROM or Debug console required
 // 4: VRAM-WiFi Donor ROM + Memory Expansion Pak, or Debug console required
 static int compatibleGameListB4DSMEPID[] = {
-	0, // 5 in 1 Solitaire
 	3, // G.G Series: Altered Weapon
 	0, // Animal Crossing Calculator
 	0, // Aru Seishun no Monogatari: Kouenji Joshi Sakka
