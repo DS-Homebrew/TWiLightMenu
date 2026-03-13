@@ -573,7 +573,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 52
+// Total: 51
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -612,7 +612,6 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist
 	"KXU", // Publisher Dream
-	"KG4", // Saikyou Ginsei Shougi
 	"KS3", // Shantae: Risky's Revenge
 	"KSJ", // Shawn Johnson Gymnastics
 	"KSV", // Sokomania 2: Cool Job
@@ -668,7 +667,6 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // PictureBook Games: The Royal Bluff (No audio)
 	0, // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist (No audio + Parts of the game only)
 	1, // Publisher Dream (No audio)
-	4, // Saikyou Ginsei Shougi (Crashes at certain points)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
 	2, // Shawn Johnson Gymnastics (No music)
 	1, // Sokomania 2: Cool Job (No audio)
