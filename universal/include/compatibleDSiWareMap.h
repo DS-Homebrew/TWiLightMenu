@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 500
+// Total: 501
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -392,6 +392,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"KRP", // RPG Dashutsu Game
 	"K5F", // G.G Series: Run & Strike
 	"K8X", // Sagittarius-A-Star
+	"KGE", // Saikyou Ginsei Igo
 	"KG4", // Saikyou Ginsei Shougi
 	"K3P", // Sakurai Miho No Kouno: Megami Serapi Uranai
 	"K5G", // G.G Series: Score Attacker
@@ -507,7 +508,7 @@ static const char compatibleGameListB4DS[][5] = {
 };
 
 // Titles requiring more RAM
-// Total: 26
+// Total: 27
 static const char compatibleGameListB4DSMEP[][5] = {
 	"K2Z", // G.G Series: Altered Weapon
 	"KWG", // Animal Crossing Calculator
@@ -532,6 +533,7 @@ static const char compatibleGameListB4DSMEP[][5] = {
 	"KPS", // Phantasy Star 0 Mini
 	"KUO", // Puzzler World XL
 	"KQR", // Remote Racers
+	"KGE", // Saikyou Ginsei Igo
 	"K97", // Star Novels: Kono Haretasora no Shitade
 	"K98", // Star Novels: Shirogane no Torikago
 	"KSC", // Sudoku Challenge!
@@ -567,13 +569,14 @@ static int compatibleGameListB4DSMEPID[] = {
 	3, // Phantasy Star 0 Mini
 	3, // Puzzler World XL
 	0, // Remote Racers
+	0, // Saikyou Ginsei Igo
 	0, // Star Novels: Kono Haretasora no Shitade
 	0, // Star Novels: Shirogane no Torikago
 	0, // Sudoku Challenge!
 };
 
 // Show RAM limitation message
-// Total: 51
+// Total: 52
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -612,6 +615,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KE3", // PictureBook Games: The Royal Bluff
 	"KHR", // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist
 	"KXU", // Publisher Dream
+	"KGE", // Saikyou Ginsei Igo
 	"KS3", // Shantae: Risky's Revenge
 	"KSJ", // Shawn Johnson Gymnastics
 	"KSV", // Sokomania 2: Cool Job
@@ -667,6 +671,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // PictureBook Games: The Royal Bluff (No audio)
 	0, // Picture Perfect: Pocket Stylist / Hair Salon: Pocket Stylist (No audio + Parts of the game only)
 	1, // Publisher Dream (No audio)
+	1, // Saikyou Ginsei Igo (No audio)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
 	2, // Shawn Johnson Gymnastics (No music)
 	1, // Sokomania 2: Cool Job (No audio)
