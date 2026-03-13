@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 499
+// Total: 500
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -400,6 +400,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K5T", // Sengoku Tactics
 	"KZJ", // G.G Series: Shadow Army
 	"KS3", // Shantae: Risky's Revenge
+	"KSJ", // Shawn Johnson Gymnastics
 	"KK5", // Kakitori Rekishi: Shouga Kusei (01)
 	"KZ9", // Chiri Kuizu: Shouga Kusei (02)
 	"KZ3", // Koumin Kuizu: Shouga Kusei (03)
@@ -572,7 +573,7 @@ static int compatibleGameListB4DSMEPID[] = {
 };
 
 // Show RAM limitation message
-// Total: 51
+// Total: 52
 static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KII", // 101 Pinball World
 	"KOK", // 1001 Crystal Mazes Collection
@@ -613,6 +614,7 @@ static const char compatibleGameListB4DSRAMLimited[][4] = {
 	"KXU", // Publisher Dream
 	"KG4", // Saikyou Ginsei Shougi
 	"KS3", // Shantae: Risky's Revenge
+	"KSJ", // Shawn Johnson Gymnastics
 	"KSV", // Sokomania 2: Cool Job
 	"K97", // Star Novels: Kono Haretasora no Shitade
 	"K98", // Star Novels: Shirogane no Torikago
@@ -668,6 +670,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 	1, // Publisher Dream (No audio)
 	4, // Saikyou Ginsei Shougi (Crashes at certain points)
 	3, // Shantae: Risky's Revenge (No music + Crashes at the Lighthouse after first fight)
+	2, // Shawn Johnson Gymnastics (No music)
 	1, // Sokomania 2: Cool Job (No audio)
 	2, // Star Novels: Kono Haretasora no Shitade (No music + No FMV)
 	5, // Star Novels: Shirogane no Torikago (No FMV)
@@ -683,7 +686,7 @@ static int compatibleGameListB4DSRAMLimitedID[] = {
 };
 
 // B4DS-Debug DSiWare Whitelist (Only plays on DS Debug consoles with 8MB of RAM)
-// Total: 32
+// Total: 31
 static const char compatibleGameListB4DSDebug[][5] = {
 	"KXO", // 18th Gate
 	"K2P", // 2Puzzle It: Fantasy
@@ -710,7 +713,6 @@ static const char compatibleGameListB4DSDebug[][5] = {
 	"KYG", // Puzzler World 2013
 	"KRR", // Robot Rescue 2
 	"K7T", // Save the Turtles
-	"KSJ", // Shawn Johnson Gymnastics
 	"KYS", // Spot the Difference
 	"KOG", // G.G Series: Super Hero Ogre
 	"KOZ", // G.G Series: Super Hero Ogre 2
