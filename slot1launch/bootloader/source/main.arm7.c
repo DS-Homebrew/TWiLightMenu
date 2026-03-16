@@ -307,19 +307,8 @@ static void my_readUserSettings(tNDSHeader* ndsHeader) {
 }
 
 void initMBK() {
-	// arm7 is master of WRAM-A, arm9 of WRAM-B & C
-	REG_MBK9=0x3000000F;
-
-	// WRAM-A fully mapped to arm7
-	*((vu32*)REG_MBK1)=0x8D898581; // same as dsiware
-
-	// WRAM-B fully mapped to arm9 // inverted order
-	*((vu32*)REG_MBK2)=0x8C888480;
-	*((vu32*)REG_MBK3)=0x9C989490;
-
-	// WRAM-C fully mapped to arm9 // inverted order
-	*((vu32*)REG_MBK4)=0x8C888480;
-	*((vu32*)REG_MBK5)=0x9C989490;
+	// Allow setting data from ARM9
+	REG_MBK9 = 0;
 
 	// WRAM mapped to the 0x3700000 - 0x37FFFFF area 
 	// WRAM-A mapped to the 0x3000000 - 0x303FFFF area : 256k
@@ -331,16 +320,12 @@ void initMBK() {
 }
 
 static void initMBK_dsiMode(void) {
-	// This function has no effect with ARM7 SCFG locked
-	*(vu32*)REG_MBK1 = *(u32*)0x02FFE180;
-	*(vu32*)REG_MBK2 = *(u32*)0x02FFE184;
-	*(vu32*)REG_MBK3 = *(u32*)0x02FFE188;
-	*(vu32*)REG_MBK4 = *(u32*)0x02FFE18C;
-	*(vu32*)REG_MBK5 = *(u32*)0x02FFE190;
 	REG_MBK6 = *(u32*)0x02FFE1A0;
 	REG_MBK7 = *(u32*)0x02FFE1A4;
 	REG_MBK8 = *(u32*)0x02FFE1A8;
-	REG_MBK9 = *(u32*)0x02FFE1AC;
+
+	// Unlock for writing data in ARM9
+	REG_MBK9 = 0;
 }
 
 void memset_addrs_arm7(u32 start, u32 end)
@@ -950,6 +935,11 @@ void arm7_main (void) {
 	// Wait for ARM9 to at least start
 	while (arm9_stateFlag < ARM9_START);
 
+	arm9_stateFlag = ARM9_SETMBK_START;
+	while (arm9_stateFlag != ARM9_START);
+	// arm7 is master of WRAM-A, arm9 of WRAM-B & C
+	REG_MBK9=0x3000000F;
+
 	//debugOutput (ERR_STS_CLR_MEM);
 
 	scfgRomBak = REG_SCFG_ROM;
@@ -1151,6 +1141,12 @@ void arm7_main (void) {
 		initMBK_dsiMode();
 		REG_SCFG_EXT = 0x93FFFB06;
 		REG_SCFG_CLK = 0x187;
+
+		while (arm9_stateFlag != ARM9_READY);
+		arm9_stateFlag = ARM9_SETMBK;
+		while (arm9_stateFlag != ARM9_READY);
+
+		REG_MBK9 = (*(u32*)0x02FFE1AC) & 0x00FFFFFF;
 	}
 
 	if (!scfgUnlock && !dsiModeConfirmed) {
