@@ -32,7 +32,7 @@ R4DS Pro folder:
 - r4dspro.com cards
 
 R4 Ultra folder:
-- R4i3D 2012+
+- R4i3D NEW, 2012 or later
 - r4ids.cn cards
 - r4igold.cc 3DS translucent
 - r4i-gold.me 2013+
