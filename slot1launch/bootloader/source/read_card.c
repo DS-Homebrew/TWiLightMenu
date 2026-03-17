@@ -142,7 +142,7 @@ static void cardDelay (u16 readTimeout) {
 }
 
 static void switchToTwlBlowfish(sNDSHeaderExt* ndsHeader) {
-	if (twlBlowfish || ndsHeader->unitCode == 0) return;
+	if (twlBlowfish || memcmp(ndsHeader->gameCode, "DSPI", 4) == 0 || ndsHeader->unitCode == 0) return;
 
 	// Used for dumping the DSi arm9i/7i binaries
 
