@@ -20,8 +20,13 @@
 #include <nds/arm7/input.h>
 #include <nds/system.h>
 
-void VblankHandler(void) {
+#include "resetslot.h"
+
+void VcountHandler() {
 	inputGetAndSend();
+}
+
+void VblankHandler(void) {
 }
 
 int main(void) {
@@ -34,14 +39,26 @@ int main(void) {
 	initClockIRQ();
 	fifoInit();
 
+	SetYtrigger(80);
+
 	installSystemFIFO();
 	
+	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
-	irqEnable(IRQ_VBLANK);
+
+	irqEnable( IRQ_VBLANK | IRQ_VCOUNT);
 	
 	if (isDSiMode()) {
 		i2cWriteRegister(0x4A, 0x12, 0x00);		// Press power-button for auto-reset
 		i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
+
+		// Make sure Arm9 had a chance to check slot status
+		fifoWaitValue32(FIFO_USER_01);
+		// If Arm9 reported slot is powered off, have Arm7 wait for Arm9 to be ready before card reset. This makes sure arm7 doesn't try card reset too early.
+		if (fifoCheckValue32(FIFO_USER_02)) { 
+			if (fifoCheckValue32(FIFO_USER_07)) { TWL_ResetSlot1(); } else { PowerOnSlot(); }
+		}
+		fifoSendValue32(FIFO_USER_03, 1);
 	}
 	
 	while (1) {

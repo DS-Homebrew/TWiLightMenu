@@ -84,22 +84,6 @@ off_t getFileSize(const char *fileName)
 	return fsize;
 }
 
-static void cart_reset() {
-	if(isDSiMode()) {
-		disableSlot1();
-		for(int i = 0; i < 20; i++)
-			swiWaitForVBlank();
-		enableSlot1();
-		while(REG_ROMCTRL & CARD_BUSY)
-			swiWaitForVBlank();
-		for(int i = 0; i < 2; i++)
-			swiWaitForVBlank();
-		REG_ROMCTRL = CARD_nRESET;
-		for(int i = 0; i < 15; i++)
-			swiWaitForVBlank();
-	}
-}
-
 
 bool consoleOn = false;
 
@@ -121,8 +105,16 @@ int main() {
 			runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
 			EnableSD = settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0);
 
+			// Tell Arm7 it's ready for card reset (if card reset is nessecery)
+			fifoSendValue32(FIFO_USER_01, 1);
+			// Waits for Arm7 to finish card reset (if nessecery)
+			fifoWaitValue32(FIFO_USER_03);
+
+			// Wait for card to stablize before continuing
+			for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+
 			sysSetCardOwner (BUS_OWNER_ARM9);
-			cart_reset();
+
 			cardReadHeader((uint8*)&ndsHeader);
 
 			char gameTid[5];
@@ -179,8 +171,19 @@ int main() {
 			}
 
 		} else {
+			//fifoSendValue32(FIFO_USER_02, 1);
+			//fifoSendValue32(FIFO_USER_07, 1);
+
+			// Tell Arm7 it's ready for card reset (if card reset is nessecery)
+			fifoSendValue32(FIFO_USER_01, 1);
+			// Waits for Arm7 to finish card reset (if nessecery)
+			fifoWaitValue32(FIFO_USER_03);
+
+			// Wait for card to stablize before continuing
+			for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+
 			sysSetCardOwner (BUS_OWNER_ARM9);
-			cart_reset();
+
 			cardReadHeader((uint8*)&ndsHeader);
 		}
 
