@@ -326,17 +326,4 @@ void dldiRelocateBinary (void) {
 	writeAddr (pDH, DO_bss_start, readAddr (pDH, DO_bss_start) + relocationOffset);
 	writeAddr (pDH, DO_bss_end, readAddr (pDH, DO_bss_end) + relocationOffset);
 }
-
-void dldiClearBss (void) {
-	data_t *pDH = _dldi_start;
-
-	addr_t ddmemSize = (1 << pDH[DO_driverSize]);			// Size of range that offsets can be in the DLDI file
-
-	if (ddmemSize <= 0x4000) return; // For <= 16KB DLDI file, BSS has already been cleared
-
-	if (pDH[DO_fixSections] & FIX_BSS) { 
-		// Initialise the BSS to 0
-		toncset (&pDH[readAddr(pDH, DO_bss_start)] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
-	}
-}
 #endif

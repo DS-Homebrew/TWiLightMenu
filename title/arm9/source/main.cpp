@@ -2355,7 +2355,15 @@ int titleMode(void)
 		4: Run temporary DSiWare
 	*/
 
-	if (((strcmp(io_dldi_data->friendlyName, "NAND FLASH CARD LIBFATNRIO") == 0) || (io_dldi_data->ioInterface.ioType == 0x4F49524E)) && (*(u32*)0x02FF8000 != 0x53535A4C)) {
+	if (strcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)") == 0) {
+		const u32* u32_io_dldi_data = (u32*)(io_dldi_data);
+		if (u32_io_dldi_data[0xD0/4] == 0xBF80074C) { // If alternate DLDI driver is found...
+			// Use original DLDI driver once bootloader runs
+			FILE* file = fopen("nitro:/dldi/dstwo.dldi", "rb");
+			fread((void*)0x02FF8000, 1, 0x800, file);
+			fclose(file);
+		}
+	} else if (((strcmp(io_dldi_data->friendlyName, "NAND FLASH CARD LIBFATNRIO") == 0) || (io_dldi_data->ioInterface.ioType == 0x4F49524E)) && (*(u32*)0x02FF8000 != 0x53535A4C)) {
 		FILE* file = fopen("nitro:/dldi/nrio.lz77", "rb");
 		fread((void*)0x02FF8004, 1, 0x3FFC, file);
 		fclose(file);

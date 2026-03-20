@@ -30,6 +30,5 @@ typedef unsigned char data_t;
 bool dldiPatchBinary (data_t *binData, u32 binSize);
 void dldiDecompressBinary (void);
 void dldiRelocateBinary (void);
-void dldiClearBss (void);
 
 #endif // DLDI_PATCHER_H
