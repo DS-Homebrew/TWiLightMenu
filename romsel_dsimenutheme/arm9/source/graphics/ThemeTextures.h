@@ -78,7 +78,7 @@ public:
 	void drawBottomBg(int bg);
 
 	void loadBoxArtToMem(const char *filename, int num);
-	void drawBoxArt(const char* filename, bool inMem);
+	bool drawBoxArt(const char* filename, bool inMem);
 	void drawOverBoxArt(uint photoWidth, uint photoHeight);
 	void drawOverRotatingCubes();
 
