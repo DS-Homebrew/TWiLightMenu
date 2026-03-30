@@ -12,12 +12,12 @@ extern "C" {
 /*
 Get Alias Name
 */
-extern void fatGetAliasName (const char* drive, const char* name, char *alias);
+// extern void fatGetAliasName (const char* drive, const char* name, char *alias);
 
 /*
 Get Alias Path
 */
-extern void fatGetAliasPath (const char* drive, const char* path, char *alias);
+extern void fatGetAliasPath (const char* path, char *alias);
 
 #ifdef __cplusplus
 }

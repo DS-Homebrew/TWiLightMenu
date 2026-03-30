@@ -2513,15 +2513,15 @@ int dsClassicMenu(void) {
 					char sfnPrv[62];
 					char sfnBnr[62];
 					if (ms().secondaryDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound()) {
-						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
-						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
-						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
-						fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.bnr", sfnBnr);
+						fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
+						fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
+						fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
+						fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.bnr", sfnBnr);
 					} else {
-						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWareSrlPath.c_str(), sfnSrl);
-						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWarePubPath.c_str(), sfnPub);
-						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWarePrvPath.c_str(), sfnPrv);
-						fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().dsiWareBnrPath.c_str(), sfnBnr);
+						fatGetAliasPath(ms().dsiWareSrlPath.c_str(), sfnSrl);
+						fatGetAliasPath(ms().dsiWarePubPath.c_str(), sfnPub);
+						fatGetAliasPath(ms().dsiWarePrvPath.c_str(), sfnPrv);
+						fatGetAliasPath(ms().dsiWareBnrPath.c_str(), sfnBnr);
 					}
 
 					const char *bootstrapinipath = sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC;

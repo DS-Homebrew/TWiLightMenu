@@ -76,12 +76,24 @@ static int fatGetAlias (const char* drive, const char* name, const char* nameEnd
 					break;
 				}
 			}
+			int extLen = 1;
 			alias[i] = '.';
-			alias[i+1] = entry.entryData[8];
-			alias[i+2] = entry.entryData[9];
-			alias[i+3] = entry.entryData[10];
-			alias[i+4] = '\0';
-			resultLen = i+4;
+			for (extLen = 1; extLen <= 3; extLen++) {
+				const int pos = 7+extLen;
+				if (entry.entryData[pos] == ' ') {
+					break;
+				} else {
+					alias[i+extLen] = entry.entryData[pos];
+				}
+			}
+			const int pos = i+extLen;
+			if (_FAT_directory_isDirectory(&entry)) {
+				alias[pos] = '\x2F';
+				resultLen = pos+1;
+			} else {
+				alias[pos] = '\0';
+				resultLen = pos;
+			}
 		} else {
 			for (i = 0; i <= 8; i++) {
 				if (entry.entryData[i] == ' ') {
@@ -99,17 +111,33 @@ static int fatGetAlias (const char* drive, const char* name, const char* nameEnd
 	return resultLen;
 }
 
-void fatGetAliasName (const char* drive, const char* name, char *alias) {
+/* void fatGetAliasName (const char* drive, const char* name, char *alias) {
 	fatGetAlias (drive, name, NULL, alias);
-}
+} */
 
-void fatGetAliasPath (const char* drive, const char* path, char *alias) {
+void fatGetAliasPath (const char* path, char *alias) {
+	if (access(path, F_OK) != 0) {
+		alias[0] = '\0';
+		return;
+	}
+
+	int drivelen = 0;
+	for (int i = 0; i < strlen(path); i++) {
+		if (path[i] == '\x2F') {
+			drivelen = i+1;
+			break;
+		}
+	}
+
+	char drive[8] = {0};
+	tonccpy(drive, path, drivelen);
+
 	char dirBak[PATH_MAX];
 	getcwd(dirBak, PATH_MAX);
 	chdir(drive);
 
 	char name[128];
-	int len = (int)strlen(drive);
+	int len = drivelen;
 	int lfnLen = len;
 	if (path[0] == '\x2F') {
 		len = 1;

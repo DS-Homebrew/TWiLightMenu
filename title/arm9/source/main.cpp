@@ -1074,15 +1074,15 @@ void lastRunROM()
 						}
 						rename("sd:/_nds/TWiLightMenu/tempDSiWare.bnr.bak", "sd:/_nds/TWiLightMenu/tempDSiWare.bnr");
 					}
-					fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
-					fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
-					fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
-					fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.bnr", sfnBnr);
+					fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
+					fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
+					fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
+					fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.bnr", sfnBnr);
 				} else {
-					fatGetAliasPath(ms().previousUsedDevice ? "fat:/" : "sd:/", ms().dsiWareSrlPath.c_str(), sfnSrl);
-					fatGetAliasPath(ms().previousUsedDevice ? "fat:/" : "sd:/", ms().dsiWarePubPath.c_str(), sfnPub);
-					fatGetAliasPath(ms().previousUsedDevice ? "fat:/" : "sd:/", ms().dsiWarePrvPath.c_str(), sfnPrv);
-					fatGetAliasPath(ms().previousUsedDevice ? "fat:/" : "sd:/", ms().dsiWareBnrPath.c_str(), sfnBnr);
+					fatGetAliasPath(ms().dsiWareSrlPath.c_str(), sfnSrl);
+					fatGetAliasPath(ms().dsiWarePubPath.c_str(), sfnPub);
+					fatGetAliasPath(ms().dsiWarePrvPath.c_str(), sfnPrv);
+					fatGetAliasPath(ms().dsiWareBnrPath.c_str(), sfnBnr);
 				}
 
 				CIniFile bootstrapini((useTempDSiWare || sys().isRunFromSD()) ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);

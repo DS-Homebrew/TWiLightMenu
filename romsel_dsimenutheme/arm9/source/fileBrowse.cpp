@@ -1236,9 +1236,9 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 				fadeType = false; // Fade to white
 			}
 
-			fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().internetBrowserPath.c_str(), sfnSrl);
-			fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", savepathPub.c_str(), sfnPub);
-			fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", savepathPrv.c_str(), sfnPrv);
+			fatGetAliasPath(ms().internetBrowserPath.c_str(), sfnSrl);
+			fatGetAliasPath(savepathPub.c_str(), sfnPub);
+			fatGetAliasPath(savepathPrv.c_str(), sfnPrv);
 		} else {
 			createSaveFile(savepath.c_str(), false, browserTid);
 		}
