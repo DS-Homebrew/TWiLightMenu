@@ -2,7 +2,7 @@
 #define COMPATIBLEDSIWAREMAP_H
 
 // B4DS DSiWare Whitelist (Plays on any DS model. Some titles requiring more RAM are also listed)
-// Total: 501
+// Total: 502
 static const char compatibleGameListB4DS[][5] = {
 	"KYP", // 1st Class Poker & BlackJack
 	"KJU", // GO Series: 10 Second Run
@@ -84,6 +84,7 @@ static const char compatibleGameListB4DS[][5] = {
 	"K9G", // Big Bass Arcade
 	"KP6J", // Bird & Beans / Tori to Mame (Japan)
 	"K96", // G.G Series: Black x Block
+	"KBL", // Bloons
 	"KLN", // Bloons TD
 	"KA5", // Boardwalk Ball Toss
 	"KBB", // Bomberman Blitz
