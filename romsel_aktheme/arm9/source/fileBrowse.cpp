@@ -462,7 +462,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 	displayDiskIcon(ms().secondaryDevice);
 	int n = 0;
 	const int iconLimit = (ms().ak_viewMode == TWLSettings::EViewGrid) ? 12 : (ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? 8 : 4;
-	const int iStart = (ms().ak_viewMode == TWLSettings::EViewGrid) ? screenOffset/4 : screenOffset;
+	const int iStart = (ms().ak_viewMode == TWLSettings::EViewGrid) ? screenOffset*4 : screenOffset;
 	for (int i = iStart; i < iStart+iconLimit; i++) {
 		if (i == file_count) {
 			break;
