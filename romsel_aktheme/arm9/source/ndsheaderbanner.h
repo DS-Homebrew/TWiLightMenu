@@ -277,7 +277,7 @@ u32 getSDKVersion(FILE* ndsFile);
  */
 int checkRomAP(FILE *ndsFile, const char* filename);
 
-extern sNDSBannerExt bnriconTile[8];
+extern sNDSBannerExt bnriconTile[12];
 extern sNDSHeaderExt* preloadedHeaders;
 extern sNDSBannerExt* preloadedBannerIcons;
 extern bool* headerPreloaded;
@@ -291,28 +291,28 @@ extern sNDSHeaderExt* getPreloadedHeader(const int fileOffset);
 extern sNDSBannerExt* getPreloadedBannerIcon(const int fileOffset);
 
 // bnriconframenum[]
-extern int bnriconPalLoaded[8];
-extern int bnriconPalLine[8];
-extern int bnriconframenumY[8];
-extern int bannerFlip[8];
+extern int bnriconPalLoaded[12];
+extern int bnriconPalLine[12];
+extern int bnriconframenumY[12];
+extern int bannerFlip[12];
 
 // bnriconisDSi[]
-extern bool isValid[8];
-extern bool isTwlm[8];
-extern bool isDirectory[8];
-extern int bnrRomType[8];
-extern bool bnriconisDSi[8];
-extern int bnrWirelessIcon[8];	// 0 = None, 1 = Local, 2 = WiFi
-extern char gameTid[8][5];
-extern u8 romVersion[8];
-extern u8 romUnitCode[8];
-extern u32 a7mbk6[8];
-extern bool isDSiWare[8];
-extern bool isHomebrew[8];
-extern bool isModernHomebrew[8];		// false == No DSi-Extended header, true == Has DSi-Extended header
-extern bool requiresRamDisk[8];
-extern int requiresDonorRom[8];
-extern int customIcon[8];				// 0 = None, 1 = png, 2 = banner.bin, -1 = error
+extern bool isValid[12];
+extern bool isTwlm[12];
+extern bool isDirectory[12];
+extern int bnrRomType[12];
+extern bool bnriconisDSi[12];
+extern int bnrWirelessIcon[12];	// 0 = None, 1 = Local, 2 = WiFi
+extern char gameTid[12][5];
+extern u8 romVersion[12];
+extern u8 romUnitCode[12];
+extern u32 a7mbk6[12];
+extern bool isDSiWare[12];
+extern bool isHomebrew[12];
+extern bool isModernHomebrew[12];		// false == No DSi-Extended header, true == Has DSi-Extended header
+extern bool requiresRamDisk[12];
+extern int requiresDonorRom[12];
+extern int customIcon[12];				// 0 = None, 1 = png, 2 = banner.bin, -1 = error
 extern char customIconPath[256];
 
 /**

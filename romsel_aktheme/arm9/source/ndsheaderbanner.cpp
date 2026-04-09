@@ -592,7 +592,7 @@ int checkRomAP(FILE *ndsFile, const char* filename)
 	return 0;
 }
 
-sNDSBannerExt bnriconTile[8];
+sNDSBannerExt bnriconTile[12];
 sNDSHeaderExt* preloadedHeaders = {NULL};
 sNDSBannerExt* preloadedBannerIcons = {NULL};
 bool* headerPreloaded = {NULL};
@@ -694,38 +694,38 @@ sNDSBannerExt* getPreloadedBannerIcon(const int fileOffset) {
 }
 
 // bnriconframeseq[]
-static u16 bnriconframeseq[8][64] = {0x0000};
+static u16 bnriconframeseq[12][64] = {0x0000};
 
 // bnriconframenum[]
-int bnriconPalLoaded[8] = {0};
-int bnriconPalLine[8] = {0};
-int bnriconPalLinePrev[8] = {0};
-int bnriconframenumY[8] = {0};
-int bnriconframenumYPrev[8] = {0};
-int bannerFlip[8] = {GL_FLIP_NONE};
-int bannerFlipPrev[8] = {GL_FLIP_NONE};
+int bnriconPalLoaded[12] = {0};
+int bnriconPalLine[12] = {0};
+int bnriconPalLinePrev[12] = {0};
+int bnriconframenumY[12] = {0};
+int bnriconframenumYPrev[12] = {0};
+int bannerFlip[12] = {GL_FLIP_NONE};
+int bannerFlipPrev[12] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
-bool isValid[8] = {false};
-bool isTwlm[8] = {false};
-bool isDirectory[8] = {false};
-int bnrRomType[8] = {0};
-bool bnriconisDSi[8] = {false};
-int bnrWirelessIcon[8] = {0}; // 0 = None, 1 = Local, 2 = WiFi
-char gameTid[8][5] = {0};
-u8 romVersion[8] = {0};
-u8 romUnitCode[8] = {0};
-u32 a7mbk6[8] = {0};
-bool isDSiWare[8] = {false};
-bool isHomebrew[8] = {false};
-bool isModernHomebrew[8] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header
-bool requiresRamDisk[8] = {false};
-int requiresDonorRom[8] = {0};
-int customIcon[8] = {0};					// 0 = None, 1 = png, 2 = banner.bin, -1 = error
+bool isValid[12] = {false};
+bool isTwlm[12] = {false};
+bool isDirectory[12] = {false};
+int bnrRomType[12] = {0};
+bool bnriconisDSi[12] = {false};
+int bnrWirelessIcon[12] = {0}; // 0 = None, 1 = Local, 2 = WiFi
+char gameTid[12][5] = {0};
+u8 romVersion[12] = {0};
+u8 romUnitCode[12] = {0};
+u32 a7mbk6[12] = {0};
+bool isDSiWare[12] = {false};
+bool isHomebrew[12] = {false};
+bool isModernHomebrew[12] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header
+bool requiresRamDisk[12] = {false};
+int requiresDonorRom[12] = {0};
+int customIcon[12] = {0};					// 0 = None, 1 = png, 2 = banner.bin, -1 = error
 char customIconPath[256];
 
-static u16 bannerDelayNum[8] = {0x0000};
-int currentbnriconframeseq[8] = {0};
+static u16 bannerDelayNum[12] = {0x0000};
+int currentbnriconframeseq[12] = {0};
 
 /**
  * Get banner sequence from banner file.

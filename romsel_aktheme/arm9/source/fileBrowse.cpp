@@ -64,6 +64,7 @@
 #define ENTRIES_PER_SCREEN 4
 #define ENTRIES_PER_SCREEN_SMALL 8
 #define ENTRIES_PER_SCREEN_LIST 10
+#define ENTRIES_PER_SCREEN_GRID 12
 
 extern bool lcdSwapped;
 
@@ -79,6 +80,7 @@ extern int cursorPosOnScreen;
 extern bool displayIcons;
 extern int iconsToDisplay;
 extern int smallIconsToDisplay;
+extern int gridIconsToDisplay;
 
 extern std::string startText;
 extern int startTextX;
@@ -231,6 +233,8 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 					if (iconsToDisplay > 4) iconsToDisplay = 4;
 					smallIconsToDisplay++;
 					if (smallIconsToDisplay > 8) smallIconsToDisplay = 8;
+					gridIconsToDisplay++;
+					if (gridIconsToDisplay > 12) gridIconsToDisplay = 12;
 
 					fileStartPos++;
 				}
@@ -274,6 +278,8 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				if (iconsToDisplay > 4) iconsToDisplay = 4;
 				smallIconsToDisplay++;
 				if (smallIconsToDisplay > 8) smallIconsToDisplay = 8;
+				gridIconsToDisplay++;
+				if (gridIconsToDisplay > 12) gridIconsToDisplay = 12;
 
 				if (pent->d_type == DT_DIR)
 					fileStartPos++;
@@ -455,7 +461,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 
 	displayDiskIcon(ms().secondaryDevice);
 	int n = 0;
-	const int iconLimit = (ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? 8 : 4;
+	const int iconLimit = (ms().ak_viewMode == TWLSettings::EViewGrid) ? 12 : (ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? 8 : 4;
 	for (int i = screenOffset; i < screenOffset+iconLimit; i++) {
 		if (i == file_count) {
 			break;
@@ -529,7 +535,9 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 		}
 
 		iconUpdate(n, isDirectory[n], dirContents.at(i).name.c_str());
-		titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
+		if (ms().ak_viewMode != TWLSettings::EViewGrid) {
+			titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
+		}
 		n++;
 	}
 	displayDiskIcon(false);
@@ -785,9 +793,9 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 			const DirEntry* entry = &dirContents.at(i + startRow);
 			printSmall(false, xPos, yPos+(i*15), entry->isDirectory ? ("["+entry->name+"]") : entry->name, Alignment::left, ((i + startRow) == fileOffset) ? FontPalette::mainTextHilight : FontPalette::mainText);
 		}
-	} else {
+	} else if (ms().ak_viewMode != TWLSettings::EViewGrid) {
 		int n = 0;
-		const int iconLimit = (ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? 8 : 4;
+		const int iconLimit = (ms().ak_viewMode == TWLSettings::EViewGrid) ? 12 : (ms().ak_viewMode == TWLSettings::EViewSmallIcon) ? 8 : 4;
 		for (int i = startRow; i < startRow+iconLimit; i++) {
 			if (i == file_count) {
 				break;
@@ -1442,6 +1450,19 @@ bool dsiWareCompatibleB4DS(void) {
 	return res;
 }
 
+int updateEntriesPerScreen(void) {
+	switch (ms().ak_viewMode) {
+		default:
+			return ENTRIES_PER_SCREEN;
+		case TWLSettings::EViewList:
+			return ENTRIES_PER_SCREEN_LIST;
+		case TWLSettings::EViewSmallIcon:
+			return ENTRIES_PER_SCREEN_SMALL;
+		case TWLSettings::EViewGrid:
+			return ENTRIES_PER_SCREEN_GRID;
+	}
+}
+
 std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	gameOrderIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
 	recentlyPlayedIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/recentlyplayed.ini";
@@ -1450,6 +1471,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	displayIcons = false;
 	iconsToDisplay = 0;
 	smallIconsToDisplay = 0;
+	gridIconsToDisplay = 0;
 
 	int pressed = 0;
 	int screenOffset = 0;
@@ -1460,10 +1482,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	getDirectoryContents (dirContents, extensionList);
 	displayDiskIcon(false);
 
-	int entriesPerScreen = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRIES_PER_SCREEN_LIST : ENTRIES_PER_SCREEN;
-	if (ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
-		entriesPerScreen = ENTRIES_PER_SCREEN_SMALL;
-	}
+	int entriesPerScreen = updateEntriesPerScreen();
 
 	fileOffset = CURPOS;
 	cursorPosOnScreen = fileOffset;
@@ -1514,221 +1533,256 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		bool selectionTouched = false;
 
-		if (pressed & KEY_UP) {
-			fileOffset--;
-			cursorPosOnScreen = fileOffset - screenOffset;
-			if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
-			resetIconScale();
-		}
-		if (pressed & KEY_DOWN) {
-			fileOffset++;
-			cursorPosOnScreen = fileOffset - screenOffset;
-			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
-			resetIconScale();
-		}
-		if (pressed & KEY_LEFT) {
-			fileOffset -= entriesPerScreen;
-			screenOffset -= entriesPerScreen;
-			if (fileOffset < 0) fileOffset = 0;
-			if (screenOffset < 0) screenOffset = 0;
-			cursorPosOnScreen = fileOffset - screenOffset;
-			if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
-			resetIconScale();
-		}
-		if (pressed & KEY_RIGHT) {
-			fileOffset += entriesPerScreen;
-			screenOffset += entriesPerScreen;
-			if (fileOffset > (int)dirContents.size() - 1) fileOffset = (int)dirContents.size() - 1;
-			if (screenOffset > (int)dirContents.size() - entriesPerScreen) {
-				screenOffset = (int)dirContents.size() - entriesPerScreen;
-				if (screenOffset < 0) screenOffset = 0;
+		if (ms().ak_viewMode == TWLSettings::EViewGrid) {
+			if ((pressed & KEY_UP) && fileOffset-4 >= 0) {
+				fileOffset -= 4;
+				if (fileOffset-screenOffset < 12) {
+					screenOffset--;
+				}
+				cursorPosOnScreen = (fileOffset/12) - screenOffset;
+				if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
+				resetIconScale();
 			}
-			cursorPosOnScreen = fileOffset - screenOffset;
-			if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
-			resetIconScale();
-		}
-		if (pressed & KEY_TOUCH) {
-			if (ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
-				if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+19) {
-					if (cursorPosOnScreen != 0) {
-						cursorPosOnScreen = 0;
-						fileOffset = screenOffset;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 2 && touch.py >= 19+20 && touch.py <= 19+19+20) {
-					if (cursorPosOnScreen != 1) {
-						cursorPosOnScreen = 1;
-						fileOffset = screenOffset+1;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 3 && touch.py >= 19+(20*2) && touch.py <= 19+19+(20*2)) {
-					if (cursorPosOnScreen != 2) {
-						cursorPosOnScreen = 2;
-						fileOffset = screenOffset+2;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 4 && touch.py >= 19+(20*3) && touch.py <= 19+19+(20*3)) {
-					if (cursorPosOnScreen != 3) {
-						cursorPosOnScreen = 3;
-						fileOffset = screenOffset+3;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 5 && touch.py >= 19+(20*4) && touch.py <= 19+19+(20*4)) {
-					if (cursorPosOnScreen != 4) {
-						cursorPosOnScreen = 4;
-						fileOffset = screenOffset+4;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 6 && touch.py >= 19+(20*5) && touch.py <= 19+19+(20*5)) {
-					if (cursorPosOnScreen != 5) {
-						cursorPosOnScreen = 5;
-						fileOffset = screenOffset+5;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 7 && touch.py >= 19+(20*6) && touch.py <= 19+19+(20*6)) {
-					if (cursorPosOnScreen != 6) {
-						cursorPosOnScreen = 6;
-						fileOffset = screenOffset+6;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 8 && touch.py >= 19+(20*7) && touch.py <= 19+19+(20*7)) {
-					if (cursorPosOnScreen != 7) {
-						cursorPosOnScreen = 7;
-						fileOffset = screenOffset+7;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
+			if ((pressed & KEY_DOWN) && fileOffset+4 > (int)dirContents.size() - 1) {
+				fileOffset += 4;
+				if (fileOffset-screenOffset >= 12) {
+					screenOffset++;
 				}
-			} else if (ms().ak_viewMode != TWLSettings::EViewList) {
-				if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+37) {
-					if (cursorPosOnScreen != 0) {
-						cursorPosOnScreen = 0;
-						fileOffset = screenOffset;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 2 && touch.py >= 19+38 && touch.py <= 19+37+38) {
-					if (cursorPosOnScreen != 1) {
-						cursorPosOnScreen = 1;
-						fileOffset = screenOffset+1;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 3 && touch.py >= 19+(38*2) && touch.py <= 19+37+(38*2)) {
-					if (cursorPosOnScreen != 2) {
-						cursorPosOnScreen = 2;
-						fileOffset = screenOffset+2;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 4 && touch.py >= 19+(38*3) && touch.py <= 19+37+(38*3)) {
-					if (cursorPosOnScreen != 3) {
-						cursorPosOnScreen = 3;
-						fileOffset = screenOffset+3;
-					} else if (touch.px >= 2 && touch.px < 2+5+32) {
-						selectionTouched = true;
-					}
-					resetIconScale();
+				cursorPosOnScreen = (fileOffset/12) - screenOffset;
+				if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
+				resetIconScale();
+			}
+			if ((pressed & KEY_LEFT) && ((fileOffset-1) % 4) > 0 && ((fileOffset-1) % 4) < 3) {
+				fileOffset--;
+				if (fileOffset < 0) fileOffset = 0;
+				cursorPosOnScreen = (fileOffset/12) - screenOffset;
+				if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
+				resetIconScale();
+			}
+			if ((pressed & KEY_RIGHT) && ((fileOffset+1) % 4) > 0 && ((fileOffset+1) % 4) < 3) {
+				fileOffset++;
+				if (fileOffset > (int)dirContents.size() - 1) fileOffset = (int)dirContents.size() - 1;
+				cursorPosOnScreen = (fileOffset/12) - screenOffset;
+				if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
+				resetIconScale();
+			}
+		} else {
+			if (pressed & KEY_UP) {
+				fileOffset--;
+				cursorPosOnScreen = fileOffset - screenOffset;
+				if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
+				resetIconScale();
+			}
+			if (pressed & KEY_DOWN) {
+				fileOffset++;
+				cursorPosOnScreen = fileOffset - screenOffset;
+				if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
+				resetIconScale();
+			}
+			if (pressed & KEY_LEFT) {
+				fileOffset -= entriesPerScreen;
+				screenOffset -= entriesPerScreen;
+				if (fileOffset < 0) fileOffset = 0;
+				if (screenOffset < 0) screenOffset = 0;
+				cursorPosOnScreen = fileOffset - screenOffset;
+				if (cursorPosOnScreen < 0) cursorPosOnScreen = 0;
+				resetIconScale();
+			}
+			if (pressed & KEY_RIGHT) {
+				fileOffset += entriesPerScreen;
+				screenOffset += entriesPerScreen;
+				if (fileOffset > (int)dirContents.size() - 1) fileOffset = (int)dirContents.size() - 1;
+				if (screenOffset > (int)dirContents.size() - entriesPerScreen) {
+					screenOffset = (int)dirContents.size() - entriesPerScreen;
+					if (screenOffset < 0) screenOffset = 0;
 				}
-			} else {
-				if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+14) {
-					if (cursorPosOnScreen != 0) {
-						cursorPosOnScreen = 0;
-						fileOffset = screenOffset;
-					} else {
-						// selectionTouched = true;
+				cursorPosOnScreen = fileOffset - screenOffset;
+				if (cursorPosOnScreen > entriesPerScreen - 1) cursorPosOnScreen = entriesPerScreen - 1;
+				resetIconScale();
+			}
+			if (pressed & KEY_TOUCH) {
+				if (ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
+					if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+19) {
+						if (cursorPosOnScreen != 0) {
+							cursorPosOnScreen = 0;
+							fileOffset = screenOffset;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 2 && touch.py >= 19+20 && touch.py <= 19+19+20) {
+						if (cursorPosOnScreen != 1) {
+							cursorPosOnScreen = 1;
+							fileOffset = screenOffset+1;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 3 && touch.py >= 19+(20*2) && touch.py <= 19+19+(20*2)) {
+						if (cursorPosOnScreen != 2) {
+							cursorPosOnScreen = 2;
+							fileOffset = screenOffset+2;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 4 && touch.py >= 19+(20*3) && touch.py <= 19+19+(20*3)) {
+						if (cursorPosOnScreen != 3) {
+							cursorPosOnScreen = 3;
+							fileOffset = screenOffset+3;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 5 && touch.py >= 19+(20*4) && touch.py <= 19+19+(20*4)) {
+						if (cursorPosOnScreen != 4) {
+							cursorPosOnScreen = 4;
+							fileOffset = screenOffset+4;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 6 && touch.py >= 19+(20*5) && touch.py <= 19+19+(20*5)) {
+						if (cursorPosOnScreen != 5) {
+							cursorPosOnScreen = 5;
+							fileOffset = screenOffset+5;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 7 && touch.py >= 19+(20*6) && touch.py <= 19+19+(20*6)) {
+						if (cursorPosOnScreen != 6) {
+							cursorPosOnScreen = 6;
+							fileOffset = screenOffset+6;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 8 && touch.py >= 19+(20*7) && touch.py <= 19+19+(20*7)) {
+						if (cursorPosOnScreen != 7) {
+							cursorPosOnScreen = 7;
+							fileOffset = screenOffset+7;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
 					}
-					resetIconScale();
-				} else if (file_count >= 2 && touch.py >= 19+15 && touch.py <= 19+14+15) {
-					if (cursorPosOnScreen != 1) {
-						cursorPosOnScreen = 1;
-						fileOffset = screenOffset+1;
-					} else {
-						// selectionTouched = true;
+				} else if (ms().ak_viewMode != TWLSettings::EViewList) {
+					if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+37) {
+						if (cursorPosOnScreen != 0) {
+							cursorPosOnScreen = 0;
+							fileOffset = screenOffset;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 2 && touch.py >= 19+38 && touch.py <= 19+37+38) {
+						if (cursorPosOnScreen != 1) {
+							cursorPosOnScreen = 1;
+							fileOffset = screenOffset+1;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 3 && touch.py >= 19+(38*2) && touch.py <= 19+37+(38*2)) {
+						if (cursorPosOnScreen != 2) {
+							cursorPosOnScreen = 2;
+							fileOffset = screenOffset+2;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 4 && touch.py >= 19+(38*3) && touch.py <= 19+37+(38*3)) {
+						if (cursorPosOnScreen != 3) {
+							cursorPosOnScreen = 3;
+							fileOffset = screenOffset+3;
+						} else if (touch.px >= 2 && touch.px < 2+5+32) {
+							selectionTouched = true;
+						}
+						resetIconScale();
 					}
-					resetIconScale();
-				} else if (file_count >= 3 && touch.py >= 19+(15*2) && touch.py <= 19+14+(15*2)) {
-					if (cursorPosOnScreen != 2) {
-						cursorPosOnScreen = 2;
-						fileOffset = screenOffset+2;
-					} else {
-						// selectionTouched = true;
+				} else {
+					if (file_count >= 1 && touch.py >= 19 && touch.py <= 19+14) {
+						if (cursorPosOnScreen != 0) {
+							cursorPosOnScreen = 0;
+							fileOffset = screenOffset;
+						} else {
+							// selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 2 && touch.py >= 19+15 && touch.py <= 19+14+15) {
+						if (cursorPosOnScreen != 1) {
+							cursorPosOnScreen = 1;
+							fileOffset = screenOffset+1;
+						} else {
+							// selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 3 && touch.py >= 19+(15*2) && touch.py <= 19+14+(15*2)) {
+						if (cursorPosOnScreen != 2) {
+							cursorPosOnScreen = 2;
+							fileOffset = screenOffset+2;
+						} else {
+							// selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 4 && touch.py >= 19+(15*3) && touch.py <= 19+14+(15*3)) {
+						if (cursorPosOnScreen != 3) {
+							cursorPosOnScreen = 3;
+							fileOffset = screenOffset+3;
+						} else {
+							// selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 5 && touch.py >= 19+(15*4) && touch.py <= 19+14+(15*4)) {
+						if (cursorPosOnScreen != 4) {
+							cursorPosOnScreen = 4;
+							fileOffset = screenOffset+4;
+						} else {
+							// selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 6 && touch.py >= 19+(15*5) && touch.py <= 19+14+(15*5)) {
+						if (cursorPosOnScreen != 5) {
+							cursorPosOnScreen = 5;
+							fileOffset = screenOffset+5;
+						} else {
+							// selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 7 && touch.py >= 19+(15*6) && touch.py <= 19+14+(15*6)) {
+						if (cursorPosOnScreen != 6) {
+							cursorPosOnScreen = 6;
+							fileOffset = screenOffset+6;
+						} else {
+							// selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 8 && touch.py >= 19+(15*7) && touch.py <= 19+14+(15*7)) {
+						if (cursorPosOnScreen != 7) {
+							cursorPosOnScreen = 7;
+							fileOffset = screenOffset+7;
+						} else {
+							// selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 9 && touch.py >= 19+(15*8) && touch.py <= 19+14+(15*8)) {
+						if (cursorPosOnScreen != 8) {
+							cursorPosOnScreen = 8;
+							fileOffset = screenOffset+8;
+						} else {
+							// selectionTouched = true;
+						}
+						resetIconScale();
+					} else if (file_count >= 10 && touch.py >= 19+(15*9) && touch.py <= 19+14+(15*9)) {
+						if (cursorPosOnScreen != 9) {
+							cursorPosOnScreen = 9;
+							fileOffset = screenOffset+9;
+						} else {
+							// selectionTouched = true;
+						}
+						resetIconScale();
 					}
-					resetIconScale();
-				} else if (file_count >= 4 && touch.py >= 19+(15*3) && touch.py <= 19+14+(15*3)) {
-					if (cursorPosOnScreen != 3) {
-						cursorPosOnScreen = 3;
-						fileOffset = screenOffset+3;
-					} else {
-						// selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 5 && touch.py >= 19+(15*4) && touch.py <= 19+14+(15*4)) {
-					if (cursorPosOnScreen != 4) {
-						cursorPosOnScreen = 4;
-						fileOffset = screenOffset+4;
-					} else {
-						// selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 6 && touch.py >= 19+(15*5) && touch.py <= 19+14+(15*5)) {
-					if (cursorPosOnScreen != 5) {
-						cursorPosOnScreen = 5;
-						fileOffset = screenOffset+5;
-					} else {
-						// selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 7 && touch.py >= 19+(15*6) && touch.py <= 19+14+(15*6)) {
-					if (cursorPosOnScreen != 6) {
-						cursorPosOnScreen = 6;
-						fileOffset = screenOffset+6;
-					} else {
-						// selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 8 && touch.py >= 19+(15*7) && touch.py <= 19+14+(15*7)) {
-					if (cursorPosOnScreen != 7) {
-						cursorPosOnScreen = 7;
-						fileOffset = screenOffset+7;
-					} else {
-						// selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 9 && touch.py >= 19+(15*8) && touch.py <= 19+14+(15*8)) {
-					if (cursorPosOnScreen != 8) {
-						cursorPosOnScreen = 8;
-						fileOffset = screenOffset+8;
-					} else {
-						// selectionTouched = true;
-					}
-					resetIconScale();
-				} else if (file_count >= 10 && touch.py >= 19+(15*9) && touch.py <= 19+14+(15*9)) {
-					if (cursorPosOnScreen != 9) {
-						cursorPosOnScreen = 9;
-						fileOffset = screenOffset+9;
-					} else {
-						// selectionTouched = true;
-					}
-					resetIconScale();
 				}
 			}
 		}
@@ -2010,12 +2064,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			listModeSwitched = (ms().ak_viewMode == TWLSettings::EViewList);
 
 			ms().ak_viewMode++;
-			if (ms().ak_viewMode > 3) ms().ak_viewMode = 0;
+			if (ms().ak_viewMode > 4) ms().ak_viewMode = 0;
 
-			entriesPerScreen = (ms().ak_viewMode == TWLSettings::EViewList) ? ENTRIES_PER_SCREEN_LIST : ENTRIES_PER_SCREEN;
-			if (ms().ak_viewMode == TWLSettings::EViewSmallIcon) {
-				entriesPerScreen = ENTRIES_PER_SCREEN_SMALL;
-			}
+			entriesPerScreen = updateEntriesPerScreen();
 			displayIcons = (ms().ak_viewMode != TWLSettings::EViewList);
 			refreshIcons = (ms().ak_viewMode == TWLSettings::EViewSmallIcon);
 			

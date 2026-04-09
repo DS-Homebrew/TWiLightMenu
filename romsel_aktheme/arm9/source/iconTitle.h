@@ -1,7 +1,7 @@
 #ifndef ICONTITLE_H
 #define ICONTITLE_H
 
-#define NDS_ICON_BANK_COUNT 8
+#define NDS_ICON_BANK_COUNT 12
 #define BAD_ICON_IDX(i) (i < 0 || i > (NDS_ICON_BANK_COUNT - 1))
 
 #define BOX_PX				40

@@ -78,18 +78,18 @@ extern u16* colorTable;
 
 extern int cursorPosOnScreen;
 
-static int iconTexID[8];
+static int iconTexID[12];
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
-static bool infoFound[8] = {false};
-static const char16_t *cachedTitle[8];
+static bool infoFound[12] = {false};
+static const char16_t *cachedTitle[12];
 static const char16_t *blankTitle = u"";
 
 static u32 arm9StartSig[8];
 
-static glImage ndsIcon[8][(32 / 32) * (256 / 32)];
-static u16 _paletteCache[8][16];
+static glImage ndsIcon[12][(32 / 32) * (256 / 32)];
+static u16 _paletteCache[12][16];
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -882,7 +882,7 @@ void iconTitleInit()
 	blackPalette = new u16[16*8]();
 	tilesModified = new u8[(32 * 256) / 2];
 
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
 		clearIcon(i);
 	}
 }

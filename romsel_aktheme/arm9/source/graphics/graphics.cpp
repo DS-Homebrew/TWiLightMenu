@@ -188,6 +188,7 @@ u16* colorTable = NULL;
 bool displayIcons = false;
 int iconsToDisplay = 0;
 int smallIconsToDisplay = 0;
+int gridIconsToDisplay = 0;
 static bool iconScaleEnabled = false;
 static int iconScaleWait = 0;
 static int iconScale = 0;
@@ -333,6 +334,10 @@ ITCM_CODE void updateSelectionBar(void) {
 				bottomImageWithBar[1][(y*256)+x] = bottomImage[1][(y*256)+x];
 			}
 		}
+	}
+
+	if (ms().ak_viewMode == TWLSettings::EViewGrid) {
+		return;
 	}
 
 	int h = (ms().ak_viewMode != TWLSettings::EViewList) ? 38 : 15;
@@ -1625,7 +1630,17 @@ void vBlankHandler()
 	}
 
 	if (displayIcons) {
-		if (ms().ak_viewMode == TWLSettings::EViewSmallIcon && smallIconsToDisplay > 0) {
+		bool runIconScale = false;
+
+		if (ms().ak_viewMode == TWLSettings::EViewGrid && gridIconsToDisplay > 0) {
+			// Playback animated icons
+			for (int i = 0; i < gridIconsToDisplay; i++) {
+				if (bnriconisDSi[i] && playBannerSequence(i)) {
+					updateFrame = true;
+				}
+			}
+			runIconScale = true;
+		} else if (ms().ak_viewMode == TWLSettings::EViewSmallIcon && smallIconsToDisplay > 0) {
 			// Playback animated icons
 			for (int i = 0; i < smallIconsToDisplay; i++) {
 				if (bnriconisDSi[i] && playBannerSequence(i)) {
@@ -1639,7 +1654,10 @@ void vBlankHandler()
 					updateFrame = true;
 				}
 			}
+			runIconScale = true;
+		}
 
+		if (runIconScale) {
 			if (iconScaleEnabled) {
 				if (!iconScaleDelay) {
 					if (iconScaleLarge) {
@@ -1693,7 +1711,19 @@ void vBlankHandler()
 		glColor(RGB15(31, 31, 31));
 
 		if (displayIcons) {
-			if (ms().ak_viewMode == TWLSettings::EViewSmallIcon && smallIconsToDisplay > 0) {
+			if (ms().ak_viewMode == TWLSettings::EViewGrid && gridIconsToDisplay > 0) {
+				int r = 0;
+				for (int i = 0; i < gridIconsToDisplay; i++) {
+					const int i2 = (i % 4);
+					if ((i == cursorPosOnScreen) && (iconScale > 0)) {
+						drawIcon(i, 16+(i2*40)-iconShift, 22+(r*38)-iconShift, (1 << 12)+iconScale);
+					} else {
+						drawIcon(i, 16+(i2*40), 22+(r*38), 0);
+					}
+					r++;
+					if (r == 4) r = 0;
+				}
+			} else if (ms().ak_viewMode == TWLSettings::EViewSmallIcon && smallIconsToDisplay > 0) {
 				for (int i = 0; i < smallIconsToDisplay; i++) {
 					drawIcon(i, 5, (20+(i*18)), (1 << 11));
 				}
