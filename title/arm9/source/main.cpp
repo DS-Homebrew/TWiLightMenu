@@ -2973,7 +2973,7 @@ int titleMode(void)
 				fclose(addon);
 			}
 		}
-		if (access("sd:/_nds/TWiLightMenu/emulators/nesDS.nds", F_OK) == 0) {
+		if (access("sd:/_nds/TWiLightMenu/emulators/gameyob.nds", F_OK) == 0) {
 			const char* addonPath = "sd:/_nds/TWiLightMenu/addons/Virtual Console";
 			if (access(addonPath, F_OK) != 0) {
 				mkdir(addonFolder, 0777);
@@ -2998,7 +2998,7 @@ int titleMode(void)
 				fclose(addon);
 			}
 		}
-		if (access("fat:/_nds/TWiLightMenu/emulators/nesDS.nds", F_OK) == 0) {
+		if (access("fat:/_nds/TWiLightMenu/emulators/gameyob.nds", F_OK) == 0) {
 			const char* addonPath = "fat:/_nds/TWiLightMenu/addons/Virtual Console";
 			if (access(addonPath, F_OK) != 0) {
 				mkdir(addonFolder, 0777);

@@ -138,7 +138,7 @@ jobs:
           7z a TWiLightMenu-Flashcard.7z
           mv TWiLightMenu-Flashcard.7z ~/artifacts
 
-          # Virtual Console Add-on 7z
+          # Virtual Console Add-ons 7z
           cd ..
           rm -rf TWiLightMenu
           cp -r 7zfile/Virtual\ Console/ TWiLightMenu
@@ -170,8 +170,26 @@ jobs:
           curl -LO $(curl https://api.github.com/repos/DS-Homebrew/PicoDriveTWL/releases | jq --raw-output '.[0].assets[0].browser_download_url' -)
           curl -LO https://github.com/DS-Homebrew/PokeMini/releases/latest/download/PokeMini.nds
           cd ../../..
-          7z a -md=16m AddOn-VirtualConsole.7z
-          mv AddOn-VirtualConsole.7z ~/artifacts
+          7z a -md=16m AddOn-VirtualConsoleFull-3DS.7z
+          mv AddOn-VirtualConsoleFull-3DS.7z ~/artifacts
+          cd _nds/TWiLightMenu/emulators
+          rm GBARunner2_arm7dldi_3ds.nds
+          rm GBARunner2_arm7dldi_nodsp_3ds.nds
+          cd ../../..
+          7z a -md=16m AddOn-VirtualConsole-DSi-Flashcard.7z
+          mv AddOn-VirtualConsoleFull-DSi-Flashcard.7z ~/artifacts
+          cd _nds/TWiLightMenu/emulators
+          rm jEnesisDS.nds
+          rm jEnesisDS_macro.nds
+          rm nesDS.nds
+          rm PicoDriveTWL.nds
+          rm SNEmulDS.nds
+          rm SNEmulDS.srl
+          rm SNEmulDS-legacy.nds
+          rm SNEmulDS-legacy-twlm-path.nds
+          cd ../../..
+          7z a -md=16m AddOn-VirtualConsoleMinimal-3DS.7z
+          mv AddOn-VirtualConsoleFullMinimal-3DS.7z ~/artifacts
 
           # Multimedia Add-on 7z
           cd ..

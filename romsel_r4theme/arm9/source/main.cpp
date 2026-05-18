@@ -985,7 +985,13 @@ int r4Theme(void) {
 		logPrint(gbaBiosFound[1] ? "GBA BIOS found on fat\n" : "GBA BIOS not found on fat\n");
 	}
 
-	const bool emulatorsInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Virtual Console" : "fat:/_nds/TWiLightMenu/addons/Virtual Console", F_OK) == 0);
+	int emulatorsInstalled = 0; // 0 = Not installed, 1/2 = Installed (DSi & Flashcard), 1 = Minimal installation (3DS), 2 = Full installation (3DS)
+	if (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Virtual Console" : "fat:/_nds/TWiLightMenu/addons/Virtual Console", F_OK) == 0) {
+		emulatorsInstalled++;
+		if (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/nesDS.nds" : "fat:/_nds/TWiLightMenu/emulators/nesDS.nds", F_OK) == 0) {
+			emulatorsInstalled++;
+		}
+	}
 	const bool multimediaInstalled = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/addons/Multimedia" : "fat:/_nds/TWiLightMenu/addons/Multimedia", F_OK) == 0);
 
 	if (ms().theme == TWLSettings::EThemeGBC) {
@@ -1374,9 +1380,17 @@ int r4Theme(void) {
 			}
 		} else {
 			std::vector<std::string_view> extensionList = {
-				".nds", ".dsi", ".ids", ".srl", ".app", ".argv", // NDS
+				".nds", ".dsi", ".ids", ".srl", ".app", ".argv" // NDS
+			};
+			std::vector<std::string_view> extensionListGBA = {
 				".agb", ".gba", ".mb" // GBA
 			};
+
+			if (!dsiFeatures() || ms().consoleModel < 2 || (emulatorsInstalled == 2 && ms().consoleModel >= 2)) {
+				for (int i = 0; i < 3; i++) {
+					extensionList.emplace_back(extensionListGBA[i]);
+				}
+			}
 
 			{
 				char currentDate[16];
@@ -1413,13 +1427,10 @@ int r4Theme(void) {
 					".int", // Intellivision
 					".m5", // Sord M5
 					".gb", ".sgb", ".gbc", // Game Boy
-					".nes", ".fds", // NES/Famicom
 					".sg", // Sega SG-1000
 					".sc", // Sega SC-3000
 					".sms", // Sega Master System
 					".gg", // Sega Game Gear
-					".gen", // Genesis
-					".smc", ".sfc", // SNES
 					".ws", ".wsc", // WonderSwan
 					".ngp", ".ngc", // Neo Geo Pocket
 					".pce", // PC Engine/TurboGrafx-16
@@ -1427,12 +1438,23 @@ int r4Theme(void) {
 					".min" // Pokémon mini
 				};
 
-				for (int i = 0; i < 28; i++) {
+				std::vector<std::string_view> extensionListEmusNotFor3DS = {
+					".nes", ".fds", // NES/Famicom
+					".gen", // Genesis
+					".smc", ".sfc", // SNES
+				};
+
+				for (int i = 0; i < 23; i++) {
 					extensionList.emplace_back(extensionListEmus[i]);
 				}
 
-				if (!ms().secondaryDevice || ms().mdEmulator == 2) {
-					extensionList.emplace_back(".md"); // Sega Mega Drive
+				if (!dsiFeatures() || ms().consoleModel < 2 || (emulatorsInstalled == 2 && ms().consoleModel >= 2)) {
+					for (int i = 0; i < 5; i++) {
+						extensionList.emplace_back(extensionListEmusNotFor3DS[i]);
+					}
+					if (!ms().secondaryDevice || ms().mdEmulator == 2) {
+						extensionList.emplace_back(".md"); // Sega Mega Drive
+					}
 				}
 			}
 
