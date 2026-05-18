@@ -189,7 +189,7 @@ jobs:
           rm SNEmulDS-legacy-twlm-path.nds
           cd ../../..
           7z a -md=16m AddOn-VirtualConsoleMinimal-3DS.7z
-          mv AddOn-VirtualConsoleFullMinimal-3DS.7z ~/artifacts
+          mv AddOn-VirtualConsoleMinimal-3DS.7z ~/artifacts
 
           # Multimedia Add-on 7z
           cd ..
