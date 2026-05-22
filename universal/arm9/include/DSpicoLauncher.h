@@ -8,4 +8,6 @@
 
 #include <nds/ndstypes.h>
 
+#include "common/picoLoader7.h"
+
 extern int picoLaunchRom(std::string romPath, std::string savePath);

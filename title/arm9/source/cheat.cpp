@@ -27,7 +27,7 @@
 #include <algorithm>
 
 #include "ndsheaderbanner.h"
-#include "perGameSettings.h"
+#include "common/perGameSettings.h"
 #include "myDSiMode.h"
 
 CheatCodelist::~CheatCodelist(void) {}
