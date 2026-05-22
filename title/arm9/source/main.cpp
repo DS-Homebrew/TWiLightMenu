@@ -923,6 +923,7 @@ void lastRunROM()
 						mkdir("saves", 0777);
 					}
 					ms().dsiWarePrvPath = ms().dsiWarePubPath;
+					ms().dsiWareBnrPath = ms().dsiWarePubPath;
 					if (savFormat) {
 						ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
 						ms().dsiWarePrvPath = ms().dsiWarePubPath;
@@ -930,14 +931,14 @@ void lastRunROM()
 						ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getPubExtension());
 						ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
 					}
+					ms().dsiWareBnrPath = replaceAll(ms().dsiWareBnrPath, typeToReplace, getBnrExtension());
 					ms().saveSettings();
 				}
 
 				if (savFormat) {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {
 						consoleDemoInit();
-						iprintf("Creating save file...\n");
-						iprintf ("\n");
+						iprintf("Creating save file...\n\n");
 						fadeType = true;
 
 						FILE *pFile = fopen(ms().dsiWarePubPath.c_str(), "wb");
@@ -961,8 +962,7 @@ void lastRunROM()
 				} else {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 						consoleDemoInit();
-						iprintf("Creating public save file...\n");
-						iprintf ("\n");
+						iprintf("Creating public save file...\n\n");
 						fadeType = true;
 
 						createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
@@ -980,8 +980,7 @@ void lastRunROM()
 
 					if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 						consoleDemoInit();
-						iprintf("Creating private save file...\n");
-						iprintf ("\n");
+						iprintf("Creating private save file...\n\n");
 						fadeType = true;
 
 						createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
@@ -995,6 +994,32 @@ void lastRunROM()
 						for (int i = 0; i < 25; i++) {
 							swiWaitForVBlank();
 						}
+					}
+				}
+
+				if ((NDSHeader.dsi_flags & BIT(2)) && getFileSize(ms().dsiWareBnrPath.c_str()) == 0) {
+					consoleDemoInit();
+					iprintf("Creating banner save file...\n\n");
+					fadeType = true;
+
+					FILE *pFile = fopen(ms().dsiWareBnrPath.c_str(), "wb");
+					if (pFile) {
+						const u16 ver = NDS_BANNER_VER_DSi;
+						fwrite(&ver, sizeof(u16), 1, pFile);
+
+						fseek(pFile, 0x4000 - 1, SEEK_SET);
+						fputc('\0', pFile);
+						fclose(pFile);
+					}
+
+					iprintf("Banner save file created!\n");
+
+					for (int i = 0; i < 30; i++) {
+						swiWaitForVBlank();
+					}
+					fadeType = false;
+					for (int i = 0; i < 25; i++) {
+						swiWaitForVBlank();
 					}
 				}
 
@@ -1029,6 +1054,7 @@ void lastRunROM()
 				char sfnSrl[62];
 				char sfnPub[62];
 				char sfnPrv[62];
+				char sfnBnr[62];
 				if (ms().previousUsedDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound()) {
 					if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak", F_OK) == 0) {
 						if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0) {
@@ -1042,13 +1068,21 @@ void lastRunROM()
 						}
 						rename("sd:/_nds/TWiLightMenu/tempDSiWare.prv.bak", "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
-					fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
-					fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
-					fatGetAliasPath("sd:/", "sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
+					if (access("sd:/_nds/TWiLightMenu/tempDSiWare.bnr.bak", F_OK) == 0) {
+						if (access("sd:/_nds/TWiLightMenu/tempDSiWare.bnr", F_OK) == 0) {
+							remove("sd:/_nds/TWiLightMenu/tempDSiWare.bnr");
+						}
+						rename("sd:/_nds/TWiLightMenu/tempDSiWare.bnr.bak", "sd:/_nds/TWiLightMenu/tempDSiWare.bnr");
+					}
+					fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
+					fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
+					fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
+					fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.bnr", sfnBnr);
 				} else {
-					fatGetAliasPath(ms().previousUsedDevice ? "fat:/" : "sd:/", ms().dsiWareSrlPath.c_str(), sfnSrl);
-					fatGetAliasPath(ms().previousUsedDevice ? "fat:/" : "sd:/", ms().dsiWarePubPath.c_str(), sfnPub);
-					fatGetAliasPath(ms().previousUsedDevice ? "fat:/" : "sd:/", ms().dsiWarePrvPath.c_str(), sfnPrv);
+					fatGetAliasPath(ms().dsiWareSrlPath.c_str(), sfnSrl);
+					fatGetAliasPath(ms().dsiWarePubPath.c_str(), sfnPub);
+					fatGetAliasPath(ms().dsiWarePrvPath.c_str(), sfnPrv);
+					fatGetAliasPath(ms().dsiWareBnrPath.c_str(), sfnBnr);
 				}
 
 				CIniFile bootstrapini((useTempDSiWare || sys().isRunFromSD()) ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
@@ -1056,6 +1090,7 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "APP_PATH", sfnSrl);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", sfnPub);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "PRV_PATH", sfnPrv);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "BNR_PATH", sfnBnr);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "QUIT_PATH", mainSrldrPath((useTempDSiWare || sys().isRunFromSD()) && (!ms().secondaryDevice || !bs().b4dsMode)));
 				bootstrapini.SetString("NDS-BOOTSTRAP", "GUI_LANGUAGE", ms().getGuiLanguageString());
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "PHAT_COLORS", dsPhatColors);
@@ -2320,7 +2355,15 @@ int titleMode(void)
 		4: Run temporary DSiWare
 	*/
 
-	if (((strcmp(io_dldi_data->friendlyName, "NAND FLASH CARD LIBFATNRIO") == 0) || (io_dldi_data->ioInterface.ioType == 0x4F49524E)) && (*(u32*)0x02FF8000 != 0x53535A4C)) {
+	if (strcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)") == 0) {
+		const u32* u32_io_dldi_data = (u32*)(io_dldi_data);
+		if (u32_io_dldi_data[0xD0/4] == 0xBF80074C) { // If alternate DLDI driver is found...
+			// Use original DLDI driver once bootloader runs
+			FILE* file = fopen("nitro:/dldi/dstwo.dldi", "rb");
+			fread((void*)0x02FF8000, 1, 0x800, file);
+			fclose(file);
+		}
+	} else if (((strcmp(io_dldi_data->friendlyName, "NAND FLASH CARD LIBFATNRIO") == 0) || (io_dldi_data->ioInterface.ioType == 0x4F49524E)) && (*(u32*)0x02FF8000 != 0x53535A4C)) {
 		FILE* file = fopen("nitro:/dldi/nrio.lz77", "rb");
 		fread((void*)0x02FF8004, 1, 0x3FFC, file);
 		fclose(file);
@@ -2930,7 +2973,7 @@ int titleMode(void)
 				fclose(addon);
 			}
 		}
-		if (access("sd:/_nds/TWiLightMenu/emulators/nesDS.nds", F_OK) == 0) {
+		if (access("sd:/_nds/TWiLightMenu/emulators/gameyob.nds", F_OK) == 0) {
 			const char* addonPath = "sd:/_nds/TWiLightMenu/addons/Virtual Console";
 			if (access(addonPath, F_OK) != 0) {
 				mkdir(addonFolder, 0777);
@@ -2955,7 +2998,7 @@ int titleMode(void)
 				fclose(addon);
 			}
 		}
-		if (access("fat:/_nds/TWiLightMenu/emulators/nesDS.nds", F_OK) == 0) {
+		if (access("fat:/_nds/TWiLightMenu/emulators/gameyob.nds", F_OK) == 0) {
 			const char* addonPath = "fat:/_nds/TWiLightMenu/addons/Virtual Console";
 			if (access(addonPath, F_OK) != 0) {
 				mkdir(addonFolder, 0777);

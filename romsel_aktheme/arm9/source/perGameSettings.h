@@ -29,6 +29,7 @@ extern int perGameSettings_remappedKeys[12];
 
 void loadPerGameSettings(std::string filename);
 void savePerGameSettings(std::string filename);
+int getSaveNo (std::string filename);
 bool checkIfShowAPMsg (std::string filename);
 void dontShowAPMsgAgain (std::string filename);
 bool checkIfShowRAMLimitMsg (std::string filename);
@@ -38,6 +39,7 @@ void perGameSettings(std::string filename);
 std::string getSavExtension(void);
 std::string getPubExtension(void);
 std::string getPrvExtension(void);
+std::string getBnrExtension(void);
 std::string getImgExtension(int number);
 
 

@@ -6,13 +6,25 @@
 #include <vector>
 #include <nds.h>
 
+class cCheatDatItem {
+  public:
+	std::string _title;
+	std::string _comment;
+	std::vector<u32> _cheat;
+	u32 _flags;
+	u32 _offset;
+	cCheatDatItem(const std::string& title, const std::string& comment, u32 flags, u32 offset = 0)
+		: _title(title), _comment(comment), _flags(flags), _offset(offset) {};
+	enum { EFolder = 1, EInFolder = 2, EOne = 4, ESelected = 8, EOpen = 16 };
+};
+
 class CheatCodelist
 {
 public:
   CheatCodelist (void)
   {
   }
-  
+
   ~CheatCodelist ();
 
   bool parse(const std::string& aFileName);
@@ -34,43 +46,26 @@ public:
   void onGenerate(void);
 
   private:
-    struct sDatIndex
-    {
-      u32 _gameCode;
-      u32 _crc32;
-      u64 _offset;
-    };
-    class cParsedItem
-    {
-      public:
-        std::string _title;
-        std::string _comment;
-        std::vector<u32> _cheat;
-        u32 _flags;
-        u32 _offset;
-        cParsedItem(const std::string& title,const std::string& comment,u32 flags,u32 offset=0):_title(title),_comment(comment),_flags(flags),_offset(offset) {};
-        enum
-        {
-          EFolder=1,
-          EInFolder=2,
-          EOne=4,
-          ESelected=8,
-          EOpen=16
-        };
-    };
+	struct sDatIndex
+	{
+	  u32 _gameCode;
+	  u32 _crc32;
+	  u64 _offset;
+	};
   private:
-    std::vector<cParsedItem> _data;
-    std::vector<size_t> _indexes;
+	std::vector<cCheatDatItem> _data;
+	std::vector<size_t> _indexes;
   public:
-    std::vector<u32> getCheats();
-    void writeCheatsToFile(const char *path);
+	std::vector<u32> getCheats();
+	std::vector<cCheatDatItem> getCheatsAlt();
+	void writeCheatsToFile(const char *path);
 
 private:
   enum TOKEN_TYPE {TOKEN_DATA, TOKEN_TAG_START, TOKEN_TAG_END, TOKEN_TAG_SINGLE};
 
   std::string nextToken (FILE* fp, TOKEN_TYPE& tokenType);
 
-  void drawCheatList(std::vector<CheatCodelist::cParsedItem *>& list, uint curPos, uint screenPos, uint scrollPos);
+  void drawCheatList(std::vector<cCheatDatItem *>& list, uint curPos, uint screenPos, uint scrollPos);
 };
 
 #endif // CHEAT_H

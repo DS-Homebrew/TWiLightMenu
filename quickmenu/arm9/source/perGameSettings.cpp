@@ -78,6 +78,13 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_remappedKeys[11] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_Y", 11);
 }
 
+int getSaveNo (std::string filename) {
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	CIniFile pergameini( pergamefilepath );
+	perGameSettings_saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
+	return perGameSettings_saveNo;
+}
+
 std::string getSavExtension(void) {
 	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
 		return ".sav";
@@ -99,6 +106,14 @@ std::string getPrvExtension(void) {
 		return ".prv";
 	} else {
 		return ".pr" + std::to_string(perGameSettings_saveNo);
+	}
+}
+
+std::string getBnrExtension(void) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
+		return ".bnr";
+	} else {
+		return ".bn" + std::to_string(perGameSettings_saveNo);
 	}
 }
 

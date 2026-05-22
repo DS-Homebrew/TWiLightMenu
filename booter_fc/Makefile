@@ -167,16 +167,20 @@ autoboot:
 	mkdir -p "../7zfile/Flashcard users/Autoboot/GBAMP + PassMe, FlashMe or WifiMe/"
 	mv _BOOT_MP.NDS "../7zfile/Flashcard users/Autoboot/GBAMP + PassMe, FlashMe or WifiMe/_BOOT_MP.nds"
 
-	#### EZ-Flash Vi, iSmart Premium, r4i.cn
+	#### iSmart Premium, r4i.cn
 	cp booter_fc.nds ismat.dat
 	dlditool flashcart_specifics/DLDI/mati.dldi ismat.dat
 	mkdir -p "../7zfile/Flashcard users/Autoboot/iSmart Premium/system/"
 	cp ismat.dat "../7zfile/Flashcard users/Autoboot/iSmart Premium/system/ismat.dat"
-	#mkdir -p "../7zfile/Flashcard users/Autoboot/EZ Flash Vi/"
-	#cp ismat.dat "../7zfile/Flashcard users/Autoboot/EZ Flash Vi/ez5isys.bin"
 	mkdir -p "../7zfile/Flashcard users/Autoboot/r4i.cn/"
 	# Since this is the last one, move it instead of copy
 	mv ismat.dat "../7zfile/Flashcard users/Autoboot/r4i.cn/_ds_menu.nds"
+
+	#### EZ-Flash Vi
+	cp booter_fc.nds ez5isys.bin
+	dlditool flashcart_specifics/DLDI/ez5i.dldi ez5isys.bin
+	mkdir -p "../7zfile/Flashcard users/Autoboot/EZ Flash Vi/"
+	mv ez5isys.bin "../7zfile/Flashcard users/Autoboot/EZ Flash Vi/ez5isys.bin"
 
 	#### EZ-Flash Parallel
 	cp booter_fc.nds ezds.dat

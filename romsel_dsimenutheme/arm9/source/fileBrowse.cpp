@@ -616,23 +616,18 @@ void updateBoxArt(void) {
 	showSTARTborder = true;
 	if (ms().theme == TWLSettings::EThemeHBL || ms().macroMode || !ms().showBoxArt || boxArtLoaded) return;
 
-	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
-		rocketVideo_playVideo = false;
-		while (dmaBusy(1)); // Wait for frame to finish rendering
-		tex().drawOverRotatingCubes(); // Clear top screen cubes for 3DS theme
+	if (ms().theme != TWLSettings::ETheme3DS) {
+		clearBoxArt();
 	}
-	clearBoxArt();
 
-	if (isDirectory[CURPOS]) {
+	sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", boxArtFilename);
+	if (!isDirectory[CURPOS] && (bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
+		sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
+	}
+	if (!tex().drawBoxArt(boxArtPath, (dsiFeatures() && ms().showBoxArt == 2))) { // Load box art
 		if (ms().theme == TWLSettings::ETheme3DS && !rocketVideo_playVideo) {
 			rocketVideo_playVideo = true;
 		}
-	} else {
-		sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", boxArtFilename);
-		if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
-			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
-		}
-		tex().drawBoxArt(boxArtPath, (dsiFeatures() && ms().showBoxArt == 2)); // Load box art
 	}
 	boxArtLoaded = true;
 }
@@ -1241,9 +1236,9 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 				fadeType = false; // Fade to white
 			}
 
-			fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", ms().internetBrowserPath.c_str(), sfnSrl);
-			fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", savepathPub.c_str(), sfnPub);
-			fatGetAliasPath(ms().secondaryDevice ? "fat:/" : "sd:/", savepathPrv.c_str(), sfnPrv);
+			fatGetAliasPath(ms().internetBrowserPath.c_str(), sfnSrl);
+			fatGetAliasPath(savepathPub.c_str(), sfnPub);
+			fatGetAliasPath(savepathPrv.c_str(), sfnPrv);
 		} else {
 			createSaveFile(savepath.c_str(), false, browserTid);
 		}
@@ -2229,7 +2224,7 @@ void dsiWareRAMLimitMsgPrep(void) {
 				if (memcmp(gameTid[CURPOS], compatibleGameListB4DSRAMLimited[i], 3) == 0) {
 					// Found match
 					msgId = compatibleGameListB4DSRAMLimitedID[i];
-					if (msgId == 9) {
+					if (msgId == 9 && sys().isRegularDS()) {
 						if (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS) {
 							const u16 hwordBak = *(vu16*)(0x08240000);
 							*(vu16*)(0x08240000) = 1; // Detect Memory Expansion Pak

@@ -162,17 +162,6 @@ static void writeAddr (data_t *mem, addr_t offset, addr_t value) {
 
 static bool dldiPatchLoader (void)
 {
-	addr_t memOffset;			// Offset of DLDI after the file is loaded into memory
-	addr_t relocationOffset;	// Value added to all offsets within the patch to fix it properly
-	addr_t ddmemOffset;			// Original offset used in the DLDI file
-	addr_t ddmemStart;			// Start of range that offsets can be in the DLDI file
-	addr_t ddmemEnd;			// End of range that offsets can be in the DLDI file
-	addr_t ddmemSize;			// Size of range that offsets can be in the DLDI file
-
-	addr_t addrIter;
-
-	size_t dldiFileSize = 0;
-
 	data_t *pDH = (data_t*)(io_dldi_data);
 
 	data_t *pAH = (data_t*)0x02FF8000;
@@ -183,76 +172,11 @@ static bool dldiPatchLoader (void)
 	}
 
 	if (*(u32*)0x02FF8004 == 0x69684320 || *(u32*)0x02FF8000 == 0x53535A4C) {
-		return true; // Skip patching for existing or compressed DLDI file
+		return true; // Existing or compressed DLDI file is already in place
 	}
 
-	dldiFileSize = 1 << pDH[DO_driverSize];
-
-	/* memOffset = readAddr (pAH, DO_text_start);
-	if (memOffset == 0) {
-			memOffset = readAddr (pAH, DO_startup) - DO_code;
-	} */
-	memOffset = 0x06000000;
-	ddmemOffset = readAddr (pDH, DO_text_start);
-	relocationOffset = memOffset - ddmemOffset;
-
-	ddmemStart = readAddr (pDH, DO_text_start);
-	ddmemSize = (1 << pDH[DO_driverSize]);
-	ddmemEnd = ddmemStart + ddmemSize;
-
-	// Remember how much space is actually reserved
-	pDH[DO_allocatedSpace] = pAH[DO_allocatedSpace];
-	// Copy the DLDI patch into the application
+	size_t dldiFileSize = 1 << pDH[DO_driverSize];
 	tonccpy (pAH, pDH, (dldiFileSize > 0x4000) ? 0x4000 : dldiFileSize);
-
-	// Fix the section pointers in the header
-	writeAddr (pAH, DO_text_start, readAddr (pAH, DO_text_start) + relocationOffset);
-	writeAddr (pAH, DO_data_end, readAddr (pAH, DO_data_end) + relocationOffset);
-	writeAddr (pAH, DO_glue_start, readAddr (pAH, DO_glue_start) + relocationOffset);
-	writeAddr (pAH, DO_glue_end, readAddr (pAH, DO_glue_end) + relocationOffset);
-	writeAddr (pAH, DO_got_start, readAddr (pAH, DO_got_start) + relocationOffset);
-	writeAddr (pAH, DO_got_end, readAddr (pAH, DO_got_end) + relocationOffset);
-	writeAddr (pAH, DO_bss_start, readAddr (pAH, DO_bss_start) + relocationOffset);
-	writeAddr (pAH, DO_bss_end, readAddr (pAH, DO_bss_end) + relocationOffset);
-	// Fix the function pointers in the header
-	writeAddr (pAH, DO_startup, readAddr (pAH, DO_startup) + relocationOffset);
-	writeAddr (pAH, DO_isInserted, readAddr (pAH, DO_isInserted) + relocationOffset);
-	writeAddr (pAH, DO_readSectors, readAddr (pAH, DO_readSectors) + relocationOffset);
-	writeAddr (pAH, DO_writeSectors, readAddr (pAH, DO_writeSectors) + relocationOffset);
-	writeAddr (pAH, DO_clearStatus, readAddr (pAH, DO_clearStatus) + relocationOffset);
-	writeAddr (pAH, DO_shutdown, readAddr (pAH, DO_shutdown) + relocationOffset);
-
-	if (pDH[DO_fixSections] & FIX_ALL) {
-		// Search through and fix pointers within the data section of the file
-		for (addrIter = (readAddr(pDH, DO_text_start) - ddmemStart); addrIter < (readAddr(pDH, DO_data_end) - ddmemStart); addrIter++) {
-			if ((ddmemStart <= readAddr(pAH, addrIter)) && (readAddr(pAH, addrIter) < ddmemEnd)) {
-				writeAddr (pAH, addrIter, readAddr(pAH, addrIter) + relocationOffset);
-			}
-		}
-	}
-
-	if (pDH[DO_fixSections] & FIX_GLUE) {
-		// Search through and fix pointers within the glue section of the file
-		for (addrIter = (readAddr(pDH, DO_glue_start) - ddmemStart); addrIter < (readAddr(pDH, DO_glue_end) - ddmemStart); addrIter++) {
-			if ((ddmemStart <= readAddr(pAH, addrIter)) && (readAddr(pAH, addrIter) < ddmemEnd)) {
-				writeAddr (pAH, addrIter, readAddr(pAH, addrIter) + relocationOffset);
-			}
-		}
-	}
-
-	if (pDH[DO_fixSections] & FIX_GOT) {
-		// Search through and fix pointers within the Global Offset Table section of the file
-		for (addrIter = (readAddr(pDH, DO_got_start) - ddmemStart); addrIter < (readAddr(pDH, DO_got_end) - ddmemStart); addrIter++) {
-			if ((ddmemStart <= readAddr(pAH, addrIter)) && (readAddr(pAH, addrIter) < ddmemEnd)) {
-				writeAddr (pAH, addrIter, readAddr(pAH, addrIter) + relocationOffset);
-			}
-		}
-	}
-
-	if (/* clearBSS && */ (pDH[DO_fixSections] & FIX_BSS) && dldiFileSize <= 0x4000) {
-		// Initialise the BSS to 0, only if the disc is being re-inited
-		toncset (&pAH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
-	}
 
 	return true;
 }

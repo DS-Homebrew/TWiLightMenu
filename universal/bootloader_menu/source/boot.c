@@ -584,12 +584,11 @@ int main (void) {
 			const u16 dldiFileSize = 1 << *(u8*)0x02FF418D;
 			tonccpy((u32*)0x06000000, (u32*)0x02FF4180, dldiFileSize);
 			dldiRelocateBinary();
-
 			toncset((u32*)0x02FF4000, 0, 0x8180); // Clear bootstub + DLDI driver
 		} else if (*(u32*)0x02FF8004 == 0x69684320) { // DLDI ' Chi' string
 			const u16 dldiFileSize = 1 << *(u8*)0x02FF800D;
 			tonccpy((u32*)0x06000000, (u32*)0x02FF8000, (dldiFileSize > 0x4000) ? 0x4000 : dldiFileSize);
-			dldiClearBss();
+			dldiRelocateBinary();
 		} else if (*(u32*)0x02FF8000 == 0x53535A4C) { // LZ77 flag
 			dldiDecompressBinary();
 		} else {

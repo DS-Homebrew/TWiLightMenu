@@ -28,6 +28,7 @@ void loadPerGameSettings(std::string filename);
 std::string getSavExtension(void);
 std::string getPubExtension(void);
 std::string getPrvExtension(void);
+std::string getBnrExtension(void);
 
 
 

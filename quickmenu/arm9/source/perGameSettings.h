@@ -25,9 +25,11 @@ extern int perGameSettings_saveRelocation;
 extern int perGameSettings_remappedKeys[12];
 
 void loadPerGameSettings(std::string filename);
+int getSaveNo (std::string filename);
 std::string getSavExtension(void);
 std::string getPubExtension(void);
 std::string getPrvExtension(void);
+std::string getBnrExtension(void);
 std::string getImgExtension(void);
 
 

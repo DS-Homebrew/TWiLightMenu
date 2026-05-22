@@ -128,6 +128,7 @@ static u16 twlColors[16] = {
 static int zoomingIconXpos[12] = {-32, -32, 256, 256+16, -32, -32, 256, 256+16, -32, -32, 256+16, 256+40};
 static int zoomingIconYpos[12] = {-32, -48, -48, -32, 192+32, 192+48, 192+48, 192+32, -32, 192, -32, 192+48};
 static int gbaIconYpos = 44;
+static bool displayConsoleIcons = true;
 
 void twlMenuVideo_loadTopGraphics(void) {
 	// Anniversary
@@ -176,6 +177,14 @@ void twlMenuVideo_loadTopGraphics(void) {
 	}
 
 	oamInit(&oamMain, SpriteMapping_1D_32, false);
+
+	if (dsiFeatures() && ms().consoleModel >= 2) {
+		const bool nesDSFound = (access(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/emulators/nesDS.nds" : "fat:/_nds/TWiLightMenu/emulators/nesDS.nds", F_OK) == 0);
+		if (!emulatorsInstalled || !nesDSFound) {
+			displayConsoleIcons = false;
+			return;
+		}
+	}
 
 	u16* gfx[12];
 	for (int i = 0; i < 12; i++) {
@@ -473,6 +482,8 @@ extern bool soundBankInited;
 mm_sound_effect bootJingle;
 
 void twlMenuVideo_topGraphicRender(void) {
+	if (!displayConsoleIcons) return;
+
 	if (!loadFrameSprite) {
 		frameDelaySprite++;
 		if (highFPS) {

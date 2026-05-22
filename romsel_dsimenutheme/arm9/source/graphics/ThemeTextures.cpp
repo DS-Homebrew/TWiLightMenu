@@ -983,10 +983,8 @@ void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 	fclose(file);
 }
 
-void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
-	if (inMem ? !boxArtFound[CURPOS] : access(filename, F_OK) != 0) return;
-
-	beginBgSubModify();
+bool ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
+	if (inMem ? !boxArtFound[CURPOS] : access(filename, F_OK) != 0) return false;
 
 	std::vector<unsigned char> image;
 	uint imageXpos, imageYpos;
@@ -996,7 +994,20 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		lodepng::decode(image, boxArtWidth, boxArtHeight, filename);
 	}
 	bool alternatePixel = false;
-	if (boxArtWidth > 256 || boxArtHeight > 192) return;
+	if (boxArtWidth > 256 || boxArtHeight > 192) return false;
+
+	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
+		rocketVideo_playVideo = false;
+		while (dmaBusy(1)); // Wait for frame to finish rendering
+		drawOverRotatingCubes(); // Clear top screen cubes for 3DS theme
+	}
+
+	if (ms().theme == TWLSettings::ETheme3DS) {
+		extern uint photoWidth, photoHeight;
+		tex().drawOverBoxArt(photoWidth, photoHeight);
+	}
+
+	beginBgSubModify();
 
 	u16* bmpImageBuffer = new u16[256 * 192];
 	u16* bmpImageBuffer2 = boxArtColorDeband ? new u16[256 * 192] : NULL;
@@ -1103,6 +1114,8 @@ void ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 	if (boxArtColorDeband) {
 		delete[] bmpImageBuffer2;
 	}
+
+	return true;
 }
 
 #define MAX_PHOTO_WIDTH 208
@@ -1546,7 +1559,7 @@ void loadRotatingCubes() {
 		}
 
 		if (doRead) {
-			// Compatible with RVID v2 & v3
+			// Compatible with RVID v2-v5
 			int rvidVer = 0;
 			fseek(videoFrameFile, 0x4, SEEK_SET);
 			fread((void*)&rvidVer, sizeof(u32), 1, videoFrameFile);
@@ -1561,13 +1574,16 @@ void loadRotatingCubes() {
 			fread((void*)&rocketVideo_fps, sizeof(u8), 1, videoFrameFile);
 			if (rocketVideo_fps >= 0x80) {
 				rocketVideo_fps -= 0x80;
+			} else if (rocketVideo_fps == 0) {
+				rocketVideo_fps = 60;
 			}
 
 			extern u8 rocketVideo_height;
 			// fseek(videoFrameFile, 0xD, SEEK_SET);
 			fread((void*)&rocketVideo_height, sizeof(u8), 1, videoFrameFile);
 
-			if (rvidVer == 3) {
+			const bool latestVer = (rvidVer >= 3 && rvidVer <= 5);
+			if (latestVer) {
 				u8 isDualScreen = 0;
 				fseek(videoFrameFile, 0xF, SEEK_SET);
 				fread((void*)&isDualScreen, sizeof(u8), 1, videoFrameFile);
@@ -1579,12 +1595,12 @@ void loadRotatingCubes() {
 			}
 
 			u8 rvidBmpMode = 1;
-			if (rvidVer == 3) {
+			if (latestVer) {
 				fseek(videoFrameFile, 0x13, SEEK_SET);
 				fread((void*)&rvidBmpMode, sizeof(u8), 1, videoFrameFile);
 			}
 
-			u32 framesSize = (0x200*rocketVideo_height)*(rocketVideo_videoFrames+1);
+			const u32 framesSize = (0x200*rocketVideo_height)*(rocketVideo_videoFrames+1);
 			if (rocketVideo_height > 144 || framesSize > 0x700000) {
 				fclose(videoFrameFile);
 				return;
@@ -1600,7 +1616,7 @@ void loadRotatingCubes() {
 			} */
 
 			u32 framesOffset = 0x200;
-			if (rvidVer == 3) {
+			if (latestVer) {
 				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
 
 				u16* colors256 = NULL;

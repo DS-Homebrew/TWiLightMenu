@@ -91,3 +91,11 @@ std::string getPrvExtension(void) {
 		return ".pr" + std::to_string(perGameSettings_saveNo);
 	}
 }
+
+std::string getBnrExtension(void) {
+	if (ms().saveLocation == TWLSettings::EGamesFolder || perGameSettings_saveNo == 0) {
+		return ".bnr";
+	} else {
+		return ".bn" + std::to_string(perGameSettings_saveNo);
+	}
+}

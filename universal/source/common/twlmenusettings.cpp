@@ -353,6 +353,7 @@ void TWLSettings::loadSettings()
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 	dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
+	dsiWareBnrPath = settingsini.GetString("SRLOADER", "DSIWARE_BNR", dsiWareBnrPath);
 	slot1Launched = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHED", slot1Launched);
 	launchType[0] = (TLaunchType)settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
 	launchType[1] = (TLaunchType)settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
@@ -515,6 +516,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 	settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 	settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
+	settingsini.SetString("SRLOADER", "DSIWARE_BNR", dsiWareBnrPath);
 	settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHED", slot1Launched);
 	settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
 	settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
