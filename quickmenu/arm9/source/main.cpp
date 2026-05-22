@@ -354,6 +354,19 @@ void ntrStartSdGame(void) {
 	}
 }
 
+void writeSoftResetId(void) {
+	if (!sys().isRunFromSD()) return;
+
+	u8 srFrontendId[8] = {'A', 'L', 'R', 'S', 4, 0, 3, 0};
+
+	FILE* file = fopen("sd:/_nds/nds-bootstrap/srBackendId.bin", "wb");
+	fwrite(srFrontendId, 1, 8, file);
+	fclose(file);
+	file = fopen("sd:/_nds/nds-bootstrap/srFrontendId.bin", "wb");
+	fwrite(srFrontendId, 1, 8, file);
+	fclose(file);
+}
+
 void dsCardLaunch() {
 	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 	*(u16*)(0x02000304) = 0x1801;
@@ -1918,6 +1931,7 @@ int dsClassicMenu(void) {
 								if (access(ndsToBoot, F_OK) != 0) {
 									sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", ms().bootstrapFile ? "nightly" : "release");
 								}
+								writeSoftResetId();
 
 								std::vector<char*> argarray;
 								argarray.push_back(ndsToBoot);
@@ -2029,6 +2043,7 @@ int dsClassicMenu(void) {
 								if (access(ndsToBoot, F_OK) != 0) {
 									sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", ms().bootstrapFile ? "nightly" : "release");
 								}
+								writeSoftResetId();
 
 								std::vector<char*> argarray;
 								argarray.push_back(ndsToBoot);
@@ -2589,6 +2604,8 @@ int dsClassicMenu(void) {
 						ntrStartSdGame();
 					}
 
+					writeSoftResetId();
+
 					char ndsToBoot[256];
 					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
 					if (access(ndsToBoot, F_OK) != 0) {
@@ -2972,6 +2989,8 @@ int dsClassicMenu(void) {
 						if (!isDSiMode() && !ms().secondaryDevice) {
 							ntrStartSdGame();
 						}
+
+						writeSoftResetId();
 
 						int err = 0;
 						if (ms().btsrpBootloaderDirect && isHomebrew[ms().secondaryDevice]) {

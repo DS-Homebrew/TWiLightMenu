@@ -331,6 +331,19 @@ void ntrStartSdGame(void) {
 	}
 }
 
+void writeSoftResetId(void) {
+	if (!sys().isRunFromSD()) return;
+
+	u8 srFrontendId[8] = {'A', 'L', 'R', 'S', 4, 0, 3, 0};
+
+	FILE* file = fopen("sd:/_nds/nds-bootstrap/srBackendId.bin", "wb");
+	fwrite(srFrontendId, 1, 8, file);
+	fclose(file);
+	file = fopen("sd:/_nds/nds-bootstrap/srFrontendId.bin", "wb");
+	fwrite(srFrontendId, 1, 8, file);
+	fclose(file);
+}
+
 void dsCardLaunch() {
 	snd().stopStream();
 	*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
@@ -1701,6 +1714,8 @@ int dsiMenuTheme(void) {
 						ntrStartSdGame();
 					}
 
+					writeSoftResetId();
+
 					char ndsToBoot[256];
 					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
 					if (access(ndsToBoot, F_OK) != 0) {
@@ -2015,6 +2030,8 @@ int dsiMenuTheme(void) {
 						if (!isDSiMode() && !ms().secondaryDevice) {
 							ntrStartSdGame();
 						}
+
+						writeSoftResetId();
 
 						int err = 0;
 						if (ms().btsrpBootloaderDirect && isHomebrew[CURPOS]) {

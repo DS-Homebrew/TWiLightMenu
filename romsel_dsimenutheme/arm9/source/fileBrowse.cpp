@@ -675,6 +675,8 @@ void launchSettings(void) {
 	stop();
 }
 
+extern void writeSoftResetId(void);
+
 void launchPictochat(const vector<DirEntry>& dirContents) {
 	const char* pictochatPath = sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds";
 
@@ -778,6 +780,7 @@ void launchPictochat(const vector<DirEntry>& dirContents) {
 		if (access(ndsToBoot, F_OK) != 0) {
 			sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", ms().bootstrapFile ? "nightly" : "release");
 		}
+		writeSoftResetId();
 
 		std::vector<char*> argarray;
 		argarray.push_back(ndsToBoot);
@@ -976,6 +979,7 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 		if (access(ndsToBoot, F_OK) != 0) {
 			sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", ms().bootstrapFile ? "nightly" : "release");
 		}
+		writeSoftResetId();
 
 		std::vector<char*> argarray;
 		argarray.push_back(ndsToBoot);
@@ -1248,6 +1252,7 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 		if (access(ndsToBoot, F_OK) != 0) {
 			sprintf(ndsToBoot, "%s:/_nds/nds-bootstrap-%s.nds", sys().isRunFromSD() ? "fat" : "sd", ms().bootstrapFile ? "nightly" : "release");
 		}
+		writeSoftResetId();
 
 		std::vector<char*> argarray;
 		argarray.push_back(ndsToBoot);

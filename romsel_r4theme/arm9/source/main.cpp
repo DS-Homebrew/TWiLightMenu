@@ -394,6 +394,19 @@ void ntrStartSdGame(void) {
 	}
 }
 
+void writeSoftResetId(void) {
+	if (!sys().isRunFromSD()) return;
+
+	u8 srFrontendId[8] = {'A', 'L', 'R', 'S', 4, 0, 3, 0};
+
+	FILE* file = fopen("sd:/_nds/nds-bootstrap/srBackendId.bin", "wb");
+	fwrite(srFrontendId, 1, 8, file);
+	fclose(file);
+	file = fopen("sd:/_nds/nds-bootstrap/srFrontendId.bin", "wb");
+	fwrite(srFrontendId, 1, 8, file);
+	fclose(file);
+}
+
 void dsCardLaunch() {
 	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 	*(u16*)(0x02000304) = 0x1801;
@@ -1236,6 +1249,7 @@ int r4Theme(void) {
 								}
 
 								std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+								writeSoftResetId();
 
 								std::vector<char*> argarray;
 								argarray.push_back(strdup(bootstrapPath.c_str()));
@@ -1850,6 +1864,8 @@ int r4Theme(void) {
 						ntrStartSdGame();
 					}
 
+					writeSoftResetId();
+
 					char ndsToBoot[256];
 					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
 					if (access(ndsToBoot, F_OK) != 0) {
@@ -2207,6 +2223,8 @@ int r4Theme(void) {
 						if (!isDSiMode() && !ms().secondaryDevice) {
 							ntrStartSdGame();
 						}
+
+						writeSoftResetId();
 
 						const bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
