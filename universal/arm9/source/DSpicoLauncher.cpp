@@ -1,9 +1,11 @@
 /*
     Copyright (C) 2024 lifehackerhansol
-    Additional modifications Copyright (C) 2025 coderkei & Rocket Robz
+    Additional modifications Copyright (C) 2025-2026 coderkei & Rocket Robz
 
     SPDX-License-Identifier: GPL-3.0-or-later
 */
+
+#ifndef NO_PICO_LAUNCHER
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -163,3 +165,5 @@ int picoLaunchRom(std::string romPath, std::string savePath) {
 	((pico_loader_9_func_t)0x06800000)();
 	return 0;
 }
+
+#endif

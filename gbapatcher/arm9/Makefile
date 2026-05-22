@@ -37,7 +37,7 @@ CFLAGS	:=	-g -Wall -O3 \
 		-flto \
 		$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9 -DSTANDALONE -D_NO_MAIN_ALL
+CFLAGS	+=	$(INCLUDE) -DARM9 -DNO_PICO_LAUNCHER -DSTANDALONE -D_NO_MAIN_ALL
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
 
 ASFLAGS	:=	-g $(ARCH) $(INCLUDE) -flto
