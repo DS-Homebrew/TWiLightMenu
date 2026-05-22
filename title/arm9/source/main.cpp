@@ -2551,7 +2551,7 @@ int titleMode(void)
 				}
 			}
 		}
-		if (useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && *(u32*)0x020007F0 != 0x4D44544C) {
+		/* if (useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && *(u32*)0x020007F0 != 0x4D44544C) {
 			u32 srBackendId[2] = {*(u32*)0x02000428, *(u32*)0x0200042C};
 			u16 tidPart = 0;
 			tonccpy(&tidPart, (void*)((u32)srBackendId+6), sizeof(u16));
@@ -2654,7 +2654,7 @@ int titleMode(void)
 			}
 		} else if (access("sd:/_nds/nds-bootstrap/srBackendId.bin", F_OK) == 0) {
 			remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
-		}
+		} */
 	}
 
 	*(u32*)(0x02000000) = softResetParamsBak;
