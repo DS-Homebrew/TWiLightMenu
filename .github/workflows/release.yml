@@ -157,9 +157,9 @@ jobs:
           curl -LO https://github.com/FluBBaOfWard/S8DS/releases/latest/download/S8DS.zip
           7z x S8DS.zip S8DS.nds
           rm S8DS.zip
-          curl -LO https://github.com/FluBBaOfWard/NGPDS/releases/latest/download/NGPDS.zip
-          7z x NGPDS.zip NGPDS.nds
-          rm NGPDS.zip
+          curl -LO https://github.com/FluBBaOfWard/NGPDS/releases/latest/download/NGPDS_0_5_9.zip
+          7z x NGPDS_0_5_9.zip NGPDS.nds
+          rm NGPDS_0_5_9.zip
           curl -LO https://github.com/FluBBaOfWard/NitroGrafx/releases/latest/download/NitroGrafx0_9_0.zip
           7z x NitroGrafx0_9_0.zip NitroGrafx.nds
           rm NitroGrafx0_9_0.zip
