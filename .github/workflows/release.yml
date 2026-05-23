@@ -177,7 +177,7 @@ jobs:
           rm GBARunner2_arm7dldi_nodsp_3ds.nds
           cd ..
           7z a -md=16m AddOn-VirtualConsole-DSi-Flashcard.7z
-          mv AddOn-VirtualConsoleFull-DSi-Flashcard.7z ~/artifacts
+          mv AddOn-VirtualConsole-DSi-Flashcard.7z ~/artifacts
           cd _nds/TWiLightMenu/emulators
           rm jEnesisDS.nds
           rm jEnesisDS_macro.nds
