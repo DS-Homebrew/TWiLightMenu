@@ -172,10 +172,10 @@ jobs:
           cd ../../..
           7z a -md=16m AddOn-VirtualConsoleFull-3DS.7z
           mv AddOn-VirtualConsoleFull-3DS.7z ~/artifacts
-          cd _nds/TWiLightMenu/emulators
+          cd _nds
           rm GBARunner2_arm7dldi_3ds.nds
           rm GBARunner2_arm7dldi_nodsp_3ds.nds
-          cd ../../..
+          cd ..
           7z a -md=16m AddOn-VirtualConsole-DSi-Flashcard.7z
           mv AddOn-VirtualConsoleFull-DSi-Flashcard.7z ~/artifacts
           cd _nds/TWiLightMenu/emulators
