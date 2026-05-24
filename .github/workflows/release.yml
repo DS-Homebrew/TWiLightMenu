@@ -188,6 +188,7 @@ jobs:
           rm SNEmulDS-legacy.nds
           rm SNEmulDS-legacy-twlm-path.nds
           cd ../../..
+          rm snemul.cfg
           7z a -md=16m AddOn-VirtualConsoleMinimal-3DS.7z
           mv AddOn-VirtualConsoleMinimal-3DS.7z ~/artifacts
 
