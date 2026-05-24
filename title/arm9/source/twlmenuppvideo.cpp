@@ -833,7 +833,8 @@ void twlMenuVideo(void) {
 	const int iEnd = (highFPS ? (longVersion ? ((72 * 6) + 30) : (72 * 3)) : (longVersion ? ((60 * 6) + 35) : (60 * 3)));
 	for (int i = 0; i < iEnd; i++) {
 		scanKeys();
-		if ((keysHeld() & KEY_A) || (keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
+		const int held = keysHeld();
+		if ((held & KEY_A) || (held & KEY_START) || (held & KEY_SELECT) || (held & KEY_TOUCH)) return;
 		//loadROMselectAsynch();
 		snd().updateStream();
 		twlMenuVideo_topGraphicRender();
