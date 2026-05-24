@@ -1258,30 +1258,30 @@ int akTheme(void) {
 					".col", // ColecoVision
 					".int", // Intellivision
 					".m5", // Sord M5
-					".gb", ".sgb", ".gbc", // Game Boy
 					".sg", // Sega SG-1000
 					".sc", // Sega SC-3000
 					".sms", // Sega Master System
 					".gg", // Sega Game Gear
 					".ws", ".wsc", // WonderSwan
 					".ngp", ".ngc", // Neo Geo Pocket
-					".pce", // PC Engine/TurboGrafx-16
 					".dsk", // Amstrad CPC
 					".min" // Pokémon mini
 				};
 
 				std::vector<std::string_view> extensionListEmusNotFor3DS = {
+					".gb", ".sgb", ".gbc", // Game Boy
 					".nes", ".fds", // NES/Famicom
 					".gen", // Genesis
 					".smc", ".sfc", // SNES
+					".pce", // PC Engine/TurboGrafx-16
 				};
 
-				for (int i = 0; i < 23; i++) {
+				for (int i = 0; i < 19; i++) {
 					extensionList.emplace_back(extensionListEmus[i]);
 				}
 
 				if (!dsiFeatures() || ms().consoleModel < 2 || (emulatorsInstalled == 2 && ms().consoleModel >= 2)) {
-					for (int i = 0; i < 5; i++) {
+					for (int i = 0; i < 9; i++) {
 						extensionList.emplace_back(extensionListEmusNotFor3DS[i]);
 					}
 					if (!ms().secondaryDevice || ms().mdEmulator == 2) {

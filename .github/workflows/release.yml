@@ -179,9 +179,11 @@ jobs:
           7z a -md=16m AddOn-VirtualConsole-DSi-Flashcard.7z
           mv AddOn-VirtualConsole-DSi-Flashcard.7z ~/artifacts
           cd _nds/TWiLightMenu/emulators
+          rm gameyob.nds
           rm jEnesisDS.nds
           rm jEnesisDS_macro.nds
           rm nesDS.nds
+          rm NitroGrafx.nds
           rm PicoDriveTWL.nds
           rm SNEmulDS.nds
           rm SNEmulDS.srl
