@@ -1580,6 +1580,9 @@ ITCM_CODE void drawCurrentTime() {
 void clearBoxArt() {
 	if (ms().macroMode) return;
 	tex().drawOverBoxArt(photoWidth, photoHeight);
+
+	extern uint boxArtWidth, boxArtHeight;
+	boxArtWidth = boxArtHeight = 0;
 }
 
 // static char videoFrameFilename[256];

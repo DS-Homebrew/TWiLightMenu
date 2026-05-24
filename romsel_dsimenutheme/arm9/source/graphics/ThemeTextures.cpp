@@ -987,14 +987,15 @@ bool ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 	if (inMem ? !boxArtFound[CURPOS] : access(filename, F_OK) != 0) return false;
 
 	std::vector<unsigned char> image;
+	uint imageWidth, imageHeight;
 	uint imageXpos, imageYpos;
 	if (inMem) {
-		lodepng::decode(image, boxArtWidth, boxArtHeight, (unsigned char*)boxArtCache+(CURPOS*0xB000), 0xB000);
+		lodepng::decode(image, imageWidth, imageHeight, (unsigned char*)boxArtCache+(CURPOS*0xB000), 0xB000);
 	} else {
-		lodepng::decode(image, boxArtWidth, boxArtHeight, filename);
+		lodepng::decode(image, imageWidth, imageHeight, filename);
 	}
 	bool alternatePixel = false;
-	if (boxArtWidth > 256 || boxArtHeight > 192) return false;
+	if (imageWidth > 256 || imageHeight > 192) return false;
 
 	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
 		rocketVideo_playVideo = false;
@@ -1006,6 +1007,9 @@ bool ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		extern uint photoWidth, photoHeight;
 		tex().drawOverBoxArt(photoWidth, photoHeight);
 	}
+
+	boxArtWidth = imageWidth;
+	boxArtHeight = imageHeight;
 
 	beginBgSubModify();
 
@@ -1171,7 +1175,6 @@ void ThemeTextures::drawOverBoxArt(uint photoWidth, uint photoHeight) {
 		}
 	}
 	commitBgSubModify();
-	boxArtWidth = boxArtHeight = 0;
 }
 
 // Redraw background over the rotating cubes bounds
