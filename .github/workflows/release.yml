@@ -157,9 +157,9 @@ jobs:
           curl -LO https://github.com/FluBBaOfWard/S8DS/releases/latest/download/S8DS.zip
           7z x S8DS.zip S8DS.nds
           rm S8DS.zip
-          curl -LO https://github.com/FluBBaOfWard/NGPDS/releases/latest/download/NGPDS.zip
-          7z x NGPDS.zip NGPDS.nds
-          rm NGPDS.zip
+          curl -LO https://github.com/FluBBaOfWard/NGPDS/releases/latest/download/NGPDS_0_5_9.zip
+          7z x NGPDS_0_5_9.zip NGPDS.nds
+          rm NGPDS_0_5_9.zip
           curl -LO https://github.com/FluBBaOfWard/NitroGrafx/releases/latest/download/NitroGrafx0_9_0.zip
           7z x NitroGrafx0_9_0.zip NitroGrafx.nds
           rm NitroGrafx0_9_0.zip
@@ -172,22 +172,25 @@ jobs:
           cd ../../..
           7z a -md=16m AddOn-VirtualConsoleFull-3DS.7z
           mv AddOn-VirtualConsoleFull-3DS.7z ~/artifacts
-          cd _nds/TWiLightMenu/emulators
+          cd _nds
           rm GBARunner2_arm7dldi_3ds.nds
           rm GBARunner2_arm7dldi_nodsp_3ds.nds
-          cd ../../..
+          cd ..
           7z a -md=16m AddOn-VirtualConsole-DSi-Flashcard.7z
-          mv AddOn-VirtualConsoleFull-DSi-Flashcard.7z ~/artifacts
+          mv AddOn-VirtualConsole-DSi-Flashcard.7z ~/artifacts
           cd _nds/TWiLightMenu/emulators
+          rm gameyob.nds
           rm jEnesisDS.nds
           rm jEnesisDS_macro.nds
           rm nesDS.nds
+          rm NitroGrafx.nds
           rm PicoDriveTWL.nds
           rm SNEmulDS.nds
           rm SNEmulDS.srl
           rm SNEmulDS-legacy.nds
           rm SNEmulDS-legacy-twlm-path.nds
           cd ../../..
+          rm snemul.cfg
           7z a -md=16m AddOn-VirtualConsoleMinimal-3DS.7z
           mv AddOn-VirtualConsoleMinimal-3DS.7z ~/artifacts
 

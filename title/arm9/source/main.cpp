@@ -244,6 +244,19 @@ void unlaunchRomBoot(std::string_view rom) {
 	stop();
 }
 
+void writeSoftResetId(void) {
+	if (!sys().isRunFromSD()) return;
+
+	u8 srFrontendId[8] = {'A', 'L', 'R', 'S', 4, 0, 3, 0};
+
+	FILE* file = fopen("sd:/_nds/nds-bootstrap/srBackendId.bin", "wb");
+	fwrite(srFrontendId, 1, 8, file);
+	fclose(file);
+	file = fopen("sd:/_nds/nds-bootstrap/srFrontendId.bin", "wb");
+	fwrite(srFrontendId, 1, 8, file);
+	fclose(file);
+}
+
 // From NTM
 // https://github.com/Epicpkmn11/NTM/blob/db69aca1b49733da51f64ee857ac9b861b1c468c/arm9/src/sav.c#L7-L93
 bool createDSiWareSave(const char *path, int size) {
@@ -725,6 +738,7 @@ void lastRunROM()
 
 				bootstrapini.SaveIniFile( sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC );
 			}
+			writeSoftResetId();
 			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
 		} else {
 			bool runNds_boostCpu = false;
@@ -1129,6 +1143,8 @@ void lastRunROM()
 					*(u32*)0x02000000 |= BIT(4);
 					ntrStartSdGame();
 				}
+
+				writeSoftResetId();
 
 				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
 			}
@@ -2535,7 +2551,7 @@ int titleMode(void)
 				}
 			}
 		}
-		if (useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && *(u32*)0x020007F0 != 0x4D44544C) {
+		/* if (useTwlCfg && isDSiMode() && sdFound() && sys().arm7SCFGLocked() && *(u32*)0x020007F0 != 0x4D44544C) {
 			u32 srBackendId[2] = {*(u32*)0x02000428, *(u32*)0x0200042C};
 			u16 tidPart = 0;
 			tonccpy(&tidPart, (void*)((u32)srBackendId+6), sizeof(u16));
@@ -2638,7 +2654,7 @@ int titleMode(void)
 			}
 		} else if (access("sd:/_nds/nds-bootstrap/srBackendId.bin", F_OK) == 0) {
 			remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
-		}
+		} */
 	}
 
 	*(u32*)(0x02000000) = softResetParamsBak;

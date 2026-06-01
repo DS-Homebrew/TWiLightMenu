@@ -51,7 +51,7 @@
 int currentTheme = 0;
 bool currentMacroMode = false;
 bool wasBacklightOff = false;
-static TWLSettings::TExploit previousDSiWareExploit = TWLSettings::EExploitNone;
+// static TWLSettings::TExploit previousDSiWareExploit = TWLSettings::EExploitNone;
 static int previousSysRegion = 0;
 
 std::vector<std::string> akThemeList;
@@ -847,7 +847,7 @@ void defaultExitHandler()
 		*(u32*)0x020007F0 = 0x4D44544C;
 	}
 
-	if (isDSiMode() && sdFound() && ms().consoleModel >= 2 && sys().arm7SCFGLocked() &&
+	/* if (isDSiMode() && sdFound() && ms().consoleModel >= 2 && sys().arm7SCFGLocked() &&
 	   (previousDSiWareExploit != ms().dsiWareExploit || previousSysRegion != ms().sysRegion)) {
 		u32 currentSrBackendId[2] = {0};
 		u8 sysValue = 0;
@@ -911,7 +911,7 @@ void defaultExitHandler()
 		} else {
 			remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
 		}
-	}
+	} */
 
 	flashcardInit();
 	if (!isDSiMode()) {
@@ -1058,7 +1058,7 @@ int settingsMode(void)
 
 	currentTheme = ms().theme;
 	currentMacroMode = ms().macroMode;
-	previousDSiWareExploit = ms().dsiWareExploit;
+	// previousDSiWareExploit = ms().dsiWareExploit;
 	previousSysRegion = ms().sysRegion;
 
 //#pragma endregion
@@ -1591,7 +1591,7 @@ int settingsMode(void)
 				{0, 1, 2});
 	}
 
-	using TExploit = TWLSettings::TExploit;
+	/* using TExploit = TWLSettings::TExploit;
 
 	if (isDSiMode() && sdFound() && ms().consoleModel >= 2 && sys().arm7SCFGLocked()) {
 		miscPage
@@ -1600,7 +1600,7 @@ int settingsMode(void)
 				Option::Int((int *)&ms().dsiWareExploit),
 				{STR_NONE, "sudokuhax", "4swordshax", "fieldrunnerhax", "grtpwn", "ugopwn/Lenny", "UNO*pwn", "Memory Pit"},
 				{TExploit::EExploitNone, TExploit::EExploitSudokuhax, TExploit::EExploit4Swordshax, TExploit::EExploitFieldrunnerhax, TExploit::EExploitGrtpwn, TExploit::EExploitUgopwn, TExploit::EExploitUnopwn, TExploit::EExploitMemoryPit});
-	}
+	} */
 	if (sdFound()) {
 		if (ms().consoleModel < 2) {
 			miscPage
