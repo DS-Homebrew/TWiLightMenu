@@ -90,6 +90,14 @@ TWiLight Menu++ is composed of multiple "sub-projects" which all work together t
 - **title**: boot splash screen (Nintendo logo by default)
   - Creates `/_nds/TWiLightMenu/main.srldr`
 
+## Files to install
+
+For DS(i) and 3DS SD card users, the `BOOT.NDS` file is found in `./7zfile/DSi&3DS - SD card users/`
+
+For 3DS users, you can then generate the TwilightMenu CIA file by executing the following batch file : `./booter/make cia.bat`. The then generated cia file can be found at `./7zfile/3DS - CFW users/cia/TWiLight Menu.cia`.
+
+You can then install TwilightMenu++ the same way you can do it when downloading the app directly from the release page : copy the aforementioned .cia and .nds files to the root of your SD card, along with the `_nds/` and `roms/` folders generated in `./7zipfile/`. Then, use FBI to install TwilightMenu's .cia file.
+
 # Translating
 
 You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.com/project/TwilightMenu). If you'd like to request a new language be added then please ask on the [Discord server](https://ds-homebrew.com/discord).
