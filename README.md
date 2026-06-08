@@ -96,7 +96,7 @@ For DS(i) and 3DS SD card users, the `BOOT.NDS` file is found in `./7zfile/DSi&3
 
 For 3DS users, you can then generate the TwilightMenu CIA file by executing the following batch file : `./booter/make cia.bat`. The then generated cia file can be found at `./7zfile/3DS - CFW users/cia/TWiLight Menu.cia`.
 
-You can then install TwilightMenu++ the same way you can do it when downloading the app directly from the release page : copy the aforementioned .cia and .nds files to the root of your SD card, along with the `_nds/` and `roms/` folders generated in `./7zipfile/`. Then, use FBI to install TwilightMenu's .cia file.
+You can then install TwilightMenu++ the same way you can do it when downloading the app directly from the release page : copy the aforementioned .cia and .nds files to the root of your SD card, along with the `_nds/` and `roms/` folders generated in `./7zfile/`. Then, use FBI to install TwilightMenu's .cia file.
 
 # Translating
 
