@@ -2299,6 +2299,12 @@ int dsClassicMenu(void) {
 				std::string romFolderNoSlash = romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romFolderNoSlash);
 
+				sNDSHeaderExt NDSHeader;
+
+				FILE *f_nds_file = fopen(filename[ms().secondaryDevice].c_str(), "rb");
+				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+				fclose(f_nds_file);
+
 				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename[ms().secondaryDevice];
 				if (ms().saveLocation == TWLSettings::ETWLMFolder) {
@@ -2312,7 +2318,7 @@ int dsClassicMenu(void) {
 				}
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
 				ms().dsiWareBnrPath = ms().dsiWarePubPath;
-				const bool savFormat = (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
+				const bool savFormat = (ms().secondaryDevice && (!isDSiMode() || NDSHeader.twlRomSize >= 0x04000000 || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
 				if (savFormat) {
 					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
 					ms().dsiWarePrvPath = ms().dsiWarePubPath;
@@ -2324,13 +2330,6 @@ int dsClassicMenu(void) {
 				ms().homebrewBootstrap = isHomebrew[ms().secondaryDevice];
 				ms().launchType[ms().secondaryDevice] = TWLSettings::EDSiWareLaunch;
 				ms().saveSettings();
-
-				sNDSHeaderExt NDSHeader;
-
-				FILE *f_nds_file = fopen(filename[ms().secondaryDevice].c_str(), "rb");
-
-				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
-				fclose(f_nds_file);
 
 				if (savFormat) {
 					if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && ((NDSHeader.pubSavSize > 0) || (NDSHeader.prvSavSize > 0))) {

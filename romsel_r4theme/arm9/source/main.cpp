@@ -1595,7 +1595,6 @@ int r4Theme(void) {
 				sNDSHeaderExt NDSHeader;
 
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");
-
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
@@ -1612,7 +1611,7 @@ int r4Theme(void) {
 				}
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
 				ms().dsiWareBnrPath = ms().dsiWarePubPath;
-				const bool savFormat = (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
+				const bool savFormat = (ms().secondaryDevice && (!isDSiMode() || NDSHeader.twlRomSize >= 0x04000000 || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
 				if (savFormat) {
 					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
 					ms().dsiWarePrvPath = ms().dsiWarePubPath;
