@@ -918,11 +918,10 @@ void lastRunROM()
 				RemoveTrailingSlashes(romFolderNoSlash);
 
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");
-
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
-				const bool savFormat = (ms().previousUsedDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
+				const bool savFormat = (ms().previousUsedDevice && (!isDSiMode() || NDSHeader.twlRomSize >= 0x04000000 || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
 
 				if (!runTempDSiWare) {
 					ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
