@@ -983,6 +983,8 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Not Used", Alignment::right, highlighted);
 				} else if (perGameSettings_wideScreen == -1) {
 					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
+				} else if (perGameSettings_wideScreen == 2) {
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "16:10 (Forced)", Alignment::right, highlighted);
 				} else if (perGameSettings_wideScreen == 1) {
 					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "16:10", Alignment::right, highlighted);
 				} else {
@@ -1173,8 +1175,8 @@ void perGameSettings (std::string filename) {
 						}
 						break;
 					case 8:
-						perGameSettings_wideScreen++;
-						if (perGameSettings_wideScreen > 1) perGameSettings_wideScreen = -1;
+						perGameSettings_wideScreen--;
+						if (perGameSettings_wideScreen < -1) perGameSettings_wideScreen = 2;
 						break;
 					case 11:
 						perGameSettings_region--;
@@ -1263,7 +1265,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 8:
 						perGameSettings_wideScreen++;
-						if (perGameSettings_wideScreen > 1) perGameSettings_wideScreen = -1;
+						if (perGameSettings_wideScreen > 2) perGameSettings_wideScreen = -1;
 						break;
 					case 9:
 					  if (pressed & KEY_A) {

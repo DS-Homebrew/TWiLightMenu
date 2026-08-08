@@ -1074,6 +1074,8 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_NOT_USED, endAlign, FontPalette::dialog);
 				} else if (perGameSettings_wideScreen == -1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, STR_DEFAULT, endAlign, FontPalette::dialog);
+				} else if (perGameSettings_wideScreen == 2) {
+					printSmall(false, perGameOpEndXpos, perGameOpYpos, "16:10 (Forced)", endAlign, FontPalette::dialog);
 				} else if (perGameSettings_wideScreen == 1) {
 					printSmall(false, perGameOpEndXpos, perGameOpYpos, "16:10", endAlign, FontPalette::dialog);
 				} else {
@@ -1275,7 +1277,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 						break;
 					case 8:
 						perGameSettings_wideScreen--;
-						if (perGameSettings_wideScreen < -1) perGameSettings_wideScreen = 1;
+						if (perGameSettings_wideScreen < -1) perGameSettings_wideScreen = 2;
 						break;
 					case 11:
 						perGameSettings_region--;
@@ -1365,7 +1367,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 						break;
 					case 8:
 						perGameSettings_wideScreen++;
-						if (perGameSettings_wideScreen > 1) perGameSettings_wideScreen = -1;
+						if (perGameSettings_wideScreen > 2) perGameSettings_wideScreen = -1;
 						break;
 					case 9:
 					  if (pressed & KEY_A) {
