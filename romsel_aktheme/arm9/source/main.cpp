@@ -958,7 +958,7 @@ int akTheme(void) {
 	graphicsInit();
 	langInit();
 
-	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
+	if (sdFound() && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
 		CIniFile lumaConfig("sd:/luma/config.ini");
 		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
 		logPrint(widescreenFound ? "Widescreen found\n" : "Widescreen not found\n");

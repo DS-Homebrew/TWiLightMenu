@@ -74,7 +74,7 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
-bool externalFirmsModules = false;
+bool widescreenFound = false;
 //bool widescreenEffects = false;
 
 extern bool showProgressBar;
@@ -456,14 +456,14 @@ void SetWidescreen(const char *filename) {
 	const char* wideCheatDataPath = ms().secondaryDevice && (!isDSiWare[ms().secondaryDevice] || (isDSiWare[ms().secondaryDevice] && !ms().dsiWareToSD)) ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin";
 	remove(wideCheatDataPath);
 
-	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
+	const int useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 	if ((isDSiMode() && sys().arm7SCFGLocked()) || ms().consoleModel < 2
-	|| !useWidescreen || !externalFirmsModules || ms().macroMode) {
+	|| !useWidescreen || !widescreenFound || ms().macroMode) {
 		return;
 	}
 
-	if (isHomebrew[ms().secondaryDevice] && ms().homebrewHasWide && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
+	if (isHomebrew[ms().secondaryDevice] && ms().homebrewHasWide) {
 		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
 			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
 		}
@@ -539,48 +539,34 @@ void SetWidescreen(const char *filename) {
 			fread(&fileCount, 1, sizeof(fileCount), file);
 
 			u32 offset = 0, size = 0;
-			u32 offsetAlt = 0, sizeAlt = 0;
 
 			// Try binary search for the game
 			int left = 0;
 			int right = fileCount;
+			bool tidFound = false;
 
 			while (left <= right) {
-				int mid = left + ((right - left) / 2);
-				fseek(file, 16 + mid * 16, SEEK_SET);
+				fseek(file, 16 + left * 16, SEEK_SET);
 				fread(buf, 1, 4, file);
 				int cmp = strcmp(buf, tid);
 				if (cmp == 0) { // TID matches, check CRC
+					tidFound = true;
 					u16 crc;
 					fread(&crc, 1, sizeof(crc), file);
 
-					if (crc == crc16) { // CRC matches
+					if (crc == 0xFFFF || crc == crc16) { // CRC matches
 						fread(&offset, 1, sizeof(offset), file);
 						fread(&size, 1, sizeof(size), file);
 						wideCheatFound = true;
 						break;
-					} else if (crc == 0xFFFF) {
-						fread(&offsetAlt, 1, sizeof(offsetAlt), file);
-						fread(&sizeAlt, 1, sizeof(sizeAlt), file);
-					}
-
-					if (crc < crc16) {
-						left = mid + 1;
 					} else {
-						right = mid - 1;
+						left++;
 					}
-				} else if (cmp < 0) {
-					left = mid + 1;
+				} else if (tidFound) {
+					break;
 				} else {
-					right = mid - 1;
+					left++;
 				}
-			}
-
-			if (offsetAlt > 0 && offset == 0)
-			{
-				offset = offsetAlt;
-				size = sizeAlt;
-				wideCheatFound = true;
 			}
 
 			if (offset > 0) {
@@ -588,8 +574,7 @@ void SetWidescreen(const char *filename) {
 				u8 *buffer = new u8[size];
 				fread(buffer, 1, size, file);
 
-				snprintf(wideBinPath, sizeof(wideBinPath), "%s:/_nds/nds-bootstrap/wideCheatData.bin", ms().secondaryDevice && (!isDSiWare[ms().secondaryDevice] || (isDSiWare[ms().secondaryDevice] && !ms().dsiWareToSD)) ? "fat" : "sd");
-				FILE *out = fopen(wideBinPath, "wb");
+				FILE *out = fopen(wideCheatDataPath, "wb");
 				if (out) {
 					fwrite(buffer, 1, size, out);
 					fclose(out);
@@ -600,7 +585,7 @@ void SetWidescreen(const char *filename) {
 			fclose(file);
 		}
 	}
-	if (wideCheatFound && (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)) {
+	if (wideCheatFound || useWidescreen == 2) {
 		if (access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0) {
 			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/TwlBg.cxi.bak");
 		}
@@ -1373,10 +1358,10 @@ int dsClassicMenu(void) {
 	bs().loadSettings();
 	logInit();
 	//widescreenEffects = (ms().consoleModel >= 2 && ms().wideScreen && access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0);
-	if (sdFound() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
+	if (sdFound() && ms().consoleModel >= 2 && (!isDSiMode() || !sys().arm7SCFGLocked())) {
 		CIniFile lumaConfig("sd:/luma/config.ini");
-		externalFirmsModules = (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true);
-		logPrint((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && externalFirmsModules ? "Widescreen found\n" : "Widescreen not found\n");
+		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true));
+		logPrint(widescreenFound ? "Widescreen found\n" : "Widescreen not found\n");
 	}
 
 	logPrint("\n");

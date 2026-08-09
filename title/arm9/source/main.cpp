@@ -418,7 +418,7 @@ bool autoRunBit = false;
 bool runTempDSiWare = false;
 bool twlBgCxiFound = false;
 
-void wideCheck(bool useWidescreen, bool checkCheatData) {
+void wideCheck(const int useWidescreen, bool checkCheatData) {
 	if ((isDSiMode() && sys().arm7SCFGLocked()) || ms().consoleModel < 2 || !useWidescreen || ms().macroMode) {
 		remove("/_nds/nds-bootstrap/wideCheatData.bin");
 		return;
@@ -426,7 +426,7 @@ void wideCheck(bool useWidescreen, bool checkCheatData) {
 
 	CIniFile lumaConfig("sd:/luma/config.ini");
 
-	bool wideCheatFound = !checkCheatData ? true : (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0);
+	const bool wideCheatFound = (!checkCheatData || useWidescreen == 2) ? true : (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0);
 	if (useWidescreen && wideCheatFound && (lumaConfig.GetInt("boot", "enable_external_firm_and_modules", 0) == true)) {
 		if (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0 && !autoRunBit) {
 			// If title previously launched in widescreen, move Widescreen.cxi again, and reboot again
@@ -588,7 +588,7 @@ void lastRunROM()
 		|| (unitCode == 3 && !ms().homebrewBootstrap)) {
 			std::string savepath;
 
-			bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
+			const int useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 			bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
 			bool colorLutBlacklisted = false;
@@ -883,7 +883,7 @@ void lastRunROM()
 		bool runNds_boostCpu = false;
 		bool runNds_boostVram = false;
 
-		bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
+		const int useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
 
 		if (ms().consoleModel >= 2 && useWidescreen && ms().homebrewHasWide) {
 			//argarray.push_back((char*)"wide");
