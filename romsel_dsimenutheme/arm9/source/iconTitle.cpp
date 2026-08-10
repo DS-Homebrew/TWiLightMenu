@@ -158,14 +158,26 @@ void convertIconPalette(sNDSBannerExt* ndsBanner) {
 	}
 }
 
+void drawIconScaled(int Xpos, int Ypos, int num, int scale) {
+	if (num == -1) { // Moving app icon
+		glSpriteScale(Xpos, Ypos, scale, bannerFlip[40], &getIcon(NDS_ICON_LIST_BANKS)[bnriconframenumY[40]]);
+		if (bnriconPalLine[40] != bnriconPalLoaded[40])
+			bnriconPalLoaded[40] = -1;
+	} else {
+		glSpriteScale(Xpos, Ypos, scale, bannerFlip[num], &getIcon(num % NDS_ICON_LIST_BANKS)[bnriconframenumY[num]]);
+		if (bnriconPalLine[num] != bnriconPalLoaded[num])
+			bnriconPalLoaded[num] = -1;
+	}
+}
+
 void drawIcon(int Xpos, int Ypos, int num) {
 	if (num == -1) { // Moving app icon
-		glSprite(Xpos, Ypos, bannerFlip[40], &getIcon(6)[bnriconframenumY[40]]);
+		glSprite(Xpos, Ypos, bannerFlip[40], &getIcon(NDS_ICON_LIST_BANKS)[bnriconframenumY[40]]);
 		if (bnriconPalLine[40] != bnriconPalLoaded[40]) {
 			bnriconPalLoaded[40] = -1; // defer loading the palette
 		}
 	} else {
-		glSprite(Xpos, Ypos, bannerFlip[num], &getIcon(num % 6)[bnriconframenumY[num]]);
+		glSprite(Xpos, Ypos, bannerFlip[num], &getIcon(num % NDS_ICON_LIST_BANKS)[bnriconframenumY[num]]);
 		if (bnriconPalLine[num] != bnriconPalLoaded[num]) {
 			bnriconPalLoaded[num] = -1; // defer loading the palette
 		}
@@ -175,7 +187,7 @@ void drawIcon(int Xpos, int Ypos, int num) {
 void loadDeferredIconPalettes() {
 	for (int i = 0; i < 41; i++) {
 		if (bnriconPalLoaded[i] == -1) {
-			glLoadPalette(i < 40 ? i % 6 : 6, bnriconTile[i].dsi_palette[bnriconPalLine[i]]);
+			glLoadPalette(i < 40 ? i % NDS_ICON_LIST_BANKS : NDS_ICON_LIST_BANKS, bnriconTile[i].dsi_palette[bnriconPalLine[i]]);
 			bnriconPalLoaded[i] = bnriconPalLine[i];
 		}
 	}
@@ -693,7 +705,7 @@ void getGameInfo(bool isDir, const char *name, int num, bool fromArgv) {
 void iconUpdate(bool isDir, const char *name, int num) {
 	logPrint("iconUpdate: ");
 
-	int spriteIdx = num == -1 ? 6 : num % 6;
+	int spriteIdx = num == -1 ? NDS_ICON_LIST_BANKS : num % NDS_ICON_LIST_BANKS;
 	if (num == -1)
 		num = 40;
 
@@ -990,6 +1002,24 @@ static inline std::u16string splitLongDialogTitle(std::string_view text) {
 }
 
 void titleUpdate(bool isDir, std::string_view name, int num) {
+	// Our fork: on the DSi theme the selected item's title/details live on the TOP screen.
+	if (ms().theme == TWLSettings::EThemeDSi) {
+		std::u16string t;
+		std::string logoKey; // rom base name (sem extensão); vazio p/ diretórios
+		if (isDir) {
+			t = (name == "..") ? u"..." : FontGraphic::utf8to16(name);
+		} else {
+			logoKey = std::string(name.substr(0, name.rfind('.')));
+			if (infoFound[num] && cachedTitle[num])
+				t = cachedTitle[num];
+			else
+				t = FontGraphic::utf8to16(name.substr(0, name.rfind('.')));
+		}
+		tex().loadGameLogo(logoKey);
+		tex().drawTopTitle(t);
+		return;
+	}
+
 	const bool theme_showdialogbox = (showdialogbox || (ms().theme == TWLSettings::EThemeSaturn && currentBg == 1) || (ms().theme == TWLSettings::EThemeHBL && dbox_showIcon));
 	if (isDir) {
 		if (theme_showdialogbox) {

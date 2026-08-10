@@ -39,6 +39,7 @@
 #include "myDSiMode.h"
 #include "date.h"
 #include "iconHandler.h"
+#include "menubar.h"
 #include "fileBrowse.h"
 #include "fontHandler.h"
 #include "graphics/ThemeTextures.h"
@@ -138,6 +139,15 @@ int titlewindowXpos[2] = {0};
 int titlewindowXdest[2] = {0};
 int titleboxXspeed = 3; // higher is SLOWER
 int titleboxXspacing = 58;
+
+// 3-row carousel selection zoom animation (DSi theme). On item change the newly-selected
+// item grows (zoom-in) and the previously-selected one shrinks (zoom-out) over a few frames
+// instead of snapping. Endpoints stay exactly at the integer scales (1.0 / 0.5) so the
+// resting art stays pixel-perfect; only the transition uses fractional scale.
+static int gridSelCur = -1;    // item que está crescendo (seleção atual)
+static int gridSelPrev = -1;   // item que está encolhendo (seleção anterior)
+static int gridZoomFP = 4096;  // progresso 0..4096 do zoom da seleção atual (4096 = cheio)
+#define GRID_ZOOM_STEP 585     // passo LINEAR do zoom (~7 frames de 0 a 4096; sem front-load)
 
 bool reloadDate = false;
 bool reloadTime = false;
@@ -460,6 +470,31 @@ void vBlankHandler() {
 	if (dbox_showIconPrev != dbox_showIcon) {
 		dbox_showIconPrev = dbox_showIcon;
 		updateFrame = true;
+	}
+
+	// Redraw immediately when the selection changes (e.g. up/down row moves that don't scroll),
+	// so the selection outline follows the cursor in real time.
+	static int curposPrev = -1;
+	if (curposPrev != CURPOS) {
+		curposPrev = CURPOS;
+		updateFrame = true;
+	}
+
+	// 3-row carousel selection zoom: grow the new item, shrink the previous one.
+	if (ms().theme == TWLSettings::EThemeDSi) {
+		if (gridSelCur != CURPOS) {
+			gridSelPrev = gridSelCur; // o antigo começa a encolher
+			gridSelCur = CURPOS;      // o novo começa a crescer
+			gridZoomFP = 0;
+		}
+		if (gridZoomFP < 4096) {
+			// Crescimento LINEAR (passo constante). O ease-out anterior era front-loaded (saltava
+			// ~metade no 1º frame), causando um "solavanco" vertical no instante da seleção
+			// (a borda de cima do box da 1ª linha pulava pro topo). Linear = zoom suave, sem salto.
+			gridZoomFP += GRID_ZOOM_STEP;
+			if (gridZoomFP > 4096) gridZoomFP = 4096;
+			updateFrame = true; // mantém o render rodando durante a animação
+		}
 	}
 
 	// Move title box/window closer to destination if moved
@@ -835,7 +870,7 @@ void vBlankHandler() {
 			}
 		}
 
-		if (ms().theme == TWLSettings::EThemeDSi) {
+		if (false) { // fork: no bips/scrollwindow/brace chrome
 			int bipXpos = 27;
 			glSprite(16 + titlewindowXpos[ms().secondaryDevice], 171, GL_FLIP_NONE,
 				 tex().scrollwindowImage());
@@ -884,6 +919,66 @@ void vBlankHandler() {
 			// 		}
 			// }
 
+			if (ms().theme == TWLSettings::EThemeDSi) {
+				// ---- 3-row carousel ----
+				// Items are laid out column-major: column c holds items {3c, 3c+1, 3c+2} in the
+				// three rows. The horizontal scroll (titleboxXpos) centres the selected column;
+				// up/down pick the row. Each item uses the theme's own assets: the icon box
+				// (box.bmp -> boxfullImage, folder.bmp -> folderImage for directories) as the
+				// frame/background, with the game icon drawn on top. The selected item is zoomed.
+				const int NROWS = 3;
+				// Integer scaling at rest: box art is 64x64, icon 32x32. Active = scale 1.0
+				// (box 64 / icon 32, native 1:1), inactive = scale 0.5 (box 32 / icon 16, exact 2:1).
+				// During a selection change the scale animates between these (fractional, brief).
+				const s32 ACTIVE_SCALE = 4096;            // 1.0 -> box 64px / icon 32px
+				const s32 INACTIVE_SCALE = 2048;          // 0.5 -> box 32px / icon 16px
+				const int colSpacing = 48;
+				const int rowCY[NROWS] = {36, 88, 140};   // 52px row pitch, shifted 8px up
+				const int sd = ms().secondaryDevice;
+				const int selCol = CURPOS / NROWS;
+				// Draw up to 8 columns (4 left + selected + 3 right) so items enter/leave smoothly.
+				for (int c = std::max(selCol - 4, 0); c <= selCol + 3; c++) {
+					int cx = 128 + c * colSpacing - titleboxXpos[sd]; // column centre x
+					for (int r = 0; r < NROWS; r++) {
+						int i = c * NROWS + r;
+						if (i >= spawnedtitleboxes)
+							continue;
+						// Animated scale: current selection grows INACTIVE->ACTIVE, the
+						// previous one shrinks ACTIVE->INACTIVE; everything else stays inactive.
+						s32 boxScale;
+						if (i == gridSelCur)
+							boxScale = INACTIVE_SCALE + ((ACTIVE_SCALE - INACTIVE_SCALE) * gridZoomFP >> 12);
+						else if (i == gridSelPrev)
+							boxScale = ACTIVE_SCALE - ((ACTIVE_SCALE - INACTIVE_SCALE) * gridZoomFP >> 12);
+						else
+							boxScale = INACTIVE_SCALE;
+						int boxPx = (boxScale * 64) >> 12; // px do box p/ centralizar (art 64x64)
+						int bx = cx - boxPx / 2;
+						int by = rowCY[r] - boxPx / 2;
+						// Frame/background from the theme: folder for directories, icon box otherwise.
+						if (isDirectory[i]) {
+							glSpriteScale(bx, by, boxScale, GL_FLIP_NONE, &tex().folderImage()[0]);
+							if (!customIcon[i])
+								continue; // folder art already shows the folder; no game icon
+						} else {
+							glSpriteScale(bx, by, boxScale, GL_FLIP_NONE, &tex().boxfullImage()[0]);
+						}
+						// Game icon (32px art) on top of the box; its on-screen size is half the
+						// box, so its scale tracks boxScale directly. During the fractional zoom,
+						// glSpriteScale truncates the destination and drops the sprite's outer texel
+						// (a missing 1px border that only fills in once the zoom settles at 1.0), so
+						// bias the scale up by ~1 texel (128 = one 32px texel) to ceil the size and
+						// keep the edge covered throughout; clamp to native 1:1.
+						s32 iconScale = boxScale + 127;
+						if (iconScale > ACTIVE_SCALE) iconScale = ACTIVE_SCALE;
+						int iconPx = (32 * iconScale) >> 12;
+						drawIconScaled(cx - iconPx / 2, rowCY[r] - iconPx / 2, i, iconScale);
+					}
+				}
+				// Menu bar on top of the items (drawn last = upper layer).
+				menuBarDraw();
+				glColor(RGB15(31, 31, 31));
+			} else {
 			int spawnedboxXpos = 96;
 			int iconXpos = 112;
 
@@ -1015,6 +1110,7 @@ void vBlankHandler() {
 			if (movingApp != -1 && ms().theme == TWLSettings::EThemeDSi && showMovingArrow) {
 				glSprite(115, movingArrowYpos, GL_FLIP_NONE, tex().movingArrowImage());
 			}
+			} // end else (non-DSi carousel)
 		}
 
 		// Top icons for 3DS theme
@@ -1083,7 +1179,7 @@ void vBlankHandler() {
 			// Draw dots after selecting a game/app
 			dots().drawAuto();
 		}
-		if (showSTARTborder && displayGameIcons && (ms().theme < 4)) {
+		if (showSTARTborder && displayGameIcons && (ms().theme < 4) && ms().theme != TWLSettings::EThemeDSi) { // fork: no START border
 			glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
 				 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] &
 							(tc().startBorderSpriteH() - 1)]);
@@ -1112,10 +1208,10 @@ void vBlankHandler() {
 			// }
 		}
 
-		// Refresh the background layer.
-		if (currentBg == 1 && ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL)
+		// Refresh the background layer. (fork: no selection bubble on the DSi theme)
+		if (currentBg == 1 && ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL && ms().theme != TWLSettings::EThemeDSi)
 			drawBubble(tex().bubbleImage());
-		if (showSTARTborder && displayGameIcons && ms().theme == TWLSettings::EThemeDSi) {
+		if (false && showSTARTborder && displayGameIcons && ms().theme == TWLSettings::EThemeDSi) { // fork: no START prompt
 			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[ms().getGameLanguage()]);
 		}
 
@@ -1546,6 +1642,7 @@ void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
 static std::string loadedDate;
 
 ITCM_CODE void drawCurrentDate() {
+	if (ms().theme == TWLSettings::EThemeDSi) return; // fork: no clock
 	// Load date
 	std::string currentDate = getDate();
 	if (currentDate == loadedDate && !reloadDate)
@@ -1561,6 +1658,7 @@ ITCM_CODE void drawCurrentDate() {
 static std::string loadedTime;
 
 ITCM_CODE void drawCurrentTime() {
+	if (ms().theme == TWLSettings::EThemeDSi) return; // fork: no clock
 	// Load time
 	std::string currentTime = retTime();
 	if (currentTime[0] == ' ')

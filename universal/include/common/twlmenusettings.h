@@ -296,6 +296,8 @@ public:
 	bool showMainMenu;
 	bool showSelectMenu;
 	bool rocketRobzLogo;
+	bool dsiVideoBg;         // frontend (tema DSi): reproduz vídeo de gameplay no fundo da tela superior
+	int dsiVideoFadeMode;    // frontend (tema DSi): 0 = checker (brick dithered), 1 = opacity (fundo a 40%)
 	TTheme theme;
 	TSettingsMusic settingsMusic;
 	TDSiMusic dsiMusic;

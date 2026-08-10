@@ -25,6 +25,7 @@
 #include "graphics/graphics.h"
 #include "graphics/iconHandler.h"
 #include "iconTitle.h"
+#include "frontendLog.h"
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
 #include "incompatibleGameMap.h"
@@ -270,6 +271,7 @@ void updateDirectoryContents(vector<DirEntry> &dirContents) {
 }
 
 void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string_view> extensionList = {}) {
+	FLOG_FN();
 	dirContents.clear();
 
 	file_count = 0;
@@ -462,6 +464,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 bool nowLoadingDisplaying = false;
 
 void displayNowLoading(void) {
+	FLOG_FN();
 	displayGameIcons = false;
 	fadeType = true; // Fade in from white
 	std::string msg;
@@ -483,7 +486,73 @@ void displayNowLoading(void) {
 	showProgressIcon = true;
 }
 
+// 3-row carousel column spacing (must match the render in graphics.cpp).
+#define ROW3_COL_SPACING 48
+
+// Number of columns to the left/right of the selected one that the carousel keeps loaded/drawn
+// (8-column window = 4 left + selected + 3 right). Column-major: column c = items {3c,3c+1,3c+2};
+// bank = item % NDS_ICON_LIST_BANKS (24), so the 24 windowed items occupy distinct banks.
+#define ROW3_COLS_LEFT 4
+#define ROW3_COLS_RIGHT 3
+
+// Loads one column's 3 items into their icon banks.
+static void loadRow3Column(const std::vector<DirEntry> &dc, int col) {
+	if (col < 0) return;
+	for (int r = 0; r < 3; r++) {
+		int i = col * 3 + r;
+		if (i > last_used_box) break;
+		if (i + PAGENUM * 40 < (int)dc.size()) {
+			bgOperations(true);
+			iconUpdate(dc[i + PAGENUM * 40].isDirectory, dc[i + PAGENUM * 40].name.c_str(), i);
+		}
+	}
+}
+
+// Loads the whole 8-column window around the selection (used on entry / page changes).
+static void loadRow3WindowIcons(const std::vector<DirEntry> &dc) {
+	int selCol = CURPOS / 3;
+	for (int c = selCol - ROW3_COLS_LEFT; c <= selCol + ROW3_COLS_RIGHT; c++)
+		loadRow3Column(dc, c);
+}
+
+// 3-row carousel navigation: dCol moves columns (spin), dRow moves rows within the centred
+// column. CURPOS = col*3 + row. No slide animation in this function; the scroll target
+// (titleboxXdest) is set so the frame handler slides the selected column to centre.
+void moveCursor3Row(int dCol, int dRow, const std::vector<DirEntry> &dc) {
+	FLOG_FN();
+	int selCol = CURPOS / 3, selRow = CURPOS % 3;
+	int newCol = selCol + dCol, newRow = selRow + dRow;
+	int target = newCol * 3 + newRow;
+	if (newCol < 0 || newRow < 0 || newRow > 2 || target < 0 || target > last_used_box) {
+		if (!edgeBumpSoundPlayed)
+			snd().playWrong();
+		edgeBumpSoundPlayed = true;
+		return;
+	}
+	edgeBumpSoundPlayed = false;
+	int oldCol = selCol;
+	CURPOS = target;
+	settingsChanged = true;
+	waitForNeedToPlayStopSound = 1;
+	bannerTextShown = false; // title (top screen) will be refreshed by the browse loop
+
+	// Centre the selected column (slide handled by frameRateHandler).
+	titleboxXdest[ms().secondaryDevice] = (CURPOS / 3) * ROW3_COL_SPACING;
+
+	// On a column change only the newly-entered column needs loading (keeps spinning snappy).
+	int newCol2 = CURPOS / 3;
+	if (newCol2 != oldCol) {
+		if (newCol2 > oldCol)
+			loadRow3Column(dc, newCol2 + ROW3_COLS_RIGHT); // entered on the right
+		else
+			loadRow3Column(dc, newCol2 - ROW3_COLS_LEFT);  // entered on the left
+	}
+
+	snd().playSelect();
+}
+
 void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntry = 0xFFFF) {
+	FLOG_FN();
 	if ((right && CURPOS >= last_used_box) || (!right && CURPOS <= 0)) {
 		if (ms().theme != TWLSettings::EThemeSaturn && !edgeBumpSoundPlayed)
 			snd().playWrong();
@@ -612,9 +681,10 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 }
 
 void updateBoxArt(void) {
+	FLOG_FN();
 	if (!boxArtFound) return;
 	showSTARTborder = true;
-	if (ms().theme == TWLSettings::EThemeHBL || ms().macroMode || !ms().showBoxArt || boxArtLoaded) return;
+	if (ms().theme == TWLSettings::EThemeHBL || ms().theme == TWLSettings::EThemeDSi || ms().macroMode || !ms().showBoxArt || boxArtLoaded) return;
 
 	if (ms().theme != TWLSettings::ETheme3DS) {
 		clearBoxArt();
@@ -634,6 +704,7 @@ void updateBoxArt(void) {
 
 
 void launchDsClassicMenu(void) {
+	FLOG_FN();
 	snd().playLaunch();
 	controlTopBright = true;
 
@@ -655,6 +726,7 @@ void launchDsClassicMenu(void) {
 }
 
 void launchSettings(void) {
+	FLOG_FN();
 	snd().playLaunch();
 	controlTopBright = true;
 
@@ -676,6 +748,7 @@ void launchSettings(void) {
 }
 
 void launchPictochat(const vector<DirEntry>& dirContents) {
+	FLOG_FN();
 	const char* pictochatPath = sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds";
 
 	if (access(pictochatPath, F_OK) != 0) {
@@ -841,6 +914,7 @@ void launchPictochat(const vector<DirEntry>& dirContents) {
 }
 
 void launchDownloadPlay(const vector<DirEntry>& dirContents) {
+	FLOG_FN();
 	const char* dlplayPath = sys().isRunFromSD() ? "sd:/_nds/dlplay.nds" : "fat:/_nds/dlplay.nds";
 
 	if ((!isDSiMode() || ms().consoleModel < 2) && access(dlplayPath, F_OK) != 0) {
@@ -1039,6 +1113,7 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 }
 
 void launchInternetBrowser(const vector<DirEntry>& dirContents) {
+	FLOG_FN();
 	if (ms().internetBrowserPath == "" || access(ms().internetBrowserPath.c_str(), F_OK) != 0) {
 		if (ms().theme == TWLSettings::EThemeSaturn) {
 			snd().playStartup();
@@ -1330,6 +1405,7 @@ void launchInternetBrowser(const vector<DirEntry>& dirContents) {
 }
 
 void launchManual(void) {
+	FLOG_FN();
 	snd().playLaunch();
 	controlTopBright = true;
 
@@ -1351,6 +1427,7 @@ void launchManual(void) {
 }
 
 void exitToSystemMenu(void) {
+	FLOG_FN();
 	snd().playLaunch();
 	controlTopBright = true;
 
@@ -1379,6 +1456,7 @@ void exitToSystemMenu(void) {
 }
 
 void switchDevice(void) {
+	FLOG_FN();
 	if (bothSDandFlashcard()) {
 		(ms().theme == TWLSettings::EThemeSaturn) ? snd().playLaunch() : snd().playSwitch();
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
@@ -1445,6 +1523,7 @@ void switchDevice(void) {
 }
 
 void launchGba(void) {
+	FLOG_FN();
 	extern void s2RamAccessAlt(bool open);
 
 	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
@@ -2521,6 +2600,7 @@ bool cannotLaunchMsg(const char *filename) {
 }
 
 bool selectMenu(void) {
+	FLOG_FN();
 	inSelectMenu = true;
 	dbox_showIcon = false;
 	if (ms().theme == TWLSettings::EThemeSaturn) {
@@ -2724,6 +2804,7 @@ bool selectMenu(void) {
 }
 
 void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool reSpawnBoxes) {
+	FLOG_FN();
 	if (nowLoadingDisplaying) {
 		clearText();
 		showProgressBar = true;
@@ -2806,7 +2887,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					isHomebrew[i] = 0;
 				}
 
-				if (dsiFeatures() && !ms().macroMode && ms().showBoxArt == 2 && ms().theme != TWLSettings::EThemeHBL && !isDirectory[i]) {
+				if (dsiFeatures() && !ms().macroMode && ms().showBoxArt == 2 && ms().theme != TWLSettings::EThemeHBL && ms().theme != TWLSettings::EThemeDSi && !isDirectory[i]) {
 					snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
 							 sys().isRunFromSD() ? "sd" : "fat",
 							 dirContents[scrn][i + PAGENUM * 40].name.c_str());
@@ -2862,6 +2943,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 }
 
 static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
+	FLOG_FN();
 	if (CURPOS == 0 && !showLshoulder) {
 		snd().playWrong();
 		return false;
@@ -2933,6 +3015,7 @@ static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents)
 }
 
 static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
+	FLOG_FN();
 	if (CURPOS == (file_count - 1) - PAGENUM * 40 && !showRshoulder) {
 		snd().playWrong();
 		return false;
@@ -3138,6 +3221,7 @@ bool setDefaultDirectory(std::string_view directory_path)
 }
 
 std::string browseForFile(const std::vector<std::string_view> extensionList) {
+	FLOG_FN();
 	displayNowLoading();
 	gameOrderIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
 	recentlyPlayedIniPath = std::string(sys().isRunFromSD() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/recentlyplayed.ini";
@@ -3164,6 +3248,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	while (1) {
 		updateDirectoryContents(dirContents[scrn]);
 		getFileInfo(scrn, dirContents, true);
+		if (ms().theme == TWLSettings::EThemeDSi)
+			loadRow3WindowIcons(dirContents[scrn]); // preload the 8-column window
 		reloadIconPalettes();
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) {
 			while (!screenFadedOut()) { swiWaitForVBlank(); }
@@ -3176,9 +3262,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			for (int i = 0; i < 20; i++) {
 				bgOperations(true);
 			}
-			if (!dropDown) {
-				dropDown = true;
-			}
+			// Dropdown/bounce era do carrossel antigo (causava shaking vertical nos items da 1ª
+			// linha) — desativado no grid de 3 linhas; fica só o efeito de zoom na seleção.
+			// if (!dropDown) { dropDown = true; }
 		} else {
 			fadeType = true; // Fade in from white
 			for (int i = 0; i < 5; i++) {
@@ -3244,6 +3330,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				pressed = keysDown();
 				held = keysDownRepeat();
 				touchRead(&touch);
+
+				// 3-row carousel: keep the selected column centred (also fixes startup positioning).
+				if (ms().theme == TWLSettings::EThemeDSi) {
+					titleboxXdest[ms().secondaryDevice] = (CURPOS / 3) * ROW3_COL_SPACING;
+					tex().tickLogoLoad(); // decode deferido do logo no ocioso (não trava a navegação)
+				}
 
 				boxArtFound = ((CURPOS + PAGENUM * 40) < ((int)dirContents[scrn].size()));
 				if (boxArtFound) {
@@ -3331,14 +3423,34 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
 
 			if ((held & KEY_LEFT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == TWLSettings::EThemeDSi)) { // Left or button arrow (DSi theme)
-				moveCursor(false, dirContents[scrn]);
+				if (ms().theme == TWLSettings::EThemeDSi)
+					moveCursor3Row(-1, 0, dirContents[scrn]); // spin left one column
+				else
+					moveCursor(false, dirContents[scrn]);
 				dsiBinariesChecked = false;
 				apChecked = false;
 				checkedDSiWareCompatibleB4DS = false;
 				dsiWareRAMLimitMsgPrepped = false;
 				infoCheckTimer = 0;
 			} else if ((held & KEY_RIGHT) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == TWLSettings::EThemeDSi)) { // Right or button arrow (DSi theme)
-				moveCursor(true, dirContents[scrn]);
+				if (ms().theme == TWLSettings::EThemeDSi)
+					moveCursor3Row(1, 0, dirContents[scrn]); // spin right one column
+				else
+					moveCursor(true, dirContents[scrn]);
+				dsiBinariesChecked = false;
+				apChecked = false;
+				checkedDSiWareCompatibleB4DS = false;
+				dsiWareRAMLimitMsgPrepped = false;
+				infoCheckTimer = 0;
+			} else if ((held & KEY_UP) && ms().theme == TWLSettings::EThemeDSi && ms().sortMethod != 4) {
+				moveCursor3Row(0, -1, dirContents[scrn]); // select the row above (same column)
+				dsiBinariesChecked = false;
+				apChecked = false;
+				checkedDSiWareCompatibleB4DS = false;
+				dsiWareRAMLimitMsgPrepped = false;
+				infoCheckTimer = 0;
+			} else if ((held & KEY_DOWN) && ms().theme == TWLSettings::EThemeDSi && ms().sortMethod != 4) {
+				moveCursor3Row(0, 1, dirContents[scrn]); // select the row below (same column)
 				dsiBinariesChecked = false;
 				apChecked = false;
 				checkedDSiWareCompatibleB4DS = false;
@@ -3512,7 +3624,50 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				movingApp = -1;
 				titleboxXspacing = 58;
 				titleboxXdest[ms().secondaryDevice] = titleboxXpos[ms().secondaryDevice] = CURPOS * titleboxXspacing;
-			} else if ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 19 && touch.px <= 236 && ms().theme == TWLSettings::EThemeDSi) { // Scroll bar (DSi theme)
+			} else if (ms().theme == TWLSettings::EThemeDSi && (pressed & KEY_TOUCH) && touch.py < 164) { // Grid tap (DSi theme)
+				// Map the touch to a grid cell using the same layout as the renderer.
+				const int NROWS = 3;
+				const int rowCY[NROWS] = {36, 88, 140}; // row centres (must match graphics.cpp)
+				const int hitR = 28;                     // half hit-box (px) around each icon centre
+				const int sd = ms().secondaryDevice;
+				const int selCol = CURPOS / NROWS;
+				int hitItem = -1;
+				for (int c = std::max(selCol - ROW3_COLS_LEFT, 0); c <= selCol + ROW3_COLS_RIGHT && hitItem < 0; c++) {
+					int cx = 128 + c * ROW3_COL_SPACING - titleboxXpos[sd]; // column centre x
+					if (touch.px < cx - hitR || touch.px > cx + hitR)
+						continue;
+					for (int r = 0; r < NROWS; r++) {
+						int i = c * NROWS + r;
+						if (i > last_used_box)
+							break;
+						if (touch.py >= rowCY[r] - hitR && touch.py <= rowCY[r] + hitR) {
+							hitItem = i;
+							break;
+						}
+					}
+				}
+				if (hitItem >= 0) {
+					if (hitItem == CURPOS) {
+						// Tapping the already-selected item launches it
+						gameTapped = true;
+					} else {
+						// Select the tapped item
+						CURPOS = hitItem;
+						settingsChanged = true;
+						bannerTextShown = false;
+						boxArtLoaded = false;
+						waitForNeedToPlayStopSound = 1;
+						titleboxXdest[sd] = (CURPOS / NROWS) * ROW3_COL_SPACING;
+						loadRow3WindowIcons(dirContents[scrn]);
+						snd().playSelect();
+						dsiBinariesChecked = false;
+						apChecked = false;
+						checkedDSiWareCompatibleB4DS = false;
+						dsiWareRAMLimitMsgPrepped = false;
+						infoCheckTimer = 0;
+					}
+				}
+			} else if (false && (pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 19 && touch.px <= 236) { // Scroll bar (disabled — was DSi carousel only)
 				touchPosition startTouch = touch;
 				showSTARTborder = false;
 				titleboxXspeed = 3;
@@ -4337,14 +4492,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 			}
 
-			// page switch
-			if (pressed & KEY_L) {
-				if (previousPage(scrn, dirContents)) {
-					break;
-				}
-			} else if (pressed & KEY_R) {
-				if (nextPage(scrn, dirContents)) {
-					break;
+			// page switch (disabled for DSi theme grid — L/R navigation removed)
+			if (ms().theme != TWLSettings::EThemeDSi) {
+				if (pressed & KEY_L) {
+					if (previousPage(scrn, dirContents)) {
+						break;
+					}
+				} else if (pressed & KEY_R) {
+					if (nextPage(scrn, dirContents)) {
+						break;
+					}
 				}
 			}
 

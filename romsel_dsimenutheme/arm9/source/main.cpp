@@ -45,6 +45,8 @@
 
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
+#include "graphics/menubar.h"
+#include "frontendLog.h"
 
 #include "common/inifile.h"
 #include "common/logging.h"
@@ -1044,8 +1046,12 @@ int dsiMenuTheme(void) {
 	}
 
 	srand(time(NULL));
-	
+
+	frontendLogInit(); // logfrontend.txt: registro das funcoes do frontend
+	FLOG("theme=%d runFromSD=%d", (int)ms().theme, (int)sys().isRunFromSD());
+
 	graphicsInit();
+	menuBarInit(); // bottom menu bar texture — before icons so it gets texture VRAM
 	iconManagerInit();
 
 	keysSetRepeat(10, 2);

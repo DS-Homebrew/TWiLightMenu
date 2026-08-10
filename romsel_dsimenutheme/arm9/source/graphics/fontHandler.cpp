@@ -57,7 +57,10 @@ void fontInit() {
 	// Load font graphics
 	std::string fontPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 	std::string defaultPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
-	if (ms().useThemeFont && (fileExists((TFN_FONT_SMALL_DSI).c_str()) || fileExists((TFN_FONT_SMALL).c_str()) || fileExists((TFN_FONT_LARGE_DSI).c_str()) || fileExists((TFN_FONT_LARGE).c_str())))
+	// Fork: the DSi grid menu uses the theme's own crisp pixel font (designed for the
+	// native DSi resolution) instead of the large Unicode default, without needing the
+	// USE_THEME_FONT setting. Falls through to the normal (tested) selection path.
+	if ((ms().useThemeFont || ms().theme == TWLSettings::EThemeDSi) && (fileExists((TFN_FONT_SMALL_DSI).c_str()) || fileExists((TFN_FONT_SMALL).c_str()) || fileExists((TFN_FONT_LARGE_DSI).c_str()) || fileExists((TFN_FONT_LARGE).c_str())))
 		fontPath = TFN_FONT_DIRECTORY;
 	if (fileExists((fontPath + "/small-dsi.nftr").c_str())) {
 		smallFont = new FontGraphic((fontPath + "/small-dsi.nftr").c_str(), useTileCache);
@@ -165,6 +168,13 @@ void fontInit() {
 			tonccpy(paletteSub + userPalOffset, bmpPal_topSmallFont + themeColor, 4 * sizeof(u16));
 		}
 	}
+	// Fork: black pop-up (dialog) text for the DSi theme, since our dialogbox is light.
+	if (ms().theme == TWLSettings::EThemeDSi) {
+		const int d = 4 * (int)FontPalette::dialog;
+		for (int k = 0; k < 4; k++)
+			palette[d + k] = paletteSub[d + k] = RGB15(0, 0, 0) | BIT(15);
+	}
+
 	effectColorModePalette(palette, sizeof(palette) / sizeof(palette[0]));
 	effectColorModePalette(paletteSub, sizeof(paletteSub) / sizeof(paletteSub[0]));
 	tonccpy(BG_PALETTE, paletteSub, sizeof(palette)); // For bottom screen

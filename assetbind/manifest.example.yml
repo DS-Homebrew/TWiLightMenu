@@ -1,0 +1,25 @@
+version: 1
+# allow_name_match: true    # (opcional, padrão desligado) habilita fallback por nome no runtime
+games:
+  - game_id: "c71e0ae447f2b3140eba7f40d3cfec0f284a2c97"
+    # IDENTIDADE = conteúdo da ROM (sha1 > md5 > crc32+size). NUNCA o nome do arquivo.
+    identity:
+      sha1: "c71e0ae447f2b3140eba7f40d3cfec0f284a2c97"
+      md5: "ba68ccd255fa8251d9f3a450b60c7d94"
+      crc32: "2a0330ea"
+      size: 20
+    rom_name: "Mario Kart DS (USA).nds"   # só informativo / fallback humano
+    # caminhos relativos à raiz do manifesto; aspas por causa de espaços
+    assets:
+      logo: "assets/c71e0ae447f2b3140eba7f40d3cfec0f284a2c97/logo.png"
+      video: "assets/c71e0ae447f2b3140eba7f40d3cfec0f284a2c97/video.mp4"
+  - game_id: "4fce14fed927761474a5b88643a18c6051bf5393"
+    identity:
+      sha1: "4fce14fed927761474a5b88643a18c6051bf5393"
+      md5: "f5daf6d08a4ab7cedb016dc5db97e3c0"
+      crc32: "16337cb9"
+      size: 18
+    rom_name: "Some Other Game (USA).nds"
+    assets:            # jogo sem arte: campos null (degrada com placeholder, não quebra)
+      logo: null
+      video: null

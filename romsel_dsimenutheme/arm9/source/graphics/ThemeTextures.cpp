@@ -4,6 +4,8 @@
 
 #include <nds.h>
 #include <nds/arm9/dldi.h>
+#include <stdio.h>
+#include <time.h>
 #include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
 #include "common/logging.h"
@@ -30,6 +32,10 @@
 
 extern bool useTwlCfg;
 
+// Solid background colour used for both screens instead of the theme's background bitmap.
+// Change these RGB (0-31) values to recolour the background. BIT(15) = opaque.
+#define SOLID_BG_COLOR (RGB15(20, 24, 31) | BIT(15))
+
 //extern bool widescreenEffects;
 
 extern u16* colorTable;
@@ -48,6 +54,540 @@ static u16* _photoBuffer = NULL;
 static u16 _topBorderBuffer[256 * 192] = {0};
 static u16* _bgSubBuffer2 = (u16*)_bgSubBuffer;
 static u16* _photoBuffer2 = (u16*)_photoBuffer;
+
+// Menu background (quickmenu/topbg.png) loaded from the active theme, converted to BG format.
+static u16 _menuBgBuffer[256 * 192];
+static bool _menuBgLoaded = false;
+
+// Off-screen compose buffer for the top screen. drawTopTitle builds the whole frame here
+// (brick + logo + titlebox + text) and copies it to BG_GFX_SUB in one shot, so the live
+// framebuffer never shows a half-drawn state (which flickered the titlebox during the
+// per-frame logo zoom redraws).
+static u16 _topCompose[256 * 192];
+
+static void loadMenuBg() {
+	_menuBgLoaded = true;
+	std::vector<unsigned char> image;
+	unsigned w = 0, h = 0;
+	std::string path = tfn().uiDirectory() + "/quickmenu/topbg.png";
+	if (lodepng::decode(image, w, h, path) == 0 && w == 256 && h == 192) {
+		for (int i = 0; i < 256 * 192; i++) {
+			u8 r = image[i * 4], g = image[i * 4 + 1], b = image[i * 4 + 2];
+			_menuBgBuffer[i] = (r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10) | BIT(15);
+		}
+	} else {
+		for (int i = 0; i < 256 * 192; i++)
+			_menuBgBuffer[i] = SOLID_BG_COLOR;
+	}
+}
+
+// Dithered version of the top background (quickmenu/topbg_dither.png), gerado pelo host: os pixels
+// opacos do brick mantêm a cor (BIT15 setado); os pixels "buraco" (transparentes no PNG) viram 0
+// para o vídeo aparecer por trás. Usado como overlay barato sobre o vídeo (sem alpha blend por
+// pixel). _menuBgDitherHas = false quando o tema não tem o asset (aí cai no blend por software).
+static u16 _menuBgDither[256 * 192];
+static bool _menuBgDitherLoaded = false;
+static bool _menuBgDitherHas = false;
+
+static void loadMenuBgDither() {
+	_menuBgDitherLoaded = true;
+	_menuBgDitherHas = false;
+	std::vector<unsigned char> image;
+	unsigned w = 0, h = 0;
+	std::string path = tfn().uiDirectory() + "/quickmenu/topbg_dither.png";
+	if (lodepng::decode(image, w, h, path) == 0 && w == 256 && h == 192) {
+		for (int i = 0; i < 256 * 192; i++) {
+			u8 r = image[i * 4], g = image[i * 4 + 1], b = image[i * 4 + 2], a = image[i * 4 + 3];
+			_menuBgDither[i] = (a >= 128) ? ((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10) | BIT(15)) : 0;
+		}
+		_menuBgDitherHas = true;
+	}
+}
+
+// Top-screen title box (grf/topscreen_titlebox.bmp): the game title/developer text is drawn
+// inside it. Loaded from the active theme; pixels are BG-format, 0 = transparent (magenta key).
+#define TITLEBOX_MAXW 256
+#define TITLEBOX_MAXH 192
+static u16 _titleboxPix[TITLEBOX_MAXW * TITLEBOX_MAXH];
+static int _titleboxW = 0, _titleboxH = 0;
+// Opaque box bounding box within the (possibly full-screen) asset; used to place the box.
+static int _tbBoxX = 0, _tbBoxY = 0, _tbBoxW = 0, _tbBoxH = 0;
+static bool _titleboxLoaded = false;
+
+// Start box (grf/topscreen_startbox.bmp): substitui a titlebox+texto enquanto o vídeo toca.
+static u16 _startboxPix[TITLEBOX_MAXW * TITLEBOX_MAXH];
+static int _startboxW = 0, _startboxH = 0;
+static int _sbBoxX = 0, _sbBoxY = 0, _sbBoxW = 0, _sbBoxH = 0;
+static bool _startboxLoaded = false, _startboxHas = false;
+
+// Slide vertical da caixa inferior (titlebox/startbox): a que sai "cai" (desce e some), a que
+// entra "sobe" (vem de baixo até o lugar). A troca é disparada pelo início/fim do vídeo.
+#define TOPBOX_MARGIN  2       // folga do rodapé
+#define BOX_SLIDE_STEP 8       // px por frame do slide
+#define BOX_SWAP_DELAY 90      // frames após o vídeo iniciar até trocar titlebox->startbox (~1.5s)
+static int _boxKind = 0;       // caixa exibida agora: 0 = titlebox(+texto), 1 = startbox
+static int _boxSlide = 0;      // deslocamento vertical (0 = no lugar; >0 = descida/escondida)
+static int _boxSwapTimer = 0;  // frames desde que o vídeo começou (conta até BOX_SWAP_DELAY)
+
+// Per-game logo (top screen, drawn above/behind the titlebox). Mapped via logos.yml.
+static u16 _logoPix[256 * 128];
+static int _logoW = 0, _logoH = 0;
+static bool _logoPresent = false;
+static std::string _logoKey; // rom base name já resolvido (cache p/ não recarregar toda seleção)
+static std::string _gameId;  // game_id (sha1) do jogo em foco, resolvido pelo índice do host
+
+// Carregamento assíncrono/deferido do logo: a troca de item só AGENDA o decode (barato);
+// o decode (lodepng, custoso) roda no loop ocioso após o item estabilizar por alguns frames.
+// Trocar de item substitui o pendente = cancelamento do anterior. Assim, rolar não trava a UI.
+#define LOGO_LOAD_DELAY 8              // frames de estabilidade antes de decodar (debounce)
+static std::string _pendingLogoPath;  // caminho do logo a decodar ("" = nada pendente)
+static int _pendingLogoDelay = 0;     // frames restantes até decodar
+static std::u16string _topTitleText;  // título atual (para redesenhar o topo após o decode)
+
+// Animação de zoom do logo (blit manual no BG da tela superior, sem hardware scaling):
+// escala atual anima até o alvo. Ao aparecer (decode pronto) -> zoom-in (0 -> 1).
+// Ao trocar de item -> zoom-out do logo anterior (1 -> 0). Zoom-out é mais rápido que
+// o debounce do decode, evitando o logo antigo virar o novo no meio da animação.
+#define LOGO_ZOOM_IN_STEP  0.14f      // velocidade do zoom-in (aparecer)
+#define LOGO_ZOOM_OUT_STEP 0.22f      // velocidade do zoom-out (sair na troca de item)
+// Drop shadow do logo (software, na composição): silhueta preta deslocada e alpha-blendada,
+// desenhada ANTES do logo. Dá profundidade sobre o brick/vídeo. (O DS não tem shaders.)
+#define LOGO_SHADOW_DX    2           // deslocamento horizontal da sombra (px)
+#define LOGO_SHADOW_DY    2           // deslocamento vertical da sombra (px)
+#define LOGO_SHADOW_ALPHA 128         // opacidade da sombra (0..255; 128 = ~50% preto)
+static float _logoScale = 0.0f;       // escala renderizada agora (0..1)
+static float _logoScaleDest = 0.0f;   // alvo da animação (0 = escondido, 1 = tamanho cheio)
+
+// ---- Vídeo de gameplay por jogo (fundo da tela superior, .tgrv streamado do SD) ----
+// Formato .tgrv: header de 14 bytes ["TGRV", u16 w, u16 h, u16 fps, u32 frameCount] seguido de
+// frameCount frames raw RGB15 (w*h*2 bytes cada). Cada jogo tem top.tgrv + bottom.tgrv (as duas
+// metades da captura de gameplay); reproduzimos na tela SUPERIOR, em loop, alternando
+// top->bottom->top... O vídeo fica ATRÁS do brick, que cai p/ VIDEO_BG_ALPHA de opacidade para
+// deixá-lo aparecer. Streamado um frame por vez (arquivos ~40MB não cabem na RAM). Composição por
+// software (a SUB engine só tem 1 camada de BG bitmap; não há VRAM p/ blend por hardware).
+#define VIDEO_START_DELAY 90   // frames parado no item antes de começar a carregar o vídeo (~1.5s)
+#define VIDEO_BG_ALPHA    102  // opacidade do brick por cima do vídeo (~40% de 255)
+#define VIDEO_FADE_STEP   12   // velocidade do fade do brick (alpha por frame)
+static u16  _videoFrame[256 * 192];   // frame atual decodificado (RGB15), em RAM
+static bool _videoActive = false;     // reprodução em andamento (há frame válido)
+static FILE *_videoFile = NULL;       // arquivo .tgrv aberto no momento
+static int  _videoW = 0, _videoH = 0, _videoFps = 15, _videoFrameCount = 0, _videoFrameIdx = 0;
+static int  _videoFmt = 0;            // 0 = BGR555 (16bpp), 1 = PAL8 (8bpp paletado)
+static int  _videoFlags = 0;          // bit0 = pixels já têm bit15 (opaco)
+static u16  _videoPal[256];           // paleta (PAL8): u16 BGR555 com bit15
+static u8   _videoIdxBuf[256 * 192];  // índices do frame (PAL8) antes de expandir p/ _videoFrame
+static int  _videoTickAccum = 0;      // acumulador de pacing (loop ~60fps -> vídeo a _videoFps)
+static int  _videoWhich = 0;          // 0 = top.tgrv, 1 = bottom.tgrv (alterna ao terminar)
+static int  _videoBgAlpha = 255;      // opacidade atual do brick (255 = opaco; anima p/ VIDEO_BG_ALPHA)
+static std::string _videoTopPath, _videoBotPath; // caminhos resolvidos p/ o jogo atual
+static std::string _pendingVideoBase; // base assets/<id> pendente ("" = nada); arma o start
+static int  _pendingVideoDelay = 0;   // frames restantes até começar a abrir o vídeo
+// Upscale por nearest-neighbor: o vídeo pode ser menor que a tela (256x192) para poupar leitura
+// do SD. Estas LUTs mapeiam cada pixel da tela para o pixel-fonte do vídeo (sem divisão por pixel).
+static u8   _vidColMap[256];          // x-tela -> x-vídeo
+static u8   _vidRowMap[192];          // y-tela -> y-vídeo
+
+// Carrega um BMP 4/8bpp do tema (magenta #FF00FF = transparente) para `pix`, calculando o
+// bounding box opaco (bx,by,bw,bh). Retorna false se não abrir/for inválido. Usado p/ titlebox
+// e startbox.
+static bool loadBoxBmp(const std::string &path, u16 *pix, int &outW, int &outH,
+                       int &bx, int &by, int &bw, int &bh) {
+	FILE *f = fopen(path.c_str(), "rb");
+	if (!f)
+		return false;
+	u8 hdr[54];
+	if (fread(hdr, 1, 54, f) != 54) { fclose(f); return false; }
+	u32 dataOff = hdr[10] | (hdr[11] << 8) | (hdr[12] << 16) | (hdr[13] << 24);
+	int w = hdr[18] | (hdr[19] << 8) | (hdr[20] << 16) | (hdr[21] << 24);
+	int h = hdr[22] | (hdr[23] << 8) | (hdr[24] << 16) | (hdr[25] << 24);
+	int bpp = hdr[28] | (hdr[29] << 8);
+	if ((bpp != 4 && bpp != 8) || w <= 0 || w > TITLEBOX_MAXW || h <= 0 || h > TITLEBOX_MAXH) { fclose(f); return false; }
+
+	u16 pal[256];
+	bool trans[256] = {false};
+	int ncol = (int)(dataOff - 54) / 4;
+	fseek(f, 54, SEEK_SET);
+	for (int i = 0; i < ncol && i < 256; i++) {
+		u8 pe[4];
+		if (fread(pe, 1, 4, f) != 4) break;
+		u8 b = pe[0], g = pe[1], r = pe[2];
+		trans[i] = (r >= 248 && g <= 8 && b >= 248); // magenta #FF00FF => transparent
+		pal[i] = (r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10) | BIT(15);
+	}
+
+	// BMP rows padded to 4 bytes (4bpp = 2 pixels/byte, high nibble first).
+	int rowsz = (bpp == 4) ? ((((w + 1) / 2) + 3) & ~3) : ((w + 3) & ~3);
+	u8 rowbuf[TITLEBOX_MAXW + 4];
+	fseek(f, dataOff, SEEK_SET);
+	for (int yy = 0; yy < h; yy++) {
+		if (fread(rowbuf, 1, rowsz, f) != (size_t)rowsz) break;
+		int y = h - 1 - yy; // BMP is bottom-up
+		for (int x = 0; x < w; x++) {
+			u8 idx = (bpp == 4) ? ((x & 1) ? (rowbuf[x / 2] & 0xF) : (rowbuf[x / 2] >> 4)) : rowbuf[x];
+			pix[y * w + x] = trans[idx] ? 0 : pal[idx];
+		}
+	}
+	fclose(f);
+	outW = w;
+	outH = h;
+
+	// Locate the opaque box within the canvas. If nothing opaque, fall back to the whole asset.
+	int minX = w, minY = h, maxX = -1, maxY = -1;
+	for (int y = 0; y < h; y++)
+		for (int x = 0; x < w; x++)
+			if (pix[y * w + x]) {
+				if (x < minX) minX = x;
+				if (x > maxX) maxX = x;
+				if (y < minY) minY = y;
+				if (y > maxY) maxY = y;
+			}
+	if (maxX < 0) { minX = minY = 0; maxX = w - 1; maxY = h - 1; }
+	bx = minX; by = minY; bw = maxX - minX + 1; bh = maxY - minY + 1;
+	return true;
+}
+
+static void loadTitlebox() {
+	_titleboxLoaded = true;
+	loadBoxBmp(tfn().uiDirectory() + "/grf/topscreen_titlebox.bmp",
+	           _titleboxPix, _titleboxW, _titleboxH, _tbBoxX, _tbBoxY, _tbBoxW, _tbBoxH);
+}
+
+static void loadStartbox() {
+	_startboxLoaded = true;
+	_startboxHas = loadBoxBmp(tfn().uiDirectory() + "/grf/topscreen_startbox.bmp",
+	           _startboxPix, _startboxW, _startboxH, _sbBoxX, _sbBoxY, _sbBoxW, _sbBoxH);
+}
+
+// Remove aspas YAML e des-escapa \" \\; também faz trim.
+static std::string ymlUnquote(std::string s) {
+	size_t a = s.find_first_not_of(" \t");
+	if (a == std::string::npos)
+		return "";
+	size_t b = s.find_last_not_of(" \t");
+	s = s.substr(a, b - a + 1);
+	if (s.size() >= 2 && s.front() == '"' && s.back() == '"') {
+		std::string o;
+		for (size_t i = 1; i + 1 < s.size(); i++) {
+			if (s[i] == '\\' && i + 2 < s.size()) { o += s[++i]; continue; }
+			o += s[i];
+		}
+		return o;
+	}
+	return s;
+}
+
+// Procura, num .yml simples (chave: valor, chave podendo estar entre aspas), o valor da `key`.
+// Suporta chaves com ':' se entre aspas. Retorna "" se não achar.
+static std::string ymlLookup(const std::string &path, const std::string &key) {
+	FILE *f = fopen(path.c_str(), "rb");
+	if (!f)
+		return "";
+	char line[512];
+	std::string result;
+	while (fgets(line, sizeof(line), f)) {
+		std::string s(line);
+		while (!s.empty() && (s.back() == '\n' || s.back() == '\r'))
+			s.pop_back();
+		size_t a = s.find_first_not_of(" \t");
+		if (a == std::string::npos || s[a] == '#')
+			continue;
+		std::string k;
+		size_t sep;
+		if (s[a] == '"') {
+			size_t i = a + 1;
+			for (; i < s.size(); i++) {
+				if (s[i] == '\\' && i + 1 < s.size()) { k += s[++i]; continue; }
+				if (s[i] == '"') break;
+				k += s[i];
+			}
+			if (i >= s.size()) continue;
+			sep = s.find(':', i);
+		} else {
+			sep = s.find(':');
+			if (sep == std::string::npos) continue;
+			k = s.substr(a, sep - a);
+			size_t ke = k.find_last_not_of(" \t");
+			k = (ke == std::string::npos) ? "" : k.substr(0, ke + 1);
+		}
+		if (sep == std::string::npos)
+			continue;
+		if (k == key) { result = ymlUnquote(s.substr(sep + 1)); break; }
+	}
+	fclose(f);
+	return result;
+}
+
+// Diretório-base dos assets do menu (SD ou FAT).
+static std::string dsimenuDir() {
+	return std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/dsimenu";
+}
+
+// Resolve o game_id do jogo `romName` via índice leve do host (assets_index.yml).
+// Guarda em _gameId. Retorna a pasta de assets do jogo (assets/<game_id>) ou "".
+static std::string resolveGameAssetsDir(const std::string &romName) {
+	_gameId = ymlLookup(dsimenuDir() + "/assets_index.yml", romName);
+	if (_gameId.empty())
+		return "";
+	return dsimenuDir() + "/assets/" + _gameId;
+}
+
+// Decodifica (lodepng) + escala o PNG do logo para _logoPix. CUSTOSO — só rodar em background.
+static void decodeLogoFile(const std::string &logoPath) {
+	_logoPresent = false;
+	std::vector<unsigned char> img;
+	unsigned w = 0, h = 0;
+	if (lodepng::decode(img, w, h, logoPath) != 0 || w == 0 || h == 0)
+		return;
+
+	// Integer scaling: escolhe o menor fator inteiro 1/N que cabe (amostragem uniforme de N em N).
+	const int maxW = 240, maxH = 120;
+	int N = 1;
+	while ((int)w / N > maxW || (int)h / N > maxH)
+		N++;
+	int tw = (int)w / N, th = (int)h / N;
+	if (tw < 1) tw = 1;
+	if (th < 1) th = 1;
+
+	for (int y = 0; y < th; y++) {
+		int syi = y * N; // passo exato N = downscale 1/N uniforme
+		for (int x = 0; x < tw; x++) {
+			int sxi = x * N;
+			int i = (syi * (int)w + sxi) * 4;
+			u8 r = img[i], g = img[i + 1], b = img[i + 2], a = img[i + 3];
+			_logoPix[y * 256 + x] = (a >= 128) ? ((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10) | BIT(15)) : 0;
+		}
+	}
+	_logoW = tw;
+	_logoH = th;
+	_logoPresent = true;
+}
+
+// Abre um dos vídeos (0=top,1=bottom), lê+valida o header TGR2 (18 bytes) e a paleta (PAL8),
+// posicionando no início dos frames.
+// TGR2: magic"TGR2", u16 w, u16 h, u16 fps, u32 nframes, u8 fmt(0=BGR555/1=PAL8), u8 flags,
+//       u16 palCnt, [paleta palCnt*u16 se PAL8], depois nframes frames.
+static bool videoOpen(int which) {
+	const std::string &p = which ? _videoBotPath : _videoTopPath;
+	if (p.empty())
+		return false;
+	_videoFile = fopen(p.c_str(), "rb");
+	if (!_videoFile)
+		return false;
+	u8 h[18];
+	if (fread(h, 1, 18, _videoFile) != 18 || h[0] != 'T' || h[1] != 'G' || h[2] != 'R' || h[3] != '2') {
+		fclose(_videoFile); _videoFile = NULL; return false;
+	}
+	_videoW = h[4] | (h[5] << 8);
+	_videoH = h[6] | (h[7] << 8);
+	_videoFps = h[8] | (h[9] << 8);
+	_videoFrameCount = h[10] | (h[11] << 8) | (h[12] << 16) | (h[13] << 24);
+	_videoFmt = h[14];
+	_videoFlags = h[15];
+	int palCnt = h[16] | (h[17] << 8);
+	// Aceita qualquer resolução até a tela (upscale no display); precisa caber no buffer.
+	if (_videoW < 1 || _videoW > 256 || _videoH < 1 || _videoH > 192 ||
+	    _videoW * _videoH > 256 * 192 || _videoFps < 1 || _videoFrameCount < 1 ||
+	    (_videoFmt != 0 && _videoFmt != 1)) {
+		fclose(_videoFile); _videoFile = NULL; return false;
+	}
+	if (_videoFmt == 1) { // PAL8: carrega a paleta (u16 BGR555, bit15 já setado no gerador)
+		if (palCnt < 1 || palCnt > 256) { fclose(_videoFile); _videoFile = NULL; return false; }
+		u8 palbuf[512];
+		if (fread(palbuf, 1, (size_t)palCnt * 2, _videoFile) != (size_t)(palCnt * 2)) {
+			fclose(_videoFile); _videoFile = NULL; return false;
+		}
+		for (int i = 0; i < palCnt; i++)
+			_videoPal[i] = palbuf[i * 2] | (palbuf[i * 2 + 1] << 8);
+		for (int i = palCnt; i < 256; i++)
+			_videoPal[i] = 0;
+	}
+	// (Re)constrói as LUTs de upscale nearest-neighbor para esta resolução.
+	for (int x = 0; x < 256; x++) _vidColMap[x] = (u8)(x * _videoW / 256);
+	for (int y = 0; y < 192; y++) _vidRowMap[y] = (u8)(y * _videoH / 192);
+	_videoFrameIdx = 0;
+	return true;
+}
+
+// Encerra a reprodução e fecha o arquivo. O brick volta a opaco (fade) no tick.
+static void videoStop() {
+	if (_videoFile) { fclose(_videoFile); _videoFile = NULL; }
+	_videoActive = false;
+	_videoWhich = 0;
+	_videoFrameIdx = 0;
+	_videoTickAccum = 0;
+	_boxSwapTimer = 0;
+	_pendingVideoBase.clear();
+	_pendingVideoDelay = 0;
+}
+
+// Lê 1 frame do arquivo aberto para _videoFrame (expande a paleta se PAL8). false = fim/erro.
+static bool videoReadOne() {
+	if (!_videoFile)
+		return false;
+	size_t n = (size_t)_videoW * _videoH;
+	if (_videoFmt == 1) { // PAL8: lê índices e expande pela paleta
+		if (fread(_videoIdxBuf, 1, n, _videoFile) != n)
+			return false;
+		for (size_t i = 0; i < n; i++)
+			_videoFrame[i] = _videoPal[_videoIdxBuf[i]];
+	} else { // BGR555: lê direto
+		if (fread(_videoFrame, 1, n * 2, _videoFile) != n * 2)
+			return false;
+		if (!(_videoFlags & 1)) // sem bit de alpha no arquivo -> força opaco
+			for (size_t i = 0; i < n; i++)
+				_videoFrame[i] |= BIT(15);
+	}
+	return true;
+}
+
+// Avança um frame; ao terminar o arquivo, alterna top<->bottom (loop).
+static bool videoAdvance() {
+	if (!_videoFile)
+		return false;
+	if (_videoFrameIdx >= _videoFrameCount) { // acabou este vídeo -> troca para o outro
+		fclose(_videoFile); _videoFile = NULL;
+		_videoWhich ^= 1;
+		if (!videoOpen(_videoWhich))
+			return false;
+	}
+	if (!videoReadOne()) { // leitura curta -> trata como fim e alterna
+		fclose(_videoFile); _videoFile = NULL;
+		_videoWhich ^= 1;
+		if (!videoOpen(_videoWhich) || !videoReadOne())
+			return false;
+	}
+	_videoFrameIdx++;
+	return true;
+}
+
+// REQUEST (barato): na troca de item, resolve só o CAMINHO do logo e AGENDA o decode em
+// background. Não decodifica aqui (senão trava a UI). O item anterior pendente é cancelado.
+// Prioridade: índice do host (assets/<game_id>/logo.png). Fallback: logos.yml antigo.
+// Também para o vídeo atual e agenda o vídeo do novo jogo (se houver assets).
+void ThemeTextures::loadGameLogo(const std::string &romName) {
+	if (romName == _logoKey)
+		return; // já resolvido p/ este jogo
+	_logoKey = romName;
+	_logoScaleDest = 0.0f;  // zoom-out do logo anterior (pixels mantidos p/ encolher)
+	_gameId.clear();
+	_pendingLogoPath.clear(); // cancela qualquer decode agendado do item anterior
+	videoStop();              // para o vídeo do item anterior (brick volta a opaco no tick)
+	if (romName.empty())
+		return;
+
+	std::string base = dsimenuDir();
+
+	std::string logoPath;
+	std::string assetsDir = resolveGameAssetsDir(romName);
+	if (!assetsDir.empty() && ms().dsiVideoBg) {
+		// Agenda o vídeo do jogo (abre/começa só após estabilizar por VIDEO_START_DELAY frames).
+		// Gated pelo toggle DSI_VIDEO_BG.
+		_videoTopPath = assetsDir + "/top.tgrv";
+		_videoBotPath = assetsDir + "/bottom.tgrv";
+		_pendingVideoBase = assetsDir;
+		_pendingVideoDelay = VIDEO_START_DELAY;
+	}
+	if (!assetsDir.empty())
+		logoPath = assetsDir + "/logo.png";
+	if (logoPath.empty()) {
+		std::string logoFile = ymlLookup(base + "/logos.yml", romName);
+		if (!logoFile.empty())
+			logoPath = base + "/logos/" + logoFile;
+	}
+	if (logoPath.empty())
+		return;
+
+	_pendingLogoPath = logoPath;         // agenda o decode
+	_pendingLogoDelay = LOGO_LOAD_DELAY;  // após estabilizar N frames
+}
+
+// Roda no loop ocioso (uma vez por frame). Debounce: só decodifica após o item ficar estável.
+// Se o item mudou nesse meio-tempo, _pendingLogoPath já foi trocado -> o anterior não roda.
+void ThemeTextures::tickLogoLoad() {
+	bool needRedraw = false;
+
+	// 1) Decode deferido do logo: quando o item estabiliza, decodifica e arma o zoom-in.
+	if (!_pendingLogoPath.empty() && --_pendingLogoDelay <= 0) {
+		std::string path = _pendingLogoPath;
+		_pendingLogoPath.clear();
+		decodeLogoFile(path);          // custoso, mas só com o item estável (usuário parado)
+		if (_logoPresent) {
+			_logoScale = 0.0f;         // começa minúsculo...
+			_logoScaleDest = 1.0f;     // ...e cresce (zoom-in ao aparecer)
+		}
+	}
+
+	// 2) Anima a escala do logo rumo ao alvo.
+	if (_logoScale != _logoScaleDest) {
+		if (_logoScale < _logoScaleDest) {
+			_logoScale += LOGO_ZOOM_IN_STEP;
+			if (_logoScale > _logoScaleDest) _logoScale = _logoScaleDest;
+		} else {
+			_logoScale -= LOGO_ZOOM_OUT_STEP;
+			if (_logoScale < _logoScaleDest) _logoScale = _logoScaleDest;
+		}
+		needRedraw = true;
+	}
+
+	// 3) Início deferido do vídeo: após o item ficar parado, abre e lê o 1º frame (custoso).
+	if (!_pendingVideoBase.empty() && --_pendingVideoDelay <= 0) {
+		_pendingVideoBase.clear();
+		_videoWhich = 0;
+		if (videoOpen(0) && videoAdvance()) { // começa pelo top.tgrv; lê o primeiro frame
+			_videoActive = true;
+			_videoTickAccum = 0;
+			needRedraw = true;
+		} else {
+			videoStop();
+		}
+	}
+
+	// 4) Pacing do vídeo: avança 1 frame a cada (~60/fps) ticks; alterna top<->bottom em loop.
+	if (_videoActive && ++_videoTickAccum >= std::max(1, 60 / _videoFps)) {
+		_videoTickAccum = 0;
+		if (videoAdvance())
+			needRedraw = true;
+		else
+			videoStop();
+	}
+
+	// 5) Fade do brick: cai p/ VIDEO_BG_ALPHA quando o vídeo toca, volta a 255 quando para.
+	int alphaTarget = _videoActive ? VIDEO_BG_ALPHA : 255;
+	if (_videoBgAlpha != alphaTarget) {
+		if (_videoBgAlpha > alphaTarget)
+			_videoBgAlpha = std::max(_videoBgAlpha - VIDEO_FADE_STEP, alphaTarget);
+		else
+			_videoBgAlpha = std::min(_videoBgAlpha + VIDEO_FADE_STEP, alphaTarget);
+		needRedraw = true;
+	}
+
+	// 6) Slide da caixa inferior: alterna titlebox<->startbox. A troca só ocorre BOX_SWAP_DELAY
+	//    frames APÓS o vídeo iniciar (desacoplado do start do vídeo). A caixa que sai "cai" (desce
+	//    até sumir); então troca; a que entra "sobe" (vem de baixo até o lugar).
+	if (_videoActive) {
+		if (_boxSwapTimer < BOX_SWAP_DELAY) _boxSwapTimer++;
+	} else {
+		_boxSwapTimer = 0;
+	}
+	int wantKind = (_videoActive && _startboxHas && _boxSwapTimer >= BOX_SWAP_DELAY) ? 1 : 0;
+	int curBoxH = (_boxKind == 1) ? _sbBoxH : _tbBoxH;
+	if (_boxKind != wantKind) {
+		_boxSlide += BOX_SLIDE_STEP;                 // desce a caixa atual
+		if (_boxSlide >= curBoxH + TOPBOX_MARGIN + 1) {
+			_boxKind = wantKind;                     // sumiu -> troca de caixa
+			int newBoxH = (_boxKind == 1) ? _sbBoxH : _tbBoxH;
+			_boxSlide = newBoxH + TOPBOX_MARGIN + 1; // posiciona a nova totalmente abaixo p/ subir
+		}
+		needRedraw = true;
+	} else if (_boxSlide > 0) {
+		_boxSlide -= BOX_SLIDE_STEP;                 // sobe a caixa nova até o lugar
+		if (_boxSlide < 0) _boxSlide = 0;
+		needRedraw = true;
+	}
+
+	if (needRedraw)
+		drawTopTitle(_topTitleText);   // recompõe o topo (logo animado e/ou vídeo/fade)
+}
 // DSi mode double-frame buffers
 //static u16* _frameBuffer[2] = {(u16*)0x02F80000, (u16*)0x02F98000};
 static u16* _frameBufferBot[2] = {NULL};
@@ -873,7 +1413,10 @@ void ThemeTextures::commitBgMainModifyAsync() {
 void ThemeTextures::drawTopBg() {
 	beginBgSubModify();
 
-	_backgroundTextures[0].copy(_bgSubBuffer, false);
+	// Menu background (quickmenu/topbg.png) on the top screen (sub engine).
+	if (!_menuBgLoaded)
+		loadMenuBg();
+	tonccpy(_bgSubBuffer, _menuBgBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 
 	if (boxArtColorDeband) {
 		tonccpy((u8*)_bgSubBuffer2, (u8*)_bgSubBuffer, 0x18000);
@@ -892,7 +1435,11 @@ void ThemeTextures::drawBottomBg(int index) {
 		index = 2;
 	beginBgMainModify();
 
-	_backgroundTextures[index].copy(_bgMainBuffer, false);
+	// Menu background (quickmenu/topbg.png) on the bottom screen (main engine).
+	(void)index;
+	if (!_menuBgLoaded)
+		loadMenuBg();
+	tonccpy(_bgMainBuffer, _menuBgBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 
 	commitBgMainModify();
 }
@@ -910,6 +1457,7 @@ void ThemeTextures::clearTopScreen() {
 }
 
 void ThemeTextures::drawProfileName() {
+	if (ms().theme == TWLSettings::EThemeDSi) return; // fork: no theme chrome (icons + top title only)
 	if (_profileNameLoaded || ms().theme == TWLSettings::EThemeSaturn || ms().theme == TWLSettings::EThemeHBL) return;
 
 	if (!topBorderBufferLoaded) {
@@ -1190,6 +1738,7 @@ void ThemeTextures::drawOverRotatingCubes() {
 }
 
 ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
+	if (ms().theme == TWLSettings::EThemeDSi) return; // fork: no theme chrome (icons + top title only)
 	if (!dsiFeatures() || sys().i2cBricked())
 		return;
 	beginBgSubModify();
@@ -1235,6 +1784,7 @@ ITCM_CODE void ThemeTextures::drawVolumeImageMacro(int volumeLevel) {
 }
 
 ITCM_CODE void ThemeTextures::drawVolumeImageCached() {
+	if (ms().theme == TWLSettings::EThemeDSi) return; // fork: no theme chrome (icons + top title only)
 	if (ms().macroMode && ms().theme == TWLSettings::EThemeSaturn) return;
 
 	int volumeLevel = getVolumeLevel();
@@ -1286,6 +1836,7 @@ ITCM_CODE int ThemeTextures::getBatteryLevel(void) {
 }
 
 ITCM_CODE void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool isRegularDS) {
+	if (ms().theme == TWLSettings::EThemeDSi) return; // fork: no theme chrome (icons + top title only)
 	// Start loading
 	beginBgSubModify();
 	const Texture *tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
@@ -1323,6 +1874,7 @@ ITCM_CODE void ThemeTextures::drawBatteryImageMacro(int batteryLevel, bool drawD
 }
 
 ITCM_CODE void ThemeTextures::drawBatteryImageCached() {
+	if (ms().theme == TWLSettings::EThemeDSi) return; // fork: no theme chrome (icons + top title only)
 	if (ms().macroMode && ms().theme == TWLSettings::EThemeSaturn) return;
 
 	int batteryLevel = getBatteryLevel();
@@ -1343,6 +1895,7 @@ ITCM_CODE void ThemeTextures::resetCachedBatteryLevel() {
 }
 
 void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
+	if (ms().theme == TWLSettings::EThemeDSi) return; // fork: no theme chrome (icons + top title only)
 	beginBgSubModify();
 
 	const Texture *rightTex = RShoulderActive ? _rightShoulderTexture.get() : _rightShoulderGreyedTexture.get();
@@ -1452,6 +2005,205 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 	} else {
 		_previousTimeWidth = dateTimeFont()->calcWidth(str);
 	}
+}
+
+// Renders the selected game's title/details (multi-line, centred, black) on the TOP screen,
+// erasing the previous title. Used by our fork so the title lives on the top screen.
+// Debug overlay on the top screen: FPS + texture VRAM usage (from the libnds allocator).
+void ThemeTextures::drawTopTitle(std::u16string_view text) {
+	FontGraphic *font = smallFont();
+	if (!font) return;
+	const int lineH = font->height();
+
+	_topTitleText.assign(text.begin(), text.end()); // guarda p/ redraw quando o logo terminar de carregar
+
+	if (!_titleboxLoaded)
+		loadTitlebox();
+	if (!_startboxLoaded)
+		loadStartbox();
+
+	// Anchor the box to the bottom of the top screen, centred horizontally; _boxSlide desloca
+	// verticalmente durante a animação de subir/cair.
+	const int margin = TOPBOX_MARGIN;
+	const int sx = (SCREEN_WIDTH - _tbBoxW) / 2;
+	const int sy = SCREEN_HEIGHT - _tbBoxH - margin + _boxSlide;
+
+	// Compose off-screen so the live framebuffer is never seen half-drawn (titlebox flicker).
+	// Restore the brick background first (clears the previous logo/title before redrawing).
+	if (!_menuBgLoaded)
+		loadMenuBg();
+	if (!_menuBgDitherLoaded)
+		loadMenuBgDither();
+	u16 *dst = _topCompose;
+	// Background composition. Three cases (video may be smaller than screen -> upscale via LUTs):
+	//  - Idle (alpha == 255): brick sólido, sem vídeo.
+	//  - Regime de reprodução (alpha no alvo) + asset dithered disponível: overlay BARATO — os
+	//    pixels opacos do brick dithered vencem; os buracos mostram o vídeo. Zero blend por pixel.
+	//  - Transição de fade (ou sem asset dithered): alphablend suave do brick sólido sobre o vídeo
+	//    (dura poucos frames, então o custo é limitado).
+	if (_videoBgAlpha < 255) {
+		// Modo checker (dsiVideoFadeMode==0): usa o brick dithered (overlay barato) em regime.
+		// Modo opacity (==1): sempre alphablend do brick a ~40% sobre o vídeo (sem dither).
+		bool steadyDither = ms().dsiVideoFadeMode == 0 && _videoActive &&
+		                    _videoBgAlpha == VIDEO_BG_ALPHA && _menuBgDitherHas;
+		if (steadyDither) {
+			for (int y = 0; y < SCREEN_HEIGHT; y++) {
+				const u16 *vrow = _videoFrame + (int)_vidRowMap[y] * _videoW;
+				const u16 *krow = _menuBgDither + y * SCREEN_WIDTH;
+				u16 *drow = dst + y * SCREEN_WIDTH;
+				for (int x = 0; x < SCREEN_WIDTH; x++) {
+					u16 k = krow[x];
+					drow[x] = k ? k : vrow[_vidColMap[x]]; // opaco = brick; buraco = vídeo
+				}
+			}
+		} else {
+			const u8 a = (u8)_videoBgAlpha;
+			for (int y = 0; y < SCREEN_HEIGHT; y++) {
+				const u16 *vrow = _videoFrame + (int)_vidRowMap[y] * _videoW;
+				const u16 *brow = _menuBgBuffer + y * SCREEN_WIDTH;
+				u16 *drow = dst + y * SCREEN_WIDTH;
+				for (int x = 0; x < SCREEN_WIDTH; x++)
+					drow[x] = alphablend(brow[x], vrow[_vidColMap[x]], a);
+			}
+		}
+	} else {
+		tonccpy(dst, _menuBgBuffer, sizeof(u16) * SCREEN_WIDTH * SCREEN_HEIGHT);
+	}
+
+	// Game logo centred on the top screen, drawn FIRST so the box stays in front (layer behind).
+	// Scaled by _logoScale (zoom-in on appear / zoom-out on item change) via nearest-neighbor.
+	if (_logoPresent && _logoScale > 0.01f) {
+		int dw = (int)(_logoW * _logoScale);
+		int dh = (int)(_logoH * _logoScale);
+		if (dw < 1) dw = 1;
+		if (dh < 1) dh = 1;
+		int lx = (SCREEN_WIDTH - dw) / 2;
+		int ly = (SCREEN_HEIGHT - dh) / 2;
+		if (ly < 0) ly = 0;
+		// Drop shadow: silhueta do logo deslocada (LOGO_SHADOW_DX/DY), preto alpha-blendado sobre
+		// o fundo já composto. Desenhada ANTES do logo, então o logo fica por cima.
+		for (int y = 0; y < dh; y++) {
+			int sy = y * _logoH / dh;
+			if (sy >= _logoH) sy = _logoH - 1;
+			int py = ly + y + LOGO_SHADOW_DY;
+			if (py < 0 || py >= SCREEN_HEIGHT) continue;
+			for (int x = 0; x < dw; x++) {
+				int sx = x * _logoW / dw;
+				if (sx >= _logoW) sx = _logoW - 1;
+				if (!_logoPix[sy * 256 + sx]) continue; // só onde o logo é opaco
+				int px = lx + x + LOGO_SHADOW_DX;
+				if ((unsigned)px >= SCREEN_WIDTH) continue;
+				u16 &d = dst[py * SCREEN_WIDTH + px];
+				d = alphablend(RGB15(0, 0, 0) | BIT(15), d, LOGO_SHADOW_ALPHA);
+			}
+		}
+		// Logo por cima da sombra.
+		for (int y = 0; y < dh; y++) {
+			int sy = y * _logoH / dh;   // nearest-neighbor no eixo Y
+			if (sy >= _logoH) sy = _logoH - 1;
+			int py = ly + y;
+			if ((unsigned)py >= SCREEN_HEIGHT) break;
+			for (int x = 0; x < dw; x++) {
+				int sx = x * _logoW / dw; // nearest-neighbor no eixo X
+				if (sx >= _logoW) sx = _logoW - 1;
+				u16 p = _logoPix[sy * 256 + sx];
+				if (!p) continue;
+				int px = lx + x;
+				if ((unsigned)px < SCREEN_WIDTH)
+					dst[py * SCREEN_WIDTH + px] = p;
+			}
+		}
+	}
+
+	if (_boxKind == 1 && _startboxHas) {
+		// Enquanto o vídeo toca: a titlebox+texto dão lugar à start box (grf/topscreen_startbox.bmp),
+		// ancorada no rodapé e centrada (+_boxSlide da animação). Sem texto de título.
+		const int bx = (SCREEN_WIDTH - _sbBoxW) / 2;
+		const int by = SCREEN_HEIGHT - _sbBoxH - margin + _boxSlide;
+		for (int y = 0; y < _sbBoxH; y++) {
+			int dy = by + y;
+			if (dy < 0 || dy >= SCREEN_HEIGHT) continue; // clip ao sair pelo rodapé
+			for (int x = 0; x < _sbBoxW; x++) {
+				u16 p = _startboxPix[(_sbBoxY + y) * _startboxW + (_sbBoxX + x)];
+				if (p)
+					dst[dy * SCREEN_WIDTH + bx + x] = p;
+			}
+		}
+	} else {
+		// Blit the box (from its location in the asset) to the bottom of the top screen.
+		// Opaque pixels overwrite (clearing any previous text inside), transparent shows the brick.
+		for (int y = 0; y < _tbBoxH; y++) {
+			int dy = sy + y;
+			if (dy < 0 || dy >= SCREEN_HEIGHT) continue; // clip ao sair pelo rodapé
+			for (int x = 0; x < _tbBoxW; x++) {
+				u16 p = _titleboxPix[(_tbBoxY + y) * _titleboxW + (_tbBoxX + x)];
+				if (p)
+					dst[dy * SCREEN_WIDTH + sx + x] = p;
+			}
+		}
+
+		int nLines = 1;
+		for (size_t p = 0; p < text.size(); p++)
+			if (text[p] == u'\n') nLines++;
+		// Centre the text block vertically inside the box.
+		int posY = sy + _tbBoxH / 2 - (nLines * lineH) / 2;
+
+		// Draw each line centred, in black.
+		size_t start = 0;
+		int line = 0;
+		while (true) {
+			size_t nl = text.find(u'\n', start);
+			std::u16string_view ln = text.substr(start, (nl == std::u16string_view::npos) ? text.size() - start : nl - start);
+			int y0 = posY + line * lineH;
+			toncset16(FontGraphic::textBuf[1], 0, SCREEN_WIDTH * lineH);
+			font->print(0, 0, true, ln, Alignment::center, FontPalette::regular);
+			for (int y = 0; y < lineH && y0 + y < SCREEN_HEIGHT; y++) {
+				if (y0 + y < 0) continue;
+				for (int x = 0; x < SCREEN_WIDTH; x++)
+					if (FontGraphic::textBuf[1][y * SCREEN_WIDTH + x])
+						dst[(y0 + y) * SCREEN_WIDTH + x] = RGB15(0, 0, 0) | BIT(15);
+			}
+			if (nl == std::u16string_view::npos) break;
+			start = nl + 1;
+			line++;
+		}
+	}
+
+	// Present the finished frame in a single contiguous copy (no visible half-draw).
+	tonccpy(BG_GFX_SUB, dst, sizeof(u16) * SCREEN_WIDTH * SCREEN_HEIGHT);
+}
+
+// DEBUG: contador de FPS numa box preta no canto superior-esquerdo da tela superior.
+// Mede quadros do loop principal por segundo (revela drops); desenhado direto no BG_GFX_SUB
+// a cada frame, DEPOIS da composição do topo, então nunca é sobrescrito pelo drawTopTitle.
+void ThemeTextures::drawTopFps() {
+	static int acc = 0;        // quadros contados no segundo atual
+	static time_t last = 0;    // segundo (RTC) da última atualização
+	static int fps = 0;        // valor exibido
+	acc++;
+	time_t now = time(NULL);
+	if (now != last) { fps = acc; acc = 0; last = now; }
+
+	FontGraphic *font = smallFont();
+	if (!font) return;
+	const int lineH = font->height();
+	const int boxW = 44, boxH = lineH + 2;
+
+	// Box preta opaca.
+	for (int y = 0; y < boxH && y < SCREEN_HEIGHT; y++)
+		for (int x = 0; x < boxW && x < SCREEN_WIDTH; x++)
+			BG_GFX_SUB[y * SCREEN_WIDTH + x] = RGB15(0, 0, 0) | BIT(15);
+
+	// Número em branco dentro da box.
+	char buf[16];
+	sprintf(buf, "%d fps", fps);
+	std::u16string s = FontGraphic::utf8to16(buf);
+	toncset16(FontGraphic::textBuf[1], 0, SCREEN_WIDTH * lineH);
+	font->print(0, 0, true, s, Alignment::left, FontPalette::regular);
+	for (int y = 0; y < lineH && (y + 1) < SCREEN_HEIGHT; y++)
+		for (int x = 0; x < boxW - 4; x++)
+			if (FontGraphic::textBuf[1][y * SCREEN_WIDTH + x])
+				BG_GFX_SUB[(y + 1) * SCREEN_WIDTH + (x + 2)] = RGB15(31, 31, 31) | BIT(15);
 }
 
 ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int posY, bool isDate) {

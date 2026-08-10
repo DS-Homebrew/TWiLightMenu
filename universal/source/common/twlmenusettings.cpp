@@ -53,6 +53,8 @@ TWLSettings::TWLSettings()
 	showMainMenu = false;
 	showSelectMenu = false;
 	rocketRobzLogo = true;
+	dsiVideoBg = true;       // vídeo de fundo ligado por padrão
+	dsiVideoFadeMode = 0;    // 0 = checker (brick dithered) por padrão
 	theme = EThemeDSi;
 	settingsMusic = ESMusicTheme;
 	dsiMusic = EMusicTheme;
@@ -231,6 +233,8 @@ void TWLSettings::loadSettings()
 	showMainMenu = settingsini.GetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
 	showSelectMenu = settingsini.GetInt("SRLOADER", "SHOW_SELECT_MENU", showSelectMenu);
 	rocketRobzLogo = settingsini.GetInt("SRLOADER", "ROCKET_ROBZ_LOGO", rocketRobzLogo);
+	dsiVideoBg = settingsini.GetInt("SRLOADER", "DSI_VIDEO_BG", dsiVideoBg);
+	dsiVideoFadeMode = settingsini.GetInt("SRLOADER", "DSI_VIDEO_FADE_MODE", dsiVideoFadeMode);
 	theme = (TTheme)settingsini.GetInt("SRLOADER", "THEME", theme);
 	settingsMusic = (TSettingsMusic)settingsini.GetInt("SRLOADER", "SETTINGS_MUSIC", settingsMusic);
 	dsiMusic = (TDSiMusic)settingsini.GetInt("SRLOADER", "DSI_MUSIC", dsiMusic);

@@ -2,7 +2,12 @@
 
 #pragma once
 
-#define NDS_ICON_BANK_COUNT 7
+// Banks 0..(NDS_ICON_LIST_BANKS-1) hold on-screen icons (index % NDS_ICON_LIST_BANKS); the last
+// bank is the "moving app" icon. Must cover the max icons shown at once. Each bank is a 32x256
+// 4bpp texture (~4KB) in VRAM_A (128KB, shared with theme textures).
+// 8 columns x 3 rows = 24 on-screen icons.
+#define NDS_ICON_LIST_BANKS 24
+#define NDS_ICON_BANK_COUNT (NDS_ICON_LIST_BANKS + 1)
 #define TWL_ICON_FRAMES 8
 #define TWL_TEX_HEIGHT 256
 

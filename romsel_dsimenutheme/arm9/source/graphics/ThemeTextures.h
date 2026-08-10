@@ -95,6 +95,10 @@ public:
 	void drawShoulders(bool LShoulderActive, bool RShoulderActive);
 	void drawDateTime(const char* date, int posX, int posY, bool isDate);
 	void drawDateTimeMacro(const char* date, int posX, int posY, bool isDate);
+	void drawTopTitle(std::u16string_view text); // selected game's title/details on the top screen
+	void loadGameLogo(const std::string &romName); // AGENDA o logo do jogo (barato; decode é deferido)
+	void tickLogoLoad();                           // decode deferido do logo (chamar 1x/frame no loop ocioso)
+	void drawTopFps();                             // DEBUG: contador de FPS numa box no canto sup. esq. (1x/frame)
 
 	void clearTopScreen();
 	void unloadRotatingCubes();
