@@ -17,7 +17,7 @@ std::vector<std::string> &getFavorites() {
 	if (!loaded) {
 		loaded = true;
 		CIniFile favoritesIni(favoritesIniPath());
-		favoritesIni.GetStringVector("FAVORITES", "PATHS", favorites, ':'); // ':' isn't allowed in FAT names, so it's a safe delimiter
+		favoritesIni.GetStringVector("FAVORITES", "PATHS", favorites, '|'); // '|' isn't allowed in FAT names, and unlike ':' never appears in drive prefixes
 	}
 	return favorites;
 }
@@ -38,6 +38,6 @@ void toggleFavorite(const std::string &fullPath) {
 
 	mkdir(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
 	CIniFile favoritesIni(favoritesIniPath());
-	favoritesIni.SetStringVector("FAVORITES", "PATHS", favorites, ':');
+	favoritesIni.SetStringVector("FAVORITES", "PATHS", favorites, '|');
 	favoritesIni.SaveIniFile(favoritesIniPath());
 }
