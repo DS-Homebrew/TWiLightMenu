@@ -115,6 +115,7 @@ static inline void doFrameUpdate(void) {
 	updateFrame = true;
 }
 
+static bool inFavoritesView = false;
 int file_count = 0;
 static int fileStartPos = 0; // The position of the first thing that is not a directory.
 
@@ -134,6 +135,12 @@ struct DirEntry {
 	bool customPos;
 	std::string fullPath;
 };
+
+// Favorites-view entries live outside the current directory, so file reads must
+// use their absolute path instead of the cwd-relative name
+static const char *entryPath(const DirEntry &entry) {
+	return entry.fullPath.empty() ? entry.name.c_str() : entry.fullPath.c_str();
+}
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
 	for (std::string_view extension : extensions) {
@@ -186,6 +193,33 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 
 	file_count = 0;
 	fileStartPos = 0;
+	if (inFavoritesView) {
+		std::vector<std::string> favorites = getFavorites();
+		for (size_t i = 0; i < favorites.size(); i++) {
+			if (access(favorites[i].c_str(), F_OK) != 0) {
+				toggleFavorite(favorites[i]);
+			} else {
+				std::string favName = favorites[i].substr(favorites[i].rfind('/') + 1);
+				DirEntry entry(favName, false, file_count, false);
+				entry.fullPath = favorites[i];
+				dirContents.push_back(entry);
+				file_count++;
+				iconsToDisplay++;
+				if (iconsToDisplay > 4) iconsToDisplay = 4;
+				smallIconsToDisplay++;
+				if (smallIconsToDisplay > 8) smallIconsToDisplay = 8;
+			}
+		}
+		std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+		dirContents.insert(dirContents.begin(), {"..", true, 0, false});
+		file_count++;
+		fileStartPos = 1;
+		iconsToDisplay++;
+		if (iconsToDisplay > 4) iconsToDisplay = 4;
+		smallIconsToDisplay++;
+		if (smallIconsToDisplay > 8) smallIconsToDisplay = 8;
+		return;
+	}
 
 	DIR *pdir = opendir(".");
 
@@ -360,8 +394,9 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 		}
 		logPrint("\n\n");
 		getcwd(path, PATH_MAX);
-		static std::string startPath = path;
-		if (ms().showDirectories && startPath == path && !getFavorites().empty()) {
+		const char *firstSlash = strchr(path, '/');
+		// Drive root ("sd:/" or "fat:/") is where the first '/' is also the last character
+		if (ms().showDirectories && firstSlash && firstSlash[1] == '\0' && !getFavorites().empty()) {
 			dirContents.insert(dirContents.begin(), {"*Favorites", true, 0, false});
 			file_count++;
 			fileStartPos++;
@@ -384,7 +419,7 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 	}
 
 	displayDiskIcon(ms().secondaryDevice);
-	getGameInfo(0, fileOffset, dirContents.at(fileOffset).isDirectory, dirContents.at(fileOffset).name.c_str(), false);
+	getGameInfo(0, fileOffset, dirContents.at(fileOffset).isDirectory, entryPath(dirContents.at(fileOffset)), false);
 	displayDiskIcon(false);
 
 	if (dirContents.at(fileOffset).isDirectory) {
@@ -475,7 +510,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 		if (i == file_count) {
 			break;
 		}
-		getGameInfo(n, i, dirContents.at(i).isDirectory, dirContents.at(i).name.c_str(), false);
+		getGameInfo(n, i, dirContents.at(i).isDirectory, entryPath(dirContents.at(i)), false);
 		if (dirContents.at(i).isDirectory) {
 			isDirectory[n] = true;
 		} else {
@@ -543,8 +578,8 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 			isHomebrew[n] = 0;
 		}
 
-		iconUpdate(n, isDirectory[n], dirContents.at(i).name.c_str());
-		titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
+		iconUpdate(n, isDirectory[n], entryPath(dirContents.at(i)));
+		titleUpdate(n, isDirectory[n], entryPath(dirContents.at(i)), n == cursorPosOnScreen);
 		n++;
 	}
 	displayDiskIcon(false);
@@ -593,7 +628,7 @@ void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
 	} else {
 		isDirectory[n] = false;
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
-		getGameInfo(n, i, isDirectory[n], dirContents.at(i).name.c_str(), false);
+		getGameInfo(n, i, isDirectory[n], entryPath(dirContents.at(i)), false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[n] = 0;
@@ -659,8 +694,8 @@ void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
 	}
 
 	for (int i = screenOffset; i < screenOffset+4; i++) {
-		iconUpdate(n, isDirectory[n], dirContents.at(i).name.c_str());
-		titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
+		iconUpdate(n, isDirectory[n], entryPath(dirContents.at(i)));
+		titleUpdate(n, isDirectory[n], entryPath(dirContents.at(i)), n == cursorPosOnScreen);
 		n++;
 	}
 
@@ -705,7 +740,7 @@ void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
 	} else {
 		isDirectory[n] = false;
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
-		getGameInfo(n, i, isDirectory[n], dirContents.at(i).name.c_str(), false);
+		getGameInfo(n, i, isDirectory[n], entryPath(dirContents.at(i)), false);
 
 		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 			bnrRomType[n] = 0;
@@ -771,8 +806,8 @@ void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
 	}
 
 	for (int i = screenOffset+3; i >= screenOffset; i--) {
-		iconUpdate(n, isDirectory[n], dirContents.at(i).name.c_str());
-		titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
+		iconUpdate(n, isDirectory[n], entryPath(dirContents.at(i)));
+		titleUpdate(n, isDirectory[n], entryPath(dirContents.at(i)), n == cursorPosOnScreen);
 		n--;
 	}
 
@@ -807,7 +842,7 @@ void refreshBanners(const int startRow, const int fileOffset, std::vector<DirEnt
 			if (i == file_count) {
 				break;
 			}
-			titleUpdate(n, isDirectory[n], dirContents.at(i).name.c_str(), n == cursorPosOnScreen);
+			titleUpdate(n, isDirectory[n], entryPath(dirContents.at(i)), n == cursorPosOnScreen);
 			n++;
 		}
 	}
@@ -1751,7 +1786,18 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 		if ((pressed & KEY_A) || selectionTouched) {
 			resetIconScale();
 			DirEntry* entry = &dirContents.at(fileOffset);
-			if (entry->isDirectory) {
+			if (entry->name == "*Favorites") {
+				inFavoritesView = true;
+				CURPOS = 0;
+				PAGENUM = 0;
+				return "null";
+			} else if (entry->isDirectory) {
+				if (inFavoritesView) {
+					inFavoritesView = false;
+					CURPOS = 0;
+					PAGENUM = 0;
+					return "null";
+				}
 				// Enter selected directory
 				chdir (entry->name.c_str());
 				char buf[256];
@@ -1764,6 +1810,14 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				return "null";
 			} else {
+				std::string prevPath;
+				if (!entry->fullPath.empty()) {
+					// Favorites view: run all launch checks from the game's real directory
+					prevPath = getcwd(path, PATH_MAX);
+					const std::string gameDir = entry->fullPath.substr(0, entry->fullPath.find_last_of('/') + 1);
+					chdir(gameDir.c_str());
+					ms().romfolder[ms().secondaryDevice] = gameDir;
+				}
 				getGameInfo0(fileOffset, dirContents);
 				const int cursorPosOnScreenBak = cursorPosOnScreen;
 				if (ms().ak_viewMode == TWLSettings::EViewList) {
@@ -2015,6 +2069,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					// Return the chosen file
 					return entry->name;
 				} else {
+					if (!prevPath.empty()) {
+						// Launch canceled: put the browser back where the favorites view was entered
+						chdir(prevPath.c_str());
+						ms().romfolder[ms().secondaryDevice] = prevPath;
+					}
 					cursorPosOnScreen = cursorPosOnScreenBak;
 					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				}
@@ -2089,6 +2148,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		if ((pressed & KEY_R) && bothSDandFlashcard()) {
 			resetIconScale();
+			inFavoritesView = false;
 			CURPOS = fileOffset;
 			PAGENUM = 0;
 			for (int i = 0; i < 100; i++) {
@@ -2117,6 +2177,13 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 		if (((pressed & KEY_L) || (pressed & KEY_B)
 		|| ((pressed & KEY_TOUCH) && touch.px >= folderUpX && touch.px < folderUpX+folderUpW && touch.py >= folderUpY && touch.py < folderUpY+folderUpH)) && ms().showDirectories) {
+			if (inFavoritesView) {
+				resetIconScale();
+				inFavoritesView = false;
+				CURPOS = 0;
+				PAGENUM = 0;
+				return "null";
+			}
 			resetIconScale();
 			// Go up a directory
 			chdir ("..");
@@ -2130,7 +2197,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			return "null";
 		}
 
-		if ((pressed & KEY_X) && !ms().kioskMode && !ms().preventDeletion && dirContents.at(fileOffset).name != "..") {
+		if ((pressed & KEY_X) && !ms().kioskMode && !ms().preventDeletion && dirContents.at(fileOffset).name != ".." && !inFavoritesView && dirContents.at(fileOffset).name != "*Favorites") {
 			DirEntry *entry = &dirContents.at(fileOffset);
 			bool unHide = (FAT_getAttr(entry->name.c_str()) & ATTR_HIDDEN || (strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != ".."));
 
@@ -2253,7 +2320,22 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			logPrint("\n");
 			if (isValid[cursorPosOnScreen] && !isTwlm[cursorPosOnScreen] && !isDirectory[cursorPosOnScreen] && (bnrRomType[cursorPosOnScreen] == 0 || bnrRomType[cursorPosOnScreen] == 1 || bnrRomType[cursorPosOnScreen] == 3)) {
 				logPrint("perGameSettings opened!\n");
+				std::string currentPath;
+				if (!dirContents.at(fileOffset).fullPath.empty()) {
+					logPrint("fullPath: ");
+					logPrint(dirContents.at(fileOffset).fullPath.c_str());
+					logPrint("\n");
+					currentPath = getcwd(path, PATH_MAX);
+					logPrint("currentPath: ");
+					logPrint(currentPath.c_str());
+					logPrint("\n");
+					std::string fullPath = dirContents.at(fileOffset).fullPath;
+					chdir(fullPath.substr(0, fullPath.find_last_of('/') + 1).c_str());
+				}
 				perGameSettings(dirContents.at(fileOffset).name);
+				if (!currentPath.empty()) {
+					chdir(currentPath.c_str());
+				}
 				cursorPosOnScreen = cursorPosOnScreenBak;
 				refreshBanners(screenOffset, fileOffset, dirContents);
 				for (int i = 0; i < 25; i++) bgOperations(true);
