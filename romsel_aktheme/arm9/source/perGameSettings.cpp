@@ -37,7 +37,7 @@
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
 
-#include "favorites.h"
+#include "common/favorites.h"
 
 extern bool useTwlCfg;
 

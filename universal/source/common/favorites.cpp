@@ -1,4 +1,4 @@
-#include "favorites.h"
+#include "common/favorites.h"
 
 #include <algorithm>
 #include <sys/stat.h>

@@ -61,6 +61,8 @@
 
 #include "fileCopy.h"
 
+#include "common/favorites.h"
+
 #define ENTRIES_PER_SCREEN 4
 #define ENTRIES_PER_SCREEN_SMALL 8
 #define ENTRIES_PER_SCREEN_LIST 10
@@ -130,6 +132,7 @@ struct DirEntry {
 	bool isDirectory;
 	int position;
 	bool customPos;
+	std::string fullPath;
 };
 
 bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
@@ -356,6 +359,18 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 			logPrint("Custom");
 		}
 		logPrint("\n\n");
+		getcwd(path, PATH_MAX);
+		static std::string startPath = path;
+		if (ms().showDirectories && startPath == path && !getFavorites().empty()) {
+			dirContents.insert(dirContents.begin(), {"*Favorites", true, 0, false});
+			file_count++;
+			fileStartPos++;
+
+			iconsToDisplay++;
+			if (iconsToDisplay > 4) iconsToDisplay = 4;
+			smallIconsToDisplay++;
+			if (smallIconsToDisplay > 8) smallIconsToDisplay = 8;
+		}
 		if (backFound) {
 			dirContents.insert(dirContents.begin(), {"..", true, backPos, false});
 		}
