@@ -41,3 +41,19 @@ void toggleFavorite(const std::string &fullPath) {
 	favoritesIni.SetStringVector("FAVORITES", "PATHS", favorites, '|');
 	favoritesIni.SaveIniFile(favoritesIniPath());
 }
+
+void flagReturnToFavorites() {
+	CIniFile favoritesIni(favoritesIniPath());
+	favoritesIni.SetInt("FAVORITES", "LASTVIEW", 1);
+	favoritesIni.SaveIniFile(favoritesIniPath());
+}
+
+bool consumeReturnToFavorites() {
+	CIniFile favoritesIni(favoritesIniPath());
+	if (favoritesIni.GetInt("FAVORITES", "LASTVIEW", 0) == 0) {
+		return false;
+	}
+	favoritesIni.SetInt("FAVORITES", "LASTVIEW", 0);
+	favoritesIni.SaveIniFile(favoritesIniPath());
+	return true;
+}

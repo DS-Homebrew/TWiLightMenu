@@ -210,15 +210,13 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				if (smallIconsToDisplay > 8) smallIconsToDisplay = 8;
 			}
 		}
-		std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
-		dirContents.insert(dirContents.begin(), {"..", true, 0, false});
-		file_count++;
-		fileStartPos = 1;
-		iconsToDisplay++;
-		if (iconsToDisplay > 4) iconsToDisplay = 4;
-		smallIconsToDisplay++;
-		if (smallIconsToDisplay > 8) smallIconsToDisplay = 8;
-		return;
+		if (dirContents.empty()) {
+			// Every favorite vanished — fall through and list the real directory instead
+			inFavoritesView = false;
+		} else {
+			std::sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			return;
+		}
 	}
 
 	DIR *pdir = opendir(".");
@@ -1505,6 +1503,19 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	int screenOffset = 0;
 	int screenOffsetPrev = 0;
 	int fileOffset = 0;
+
+	// If the last launch came from the favorites view, reopen it (once per boot)
+	static bool favoritesViewRestored = false;
+	if (!favoritesViewRestored) {
+		favoritesViewRestored = true;
+		if (consumeReturnToFavorites()) {
+			inFavoritesView = true;
+			// Leaving the restored view should land at the drive root, the only place it can be entered from
+			std::string cwd = getcwd(path, PATH_MAX);
+			chdir(cwd.substr(0, cwd.find('/') + 1).c_str());
+		}
+	}
+
 	std::vector<DirEntry> dirContents;
 	displayDiskIcon(ms().secondaryDevice);
 	getDirectoryContents (dirContents, extensionList);
@@ -2013,6 +2024,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				if (proceedToLaunch) {
 					applaunch = true;
 
+					if (!prevPath.empty()) {
+						// Launched from the favorites view: reopen it on next boot
+						flagReturnToFavorites();
+					}
+
 					CURPOS = fileOffset;
 					PAGENUM = 0;
 					for (int i = 0; i < 100; i++) {
@@ -2058,8 +2074,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						timesPlayedIni.SetInt(path, entry->name, (timesPlayedIni.GetInt(path, entry->name, 0) + 1));
 						timesPlayedIni.SaveIniFile(timesPlayedIniPath);
 
-						if (ms().sortMethod == TWLSettings::ESortRecent) {
+						if (ms().sortMethod == TWLSettings::ESortRecent && prevPath.empty()) {
 							// Set cursor pos to the first slot that isn't a directory so it won't be misplaced with recent sort
+							// (not in the favorites view, which always sorts alphabetically)
 							ms().saveCursorPosition[ms().secondaryDevice] = fileStartPos;
 						}
 
