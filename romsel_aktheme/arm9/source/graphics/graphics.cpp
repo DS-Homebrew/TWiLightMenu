@@ -1092,131 +1092,78 @@ static void loadBmp(const ImageType type, const char* filename) {
 		fread(bmpImageBuffer, bits, width * height, file);
 
 		bool alternatePixel = false;
+		bool alternatePixel2 = false;
 		int x = 0;
 		int y = height-1;
-		u8 pixelAdjustInfo = 0;
-		for (u32 i = 0; i < width*height; i++) {
-			pixelAdjustInfo = 0;
-			if (alternatePixel) {
-				if (bmpImageBuffer[(i*bits)] >= 0x4 && bmpImageBuffer[(i*bits)] < 0xFC) {
-					bmpImageBuffer[(i*bits)] += 0x4;
-					pixelAdjustInfo |= BIT(0);
+		for (int b = 0; b < 2; b++) {
+			for (u32 i = 0; i < width*height; i++) {
+				const u8 oldR = bmpImageBuffer[(i*bits)+2];
+				const u8 oldG = bmpImageBuffer[(i*bits)+1];
+				const u8 oldB = bmpImageBuffer[(i*bits)];
+				u8 newR = oldR;
+				u8 newG = oldG;
+				u8 newB = oldB;
+				if (alternatePixel) {
+					if (oldR >= 4 && oldR < 0xFC) newR += 4;
+					if (oldG >= 4 && oldG < 0xFC) newG += 4;
+					if (oldB >= 4 && oldB < 0xFC) newB += 4;
 				}
-				if (bmpImageBuffer[(i*bits)+1] >= 0x4 && bmpImageBuffer[(i*bits)+1] < 0xFC) {
-					bmpImageBuffer[(i*bits)+1] += 0x4;
-					pixelAdjustInfo |= BIT(1);
+				if (alternatePixel2) {
+					if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
+					if (((oldG/2) % 2) == 1 && newG < 0xFE) newG += 2;
+					if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
 				}
-				if (bmpImageBuffer[(i*bits)+2] >= 0x4 && bmpImageBuffer[(i*bits)+2] < 0xFC) {
-					bmpImageBuffer[(i*bits)+2] += 0x4;
-					pixelAdjustInfo |= BIT(2);
+				u16 color = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
+				if (colorTable && ((type < ImageType::startButton) || (color != (0 | BIT(15))))) {
+					color = colorTable[color % 0x8000] | BIT(15);
 				}
-			}
-			u16 color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
-			if (colorTable && ((type < ImageType::startButton) || (color != (0 | BIT(15))))) {
-				color = colorTable[color % 0x8000] | BIT(15);
-			}
-			if (type == ImageType::selectionBarBg) {
-				selectionBarBg[0][(y*width)+x] = color;
-			} else if (type == ImageType::weekdayText2) {
-				weekdayText2[0][(y*width)+x] = color;
-			} else if (type == ImageType::weekdayText) {
-				weekdayText[0][(y*width)+x] = color;
-			} else if (type == ImageType::dayNumbers2) {
-				dayNumbers2[0][(y*width)+x] = color;
-			} else if (type == ImageType::dayNumbers) {
-				dayNumbers[0][(y*width)+x] = color;
-			} else if (type == ImageType::yearNumbers2) {
-				yearNumbers2[0][(y*width)+x] = color;
-			} else if (type == ImageType::yearNumbers) {
-				yearNumbers[0][(y*width)+x] = color;
-			} else if (type == ImageType::clockColon2) {
-				clockColon2[0][(y*width)+x] = color;
-			} else if (type == ImageType::clockColon) {
-				clockColon[0][(y*width)+x] = color;
-			} else if (type == ImageType::clockNumbers2) {
-				clockNumbers2[0][(y*width)+x] = color;
-			} else if (type == ImageType::clockNumbers) {
-				clockNumbers[0][(y*width)+x] = color;
-			} else if (type == ImageType::cardIconBlue) {
-				cardIconBlue[0][(y*width)+x] = color;
-			} else if (type == ImageType::folderUp) {
-				folderUpIcon[0][(y*width)+x] = color;
-			} else if (type == ImageType::brightness) {
-				brightnessBtn[0][(y*width)+x] = color;
-			} else if (type == ImageType::startButton) {
-				startButton[0][(y*width)+x] = color;
-			} else if (type == ImageType::top) {
-				topImage[0][(xPos+x+(y*256))+(yPos*256)] = color;
-			} else {
-				bottomImage[0][(xPos+x+(y*256))+(yPos*256)] = color;
-			}
-			if (alternatePixel) {
-				if (pixelAdjustInfo & BIT(0)) {
-					bmpImageBuffer[(i*bits)] -= 0x4;
+				if (type == ImageType::selectionBarBg) {
+					selectionBarBg[b][(y*width)+x] = color;
+				} else if (type == ImageType::weekdayText2) {
+					weekdayText2[b][(y*width)+x] = color;
+				} else if (type == ImageType::weekdayText) {
+					weekdayText[b][(y*width)+x] = color;
+				} else if (type == ImageType::dayNumbers2) {
+					dayNumbers2[b][(y*width)+x] = color;
+				} else if (type == ImageType::dayNumbers) {
+					dayNumbers[b][(y*width)+x] = color;
+				} else if (type == ImageType::yearNumbers2) {
+					yearNumbers2[b][(y*width)+x] = color;
+				} else if (type == ImageType::yearNumbers) {
+					yearNumbers[b][(y*width)+x] = color;
+				} else if (type == ImageType::clockColon2) {
+					clockColon2[b][(y*width)+x] = color;
+				} else if (type == ImageType::clockColon) {
+					clockColon[b][(y*width)+x] = color;
+				} else if (type == ImageType::clockNumbers2) {
+					clockNumbers2[b][(y*width)+x] = color;
+				} else if (type == ImageType::clockNumbers) {
+					clockNumbers[b][(y*width)+x] = color;
+				} else if (type == ImageType::cardIconBlue) {
+					cardIconBlue[b][(y*width)+x] = color;
+				} else if (type == ImageType::folderUp) {
+					folderUpIcon[b][(y*width)+x] = color;
+				} else if (type == ImageType::brightness) {
+					brightnessBtn[b][(y*width)+x] = color;
+				} else if (type == ImageType::startButton) {
+					startButton[b][(y*width)+x] = color;
+				} else if (type == ImageType::top) {
+					topImage[b][(xPos+x+(y*256))+(yPos*256)] = color;
+				} else {
+					bottomImage[b][(xPos+x+(y*256))+(yPos*256)] = color;
 				}
-				if (pixelAdjustInfo & BIT(1)) {
-					bmpImageBuffer[(i*bits)+1] -= 0x4;
+				x++;
+				if (x == (int)width) {
+					alternatePixel = !alternatePixel;
+					alternatePixel2 = !alternatePixel2;
+					x=0;
+					y--;
 				}
-				if (pixelAdjustInfo & BIT(2)) {
-					bmpImageBuffer[(i*bits)+2] -= 0x4;
-				}
-			} else {
-				if (bmpImageBuffer[(i*bits)] >= 0x4 && bmpImageBuffer[(i*bits)] < 0xFC) {
-					bmpImageBuffer[(i*bits)] += 0x4;
-				}
-				if (bmpImageBuffer[(i*bits)+1] >= 0x4 && bmpImageBuffer[(i*bits)+1] < 0xFC) {
-					bmpImageBuffer[(i*bits)+1] += 0x4;
-				}
-				if (bmpImageBuffer[(i*bits)+2] >= 0x4 && bmpImageBuffer[(i*bits)+2] < 0xFC) {
-					bmpImageBuffer[(i*bits)+2] += 0x4;
-				}
-			}
-			color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
-			if (colorTable && ((type < ImageType::startButton) || (color != (0 | BIT(15))))) {
-				color = colorTable[color % 0x8000] | BIT(15);
-			}
-			if (type == ImageType::selectionBarBg) {
-				selectionBarBg[1][(y*width)+x] = color;
-			} else if (type == ImageType::weekdayText2) {
-				weekdayText2[1][(y*width)+x] = color;
-			} else if (type == ImageType::weekdayText) {
-				weekdayText[1][(y*width)+x] = color;
-			} else if (type == ImageType::dayNumbers2) {
-				dayNumbers2[1][(y*width)+x] = color;
-			} else if (type == ImageType::dayNumbers) {
-				dayNumbers[1][(y*width)+x] = color;
-			} else if (type == ImageType::yearNumbers2) {
-				yearNumbers2[1][(y*width)+x] = color;
-			} else if (type == ImageType::yearNumbers) {
-				yearNumbers[1][(y*width)+x] = color;
-			} else if (type == ImageType::clockColon2) {
-				clockColon2[1][(y*width)+x] = color;
-			} else if (type == ImageType::clockColon) {
-				clockColon[1][(y*width)+x] = color;
-			} else if (type == ImageType::clockNumbers2) {
-				clockNumbers2[1][(y*width)+x] = color;
-			} else if (type == ImageType::clockNumbers) {
-				clockNumbers[1][(y*width)+x] = color;
-			} else if (type == ImageType::cardIconBlue) {
-				cardIconBlue[1][(y*width)+x] = color;
-			} else if (type == ImageType::folderUp) {
-				folderUpIcon[1][(y*width)+x] = color;
-			} else if (type == ImageType::brightness) {
-				brightnessBtn[1][(y*width)+x] = color;
-			} else if (type == ImageType::startButton) {
-				startButton[1][(y*width)+x] = color;
-			} else if (type == ImageType::top) {
-				topImage[1][(xPos+x+(y*256))+(yPos*256)] = color;
-			} else {
-				bottomImage[1][(xPos+x+(y*256))+(yPos*256)] = color;
-			}
-			x++;
-			if (x == (int)width) {
 				alternatePixel = !alternatePixel;
-				x=0;
-				y--;
+				alternatePixel2 = !alternatePixel2;
 			}
 			alternatePixel = !alternatePixel;
+			y = height-1;
 		}
 		delete[] bmpImageBuffer;
 	} else if (bitsPerPixel == 16) { // 16-bit
@@ -1500,89 +1447,56 @@ static void loadPng(const bool top, const std::string filename) {
 	}
 
 	bool alternatePixel = false;
+	bool alternatePixel2 = false;
 	int x = 0;
 	int y = 0;
-	u8 pixelAdjustInfo = 0;
-	for (unsigned i=0;i<image.size()/4;i++) {
-		pixelAdjustInfo = 0;
-		if (alternatePixel) {
-			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
-				image[(i*4)] += 0x4;
-				pixelAdjustInfo |= BIT(0);
+	for (int b = 0; b < 2; b++) {
+		for (unsigned i=0;i<image.size()/4;i++) {
+			const u8 oldR = image[(i*4)];
+			const u8 oldG = image[(i*4)+1];
+			const u8 oldB = image[(i*4)+2];
+			const u8 oldAlpha = image[(i*4)+3];
+			u8 newR = oldR;
+			u8 newG = oldG;
+			u8 newB = oldB;
+			u8 newAlpha = oldAlpha;
+			if (alternatePixel) {
+				if (oldR >= 4 && oldR < 0xFC) newR += 4;
+				if (oldG >= 4 && oldG < 0xFC) newG += 4;
+				if (oldB >= 4 && oldB < 0xFC) newB += 4;
+				if (oldAlpha >= 4 && oldAlpha < 0xFC) newAlpha += 4;
 			}
-			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
-				image[(i*4)+1] += 0x4;
-				pixelAdjustInfo |= BIT(1);
+			if (alternatePixel2) {
+				if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
+				if (((oldG/2) % 2) == 1 && newG < 0xFE) newG += 2;
+				if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
+				if (((oldAlpha/2) % 2) == 1 && newAlpha < 0xFE) newAlpha += 2;
 			}
-			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
-				image[(i*4)+2] += 0x4;
-				pixelAdjustInfo |= BIT(2);
+			u16 res = 0;
+			if (oldAlpha > 0) {
+				u16 color = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
+				if (colorTable) {
+					color = colorTable[color % 0x8000] | BIT(15);
+				}
+				res = alphablend(color, colorTable ? colorTable[0] : 0, newAlpha);
 			}
-			if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
-				image[(i*4)+3] += 0x4;
-				pixelAdjustInfo |= BIT(3);
+			if (top) {
+				topImage[b][(xPos+x+(y*256))+(yPos*256)] = res;
+			} else {
+				bottomImage[b][(xPos+x+(y*256))+(yPos*256)] = res;
 			}
-		}
-		u16 res = 0;
-		if (image[(i*4)+3] > 0) {
-			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorTable) {
-				color = colorTable[color % 0x8000] | BIT(15);
+			x++;
+			if ((unsigned)x == width) {
+				alternatePixel = !alternatePixel;
+				alternatePixel2 = !alternatePixel2;
+				x=0;
+				y++;
 			}
-			res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
-		}
-		if (top) {
-			topImage[0][(xPos+x+(y*256))+(yPos*256)] = res;
-		} else {
-			bottomImage[0][(xPos+x+(y*256))+(yPos*256)] = res;
-		}
-		if (alternatePixel) {
-			if (pixelAdjustInfo & BIT(0)) {
-				image[(i*4)] -= 0x4;
-			}
-			if (pixelAdjustInfo & BIT(1)) {
-				image[(i*4)+1] -= 0x4;
-			}
-			if (pixelAdjustInfo & BIT(2)) {
-				image[(i*4)+2] -= 0x4;
-			}
-			if (pixelAdjustInfo & BIT(3)) {
-				image[(i*4)+3] -= 0x4;
-			}
-		} else {
-			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
-				image[(i*4)] += 0x4;
-			}
-			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
-				image[(i*4)+1] += 0x4;
-			}
-			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
-				image[(i*4)+2] += 0x4;
-			}
-			if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
-				image[(i*4)+3] += 0x4;
-			}
-		}
-		res = 0;
-		if (image[(i*4)+3] > 0) {
-			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorTable) {
-				color = colorTable[color % 0x8000] | BIT(15);
-			}
-			res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
-		}
-		if (top) {
-			topImage[1][(xPos+x+(y*256))+(yPos*256)] = res;
-		} else {
-			bottomImage[1][(xPos+x+(y*256))+(yPos*256)] = res;
-		}
-		x++;
-		if ((unsigned)x == width) {
 			alternatePixel = !alternatePixel;
-			x=0;
-			y++;
+			alternatePixel2 = !alternatePixel2;
 		}
 		alternatePixel = !alternatePixel;
+		y=0;
 	}
 }
 

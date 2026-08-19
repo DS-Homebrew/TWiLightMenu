@@ -241,71 +241,48 @@ static void loadBmp(const bool top, const int startMenu, const char* filename) {
 		fread(bmpImageBuffer, bits, width * height, file);
 
 		bool alternatePixel = false;
+		bool alternatePixel2 = false;
 		int x = 0;
 		int y = height-1;
-		u8 pixelAdjustInfo = 0;
-		for (u32 i = 0; i < width*height; i++) {
-			pixelAdjustInfo = 0;
-			if (alternatePixel) {
-				if (bmpImageBuffer[(i*bits)] >= 0x4 && bmpImageBuffer[(i*bits)] < 0xFC) {
-					bmpImageBuffer[(i*bits)] += 0x4;
-					pixelAdjustInfo |= BIT(0);
+		for (int b = 0; b < 2; b++) {
+			for (u32 i = 0; i < width*height; i++) {
+				const u8 oldR = bmpImageBuffer[(i*bits)+2];
+				const u8 oldG = bmpImageBuffer[(i*bits)+1];
+				const u8 oldB = bmpImageBuffer[(i*bits)];
+				u8 newR = oldR;
+				u8 newG = oldG;
+				u8 newB = oldB;
+				if (alternatePixel) {
+					if (oldR >= 4 && oldR < 0xFC) newR += 4;
+					if (oldG >= 4 && oldG < 0xFC) newG += 4;
+					if (oldB >= 4 && oldB < 0xFC) newB += 4;
 				}
-				if (bmpImageBuffer[(i*bits)+1] >= 0x4 && bmpImageBuffer[(i*bits)+1] < 0xFC) {
-					bmpImageBuffer[(i*bits)+1] += 0x4;
-					pixelAdjustInfo |= BIT(1);
+				if (alternatePixel2) {
+					if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
+					if (((oldG/2) % 2) == 1 && newG < 0xFE) newG += 2;
+					if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
 				}
-				if (bmpImageBuffer[(i*bits)+2] >= 0x4 && bmpImageBuffer[(i*bits)+2] < 0xFC) {
-					bmpImageBuffer[(i*bits)+2] += 0x4;
-					pixelAdjustInfo |= BIT(2);
+				u16 color = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
+				if (colorTable) {
+					color = colorTable[color % 0x8000] | BIT(15);
 				}
-			}
-			u16 color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
-			if (colorTable) {
-				color = colorTable[color % 0x8000] | BIT(15);
-			}
-			if (top) {
-				topImage[startMenu][0][(xPos+x+(y*256))+(yPos*256)] = color;
-			} else {
-				bottomImage[startMenu][0][(xPos+x+(y*256))+(yPos*256)] = color;
-			}
-			if (alternatePixel) {
-				if (pixelAdjustInfo & BIT(0)) {
-					bmpImageBuffer[(i*bits)] -= 0x4;
+				if (top) {
+					topImage[startMenu][b][(xPos+x+(y*256))+(yPos*256)] = color;
+				} else {
+					bottomImage[startMenu][b][(xPos+x+(y*256))+(yPos*256)] = color;
 				}
-				if (pixelAdjustInfo & BIT(1)) {
-					bmpImageBuffer[(i*bits)+1] -= 0x4;
+				x++;
+				if (x == (int)width) {
+					alternatePixel = !alternatePixel;
+					alternatePixel2 = !alternatePixel2;
+					x=0;
+					y--;
 				}
-				if (pixelAdjustInfo & BIT(2)) {
-					bmpImageBuffer[(i*bits)+2] -= 0x4;
-				}
-			} else {
-				if (bmpImageBuffer[(i*bits)] >= 0x4 && bmpImageBuffer[(i*bits)] < 0xFC) {
-					bmpImageBuffer[(i*bits)] += 0x4;
-				}
-				if (bmpImageBuffer[(i*bits)+1] >= 0x4 && bmpImageBuffer[(i*bits)+1] < 0xFC) {
-					bmpImageBuffer[(i*bits)+1] += 0x4;
-				}
-				if (bmpImageBuffer[(i*bits)+2] >= 0x4 && bmpImageBuffer[(i*bits)+2] < 0xFC) {
-					bmpImageBuffer[(i*bits)+2] += 0x4;
-				}
-			}
-			color = bmpImageBuffer[(i*bits)+2]>>3 | (bmpImageBuffer[(i*bits)+1]>>3)<<5 | (bmpImageBuffer[i*bits]>>3)<<10 | BIT(15);
-			if (colorTable) {
-				color = colorTable[color % 0x8000] | BIT(15);
-			}
-			if (top) {
-				topImage[startMenu][1][(xPos+x+(y*256))+(yPos*256)] = color;
-			} else {
-				bottomImage[startMenu][1][(xPos+x+(y*256))+(yPos*256)] = color;
-			}
-			x++;
-			if (x == (int)width) {
 				alternatePixel = !alternatePixel;
-				x=0;
-				y--;
+				alternatePixel2 = !alternatePixel2;
 			}
 			alternatePixel = !alternatePixel;
+			y = height-1;
 		}
 		delete[] bmpImageBuffer;
 	} else if (bitsPerPixel == 16) { // 16-bit
@@ -430,89 +407,56 @@ static void loadPng(const bool top, const int startMenu, const std::string filen
 	}
 
 	bool alternatePixel = false;
+	bool alternatePixel2 = false;
 	int x = 0;
 	int y = 0;
-	u8 pixelAdjustInfo = 0;
-	for (unsigned i=0;i<image.size()/4;i++) {
-		pixelAdjustInfo = 0;
-		if (alternatePixel) {
-			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
-				image[(i*4)] += 0x4;
-				pixelAdjustInfo |= BIT(0);
+	for (int b = 0; b < 2; b++) {
+		for (unsigned i=0;i<image.size()/4;i++) {
+			const u8 oldR = image[(i*4)];
+			const u8 oldG = image[(i*4)+1];
+			const u8 oldB = image[(i*4)+2];
+			const u8 oldAlpha = image[(i*4)+3];
+			u8 newR = oldR;
+			u8 newG = oldG;
+			u8 newB = oldB;
+			u8 newAlpha = oldAlpha;
+			if (alternatePixel) {
+				if (oldR >= 4 && oldR < 0xFC) newR += 4;
+				if (oldG >= 4 && oldG < 0xFC) newG += 4;
+				if (oldB >= 4 && oldB < 0xFC) newB += 4;
+				if (oldAlpha >= 4 && oldAlpha < 0xFC) newAlpha += 4;
 			}
-			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
-				image[(i*4)+1] += 0x4;
-				pixelAdjustInfo |= BIT(1);
+			if (alternatePixel2) {
+				if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
+				if (((oldG/2) % 2) == 1 && newG < 0xFE) newG += 2;
+				if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
+				if (((oldAlpha/2) % 2) == 1 && newAlpha < 0xFE) newAlpha += 2;
 			}
-			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
-				image[(i*4)+2] += 0x4;
-				pixelAdjustInfo |= BIT(2);
+			u16 res = 0;
+			if (oldAlpha > 0) {
+				u16 color = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
+				if (colorTable) {
+					color = colorTable[color % 0x8000] | BIT(15);
+				}
+				res = alphablend(color, colorTable ? colorTable[0] : 0, newAlpha);
 			}
-			if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
-				image[(i*4)+3] += 0x4;
-				pixelAdjustInfo |= BIT(3);
+			if (top) {
+				topImage[startMenu][b][(xPos+x+(y*256))+(yPos*256)] = res;
+			} else {
+				bottomImage[startMenu][b][(xPos+x+(y*256))+(yPos*256)] = res;
 			}
-		}
-		u16 res = 0;
-		if (image[(i*4)+3] > 0) {
-			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorTable) {
-				color = colorTable[color % 0x8000] | BIT(15);
+			x++;
+			if ((unsigned)x == width) {
+				alternatePixel = !alternatePixel;
+				alternatePixel2 = !alternatePixel2;
+				x=0;
+				y++;
 			}
-			res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
-		}
-		if (top) {
-			topImage[startMenu][0][(xPos+x+(y*256))+(yPos*256)] = res;
-		} else {
-			bottomImage[startMenu][0][(xPos+x+(y*256))+(yPos*256)] = res;
-		}
-		if (alternatePixel) {
-			if (pixelAdjustInfo & BIT(0)) {
-				image[(i*4)] -= 0x4;
-			}
-			if (pixelAdjustInfo & BIT(1)) {
-				image[(i*4)+1] -= 0x4;
-			}
-			if (pixelAdjustInfo & BIT(2)) {
-				image[(i*4)+2] -= 0x4;
-			}
-			if (pixelAdjustInfo & BIT(3)) {
-				image[(i*4)+3] -= 0x4;
-			}
-		} else {
-			if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
-				image[(i*4)] += 0x4;
-			}
-			if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
-				image[(i*4)+1] += 0x4;
-			}
-			if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
-				image[(i*4)+2] += 0x4;
-			}
-			if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
-				image[(i*4)+3] += 0x4;
-			}
-		}
-		res = 0;
-		if (image[(i*4)+3] > 0) {
-			u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (colorTable) {
-				color = colorTable[color % 0x8000] | BIT(15);
-			}
-			res = alphablend(color, colorTable ? colorTable[0] : 0, image[(i*4)+3]);
-		}
-		if (top) {
-			topImage[startMenu][1][(xPos+x+(y*256))+(yPos*256)] = res;
-		} else {
-			bottomImage[startMenu][1][(xPos+x+(y*256))+(yPos*256)] = res;
-		}
-		x++;
-		if ((unsigned)x == width) {
 			alternatePixel = !alternatePixel;
-			x=0;
-			y++;
+			alternatePixel2 = !alternatePixel2;
 		}
 		alternatePixel = !alternatePixel;
+		y=0;
 	}
 }
 

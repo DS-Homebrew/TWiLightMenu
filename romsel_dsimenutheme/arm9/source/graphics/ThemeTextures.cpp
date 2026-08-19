@@ -995,6 +995,7 @@ bool ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 		lodepng::decode(image, imageWidth, imageHeight, filename);
 	}
 	bool alternatePixel = false;
+	bool alternatePixel2 = false;
 	if (imageWidth > 256 || imageHeight > 192) return false;
 
 	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
@@ -1024,82 +1025,58 @@ bool ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 	int photoX = photoXstart;
 	int photoY = imageYpos;
 
-	for (uint i=0;i<image.size()/4;i++) {
-		u8 pixelAdjustInfo = 0;
-		if (boxArtColorDeband) {
+	for (int b = 0; b < boxArtColorDeband+1; b++) {
+		for (uint i=0;i<image.size()/4;i++) {
+			const u8 oldR = image[(i*4)];
+			const u8 oldG = image[(i*4)+1];
+			const u8 oldB = image[(i*4)+2];
+			const u8 oldAlpha = image[(i*4)+3];
+			u8 newR = oldR;
+			u8 newG = oldG;
+			u8 newB = oldB;
+			u8 newAlpha = oldAlpha;
 			if (alternatePixel) {
-				if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
-					image[(i*4)] += 0x4;
-					pixelAdjustInfo |= BIT(0);
-				}
-				if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
-					image[(i*4)+1] += 0x4;
-					pixelAdjustInfo |= BIT(1);
-				}
-				if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
-					image[(i*4)+2] += 0x4;
-					pixelAdjustInfo |= BIT(2);
-				}
-				if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
-					image[(i*4)+3] += 0x4;
-					pixelAdjustInfo |= BIT(3);
-				}
+				if (oldR >= 4 && oldR < 0xFC) newR += 4;
+				if (oldG >= 4 && oldG < 0xFC) newG += 4;
+				if (oldB >= 4 && oldB < 0xFC) newB += 4;
+				if (oldAlpha >= 4 && oldAlpha < 0xFC) newAlpha += 4;
 			}
-		}
-		u16 color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (colorTable) {
-			color = colorTable[color % 0x8000] | BIT(15);
-		}
-		if (image[(i*4)+3] == 255) {
-			bmpImageBuffer[i] = color;
-		} else {
-			bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], image[(i*4)+3]);
-		}
-		if (boxArtColorDeband) {
-			if (alternatePixel) {
-				if (pixelAdjustInfo & BIT(0)) {
-					image[(i*4)] -= 0x4;
-				}
-				if (pixelAdjustInfo & BIT(1)) {
-					image[(i*4)+1] -= 0x4;
-				}
-				if (pixelAdjustInfo & BIT(2)) {
-					image[(i*4)+2] -= 0x4;
-				}
-				if (pixelAdjustInfo & BIT(3)) {
-					image[(i*4)+3] -= 0x4;
-				}
-			} else {
-				if (image[(i*4)] >= 0x4 && image[(i*4)] < 0xFC) {
-					image[(i*4)] += 0x4;
-				}
-				if (image[(i*4)+1] >= 0x4 && image[(i*4)+1] < 0xFC) {
-					image[(i*4)+1] += 0x4;
-				}
-				if (image[(i*4)+2] >= 0x4 && image[(i*4)+2] < 0xFC) {
-					image[(i*4)+2] += 0x4;
-				}
-				if (image[(i*4)+3] >= 0x4 && image[(i*4)+3] < 0xFC) {
-					image[(i*4)+3] += 0x4;
-				}
+			if (alternatePixel2 && boxArtColorDeband) {
+				if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
+				if (((oldG/2) % 2) == 1 && newG < 0xFE) newG += 2;
+				if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
+				if (((oldAlpha/2) % 2) == 1 && newAlpha < 0xFE) newAlpha += 2;
 			}
-			color = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			u16 color = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
 			if (colorTable) {
 				color = colorTable[color % 0x8000] | BIT(15);
 			}
-			if (image[(i*4)+3] == 255) {
-				bmpImageBuffer2[i] = color;
-			} else {
-				bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], image[(i*4)+3]);
+			if (b == 0) {
+				if (oldAlpha == 255) {
+					bmpImageBuffer[i] = color;
+				} else {
+					bmpImageBuffer[i] = alphablend(color, _bgSubBuffer[(photoY*256)+photoX], newAlpha);
+				}
+			} else if (boxArtColorDeband) {
+				if (oldAlpha == 255) {
+					bmpImageBuffer2[i] = color;
+				} else {
+					bmpImageBuffer2[i] = alphablend(color, _bgSubBuffer2[(photoY*256)+photoX], newAlpha);
+				}
 			}
-			if ((i % boxArtWidth) == boxArtWidth-1) alternatePixel = !alternatePixel;
+			if ((i % boxArtWidth) == boxArtWidth-1) {
+				alternatePixel = !alternatePixel;
+				alternatePixel2 = !alternatePixel2;
+			}
 			alternatePixel = !alternatePixel;
+			alternatePixel2 = !alternatePixel2;
+			photoX++;
+			if (photoX == photoXend) {
+				photoX = photoXstart;
+				photoY++;
+			}
 		}
-		photoX++;
-		if (photoX == photoXend) {
-			photoX = photoXstart;
-			photoY++;
-		}
+		alternatePixel = !alternatePixel;
 	}
 
 	u16 *src = bmpImageBuffer;
