@@ -217,8 +217,10 @@ void imageLoad(const char* filename) {
 				}
 				x++;
 				if ((unsigned)x == width) {
-					alternatePixel = !alternatePixel;
-					alternatePixel2 = !alternatePixel2;
+					if ((x % 2) == 0) {
+						alternatePixel = !alternatePixel;
+						alternatePixel2 = !alternatePixel2;
+					}
 					x=0;
 					y++;
 				}
@@ -317,8 +319,10 @@ void imageLoad(const char* filename) {
 					dsImageBuffer[b][(xPos+x+(y*256))+(yPos*256)] = color;
 					x++;
 					if (x == (int)width) {
-						alternatePixel = !alternatePixel;
-						alternatePixel2 = !alternatePixel2;
+						if ((x % 2) == 0) {
+							alternatePixel = !alternatePixel;
+							alternatePixel2 = !alternatePixel2;
+						}
 						x=0;
 						y--;
 					}
