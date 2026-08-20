@@ -379,42 +379,82 @@ void imageLoad(const char* filename) {
 
 			delete[] bmpImageBuffer;
 		} else if (bitsPerPixel == 8) { // 8-bit
-			u16* pixelBuffer = new u16[256];
+			dsImageBuffer[0] = new u16[256*192];
+			dsImageBuffer[1] = new u16[256*192];
+			toncset16(dsImageBuffer[0], colorTable ? colorTable[0] : 0, 256*192);
+			toncset16(dsImageBuffer[1], colorTable ? colorTable[0] : 0, 256*192);
+
+			setupRgb565BmpDisplay();
+
+			u8* pixelBufferB = new u8[256];
+			u8* pixelBufferG = new u8[256];
+			u8* pixelBufferR = new u8[256];
 			for (int i = 0; i < 256; i++) {
-				u8 pixelB = 0;
-				u8 pixelG = 0;
-				u8 pixelR = 0;
 				u8 unk = 0;
-				fread(&pixelB, 1, 1, file);
-				fread(&pixelG, 1, 1, file);
-				fread(&pixelR, 1, 1, file);
+				fread(&pixelBufferB[i], 1, 1, file);
+				fread(&pixelBufferG[i], 1, 1, file);
+				fread(&pixelBufferR[i], 1, 1, file);
 				fread(&unk, 1, 1, file);
-
-				pixelBuffer[i] = rgb8ToRgb565(pixelR, pixelG, pixelB);
-				if (colorTable) {
-					pixelBuffer[i] = colorTable[pixelBuffer[i] % 0x8000];
-				}
 			}
-			tonccpy(BG_PALETTE, pixelBuffer, 256*2);
-			delete[] pixelBuffer;
 
-			u8 *bmpImageBuffer = new u8[width * height];
-			fread(bmpImageBuffer, 1, width * height, file);
+			u8 *bmpImageBuffer = new u8[(width * height)*3];
+			u8 *bmpImageBuffer8 = new u8[width * height];
+			fread(bmpImageBuffer8, 1, width * height, file);
 
+			for (u32 i = 0; i < width*height; i++) {
+				bmpImageBuffer[(i*3)] = pixelBufferB[bmpImageBuffer8[i]];
+				bmpImageBuffer[(i*3)+1] = pixelBufferG[bmpImageBuffer8[i]];
+				bmpImageBuffer[(i*3)+2] = pixelBufferR[bmpImageBuffer8[i]];
+			}
+			delete[] pixelBufferB;
+			delete[] pixelBufferG;
+			delete[] pixelBufferR;
+			delete[] bmpImageBuffer8;
+
+			bool alternatePixel = false;
+			bool alternatePixel2 = false;
 			int x = 0;
 			int y = height-1;
-			for (u32 i = 0; i < width*height; i++) {
-				dsImageBuffer8[(xPos+x+(y*256))+(yPos*256)] = bmpImageBuffer[i];
-				x++;
-				if (x == (int)width) {
-					x=0;
-					y--;
+			for (int b = 0; b < 2; b++) {
+				for (u32 i = 0; i < width*height; i++) {
+					const u8 oldR = bmpImageBuffer[(i*3)+2];
+					const u8 oldG = bmpImageBuffer[(i*3)+1];
+					const u8 oldB = bmpImageBuffer[(i*3)];
+					u8 newR = oldR;
+					u8 newG = oldG;
+					u8 newB = oldB;
+					if (alternatePixel) {
+						if (oldR >= 4 && oldR < 0xFC) newR += 4;
+						if (oldG >= 2 && oldG < 0xFE) newG += 2;
+						if (oldB >= 4 && oldB < 0xFC) newB += 4;
+					}
+					if (alternatePixel2) {
+						if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
+						if ((oldG % 2) == 1 && newG < 0xFF) newG++;
+						if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
+					}
+					u16 color = rgb8ToRgb565(newR, newG, newB);
+					if (colorTable) {
+						color = colorTable[color % 0x8000];
+					}
+					dsImageBuffer[b][(xPos+x+(y*256))+(yPos*256)] = color;
+					x++;
+					if (x == (int)width) {
+						if ((x % 2) == 0) {
+							alternatePixel = !alternatePixel;
+							alternatePixel2 = !alternatePixel2;
+						}
+						x=0;
+						y--;
+					}
+					alternatePixel = !alternatePixel;
+					alternatePixel2 = !alternatePixel2;
 				}
+				alternatePixel = !alternatePixel;
+				y = height-1;
 			}
-			dmaCopyWords(0, dsImageBuffer8, bgGetGfxPtr(bg3Main), 256*192);
-			delete[] dsImageBuffer8;
-
 			delete[] bmpImageBuffer;
+			doubleBuffer = true;
 		} else if (bitsPerPixel == 1) { // 1-bit
 			u16 monoPixel[2] = {0};
 			for (int i = 0; i < 2; i++) {
