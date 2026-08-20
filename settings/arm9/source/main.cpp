@@ -1227,7 +1227,7 @@ int settingsMode(void)
 		guiPage.option(STR_BOXART, STR_DESCRIPTION_BOXART, Option::Int(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {1, 0});
 	}
 	if (dsiFeatures() || (sys().isRegularDS() && sys().dsDebugRam())) {
-		guiPage.option(STR_PHOTO_BOXART_COLOR_RANGE, STR_DESCRIPTION_PHOTO_BOXART_COLOR_RANGE, Option::Bool(&ms().boxArtColorDeband), {STR_HIGH, STR_LOW}, {true, false});
+		guiPage.option(STR_PHOTO_BOXART_DITHER_LEVEL, STR_DESCRIPTION_PHOTO_BOXART_DITHER_LEVEL, Option::Bool(&ms().boxArtColorDeband), {STR_REDUCED, STR_NORMAL}, {true, false});
 	}
 	
 	if (sdFound()) {
