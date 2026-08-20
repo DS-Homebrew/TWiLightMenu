@@ -1077,6 +1077,7 @@ bool ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 			}
 		}
 		alternatePixel = !alternatePixel;
+		photoY = imageYpos;
 	}
 
 	u16 *src = bmpImageBuffer;
