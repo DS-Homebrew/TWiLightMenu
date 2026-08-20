@@ -37,6 +37,7 @@ bool supportsDoubleBuffer = false;
 
 extern void ClearBrightness();
 extern int imageType;
+extern bool secondBuffer;
 
 //---------------------------------------------------------------------------------
 void stop (void) {
@@ -151,6 +152,10 @@ static void mainLoop(void) {
 			doubleBuffer = !doubleBuffer;
 			printText();
 			snd().playSwitch();
+		}
+
+		if ((pressed & KEY_Y) && supportsDoubleBuffer && !doubleBuffer) {
+			secondBuffer = !secondBuffer;
 		}
 
 		if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.px >= 0 && touch.px < 80 && touch.py >= 169 && touch.py < 192)) {

@@ -40,7 +40,7 @@ int fadeDelay = 0;
 int screenBrightness = 31;
 int imageType = 0;
 bool doubleBuffer = false;
-static bool secondBuffer = false;
+bool secondBuffer = false;
 
 u8* dsImageBuffer8;
 u16* dsImageBuffer[2];
