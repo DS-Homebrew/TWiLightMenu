@@ -7,7 +7,6 @@
 
 #include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
-#include "common/flashcard.h"
 #include "common/tonccpy.h"
 #include "common/lodepng.h"
 #include "common/ColorLut.h"
@@ -85,10 +84,8 @@ extern bool useTwlCfg;
 
 extern u16 convertVramColorToGrayscale(u16 val);
 
-extern u16 frameBuffer[2][256*192];
-extern u16 frameBufferBot[2][256*192];
-extern bool doubleBuffer;
-extern bool doubleBufferTop;
+extern bool multiBuffer;
+extern bool multiBufferTop;
 
 extern bool fadeType;
 extern bool fadeColor;
@@ -98,7 +95,8 @@ static int frameDelaySprite = 0;
 static bool frameDelaySpriteEven = true;	// For 24FPS or 48FPS
 static bool loadFrameSprite = true;
 static bool longVersion = false;
-static bool highFPS = false; // 75FPS
+extern bool highFPS;
+extern int bufferCount;
 
 /*static int anniversaryTextYpos = -14;
 static bool anniversaryTextYposMove = false;
@@ -715,7 +713,8 @@ void twlMenuVideo(void) {
 	lodepng::decode(image, width, height, logoPath);
 	bool alternatePixel = false;
 	bool alternatePixel2 = false;
-	for (int b = 0; b < 2; b++) {
+	bool alternatePixel3 = false;
+	for (int b = 0; b < bufferCount; b++) {
 		for (unsigned i=0;i<image.size()/4;i++) {
 			const u8 oldR = image[(i*4)];
 			const u8 oldG = image[(i*4)+1];
@@ -729,9 +728,14 @@ void twlMenuVideo(void) {
 				if (oldB >= 4 && oldB < 0xFC) newB += 4;
 			}
 			if (alternatePixel2) {
-				if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
-				if (((oldG/2) % 2) == 1 && newG < 0xFE) newG += 2;
-				if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
+				if (oldR >= 2 && newR < 0xFE) newR += 2;
+				if (oldG >= 2 && newG < 0xFE) newG += 2;
+				if (oldB >= 2 && newB < 0xFE) newB += 2;
+			}
+			if (alternatePixel3) {
+				if (oldR >= 1 && newR < 0xFF) newR++;
+				if (oldG >= 1 && newG < 0xFF) newG++;
+				if (oldB >= 1 && newB < 0xFF) newB++;
 			}
 			frameBuffer[b][i] = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
 			if ((i % 256) == 255) {
@@ -742,11 +746,17 @@ void twlMenuVideo(void) {
 			alternatePixel2 = !alternatePixel2;
 		}
 		alternatePixel = !alternatePixel;
+		if (b == 1) {
+			alternatePixel2 = !alternatePixel2;
+		}
+		if (highFPS) {
+			alternatePixel3 = !alternatePixel3;
+		}
 	}
 	image.clear();
 
-	doubleBuffer = true;
-	doubleBufferTop = true;
+	multiBuffer = true;
+	multiBufferTop = true;
 
 	if (showTwl) {
 		lodepng::decode(image, width, height, "nitro:/graphics/TWL.png");
@@ -781,8 +791,9 @@ void twlMenuVideo(void) {
 			}
 			const u16 val = *(src++);
 			if (image[(i*4)+3] > 0) {
-				frameBuffer[0][y*256+x] = val;
-				frameBuffer[1][y*256+x] = val;
+				for (int b = 0; b < bufferCount; b++) {
+					frameBuffer[b][y*256+x] = val;
+				}
 			}
 			x++;
 		}
@@ -793,13 +804,12 @@ void twlMenuVideo(void) {
 	}
 
 	if (colorTable) {
-		for (int i=0; i<256*192; i++) {
-			frameBuffer[0][i] = colorTable[frameBuffer[0][i] % 0x8000] | BIT(15);
-			frameBuffer[1][i] = colorTable[frameBuffer[1][i] % 0x8000] | BIT(15);
+		for (int b = 0; b < bufferCount; b++) {
+			for (int i=0; i<256*192; i++) {
+				frameBuffer[b][i] = colorTable[frameBuffer[b][i] % 0x8000] | BIT(15);
+			}
 		}
 	}
-
-	highFPS = ((sys().isRegularDS() && !sys().isDSPhat()) || ((dsiFeatures() || sdFound()) && ms().consoleModel < 2));
 
 	if (highFPS) {
 		*(u32*)(0x2FFFD0C) = 0x43535046;

@@ -1179,9 +1179,9 @@ bool ThemeTextures::drawBoxArtBmp(const char *filename, bool inMem) {
 				if (oldB >= 4 && oldB < 0xFC) newB += 4;
 			}
 			if (alternatePixel2 && boxArtColorDeband) {
-				if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
-				if (((oldG/2) % 2) == 1 && newG < 0xFE) newG += 2;
-				if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
+				if (oldR >= 2 && newR < 0xFE) newR += 2;
+				if (oldG >= 2 && newG < 0xFE) newG += 2;
+				if (oldB >= 2 && newB < 0xFE) newB += 2;
 			}
 			u16 color = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
 			if (colorTable) {
@@ -1292,10 +1292,10 @@ bool ThemeTextures::drawBoxArtPng(const char *filename, bool inMem) {
 				if (oldAlpha >= 4 && oldAlpha < 0xFC) newAlpha += 4;
 			}
 			if (alternatePixel2 && boxArtColorDeband) {
-				if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
-				if (((oldG/2) % 2) == 1 && newG < 0xFE) newG += 2;
-				if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
-				if (((oldAlpha/2) % 2) == 1 && newAlpha < 0xFE) newAlpha += 2;
+				if (oldR >= 2 && newR < 0xFE) newR += 2;
+				if (oldG >= 2 && newG < 0xFE) newG += 2;
+				if (oldB >= 2 && newB < 0xFE) newB += 2;
+				if (oldAlpha >= 2 && newAlpha < 0xFE) newAlpha += 2;
 			}
 			u16 color = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
 			if (colorTable) {

@@ -33,11 +33,13 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
-bool supportsDoubleBuffer = false;
+bool supportsMultiBuffer = false;
 
 extern void ClearBrightness();
+extern bool highFPS;
 extern int imageType;
-extern bool secondBuffer;
+extern int currentBuffer;
+extern int bufferCount;
 
 //---------------------------------------------------------------------------------
 void stop (void) {
@@ -116,8 +118,8 @@ void printText(void) {
 	if (ms().macroMode) return;
 
 	clearText(false);
-	if (supportsDoubleBuffer) {
-		printSmall(false, 0, 88, doubleBuffer ? STR_A_REGULAR_DITHERING : STR_A_TEMPORAL_DITHERING, Alignment::center);
+	if (supportsMultiBuffer) {
+		printSmall(false, 0, 88, multiBuffer ? STR_A_REGULAR_DITHERING : STR_A_TEMPORAL_DITHERING, Alignment::center);
 	}
 	printSmall(false, -88, 174, STR_BACK, Alignment::center);
 	updateText(false);
@@ -148,14 +150,15 @@ static void mainLoop(void) {
 			customSleep();
 		}
 
-		if ((pressed & KEY_A) && supportsDoubleBuffer) {
-			doubleBuffer = !doubleBuffer;
+		if ((pressed & KEY_A) && supportsMultiBuffer) {
+			multiBuffer = !multiBuffer;
 			printText();
 			snd().playSwitch();
 		}
 
-		if ((pressed & KEY_Y) && supportsDoubleBuffer && !doubleBuffer) {
-			secondBuffer = !secondBuffer;
+		if ((pressed & KEY_Y) && supportsMultiBuffer && !multiBuffer) {
+			currentBuffer++;
+			if (currentBuffer == bufferCount) currentBuffer = 0;
 		}
 
 		if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.px >= 0 && touch.px < 80 && touch.py >= 169 && touch.py < 192)) {
@@ -184,6 +187,11 @@ int imageViewer(void) {
 	keysSetRepeat(25, 25);
 
 	ms().loadSettings();
+
+	highFPS = ((sys().isRegularDS() && !sys().isDSPhat()) || ((dsiFeatures() || sdFound()) && ms().consoleModel < 2));
+	if (highFPS) {
+		bufferCount = 4;
+	}
 
 	const char* imagePathChar = ms().romPath[ms().previousUsedDevice].c_str();
 
@@ -227,11 +235,16 @@ int imageViewer(void) {
 	}
 
 	bgLoad();
-	supportsDoubleBuffer = doubleBuffer;
+	supportsMultiBuffer = multiBuffer;
 	printText();
 
 	snd();
 	snd().beginStream();
+
+	if (highFPS) {
+		*(u32*)(0x2FFFD0C) = 0x43535046;
+		swiWaitForVBlank();
+	}
 
 	fadeType = true;	// Fade in from white
 	mainLoop();

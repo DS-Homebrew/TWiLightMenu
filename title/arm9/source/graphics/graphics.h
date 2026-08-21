@@ -19,8 +19,8 @@
 ------------------------------------------------------------------*/
 #pragma once
 
-extern u16 frameBuffer[2][256*192];
-extern u16 frameBufferBot[2][256*192];
+extern u16* frameBuffer[4];
+extern u16* frameBufferBot[4];
 extern u16* colorTable;
 extern bool invertedColors;
 extern bool noWhiteFade;

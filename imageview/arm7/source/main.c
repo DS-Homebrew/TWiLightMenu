@@ -31,11 +31,14 @@
 #include <maxmod7.h>
 #include "common/isPhatCheck.h"
 #include "common/arm7status.h"
+#include "fpsAdjust.h"
 
 void my_touchInit();
 void my_installSystemFIFO(void);
 
 u8 my_i2cReadRegister(u8 device, u8 reg);
+
+static fpsa_t sActiveFpsa;
 
 #define BIT_SET(c, n) ((c) << (n))
 
@@ -79,6 +82,9 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
+	void my_inputGetAndSend(void);
+	my_inputGetAndSend();
+
 	if (*(int*)0x02003004 == 2) {
 		soundFadeIn();
 	} else if (*(int*)0x02003004 == 1) {
@@ -89,12 +95,139 @@ void VblankHandler(void) {
 	REG_MASTER_VOLUME = soundVolume;
 }
 
-//---------------------------------------------------------------------------------
-void VcountHandler() {
-//---------------------------------------------------------------------------------
-	void my_inputGetAndSend(void);
-	my_inputGetAndSend();
+static void vcountIrqLower()
+{
+    while (1)
+    {
+        if (sActiveFpsa.initial)
+        {
+            sActiveFpsa.initial = FALSE;
+            break;
+        }
+
+        if (!sActiveFpsa.backJump)
+            sActiveFpsa.cycleDelta += sActiveFpsa.targetCycles - ((u64)FPSA_CYCLES_PER_FRAME << 24);
+        u32 linesToAdd = 0;
+        while (sActiveFpsa.cycleDelta >= (s64)((u64)FPSA_CYCLES_PER_LINE << 23))
+        {
+            sActiveFpsa.cycleDelta -= (u64)FPSA_CYCLES_PER_LINE << 24;
+            if (++linesToAdd == 5)
+                break;
+        }
+        if (linesToAdd == 0)
+        {
+            sActiveFpsa.backJump = FALSE;
+            break;
+        }
+        if (linesToAdd > 1)
+        {
+            sActiveFpsa.backJump = TRUE;
+        }
+        else
+        {
+            // don't set the backJump flag because the irq is not retriggered if the new vcount
+            // is the same as the previous line
+            sActiveFpsa.backJump = FALSE;
+        }
+        // ensure we won't accidentally run out of line time
+        while (REG_DISPSTAT & DISP_IN_HBLANK)
+            ;
+        int curVCount = REG_VCOUNT;
+        REG_VCOUNT = curVCount - (linesToAdd - 1);
+        if (linesToAdd == 1)
+            break;
+
+        while (REG_VCOUNT >= curVCount)//FPSA_ADJUST_MAX_VCOUNT - 5)
+            ;
+        while (REG_VCOUNT < curVCount)//FPSA_ADJUST_MAX_VCOUNT - 5)
+            ;
+    }
+    REG_IF = IRQ_VCOUNT;
 }
+
+static void vcountIrqHigher()
+{
+    if (sActiveFpsa.initial)
+    {
+        sActiveFpsa.initial = FALSE;
+        return;
+    }
+    sActiveFpsa.cycleDelta += ((u64)FPSA_CYCLES_PER_FRAME << 24) - sActiveFpsa.targetCycles;
+    u32 linesToSkip = 0;
+    while (sActiveFpsa.cycleDelta >= (s64)((u64)FPSA_CYCLES_PER_LINE << 23))
+    {
+        sActiveFpsa.cycleDelta -= (u64)FPSA_CYCLES_PER_LINE << 24;
+        if (++linesToSkip == sActiveFpsa.linesToSkipMax)
+            break;
+    }
+    if (linesToSkip == 0)
+        return;
+    // ensure we won't accidentally run out of line time
+    while (REG_DISPSTAT & DISP_IN_HBLANK)
+        ;
+    REG_VCOUNT = REG_VCOUNT + (linesToSkip + 1);
+}
+
+void fpsa_init(fpsa_t* fpsa)
+{
+    memset(fpsa, 0, sizeof(fpsa_t));
+    fpsa->isStarted = FALSE;
+    fpsa_setTargetFrameCycles(fpsa, (u64)FPSA_CYCLES_PER_FRAME << 24); // default to no adjustment
+}
+
+void fpsa_start(fpsa_t* fpsa)
+{
+    int irq = enterCriticalSection();
+    do
+    {
+        if (fpsa->isStarted)
+            break;
+        if (fpsa->targetCycles == ((u64)FPSA_CYCLES_PER_FRAME << 24))
+            break;
+        irqDisable(IRQ_VCOUNT);
+        fpsa->backJump = FALSE;
+        fpsa->cycleDelta = 0;
+        fpsa->initial = TRUE;
+        fpsa->isFpsLower = fpsa->targetCycles >= ((u64)FPSA_CYCLES_PER_FRAME << 24);
+        // prevent the irq from immediately happening
+        while (REG_VCOUNT != FPSA_ADJUST_MAX_VCOUNT + 2)
+            ;
+        fpsa->isStarted = TRUE;
+        if (fpsa->isFpsLower)
+        {
+            SetYtrigger(FPSA_ADJUST_MAX_VCOUNT - 5);
+            irqSet(IRQ_VCOUNT, vcountIrqLower);
+        }
+        else
+        {
+            SetYtrigger(FPSA_ADJUST_MIN_VCOUNT);
+            irqSet(IRQ_VCOUNT, vcountIrqHigher);
+        }
+        irqEnable(IRQ_VCOUNT);
+    } while (0);
+    leaveCriticalSection(irq);
+}
+
+void fpsa_stop(fpsa_t* fpsa)
+{
+    if (!fpsa->isStarted)
+        return;
+    fpsa->isStarted = FALSE;
+    irqDisable(IRQ_VCOUNT);
+}
+
+void fpsa_setTargetFrameCycles(fpsa_t* fpsa, u64 cycles)
+{
+    fpsa->targetCycles = cycles;
+}
+
+void fpsa_setTargetFpsFraction(fpsa_t* fpsa, u32 num, u32 den)
+{
+    u64 cycles = (((double)FPSA_SYS_CLOCK * den * (1 << 24)) / num) + 0.5;
+    fpsa_setTargetFrameCycles(fpsa, cycles);//((((u64)FPSA_SYS_CLOCK * (u64)den) << 24) + ((num + 1) >> 1)) / num);
+	fpsa->linesToSkipMax = (num / den > 62) ? 55 : 5;
+}
+
 
 volatile bool exitflag = false;
 
@@ -142,10 +275,8 @@ int main() {
 	installSoundFIFO();
 	my_installSystemFIFO();
 
-	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
-
-	irqEnable(IRQ_VBLANK | IRQ_VCOUNT);
+	irqEnable(IRQ_VBLANK);
 
 	setPowerButtonCB(powerButtonCB);
 
@@ -194,6 +325,25 @@ int main() {
 				status = (status & ~SD_MASK) | ((1 << SD_OFF) & SD_MASK);
 				fifoSendValue32(FIFO_USER_03, status);
 			}
+		}
+		if (*(u32*)(0x2FFFD0C) == 0x43535046) {
+			const u32 num = 76;
+			const u32 den = 1;
+			const int max = 78;
+
+			int vblankCount = 1;
+			while (num * (vblankCount + 1) / den < max)
+				vblankCount++;
+
+			// safety
+			if (num * vblankCount / den < max)
+			{
+				fpsa_init(&sActiveFpsa);
+				fpsa_setTargetFpsFraction(&sActiveFpsa, num * vblankCount, den);
+				fpsa_start(&sActiveFpsa);
+			}
+
+			*(u32*)(0x2FFFD0C) = 0;
 		}
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();

@@ -37,13 +37,15 @@ extern bool controlTopBright;
 extern bool controlBottomBright;
 int fadeDelay = 0;
 
+bool highFPS = false;
 int screenBrightness = 31;
 int imageType = 0;
-bool doubleBuffer = false;
-bool secondBuffer = false;
+bool multiBuffer = false;
+int currentBuffer = 0;
+int bufferCount = 2;
 
 u8* dsImageBuffer8;
-u16* dsImageBuffer[2];
+u16* dsImageBuffer[4];
 u16* colorTable = NULL;
 
 int bg3Sub;
@@ -82,10 +84,10 @@ void hBlankHandler() {
 	if (scanline > 192) {
 		return;
 	} else if (scanline == 192) {
-		dmaCopyWordsAsynch(0, dsImageBuffer[secondBuffer], BG_PALETTE, 256*2);
+		dmaCopyWordsAsynch(0, dsImageBuffer[currentBuffer], BG_PALETTE, 256*2);
 	} else {
 		scanline++;
-		dmaCopyWordsAsynch(0, dsImageBuffer[secondBuffer]+(scanline*256), BG_PALETTE, 256*2);
+		dmaCopyWordsAsynch(0, dsImageBuffer[currentBuffer]+(scanline*256), BG_PALETTE, 256*2);
 	}
 }
 
@@ -116,9 +118,10 @@ void vBlankHandler() {
 	if (controlTopBright) SetBrightness(0, screenBrightness);
 	if (controlBottomBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
-	if (doubleBuffer) {
-		// dmaCopyHalfWordsAsynch(0, dsImageBuffer[secondBuffer], BG_GFX, (256*192)*2);
-		secondBuffer = !secondBuffer;
+	if (multiBuffer) {
+		// dmaCopyHalfWordsAsynch(0, dsImageBuffer[currentBuffer], BG_GFX, (256*192)*2);
+		currentBuffer++;
+		if (currentBuffer == bufferCount) currentBuffer = 0;
 	}
 
 	//updateText(true);
@@ -148,10 +151,10 @@ void imageLoad(const char* filename) {
 	return; */
 
 	if (imageType == 2) { // PNG
-		dsImageBuffer[0] = new u16[256*192];
-		dsImageBuffer[1] = new u16[256*192];
-		toncset16(dsImageBuffer[0], colorTable ? colorTable[0] : 0, 256*192);
-		toncset16(dsImageBuffer[1], colorTable ? colorTable[0] : 0, 256*192);
+		for (int i = 0; i < bufferCount; i++) {
+			dsImageBuffer[i] = new u16[256*192];
+			toncset16(dsImageBuffer[i], colorTable ? colorTable[0] : 0, 256*192);
+		}
 
 		setupRgb565BmpDisplay();
 
@@ -178,9 +181,10 @@ void imageLoad(const char* filename) {
 
 		bool alternatePixel = false;
 		bool alternatePixel2 = false;
+		bool alternatePixel3 = false;
 		int x = 0;
 		int y = 0;
-		for (int b = 0; b < 2; b++) {
+		for (int b = 0; b < bufferCount; b++) {
 			for (unsigned i=0;i<image.size()/4;i++) {
 				const u8 oldR = image[(i*4)];
 				const u8 oldG = image[(i*4)+1];
@@ -200,11 +204,16 @@ void imageLoad(const char* filename) {
 					if (oldAlphaG >= 2 && oldAlphaG < 0xFE) newAlphaG += 2;
 				}
 				if (alternatePixel2) {
-					if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
-					if ((oldG % 2) == 1 && newG < 0xFF) newG++;
-					if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
-					if (((oldAlpha/2) % 2) == 1 && newAlpha < 0xFE) newAlpha += 2;
-					if ((oldAlphaG % 2) == 1 && newAlphaG < 0xFF) newAlphaG++;
+					if (oldR >= 2 && newR < 0xFE) newR += 2;
+					if (oldG >= 1 && newG < 0xFF) newG++;
+					if (oldB >= 2 && newB < 0xFE) newB += 2;
+					if (oldAlpha >= 2 && newAlpha < 0xFE) newAlpha += 2;
+					if (oldAlphaG >= 1 && newAlphaG < 0xFF) newAlphaG++;
+				}
+				if (alternatePixel3) {
+					if (oldR >= 1 && newR < 0xFF) newR++;
+					if (oldB >= 1 && newB < 0xFF) newB++;
+					if (oldAlpha >= 1 && newAlpha < 0xFF) newAlpha++;
 				}
 				if (oldAlpha > 0) {
 					u16 res = 0;
@@ -228,9 +237,15 @@ void imageLoad(const char* filename) {
 				alternatePixel2 = !alternatePixel2;
 			}
 			alternatePixel = !alternatePixel;
+			if (b == 1) {
+				alternatePixel2 = !alternatePixel2;
+			}
+			if (highFPS) {
+				alternatePixel3 = !alternatePixel3;
+			}
 			y=0;
 		}
-		doubleBuffer = true;
+		multiBuffer = true;
 		return;
 	} else if (imageType == 1) { // BMP
 		FILE* file = fopen(filename, "rb");
@@ -278,10 +293,10 @@ void imageLoad(const char* filename) {
 			fseek(file, headerSize - 1, SEEK_CUR);
 		}
 		if (bitsPerPixel == 24 || bitsPerPixel == 32) { // 24-bit or 32-bit
-			dsImageBuffer[0] = new u16[256*192];
-			dsImageBuffer[1] = new u16[256*192];
-			toncset16(dsImageBuffer[0], colorTable ? colorTable[0] : 0, 256*192);
-			toncset16(dsImageBuffer[1], colorTable ? colorTable[0] : 0, 256*192);
+			for (int i = 0; i < bufferCount; i++) {
+				dsImageBuffer[i] = new u16[256*192];
+				toncset16(dsImageBuffer[i], colorTable ? colorTable[0] : 0, 256*192);
+			}
 
 			setupRgb565BmpDisplay();
 
@@ -292,9 +307,10 @@ void imageLoad(const char* filename) {
 
 			bool alternatePixel = false;
 			bool alternatePixel2 = false;
+			bool alternatePixel3 = false;
 			int x = 0;
 			int y = height-1;
-			for (int b = 0; b < 2; b++) {
+			for (int b = 0; b < bufferCount; b++) {
 				for (u32 i = 0; i < width*height; i++) {
 					const u8 oldR = bmpImageBuffer[(i*bits)+2];
 					const u8 oldG = bmpImageBuffer[(i*bits)+1];
@@ -308,9 +324,13 @@ void imageLoad(const char* filename) {
 						if (oldB >= 4 && oldB < 0xFC) newB += 4;
 					}
 					if (alternatePixel2) {
-						if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
-						if ((oldG % 2) == 1 && newG < 0xFF) newG++;
-						if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
+						if (oldR >= 2 && newR < 0xFE) newR += 2;
+						if (oldG >= 1 && newG < 0xFF) newG++;
+						if (oldB >= 2 && newB < 0xFE) newB += 2;
+					}
+					if (alternatePixel3) {
+						if (oldR >= 1 && newR < 0xFF) newR++;
+						if (oldB >= 1 && newB < 0xFF) newB++;
 					}
 					u16 color = rgb8ToRgb565(newR, newG, newB);
 					if (colorTable) {
@@ -330,10 +350,16 @@ void imageLoad(const char* filename) {
 					alternatePixel2 = !alternatePixel2;
 				}
 				alternatePixel = !alternatePixel;
+				if (b == 1) {
+					alternatePixel2 = !alternatePixel2;
+				}
+				if (highFPS) {
+					alternatePixel3 = !alternatePixel3;
+				}
 				y = height-1;
 			}
 			delete[] bmpImageBuffer;
-			doubleBuffer = true;
+			multiBuffer = true;
 		} else if (bitsPerPixel == 16) { // 16-bit
 			dsImageBuffer[0] = new u16[256*192];
 			toncset16(dsImageBuffer[0], colorTable ? colorTable[0] : 0, 256*192);
@@ -379,10 +405,10 @@ void imageLoad(const char* filename) {
 
 			delete[] bmpImageBuffer;
 		} else if (bitsPerPixel == 8) { // 8-bit
-			dsImageBuffer[0] = new u16[256*192];
-			dsImageBuffer[1] = new u16[256*192];
-			toncset16(dsImageBuffer[0], colorTable ? colorTable[0] : 0, 256*192);
-			toncset16(dsImageBuffer[1], colorTable ? colorTable[0] : 0, 256*192);
+			for (int i = 0; i < bufferCount; i++) {
+				dsImageBuffer[i] = new u16[256*192];
+				toncset16(dsImageBuffer[i], colorTable ? colorTable[0] : 0, 256*192);
+			}
 
 			setupRgb565BmpDisplay();
 
@@ -413,9 +439,10 @@ void imageLoad(const char* filename) {
 
 			bool alternatePixel = false;
 			bool alternatePixel2 = false;
+			bool alternatePixel3 = false;
 			int x = 0;
 			int y = height-1;
-			for (int b = 0; b < 2; b++) {
+			for (int b = 0; b < bufferCount; b++) {
 				for (u32 i = 0; i < width*height; i++) {
 					const u8 oldR = bmpImageBuffer[(i*3)+2];
 					const u8 oldG = bmpImageBuffer[(i*3)+1];
@@ -429,9 +456,13 @@ void imageLoad(const char* filename) {
 						if (oldB >= 4 && oldB < 0xFC) newB += 4;
 					}
 					if (alternatePixel2) {
-						if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
-						if ((oldG % 2) == 1 && newG < 0xFF) newG++;
-						if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
+						if (oldR >= 2 && newR < 0xFE) newR += 2;
+						if (oldG >= 1 && newG < 0xFF) newG++;
+						if (oldB >= 2 && newB < 0xFE) newB += 2;
+					}
+					if (alternatePixel3) {
+						if (oldR >= 1 && newR < 0xFF) newR++;
+						if (oldB >= 1 && newB < 0xFF) newB++;
 					}
 					u16 color = rgb8ToRgb565(newR, newG, newB);
 					if (colorTable) {
@@ -451,10 +482,16 @@ void imageLoad(const char* filename) {
 					alternatePixel2 = !alternatePixel2;
 				}
 				alternatePixel = !alternatePixel;
+				if (b == 1) {
+					alternatePixel2 = !alternatePixel2;
+				}
+				if (highFPS) {
+					alternatePixel3 = !alternatePixel3;
+				}
 				y = height-1;
 			}
 			delete[] bmpImageBuffer;
-			doubleBuffer = true;
+			multiBuffer = true;
 		} else if (bitsPerPixel == 1) { // 1-bit
 			u16 monoPixel[2] = {0};
 			for (int i = 0; i < 2; i++) {
