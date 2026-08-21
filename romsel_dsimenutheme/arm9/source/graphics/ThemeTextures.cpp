@@ -984,7 +984,254 @@ void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 }
 
 bool ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
-	if (inMem ? !boxArtFound[CURPOS] : access(filename, F_OK) != 0) return false;
+	logPrint("drawBoxArt\n");
+
+	logPrint("filename: ");
+	logPrint(filename);
+
+	if (inMem ? !boxArtFound[CURPOS] : access(filename, F_OK) != 0) {
+		logPrint(" not found\n");
+		return false;
+	}
+	logPrint("\n");
+
+	if (extension(filename, {".bmp"})) {
+		return drawBoxArtBmp(filename, inMem);
+	}
+	return drawBoxArtPng(filename, inMem);
+}
+
+bool ThemeTextures::drawBoxArtBmp(const char *filename, bool inMem) {
+	logPrint("drawBoxArtBmp\n");
+
+	FILE* file = inMem ? NULL : fopen(filename, "rb");
+
+	uint imageXpos, imageYpos;
+	u8* fileMem = inMem ? boxArtCache+(CURPOS*0xB000) : NULL;
+	u8* image = NULL;
+	u16* image16 = NULL;
+
+	// Read width & height
+	u32 width, height;
+	if (!inMem) {
+		fseek(file, 0x12, SEEK_SET);
+		fread(&width, 1, sizeof(width), file);
+		fread(&height, 1, sizeof(height), file);
+	} else {
+		tonccpy(&width, fileMem+0x12, sizeof(width));
+		tonccpy(&height, fileMem+0x16, sizeof(height));
+	}
+
+	if (width > 256 || height > 192) {
+		logPrint("Width and/or height is too high\n");
+		if (!inMem) fclose(file);
+		return false;
+	}
+
+	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
+		rocketVideo_playVideo = false;
+		while (dmaBusy(1)); // Wait for frame to finish rendering
+		drawOverRotatingCubes(); // Clear top screen cubes for 3DS theme
+	}
+
+	if (ms().theme == TWLSettings::ETheme3DS) {
+		extern uint photoWidth, photoHeight;
+		tex().drawOverBoxArt(photoWidth, photoHeight);
+	}
+
+	boxArtWidth = width;
+	boxArtHeight = height;
+
+	bool alternatePixel = false;
+	bool alternatePixel2 = false;
+
+	beginBgSubModify();
+
+	u16* bmpImageBuffer = new u16[256 * 192];
+	u16* bmpImageBuffer2 = boxArtColorDeband ? new u16[256 * 192] : NULL;
+
+	imageXpos = (256-boxArtWidth)/2;
+	imageYpos = (192-boxArtHeight)/2;
+
+	if (!inMem) fseek(file, 0x1C, SEEK_SET);
+	u8 bitsPerPixel = inMem ? fileMem[0x1C] : fgetc(file);
+	int bits = (bitsPerPixel == 32) ? 4 : 3;
+	if (!inMem) fseek(file, 0xE, SEEK_SET);
+	u8 headerSize = inMem ? fileMem[0xE] : fgetc(file);
+	bool rgb565 = false;
+	if (!inMem) {
+		if (headerSize == 0x38) {
+			fseek(file, 0x2C, SEEK_CUR);
+			rgb565 = fgetc(file) == 0x07;
+			fseek(file, headerSize - 0x2E, SEEK_CUR);
+		} else {
+			fseek(file, headerSize - 1, SEEK_CUR);
+		}
+	} else {
+		if (headerSize == 0x38) {
+			rgb565 = fileMem[0x3B] == 0x07;
+		}
+		fileMem += 0xE + headerSize;
+	}
+	if (bitsPerPixel == 24 || bitsPerPixel == 32) { // 24-bit or 32-bit
+		logPrint("BMP is 26/32-bit\n");
+		image = new u8[(width * height)*bits];
+		if (inMem) {
+			tonccpy(image, fileMem, (width * height)*bits);
+		} else {
+			fread(image, bits, width * height, file);
+		}
+	} else if (bitsPerPixel == 16) { // 16-bit
+		logPrint("BMP is 16-bit\n");
+		image16 = new u16[width * height];
+		if (inMem) {
+			tonccpy(image16, fileMem, (width * height)*2);
+		} else {
+			fread(image16, 2, width * height, file);
+		}
+	} else if (bitsPerPixel == 8) { // 8-bit
+		logPrint("BMP is 8-bit\n");
+		u8* pixelBufferB = new u8[256];
+		u8* pixelBufferG = new u8[256];
+		u8* pixelBufferR = new u8[256];
+		if (inMem) {
+			for (int i = 0; i < 256; i++) {
+				pixelBufferB[i] = *fileMem++;
+				pixelBufferG[i] = *fileMem++;
+				pixelBufferR[i] = *fileMem++;
+				fileMem++;
+			}
+		} else {
+			for (int i = 0; i < 256; i++) {
+				u8 unk = 0;
+				fread(&pixelBufferB[i], 1, 1, file);
+				fread(&pixelBufferG[i], 1, 1, file);
+				fread(&pixelBufferR[i], 1, 1, file);
+				fread(&unk, 1, 1, file);
+			}
+		}
+
+		image = new u8[(width * height)*3];
+		u8 *image8 = new u8[width * height];
+		if (inMem) {
+			tonccpy(image8, fileMem, width * height);
+		} else {
+			fread(image8, 1, width * height, file);
+		}
+
+		for (u32 i = 0; i < width*height; i++) {
+			image[(i*3)] = pixelBufferB[image8[i]];
+			image[(i*3)+1] = pixelBufferG[image8[i]];
+			image[(i*3)+2] = pixelBufferR[image8[i]];
+		}
+		delete[] pixelBufferB;
+		delete[] pixelBufferG;
+		delete[] pixelBufferR;
+		delete[] image8;
+	} else /* if (bitsPerPixel == 1) */ { // 1-bit (Not supported)
+		logPrint("BMP is invalid\n");
+		if (!inMem) fclose(file);
+		return false;
+	}
+	if (!inMem) fclose(file);
+
+	int x = 0;
+	int y = boxArtHeight-1;
+	if (bitsPerPixel == 16) {
+		for (u32 i = 0; i < width*height; i++) {
+			const u16 val = image16[i];
+			u16 color = 0;
+			if (rgb565) {
+				color = ((val >> 11) & 0x1F) | ((val & (0x1F << 6)) >> 1) | ((val & 0x1F) << 10) | BIT(15);
+			} else {
+				color = ((val >> 10) & 0x1F) | ((val) & (0x1F << 5)) | ((val & 0x1F) << 10) | BIT(15);
+			}
+			if (colorTable) {
+				color = colorTable[color % 0x8000] | BIT(15);
+			}
+			bmpImageBuffer[x+(y*boxArtWidth)] = color;
+			if (boxArtColorDeband) {
+				bmpImageBuffer2[x+(y*boxArtWidth)] = color;
+			}
+			x++;
+			if (x == (int)boxArtWidth) {
+				if ((x % 2) == 0) {
+					alternatePixel = !alternatePixel;
+					alternatePixel2 = !alternatePixel2;
+				}
+				x=0;
+				y--;
+			}
+			alternatePixel = !alternatePixel;
+			alternatePixel2 = !alternatePixel2;
+		}
+	} else for (int b = 0; b < boxArtColorDeband+1; b++) {
+		for (u32 i = 0; i < width*height; i++) {
+			const u8 oldR = image[(i*bits)+2];
+			const u8 oldG = image[(i*bits)+1];
+			const u8 oldB = image[(i*bits)];
+			u8 newR = oldR;
+			u8 newG = oldG;
+			u8 newB = oldB;
+			if (alternatePixel) {
+				if (oldR >= 4 && oldR < 0xFC) newR += 4;
+				if (oldG >= 4 && oldG < 0xFC) newG += 4;
+				if (oldB >= 4 && oldB < 0xFC) newB += 4;
+			}
+			if (alternatePixel2 && boxArtColorDeband) {
+				if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
+				if (((oldG/2) % 2) == 1 && newG < 0xFE) newG += 2;
+				if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
+			}
+			u16 color = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
+			if (colorTable) {
+				color = colorTable[color % 0x8000] | BIT(15);
+			}
+			if (b == 0) {
+				bmpImageBuffer[x+(y*boxArtWidth)] = color;
+			} else if (boxArtColorDeband) {
+				bmpImageBuffer2[x+(y*boxArtWidth)] = color;
+			}
+			x++;
+			if (x == (int)boxArtWidth) {
+				if ((x % 2) == 0) {
+					alternatePixel = !alternatePixel;
+					alternatePixel2 = !alternatePixel2;
+				}
+				x=0;
+				y--;
+			}
+			alternatePixel = !alternatePixel;
+			alternatePixel2 = !alternatePixel2;
+		}
+		alternatePixel = !alternatePixel;
+		y = boxArtHeight-1;
+	}
+
+	u16 *src = bmpImageBuffer;
+	u16 *src2 = bmpImageBuffer2;
+	for (uint y = 0; y < boxArtHeight; y++) {
+		for (uint x = 0; x < boxArtWidth; x++) {
+			_bgSubBuffer[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
+			if (boxArtColorDeband) {
+				_bgSubBuffer2[(y+imageYpos) * 256 + imageXpos + x] = *(src2++);
+			}
+		}
+	}
+	commitBgSubModify();
+
+	if (image) delete[] image;
+	if (image16) delete[] image16;
+	delete[] bmpImageBuffer;
+	if (boxArtColorDeband) {
+		delete[] bmpImageBuffer2;
+	}
+
+	return true;
+}
+
+bool ThemeTextures::drawBoxArtPng(const char *filename, bool inMem) {
+	logPrint("drawBoxArtPng\n");
 
 	std::vector<unsigned char> image;
 	uint imageWidth, imageHeight;
@@ -996,7 +1243,10 @@ bool ThemeTextures::drawBoxArt(const char *filename, bool inMem) {
 	}
 	bool alternatePixel = false;
 	bool alternatePixel2 = false;
-	if (imageWidth > 256 || imageHeight > 192) return false;
+	if (imageWidth > 256 || imageHeight > 192) {
+		logPrint("Width and/or height is too high\n");
+		return false;
+	}
 
 	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
 		rocketVideo_playVideo = false;

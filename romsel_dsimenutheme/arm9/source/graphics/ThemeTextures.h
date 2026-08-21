@@ -79,6 +79,10 @@ public:
 
 	void loadBoxArtToMem(const char *filename, int num);
 	bool drawBoxArt(const char* filename, bool inMem);
+private:
+	bool drawBoxArtBmp(const char* filename, bool inMem);
+	bool drawBoxArtPng(const char* filename, bool inMem);
+public:
 	void drawOverBoxArt(uint photoWidth, uint photoHeight);
 	void drawOverRotatingCubes();
 

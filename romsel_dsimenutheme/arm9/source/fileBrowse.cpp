@@ -620,9 +620,17 @@ void updateBoxArt(void) {
 		clearBoxArt();
 	}
 
-	sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", boxArtFilename);
-	if (!isDirectory[CURPOS] && (bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
-		sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
+	sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.bmp", sys().isRunFromSD() ? "sd" : "fat", boxArtFilename);
+	if (access(boxArtPath, F_OK) != 0) {
+		sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", boxArtFilename);
+	}
+	if (!isDirectory[CURPOS] && (bnrRomType[CURPOS] == 0)) {
+		if (access(boxArtPath, F_OK) != 0) {
+			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.bmp", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
+		}
+		if (access(boxArtPath, F_OK) != 0) {
+			sprintf(boxArtPath, "%s:/_nds/TWiLightMenu/boxart/%s.png", sys().isRunFromSD() ? "sd" : "fat", gameTid[CURPOS]);
+		}
 	}
 	if (!tex().drawBoxArt(boxArtPath, (dsiFeatures() && ms().showBoxArt == 2))) { // Load box art
 		if (ms().theme == TWLSettings::ETheme3DS && !rocketVideo_playVideo) {
@@ -2812,13 +2820,25 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				}
 
 				if (dsiFeatures() && !ms().macroMode && ms().showBoxArt == 2 && ms().theme != TWLSettings::EThemeHBL) {
-					snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
+					snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.bmp",
 							 sys().isRunFromSD() ? "sd" : "fat",
 							 dirContents[scrn][i + PAGENUM * 40].name.c_str());
-					if (!isDirectory[i] && (bnrRomType[i] == 0) && (access(boxArtPath, F_OK) != 0)) {
+					if (access(boxArtPath, F_OK) != 0) {
 						snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
-								 (sys().isRunFromSD() ? "sd" : "fat"),
-								 gameTid[i]);
+								 sys().isRunFromSD() ? "sd" : "fat",
+								 dirContents[scrn][i + PAGENUM * 40].name.c_str());
+					}
+					if (!isDirectory[i] && (bnrRomType[i] == 0) && (access(boxArtPath, F_OK) != 0)) {
+						if (access(boxArtPath, F_OK) != 0) {
+							snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.bmp",
+									 (sys().isRunFromSD() ? "sd" : "fat"),
+									 gameTid[i]);
+						}
+						if (access(boxArtPath, F_OK) != 0) {
+							snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
+									 (sys().isRunFromSD() ? "sd" : "fat"),
+									 gameTid[i]);
+						}
 					}
 					tex().loadBoxArtToMem(boxArtPath, i);
 				}
@@ -3253,10 +3273,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				boxArtFound = ((CURPOS + PAGENUM * 40) < ((int)dirContents[scrn].size()));
 				if (boxArtFound) {
 					boxArtFilename = dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str();
-
-					logPrint("boxArtFilename: ");
-					logPrint(boxArtFilename);
-					logPrint("\n");
 				}
 				updateBoxArt();
 				if (ms().theme < 4) {
