@@ -2815,7 +2815,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
 							 sys().isRunFromSD() ? "sd" : "fat",
 							 dirContents[scrn][i + PAGENUM * 40].name.c_str());
-					if ((bnrRomType[i] == 0) && (access(boxArtPath, F_OK) != 0)) {
+					if (!isDirectory[CURPOS] && (bnrRomType[i] == 0) && (access(boxArtPath, F_OK) != 0)) {
 						snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
 								 (sys().isRunFromSD() ? "sd" : "fat"),
 								 gameTid[i]);
