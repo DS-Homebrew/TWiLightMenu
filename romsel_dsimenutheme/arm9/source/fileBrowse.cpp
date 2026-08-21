@@ -2812,7 +2812,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				}
 
 				if (dsiFeatures() && !ms().macroMode && ms().showBoxArt == 2 && ms().theme != TWLSettings::EThemeHBL) {
-					snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.bmp",
+					snprintf(boxArtPath, sizeof(boxArtPath), "%s:/_nds/TWiLightMenu/boxart/%s.png",
 							 sys().isRunFromSD() ? "sd" : "fat",
 							 dirContents[scrn][i + PAGENUM * 40].name.c_str());
 					if (!isDirectory[i] && (bnrRomType[i] == 0) && (access(boxArtPath, F_OK) != 0)) {
