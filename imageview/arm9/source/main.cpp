@@ -136,7 +136,7 @@ static void mainLoop(void) {
 	while (1) {
 		do {
 			scanKeys();
-			touchRead(&touch);
+			if (visibleBgAndText) touchRead(&touch);
 			pressed = keysDown();
 			held = keysHeld();
 			//repeat = keysDownRepeat();
