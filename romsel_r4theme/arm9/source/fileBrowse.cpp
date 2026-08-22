@@ -228,28 +228,33 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 				emplaceBackDirContent = (pent->d_type != DT_DIR && nameEndsWith(pent->d_name, extensionList));
 			}
 			if (emplaceBackDirContent) {
-				if ((pent->d_type != DT_DIR) && extension(pent->d_name, {".md"})) {
-					FILE* mdFile = fopen(pent->d_name, "rb");
-					if (mdFile) {
-						u8 segaEntryPointReversed[4] = {0};
-						u8 segaEntryPointU8[4] = {0};
-						u32 segaEntryPoint = 0;
-						fseek(mdFile, 4, SEEK_SET);
-						fread(&segaEntryPointReversed, 1, 4, mdFile);
-						for (int i = 0; i < 4; i++) {
-							segaEntryPointU8[3-i] = segaEntryPointReversed[i];
-						}
-						tonccpy(&segaEntryPoint, segaEntryPointU8, 4);
+				if (pent->d_type != DT_DIR) {
+					if (extension(pent->d_name, {".md"})) {
+						FILE* mdFile = fopen(pent->d_name, "rb");
+						if (mdFile) {
+							u8 segaEntryPointReversed[4] = {0};
+							u8 segaEntryPointU8[4] = {0};
+							u32 segaEntryPoint = 0;
+							fseek(mdFile, 4, SEEK_SET);
+							fread(&segaEntryPointReversed, 1, 4, mdFile);
+							for (int i = 0; i < 4; i++) {
+								segaEntryPointU8[3-i] = segaEntryPointReversed[i];
+							}
+							tonccpy(&segaEntryPoint, segaEntryPointU8, 4);
 
-						char segaString[5] = {0};
-						fseek(mdFile, 0x100, SEEK_SET);
-						fread(segaString, 1, 4, mdFile);
-						fclose(mdFile);
+							char segaString[5] = {0};
+							fseek(mdFile, 0x100, SEEK_SET);
+							fread(segaString, 1, 4, mdFile);
+							fclose(mdFile);
 
-						if (!((segaEntryPointReversed[0] == 0) && ((strcmp(segaString, "SEGA") == 0) || ((segaEntryPoint >= 8) && (segaEntryPoint < 0x3FFFFF))))) {
-							// Invalid string or entry point found
-							continue;
+							if (!((segaEntryPointReversed[0] == 0) && ((strcmp(segaString, "SEGA") == 0) || ((segaEntryPoint >= 8) && (segaEntryPoint < 0x3FFFFF))))) {
+								// Invalid string or entry point found
+								continue;
+							}
 						}
+					} else if (!ms().macroMode && extension(pent->d_name, {"_bot.gif", "_bot.bmp", "_bot.png"})) {
+						// Do not show bottom screen images seperately if macro mode is turned off
+						continue;
 					}
 				}
 				dirContents.emplace_back(pent->d_name, ms().showDirectories ? (pent->d_type == DT_DIR) : false, file_count, false);

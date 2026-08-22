@@ -60,7 +60,7 @@ void checkSdEject(void) {
 	irqDisable(IRQ_HBLANK);
 
 	videoSetMode(MODE_5_2D | DISPLAY_BG2_ACTIVE);
-	//videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
+	videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
 
 	REG_BLDY = 0;
 

@@ -34,10 +34,12 @@ bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
 bool supportsMultiBuffer = false;
+static bool visibleBgAndText = true;
 
 extern void ClearBrightness();
 extern bool highFPS;
 extern int imageType;
+extern bool dualScreenImage;
 extern int currentBuffer;
 extern int bufferCount;
 
@@ -115,8 +117,6 @@ void customSleep() {
 }
 
 void printText(void) {
-	if (ms().macroMode) return;
-
 	clearText(false);
 	if (supportsMultiBuffer) {
 		printSmall(false, 0, 88, multiBuffer ? STR_A_REGULAR_DITHERING : STR_A_TEMPORAL_DITHERING, Alignment::center);
@@ -152,7 +152,7 @@ static void mainLoop(void) {
 
 		if ((pressed & KEY_A) && supportsMultiBuffer) {
 			multiBuffer = !multiBuffer;
-			printText();
+			if (visibleBgAndText) printText();
 			snd().playSwitch();
 		}
 
@@ -161,7 +161,7 @@ static void mainLoop(void) {
 			if (currentBuffer == bufferCount) currentBuffer = 0;
 		}
 
-		if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.px >= 0 && touch.px < 80 && touch.py >= 169 && touch.py < 192)) {
+		if ((pressed & KEY_B) || (visibleBgAndText && (pressed & KEY_TOUCH) && touch.px >= 0 && touch.px < 80 && touch.py >= 169 && touch.py < 192)) {
 			loadROMselect();
 		}
 
@@ -194,6 +194,7 @@ int imageViewer(void) {
 	}
 
 	const char* imagePathChar = ms().romPath[ms().previousUsedDevice].c_str();
+	char imagePathCharBottom[256] = {0};
 
 	if (strlen(imagePathChar) >= 2) {
 		if (extension(imagePathChar, {".gif"})) {
@@ -207,36 +208,82 @@ int imageViewer(void) {
 		imageType = 2;
 	}
 
-	graphicsInit();
-	fontInit();
-
-	langInit();
-
-	imageLoad((strlen(imagePathChar) >= 2) ? imagePathChar : "nitro:/graphics/test.png");
-	if (imageType == 0) {
-		Gif gif (imagePathChar, true, true, true);
-
-		bgLoad();
-		printText();
-
-		snd();
-		snd().beginStream();
-
-		fadeType = true;	// Fade in from white
-		for (int i = 0; i < 18; i++) {
-			swiWaitForVBlank(); // Wait until GIF appears on-screen before animating
+	if (!ms().macroMode && strlen(imagePathChar) >= 6) {
+		char imagePathChar_noExt[256] = {0};
+		sprintf(imagePathChar_noExt, imagePathChar);
+		for (int i = strlen(imagePathChar); i >= 0; i--) {
+			if (imagePathChar_noExt[i] == '.') {
+				imagePathChar_noExt[i] = 0;
+				break;
+			}
 		}
 
-		timerStart(0, ClockDivider_1024, TIMER_FREQ_1024(100), Gif::timerHandler);
+		if (imageType == 0) {
+			sprintf(imagePathCharBottom, "%s_bot.gif", imagePathChar_noExt);
+		} else if (imageType == 1) {
+			sprintf(imagePathCharBottom, "%s_bot.bmp", imagePathChar_noExt);
+		} else if (imageType == 2) {
+			sprintf(imagePathCharBottom, "%s_bot.png", imagePathChar_noExt);
+		}
 
-		mainLoop();
-
-		return 0;
+		dualScreenImage = (access(imagePathCharBottom, F_OK) == 0);
 	}
 
-	bgLoad();
+	visibleBgAndText = (!ms().macroMode && !dualScreenImage);
+
+	graphicsInit();
+	fontInit();
+	langInit();
+
+	imageLoad((strlen(imagePathChar) >= 2) ? imagePathChar : "nitro:/graphics/test.png", false);
+	if (dualScreenImage) {
+		imageLoad(imagePathCharBottom, true);
+	}
+	if (imageType == 0) {
+		Gif gif (imagePathChar, true, true, true);
+		if (dualScreenImage) {
+			Gif gif (imagePathCharBottom, false, true, true);
+
+			snd();
+			snd().beginStream();
+
+			fadeType = true;	// Fade in from white
+			for (int i = 0; i < 18; i++) {
+				swiWaitForVBlank(); // Wait until GIF appears on-screen before animating
+			}
+
+			timerStart(0, ClockDivider_1024, TIMER_FREQ_1024(100), Gif::timerHandler);
+
+			mainLoop();
+
+			return 0;
+		} else {
+			if (visibleBgAndText) {
+				bgLoad();
+				printText();
+			}
+
+			snd();
+			snd().beginStream();
+
+			fadeType = true;	// Fade in from white
+			for (int i = 0; i < 18; i++) {
+				swiWaitForVBlank(); // Wait until GIF appears on-screen before animating
+			}
+
+			timerStart(0, ClockDivider_1024, TIMER_FREQ_1024(100), Gif::timerHandler);
+
+			mainLoop();
+
+			return 0;
+		}
+	}
+
 	supportsMultiBuffer = multiBuffer;
-	printText();
+	if (visibleBgAndText) {
+		bgLoad();
+		printText();
+	}
 
 	snd();
 	snd().beginStream();

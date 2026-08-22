@@ -25,6 +25,6 @@
 extern bool multiBuffer;
 
 void SetBrightness(u8 screen, s8 bright);
-void imageLoad(const char* filename);
+void imageLoad(const char* filename, const bool bottom);
 void bgLoad(void);
 void graphicsInit();
