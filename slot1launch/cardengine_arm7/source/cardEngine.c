@@ -25,6 +25,7 @@
 
 #include <string.h>
 #include "cardEngine.h"
+#include "i2c.h"
 
 #include "sr_data_error.h"	// For showing an error screen
 #include "sr_data_srloader.h"	// For rebooting into TWiLight Menu++
@@ -61,9 +62,9 @@ static void unlaunchSetFilename(bool boot) {
 }
 
 void rebootConsole(void) {
-	u8 readCommand = readPowerManagement(0x10);
-	readCommand |= BIT(0);
-	writePowerManagement(0x10, readCommand); // Reboot console
+	i2cWriteRegister(0x4A, 0x12, i2cReadRegister(0x4A, 0x12) | 1); // 3DS - is_twl - Do not trust gbatek for this register - Thanks TuxSH!
+	i2cWriteRegister(0x4A, 0x70, 0x01);
+	i2cWriteRegister(0x4A, 0x11, 0x01);		// Reboot console
 }
 
 void myIrqHandlerVBlank(void) {
