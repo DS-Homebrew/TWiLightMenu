@@ -37,6 +37,8 @@
 #include "dmaExcludeMap.h"
 #include "asyncReadExcludeMap.h"
 
+#include "common/favorites.h"
+
 extern bool useTwlCfg;
 
 extern u16* colorTable;
@@ -472,6 +474,10 @@ void perGameSettings (std::string filename) {
 
 	perGameSettings_cursorPosition = 0;
 	loadPerGameSettings(filename);
+	char cwd[PATH_MAX];
+	getcwd(cwd, PATH_MAX);
+	std::string cwdStr = cwd;
+	std::string fullPath = cwdStr + (cwdStr.back() == '/' ? "" : "/") + filename;
 
 	std::string filenameForInfo = filename;
 	if (extension(filenameForInfo, {".argv"})) {
@@ -635,6 +641,8 @@ void perGameSettings (std::string filename) {
 	}
 	if (isHomebrew[cursorPosOnScreen]) {		// Per-game settings for homebrew
 		perGameOps++;
+		perGameOp[perGameOps] = 10; // Favorite
+		perGameOps++;
 		perGameOp[perGameOps] = 0;	// Language
 		if (isModernHomebrew[cursorPosOnScreen]) {
 			perGameOps++;
@@ -673,6 +681,8 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
 	} else if (showPerGameSettings && isDSiWare[cursorPosOnScreen]) {	// Per-game settings for DSiWare
+		perGameOps++;
+		perGameOp[perGameOps] = 10; // Favorite
 		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
@@ -718,6 +728,8 @@ void perGameSettings (std::string filename) {
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
+		perGameOps++;
+		perGameOp[perGameOps] = 10; // Favorite
 		const bool bootstrapEnabled = (useBootstrap || (dsiFeatures() && romUnitCode[cursorPosOnScreen] > 0) || (ms().secondaryDevice && romUnitCode[cursorPosOnScreen] == 3) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
 			perGameOps++;
@@ -986,6 +998,14 @@ void perGameSettings (std::string filename) {
 			case 9:
 				printSmall(false, 0, perGameOpYpos, SET_AS_DONOR_ROM, Alignment::center, highlighted);
 				break;
+			case 10:
+				printSmall(false, perGameOpXpos, perGameOpYpos, "Favorite:", Alignment::left, highlighted);
+				if (isFavorite(fullPath)) {
+					printSmall(false, 256 - perGameOpXpos, perGameOpYpos, "Yes", Alignment::right, highlighted);
+				} else {
+					printSmall(false, 256 - perGameOpXpos, perGameOpYpos, "No", Alignment::right, highlighted);
+				}
+				break;
 			case 11:
 				printSmall(false, perGameOpXpos, perGameOpYpos, "Region:", Alignment::left, highlighted);
 				if (perGameSettings_region == -2) {
@@ -1170,6 +1190,9 @@ void perGameSettings (std::string filename) {
 						perGameSettings_wideScreen--;
 						if (perGameSettings_wideScreen < -1) perGameSettings_wideScreen = 2;
 						break;
+					case 10:
+						toggleFavorite(fullPath);
+						break;
 					case 11:
 						perGameSettings_region--;
 						if (!dsiFeatures() && perGameSettings_region == -1) {
@@ -1204,7 +1227,8 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_saveRelocation > 1) perGameSettings_saveRelocation = -1;
 						break;
 				}
-				perGameSettingsChanged = true;
+				if (perGameOp[perGameSettings_cursorPosition] != 10)
+					perGameSettingsChanged = true;
 			} else if ((pressed & KEY_A) || (held & KEY_RIGHT)) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
 					case 0:
@@ -1301,6 +1325,9 @@ void perGameSettings (std::string filename) {
 						sprintf(SET_AS_DONOR_ROM, "Done!");
 					  }
 						break;
+					case 10:
+						toggleFavorite(fullPath);
+						break;
 					case 11:
 						perGameSettings_region++;
 						if (!dsiFeatures() && perGameSettings_region == -1) {
@@ -1338,7 +1365,8 @@ void perGameSettings (std::string filename) {
 						if (pressed & KEY_A) remapButtons();
 						break;
 				}
-				perGameSettingsChanged = true;
+				if (perGameOp[perGameSettings_cursorPosition] != 10)
+					perGameSettingsChanged = true;
 			}
 
 			if (pressed & KEY_B) {
