@@ -30,6 +30,7 @@
 #include "graphics/color.h"
 
 #include <nds.h>
+#include "ndma.h"
 
 extern bool fadeType;
 extern bool fadeSpeed;
@@ -105,6 +106,20 @@ ITCM_CODE void hBlankHandler_dualScreen() {
 	}
 }
 
+ITCM_CODE void hBlankHandler_dualScreenNdma() {
+	int scanline = REG_VCOUNT;
+	if (scanline > 192) {
+		return;
+	} else if (scanline == 192) {
+		ndmaCopyWordsAsynch(0, dsImageBuffer[0][currentBuffer], BG_PALETTE, 256*2);
+		ndmaCopyWordsAsynch(1, dsImageBuffer[1][currentBuffer], BG_PALETTE_SUB, 256*2);
+	} else {
+		scanline++;
+		ndmaCopyWordsAsynch(0, dsImageBuffer[0][currentBuffer]+(scanline*256), BG_PALETTE, 256*2);
+		ndmaCopyWordsAsynch(1, dsImageBuffer[1][currentBuffer]+(scanline*256), BG_PALETTE_SUB, 256*2);
+	}
+}
+
 ITCM_CODE void vBlankHandler() {
 	if (fadeType) {
 		if (!fadeDelay) {
@@ -153,7 +168,7 @@ void setupRgb565BmpDisplay(const bool bottom) {
 	dmaCopyWords(0, dsImageBuffer8, bgGetGfxPtr(bottom ? bg3Sub : bg3Main), 256*192);
 	delete[] dsImageBuffer8;
 
-	irqSet(IRQ_HBLANK, bottom ? hBlankHandler_dualScreen : hBlankHandler);
+	irqSet(IRQ_HBLANK, bottom ? (ndmaEnabled() ? hBlankHandler_dualScreenNdma : hBlankHandler_dualScreen) : hBlankHandler);
 	irqEnable(IRQ_HBLANK);
 }
 
