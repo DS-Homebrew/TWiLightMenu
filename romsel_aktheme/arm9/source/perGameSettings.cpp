@@ -699,8 +699,8 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 		}
 	} else if (showPerGameSettings && isDSiWare[cursorPosOnScreen]) {	// Per-game settings for DSiWare
-		const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter);
-		if (booterIsNdsBootstrap || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+		const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
+		if (booterIsNdsBootstrap) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
 			perGameOps++;
@@ -718,7 +718,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 19;	// Slot-1 Mode
 		}
-		if ((booterIsNdsBootstrap || totalRomSize >= 0x04000000) || !dsiFeatures() || (ms().secondaryDevice && bs().b4dsMode) || !ms().dsiWareToSD || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+		if ((booterIsNdsBootstrap || totalRomSize >= 0x04000000) || !dsiFeatures() || (ms().secondaryDevice && bs().b4dsMode) || !ms().dsiWareToSD) {
 			if ((!ms().secondaryDevice || (dsiFeatures() && !bs().b4dsMode)) && !sys().scfgSdmmcEnabled() && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
