@@ -1,0 +1,16 @@
+# Cached ScreenScraper credentials — never commit
+.ss_credentials.json
+
+# Downloaded media / output artifacts
+*-logo.png
+*-video.*
+*.tgrv
+
+# Temp
+*.tmp
+
+# Skyscraper source/build (dependency)
+skysource/
+
+# Área de trabalho/staging do pipeline (assets são movidos para o SD ao final)
+cache/

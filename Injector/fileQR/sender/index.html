@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fileQR — ferramenta de transferência</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>fileQR <span class="tag">transfer</span></h1>
+  <p class="sub">Transforma um arquivo em uma sequência de QR codes para a
+  câmera do Nintendo DSi capturar e remontar no cartão SD.</p>
+</header>
+
+<main>
+  <section class="panel controls">
+    <div id="drop" class="drop">
+      <input type="file" id="file" hidden>
+      <div class="drop-inner">
+        <strong>Arraste um arquivo aqui</strong>
+        <span>ou clique para escolher (.nds, ou qualquer arquivo)</span>
+      </div>
+    </div>
+
+    <details class="preset">
+      <summary>Presets de confiabilidade</summary>
+      <div class="preset-row">
+        <button data-preset="seguro" class="ghost">Seguro (lento)</button>
+        <button data-preset="equilibrado" class="ghost">Equilibrado</button>
+        <button data-preset="rapido" class="ghost">Rápido (denso)</button>
+      </div>
+    </details>
+
+    <div class="grid">
+      <label>Chunk (bytes/frame)
+        <input type="number" id="chunk" value="512" min="32" max="2000" step="16">
+      </label>
+      <label>Correção de erro
+        <select id="ecc">
+          <option value="L">L (7%)</option>
+          <option value="M" selected>M (15%)</option>
+          <option value="Q">Q (25%)</option>
+          <option value="H">H (30%)</option>
+        </select>
+      </label>
+      <label>FPS
+        <input type="number" id="fps" value="5" min="1" max="30" step="1">
+      </label>
+      <label>Tamanho do módulo (px)
+        <input type="number" id="scale" value="6" min="2" max="20" step="1">
+      </label>
+      <label>Manifest a cada N frames
+        <input type="number" id="manifestEvery" value="40" min="0" max="500" step="1">
+      </label>
+    </div>
+
+    <div class="actions">
+      <button id="build" disabled>Gerar frames</button>
+      <button id="play" disabled>▶ Play</button>
+      <button id="pause" disabled>⏸ Pause</button>
+      <button id="present" class="primary" disabled>⛶ Apresentar (tela cheia)</button>
+      <label class="loop"><input type="checkbox" id="loop" checked> Loop</label>
+    </div>
+
+    <div id="info" class="info">Nenhum arquivo selecionado.</div>
+  </section>
+
+  <section class="panel stage">
+    <canvas id="qr" width="256" height="256"></canvas>
+    <div id="frameLabel" class="frame-label">—</div>
+    <input type="range" id="seek" min="0" max="0" value="0" disabled>
+    <div class="progress"><div id="bar" class="bar"></div></div>
+  </section>
+</main>
+
+<footer>
+  <span>Protocolo FQR1 (binário) · veja <code>shared/PROTOCOL.md</code></span>
+</footer>
+
+<!-- overlay de apresentação em tela cheia -->
+<div id="stagefull" class="stagefull hidden">
+  <canvas id="qrBig"></canvas>
+  <div class="hud">
+    <div id="hudText" class="hud-text">—</div>
+    <div class="progress big"><div id="barBig" class="bar"></div></div>
+    <div class="hud-help">Espaço: play/pause · Esc: sair</div>
+  </div>
+</div>
+
+<script src="vendor-qrcode.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -151,6 +151,14 @@ STRING(R, "\\R")
 STRING(NEXT_R, "Next Page \\R")
 STRING(NEXT, "Next")
 
+// Frontend settings (DSi theme, hold \X)
+STRING(FRONTEND_SETTINGS, "Menu Settings")
+STRING(TOP_BG_STYLE, "Top BG Opacity")
+STRING(DITHERING, "Dithering")
+STRING(TRANSPARENCY, "Transparency")
+STRING(PLAY_BACKGROUND, "Play Background")
+STRING(DEBUG_MENU, "Debug Menu")
+
 // Per-game settings
 STRING(SDK_VER, "SDK ver: %s")
 STRING(DS_PHAT_COLORS, "DS Phat Colors")

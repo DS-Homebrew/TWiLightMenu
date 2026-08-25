@@ -58,6 +58,38 @@ menu normal usa `FontPalette::regular` (índices 0-3).
   Cheque com `strings dist/dsimenu.srldr | grep <string removida>` se a build tem/perdeu algo.
 - Injeção de tecla não é confiável — peça teste manual para telas que precisam de input.
 
+## Escrever no `BG_GFX_SUB` todo frame = flicker no hardware (invisível no preview)
+
+A tela superior é apresentada por `drawTopTitle` numa **cópia única** (`tonccpy` de `_topCompose` p/
+`BG_GFX_SUB`). Desenhar algo **pixel-a-pixel direto no `BG_GFX_SUB` a cada frame** (era o caso da
+status bar, chamada no `bgOperations` logo antes do vblank) faz o LCD ler o buffer no meio da escrita
+→ tearing/flicker **constante no console**. No **melonDS o flicker quase não aparece** — só se pega em
+hardware.
+
+- **Correção (status bar):** parar de desenhar por frame. `composeStatusBar` roda no **fim do
+  `drawTopTitle`** (camada de cima, apresentação atômica), e `tickStatusBar()` (1x/frame) só chama
+  `redrawTop()` quando o **conteúdo muda** (hora/bateria). Estado do último desenho fica em
+  `_lastStatusTime`/`_lastStatusBatt`.
+- **Exceção tolerada:** o `drawTopDebug` (overlay de debug) ainda escreve por frame — mas é uma
+  ferramenta de debug opt-in, então o custo/tearing é aceitável.
+
+## Campo novo em `TWLSettings` precisa de load **E** save
+
+`options.ini` (seção `SRLOADER`) é lido em `loadSettings()` e gravado em `saveSettings()`
+(`universal/source/common/twlmenusettings.cpp`) — são **dois lugares separados**. `dsiVideoBg` e
+`dsiVideoFadeMode` existiam só no load: as mudanças **não persistiam** entre boots. Ao adicionar
+`dsiDebugMenu`, o save dos três (`DSI_VIDEO_BG`/`DSI_VIDEO_FADE_MODE`/`DSI_DEBUG_MENU`) foi incluído.
+Regra: todo campo novo → default no construtor + `GetInt` no load + `SetInt` no save.
+
+## Reduzir fonte pixelada: OR-downsample, não point-sample
+
+Não existe fonte menor que a `small`. Para encolher a **hora** da status bar (`SB_TIME_NUM/DEN`),
+amostrar 1 pixel por célula (point-sample) **destrói os traços finos** → dígitos ilegíveis (ex.: a
+hora virava `0'-4`). Solução: **OR-downsample** — o pixel de destino acende se **qualquer** pixel-fonte
+na sua célula estiver aceso (preserva os traços, engrossa de leve). Espaço entre caracteres
+(`SB_TIME_TRACKING`) é feito renderizando **caractere-a-caractere** e avançando o `penX` manualmente
+(o `FontGraphic::print` não limpa o `textBuf`, então dá p/ acumular após um `toncset16` inicial).
+
 ## Constantes de grid em dois arquivos
 
 `colSpacing`/`rowCY` (render, graphics.cpp) têm que bater com `ROW3_COL_SPACING`/`rowCY` do handler

@@ -55,6 +55,7 @@ TWLSettings::TWLSettings()
 	rocketRobzLogo = true;
 	dsiVideoBg = true;       // vídeo de fundo ligado por padrão
 	dsiVideoFadeMode = 0;    // 0 = checker (brick dithered) por padrão
+	dsiDebugMenu = false;    // overlay de debug desligado por padrão
 	theme = EThemeDSi;
 	settingsMusic = ESMusicTheme;
 	dsiMusic = EMusicTheme;
@@ -235,6 +236,7 @@ void TWLSettings::loadSettings()
 	rocketRobzLogo = settingsini.GetInt("SRLOADER", "ROCKET_ROBZ_LOGO", rocketRobzLogo);
 	dsiVideoBg = settingsini.GetInt("SRLOADER", "DSI_VIDEO_BG", dsiVideoBg);
 	dsiVideoFadeMode = settingsini.GetInt("SRLOADER", "DSI_VIDEO_FADE_MODE", dsiVideoFadeMode);
+	dsiDebugMenu = settingsini.GetInt("SRLOADER", "DSI_DEBUG_MENU", dsiDebugMenu);
 	theme = (TTheme)settingsini.GetInt("SRLOADER", "THEME", theme);
 	settingsMusic = (TSettingsMusic)settingsini.GetInt("SRLOADER", "SETTINGS_MUSIC", settingsMusic);
 	dsiMusic = (TDSiMusic)settingsini.GetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
@@ -434,6 +436,9 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
 	settingsini.SetInt("SRLOADER", "SHOW_SELECT_MENU", showSelectMenu);
 	settingsini.SetInt("SRLOADER", "ROCKET_ROBZ_LOGO", rocketRobzLogo);
+	settingsini.SetInt("SRLOADER", "DSI_VIDEO_BG", dsiVideoBg);
+	settingsini.SetInt("SRLOADER", "DSI_VIDEO_FADE_MODE", dsiVideoFadeMode);
+	settingsini.SetInt("SRLOADER", "DSI_DEBUG_MENU", dsiDebugMenu);
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SetInt("SRLOADER", "SETTINGS_MUSIC", settingsMusic);
 	settingsini.SetInt("SRLOADER", "DSI_MUSIC", dsiMusic);

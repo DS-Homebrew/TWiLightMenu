@@ -98,7 +98,10 @@ public:
 	void drawTopTitle(std::u16string_view text); // selected game's title/details on the top screen
 	void loadGameLogo(const std::string &romName); // AGENDA o logo do jogo (barato; decode é deferido)
 	void tickLogoLoad();                           // decode deferido do logo (chamar 1x/frame no loop ocioso)
-	void drawTopFps();                             // DEBUG: contador de FPS numa box no canto sup. esq. (1x/frame)
+	void drawTopDebug();                           // DEBUG: overlay (fps/polígonos/vértices/vram) no canto sup. esq. (1x/frame)
+	void tickStatusBar();                          // recompõe o topo só quando a hora/bateria mudam (1x/frame, sem flicker)
+	void composeStatusBar(u16 *dst);               // desenha a barra de status no buffer dado (topo, por cima de tudo)
+	void redrawTop();                              // recompõe a tela superior (limpa overlay de debug residual)
 
 	void clearTopScreen();
 	void unloadRotatingCubes();

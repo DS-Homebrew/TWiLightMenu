@@ -1,6 +1,6 @@
 # Fluxo do `browseForFile` (o loop do menu)
 
-`browseForFile` (`fileBrowse.cpp:3204`) é o loop principal do menu: mostra o grid, processa input,
+`browseForFile` (`fileBrowse.cpp:~3320`) é o loop principal do menu: mostra o grid, processa input,
 e **retorna qual jogo lançar**. O boot em si é feito depois, no `main.cpp`. Entender o **contrato de
 retorno** é o que permite mexer no frontend sem quebrar o launch.
 
@@ -67,9 +67,25 @@ browseForFile:
 
 ## Onde entram os pop-ups
 
-- **Y → `perGameSettings()`** (`perGameSettings.cpp`): seta `dbox_showIcon`/`showdialogbox`, desliza
-  o `dialogbox` do tema e desenha as opções com `printSmall(..., FontPalette::dialog)`.
+- **Y (toque curto) → `perGameSettings()`** (`perGameSettings.cpp`): seta `dbox_showIcon`/`showdialogbox`,
+  desliza o `dialogbox` do tema e desenha as opções com `printSmall(..., FontPalette::dialog)`.
 - **X →** dialog de deletar/ocultar arquivo (mesma mecânica de dbox).
+- **Y (segurar, tema DSi) → `dsiFrontendSettingsMenu()`** (`fileBrowse.cpp`, logo antes de
+  `browseForFile`): pop-up de configs do frontend. Detecção de hold: ao `pressed & KEY_Y`, um mini-loop
+  conta ~24 frames enquanto `keysHeld() & KEY_Y`; se completar, abre o menu e zera `pressed` (o
+  `perGameSettings` não dispara). Abre com `dbox_showIcon = false` (sem o ícone do jogo na box).
+  Navegação: ↑/↓ move; ←/→/`A` alterna; `B` fecha e salva. Opções (salvas em `options.ini` via
+  `ms().saveSettings()`):
+  - **Top BG Opacity** → `dsiVideoFadeMode` (0 = Dithering/checker, 1 = Transparency/opacity). Reflete
+    ao vivo no próximo redraw do topo (`drawTopTitle` lê o modo).
+  - **Play Background** → `dsiVideoBg` (on/off). Efeito pleno no próximo load do menu.
+  - **Debug Menu** → `dsiDebugMenu` (on/off): overlay `tex().drawTopDebug()` (fps, polígonos/vértices
+    via `glGetInt`, VRAM dos bancos de ícone) desenhado 1x/frame no loop ocioso, após `tickLogoLoad`.
+    Ao desligar, `tex().redrawTop()` limpa a box residual.
+
+  > Chaves no `options.ini` (seção `SRLOADER`): `DSI_VIDEO_FADE_MODE`, `DSI_VIDEO_BG`, `DSI_DEBUG_MENU`.
+  > Antes desta mudança, `DSI_VIDEO_*` eram lidas mas **nunca salvas** (`twlmenusettings.cpp`); o save
+  > foi adicionado junto. Injeção de tecla no melonDS é não-confiável → testar o hold no teclado/hardware.
 - Ambos usam `drawDbox()` (`graphics.cpp`) que blita `tex().dialogboxImage()` deslizando de baixo.
 - Texto dos pop-ups é **preto** no tema DSi (paleta forçada em `fontHandler.cpp`).
 

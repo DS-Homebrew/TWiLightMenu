@@ -1003,6 +1003,8 @@ void bgOperations(bool waitFrame) {
 	tex().drawBatteryImageCached();
 	drawCurrentTime();
 	drawCurrentDate();
+	if (ms().theme == TWLSettings::EThemeDSi)
+		tex().tickStatusBar(); // recompõe o topo (barra de status) só quando hora/bateria mudam
 	snd().updateStream();
 	if (waitFrame) {
 		swiWaitForVBlank();

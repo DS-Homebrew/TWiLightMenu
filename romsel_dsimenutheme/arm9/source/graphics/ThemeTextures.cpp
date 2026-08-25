@@ -26,6 +26,8 @@
 #include "common/tonccpy.h"
 #include "common/lodepng.h"
 #include "language.h"
+#include "iconHandler.h"
+#include "date.h"
 #include "ndsheaderbanner.h"
 #include "ndma.h"
 
@@ -120,14 +122,42 @@ static int _startboxW = 0, _startboxH = 0;
 static int _sbBoxX = 0, _sbBoxY = 0, _sbBoxW = 0, _sbBoxH = 0;
 static bool _startboxLoaded = false, _startboxHas = false;
 
+// Status bar (grf/status_bar.bmp): caixa no canto superior direito da tela superior, com a hora
+// e o ícone de bateria por cima. Magenta (#FF00FF) = transparente (0). Desenhada por frame no topo.
+#define STATUSBAR_MAXW 256
+#define STATUSBAR_MAXH 64
+// Escala da fonte da hora na barra (nearest-neighbor). NUM/DEN < 1 reduz. Ex.: 3/4 = 75%.
+#define SB_TIME_NUM 3
+#define SB_TIME_DEN 4
+// Espaço extra (px na escala nativa) entre os caracteres da hora (tracking).
+#define SB_TIME_TRACKING 3
+// Recuo (px) da bateria até a borda direita da barra. Posição da bateria é FIXA (não depende da hora).
+#define SB_BATT_RIGHT_INSET 10
+static u16 _statusBarPix[STATUSBAR_MAXW * STATUSBAR_MAXH];
+static int _sbarW = 0, _sbarH = 0;
+static int _sbarBX = 0, _sbarBY = 0, _sbarBW = 0, _sbarBH = 0; // bounding box (não usado no blit)
+static bool _statusBarLoaded = false, _statusBarHas = false;
+
+// Ícones de bateria (PNG RGBA em <tema>/battery/). Indexados por estado 0..5.
+#define BATT_MAXW 32
+#define BATT_MAXH 24
+#define BATT_STATES 6
+static u16 _battPix[BATT_STATES][BATT_MAXW * BATT_MAXH];
+static int _battW[BATT_STATES] = {0}, _battH[BATT_STATES] = {0};
+static bool _battLoaded = false;
+
+// Último conteúdo desenhado na barra (para só recompor o topo quando muda -> sem flicker por frame).
+static std::string _lastStatusTime;
+static int _lastStatusBatt = -999;
+
 // Slide vertical da caixa inferior (titlebox/startbox): a que sai "cai" (desce e some), a que
 // entra "sobe" (vem de baixo até o lugar). A troca é disparada pelo início/fim do vídeo.
 #define TOPBOX_MARGIN  2       // folga do rodapé
 #define BOX_SLIDE_STEP 8       // px por frame do slide
-#define BOX_SWAP_DELAY 90      // frames após o vídeo iniciar até trocar titlebox->startbox (~1.5s)
+#define BOX_SWAP_DELAY 90      // frames após selecionar o item até trocar titlebox->startbox (~1.5s)
 static int _boxKind = 0;       // caixa exibida agora: 0 = titlebox(+texto), 1 = startbox
 static int _boxSlide = 0;      // deslocamento vertical (0 = no lugar; >0 = descida/escondida)
-static int _boxSwapTimer = 0;  // frames desde que o vídeo começou (conta até BOX_SWAP_DELAY)
+static int _boxSwapTimer = 0;  // frames desde que o item foi selecionado (conta até BOX_SWAP_DELAY)
 
 // Per-game logo (top screen, drawn above/behind the titlebox). Mapped via logos.yml.
 static u16 _logoPix[256 * 128];
@@ -191,7 +221,7 @@ static u8   _vidRowMap[192];          // y-tela -> y-vídeo
 // bounding box opaco (bx,by,bw,bh). Retorna false se não abrir/for inválido. Usado p/ titlebox
 // e startbox.
 static bool loadBoxBmp(const std::string &path, u16 *pix, int &outW, int &outH,
-                       int &bx, int &by, int &bw, int &bh) {
+                       int &bx, int &by, int &bw, int &bh, int maxH = TITLEBOX_MAXH) {
 	FILE *f = fopen(path.c_str(), "rb");
 	if (!f)
 		return false;
@@ -201,7 +231,7 @@ static bool loadBoxBmp(const std::string &path, u16 *pix, int &outW, int &outH,
 	int w = hdr[18] | (hdr[19] << 8) | (hdr[20] << 16) | (hdr[21] << 24);
 	int h = hdr[22] | (hdr[23] << 8) | (hdr[24] << 16) | (hdr[25] << 24);
 	int bpp = hdr[28] | (hdr[29] << 8);
-	if ((bpp != 4 && bpp != 8) || w <= 0 || w > TITLEBOX_MAXW || h <= 0 || h > TITLEBOX_MAXH) { fclose(f); return false; }
+	if ((bpp != 4 && bpp != 8) || w <= 0 || w > TITLEBOX_MAXW || h <= 0 || h > maxH) { fclose(f); return false; }
 
 	u16 pal[256];
 	bool trans[256] = {false};
@@ -256,6 +286,40 @@ static void loadStartbox() {
 	_startboxLoaded = true;
 	_startboxHas = loadBoxBmp(tfn().uiDirectory() + "/grf/topscreen_startbox.bmp",
 	           _startboxPix, _startboxW, _startboxH, _sbBoxX, _sbBoxY, _sbBoxW, _sbBoxH);
+}
+
+static void loadStatusBar() {
+	_statusBarLoaded = true;
+	_statusBarHas = loadBoxBmp(tfn().uiDirectory() + "/grf/status_bar.bmp",
+	           _statusBarPix, _sbarW, _sbarH, _sbarBX, _sbarBY, _sbarBW, _sbarBH, STATUSBAR_MAXH);
+}
+
+// Estados de bateria mapeados de getBatteryLevel(): 0=vazia .. 4=cheia, 5=carregando.
+static const char *const _battFile[BATT_STATES] = {
+	"/battery/battery0.png", "/battery/battery1.png", "/battery/battery2.png",
+	"/battery/battery3.png", "/battery/battery4.png", "/battery/batterycharge.png",
+};
+
+static void loadBattery() {
+	_battLoaded = true;
+	for (int i = 0; i < BATT_STATES; i++) {
+		std::vector<unsigned char> img;
+		unsigned w = 0, h = 0;
+		if (lodepng::decode(img, w, h, tfn().uiDirectory() + _battFile[i]) != 0)
+			continue;
+		if (w == 0 || h == 0 || w > BATT_MAXW || h > BATT_MAXH)
+			continue;
+		_battW[i] = w;
+		_battH[i] = h;
+		for (unsigned y = 0; y < h; y++) {
+			for (unsigned x = 0; x < w; x++) {
+				unsigned o = (y * w + x) * 4;
+				u8 r = img[o], g = img[o + 1], b = img[o + 2], a = img[o + 3];
+				_battPix[i][y * BATT_MAXW + x] = (a >= 128)
+					? ((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10) | BIT(15)) : 0;
+			}
+		}
+	}
 }
 
 // Remove aspas YAML e des-escapa \" \\; também faz trim.
@@ -415,7 +479,6 @@ static void videoStop() {
 	_videoWhich = 0;
 	_videoFrameIdx = 0;
 	_videoTickAccum = 0;
-	_boxSwapTimer = 0;
 	_pendingVideoBase.clear();
 	_pendingVideoDelay = 0;
 }
@@ -472,6 +535,7 @@ void ThemeTextures::loadGameLogo(const std::string &romName) {
 	_gameId.clear();
 	_pendingLogoPath.clear(); // cancela qualquer decode agendado do item anterior
 	videoStop();              // para o vídeo do item anterior (brick volta a opaco no tick)
+	_boxSwapTimer = 0;        // recomeça a contagem p/ trocar titlebox->startbox neste novo item
 	if (romName.empty())
 		return;
 
@@ -561,15 +625,11 @@ void ThemeTextures::tickLogoLoad() {
 		needRedraw = true;
 	}
 
-	// 6) Slide da caixa inferior: alterna titlebox<->startbox. A troca só ocorre BOX_SWAP_DELAY
-	//    frames APÓS o vídeo iniciar (desacoplado do start do vídeo). A caixa que sai "cai" (desce
-	//    até sumir); então troca; a que entra "sobe" (vem de baixo até o lugar).
-	if (_videoActive) {
-		if (_boxSwapTimer < BOX_SWAP_DELAY) _boxSwapTimer++;
-	} else {
-		_boxSwapTimer = 0;
-	}
-	int wantKind = (_videoActive && _startboxHas && _boxSwapTimer >= BOX_SWAP_DELAY) ? 1 : 0;
+	// 6) Slide da caixa inferior: alterna titlebox<->startbox. A troca ocorre BOX_SWAP_DELAY frames
+	//    após o item ser selecionado (independente do vídeo; o timer reseta na troca de item, em
+	//    loadGameLogo). A caixa que sai "cai" (desce até sumir); troca; a que entra "sobe" (de baixo).
+	if (_boxSwapTimer < BOX_SWAP_DELAY) _boxSwapTimer++;
+	int wantKind = (_startboxHas && _boxSwapTimer >= BOX_SWAP_DELAY) ? 1 : 0;
 	int curBoxH = (_boxKind == 1) ? _sbBoxH : _tbBoxH;
 	if (_boxKind != wantKind) {
 		_boxSlide += BOX_SLIDE_STEP;                 // desce a caixa atual
@@ -2169,14 +2229,18 @@ void ThemeTextures::drawTopTitle(std::u16string_view text) {
 		}
 	}
 
+	// Barra de status por cima de tudo (titlebox/startbox/logo/texto), na composição do topo.
+	composeStatusBar(dst);
+
 	// Present the finished frame in a single contiguous copy (no visible half-draw).
 	tonccpy(BG_GFX_SUB, dst, sizeof(u16) * SCREEN_WIDTH * SCREEN_HEIGHT);
 }
 
-// DEBUG: contador de FPS numa box preta no canto superior-esquerdo da tela superior.
-// Mede quadros do loop principal por segundo (revela drops); desenhado direto no BG_GFX_SUB
+// DEBUG: overlay de métricas numa box preta no canto superior-esquerdo da tela superior.
+// Mostra FPS do loop principal (revela drops), polígonos/vértices em HW no último frame 3D, e a
+// VRAM de textura ocupada pelos bancos de ícone (banco A, 128KB). Desenhado direto no BG_GFX_SUB
 // a cada frame, DEPOIS da composição do topo, então nunca é sobrescrito pelo drawTopTitle.
-void ThemeTextures::drawTopFps() {
+void ThemeTextures::drawTopDebug() {
 	static int acc = 0;        // quadros contados no segundo atual
 	static time_t last = 0;    // segundo (RTC) da última atualização
 	static int fps = 0;        // valor exibido
@@ -2187,23 +2251,162 @@ void ThemeTextures::drawTopFps() {
 	FontGraphic *font = smallFont();
 	if (!font) return;
 	const int lineH = font->height();
-	const int boxW = 44, boxH = lineH + 2;
+
+	// Métricas ao vivo do render 3D (tela inferior gl2d).
+	int polys = 0, verts = 0;
+	glGetInt(GL_GET_POLYGON_RAM_COUNT, &polys);
+	glGetInt(GL_GET_VERTEX_RAM_COUNT, &verts);
+	// VRAM de textura: bancos de ícone (cada um 32x256 4bpp = 4KB) ocupam o banco A (128KB).
+	const int vramUsedK = (NDS_ICON_BANK_COUNT * 4);
+
+	// Três linhas de texto.
+	char lines[3][20];
+	sprintf(lines[0], "%d fps", fps);
+	sprintf(lines[1], "P%d V%d", polys, verts);
+	sprintf(lines[2], "VRAM %d/128K", vramUsedK);
+
+	const int boxW = 92, boxH = lineH * 3 + 4;
 
 	// Box preta opaca.
 	for (int y = 0; y < boxH && y < SCREEN_HEIGHT; y++)
 		for (int x = 0; x < boxW && x < SCREEN_WIDTH; x++)
 			BG_GFX_SUB[y * SCREEN_WIDTH + x] = RGB15(0, 0, 0) | BIT(15);
 
-	// Número em branco dentro da box.
-	char buf[16];
-	sprintf(buf, "%d fps", fps);
-	std::u16string s = FontGraphic::utf8to16(buf);
-	toncset16(FontGraphic::textBuf[1], 0, SCREEN_WIDTH * lineH);
-	font->print(0, 0, true, s, Alignment::left, FontPalette::regular);
-	for (int y = 0; y < lineH && (y + 1) < SCREEN_HEIGHT; y++)
-		for (int x = 0; x < boxW - 4; x++)
-			if (FontGraphic::textBuf[1][y * SCREEN_WIDTH + x])
-				BG_GFX_SUB[(y + 1) * SCREEN_WIDTH + (x + 2)] = RGB15(31, 31, 31) | BIT(15);
+	// Texto branco dentro da box, uma linha por métrica.
+	for (int l = 0; l < 3; l++) {
+		std::u16string s = FontGraphic::utf8to16(lines[l]);
+		toncset16(FontGraphic::textBuf[1], 0, SCREEN_WIDTH * lineH);
+		font->print(0, 0, true, s, Alignment::left, FontPalette::regular);
+		int y0 = 2 + l * lineH;
+		for (int y = 0; y < lineH && (y0 + y) < SCREEN_HEIGHT; y++)
+			for (int x = 0; x < boxW - 4; x++)
+				if (FontGraphic::textBuf[1][y * SCREEN_WIDTH + x])
+					BG_GFX_SUB[(y0 + y) * SCREEN_WIDTH + (x + 2)] = RGB15(31, 31, 31) | BIT(15);
+	}
+}
+
+// Recompõe a tela superior a partir do título atual. Usado para limpar o overlay de debug residual
+// quando ele é desligado (o drawTopTitle sozinho só roda em needRedraw, então a box ficaria parada).
+void ThemeTextures::redrawTop() {
+	drawTopTitle(_topTitleText);
+}
+
+// Barra de status no canto superior direito da tela superior: fundo (grf/status_bar.bmp) + hora
+// (à esquerda, preto) + ícone de bateria (à direita). Desenha no buffer `dst` — quando é o
+// _topCompose (dentro do drawTopTitle) fica por cima da titlebox/startbox; quando é o BG_GFX_SUB
+// (1x/frame) mantém o relógio vivo no ocioso.
+void ThemeTextures::composeStatusBar(u16 *dst) {
+	if (!_statusBarLoaded) loadStatusBar();
+	if (!_statusBarHas) return;
+	if (!_battLoaded) loadBattery();
+
+	const int barX = SCREEN_WIDTH - _sbarW; // ancorada à direita, no topo
+	const int barY = 0;
+
+	// Fundo da barra (0 = magenta transparente -> pula, mostra o que já estava no topo).
+	for (int y = 0; y < _sbarH; y++) {
+		int dy = barY + y;
+		if ((unsigned)dy >= SCREEN_HEIGHT) continue;
+		for (int x = 0; x < _sbarW; x++) {
+			u16 p = _statusBarPix[y * _sbarW + x];
+			if (!p) continue;
+			int dx = barX + x;
+			if ((unsigned)dx >= SCREEN_WIDTH) continue;
+			dst[dy * SCREEN_WIDTH + dx] = p;
+		}
+	}
+
+	// Layout: hora (esquerda) + bateria (direita, posição fixa).
+	int lvl = getBatteryLevel();
+	int st = (lvl >= 7) ? 5 : (lvl < 0 ? 0 : (lvl > 4 ? 4 : lvl));
+	int iw = _battW[st], ih = _battH[st];
+
+	// Registra o conteúdo desenhado agora (usado por tickStatusBar p/ recompor só quando muda).
+	std::string timeStr = retTime();
+	_lastStatusTime = timeStr;
+	_lastStatusBatt = lvl;
+
+	FontGraphic *font = smallFont();
+	const int lineH = font ? font->height() : 0;
+	std::u16string t;
+	int tw = 0;           // largura nativa do texto da hora (com tracking entre caracteres)
+	int twS = 0, thS = 0; // largura/altura já reduzidas (escala SB_TIME_NUM/DEN)
+	if (font) {
+		t = FontGraphic::utf8to16(timeStr);
+		for (size_t i = 0; i < t.size(); i++) {
+			tw += font->calcWidth(std::u16string(1, t[i]));
+			if (i + 1 < t.size()) tw += SB_TIME_TRACKING;
+		}
+		twS = tw * SB_TIME_NUM / SB_TIME_DEN;
+		thS = lineH * SB_TIME_NUM / SB_TIME_DEN;
+	}
+
+	const int gap = 5; // folga entre a hora e a bateria
+
+	// Bateria ancorada à direita da barra, em posição FIXA: mudanças na largura da hora não a empurram.
+	int ix = barX + _sbarW - SB_BATT_RIGHT_INSET - (iw > 0 ? iw : 0);
+	int iy = barY + (_sbarH - ih) / 2;
+
+	// Hora à ESQUERDA da bateria, alinhada à direita (cresce para a esquerda a partir de um ponto fixo).
+	// Em preto, reduzida com OR-downsample (acende o pixel de destino se QUALQUER pixel-fonte na sua
+	// célula estiver aceso), preservando os traços finos da fonte.
+	if (font && twS > 0) {
+		toncset16(FontGraphic::textBuf[1], 0, SCREEN_WIDTH * lineH);
+		int penX = 0; // renderiza caractere-a-caractere com tracking extra entre eles
+		for (size_t i = 0; i < t.size(); i++) {
+			std::u16string ch(1, t[i]);
+			font->print(penX, 0, true, ch, Alignment::left, FontPalette::regular);
+			penX += font->calcWidth(ch) + SB_TIME_TRACKING;
+			if (penX >= SCREEN_WIDTH) break;
+		}
+		int txRight = ix - ((iw > 0) ? gap : 0); // borda direita fixa do campo de horas
+		int tx = txRight - twS;                  // início do texto (cresce p/ a esquerda)
+		int ty = barY + (_sbarH - thS) / 2;
+		for (int y = 0; y < thS; y++) {
+			int dy = ty + y;
+			if ((unsigned)dy >= SCREEN_HEIGHT) continue;
+			int sy0 = y * lineH / thS, sy1 = (y + 1) * lineH / thS;
+			if (sy1 <= sy0) sy1 = sy0 + 1;
+			for (int x = 0; x < twS; x++) {
+				int sx0 = x * tw / twS, sx1 = (x + 1) * tw / twS;
+				if (sx1 <= sx0) sx1 = sx0 + 1;
+				bool on = false;
+				for (int sy = sy0; sy < sy1 && !on; sy++)
+					for (int sx = sx0; sx < sx1; sx++)
+						if (FontGraphic::textBuf[1][sy * SCREEN_WIDTH + sx]) { on = true; break; }
+				if (!on) continue;
+				int dx = tx + x;
+				if ((unsigned)dx >= SCREEN_WIDTH) continue;
+				dst[dy * SCREEN_WIDTH + dx] = RGB15(0, 0, 0) | BIT(15);
+			}
+		}
+	}
+
+	// Bateria na posição fixa calculada acima (ix, iy).
+	if (iw > 0) {
+		for (int y = 0; y < ih; y++) {
+			int dy = iy + y;
+			if ((unsigned)dy >= SCREEN_HEIGHT) continue;
+			for (int x = 0; x < iw; x++) {
+				u16 p = _battPix[st][y * BATT_MAXW + x];
+				if (!p) continue;
+				int dx = ix + x;
+				if ((unsigned)dx >= SCREEN_WIDTH) continue;
+				dst[dy * SCREEN_WIDTH + dx] = p;
+			}
+		}
+	}
+}
+
+// Chamado 1x/frame no loop ocioso. NÃO desenha por frame (isso causava flicker da bateria no
+// hardware: escrita pixel-a-pixel no BG_GFX_SUB durante o scanout). Em vez disso, só recompõe o topo
+// (drawTopTitle -> apresenta de uma vez) QUANDO a hora ou a bateria mudam.
+void ThemeTextures::tickStatusBar() {
+	if (!_statusBarLoaded) loadStatusBar();
+	if (!_statusBarHas) return;
+	if (!_battLoaded) loadBattery();
+	if (retTime() != _lastStatusTime || getBatteryLevel() != _lastStatusBatt)
+		redrawTop(); // recompõe o topo (composeStatusBar roda no fim do drawTopTitle e atualiza o estado)
 }
 
 ITCM_CODE void ThemeTextures::drawDateTimeMacro(const char *str, int posX, int posY, bool isDate) {

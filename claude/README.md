@@ -20,8 +20,19 @@ foram mantidos intactos.
 - **Tela inferior (bottom, MAIN engine):** grid de 3 linhas × N colunas. Cada item = box do tema
   (`box.bmp`/`folder.bmp`) + ícone do jogo por cima. Item selecionado é center-locked e ampliado
   (integer scaling 1.0; inativos 0.5). Barra de menu (`Botton_bar`) no rodapé, por cima dos items.
-- **Tela superior (top, SUB engine):** fundo brick + **titlebox** ancorada no rodapé contendo o
-  título + desenvolvedor do jogo (texto preto).
+- **Tela superior (top, SUB engine):** composta 1 buffer (`_topCompose`) e apresentada de uma vez.
+  Camadas, de trás p/ frente: fundo brick (ou vídeo de gameplay) → logo do jogo → **titlebox**
+  (título + desenvolvedor, texto preto) **ou startbox** → **status bar** (canto sup. direito).
+  Ver [architecture.md] p/ a pipeline de composição do topo.
+- **Titlebox ↔ startbox:** a titlebox some e a **startbox** ("START to play") sobe no lugar
+  ~1.5s (`BOX_SWAP_DELAY`) após selecionar o item (independente do vídeo de fundo).
+- **Status bar (top, canto sup. dir.):** `grf/status_bar.bmp` + **hora** (esquerda) e **bateria**
+  (direita, posição fixa). Ver [assets-and-pipelines.md] e [gotchas.md] (flicker).
+- **Vídeo de fundo (opcional):** `dsiVideoBg` reproduz gameplay no fundo do topo; `dsiVideoFadeMode`
+  escolhe o estilo (dithering/checker ou opacity/transparency).
+- **Overlay de debug (opcional):** `dsiDebugMenu` mostra fps / polígonos / vértices / VRAM no topo.
+- **Menu de configs do frontend:** **segurar `Y`** abre um pop-up p/ alternar os 3 toggles acima;
+  salvos em `options.ini`. Ver [browseforfile-flow.md].
 - **Fundo das duas telas:** `quickmenu/topbg.png` do tema (padrão de tijolinhos).
 - **Fonte do menu:** a fonte do tema (pixel, resolução DSi), forçada para o tema DSi.
 - **Pop-ups (X/Y):** dialogbox do tema, texto preto.

@@ -65,8 +65,14 @@ bug nosso. **Boot só testa em hardware real** (via `deploy_sd.sh`, funciona 100
 ### Injeção de tecla é não-confiável
 
 Eventos sintéticos de tecla (`osascript key code`) **não chegam** de forma confiável ao input do DS
-no melonDS. Para testar navegação/telas que precisam de input (pop-ups X/Y etc.), peça ao usuário
-testar no teclado físico, ou capture o estado que já estiver na tela.
+no melonDS. Para testar navegação/telas que precisam de input (pop-ups X/Y, segurar `Y` p/ o menu de
+configs etc.), peça ao usuário testar no teclado físico, ou capture o estado que já estiver na tela.
+
+### Flicker/tearing do topo NÃO reproduz no preview
+
+Escrita no `BG_GFX_SUB` no meio do scanout causa flicker **no hardware**, mas o melonDS renderiza
+"limpo" e **não mostra** o problema. Ou seja: a tela superior pode parecer perfeita no preview e
+piscar no console. Se mexer na composição do topo/status bar, valide em hardware. Ver [gotchas.md].
 
 ## Deploy no cartão real
 

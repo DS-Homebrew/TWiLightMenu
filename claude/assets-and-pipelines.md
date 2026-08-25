@@ -42,14 +42,29 @@ Para atualizar a barra: troque `assets/Botton_bar.png`, rode `convert_bar.py`, r
 Para arte na **tela superior** (que não tem gl2d), lemos o BMP do tema e blittamos os pixels no
 `BG_GFX_SUB`. Caso do **titlebox** (`ThemeTextures.cpp`):
 
-- `loadTitlebox()` lê `<tema>/grf/topscreen_titlebox.bmp` (parser de BMP 4bpp/8bpp próprio),
-  converte para formato do BG, trata magenta como transparente, e **detecta o bounding box** da
-  caixa opaca dentro do canvas (o asset pode ser 256×192 com a caixa em qualquer lugar).
-- `drawTopTitle()` blita a caixa **ancorada no rodapé da top screen** (centralizada) e desenha o
-  título + desenvolvedor (texto preto, `FontGraphic`) centrado dentro dela.
-- Constantes de posição no `drawTopTitle`: `margin` (folga do rodapé). Texto centra no bbox.
+- `loadBoxBmp()` é o parser genérico (BMP 4bpp/8bpp próprio): converte p/ formato do BG, trata
+  **magenta `#FF00FF` = transparente**, e devolve o **bounding box** da parte opaca. Tem um param
+  `maxH` (default `TITLEBOX_MAXH`) p/ validar contra buffers menores (usado pela status bar).
+- `loadTitlebox()`/`loadStartbox()` usam `loadBoxBmp` p/ `<tema>/grf/topscreen_titlebox.bmp` e
+  `.../topscreen_startbox.bmp`. `drawTopTitle()` blita a caixa **ancorada no rodapé** e desenha o
+  título + desenvolvedor (texto preto, `FontGraphic`) centrado. Constante: `margin` (folga do rodapé).
 
-Editar `topscreen_titlebox.bmp` **não exige recompilar** (lido do SD). Mudar posição/margem sim.
+Editar `topscreen_titlebox.bmp`/`topscreen_startbox.bmp` **não exige recompilar** (lido do SD).
+
+### Status bar (topo, canto superior direito)
+
+- `loadStatusBar()` lê `<tema>/grf/status_bar.bmp` (via `loadBoxBmp`, buffer próprio `STATUSBAR_MAXH`).
+  É uma caixa (prata arredondada) com fundo magenta transparente — só o miolo aparece.
+- **Bateria**: `loadBattery()` decodifica os PNGs RGBA de `<tema>/battery/` (via lodepng): `battery0..4`
+  + `batterycharge`, mapeados de `getBatteryLevel()` (0..4 níveis, 7 = carregando). Alpha `< 128` = vazio.
+- `composeStatusBar(dst)` desenha: fundo da barra → **hora** (esquerda) → **bateria** (direita, fixa).
+  Layout controlado por defines em `ThemeTextures.cpp`: `SB_TIME_NUM/DEN` (escala da fonte da hora,
+  reduzida com **OR-downsample** p/ não perder traço), `SB_TIME_TRACKING` (espaço entre caracteres,
+  render caractere-a-caractere), `SB_BATT_RIGHT_INSET` (recuo fixo da bateria; a hora é alinhada à
+  direita encostada nela, então mudar a largura da hora **não empurra** a bateria).
+- **Atualização sem flicker**: nunca desenha por frame no `BG_GFX_SUB`; ver [architecture.md]/[gotchas.md].
+
+Editar `status_bar.bmp` ou os PNGs de bateria **não exige recompilar** (lidos do SD; ajustar layout sim).
 
 ## Fundos das telas (topbg.png)
 
@@ -65,6 +80,9 @@ Editar `topscreen_titlebox.bmp` **não exige recompilar** (lido do SD). Mudar po
 | dialogbox (X/Y) | tema `grf/dialogbox.bmp` | `Texture`/gl2d | não |
 | fundo brick | tema `quickmenu/topbg.png` | lodepng → BG | não |
 | titlebox (top) | tema `grf/topscreen_titlebox.bmp` | BMP loader → SUB BG | não (código sim) |
+| startbox (top) | tema `grf/topscreen_startbox.bmp` | BMP loader → SUB BG | não (código sim) |
+| status bar (top) | tema `grf/status_bar.bmp` | BMP loader → SUB BG | não (código sim) |
+| bateria (status bar) | tema `battery/*.png` (RGBA) | lodepng → SUB BG | não (código sim) |
 | menu bar (bottom) | `assets/Botton_bar.png` | convert_bar.py → grit → gl2d | **sim** |
 | fonte | tema `font/*.nftr` | `fontHandler` | não |
 

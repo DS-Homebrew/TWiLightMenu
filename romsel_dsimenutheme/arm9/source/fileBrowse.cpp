@@ -3220,6 +3220,103 @@ bool setDefaultDirectory(std::string_view directory_path)
 	return true;
 }
 
+// Pop-up de configurações do frontend (tema DSi), aberto ao SEGURAR \X no grid.
+// Permite alternar, e salvar em options.ini:
+//   - Estilo de opacidade do fundo da tela superior: Dithering (checker) vs Transparency (opacity).
+//   - Reprodução do vídeo de fundo (on/off).
+//   - Menu de debug (fps/polígonos/vram na tela superior) (on/off).
+// Usa a mesma mecânica de dialogbox dos outros pop-ups (dbox desliza de baixo, texto preto).
+static void dsiFrontendSettingsMenu() {
+	int pressed = 0;
+	int held = 0;
+	int cursor = 0;
+	const int optCount = 3;
+
+	// Abre a dialogbox (desliza de baixo) e espera assentar. Sem o ícone do jogo (dbox_showIcon=false).
+	dbox_showIcon = false;
+	showdialogbox = true;
+	clearText();
+	updateText(false);
+	while (!dboxStopped) { bgOperations(true); }
+
+	while (1) {
+		clearText();
+
+		// Título.
+		printSmall(false, 0, 66, STR_FRONTEND_SETTINGS, Alignment::center, FontPalette::dialog);
+
+		const int optY = 98;
+		const int rowH = 16;
+		const int labelX = 24;
+		const int valueX = 232;
+
+		// Cursor ">" na linha selecionada.
+		printSmall(false, 16, optY + cursor * rowH, ">", Alignment::left, FontPalette::dialog);
+
+		// Opção 0: estilo de opacidade do fundo do topo.
+		printSmall(false, labelX, optY + 0 * rowH, STR_TOP_BG_STYLE + ":", Alignment::left, FontPalette::dialog);
+		printSmall(false, valueX, optY + 0 * rowH, ms().dsiVideoFadeMode == 1 ? STR_TRANSPARENCY : STR_DITHERING, Alignment::right, FontPalette::dialog);
+
+		// Opção 1: reprodução do fundo (vídeo).
+		printSmall(false, labelX, optY + 1 * rowH, STR_PLAY_BACKGROUND + ":", Alignment::left, FontPalette::dialog);
+		printSmall(false, valueX, optY + 1 * rowH, ms().dsiVideoBg ? STR_ON : STR_OFF, Alignment::right, FontPalette::dialog);
+
+		// Opção 2: menu de debug.
+		printSmall(false, labelX, optY + 2 * rowH, STR_DEBUG_MENU + ":", Alignment::left, FontPalette::dialog);
+		printSmall(false, valueX, optY + 2 * rowH, ms().dsiDebugMenu ? STR_ON : STR_OFF, Alignment::right, FontPalette::dialog);
+
+		printSmall(false, 240, 160, STR_B_BACK, Alignment::right, FontPalette::dialog);
+		updateText(false);
+
+		do {
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+			bgOperations(true);
+		} while (!held);
+
+		if (held & KEY_UP) {
+			snd().playSelect();
+			cursor = (cursor + optCount - 1) % optCount;
+		}
+		if (held & KEY_DOWN) {
+			snd().playSelect();
+			cursor = (cursor + 1) % optCount;
+		}
+		if ((held & KEY_LEFT) || (held & KEY_RIGHT) || (pressed & KEY_A)) {
+			snd().playSelect();
+			switch (cursor) {
+				case 0:
+					ms().dsiVideoFadeMode = (ms().dsiVideoFadeMode == 1) ? 0 : 1;
+					break;
+				case 1:
+					ms().dsiVideoBg = !ms().dsiVideoBg;
+					break;
+				case 2:
+					ms().dsiDebugMenu = !ms().dsiDebugMenu;
+					// Ao desligar, limpa a box residual recompondo o topo.
+					if (!ms().dsiDebugMenu)
+						tex().redrawTop();
+					break;
+			}
+		}
+
+		if (pressed & KEY_B) {
+			snd().playBack();
+			break;
+		}
+	}
+
+	// Persiste as mudanças no options.ini e fecha a dialogbox.
+	ms().saveSettings();
+	showdialogbox = false;
+	dbox_showIcon = false;
+	clearText();
+	updateText(false);
+	for (int i = 0; i < 15; i++) { bgOperations(true); }
+	tex().redrawTop(); // reflete estilo/fundo alterados na tela superior
+}
+
 std::string browseForFile(const std::vector<std::string_view> extensionList) {
 	FLOG_FN();
 	displayNowLoading();
@@ -3335,6 +3432,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				if (ms().theme == TWLSettings::EThemeDSi) {
 					titleboxXdest[ms().secondaryDevice] = (CURPOS / 3) * ROW3_COL_SPACING;
 					tex().tickLogoLoad(); // decode deferido do logo no ocioso (não trava a navegação)
+					if (ms().dsiDebugMenu)
+						tex().drawTopDebug(); // overlay de debug por cima do topo (após tickLogoLoad)
 				}
 
 				boxArtFound = ((CURPOS + PAGENUM * 40) < ((int)dirContents[scrn].size()));
@@ -4707,6 +4806,23 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 				dbox_showIcon = false;
 				bannerTextShown = false;
+			}
+
+			// Segurar \Y (tema DSi) -> pop-up de configurações do frontend (estilo do fundo, reprodução
+			// do fundo, menu de debug). Um toque curto cai no perGameSettings abaixo.
+			if ((pressed & KEY_Y) && ms().theme == TWLSettings::EThemeDSi && !(held & KEY_SELECT)) {
+				int holdFrames = 0;
+				while (holdFrames < 24) {
+					scanKeys();
+					if (!(keysHeld() & KEY_Y)) break;
+					bgOperations(true);
+					holdFrames++;
+				}
+				if (holdFrames >= 24) {
+					dsiFrontendSettingsMenu();
+					bannerTextShown = false;
+					pressed = 0; // consome o \Y para o perGameSettings não abrir também
+				}
 			}
 
 			if ((pressed & KEY_Y) && !ms().kioskMode && isValid[CURPOS] && !isTwlm[CURPOS] && !isDirectory[CURPOS] && bannerTextShown && showSTARTborder) {

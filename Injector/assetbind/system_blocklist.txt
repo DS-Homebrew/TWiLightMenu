@@ -1,0 +1,27 @@
+# system_blocklist.txt — arquivos .nds que NÃO são jogos (apps de sistema/homebrew
+# do TWiLightMenu). O scanner os ignora para não scrapear/bindar lixo.
+#
+# Formatos aceitos por linha (case-insensitive; '#' = comentário):
+#   sha1:<hex>        -> exclui por hash de conteúdo (robusto a rename)
+#   name:<substring>  -> exclui se o substring aparece no nome do arquivo
+#   <substring>       -> atalho para name:<substring>
+#
+# Hashes abaixo foram coletados do SD card de teste do TWiLightMenu.
+
+# --- por hash (identidade de conteúdo — não engana renomeando) ---
+sha1:d7acf1be345b87bb3863e599725c8956d5ce87d4   # dsimenu.nds
+sha1:434735c1abf25fcf1c7355b83381d69f9f40f108   # pictochat.nds
+sha1:942c55193794ffaab37ff343db20dc178c7ce2e5   # dlplay.nds
+sha1:12a77aa72558dcc2ddea559ecd789070ffc8cbb0   # nds-bootstrap-hb-release.nds
+sha1:25ea8e586285c1706662a70c9255e1bff11df588   # nds-bootstrap-release.nds
+sha1:2f0ae47371b099cd9a6e5e7e35f81629382916cd   # GBARunner2_arm7dldi_nodsp_dsi.nds
+sha1:3861535f86c9e88b92233a9cf8525584b4da38be   # GBARunner2_arm7dldi_dsi.nds
+
+# --- por nome (pega variações/versões futuras desses homebrews) ---
+name:dsimenu
+name:pictochat
+name:dlplay
+name:nds-bootstrap
+name:gbarunner
+name:_dstwo_plug
+name:moonshell
