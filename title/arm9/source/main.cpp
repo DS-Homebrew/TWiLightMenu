@@ -906,6 +906,7 @@ void lastRunROM()
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 				bool dsPhatColors = (perGameSettings_dsPhatColors == -1 ? DEFAULT_PHAT_COLORS : perGameSettings_dsPhatColors);
 				bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
+				const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
 				if (runTempDSiWare) {
 					useWidescreen = *(bool*)(0x02000014);
 					useNightly = *(bool*)(0x02000010);
@@ -921,7 +922,7 @@ void lastRunROM()
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
-				const bool savFormat = (ms().previousUsedDevice && (!isDSiMode() || NDSHeader.twlRomSize >= 0x04000000 || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
+				const bool savFormat = (NDSHeader.twlRomSize >= 0x04000000) || (sys().scfgSdmmcEnabled() && dsiWareSlot1Mode) || (ms().previousUsedDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
 
 				if (!runTempDSiWare) {
 					ms().dsiWareSrlPath = ms().romPath[ms().previousUsedDevice];
@@ -1068,7 +1069,7 @@ void lastRunROM()
 				char sfnPub[62];
 				char sfnPrv[62];
 				char sfnBnr[62];
-				if (ms().previousUsedDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound()) {
+				if (ms().previousUsedDevice && !bs().b4dsMode && ms().dsiWareToSD && !savFormat && sdFound()) {
 					if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub.bak", F_OK) == 0) {
 						if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0) {
 							remove("sd:/_nds/TWiLightMenu/tempDSiWare.pub");
@@ -1111,6 +1112,7 @@ void lastRunROM()
 					(perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", (perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", (perGameSettings_region < -1 ? ms().useRomRegion : 0));
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSIWARE_SLOT1_MODE", dsiWareSlot1Mode);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);

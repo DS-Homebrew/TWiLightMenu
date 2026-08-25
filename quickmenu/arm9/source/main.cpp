@@ -2273,6 +2273,8 @@ int dsClassicMenu(void) {
 				remove(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 
 				loadPerGameSettings(filename[ms().secondaryDevice]);
+				const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
+				const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
 
 				std::string typeToReplace = filename[ms().secondaryDevice].substr(filename[ms().secondaryDevice].rfind('.'));
 
@@ -2303,7 +2305,7 @@ int dsClassicMenu(void) {
 				}
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
 				ms().dsiWareBnrPath = ms().dsiWarePubPath;
-				const bool savFormat = (ms().secondaryDevice && (!isDSiMode() || NDSHeader.twlRomSize >= 0x04000000 || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
+				const bool savFormat = booterIsNdsBootstrap && ((NDSHeader.twlRomSize >= 0x04000000) || (sys().scfgSdmmcEnabled() && dsiWareSlot1Mode) || (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode)));
 				if (savFormat) {
 					ms().dsiWarePubPath = replaceAll(ms().dsiWarePubPath, typeToReplace, getSavExtension());
 					ms().dsiWarePrvPath = ms().dsiWarePubPath;
@@ -2427,7 +2429,7 @@ int dsClassicMenu(void) {
 
 				fadeType = false;	// Fade to white
 
-				if (ms().secondaryDevice && !bs().b4dsMode && (ms().dsiWareToSD || (!(perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) && ms().consoleModel == 0)) && sdFound()) {
+				if (ms().secondaryDevice && !bs().b4dsMode && (ms().dsiWareToSD || (!booterIsNdsBootstrap && ms().consoleModel == 0)) && !savFormat && sdFound()) {
 					while (!fadeType && !screenFadedOut()) {
 						swiWaitForVBlank();
 					}
@@ -2466,7 +2468,7 @@ int dsClassicMenu(void) {
 					}
 				}
 
-				if (dsiFeatures() && ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0)) {
+				if (dsiFeatures() && booterIsNdsBootstrap) {
 					CheatCodelist codelist;
 					u32 gameCode, crc32;
 
@@ -2505,13 +2507,13 @@ int dsClassicMenu(void) {
 					}
 				}
 
-				if (((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) && !ms().homebrewBootstrap) {
+				if (booterIsNdsBootstrap && !ms().homebrewBootstrap) {
 					// Use nds-bootstrap
 					char sfnSrl[62];
 					char sfnPub[62];
 					char sfnPrv[62];
 					char sfnBnr[62];
-					if (ms().secondaryDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound()) {
+					if (ms().secondaryDevice && !bs().b4dsMode && ms().dsiWareToSD && !savFormat && sdFound()) {
 						fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", sfnSrl);
 						fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.pub", sfnPub);
 						fatGetAliasPath("sd:/_nds/TWiLightMenu/tempDSiWare.prv", sfnPrv);
@@ -2537,6 +2539,7 @@ int dsClassicMenu(void) {
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "REGION", perGameSettings_region < -1 ? ms().gameRegion : perGameSettings_region);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ROM_REGION", perGameSettings_region < -1 ? ms().useRomRegion : 0);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSIWARE_SLOT1_MODE", dsiWareSlot1Mode);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);

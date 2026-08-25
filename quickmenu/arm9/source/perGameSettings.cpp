@@ -34,6 +34,7 @@ int perGameSettings_dsiwareBooter = -1;
 int perGameSettings_useBootstrap = -1;
 int perGameSettings_fcGameLoader = -1;
 int perGameSettings_saveRelocation = -1;
+int perGameSettings_dsiWareSlot1Mode = -1;
 int perGameSettings_remappedKeys[12] = {0};
 
 char pergamefilepath[256];
@@ -63,6 +64,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_useBootstrap = pergameini.GetInt("GAMESETTINGS", "USE_BOOTSTRAP", -1);
 	perGameSettings_fcGameLoader = pergameini.GetInt("GAMESETTINGS", "FC_GAME_LOADER", -1);
 	perGameSettings_saveRelocation = pergameini.GetInt("GAMESETTINGS", "SAVE_RELOCATION", -1);
+	perGameSettings_dsiWareSlot1Mode = pergameini.GetInt("GAMESETTINGS", "DSIWARE_SLOT1_MODE", -1);
 
 	perGameSettings_remappedKeys[0] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_A", 0);
 	perGameSettings_remappedKeys[1] = pergameini.GetInt("GAMESETTINGS", "REMAPPED_KEY_B", 1);
