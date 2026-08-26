@@ -910,6 +910,7 @@ void lastRunROM()
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 				bool dsPhatColors = (perGameSettings_dsPhatColors == -1 ? DEFAULT_PHAT_COLORS : perGameSettings_dsPhatColors);
 				bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
+				bool asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
 				const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
 				if (runTempDSiWare) {
 					useWidescreen = *(bool*)(0x02000014);
@@ -1055,6 +1056,14 @@ void lastRunROM()
 							break;
 						}
 					}
+
+					for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
+						if (memcmp(NDSHeader.gameCode, asyncReadExcludeList[i], 3) == 0) {
+							// Found match
+							asyncCardRead = false;
+							break;
+						}
+					}
 				}
 
 				bool useTempDSiWare = (ms().previousUsedDevice && !bs().b4dsMode && ms().dsiWareToSD && sdFound());
@@ -1117,6 +1126,9 @@ void lastRunROM()
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "CARD_READ_DMA", cardReadDMA);
+				if (dsiFeatures() || !ms().secondaryDevice) {
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "ASYNC_CARD_READ", asyncCardRead);
+				}
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", 5);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", 1);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", 0);
