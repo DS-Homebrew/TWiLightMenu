@@ -725,15 +725,16 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 19;	// Slot-1 Mode
 		}
 		if ((booterIsNdsBootstrap || totalRomSize >= 0x04000000) || !dsiFeatures() || !ms().dsiWareToSD) {
-			if ((!ms().secondaryDevice || (dsiFeatures() && !bs().b4dsMode)) && !sys().scfgSdmmcEnabled() && !blacklisted_cardReadDma) {
+			const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
+			if ((!ms().secondaryDevice || (dsiFeatures() && !bs().b4dsMode)) && (!sys().scfgSdmmcEnabled() || dsiWareSlot1Mode) && !blacklisted_cardReadDma) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
 			}
-			if ((!ms().secondaryDevice || (dsiFeatures() && !bs().b4dsMode)) && !sys().scfgSdmmcEnabled() && !romLoadableInRam && !blacklisted_asyncCardRead) {
+			if ((!ms().secondaryDevice || (dsiFeatures() && !bs().b4dsMode)) && (!sys().scfgSdmmcEnabled() || dsiWareSlot1Mode) && !romLoadableInRam && !blacklisted_asyncCardRead) {
 				perGameOps++;
 				perGameOp[perGameOps] = 12;	// Async Card Read
 			}
-			if (((dsiFeatures() && !bs().b4dsMode) || !ms().secondaryDevice) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
+			if ((!ms().secondaryDevice || (dsiFeatures() && !bs().b4dsMode)) && sys().dsiWramAccess() && !sys().dsiWramMirrored() && !blacklisted_colorLut) {
 				perGameOps++;
 				perGameOp[perGameOps] = 16;	// DS Phat Colors
 			}
