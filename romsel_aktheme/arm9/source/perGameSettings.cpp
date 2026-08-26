@@ -465,17 +465,19 @@ void remapButtons (void) {
 static bool savExists[10] = {false};
 
 static void checkSaves(std::string filenameForInfo, u32 totalRomSize, u32 pubSize, u32 prvSize) {
+	if (isDSiWare[cursorPosOnScreen] && pubSize == 0 && prvSize == 0) return;
+	const bool savFormat = !isDSiWare[cursorPosOnScreen] || (totalRomSize >= 0x04000000) || (sys().scfgSdmmcEnabled() && (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode)) || (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
+
 	int saveNoBak = perGameSettings_saveNo;
 	for (int i = 0; i < 10; i++) {
 		perGameSettings_saveNo = i;
-		const bool savFormat = (totalRomSize >= 0x04000000) || (sys().scfgSdmmcEnabled() && (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode)) || (ms().secondaryDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
-		if (isDSiWare[cursorPosOnScreen] && (pubSize > 0 || prvSize > 0) && !savFormat) {
+		if (isDSiWare[cursorPosOnScreen] && !savFormat) {
 			std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')));
 			savExists[i] = access((path + getPubExtension()).c_str(), F_OK) == 0 || access((path + getPrvExtension()).c_str(), F_OK) == 0;
-		} else {
-			std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getSavExtension());
-			savExists[i] = access(path.c_str(), F_OK) == 0;
+			continue;
 		}
+		std::string path("saves/" + filenameForInfo.substr(0, filenameForInfo.find_last_of('.')) + getSavExtension());
+		savExists[i] = access(path.c_str(), F_OK) == 0;
 	}
 	perGameSettings_saveNo = saveNoBak;
 }
