@@ -714,7 +714,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
-		if (!sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
+		if (totalRomSize < 0x04000000 && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail) {
 			perGameOps++;
 			perGameOp[perGameOps] = 13;	// DSiWare Booter
 		}

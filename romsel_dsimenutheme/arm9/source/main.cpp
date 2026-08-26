@@ -1355,8 +1355,14 @@ int dsiMenuTheme(void) {
 			if (isDSiWare[CURPOS]) {
 				remove(sys().isRunFromSD() ? "sd:/_nds/nds-bootstrap/esrb.bin" : "fat:/_nds/nds-bootstrap/esrb.bin");
 
+				sNDSHeaderExt NDSHeader;
+
+				FILE *f_nds_file = fopen(filename.c_str(), "rb");
+				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+				fclose(f_nds_file);
+
 				loadPerGameSettings(filename);
-				const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
+				const bool booterIsNdsBootstrap = (perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || NDSHeader.twlRomSize >= 0x04000000 || (ms().secondaryDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0;
 				const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
 
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
@@ -1368,12 +1374,6 @@ int dsiMenuTheme(void) {
 
 				std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romFolderNoSlash);
-
-				sNDSHeaderExt NDSHeader;
-
-				FILE *f_nds_file = fopen(filename.c_str(), "rb");
-				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
-				fclose(f_nds_file);
 
 				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;

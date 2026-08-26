@@ -897,8 +897,12 @@ void lastRunROM()
 	} else if (runTempDSiWare || ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch) {
 		if (!runTempDSiWare && access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
+		FILE *f_nds_file = fopen(filename.c_str(), "rb");
+		fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+		fclose(f_nds_file);
+
 		loadPerGameSettings(filename);
-		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || (ms().previousUsedDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
+		if ((perGameSettings_dsiwareBooter == -1 ? ms().dsiWareBooter : perGameSettings_dsiwareBooter) || NDSHeader.twlRomSize >= 0x04000000 || (ms().previousUsedDevice && bs().b4dsMode) || sys().arm7SCFGLocked() || ms().consoleModel > 0) {
 			if (ms().homebrewBootstrap) {
 				unlaunchRomBoot(ms().previousUsedDevice ? "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi" : ms().dsiWareSrlPath);
 			} else {
@@ -917,10 +921,6 @@ void lastRunROM()
 
 				std::string romFolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romFolderNoSlash);
-
-				FILE *f_nds_file = fopen(filename.c_str(), "rb");
-				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
-				fclose(f_nds_file);
 
 				const bool savFormat = (NDSHeader.twlRomSize >= 0x04000000) || (sys().scfgSdmmcEnabled() && dsiWareSlot1Mode) || (ms().previousUsedDevice && (!isDSiMode() || !sys().scfgSdmmcEnabled() || bs().b4dsMode));
 
