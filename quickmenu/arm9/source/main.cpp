@@ -236,18 +236,20 @@ bool setCardReadDMA() {
 /**
  * Disable asynch card read for a specific game.
  */
-bool setAsyncCardRead() {
-	if (!ms().ignoreBlacklists) {
+int setAsyncCardRead() {
+	int asyncCardRead = perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead;
+
+	if (asyncCardRead == 2 && !ms().ignoreBlacklists) {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
 			if (memcmp(gameTid[ms().secondaryDevice], asyncReadExcludeList[i], 3) == 0) {
 				// Found match
-				return false;
+				return 1;
 			}
 		}
 	}
 
-	return perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead;
+	return asyncCardRead;
 }
 
 /**

@@ -610,7 +610,7 @@ void lastRunROM()
 			bool boostCpu = (perGameSettings_boostCpu == -1 ? boostCpuDefault : perGameSettings_boostCpu);
 
 			bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
-			bool asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
+			int asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
 			bool dsModeForced = false;
 
 			wideCheck(useWidescreen, !ms().homebrewBootstrap);
@@ -690,11 +690,13 @@ void lastRunROM()
 						}
 					}
 
-					for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
-						if (memcmp(game_TID, asyncReadExcludeList[i], 3) == 0) {
-							// Found match
-							asyncCardRead = false;
-							break;
+					if (asyncCardRead == 2) {
+						for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
+							if (memcmp(game_TID, asyncReadExcludeList[i], 3) == 0) {
+								// Found match
+								asyncCardRead = 1;
+								break;
+							}
 						}
 					}
 				}
@@ -910,7 +912,7 @@ void lastRunROM()
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 				bool dsPhatColors = (perGameSettings_dsPhatColors == -1 ? DEFAULT_PHAT_COLORS : perGameSettings_dsPhatColors);
 				bool cardReadDMA = (perGameSettings_cardReadDMA == -1 ? DEFAULT_CARD_READ_DMA : perGameSettings_cardReadDMA);
-				bool asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
+				int asyncCardRead = (perGameSettings_asyncCardRead == -1 ? DEFAULT_ASYNC_CARD_READ : perGameSettings_asyncCardRead);
 				const bool dsiWareSlot1Mode = (perGameSettings_dsiWareSlot1Mode == -1 ? DEFAULT_DSIWARE_SLOT1_MODE : perGameSettings_dsiWareSlot1Mode);
 				if (runTempDSiWare) {
 					useWidescreen = *(bool*)(0x02000014);
@@ -1057,11 +1059,13 @@ void lastRunROM()
 						}
 					}
 
-					for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
-						if (memcmp(NDSHeader.gameCode, asyncReadExcludeList[i], 3) == 0) {
-							// Found match
-							asyncCardRead = false;
-							break;
+					if (asyncCardRead == 2) {
+						for (unsigned int i = 0; i < sizeof(asyncReadExcludeList)/sizeof(asyncReadExcludeList[0]); i++) {
+							if (memcmp(NDSHeader.gameCode, asyncReadExcludeList[i], 3) == 0) {
+								// Found match
+								asyncCardRead = 1;
+								break;
+							}
 						}
 					}
 				}

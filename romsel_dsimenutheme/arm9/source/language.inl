@@ -193,6 +193,8 @@ STRING(NOT_USED, "Not Used")
 STRING(DSI_MODE, "DSi mode")
 STRING(DS_MODE, "DS mode")
 STRING(KERNEL, "Kernel")
+STRING(MINIMAL, "Minimal")
+STRING(FULL, "Full")
 
 // Languages
 STRING(CHINESE, "Chinese")

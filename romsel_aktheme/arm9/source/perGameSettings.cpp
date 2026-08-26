@@ -182,7 +182,7 @@ void savePerGameSettings (std::string filename) {
 			if (!blacklisted_boostCpu) pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
-		if (!blacklisted_asyncCardRead) pergameini.SetInt("GAMESETTINGS", "ASYNC_CARD_READ", perGameSettings_asyncCardRead);
+		pergameini.SetInt("GAMESETTINGS", "ASYNC_CARD_READ", perGameSettings_asyncCardRead);
 		if (ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "FC_GAME_LOADER", perGameSettings_fcGameLoader);
 			perGameSettings_fcGameLoaderCheat = perGameSettings_fcGameLoader;
@@ -726,7 +726,7 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Card Read DMA
 			}
-			if ((!ms().secondaryDevice || (dsiFeatures() && !bs().b4dsMode)) && (!sys().scfgSdmmcEnabled() || dsiWareSlot1Mode) && !romLoadableInRam && !blacklisted_asyncCardRead) {
+			if ((!ms().secondaryDevice || (dsiFeatures() && !bs().b4dsMode)) && (!sys().scfgSdmmcEnabled() || dsiWareSlot1Mode) && !romLoadableInRam) {
 				perGameOps++;
 				perGameOp[perGameOps] = 12;	// Async Card Read
 			}
@@ -787,7 +787,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}
 		if (bootstrapEnabled) {
-			if ((!ms().secondaryDevice || (dsiFeatures() && !bs().b4dsMode)) && !romLoadableInRam && !blacklisted_asyncCardRead) {
+			if ((!ms().secondaryDevice || (dsiFeatures() && !bs().b4dsMode)) && !romLoadableInRam) {
 				perGameOps++;
 				perGameOp[perGameOps] = 12;	// Async Card Read
 			}
@@ -1032,8 +1032,10 @@ void perGameSettings (std::string filename) {
 				printSmall(false, perGameOpXpos, perGameOpYpos, "Asynch Card Read:", Alignment::left, highlighted);
 				if (perGameSettings_asyncCardRead == -1) {
 					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Default", Alignment::right, highlighted);
+				} else if (perGameSettings_asyncCardRead == 2) {
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Full", Alignment::right, highlighted);
 				} else if (perGameSettings_asyncCardRead == 1) {
-					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "On", Alignment::right, highlighted);
+					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Minimal", Alignment::right, highlighted);
 				} else {
 					printSmall(false, 256-perGameOpXpos, perGameOpYpos, "Off", Alignment::right, highlighted);
 				}
@@ -1211,7 +1213,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 12:
 						perGameSettings_asyncCardRead--;
-						if (perGameSettings_asyncCardRead < -1) perGameSettings_asyncCardRead = 1;
+						if (perGameSettings_asyncCardRead < -1) perGameSettings_asyncCardRead = blacklisted_asyncCardRead ? 1 : 2;
 						break;
 					case 13:
 						perGameSettings_dsiwareBooter--;
@@ -1347,7 +1349,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 12:
 						perGameSettings_asyncCardRead++;
-						if (perGameSettings_asyncCardRead > 1) perGameSettings_asyncCardRead = -1;
+						if (perGameSettings_asyncCardRead > (blacklisted_asyncCardRead ? 1 : 2)) perGameSettings_asyncCardRead = -1;
 						break;
 					case 13:
 						perGameSettings_dsiwareBooter++;
