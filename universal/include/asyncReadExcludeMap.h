@@ -10,6 +10,7 @@ static const char asyncReadExcludeList[][4] = {
 	"ABX", // Bomberman Land Touch!
 	"ACB", // Castlevania: Portrait of Ruin
 	"VCW", // Classic Word Games
+	"VC6", // CSI: Unsolved!
 	"ADK", // Daikoukai Jidai IV: Rota Nova
 	"YDQ", // Dragon Quest IX: Sentinels of the Starry Skies
 	"DMD", // DSi XL Demo Video Volume 1
