@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 """
-refresh_logos.py — REBAIXA só o LOGO de cada jogo do SD e SUBSTITUI o logo.png
-antigo em assets/<sha1>/, mantendo vídeos (.tgrv) e manifest.yml intactos.
+refresh_logos.py -- re-downloads ONLY the LOGO for each game on the SD and REPLACES the old
+logo.png under assets/<sha1>/, leaving videos (.tgrv) and manifest.yml untouched.
 
-Para que serve: depois de mudar o processamento de logo, atualizar os logos já
-gravados no SD sem re-baixar os vídeos nem reescrever o manifesto — uma passada
-barata e cirúrgica.
+What it's for: after changing how logos are processed, refresh the logos already written to
+the SD without re-downloading the videos or rewriting the manifest -- a cheap, surgical pass.
+Unlike scan_and_bind.py, this always re-fetches every game's logo (that's the point of a
+"refresh"); use --only-existing to at least avoid creating brand new entries.
 
-Como funciona (reaproveita o scan_and_bind.py):
-  1) varre o SD por ROMs (.nds), pula a blocklist de sistema e agrupa por sha1
-     (mesma identidade de conteúdo usada no bind — duplicatas colapsam);
-  2) para cada jogo, chama o fetch_ds_media.sh com LOGO_ONLY=1 (baixa só o logo,
-     sem vídeo) num diretório temporário;
-  3) copia o logo por cima de <out>/assets/<sha1>/logo.png (cria a pasta se não
-     existir). NADA além de logo.png é tocado.
+How it works (reuses scan_and_bind.py):
+  1) scans the SD for ROMs (.nds), skips the system blocklist and groups by sha1
+     (the same content identity used for binding -- duplicates collapse). Hashing reuses
+     scan_and_bind.py's hash cache, so re-running this doesn't re-read every ROM's content;
+  2) for each game, calls fetch_ds_media.py with LOGO_ONLY=1 (downloads only the logo,
+     no video) into a temporary directory;
+  3) copies the logo over <out>/assets/<sha1>/logo.png (creating the folder if it doesn't
+     exist). NOTHING besides logo.png is touched.
 
-Credenciais do ScreenScraper: lidas pelo próprio fetch_ds_media.sh (env
-SS_USER/SS_PASS, cache .ss_credentials.json ou prompt).
+ScreenScraper credentials: read by fetch_ds_media.py itself (env SS_USER/SS_PASS, the
+.ss_credentials.json cache, or an interactive prompt).
 """
 import argparse
 import os
@@ -25,40 +27,45 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-# Reutiliza a varredura/hash/fetch já testados do pipeline.
+# Reuses the already-tested scan/hash/fetch pipeline.
 from scan_and_bind import (                       # noqa: E402
-    find_roms, load_blocklist, name_blocked, fetch_media,
-    DEFAULT_FETCH, DEFAULT_BLOCKLIST,
+    find_roms, load_blocklist, name_blocked, fetch_media, ProgressBar,
+    load_hash_cache, save_hash_cache, hash_file_cached,
+    DEFAULT_FETCH, DEFAULT_BLOCKLIST, DEFAULT_CACHE,
 )
-from rom_hash import hash_file                     # noqa: E402
 
 DEFAULT_OUT_SUB = os.path.join("_nds", "TWiLightMenu", "dsimenu")
 
 
 def main(argv):
     ap = argparse.ArgumentParser(
-        description="Rebaixa só o logo de cada jogo do SD e substitui o antigo.")
-    ap.add_argument("--sd", required=True, help="raiz do SD card a escanear")
+        description="Re-downloads only the logo for each game on the SD, replacing the old one.")
+    ap.add_argument("--sd", required=True, help="SD card root to scan")
     ap.add_argument("--out", default=None,
-                    help="onde estão os assets/ (padrão: <SD>/_nds/TWiLightMenu/dsimenu)")
+                    help="where assets/ lives (default: <SD>/_nds/TWiLightMenu/dsimenu)")
+    ap.add_argument("--cache", default=DEFAULT_CACHE,
+                    help="working folder holding the ROM hash cache (shared with scan_and_bind.py)")
     ap.add_argument("--fetch-script", default=DEFAULT_FETCH,
-                    help="caminho do fetch_ds_media.sh")
+                    help="path to fetch_ds_media.py")
     ap.add_argument("--blocklist", default=DEFAULT_BLOCKLIST,
-                    help="blocklist de apps de sistema")
-    ap.add_argument("--rom-ext", default=".nds", help="extensões de ROM (csv). Padrão .nds")
+                    help="system app blocklist")
+    ap.add_argument("--rom-ext", default=".nds", help="ROM extensions (csv). Default .nds")
     ap.add_argument("--only-existing", action="store_true",
-                    help="só atualiza jogos que JÁ têm assets/<sha1>/ (não cria novos).")
+                    help="only update games that ALREADY have assets/<sha1>/ (don't create new ones).")
     ap.add_argument("--dry-run", action="store_true",
-                    help="lista o que faria, sem baixar nem escrever.")
+                    help="list what would be done, without downloading or writing anything.")
+    ap.add_argument("--no-progress", action="store_true",
+                    help="print one line per game instead of a live progress bar")
     args = ap.parse_args(argv)
 
     if not os.path.isdir(args.sd):
-        sys.stderr.write(f"!! SD não encontrado: {args.sd}\n")
+        sys.stderr.write(f"!! SD not found: {args.sd}\n")
         return 1
     out = args.out or os.path.join(args.sd, DEFAULT_OUT_SUB)
     out_assets = os.path.join(out, "assets")
+    cache = os.path.abspath(args.cache)
     if not args.dry_run and not os.path.isfile(args.fetch_script):
-        sys.stderr.write(f"!! fetch script não encontrado: {args.fetch_script}\n")
+        sys.stderr.write(f"!! fetch script not found: {args.fetch_script}\n")
         return 1
 
     exts = {e if e.startswith(".") else "." + e
@@ -67,42 +74,51 @@ def main(argv):
 
     roms = find_roms(args.sd, exts)
     if not roms:
-        sys.stderr.write(f"!! nenhuma ROM {sorted(exts)} em {args.sd}\n")
+        sys.stderr.write(f"!! no ROM {sorted(exts)} in {args.sd}\n")
         return 1
 
-    # Agrupa por sha1 (igual ao scan_and_bind): pula bloqueados por nome e por hash.
+    # Groups by sha1 (same as scan_and_bind): skips entries blocked by name and by hash.
+    # Hashing is cached by (path, size, mtime) so a re-run doesn't re-read every ROM.
+    hash_cache = load_hash_cache(cache)
+    hash_cache_dirty = False
     by_sha1 = {}
-    for path in roms:
+    scan_bar = ProgressBar(len(roms), prefix="Scanning ", enabled=not args.no_progress)
+    for i, path in enumerate(roms, 1):
+        scan_bar.update(i, os.path.basename(path))
         if name_blocked(path, name_block):
             continue
-        h = hash_file(path)
+        h, was_cached = hash_file_cached(path, hash_cache)
+        hash_cache_dirty = hash_cache_dirty or not was_cached
         if h["sha1"].lower() in sha1_block:
             continue
         by_sha1.setdefault(h["sha1"], []).append(path)
+    scan_bar.finish()
+    if hash_cache_dirty:
+        save_hash_cache(cache, hash_cache)
 
     total = len(by_sha1)
-    print(f">> {len(roms)} arquivos, {total} jogos únicos. Destino: {out_assets}",
+    print(f">> {len(roms)} files, {total} unique games. Destination: {out_assets}",
           file=sys.stderr)
 
-    # Força logo-only no fetch (sem vídeo).
+    # Forces logo-only mode on the fetch (no video).
     os.environ["LOGO_ONLY"] = "1"
 
     replaced = skipped = failed = 0
+    bar = ProgressBar(total, prefix="Refreshing logos ", enabled=not args.no_progress)
     for i, (sha1, files) in enumerate(sorted(by_sha1.items()), 1):
         primary = files[0]
         game_dir = os.path.join(out_assets, sha1)
         dst_logo = os.path.join(game_dir, "logo.png")
         had = os.path.isfile(dst_logo)
-        tag = f"[{i}/{total}] {sha1[:12]}… {os.path.basename(primary)}"
+        bar.update(i, os.path.basename(primary))
+        tag = f"[{i}/{total}] {sha1[:12]}... {os.path.basename(primary)}"
 
         if args.only_existing and not had:
-            print(f">> {tag} — sem assets/ ainda; pulado (--only-existing).",
-                  file=sys.stderr)
+            bar.note(f">> {tag} -- no assets/ yet; skipped (--only-existing).")
             skipped += 1
             continue
         if args.dry_run:
-            print(f">> {tag} — {'substituiria' if had else 'criaria'} {dst_logo}",
-                  file=sys.stderr)
+            bar.note(f">> {tag} -- would {'replace' if had else 'create'} {dst_logo}")
             continue
 
         try:
@@ -110,24 +126,22 @@ def main(argv):
                 src = fetch_media(args.fetch_script, primary, tmp)
                 new_logo = src.get("logo")
                 if not new_logo or not os.path.isfile(new_logo):
-                    print(f">> {tag} — logo não encontrado no ScreenScraper; mantido.",
-                          file=sys.stderr)
+                    bar.note(f">> {tag} -- logo not found on ScreenScraper; kept as-is.")
                     skipped += 1
                     continue
                 os.makedirs(game_dir, exist_ok=True)
                 shutil.copyfile(new_logo, dst_logo)
-            print(f">> {tag} — logo {'substituído' if had else 'criado'}.",
-                  file=sys.stderr)
             replaced += 1
-        except Exception as e:                       # noqa: BLE001 (loga e segue)
-            sys.stderr.write(f"!! {tag} — falhou: {e}\n")
+        except Exception as e:                       # noqa: BLE001 (log and continue)
+            bar.note(f"!! {tag} -- failed: {e}")
             failed += 1
+    bar.finish()
 
     if args.dry_run:
-        print(f">> dry-run: {total} jogo(s) avaliados (nada alterado).", file=sys.stderr)
+        print(f">> dry-run: {total} game(s) evaluated (nothing changed).", file=sys.stderr)
     else:
-        print(f">> Concluído: {replaced} logo(s) atualizados, {skipped} pulados, "
-              f"{failed} falhas.", file=sys.stderr)
+        print(f">> Done: {replaced} logo(s) updated, {skipped} skipped, "
+              f"{failed} failure(s).", file=sys.stderr)
     return 0 if failed == 0 or replaced else 1
 
 

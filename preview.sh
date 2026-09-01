@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-# preview.sh — compila o frontend (romsel_dsimenutheme), copia pro SD de
-# preview e (re)lança o melonDS com a nossa build.
+# preview.sh -- compiles the frontend (romsel_dsimenutheme), copies it to the
+# preview SD, and (re)launches melonDS with our build.
 #
-# Uso:
-#   ./preview.sh              # compila, copia e lança  (padrão)
-#   ./preview.sh --no-build   # pula a compilação, só copia a build atual e lança
-#   ./preview.sh --launch     # só relança o melonDS (sem compilar nem copiar)
+# Usage:
+#   ./preview.sh              # compile, copy and launch  (default)
+#   ./preview.sh --no-build   # skip compiling, just copy the current build and launch
+#   ./preview.sh --launch     # just relaunch melonDS (no compile, no copy)
 # ---------------------------------------------------------------------------
 set -euo pipefail
 
@@ -19,35 +19,35 @@ MELONDS="/Applications/melonDS.app/Contents/MacOS/melonDS"
 MODE="${1:-}"
 
 if [ ! -x "$MELONDS" ]; then
-	echo "!! melonDS não encontrado em: $MELONDS" >&2
+	echo "!! melonDS not found at: $MELONDS" >&2
 	exit 1
 fi
 
 if [ "$MODE" != "--launch" ]; then
 	if [ "$MODE" != "--no-build" ]; then
-		# Garante a imagem docker de build (a mesma do compile_docker.sh).
+		# Ensures the build docker image exists (the same one compile_docker.sh uses).
 		if ! docker image inspect twilightmenu >/dev/null 2>&1; then
-			echo ">> Imagem docker 'twilightmenu' ausente; buildando (pode demorar)..."
+			echo ">> Docker image 'twilightmenu' missing; building it (this can take a while)..."
 			docker build -t twilightmenu --label twilightmenu ./
 		fi
-		echo ">> Compilando romsel_dsimenutheme..."
+		echo ">> Compiling romsel_dsimenutheme..."
 		docker run --rm -v "$ROOT:/data" twilightmenu make romsel_dsimenutheme
 	fi
 
-	echo ">> Copiando build pro SD de preview..."
+	echo ">> Copying the build to the preview SD..."
 	cp "$NDS" "$SD/dsimenu.nds"
 	cp "$NDS" "$SD/_nds/TWiLightMenu/dsimenu.srldr"
 fi
 
-echo ">> (Re)lançando melonDS..."
+echo ">> (Re)launching melonDS..."
 pkill -x melonDS 2>/dev/null || true
 sleep 1
 
-# Limpa o cache de folder-sync do melonDS (dsisd.bin). Ele cresce a cada lançamento e, quando
-# fica grande (centenas de MB / GB), o melonDS crasha ao bootar um jogo (chainload do
-# nds-bootstrap) => tela branca. Limpar aqui mantém o boot funcionando no preview.
+# Clears melonDS's folder-sync cache (dsisd.bin). It grows on every launch and, once it gets
+# large (hundreds of MB / a few GB), melonDS crashes when booting a game (nds-bootstrap
+# chainload) => white screen. Clearing it here keeps boot working in preview.
 rm -f "$HOME/Library/Preferences/melonDS/dsisd.bin" "$HOME/Library/Preferences/melonDS/dsisd.bin.idx"
 rm -f "$SD/_nds/pagefile.sys" "$SD/NDSBTSRP.LOG"
 
 "$MELONDS" "$SD/dsimenu.nds" >/tmp/melonds_preview.log 2>&1 &
-echo ">> melonDS iniciado (PID $!). Log: /tmp/melonds_preview.log"
+echo ">> melonDS started (PID $!). Log: /tmp/melonds_preview.log"

@@ -1,14 +1,14 @@
 """
-rom_binder.py — vincula ROMs aos seus assets ({logo, video}) pelo HASH do conteúdo.
+rom_binder.py -- binds ROMs to their assets ({logo, video}) by content HASH.
 
-CHAVE DE IDENTIFICAÇÃO (não negociável): prioridade sha1 > md5 > crc32(+size). O nome do
-arquivo NUNCA é chave primária — só é usado como fallback se allow_name_match=True (padrão
-desligado), porque nome é ambíguo (renome/duplicata/nomes iguais para jogos diferentes).
+IDENTIFICATION KEY (non-negotiable): priority sha1 > md5 > crc32(+size). The file name is
+NEVER the primary key -- it is only used as a fallback when allow_name_match=True (off by
+default), because a name is ambiguous (rename/duplicate/two games sharing the same name).
 
-Uso:
+Usage:
     from rom_binder import load_manifest
-    binder = load_manifest("caminho/manifest.yml")
-    res = binder.bind("/sd/roms/Alguma ROM.nds")
+    binder = load_manifest("path/manifest.yml")
+    res = binder.bind("/sd/roms/Some ROM.nds")
     if res:
         print(res.logo, res.video, res.matched_by)
 """
@@ -24,29 +24,29 @@ log = logging.getLogger("assetbind")
 
 
 class ManifestError(Exception):
-    """Manifesto inválido (ex.: mesmo hash em duas entradas diferentes)."""
+    """Invalid manifest (e.g. the same hash appears in two different entries)."""
 
 
 @dataclass
 class BindResult:
     game_id: str
-    logo: Optional[str]           # caminho absoluto do logo (ou None se ausente)
-    video: Optional[str]          # mp4 empilhado (opcional; não usado pelo DS)
+    logo: Optional[str]           # absolute path to the logo (or None if missing)
+    video: Optional[str]          # stacked mp4 (optional; not used by the DS)
     matched_by: str               # 'sha1' | 'md5' | 'crc32+size' | 'name'
-    video_top: Optional[str] = None     # tela superior .tgrv (DS)
-    video_bottom: Optional[str] = None  # tela inferior .tgrv (DS)
+    video_top: Optional[str] = None     # top screen .tgrv (DS)
+    video_bottom: Optional[str] = None  # bottom screen .tgrv (DS)
 
 
 class Binder:
     def __init__(self, manifest: dict, root: str):
-        # root: diretório-base para resolver caminhos de asset relativos -> absolutos.
+        # root: base directory used to resolve relative asset paths -> absolute paths.
         self.root = os.path.abspath(root)
         self.games = manifest.get("games", []) or []
         self.allow_name_match_default = bool(manifest.get("allow_name_match", False))
 
-        # Índices O(1). Um mesmo hash em DUAS entradas diferentes = manifesto inválido.
+        # O(1) indexes. The same hash appearing in TWO different entries = invalid manifest.
         self._sha1, self._md5, self._crcsize = {}, {}, {}
-        self._name = {}  # nome é só fallback; duplicatas de nome toleradas (primeiro vence)
+        self._name = {}  # name is only a fallback; duplicate names are tolerated (first wins)
 
         for g in self.games:
             idn = g.get("identity", {}) or {}
@@ -64,15 +64,15 @@ class Binder:
         k = str(key).lower()
         if k in idx and idx[k] is not g:
             raise ManifestError(
-                f"hash {label} duplicado ({k}) entre game_id "
-                f"'{idx[k].get('game_id')}' e '{g.get('game_id')}'"
+                f"duplicate {label} hash ({k}) between game_id "
+                f"'{idx[k].get('game_id')}' and '{g.get('game_id')}'"
             )
         idx[k] = g
 
-    # -------- resolução de asset --------
+    # -------- asset resolution --------
 
     def _resolve(self, rel):
-        """Caminho relativo à raiz do manifesto -> absoluto; None se não existir em disco."""
+        """Path relative to the manifest root -> absolute; None if it doesn't exist on disk."""
         if not rel:
             return None
         p = rel if os.path.isabs(rel) else os.path.join(self.root, rel)
@@ -85,9 +85,9 @@ class Binder:
         def resolve_warn(key):
             ref = a.get(key)
             path = self._resolve(ref)
-            # Asset referenciado no manifesto mas ausente em disco: avisa, não quebra.
+            # Asset referenced in the manifest but missing on disk: warn, don't break.
             if ref and path is None:
-                log.warning("game %s: %s referenciado mas ausente: %s", gid, key, ref)
+                log.warning("game %s: %s referenced but missing: %s", gid, key, ref)
             return path
 
         return BindResult(
@@ -102,7 +102,7 @@ class Binder:
     # -------- bind --------
 
     def bind(self, rom_path: str, allow_name_match: Optional[bool] = None) -> Optional[BindResult]:
-        """Dado o caminho de uma ROM, devolve BindResult ou None (sem correspondência)."""
+        """Given a ROM path, returns a BindResult or None (no match)."""
         h = hash_file(rom_path)
 
         g = self._sha1.get(h["sha1"])
@@ -121,15 +121,15 @@ class Binder:
             if g is not None:
                 return self._result(g, "name")
 
-        # Sem entrada: deixa sem arte (placeholder) e loga o sha1 p/ scrapear depois.
-        log.warning("ROM sem entrada no manifesto (sha1=%s): %s", h["sha1"], rom_path)
+        # No entry: leave it without art (placeholder) and log the sha1 to scrape later.
+        log.warning("ROM has no manifest entry (sha1=%s): %s", h["sha1"], rom_path)
         return None
 
 
 def load_manifest(path: str) -> Binder:
-    """Carrega o manifesto e devolve um Binder. Caminhos de asset são relativos ao manifesto."""
+    """Loads the manifest and returns a Binder. Asset paths are relative to the manifest."""
     with open(path, "r", encoding="utf-8") as f:
         manifest = load_manifest_text(f.read())
     if not isinstance(manifest, dict) or "games" not in manifest:
-        raise ManifestError(f"manifesto inválido: {path}")
+        raise ManifestError(f"invalid manifest: {path}")
     return Binder(manifest, root=os.path.dirname(os.path.abspath(path)))

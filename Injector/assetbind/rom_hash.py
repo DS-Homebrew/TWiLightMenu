@@ -1,17 +1,16 @@
 """
-rom_hash.py — identidade de conteúdo de uma ROM.
+rom_hash.py -- content identity of a ROM.
 
-POR QUE HASH E NÃO NOME: o nome do arquivo é frágil (pode ser renomeado, duplicado, ou
-duas ROMs diferentes terem o mesmo nome). A identidade correta é o CONTEÚDO. Para DS
-usamos o arquivo INTEIRO (sem stripping de header). Calculamos sha1, md5, crc32 e size
-numa única passada de leitura.
+WHY HASH INSTEAD OF NAME: the file name is fragile (it can be renamed, duplicated, or two
+different ROMs can share the same name). The correct identity is the CONTENT. For DS we hash
+the WHOLE file (no header stripping). sha1, md5, crc32 and size are computed in a single read pass.
 """
 import hashlib
 import zlib
 
 
 def hash_file(path, chunk=1 << 20):
-    """Retorna dict {sha1, md5, crc32, size} do conteúdo do arquivo (uma passada)."""
+    """Returns dict {sha1, md5, crc32, size} for the file's content (single pass)."""
     sha1 = hashlib.sha1()
     md5 = hashlib.md5()
     crc = 0

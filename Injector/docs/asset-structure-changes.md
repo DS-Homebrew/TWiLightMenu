@@ -1,125 +1,127 @@
-# Alterações na estrutura de assets — prompt para o lado-DS (TWiLightMenu modificado)
+# Asset structure changes -- prompt for the DS side (modified TWiLightMenu)
 
-> Prompt pronto para entregar a quem for atualizar o leitor de assets no DS.
-> Documenta a estrutura gerada pelo pipeline do host (GridFootage:
-> `run_sdcard.sh` → `scan_and_bind.py` → `fetch_ds_media.sh` → `split_ds_video.py`).
+> Ready-to-hand-off prompt for whoever updates the asset reader on the DS.
+> Documents the layout produced by the host pipeline (GridFootage:
+> `deploy.py` -> `scan_and_bind.py` -> `fetch_ds_media.py` -> `split_ds_video.py`).
 
 ---
 
-## Contexto
+## Context
 
-O pipeline do host (GridFootage) mudou a estrutura de assets que a versão modificada do
-TWiLightMenu consome. Atualize o leitor no DS para a estrutura abaixo.
+The host pipeline (GridFootage) changed the asset layout that the modified TWiLightMenu
+build consumes. Update the DS-side reader to match the layout below.
 
-## Localização (no SD card)
+## Location (on the SD card)
 
-Tudo fica em: `<SD>/_nds/TWiLightMenu/dsimenu/`
+Everything lives under: `<SD>/_nds/TWiLightMenu/dsimenu/`
 
 ```
 <SD>/_nds/TWiLightMenu/dsimenu/
-├── manifest.yml               # fonte de verdade: game_id -> identity + assets
-├── assets_index.yml           # índice runtime: nome-da-ROM (sem ext) -> game_id
+├── manifest.yml               # source of truth: game_id -> identity + assets
+├── assets_index.yml           # runtime index: ROM name (no ext) -> game_id
 └── assets/
-    └── <sha1>/                 # uma pasta por jogo; <sha1> = SHA1 do arquivo .nds inteiro
-        ├── logo.png            # logo transparente / wheel
-        ├── top.tgrv            # vídeo da TELA SUPERIOR
-        └── bottom.tgrv         # vídeo da TELA INFERIOR
+    └── <sha1>/                 # one folder per game; <sha1> = SHA1 of the whole .nds file
+        ├── logo.png            # transparent logo / wheel
+        ├── top.tgrv            # TOP SCREEN video
+        └── bottom.tgrv         # BOTTOM SCREEN video
 ```
 
-(Ao lado seguem existindo `logos/` + `logos.yml`, da feature antiga de logo por nome — não conflitam.)
+(`logos/` + `logos.yml`, from the older name-based logo feature, still live alongside this --
+they don't conflict.)
 
-## O que mudou vs. a estrutura anterior
+## What changed vs. the previous layout
 
-- **ANTES:** assets tinham `{ logo, video }` e o vídeo era um mp4 empilhado (2 telas).
-- **AGORA:** o vídeo empilhado foi **DIVIDIDO** em duas telas e convertido para o formato
-  **TGRV** (frames crus, blit direto). O campo `video` (mp4) **NÃO é mais usado** (fica
-  `null`) e o mp4 não é copiado para o SD. Use `video_top` e `video_bottom`.
-- **NOVO:** `assets_index.yml` — índice por nome que o DS usa em runtime para casar a ROM
-  em foco sem precisar hashear (nome-base sem extensão → game_id).
+- **BEFORE:** assets had `{ logo, video }` and the video was a stacked mp4 (2 screens).
+- **NOW:** the stacked video was **SPLIT** into two screens and converted to the **TGRV**
+  format (raw frames, direct blit). The `video` (mp4) field is **no longer used** (stays
+  `null`) and the mp4 is not copied to the SD. Use `video_top` and `video_bottom`.
+- **NEW:** `assets_index.yml` -- a name-based index the DS uses at runtime to match the
+  focused ROM without hashing (base name without extension -> game_id).
 
-## Schema do `manifest.yml`
+## `manifest.yml` schema
 
 ```yaml
 version: 1
 games:
   - game_id: "<sha1>"
-    identity:                      # identidade por CONTEÚDO (prioridade sha1 > md5 > crc32+size)
+    identity:                      # identity by CONTENT (priority sha1 > md5 > crc32+size)
       sha1: "<hex>"
       md5:  "<hex>"
       crc32: "<hex>"
       size: <bytes>
-    rom_name: "<nome do arquivo>"  # só informativo / fallback humano
+    rom_name: "<file name>"        # informational / human fallback only
     assets:
-      logo: "assets/<sha1>/logo.png"            # ou null
-      video: null                               # LEGADO: sempre null (não usar)
-      video_top: "assets/<sha1>/top.tgrv"       # ou null
-      video_bottom: "assets/<sha1>/bottom.tgrv" # ou null
+      logo: "assets/<sha1>/logo.png"            # or null
+      video: null                               # LEGACY: always null (don't use)
+      video_top: "assets/<sha1>/top.tgrv"       # or null
+      video_bottom: "assets/<sha1>/bottom.tgrv" # or null
 ```
 
-Caminhos são **relativos** à pasta do `manifest.yml`. Um game pode ter assets faltando
-(`null`): degrade com placeholder, não quebre.
+Paths are **relative** to the `manifest.yml` folder. A game can have missing assets
+(`null`): degrade with a placeholder, don't crash.
 
-## Schema do `assets_index.yml` (índice runtime por nome)
+## `assets_index.yml` schema (runtime name-based index)
 
 ```yaml
 version: 1
 roms:
-  "<nome-base-da-ROM-sem-extensão>": "<game_id>"
+  "<ROM-base-name-without-extension>": "<game_id>"
   ...
 ```
 
-- Uma linha por **arquivo** do SD, incluindo duplicatas: `"Jogo"` e `"Jogo - cópia"`
-  apontam para o **mesmo** `game_id`.
-- As chaves (nomes) estão em **Unicode NFC** (ex.: "ó" precomposto). Ao comparar com o
-  nome lido do sistema de arquivos, normalize para NFC antes de casar.
+- One line per **file** on the SD, including duplicates: `"Game"` and `"Game - copy"`
+  both point at the **same** `game_id`.
+- Keys (names) are in **Unicode NFC** (e.g. an accented letter is precomposed). When
+  comparing against a name read from the filesystem, normalize it to NFC before matching.
 
-## Formato TGR2 (arquivo de vídeo por tela) — little-endian
+## TGR2 format (per-screen video file) -- little-endian
 
-O `.tgrv` é vídeo **cru** (sem codec): o "bitrate" é fixo em
-`width*height*bytes_por_pixel*fps` e a **banda de leitura do cartão SD** é o que
-limita o FPS no DS. Por isso as telas são gravadas em **baixa resolução** (padrão
-128x96, reescalada por hardware p/ 256x192) e, por padrão, em **8bpp indexado**
-(metade dos dados do BGR555). O header carrega `width`/`height`/`fmt` — o leitor
-deve **respeitá-los** (não assumir 256x192/98304 bytes fixos).
+`.tgrv` is **raw** video (no codec): the "bitrate" is fixed at
+`width*height*bytes_per_pixel*fps`, and the **SD card's read bandwidth** is what limits the
+FPS on the DS. That's why screens are recorded at a **low resolution** (default 128x96,
+hardware-upscaled to 256x192) and, by default, at **8bpp indexed** (half the data of
+BGR555). The header carries `width`/`height`/`fmt` -- the reader must **respect them** (don't
+assume a fixed 256x192/98304 bytes).
 
 ```
-offset 0 : magic   'TGR2'  (4 bytes ASCII)
-offset 4 : width   u16     (padrão 128)
-offset 6 : height  u16     (padrão 96)
-offset 8 : fps     u16     (padrão 12)
+offset 0 : magic   'TGR2'  (4 ASCII bytes)
+offset 4 : width   u16     (default 128)
+offset 6 : height  u16     (default 96)
+offset 8 : fps     u16     (default 12)
 offset 10: nframes u32
 offset 14: fmt     u8       (0 = BGR555 16bpp, 1 = PAL8 8bpp)
-offset 15: flags   u8       (bit0 = pixels/paleta já têm bit15/opaco setado)
-offset 16: pal_cnt u16      (0 no BGR555; 256 no PAL8)
-offset 18: paleta  pal_cnt × u16 BGR555 (bit15=1 opaco)   [só quando fmt=PAL8]
-offset ..: nframes × frame
-  PAL8   (fmt=1): cada frame = width*height bytes (1 índice por pixel).
-                  Carregue a paleta (256 × u16 BGR555) na palette RAM uma vez e
-                  use o modo BG bitmap de 256 cores; o índice é blitado direto.
-  BGR555 (fmt=0): cada frame = width*height*2 bytes, u16 BGR555
-                  (bits 0-4=R, 5-9=G, 10-14=B, bit15=1 opaco). Layout idêntico ao
-                  framebuffer 16-bit do DS -> fread direto p/ u16[width*height].
-Reescale de width×height até 256×192 na tela (BG affine faz ×2 por hardware com
-128×96). Sem áudio (preview mudo).
+offset 15: flags   u8       (bit0 = pixels/palette already have bit15/opaque set)
+offset 16: pal_cnt u16      (0 for BGR555; 256 for PAL8)
+offset 18: palette pal_cnt x u16 BGR555 (bit15=1 opaque)   [PAL8 only]
+offset ..: nframes x frame
+  PAL8   (fmt=1): each frame = width*height bytes (1 index per pixel).
+                  Load the palette (256 x u16 BGR555) into palette RAM once and use the
+                  256-color bitmap BG mode; the index is blitted directly.
+  BGR555 (fmt=0): each frame = width*height*2 bytes, u16 BGR555
+                  (bits 0-4=R, 5-9=G, 10-14=B, bit15=1 opaque). Same layout as the DS's
+                  16-bit framebuffer -> fread straight into u16[width*height].
+Upscale from width x height to 256x192 on screen (affine BG does x2 in hardware with
+128x96). No audio (silent preview).
 ```
 
-## Como casar a ROM ao asset (runtime)
+## Matching a ROM to its asset (runtime)
 
-1. Pegue o **nome-base** da ROM em foco (sem extensão) e normalize para **NFC**.
-2. Busque em `assets_index.yml` → obtém o `game_id`.
-3. Carregue `assets/<game_id>/logo.png`, `top.tgrv`, `bottom.tgrv` (tratando ausências).
-   (Opcional: cruze com `manifest.yml` para metadados extras via `game_id`.)
+1. Take the focused ROM's **base name** (no extension) and normalize it to **NFC**.
+2. Look it up in `assets_index.yml` -> get the `game_id`.
+3. Load `assets/<game_id>/logo.png`, `top.tgrv`, `bottom.tgrv` (handling missing ones).
+   (Optional: cross-reference `manifest.yml` via `game_id` for extra metadata.)
 
-**IMPORTANTE:** o índice já resolve duplicatas — ROMs renomeadas/duplicadas mapeiam para o
-mesmo `game_id` e compartilham os mesmos assets. Não tente casar por conteúdo no DS
-(o host já fez isso por SHA1); apenas use o índice por nome.
+**IMPORTANT:** the index already resolves duplicates -- renamed/duplicated ROMs map to the
+same `game_id` and share the same assets. Don't try to match by content on the DS (the host
+already did that by SHA1); just use the name-based index.
 
-## Tarefas
+## Tasks
 
-- Ler `assets_index.yml` e `manifest.yml` de `<SD>/_nds/TWiLightMenu/dsimenu/`.
-- Resolver, para o jogo em foco, `logo` + `top.tgrv` + `bottom.tgrv` (tratando `null`).
-- Reproduzir `top.tgrv` na tela superior e `bottom.tgrv` na inferior, em loop, respeitando o
-  `fps` e o `width`/`height`/`fmt` do header. PAL8: carregue a paleta uma vez e `fread`
-  `width*height` bytes/frame p/ o BG bitmap 256 cores. BGR555: `fread` `width*height*2`
-  bytes/frame -> `u16[width*height]`. Reescale até 256x192 (BG affine ×2 com 128x96).
-- Tratar assets ausentes (`null` / arquivo inexistente) com fallback (ex.: usar só o logo).
+- Read `assets_index.yml` and `manifest.yml` from `<SD>/_nds/TWiLightMenu/dsimenu/`.
+- Resolve, for the focused game, `logo` + `top.tgrv` + `bottom.tgrv` (handling `null`).
+- Play `top.tgrv` on the top screen and `bottom.tgrv` on the bottom, looping, respecting
+  the header's `fps` and `width`/`height`/`fmt`. PAL8: load the palette once and `fread`
+  `width*height` bytes/frame into the 256-color bitmap BG. BGR555: `fread`
+  `width*height*2` bytes/frame -> `u16[width*height]`. Upscale to 256x192 (affine BG x2
+  with 128x96).
+- Handle missing assets (`null` / missing file) with a fallback (e.g. logo only).

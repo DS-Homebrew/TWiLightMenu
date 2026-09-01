@@ -1,14 +1,14 @@
-# system_blocklist.txt — arquivos .nds que NÃO são jogos (apps de sistema/homebrew
-# do TWiLightMenu). O scanner os ignora para não scrapear/bindar lixo.
+# system_blocklist.txt -- .nds files that are NOT games (TWiLightMenu system/homebrew
+# apps). The scanner ignores them so it doesn't scrape/bind junk.
 #
-# Formatos aceitos por linha (case-insensitive; '#' = comentário):
-#   sha1:<hex>        -> exclui por hash de conteúdo (robusto a rename)
-#   name:<substring>  -> exclui se o substring aparece no nome do arquivo
-#   <substring>       -> atalho para name:<substring>
+# Accepted line formats (case-insensitive; '#' = comment):
+#   sha1:<hex>        -> exclude by content hash (robust to renaming)
+#   name:<substring>  -> exclude if the substring appears in the file name
+#   <substring>       -> shorthand for name:<substring>
 #
-# Hashes abaixo foram coletados do SD card de teste do TWiLightMenu.
+# The hashes below were collected from the TWiLightMenu test SD card.
 
-# --- por hash (identidade de conteúdo — não engana renomeando) ---
+# --- by hash (content identity -- can't be fooled by renaming) ---
 sha1:d7acf1be345b87bb3863e599725c8956d5ce87d4   # dsimenu.nds
 sha1:434735c1abf25fcf1c7355b83381d69f9f40f108   # pictochat.nds
 sha1:942c55193794ffaab37ff343db20dc178c7ce2e5   # dlplay.nds
@@ -16,8 +16,14 @@ sha1:12a77aa72558dcc2ddea559ecd789070ffc8cbb0   # nds-bootstrap-hb-release.nds
 sha1:25ea8e586285c1706662a70c9255e1bff11df588   # nds-bootstrap-release.nds
 sha1:2f0ae47371b099cd9a6e5e7e35f81629382916cd   # GBARunner2_arm7dldi_nodsp_dsi.nds
 sha1:3861535f86c9e88b92233a9cf8525584b4da38be   # GBARunner2_arm7dldi_dsi.nds
+sha1:36f6ca13efff6bd79481226a5922d6cfc7121878   # DS_LCD_Tester.nds
+sha1:3f46e3595fcdd717954abdd269b9419cbcfe6dc9   # boot.nds / ntrboot.nds (same content)
+sha1:45545f1c7cd567752d99f947eed4c1343429cc37   # vnds.nds
+sha1:488082713417f8fd0226a62097ca130d09db8cf1   # dsibiosdumper.nds
+sha1:89d6389a14b1bf1d19188b1451e64299fa107615   # DSiLanguagePacher.nds
+sha1:c2b24ef67487c52332562e4def4c0a0dd92d854c   # Updater.nds
 
-# --- por nome (pega variações/versões futuras desses homebrews) ---
+# --- by name (catches future variations/versions of these homebrews) ---
 name:dsimenu
 name:pictochat
 name:dlplay
@@ -25,3 +31,6 @@ name:nds-bootstrap
 name:gbarunner
 name:_dstwo_plug
 name:moonshell
+name:ds_lcd_tester
+name:dsibiosdumper
+name:dsilanguagepacher

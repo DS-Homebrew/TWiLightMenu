@@ -1,145 +1,161 @@
-# assetbind — bind ROM ↔ assets por HASH de conteúdo
+# assetbind -- bind ROM <-> assets by content HASH
 
-Camada que vincula cada ROM aos seus assets (`logo`, `video`) através de um manifesto `.yml`,
-usando a **identidade de conteúdo** da ROM — não o nome do arquivo.
+Layer that links each ROM to its assets (`logo`, `video`) through a `.yml` manifest,
+using the ROM's **content identity** -- not the file name.
 
-## Por que hash e não nome (decisão de identificação)
+## Why hash and not name (identification decision)
 
-O nome do arquivo é frágil: pode ser **renomeado**, **duplicado**, e duas ROMs diferentes podem
-ter o **mesmo nome**. A identidade estável é o **conteúdo**. Por isso a chave é o hash, com
-prioridade **`sha1` > `md5` > `crc32`+`size`**. O nome só é usado como *fallback* opcional
-(`allow_name_match`, desligado por padrão). Para DS o hash é do **arquivo inteiro** (sem stripping
-de header).
+The file name is fragile: it can be **renamed**, **duplicated**, and two different ROMs can
+share the **same name**. The stable identity is the **content**. That's why the key is the hash,
+with priority **`sha1` > `md5` > `crc32`+`size`**. The name is only used as an optional
+*fallback* (`allow_name_match`, off by default). For DS the hash is of the **whole file**
+(no header stripping).
 
-Consequências (esperadas, não são erros):
-- ROM renomeada/duplicada → resolve para a mesma entrada (mesmo hash).
-- N arquivos com o mesmo conteúdo → compartilham os mesmos assets.
-- Arquivos com nomes iguais mas conteúdos diferentes → entradas diferentes, sem colisão.
+Consequences (expected, not bugs):
+- A renamed/duplicated ROM -> resolves to the same entry (same hash).
+- N files with the same content -> share the same assets.
+- Files with the same name but different content -> different entries, no collision.
 
-## Estrutura de pastas
+## Folder layout
 
-O host (gerador) organiza os assets numa pasta raiz, com **uma subpasta por jogo**:
+The host (generator) organizes the assets under a root folder, with **one subfolder per game**:
 
 ```
-<raiz>/
+<root>/
   manifest.yml
-  assets/                       # pasta raiz dos assets
-    <game_id>/                  # uma pasta por jogo (game_id = sha1 da ROM)
+  assets/                       # assets root folder
+    <game_id>/                  # one folder per game (game_id = the ROM's sha1)
       logo.png
       video.<ext>
 ```
 
-Os caminhos no `.yml` são **relativos à raiz do manifesto** (nunca absolutos da máquina).
+Paths in the `.yml` are **relative to the manifest root** (never absolute machine paths).
 
-## Schema do `.yml`
+## `.yml` schema
 
 ```yaml
 version: 1
-# allow_name_match: true        # opcional (padrão off): habilita fallback por nome no runtime
+# allow_name_match: true        # optional (off by default): enables the name fallback at runtime
 games:
-  - game_id: "<id estável (sha1 da rom, ou id do ScreenScraper)>"
-    identity:                   # CHAVE = conteúdo (sha1 > md5 > crc32+size)
+  - game_id: "<stable id (the ROM's sha1, or a ScreenScraper id)>"
+    identity:                   # KEY = content (sha1 > md5 > crc32+size)
       sha1: "<hex>"
       md5:  "<hex>"
       crc32: "<hex>"
       size: <bytes>
-    rom_name: "Cool Game (USA).nds"   # apenas informativo / fallback humano
+    rom_name: "Cool Game (USA).nds"   # informational only / human fallback
     assets:
-      logo:  "assets/<game_id>/logo.png"       # ou null se ausente
-      video: null                              # mp4 empilhado (não vai para o SD)
-      video_top:    "assets/<game_id>/top.tgrv"    # tela superior TGR2 128x96 PAL8 (DS)
-      video_bottom: "assets/<game_id>/bottom.tgrv" # tela inferior TGR2 128x96 PAL8 (DS)
+      logo:  "assets/<game_id>/logo.png"       # or null if missing
+      video: null                              # stacked mp4 (not shipped to the SD)
+      video_top:    "assets/<game_id>/top.tgrv"    # top screen TGR2 128x96 PAL8 (DS)
+      video_bottom: "assets/<game_id>/bottom.tgrv" # bottom screen TGR2 128x96 PAL8 (DS)
 ```
 
-O `fetch_ds_media.sh` já divide o vídeo empilhado do ScreenScraper em dois `.tgrv`
-(via `../split_ds_video.py`): `top.tgrv` (tela superior) e `bottom.tgrv` (tela inferior),
-cada um em TGR2 128x96 8bpp indexado (paleta de 256 cores por vídeo), prontos para a
-versão modificada do TWiLightMenu. Veja o formato em `../docs/asset-structure-changes.md`.
-O `run_sdcard.sh`/`scan_and_bind.py` movem esses `.tgrv` para `assets/<game_id>/` e os
-registram no manifesto. O `mp4` intermediário não é copiado para o SD.
+`fetch_ds_media.py` already splits the stacked video from ScreenScraper into two `.tgrv`
+files (via `../split_ds_video.py`): `top.tgrv` (top screen) and `bottom.tgrv` (bottom
+screen), each in TGR2 128x96 8bpp indexed format (a 256-color palette per video), ready for
+the modified TWiLightMenu. See the format in `../docs/asset-structure-changes.md`.
+`deploy.py`/`scan_and_bind.py` move those `.tgrv` files into `assets/<game_id>/` and register
+them in the manifest. The intermediate `mp4` is not copied to the SD.
 
-Ver `manifest.example.yml`.
+See `manifest.example.yml`.
 
-## Componentes
+## Components
 
-- **`scan_and_bind.py`** — orquestrador do SD card. **Só LÊ o SD na varredura**; todo o
-  download/processamento (baixar via `../fetch_ds_media.sh`, split de vídeo, downscale do logo)
-  acontece numa **pasta de trabalho local** (`--cache`, padrão `../cache`). Gera `manifest.yml`
-  + `assets_index.yml` no cache e, ao final, **monta as pastas no SD e move** o conteúdo para o
-  destino (`--out`). Filtra apps de sistema (blocklist), dedup por hash, idempotente (pula quem
-  já está no SD), e mostra **progresso em %**.
-- **`system_blocklist.txt`** — arquivos `.nds` que NÃO são jogos (dsimenu, pictochat, nds-bootstrap,
-  GBARunner2, …). Exclui por `sha1:` e/ou `name:` — o hash é robusto a renome.
-- **`generate_manifest.py`** — o "aplicativo": varre as ROMs + a pasta de mídia do Skyscraper,
-  calcula os hashes, **copia/organiza** os assets em `assets/<game_id>/`, e escreve o `manifest.yml`.
-- **`rom_binder.py`** — bind em runtime: `load_manifest(path)` → `Binder`; `binder.bind(rom_path)`
-  devolve `{game_id, logo, video, matched_by}` (caminhos absolutos, validados em disco) ou `None`.
-- **`rom_hash.py`** — hash de conteúdo (sha1/md5/crc32/size) numa passada.
-- **`yaml_io.py`** — I/O do `.yml` (usa PyYAML se instalado; senão, leitor/escritor próprio do schema).
-- **`test_binder.py`** — testes (unittest).
+- **`scan_and_bind.py`** -- the SD card orchestrator. **Only READS the SD during the scan**;
+  all the download/processing (via `../fetch_ds_media.py`, video splitting, logo downscaling)
+  happens in a **local working folder** (`--cache`, default `../cache`). Generates
+  `manifest.yml` + `assets_index.yml` in the cache and, at the end, **builds the folders on
+  the SD and moves** the content to the destination (`--out`). Filters system apps
+  (blocklist), dedups by hash, is idempotent (skips whatever is already on the SD), and shows
+  a **live progress bar** (`--no-progress` for plain one-line-per-file output, e.g. when
+  piping to a log file). Re-scanning an SD that's already fully set up is cheap: ROM hashes
+  are cached by (path, size, mtime) in `<cache>/rom_hash_cache.json`, so unchanged ROMs are
+  never re-read, and games that already have the assets a given pass cares about (logo for a
+  logo-only pass, video for a full pass) are never re-downloaded -- only genuinely new ROMs
+  get hashed and fetched. Whatever's left to fetch is scraped in **batches** of
+  `SCRAPE_BATCH_SIZE` ROMs (default 15) per Skyscraper invocation instead of one invocation
+  per ROM: Skyscraper accepts several filenames in a single call and, given more than one,
+  uses its own internal multi-threaded scraping (`-t`, 4 threads by default) -- a "one ROM
+  per process" loop can never benefit from that, and pays a full process/cache-session
+  startup for every single game on top.
+- **`system_blocklist.txt`** -- `.nds` files that are NOT games (dsimenu, pictochat,
+  nds-bootstrap, GBARunner2, ...). Excludes by `sha1:` and/or `name:` -- the hash is robust to
+  renaming.
+- **`generate_manifest.py`** -- the standalone "app": scans the ROMs + the Skyscraper media
+  folder, computes the hashes, **copies/organizes** the assets into `assets/<game_id>/`, and
+  writes `manifest.yml`.
+- **`rom_binder.py`** -- runtime bind: `load_manifest(path)` -> `Binder`; `binder.bind(rom_path)`
+  returns `{game_id, logo, video, matched_by}` (absolute paths, validated on disk) or `None`.
+- **`rom_hash.py`** -- content hash (sha1/md5/crc32/size) in a single pass.
+- **`yaml_io.py`** -- `.yml` I/O (uses PyYAML if installed; otherwise a purpose-built reader/writer for this schema).
+- **`test_binder.py`** -- tests (unittest).
 
-## Uso
+## Usage
 
-### Escanear o SD card, baixar e bindar (feature do SD)
+### Scan the SD card, download, and bind (the SD feature)
 
-Varre o SD, ignora apps de sistema (blocklist), baixa logo+vídeo de cada jogo, organiza em
-`assets/<sha1>/` **dentro do SD** e escreve o `manifest.yml`. Duplicatas (`... - cópia.nds`)
-colapsam por hash em uma entrada e compartilham os assets.
+Scans the SD, ignores system apps (blocklist), downloads the logo+video for each game,
+organizes them into `assets/<sha1>/` **inside the SD**, and writes `manifest.yml`. Duplicates
+(`... - copy.nds`) collapse by hash into one entry and share the assets.
+
+Most users should run this through `../deploy.py` instead (it also handles finding the SD
+card and installing `dsimenu.srldr`). Calling it directly is only needed for scripting /
+advanced use:
 
 ```bash
-export SS_USER='...'; export SS_PASS='...'   # ou deixe o fetch_ds_media.sh perguntar/usar cache
-python3 scan_and_bind.py --sd "/Volumes/SDCARD"
-# opções:
-#   --out <dir>          raiz de saída (padrão: a própria raiz do SD)
-#   --no-download        só (re)organiza assets existentes e reescreve o manifesto
-#   --force              rebaixa mesmo se assets/<sha1>/ já existir
-#   --blocklist <file>   blocklist customizada (padrão: system_blocklist.txt)
+export SS_USER='...'; export SS_PASS='...'   # or let fetch_ds_media.py prompt/use its cache
+python3 scan_and_bind.py --sd "/path/to/SD_CARD"
+# options:
+#   --out <dir>          output root (default: the SD root itself)
+#   --no-download        only (re)organize existing assets and rewrite the manifest
+#   --force               re-download even if assets/<sha1>/ already exists
+#   --blocklist <file>    custom blocklist (default: system_blocklist.txt)
 ```
 
-### Gerar o manifesto (host)
+### Generate the manifest (host)
 
-O Skyscraper baixa, por ROM, `"<base>-logo.png"` e `"<base>-video.<ext>"`. Então:
+Skyscraper downloads, per ROM, `"<base>-logo.png"` and `"<base>-video.<ext>"`. Then:
 
 ```bash
 python3 generate_manifest.py \
-  --roms  "/caminho/roms/nds" \
-  --media "/caminho/skyscraper/media" \
-  --out   "/caminho/saida"
-# opções: --rom-ext .nds  --logo-suffix -logo.png  --video-suffix -video  --allow-name-match
+  --roms  "/path/to/roms/nds" \
+  --media "/path/to/skyscraper/media" \
+  --out   "/path/to/output"
+# options: --rom-ext .nds  --logo-suffix -logo.png  --video-suffix -video  --allow-name-match
 ```
 
-Gera `/caminho/saida/manifest.yml` + `/caminho/saida/assets/<game_id>/...`.
+Generates `/path/to/output/manifest.yml` + `/path/to/output/assets/<game_id>/...`.
 
-### Bind em runtime
+### Bind at runtime
 
 ```python
 from rom_binder import load_manifest
-binder = load_manifest("/caminho/saida/manifest.yml")
-res = binder.bind("/sd/roms/Alguma ROM.nds")
+binder = load_manifest("/path/to/output/manifest.yml")
+res = binder.bind("/sd/roms/Some ROM.nds")
 if res:
     print(res.logo, res.video, "via", res.matched_by)
 else:
-    print("sem arte (scrapear depois)")
+    print("no art yet (scrape it later)")
 ```
 
-### Testes
+### Tests
 
 ```bash
-python3 test_binder.py          # ou: python3 -m unittest -v
+python3 test_binder.py          # or: python3 -m unittest -v
 ```
-Cobre: (a) renomeado resolve; (b) duplicatas compartilham arte; (c) nomes iguais + hashes
-diferentes não colidem; (d) asset faltante degrada com aviso; + hash duplicado = manifesto inválido;
-+ round-trip do YAML.
+Covers: (a) a renamed file resolves; (b) duplicates share art; (c) same names + different
+hashes don't collide; (d) a missing asset degrades with a warning; + duplicate hash = invalid
+manifest; + YAML round-trip.
 
-## Tratamento de erros
-- Asset ausente em disco (mas referenciado): vincula o que existir, loga aviso, não quebra.
-- ROM sem entrada: retorna `None` e loga o `sha1` (para scrapear depois).
-- Mesmo hash em duas entradas do `.yml`: `ManifestError` apontando os `game_id` conflitantes.
+## Error handling
+- Asset missing on disk (but referenced): binds whatever exists, logs a warning, doesn't break.
+- ROM with no entry: returns `None` and logs the `sha1` (to scrape later).
+- Same hash in two `.yml` entries: `ManifestError` naming the conflicting `game_id`s.
 
-## Nota de integração com o DS (ponte)
+## Note on DS integration (the bridge)
 
-O DS **não calcula hash em runtime** (ARM9 a 67 MHz não hasheia ROMs de dezenas/centenas de MB a
-tempo). Este manifesto é do **host**: ele é a fonte de verdade robusta. Para o frontend do DS
-consumir, o host resolve cada ROM do cartão por hash e emite um índice leve que o DS casa barato
-(hoje o frontend usa `logos.yml` por nome — ver a feature de logo). Essa ponte (emitir o índice do
-DS a partir deste manifesto) é o próximo passo natural.
+The DS **does not hash at runtime** (a 67 MHz ARM9 can't hash tens/hundreds of MB of ROM in
+time). This manifest lives on the **host**: it is the robust source of truth. For the DS
+frontend to consume it, the host resolves each ROM on the cartridge by hash and emits a light
+index the DS can match cheaply (`assets_index.yml`, written directly by `scan_and_bind.py`).

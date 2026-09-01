@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 """
-generate_manifest.py — gera o manifesto .yml e ORGANIZA os assets em pastas por jogo.
+generate_manifest.py -- generates the manifest .yml and ORGANIZES assets into per-game folders.
 
-Entrada:
-  --roms  <dir>   pasta com as ROMs (ex.: .nds)
-  --media <dir>   pasta onde o Skyscraper/ScreenScraper baixou os assets, nomeados
-                  "<base>-logo.png" e "<base>-video.<ext>" (base = nome da ROM sem extensão)
-  --out   <dir>   raiz de saída: recebe manifest.yml + assets/<game_id>/{logo,video}
+Input:
+  --roms  <dir>   folder with the ROMs (e.g. .nds)
+  --media <dir>   folder where Skyscraper/ScreenScraper downloaded the assets, named
+                  "<base>-logo.png" and "<base>-video.<ext>" (base = ROM name without extension)
+  --out   <dir>   output root: receives manifest.yml + assets/<game_id>/{logo,video}
 
-Estrutura de saída (pasta de assets + subpasta por jogo):
+Output layout (assets folder + one subfolder per game):
   <out>/
     manifest.yml
     assets/
-      <game_id>/            # game_id = sha1 da ROM (identidade estável de conteúdo)
+      <game_id>/            # game_id = ROM sha1 (stable content identity)
         logo.png
         video.<ext>
 
-IDENTIDADE POR HASH (não por nome): a ROM é casada ao asset pelo conteúdo. Arquivos
-duplicados (mesmo hash, nomes diferentes) viram UMA entrada e compartilham os assets.
+IDENTITY BY HASH (not by name): the ROM is matched to its asset by content. Duplicate files
+(same hash, different names) become ONE entry and share the assets.
 """
 import argparse
 import glob
@@ -40,7 +40,7 @@ def find_roms(roms_dir, exts):
 
 
 def find_source_assets(media_dir, base, logo_suffix, video_suffix):
-    """Acha logo e vídeo do Skyscraper para o 'base' da ROM. Retorna (logo_path, video_path)."""
+    """Finds the Skyscraper logo and video for the ROM's 'base' name. Returns (logo_path, video_path)."""
     logo = os.path.join(media_dir, base + logo_suffix)
     logo = logo if os.path.isfile(logo) else None
     vids = sorted(glob.glob(glob.escape(os.path.join(media_dir, base + video_suffix)) + ".*"))
@@ -49,15 +49,15 @@ def find_source_assets(media_dir, base, logo_suffix, video_suffix):
 
 
 def main(argv):
-    ap = argparse.ArgumentParser(description="Gera manifest.yml + organiza assets por jogo.")
-    ap.add_argument("--roms", required=True, help="pasta das ROMs")
-    ap.add_argument("--media", required=True, help="pasta dos assets do Skyscraper")
-    ap.add_argument("--out", required=True, help="raiz de saída (manifest.yml + assets/)")
-    ap.add_argument("--rom-ext", default=".nds", help="extensões de ROM (csv). Padrão .nds")
+    ap = argparse.ArgumentParser(description="Generates manifest.yml + organizes assets per game.")
+    ap.add_argument("--roms", required=True, help="ROMs folder")
+    ap.add_argument("--media", required=True, help="Skyscraper assets folder")
+    ap.add_argument("--out", required=True, help="output root (manifest.yml + assets/)")
+    ap.add_argument("--rom-ext", default=".nds", help="ROM extensions (csv). Default .nds")
     ap.add_argument("--logo-suffix", default="-logo.png")
     ap.add_argument("--video-suffix", default="-video")
     ap.add_argument("--allow-name-match", action="store_true",
-                    help="grava allow_name_match: true no manifesto (fallback por nome no runtime)")
+                    help="write allow_name_match: true in the manifest (name fallback at runtime)")
     args = ap.parse_args(argv)
 
     exts = {e if e.startswith(".") else "." + e for e in args.rom_ext.lower().split(",")}
@@ -66,10 +66,10 @@ def main(argv):
 
     roms = find_roms(args.roms, exts)
     if not roms:
-        print(f"!! nenhuma ROM {sorted(exts)} em {args.roms}", file=sys.stderr)
+        print(f"!! no ROM {sorted(exts)} in {args.roms}", file=sys.stderr)
         return 1
 
-    # Agrupa por sha1 (conteúdo). Duplicatas (mesmo hash) => uma entrada só.
+    # Group by sha1 (content). Duplicates (same hash) => a single entry.
     by_sha1 = {}
     for path in roms:
         h = hash_file(path)
@@ -81,10 +81,10 @@ def main(argv):
         h = info["hash"]
         files = info["files"]
         if len(files) > 1:
-            print(f">> {len(files)} arquivos com o mesmo conteúdo (sha1 {sha1[:8]}…) "
-                  f"-> 1 entrada: {[os.path.basename(f) for f in files]}", file=sys.stderr)
+            print(f">> {len(files)} files with the same content (sha1 {sha1[:8]}...) "
+                  f"-> 1 entry: {[os.path.basename(f) for f in files]}", file=sys.stderr)
 
-        # procura assets por qualquer um dos nomes do grupo (bases diferentes p/ mesmo jogo)
+        # look for assets under any of the group's names (different bases for the same game)
         src_logo = src_video = None
         for f in files:
             base = os.path.splitext(os.path.basename(f))[0]
@@ -92,7 +92,7 @@ def main(argv):
             src_logo = src_logo or l
             src_video = src_video or v
 
-        game_id = sha1  # identidade estável de conteúdo (pode ser o id do ScreenScraper)
+        game_id = sha1  # stable content identity (could also be the ScreenScraper id)
         game_dir = os.path.join(assets_root, game_id)
         rel_logo = rel_video = None
         if src_logo or src_video:
@@ -110,13 +110,13 @@ def main(argv):
             n_video += 1
         if not src_logo and not src_video:
             n_noasset += 1
-            print(f"   aviso: sem assets para {os.path.basename(files[0])} (sha1 {sha1[:8]}…)",
+            print(f"   warning: no assets for {os.path.basename(files[0])} (sha1 {sha1[:8]}...)",
                   file=sys.stderr)
 
         games.append({
             "game_id": game_id,
             "identity": h,               # sha1, md5, crc32, size
-            "rom_name": os.path.basename(files[0]),  # informativo/fallback apenas
+            "rom_name": os.path.basename(files[0]),  # informational/fallback only
             "assets": {"logo": rel_logo, "video": rel_video},
         })
 
@@ -128,8 +128,8 @@ def main(argv):
     with open(out_path, "w", encoding="utf-8") as fh:
         fh.write(dump_manifest(manifest))
 
-    print(f">> {out_path}: {len(games)} jogos, {n_logo} logos, {n_video} vídeos, "
-          f"{n_noasset} sem assets.", file=sys.stderr)
+    print(f">> {out_path}: {len(games)} games, {n_logo} logos, {n_video} videos, "
+          f"{n_noasset} with no assets.", file=sys.stderr)
     return 0
 
 

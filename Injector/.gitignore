@@ -12,5 +12,19 @@
 # Skyscraper source/build (dependency)
 skysource/
 
-# Área de trabalho/staging do pipeline (assets são movidos para o SD ao final)
+# Tools deploy.py bootstraps automatically (downloaded ffmpeg, cloned Skyscraper source)
+tools/
+
+# Pipeline working/staging area (assets are moved to the SD at the end)
 cache/
+
+# Python bytecode cache
+__pycache__/
+*.pyc
+
+# A locally-built dsimenu.srldr and bundled themes, if you drop them here for deploy.py
+build/
+themes/
+
+# Release package built from this folder -- attached to GitHub Releases, not committed
+TWiLightMenuGRID-deploy-tools.zip
