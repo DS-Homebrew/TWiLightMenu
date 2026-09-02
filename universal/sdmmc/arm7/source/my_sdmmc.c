@@ -497,38 +497,6 @@ void my_sdmmc_get_cid(int devicenumber, u32 *cid) {
 	leaveCriticalSection(oldIME);
 }
 
-#ifdef SDMMC_USE_FIFO
-//---------------------------------------------------------------------------------
-void my_sdmmcMsgHandler(int bytes, void *user_data) {
-//---------------------------------------------------------------------------------
-    FifoMessage msg;
-    int retval = 0;
-
-    fifoGetDatamsg(FIFO_SDMMC, bytes, (u8*)&msg);
-
-    int oldIME = enterCriticalSection();
-    switch (msg.type) {
-
-    case SDMMC_SD_READ_SECTORS:
-        retval = my_sdmmc_readsectors(&deviceSD, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-        break;
-    case SDMMC_SD_WRITE_SECTORS:
-        retval = my_sdmmc_writesectors(&deviceSD, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-        break;
-    case SDMMC_NAND_READ_SECTORS:
-        retval = my_sdmmc_readsectors(&deviceNAND, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-        break;
-    case SDMMC_NAND_WRITE_SECTORS:
-        retval = my_sdmmc_writesectors(&deviceNAND, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-        break;
-    }
-
-    leaveCriticalSection(oldIME);
-
-    fifoSendValue32(FIFO_SDMMC, retval);
-}
-#endif
-
 //---------------------------------------------------------------------------------
 int my_sdmmc_nand_startup() {
 //---------------------------------------------------------------------------------
@@ -543,66 +511,23 @@ int my_sdmmc_sd_startup() {
 	return my_sdmmc_sdcard_init();
 }
 
-#ifdef SDMMC_USE_FIFO
 //---------------------------------------------------------------------------------
-void my_sdmmcValueHandler(u32 value, void* user_data) {
-//---------------------------------------------------------------------------------
-    int result = 0;
-    int sdflag = 0;
-    int oldIME = enterCriticalSection();
-
-    switch(value) {
-
-    case SDMMC_HAVE_SD:
-        result = sdmmc_read16(REG_SDSTATUS0);
-        break;
-
-    case SDMMC_SD_START:
-        sdflag = 1;
-        /* Falls through. */
-    case SDMMC_NAND_START:
-        if (sdmmc_read16(REG_SDSTATUS0) == 0) {
-            result = 1;
-        } else {
-            result = (sdflag == 1) ? my_sdmmc_sd_startup() : my_sdmmc_nand_startup();
-        }
-        break;
-
-    case SDMMC_SD_IS_INSERTED:
-        result = my_sdmmc_cardinserted();
-        break;
-
-    case SDMMC_SD_STOP:
-        my_sdmmc_controller_initialised = false;
-        break;
-
-    case SDMMC_NAND_SIZE:
-        result = deviceNAND.total_size;
-        break;
-    }
-
-    leaveCriticalSection(oldIME);
-
-    fifoSendValue32(FIFO_SDMMC, result);
-}
-#else
-//---------------------------------------------------------------------------------
-void my_sdmmcHandler() {
+void my_sdmmcHandler(u32 value, void* user_data) {
 //---------------------------------------------------------------------------------
 	int result = 0;
 	int sdflag = 0;
 	int oldIME = enterCriticalSection();
 
-	switch(IPC_GetSync()) {
+	switch(*(u32*)0x02FFFA0C) {
 
-	case 0: // 0x56484453: // SDMMC_HAVE_SD
+	case 0x56484453: // SDMMC_HAVE_SD
 		result = (sdmmc_read16(REG_SDSTATUS0) & BIT(5)) != 0;
 		break;
 
-	case 1: // 0x54534453: // SDMMC_SD_START
+	case  0x54534453: // SDMMC_SD_START
 		sdflag = 1;
 		/* Falls through. */
-	case 2: // 0x5453414E: // SDMMC_NAND_START
+	case 0x5453414E: // SDMMC_NAND_START
 		if (sdmmc_read16(REG_SDSTATUS0) == 0) {
 			result = 1;
 		} else {
@@ -621,7 +546,7 @@ void my_sdmmcHandler() {
 		}
 		break;
 
-	case 3: // 0x4E494453: // SDMMC_SD_IS_INSERTED
+	case 0x4E494453: // SDMMC_SD_IS_INSERTED
 		result = useDLDI ? io_dldi_data->ioInterface.isInserted() : my_sdmmc_cardinserted();
 		break;
 
@@ -632,25 +557,20 @@ void my_sdmmcHandler() {
 	//	result = deviceNAND.total_size;
 	//	break;
 
-	case 4: // 0x44524453: // SDMMC_SD_READ_SECTORS
+	case 0x44524453: // SDMMC_SD_READ_SECTORS
 		result =
 			useDLDI ? (io_dldi_data->ioInterface.readSectors(*(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08) ? 0 : 1)
 					: my_sdmmc_readsectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
 		break;
-	case 5: // 0x52574453: // SDMMC_SD_WRITE_SECTORS
-		u32 sector = *(u32*)0x02FFFA00;
-		u32 numSectors = *(u32*)0x02FFFA04;
-		void* buffer = (void*)*(u32*)0x02FFFA08;
-		for (int i = 0; i < numSectors; i++) {
+	case 0x52574453: // SDMMC_SD_WRITE_SECTORS
 		result =
-			useDLDI ? (io_dldi_data->ioInterface.writeSectors(sector+i, 1, buffer+(i*512)) ? 0 : 1)
-					: my_sdmmc_writesectors(&deviceSD, sector+i, 1, buffer+(i*512));
-		}
+			useDLDI ? (io_dldi_data->ioInterface.writeSectors(*(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08) ? 0 : 1)
+					: my_sdmmc_writesectors(&deviceSD, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
 		break;
-	case 6: // 0x4452414E: // SDMMC_NAND_READ_SECTORS
+	case 0x4452414E: // SDMMC_NAND_READ_SECTORS
 		result = my_sdmmc_readsectors(&deviceNAND, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
 		break;
-	case 7: // 0x5257414E: // SDMMC_NAND_WRITE_SECTORS
+	case 0x5257414E: // SDMMC_NAND_WRITE_SECTORS
 		result = my_sdmmc_writesectors(&deviceNAND, *(u32*)0x02FFFA00, *(u32*)0x02FFFA04, (void*)*(u32*)0x02FFFA08);
 		break;
 	}
@@ -660,7 +580,6 @@ void my_sdmmcHandler() {
 	//fifoSendValue32(FIFO_SDMMC, result);
 	*(u32*)0x02FFFA0C = result;
 }
-#endif
 
 //---------------------------------------------------------------------------------
 int my_sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out) {
