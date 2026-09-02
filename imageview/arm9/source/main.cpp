@@ -33,7 +33,6 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
-bool supportsMultiBuffer = false;
 static bool visibleBgAndText = true;
 
 extern void ClearBrightness();
@@ -118,8 +117,8 @@ void customSleep() {
 
 void printText(void) {
 	clearText(false);
-	if (supportsMultiBuffer) {
-		printSmall(false, 0, 88, multiBuffer ? STR_A_REGULAR_DITHERING : STR_A_TEMPORAL_DITHERING, Alignment::center);
+	if (supportsMultiBuffer[0] || supportsMultiBuffer[1]) {
+		printSmall(false, 0, 88, (multiBuffer[0] || multiBuffer[1]) ? STR_A_REGULAR_DITHERING : STR_A_TEMPORAL_DITHERING, Alignment::center);
 	}
 	printSmall(false, -88, 174, STR_BACK, Alignment::center);
 	updateText(false);
@@ -150,13 +149,18 @@ static void mainLoop(void) {
 			customSleep();
 		}
 
-		if ((pressed & KEY_A) && supportsMultiBuffer) {
-			multiBuffer = !multiBuffer;
+		if ((pressed & KEY_A) && (supportsMultiBuffer[0] || supportsMultiBuffer[1])) {
+			if (supportsMultiBuffer[0]) {
+				multiBuffer[0] = !multiBuffer[0];
+			}
+			if (supportsMultiBuffer[1]) {
+				multiBuffer[1] = !multiBuffer[1];
+			}
 			if (visibleBgAndText) printText();
 			snd().playSwitch();
 		}
 
-		if ((pressed & KEY_Y) && supportsMultiBuffer && !multiBuffer) {
+		if ((pressed & KEY_Y) && (supportsMultiBuffer[0] || supportsMultiBuffer[1]) && (!multiBuffer[0] || !multiBuffer[1])) {
 			currentBuffer++;
 			if (currentBuffer == bufferCount) currentBuffer = 0;
 		}
@@ -279,7 +283,6 @@ int imageViewer(void) {
 		}
 	}
 
-	supportsMultiBuffer = multiBuffer;
 	if (visibleBgAndText) {
 		bgLoad();
 		printText();

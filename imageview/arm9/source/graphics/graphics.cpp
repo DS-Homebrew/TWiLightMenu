@@ -42,7 +42,8 @@ bool highFPS = false;
 int screenBrightness = 31;
 int imageType = 0;
 bool dualScreenImage = false;
-DTCM_DATA bool multiBuffer = false;
+DTCM_DATA bool supportsMultiBuffer[2] = {false};
+DTCM_DATA bool multiBuffer[2] = {false};
 DTCM_DATA int currentBuffer = 0;
 DTCM_DATA int bufferCount = 2;
 
@@ -97,12 +98,12 @@ ITCM_CODE void hBlankHandler_dualScreen() {
 	if (scanline > 192) {
 		return;
 	} else if (scanline == 192) {
-		dmaCopyWordsAsynch(0, dsImageBuffer[0][currentBuffer], BG_PALETTE, 256*2);
-		dmaCopyWordsAsynch(1, dsImageBuffer[1][currentBuffer], BG_PALETTE_SUB, 256*2);
+		if (supportsMultiBuffer[0]) dmaCopyWordsAsynch(0, dsImageBuffer[0][currentBuffer], BG_PALETTE, 256*2);
+		if (supportsMultiBuffer[1]) dmaCopyWordsAsynch(1, dsImageBuffer[1][currentBuffer], BG_PALETTE_SUB, 256*2);
 	} else {
 		scanline++;
-		dmaCopyWordsAsynch(0, dsImageBuffer[0][currentBuffer]+(scanline*256), BG_PALETTE, 256*2);
-		dmaCopyWordsAsynch(1, dsImageBuffer[1][currentBuffer]+(scanline*256), BG_PALETTE_SUB, 256*2);
+		if (supportsMultiBuffer[0]) dmaCopyWordsAsynch(0, dsImageBuffer[0][currentBuffer]+(scanline*256), BG_PALETTE, 256*2);
+		if (supportsMultiBuffer[1]) dmaCopyWordsAsynch(1, dsImageBuffer[1][currentBuffer]+(scanline*256), BG_PALETTE_SUB, 256*2);
 	}
 }
 
@@ -111,12 +112,12 @@ ITCM_CODE void hBlankHandler_dualScreenNdma() {
 	if (scanline > 192) {
 		return;
 	} else if (scanline == 192) {
-		ndmaCopyWordsAsynch(0, dsImageBuffer[0][currentBuffer], BG_PALETTE, 256*2);
-		ndmaCopyWordsAsynch(1, dsImageBuffer[1][currentBuffer], BG_PALETTE_SUB, 256*2);
+		if (supportsMultiBuffer[0]) ndmaCopyWordsAsynch(0, dsImageBuffer[0][currentBuffer], BG_PALETTE, 256*2);
+		if (supportsMultiBuffer[1]) ndmaCopyWordsAsynch(1, dsImageBuffer[1][currentBuffer], BG_PALETTE_SUB, 256*2);
 	} else {
 		scanline++;
-		ndmaCopyWordsAsynch(0, dsImageBuffer[0][currentBuffer]+(scanline*256), BG_PALETTE, 256*2);
-		ndmaCopyWordsAsynch(1, dsImageBuffer[1][currentBuffer]+(scanline*256), BG_PALETTE_SUB, 256*2);
+		if (supportsMultiBuffer[0]) ndmaCopyWordsAsynch(0, dsImageBuffer[0][currentBuffer]+(scanline*256), BG_PALETTE, 256*2);
+		if (supportsMultiBuffer[1]) ndmaCopyWordsAsynch(1, dsImageBuffer[1][currentBuffer]+(scanline*256), BG_PALETTE_SUB, 256*2);
 	}
 }
 
@@ -147,7 +148,7 @@ ITCM_CODE void vBlankHandler() {
 	if (controlTopBright) SetBrightness(0, screenBrightness);
 	if (controlBottomBright && !ms().macroMode) SetBrightness(1, screenBrightness);
 
-	if (multiBuffer) {
+	if (multiBuffer[0] || multiBuffer[1]) {
 		// dmaCopyHalfWordsAsynch(0, dsImageBuffer[currentBuffer], BG_GFX, (256*192)*2);
 		currentBuffer++;
 		if (currentBuffer == bufferCount) currentBuffer = 0;
@@ -277,7 +278,8 @@ void imageLoad(const char* filename, const bool bottom) {
 			}
 			y=0;
 		}
-		multiBuffer = true;
+		supportsMultiBuffer[bottom] = true;
+		multiBuffer[bottom] = true;
 		return;
 	} else if (imageType == 1) { // BMP
 		FILE* file = fopen(filename, "rb");
@@ -391,7 +393,8 @@ void imageLoad(const char* filename, const bool bottom) {
 				y = height-1;
 			}
 			delete[] bmpImageBuffer;
-			multiBuffer = true;
+			supportsMultiBuffer[bottom] = true;
+			multiBuffer[bottom] = true;
 		} else if (bitsPerPixel == 16) { // 16-bit
 			dsImageBuffer[bottom][0] = new u16[256*192];
 			toncset16(dsImageBuffer[bottom][0], colorTable ? colorTable[0] : 0, 256*192);
@@ -523,7 +526,8 @@ void imageLoad(const char* filename, const bool bottom) {
 				y = height-1;
 			}
 			delete[] bmpImageBuffer;
-			multiBuffer = true;
+			supportsMultiBuffer[bottom] = true;
+			multiBuffer[bottom] = true;
 		} else if (bitsPerPixel == 1) { // 1-bit
 			u16 monoPixel[2] = {0};
 			for (int i = 0; i < 2; i++) {
