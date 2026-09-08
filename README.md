@@ -129,7 +129,10 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - [fail0verflow](https://github.com/fail0verflow/), Fluto, and Arkhandar: Homebrew Channel/Launcher graphics
 - [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi UI's `SELECT` menu
 - [Mr. Start](https://github.com/Arthur-Start): Super Nintendo DS splash screen
-- [PW5190](https://github.com/PW5190): Kirby-themed and Pokémon Day TWLMenu++ splash screens
+- [PW5190](https://github.com/PW5190): These TWLMenu++ splash screens:
+     - Kirby
+     - Pokémon Day
+	 - Zelda
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons
 ## Music
@@ -152,6 +155,7 @@ You can help translate TWiLight Menu++ on the [Crowdin project](https://crowdin.
 - Nikokaro: Found no-tilt patches for *WarioWare: Twisted!*, and *Yoshi Topsy-Turvy*. ([GBAtemp thread](https://gbatemp.net/threads/gba-no-tilt-patches-for-ds-users.584128/))
 - [Lorenzooone](https://github.com/Lorenzooone): Improvements to Slot-1 launcher, and added support for booting DSi-Enhanced/Exclusive game cards in DSi mode
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS
+- [PW5190](https://github.com/PW5190): ESRB info contributions
 - RadDude McCoolguy, fintogive, KazoWAR, Vague Rant, [gamemasterplc](https://github.com/gamemasterplc), [Rocket Robz](https://github.com/RocketRobz), [ChampionLeake](https://github.com/ChampionLeake), [DeadSkullzJr](https://github.com/DeadSkullzJr), [spellboundtriangle](https://github.com/spellboundtriangle), [LedyBacer](https://github.com/LedyBacer): Widescreen cheats
 - [SNBeast](https://github.com/SNBeast): Unlaunch patches
 - Taiju Yamada: Code used to bypass R4i-SDHC boot file protection
