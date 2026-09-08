@@ -28,9 +28,9 @@ void loadGbaBorder(const char* filename) {
 				if (oldB >= 4 && oldB < 0xFC) newB += 4;
 			}
 			if (alternatePixel2) {
-				if (((oldR/2) % 2) == 1 && newR < 0xFE) newR += 2;
-				if (((oldG/2) % 2) == 1 && newG < 0xFE) newG += 2;
-				if (((oldB/2) % 2) == 1 && newB < 0xFE) newB += 2;
+				if (oldR >= 2 && newR < 0xFE) newR += 2;
+				if (oldG >= 2 && newG < 0xFE) newG += 2;
+				if (oldB >= 2 && newB < 0xFE) newB += 2;
 			}
 			bmpImageBuffer[i] = newR>>3 | (newG>>3)<<5 | (newB>>3)<<10 | BIT(15);
 			if ((i % 256) == 255) {
