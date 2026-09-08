@@ -689,16 +689,22 @@ void vBlankHandler()
 				continue;
 			}
 			if (moveIconUp[0] || moveIconUp[3]) {
+				static u16* src = NULL;
+				static u16* dst = NULL;
+
+				if (src) {
+					dmaCopyWordsAsynch(0, src, dst, 45 * 256); // Move text in sync with the icon box
+				}
+
+				// Store text movement for next frame
 				u16* bgPtr = bgGetGfxPtr(2);
 				int textMoveSrc = iconYpos[i]+6;
 				if (textMoveSrc < 0) textMoveSrc = 6;
 				int textMoveDst = iconYpos[i];
 				if (textMoveDst < 0) textMoveDst = 0;
 
-				u16* src = bgPtr + (textMoveSrc * (256/2));
-				u16* dst = bgPtr + (textMoveDst * (256/2));
-
-				dmaCopyWordsAsynch(0, src, dst, 45 * 256);
+				src = bgPtr + (textMoveSrc * (256/2));
+				dst = bgPtr + (textMoveDst * (256/2));
 			}
 			updateFrame = true;
 		}
