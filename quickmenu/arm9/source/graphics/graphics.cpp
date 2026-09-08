@@ -681,10 +681,26 @@ void vBlankHandler()
 		}
 
 		for (int i = 0; i < 7; i++) {
-			if (moveIconUp[i]) {
-				iconYpos[i] -= 6;
-				updateFrame = true;
+			if (!moveIconUp[i]) continue;
+
+			iconYpos[i] -= 6;
+			if (iconYpos[i] < -64) {
+				moveIconUp[i] = false;
+				continue;
 			}
+			if (moveIconUp[0] || moveIconUp[3]) {
+				u16* bgPtr = bgGetGfxPtr(2);
+				int textMoveSrc = iconYpos[i]+6;
+				if (textMoveSrc < 0) textMoveSrc = 6;
+				int textMoveDst = iconYpos[i];
+				if (textMoveDst < 0) textMoveDst = 0;
+
+				u16* src = bgPtr + (textMoveSrc * (256/2));
+				u16* dst = bgPtr + (textMoveDst * (256/2));
+
+				dmaCopyWordsAsynch(0, src, dst, 45 * 256);
+			}
+			updateFrame = true;
 		}
 	}
 

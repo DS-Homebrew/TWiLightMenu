@@ -514,7 +514,7 @@ void SetWidescreen(const char *filename) {
 	if (wideCheatFound) {
 		if (fcopy(wideBinPath, wideCheatDataPath) != 0) {
 			remove(wideCheatDataPath);
-			clearText();
+			clearText(false);
 			printSmall(false, 0, 72, STR_FAILED_TO_COPY_WIDESCREEN, Alignment::center);
 			fadeType = true; // Fade in from white
 			for (int i = 0; i < 60 * 3; i++) {
@@ -824,7 +824,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 	fadeSpeed = true;
 	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-	clearText();
+	clearText(false);
 	printSmall(false, 4, 4, text);
 	if (err == 0) {
 		printSmall(false, 4, 20, STR_FLASHCARD_UNSUPPORTED);
@@ -1017,7 +1017,7 @@ void directCardLaunch() {
 	int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, sys().isRunFromSD(), true, true, false, true, true, false, -1);
 	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-	clearText();
+	clearText(false);
 	printSmall(false, 4, 4, text);
 	updateText(false);
 	fadeType = true; // Fade in
@@ -1530,6 +1530,8 @@ int dsClassicMenu(void) {
 	}
 
 	startMenu = true;	// Show bottom screen graphics
+	printSmall(false, ms().rtl() ? 72 : -72, 6, STR_B_BACK, Alignment::center);
+	updateBBackText();
 	fadeSpeed = false;
 
 	Datetime previousTime;
@@ -1590,8 +1592,7 @@ int dsClassicMenu(void) {
 				}
 
 				if (updateMenuText) {
-					clearText();
-					printSmall(false, ms().rtl() ? 72 : -72, 6, STR_B_BACK, Alignment::center);
+					clearText(false);
 					if (ms().macroMode) printSmall(false, ms().rtl() ? -72 : 72, 6, curTime, Alignment::center);
 					if (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA) {
 						printNdsCartBannerText();
@@ -1867,14 +1868,14 @@ int dsClassicMenu(void) {
 							whiteScreen = true;
 							fadeSpeed = true;
 							controlTopBright = false;
-							clearText();
+							clearText(false);
 
 							if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
 								chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
 								int err = runNdsFile (pictochatPath, 0, NULL, sys().isRunFromSD(), true, true, true, false, false, false, ms().gameLanguage);
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-								clearText();
+								clearText(false);
 								printSmall(false, 4, 4, text);
 								fadeType = true; // Fade in
 								updateText(false);
@@ -1951,7 +1952,7 @@ int dsClassicMenu(void) {
 								int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-								clearText();
+								clearText(false);
 								printSmall(false, 4, 4, text);
 								if (err == 1) {
 									printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
@@ -1979,7 +1980,7 @@ int dsClassicMenu(void) {
 							whiteScreen = true;
 							fadeSpeed = true;
 							controlTopBright = false;
-							clearText();
+							clearText(false);
 
 							if (dlplayReboot) {
 								*(u32*)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
@@ -2019,7 +2020,7 @@ int dsClassicMenu(void) {
 								int err = runNdsFile (dlplayPath, 0, NULL, sys().isRunFromSD(), true, true, true, false, false, false, ms().gameLanguage);
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-								clearText();
+								clearText(false);
 								printSmall(false, 4, 4, text);
 								fadeType = true; // Fade in
 								updateText(false);
@@ -2063,7 +2064,7 @@ int dsClassicMenu(void) {
 								int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-								clearText();
+								clearText(false);
 								printSmall(false, 4, 4, text);
 								if (err == 1) {
 									printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
@@ -2329,7 +2330,7 @@ int dsClassicMenu(void) {
 						whiteScreen = true;
 						fadeSpeed = true;
 						controlTopBright = false;
-						clearText();
+						clearText(false);
 						printSmall(false, 0, 88, STR_CREATING_SAVE, Alignment::center);
 						fadeType = true;	// Fade in from white
 						updateText(false);
@@ -2351,7 +2352,7 @@ int dsClassicMenu(void) {
 							showProgressBar = false;
 						}
 
-						clearText();
+						clearText(false);
 						printSmall(false, 0, 88, STR_SAVE_CREATED, Alignment::center);
 						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
@@ -2365,14 +2366,14 @@ int dsClassicMenu(void) {
 						whiteScreen = true;
 						fadeSpeed = true;
 						controlTopBright = false;
-						clearText();
+						clearText(false);
 						printSmall(false, 0, 88, STR_CREATING_PUBLIC_SAVE, Alignment::center);
 						fadeType = true;	// Fade in from white
 						updateText(false);
 
 						createDSiWareSave(ms().dsiWarePubPath.c_str(), NDSHeader.pubSavSize);
 
-						clearText();
+						clearText(false);
 						printSmall(false, 0, 88, STR_PUBLIC_SAVE_CREATED, Alignment::center);
 						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
@@ -2386,14 +2387,14 @@ int dsClassicMenu(void) {
 						whiteScreen = true;
 						fadeSpeed = true;
 						controlTopBright = false;
-						clearText();
+						clearText(false);
 						printSmall(false, 0, 88, STR_CREATING_PRIVATE_SAVE, Alignment::center);
 						fadeType = true;	// Fade in from white
 						updateText(false);
 
 						createDSiWareSave(ms().dsiWarePrvPath.c_str(), NDSHeader.prvSavSize);
 
-						clearText();
+						clearText(false);
 						printSmall(false, 0, 88, STR_PRIVATE_SAVE_CREATED, Alignment::center);
 						updateText(false);
 						for (int i = 0; i < 60; i++) swiWaitForVBlank();
@@ -2408,7 +2409,7 @@ int dsClassicMenu(void) {
 					whiteScreen = true;
 					fadeSpeed = true;
 					controlTopBright = false;
-					clearText();
+					clearText(false);
 					printSmall(false, 0, 88, STR_CREATING_BANNER_SAVE, Alignment::center);
 					fadeType = true;	// Fade in from white
 					updateText(false);
@@ -2423,7 +2424,7 @@ int dsClassicMenu(void) {
 						fclose(pFile);
 					}
 
-					clearText();
+					clearText(false);
 					printSmall(false, 0, 88, STR_BANNER_SAVE_CREATED, Alignment::center);
 					updateText(false);
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
@@ -2439,7 +2440,7 @@ int dsClassicMenu(void) {
 					whiteScreen = true;
 					fadeSpeed = true;
 					controlTopBright = false;
-					clearText();
+					clearText(false);
 					printSmall(false, 0, 86, STR_NOW_COPYING_DATA, Alignment::center);
 					printSmall(false, 0, 100, STR_DO_NOT_TURN_OFF_POWER, Alignment::center);
 					fadeType = true;	// Fade in from white
@@ -2460,7 +2461,7 @@ int dsClassicMenu(void) {
 					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))
 					 || ((NDSHeader.dsi_flags & BIT(2)) && access(ms().dsiWareBnrPath.c_str(), F_OK) == 0)) {
 						for (int i = 0; i < 25; i++) swiWaitForVBlank();
-						clearText();
+						clearText(false);
 						printSmall(false, 0, 8, STR_RESTART_AFTER_SAVE, Alignment::center);
 						updateText(false);
 						fadeType = true;	// Fade in from white
@@ -2606,7 +2607,7 @@ int dsClassicMenu(void) {
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
 					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-					clearText();
+					clearText(false);
 					printSmall(false, 4, 4, text);
 					if (err == 1) {
 						printSmall(false, 4, 24, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
@@ -2725,7 +2726,7 @@ int dsClassicMenu(void) {
 								s2RamAccessAlt(true);
 								whiteScreen = true;
 								fadeSpeed = true; // Fast fading
-								clearText();
+								clearText(false);
 								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
 								updateText(false);
 
@@ -2746,7 +2747,7 @@ int dsClassicMenu(void) {
 									fclose(pFile);
 									showProgressBar = false;
 								}
-								clearText();
+								clearText(false);
 								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_SAVE_CREATED : STR_SAVE_EXPANDED, Alignment::center);
 								updateText(false);
 								for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -2769,7 +2770,7 @@ int dsClassicMenu(void) {
 						snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 						whiteScreen = true;
 						fadeSpeed = true; // Fast fading
-						clearText();
+						clearText(false);
 						printSmall(false, 4, 4, text);
 						if (err == 1) {
 							printSmall(false, 4, 24, STR_PICO_LOADER_NOT_FOUND);
@@ -2822,7 +2823,7 @@ int dsClassicMenu(void) {
 								s2RamAccessAlt(true);
 								whiteScreen = true;
 								fadeSpeed = true; // Fast fading
-								clearText();
+								clearText(false);
 								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
 								updateText(false);
 
@@ -2843,7 +2844,7 @@ int dsClassicMenu(void) {
 									fclose(pFile);
 									showProgressBar = false;
 								}
-								clearText();
+								clearText(false);
 								printSmall(false, 0, 88, (orgsavesize == 0) ? STR_SAVE_CREATED : STR_SAVE_EXPANDED, Alignment::center);
 								updateText(false);
 								for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -3019,7 +3020,7 @@ int dsClassicMenu(void) {
 						snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 						whiteScreen = true;
 						fadeSpeed = true; // Fast fading
-						clearText();
+						clearText(false);
 						printSmall(false, 4, 4, text);
 						if (err == 1) {
 							if (ms().homebrewBootstrap) {
@@ -3128,7 +3129,7 @@ int dsClassicMenu(void) {
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, false, language);
 					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-					clearText();
+					clearText(false);
 					whiteScreen = true;
 					fadeSpeed = true;
 					controlTopBright = false;
@@ -3212,7 +3213,7 @@ int dsClassicMenu(void) {
 							swiWaitForVBlank();
 						}
 						s2RamAccessAlt(true);
-						clearText();
+						clearText(false);
 						if (*(u16*)(0x020000C0) == 0x5A45) {
 							printSmall(false, 0, 88, STR_PLEASE_WAIT, Alignment::center);
 						}
@@ -3251,7 +3252,7 @@ int dsClassicMenu(void) {
 							romSize = 0x1FFFFFE;
 						}
 
-						clearText();
+						clearText(false);
 						printSmall(false, 0, 88, STR_NOW_LOADING, Alignment::center);
 						updateText(false);
 
@@ -3666,7 +3667,7 @@ int dsClassicMenu(void) {
 				fadeSpeed = true;
 				char text[64];
 				snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
-				clearText();
+				clearText(false);
 				printSmall(false, 4, 4, text);
 				if (err == 1 && useNDSB) {
 					printSmall(false, 4, 24, ms().bootstrapFile ? STR_BOOTSTRAP_HB_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_HB_RELEASE_NOT_FOUND);

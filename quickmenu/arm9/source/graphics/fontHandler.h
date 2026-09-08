@@ -7,6 +7,7 @@ void esrbDescFontInit(bool dsFont);
 void esrbDescFontDeinit();
 
 void updateText(bool top);
+void updateBBackText();
 void updateTopTextArea(int x, int y, int width, int height, u16 *restoreBuf = NULL);
 void updateTextImg(u16* img, bool top);
 void clearText(bool top);

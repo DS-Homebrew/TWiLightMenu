@@ -115,7 +115,26 @@ void updateText(bool top) {
 	text.clear();
 
 	// Copy buffer to the screen (top screen must be copied manually to background)
-	if (!top) tonccpy(bgGetGfxPtr(top ? 6 : 2), FontGraphic::textBuf[top], 256 * 192);
+	if (top) return;
+	tonccpy(bgGetGfxPtr(2) + (24 * (256)/2), FontGraphic::textBuf[0] + (24 * 256), 256 * (192-24)); // "B Back" text ignored
+}
+
+void updateBBackText() {
+	// Draw text
+	auto &text = getTextQueue(false);
+	for (auto it = text.begin(); it != text.end(); ++it) {
+		FontGraphic *font = getFont(it->large);
+		if (font)
+			font->print(it->x, it->y, false, it->message, it->align, it->palette, false, it->monospaced);
+	}
+	text.clear();
+
+	// Copy buffer to the back layer
+	for (int i = 0; i < 256*24; i++) {
+		if (FontGraphic::textBuf[0][i]) {
+			BG_GFX[i] = BG_PALETTE[FontGraphic::textBuf[0][i]] | BIT(15);
+		}
+	}
 }
 
 void updateTopTextArea(int x, int y, int width, int height, u16 *restoreBuf) {
