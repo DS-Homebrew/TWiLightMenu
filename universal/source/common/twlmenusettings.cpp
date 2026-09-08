@@ -90,6 +90,7 @@ TWLSettings::TWLSettings()
 	dsiSplashAutoSkip = false;
 	nintendoLogoColor = 1;
 	showlogo = true;
+	splashEasterEggs = true;
 	longSplashJingle = false;
 	autorun = false;
 	autostartSlot1 = false;
@@ -289,6 +290,7 @@ void TWLSettings::loadSettings()
 	dsiSplashAutoSkip = settingsini.GetInt("SRLOADER", "DSI_SPLASH_AUTO_SKIP", dsiSplashAutoSkip);
 	nintendoLogoColor = settingsini.GetInt("SRLOADER", "NINTENDO_LOGO_COLOR", nintendoLogoColor);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
+	splashEasterEggs = settingsini.GetInt("SRLOADER", "SPLASH_EASTER_EGGS", splashEasterEggs);
 	longSplashJingle = settingsini.GetInt("SRLOADER", "LONG_SPLASH_JINGLE", longSplashJingle);
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", autorun);
 	autostartSlot1 = settingsini.GetInt("SRLOADER", "AUTORUNSLOT1", autostartSlot1);
@@ -473,6 +475,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "DSI_SPLASH_AUTO_SKIP", dsiSplashAutoSkip);
 	settingsini.SetInt("SRLOADER", "NINTENDO_LOGO_COLOR", nintendoLogoColor);
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
+	settingsini.SetInt("SRLOADER", "SPLASH_EASTER_EGGS", splashEasterEggs);
 	settingsini.SetInt("SRLOADER", "LONG_SPLASH_JINGLE", longSplashJingle);
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "AUTORUNSLOT1", autostartSlot1);

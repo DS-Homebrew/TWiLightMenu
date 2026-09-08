@@ -334,6 +334,7 @@ public:
 	bool dsiSplashAutoSkip;
 	int nintendoLogoColor;
 	bool showlogo;
+	bool splashEasterEggs;
 	bool longSplashJingle;
 	bool autorun;
 	bool autostartSlot1;

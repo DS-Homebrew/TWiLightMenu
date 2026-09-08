@@ -654,59 +654,66 @@ void twlMenuVideo(void) {
 	const struct tm *Time = localtime(&Raw);
 
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
+	bool easterEggUsed = false;
 	bool showTwl = true;
 
-	if (strcmp(currentDate, "04/01") == 0) {
-		// Load Starship Menu++ BG
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppStarship.png");
-		longVersion = ms().longSplashJingle;
-		showTwl = false;
-	} else if (strncmp(currentDate, "12", 2) == 0) {
-		// Load christmas BG for December
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppXmas.png");
-		longVersion = ms().longSplashJingle;
-	} else if (strcmp(currentDate, "10/31") == 0) {
-		// Load orange BG for Halloween
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppOrange.png");
-		longVersion = ms().longSplashJingle;
-	} else if (strcmp(currentDate, styleSavvyReleaseDate()) == 0) {
-		// Load Style Savvy BG
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppFashion.png");
-		gbaIconYpos -= 8;
-	} else if (strcmp(currentDate, ms().getGameRegion() == 0 ? "07/21" : "08/14") == 0) {
-		// Load Virtual Boy BG
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppVirtualBoy.png");
-		longVersion = ms().longSplashJingle;
-	} else if (strcmp(currentDate, "02/14") == 0) {
-		// Load heart-shaped BG for Valentine's Day
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppHeart.png");
-		longVersion = ms().longSplashJingle;
-	} else if (strcmp(currentDate, "02/21") == 0) {
-		// Load Zelda-themed BG
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppZelda.png");
-	} else if (strcmp(currentDate, "02/27") == 0) {
-		// Load Pokémon Day BG
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppPokemon.png");
-	} else if (strcmp(currentDate, "03/10") == 0 || strcmp(currentDate, sm64dsReleaseDate()) == 0) {
-		// Load Mario-themed BG & logo for MAR10 Day
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppMario.png");
-	} else if (strcmp(currentDate, "03/17") == 0 || strcmp(currentDate, "04/22") == 0) {
-		// Load green BG for St. Patrick's Day, or Earth Day
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppGreen.png");
-		longVersion = ms().longSplashJingle;
-	} else if (strcmp(currentDate, "04/27") == 0) {
-		// Load Kirby-themed BG & logo for Kirby's anniversary
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppKirby.png");
-		longVersion = ms().longSplashJingle;
-	} else if (strcmp(currentDate, "06/11") == 0 || strcmp(currentDate, "09/23") == 0) {
-		// CiTRadvance SRLDSiSion Menu X++ii++++++++oader X++X Menu++ logo for TWiLight's rename days
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppCitradvancesrldsisionmenuoadmenu.png");
-		longVersion = ms().longSplashJingle;
-		showTwl = false;
-	} else if (strcmp(currentDate, sonic1ReleaseDate()) == 0) {
-		// Load Sonic-themed BG for Sonic's anniversary
-		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppSonic.png");
-	} else {
+	if (ms().splashEasterEggs) {
+		easterEggUsed = true;
+		if (strcmp(currentDate, "04/01") == 0) {
+			// Load Starship Menu++ BG
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppStarship.png");
+			longVersion = ms().longSplashJingle;
+			showTwl = false;
+		} else if (strncmp(currentDate, "12", 2) == 0) {
+			// Load christmas BG for December
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppXmas.png");
+			longVersion = ms().longSplashJingle;
+		} else if (strcmp(currentDate, "10/31") == 0) {
+			// Load orange BG for Halloween
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppOrange.png");
+			longVersion = ms().longSplashJingle;
+		} else if (strcmp(currentDate, styleSavvyReleaseDate()) == 0) {
+			// Load Style Savvy BG
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppFashion.png");
+			gbaIconYpos -= 8; // Shift up GBA icon to not cover the shoe
+		} else if (strcmp(currentDate, ms().getGameRegion() == 0 ? "07/21" : "08/14") == 0) {
+			// Load Virtual Boy BG
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppVirtualBoy.png");
+			longVersion = ms().longSplashJingle;
+		} else if (strcmp(currentDate, "02/14") == 0) {
+			// Load heart-shaped BG for Valentine's Day
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppHeart.png");
+			longVersion = ms().longSplashJingle;
+		} else if (strcmp(currentDate, "02/21") == 0) {
+			// Load Zelda-themed BG
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppZelda.png");
+		} else if (strcmp(currentDate, "02/27") == 0) {
+			// Load Pokémon Day BG
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppPokemon.png");
+		} else if (strcmp(currentDate, "03/10") == 0 || strcmp(currentDate, sm64dsReleaseDate()) == 0) {
+			// Load Mario-themed BG & logo for MAR10 Day
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppMario.png");
+		} else if (strcmp(currentDate, "03/17") == 0 || strcmp(currentDate, "04/22") == 0) {
+			// Load green BG for St. Patrick's Day, or Earth Day
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppGreen.png");
+			longVersion = ms().longSplashJingle;
+		} else if (strcmp(currentDate, "04/27") == 0) {
+			// Load Kirby-themed BG & logo for Kirby's anniversary
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppKirby.png");
+			longVersion = ms().longSplashJingle;
+		} else if (strcmp(currentDate, "06/11") == 0 || strcmp(currentDate, "09/23") == 0) {
+			// CiTRadvance SRLDSiSion Menu X++ii++++++++oader X++X Menu++ logo for TWiLight's rename days
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppCitradvancesrldsisionmenuoadmenu.png");
+			longVersion = ms().longSplashJingle;
+			showTwl = false;
+		} else if (strcmp(currentDate, sonic1ReleaseDate()) == 0) {
+			// Load Sonic-themed BG for Sonic's anniversary
+			sprintf(logoPath, "nitro:/graphics/logo_twlmenuppSonic.png");
+		} else {
+			easterEggUsed = false;
+		}
+	}
+	if (!easterEggUsed) {
 		// Load normal BG
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenupp.png");
 		longVersion = ms().longSplashJingle;

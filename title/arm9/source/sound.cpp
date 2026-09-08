@@ -112,35 +112,42 @@ SoundControl::SoundControl()
 	const struct tm *Time = localtime(&Raw);
 
 	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
+	bool easterEggUsed = false;
 	sprintf(birthDate, "%02d/%02d", birthMonth, birthDay);
 
 	sprintf(soundBankPath, "nitro:/soundbank%s.bin", (strcmp(currentDate, birthDate) == 0) ? "_bday" : "");
 
-	if (strcmp(currentDate, styleSavvyReleaseDate()) == 0) {
-		// Load Style Savvy title theme
-		sprintf(wavPath, "nitro:/sound/fashion.wav");
-	} else if (strcmp(currentDate, sm64dsReleaseDate()) == 0) {
-		// Load Mario 64 coin sound
-		sprintf(wavPath, "nitro:/sound/coin64.wav");
-	} else if (strcmp(currentDate, sonic1ReleaseDate()) == 0) {
-		// Load Sonic 1 extra life sound
-		sprintf(wavPath, "nitro:/sound/sonic.wav");
-	} else if (strcmp(currentDate, "02/21") == 0) {
-		// Load Zelda "Heart Container Get" sound
-		sprintf(wavPath, "nitro:/sound/zelda.wav");
-	} else if (strcmp(currentDate, "02/27") == 0) {
-		// Load Pokémon Day sound
-		sprintf(wavPath, "nitro:/sound/pokemon.wav");
-	} else if (strcmp(currentDate, "03/10") == 0) {
-		// Load Mario coin sound for MAR10 Day
-		sprintf(wavPath, "nitro:/sound/coin.wav");
-	} else if (strcmp(currentDate, "04/27") == 0) {
-		// Load Kirby dance jingle for Kirby's anniversary
-		sprintf(wavPath, ms().longSplashJingle ? "nitro:/sound/kirbyLong.wav" : "nitro:/sound/kirby.wav");
-	} else if (strcmp(currentDate, ms().getGameRegion() == 0 ? "07/21" : "08/14") == 0) {
-		// Load Virtual Boy rendition of jingle for Virtual Boy release date
-		sprintf(wavPath, ms().longSplashJingle ? "nitro:/sound/virtualBoyLong.wav" : "nitro:/sound/virtualBoy.wav");
-	} else {
+	if (ms().splashEasterEggs) {
+		easterEggUsed = true;
+		if (strcmp(currentDate, styleSavvyReleaseDate()) == 0) {
+			// Load Style Savvy title theme
+			sprintf(wavPath, "nitro:/sound/fashion.wav");
+		} else if (strcmp(currentDate, sm64dsReleaseDate()) == 0) {
+			// Load Mario 64 coin sound
+			sprintf(wavPath, "nitro:/sound/coin64.wav");
+		} else if (strcmp(currentDate, sonic1ReleaseDate()) == 0) {
+			// Load Sonic 1 extra life sound
+			sprintf(wavPath, "nitro:/sound/sonic.wav");
+		} else if (strcmp(currentDate, "02/21") == 0) {
+			// Load Zelda "Heart Container Get" sound
+			sprintf(wavPath, "nitro:/sound/zelda.wav");
+		} else if (strcmp(currentDate, "02/27") == 0) {
+			// Load Pokémon Day sound
+			sprintf(wavPath, "nitro:/sound/pokemon.wav");
+		} else if (strcmp(currentDate, "03/10") == 0) {
+			// Load Mario coin sound for MAR10 Day
+			sprintf(wavPath, "nitro:/sound/coin.wav");
+		} else if (strcmp(currentDate, "04/27") == 0) {
+			// Load Kirby dance jingle for Kirby's anniversary
+			sprintf(wavPath, ms().longSplashJingle ? "nitro:/sound/kirbyLong.wav" : "nitro:/sound/kirby.wav");
+		} else if (strcmp(currentDate, ms().getGameRegion() == 0 ? "07/21" : "08/14") == 0) {
+			// Load Virtual Boy rendition of jingle for Virtual Boy release date
+			sprintf(wavPath, ms().longSplashJingle ? "nitro:/sound/virtualBoyLong.wav" : "nitro:/sound/virtualBoy.wav");
+		} else {
+			easterEggUsed = false;
+		}
+	}
+	if (!easterEggUsed) {
 		sprintf(wavPath, ms().longSplashJingle ? "nitro:/sound/titleLong.wav" : "nitro:/sound/title.wav");
 	}
 
