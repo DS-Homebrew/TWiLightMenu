@@ -759,7 +759,7 @@ void vBlankHandler()
 				if ((isDSiMode() && !flashcardFound() && sys().arm7SCFGLocked()) || (io_dldi_data->ioInterface.features & FEATURE_SLOT_GBA)) {
 					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &icon_dscard.images[0]);
 				} else drawIcon(1, 40, iconYpos[0]+6);
-				if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessicons.images[(bnrWirelessIcon[0]-1) & 31]);
+				if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessicons.images[bnrWirelessIcon[1]-1]);
 			}
 			glSprite(33, iconYpos[1], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::PICTOCHAT));
 			glSprite(129, iconYpos[2], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::DOWNLOADPLAY));
@@ -772,7 +772,7 @@ void vBlankHandler()
 			if (sys().isRegularDS() || (dsiFeatures() && !sys().i2cBricked() && ms().consoleModel < 2)) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::BRIGHTNESS));
 			}
-			if (bnrWirelessIcon[num] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessicons.images[(bnrWirelessIcon[1]-1) & 31]);
+			if (bnrWirelessIcon[num] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessicons.images[bnrWirelessIcon[num]-1]);
 			if (!ms().kioskMode) {
 				glSprite(117, iconYpos[5], GL_FLIP_NONE, getMenuEntryTexture(MenuEntry::SETTINGS));
 			}
