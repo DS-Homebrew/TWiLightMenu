@@ -26,6 +26,7 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <gl2d.h>
+#include "common/dsiBanner.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
 #include "common/systemdetails.h"
@@ -631,6 +632,9 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 				ret = 0; // if seek fails set to !=1
 
 			if (ret != 1) {
+				// Only the NTR portion of the banner will be read, so clear the DSi
+				// animation data left behind by the previously loaded ROM.
+				toncset(ndsBanner.dsi_icon, 0, DSI_BANNER_ANIME_SIZE);
 				// try again, but using regular banner size
 				ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
 				if (ret == 0)
@@ -684,6 +688,8 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 		}
 
 		if (ndsHeader.dsi_flags & BIT(2)) {
+			std::string bnrPath;
+			std::string altBnrPath;
 			{
 				std::string filename = name;
 
@@ -696,7 +702,7 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
-				std::string bnrPath = romFolderNoSlash + "/saves/" + filename;
+				bnrPath = romFolderNoSlash + "/saves/" + filename;
 				if (ms().saveLocation == TWLSettings::ETWLMFolder) {
 					std::string twlmSavesFolder = sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/saves" : "fat:/_nds/TWiLightMenu/saves";
 					bnrPath = twlmSavesFolder + "/" + filename;
@@ -706,34 +712,28 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 				extern std::string getBnrExtension(void);
 				bnrPath = replaceAll(bnrPath, typeToReplace, getBnrExtension());
 
+				// A NAND/GM9i dump leaves the title's own banner save next to the ROM
+				// as a plain .bnr, which never carries a TWiLightMenu save slot suffix.
+				altBnrPath = replaceAll(romFolderNoSlash + "/" + filename, typeToReplace, ".bnr");
+
 				logPrint("Banner save path: %s\n", bnrPath.c_str());
-				fp = fopen(bnrPath.c_str(), "rb");
 			}
 
-			if (fp) {
-				logPrint("Banner save found!\n");
+			// The banner save is validated in full before anything is applied, so a
+			// blank or corrupt one leaves the ROM's own banner untouched.
+			if (dsiSubBannerLoad(bnrPath.c_str(), ndsBanner.dsi_icon, &ndsBanner.crc[3])
+			 || (altBnrPath != bnrPath && dsiSubBannerLoad(altBnrPath.c_str(), ndsBanner.dsi_icon, &ndsBanner.crc[3]))) {
+				logPrint("Banner save is valid.\n");
 
-				u16 ver = 0;
-				u16 crc16 = 0;
-				fread(&ver, sizeof(u16), 1, fp);
-				fseek(fp, 8, SEEK_SET);
-				fread(&crc16, sizeof(u16), 1, fp);
-				if (ver == NDS_BANNER_VER_DSi && crc16 != 0) {
-					logPrint("Banner save is valid.\n");
+				// A sub-banner only ever uses palette 0.
+				tonccpy(ndsBanner.icon, ndsBanner.dsi_icon, 512);
+				tonccpy(ndsBanner.palette, ndsBanner.dsi_palette, 16*sizeof(u16));
 
-					ndsBanner.crc[3] = crc16;
-
-					fseek(fp, 0x20, SEEK_SET);
-					fread(ndsBanner.dsi_icon, 1, 0x1180, fp);
-
-					tonccpy(ndsBanner.icon, ndsBanner.dsi_icon, 512);
-					tonccpy(ndsBanner.palette, ndsBanner.dsi_palette, 16*sizeof(u16));
-				} else {
-					logPrint("Banner save is invalid.\n");
-				}
-				fclose(fp);
+				// The banner now holds valid DSi animation data even when the ROM's
+				// own banner is NTR-only, so let the DSi code paths pick it up.
+				ndsBanner.version = NDS_BANNER_VER_DSi;
 			} else {
-				logPrint("Banner save not found!\n");
+				logPrint("No valid banner save.\n");
 			}
 		}
 

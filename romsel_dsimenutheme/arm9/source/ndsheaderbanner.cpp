@@ -10,6 +10,7 @@
 #include "perGameSettings.h"
 #include <gl2d.h>
 
+#include "common/dsiBanner.h"
 #include "ndsheaderbanner.h"
 #include "module_params.h"
 
@@ -601,6 +602,7 @@ int currentbnriconframeseq[41] = {0};
 void grabBannerSequence(int iconnum)
 {
 	memcpy(bnriconframeseq[iconnum], bnriconTile[iconnum].dsi_seq, 64 * sizeof(u16));
+	bannerDelayNum[iconnum] = 0;
 	currentbnriconframeseq[iconnum] = 0;
 }
 
@@ -610,6 +612,7 @@ void grabBannerSequence(int iconnum)
 void clearBannerSequence(int iconnum)
 {
 	memset(bnriconframeseq[iconnum], 0, 64 * sizeof(u16));
+	bannerDelayNum[iconnum] = 0;
 	currentbnriconframeseq[iconnum] = 0;
 }
 
@@ -619,56 +622,45 @@ void clearBannerSequence(int iconnum)
  */
 bool playBannerSequence(int iconnum)
 {
-	if (bnriconframeseq[iconnum][currentbnriconframeseq[iconnum] + 1] == 0x0100) {
+	DsiBannerFrame frame;
+
+	if (!dsiBannerSeqStep(bnriconframeseq[iconnum], &currentbnriconframeseq[iconnum], &bannerDelayNum[iconnum], &frame)) {
 		// Do nothing if icon isn't animated
 		bnriconPalLine[iconnum] = 0;
 		bnriconframenumY[iconnum] = 0;
 		bannerFlip[iconnum] = GL_FLIP_NONE;
-	} else {
-		u16 setframeseq = bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]];
-		bnriconPalLine[iconnum] = SEQ_PAL(setframeseq);
-		bnriconframenumY[iconnum] = SEQ_BMP(setframeseq);
-		bool flipH = SEQ_FLIPH(setframeseq);
-		bool flipV = SEQ_FLIPV(setframeseq);
-
-		if (flipH && flipV) {
-			bannerFlip[iconnum] = GL_FLIP_H | GL_FLIP_V;
-		} else if (!flipH && !flipV) {
-			bannerFlip[iconnum] = GL_FLIP_NONE;
-		} else if (flipH && !flipV) {
-			bannerFlip[iconnum] = GL_FLIP_H;
-		} else if (!flipH && flipV) {
-			bannerFlip[iconnum] = GL_FLIP_V;
-		}
-
-		bool updateIcon = false;
-
-		if (bnriconPalLinePrev[iconnum] != bnriconPalLine[iconnum]) {
-			bnriconPalLinePrev[iconnum] = bnriconPalLine[iconnum];
-			updateIcon = true;
-		}
-
-		if (bnriconframenumYPrev[iconnum] != bnriconframenumY[iconnum]) {
-			bnriconframenumYPrev[iconnum] = bnriconframenumY[iconnum];
-			updateIcon = true;
-		}
-
-		if (bannerFlipPrev[iconnum] != bannerFlip[iconnum]) {
-			bannerFlipPrev[iconnum] = bannerFlip[iconnum];
-			updateIcon = true;
-		}
-
-		bannerDelayNum[iconnum]++;
-		if (bannerDelayNum[iconnum] >= (setframeseq & 0x00FF)) {
-			bannerDelayNum[iconnum] = 0x0000;
-			currentbnriconframeseq[iconnum]++;
-			if (bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]] == 0x0000) {
-				currentbnriconframeseq[iconnum] = 0; // Reset sequence
-			}
-		}
-
-		return updateIcon;
+		return false;
 	}
 
-	return false;
+	bnriconPalLine[iconnum] = frame.pltt;
+	bnriconframenumY[iconnum] = frame.cell;
+
+	if (frame.flipH && frame.flipV) {
+		bannerFlip[iconnum] = GL_FLIP_H | GL_FLIP_V;
+	} else if (!frame.flipH && !frame.flipV) {
+		bannerFlip[iconnum] = GL_FLIP_NONE;
+	} else if (frame.flipH && !frame.flipV) {
+		bannerFlip[iconnum] = GL_FLIP_H;
+	} else {
+		bannerFlip[iconnum] = GL_FLIP_V;
+	}
+
+	bool updateIcon = false;
+
+	if (bnriconPalLinePrev[iconnum] != bnriconPalLine[iconnum]) {
+		bnriconPalLinePrev[iconnum] = bnriconPalLine[iconnum];
+		updateIcon = true;
+	}
+
+	if (bnriconframenumYPrev[iconnum] != bnriconframenumY[iconnum]) {
+		bnriconframenumYPrev[iconnum] = bnriconframenumY[iconnum];
+		updateIcon = true;
+	}
+
+	if (bannerFlipPrev[iconnum] != bannerFlip[iconnum]) {
+		bannerFlipPrev[iconnum] = bannerFlip[iconnum];
+		updateIcon = true;
+	}
+
+	return updateIcon;
 }
