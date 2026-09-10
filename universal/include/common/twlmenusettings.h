@@ -141,7 +141,8 @@ public:
 		ETunaViDSLaunch = 24,
 		EImageLaunch = 25,
 		E3DSLaunch = 26,
-		EPokeMiniLaunch = 27
+		EPokeMiniLaunch = 27,
+		ECustomLaunch = 28 // User-defined launcher, see common/customLaunchers.h
 	};
 
 	enum TConsoleModel : int

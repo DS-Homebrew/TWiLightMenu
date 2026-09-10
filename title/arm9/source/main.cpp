@@ -23,6 +23,7 @@
 #include "ndsheaderbanner.h"
 #include "common/pergamesettings.h"
 #include "common/stringtool.h"
+#include "common/customLaunchers.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "defaultSettings.h"
@@ -1509,6 +1510,27 @@ void lastRunROM()
 			argarray.at(0) = (char*)"fat:/_nds/TWiLightMenu/emulators/PokeMini.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1); // Pass ROM to PokeMini as argument
+	} else if (ms().launchType[ms().previousUsedDevice] == Launch::ECustomLaunch) {
+		if (access(ms().romPath[ms().previousUsedDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		// Re-resolve the config from the saved ROM path's extension, so no extra setting
+		// has to be persisted.
+		loadCustomLaunchers();
+		const CustomLauncher *customLauncher = findCustomLauncher(ms().romPath[ms().previousUsedDevice]);
+		if (!customLauncher) return;	// Config removed since launching, so fall back to the menu
+
+		// Rebuild argv exactly as the menu did: EXTRA_ARGS, then the expanded ARG.
+		// The generic reconstruction above only restores HOMEBREW_ARG (the ARG half).
+		argarray.resize(1);
+		for (const std::string &extraArg : splitLauncherExtraArgs(*customLauncher)) {
+			argarray.push_back(strdup(extraArg.c_str()));
+		}
+		if (!ms().homebrewArg[ms().previousUsedDevice].empty()) {
+			argarray.push_back(strdup(ms().homebrewArg[ms().previousUsedDevice].c_str()));
+		}
+
+		argarray.at(0) = (char*)customLauncher->launcherPath.c_str();
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, (customLauncher->dsMode != 0), (customLauncher->boostCpu != 0), true, false, -1); // Pass file to the user-defined launcher as argument
 	}
 	if (err > 0) {
 		consoleDemoInit();

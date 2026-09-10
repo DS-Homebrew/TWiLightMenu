@@ -35,6 +35,7 @@
 #include "common/nds_bootstrap_loader.h"
 #include "DSpicoLauncher.h"
 #include "common/stringtool.h"
+#include "common/customLaunchers.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
 #include "common/twlmenusettings.h"
@@ -3162,6 +3163,8 @@ int dsClassicMenu(void) {
 				const char *ndsToBoot = "";
 				std::string ndsToBootFat;
 				const char *tgdsNdsPath = "sd:/_nds/TWiLightMenu/apps/ToolchainGenericDS-multiboot.srl";
+				const CustomLauncher *customLauncher = NULL;	// Set by the user-defined launcher arm below
+				std::string customLaunchArg;			// Must outlive the argarray.push_back() further down
 				if (extension(filename[ms().secondaryDevice], {".plg"})) {
 					ndsToBoot = "fat:/_nds/TWiLightMenu/bootplg.srldr";
 					dsModeSwitch = true;
@@ -3587,8 +3590,25 @@ int dsClassicMenu(void) {
 					if (!isDSiMode()) {
 						boostVram = true;
 					}
+				} else if ((customLauncher = findCustomLauncher(filename[ms().secondaryDevice])) != NULL) {
+					// User-defined launcher, from _nds/TWiLightMenu/extras/config.<ext>.ini.
+					// Last in the chain, so a built-in extension always wins.
+					ms().launchType[ms().secondaryDevice] = TWLSettings::ECustomLaunch;
+
+					ndsToBoot = customLauncher->launcherPath.c_str();
+					dsModeSwitch = (customLauncher->dsMode != 0);
+					boostCpu = (customLauncher->boostCpu != 0);
+					boostVram = (customLauncher->boostVram == -1)
+							? (!isDSiMode() && strncmp(ndsToBoot, "fat:", 4) == 0)
+							: (customLauncher->boostVram != 0);
+					customLaunchArg = buildLauncherArg(*customLauncher, ROMpath,
+									  replaceAll(ROMpath, "sd:/", "fat:/"), filename[ms().secondaryDevice]);
 				}
 
+				if (customLauncher) {
+					// Store the expanded arg so lastRunROM() rebuilds the identical argv on resume
+					ms().homebrewArg[ms().secondaryDevice] = customLaunchArg;
+				}
 				ms().saveSettings();
 
 				if (ms().btsrpBootloaderDirect && useNDSB) {
@@ -3609,7 +3629,17 @@ int dsClassicMenu(void) {
 					std::string romfolderFat = replaceAll(romfolderNoSlash, "sd:", "fat:");
 					snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderFat.c_str(), filename[ms().secondaryDevice].c_str());
 				}
-				argarray.push_back(useNDSB ? (char*)ROMpathFAT.c_str() : ROMpath);
+				if (customLauncher) {
+					// EXTRA_ARGS first, then the expanded ARG template as the final argument
+					for (const std::string &extraArg : splitLauncherExtraArgs(*customLauncher)) {
+						argarray.push_back(strdup(extraArg.c_str()));
+					}
+					if (!customLaunchArg.empty()) {
+						argarray.push_back((char*)customLaunchArg.c_str());
+					}
+				} else {
+					argarray.push_back(useNDSB ? (char*)ROMpathFAT.c_str() : ROMpath);
+				}
 				if (!ms().btsrpBootloaderDirect && useNDSB) {
 					ndsToBoot = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 				}
