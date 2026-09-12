@@ -16,7 +16,7 @@ void Gif::timerHandler(void) {
 	}
 }
 
-void Gif::displayFrame(void) {
+ITCM_CODE void Gif::displayFrame(void) {
 	if (_paused || ++_currentDelayProgress < _currentDelay)
 		return;
 
