@@ -17,6 +17,7 @@ jobs:
           fetch-depth: 0
       - name: Install tools
         run: |
+          sudo sed -i "/bullseye-security/d" /etc/apt/sources.list
           sudo apt-get update
           sudo apt-get install jq p7zip-full python -y
       - name: Setup environment
