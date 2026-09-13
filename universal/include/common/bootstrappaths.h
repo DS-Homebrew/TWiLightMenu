@@ -18,6 +18,8 @@
 
 #define PERGAMESETTINGS_PATH "/_nds/TWiLightMenu/gamesettings/%s.ini"
 
+#define TWLMENU_EXTRAS_DIR "/_nds/TWiLightMenu/extras"
+
 #define SLOT1_SRL "/_nds/TWiLightMenu/slot1launch.srldr"
 
 #define GBARUNNER2_INI "/_gba/gbarunner2.ini"

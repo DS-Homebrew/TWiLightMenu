@@ -29,6 +29,7 @@
 #include <gl2d.h>
 #include "common/twlmenusettings.h"
 #include "common/bootstrapsettings.h"
+#include "common/customLaunchers.h"
 #include "common/systemdetails.h"
 #include "common/stringtool.h"
 #include "common/dsiBanner.h"
@@ -926,7 +927,12 @@ void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv)
 		infoFound = false;
 	}
 
-	if ((ms().theme != TWLSettings::EThemeGBC || ms().filenameDisplay < 2) && ms().showCustomIcons && !preloadedBannerIconFound(fileOffset) && customIcon < 2 && (!fromArgv || customIcon <= 0)) {
+	// A user-defined file-type banner (extras/config.<ext>.ini) backs up the per-file
+	// icons/ overrides below, and applies even when custom icons are turned off.
+	const CustomLauncher *customLauncher = (!isDir && name) ? findCustomLauncher(name) : NULL;
+	const bool bannerFromLauncher = (customLauncher && !customLauncher->bannerPath.empty());
+
+	if ((ms().theme != TWLSettings::EThemeGBC || ms().filenameDisplay < 2) && (ms().showCustomIcons || bannerFromLauncher) && !preloadedBannerIconFound(fileOffset) && customIcon < 2 && (!fromArgv || customIcon <= 0)) {
 		toncset(&ndsBanner, 0, sizeof(sNDSBannerExt));
 		const bool argvHadPng = customIcon == 1;
 		u8 iconCopy[512];
@@ -939,9 +945,26 @@ void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv)
 		toncset(&ndsBanner, 0, sizeof(sNDSBannerExt));
 		bool customIconGood = false;
 
-		// First try banner bin
-		snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.bin", sys().isRunFromSD() ? "sd" : "fat", name);
-		if (access(customIconPath, F_OK) == 0) {
+		// Per-file overrides from icons/ first, then the file-type banner from the ini.
+		// The per-file lookups stay behind showCustomIcons; the ini banner does not.
+		bool customIconIsPng = false;
+		bool customIconFound = false;
+		if (ms().showCustomIcons) {
+			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.bin", sys().isRunFromSD() ? "sd" : "fat", name);
+			customIconFound = (access(customIconPath, F_OK) == 0);
+			if (!customIconFound) {
+				snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sys().isRunFromSD() ? "sd" : "fat", name);
+				customIconFound = (access(customIconPath, F_OK) == 0);
+				customIconIsPng = customIconFound;
+			}
+		}
+		if (!customIconFound && bannerFromLauncher) {
+			snprintf(customIconPath, sizeof(customIconPath), "%s", customLauncher->bannerPath.c_str());
+			customIconFound = true;
+			customIconIsPng = customLauncher->bannerIsPng;
+		}
+
+		if (customIconFound && !customIconIsPng) {
 			customIcon = 2; // custom icon is a banner bin
 			FILE *file = fopen(customIconPath, "rb");
 			if (file) {
@@ -965,11 +988,10 @@ void getGameInfo(int fileOffset, bool isDir, const char* name, bool fromArgv)
 					}
 				}
 			}
-		} else {
-			// If no banner bin, try png
-			snprintf(customIconPath, sizeof(customIconPath), "%s:/_nds/TWiLightMenu/icons/%s.png", sys().isRunFromSD() ? "sd" : "fat", name);
-			customIcon = (access(customIconPath, F_OK) == 0);
-			if (customIcon) {
+		} else if (customIconFound) {
+			// customIconPath already holds the resolved png
+			customIcon = 1; // custom icon is a png
+			{
 				std::vector<unsigned char> image;
 				uint imageWidth, imageHeight;
 				lodepng::decode(image, imageWidth, imageHeight, customIconPath);
