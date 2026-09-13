@@ -1079,7 +1079,8 @@ int settingsMode(void)
 
 	srand(time(NULL));
 
-	if (sdFound() && ms().consoleModel < 2) {
+	const bool hiyaFound = (access("sd:/hiya.dsi", F_OK) == 0 && access("sd:/hiya", F_OK) == 0 && !sys().arm7SCFGLocked()); // Check for hiyaCFW
+	if (hiyaFound && ms().consoleModel < 2) {
 		hiyaAutobootFound = (access("sd:/hiya/autoboot.bin", F_OK) == 0);
 		logPrint(hiyaAutobootFound ? "hiya autoboot file found\n" : "hiya autoboot file not found\n");
 	}
@@ -1673,8 +1674,11 @@ int settingsMode(void)
 
 		// We are also using the changed callback to write
 		// or delete the hiya autoboot file.
+		if (hiyaFound) {
+			miscPage
+				.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {"TWiLight Menu++", STR_SYSTEM_MENU}, {true, false});
+		}
 		miscPage
-			.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {"TWiLight Menu++", STR_SYSTEM_MENU}, {true, false})
 			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {STR_PRESS_A}, {0});
 	}
 
