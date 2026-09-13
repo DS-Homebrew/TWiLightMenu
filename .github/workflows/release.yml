@@ -152,7 +152,7 @@ jobs:
           # Virtual Console Add-on (DSi or Flashcard) 7z
           cd ..
           rm -rf TWiLightMenu
-          cp -r "7zfile/Virtual Console (DSi or Flashcard)" TWiLightMenu
+          cp -r "7zfile/Virtual Console (DSi or Flashcard)/" TWiLightMenu
           cd TWiLightMenu/_nds/TWiLightMenu/emulators
           curl -LO https://github.com/wavemotion-dave/A8DS/releases/latest/download/A8DS.nds
           curl -LO https://github.com/wavemotion-dave/StellaDS/releases/latest/download/StellaDS.nds
@@ -187,7 +187,7 @@ jobs:
           # Virtual Console Add-on (3DS, Minimal) 7z
           cd ..
           rm -rf TWiLightMenu
-          cp -r "7zfile/Virtual Console (3DS, Minimal)" TWiLightMenu
+          cp -r "7zfile/Virtual Console (3DS, Minimal)/" TWiLightMenu
           cd TWiLightMenu/_nds/TWiLightMenu
           mkdir -p emulators
           cd emulators
@@ -216,7 +216,7 @@ jobs:
           # Virtual Console Add-on (3DS, Full) 7z
           cd ..
           rm -rf TWiLightMenu
-          cp -r "7zfile/Virtual Console (3DS, Full)" TWiLightMenu
+          cp -r "7zfile/Virtual Console (3DS, Full)/" TWiLightMenu
           cd TWiLightMenu/_nds/TWiLightMenu/emulators
           curl -LO https://github.com/wavemotion-dave/A8DS/releases/latest/download/A8DS.nds
           curl -LO https://github.com/wavemotion-dave/StellaDS/releases/latest/download/StellaDS.nds
