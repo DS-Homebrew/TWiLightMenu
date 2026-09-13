@@ -40,6 +40,8 @@
 #include "ndsheaderbanner.h"
 #include "common/twlmenusettings.h"
 #include "common/bootstrapsettings.h"
+#include "common/customLaunchers.h"
+#include "launch/launchExecutor.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
@@ -730,7 +732,7 @@ bool checkForGbaBiosRequirement(void) {
 	return false;
 }
 
-bool cannotLaunchMsg(char tid1) {
+bool cannotLaunchMsg(char tid1, bool gbaBiosMissing = false) {
 	bool res = false;
 
 	if (ms().macroMode) {
@@ -741,7 +743,7 @@ bool cannotLaunchMsg(char tid1) {
 	printSmall(false, 0, 74, isTwlm ? "Information" : "Error!", Alignment::center, FontPalette::white);
 	if (!isTwlm && bnrRomType == 0 && sys().isRegularDS()) {
 		printSmall(false, 0, 90, "For use with Nintendo DSi systems only.", Alignment::center);
-	} else if (bnrRomType == 1) {
+	} else if (gbaBiosMissing) {
 		printSmall(false, 0, 90, "GBA BIOS is missing!", Alignment::center);
 	} else {
 		printSmall(false, 0, 90, isTwlm ? "TWiLight Menu++ is already running." : "This game cannot be launched.", Alignment::center);
@@ -1144,57 +1146,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 
-			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
-				bnrRomType = 0;
-			} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
-				bnrRomType = 10;
-			} else if (extension(std_romsel_filename, {".msx"})) {
-				bnrRomType = 21;
-			} else if (extension(std_romsel_filename, {".col"})) {
-				bnrRomType = 13;
-			} else if (extension(std_romsel_filename, {".m5"})) {
-				bnrRomType = 14;
-			} else if (extension(std_romsel_filename, {".int"})) {
-				bnrRomType = 12;
-			} else if (extension(std_romsel_filename, {".plg"})) {
-				bnrRomType = 9;
-			} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
-				bnrRomType = 19;
-			} else if (extension(std_romsel_filename, {".gif", ".bmp", ".png"})) {
-				bnrRomType = 20;
-			} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
-				bnrRomType = 1;
-			} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
-				bnrRomType = 2;
-			} else if (extension(std_romsel_filename,{ ".gbc"})) {
-				bnrRomType = 3;
-			} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
-				bnrRomType = 4;
-			} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
-				bnrRomType = 15;
-			} else if (extension(std_romsel_filename, {".sms"})) {
-				bnrRomType = 5;
-			} else if (extension(std_romsel_filename, {".gg"})) {
-				bnrRomType = 6;
-			} else if (extension(std_romsel_filename, {".gen", ".md"})) {
-				bnrRomType = 7;
-			} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
-				bnrRomType = 8;
-			} else if (extension(std_romsel_filename, {".pce"})) {
-				bnrRomType = 11;
-			} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
-				bnrRomType = 16;
-			} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
-				bnrRomType = 17;
-			} else if (extension(std_romsel_filename, {".dsk"})) {
-				bnrRomType = 18;
-			} else if (extension(std_romsel_filename, {".min"})) {
-				bnrRomType = 22;
-			} else if (extension(std_romsel_filename, {".ntrb"})) {
-				bnrRomType = 23;
-			} else {
-				bnrRomType = 9;
-			}
+			bnrRomType = launcherRomType(std_romsel_filename);
 		}
 
 		if (bnrRomType != 0) {
@@ -1286,12 +1238,15 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 				int hasAP = 0;
 				bool proceedToLaunch = true;
+				const std::string &launchName = dirContents.at(fileOffset).name;
+				const LaunchPrecheck precheck = launcherPrecheck(findCustomLauncher(launchName), captureLaunchEnv(ms().secondaryDevice), launchName);
+				const bool gbaBiosMissing = (precheck == LaunchPrecheck::GbaBios && checkForGbaBiosRequirement());
 
 				if (!isValid || isTwlm || (!isDSiWare && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType == 0 && gameTid[0] == 'D' && romUnitCode == 3 && requiresDonorRom != 51)
 				|| (isDSiWare && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
-				|| (bnrRomType == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
-					proceedToLaunch = cannotLaunchMsg(gameTid[0]);
+				|| gbaBiosMissing) {
+					proceedToLaunch = cannotLaunchMsg(gameTid[0], gbaBiosMissing);
 				}
 				const bool useBootstrapAnyway = ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) || !ms().secondaryDevice);
 				if (proceedToLaunch && useBootstrapAnyway && bnrRomType == 0 && !isDSiWare
@@ -1373,13 +1328,10 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						proceedToLaunch = false;
 						ramDiskMsg();
 					}
-				} else if (bnrRomType == 7) {
-					if (ms().mdEmulator==1 && getFileSize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
-						proceedToLaunch = false;
-						mdRomTooBig();
-					}
-				} else if ((bnrRomType == 8 || (bnrRomType == 11 && ms().smsGgInRam))
-							&& isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()) {
+				} else if (precheck == LaunchPrecheck::MdRomTooBig) {
+					proceedToLaunch = false;
+					mdRomTooBig();
+				} else if (precheck == LaunchPrecheck::LockedScfg) {
 					proceedToLaunch = cannotLaunchMsg(0);
 				}
 

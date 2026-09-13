@@ -382,6 +382,28 @@ void loadMenuSrldrList (const char* dirPath) {
 	}
 }
 
+// Copies the file type launcher configs (extras/config.<ext>.ini) to the other device,
+// without which the menus there can't list anything but DS files
+static void copyLauncherConfigs(const char *fromDevice, const char *toDevice)
+{
+	const std::string fromDir = std::string(fromDevice) + TWLMENU_EXTRAS_DIR;
+	const std::string toDir = std::string(toDevice) + TWLMENU_EXTRAS_DIR;
+	DIR *dir = opendir(fromDir.c_str());
+	if (!dir) return;
+
+	mkdir(toDir.c_str(), 0777);
+	struct dirent *ent;
+	while ((ent = readdir(dir)) != NULL) {
+		const std::string name = ent->d_name;
+		if (ent->d_type == DT_DIR || name.substr(0, 2) == "._") continue;
+
+		if (strncasecmp(name.c_str(), "config.", 7) == 0 && extension(name, {".ini"})) {
+			fcopy((fromDir + "/" + name).c_str(), (toDir + "/" + name).c_str());
+		}
+	}
+	closedir(dir);
+}
+
 std::optional<Option> opt_theme_select(void)
 {
 	switch (ms().theme) {
@@ -566,6 +588,9 @@ void begin_update(int opt)
 			fcopy("fat:/_nds/TWiLightMenu/addons/Multimedia", "sd:/_nds/TWiLightMenu/addons/Multimedia");
 		}
 
+		logPrint("Copying launcher configs from fat to sd\n");
+		copyLauncherConfigs("fat:", "sd:");
+
 		logPrint("Copying 3dssplash.srldr from fat to sd\n");
 		fcopy("fat:/_nds/TWiLightMenu/3dssplash.srldr", "sd:/_nds/TWiLightMenu/3dssplash.srldr");
 		logPrint("Copying imageview.srldr from fat to sd\n");
@@ -586,6 +611,9 @@ void begin_update(int opt)
 			fcopy("sd:/_nds/TWiLightMenu/addons/Virtual Console", "fat:/_nds/TWiLightMenu/addons/Virtual Console");
 			fcopy("sd:/_nds/TWiLightMenu/addons/Multimedia", "fat:/_nds/TWiLightMenu/addons/Multimedia");
 		}
+
+		logPrint("Copying launcher configs from sd to fat\n");
+		copyLauncherConfigs("sd:", "fat:");
 
 		logPrint("Copying 3dssplash.srldr from sd to fat\n");
 		fcopy("sd:/_nds/TWiLightMenu/3dssplash.srldr", "fat:/_nds/TWiLightMenu/3dssplash.srldr");

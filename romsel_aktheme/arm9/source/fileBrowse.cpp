@@ -40,6 +40,8 @@
 #include "ndsheaderbanner.h"
 #include "common/twlmenusettings.h"
 #include "common/bootstrapsettings.h"
+#include "common/customLaunchers.h"
+#include "launch/launchExecutor.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
@@ -383,57 +385,7 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 		isDirectory[0] = false;
 		std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 
-		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
-			bnrRomType[0] = 0;
-		} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
-			bnrRomType[0] = 10;
-		} else if (extension(std_romsel_filename, {".msx"})) {
-			bnrRomType[0] = 21;
-		} else if (extension(std_romsel_filename, {".col"})) {
-			bnrRomType[0] = 13;
-		} else if (extension(std_romsel_filename, {".m5"})) {
-			bnrRomType[0] = 14;
-		} else if (extension(std_romsel_filename, {".int"})) {
-			bnrRomType[0] = 12;
-		} else if (extension(std_romsel_filename, {".plg"})) {
-			bnrRomType[0] = 9;
-		} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
-			bnrRomType[0] = 19;
-		} else if (extension(std_romsel_filename, {".gif", ".bmp", ".png"})) {
-			bnrRomType[0] = 20;
-		} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
-			bnrRomType[0] = 1;
-		} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
-			bnrRomType[0] = 2;
-		} else if (extension(std_romsel_filename,{ ".gbc"})) {
-			bnrRomType[0] = 3;
-		} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
-			bnrRomType[0] = 4;
-		} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
-			bnrRomType[0] = 15;
-		} else if (extension(std_romsel_filename, {".sms"})) {
-			bnrRomType[0] = 5;
-		} else if (extension(std_romsel_filename, {".gg"})) {
-			bnrRomType[0] = 6;
-		} else if (extension(std_romsel_filename, {".gen", ".md"})) {
-			bnrRomType[0] = 7;
-		} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
-			bnrRomType[0] = 8;
-		} else if (extension(std_romsel_filename, {".pce"})) {
-			bnrRomType[0] = 11;
-		} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
-			bnrRomType[0] = 16;
-		} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
-			bnrRomType[0] = 17;
-		} else if (extension(std_romsel_filename, {".dsk"})) {
-			bnrRomType[0] = 18;
-		} else if (extension(std_romsel_filename, {".min"})) {
-			bnrRomType[0] = 22;
-		} else if (extension(std_romsel_filename, {".ntrb"})) {
-			bnrRomType[0] = 23;
-		} else {
-			bnrRomType[0] = 9;
-		}
+		bnrRomType[0] = launcherRomType(std_romsel_filename);
 	}
 
 	if (bnrRomType[0] != 0) {
@@ -472,57 +424,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 			isDirectory[n] = false;
 			std::string std_romsel_filename = dirContents.at(i).name.c_str();
 
-			if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
-				bnrRomType[n] = 0;
-			} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
-				bnrRomType[n] = 10;
-			} else if (extension(std_romsel_filename, {".msx"})) {
-				bnrRomType[n] = 21;
-			} else if (extension(std_romsel_filename, {".col"})) {
-				bnrRomType[n] = 13;
-			} else if (extension(std_romsel_filename, {".m5"})) {
-				bnrRomType[n] = 14;
-			} else if (extension(std_romsel_filename, {".int"})) {
-				bnrRomType[n] = 12;
-			} else if (extension(std_romsel_filename, {".plg"})) {
-				bnrRomType[n] = 9;
-			} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
-				bnrRomType[n] = 19;
-			} else if (extension(std_romsel_filename, {".gif", ".bmp", ".png"})) {
-				bnrRomType[n] = 20;
-			} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
-				bnrRomType[n] = 1;
-			} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
-				bnrRomType[n] = 2;
-			} else if (extension(std_romsel_filename,{ ".gbc"})) {
-				bnrRomType[n] = 3;
-			} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
-				bnrRomType[n] = 4;
-			} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
-				bnrRomType[n] = 15;
-			} else if (extension(std_romsel_filename, {".sms"})) {
-				bnrRomType[n] = 5;
-			} else if (extension(std_romsel_filename, {".gg"})) {
-				bnrRomType[n] = 6;
-			} else if (extension(std_romsel_filename, {".gen", ".md"})) {
-				bnrRomType[n] = 7;
-			} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
-				bnrRomType[n] = 8;
-			} else if (extension(std_romsel_filename, {".pce"})) {
-				bnrRomType[n] = 11;
-			} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
-				bnrRomType[n] = 16;
-			} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
-				bnrRomType[n] = 17;
-			} else if (extension(std_romsel_filename, {".dsk"})) {
-				bnrRomType[n] = 18;
-			} else if (extension(std_romsel_filename, {".min"})) {
-				bnrRomType[n] = 22;
-			} else if (extension(std_romsel_filename, {".ntrb"})) {
-				bnrRomType[n] = 23;
-			} else {
-				bnrRomType[n] = 9;
-			}
+			bnrRomType[n] = launcherRomType(std_romsel_filename);
 		}
 
 		if (bnrRomType[n] != 0) {
@@ -585,57 +487,7 @@ void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
 		getGameInfo(n, i, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
-		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
-			bnrRomType[n] = 0;
-		} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
-			bnrRomType[n] = 10;
-		} else if (extension(std_romsel_filename, {".msx"})) {
-			bnrRomType[n] = 21;
-		} else if (extension(std_romsel_filename, {".col"})) {
-			bnrRomType[n] = 13;
-		} else if (extension(std_romsel_filename, {".m5"})) {
-			bnrRomType[n] = 14;
-		} else if (extension(std_romsel_filename, {".int"})) {
-			bnrRomType[n] = 12;
-		} else if (extension(std_romsel_filename, {".plg"})) {
-			bnrRomType[n] = 9;
-		} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
-			bnrRomType[n] = 19;
-		} else if (extension(std_romsel_filename, {".gif", ".bmp", ".png"})) {
-			bnrRomType[n] = 20;
-		} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
-			bnrRomType[n] = 1;
-		} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
-			bnrRomType[n] = 2;
-		} else if (extension(std_romsel_filename,{ ".gbc"})) {
-			bnrRomType[n] = 3;
-		} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
-			bnrRomType[n] = 4;
-		} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
-			bnrRomType[n] = 15;
-		} else if (extension(std_romsel_filename, {".sms"})) {
-			bnrRomType[n] = 5;
-		} else if (extension(std_romsel_filename, {".gg"})) {
-			bnrRomType[n] = 6;
-		} else if (extension(std_romsel_filename, {".gen", ".md"})) {
-			bnrRomType[n] = 7;
-		} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
-			bnrRomType[n] = 8;
-		} else if (extension(std_romsel_filename, {".pce"})) {
-			bnrRomType[n] = 11;
-		} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
-			bnrRomType[n] = 16;
-		} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
-			bnrRomType[n] = 17;
-		} else if (extension(std_romsel_filename, {".dsk"})) {
-			bnrRomType[n] = 18;
-		} else if (extension(std_romsel_filename, {".min"})) {
-			bnrRomType[n] = 22;
-		} else if (extension(std_romsel_filename, {".ntrb"})) {
-			bnrRomType[n] = 23;
-		} else {
-			bnrRomType[n] = 9;
-		}
+		bnrRomType[n] = launcherRomType(std_romsel_filename);
 
 		if (bnrRomType[n] != 0) {
 			bnrWirelessIcon[n] = 0;
@@ -697,57 +549,7 @@ void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
 		std::string std_romsel_filename = dirContents.at(i).name.c_str();
 		getGameInfo(n, i, isDirectory[n], dirContents.at(i).name.c_str(), false);
 
-		if (extension(std_romsel_filename, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
-			bnrRomType[n] = 0;
-		} else if (extension(std_romsel_filename, {".xex", ".atr", ".a26", ".a52", ".a78"})) {
-			bnrRomType[n] = 10;
-		} else if (extension(std_romsel_filename, {".msx"})) {
-			bnrRomType[n] = 21;
-		} else if (extension(std_romsel_filename, {".col"})) {
-			bnrRomType[n] = 13;
-		} else if (extension(std_romsel_filename, {".m5"})) {
-			bnrRomType[n] = 14;
-		} else if (extension(std_romsel_filename, {".int"})) {
-			bnrRomType[n] = 12;
-		} else if (extension(std_romsel_filename, {".plg"})) {
-			bnrRomType[n] = 9;
-		} else if (extension(std_romsel_filename, {".avi", ".rvid", ".fv"})) {
-			bnrRomType[n] = 19;
-		} else if (extension(std_romsel_filename, {".gif", ".bmp", ".png"})) {
-			bnrRomType[n] = 20;
-		} else if (extension(std_romsel_filename, {".agb", ".gba", ".mb"})) {
-			bnrRomType[n] = 1;
-		} else if (extension(std_romsel_filename, {".gb", ".sgb"})) {
-			bnrRomType[n] = 2;
-		} else if (extension(std_romsel_filename,{ ".gbc"})) {
-			bnrRomType[n] = 3;
-		} else if (extension(std_romsel_filename, {".nes", ".fds"})) {
-			bnrRomType[n] = 4;
-		} else if (extension(std_romsel_filename, {".sg", ".sc"})) {
-			bnrRomType[n] = 15;
-		} else if (extension(std_romsel_filename, {".sms"})) {
-			bnrRomType[n] = 5;
-		} else if (extension(std_romsel_filename, {".gg"})) {
-			bnrRomType[n] = 6;
-		} else if (extension(std_romsel_filename, {".gen", ".md"})) {
-			bnrRomType[n] = 7;
-		} else if (extension(std_romsel_filename, {".smc", ".sfc"})) {
-			bnrRomType[n] = 8;
-		} else if (extension(std_romsel_filename, {".pce"})) {
-			bnrRomType[n] = 11;
-		} else if (extension(std_romsel_filename, {".ws", ".wsc"})) {
-			bnrRomType[n] = 16;
-		} else if (extension(std_romsel_filename, {".ngp", ".ngc"})) {
-			bnrRomType[n] = 17;
-		} else if (extension(std_romsel_filename, {".dsk"})) {
-			bnrRomType[n] = 18;
-		} else if (extension(std_romsel_filename, {".min"})) {
-			bnrRomType[n] = 22;
-		} else if (extension(std_romsel_filename, {".ntrb"})) {
-			bnrRomType[n] = 23;
-		} else {
-			bnrRomType[n] = 9;
-		}
+		bnrRomType[n] = launcherRomType(std_romsel_filename);
 
 		if (bnrRomType[n] != 0) {
 			bnrWirelessIcon[n] = 0;
@@ -1108,7 +910,7 @@ bool checkForGbaBiosRequirement(void) {
 	return false;
 }
 
-bool cannotLaunchMsg(char tid1) {
+bool cannotLaunchMsg(char tid1, bool gbaBiosMissing = false) {
 	bool res = false;
 
 	showdialogbox = true;
@@ -1116,7 +918,7 @@ bool cannotLaunchMsg(char tid1) {
 	printSmall(false, 0, 74, isTwlm[cursorPosOnScreen] ? "Information" : "Error!", Alignment::center, FontPalette::formTitleText);
 	if (!isTwlm[cursorPosOnScreen] && bnrRomType[cursorPosOnScreen] == 0 && sys().isRegularDS()) {
 		printSmall(false, 0, 90, "For use with Nintendo DSi systems only.", Alignment::center, FontPalette::formText);
-	} else if (bnrRomType[cursorPosOnScreen] == 1) {
+	} else if (gbaBiosMissing) {
 		printSmall(false, 0, 90, "GBA BIOS is missing!", Alignment::center, FontPalette::formText);
 	} else {
 		printSmall(false, 0, 90, isTwlm[cursorPosOnScreen] ? "TWiLight Menu++ is already running." : "This game cannot be launched.", Alignment::center, FontPalette::formText);
@@ -1764,12 +1566,15 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				}
 				int hasAP = 0;
 				bool proceedToLaunch = true;
+				const std::string &launchName = dirContents.at(fileOffset).name;
+				const LaunchPrecheck precheck = launcherPrecheck(findCustomLauncher(launchName), captureLaunchEnv(ms().secondaryDevice), launchName);
+				const bool gbaBiosMissing = (precheck == LaunchPrecheck::GbaBios && checkForGbaBiosRequirement());
 
 				if (!isValid[cursorPosOnScreen] || isTwlm[cursorPosOnScreen] || (!isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[cursorPosOnScreen] == 0 && gameTid[cursorPosOnScreen][0] == 'D' && romUnitCode[cursorPosOnScreen] == 3 && requiresDonorRom[cursorPosOnScreen] != 51)
 				|| (isDSiWare[cursorPosOnScreen] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
-				|| (bnrRomType[cursorPosOnScreen] == 1 && (!ms().secondaryDevice || dsiFeatures() || ms().gbaBooter == TWLSettings::EGbaGbar2) && checkForGbaBiosRequirement())) {
-					proceedToLaunch = cannotLaunchMsg(gameTid[cursorPosOnScreen][0]);
+				|| gbaBiosMissing) {
+					proceedToLaunch = cannotLaunchMsg(gameTid[cursorPosOnScreen][0], gbaBiosMissing);
 					refreshBanners(screenOffset, fileOffset, dirContents);
 				}
 				const bool useBootstrapAnyway = ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) || !ms().secondaryDevice);
@@ -1856,14 +1661,11 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						ramDiskMsg();
 						refreshBanners(screenOffset, fileOffset, dirContents);
 					}
-				} else if (bnrRomType[cursorPosOnScreen] == 7) {
-					if (ms().mdEmulator==1 && getFileSize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
-						proceedToLaunch = false;
-						mdRomTooBig();
-						refreshBanners(screenOffset, fileOffset, dirContents);
-					}
-				} else if ((bnrRomType[cursorPosOnScreen] == 8 || (bnrRomType[cursorPosOnScreen] == 11 && ms().smsGgInRam))
-							&& isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked()) {
+				} else if (precheck == LaunchPrecheck::MdRomTooBig) {
+					proceedToLaunch = false;
+					mdRomTooBig();
+					refreshBanners(screenOffset, fileOffset, dirContents);
+				} else if (precheck == LaunchPrecheck::LockedScfg) {
 					proceedToLaunch = cannotLaunchMsg(0);
 					refreshBanners(screenOffset, fileOffset, dirContents);
 				}

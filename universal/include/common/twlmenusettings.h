@@ -118,6 +118,10 @@ public:
 		ESDFlashcardLaunch = 1,
 		ESDFlashcardDirectLaunch = 2,
 		EDSiWareLaunch = 3,
+		// 4 to 27 (except 11) are only read from settings saved by older versions. Files other
+		// than DS binaries now launch through extras/config.<ext>.ini (common/customLaunchers.h),
+		// saved as ESDFlashcardLaunch (through nds-bootstrap-hb), EGBANativeLaunch or ECustomLaunch,
+		// and title relaunches all of these through the file's config.
 		ENESDSLaunch = 4,
 		EGameYobLaunch = 5,
 		ES8DSLaunch = 6,
@@ -141,7 +145,8 @@ public:
 		ETunaViDSLaunch = 24,
 		EImageLaunch = 25,
 		E3DSLaunch = 26,
-		EPokeMiniLaunch = 27
+		EPokeMiniLaunch = 27,
+		ECustomLaunch = 28 // Launched through a file's extras/config.<ext>.ini, see common/customLaunchers.h
 	};
 
 	enum TConsoleModel : int
@@ -352,6 +357,7 @@ public:
 	bool dsClassicCustomFont;
 
 	bool dontShowClusterWarning;
+	int addonUpdateNoticeShown; // Bits of the missing launcher config notices already shown by title: 1 = Virtual Console, 2 = Multimedia, 4 = base package
 	bool ignoreBlacklists;
 
 	bool slot1AccessSD;

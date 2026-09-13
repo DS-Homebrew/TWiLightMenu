@@ -109,6 +109,7 @@ TWLSettings::TWLSettings()
 	dsClassicCustomFont = false;
 
 	dontShowClusterWarning = false;
+	addonUpdateNoticeShown = 0;
 	ignoreBlacklists = false;
 
 	slot1AccessSD = false;
@@ -311,6 +312,7 @@ void TWLSettings::loadSettings()
 	dsClassicCustomFont = settingsini.GetInt("SRLOADER", "DS_CLASSIC_CUSTOM_FONT", dsClassicCustomFont);
 
 	dontShowClusterWarning = settingsini.GetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
+	addonUpdateNoticeShown = settingsini.GetInt("SRLOADER", "ADDON_UPDATE_NOTICE_SHOWN", addonUpdateNoticeShown);
 	ignoreBlacklists = settingsini.GetInt("SRLOADER", "IGNORE_BLACKLISTS", ignoreBlacklists);
 
 	slot1AccessSD = settingsini.GetInt("SRLOADER", "SLOT1_ENABLESD", slot1AccessSD);
@@ -494,6 +496,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "DS_CLASSIC_CUSTOM_FONT", dsClassicCustomFont);
 
 	settingsini.SetInt("SRLOADER", "DONT_SHOW_CLUSTER_WARNING", dontShowClusterWarning);
+	settingsini.SetInt("SRLOADER", "ADDON_UPDATE_NOTICE_SHOWN", addonUpdateNoticeShown);
 	settingsini.SetInt("SRLOADER", "IGNORE_BLACKLISTS", ignoreBlacklists);
 
 	settingsini.SetInt("SRLOADER", "SLOT1_ENABLESD", slot1AccessSD);
