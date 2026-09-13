@@ -57,7 +57,8 @@ jobs:
           rm -rf 7zfile/debug
           rm -rf 7zfile/roms
           rm "7zfile/3DS - CFW users/Games supported with widescreen.txt"
-          rm 7zfile/Virtual\ Console/snemul.cfg
+          rm 7zfile/Virtual\ Console\ (DSi\ or\ Flashcard)/snemul.cfg
+          rm 7zfile/Virtual\ Console\ (3DS,\ Full)/snemul.cfg
 
           cp -r 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
@@ -66,6 +67,8 @@ jobs:
           # DSi 7z
           cp -r TWiLightMenu/DSi\ -\ CFW\ users/SDNAND\ root/* TWiLightMenu
           rm -rf TWiLightMenu/DSi\ -\ CFW\ users
+          cp -r TWiLightMenu/DSi\ -\ SD\ card\ users/* TWiLightMenu
+          rm -rf TWiLightMenu/DSi\ -\ SD\ card\ users
           cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
           rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
           rm -rf TWiLightMenu/3DS\ -\ CFW\ users
@@ -73,9 +76,9 @@ jobs:
           rm -rf TWiLightMenu/Better\ DSi\ Menu\ Music
           rm -rf TWiLightMenu/Extra\ UI\ Music
           rm -rf TWiLightMenu/Multimedia
-          rm -rf TWiLightMenu/Virtual\ Console
-          rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_3ds.nds
-          rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds
+          rm -rf TWiLightMenu/Virtual\ Console\ (DSi\ or\ Flashcard)
+          rm -rf TWiLightMenu/Virtual\ Console\ (3DS,\ Minimal)
+          rm -rf TWiLightMenu/Virtual\ Console\ (3DS,\ Full)
           rm -rf TWiLightMenu/_nds/TWiLightMenu/bootplg.srldr
           rm -rf TWiLightMenu/_nds/TWiLightMenu/gbaswitch.srldr
           7z a TWiLightMenu-DSi.7z TWiLightMenu
@@ -86,6 +89,7 @@ jobs:
           cp -r 7zfile/ TWiLightMenu/
           cp -r TWiLightMenu/3DS\ -\ CFW\ users/* TWiLightMenu
           rm -rf TWiLightMenu/3DS\ -\ CFW\ users
+          rm -rf TWiLightMenu/DSi\ -\ SD\ card\ users
           cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
           rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
           rm -rf TWiLightMenu/DSi\ -\ CFW\ users
@@ -93,9 +97,9 @@ jobs:
           rm -rf TWiLightMenu/Better\ DSi\ Menu\ Music
           rm -rf TWiLightMenu/Extra\ UI\ Music
           rm -rf TWiLightMenu/Multimedia
-          rm -rf TWiLightMenu/Virtual\ Console
-          rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_dsi.nds
-          rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds
+          rm -rf TWiLightMenu/Virtual\ Console\ (DSi\ or\ Flashcard)
+          rm -rf TWiLightMenu/Virtual\ Console\ (3DS,\ Minimal)
+          rm -rf TWiLightMenu/Virtual\ Console\ (3DS,\ Full)
           rm -rf TWiLightMenu/_nds/TWiLightMenu/unlaunch
           rm -rf TWiLightMenu/_nds/TWiLightMenu/bootplg.srldr
           rm -rf TWiLightMenu/_nds/TWiLightMenu/gbaswitch.srldr
@@ -109,20 +113,35 @@ jobs:
           cp -r TWiLightMenu/Flashcard\ users/* TWiLightMenu
           rm -rf TWiLightMenu/Flashcard\ users
           rm -rf TWiLightMenu/3DS\ -\ CFW\ users
+          rm -rf TWiLightMenu/DSi\ -\ SD\ card\ users
           rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
           rm -rf TWiLightMenu/DSi\ -\ CFW\ users
           rm -rf TWiLightMenu/Better\ DSi\ Menu\ Music
           rm -rf TWiLightMenu/Extra\ UI\ Music
           rm -rf TWiLightMenu/Multimedia
-          rm -rf TWiLightMenu/Virtual\ Console
+          rm -rf TWiLightMenu/Virtual\ Console\ (DSi\ or\ Flashcard)
+          rm -rf TWiLightMenu/Virtual\ Console\ (3DS,\ Minimal)
+          rm -rf TWiLightMenu/Virtual\ Console\ (3DS,\ Full)
           7z a TWiLightMenu-Flashcard.7z TWiLightMenu
           mv TWiLightMenu-Flashcard.7z ~/artifacts
 
-          # Virtual Console Add-on 7z
+          # Virtual Console Add-on (DSi or Flashcard) 7z
           rm -rf TWiLightMenu
-          cp -r 7zfile/Virtual\ Console/ TWiLightMenu
-          7z a -md=16m AddOn-VirtualConsole.7z TWiLightMenu
-          mv AddOn-VirtualConsole.7z ~/artifacts
+          cp -r 7zfile/Virtual\ Console\ (DSi\ or\ Flashcard)/ TWiLightMenu
+          7z a -md=16m AddOn-VirtualConsole-DSi-or-Flashcard.7z TWiLightMenu
+          mv AddOn-VirtualConsole-DSi-or-Flashcard.7z ~/artifacts
+
+          # Virtual Console Add-on (3DS, Minimal) 7z
+          rm -rf TWiLightMenu
+          cp -r 7zfile/Virtual\ Console\ (3DS,\ Minimal)/ TWiLightMenu
+          7z a -md=16m AddOn-VirtualConsole-3DS-Minimal.7z TWiLightMenu
+          mv AddOn-VirtualConsole-3DS-Minimal.7z ~/artifacts
+
+          # Virtual Console Add-on (3DS, Full) 7z
+          rm -rf TWiLightMenu
+          cp -r 7zfile/Virtual\ Console\ (3DS,\ Full)/ TWiLightMenu
+          7z a -md=16m AddOn-VirtualConsole-3DS-Full.7z TWiLightMenu
+          mv AddOn-VirtualConsole-3DS-Full.7z ~/artifacts
 
           # Multimedia Add-on 7z
           rm -rf TWiLightMenu
