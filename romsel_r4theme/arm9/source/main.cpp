@@ -687,13 +687,13 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		fcPath = replaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", fcPath);
 		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
+		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1, 0);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 13) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 		fcPath = replaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", fcPath);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
+		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1, 0);
 	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 			|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
 			|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
@@ -706,7 +706,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		fcPath = replaceAll(ndsPath, "fat:/", slashchar);
 		fcrompathini.SetString("YSMENU", "AUTO_BOOT", fcPath);
 		fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
+		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1, 0);
 	}
 
 	char text[32];
@@ -733,7 +733,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 	} while (!(pressed & KEY_B));
 	vector<char *> argarray;
 	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
-	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 	stop();
 }
 
@@ -995,7 +995,7 @@ static void launchWithConfig(const CustomLauncher *launcher, const std::string &
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_B));
 	const char *menuSrldr = (sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr");
-	runNdsFile(menuSrldr, 1, &menuSrldr, sys().isRunFromSD(), true, false, false, true, true, false, -1);
+	runNdsFile(menuSrldr, 1, &menuSrldr, sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 }
 
 int r4Theme(void) {
@@ -1167,7 +1167,7 @@ int r4Theme(void) {
 		  if (ms().theme == TWLSettings::EThemeGBC) {
 				vector<char *> argarray;
 				argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr"));
-				int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+				int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 				iprintf ("Start failed. Error %i\n", err);
 		  } else {
 			lcdMainOnBottom();
@@ -1238,7 +1238,7 @@ int r4Theme(void) {
 				}
 				vector<char *> argarray;
 				argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/manual.srldr" : "fat:/_nds/TWiLightMenu/manual.srldr"));
-				int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+				int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				dialogboxHeight = 0;
@@ -1289,7 +1289,7 @@ int r4Theme(void) {
 							int err;
 							chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
 							if (!sys().isRunFromSD()) {
-								err = runNdsFile (moonshlPath, 0, NULL, sys().isRunFromSD(), true, true, true, true, false, false, -1);
+								err = runNdsFile (moonshlPath, 0, NULL, sys().isRunFromSD(), true, true, true, true, false, false, -1, 0);
 								useNDSB = false;
 							} else {
 								if (access("sd:/moonshl2/logbuf.txt", F_OK) == 0) {
@@ -1313,7 +1313,7 @@ int r4Theme(void) {
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 								bootstrapini.SaveIniFile( BOOTSTRAP_INI );
-								err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), false, true, false, true, true, false, -1);
+								err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), false, true, false, true, true, false, -1, 0);
 							}
 							char text[32];
 							snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -1370,7 +1370,7 @@ int r4Theme(void) {
 							if (directMethod) {
 								SetWidescreen(NULL);
 								chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
-								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, sys().isRunFromSD(), true, true, false, true, true, false, -1);
+								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, sys().isRunFromSD(), true, true, false, true, true, false, -1, 0);
 								char text[32];
 								snprintf (text, sizeof(text), "Start failed. Error %i", err);
 								dialogboxHeight = 0;
@@ -1437,7 +1437,7 @@ int r4Theme(void) {
 				ms().saveSettings();
 				vector<char *> argarray;
 				argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr"));
-				int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+				int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 				iprintf ("Start failed. Error %i\n", err);
 			}
 		} else {
@@ -1838,7 +1838,7 @@ int r4Theme(void) {
 					}
 
 					argarray.at(0) = (char *)ndsToBoot;
-					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
+					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1, 0);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
 					clearText(false);
@@ -1861,7 +1861,7 @@ int r4Theme(void) {
 					} while (!(pressed & KEY_B));
 					vector<char *> argarray;
 					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
-					runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+					runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 					stop();
 				}
 
@@ -2011,7 +2011,7 @@ int r4Theme(void) {
 						} while (!(pressed & KEY_B));
 						vector<char *> argarray;
 						argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
-						runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+						runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 					} else
 					if ((((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) && !ms().homebrewBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && romUnitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| (ms().secondaryDevice && !ms().kernelUseable)
@@ -2200,7 +2200,7 @@ int r4Theme(void) {
 						}
 
 						argarray.at(0) = (char *)ndsToBoot;
-						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
+						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1, 0);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
 						clearText(false);
@@ -2228,7 +2228,7 @@ int r4Theme(void) {
 						} while (!(pressed & KEY_B));
 						vector<char *> argarray;
 						argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
-						runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+						runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 					} else {
 						ms().romPath[ms().secondaryDevice] = argarray[0];
 						ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
@@ -2324,7 +2324,7 @@ int r4Theme(void) {
 						runNds_boostCpu = perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu;
 						runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
 					}
-					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, false, runNds_language);
+					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, false, runNds_language, 0);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
 					clearText(false);
@@ -2343,7 +2343,7 @@ int r4Theme(void) {
 					} while (!(pressed & KEY_B));
 					vector<char *> argarray;
 					argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr"));
-					runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+					runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 				}
 			} else {
 				launchWithConfig(findCustomLauncher(filename), ms().romfolder[ms().secondaryDevice], filename, argarray);

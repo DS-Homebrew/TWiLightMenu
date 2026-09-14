@@ -50,6 +50,7 @@
 #define HAVE_DSISD_OFFSET 28
 #define DSIMODE_OFFSET 32
 #define LOADFROMRAM_OFFSET 36
+#define COMMON_CACHE_OFFSET 40
 
 
 typedef signed int addr_t;
@@ -235,7 +236,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, int argc, const char** argv)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, int argc, const char** argv, u32 commonCache)
 {
 	char* argStart;
 	u16* argData;
@@ -262,6 +263,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	}
 
 	writeAddr ((data_t*) LCDC_BANK_C, LOADFROMRAM_OFFSET, loadFromRam);
+	writeAddr ((data_t*) LCDC_BANK_C, COMMON_CACHE_OFFSET, commonCache);
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
 	writeAddr ((data_t*) LCDC_BANK_C, WANT_TO_PATCH_DLDI_OFFSET, dldiPatchNds);
@@ -364,7 +366,7 @@ bool runNds9 (const char* filename) {
 	return true;
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv)  {
+int runNdsFile (const char* filename, int argc, const char** argv, u32 commonCache)  {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
@@ -392,5 +394,5 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 
 	const bool loadFromRam = (runNds9(filename) || (isDSiMode() && access("sd:/", F_OK) != 0));
 	
-	return runNds (load_bin, load_bin_size, st.st_ino, true, (memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, argc, argv);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, (memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, argc, argv, commonCache);
 }

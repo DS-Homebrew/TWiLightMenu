@@ -43,43 +43,46 @@ bool fileExists(const char* path) {
 void fontInit() {
 	logPrint("fontInit() ");
 
-	// extern u32 rotatingCubesLoaded;
-	// const bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (*(u16*)(0x020000C0) != 0 || !rotatingCubesLoaded)
-	// 						&& (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
-	const bool useTileCache = (!dsiFeatures() && !sys().dsDebugRam());
-
 	// Unload fonts if already loaded
 	if (smallFont)
 		delete smallFont;
 	if (largeFont)
 		delete largeFont;
 
+	// extern u32 rotatingCubesLoaded;
+	// const bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (*(u16*)(0x020000C0) != 0 || !rotatingCubesLoaded)
+	// 						&& (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
+	const bool useTileCache = (!dsiFeatures() && !sys().dsDebugRam());
+	bool themeFontFound = false;
+
 	// Load font graphics
 	std::string fontPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 	std::string defaultPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
-	if (ms().useThemeFont && (fileExists((TFN_FONT_SMALL_DSI).c_str()) || fileExists((TFN_FONT_SMALL).c_str()) || fileExists((TFN_FONT_LARGE_DSI).c_str()) || fileExists((TFN_FONT_LARGE).c_str())))
+	if (ms().useThemeFont && (fileExists((TFN_FONT_SMALL_DSI).c_str()) || fileExists((TFN_FONT_SMALL).c_str()) || fileExists((TFN_FONT_LARGE_DSI).c_str()) || fileExists((TFN_FONT_LARGE).c_str()))) {
 		fontPath = TFN_FONT_DIRECTORY;
+		themeFontFound = true;
+	}
 	if (fileExists((fontPath + "/small-dsi.nftr").c_str())) {
-		smallFont = new FontGraphic((fontPath + "/small-dsi.nftr").c_str(), useTileCache);
+		smallFont = new FontGraphic((fontPath + "/small-dsi.nftr").c_str(), false, !themeFontFound, useTileCache);
 	} else if (fileExists((fontPath + "/small.nftr").c_str())) {
-		smallFont = new FontGraphic((fontPath + "/small.nftr").c_str(), useTileCache);
+		smallFont = new FontGraphic((fontPath + "/small.nftr").c_str(), false, !themeFontFound, useTileCache);
 	} else if (fileExists((defaultPath + "/small.nftr").c_str())) {
-		smallFont = new FontGraphic((defaultPath + "/small.nftr").c_str(), useTileCache);
+		smallFont = new FontGraphic((defaultPath + "/small.nftr").c_str(), false, !themeFontFound, useTileCache);
 	} else {
-		smallFont = new FontGraphic("nitro:/graphics/font/small.nftr", useTileCache);
+		smallFont = new FontGraphic("nitro:/graphics/font/small.nftr", false, !themeFontFound, useTileCache);
 	}
 	// If custom small font but no custom large font, use small font as large font
 	if ((fileExists((fontPath + "/small-dsi.nftr").c_str()) || fileExists((fontPath + "/small.nftr").c_str())) && (!fileExists((fontPath + "/large-dsi.nftr").c_str()) && !fileExists((fontPath + "/large.nftr").c_str())))
 		largeFont = smallFont;
 	else {
 		if (fileExists((fontPath + "/large-dsi.nftr").c_str())) {
-			largeFont = new FontGraphic((fontPath + "/large-dsi.nftr").c_str(), useTileCache);
+			largeFont = new FontGraphic((fontPath + "/large-dsi.nftr").c_str(), true, !themeFontFound, useTileCache);
 		} else if (fileExists((fontPath + "/large.nftr").c_str())) {
-			largeFont = new FontGraphic((fontPath + "/large.nftr").c_str(), useTileCache);
+			largeFont = new FontGraphic((fontPath + "/large.nftr").c_str(), true, !themeFontFound, useTileCache);
 		} else if (fileExists((defaultPath + "/large.nftr").c_str())) {
-			largeFont = new FontGraphic((defaultPath + "/large.nftr").c_str(), useTileCache);
+			largeFont = new FontGraphic((defaultPath + "/large.nftr").c_str(), true, !themeFontFound, useTileCache);
 		} else {
-			largeFont = new FontGraphic("nitro:/graphics/font/large.nftr", useTileCache);
+			largeFont = new FontGraphic("nitro:/graphics/font/large.nftr", true, !themeFontFound, useTileCache);
 		}
 	}
 
@@ -173,7 +176,7 @@ void fontInit() {
 }
 
 void esrbDescFontInit(bool dsFont) {
-	esrbDescFont = new FontGraphic(dsFont ? "nitro:/graphics/font/ds.nftr" : "nitro:/graphics/font/small.nftr", false);
+	esrbDescFont = new FontGraphic(dsFont ? "nitro:/graphics/font/ds.nftr" : "nitro:/graphics/font/small.nftr", false, false, false);
 }
 
 void esrbDescFontDeinit() {

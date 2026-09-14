@@ -500,9 +500,9 @@ void ThemeTextures::loadBatteryTextures() {
 }
 
 void ThemeTextures::loadUITextures() {
-	_dateTimeFont = std::make_unique<FontGraphic>(((access((TFN_FONT_DATE_TIME).c_str(), F_OK) == 0) ? TFN_FONT_DATE_TIME : TFN_FALLBACK_FONT_DATE_TIME).c_str(), false);
+	_dateTimeFont = std::make_unique<FontGraphic>(((access((TFN_FONT_DATE_TIME).c_str(), F_OK) == 0) ? TFN_FONT_DATE_TIME : TFN_FALLBACK_FONT_DATE_TIME).c_str(), false, false, false);
 	if (access((TFN_FONT_USERNAME).c_str(), F_OK) == 0) {
-		_usernameFont = std::make_unique<FontGraphic>((TFN_FONT_USERNAME).c_str(), false);
+		_usernameFont = std::make_unique<FontGraphic>((TFN_FONT_USERNAME).c_str(), false, false, false);
 	}
 
 	if (ms().theme != TWLSettings::EThemeHBL) {

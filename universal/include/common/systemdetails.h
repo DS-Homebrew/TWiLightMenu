@@ -32,8 +32,12 @@ public:
 	bool hasRegulableBacklight() { return _hasRegulableBacklight; }
 	bool i2cBricked() { return _i2cBricked; }
 	bool dsDebugRam() { return _dsDebugRam; }
+	u32 commonCache() { return *_lastUsedCommonCache; }
 	void initFilesystem(const char *runningPath);
 	void initArm7RegStatuses();
+	u32* allocCommonCache(const u32 tag, u32 allocSize);
+	u32* getDataFromCommonCache(const u32 tag);
+	void resetCommonCache();
 	int batteryStatus();
 	int volumeStatus();
 	ESDStatus sdStatus();
@@ -52,6 +56,9 @@ private:
 	bool _fatInitOk;
 	bool _fifoOk;
 	bool _nitroFsInitOk;
+	u32* _lastUsedCommonCache;
+	u32* _commonCachePtr;
+	u32* _commonCache;
 };
 
 typedef singleton<SystemDetails> systemDetails_s;

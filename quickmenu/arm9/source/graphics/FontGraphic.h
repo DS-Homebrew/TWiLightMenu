@@ -34,6 +34,7 @@ private:
 	static char16_t arabicForm(char16_t current, char16_t prev, char16_t next);
 
 	FILE* file = nullptr;
+	bool fromCommonCache = false;
 	bool useTileCache = false;
 	u8 tileOffset = 0;
 	u8 tileWidth = 0, tileHeight = 0;
@@ -55,7 +56,7 @@ public:
 
 	static std::u16string utf8to16(std::string_view text);
 
-	FontGraphic(const std::vector<std::string> &paths, const bool set_useTileCache);
+	FontGraphic(const std::vector<std::string> &paths, const bool large, const bool useCommonCache, const bool set_useTileCache);
 
 	~FontGraphic(void);
 

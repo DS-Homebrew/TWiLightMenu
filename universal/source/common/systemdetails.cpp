@@ -82,6 +82,21 @@ SystemDetails::SystemDetails()
 	// force is regular ds
 	//_isRegularDS = true;
 	// Restore value.
+
+	u32* commonCacheTag = (u32*)(dsiFeatures() ? 0x02FF3FFC : _dsDebugRam ? 0x027F3FFC : 0x023F3FFC);
+	_commonCachePtr = (u32*)(dsiFeatures() ? 0x02FF3FF8 : _dsDebugRam ? 0x027F3FF8 : 0x023F3FF8);
+	_commonCache = (u32*)(dsiFeatures() ? 0x02FF3E00 : _dsDebugRam ? 0x027F3E00 : 0x023F3E00);
+	_lastUsedCommonCache = (u32*)(dsiFeatures() ? 0x02FF3FF4 : _dsDebugRam ? 0x027F3FF4 : 0x023F3FF4);
+
+	if (*commonCacheTag != 0x414C5253) {
+		*commonCacheTag = 0x414C5253; // 'SRLA'
+		*_lastUsedCommonCache = (u32)_commonCache;
+		*_commonCachePtr = (u32)_commonCache;
+
+		for (int i = 0; i < 125; i++) {
+			_commonCache[i] = 0;
+		}
+	}
 }
 
 void SystemDetails::initArm7RegStatuses() {
@@ -129,5 +144,53 @@ void SystemDetails::initFilesystem(const char *runningPath)
 
 	if (!_nitroFsInitOk && runningPath != NULL) {
 		_nitroFsInitOk = nitroFSInit(runningPath) == 1;
+	}
+}
+
+u32* SystemDetails::allocCommonCache(const u32 tag, u32 allocSize)
+{
+	while ((allocSize % 4) != 0) allocSize++;
+	allocSize += 4; // Increase size for tag
+
+	for (int i = 0; i < 125; i++) {
+		if (_commonCache[i] == 0) {
+			u32 offset = *_lastUsedCommonCache;
+			offset -= allocSize;
+			*_lastUsedCommonCache = offset;
+			*(u32*)offset = tag;
+
+			_commonCache[i] = offset;
+			offset += 4;
+			return (u32*)offset;
+		}
+	}
+
+	return NULL;
+}
+
+u32* SystemDetails::getDataFromCommonCache(const u32 tag)
+{
+	for (int i = 0; i < 125; i++) {
+		if (_commonCache[i] == 0) {
+			return NULL;
+		} else {
+			u32 offset = _commonCache[i];
+			if (*(u32*)offset == tag) {
+				offset += 4;
+				return (u32*)offset;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+void SystemDetails::resetCommonCache()
+{
+	*_lastUsedCommonCache = (u32)_commonCache;
+	*_commonCachePtr = (u32)_commonCache;
+
+	for (int i = 0; i < 125; i++) {
+		_commonCache[i] = 0;
 	}
 }

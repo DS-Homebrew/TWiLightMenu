@@ -47,6 +47,7 @@ Helpful information:
 #define ARM7
 #include <nds/arm7/audio.h>
 #include <string.h> // memcmp
+#include "dmaTwl.h"
 #include "common/tonccpy.h"
 #include "sdmmc.h"
 #include "fat.h"
@@ -75,6 +76,7 @@ extern unsigned long argSize;
 extern unsigned long dsiSD;
 extern unsigned long dsiMode;
 extern unsigned long loadFromRam;
+extern unsigned long commonCache;
 
 bool sdRead = false;
 
@@ -175,6 +177,11 @@ static void initMBK_dsiMode(void) {
 	REG_MBK9 = *(u32*)0x02FFE1AC;
 }
 
+void memset_addrs_arm7(u32 start, u32 end)
+{
+	toncset((u32*)start, 0, ((int)end - (int)start));
+}
+
 /*-------------------------------------------------------------------------
 resetMemory_ARM7
 Clears all of the NDS's RAM that is visible to the ARM7
@@ -218,10 +225,10 @@ void resetMemory_ARM7 (void)
 	arm7clearRAM();
 	// clear most of EWRAM - except after RAM end - 0xc000, which has the bootstub
 	if (dsiMode && loadFromRam) {
-		toncset((void*)0x02004000, 0, 0x7FC000);
-		toncset((void*)0x02D00000, 0, 0x2F4000);
+		memset_addrs_arm7(0x02004000, 0x02800000);
+		memset_addrs_arm7(0x02D00000, 0x02FF4000);
 	} else {
-		toncset((void*)0x02004000, 0, dsiMode ? 0xFF0000 : 0x3F0000);
+		memset_addrs_arm7(0x02004000, (commonCache >= 0x02000000 && commonCache < 0x03000000) ? commonCache : (dsiMode ? 0x02FF4000 : 0x023F4000));
 	}
 	*(u32*)(0x2FFFD9C) = 0;	// Clear exception handler
 

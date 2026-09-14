@@ -31,6 +31,7 @@
 	.global dsiSD
 	.global dsiMode
 	.global loadFromRam
+	.global commonCache
 @---------------------------------------------------------------------------------
 	.align	4
 	.arm
@@ -57,6 +58,8 @@ dsiSD:
 dsiMode:
 	.word	0
 loadFromRam:
+	.word	0
+commonCache:
 	.word	0
 
 startUp:

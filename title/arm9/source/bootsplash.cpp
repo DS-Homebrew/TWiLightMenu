@@ -6,6 +6,7 @@
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
+#include "graphics/fontHandler.h"
 #include "graphics/gif.hpp"
 #include "graphics/graphics.h"
 #include "common/lodepng.h"
@@ -158,8 +159,14 @@ void bootSplashDSi(void) {
 			//loadROMselectAsynch();
 			scanKeys();
 
-			if (!custom && splash.currentFrame() == 16)
-				snd().playDSiBoot();
+			if (!custom) {
+				if (splash.currentFrame() == 16) {
+					snd().playDSiBoot();
+					fontInit(true);
+				}
+			} else {
+				fontInit(true);
+			}
 		}
 	} else {
 		u16 pressed = 0;
@@ -186,8 +193,14 @@ void bootSplashDSi(void) {
 				}
 			}
 
-			if (!custom && splash.currentFrame() == (super ? 1 : 26))
-				snd().playDSiBoot();
+			if (!custom) {
+				if (splash.currentFrame() == (super ? 1 : 26)) {
+					snd().playDSiBoot();
+					fontInit(true);
+				}
+			} else {
+				fontInit(true);
+			}
 		}
 	}
 

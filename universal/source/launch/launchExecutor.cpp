@@ -37,6 +37,8 @@ extern char copyBuf[0x8000];
 extern void s2RamAccess(bool open);
 extern void gbaSramAccess(bool open);
 
+extern bool extension(const std::string_view filename, const std::vector<std::string_view> extensions);
+
 static unsigned fileSizeOf(const char *path)
 {
 	struct stat st;
@@ -242,6 +244,7 @@ void prepareLaunch(const LaunchPlan &plan, bool bootstrapDirect)
 int runLaunch(const LaunchPlan &plan, bool bootstrapDirect)
 {
 	const char *ndsToBoot = (plan.useNDSB && !bootstrapDirect) ? bootstrapHbPath() : plan.ndsToBoot.c_str();
+	const bool ndsToBootIsImageViewer = extension(ndsToBoot, {"view.srldr"});
 
 	std::vector<const char *> argv;
 	argv.push_back(plan.tgdsMode ? plan.argv0.c_str() : ndsToBoot);
@@ -288,5 +291,5 @@ int runLaunch(const LaunchPlan &plan, bool bootstrapDirect)
 	}
 
 	return runNdsFile(ndsToBoot, argv.size(), &argv[0], sys().isRunFromSD(), !plan.useNDSB, true,
-			plan.dsModeSwitch, plan.boostCpu, plan.boostVram, plan.tscTgds, -1);
+			plan.dsModeSwitch, plan.boostCpu, plan.boostVram, plan.tscTgds, -1, ndsToBootIsImageViewer ? sys().commonCache() : 0);
 }

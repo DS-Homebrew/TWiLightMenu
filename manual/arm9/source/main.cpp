@@ -23,6 +23,7 @@
 
 #include "myDSiMode.h"
 #include "common/inifile.h"
+#include "common/logging.h"
 #include "common/tonccpy.h"
 #include "language.h"
 
@@ -203,7 +204,7 @@ void loadROMselect() {
 			break;
 	}
 
-	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 	fadeType = true;	// Fade in from white
 }
 
@@ -235,6 +236,7 @@ int manualScreen(void) {
 	keysSetRepeat(25, 25);
 
 	ms().loadSettings();
+	logInit();
 
 	graphicsInit();
 	fontInit();

@@ -33,24 +33,24 @@ bool fileExists(std::vector<std::string_view> paths) {
 void fontInit() {
 	logPrint("fontInit() ");
 
-	// const bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
-	const bool useTileCache = (!dsiFeatures() && !sys().dsDebugRam());
-
 	// Unload fonts if already loaded
 	if (smallFont)
 		delete smallFont;
 	if (largeFont)
 		delete largeFont;
 
+	// const bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
+	const bool useTileCache = (!dsiFeatures() && !sys().dsDebugRam());
+
 	// Load font graphics
 	std::string fontPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 	std::string defaultPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
-	smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", defaultPath + "/small-dsi.nftr", "nitro:/graphics/font/small.nftr"}, useTileCache);
+	smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", defaultPath + "/small-dsi.nftr", "nitro:/graphics/font/small.nftr"}, false, useTileCache);
 	// If custom small font but no custom large font, use small font as large font
 	if (fileExists({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr"}) && !fileExists({fontPath + "/large-dsi.nftr", fontPath + "/large.nftr"}))
 		largeFont = smallFont;
 	else
-		largeFont = new FontGraphic({fontPath + "/large-dsi.nftr", fontPath + "/large.nftr", defaultPath + "/large-dsi.nftr", "nitro:/graphics/font/large.nftr"}, useTileCache);
+		largeFont = new FontGraphic({fontPath + "/large-dsi.nftr", fontPath + "/large.nftr", defaultPath + "/large-dsi.nftr", "nitro:/graphics/font/large.nftr"}, true, useTileCache);
 
 	// Load palettes
 	u16 palette[] = {

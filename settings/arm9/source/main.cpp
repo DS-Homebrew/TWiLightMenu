@@ -181,7 +181,7 @@ void loadMainMenu()
 	vector<char *> argarray;
 	argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/mainmenu.srldr" : "fat:/_nds/TWiLightMenu/mainmenu.srldr"));
 
-	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 	fadeType = true;	// Fade in from white
 }
 
@@ -196,7 +196,7 @@ void loadROMselect()
 	} else {
 		argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
 	}
-	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 	fadeType = true;	// Fade in from white
 }
 
@@ -437,6 +437,7 @@ std::optional<Option> opt_bg_select(void)
 
 std::optional<Option> opt_font_select(void)
 {
+	sys().resetCommonCache(); // Clear current font from common cache
 	return Option(STR_FONTSEL, STR_AB_SETFONT, Option::Str(&ms().font), fontList);
 }
 
@@ -691,7 +692,7 @@ void begin_update(int opt)
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	
-	runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, sys().isRunFromSD(), true, false, false, true, true, false, -1);
+	runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 	stop();
 }
 

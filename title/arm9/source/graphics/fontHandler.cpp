@@ -30,46 +30,57 @@ bool fileExists(std::vector<std::string_view> paths) {
 	return false;
 }
 
-void fontInit() {
+void fontInit(const bool preload) {
+	// Unload fonts if already loaded
+	/* if (smallFont)
+		delete smallFont;
+	if (largeFont)
+		delete largeFont; */
+
+
+	if (smallFont || largeFont) {
+		return;
+	}
+
 	logPrint("fontInit() ");
 
 	// const bool useExpansionPak = (sys().isRegularDS() && ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS));
 	const bool useTileCache = (!dsiFeatures() && !sys().dsDebugRam());
-
-	// Unload fonts if already loaded
-	if (smallFont)
-		delete smallFont;
-	if (largeFont)
-		delete largeFont;
+	if (preload && useTileCache) {
+		return;
+	}
 
 	// Load font graphics
 	std::string fontPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/" + ms().font;
 	std::string defaultPath = std::string(sys().isRunFromSD() ? "sd:" : "fat:") + "/_nds/TWiLightMenu/extras/fonts/Default";
-	smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", defaultPath + "/small-dsi.nftr", "nitro:/graphics/font/small.nftr"}, useTileCache);
+	smallFont = new FontGraphic({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr", defaultPath + "/small-dsi.nftr", "nitro:/graphics/font/small.nftr"}, false, useTileCache);
 	// If custom small font but no custom large font, use small font as large font
 	if (fileExists({fontPath + "/small-dsi.nftr", fontPath + "/small.nftr"}) && !fileExists({fontPath + "/large-dsi.nftr", fontPath + "/large.nftr"}))
 		largeFont = smallFont;
 	else
-		largeFont = new FontGraphic({fontPath + "/large-dsi.nftr", fontPath + "/large.nftr", defaultPath + "/large-dsi.nftr", "nitro:/graphics/font/large.nftr"}, useTileCache);
+		largeFont = new FontGraphic({fontPath + "/large-dsi.nftr", fontPath + "/large.nftr", defaultPath + "/large-dsi.nftr", "nitro:/graphics/font/large.nftr"}, true, useTileCache);
 
-	// Load palettes
-	u16 palette[] = {
-		0x0000,
-		0xDEF7,
-		0xC631,
-		0xA108,
-	};
-	if (colorTable) {
-		for (int i = 1; i < 4; i++) {
-			palette[i] = colorTable[palette[i] % 0x8000];
+	if (!preload) {
+		// Load palettes
+		u16 palette[] = {
+			0x0000,
+			0xDEF7,
+			0xC631,
+			0xA108,
+		};
+		if (colorTable) {
+			for (int i = 1; i < 4; i++) {
+				palette[i] = colorTable[palette[i] % 0x8000];
+			}
 		}
+		tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
+		tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
 	}
-	tonccpy(BG_PALETTE + 0xF8, palette, sizeof(palette));
-	tonccpy(BG_PALETTE_SUB + 0xF8, palette, sizeof(palette));
+
 	logPrint("Font inited\n");
 }
 
-void unloadFont() {
+/* void unloadFont() {
 	if (largeFont) {
 		delete largeFont;
 		largeFont = nullptr;
@@ -79,7 +90,7 @@ void unloadFont() {
 		delete smallFont;
 		smallFont = nullptr;
 	}
-}
+} */
 
 static std::list<TextEntry> &getTextQueue(bool top) {
 	return top ? topText : bottomText;

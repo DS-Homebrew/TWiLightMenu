@@ -1,5 +1,7 @@
 #include "FontGraphic.h"
 
+#include "common/logging.h"
+#include "common/systemdetails.h"
 #include "common/tonccpy.h"
 
 u8 FontGraphic::textBuf[2][256 * 192];
@@ -88,7 +90,7 @@ char16_t FontGraphic::arabicForm(char16_t current, char16_t prev, char16_t next)
 	return current;
 }
 
-FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool set_useTileCache) {
+FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool large, const bool useCommonCache, const bool set_useTileCache) {
 	for (const auto &path : paths) {
 		file = fopen(path.c_str(), "rb");
 		if (file)
@@ -96,98 +98,144 @@ FontGraphic::FontGraphic(const std::vector<std::string> &paths, const bool set_u
 	}
 
 	useTileCache = set_useTileCache;
-	if (file) {
-		// Get file size
-		fseek(file, 0, SEEK_END);
-		u32 fileSize = ftell(file);
+	if (!file)
+		return;
 
-		// Skip font info
-		fseek(file, 0x14, SEEK_SET);
-		tileOffset = fgetc(file);
-		fseek(file, tileOffset-1, SEEK_CUR);
-		tileOffset += 0x20;
+	const u32 fnttTag = large ? 0x54544E46 : 0x74746E66; // 'FNTT' or 'fntt'
+	const u32 fntwTag = large ? 0x57544E46 : 0x77746E66; // 'FNTW' or 'fntw'
+	const u32 fntmTag = large ? 0x4D544E46 : 0x6D746E66; // 'FNTM' or 'fntm'
 
-		// Load glyph info
-		u32 chunkSize;
-		fread(&chunkSize, 4, 1, file);
-		tileWidth = fgetc(file);
-		tileHeight = fgetc(file);
-		fread(&tileSize, 2, 1, file);
+	// Get file size
+	fseek(file, 0, SEEK_END);
+	u32 fileSize = ftell(file);
 
-		// Load character glyphs
-		tileAmount = (chunkSize - 0x10) / tileSize;
-		fseek(file, 4, SEEK_CUR);
-		if (useTileCache) {
-			fontTiles = new u8[tileSize * (tileAmount>tileCacheCount ? tileCacheCount : tileAmount)];
-		} else {
-			fontTiles = new u8[tileSize * tileAmount];
+	// Skip font info
+	fseek(file, 0x14, SEEK_SET);
+	tileOffset = fgetc(file);
+	fseek(file, tileOffset-1, SEEK_CUR);
+	tileOffset += 0x20;
+
+	// Load glyph info
+	u32 chunkSize;
+	fread(&chunkSize, 4, 1, file);
+	tileWidth = fgetc(file);
+	tileHeight = fgetc(file);
+	fread(&tileSize, 2, 1, file);
+
+	// Load character glyphs
+	tileAmount = (chunkSize - 0x10) / tileSize;
+	fseek(file, 4, SEEK_CUR);
+	if (useTileCache) {
+		fontTiles = new u8[tileSize * (tileAmount>tileCacheCount ? tileCacheCount : tileAmount)];
+	} else if (useCommonCache) {
+		fontTiles = (u8*)sys().getDataFromCommonCache(fnttTag);
+		if (fontTiles == NULL) {
+			fontTiles = (u8*)sys().allocCommonCache(fnttTag, tileSize * tileAmount);
+			if (fontTiles == NULL) {
+				fontTiles = new u8[tileSize * tileAmount];
+			} else {
+				logPrint("Loading font to common cache: %s\n", large ? "large" : "small");
+				fromCommonCache = true;
+			}
 			fread(fontTiles, tileSize, tileAmount, file);
+		} else {
+			logPrint("Using font from common cache: %s\n", large ? "large" : "small");
+			fromCommonCache = true;
 		}
+	} else {
+		fontTiles = new u8[tileSize * tileAmount];
+		fread(fontTiles, tileSize, tileAmount, file);
+	}
 
-		// Load character widths
-		fseek(file, 0x24, SEEK_SET);
-		u32 locHDWC;
-		fread(&locHDWC, 4, 1, file);
-		fseek(file, locHDWC-4, SEEK_SET);
-		fread(&chunkSize, 4, 1, file);
-		fseek(file, 8, SEEK_CUR);
+	// Load character widths
+	fseek(file, 0x24, SEEK_SET);
+	u32 locHDWC;
+	fread(&locHDWC, 4, 1, file);
+	fseek(file, locHDWC-4, SEEK_SET);
+	fread(&chunkSize, 4, 1, file);
+	fseek(file, 8, SEEK_CUR);
+	if (!useCommonCache || useTileCache) {
 		fontWidths = new u8[3 * tileAmount];
 		fread(fontWidths, 3, tileAmount, file);
+	} else {
+		fontWidths = (u8*)sys().getDataFromCommonCache(fntwTag);
+		if (fontWidths == NULL) {
+			fontWidths = (u8*)sys().allocCommonCache(fntwTag, 3 * tileAmount);
+			if (fontWidths == NULL) {
+				fontWidths = new u8[3 * tileAmount];
+			}
+			fread(fontWidths, 3, tileAmount, file);
+		}
+	}
 
-		// Load character maps
+	// Load character maps
+	if (!useCommonCache || useTileCache) {
 		fontMap = new u16[tileAmount];
+	} else {
+		fontMap = (u16*)sys().getDataFromCommonCache(fntmTag);
+		if (fontMap == NULL) {
+			fontMap = (u16*)sys().allocCommonCache(fntmTag, tileAmount * sizeof(u16));
+			if (fontMap == NULL) {
+				fontMap = new u16[tileAmount];
+			}
+		} else {
+			goto setQuestionMark;
+		}
+	}
 
-		fseek(file, 0x28, SEEK_SET);
-		u32 locPAMC, mapType;
+	fseek(file, 0x28, SEEK_SET);
+	u32 locPAMC, mapType;
+	fread(&locPAMC, 4, 1, file);
+
+	while (locPAMC && locPAMC < fileSize) {
+		u16 firstChar, lastChar;
+		fseek(file, locPAMC, SEEK_SET);
+		fread(&firstChar, 2, 1, file);
+		fread(&lastChar, 2, 1, file);
+		fread(&mapType, 4, 1, file);
 		fread(&locPAMC, 4, 1, file);
 
-		while (locPAMC < fileSize) {
-			u16 firstChar, lastChar;
-			fseek(file, locPAMC, SEEK_SET);
-			fread(&firstChar, 2, 1, file);
-			fread(&lastChar, 2, 1, file);
-			fread(&mapType, 4, 1, file);
-			fread(&locPAMC, 4, 1, file);
-
-			switch(mapType) {
-				case 0: {
-					u16 firstTile;
-					fread(&firstTile, 2, 1, file);
-					for (unsigned i=firstChar;i<=lastChar;i++) {
-						fontMap[firstTile+(i-firstChar)] = i;
-					}
-					break;
-				} case 1: {
-					for (int i=firstChar;i<=lastChar;i++) {
-						u16 tile;
-						fread(&tile, 2, 1, file);
-						fontMap[tile] = i;
-					}
-					break;
-				} case 2: {
-					u16 groupAmount;
-					fread(&groupAmount, 2, 1, file);
-					for (int i=0;i<groupAmount;i++) {
-						u16 charNo, tileNo;
-						fread(&charNo, 2, 1, file);
-						fread(&tileNo, 2, 1, file);
-						fontMap[tileNo] = charNo;
-					}
-					break;
+		switch(mapType) {
+			case 0: {
+				u16 firstTile;
+				fread(&firstTile, 2, 1, file);
+				for (unsigned i=firstChar;i<=lastChar;i++) {
+					fontMap[firstTile+(i-firstChar)] = i;
 				}
+				break;
+			} case 1: {
+				for (int i=firstChar;i<=lastChar;i++) {
+					u16 tile;
+					fread(&tile, 2, 1, file);
+					fontMap[tile] = i;
+				}
+				break;
+			} case 2: {
+				u16 groupAmount;
+				fread(&groupAmount, 2, 1, file);
+				for (int i=0;i<groupAmount;i++) {
+					u16 charNo, tileNo;
+					fread(&charNo, 2, 1, file);
+					fread(&tileNo, 2, 1, file);
+					fontMap[tileNo] = charNo;
+				}
+				break;
 			}
 		}
-		questionMark = getCharIndex(0xFFFD);
-		if (questionMark == 0)
-			questionMark = getCharIndex('?');
-
-		// I feel like using hashtag's width for monospace is generally fine for most fonts.
-		setFixedWidthChar('#');
 	}
+setQuestionMark:
+	questionMark = getCharIndex(0xFFFD);
+	if (questionMark == 0)
+		questionMark = getCharIndex('?');
+
+	// I feel like using hashtag's width for monospace is generally fine for most fonts.
+	setFixedWidthChar('#');
 }
 
 FontGraphic::~FontGraphic(void) {
 	fclose(file);
+	if (fromCommonCache)
+		return;
 	if (fontTiles)
 		delete[] fontTiles;
 	if (fontWidths)

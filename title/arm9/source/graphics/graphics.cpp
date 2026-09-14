@@ -100,6 +100,9 @@ void vBlankHandler() {
 	}
 	if (controlTopBright) SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
 	if (controlBottomBright && !ms().macroMode) SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
+	if (twlMenuSplash) {
+		twlMenuVideo_topGraphicRender();
+	}
 	if (multiBuffer) {
 		if (multiBufferTop) {
 			dmaCopyWordsAsynch(0, frameBuffer[currentBuffer], BG_GFX, 0x18000);
@@ -275,7 +278,7 @@ void loadTitleGraphics() {
 	toncset16(BG_PALETTE, 0, 256);
 	toncset16(BG_PALETTE_SUB, 0, 256);
 
-	// Display TWiLightMenu++ logo
+	// Display Rocket Robz logo
 	LoadBMP();
 
 	twlMenuVideo_loadTopGraphics();

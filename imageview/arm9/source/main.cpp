@@ -24,6 +24,7 @@
 
 #include "myDSiMode.h"
 #include "common/inifile.h"
+#include "common/logging.h"
 #include "common/tonccpy.h"
 #include "language.h"
 
@@ -74,7 +75,7 @@ void loadROMselect() {
 			break;
 	}
 
-	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 
 	fadeType = true;	// Fade in from white
 }
@@ -182,7 +183,7 @@ static void mainLoop(void) {
 	mmStop();
 	*(int*)0x02003004 = 0;
 
-	runNdsFile(sys().isRunFromSD() ? "sd:/boot.nds" : "fat:/boot.nds", 0, NULL, sys().isRunFromSD(), true, true, false, true, true, false, -1);
+	runNdsFile(sys().isRunFromSD() ? "sd:/boot.nds" : "fat:/boot.nds", 0, NULL, sys().isRunFromSD(), true, true, false, true, true, false, -1, sys().commonCache());
 }
 
 //---------------------------------------------------------------------------------
@@ -191,6 +192,7 @@ int imageViewer(void) {
 	keysSetRepeat(25, 25);
 
 	ms().loadSettings();
+	logInit();
 
 	highFPS = ((sys().isRegularDS() && !sys().isDSPhat()) || ((dsiFeatures() || sdFound()) && ms().consoleModel < 2));
 	if (highFPS) {

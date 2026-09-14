@@ -788,7 +788,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 			swiWaitForVBlank();
 		}
 		s2RamAccessAlt(true);
-		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
+		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1, 0);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 13) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 		fcPath = replaceAll(ndsPath, "fat:/", dstwofat);
@@ -798,7 +798,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 			swiWaitForVBlank();
 		}
 		s2RamAccessAlt(true);
-		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
+		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1, 0);
 	} else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 			|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
 			|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)
@@ -814,7 +814,7 @@ void loadGameOnFlashcard(const char* ndsPath, bool dsGame) {
 		while (!screenFadedOut()) {
 			swiWaitForVBlank();
 		}
-		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1);
+		err = runNdsFile("fat:/YSMenu.nds", 0, NULL, sys().isRunFromSD(), true, true, true, runNds_boostCpu, runNds_boostVram, false, -1, 0);
 	} else {
 		while (!screenFadedOut()) {
 			swiWaitForVBlank();
@@ -850,7 +850,7 @@ void loadROMselect()
 	} else {
 		argarray.push_back((char*)(sys().isRunFromSD() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr"));
 	}
-	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+	runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 }
 
 /* bool ndsPreloaded = false;
@@ -901,6 +901,17 @@ bool preloadNds(const char* filename) {
 	arm9dst += 0x4000;
 	return false;
 } */
+
+bool extension(const std::string_view filename, const std::vector<std::string_view> extensions) {
+	for (std::string_view extension : extensions) {
+		// logPrint("Checking for %s extension in %s\n", extension.data(), filename.data());
+		if ((strlen(filename.data()) > strlen(extension.data())) && (strcasecmp(filename.substr(filename.size() - extension.size()).data(), extension.data()) == 0)) {
+			return true;
+		}
+	}
+
+	return false;
+}
 
 // From NTM
 // https://github.com/Epicpkmn11/NTM/blob/db69aca1b49733da51f64ee857ac9b861b1c468c/arm9/src/sav.c#L7-L93
@@ -1006,7 +1017,7 @@ void directCardLaunch() {
 			if (sdFound()) {
 				chdir("sd:/");
 			}
-			int err = runNdsFile ("/_nds/TWiLightMenu/dstwoLaunch.srldr", 0, NULL, sys().isRunFromSD(), true, true, true, DEFAULT_BOOST_CPU, DEFAULT_BOOST_VRAM, false, -1);
+			int err = runNdsFile ("/_nds/TWiLightMenu/dstwoLaunch.srldr", 0, NULL, sys().isRunFromSD(), true, true, true, DEFAULT_BOOST_CPU, DEFAULT_BOOST_VRAM, false, -1, 0);
 			char text[64];
 			snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 			ClearBrightness();
@@ -1016,7 +1027,7 @@ void directCardLaunch() {
 	}*/
 	SetWidescreen(NULL);
 	chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
-	int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, sys().isRunFromSD(), true, true, false, true, true, false, -1);
+	int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, sys().isRunFromSD(), true, true, false, true, true, false, -1, 0);
 	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	clearText(false);
@@ -1869,7 +1880,7 @@ int dsClassicMenu(void) {
 
 							if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
 								chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
-								int err = runNdsFile (pictochatPath, 0, NULL, sys().isRunFromSD(), true, true, true, false, false, false, ms().gameLanguage);
+								int err = runNdsFile (pictochatPath, 0, NULL, sys().isRunFromSD(), true, true, true, false, false, false, ms().gameLanguage, 0);
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText(false);
@@ -1946,7 +1957,7 @@ int dsClassicMenu(void) {
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", 10);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", 11);
 								bootstrapini.SaveIniFile(bootstrapinipath);
-								int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
+								int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1, 0);
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText(false);
@@ -2014,7 +2025,7 @@ int dsClassicMenu(void) {
 								for (int i = 0; i < 15; i++) swiWaitForVBlank();
 							} else if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
 								chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
-								int err = runNdsFile (dlplayPath, 0, NULL, sys().isRunFromSD(), true, true, true, false, false, false, ms().gameLanguage);
+								int err = runNdsFile (dlplayPath, 0, NULL, sys().isRunFromSD(), true, true, true, false, false, false, ms().gameLanguage, 0);
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText(false);
@@ -2058,7 +2069,7 @@ int dsClassicMenu(void) {
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_X", 10);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "REMAPPED_KEY_Y", 11);
 								bootstrapini.SaveIniFile(bootstrapinipath);
-								int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
+								int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1, 0);
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText(false);
@@ -2172,7 +2183,7 @@ int dsClassicMenu(void) {
 								return "fat:/_nds/TWiLightMenu/manual.srldr";
 							};
 							argarray.push_back(getLaunchArgument());
-							int err = runNdsFile(argarray[0], argarray.size(), &argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1);
+							int err = runNdsFile(argarray[0], argarray.size(), &argarray[0], sys().isRunFromSD(), true, false, false, true, true, false, -1, sys().commonCache());
 							iprintf (STR_START_FAILED_ERROR.c_str(), err);
 						}
 						break;
@@ -2601,7 +2612,7 @@ int dsClassicMenu(void) {
 					}
 
 					argarray.at(0) = (char *)ndsToBoot;
-					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1);
+					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, false, true, true, false, -1, 0);
 					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText(false);
@@ -3011,7 +3022,7 @@ int dsClassicMenu(void) {
 							}
 						} else {
 							argarray.at(0) = (char *)ndsToBoot;
-							err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
+							err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1, 0);
 						}
 						char text[64];
 						snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
@@ -3123,7 +3134,7 @@ int dsClassicMenu(void) {
 						runNds_boostVram = perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram;
 					}
 					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
-					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, false, language);
+					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], sys().isRunFromSD(), true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram, false, language, 0);
 					char text[64];
 					snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText(false);

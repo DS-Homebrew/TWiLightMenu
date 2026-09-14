@@ -10,6 +10,7 @@
 #include "common/tonccpy.h"
 #include "common/lodepng.h"
 #include "common/ColorLut.h"
+#include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
 #include "graphics/color.h"
 #include "sound.h"
@@ -91,6 +92,7 @@ extern bool fadeType;
 extern bool fadeColor;
 extern bool controlTopBright;
 
+static int currentFrame = 0;
 static int frameDelaySprite = 0;
 static bool frameDelaySpriteEven = true;	// For 24FPS or 48FPS
 static bool loadFrameSprite = true;
@@ -480,7 +482,10 @@ extern bool soundBankInited;
 mm_sound_effect bootJingle;
 
 void twlMenuVideo_topGraphicRender(void) {
-	if (!displayConsoleIcons) return;
+	if (!displayConsoleIcons) {
+		currentFrame++;
+		return;
+	}
 
 	if (!loadFrameSprite) {
 		frameDelaySprite++;
@@ -618,7 +623,6 @@ void twlMenuVideo_topGraphicRender(void) {
 		for (int i = 0; i < 12; i++) {
 			oamSetXY(&oamMain, i, zoomingIconXpos[i], zoomingIconYpos[i]);
 		}
-		while (REG_VCOUNT < 88); // Fix/Hide screen tearing
 		oamUpdate(&oamMain);
 
 		frameDelaySprite = 0;
@@ -642,6 +646,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			anniversaryTextYposMove = false;
 		}
 	}*/
+
+	currentFrame++;
 }
 
 void twlMenuVideo(void) {
@@ -821,6 +827,8 @@ void twlMenuVideo(void) {
 		}
 	}
 
+	const int frameCount = (highFPS ? (longVersion ? ((72 * 6) + 30) : (72 * 3)) : (longVersion ? ((60 * 6) + 35) : (60 * 3)));
+
 	if (highFPS) {
 		*(u32*)(0x2FFFD0C) = 0x43535046;
 		swiWaitForVBlank();
@@ -837,14 +845,14 @@ void twlMenuVideo(void) {
 	extern bool twlMenuSplash;
 	twlMenuSplash = true;
 
-	const int iEnd = (highFPS ? (longVersion ? ((72 * 6) + 30) : (72 * 3)) : (longVersion ? ((60 * 6) + 35) : (60 * 3)));
-	for (int i = 0; i < iEnd; i++) {
+	fontInit(true);
+
+	while (currentFrame < frameCount) {
 		scanKeys();
 		const int held = keysHeld();
 		if ((held & KEY_A) || (held & KEY_START) || (held & KEY_SELECT) || (held & KEY_TOUCH)) return;
 		//loadROMselectAsynch();
 		snd().updateStream();
-		twlMenuVideo_topGraphicRender();
 		swiWaitForVBlank();
 	}
 }

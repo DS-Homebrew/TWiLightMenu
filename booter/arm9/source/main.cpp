@@ -328,7 +328,9 @@ int main(int argc, char **argv) {
 		vector<char *> argarray;
 		argarray.push_back((char*)srldrPath);
 
-		int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, true, false, false, true, true, false, -1);
+		u32* commonCacheTag = (u32*)0x02FF3FFC;
+		u32* _lastUsedCommonCache = (u32*)0x02FF3FF4;
+		int err = runNdsFile(argarray[0], argarray.size(), (const char**)&argarray[0], true, true, false, false, true, true, false, -1, (*commonCacheTag == 0x414C5253) ? *_lastUsedCommonCache : 0);
 		bool twlmFound = (access("sd:/_nds/TWiLightMenu", F_OK) == 0);
 
 		waitBeforeFade = false;

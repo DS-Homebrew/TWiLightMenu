@@ -82,6 +82,7 @@ extern unsigned long dsMode;
 extern unsigned long loadFromRam;
 extern unsigned long language;
 extern unsigned long tscTgds;
+extern unsigned long commonCache;
 
 bool sdRead = false;
 
@@ -243,7 +244,7 @@ void resetMemory_ARM7 (void) {
 		memset_addrs_arm7(0x02004000, 0x02800000);
 		memset_addrs_arm7(0x02D00000, 0x02FF4000);
 	} else {
-		memset_addrs_arm7(0x02004000, dsiMode&&!dsMode ? 0x02FF4000 : 0x023F4000);
+		memset_addrs_arm7(0x02004000, (commonCache >= 0x02000000 && commonCache < 0x03000000) ? commonCache : (dsiMode&&!dsMode ? 0x02FF4000 : 0x023F4000));
 	}
 	*(u32*)(0x2FFFD9C) = 0;	// Clear exception handler
 

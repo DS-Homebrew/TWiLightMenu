@@ -72,6 +72,7 @@ extern unsigned long argStart;
 extern unsigned long argSize;
 extern unsigned long dsiSD;
 extern unsigned long dsiMode;
+extern unsigned long commonCache;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Firmware stuff
@@ -224,7 +225,7 @@ void resetMemory_ARM7 (void)
 	REG_IPC_FIFO_CR = 0;
 
 	memset_addrs_arm7(0x03800000 - 0x8000, 0x03800000 + 0xC000); // clear exclusive IWRAM
-	memset_addrs_arm7(0x02004000, 0x03000000 - 0xC000);	// clear part of EWRAM - except before bootstub
+	memset_addrs_arm7(0x02004000, (commonCache >= 0x02000000 && commonCache < 0x03000000) ? commonCache : (0x03000000 - 0xC000));	// clear part of EWRAM - except before bootstub
 
 	REG_IE = 0;
 	REG_IF = ~0;

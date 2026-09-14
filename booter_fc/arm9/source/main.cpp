@@ -79,8 +79,11 @@ int main(int argc, char **argv) {
 		vector<char *> argarray;
 		argarray.push_back((char*)(primaryIsSd ? "sd:/_nds/TWiLightMenu/main.srldr" : "fat:/_nds/TWiLightMenu/main.srldr"));
 
+		u32* commonCacheTag = (u32*)0x02FF3FFC;
+		u32* _lastUsedCommonCache = (u32*)0x02FF3FF4;
+
 		//iprintf(sdFound ? "Running from SD...\n" : "Running from flashcard...\n");
-		int err = runNdsFile (argarray[0], argarray.size(), (const char**)&argarray[0]);
+		int err = runNdsFile (argarray[0], argarray.size(), (const char**)&argarray[0], (*commonCacheTag == 0x414C5253) ? *_lastUsedCommonCache : 0);
 
 		consoleDemoInit();
 

@@ -35,6 +35,7 @@
 	.global loadFromRam
 	.global language
 	.global tscTgds
+	.global commonCache
 @---------------------------------------------------------------------------------
 	.align	4
 	.arm
@@ -69,6 +70,8 @@ loadFromRam:
 language:
 	.word	0
 tscTgds:
+	.word	0
+commonCache:
 	.word	0
 
 startUp:

@@ -84,6 +84,7 @@ dsiMode:
 #define LOADFROMRAM_OFFSET 44
 #define LANGUAGE_OFFSET 48
 #define TSC_TGDS_OFFSET 52
+#define COMMON_CACHE_OFFSET 56
 
 
 typedef signed int addr_t;
@@ -181,8 +182,25 @@ static bool dldiPatchLoader (void)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, const char* filename, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool lockScfg, bool boostCpu, bool boostVram, bool tscTgds, int language)
-{
+int runNds (
+	const void* loader,
+	u32 loaderSize,
+	u32 cluster,
+	bool initDisc,
+	bool dldiPatchNds,
+	bool loadFromRam,
+	const char* filename,
+	int argc,
+	const char** argv,
+	bool clearMasterBright,
+	bool dsModeSwitch,
+	bool lockScfg,
+	bool boostCpu,
+	bool boostVram,
+	bool tscTgds,
+	int language,
+	u32 commonCache
+) {
 	char* argStart;
 	u16* argData;
 	u16 argTempVal = 0;
@@ -215,6 +233,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	writeAddr ((data_t*) LCDC_BANK_C, LOADFROMRAM_OFFSET, loadFromRam);
 	writeAddr ((data_t*) LCDC_BANK_C, LANGUAGE_OFFSET, language);
 	writeAddr ((data_t*) LCDC_BANK_C, TSC_TGDS_OFFSET, tscTgds);
+	writeAddr ((data_t*) LCDC_BANK_C, COMMON_CACHE_OFFSET, commonCache);
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
 	writeAddr ((data_t*) LCDC_BANK_C, WANT_TO_PATCH_DLDI_OFFSET, dldiPatchNds);
@@ -401,10 +420,23 @@ int runUnlaunchDsi (const char* filename, u32 sector) {
 		fclose(gifFile);
 	}
 
-	return runNds (load_bin, load_bin_size, sector, true, false, true, filename, 0, NULL, true, false, false, true, true, false, -1);
+	return runNds (load_bin, load_bin_size, sector, true, false, true, filename, 0, NULL, true, false, false, true, true, false, -1, 0);
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv, bool isRunFromSD, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram, bool tscTgds, int language) {
+int runNdsFile (
+	const char* filename,
+	int argc,
+	const char** argv,
+	bool isRunFromSD,
+	bool dldiPatchNds,
+	bool clearMasterBright,
+	bool dsModeSwitch,
+	bool boostCpu,
+	bool boostVram,
+	bool tscTgds,
+	int language,
+	u32 commonCache
+) {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
@@ -453,7 +485,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool isRunFro
 	installBootStub(havedsiSD, isRunFromSD, dsModeSwitch);
 	#endif
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, filename, argc, argv, clearMasterBright, dsModeSwitch, lockScfg, boostCpu, boostVram, tscTgds, language);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, filename, argc, argv, clearMasterBright, dsModeSwitch, lockScfg, boostCpu, boostVram, tscTgds, language, commonCache);
 }
 
 /*
