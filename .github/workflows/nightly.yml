@@ -19,7 +19,7 @@ jobs:
     name: Build with Docker using devkitARM
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
           fetch-depth: 0
@@ -165,13 +165,13 @@ jobs:
           cp 7zfile/_nds/TWiLightMenu/extras/widescreen.pck ~/artifacts
       - name: Publish build to GH Actions
         if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: ~/artifacts/*
           name: build
       - name: Publish build to GH Actions (PR)
         if: ${{ success() && startsWith(github.ref, 'refs/pull') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: ~/artifacts/TWiLightMenu.7z
           name: build
