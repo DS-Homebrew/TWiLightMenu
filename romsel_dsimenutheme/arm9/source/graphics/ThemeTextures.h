@@ -374,6 +374,7 @@ private:
 	int folderTexID;
 	int cornerButtonTexID;
 	int smallCartTexID;
+	int smallCartFallbackTexID;
 
 	int progressTexID;
 	int dialogboxTexID;

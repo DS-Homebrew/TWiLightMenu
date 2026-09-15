@@ -370,6 +370,7 @@ public:
 	bool dsiWareToSD;
 	bool newSnesEmuVer;
 	bool smsGgInRam;
+	bool dlplayRsaPatch;
 	bool esrbRatingScreen;
 
 	int ak_viewMode;

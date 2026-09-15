@@ -36,6 +36,7 @@
 #include "DSpicoLauncher.h"
 #include "common/stringtool.h"
 #include "common/customLaunchers.h"
+#include "common/dlplayPatch.h"
 #include "common/systemdetails.h"
 #include "launch/launchExecutor.h"
 #include "common/tonccpy.h"
@@ -1225,7 +1226,7 @@ void findPictochatAndDownladPlay() {
 			}
 		}
 	}
-	if (isDSiMode() && sdFound() && ms().consoleModel == 0) {
+	if (isDSiMode() && sdFound() && (ms().consoleModel == 0 || ms().consoleModel >= 2)) { // 3DS: TWL NAND
 		mountNand();
 		if (access("nand:/", F_OK) == 0) {
 			for (int i = 0; i < 3; i++) {
@@ -1932,9 +1933,12 @@ int dsClassicMenu(void) {
 								std::vector<char*> argarray;
 								argarray.push_back(ndsToBoot);
 
+								char pictochatFullPath[sizeof(pictochatPath) + 4];
+								snprintf(pictochatFullPath, sizeof(pictochatFullPath), "%s:%s", sys().isRunFromSD() ? "sd" : "fat", pictochatPath);
+
 								const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 								CIniFile bootstrapini(bootstrapinipath);
-								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", pictochatFullPath);
 								bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
@@ -1990,6 +1994,17 @@ int dsClassicMenu(void) {
 							controlTopBright = false;
 							clearText(false);
 
+							char dlplayFullPath[sizeof(dlplayPath) + 4];
+							char patchedPath[256];
+							const char* bootPath = dlplayFullPath;
+							if (!dlplayReboot) {
+								snprintf(dlplayFullPath, sizeof(dlplayFullPath), "%s:%s", sys().isRunFromSD() ? "sd" : "fat", dlplayPath);
+								if (ms().dlplayRsaPatch) {
+									snprintf(patchedPath, sizeof(patchedPath), "%s:/_nds/dlplay_rsapatch.nds", sys().isRunFromSD() ? "sd" : "fat");
+									bootPath = dlplayGetBootPath(dlplayFullPath, patchedPath);
+								}
+							}
+
 							if (dlplayReboot) {
 								*(u32*)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
 								*(u16*)(0x02000304) = 0x1801;
@@ -2025,7 +2040,7 @@ int dsClassicMenu(void) {
 								for (int i = 0; i < 15; i++) swiWaitForVBlank();
 							} else if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
 								chdir(sys().isRunFromSD() ? "sd:/" : "fat:/");
-								int err = runNdsFile (dlplayPath, 0, NULL, sys().isRunFromSD(), true, true, true, false, false, false, ms().gameLanguage, 0);
+								int err = runNdsFile (bootPath, 0, NULL, sys().isRunFromSD(), true, true, true, false, false, false, ms().gameLanguage, 0);
 								char text[64];
 								snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 								clearText(false);
@@ -2046,7 +2061,7 @@ int dsClassicMenu(void) {
 
 								const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 								CIniFile bootstrapini(bootstrapinipath);
-								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", sys().isRunFromSD() ? "sd:/_nds/dlplay.nds" : "fat:/_nds/dlplay.nds");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", bootPath);
 								bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
