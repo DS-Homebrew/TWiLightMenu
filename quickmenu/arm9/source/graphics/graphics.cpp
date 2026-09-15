@@ -866,15 +866,21 @@ static void clockNeedleDraw(int angle, u32 length, u16 color) {
 }
 
 static void markerLoad(void) {
-	char filePath[256];
-	snprintf(filePath, sizeof(filePath), "nitro:/graphics/calendar/marker/%i.png", getFavoriteColor());
+	char filePath[40];
+	sprintf(filePath, "nitro:/graphics/calendar/marker.png");
 	FILE* file = fopen(filePath, "rb");
 
 	if (file) {
+		u8 pngImage[0x9C];
+		fread(pngImage, 1, 0x9C, file);
+		fseek(file, getFavoriteColor()*0xE, SEEK_CUR);
+		fread(pngImage+0x46, 1, 0xE, file);
+		fclose(file);
+
 		// Start loading
 		std::vector<unsigned char> image;
 		unsigned width, height;
-		lodepng::decode(image, width, height, filePath);
+		lodepng::decode(image, width, height, pngImage, 0x9C);
 		for (unsigned i=0;i<image.size()/4;i++) {
 			markerImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
@@ -882,8 +888,6 @@ static void markerLoad(void) {
 			}
 		}
 	}
-
-	fclose(file);
 }
 
 static void markerDraw(int x, int y) {
@@ -1255,15 +1259,21 @@ void topBgLoad(void) {
 void topBarLoad(void) {
 	if (ms().macroMode) return;
 
-	char filePath[256];
-	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", "topbar", getFavoriteColor());
+	char filePath[32];
+	sprintf(filePath, "nitro:/graphics/topbar.png");
 	FILE* file = fopen(filePath, "rb");
 
 	if (file) {
+		u8 pngImage[0x100];
+		fread(pngImage, 1, 0x100, file);
+		fseek(file, getFavoriteColor()*0x10, SEEK_CUR);
+		fread(pngImage+0x78, 1, 0x10, file);
+		fclose(file);
+
 		// Start loading
 		std::vector<unsigned char> image;
 		unsigned width, height;
-		lodepng::decode(image, width, height, filePath);
+		lodepng::decode(image, width, height, pngImage, 0x100);
 		for (unsigned i=0;i<image.size()/4;i++) {
 			bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 			if (colorTable) {
@@ -1282,8 +1292,6 @@ void topBarLoad(void) {
 			x++;
 		}
 	}
-
-	fclose(file);
 
 	char16_t username[11] = {0};
 	memcpy(username, useTwlCfg ? (s16 *)0x02000448 : PersonalData->name, 10 * sizeof(char16_t));
