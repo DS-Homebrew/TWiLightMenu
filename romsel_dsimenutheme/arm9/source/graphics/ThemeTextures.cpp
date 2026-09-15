@@ -62,7 +62,7 @@ uint boxArtWidth = 0, boxArtHeight = 0;
 ThemeTextures::ThemeTextures()
     : bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
       movingarrowTexID(0), launchdotTexID(0), startTexID(0), startbrdTexID(0), settingsTexID(0), manualTexID(0), braceTexID(0),
-      boxfullTexID(0), boxemptyTexID(0), folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0),
+      boxfullTexID(0), boxemptyTexID(0), folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), smallCartFallbackTexID(0), progressTexID(0),
       dialogboxTexID(0), wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1), _profileNameLoaded(false) {
 	// Overallocation, but thats fine,
 	// 0: Top, 1: Bottom, 2: Bottom Bubble, 3: Moving, 4: MovingLeft, 5: MovingRight
@@ -141,8 +141,51 @@ void ThemeTextures::loadCornerButtonImage(const Texture &tex, int arraysize, int
 	_cornerButtonImage = std::move(loadTexture(&cornerButtonTexID, tex, arraysize, sprW, sprH, GL_RGB16));
 }
 
+// Whether an icon of a 32px wide texture has no opaque pixels
+static bool isSmallCartIconEmpty(const Texture &tex, unsigned int icon) {
+	if ((tex.type() & TextureType::Compressed) || (icon + 1) * 32 > tex.texHeight()) {
+		return false;
+	}
+	const unsigned int rowSize = (tex.type() & TextureType::Paletted) ? 32 / 2 : 32 * sizeof(u16);
+	const u8 *pixels = tex.bytes() + icon * 32 * rowSize;
+	for (unsigned int i = 0; i < 32 * rowSize; i++) {
+		if (pixels[i] != 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
 void ThemeTextures::loadSmallCartImage(const Texture &tex) {
-	_smallCartImage = std::move(loadTexture(&smallCartTexID, tex, (32 / 16) * (256 / 32), 32, 32, GL_RGB16));
+	const unsigned int arraySize = (32 / 16) * (256 / 32);
+	_smallCartImage = std::move(loadTexture(&smallCartTexID, tex, arraySize, 32, 32, GL_RGB16));
+
+	if (ms().theme != TWLSettings::ETheme3DS || tex.texWidth() != 32) {
+		return;
+	}
+
+	// Older 3DS themes leave the icons added later (Pictochat, DS Download Play, Internet Browser) empty, so use the default theme's
+	const unsigned int iconCount = 256 / 32;
+	bool missingIcon[iconCount];
+	bool anyMissingIcon = false;
+	for (unsigned int i = 0; i < iconCount; i++) {
+		missingIcon[i] = (i >= tex.texHeight() / 32) || isSmallCartIconEmpty(tex, i);
+		anyMissingIcon |= missingIcon[i];
+	}
+	if (!anyMissingIcon) {
+		return;
+	}
+
+	const Texture fallbackTex(TFN_FALLBACK_GRF_SMALL_CART, "");
+	if (fallbackTex.texWidth() != 32) {
+		return;
+	}
+	unique_ptr<glImage[]> fallbackImage = loadTexture(&smallCartFallbackTexID, fallbackTex, arraySize, 32, 32, GL_RGB16);
+	for (unsigned int i = 0; i < iconCount && i < fallbackTex.texHeight() / 32; i++) {
+		if (missingIcon[i] && !isSmallCartIconEmpty(fallbackTex, i)) {
+			_smallCartImage[i] = fallbackImage[i];
+		}
+	}
 }
 
 void ThemeTextures::loadWirelessIcons(const Texture &tex) {
