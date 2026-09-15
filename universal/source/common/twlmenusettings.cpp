@@ -123,6 +123,7 @@ TWLSettings::TWLSettings()
 	dsiWareToSD = true;
 	newSnesEmuVer = false;
 	smsGgInRam = false;
+	dlplayRsaPatch = true;
 	esrbRatingScreen = false;
 
 	ak_viewMode = EViewInternal;
@@ -328,6 +329,7 @@ void TWLSettings::loadSettings()
 	dsiWareToSD = settingsini.GetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 	newSnesEmuVer = settingsini.GetInt("SRLOADER", "NEW_SNES_EMU_VER", newSnesEmuVer);
 	smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
+	dlplayRsaPatch = settingsini.GetInt("SRLOADER", "DLPLAY_RSA_PATCH", dlplayRsaPatch);
 	esrbRatingScreen = settingsini.GetInt("SRLOADER", "ESRB_RATING_SCREEN", esrbRatingScreen);
 
 	ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
@@ -510,6 +512,7 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 	settingsini.SetInt("SRLOADER", "DSIWARE_TO_SD", dsiWareToSD);
 	settingsini.SetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
+	settingsini.SetInt("SRLOADER", "DLPLAY_RSA_PATCH", dlplayRsaPatch);
 	settingsini.SetInt("SRLOADER", "ESRB_RATING_SCREEN", esrbRatingScreen);
 
 	settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);

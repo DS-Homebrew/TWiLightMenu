@@ -18,6 +18,7 @@
 
 #include "date.h"
 #include "fileCopy.h"
+#include "nand/nandio.h"
 
 #include "graphics/graphics.h"
 
@@ -90,6 +91,112 @@ extern const char* mainSrldrPath(const bool sdPath);
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char16_t hiyaNdsPath[] = u"sdmc:/hiya.dsi";
 char launcherPath[256];
+
+char pictochatPath[256];
+char dlplayPath[256];
+bool pictochatFound = false;
+bool dlplayFound = false;
+bool pictochatReboot = false;
+bool dlplayReboot = false;
+
+static const char* const pictochatApps[] = {
+	"484e4541/content/00000000.app",
+	"484e4543/content/00000000.app",
+	"484e454b/content/00000000.app",
+};
+
+static const char* const dlplayApps[] = {
+	"484e4441/content/00000001.app",
+	"484e4441/content/00000000.app",
+	"484e4443/content/00000000.app",
+	"484e444b/content/00000000.app",
+};
+
+/**
+ * Find a system app in "_nds", or on SDNAND, or copy it from DSi or 3DS TWL NAND to "_nds".
+ * @param apps Title paths under "title/00030005".
+ * @param ndsFilename Filename of the app in "_nds".
+ * @param path Set to the path of the found app.
+ * @return true if the app was found.
+ */
+static bool findSystemApp(const char* const* apps, int appCount, const char* ndsFilename, char* path) {
+	const char* ndsPath = sys().isRunFromSD() ? "sd:/_nds/" : "fat:/_nds/";
+
+	snprintf(path, 256, "%s%s", ndsPath, ndsFilename);
+	if (access(path, F_OK) == 0) {
+		return true;
+	}
+
+	if (ms().consoleModel == TWLSettings::EDSiDebug || !sdFound()) {
+		return false;
+	}
+
+	if (ms().consoleModel == TWLSettings::EDSiRetail) {
+		for (int i = 0; i < appCount; i++) {
+			snprintf(path, 256, "sd:/title/00030005/%s", apps[i]);
+			if (access(path, F_OK) == 0) {
+				return true;
+			}
+		}
+	}
+
+	if (!isDSiMode()) {
+		return false;
+	}
+
+	static bool nandInited = false;
+	static bool nandMounted = false;
+	if (!nandInited) {
+		nandMounted = fatMountSimple("nand", &io_dsi_nand) && (access("nand:/", F_OK) == 0);
+		nandInited = true;
+	}
+	if (!nandMounted) {
+		return false;
+	}
+
+	char srcPath[256];
+	for (int i = 0; i < appCount; i++) {
+		snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/%s", apps[i]);
+		if (access(srcPath, F_OK) == 0) {
+			snprintf(path, 256, "%s%s", ndsPath, ndsFilename);
+			remove(path);
+			return (fcopy(srcPath, path) == 0);	// Copy from NAND
+		}
+	}
+	return false;
+}
+
+static void findPictochatAndDownloadPlay(void) {
+	if (isDSiMode() && sys().arm7SCFGLocked()) {
+		// The NAND titles get booted through the Launcher instead
+		snprintf(pictochatPath, sizeof(pictochatPath), "%s", sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds");
+		pictochatFound = (access(pictochatPath, F_OK) == 0);
+		if (!pictochatFound && ms().consoleModel < 2) {
+			pictochatFound = true;
+			pictochatReboot = true;
+		}
+		dlplayFound = true;
+		dlplayReboot = true;
+	} else {
+		pictochatFound = findSystemApp(pictochatApps, sizeof(pictochatApps) / sizeof(pictochatApps[0]), "pictochat.nds", pictochatPath);
+		dlplayFound = findSystemApp(dlplayApps, sizeof(dlplayApps) / sizeof(dlplayApps[0]), "dlplay.nds", dlplayPath);
+		if (!dlplayFound && isDSiMode() && ms().consoleModel >= 2) {
+			dlplayFound = true;
+			dlplayReboot = true;
+		}
+	}
+
+	if (pictochatReboot) {
+		logPrint("Pictochat found (reboot)\n");
+	} else if (pictochatFound) {
+		logPrint("Pictochat found: %s\n", pictochatPath);
+	}
+	if (dlplayReboot) {
+		logPrint("DS Download Play found (reboot)\n");
+	} else if (dlplayFound) {
+		logPrint("DS Download Play found: %s\n", dlplayPath);
+	}
+}
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -1142,6 +1249,10 @@ int dsiMenuTheme(void) {
 		useRumble = my_isRumbleInserted();
 		logPrint(useRumble ? "Rumble found\n" : "Rumble not found\n");
 	}
+
+	// Before any texture is loaded, as the NAND key from ARM7 is kept in main RAM
+	findPictochatAndDownloadPlay();
+
 	tfn(); //
 	tc().loadConfig();
 	tex().videoSetup(); // allocate texture pointers

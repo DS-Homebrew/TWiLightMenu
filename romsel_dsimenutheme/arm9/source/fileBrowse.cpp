@@ -34,6 +34,7 @@
 #include "common/twlmenusettings.h"
 #include "common/bootstrapsettings.h"
 #include "common/customLaunchers.h"
+#include "common/dlplayPatch.h"
 #include "launch/launchExecutor.h"
 #include "common/flashcard.h"
 #include "common/inifile.h"
@@ -692,10 +693,51 @@ void launchSettings(void) {
 
 extern void writeSoftResetId(void);
 
-void launchPictochat(const vector<DirEntry>& dirContents) {
-	const char* pictochatPath = sys().isRunFromSD() ? "sd:/_nds/pictochat.nds" : "fat:/_nds/pictochat.nds";
+extern char pictochatPath[256];
+extern char dlplayPath[256];
+extern bool pictochatFound;
+extern bool dlplayFound;
+extern bool pictochatReboot;
+extern bool dlplayReboot;
 
-	if (access(pictochatPath, F_OK) != 0) {
+/**
+ * Reboot into a DSi system title, booted via Launcher.
+ * @param tidLow Low title ID of the title, with its last byte set to the console region.
+ */
+static void rebootIntoSystemTitle(u32 tidLow) {
+	tidLow &= ~0xFF;
+	switch (ms().sysRegion) {
+		case 4:
+			tidLow |= 'C';
+			break;
+		case 5:
+			tidLow |= 'K';
+			break;
+		default:
+			tidLow |= 'A';
+	}
+
+	*(u32*)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
+	*(u16*)(0x02000304) = 0x1801;
+	*(u32*)(0x02000308) = tidLow;
+	*(u32*)(0x0200030C) = 0x00030005;
+	*(u32*)(0x02000310) = tidLow;
+	*(u32*)(0x02000314) = 0x00030005;
+	*(u32*)(0x02000318) = 0x00000017;
+	*(u32*)(0x0200031C) = 0x00000000;
+	*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
+
+	if (ms().consoleModel < 2) {
+		unlaunchSetHiyaBoot();
+	}
+
+	DC_FlushAll();						// Make reboot not fail
+	fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+}
+
+void launchPictochat(const vector<DirEntry>& dirContents) {
+	if (!pictochatFound) {
 		if (ms().theme == TWLSettings::EThemeSaturn) {
 			snd().playStartup();
 			fadeType = false;	   // Fade to black
@@ -769,7 +811,9 @@ void launchPictochat(const vector<DirEntry>& dirContents) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch Pictochat
-	if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
+	if (pictochatReboot) {
+		rebootIntoSystemTitle(0x484E4541);	// "HNEA"
+	} else if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
 		int err = runNdsFile(pictochatPath, 0, NULL, sys().isRunFromSD(), true, true, true, false, false, false, ms().gameLanguage, 0);
 		char text[32];
 		snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
@@ -859,9 +903,7 @@ void launchPictochat(const vector<DirEntry>& dirContents) {
 }
 
 void launchDownloadPlay(const vector<DirEntry>& dirContents) {
-	const char* dlplayPath = sys().isRunFromSD() ? "sd:/_nds/dlplay.nds" : "fat:/_nds/dlplay.nds";
-
-	if ((!isDSiMode() || ms().consoleModel < 2) && access(dlplayPath, F_OK) != 0) {
+	if (!dlplayFound) {
 		if (ms().theme == TWLSettings::EThemeSaturn) {
 			snd().playStartup();
 			fadeType = false;	   // Fade to black
@@ -935,41 +977,17 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 	snd().stopStream();
 	ms().saveSettings();
 	// Launch DS Download Play
-	if (isDSiMode() && (sys().arm7SCFGLocked() || (ms().consoleModel >= 2 && access(dlplayPath, F_OK) != 0))) {
-		*(u32*)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
-		*(u16*)(0x02000304) = 0x1801;
+	char patchedPath[256];
+	const char* bootPath = dlplayPath;
+	if (!dlplayReboot && ms().dlplayRsaPatch) {
+		snprintf(patchedPath, sizeof(patchedPath), "%s", sys().isRunFromSD() ? "sd:/_nds/dlplay_rsapatch.nds" : "fat:/_nds/dlplay_rsapatch.nds");
+		bootPath = dlplayGetBootPath(dlplayPath, patchedPath);
+	}
 
-		switch (ms().sysRegion) {
-			case 4:
-				*(u32*)(0x02000308) = 0x484E4443;
-				*(u32*)(0x0200030C) = 0x00030005;
-				*(u32*)(0x02000310) = 0x484E4443;
-				break;
-			case 5:
-				*(u32*)(0x02000308) = 0x484E444B;
-				*(u32*)(0x0200030C) = 0x00030005;
-				*(u32*)(0x02000310) = 0x484E444B;
-				break;
-			default:
-				*(u32*)(0x02000308) = 0x484E4441;	// "HNDA"
-				*(u32*)(0x0200030C) = 0x00030005;
-				*(u32*)(0x02000310) = 0x484E4441;	// "HNDA"
-		}
-
-		*(u32*)(0x02000314) = 0x00030005;
-		*(u32*)(0x02000318) = 0x00000017;
-		*(u32*)(0x0200031C) = 0x00000000;
-		*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
-
-		if (ms().consoleModel < 2) {
-			unlaunchSetHiyaBoot();
-		}
-
-		DC_FlushAll();						// Make reboot not fail
-		fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
-		for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	if (dlplayReboot) {
+		rebootIntoSystemTitle(0x484E4441);	// "HNDA"
 	} else if ((!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
-		int err = runNdsFile(dlplayPath, 0, NULL, sys().isRunFromSD(), true, true, true, false, false, false, ms().gameLanguage, 0);
+		int err = runNdsFile(bootPath, 0, NULL, sys().isRunFromSD(), true, true, true, false, false, false, ms().gameLanguage, 0);
 		char text[32];
 		snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 		fadeType = true;
@@ -1001,7 +1019,7 @@ void launchDownloadPlay(const vector<DirEntry>& dirContents) {
 
 		const char *bootstrapinipath = (sys().isRunFromSD() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
 		CIniFile bootstrapini(bootstrapinipath);
-		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", dlplayPath);
+		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", bootPath);
 		bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
