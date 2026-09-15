@@ -1041,7 +1041,7 @@ int settingsMode(void)
 	if (sys().isRegularDS()) {
 		loadGbaBorderList();
 	}
-	if (dsiFeatures() && ms().consoleModel == 0) {
+	if (dsiFeatures() && ms().consoleModel == 0 && ms().unlaunchSettings) {
 		loadUnlaunchBgList();
 	}
 	loadFontList();
@@ -1466,7 +1466,7 @@ int settingsMode(void)
 	}
 
 	SettingsPage unlaunchPage(STR_UNLAUNCH_SETTINGS);
-	if (sdFound() && ms().consoleModel == 0) {
+	if (dsiFeatures() && ms().consoleModel == 0 && ms().unlaunchSettings) {
 		unlaunchPage
 			.option(STR_BACKGROUND,
 				STR_DESCRIPTION_UNLAUNCH_BG,
@@ -1699,7 +1699,7 @@ int settingsMode(void)
 		.addPage(bootstrapPage);
 	if (!gbaR3Found)
 		gui().addPage(gbar2Page);
-	if (sdFound() && ms().consoleModel == 0)
+	if (dsiFeatures() && ms().consoleModel == 0 && ms().unlaunchSettings)
 		gui().addPage(unlaunchPage);
 	if (gamesPageVisible)
 		gui().addPage(gamesPage);

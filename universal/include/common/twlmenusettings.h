@@ -350,6 +350,7 @@ public:
 	std::string dsi_theme;
 	std::string _3ds_theme;
 	std::string gbaBorder;
+	bool unlaunchSettings;
 	std::string unlaunchBg;
 	int removeLauncherPatches;
 	std::string font;

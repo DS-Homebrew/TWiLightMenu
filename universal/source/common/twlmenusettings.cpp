@@ -8,6 +8,7 @@
 #include <nds/arm9/dldi.h>
 #include <string.h>
 
+bool *unlaunchSettingsPtr;
 const char *charUnlaunchBg;
 int *removeLauncherPatchesPtr;
 
@@ -102,6 +103,7 @@ TWLSettings::TWLSettings()
 	_3ds_theme = "light";
 
 	gbaBorder = "default.png";
+	unlaunchSettings = false;
 	unlaunchBg = "default.gif";
 	removeLauncherPatches = 2; // 2 == 'Default', keep splash/sound but allow the rest of the patches
 	font = "default";
@@ -303,6 +305,8 @@ void TWLSettings::loadSettings()
 	_3ds_theme = settingsini.GetString("SRLOADER", "3DS_THEME", _3ds_theme);
 
 	gbaBorder = settingsini.GetString("SRLOADER", "GBA_BORDER", gbaBorder);
+	unlaunchSettings = settingsini.GetInt("SRLOADER", "UNLAUNCH_SETTINGS", unlaunchSettings);
+	unlaunchSettingsPtr = &unlaunchSettings;
 	unlaunchBg = settingsini.GetString("SRLOADER", "UNLAUNCH_BG", unlaunchBg);
 	charUnlaunchBg = unlaunchBg.c_str();
 	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_LAUNCHER_PATCHES", removeLauncherPatches);
