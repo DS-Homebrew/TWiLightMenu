@@ -1269,7 +1269,7 @@ int akTheme(void) {
 			stop();
 		} else {
 			std::vector<std::string_view> extensionList = {
-				".nds", ".dsi", ".ids", ".srl", ".app", ".argv" // NDS
+				".nds", ".ndz", ".dsi", ".ids", ".srl", ".app", ".argv" // NDS
 			};
 
 			// Extensions with a launcher config that can launch here. Added before the
@@ -1703,7 +1703,7 @@ int akTheme(void) {
 			} else
 
 			// Launch .nds directly or via nds-bootstrap
-			if (extension(filename, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+			if (extension(filename, {".nds", ".ndz", ".dsi", ".ids", ".srl", ".app"})) {
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				bool dsModeSwitch = false;
@@ -1735,7 +1735,7 @@ int akTheme(void) {
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
-				if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && isHomebrew[cursorPosOnScreen] && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
+				if (!isNdz[cursorPosOnScreen] && !ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && isHomebrew[cursorPosOnScreen] && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
 					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 					ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
@@ -1745,7 +1745,7 @@ int akTheme(void) {
 
 					unlaunchRomBoot(argarray[0]);
 				} else if (useBackend) {
-					if ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (isDSiMode() || romUnitCode[cursorPosOnScreen] < 3)) {
+					if (isNdz[cursorPosOnScreen] || ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (isDSiMode() || romUnitCode[cursorPosOnScreen] < 3))) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 						std::string ramdiskname = replaceAll(filename, typeToReplace, getImgExtension(perGameSettings_ramDiskNo));
@@ -1813,7 +1813,7 @@ int akTheme(void) {
 						displayDiskIcon(!sys().isRunFromSD());
 						ms().saveSettings();
 
-						int err = picoLaunchRom(path, savepath);
+						int err = picoLaunchRom(path, savepath, !isNdz[cursorPosOnScreen]);
 						displayDiskIcon(false);
 
 						char text[32];

@@ -13,6 +13,6 @@
 
 #include "common/picoLoader7.h"
 
-extern int picoLaunchRom(std::string romPath, std::string savePath);
+extern int picoLaunchRom(std::string romPath, std::string savePath, bool useCheats);
 
 #endif

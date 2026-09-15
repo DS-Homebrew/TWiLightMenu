@@ -306,6 +306,7 @@ extern char gameTid[5];
 extern u8 romVersion;
 extern u8 romUnitCode;
 extern u32 a7mbk6;
+extern bool isNdz;
 extern bool isDSiWare;
 extern bool isHomebrew;
 extern bool isModernHomebrew;		// false == No DSi-Extended header, true == Has DSi-Extended header

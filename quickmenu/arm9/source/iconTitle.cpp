@@ -312,6 +312,7 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnrWirelessIcon[num] = 0;
+	isNdz[num] = false;
 	isDSiWare[num] = false;
 	isHomebrew[num] = true;
 	isModernHomebrew[num] = true;
@@ -493,7 +494,7 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 		}
 		// clean up the allocated line
 		free(line);
-	} else if ((strcmp(name, "slot1") == 0) || extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+	} else if ((strcmp(name, "slot1") == 0) || extension(name, {".nds", ".ndz", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp = NULL;
 		int ret;
@@ -530,36 +531,64 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 				}
 			}
 
+			isNdz[num] = (memcmp(ndsHeader.gameTitle, "NDZ1", 4) == 0);
+			if (isNdz[num]) {
+				fseek(fp, 0x2410, SEEK_SET);
+				fread(ndsHeader.gameCode, 1, 4, fp);
+				fseek(fp, 0x2418, SEEK_SET);
+				fread(&ndsHeader.headerCRC16, sizeof(u16), 1, fp);
+			}
+
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
-			romVersion[num] = ndsHeader.romversion;
-			unitCode[num] = ndsHeader.unitCode;
+			if (isNdz[num]) {
+				if (gameTid[num][0] == 'D') {
+					unitCode[num] = 0x03;
+				} else if (gameTid[num][0] == 'V'
+				 || strncmp(gameTid[num], "IRB", 3) == 0 // Pokémon Gen 5
+				 || strncmp(gameTid[num], "IRA", 3) == 0
+				 || strncmp(gameTid[num], "IRE", 3) == 0
+				 || strncmp(gameTid[num], "IRD", 3) == 0
+				) {
+					unitCode[num] = 0x02;
+				} else {
+					unitCode[num] = 0;
+				}
+			} else {
+				romVersion[num] = ndsHeader.romversion;
+				unitCode[num] = ndsHeader.unitCode;
+			}
 			headerCRC[num] = ndsHeader.headerCRC16;
 
-			fseek(fp, ndsHeader.arm9romOffset + ((strncmp(gameTid[num], "BIG", 3) == 0) ? 0x02000800 : ndsHeader.arm9executeAddress) - ndsHeader.arm9destination, SEEK_SET);
-			// "Battle/Combat of Giants: Mutant Insects" (TID: BIG) has code that is run before the actual SDK boot code
-			fread(arm9StartSig, sizeof(u32), 4, fp);
-			if ((arm9StartSig[0] == 0xE3A0C301 || (arm9StartSig[0] >= 0xEA000000 && arm9StartSig[0] < 0xEC000000 /* If title contains cracktro or extra splash */))
-			  && arm9StartSig[1] == 0xE58CC208) {
-				// Title seems to be developed with Nintendo SDK, verify
-				if ((arm9StartSig[2] >= 0xEB000000 && arm9StartSig[2] < 0xEC000000) // SDK 2 & TWL SDK 5
-				 && (arm9StartSig[3] >= 0xE3A00000 && arm9StartSig[3] < 0xE3A01000)) {
-					isHomebrew[num] = false;
-					isModernHomebrew[num] = false;
-				} else
-				if (arm9StartSig[2] == 0xE1DC00B6 // SDK 3-5
-				 && arm9StartSig[3] == 0xE3500000) {
-					isHomebrew[num] = false;
-					isModernHomebrew[num] = false;
-				} else
-				if (arm9StartSig[2] == 0xEAFFFFFF // SDK 4 (HM DS Cute)
-				 && arm9StartSig[3] == 0xE1DC00B6) {
+			if (isNdz[num]) {
+				isHomebrew[num] = false;
+				isModernHomebrew[num] = false;
+			} else {
+				fseek(fp, ndsHeader.arm9romOffset + ((strncmp(gameTid[num], "BIG", 3) == 0) ? 0x02000800 : ndsHeader.arm9executeAddress) - ndsHeader.arm9destination, SEEK_SET);
+				// "Battle/Combat of Giants: Mutant Insects" (TID: BIG) has code that is run before the actual SDK boot code
+				fread(arm9StartSig, sizeof(u32), 4, fp);
+				if ((arm9StartSig[0] == 0xE3A0C301 || (arm9StartSig[0] >= 0xEA000000 && arm9StartSig[0] < 0xEC000000 /* If title contains cracktro or extra splash */))
+				  && arm9StartSig[1] == 0xE58CC208) {
+					// Title seems to be developed with Nintendo SDK, verify
+					if ((arm9StartSig[2] >= 0xEB000000 && arm9StartSig[2] < 0xEC000000) // SDK 2 & TWL SDK 5
+					 && (arm9StartSig[3] >= 0xE3A00000 && arm9StartSig[3] < 0xE3A01000)) {
+						isHomebrew[num] = false;
+						isModernHomebrew[num] = false;
+					} else
+					if (arm9StartSig[2] == 0xE1DC00B6 // SDK 3-5
+					 && arm9StartSig[3] == 0xE3500000) {
+						isHomebrew[num] = false;
+						isModernHomebrew[num] = false;
+					} else
+					if (arm9StartSig[2] == 0xEAFFFFFF // SDK 4 (HM DS Cute)
+					 && arm9StartSig[3] == 0xE1DC00B6) {
+						isHomebrew[num] = false;
+						isModernHomebrew[num] = false;
+					}
+				} else if (strncmp(gameTid[num], "HNA", 3) == 0) {
+					// Modcrypted
 					isHomebrew[num] = false;
 					isModernHomebrew[num] = false;
 				}
-			} else if (strncmp(gameTid[num], "HNA", 3) == 0) {
-				// Modcrypted
-				isHomebrew[num] = false;
-				isModernHomebrew[num] = false;
 			}
 
 			if (isHomebrew[num]) {
@@ -584,15 +613,17 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 				 || (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000))) {
 					isModernHomebrew[num] = false; // Homebrew is old (requires a DLDI driver to read from SD)
 				}
-			} else if (ndsHeader.unitCode != 0 && (ndsHeader.accessControl & BIT(4))) {
+			} else if (!isNdz[num] && ndsHeader.unitCode != 0 && (ndsHeader.accessControl & BIT(4))) {
 				isDSiWare[num] = true; // Is a DSiWare game
 			}
 		}
 
-		if (ndsHeader.dsi_flags & BIT(4))
-			bnrWirelessIcon[num] = 1;
-		else if (ndsHeader.dsi_flags & BIT(3))
-			bnrWirelessIcon[num] = 2;
+		if (!isNdz[num]) {
+			if (ndsHeader.dsi_flags & BIT(4))
+				bnrWirelessIcon[num] = 1;
+			else if (ndsHeader.dsi_flags & BIT(3))
+				bnrWirelessIcon[num] = 2;
+		}
 
 		if (customIcon[num] == 2) { // custom banner bin
 			// we're done early
@@ -609,7 +640,7 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 			memcpy(paletteCopy, ndsBanner.palette, sizeof(paletteCopy));
 		}
 
-		if (ndsHeader.bannerOffset == 0) {
+		if (!isNdz[num] && ndsHeader.bannerOffset == 0) {
 			if (!isSlot1)
 				fclose(fp);
 
@@ -646,7 +677,8 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 				return;
 			}
 		} else {
-			ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
+			const u32 bannerOffset = isNdz[num] ? 0x10 : ndsHeader.bannerOffset;
+			ret = fseek(fp, bannerOffset, SEEK_SET);
 			if (ret == 0)
 				ret = fread(&ndsBanner, NDS_BANNER_SIZE_DSi, 1, fp); // read if seek succeed
 			else
@@ -657,7 +689,7 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 				// animation data left behind by the previously loaded ROM.
 				toncset(ndsBanner.dsi_icon, 0, DSI_BANNER_ANIME_SIZE);
 				// try again, but using regular banner size
-				ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
+				ret = fseek(fp, bannerOffset, SEEK_SET);
 				if (ret == 0)
 					ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp); // read if seek succeed
 				else
@@ -708,7 +740,7 @@ void getGameInfo(int num, bool isDir, const char* name, bool fromArgv)
 			return;
 		}
 
-		if (ndsHeader.dsi_flags & BIT(2)) {
+		if (!isNdz[num] && (ndsHeader.dsi_flags & BIT(2))) {
 			std::string bnrPath;
 			std::string altBnrPath;
 			{

@@ -547,23 +547,31 @@ void lastRunROM()
 		loadPerGameSettings(filename);
 
 		bool dsiBinariesFound = true;
-		char game_TID[5];
+		char game_TID[5] = {0};
 		u8 unitCode = 0;
 
 		FILE *f_nds_file = fopen(filename.c_str(), "rb");
-		dsiBinariesFound = checkDsiBinaries(f_nds_file);
-		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameTitle), SEEK_SET);
 		fread(game_TID, 1, 4, f_nds_file);
-		fseek(f_nds_file, 0x12, SEEK_SET);
-		fread(&unitCode, 1, 1, f_nds_file);
-		game_TID[4] = 0;
+		const bool isNdz = (memcmp(game_TID, "NDZ1", 4) == 0);
+
+		if (isNdz) {
+			fseek(f_nds_file, 0x2410, SEEK_SET);
+			fread(game_TID, 1, 4, f_nds_file);
+		} else {
+			dsiBinariesFound = checkDsiBinaries(f_nds_file);
+			fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+			fread(game_TID, 1, 4, f_nds_file);
+			fseek(f_nds_file, 0x12, SEEK_SET);
+			fread(&unitCode, 1, 1, f_nds_file);
+		}
 
 		fclose(f_nds_file);
 
-		if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && ms().homebrewBootstrap && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
+		if (!isNdz && !ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && ms().homebrewBootstrap && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
 			unlaunchRomBoot(ms().romPath[ms().previousUsedDevice]);
 		} else
-		if ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (isDSiMode() || unitCode < 3)) {
+		if (isNdz || ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (isDSiMode() || unitCode < 3))) {
 			std::string savepath;
 
 			std::string typeToReplace = filename.substr(filename.rfind('.'));
@@ -619,7 +627,7 @@ void lastRunROM()
 				}
 			}
 
-			err = picoLaunchRom(ms().romPath[ms().previousUsedDevice], savepath);
+			err = picoLaunchRom(ms().romPath[ms().previousUsedDevice], savepath, !isNdz);
 		} else
 		if (((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) && !ms().homebrewBootstrap) || !ms().previousUsedDevice || (dsiFeatures() && unitCode > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 		|| (ms().previousUsedDevice && !ms().kernelUseable)

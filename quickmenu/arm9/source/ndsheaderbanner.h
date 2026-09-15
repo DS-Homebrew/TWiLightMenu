@@ -315,6 +315,7 @@ extern bool isDirectory[2];
 extern eROMType bnrRomType[2];
 extern bool bnriconisDSi[2];
 extern int bnrWirelessIcon[2];		// 0 = None, 1 = Local, 2 = WiFi
+extern bool isNdz[2];
 extern bool isDSiWare[2];
 extern bool isHomebrew[2];
 extern bool isModernHomebrew[2];		// false == No DSi-Extended header, true == Has DSi-Extended header

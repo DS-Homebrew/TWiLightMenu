@@ -24,7 +24,7 @@ static int sAddonConfigCount[4] = {0};
 
 // The Nintendo DS binaries, which are always launched by the menus' own code
 static const char *const kNdsFamilyExtensions[] = {
-	".nds", ".dsi", ".ids", ".srl", ".app", ".argv"
+	".nds", ".ndz", ".dsi", ".ids", ".srl", ".app", ".argv"
 };
 
 // ICON names, indexed by bnrRomType number minus one

@@ -79,7 +79,7 @@ static bool prepareCheats(std::string romPath) {
     return false;
 }
 
-int picoLaunchRom(std::string romPath, std::string savePath) {
+int picoLaunchRom(std::string romPath, std::string savePath, bool useCheats) {
 	const char picoLoader7Path[] = "fat:/_pico/picoLoader7.bin";
 	const char picoLoader9Path[] = "fat:/_pico/picoLoader9.bin";
 
@@ -103,7 +103,9 @@ int picoLaunchRom(std::string romPath, std::string savePath) {
 	strcpy(sLoadParams.romPath, romPath.c_str());
 	strcpy(sLoadParams.savePath, savePath.c_str());
 
-	const bool useCheats = prepareCheats(romPath);
+	if(useCheats){
+		useCheats = prepareCheats(romPath);
+	}
 
 	fseek(loader9, 0, SEEK_END);
 	auto picoLoader9Size = ftell(loader9);

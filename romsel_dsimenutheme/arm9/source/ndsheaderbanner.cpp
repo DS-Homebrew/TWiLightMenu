@@ -576,14 +576,15 @@ int bannerFlip[41] = {GL_FLIP_NONE};
 int bannerFlipPrev[41] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
-bool isValid[40] = {false};
-bool isTwlm[40] = {false};
-bool isUnlaunch[40] = {false};
+bool isValid[41] = {false};
+bool isTwlm[41] = {false};
+bool isUnlaunch[41] = {false};
 bool isDirectory[40] = {false};
 bool bnrSysSettings[41] = {false};
 int bnrRomType[41] = {0};
 bool bnriconisDSi[41] = {false};
 int bnrWirelessIcon[41] = {0}; // 0 = None, 1 = Local, 2 = WiFi
+bool isNdz[41] = {false};
 bool isDSiWare[41] = {false};
 bool isHomebrew[41] = {false};
 bool isModernHomebrew[41] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header

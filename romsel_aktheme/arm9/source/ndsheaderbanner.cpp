@@ -717,6 +717,7 @@ char gameTid[8][5] = {0};
 u8 romVersion[8] = {0};
 u8 romUnitCode[8] = {0};
 u32 a7mbk6[8] = {0};
+bool isNdz[8] = {false};
 bool isDSiWare[8] = {false};
 bool isHomebrew[8] = {false};
 bool isModernHomebrew[8] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header

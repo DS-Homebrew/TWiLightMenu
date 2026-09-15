@@ -611,7 +611,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 	u32 SDKVersion = 0;
 	u8 sdkSubVer = 0;
 	char sdkSubVerChar[8] = {0};
-	if (bnrRomType[CURPOS] == 0 && (memcmp(gameTid[CURPOS], "HND", 3) == 0 || memcmp(gameTid[CURPOS], "HNE", 3) == 0 || !isHomebrew[CURPOS])) {
+	if (!isNdz[CURPOS] && bnrRomType[CURPOS] == 0 && (memcmp(gameTid[CURPOS], "HND", 3) == 0 || memcmp(gameTid[CURPOS], "HNE", 3) == 0 || !isHomebrew[CURPOS])) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		tonccpy(&sdkSubVer, (u8*)&SDKVersion+2, 1);
 		sprintf(sdkSubVerChar, "%d", sdkSubVer);
@@ -628,7 +628,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 	u32 pubSize = 0;
 	u32 prvSize = 0;
 	bool usesCloneboot = false;
-	if (bnrRomType[CURPOS] == 0) {
+	if (!isNdz[CURPOS] && bnrRomType[CURPOS] == 0) {
 		fseek(f_nds_file, 0x20, SEEK_SET);
 		fread(&arm9off, sizeof(u32), 1, f_nds_file);
 		fseek(f_nds_file, 0x2C, SEEK_SET);
@@ -694,11 +694,11 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 	}*/
 	bool runInShown = false;
 
-	const bool useBootstrap = (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap));
-	const bool usePicoLoader = (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader));
+	const bool useBootstrap = !isNdz[CURPOS] && (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap));
+	const bool usePicoLoader = isNdz[CURPOS] || (perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader));
 	bool showCheats = ((useBootstrap || usePicoLoader || unitCode[CURPOS] == 3
 	|| !ms().kernelUseable
-	|| !ms().secondaryDevice) && bnrRomType[CURPOS] == 0 && !isHomebrew[CURPOS] && !isDSiWare[CURPOS]
+	|| !ms().secondaryDevice) && !isNdz[CURPOS] && bnrRomType[CURPOS] == 0 && !isHomebrew[CURPOS] && !isDSiWare[CURPOS]
 	&& memcmp(gameTid[CURPOS], "HND", 3) != 0
 	&& memcmp(gameTid[CURPOS], "HNE", 3) != 0);
 
@@ -805,7 +805,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			donorRomTextShown = false;
 		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games
-		const bool bootstrapEnabled = (useBootstrap || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && unitCode[CURPOS] == 3) || !ms().secondaryDevice);
+		const bool bootstrapEnabled = !isNdz[CURPOS] && (useBootstrap || (dsiFeatures() && unitCode[CURPOS] > 0) || (ms().secondaryDevice && unitCode[CURPOS] == 3) || !ms().secondaryDevice);
 		if (bootstrapEnabled) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
@@ -818,12 +818,12 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
 		}
-		if (((dsiFeatures() && ((useBootstrap && isDSiMode()) || unitCode[CURPOS] > 0) && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_boostCpu) {
+		if (!isNdz[CURPOS] && ((dsiFeatures() && ((useBootstrap && isDSiMode()) || unitCode[CURPOS] > 0) && !bs().b4dsMode) || !ms().secondaryDevice) && !blacklisted_boostCpu) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 			runInShown = true;
 		}
-		if ((dsiFeatures() || !ms().secondaryDevice) && unitCode[CURPOS] < 3) {
+		if (!isNdz[CURPOS] && (dsiFeatures() || !ms().secondaryDevice) && unitCode[CURPOS] < 3) {
 			if (!blacklisted_boostCpu) {
 				perGameOps++;
 				perGameOp[perGameOps] = 3;	// ARM9 CPU Speed
@@ -835,7 +835,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			perGameOps++;
 			perGameOp[perGameOps] = 5;	// Card Read DMA
 		}
-		if (ms().secondaryDevice && unitCode[CURPOS] < 3) {
+		if (!isNdz[CURPOS] && ms().secondaryDevice && unitCode[CURPOS] < 3) {
 			perGameOps++;
 			perGameOp[perGameOps] = 14;	// Game Loader
 		}
@@ -874,7 +874,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 			} else {
 				donorRomTextShown = false;
 			}
-		} else if (!dsiFeatures()) {
+		} else if (!isNdz[CURPOS] && !dsiFeatures()) {
 			if (memcmp(gameTid[CURPOS], "UBR", 3) == 0) {
 				perGameOps++;
 				perGameOp[perGameOps] = 15;	// Set as Internet Browser
@@ -911,7 +911,7 @@ void perGameSettings (std::string filename, bool* dsiBinariesFound, bool* dsiBin
 
 	extern std::string replaceAll(std::string str, const std::string &from, const std::string &to);
 
-	if (bnrRomType[CURPOS] == 0) {
+	if (!isNdz[CURPOS] && bnrRomType[CURPOS] == 0) {
 		if ((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
 			SDKnumbertext = replaceAll(STR_SDK_VER, "%s", "1."+(std::string)sdkSubVerChar);
 		} else if ((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {

@@ -118,6 +118,7 @@ bool isDirectory[2]{false, false};
 eROMType bnrRomType[2]{};
 bool bnriconisDSi[2]{false, false};
 int bnrWirelessIcon[2]{}; 			// 0 = None, 1 = Local, 2 = WiFi
+bool isNdz[2]{false, false};
 bool isDSiWare[2]{false, false};
 bool isHomebrew[2]{false, false};
 bool isModernHomebrew[2]{false, false};		// false == No DSi-Extended header, true == Has DSi-Extended header

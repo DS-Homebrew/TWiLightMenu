@@ -2651,7 +2651,7 @@ int dsClassicMenu(void) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if (extension(filename[ms().secondaryDevice], {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+			if (extension(filename[ms().secondaryDevice], {".nds", ".ndz", ".dsi", ".ids", ".srl", ".app"})) {
 				std::string typeToReplace = filename[ms().secondaryDevice].substr(filename[ms().secondaryDevice].rfind('.'));
 
 				bool dsModeSwitch = false;
@@ -2684,14 +2684,14 @@ int dsClassicMenu(void) {
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
-				if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && isHomebrew[ms().secondaryDevice] && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
+				if (!isNdz[ms().secondaryDevice] && !ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && isHomebrew[ms().secondaryDevice] && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
 					ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
 					ms().saveSettings();
 
 					unlaunchRomBoot(ms().romPath[ms().secondaryDevice]);
 				} else if (useBackend) {
-					if ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (isDSiMode() || unitCode[ms().secondaryDevice] < 3)) {
+					if (isNdz[ms().secondaryDevice] || ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (isDSiMode() || unitCode[ms().secondaryDevice] < 3))) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename[ms().secondaryDevice], typeToReplace, getSavExtension());
 						std::string ramdiskname = replaceAll(filename[ms().secondaryDevice], typeToReplace, getImgExtension());
@@ -2772,7 +2772,7 @@ int dsClassicMenu(void) {
 						}
 						s2RamAccessAlt(true);
 
-						int err = picoLaunchRom(path, savepath);
+						int err = picoLaunchRom(path, savepath, !isNdz[ms().secondaryDevice]);
 
 						char text[64];
 						snprintf (text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);

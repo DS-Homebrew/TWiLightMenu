@@ -284,14 +284,15 @@ extern int bnriconframenumY[41];
 extern int bannerFlip[41];
 
 // bnriconisDSi[]
-extern bool isValid[40];
-extern bool isTwlm[40];
-extern bool isUnlaunch[40];
+extern bool isValid[41];
+extern bool isTwlm[41];
+extern bool isUnlaunch[41];
 extern bool isDirectory[40];
 extern bool bnrSysSettings[41];
 extern int bnrRomType[41];
 extern bool bnriconisDSi[41];
 extern int bnrWirelessIcon[41];	// 0 = None, 1 = Local, 2 = WiFi
+extern bool isNdz[41];
 extern bool isDSiWare[41];
 extern bool isHomebrew[41];
 extern bool isModernHomebrew[41];		// false == No DSi-Extended header, true == Has DSi-Extended header

@@ -1442,7 +1442,7 @@ int r4Theme(void) {
 			}
 		} else {
 			std::vector<std::string_view> extensionList = {
-				".nds", ".dsi", ".ids", ".srl", ".app", ".argv" // NDS
+				".nds", ".ndz", ".dsi", ".ids", ".srl", ".app", ".argv" // NDS
 			};
 
 			// Extensions with a launcher config that can launch here. Added before the
@@ -1883,7 +1883,7 @@ int r4Theme(void) {
 			} else
 
 			// Launch .nds directly or via nds-bootstrap
-			if (extension(filename, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+			if (extension(filename, {".nds", ".ndz", ".dsi", ".ids", ".srl", ".app"})) {
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
 				bool dsModeSwitch = false;
@@ -1915,7 +1915,7 @@ int r4Theme(void) {
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
-				if (!ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && isHomebrew && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
+				if (!isNdz && !ms().secondaryDevice && !sys().arm7SCFGLocked() && ms().consoleModel == TWLSettings::EDSiRetail && isHomebrew && !(perGameSettings_useBootstrap == -1 ? true : perGameSettings_useBootstrap)) {
 					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 					ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
@@ -1923,7 +1923,7 @@ int r4Theme(void) {
 
 					unlaunchRomBoot(argarray[0]);
 				} else if (useBackend) {
-					if ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (isDSiMode() || romUnitCode < 3)) {
+					if (isNdz || ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::EPicoLoader) : (perGameSettings_fcGameLoader == TWLSettings::EPicoLoader)) && !ms().homebrewBootstrap && ms().secondaryDevice && (isDSiMode() || romUnitCode < 3))) {
 						std::string path = argarray[0];
 						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
 						std::string ramdiskname = replaceAll(filename, typeToReplace, getImgExtension(perGameSettings_ramDiskNo));
@@ -1988,7 +1988,7 @@ int r4Theme(void) {
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
 
-						int err = picoLaunchRom(path, savepath);
+						int err = picoLaunchRom(path, savepath, !isNdz);
 
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);

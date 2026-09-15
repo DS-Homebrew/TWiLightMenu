@@ -392,6 +392,7 @@ void getGameInfo0(const int fileOffset, std::vector<DirEntry> dirContents) {
 		bnrWirelessIcon[0] = 0;
 		isValid[0] = true;
 		isTwlm[0] = false;
+		isNdz[0] = false;
 		isDSiWare[0] = false;
 		isHomebrew[0] = 0;
 	}
@@ -431,6 +432,7 @@ void loadIcons(const int screenOffset, std::vector<DirEntry> dirContents) {
 			bnrWirelessIcon[n] = 0;
 			isValid[n] = true;
 			isTwlm[n] = false;
+			isNdz[n] = false;
 			isDSiWare[n] = false;
 			isHomebrew[n] = 0;
 		}
@@ -493,6 +495,7 @@ void loadIconUp(const int screenOffset, std::vector<DirEntry> dirContents) {
 			bnrWirelessIcon[n] = 0;
 			isValid[n] = true;
 			isTwlm[n] = false;
+			isNdz[n] = false;
 			isDSiWare[n] = false;
 			isHomebrew[n] = 0;
 		}
@@ -555,6 +558,7 @@ void loadIconDown(const int screenOffset, std::vector<DirEntry> dirContents) {
 			bnrWirelessIcon[n] = 0;
 			isValid[n] = true;
 			isTwlm[n] = false;
+			isNdz[n] = false;
 			isDSiWare[n] = false;
 			isHomebrew[n] = 0;
 		}
@@ -920,8 +924,12 @@ bool cannotLaunchMsg(char tid1, bool gbaBiosMissing = false) {
 		printSmall(false, 0, 90, "For use with Nintendo DSi systems only.", Alignment::center, FontPalette::formText);
 	} else if (gbaBiosMissing) {
 		printSmall(false, 0, 90, "GBA BIOS is missing!", Alignment::center, FontPalette::formText);
+	} else if (isTwlm[cursorPosOnScreen]) {
+		printSmall(false, 0, 90, "TWiLight Menu++ is already running.", Alignment::center, FontPalette::formText);
+	} else if (isNdz[cursorPosOnScreen]) {
+		printSmall(false, 0, 90, "Can only be launched from DSpico IR.", Alignment::center, FontPalette::formText);
 	} else {
-		printSmall(false, 0, 90, isTwlm[cursorPosOnScreen] ? "TWiLight Menu++ is already running." : "This game cannot be launched.", Alignment::center, FontPalette::formText);
+		printSmall(false, 0, 90, "This game cannot be launched.", Alignment::center, FontPalette::formText);
 	}
 	printSmall(false, 0, 108, " OK", Alignment::center, FontPalette::formText);
 	updateText(false);
@@ -1570,7 +1578,8 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 				const LaunchPrecheck precheck = launcherPrecheck(findCustomLauncher(launchName), captureLaunchEnv(ms().secondaryDevice), launchName);
 				const bool gbaBiosMissing = (precheck == LaunchPrecheck::GbaBios && checkForGbaBiosRequirement());
 
-				if (!isValid[cursorPosOnScreen] || isTwlm[cursorPosOnScreen] || (!isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[cursorPosOnScreen] == 0 && gameTid[cursorPosOnScreen][0] == 'D' && romUnitCode[cursorPosOnScreen] == 3 && requiresDonorRom[cursorPosOnScreen] != 51)
+				if (!isValid[cursorPosOnScreen] || (isNdz[cursorPosOnScreen] && (!ms().secondaryDevice || memcmp(io_dldi_data->friendlyName, "DSpico", 6) != 0)) || isTwlm[cursorPosOnScreen]
+				|| (!isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice && bnrRomType[cursorPosOnScreen] == 0 && gameTid[cursorPosOnScreen][0] == 'D' && romUnitCode[cursorPosOnScreen] == 3 && requiresDonorRom[cursorPosOnScreen] != 51)
 				|| (isDSiWare[cursorPosOnScreen] && ((((!dsiFeatures() && (!sdFound() || !ms().dsiWareToSD)) || bs().b4dsMode) && ms().secondaryDevice && !dsiWareCompatibleB4DS())
 				|| (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0 && sys().arm7SCFGLocked() && !sys().dsiWramAccess() && !gameCompatibleMemoryPit())))
 				|| gbaBiosMissing) {
@@ -1578,7 +1587,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					refreshBanners(screenOffset, fileOffset, dirContents);
 				}
 				const bool useBootstrapAnyway = ((perGameSettings_fcGameLoader == -1 ? (ms().fcGameLoader == TWLSettings::ENdsBootstrap) : (perGameSettings_fcGameLoader == TWLSettings::ENdsBootstrap)) || !ms().secondaryDevice);
-				if (proceedToLaunch && useBootstrapAnyway && bnrRomType[cursorPosOnScreen] == 0 && !isDSiWare[cursorPosOnScreen]
+				if (proceedToLaunch && useBootstrapAnyway && !isNdz[cursorPosOnScreen] && bnrRomType[cursorPosOnScreen] == 0 && !isDSiWare[cursorPosOnScreen]
 				 && isHomebrew[cursorPosOnScreen] == 0
 				 && checkIfDSiMode(dirContents.at(fileOffset).name)) {
 					bool hasDsiBinaries = true;
@@ -1593,7 +1602,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						refreshBanners(screenOffset, fileOffset, dirContents);
 					}
 				}
-				if (proceedToLaunch && (useBootstrapAnyway || ((!dsiFeatures() || bs().b4dsMode) && isDSiWare[cursorPosOnScreen])) && bnrRomType[cursorPosOnScreen] == 0 && !dsModeForced && isHomebrew[cursorPosOnScreen] == 0) {
+				if (proceedToLaunch && (useBootstrapAnyway || ((!dsiFeatures() || bs().b4dsMode) && isDSiWare[cursorPosOnScreen])) && !isNdz[cursorPosOnScreen] && bnrRomType[cursorPosOnScreen] == 0 && !dsModeForced && isHomebrew[cursorPosOnScreen] == 0) {
 					proceedToLaunch = checkForCompatibleGame();
 					if (proceedToLaunch && requiresDonorRom[cursorPosOnScreen]) {
 						const char* pathDefine = "DONORTWL_NDS_PATH"; // SDK5.x (TWL)
@@ -1640,12 +1649,12 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							refreshBanners(screenOffset, fileOffset, dirContents);
 						}
 					}
-					if (proceedToLaunch && !isDSiWare[cursorPosOnScreen] && checkIfShowAPMsg(dirContents.at(fileOffset).name)) {
+					if (proceedToLaunch && !isNdz[cursorPosOnScreen] && !isDSiWare[cursorPosOnScreen] && checkIfShowAPMsg(dirContents.at(fileOffset).name)) {
 						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 						hasAP = checkRomAP(f_nds_file, dirContents.at(fileOffset).name.c_str());
 						fclose(f_nds_file);
 					}
-					if (proceedToLaunch && isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
+					if (proceedToLaunch && !isNdz[cursorPosOnScreen] && isDSiWare[cursorPosOnScreen] && (!dsiFeatures() || bs().b4dsMode) && ms().secondaryDevice) {
 						if (!dsiFeatures() && !sys().isRegularDS()) {
 							proceedToLaunch = dsiWareInDSModeMsg();
 						}
@@ -1709,7 +1718,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 
 				// If SD card's cluster size is less than 32KB, then show warning for DS games with nds-bootstrap
 				extern struct statvfs st[2];
-				if ((useBootstrapAnyway || isDSiWare[cursorPosOnScreen]) && bnrRomType[cursorPosOnScreen] == 0 && (!isDSiWare[cursorPosOnScreen] || (ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode))) && isHomebrew[cursorPosOnScreen] == 0
+				if ((useBootstrapAnyway || isDSiWare[cursorPosOnScreen]) && !isNdz[cursorPosOnScreen] && bnrRomType[cursorPosOnScreen] == 0 && (!isDSiWare[cursorPosOnScreen] || (ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode))) && isHomebrew[cursorPosOnScreen] == 0
 				 && proceedToLaunch && st[ms().secondaryDevice].f_bsize < (32 << 10) && !ms().dontShowClusterWarning) {
 					dialogboxHeight = 5;
 					showdialogbox = true;
