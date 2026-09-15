@@ -30,7 +30,14 @@ void nandio_set_fat_sig_fix(u32 offset) {
 }
 
 void getConsoleID(u8 *consoleID){
-	u8 *fifo=(u8*)0x02F00000; //shared mem address that has our computed key3 stuff
+	u8 *fifo=(u8*)crypt_buf; //shared mem address that has our computed key3 stuff
+	DC_InvalidateRange(fifo, 0x400);
+	*(u32*)(0xCFFFD08) = (u32)fifo;
+	*(u32*)(0xCFFFD0C) = 0x44494347; // 'GCID'
+	while (*(u32*)(0xCFFFD0C) != 0) {
+		swiDelay(100);
+	}
+
 	u8 key[16]; //key3 normalkey - keyslot 3 is used for DSi/twln NAND crypto
 	u8 key_xy[16]; //key3_y ^ key3_x
 	u8 key_x[16];////key3_x - contains a DSi console id (which just happens to be the LFCS on 3ds)
