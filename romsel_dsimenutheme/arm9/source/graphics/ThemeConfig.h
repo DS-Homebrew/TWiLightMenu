@@ -28,6 +28,7 @@ private:
 	int _bubbleTipSpriteW;
 
 	int _rotatingCubesRenderY;
+	int _rotatingCubesRenderYBottom;
 
 	int _shoulderLRenderY;
 	int _shoulderLRenderX;
@@ -113,6 +114,7 @@ private:
 	bool _darkLoading;
 	bool _useAlphaBlend;
 	bool _playStopSound;
+	bool _playLidSound;
 	bool _playStartupJingle;
 	int _startupJingleDelayAdjust;
 	u16 _progressBarColor;
@@ -169,6 +171,7 @@ public:
 	int bubbleTipSpriteW() const { return _bubbleTipSpriteW; }
 
 	int rotatingCubesRenderY() const { return _rotatingCubesRenderY; }
+	int rotatingCubesRenderYBottom() const { return _rotatingCubesRenderYBottom; }
 
 	int shoulderLRenderY() const { return _shoulderLRenderY; }
 	int shoulderLRenderX() const { return _shoulderLRenderX; }
@@ -255,6 +258,7 @@ public:
 	bool useAlphaBlend() const { return _useAlphaBlend; }
 
 	bool playStopSound() const { return _playStopSound; }
+	bool playLidSound() const { return _playLidSound; }
 	bool playStartupJingle() const { return _playStartupJingle; }
 	int startupJingleDelayAdjust() const { return _startupJingleDelayAdjust; }
 	u16 progressBarColor() const { return _progressBarColor; }

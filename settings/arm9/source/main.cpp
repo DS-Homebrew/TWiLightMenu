@@ -1214,6 +1214,11 @@ int settingsMode(void)
 				Option::Int((int *)&ms().settingsMusic),
 				{STR_CURRENT_UI, STR_OFF, STR_NINTENDO_DSI, STR_NINTENDO_3DS},
 				{TSettingsMusic::ESMusicTheme, TSettingsMusic::ESMusicOff, TSettingsMusic::ESMusicDSi, TSettingsMusic::ESMusic3DS})
+		.option(STR_LID_SOUND,
+				STR_DESCRIPTION_LID_SOUND,
+				Option::Bool(&ms().lidSound),
+				{STR_ON, STR_OFF},
+				{true, false})
 		.option(STR_FONT,
 				STR_DESCRIPTION_FONT,
 				Option::Nul(opt_font_select),

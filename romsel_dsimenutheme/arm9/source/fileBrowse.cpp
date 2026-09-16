@@ -152,6 +152,8 @@ extern bool createDSiWareSave(const char *path, int size);
 extern void createSaveFile(const char* savePath, const bool isHomebrew, const char* gameTid);
 
 extern bool rocketVideo_playVideo;
+extern bool rocketVideo_topVisible;
+extern bool rocketVideo_weaveRefill;
 
 extern void bgOperations(bool waitFrame);
 
@@ -584,9 +586,13 @@ void moveCursor(bool right, const std::vector<DirEntry> dirContents, int maxEntr
 		if (firstMove) {
 			firstMove = false;
 			if (boxArtLoaded) {
-				if (!rocketVideo_playVideo)
+				if (!rocketVideo_topVisible)
 					clearBoxArt();
-				rocketVideo_playVideo = (ms().theme == TWLSettings::ETheme3DS) ? true : false;
+				if (ms().theme == TWLSettings::ETheme3DS) {
+					resumeRotatingCubesVideo();
+				} else {
+					rocketVideo_playVideo = false;
+				}
 				boxArtLoaded = false;
 				if (ms().theme == TWLSettings::EThemeSaturn) {
 					for (int i = 0; i < 10; i++)
@@ -641,8 +647,8 @@ void updateBoxArt(void) {
 		}
 	}
 	if (!tex().drawBoxArt(boxArtPath, (dsiFeatures() && ms().showBoxArt == 2))) { // Load box art
-		if (ms().theme == TWLSettings::ETheme3DS && !rocketVideo_playVideo) {
-			rocketVideo_playVideo = true;
+		if (ms().theme == TWLSettings::ETheme3DS && !rocketVideo_topVisible) {
+			resumeRotatingCubesVideo();
 		}
 	}
 	boxArtLoaded = true;
@@ -1426,11 +1432,11 @@ void switchDevice(void) {
 			}
 		}
 		ms().secondaryDevice = !ms().secondaryDevice;
-		if (!rocketVideo_playVideo || ms().showBoxArt)
+		if (!rocketVideo_topVisible || ms().showBoxArt)
 			clearBoxArt(); // Clear box art
 		if (ms().theme != TWLSettings::EThemeSaturn && ms().theme != TWLSettings::EThemeHBL) whiteScreen = true;
 		boxArtLoaded = false;
-		rocketVideo_playVideo = true;
+		resumeRotatingCubesVideo();
 		shouldersRendered = false;
 		currentBg = 0;
 		showSTARTborder = false;
@@ -1486,7 +1492,8 @@ void launchGba(void) {
 	extern void s2RamAccessAlt(bool open);
 
 	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
-		while (dmaBusy(1)); // Wait for frame to finish rendering
+		// The frame being blitted may live in the Slot-2 RAM pak we are about to take away
+		while (dmaBusy(0) || dmaBusy(1)); // Wait for frame to finish rendering
 	}
 	s2RamAccessAlt(false);
 	const bool validRom = (((u8*)GBAROM)[0xB2] == 0x96);
@@ -2578,10 +2585,10 @@ bool selectMenu(void) {
 	}
 	clearText();
 	updateText(false);
-	if (!rocketVideo_playVideo || ms().showBoxArt)
+	if (!rocketVideo_topVisible || ms().showBoxArt)
 		clearBoxArt(); // Clear box art
 	boxArtLoaded = false;
-	rocketVideo_playVideo = true;
+	resumeRotatingCubesVideo();
 	int maxCursors = 0;
 	int selCursorPosition = 0;
 	int assignedOp[5] = {-1};
@@ -2885,7 +2892,7 @@ static bool previousPage(SwitchState scrn, vector<vector<DirEntry>> dirContents)
 		clearBoxArt(); // Clear box art
 	boxArtLoaded = false;
 	bannerTextShown = false;
-	rocketVideo_playVideo = true;
+	resumeRotatingCubesVideo();
 	shouldersRendered = false;
 	currentBg = 0;
 	showSTARTborder = false;
@@ -2962,7 +2969,7 @@ static bool nextPage(SwitchState scrn, vector<vector<DirEntry>> dirContents) {
 		clearBoxArt(); // Clear box art
 	boxArtLoaded = false;
 	bannerTextShown = false;
-	rocketVideo_playVideo = true;
+	resumeRotatingCubesVideo();
 	shouldersRendered = false;
 	currentBg = 0;
 	showSTARTborder = false;
@@ -3296,7 +3303,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 						}
 					}
 				} else {
-					if (displayBoxArt && !rocketVideo_playVideo) {
+					if (displayBoxArt && !rocketVideo_topVisible) {
 						clearBoxArt();
 						displayBoxArt = false;
 					}
@@ -3304,6 +3311,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					clearText(false);
 					currentBg = 0;
 					showSTARTborder = rocketVideo_playVideo = (ms().theme == TWLSettings::ETheme3DS ? true : false);
+					rocketVideo_topVisible = rocketVideo_weaveRefill = rocketVideo_playVideo;
 				}
 				if (ms().theme == TWLSettings::EThemeHBL) {
 					printLarge(false, 0, 142, "^", Alignment::center, FontPalette::overlay);
@@ -4154,7 +4162,6 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							snd().fadeOutStream();
 
 							// Clear screen with white
-							rocketVideo_playVideo = false;
 							tex().unloadRotatingCubes();
 						}
 
@@ -4362,7 +4369,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					clearBoxArt(); // Clear box art
 				boxArtLoaded = false;
 				bannerTextShown = false;
-				rocketVideo_playVideo = true;
+				resumeRotatingCubesVideo();
 				shouldersRendered = false;
 				currentBg = 0;
 				showSTARTborder = false;
@@ -4469,7 +4476,7 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 							clearBoxArt(); // Clear box art
 						boxArtLoaded = false;
 						bannerTextShown = false;
-						rocketVideo_playVideo = true;
+						resumeRotatingCubesVideo();
 						shouldersRendered = false;
 						currentBg = 0;
 						showSTARTborder = false;
