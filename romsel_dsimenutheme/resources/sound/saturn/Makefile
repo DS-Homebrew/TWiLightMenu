@@ -15,8 +15,11 @@ include $(DEVKITARM)/ds_rules
 # define SFX_STARTUP	4
 # define SFX_SELECT	5
 # define SFX_BACK	6
+# define SFX_LIDCLOSE	7
+# define SFX_LIDOPEN	8
 
 NAMES			:= startup.wav wrong.wav launch.wav stop.wav switch.wav select.wav back.wav
+NAMES			+= lidclose.wav lidopen.wav
 
 TARGETS			:= sfx.bin
 

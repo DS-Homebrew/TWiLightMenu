@@ -290,6 +290,7 @@ public:
 	TLanguage titleLanguage;
 	bool macroMode;
 	bool sleepMode;
+	bool lidSound;
 	bool kioskMode;
 	TExploit dsiWareExploit;
 	bool wifiLed;

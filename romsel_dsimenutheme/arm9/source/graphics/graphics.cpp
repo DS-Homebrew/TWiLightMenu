@@ -179,12 +179,18 @@ int vblankRefreshCounter = 0;
 u32 rotatingCubesLoaded = false;	// u32 used instead of bool, to fix a weird bug
 
 bool rocketVideo_playVideo = false;
+bool rocketVideo_topVisible = true;	// False while box art covers the top band
 int rocketVideo_videoYpos = 78;
+int rocketVideo_videoYposBottom = 78;
 int frameOf60fps = 60;
 int rocketVideo_videoFrames = 249;
 int rocketVideo_currentFrame = -1;
 u8 rocketVideo_fps = 25;
-u8 rocketVideo_height = 56;
+u8 rocketVideo_height = 56;		// Stored rows per frame; the field height when interlaced
+u8 rocketVideo_bandHeight = 56;		// Rows the video occupies on screen
+bool rocketVideo_interlaced = false;
+bool rocketVideo_dualScreen = false;
+bool rocketVideo_weaveRefill = false;	// Repaint both fields on the next frame
 int rocketVideo_frameDelay = 0;
 bool rocketVideo_frameDelayEven = true; // For 24FPS
 bool rocketVideo_loadFrame = true;
@@ -260,6 +266,7 @@ void SetBrightness(u8 screen, s8 bright) {
 // }
 
 void bottomBgLoad(int drawBubble, bool init = false) {
+	const int bottomBgStateBefore = bottomBgState;
 	if (init || drawBubble == 0 || (drawBubble == 2 && ms().theme == TWLSettings::ETheme3DS)) {
 		if (bottomBgState != 1) {
 			tex().drawBottomBg(1);
@@ -276,6 +283,13 @@ void bottomBgLoad(int drawBubble, bool init = false) {
 			bottomBgState = 3;
 		}
 	}
+	// drawBottomBg() commits the whole background, painting over the second video band.
+	if (rotatingCubesLoaded && rocketVideo_dualScreen && bottomBgState != bottomBgStateBefore) {
+		rocketVideo_loadFrame = true;	// Repaint the band without waiting for the next frame
+		rocketVideo_weaveRefill = true;
+		if (rocketVideo_currentFrame > 0) rocketVideo_currentFrame--;
+	}
+
 	if (ms().macroMode && prevBottomBgState != bottomBgState) {
 		reloadDate = true;
 		reloadTime = true;
@@ -383,11 +397,64 @@ void frameRateHandler(void) {
 	}
 }
 
+// Write one field of an interlaced video into every other row of the band, leaving the
+// rows of the opposite field in place. The theme's whole UI shares the bitmap layer, so
+// the affine stretch a dedicated player would use is not available here.
+// Blocking transfers: the channel is free again by the time this returns, which keeps the
+// dmaBusy() waits elsewhere correct.
+ITCM_CODE static void weaveVideoField(u8 channel, const u8 *src, u16 *bandTop, int parity) {
+	u16 *dst = bandTop + (parity ? SCREEN_WIDTH : 0);
+	for (u8 line = 0; line < rocketVideo_height; line++) {
+		dmaCopyWords(channel, src, dst, 0x200);
+		src += 0x200;
+		dst += SCREEN_WIDTH * 2;
+	}
+}
+
+static void blitVideoFrame(int frame) {
+	const u32 frameBytes = 0x200 * rocketVideo_height;
+	const u32 stride = rocketVideo_dualScreen ? frameBytes * 2 : frameBytes;
+	const u8 *src = rotatingCubesLocation + ((u32)frame * stride);
+	u16 *topBand = (u16*)BG_GFX_SUB + (SCREEN_WIDTH * rocketVideo_videoYpos);
+	u16 *bottomBand = (u16*)BG_GFX + (SCREEN_WIDTH * rocketVideo_videoYposBottom);
+
+	if (rocketVideo_interlaced) {
+		const int parity = frame & 1;
+		if (rocketVideo_topVisible)
+			weaveVideoField(1, src, topBand, parity);
+		if (rocketVideo_dualScreen)
+			weaveVideoField(0, src + frameBytes, bottomBand, parity);
+	} else {
+		if (rocketVideo_topVisible)
+			dmaCopyWordsAsynch(1, src, topBand, frameBytes);
+		if (rocketVideo_dualScreen)
+			dmaCopyWordsAsynch(0, src + frameBytes, bottomBand, frameBytes);
+	}
+}
+
+// Resume playback after the band has been covered by box art or a background redraw.
+void resumeRotatingCubesVideo(void) {
+	rocketVideo_playVideo = true;
+	rocketVideo_topVisible = true;
+	rocketVideo_weaveRefill = true;
+}
+
 void playRotatingCubesVideo(void) {
 	if (!rocketVideo_playVideo || !rocketVideo_loadFrame)
 		return;
 
-	dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*rocketVideo_height)), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x200*rocketVideo_height);
+	// After the band has been painted over, an interlaced video only fills half of its
+	// rows per frame, so lay down the opposite field first.
+	if (rocketVideo_weaveRefill) {
+		rocketVideo_weaveRefill = false;
+		if (rocketVideo_interlaced) {
+			int other = rocketVideo_currentFrame - 1;
+			if (other < 0) other = rocketVideo_videoFrames;
+			blitVideoFrame(other);
+		}
+	}
+
+	blitVideoFrame(rocketVideo_currentFrame);
 
 	rocketVideo_currentFrame++;
 	if (rocketVideo_currentFrame > rocketVideo_videoFrames) {

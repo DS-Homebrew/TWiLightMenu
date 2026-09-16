@@ -11,7 +11,7 @@
 ThemeConfig::ThemeConfig()
 	: _startBorderRenderY(81), _startBorderSpriteW(32), _startBorderSpriteH(80), _startTextRenderY(143),
 	_titleboxRenderY(85), _titleboxMaxLines(4), _titleboxTextY(30), _titleboxTextW(240), _titleboxTextLarge(true),
-	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11), _rotatingCubesRenderY(78),
+	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11), _rotatingCubesRenderY(78), _rotatingCubesRenderYBottom(78),
 	_shoulderLRenderY(172), _shoulderLRenderX(0), _shoulderLTextY(257), _shoulderLTextX(18), _shoulderLTextAlign(1),
 	_shoulderRRenderY(172), _shoulderRRenderX(178), _shoulderRTextY(257), _shoulderRTextX(238), _shoulderRTextAlign(-1),
 	_volumeRenderY(4), _volumeRenderX(16), _batteryRenderY(5), _batteryRenderX(235), _usernameRenderY(3), _usernameRenderX(28),
@@ -31,7 +31,7 @@ ThemeConfig::ThemeConfig()
 	_iconSMSUserPalette(false), _iconSNESUserPalette(false), _iconUnknownUserPalette(false), _iconVIDUserPalette(false),
 	_iconWSUserPalette(false), _usernameUserPalette(true), _progressBarUserPalette(true),
 	_purpleBatteryAvailable(false), _renderPhoto(true), _darkLoading(false), _useAlphaBlend(true),
-	_playStopSound(true),
+	_playStopSound(true), _playLidSound(true),
 	_playStartupJingle(false), _startupJingleDelayAdjust(0), _progressBarColor(0x7C00),
 	_fontPalette1(0x0000), _fontPalette2(0xDEF7), _fontPalette3(0xC631), _fontPalette4(0xA108),
 	_fontPaletteDisabled1(0x0000), _fontPaletteDisabled2(0xDEF7), _fontPaletteDisabled3(0xC631), _fontPaletteDisabled4(0xA108),
@@ -168,11 +168,13 @@ void ThemeConfig::loadConfig() {
 
 	_purpleBatteryAvailable = getInt(themeConfig, "PurpleBatteryAvailable", _purpleBatteryAvailable);
 	_rotatingCubesRenderY = getInt(themeConfig, "RotatingCubesRenderY", _rotatingCubesRenderY);
+	_rotatingCubesRenderYBottom = getInt(themeConfig, "RotatingCubesRenderYBottom", _rotatingCubesRenderYBottom);
 	_renderPhoto = getInt(themeConfig, "RenderPhoto", _renderPhoto);
 	_darkLoading = getInt(themeConfig, "DarkLoading", _darkLoading);
 	_useAlphaBlend = getInt(themeConfig, "UseAlphaBlend", _useAlphaBlend);
 
 	_playStopSound = getInt(themeConfig, "PlayStopSound", _playStopSound);
+	_playLidSound = getInt(themeConfig, "PlayLidSound", _playLidSound);
 	_playStartupJingle = getInt(themeConfig, "PlayStartupJingle", _playStartupJingle);
 	_startupJingleDelayAdjust = getInt(themeConfig, "StartupJingleDelayAdjust", _startupJingleDelayAdjust);
 	_progressBarColor = getInt(themeConfig, "ProgressBarColor", _progressBarColor);

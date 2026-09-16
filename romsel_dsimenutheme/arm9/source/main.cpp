@@ -1055,6 +1055,12 @@ void customSleep() {
 	controlTopBright = true;
 	controlBottomBright = true;
 
+	// Played before the stream is closed; maxmod effects are independent of it,
+	// and interrupts keep running through the fade, so the sound is heard.
+	if (ms().lidSound && tc().playLidSound()) {
+		snd().playLidClose();
+	}
+
 	snd().stopStream();
 	fadeSleep = true;
 	fadeType = false;
@@ -1071,6 +1077,9 @@ void customSleep() {
 		swiWaitForVBlank();
 	}
 	irqEnable(IRQ_VBLANK & IRQ_VCOUNT);
+	if (ms().lidSound && tc().playLidSound()) {
+		snd().playLidOpen();
+	}
 	if (!ms().macroMode) {
 		powerOn(PM_BACKLIGHT_TOP);
 	}

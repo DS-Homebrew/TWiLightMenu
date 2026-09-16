@@ -32,6 +32,9 @@ void drawCurrentTime();
 bool loadPhotoList();
 void reloadPhoto();
 void clearBoxArt();
+
+// Resume the 3DS theme's background video after the band has been covered.
+void resumeRotatingCubesVideo();
 void graphicsInit();
 extern u16* colorTable;
 

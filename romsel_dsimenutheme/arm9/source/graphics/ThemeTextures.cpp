@@ -37,6 +37,17 @@ extern bool invertedColors;
 extern bool noWhiteFade;
 extern u32 rotatingCubesLoaded;
 extern bool rocketVideo_playVideo;
+extern bool rocketVideo_topVisible;
+extern bool rocketVideo_dualScreen;
+extern bool rocketVideo_interlaced;
+extern bool rocketVideo_weaveRefill;
+extern u8 rocketVideo_bandHeight;
+extern u8 rocketVideo_height;
+extern u8 rocketVideo_fps;
+extern int rocketVideo_videoFrames;
+extern int rocketVideo_currentFrame;
+extern int rocketVideo_videoYpos;
+extern int rocketVideo_videoYposBottom;
 extern u8 *rotatingCubesLocation;
 
 // #include <nds/arm9/decompress.h>
@@ -828,9 +839,9 @@ u16 *ThemeTextures::beginBgSubModify() {
 	if (boxArtColorDeband) {
 		bgLoc = _frameBufferBot[0];
 	}
-	dmaCopyWords(0, bgLoc, _bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWords(3, bgLoc, _bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	if (boxArtColorDeband) {
-		dmaCopyWords(0, _frameBufferBot[1], _bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+		dmaCopyWords(3, _frameBufferBot[1], _bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}
 	return _bgSubBuffer;
 }
@@ -882,9 +893,9 @@ u16 *ThemeTextures::beginBgMainModify() {
 	/*if (boxArtColorDeband) {
 		bgLoc = _frameBufferBot[0];
 	}*/
-	dmaCopyWords(0, bgLoc, _bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWords(3, bgLoc, _bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	/*if (ndmaEnabled()) {
-		dmaCopyWords(0, _frameBuffer[1], _bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+		dmaCopyWords(3, _frameBuffer[1], _bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}*/
 	return _bgMainBuffer;
 }
@@ -1071,8 +1082,8 @@ bool ThemeTextures::drawBoxArtBmp(const char *filename, bool inMem) {
 		return false;
 	}
 
-	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
-		rocketVideo_playVideo = false;
+	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_topVisible) {
+		rocketVideo_topVisible = false;
 		while (dmaBusy(1)); // Wait for frame to finish rendering
 		drawOverRotatingCubes(); // Clear top screen cubes for 3DS theme
 	}
@@ -1291,8 +1302,8 @@ bool ThemeTextures::drawBoxArtPng(const char *filename, bool inMem) {
 		return false;
 	}
 
-	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_playVideo) {
-		rocketVideo_playVideo = false;
+	if (ms().theme == TWLSettings::ETheme3DS && rocketVideo_topVisible) {
+		rocketVideo_topVisible = false;
 		while (dmaBusy(1)); // Wait for frame to finish rendering
 		drawOverRotatingCubes(); // Clear top screen cubes for 3DS theme
 	}
@@ -1452,15 +1463,25 @@ void ThemeTextures::drawOverBoxArt(uint photoWidth, uint photoHeight) {
 void ThemeTextures::drawOverRotatingCubes() {
 	// if (!rotatingCubesLoaded) return;
 
-	extern u8 rocketVideo_height;
-	extern int rocketVideo_videoYpos;
-
 	beginBgSubModify();
-	for (uint y = 0; y < rocketVideo_height; y++) {
+	for (uint y = 0; y < rocketVideo_bandHeight; y++) {
 		uint offset = (rocketVideo_videoYpos + y) * SCREEN_WIDTH;
 		tonccpy(_bgSubBuffer + offset, _topBorderBuffer + offset, sizeof(u16) * SCREEN_WIDTH);
 	}
 	commitBgSubModify();
+}
+
+// Redraw the bottom screen background over the second video band.
+// _bgMainBuffer always holds the pristine bottom background: the video writes straight
+// to BG_GFX and never touches it, and the partial main-BG writers are macro mode only,
+// where the video is never loaded.
+void ThemeTextures::drawOverRotatingCubesBottom() {
+	if (!rocketVideo_dualScreen || ms().macroMode) return;
+
+	const u32 offset = (u32)rocketVideo_videoYposBottom * SCREEN_WIDTH;
+	const u32 size = sizeof(u16) * SCREEN_WIDTH * rocketVideo_bandHeight;
+	DC_FlushRange(_bgMainBuffer + offset, size);
+	dmaCopyWords(3, _bgMainBuffer + offset, (u16*)BG_GFX + offset, size);
 }
 
 ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
@@ -1811,155 +1832,288 @@ u16 *ThemeTextures::photoBuffer2() { return _photoBuffer2; }
 //u16 *ThemeTextures::frameBuffer(bool secondBuffer) { return _frameBuffer[secondBuffer]; }
 u16 *ThemeTextures::frameBufferBot(bool secondBuffer) { return _frameBufferBot[secondBuffer]; }
 
+// RVID v3-v5 header, as written by Vid2RVID (see RocketVideoPlayer's rvidHeaderInfo4).
+// Naturally aligned, so the struct layout matches the file layout exactly.
+struct RvidHeader {
+	u32 magic;			// "RVID"
+	u32 ver;
+	u32 frames;
+	u8 fps;				// >= 0x80: subtract 0x80 (NTSC), 0: console refresh rate
+	u8 vRes;			// Rows per stored frame; the field height when interlaced
+	u8 interlaced;
+	u8 dualScreen;		// 1 = top and bottom screen, 2 = video is for GBA
+	u16 sampleRate;
+	u8 audioBitMode;
+	u8 bmpMode;			// 0 = 8 BPP + palette, 1 = 16 BPP, 2 = 16 BPP needing the alpha bit
+	u32 compressedFrameSizeTableOffset;	// 0 when the frames are not compressed
+	u32 soundLeftOffset;
+	u32 soundRightOffset;
+};
+static_assert(sizeof(RvidHeader) == 0x20, "RVID header layout must match the file");
+
+#define RVID_MAGIC				0x44495652	// "RVID"
+#define RVID_FRAME_TABLE_OFFSET	0x200
+#define ROTATING_CUBES_MAX_SIZE	0x700000
+
+// Apply the screen color filter and/or force the alpha bit on a decoded 16 BPP frame,
+// matching what the playback hardware needs. Kept identical to the previous per-buffer pass.
+static void applyRotatingCubesColor(u16 *frame, u32 pixels, u8 bmpMode) {
+	if (colorTable) {
+		for (u32 i = 0; i < pixels; i++) {
+			frame[i] = colorTable[frame[i] % 0x8000] | BIT(15);
+		}
+	} else if (bmpMode == 2) {
+		for (u32 i = 0; i < pixels; i++) {
+			frame[i] |= BIT(15);
+		}
+	}
+}
+
+// Decode a v3-v5 RVID into rotatingCubesLocation as raw 16 BPP frames.
+// Dual screen videos store two sub-frames per frame, interleaved top then bottom.
+static bool loadRotatingCubesLatest(FILE *videoFrameFile, const RvidHeader &header) {
+	const bool dualScreen = (header.dualScreen == 1);
+	const bool interlaced = (header.interlaced != 0);
+	const u32 screens = dualScreen ? 2 : 1;
+	const u32 frameCount = (u32)rocketVideo_videoFrames + 1;
+	const u32 entries = frameCount * screens;
+
+	// Bytes of a single stored sub-frame, in the file and in our buffer.
+	const u32 srcFrameBytes = (header.bmpMode == 0 ? 0x100 : 0x200) * header.vRes;
+	const u32 dstFrameBytes = 0x200 * header.vRes;
+
+	// A band that runs past the bottom of the screen would spill into the rows the
+	// main engine shares with the 8 BPP text layer, so check it before anything else.
+	const int bandHeight = header.vRes * (interlaced ? 2 : 1);
+	const int yTop = tc().rotatingCubesRenderY();
+	const int yBottom = tc().rotatingCubesRenderYBottom();
+	if (bandHeight > SCREEN_HEIGHT
+	 || yTop < 0 || yTop + bandHeight > SCREEN_HEIGHT
+	 || (dualScreen && (yBottom < 0 || yBottom + bandHeight > SCREEN_HEIGHT))) {
+		return false;
+	}
+
+	if ((u64)dstFrameBytes * screens * frameCount > ROTATING_CUBES_MAX_SIZE) {
+		return false;
+	}
+
+	u32 *frameOffsets = new u32[entries];
+	fseek(videoFrameFile, RVID_FRAME_TABLE_OFFSET, SEEK_SET);
+	if (fread(frameOffsets, 4, entries, videoFrameFile) != entries) {
+		delete[] frameOffsets;
+		return false;
+	}
+
+	// From v4 on, the low 2 bits of an offset select one of up to four part files.
+	// Theme videos are single file, so refuse rather than seek to the wrong place.
+	if (header.ver >= 4) {
+		for (u32 i = 0; i < entries; i++) {
+			if (frameOffsets[i] & 3) {
+				delete[] frameOffsets;
+				return false;
+			}
+		}
+	}
+
+	const bool compressed = (header.compressedFrameSizeTableOffset != 0);
+	u32 *frameSizes = NULL;
+	if (compressed) {
+		frameSizes = new u32[entries];
+		fseek(videoFrameFile, header.compressedFrameSizeTableOffset, SEEK_SET);
+		// The table holds a u16 per sub-frame for 8 BPP videos and a u32 for 16 BPP ones.
+		bool sizesOk = true;
+		if (header.bmpMode == 0) {
+			u16 *sizes16 = new u16[entries];
+			sizesOk = (fread(sizes16, 2, entries, videoFrameFile) == entries);
+			for (u32 i = 0; i < entries; i++) {
+				frameSizes[i] = sizes16[i];
+			}
+			delete[] sizes16;
+		} else {
+			sizesOk = (fread(frameSizes, 4, entries, videoFrameFile) == entries);
+		}
+		if (!sizesOk) {
+			delete[] frameSizes;
+			delete[] frameOffsets;
+			return false;
+		}
+	}
+
+	// Frames are decoded into main RAM and only then copied to the video buffer, which on
+	// a regular DS is the Slot-2 RAM pak: its 16-bit bus cannot take the byte-wide writes
+	// that LZ77 decompression and the 8 BPP expansion perform.
+	u8 *frameScratch = new u8[dstFrameBytes];
+	u8 *compressedScratch = compressed ? new u8[srcFrameBytes] : NULL;
+	u16 *palette = (header.bmpMode == 0) ? new u16[256] : NULL;
+	u8 *indexScratch = (header.bmpMode == 0) ? new u8[srcFrameBytes] : NULL;
+
+	bool ok = true;
+	for (u32 i = 0; i < entries && ok; i++) {
+		fseek(videoFrameFile, frameOffsets[i], SEEK_SET);
+
+		// The palette is stored ahead of the pixels and is never compressed.
+		if (header.bmpMode == 0 && fread(palette, 2, 256, videoFrameFile) != 256) {
+			ok = false;
+			break;
+		}
+
+		u8 *decodeDst = (header.bmpMode == 0) ? indexScratch : frameScratch;
+		const u32 size = compressed ? frameSizes[i] : srcFrameBytes;
+		if (size == srcFrameBytes) {
+			ok = (fread(decodeDst, 1, srcFrameBytes, videoFrameFile) == srcFrameBytes);
+		} else if (size == 0 || size > srcFrameBytes) {
+			ok = false; // Bogus size table
+		} else {
+			ok = (fread(compressedScratch, 1, size, videoFrameFile) == size);
+			if (ok) {
+				decompress(compressedScratch, decodeDst, LZ77);
+			}
+		}
+		if (!ok) break;
+
+		u16 *frame16 = (u16*)frameScratch;
+		if (header.bmpMode == 0) {
+			if (colorTable) {
+				for (int c = 0; c < 256; c++) {
+					palette[c] = colorTable[palette[c] % 0x8000] | BIT(15);
+				}
+			} else {
+				for (int c = 0; c < 256; c++) {
+					palette[c] |= BIT(15);
+				}
+			}
+			for (u32 p = 0; p < srcFrameBytes; p++) {
+				frame16[p] = palette[indexScratch[p]];
+			}
+		} else {
+			applyRotatingCubesColor(frame16, dstFrameBytes / 2, header.bmpMode);
+		}
+
+		u8 *dst = rotatingCubesLocation + (i * dstFrameBytes);
+		tonccpy(dst, frameScratch, dstFrameBytes);
+		DC_FlushRange(dst, dstFrameBytes);
+	}
+
+	delete[] indexScratch;
+	delete[] palette;
+	delete[] compressedScratch;
+	delete[] frameScratch;
+	delete[] frameSizes;
+	delete[] frameOffsets;
+
+	if (!ok) return false;
+
+	rocketVideo_dualScreen = dualScreen;
+	rocketVideo_interlaced = interlaced;
+	rocketVideo_bandHeight = bandHeight;
+	rocketVideo_videoYpos = yTop;
+	rocketVideo_videoYposBottom = yBottom;
+	return true;
+}
+
+// Decode a pre-v3 RVID: frames laid end to end, 16 BPP single screen only.
+// v1 and v2 share the first fields; only v2 carries the compression flag and a frame offset.
+static bool loadRotatingCubesLegacy(FILE *videoFrameFile, const RvidHeader &header, u32 framesSize) {
+	if (rocketVideo_height > 144 || framesSize > ROTATING_CUBES_MAX_SIZE) {
+		return false;
+	}
+
+	u32 framesOffset = RVID_FRAME_TABLE_OFFSET;
+	if (header.ver == 2) {
+		// v2 reuses the bytes this struct calls audioBitMode/bmpMode as a u16 "framesCompressed",
+		// and the ones it calls compressedFrameSizeTableOffset as the offset of the first frame.
+		const u16 framesCompressed = (u16)header.audioBitMode | ((u16)header.bmpMode << 8);
+		if (framesCompressed || header.interlaced) {
+			return false; // Never supported here, and loading it raw would show garbage
+		}
+		framesOffset = header.compressedFrameSizeTableOffset;
+	}
+
+	fseek(videoFrameFile, framesOffset, SEEK_SET);
+	if (fread(rotatingCubesLocation, 1, framesSize, videoFrameFile) != framesSize) {
+		return false;
+	}
+
+	applyRotatingCubesColor((u16*)rotatingCubesLocation, framesSize / 2, 1);
+	DC_FlushRange(rotatingCubesLocation, framesSize);
+
+	rocketVideo_dualScreen = false;
+	rocketVideo_interlaced = false;
+	rocketVideo_bandHeight = rocketVideo_height;
+	rocketVideo_videoYpos = tc().rotatingCubesRenderY();
+	return true;
+}
+
 void loadRotatingCubes() {
 	std::string cubes = TFN_RVID_CUBES;
 	FILE *videoFrameFile = fopen(cubes.c_str(), "rb");
+	if (!videoFrameFile) return;
 
-	if (videoFrameFile) {
-		bool doRead = false;
-		if (dsiFeatures()) {
+	bool doRead = false;
+	if (dsiFeatures()) {
+		doRead = true;
+	} else if (sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
+		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
+						 // Expansion Pak)
+		if (*(u16*)(0x020000C0) == 0) {
+			*(vu16*)(0x08240000) = 1;
+		}
+		if ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) {
+			// Set to load video into DS Memory Expansion Pak
+			rotatingCubesLocation = (u8*)0x09000000;
 			doRead = true;
-		} else if (sys().isRegularDS() && (io_dldi_data->ioInterface.features & FEATURE_SLOT_NDS)) {
-			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
-							 // Expansion Pak)
-			if (*(u16*)(0x020000C0) == 0) {
-				*(vu16*)(0x08240000) = 1;
-			}
-			if ((*(u16*)(0x020000C0) != 0 && *(u16*)(0x020000C0) != 0x5A45) || *(vu16*)(0x08240000) == 1) {
-				// Set to load video into DS Memory Expansion Pak
-				rotatingCubesLocation = (u8*)0x09000000;
-				doRead = true;
-			}
 		}
-
-		if (doRead) {
-			// Compatible with RVID v2-v5
-			int rvidVer = 0;
-			fseek(videoFrameFile, 0x4, SEEK_SET);
-			fread((void*)&rvidVer, sizeof(u32), 1, videoFrameFile);
-
-			extern int rocketVideo_videoFrames;
-			// fseek(videoFrameFile, 0x8, SEEK_SET);
-			fread((void*)&rocketVideo_videoFrames, sizeof(u32), 1, videoFrameFile);
-			rocketVideo_videoFrames--;
-
-			extern u8 rocketVideo_fps;
-			// fseek(videoFrameFile, 0xC, SEEK_SET);
-			fread((void*)&rocketVideo_fps, sizeof(u8), 1, videoFrameFile);
-			if (rocketVideo_fps >= 0x80) {
-				rocketVideo_fps -= 0x80;
-			} else if (rocketVideo_fps == 0) {
-				rocketVideo_fps = 60;
-			}
-
-			extern u8 rocketVideo_height;
-			// fseek(videoFrameFile, 0xD, SEEK_SET);
-			fread((void*)&rocketVideo_height, sizeof(u8), 1, videoFrameFile);
-
-			const bool latestVer = (rvidVer >= 3 && rvidVer <= 5);
-			if (latestVer) {
-				u8 isDualScreen = 0;
-				fseek(videoFrameFile, 0xF, SEEK_SET);
-				fread((void*)&isDualScreen, sizeof(u8), 1, videoFrameFile);
-
-				if (isDualScreen) {
-					fclose(videoFrameFile);
-					return;
-				}
-			}
-
-			u8 rvidBmpMode = 1;
-			if (latestVer) {
-				fseek(videoFrameFile, 0x13, SEEK_SET);
-				fread((void*)&rvidBmpMode, sizeof(u8), 1, videoFrameFile);
-			}
-
-			const u32 framesSize = (0x200*rocketVideo_height)*(rocketVideo_videoFrames+1);
-			if (rocketVideo_height > 144 || framesSize > 0x700000) {
-				fclose(videoFrameFile);
-				return;
-			}
-
-			// Configured by tc().rotatingCubesRenderY()
-			/* if (rocketVideo_height >= 58) {
-				// Adjust video positioning
-				extern int rocketVideo_videoYpos;
-				for (int i = 58; i < rocketVideo_height; i += 2) {
-					rocketVideo_videoYpos--;
-				}
-			} */
-
-			u32 framesOffset = 0x200;
-			if (latestVer) {
-				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
-
-				u16* colors256 = NULL;
-				u8* frameBuffer256 = NULL;
-				if (rvidBmpMode == 0) {
-					colors256 = new u16[256];
-					frameBuffer256 = new u8[0xC000];
-				}
-				u32 frameTableOffset = 0x200;
-				for (int i = 0; i <= rocketVideo_videoFrames; i++) {
-					fseek(videoFrameFile, frameTableOffset, SEEK_SET);
-					fread((void*)&framesOffset, sizeof(u32), 1, videoFrameFile);
-
-					fseek(videoFrameFile, framesOffset, SEEK_SET);
-					if (rvidBmpMode == 0) {
-						fread(colors256, 2, 256, videoFrameFile);
-						fread(frameBuffer256, 1, 0x100*rocketVideo_height, videoFrameFile);
-
-						if (colorTable) {
-							for (int c = 0; c < 256; c++) {
-								colors256[c] = colorTable[colors256[c] % 0x8000] | BIT(15);
-							}
-						} else {
-							for (int c = 0; c < 256; c++) {
-								colors256[c] |= BIT(15);
-							}
-						}
-
-						for (int p = 0; p < 0x100*rocketVideo_height; p++) {
-							rotatingCubesLocation16[((0x100*rocketVideo_height)*i)+p] = colors256[frameBuffer256[p]];
-						}
-					} else {
-						fread(rotatingCubesLocation+((0x200*rocketVideo_height)*i), 1, 0x200*rocketVideo_height, videoFrameFile);
-					}
-
-					frameTableOffset += 4;
-				}
-				if (rvidBmpMode == 0) {
-					delete[] colors256;
-					delete[] frameBuffer256;
-				}
-			} else {
-				fseek(videoFrameFile, 0x14, SEEK_SET);
-				fread((void*)&framesOffset, sizeof(u32), 1, videoFrameFile);
-
-				fseek(videoFrameFile, framesOffset, SEEK_SET);
-
-				fread(rotatingCubesLocation, 1, framesSize, videoFrameFile);
-			}
-
-			if (colorTable && rvidBmpMode > 0) {
-				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
-				for (u32 i = 0; i < framesSize/2; i++) {
-					rotatingCubesLocation16[i] = colorTable[rotatingCubesLocation16[i] % 0x8000] | BIT(15);
-				}
-			} else if (rvidBmpMode == 2) {
-				u16* rotatingCubesLocation16 = (u16*)rotatingCubesLocation;
-				for (u32 i = 0; i < framesSize/2; i++) {
-					rotatingCubesLocation16[i] |= BIT(15);
-				}
-			}
-
-			rotatingCubesLoaded = true;
-			rocketVideo_playVideo = true;
-		}
-		fclose(videoFrameFile);
 	}
+
+	if (!doRead) {
+		fclose(videoFrameFile);
+		return;
+	}
+
+	// Compatible with RVID v2-v5
+	RvidHeader header = {0};
+	if (fread(&header, 1, sizeof(header), videoFrameFile) != sizeof(header)
+	 || header.magic != RVID_MAGIC || header.frames == 0 || header.vRes == 0) {
+		fclose(videoFrameFile);
+		return;
+	}
+
+	rocketVideo_videoFrames = (int)header.frames - 1;
+
+	rocketVideo_fps = header.fps;
+	if (rocketVideo_fps >= 0x80) {
+		rocketVideo_fps -= 0x80;
+	} else if (rocketVideo_fps == 0) {
+		rocketVideo_fps = 60;
+	}
+
+	rocketVideo_height = header.vRes;
+
+	const bool latestVer = (header.ver >= 3 && header.ver <= 5);
+	bool loaded = false;
+	if (latestVer) {
+		if (header.dualScreen != 2) { // 2 means the video targets a GBA
+			loaded = loadRotatingCubesLatest(videoFrameFile, header);
+		}
+	} else if (header.ver == 1 || header.ver == 2) {
+		loaded = loadRotatingCubesLegacy(videoFrameFile, header,
+			(0x200 * rocketVideo_height) * ((u32)rocketVideo_videoFrames + 1));
+	}
+
+	if (loaded) {
+		rocketVideo_currentFrame = 0; // Starts at -1, which would blit from before the buffer
+		rotatingCubesLoaded = true;
+		rocketVideo_playVideo = true;
+		rocketVideo_topVisible = true;
+		rocketVideo_weaveRefill = true;
+	}
+	fclose(videoFrameFile);
 }
 void ThemeTextures::unloadRotatingCubes() {
+	rocketVideo_playVideo = false;
+	while (dmaBusy(0) || dmaBusy(1)); // Wait for any in-flight frame to finish rendering
+	drawOverRotatingCubesBottom(); // Restore the bottom screen behind the icons
+	rotatingCubesLoaded = false;
 	if (dsiFeatures() && !ms().macroMode && ms().theme == TWLSettings::ETheme3DS && ms().consoleModel == 0) {
 		toncset32(rotatingCubesLocation, 0, 0x700000/sizeof(u32)); // Clear video before freeing
 		delete[] rotatingCubesLocation;

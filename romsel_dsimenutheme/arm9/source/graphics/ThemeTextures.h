@@ -85,6 +85,7 @@ private:
 public:
 	void drawOverBoxArt(uint photoWidth, uint photoHeight);
 	void drawOverRotatingCubes();
+	void drawOverRotatingCubesBottom();
 
 	void drawVolumeImage(int volumeLevel);
 	void drawVolumeImageMacro(int volumeLevel);
