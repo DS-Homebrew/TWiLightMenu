@@ -184,17 +184,28 @@ bool rocketVideo_topVisible = true;	// False while box art covers the top band
 int rocketVideo_videoYpos = 78;
 int rocketVideo_videoYposBottom = 78;
 int frameOf60fps = 60;
-int rocketVideo_videoFrames = 249;
-int rocketVideo_currentFrame = -1;
+int rocketVideo_videoFrames = 249;	// Last frame number in the file
+int rocketVideo_loopFrame = 0;		// Frame the video goes back to after the last one
+int rocketVideo_currentFrame = 0;	// Next frame to blit
+int rocketVideo_prevFrame = -1;		// Last frame blitted, or -1
+bool rocketVideo_field = false;		// Field of rocketVideo_currentFrame when interlaced
 u8 rocketVideo_fps = 25;
 u8 rocketVideo_height = 56;		// Stored rows per frame; the field height when interlaced
 u8 rocketVideo_bandHeight = 56;		// Rows the video occupies on screen
 bool rocketVideo_interlaced = false;
-bool rocketVideo_dualScreen = false;
+bool rocketVideo_dualScreen = false;	// Two sub-frames per frame, top then bottom
+bool rocketVideo_onTop = true;		// A band plays on the top screen
+bool rocketVideo_onBottom = false;	// A band plays on the bottom screen
+bool rocketVideo_indexed = false;	// 8 BPP: frames hold palette indices followed by their palette
 bool rocketVideo_hasAlpha = false;	// Pixels with bit 15 clear show the theme behind them
 u32 *rocketVideo_spanIndex = NULL;	// Per sub-frame offsets into rocketVideo_spanData
 u16 *rocketVideo_spanData = NULL;	// Alpha run lists, see AlphaSpanWriter
 bool rocketVideo_weaveRefill = false;	// Repaint both fields on the next frame
+// Top screen GUI pixels inside the band, kept in front of the video: per screen row, the
+// number of [start, end) pairs in rocketVideo_guiRuns. Built by ThemeTextures::flushTopGui().
+u8 rocketVideo_guiRunCount[SCREEN_HEIGHT] = {0};
+u16 rocketVideo_guiRuns[SCREEN_HEIGHT][2 * ROCKET_VIDEO_GUI_RUNS] = {{0}};
+int rocketVideo_guiRows = 0;		// Rows with a non-zero rocketVideo_guiRunCount
 int rocketVideo_frameDelay = 0;
 bool rocketVideo_frameDelayEven = true; // For 24FPS
 bool rocketVideo_loadFrame = true;
@@ -287,11 +298,13 @@ void bottomBgLoad(int drawBubble, bool init = false) {
 			bottomBgState = 3;
 		}
 	}
-	// drawBottomBg() commits the whole background, painting over the second video band.
-	if (rotatingCubesLoaded && rocketVideo_dualScreen && bottomBgState != bottomBgStateBefore) {
+	// drawBottomBg() commits around the second video band, whose transparent pixels still
+	// show the old background until the band is fully repainted.
+	if (rotatingCubesLoaded && rocketVideo_onBottom && bottomBgState != bottomBgStateBefore) {
+		const int oldIE = enterCriticalSection();
 		rocketVideo_loadFrame = true;	// Repaint the band without waiting for the next frame
 		rocketVideo_weaveRefill = true;
-		if (rocketVideo_currentFrame > 0) rocketVideo_currentFrame--;
+		leaveCriticalSection(oldIE);
 	}
 
 	if (ms().macroMode && prevBottomBgState != bottomBgState) {
@@ -401,6 +414,60 @@ void frameRateHandler(void) {
 	}
 }
 
+// Last frame blitted to each screen's even and odd rows, or -1 when unknown. Only
+// transparent pixels that were opaque in that frame need the background put back:
+// everywhere else the background is already on screen.
+// Screen 0 is the top band and 1 the bottom band.
+static int alphaLastFrame[2][2] = {{-1, -1}, {-1, -1}};
+
+// Band lines of each screen's fields whose background changed since they were last blitted,
+// as [start, end). They restore every transparent pixel, not only those the previous frame
+// covered.
+static int alphaDirtyStart[2][2] = {{0, 0}, {0, 0}};
+static int alphaDirtyEnd[2][2] = {{0, 0}, {0, 0}};
+
+void resetVideoAlphaTracking(void) {
+	for (int screen = 0; screen < 2; screen++) {
+		alphaLastFrame[screen][0] = -1;
+		alphaLastFrame[screen][1] = -1;
+	}
+}
+
+// The background under screen rows [y0, y1) of a band changed.
+void invalidateVideoAlphaRows(int screen, int y0, int y1) {
+	const int bandY = screen ? rocketVideo_videoYposBottom : rocketVideo_videoYpos;
+	int r0 = y0 - bandY;
+	int r1 = y1 - bandY;
+	if (r0 < 0) r0 = 0;
+	if (r1 > rocketVideo_bandHeight) r1 = rocketVideo_bandHeight;
+	if (r0 >= r1) return;
+
+	const int oldIE = enterCriticalSection();
+	for (int parity = 0; parity < 2; parity++) {
+		int start = r0, end = r1;
+		if (rocketVideo_interlaced) {
+			// Field line l covers band row 2l + parity
+			start = (r0 - parity + 1) / 2;
+			end = (r1 - parity + 1) / 2;
+		} else if (parity) {
+			break;
+		}
+		if (start >= end) continue;
+		if (alphaDirtyStart[screen][parity] >= alphaDirtyEnd[screen][parity]) {
+			alphaDirtyStart[screen][parity] = start;
+			alphaDirtyEnd[screen][parity] = end;
+		} else {
+			if (start < alphaDirtyStart[screen][parity]) alphaDirtyStart[screen][parity] = start;
+			if (end > alphaDirtyEnd[screen][parity]) alphaDirtyEnd[screen][parity] = end;
+		}
+	}
+	leaveCriticalSection(oldIE);
+}
+
+static inline void copyVideoRun(u16 *dst, const u16 *src, int x, int end) {
+	tonccpy(dst + x, src + x, sizeof(u16) * (end - x));
+}
+
 // Write one field of an interlaced video into every other row of the band, leaving the
 // rows of the opposite field in place. The theme's whole UI shares the bitmap layer, so
 // the affine stretch a dedicated player would use is not available here.
@@ -415,25 +482,26 @@ ITCM_CODE static void weaveVideoField(u8 channel, const u8 *src, u16 *bandTop, i
 	}
 }
 
-// Last frame blitted to each screen's even and odd rows, or -1 when unknown. Only
-// transparent pixels that were opaque in that frame need the background put back:
-// everywhere else the background is already on screen.
-static int alphaLastFrame[2][2] = {{-1, -1}, {-1, -1}};
+// Span row header for a row whose run list did not fit: blit it pixel by pixel.
+#define ALPHA_ROW_PER_PIXEL 0xFFFF
 
-void resetVideoAlphaTracking(void) {
-	for (int screen = 0; screen < 2; screen++) {
-		alphaLastFrame[screen][0] = -1;
-		alphaLastFrame[screen][1] = -1;
-	}
-}
-
-static inline void copyVideoRun(u16 *dst, const u16 *src, int x, int end) {
-	tonccpy(dst + x, src + x, sizeof(u16) * (end - x));
+static inline const u16 *nextAlphaRow(const u16 *row) {
+	return row + 1 + ((*row == ALPHA_ROW_PER_PIXEL) ? 0 : *row);
 }
 
 // Write one row from its run list: opaque runs from the video, transparent runs from the
 // background where the previous frame's row (if known) had opaque pixels.
 ITCM_CODE static void blitAlphaRow(const u16 *src, u16 *dst, const u16 *bg, const u16 *cur, const u16 *prev) {
+	if (*cur == ALPHA_ROW_PER_PIXEL) {
+		for (int x = 0; x < SCREEN_WIDTH; x++) {
+			dst[x] = (src[x] & BIT(15)) ? src[x] : bg[x];
+		}
+		return;
+	}
+	if (prev && *prev == ALPHA_ROW_PER_PIXEL) {
+		prev = NULL; // Its runs are unknown, so restore every transparent pixel
+	}
+
 	int curFlips = *cur++;
 	int prevFlips = 0;
 	if (prev) prevFlips = *prev++;
@@ -472,22 +540,26 @@ ITCM_CODE static void blitAlphaRow(const u16 *src, u16 *dst, const u16 *bg, cons
 	}
 }
 
-ITCM_CODE static void blitAlphaBand(int screen, const u16 *src, u16 *dst, const u16 *bg, int frame, int parity) {
+// screen picks the band's tracking, subFrame which of the frame's stored pictures to show.
+ITCM_CODE static void blitAlphaBand(int screen, u32 subFrame, const u16 *src, u16 *dst, const u16 *bg, int frame, int parity) {
 	const u32 screens = rocketVideo_dualScreen ? 2 : 1;
-	const u16 *cur = rocketVideo_spanData + rocketVideo_spanIndex[(u32)frame * screens + screen];
+	const u16 *cur = rocketVideo_spanData + rocketVideo_spanIndex[(u32)frame * screens + subFrame];
 	const int prevFrame = alphaLastFrame[screen][parity];
 	const u16 *prev = (prevFrame < 0) ? NULL
-		: rocketVideo_spanData + rocketVideo_spanIndex[(u32)prevFrame * screens + screen];
+		: rocketVideo_spanData + rocketVideo_spanIndex[(u32)prevFrame * screens + subFrame];
+	const int dirtyStart = alphaDirtyStart[screen][parity];
+	const int dirtyEnd = alphaDirtyEnd[screen][parity];
 
 	const int rowStep = SCREEN_WIDTH * (rocketVideo_interlaced ? 2 : 1);
 	if (parity) {
 		dst += SCREEN_WIDTH;
 		bg += SCREEN_WIDTH;
 	}
-	for (u8 line = 0; line < rocketVideo_height; line++) {
-		const u16 *curNext = cur + 1 + *cur;
-		const u16 *prevNext = prev ? prev + 1 + *prev : NULL;
-		blitAlphaRow(src, dst, bg, cur, prev);
+	for (int line = 0; line < rocketVideo_height; line++) {
+		const u16 *curNext = nextAlphaRow(cur);
+		const u16 *prevNext = prev ? nextAlphaRow(prev) : NULL;
+		const bool dirty = (line >= dirtyStart && line < dirtyEnd);
+		blitAlphaRow(src, dst, bg, cur, dirty ? NULL : prev);
 		cur = curNext;
 		prev = prevNext;
 		src += SCREEN_WIDTH;
@@ -495,69 +567,162 @@ ITCM_CODE static void blitAlphaBand(int screen, const u16 *src, u16 *dst, const 
 		bg += rowStep;
 	}
 	alphaLastFrame[screen][parity] = frame;
+	alphaDirtyStart[screen][parity] = 0;
+	alphaDirtyEnd[screen][parity] = 0;
 }
 
-static void blitVideoFrame(int frame) {
-	const u32 frameBytes = 0x200 * rocketVideo_height;
+// The top screen's GUI is drawn into the same bitmap as the video, so copy its pixels back
+// over the band to keep it in front.
+ITCM_CODE static void overlayTopGui(u16 *band, const u16 *gui) {
+	for (int line = 0; line < rocketVideo_bandHeight; line++) {
+		const u16 *run = rocketVideo_guiRuns[rocketVideo_videoYpos + line];
+		for (int i = rocketVideo_guiRunCount[rocketVideo_videoYpos + line]; i > 0; i--, run += 2) {
+			copyVideoRun(band, gui, run[0], run[1]);
+		}
+		band += SCREEN_WIDTH;
+		gui += SCREEN_WIDTH;
+	}
+}
+
+// 8 BPP videos keep each sub-frame as palette indices followed by its palette, and only turn
+// into 16 BPP here: half the memory of storing them expanded, for a lookup per pixel.
+ITCM_CODE static void expandIndexedBand(u16 *band, const u8 *frame, int parity) {
+	const u16 *const palette = (const u16*)(frame + (0x100 * rocketVideo_height));
+	const int rowStep = SCREEN_WIDTH * (rocketVideo_interlaced ? 2 : 1);
+	u16 *row = band + (parity ? SCREEN_WIDTH : 0);
+	const u8 *index = frame;
+	for (int line = 0; line < rocketVideo_height; line++) {
+		for (int x = 0; x < SCREEN_WIDTH; x++) {
+			row[x] = palette[index[x]];
+		}
+		index += SCREEN_WIDTH;
+		row += rowStep;
+	}
+}
+
+static void blitVideoFrame(int frame, int parity) {
+	const u32 frameBytes = rocketVideo_indexed ? (0x100 * rocketVideo_height) + 0x200 : 0x200 * rocketVideo_height;
 	const u32 stride = rocketVideo_dualScreen ? frameBytes * 2 : frameBytes;
 	const u8 *src = rotatingCubesLocation + ((u32)frame * stride);
+	const u32 bottomSubFrame = rocketVideo_dualScreen ? 1 : 0;
+	const u8 *bottomSrc = src + (bottomSubFrame * frameBytes);
+	const bool top = rocketVideo_onTop && rocketVideo_topVisible;
+	const bool bottom = rocketVideo_onBottom;
 	u16 *topBand = (u16*)BG_GFX_SUB + (SCREEN_WIDTH * rocketVideo_videoYpos);
 	u16 *bottomBand = (u16*)BG_GFX + (SCREEN_WIDTH * rocketVideo_videoYposBottom);
+	const u16 *topBg = tex().bgSubBuffer() + (SCREEN_WIDTH * rocketVideo_videoYpos);
 
-	if (rocketVideo_hasAlpha) {
-		const int parity = rocketVideo_interlaced ? (frame & 1) : 0;
-		if (rocketVideo_topVisible)
-			blitAlphaBand(0, (const u16*)src, topBand,
-				tex().bgSubBuffer() + (SCREEN_WIDTH * rocketVideo_videoYpos), frame, parity);
-		if (rocketVideo_dualScreen)
-			blitAlphaBand(1, (const u16*)(src + frameBytes), bottomBand,
+	if (rocketVideo_indexed) {
+		if (!rocketVideo_interlaced) parity = 0;
+		if (top)
+			expandIndexedBand(topBand, src, parity);
+		if (bottom)
+			expandIndexedBand(bottomBand, bottomSrc, parity);
+	} else if (rocketVideo_hasAlpha) {
+		if (!rocketVideo_interlaced) parity = 0;
+		if (top)
+			blitAlphaBand(0, 0, (const u16*)src, topBand, topBg, frame, parity);
+		if (bottom)
+			blitAlphaBand(1, bottomSubFrame, (const u16*)bottomSrc, bottomBand,
 				tex().bgMainBuffer() + (SCREEN_WIDTH * rocketVideo_videoYposBottom), frame, parity);
 	} else if (rocketVideo_interlaced) {
-		const int parity = frame & 1;
-		if (rocketVideo_topVisible)
+		if (top)
 			weaveVideoField(1, src, topBand, parity);
-		if (rocketVideo_dualScreen)
-			weaveVideoField(0, src + frameBytes, bottomBand, parity);
+		if (bottom)
+			weaveVideoField(0, bottomSrc, bottomBand, parity);
 	} else {
-		if (rocketVideo_topVisible)
-			dmaCopyWordsAsynch(1, src, topBand, frameBytes);
-		if (rocketVideo_dualScreen)
-			dmaCopyWordsAsynch(0, src + frameBytes, bottomBand, frameBytes);
+		if (top) {
+			// The GUI overlay has to land after the frame. A CPU copy: a blocking DMA transfer of
+			// a whole frame would hold this handler, and the main thread with it, for far longer
+			if (rocketVideo_guiRows) {
+				tonccpy(topBand, src, frameBytes);
+			} else {
+				dmaCopyWordsAsynch(1, src, topBand, frameBytes);
+			}
+		}
+		if (bottom)
+			dmaCopyWordsAsynch(0, bottomSrc, bottomBand, frameBytes);
+	}
+
+	if (top && rocketVideo_guiRows) {
+		overlayTopGui(topBand, topBg);
 	}
 }
 
 // Resume playback after the band has been covered by box art or a background redraw.
 void resumeRotatingCubesVideo(void) {
+	const int oldIE = enterCriticalSection();
 	rocketVideo_playVideo = true;
 	rocketVideo_topVisible = true;
 	rocketVideo_weaveRefill = true;
+	leaveCriticalSection(oldIE);
+}
+
+// Set when a CPU blit (alpha or 8 BPP) ran past the end of vblank and into the next frame's scan.
+static bool blitOverrun = false;
+// Set when the last tick only laid down the opposite field, so this one must show a frame.
+static bool alphaRefillDeferred = false;
+
+static void advanceVideoFrame(void) {
+	rocketVideo_prevFrame = rocketVideo_currentFrame;
+	rocketVideo_currentFrame++;
+	if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
+		rocketVideo_currentFrame = rocketVideo_loopFrame;
+	}
+	rocketVideo_field = !rocketVideo_field;
+	rocketVideo_frameDelay = 0;
+	rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
+	rocketVideo_loadFrame = false;
 }
 
 void playRotatingCubesVideo(void) {
 	if (!rocketVideo_playVideo || !rocketVideo_loadFrame)
 		return;
 
+	// Transparent and 8 BPP videos are blitted by the CPU inside this handler. If the last blit ran
+	// into the next frame, sit this vblank out so the main thread gets a whole frame to run:
+	// otherwise the handler can keep re-entering and starve it. rocketVideo_loadFrame stays
+	// set, so the same frame goes out on the next vblank. Skipping a frame instead would
+	// leave an interlaced video filling the same field over and over.
+	if ((rocketVideo_hasAlpha || rocketVideo_indexed) && blitOverrun) {
+		blitOverrun = false;
+		return;
+	}
+
 	// After the band has been painted over, an interlaced video only fills half of its
 	// rows per frame, so lay down the opposite field first.
-	if (rocketVideo_weaveRefill) {
+	if (rocketVideo_weaveRefill && alphaRefillDeferred) {
+		// Asked again before the deferred frame went out: that frame goes first, so a refill
+		// requested over and over still lets the video advance
+		rocketVideo_weaveRefill = false;
+		resetVideoAlphaTracking();
+	} else if (rocketVideo_weaveRefill) {
 		rocketVideo_weaveRefill = false;
 		resetVideoAlphaTracking(); // What is on screen in the band is no longer known
 		if (rocketVideo_interlaced) {
-			int other = rocketVideo_currentFrame - 1;
-			if (other < 0) other = rocketVideo_videoFrames;
-			blitVideoFrame(other);
+			const int other = (rocketVideo_prevFrame >= 0) ? rocketVideo_prevFrame : rocketVideo_currentFrame;
+			blitVideoFrame(other, !rocketVideo_field);
+			if (rocketVideo_hasAlpha) {
+				// Two full alpha restores are too much for one vblank: rocketVideo_loadFrame
+				// stays set, so the current frame goes out on the next one.
+				blitOverrun = (REG_VCOUNT < 192);
+				alphaRefillDeferred = true;
+				return;
+			}
 		}
+	} else if (rocketVideo_prevFrame >= 0 && rocketVideo_currentFrame < rocketVideo_prevFrame) {
+		// Anything that slipped into the band unnoticed would otherwise stay until those
+		// pixels turn opaque again, so restore the whole backdrop once per loop.
+		resetVideoAlphaTracking();
 	}
 
-	blitVideoFrame(rocketVideo_currentFrame);
-
-	rocketVideo_currentFrame++;
-	if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
-		rocketVideo_currentFrame = 0;
+	blitVideoFrame(rocketVideo_currentFrame, rocketVideo_field);
+	alphaRefillDeferred = false;
+	if (rocketVideo_hasAlpha || rocketVideo_indexed) {
+		blitOverrun = (REG_VCOUNT < 192);
 	}
-	rocketVideo_frameDelay = 0;
-	rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
-	rocketVideo_loadFrame = false;
+
+	advanceVideoFrame();
 }
 
 void vBlankHandler() {
@@ -1597,6 +1762,7 @@ void loadPhoto(const std::string &path, const bool bufferOnly) {
 
 	u16 *bgSubBuffer = tex().beginBgSubModify();
 	u16* bgSubBuffer2 = tex().bgSubBuffer2();
+	tex().clearTopGuiMask(24, 24, 208, 156); // The photo covers any GUI there
 
 	// Fill area with black
 	for (int y = 24; y < 180; y++) {
@@ -1648,6 +1814,7 @@ void loadBootstrapScreenshot(FILE *file, const bool bufferOnly) {
 	u16* bgSubBuffer2 = tex().bgSubBuffer2();
 
 	if (!bufferOnly) {
+		tex().clearTopGuiMask(24, 24, 208, 156); // The screenshot covers any GUI there
 		// Fill area with black
 		for (int y = 24; y < 180; y++) {
 			dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
@@ -1862,4 +2029,5 @@ void graphicsInit() {
 	irqSet(IRQ_VCOUNT, frameRateHandler);
 	irqEnable(IRQ_VCOUNT);
 	// consoleDemoInit();
+
 }

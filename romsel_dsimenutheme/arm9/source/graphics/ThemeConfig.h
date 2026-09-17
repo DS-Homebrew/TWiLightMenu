@@ -29,6 +29,8 @@ private:
 
 	int _rotatingCubesRenderY;
 	int _rotatingCubesRenderYBottom;
+	int _rotatingCubesMainScreen;
+	int _rotatingCubesLoopFrame;
 
 	int _shoulderLRenderY;
 	int _shoulderLRenderX;
@@ -172,6 +174,8 @@ public:
 
 	int rotatingCubesRenderY() const { return _rotatingCubesRenderY; }
 	int rotatingCubesRenderYBottom() const { return _rotatingCubesRenderYBottom; }
+	int rotatingCubesMainScreen() const { return _rotatingCubesMainScreen; }
+	int rotatingCubesLoopFrame() const { return _rotatingCubesLoopFrame; }
 
 	int shoulderLRenderY() const { return _shoulderLRenderY; }
 	int shoulderLRenderX() const { return _shoulderLRenderX; }

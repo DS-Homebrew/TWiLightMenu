@@ -3208,7 +3208,9 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 			}
 
 			controlTopBright = true;
-			while (!screenFadedIn()) { swiWaitForVBlank(); }
+			// Give the vblank handler at least one frame to apply the top screen's brightness:
+			// if the bottom screen has already faded in, the loop would not wait at all
+			do { swiWaitForVBlank(); } while (!screenFadedIn());
 			musicplaying = true;
 		}
 
@@ -3310,8 +3312,16 @@ std::string browseForFile(const std::vector<std::string_view> extensionList) {
 					bannerTextShown = false;
 					clearText(false);
 					currentBg = 0;
-					showSTARTborder = rocketVideo_playVideo = (ms().theme == TWLSettings::ETheme3DS ? true : false);
-					rocketVideo_topVisible = rocketVideo_weaveRefill = rocketVideo_playVideo;
+					// This runs every frame while the cursor is on an empty spot: only ask for a
+					// repaint when playback actually changes, or the video would never advance
+					const bool playVideo = (ms().theme == TWLSettings::ETheme3DS);
+					showSTARTborder = playVideo;
+					if (rocketVideo_playVideo != playVideo || rocketVideo_topVisible != playVideo) {
+						const int oldIE = enterCriticalSection();
+						rocketVideo_playVideo = playVideo;
+						rocketVideo_topVisible = rocketVideo_weaveRefill = playVideo;
+						leaveCriticalSection(oldIE);
+					}
 				}
 				if (ms().theme == TWLSettings::EThemeHBL) {
 					printLarge(false, 0, 142, "^", Alignment::center, FontPalette::overlay);
