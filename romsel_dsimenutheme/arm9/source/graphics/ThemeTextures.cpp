@@ -39,13 +39,27 @@ extern u32 rotatingCubesLoaded;
 extern bool rocketVideo_playVideo;
 extern bool rocketVideo_topVisible;
 extern bool rocketVideo_dualScreen;
+extern bool rocketVideo_onTop;
+extern bool rocketVideo_onBottom;
+extern u8 rocketVideo_guiRunCount[SCREEN_HEIGHT];
+extern u16 rocketVideo_guiRuns[SCREEN_HEIGHT][2 * ROCKET_VIDEO_GUI_RUNS];
+extern int rocketVideo_guiRows;
 extern bool rocketVideo_interlaced;
+extern bool rocketVideo_hasAlpha;
+extern bool rocketVideo_indexed;
+extern u32 *rocketVideo_spanIndex;
+extern u16 *rocketVideo_spanData;
+extern void resetVideoAlphaTracking(void);
+extern void invalidateVideoAlphaRows(int screen, int y0, int y1);
 extern bool rocketVideo_weaveRefill;
 extern u8 rocketVideo_bandHeight;
 extern u8 rocketVideo_height;
 extern u8 rocketVideo_fps;
 extern int rocketVideo_videoFrames;
+extern int rocketVideo_loopFrame;
 extern int rocketVideo_currentFrame;
+extern int rocketVideo_prevFrame;
+extern bool rocketVideo_field;
 extern int rocketVideo_videoYpos;
 extern int rocketVideo_videoYposBottom;
 extern u8 *rotatingCubesLocation;
@@ -64,6 +78,14 @@ static u16* _photoBuffer2 = (u16*)_photoBuffer;
 static u16* _frameBufferBot[2] = {NULL};
 
 static bool topBorderBufferLoaded = false;
+
+// Top screen pixels drawn by GUI elements (username, date, time, battery...), which a video
+// on the top screen keeps in front of it, and the rows changed since flushTopGui() last ran.
+static u8 _topGuiMask[256 * 192] = {0};
+static int _topGuiDirtyY0 = SCREEN_HEIGHT;
+static int _topGuiDirtyY1 = 0;
+static int _topGuiDirtyBeforeY0 = SCREEN_HEIGHT;	// The range as it was when beginBgSubModify() widened it
+static int _topGuiDirtyBeforeY1 = 0;
 bool boxArtColorDeband = false;
 
 static u8* boxArtCache = NULL;	// Size: 0x1B8000
@@ -831,6 +853,127 @@ void ThemeTextures::loadIconUnknownTexture() {
 	}
 	logPrint("Loaded iconUnknownTexture\n");
 }
+// While a video plays, its band belongs to the vblank handler, and the matching rows of the
+// background buffers are kept free of it: snapshots skip them, so they hold the background
+// plus whatever was drawn over it (clock, battery...). Transparent video pixels are restored
+// from there, and a whole-screen commit would otherwise write a stale frame over the band.
+static bool videoOwnsTopBand() {
+	return rotatingCubesLoaded && rocketVideo_playVideo && rocketVideo_onTop && rocketVideo_topVisible && !boxArtColorDeband;
+}
+
+static bool videoOwnsBottomBand() {
+	return rotatingCubesLoaded && rocketVideo_playVideo && rocketVideo_onBottom && !ms().macroMode;
+}
+
+static void markTopGuiRows(int y0, int y1) {
+	if (y0 < 0) y0 = 0;
+	if (y1 > SCREEN_HEIGHT) y1 = SCREEN_HEIGHT;
+	if (y0 >= y1) return;
+	if (y0 < _topGuiDirtyY0) _topGuiDirtyY0 = y0;
+	if (y1 > _topGuiDirtyY1) _topGuiDirtyY1 = y1;
+}
+
+// beginBgSubModify() assumes the whole screen may change. Writers that only touch a few rows
+// call this afterwards, so only those rows get rebuilt and restored behind the video.
+static void narrowTopGuiRows(int y0, int y1) {
+	_topGuiDirtyY0 = _topGuiDirtyBeforeY0;
+	_topGuiDirtyY1 = _topGuiDirtyBeforeY1;
+	markTopGuiRows(y0, y1);
+}
+
+// Rebuild the GUI run lists of the changed rows inside the top band, and have the video
+// restore the background behind its transparent pixels on those rows.
+static void flushTopGui() {
+	int y0 = _topGuiDirtyY0;
+	int y1 = _topGuiDirtyY1;
+	_topGuiDirtyY0 = SCREEN_HEIGHT;
+	_topGuiDirtyY1 = 0;
+	if (!rotatingCubesLoaded || !rocketVideo_onTop) return;
+
+	if (y0 < rocketVideo_videoYpos) y0 = rocketVideo_videoYpos;
+	if (y1 > rocketVideo_videoYpos + rocketVideo_bandHeight) y1 = rocketVideo_videoYpos + rocketVideo_bandHeight;
+	if (y0 >= y1) return;
+
+	u16 runs[2 * ROCKET_VIDEO_GUI_RUNS];
+	for (int y = y0; y < y1; y++) {
+		const u8 *mask = _topGuiMask + (y * SCREEN_WIDTH);
+		int count = 0;
+		for (int x = 0; x < SCREEN_WIDTH;) {
+			if (!mask[x]) {
+				x++;
+				continue;
+			}
+			const int start = x;
+			while (x < SCREEN_WIDTH && mask[x]) x++;
+			if (count == ROCKET_VIDEO_GUI_RUNS) {
+				runs[(2 * count) - 1] = x; // Out of room: stretch the last run over the gap
+			} else {
+				runs[2 * count] = start;
+				runs[(2 * count) + 1] = x;
+				count++;
+			}
+		}
+
+		const int oldIE = enterCriticalSection();
+		rocketVideo_guiRows += (count != 0) - (rocketVideo_guiRunCount[y] != 0);
+		if (count) {
+			tonccpy(rocketVideo_guiRuns[y], runs, sizeof(u16) * 2 * count);
+		}
+		rocketVideo_guiRunCount[y] = count;
+		leaveCriticalSection(oldIE);
+	}
+	invalidateVideoAlphaRows(0, y0, y1);
+}
+
+void ThemeTextures::clearTopGuiMask(int x, int y, int w, int h) {
+	if (x < 0) {
+		w += x;
+		x = 0;
+	}
+	if (y < 0) {
+		h += y;
+		y = 0;
+	}
+	if (x + w > SCREEN_WIDTH) w = SCREEN_WIDTH - x;
+	if (y + h > SCREEN_HEIGHT) h = SCREEN_HEIGHT - y;
+	if (w <= 0 || h <= 0) return;
+	for (int row = y; row < y + h; row++) {
+		toncset(_topGuiMask + (row * SCREEN_WIDTH) + x, 0, w);
+	}
+	markTopGuiRows(y, y + h);
+}
+
+// Snapshot the screen into a background buffer, leaving the band rows as they are.
+static void snapshotAroundBand(const u16 *src, u16 *dst, int bandY) {
+	const u32 aboveBytes = sizeof(u16) * SCREEN_WIDTH * bandY;
+	const u32 belowOffset = SCREEN_WIDTH * (bandY + rocketVideo_bandHeight);
+	const u32 belowBytes = sizeof(u16) * (BG_BUFFER_PIXELCOUNT - belowOffset);
+	if (aboveBytes) {
+		dmaCopyWords(3, src, dst, aboveBytes);
+	}
+	if (belowBytes) {
+		dmaCopyWords(3, src + belowOffset, dst + belowOffset, belowBytes);
+	}
+}
+
+// Copy a background buffer to VRAM around the band. When asynchronous, the rows above the
+// band still go synchronously, as a DMA channel only takes one transfer at a time.
+static void commitAroundBand(const u16 *src, u16 *dst, int bandY, bool async) {
+	const u32 aboveBytes = sizeof(u16) * SCREEN_WIDTH * bandY;
+	const u32 belowOffset = SCREEN_WIDTH * (bandY + rocketVideo_bandHeight);
+	const u32 belowBytes = sizeof(u16) * (BG_BUFFER_PIXELCOUNT - belowOffset);
+	if (aboveBytes) {
+		dmaCopyWords(2, src, dst, aboveBytes);
+	}
+	if (belowBytes) {
+		if (async) {
+			dmaCopyWordsAsynch(2, src + belowOffset, dst + belowOffset, belowBytes);
+		} else {
+			dmaCopyWords(2, src + belowOffset, dst + belowOffset, belowBytes);
+		}
+	}
+}
+
 u16 *ThemeTextures::beginBgSubModify() {
 	if (ms().macroMode)
 		return _bgSubBuffer;
@@ -839,7 +982,14 @@ u16 *ThemeTextures::beginBgSubModify() {
 	if (boxArtColorDeband) {
 		bgLoc = _frameBufferBot[0];
 	}
-	dmaCopyWords(3, bgLoc, _bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	_topGuiDirtyBeforeY0 = _topGuiDirtyY0;
+	_topGuiDirtyBeforeY1 = _topGuiDirtyY1;
+	markTopGuiRows(0, SCREEN_HEIGHT);
+	if (videoOwnsTopBand()) {
+		snapshotAroundBand(bgLoc, _bgSubBuffer, rocketVideo_videoYpos);
+	} else {
+		dmaCopyWords(3, bgLoc, _bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	}
 	if (boxArtColorDeband) {
 		dmaCopyWords(3, _frameBufferBot[1], _bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}
@@ -859,10 +1009,15 @@ void ThemeTextures::commitBgSubModify() {
 		DC_FlushRange(_bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}
 	while (REG_VCOUNT != 191); // Fix screen tearing
-	dmaCopyWords(2, _bgSubBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	if (videoOwnsTopBand()) {
+		commitAroundBand(_bgSubBuffer, bgLoc, rocketVideo_videoYpos, false);
+	} else {
+		dmaCopyWords(2, _bgSubBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	}
 	if (boxArtColorDeband) {
 		dmaCopyWords(2, _bgSubBuffer2, _frameBufferBot[1], sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}
+	flushTopGui();
 }
 
 void ThemeTextures::commitBgSubModifyAsync() {
@@ -878,7 +1033,11 @@ void ThemeTextures::commitBgSubModifyAsync() {
 		DC_FlushRange(_bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}
 	while (REG_VCOUNT != 191); // Fix screen tearing
-	dmaCopyWordsAsynch(2, _bgSubBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	if (videoOwnsTopBand()) {
+		commitAroundBand(_bgSubBuffer, bgLoc, rocketVideo_videoYpos, true);
+	} else {
+		dmaCopyWordsAsynch(2, _bgSubBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	}
 	if (boxArtColorDeband) {
 		if (ndmaEnabled()) {
 			ndmaCopyWordsAsynch(2, _bgSubBuffer2, _frameBufferBot[1], sizeof(u16) * BG_BUFFER_PIXELCOUNT);
@@ -886,6 +1045,7 @@ void ThemeTextures::commitBgSubModifyAsync() {
 			tonccpy(_frameBufferBot[1], _bgSubBuffer2, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 		}
 	}
+	flushTopGui();
 }
 
 u16 *ThemeTextures::beginBgMainModify() {
@@ -893,7 +1053,11 @@ u16 *ThemeTextures::beginBgMainModify() {
 	/*if (boxArtColorDeband) {
 		bgLoc = _frameBufferBot[0];
 	}*/
-	dmaCopyWords(3, bgLoc, _bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	if (videoOwnsBottomBand()) {
+		snapshotAroundBand(bgLoc, _bgMainBuffer, rocketVideo_videoYposBottom);
+	} else {
+		dmaCopyWords(3, bgLoc, _bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	}
 	/*if (ndmaEnabled()) {
 		dmaCopyWords(3, _frameBuffer[1], _bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}*/
@@ -906,7 +1070,12 @@ void ThemeTextures::commitBgMainModify() {
 		bgLoc = _frameBufferBot[0];
 	}*/
 	DC_FlushRange(_bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	dmaCopyWords(2, _bgMainBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	if (videoOwnsBottomBand()) {
+		commitAroundBand(_bgMainBuffer, bgLoc, rocketVideo_videoYposBottom, false);
+		invalidateVideoAlphaRows(1, 0, SCREEN_HEIGHT);
+	} else {
+		dmaCopyWords(2, _bgMainBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	}
 	/*if (ndmaEnabled()) {
 		dmaCopyWords(2, _bgMainBuffer, _frameBuffer[1], sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}*/
@@ -918,7 +1087,12 @@ void ThemeTextures::commitBgMainModifyAsync() {
 		bgLoc = _frameBufferBot[0];
 	}*/
 	DC_FlushRange(_bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	dmaCopyWordsAsynch(2, _bgMainBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	if (videoOwnsBottomBand()) {
+		commitAroundBand(_bgMainBuffer, bgLoc, rocketVideo_videoYposBottom, true);
+		invalidateVideoAlphaRows(1, 0, SCREEN_HEIGHT);
+	} else {
+		dmaCopyWordsAsynch(2, _bgMainBuffer, bgLoc, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	}
 	/*if (boxArtColorDeband) {
 		ndmaCopyWordsAsynch(2, _bgMainBuffer, _frameBuffer[1], sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	}*/
@@ -928,6 +1102,7 @@ void ThemeTextures::drawTopBg() {
 	beginBgSubModify();
 
 	_backgroundTextures[0].copy(_bgSubBuffer, false);
+	toncset(_topGuiMask, 0, sizeof(_topGuiMask));
 
 	if (boxArtColorDeband) {
 		tonccpy((u8*)_bgSubBuffer2, (u8*)_bgSubBuffer, 0x18000);
@@ -954,6 +1129,7 @@ void ThemeTextures::drawBottomBg(int index) {
 void ThemeTextures::clearTopScreen() {
 	beginBgSubModify();
 	const u16 val = colorTable ? (colorTable[0x7FFF] | BIT(15)) : 0xFFFF;
+	toncset(_topGuiMask, 0, sizeof(_topGuiMask));
 	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 		_bgSubBuffer[i] = val;
 		if (boxArtColorDeband) {
@@ -998,6 +1174,7 @@ void ThemeTextures::drawProfileName() {
 			if (ms().macroMode) {
 				_bgMainBuffer[(yPos + y) * 256 + (xPos + x)] = val;
 			} else {
+				_topGuiMask[(yPos + y) * 256 + (xPos + x)] = (px != 0);
 				_bgSubBuffer[(yPos + y) * 256 + (xPos + x)] = val;
 				if (boxArtColorDeband) {
 					_bgSubBuffer2[(yPos + y) * 256 + (xPos + x)] = val;
@@ -1006,6 +1183,9 @@ void ThemeTextures::drawProfileName() {
 		}
 	}
 
+	if (!ms().macroMode) {
+		markTopGuiRows(yPos, yPos + usernameFont()->height());
+	}
 	ms().macroMode ? commitBgMainModify() : commitBgSubModify();
 	_profileNameLoaded = true;
 }
@@ -1419,6 +1599,7 @@ void ThemeTextures::drawOverBoxArt(uint photoWidth, uint photoHeight) {
 			_backgroundTextures[0].copy(_topBorderBuffer, false);
 			topBorderBufferLoaded = true;
 		}
+		clearTopGuiMask(boxArtX, boxArtY, boxArtWidth, boxArtHeight);
 		for (uint y = 0; y < boxArtHeight; y++) {
 			uint offset = boxArtX + (boxArtY + y) * SCREEN_WIDTH;
 			tonccpy(_bgSubBuffer + offset, _topBorderBuffer + offset, sizeof(u16) * boxArtWidth);
@@ -1434,6 +1615,7 @@ void ThemeTextures::drawOverBoxArt(uint photoWidth, uint photoHeight) {
 		uint blackY = boxArtY > PHOTO_OFFSET ? boxArtY : PHOTO_OFFSET;
 		uint blackWidth = boxArtWidth < MAX_PHOTO_WIDTH ? boxArtWidth : MAX_PHOTO_WIDTH;
 		uint blackHeight = boxArtHeight < MAX_PHOTO_HEIGHT ? boxArtHeight : MAX_PHOTO_HEIGHT;
+		clearTopGuiMask(blackX, blackY, blackWidth, blackHeight);
 		for (uint y = 0; y < blackHeight; y++) {
 			uint offset = blackX + (blackY + y) * SCREEN_WIDTH;
 			dmaFillHalfWords(0x8000, _bgSubBuffer + offset, sizeof(u16) * blackWidth);
@@ -1459,16 +1641,17 @@ void ThemeTextures::drawOverBoxArt(uint photoWidth, uint photoHeight) {
 	commitBgSubModify();
 }
 
-// Redraw background over the rotating cubes bounds
+// Redraw background over the rotating cubes bounds. Snapshots taken while the video played
+// skipped the band, so those rows of _bgSubBuffer still hold the background along with
+// anything drawn over it, such as the clock or battery.
 void ThemeTextures::drawOverRotatingCubes() {
-	// if (!rotatingCubesLoaded) return;
+	if (!rotatingCubesLoaded || !rocketVideo_onTop) return;
 
-	beginBgSubModify();
-	for (uint y = 0; y < rocketVideo_bandHeight; y++) {
-		uint offset = (rocketVideo_videoYpos + y) * SCREEN_WIDTH;
-		tonccpy(_bgSubBuffer + offset, _topBorderBuffer + offset, sizeof(u16) * SCREEN_WIDTH);
-	}
-	commitBgSubModify();
+	const u32 offset = (u32)rocketVideo_videoYpos * SCREEN_WIDTH;
+	const u32 size = sizeof(u16) * SCREEN_WIDTH * rocketVideo_bandHeight;
+	DC_FlushRange(_bgSubBuffer + offset, size);
+	while (REG_VCOUNT != 191); // Fix screen tearing
+	dmaCopyWords(2, _bgSubBuffer + offset, (u16*)BG_GFX_SUB + offset, size);
 }
 
 // Redraw the bottom screen background over the second video band.
@@ -1476,7 +1659,7 @@ void ThemeTextures::drawOverRotatingCubes() {
 // to BG_GFX and never touches it, and the partial main-BG writers are macro mode only,
 // where the video is never loaded.
 void ThemeTextures::drawOverRotatingCubesBottom() {
-	if (!rocketVideo_dualScreen || ms().macroMode) return;
+	if (!rocketVideo_onBottom || ms().macroMode) return;
 
 	const u32 offset = (u32)rocketVideo_videoYposBottom * SCREEN_WIDTH;
 	const u32 size = sizeof(u16) * SCREEN_WIDTH * rocketVideo_bandHeight;
@@ -1493,9 +1676,11 @@ ITCM_CODE void ThemeTextures::drawVolumeImage(int volumeLevel) {
 	const u16 *src = tex->texture();
 	int startX = tc().volumeRenderX();
 	int startY = tc().volumeRenderY();
+	narrowTopGuiRows(startY, startY + tex->texHeight());
 	for (uint y = 0; y < tex->texHeight(); y++) {
 		for (uint x = 0; x < tex->texWidth(); x++) {
 			u16 val = *(src++);
+			_topGuiMask[(startY + y) * 256 + startX + x] = (val & BIT(15)) != 0;
 			if (!(val & BIT(15))) // If transparent, restore background image
 					val = _topBorderBuffer[(startY + y) * 256 + startX + x];
 
@@ -1585,9 +1770,11 @@ ITCM_CODE void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMod
 	beginBgSubModify();
 	const Texture *tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
 	const u16 *src = tex->texture();
+	narrowTopGuiRows(tc().batteryRenderY(), tc().batteryRenderY() + tex->texHeight());
 	for (uint y = tc().batteryRenderY(); y < tc().batteryRenderY() + tex->texHeight(); y++) {
 		for (uint x = tc().batteryRenderX(); x < tc().batteryRenderX() + tex->texWidth(); x++) {
 			u16 val = *(src++);
+			_topGuiMask[y * 256 + x] = (val & BIT(15)) != 0;
 			if (!(val & BIT(15))) // If transparent, restore background image
 				val = _topBorderBuffer[y * 256 + x];
 
@@ -1651,6 +1838,7 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 		for (uint x = tc().shoulderRRenderX(); x < tc().shoulderRRenderX() + rightTex->texWidth(); x++) {
 			u16 val = *(rightSrc++);
 			if (val >> 15) { // Do not render transparent pixel
+				_topGuiMask[y * 256 + x] = 1;
 				_bgSubBuffer[y * 256 + x] = val;
 				if (boxArtColorDeband) {
 					_bgSubBuffer2[y * 256 + x] = val;
@@ -1672,6 +1860,7 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 			u16 bg = _bgSubBuffer[(posY + y) * SCREEN_WIDTH + (posX + x)];
 			u16 val = px ? themealphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
 
+			if (px) _topGuiMask[(posY + y) * SCREEN_WIDTH + (posX + x)] = 1;
 			_bgSubBuffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = val;
 			if (boxArtColorDeband) {
 				_bgSubBuffer2[(posY + y) * SCREEN_WIDTH + (posX + x)] = val;
@@ -1684,6 +1873,7 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 		for (uint x = tc().shoulderLRenderX(); x < tc().shoulderLRenderX() + leftTex->texWidth(); x++) {
 			u16 val = *(leftSrc++);
 			if (val >> 15) { // Do not render transparent pixel
+				_topGuiMask[y * 256 + x] = 1;
 				_bgSubBuffer[y * 256 + x] = val;
 				if (boxArtColorDeband) {
 					_bgSubBuffer2[y * 256 + x] = val;
@@ -1705,6 +1895,7 @@ void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 			u16 bg = _bgSubBuffer[(posY + y) * SCREEN_WIDTH + (posX + x)];
 			u16 val = px ? themealphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
 
+			if (px) _topGuiMask[(posY + y) * SCREEN_WIDTH + (posX + x)] = 1;
 			_bgSubBuffer[(posY + y) * SCREEN_WIDTH + (posX + x)] = val;
 			if (boxArtColorDeband) {
 				_bgSubBuffer2[(posY + y) * SCREEN_WIDTH + (posX + x)] = val;
@@ -1725,22 +1916,35 @@ ITCM_CODE void ThemeTextures::drawDateTime(const char *str, int posX, int posY, 
 	dateTimeFont()->print(0, 0, true, str, Alignment::left, FontPalette::dateTime);
 	int width = std::max(dateTimeFont()->calcWidth(str), isDate ? _previousDateWidth : _previousTimeWidth);
 
-	// Copy to background
+	// Copy to background. The text also goes into _bgSubBuffer and the GUI mask; rows inside a
+	// playing video's band are left to the video, which copies the text back over its frame.
+	const bool videoPlaying = videoOwnsTopBand();
 	for (int y = 0; y < dateTimeFont()->height() && posY + y < SCREEN_HEIGHT; y++) {
 		if (posY + y < 0) continue;
+		const bool rowInVideoBand = videoPlaying && posY + y >= rocketVideo_videoYpos
+			&& posY + y < rocketVideo_videoYpos + rocketVideo_bandHeight;
 		for (int x = 0; x < width && posX + x < SCREEN_WIDTH; x++) {
 			if (posX + x < 0) continue;
 			int px = FontGraphic::textBuf[1][y * 256 + x];
 			u16 bg = _topBorderBuffer[(posY + y) * 256 + (posX + x)];
 			u16 val = px ? themealphablend(BG_PALETTE[px], bg, (px % 4) < 2 ? 128 : 224) : bg;
 
-			BG_GFX_SUB[(posY + y) * 256 + (posX + x)] = val;
+			_topGuiMask[(posY + y) * 256 + (posX + x)] = (px != 0);
+			_bgSubBuffer[(posY + y) * 256 + (posX + x)] = val;
+			if (!rowInVideoBand) {
+				BG_GFX_SUB[(posY + y) * 256 + (posX + x)] = val;
+			}
 			if (boxArtColorDeband) {
 				_frameBufferBot[0][(posY + y) * 256 + (posX + x)] = val;
 				_frameBufferBot[1][(posY + y) * 256 + (posX + x)] = val;
 			}
 		}
 	}
+
+	// Without a commit to do it, rebuild the video's GUI runs here, whether or not the band is
+	// visible right now.
+	markTopGuiRows(posY, posY + dateTimeFont()->height());
+	flushTopGui();
 
 	if (isDate) {
 		_previousDateWidth = dateTimeFont()->calcWidth(str);
@@ -1826,6 +2030,8 @@ void ThemeTextures::applyUserPaletteToAllGrfTextures() {
 		_settingsIconTexture->applyUserPaletteFile(TFN_PALETTE_ICON_SETTINGS, effectDSiArrowButtonPalettes);
 }
 
+u16 *ThemeTextures::bgMainBuffer() { return _bgMainBuffer; }
+u16 *ThemeTextures::bgSubBuffer() { return _bgSubBuffer; }
 u16 *ThemeTextures::bgSubBuffer2() { return _bgSubBuffer2; }
 u16 *ThemeTextures::photoBuffer() { return _photoBuffer; }
 u16 *ThemeTextures::photoBuffer2() { return _photoBuffer2; }
@@ -1844,7 +2050,7 @@ struct RvidHeader {
 	u8 dualScreen;		// 1 = top and bottom screen, 2 = video is for GBA
 	u16 sampleRate;
 	u8 audioBitMode;
-	u8 bmpMode;			// 0 = 8 BPP + palette, 1 = 16 BPP, 2 = 16 BPP needing the alpha bit
+	u8 bmpMode;			// 0 = 8 BPP + palette, 1 = 16 BPP RGB555, 2 = 16 BPP RGB565 (bit 15 holds green)
 	u32 compressedFrameSizeTableOffset;	// 0 when the frames are not compressed
 	u32 soundLeftOffset;
 	u32 soundRightOffset;
@@ -1853,54 +2059,139 @@ static_assert(sizeof(RvidHeader) == 0x20, "RVID header layout must match the fil
 
 #define RVID_MAGIC				0x44495652	// "RVID"
 #define RVID_FRAME_TABLE_OFFSET	0x200
-#define ROTATING_CUBES_MAX_SIZE	0x700000
+#define ROTATING_CUBES_MAX_SIZE	0x700000	// Fixed video buffer: Slot-2 RAM pak, 3DS and dev units
+// On a DSi, heap kept free once the video buffer is taken, for everything the menu loads after
+// it (fonts, icons, box art decoding). Measured: about 1MB more is in use once the menu is idle.
+#define VIDEO_RAM_RESERVE		0x200000
 
-// Apply the screen color filter and/or force the alpha bit on a decoded 16 BPP frame,
-// matching what the playback hardware needs. Kept identical to the previous per-buffer pass.
+static u32 rotatingCubesBufferSize = ROTATING_CUBES_MAX_SIZE;
+static bool rotatingCubesBufferAllocated = false;	// DSi: sized to the video and freed on unload
+
+// Apply the screen color filter and/or force the alpha bit on a decoded 16 BPP frame.
+// RGB555 frames keep their alpha bit, so pixels with bit 15 clear let the theme show
+// through; RGB565 frames use bit 15 for green and are always opaque.
 static void applyRotatingCubesColor(u16 *frame, u32 pixels, u8 bmpMode) {
+	const bool keepAlpha = (bmpMode == 1);
 	if (colorTable) {
 		for (u32 i = 0; i < pixels; i++) {
-			frame[i] = colorTable[frame[i] % 0x8000] | BIT(15);
+			const u16 alpha = keepAlpha ? (frame[i] & BIT(15)) : BIT(15);
+			frame[i] = colorTable[frame[i] % 0x8000] | alpha;
 		}
-	} else if (bmpMode == 2) {
+	} else if (!keepAlpha) {
 		for (u32 i = 0; i < pixels; i++) {
 			frame[i] |= BIT(15);
 		}
 	}
 }
 
-// Decode a v3-v5 RVID into rotatingCubesLocation as raw 16 BPP frames.
-// Dual screen videos store two sub-frames per frame, interleaved top then bottom.
-static bool loadRotatingCubesLatest(FILE *videoFrameFile, const RvidHeader &header) {
-	const bool dualScreen = (header.dualScreen == 1);
-	const bool interlaced = (header.interlaced != 0);
-	const u32 screens = dualScreen ? 2 : 1;
-	const u32 frameCount = (u32)rocketVideo_videoFrames + 1;
-	const u32 entries = frameCount * screens;
+// Transparent RGB555 videos are blitted from per-row run lists instead of pixel by pixel,
+// which is far too slow for the vblank handler. They live in the video buffer after the
+// frames: a u32 offset per sub-frame, then for each row a u16 count followed by that many
+// x positions where the run flips between opaque and transparent. Runs start opaque at
+// x = 0 and the last one ends at the screen edge. A row whose positions do not fit gets
+// the count ALPHA_ROW_PER_PIXEL instead, and is blitted pixel by pixel.
+#define ALPHA_ROW_PER_PIXEL 0xFFFF
 
-	// Bytes of a single stored sub-frame, in the file and in our buffer.
-	const u32 srcFrameBytes = (header.bmpMode == 0 ? 0x100 : 0x200) * header.vRes;
-	const u32 dstFrameBytes = 0x200 * header.vRes;
+struct AlphaSpanWriter {
+	u32 *index;
+	u16 *data;
+	u16 *out;
+	u16 *end;
+	u32 rowsOwed;	// Headers of rows not written yet, which [out, end) always has room for
+	bool ok;
+	bool transparent;
+};
 
-	// A band that runs past the bottom of the screen would spill into the rows the
-	// main engine shares with the 8 BPP text layer, so check it before anything else.
-	const int bandHeight = header.vRes * (interlaced ? 2 : 1);
-	const int yTop = tc().rotatingCubesRenderY();
-	const int yBottom = tc().rotatingCubesRenderYBottom();
-	if (bandHeight > SCREEN_HEIGHT
-	 || yTop < 0 || yTop + bandHeight > SCREEN_HEIGHT
-	 || (dualScreen && (yBottom < 0 || yBottom + bandHeight > SCREEN_HEIGHT))) {
-		return false;
+// Lay the index and span data out after framesBytes of frames, for entries sub-frames of
+// rows rows each.
+static void initAlphaSpans(AlphaSpanWriter &w, u32 framesBytes, u32 entries, u8 rows) {
+	const u32 bufferSize = rotatingCubesBufferSize;
+	const u32 indexOffset = (framesBytes + 3) & ~3;
+	const u32 dataOffset = indexOffset + (entries * 4);
+	w.index = (u32*)(rotatingCubesLocation + indexOffset);
+	w.data = w.out = (u16*)(rotatingCubesLocation + dataOffset);
+	w.end = (u16*)(rotatingCubesLocation + bufferSize);
+	w.rowsOwed = entries * rows;
+	w.ok = (dataOffset < bufferSize) && ((u32)(w.end - w.out) >= w.rowsOwed);
+	w.transparent = false;
+}
+
+static void addAlphaSpans(AlphaSpanWriter &w, u32 entry, const u16 *frame, u8 rows) {
+	if (!w.ok) return;
+	w.index[entry] = (u32)(w.out - w.data);
+	u16 flipsAt[SCREEN_WIDTH];
+	for (u8 y = 0; y < rows; y++) {
+		u16 flips = 0;
+		bool opaque = true;
+		for (int x = 0; x < SCREEN_WIDTH; x++) {
+			const bool pixelOpaque = (*frame++ & BIT(15));
+			if (pixelOpaque != opaque) {
+				flipsAt[flips++] = x;
+				opaque = pixelOpaque;
+			}
+		}
+		if (flips) w.transparent = true;
+
+		w.rowsOwed--;
+		if (flips && (u32)(w.end - w.out) < 1u + flips + w.rowsOwed) {
+			*w.out++ = ALPHA_ROW_PER_PIXEL; // Too noisy to fit
+			continue;
+		}
+		// Word by word: on a regular DS this may be the Slot-2 RAM pak's 16-bit bus
+		*w.out++ = flips;
+		for (u16 i = 0; i < flips; i++) {
+			*w.out++ = flipsAt[i];
+		}
 	}
+}
 
-	if ((u64)dstFrameBytes * screens * frameCount > ROTATING_CUBES_MAX_SIZE) {
-		return false;
-	}
+static void finishAlphaSpans(const AlphaSpanWriter &w) {
+	rocketVideo_hasAlpha = (w.ok && w.transparent);
+	rocketVideo_spanIndex = w.index;
+	rocketVideo_spanData = w.data;
+}
 
-	u32 *frameOffsets = new u32[entries];
-	fseek(videoFrameFile, RVID_FRAME_TABLE_OFFSET, SEEK_SET);
-	if (fread(frameOffsets, 4, entries, videoFrameFile) != entries) {
-		delete[] frameOffsets;
+// Tables and scratch buffers for decoding v3-v5 sub-frames.
+// 8 BPP sub-frames are stored as their palette indices followed by their 256-color palette,
+// and turned into 16 BPP only when blitted; the others are stored as 16 BPP.
+struct RvidDecoder {
+	RvidHeader header;
+	u32 entries;		// Sub-frames in the file
+	u32 srcFrameBytes;	// Pixel bytes of a sub-frame in the file
+	u32 dstFrameBytes;	// Bytes of a sub-frame in the video buffer
+	u32 *offsets;
+	u32 *sizes;			// NULL when the frames are not compressed
+	// Frames bound for the Slot-2 RAM pak are decoded into main RAM and only then copied:
+	// its 16-bit bus cannot take the byte-wide writes that LZ77 decompression performs.
+	u8 *frameScratch;
+	u8 *compressedScratch;
+	u16 *palette;
+};
+
+static void closeRvidDecoder(RvidDecoder &d) {
+	delete[] d.palette;
+	delete[] d.compressedScratch;
+	delete[] d.frameScratch;
+	delete[] d.sizes;
+	delete[] d.offsets;
+	d.compressedScratch = d.frameScratch = NULL;
+	d.palette = NULL;
+	d.sizes = d.offsets = NULL;
+}
+
+static bool openRvidDecoder(RvidDecoder &d, FILE *file, const RvidHeader &header, u32 entries) {
+	d.header = header;
+	d.entries = entries;
+	d.srcFrameBytes = (header.bmpMode == 0 ? 0x100 : 0x200) * header.vRes;
+	d.dstFrameBytes = (header.bmpMode == 0) ? d.srcFrameBytes + 0x200 : 0x200 * header.vRes;
+	d.offsets = new u32[entries];
+	d.sizes = NULL;
+	d.frameScratch = d.compressedScratch = NULL;
+	d.palette = NULL;
+
+	fseek(file, RVID_FRAME_TABLE_OFFSET, SEEK_SET);
+	if (fread(d.offsets, 4, entries, file) != entries) {
+		closeRvidDecoder(d);
 		return false;
 	}
 
@@ -1908,102 +2199,178 @@ static bool loadRotatingCubesLatest(FILE *videoFrameFile, const RvidHeader &head
 	// Theme videos are single file, so refuse rather than seek to the wrong place.
 	if (header.ver >= 4) {
 		for (u32 i = 0; i < entries; i++) {
-			if (frameOffsets[i] & 3) {
-				delete[] frameOffsets;
+			if (d.offsets[i] & 3) {
+				closeRvidDecoder(d);
 				return false;
 			}
 		}
 	}
 
-	const bool compressed = (header.compressedFrameSizeTableOffset != 0);
-	u32 *frameSizes = NULL;
-	if (compressed) {
-		frameSizes = new u32[entries];
-		fseek(videoFrameFile, header.compressedFrameSizeTableOffset, SEEK_SET);
+	if (header.compressedFrameSizeTableOffset != 0) {
+		d.sizes = new u32[entries];
+		fseek(file, header.compressedFrameSizeTableOffset, SEEK_SET);
 		// The table holds a u16 per sub-frame for 8 BPP videos and a u32 for 16 BPP ones.
 		bool sizesOk = true;
 		if (header.bmpMode == 0) {
 			u16 *sizes16 = new u16[entries];
-			sizesOk = (fread(sizes16, 2, entries, videoFrameFile) == entries);
+			sizesOk = (fread(sizes16, 2, entries, file) == entries);
 			for (u32 i = 0; i < entries; i++) {
-				frameSizes[i] = sizes16[i];
+				d.sizes[i] = sizes16[i];
 			}
 			delete[] sizes16;
 		} else {
-			sizesOk = (fread(frameSizes, 4, entries, videoFrameFile) == entries);
+			sizesOk = (fread(d.sizes, 4, entries, file) == entries);
 		}
 		if (!sizesOk) {
-			delete[] frameSizes;
-			delete[] frameOffsets;
+			closeRvidDecoder(d);
 			return false;
 		}
+		d.compressedScratch = new u8[d.srcFrameBytes];
 	}
 
-	// Frames are decoded into main RAM and only then copied to the video buffer, which on
-	// a regular DS is the Slot-2 RAM pak: its 16-bit bus cannot take the byte-wide writes
-	// that LZ77 decompression and the 8 BPP expansion perform.
-	u8 *frameScratch = new u8[dstFrameBytes];
-	u8 *compressedScratch = compressed ? new u8[srcFrameBytes] : NULL;
-	u16 *palette = (header.bmpMode == 0) ? new u16[256] : NULL;
-	u8 *indexScratch = (header.bmpMode == 0) ? new u8[srcFrameBytes] : NULL;
+	d.frameScratch = new u8[d.dstFrameBytes];
+	if (header.bmpMode == 0) {
+		d.palette = new u16[256];
+	}
+	return true;
+}
 
-	bool ok = true;
-	for (u32 i = 0; i < entries && ok; i++) {
-		fseek(videoFrameFile, frameOffsets[i], SEEK_SET);
+// LZ77 (type 0x10) decompression. Much faster than the BIOS call, which shortens loading.
+// Returns false when the data would not fit maxSize.
+ITCM_CODE static bool decompressLz77(const u8 *src, u8 *dst, u32 maxSize) {
+	if (src[0] != 0x10) return false;
+	const u32 size = src[1] | (src[2] << 8) | (src[3] << 16);
+	if (size > maxSize) return false;
+	src += 4;
 
-		// The palette is stored ahead of the pixels and is never compressed.
-		if (header.bmpMode == 0 && fread(palette, 2, 256, videoFrameFile) != 256) {
-			ok = false;
-			break;
-		}
-
-		u8 *decodeDst = (header.bmpMode == 0) ? indexScratch : frameScratch;
-		const u32 size = compressed ? frameSizes[i] : srcFrameBytes;
-		if (size == srcFrameBytes) {
-			ok = (fread(decodeDst, 1, srcFrameBytes, videoFrameFile) == srcFrameBytes);
-		} else if (size == 0 || size > srcFrameBytes) {
-			ok = false; // Bogus size table
-		} else {
-			ok = (fread(compressedScratch, 1, size, videoFrameFile) == size);
-			if (ok) {
-				decompress(compressedScratch, decodeDst, LZ77);
-			}
-		}
-		if (!ok) break;
-
-		u16 *frame16 = (u16*)frameScratch;
-		if (header.bmpMode == 0) {
-			if (colorTable) {
-				for (int c = 0; c < 256; c++) {
-					palette[c] = colorTable[palette[c] % 0x8000] | BIT(15);
+	const u8 *const start = dst;
+	const u8 *const end = dst + size;
+	while (dst < end) {
+		u8 flags = *src++;
+		for (int i = 0; i < 8 && dst < end; i++, flags <<= 1) {
+			if (flags & 0x80) {
+				u32 len = (src[0] >> 4) + 3;
+				const u32 disp = (((src[0] & 0xF) << 8) | src[1]) + 1;
+				src += 2;
+				if (disp > (u32)(dst - start)) return false;
+				const u8 *from = dst - disp;
+				if (len > (u32)(end - dst)) len = end - dst;
+				while (len--) {
+					*dst++ = *from++;
 				}
 			} else {
-				for (int c = 0; c < 256; c++) {
-					palette[c] |= BIT(15);
-				}
+				*dst++ = *src++;
 			}
-			for (u32 p = 0; p < srcFrameBytes; p++) {
-				frame16[p] = palette[indexScratch[p]];
-			}
-		} else {
-			applyRotatingCubesColor(frame16, dstFrameBytes / 2, header.bmpMode);
 		}
+	}
+	return true;
+}
 
-		u8 *dst = rotatingCubesLocation + (i * dstFrameBytes);
-		tonccpy(dst, frameScratch, dstFrameBytes);
-		DC_FlushRange(dst, dstFrameBytes);
+// Decode one sub-frame into out (d.dstFrameBytes long, byte-addressable memory) in its stored
+// form, with the color filter applied.
+static bool decodeRvidSubFrame(RvidDecoder &d, FILE *file, u32 entry, u8 *out) {
+	const RvidHeader &header = d.header;
+	fseek(file, d.offsets[entry], SEEK_SET);
+
+	// The palette is stored ahead of the pixels and is never compressed.
+	if (header.bmpMode == 0 && fread(d.palette, 2, 256, file) != 256) {
+		return false;
 	}
 
-	delete[] indexScratch;
-	delete[] palette;
-	delete[] compressedScratch;
-	delete[] frameScratch;
-	delete[] frameSizes;
-	delete[] frameOffsets;
+	u8 *decodeDst = out;
+	const u32 size = d.sizes ? d.sizes[entry] : d.srcFrameBytes;
+	if (size == d.srcFrameBytes) {
+		if (fread(decodeDst, 1, d.srcFrameBytes, file) != d.srcFrameBytes) return false;
+	} else if (size == 0 || size > d.srcFrameBytes) {
+		return false; // Bogus size table
+	} else {
+		if (fread(d.compressedScratch, 1, size, file) != size) return false;
+		if (!decompressLz77(d.compressedScratch, decodeDst, d.srcFrameBytes)) {
+			decompress(d.compressedScratch, decodeDst, LZ77);
+		}
+	}
 
+	if (header.bmpMode == 0) {
+		if (colorTable) {
+			for (int c = 0; c < 256; c++) {
+				d.palette[c] = colorTable[d.palette[c] % 0x8000] | BIT(15);
+			}
+		} else {
+			for (int c = 0; c < 256; c++) {
+				d.palette[c] |= BIT(15);
+			}
+		}
+		tonccpy(out + d.srcFrameBytes, d.palette, 0x200);
+	} else {
+		applyRotatingCubesColor((u16*)out, d.dstFrameBytes / 2, header.bmpMode);
+	}
+	return true;
+}
+
+// Decode a v3-v5 RVID into rotatingCubesLocation.
+// Dual screen videos store two sub-frames per frame, interleaved top then bottom.
+static bool loadRotatingCubesLatest(FILE *videoFrameFile, const RvidHeader &header) {
+	const bool dualScreen = (header.dualScreen == 1);
+	const bool interlaced = (header.interlaced != 0);
+	const u32 screens = dualScreen ? 2 : 1;
+	const u32 frameCount = (u32)rocketVideo_videoFrames + 1;
+	const u32 entries = frameCount * screens;
+	const u32 dstFrameBytes = (header.bmpMode == 0) ? (0x100 * header.vRes) + 0x200 : 0x200 * header.vRes;
+
+	// A band that runs past the bottom of the screen would spill into the rows the
+	// main engine shares with the 8 BPP text layer, so check it before anything else.
+	const int bandHeight = header.vRes * (interlaced ? 2 : 1);
+	const int yTop = tc().rotatingCubesRenderY();
+	const int yBottom = tc().rotatingCubesRenderYBottom();
+	const bool onBottomOnly = (!dualScreen && tc().rotatingCubesMainScreen() == 1);
+	const bool onTop = !onBottomOnly;
+	const bool onBottom = (dualScreen || onBottomOnly);
+	if (bandHeight > SCREEN_HEIGHT
+	 || (onTop && (yTop < 0 || yTop + bandHeight > SCREEN_HEIGHT))
+	 || (onBottom && (yBottom < 0 || yBottom + bandHeight > SCREEN_HEIGHT))) {
+		return false;
+	}
+
+	RvidDecoder decoder;
+	if (!openRvidDecoder(decoder, videoFrameFile, header, entries)) {
+		return false;
+	}
+
+	if ((u64)dstFrameBytes * entries > rotatingCubesBufferSize) {
+		logPrint("RVID: too large to load\n");
+		closeRvidDecoder(decoder);
+		return false;
+	}
+
+	AlphaSpanWriter spans;
+	initAlphaSpans(spans, entries * dstFrameBytes, entries, header.vRes);
+	spans.ok = spans.ok && (header.bmpMode == 1);
+
+	// Decode straight into the video buffer when it is main RAM. The Slot-2 RAM pak cannot
+	// take the byte-wide writes, so frames bound for it go through main RAM first.
+	const bool direct = (rotatingCubesLocation != (u8*)0x09000000);
+	bool ok = true;
+	for (u32 i = 0; i < entries && ok; i++) {
+		u8 *dst = rotatingCubesLocation + (i * dstFrameBytes);
+		u8 *out = direct ? dst : decoder.frameScratch;
+		ok = decodeRvidSubFrame(decoder, videoFrameFile, i, out);
+		if (!ok) break;
+		if (header.bmpMode == 1) {
+			addAlphaSpans(spans, i, (u16*)out, header.vRes);
+		}
+		if (!direct) {
+			tonccpy(dst, decoder.frameScratch, dstFrameBytes);
+		}
+		DC_FlushRange(dst, dstFrameBytes);
+	}
+	closeRvidDecoder(decoder);
 	if (!ok) return false;
+	finishAlphaSpans(spans);
 
+	rocketVideo_indexed = (header.bmpMode == 0);
 	rocketVideo_dualScreen = dualScreen;
+	rocketVideo_onTop = onTop;
+	rocketVideo_onBottom = onBottom;
 	rocketVideo_interlaced = interlaced;
 	rocketVideo_bandHeight = bandHeight;
 	rocketVideo_videoYpos = yTop;
@@ -2014,7 +2381,12 @@ static bool loadRotatingCubesLatest(FILE *videoFrameFile, const RvidHeader &head
 // Decode a pre-v3 RVID: frames laid end to end, 16 BPP single screen only.
 // v1 and v2 share the first fields; only v2 carries the compression flag and a frame offset.
 static bool loadRotatingCubesLegacy(FILE *videoFrameFile, const RvidHeader &header, u32 framesSize) {
-	if (rocketVideo_height > 144 || framesSize > ROTATING_CUBES_MAX_SIZE) {
+	if (rocketVideo_height > 144 || framesSize > rotatingCubesBufferSize) {
+		return false;
+	}
+	const bool onBottom = (tc().rotatingCubesMainScreen() == 1);
+	const int yBottom = tc().rotatingCubesRenderYBottom();
+	if (onBottom && (yBottom < 0 || yBottom + rocketVideo_height > SCREEN_HEIGHT)) {
 		return false;
 	}
 
@@ -2037,11 +2409,65 @@ static bool loadRotatingCubesLegacy(FILE *videoFrameFile, const RvidHeader &head
 	applyRotatingCubesColor((u16*)rotatingCubesLocation, framesSize / 2, 1);
 	DC_FlushRange(rotatingCubesLocation, framesSize);
 
+	const u32 frameBytes = 0x200 * rocketVideo_height;
+	const u32 entries = framesSize / frameBytes;
+	AlphaSpanWriter spans;
+	initAlphaSpans(spans, framesSize, entries, rocketVideo_height);
+	for (u32 i = 0; i < entries; i++) {
+		addAlphaSpans(spans, i, (u16*)(rotatingCubesLocation + (i * frameBytes)), rocketVideo_height);
+	}
+	finishAlphaSpans(spans);
+	rocketVideo_indexed = false;
 	rocketVideo_dualScreen = false;
+	rocketVideo_onTop = !onBottom;
+	rocketVideo_onBottom = onBottom;
 	rocketVideo_interlaced = false;
 	rocketVideo_bandHeight = rocketVideo_height;
 	rocketVideo_videoYpos = tc().rotatingCubesRenderY();
+	rocketVideo_videoYposBottom = yBottom;
 	return true;
+}
+
+// Largest block the heap can hand out right now, to 64KB.
+static u32 largestFreeBlock(void) {
+	u32 lo = 0;
+	u32 hi = 0x1000000 / 0x10000;
+	while (lo < hi) {
+		const u32 mid = (lo + hi + 1) / 2;
+		u8 *block = new (std::nothrow) u8[mid * 0x10000];
+		if (block) {
+			delete[] block;
+			lo = mid;
+		} else {
+			hi = mid - 1;
+		}
+	}
+	return lo * 0x10000;
+}
+
+// Video buffer bytes a video needs: its stored frames, and for videos that may have alpha, the
+// span index plus room for 16 run flips per row on average (noisier rows are blitted per pixel).
+// 0 for a video this loader does not play.
+static u32 rotatingCubesBytesNeeded(const RvidHeader &header) {
+	u64 frameBytes = 0;
+	u64 entries = header.frames;
+	bool spans = false;
+	if (header.ver >= 3 && header.ver <= 5 && header.dualScreen != 2) {
+		entries *= (header.dualScreen == 1) ? 2 : 1;
+		frameBytes = entries * ((header.bmpMode == 0) ? (0x100 * header.vRes) + 0x200 : 0x200 * header.vRes);
+		spans = (header.bmpMode == 1);
+	} else if (header.ver == 1 || header.ver == 2) {
+		frameBytes = entries * 0x200 * header.vRes;
+		spans = true;
+	} else {
+		return 0;
+	}
+	u64 total = (frameBytes + 3) & ~3ULL;
+	if (spans) {
+		total += (entries * 4) + (entries * header.vRes * 2 * 17);
+	}
+	total = (total + 3) & ~3ULL;
+	return (total > 0x1000000) ? 0x1000000 : (u32)total;
 }
 
 void loadRotatingCubes() {
@@ -2080,6 +2506,28 @@ void loadRotatingCubes() {
 
 	rocketVideo_videoFrames = (int)header.frames - 1;
 
+	// On a DSi the buffer is sized to the video, up to what the heap can spare
+	rotatingCubesBufferSize = ROTATING_CUBES_MAX_SIZE;
+	if (dsiFeatures() && ms().consoleModel == 0) {
+		const u32 needed = rotatingCubesBytesNeeded(header);
+		const u32 largest = largestFreeBlock();
+		const u32 limit = (largest > VIDEO_RAM_RESERVE) ? largest - VIDEO_RAM_RESERVE : 0;
+		logPrint("RVID: needs %lu KB, %lu KB available\n", (unsigned long)(needed >> 10), (unsigned long)(limit >> 10));
+		rotatingCubesLocation = (needed && needed <= limit) ? new (std::nothrow) u8[needed] : NULL;
+		if (!rotatingCubesLocation) {
+			if (needed) logPrint("RVID: too large to load\n");
+			fclose(videoFrameFile);
+			return;
+		}
+		rotatingCubesBufferSize = needed;
+		rotatingCubesBufferAllocated = true;
+	}
+
+	rocketVideo_loopFrame = tc().rotatingCubesLoopFrame();
+	if (rocketVideo_loopFrame < 0 || rocketVideo_loopFrame > rocketVideo_videoFrames) {
+		rocketVideo_loopFrame = 0;
+	}
+
 	rocketVideo_fps = header.fps;
 	if (rocketVideo_fps >= 0x80) {
 		rocketVideo_fps -= 0x80;
@@ -2101,11 +2549,18 @@ void loadRotatingCubes() {
 	}
 
 	if (loaded) {
-		rocketVideo_currentFrame = 0; // Starts at -1, which would blit from before the buffer
+		rocketVideo_currentFrame = 0;
+		rocketVideo_prevFrame = -1;
+		rocketVideo_field = false;
+		resetVideoAlphaTracking();
 		rotatingCubesLoaded = true;
 		rocketVideo_playVideo = true;
 		rocketVideo_topVisible = true;
 		rocketVideo_weaveRefill = true;
+	} else if (rotatingCubesBufferAllocated) {
+		delete[] rotatingCubesLocation;
+		rotatingCubesLocation = NULL;
+		rotatingCubesBufferAllocated = false;
 	}
 	fclose(videoFrameFile);
 }
@@ -2114,9 +2569,11 @@ void ThemeTextures::unloadRotatingCubes() {
 	while (dmaBusy(0) || dmaBusy(1)); // Wait for any in-flight frame to finish rendering
 	drawOverRotatingCubesBottom(); // Restore the bottom screen behind the icons
 	rotatingCubesLoaded = false;
-	if (dsiFeatures() && !ms().macroMode && ms().theme == TWLSettings::ETheme3DS && ms().consoleModel == 0) {
-		toncset32(rotatingCubesLocation, 0, 0x700000/sizeof(u32)); // Clear video before freeing
+	if (rotatingCubesBufferAllocated) {
+		toncset32(rotatingCubesLocation, 0, rotatingCubesBufferSize/sizeof(u32)); // Clear video before freeing
 		delete[] rotatingCubesLocation;
+		rotatingCubesLocation = NULL;
+		rotatingCubesBufferAllocated = false;
 	}
 }
 void ThemeTextures::unloadPhotoBuffer() {
@@ -2228,9 +2685,7 @@ void ThemeTextures::videoSetup() {
 			rotatingCubesLocation = (u8*)0x0D700000;
 			boxArtCache = (u8*)0x0D540000;
 		} else {
-			if (ms().theme == TWLSettings::ETheme3DS) {
-				rotatingCubesLocation = new u8[0x700000];
-			}
+			// The video buffer is allocated by loadRotatingCubes(), once the video's size is known
 			if (ms().showBoxArt == 2) {
 				boxArtCache = new u8[0x1B8000];
 			}

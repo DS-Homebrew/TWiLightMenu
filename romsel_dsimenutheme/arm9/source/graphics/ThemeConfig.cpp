@@ -11,7 +11,7 @@
 ThemeConfig::ThemeConfig()
 	: _startBorderRenderY(81), _startBorderSpriteW(32), _startBorderSpriteH(80), _startTextRenderY(143),
 	_titleboxRenderY(85), _titleboxMaxLines(4), _titleboxTextY(30), _titleboxTextW(240), _titleboxTextLarge(true),
-	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11), _rotatingCubesRenderY(78), _rotatingCubesRenderYBottom(78),
+	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11), _rotatingCubesRenderY(78), _rotatingCubesRenderYBottom(78), _rotatingCubesMainScreen(0), _rotatingCubesLoopFrame(0),
 	_shoulderLRenderY(172), _shoulderLRenderX(0), _shoulderLTextY(257), _shoulderLTextX(18), _shoulderLTextAlign(1),
 	_shoulderRRenderY(172), _shoulderRRenderX(178), _shoulderRTextY(257), _shoulderRTextX(238), _shoulderRTextAlign(-1),
 	_volumeRenderY(4), _volumeRenderX(16), _batteryRenderY(5), _batteryRenderX(235), _usernameRenderY(3), _usernameRenderX(28),
@@ -169,6 +169,8 @@ void ThemeConfig::loadConfig() {
 	_purpleBatteryAvailable = getInt(themeConfig, "PurpleBatteryAvailable", _purpleBatteryAvailable);
 	_rotatingCubesRenderY = getInt(themeConfig, "RotatingCubesRenderY", _rotatingCubesRenderY);
 	_rotatingCubesRenderYBottom = getInt(themeConfig, "RotatingCubesRenderYBottom", _rotatingCubesRenderYBottom);
+	_rotatingCubesMainScreen = getInt(themeConfig, "RotatingCubesMainScreen", _rotatingCubesMainScreen);
+	_rotatingCubesLoopFrame = getInt(themeConfig, "RotatingCubesLoopFrame", _rotatingCubesLoopFrame);
 	_renderPhoto = getInt(themeConfig, "RenderPhoto", _renderPhoto);
 	_darkLoading = getInt(themeConfig, "DarkLoading", _darkLoading);
 	_useAlphaBlend = getInt(themeConfig, "UseAlphaBlend", _useAlphaBlend);

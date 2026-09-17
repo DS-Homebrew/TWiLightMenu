@@ -11,6 +11,7 @@
 #include <vector>
 
 #define BG_BUFFER_PIXELCOUNT 256 * 192
+#define ROCKET_VIDEO_GUI_RUNS 32	// Top screen GUI runs kept per row in front of the video
 
 extern bool boxArtColorDeband;
 
@@ -64,6 +65,7 @@ public:
 	void loadIconUnknownTexture();
 
 	static unsigned short *beginBgSubModify();
+	static void clearTopGuiMask(int x, int y, int w, int h);
 	static void commitBgSubModify();
 	static void commitBgSubModifyAsync();
 
@@ -205,6 +207,8 @@ public:
 	FontGraphic *usernameFont() { extern FontGraphic *smallFont; return _usernameFont ? _usernameFont.get() : smallFont; }
 	FontGraphic *smallFont() { extern FontGraphic *smallFont; return smallFont; }
 
+	static u16* bgMainBuffer();
+	static u16* bgSubBuffer();
 	static u16* bgSubBuffer2();
 	static u16* photoBuffer();
 	static u16* photoBuffer2();
