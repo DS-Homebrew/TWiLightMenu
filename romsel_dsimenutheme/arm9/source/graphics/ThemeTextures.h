@@ -205,6 +205,8 @@ public:
 	FontGraphic *usernameFont() { extern FontGraphic *smallFont; return _usernameFont ? _usernameFont.get() : smallFont; }
 	FontGraphic *smallFont() { extern FontGraphic *smallFont; return smallFont; }
 
+	static u16* bgMainBuffer();
+	static u16* bgSubBuffer();
 	static u16* bgSubBuffer2();
 	static u16* photoBuffer();
 	static u16* photoBuffer2();

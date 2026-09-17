@@ -40,6 +40,10 @@ extern bool rocketVideo_playVideo;
 extern bool rocketVideo_topVisible;
 extern bool rocketVideo_dualScreen;
 extern bool rocketVideo_interlaced;
+extern bool rocketVideo_hasAlpha;
+extern u32 *rocketVideo_spanIndex;
+extern u16 *rocketVideo_spanData;
+extern void resetVideoAlphaTracking(void);
 extern bool rocketVideo_weaveRefill;
 extern u8 rocketVideo_bandHeight;
 extern u8 rocketVideo_height;
@@ -1826,6 +1830,8 @@ void ThemeTextures::applyUserPaletteToAllGrfTextures() {
 		_settingsIconTexture->applyUserPaletteFile(TFN_PALETTE_ICON_SETTINGS, effectDSiArrowButtonPalettes);
 }
 
+u16 *ThemeTextures::bgMainBuffer() { return _bgMainBuffer; }
+u16 *ThemeTextures::bgSubBuffer() { return _bgSubBuffer; }
 u16 *ThemeTextures::bgSubBuffer2() { return _bgSubBuffer2; }
 u16 *ThemeTextures::photoBuffer() { return _photoBuffer; }
 u16 *ThemeTextures::photoBuffer2() { return _photoBuffer2; }
@@ -1844,7 +1850,7 @@ struct RvidHeader {
 	u8 dualScreen;		// 1 = top and bottom screen, 2 = video is for GBA
 	u16 sampleRate;
 	u8 audioBitMode;
-	u8 bmpMode;			// 0 = 8 BPP + palette, 1 = 16 BPP, 2 = 16 BPP needing the alpha bit
+	u8 bmpMode;			// 0 = 8 BPP + palette, 1 = 16 BPP RGB555, 2 = 16 BPP RGB565 (bit 15 holds green)
 	u32 compressedFrameSizeTableOffset;	// 0 when the frames are not compressed
 	u32 soundLeftOffset;
 	u32 soundRightOffset;
@@ -1855,18 +1861,75 @@ static_assert(sizeof(RvidHeader) == 0x20, "RVID header layout must match the fil
 #define RVID_FRAME_TABLE_OFFSET	0x200
 #define ROTATING_CUBES_MAX_SIZE	0x700000
 
-// Apply the screen color filter and/or force the alpha bit on a decoded 16 BPP frame,
-// matching what the playback hardware needs. Kept identical to the previous per-buffer pass.
+// Apply the screen color filter and/or force the alpha bit on a decoded 16 BPP frame.
+// RGB555 frames keep their alpha bit, so pixels with bit 15 clear let the theme show
+// through; RGB565 frames use bit 15 for green and are always opaque.
 static void applyRotatingCubesColor(u16 *frame, u32 pixels, u8 bmpMode) {
+	const bool keepAlpha = (bmpMode == 1);
 	if (colorTable) {
 		for (u32 i = 0; i < pixels; i++) {
-			frame[i] = colorTable[frame[i] % 0x8000] | BIT(15);
+			const u16 alpha = keepAlpha ? (frame[i] & BIT(15)) : BIT(15);
+			frame[i] = colorTable[frame[i] % 0x8000] | alpha;
 		}
-	} else if (bmpMode == 2) {
+	} else if (!keepAlpha) {
 		for (u32 i = 0; i < pixels; i++) {
 			frame[i] |= BIT(15);
 		}
 	}
+}
+
+// Transparent RGB555 videos are blitted from per-row run lists instead of pixel by pixel,
+// which is far too slow for the vblank handler. They live in the unused tail of the video
+// buffer: a u32 offset per sub-frame, then for each row a u16 count followed by that many
+// x positions where the run flips between opaque and transparent. Runs start opaque at
+// x = 0 and the last one ends at the screen edge.
+struct AlphaSpanWriter {
+	u32 *index;
+	u16 *data;
+	u16 *out;
+	u16 *end;
+	bool ok;
+	bool transparent;
+};
+
+static void initAlphaSpans(AlphaSpanWriter &w, u32 framesBytes, u32 entries) {
+	const u32 indexOffset = (framesBytes + 3) & ~3;
+	const u32 dataOffset = indexOffset + (entries * 4);
+	w.ok = (dataOffset < ROTATING_CUBES_MAX_SIZE);
+	w.transparent = false;
+	w.index = (u32*)(rotatingCubesLocation + indexOffset);
+	w.data = w.out = (u16*)(rotatingCubesLocation + dataOffset);
+	w.end = (u16*)(rotatingCubesLocation + ROTATING_CUBES_MAX_SIZE);
+}
+
+static void addAlphaSpans(AlphaSpanWriter &w, u32 entry, const u16 *frame, u8 rows) {
+	if (!w.ok) return;
+	w.index[entry] = (u32)(w.out - w.data);
+	for (u8 y = 0; y < rows; y++) {
+		if (w.end - w.out < 1 + SCREEN_WIDTH) {
+			w.ok = false; // Too noisy to fit, so blit it as an opaque video
+			return;
+		}
+		u16 *count = w.out++;
+		u16 flips = 0;
+		bool opaque = true;
+		for (int x = 0; x < SCREEN_WIDTH; x++) {
+			const bool pixelOpaque = (*frame++ & BIT(15));
+			if (pixelOpaque != opaque) {
+				*w.out++ = x;
+				flips++;
+				opaque = pixelOpaque;
+			}
+		}
+		*count = flips;
+		if (flips) w.transparent = true;
+	}
+}
+
+static void finishAlphaSpans(const AlphaSpanWriter &w) {
+	rocketVideo_hasAlpha = (w.ok && w.transparent);
+	rocketVideo_spanIndex = w.index;
+	rocketVideo_spanData = w.data;
 }
 
 // Decode a v3-v5 RVID into rotatingCubesLocation as raw 16 BPP frames.
@@ -1947,6 +2010,10 @@ static bool loadRotatingCubesLatest(FILE *videoFrameFile, const RvidHeader &head
 	u16 *palette = (header.bmpMode == 0) ? new u16[256] : NULL;
 	u8 *indexScratch = (header.bmpMode == 0) ? new u8[srcFrameBytes] : NULL;
 
+	AlphaSpanWriter spans;
+	initAlphaSpans(spans, entries * dstFrameBytes, entries);
+	spans.ok = spans.ok && (header.bmpMode == 1);
+
 	bool ok = true;
 	for (u32 i = 0; i < entries && ok; i++) {
 		fseek(videoFrameFile, frameOffsets[i], SEEK_SET);
@@ -1987,6 +2054,7 @@ static bool loadRotatingCubesLatest(FILE *videoFrameFile, const RvidHeader &head
 			}
 		} else {
 			applyRotatingCubesColor(frame16, dstFrameBytes / 2, header.bmpMode);
+			addAlphaSpans(spans, i, frame16, header.vRes);
 		}
 
 		u8 *dst = rotatingCubesLocation + (i * dstFrameBytes);
@@ -2005,6 +2073,7 @@ static bool loadRotatingCubesLatest(FILE *videoFrameFile, const RvidHeader &head
 
 	rocketVideo_dualScreen = dualScreen;
 	rocketVideo_interlaced = interlaced;
+	finishAlphaSpans(spans);
 	rocketVideo_bandHeight = bandHeight;
 	rocketVideo_videoYpos = yTop;
 	rocketVideo_videoYposBottom = yBottom;
@@ -2037,6 +2106,14 @@ static bool loadRotatingCubesLegacy(FILE *videoFrameFile, const RvidHeader &head
 	applyRotatingCubesColor((u16*)rotatingCubesLocation, framesSize / 2, 1);
 	DC_FlushRange(rotatingCubesLocation, framesSize);
 
+	const u32 frameBytes = 0x200 * rocketVideo_height;
+	const u32 entries = framesSize / frameBytes;
+	AlphaSpanWriter spans;
+	initAlphaSpans(spans, framesSize, entries);
+	for (u32 i = 0; i < entries; i++) {
+		addAlphaSpans(spans, i, (u16*)(rotatingCubesLocation + (i * frameBytes)), rocketVideo_height);
+	}
+	finishAlphaSpans(spans);
 	rocketVideo_dualScreen = false;
 	rocketVideo_interlaced = false;
 	rocketVideo_bandHeight = rocketVideo_height;
@@ -2102,6 +2179,7 @@ void loadRotatingCubes() {
 
 	if (loaded) {
 		rocketVideo_currentFrame = 0; // Starts at -1, which would blit from before the buffer
+		resetVideoAlphaTracking();
 		rotatingCubesLoaded = true;
 		rocketVideo_playVideo = true;
 		rocketVideo_topVisible = true;
